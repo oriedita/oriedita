@@ -56,8 +56,8 @@ selectされた部分だけでのSVG出力
 
 			//oc.senbun_kousa_hantei(Senbun s1,Senbun s2,double rhit,double rhei)
 
-			Ten kousa_ten =new Ten(1000000.0,1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
-			double kousa_ten_kyori=kousa_ten.kyori(s_step[2].geta());
+			Ten kousa_point =new Ten(1000000.0,1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
+			double kousa_ten_kyori=kousa_point.kyori(s_step[2].geta());
 
 
 

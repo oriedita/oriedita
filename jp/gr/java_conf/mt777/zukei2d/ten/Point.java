@@ -2,27 +2,27 @@ package jp.gr.java_conf.mt777.zukei2d.ten;
 
 //import java.util.*;
 
-public class Ten {//点の座標や方向ベクトルなどをあらわすときに用いる
+public class Point {//点の座標や方向ベクトルなどをあらわすときに用いる
     //Used to represent point coordinates, direction vectors, etc.
 
     double x, y;
 
 
-    public Ten(Ten p) {
+    public Point(Point p) {
         set(p);
     }//コンストラクタ
 
-    public Ten() {
+    public Point() {
         x = 0;
         y = 0;
     }//コンストラクタ
 
-    public Ten(double i, double j) {
+    public Point(double i, double j) {
         x = i;
         y = j;
     } //コンストラクタ
 
-    public Ten(double a, Ten p, double b, Ten q) {
+    public Point(double a, Point p, double b, Point q) {
         x = a * p.getx() + b * q.getx();
         y = a * p.gety() + b * q.gety();
     } //コンストラクタ
@@ -32,7 +32,7 @@ public class Ten {//点の座標や方向ベクトルなどをあらわすとき
     }
 
 
-    public void set(Ten p) {
+    public void set(Point p) {
         x = p.getx();
         y = p.gety();
     }
@@ -43,7 +43,7 @@ public class Ten {//点の座標や方向ベクトルなどをあらわすとき
         y = j;
     }
 
-    public void set(double a, Ten p, double b, Ten q) {
+    public void set(double a, Point p, double b, Point q) {
         x = a * p.getx() + b * q.getx();
         y = a * p.gety() + b * q.gety();
     }
@@ -80,7 +80,7 @@ public class Ten {//点の座標や方向ベクトルなどをあらわすとき
     }
 
     //他の点との距離（double）を求める関数----------------------------------------------------
-    public double kyori(Ten p) {
+    public double kyori(Point p) {
         //double x1=p.getx(),y1=p.gety();
         //return Math.sqrt((x1-x)*(x1-x)+(y1-y)*(y1-y));
 
@@ -101,21 +101,21 @@ public class Ten {//点の座標や方向ベクトルなどをあらわすとき
         }
     */
     //他の点との距離の2乗（double）を求める関数----------------------------------------------------
-    public double kyori2jyou(Ten p) {
+    public double kyori2jyou(Point p) {
         double x1 = p.getx() - x, y1 = p.gety() - y;
         return x1 * x1 + y1 * y1;
     }
 
 
     //自Tenを基準としてみたとき、他の点の位置をTenで返す。
-    public Ten tano_Ten_iti(Ten taten) {
-        Ten rten = new Ten();
+    public Point tano_Ten_iti(Point taten) {
+        Point rten = new Point();
         rten.setx(taten.getx() - x);
         rten.sety(taten.gety() - y);
         return rten;
     }
 
-    public void idou(Ten addten) {
+    public void idou(Point addten) {
         x = x + addten.getx();
         y = y + addten.gety();
     }

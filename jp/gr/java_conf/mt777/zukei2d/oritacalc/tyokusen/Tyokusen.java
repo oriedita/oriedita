@@ -28,7 +28,7 @@ public class Tyokusen {
     }
 
 
-    public Tyokusen(Ten p1, Ten p2) {  //コンストラクタ
+    public Tyokusen(Point p1, Point p2) {  //コンストラクタ
         //二点を指定して直線のa,b,cを求める
         double x1 = p1.getx(), y1 = p1.gety();
         double x2 = p2.getx(), y2 = p2.gety();
@@ -39,7 +39,7 @@ public class Tyokusen {
     }
 
 
-    public Tyokusen(Senbun s0) {  //コンストラクタ
+    public Tyokusen(Line s0) {  //コンストラクタ
         //Senbunを指定して直線のa,b,cを求める
         double x1 = s0.getax(), y1 = s0.getay();
         double x2 = s0.getbx(), y2 = s0.getby();
@@ -121,7 +121,7 @@ public class Tyokusen {
         return c;
     }
 
-    public double kyorikeisan(Ten p) {//直線と点pとの距離
+    public double kyorikeisan(Point p) {//直線と点pとの距離
         double x = p.getx();
         double y = p.gety();
         //return Math.abs((double) ((float)(a*x+b*y+c)/Math.sqrt((float)(a*a+b*b))));
@@ -129,7 +129,7 @@ public class Tyokusen {
     }
 
 
-    public double kyori_2jyou_keisan(Ten p) {//直線と点pとの距離の二乗
+    public double kyori_2jyou_keisan(Point p) {//直線と点pとの距離の二乗
         double x = p.getx();
         double y = p.gety();
         //return Math.abs((double) ((float)(a*x+b*y+c)/Math.sqrt((float)(a*a+b*b))));
@@ -137,7 +137,7 @@ public class Tyokusen {
     }
 
 
-    public void tyokkouka(Ten p) { //点（x,y)を通って ax+by+c=0に直交する直線 (bx-ay+d=0)に変換
+    public void tyokkouka(Point p) { //点（x,y)を通って ax+by+c=0に直交する直線 (bx-ay+d=0)に変換
         double e;
         double x = p.getx();
         double y = p.gety();
@@ -150,13 +150,13 @@ public class Tyokusen {
     }
 
 
-    public int onajigawa(Ten p1, Ten p2) {//2点が直線の同じ側なら１、別の側なら-1、直線上の点があるなら０を返す
+    public int onajigawa(Point p1, Point p2) {//2点が直線の同じ側なら１、別の側なら-1、直線上の点があるなら０を返す
         double dd = dainyuukeisan(p1) * dainyuukeisan(p2);
 		return Double.compare(dd, 0.0);
 	}
 
 
-    public double dainyuukeisan(Ten p) {
+    public double dainyuukeisan(Point p) {
         return a * p.getx() + b * p.gety() + c;
     }  //a*x+b*y+cにx,yを代入した値を返す
 
@@ -174,7 +174,7 @@ public class Tyokusen {
 
         }
     */
-    public int senbun_kousa_hantei_kuwasii(Senbun s0) {//0=この直線は与えられた線分と交差しない、1=X型で交差する、21=線分のa点でT型で交差する、22=線分のb点でT型で交差する、3=線分は直線に含まれる。
+    public int senbun_kousa_hantei_kuwasii(Line s0) {//0=この直線は与えられた線分と交差しない、1=X型で交差する、21=線分のa点でT型で交差する、22=線分のb点でT型で交差する、3=線分は直線に含まれる。
 
 
         double d_a2 = kyori_2jyou_keisan(s0.geta());
@@ -212,16 +212,16 @@ public class Tyokusen {
 
 
     //他の直線との交点を求める関数　20170312追加
-    public Ten kouten_motome(Tyokusen t2) {
+    public Point kouten_motome(Tyokusen t2) {
         double a1 = a, b1 = b, c1 = c;//直線t1, a1*x+b1*y+c1=0の各係数を求める。
         double a2 = t2.geta(), b2 = t2.getb(), c2 = t2.getc();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
 
-        return new Ten((b1 * c2 - b2 * c1) / (a1 * b2 - a2 * b1), (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1));
+        return new Point((b1 * c2 - b2 * c1) / (a1 * b2 - a2 * b1), (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1));
     }
 
 
     //直線上の点pの影の位置（点pと最も近い直線上の位置）を求める。　20170312追加
-    public Ten kage_motome(Ten p) {
+    public Point kage_motome(Point p) {
         Tyokusen t1 = new Tyokusen(a, b, c);
         t1.tyokkouka(p);//点p1を通って tに直行する直線を求める。
         return kouten_motome(t1);

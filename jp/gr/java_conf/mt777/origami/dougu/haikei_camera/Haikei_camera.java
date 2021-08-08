@@ -2,7 +2,6 @@ package jp.gr.java_conf.mt777.origami.dougu.haikei_camera;
 
 
 import jp.gr.java_conf.mt777.zukei2d.ten.*;
-import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
 import jp.gr.java_conf.mt777.origami.dougu.camera.*;
 
@@ -13,13 +12,13 @@ public class Haikei_camera {//実際の座標と、表示座標の仲立ち
 //引数は、Graphics2D g2h,Image imgh,Ten h1,Ten h2,Ten h3,Ten h4
 //h2,とh4も重なるようにする
     OritaCalc oc = new OritaCalc();
-    Ten h1 = new Ten();
-    Ten h2 = new Ten();
-    Ten h3 = new Ten();
-    Ten h4 = new Ten();
+    Point h1 = new Point();
+    Point h2 = new Point();
+    Point h3 = new Point();
+    Point h4 = new Point();
 
-    Ten h3_obj = new Ten();
-    Ten h4_obj = new Ten();
+    Point h3_obj = new Point();
+    Point h4_obj = new Point();
 
     double haikei_haba;
     double haikei_takasa;
@@ -44,10 +43,10 @@ public class Haikei_camera {//実際の座標と、表示座標の仲立ち
 
 
     public void reset() {
-        set_h1(new Ten(0.0, 0.0));
-        set_h2(new Ten(1.0, 1.0));
-        set_h3(new Ten(120.0, 120.0));
-        set_h4(new Ten(121.0, 121.0));
+        set_h1(new Point(0.0, 0.0));
+        set_h2(new Point(1.0, 1.0));
+        set_h3(new Point(120.0, 120.0));
+        set_h4(new Point(121.0, 121.0));
 
         parameter_keisan();
 
@@ -71,12 +70,12 @@ public class Haikei_camera {//実際の座標と、表示座標の仲立ち
     }
 
 
-    public Ten get_kijyun_jyoutai_iti(Ten pt) {
-        Ten pt1 = new Ten();
-        Ten pt2 = new Ten();
-        Ten pt3 = new Ten();
+    public Point get_kijyun_jyoutai_iti(Point pt) {
+        Point pt1 = new Point();
+        Point pt2 = new Point();
+        Point pt3 = new Point();
 
-        pt1.set(oc.ten_kaiten(new Ten(p_kaiten_x, p_kaiten_y), pt, -get_kakudo()));
+        pt1.set(oc.ten_kaiten(new Point(p_kaiten_x, p_kaiten_y), pt, -get_kakudo()));
         pt2.set(pt1.getx() - p_idou_x, pt1.gety() - p_idou_y);
         pt3.set(pt2.getx() / p_bairitu, pt2.gety() / p_bairitu);
 
@@ -86,51 +85,51 @@ public class Haikei_camera {//実際の座標と、表示座標の仲立ち
 
     //public void set_h1(Ten ht){h1.set(ht);}
 //public void set_h2(Ten ht){h2.set(ht);}
-    public void set_h1(Ten ht) {
+    public void set_h1(Point ht) {
         h1.set(get_kijyun_jyoutai_iti(ht));
     }
 
-    public void set_h2(Ten ht) {
+    public void set_h2(Point ht) {
         h2.set(get_kijyun_jyoutai_iti(ht));
     }
 
-    public void set_h3(Ten ht) {
+    public void set_h3(Point ht) {
         h3.set(ht);
     }
 
-    public void set_h4(Ten ht) {
+    public void set_h4(Point ht) {
         h4.set(ht);
     }
 
-    public void set_h3_obj(Ten ht) {
+    public void set_h3_obj(Point ht) {
         h3_obj.set(ht);
     }
 
-    public void set_h4_obj(Ten ht) {
+    public void set_h4_obj(Point ht) {
         h4_obj.set(ht);
     }
 
-    public Ten get_h1() {
+    public Point get_h1() {
         return h1;
     }
 
-    public Ten get_h2() {
+    public Point get_h2() {
         return h2;
     }
 
-    public Ten get_h3() {
+    public Point get_h3() {
         return h3;
     }
 
-    public Ten get_h4() {
+    public Point get_h4() {
         return h4;
     }
 
-    public Ten get_h3_obj() {
+    public Point get_h3_obj() {
         return h3_obj;
     }
 
-    public Ten get_h4_obj() {
+    public Point get_h4_obj() {
         return h4_obj;
     }
 

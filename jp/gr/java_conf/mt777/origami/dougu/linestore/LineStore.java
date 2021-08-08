@@ -1,4 +1,4 @@
-package jp.gr.java_conf.mt777.origami.dougu.senbunsyuugou;
+package jp.gr.java_conf.mt777.origami.dougu.linestore;
 
 import jp.gr.java_conf.mt777.kiroku.memo.*;
 
@@ -12,44 +12,44 @@ import java.util.*;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
-public class Senbunsyuugou {
+public class LineStore {
     int sousuu;               //実際に使う線分の総数
-    ArrayList<Senbun> Senb = new ArrayList<>(); //線分のインスタンス化
+    ArrayList<Line> Senb = new ArrayList<>(); //線分のインスタンス化
     OritaCalc oc = new OritaCalc();          //各種計算用の関数を使うためのクラスのインスタンス化
 
-    public Senbunsyuugou() {
+    public LineStore() {
         reset();
     } //コンストラクタ
 
     public void reset() {
         sousuu = 0;
         Senb.clear();
-        Senb.add(new Senbun());
+        Senb.add(new Line());
     }
 
-    public void set(Senbunsyuugou ss) {
+    public void set(LineStore ss) {
         sousuu = ss.getsousuu();
         for (int i = 0; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             s.set(ss.get(i));
         }
     }
 
-    private Senbun sen(int i) {
+    private Line sen(int i) {
         if (sousuu + 1 > Senb.size()) {
             while (sousuu + 1 > Senb.size()) {
-                Senb.add(new Senbun());
+                Senb.add(new Line());
             }
         }//この文がないとうまく行かない。なぜこの文でないといけないかという理由が正確にはわからない。
         return Senb.get(i);
     }
 
     //
-    private void senset(int i, Senbun s) {
+    private void senset(int i, Line s) {
         if (sousuu + 1 > Senb.size()) {
             while (sousuu + 1 > Senb.size()) {
-                Senb.add(new Senbun());
+                Senb.add(new Line());
             }
         }//この文がないとうまく行かない。なぜこの文でないといけないかという理由が正確にはわからない。
         if (i + 1 <= Senb.size()) {
@@ -67,86 +67,86 @@ public class Senbunsyuugou {
     }
 
     //線分を得る
-    public Senbun get(int i) {
+    public Line get(int i) {
         //Senbun s;s= sen(i);return s;
         return sen(i);
     }
 
     //i番目の線分の端点を得る
-    public Ten geta(int i) {
-        Senbun s;
+    public Point geta(int i) {
+        Line s;
         s = sen(i);
         return s.geta();
     }
 
-    public Ten getb(int i) {
-        Senbun s;
+    public Point getb(int i) {
+        Line s;
         s = sen(i);
         return s.getb();
     }
 
     //i番目の線分の端点を得る
     public double getax(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.getax();
     }
 
     public double getbx(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.getbx();
     }
 
     public double getay(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.getay();
     }
 
     public double getby(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.getby();
     }
 
     //i番目の線分の端点の位置をセットする
-    public void seta(int i, Ten p) {
-        Senbun s;
+    public void seta(int i, Point p) {
+        Line s;
         s = sen(i);
         s.seta(p);
     }
 
-    public void setb(int i, Ten p) {
-        Senbun s;
+    public void setb(int i, Point p) {
+        Line s;
         s = sen(i);
         s.setb(p);
     }
 
     //i番目の線分の値を入力する
-    public void set(int i, Ten p, Ten q, int ic, int ia) {
-        Senbun s;
+    public void set(int i, Point p, Point q, int ic, int ia) {
+        Line s;
         s = sen(i);
         s.set(p, q, ic, ia);
     }
 
     //i番目の線分の色を入力する
     public void setcolor(int i, int icol) {
-        Senbun s;
+        Line s;
         s = sen(i);
         s.setcolor(icol);
     }
 
     //i番目の線分の色を出力する
     public int getcolor(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.getcolor();
     }
 
     //i番目の線分の活性を出力する
     public int getiactive(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.getiactive();
     }
@@ -161,7 +161,7 @@ public class Senbunsyuugou {
 
         for (int i = 1; i <= sousuu; i++) {
             memo1.addGyou("番号," + i);
-            Senbun s;
+            Line s;
             s = sen(i);
             memo1.addGyou("色," + s.getcolor());
             memo1.addGyou("座標," + s.getax() + "," + s.getay() + "," +
@@ -234,7 +234,7 @@ public class Senbunsyuugou {
             if ((yomiflg == 1) && (str.equals("色"))) {
                 str = tk.nextToken();
                 ic = Integer.parseInt(str);
-                Senbun s;
+                Line s;
                 s = sen(ibangou);
                 s.setcolor(ic);
 
@@ -249,7 +249,7 @@ public class Senbunsyuugou {
                 str = tk.nextToken();
                 by = Double.parseDouble(str);
 
-                Senbun s;
+                Line s;
                 s = sen(ibangou);
                 s.set(ax, ay, bx, by);
                 //	System.out.println(ax );
@@ -310,7 +310,7 @@ public class Senbunsyuugou {
     //点状の線分を削除
     public void ten_sakujyo() {
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             if (oc.hitosii(s.geta(), s.getb())) {
                 delsenbun(i);
@@ -321,7 +321,7 @@ public class Senbunsyuugou {
 
     public void ten_sakujyo(double r) {
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             if (oc.hitosii(s.geta(), s.getb(), r)) {
                 delsenbun(i);
@@ -333,17 +333,17 @@ public class Senbunsyuugou {
     // 全く重なる線分が2本存在するときに番号の遅いほうを削除する。
     public void jyuufuku_senbun_sakujyo(double r) {
         int[] sakujyo_flg = new int[sousuu + 1];
-        Senbun[] snew = new Senbun[sousuu + 1];
+        Line[] snew = new Line[sousuu + 1];
         for (int i = 1; i <= sousuu; i++) {
             sakujyo_flg[i] = 0;
-            snew[i] = new Senbun();
+            snew[i] = new Line();
         }
 
         for (int i = 1; i <= sousuu - 1; i++) {
-            Senbun si;
+            Line si;
             si = sen(i);
             for (int j = i + 1; j <= sousuu; j++) {
-                Senbun sj;
+                Line sj;
                 sj = sen(j);
                 if (r <= -9999.9) {
                     if (oc.senbun_kousa_hantei(si, sj) == 31) {
@@ -360,7 +360,7 @@ public class Senbunsyuugou {
         int smax = 0;
         for (int i = 1; i <= sousuu; i++) {
             if (sakujyo_flg[i] == 0) {
-                Senbun si;
+                Line si;
                 si = sen(i);
                 smax = smax + 1;
                 snew[smax].set(si);
@@ -369,7 +369,7 @@ public class Senbunsyuugou {
 
         sousuu = smax;
         for (int i = 1; i <= sousuu; i++) {
-            Senbun si;
+            Line si;
             si = sen(i);
             si.set(snew[i]);
         }
@@ -385,9 +385,9 @@ public class Senbunsyuugou {
         if (i == j) {
             return 0;
         }
-        Senbun si;
+        Line si;
         si = sen(i);
-        Senbun sj;
+        Line sj;
         sj = sen(j);
         if (oc.senbun_kousa_hantei(si, sj) == 31) {  //31はsiとsjが全く同じに重なることを示す
             delsenbun(j);
@@ -444,20 +444,20 @@ public class Senbunsyuugou {
             return 0;
         }
 
-        Senbun si;
+        Line si;
         si = sen(i);
-        Senbun sj;
+        Line sj;
         sj = sen(j);
 
-        Ten p1 = new Ten();
+        Point p1 = new Point();
         p1.set(si.geta());
-        Ten p2 = new Ten();
+        Point p2 = new Point();
         p2.set(si.getb());
-        Ten p3 = new Ten();
+        Point p3 = new Point();
         p3.set(sj.geta());
-        Ten p4 = new Ten();
+        Point p4 = new Point();
         p4.set(sj.getb());
-        Ten pk = new Ten();
+        Point pk = new Point();
 
 
         double ixmax;
@@ -814,10 +814,10 @@ public class Senbunsyuugou {
 
 
     //線分の追加-------------------------------
-    public void addsenbun(Ten pi, Ten pj, int i_c) {
+    public void addsenbun(Point pi, Point pj, int i_c) {
         sousuu++;
 
-        Senbun s;
+        Line s;
         s = sen(sousuu);
         s.set(pi, pj, i_c);
     }
@@ -826,16 +826,16 @@ public class Senbunsyuugou {
     public void addsenbun(double ax, double ay, double bx, double by, int ic) {
         sousuu++;
 
-        Senbun s;
+        Line s;
         s = sen(sousuu);
         s.set(ax, ay, bx, by, ic);
     }
 
     //線分の追加-------------------------------
-    public void addsenbun(Ten pi, Ten pj) {
+    public void addsenbun(Point pi, Point pj) {
         sousuu++;
 
-        Senbun s;
+        Line s;
         s = sen(sousuu);
 
         s.seta(pi);
@@ -845,9 +845,9 @@ public class Senbunsyuugou {
     //線分の削除-----------------------------------------
     public void delsenbun(int j) {   //j番目の線分を削除する
         for (int i = j; i <= sousuu - 1; i++) {
-            Senbun si;
+            Line si;
             si = sen(i);
-            Senbun si1;
+            Line si1;
             si1 = sen(i + 1);
             si.set(si1);
 
@@ -857,7 +857,7 @@ public class Senbunsyuugou {
 
     //i番目の線分の長さを得る---------------------------
     public double getnagasa(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.getnagasa();
     }
@@ -869,11 +869,11 @@ public class Senbunsyuugou {
         for (int i = 1; i <= sousuu; i++) {
             iflga = 0;
             iflgb = 0;
-            Senbun si;
+            Line si;
             si = sen(i);
             for (int j = 1; j <= sousuu; j++) {
                 if (i != j) {
-                    Senbun sj;
+                    Line sj;
                     sj = sen(j);
                     if (oc.kyori(si.geta(), sj.geta()) < r) {
                         iflga = 1;
@@ -902,11 +902,11 @@ public class Senbunsyuugou {
         int iflg = 0;
         for (int i = 1; i <= sousuu; i++) {
             iflg = 0;
-            Senbun si;
+            Line si;
             si = sen(i);
             for (int j = 1; j <= sousuu; j++) {
                 if (i != j) {
-                    Senbun sj;
+                    Line sj;
                     sj = sen(j);
                     if (oc.kyori(si.geta(), sj.geta()) < r) {
                         iflg = 1;
@@ -935,7 +935,7 @@ public class Senbunsyuugou {
     //もし対象外にする線分が無い場合は、jを0とか負の整数とかにする。
     //070317　追加機能　j　が　-10　の時は　活性化していない枝（getiactive(i)が0）を対象にする。
 
-    public int senbun_sagasi(Ten p, double r, int j) {
+    public int senbun_sagasi(Point p, double r, int j) {
         if (j == -10) {
             for (int i = 1; i <= sousuu; i++) {
                 if (((senbun_busyo_sagasi(i, p, r) == 1) && (i != j)) && (getiactive(i) == 0)) {
@@ -976,7 +976,7 @@ public class Senbunsyuugou {
 
     //点pが指定された線分とどの部所で近い(r以内)かどうかを判定する関数　---------------------------------
     //0=近くない、1=a点に近い、2=b点に近い、3=柄の部分に近い
-    public int senbun_busyo_sagasi(int i, Ten p, double r) {
+    public int senbun_busyo_sagasi(int i, Point p, double r) {
         if (r > oc.kyori(p, geta(i))) {
             return 1;
         }//a点に近いかどうか
@@ -991,7 +991,7 @@ public class Senbunsyuugou {
 
 
     //点pに最も近い線分の番号を返す
-    public int mottomo_tikai_senbun_sagasi(Ten p) {
+    public int mottomo_tikai_senbun_sagasi(Point p) {
         int minrid = 0;
         double minr = 100000;
         for (int i = 1; i <= sousuu; i++) {
@@ -1007,11 +1007,11 @@ public class Senbunsyuugou {
 
 
     //点pに最も近い線分の端点を返す
-    public Ten mottomo_tikai_Ten_sagasi(Ten p) {
+    public Point mottomo_tikai_Ten_sagasi(Point p) {
 
-        Ten p_return = new Ten();
+        Point p_return = new Point();
         p_return.set(100000.0, 100000.0);
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
         for (int i = 1; i <= sousuu; i++) {
             p_temp.set(geta(i));
             if (p.kyori2jyou(p_temp) < p.kyori2jyou(p_return)) {
@@ -1030,9 +1030,9 @@ public class Senbunsyuugou {
 
 
     //点pの近くの線分の活性化
-    public void kasseika(Ten p, double r) {
+    public void kasseika(Point p, double r) {
         for (int i = 1; i <= sousuu; i++) {
-            Senbun si;
+            Line si;
             si = sen(i);
             si.kasseika(p, r);
         }
@@ -1041,7 +1041,7 @@ public class Senbunsyuugou {
     //全線分の非活性化
     public void hikasseika() {
         for (int i = 1; i <= sousuu; i++) {
-            Senbun si;
+            Line si;
             si = sen(i);
             si.hikasseika();
         }
@@ -1049,9 +1049,9 @@ public class Senbunsyuugou {
 
 
     //線分の活性化されたものを点pの座標にする
-    public void set(Ten p) {
+    public void set(Point p) {
         for (int i = 1; i <= sousuu; i++) {
-            Senbun si;
+            Line si;
             si = sen(i);
             si.set(p);
         }

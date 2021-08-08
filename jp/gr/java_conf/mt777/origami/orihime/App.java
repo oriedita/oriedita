@@ -27,14 +27,14 @@ import jp.gr.java_conf.mt777.origami.orihime.egaki_syokunin.*;
 import jp.gr.java_conf.mt777.origami.dougu.camera.*;
 import jp.gr.java_conf.mt777.origami.dougu.haikei_camera.*;
 import jp.gr.java_conf.mt777.origami.dougu.keijiban.*;
-import jp.gr.java_conf.mt777.origami.dougu.senbunsyuugou.*;
+import jp.gr.java_conf.mt777.origami.dougu.linestore.*;
 import jp.gr.java_conf.mt777.kiroku.memo.*;
 
 import jp.gr.java_conf.mt777.kiroku.moji_sousa.*;
-import jp.gr.java_conf.mt777.zukei2d.ten.*;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
 import jp.gr.java_conf.mt777.zukei2d.kousi.*;
+import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
 /*///a アプレット用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
 import java.applet.*; 
@@ -76,7 +76,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
     ArrayList<Oriagari_Zu> OAZ = new ArrayList<>(); //折り上がり図のインスタンス化
 
-    public Senbunsyuugou Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public LineStore Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
 
     int i_OAZ = 0;//OAZの何番目のOriagari_Zuがボタン操作や変形操作の対象となるかを指定
 
@@ -91,7 +91,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
     Haikei_camera h_cam = new Haikei_camera();
 
-    Ten mouse_temp0 = new Ten();//マウスの動作対応時に、一時的に使うTen
+    Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
     int icol;//基本枝職人の枝の色を指定する。0は黒、1は赤、2は赤。//icol=0 black	//icol=1 red	//icol=2 blue	//icol=3 cyan	//icol=4 orange	//icol=5 mazenta	//icol=6 green	//icol=7 yellow	//icol=8 new Color(210,0,255) //紫
     int h_icol;//補助線の枝の色を指定する。
@@ -323,8 +323,8 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     int i_Lock_on_ori = 0;//背景をロックオンする＝１、しない＝０
     int i_Lock_on = 0;//背景をロックオンする＝１、しない＝０
 
-    Ten p_mouse_object_iti = new Ten();//マウスのオブジェクト座標上の位置
-    Ten p_mouse_TV_iti = new Ten();//マウスのTV座標上の位置
+    Point p_mouse_object_iti = new Point();//マウスのオブジェクト座標上の位置
+    Point p_mouse_TV_iti = new Point();//マウスのTV座標上の位置
 
     // アプレットの幅と高さ
     Dimension dim;
@@ -1302,7 +1302,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
                 for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
                     OZi = (Oriagari_Zu) OAZ.get(i_oz);
 
-                    Ten t_o2tv = new Ten();
+                    Point t_o2tv = new Point();
                     t_o2tv = camera_of_orisen_nyuuryokuzu.object2TV(camera_of_orisen_nyuuryokuzu.get_camera_ichi());
 
                     OZi.d_oriagarizu_syukusyaku_keisuu = OZi.d_oriagarizu_syukusyaku_keisuu * d_bairitu;
@@ -1383,7 +1383,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
                     for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
                         OZi = (Oriagari_Zu) OAZ.get(i_oz);
 
-                        Ten t_o2tv = new Ten();
+                        Point t_o2tv = new Point();
                         t_o2tv = camera_of_orisen_nyuuryokuzu.object2TV(camera_of_orisen_nyuuryokuzu.get_camera_ichi());
 
                         OZi.d_oriagarizu_syukusyaku_keisuu = OZi.d_oriagarizu_syukusyaku_keisuu * d_bairitu;
@@ -1461,7 +1461,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
                 for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
                     OZi = (Oriagari_Zu) OAZ.get(i_oz);
 
-                    Ten t_o2tv = new Ten();
+                    Point t_o2tv = new Point();
                     t_o2tv = camera_of_orisen_nyuuryokuzu.object2TV(camera_of_orisen_nyuuryokuzu.get_camera_ichi());
 
                     OZi.d_oriagarizu_syukusyaku_keisuu = OZi.d_oriagarizu_syukusyaku_keisuu * d_bairitu;
@@ -1691,10 +1691,10 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
                 double dvx = hidari_ue_ix;
                 double dvy = hidari_ue_iy;
 
-                haikei_set(new Ten(120.0, 120.0),
-                        new Ten(120.0 + 10.0, 120.0),
-                        new Ten(dvx, dvy),
-                        new Ten(dvx + 10.0, dvy));
+                haikei_set(new Point(120.0, 120.0),
+                        new Point(120.0 + 10.0, 120.0),
+                        new Point(dvx, dvy),
+                        new Point(dvx + 10.0, dvy));
 
 
 //背景表示の各条件を設定
@@ -1776,10 +1776,10 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
                     double dvx = xmin;
                     double dvy = ymin;
 
-                    haikei_set(new Ten(120.0, 120.0),
-                            new Ten(120.0 + 10.0, 120.0),
-                            new Ten(dvx, dvy),
-                            new Ten(dvx + 10.0, dvy));
+                    haikei_set(new Point(120.0, 120.0),
+                            new Point(120.0 + 10.0, 120.0),
+                            new Point(dvx, dvy),
+                            new Point(dvx + 10.0, dvy));
 
                     if (i_Lock_on == 1) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
                         h_cam.set_i_Lock_on(i_Lock_on);
@@ -6313,7 +6313,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 } else if (es1.get_orisensuu_for_select_oritatami() > 0) {
                     oritatami_jyunbi();//ここでOZがOAZ(0)からOAZ(i)に切り替わる
                     //OZ.ts1.Senbunsyuugou2Tensyuugou(es1.get_for_select_oritatami());
-                    OZ.i_suitei_meirei = 5;
+                    OZ.i_estimated_order = 5;
 
                     if (i_SubThread == 0) {
                         i_SubThread = 1;
@@ -6375,7 +6375,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
                 img_kaisetu_fname = "qqq/koteimen_sitei.png";
                 readImageFromFile3();
-                if (OZ.hyouji_flg > 0) {
+                if (OZ.display_flg > 0) {
                     i_mouse_modeA = 103;
                     System.out.println("i_mouse_modeA = " + i_mouse_modeA);
                 }
@@ -6590,7 +6590,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 readImageFromFile3();
 
                 //OZ.i_suitei_jissi_umu=0;//i_suitei_jissi_umuは、折り畳み推定の計算を実施したかどうかを表す。int i_suitei_jissi_umu=0なら実施しない。1なら実施した。
-                OZ.i_suitei_meirei = 6;
+                OZ.i_estimated_order = 6;
 
 
                 i_sub_mode = 0;//1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかう。
@@ -6643,9 +6643,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 img_kaisetu_fname =
                         "qqq/AS_matome.png";
                 readImageFromFile3();
-                if (OZ.betu_sagasi_flg == 1) {
+                if (OZ.different_search_flg == 1) {
                     //OZ.i_suitei_jissi_umu=0;//i_suitei_jissi_umuは、折り畳み推定の計算を実施したかどうかを表す。int i_suitei_jissi_umu=0なら実施しない。1なら実施した。
-                    OZ.i_suitei_meirei = 6;
+                    OZ.i_estimated_order = 6;
 
                     if (i_SubThread == 0) {
                         i_SubThread = 1;
@@ -6689,11 +6689,11 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
                 text26.setText(String.valueOf(i_oritatami_bangou));
 
-                OZ.i_suitei_meirei = 6;
+                OZ.i_estimated_order = 6;
 
                 if (i_oritatami_bangou < OZ.hakkenn_sita_kazu) {
                     settei_syokika_yosoku();//折り上がり予想の廃棄
-                    OZ.i_suitei_meirei = 51;    //i_suitei_meirei=51はoritatami_suiteiの最初の推定図用カメラの設定は素通りするための設定。推定図用カメラの設定を素通りしたら、i_suitei_meirei=5に変更される。
+                    OZ.i_estimated_order = 51;    //i_suitei_meirei=51はoritatami_suiteiの最初の推定図用カメラの設定は素通りするための設定。推定図用カメラの設定を素通りしたら、i_suitei_meirei=5に変更される。
                     //1例目の折り上がり予想はi_suitei_meirei=5を指定、2例目以降の折り上がり予想はi_suitei_meirei=6で実施される
                     //betu_sagasi_flg=1;
                 }
@@ -7487,7 +7487,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
     }
 
     // ------------------------------------------------------------------------
-    public Ten ten_of_kijyunmen_old = new Ten(); //ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
+    public Point point_of_kijyunmen_old = new Point(); //ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
 
     //
     private void oritatame(int i_fold_type, int i_suitei_meirei) {//引数の意味は(i_fold_type , i_suitei_meirei)
@@ -7517,7 +7517,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             //
             //Ten ten_of_kijyunmen_old =new Ten(); ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());
-            ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
+            point_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
             //これより前のOZは古いOZ
             oritatami_jyunbi();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、OAZ(0)共通パラメータを引き継がせる。
             //これより後のOZは新しいOZに変わる
@@ -7525,7 +7525,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
             //OZ.i_suitei_jissi_umu=0;	//i_suitei_jissi_umuは、折り畳み推定の計算を実施したかどうかを表す。int i_suitei_jissi_umu=0なら実施しない。1なら実施した。
-            OZ.i_suitei_meirei = i_suitei_meirei;
+            OZ.i_estimated_order = i_suitei_meirei;
 
             if (i_SubThread == 0) {
                 i_SubThread = 1;
@@ -7536,7 +7536,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
         } else if (i_fold_type == 3) {
-            OZ.i_suitei_meirei = i_suitei_meirei;
+            OZ.i_estimated_order = i_suitei_meirei;
 
             if (i_SubThread == 0) {
                 i_SubThread = 1;
@@ -8187,7 +8187,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
     // *******************************************************************************************zzzzzzzzzzzz
-    public void i_cp_or_oriagari_hantei(Ten p) {//マウスで得られたTenが、展開図や折り上がり図などのどれを指しているのか判定する関数
+    public void i_cp_or_oriagari_hantei(Point p) {//マウスで得られたTenが、展開図や折り上がり図などのどれを指しているのか判定する関数
         //20171216
         //hyouji_flg==2,ip4==0  omote
         //hyouji_flg==2,ip4==1	ura
@@ -8218,42 +8218,42 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
             int OZ_hyouji_mode = 0;//折り上がり図表示なし
-            if ((OZi.hyouji_flg == 2) && (OZi.ip4 == 0)) {
+            if ((OZi.display_flg == 2) && (OZi.ip4 == 0)) {
                 OZ_hyouji_mode = 1;
             }//	omote
-            if ((OZi.hyouji_flg == 2) && (OZi.ip4 == 1)) {
+            if ((OZi.display_flg == 2) && (OZi.ip4 == 1)) {
                 OZ_hyouji_mode = 2;
             }//	ura
-            if ((OZi.hyouji_flg == 2) && (OZi.ip4 == 2)) {
+            if ((OZi.display_flg == 2) && (OZi.ip4 == 2)) {
                 OZ_hyouji_mode = 3;
             }//	omote & ura
-            if ((OZi.hyouji_flg == 2) && (OZi.ip4 == 3)) {
+            if ((OZi.display_flg == 2) && (OZi.ip4 == 3)) {
                 OZ_hyouji_mode = 3;
             }//	omote & ura
 
-            if ((OZi.hyouji_flg == 3) && (OZi.ip4 == 0)) {
+            if ((OZi.display_flg == 3) && (OZi.ip4 == 0)) {
                 OZ_hyouji_mode = 1;
             }//	omote
-            if ((OZi.hyouji_flg == 3) && (OZi.ip4 == 1)) {
+            if ((OZi.display_flg == 3) && (OZi.ip4 == 1)) {
                 OZ_hyouji_mode = 2;
             }//	ura
-            if ((OZi.hyouji_flg == 3) && (OZi.ip4 == 2)) {
+            if ((OZi.display_flg == 3) && (OZi.ip4 == 2)) {
                 OZ_hyouji_mode = 3;
             }//	omote & ura
-            if ((OZi.hyouji_flg == 3) && (OZi.ip4 == 3)) {
+            if ((OZi.display_flg == 3) && (OZi.ip4 == 3)) {
                 OZ_hyouji_mode = 3;
             }//	omote & ura
 
-            if ((OZi.hyouji_flg == 5) && (OZi.ip4 == 0)) {
+            if ((OZi.display_flg == 5) && (OZi.ip4 == 0)) {
                 OZ_hyouji_mode = 1;
             }//	omote
-            if ((OZi.hyouji_flg == 5) && (OZi.ip4 == 1)) {
+            if ((OZi.display_flg == 5) && (OZi.ip4 == 1)) {
                 OZ_hyouji_mode = 2;
             }//	ura
-            if ((OZi.hyouji_flg == 5) && (OZi.ip4 == 2)) {
+            if ((OZi.display_flg == 5) && (OZi.ip4 == 2)) {
                 OZ_hyouji_mode = 3;
             }//	omote & ura
-            if ((OZi.hyouji_flg == 5) && (OZi.ip4 == 3)) {
+            if ((OZi.display_flg == 5) && (OZi.ip4 == 3)) {
                 OZ_hyouji_mode = 4;
             }//	omote & ura & omote2 & ura2
 
@@ -8349,7 +8349,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
                 // ---------------------------------------------------------------------hhhhhhhhh
 
-                Ten p = new Ten(e2p(e));
+                Point p = new Point(e2p(e));
                 i_cp_or_oriagari_hantei(p);
 //System.out.println("ホイールで拡大縮小　i_cp_or_oriagari=　" +i_cp_or_oriagari);
                 if (i_cp_or_oriagari == 0) {
@@ -8437,13 +8437,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
     //----------------------------------------------------------------------
 
 
-    public Ten e2p(MouseEvent e) {
+    public Point e2p(MouseEvent e) {
 
         double d_haba = 0.0;
         if (ckbox_ten_hanasi.isSelected()) {
             d_haba = camera_of_orisen_nyuuryokuzu.get_camera_bairitsu_x() * es1.get_d_hantei_haba();
         }
-        return new Ten(e.getX() - (int) d_haba, e.getY() - (int) d_haba);
+        return new Point(e.getX() - (int) d_haba, e.getY() - (int) d_haba);
     }
 
 
@@ -8476,7 +8476,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //何もしない
         //  final Point mouseLocation = MouseInfo.getPointerInfo().getLocation();//これは多分J2SE 5.0「Tiger」以降で作動するコード
 
-        Ten p = new Ten(e2p(e));
+        Point p = new Point(e2p(e));
         mouse_object_iti(p);
         if (i_mouse_modeA == 0) {
         } else if (i_mouse_modeA == 1) {
@@ -8724,7 +8724,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
     public void mousePressed(MouseEvent e) {
 
         //Ten p =new Ten(e.getX(),e.getY());
-        Ten p = new Ten(e2p(e));
+        Point p = new Point(e2p(e));
 
 
 //wwwwwwwwwwww
@@ -9164,7 +9164,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         if (i_mouseDragged_yuukou == 1) {
 
             //Ten p =new Ten(e.getX(),e.getY());
-            Ten p = new Ten(e2p(e));
+            Point p = new Point(e2p(e));
             mouse_object_iti(p);
 
             //if (ckbox_mouse_settei.isSelected()){  //20201010　コメントアウト
@@ -9540,7 +9540,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
     public void mouseReleased(MouseEvent e) {
         if (i_mouseReleased_yuukou == 1) {
             //Ten p =new Ten(e.getX(),e.getY());
-            Ten p = new Ten(e2p(e));
+            Point p = new Point(e2p(e));
 
 
             //if (ckbox_mouse_settei.isSelected()){  //20201010　コメントアウト
@@ -9724,13 +9724,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                     //i_Lock_on_ori=1;
                     Button_kyoutuu_sagyou();
                     //System.out.println("i_mouse_modeA==4");
-                    Senbun s_1 = new Senbun();
+                    Line s_1 = new Line();
                     s_1.set(es1.get_s_step(1));
-                    Senbun s_2 = new Senbun();
+                    Line s_2 = new Line();
                     s_2.set(es1.get_s_step(2));
-                    Senbun s_3 = new Senbun();
+                    Line s_3 = new Line();
                     s_3.set(es1.get_s_step(3));
-                    Senbun s_4 = new Senbun();
+                    Line s_4 = new Line();
                     s_4.set(es1.get_s_step(4));
 
                     //int i_Lock_on_old=i_Lock_on;
@@ -9943,8 +9943,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                     );
 
                 }
-                if ((new_kijyunmen_id != old_kijyunmen_id) && (OZ.i_suitei_dankai > 1)) {
-                    OZ.i_suitei_dankai = 1;
+                if ((new_kijyunmen_id != old_kijyunmen_id) && (OZ.i_estimated_step > 1)) {
+                    OZ.i_estimated_step = 1;
                 }
 
             } else if (i_mouse_modeA == 7) {
@@ -9984,7 +9984,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
     // --------------------------------------------------
 
 
-    public void mouse_object_iti(Ten p) {//この関数はmouseMoved等と違ってマウスイベントが起きても自動では認識されない
+    public void mouse_object_iti(Point p) {//この関数はmouseMoved等と違ってマウスイベントが起きても自動では認識されない
         p_mouse_TV_iti.set(p.getx(), p.gety());
 
         p_mouse_object_iti.set(camera_of_orisen_nyuuryokuzu.TV2object(p_mouse_TV_iti));
@@ -10007,7 +10007,7 @@ public void keyTyped(KeyEvent e){
 
 
     // ------------------------------------------------------
-    public void haikei_set(Ten t1, Ten t2, Ten t3, Ten t4) {
+    public void haikei_set(Point t1, Point t2, Point t3, Point t4) {
         h_cam.set_h1(t1);
         h_cam.set_h2(t2);
         h_cam.set_h3(t3);
@@ -10089,7 +10089,7 @@ public void keyTyped(KeyEvent e){
         //OritaCalc oc =new OritaCalc();
 
         //別の重なりさがし　のボタンの色の指定。
-        if (OZ.betu_sagasi_flg == 1) {
+        if (OZ.different_search_flg == 1) {
             Button3.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
             Button3.setForeground(Color.black);
 
@@ -10250,7 +10250,7 @@ img_haikei=(Image)imageT;
         //基準面の表示
         //System.out.println("paint　+++++++++++++++++++++　基準面の表示");
         if (i_mejirusi_hyouji == 1) {
-            if (OZ.hyouji_flg > 0) {
+            if (OZ.display_flg > 0) {
                 //	ts1.setCamera(camera_of_orisen_nyuuryokuzu);
                 OZ.ts1.oekaki_kijyunmen_id_with_camera(bufferGraphics);//ts1が折り畳みを行う際の基準面を表示するのに使う。
             }
@@ -10302,7 +10302,7 @@ img_haikei=(Image)imageT;
 
 
             if (i_kou_mitudo_nyuuryoku_hyouji == 1) {
-                Ten kus_sisuu = new Ten(es1.get_moyori_ten_sisuu(p_mouse_TV_iti));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
+                Point kus_sisuu = new Point(es1.get_moyori_ten_sisuu(p_mouse_TV_iti));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
 
                 double dx_ind;
                 dx_ind = kus_sisuu.getx();
@@ -10480,7 +10480,7 @@ double dvy=(double)ymin;
 
     void settei_syokika_yosoku() {
         OZ.text_kekka = "";
-        OZ.hyouji_flg = 0;//折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図
+        OZ.display_flg = 0;//折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図
         OZ.hyouji_flg_backup = 0;//表示様式hyouji_flgの一時的バックアップ用
 
         //表示用の値を格納する変数
@@ -10503,7 +10503,7 @@ double dvy=(double)ymin;
         //1000なら別の重なり方が見つかった。
 
 
-        OZ.betu_sagasi_flg = 0;     //これは「別の重なりを探す」ことが有効の場合は１、無効の場合は０をとる。
+        OZ.different_search_flg = 0;     //これは「別の重なりを探す」ことが有効の場合は１、無効の場合は０をとる。
         OZ.hakkenn_sita_kazu = 0;    //折り重なり方で、何通り発見したかを格納する。
 
 
@@ -10617,7 +10617,7 @@ double dvy=(double)ymin;
             if (fname.endsWith("svg")) {
                 //	Memo memo1; memo1=es1.getMemo_for_kakidasi();
                 Memo memo1;
-                memo1 = es1.getMemo_for_svg_kakidasi_with_camera(i_bun_hyouji, i_cp_hyouji, i_a0_hyouji, i_a1_hyouji, fTenkaizuSenhaba, i_orisen_hyougen, f_h_TenkaizuSenhaba, dim.width, dim.height, i_mejirusi_hyouji);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+                memo1 = es1.getMemo_for_svg_export_with_camera(i_bun_hyouji, i_cp_hyouji, i_a0_hyouji, i_a1_hyouji, fTenkaizuSenhaba, i_orisen_hyougen, f_h_TenkaizuSenhaba, dim.width, dim.height, i_mejirusi_hyouji);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
                 Memo memo2 = new Memo();
                 //memo2=OZ.getMemo_for_svg_kakidasi();//20180227　各折り上がりのmemoと重複する作業なので削除
@@ -10627,7 +10627,7 @@ double dvy=(double)ymin;
                 for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
                     OZi = (Oriagari_Zu) OAZ.get(i_oz);
 
-                    memo2.addMemo(OZi.getMemo_for_svg_kakidasi());
+                    memo2.addMemo(OZi.getMemo_for_svg_export());
 
 
                 }
@@ -10808,7 +10808,7 @@ double dvy=(double)ymin;
     //-----------------------------------------------------------------------------------------------------
     void writeMemo2File() {
         Memo memo1;
-        memo1 = es1.getMemo_for_kakidasi();
+        memo1 = es1.getMemo_for_export();
 /*
 		FileDialog fd = new FileDialog(this,"書き出しファイルの指定",FileDialog.SAVE);
 		fd.setVisible(true);
@@ -10874,7 +10874,7 @@ double dvy=(double)ymin;
 
     //--------------------------------------------------------------------------
     public void oritatami_suitei() {
-        OZ.oritatami_suitei(camera_of_orisen_nyuuryokuzu, Ss0);
+        OZ.folding_estimated(camera_of_orisen_nyuuryokuzu, Ss0);
     }
 
     //--------------------------------------------------------------------------

@@ -5,47 +5,47 @@ import java.awt.*;
 import jp.gr.java_conf.mt777.kiroku.memo.*;
 
 import jp.gr.java_conf.mt777.zukei2d.en.*;
-import jp.gr.java_conf.mt777.zukei2d.ten.*;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.tyokusen.*;
 import jp.gr.java_conf.mt777.zukei2d.takakukei.*;
 import jp.gr.java_conf.mt777.seiretu.narabebako.*;
+import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
 import java.util.*;
 
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
-public class Orisensyuugou {
+public class PolygonStore {
     int sousuu;               //実際に使う線分の総数
-    ArrayList<Senbun> Senb = new ArrayList<>(); //折線とする線分のインスタンス化
+    ArrayList<Line> Senb = new ArrayList<>(); //折線とする線分のインスタンス化
     OritaCalc oc = new OritaCalc();          //各種計算用の関数を使うためのクラスのインスタンス化
 
-    ArrayList<Senbun> Check1Senb = new ArrayList<>(); //check情報を格納する線分のインスタンス化
-    ArrayList<Senbun> Check2Senb = new ArrayList<>(); //check情報を格納する線分のインスタンス化
-    ArrayList<Senbun> Check3Senb = new ArrayList<>(); //check情報を格納する線分のインスタンス化
-    ArrayList<Senbun> Check4Senb = new ArrayList<>(); //check情報を格納する線分のインスタンス化
-    ArrayList<Ten> Check4Ten = new ArrayList<>(); //checkすべき点のインスタンス化
+    ArrayList<Line> Check1Senb = new ArrayList<>(); //check情報を格納する線分のインスタンス化
+    ArrayList<Line> Check2Senb = new ArrayList<>(); //check情報を格納する線分のインスタンス化
+    ArrayList<Line> Check3Senb = new ArrayList<>(); //check情報を格納する線分のインスタンス化
+    ArrayList<Line> Check4Senb = new ArrayList<>(); //check情報を格納する線分のインスタンス化
+    ArrayList<Point> check4Point = new ArrayList<>(); //checkすべき点のインスタンス化
 
 
-    ArrayList<En> Cir = new ArrayList<>(); //円のインスタンス化
+    ArrayList<Circle> Cir = new ArrayList<>(); //円のインスタンス化
 
-    public Orisensyuugou() {
+    public PolygonStore() {
         reset();
     } //コンストラクタ
 
     public void reset() {
         sousuu = 0;
         Senb.clear();
-        Senb.add(new Senbun());
+        Senb.add(new Line());
         Check1Senb.clear();
         Check2Senb.clear();
         Check3Senb.clear();//Check3Senb.add(new Senbun());
         Check4Senb.clear();//Check4Senb.add(new Senbun());
-        Check4Ten.clear();
+        check4Point.clear();
         Cir.clear();
-        Cir.add(new En());
+        Cir.add(new Circle());
     }
 
     public void hyouji(String s0) {
@@ -53,7 +53,7 @@ public class Orisensyuugou {
         System.out.println(s0 + "  sousuu = " + sousuu);
         for (int i = 1; i <= sousuu; i++) {
 
-            Senbun s;
+            Line s;
             s = sen(i);
             s.hyouji(" ");
 
@@ -65,29 +65,29 @@ public class Orisensyuugou {
     }
 
 
-    public void set(Orisensyuugou ss) {
+    public void set(PolygonStore ss) {
         sousuu = ss.getsousuu();
         for (int i = 0; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             s.set(ss.get(i));
         }
     }
 
-    private Senbun sen(int i) {
+    private Line sen(int i) {
         if (sousuu + 1 > Senb.size()) {
             while (sousuu + 1 > Senb.size()) {
-                Senb.add(new Senbun());
+                Senb.add(new Line());
             }
         }//この文がないとうまく行かない。なぜこの文でないといけないかという理由が正確にはわからない。
         return Senb.get(i);
     }
 
     //
-    private void senset(int i, Senbun s) {
+    private void senset(int i, Line s) {
         if (sousuu + 1 > Senb.size()) {
             while (sousuu + 1 > Senb.size()) {
-                Senb.add(new Senbun());
+                Senb.add(new Line());
             }
         }//この文がないとうまく行かない。なぜこの文でないといけないかという理由が正確にはわからない。
         if (i + 1 <= Senb.size()) {
@@ -105,58 +105,58 @@ public class Orisensyuugou {
     }
 
     //線分を得る
-    public Senbun get(int i) {
+    public Line get(int i) {
         //Senbun s;s= sen(i);return s;
         return sen(i);
     }
 
     //i番目の線分の端点を得る
-    public Ten geta(int i) {
-        Senbun s;
+    public Point geta(int i) {
+        Line s;
         s = sen(i);
         return s.geta();
     }
 
-    public Ten getb(int i) {
-        Senbun s;
+    public Point getb(int i) {
+        Line s;
         s = sen(i);
         return s.getb();
     }
 
     //i番目の線分の端点を得る
     public double getax(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.getax();
     }
 
     public double getbx(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.getbx();
     }
 
     public double getay(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.getay();
     }
 
     public double getby(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.getby();
     }
 
     //i番目の線分の端点の位置をセットする
-    public void seta(int i, Ten p) {
-        Senbun s;
+    public void seta(int i, Point p) {
+        Line s;
         s = sen(i);
         s.seta(p);
     }
 
-    public void setb(int i, Ten p) {
-        Senbun s;
+    public void setb(int i, Point p) {
+        Line s;
         s = sen(i);
         s.setb(p);
     }
@@ -166,56 +166,56 @@ public class Orisensyuugou {
     //public void set(int i,Senbun s0){Senbun s;s= sen(i);s.set(s0);}
 
     //i番目の線分の値を入力する
-    public void set(int i, Ten p, Ten q) {
-        Senbun s;
+    public void set(int i, Point p, Point q) {
+        Line s;
         s = sen(i);
         s.seta(p);
         s.setb(q);
     }
 
     //i番目の線分の値を入力する
-    public void set(int i, Ten p, Ten q, int ic, int ia) {
-        Senbun s;
+    public void set(int i, Point p, Point q, int ic, int ia) {
+        Line s;
         s = sen(i);
         s.set(p, q, ic, ia);
     }
 
     //i番目の線分の色を入力する
     public void setcolor(int i, int icol) {
-        Senbun s;
+        Line s;
         s = sen(i);
         s.setcolor(icol);
     }
 
     //i番目の線分の色を出力する
     public int getcolor(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.getcolor();
     }
 
     //
     public void set_tpp_sen(int i, int itpp) {
-        Senbun s;
+        Line s;
         s = sen(i);
         s.set_tpp(itpp);
     }
 
     public int get_tpp_sen(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.get_tpp();
     }
 
     public void set_tpp_sen_color(int i, Color c0) {
-        Senbun s;
+        Line s;
         s = sen(i);
         s.set_tpp_color(c0);
     }
 
     //public void set_tpp_sen_color(int iR,int iG,int iB){tpp_color=new Color(iR,iG,iB);}
     public Color get_tpp_sen_color(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.get_tpp_color();
     }
@@ -224,26 +224,26 @@ public class Orisensyuugou {
 //
 //pppppppppp
     public void set_tpp_en(int i, int itpp) {
-        En e;
+        Circle e;
         e = cir_getEn(i);
         e.set_tpp(itpp);
     }
 
     public int get_tpp_en(int i) {
-        En e;
+        Circle e;
         e = cir_getEn(i);
         return e.get_tpp();
     }
 
     public void set_tpp_en_color(int i, Color c0) {
-        En e;
+        Circle e;
         e = cir_getEn(i);
         e.set_tpp_color(c0);
     }
 
     //public void set_tpp_en_color(int iR,int iG,int iB){tpp_color=new Color(iR,iG,iB);}
     public Color get_tpp_en_color(int i) {
-        En e;
+        Circle e;
         e = cir_getEn(i);
         return e.get_tpp_color();
     }
@@ -254,7 +254,7 @@ public class Orisensyuugou {
 
     //i番目の線分の活性を入力する
     public void setiactive(int i, int iactive) {
-        Senbun s;
+        Line s;
         s = sen(i);
         s.setiactive(iactive);
     }
@@ -262,7 +262,7 @@ public class Orisensyuugou {
 
     //i番目の線分の活性を出力する
     public int getiactive(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.getiactive();
     }
@@ -290,7 +290,7 @@ public class Orisensyuugou {
 
         for (int i = 1; i <= sousuu; i++) {
             memo1.addGyou("番号," + i);
-            Senbun s;
+            Line s;
             s = sen(i);
             memo1.addGyou("色," + s.getcolor());
 
@@ -305,7 +305,7 @@ public class Orisensyuugou {
         memo1.addGyou("<円集合>");
         for (int i = 1; i <= cir_size(); i++) {
             memo1.addGyou("番号," + i);
-            En e_temp = new En();
+            Circle e_temp = new Circle();
             e_temp.set(cir_getEn(i));
             memo1.addGyou("中心と半径と色," + e_temp.getx() + "," + e_temp.gety() + "," + e_temp.getr() + "," + e_temp.getcolor());
 
@@ -338,7 +338,7 @@ public class Orisensyuugou {
             if (getiactive(i) != ijyogai) {
                 ibangou = ibangou + 1;
                 memo1.addGyou("番号," + ibangou);
-                Senbun s;
+                Line s;
                 s = sen(i);
                 memo1.addGyou("色," + s.getcolor());
 
@@ -356,7 +356,7 @@ public class Orisensyuugou {
         memo1.addGyou("<円集合>");
         for (int i = 1; i <= cir_size(); i++) {
             memo1.addGyou("番号," + i);
-            En e_temp = new En();
+            Circle e_temp = new Circle();
             e_temp.set(cir_getEn(i));
             //memo1.addGyou( "色,"+str.valueOf(e_temp.getcolor()));
             memo1.addGyou("中心と半径と色," + e_temp.getx() + "," + e_temp.gety() + "," + e_temp.getr() + "," + e_temp.getcolor());
@@ -385,7 +385,7 @@ public class Orisensyuugou {
 
         for (int i = 1; i <= sousuu; i++) {
             memo1.addGyou("補助番号," + i);
-            Senbun s;
+            Line s;
             s = sen(i);
             memo1.addGyou("補助色," + s.getcolor());
 
@@ -410,7 +410,7 @@ public class Orisensyuugou {
 
         int ibangou = 0;
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             if (s.getcolor() < 3) {
                 ibangou = ibangou + 1;
@@ -441,7 +441,7 @@ public class Orisensyuugou {
 
         int ibangou = 0;
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             if ((s.getcolor() < 3) && (s.get_i_select() == 2)) {
                 ibangou = ibangou + 1;
@@ -473,7 +473,7 @@ public class Orisensyuugou {
 
         int ibangou = 0;
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             if ((s.getcolor() < 3) && (s.get_i_select() == 2)) {
                 ibangou = ibangou + 1;
@@ -555,7 +555,7 @@ public class Orisensyuugou {
         //
 
 
-        En e_temp = new En();
+        Circle e_temp = new Circle();
 
         for (int i = 1; i <= memo1.getGyousuu(); i++) {
             String str_i = memo1.getGyou(i);
@@ -587,7 +587,7 @@ public class Orisensyuugou {
             if ((yomiflg == 1) && (str.equals("色"))) {
                 str = tk.nextToken();
                 ic = Integer.parseInt(str);
-                Senbun s;
+                Line s;
                 s = sen(ibangou);
                 s.setcolor(ic);
             }
@@ -597,7 +597,7 @@ public class Orisensyuugou {
                 if (st_new[0].equals("<tpp")) {
                     s_new = st_new[1].split("<", 2);
                     i_tpp = (Integer.parseInt(s_new[0]));
-                    Senbun s;
+                    Line s;
                     s = sen(ibangou);
                     s.set_tpp(i_tpp);
                 }
@@ -606,7 +606,7 @@ public class Orisensyuugou {
                 if (st_new[0].equals("<tpp_color_R")) {
                     s_new = st_new[1].split("<", 2);
                     i_tpp_color_R = (Integer.parseInt(s_new[0]));
-                    Senbun s;
+                    Line s;
                     s = sen(ibangou);
                     s.set_tpp_color(new Color(i_tpp_color_R, i_tpp_color_G, i_tpp_color_B));
                 }        //  System.out.println(Integer.parseInt(s[0])) ;
@@ -614,14 +614,14 @@ public class Orisensyuugou {
                 if (st_new[0].equals("<tpp_color_G")) {
                     s_new = st_new[1].split("<", 2);
                     i_tpp_color_G = (Integer.parseInt(s_new[0]));
-                    Senbun s;
+                    Line s;
                     s = sen(ibangou);
                     s.set_tpp_color(new Color(i_tpp_color_R, i_tpp_color_G, i_tpp_color_B));
                 }
                 if (st_new[0].equals("<tpp_color_B")) {
                     s_new = st_new[1].split("<", 2);
                     i_tpp_color_B = (Integer.parseInt(s_new[0]));
-                    Senbun s;
+                    Line s;
                     s = sen(ibangou);
                     s.set_tpp_color(new Color(i_tpp_color_R, i_tpp_color_G, i_tpp_color_B));
                 }
@@ -632,7 +632,7 @@ public class Orisensyuugou {
             if ((yomiflg == 1) && (str.equals("iactive"))) {//20181110追加
                 str = tk.nextToken();
                 is = Integer.parseInt(str);
-                Senbun s;
+                Line s;
                 s = sen(ibangou);
                 s.setiactive(is);
             }
@@ -641,7 +641,7 @@ public class Orisensyuugou {
             if ((yomiflg == 1) && (str.equals("選択"))) {
                 str = tk.nextToken();
                 is = Integer.parseInt(str);
-                Senbun s;
+                Line s;
                 s = sen(ibangou);
                 s.set_i_select(is);
             }
@@ -655,7 +655,7 @@ public class Orisensyuugou {
                 str = tk.nextToken();
                 by = Double.parseDouble(str);
 
-                Senbun s;
+                Line s;
                 s = sen(ibangou);
                 s.set(ax, ay, bx, by);
                 //	System.out.println(ax );
@@ -789,14 +789,14 @@ public class Orisensyuugou {
             if ((yomiflg == 1) && (str.equals("補助色"))) {
                 str = tk.nextToken();
                 ic = Integer.parseInt(str);
-                Senbun s;
+                Line s;
                 s = sen(ibangou);
                 s.setcolor(ic);
             }
             if ((yomiflg == 1) && (str.equals("補助選択"))) {
                 str = tk.nextToken();
                 is = Integer.parseInt(str);
-                Senbun s;
+                Line s;
                 s = sen(ibangou);
                 s.set_i_select(is);
             }
@@ -810,7 +810,7 @@ public class Orisensyuugou {
                 str = tk.nextToken();
                 by = Double.parseDouble(str);
 
-                Senbun s;
+                Line s;
                 s = sen(ibangou);
                 s.set(ax, ay, bx, by);
                 //	System.out.println(ax );
@@ -886,7 +886,7 @@ public class Orisensyuugou {
             if ((yomiflg == 1) && (str.equals("色"))) {
                 str = tk.nextToken();
                 ic = Integer.parseInt(str);
-                Senbun s;
+                Line s;
                 s = sen(ibangou);
                 s.setcolor(ic);
             }
@@ -896,7 +896,7 @@ public class Orisensyuugou {
                 if (st_new[0].equals("<tpp")) {
                     s_new = st_new[1].split("<", 2);
                     i_tpp = (Integer.parseInt(s_new[0]));
-                    Senbun s;
+                    Line s;
                     s = sen(ibangou);
                     s.set_tpp(i_tpp);
                 }
@@ -905,7 +905,7 @@ public class Orisensyuugou {
                 if (st_new[0].equals("<tpp_color_R")) {
                     s_new = st_new[1].split("<", 2);
                     i_tpp_color_R = (Integer.parseInt(s_new[0]));
-                    Senbun s;
+                    Line s;
                     s = sen(ibangou);
                     s.set_tpp_color(new Color(i_tpp_color_R, i_tpp_color_G, i_tpp_color_B));
                 }        //  System.out.println(Integer.parseInt(s[0])) ;
@@ -913,14 +913,14 @@ public class Orisensyuugou {
                 if (st_new[0].equals("<tpp_color_G")) {
                     s_new = st_new[1].split("<", 2);
                     i_tpp_color_G = (Integer.parseInt(s_new[0]));
-                    Senbun s;
+                    Line s;
                     s = sen(ibangou);
                     s.set_tpp_color(new Color(i_tpp_color_R, i_tpp_color_G, i_tpp_color_B));
                 }
                 if (st_new[0].equals("<tpp_color_B")) {
                     s_new = st_new[1].split("<", 2);
                     i_tpp_color_B = (Integer.parseInt(s_new[0]));
-                    Senbun s;
+                    Line s;
                     s = sen(ibangou);
                     s.set_tpp_color(new Color(i_tpp_color_R, i_tpp_color_G, i_tpp_color_B));
                 }
@@ -938,7 +938,7 @@ public class Orisensyuugou {
                 str = tk.nextToken();
                 by = Double.parseDouble(str);
 
-				Senbun s = sen(ibangou);
+				Line s = sen(ibangou);
                 s.set(ax, ay, bx, by);
                 //	System.out.println(ax );
             }
@@ -953,7 +953,7 @@ public class Orisensyuugou {
 
             if ((yomiflg == 3) && (str.equals("番号"))) {
                 str = tk.nextToken();//ibangou=Ii.parseInt(str);
-                Cir.add(new En(0.0, 0.0, 1.0, 1));
+                Cir.add(new Circle(0.0, 0.0, 1.0, 1));
                 ibangou = cir_size();
             }
 
@@ -1073,7 +1073,7 @@ public class Orisensyuugou {
 
         int ibangou = 0;
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
 
 
@@ -1099,7 +1099,7 @@ public class Orisensyuugou {
         memo1.addGyou("<円集合>");
         for (int i = 1; i <= cir_size(); i++) {
             memo1.addGyou("番号," + i);
-            En e_temp = new En();
+            Circle e_temp = new Circle();
             e_temp.set(cir_getEn(i));
             //memo1.addGyou( "色,"+str.valueOf(e_temp.getcolor()));
             memo1.addGyou("中心と半径と色," + e_temp.getx() + "," + e_temp.gety() + "," + e_temp.getr() + "," + e_temp.getcolor());
@@ -1129,7 +1129,7 @@ public class Orisensyuugou {
 
         int ibangou = 0;
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
 
 
@@ -1156,7 +1156,7 @@ public class Orisensyuugou {
     //-----------------------------
     public void select_all() {
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             s.set_i_select(2);
         }
@@ -1165,7 +1165,7 @@ public class Orisensyuugou {
 
     public void unselect_all() {
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             s.set_i_select(0);
         }
@@ -1173,12 +1173,12 @@ public class Orisensyuugou {
 
 
     public void select(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         s.set_i_select(2);
     }
 
-    public void select(Ten p1, Ten p2, Ten p3) {
+    public void select(Point p1, Point p2, Point p3) {
         Takakukei sankaku = new Takakukei(3);
         sankaku.set(1, p1);
         sankaku.set(2, p2);
@@ -1186,7 +1186,7 @@ public class Orisensyuugou {
 
 
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             if (sankaku.totu_kyoukai_naibu(s) == 1) {
 
@@ -1196,7 +1196,7 @@ public class Orisensyuugou {
         }
     }
 
-    public void select(Ten p1, Ten p2, Ten p3, Ten p4) {
+    public void select(Point p1, Point p2, Point p3, Point p4) {
         //Ten p1 = new Ten();   p1.set(si.geta());
         Takakukei sikaku = new Takakukei(4);
         sikaku.set(1, p1);
@@ -1205,7 +1205,7 @@ public class Orisensyuugou {
         sikaku.set(4, p4);
 
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             if (sikaku.totu_kyoukai_naibu(s) == 1) {
 
@@ -1216,7 +1216,7 @@ public class Orisensyuugou {
     }
 
 
-    public void unselect(Ten p1, Ten p2, Ten p3) {
+    public void unselect(Point p1, Point p2, Point p3) {
         Takakukei sankaku = new Takakukei(3);
         sankaku.set(1, p1);
         sankaku.set(2, p2);
@@ -1224,7 +1224,7 @@ public class Orisensyuugou {
 
 
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             if (sankaku.totu_kyoukai_naibu(s) == 1) {
 
@@ -1234,7 +1234,7 @@ public class Orisensyuugou {
         }
     }
 
-    public void unselect(Ten p1, Ten p2, Ten p3, Ten p4) {
+    public void unselect(Point p1, Point p2, Point p3, Point p4) {
         //Ten p1 = new Ten();   p1.set(si.geta());
         Takakukei sikaku = new Takakukei(4);
         sikaku.set(1, p1);
@@ -1243,7 +1243,7 @@ public class Orisensyuugou {
         sikaku.set(4, p4);
 
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             if (sikaku.totu_kyoukai_naibu(s) == 1) {
 
@@ -1254,7 +1254,7 @@ public class Orisensyuugou {
     }
 
     //--------------------------------
-    public int MV_change(Ten p1, Ten p2, Ten p3, Ten p4) {
+    public int MV_change(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
         Takakukei sikaku = new Takakukei(4);
@@ -1264,7 +1264,7 @@ public class Orisensyuugou {
         sikaku.set(4, p4);
 
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             if (sikaku.totu_kyoukai_naibu(s) == 1) {
                 int ic_temp;
@@ -1283,7 +1283,7 @@ public class Orisensyuugou {
 
 
     //--------------------------------
-    public int M_nisuru(Ten p1, Ten p2, Ten p3, Ten p4) {
+    public int M_nisuru(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
         Takakukei sikaku = new Takakukei(4);
@@ -1293,7 +1293,7 @@ public class Orisensyuugou {
         sikaku.set(4, p4);
 
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             if (sikaku.totu_kyoukai_naibu(s) == 1) {
                 s.setcolor(1);
@@ -1304,7 +1304,7 @@ public class Orisensyuugou {
     }
 
     //--------------------------------
-    public int V_nisuru(Ten p1, Ten p2, Ten p3, Ten p4) {
+    public int V_nisuru(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
         Takakukei sikaku = new Takakukei(4);
@@ -1314,7 +1314,7 @@ public class Orisensyuugou {
         sikaku.set(4, p4);
 
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             if (sikaku.totu_kyoukai_naibu(s) == 1) {
                 s.setcolor(2);
@@ -1325,7 +1325,7 @@ public class Orisensyuugou {
     }
 
     //--------------------------------
-    public int E_nisuru(Ten p1, Ten p2, Ten p3, Ten p4) {
+    public int E_nisuru(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
         Takakukei sikaku = new Takakukei(4);
@@ -1335,7 +1335,7 @@ public class Orisensyuugou {
         sikaku.set(4, p4);
 
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             if (sikaku.totu_kyoukai_naibu(s) == 1) {
                 s.setcolor(0);
@@ -1347,7 +1347,7 @@ public class Orisensyuugou {
     }
 
     //--------------------------------
-    public int HK_nisuru(Ten p1, Ten p2, Ten p3, Ten p4) {
+    public int HK_nisuru(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
         Takakukei sikaku = new Takakukei(4);
@@ -1360,12 +1360,12 @@ public class Orisensyuugou {
         int okikae_suu = 0;
         for (int i = 1; i <= sousuu; i++) {
             if (getcolor(i) < 3) {
-                Senbun s;
+                Line s;
                 s = sen(i);
                 if (sikaku.totu_kyoukai_naibu(s) == 1) {
                     okikae_suu = okikae_suu + 1;
 
-                    Senbun add_sen = new Senbun();
+                    Line add_sen = new Line();
                     add_sen.set(s);
                     add_sen.setcolor(3);
 
@@ -1407,7 +1407,7 @@ public class Orisensyuugou {
     //public int Senbun_X_kousa_hantei(Senbun s1,Senbun s2){//0はX交差しない。1は交差する。20201017追加
     //  if (s.substring(4, 7).equals("boa")) {
 
-    public int D_nisuru_line(Senbun s_step1, String Dousa_mode) {
+    public int D_nisuru_line(Line s_step1, String Dousa_mode) {
         //"l"  lXは小文字のエル。Senbun s_step1と重複する部分のある線分を削除するモード。
         //"lX" lXは小文字のエルと大文字のエックス。Senbun s_step1と重複する部分のある線分やX交差する線分を削除するモード。
         int i_r = 0;//たくさんある折線のうち、一本でも削除すれば1、1本も削除しないなら0。
@@ -1422,7 +1422,7 @@ public class Orisensyuugou {
         int i_kono_orisen_wo_sakujyo = 0;//i_この折線を削除　0削除しない、1削除する
         for (int i = 1; i <= sousuu; i++) {
 
-            Senbun s;
+            Line s;
             s = sen(i);
 
             i_kono_orisen_wo_sakujyo = 0;
@@ -1455,7 +1455,7 @@ public class Orisensyuugou {
             }
         }
 
-        Ten ec = new Ten();//円の中心座標を入れる変数
+        Point ec = new Point();//円の中心座標を入れる変数
         double er;//円の中心座標を入れる変数
 
         //Senbun s1=new Senbun(p1,p2);
@@ -1467,7 +1467,7 @@ public class Orisensyuugou {
         int ii = 0;
         for (int i = 1; i <= cir_size(); i++) {
             int idel = 0;
-            En e_temp = new En();
+            Circle e_temp = new Circle();
             e_temp.set(cir_getEn(i));
             ec.set(e_temp.get_tyuusin());
             er = e_temp.getr();
@@ -1502,7 +1502,7 @@ public class Orisensyuugou {
 
 
     //-----------------------wwwwwwwwwwwwwww---------
-    public int D_nisuru(Ten p1, Ten p2, Ten p3, Ten p4) {
+    public int D_nisuru(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
         Takakukei sikaku = new Takakukei(4);
@@ -1518,7 +1518,7 @@ public class Orisensyuugou {
         int ibangou = 0;
 
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
 
             if (sikaku.totu_kyoukai_naibu(s) == 1) {
@@ -1533,19 +1533,19 @@ public class Orisensyuugou {
             }
         }
 
-        Ten ec = new Ten();//円の中心座標を入れる変数
+        Point ec = new Point();//円の中心座標を入れる変数
         double er;//円の中心座標を入れる変数
 
-        Senbun s1 = new Senbun(p1, p2);
-        Senbun s2 = new Senbun(p2, p3);
-        Senbun s3 = new Senbun(p3, p4);
-        Senbun s4 = new Senbun(p4, p1);
+        Line s1 = new Line(p1, p2);
+        Line s2 = new Line(p2, p3);
+        Line s3 = new Line(p3, p4);
+        Line s4 = new Line(p4, p1);
 
         memo1.addGyou("<円集合>");
         int ii = 0;
         for (int i = 1; i <= cir_size(); i++) {
             int idel = 0;
-            En e_temp = new En();
+            Circle e_temp = new Circle();
             e_temp.set(cir_getEn(i));
             ec.set(e_temp.get_tyuusin());
             er = e_temp.getr();
@@ -1571,7 +1571,7 @@ public class Orisensyuugou {
                 }
             }
 
-            if (sikaku.totu_kyoukai_naibu(new Senbun(e_temp.get_tyuusin(), e_temp.get_tyuusin())) == 1) {
+            if (sikaku.totu_kyoukai_naibu(new Line(e_temp.get_tyuusin(), e_temp.get_tyuusin())) == 1) {
                 idel = 1;
             }
 
@@ -1595,7 +1595,7 @@ public class Orisensyuugou {
 
 
     //--------------------------------
-    public int D_nisuru0(Ten p1, Ten p2, Ten p3, Ten p4) {//折線のみ削除
+    public int D_nisuru0(Point p1, Point p2, Point p3, Point p4) {//折線のみ削除
 
         //System.out.println("(ori_s_1)zzzzz check4_size() = "+check4_size());
         int i_r = 0;
@@ -1615,7 +1615,7 @@ public class Orisensyuugou {
         int ibangou = 0;
 
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
 
             if ((sikaku.totu_kyoukai_naibu(s) == 1) && (getcolor(i) < 3)) {
@@ -1646,7 +1646,7 @@ public class Orisensyuugou {
         int ii = 0;
         for (int i = 1; i <= cir_size(); i++) {
             //int idel=0;
-            En e_temp = new En();
+            Circle e_temp = new Circle();
             e_temp.set(cir_getEn(i));//ec.set(e_temp.get_tyuusin());er=e_temp.getr();
 
             //if(oc.kyori_senbun(ec,s1)<= er){ if((oc.kyori(s1.geta(),ec)>= er)||(oc.kyori(s1.geta(),ec)>= er))  {idel=1;}}
@@ -1682,7 +1682,7 @@ public class Orisensyuugou {
 
     //--------------------------------
 //--------------------------------
-    public int D_nisuru2(Ten p1, Ten p2, Ten p3, Ten p4) {//折線のみ削除
+    public int D_nisuru2(Point p1, Point p2, Point p3, Point p4) {//折線のみ削除
         int i_r = 0;
         Takakukei sikaku = new Takakukei(4);
         sikaku.set(1, p1);
@@ -1697,7 +1697,7 @@ public class Orisensyuugou {
         int ibangou = 0;
 
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
 
             if ((sikaku.totu_kyoukai_naibu(s) == 1) && (getcolor(i) == 0)) {
@@ -1714,7 +1714,7 @@ public class Orisensyuugou {
         memo1.addGyou("<円集合>");
         int ii = 0;
         for (int i = 1; i <= cir_size(); i++) {
-            En e_temp = new En();
+            Circle e_temp = new Circle();
             e_temp.set(cir_getEn(i));//ec.set(e_temp.get_tyuusin());er=e_temp.getr();
             ii = ii + 1;
             memo1.addGyou("番号," + ii);
@@ -1728,7 +1728,7 @@ public class Orisensyuugou {
 
 
     //--------------------------------
-    public int D_nisuru3(Ten p1, Ten p2, Ten p3, Ten p4) {//補助活線のみ削除
+    public int D_nisuru3(Point p1, Point p2, Point p3, Point p4) {//補助活線のみ削除
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
         Takakukei sikaku = new Takakukei(4);
@@ -1744,7 +1744,7 @@ public class Orisensyuugou {
         int ibangou = 0;
 
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
 
             if ((sikaku.totu_kyoukai_naibu(s) == 1) && (getcolor(i) == 3)) {
@@ -1759,21 +1759,21 @@ public class Orisensyuugou {
         }
 
 
-        Ten ec = new Ten();//円の中心座標を入れる変数
+        Point ec = new Point();//円の中心座標を入れる変数
         double er;//円の中心座標を入れる変数
 
 
-        Senbun s1 = new Senbun(p1, p2);
-        Senbun s2 = new Senbun(p2, p3);
-        Senbun s3 = new Senbun(p3, p4);
-        Senbun s4 = new Senbun(p4, p1);
+        Line s1 = new Line(p1, p2);
+        Line s2 = new Line(p2, p3);
+        Line s3 = new Line(p3, p4);
+        Line s4 = new Line(p4, p1);
 
 
         memo1.addGyou("<円集合>");
         int ii = 0;
         for (int i = 1; i <= cir_size(); i++) {
             int idel = 0;
-            En e_temp = new En();
+            Circle e_temp = new Circle();
             e_temp.set(cir_getEn(i));
             ec.set(e_temp.get_tyuusin());
             er = e_temp.getr();
@@ -1799,7 +1799,7 @@ public class Orisensyuugou {
                 }
             }
 
-            if (sikaku.totu_kyoukai_naibu(new Senbun(e_temp.get_tyuusin(), e_temp.get_tyuusin())) == 1) {
+            if (sikaku.totu_kyoukai_naibu(new Line(e_temp.get_tyuusin(), e_temp.get_tyuusin())) == 1) {
                 idel = 1;
             }
 
@@ -1825,7 +1825,7 @@ public class Orisensyuugou {
 //--------------------------------
 
     //--------------------------------
-    public int chenge_property_in_4kakukei(Ten p1, Ten p2, Ten p3, Ten p4, Color sen_tokutyuu_color) {//4角形の中にある円や補助活線の色などのプロパティを変える
+    public int chenge_property_in_4kakukei(Point p1, Point p2, Point p3, Point p4, Color sen_tokutyuu_color) {//4角形の中にある円や補助活線の色などのプロパティを変える
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
         Takakukei sikaku = new Takakukei(4);
@@ -1835,7 +1835,7 @@ public class Orisensyuugou {
         sikaku.set(4, p4);
 
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
 
             if ((sikaku.totu_kyoukai_naibu(s) == 1) && (getcolor(i) == 3)) {
@@ -1847,20 +1847,20 @@ public class Orisensyuugou {
 
 //wwwwwwww
 
-        Ten ec = new Ten();//円の中心座標を入れる変数
+        Point ec = new Point();//円の中心座標を入れる変数
         double er;//円の中心座標を入れる変数
 
 
-        Senbun s1 = new Senbun(p1, p2);
-        Senbun s2 = new Senbun(p2, p3);
-        Senbun s3 = new Senbun(p3, p4);
-        Senbun s4 = new Senbun(p4, p1);
+        Line s1 = new Line(p1, p2);
+        Line s2 = new Line(p2, p3);
+        Line s3 = new Line(p3, p4);
+        Line s4 = new Line(p4, p1);
 
 
         //("<円集合>");
         for (int i = 1; i <= cir_size(); i++) {
             int i_change = 0;
-            En e_temp = new En();
+            Circle e_temp = new Circle();
             e_temp.set(cir_getEn(i));
             ec.set(e_temp.get_tyuusin());
             er = e_temp.getr();
@@ -1886,7 +1886,7 @@ public class Orisensyuugou {
                 }
             }
 
-            if (sikaku.totu_kyoukai_naibu(new Senbun(e_temp.get_tyuusin(), e_temp.get_tyuusin())) == 1) {
+            if (sikaku.totu_kyoukai_naibu(new Line(e_temp.get_tyuusin(), e_temp.get_tyuusin())) == 1) {
                 i_change = 1;
             }
 
@@ -1906,19 +1906,19 @@ public class Orisensyuugou {
 
 
     public void unselect(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         s.set_i_select(0);
     }
 
     public int get_select(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.get_i_select();
     }
 
     public void set_select(int i, int isel) {
-        Senbun s;
+        Line s;
         s = sen(i);
         s.set_i_select(isel);
     }
@@ -1956,7 +1956,7 @@ public class Orisensyuugou {
     //点状の線分を削除
     public void ten_sakujyo() {
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             if (oc.hitosii(s.geta(), s.getb())) {
                 delsenbun(i);
@@ -1967,7 +1967,7 @@ public class Orisensyuugou {
 
     public void ten_sakujyo(double r) {
         for (int i = 1; i <= sousuu; i++) {
-            Senbun s;
+            Line s;
             s = sen(i);
             if (oc.hitosii(s.geta(), s.getb(), r)) {
                 delsenbun(i);
@@ -1979,17 +1979,17 @@ public class Orisensyuugou {
     // 全く重なる線分が2本存在するときに番号の遅いほうを削除する。
     public void jyuufuku_senbun_sakujyo(double r) {
         int[] sakujyo_flg = new int[sousuu + 1];
-        Senbun[] snew = new Senbun[sousuu + 1];
+        Line[] snew = new Line[sousuu + 1];
         for (int i = 1; i <= sousuu; i++) {
             sakujyo_flg[i] = 0;
-            snew[i] = new Senbun();
+            snew[i] = new Line();
         }
 
         for (int i = 1; i <= sousuu - 1; i++) {
-            Senbun si;
+            Line si;
             si = sen(i);
             for (int j = i + 1; j <= sousuu; j++) {
-                Senbun sj;
+                Line sj;
                 sj = sen(j);
                 if (r <= -9999.9) {
                     if (oc.senbun_kousa_hantei(si, sj) == 31) {
@@ -2006,7 +2006,7 @@ public class Orisensyuugou {
         int smax = 0;
         for (int i = 1; i <= sousuu; i++) {
             if (sakujyo_flg[i] == 0) {
-                Senbun si;
+                Line si;
                 si = sen(i);
                 smax = smax + 1;
                 snew[smax].set(si);
@@ -2015,7 +2015,7 @@ public class Orisensyuugou {
 
         sousuu = smax;
         for (int i = 1; i <= sousuu; i++) {
-            Senbun si;
+            Line si;
             si = sen(i);
             si.set(snew[i]);
         }
@@ -2031,9 +2031,9 @@ public class Orisensyuugou {
         if (i == j) {
             return 0;
         }
-        Senbun si;
+        Line si;
         si = sen(i);
-        Senbun sj;
+        Line sj;
         sj = sen(j);
         if (oc.senbun_kousa_hantei(si, sj) == 31) {  //31はsiとsjが全く同じに重なることを示す
             delsenbun(j);
@@ -2250,9 +2250,9 @@ public class Orisensyuugou {
 
     //---------------------
     public int kousabunkatu_hayai(int i, int j) {//iは加える方(2)、jは元からある方(1)//=0 交差せず
-        Senbun si;
+        Line si;
         si = sen(i);
-        Senbun sj;
+        Line sj;
         sj = sen(j);
 
         if (si.get_i_max_x() < sj.get_i_min_x()) {
@@ -2268,7 +2268,7 @@ public class Orisensyuugou {
             return 0;
         }
         //		System.out.println("kousabunkatu_hayai 01");
-        Ten kousa_ten = new Ten();
+        Point kousa_point = new Point();
         int kousa_flg0, kousa_flg1;
 
 //ここでの「2本の線分A,Bがどのように交差するか」の考え方として（１）線分Aを直線にして、線分Bはそのまま線分とする（２）線分Bの2つの端点が共にその直線の片側にあるか、別々に直線の両側にあるかという風に考える。
@@ -2291,7 +2291,7 @@ public class Orisensyuugou {
         //	X交差
         // --------------------------------------
         if ((kousa_flg0 == 1) && (kousa_flg1 == 1)) {//(kousa_flg0==1)&&(kousa_flg1==1) 加える折線と既存の折線はX型で交わる
-            kousa_ten.set(oc.kouten_motome(tyoku0, tyoku1));
+            kousa_point.set(oc.kouten_motome(tyoku0, tyoku1));
             //kousa_ten.set(oc.kouten_motome(tyoku0,tyoku1));
             //kousa_ten.set(oc.kouten_motome(tyoku0,tyoku1));
 
@@ -2299,13 +2299,13 @@ public class Orisensyuugou {
                     || ((si.getcolor() == 3) && (sj.getcolor() == 3))) {
 
                 //addsenbun(kousa_ten,si.getb(),si.getcolor());
-                addsenbun(kousa_ten, si.getb(), si);
-                si.setb(kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
+                addsenbun(kousa_point, si.getb(), si);
+                si.setb(kousa_point);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
 
                 //addsenbun(kousa_ten,sj.getb(),sj.getcolor());
-                addsenbun(kousa_ten, sj.getb(), sj);
+                addsenbun(kousa_point, sj.getb(), sj);
 
-                sj.setb(kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
+                sj.setb(kousa_point);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
 
                 return 1;
             }
@@ -2313,9 +2313,9 @@ public class Orisensyuugou {
             if ((si.getcolor() == 3) && (sj.getcolor() != 3)) {//加えるほうiが水色線（補助活線）、元からあるほうjが折線
 
                 //addsenbun(kousa_ten,si.getb(),si.getcolor());
-                addsenbun(kousa_ten, si.getb(), si);
+                addsenbun(kousa_point, si.getb(), si);
 
-                si.setb(kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
+                si.setb(kousa_point);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
 
                 //addsenbun(kousa_ten,sj.getb(),sj.getcolor());
                 //sj.setb(kousa_ten);  //j番目の線分(端点aとb)を点pで分割する。j番目の線分abをapに変え、線分pbを加える。
@@ -2329,9 +2329,9 @@ public class Orisensyuugou {
                 //si.setb(kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
 
                 //addsenbun(kousa_ten,sj.getb(),sj.getcolor());
-                addsenbun(kousa_ten, sj.getb(), sj);
+                addsenbun(kousa_point, sj.getb(), sj);
 
-                sj.setb(kousa_ten);  //j番目の線分(端点aとb)を点pで分割する。j番目の線分abをapに変え、線分pbを加える。
+                sj.setb(kousa_point);  //j番目の線分(端点aとb)を点pで分割する。j番目の線分abをapに変え、線分pbを加える。
 
                 return 3;
             }
@@ -2343,18 +2343,18 @@ public class Orisensyuugou {
         // --------------------------------------
         if ((kousa_flg0 == 1) && (kousa_flg1 == 21)) {//加える折線と既存の折線はT型(加える折線が縦、既存の折線が横)で交わる(縦のa点で交わる)
 
-            Ten pk = new Ten();
+            Point pk = new Point();
             pk.set(oc.kage_motome(oc.Senbun2Tyokusen(sj), si.geta()));//pkは点pの（線分を含む直線上の）影
-            kousa_ten.set(pk);//交差点は折線i上のs0の端点の影 20161129
+            kousa_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
             //ori_s.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(tyoku0,tyoku1));
 
             if (((si.getcolor() != 3) && (sj.getcolor() != 3))
                     || ((si.getcolor() == 3) && (sj.getcolor() == 3))) {
                 //addsenbun(kousa_ten,sj.getb(),sj.getcolor());
-                addsenbun(kousa_ten, sj.getb(), sj);
+                addsenbun(kousa_point, sj.getb(), sj);
 
-                sj.setb(kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
+                sj.setb(kousa_point);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
                 return 121;
             }
 
@@ -2364,9 +2364,9 @@ public class Orisensyuugou {
 
             if ((si.getcolor() != 3) && (sj.getcolor() == 3)) {//加えるほうiが折線、元からあるほうjが水色線（補助活線）
                 //addsenbun(kousa_ten,sj.getb(),sj.getcolor());
-                addsenbun(kousa_ten, sj.getb(), sj);
+                addsenbun(kousa_point, sj.getb(), sj);
 
-                sj.setb(kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
+                sj.setb(kousa_point);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
                 return 121;
             }
         }
@@ -2375,18 +2375,18 @@ public class Orisensyuugou {
         //	T交差(加える折線のb点で交わる)
         // --------------------------------------
         if ((kousa_flg0 == 1) && (kousa_flg1 == 22)) {//加える折線と既存の折線はT型(加える折線が縦、既存の折線が横)で交わる(縦のb点で交わる)
-            Ten pk = new Ten();
+            Point pk = new Point();
             pk.set(oc.kage_motome(oc.Senbun2Tyokusen(sj), si.getb()));//pkは点pの（線分を含む直線上の）影
-            kousa_ten.set(pk);//交差点は折線i上のs0の端点の影 20161129
+            kousa_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
             //ori_s.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(tyoku0,tyoku1));
 
             if (((si.getcolor() != 3) && (sj.getcolor() != 3))
                     || ((si.getcolor() == 3) && (sj.getcolor() == 3))) {
                 //addsenbun(kousa_ten,sj.getb(),sj.getcolor());
-                addsenbun(kousa_ten, sj.getb(), sj);
+                addsenbun(kousa_point, sj.getb(), sj);
 
-                sj.setb(kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
+                sj.setb(kousa_point);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
                 return 122;
             }
 
@@ -2396,9 +2396,9 @@ public class Orisensyuugou {
 
             if ((si.getcolor() != 3) && (sj.getcolor() == 3)) {//加えるほうiが折線、元からあるほうjが水色線（補助活線）
                 //addsenbun(kousa_ten,sj.getb(),sj.getcolor());
-                addsenbun(kousa_ten, sj.getb(), sj);
+                addsenbun(kousa_point, sj.getb(), sj);
 
-                sj.setb(kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
+                sj.setb(kousa_point);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
                 return 122;
             }
         }
@@ -2407,26 +2407,26 @@ public class Orisensyuugou {
         //	T交差(元からあった折線のa点で交わる)
         // --------------------------------------
         if ((kousa_flg0 == 21) && (kousa_flg1 == 1)) {//加える折線と既存の折線はT型(加える折線が横、既存の折線が縦)で交わる(縦のa点で交わる)
-            Ten pk = new Ten();
+            Point pk = new Point();
             pk.set(oc.kage_motome(oc.Senbun2Tyokusen(si), sj.geta()));//pkは点pの（線分を含む直線上の）影
-            kousa_ten.set(pk);//交差点は折線i上のs0の端点の影 20161129
+            kousa_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
             //ori_s.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(tyoku0,tyoku1));
 
             if (((si.getcolor() != 3) && (sj.getcolor() != 3))
                     || ((si.getcolor() == 3) && (sj.getcolor() == 3))) {
                 //addsenbun(kousa_ten,si.getb(),si.getcolor());
-                addsenbun(kousa_ten, si.getb(), si);
+                addsenbun(kousa_point, si.getb(), si);
 
-                si.setb(kousa_ten);
+                si.setb(kousa_point);
                 return 211;
             }
 
             if ((si.getcolor() == 3) && (sj.getcolor() != 3)) {//加えるほうiが水色線（補助活線）、元からあるほうjが折線
                 //addsenbun(kousa_ten,si.getb(),si.getcolor());
-                addsenbun(kousa_ten, si.getb(), si);
+                addsenbun(kousa_point, si.getb(), si);
 
-                si.setb(kousa_ten);
+                si.setb(kousa_point);
                 return 211;
             }
 
@@ -2439,26 +2439,26 @@ public class Orisensyuugou {
         //	T交差(元からあった折線の折線のb点で交わる)
         // --------------------------------------
         if ((kousa_flg0 == 22) && (kousa_flg1 == 1)) {//加える折線と既存の折線はT型(加える折線が横、既存の折線が縦)で交わる(縦のa点で交わる)
-            Ten pk = new Ten();
+            Point pk = new Point();
             pk.set(oc.kage_motome(oc.Senbun2Tyokusen(si), sj.getb()));//pkは点pの（線分を含む直線上の）影
-            kousa_ten.set(pk);//交差点は折線i上のs0の端点の影 20161129
+            kousa_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
             //ori_s.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(tyoku0,tyoku1));
 
             if (((si.getcolor() != 3) && (sj.getcolor() != 3))
                     || ((si.getcolor() == 3) && (sj.getcolor() == 3))) {
                 //addsenbun(kousa_ten,si.getb(),si.getcolor());
-                addsenbun(kousa_ten, si.getb(), si);
+                addsenbun(kousa_point, si.getb(), si);
 
-                si.setb(kousa_ten);
+                si.setb(kousa_point);
                 return 221;
             }
 
             if ((si.getcolor() == 3) && (sj.getcolor() != 3)) {//加えるほうiが水色線（補助活線）、元からあるほうjが折線
                 //addsenbun(kousa_ten,si.getb(),si.getcolor());
-                addsenbun(kousa_ten, si.getb(), si);
+                addsenbun(kousa_point, si.getb(), si);
 
-                si.setb(kousa_ten);
+                si.setb(kousa_point);
                 return 221;
             }
 
@@ -2490,13 +2490,13 @@ public class Orisensyuugou {
         //	加える折線と既存の折線は平行
         // --------------------------------------
         if (kousa_flg0 == 3) {//加える折線と既存の折線は同一直線上にある
-            Ten p1 = new Ten();
+            Point p1 = new Point();
             p1.set(si.geta());
-            Ten p2 = new Ten();
+            Point p2 = new Point();
             p2.set(si.getb());
-            Ten p3 = new Ten();
+            Point p3 = new Point();
             p3.set(sj.geta());
-            Ten p4 = new Ten();
+            Point p4 = new Point();
             p4.set(sj.getb());
 
             //setiactive(j,100)とされた折線は、kousabunkatu(int i1,int i2,int i3,int i4)の操作が戻った後で削除される。
@@ -2780,9 +2780,9 @@ public class Orisensyuugou {
             return 0;
         }
 
-        Senbun si;
+        Line si;
         si = sen(i);
-        Senbun sj;
+        Line sj;
         sj = sen(j);
 
         if (si.get_i_max_x() < sj.get_i_min_x()) {
@@ -2800,15 +2800,15 @@ public class Orisensyuugou {
 
         //           System.out.println("kousabunkatu("+i +","+j+")    (" 	+   si.getax() +","+   si.getay()  +")-("+  si.getbx()  +","+  si.getby()  +")---("
         //								+   sj.getax() +","+   sj.getay()  +")-("+  sj.getbx()  +","+  sj.getby()  +")    "    );
-        Ten p1 = new Ten();
+        Point p1 = new Point();
         p1.set(si.geta());
-        Ten p2 = new Ten();
+        Point p2 = new Point();
         p2.set(si.getb());
-        Ten p3 = new Ten();
+        Point p3 = new Point();
         p3.set(sj.geta());
-        Ten p4 = new Ten();
+        Point p4 = new Point();
         p4.set(sj.getb());
-        Ten pk = new Ten();
+        Point pk = new Point();
 
         double ixmax;
         double ixmin;
@@ -3233,13 +3233,13 @@ public class Orisensyuugou {
 
 
     public void add_en(double dx, double dy, double dr, int ic) {
-        Cir.add(new En(dx, dy, dr, ic));
+        Cir.add(new Circle(dx, dy, dr, ic));
 
         //Senbun s;s= sen(sousuu);
         //s.set(pi,pj,i_c);
     }
 
-    public void add_en(Ten t, double dr) {
+    public void add_en(Point t, double dr) {
         add_en(t.getx(), t.gety(), dr, 0);
     }
 
@@ -3247,12 +3247,12 @@ public class Orisensyuugou {
     //円と円の交点に半径0の円を発生-------------------------------
     public void en_en_kouten(int imin, int imax, int jmin, int jmax) {
         for (int i = imin; i <= imax; i++) {
-            En ei = new En();
+            Circle ei = new Circle();
             ei.set(cir_getEn(i));
             if (ei.getr() > 0.0000001) {//半径0の円は対象外
                 for (int j = jmin; j <= jmax; j++) {
 
-                    En ej = new En();
+                    Circle ej = new Circle();
                     ej.set(cir_getEn(j));
                     if (ej.getr() > 0.0000001) {//半径0の円は対象外
                         if (oc.kyori(ei.get_tyuusin(), ej.get_tyuusin()) < 0.000001) {//2つの円は同心円で交差しない
@@ -3265,7 +3265,7 @@ public class Orisensyuugou {
                         } else if (oc.kyori(ei.get_tyuusin(), ej.get_tyuusin()) < Math.abs(ei.getr() - ej.getr())) {//2つの円は交差しない
 
 						} else {//2つの円は2点で交差
-                            Senbun k_senb = new Senbun();
+                            Line k_senb = new Line();
                             k_senb.set(oc.en_to_en_no_kouten_wo_musubu_senbun(ei, ej));
 
                             add_en(k_senb.geta(), 0.0);
@@ -3281,7 +3281,7 @@ public class Orisensyuugou {
     //円と折線の交点に半径0の円を発生-------------------------------
     public void Senbun_en_kouten(int imin, int imax, int jmin, int jmax) {
         for (int i = imin; i <= imax; i++) {
-            Senbun si;
+            Line si;
             si = sen(i);
 
             Tyokusen ti = new Tyokusen();
@@ -3289,7 +3289,7 @@ public class Orisensyuugou {
             //if(ei.getr()>0.0000001){//半径0の円は対象外
             for (int j = jmin; j <= jmax; j++) {
 
-                En ej = new En();
+                Circle ej = new Circle();
                 ej.set(cir_getEn(j));
                 if (ej.getr() > 0.0000001) {//半径0の円は対象外
                     double tc_kyori = ti.kyorikeisan(ej.get_tyuusin()); //直線と円の中心の距離
@@ -3305,7 +3305,7 @@ public class Orisensyuugou {
                         }
                     } else if (tc_kyori > ej.getr()) {//円と直線は交差しない
 					} else {//円と直線は2点で交差
-                        Senbun k_senb = new Senbun();
+                        Line k_senb = new Line();
                         k_senb.set(oc.en_to_tyokusen_no_kouten_wo_musubu_senbun(ej, ti));
 
                         if (oc.kyori_senbun(k_senb.geta(), si) < 0.00001) {
@@ -3369,14 +3369,14 @@ public class Orisensyuugou {
         //=   100　3桁目の数字。i番目の円の半径が0で、他の半径が0でない円の円周と重なっている数。2個以上と重なっているときは2と表示される。
         //=  1000　4桁目の数字。i番目の円の半径が0で、他の折線と重なっている数。2個以上と重なっているときは2と表示される。
         //= 10000　5桁目の数字。i番目の円の半径が0で、他の補助活線と重なっている数。2個以上と重なっているときは2と表示される。
-        En e_temp = new En();
+        Circle e_temp = new Circle();
         e_temp.set(cir_getEn(i0));
         double er_0 = e_temp.getr();
-        Ten ec_0 = new Ten();
+        Point ec_0 = new Point();
         ec_0.set(e_temp.get_tyuusin());
 
         double er_1;
-        Ten ec_1 = new Ten();
+        Point ec_1 = new Point();
 
         int ir1 = 0;
         int ir2 = 0;
@@ -3406,7 +3406,7 @@ public class Orisensyuugou {
             }
 
             for (int i = 1; i <= sousuu; i++) {
-                Senbun si;
+                Line si;
                 si = sen(i);
                 if (oc.kyori_senbun(ec_0, si) < 0.000001) {
 
@@ -3463,19 +3463,19 @@ public class Orisensyuugou {
 
 
     //線分の追加-------------------------------
-    public void addsenbun(Ten pi, Ten pj, int i_c) {
+    public void addsenbun(Point pi, Point pj, int i_c) {
         sousuu++;
 
-        Senbun s;
+        Line s;
         s = sen(sousuu);
         s.set(pi, pj, i_c);
     }
 
     //線分の追加-------------------------------wwwwwwwwww
-    public void addsenbun(Ten pi, Ten pj, Senbun s0) {//Ten piからTen pjまでの線分を追加。この追加する線分のその他のパラメータはs0と同じ
+    public void addsenbun(Point pi, Point pj, Line s0) {//Ten piからTen pjまでの線分を追加。この追加する線分のその他のパラメータはs0と同じ
         sousuu++;
 
-        Senbun s;
+        Line s;
         s = sen(sousuu);
         //s.set(pi,pj,s0.getcolor());
         s.set(s0);
@@ -3484,10 +3484,10 @@ public class Orisensyuugou {
     }
 
     //線分の追加-------------------------------
-    public void addsenbun(Ten pi, Ten pj, int i_c, int i_a) {
+    public void addsenbun(Point pi, Point pj, int i_c, int i_a) {
         sousuu++;
 
-        Senbun s;
+        Line s;
         s = sen(sousuu);
         s.set(pi, pj, i_c, i_a);
     }
@@ -3496,16 +3496,16 @@ public class Orisensyuugou {
     public void addsenbun(double ax, double ay, double bx, double by, int ic) {
         sousuu++;
 
-        Senbun s;
+        Line s;
         s = sen(sousuu);
         s.set(ax, ay, bx, by, ic);
     }
 
     //線分の追加-------------------------------
-    public void addsenbun(Ten pi, Ten pj) {
+    public void addsenbun(Point pi, Point pj) {
         sousuu++;
 
-        Senbun s;
+        Line s;
         s = sen(sousuu);
 
         s.seta(pi);
@@ -3513,7 +3513,7 @@ public class Orisensyuugou {
     }
 
     //線分の追加-------------------------------
-    public void addsenbun(Senbun s0) {
+    public void addsenbun(Line s0) {
         //addsenbun(s0.geta(),s0.getb(),s0.getcolor());//20181110コメントアウト
         addsenbun(s0.geta(), s0.getb(), s0.getcolor(), s0.getiactive());//20181110追加
     }
@@ -3521,9 +3521,9 @@ public class Orisensyuugou {
     //線分の削除-----------------------------------------
     public void delsenbun(int j) {   //j番目の線分を削除する  このsi= sen(i)は大丈夫なのだろうか????????si= sen(i)　20161106
         for (int i = j; i <= sousuu - 1; i++) {
-            Senbun si;
+            Line si;
             si = sen(i);
-            Senbun si1;
+            Line si1;
             si1 = sen(i + 1);
             si.set(si1);
 
@@ -3533,9 +3533,9 @@ public class Orisensyuugou {
 
 
     //線分の分割-----------------qqqqq------------------------
-    public void senbun_bunkatu(int i, Ten p) {   //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
+    public void senbun_bunkatu(int i, Point p) {   //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
 
-        Senbun s1 = new Senbun(p, getb(i));//i番目の線分abをapに変える前に作っておく
+        Line s1 = new Line(p, getb(i));//i番目の線分abをapに変える前に作っておく
         int i_c;
         i_c = getcolor(i);
 
@@ -3558,7 +3558,7 @@ public class Orisensyuugou {
 
     //i番目の線分の長さを得る---------------------------
     public double getnagasa(int i) {
-        Senbun s;
+        Line s;
         s = sen(i);
         return s.getnagasa();
     }
@@ -3570,11 +3570,11 @@ public class Orisensyuugou {
         for (int i = 1; i <= sousuu; i++) {
             iflga = 0;
             iflgb = 0;
-            Senbun si;
+            Line si;
             si = sen(i);
             for (int j = 1; j <= sousuu; j++) {
                 if (i != j) {
-                    Senbun sj;
+                    Line sj;
                     sj = sen(j);
                     if (oc.kyori(si.geta(), sj.geta()) < r) {
                         iflga = 1;
@@ -3600,9 +3600,9 @@ public class Orisensyuugou {
 
     //-----------------------------------------------
     public void delsenbun_vertex(int i) {//i番目の折線を消すとき、その折線の端点も消せる場合は消す
-        Ten pa = new Ten();
+        Point pa = new Point();
         pa.set(geta(i));
-        Ten pb = new Ten();
+        Point pb = new Point();
         pb.set(getb(i));
         delsenbun(i);
 
@@ -3618,11 +3618,11 @@ public class Orisensyuugou {
         int iflg = 0;
         for (int i = 1; i <= sousuu; i++) {
             iflg = 0;
-            Senbun si;
+            Line si;
             si = sen(i);
             for (int j = 1; j <= sousuu; j++) {
                 if (i != j) {
-                    Senbun sj;
+                    Line sj;
                     sj = sen(j);
                     if (oc.kyori(si.geta(), sj.geta()) < r) {
                         iflg = 1;
@@ -3651,7 +3651,7 @@ public class Orisensyuugou {
     //もし対象外にする線分が無い場合は、jを0とか負の整数とかにする。
     //070317　追加機能　j　が　-10　の時は　活性化していない枝（getiactive(i)が0）を対象にする。
 
-    public int senbun_sagasi(Ten p, double r, int j) {
+    public int senbun_sagasi(Point p, double r, int j) {
         if (j == -10) {
             for (int i = 1; i <= sousuu; i++) {
                 if (((senbun_busyo_sagasi(i, p, r) == 1) && (i != j)) && (getiactive(i) == 0)) {
@@ -3691,7 +3691,7 @@ public class Orisensyuugou {
 
     //点pが指定された線分とどの部所で近い(r以内)かどうかを判定する関数　---------------------------------
     //0=近くない、1=a点に近い、2=b点に近い、3=柄の部分に近い
-    public int senbun_busyo_sagasi(int i, Ten p, double r) {
+    public int senbun_busyo_sagasi(int i, Point p, double r) {
         if (r > oc.kyori(p, geta(i))) {
             return 1;
         }//a点に近いかどうか
@@ -3706,15 +3706,15 @@ public class Orisensyuugou {
 
 
     //点pに最も近い円（円周と中心の両方を考慮する）の番号を返す
-    public int mottomo_tikai_en_sagasi(Ten p) {
+    public int mottomo_tikai_en_sagasi(Point p) {
 
 
         int minrid = 0;
         double minr = 100000;
         double rtemp;
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
         for (int i = 1; i <= cir_size(); i++) {
-            En e_temp = new En();
+            Circle e_temp = new Circle();
             e_temp.set(cir_getEn(i));
 
 
@@ -3738,13 +3738,13 @@ public class Orisensyuugou {
 
 
     //点pに最も近い円の番号を逆順で（番号の大きいほうが優先という意味）探して返す
-    public int mottomo_tikai_en_sagasi_gyakujyun(Ten p) {
+    public int mottomo_tikai_en_sagasi_gyakujyun(Point p) {
         int minrid = 0;
         double minr = 100000;
         double rtemp;
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
         for (int i = 1; i <= cir_size(); i++) {
-            En e_temp = new En();
+            Circle e_temp = new Circle();
             e_temp.set(cir_getEn(i));
 
 
@@ -3768,13 +3768,13 @@ public class Orisensyuugou {
 
 
     //点pに最も近い円の番号での、その距離を返す
-    public double mottomo_tikai_en_kyori(Ten p) {
+    public double mottomo_tikai_en_kyori(Point p) {
         int minrid = 0;
         double minr = 100000;
         double rtemp;
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
         for (int i = 1; i <= cir_size(); i++) {
-            En e_temp = new En();
+            Circle e_temp = new Circle();
             e_temp.set(cir_getEn(i));
 
 
@@ -3797,7 +3797,7 @@ public class Orisensyuugou {
 
 
     //点pに最も近い線分の番号を返す
-    public int mottomo_tikai_senbun_sagasi(Ten p) {
+    public int mottomo_tikai_senbun_sagasi(Point p) {
         int minrid = 0;
         double minr = 100000;
         for (int i = 1; i <= sousuu; i++) {
@@ -3813,7 +3813,7 @@ public class Orisensyuugou {
 
 
     //点pに最も近い線分の番号を逆から（番号の大きいほうから小さいほうへという意味）探して返す
-    public int mottomo_tikai_senbun_sagasi_gyakujyun(Ten p) {
+    public int mottomo_tikai_senbun_sagasi_gyakujyun(Point p) {
         int minrid = 0;
         double minr = 100000;
         for (int i = sousuu; i >= 1; i--) {
@@ -3829,7 +3829,7 @@ public class Orisensyuugou {
 
 
     //点pに最も近い線分の番号での、その距離を返す
-    public double mottomo_tikai_senbun_kyori(Ten p) {
+    public double mottomo_tikai_senbun_kyori(Point p) {
         int minrid = 0;
         double minr = 100000.0;
         for (int i = 1; i <= sousuu; i++) {
@@ -3845,7 +3845,7 @@ public class Orisensyuugou {
 
 
     //点pに最も近い線分の番号での、その距離を返す。ただし線分s0と平行な折線が調査の対象外。つまり、平行な折線が重なっていても近い距離にあるとはみなされない。
-    public double mottomo_tikai_senbun_kyori_heikou_jyogai(Ten p, Senbun s0) {
+    public double mottomo_tikai_senbun_kyori_heikou_jyogai(Point p, Line s0) {
         double minr = 100000.0;
         for (int i = 1; i <= sousuu; i++) {
             if (oc.heikou_hantei(get(i), s0, 0.0001) == 0) {
@@ -3860,10 +3860,10 @@ public class Orisensyuugou {
     }
 
 
-    public En mottomo_tikai_ensyuu(Ten p) {
+    public Circle mottomo_tikai_ensyuu(Point p) {
         int minrid = 0;
         double minr = 100000.0;
-        En e1 = new En(100000.0, 100000.0, 1.0, 0);
+        Circle e1 = new Circle(100000.0, 100000.0, 1.0, 0);
         for (int i = 1; i <= cir_size(); i++) {
             double ek = oc.kyori_ensyuu(p, cir_getEn(i));
             if (minr > ek) {
@@ -3880,10 +3880,10 @@ public class Orisensyuugou {
     }
 
 
-    public Senbun mottomo_tikai_Senbun(Ten p) {
+    public Line mottomo_tikai_Senbun(Point p) {
         int minrid = 0;
         double minr = 100000.0;
-        Senbun s1 = new Senbun(100000.0, 100000.0, 100000.0, 100000.1);
+        Line s1 = new Line(100000.0, 100000.0, 100000.0, 100000.1);
         for (int i = 1; i <= sousuu; i++) {
             double sk = oc.kyori_senbun(p, get(i));
             if (minr > sk) {
@@ -3903,10 +3903,10 @@ public class Orisensyuugou {
 
     //点pに最も近い、「線分の端点」を返す
     //public Ten mottomo_tikai_Ten_sagasi(Ten p) {
-    public Ten mottomo_tikai_Ten(Ten p) {
-        Ten p_return = new Ten();
+    public Point mottomo_tikai_Ten(Point p) {
+        Point p_return = new Point();
         p_return.set(100000.0, 100000.0);
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
         for (int i = 1; i <= sousuu; i++) {
             //p_temp.set(geta(i));if(p.kyori(p_temp)<p.kyori(p_return) ) {p_return.set(p_temp.etx(),p_temp.gety()); }
             //p_temp.set(getb(i));if(p.kyori(p_temp)<p.kyori(p_return) ) {p_return.set(p_temp.getx(),p_temp.gety()); }
@@ -3925,12 +3925,12 @@ public class Orisensyuugou {
 
     //点pに最も近い、「円の中心点」を返す
     //public Ten mottomo_tikai_Tyuusin(Ten p) {   //qqqqqqqqqqqq
-    public Ten mottomo_tikai_Tyuusin(Ten p) {
-        Ten p_return = new Ten();
+    public Point mottomo_tikai_Tyuusin(Point p) {
+        Point p_return = new Point();
         p_return.set(100000.0, 100000.0);
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
         for (int i = 1; i <= cir_size(); i++) {
-            En e_temp = new En();
+            Circle e_temp = new Circle();
             e_temp.set(cir_getEn(i));
             p_temp.set(e_temp.get_tyuusin());
             if (p.kyori2jyou(p_temp) < p.kyori2jyou(p_return)) {
@@ -3941,10 +3941,10 @@ public class Orisensyuugou {
     }
 
     //点pに最も近い、「線分の端点」を返す。ただし、補助活線は対象外
-    public Ten mottomo_tikai_Ten_with_icol_0_1_2(Ten p) {
-        Ten p_return = new Ten();
+    public Point mottomo_tikai_Ten_with_icol_0_1_2(Point p) {
+        Point p_return = new Point();
         p_return.set(100000.0, 100000.0);
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
         for (int i = 1; i <= sousuu; i++) {
             if ((0 <= getcolor(i)) && (getcolor(i) <= 2)) {
                 p_temp.set(geta(i));
@@ -3968,7 +3968,7 @@ public class Orisensyuugou {
         int i_senbun_kousa_hantei;
         i_senbun_kousa_hantei = oc.senbun_kousa_hantei(get(i), get(j), 0.00001, 0.00001);
 
-        Senbun addsen = new Senbun();
+        Line addsen = new Line();
         int i_ten = 0;
         if (i_senbun_kousa_hantei == 323) {
             addsen.set(getb(i), getb(j));
@@ -4102,16 +4102,16 @@ public class Orisensyuugou {
 //
     int[] i_s = new int[2];//この変数はdel_Vとtyouten_syuui_sensuuとで共通に使う。tyouten_syuui_sensuuで、頂点回りの折線数が2のときにその2折線の番号を入れる変数。なお、折線数が3以上のときは意味を成さない。//qを端点とする2本の線分の番号
 
-    public int del_V(Ten p, double hikiyose_hankei, double r) {
+    public int del_V(Point p, double hikiyose_hankei, double r) {
         int i_return;
         i_return = 0;
 
-        Ten q = new Ten();
+        Point q = new Point();
         q.set(mottomo_tikai_Ten(p));//qは点pに近い方の端点
         if (q.kyori2jyou(p) > hikiyose_hankei * hikiyose_hankei) {
             return 0;
         }
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
 
         if (tyouten_syuui_sensuu_for_del_V(q, r) == 2) {
             //int i_s[] = new int[2];//qを端点とする2本の線分の番号
@@ -4162,10 +4162,10 @@ public class Orisensyuugou {
             int i_c;
             i_c = getcolor(ix);
 
-            Senbun s_ixb_iyb = new Senbun(getb(ix), getb(iy));
-            Senbun s_ixb_iya = new Senbun(getb(ix), geta(iy));
-            Senbun s_ixa_iyb = new Senbun(geta(ix), getb(iy));
-            Senbun s_ixa_iya = new Senbun(geta(ix), geta(iy));
+            Line s_ixb_iyb = new Line(getb(ix), getb(iy));
+            Line s_ixb_iya = new Line(getb(ix), geta(iy));
+            Line s_ixa_iyb = new Line(geta(ix), getb(iy));
+            Line s_ixa_iya = new Line(geta(ix), geta(iy));
 
 
             if (i_senbun_kousa_hantei == 323) {
@@ -4206,16 +4206,16 @@ public class Orisensyuugou {
 
 // -------------------------------------------------------------------------------------------------------------
 
-    public int del_V_cc(Ten p, double hikiyose_hankei, double r) {//2つの折線の色が違った場合カラーチェンジして、点削除する。黒赤は赤赤、黒青は青青、青赤は黒にする
+    public int del_V_cc(Point p, double hikiyose_hankei, double r) {//2つの折線の色が違った場合カラーチェンジして、点削除する。黒赤は赤赤、黒青は青青、青赤は黒にする
         int i_return;
         i_return = 0;
 
-        Ten q = new Ten();
+        Point q = new Point();
         q.set(mottomo_tikai_Ten(p));//qは点pに近い方の端点
         if (q.kyori2jyou(p) > hikiyose_hankei * hikiyose_hankei) {
             return 0;
         }
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
 
         if (tyouten_syuui_sensuu_for_del_V(q, r) == 2) {
 
@@ -4312,10 +4312,10 @@ public class Orisensyuugou {
             int i_c;
             i_c = getcolor(ix);
 
-            Senbun s_ixb_iyb = new Senbun(getb(ix), getb(iy));
-            Senbun s_ixb_iya = new Senbun(getb(ix), geta(iy));
-            Senbun s_ixa_iyb = new Senbun(geta(ix), getb(iy));
-            Senbun s_ixa_iya = new Senbun(geta(ix), geta(iy));
+            Line s_ixb_iyb = new Line(getb(ix), getb(iy));
+            Line s_ixb_iya = new Line(getb(ix), geta(iy));
+            Line s_ixa_iyb = new Line(geta(ix), getb(iy));
+            Line s_ixa_iya = new Line(geta(ix), geta(iy));
 
 
             if (i_senbun_kousa_hantei == 323) {
@@ -4351,11 +4351,11 @@ public class Orisensyuugou {
 
 
     //点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の線分が出ているか（頂点とr以内に端点がある線分の数）//del_V用の関数
-    public int tyouten_syuui_sensuu_for_del_V(Ten p, double r) {//del_V用の関数
+    public int tyouten_syuui_sensuu_for_del_V(Point p, double r) {//del_V用の関数
 
-        Ten q = new Ten();
+        Point q = new Point();
         q.set(mottomo_tikai_Ten(p));//qは点pに近い方の端点
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
 
 
         int i_return;
@@ -4384,11 +4384,11 @@ public class Orisensyuugou {
 
 
     //点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の線分が出ているか（頂点とr以内に端点がある線分の数）
-    public int tyouten_syuui_sensuu(Ten p, double r) {
+    public int tyouten_syuui_sensuu(Point p, double r) {
 
-        Ten q = new Ten();
+        Point q = new Point();
         q.set(mottomo_tikai_Ten(p));//qは点pに近い方の端点
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
 
 
         int i_return;
@@ -4414,11 +4414,11 @@ public class Orisensyuugou {
 
 
     //点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の赤い線分が出ているか（頂点とr以内に端点がある線分の数）
-    public int tyouten_syuui_sensuu_red(Ten p, double r) {
+    public int tyouten_syuui_sensuu_red(Point p, double r) {
 
-        Ten q = new Ten();
+        Point q = new Point();
         q.set(mottomo_tikai_Ten(p));//qは点pに近い方の端点
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
 
 
         int i_return;
@@ -4442,11 +4442,11 @@ public class Orisensyuugou {
 
     //--------------------------------------------
     //点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の青い線分が出ているか（頂点とr以内に端点がある線分の数）
-    public int tyouten_syuui_sensuu_blue(Ten p, double r) {
+    public int tyouten_syuui_sensuu_blue(Point p, double r) {
 
-        Ten q = new Ten();
+        Point q = new Point();
         q.set(mottomo_tikai_Ten(p));//qは点pに近い方の端点
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
 
 
         int i_return;
@@ -4470,11 +4470,11 @@ public class Orisensyuugou {
 
     //--------------------------------------------
     //点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の黒い線分が出ているか（頂点とr以内に端点がある線分の数）
-    public int tyouten_syuui_sensuu_black(Ten p, double r) {
+    public int tyouten_syuui_sensuu_black(Point p, double r) {
 
-        Ten q = new Ten();
+        Point q = new Point();
         q.set(mottomo_tikai_Ten(p));//qは点pに近い方の端点
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
 
 
         int i_return;
@@ -4498,11 +4498,11 @@ public class Orisensyuugou {
 
     //--------------------------------------------
     //点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の補助活線が出ているか（頂点とr以内に端点がある線分の数）
-    public int tyouten_syuui_sensuu_hojyo_kassen(Ten p, double r) {
+    public int tyouten_syuui_sensuu_hojyo_kassen(Point p, double r) {
 
-        Ten q = new Ten();
+        Point q = new Point();
         q.set(mottomo_tikai_Ten(p));//qは点pに近い方の端点
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
 
 
         int i_return;
@@ -4527,11 +4527,11 @@ public class Orisensyuugou {
 
     //--------------------------------------------
     //点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の選択された線分が出ているか。　20180918追加（頂点とr以内に端点がある線分の数）
-    public int tyouten_syuui_sensuu_select(Ten p, double r) {//rの値は0.0001位で頂点周りの折り畳み判定とかはうまく動いている
+    public int tyouten_syuui_sensuu_select(Point p, double r) {//rの値は0.0001位で頂点周りの折り畳み判定とかはうまく動いている
 
-        Ten q = new Ten();
+        Point q = new Point();
         q.set(mottomo_tikai_Ten(p));//qは点pに近い方の端点
-        Ten p_temp = new Ten();
+        Point p_temp = new Point();
 
 
         int i_return;
@@ -4557,9 +4557,9 @@ public class Orisensyuugou {
 
 
     //点pの近くの線分の活性化
-    public void kasseika(Ten p, double r) {
+    public void kasseika(Point p, double r) {
         for (int i = 1; i <= sousuu; i++) {
-            Senbun si;
+            Line si;
             si = sen(i);
             si.kasseika(p, r);
         }
@@ -4568,7 +4568,7 @@ public class Orisensyuugou {
     //全線分の非活性化
     public void hikasseika() {
         for (int i = 1; i <= sousuu; i++) {
-            Senbun si;
+            Line si;
             si = sen(i);
             si.hikasseika();
         }
@@ -4576,9 +4576,9 @@ public class Orisensyuugou {
 
 
     //線分の活性化されたものを点pの座標にする
-    public void set(Ten p) {
+    public void set(Point p) {
         for (int i = 1; i <= sousuu; i++) {
-            Senbun si;
+            Line si;
             si = sen(i);
             si.set(p);
         }
@@ -4602,7 +4602,7 @@ public class Orisensyuugou {
 
 
     //線分s0と全く重なる線分が線分集合の中の線分にあれば、その番号を返す。なければ-10を返す。
-    public int kasanari_senbun_sagasi(Senbun s0) {
+    public int kasanari_senbun_sagasi(Line s0) {
 
         for (int i = 1; i <= sousuu; i++) {
             if (oc.senbun_kousa_hantei(get(i), s0) == 31) {
@@ -4615,7 +4615,7 @@ public class Orisensyuugou {
     }
 
     //線分s0と部分的に重なる線分が線分集合の中の線分にあれば、最初に見つかった線分の番号を返す。なければ-10を返す。
-    public int bubun_kasanari_senbun_sagasi(Senbun s0) {
+    public int bubun_kasanari_senbun_sagasi(Line s0) {
 
         for (int i = 1; i <= sousuu; i++) {
             if (oc.senbun_kousa_hantei(get(i), s0) == 321) {
@@ -4677,16 +4677,16 @@ public class Orisensyuugou {
 
 
     //点pにもっとも近い折線をその点pの影で分割する。ただし、点pの影がどれか折線の端点と同じとみなされる場合は何もしない。
-    public void senbun_bunkatu(Ten p) {//点pが折線の端点と一致していないことが前提
+    public void senbun_bunkatu(Point p) {//点pが折線の端点と一致していないことが前提
 
 
         int mts_id;
         mts_id = mottomo_tikai_senbun_sagasi(p);//mts_idは点pに最も近い線分の番号	public int ori_s.mottomo_tikai_senbun_sagasi(Ten p)
-        Senbun mts = new Senbun(geta(mts_id), getb(mts_id));//mtsは点pに最も近い線分
+        Line mts = new Line(geta(mts_id), getb(mts_id));//mtsは点pに最も近い線分
 
         //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){}
         //線分を含む直線を得る public Tyokusen oc.Senbun2Tyokusen(Senbun s){}
-        Ten pk = new Ten();
+        Point pk = new Point();
         pk.set(oc.kage_motome(oc.Senbun2Tyokusen(mts), p));//pkは点pの（線分を含む直線上の）影
         if (pk.kyori(mottomo_tikai_Ten(pk)) < 0.000001) {
             return;
@@ -4697,15 +4697,15 @@ public class Orisensyuugou {
 
 
     //折線iをその点pの影で分割する。ただし、点pの影がどれか折線の端点と同じとみなされる場合は何もしない。
-    public int senbun_bunkatu(Ten p, int i) {//何もしない=0,分割した=1
+    public int senbun_bunkatu(Point p, int i) {//何もしない=0,分割した=1
 
         int mts_id;
         mts_id = i;
-        Senbun mts = new Senbun(geta(mts_id), getb(mts_id));//mtsは点pに最も近い線分
+        Line mts = new Line(geta(mts_id), getb(mts_id));//mtsは点pに最も近い線分
 
         //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){}
         //線分を含む直線を得る public Tyokusen oc.Senbun2Tyokusen(Senbun s){}
-        Ten pk = new Ten();
+        Point pk = new Point();
         pk.set(oc.kage_motome(oc.Senbun2Tyokusen(mts), p));//pkは点pの（線分を含む直線上の）影
         //if(pk.kyori(mottomo_tikai_Ten(pk))<0.000001) {return 0;}
         //線分の分割-----------------------------------------
@@ -4715,7 +4715,7 @@ public class Orisensyuugou {
     }
 
 
-    public void add_sonomama(Orisensyuugou o_temp) {//別の折線集合の折線を追加する。単に追加するだけで、他の処理は一切しない。
+    public void add_sonomama(PolygonStore o_temp) {//別の折線集合の折線を追加する。単に追加するだけで、他の処理は一切しない。
         for (int i = 1; i <= o_temp.getsousuu(); i++) {
             addsenbun(o_temp.geta(i), o_temp.getb(i), o_temp.getcolor(i));
 
@@ -4724,8 +4724,8 @@ public class Orisensyuugou {
 
     // --------------ccccccccc
     public void move(double dx, double dy) {//折線集合全体の位置を移動する。
-        Ten temp_a = new Ten();
-        Ten temp_b = new Ten();
+        Point temp_a = new Point();
+        Point temp_b = new Point();
         for (int i = 1; i <= getsousuu(); i++) {
             temp_a.set(geta(i));
             temp_b.set(getb(i));
@@ -4739,7 +4739,7 @@ public class Orisensyuugou {
 
         for (int i = 1; i <= cir_size(); i++) {
 
-            En e_temp = new En();
+            Circle e_temp = new Circle();
             e_temp.set(cir_getEn(i));
 
             e_temp.setx(e_temp.getx() + dx);
@@ -4751,7 +4751,7 @@ public class Orisensyuugou {
     }
 
 
-    public void move(Ten ta, Ten tb, Ten tc, Ten td) {//折線集合全体の位置を移動する。
+    public void move(Point ta, Point tb, Point tc, Point td) {//折線集合全体の位置を移動する。
         double d;
         d = oc.kakudo(ta, tb, tc, td);
         double r;
@@ -4764,8 +4764,8 @@ public class Orisensyuugou {
 
         //oc.ten_kaiten(Ten a,Ten b,double d,double r)//点aを中心に点bをd度回転しabの距離がr倍の点を返す関数（元の点は変えずに新しい点を返す）
 
-        Ten temp_a = new Ten();
-        Ten temp_b = new Ten();
+        Point temp_a = new Point();
+        Point temp_b = new Point();
         for (int i = 1; i <= getsousuu(); i++) {
             temp_a.set(oc.ten_kaiten(ta, geta(i), d, r));
             temp_b.set(oc.ten_kaiten(ta, getb(i), d, r));
@@ -4785,17 +4785,17 @@ public class Orisensyuugou {
         for (int i = 1; i <= sousuu - 1; i++) {
             if (getcolor(i) != 3) {
 
-                Senbun si;
+                Line si;
                 si = sen(i);
 
                 for (int j = i + 1; j <= sousuu; j++) {
                     if (getcolor(j) != 3) {
-                        Senbun sj;
+                        Line sj;
                         sj = sen(j);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
 
-                        Senbun si1 = new Senbun();
+                        Line si1 = new Line();
                         si1.set(si);
-                        Senbun sj1 = new Senbun();
+                        Line sj1 = new Line();
                         sj1.set(sj);
 
                         if (oc.senbun_kousa_hantei(si, sj, r_hitosii, heikou_hantei) == 31) {
@@ -4851,11 +4851,11 @@ public class Orisensyuugou {
         for (int i = 1; i <= sousuu - 1; i++) {
             if (getcolor(i) != 3) {
 
-                Senbun si;
+                Line si;
                 si = sen(i);
                 for (int j = i + 1; j <= sousuu; j++) {
                     if (getcolor(j) != 3) {
-                        Senbun sj;
+                        Line sj;
                         sj = sen(j);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                         //T字型交差
                         if (oc.senbun_kousa_hantei(si, sj, r_hitosii, heikou_hantei) == 31) {
@@ -4916,16 +4916,16 @@ public class Orisensyuugou {
         for (int i = 1; i <= sousuu - 1; i++) {
             if (getcolor(i) != 3) {
 
-                Senbun si;
+                Line si;
                 si = sen(i);
                 for (int j = i + 1; j <= sousuu; j++) {
                     if (getcolor(j) != 3) {
-                        Senbun sj;
+                        Line sj;
                         sj = sen(j);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
 
-                        Senbun si1 = new Senbun();
+                        Line si1 = new Line();
                         si1.set(si);
-                        Senbun sj1 = new Senbun();
+                        Line sj1 = new Line();
                         sj1.set(sj);
 
                         //T字型交差
@@ -4957,11 +4957,11 @@ public class Orisensyuugou {
         for (int i = 1; i <= sousuu - 1; i++) {
             if (getcolor(i) != 3) {
 
-                Senbun si;
+                Line si;
                 si = sen(i);
                 for (int j = i + 1; j <= sousuu; j++) {
                     if (getcolor(j) != 3) {
-                        Senbun sj;
+                        Line sj;
                         sj = sen(j);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                         //T字型交差
                         //折線iをその点pの影で分割する。ただし、点pの影がどれか折線の端点と同じとみなされる場合は何もしない。
@@ -5001,7 +5001,7 @@ public class Orisensyuugou {
         return Cir.size() - 1;
     }
 
-    public En cir_getEn(int i) {
+    public Circle cir_getEn(int i) {
 
         //if(sousuu+1> Senb.size()){while(sousuu+1> Senb.size()){Senb.add(new Senbun());}}//この文がないとうまく行かない。なぜこの文でないといけないかという理由が正確にはわからない。
         //return (Senbun)Senb.get(i);
@@ -5009,7 +5009,7 @@ public class Orisensyuugou {
 
     }
 
-    public void cir_setEn(int i, En e0) {
+    public void cir_setEn(int i, Circle e0) {
         //iの指定があったとき、EnはCirのi-1番目に格納される　
         //i>cir_size()のときは、Cirのi-1番目の円はまだ定義されていないので、とりあえずi-1番目まで円を存在させる必要がある
 
@@ -5021,11 +5021,11 @@ public class Orisensyuugou {
 
         if (i > cir_size()) {
             while (i > cir_size()) {
-                Cir.add(new En());
+                Cir.add(new Circle());
             }
         }
 
-        En etemp = new En();
+        Circle etemp = new Circle();
         etemp.set(e0);
 //System.out.println("etemp "+ etemp.getcolor()  );
 
@@ -5054,27 +5054,27 @@ public class Orisensyuugou {
     }//Check4Senbには0番目からsize()-1番目までデータが入っている
 
     public int check4_T_size() {
-        return Check4Ten.size();
+        return check4Point.size();
     }//Check4Tenには0番目からsize()-1番目までデータが入っている
 
-    public Senbun check1_getSenbun(int i) {
+    public Line check1_getSenbun(int i) {
         return Check1Senb.get(i);
     }
 
-    public Senbun check2_getSenbun(int i) {
+    public Line check2_getSenbun(int i) {
         return Check2Senb.get(i);
     }
 
-    public Senbun check3_getSenbun(int i) {
+    public Line check3_getSenbun(int i) {
         return Check3Senb.get(i);
     }
 
-    public Senbun check4_getSenbun(int i) {
+    public Line check4_getSenbun(int i) {
         return Check4Senb.get(i);
     }
 
-    public Ten check4_getTen(int i) {
-        return Check4Ten.get(i);
+    public Point check4_getTen(int i) {
+        return check4Point.get(i);
     }
 
     public void check3(double r) {//頂点周囲の線数チェック
@@ -5082,9 +5082,9 @@ public class Orisensyuugou {
         unselect_all();
         for (int i = 1; i <= sousuu; i++) {
             if (getcolor(i) != 3) {
-                Senbun si;
+                Line si;
                 si = sen(i);
-                Ten p = new Ten();
+                Point p = new Point();
                 int tss;    //頂点の周りの折線の数。　tss%2==0 偶数、==1 奇数
                 int tss_red;    //頂点の周りの山折線の数。
                 int tss_blue;    //頂点の周りの谷折線の数。
@@ -5103,7 +5103,7 @@ public class Orisensyuugou {
 
                 if ((tss_black != 0) && (tss_black != 2)) {//黒線がないか2本以外の場合はおかしい。
                     //System.out.println("20170216_1");
-                    Check3Senb.add(new Senbun(p, p));//set_select(i,2);
+                    Check3Senb.add(new Line(p, p));//set_select(i,2);
 
                 }
 
@@ -5113,12 +5113,12 @@ public class Orisensyuugou {
 
                         if (Math.abs(tss_red - tss_blue) != 2) {//用紙内部の点で前川定理を満たさないのはダメ
                             //System.out.println("20170216_2");
-                            Check3Senb.add(new Senbun(p, p));//set_select(i,2);
+                            Check3Senb.add(new Line(p, p));//set_select(i,2);
                         }
                     }
                     if (kakutyou_fushimi_hantei_naibu(p) == 0) {
                         //System.out.println("20170216_3");
-                        Check3Senb.add(new Senbun(p, p));//set_select(i,2);
+                        Check3Senb.add(new Line(p, p));//set_select(i,2);
                     }
 
 
@@ -5127,7 +5127,7 @@ public class Orisensyuugou {
                 if (tss_black == 2) {//黒線が2本の場合
                     if (kakutyou_fushimi_hantei_henbu(p) == 0) {
                         //System.out.println("20170216_3");
-                        Check3Senb.add(new Senbun(p, p));//set_select(i,2);
+                        Check3Senb.add(new Line(p, p));//set_select(i,2);
                     }
                 }
 
@@ -5147,19 +5147,19 @@ public class Orisensyuugou {
                 //-----------------
                 if ((tss_black != 0) && (tss_black != 2)) {//黒線がないか2本以外の場合はおかしい。
                     //System.out.println("20170216_4");
-                    Check3Senb.add(new Senbun(p, p));//set_select(i,2);
+                    Check3Senb.add(new Line(p, p));//set_select(i,2);
                 }
 
                 if (tss_black == 0) {//黒線がない場合
                     if (tss - tss_hojyo_kassen == tss_red + tss_blue) {//（前提として境界は黒で、山谷未設定折線はないこと。）頂点周囲に赤か青しかない。つまり、用紙内部の点
                         if (Math.abs(tss_red - tss_blue) != 2) {//用紙内部の点で前川定理を満たさないのはダメ
                             //System.out.println("20170216_5");
-                            Check3Senb.add(new Senbun(p, p));//set_select(i,2);
+                            Check3Senb.add(new Line(p, p));//set_select(i,2);
                         }
                     }
                     if (kakutyou_fushimi_hantei_naibu(p) == 0) {
                         //System.out.println("20170216_6");
-                        Check3Senb.add(new Senbun(p, p));//set_select(i,2);
+                        Check3Senb.add(new Line(p, p));//set_select(i,2);
                     }
 
 
@@ -5169,7 +5169,7 @@ public class Orisensyuugou {
                 if (tss_black == 2) {//黒線が2本の場合
                     if (kakutyou_fushimi_hantei_henbu(p) == 0) {
                         //System.out.println("20170216_3");
-                        Check3Senb.add(new Senbun(p, p));//set_select(i,2);
+                        Check3Senb.add(new Line(p, p));//set_select(i,2);
                     }
                 }
 
@@ -5183,9 +5183,9 @@ public class Orisensyuugou {
 
 
     // -----------------------------------------------------
-    public int Check4Ten_jyuufuku_check(Ten p0) {
+    public int Check4Ten_jyuufuku_check(Point p0) {
         for (int i = 0; i < check4_T_size(); i++) {
-            Ten p = new Ten();
+            Point p = new Point();
             p.set(check4_getTen(i));
             if ((-0.00000001 < p0.getx() - p.getx()) && (p0.getx() - p.getx() < 0.00000001)) {
                 if ((-0.00000001 < p0.gety() - p.gety()) && (p0.gety() - p.gety() < 0.00000001)) {
@@ -5199,7 +5199,7 @@ public class Orisensyuugou {
     // -----------------------------------------------------
     public void check4(double r) {//頂点周囲の線数チェック
         Check4Senb.clear();
-        Check4Ten.clear();
+        check4Point.clear();
 
         unselect_all();
 
@@ -5207,21 +5207,21 @@ public class Orisensyuugou {
         for (int i = 1; i <= sousuu; i++) {
             if (getcolor(i) != 3) {
 
-                Senbun si;
+                Line si;
                 si = sen(i);
 
                 //System.out.println("sen("+i+")=si  : ax="+si.geta().getx()+", ay="+si.geta().gety()+", bx="+si.getb().getx()+", by="+si.getb().gety());
 
-                Ten pa = new Ten();
+                Point pa = new Point();
                 pa.set(si.geta());
                 if (Check4Ten_jyuufuku_check(pa) == 0) {
-                    Check4Ten.add(pa);
+                    check4Point.add(pa);
                 }
 
-                Ten pb = new Ten();
+                Point pb = new Point();
                 pb.set(si.getb());
                 if (Check4Ten_jyuufuku_check(pb) == 0) {
-                    Check4Ten.add(pb);
+                    check4Point.add(pb);
                 }
 
                 //20170828
@@ -5240,19 +5240,19 @@ public class Orisensyuugou {
         //チェックすべき場所が平らに折りたたみ可能かの選別
         for (int i = 0; i < check4_T_size(); i++) {
             //System.out.println("i = "+i+"/"+check4_T_size());
-            Ten p = new Ten();
+            Point p = new Point();
             p.set(check4_getTen(i));
 
             //tyouten_syuui_sensuu_all(p,r);
             //-----------------
             if (i_taira_ok(p, r) == 0) {
-                Check4Senb.add(new Senbun(p, p));
+                Check4Senb.add(new Line(p, p));
             }
         }
     }
 
     // -------------------------------------------------------------------
-    public int i_taira_ok(Ten p, double r) {//平らに折りたたみ可能=1
+    public int i_taira_ok(Point p, double r) {//平らに折りたたみ可能=1
         double hantei_kyori = 0.00001;
         //点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の線分が出ているか（頂点とr以内に端点がある線分の数）
         int i_tss = 0;    //i_tss%2==0 偶数、==1 奇数
@@ -5365,9 +5365,9 @@ public class Orisensyuugou {
         unselect_all();
         for (int i = 1; i <= sousuu; i++) {
             if (getcolor(i) != 3) {
-                Senbun si;
+                Line si;
                 si = sen(i);
-                Ten p = new Ten();
+                Point p = new Point();
                 int tss;    //tss%2==0 偶数、==1 奇数
                 int tss_red;
                 int tss_blue;
@@ -5386,7 +5386,7 @@ public class Orisensyuugou {
 
                 if ((tss_black != 0) && (tss_black != 2)) {//黒線がないか2本以外の場合はおかしい。
                     //System.out.println("20170216_1");
-                    Check4Senb.add(new Senbun(p, p));//set_select(i,2);
+                    Check4Senb.add(new Line(p, p));//set_select(i,2);
 
                 }
 
@@ -5396,12 +5396,12 @@ public class Orisensyuugou {
 
                         if (Math.abs(tss_red - tss_blue) != 2) {//用紙内部の点で前川定理を満たさないのはダメ
                             //System.out.println("20170216_2");
-                            Check4Senb.add(new Senbun(p, p));//set_select(i,2);
+                            Check4Senb.add(new Line(p, p));//set_select(i,2);
                         }
                     }
                     if (kakutyou_fushimi_hantei_naibu(p) == 0) {
                         //System.out.println("20170216_3");
-                        Check4Senb.add(new Senbun(p, p));//set_select(i,2);
+                        Check4Senb.add(new Line(p, p));//set_select(i,2);
                     }
 
 
@@ -5410,7 +5410,7 @@ public class Orisensyuugou {
                 if (tss_black == 2) {//黒線が2本の場合
                     if (kakutyou_fushimi_hantei_henbu(p) == 0) {
                         //System.out.println("20170216_3");
-                        Check4Senb.add(new Senbun(p, p));//set_select(i,2);
+                        Check4Senb.add(new Line(p, p));//set_select(i,2);
                     }
                 }
 
@@ -5430,19 +5430,19 @@ public class Orisensyuugou {
                 //-----------------
                 if ((tss_black != 0) && (tss_black != 2)) {//黒線がないか2本以外の場合はおかしい。
                     //System.out.println("20170216_4");
-                    Check4Senb.add(new Senbun(p, p));//set_select(i,2);
+                    Check4Senb.add(new Line(p, p));//set_select(i,2);
                 }
 
                 if (tss_black == 0) {//黒線がない場合
                     if (tss - tss_cyan == tss_red + tss_blue) {//（前提として境界は黒で、山谷未設定折線はないこと。）頂点周囲に赤か青しかない。つまり、用紙内部の点
                         if (Math.abs(tss_red - tss_blue) != 2) {//用紙内部の点で前川定理を満たさないのはダメ
                             //System.out.println("20170216_5");
-                            Check4Senb.add(new Senbun(p, p));//set_select(i,2);
+                            Check4Senb.add(new Line(p, p));//set_select(i,2);
                         }
                     }
                     if (kakutyou_fushimi_hantei_naibu(p) == 0) {
                         //System.out.println("20170216_6");
-                        Check4Senb.add(new Senbun(p, p));//set_select(i,2);
+                        Check4Senb.add(new Line(p, p));//set_select(i,2);
                     }
 
 
@@ -5452,7 +5452,7 @@ public class Orisensyuugou {
                 if (tss_black == 2) {//黒線が2本の場合
                     if (kakutyou_fushimi_hantei_henbu(p) == 0) {
                         //System.out.println("20170216_3");
-                        Check4Senb.add(new Senbun(p, p));//set_select(i,2);
+                        Check4Senb.add(new Line(p, p));//set_select(i,2);
                     }
                 }
 
@@ -5468,10 +5468,10 @@ public class Orisensyuugou {
 // **************************************
 
     //Ten p に最も近い用紙辺部の端点が拡張伏見定理を満たすか判定
-    public int kakutyou_fushimi_hantei_henbu(Ten p) {//return　0=満たさない、　1=満たす。　
+    public int kakutyou_fushimi_hantei_henbu(Point p) {//return　0=満たさない、　1=満たす。　
         double hantei_kyori = 0.00001;
 
-        Ten t1 = new Ten();
+        Point t1 = new Point();
         t1.set(mottomo_tikai_Ten_with_icol_0_1_2(p));//点pに最も近い、「線分の端点」を返すori_s.mottomo_tikai_Tenは近い点がないと p_return.set(100000.0,100000.0)と返してくる
 
         //t1を端点とする折線をNarabebakoに入れる
@@ -5490,7 +5490,7 @@ public class Orisensyuugou {
     }
 
     // ---------------------------------
-    public int kakutyou_fushimi_hantei_henbu(Ten p, Narabebako_int_double nbox) {//return　0=満たさない、　1=満たす。　
+    public int kakutyou_fushimi_hantei_henbu(Point p, Narabebako_int_double nbox) {//return　0=満たさない、　1=満たす。　
         double hantei_kyori = 0.00001;
 
         int tikai_orisen_jyunban;
@@ -5581,7 +5581,7 @@ public class Orisensyuugou {
 // **************************************
 
     //bを端点とする折線が入ったNarabebakoを得る。線分baとのなす角が小さい順に並んでいる。
-    public Narabebako_int_double get_nbox_of_tyouten_b_syuui_orisen(Ten a, Ten b) {
+    public Narabebako_int_double get_nbox_of_tyouten_b_syuui_orisen(Point a, Point b) {
         Narabebako_int_double r_nbox = new Narabebako_int_double();
         double hantei_kyori = 0.00001;
 
@@ -5694,10 +5694,10 @@ public class Orisensyuugou {
 
 
     //Ten p に最も近い用紙内部の端点が拡張伏見定理を満たすか判定
-    public int kakutyou_fushimi_hantei_naibu(Ten p) {//return　0=満たさない、　1=満たす。　
+    public int kakutyou_fushimi_hantei_naibu(Point p) {//return　0=満たさない、　1=満たす。　
         double hantei_kyori = 0.00001;
 
-        Ten t1 = new Ten();
+        Point t1 = new Point();
         t1.set(mottomo_tikai_Ten_with_icol_0_1_2(p));//点pに最も近い、「線分の端点」を返すori_s.mottomo_tikai_Tenは近い点がないと p_return.set(100000.0,100000.0)と返してくる
 
         //t1を端点とする折線をNarabebakoに入れる
@@ -5716,7 +5716,7 @@ public class Orisensyuugou {
 
     }
 
-    public int kakutyou_fushimi_hantei_naibu(Ten p, Narabebako_int_double nbox) {//return　0=満たさない、　1=満たす。　
+    public int kakutyou_fushimi_hantei_naibu(Point p, Narabebako_int_double nbox) {//return　0=満たさない、　1=満たす。　
         double hantei_kyori = 0.00001;
 
         if (nbox.getsousuu() % 2 == 1) {//t1を端点とする折線の数が奇数のとき
@@ -5888,7 +5888,7 @@ public class Orisensyuugou {
 
 
     // ---------------------------
-    public int X_koisa_ari_nasi(Senbun s0) {//s0とX字で交差する折線があれば1、なければ0を返す
+    public int X_koisa_ari_nasi(Line s0) {//s0とX字で交差する折線があれば1、なければ0を返す
         for (int i = 1; i <= sousuu; i++) {
             if (oc.senbun_kousa_hantei(get(i), s0, 0.00001, 0.00001) == 1) {
                 return 1;
@@ -5970,7 +5970,7 @@ public class Orisensyuugou {
 
 
     // ---------------------------
-    public int TL_koisa_ari_nasi(Senbun s0) {//s0とT字またはL字で交差する折線があれば1、なければ0を返す
+    public int TL_koisa_ari_nasi(Line s0) {//s0とT字またはL字で交差する折線があれば1、なければ0を返す
         for (int i = 1; i <= sousuu; i++) {
             int i_senbun_kousa_hantei = oc.senbun_kousa_hantei(get(i), s0, 0.00001, 0.00001);
             if (i_senbun_kousa_hantei == 21) {
@@ -6010,7 +6010,7 @@ public class Orisensyuugou {
 
         for (int i = 1; i <= sousuu; i++) {
             i_kono_orisen_wo_kaeru = 0;
-            Senbun s;
+            Line s;
             s = sen(i);
             //線分s0の全部が凸多角形の外部（境界線は内部とみなさない）に存在するとき0、
             //線分s0が凸多角形の外部と境界線の両方に渡って存在するとき1、
@@ -6047,7 +6047,7 @@ public class Orisensyuugou {
     }
 
     //-------------------------------------------------------------
-    public void select_lX(Senbun s_step1, String Dousa_mode) {
+    public void select_lX(Line s_step1, String Dousa_mode) {
         //select_lX,unselect_lX
         //"lX" lXは小文字のエルと大文字のエックス。Senbun s_step1と重複する部分のある線分やX交差する線分を対象にするモード。
 
@@ -6055,7 +6055,7 @@ public class Orisensyuugou {
 
         for (int i = 1; i <= sousuu; i++) {
             i_kono_orisen_wo_kaeru = 0;
-            Senbun s;
+            Line s;
             s = sen(i);
 
             if (oc.Senbun_kasanari_hantei(s, s_step1) == 1) {

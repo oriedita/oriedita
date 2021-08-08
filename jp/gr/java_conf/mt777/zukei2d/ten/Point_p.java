@@ -76,7 +76,7 @@ public class Ten {//点の座標や方向ベクトルなどをあらわすとき
 
 //==========================================================
 
-public class Ten_p extends Ten {//Ten_pはTenに選択状態などの機能追加したもので、オリヒメver.3.037から追加。展開図職人の持つ点集合で使う。
+public class Point_p extends Point {//Ten_pはTenに選択状態などの機能追加したもので、オリヒメver.3.037から追加。展開図職人の持つ点集合で使う。
 
     byte i_sentaku = 0;//選択状態
 

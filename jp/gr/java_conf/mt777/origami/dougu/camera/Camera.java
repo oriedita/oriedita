@@ -129,20 +129,20 @@ public class Camera {//実際の座標と、表示座標の仲立ち
 	public double get_hyouji_ichi_x(){return hyouji_ichi_x;}
 	public double get_hyouji_ichi_y(){return hyouji_ichi_y;}
 
-	public void set_camera_ichi(Ten p){
+	public void set_camera_ichi(Point p){
 		set_camera_ichi_x(p.getx());
 		set_camera_ichi_y(p.gety());
 	}
 
-	public void set_hyouji_ichi(Ten p){
+	public void set_hyouji_ichi(Point p){
 		set_hyouji_ichi_x(p.getx());
 		set_hyouji_ichi_y(p.gety());
 	}
 
 
 
-	public Ten get_camera_ichi(){
-		Ten t_ichi=new Ten();
+	public Point get_camera_ichi(){
+		Point t_ichi=new Point();
 		t_ichi.setx(camera_ichi_x);
 		t_ichi.sety(camera_ichi_y);
 		return t_ichi;
@@ -150,8 +150,8 @@ public class Camera {//実際の座標と、表示座標の仲立ち
 
 
 
-	public Ten object2TV(Ten t_ob){
-		Ten t_tv =new Ten();
+	public Point object2TV(Point t_ob){
+		Point t_tv =new Point();
 		double x1,y1;	
 		double x2,y2;
 		x1=t_ob.getx()-camera_ichi_x;
@@ -174,8 +174,8 @@ public class Camera {//実際の座標と、表示座標の仲立ち
 
 
 
-	public Senbun object2TV(Senbun s_ob){
-		Senbun s_tv =new Senbun();
+	public Line object2TV(Line s_ob){
+		Line s_tv =new Line();
 		s_tv.set(s_ob);
 		s_tv.seta(object2TV(s_ob.geta()));
 		s_tv.setb(object2TV(s_ob.getb()));
@@ -183,8 +183,8 @@ public class Camera {//実際の座標と、表示座標の仲立ち
 	}
 
 
-	public Ten TV2object(Ten t_tv){
-		Ten t_ob =new Ten();
+	public Point TV2object(Point t_tv){
+		Point t_ob =new Point();
 		double x1,y1;	
 		double x2,y2;
 		x1=t_tv.getx();
@@ -207,21 +207,21 @@ public class Camera {//実際の座標と、表示座標の仲立ち
 		return t_ob;
 	}
 
-	public Senbun TV2object(Senbun s_tv){
-		Senbun s_ob =new Senbun();
+	public Line TV2object(Line s_tv){
+		Line s_ob =new Line();
 		s_ob.set(s_tv);
 		s_ob.seta(TV2object(s_tv.geta()));
 		s_ob.setb(TV2object(s_tv.getb()));
 		return s_ob;
 	}
 
-	public void hyouji_ichi_idou(Ten tuika){
+	public void hyouji_ichi_idou(Point tuika){
 		hyouji_ichi_x=hyouji_ichi_x+tuika.getx();
 		hyouji_ichi_y=hyouji_ichi_y+tuika.gety();
 	}
 
 	//TV上の表示は変化しないようにして、TV上の座標Ten　P　に対応する、被写体の位置にcamera位置をあわせる。
-	public void camera_ichi_sitei_from_TV(Ten p){
+	public void camera_ichi_sitei_from_TV(Point p){
 		
 		set_camera_ichi(TV2object(p));
 		set_hyouji_ichi(p);

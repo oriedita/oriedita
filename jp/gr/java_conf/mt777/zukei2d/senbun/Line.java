@@ -2,14 +2,14 @@ package jp.gr.java_conf.mt777.zukei2d.senbun;
 
 import java.awt.*;
 
-import jp.gr.java_conf.mt777.zukei2d.ten.*;
+import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 //import  jp.gr.java_conf.mt777.zukei2d.*;
 import java.math.BigDecimal;
 
-public class Senbun {
+public class Line {
     //OritaCalc oc =new OritaCalc();//各種計算用の関数を使うためのクラスのインスタンス化
-    private final Ten a = new Ten(); //枝のa点
-    private final Ten b = new Ten(); //枝のb
+    private final Point a = new Point(); //枝のa点
+    private final Point b = new Point(); //枝のb
     int iactive;//0は活性なし。1はaが活性。2はbが活性。3はaもbも活性。
     int icol;//色の指定　0=black,1=blue,2=red.
 
@@ -25,7 +25,7 @@ public class Senbun {
     int i_min_y;//端点のy座標の切り捨て時の小さいほう
 
     //コンストラクタ
-    public Senbun() {
+    public Line() {
         a.set(0.0, 0.0);
         b.set(0.0, 0.0);
         iactive = 0;
@@ -37,7 +37,7 @@ public class Senbun {
         i_min_y = 0;
     }
 
-    public Senbun(Ten t1, Ten t2) {
+    public Line(Point t1, Point t2) {
         a.set(t1);
         b.set(t2);
         iactive = 0;
@@ -49,7 +49,7 @@ public class Senbun {
         i_min_y = 0;
     }
 
-    public Senbun(Ten t1, Ten t2, int icollor) {
+    public Line(Point t1, Point t2, int icollor) {
         a.set(t1);
         b.set(t2);
         iactive = 0;
@@ -61,7 +61,7 @@ public class Senbun {
         i_min_y = 0;
     }
 
-    public Senbun(double i1, double i2, double i3, double i4) {
+    public Line(double i1, double i2, double i3, double i4) {
         a.set(i1, i2);
         b.set(i3, i4);
         iactive = 0;
@@ -105,7 +105,7 @@ public class Senbun {
 
 
     //-------------------------------------------
-    public void set(Senbun s) {
+    public void set(Line s) {
         a.set(s.geta());
         b.set(s.getb());
         iactive = s.getiactive();
@@ -146,11 +146,11 @@ public class Senbun {
     }
 
     //----------
-    public void seta(Ten p) {
+    public void seta(Point p) {
         set(p.getx(), p.gety(), b.getx(), b.gety());
     }
 
-    public void setb(Ten p) {
+    public void setb(Point p) {
         set(a.getx(), a.gety(), p.getx(), p.gety());
     }
 
@@ -159,7 +159,7 @@ public class Senbun {
 
     //----------
     //活性化された点の座標をpにする   !!!!!!!!!!!!この関数は間違えたとき、気づきにくいので危険、できれば別名に変える20170507
-    public void set(Ten p) {
+    public void set(Point p) {
         if (iactive == 1) {
             seta(p);
         }
@@ -172,18 +172,18 @@ public class Senbun {
 
 
     //---------
-    public void set(Ten p, Ten q, int ic, int ia) {
+    public void set(Point p, Point q, int ic, int ia) {
         set(p, q);
         icol = ic;
         iactive = ia;
     }
 
-    public void set(Ten p, Ten q, int ic) {
+    public void set(Point p, Point q, int ic) {
         set(p, q);
         icol = ic;
     }
 
-    public void set(Ten p, Ten q) {
+    public void set(Point p, Point q) {
         set(p.getx(), p.gety(), q.getx(), q.gety());
     }
     //public void set(Ten p,Ten q              ){	a.set(p);  b.set(q);    			}
@@ -233,7 +233,7 @@ public class Senbun {
     }
 
     //この線分が、ある点と近いかどうかで活性化する。
-    public void kasseika(Ten p, double r) {
+    public void kasseika(Point p, double r) {
         iactive = 0;
         if (p.kyori2jyou(a) <= r * r) {
             iactive = 1;
@@ -253,32 +253,32 @@ public class Senbun {
 
     //両端点a,bの座標を交換
     public void a_b_koukan() {
-        Ten t_temp = new Ten(a);
+        Point t_temp = new Point(a);
         a.set(b);
         b.set(t_temp);
     }
 
 
-    public Ten geta() {
-        return new Ten(a.getx(), a.gety());
+    public Point geta() {
+        return new Point(a.getx(), a.gety());
     }
 
-    public Ten getb() {
-        return new Ten(b.getx(), b.gety());
+    public Point getb() {
+        return new Point(b.getx(), b.gety());
     }
 
 
 //	public Ten geta(){return a;}
 //	public Ten getb(){return b;}
 
-    public Ten get_tikai_hasi(Ten p) {//点Pと近いほうの端点を返す
+    public Point get_tikai_hasi(Point p) {//点Pと近いほうの端点を返す
         if (p.kyori2jyou(a) <= p.kyori2jyou(b)) {
             return a;
         }
         return b;
     }
 
-    public Ten get_tooi_hasi(Ten p) {//点Pと遠いいほうの端点を返す
+    public Point get_tooi_hasi(Point p) {//点Pと遠いいほうの端点を返す
         if (p.kyori2jyou(a) >= p.kyori2jyou(b)) {
             return a;
         }

@@ -20,17 +20,17 @@ public class File_keisiki_henkan {
 		Double Dd = 0.0;
 		Integer Ii    = 0;
 		
-		ArrayList<Ten> tL = new ArrayList<>();
+		ArrayList<Point> tL = new ArrayList<>();
 				
-		tL.add(new Ten());
+		tL.add(new Point());
 		
-                Ten tn=new Ten();
+                Point tn=new Point();
 		int Tenmax=0;
 
-		ArrayList<Bou> bL = new ArrayList<>();
-                bL.add(new Bou());
+		ArrayList<Stick> bL = new ArrayList<>();
+                bL.add(new Stick());
 
-		Bou bu=new Bou();
+		Stick bu=new Stick();
 		int Boumax=0;
 		
 		ArrayList<Integer> itempL = new ArrayList<>();
@@ -67,7 +67,7 @@ public class File_keisiki_henkan {
 				       if(d2<ymin){ymin=d2;}
 				       
 					Tenmax=Tenmax+1;
-				       tL.add( new Ten(d1,d2));
+				       tL.add( new Point(d1,d2));
 				}
 				if (str.equals("f")){
 					itempL.clear();itempL.add(0);
@@ -82,12 +82,12 @@ public class File_keisiki_henkan {
 						Integer Im1_itempL= itempL.get(i-1);
 						for(int j=1;j<=Boumax;j++){
 							bu= bL.get(j);
-							if((bu.getmae()== Im1_itempL)&&(bu.getato()== I_itempL)){iflg=iflg+1;}
-							if((bu.getmae()== I_itempL)&&(bu.getato()== Im1_itempL)){iflg=iflg+1;}
+							if((bu.getBegin()== Im1_itempL)&&(bu.getEnd()== I_itempL)){iflg=iflg+1;}
+							if((bu.getBegin()== I_itempL)&&(bu.getEnd()== Im1_itempL)){iflg=iflg+1;}
 						}
 						if(iflg==0){
 							Boumax=Boumax+1;
-							bL.add(new Bou(Im1_itempL, I_itempL,0));
+							bL.add(new Stick(Im1_itempL, I_itempL,0));
 						}
 					}  
 				}
@@ -99,8 +99,8 @@ public class File_keisiki_henkan {
 					id= Integer.parseInt(tk.nextToken());
 					for(int i=1;i<=Boumax;i++){
 						bu= bL.get(i);
-						if((bu.getmae()==ia)&&(bu.getato()==ib)){bu.setcolor(ic);}
-						if((bu.getmae()==ib)&&(bu.getato()==ia)){bu.setcolor(ic);}
+						if((bu.getBegin()==ia)&&(bu.getEnd()==ib)){bu.setColor(ic);}
+						if((bu.getBegin()==ib)&&(bu.getEnd()==ia)){bu.setColor(ic);}
 					}
 				}
 			} 
@@ -118,20 +118,20 @@ public class File_keisiki_henkan {
 			//System.out.println("番号,"+str.valueOf(i));
                         bu= bL.get(i);
 			
-			int icol; icol= bu.getcolor()-1;
-			bu.setcolor(icol);
-			if(bu.getcolor()==1){icol=2;}
-			if(bu.getcolor()==2){icol=1;}
+			int icol; icol= bu.getColor()-1;
+			bu.setColor(icol);
+			if(bu.getColor()==1){icol=2;}
+			if(bu.getColor()==2){icol=1;}
 
-			if(icol!=0){bu.setcolor(icol);}
+			if(icol!=0){bu.setColor(icol);}
 
                         MemR.addGyou("色,"  + icol);
 			
-			tn= tL.get(bu.getmae());
+			tn= tL.get(bu.getBegin());
 			d1=tn.getx();
 			d2=tn.gety();
 			
-			tn= tL.get(bu.getato());
+			tn= tL.get(bu.getEnd());
 			d3=tn.getx();
 			d4=tn.gety();
 			

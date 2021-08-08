@@ -134,7 +134,7 @@ public class Smen {//このクラスは展開図をを折り畳み推定して�
     // ここは　class Smen の中だよ。
 
     //現在の順列状態から開始して、可能な重なりかたとなる順列を探す
-    public int kanou_kasanari_sagasi(Jyougehyou jg) {//これはjgを変えないはず。
+    public int kanou_kasanari_sagasi(ClassTable jg) {//これはjgを変えないはず。
         int mk, ijh;
         mk = 0;
         ijh = 1;//ijhの初期値は0以外ならなんでもいい。
@@ -185,7 +185,7 @@ public class Smen {//このクラスは展開図をを折り畳み推定して�
 
 
     //現在の上下表をもとに、上から数えてi番めの面のid番号を格納する。
-    public void set_Menid2uekara_kazoeta_iti(Jyougehyou jg) {
+    public void set_Menid2uekara_kazoeta_iti(ClassTable jg) {
         for (int i = 1; i <= Menidsuu; i++) {
             Menid2uekara_kazoeta_iti[i] = 0;
             for (int j = 1; j <= Menidsuu; j++) {
@@ -211,7 +211,7 @@ public class Smen {//このクラスは展開図をを折り畳み推定して�
     }
 
     //現在の上下表をもとに、上から数えてi番めの面のid番号を返す。上下表は完成したものを使わないと結果がおかしくなる恐れ有り。
-    private int get_uekara_kazoeta_itino_Menid(int iban, Jyougehyou jg) {
+    private int get_uekara_kazoeta_itino_Menid(int iban, ClassTable jg) {
         set_Menid2uekara_kazoeta_iti(jg);
         return Menid[uekara_kazoeta_iti2Menid[iban]];
      
@@ -245,7 +245,7 @@ public class Smen {//このクラスは展開図をを折り畳み推定して�
     //一番上の面からチェックしていって何桁目で折り重なりに矛盾が生じるかを求める。
     //この際jgは変化しない。なおここでは隣接面の境界線の突き抜け条件はチェックしていない。
     //このSmenでは折り重なりに矛盾がない場合は1000を返す。
-    private int kasanari_mujyun_keta_motome(Jyougehyou jg) {
+    private int kasanari_mujyun_keta_motome(ClassTable jg) {
         for (int i = 1; i <= Menidsuu - 1; i++) {
             for (int j = i + 1; j <= Menidsuu; j++) {
                 if (jg.get(Menid[getJyunretu(i)], Menid[getJyunretu(j)]) == 0) {
@@ -291,7 +291,7 @@ public class Smen {//このクラスは展開図をを折り畳み推定して�
 
     //
 
-    private int tukinuke_mujyun_keta_motome(Jyougehyou jg) {
+    private int tukinuke_mujyun_keta_motome(ClassTable jg) {
         int ketaMim = 1000;
         int tmk = 1000;
         for (int i = 1; i <= jg.getTouka_jyoukensuu(); i++) {
@@ -357,7 +357,7 @@ public class Smen {//このクラスは展開図をを折り畳み推定して�
 
     //
 
-    private int u_tukinuke_mujyun_keta_motome(Jyougehyou jg) {
+    private int u_tukinuke_mujyun_keta_motome(ClassTable jg) {
         int ketaMim = 1000;
         int tmk = 1000;
         for (int i = 1; i <= jg.get_uTouka_jyoukensuu(); i++) {
@@ -381,7 +381,7 @@ public class Smen {//このクラスは展開図をを折り畳み推定して�
 
     //一番上の面からチェックしていって何番目で矛盾が生じるかを求める。
     //この際jgは変化しない。このSmenでは矛盾がない場合は1000を返す。
-    private int mujyun_keta_motome(Jyougehyou jg) {
+    private int mujyun_keta_motome(ClassTable jg) {
         int min1, min2, min3;
         min1 = kasanari_mujyun_keta_motome(jg);
         min2 = tukinuke_mujyun_keta_motome(jg);
@@ -401,7 +401,7 @@ public class Smen {//このクラスは展開図をを折り畳み推定して�
 
 
     //上下表にSmenの面の重なりによる情報を入れる
-    public void jg_ni_Smen_wo_nyuuryoku(Jyougehyou jg) {
+    public void jg_ni_Smen_wo_nyuuryoku(ClassTable jg) {
 
         for (int i = 1; i <= Menidsuu; i++) {
             for (int j = 1; j <= i - 1; j++) {
@@ -416,7 +416,7 @@ public class Smen {//このクラスは展開図をを折り畳み推定して�
 
 
     //上下表にSmenの面の重なりによる情報を入れる。これは初期の計算準備の際にSmenの有効数を求めるのに使う。
-    public void jg_ni_Smen_no_tantoubasyo_wo_nyuuryoku(Jyougehyou jg) {
+    public void jg_ni_Smen_no_tantoubasyo_wo_nyuuryoku(ClassTable jg) {
 
         for (int i = 1; i <= Menidsuu; i++) {
             for (int j = 1; j <= i - 1; j++) {
@@ -434,7 +434,7 @@ public class Smen {//このクラスは展開図をを折り畳み推定して�
     }
 
     //上下表にSmenによって何個の新情報が入るかを返す。
-    public int sinki_jyouhou_suu(Jyougehyou jg) {
+    public int sinki_jyouhou_suu(ClassTable jg) {
         int inew = 0;
         for (int i = 1; i <= Menidsuu; i++) {
             for (int j = 1; j <= i - 1; j++) {
@@ -461,7 +461,7 @@ public class Smen {//このクラスは展開図をを折り畳み推定して�
     //jg[i][j]が-100なら、面iとjは重なるところがない。
 
 
-    public void setAnnaisyo(Jyougehyou jg) { //重複順列発生機の案内書をSmenで準備してやる。
+    public void setAnnaisyo(ClassTable jg) { //重複順列発生機の案内書をSmenで準備してやる。
         int[] ueMenid = new int[Menidsuu + 1];
         int[] ueMenidFlg = new int[Menidsuu + 1];//ueMenid[]が有効なら1、無効なら0
 
@@ -502,7 +502,7 @@ public class Smen {//このクラスは展開図をを折り畳み推定して�
 
     //-----------------------------------------------------------
     //上下表による、このSmenに含まれる面同士のペアの重なり分類が未定の統計をとる
-    public int kasanari_bunryi_mitei(Jyougehyou jg) {
+    public int kasanari_bunryi_mitei(ClassTable jg) {
         int iret = 0;
         for (int i = 1; i <= Menidsuu - 1; i++) {
             for (int j = i + 1; j <= Menidsuu; j++) {
@@ -516,7 +516,7 @@ public class Smen {//このクラスは展開図をを折り畳み推定して�
 
     //-----------------------------------------------------------
     //上下表による、このSmenに含まれる面同士のペアの重なり分類が決定済みの統計をとる
-    public int kasanari_bunryi_ketteizumi(Jyougehyou jg) {
+    public int kasanari_bunryi_ketteizumi(ClassTable jg) {
         int iret = 0;
         for (int i = 1; i <= Menidsuu - 1; i++) {
             for (int j = i + 1; j <= Menidsuu; j++) {

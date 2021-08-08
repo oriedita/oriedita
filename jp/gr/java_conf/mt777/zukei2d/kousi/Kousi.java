@@ -4,9 +4,9 @@ import jp.gr.java_conf.mt777.origami.dougu.camera.*;
 
 import java.awt.*;
 
-import jp.gr.java_conf.mt777.zukei2d.ten.*;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
+import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
@@ -165,11 +165,11 @@ public class Kousi {
         d_kousi_bx = d_kousi_haba * d_kousi_b_nagasa * Math.cos(d_rad);
         d_kousi_by = d_kousi_haba * d_kousi_b_nagasa * Math.sin(d_rad);
 
-        taikakusen_max = oc.kyori(new Ten(0.0, 0.0), new Ten(d_kousi_ax + d_kousi_bx, d_kousi_ay + d_kousi_by));
-        taikakusen_min = oc.kyori(new Ten(d_kousi_ax, d_kousi_ay), new Ten(d_kousi_bx, d_kousi_by));
+        taikakusen_max = oc.kyori(new Point(0.0, 0.0), new Point(d_kousi_ax + d_kousi_bx, d_kousi_ay + d_kousi_by));
+        taikakusen_min = oc.kyori(new Point(d_kousi_ax, d_kousi_ay), new Point(d_kousi_bx, d_kousi_by));
         if (taikakusen_max < taikakusen_min) {
-            taikakusen_min = oc.kyori(new Ten(0.0, 0.0), new Ten(d_kousi_ax + d_kousi_bx, d_kousi_ay + d_kousi_by));
-            taikakusen_max = oc.kyori(new Ten(d_kousi_ax, d_kousi_ay), new Ten(d_kousi_bx, d_kousi_by));
+            taikakusen_min = oc.kyori(new Point(0.0, 0.0), new Point(d_kousi_ax + d_kousi_bx, d_kousi_ay + d_kousi_by));
+            taikakusen_max = oc.kyori(new Point(d_kousi_ax, d_kousi_ay), new Point(d_kousi_bx, d_kousi_by));
         }
 
 
@@ -230,7 +230,7 @@ public class Kousi {
     }
 //------
 
-    public Ten get_sisuu(Ten t0) {//obj系座標のTenから、格子の指数を得る
+    public Point get_sisuu(Point t0) {//obj系座標のTenから、格子の指数を得る
         //行列 [d_kousi_ax, d_kousi_bx]によって[1]は格子ベクトルaに変換され、[1]は格子ベクトルbに変換される。
         //     [d_kousi_ay, d_kousi_by]        [0]　　　　　　　 　　　　　　[0]
         //この逆行列によってobj系座標のTenは格子の指数に変換される。
@@ -255,19 +255,19 @@ public class Kousi {
         double sisuu_x = gax * kx + gbx * ky;
         double sisuu_y = gay * kx + gby * ky;
 
-        return new Ten(sisuu_x, sisuu_y);
+        return new Point(sisuu_x, sisuu_y);
 
     }
 
     // ----------------------------
-    public int get_a_sisuu_min(Ten p_a, Ten p_b, Ten p_c, Ten p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より小さい整数の指数を得る。
-        Ten p_a_sisuu = new Ten();
+    public int get_a_sisuu_min(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より小さい整数の指数を得る。
+        Point p_a_sisuu = new Point();
         p_a_sisuu.set(get_sisuu(p_a));//p_aの格子系の指数
-        Ten p_b_sisuu = new Ten();
+        Point p_b_sisuu = new Point();
         p_b_sisuu.set(get_sisuu(p_b));//p_bの格子系の指数
-        Ten p_c_sisuu = new Ten();
+        Point p_c_sisuu = new Point();
         p_c_sisuu.set(get_sisuu(p_c));//p_cの格子系の指数
-        Ten p_d_sisuu = new Ten();
+        Point p_d_sisuu = new Point();
         p_d_sisuu.set(get_sisuu(p_d));//p_dの格子系の指数
 
         double a_sisuu_max = p_a_sisuu.getx();
@@ -320,14 +320,14 @@ public class Kousi {
     }
 
     // ----------------------------
-    public int get_a_sisuu_max(Ten p_a, Ten p_b, Ten p_c, Ten p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より大きい整数の指数を得る。
-        Ten p_a_sisuu = new Ten();
+    public int get_a_sisuu_max(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より大きい整数の指数を得る。
+        Point p_a_sisuu = new Point();
         p_a_sisuu.set(get_sisuu(p_a));//p_aの格子系の指数
-        Ten p_b_sisuu = new Ten();
+        Point p_b_sisuu = new Point();
         p_b_sisuu.set(get_sisuu(p_b));//p_bの格子系の指数
-        Ten p_c_sisuu = new Ten();
+        Point p_c_sisuu = new Point();
         p_c_sisuu.set(get_sisuu(p_c));//p_cの格子系の指数
-        Ten p_d_sisuu = new Ten();
+        Point p_d_sisuu = new Point();
         p_d_sisuu.set(get_sisuu(p_d));//p_dの格子系の指数
 
         double a_sisuu_max = p_a_sisuu.getx();
@@ -380,14 +380,14 @@ public class Kousi {
     }
 
     // ----------------------------
-    public int get_b_sisuu_min(Ten p_a, Ten p_b, Ten p_c, Ten p_d) {//obj座標系の4つの点を指定し、各点のbベクトルの指数より小さい整数の指数を得る。
-        Ten p_a_sisuu = new Ten();
+    public int get_b_sisuu_min(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のbベクトルの指数より小さい整数の指数を得る。
+        Point p_a_sisuu = new Point();
         p_a_sisuu.set(get_sisuu(p_a));//p_aの格子系の指数
-        Ten p_b_sisuu = new Ten();
+        Point p_b_sisuu = new Point();
         p_b_sisuu.set(get_sisuu(p_b));//p_bの格子系の指数
-        Ten p_c_sisuu = new Ten();
+        Point p_c_sisuu = new Point();
         p_c_sisuu.set(get_sisuu(p_c));//p_cの格子系の指数
-        Ten p_d_sisuu = new Ten();
+        Point p_d_sisuu = new Point();
         p_d_sisuu.set(get_sisuu(p_d));//p_dの格子系の指数
 
         double a_sisuu_max = p_a_sisuu.getx();
@@ -440,14 +440,14 @@ public class Kousi {
     }
 
     // ----------------------------
-    public int get_b_sisuu_max(Ten p_a, Ten p_b, Ten p_c, Ten p_d) {//obj座標系の4つの点を指定し、各点のbベクトルの指数より大きい整数の指数を得る。
-        Ten p_a_sisuu = new Ten();
+    public int get_b_sisuu_max(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のbベクトルの指数より大きい整数の指数を得る。
+        Point p_a_sisuu = new Point();
         p_a_sisuu.set(get_sisuu(p_a));//p_aの格子系の指数
-        Ten p_b_sisuu = new Ten();
+        Point p_b_sisuu = new Point();
         p_b_sisuu.set(get_sisuu(p_b));//p_bの格子系の指数
-        Ten p_c_sisuu = new Ten();
+        Point p_c_sisuu = new Point();
         p_c_sisuu.set(get_sisuu(p_c));//p_cの格子系の指数
-        Ten p_d_sisuu = new Ten();
+        Point p_d_sisuu = new Point();
         p_d_sisuu.set(get_sisuu(p_d));//p_dの格子系の指数
 
         double a_sisuu_max = p_a_sisuu.getx();
@@ -522,10 +522,10 @@ public class Kousi {
         //入力規定が1か2（正方格子）の場合の格子線の描画
         Graphics2D g2 = (Graphics2D) g;
 
-        Senbun s_tv = new Senbun();
+        Line s_tv = new Line();
         //Ten a =new Ten(); Ten b =new Ten();
 
-        Senbun s_ob = new Senbun();
+        Line s_ob = new Line();
 
 
         //格子線の描画
@@ -534,22 +534,22 @@ public class Kousi {
 
 
         if (jyoutai() != 0) {
-            Ten p0_a = new Ten();
+            Point p0_a = new Point();
             p0_a.set(0, 0);//画面の左上カドのTV系座標
-            Ten p0_b = new Ten();
+            Point p0_b = new Point();
             p0_b.set(0, p0y_max);//画面の左下カドのTV系座標
-            Ten p0_c = new Ten();
+            Point p0_c = new Point();
             p0_c.set(p0x_max, p0y_max);//画面の右下カドのTV系座標
-            Ten p0_d = new Ten();
+            Point p0_d = new Point();
             p0_d.set(p0x_max, 0);//画面の右上カドのTV系座標
 
-            Ten p_a = new Ten();
+            Point p_a = new Point();
             p_a.set(camera.TV2object(p0_a));//画面の左上カドのobj系座標
-            Ten p_b = new Ten();
+            Point p_b = new Point();
             p_b.set(camera.TV2object(p0_b));//画面の左下カドのobj系座標
-            Ten p_c = new Ten();
+            Point p_c = new Point();
             p_c.set(camera.TV2object(p0_c));//画面の右下カドのobj系座標
-            Ten p_d = new Ten();
+            Point p_d = new Point();
             p_d.set(camera.TV2object(p0_d));//画面の右上カドのobj系座標
 
 
@@ -767,9 +767,9 @@ if(p_d.gety()<p_y_min){p_y_min=p_d.gety();}if(p_y_min>-200.0-1.0){p_y_min=-200.0
 
     // --------------------------
 
-    public Ten moyori_kousi_ten(Ten t0) {
+    public Point moyori_kousi_ten(Point t0) {
 
-        Ten t2 = new Ten(); //格子点
+        Point t2 = new Point(); //格子点
         double kousi_x;
         double kousi_y;
 
@@ -783,10 +783,10 @@ if(p_d.gety()<p_y_min){p_y_min=p_d.gety();}if(p_y_min>-200.0-1.0){p_y_min=-200.0
             //用紙枠の中の格子点との近さを検討
             if (jyoutai() == 1) {
 
-                Ten t_1 = new Ten(t0.getx() - taikakusen_max, t0.gety() - taikakusen_max);
-                Ten t_2 = new Ten(t0.getx() - taikakusen_max, t0.gety() + taikakusen_max);
-                Ten t_3 = new Ten(t0.getx() + taikakusen_max, t0.gety() + taikakusen_max);
-                Ten t_4 = new Ten(t0.getx() + taikakusen_max, t0.gety() - taikakusen_max);
+                Point t_1 = new Point(t0.getx() - taikakusen_max, t0.gety() - taikakusen_max);
+                Point t_2 = new Point(t0.getx() - taikakusen_max, t0.gety() + taikakusen_max);
+                Point t_3 = new Point(t0.getx() + taikakusen_max, t0.gety() + taikakusen_max);
+                Point t_4 = new Point(t0.getx() + taikakusen_max, t0.gety() - taikakusen_max);
 
                 int kousi_a_max = get_a_sisuu_max(t_1, t_2, t_3, t_4);
                 int kousi_a_min = get_a_sisuu_min(t_1, t_2, t_3, t_4);
@@ -798,7 +798,7 @@ if(p_d.gety()<p_y_min){p_y_min=p_d.gety();}if(p_y_min>-200.0-1.0){p_y_min=-200.0
                 for (int i = kousi_a_min; i <= kousi_a_max; i++) {
                     for (int j = kousi_b_min; j <= kousi_b_max; j++) {
 
-                        Ten t_tmp = new Ten(okx0 + d_kousi_ax * i + d_kousi_bx * j, oky0 + d_kousi_ay * i + d_kousi_by * j);
+                        Point t_tmp = new Point(okx0 + d_kousi_ax * i + d_kousi_bx * j, oky0 + d_kousi_ay * i + d_kousi_by * j);
                         if (((-200.000001 <= t_tmp.getx()) && (t_tmp.getx() <= 200.000001)) && ((-200.000001 <= t_tmp.gety()) && (t_tmp.gety() <= 200.000001))) {
 
                             if (t0.kyori(t_tmp) <= kyori_min) {
@@ -814,10 +814,10 @@ if(p_d.gety()<p_y_min){p_y_min=p_d.gety();}if(p_y_min>-200.0-1.0){p_y_min=-200.0
             //用紙枠の内外に関係なく格子点との近さを検討
             if (jyoutai() == 2) {
 
-                Ten t_1 = new Ten(t0.getx() - taikakusen_max, t0.gety() - taikakusen_max);
-                Ten t_2 = new Ten(t0.getx() - taikakusen_max, t0.gety() + taikakusen_max);
-                Ten t_3 = new Ten(t0.getx() + taikakusen_max, t0.gety() + taikakusen_max);
-                Ten t_4 = new Ten(t0.getx() + taikakusen_max, t0.gety() - taikakusen_max);
+                Point t_1 = new Point(t0.getx() - taikakusen_max, t0.gety() - taikakusen_max);
+                Point t_2 = new Point(t0.getx() - taikakusen_max, t0.gety() + taikakusen_max);
+                Point t_3 = new Point(t0.getx() + taikakusen_max, t0.gety() + taikakusen_max);
+                Point t_4 = new Point(t0.getx() + taikakusen_max, t0.gety() - taikakusen_max);
 
                 int kousi_a_max = get_a_sisuu_max(t_1, t_2, t_3, t_4);
                 int kousi_a_min = get_a_sisuu_min(t_1, t_2, t_3, t_4);
@@ -828,7 +828,7 @@ if(p_d.gety()<p_y_min){p_y_min=p_d.gety();}if(p_y_min>-200.0-1.0){p_y_min=-200.0
                 double kyori_min = taikakusen_max;
                 for (int i = kousi_a_min; i <= kousi_a_max; i++) {
                     for (int j = kousi_b_min; j <= kousi_b_max; j++) {
-                        Ten t_tmp = new Ten(okx0 + d_kousi_ax * i + d_kousi_bx * j, oky0 + d_kousi_ay * i + d_kousi_by * j);
+                        Point t_tmp = new Point(okx0 + d_kousi_ax * i + d_kousi_bx * j, oky0 + d_kousi_ay * i + d_kousi_by * j);
                         if (t0.kyori(t_tmp) <= kyori_min) {
                             kyori_min = t0.kyori(t_tmp);
                             t2.set(t_tmp);

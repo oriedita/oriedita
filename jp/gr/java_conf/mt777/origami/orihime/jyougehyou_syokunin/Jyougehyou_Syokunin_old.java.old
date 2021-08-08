@@ -123,9 +123,9 @@ public class Jyougehyou_Syokunin {//上下表　折りたたむ前の展開図の面が折りたたん
 
 		//各Smenに含まれる面を記録する。
 		System.out.println("各Smenに含まれる面を記録するため、各Smenの内部点を登録" );
-                Ten Smen_naibuTen[] = new Ten[Smensuu+1];  //<<<<<<<<<<<<<<<<<<<<<<<<<<<オブジェクトの配列を動的に指定      
+                Ten smen_naibuPoint[] = new Ten[Smensuu+1];  //<<<<<<<<<<<<<<<<<<<<<<<<<<<オブジェクトの配列を動的に指定
 		for(int i=1;i<=Smensuu;i++){
-			Smen_naibuTen[i]=Smen_zu.naibuTen_motome(i);
+			smen_naibuPoint[i]=Smen_zu.naibuTen_motome(i);
 		}
 
 		System.out.println("各Smenに含まれる面を記録する" );
@@ -139,7 +139,7 @@ public class Jyougehyou_Syokunin {//上下表　折りたたむ前の展開図の面が折りたたん
 			
 			for(int j=1;j<=jg.getMensuu();j++){
 				//if(otta_Men_zu.naibu(Smen_zu.naibuTen_motome(i),j)==2){
-				if(otta_Men_zu.kantan_naibu(Smen_naibuTen[i],j)==2){
+				if(otta_Men_zu.kantan_naibu(smen_naibuPoint[i],j)==2){
 					s0[i].addMenid(j)	;//ここで面番号jは小さい方が先に追加される。
 				} 
 			}
@@ -155,7 +155,7 @@ public class Jyougehyou_Syokunin {//上下表　折りたたむ前の展開図の面が折りたたん
 			for(int j=1;j<=otta_Men_zu.getMensuu();j++){
 
 				//System.out.print("現在処理中のSmenは、"+i+" / "+Smensuu +"     :::     "   +j+"/"+jg.getMensuu()+"-");
-				if(otta_Men_zu.kantan_naibu(Smen_naibuTen[i],j)==2){
+				if(otta_Men_zu.kantan_naibu(smen_naibuPoint[i],j)==2){
 					//System.out.println(j);
 				       s0addMenidsuu=s0addMenidsuu+1;
 				       s0addMenid[s0addMenidsuu]=j;

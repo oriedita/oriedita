@@ -11,18 +11,18 @@ import java.awt.*;
 //画像出力のため追加終わり
 
 import jp.gr.java_conf.mt777.origami.orihime.*;
-import jp.gr.java_conf.mt777.origami.orihime.kihonshi_syokunin.*;
+import jp.gr.java_conf.mt777.origami.orihime.basicbranch_worker.*;
 import jp.gr.java_conf.mt777.origami.orihime.tenkaizu_syokunin.*;
 import jp.gr.java_conf.mt777.origami.orihime.jyougehyou_syokunin.*;
 
 import jp.gr.java_conf.mt777.origami.dougu.camera.*;
 import jp.gr.java_conf.mt777.origami.dougu.keijiban.*;
-import jp.gr.java_conf.mt777.origami.dougu.senbunsyuugou.*;
+import jp.gr.java_conf.mt777.origami.dougu.linestore.*;
 import jp.gr.java_conf.mt777.kiroku.memo.*;
 
 import jp.gr.java_conf.mt777.kiroku.moji_sousa.*;
-import jp.gr.java_conf.mt777.zukei2d.ten.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
+import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
 
 // -------------------------------------------------------------------------------------
@@ -35,26 +35,21 @@ public class Oriagari_Zu {
 
     App orihime_app;
 
-    OritaCalc oc = new OritaCalc();
-    Moji_sousa ms = new Moji_sousa(); //文字列操作用の関数を集めたクラス
-
     double r = 3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
 
 
     public double d_oriagarizu_syukusyaku_keisuu = 1.0;//折り上がり図の縮尺係数
     public double d_oriagarizu_kaiten_hosei = 0.0;//折り上がり図の回転表示角度の補正角度
 
-    public Kihonshi_Syokunin ks2 = new Kihonshi_Syokunin(r);    //基本枝職人。ts2の持つ点集合をts3に渡す前に、
+    public BasicBranch_Worker ks2 = new BasicBranch_Worker(r);    //基本枝職人。ts2の持つ点集合をts3に渡す前に、
     //ts2の持つ点集合は棒が重なっていたりするかもしれないので、
     //いったんks2に渡して線分集合として整理する。
 
-    public Tenkaizu_Syokunin ts1 = new Tenkaizu_Syokunin(r);    //展開図職人。入力された線分集合を最初に折って針金状の点集合の折り上がり図を作る
-    public Tenkaizu_Syokunin ts2 = new Tenkaizu_Syokunin(r);    //展開図職人。ts1の作った針金状の点集合の折り上がり図を保持し、線分集合にするなどの働きをする。
-    public Tenkaizu_Syokunin ts3 = new Tenkaizu_Syokunin(r);    //展開図職人。ts1の作った針金状の点集合を整理し。新たに面を認識するなどの働きを持つ。
+    public CreasePattern_Worker ts1 = new CreasePattern_Worker(r);    //展開図職人。入力された線分集合を最初に折って針金状の点集合の折り上がり図を作る
+    public CreasePattern_Worker ts2 = new CreasePattern_Worker(r);    //展開図職人。ts1の作った針金状の点集合の折り上がり図を保持し、線分集合にするなどの働きをする。
+    public CreasePattern_Worker ts3 = new CreasePattern_Worker(r);    //展開図職人。ts1の作った針金状の点集合を整理し。新たに面を認識するなどの働きを持つ。
 
-    public Jyougehyou_Syokunin js;
-    //public Jyougehyou_Syokunin js      = new Jyougehyou_Syokunin();
-    //public Jyougehyou_Syokunin(ap ap0){ orihime_ap=ap0;    reset();	}    //コンストラクタ
+    public Jyougehyou_Worker js;
 
     public Camera camera_of_oriagarizu = new Camera();
     public Camera camera_of_oriagari_omote = new Camera();
@@ -68,9 +63,9 @@ public class Oriagari_Zu {
 
     public int hyouji_flg_backup = 4;//表示様式hyouji_flgの一時的バックアップ用
     //int hyouji_flg_backup=4;//表示様式hyouji_flgの一時的バックアップ用
-    public int hyouji_flg = 0;//折り上がり図の表示様式の指定。1なら展開図整理、2なら針金図。3なら透過図。4なら実際に折り紙を折った場合と同じ。
-    public int i_suitei_meirei = 0;//折り畳み推定をどの段階まで行うかの指示
-    public int i_suitei_dankai = 0;//折り畳み推定がどの段階までできたかの表示
+    public int display_flg = 0;//折り上がり図の表示様式の指定。1なら展開図整理、2なら針金図。3なら透過図。4なら実際に折り紙を折った場合と同じ。
+    public int i_estimated_order = 0;//折り畳み推定をどの段階まで行うかの指示
+    public int i_estimated_step = 0;//折り畳み推定がどの段階までできたかの表示
     //public int i_suitei_jissi_umu=0;//int i_suitei_jissi_umuは、折り畳み推定の計算を実施したかどうかを表す。int i_suitei_jissi_umu=0なら実施しない。1なら実施した。
 
 
@@ -95,7 +90,7 @@ public class Oriagari_Zu {
     //0なら可能な重なりかたとなる状態は存在しない。
     //1000なら別の重なり方が見つかった。
 
-    public int betu_sagasi_flg = 0;     //これは「別の重なりを探す」ことが有効の場合は１、無効の場合は０をとる。
+    public int different_search_flg = 0;     //これは「別の重なりを探す」ことが有効の場合は１、無効の場合は０をとる。
     public int hakkenn_sita_kazu = 0;    //折り重なり方で、何通り発見したかを格納する。
 
 
@@ -135,17 +130,14 @@ public class Oriagari_Zu {
 
         orihime_app = app0;
 
-        js = new Jyougehyou_Syokunin(app0);
+        js = new Jyougehyou_Worker(app0);
         keijiban = new Keijiban(app0);
 
         //カメラの設定 ------------------------------------------------------------------
         oriagari_camera_syokika();
         //カメラの設定はここまで----------------------------------------------------
 
-
         text_kekka = "";
-
-
     }
 
     //----------------------------------------------------------
@@ -161,10 +153,10 @@ public class Oriagari_Zu {
         //ts2.setCamera(camera_of_oriagarizu);	//20170615 実行しないようにした（折りあがり図の表示状況を変えないようにするため）
         //js.setCamera(camera_of_oriagarizu);	//20170615 実行しないようにした（折りあがり図の表示状況を変えないようにするため）
 
-        hyouji_flg = 0;//折り上がり図の表示様式の指定。1なら展開図整理、2なら針金図。3なら透過図。5なら実際に折り紙を折った場合と同じ。
-        i_suitei_meirei = 0;//折り畳み推定をどの段階まで行うかの指示
-        i_suitei_dankai = 0;//折り畳み推定がどの段階までできたかの表示
-        betu_sagasi_flg = 0;
+        display_flg = 0;//折り上がり図の表示様式の指定。1なら展開図整理、2なら針金図。3なら透過図。5なら実際に折り紙を折った場合と同じ。
+        i_estimated_order = 0;//折り畳み推定をどの段階まで行うかの指示
+        i_estimated_step = 0;//折り畳み推定がどの段階までできたかの表示
+        different_search_flg = 0;
 
         matome_write_image_jikkoutyuu = false; //複数の折りあがり形の予測の書き出しがが実行中ならtureになる。20170615
 
@@ -260,7 +252,7 @@ public class Oriagari_Zu {
 
         //針金図の表示
         //System.out.println("paint　+++++++++++++++++++++　針金図の表示");
-        if (hyouji_flg == 2) {
+        if (display_flg == 2) {
             ts2.oekaki_with_camera(bufferGraphics, ip4);//折り上がり図の操作はこのts2の針金図を動かす。
         }
 
@@ -270,12 +262,12 @@ public class Oriagari_Zu {
 
             //透過図の表示
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
-            if (hyouji_flg == 3) {        // hyouji_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
+            if (display_flg == 3) {        // hyouji_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
                 js.oekaki_toukazu_with_camera(bufferGraphics, ts1, ts2.get(), ts3.get(), i_toukazu_color, toukazu_toukado);
             }
 
             //折り上がり図の表示************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
-            if (hyouji_flg == 5) {
+            if (display_flg == 5) {
                 js.oekaki_oriagarizu_with_camera(bufferGraphics, ts1, ts2.get(), ts3.get());// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
@@ -293,12 +285,12 @@ public class Oriagari_Zu {
 
             //透過図の表示
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
-            if (hyouji_flg == 3) {        // hyouji_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
+            if (display_flg == 3) {        // hyouji_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
                 js.oekaki_toukazu_with_camera(bufferGraphics, ts1, ts2.get(), ts3.get(), i_toukazu_color, toukazu_toukado);
             }
 
             //折り上がり図の表示************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
-            if (hyouji_flg == 5) {
+            if (display_flg == 5) {
                 js.oekaki_oriagarizu_with_camera(bufferGraphics, ts1, ts2.get(), ts3.get());// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
@@ -310,7 +302,7 @@ public class Oriagari_Zu {
         }
 
         //透過図（折りあがり図表示時に追加する分）
-        if ((ip4 == 3) && (hyouji_flg == 5)) {
+        if ((ip4 == 3) && (display_flg == 5)) {
             // ---------------------------------------------------------------------------------
             js.setCamera(camera_of_touka_omote);
             //透過図の表示
@@ -382,23 +374,14 @@ public class Oriagari_Zu {
 
     //---------------------------------------------------------
 
-    //public Memo getMemo_for_svg_kakidasi(){
-    //	return js.getMemo_for_svg_kakidasi() ;
-    //}
 
-    public Memo getMemo_for_svg_kakidasi() {
+    public Memo getMemo_for_svg_export() {
 
         Memo memo_temp = new Memo();
 
         //針金図のsvg
-        //System.out.println("paint　+++++++++++++++++++++　針金図の表示");
-        if (hyouji_flg == 2) {
-            //ts2.oekaki_with_camera(bufferGraphics,ip4);//折り上がり図の操作はこのts2の針金図を動かす。
-
-//System.out.println("getMemo_hariganezu_for_svg_kakidasi　針金図のsvg");
-            memo_temp.addMemo(js.getMemo_hariganezu_for_svg_kakidasi(ts1, ts2.get(), ts3.get(), 0));//４番目の整数は０なら面の枠のみ、１なら面を塗る
-
-
+        if (display_flg == 2) {
+            memo_temp.addMemo(js.getMemo_wirediagram_for_svg_export(ts1, ts2.get(), ts3.get(), 0));//４番目の整数は０なら面の枠のみ、１なら面を塗る
         }
 
         //折りあがり図（表）のsvg
@@ -407,12 +390,12 @@ public class Oriagari_Zu {
 
             //透過図のsvg
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
-            if (hyouji_flg == 3) {        // hyouji_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                memo_temp.addMemo(js.getMemo_hariganezu_for_svg_kakidasi(ts1, ts2.get(), ts3.get(), 1));
+            if (display_flg == 3) {        // hyouji_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
+                memo_temp.addMemo(js.getMemo_wirediagram_for_svg_export(ts1, ts2.get(), ts3.get(), 1));
             }
 
             //折り上がり図のsvg************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
-            if (hyouji_flg == 5) {
+            if (display_flg == 5) {
                 //js.oekaki_oriagarizu_with_camera(bufferGraphics,ts1,ts2.get(),ts3.get());// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
                 memo_temp.addMemo(js.getMemo_for_svg_with_camera(ts1, ts2.get(), ts3.get()));// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
 
@@ -426,12 +409,12 @@ public class Oriagari_Zu {
 
             //透過図のsvg
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
-            if (hyouji_flg == 3) {        // hyouji_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                memo_temp.addMemo(js.getMemo_hariganezu_for_svg_kakidasi(ts1, ts2.get(), ts3.get(), 1));
+            if (display_flg == 3) {        // hyouji_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
+                memo_temp.addMemo(js.getMemo_wirediagram_for_svg_export(ts1, ts2.get(), ts3.get(), 1));
             }
 
             //折り上がり図のsvg************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
-            if (hyouji_flg == 5) {
+            if (display_flg == 5) {
                 //js.oekaki_oriagarizu_with_camera(bufferGraphics,ts1,ts2.get(),ts3.get());// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
                 memo_temp.addMemo(js.getMemo_for_svg_with_camera(ts1, ts2.get(), ts3.get()));// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
 
@@ -441,7 +424,7 @@ public class Oriagari_Zu {
         }
 
         //透過図（折りあがり図表示時に追加する分）
-        if ((ip4 == 3) && (hyouji_flg == 5)) {
+        if ((ip4 == 3) && (display_flg == 5)) {
             // ---------------------------------------------------------------------------------
             js.setCamera(camera_of_touka_omote);
             //透過図のsvg
@@ -469,7 +452,7 @@ public class Oriagari_Zu {
 
 //-----------------------------------
 
-    void oritatami_suitei_camera_settei(Camera camera_of_orisen_nyuuryokuzu, Senbunsyuugou Ss0) {
+    void oritatami_suitei_camera_settei(Camera camera_of_orisen_nyuuryokuzu, LineStore Ss0) {
 
 
         d_oriagarizu_syukusyaku_keisuu = camera_of_orisen_nyuuryokuzu.get_camera_bairitsu_x();
@@ -481,15 +464,13 @@ public class Oriagari_Zu {
         orihime_app.text30.setCaretPosition(0);
 
 
-        System.out.println("ts1.ten_of_kijyunmen_ob     " + ts1.ten_of_kijyunmen_ob.getx());
-//Ten p =new Ten();p.set(ts1.ten_of_kijyunmen_ob);
-//Ten p0 =new Ten();p0.set(camera_of_orisen_nyuuryokuzu.object2TV(p));
+        System.out.println("ts1.ten_of_kijyunmen_ob     " + ts1.point_of_kijyunmen_ob.getx());
 
-        Ten p0 = new Ten();
-        Ten p = new Ten();
+        Point p0 = new Point();
+        Point p = new Point();
 
 
-        p.set(ts1.ten_of_kijyunmen_ob);
+        p.set(ts1.point_of_kijyunmen_ob);
         p0.set(camera_of_orisen_nyuuryokuzu.object2TV(p));
 
 
@@ -497,9 +478,6 @@ public class Oriagari_Zu {
         double d_camera_ichi_y = p.gety();
         double d_hyouji_ichi_x = p0.getx();
         double d_hyouji_ichi_y = p0.gety();
-        //double d_hyouji_ichi_x=camera_of_orisen_nyuuryokuzu.get_hyouji_ichi_x();
-        //double d_hyouji_ichi_y=camera_of_orisen_nyuuryokuzu.get_hyouji_ichi_y();
-
 
         camera_of_oriagarizu.set_camera(camera_of_orisen_nyuuryokuzu);
         camera_of_oriagarizu.set_camera_ichi_x(d_camera_ichi_x);
@@ -539,22 +517,22 @@ public class Oriagari_Zu {
     }
 
     //-----------------------------------
-    public void oritatami_suitei(Camera camera_of_orisen_nyuuryokuzu, Senbunsyuugou Ss0) {//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public void folding_estimated(Camera camera_of_orisen_nyuuryokuzu, LineStore Ss0) {//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
 
 
-        int i_camera_settei = 0;
+        int i_camera_estimated = 0;
 
 
         //-------------------------------折り上がり図表示用カメラの設定
 
-        if ((i_suitei_dankai == 0) && (i_suitei_meirei <= 5)) {
-            i_camera_settei = 1;
+        if ((i_estimated_step == 0) && (i_estimated_order <= 5)) {
+            i_camera_estimated = 1;
 
 
         }
 
-        if (i_suitei_meirei == 51) {
-            i_suitei_meirei = 5;
+        if (i_estimated_order == 51) {
+            i_estimated_order = 5;
         }
 
 
@@ -564,131 +542,131 @@ public class Oriagari_Zu {
         // suitei = estimated
         // dankai = step
         // meirei = order
-        if ((i_suitei_dankai == 0) && (i_suitei_meirei == 1)) {
+        if ((i_estimated_step == 0) && (i_estimated_order == 1)) {
             estimated_initialize(); // estimated_initialize
-            oritatami_suitei_01(Ss0);
-            i_suitei_dankai = 1;
-            hyouji_flg = 1;
-        } else if ((i_suitei_dankai == 0) && (i_suitei_meirei == 2)) {
+            folding_estimated_01(Ss0);
+            i_estimated_step = 1;
+            display_flg = 1;
+        } else if ((i_estimated_step == 0) && (i_estimated_order == 2)) {
             estimated_initialize();
-            oritatami_suitei_01(Ss0);
-            i_suitei_dankai = 1;
-            hyouji_flg = 1;
-            oritatami_suitei_02();
-            i_suitei_dankai = 2;
-            hyouji_flg = 2;
-        } else if ((i_suitei_dankai == 0) && (i_suitei_meirei == 3)) {
+            folding_estimated_01(Ss0);
+            i_estimated_step = 1;
+            display_flg = 1;
+            folding_estimated_02();
+            i_estimated_step = 2;
+            display_flg = 2;
+        } else if ((i_estimated_step == 0) && (i_estimated_order == 3)) {
             estimated_initialize();
-            oritatami_suitei_01(Ss0);
-            i_suitei_dankai = 1;
-            hyouji_flg = 1;
-            oritatami_suitei_02();
-            i_suitei_dankai = 2;
-            hyouji_flg = 2;
-            oritatami_suitei_03();
-            i_suitei_dankai = 3;
-            hyouji_flg = 3;
-        } else if ((i_suitei_dankai == 0) && (i_suitei_meirei == 5)) {
+            folding_estimated_01(Ss0);
+            i_estimated_step = 1;
+            display_flg = 1;
+            folding_estimated_02();
+            i_estimated_step = 2;
+            display_flg = 2;
+            folding_estimated_03();
+            i_estimated_step = 3;
+            display_flg = 3;
+        } else if ((i_estimated_step == 0) && (i_estimated_order == 5)) {
             estimated_initialize();
-            oritatami_suitei_01(Ss0);
-            i_suitei_dankai = 1;
-            hyouji_flg = 1;
-            oritatami_suitei_02();
-            i_suitei_dankai = 2;
-            hyouji_flg = 2;
-            oritatami_suitei_03();
-            i_suitei_dankai = 3;
-            hyouji_flg = 3;
-            oritatami_suitei_04();
-            i_suitei_dankai = 4;
-            hyouji_flg = 4;
-            oritatami_suitei_05();
-            i_suitei_dankai = 5;
-            hyouji_flg = 5;
-            if ((hakkenn_sita_kazu == 0) && (betu_sagasi_flg == 0)) {
-                i_suitei_dankai = 3;
-                hyouji_flg = 3;
+            folding_estimated_01(Ss0);
+            i_estimated_step = 1;
+            display_flg = 1;
+            folding_estimated_02();
+            i_estimated_step = 2;
+            display_flg = 2;
+            folding_estimated_03();
+            i_estimated_step = 3;
+            display_flg = 3;
+            folding_estimated_04();
+            i_estimated_step = 4;
+            display_flg = 4;
+            folding_estimated_05();
+            i_estimated_step = 5;
+            display_flg = 5;
+            if ((hakkenn_sita_kazu == 0) && (different_search_flg == 0)) {
+                i_estimated_step = 3;
+                display_flg = 3;
             }
-        } else if ((i_suitei_dankai == 1) && (i_suitei_meirei == 1)) {
-        } else if ((i_suitei_dankai == 1) && (i_suitei_meirei == 2)) {
-            oritatami_suitei_02();
-            i_suitei_dankai = 2;
-            hyouji_flg = 2;
-        } else if ((i_suitei_dankai == 1) && (i_suitei_meirei == 3)) {
-            oritatami_suitei_02();
-            i_suitei_dankai = 2;
-            hyouji_flg = 2;
-            oritatami_suitei_03();
-            i_suitei_dankai = 3;
-            hyouji_flg = 3;
-        } else if ((i_suitei_dankai == 1) && (i_suitei_meirei == 5)) {
-            oritatami_suitei_02();
-            i_suitei_dankai = 2;
-            hyouji_flg = 2;
-            oritatami_suitei_03();
-            i_suitei_dankai = 3;
-            hyouji_flg = 3;
-            oritatami_suitei_04();
-            i_suitei_dankai = 4;
-            hyouji_flg = 4;
-            oritatami_suitei_05();
-            i_suitei_dankai = 5;
-            hyouji_flg = 5;
-            if ((hakkenn_sita_kazu == 0) && (betu_sagasi_flg == 0)) {
-                i_suitei_dankai = 3;
-                hyouji_flg = 3;
+        } else if ((i_estimated_step == 1) && (i_estimated_order == 1)) {
+        } else if ((i_estimated_step == 1) && (i_estimated_order == 2)) {
+            folding_estimated_02();
+            i_estimated_step = 2;
+            display_flg = 2;
+        } else if ((i_estimated_step == 1) && (i_estimated_order == 3)) {
+            folding_estimated_02();
+            i_estimated_step = 2;
+            display_flg = 2;
+            folding_estimated_03();
+            i_estimated_step = 3;
+            display_flg = 3;
+        } else if ((i_estimated_step == 1) && (i_estimated_order == 5)) {
+            folding_estimated_02();
+            i_estimated_step = 2;
+            display_flg = 2;
+            folding_estimated_03();
+            i_estimated_step = 3;
+            display_flg = 3;
+            folding_estimated_04();
+            i_estimated_step = 4;
+            display_flg = 4;
+            folding_estimated_05();
+            i_estimated_step = 5;
+            display_flg = 5;
+            if ((hakkenn_sita_kazu == 0) && (different_search_flg == 0)) {
+                i_estimated_step = 3;
+                display_flg = 3;
             }
-        } else if ((i_suitei_dankai == 2) && (i_suitei_meirei == 1)) {
-        } else if ((i_suitei_dankai == 2) && (i_suitei_meirei == 2)) {
-        } else if ((i_suitei_dankai == 2) && (i_suitei_meirei == 3)) {
-            oritatami_suitei_03();
-            i_suitei_dankai = 3;
-            hyouji_flg = 3;
-        } else if ((i_suitei_dankai == 2) && (i_suitei_meirei == 5)) {
-            oritatami_suitei_03();
-            i_suitei_dankai = 3;
-            hyouji_flg = 3;
-            oritatami_suitei_04();
-            i_suitei_dankai = 4;
-            hyouji_flg = 4;
-            oritatami_suitei_05();
-            i_suitei_dankai = 5;
-            hyouji_flg = 5;
-            if ((hakkenn_sita_kazu == 0) && (betu_sagasi_flg == 0)) {
-                i_suitei_dankai = 3;
-                hyouji_flg = 3;
+        } else if ((i_estimated_step == 2) && (i_estimated_order == 1)) {
+        } else if ((i_estimated_step == 2) && (i_estimated_order == 2)) {
+        } else if ((i_estimated_step == 2) && (i_estimated_order == 3)) {
+            folding_estimated_03();
+            i_estimated_step = 3;
+            display_flg = 3;
+        } else if ((i_estimated_step == 2) && (i_estimated_order == 5)) {
+            folding_estimated_03();
+            i_estimated_step = 3;
+            display_flg = 3;
+            folding_estimated_04();
+            i_estimated_step = 4;
+            display_flg = 4;
+            folding_estimated_05();
+            i_estimated_step = 5;
+            display_flg = 5;
+            if ((hakkenn_sita_kazu == 0) && (different_search_flg == 0)) {
+                i_estimated_step = 3;
+                display_flg = 3;
             }
-        } else if ((i_suitei_dankai == 3) && (i_suitei_meirei == 1)) {
-        } else if ((i_suitei_dankai == 3) && (i_suitei_meirei == 2)) {
-            hyouji_flg = 2;
-        } else if ((i_suitei_dankai == 3) && (i_suitei_meirei == 3)) {
-            hyouji_flg = 3;
-        } else if ((i_suitei_dankai == 3) && (i_suitei_meirei == 5)) {
-            oritatami_suitei_04();
-            i_suitei_dankai = 4;
-            hyouji_flg = 4;
-            oritatami_suitei_05();
-            i_suitei_dankai = 5;
-            hyouji_flg = 5;
-            if ((hakkenn_sita_kazu == 0) && (betu_sagasi_flg == 0)) {
-                i_suitei_dankai = 3;
-                hyouji_flg = 3;
+        } else if ((i_estimated_step == 3) && (i_estimated_order == 1)) {
+        } else if ((i_estimated_step == 3) && (i_estimated_order == 2)) {
+            display_flg = 2;
+        } else if ((i_estimated_step == 3) && (i_estimated_order == 3)) {
+            display_flg = 3;
+        } else if ((i_estimated_step == 3) && (i_estimated_order == 5)) {
+            folding_estimated_04();
+            i_estimated_step = 4;
+            display_flg = 4;
+            folding_estimated_05();
+            i_estimated_step = 5;
+            display_flg = 5;
+            if ((hakkenn_sita_kazu == 0) && (different_search_flg == 0)) {
+                i_estimated_step = 3;
+                display_flg = 3;
             }
-        } else if ((i_suitei_dankai == 5) && (i_suitei_meirei == 1)) {
-        } else if ((i_suitei_dankai == 5) && (i_suitei_meirei == 2)) {
-            hyouji_flg = 2;
-        } else if ((i_suitei_dankai == 5) && (i_suitei_meirei == 3)) {
-            hyouji_flg = 3;
-        } else if ((i_suitei_dankai == 5) && (i_suitei_meirei == 5)) {
-            hyouji_flg = 5;
-        } else if ((i_suitei_dankai == 5) && (i_suitei_meirei == 6)) {
-            oritatami_suitei_05();
-            i_suitei_dankai = 5;
-            hyouji_flg = 5;
+        } else if ((i_estimated_step == 5) && (i_estimated_order == 1)) {
+        } else if ((i_estimated_step == 5) && (i_estimated_order == 2)) {
+            display_flg = 2;
+        } else if ((i_estimated_step == 5) && (i_estimated_order == 3)) {
+            display_flg = 3;
+        } else if ((i_estimated_step == 5) && (i_estimated_order == 5)) {
+            display_flg = 5;
+        } else if ((i_estimated_step == 5) && (i_estimated_order == 6)) {
+            folding_estimated_05();
+            i_estimated_step = 5;
+            display_flg = 5;
         }
 
 
-        if (i_camera_settei == 1) {
+        if (i_camera_estimated == 1) {
             oritatami_suitei_camera_settei(camera_of_orisen_nyuuryokuzu, Ss0);
         }
 
@@ -696,7 +674,7 @@ public class Oriagari_Zu {
     }
 
     //--------------------------------------------------------------------------
-    public void oritatami_suitei_2col(Camera camera_of_orisen_nyuuryokuzu, Senbunsyuugou Ss0) {//２色塗りわけ展開図
+    public void oritatami_suitei_2col(Camera camera_of_orisen_nyuuryokuzu, LineStore Ss0) {//２色塗りわけ展開図
 
         //-------------------------------折り上がり図表示用カメラの設定
 
@@ -740,22 +718,22 @@ public class Oriagari_Zu {
 
         //-------------------------------
         estimated_initialize();
-        oritatami_suitei_01(Ss0);
-        i_suitei_dankai = 1;
-        hyouji_flg = 1;
+        folding_estimated_01(Ss0);
+        i_estimated_step = 1;
+        display_flg = 1;
         oritatami_suitei_02col();
-        i_suitei_dankai = 2;
-        hyouji_flg = 2;
-        oritatami_suitei_03();
-        i_suitei_dankai = 3;
-        hyouji_flg = 3;
-        oritatami_suitei_04();
-        i_suitei_dankai = 4;
-        hyouji_flg = 4;
-        oritatami_suitei_05();
-        i_suitei_dankai = 5;
-        hyouji_flg = 5;
-        i_suitei_dankai = 10;
+        i_estimated_step = 2;
+        display_flg = 2;
+        folding_estimated_03();
+        i_estimated_step = 3;
+        display_flg = 3;
+        folding_estimated_04();
+        i_estimated_step = 4;
+        display_flg = 4;
+        folding_estimated_05();
+        i_estimated_step = 5;
+        display_flg = 5;
+        i_estimated_step = 10;
         //if((OZ.hakkenn_sita_kazu==0)&&(OZ.betu_sagasi_flg==0)){ OZ.i_suitei_dankai=3; OZ.hyouji_flg=3;}
 
         //return 1000;
@@ -764,28 +742,28 @@ public class Oriagari_Zu {
 
 
     //-------------------------------bbbbbbb----
-    public int oritatami_suitei_01(Senbunsyuugou Ss1) {
+    public int folding_estimated_01(LineStore Ss1) {
         System.out.println("＜＜＜＜＜oritatami_suitei_01;開始");
         keijiban.tuiki("<<<<oritatami_suitei_01;  start");
         //マウスの入力でes1の中に作った線分集合をts1に渡し、点集合(展開図に相当)にする
         // Pass the line segment set created in es1 to ts1 by mouse input and make it a point set (corresponding to the development view).
-        ts1.Senbunsyuugou2Tensyuugou(Ss1);
+        ts1.lineStore2pointStore(Ss1);
         ip3 = ts1.set_kijyunmen_id(ip3);
-        ip3 = ts1.set_kijyunmen_id(orihime_app.ten_of_kijyunmen_old);//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
+        ip3 = ts1.set_kijyunmen_id(orihime_app.point_of_kijyunmen_old);//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
 
         return 1000;
     }
 
 
     //-----------------------------------
-    public int oritatami_suitei_02() {
+    public int folding_estimated_02() {
         System.out.println("＜＜＜＜＜oritatami_suitei_02;開始");
         keijiban.tuiki("<<<<oritatami_suitei_02;  start");
         //ts1が折りたたみを行い、できた針金図をts2に渡す。
         //ts1 folds and passes the resulting wire diagram to ts2.
         //ts2が折りあがった形を少しだけ変形したいような場合に働く。
         //It works when you want to slightly deform the folded shape of ts2.
-        ts2.set(ts1.oritatami());
+        ts2.set(ts1.folding());
         orihime_app.keijiban.tuiki("<<<<oritatami_suitei_02; end");
 
         //ts2.Iti_sitei(0.0 , 0.0);点集合の平均位置を全点の重心にする。
@@ -805,7 +783,7 @@ public class Oriagari_Zu {
     }
 
     //-----------------------------------
-    public int oritatami_suitei_03() {
+    public int folding_estimated_03() {
         System.out.println("＜＜＜＜＜oritatami_suitei_03;開始");
         keijiban.tuiki("<<<<oritatami_suitei_03;  start");
         //ts2は折る前の展開図の面を保持した点集合を持っている。
@@ -827,7 +805,7 @@ public class Oriagari_Zu {
         //展開図職人ts3はks2から点集合（ts2の持つ針金図を整理したもの）を受け取り、Smenに分割する。
         System.out.println("＜＜＜＜＜oritatami_suitei_03()_____展開図職人ts3はks2から整理された線分集合を受け取り、Smenに分割する。");
         System.out.println("　　　oritatami_suitei_03()のts3.Senbunsyuugou2Tensyuugou(ks2.get());実施");
-        ts3.Senbunsyuugou2Tensyuugou(ks2.get());
+        ts3.lineStore2pointStore(ks2.get());
 
         System.out.println("＜＜＜＜＜oritatami_suitei_03()_____上下表職人jsは、展開図職人ts3から点集合を受け取り、Smenを設定する。");
         js.Smen_settei(ts1, ts2.get(), ts3.get());
@@ -836,7 +814,7 @@ public class Oriagari_Zu {
     }
 
     //-----------------------------------
-    public int oritatami_suitei_04() {
+    public int folding_estimated_04() {
         System.out.println("＜＜＜＜＜oritatami_suitei_04;開始");
         keijiban.tuiki("<<<<oritatami_suitei_04;  start");
         //面(折りたたむ前の展開図の面のこと)の上下表を作る。
@@ -846,11 +824,11 @@ public class Oriagari_Zu {
         System.out.println("＜＜＜＜＜oritatami_suitei_04()_____上下表職人jsが面(折りたたむ前の展開図の面のこと)の上下表を作る。");
 
         ip1 = 0;
-        betu_sagasi_flg = 0;
+        different_search_flg = 0;
         ip1 = js.Jyougehyou_settei(ts1, ts2.get(), ts3.get());   //ip1=折った後の表裏が同じ面が隣接するという誤りがあれば0を、無ければ1000を格納する変数。
         if (ip1 == 1000) {
             ip1 = 1000;
-            betu_sagasi_flg = 1;
+            different_search_flg = 1;
         }
         hakkenn_sita_kazu = 0;
         System.out.println("＜＜＜＜＜oritatami_suitei_04()____終了");
@@ -859,12 +837,12 @@ public class Oriagari_Zu {
 
 
     //-----------------------------------
-    public int oritatami_suitei_05() {
+    public int folding_estimated_05() {
         System.out.println("＜＜＜＜＜oritatami_suitei_05()_____上下表職人jsがjs.kanou_kasanari_sagasi()実施。");
         orihime_app.keijiban.tuiki("<<<<oritatami_suitei_05()  ___js.kanou_kasanari_sagasi()  start");
 
-        if ((i_suitei_dankai == 4) || (i_suitei_dankai == 5)) {
-            if (betu_sagasi_flg == 1) {
+        if ((i_estimated_step == 4) || (i_estimated_step == 5)) {
+            if (different_search_flg == 1) {
 
                 ip2 = js.kanou_kasanari_sagasi();//ip2=上下表職人が折り畳み可能な重なり方を探した際に、可能な重なり方がなければ0を、可能な重なり方があれば1000を格納する変数。
 
@@ -879,12 +857,12 @@ public class Oriagari_Zu {
 
         text_kekka = "Number of found solutions = " + hakkenn_sita_kazu + "  ";
 
-        betu_sagasi_flg = 0;
+        different_search_flg = 0;
         if ((ip2 == 1000) && (ip5 > 0)) {
-            betu_sagasi_flg = 1;
+            different_search_flg = 1;
         }
 
-        if (betu_sagasi_flg == 0) {
+        if (different_search_flg == 0) {
             text_kekka = text_kekka + " There is no other solution. ";
         }
 
@@ -911,15 +889,15 @@ public class Oriagari_Zu {
     //フリーズした。これは、128を127の変えることでもフリーズはなくなるが、透過度は２の倍数にしておかないと、2分の一にしたとき値がずれるかもしれないので、透過度の最大値は64としておくことにする。
 
 
-    private Ten p_m_left_on = new Ten();//マウスの左ボタンを押したときの座標
+    private Point p_m_left_on = new Point();//マウスの左ボタンを押したときの座標
     private int i_nanini_tikai = 0;//Ten pが展開図の点に近い=1、折り上がり図の点に近い=2、どちらにも近くない=0
     private int i_mottomo_tikai_Tenid;
     private int i_ten_sentaku = 0;//ts1、ts2ともに未選択（状況　i_ten_sentaku=0）,ts1選択済でts2未選択（状況　i_ten_sentaku=1）,その頂点がts2選択済（状況　i_ten_sentaku=2）
-    private Ten ugokasu_maeno_sentaku_ten = new Ten();//動かす前の選択した点の座標
+    private Point ugokasu_maeno_sentaku_point = new Point();//動かす前の選択した点の座標
 
 
     //-----------------------------------------------------------------------------------------------------uuuuuuu--
-    public void oriagari_sousa_mouse_on(Ten p) {//折り上がり図操作でマウスの左ボタンを押したときの作業
+    public void oriagari_sousa_mouse_on(Point p) {//折り上がり図操作でマウスの左ボタンを押したときの作業
         if (i_oriagari_sousa_mode == 1) {
             oriagari_sousa_mouse_on_1(p);
         }
@@ -928,7 +906,7 @@ public class Oriagari_Zu {
         }
     }
 
-    public void oriagari_sousa_mouse_drag(Ten p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
+    public void oriagari_sousa_mouse_drag(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
         if (i_oriagari_sousa_mode == 1) {
             oriagari_sousa_mouse_drag_1(p);
         }
@@ -938,7 +916,7 @@ public class Oriagari_Zu {
     }
 
 
-    public void oriagari_sousa_mouse_off(Ten p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
+    public void oriagari_sousa_mouse_off(Point p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
         if (i_oriagari_sousa_mode == 1) {
             oriagari_sousa_mouse_off_1(p);
         }
@@ -950,9 +928,9 @@ public class Oriagari_Zu {
 
     //  =================================================================================================================================
     //-----------------------------------------------------------------------------------------------------uuuuuuu--
-    public void oriagari_sousa_mouse_on_1(Ten p) {//折り上がり図操作でマウスの左ボタンを押したときの作業   折りずらし機能
+    public void oriagari_sousa_mouse_on_1(Point p) {//折り上がり図操作でマウスの左ボタンを押したときの作業   折りずらし機能
 
-        p_m_left_on.set(new Ten(p.getx(), p.gety()));
+        p_m_left_on.set(new Point(p.getx(), p.gety()));
 
         ts2.setCamera(camera_of_oriagarizu);
         ts2.setCam_omote(camera_of_oriagari_omote);
@@ -971,7 +949,7 @@ public class Oriagari_Zu {
             }
         }//i_mottomo_tikai_Tenidにpに最も近い点の番号を格納 ここまで
 
-        ugokasu_maeno_sentaku_ten.set(ts2.getTen(i_mottomo_tikai_Tenid));
+        ugokasu_maeno_sentaku_point.set(ts2.getTen(i_mottomo_tikai_Tenid));
 
 
         System.out.println("i_nanini_tikai = " + i_nanini_tikai);
@@ -992,7 +970,7 @@ public class Oriagari_Zu {
             if (i_ten_sentaku == 0) {
                 set_all_ten_sentaku_0();
                 //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、ts1でその番号の点を選択済みにする
-                Ten ps = new Ten();
+                Point ps = new Point();
                 ps.set(ts2.getTen(i_mottomo_tikai_Tenid));
                 for (int i = 1; i <= ts2.getTensuu(); i++) {
                     if (ps.kyori(ts2.getTen(i)) < 0.0000001) {
@@ -1026,7 +1004,7 @@ public class Oriagari_Zu {
                 set_all_ten_sentaku_0();
 
                 //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、ts1でその番号の点を選択済みにする
-                Ten ps = new Ten();
+                Point ps = new Point();
                 ps.set(ts2.getTen(i_mottomo_tikai_Tenid));
                 for (int i = 1; i <= ts2.getTensuu(); i++) {
                     if (ps.kyori(ts2.getTen(i)) < 0.0000001) {
@@ -1043,8 +1021,8 @@ public class Oriagari_Zu {
 
             if (i_oriagari_sousa_mode == 1) {
 
-                hyouji_flg_backup = hyouji_flg;   //20180216  //hyouji_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
-                hyouji_flg = 2;            //20180216
+                hyouji_flg_backup = display_flg;   //20180216  //hyouji_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                display_flg = 2;            //20180216
             }
 
 
@@ -1058,7 +1036,7 @@ public class Oriagari_Zu {
     }
 
     //-------------
-    public void oriagari_sousa_mouse_drag_1(Ten p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
+    public void oriagari_sousa_mouse_drag_1(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
 
         ts2.setCamera(camera_of_oriagarizu);
         ts2.setCam_omote(camera_of_oriagari_omote);
@@ -1068,18 +1046,18 @@ public class Oriagari_Zu {
         }
 
         if (i_nanini_tikai == 2) {
-            ts2.mDragged_sentakuten_ugokasi_with_camera(ugokasu_maeno_sentaku_ten, p_m_left_on, p, ip4);
+            ts2.mDragged_sentakuten_ugokasi_with_camera(ugokasu_maeno_sentaku_point, p_m_left_on, p, ip4);
 
 
             if (i_oriagari_sousa_mode == 2) {
-                oritatami_suitei_03();//20180216
+                folding_estimated_03();//20180216
             }
         }
 
     }
 
     //-------------
-    public void oriagari_sousa_mouse_off_1(Ten p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
+    public void oriagari_sousa_mouse_off_1(Point p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
         ts2.setCamera(camera_of_oriagarizu);
         ts2.setCam_omote(camera_of_oriagari_omote);
         ts2.setCam_ura(camera_of_oriagari_ura);
@@ -1089,18 +1067,18 @@ public class Oriagari_Zu {
 
         if (i_nanini_tikai == 2) {
 
-            hyouji_flg = hyouji_flg_backup;//20180216
+            display_flg = hyouji_flg_backup;//20180216
 
-            ts2.mReleased_sentakuten_ugokasi_with_camera(ugokasu_maeno_sentaku_ten, p_m_left_on, p, ip4);
+            ts2.mReleased_sentakuten_ugokasi_with_camera(ugokasu_maeno_sentaku_point, p_m_left_on, p, ip4);
             if (p_m_left_on.kyori(p) > 0.0000001) {
                 kiroku();
-                i_suitei_dankai = 2;
+                i_estimated_step = 2;
 
-                if (hyouji_flg == 2) {
+                if (display_flg == 2) {
                 }
 
-                if (hyouji_flg == 5) {
-                    i_suitei_meirei = 5;
+                if (display_flg == 5) {
+                    i_estimated_order = 5;
                     orihime_app.oritatami_suitei();
                 }//オリジナル 20180124 これ以外だと、表示いったんもどるようでうざい
             }
@@ -1108,7 +1086,7 @@ public class Oriagari_Zu {
 
             ts1.set_all_ten_sentaku_0();
             //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、ts1でその番号の点を選択済みにする
-            Ten ps = new Ten();
+            Point ps = new Point();
             ps.set(ts2.getTen(i_mottomo_tikai_Tenid));
             for (int i = 1; i <= ts2.getTensuu(); i++) {
                 if (ps.kyori(ts2.getTen(i)) < 0.0000001) {
@@ -1122,9 +1100,9 @@ public class Oriagari_Zu {
 //  =================================================================================================================================
 //  ==========折り上がり図のまま変形操作===========================================================================================================
     //-----------------------------------------------------------------------------------------------------uuuuuuu--
-    public void oriagari_sousa_mouse_on_2(Ten p) {//折り上がり図操作でマウスの左ボタンを押したときの作業
+    public void oriagari_sousa_mouse_on_2(Point p) {//折り上がり図操作でマウスの左ボタンを押したときの作業
 
-        p_m_left_on.set(new Ten(p.getx(), p.gety()));
+        p_m_left_on.set(new Point(p.getx(), p.gety()));
 
         ts2.setCamera(camera_of_oriagarizu);
         ts2.setCam_omote(camera_of_oriagari_omote);
@@ -1143,7 +1121,7 @@ public class Oriagari_Zu {
             }
         }//i_mottomo_tikai_Tenidにpに最も近い点の番号を格納 ここまで
 
-        ugokasu_maeno_sentaku_ten.set(ts2.getTen(i_mottomo_tikai_Tenid));
+        ugokasu_maeno_sentaku_point.set(ts2.getTen(i_mottomo_tikai_Tenid));
 
 
         System.out.println("i_nanini_tikai = " + i_nanini_tikai);
@@ -1164,7 +1142,7 @@ public class Oriagari_Zu {
             if (i_ten_sentaku == 0) {
                 set_all_ten_sentaku_0();
                 //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、ts1でその番号の点を選択済みにする
-                Ten ps = new Ten();
+                Point ps = new Point();
                 ps.set(ts2.getTen(i_mottomo_tikai_Tenid));
                 for (int i = 1; i <= ts2.getTensuu(); i++) {
                     if (ps.kyori(ts2.getTen(i)) < 0.0000001) {
@@ -1198,7 +1176,7 @@ public class Oriagari_Zu {
                 set_all_ten_sentaku_0();
 
                 //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、ts1でその番号の点を選択済みにする
-                Ten ps = new Ten();
+                Point ps = new Point();
                 ps.set(ts2.getTen(i_mottomo_tikai_Tenid));
                 for (int i = 1; i <= ts2.getTensuu(); i++) {
                     if (ps.kyori(ts2.getTen(i)) < 0.0000001) {
@@ -1215,8 +1193,8 @@ public class Oriagari_Zu {
 
             if (i_oriagari_sousa_mode == 1) {
 
-                hyouji_flg_backup = hyouji_flg;   //20180216  //hyouji_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
-                hyouji_flg = 2;            //20180216
+                hyouji_flg_backup = display_flg;   //20180216  //hyouji_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                display_flg = 2;            //20180216
             }
 
 
@@ -1230,7 +1208,7 @@ public class Oriagari_Zu {
     }
 
     //-------------
-    public void oriagari_sousa_mouse_drag_2(Ten p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
+    public void oriagari_sousa_mouse_drag_2(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
 
         ts2.setCamera(camera_of_oriagarizu);
         ts2.setCam_omote(camera_of_oriagari_omote);
@@ -1240,18 +1218,18 @@ public class Oriagari_Zu {
         }
 
         if (i_nanini_tikai == 2) {
-            ts2.mDragged_sentakuten_ugokasi_with_camera(ugokasu_maeno_sentaku_ten, p_m_left_on, p, ip4);
+            ts2.mDragged_sentakuten_ugokasi_with_camera(ugokasu_maeno_sentaku_point, p_m_left_on, p, ip4);
 
 
             if (i_oriagari_sousa_mode == 2) {
-                oritatami_suitei_03();//20180216
+                folding_estimated_03();//20180216
             }
         }
 
     }
 
     //-------------
-    public void oriagari_sousa_mouse_off_2(Ten p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
+    public void oriagari_sousa_mouse_off_2(Point p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
         ts2.setCamera(camera_of_oriagarizu);
         ts2.setCam_omote(camera_of_oriagari_omote);
         ts2.setCam_ura(camera_of_oriagari_ura);
@@ -1260,17 +1238,17 @@ public class Oriagari_Zu {
         }
 
         if (i_nanini_tikai == 2) {
-            ts2.mReleased_sentakuten_ugokasi_with_camera(ugokasu_maeno_sentaku_ten, p_m_left_on, p, ip4);
+            ts2.mReleased_sentakuten_ugokasi_with_camera(ugokasu_maeno_sentaku_point, p_m_left_on, p, ip4);
             if (p_m_left_on.kyori(p) > 0.0000001) {
                 kiroku();
                 //if(ts2.get_ten_sentakusuu()!=0){
-                i_suitei_dankai = 2;
+                i_estimated_step = 2;
 
 
                 if (i_oriagari_sousa_mode == 1) {
-                    hyouji_flg = hyouji_flg_backup;//20180216
+                    display_flg = hyouji_flg_backup;//20180216
                 }
-                if (hyouji_flg == 2) {
+                if (display_flg == 2) {
                 }
 
 
@@ -1278,7 +1256,7 @@ public class Oriagari_Zu {
                 //if(hyouji_flg==5){i_suitei_meirei=5;orihime_ap.oritatami_suitei();}//オリジナル 20180124 これ以外だと、表示いったんもどるようでうざい
 //}
 //if(i_oriagari_sousa_mode==2){
-                oritatami_suitei_03();//20180216
+                folding_estimated_03();//20180216
 //}
 
 
@@ -1288,7 +1266,7 @@ public class Oriagari_Zu {
             //}
             ts1.set_all_ten_sentaku_0();
             //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、ts1でその番号の点を選択済みにする
-            Ten ps = new Ten();
+            Point ps = new Point();
             ps.set(ts2.getTen(i_mottomo_tikai_Tenid));
             for (int i = 1; i <= ts2.getTensuu(); i++) {
                 if (ps.kyori(ts2.getTen(i)) < 0.0000001) {
@@ -1311,26 +1289,18 @@ public class Oriagari_Zu {
 
     public void redo() {
         ts2.redo();
-        oritatami_suitei_03();
+        folding_estimated_03();
     }
-
 
     public void undo() {
         ts2.undo();
-        oritatami_suitei_03();
+        folding_estimated_03();
     }
-
 
     //--------------------
     public void set_all_ten_sentaku_0() {
         ts1.set_all_ten_sentaku_0();
         ts2.set_all_ten_sentaku_0();
     }
-
-
     //--------------------
-
-
 }
-
-

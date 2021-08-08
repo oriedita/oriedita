@@ -41,7 +41,7 @@ class SubThread extends Thread {
                         } catch (InterruptedException e) {
                         }
                     }
-                    if (orihime_app.OZ.betu_sagasi_flg == 0) {
+                    if (orihime_app.OZ.different_search_flg == 0) {
                         mokuhyou = orihime_app.OZ.hakkenn_sita_kazu;
                     }
 
@@ -61,8 +61,8 @@ class SubThread extends Thread {
                 orihime_app.oritatami_suitei();
                 orihime_app.repaint();
 
-                orihime_app.OZ.i_suitei_meirei = 6;
-                if (orihime_app.OZ.betu_sagasi_flg == 0) {
+                orihime_app.OZ.i_estimated_order = 6;
+                if (orihime_app.OZ.different_search_flg == 0) {
                     mokuhyou = orihime_app.OZ.hakkenn_sita_kazu;
                 }
 

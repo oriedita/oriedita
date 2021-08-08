@@ -2,26 +2,26 @@ package jp.gr.java_conf.mt777.zukei2d.takakukei;
 
 import java.awt.*;
 
-import jp.gr.java_conf.mt777.zukei2d.ten.*;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
 import jp.gr.java_conf.mt777.seiretu.narabebako.*;
+import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
 public class Takakukei {
     String c = "";
     int kakusuu;             //何角形か
     //ArrayList TenList = new ArrayList();
 
-    Ten[] t;//頂点
+    Point[] t;//頂点
 
     OritaCalc oc = new OritaCalc();          //各種計算用の関数を使うためのクラスのインスタンス化
 
 
     public Takakukei(int kaku) {  //コンストラクタ
         kakusuu = kaku;
-        Ten[] t0 = new Ten[kaku + 1];   //頂点
+        Point[] t0 = new Point[kaku + 1];   //頂点
         for (int i = 0; i <= kaku; i++) {
-            t0[i] = new Ten();
+            t0[i] = new Point();
         }
         // red=255;green=0;blue=0;
         t = t0;
@@ -37,26 +37,26 @@ public class Takakukei {
     }
 
     //多角形のi番目の頂点をセットする
-    public void set(int i, Ten p) {
+    public void set(int i, Point p) {
         t[i].set(p);
     }
 
     //多角形のi番目の頂点をゲットする
-    public Ten get(int i) {
+    public Point get(int i) {
         return t[i];
     }
 
     //点p0を基準に多角形のi番目の頂点をセットする
-    public void set(Ten p0, int i, Ten p) {
+    public void set(Point p0, int i, Point p) {
         t[i].set(p0.getx() + p.getx(), p0.gety() + p.gety());
     }
 
     //線分が、この多角形の辺と交差する(true)かしない(false)か判定する関数----------------------------------
-    public boolean kousa(Senbun s0) {
+    public boolean kousa(Line s0) {
         int itrue = 0;
         // Senbun s0 =new Senbun();
         // s0.set(sa);
-        Senbun s = new Senbun();
+        Line s = new Line();
         for (int i = 1; i <= kakusuu - 1; i++) {
             s.set(t[i], t[i + 1]); //線分
             if (oc.senbun_kousa_hantei(s0, s) >= 1) {
@@ -80,15 +80,15 @@ public class Takakukei {
     //線分s0が凸多角形の内部と境界線の両方に渡って存在するとき4、
     //線分s0の全部が凸多角形の内部（境界線は内部とみなさない）に存在するとき5、
     //を返す
-    public int naibu_gaibu_hantei(Senbun s0) {
+    public int naibu_gaibu_hantei(Line s0) {
 
         Narabebako_int_double nbox = new Narabebako_int_double();
 
         int i_kouten = 0;
 
-        Ten[] kouten = new Ten[kakusuu * 2 + 3];   //交点
+        Point[] kouten = new Point[kakusuu * 2 + 3];   //交点
         for (int i = 0; i <= kakusuu * 2 + 2; i++) {
-            kouten[i] = new Ten();
+            kouten[i] = new Point();
         }
 
         //kouten[0].set(s0.geta());
@@ -104,7 +104,7 @@ public class Takakukei {
         int iflag = 0;//
         int kh = 0; //oc.senbun_kousa_hantei(s0,s)の値の格納用
 
-        Senbun s = new Senbun();
+        Line s = new Line();
 
         for (int i = 1; i <= kakusuu; i++) {
 
@@ -289,12 +289,12 @@ public class Takakukei {
 
     //線分s0の一部でも凸多角形の内部（境界線は内部とみなさない）に
     //存在するとき1、しないなら0を返す
-    public int totu_naibu(Senbun s0) {
+    public int totu_naibu(Line s0) {
         int iflag = 0;//
         int kh = 0; //oc.senbun_kousa_hantei(s0,s)の値の格納用
         // Senbun s0 =new Senbun();
         // s0.set(sa);
-        Senbun s = new Senbun();
+        Line s = new Line();
         for (int i = 1; i <= kakusuu - 1; i++) {
             s.set(t[i], t[i + 1]); //線分
             kh = oc.senbun_kousa_hantei(s0, s);
@@ -340,21 +340,21 @@ public class Takakukei {
         } //ここは実際にはkhが20以上30未満のときに実行される。
 
         if (iflag == 0) {
-            if (naibu(new Ten(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
+            if (naibu(new Point(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
                 return 1;
             }
             return 0;
         }
 
         if (iflag == 1) {
-            if (naibu(new Ten(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
+            if (naibu(new Point(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
                 return 1;
             }
             return 0;
         }
 
         if (iflag == 2) {
-            if (naibu(new Ten(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
+            if (naibu(new Point(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
                 return 1;
             }
             if (naibu(s0.geta()) == 2) {
@@ -379,11 +379,11 @@ public class Takakukei {
 
     //線分s0の一部でも凸多角形の内部（境界線も内部とみなす）に
     //存在するとき1、しないなら0を返す
-    public int totu_kyoukai_naibu(Senbun s0) {//s0の一部でも多角形に触れているなら1を返す。
+    public int totu_kyoukai_naibu(Line s0) {//s0の一部でも多角形に触れているなら1を返す。
         int iflag = 0;//
         int kh = 0; //oc.senbun_kousa_hantei(s0,s)の値の格納用
 
-        Senbun s = new Senbun();
+        Line s = new Line();
         for (int i = 1; i <= kakusuu - 1; i++) {
             s.set(t[i], t[i + 1]); //線分
             kh = oc.senbun_kousa_hantei(s0, s);
@@ -398,7 +398,7 @@ public class Takakukei {
             return 1;
         }
 
-        if (naibu(new Ten(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
+        if (naibu(new Point(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
             return 1;
         }
 
@@ -408,10 +408,10 @@ public class Takakukei {
 
 
     //点が、この多角形の内部にある(true)かない(false)か判定する関数----------------------------------
-    public int naibu(Ten p) {      //0=外部、　1=境界、　2=内部
-        Senbun s = new Senbun();
-        Senbun sq = new Senbun();
-        Ten q = new Ten();
+    public int naibu(Point p) {      //0=外部、　1=境界、　2=内部
+        Line s = new Line();
+        Line sq = new Line();
+        Point q = new Point();
 
         int kousakaisuu = 0;
         int jyuuji_kousakaisuu = 0;
@@ -490,7 +490,7 @@ public class Takakukei {
     }
 
     //ある点と多角形の距離（ある点と多角形の境界上の点の距離の最小値）を求める
-    public double kyori_motome(Ten tn) {
+    public double kyori_motome(Point tn) {
         double kyori;
         kyori = oc.kyori_senbun(tn, t[kakusuu], t[1]);
         for (int i = 1; i <= kakusuu - 1; i++) {
@@ -504,9 +504,9 @@ public class Takakukei {
 
 
     //多角形の内部の点を求める
-    public Ten naibuTen_motome() {
-        Ten tn = new Ten();
-        Ten tr = new Ten();
+    public Point naibuTen_motome() {
+        Point tn = new Point();
+        Point tr = new Point();
         double kyori;
         kyori = -10.0;
 

@@ -2,21 +2,21 @@ package jp.gr.java_conf.mt777.origami.dougu.men;
 
 import java.util.*;
 
-public class Men {
+public class Face {
     ArrayList<Integer> TenidL = new ArrayList<>();
     int Tenidsuu;
     int icol;
 
     //Ten kanrenTen =new Ten();//面に関連する点を格納。面内部の点とかを格納するのに使う。必ずしも使う必要は無いので、使わないときは無視していい。
     //コンストラクタ
-    public Men() {
+    public Face() {
         Tenidsuu = 0;
         icol = 0;
         TenidL.add(0);
     }
 
     //コンストラクタ
-    public Men(Men mn) {
+    public Face(Face mn) {
         Tenidsuu = mn.getTenidsuu();
         icol = mn.getcolor();
         for (int i = 0; i <= Tenidsuu; i++) {
@@ -25,14 +25,11 @@ public class Men {
     }
 
     public void reset() {
-        //System.out.println("men：reset 000 ");
         Tenidsuu = 0;
         icol = 0;
 
-//System.out.println("men：reset 001 ");
         TenidL.clear();
 
-//System.out.println("men：reset 002 ");
         TenidL.add(0);
 
 
@@ -86,7 +83,7 @@ public class Men {
         return idmin;
     }
 
-    public void seiretu() { //Tenid[1]の値がTenid[]のなかで最小になるように整列する。
+    public void align() { //Tenid[1]の値がTenid[]のなかで最小になるように整列する。
         int idmin;
         idmin = getTenidmin();
         while (getTenid(1) != idmin) {

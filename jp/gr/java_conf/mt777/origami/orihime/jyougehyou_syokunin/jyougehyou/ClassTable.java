@@ -5,8 +5,8 @@ import  jp.gr.java_conf.mt777.origami.orihime.jyougehyou_syokunin.jyougehyou.tou
 
 import java.util.*;
 
-public class Jyougehyou {//このクラスは折り畳んだ際の面の上下関係を記録、活用するのに使う。
-  int Mensuu;             //折りたたむ前の展開図の面の数
+public class ClassTable {//This class is used to record and utilize the hierarchical relationship of faces when folded.
+  int facesTotal;             //Number of faces in the unfolded view before folding
 
 	//  jg[][]は折る前の展開図のすべての面同士の上下関係を1つの表にまとめたものとして扱う
 	//　jg[i][j]が1なら面iは面jの上側。0なら下側。
@@ -26,7 +26,7 @@ public class Jyougehyou {//このクラスは折り畳んだ際の面の上下�
 						//さらにa,b,c,dがあるSmenで共存する場合の、境界線で突き抜けが生じうる組み合わせ
 
 
-	public Jyougehyou(){//コンストラクタ
+	public ClassTable(){//コンストラクタ
 		reset();
 	}
 
@@ -38,10 +38,10 @@ public class Jyougehyou {//このクラスは折り畳んだ際の面の上下�
 	}
 
         //
-	public void jg_hozon(){for(int i=1;i<=Mensuu;i++){for(int j=1;j<=Mensuu;j++){jg_h[i][j]=jg[i][j];}}}
+	public void jg_hozon(){for(int i = 1; i<= facesTotal; i++){for(int j = 1; j<= facesTotal; j++){jg_h[i][j]=jg[i][j];}}}
 
 	//
-	public void jg_fukugen(){for(int i=1;i<=Mensuu;i++){for(int j=1;j<=Mensuu;j++){jg[i][j]=jg_h[i][j];}}}
+	public void jg_fukugen(){for(int i = 1; i<= facesTotal; i++){for(int j = 1; j<= facesTotal; j++){jg[i][j]=jg_h[i][j];}}}
 
 	//
         public void set(int i,int j,int jyoutai){
@@ -51,25 +51,25 @@ public class Jyougehyou {//このクラスは折り畳んだ際の面の上下�
 
 	public int get(int i,int j){return jg[i][j];}
 
-	public void setMensuu(int iM){
-		Mensuu=iM;
+	public void setFacesTotal(int iM){
+		facesTotal =iM;
 
-		int j_g[][] = new int [Mensuu+1][Mensuu+1];
-		int j_g_h[][] = new int [Mensuu+1][Mensuu+1];	
+		int j_g[][] = new int [facesTotal +1][facesTotal +1];
+		int j_g_h[][] = new int [facesTotal +1][facesTotal +1];
 
 	  jg=j_g;
 	  jg_h=j_g_h;
 	
 		
-		for(int i=0;i<=Mensuu;i++){
-			for(int j=0;j<=Mensuu;j++){
+		for(int i = 0; i<= facesTotal; i++){
+			for(int j = 0; j<= facesTotal; j++){
 				jg[i][j]=-100;jg_h[i][j]=-100;
 			}
 		}
 	}
 
 
-        public int getMensuu(){return Mensuu;}
+        public int getFacesTotal(){return facesTotal;}
 
 
 	public int getTouka_jyoukensuu(){return Touka_jyoukensuu;}

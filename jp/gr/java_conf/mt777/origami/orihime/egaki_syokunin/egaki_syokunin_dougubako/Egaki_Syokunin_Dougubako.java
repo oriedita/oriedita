@@ -1,23 +1,11 @@
 package jp.gr.java_conf.mt777.origami.orihime.egaki_syokunin.egaki_syokunin_dougubako;
 
-import jp.gr.java_conf.mt777.origami.dougu.senbunsyuugou.*;
 import jp.gr.java_conf.mt777.origami.dougu.orisensyuugou.*;
-import jp.gr.java_conf.mt777.origami.dougu.camera.*;
-import jp.gr.java_conf.mt777.origami.orihime.undo_box.*;
 
-import java.awt.*;
-import java.awt.geom.*;
-
-import  jp.gr.java_conf.mt777.kiroku.memo.*;
-import  jp.gr.java_conf.mt777.seiretu.narabebako.*;
-import  jp.gr.java_conf.mt777.zukei2d.en.*;
 import  jp.gr.java_conf.mt777.zukei2d.ten.*;
 import  jp.gr.java_conf.mt777.zukei2d.senbun.*;
-import  jp.gr.java_conf.mt777.zukei2d.takakukei.*;
 import  jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
 import  jp.gr.java_conf.mt777.zukei2d.oritacalc.tyokusen.*;
-import  jp.gr.java_conf.mt777.zukei2d.oritaoekaki.*;
-import  jp.gr.java_conf.mt777.zukei2d.kousi.*;
 
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
@@ -26,19 +14,19 @@ public class Egaki_Syokunin_Dougubako {
 
 
 	OritaCalc oc =new OritaCalc(); //各種計算用の関数を使うためのクラスのインスタンス化
-	Orisensyuugou ori_s;
+	PolygonStore ori_s;
 
 
-	public Egaki_Syokunin_Dougubako(Orisensyuugou o_s ){  //コンストラクタ
+	public Egaki_Syokunin_Dougubako(PolygonStore o_s ){  //コンストラクタ
 		ori_s=o_s;
 	}
 
 //ベクトルab(=s0)を点aからb方向に、最初に他の折線と交差するところまで延長する
-	Senbun kousaten_made_nobasi_senbun=new Senbun();
-	Ten kousaten_made_nobasi_ten=new Ten();
+	Line kousaten_made_nobasi_line =new Line();
+	Point kousaten_made_nobasi_point =new Point();
 	int kousaten_made_nobasi_flg=0;//abを伸ばした最初の交点の状況
 	int kousaten_made_nobasi_orisen_fukumu_flg=0;//abを直線化したのが、既存の折線を含むなら3
-	Senbun kousaten_made_nobasi_saisyono_senbun= new Senbun();//abを直線化したのと、最初にぶつかる既存の折線
+	Line kousaten_made_nobasi_saisyono_line = new Line();//abを直線化したのと、最初にぶつかる既存の折線
 
 
 
@@ -92,11 +80,11 @@ public class Egaki_Syokunin_Dougubako {
 */
 
 // -------------------
-	public void kousaten_made_nobasi_keisan_fukumu_senbun_musi(Ten a,Ten b) {//ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する//他の折線と交差しないなら、Ten aを返す
-			Senbun s0=new Senbun();s0.set(a,b);
-			Senbun add_sen=new Senbun();add_sen.set(s0);
-			Ten kousa_ten =new Ten(1000000.0,1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
-			double kousa_ten_kyori=kousa_ten.kyori(add_sen.geta());
+	public void kousaten_made_nobasi_keisan_fukumu_senbun_musi(Point a, Point b) {//ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する//他の折線と交差しないなら、Ten aを返す
+			Line s0=new Line();s0.set(a,b);
+			Line add_sen=new Line();add_sen.set(s0);
+			Point kousa_point =new Point(1000000.0,1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
+			double kousa_ten_kyori= kousa_point.kyori(add_sen.geta());
 			Tyokusen tyoku1 =new Tyokusen(add_sen.geta(),add_sen.getb());
 			int i_kousa_flg;
 
@@ -108,20 +96,20 @@ public class Egaki_Syokunin_Dougubako {
 				//if(i_kousa_flg==3){kousaten_made_nobasi_orisen_fukumu_flg=3;}
 				if((i_kousa_flg==1||i_kousa_flg==21)||i_kousa_flg==22){
 
-					kousa_ten.set(oc.kouten_motome(tyoku1,ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
+					kousa_point.set(oc.kouten_motome(tyoku1,ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
 
-					if(kousa_ten.kyori(add_sen.geta())>0.00001     ){
+					if(kousa_point.kyori(add_sen.geta())>0.00001     ){
 
-						if(kousa_ten.kyori(add_sen.geta())<kousa_ten_kyori   ){
-							double d_kakudo=oc.kakudo(add_sen.geta(),add_sen.getb(),add_sen.geta(),kousa_ten);
+						if(kousa_point.kyori(add_sen.geta())<kousa_ten_kyori   ){
+							double d_kakudo=oc.kakudo(add_sen.geta(),add_sen.getb(),add_sen.geta(), kousa_point);
 
 							if(d_kakudo<1.0||d_kakudo>359.0){
 
-								kousa_ten_kyori=kousa_ten.kyori(add_sen.geta());
-								add_sen.set(add_sen.geta(),kousa_ten);
+								kousa_ten_kyori= kousa_point.kyori(add_sen.geta());
+								add_sen.set(add_sen.geta(), kousa_point);
 							
 								kousaten_made_nobasi_flg=i_kousa_flg;
-								kousaten_made_nobasi_saisyono_senbun.set(ori_s.get(i));
+								kousaten_made_nobasi_saisyono_line.set(ori_s.get(i));
 
 							}
 					
@@ -134,18 +122,18 @@ public class Egaki_Syokunin_Dougubako {
 			}
 		//return add_sen.getb();
 
-		kousaten_made_nobasi_senbun.set(add_sen);//System.out.println("kousaten_made_nobasi_senbun.set 20201129 kousaten_made_nobasi_keisan_fukumu_senbun_musi");
-		kousaten_made_nobasi_ten.set(add_sen.getb());
+		kousaten_made_nobasi_line.set(add_sen);//System.out.println("kousaten_made_nobasi_senbun.set 20201129 kousaten_made_nobasi_keisan_fukumu_senbun_musi");
+		kousaten_made_nobasi_point.set(add_sen.getb());
 	}
 
 
 
 // -------------------
-	public void kousaten_made_nobasi_keisan_fukumu_senbun_musi_new(Ten a,Ten b) {//ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する//他の折線と交差しないなら、Ten aを返す
-			Senbun s0=new Senbun();s0.set(a,b);
-			Senbun add_sen=new Senbun();add_sen.set(s0);
-			Ten kousa_ten =new Ten(1000000.0,1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
-			double kousa_ten_kyori=kousa_ten.kyori(add_sen.geta());
+	public void kousaten_made_nobasi_keisan_fukumu_senbun_musi_new(Point a, Point b) {//ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する//他の折線と交差しないなら、Ten aを返す
+			Line s0=new Line();s0.set(a,b);
+			Line add_sen=new Line();add_sen.set(s0);
+			Point kousa_point =new Point(1000000.0,1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
+			double kousa_ten_kyori= kousa_point.kyori(add_sen.geta());
 			Tyokusen tyoku1 =new Tyokusen(add_sen.geta(),add_sen.getb());
 			int i_kousa_flg;
 
@@ -164,20 +152,20 @@ public class Egaki_Syokunin_Dougubako {
 				//if(i_kousa_flg==3){kousaten_made_nobasi_orisen_fukumu_flg=3;}
 				if((i_kousa_flg==1||i_kousa_flg==21)||i_kousa_flg==22){
 
-					kousa_ten.set(oc.kouten_motome(tyoku1,ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
+					kousa_point.set(oc.kouten_motome(tyoku1,ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
 
-					if(kousa_ten.kyori(add_sen.geta())>0.00001     ){
+					if(kousa_point.kyori(add_sen.geta())>0.00001     ){
 
-						if(kousa_ten.kyori(add_sen.geta())<kousa_ten_kyori   ){
-							double d_kakudo=oc.kakudo(add_sen.geta(),add_sen.getb(),add_sen.geta(),kousa_ten);
+						if(kousa_point.kyori(add_sen.geta())<kousa_ten_kyori   ){
+							double d_kakudo=oc.kakudo(add_sen.geta(),add_sen.getb(),add_sen.geta(), kousa_point);
 
 							if(d_kakudo<1.0||d_kakudo>359.0){
 //System.out.println("20201129 col = "+ori_s.get(i).getcolor());  
-								kousa_ten_kyori=kousa_ten.kyori(add_sen.geta());
-								add_sen.set(add_sen.geta(),kousa_ten);
+								kousa_ten_kyori= kousa_point.kyori(add_sen.geta());
+								add_sen.set(add_sen.geta(), kousa_point);
 							
 								kousaten_made_nobasi_flg=i_kousa_flg;
-								kousaten_made_nobasi_saisyono_senbun.set(ori_s.get(i));
+								kousaten_made_nobasi_saisyono_line.set(ori_s.get(i));
 
 							}
 					
@@ -190,8 +178,8 @@ public class Egaki_Syokunin_Dougubako {
 			}
 		//return add_sen.getb();
 
-		kousaten_made_nobasi_senbun.set(add_sen);//System.out.println("kousaten_made_nobasi_senbun.set 20201129 kousaten_made_nobasi_keisan_fukumu_senbun_musi_new");
-		kousaten_made_nobasi_ten.set(add_sen.getb());
+		kousaten_made_nobasi_line.set(add_sen);//System.out.println("kousaten_made_nobasi_senbun.set 20201129 kousaten_made_nobasi_keisan_fukumu_senbun_musi_new");
+		kousaten_made_nobasi_point.set(add_sen.getb());
 	}
 
 
@@ -218,7 +206,7 @@ public class Egaki_Syokunin_Dougubako {
 */
 
 // -------------------
-public int get_kousaten_made_nobasi_flg_new(Ten a,Ten b){//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+public int get_kousaten_made_nobasi_flg_new(Point a, Point b){//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
 	//kousaten_made_nobasi_keisan_fukumu_senbun_musi_new(a,b);
 	return kousaten_made_nobasi_flg;
 }
@@ -226,7 +214,7 @@ public int get_kousaten_made_nobasi_flg_new(Ten a,Ten b){//0=この直線は与�
 
 
 // -------------------
-public int get_kousaten_made_nobasi_flg(Ten a,Ten b){//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+public int get_kousaten_made_nobasi_flg(Point a, Point b){//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
 	kousaten_made_nobasi_keisan_fukumu_senbun_musi(a,b);
 	return kousaten_made_nobasi_flg;
 }
@@ -238,37 +226,37 @@ public int get_kousaten_made_nobasi_orisen_fukumu_flg(Ten a,Ten b){//abを直線
 }*/
 
 // -------------------
-public Senbun get_kousaten_made_nobasi_senbun(Ten a,Ten b){
+public Line get_kousaten_made_nobasi_senbun(Point a, Point b){
 	kousaten_made_nobasi_keisan_fukumu_senbun_musi(a,b);
-	return kousaten_made_nobasi_senbun;
+	return kousaten_made_nobasi_line;
 }
 // -------------------
-public Senbun get_kousaten_made_nobasi_senbun_new(){
+public Line get_kousaten_made_nobasi_senbun_new(){
 	//kousaten_made_nobasi_keisan_fukumu_senbun_musi_new(a,b);
-	return kousaten_made_nobasi_senbun;
+	return kousaten_made_nobasi_line;
 }
 // -------------------
-public Senbun get_kousaten_made_nobasi_saisyono_senbun(Ten a,Ten b){
+public Line get_kousaten_made_nobasi_saisyono_senbun(Point a, Point b){
 	kousaten_made_nobasi_keisan_fukumu_senbun_musi(a,b);
-	return kousaten_made_nobasi_saisyono_senbun;
+	return kousaten_made_nobasi_saisyono_line;
 }
 
 // -------------------
-public Senbun get_kousaten_made_nobasi_saisyono_senbun_new(){
+public Line get_kousaten_made_nobasi_saisyono_senbun_new(){
 	//kousaten_made_nobasi_keisan_fukumu_senbun_musi(a,b);
-	return kousaten_made_nobasi_saisyono_senbun;
+	return kousaten_made_nobasi_saisyono_line;
 }
 
 
 // -------------------
-public Ten get_kousaten_made_nobasi_ten(Ten a,Ten b){
+public Point get_kousaten_made_nobasi_ten(Point a, Point b){
 	kousaten_made_nobasi_keisan_fukumu_senbun_musi(a,b);
-	return kousaten_made_nobasi_ten;
+	return kousaten_made_nobasi_point;
 }
 
-public Ten get_kousaten_made_nobasi_ten_new(){
+public Point get_kousaten_made_nobasi_ten_new(){
 	//kousaten_made_nobasi_keisan_fukumu_senbun_musi(a,b);
-	return kousaten_made_nobasi_ten;
+	return kousaten_made_nobasi_point;
 }
 
 

@@ -1,19 +1,8 @@
 package jp.gr.java_conf.mt777.origami.orihime.undo_box;
 
-import jp.gr.java_conf.mt777.origami.dougu.senbunsyuugou.*;
-import jp.gr.java_conf.mt777.origami.dougu.orisensyuugou.*;
-import jp.gr.java_conf.mt777.origami.dougu.camera.*;
-
-import java.awt.*;
 import java.util.LinkedList;
 
 import jp.gr.java_conf.mt777.kiroku.memo.*;
-
-import jp.gr.java_conf.mt777.zukei2d.ten.*;
-import jp.gr.java_conf.mt777.zukei2d.senbun.*;
-import jp.gr.java_conf.mt777.zukei2d.takakukei.*;
-import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
-import jp.gr.java_conf.mt777.zukei2d.oritaoekaki.*;
 
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------

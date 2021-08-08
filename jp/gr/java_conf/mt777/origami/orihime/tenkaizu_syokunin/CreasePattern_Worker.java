@@ -2,25 +2,25 @@ package jp.gr.java_conf.mt777.origami.orihime.tenkaizu_syokunin;
 
 import java.awt.*;
 
-import jp.gr.java_conf.mt777.origami.dougu.senbunsyuugou.*;
+import jp.gr.java_conf.mt777.origami.dougu.linestore.*;
 import jp.gr.java_conf.mt777.origami.dougu.camera.*;
-import jp.gr.java_conf.mt777.origami.dougu.tensyuugou.*;
+import jp.gr.java_conf.mt777.origami.dougu.pointstore.*;
 import jp.gr.java_conf.mt777.origami.orihime.undo_box.*;
 import jp.gr.java_conf.mt777.kiroku.memo.*;
-import jp.gr.java_conf.mt777.zukei2d.ten.*;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 import jp.gr.java_conf.mt777.zukei2d.heikinzahyou.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
+import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 
-public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図としてのTensyuugou cを１つだけもつ。
+public class CreasePattern_Worker {//この展開図職人クラスは展開図としてのTensyuugou cを１つだけもつ。
     //折り畳み等をやった結果得られるTensyuugouは外部に返すようにして、自分自身では保持しない。
     OritaCalc oc = new OritaCalc(); //各種計算用の関数を使うためのクラスのインスタンス化
     double r = 3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
 
-    Tensyuugou c = new Tensyuugou();    //展開図
+    PointStore c = new PointStore();    //展開図
 
     Undo_Box Ubox = new Undo_Box();
 
@@ -45,11 +45,11 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
     Camera cam_touka_ura = new Camera();
 
 
-    public Ten ten_of_kijyunmen_ob = new Ten();
+    public Point point_of_kijyunmen_ob = new Point();
 
     //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
-    public Tenkaizu_Syokunin(double r0) {  //コンストラクタ
+    public CreasePattern_Worker(double r0) {  //コンストラクタ
         //	 reset();
         r = r0;
     }
@@ -89,7 +89,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
     //-----------
     public void add_kijyunmen_id() {
         kijyunmen_id = kijyunmen_id + 1;
-        if (kijyunmen_id > c.getMensuu()) {
+        if (kijyunmen_id > c.getFacesTotal()) {
             kijyunmen_id = 1;
         }
     }
@@ -102,23 +102,23 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
 
     //-------------------------------------------
-    public Ten get_kijyunmen_migiue_Ten() {
+    public Point get_kijyunmen_migiue_Ten() {
 
         return c.get_men_migiue_Ten(kijyunmen_id);
 
     }
 
     //-------------------------------------------
-    public Ten get_ten_of_kijyunmen_ob() {
+    public Point get_ten_of_kijyunmen_ob() {
 
-        return ten_of_kijyunmen_ob;
+        return point_of_kijyunmen_ob;
 
     }
 
     //-------------------------------------------
-    public Ten get_ten_of_kijyunmen_tv() {
+    public Point get_ten_of_kijyunmen_tv() {
 
-        return camera.object2TV(ten_of_kijyunmen_ob);
+        return camera.object2TV(point_of_kijyunmen_ob);
 
     }
 
@@ -128,14 +128,14 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
         kijyunmen_id = i;
 
 
-        if (kijyunmen_id > c.getMensuu()) {
-            kijyunmen_id = c.getMensuu();
+        if (kijyunmen_id > c.getFacesTotal()) {
+            kijyunmen_id = c.getFacesTotal();
         }
         if (kijyunmen_id < 1) {
             kijyunmen_id = 1;
         }
 
-        ten_of_kijyunmen_ob = c.naibuTen_motome(kijyunmen_id);
+        point_of_kijyunmen_ob = c.naibuTen_motome(kijyunmen_id);
 
 
         return kijyunmen_id;
@@ -143,48 +143,48 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
 
     //-----------これは基準面指定モードでマウスを押されたときの対応201503
-    public int set_kijyunmen_id(Ten p0) {//実際に有効になっている基準面idを返す
-        Ten p = new Ten();
+    public int set_kijyunmen_id(Point p0) {//実際に有効になっている基準面idを返す
+        Point p = new Point();
         p.set(camera.TV2object(p0));
         if (c.naibu(p) > 0) {
             kijyunmen_id = c.naibu(p);
-            ten_of_kijyunmen_ob.set(p);
+            point_of_kijyunmen_ob.set(p);
         }//c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
         return kijyunmen_id;
     }
 
 
     //-----------Ten p0が折り上がり図の内部に有るかどうかを判定する
-    public int naibu_hantei(Ten p0) {//実際にp0がある面idを返す
-        Ten p = new Ten();
+    public int naibu_hantei(Point p0) {//実際にp0がある面idを返す
+        Point p = new Point();
         p.set(camera.TV2object(p0));
         return c.naibu(p);//c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     //-----------Ten p0が折り上がり図(表)の内部に有るかどうかを判定する
-    public int naibu_hantei_omote(Ten p0) {//実際にp0がある面idを返す
-        Ten p = new Ten();
+    public int naibu_hantei_omote(Point p0) {//実際にp0がある面idを返す
+        Point p = new Point();
         p.set(cam_omote.TV2object(p0));
         return c.naibu(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     //-----------Ten p0が折り上がり図(裏)の内部に有るかどうかを判定する
-    public int naibu_hantei_ura(Ten p0) {//実際にp0がある面idを返す
-        Ten p = new Ten();
+    public int naibu_hantei_ura(Point p0) {//実際にp0がある面idを返す
+        Point p = new Point();
         p.set(cam_ura.TV2object(p0));
         return c.naibu(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     //-----------Ten p0が折り上がり図に付属して表示される透過図(表)の内部に有るかどうかを判定する
-    public int naibu_hantei_touka_omote(Ten p0) {//実際にp0がある面idを返す
-        Ten p = new Ten();
+    public int naibu_hantei_touka_omote(Point p0) {//実際にp0がある面idを返す
+        Point p = new Point();
         p.set(cam_touka_omote.TV2object(p0));
         return c.naibu(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     //-----------Ten p0が折り上がり図に付属して表示される透過図(裏)の内部に有るかどうかを判定する
-    public int naibu_hantei_touka_ura(Ten p0) {//実際にp0がある面idを返す
-        Ten p = new Ten();
+    public int naibu_hantei_touka_ura(Point p0) {//実際にp0がある面idを返す
+        Point p = new Point();
         p.set(cam_touka_ura.TV2object(p0));
         return c.naibu(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
@@ -256,7 +256,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
     // ----------------
     public int getMensuu() {
-        return c.getMensuu();
+        return c.getFacesTotal();
     }
 
     //-------------
@@ -270,13 +270,13 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
     }
 
     //面の内部の点を求める//---------------------------------------
-    public Ten naibuTen_motome(int i) {
+    public Point naibuTen_motome(int i) {
         return c.naibuTen_motome(i);
     }
 
     //点集合の持つ棒の総数を得る
     public int getBousuu() {
-        return c.getBousuu();
+        return c.getSticksTotal();
     }
 
     //点集合の持つ棒の色を得る（点集合を展開図として扱う場合では、この色は山谷をあらわす）。
@@ -292,9 +292,9 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
     //-------------------------------------------
     //折りたたみ推定（ここでできるのは面の重なりを考えていない針金図）
     //Folding estimation (What you can do here is a wire diagram that does not consider the overlap of surfaces)
-    public Tensyuugou oritatami() {//折りたたみ推定
-        Tensyuugou cn = new Tensyuugou();    //展開図
-        cn.settei(c.getTensuu(), c.getBousuu(), c.getMensuu());
+    public PointStore folding() {//折りたたみ推定
+        PointStore cn = new PointStore();    //展開図
+        cn.settei(c.getPointsTotal(), c.getSticksTotal(), c.getFacesTotal());
         cn.set(c);
 
 
@@ -302,7 +302,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
         //kijyunmen_id=1;//基準になる面を指定する
 
-        for (int i = 0; i <= c.getMensuu(); i++) {
+        for (int i = 0; i <= c.getFacesTotal(); i++) {
             tonariMenid[i] = 0;
             kyoukaiBouid[i] = 0;
             iMeniti[i] = 0;
@@ -314,12 +314,12 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
         int imano_Meniti = 1;
         int nokori_Mensuu;
-        nokori_Mensuu = c.getMensuu() - 1;
+        nokori_Mensuu = c.getFacesTotal() - 1;
 
         while (nokori_Mensuu > 0) {
-            for (int i = 1; i <= c.getMensuu(); i++) {
+            for (int i = 1; i <= c.getFacesTotal(); i++) {
                 if (iMeniti[i] == imano_Meniti) {
-                    for (int j = 1; j <= c.getMensuu(); j++) {
+                    for (int j = 1; j <= c.getFacesTotal(); j++) {
                         int mth = c.Men_tonari_hantei(i, j);
                         if ((mth > 0) && (iMeniti[j] == 0)) {
                             iMeniti[j] = imano_Meniti + 1;
@@ -333,7 +333,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
             imano_Meniti = imano_Meniti + 1;
 
             nokori_Mensuu = 0;
-            for (int i = 1; i <= c.getMensuu(); i++) {
+            for (int i = 1; i <= c.getFacesTotal(); i++) {
                 if (iMeniti[i] == 0) {
                     nokori_Mensuu = nokori_Mensuu + 1;
                 }
@@ -348,9 +348,9 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
         //展開図が折られたときにどこに移動するかを、面imの移動によって求める。
 
         System.out.println("折ったときの点の位置を求める（開始）");
-        for (int it = 1; it <= c.getTensuu(); it++) {
+        for (int it = 1; it <= c.getPointsTotal(); it++) {
             tnew[it].reset();
-            for (int im = 1; im <= c.getMensuu(); im++) {
+            for (int im = 1; im <= c.getFacesTotal(); im++) {
                 if (c.Ten_moti_hantei(im, it) == 1) {//c.Ten_moti_hanteiは、Men[im]の境界にTen[it]が含まれるなら1、含まれないなら0を返す
                     tnew[it].addTen(ori_idou(it, im));
                     cn.setTen(it, tnew[it].getHeikin_Ten());
@@ -364,9 +364,9 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
     }
 
     //------------------------------------------------------------
-    private Ten ori_idou(int it, int im) { //点itが面imの一員として折られた場合の移動先の位置を求める関数
+    private Point ori_idou(int it, int im) { //点itが面imの一員として折られた場合の移動先の位置を求める関数
 
-        Ten p = new Ten();  // p1.set(s.geta());
+        Point p = new Point();  // p1.set(s.geta());
         p.set(c.getTen(it));
         int idousakino_Menid;
         idousakino_Menid = im;//最初の面のid番号。これから基準面の方向に隣接する面をたどっていく。
@@ -382,10 +382,10 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 // ***********************************
 
     //折りたたみ推定（ここでできるのは面の重なりを考えていない針金図）
-    public Tensyuugou men_iti_motome() {//折りたたみ推定
+    public PointStore men_iti_motome() {//折りたたみ推定
 
-        Tensyuugou cn = new Tensyuugou();    //展開図
-        cn.settei(c.getTensuu(), c.getBousuu(), c.getMensuu());
+        PointStore cn = new PointStore();    //展開図
+        cn.settei(c.getPointsTotal(), c.getSticksTotal(), c.getFacesTotal());
         cn.set(c);
 
 
@@ -393,7 +393,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
         //kijyunmen_id=1;//基準になる面を指定する
 
-        for (int i = 0; i <= c.getMensuu(); i++) {
+        for (int i = 0; i <= c.getFacesTotal(); i++) {
             tonariMenid[i] = 0;
             kyoukaiBouid[i] = 0;
             iMeniti[i] = 0;
@@ -405,12 +405,12 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
         int imano_Meniti = 1;
         int nokori_Mensuu;
-        nokori_Mensuu = c.getMensuu() - 1;
+        nokori_Mensuu = c.getFacesTotal() - 1;
 
         while (nokori_Mensuu > 0) {
-            for (int i = 1; i <= c.getMensuu(); i++) {
+            for (int i = 1; i <= c.getFacesTotal(); i++) {
                 if (iMeniti[i] == imano_Meniti) {
-                    for (int j = 1; j <= c.getMensuu(); j++) {
+                    for (int j = 1; j <= c.getFacesTotal(); j++) {
                         int mth = c.Men_tonari_hantei(i, j);
                         if ((mth > 0) && (iMeniti[j] == 0)) {
                             iMeniti[j] = imano_Meniti + 1;
@@ -424,7 +424,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
             imano_Meniti = imano_Meniti + 1;
 
             nokori_Mensuu = 0;
-            for (int i = 1; i <= c.getMensuu(); i++) {
+            for (int i = 1; i <= c.getFacesTotal(); i++) {
                 if (iMeniti[i] == 0) {
                     nokori_Mensuu = nokori_Mensuu + 1;
                 }
@@ -442,37 +442,37 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 // **********************************
 
 
-    private Ten sentaisyou_ten_motome(int bouid, Ten tn) {//棒のidと、任意の点を与えて、idが対応する棒に対して、与えた点の線対称になる点を返す
+    private Point sentaisyou_ten_motome(int bouid, Point tn) {//棒のidと、任意の点を与えて、idが対応する棒に対して、与えた点の線対称になる点を返す
         return oc.sentaisyou_ten_motome(c.get_maeTen_from_Bou_id(bouid), c.get_atoTen_from_Bou_id(bouid), tn);
     }
 
 
     public int getTensuu() {
-        return c.getTensuu();
+        return c.getPointsTotal();
     }
 //	int getBousuu(){return c.getBousuu();}	
 //	int getMensuu(){return c.getMensuu();}	
 
 
     //-------------------------------------------
-    public void set(Tensyuugou ts) {
-        settei(ts.getTensuu(), ts.getBousuu(), ts.getMensuu());
-        c.settei(ts.getTensuu(), ts.getBousuu(), ts.getMensuu());
+    public void set(PointStore ts) {
+        settei(ts.getPointsTotal(), ts.getSticksTotal(), ts.getFacesTotal());
+        c.settei(ts.getPointsTotal(), ts.getSticksTotal(), ts.getFacesTotal());
         c.set(ts);
 //System.out.println("折りたたみset 001   c.getTenx(1) = "+c.getTenx(1));		
 
     }
 
-    public Tensyuugou get() {
+    public PointStore get() {
         return c;
     }
 
     //------------------
-    public Senbunsyuugou getSenbunsyuugou() {
-        Senbunsyuugou ss = new Senbunsyuugou();    //基本枝構造のインスタンス化
+    public LineStore getSenbunsyuugou() {
+        LineStore ss = new LineStore();    //基本枝構造のインスタンス化
 
-        ss.setsousuu(c.getBousuu());
-        for (int i = 1; i <= c.getBousuu(); i++) {
+        ss.setsousuu(c.getSticksTotal());
+        for (int i = 1; i <= c.getSticksTotal(); i++) {
             ss.set(i, c.getTen(c.getmae(i)), c.getTen(c.getato(i)), c.getcolor(i), 0);
         }
         return ss;
@@ -482,12 +482,12 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
     //　ここは class Tenkaizu_Syokunin  の中です
 
     //--------------------------------------------------------------------------
-    public void Senbunsyuugou2Tensyuugou(Senbunsyuugou k) {
+    public void lineStore2pointStore(LineStore k) {
 
         //   settei(k.getsousuu(),k.getsousuu(),k.getsousuu());
         //   c.settei(k.getsousuu(),k.getsousuu(),k.getsousuu());
 
-        Ten ti = new Ten();
+        Point ti = new Point();
         reset();
 
         //まず、Tensyuugou内で点を定義する。
@@ -510,7 +510,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
             //	}
 
             for (int j = 1; j <= addTensuu; j++) {
-                if (oc.hitosii(ti, new Ten(addTenx[j], addTeny[j]))) {
+                if (oc.hitosii(ti, new Point(addTenx[j], addTeny[j]))) {
                     flag1 = 1;
                 }
             }
@@ -530,7 +530,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
             //	if(oc.hitosii(ti,c.getTen(j) )){flag1=1;}
             //}
             for (int j = 1; j <= addTensuu; j++) {
-                if (oc.hitosii(ti, new Ten(addTenx[j], addTeny[j]))) {
+                if (oc.hitosii(ti, new Point(addTenx[j], addTeny[j]))) {
                     flag1 = 1;
                 }
             }
@@ -565,13 +565,13 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
         int[] ika2ic = new int[k.getsousuu() + 1];
         int[] ikb2ic = new int[k.getsousuu() + 1];
         for (int n = 1; n <= k.getsousuu(); n++) {
-            for (int i = 1; i <= c.getTensuu(); i++) {
+            for (int i = 1; i <= c.getPointsTotal(); i++) {
                 if (oc.hitosii(k.geta(n), c.getTen(i))) {
                     ika2ic[n] = i;
                     break;
                 }
             }
-            for (int i = 1; i <= c.getTensuu(); i++) {
+            for (int i = 1; i <= c.getPointsTotal(); i++) {
                 if (oc.hitosii(k.getb(n), c.getTen(i))) {
                     ikb2ic[n] = i;
                     break;
@@ -586,7 +586,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
 
         System.out.print("棒の全数　＝　");
-        System.out.println(c.getBousuu());
+        System.out.println(c.getSticksTotal());
         //
         System.out.println("線分集合->点集合：点集合内で面を発生　開始");
         //その次に、Tensyuugou内で面を発生させる。
@@ -601,21 +601,21 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
     //棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
     public int Bou_moti_Menid_min_motome(int ib) {
-        return c.Bou_moti_Menid_min_motome(ib);
+        return c.Stick_moti_Menid_min_motome(ib);
     }
 
     //棒ibを境界として含む面(最大で2面ある)のうちでMenidの大きいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
     public int Bou_moti_Menid_max_motome(int ib) {
-        return c.Bou_moti_Menid_max_motome(ib);
+        return c.Stick_moti_Menid_max_motome(ib);
     }
 
     //　ここは class Tenkaizu_Syokunin  の中です
 
 
     //マウス操作(ボタンを押したとき)時の作業----------------------------------------------------
-    public int mPressed(Ten p, int ura_omote) {
+    public int mPressed(Point p, int ura_omote) {
         //マウスと近い位置にあるTenを探す。
-        Ten pn = new Ten();
+        Point pn = new Point();
         pn.set(p);
         if (ura_omote == 1) {
             pn.setx(-p.getx() + 2.0 * 700.0);
@@ -625,12 +625,12 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
     }
 
     //マウス操作(ドラッグしたとき)を行う関数----------------------------------------------------
-    public int mDragged(Ten p, int ura_omote) {
+    public int mDragged(Point p, int ura_omote) {
 
 
         if (i_ugokasuTen != 0) {//Tenを変更
 
-            Ten pn = new Ten();
+            Point pn = new Point();
             pn.set(p);
             if (ura_omote == 1) {
                 pn.setx(-p.getx() + 2.0 * 700.0);
@@ -642,11 +642,11 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
 
     //マウス操作(ボタンを離したとき)を行う関数----------------------------------------------------
-    public int mReleased(Ten p, int ura_omote) {
+    public int mReleased(Point p, int ura_omote) {
         int ireturn = 0;
 
         if (i_ugokasuTen != 0) {
-            Ten pn = new Ten();
+            Point pn = new Point();
             pn.set(p);
             if (ura_omote == 1) {
                 pn.setx(-p.getx() + 2.0 * 700.0);
@@ -665,8 +665,8 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
     //マウス操作(ボタンを押したとき)時の作業----------------------------------------------------
 
 
-    public int mPressed_with_camera(Ten p0, int ip4) {
-        Ten p = new Ten();
+    public int mPressed_with_camera(Point p0, int ip4) {
+        Point p = new Point();
         if (ip4 == 0) {
             p.set(cam_omote.TV2object(p0));
         }
@@ -704,9 +704,9 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 */
 
     //--------------------------------------------------
-    public void mDragged_sentakuten_ugokasi_with_camera(Ten p0, int ip4) {   //選択された点を動かす
+    public void mDragged_sentakuten_ugokasi_with_camera(Point p0, int ip4) {   //選択された点を動かす
 
-        Ten p = new Ten();
+        Point p = new Point();
         if (ip4 == 0) {
             p.set(cam_omote.TV2object(p0));
         }
@@ -728,9 +728,9 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
 
     //--------------------------------------------------
-    public void mDragged_sentakuten_ugokasi_with_camera(Ten ugokasu_maeno_sentaku_ten, Ten p0, Ten p1, int ip4) {   //選択された点を動かす
+    public void mDragged_sentakuten_ugokasi_with_camera(Point ugokasu_maeno_sentaku_point, Point p0, Point p1, int ip4) {   //選択された点を動かす
 
-        Ten pa = new Ten();
+        Point pa = new Point();
         if (ip4 == 0) {
             pa.set(cam_omote.TV2object(p0));
         }
@@ -738,7 +738,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
             pa.set(cam_ura.TV2object(p0));
         }
 
-        Ten pb = new Ten();
+        Point pb = new Point();
         if (ip4 == 0) {
             pb.set(cam_omote.TV2object(p1));
         }
@@ -747,8 +747,8 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
         }
 
 
-        Ten p_u = new Ten();
-        p_u.set(ugokasu_maeno_sentaku_ten.getx(), ugokasu_maeno_sentaku_ten.gety());
+        Point p_u = new Point();
+        p_u.set(ugokasu_maeno_sentaku_point.getx(), ugokasu_maeno_sentaku_point.gety());
         p_u.idou(pa.tano_Ten_iti(pb));
 
         c.sentaku_ten_move(p_u);
@@ -757,9 +757,9 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
     }
 
     //--------------------------------------------------
-    public void mReleased_sentakuten_ugokasi_with_camera(Ten ugokasu_maeno_sentaku_ten, Ten p0, Ten p1, int ip4) {   //選択された点を動かす
+    public void mReleased_sentakuten_ugokasi_with_camera(Point ugokasu_maeno_sentaku_point, Point p0, Point p1, int ip4) {   //選択された点を動かす
 
-        Ten pa = new Ten();
+        Point pa = new Point();
         if (ip4 == 0) {
             pa.set(cam_omote.TV2object(p0));
         }
@@ -767,7 +767,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
             pa.set(cam_ura.TV2object(p0));
         }
 
-        Ten pb = new Ten();
+        Point pb = new Point();
         if (ip4 == 0) {
             pb.set(cam_omote.TV2object(p1));
         }
@@ -776,8 +776,8 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
         }
 
 
-        Ten p_u = new Ten();
-        p_u.set(ugokasu_maeno_sentaku_ten.getx(), ugokasu_maeno_sentaku_ten.gety());
+        Point p_u = new Point();
+        p_u.set(ugokasu_maeno_sentaku_point.getx(), ugokasu_maeno_sentaku_point.gety());
         p_u.idou(pa.tano_Ten_iti(pb));
 
         c.sentaku_ten_move(p_u);
@@ -788,9 +788,9 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
     //マウス操作(ボタンを離したとき)を行う関数----------------------------------------------------
 
 
-    public int mReleased_with_camera(Ten p0, int ip4) {
+    public int mReleased_with_camera(Point p0, int ip4) {
 
-        Ten p = new Ten();
+        Point p = new Point();
         if (ip4 == 0) {
             p.set(cam_omote.TV2object(p0));
         }
@@ -816,9 +816,9 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
 // -----------------------
 
-    public void mReleased_sentakuten_ugokasi_with_camera(Ten p0, int ip4) {
+    public void mReleased_sentakuten_ugokasi_with_camera(Point p0, int ip4) {
 
-        Ten p = new Ten();
+        Point p = new Point();
         if (ip4 == 0) {
             p.set(cam_omote.TV2object(p0));
         }
@@ -858,7 +858,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
         //	for (int i=1; i<=c.getTensuu(); i++ ){ g.drawOval( gx(tnew[i].getx()-r),gy(tnew[i].gety()-r),2*ir,2*ir);} //円
         g.setColor(Color.black);
         //	for (int i=1; i<=c.getTensuu(); i++ ){ g.drawString( text.valueOf(i),gx(c.getTenx(i)),gy(c.getTeny(i)));}
-        for (int i = 1; i <= c.getBousuu(); i++) {
+        for (int i = 1; i <= c.getSticksTotal(); i++) {
             if (c.getcolor(i) == 0) {
                 g.setColor(Color.black);
             }
@@ -878,10 +878,10 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
     public void oekaki_with_camera(Graphics g) {
 //System.out.println("折りたたみ oekaki 001   c.getTenx(1) = "+c.getTenx(1));	
-        Senbun s_tv = new Senbun();
+        Line s_tv = new Line();
         String text = "";//文字列処理用のクラスのインスタンス化
         g.setColor(Color.black);
-        for (int i = 1; i <= c.getBousuu(); i++) {
+        for (int i = 1; i <= c.getSticksTotal(); i++) {
             if (c.getcolor(i) == 0) {
                 g.setColor(Color.black);
             }
@@ -900,7 +900,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
     // ------------------------------
     public void oekaki_Ten_id_with_camera(Graphics g, int i) {    //点を描く
-        Ten tn = new Ten();
+        Point tn = new Point();
         tn.set(camera.object2TV(c.getTen(i)));
         int ir = 7;//半径
         g.setColor(new Color(0, 255, 255, 100));//水色
@@ -909,7 +909,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
     // ------------------------------
     public void oekaki_Ten_id_with_camera_green(Graphics g, int i) {    //点を描く
-        Ten tn = new Ten();
+        Point tn = new Point();
         tn.set(camera.object2TV(c.getTen(i)));
         int ir = 15;//半径
         g.setColor(new Color(0, 255, 0, 100));//緑色
@@ -922,7 +922,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
     public void oekaki_Ten_id_with_camera(Graphics g, int i, int ip4) {
         //点を描く
-        Ten tn = new Ten();
+        Point tn = new Point();
         tn.set(camera.object2TV(c.getTen(i)));
         int ir = 10;//半径
         g.setColor(new Color(0, 255, 0, 50));//緑色
@@ -947,10 +947,10 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
     public void oekaki_with_camera(Graphics g, int ip4) {
 
-        Senbun s_tv = new Senbun();
+        Line s_tv = new Line();
         String text = "";//文字列処理用のクラスのインスタンス化
         g.setColor(Color.black);
-        for (int i = 1; i <= c.getBousuu(); i++) {
+        for (int i = 1; i <= c.getSticksTotal(); i++) {
             if (c.getcolor(i) == 0) {
                 g.setColor(Color.black);
             }
@@ -984,9 +984,9 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
     public void oekaki_kijyunmen_id_with_camera(Graphics g) {
         //面内部の点を描く
-        Ten tn = new Ten();
+        Point tn = new Point();
         //tn.reset();
-        tn.set(camera.object2TV(ten_of_kijyunmen_ob));
+        tn.set(camera.object2TV(point_of_kijyunmen_ob));
 
         g.setColor(new Color(200, 50, 255, 90));
         g.fillOval(gx(tn.getx()) - 50, gy(tn.gety()) - 50, 100, 100); //円
@@ -1048,8 +1048,8 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
     double d_h_k = 10.0;//一定の距離より近い近傍かの判定距離
 
     //与えられた座標と一定の距離より近い近傍にあって、かつ最も近い点の番号を返す。もし、一定の距離以内にTenがないなら0を返す。
-    public int mottomo_tikai_Tenid_with_camera(Ten p0) {//展開図用
-        Ten p = new Ten();
+    public int mottomo_tikai_Tenid_with_camera(Point p0) {//展開図用
+        Point p = new Point();
         p.set(camera.TV2object(p0));
 
         return c.mottomo_tikai_Tenid(p, d_h_k / camera.get_camera_bairitsu_x());
@@ -1057,8 +1057,8 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
 
 
     //与えられた座標と一定の距離より近い近傍にあって、かつ最も近い点の番号を返す。もし、一定の距離以内にTenがないなら0を返す。
-    public int mottomo_tikai_Tenid_with_camera(Ten p0, int ip4) {//折り上がり図用
-        Ten p = new Ten();
+    public int mottomo_tikai_Tenid_with_camera(Point p0, int ip4) {//折り上がり図用
+        Point p = new Point();
         if (ip4 == 0) {
             p.set(cam_omote.TV2object(p0));
             return c.mottomo_tikai_Tenid(p, d_h_k / cam_omote.get_camera_bairitsu_x());
@@ -1074,16 +1074,16 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
     //--------------------
 
     //与えられた座標と一定の距離より近い近傍にあって、かつ最も近い点の距離を返す。もし、一定の距離以内にTenがないなら1000000.0を返す。
-    public double mottomo_tikai_Ten_kyori_with_camera(Ten p0) {//p0はTV座標。リターンされるのはobでの距離
-        Ten p = new Ten();
+    public double mottomo_tikai_Ten_kyori_with_camera(Point p0) {//p0はTV座標。リターンされるのはobでの距離
+        Point p = new Point();
         p.set(camera.TV2object(p0));
         return c.mottomo_tikai_Ten_kyori(p, d_h_k / camera.get_camera_bairitsu_x());
     }
 
 
     //与えられた座標と一定の距離より近い近傍にあって、かつ最も近い点の距離を返す。もし、一定の距離以内にTenがないなら1000000.0を返す。
-    public double mottomo_tikai_Ten_kyori_with_camera(Ten p0, int ip4) {//p0はTV座標。リターンされるのはobでの距離
-        Ten p = new Ten();
+    public double mottomo_tikai_Ten_kyori_with_camera(Point p0, int ip4) {//p0はTV座標。リターンされるのはobでの距離
+        Point p = new Point();
         if (ip4 == 0) {
             p.set(cam_omote.TV2object(p0));
             return c.mottomo_tikai_Ten_kyori(p, d_h_k / cam_omote.get_camera_bairitsu_x());
@@ -1096,7 +1096,7 @@ public class Tenkaizu_Syokunin {//この展開図職人クラスは展開図と�
     }
 
     // ------------------------------
-    public Ten getTen(int i) {
+    public Point getTen(int i) {
         return c.getTen(i);
     }
 

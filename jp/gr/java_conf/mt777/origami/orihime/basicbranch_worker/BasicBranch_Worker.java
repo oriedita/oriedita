@@ -1,36 +1,36 @@
-package jp.gr.java_conf.mt777.origami.orihime.kihonshi_syokunin;
+package jp.gr.java_conf.mt777.origami.orihime.basicbranch_worker;
 
-import jp.gr.java_conf.mt777.origami.dougu.senbunsyuugou.*;
+import jp.gr.java_conf.mt777.origami.dougu.linestore.*;
 import jp.gr.java_conf.mt777.origami.dougu.camera.*;
 
 import java.awt.*;
 
 import jp.gr.java_conf.mt777.kiroku.memo.*;
 
-import jp.gr.java_conf.mt777.zukei2d.ten.*;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 import jp.gr.java_conf.mt777.zukei2d.takakukei.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
 import jp.gr.java_conf.mt777.zukei2d.oritaoekaki.*;
+import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
-public class Kihonshi_Syokunin {
+public class BasicBranch_Worker {
     OritaCalc oc = new OritaCalc(); //各種計算用の関数を使うためのクラスのインスタンス化
     double r = 3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
     int icol;//線分の色
     int taisyousei;
 
-    Ten pa = new Ten(); //マウスボタンが押された位置からa点までのベクトル
-    Ten pb = new Ten(); //マウスボタンが押された位置からb点までのベクトル
+    Point pa = new Point(); //マウスボタンが押された位置からa点までのベクトル
+    Point pb = new Point(); //マウスボタンが押された位置からb点までのベクトル
 
     int ugokasi_mode = 0;    //枝を動かす動作モード。0=なにもしない、1=a点を動かす、2=b点を動かす、3=枝を平行移動 、4=新規追加
     int ieda;              //アクティブな枝の番号
 
     int i_saigo_no_senbun_no_maru_kaku = 1;    //1描く、0描かない
 
-    Senbunsyuugou k = new Senbunsyuugou();    //基本枝構造のインスタンス化
+    LineStore k = new LineStore();    //基本枝構造のインスタンス化
     // Senbunsyuugou k ;    //基本枝構造
     Takakukei gomibako = new Takakukei(4);    //ゴミ箱のインスタンス化
     Takakukei tyuuoutai = new Takakukei(4);    //中央帯のインスタンス化
@@ -47,8 +47,8 @@ public class Kihonshi_Syokunin {
     int kensa_houhou = 0;
     int nhi = 0;
 
-    Ten nhTen = new Ten();
-    Ten nhTen1 = new Ten();
+    Point nhPoint = new Point();
+    Point nhPoint1 = new Point();
 
     int kousi_haba = 24;  //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<格子幅
     int i_kousi_x_min = -1000;
@@ -59,20 +59,20 @@ public class Kihonshi_Syokunin {
 
     //---------------------------------
     // Kihonshi_Syokunin(  Senbunsyuugou k0,double r0 ){  //コンストラクタ
-    public Kihonshi_Syokunin(double r0) {  //コンストラクタ
+    public BasicBranch_Worker(double r0) {  //コンストラクタ
         r = r0;
         ugokasi_mode = 0;
         ieda = 0;
         icol = 0;
-        gomibako.set(new Ten(10.0, 150.0), 1, new Ten(0.0, 0.0));
-        gomibako.set(new Ten(10.0, 150.0), 2, new Ten(50.0, 0.0));
-        gomibako.set(new Ten(10.0, 150.0), 3, new Ten(40.0, 50.0));
-        gomibako.set(new Ten(10.0, 150.0), 4, new Ten(10.0, 50.0));
+        gomibako.set(new Point(10.0, 150.0), 1, new Point(0.0, 0.0));
+        gomibako.set(new Point(10.0, 150.0), 2, new Point(50.0, 0.0));
+        gomibako.set(new Point(10.0, 150.0), 3, new Point(40.0, 50.0));
+        gomibako.set(new Point(10.0, 150.0), 4, new Point(10.0, 50.0));
 
-        tyuuoutai.set(1, new Ten(tyuuoutai_xmin, tyuuoutai_ymin));
-        tyuuoutai.set(2, new Ten(tyuuoutai_xmax, tyuuoutai_ymin));
-        tyuuoutai.set(3, new Ten(tyuuoutai_xmax, tyuuoutai_ymax));
-        tyuuoutai.set(4, new Ten(tyuuoutai_xmin, tyuuoutai_ymax));
+        tyuuoutai.set(1, new Point(tyuuoutai_xmin, tyuuoutai_ymin));
+        tyuuoutai.set(2, new Point(tyuuoutai_xmax, tyuuoutai_ymin));
+        tyuuoutai.set(3, new Point(tyuuoutai_xmax, tyuuoutai_ymax));
+        tyuuoutai.set(4, new Point(tyuuoutai_xmin, tyuuoutai_ymax));
 
         taisyousei = 0;
     }
@@ -123,12 +123,12 @@ public class Kihonshi_Syokunin {
     }
 
     //--------------------------------------------
-    public void set(Senbunsyuugou ss) {
+    public void set(LineStore ss) {
         k.set(ss);
     }
 
     //----------------------------------------------
-    public Senbunsyuugou get() {
+    public LineStore get() {
         return k;
     }
 
@@ -259,8 +259,8 @@ public class Kihonshi_Syokunin {
     //枝を動かした後の処理を行う関数----------------------------------------------------
     public void eda_atosyori_01() {//枝の長さを変えずに、枝全体を平行移動して微調整する。
         //アクティブな帯の位置を微調整する
-        Ten ab = new Ten(1, k.getb(ieda), -1, k.geta(ieda));//アクティブな枝の、点aから点bへ向かうベクトル
-        Ten ba = new Ten(1, k.geta(ieda), -1, k.getb(ieda));//アクティブな枝の、点aから点bへ向かうベクトル
+        Point ab = new Point(1, k.getb(ieda), -1, k.geta(ieda));//アクティブな枝の、点aから点bへ向かうベクトル
+        Point ba = new Point(1, k.geta(ieda), -1, k.getb(ieda));//アクティブな枝の、点aから点bへ向かうベクトル
 
         int jeda;   //アクティブな枝と近い別の枝
         int jbasyo; //アクティブな枝と近い別の枝のどこが近いのかを示すための番号
@@ -271,11 +271,11 @@ public class Kihonshi_Syokunin {
         jbasyo = k.senbun_busyo_sagasi(jeda, k.geta(ieda), 2 * r);//別の枝のどの部所が近いかを求める。
         if ((jeda != 0) && (jbasyo == 1)) { //アクティブな枝のa点と、別の枝のa点が近い場合
             k.seta(ieda, k.geta(jeda));
-            k.setb(ieda, new Ten(1, k.geta(ieda), 1, ab));//こう書いてもちゃんと動く様なので、このまま使う。
+            k.setb(ieda, new Point(1, k.geta(ieda), 1, ab));//こう書いてもちゃんと動く様なので、このまま使う。
         }
         if ((jeda != 0) && (jbasyo == 2)) { //アクティブな枝のa点と、別の枝のb点が近い場合
             k.seta(ieda, k.getb(jeda));
-            k.setb(ieda, new Ten(1, k.geta(ieda), 1, ab));
+            k.setb(ieda, new Point(1, k.geta(ieda), 1, ab));
         }
 
         //　アクティブな枝のb点　と　別の枝　との距離が　ｒ　より近い場合
@@ -283,11 +283,11 @@ public class Kihonshi_Syokunin {
         jbasyo = k.senbun_busyo_sagasi(jeda, k.getb(ieda), 2 * r);//別の枝のどの部所が近いかを求める。
         if ((jeda != 0) && (jbasyo == 1)) { //アクティブな枝のb点と、別の枝のa点が近い場合
             k.setb(ieda, k.geta(jeda));
-            k.seta(ieda, new Ten(1, k.getb(ieda), 1, ba));
+            k.seta(ieda, new Point(1, k.getb(ieda), 1, ba));
         }
         if ((jeda != 0) && (jbasyo == 2)) { //アクティブな枝のb点と、別の枝のb点が近い場合
             k.setb(ieda, k.getb(jeda));
-            k.seta(ieda, new Ten(1, k.getb(ieda), 1, ba));
+            k.seta(ieda, new Point(1, k.getb(ieda), 1, ba));
         }
     }
 
@@ -400,7 +400,7 @@ public class Kihonshi_Syokunin {
             for (int i = 1; i <= k.getsousuu() - 1; i++) {
                 for (int j = i + 1; j <= k.getsousuu(); j++) {
                     if (oc.senbun_kousa_hantei(k.get(i), k.get(j)) == 31) {
-                        OO.habaLine(g, k.get(i), kr, 1);//  太線
+                        OO.widthLine(g, k.get(i), kr, 1);//  太線
                         g.fillOval((int) k.getax(i) - kr, (int) k.getay(i) - kr, 2 * kr, 2 * kr); //円
                         g.fillOval((int) k.getbx(i) - kr, (int) k.getby(i) - kr, 2 * kr, 2 * kr); //円
                     }
@@ -426,8 +426,8 @@ public class Kihonshi_Syokunin {
         g.drawString("線分の数　" + k.getsousuu(), 30, 50);
 
         //描画
-        Ten a = new Ten();
-        Ten b = new Ten();
+        Point a = new Point();
+        Point b = new Point();
         int ir = (int) r;
 
         //入力規定が1（格子）の場合の格子線の描画
@@ -553,7 +553,7 @@ public class Kihonshi_Syokunin {
             g.drawLine((int) a.getx(), (int) a.gety(), (int) b.getx(), (int) b.gety()); //直線
 
             if (iTenkaizuSenhaba != 1) {
-                OO.habaLine(g, k.get(i), iTenkaizuSenhaba, k.getcolor(i));
+                OO.widthLine(g, k.get(i), iTenkaizuSenhaba, k.getcolor(i));
             }//  太線
             //  OO.habaLine( g,k.get(i),ir,k.getcolor(i));//  太線
 
@@ -577,13 +577,13 @@ public class Kihonshi_Syokunin {
         double d;
         OritaOekaki OO = new OritaOekaki();
 
-        Senbun s_tv = new Senbun();
-        Ten a = new Ten();
-        Ten b = new Ten();
+        Line s_tv = new Line();
+        Point a = new Point();
+        Point b = new Point();
         int ir = (int) (r * camera.get_camera_bairitsu_x());
 
         //格子線の描画
-        Senbun s_ob = new Senbun();
+        Line s_ob = new Line();
         //入力規定が1か2（正方格子）の場合の格子線の描画
 
 
@@ -608,8 +608,8 @@ public class Kihonshi_Syokunin {
             //格子点に丸を描く
 
             g.setColor(Color.gray);
-            Ten t_ob = new Ten();
-            Ten t_tv = new Ten();
+            Point t_ob = new Point();
+            Point t_tv = new Point();
             for (int i = i_kousi_x_min / kousi_haba; i <= i_kousi_x_max / kousi_haba; i++) {
                 for (int j = i_kousi_y_min / kousi_haba; j <= i_kousi_y_max / kousi_haba; j++) {
                     t_ob.set(kousi_haba * i, kousi_haba * j);
@@ -656,8 +656,8 @@ public class Kihonshi_Syokunin {
             //格子点に丸を描く
 
             g.setColor(Color.gray);
-            Ten t_ob = new Ten();
-            Ten t_tv = new Ten();
+            Point t_ob = new Point();
+            Point t_tv = new Point();
             for (int i = -30; i <= 30; i++) {
                 for (int j = -30; j <= 30; j = j + 2) {
                     t_ob.set(kousi_haba * i, sankaku_kousi_takasa * j);
@@ -700,7 +700,7 @@ public class Kihonshi_Syokunin {
 
             g.drawLine((int) a.getx(), (int) a.gety(), (int) b.getx(), (int) b.gety()); //直線
             if (iTenkaizuSenhaba != 1) {
-                OO.habaLine(g, s_tv, iTenkaizuSenhaba, k.getcolor(i));
+                OO.widthLine(g, s_tv, iTenkaizuSenhaba, k.getcolor(i));
             }//  太線
 
             //OO.habaLine( g,s_tv,iTenkaizuSenhaba,k.getcolor(i));
@@ -734,7 +734,7 @@ public class Kihonshi_Syokunin {
 
             g.drawLine((int) a.getx(), (int) a.gety(), (int) b.getx(), (int) b.gety()); //直線
             if (iTenkaizuSenhaba != 1) {
-                OO.habaLine(g, s_tv, iTenkaizuSenhaba, k.getcolor(i));
+                OO.widthLine(g, s_tv, iTenkaizuSenhaba, k.getcolor(i));
             }//  太線
 
             if (i_saigo_no_senbun_no_maru_kaku == 1) {
@@ -760,7 +760,7 @@ public class Kihonshi_Syokunin {
 
 
     //マウス操作(ボタンを押したとき)時の作業----------------------------------------------------
-    public void mPressed(Ten p) {
+    public void mPressed(Point p) {
         //ゴミ箱がクリックされたら、単独の線分を削除する
 
         if (gomibako.naibu(p) >= 1) {
@@ -862,16 +862,16 @@ public class Kihonshi_Syokunin {
 
             if (nhi == 1) {
                 k.addsenbun(p, p);
-                nhTen = p;
+                nhPoint = p;
                 for (int i = 1; i <= k.getsousuu() - 1; i++) {
                     if (oc.hitosii(k.geta(i), p, 2.0 * r)) {
                         k.set(k.getsousuu(), k.geta(i), k.geta(i), 0, 0);
-                        nhTen = k.geta(i);
+                        nhPoint = k.geta(i);
                         break;
                     }
                     if (oc.hitosii(k.getb(i), p, 2.0 * r)) {
                         k.set(k.getsousuu(), k.getb(i), k.getb(i), 0, 0);
-                        nhTen = k.getb(i);
+                        nhPoint = k.getb(i);
                         break;
                     }
                 }
@@ -880,7 +880,7 @@ public class Kihonshi_Syokunin {
             }
             if (nhi != 1) {   // set(int i, Ten p,Ten q,int ic,int ia)
 
-                k.addsenbun(nhTen, p);
+                k.addsenbun(nhPoint, p);
                 for (int i = 1; i <= k.getsousuu() - 1; i++) {
                     if (oc.hitosii(k.geta(i), p, 2.0 * r)) {
                         k.set(k.getsousuu(), k.geta(i), k.getb(k.getsousuu() - 1), 0, 0);
@@ -893,7 +893,7 @@ public class Kihonshi_Syokunin {
                         break;
                     }
                 }
-                nhTen = p;
+                nhPoint = p;
             }
 
             if (icol >= 0) {
@@ -910,7 +910,7 @@ public class Kihonshi_Syokunin {
     }
 
     //マウス操作(ドラッグしたとき)を行う関数----------------------------------------------------
-    public void mDragged(Ten p) {
+    public void mDragged(Point p) {
 
         if (nyuuryoku_houhou <= 1) {
 
@@ -921,8 +921,8 @@ public class Kihonshi_Syokunin {
                 k.set(p);
             } //b点を変更
             if (ugokasi_mode == 3) {//枝を平行移動
-                k.seta(ieda, new Ten(1, p, 1, pa));
-                k.setb(ieda, new Ten(1, p, 1, pb));
+                k.seta(ieda, new Point(1, p, 1, pa));
+                k.setb(ieda, new Point(1, p, 1, pb));
             }
             if (ugokasi_mode == 4) {
                 k.set(p);
@@ -948,7 +948,7 @@ public class Kihonshi_Syokunin {
     }
 
     //マウス操作(ボタンを離したとき)を行う関数----------------------------------------------------
-    public void mReleased(Ten p) {
+    public void mReleased(Point p) {
 
         if (nyuuryoku_houhou <= 1) {
 
@@ -959,8 +959,8 @@ public class Kihonshi_Syokunin {
                 k.set(p);
             } //b点を変更
             if (ugokasi_mode == 3) {//枝を平行移動
-                k.seta(ieda, new Ten(1, p, 1, pa));
-                k.setb(ieda, new Ten(1, p, 1, pb));
+                k.seta(ieda, new Point(1, p, 1, pa));
+                k.setb(ieda, new Point(1, p, 1, pb));
                 if (ugokasi_mode == 4) {
                     k.set(p);
                 }//a点を変更(ugokasi_mode==1)と同じ動作をする
@@ -1008,8 +1008,8 @@ public class Kihonshi_Syokunin {
                 if (((tyuuoutai_xmin < k.geta(ieda).getx()) && (k.geta(ieda).getx() < tyuuoutai_xmax))
                         &&
                         ((tyuuoutai_xmin < k.getb(ieda).getx()) && (k.getb(ieda).getx() < tyuuoutai_xmax))) {
-                    k.seta(ieda, new Ten((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.geta(ieda).gety()));
-                    k.setb(ieda, new Ten((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.getb(ieda).gety()));
+                    k.seta(ieda, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.geta(ieda).gety()));
+                    k.setb(ieda, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.getb(ieda).gety()));
                 }
             }
 
@@ -1036,7 +1036,7 @@ public class Kihonshi_Syokunin {
 
     //000000000000000000000000000000000000000000000000000000000000000000000000000000000
     //マウス操作(i_mouse_modeA==0　旧動作　見本のために残している。削除可----------------------------------------------------
-    public void mPressed_A_00(Ten p) {
+    public void mPressed_A_00(Point p) {
         //ゴミ箱がクリックされたら、単独の線分を削除する
         if (gomibako.naibu(p) >= 1) {
             k.tanSenbun_sakujyo(r);
@@ -1097,22 +1097,22 @@ public class Kihonshi_Syokunin {
             //System.out.print("nh1 = ");System.out.print("nh1 = ")
             if (nhi == 1) {
                 k.addsenbun(p, p);
-                nhTen = p;
+                nhPoint = p;
                 for (int i = 1; i <= k.getsousuu() - 1; i++) {
                     if (oc.hitosii(k.geta(i), p, 2.0 * r)) {
                         k.set(k.getsousuu(), k.geta(i), k.geta(i), 0, 0);
-                        nhTen = k.geta(i);
+                        nhPoint = k.geta(i);
                         break;
                     }
                     if (oc.hitosii(k.getb(i), p, 2.0 * r)) {
                         k.set(k.getsousuu(), k.getb(i), k.getb(i), 0, 0);
-                        nhTen = k.getb(i);
+                        nhPoint = k.getb(i);
                         break;
                     }
                 }
             }
             if (nhi != 1) {   // set(int i, Ten p,Ten q,int ic,int ia)
-                k.addsenbun(nhTen, p);
+                k.addsenbun(nhPoint, p);
                 for (int i = 1; i <= k.getsousuu() - 1; i++) {
                     if (oc.hitosii(k.geta(i), p, 2.0 * r)) {
                         k.set(k.getsousuu(), k.geta(i), k.getb(k.getsousuu() - 1), 0, 0);
@@ -1125,7 +1125,7 @@ public class Kihonshi_Syokunin {
                         break;
                     }
                 }
-                nhTen = p;
+                nhPoint = p;
             }
             if (icol >= 0) {
                 k.setcolor(k.getsousuu(), icol);
@@ -1135,7 +1135,7 @@ public class Kihonshi_Syokunin {
 
 
     //マウス操作(i_mouse_modeA==0　旧動作　見本のために残している。削除可----------------------------------------------------
-    public void mDragged_A_00(Ten p) {
+    public void mDragged_A_00(Point p) {
         if (nyuuryoku_houhou <= 1) {
             if (ugokasi_mode == 1) {
                 k.set(p);
@@ -1144,8 +1144,8 @@ public class Kihonshi_Syokunin {
                 k.set(p);
             } //b点を変更
             if (ugokasi_mode == 3) {        //枝を平行移動
-                k.seta(ieda, new Ten(1, p, 1, pa));
-                k.setb(ieda, new Ten(1, p, 1, pb));
+                k.seta(ieda, new Point(1, p, 1, pa));
+                k.setb(ieda, new Point(1, p, 1, pb));
             }
             if (ugokasi_mode == 4) {
                 k.set(p);
@@ -1160,7 +1160,7 @@ public class Kihonshi_Syokunin {
     }
 
     //マウス操作(i_mouse_modeA==0　旧動作　見本のために残している。削除可----------------------------------------------------
-    public void mReleased_A_00(Ten p) {
+    public void mReleased_A_00(Point p) {
         if (nyuuryoku_houhou <= 1) {
             if (ugokasi_mode == 1) {
                 k.set(p);
@@ -1169,8 +1169,8 @@ public class Kihonshi_Syokunin {
                 k.set(p);
             } //b点を変更
             if (ugokasi_mode == 3) {//枝を平行移動
-                k.seta(ieda, new Ten(1, p, 1, pa));
-                k.setb(ieda, new Ten(1, p, 1, pb));
+                k.seta(ieda, new Point(1, p, 1, pa));
+                k.setb(ieda, new Point(1, p, 1, pb));
                 if (ugokasi_mode == 4) {
                     k.set(p);
                 }//a点を変更(ugokasi_mode==1)と同じ動作をする
@@ -1200,8 +1200,8 @@ public class Kihonshi_Syokunin {
                 if (((tyuuoutai_xmin < k.geta(ieda).getx()) && (k.geta(ieda).getx() < tyuuoutai_xmax))
                         &&
                         ((tyuuoutai_xmin < k.getb(ieda).getx()) && (k.getb(ieda).getx() < tyuuoutai_xmax))) {
-                    k.seta(ieda, new Ten((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.geta(ieda).gety()));
-                    k.setb(ieda, new Ten((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.getb(ieda).gety()));
+                    k.seta(ieda, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.geta(ieda).gety()));
+                    k.setb(ieda, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.getb(ieda).gety()));
                 }
             }
 
@@ -1223,10 +1223,10 @@ public class Kihonshi_Syokunin {
 
     //1111111111111111111111111111111111111111111111111111111
     //マウス操作(i_mouse_modeA==1線分入力　でボタンを押したとき)時の作業----------------------------------------------------
-    public void mPressed_A_01(Ten p0) {
+    public void mPressed_A_01(Point p0) {
 
         i_saigo_no_senbun_no_maru_kaku = 0;
-        Ten p = new Ten();
+        Point p = new Point();
         p.set(camera.TV2object(p0));
         k.addsenbun(p, p);
         ieda = k.getsousuu();
@@ -1234,16 +1234,16 @@ public class Kihonshi_Syokunin {
     }
 
     //マウス操作(i_mouse_modeA==1線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
-    public void mDragged_A_01(Ten p0) {
-        Ten p = new Ten();
+    public void mDragged_A_01(Point p0) {
+        Point p = new Point();
         p.set(camera.TV2object(p0));
         k.seta(ieda, p);
     }
 
     //マウス操作(i_mouse_modeA==1線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
-    public void mReleased_A_01(Ten p0) {
+    public void mReleased_A_01(Point p0) {
         i_saigo_no_senbun_no_maru_kaku = 1;
-        Ten p = new Ten();
+        Point p = new Point();
         p.set(camera.TV2object(p0));
         k.seta(ieda, p);
         eda_atosyori_02();                //一端の点だけを移動して反対の端の点は動かさないで微調整する。 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1283,8 +1283,8 @@ public class Kihonshi_Syokunin {
     }
 
     //------------------------------------------------------
-    public Ten kitei_idou(Ten t1) {
-        Ten t_ob = new Ten();
+    public Point kitei_idou(Point t1) {
+        Point t_ob = new Point();
 
         for (int i = i_kousi_x_min / kousi_haba; i <= i_kousi_x_max / kousi_haba; i++) {
             for (int j = i_kousi_y_min / kousi_haba; j <= i_kousi_y_max / kousi_haba; j++) {
@@ -1301,11 +1301,11 @@ public class Kihonshi_Syokunin {
     }
 
     //------------------------------------------------------
-    public Ten sankaku_kitei_idou(Ten t1) {
+    public Point sankaku_kitei_idou(Point t1) {
         double sqr3 = 1.732051;
         double sankaku_kousi_takasa;
         sankaku_kousi_takasa = kousi_haba * sqr3 / 2.0;
-        Ten t_ob = new Ten();
+        Point t_ob = new Point();
         for (int i = -30; i <= 30; i++) {
             for (int j = -30; j <= 30; j = j + 2) {
                 t_ob.set(kousi_haba * i, sankaku_kousi_takasa * j);
@@ -1348,27 +1348,27 @@ public class Kihonshi_Syokunin {
 
 
     //22222222222222222222222222222222222222222222222222222222222222
-    public void mPressed_A_02(Ten p0) {
+    public void mPressed_A_02(Point p0) {
     }//マウス操作(i_mouse_modeA==2展開図調整　でボタンを押したとき)時の作業
 
-    public void mDragged_A_02(Ten p0) {
+    public void mDragged_A_02(Point p0) {
     }//マウス操作(i_mouse_modeA==2線分入力　でドラッグしたとき)を行う関数
 
-    public void mReleased_A_02(Ten p0) {
+    public void mReleased_A_02(Point p0) {
     }//マウス操作(i_mouse_modeA==2線分入力　でボタンを離したとき)を行う関数
 
     //3333333333333333333333333333333333333333333333333333333333333
     //マウス操作(i_mouse_modeA==3線分削除　でボタンを押したとき)時の作業----------------------------------------------------
-    public void mPressed_A_03(Ten p0) {
+    public void mPressed_A_03(Point p0) {
     }
 
     //マウス操作(i_mouse_modeA==3線分削除　　でドラッグしたとき)を行う関数----------------------------------------------------
-    public void mDragged_A_03(Ten p0) {
+    public void mDragged_A_03(Point p0) {
     }
 
     //マウス操作(i_mouse_modeA==3線分削除　　でボタンを離したとき)を行う関数----------------------------------------------------
-    public void mReleased_A_03(Ten p0) {
-        Ten p = new Ten();
+    public void mReleased_A_03(Point p0) {
+        Point p = new Point();
         p.set(camera.TV2object(p0));
         int minrid;
         double minr;
@@ -1379,14 +1379,14 @@ public class Kihonshi_Syokunin {
     }
 
     //44444444444444444444444444444444444444444444444444444444444444
-    public void mPressed_A_04(Ten p0) {
+    public void mPressed_A_04(Point p0) {
     }//マウス操作(i_mouse_modeA==4線_変換　でボタンを押したとき)時の作業
 
-    public void mDragged_A_04(Ten p0) {
+    public void mDragged_A_04(Point p0) {
     }//マウス操作(i_mouse_modeA==4線_変換　でドラッグしたとき)を行う関数
 
-    public void mReleased_A_04(Ten p0) {
-        Ten p = new Ten();
+    public void mReleased_A_04(Point p0) {
+        Point p = new Point();
         p.set(camera.TV2object(p0));
         int minrid;
         double minr;
