@@ -1,0 +1,169 @@
+しょうもないJava備忘録 | Image、BufferedImageの変換[Java]   より
+
+Image、BufferedImageの変換[Java]
+2012/03/30 15:11 Category: 画像処理
+
+//BufferedImage → Image 
+//低速かもしれないがこの方法が簡単
+//Image img;  
+BufferedImage bImg =new BufferedImage(img.getWidth(null),img.getHeight(null),BufferedImage.TYPE_INT_ARGB);  
+Graphics g = bImg.getGraphics();  
+g.drawImage(img,0,0,null);  
+
+・Image → BufferedImage 
+キャストするだけ 
+view plainprint?
+//BufferedImage bImg  
+Image img = (Image)bImg;  
+
+
+
+
+----------------------------------------------------
+
+
+
+
+
+        imageT = robot.createScreenCapture(bounds);
+	i_toumeika=i_toumeika+1;if(i_toumeika==2){i_toumeika=0;]
+
+
+			//左上端から、左上で描画用画面の見える限界位置へのベクトル
+			int hidari_ue_ix=115;
+			int hidari_ue_iy=60;
+
+			//右下端から、右下で描画用画面の見える限界位置へのベクトル
+			int migi_sita_ix=115;
+			int migi_sita_iy=40;
+
+
+
+
+
+
+
+
+背景画像ファイルの読み込み手順
+
+-------------------------------------------------------
+	Image img_haikei;       //背景用の画像
+
+-------------------------------------------------------
+
+		JButton	Button_haikei		= new JButton(	"BG"		);
+			readImageFromFile();
+		}});
+
+-------------------------------------------------------
+ 	void readImageFromFile() {
+			Toolkit tk = Toolkit.getDefaultToolkit();
+			img_haikei = tk.getImage(img_haikei_fname);
+
+	}
+
+
+-------------------------------------------------------
+	public void paint(Graphics g) {
+Graphics2D g2 = (Graphics2D) bufferGraphics;
+		//背景表示
+
+				haikei_byouga(g2,img_haikei);
+			
+		}
+
+
+-------------------------------------------------------
+
+	public void haikei_byouga(Graphics2D g2h,Image imgh){//引数はカメラ設定、線幅、画面X幅、画面y高さ
+
+
+		
+		g2h.drawImage(imgh, h_cam.get_x0(),h_cam.get_y0(),h_cam.get_x1(),h_cam.get_y1(),this);
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------
+// 19 19 19 19 19 19 19 19 19 select 選択
+
+	Ten p19_1 =new Ten();//TV座標
+	Ten p19_2 =new Ten();//TV座標
+	Ten p19_3 =new Ten();//TV座標
+	Ten p19_4 =new Ten();//TV座標
+	//マウス操作(i_mouse_modeA==19  select　でボタンを押したとき)時の作業----------------------------------------------------
+	public void mPressed_A_19(Ten p0) {
+		p19_1.set(p0);	
+
+		i_egaki_dankai=0;
+
+		Ten p =new Ten(); p.set(camera.TV2object(p0));
+		
+		s_step[1].set(p,p);s_step[1].setcolor(5);
+		s_step[2].set(p,p);s_step[2].setcolor(5);
+		s_step[3].set(p,p);s_step[3].setcolor(5);
+		s_step[4].set(p,p);s_step[4].setcolor(5);
+
+	}
+
+
+	Ten p19_a =new Ten();//object座標
+	Ten p19_b =new Ten();//object座標
+	Ten p19_c =new Ten();//object座標
+	Ten p19_d =new Ten();//object座標
+	//マウス操作(i_mouse_modeA==19 select　でドラッグしたとき)を行う関数----------------------------------------------------
+	public void mDragged_A_19(Ten p0) {  
+		p19_2.set(p19_1.getx(),p0.gety());
+		p19_4.set(p0.getx(), p19_1.gety());
+
+		p19_a.set(camera.TV2object(p19_1));
+		p19_b.set(camera.TV2object(p19_2));
+		p19_c.set(camera.TV2object(p0));
+		p19_d.set(camera.TV2object(p19_4));
+
+		s_step[1].set(p19_a,p19_b); 
+		s_step[2].set(p19_b,p19_c); 
+		s_step[3].set(p19_c,p19_d); 
+		s_step[4].set(p19_d,p19_a); 
+
+		i_egaki_dankai=4;//s_step[4]まで描画するために、この行が必要
+
+	}
+
+	//マウス操作(i_mouse_modeA==19 select　でボタンを離したとき)を行う関数----------------------------------------------------
+	public void mReleased_A_19(Ten p0) {
+
+		i_egaki_dankai=0;
+		
+		select(p19_1,p0);
+			//Ten p =new Ten(); p.set(camera.TV2object(p0));
+			//ori_s.select_all();
+			/*
+			//s_step[1].seta(p);
+			moyori_ten.set(get_moyori_ten(p));
+
+			if(p.kyori(moyori_ten)<=d_hantei_haba     ){s_step[1].seta(moyori_ten);	}
+				if(s_step[1].getnagasa()>0.00000001){
+					addsenbun(s_step[1]);kiroku();
+				}
+			*/
+		if(p19_1.kyori(p0)<=0.000001){
+			Ten p =new Ten(); p.set(camera.TV2object(p0));
+			if(ori_s.mottomo_tikai_senbun_kyori(p)<d_hantei_haba){//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
+				ori_s.select(ori_s.mottomo_tikai_senbun_sagasi(p));
+			}
+		}
+
+	}

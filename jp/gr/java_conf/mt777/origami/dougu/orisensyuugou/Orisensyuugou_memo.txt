@@ -1,0 +1,160 @@
+package jp.gr.java_conf.mt777.origami.dougu.orisensyuugou;
+
+import  jp.gr.java_conf.mt777.kiroku.memo.*;
+
+import  jp.gr.java_conf.mt777.zukei2d.ten.*;
+import  jp.gr.java_conf.mt777.zukei2d.senbun.*;
+import  jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
+
+
+import java.util.*;
+
+// -------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------
+public class Orisensyuugou {
+	public Orisensyuugou(){   reset();  } //コンストラクタ
+	public void  reset(){  sousuu =0;   Senb.clear();Senb.add(new Senbun());   }
+	public void  set(Orisensyuugou ss){
+	private void senset(int i,Senbun s){
+	public int getsousuu(){return sousuu; } //線分の総数を得る 
+	public void setsousuu(int i){ 	sousuu =i; }
+	public Senbun get(int i)//線分を得る
+
+	public Ten geta(int i){Senbun s;s= sen(i);return s.geta();}//i番目の線分の端点を得る
+	public Ten getb(int i){Senbun s;s= sen(i);return s.getb();}
+	
+	public double getax(int i){Senbun s;s= sen(i);return s.getax();}//i番目の線分の端点を得る
+	public double getbx(int i){Senbun s;s= sen(i);return s.getbx();}
+	public double getay(int i){Senbun s;s= sen(i);return s.getay();}
+	public double getby(int i){Senbun s;s= sen(i);return s.getby();}
+
+	//i番目の線分の端点の位置をセットする
+	public void seta(int i,Ten p){Senbun s;s= sen(i);s.seta(p);}
+	public void setb(int i,Ten p){Senbun s;s= sen(i);s.setb(p);}
+   
+	//i番目の線分の値を入力する
+	public void set(int i, Ten p,Ten q,int ic,int ia){ Senbun s;s= sen(i);s.set(p,q, ic, ia); }
+
+	//i番目の線分の色を入力する
+	public void setcolor(int i,int icol){ Senbun s;s= sen(i);s.setcolor(icol);}
+	//i番目の線分の色を出力する
+	public int getcolor(int i){Senbun s;s= sen(i);return s.getcolor();}
+
+	//i番目の線分の活性を出力する
+	public int getiactive(int i){Senbun s;s= sen(i);return s.getiactive();}
+//-----------------------------
+	
+	public Memo getMemo(){//線分集合の全線分の情報を Memoとして出力する。
+
+	public void setMemo(Memo memo1){}
+
+//-----------------------------
+	//展開図入力時の線分集合の整理
+	public void bunkatu_seiri(){//折り畳み推定などで得られる針金図の整理
+
+	//全線分の山谷を入れ替える。境界線等の山谷以外の線種は変化なし。
+	public void zen_yama_tani_henkan(){}
+
+	//Smenを発生させるための線分集合の整理
+	public void bunkatu_seiri_for_Smen_hassei(){}//折り畳み推定などで得られる針金図の整理
+
+	//点状の線分を削除
+	public void ten_sakujyo(){}
+
+	public void ten_sakujyo(double r){}
+
+	// 全く重なる線分が2本存在するときに番号の遅いほうを削除する。
+	public void jyuufuku_senbun_sakujyo(double r){}
+	public void jyuufuku_senbun_sakujyo(){	 jyuufuku_senbun_sakujyo(-10000.0);  } 
+	public int jyuufuku_senbun_sakujyo(int i,int j){}    //重複の削除をしたら1、しなければ0を返す
+
+
+	//交差している２つの線分の交点で２つの線分を分割する。　まったく重なる線分が２つあった場合は、なんの処理もなされないまま２つとも残る。
+	public void kousabunkatu_amai(){} 
+
+//---------------------
+
+	//交差している２つの線分の交点で２つの線分を分割する。分割を行ったら1。行わなかったら0を返す。オリヒメ2.002から分割後の線の色も制御するようにした(重複部がある場合は一本化し、番号の遅いほうの色になる)。
+	public int kousabunkatu_amai(int i,int j){ }
+
+
+	//線分の追加-------------------------------
+//	public void addsenbun(Ten pi,Ten pj,int i_c){}
+	//線分の追加-------------------------------
+//	public void addsenbun(double ax,double ay,double bx,double by,int ic){}
+
+	//線分の追加-------------------------------
+//	public void addsenbun(Ten pi,Ten pj){}
+
+	//線分の削除-----------------------------------------
+	public void delsenbun(int j){  } //j番目の線分を削除する
+
+
+	//線分の分割-----------------------------------------
+	public void senbun_binkatu(int j,Ten p){  } //pとj番目の線分の端点aとの線分を加え、pとj番目の線分の端点bとの線分を加え、j番目の線分を削除する
+
+
+
+	//i番目の線分の長さを得る---------------------------
+	public double getnagasa(int i){Senbun s;s= sen(i);return s.getnagasa();}
+
+	//閉多角形を形成せず、枝状になっている線分を削除する。
+	public void eda_kesi(double r){}
+ 
+	//一本だけの離れてある線分を削除する。
+	public void tanSenbun_sakujyo(double r){ 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+ 
+    
+	//点pに近い(r以内)線分をさがし、その番号を返す関数(ただし、j番目の線分は対象外)。近い線分がなければ、0を返す---------------------------------
+	//もし対象外にする線分が無い場合は、jを0とか負の整数とかにする。
+	//070317　追加機能　j　が　-10　の時は　活性化していない枝（getiactive(i)が0）を対象にする。
+
+	public int senbun_sagasi(Ten p,double r,int j) {}
+
+	//点pが指定された線分とどの部所で近い(r以内)かどうかを判定する関数　---------------------------------
+	//0=近くない、1=a点に近い、2=b点に近い、3=柄の部分に近い
+	public int senbun_busyo_sagasi(int i,Ten p,double r) {}
+
+
+	//点pに最も近い線分の番号を返す
+	public int mottomo_tikai_senbun_sagasi(Ten p) {}
+
+
+	//点pに最も近い線分の番号での、その距離を返す
+	public double mottomo_tikai_senbun_kyori(Ten p) {}
+
+
+
+	public Senbun mottomo_tikai_Senbun(Ten p) {}
+
+
+	//点pに最も近い線分の、点pに近い方の端点を返す
+	//public Ten mottomo_tikai_Ten_sagasi(Ten p) {
+	public Ten mottomo_tikai_Ten(Ten p) {}
+
+
+	//点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の線分が出ているか	
+	public int tyouten_syuui_sennsuu(Ten p) {}
+
+	//点pの近くの線分の活性化//線分の活性化とはSenbunクラスのint iactive=0は活性なし。1はaが活性。2はbが活性。3はaもbも活性。
+	public void kasseika(Ten p,double r){}
+  
+	//全線分の非活性化
+	public void hikasseika(){} 
+ 
+	//線分の活性化されたものを点pの座標にする
+	public void set(Ten p){}
+
+	//線分集合の中の線分i0と、i0以外で、全く重なる線分があれば、その番号を返す。なければ-10を返す。
+	public int kasanari_senbun_sagasi(int i0) {}
+
+
+	//線分s0と全く重なる線分が線分集合の中の線分にあれば、その番号を返す。なければ-10を返す。
+	public int kasanari_senbun_sagasi(Senbun s0) {}
+
+
+
+     
+
+}

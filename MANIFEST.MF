@@ -1,0 +1,2 @@
+Main-Class: jp.gr.java_conf.mt777.origami.orihime.Orihime
+

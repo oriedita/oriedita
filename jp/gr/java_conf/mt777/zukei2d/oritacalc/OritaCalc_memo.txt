@@ -1,0 +1,118 @@
+package jp.gr.java_conf.mt777.zukei2d.oritacalc;
+import  jp.gr.java_conf.mt777.zukei2d.ten.*;
+import  jp.gr.java_conf.mt777.zukei2d.oritacalc.tyokusen.*;
+import  jp.gr.java_conf.mt777.zukei2d.senbun.*;
+//import  jp.gr.java_conf.mt777.zukei2d.Ten;
+
+public class OritaCalc {
+
+	//直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。
+	public Ten kage_motome(Tyokusen t,Ten p){}
+
+	//点P0とP1を通る直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。
+	public Ten kage_motome(Ten p0,Ten p1,Ten p){}
+
+	//2つの点が同じ位置(true)か異なる(false)か判定する関数 誤差は0.1に固定---------------------------------
+	public boolean hitosii(Ten p1,Ten p2){}
+	public boolean hitosii(Ten p1,Ten p2,double r){}//rは誤差の許容度。rが負なら厳密判定。
+
+	//２点間の距離（整数）を求める関数----------------------------------------------------
+	public double kyori(Ten p0,Ten p1){}
+
+	//２点間a,bを指定して、ベクトルabとx軸のなす角度を求める関数。もしa=bなら-10000.0を返す----------------------------------------------------
+	public double kakudo(Ten a,Ten b){} 
+  
+  
+	//線分を指定して、ベクトルabとx軸のなす角度を求める関数。もしa=bなら-10000.0を返す----------------------------------------------------
+	public double kakudo(Senbun s){} 
+  
+	//線分を指定して、ベクトルabとx軸のなす角度を求める関数。もしa=bなら-10000.0を返す----------------------------------------------------
+	public double kakudozure(Senbun s,double a){}  
+  
+	//点paが、二点p1,p2を端点とする線分に点p1と点p2で直行する、2つの線分を含む長方形内にある場合は2を返す関数
+	public int hakononaka(Ten p1,Ten pa,Ten p2){}
+
+
+	//点paが、二点p1,p2を端点とする線分に点p1と点p2で直行する、2つの線分を含む長方形内にある場合は2を返す関数。これは 少しはみ出しても長方形内にあるとみなす。
+	//具体的には線分の中に点があるかの判定の際、わずかに点が線分の外にある場合は、線分の中にあると、甘く判定する。描き職人で展開図を描くときは、この甘いほうを使わないとT字型の線分の交差分割に失敗する
+	//しかし、なぜか、折り畳み推定にこの甘いほうを使うと無限ループになるようで、うまくいかない。この正確な解明は未解決20161105
+	public int hakononaka_amai(Ten p1,Ten pa,Ten p2){}
+
+	//点p0と、二点p1,p2を両端とする線分との間の距離を求める関数----------------------------------------------------
+	public double kyori_senbun(Ten p0,Ten p1,Ten p2){}
+
+	//点p0と、線分との間の距離を求める関数----------------------------------------------------
+	public double kyori_senbun(Ten p0,Senbun s){}
+
+	//２つの線分が、交差するかどうかを判定する関数----------------------------------------------------
+		// 0=交差しない、　
+		// 1=２つの線分が平行でなく、一点で十字路型で交差する、
+		// 2番代=２つの線分が平行でなく、一点でＴ字路型またはくの字型で交差する
+		// 3=２つの線分が平行で、交差する
+		// 4=線分s1と線分s2が点で、交差する
+		// 5=線分s1が点で、交差する
+		// 6=線分s2が点で、交差する
+		//注意！p1とp2が同じ、またはp3とp4が同じ場合は結果がおかしくなるがが、
+		//この関数自体にはチェック機構をつけていないので、気づきにくいことがある。
+	public int senbun_kousa_hantei(Senbun s1,Senbun s2){return senbun_kousa_hantei( s1,s2,0.000001,0.000001) ;}
+
+
+
+	public int senbun_kousa_hantei(Senbun s1,Senbun s2,double rhit,double rhei){    //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度  }
+
+
+	//senbun_kousa_hantei_amaiの甘いところは、具体的にはreturn 21からreturn 28までの前提になる	if( (hakononaka(p1,pk,p2)>=1)&& (hakononaka(p3,pk,p4)>=1) )のかわりに
+	// (hakononaka_amai(p1,pk,p2)>=1)&& (hakononaka_amai(p3,pk,p4)を使っていること。hakononaka_amaiは
+	//点paが、二点p1,p2を端点とする線分に点p1と点p2で直行する、2つの線分を含む長方形内にある場合は2を返す関数。これは 少しはみ出しても長方形内にあるとみなす。
+	//具体的には線分の中に点があるかの判定の際、わずかに点が線分の外にある場合は、線分の中にあると、甘く判定する。描き職人で展開図を描くときは、この甘いほうを使わないとT字型の線分の交差分割に失敗する
+	//しかし、なぜか、折り畳み推定にこの甘いほうを使うと無限ループになるようで、うまくいかない。この正確な解明は未解決20161105
+	public int senbun_kousa_hantei_amai(Senbun s1,Senbun s2){return senbun_kousa_hantei_amai( s1,s2,0.000001,0.000001) ;}
+	public int senbun_kousa_hantei_amai(Senbun s1,Senbun s2,double rhit,double rhei){    //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度 }
+
+	//２つの直線が平行かどうかを判定する関数。
+	public int heikou_hantei(Tyokusen t1,Tyokusen t2){}
+
+	//２つの線分が平行かどうかを判定する関数。
+	public int heikou_hantei(Senbun s1,Senbun s2,double r){}
+
+  
+	public int heikou_hantei(Tyokusen t1,Tyokusen t2,double r){//rは誤差の許容度。rが負なら厳密判定。
+		//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する}
+
+
+	//２つの直線の交点を求める関数
+	public Ten kouten_motome(Tyokusen t1,Tyokusen t2){}
+
+	//線分を含む直線を得る public Tyokusen Senbun2Tyokusen(Senbun s){}
+
+	//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
+	public Ten kouten_motome(Senbun s1,Senbun s2){}
+
+	//線分を真横に平行移動する関数（元の線分は変えずに新しい線分を返す）
+	public Senbun mayoko_idou(Senbun s,double d) {}
+
+
+	//線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
+	public Senbun Senbun_kaiten(Senbun s0,double d) {}
+
+
+
+	//線分abをaを中心にr倍してd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
+	public Senbun Senbun_kaiten(Senbun s0,double d,double r) {}
+
+	//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める関数
+	public Ten sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){}
+
+	//角度を0.0度以上360.0度未満に押さえる関数
+	public double kakudo_osame_0_360(double kakudo){}
+
+	//ベクトルabとcdのなす角度
+	public double kakudo(Ten a,Ten b,Ten c,Ten d){} 
+  
+	//三角形の内心を求める
+	public Ten naisin(Ten ta,Ten tb,Ten tc){}
+
+
+
+
+}

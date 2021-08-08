@@ -1,0 +1,1423 @@
+//3 3 3 3 3 33333333333333333333333333333333333333333333333333333333
+	//マウス操作(i_mouse_modeA==3,23 "線分削除" でボタンを押したとき)時の作業----------------------------------------------------
+	public void mPressed_A_03(Ten p0) { 
+		//System.out.println("(1)zzzzz ori_s.check4_size() = "+ori_s.check4_size());
+					if(i_orisen_hojyosen==0){  mPressed_A_box_select(p0)  ;   }//折線の削除
+					if(i_orisen_hojyosen==2){  mPressed_A_box_select(p0)  ;   }//黒の折線
+					if(i_orisen_hojyosen==3){  mPressed_A_box_select(p0)  ;   }//補助活線
+
+					if(i_orisen_hojyosen==1){  mPressed_A_box_select(p0);   }//補助絵線
+
+					if(i_orisen_hojyosen==4){  mPressed_A_box_select(p0);   }//折線と補助活線と補助絵線
+	}
+
+	//マウス操作(i_mouse_modeA==3,23でドラッグしたとき)を行う関数----------------------------------------------------
+	public void mDragged_A_03(Ten p0) { 
+		//System.out.println("(2)zzzzz ori_s.check4_size() = "+ori_s.check4_size());
+					if(i_orisen_hojyosen==0){mDragged_A_box_select( p0) ;     }
+					if(i_orisen_hojyosen==2){mDragged_A_box_select( p0) ;     }
+					if(i_orisen_hojyosen==3){mDragged_A_box_select( p0) ;     }
+
+					if(i_orisen_hojyosen==1){mDragged_A_box_select( p0)  ;   }
+
+					if(i_orisen_hojyosen==4){mDragged_A_box_select( p0)  ;   }
+
+
+
+	}
+
+	//マウス操作(i_mouse_modeA==3,23 でボタンを離したとき)を行う関数----------------------------------------------------
+	public void mReleased_A_03(Ten p0) {//折線と補助活線と円
+		//System.out.println("(3_1)zzzzz ori_s.check4_size() = "+ori_s.check4_size());
+		//Ten p =new Ten(); 
+		p.set(camera.TV2object(p0));
+		i_egaki_dankai=0;
+
+		//最寄の一つを削除
+		if(p19_1.kyori(p0)<=0.000001){//最寄の一つを削除
+			int i_sakujyo_mode=10;//i_sakujyo_modeはここで定義・宣言している
+			if(i_orisen_hojyosen==0){i_sakujyo_mode=0;}	
+			if(i_orisen_hojyosen==2){i_sakujyo_mode=2;}
+			if(i_orisen_hojyosen==3){i_sakujyo_mode=3;}
+			if(i_orisen_hojyosen==1){i_sakujyo_mode=1;}
+			if(i_orisen_hojyosen==4){i_sakujyo_mode=10;
+				//Ten p =new Ten(); p.set(camera.TV2object(p0));
+				double rs_min;
+				rs_min=ori_s.mottomo_tikai_senbun_kyori(p);//点pに最も近い線分(折線と補助活線)の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
+
+				double re_min;
+				re_min=ori_s.mottomo_tikai_en_kyori(p);//点pに最も近い円の番号での、その距離を返す	public double mottomo_tikai_en_kyori(Ten p)
+
+				double hoj_rs_min;
+				hoj_rs_min=hoj_s.mottomo_tikai_senbun_kyori(p);//点pに最も近い補助絵線の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
+
+				if((rs_min<=re_min)&&(rs_min<=hoj_rs_min)){
+						if(ori_s.getcolor(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p))<3){i_sakujyo_mode=0;}
+						else {i_sakujyo_mode=3;}
+				}
+
+				if((re_min <rs_min)&&(re_min<=hoj_rs_min)){i_sakujyo_mode=3;}
+				if((hoj_rs_min <rs_min)&&(hoj_rs_min<re_min)){i_sakujyo_mode=1;}
+
+			}
+
+
+			if(i_sakujyo_mode==0){ //折線の削除
+
+				//Ten p =new Ten(); p.set(camera.TV2object(p0));
+				double rs_min;
+				rs_min=ori_s.mottomo_tikai_senbun_kyori(p);//点pに最も近い線分(折線と補助活線)の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
+					if(rs_min<d_hantei_haba){
+						if(ori_s.getcolor(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p))<3){
+							ori_s.delsenbun_vertex(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p));
+							en_seiri();
+							kiroku();
+						}
+					}
+			
+			}
+
+
+			if(i_sakujyo_mode==2){ //黒の折線の削除
+
+				//Ten p =new Ten(); p.set(camera.TV2object(p0));
+				double rs_min;
+				rs_min=ori_s.mottomo_tikai_senbun_kyori(p);//点pに最も近い線分(折線と補助活線)の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
+					if(rs_min<d_hantei_haba){
+						if(ori_s.getcolor(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p))==0){
+							ori_s.delsenbun_vertex(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p));
+							en_seiri();
+							kiroku();
+						}
+					}
+			
+			}
+
+			if(i_sakujyo_mode==3){  //補助活線  
+				//Ten p =new Ten(); p.set(camera.TV2object(p0));
+				double rs_min;
+				rs_min=ori_s.mottomo_tikai_senbun_kyori(p);//点pに最も近い線分(折線と補助活線)の番号での、その距離を返す	
+				double re_min;
+				re_min=ori_s.mottomo_tikai_en_kyori(p);//点pに最も近い円の番号での、その距離を返す	public double mottomo_tikai_en_kyori(Ten p)
+
+
+				if(rs_min<=re_min){
+					if( rs_min<d_hantei_haba){//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
+						if(ori_s.getcolor(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p))==3){
+							ori_s.delsenbun_vertex(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p));
+							en_seiri();
+							kiroku();
+						}
+					}
+				}else{
+					if(re_min<d_hantei_haba){
+						ori_s.delen(ori_s.mottomo_tikai_en_sagasi_gyakujyun(p));
+						en_seiri();
+						kiroku();
+					}
+				}
+
+		
+			}
+
+			if(i_sakujyo_mode==1){ //補助絵線
+
+				//Ten p =new Ten(); p.set(camera.TV2object(p0));
+				double rs_min;
+				rs_min=hoj_s.mottomo_tikai_senbun_kyori(p);//点pに最も近い補助絵線の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
+
+					if(rs_min<d_hantei_haba){
+						hoj_s.delsenbun_vertex(hoj_s.mottomo_tikai_senbun_sagasi_gyakujyun(p));
+						//en_seiri();
+						kiroku();
+					}
+				
+			}
+
+
+		}
+
+
+
+		//四角枠内の削除 //p19_1はselectの最初のTen。この条件は最初のTenと最後の点が遠いので、四角を発生させるということ。
+		if(p19_1.kyori(p0)>0.000001){
+			if((i_orisen_hojyosen==0)||(i_orisen_hojyosen==4)){ //折線の削除	//D_nisuru(p19_1,p0)で折線だけが削除される。
+				if(D_nisuru0(p19_1,p0)!=0){ 
+					en_seiri();
+					kiroku();
+				}
+			}
+
+
+			if(i_orisen_hojyosen==2){  //黒の折線のみ削除
+				if(D_nisuru2(p19_1,p0)!=0){
+					en_seiri();
+					kiroku();
+				}
+			}
+
+
+			if((i_orisen_hojyosen==3)||(i_orisen_hojyosen==4)){  //補助活線  //現状では削除しないときもUNDO用に記録されてしまう20161218
+				if(D_nisuru3(p19_1,p0)!=0){
+					en_seiri();
+					kiroku();
+				}
+			}
+
+			if((i_orisen_hojyosen==1)||(i_orisen_hojyosen==4)){ //補助絵線	//現状では削除しないときもUNDO用に記録されてしまう20161218
+				if(D_nisuru1(p19_1,p0)!=0){kiroku();	}
+			}
+
+		}
+
+//qqqqqqqqqqqqqqqqqqqqqqqqqqqqq//System.out.println("= ");qqqqq
+//check4(0.0001);//D_nisuru0をすると、ori_s.D_nisuru0内でresetが実行されるため、check4のやり直しが必要。
+		if(i_check1==1){check1(0.001,0.5);}
+		if(i_check2==1){check2(0.01,0.5);}
+		if(i_check3==1){check3(0.0001);}
+		if(i_check4==1){check4(0.0001);}
+
+	}
+
+//77777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777
+
+
+				 		
+		JButton		Button_in_L_col_change	= new JButton(	""	);//new JButton(	"in_L_col_change"	);
+				Button_in_L_col_change.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) { 
+		img_kaisetu_fname="qqq/in_L_col_change.png";readImageFromFile3();
+
+							i_mouse_modeA=   34    ; 
+						System.out.println("i_mouse_modeA = "+i_mouse_modeA);
+iro_sitei_ato_ni_jissisuru_sagyou_bangou=34;
+
+
+							if(icol==0){
+								icol=1;	es1.setcolor(icol);										//最初の折線の色を指定する。0は黒、1は赤、2は青。
+								ButtonCol_irokesi();ButtonCol_red.setForeground(Color.black);ButtonCol_red.setBackground(Color.red);	//折線のボタンの色設定
+							}
+
+
+
+							es1.unselect_all();Button_kyoutuu_sagyou();repaint(); 
+		}}); 
+		pnlw21.add(	Button_in_L_col_change);
+
+		Button_in_L_col_change.setMargin(new Insets(0,0,0,0));
+		Button_in_L_col_change.setIcon(new ImageIcon(getClass().getClassLoader().getResource( 
+		  "ppp/in_L_col_change.png")));
+
+
+
+fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+
+
+	public int senbun_kousa_hantei(Senbun s1,Senbun s2,double rhit,double rhei){    
+//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度  
+
+		if(交差しない){return 0;}    
+    
+		//例外処理　線分s1と線分s2が点の場合
+			if(線分s1と線分s2が等しい){return 4;}
+			交差しない　return 0;
+
+		//例外処理　線分s1が点の場合  
+			if(s2上にs1がある){return 5;}
+			交差しない　return 0;
+
+		//例外処理　線分s2が点の場合 
+			if(s1上にs2がある){return 6;}
+			交差しない　return 0;
+
+		//２つの直線が平行でない
+
+				if( hitosii(p1,p3,rhit)){return 21;}//L字型
+				if( hitosii(p1,p4,rhit)){return 22;}//L字型
+				if( hitosii(p2,p3,rhit)){return 23;}//L字型
+				if( hitosii(p2,p4,rhit)){return 24;}//L字型
+				if( hitosii(p1,pk,rhit)){return 25;}//T字型 s1が縦棒
+				if( hitosii(p2,pk,rhit)){return 26;}//T字型 s1が縦棒
+				if( hitosii(p3,pk,rhit)){return 27;}//T字型 s2が縦棒
+				if( hitosii(p4,pk,rhit)){return 28;}//T字型 s2が縦棒
+				return 1;交差する					// <<<<<<<<<<<<<<<<< return 1;
+			交差しない　return 0;
+
+
+		//２つの直線が平行で、y切片は一致しない
+			return 0;
+
+		// ２つの線分が全く同じ
+		if( hitosii(p1,p3,rhit)&& hitosii(p2,p4,rhit))  {return 31;} 
+		if( hitosii(p1,p4,rhit)&& hitosii(p2,p3,rhit))  {return 31;} 
+
+		//２つの直線が平行で、y切片も一致する
+		if (heikou_hantei(t1,t2,rhei)==2){ 
+			if(hitosii(p1,p3,rhit)){ //2つの線分の端点どうしが1点で重なる場合
+				if(hakononaka(p1,p4,p2)==2){return 321;}//s2がs1に含まれる
+				if(hakononaka(p3,p2,p4)==2){return 322;}//s1がs2に含まれる
+				if(hakononaka(p2,p1,p4)==2){return 323;}//2つの線分は1点で重なるだけで、それ以外では重ならない
+			}
+
+			if(hitosii(p1,p4,rhit)){
+				if(hakononaka(p1,p3,p2)==2){return 331;}
+				if(hakononaka(p4,p2,p3)==2){return 332;}
+				if(hakononaka(p2,p1,p3)==2){return 333;}//2つの線分は1点で重なるだけで、それ以外では重ならない
+			}
+
+			if(hitosii(p2,p3,rhit)){
+				if(hakononaka(p2,p4,p1)==2){return 341;}
+				if(hakononaka(p3,p1,p4)==2){return 342;}
+				if(hakononaka(p1,p2,p4)==2){return 343;}//2つの線分は1点で重なるだけで、それ以外では重ならない
+			}
+
+			if(hitosii(p2,p4,rhit)){
+				if(hakononaka(p2,p3,p1)==2){return 351;}
+				if(hakononaka(p4,p1,p3)==2){return 352;}
+				if(hakononaka(p1,p2,p3)==2){return 353;}//2つの線分は1点で重なるだけで、それ以外では重ならない
+			}
+
+			//2つの線分の端点どうしが重ならない場合
+			if((hakononaka(p1,p3,p4)==2)&&(hakononaka(p3,p4,p2)==2)){return 361;}//線分(p1,p2)に線分(p3,p4)が含まれる
+			if((hakononaka(p1,p4,p3)==2)&&(hakononaka(p4,p3,p2)==2)){return 362;}//線分(p1,p2)に線分(p3,p4)が含まれる
+
+			if((hakononaka(p3,p1,p2)==2)&&(hakononaka(p1,p2,p4)==2)){return 363;}//線分(p3,p4)に線分(p1,p2)が含まれる      
+			if((hakononaka(p3,p2,p1)==2)&&(hakononaka(p2,p1,p4)==2)){return 364;}//線分(p3,p4)に線分(p1,p2)が含まれる      
+
+
+      
+			if((hakononaka(p1,p3,p2)==2)&&(hakononaka(p3,p2,p4)==2))  {return 371;}//線分(p1,p2)のP2側と線分(p3,p4)のP3側が部分的に重なる  
+			if((hakononaka(p1,p4,p2)==2)&&(hakononaka(p4,p2,p3)==2))  {return 372;}//線分(p1,p2)のP2側と線分(p4,p3)のP4側が部分的に重なる
+
+			if((hakononaka(p3,p1,p4)==2)&&(hakononaka(p1,p4,p2)==2))  {return 373;}//線分(p3,p4)のP4側と線分(p1,p2)のP1側が部分的に重なる
+			if((hakononaka(p4,p1,p3)==2)&&(hakononaka(p1,p3,p2)==2))  {return 374;}//線分(p4,p3)のP3側と線分(p1,p2)のP1側が部分的に重なる
+
+			return 0;
+		}  
+		return -1;//ここは何らかのエラーの時に通る。
+    
+	}
+
+
+
+
+
+
+
+
+	//senbun_kousa_hantei_amaiの甘いところは、具体的にはreturn 21からreturn 28までの前提になる	if( (hakononaka(p1,pk,p2)>=1)&& (hakononaka(p3,pk,p4)>=1) )のかわりに
+	// (hakononaka_amai(p1,pk,p2)>=1)&& (hakononaka_amai(p3,pk,p4)を使っていること。hakononaka_amaiは
+	//点paが、二点p1,p2を端点とする線分に点p1と点p2で直行する、2つの線分を含む長方形内にある場合は2を返す関数。これは 少しはみ出しても長方形内にあるとみなす。
+	//具体的には線分の中に点があるかの判定の際、わずかに点が線分の外にある場合は、線分の中にあると、甘く判定する。描き職人で展開図を描くときは、この甘いほうを使わないとT字型の線分の交差分割に失敗する
+	//しかし、なぜか、折り畳み推定にこの甘いほうを使うと無限ループになるようで、うまくいかない。この正確な解明は未解決20161105
+
+	public int senbun_kousa_hantei_amai(Senbun s1,Senbun s2,double rhit,double rhei){    //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度  
+		double x1max=s1.getax();
+		double x1min=s1.getax();
+		double y1max=s1.getay();
+		double y1min=s1.getay();
+		if(x1max<s1.getbx()){x1max=s1.getbx();}
+		if(x1min>s1.getbx()){x1min=s1.getbx();}
+		if(y1max<s1.getby()){y1max=s1.getby();}
+		if(y1min>s1.getby()){y1min=s1.getby();}
+		double x2max=s2.getax();
+		double x2min=s2.getax();
+		double y2max=s2.getay();
+		double y2min=s2.getay();
+		if(x2max<s2.getbx()){x2max=s2.getbx();}
+		if(x2min>s2.getbx()){x2min=s2.getbx();}
+		if(y2max<s2.getby()){y2max=s2.getby();}
+		if(y2min>s2.getby()){y2min=s2.getby();}
+    
+		if(x1max+rhit+0.1<x2min){return 0;}
+		if(x1min-rhit-0.1>x2max){return 0;}    
+		if(y1max+rhit+0.1<y2min){return 0;}
+		if(y1min-rhit-0.1>y2max){return 0;}    
+    
+		//System.out.println("###########");
+    
+		Ten p1 = new Ten();   p1.set(s1.geta());
+		Ten p2 = new Ten();   p2.set(s1.getb());    
+		Ten p3 = new Ten();   p3.set(s2.geta());
+		Ten p4 = new Ten();   p4.set(s2.getb()); 
+
+		Tyokusen t1 =new Tyokusen(p1,p2);
+		Tyokusen t2 =new Tyokusen(p3,p4);
+		//System.out.print("　　線分交差判定での平行判定の結果　＝　");
+		//System.out.println (heikou_hantei(t1,t2,rhei)); 
+		// heikou_hantei(t1,t2,rhei)
+
+		//例外処理　線分s1と線分s2が点の場合
+		if(((p1.getx()==p2.getx())&&(p1.gety()==p2.gety()))
+		&&
+		((p3.getx()==p4.getx())&&(p3.gety()==p4.gety()))){    
+			if((p1.getx()==p3.getx())&&(p1.gety()==p3.gety())){return 4;}
+			return 0;
+		}
+
+		//例外処理　線分s1が点の場合
+		if((p1.getx()==p2.getx())&&(p1.gety()==p2.gety())){    
+			if((hakononaka(p3,p1,p4)>=1)&&(t2.dainyuukeisan(p1)==0.0)){return 5;}
+			return 0;
+		}
+
+		//例外処理　線分s2が点の場合
+		if((p3.getx()==p4.getx())&&(p3.gety()==p4.gety())){    
+			if((hakononaka(p1,p3,p2)>=1)&&(t1.dainyuukeisan(p3)==0.0)){return 6;}
+			return 0;
+		}
+
+		// System.out.println("AAAAAAAAAAAA");
+		if (heikou_hantei(t1,t2,rhei)==0){    //２つの直線が平行でない
+			Ten pk = new Ten();   pk.set(kouten_motome(t1,t2));    //<<<<<<<<<<<<<<<<<<<<<<<
+			if( (hakononaka_amai(p1,pk,p2)>=1)
+			&& (hakononaka_amai(p3,pk,p4)>=1) ){
+				if( hitosii(p1,p3,rhit)){return 21;}
+				if( hitosii(p1,p4,rhit)){return 22;}
+				if( hitosii(p2,p3,rhit)){return 23;}
+				if( hitosii(p2,p4,rhit)){return 24;}
+				if( hitosii(p1,pk,rhit)){return 25;}
+				if( hitosii(p2,pk,rhit)){return 26;}
+				if( hitosii(p3,pk,rhit)){return 27;}
+				if( hitosii(p4,pk,rhit)){return 28;}
+				return 1;
+			}
+			return 0;
+		}
+
+		if (heikou_hantei(t1,t2,rhei)==1){ //２つの直線が平行で、y切片は一致しない
+			// System.out.println("BBBBBBBBBBB");    
+			return 0;
+		}
+    
+		// ２つの線分が全く同じ
+		if( hitosii(p1,p3,rhit)&& hitosii(p2,p4,rhit))  {return 31;} 
+		if( hitosii(p1,p4,rhit)&& hitosii(p2,p3,rhit))  {return 31;} 
+
+		// System.out.println("###########");
+    
+		//２つの直線が平行で、y切片も一致する
+		if (heikou_hantei(t1,t2,rhei)==2){ 
+			if(hitosii(p1,p3,rhit)){ //2つの線分の端点どうしが1点で重なる場合
+				if(hakononaka(p1,p4,p2)==2){return 321;}//長い線分に短い線分が含まれる
+				if(hakononaka(p3,p2,p4)==2){return 322;}//長い線分に短い線分が含まれる
+				if(hakononaka(p2,p1,p4)==2){return 323;}//2つの線分は1点で重なるだけで、それ以外では重ならない
+			}
+
+			if(hitosii(p1,p4,rhit)){
+				if(hakononaka(p1,p3,p2)==2){return 331;}//長い線分に短い線分が含まれる
+				if(hakononaka(p4,p2,p3)==2){return 332;}//長い線分に短い線分が含まれる
+				if(hakononaka(p2,p1,p3)==2){return 333;}//2つの線分は1点で重なるだけで、それ以外では重ならない
+			}
+
+			if(hitosii(p2,p3,rhit)){
+				if(hakononaka(p2,p4,p1)==2){return 341;}//長い線分に短い線分が含まれる
+				if(hakononaka(p3,p1,p4)==2){return 342;}//長い線分に短い線分が含まれる
+				if(hakononaka(p1,p2,p4)==2){return 343;}//2つの線分は1点で重なるだけで、それ以外では重ならない
+			}
+
+			if(hitosii(p2,p4,rhit)){
+				if(hakononaka(p2,p3,p1)==2){return 351;}//長い線分に短い線分が含まれる
+				if(hakononaka(p4,p1,p3)==2){return 352;}//長い線分に短い線分が含まれる
+				if(hakononaka(p1,p2,p3)==2){return 353;}//2つの線分は1点で重なるだけで、それ以外では重ならない
+			}
+
+			//2つの線分の端点どうしが重ならない場合
+			if((hakononaka(p1,p3,p4)==2)&&(hakononaka(p3,p4,p2)==2)){return 361;}//線分(p1,p2)に線分(p3,p4)が含まれる
+			if((hakononaka(p1,p4,p3)==2)&&(hakononaka(p4,p3,p2)==2)){return 362;}//線分(p1,p2)に線分(p3,p4)が含まれる
+
+			if((hakononaka(p3,p1,p2)==2)&&(hakononaka(p1,p2,p4)==2)){return 363;}//線分(p3,p4)に線分(p1,p2)が含まれる      
+			if((hakononaka(p3,p2,p1)==2)&&(hakononaka(p2,p1,p4)==2)){return 364;}//線分(p3,p4)に線分(p1,p2)が含まれる      
+      
+			if((hakononaka(p1,p3,p2)==2)&&(hakononaka(p3,p2,p4)==2))  {return 371;}
+			if((hakononaka(p1,p4,p2)==2)&&(hakononaka(p4,p2,p3)==2))  {return 372;}
+			if((hakononaka(p3,p1,p4)==2)&&(hakononaka(p1,p4,p2)==2))  {return 373;}
+			if((hakononaka(p4,p1,p3)==2)&&(hakononaka(p1,p3,p2)==2))  {return 374;}
+   
+			return 0;
+		}  
+		return -1;//ここは何らかのエラーの時に通る。
+    
+	}
+
+
+..............................................................................
+
+
+
+
+
+
+
+
+v3.054でセレクトした折線の移動やコピー時の場所の選択がすでにある頂点しか選べなかったのを改良。
+
+		else if(i_mouse_modeA==21) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mPressed_A_21(p);}//move　に使う
+		else if(i_mouse_modeA==22) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mPressed_A_22(p);}//copy_paste　に使う
+
+		else if(i_mouse_modeA==31) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mPressed_A_31(p);}//move 2p2p　に使う
+			i_mouse_modeA=   31    ; 
+
+		else if(i_mouse_modeA==32) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mPressed_A_32(p);}//copy 2p2p　　に使う
+		else if(i_mouse_modeA==12) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mPressed_A_12(p);}//鏡映モード。
+
+
+
+
+
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//1 1 1 1 1 1 01 01 01 01 01 11111111111 i_mouse_modeA==1線分入力 111111111111111111111111111111111
+	//動作概要　
+	//マウスボタン押されたとき　
+	//用紙1/1分割時 		折線の端点のみが基準点。格子点が基準点になることはない。
+	//用紙1/2から1/512分割時	折線の端点と用紙枠内（-200.0,-200.0 _ 200.0,200.0)）の格子点とが基準点
+	//入力点Pが基準点から格子幅kus.d_haba()の1/4より遠いときは折線集合への入力なし
+	//線分が長さがなく1点状のときは折線集合への入力なし
+
+	//マウス操作(マウスを動かしたとき)を行う関数
+	public void mMoved_A_01(Ten p0) {
+		if(i_kou_mitudo_nyuuryoku==1){
+			s_kouho[1].setiactive(3);
+
+			p.set(camera.TV2object(p0));
+			i_kouho_dankai=1;
+			moyori_ten.set(get_moyori_ten(p));
+
+			if(p.kyori(moyori_ten)<d_hantei_haba){  s_kouho[1].set(moyori_ten,moyori_ten);}
+			else{					s_kouho[1].set(p,p);}
+			
+			//s_kouho[1].setcolor(icol);
+			if(i_orisen_hojyosen==0){s_kouho[1].setcolor(icol);}
+			if(i_orisen_hojyosen==1){s_kouho[1].setcolor(h_icol);}
+
+			return;
+		}
+	}
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	//マウス操作(マウスを動かしたとき)を行う関数
+	public void mMoved_A_21(Ten p0) {mMoved_A_11(p0);}//近い既存点のみ表示
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	//マウス操作(マウスを動かしたとき)を行う関数
+	public void mMoved_A_11(Ten p0) {//近い既存点のみ表示
+		if(i_kou_mitudo_nyuuryoku==1){
+			s_kouho[1].setiactive(3);
+
+			i_kouho_dankai=0;
+			p.set(camera.TV2object(p0));
+			moyori_ten.set(get_moyori_ten(p));
+			if(p.kyori(moyori_ten)<d_hantei_haba     ){
+				i_kouho_dankai=1;
+				s_kouho[1].set(moyori_ten,moyori_ten);
+				s_kouho[1].setcolor(icol);
+			}
+		}
+	}
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+	//マウス操作(i_mouse_modeA==21　;移動モード　でボタンを押したとき)時の作業----------------------------------------------------
+	public void mPressed_A_21(Ten p0) {
+		p.set(camera.TV2object(p0));
+		if(i_egaki_dankai==0){    //第1段階として、点を選択
+			moyori_ten.set(get_moyori_ten(p));
+			if(p.kyori(moyori_ten)<d_hantei_haba){
+				i_egaki_dankai=i_egaki_dankai+1;
+				s_step[i_egaki_dankai].set(moyori_ten,moyori_ten);s_step[i_egaki_dankai].setcolor(5);
+			}
+		return;
+		}
+	}
+
+	//マウス操作(i_mouse_modeA==21　;移動モード　でドラッグしたとき)を行う関数----------------------------------------------------
+	public void mDragged_A_21(Ten p0) {  
+		//Ten p =new Ten(); 
+		p.set(camera.TV2object(p0));
+		s_step[1].setb(p); 
+
+		if(i_kou_mitudo_nyuuryoku==1){
+			i_kouho_dankai=0;
+			moyori_ten.set(get_moyori_ten(p));
+			if(p.kyori(moyori_ten)<d_hantei_haba     ){
+				i_kouho_dankai=1;
+				s_kouho[1].set(moyori_ten,moyori_ten);
+				s_kouho[1].setcolor(icol);
+				s_step[1].setb(s_kouho[1].getb()); 
+			}
+		}
+		return;
+	}
+
+
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+ap:
+	void set_i_OAZ(int i){//OZが切り替わるときの処理
+
+
+//---------------------------------------------------
+
+折りずらし機能の動作
+
+展開図の頂点を
+
+	左ボタンon
+		その頂点がts1、ts2ともに未選択（状況　i_ten_sentaku=0）
+			ts1、ts2をset_all_ten_sentaku_0()ですべて日選択にする
+			今指定した頂点をts2選択済にし、ts1選択を計算する。
+
+		その頂点がts1選択済でts2未選択。ts2選択済みと同じ折り上がり位置（状況　i_ten_sentaku=1）
+			その頂点をts2選択済にする
+
+		その頂点がts2選択済（状況　i_ten_sentaku=2）
+			その頂点をts2未選択にする
+
+
+	ドラッグ
+		何もせず
+
+
+	左ボタンoff
+		何もせず
+	
+
+
+
+
+
+
+折上図の頂点を
+
+	左ボタンon
+		その頂点が未選択（状況　i_ten_sentaku=0）
+			その頂点を選択済にする
+
+		その頂点がts1選択済でts2未選択。ts2選択済みと同じ折り上がり位置（状況　i_ten_sentaku=1）
+			その頂点を選択済にする
+
+		その頂点がts2選択済（状況　i_ten_sentaku=2）
+			何もせず
+
+
+	ドラッグ
+		（状況　i_ten_sentaku=0）
+			変形
+
+
+		（状況　i_ten_sentaku=2）
+			変形
+
+
+	左ボタンoff
+
+		（状況　i_ten_sentaku=0）
+			変形
+
+
+		（状況　i_ten_sentaku=2）
+			移動あり
+				変形
+
+			移動なし
+				その頂点を未選択にする
+	
+
+
+
+
+
+
+ts2.get_ten_sentakusuu =0	の時
+	展開図の頂点近くをクリック同じ点で離す
+	展開図の頂点近くをクリック違う点で離す
+	折上図の頂点近くをクリック
+
+ts2.get_ten_sentakusuu !=0	の時
+	展開図の選択されている頂点近くをクリック同じ点で離す
+	展開図の選択されている頂点近くをクリック違う点で離す
+	折上図の選択されている頂点近くをクリック
+	展開図の選択されていない頂点近くをクリック同じ点で離す
+	展開図の選択されていない頂点近くをクリック違う点で離す
+	折上図の選択されていない頂点近くをクリック
+
+
+
+
+
+ap.javaの
+Button_oriagari_sousaを押すとi_mouse_modeA=101;となる。
+マウスの左ボタンを押すと
+		else if(i_mouse_modeA==101){		//折り上がり図操作
+			OZ.ts2.setCamera(OZ.camera_of_oriagarizu);
+			OZ.ts2.setCam_omote(OZ.camera_of_oriagari_omote);
+			OZ.ts2.setCam_ura(OZ.camera_of_oriagari_ura);
+
+			int i_ugokasuTen;
+			i_ugokasuTen=OZ.ts2.mPressed_with_camera(p,OZ.ip4);
+			System.out.println("i_ugokasuTen = "+i_ugokasuTen);
+			   
+			if(i_ugokasuTen!=0){   
+				OZ.hyouji_flg_backup=OZ.hyouji_flg;    //hyouji_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+				OZ.hyouji_flg=2;
+			}
+		}	
+
+マウスをドラッグすると
+		else if(i_mouse_modeA==101){
+				OZ.ts2.setCamera(OZ.camera_of_oriagarizu);
+				OZ.ts2.setCam_omote(OZ.camera_of_oriagari_omote);
+				OZ.ts2.setCam_ura(OZ.camera_of_oriagari_ura);
+
+				if(OZ.ts2.mDragged_with_camera(p,OZ.ip4)!=0){
+					//if(hyouji_flg!=3){oritatami_suitei_2();}
+				}
+		}
+
+
+//---------------
+展開図職人でob座標での点pから最も近い点の番号iを得るには
+i=c.mottomo_tikai_Tenid(p,r*3); 
+
+展開図職人で点の番号iからob座標での点pを得るには
+	public Ten getTen(int i){return t[i];}   //点を得る    
+
+
+
+
+
+
+
+
+SVGファイルの書き出しの元締めはapの下記の場所
+// -----------------------------------mmmmmmmmmmmmmm-------
+	void writeImageFile(String fname){//i=1　png, 2=jpg
+
+
+		if(fname!=  null){
+			int i=1;
+
+			if(fname.endsWith("svg")){
+				Memo memo1; memo1=es1.getMemo_for_kakidasi();
+				Memo memo2; memo2=OZ.getMemo_for_svg_kakidasi();
+
+				//各折り上がりのmemo
+				Oriagari_Zu OZi;
+				for (int i_oz=1;i<=OAZ.size()-1;i_oz++){
+					OZi=(Oriagari_Zu)OAZ.get(i_oz);
+					memo2=OZi.getMemo_for_svg_kakidasi();
+				}
+
+
+
+
+				memoAndName2File(file_henkan.orihime2svg(memo1,memo2),fname);
+				return;
+			}else if(fname.endsWith("png")){  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	//-----------------------------------------------------------------------------------------------------
+	void writeMemo2File() {
+
+		FileDialog fd = new FileDialog(this,"書き出しファイルの指定",FileDialog.SAVE);
+		fd.setVisible(true);
+
+		String fname = fd.getDirectory() + fd.getFile();
+
+		if(fd.getFile()!=  null){
+
+			Memo memo1; memo1=es1.getMemo_for_kakidasi();
+
+			if(fname.endsWith("cp")){
+				memoAndName2File(file_henkan.orihime2cp(memo1),fname);
+
+				frame_title=frame_title_0+"        "+fd.getFile();
+				setTitle(frame_title);es1.set_title(frame_title);
+
+			}else if(fname.endsWith("orh")){  
+				memoAndName2File(memo1,fname);
+
+				frame_title=frame_title_0+"        "+fd.getFile();
+				setTitle(frame_title);es1.set_title(frame_title);
+
+			}else{
+				fname=fname+".orh";
+				memoAndName2File(memo1,fname);
+
+				frame_title=frame_title_0+"        "+fd.getFile()+".orh";
+				setTitle(frame_title);es1.set_title(frame_title);
+			}
+		}
+	}
+
+	//----------------
+
+
+
+
+
+
+// *********************************************************************************************
+
+	//--------------------------------------------------------- 
+	void writeImage(){
+		String fname = selectFileName("file name for Img save");
+
+		if(fname!=  null){
+
+			writeImageFile(fname);
+		}
+	}
+
+	//------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+foldの動作
+
+
+展開図選択なし
+展開図選択あり
+折り上がり図
+
+fold系押した時の動作
+
+es1.get_orisensuu_for_select_oritatami()
+
+折り上がり系図無し OAZ.size()==1	展開図選択なし i_OAZ==0	全展開図で折畳み
+					展開図選択あり i_OAZ==0	選択された展開図で折畳み
+					折り上がり系図 i_OAZ>0	有り得ない
+折り上がり系図有り OAZ.size()>1		展開図選択なし i_OAZ==0	何もしない
+					展開図選択あり i_OAZ==0	選択された展開図で折畳み
+					折り上がり系図 i_OAZ>0	折り上がり系図で折畳み
+
+
+
+
+
+折り上がり系図とは、折り上がり図や針金図等
+
+
+展開図無し
+展開図有りで選択無し
+展開図有りで選択無し
+
+折り途上図無し
+折り途上図有りで選択無し
+折り途上図有りで選択無し
+
+折り上がり図無し
+折り上がり図有りで選択無し
+折り上がり図有りで選択無し
+
+
+
+展開図無し		折り途上図無し			折り上がり図無し		何もしない
+							折り上がり図有りで選択無し	
+							折り上がり図有りで選択無し	
+			折り途上図有りで選択無し	折り上がり図無し
+							折り上がり図有りで選択無し
+							折り上がり図有りで選択無し
+			折り途上図有りで選択無し	折り上がり図無し
+							折り上がり図有りで選択無し
+							折り上がり図有りで選択無し
+展開図有りで選択無し	折り途上図無し			折り上がり図無し
+							折り上がり図有りで選択無し
+							折り上がり図有りで選択無し
+			折り途上図有りで選択無し	折り上がり図無し
+							折り上がり図有りで選択無し
+							折り上がり図有りで選択無し
+			折り途上図有りで選択無し	折り上がり図無し
+							折り上がり図有りで選択無し
+							折り上がり図有りで選択無し
+展開図有りで選択無し	折り途上図無し			折り上がり図無し
+							折り上がり図有りで選択無し
+							折り上がり図有りで選択無し
+			折り途上図有りで選択無し	折り上がり図無し
+							折り上がり図有りで選択無し
+							折り上がり図有りで選択無し
+			折り途上図有りで選択無し	折り上がり図無し
+							折り上がり図有りで選択無し
+							折り上がり図有りで選択無し
+
+
+折り途上図無し
+折り途上図有りで選択無し
+折り途上図有りで選択無し
+
+折り上がり図無し
+折り上がり図有りで選択無し
+折り上がり図有りで選択無し
+
+
+
+
+展開図無し
+展開図１つで選択無し
+展開図１つで選択無し
+展開図複数で選択無し
+展開図１つで選択無し
+
+
+折り途上図無し
+折り途上図有りで選択無し
+折り途上図有りで選択無し
+
+折り上がり図無し
+折り上がり図有りで選択無し
+折り上がり図有りで選択無し
+
+
+
+
+
+
+
+
+
+
+
+
+int i_fold_type=0;//=0は通常の展開図の全折線を対象とした折り畳み推定、=1はselectされた折線を対象とした折り畳み推定、	
+
+
+
+
+
+
+
+
+
+smenで、現在の順列において、上からi番目とj番目の面のペアの上下表での値を見る例
+	        for(int i=1;i<=Menidsuu-1;i++){
+			 for(int j=i+1;j<=Menidsuu;j++){
+			     if(jg.get( Menid[getJyunretu(i)],Menid[getJyunretu(j)])==0){return i;}
+			 }
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+Jyuufuku_Jyunretu_hasseiki で再帰関数で作る木検索関数
+
+とりあえず、1からkまでの整数の順列をひとつずつ書き出す関数
+
+一番最初（順列１番目を求めるとき）
+
+桁位置は最初０
+この段階で１桁目のとりうる変数列を作って、最初はその変数列の1番目を指定して次の関数（再帰）に渡す
+
+
+関数（再帰）
+桁の番目はｎ
+変数列のｍ番目を指定して
+
+
+
+
+
+
+
+Jyuufuku_Jyunretu_hasseiki  jhでのsusumu(0)の場合の動作内容
+
+	public int susumu(int idousuru_keta=0){	
+		//旅人移動     桁数が大きくなる方向に進むときは
+		//各ij[]の値を道しるべに進む。桁数が大きいところから小さいほうに戻ってきたときは各ij[]の値を変える。
+		//地図は各道しるべで，桁数がそこ以下（そこも含む）の道しるべの情報を含む。具体的には、そこまで出てきた各グループごとの個数。
+		//i_tabibito==Ketasuuなら1桁戻る。もどったら、そこで直ちにそこの位置（道しるべ）と地図の修正。
+		//i_tabibito< Ketasuuなら、ij[i_tabibito]==Gsuuなら1桁減る方向に戻る。もどったら、そこで直ちにそこの位置（道しるべ）と地図の修正。
+		//i_tabibito< Ketasuuなら、ij[i_tabibito]< Gsuuなら1桁増える方向に進む。進んだら、そこで直ちにそこの位置（道しるべ）と地図の修正。道しるべは可能な限り若い番号にする。
+                i_tabibito=idousuru_keta=0;
+		int ireturn =idousuru_keta=0;
+
+		while(i_tabibito<=Ketasuu){
+                                                    
+			if(i_tabibito==0){
+				i_tabibito=i_tabibito+1;ij[i_tabibito]=0;//桁数大きくなる方に進む
+			}
+
+			ij[i_tabibito]=mitisirube_tatekae(ij[i_tabibito]);
+                        
+			if(ij[i_tabibito]<= Ketasuu){//桁数大きくなる方に進む
+				i_tabibito=i_tabibito+1;ij[i_tabibito]=0; 
+				if(i_tabibito==Ketasuu+1){break;}
+			}
+			
+			else{//桁数小さくなる方に戻る
+				i_tabibito=i_tabibito-1;ireturn =i_tabibito;
+			}
+		}
+
+		//	for(int i=1;i<=Ketasuu;i++){System.out.print(ij[i] );System.out.print(",");}System.out.println();
+
+		return ireturn;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+通常selectされた折線ではselect=2になっている。unselectされた折線ではselect=0になっている。
+
+		int ibangou=0;
+                for(int i=1;i<=sousuu;i++){
+			if(getiactive(i)!=ijyogai){
+				ibangou=ibangou+1;
+				memo1.addGyou("番号,"+str.valueOf(ibangou));
+				Senbun s;s= sen(i);
+				memo1.addGyou( "色,"+str.valueOf(s.getcolor()));
+
+			memo1.addGyou( "<tpp>"+str.valueOf(s.get_tpp())+"</tpp>");					//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			memo1.addGyou("<tpp_color_R>"+str.valueOf(s.get_tpp_color().getRed()	)+"</tpp_color_R>");	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			memo1.addGyou("<tpp_color_G>"+str.valueOf(s.get_tpp_color().getGreen()	)+"</tpp_color_G>");	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			memo1.addGyou("<tpp_color_B>"+str.valueOf(s.get_tpp_color().getBlue()	)+"</tpp_color_B>");	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+				memo1.addGyou( "選択,"+str.valueOf(s.get_i_select()));
+				memo1.addGyou( "座標,"  +	str.valueOf(s.getax())+","+ str.valueOf(s.getay())+","+ str.valueOf(s.getbx())+","+ str.valueOf(s.getby()));
+			}
+		}
+
+		memo1.addGyou("<円集合>");
+		for(int i=1;i<=cir_size();i++ ){
+			memo1.addGyou("番号,"+str.valueOf(i));
+			En e_temp= new En();  e_temp.set(cir_getEn(i));
+			//memo1.addGyou( "色,"+str.valueOf(e_temp.getcolor()));
+			memo1.addGyou( "中心と半径と色,"  +	str.valueOf(e_temp.getx())+","+ str.valueOf(e_temp.gety())+","+ str.valueOf(e_temp.getr())    +","+ str.valueOf(e_temp.getcolor())   );
+
+			memo1.addGyou( "<tpp>"+str.valueOf(e_temp.get_tpp())+"</tpp>");					//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			memo1.addGyou("<tpp_color_R>"+str.valueOf(e_temp.get_tpp_color().getRed()	)+"</tpp_color_R>");	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			memo1.addGyou("<tpp_color_G>"+str.valueOf(e_temp.get_tpp_color().getGreen()	)+"</tpp_color_G>");	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			memo1.addGyou("<tpp_color_B>"+str.valueOf(e_temp.get_tpp_color().getBlue()	)+"</tpp_color_B>");	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+	private Senbun sen(int i){
+		if(sousuu+1> Senb.size()){while(sousuu+1> Senb.size()){Senb.add(new Senbun());}}//この文がないとうまく行かない。なぜこの文でないといけないかという理由が正確にはわからない。
+		return (Senbun)Senb.get(i);
+	}
+
+
+En e;  e=cir_getEn(i);e.set_tpp_color(c0);
+
+
+
+
+
+		for(int i=1;i<=memo1.getGyousuu();i++){
+			StringTokenizer tk = new StringTokenizer(memo1.getGyou(i),",");
+			//jtok=    tk.countTokens();
+			str=tk.nextToken();	
+	      			  //  	System.out.println("::::::::::"+ str+"<<<<<" );
+
+			if(str.equals("<タイトル>")){yomiflg=2;}
+			if((yomiflg==2)&&(str.equals("タイトル"))){
+				str=tk.nextToken();r_title =str;	   
+			}
+
+
+			if(str.equals("<線分集合>")){yomiflg=1;}
+			if((yomiflg==1)&&(str.equals("番号"))){
+				str=tk.nextToken();ibangou=Ii.parseInt(str);	   
+			}
+			if((yomiflg==1)&&(str.equals("色"))){
+				str=tk.nextToken();ic=Ii.parseInt(str);	
+				Senbun s;s= sen(ibangou); s.setcolor(ic);
+			}	    
+
+
+---------------------------------------
+
+		for(int i=1;i<=memo1.getGyousuu();i++){
+			String str=new String(memo1.getGyou(i));
+			str.trim();
+
+			if(str.equals("<Kousi>")){i_yomi=1;
+			}else if(str.equals("</Kousi>")){i_yomi=0;
+			}else{
+				if(i_yomi==1){
+					st = str.split(">", 2);// <-----------------------------------２つに分割するときは2を指定
+ 
+					if(st[0].equals("<i_kitei_jyoutai")){
+						s= st[1].split("<", 2); 
+						set_i_kitei_jyoutai(Integer.parseInt(s[0])); 
+					}		
+					//  System.out.println(Integer.parseInt(s[0])) ;
+  
+					if(st[0].equals("<nyuuryoku_kitei")){
+						s= st[1].split("<", 2); 
+						orihime_ap.text1.setText(s[0]);
+						orihime_ap.set_kousi_bunkatu_suu();
+						//set_kousi_bunkatu_suu(Integer.parseInt(s[0])); 
+
+					}	
+					//  System.out.println(Integer.parseInt(s[0])) ;  
+
+
+
+------------------------------------------
+
+円、補助線多色化計画
+
+旧データを新オリヒメでの読み込みにも対応すること
+新データを旧オリヒメでの読み込みにも対応すること
+
+円、補助線に特注プロパティパラメータtppとcolorをつける。
+
+tpp=1なら色等のプロパティの特注あり
+
+当初はtpp=0
+
+作業時に色等特注すれば、tpp=1とする。
+
+
+
+
+set_sen_tokutyuu_color
+
+En e_temp= new En();  e_temp.set(cir_getEn(i0));
+
+
+
+
+
+
+
+
+
+反転円を描く操作
+当該ボタンを押すと、apにて
+i_mouse_modeA=   46となる。
+
+ES1の中では
+add_hanten(s_step[1],e_step[1]);//線１本と円1つを選択した場合
+又は
+add_hanten(e_step[1],e_step[2]);//円2つを選択した場合
+			
+実際の円の反転を求める計算は、Enクラス自体の関数　eh.hanten(e0)を使う。この例では、ehが反転円。
+
+
+格子のColor の取り扱い。
+kousi内では
+	Color kousi_color=new Color(230, 230, 230);//格子線の色
+
+	public  void  set_kousi_color(Color color0){kousi_color =color0;}
+	public  Color get_kousi_color(     ){return kousi_color;}
+
+ES1の中でのColor の取り扱い。
+	kus.set_kousi_color(new Color(i_kousi_color_R, i_kousi_color_G,i_kousi_color_B));
+
+			memo1.addGyou("<kousi_color_R>"+kus.get_kousi_color().getRed()	+"</kousi_color_R>");
+			memo1.addGyou("<kousi_color_G>"+kus.get_kousi_color().getGreen()+"</kousi_color_G>");
+			memo1.addGyou("<kousi_color_B>"+kus.get_kousi_color().getBlue()	+"</kousi_color_B>");
+
+	public void g_setColor(Graphics g,int i) {
+/*
+
+		Color.black       黒を表します
+		Color.blue        青を表します
+		Color.cyan        シアンを表します
+		Color.darkGray    ダークグレイを表します
+		Color.gray        グレイを表します
+		Color.green       緑を表します
+		Color.lightGray   ライトグレイを表します
+		Color.magenta     マゼンタを表します
+		Color.orange      オレンジを表します
+		Color.pink        ピンクを表します
+		Color.red         赤を表します
+		Color.white       白を表します
+		Color.yellow      黄を表します
+*/
+
+		//icol=0 black
+		//icol=1 red
+		//icol=2 blue
+		//icol=3 cyan
+		//icol=4 orange
+		//icol=5 mazenta
+		//icol=6 green
+		//icol=7 yellow
+		//icol=8 new Color(210,0,255) //紫
+
+		if(i==0){g.setColor(Color.black);return;}
+		if(i==1){g.setColor(Color.red);return;}
+		if(i==2){g.setColor(Color.blue);return;}
+					//g.setColor(new Color(100, 200,200));この色は補助線用に使った方がいいかも
+		if(i==3){g.setColor(new Color(100, 200,200));return;}
+		//if(i==3){g.setColor(Color.cyan);return;}
+		if(i==4){g.setColor(Color.orange);return;}
+		if(i==5){g.setColor(Color.magenta);return;}
+		if(i==6){g.setColor(Color.green);return;}
+		if(i==7){g.setColor(Color.yellow);return;}
+		if(i==8){g.setColor(new Color(210,0,255));return;}
+
+
+	}
+
+
+色選択の方法
+
+グローバルで定義しておくこと
+
+	public Color oriagarizu_F_color=new Color(255,255,50);//折り上がり図の表面の色
+	public JButton Button_F_color   ;                    //折り上がり図の表の色の指定に用いる
+
+// -------------折り上がり予測図表面の色の選択
+			Button_F_color 		= new JButton(	" "	);
+			Button_F_color.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) { 
+	img_kaisetu_fname="qqq/F_color.png";readImageFromFile3();
+							Button_kyoutuu_sagyou();
+							i_mouseDragged_yuukou=0; i_mouseReleased_yuukou=0;
+						//以下にやりたいことを書く			
+							JColorChooser colorchooser = new JColorChooser();
+							oriagarizu_F_color= colorchooser.showDialog(null, "F_col", Color.white);
+							if(oriagarizu_F_color != null){js.set_F_color(oriagarizu_F_color);}
+						//以上でやりたいことは書き終わり
+			Button_F_color.setBackground(oriagarizu_F_color);	//ボタンの色設定
+							repaint(); 
+		}});
+		//Button_F_color.setPreferredSize(new Dimension(25, 25));
+		Button_F_color.setMargin(new Insets(0,0,0,0));
+		Button_F_color.setIcon(new ImageIcon(getClass().getClassLoader().getResource( 
+		  "ppp/F_color.png")));
+		pnls.add(Button_F_color);
+
+
+		//重要注意　読み込みや書き出しでファイルダイアログのボックスが開くと、それをフレームに重なる位置で操作した場合、ファイルボックスが消えたときに、
+		//マウスのドラッグとリリースが発生する。このため、余計な操作がされてしまう可能性がある。なお、このときマウスクリックは発生しない。
+		// i_mouseDragged_yuukou=0;や i_mouseReleased_yuukou=0;は、この余計な操作を防ぐために指定している。
+
+
+
+sen_tokutyuu
+if(sen_tokutyuu_color != null){
+//js.set_F_color(oriagarizu_F_color);
+
+
+円もしくは　補助線の選択
+
+
+
+
+
+
+
+
+
+
+ドーナツタイプの穴あきや切り込みのある展開図を扱うには、まずは、針金図を作れるようにする。
+折りたたみを行い、針金図を作るのはts1.oritatami()
+
+展開図から針金図ができるまでの手順は
+
+System.out.println("＜＜＜＜＜oritatami_suitei_01;開始");
+	//マウスの入力でes1の中に作った線分集合をts1に渡し、点集合(展開図に相当)にする
+	ts1.Senbunsyuugou2Tensyuugou(es1.get_for_oritatami());
+	ip3=ts1.set_kijyunmen_id(ip3); 
+	return 1000;
+}
+
+//-----------------------------------
+int oritatami_suitei_02(){
+	System.out.println("＜＜＜＜＜oritatami_suitei_02;開始");
+	//ts1が折りたたみを行い、できた針金図をts2に渡す。
+	//ts2が折りあがった形を少しだけ変形したいような場合に働く。
+	ts2.set( ts1.oritatami())  ;
+	//ts2.Iti_sitei(0.0 , 0.0);点集合の平均位置を全点の重心にする。
+	//  if(ip4==1){ ts2.uragaesi();}
+	// ts2.set( ts2.oritatami())  ;//折り畳んだ針金図を、折り開きたい場合の操作
+	//ここまでで針金図はできていて、ts2が持っている。これは、マウスで操作、変形できる。
+	return 1000;
+}
+
+
+
+
+
+
+// ************************
+
+
+データ書き出しにおいて、各種設定等の情報の書き出しは
+Egaki_Syokunin.javaの
+	public void Memo_jyouhou_tuika(Memo memo1)
+で行う。
+
+
+
+データ読み込みにおいて、各種設定等の情報の読み込みは
+Egaki_Syokunin.javaの
+	public void Memo_jyouhou_toridasi(Memo memo1)
+
+
+
+データ読み込み時にapで行われることの要約
+	readFile2Memo() ;
+
+	//展開図の初期化　開始
+		tenkaizu_syokika();			//展開図パラメータの初期化
+		es1.reset();				//描き職人の初期化
+		es1.set_i_kitei_jyoutai(0);		//格子幅の指定
+		icol=1;	es1.setcolor(icol);		//最初の折線の色を指定する。0は黒、1は赤、2は青。
+		ButtonCol_irokesi();ButtonCol_red.setForeground(Color.black);ButtonCol_red.setBackground(Color.red);	//折線のボタンの色設定
+	//展開図の初期化　終了
+
+	es1.setCamera(camera_of_orisen_nyuuryokuzu);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
+	es1.setMemo_for_yomikomi(memo_temp);
+	es1.kiroku();
+
+	//折畳予測図の初期化　開始
+		settei_syokika_yosoku();
+	//折畳予測図の初期化　終了
+				
+	repaint(); 
+
+以上の操作で、特にcheck4（頂点周りの折りたたみ可能性のチェック）に関するのは
+apのtenkaizu_syokika();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+頂点周りの折りたたみチェックは
+ap.javaの
+ckbox_check4 = new JCheckBox("check A+MV")ボタンで起動
+その実体は
+						if(ckbox_check4.isSelected()){
+							es1.check4(0.0001);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度 
+							es1.set_i_check4(1);
+						}else{
+							es1.set_i_check4(0);
+						}
+
+Egaki_Syokunin.javaでは
+	int i_check4=0;//=0 check4を実施しない、1=実施する　
+
+Egaki_Syokunin.javaでは頂点周りの折りたたみチェックの以来は check4(double r)で受ける。
+
+頂点周りの折りたたみチェックとして、ori_s.check4(r)を実施したいのだが、これをスレッドで実施させるため、いったん
+	public void  check4(double r){orihime_ap.check4(r);}　
+としている。
+
+orihime_ap.check4(r)はi_sub_mode=3（3=頂点周りの折畳み可能性判定）としてsub.start();させる。
+
+subでは
+		if(orihime_ap.i_sub_mode  ==3){
+			orihime_ap.es1.ap_check4(orihime_ap.d_ap_check4);
+		}
+として、orihime_ap.es1.ap_check4が実施される。
+結局Egaki_Syokunin.javaとしてEgaki_Syokunin.javaのcheck4(double r)関数を実施すると、Egaki_Syokunin.javaのap_check4(double r)が実施されori_s.check4(r);に作業がいく。
+	public void  ap_check4(double r){ori_s.check4(r);}
+
+
+ori_sで実際のチェックが行われる。その結果はori_sのCheck4Senbというアレイリストに格納される。
+
+
+
+チェック結果はEgaki_Syokunin.javaから、OritaOekaki.javaに飛ばされて表示される。
+
+	Egaki_Syokunin.java
+		//Check4Senbには0番目からsize()-1番目までデータが入っている
+		//System.out.println("ori_s.check4_size() = "+ori_s.check4_size());
+		if(i_check4==1){	
+			for(int i=0;i<ori_s.check4_size();i++ ){
+				Senbun s_temp= new Senbun();  s_temp.set(ori_s.check4_getSenbun(i));
+				OO.yubisasi4(g,camera.object2TV(s_temp), 7.0 , 3.0 , 1);
+			}
+		}
+
+	OritaOekaki.java
+		//指定されたTenを中心に指差し図を描く
+		public void yubisasi4(Graphics g,Senbun s_tv,double nagasa,double haba,int icolor){
+			Graphics2D g2 = (Graphics2D)g;
+			g.setColor(new Color(255, 0, 147, 50));//g.setColor(Color.PINK);
+			g.drawLine((int)s_tv.getax(),(int)s_tv.getay(),(int)s_tv.getbx(),(int)s_tv.getby()); //直線
+		}
+
+
+
+
+
+

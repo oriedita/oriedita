@@ -1,0 +1,108 @@
+package jp.gr.java_conf.mt777.zukei2d.senbun;
+import  jp.gr.java_conf.mt777.zukei2d.ten.*;
+//import  jp.gr.java_conf.mt777.zukei2d.*;
+
+public class Senbun {
+	//OritaCalc oc =new OritaCalc();//各種計算用の関数を使うためのクラスのインスタンス化
+	private Ten a =new Ten(); //枝のa点 
+	private Ten b =new Ten(); //枝のb 
+	int iactive;//0は活性なし。1はaが活性。2はbが活性。3はaもbも活性。
+	int icol;//色の指定　0=black,1=blue,2=red.
+	int i_select;//0は選択されていない。1以上は場面に応じて適宜設定
+	int i_max_x;//端点のx座標の切り上げ時の大きいほう
+	int i_min_x;//端点のx座標の切り捨て時の小さいほう
+	int i_max_y;//端点のy座標の切り上げ時の大きいほう
+	int i_min_y;//端点のy座標の切り捨て時の小さいほう
+
+	//コンストラクタ
+	public Senbun(){  a.set(0.0,0.0);b.set(0.0,0.0);iactive=0;icol=0;	}
+	public Senbun(Ten t1,Ten t2){	a.set(t1);b.set(t2);iactive=0;icol=0;	}
+	public Senbun(double i1,double i2,double i3,double i4){  a.set(i1,i2);b.set(i3,i4);iactive=0;icol=0;    }
+
+	public void reset(){	a.set(0.0,0.0);b.set(0.0,0.0);iactive=0;icol=0; }
+
+	public void set(Senbun s){  
+		a.set(s.geta());  
+		b.set(s.getb());	
+		iactive=s.getiactive();	
+		icol=s.getcolor();   
+		i_select=s.get_i_select();
+	}
+
+	public void setcolor(int i){icol=i;}
+
+	public int getcolor(){return icol;}
+
+	public void setiactive(int i){iactive=i;}
+
+	public int getiactive(){return iactive;}
+
+
+
+	public void set_i_select(int i){i_select=i;}
+
+	public int get_i_select(){return i_select;}
+
+	//この線分が、ある点と近いかどうかで活性化する。
+	public void kasseika(Ten p,double r){
+		iactive=0;
+		if(p.kyori(a)<=r){iactive=1;}
+		if(p.kyori(b)<=r){iactive=2;}
+		//if(oc.kyori(p,a)<=r){iactive=1;}
+		//if(oc.kyori(p,b)<=r){iactive=2;}
+	}
+    
+ 	//この線分を非活性化
+	public void hikasseika(){iactive=0; }            
+
+
+
+
+//-------------------------------------------
+
+ 	//活性化された点の座標をpにする   
+	public void set(Ten p){
+		if (iactive==1){a.set(p.getx(),p.gety());}
+		if (iactive==2){b.set(p.getx(),p.gety());}   
+	}
+    
+	//----------
+	public void set(double ax,double ay,double bx,double by){   a.set(ax,ay) ;b.set(bx,by);     }
+	//----------
+	public void set(double ax,double ay,double bx,double by,int ic){   a.set(ax,ay) ;b.set(bx,by);  icol=ic;   }    
+	//---------
+	public void set(Ten p,Ten q,int ic,int ia){	a.set(p);  b.set(q);	icol=ic;iactive=ia;	}
+	public void set(Ten p,Ten q,int ic       ){	a.set(p);  b.set(q);	icol=ic;		}
+	public void set(Ten p,Ten q              ){	a.set(p);  b.set(q);    			}
+
+	public void seta(Ten p){a.set(p);}
+
+	public void setb(Ten p){b.set(p);}
+
+	public Ten geta(){return a;}
+
+	public Ten getb(){return b;}
+
+	public Ten get_tikai_hasi(Ten p){//点Pと近いほうの端点を返す
+		if(p.kyori(a)<=p.kyori(b)){return a;}
+		return b;
+	}
+
+	public Ten get_tooi_hasi(Ten p){//点Pと遠いいほうの端点を返す
+		if(p.kyori(a)>=p.kyori(b)){return a;}
+		return b;
+	}
+
+
+	public double getnagasa(){return a.kyori(b);}    
+	//public double getnagasa(){return oc.kyori(a,b);}
+
+	public double getax(){return a.getx();}
+
+	public double getay(){return a.gety();}
+
+	public double getbx(){return b.getx();}
+
+	public double getby(){return b.gety();}
+
+}

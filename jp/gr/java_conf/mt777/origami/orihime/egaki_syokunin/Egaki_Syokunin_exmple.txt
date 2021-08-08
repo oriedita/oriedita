@@ -1,0 +1,69 @@
+Egaki_Syokunin.javaで使えるコード
+
+任意の点が与えられたとき、最も近い端点を得るコード
+
+		Ten t1 =new Ten(); 
+		t1.set(ori_s.mottomo_tikai_Ten(t0));//ori_s.mottomo_tikai_Ten_sagasiは近い点がないと p_return.set(100000.0,100000.0)と返してくる
+
+任意の点が与えられたとき、端点もしくは格子点で最も近い点を得るコード
+		Ten p =new Ten(); p.set(camera.TV2object(p0));
+		moyori_ten.set(get_moyori_ten(p));
+
+
+
+
+あるid値（折線のid番号等）とdouble値の組を、double値の順に並べて、double値の順にid番号を取り出すコード
+
+	import  jp.gr.java_conf.mt777.seiretu.narabebako.*;
+
+		Narabebako_int_double nbox =new Narabebako_int_double();
+		for (int i=1; i<=ori_s.getsousuu(); i++ ){
+			nbox.ire_i_tiisaijyun(new int_double( i  , double ));	
+		}
+
+		for (int i=1; i<=nbox.getsousuu(); i++ ){
+			nbox.get_int(i);
+		}	
+
+
+ある点から、折線iが、出ているかどうか（折線iが、ある点を端点とするかどうか）を判定するコード
+
+
+
+
+ある点を端点とする線分iとjの角度（0より大きく360以下）を求めるコード
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			//線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d) 
+
+			//d_kakudo_kei=180.0/(double)5;
+			d_kakudo_kei=180.0/(double)id_kakudo_kei;
+			Senbun s_kiso =new Senbun( s_step[2].geta(),s_step[1].geta());
+			kakudo=0.0;
+
+			int i_jyun;i_jyun=0;//i_jyunは線を描くとき順番に色を変えたいとき使う
+			for(int i=1;i<=id_kakudo_kei*2-1;i++){i_jyun=i_jyun+1;if(i_jyun==2){i_jyun=0;}
+			//for(int i=1;i<=5*2-1;i++){
+				i_egaki_dankai=i_egaki_dankai+1; kakudo=kakudo+d_kakudo_kei;	s_step[i_egaki_dankai].set(oc.Senbun_kaiten(s_kiso,kakudo,1.0) );
+				if(i_jyun==0){s_step[i_egaki_dankai].setcolor(6);}
+				if(i_jyun==1){s_step[i_egaki_dankai].setcolor(4);}
+			}
+
+
+

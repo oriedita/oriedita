@@ -1,0 +1,512 @@
+上側
+
+Button_yomi		説明
+Button_kaki		説明
+Button_haikei		説明
+Button_haikei_kirikae	説明
+
+Button_senbun_nyuryoku	アイコン　説明
+Button_senhaba		アイコン　説明
+ButtonCol_red		説明
+ButtonCol_blue
+ButtonCol_black
+Button_zen_yama_tani_henkan	説明
+
+Button_tenkaizu_idiu	アイコン　説明
+Button_tenkaizu_kakudai	アイコン　説明
+Button_tenkaizu_syukusyou	アイコン　説明
+Button_tenkaizu_p_kaiten	アイコン　説明
+Button_tenkaizu_m_kaiten	アイコン　説明
+Button_kaisetu		アイコン　説明
+
+西側
+Button_senbun_nyuryoku11	アイコン　説明
+Button_senbun_entyou	アイコン　説明
+Button_tou_kyori_senbun	アイコン　説明
+Button_kaku_toubun	アイコン　説明
+Button_naishin	アイコン　説明
+Button_suisen	アイコン　説明
+Button_orikaesi	アイコン　説明
+Button_kyouei	アイコン　説明
+
+Button_Select	説明
+Button_senbun_sakujyo	アイコン　説明
+Button_eda_kesi	アイコン　説明
+Button_senbun_henkan	アイコン　説明
+
+Button_v_add
+Button_v_del
+Button_kitei	アイコン　説明
+Button_kitei2	アイコン　説明
+
+東側
+Button_id_kakudo_kei_18	
+Button_id_kakudo_kei_17	
+Button_id_kakudo_kei_16	
+Button_id_kakudo_kei_15
+Button_id_kakudo_kei_14	
+Button_id_kakudo_kei_13	
+Button_id_kakudo_kei_12	
+Button_id_kakudo_kei_11
+Button_id_kakudo_kei_10	
+Button_id_kakudo_kei_09
+Button_id_kakudo_kei_08	
+Button_id_kakudo_kei_07	
+Button_id_kakudo_kei_06	
+Button_id_kakudo_kei_05
+Button_id_kakudo_kei_04	
+Button_id_kakudo_kei_03	
+Button_id_kakudo_kei_02	
+Button_deg
+Button_deg2
+
+南側
+Button_suitei_04
+Button0b 
+Button_suitei_01
+Button_suitei_02
+Button_suitei_03
+Button_oriagari_sousa
+Button_oriagari_idiu
+Button_oriagari_kakudai
+Button_oriagari_syukusyou
+Button_oriagari_p_kaiten
+Button_oriagari_m_kaiten
+Button_koteimen_sitei
+Button_settei_syokika
+Button_zen_syokika
+
+
+
+
+// -----1;線分入力モード。
+		JButton	Button_senbun_nyuryoku	= new JButton(	""	);
+			Button_senbun_nyuryoku.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) { 
+		img_kaisetu_fname="qqq/.png";readImageFromFile3();
+						i_mouse_modeA=1;
+						es1.set_i_egaki_dankai(0);repaint(); 
+	  }}); pnln.add(Button_senbun_nyuryoku);
+		     Icon icon_senbun_nyuryoku = new ImageIcon(
+			  "ppp/senbun_nyuryoku.png");	
+			Button_senbun_nyuryoku.setPreferredSize(new Dimension(25, 25));
+			Button_senbun_nyuryoku.setMargin(new Insets(0,0,0,0));
+			Button_senbun_nyuryoku.setIcon(
+			  icon_senbun_nyuryoku);
+// ------1;線分入力モード。ここまで
+
+
+Button_yomi		説明
+折線データ読み込み
+オリヒメが読めるデータファイルの形式は3種類
+①～.orh　（オリヒメ専用形式に基づく折線データ）
+②～.cp　 （一般的なcp形式に基づく折線データ）
+③～.obj　（一般的なobj形式に基づく折線データ）
+
+
+＊ORIPAのデータをオリヒメに入力するには
+ORIPAから～.obj形式でファイルを出力したものを、
+オリヒメに入力する。
+
+
+
+
+Button_kaki		説明
+折線データ書き出し
+オリヒメが保存できるデータファイルの形式は2種類
+①～.orh　（オリヒメ専用形式に基づく折線データ）
+②～.cp　 （一般的なcp形式に基づく折線データ）
+
+＊オリヒメのデータをORIPAに入力するには
+オリヒメから～.cp形式でファイルを出力したものを、
+ORIPAに入力する。
+
+
+
+
+
+
+Button_haikei		説明
+作業時に背景がほしい場合、
+JPGファイルを指定して表示できる。
+
+たとえば、展開図の画像ファイルしかなくて、
+オリヒメでデータ化して折り畳み予測したい場合などは、
+展開図の画像ファイルを背景にすると便利。
+
+また、折りたいものの画像を背景にすれば
+創作のテンションがあがるかも。
+
+
+
+Button_haikei_kirikae	説明
+背景を消す。
+このボタンをもう一度押すと
+再び背景を表示する。
+
+
+
+線分入力
+Button_senbun_nyuryoku	アイコン　説明
+折線入力
+以下の手順で自由に折線を描く
+（１）適当な場所でマウスボタンを押す。
+（２）押したままマウスを適当に動かす。
+（３）マウスボタンを離す。
+
+折線を描く場合、その折線の端点は、
+近くに格子点や他の折線の端点がある場合は、
+それらのうちで最も近い点に引寄せられる。
+
+
+
+Button_senhaba		アイコン　説明
+
+
+
+
+
+ButtonCol_red		説明
+
+展開図に加える折線を山折（赤い線）にする。
+
+ButtonCol_blue
+展開図に加える折線を谷折（青い線）にする。
+
+ButtonCol_black
+展開図に加える折線を境界線もしくは山谷不明折線（黒い線）にする。
+
+オリヒメは山谷不明折線があると勝手に山谷を推定するが、山谷不明折線が多いと折畳推定に時間がかかる。
+
+
+Button_zen_yama_tani_henkan	説明
+
+
+
+
+Button_tenkaizu_idiu	アイコン　説明
+
+展開図を移動する。
+
+
+Button_tenkaizu_kakudai	アイコン　説明
+
+展開図を拡大する。
+
+Button_tenkaizu_syukusyou	アイコン　説明
+
+展開図を縮小する。
+
+Button_tenkaizu_p_kaiten	アイコン　説明
+
+展開図を反時計回りに回転する。
+
+Button_tenkaizu_m_kaiten	アイコン　説明
+
+展開図を時計回りに回転する。
+
+
+Button_kaisetu		アイコン　説明
+
+西側
+Button_senbun_nyuryoku11	アイコン　説明
+
+折線入力
+以下の手順で自由に折線を描く
+（１）格子点や他の折線の端点の近くでマウスボタンを押す。
+（２）押したままマウスを適当に動かす。
+（３）マウスボタンを別の格子点や他の折線の端点の近くで離す。
+
+折線を描くこうとした場合、その折線の端点の
+近くに格子点や他の折線の端点がない場合は、
+折線は追加できない。
+
+これはORIPAの折線入力と同様
+
+
+Button_senbun_entyou	アイコン　説明
+
+折線を延長する。
+
+（１）折線を指定
+（２）別の折線を指定
+（３）（１）の折線が（２）の折線（もしくは（２）の延長）との交点まで延長される。
+
+
+
+
+Button_tou_kyori_senbun	アイコン　説明
+
+工事中
+
+
+
+
+
+
+Button_kaku_toubun	アイコン　説明
+
+（１）点Aを指定
+（２）点Bを指定
+（３）点Cを指定
+（４）折線Dを指定
+（５）線分BAと線分BCの角の二等分線が描かれる。（折線Dの交点まで）
+
+
+
+
+Button_naishin	アイコン　説明
+
+（１）点Aを指定
+（２）点Bを指定
+（３）点Cを指定
+
+（４）点ABCと内心を結ぶ線が描かれる。
+
+Button_suisen	アイコン　説明
+（１）点Aを指定
+（２）折線Bを指定
+（３）点Aから折線Bに垂線が描かれる。
+
+Button_orikaesi	アイコン　説明
+
+（１）点Aを指定
+（２）点Bを指定
+（３）点Cを指定
+（４）線分BCを対称軸として線分BAと線対称な線が描かれる。
+
+
+
+Button_kyouei	アイコン　説明
+
+セレクト済みの折線に関し、その線対称な折線を追加する。
+手順は以下の通り
+
+（０）この操作の前に　セレクトボタンで、好きな折線（複数でも可）をセレクト状態にしておく。
+（１）点Aと点Bを指定する。
+（２）線分ABを対称軸としてセレクト状態の折線と線対称な折線が追加される。
+
+
+Button_Select	説明
+
+マウスで折線を選択しセレクト状態にする。
+
+Button_select_all	説明
+全ての折線をセレクト状態にする。
+
+Button_unselect_all	説明
+全ての折線をセレクト状態でなくする。
+
+Button_senbun_sakujyo	アイコン　説明
+
+折線を１本づつ指定して削除する。
+
+
+
+Button_eda_kesi	アイコン　説明
+
+枝状の線分（面の境界になっていない線分）をまとめて削除する。
+
+
+Button_senbun_henkan	アイコン　説明
+
+折線を
+赤（山）なら青（谷）に、
+青（谷）なら黒（境界線または山谷不明線）に、
+黒（境界線または山谷不明線）なら赤（山）に
+変える
+
+
+Button_v_add
+
+折線上に頂点を加える。
+ORIPAのAddVertexと同じ
+
+
+Button_v_del
+折線上の頂点を削除する。
+ORIPAのDeleteVertexと同じ
+
+
+Button_kitei	アイコン　説明
+用紙の格子を細かくする。
+
+
+Button_kitei2	アイコン　説明
+用紙の格子を荒くする。
+
+
+
+東側
+Button_id_kakudo_kei_18	
+
+角度系入力の角度を指定する。
+
+Button_id_kakudo_kei_17	
+Button_id_kakudo_kei_16	
+Button_id_kakudo_kei_15
+Button_id_kakudo_kei_14	
+Button_id_kakudo_kei_13	
+Button_id_kakudo_kei_12	
+Button_id_kakudo_kei_11
+Button_id_kakudo_kei_10	
+Button_id_kakudo_kei_09
+Button_id_kakudo_kei_08	
+Button_id_kakudo_kei_07	
+Button_id_kakudo_kei_06	
+Button_id_kakudo_kei_05
+Button_id_kakudo_kei_04	
+Button_id_kakudo_kei_03	
+Button_id_kakudo_kei_02	
+
+
+Button_deg
+角度系入力の方法
+（１）線分を指定
+（２）現れた補助線の交点を指定
+
+
+
+Button_deg3
+角度系入力の方法
+（１）点Aを指定
+（２）点Bを指定
+（３）現れた補助線の交点を指定
+
+
+
+Button_deg2
+
+角度系入力の方法
+（１）点Aを指定
+（２）点Bを指定
+（３）現れた補助線から１本を選ぶとそれが青くなる
+（４）すでにある折線から適当なものを選ぶ
+（５）（３）が、（４）の交点まで折線になる。
+
+
+
+Button_deg4
+角度系入力の方法
+（１）点Aを指定
+（２）点Bを指定
+（３）現れた補助線上の適当なところをクリックすると、そこまで折線になる
+
+
+
+
+
+
+
+南側
+Button_suitei_04
+
+展開図から折畳推定する。
+
+Button0b 
+
+折り上がり図を裏返したり、もどしたり
+
+Button_suitei_01
+
+展開図のソフトへの認識
+
+
+Button_suitei_02
+
+針金図を描く
+
+Button_suitei_03
+
+透過図を描く
+
+Button_oriagari_sousa
+
+折り上がり図を変形させる
+
+
+
+
+Button_oriagari_idiu
+折り上がり図を移動する。
+
+
+
+Button_oriagari_kakudai
+
+折り上がり図を拡大する。
+
+
+Button_oriagari_syukusyou
+折り上がり図を縮小する。
+
+Button_oriagari_p_kaiten
+折り上がり図を反時計回りに回転する。
+
+Button_oriagari_m_kaiten
+折り上がり図を時計回りに回転する。
+
+Button_koteimen_sitei
+折り上がり推定時に固定させる面を指定する。
+
+Button_settei_syokika
+
+折りあがり図を捨てる。
+
+
+Button_zen_syokika
+
+畜生、やり直しだ。
+
+
+Button_unselect	説明
+
+マウスで折線を選択し非セレクト状態にする。
+
+Unselect crease lines.
+
+
+Button_move	アイコン　説明
+
+セレクト済みの折線を移動する。
+手順は以下の通り
+
+（０）この操作の前に　セレクトボタンで、好きな折線（複数でも可）をセレクト状態にしておく。
+（１）格子点や他の折線の端点の近くでマウスボタンを押す。
+（２）押したままマウスを適当に動かす。
+（３）マウスボタンを別の格子点や他の折線の端点の近くで離す。
+（４）セレクトされた折線がマウスの移動分と同じだけ移動する。
+
+Move selected crease lines.
+(0)Select crease lines in advance using select button.
+(1)Push mouse button anywhere you like.
+(2)Move mouse.
+(3)Release mouse button anywhere you like.
+(4)Then, selected lines move as much as mouse.
+
+
+
+Button_copy_paste	アイコン　説明
+
+セレクト済みの折線を移動する。
+手順は以下の通り
+（０）この操作の前に　セレクトボタンで、好きな折線（複数でも可）をセレクト状態にしておく。
+（１）格子点や他の折線の端点の近くでマウスボタンを押す。
+（２）押したままマウスを適当に動かす。
+（３）マウスボタンを別の格子点や他の折線の端点の近くで離す。
+（４）セレクトされた折線がマウスの移動分と同じだけ離れた場所にコピペされる。
+
+
+Copy and Paste selected crease lines.
+(0)Select crease lines in advance using select button.
+(1)Push mouse button anywhere you like.
+(2)Move mouse.
+(3)Release mouse button anywhere you like.
+(4)Then, selected lines are pasted at the place where moved as much as mouse.
+
+
+
+del_selected_senbun
+
+セレクトされた折線を削除する。
+
+Delete selected lines.

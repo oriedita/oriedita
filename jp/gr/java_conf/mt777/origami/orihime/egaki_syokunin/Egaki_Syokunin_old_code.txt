@@ -1,0 +1,17 @@
+			//	OO.habaLine( g,s_tv,iTenkaizuSenhaba,ori_s.getcolor(i));//  ‘¾ü
+
+
+
+				//OO.habaLine( g,s_tv,iTenkaizuSenhaba,k.getcolor(i));
+
+  				//int i_haba=iTenkaizuSenhaba;
+				//g.fillOval( (int)a.getx()-i_haba,(int)a.gety()-i_haba,2*i_haba,2*i_haba); //‰~
+				//g.fillOval( (int)b.getx()-i_haba,(int)b.gety()-i_haba,2*i_haba,2*i_haba); //‰~
+
+
+
+
+
+
+
+

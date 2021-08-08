@@ -1,0 +1,5 @@
+折線選択モードの時にこのチェックボックスがオンならば、適当な場所でマウスの左ボタンをトリプルクリックすることで、折線選択モードからその時点で選択済みの動作モードに移行できる（マウスクリックだけでmoveやcopy等のその時の動作モードに移行できる）。
+
+In the crease line selection mode,if this check box is selected, triple-clicking the left mouse button at an appropriate location, you can switch from the crease lie selection mode to the operation mode. (Move, copy, etc.)
+
+If this check box is selected,in the crease line selection mode, triple-clicking the left mouse button at an appropriate location, you can switch from the crease lie selection mode to the operation mode. (Move, copy, etc.)
