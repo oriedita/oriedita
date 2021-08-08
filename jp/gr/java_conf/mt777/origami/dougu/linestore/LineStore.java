@@ -13,8 +13,8 @@ import java.util.*;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 public class LineStore {
-    int sousuu;               //実際に使う線分の総数
-    ArrayList<Line> Senb = new ArrayList<>(); //線分のインスタンス化
+    int total;               //実際に使う線分の総数
+    ArrayList<Line> lines = new ArrayList<>(); //線分のインスタンス化
     OritaCalc oc = new OritaCalc();          //各種計算用の関数を使うためのクラスのインスタンス化
 
     public LineStore() {
@@ -22,132 +22,132 @@ public class LineStore {
     } //コンストラクタ
 
     public void reset() {
-        sousuu = 0;
-        Senb.clear();
-        Senb.add(new Line());
+        total = 0;
+        lines.clear();
+        lines.add(new Line());
     }
 
     public void set(LineStore ss) {
-        sousuu = ss.getsousuu();
-        for (int i = 0; i <= sousuu; i++) {
+        total = ss.getTotal();
+        for (int i = 0; i <= total; i++) {
             Line s;
-            s = sen(i);
+            s = getLine(i);
             s.set(ss.get(i));
         }
     }
 
-    private Line sen(int i) {
-        if (sousuu + 1 > Senb.size()) {
-            while (sousuu + 1 > Senb.size()) {
-                Senb.add(new Line());
+    private Line getLine(int i) {
+        if (total + 1 > lines.size()) {
+            while (total + 1 > lines.size()) {
+                lines.add(new Line());
             }
         }//この文がないとうまく行かない。なぜこの文でないといけないかという理由が正確にはわからない。
-        return Senb.get(i);
+        return lines.get(i);
     }
 
     //
-    private void senset(int i, Line s) {
-        if (sousuu + 1 > Senb.size()) {
-            while (sousuu + 1 > Senb.size()) {
-                Senb.add(new Line());
+    private void setLine(int i, Line s) {
+        if (total + 1 > lines.size()) {
+            while (total + 1 > lines.size()) {
+                lines.add(new Line());
             }
         }//この文がないとうまく行かない。なぜこの文でないといけないかという理由が正確にはわからない。
-        if (i + 1 <= Senb.size()) {
-            Senb.set(i, s);
+        if (i + 1 <= lines.size()) {
+            lines.set(i, s);
         } //なぜか、このifがないとうまく行かない
     }
 
     //線分の総数を得る
-    public int getsousuu() {
-        return sousuu;
+    public int getTotal() {
+        return total;
     }
 
-    public void setsousuu(int i) {
-        sousuu = i;
+    public void setTotal(int i) {
+        total = i;
     }
 
     //線分を得る
     public Line get(int i) {
         //Senbun s;s= sen(i);return s;
-        return sen(i);
+        return getLine(i);
     }
 
     //i番目の線分の端点を得る
     public Point geta(int i) {
         Line s;
-        s = sen(i);
+        s = getLine(i);
         return s.geta();
     }
 
     public Point getb(int i) {
         Line s;
-        s = sen(i);
+        s = getLine(i);
         return s.getb();
     }
 
     //i番目の線分の端点を得る
     public double getax(int i) {
         Line s;
-        s = sen(i);
+        s = getLine(i);
         return s.getax();
     }
 
     public double getbx(int i) {
         Line s;
-        s = sen(i);
+        s = getLine(i);
         return s.getbx();
     }
 
     public double getay(int i) {
         Line s;
-        s = sen(i);
+        s = getLine(i);
         return s.getay();
     }
 
     public double getby(int i) {
         Line s;
-        s = sen(i);
+        s = getLine(i);
         return s.getby();
     }
 
     //i番目の線分の端点の位置をセットする
     public void seta(int i, Point p) {
         Line s;
-        s = sen(i);
+        s = getLine(i);
         s.seta(p);
     }
 
     public void setb(int i, Point p) {
         Line s;
-        s = sen(i);
+        s = getLine(i);
         s.setb(p);
     }
 
     //i番目の線分の値を入力する
     public void set(int i, Point p, Point q, int ic, int ia) {
         Line s;
-        s = sen(i);
+        s = getLine(i);
         s.set(p, q, ic, ia);
     }
 
     //i番目の線分の色を入力する
     public void setcolor(int i, int icol) {
         Line s;
-        s = sen(i);
+        s = getLine(i);
         s.setcolor(icol);
     }
 
     //i番目の線分の色を出力する
     public int getcolor(int i) {
         Line s;
-        s = sen(i);
+        s = getLine(i);
         return s.getcolor();
     }
 
     //i番目の線分の活性を出力する
     public int getiactive(int i) {
         Line s;
-        s = sen(i);
+        s = getLine(i);
         return s.getiactive();
     }
 
@@ -157,14 +157,14 @@ public class LineStore {
 
         Memo memo1 = new Memo();
         memo1.reset();
-        memo1.addGyou("<線分集合>");
+        memo1.addLine("<線分集合>");
 
-        for (int i = 1; i <= sousuu; i++) {
-            memo1.addGyou("番号," + i);
+        for (int i = 1; i <= total; i++) {
+            memo1.addLine("番号," + i);
             Line s;
-            s = sen(i);
-            memo1.addGyou("色," + s.getcolor());
-            memo1.addGyou("座標," + s.getax() + "," + s.getay() + "," +
+            s = getLine(i);
+            memo1.addLine("色," + s.getcolor());
+            memo1.addLine("座標," + s.getax() + "," + s.getay() + "," +
                     s.getbx() + "," + s.getby());
 
 
@@ -192,10 +192,10 @@ public class LineStore {
 
 //最初に線分の総数を求める
         int isen = 0;
-        for (int i = 1; i <= memo1.getGyousuu(); i++) {
+        for (int i = 1; i <= memo1.getLineSize(); i++) {
 
 
-            StringTokenizer tk = new StringTokenizer(memo1.getGyou(i), ",");
+            StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
             //jtok=    tk.countTokens();
 
 
@@ -210,14 +210,14 @@ public class LineStore {
             }
         }
 
-        sousuu = isen;
+        total = isen;
 //最初に線分の総数が求められた
         //
 
-        for (int i = 1; i <= memo1.getGyousuu(); i++) {
+        for (int i = 1; i <= memo1.getLineSize(); i++) {
 
 
-            StringTokenizer tk = new StringTokenizer(memo1.getGyou(i), ",");
+            StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
             //jtok=    tk.countTokens();
             str = tk.nextToken();
             //  	System.out.println("::::::::::"+ str+"<<<<<" );
@@ -235,7 +235,7 @@ public class LineStore {
                 str = tk.nextToken();
                 ic = Integer.parseInt(str);
                 Line s;
-                s = sen(ibangou);
+                s = getLine(ibangou);
                 s.setcolor(ic);
 
             }
@@ -250,7 +250,7 @@ public class LineStore {
                 by = Double.parseDouble(str);
 
                 Line s;
-                s = sen(ibangou);
+                s = getLine(ibangou);
                 s.set(ax, ay, bx, by);
                 //	System.out.println(ax );
             }
@@ -277,7 +277,7 @@ public class LineStore {
     public void zen_yama_tani_henkan() {
         int ic_temp;
 
-        for (int ic_id = 1; ic_id <= sousuu; ic_id++) {
+        for (int ic_id = 1; ic_id <= total; ic_id++) {
             ic_temp = getcolor(ic_id);
             if (ic_temp == 1) {
                 ic_temp = 2;
@@ -293,25 +293,25 @@ public class LineStore {
 
     public void bunkatu_seiri_for_Smen_hassei() {//折り畳み推定などで得られる針金図の整理
         System.out.println("　　Senbunsyuugouの中で、Smenを発生させるための線分集合の整理");
-        System.out.println("分割整理　１、点削除前	getsousuu() = " + getsousuu());
+        System.out.println("分割整理　１、点削除前	getsousuu() = " + getTotal());
         ten_sakujyo();          //念のため、点状の線分を除く
-        System.out.println("分割整理　２、重複線分削除前	getsousuu() = " + getsousuu());
+        System.out.println("分割整理　２、重複線分削除前	getsousuu() = " + getTotal());
         jyuufuku_senbun_sakujyo();//念のため、全く一致する線分が２つあれば１つを除く
-        System.out.println("分割整理　３、交差分割前	getsousuu() = " + getsousuu());
+        System.out.println("分割整理　３、交差分割前	getsousuu() = " + getTotal());
         kousabunkatu();
-        System.out.println("分割整理　４、点削除前	getsousuu() = " + getsousuu());
+        System.out.println("分割整理　４、点削除前	getsousuu() = " + getTotal());
         ten_sakujyo();             //折り畳み推定の針金図の整理のため、点状の線分を除く
-        System.out.println("分割整理　５、重複線分削除前	getsousuu() = " + getsousuu());
+        System.out.println("分割整理　５、重複線分削除前	getsousuu() = " + getTotal());
         jyuufuku_senbun_sakujyo(); //折り畳み推定の針金図の整理のため、全く一致する線分が２つあれば１つを除く
-        System.out.println("分割整理　５、重複線分削除後	getsousuu() = " + getsousuu());
+        System.out.println("分割整理　５、重複線分削除後	getsousuu() = " + getTotal());
     }
 
 
     //点状の線分を削除
     public void ten_sakujyo() {
-        for (int i = 1; i <= sousuu; i++) {
+        for (int i = 1; i <= total; i++) {
             Line s;
-            s = sen(i);
+            s = getLine(i);
             if (oc.hitosii(s.geta(), s.getb())) {
                 delsenbun(i);
                 i = i - 1;
@@ -320,9 +320,9 @@ public class LineStore {
     }
 
     public void ten_sakujyo(double r) {
-        for (int i = 1; i <= sousuu; i++) {
+        for (int i = 1; i <= total; i++) {
             Line s;
-            s = sen(i);
+            s = getLine(i);
             if (oc.hitosii(s.geta(), s.getb(), r)) {
                 delsenbun(i);
                 i = i - 1;
@@ -332,25 +332,25 @@ public class LineStore {
 
     // 全く重なる線分が2本存在するときに番号の遅いほうを削除する。
     public void jyuufuku_senbun_sakujyo(double r) {
-        int[] sakujyo_flg = new int[sousuu + 1];
-        Line[] snew = new Line[sousuu + 1];
-        for (int i = 1; i <= sousuu; i++) {
+        int[] sakujyo_flg = new int[total + 1];
+        Line[] snew = new Line[total + 1];
+        for (int i = 1; i <= total; i++) {
             sakujyo_flg[i] = 0;
             snew[i] = new Line();
         }
 
-        for (int i = 1; i <= sousuu - 1; i++) {
+        for (int i = 1; i <= total - 1; i++) {
             Line si;
-            si = sen(i);
-            for (int j = i + 1; j <= sousuu; j++) {
+            si = getLine(i);
+            for (int j = i + 1; j <= total; j++) {
                 Line sj;
-                sj = sen(j);
+                sj = getLine(j);
                 if (r <= -9999.9) {
-                    if (oc.senbun_kousa_hantei(si, sj) == 31) {
+                    if (oc.line_intersect_decide(si, sj) == 31) {
                         sakujyo_flg[j] = 1;
                     }
                 } else {
-                    if (oc.senbun_kousa_hantei(si, sj, r, r) == 31) {
+                    if (oc.line_intersect_decide(si, sj, r, r) == 31) {
                         sakujyo_flg[j] = 1;
                     }
                 }
@@ -358,19 +358,19 @@ public class LineStore {
         }
 
         int smax = 0;
-        for (int i = 1; i <= sousuu; i++) {
+        for (int i = 1; i <= total; i++) {
             if (sakujyo_flg[i] == 0) {
                 Line si;
-                si = sen(i);
+                si = getLine(i);
                 smax = smax + 1;
                 snew[smax].set(si);
             }
         }
 
-        sousuu = smax;
-        for (int i = 1; i <= sousuu; i++) {
+        total = smax;
+        for (int i = 1; i <= total; i++) {
             Line si;
-            si = sen(i);
+            si = getLine(i);
             si.set(snew[i]);
         }
     }
@@ -386,10 +386,10 @@ public class LineStore {
             return 0;
         }
         Line si;
-        si = sen(i);
+        si = getLine(i);
         Line sj;
-        sj = sen(j);
-        if (oc.senbun_kousa_hantei(si, sj) == 31) {  //31はsiとsjが全く同じに重なることを示す
+        sj = getLine(j);
+        if (oc.line_intersect_decide(si, sj) == 31) {  //31はsiとsjが全く同じに重なることを示す
             delsenbun(j);
             return 1;
         }
@@ -402,25 +402,25 @@ public class LineStore {
 
         ArrayList<Integer> k_flg = new ArrayList<>();//交差分割の影響があることを示すフラッグ。
 
-        for (int i = 0; i <= sousuu + 1; i++) {
+        for (int i = 0; i <= total + 1; i++) {
             k_flg.add(1);
         }
 
         while (ibunkatu != 0) {
             ibunkatu = 0;
-            for (int i = 1; i <= sousuu; i++) {
+            for (int i = 1; i <= total; i++) {
                 Integer I_k_flag = (Integer) k_flg.get(i);
                 if (I_k_flag == 1) {
                     k_flg.set(i, 0);
-                    for (int j = 1; j <= sousuu; j++) {
+                    for (int j = 1; j <= total; j++) {
                         if (i != j) {
                             Integer J_k_flag = k_flg.get(j);
                             if (J_k_flag == 1) {
                                 int itemp = 0;
-                                int old_sousuu = sousuu;
+                                int old_sousuu = total;
                                 itemp = kousabunkatu(i, j);
-                                if (old_sousuu < sousuu) {
-                                    for (int is = old_sousuu + 1; is <= sousuu; is++) {
+                                if (old_sousuu < total) {
+                                    for (int is = old_sousuu + 1; is <= total; is++) {
                                         k_flg.add(1);
                                     }
                                 }
@@ -445,9 +445,9 @@ public class LineStore {
         }
 
         Line si;
-        si = sen(i);
+        si = getLine(i);
         Line sj;
-        sj = sen(j);
+        sj = getLine(j);
 
         Point p1 = new Point();
         p1.set(si.geta());
@@ -519,7 +519,7 @@ public class LineStore {
             return 0;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 1) {
+        if (oc.line_intersect_decide(si, sj) == 1) {
             pk.set(oc.kouten_motome(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
             si.seta(p1);
             si.setb(pk);
@@ -532,7 +532,7 @@ public class LineStore {
 
         //oc.senbun_kousa_hantei(si,sj)が21から24まではくの字型の交差で、なにもしない。
 
-        if (oc.senbun_kousa_hantei(si, sj) == 25) {
+        if (oc.line_intersect_decide(si, sj) == 25) {
             pk.set(oc.kouten_motome(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
             sj.seta(p3);
             sj.setb(pk);
@@ -540,7 +540,7 @@ public class LineStore {
             return 1;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 26) {
+        if (oc.line_intersect_decide(si, sj) == 26) {
             pk.set(oc.kouten_motome(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
             sj.seta(p3);
             sj.setb(pk);
@@ -548,7 +548,7 @@ public class LineStore {
             return 1;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 27) {
+        if (oc.line_intersect_decide(si, sj) == 27) {
             pk.set(oc.kouten_motome(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
             si.seta(p1);
             si.setb(pk);
@@ -556,7 +556,7 @@ public class LineStore {
             return 1;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 28) {
+        if (oc.line_intersect_decide(si, sj) == 28) {
             pk.set(oc.kouten_motome(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
             si.seta(p1);
             si.setb(pk);
@@ -564,12 +564,12 @@ public class LineStore {
             return 1;
         }
         //
-        if (oc.senbun_kousa_hantei(si, sj) == 31) {//2つの線分がまったく同じ場合は、何もしない。
+        if (oc.line_intersect_decide(si, sj) == 31) {//2つの線分がまったく同じ場合は、何もしない。
             return 0;
         }
 
 
-        if (oc.senbun_kousa_hantei(si, sj) == 321) {//2つの線分の端点どうし(p1とp3)が1点で重なる。siにsjが含まれる
+        if (oc.line_intersect_decide(si, sj) == 321) {//2つの線分の端点どうし(p1とp3)が1点で重なる。siにsjが含まれる
             si.seta(p2);
             si.setb(p4);
 
@@ -585,7 +585,7 @@ public class LineStore {
 
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 322) {//2つの線分の端点どうし(p1とp3)が1点で重なる。sjにsiが含まれる
+        if (oc.line_intersect_decide(si, sj) == 322) {//2つの線分の端点どうし(p1とp3)が1点で重なる。sjにsiが含まれる
             sj.seta(p2);
             sj.setb(p4);
             int jyuufuku_col;
@@ -598,7 +598,7 @@ public class LineStore {
             return 1;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 331) {//2つの線分の端点どうし(p1とp4)が1点で重なる。siにsjが含まれる
+        if (oc.line_intersect_decide(si, sj) == 331) {//2つの線分の端点どうし(p1とp4)が1点で重なる。siにsjが含まれる
             si.seta(p2);
             si.setb(p3);
 
@@ -612,7 +612,7 @@ public class LineStore {
             return 1;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 332) {//2つの線分の端点どうし(p1とp4)が1点で重なる。sjにsiが含まれる
+        if (oc.line_intersect_decide(si, sj) == 332) {//2つの線分の端点どうし(p1とp4)が1点で重なる。sjにsiが含まれる
             sj.seta(p2);
             sj.setb(p3);
             int jyuufuku_col;
@@ -624,7 +624,7 @@ public class LineStore {
             return 1;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 341) {//2つの線分の端点どうし(p2とp3)が1点で重なる。siにsjが含まれる
+        if (oc.line_intersect_decide(si, sj) == 341) {//2つの線分の端点どうし(p2とp3)が1点で重なる。siにsjが含まれる
             si.seta(p1);
             si.setb(p4);
             int jyuufuku_col;
@@ -637,7 +637,7 @@ public class LineStore {
             return 1;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 342) {//2つの線分の端点どうし(p2とp3)が1点で重なる。sjにsiが含まれる
+        if (oc.line_intersect_decide(si, sj) == 342) {//2つの線分の端点どうし(p2とp3)が1点で重なる。sjにsiが含まれる
             sj.seta(p1);
             sj.setb(p4);
             int jyuufuku_col;
@@ -651,7 +651,7 @@ public class LineStore {
             return 1;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 351) {//2つの線分の端点どうし(p2とp4)が1点で重なる。siにsjが含まれる
+        if (oc.line_intersect_decide(si, sj) == 351) {//2つの線分の端点どうし(p2とp4)が1点で重なる。siにsjが含まれる
 
 
             si.seta(p1);
@@ -667,7 +667,7 @@ public class LineStore {
             return 1;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 352) {//2つの線分の端点どうし(p2とp4)が1点で重なる。sjにsiが含まれる
+        if (oc.line_intersect_decide(si, sj) == 352) {//2つの線分の端点どうし(p2とp4)が1点で重なる。sjにsiが含まれる
             sj.seta(p1);
             sj.setb(p3);
             int jyuufuku_col;
@@ -681,7 +681,7 @@ public class LineStore {
         }
 
 
-        if (oc.senbun_kousa_hantei(si, sj) == 361) {//p1-p3-p4-p2の順
+        if (oc.line_intersect_decide(si, sj) == 361) {//p1-p3-p4-p2の順
             si.seta(p1);
             si.setb(p3);
 
@@ -696,7 +696,7 @@ public class LineStore {
             return 1;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 362) {//p1-p4-p3-p2の順
+        if (oc.line_intersect_decide(si, sj) == 362) {//p1-p4-p3-p2の順
             si.seta(p1);
             si.setb(p4);
 
@@ -712,7 +712,7 @@ public class LineStore {
             return 1;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 363) {//p3-p1-p2-p4の順
+        if (oc.line_intersect_decide(si, sj) == 363) {//p3-p1-p2-p4の順
             sj.seta(p1);
             sj.setb(p3);
 
@@ -728,7 +728,7 @@ public class LineStore {
             return 1;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 364) {//p3-p2-p1-p4の順
+        if (oc.line_intersect_decide(si, sj) == 364) {//p3-p2-p1-p4の順
             sj.seta(p1);
             sj.setb(p4);
 
@@ -745,7 +745,7 @@ public class LineStore {
         }
 
         //
-        if (oc.senbun_kousa_hantei(si, sj) == 371) {//p1-p3-p2-p4の順
+        if (oc.line_intersect_decide(si, sj) == 371) {//p1-p3-p2-p4の順
             //System.out.println("371");
             si.seta(p1);
             si.setb(p3);
@@ -762,7 +762,7 @@ public class LineStore {
             return 1;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 372) {//p1-p4-p2-p3の順
+        if (oc.line_intersect_decide(si, sj) == 372) {//p1-p4-p2-p3の順
             //System.out.println("372");
             si.seta(p1);
             si.setb(p4);
@@ -779,7 +779,7 @@ public class LineStore {
             return 1;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 373) {//p3-p1-p4-p2の順
+        if (oc.line_intersect_decide(si, sj) == 373) {//p3-p1-p4-p2の順
             //System.out.println("373");
             sj.seta(p1);
             sj.setb(p3);
@@ -794,7 +794,7 @@ public class LineStore {
             return 1;
         }
 
-        if (oc.senbun_kousa_hantei(si, sj) == 374) {//p4-p1-p3-p2の順
+        if (oc.line_intersect_decide(si, sj) == 374) {//p4-p1-p3-p2の順
             //System.out.println("374");
             sj.seta(p1);
             sj.setb(p4);
@@ -815,28 +815,28 @@ public class LineStore {
 
     //線分の追加-------------------------------
     public void addsenbun(Point pi, Point pj, int i_c) {
-        sousuu++;
+        total++;
 
         Line s;
-        s = sen(sousuu);
+        s = getLine(total);
         s.set(pi, pj, i_c);
     }
 
     //線分の追加-------------------------------
     public void addsenbun(double ax, double ay, double bx, double by, int ic) {
-        sousuu++;
+        total++;
 
         Line s;
-        s = sen(sousuu);
+        s = getLine(total);
         s.set(ax, ay, bx, by, ic);
     }
 
     //線分の追加-------------------------------
     public void addsenbun(Point pi, Point pj) {
-        sousuu++;
+        total++;
 
         Line s;
-        s = sen(sousuu);
+        s = getLine(total);
 
         s.seta(pi);
         s.setb(pj);
@@ -844,21 +844,21 @@ public class LineStore {
 
     //線分の削除-----------------------------------------
     public void delsenbun(int j) {   //j番目の線分を削除する
-        for (int i = j; i <= sousuu - 1; i++) {
+        for (int i = j; i <= total - 1; i++) {
             Line si;
-            si = sen(i);
+            si = getLine(i);
             Line si1;
-            si1 = sen(i + 1);
+            si1 = getLine(i + 1);
             si.set(si1);
 
         }
-        sousuu--;
+        total--;
     }
 
     //i番目の線分の長さを得る---------------------------
     public double getnagasa(int i) {
         Line s;
-        s = sen(i);
+        s = getLine(i);
         return s.getnagasa();
     }
 
@@ -866,15 +866,15 @@ public class LineStore {
     public void eda_kesi(double r) {
         int iflga = 0;
         int iflgb = 0;
-        for (int i = 1; i <= sousuu; i++) {
+        for (int i = 1; i <= total; i++) {
             iflga = 0;
             iflgb = 0;
             Line si;
-            si = sen(i);
-            for (int j = 1; j <= sousuu; j++) {
+            si = getLine(i);
+            for (int j = 1; j <= total; j++) {
                 if (i != j) {
                     Line sj;
-                    sj = sen(j);
+                    sj = getLine(j);
                     if (oc.kyori(si.geta(), sj.geta()) < r) {
                         iflga = 1;
                     }
@@ -900,14 +900,14 @@ public class LineStore {
     //一本だけの離れてある線分を削除する。
     public void tanSenbun_sakujyo(double r) {
         int iflg = 0;
-        for (int i = 1; i <= sousuu; i++) {
+        for (int i = 1; i <= total; i++) {
             iflg = 0;
             Line si;
-            si = sen(i);
-            for (int j = 1; j <= sousuu; j++) {
+            si = getLine(i);
+            for (int j = 1; j <= total; j++) {
                 if (i != j) {
                     Line sj;
-                    sj = sen(j);
+                    sj = getLine(j);
                     if (oc.kyori(si.geta(), sj.geta()) < r) {
                         iflg = 1;
                     }
@@ -937,17 +937,17 @@ public class LineStore {
 
     public int senbun_sagasi(Point p, double r, int j) {
         if (j == -10) {
-            for (int i = 1; i <= sousuu; i++) {
+            for (int i = 1; i <= total; i++) {
                 if (((senbun_busyo_sagasi(i, p, r) == 1) && (i != j)) && (getiactive(i) == 0)) {
                     return i;
                 }
             }
-            for (int i = 1; i <= sousuu; i++) {
+            for (int i = 1; i <= total; i++) {
                 if (((senbun_busyo_sagasi(i, p, r) == 2) && (i != j)) && (getiactive(i) == 0)) {
                     return i;
                 }
             }
-            for (int i = 1; i <= sousuu; i++) {
+            for (int i = 1; i <= total; i++) {
                 if (((senbun_busyo_sagasi(i, p, r) == 3) && (i != j)) && (getiactive(i) == 0)) {
                     return i;
                 }
@@ -955,17 +955,17 @@ public class LineStore {
             return 0;
         }
 
-        for (int i = 1; i <= sousuu; i++) {
+        for (int i = 1; i <= total; i++) {
             if ((senbun_busyo_sagasi(i, p, r) == 1) && (i != j)) {
                 return i;
             }
         }
-        for (int i = 1; i <= sousuu; i++) {
+        for (int i = 1; i <= total; i++) {
             if ((senbun_busyo_sagasi(i, p, r) == 2) && (i != j)) {
                 return i;
             }
         }
-        for (int i = 1; i <= sousuu; i++) {
+        for (int i = 1; i <= total; i++) {
             if ((senbun_busyo_sagasi(i, p, r) == 3) && (i != j)) {
                 return i;
             }
@@ -994,7 +994,7 @@ public class LineStore {
     public int mottomo_tikai_senbun_sagasi(Point p) {
         int minrid = 0;
         double minr = 100000;
-        for (int i = 1; i <= sousuu; i++) {
+        for (int i = 1; i <= total; i++) {
             double sk = oc.kyori_senbun(p, get(i));
             if (minr > sk) {
                 minr = sk;
@@ -1012,7 +1012,7 @@ public class LineStore {
         Point p_return = new Point();
         p_return.set(100000.0, 100000.0);
         Point p_temp = new Point();
-        for (int i = 1; i <= sousuu; i++) {
+        for (int i = 1; i <= total; i++) {
             p_temp.set(geta(i));
             if (p.kyori2jyou(p_temp) < p.kyori2jyou(p_return)) {
                 p_return.set(p_temp.getx(), p_temp.gety());
@@ -1031,18 +1031,18 @@ public class LineStore {
 
     //点pの近くの線分の活性化
     public void kasseika(Point p, double r) {
-        for (int i = 1; i <= sousuu; i++) {
+        for (int i = 1; i <= total; i++) {
             Line si;
-            si = sen(i);
+            si = getLine(i);
             si.kasseika(p, r);
         }
     }
 
     //全線分の非活性化
     public void hikasseika() {
-        for (int i = 1; i <= sousuu; i++) {
+        for (int i = 1; i <= total; i++) {
             Line si;
-            si = sen(i);
+            si = getLine(i);
             si.hikasseika();
         }
     }
@@ -1050,9 +1050,9 @@ public class LineStore {
 
     //線分の活性化されたものを点pの座標にする
     public void set(Point p) {
-        for (int i = 1; i <= sousuu; i++) {
+        for (int i = 1; i <= total; i++) {
             Line si;
-            si = sen(i);
+            si = getLine(i);
             si.set(p);
         }
 
@@ -1061,9 +1061,9 @@ public class LineStore {
     //線分集合の中の線分i0と、i0以外で、全く重なる線分があれば、その番号を返す。なければ-10を返す。
     public int kasanari_senbun_sagasi(int i0) {
         //int minrid=0;double minr=100000;
-        for (int i = 1; i <= sousuu; i++) {
+        for (int i = 1; i <= total; i++) {
             if (i != i0) {
-                if (oc.senbun_kousa_hantei(get(i), get(i0)) == 31) {
+                if (oc.line_intersect_decide(get(i), get(i0)) == 31) {
                     return i;
                 }
             }

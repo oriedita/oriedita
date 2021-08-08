@@ -16,11 +16,11 @@ import jp.gr.java_conf.mt777.kiroku.memo.*;
 import jp.gr.java_conf.mt777.seiretu.narabebako.*;
 import jp.gr.java_conf.mt777.zukei2d.en.*;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
-import jp.gr.java_conf.mt777.zukei2d.takakukei.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.tyokusen.*;
 import jp.gr.java_conf.mt777.zukei2d.oritaoekaki.*;
 import jp.gr.java_conf.mt777.zukei2d.kousi.*;
+import jp.gr.java_conf.mt777.zukei2d.takakukei.Polygon;
 import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
 
@@ -73,8 +73,8 @@ public class Egaki_Syokunin {
     private final LineStore sen_s = new LineStore();    //基本枝構造のインスタンス化
     //private Senbunsyuugou sen_s;    //基本枝構造のインスタンス化
 
-    Takakukei gomibako = new Takakukei(4);    //ゴミ箱のインスタンス化
-    Takakukei tyuuoutai = new Takakukei(4);    //中央帯のインスタンス化
+    Polygon gomibako = new Polygon(4);    //ゴミ箱のインスタンス化
+    Polygon tyuuoutai = new Polygon(4);    //中央帯のインスタンス化
     double tyuuoutai_xmin = 180.0;
     double tyuuoutai_xmax = 206.0;
     double tyuuoutai_ymin = 50.0;
@@ -160,7 +160,7 @@ public class Egaki_Syokunin {
     Point p61_2 = new Point();//TV座標
     Point p61_3 = new Point();//TV座標
     Point p61_4 = new Point();//TV座標
-    public Takakukei p61_TV_hako = new Takakukei(4);    //選択箱(TV座標)のインスタンス化
+    public Polygon p61_TV_hako = new Polygon(4);    //選択箱(TV座標)のインスタンス化
     int p61_mode = 0;//=1 新たに選択箱を作る。=2　点を移動。３　辺を移動。４　選択箱を移動。
 
 
@@ -266,8 +266,8 @@ public class Egaki_Syokunin {
 
         // 展開図用カメラ設定の読み込み
         i_yomi = 0;
-        for (int i = 1; i <= memo1.getGyousuu(); i++) {
-            String str = memo1.getGyou(i);
+        for (int i = 1; i <= memo1.getLineSize(); i++) {
+            String str = memo1.getLine(i);
             str.trim();
 
             if (str.equals("<camera_of_orisen_nyuuryokuzu>")) {
@@ -319,8 +319,8 @@ public class Egaki_Syokunin {
 
         // ----------------------------------------- チェックボックス等の設定の読み込み
         i_yomi = 0;
-        for (int i = 1; i <= memo1.getGyousuu(); i++) {
-            String str = memo1.getGyou(i);
+        for (int i = 1; i <= memo1.getLineSize(); i++) {
+            String str = memo1.getLine(i);
             str.trim();
 
             if (str.equals("<settei>")) {
@@ -496,8 +496,8 @@ public class Egaki_Syokunin {
 
 
         i_yomi = 0;
-        for (int i = 1; i <= memo1.getGyousuu(); i++) {
-            String str = memo1.getGyou(i);
+        for (int i = 1; i <= memo1.getLineSize(); i++) {
+            String str = memo1.getLine(i);
             str.trim();
 
             if (str.equals("<Kousi>")) {
@@ -608,8 +608,8 @@ public class Egaki_Syokunin {
 
         int i_Kousi_iro_yomikomi = 0;//Kousi_iroの読み込みがあったら1、なければ0
         i_yomi = 0;
-        for (int i = 1; i <= memo1.getGyousuu(); i++) {
-            String str = memo1.getGyou(i);
+        for (int i = 1; i <= memo1.getLineSize(); i++) {
+            String str = memo1.getLine(i);
             str.trim();
 
             if (str.equals("<Kousi_iro>")) {
@@ -681,8 +681,8 @@ public class Egaki_Syokunin {
 
         int i_oriagarizu_yomikomi = 0;//oriagarizuの読み込みがあったら1、なければ0
         i_yomi = 0;
-        for (int i = 1; i <= memo1.getGyousuu(); i++) {
-            String str = memo1.getGyou(i);
+        for (int i = 1; i <= memo1.getLineSize(); i++) {
+            String str = memo1.getLine(i);
             str.trim();
 
             if (str.equals("<oriagarizu>")) {
@@ -1071,7 +1071,7 @@ public class Egaki_Syokunin {
                     double y2 = b_by.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 
 
-                    memo_temp.addGyou("<line x1=\"" + x1 + "\"" +
+                    memo_temp.addLine("<line x1=\"" + x1 + "\"" +
                             " y1=\"" + y1 + "\"" +
                             " x2=\"" + x2 + "\"" +
                             " y2=\"" + y2 + "\"" +
@@ -1118,14 +1118,14 @@ public class Egaki_Syokunin {
                             //   height="46.869045"
                             //   x="0"
                             //   y="249.375" />
-                            memo_temp.addGyou("<rect style=\"fill:#000000;stroke:#000000;stroke-width:1\"" +
+                            memo_temp.addLine("<rect style=\"fill:#000000;stroke:#000000;stroke-width:1\"" +
                                     " width=\"" + (2.0 * (double) i_haba + 1.0) + "\"" +
                                     " height=\"" + (2.0 * (double) i_haba + 1.0) + "\"" +
                                     " x=\"" + (x1 - (double) i_haba) + "\"" +
                                     " y=\"" + (y1 - (double) i_haba) + "\"" +
                                     " />");
 
-                            memo_temp.addGyou("<rect style=\"fill:#000000;stroke:#000000;stroke-width:1\"" +
+                            memo_temp.addLine("<rect style=\"fill:#000000;stroke:#000000;stroke-width:1\"" +
                                     " width=\"" + (2.0 * (double) i_haba + 1.0) + "\"" +
                                     " height=\"" + (2.0 * (double) i_haba + 1.0) + "\"" +
                                     " x=\"" + (x2 - (double) i_haba) + "\"" +
@@ -1143,14 +1143,14 @@ public class Egaki_Syokunin {
                             //int i_haba=(int)fTenkaizuSenhaba+ir_ten;//int i_haba=2;
                             double d_haba = (double) fTenkaizuSenhaba / 2.0 + (double) ir_ten;//int i_haba=2;
 
-                            memo_temp.addGyou("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
+                            memo_temp.addLine("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
                                     " r=\"" + d_haba + "\"" +
                                     " cx=\"" + x1 + "\"" +
                                     " cy=\"" + y1 + "\"" +
                                     " />");
 
 
-                            memo_temp.addGyou("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
+                            memo_temp.addLine("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
                                     " r=\"" + d_haba + "\"" +
                                     " cx=\"" + x2 + "\"" +
                                     " cy=\"" + y2 + "\"" +
@@ -1202,179 +1202,179 @@ public class Egaki_Syokunin {
         // ----------------------------------------------------------------------
 
 
-        memo1.addGyou("<camera_of_orisen_nyuuryokuzu>");
-        memo1.addGyou("<camera_ichi_x>" + camera.get_camera_ichi_x() + "</camera_ichi_x>");
-        memo1.addGyou("<camera_ichi_y>" + camera.get_camera_ichi_y() + "</camera_ichi_y>");
-        memo1.addGyou("<camera_kakudo>" + camera.get_camera_kakudo() + "</camera_kakudo>");
-        memo1.addGyou("<camera_kagami>" + camera.get_camera_kagami() + "</camera_kagami>");
-        memo1.addGyou("<camera_bairitsu_x>" + camera.get_camera_bairitsu_x() + "</camera_bairitsu_x>");
-        memo1.addGyou("<camera_bairitsu_y>" + camera.get_camera_bairitsu_y() + "</camera_bairitsu_y>");
-        memo1.addGyou("<hyouji_ichi_x>" + camera.get_hyouji_ichi_x() + "</hyouji_ichi_x>");
-        memo1.addGyou("<hyouji_ichi_y>" + camera.get_hyouji_ichi_y() + "</hyouji_ichi_y>");
-        memo1.addGyou("</camera_of_orisen_nyuuryokuzu>");
+        memo1.addLine("<camera_of_orisen_nyuuryokuzu>");
+        memo1.addLine("<camera_ichi_x>" + camera.get_camera_ichi_x() + "</camera_ichi_x>");
+        memo1.addLine("<camera_ichi_y>" + camera.get_camera_ichi_y() + "</camera_ichi_y>");
+        memo1.addLine("<camera_kakudo>" + camera.get_camera_kakudo() + "</camera_kakudo>");
+        memo1.addLine("<camera_kagami>" + camera.get_camera_kagami() + "</camera_kagami>");
+        memo1.addLine("<camera_bairitsu_x>" + camera.get_camera_bairitsu_x() + "</camera_bairitsu_x>");
+        memo1.addLine("<camera_bairitsu_y>" + camera.get_camera_bairitsu_y() + "</camera_bairitsu_y>");
+        memo1.addLine("<hyouji_ichi_x>" + camera.get_hyouji_ichi_x() + "</hyouji_ichi_x>");
+        memo1.addLine("<hyouji_ichi_y>" + camera.get_hyouji_ichi_y() + "</hyouji_ichi_y>");
+        memo1.addLine("</camera_of_orisen_nyuuryokuzu>");
 
 
         // ----------------------------------------------------------------------
-        memo1.addGyou("<settei>");
+        memo1.addLine("<settei>");
         if (orihime_app.ckbox_mouse_settei.isSelected()) {
-            memo1.addGyou("<ckbox_mouse_settei>true </ckbox_mouse_settei>");
+            memo1.addLine("<ckbox_mouse_settei>true </ckbox_mouse_settei>");
         }
         if (!orihime_app.ckbox_mouse_settei.isSelected()) {
-            memo1.addGyou("<ckbox_mouse_settei>false</ckbox_mouse_settei>");
+            memo1.addLine("<ckbox_mouse_settei>false</ckbox_mouse_settei>");
         }
 
         if (orihime_app.ckbox_ten_sagasi.isSelected()) {
-            memo1.addGyou("<ckbox_ten_sagasi>true </ckbox_ten_sagasi>");
+            memo1.addLine("<ckbox_ten_sagasi>true </ckbox_ten_sagasi>");
         }
         if (!orihime_app.ckbox_ten_sagasi.isSelected()) {
-            memo1.addGyou("<ckbox_ten_sagasi>false</ckbox_ten_sagasi>");
+            memo1.addLine("<ckbox_ten_sagasi>false</ckbox_ten_sagasi>");
         }
 
         if (orihime_app.ckbox_ten_hanasi.isSelected()) {
-            memo1.addGyou("<ckbox_ten_hanasi>true </ckbox_ten_hanasi>");
+            memo1.addLine("<ckbox_ten_hanasi>true </ckbox_ten_hanasi>");
         }
         if (!orihime_app.ckbox_ten_hanasi.isSelected()) {
-            memo1.addGyou("<ckbox_ten_hanasi>false</ckbox_ten_hanasi>");
+            memo1.addLine("<ckbox_ten_hanasi>false</ckbox_ten_hanasi>");
         }
 
         if (orihime_app.ckbox_kou_mitudo_nyuuryoku.isSelected()) {
-            memo1.addGyou("<ckbox_kou_mitudo_nyuuryoku>true </ckbox_kou_mitudo_nyuuryoku>");
+            memo1.addLine("<ckbox_kou_mitudo_nyuuryoku>true </ckbox_kou_mitudo_nyuuryoku>");
         }
         if (!orihime_app.ckbox_kou_mitudo_nyuuryoku.isSelected()) {
-            memo1.addGyou("<ckbox_kou_mitudo_nyuuryoku>false</ckbox_kou_mitudo_nyuuryoku>");
+            memo1.addLine("<ckbox_kou_mitudo_nyuuryoku>false</ckbox_kou_mitudo_nyuuryoku>");
         }
 
         if (orihime_app.ckbox_bun.isSelected()) {
-            memo1.addGyou("<ckbox_bun>true </ckbox_bun>");
+            memo1.addLine("<ckbox_bun>true </ckbox_bun>");
         }
         if (!orihime_app.ckbox_bun.isSelected()) {
-            memo1.addGyou("<ckbox_bun>false</ckbox_bun>");
+            memo1.addLine("<ckbox_bun>false</ckbox_bun>");
         }
 
         if (orihime_app.ckbox_cp.isSelected()) {
-            memo1.addGyou("<ckbox_cp>true </ckbox_cp>");
+            memo1.addLine("<ckbox_cp>true </ckbox_cp>");
         }
         if (!orihime_app.ckbox_cp.isSelected()) {
-            memo1.addGyou("<ckbox_cp>false</ckbox_cp>");
+            memo1.addLine("<ckbox_cp>false</ckbox_cp>");
         }
 
         if (orihime_app.ckbox_a0.isSelected()) {
-            memo1.addGyou("<ckbox_a0>true </ckbox_a0>");
+            memo1.addLine("<ckbox_a0>true </ckbox_a0>");
         }
         if (!orihime_app.ckbox_a0.isSelected()) {
-            memo1.addGyou("<ckbox_a0>false</ckbox_a0>");
+            memo1.addLine("<ckbox_a0>false</ckbox_a0>");
         }
 
         if (orihime_app.ckbox_a1.isSelected()) {
-            memo1.addGyou("<ckbox_a1>true </ckbox_a1>");
+            memo1.addLine("<ckbox_a1>true </ckbox_a1>");
         }
         if (!orihime_app.ckbox_a1.isSelected()) {
-            memo1.addGyou("<ckbox_a1>false</ckbox_a1>");
+            memo1.addLine("<ckbox_a1>false</ckbox_a1>");
         }
 
         if (orihime_app.ckbox_mejirusi.isSelected()) {
-            memo1.addGyou("<ckbox_mejirusi>true </ckbox_mejirusi>");
+            memo1.addLine("<ckbox_mejirusi>true </ckbox_mejirusi>");
         }
         if (!orihime_app.ckbox_mejirusi.isSelected()) {
-            memo1.addGyou("<ckbox_mejirusi>false</ckbox_mejirusi>");
+            memo1.addLine("<ckbox_mejirusi>false</ckbox_mejirusi>");
         }
 
         if (orihime_app.ckbox_cp_ue.isSelected()) {
-            memo1.addGyou("<ckbox_cp_ue>true </ckbox_cp_ue>");
+            memo1.addLine("<ckbox_cp_ue>true </ckbox_cp_ue>");
         }
         if (!orihime_app.ckbox_cp_ue.isSelected()) {
-            memo1.addGyou("<ckbox_cp_ue>false</ckbox_cp_ue>");
+            memo1.addLine("<ckbox_cp_ue>false</ckbox_cp_ue>");
         }
 
         if (orihime_app.ckbox_oritatami_keika.isSelected()) {
-            memo1.addGyou("<ckbox_oritatami_keika>true </ckbox_oritatami_keika>");
+            memo1.addLine("<ckbox_oritatami_keika>true </ckbox_oritatami_keika>");
         }
         if (!orihime_app.ckbox_oritatami_keika.isSelected()) {
-            memo1.addGyou("<ckbox_oritatami_keika>false</ckbox_oritatami_keika>");
+            memo1.addLine("<ckbox_oritatami_keika>false</ckbox_oritatami_keika>");
         }
 
 
         //展開図の線の太さ。
-        memo1.addGyou("<iTenkaizuSenhaba>" +
+        memo1.addLine("<iTenkaizuSenhaba>" +
                 orihime_app.iTenkaizuSenhaba +
                 "</iTenkaizuSenhaba>");
 
         //頂点のしるしの幅
-        memo1.addGyou("<ir_ten>" +
+        memo1.addLine("<ir_ten>" +
                 orihime_app.ir_ten +
                 "</ir_ten>");
 
         //折線表現を色で表す
-        memo1.addGyou("<i_orisen_hyougen>" +
+        memo1.addLine("<i_orisen_hyougen>" +
                 orihime_app.i_orisen_hyougen +
                 "</i_orisen_hyougen>");
 
 //A_A
-        memo1.addGyou("<i_anti_alias>" +
+        memo1.addLine("<i_anti_alias>" +
                 orihime_app.i_anti_alias +
                 "</i_anti_alias>");
 
 
-        memo1.addGyou("</settei>");
+        memo1.addLine("</settei>");
 
         // ----------------------------------------------------------------------
 
 
-        memo1.addGyou("<Kousi>");
+        memo1.addLine("<Kousi>");
 
-        memo1.addGyou("<i_kitei_jyoutai>" + get_i_kitei_jyoutai() + "</i_kitei_jyoutai>");
-        memo1.addGyou("<nyuuryoku_kitei>" + orihime_app.nyuuryoku_kitei + "</nyuuryoku_kitei>");
+        memo1.addLine("<i_kitei_jyoutai>" + get_i_kitei_jyoutai() + "</i_kitei_jyoutai>");
+        memo1.addLine("<nyuuryoku_kitei>" + orihime_app.nyuuryoku_kitei + "</nyuuryoku_kitei>");
 
-        memo1.addGyou("<memori_kankaku>" + orihime_app.memori_kankaku + "</memori_kankaku>");
-        memo1.addGyou("<a_to_heikouna_memori_iti>" + kus.get_a_to_heikouna_memori_iti() + "</a_to_heikouna_memori_iti>");
-        memo1.addGyou("<b_to_heikouna_memori_iti>" + kus.get_b_to_heikouna_memori_iti() + "</b_to_heikouna_memori_iti>");
-        memo1.addGyou("<kousi_senhaba>" + kus.get_kousi_senhaba() + "</kousi_senhaba>");
+        memo1.addLine("<memori_kankaku>" + orihime_app.memori_kankaku + "</memori_kankaku>");
+        memo1.addLine("<a_to_heikouna_memori_iti>" + kus.get_a_to_heikouna_memori_iti() + "</a_to_heikouna_memori_iti>");
+        memo1.addLine("<b_to_heikouna_memori_iti>" + kus.get_b_to_heikouna_memori_iti() + "</b_to_heikouna_memori_iti>");
+        memo1.addLine("<kousi_senhaba>" + kus.get_kousi_senhaba() + "</kousi_senhaba>");
 
-        memo1.addGyou("<d_kousi_x_a>" + orihime_app.d_kousi_x_a + "</d_kousi_x_a>");
-        memo1.addGyou("<d_kousi_x_b>" + orihime_app.d_kousi_x_b + "</d_kousi_x_b>");
-        memo1.addGyou("<d_kousi_x_c>" + orihime_app.d_kousi_x_c + "</d_kousi_x_c>");
-        memo1.addGyou("<d_kousi_y_a>" + orihime_app.d_kousi_y_a + "</d_kousi_y_a>");
-        memo1.addGyou("<d_kousi_y_b>" + orihime_app.d_kousi_y_b + "</d_kousi_y_b>");
-        memo1.addGyou("<d_kousi_y_c>" + orihime_app.d_kousi_y_c + "</d_kousi_y_c>");
-        memo1.addGyou("<d_kousi_kakudo>" + orihime_app.d_kousi_kakudo + "</d_kousi_kakudo>");
+        memo1.addLine("<d_kousi_x_a>" + orihime_app.d_kousi_x_a + "</d_kousi_x_a>");
+        memo1.addLine("<d_kousi_x_b>" + orihime_app.d_kousi_x_b + "</d_kousi_x_b>");
+        memo1.addLine("<d_kousi_x_c>" + orihime_app.d_kousi_x_c + "</d_kousi_x_c>");
+        memo1.addLine("<d_kousi_y_a>" + orihime_app.d_kousi_y_a + "</d_kousi_y_a>");
+        memo1.addLine("<d_kousi_y_b>" + orihime_app.d_kousi_y_b + "</d_kousi_y_b>");
+        memo1.addLine("<d_kousi_y_c>" + orihime_app.d_kousi_y_c + "</d_kousi_y_c>");
+        memo1.addLine("<d_kousi_kakudo>" + orihime_app.d_kousi_kakudo + "</d_kousi_kakudo>");
         //memo1.addGyou("<d_kousi_x_nagasa>"+orihime_ap.d_kousi_x_nagasa+"</d_kousi_x_nagasa>");
         //memo1.addGyou("<d_kousi_y_nagasa>"+orihime_ap.d_kousi_y_nagasa+"</d_kousi_y_nagasa>");
 
 
-        memo1.addGyou("</Kousi>");
+        memo1.addLine("</Kousi>");
         // ----------------------------------------------------------------------
 
-        memo1.addGyou("<Kousi_iro>");
+        memo1.addLine("<Kousi_iro>");
 
-        memo1.addGyou("<kousi_color_R>" + kus.get_kousi_color().getRed() + "</kousi_color_R>");
-        memo1.addGyou("<kousi_color_G>" + kus.get_kousi_color().getGreen() + "</kousi_color_G>");
-        memo1.addGyou("<kousi_color_B>" + kus.get_kousi_color().getBlue() + "</kousi_color_B>");
+        memo1.addLine("<kousi_color_R>" + kus.get_kousi_color().getRed() + "</kousi_color_R>");
+        memo1.addLine("<kousi_color_G>" + kus.get_kousi_color().getGreen() + "</kousi_color_G>");
+        memo1.addLine("<kousi_color_B>" + kus.get_kousi_color().getBlue() + "</kousi_color_B>");
 
-        memo1.addGyou("<kousi_memori_color_R>" + kus.get_kousi_memori_color().getRed() + "</kousi_memori_color_R>");
-        memo1.addGyou("<kousi_memori_color_G>" + kus.get_kousi_memori_color().getGreen() + "</kousi_memori_color_G>");
-        memo1.addGyou("<kousi_memori_color_B>" + kus.get_kousi_memori_color().getBlue() + "</kousi_memori_color_B>");
+        memo1.addLine("<kousi_memori_color_R>" + kus.get_kousi_memori_color().getRed() + "</kousi_memori_color_R>");
+        memo1.addLine("<kousi_memori_color_G>" + kus.get_kousi_memori_color().getGreen() + "</kousi_memori_color_G>");
+        memo1.addLine("<kousi_memori_color_B>" + kus.get_kousi_memori_color().getBlue() + "</kousi_memori_color_B>");
 
-        memo1.addGyou("</Kousi_iro>");
+        memo1.addLine("</Kousi_iro>");
 
 
         // ----------------------------------------------------------------------
 
-        memo1.addGyou("<oriagarizu>");
+        memo1.addLine("<oriagarizu>");
 
-        memo1.addGyou("<oriagarizu_F_color_R>" + orihime_app.OZ.oriagarizu_F_color.getRed() + "</oriagarizu_F_color_R>");
-        memo1.addGyou("<oriagarizu_F_color_G>" + orihime_app.OZ.oriagarizu_F_color.getGreen() + "</oriagarizu_F_color_G>");
-        memo1.addGyou("<oriagarizu_F_color_B>" + orihime_app.OZ.oriagarizu_F_color.getBlue() + "</oriagarizu_F_color_B>");
+        memo1.addLine("<oriagarizu_F_color_R>" + orihime_app.OZ.foldedFigure_F_color.getRed() + "</oriagarizu_F_color_R>");
+        memo1.addLine("<oriagarizu_F_color_G>" + orihime_app.OZ.foldedFigure_F_color.getGreen() + "</oriagarizu_F_color_G>");
+        memo1.addLine("<oriagarizu_F_color_B>" + orihime_app.OZ.foldedFigure_F_color.getBlue() + "</oriagarizu_F_color_B>");
 
-        memo1.addGyou("<oriagarizu_B_color_R>" + orihime_app.OZ.oriagarizu_B_color.getRed() + "</oriagarizu_B_color_R>");
-        memo1.addGyou("<oriagarizu_B_color_G>" + orihime_app.OZ.oriagarizu_B_color.getGreen() + "</oriagarizu_B_color_G>");
-        memo1.addGyou("<oriagarizu_B_color_B>" + orihime_app.OZ.oriagarizu_B_color.getBlue() + "</oriagarizu_B_color_B>");
+        memo1.addLine("<oriagarizu_B_color_R>" + orihime_app.OZ.foldedFigure_B_color.getRed() + "</oriagarizu_B_color_R>");
+        memo1.addLine("<oriagarizu_B_color_G>" + orihime_app.OZ.foldedFigure_B_color.getGreen() + "</oriagarizu_B_color_G>");
+        memo1.addLine("<oriagarizu_B_color_B>" + orihime_app.OZ.foldedFigure_B_color.getBlue() + "</oriagarizu_B_color_B>");
 
-        memo1.addGyou("<oriagarizu_L_color_R>" + orihime_app.OZ.oriagarizu_L_color.getRed() + "</oriagarizu_L_color_R>");
-        memo1.addGyou("<oriagarizu_L_color_G>" + orihime_app.OZ.oriagarizu_L_color.getGreen() + "</oriagarizu_L_color_G>");
-        memo1.addGyou("<oriagarizu_L_color_B>" + orihime_app.OZ.oriagarizu_L_color.getBlue() + "</oriagarizu_L_color_B>");
+        memo1.addLine("<oriagarizu_L_color_R>" + orihime_app.OZ.foldedFigure_L_color.getRed() + "</oriagarizu_L_color_R>");
+        memo1.addLine("<oriagarizu_L_color_G>" + orihime_app.OZ.foldedFigure_L_color.getGreen() + "</oriagarizu_L_color_G>");
+        memo1.addLine("<oriagarizu_L_color_B>" + orihime_app.OZ.foldedFigure_L_color.getBlue() + "</oriagarizu_L_color_B>");
 
 
-        memo1.addGyou("</oriagarizu>");
+        memo1.addLine("</oriagarizu>");
 
     }
 
@@ -1400,7 +1400,7 @@ public class Egaki_Syokunin {
             int idel = 0;
 
 
-            if (gomibako.totu_naibu(ori_s.get(i)) == 1) {
+            if (gomibako.convex_inside(ori_s.get(i)) == 1) {
                 idel = 1;
             }
 
@@ -3243,7 +3243,7 @@ public class Egaki_Syokunin {
         //加える線分について整理
         //Senbun add_senbun =new Senbun();
         //add_senbun.set(oc.nitoubunsen(s_step[i_e_d].geta(),s_step[i_egaki_dankai].geta(),1000.0));
-        Tyokusen add_tyokusen = new Tyokusen(add_line);
+        StraightLine add_straightLine = new StraightLine(add_line);
 
 
         int i_saisyo = Senb_boro_1p.size() - 1;
@@ -3251,7 +3251,7 @@ public class Egaki_Syokunin {
             //既存の線分について整理
             Line kizon_line = new Line();
             kizon_line.set((Line) Senb_boro_1p.get(i));
-            Tyokusen kizon_tyokusen = new Tyokusen(kizon_line);
+            StraightLine kizon_straightLine = new StraightLine(kizon_line);
 
 
             //加える線分と既存の線分を戦わせる
@@ -3259,27 +3259,27 @@ public class Egaki_Syokunin {
 //add_tyokusen.hyouji("     途中　add_tyokusen :");
 //kizon_tyokusen.hyouji("     途中　kizon_tyokusen :");
 
-            int i_heikou = oc.heikou_hantei(add_tyokusen, kizon_tyokusen, 0.0001);//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+            int i_heikou = oc.heikou_hantei(add_straightLine, kizon_straightLine, 0.0001);//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
 
 
             if (i_heikou == 0) {//加える線分と既存の線分が非平行の場合
 //System.out.println("     途中_加える線分と既存の線分が非平行");
                 Point kouten = new Point();
-                kouten.set(oc.kouten_motome(add_tyokusen, kizon_tyokusen));
+                kouten.set(oc.kouten_motome(add_straightLine, kizon_straightLine));
 
-                if ((add_tyokusen.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.geta()) <= 0) &&
-                        (add_tyokusen.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.getb()) <= 0)) {
+                if ((add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.geta()) <= 0) &&
+                        (add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.getb()) <= 0)) {
                     Senb_boro_1p.remove(i);
-                } else if ((add_tyokusen.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.geta()) == 1) &&
-                        (add_tyokusen.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.getb()) == -1)) {
+                } else if ((add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.geta()) == 1) &&
+                        (add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.getb()) == -1)) {
                     kizon_line.set(kizon_line.geta(), kouten);
                     if (kizon_line.getnagasa() < 0.0000001) {
                         Senb_boro_1p.remove(i);
                     } else {
                         Senb_boro_1p.set(i, kizon_line);
                     }
-                } else if ((add_tyokusen.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.geta()) == -1) &&
-                        (add_tyokusen.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.getb()) == 1)) {
+                } else if ((add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.geta()) == -1) &&
+                        (add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.getb()) == 1)) {
                     kizon_line.set(kouten, kizon_line.getb());
                     if (kizon_line.getnagasa() < 0.0000001) {
                         Senb_boro_1p.remove(i);
@@ -3290,17 +3290,17 @@ public class Egaki_Syokunin {
 
                 //
 
-                if ((kizon_tyokusen.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.geta()) <= 0) &&
-                        (kizon_tyokusen.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.getb()) <= 0)) {
+                if ((kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.geta()) <= 0) &&
+                        (kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.getb()) <= 0)) {
                     return;
-                } else if ((kizon_tyokusen.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.geta()) == 1) &&
-                        (kizon_tyokusen.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.getb()) == -1)) {
+                } else if ((kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.geta()) == 1) &&
+                        (kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.getb()) == -1)) {
                     add_line.set(add_line.geta(), kouten);
                     if (add_line.getnagasa() < 0.0000001) {
                         return;
                     }
-                } else if ((kizon_tyokusen.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.geta()) == -1) &&
-                        (kizon_tyokusen.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.getb()) == 1)) {
+                } else if ((kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.geta()) == -1) &&
+                        (kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.getb()) == 1)) {
                     add_line.set(kouten, add_line.getb());
                     if (add_line.getnagasa() < 0.0000001) {
                         return;
@@ -3310,9 +3310,9 @@ public class Egaki_Syokunin {
 
             } else if (i_heikou == 1) {//加える線分と既存の線分が平行で２直線が一致しない場合
 //System.out.println("     途中_加える線分と既存の線分が平行で２直線が一致しない");
-                if (add_tyokusen.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.geta()) == -1) {
+                if (add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.geta()) == -1) {
                     Senb_boro_1p.remove(i);
-                } else if (kizon_tyokusen.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.geta()) == -1) {
+                } else if (kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.geta()) == -1) {
                     return;
                 }
 
@@ -3403,8 +3403,8 @@ public class Egaki_Syokunin {
                 s_mae.set((Line) Senb_boro_1p.get(ia));
                 s_ato.set((Line) Senb_boro_1p.get(ib));
 
-                Tyokusen t_mae = new Tyokusen(s_mae);
-                Tyokusen t_ato = new Tyokusen(s_ato);
+                StraightLine t_mae = new StraightLine(s_mae);
+                StraightLine t_ato = new StraightLine(s_ato);
 
                 int i_mae = s_mae.getiactive();//この場合iactiveには、そのボロノイ線分を加えたときの既存側のボロノイ母点の番号が入っている。
                 int i_ato = s_ato.getiactive();//この場合iactiveには、そのボロノイ線分を加えたときの既存側のボロノイ母点の番号が入っている。
@@ -3626,7 +3626,7 @@ public class Egaki_Syokunin {
 
 
             for (int i = 1; i <= ori_s.getsousuu(); i++) {
-                int i_senbun_kousa_hantei = oc.senbun_kousa_hantei(ori_s.get(i), s_step[1], 0.0001, 0.0001);
+                int i_senbun_kousa_hantei = oc.line_intersect_decide(ori_s.get(i), s_step[1], 0.0001, 0.0001);
                 int i_jikkou = 0;
 
                 if (i_senbun_kousa_hantei == 1) {
@@ -3692,7 +3692,7 @@ public class Egaki_Syokunin {
                 //最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがあるかどうかを判断する。
                 int i_senbun_entyou_mode = 0;// i_senbun_entyou_mode=0なら最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがない。1ならある。
                 for (int i = 1; i <= entyou_kouho_nbox.getsousuu(); i++) {
-                    if (oc.senbun_kousa_hantei(ori_s.get(entyou_kouho_nbox.get_int(i)), moyori_line, 0.000001, 0.000001) == 31) {//線分が同じならoc.senbun_kousa_hantei==31
+                    if (oc.line_intersect_decide(ori_s.get(entyou_kouho_nbox.get_int(i)), moyori_line, 0.000001, 0.000001) == 31) {//線分が同じならoc.senbun_kousa_hantei==31
                         i_senbun_entyou_mode = 1;
                     }
                 }
@@ -4859,7 +4859,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         if ((e_s_dougubako.get_kousaten_made_nobasi_flg_new(a, b) == 21)
                 || (e_s_dougubako.get_kousaten_made_nobasi_flg_new(a, b) == 22)) {//System.out.println("20201129 21 or 22");
 
-            Tyokusen tyoku1 = new Tyokusen(a, b);
+            StraightLine tyoku1 = new StraightLine(a, b);
             int i_kousa_flg;
 
             Narabebako_int_double t_m_s_nbox = new Narabebako_int_double();
@@ -4887,7 +4887,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     return;
                 }
 
-                Tyokusen tyoku2 = new Tyokusen(ori_s.get(t_m_s_nbox.get_int(1)));
+                StraightLine tyoku2 = new StraightLine(ori_s.get(t_m_s_nbox.get_int(1)));
                 i_kousa_flg = tyoku2.senbun_kousa_hantei_kuwasii(ori_s.get(t_m_s_nbox.get_int(2)));
                 if (i_kousa_flg == 3) {
                     Line kousaten_made_nobasi_saisyono_line = new Line();
@@ -4909,7 +4909,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                 i_kousa_flg = tyoku1.senbun_kousa_hantei_kuwasii(ori_s.get(t_m_s_nbox.get_int(1)));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
                 if (i_kousa_flg == 3) {
-                    Tyokusen tyoku2 = new Tyokusen(ori_s.get(t_m_s_nbox.get_int(2)));
+                    StraightLine tyoku2 = new StraightLine(ori_s.get(t_m_s_nbox.get_int(2)));
                     i_kousa_flg = tyoku2.senbun_kousa_hantei_kuwasii(ori_s.get(t_m_s_nbox.get_int(3)));
                     if (i_kousa_flg == 3) {
                         Line kousaten_made_nobasi_saisyono_line = new Line();
@@ -4927,7 +4927,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //------------------------------------------------
                 i_kousa_flg = tyoku1.senbun_kousa_hantei_kuwasii(ori_s.get(t_m_s_nbox.get_int(2)));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
                 if (i_kousa_flg == 3) {
-                    Tyokusen tyoku2 = new Tyokusen(ori_s.get(t_m_s_nbox.get_int(3)));
+                    StraightLine tyoku2 = new StraightLine(ori_s.get(t_m_s_nbox.get_int(3)));
                     i_kousa_flg = tyoku2.senbun_kousa_hantei_kuwasii(ori_s.get(t_m_s_nbox.get_int(1)));
                     if (i_kousa_flg == 3) {
                         Line kousaten_made_nobasi_saisyono_line = new Line();
@@ -4945,7 +4945,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //------------------------------------------------
                 i_kousa_flg = tyoku1.senbun_kousa_hantei_kuwasii(ori_s.get(t_m_s_nbox.get_int(3)));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
                 if (i_kousa_flg == 3) {
-                    Tyokusen tyoku2 = new Tyokusen(ori_s.get(t_m_s_nbox.get_int(1)));
+                    StraightLine tyoku2 = new StraightLine(ori_s.get(t_m_s_nbox.get_int(1)));
                     i_kousa_flg = tyoku2.senbun_kousa_hantei_kuwasii(ori_s.get(t_m_s_nbox.get_int(2)));
                     if (i_kousa_flg == 3) {
                         Line kousaten_made_nobasi_saisyono_line = new Line();
@@ -5643,10 +5643,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             p61_mode = 1;
         }
         if (i_egaki_dankai == 4) {
-            if (p61_TV_hako.naibu(p0) == 0) {
+            if (p61_TV_hako.inside(p0) == 0) {
                 p61_mode = 1;
             }
-            if (p61_TV_hako.naibu(p0) > 0) {
+            if (p61_TV_hako.inside(p0) > 0) {
                 p61_mode = 4;
             }
 
@@ -7401,7 +7401,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 if (s_step[1].getnagasa() > 0.00000001) {
                     int imax = ori_s.getsousuu();
                     for (int i = 1; i <= imax; i++) {
-                        int i_senbun_kousa_hantei = oc.senbun_kousa_hantei_amai(ori_s.get(i), s_step[1], 0.01, 0.01);
+                        int i_senbun_kousa_hantei = oc.line_intersect_decide_sweet(ori_s.get(i), s_step[1], 0.01, 0.01);
                         int i_jikkou = 0;
                         //if(i_senbun_kousa_hantei== 21 ){ i_jikkou=1;}//L字型
                         //if(i_senbun_kousa_hantei== 22 ){ i_jikkou=1;}//L字型
@@ -7457,7 +7457,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         double kousa_ten_kyori = kousa_point.kyori(add_sen.geta());
 
 
-        Tyokusen tyoku1 = new Tyokusen(add_sen.geta(), add_sen.getb());
+        StraightLine tyoku1 = new StraightLine(add_sen.geta(), add_sen.getb());
         int i_kousa_flg;
         for (int i = 1; i <= ori_s.getsousuu(); i++) {
             i_kousa_flg = tyoku1.senbun_kousa_hantei_kuwasii(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
@@ -7495,7 +7495,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         Point kousa_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
         double kousa_ten_kyori = kousa_point.kyori(add_sen.geta());
 
-        Tyokusen tyoku1 = new Tyokusen(add_sen.geta(), add_sen.getb());
+        StraightLine tyoku1 = new StraightLine(add_sen.geta(), add_sen.getb());
         int i_kousa_flg;//元の線分を直線としたものと、他の線分の交差状態
         int i_senbun_kousa_flg;//元の線分と、他の線分の交差状態
 
@@ -7504,7 +7504,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             i_kousa_flg = tyoku1.senbun_kousa_hantei_kuwasii(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
 
             //i_senbun_kousa_flg=oc.senbun_kousa_hantei_amai( add_sen,ori_s.get(i),0.00001,0.00001);//20180408なぜかこの行の様にadd_senを使うと、i_senbun_kousa_flgがおかしくなる
-            i_senbun_kousa_flg = oc.senbun_kousa_hantei_amai(s0, ori_s.get(i), 0.00001, 0.00001);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
+            i_senbun_kousa_flg = oc.line_intersect_decide_sweet(s0, ori_s.get(i), 0.00001, 0.00001);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
             if ((i_kousa_flg == 1 || i_kousa_flg == 21) || i_kousa_flg == 22) {
                 if (i_senbun_kousa_flg < 21 || i_senbun_kousa_flg > 28) {
                     //System.out.println("i_kousa_flg = "+i_kousa_flg  +      " ; i_senbun_kousa_flg = "+i_senbun_kousa_flg);
@@ -7577,7 +7577,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         double kousa_ten_kyori = kousa_point.kyori(add_sen.geta());
 
 
-        Tyokusen tyoku1 = new Tyokusen(add_sen.geta(), add_sen.getb());
+        StraightLine tyoku1 = new StraightLine(add_sen.geta(), add_sen.getb());
         int i_kousa_flg;
         for (int i = 1; i <= ori_s.getsousuu(); i++) {
             i_kousa_flg = tyoku1.senbun_kousa_hantei_kuwasii(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
@@ -8479,7 +8479,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //int i_tekisetu=1;//外周部の形状が適切なら1、適切でないなら0
         //if(i_O_F_C==1){
         if (i_takakukei_kansei == 1) {
-            Takakukei Taka = new Takakukei(i_egaki_dankai);
+            Polygon Taka = new Polygon(i_egaki_dankai);
             for (int i = 1; i <= i_egaki_dankai; i++) {
                 Taka.set(i, s_step[i].geta());
             }
@@ -8670,7 +8670,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             //if(p.kyori(moyori_ten)<=d_hantei_haba){
             if (s_step[1].getnagasa() > 0.00000001) {
                 for (int i = 1; i <= ori_s.getsousuu(); i++) {
-                    int i_senbun_kousa_hantei = oc.senbun_kousa_hantei(ori_s.get(i), s_step[1], 0.0001, 0.0001);
+                    int i_senbun_kousa_hantei = oc.line_intersect_decide(ori_s.get(i), s_step[1], 0.0001, 0.0001);
                     int i_jikkou = 0;
                     if (i_senbun_kousa_hantei == 1) {
                         i_jikkou = 1;
@@ -8851,7 +8851,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 nbox.reset();
                 for (int i = 1; i <= ori_s.getsousuu(); i++) {
 
-                    int i_senbun_kousa_hantei = oc.senbun_kousa_hantei(ori_s.get(i), s_step[i_s_step], 0.0001, 0.0001);
+                    int i_senbun_kousa_hantei = oc.line_intersect_decide(ori_s.get(i), s_step[i_s_step], 0.0001, 0.0001);
                     int i_jikkou = 0;
 
                     if ((i_senbun_kousa_hantei != 0) && (i_senbun_kousa_hantei != 1)) {
@@ -10742,9 +10742,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         p.set(camera.TV2object(p0));
         if ((i_egaki_dankai == 4) && (i_en_egaki_dankai == 0)) {
             s_step[2].seta(p);
-            s_step[3].set(oc.mayoko_idou(s_step[1], s_step[2].getnagasa()));
+            s_step[3].set(oc.moveParallel(s_step[1], s_step[2].getnagasa()));
             s_step[3].setcolor(8);
-            s_step[4].set(oc.mayoko_idou(s_step[1], -s_step[2].getnagasa()));
+            s_step[4].set(oc.moveParallel(s_step[1], -s_step[2].getnagasa()));
             s_step[4].setcolor(8);
         }
     }
@@ -10769,9 +10769,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 i_en_egaki_dankai = 0;
                 return;
             }
-            s_step[3].set(oc.mayoko_idou(s_step[1], s_step[2].getnagasa()));
+            s_step[3].set(oc.moveParallel(s_step[1], s_step[2].getnagasa()));
             s_step[3].setcolor(8);
-            s_step[4].set(oc.mayoko_idou(s_step[1], -s_step[2].getnagasa()));
+            s_step[4].set(oc.moveParallel(s_step[1], -s_step[2].getnagasa()));
             s_step[4].setcolor(8);
         }
 
@@ -10881,7 +10881,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             if (Math.abs((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2)) < 0.0000001) {//外接線1本の場合
                 Point kouten = new Point();
                 kouten.set(oc.naibun(c1, c2, -r1, r2));
-                Tyokusen ty = new Tyokusen(c1, kouten);
+                StraightLine ty = new StraightLine(c1, kouten);
                 ty.tyokkouka(kouten);
                 s_step[1].set(oc.en_to_tyokusen_no_kouten_wo_musubu_senbun(new Circle(kouten, (r1 + r2) / 2.0, 0), ty));
 
@@ -10900,9 +10900,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 double xr2 = xq2 + x1;
                 double yr2 = yq2 + y1;
 
-                Tyokusen t1 = new Tyokusen(x1, y1, xr1, yr1);
+                StraightLine t1 = new StraightLine(x1, y1, xr1, yr1);
                 t1.tyokkouka(new Point(xr1, yr1));
-                Tyokusen t2 = new Tyokusen(x1, y1, xr2, yr2);
+                StraightLine t2 = new StraightLine(x1, y1, xr2, yr2);
                 t2.tyokkouka(new Point(xr2, yr2));
 
                 s_step[1].set(new Point(xr1, yr1), oc.kage_motome(t1, new Point(x2, y2)));
@@ -10926,9 +10926,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 double xr2 = xq2 + x1;
                 double yr2 = yq2 + y1;
 
-                Tyokusen t1 = new Tyokusen(x1, y1, xr1, yr1);
+                StraightLine t1 = new StraightLine(x1, y1, xr1, yr1);
                 t1.tyokkouka(new Point(xr1, yr1));
-                Tyokusen t2 = new Tyokusen(x1, y1, xr2, yr2);
+                StraightLine t2 = new StraightLine(x1, y1, xr2, yr2);
                 t2.tyokkouka(new Point(xr2, yr2));
 
                 s_step[1].set(new Point(xr1, yr1), oc.kage_motome(t1, new Point(x2, y2)));
@@ -10940,7 +10940,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                 Point kouten = new Point();
                 kouten.set(oc.naibun(c1, c2, r1, r2));
-                Tyokusen ty = new Tyokusen(c1, kouten);
+                StraightLine ty = new StraightLine(c1, kouten);
                 ty.tyokkouka(kouten);
                 s_step[3].set(oc.en_to_tyokusen_no_kouten_wo_musubu_senbun(new Circle(kouten, (r1 + r2) / 2.0, 0), ty));
                 s_step[3].setcolor(8);
@@ -10973,13 +10973,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 double xr4 = xq4 + x1;
                 double yr4 = yq4 + y1;
 
-                Tyokusen t1 = new Tyokusen(x1, y1, xr1, yr1);
+                StraightLine t1 = new StraightLine(x1, y1, xr1, yr1);
                 t1.tyokkouka(new Point(xr1, yr1));
-                Tyokusen t2 = new Tyokusen(x1, y1, xr2, yr2);
+                StraightLine t2 = new StraightLine(x1, y1, xr2, yr2);
                 t2.tyokkouka(new Point(xr2, yr2));
-                Tyokusen t3 = new Tyokusen(x1, y1, xr3, yr3);
+                StraightLine t3 = new StraightLine(x1, y1, xr3, yr3);
                 t3.tyokkouka(new Point(xr3, yr3));
-                Tyokusen t4 = new Tyokusen(x1, y1, xr4, yr4);
+                StraightLine t4 = new StraightLine(x1, y1, xr4, yr4);
                 t4.tyokkouka(new Point(xr4, yr4));
 
                 s_step[1].set(new Point(xr1, yr1), oc.kage_motome(t1, new Point(x2, y2)));
@@ -11237,9 +11237,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             }
 
 
-            Tyokusen t1 = new Tyokusen(sen1);
+            StraightLine t1 = new StraightLine(sen1);
             t1.tyokkouka(oc.naibun(sen1.geta(), sen1.getb(), 1.0, 1.0));
-            Tyokusen t2 = new Tyokusen(sen2);
+            StraightLine t2 = new StraightLine(sen2);
             t2.tyokkouka(oc.naibun(sen2.geta(), sen2.getb(), 1.0, 1.0));
             add_en(oc.kouten_motome(t1, t2), oc.kyori(s_step[1].geta(), oc.kouten_motome(t1, t2)), 3);
             kiroku();
@@ -11605,9 +11605,9 @@ s_step[i_egaki_dankai].setcolor(6);
 
     // ---------------------------
     public void add_hanten(Line s0, Circle eh) {
-        Tyokusen ty = new Tyokusen(s0);
+        StraightLine ty = new StraightLine(s0);
         //s0上に(x,y)がくるとき
-        if (ty.kyorikeisan(eh.get_tyuusin()) < 0.0000001) {
+        if (ty.calculateDistance(eh.get_tyuusin()) < 0.0000001) {
             return;
         }
 

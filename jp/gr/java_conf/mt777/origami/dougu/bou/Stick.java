@@ -3,7 +3,7 @@ package jp.gr.java_conf.mt777.origami.dougu.bou;
 public class Stick {
     int begin;
     int end;
-    int icol;//If it is 0, there is no mountain valley. If 1, it's a mountain. If it is 2, it is a valley. 
+    int icol;//If it is 0, there is no mountain valley. If 1, it's a mountain. If it is 2, it is a valley.
 
     //コンストラクタ
     public Stick() {

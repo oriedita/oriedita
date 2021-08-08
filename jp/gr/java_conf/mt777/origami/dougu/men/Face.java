@@ -20,7 +20,7 @@ public class Face {
         Tenidsuu = mn.getTenidsuu();
         icol = mn.getcolor();
         for (int i = 0; i <= Tenidsuu; i++) {
-            TenidL.add(mn.getTenid(i));
+            TenidL.add(mn.getPointId(i));
         }
     }
 
@@ -48,7 +48,7 @@ public class Face {
         TenidL.add(Tid);
     }
 
-    public int getTenid(int i) {
+    public int getPointId(int i) {
 		return TenidL.get(i);
     }
 
@@ -56,9 +56,9 @@ public class Face {
 
     private void okikae() { //Tenid[n+1]の値をTenid[n]の値に置き換える。Tenid[1]の値は、最後のTenidにする
         for (int i = 1; i <= Tenidsuu; i++) {
-            TenidL.set(i - 1, getTenid(i));
+            TenidL.set(i - 1, getPointId(i));
         }
-        TenidL.set(Tenidsuu, getTenid(0));
+        TenidL.set(Tenidsuu, getPointId(0));
         TenidL.set(0, 0);
 
     }
@@ -73,11 +73,11 @@ public class Face {
 
     public int getTenidmin() {    //面mptempに含まれる棒のidの最小値を求める。
         //int idmin=10000;
-        int idmin = getTenid(1);
+        int idmin = getPointId(1);
         //for(int i=1;i<=Tenidsuu;i++){
         for (int i = 2; i <= Tenidsuu; i++) {
-            if (idmin > getTenid(i)) {
-                idmin = getTenid(i);
+            if (idmin > getPointId(i)) {
+                idmin = getPointId(i);
             }
         }
         return idmin;
@@ -86,7 +86,7 @@ public class Face {
     public void align() { //Tenid[1]の値がTenid[]のなかで最小になるように整列する。
         int idmin;
         idmin = getTenidmin();
-        while (getTenid(1) != idmin) {
+        while (getPointId(1) != idmin) {
             okikae();
         }
     }

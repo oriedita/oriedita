@@ -26,7 +26,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 
     //VVVVVVVVVVVV oritatami　と　oekaki で使う変数　の定義　VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
     int[] iMeniti;//ある面が基準面と何面離れているかを示す。基準面では1、基準面の隣では2、その隣では3という様に値を入れる
-    int kijyunmen_id;
+    int referencePlane_id;
     int[] tonariMenid;//ある面の隣の面（基準面側）のid
     int[] kyoukaiBouid;//ある面と隣の面（基準面側）の間の棒のid
 
@@ -45,7 +45,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     Camera cam_touka_ura = new Camera();
 
 
-    public Point point_of_kijyunmen_ob = new Point();
+    public Point point_of_referencePlane_ob = new Point();
 
     //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
@@ -88,69 +88,69 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 
     //-----------
     public void add_kijyunmen_id() {
-        kijyunmen_id = kijyunmen_id + 1;
-        if (kijyunmen_id > c.getFacesTotal()) {
-            kijyunmen_id = 1;
+        referencePlane_id = referencePlane_id + 1;
+        if (referencePlane_id > c.getFacesTotal()) {
+            referencePlane_id = 1;
         }
     }
 
 
     //-------------------------------------------
     public int get_kijyunmen_id() {
-        return kijyunmen_id;
+        return referencePlane_id;
     }
 
 
     //-------------------------------------------
     public Point get_kijyunmen_migiue_Ten() {
 
-        return c.get_men_migiue_Ten(kijyunmen_id);
+        return c.get_men_migiue_Ten(referencePlane_id);
 
     }
 
     //-------------------------------------------
     public Point get_ten_of_kijyunmen_ob() {
 
-        return point_of_kijyunmen_ob;
+        return point_of_referencePlane_ob;
 
     }
 
     //-------------------------------------------
     public Point get_ten_of_kijyunmen_tv() {
 
-        return camera.object2TV(point_of_kijyunmen_ob);
+        return camera.object2TV(point_of_referencePlane_ob);
 
     }
 
 
     //-------------------------------------------
-    public int set_kijyunmen_id(int i) {
-        kijyunmen_id = i;
+    public int set_referencePlane_id(int i) {
+        referencePlane_id = i;
 
 
-        if (kijyunmen_id > c.getFacesTotal()) {
-            kijyunmen_id = c.getFacesTotal();
+        if (referencePlane_id > c.getFacesTotal()) {
+            referencePlane_id = c.getFacesTotal();
         }
-        if (kijyunmen_id < 1) {
-            kijyunmen_id = 1;
+        if (referencePlane_id < 1) {
+            referencePlane_id = 1;
         }
 
-        point_of_kijyunmen_ob = c.naibuTen_motome(kijyunmen_id);
+        point_of_referencePlane_ob = c.insidePoint_surface(referencePlane_id);
 
 
-        return kijyunmen_id;
+        return referencePlane_id;
     }
 
 
     //-----------これは基準面指定モードでマウスを押されたときの対応201503
-    public int set_kijyunmen_id(Point p0) {//実際に有効になっている基準面idを返す
+    public int set_referencePlane_id(Point p0) {//実際に有効になっている基準面idを返す
         Point p = new Point();
         p.set(camera.TV2object(p0));
-        if (c.naibu(p) > 0) {
-            kijyunmen_id = c.naibu(p);
-            point_of_kijyunmen_ob.set(p);
+        if (c.inside(p) > 0) {
+            referencePlane_id = c.inside(p);
+            point_of_referencePlane_ob.set(p);
         }//c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
-        return kijyunmen_id;
+        return referencePlane_id;
     }
 
 
@@ -158,35 +158,35 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     public int naibu_hantei(Point p0) {//実際にp0がある面idを返す
         Point p = new Point();
         p.set(camera.TV2object(p0));
-        return c.naibu(p);//c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
+        return c.inside(p);//c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     //-----------Ten p0が折り上がり図(表)の内部に有るかどうかを判定する
     public int naibu_hantei_omote(Point p0) {//実際にp0がある面idを返す
         Point p = new Point();
         p.set(cam_omote.TV2object(p0));
-        return c.naibu(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
+        return c.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     //-----------Ten p0が折り上がり図(裏)の内部に有るかどうかを判定する
     public int naibu_hantei_ura(Point p0) {//実際にp0がある面idを返す
         Point p = new Point();
         p.set(cam_ura.TV2object(p0));
-        return c.naibu(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
+        return c.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     //-----------Ten p0が折り上がり図に付属して表示される透過図(表)の内部に有るかどうかを判定する
     public int naibu_hantei_touka_omote(Point p0) {//実際にp0がある面idを返す
         Point p = new Point();
         p.set(cam_touka_omote.TV2object(p0));
-        return c.naibu(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
+        return c.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     //-----------Ten p0が折り上がり図に付属して表示される透過図(裏)の内部に有るかどうかを判定する
     public int naibu_hantei_touka_ura(Point p0) {//実際にp0がある面idを返す
         Point p = new Point();
         p.set(cam_touka_ura.TV2object(p0));
-        return c.naibu(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
+        return c.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
 
@@ -208,7 +208,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     }
 
 
-    public void setCam_omote(Camera cam0) {
+    public void setCam_front(Camera cam0) {
         cam_omote.set_camera_kagami(cam0.get_camera_kagami());
         cam_omote.set_camera_ichi_x(cam0.get_camera_ichi_x());
         cam_omote.set_camera_ichi_y(cam0.get_camera_ichi_y());
@@ -219,7 +219,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
         cam_omote.set_hyouji_ichi_y(cam0.get_hyouji_ichi_y());
     }
 
-    public void setCam_ura(Camera cam0) {
+    public void setCam_rear(Camera cam0) {
         cam_ura.set_camera_kagami(cam0.get_camera_kagami());
         cam_ura.set_camera_ichi_x(cam0.get_camera_ichi_x());
         cam_ura.set_camera_ichi_y(cam0.get_camera_ichi_y());
@@ -231,7 +231,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     }
 
 
-    public void setCam_touka_omote(Camera cam0) {
+    public void setCam_transparent_front(Camera cam0) {
         cam_touka_omote.set_camera_kagami(cam0.get_camera_kagami());
         cam_touka_omote.set_camera_ichi_x(cam0.get_camera_ichi_x());
         cam_touka_omote.set_camera_ichi_y(cam0.get_camera_ichi_y());
@@ -242,7 +242,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
         cam_touka_omote.set_hyouji_ichi_y(cam0.get_hyouji_ichi_y());
     }
 
-    public void setCam_touka_ura(Camera cam0) {
+    public void setCam_transparent_rear(Camera cam0) {
         cam_touka_ura.set_camera_kagami(cam0.get_camera_kagami());
         cam_touka_ura.set_camera_ichi_x(cam0.get_camera_ichi_x());
         cam_touka_ura.set_camera_ichi_y(cam0.get_camera_ichi_y());
@@ -271,7 +271,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 
     //面の内部の点を求める//---------------------------------------
     public Point naibuTen_motome(int i) {
-        return c.naibuTen_motome(i);
+        return c.insidePoint_surface(i);
     }
 
     //点集合の持つ棒の総数を得る
@@ -294,7 +294,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     //Folding estimation (What you can do here is a wire diagram that does not consider the overlap of surfaces)
     public PointStore folding() {//折りたたみ推定
         PointStore cn = new PointStore();    //展開図
-        cn.settei(c.getPointsTotal(), c.getSticksTotal(), c.getFacesTotal());
+        cn.configure(c.getPointsTotal(), c.getSticksTotal(), c.getFacesTotal());
         cn.set(c);
 
 
@@ -310,7 +310,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 //System.out.println("折りたたみ推定002   c.getTenx(1) = "+c.getTenx(1)+"   :   cn.getTenx(1) = "+cn.getTenx(1));
         //折りたたみの準備として面同士の位置関係を把握する
         System.out.println("折りたたみの準備として面同士の位置関係を把握する");
-        iMeniti[kijyunmen_id] = 1;
+        iMeniti[referencePlane_id] = 1;
 
         int imano_Meniti = 1;
         int nokori_Mensuu;
@@ -367,10 +367,10 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     private Point ori_idou(int it, int im) { //点itが面imの一員として折られた場合の移動先の位置を求める関数
 
         Point p = new Point();  // p1.set(s.geta());
-        p.set(c.getTen(it));
+        p.set(c.getPoint(it));
         int idousakino_Menid;
         idousakino_Menid = im;//最初の面のid番号。これから基準面の方向に隣接する面をたどっていく。
-        while (idousakino_Menid != kijyunmen_id) {
+        while (idousakino_Menid != referencePlane_id) {
             //p.set(sentaisyou_ten_motome(c.getBou(kyoukaiBouid[idousakino_Menid]),p));
             p.set(sentaisyou_ten_motome(kyoukaiBouid[idousakino_Menid], p));
             idousakino_Menid = tonariMenid[idousakino_Menid];
@@ -381,11 +381,11 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 
 // ***********************************
 
-    //折りたたみ推定（ここでできるのは面の重なりを考えていない針金図）
-    public PointStore men_iti_motome() {//折りたたみ推定
+    //Folding estimation (What you can do here is a wire diagram that does not consider the overlap of surfaces)
+    public PointStore surface_iti_motome() {//Folding estimate
 
         PointStore cn = new PointStore();    //展開図
-        cn.settei(c.getPointsTotal(), c.getSticksTotal(), c.getFacesTotal());
+        cn.configure(c.getPointsTotal(), c.getSticksTotal(), c.getFacesTotal());
         cn.set(c);
 
 
@@ -401,13 +401,13 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 //System.out.println("折りたたみ推定002   c.getTenx(1) = "+c.getTenx(1)+"   :   cn.getTenx(1) = "+cn.getTenx(1));
         //折りたたみの準備として面同士の位置関係を把握する
         System.out.println("折りたたみの準備として面同士の位置関係を把握する");
-        iMeniti[kijyunmen_id] = 1;
+        iMeniti[referencePlane_id] = 1;
 
         int imano_Meniti = 1;
-        int nokori_Mensuu;
-        nokori_Mensuu = c.getFacesTotal() - 1;
+        int remaining_Mensuu;
+        remaining_Mensuu = c.getFacesTotal() - 1;
 
-        while (nokori_Mensuu > 0) {
+        while (remaining_Mensuu > 0) {
             for (int i = 1; i <= c.getFacesTotal(); i++) {
                 if (iMeniti[i] == imano_Meniti) {
                     for (int j = 1; j <= c.getFacesTotal(); j++) {
@@ -423,14 +423,14 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 
             imano_Meniti = imano_Meniti + 1;
 
-            nokori_Mensuu = 0;
+            remaining_Mensuu = 0;
             for (int i = 1; i <= c.getFacesTotal(); i++) {
                 if (iMeniti[i] == 0) {
-                    nokori_Mensuu = nokori_Mensuu + 1;
+                    remaining_Mensuu = remaining_Mensuu + 1;
                 }
             }
 
-            System.out.println("nokori_Mensuu = " + nokori_Mensuu);
+            System.out.println("remaining_Mensuu = " + remaining_Mensuu);
         }
 
 
@@ -443,7 +443,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 
 
     private Point sentaisyou_ten_motome(int bouid, Point tn) {//棒のidと、任意の点を与えて、idが対応する棒に対して、与えた点の線対称になる点を返す
-        return oc.sentaisyou_ten_motome(c.get_maeTen_from_Bou_id(bouid), c.get_atoTen_from_Bou_id(bouid), tn);
+        return oc.sentaisyou_ten_motome(c.get_maeTen_from_Stick_id(bouid), c.get_atoTen_from_Bou_id(bouid), tn);
     }
 
 
@@ -457,7 +457,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     //-------------------------------------------
     public void set(PointStore ts) {
         settei(ts.getPointsTotal(), ts.getSticksTotal(), ts.getFacesTotal());
-        c.settei(ts.getPointsTotal(), ts.getSticksTotal(), ts.getFacesTotal());
+        c.configure(ts.getPointsTotal(), ts.getSticksTotal(), ts.getFacesTotal());
         c.set(ts);
 //System.out.println("折りたたみset 001   c.getTenx(1) = "+c.getTenx(1));		
 
@@ -471,9 +471,9 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     public LineStore getSenbunsyuugou() {
         LineStore ss = new LineStore();    //基本枝構造のインスタンス化
 
-        ss.setsousuu(c.getSticksTotal());
+        ss.setTotal(c.getSticksTotal());
         for (int i = 1; i <= c.getSticksTotal(); i++) {
-            ss.set(i, c.getTen(c.getmae(i)), c.getTen(c.getato(i)), c.getcolor(i), 0);
+            ss.set(i, c.getPoint(c.getmae(i)), c.getPoint(c.getato(i)), c.getcolor(i), 0);
         }
         return ss;
     }
@@ -496,11 +496,11 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
         int flag1;
         double x, y;
 
-        double[] addTenx = new double[k.getsousuu() + 1];//+1を加えないと面の数が1の時にエラーが出る
-        double[] addTeny = new double[k.getsousuu() + 1];//+1を加えないと面の数が1の時にエラーが出る
+        double[] addTenx = new double[k.getTotal() + 1];//+1を加えないと面の数が1の時にエラーが出る
+        double[] addTeny = new double[k.getTotal() + 1];//+1を加えないと面の数が1の時にエラーが出る
         int addTensuu = 0;
 
-        for (int i = 1; i <= k.getsousuu(); i++) {
+        for (int i = 1; i <= k.getTotal(); i++) {
             flag1 = 0;
             ti = k.geta(i);
             x = ti.getx();
@@ -551,8 +551,8 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
         //settei(addTensuu,k.getsousuu(),k.getsousuu()-addTensuu+1);//      <<ここは、冗長性確保のためもっと余裕を持たせたほうがいいかもしれない。
         //c.settei(addTensuu,k.getsousuu(),k.getsousuu()-addTensuu+1);//      <<ここは、冗長性確保のためもっと余裕を持たせたほうがいいかもしれない。
 
-        settei(addTensuu, k.getsousuu(), k.getsousuu() - addTensuu + 100);//      <<ここは、冗長性確保のためもっと余裕を持たせたほうがいいかもしれない。要検討20150315
-        c.settei(addTensuu, k.getsousuu(), k.getsousuu() - addTensuu + 100);//      <<ここは、冗長性確保のためもっと余裕を持たせたほうがいいかもしれない。要検討20150315
+        settei(addTensuu, k.getTotal(), k.getTotal() - addTensuu + 100);//      <<ここは、冗長性確保のためもっと余裕を持たせたほうがいいかもしれない。要検討20150315
+        c.configure(addTensuu, k.getTotal(), k.getTotal() - addTensuu + 100);//      <<ここは、冗長性確保のためもっと余裕を持たせたほうがいいかもしれない。要検討20150315
 
         for (int i = 1; i <= addTensuu; i++) {
             c.addTen(addTenx[i], addTeny[i]);
@@ -562,17 +562,17 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
         //次に、Tensyuugou内で棒を定義する。
         System.out.println("線分集合->点集合：点集合内で棒の定義");
 
-        int[] ika2ic = new int[k.getsousuu() + 1];
-        int[] ikb2ic = new int[k.getsousuu() + 1];
-        for (int n = 1; n <= k.getsousuu(); n++) {
+        int[] ika2ic = new int[k.getTotal() + 1];
+        int[] ikb2ic = new int[k.getTotal() + 1];
+        for (int n = 1; n <= k.getTotal(); n++) {
             for (int i = 1; i <= c.getPointsTotal(); i++) {
-                if (oc.hitosii(k.geta(n), c.getTen(i))) {
+                if (oc.hitosii(k.geta(n), c.getPoint(i))) {
                     ika2ic[n] = i;
                     break;
                 }
             }
             for (int i = 1; i <= c.getPointsTotal(); i++) {
-                if (oc.hitosii(k.getb(n), c.getTen(i))) {
+                if (oc.hitosii(k.getb(n), c.getPoint(i))) {
                     ikb2ic[n] = i;
                     break;
                 }
@@ -580,7 +580,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 
         }
 
-        for (int n = 1; n <= k.getsousuu(); n++) {
+        for (int n = 1; n <= k.getTotal(); n++) {
             c.addBou(ika2ic[n], ikb2ic[n], k.getcolor(n));
         }
 
@@ -901,7 +901,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     // ------------------------------
     public void oekaki_Ten_id_with_camera(Graphics g, int i) {    //点を描く
         Point tn = new Point();
-        tn.set(camera.object2TV(c.getTen(i)));
+        tn.set(camera.object2TV(c.getPoint(i)));
         int ir = 7;//半径
         g.setColor(new Color(0, 255, 255, 100));//水色
         g.fillOval(gx(tn.getx()) - ir, gy(tn.gety()) - ir, 2 * ir, 2 * ir); //円
@@ -910,7 +910,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     // ------------------------------
     public void oekaki_Ten_id_with_camera_green(Graphics g, int i) {    //点を描く
         Point tn = new Point();
-        tn.set(camera.object2TV(c.getTen(i)));
+        tn.set(camera.object2TV(c.getPoint(i)));
         int ir = 15;//半径
         g.setColor(new Color(0, 255, 0, 100));//緑色
         g.fillOval(gx(tn.getx()) - ir, gy(tn.gety()) - ir, 2 * ir, 2 * ir); //円
@@ -923,22 +923,22 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     public void oekaki_Ten_id_with_camera(Graphics g, int i, int ip4) {
         //点を描く
         Point tn = new Point();
-        tn.set(camera.object2TV(c.getTen(i)));
+        tn.set(camera.object2TV(c.getPoint(i)));
         int ir = 10;//半径
         g.setColor(new Color(0, 255, 0, 50));//緑色
 
         if (ip4 == 0) {
-            tn.set(cam_omote.object2TV(c.getTen(i)));
+            tn.set(cam_omote.object2TV(c.getPoint(i)));
             g.fillOval(gx(tn.getx()) - ir, gy(tn.gety()) - ir, 2 * ir, 2 * ir); //円
         }
         if (ip4 == 1) {
-            tn.set(cam_ura.object2TV(c.getTen(i)));
+            tn.set(cam_ura.object2TV(c.getPoint(i)));
             g.fillOval(gx(tn.getx()) - ir, gy(tn.gety()) - ir, 2 * ir, 2 * ir); //円
         }
         if ((ip4 == 2) || (ip4 == 3)) {
-            tn.set(cam_omote.object2TV(c.getTen(i)));
+            tn.set(cam_omote.object2TV(c.getPoint(i)));
             g.fillOval(gx(tn.getx()) - ir, gy(tn.gety()) - ir, 2 * ir, 2 * ir); //円
-            tn.set(cam_ura.object2TV(c.getTen(i)));
+            tn.set(cam_ura.object2TV(c.getPoint(i)));
             g.fillOval(gx(tn.getx()) - ir, gy(tn.gety()) - ir, 2 * ir, 2 * ir); //円
         }
 
@@ -986,7 +986,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
         //面内部の点を描く
         Point tn = new Point();
         //tn.reset();
-        tn.set(camera.object2TV(point_of_kijyunmen_ob));
+        tn.set(camera.object2TV(point_of_referencePlane_ob));
 
         g.setColor(new Color(200, 50, 255, 90));
         g.fillOval(gx(tn.getx()) - 50, gy(tn.gety()) - 50, 100, 100); //円
@@ -1097,7 +1097,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 
     // ------------------------------
     public Point getTen(int i) {
-        return c.getTen(i);
+        return c.getPoint(i);
     }
 
 

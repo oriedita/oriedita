@@ -3,12 +3,12 @@ package jp.gr.java_conf.mt777.zukei2d.oritacalc.tyokusen;
 import jp.gr.java_conf.mt777.zukei2d.ten.*;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 
-public class Tyokusen {
+public class StraightLine {
     //注意！p1=p2の場合は結果がおかしくなるがこの関数にチェック機構がないので、気づきにくいかも。
     //aは0以上。もしa＝0なら、bが0以上になるようにすること。こうしないと、直線との距離の符号がおかしくなる。
     double a, b, c;//a*x+b*y+c=0,  a,b,c,x,y,は整数として扱う(20181115このコメントおかしいのでは？)
 
-    public Tyokusen() {  //コンストラクタ
+    public StraightLine() {  //コンストラクタ
         double x1 = 0.0;
         double y1 = 0.0;
         double x2 = 1.0;
@@ -17,50 +17,50 @@ public class Tyokusen {
         a = y2 - y1;
         b = x1 - x2;
         c = y1 * x2 - x1 * y2;
-        keisuu_totonoe();
+        coefficient();
     }
 
-    public Tyokusen(double a0, double b0, double c0) {  //コンストラクタ
+    public StraightLine(double a0, double b0, double c0) {  //コンストラクタ
         a = a0;
         b = b0;
         c = c0;
-        keisuu_totonoe();
+        coefficient();
     }
 
 
-    public Tyokusen(Point p1, Point p2) {  //コンストラクタ
+    public StraightLine(Point p1, Point p2) {  //コンストラクタ
         //二点を指定して直線のa,b,cを求める
         double x1 = p1.getx(), y1 = p1.gety();
         double x2 = p2.getx(), y2 = p2.gety();
         a = y2 - y1;
         b = x1 - x2;
         c = y1 * x2 - x1 * y2;
-        keisuu_totonoe();
+        coefficient();
     }
 
 
-    public Tyokusen(Line s0) {  //コンストラクタ
+    public StraightLine(Line s0) {  //コンストラクタ
         //Senbunを指定して直線のa,b,cを求める
         double x1 = s0.getax(), y1 = s0.getay();
         double x2 = s0.getbx(), y2 = s0.getby();
         a = y2 - y1;
         b = x1 - x2;
         c = y1 * x2 - x1 * y2;
-        keisuu_totonoe();
+        coefficient();
     }
 
 
-    public Tyokusen(double x1, double y1, double x2, double y2) {  //コンストラクタ
+    public StraightLine(double x1, double y1, double x2, double y2) {  //コンストラクタ
         //二点を指定して直線のa,b,cを求める
 
         a = y2 - y1;
         b = x1 - x2;
         c = y1 * x2 - x1 * y2;
-        keisuu_totonoe();
+        coefficient();
     }
 
     //
-    void keisuu_totonoe() {
+    void coefficient() {
         if ((a < 0.0)) {
             a = -a;
             b = -b;
@@ -88,11 +88,11 @@ public class Tyokusen {
     }
 
     //
-    public void set(Tyokusen t) {
+    public void set(StraightLine t) {
         a = t.geta();
         b = t.getb();
         c = t.getc();
-        keisuu_totonoe();
+        coefficient();
     }
 
     //
@@ -121,7 +121,7 @@ public class Tyokusen {
         return c;
     }
 
-    public double kyorikeisan(Point p) {//直線と点pとの距離
+    public double calculateDistance(Point p) {//直線と点pとの距離
         double x = p.getx();
         double y = p.gety();
         //return Math.abs((double) ((float)(a*x+b*y+c)/Math.sqrt((float)(a*a+b*b))));
@@ -129,7 +129,7 @@ public class Tyokusen {
     }
 
 
-    public double kyori_2jyou_keisan(Point p) {//直線と点pとの距離の二乗
+    public double distance_2jyou_keisan(Point p) {//直線と点pとの距離の二乗
         double x = p.getx();
         double y = p.gety();
         //return Math.abs((double) ((float)(a*x+b*y+c)/Math.sqrt((float)(a*a+b*b))));
@@ -146,7 +146,7 @@ public class Tyokusen {
         a = b;
         b = -e;
 
-        keisuu_totonoe();
+        coefficient();
     }
 
 
@@ -177,8 +177,8 @@ public class Tyokusen {
     public int senbun_kousa_hantei_kuwasii(Line s0) {//0=この直線は与えられた線分と交差しない、1=X型で交差する、21=線分のa点でT型で交差する、22=線分のb点でT型で交差する、3=線分は直線に含まれる。
 
 
-        double d_a2 = kyori_2jyou_keisan(s0.geta());
-        double d_b2 = kyori_2jyou_keisan(s0.getb());
+        double d_a2 = distance_2jyou_keisan(s0.geta());
+        double d_b2 = distance_2jyou_keisan(s0.getb());
 
         if (d_a2 < 0.00000001 && d_b2 < 0.00000001) {
             return 3;
@@ -212,7 +212,7 @@ public class Tyokusen {
 
 
     //他の直線との交点を求める関数　20170312追加
-    public Point kouten_motome(Tyokusen t2) {
+    public Point kouten_motome(StraightLine t2) {
         double a1 = a, b1 = b, c1 = c;//直線t1, a1*x+b1*y+c1=0の各係数を求める。
         double a2 = t2.geta(), b2 = t2.getb(), c2 = t2.getc();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
 
@@ -222,7 +222,7 @@ public class Tyokusen {
 
     //直線上の点pの影の位置（点pと最も近い直線上の位置）を求める。　20170312追加
     public Point kage_motome(Point p) {
-        Tyokusen t1 = new Tyokusen(a, b, c);
+        StraightLine t1 = new StraightLine(a, b, c);
         t1.tyokkouka(p);//点p1を通って tに直行する直線を求める。
         return kouten_motome(t1);
     }

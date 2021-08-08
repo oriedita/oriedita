@@ -158,7 +158,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
         System.out.println("各Smenに含まれる面を記録するため、各Smenの内部点を登録");
         Point[] smen_naibuPoint = new Point[Smensuu + 1];  //<<<<<<<<<<<<<<<<<<<<<<<<<<<オブジェクトの配列を動的に指定
         for (int i = 1; i <= Smensuu; i++) {
-            smen_naibuPoint[i] = Smen_zu.naibuTen_motome(i);
+            smen_naibuPoint[i] = Smen_zu.insidePoint_surface(i);
         }
 
         System.out.println("各Smenに含まれる面を記録する");
@@ -188,7 +188,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
             for (int j = 1; j <= otta_Men_zu.getFacesTotal(); j++) {
 
                 //System.out.print("現在処理中のSmenは、"+i+" / "+Smensuu +"     :::     "   +j+"/"+jg.getMensuu()+"-");
-                if (otta_Men_zu.kantan_naibu(smen_naibuPoint[i], j) == 2) {
+                if (otta_Men_zu.kantan_inside(smen_naibuPoint[i], j) == 2) {
                     //System.out.println(j);
                     s0addMenidsuu = s0addMenidsuu + 1;
                     s0addMenid[s0addMenidsuu] = j;
@@ -233,7 +233,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
 
     //------------------------------------------------------
     public int Jyougehyou_settei(CreasePattern_Worker orite, PointStore otta_Men_zu, PointStore Smen_zu) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
-        orihime_app.keijiban.tuiki("           Jyougehyou_settei   step1   start ");
+        orihime_app.bulletinBoard.write("           Jyougehyou_settei   step1   start ");
         int ireturn = 1000;
         jg.setFacesTotal(otta_Men_zu.getFacesTotal());
 
@@ -277,7 +277,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
         }
 
         //----------------------------------------------
-        orihime_app.keijiban.tuiki("           Jyougehyou_settei   step2   start ");
+        orihime_app.bulletinBoard.write("           Jyougehyou_settei   step2   start ");
         System.out.println("等価条件を設定する   ");
         //等価条件を設定する。棒ibを境界として隣接する2つの面im1,im2が有る場合、折り畳み推定した場合に
         //棒ibの一部と重なる位置に有る面imは面im1と面im2に上下方向で挟まれることはない。このことから
@@ -288,10 +288,10 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
             if (Mid_min != Mid_max) {//展開図において、棒ibの両脇に面がある
                 for (int im = 1; im <= jg.getFacesTotal(); im++) {
                     if ((im != Mid_min) && (im != Mid_max)) {
-                        if (otta_Men_zu.kantan_totu_naibu(ib, im) == 1) {
+                        if (otta_Men_zu.kantan_totu_inside(ib, im) == 1) {
                             //下の２つのifは暫定的な処理。あとで置き換え予定
-                            if (otta_Men_zu.totu_naibu(0.5, ib, im) == 1) {
-                                if (otta_Men_zu.totu_naibu(-0.5, ib, im) == 1) {
+                            if (otta_Men_zu.convex_inside(0.5, ib, im) == 1) {
+                                if (otta_Men_zu.convex_inside(-0.5, ib, im) == 1) {
                                     jg.addTouka_jyouken(im, Mid_min, im, Mid_max);
                                 }
                             }
@@ -302,7 +302,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
         }
         System.out.print("３面が関与する突き抜け条件の数　＝　");
         System.out.println(jg.getTouka_jyoukensuu());
-        orihime_app.keijiban.tuiki("           Jyougehyou_settei   step3   start ");
+        orihime_app.bulletinBoard.write("           Jyougehyou_settei   step3   start ");
         //等価条件の追加。棒ibの境界として隣接する2つの面im1,im2が有り、
         //また棒jbの境界として隣接する2つの面im3,im4が有り、ibとjbが平行で、一部重なる場合、折り畳み推定した場合に
         //棒ibの面と面jbの面がi,j,i,j　または　j,i,j,i　と並ぶことはない。もしこれがおきたら、
@@ -311,7 +311,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
 
         for (int ib = 1; ib <= orite.getBousuu() - 1; ib++) {
             for (int jb = ib + 1; jb <= orite.getBousuu(); jb++) {
-                if (otta_Men_zu.heikou_kasanai(ib, jb) == 1) {
+                if (otta_Men_zu.parallel_overlap(ib, jb) == 1) {
                     mi1 = orite.Bou_moti_Menid_min_motome(ib);
                     mi2 = orite.Bou_moti_Menid_max_motome(ib);
                     if (mi1 != mi2) {
@@ -332,7 +332,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
         System.out.println(jg.get_uTouka_jyoukensuu());
         //5154                      System.out.print("Smensuu = "); System.out.println(Smensuu);System.exit(0);
 
-        orihime_app.keijiban.tuiki("           Jyougehyou_settei   step4   start ");
+        orihime_app.bulletinBoard.write("           Jyougehyou_settei   step4   start ");
         //追加推定
         int ituika;
 
@@ -346,7 +346,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
         //*************最初に行う演繹的推論の結果の保存**************************
         jg.jg_hozon();//山折り谷折りの情報から決定される上下関係を保存しておく。
         //************************************************************************
-        orihime_app.keijiban.tuiki("           Jyougehyou_settei   step5   start ");
+        orihime_app.bulletinBoard.write("           Jyougehyou_settei   step5   start ");
 //orihime_ap.keijiban.tuiki("00000           ");
         //Smen毎に案内書を作る
         System.out.println("Smen毎に案内書を作る");
@@ -1444,10 +1444,10 @@ int ss; ss=getSmen_yuukou_suu();
 
     //現在の順列状態から開始して、可能な重なりかたとなる状態を探す。なお、ここは高速化の余地がある。
     public int kanou_kasanari_sagasi() {      //これはjgを変えないはず。
-        orihime_app.keijiban.tuiki("_ _______");
-        orihime_app.keijiban.tuiki("__ ______");
-        orihime_app.keijiban.tuiki("___ _____");
-        orihime_app.keijiban.tuiki("____ ____");
+        orihime_app.bulletinBoard.write("_ _______");
+        orihime_app.bulletinBoard.write("__ ______");
+        orihime_app.bulletinBoard.write("___ _____");
+        orihime_app.bulletinBoard.write("____ ____");
         int ms, Sid;
         ms = 0;
 
@@ -1461,7 +1461,7 @@ int ss; ss=getSmen_yuukou_suu();
                 return 1000;
             }//全てのSmenで、矛盾はない。
             Sid = susumu(ms - 1);
-            orihime_app.keijiban.kakikae(9, "susumu(" + ms + "-1 = )" + Sid);
+            orihime_app.bulletinBoard.rewrite(9, "susumu(" + ms + "-1 = )" + Sid);
         }
         return 0;//可能な重なりかたとなる状態は存在しない
     }
@@ -1476,13 +1476,13 @@ int ss; ss=getSmen_yuukou_suu();
 
         for (int ss = 1; ss <= Smen_yuukou_suu; ss++) {      //<<<<<<<<<<<<<<高速化のため変更。070417
 
-            orihime_app.keijiban.kakikae(7, "mujyun_Smen_motome( " + ss + ") , Menidsuu = " + s[ss].getMenidsuu() + " , Men_pair_suu = " + s[ss].getMenidsuu() * (s[ss].getMenidsuu() - 1) / 2);
-            orihime_app.keijiban.kakikae(8, " kasanari_bunryi_mitei = " + s[ss].kasanari_bunryi_mitei(jg));
-            orihime_app.keijiban.kakikae(9, " kasanari_bunryi_ketteizumi = " + s[ss].kasanari_bunryi_ketteizumi(jg));
+            orihime_app.bulletinBoard.rewrite(7, "mujyun_Smen_motome( " + ss + ") , Menidsuu = " + s[ss].getMenidsuu() + " , Men_pair_suu = " + s[ss].getMenidsuu() * (s[ss].getMenidsuu() - 1) / 2);
+            orihime_app.bulletinBoard.rewrite(8, " kasanari_bunryi_mitei = " + s[ss].kasanari_bunryi_mitei(jg));
+            orihime_app.bulletinBoard.rewrite(9, " kasanari_bunryi_ketteizumi = " + s[ss].kasanari_bunryi_ketteizumi(jg));
 
 
             kks = s[ss].kanou_kasanari_sagasi(jg);
-            orihime_app.keijiban.kakikae(10, Jyunretu_count(ss));
+            orihime_app.bulletinBoard.rewrite(10, Jyunretu_count(ss));
 
 
             if (kks == 0) {//kks==0ということは、可能な重なりかたとなる順列は存在しない
@@ -1624,12 +1624,12 @@ int ss; ss=getSmen_yuukou_suu();
                 }
 
                 for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
-                    x[i] = gx(Smen_zu.getTenx(Smen_zu.getTenid(im, i)));
-                    y[i] = gy(Smen_zu.getTeny(Smen_zu.getTenid(im, i)));
+                    x[i] = gx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
+                    y[i] = gy(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                 }
 
-                x[0] = gx(Smen_zu.getTenx(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
-                y[0] = gy(Smen_zu.getTeny(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
+                x[0] = gx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                y[0] = gy(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
 
                 g.fillPolygon(x, y, Smen_zu.getTenidsuu(im));
             }
@@ -1680,12 +1680,12 @@ int ss; ss=getSmen_yuukou_suu();
                 g.setColor(new Color(col_kosa, col_kosa, col_kosa));
 
                 for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
-                    x[i] = gx(Smen_zu.getTenx(Smen_zu.getTenid(im, i)));
-                    y[i] = gy(Smen_zu.getTeny(Smen_zu.getTenid(im, i)));
+                    x[i] = gx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
+                    y[i] = gy(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                 }
 
-                x[0] = gx(Smen_zu.getTenx(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
-                y[0] = gy(Smen_zu.getTeny(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
+                x[0] = gx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                y[0] = gy(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
 
                 g.fillPolygon(x, y, Smen_zu.getTenidsuu(im));
             }
@@ -1748,12 +1748,12 @@ int ss; ss=getSmen_yuukou_suu();
                 g.setColor(new Color(col_kosa, 0, 0));
 
                 for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
-                    x[i] = gx(Smen_zu.getTenx(Smen_zu.getTenid(im, i)));
-                    y[i] = gy(Smen_zu.getTeny(Smen_zu.getTenid(im, i)));
+                    x[i] = gx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
+                    y[i] = gy(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                 }
 
-                x[0] = gx(Smen_zu.getTenx(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
-                y[0] = gy(Smen_zu.getTeny(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
+                x[0] = gx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                y[0] = gy(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
 
                 g.fillPolygon(x, y, Smen_zu.getTenidsuu(im));
             }
@@ -1856,15 +1856,15 @@ int ss; ss=getSmen_yuukou_suu();
 
                 //折り上がり図を描くときのim番目のSmenの多角形の頂点の座標（PC表示上）を求める
                 for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
-                    t0.setx(Smen_zu.getTenx(Smen_zu.getTenid(im, i)));
-                    t0.sety(Smen_zu.getTeny(Smen_zu.getTenid(im, i)));
+                    t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
+                    t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
                     x[i] = gx(t1.getx());
                     y[i] = gy(t1.gety());
                 }
 
-                t0.setx(Smen_zu.getTenx(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
-                t0.sety(Smen_zu.getTeny(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
+                t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getx());
                 y[0] = gy(t1.gety());
@@ -1886,7 +1886,7 @@ int ss; ss=getSmen_yuukou_suu();
 													);
 */
 
-                memo_temp.addGyou("<polygon points=\"" + str_zahyou + "\"" +
+                memo_temp.addLine("<polygon points=\"" + str_zahyou + "\"" +
                         " style=\"" + "stroke:" + str_stroke + ";fill:" + str_stroke + "\"" +
                         " stroke-width=\"" + str_strokewidth + "\"" + " />"
                 );
@@ -1964,7 +1964,7 @@ int ss; ss=getSmen_yuukou_suu();
                 BigDecimal b_by = new BigDecimal(String.valueOf(b.gety()));
 
 
-                memo_temp.addGyou("<line x1=\"" + b_ax.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + "\"" +
+                memo_temp.addLine("<line x1=\"" + b_ax.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + "\"" +
                         " y1=\"" + b_ay.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + "\"" +
                         " x2=\"" + b_bx.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + "\"" +
                         " y2=\"" + b_by.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + "\"" +
@@ -2047,8 +2047,8 @@ int ss; ss=getSmen_yuukou_suu();
 
                     for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
 
-                        t0.setx(Smen_zu.getTenx(Smen_zu.getTenid(im, i)));
-                        t0.sety(Smen_zu.getTeny(Smen_zu.getTenid(im, i)));
+                        t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
+                        t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                         t1.set(camera.object2TV(t0));
                         x[i] = gx(t1.getx());
                         y[i] = gy(t1.gety());
@@ -2056,8 +2056,8 @@ int ss; ss=getSmen_yuukou_suu();
                         //y[i]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,i)));
                     }
 
-                    t0.setx(Smen_zu.getTenx(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
-                    t0.sety(Smen_zu.getTeny(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
+                    t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                    t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
                     t1.set(camera.object2TV(t0));
                     x[0] = gx(t1.getx());
                     y[0] = gy(t1.gety());
@@ -2130,8 +2130,8 @@ int ss; ss=getSmen_yuukou_suu();
 
                 for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
 
-                    t0.setx(Smen_zu.getTenx(Smen_zu.getTenid(im, i)));
-                    t0.sety(Smen_zu.getTeny(Smen_zu.getTenid(im, i)));
+                    t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
+                    t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
                     x[i] = gx(t1.getx());
                     y[i] = gy(t1.gety());
@@ -2141,8 +2141,8 @@ int ss; ss=getSmen_yuukou_suu();
                     //y[i]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,i)));
                 }
 
-                t0.setx(Smen_zu.getTenx(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
-                t0.sety(Smen_zu.getTeny(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
+                t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getx());
                 y[0] = gy(t1.gety());
@@ -2219,8 +2219,8 @@ int ss; ss=getSmen_yuukou_suu();
             String text = "";//文字列処理用のクラスのインスタンス化
 
             text = "M ";
-            t_ob.setx(otta_Men_zu.getTenx(otta_Men_zu.getTenid(im, 1)));
-            t_ob.sety(otta_Men_zu.getTeny(otta_Men_zu.getTenid(im, 1)));
+            t_ob.setx(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, 1)));
+            t_ob.sety(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, 1)));
             t_tv.set(camera.object2TV(t_ob));
             BigDecimal b_t_tv_x = new BigDecimal(String.valueOf(t_tv.getx()));
             BigDecimal b_t_tv_y = new BigDecimal(String.valueOf(t_tv.gety()));
@@ -2231,8 +2231,8 @@ int ss; ss=getSmen_yuukou_suu();
 
             for (int i = 2; i <= otta_Men_zu.getTenidsuu(im); i++) {
                 text = text + "L ";
-                t_ob.setx(otta_Men_zu.getTenx(otta_Men_zu.getTenid(im, i)));
-                t_ob.sety(otta_Men_zu.getTeny(otta_Men_zu.getTenid(im, i)));
+                t_ob.setx(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, i)));
+                t_ob.sety(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, i)));
                 t_tv.set(camera.object2TV(t_ob));
                 BigDecimal b_t_tv_x_i = new BigDecimal(String.valueOf(t_tv.getx()));
                 BigDecimal b_t_tv_y_i = new BigDecimal(String.valueOf(t_tv.gety()));
@@ -2285,7 +2285,7 @@ int ss; ss=getSmen_yuukou_suu();
 
             }
 
-            memo_temp.addGyou("<path d=\"" + text + "\"" +
+            memo_temp.addLine("<path d=\"" + text + "\"" +
                     " style=\"" + "stroke:" + str_stroke + "\"" +
                     " stroke-width=\"" + str_strokewidth + "\"" +
                     //" fill=\"none\"" +" />"
@@ -2364,15 +2364,15 @@ int ss; ss=getSmen_yuukou_suu();
             //面を描く
             for (int im = 1; im <= otta_Men_zu.getFacesTotal(); im++) {
                 for (int i = 1; i <= otta_Men_zu.getTenidsuu(im) - 1; i++) {
-                    t0.setx(otta_Men_zu.getTenx(otta_Men_zu.getTenid(im, i)));
-                    t0.sety(otta_Men_zu.getTeny(otta_Men_zu.getTenid(im, i)));
+                    t0.setx(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, i)));
+                    t0.sety(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
                     x[i] = gx(t1.getx());
                     y[i] = gy(t1.gety());
                 }
 
-                t0.setx(otta_Men_zu.getTenx(otta_Men_zu.getTenid(im, otta_Men_zu.getTenidsuu(im))));
-                t0.sety(otta_Men_zu.getTeny(otta_Men_zu.getTenid(im, otta_Men_zu.getTenidsuu(im))));
+                t0.setx(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, otta_Men_zu.getTenidsuu(im))));
+                t0.sety(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, otta_Men_zu.getTenidsuu(im))));
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getx());
                 y[0] = gy(t1.gety());
@@ -2435,15 +2435,15 @@ int ss; ss=getSmen_yuukou_suu();
                 g.setColor(new Color(col_kosa, col_kosa, col_kosa));
 
                 for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
-                    t0.setx(Smen_zu.getTenx(Smen_zu.getTenid(im, i)));
-                    t0.sety(Smen_zu.getTeny(Smen_zu.getTenid(im, i)));
+                    t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
+                    t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
                     x[i] = gx(t1.getx());
                     y[i] = gy(t1.gety());
                 }
 
-                t0.setx(Smen_zu.getTenx(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
-                t0.sety(Smen_zu.getTeny(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
+                t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getx());
                 y[0] = gy(t1.gety());
@@ -2482,7 +2482,7 @@ int ss; ss=getSmen_yuukou_suu();
 
     //---------------------------------------------------------
 
-    public void oekaki_oriagarizu_with_camera(Graphics g, CreasePattern_Worker orite, PointStore otta_Men_zu, PointStore Smen_zu) {
+    public void oekaki_foldedFigure_with_camera(Graphics g, CreasePattern_Worker orite, PointStore otta_Men_zu, PointStore Smen_zu) {
         Graphics2D g2 = (Graphics2D) g;
         int omote_ura = 0;
         if (camera.get_camera_kagami() == 1.0) {
@@ -2560,8 +2560,8 @@ int ss; ss=getSmen_yuukou_suu();
 
                 for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
 
-                    t0.setx(Smen_zu.getTenx(Smen_zu.getTenid(im, i)));
-                    t0.sety(Smen_zu.getTeny(Smen_zu.getTenid(im, i)));
+                    t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
+                    t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
                     x[i] = gx(t1.getx());
                     y[i] = gy(t1.gety());
@@ -2569,8 +2569,8 @@ int ss; ss=getSmen_yuukou_suu();
                     //y[i]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,i)));
                 }
 
-                t0.setx(Smen_zu.getTenx(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
-                t0.sety(Smen_zu.getTeny(Smen_zu.getTenid(im, Smen_zu.getTenidsuu(im))));
+                t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getx());
                 y[0] = gy(t1.gety());
@@ -2648,7 +2648,7 @@ int ss; ss=getSmen_yuukou_suu();
                     o_bmtx = o_bmx + o_btx;
                     o_bmty = o_bmy + o_bty;
 
-                    if (Smen_zu.naibu(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), im) != 0) {//0=外部、　1=境界、　2=内部
+                    if (Smen_zu.inside(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), im) != 0) {//0=外部、　1=境界、　2=内部
 
 
                         t0.setx(o_bmtx);
@@ -2716,7 +2716,7 @@ int ss; ss=getSmen_yuukou_suu();
                     o_bmty = o_bmy + o_bty;
 
 
-                    if (Smen_zu.naibu(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), im) != 0) {//0=外部、　1=境界、　2=内部
+                    if (Smen_zu.inside(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), im) != 0) {//0=外部、　1=境界、　2=内部
 
                         t0.setx(o_bmtx);
                         t0.sety(o_bmty);

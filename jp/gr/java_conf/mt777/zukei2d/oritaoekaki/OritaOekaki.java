@@ -25,8 +25,8 @@ public class OritaOekaki { //お絵かき用
 		if(icolor==3){g.setColor(Color.green);}
 		if(icolor==4){g.setColor(Color.orange);}
 		Line sp=new Line(); Line sm=new Line();
-	 	sp= oc.mayoko_idou(s,r);
-		sm= oc.mayoko_idou(s,-r);
+	 	sp= oc.moveParallel(s,r);
+		sm= oc.moveParallel(s,-r);
 
 		int x[] = new int[5];
 		int y[] = new int[5];

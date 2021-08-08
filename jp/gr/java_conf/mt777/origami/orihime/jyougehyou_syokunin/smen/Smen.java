@@ -154,7 +154,7 @@ public class Smen {//このクラスは展開図をを折り畳み推定して�
             for (int i = 1; i <= Menidsuu; i++) {
                 s0 = s0 + " : " + getJyunretu(i);
             }
-            orihime_app.keijiban.kakikae(10, "Smen_kanou_kasanari_sagasi(jg) =  " + s0);
+            orihime_app.bulletinBoard.rewrite(10, "Smen_kanou_kasanari_sagasi(jg) =  " + s0);
 
 
             //try{Thread.sleep(1000);}catch (InterruptedException e){}// 1000ミリ秒待機する。

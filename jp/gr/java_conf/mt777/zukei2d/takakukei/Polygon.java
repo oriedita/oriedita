@@ -7,7 +7,7 @@ import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
 import jp.gr.java_conf.mt777.seiretu.narabebako.*;
 import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
-public class Takakukei {
+public class Polygon {
     String c = "";
     int kakusuu;             //何角形か
     //ArrayList TenList = new ArrayList();
@@ -17,7 +17,7 @@ public class Takakukei {
     OritaCalc oc = new OritaCalc();          //各種計算用の関数を使うためのクラスのインスタンス化
 
 
-    public Takakukei(int kaku) {  //コンストラクタ
+    public Polygon(int kaku) {  //コンストラクタ
         kakusuu = kaku;
         Point[] t0 = new Point[kaku + 1];   //頂点
         for (int i = 0; i <= kaku; i++) {
@@ -59,13 +59,13 @@ public class Takakukei {
         Line s = new Line();
         for (int i = 1; i <= kakusuu - 1; i++) {
             s.set(t[i], t[i + 1]); //線分
-            if (oc.senbun_kousa_hantei(s0, s) >= 1) {
+            if (oc.line_intersect_decide(s0, s) >= 1) {
                 itrue = 1;
             }
         }
 
         s.set(t[kakusuu], t[1]); //線分
-        if (oc.senbun_kousa_hantei(s0, s) >= 1) {
+        if (oc.line_intersect_decide(s0, s) >= 1) {
             itrue = 1;
         }
 
@@ -114,7 +114,7 @@ public class Takakukei {
                 s.set(t[i], t[i + 1]);
             } //線分
 
-            kh = oc.senbun_kousa_hantei(s0, s);
+            kh = oc.line_intersect_decide(s0, s);
 
             if (kh == 1) {
                 i_kouten = i_kouten + 1;
@@ -200,7 +200,7 @@ public class Takakukei {
 
         for (int i = 1; i <= nbox.getsousuu(); i++) {
 
-            i_nai = naibu(kouten[nbox.get_int(i)]);
+            i_nai = inside(kouten[nbox.get_int(i)]);
             if (i_nai == 0) {
                 soto = 1;
             }
@@ -212,7 +212,7 @@ public class Takakukei {
             }
 
             if (i != nbox.getsousuu()) {
-                i_nai = naibu(oc.tyuukanten(kouten[nbox.get_int(i)], kouten[nbox.get_int(i + 1)]));
+                i_nai = inside(oc.tyuukanten(kouten[nbox.get_int(i)], kouten[nbox.get_int(i + 1)]));
                 if (i_nai == 0) {
                     soto = 1;
                 }
@@ -289,7 +289,7 @@ public class Takakukei {
 
     //線分s0の一部でも凸多角形の内部（境界線は内部とみなさない）に
     //存在するとき1、しないなら0を返す
-    public int totu_naibu(Line s0) {
+    public int convex_inside(Line s0) {
         int iflag = 0;//
         int kh = 0; //oc.senbun_kousa_hantei(s0,s)の値の格納用
         // Senbun s0 =new Senbun();
@@ -297,7 +297,7 @@ public class Takakukei {
         Line s = new Line();
         for (int i = 1; i <= kakusuu - 1; i++) {
             s.set(t[i], t[i + 1]); //線分
-            kh = oc.senbun_kousa_hantei(s0, s);
+            kh = oc.line_intersect_decide(s0, s);
             if (kh == 1) {
                 return 1;
             }
@@ -319,7 +319,7 @@ public class Takakukei {
         }
 
         s.set(t[kakusuu], t[1]); //線分
-        kh = oc.senbun_kousa_hantei(s0, s);
+        kh = oc.line_intersect_decide(s0, s);
         if (kh == 1) {
             return 1;
         }
@@ -340,27 +340,27 @@ public class Takakukei {
         } //ここは実際にはkhが20以上30未満のときに実行される。
 
         if (iflag == 0) {
-            if (naibu(new Point(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
+            if (inside(new Point(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
                 return 1;
             }
             return 0;
         }
 
         if (iflag == 1) {
-            if (naibu(new Point(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
+            if (inside(new Point(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
                 return 1;
             }
             return 0;
         }
 
         if (iflag == 2) {
-            if (naibu(new Point(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
+            if (inside(new Point(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
                 return 1;
             }
-            if (naibu(s0.geta()) == 2) {
+            if (inside(s0.geta()) == 2) {
                 return 1;
             }
-            if (naibu(s0.getb()) == 2) {
+            if (inside(s0.getb()) == 2) {
                 return 1;
             }
             return 0;
@@ -386,19 +386,19 @@ public class Takakukei {
         Line s = new Line();
         for (int i = 1; i <= kakusuu - 1; i++) {
             s.set(t[i], t[i + 1]); //線分
-            kh = oc.senbun_kousa_hantei(s0, s);
+            kh = oc.line_intersect_decide(s0, s);
             if (kh != 0) {
                 return 1;
             }
         }
 
         s.set(t[kakusuu], t[1]); //線分
-        kh = oc.senbun_kousa_hantei(s0, s);
+        kh = oc.line_intersect_decide(s0, s);
         if (kh != 0) {
             return 1;
         }
 
-        if (naibu(new Point(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
+        if (inside(new Point(0.5, s0.geta(), 0.5, s0.getb())) == 2) {
             return 1;
         }
 
@@ -408,7 +408,7 @@ public class Takakukei {
 
 
     //点が、この多角形の内部にある(true)かない(false)か判定する関数----------------------------------
-    public int naibu(Point p) {      //0=外部、　1=境界、　2=内部
+    public int inside(Point p) {      //0=外部、　1=境界、　2=内部
         Line s = new Line();
         Line sq = new Line();
         Point q = new Point();
@@ -446,19 +446,19 @@ public class Takakukei {
 
             for (int i = 1; i <= kakusuu - 1; i++) {
                 s.set(t[i], t[i + 1]); //線分
-                if (oc.senbun_kousa_hantei(sq, s, 0.0, 0.0) >= 1) {
+                if (oc.line_intersect_decide(sq, s, 0.0, 0.0) >= 1) {
                     kousakaisuu++;
                 }
-                if (oc.senbun_kousa_hantei(sq, s, 0.0, 0.0) == 1) {
+                if (oc.line_intersect_decide(sq, s, 0.0, 0.0) == 1) {
                     jyuuji_kousakaisuu++;
                 }
             }
 
             s.set(t[kakusuu], t[1]); //線分
-            if (oc.senbun_kousa_hantei(sq, s, 0.0, 0.0) >= 1) {
+            if (oc.line_intersect_decide(sq, s, 0.0, 0.0) >= 1) {
                 kousakaisuu++;
             }
-            if (oc.senbun_kousa_hantei(sq, s, 0.0, 0.0) == 1) {
+            if (oc.line_intersect_decide(sq, s, 0.0, 0.0) == 1) {
                 jyuuji_kousakaisuu++;
             }
 
@@ -512,20 +512,20 @@ public class Takakukei {
 
         for (int i = 2; i <= kakusuu - 1; i++) {
             tn.set(oc.naisin(t[i - 1], t[i], t[i + 1]));
-            if ((kyori < kyori_motome(tn)) && (naibu(tn) == 2)) {
+            if ((kyori < kyori_motome(tn)) && (inside(tn) == 2)) {
                 kyori = kyori_motome(tn);
                 tr.set(tn);
             }
         }
         //
         tn.set(oc.naisin(t[kakusuu - 1], t[kakusuu], t[1]));
-        if ((kyori < kyori_motome(tn)) && (naibu(tn) == 2)) {
+        if ((kyori < kyori_motome(tn)) && (inside(tn) == 2)) {
             kyori = kyori_motome(tn);
             tr.set(tn);
         }
         //
         tn.set(oc.naisin(t[kakusuu], t[1], t[2]));
-        if ((kyori < kyori_motome(tn)) && (naibu(tn) == 2)) {
+        if ((kyori < kyori_motome(tn)) && (inside(tn) == 2)) {
             kyori = kyori_motome(tn);
             tr.set(tn);
         }

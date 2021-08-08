@@ -8,9 +8,9 @@ import java.awt.*;
 import jp.gr.java_conf.mt777.kiroku.memo.*;
 
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
-import jp.gr.java_conf.mt777.zukei2d.takakukei.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
 import jp.gr.java_conf.mt777.zukei2d.oritaoekaki.*;
+import jp.gr.java_conf.mt777.zukei2d.takakukei.Polygon;
 import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
 // -------------------------------------------------------------------------------------
@@ -32,8 +32,8 @@ public class BasicBranch_Worker {
 
     LineStore k = new LineStore();    //基本枝構造のインスタンス化
     // Senbunsyuugou k ;    //基本枝構造
-    Takakukei gomibako = new Takakukei(4);    //ゴミ箱のインスタンス化
-    Takakukei tyuuoutai = new Takakukei(4);    //中央帯のインスタンス化
+    Polygon gomibako = new Polygon(4);    //ゴミ箱のインスタンス化
+    Polygon tyuuoutai = new Polygon(4);    //中央帯のインスタンス化
     double tyuuoutai_xmin = 180.0;
     double tyuuoutai_xmax = 206.0;
     double tyuuoutai_ymin = 50.0;
@@ -163,7 +163,7 @@ public class BasicBranch_Worker {
 
     //--------------------------------------------
     public int getsousuu() {
-        return k.getsousuu();
+        return k.getTotal();
     }
 
 
@@ -238,12 +238,12 @@ public class BasicBranch_Worker {
     //不要な線分を消去する-----------------------------------------------
     public void gomisute() {
 
-        for (int i = 1; i <= k.getsousuu(); i++) {
+        for (int i = 1; i <= k.getTotal(); i++) {
             int idel = 0;
             //if(gomibako.naibu(k.geta(i))>0){idel=1;}    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             //if(gomibako.kousa(k.get( i))){idel=1;}
 
-            if (gomibako.totu_naibu(k.get(i)) == 1) {
+            if (gomibako.convex_inside(k.get(i)) == 1) {
                 idel = 1;
             }
 
@@ -251,7 +251,7 @@ public class BasicBranch_Worker {
             if (idel == 1) {
                 k.delsenbun(i);
                 i = i - 1;
-                ieda = k.getsousuu() + 1;    //<<<<<<<<<<<<<<<<<<
+                ieda = k.getTotal() + 1;    //<<<<<<<<<<<<<<<<<<
             }
         }
     }
@@ -392,14 +392,14 @@ public class BasicBranch_Worker {
         if (kensa_houhou == 1) {//検査用
             int kr = 10;
             g.setColor(Color.red);
-            for (int i = 1; i <= k.getsousuu(); i++) {
+            for (int i = 1; i <= k.getTotal(); i++) {
                 if (oc.hitosii(k.geta(i), k.getb(i), r)) {
                     g.fillOval((int) k.getax(i) - kr, (int) k.getay(i) - kr, 2 * kr, 2 * kr); //円
                 }
             }
-            for (int i = 1; i <= k.getsousuu() - 1; i++) {
-                for (int j = i + 1; j <= k.getsousuu(); j++) {
-                    if (oc.senbun_kousa_hantei(k.get(i), k.get(j)) == 31) {
+            for (int i = 1; i <= k.getTotal() - 1; i++) {
+                for (int j = i + 1; j <= k.getTotal(); j++) {
+                    if (oc.line_intersect_decide(k.get(i), k.get(j)) == 31) {
                         OO.widthLine(g, k.get(i), kr, 1);//  太線
                         g.fillOval((int) k.getax(i) - kr, (int) k.getay(i) - kr, 2 * kr, 2 * kr); //円
                         g.fillOval((int) k.getbx(i) - kr, (int) k.getby(i) - kr, 2 * kr, 2 * kr); //円
@@ -423,7 +423,7 @@ public class BasicBranch_Worker {
         g.setColor(Color.black);
         g.drawString("ごみ箱", 18, 180);
 
-        g.drawString("線分の数　" + k.getsousuu(), 30, 50);
+        g.drawString("線分の数　" + k.getTotal(), 30, 50);
 
         //描画
         Point a = new Point();
@@ -444,7 +444,7 @@ public class BasicBranch_Worker {
         //対称性がある場合の処理
         g.setColor(new Color(200, 200, 200));
         if (taisyousei > 0) {
-            for (int i = 1; i <= k.getsousuu(); i++) {
+            for (int i = 1; i <= k.getTotal(); i++) {
                 if ((k.geta(i).getx() < tyuuoutai_xmin)
                         ||
                         (k.getb(i).getx() < tyuuoutai_xmin)) {
@@ -465,7 +465,7 @@ public class BasicBranch_Worker {
         double L = 100.0;
         if (icol == -2) { //角度系用icol=-2
             g.setColor(new Color(245, 245, 245));
-            for (int i = 1; i <= k.getsousuu(); i++) {
+            for (int i = 1; i <= k.getTotal(); i++) {
                 a.set(k.geta(i));
                 b.set(k.getb(i));
                 d = 0.0;
@@ -476,7 +476,7 @@ public class BasicBranch_Worker {
                 }
             }
 
-            if (ieda <= k.getsousuu()) {
+            if (ieda <= k.getTotal()) {
                 g.setColor(new Color(205, 245, 245));
                 d = 0.0;
                 a.set(k.geta(ieda));
@@ -527,7 +527,7 @@ public class BasicBranch_Worker {
       }
 */
 
-        for (int i = 1; i <= k.getsousuu(); i++) {
+        for (int i = 1; i <= k.getTotal(); i++) {
             a.set(k.geta(i));
             b.set(k.getb(i));
             if (k.getcolor(i) == 0) {
@@ -682,7 +682,7 @@ public class BasicBranch_Worker {
 
         //展開図の描画
 
-        for (int i = 1; i <= k.getsousuu() - 1; i++) {
+        for (int i = 1; i <= k.getTotal() - 1; i++) {
 
             if (k.getcolor(i) == 0) {
                 g.setColor(Color.black);
@@ -714,7 +714,7 @@ public class BasicBranch_Worker {
             g.drawOval((int) b.getx() - ir, (int) b.gety() - ir, 2 * ir, 2 * ir); //円
         }
 
-        int i = k.getsousuu();
+        int i = k.getTotal();
 
         if (i != 0) {
 
@@ -763,7 +763,7 @@ public class BasicBranch_Worker {
     public void mPressed(Point p) {
         //ゴミ箱がクリックされたら、単独の線分を削除する
 
-        if (gomibako.naibu(p) >= 1) {
+        if (gomibako.inside(p) >= 1) {
             k.tanSenbun_sakujyo(r);
             nhi = 0;//入力方法が多角形の場合の初期化を行う
         }
@@ -780,10 +780,10 @@ public class BasicBranch_Worker {
                 k.addsenbun(k.getb(mtsid), p);
 
                 k.set(mtsid, k.geta(mtsid), p, k.getcolor(mtsid), 0);
-                k.setcolor(k.getsousuu(), k.getcolor(mtsid));
+                k.setcolor(k.getTotal(), k.getcolor(mtsid));
                 if (icol >= 0) {
                     k.set(mtsid, k.geta(mtsid), p, icol, 0);
-                    k.setcolor(k.getsousuu(), icol);
+                    k.setcolor(k.getTotal(), icol);
 
                 }
             }
@@ -793,7 +793,7 @@ public class BasicBranch_Worker {
             //基本枝構造の中の、どの枝とも遠い場合。
             if (ieda == 0) {
                 k.addsenbun(p, p);
-                ieda = k.getsousuu();
+                ieda = k.getTotal();
                 ugokasi_mode = 4;
                 if (icol >= 0) {
                     k.setcolor(ieda, icol);
@@ -863,14 +863,14 @@ public class BasicBranch_Worker {
             if (nhi == 1) {
                 k.addsenbun(p, p);
                 nhPoint = p;
-                for (int i = 1; i <= k.getsousuu() - 1; i++) {
+                for (int i = 1; i <= k.getTotal() - 1; i++) {
                     if (oc.hitosii(k.geta(i), p, 2.0 * r)) {
-                        k.set(k.getsousuu(), k.geta(i), k.geta(i), 0, 0);
+                        k.set(k.getTotal(), k.geta(i), k.geta(i), 0, 0);
                         nhPoint = k.geta(i);
                         break;
                     }
                     if (oc.hitosii(k.getb(i), p, 2.0 * r)) {
-                        k.set(k.getsousuu(), k.getb(i), k.getb(i), 0, 0);
+                        k.set(k.getTotal(), k.getb(i), k.getb(i), 0, 0);
                         nhPoint = k.getb(i);
                         break;
                     }
@@ -881,14 +881,14 @@ public class BasicBranch_Worker {
             if (nhi != 1) {   // set(int i, Ten p,Ten q,int ic,int ia)
 
                 k.addsenbun(nhPoint, p);
-                for (int i = 1; i <= k.getsousuu() - 1; i++) {
+                for (int i = 1; i <= k.getTotal() - 1; i++) {
                     if (oc.hitosii(k.geta(i), p, 2.0 * r)) {
-                        k.set(k.getsousuu(), k.geta(i), k.getb(k.getsousuu() - 1), 0, 0);
+                        k.set(k.getTotal(), k.geta(i), k.getb(k.getTotal() - 1), 0, 0);
                         nhi = 0;
                         break;
                     }
                     if (oc.hitosii(k.getb(i), p, 2.0 * r)) {
-                        k.set(k.getsousuu(), k.getb(i), k.getb(k.getsousuu() - 1), 0, 0);
+                        k.set(k.getTotal(), k.getb(i), k.getb(k.getTotal() - 1), 0, 0);
                         nhi = 0;
                         break;
                     }
@@ -897,7 +897,7 @@ public class BasicBranch_Worker {
             }
 
             if (icol >= 0) {
-                k.setcolor(k.getsousuu(), icol);
+                k.setcolor(k.getTotal(), icol);
             }
         }
 
@@ -981,7 +981,7 @@ public class BasicBranch_Worker {
                 // k.set(kitei_idou(p)) ;
 
 
-                for (int i = 1; i <= k.getsousuu(); i++) {
+                for (int i = 1; i <= k.getTotal(); i++) {
                     // Ten tn=new Ten();
                     //tn.set(k.get(i));
                     //   k.set(i,kitei_idou(k.geta(i)));
@@ -1014,8 +1014,8 @@ public class BasicBranch_Worker {
             }
 
             //ゴミ捨て。　これをやるとアクティブなieda枝の番号がずれるので、一応eda_atosyoriの後でやるようにする。
-            if ((ugokasi_mode == 4) && (k.getnagasa(k.getsousuu()) < r)) { //新規追加分の線分が点状の（長さがrより小さい）とき削除。
-                k.delsenbun(k.getsousuu());
+            if ((ugokasi_mode == 4) && (k.getnagasa(k.getTotal()) < r)) { //新規追加分の線分が点状の（長さがrより小さい）とき削除。
+                k.delsenbun(k.getTotal());
             } else {
                 gomisute();//ごみ箱に入った線分の消去
             }
@@ -1038,7 +1038,7 @@ public class BasicBranch_Worker {
     //マウス操作(i_mouse_modeA==0　旧動作　見本のために残している。削除可----------------------------------------------------
     public void mPressed_A_00(Point p) {
         //ゴミ箱がクリックされたら、単独の線分を削除する
-        if (gomibako.naibu(p) >= 1) {
+        if (gomibako.inside(p) >= 1) {
             k.tanSenbun_sakujyo(r);
             nhi = 0;//入力方法が多角形の場合の初期化を行う
         }
@@ -1052,10 +1052,10 @@ public class BasicBranch_Worker {
                 k.addsenbun(k.getb(mtsid), p);
 
                 k.set(mtsid, k.geta(mtsid), p, k.getcolor(mtsid), 0);
-                k.setcolor(k.getsousuu(), k.getcolor(mtsid));
+                k.setcolor(k.getTotal(), k.getcolor(mtsid));
                 if (icol >= 0) {
                     k.set(mtsid, k.geta(mtsid), p, icol, 0);
-                    k.setcolor(k.getsousuu(), icol);
+                    k.setcolor(k.getTotal(), icol);
                 }
             }
 
@@ -1064,7 +1064,7 @@ public class BasicBranch_Worker {
             //基本枝構造の中の、どの枝とも遠い場合。
             if (ieda == 0) {
                 k.addsenbun(p, p);
-                ieda = k.getsousuu();
+                ieda = k.getTotal();
                 ugokasi_mode = 4;
                 if (icol >= 0) {
                     k.setcolor(ieda, icol);
@@ -1098,14 +1098,14 @@ public class BasicBranch_Worker {
             if (nhi == 1) {
                 k.addsenbun(p, p);
                 nhPoint = p;
-                for (int i = 1; i <= k.getsousuu() - 1; i++) {
+                for (int i = 1; i <= k.getTotal() - 1; i++) {
                     if (oc.hitosii(k.geta(i), p, 2.0 * r)) {
-                        k.set(k.getsousuu(), k.geta(i), k.geta(i), 0, 0);
+                        k.set(k.getTotal(), k.geta(i), k.geta(i), 0, 0);
                         nhPoint = k.geta(i);
                         break;
                     }
                     if (oc.hitosii(k.getb(i), p, 2.0 * r)) {
-                        k.set(k.getsousuu(), k.getb(i), k.getb(i), 0, 0);
+                        k.set(k.getTotal(), k.getb(i), k.getb(i), 0, 0);
                         nhPoint = k.getb(i);
                         break;
                     }
@@ -1113,14 +1113,14 @@ public class BasicBranch_Worker {
             }
             if (nhi != 1) {   // set(int i, Ten p,Ten q,int ic,int ia)
                 k.addsenbun(nhPoint, p);
-                for (int i = 1; i <= k.getsousuu() - 1; i++) {
+                for (int i = 1; i <= k.getTotal() - 1; i++) {
                     if (oc.hitosii(k.geta(i), p, 2.0 * r)) {
-                        k.set(k.getsousuu(), k.geta(i), k.getb(k.getsousuu() - 1), 0, 0);
+                        k.set(k.getTotal(), k.geta(i), k.getb(k.getTotal() - 1), 0, 0);
                         nhi = 0;
                         break;
                     }
                     if (oc.hitosii(k.getb(i), p, 2.0 * r)) {
-                        k.set(k.getsousuu(), k.getb(i), k.getb(k.getsousuu() - 1), 0, 0);
+                        k.set(k.getTotal(), k.getb(i), k.getb(k.getTotal() - 1), 0, 0);
                         nhi = 0;
                         break;
                     }
@@ -1128,7 +1128,7 @@ public class BasicBranch_Worker {
                 nhPoint = p;
             }
             if (icol >= 0) {
-                k.setcolor(k.getsousuu(), icol);
+                k.setcolor(k.getTotal(), icol);
             }
         }
     }
@@ -1180,7 +1180,7 @@ public class BasicBranch_Worker {
 
             //----------格子に乗せる
             if (nyuuryoku_kitei >= 1) {
-                for (int i = 1; i <= k.getsousuu(); i++) {
+                for (int i = 1; i <= k.getTotal(); i++) {
                     System.out.print("iactive ");
                     System.out.print(i);
                     System.out.print(": ");
@@ -1206,8 +1206,8 @@ public class BasicBranch_Worker {
             }
 
             //ゴミ捨て。　これをやるとアクティブなieda枝の番号がずれるので、一応eda_atosyoriの後でやるようにする。
-            if ((ugokasi_mode == 4) && (k.getnagasa(k.getsousuu()) < r)) { //新規追加分の線分が点状の（長さがrより小さい）とき削除。
-                k.delsenbun(k.getsousuu());
+            if ((ugokasi_mode == 4) && (k.getnagasa(k.getTotal()) < r)) { //新規追加分の線分が点状の（長さがrより小さい）とき削除。
+                k.delsenbun(k.getTotal());
             } else {
                 gomisute();//ごみ箱に入った線分の消去
             }
@@ -1229,7 +1229,7 @@ public class BasicBranch_Worker {
         Point p = new Point();
         p.set(camera.TV2object(p0));
         k.addsenbun(p, p);
-        ieda = k.getsousuu();
+        ieda = k.getTotal();
         k.setcolor(ieda, icol);
     }
 
@@ -1254,8 +1254,8 @@ public class BasicBranch_Worker {
             //System.out.print("iactive 20150312"); System.out.print(i); System.out.print(": ");
             //System.out.println(k.getiactive(i));
             //if(k.getiactive(i)>=1){
-            k.seta(k.getsousuu(), kitei_idou(k.geta(k.getsousuu())));
-            k.setb(k.getsousuu(), kitei_idou(k.getb(k.getsousuu())));
+            k.seta(k.getTotal(), kitei_idou(k.geta(k.getTotal())));
+            k.setb(k.getTotal(), kitei_idou(k.getb(k.getTotal())));
             //}
             //}
         }
@@ -1263,17 +1263,17 @@ public class BasicBranch_Worker {
 
         if (nyuuryoku_kitei == 3) {
 
-            k.seta(k.getsousuu(), sankaku_kitei_idou(k.geta(k.getsousuu())));
-            k.setb(k.getsousuu(), sankaku_kitei_idou(k.getb(k.getsousuu())));
+            k.seta(k.getTotal(), sankaku_kitei_idou(k.geta(k.getTotal())));
+            k.setb(k.getTotal(), sankaku_kitei_idou(k.getb(k.getTotal())));
 
         }
 
 
         //今入力した線分が、今までに入力済みのどれかの線分と全く同じ位置で一致する場合は、今入力した線分の色だけ反映させて、今入力した線分は追加はしない。
         int i_kasanari;
-        i_kasanari = k.kasanari_senbun_sagasi(k.getsousuu());
+        i_kasanari = k.kasanari_senbun_sagasi(k.getTotal());
         if (i_kasanari > 0) {
-            k.setcolor(i_kasanari, k.getcolor(k.getsousuu()));
+            k.setcolor(i_kasanari, k.getcolor(k.getTotal()));
             k.delsenbun(getsousuu());
         }
         k.kousabunkatu();//全く重なる線分がない状態で実施される。//2回やらないと反応しない場合がある。原因不明。

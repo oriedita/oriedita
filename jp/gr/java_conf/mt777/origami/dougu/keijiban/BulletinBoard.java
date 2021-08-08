@@ -4,7 +4,7 @@ import jp.gr.java_conf.mt777.origami.orihime.*;
 
 import java.awt.*;
 
-public class Keijiban {
+public class BulletinBoard {
 
     int ix0 = 120;//掲示板の左上端のX座標
     int iy0 = 200;//掲示板の左上端のY座標
@@ -24,7 +24,7 @@ public class Keijiban {
 
 
     //コンストラクタ
-    public Keijiban(App app0) {
+    public BulletinBoard(App app0) {
 
         orihime_app = app0;
     }
@@ -71,7 +71,7 @@ public class Keijiban {
     }
 
 
-    public void tuiki(String s0) {
+    public void write(String s0) {
         s01 = s02;
         s02 = s03;
         s03 = s04;
@@ -85,7 +85,7 @@ public class Keijiban {
         repaint();
     }
 
-    public void kakikae(int i, String s0) {
+    public void rewrite(int i, String s0) {
         if (i == 1) {
             s01 = s0;
         }
@@ -151,7 +151,7 @@ public class Keijiban {
 
 
     //
-    public void keiji(Graphics g) {
+    public void draw(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
         g.setColor(Color.blue);

@@ -85,7 +85,7 @@ public class Egaki_Syokunin_Dougubako {
 			Line add_sen=new Line();add_sen.set(s0);
 			Point kousa_point =new Point(1000000.0,1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
 			double kousa_ten_kyori= kousa_point.kyori(add_sen.geta());
-			Tyokusen tyoku1 =new Tyokusen(add_sen.geta(),add_sen.getb());
+			StraightLine tyoku1 =new StraightLine(add_sen.geta(),add_sen.getb());
 			int i_kousa_flg;
 
 			kousaten_made_nobasi_flg=0;
@@ -134,7 +134,7 @@ public class Egaki_Syokunin_Dougubako {
 			Line add_sen=new Line();add_sen.set(s0);
 			Point kousa_point =new Point(1000000.0,1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
 			double kousa_ten_kyori= kousa_point.kyori(add_sen.geta());
-			Tyokusen tyoku1 =new Tyokusen(add_sen.geta(),add_sen.getb());
+			StraightLine tyoku1 =new StraightLine(add_sen.geta(),add_sen.getb());
 			int i_kousa_flg;
 
 			kousaten_made_nobasi_flg=0;

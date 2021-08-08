@@ -168,7 +168,7 @@ public class Circle {//点の座標や方向ベクトルなどをあらわすと
 
 	//(x,y)を通らない線分を他の円に反転する関数----------------------------------------------------
 	public Circle hanten_Senbun2En(Line s0){//s0が(x,y)を通るときはおかしな結果になる。
-		Tyokusen ty= new Tyokusen(s0);
+		StraightLine ty= new StraightLine(s0);
 		Point t0=new Point(); t0.set(ty.kage_motome(get_tyuusin()));
 		return new Circle(new Line(   hanten(t0),get_tyuusin() )   ,5);
 	}
