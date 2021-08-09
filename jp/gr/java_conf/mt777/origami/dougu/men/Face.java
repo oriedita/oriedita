@@ -17,8 +17,8 @@ public class Face {
 
     //コンストラクタ
     public Face(Face mn) {
-        Tenidsuu = mn.getTenidsuu();
-        icol = mn.getcolor();
+        Tenidsuu = mn.getPointsCount();
+        icol = mn.getColor();
         for (int i = 0; i <= Tenidsuu; i++) {
             TenidL.add(mn.getPointId(i));
         }
@@ -35,7 +35,7 @@ public class Face {
 
     }
 
-    public int getTenidsuu() {
+    public int getPointsCount() {
         return Tenidsuu;
     }
 
@@ -43,7 +43,7 @@ public class Face {
         Tenidsuu = i;
     }
 
-    public void addTenid(int Tid) {
+    public void addPointId(int Tid) {
         Tenidsuu = Tenidsuu + 1;
         TenidL.add(Tid);
     }
@@ -63,11 +63,11 @@ public class Face {
 
     }
 
-    public void setcolor(int i) {
+    public void setColor(int i) {
         icol = i;
     }
 
-    public int getcolor() {
+    public int getColor() {
         return icol;
     }
 

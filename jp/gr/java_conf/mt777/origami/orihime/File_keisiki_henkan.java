@@ -128,12 +128,12 @@ public class File_keisiki_henkan {
                         MemR.addLine("色,"  + icol);
 			
 			tn= tL.get(bu.getBegin());
-			d1=tn.getx();
-			d2=tn.gety();
+			d1=tn.getX();
+			d2=tn.getY();
 			
 			tn= tL.get(bu.getEnd());
-			d3=tn.getx();
-			d4=tn.gety();
+			d3=tn.getX();
+			d4=tn.getY();
 			
 			//d1=d1-xmin+150.0;
 			//d2=d2-ymin+150.0;

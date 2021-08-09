@@ -30,8 +30,8 @@ public class StraightLine {
 
     public StraightLine(Point p1, Point p2) {  //コンストラクタ
         //二点を指定して直線のa,b,cを求める
-        double x1 = p1.getx(), y1 = p1.gety();
-        double x2 = p2.getx(), y2 = p2.gety();
+        double x1 = p1.getX(), y1 = p1.getY();
+        double x2 = p2.getX(), y2 = p2.getY();
         a = y2 - y1;
         b = x1 - x2;
         c = y1 * x2 - x1 * y2;
@@ -39,9 +39,9 @@ public class StraightLine {
     }
 
 
-    public StraightLine(Line s0) {  //コンストラクタ
+    public StraightLine(LineSegment s0) {  //コンストラクタ
         //Senbunを指定して直線のa,b,cを求める
-        double x1 = s0.getax(), y1 = s0.getay();
+        double x1 = s0.getAx(), y1 = s0.getay();
         double x2 = s0.getbx(), y2 = s0.getby();
         a = y2 - y1;
         b = x1 - x2;
@@ -122,16 +122,16 @@ public class StraightLine {
     }
 
     public double calculateDistance(Point p) {//直線と点pとの距離
-        double x = p.getx();
-        double y = p.gety();
+        double x = p.getX();
+        double y = p.getY();
         //return Math.abs((double) ((float)(a*x+b*y+c)/Math.sqrt((float)(a*a+b*b))));
         return Math.abs((a * x + b * y + c) / Math.sqrt(a * a + b * b));
     }
 
 
     public double distance_2jyou_keisan(Point p) {//直線と点pとの距離の二乗
-        double x = p.getx();
-        double y = p.gety();
+        double x = p.getX();
+        double y = p.getY();
         //return Math.abs((double) ((float)(a*x+b*y+c)/Math.sqrt((float)(a*a+b*b))));
         return (a * x + b * y + c) * (a * x + b * y + c) / (a * a + b * b);
     }
@@ -139,8 +139,8 @@ public class StraightLine {
 
     public void tyokkouka(Point p) { //点（x,y)を通って ax+by+c=0に直交する直線 (bx-ay+d=0)に変換
         double e;
-        double x = p.getx();
-        double y = p.gety();
+        double x = p.getX();
+        double y = p.getY();
         c = -b * x + a * y;
         e = a;
         a = b;
@@ -157,7 +157,7 @@ public class StraightLine {
 
 
     public double dainyuukeisan(Point p) {
-        return a * p.getx() + b * p.gety() + c;
+        return a * p.getX() + b * p.getY() + c;
     }  //a*x+b*y+cにx,yを代入した値を返す
 
     /*
@@ -174,11 +174,11 @@ public class StraightLine {
 
         }
     */
-    public int senbun_kousa_hantei_kuwasii(Line s0) {//0=この直線は与えられた線分と交差しない、1=X型で交差する、21=線分のa点でT型で交差する、22=線分のb点でT型で交差する、3=線分は直線に含まれる。
+    public int senbun_kousa_hantei_kuwasii(LineSegment s0) {//0=この直線は与えられた線分と交差しない、1=X型で交差する、21=線分のa点でT型で交差する、22=線分のb点でT型で交差する、3=線分は直線に含まれる。
 
 
-        double d_a2 = distance_2jyou_keisan(s0.geta());
-        double d_b2 = distance_2jyou_keisan(s0.getb());
+        double d_a2 = distance_2jyou_keisan(s0.getA());
+        double d_b2 = distance_2jyou_keisan(s0.getB());
 
         if (d_a2 < 0.00000001 && d_b2 < 0.00000001) {
             return 3;
@@ -195,8 +195,8 @@ public class StraightLine {
 
         //以下は線分のa点もb点も直線上にはないと判断される場合
 
-        double d_a = dainyuukeisan(s0.geta());
-        double d_b = dainyuukeisan(s0.getb());
+        double d_a = dainyuukeisan(s0.getA());
+        double d_b = dainyuukeisan(s0.getB());
 
         if (d_a * d_b > 0.0) {
             return 0;

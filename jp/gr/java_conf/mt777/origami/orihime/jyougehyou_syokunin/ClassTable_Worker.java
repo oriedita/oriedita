@@ -20,14 +20,14 @@ import jp.gr.java_conf.mt777.seiretu.narabebako.*;
 import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
 
-public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what kind of vertical relationship the surface of the developed view before folding will be after folding.
+public class ClassTable_Worker {//Top and bottom table: Record and utilize what kind of vertical relationship the surface of the developed view before folding will be after folding.
     //String c=new String();
     //int Mensuu;             //折りたたむ前の展開図の面の数
     ClassTable jg = new ClassTable();
     //Jyougehyou jg;// =new Jyougehyou();
     //Jyougehyou jg_syokiti =new Jyougehyou();//展開図のみから得られる上下関係を記録しておく。
-    int Smensuu;//Smenの数
-    int Smen_yuukou_suu;//Smenは全て調べなくても、Menの上下関係は網羅できる。Menの上下関係を網羅するのに必要なSmenの数が優先順位の何番目までかをさがす。
+    int SmenTotal;//Smenの数
+    int Smen_yuukou_suu;//Smenは全て調べなくても、Faceの上下関係は網羅できる。Faceの上下関係を網羅するのに必要なSmenの数が優先順位の何番目までかをさがす。
     int Menidsuu_max;//各Smenの持つMenidsuuの最大値。すなわち、最も紙に重なりが多いところの枚数。
     //paint 用のint格納用VVVVVVVVVVVVVVVVVVVVVV
     int ip1 = 0; //0は折り畳み図の表側を表示するモード。1は折り畳み図の裏側を表示するモード。
@@ -59,12 +59,12 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
 
 
     //-----------------------------------------------------------------
-    public Jyougehyou_Worker() {
+    public ClassTable_Worker() {
         reset();
     }    //コンストラクタ
 
     //-----------------------------------------------------------------
-    public Jyougehyou_Worker(App app0) {
+    public ClassTable_Worker(App app0) {
         orihime_app = app0;
         reset();
     }    //コンストラクタ
@@ -72,7 +72,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
     //-----------------------------------------------------------------
     public void reset() {
         jg.reset();//jg_syokiti.reset();
-        Smensuu = 0;
+        SmenTotal = 0;
         Smen_yuukou_suu = 0;
         ip1 = 0;
         Menidsuu_max = 0;
@@ -96,8 +96,8 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
     }
 
 
-    public int getSmensuu() {
-        return Smensuu;
+    public int getSmenTotal() {
+        return SmenTotal;
     }
 
     public int getSmen_yuukou_suu() {
@@ -115,7 +115,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
          return Jyougehyou_settei_2   (                  orite,           otta_Men_zu,           Smen_zu);
        }
 */
-    public void Smen_settei(CreasePattern_Worker orite, PointStore otta_Men_zu, PointStore Smen_zu) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
+    public void Smen_configure(CreasePattern_Worker orite, PointStore otta_Men_zu, PointStore Smen_zu) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
         //面(折りたたむ前の展開図の面のこと)の上下表を作る。
         //これにはts2の持つ点集合（折りたたんだあとの面の位置関係の情報を持つ）と  <-------------otta_Men_zu
         //ts3の持つ点集合（針金図で面を細分割したSmenの情報を持つ）を使う。 <-------------Smen_zu
@@ -124,15 +124,15 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
 
         System.out.println("Smenの初期設定");
         reset();
-        Smensuu = Smen_zu.getFacesTotal();
+        SmenTotal = Smen_zu.getFacesTotal();
         //4915                      System.out.print("Smensuu = "); System.out.println(Smensuu);System.exit(0);
 
-        Smen[] s0_ori = new Smen[Smensuu + 1];
-        Smen[] s_ori = new Smen[Smensuu + 1];
+        Smen[] s0_ori = new Smen[SmenTotal + 1];
+        Smen[] s_ori = new Smen[SmenTotal + 1];
         s0 = s0_ori;
         s = s_ori;
-        int[] s0yj = new int[Smensuu + 1];
-        int[] yjs0 = new int[Smensuu + 1];
+        int[] s0yj = new int[SmenTotal + 1];
+        int[] yjs0 = new int[SmenTotal + 1];
         s0_no_yusenjyun = s0yj;
         yusenjyun_kara_s0id = yjs0;
 
@@ -146,7 +146,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
         //4926                     System.out.print("Smensuu = "); System.out.println(Smensuu);System.exit(0);
 
         //
-        for (int i = 0; i < Smensuu + 1; i++) {
+        for (int i = 0; i < SmenTotal + 1; i++) {
             s0[i] = new Smen(orihime_app);
             s[i] = s0[i];
             s0_no_yusenjyun[i] = 0;
@@ -156,8 +156,8 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
 
         //各Smenに含まれる面を記録する。
         System.out.println("各Smenに含まれる面を記録するため、各Smenの内部点を登録");
-        Point[] smen_naibuPoint = new Point[Smensuu + 1];  //<<<<<<<<<<<<<<<<<<<<<<<<<<<オブジェクトの配列を動的に指定
-        for (int i = 1; i <= Smensuu; i++) {
+        Point[] smen_naibuPoint = new Point[SmenTotal + 1];  //<<<<<<<<<<<<<<<<<<<<<<<<<<<オブジェクトの配列を動的に指定
+        for (int i = 1; i <= SmenTotal; i++) {
             smen_naibuPoint[i] = Smen_zu.insidePoint_surface(i);
         }
 
@@ -180,7 +180,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
 		}
 */
 
-        for (int i = 1; i <= Smensuu; i++) {
+        for (int i = 1; i <= SmenTotal; i++) {
             int s0addMenidsuu = 0;
             //System.out.println("現在処理中のSmenは、"+i+" / "+Smensuu );
             //for(int j=1;j<=jg.getMensuu();j++){
@@ -199,7 +199,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
             //System.out.println("**1** 現在処理中のSmenは、"+i+" / "+Smensuu+"  :::  s0addMenidsuu= "+s0addMenidsuu+" ::: 面積= "+Smen_zu.menseki_motome(i));
             //}/////////20150308
 
-            s0[i].setKetasuu(s0addMenidsuu);
+            s0[i].setNumDigits(s0addMenidsuu);
 
             //System.out.println("**2**");
             for (int j = 1; j <= s0addMenidsuu; j++) {
@@ -213,9 +213,9 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
         System.out.println("各Smenに含まれる面の数の内で最大のものを求める");
         //各Smenに含まれる面の数の内で最大のものを求める。
         Menidsuu_max = 0;
-        for (int i = 1; i <= Smensuu; i++) {
-            if (s0[i].getMenidsuu() > Menidsuu_max) {
-                Menidsuu_max = s0[i].getMenidsuu();
+        for (int i = 1; i <= SmenTotal; i++) {
+            if (s0[i].getFaceIdCount() > Menidsuu_max) {
+                Menidsuu_max = s0[i].getFaceIdCount();
             }
         }
     }
@@ -232,7 +232,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
 */
 
     //------------------------------------------------------
-    public int Jyougehyou_settei(CreasePattern_Worker orite, PointStore otta_Men_zu, PointStore Smen_zu) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
+    public int ClassTable_configure(CreasePattern_Worker orite, PointStore otta_Men_zu, PointStore Smen_zu) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
         orihime_app.bulletinBoard.write("           Jyougehyou_settei   step1   start ");
         int ireturn = 1000;
         jg.setFacesTotal(otta_Men_zu.getFacesTotal());
@@ -241,7 +241,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
         System.out.println("山折り谷折りの情報から決定される上下関係を上下表に入れる");
         int Mid_min, Mid_max;
         for (int ib = 1; ib <= orite.getBousuu(); ib++) {
-            Mid_min = orite.Bou_moti_Menid_min_motome(ib);
+            Mid_min = orite.Stick_moti_FaceId_min_request(ib);
             Mid_max = orite.Bou_moti_Menid_max_motome(ib);
             if (Mid_min != Mid_max) {//展開図において、棒ibの両脇に面がある
                 //if(orite.getcolor(ib)==1){//赤い線で山折りを意味する
@@ -283,7 +283,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
         //棒ibの一部と重なる位置に有る面imは面im1と面im2に上下方向で挟まれることはない。このことから
         //gj[im1][im]=gj[im2][im]という等価条件が成り立つ。
         for (int ib = 1; ib <= orite.getBousuu(); ib++) {
-            Mid_min = orite.Bou_moti_Menid_min_motome(ib);
+            Mid_min = orite.Stick_moti_FaceId_min_request(ib);
             Mid_max = orite.Bou_moti_Menid_max_motome(ib);
             if (Mid_min != Mid_max) {//展開図において、棒ibの両脇に面がある
                 for (int im = 1; im <= jg.getFacesTotal(); im++) {
@@ -292,7 +292,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
                             //下の２つのifは暫定的な処理。あとで置き換え予定
                             if (otta_Men_zu.convex_inside(0.5, ib, im) == 1) {
                                 if (otta_Men_zu.convex_inside(-0.5, ib, im) == 1) {
-                                    jg.addTouka_jyouken(im, Mid_min, im, Mid_max);
+                                    jg.addEquivalenceCondition(im, Mid_min, im, Mid_max);
                                 }
                             }
                         }
@@ -301,7 +301,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
             }
         }
         System.out.print("３面が関与する突き抜け条件の数　＝　");
-        System.out.println(jg.getTouka_jyoukensuu());
+        System.out.println(jg.getEquivalenceConditionTotal());
         orihime_app.bulletinBoard.write("           Jyougehyou_settei   step3   start ");
         //等価条件の追加。棒ibの境界として隣接する2つの面im1,im2が有り、
         //また棒jbの境界として隣接する2つの面im3,im4が有り、ibとjbが平行で、一部重なる場合、折り畳み推定した場合に
@@ -312,15 +312,15 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
         for (int ib = 1; ib <= orite.getBousuu() - 1; ib++) {
             for (int jb = ib + 1; jb <= orite.getBousuu(); jb++) {
                 if (otta_Men_zu.parallel_overlap(ib, jb) == 1) {
-                    mi1 = orite.Bou_moti_Menid_min_motome(ib);
+                    mi1 = orite.Stick_moti_FaceId_min_request(ib);
                     mi2 = orite.Bou_moti_Menid_max_motome(ib);
                     if (mi1 != mi2) {
-                        mj1 = orite.Bou_moti_Menid_min_motome(jb);
+                        mj1 = orite.Stick_moti_FaceId_min_request(jb);
                         mj2 = orite.Bou_moti_Menid_max_motome(jb);
                         if (mj1 != mj2) {
                             if (mi1 * mi2 * mj1 * mj2 != 0) {
                                 if (onaji_Smen_ni_sonzai(mi1, mi2, mj1, mj2) == 1) {
-                                    jg.add_uTouka_jyouken(mi1, mi2, mj1, mj2);
+                                    jg.addUEquivalenceCondition(mi1, mi2, mj1, mj2);
                                 }
                             }
                         }
@@ -329,7 +329,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
             }
         }
         System.out.print("４面が関与する突き抜け条件の数　＝　");
-        System.out.println(jg.get_uTouka_jyoukensuu());
+        System.out.println(jg.getUEquivalenceConditionTotal());
         //5154                      System.out.print("Smensuu = "); System.out.println(Smensuu);System.exit(0);
 
         orihime_app.bulletinBoard.write("           Jyougehyou_settei   step4   start ");
@@ -344,13 +344,13 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
         System.out.println("追加推定 終了し、上下表を保存------------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
 
         //*************最初に行う演繹的推論の結果の保存**************************
-        jg.jg_hozon();//山折り谷折りの情報から決定される上下関係を保存しておく。
+        jg.jg_save();//山折り谷折りの情報から決定される上下関係を保存しておく。
         //************************************************************************
         orihime_app.bulletinBoard.write("           Jyougehyou_settei   step5   start ");
 //orihime_ap.keijiban.tuiki("00000           ");
         //Smen毎に案内書を作る
         System.out.println("Smen毎に案内書を作る");
-        for (int i = 1; i <= Smensuu; i++) {
+        for (int i = 1; i <= SmenTotal; i++) {
             //System.out.print("Smen");System.out.print(i);System.out.println("にて。");
             s0[i].setAnnaisyo(jg);
         }
@@ -359,13 +359,13 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
         System.out.println("Smen(s0)に優先順位をつける");
         //まず、他のSmenに丸ごと含まれているSmenを除外する
 
-        int[] Smen_no_dokujisei = new int[Smensuu + 1];  //<<<<<<<<<<<<<<<Smenの独自性
-        for (int i = 1; i <= Smensuu; i++) {
+        int[] Smen_no_dokujisei = new int[SmenTotal + 1];  //<<<<<<<<<<<<<<<Smenの独自性
+        for (int i = 1; i <= SmenTotal; i++) {
             Smen_no_dokujisei[i] = 1;
         }
-        for (int i = 1; i <= Smensuu; i++) {
+        for (int i = 1; i <= SmenTotal; i++) {
             Smen_no_dokujisei[i] = 1;
-            for (int j = 1; j <= Smensuu; j++) {
+            for (int j = 1; j <= SmenTotal; j++) {
                 if (Smen_no_dokujisei[j] == 1) {
 
                     if (i != j) {//s0[j]がs0[i]を含むかをみる。
@@ -391,14 +391,14 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
 		}
 */
 //
-        int[] i_yusendo_max = new int[Smensuu + 1];     //<<<<<<<<<<<<<<<臨時
+        int[] i_yusendo_max = new int[SmenTotal + 1];     //<<<<<<<<<<<<<<<臨時
         //5115                     System.out.print("Smensuu = "); System.out.println(Smensuu);System.exit(0);
 
-        for (int i = 1; i <= Smensuu; i++) {//優先度i番目のSmenidをさがす。
+        for (int i = 1; i <= SmenTotal; i++) {//優先度i番目のSmenidをさがす。
             int yusendo_max = -10000;//優先度i番目の優先度の値（大きいほうが優先度が高い）。
             int i_yusen = 0;
 
-            for (int is0 = 1; is0 <= Smensuu; is0++) { //Smenを１からSmensuu番目までサーチ
+            for (int is0 = 1; is0 <= SmenTotal; is0++) { //Smenを１からSmensuu番目までサーチ
                 int Sy;//Smenid_yusendo(is0)+Smen_no_dokujisei[is0] を格納
                 if (s0_no_yusenjyun[is0] == 0) {//まだ優先順位がついていないSmenだけを扱う
                     Sy = Smenid_yusendo(is0)/*+Smen_no_dokujisei[is0]*/;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -407,7 +407,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
                         i_yusen = is0;// i_yusenがi番目の優先度を探している際の最も有力な候補の番号
                     }
                     if (yusendo_max == Sy) {
-                        if (s0[i_yusen].getMenidsuu() < s0[is0].getMenidsuu()) {
+                        if (s0[i_yusen].getFaceIdCount() < s0[is0].getFaceIdCount()) {
                             yusendo_max = Sy;
                             i_yusen = is0;
                         }
@@ -429,8 +429,8 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
 
         //優先度からs0のidを指定できるようにする
 
-        for (int i = 1; i <= Smensuu; i++) {
-            for (int is0 = 1; is0 <= Smensuu; is0++) {
+        for (int i = 1; i <= SmenTotal; i++) {
+            for (int is0 = 1; is0 <= SmenTotal; is0++) {
                 if (i == s0_no_yusenjyun[is0]) {
                     yusenjyun_kara_s0id[i] = is0;
                 }
@@ -439,18 +439,18 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
 
 
         //System.out.println("------------" );
-        System.out.println("上下表職人内　Smensuu = " + Smensuu);
+        System.out.println("上下表職人内　Smensuu = " + SmenTotal);
         System.out.println("上下表職人内　s0に優先順位をつける");
-        for (int i = 1; i <= Smensuu; i++) {
+        for (int i = 1; i <= SmenTotal; i++) {
             System.out.println(s0_no_yusenjyun[i]);
         }
         System.out.println("上下表職人内　優先度からs0のid");
-        for (int i = 1; i <= Smensuu; i++) {
+        for (int i = 1; i <= SmenTotal; i++) {
             System.out.println(yusenjyun_kara_s0id[i]);
         }
 
 
-        for (int i = 1; i <= Smensuu; i++) {
+        for (int i = 1; i <= SmenTotal; i++) {
             //System.out.println(yusenjyun_kara_s0id[i]);
             if (i_yusendo_max[yusenjyun_kara_s0id[i]] != 0) {
                 Smen_yuukou_suu = i;       //早いが変な結果になることあり。
@@ -472,7 +472,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
         //System.out.println();
         //
 
-        for (int i = 1; i <= Smensuu; i++) {
+        for (int i = 1; i <= SmenTotal; i++) {
             s[i] = s0[yusenjyun_kara_s0id[i]];
         }
 
@@ -507,16 +507,16 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
         System.out.print("Smen有効数は　");
         System.out.print(Smen_yuukou_suu);
         System.out.print("／");
-        System.out.println(Smensuu);
+        System.out.println(SmenTotal);
 
 
         //jg.jg_hozon();//山折り谷折りの情報から決定される上下関係を保存しておく。
 
 
         //jg[][]の重なりのある面の組み合わせの位置の値を-100から-50に変える。
-        for (int k = 1; k <= Smensuu; k++) {
-            for (int i = 1; i <= s[k].getMenidsuu() - 1; i++) {
-                for (int j = i + 1; j <= s[k].getMenidsuu(); j++) {
+        for (int k = 1; k <= SmenTotal; k++) {
+            for (int i = 1; i <= s[k].getFaceIdCount() - 1; i++) {
+                for (int j = i + 1; j <= s[k].getFaceIdCount(); j++) {
                     jg.set(i, j, -50);
                     jg.set(j, i, -50);
                 }
@@ -550,14 +550,14 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
             while (flg_b >= 1) {
                 flg_b = 0;
 
-                for (int iS = 1; iS <= Smensuu; iS++) {
+                for (int iS = 1; iS <= SmenTotal; iS++) {
 
                     int flg_a = 1;
                     while (flg_a >= 1) {
                         flg_a = 0;
-                        for (int iM = 1; iM <= s0[iS].getMenidsuu(); iM++) {//3面の比較で中間にくる面
-                            int[] ueMenid = new int[s0[iS].getMenidsuu() + 1];//S面に含まれるあるMenの上がわにあるid番号を記録する。これが20ということは、
-                            int[] sitaMenid = new int[s0[iS].getMenidsuu() + 1];//S面に含まれるあるMenの下がわにあるid番号を記録する。これが20ということは、
+                        for (int iM = 1; iM <= s0[iS].getFaceIdCount(); iM++) {//3面の比較で中間にくる面
+                            int[] ueMenid = new int[s0[iS].getFaceIdCount() + 1];//S面に含まれるあるMenの上がわにあるid番号を記録する。これが20ということは、
+                            int[] sitaMenid = new int[s0[iS].getFaceIdCount() + 1];//S面に含まれるあるMenの下がわにあるid番号を記録する。これが20ということは、
                             int ueMenid_max = 0;
                             int sitaMenid_max = 0;
                             Mid = s0[iS].getMenid(iM);
@@ -570,7 +570,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
                             //あるSmen内の上下関係は必要ない。
                             //
                             //ここの操作はあるSmenの上下関係を上下表から採集している。
-                            for (int i = 1; i <= s0[iS].getMenidsuu(); i++) {//Menid[iM]より上にある面。
+                            for (int i = 1; i <= s0[iS].getFaceIdCount(); i++) {//Menid[iM]より上にある面。
                                 if (iM != i) {
                                     if (jg.get(Mid, s0[iS].getMenid(i)) == 0) {
                                         ueMenid_max = ueMenid_max + 1;
@@ -632,83 +632,83 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
             //System.out.println ("３面が関与する突き抜け条件から追加推定   " );
             //jg.addTouka_jyouken(im,Mid_min,im,Mid_max)qqqqqqqqqqqq
             //(im,Mid_min,im,Mid_max);
-            Touka_jyouken tg = new Touka_jyouken();
+            EquivalenceCondition tg = new EquivalenceCondition();
 
             int flg_a = 1;
             while (flg_a >= 1) {
                 flg_a = 0;
-                for (int i = 1; i <= jg.getTouka_jyoukensuu(); i++) {
-                    tg = jg.getTouka_jyouken(i);
+                for (int i = 1; i <= jg.getEquivalenceConditionTotal(); i++) {
+                    tg = jg.getEquivalenceCondition(i);
                     //if(onaji_Smen_ni_sonzai(tg.geta(),tg.getb(),tg.getd())==1) {
-                    if (jg.get(tg.geta(), tg.getb()) == 1) {
-                        if (jg.get(tg.geta(), tg.getd()) == 0) {
+                    if (jg.get(tg.getA(), tg.getB()) == 1) {
+                        if (jg.get(tg.getA(), tg.getD()) == 0) {
                             return 3;
                         }
-                        if (jg.get(tg.getd(), tg.geta()) == 1) {
+                        if (jg.get(tg.getD(), tg.getA()) == 1) {
                             return 3;
                         }
-                        if (jg.get(tg.geta(), tg.getd()) < 0) {
-                            jg.set(tg.geta(), tg.getd(), 1);
+                        if (jg.get(tg.getA(), tg.getD()) < 0) {
+                            jg.set(tg.getA(), tg.getD(), 1);
                             flg_a = flg_a + 1;
                             flg_c = flg_c + 1;
                         }
-                        if (jg.get(tg.getd(), tg.geta()) < 0) {
-                            jg.set(tg.getd(), tg.geta(), 0);
+                        if (jg.get(tg.getD(), tg.getA()) < 0) {
+                            jg.set(tg.getD(), tg.getA(), 0);
                             flg_a = flg_a + 1;
                             flg_c = flg_c + 1;
                         }
                     }
-                    if (jg.get(tg.geta(), tg.getb()) == 0) {
-                        if (jg.get(tg.geta(), tg.getd()) == 1) {
+                    if (jg.get(tg.getA(), tg.getB()) == 0) {
+                        if (jg.get(tg.getA(), tg.getD()) == 1) {
                             return 3;
                         }
-                        if (jg.get(tg.getd(), tg.geta()) == 0) {
+                        if (jg.get(tg.getD(), tg.getA()) == 0) {
                             return 3;
                         }
-                        if (jg.get(tg.geta(), tg.getd()) < 0) {
-                            jg.set(tg.geta(), tg.getd(), 0);
+                        if (jg.get(tg.getA(), tg.getD()) < 0) {
+                            jg.set(tg.getA(), tg.getD(), 0);
                             flg_a = flg_a + 1;
                             flg_c = flg_c + 1;
                         }
-                        if (jg.get(tg.getd(), tg.geta()) < 0) {
-                            jg.set(tg.getd(), tg.geta(), 1);
+                        if (jg.get(tg.getD(), tg.getA()) < 0) {
+                            jg.set(tg.getD(), tg.getA(), 1);
                             flg_a = flg_a + 1;
                             flg_c = flg_c + 1;
                         }
                     }
                     //
-                    if (jg.get(tg.geta(), tg.getd()) == 1) {
-                        if (jg.get(tg.geta(), tg.getb()) == 0) {
+                    if (jg.get(tg.getA(), tg.getD()) == 1) {
+                        if (jg.get(tg.getA(), tg.getB()) == 0) {
                             return 3;
                         }
-                        if (jg.get(tg.getb(), tg.geta()) == 1) {
+                        if (jg.get(tg.getB(), tg.getA()) == 1) {
                             return 3;
                         }
-                        if (jg.get(tg.geta(), tg.getb()) < 0) {
-                            jg.set(tg.geta(), tg.getb(), 1);
+                        if (jg.get(tg.getA(), tg.getB()) < 0) {
+                            jg.set(tg.getA(), tg.getB(), 1);
                             flg_a = flg_a + 1;
                             flg_c = flg_c + 1;
                         }
-                        if (jg.get(tg.getb(), tg.geta()) < 0) {
-                            jg.set(tg.getb(), tg.geta(), 0);
+                        if (jg.get(tg.getB(), tg.getA()) < 0) {
+                            jg.set(tg.getB(), tg.getA(), 0);
                             flg_a = flg_a + 1;
                             flg_c = flg_c + 1;
                         }
                     }
-                    if (jg.get(tg.geta(), tg.getd()) == 0) {
-                        if (jg.get(tg.geta(), tg.getb()) == 1) {
+                    if (jg.get(tg.getA(), tg.getD()) == 0) {
+                        if (jg.get(tg.getA(), tg.getB()) == 1) {
                             return 3;
                         }
-                        if (jg.get(tg.getb(), tg.geta()) == 0) {
+                        if (jg.get(tg.getB(), tg.getA()) == 0) {
                             return 3;
                         }
-                        if (jg.get(tg.geta(), tg.getb()) < 0) {
-                            jg.set(tg.geta(), tg.getb(), 0);
+                        if (jg.get(tg.getA(), tg.getB()) < 0) {
+                            jg.set(tg.getA(), tg.getB(), 0);
                             flg_a = flg_a + 1;
                             flg_c = flg_c + 1;
                         }
-                        if (jg.get(tg.getb(), tg.geta()) < 0) {
-                            jg.set(tg.getb(), tg.geta(), 1);
+                        if (jg.get(tg.getB(), tg.getA()) < 0) {
+                            jg.set(tg.getB(), tg.getA(), 1);
                             flg_a = flg_a + 1;
                             flg_c = flg_c + 1;
                         }
@@ -728,13 +728,13 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
             flg_a = 1;
             while (flg_a >= 1) {
                 flg_a = 0;
-                for (int i = 1; i <= jg.get_uTouka_jyoukensuu(); i++) {
-                    tg = jg.get_uTouka_jyouken(i);
+                for (int i = 1; i <= jg.getUEquivalenceConditionTotal(); i++) {
+                    tg = jg.getUEquivalenceCondition(i);
                     int a, b, c, d;
-                    a = tg.geta();
-                    b = tg.getb();
-                    c = tg.getc();
-                    d = tg.getd();
+                    a = tg.getA();
+                    b = tg.getB();
+                    c = tg.getC();
+                    d = tg.getD();
 
 
                     //　a>b>c　だけならdの位置は決まらない
@@ -1140,14 +1140,14 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
             while (flg_b >= 1) {
                 flg_b = 0;
 
-                for (int iS = 1; iS <= Smensuu; iS++) {
+                for (int iS = 1; iS <= SmenTotal; iS++) {
 
                     int flg_a = 1;
                     while (flg_a >= 1) {
                         flg_a = 0;
-                        for (int iM = 1; iM <= s0[iS].getMenidsuu(); iM++) {//3面の比較で中間にくる面
-                            int[] ueMenid = new int[s0[iS].getMenidsuu() + 1];//S面に含まれるあるMenの上がわにあるid番号を記録する。これが20ということは、
-                            int[] sitaMenid = new int[s0[iS].getMenidsuu() + 1];//S面に含まれるあるMenの下がわにあるid番号を記録する。これが20ということは、
+                        for (int iM = 1; iM <= s0[iS].getFaceIdCount(); iM++) {//3面の比較で中間にくる面
+                            int[] ueMenid = new int[s0[iS].getFaceIdCount() + 1];//S面に含まれるあるMenの上がわにあるid番号を記録する。これが20ということは、
+                            int[] sitaMenid = new int[s0[iS].getFaceIdCount() + 1];//S面に含まれるあるMenの下がわにあるid番号を記録する。これが20ということは、
                             int ueMenid_max = 0;
                             int sitaMenid_max = 0;
                             Mid = s0[iS].getMenid(iM);
@@ -1160,7 +1160,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
                             //あるSmen内の上下関係は必要ない。
                             //
                             //ここの操作はあるSmenの上下関係を上下表から採集している。
-                            for (int i = 1; i <= s0[iS].getMenidsuu(); i++) {//Menid[iM]より上にある面。
+                            for (int i = 1; i <= s0[iS].getFaceIdCount(); i++) {//Menid[iM]より上にある面。
                                 if (iM != i) {
                                     if (jg.get(Mid, s0[iS].getMenid(i)) == 0) {
                                         ueMenid_max = ueMenid_max + 1;
@@ -1225,17 +1225,17 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
     //-----------------------------------------------------------------------------------------
 
     private int Smen_i_ga_j_ni_fukumareru(int s0i, int s0j) { //含まれるなら１、ないなら０
-        if (s0[s0i].getMenidsuu() > s0[s0j].getMenidsuu()) {
+        if (s0[s0i].getFaceIdCount() > s0[s0j].getFaceIdCount()) {
             return 0;
         }
 
 
-        for (int i = 1; i <= s0[s0i].getMenidsuu(); i++) {
-            for (int j = 1; j <= s0[s0j].getMenidsuu(); j++) {
+        for (int i = 1; i <= s0[s0i].getFaceIdCount(); i++) {
+            for (int j = 1; j <= s0[s0j].getFaceIdCount(); j++) {
                 if (s0[s0i].getMenid(i) == s0[s0j].getMenid(j)) {
                     break;
                 }
-                if (j == s0[s0j].getMenidsuu()) {
+                if (j == s0[s0j].getFaceIdCount()) {
                     return 0;
                 }
             }
@@ -1259,10 +1259,10 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
     //------------------------
     //引数の３つの面を同時に含むSmenが1つ以上存在するなら１、しないなら０を返す。
     private int onaji_Smen_ni_sonzai(int im1, int im2, int im3) {
-        for (int i = 1; i <= Smensuu; i++) {
-            if (s[i].Menid2Jyunretuketa(im1) >= 1) {
-                if (s[i].Menid2Jyunretuketa(im2) >= 1) {
-                    if (s[i].Menid2Jyunretuketa(im3) >= 1) {
+        for (int i = 1; i <= SmenTotal; i++) {
+            if (s[i].FaceId2PermutationDigit(im1) >= 1) {
+                if (s[i].FaceId2PermutationDigit(im2) >= 1) {
+                    if (s[i].FaceId2PermutationDigit(im3) >= 1) {
 
                         return 1;
                     }
@@ -1278,11 +1278,11 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
     //------------------------
     //引数の４つの面を同時に含むSmenが1つ以上存在するなら１、しないなら０を返す。
     private int onaji_Smen_ni_sonzai(int im1, int im2, int im3, int im4) {
-        for (int i = 1; i <= Smensuu; i++) {
-            if (s[i].Menid2Jyunretuketa(im1) >= 1) {
-                if (s[i].Menid2Jyunretuketa(im2) >= 1) {
-                    if (s[i].Menid2Jyunretuketa(im3) >= 1) {
-                        if (s[i].Menid2Jyunretuketa(im4) >= 1) {
+        for (int i = 1; i <= SmenTotal; i++) {
+            if (s[i].FaceId2PermutationDigit(im1) >= 1) {
+                if (s[i].FaceId2PermutationDigit(im2) >= 1) {
+                    if (s[i].FaceId2PermutationDigit(im3) >= 1) {
+                        if (s[i].FaceId2PermutationDigit(im4) >= 1) {
                             return 1;
                         }
                     }
@@ -1301,18 +1301,18 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
     //もし現在の面の重なり状態が、最後のものだったら0をreturnして、面の重なり状態は最初のものに戻る。
     //zzzzzzzz
 
-    public int susumu(int ss) {
+    public int next(int ss) {
         int isusumu;//=0の場合Smenが変わる（桁が変るようなイメージ）。
         int Sid;//変化が及んだSmenのid番号
         isusumu = 0;
         //ss+1番目以上のSmenはみな初期値にする。Smenに含まれる面数が0のときはエラーになる。
 //System.out.println("    js.susumu 001      ss+1番目以上のSmenはみな初期値にする。");
 
-        for (int i = ss + 1; i <= Smensuu; i++) {
+        for (int i = ss + 1; i <= SmenTotal; i++) {
 
 //System.out.println("    js.susumu i= "+i+"        Smensuu= "+Smensuu);
 
-            s[i].Jyunretu_1banme();
+            s[i].Permutation_first();
         }
 //System.out.println("    js.susumu 002      ss+1番目以上のSmenはみな初期値にする。");
         //Smenのid番号の大きいものから小さいものの順に面の重なり状態を変えていく。
@@ -1320,7 +1320,7 @@ public class Jyougehyou_Worker {//Top and bottom table: Record and utilize what 
         //isusumu =s[ss].susumu(s);
         for (int i = ss; i >= 1; i--) {
             if (isusumu == 0) {
-                isusumu = s[i].susumu(s[i].getMenidsuu());
+                isusumu = s[i].next(s[i].getFaceIdCount());
                 Sid = i;
             }
 
@@ -1364,21 +1364,21 @@ int ss; ss=getSmen_yuukou_suu();
 
 */
 //---------------------------------------------------------------------------------------------------------------------------------------------
-    public String Jyunretu_count() {
+    public String Permutation_count() {
         String s0 = "";
 
         for (int ss = 1; ss <= Smen_yuukou_suu; ss++) {
-            s0 = s0 + " : " + s[ss].get_Jyunretu_count();
+            s0 = s0 + " : " + s[ss].get_Permutation_count();
         }
         return s0;
     }
 
     //---------------------------------------------------------------------------------------------------------------------------------------------
-    public String Jyunretu_count(int imax) {
+    public String Permutation_count(int imax) {
         String s0 = "";
 
         for (int ss = 1; ss <= imax; ss++) {
-            s0 = s0 + " : " + s[ss].get_Jyunretu_count();
+            s0 = s0 + " : " + s[ss].get_Permutation_count();
         }
         return s0;
     }
@@ -1402,7 +1402,7 @@ int ss; ss=getSmen_yuukou_suu();
         //最終桁での処理
         if (ss == Smen_yuukou_suu) {
 
-            if (s[ss].kanou_kasanari_sagasi(jg) == 1000) {//==0ということは、可能な重なりかたとなる順列は存在しない。　==1000　このSmenは、矛盾はない状態になっている。
+            if (s[ss].possible_overlapping_search(jg) == 1000) {//==0ということは、可能な重なりかたとなる順列は存在しない。　==1000　このSmenは、矛盾はない状態になっている。
                 return 100;//折り畳み可能な順列組み合わせが見つかった。
             } else {
                 return 0;
@@ -1412,11 +1412,11 @@ int ss; ss=getSmen_yuukou_suu();
 
 
         //最終桁以外での処理
-        if (s[ss].kanou_kasanari_sagasi(jg) == 1000) {//==0ということは、可能な重なりかたとなる順列は存在しない。　==1000　このSmenは、矛盾はない状態になっている。
+        if (s[ss].possible_overlapping_search(jg) == 1000) {//==0ということは、可能な重なりかたとなる順列は存在しない。　==1000　このSmenは、矛盾はない状態になっている。
 
 
             while (kanou_kasanari_sagasi_self(ss + 1) == 0) {//次の桁で可能な重なりかたとなる順列は存在しない
-                if (s[ss].susumu() == 0) {
+                if (s[ss].next() == 0) {
                     return 0;
                 }//この桁では進めない（新たな順列は無い）
 
@@ -1437,13 +1437,13 @@ int ss; ss=getSmen_yuukou_suu();
     }
 
 
-    public int susumu_new() {
+    public int next_new() {
         return 0;
     }
 //------------------------------------------------------------------------------------------------------
 
-    //現在の順列状態から開始して、可能な重なりかたとなる状態を探す。なお、ここは高速化の余地がある。
-    public int kanou_kasanari_sagasi() {      //これはjgを変えないはず。
+        //現在の順列状態から開始して、可能な重なりかたとなる状態を探す。なお、ここは高速化の余地がある。
+    public int possible_overlapping_search() {      //これはjgを変えないはず。
         orihime_app.bulletinBoard.write("_ _______");
         orihime_app.bulletinBoard.write("__ ______");
         orihime_app.bulletinBoard.write("___ _____");
@@ -1456,11 +1456,11 @@ int ss; ss=getSmen_yuukou_suu();
         Sid = 1;//Sidの初期値は0以外ならなんでもいい。
         while (Sid != 0) { //Sid==0なら、Smenの最も番号の小さいものまで調べ尽くしたという意味。
 
-            ms = mujyun_Smen_motome();
+            ms = inconsistent_Smen_motome();
             if (ms == 1000) {
                 return 1000;
             }//全てのSmenで、矛盾はない。
-            Sid = susumu(ms - 1);
+            Sid = next(ms - 1);
             orihime_app.bulletinBoard.rewrite(9, "susumu(" + ms + "-1 = )" + Sid);
         }
         return 0;//可能な重なりかたとなる状態は存在しない
@@ -1468,21 +1468,21 @@ int ss; ss=getSmen_yuukou_suu();
 
     //-----------------------------------------------------------------------------------------------------------------
     //折り重なり方が矛盾するSmenを番号の小さい順からさがす。  なお、ここも高速化の余地がある。
-    private int mujyun_Smen_motome() { //jgは変化する。
+    private int inconsistent_Smen_motome() { //jgは変化する。
 
         //orihime_ap.keijiban.kakikae(9,"mujyun_Smen_motome()");
         int kks;
-        jg.jg_fukugen();//<<<<<<<<<<<<<<<<<<<<<<<<<<<,,
+        jg.jg_restore();//<<<<<<<<<<<<<<<<<<<<<<<<<<<,,
 
         for (int ss = 1; ss <= Smen_yuukou_suu; ss++) {      //<<<<<<<<<<<<<<高速化のため変更。070417
 
-            orihime_app.bulletinBoard.rewrite(7, "mujyun_Smen_motome( " + ss + ") , Menidsuu = " + s[ss].getMenidsuu() + " , Men_pair_suu = " + s[ss].getMenidsuu() * (s[ss].getMenidsuu() - 1) / 2);
-            orihime_app.bulletinBoard.rewrite(8, " kasanari_bunryi_mitei = " + s[ss].kasanari_bunryi_mitei(jg));
+            orihime_app.bulletinBoard.rewrite(7, "mujyun_Smen_motome( " + ss + ") , Menidsuu = " + s[ss].getFaceIdCount() + " , Men_pair_suu = " + s[ss].getFaceIdCount() * (s[ss].getFaceIdCount() - 1) / 2);
+            orihime_app.bulletinBoard.rewrite(8, " kasanari_bunryi_mitei = " + s[ss].overlapping_bunryi_mitei(jg));
             orihime_app.bulletinBoard.rewrite(9, " kasanari_bunryi_ketteizumi = " + s[ss].kasanari_bunryi_ketteizumi(jg));
 
 
-            kks = s[ss].kanou_kasanari_sagasi(jg);
-            orihime_app.bulletinBoard.rewrite(10, Jyunretu_count(ss));
+            kks = s[ss].possible_overlapping_search(jg);
+            orihime_app.bulletinBoard.rewrite(10, Permutation_count(ss));
 
 
             if (kks == 0) {//kks==0ということは、可能な重なりかたとなる順列は存在しない
@@ -1590,8 +1590,8 @@ int ss; ss=getSmen_yuukou_suu();
         String text = "";//文字列処理用のクラスのインスタンス化
         ip1 = omote_ura;
         //  System.out.println(Smensuu);
-        for (int im = 1; im <= Smensuu; im++) { //Smenから上からの指定した番目の面のidを求める。
-            s0[im].set_Menid2uekara_kazoeta_iti(jg);//Smenの.set_Menid2uekara_kazoeta_itiは現在の上下表をもとに、上から数えてi番めの面のid番号を全ての順番につき格納する。
+        for (int im = 1; im <= SmenTotal; im++) { //Smenから上からの指定した番目の面のidを求める。
+            s0[im].set_FaceId2fromTop_counted_position(jg);//Smenの.set_Menid2uekara_kazoeta_itiは現在の上下表をもとに、上から数えてi番めの面のid番号を全ての順番につき格納する。
         }
 
         //面を描く
@@ -1601,10 +1601,10 @@ int ss; ss=getSmen_yuukou_suu();
         if (hyouji_flg == 4) {//折紙表示---------------------------------------------------------------------------
             //面を描く
             int Men_jyunban;
-            for (int im = 1; im <= Smensuu; im++) {
+            for (int im = 1; im <= SmenTotal; im++) {
                 Men_jyunban = 1;
                 if (omote_ura == 1) {
-                    Men_jyunban = s0[im].getMenidsuu();
+                    Men_jyunban = s0[im].getFaceIdCount();
                 }
 
                 if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
@@ -1648,11 +1648,11 @@ int ss; ss=getSmen_yuukou_suu();
 
                 Men_jyunban_min = 1;
                 if (omote_ura == 1) {
-                    Men_jyunban_min = s0[Mid_min].getMenidsuu();
+                    Men_jyunban_min = s0[Mid_min].getFaceIdCount();
                 }
                 Men_jyunban_max = 1;
                 if (omote_ura == 1) {
-                    Men_jyunban_max = s0[Mid_max].getMenidsuu();
+                    Men_jyunban_max = s0[Mid_max].getFaceIdCount();
                 }
 
                 if (
@@ -1673,7 +1673,7 @@ int ss; ss=getSmen_yuukou_suu();
             System.out.println("Smen透過表示");
             //面を描く
             for (int im = 1; im <= Smen_zu.getFacesTotal(); im++) {
-                col_kosa = colmax - col_hiku * (s0[im].getMenidsuu() - 1);
+                col_kosa = colmax - col_hiku * (s0[im].getFaceIdCount() - 1);
                 if (col_kosa < 0) {
                     col_kosa = 0;
                 }
@@ -1788,8 +1788,8 @@ int ss; ss=getSmen_yuukou_suu();
 
         Point t0 = new Point();
         Point t1 = new Point();
-        Line s_ob = new Line();
-        Line s_tv = new Line();
+        LineSegment s_ob = new LineSegment();
+        LineSegment s_tv = new LineSegment();
 
         ip1 = omote_ura;
         //  System.out.println(Smensuu);
@@ -1813,21 +1813,21 @@ int ss; ss=getSmen_yuukou_suu();
         double[] yd = new double[100];
 
         //Smenの.set_Menid2uekara_kazoeta_itiは現在の上下表をもとに、上から数えてi番めの面のid番号を全ての順番につき格納する。
-        for (int im = 1; im <= Smensuu; im++) { //Smenから上からの指定した番目の面のidを求める。
-            s0[im].set_Menid2uekara_kazoeta_iti(jg);//s0[]はSmen_zuから得られるSmenそのもの、jgは上下表Jyougehyouのこと
+        for (int im = 1; im <= SmenTotal; im++) { //Smenから上からの指定した番目の面のidを求める。
+            s0[im].set_FaceId2fromTop_counted_position(jg);//s0[]はSmen_zuから得られるSmenそのもの、jgは上下表Jyougehyouのこと
         }
         //ここまでで、上下表の情報がSmenの各面に入った
 
         //面を描く
         //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オフ
         int Men_jyunban;
-        for (int im = 1; im <= Smensuu; im++) {//imは各Smenの番号
-            if (s0[im].getMenidsuu() > 0) {//MenidsuuはSmen(折り畳み推定してえられた針金図を細分割した面)で重なっているMen(折りたたむ前の展開図の面)の数。これが0なら、ドーナツ状の穴の面なので描画対象外
+        for (int im = 1; im <= SmenTotal; im++) {//imは各Smenの番号
+            if (s0[im].getFaceIdCount() > 0) {//MenidsuuはSmen(折り畳み推定してえられた針金図を細分割した面)で重なっているMen(折りたたむ前の展開図の面)の数。これが0なら、ドーナツ状の穴の面なので描画対象外
 
                 //折り上がり図を描くときのim番目のSmenの色を決める
                 Men_jyunban = 1;
                 if (omote_ura == 1) {
-                    Men_jyunban = s0[im].getMenidsuu();
+                    Men_jyunban = s0[im].getFaceIdCount();
                 }
 
 
@@ -1856,18 +1856,18 @@ int ss; ss=getSmen_yuukou_suu();
 
                 //折り上がり図を描くときのim番目のSmenの多角形の頂点の座標（PC表示上）を求める
                 for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
-                    t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
-                    t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
+                    t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
+                    t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
-                    x[i] = gx(t1.getx());
-                    y[i] = gy(t1.gety());
+                    x[i] = gx(t1.getX());
+                    y[i] = gy(t1.getY());
                 }
 
-                t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
-                t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
                 t1.set(camera.object2TV(t0));
-                x[0] = gx(t1.getx());
-                y[0] = gy(t1.gety());
+                x[0] = gx(t1.getX());
+                y[0] = gy(t1.getY());
                 //折り上がり図を描くときのim番目のSmenの多角形の頂点の座標（PC表示上）を求めるのはここまで
 
                 //g2.fill(new Polygon(x,y,Smen_zu.getTenidsuu(im)));  //svg出力
@@ -1928,10 +1928,10 @@ int ss; ss=getSmen_yuukou_suu();
             Mid_min = Smen_zu.Stick_moti_Menid_min_motome(ib);//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
             Mid_max = Smen_zu.Stick_moti_Menid_max_motome(ib);
 
-            if (s0[Mid_min].getMenidsuu() == 0) {
+            if (s0[Mid_min].getFaceIdCount() == 0) {
                 oekaki_flg = 1;
             }//menをもたない、ドーナツの穴状のSmenは境界の棒を描く
-            else if (s0[Mid_max].getMenidsuu() == 0) {
+            else if (s0[Mid_max].getFaceIdCount() == 0) {
                 oekaki_flg = 1;
             } else if (Mid_min == Mid_max) {
                 oekaki_flg = 1;
@@ -1939,11 +1939,11 @@ int ss; ss=getSmen_yuukou_suu();
             else {
                 Men_jyunban_min = 1;
                 if (omote_ura == 1) {
-                    Men_jyunban_min = s0[Mid_min].getMenidsuu();
+                    Men_jyunban_min = s0[Mid_min].getFaceIdCount();
                 }
                 Men_jyunban_max = 1;
                 if (omote_ura == 1) {
-                    Men_jyunban_max = s0[Mid_max].getMenidsuu();
+                    Men_jyunban_max = s0[Mid_max].getFaceIdCount();
                 }
                 if (s0[Mid_min].uekara_kazoeta_Menid(Men_jyunban_min) != s0[Mid_max].uekara_kazoeta_Menid(Men_jyunban_max)) {
                     oekaki_flg = 1;
@@ -1955,13 +1955,13 @@ int ss; ss=getSmen_yuukou_suu();
                 s_tv.set(camera.object2TV(s_ob));
                 //g.drawLine( gx(s_tv.getax()),gy(s_tv.getay()),gx(s_tv.getbx()),gy(s_tv.getby())); //svg に直線を出力
 
-                a.set(s_tv.geta());
-                b.set(s_tv.getb());//a.set(s_tv.getax()+0.000001,s_tv.getay()+0.000001); b.set(s_tv.getbx()+0.000001,s_tv.getby()+0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+                a.set(s_tv.getA());
+                b.set(s_tv.getB());//a.set(s_tv.getax()+0.000001,s_tv.getay()+0.000001); b.set(s_tv.getbx()+0.000001,s_tv.getby()+0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
-                BigDecimal b_ax = new BigDecimal(String.valueOf(a.getx()));
-                BigDecimal b_ay = new BigDecimal(String.valueOf(a.gety()));
-                BigDecimal b_bx = new BigDecimal(String.valueOf(b.getx()));
-                BigDecimal b_by = new BigDecimal(String.valueOf(b.gety()));
+                BigDecimal b_ax = new BigDecimal(String.valueOf(a.getX()));
+                BigDecimal b_ay = new BigDecimal(String.valueOf(a.getY()));
+                BigDecimal b_bx = new BigDecimal(String.valueOf(b.getX()));
+                BigDecimal b_by = new BigDecimal(String.valueOf(b.getY()));
 
 
                 memo_temp.addLine("<line x1=\"" + b_ax.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + "\"" +
@@ -2001,8 +2001,8 @@ int ss; ss=getSmen_yuukou_suu();
         OritaOekaki OO = new OritaOekaki();
         Point t0 = new Point();
         Point t1 = new Point();
-        Line s_ob = new Line();
-        Line s_tv = new Line();
+        LineSegment s_ob = new LineSegment();
+        LineSegment s_tv = new LineSegment();
         String text = "";//文字列処理用のクラスのインスタンス化
         ip1 = omote_ura;
         //  System.out.println(Smensuu);
@@ -2014,19 +2014,19 @@ int ss; ss=getSmen_yuukou_suu();
 
         if (hyouji_flg == 5) {//折紙表示---------------------------------------------------------------------------
 
-            for (int im = 1; im <= Smensuu; im++) { //Smenから上からの指定した番目の面のidを求める。
-                s0[im].set_Menid2uekara_kazoeta_iti(jg);
+            for (int im = 1; im <= SmenTotal; im++) { //Smenから上からの指定した番目の面のidを求める。
+                s0[im].set_FaceId2fromTop_counted_position(jg);
             }
 
 
             //面を描く
 //System.out.println("上下表職人　oekaki_with_camera+++++++++++++++折紙表示　面を描く");
             int Men_jyunban;
-            for (int im = 1; im <= Smensuu; im++) {
-                if (s0[im].getMenidsuu() > 0) {
+            for (int im = 1; im <= SmenTotal; im++) {
+                if (s0[im].getFaceIdCount() > 0) {
                     Men_jyunban = 1;
                     if (omote_ura == 1) {
-                        Men_jyunban = s0[im].getMenidsuu();
+                        Men_jyunban = s0[im].getFaceIdCount();
                     }
 
                     if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
@@ -2047,20 +2047,20 @@ int ss; ss=getSmen_yuukou_suu();
 
                     for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
 
-                        t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
-                        t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
+                        t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
+                        t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                         t1.set(camera.object2TV(t0));
-                        x[i] = gx(t1.getx());
-                        y[i] = gy(t1.gety());
+                        x[i] = gx(t1.getX());
+                        y[i] = gy(t1.getY());
                         //x[i]=gx(Smen_zu.getTenx(Smen_zu.getTenid(im,i)));
                         //y[i]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,i)));
                     }
 
-                    t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
-                    t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                    t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                    t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
                     t1.set(camera.object2TV(t0));
-                    x[0] = gx(t1.getx());
-                    y[0] = gy(t1.gety());
+                    x[0] = gx(t1.getX());
+                    y[0] = gy(t1.getY());
                     //x[0]=gx(Smen_zu.getTenx(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
                     //y[0]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
 
@@ -2079,10 +2079,10 @@ int ss; ss=getSmen_yuukou_suu();
                 Mid_min = Smen_zu.Stick_moti_Menid_min_motome(ib);//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
                 Mid_max = Smen_zu.Stick_moti_Menid_max_motome(ib);
 
-                if (s0[Mid_min].getMenidsuu() == 0) {
+                if (s0[Mid_min].getFaceIdCount() == 0) {
                     oekaki_flg = 1;
                 }//menをもたない、ドーナツの穴状のSmenは境界の棒を描く
-                else if (s0[Mid_max].getMenidsuu() == 0) {
+                else if (s0[Mid_max].getFaceIdCount() == 0) {
                     oekaki_flg = 1;
                 } else if (Mid_min == Mid_max) {
                     oekaki_flg = 1;
@@ -2090,11 +2090,11 @@ int ss; ss=getSmen_yuukou_suu();
                 else {
                     Men_jyunban_min = 1;
                     if (omote_ura == 1) {
-                        Men_jyunban_min = s0[Mid_min].getMenidsuu();
+                        Men_jyunban_min = s0[Mid_min].getFaceIdCount();
                     }
                     Men_jyunban_max = 1;
                     if (omote_ura == 1) {
-                        Men_jyunban_max = s0[Mid_max].getMenidsuu();
+                        Men_jyunban_max = s0[Mid_max].getFaceIdCount();
                     }
                     if (s0[Mid_min].uekara_kazoeta_Menid(Men_jyunban_min) != s0[Mid_max].uekara_kazoeta_Menid(Men_jyunban_max)) {
                         oekaki_flg = 1;
@@ -2104,7 +2104,7 @@ int ss; ss=getSmen_yuukou_suu();
                 if (oekaki_flg == 1) {//棒を描く。
                     s_ob.set(Smen_zu.getmaex(ib), Smen_zu.getmaey(ib), Smen_zu.getatox(ib), Smen_zu.getatoy(ib));
                     s_tv.set(camera.object2TV(s_ob));
-                    g.drawLine(gx(s_tv.getax()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
+                    g.drawLine(gx(s_tv.getAx()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
                     //g.drawLine( gx(Smen_zu.getmaex(ib)),gy(Smen_zu.getmaey(ib)),gx(Smen_zu.getatox(ib)),gy(Smen_zu.getatoy(ib))); //直線
                 }
 
@@ -2130,22 +2130,22 @@ int ss; ss=getSmen_yuukou_suu();
 
                 for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
 
-                    t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
-                    t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
+                    t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
+                    t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
-                    x[i] = gx(t1.getx());
-                    y[i] = gy(t1.gety());
+                    x[i] = gx(t1.getX());
+                    y[i] = gy(t1.getY());
                     //x[i]=gx(Smen_zu.getTenx(Smen_zu.getTenid(im,i)));
                     //y[i]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,i)));
                     //x[i]=gx(Smen_zu.getTenx(Smen_zu.getTenid(im,i)));
                     //y[i]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,i)));
                 }
 
-                t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
-                t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
                 t1.set(camera.object2TV(t0));
-                x[0] = gx(t1.getx());
-                y[0] = gy(t1.gety());
+                x[0] = gx(t1.getX());
+                y[0] = gy(t1.getY());
                 //x[0]=gx(Smen_zu.getTenx(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
                 //y[0]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
                 //x[0]=gx(Smen_zu.getTenx(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
@@ -2177,8 +2177,8 @@ int ss; ss=getSmen_yuukou_suu();
 
         Point t_ob = new Point();
         Point t_tv = new Point();
-        Line s_ob = new Line();
-        Line s_tv = new Line();
+        LineSegment s_ob = new LineSegment();
+        LineSegment s_tv = new LineSegment();
 
         ip1 = omote_ura;
         //  System.out.println(Smensuu);
@@ -2219,11 +2219,11 @@ int ss; ss=getSmen_yuukou_suu();
             String text = "";//文字列処理用のクラスのインスタンス化
 
             text = "M ";
-            t_ob.setx(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, 1)));
-            t_ob.sety(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, 1)));
+            t_ob.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, 1)));
+            t_ob.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, 1)));
             t_tv.set(camera.object2TV(t_ob));
-            BigDecimal b_t_tv_x = new BigDecimal(String.valueOf(t_tv.getx()));
-            BigDecimal b_t_tv_y = new BigDecimal(String.valueOf(t_tv.gety()));
+            BigDecimal b_t_tv_x = new BigDecimal(String.valueOf(t_tv.getX()));
+            BigDecimal b_t_tv_y = new BigDecimal(String.valueOf(t_tv.getY()));
 
             text = text + b_t_tv_x.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + " " +
                     b_t_tv_y.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + " ";
@@ -2231,11 +2231,11 @@ int ss; ss=getSmen_yuukou_suu();
 
             for (int i = 2; i <= otta_Men_zu.getTenidsuu(im); i++) {
                 text = text + "L ";
-                t_ob.setx(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, i)));
-                t_ob.sety(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, i)));
+                t_ob.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, i)));
+                t_ob.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, i)));
                 t_tv.set(camera.object2TV(t_ob));
-                BigDecimal b_t_tv_x_i = new BigDecimal(String.valueOf(t_tv.getx()));
-                BigDecimal b_t_tv_y_i = new BigDecimal(String.valueOf(t_tv.gety()));
+                BigDecimal b_t_tv_x_i = new BigDecimal(String.valueOf(t_tv.getX()));
+                BigDecimal b_t_tv_y_i = new BigDecimal(String.valueOf(t_tv.getY()));
 
                 text = text + b_t_tv_x_i.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + " " +
                         b_t_tv_y_i.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + " ";
@@ -2335,8 +2335,8 @@ int ss; ss=getSmen_yuukou_suu();
         OritaOekaki OO = new OritaOekaki();
         Point t0 = new Point();
         Point t1 = new Point();
-        Line s_ob = new Line();
-        Line s_tv = new Line();
+        LineSegment s_ob = new LineSegment();
+        LineSegment s_tv = new LineSegment();
         String text = "";//文字列処理用のクラスのインスタンス化
 
         //面を描く準備
@@ -2364,18 +2364,18 @@ int ss; ss=getSmen_yuukou_suu();
             //面を描く
             for (int im = 1; im <= otta_Men_zu.getFacesTotal(); im++) {
                 for (int i = 1; i <= otta_Men_zu.getTenidsuu(im) - 1; i++) {
-                    t0.setx(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, i)));
-                    t0.sety(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, i)));
+                    t0.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, i)));
+                    t0.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
-                    x[i] = gx(t1.getx());
-                    y[i] = gy(t1.gety());
+                    x[i] = gx(t1.getX());
+                    y[i] = gy(t1.getY());
                 }
 
-                t0.setx(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, otta_Men_zu.getTenidsuu(im))));
-                t0.sety(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, otta_Men_zu.getTenidsuu(im))));
+                t0.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, otta_Men_zu.getTenidsuu(im))));
+                t0.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, otta_Men_zu.getTenidsuu(im))));
                 t1.set(camera.object2TV(t0));
-                x[0] = gx(t1.getx());
-                y[0] = gy(t1.gety());
+                x[0] = gx(t1.getX());
+                y[0] = gy(t1.getY());
                 g.fillPolygon(x, y, otta_Men_zu.getTenidsuu(im));
                 //g.drawPolygon(x,y,otta_Men_zu.getTenidsuu(im));
             }
@@ -2402,7 +2402,7 @@ int ss; ss=getSmen_yuukou_suu();
             for (int ib = 1; ib <= Smen_zu.getSticksTotal(); ib++) {
                 s_ob.set(Smen_zu.getmaex(ib), Smen_zu.getmaey(ib), Smen_zu.getatox(ib), Smen_zu.getatoy(ib));
                 s_tv.set(camera.object2TV(s_ob));
-                g.drawLine(gx(s_tv.getax()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
+                g.drawLine(gx(s_tv.getAx()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
             }
 
 
@@ -2421,7 +2421,7 @@ int ss; ss=getSmen_yuukou_suu();
 
             for (int im = 1; im <= Smen_zu.getFacesTotal(); im++) {
 
-                col_kosa = colmax - col_hiku * (s0[im].getMenidsuu());
+                col_kosa = colmax - col_hiku * (s0[im].getFaceIdCount());
 
 
                 if (col_kosa > 255) {
@@ -2435,18 +2435,18 @@ int ss; ss=getSmen_yuukou_suu();
                 g.setColor(new Color(col_kosa, col_kosa, col_kosa));
 
                 for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
-                    t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
-                    t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
+                    t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
+                    t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
-                    x[i] = gx(t1.getx());
-                    y[i] = gy(t1.gety());
+                    x[i] = gx(t1.getX());
+                    y[i] = gy(t1.getY());
                 }
 
-                t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
-                t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
                 t1.set(camera.object2TV(t0));
-                x[0] = gx(t1.getx());
-                y[0] = gy(t1.gety());
+                x[0] = gx(t1.getX());
+                y[0] = gy(t1.getY());
                 g.fillPolygon(x, y, Smen_zu.getTenidsuu(im));
             }
 
@@ -2472,7 +2472,7 @@ int ss; ss=getSmen_yuukou_suu();
             for (int ib = 1; ib <= Smen_zu.getSticksTotal(); ib++) {
                 s_ob.set(Smen_zu.getmaex(ib), Smen_zu.getmaey(ib), Smen_zu.getatox(ib), Smen_zu.getatoy(ib));
                 s_tv.set(camera.object2TV(s_ob));
-                g.drawLine(gx(s_tv.getax()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
+                g.drawLine(gx(s_tv.getAx()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
             }
 
         }
@@ -2495,8 +2495,8 @@ int ss; ss=getSmen_yuukou_suu();
         OritaOekaki OO = new OritaOekaki();
         Point t0 = new Point();
         Point t1 = new Point();
-        Line s_ob = new Line();
-        Line s_tv = new Line();
+        LineSegment s_ob = new LineSegment();
+        LineSegment s_tv = new LineSegment();
         String text = "";//文字列処理用のクラスのインスタンス化
         ip1 = omote_ura;
         //  System.out.println(Smensuu);
@@ -2512,8 +2512,8 @@ int ss; ss=getSmen_yuukou_suu();
         //if(hyouji_flg==5){//折紙表示---------------------------------------------------------------------------
 
         //Smenの.set_Menid2uekara_kazoeta_itiは現在の上下表をもとに、上から数えてi番めの面のid番号を全ての順番につき格納する。
-        for (int im = 1; im <= Smensuu; im++) { //Smenから上からの指定した番目の面のidを求める。
-            s0[im].set_Menid2uekara_kazoeta_iti(jg);//s0[]はSmen_zuから得られるSmenそのもの、jgは上下表Jyougehyouのこと
+        for (int im = 1; im <= SmenTotal; im++) { //Smenから上からの指定した番目の面のidを求める。
+            s0[im].set_FaceId2fromTop_counted_position(jg);//s0[]はSmen_zuから得られるSmenそのもの、jgは上下表Jyougehyouのこと
         }
         //ここまでで、上下表の情報がSmenの各面に入った
 
@@ -2522,13 +2522,13 @@ int ss; ss=getSmen_yuukou_suu();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オフ
 
         int Men_jyunban;
-        for (int im = 1; im <= Smensuu; im++) {//imは各Smenの番号
-            if (s0[im].getMenidsuu() > 0) {//MenidsuuはSmen(折り畳み推定してえられた針金図を細分割した面)で重なっているMen(折りたたむ前の展開図の面)の数。これが0なら、ドーナツ状の穴の面なので描画対象外
+        for (int im = 1; im <= SmenTotal; im++) {//imは各Smenの番号
+            if (s0[im].getFaceIdCount() > 0) {//MenidsuuはSmen(折り畳み推定してえられた針金図を細分割した面)で重なっているMen(折りたたむ前の展開図の面)の数。これが0なら、ドーナツ状の穴の面なので描画対象外
 
                 //折り上がり図を描くときのim番目のSmenの色を決める
                 Men_jyunban = 1;
                 if (omote_ura == 1) {
-                    Men_jyunban = s0[im].getMenidsuu();
+                    Men_jyunban = s0[im].getFaceIdCount();
                 }
 
                 //if(orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban))%2==1){g.setColor(new Color(255,255,50));}
@@ -2560,20 +2560,20 @@ int ss; ss=getSmen_yuukou_suu();
 
                 for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
 
-                    t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
-                    t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
+                    t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
+                    t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
-                    x[i] = gx(t1.getx());
-                    y[i] = gy(t1.gety());
+                    x[i] = gx(t1.getX());
+                    y[i] = gy(t1.getY());
                     //x[i]=gx(Smen_zu.getTenx(Smen_zu.getTenid(im,i)));
                     //y[i]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,i)));
                 }
 
-                t0.setx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
-                t0.sety(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
                 t1.set(camera.object2TV(t0));
-                x[0] = gx(t1.getx());
-                y[0] = gy(t1.gety());
+                x[0] = gx(t1.getX());
+                y[0] = gy(t1.getY());
                 //x[0]=gx(Smen_zu.getTenx(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
                 //y[0]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
 
@@ -2620,7 +2620,7 @@ int ss; ss=getSmen_yuukou_suu();
                     //棒の座標   Smen_zu.getmaex(ib),Smen_zu.getmaey(ib)   -    Smen_zu.getatox(ib) , Smen_zu.getatoy(ib)
                     Point b_mae = new Point(Smen_zu.getmaex(ib), Smen_zu.getmaey(ib));
                     Point b_ato = new Point(Smen_zu.getatox(ib), Smen_zu.getatoy(ib));
-                    double b_nagasa = b_mae.kyori(b_ato);
+                    double b_nagasa = b_mae.distance(b_ato);
 
                     //棒と直交するベクトル
                     double o_btx = -(Smen_zu.getmaey(ib) - Smen_zu.getatoy(ib)) * 10.0 / b_nagasa;//棒と直交するxベクトル
@@ -2633,11 +2633,11 @@ int ss; ss=getSmen_yuukou_suu();
                     o_bmx = (Smen_zu.getmaex(ib) + Smen_zu.getatox(ib)) / 2.0;
                     o_bmy = (Smen_zu.getmaey(ib) + Smen_zu.getatoy(ib)) / 2.0;
 
-                    t0.setx(o_bmx);
-                    t0.sety(o_bmy);
+                    t0.setX(o_bmx);
+                    t0.setY(o_bmy);
                     t1.set(camera.object2TV(t0));
-                    t_bmx = t1.getx();
-                    t_bmy = t1.gety();
+                    t_bmx = t1.getX();
+                    t_bmy = t1.getY();
 
                     //棒の中点を通る直交線上の点
                     double o_bmtx, o_bmty;
@@ -2651,48 +2651,48 @@ int ss; ss=getSmen_yuukou_suu();
                     if (Smen_zu.inside(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), im) != 0) {//0=外部、　1=境界、　2=内部
 
 
-                        t0.setx(o_bmtx);
-                        t0.sety(o_bmty);
+                        t0.setX(o_bmtx);
+                        t0.setY(o_bmty);
                         t1.set(camera.object2TV(t0));
-                        t_bmtx = t1.getx();
-                        t_bmty = t1.gety();
+                        t_bmtx = t1.getX();
+                        t_bmty = t1.getY();
 
 
                         //影の長方形
 
                         // ---------- [0] ----------------
-                        t0.setx(Smen_zu.getmaex(ib));
-                        t0.sety(Smen_zu.getmaey(ib));
+                        t0.setX(Smen_zu.getmaex(ib));
+                        t0.setY(Smen_zu.getmaey(ib));
                         t1.set(camera.object2TV(t0));
-                        xd[0] = t1.getx();
-                        yd[0] = t1.gety();
+                        xd[0] = t1.getX();
+                        yd[0] = t1.getY();
                         x[0] = (int) xd[0];
                         y[0] = (int) yd[0];
 
                         // ---------- [1] ----------------
-                        t0.setx(Smen_zu.getmaex(ib) + o_btx);
-                        t0.sety(Smen_zu.getmaey(ib) + o_bty);
+                        t0.setX(Smen_zu.getmaex(ib) + o_btx);
+                        t0.setY(Smen_zu.getmaey(ib) + o_bty);
                         t1.set(camera.object2TV(t0));
-                        xd[1] = t1.getx();
-                        yd[1] = t1.gety();
+                        xd[1] = t1.getX();
+                        yd[1] = t1.getY();
                         x[1] = (int) xd[1];
                         y[1] = (int) yd[1];
 
                         // ---------- [2] ----------------
-                        t0.setx(Smen_zu.getatox(ib) + o_btx);
-                        t0.sety(Smen_zu.getatoy(ib) + o_bty);
+                        t0.setX(Smen_zu.getatox(ib) + o_btx);
+                        t0.setY(Smen_zu.getatoy(ib) + o_bty);
                         t1.set(camera.object2TV(t0));
-                        xd[2] = t1.getx();
-                        yd[2] = t1.gety();
+                        xd[2] = t1.getX();
+                        yd[2] = t1.getY();
                         x[2] = (int) xd[2];
                         y[2] = (int) yd[2];
 
                         // ---------- [3] ----------------
-                        t0.setx(Smen_zu.getatox(ib));
-                        t0.sety(Smen_zu.getatoy(ib));
+                        t0.setX(Smen_zu.getatox(ib));
+                        t0.setY(Smen_zu.getatoy(ib));
                         t1.set(camera.object2TV(t0));
-                        xd[3] = t1.getx();
-                        yd[3] = t1.gety();
+                        xd[3] = t1.getX();
+                        yd[3] = t1.getY();
                         x[3] = (int) xd[3];
                         y[3] = (int) yd[3];
 
@@ -2718,48 +2718,48 @@ int ss; ss=getSmen_yuukou_suu();
 
                     if (Smen_zu.inside(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), im) != 0) {//0=外部、　1=境界、　2=内部
 
-                        t0.setx(o_bmtx);
-                        t0.sety(o_bmty);
+                        t0.setX(o_bmtx);
+                        t0.setY(o_bmty);
                         t1.set(camera.object2TV(t0));
-                        t_bmtx = t1.getx();
-                        t_bmty = t1.gety();
+                        t_bmtx = t1.getX();
+                        t_bmty = t1.getY();
 
 
                         //影の長方形
 
                         // ---------- [0] ----------------
-                        t0.setx(Smen_zu.getmaex(ib));
-                        t0.sety(Smen_zu.getmaey(ib));
+                        t0.setX(Smen_zu.getmaex(ib));
+                        t0.setY(Smen_zu.getmaey(ib));
                         t1.set(camera.object2TV(t0));
-                        xd[0] = t1.getx();
-                        yd[0] = t1.gety();
+                        xd[0] = t1.getX();
+                        yd[0] = t1.getY();
                         x[0] = (int) xd[0];
                         y[0] = (int) yd[0];
 
                         // ---------- [1] ----------------
-                        t0.setx(Smen_zu.getmaex(ib) + o_btx);
-                        t0.sety(Smen_zu.getmaey(ib) + o_bty);
+                        t0.setX(Smen_zu.getmaex(ib) + o_btx);
+                        t0.setY(Smen_zu.getmaey(ib) + o_bty);
                         t1.set(camera.object2TV(t0));
-                        xd[1] = t1.getx();
-                        yd[1] = t1.gety();
+                        xd[1] = t1.getX();
+                        yd[1] = t1.getY();
                         x[1] = (int) xd[1];
                         y[1] = (int) yd[1];
 
                         // ---------- [2] ----------------
-                        t0.setx(Smen_zu.getatox(ib) + o_btx);
-                        t0.sety(Smen_zu.getatoy(ib) + o_bty);
+                        t0.setX(Smen_zu.getatox(ib) + o_btx);
+                        t0.setY(Smen_zu.getatoy(ib) + o_bty);
                         t1.set(camera.object2TV(t0));
-                        xd[2] = t1.getx();
-                        yd[2] = t1.gety();
+                        xd[2] = t1.getX();
+                        yd[2] = t1.getY();
                         x[2] = (int) xd[2];
                         y[2] = (int) yd[2];
 
                         // ---------- [3] ----------------
-                        t0.setx(Smen_zu.getatox(ib));
-                        t0.sety(Smen_zu.getatoy(ib));
+                        t0.setX(Smen_zu.getatox(ib));
+                        t0.setY(Smen_zu.getatoy(ib));
                         t1.set(camera.object2TV(t0));
-                        xd[3] = t1.getx();
-                        yd[3] = t1.gety();
+                        xd[3] = t1.getX();
+                        yd[3] = t1.getY();
                         x[3] = (int) xd[3];
                         y[3] = (int) yd[3];
 
@@ -2806,10 +2806,10 @@ int ss; ss=getSmen_yuukou_suu();
             Mid_min = Smen_zu.Stick_moti_Menid_min_motome(ib);//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
             Mid_max = Smen_zu.Stick_moti_Menid_max_motome(ib);
 
-            if (s0[Mid_min].getMenidsuu() == 0) {
+            if (s0[Mid_min].getFaceIdCount() == 0) {
                 oekaki_flg = 1;
             }//menをもたない、ドーナツの穴状のSmenは境界の棒を描く
-            else if (s0[Mid_max].getMenidsuu() == 0) {
+            else if (s0[Mid_max].getFaceIdCount() == 0) {
                 oekaki_flg = 1;
             } else if (Mid_min == Mid_max) {
                 oekaki_flg = 1;
@@ -2817,11 +2817,11 @@ int ss; ss=getSmen_yuukou_suu();
             else {
                 Men_jyunban_min = 1;
                 if (omote_ura == 1) {
-                    Men_jyunban_min = s0[Mid_min].getMenidsuu();
+                    Men_jyunban_min = s0[Mid_min].getFaceIdCount();
                 }
                 Men_jyunban_max = 1;
                 if (omote_ura == 1) {
-                    Men_jyunban_max = s0[Mid_max].getMenidsuu();
+                    Men_jyunban_max = s0[Mid_max].getFaceIdCount();
                 }
                 if (s0[Mid_min].uekara_kazoeta_Menid(Men_jyunban_min) != s0[Mid_max].uekara_kazoeta_Menid(Men_jyunban_max)) {
                     oekaki_flg = 1;
@@ -2832,7 +2832,7 @@ int ss; ss=getSmen_yuukou_suu();
                 s_ob.set(Smen_zu.getmaex(ib), Smen_zu.getmaey(ib), Smen_zu.getatox(ib), Smen_zu.getatoy(ib));
                 s_tv.set(camera.object2TV(s_ob));
                 //g2.draw(new Line2D.Double( gx(s_tv.getax()),gy(s_tv.getay()),gx(s_tv.getbx()),gy(s_tv.getby())));
-                g.drawLine(gx(s_tv.getax()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
+                g.drawLine(gx(s_tv.getAx()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
                 //g.drawLine( gx(Smen_zu.getmaex(ib)),gy(Smen_zu.getmaey(ib)),gx(Smen_zu.getatox(ib)),gy(Smen_zu.getatoy(ib))); //直線
             }
 
@@ -2886,10 +2886,10 @@ int ss; ss=getSmen_yuukou_suu();
         Mid_min = Smen_zu.Stick_moti_Menid_min_motome(ib);//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
         Mid_max = Smen_zu.Stick_moti_Menid_max_motome(ib);
 
-        if (s0[Mid_min].getMenidsuu() == 0) {
+        if (s0[Mid_min].getFaceIdCount() == 0) {
             return 0;
         }//menをもたない、ドーナツの穴状のSmenとの境界の棒には影なし
-        if (s0[Mid_max].getMenidsuu() == 0) {
+        if (s0[Mid_max].getFaceIdCount() == 0) {
             return 0;
         }//menをもたない、ドーナツの穴状のSmenとの境界の棒には影なし
         if (Mid_min == Mid_max) {
@@ -2898,11 +2898,11 @@ int ss; ss=getSmen_yuukou_suu();
 
         Men_jyunban_min = 1;
         if (omote_ura == 1) {
-            Men_jyunban_min = s0[Mid_min].getMenidsuu();
+            Men_jyunban_min = s0[Mid_min].getFaceIdCount();
         }
         Men_jyunban_max = 1;
         if (omote_ura == 1) {
-            Men_jyunban_max = s0[Mid_max].getMenidsuu();
+            Men_jyunban_max = s0[Mid_max].getFaceIdCount();
         }
 
         int Mid_min_mieteru_men_id = s0[Mid_min].uekara_kazoeta_Menid(Men_jyunban_min);
@@ -3231,7 +3231,7 @@ int ss; ss=getSmen_yuukou_suu();
             i_kentouzumi[i] = 0;
         }
 
-        for (int i = 1; i <= Smensuu; i++) {
+        for (int i = 1; i <= SmenTotal; i++) {
             int s_top_id = get_s_top_id_without_rated_men(i);//各s面の（レートがついた面は除く）一番上の面。s_top_id=0ならそのs面にはレートが未定の面はない
             //System.out.println("*********   get_top_men_id_without_rated_men()   Smen ID = "+I+"  s_top_id = "+s_top_id+  "   負け数 = "+get_maketa_kazu_goukei_without_rated_men(s_top_id));
 
@@ -3281,7 +3281,7 @@ int ss; ss=getSmen_yuukou_suu();
 
     private int get_s_top_id_without_rated_men(int ism) {//ismはs面のid
 //System.out.println("*********   get_s_top_id_without_rated_men   *************");
-        int Mensuu = s0[ism].getMenidsuu();//Smenでの面数//Smen s0[];//Smen_zuから得られるSmen
+        int Mensuu = s0[ism].getFaceIdCount();//Smenでの面数//Smen s0[];//Smen_zuから得られるSmen
         for (int jyunban = 1; jyunban <= Mensuu; jyunban++) {
             int im = s0[ism].uekara_kazoeta_Menid(jyunban);
             if (i_men_rating[im] == 0) {
@@ -3296,7 +3296,7 @@ int ss; ss=getSmen_yuukou_suu();
     private int get_maketa_kazu_goukei_without_rated_men(int men_id) {
 //System.out.println("*********   get_maketa_kazu_goukei_without_rated_men   *************");
         int i_make = 0;
-        for (int ism = 1; ism <= Smensuu; ism++) {
+        for (int ism = 1; ism <= SmenTotal; ism++) {
             i_make = i_make + get_smen_de_maketa_kazu_without_rated_men(ism, men_id);
             if (i_make >= top_men_id_ga_maketa_kazu_goukei_without_rated_men) {
                 return i_make;
@@ -3311,7 +3311,7 @@ int ss; ss=getSmen_yuukou_suu();
     //-----------------------------------
     private int get_smen_de_maketa_kazu_without_rated_men(int ism, int men_id) {//ismはsmenのid
 //System.out.println("*********   get_smen_de_maketa_kazu_without_rated_men   *************");
-        int Mensuu = s0[ism].getMenidsuu();//Smenでの面数//Smen s0[];//Smen_zuから得られるSmen
+        int Mensuu = s0[ism].getFaceIdCount();//Smenでの面数//Smen s0[];//Smen_zuから得られるSmen
         int maketa_kazu = 0;
 //System.out.println("*********   get_smen_de_maketa_kazu_without_rated_men   ********Mensuu = "+Mensuu);
 //System.out.println("*********   get_smen_de_maketa_kazu_without_rated_men   ********men_id = "+men_id);

@@ -30,7 +30,7 @@ public class OritaCalc {
 
 
     //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。
-    public Point kage_motome(StraightLine t, Point p) {
+    public Point shadow_request(StraightLine t, Point p) {
 
         StraightLine t1 = new StraightLine();
         t1.set(t);
@@ -39,33 +39,33 @@ public class OritaCalc {
     }
 
     //点P0とP1を通る直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。
-    public Point kage_motome(Point p0, Point p1, Point p) {
+    public Point shadow_request(Point p0, Point p1, Point p) {
         StraightLine t = new StraightLine(p0, p1);
-        return kage_motome(t, p);
+        return shadow_request(t, p);
     }
 
-    //線分s0を含む直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。
-    public Point kage_motome(Line s0, Point p) {
-        return kage_motome(s0.geta(), s0.getb(), p);
+    //Find the position of the shadow of the point p on the straight line t including the line segment s0 (the position on the straight line t closest to the point p).
+    public Point shadow_request(LineSegment s0, Point p) {
+        return shadow_request(s0.getA(), s0.getB(), p);
     }
 
 
-    //2つの点が同じ位置(true)か異なる(false)か判定する関数----------------------------------
-    public boolean hitosii(Point p1, Point p2) {
-        return hitosii(p1, p2, 0.1);//ここで誤差が定義されている。
+    //A function that determines whether two points are in the same position (true) or different (false) -------------------------------- -
+    public boolean equal(Point p1, Point p2) {
+        return equal(p1, p2, 0.1);//The error is defined here.
     }
 
-    public boolean hitosii(Point p1, Point p2, double r) {//rは誤差の許容度。rが負なら厳密判定。
+    public boolean equal(Point p1, Point p2, double r) {//r is the error tolerance. Strict judgment if r is negative.
 
         //厳密に判定。
         if (r <= 0.0) {
-            if ((p1.getx() == p2.getx()) && (p1.gety() == p2.gety())) {
+            if ((p1.getX() == p2.getX()) && (p1.getY() == p2.getY())) {
                 return true;
             }
         }
         //誤差を許容。
         if (r > 0) {
-            if (kyori(p1, p2) <= r) {
+            if (distance(p1, p2) <= r) {
                 return true;
             }
         }
@@ -73,24 +73,17 @@ public class OritaCalc {
     }
 
     //２点間の距離（整数）を求める関数----------------------------------------------------
-    public double kyori(Point p0, Point p1) {
-        return p0.kyori(p1);
+    public double distance(Point p0, Point p1) {
+        return p0.distance(p1);
     }
 
-    /*
-	public double kyori(Ten p0,Ten p1){
-		double x0=p0.getx(),y0=p0.gety();
-		double x1=p1.getx(),y1=p1.gety();
-		return Math.sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0));
-	}
-*/
-    //２点間a,bを指定して、ベクトルabとx軸のなす角度を求める関数。もしa=bなら-10000.0を返す----------------------------------------------------
-    public double kakudo(Point a, Point b) {
+    //A function that finds the angle between the vector ab and the x-axis by specifying a and b between two points. If a = b, return -10000.0 ----------------------------------------- -----------
+    public double angle(Point a, Point b) {
         double ax, ay, bx, by, x, y, L, c, ret;
-        ax = a.getx();
-        ay = a.gety();
-        bx = b.getx();
-        by = b.gety();
+        ax = a.getX();
+        ay = a.getY();
+        bx = b.getX();
+        by = b.getY();
         x = bx - ax;
         y = by - ay;
         L = Math.sqrt(x * x + y * y);
@@ -115,22 +108,22 @@ public class OritaCalc {
 
 
     //線分を指定して、ベクトルabとx軸のなす角度を求める関数。もしa=bなら-10000.0を返す----------------------------------------------------
-    public double kakudo(Line s) {
-        return kakudo(s.geta(), s.getb());
+    public double angle(LineSegment s) {
+        return angle(s.getA(), s.getB());
     }
 
     //線分を指定して、ベクトルabとx軸のなす角度を求める関数。もしa=bなら-10000.0を返す----------------------------------------------------
-    public double kakudozure(Line s, double a) {
+    public double kakudozure(LineSegment s, double a) {
         double b;//実際の角度をaで割った時の剰余
-        b = kakudo(s) % a;
+        b = angle(s) % a;
         if (a - b < b) {
             b = a - b;
         }
         return b;
     }
 
-    //点paが、二点p1,p2を端点とする線分に点p1と点p2で直行する、2つの線分を含む長方形内にある場合は2を返す関数
-    public int hakononaka(Point p1, Point pa, Point p2) {
+    //A function that returns 2 if the point pa is in a rectangle containing two line segments that is orthogonal to the line segment ending at the two points p1 and p2 at the points p1 and p2.
+    public int isInside(Point p1, Point pa, Point p2) {
         StraightLine t = new StraightLine(p1, p2);//p1,p2を通る直線tを求める。
         StraightLine u1 = new StraightLine(p1, p2);
         u1.tyokkouka(p1);//点p1を通って tに直行する直線u1を求める。
@@ -175,14 +168,14 @@ public class OritaCalc {
 
     //点pが指定された線分とどの部所で近い(r以内)かどうかを判定する関数　---------------------------------
     //0=近くない、1=a点に近い、2=b点に近い、3=柄の部分に近い
-    public int senbun_busyo_sagasi(Point p, Line s0, double r) {
-        if (r > kyori(p, s0.geta())) {
+    public int senbun_busyo_sagasi(Point p, LineSegment s0, double r) {
+        if (r > distance(p, s0.getA())) {
             return 1;
         }//a点に近いかどうか
-        if (r > kyori(p, s0.getb())) {
+        if (r > distance(p, s0.getB())) {
             return 2;
         }//b点に近いかどうか
-        if (r > kyori_senbun(p, s0)) {
+        if (r > distance_lineSegment(p, s0)) {
             return 3;
         }//柄の部分に近いかどうか
         return 0;
@@ -190,13 +183,13 @@ public class OritaCalc {
 
 
     //点p0と、二点p1,p2を両端とする線分との間の距離を求める関数----------------------------------------------------
-    public double kyori_senbun(Point p0, Point p1, Point p2) {
+    public double distance_lineSegment(Point p0, Point p1, Point p2) {
         // Ten p1 = new Ten();   p1.set(s.geta());
         // Ten p2 = new Ten();   p2.set(s.getb());
 
         //p1とp2が同じ場合
-        if (kyori(p1, p2) == 0.0) {
-            return kyori(p0, p1);
+        if (distance(p1, p2) == 0.0) {
+            return distance(p0, p1);
         }
 
         //p1とp2が異なる場合
@@ -204,19 +197,19 @@ public class OritaCalc {
         StraightLine u = new StraightLine(p1, p2);
         u.tyokkouka(p0);//点p0を通って tに直行する直線uを求める。
 
-        if (hakononaka(p1, kouten_motome(t, u), p2) >= 1) {
+        if (isInside(p1, kouten_motome(t, u), p2) >= 1) {
             return t.calculateDistance(p0);
         }//tとuの交点がp1とp2の間にある場合。
-        return Math.min(kyori(p0, p1), kyori(p0, p2));//tとuの交点がp1とp2の間にない場合。
+        return Math.min(distance(p0, p1), distance(p0, p2));//tとuの交点がp1とp2の間にない場合。
     }
 
     //点p0と、線分sとの間の距離を求める関数----------------------------------------------------
-    public double kyori_senbun(Point p0, Line s) {
+    public double distance_lineSegment(Point p0, LineSegment s) {
         Point p1 = new Point();
-        p1.set(s.geta());
+        p1.set(s.getA());
         Point p2 = new Point();
-        p2.set(s.getb());
-        return kyori_senbun(p0, p1, p2);
+        p2.set(s.getB());
+        return distance_lineSegment(p0, p1, p2);
     }
 
     // A function that determines whether two line segments intersect ---------------------------------- ------------------ ------------------
@@ -229,7 +222,7 @@ public class OritaCalc {
 // 6 = Line segment s2 intersects at a point
     //Note! If p1 and p2 are the same, or p3 and p4 are the same, the result will be strange,
 // This function itself does not have a check mechanism, so it may be difficult to notice.
-    public int line_intersect_decide(Line s1, Line s2) {
+    public int line_intersect_decide(LineSegment s1, LineSegment s2) {
         //return senbun_kousa_hantei( s1,s2,0.001,0.001) ;
         return line_intersect_decide(s1, s2, 0.01, 0.01);
 
@@ -237,15 +230,15 @@ public class OritaCalc {
     }
 
 
-    public int line_intersect_decide_sweet(Line s1, Line s2) {
+    public int line_intersect_decide_sweet(LineSegment s1, LineSegment s2) {
         //return senbun_kousa_hantei_amai( s1,s2,0.000001,0.000001) ;
         return line_intersect_decide_sweet(s1, s2, 0.01, 0.01);
     }
 
 
-    public int line_intersect_decide(Line s1, Line s2, double rhit, double rhei) {    //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-        double x1max = s1.getax();
-        double x1min = s1.getax();
+    public int line_intersect_decide(LineSegment s1, LineSegment s2, double rhit, double rhei) {    //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
+        double x1max = s1.getAx();
+        double x1min = s1.getAx();
         double y1max = s1.getay();
         double y1min = s1.getay();
         if (x1max < s1.getbx()) {
@@ -260,8 +253,8 @@ public class OritaCalc {
         if (y1min > s1.getby()) {
             y1min = s1.getby();
         }
-        double x2max = s2.getax();
-        double x2min = s2.getax();
+        double x2max = s2.getAx();
+        double x2min = s2.getAx();
         double y2max = s2.getay();
         double y2min = s2.getay();
         if (x2max < s2.getbx()) {
@@ -293,13 +286,13 @@ public class OritaCalc {
         //System.out.println("###########");
 
         Point p1 = new Point();
-        p1.set(s1.geta());
+        p1.set(s1.getA());
         Point p2 = new Point();
-        p2.set(s1.getb());
+        p2.set(s1.getB());
         Point p3 = new Point();
-        p3.set(s2.geta());
+        p3.set(s2.getA());
         Point p4 = new Point();
-        p4.set(s2.getb());
+        p4.set(s2.getB());
 
         StraightLine t1 = new StraightLine(p1, p2);
         StraightLine t2 = new StraightLine(p3, p4);
@@ -308,26 +301,26 @@ public class OritaCalc {
         // heikou_hantei(t1,t2,rhei)
 
         //例外処理　線分s1と線分s2が点の場合
-        if (((p1.getx() == p2.getx()) && (p1.gety() == p2.gety()))
+        if (((p1.getX() == p2.getX()) && (p1.getY() == p2.getY()))
                 &&
-                ((p3.getx() == p4.getx()) && (p3.gety() == p4.gety()))) {
-            if ((p1.getx() == p3.getx()) && (p1.gety() == p3.gety())) {
+                ((p3.getX() == p4.getX()) && (p3.getY() == p4.getY()))) {
+            if ((p1.getX() == p3.getX()) && (p1.getY() == p3.getY())) {
                 return 4;
             }
             return 0;
         }
 
         //例外処理　線分s1が点の場合
-        if ((p1.getx() == p2.getx()) && (p1.gety() == p2.gety())) {
-            if ((hakononaka(p3, p1, p4) >= 1) && (t2.dainyuukeisan(p1) == 0.0)) {
+        if ((p1.getX() == p2.getX()) && (p1.getY() == p2.getY())) {
+            if ((isInside(p3, p1, p4) >= 1) && (t2.dainyuukeisan(p1) == 0.0)) {
                 return 5;
             }
             return 0;
         }
 
         //例外処理　線分s2が点の場合
-        if ((p3.getx() == p4.getx()) && (p3.gety() == p4.gety())) {
-            if ((hakononaka(p1, p3, p2) >= 1) && (t1.dainyuukeisan(p3) == 0.0)) {
+        if ((p3.getX() == p4.getX()) && (p3.getY() == p4.getY())) {
+            if ((isInside(p1, p3, p2) >= 1) && (t1.dainyuukeisan(p3) == 0.0)) {
                 return 6;
             }
             return 0;
@@ -337,30 +330,30 @@ public class OritaCalc {
         if (heikou_hantei(t1, t2, rhei) == 0) {    //２つの直線が平行でない
             Point pk = new Point();
             pk.set(kouten_motome(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
-            if ((hakononaka(p1, pk, p2) >= 1)
-                    && (hakononaka(p3, pk, p4) >= 1)) {
-                if (hitosii(p1, p3, rhit)) {
+            if ((isInside(p1, pk, p2) >= 1)
+                    && (isInside(p3, pk, p4) >= 1)) {
+                if (equal(p1, p3, rhit)) {
                     return 21;
                 }//L字型
-                if (hitosii(p1, p4, rhit)) {
+                if (equal(p1, p4, rhit)) {
                     return 22;
                 }//L字型
-                if (hitosii(p2, p3, rhit)) {
+                if (equal(p2, p3, rhit)) {
                     return 23;
                 }//L字型
-                if (hitosii(p2, p4, rhit)) {
+                if (equal(p2, p4, rhit)) {
                     return 24;
                 }//L字型
-                if (hitosii(p1, pk, rhit)) {
+                if (equal(p1, pk, rhit)) {
                     return 25;
                 }//T字型 s1が縦棒
-                if (hitosii(p2, pk, rhit)) {
+                if (equal(p2, pk, rhit)) {
                     return 26;
                 }//T字型 s1が縦棒
-                if (hitosii(p3, pk, rhit)) {
+                if (equal(p3, pk, rhit)) {
                     return 27;
                 }//T字型 s2が縦棒
-                if (hitosii(p4, pk, rhit)) {
+                if (equal(p4, pk, rhit)) {
                     return 28;
                 }//T字型 s2が縦棒
                 return 1;                    // <<<<<<<<<<<<<<<<< return 1;
@@ -374,10 +367,10 @@ public class OritaCalc {
         }
 
         // ２つの線分が全く同じ
-        if (hitosii(p1, p3, rhit) && hitosii(p2, p4, rhit)) {
+        if (equal(p1, p3, rhit) && equal(p2, p4, rhit)) {
             return 31;
         }
-        if (hitosii(p1, p4, rhit) && hitosii(p2, p3, rhit)) {
+        if (equal(p1, p4, rhit) && equal(p2, p3, rhit)) {
             return 31;
         }
 
@@ -385,81 +378,81 @@ public class OritaCalc {
 
         //２つの直線が平行で、y切片も一致する
         if (heikou_hantei(t1, t2, rhei) == 2) {
-            if (hitosii(p1, p3, rhit)) { //2つの線分の端点どうしが1点で重なる場合
-                if (hakononaka(p1, p4, p2) == 2) {
+            if (equal(p1, p3, rhit)) { //2つの線分の端点どうしが1点で重なる場合
+                if (isInside(p1, p4, p2) == 2) {
                     return 321;
                 }
-                if (hakononaka(p3, p2, p4) == 2) {
+                if (isInside(p3, p2, p4) == 2) {
                     return 322;
                 }
-                if (hakononaka(p2, p1, p4) == 2) {
+                if (isInside(p2, p1, p4) == 2) {
                     return 323;
                 }//2つの線分は1点で重なるだけで、それ以外では重ならない
             }
 
-            if (hitosii(p1, p4, rhit)) {
-                if (hakononaka(p1, p3, p2) == 2) {
+            if (equal(p1, p4, rhit)) {
+                if (isInside(p1, p3, p2) == 2) {
                     return 331;
                 }
-                if (hakononaka(p4, p2, p3) == 2) {
+                if (isInside(p4, p2, p3) == 2) {
                     return 332;
                 }
-                if (hakononaka(p2, p1, p3) == 2) {
+                if (isInside(p2, p1, p3) == 2) {
                     return 333;
                 }//2つの線分は1点で重なるだけで、それ以外では重ならない
             }
 
-            if (hitosii(p2, p3, rhit)) {
-                if (hakononaka(p2, p4, p1) == 2) {
+            if (equal(p2, p3, rhit)) {
+                if (isInside(p2, p4, p1) == 2) {
                     return 341;
                 }
-                if (hakononaka(p3, p1, p4) == 2) {
+                if (isInside(p3, p1, p4) == 2) {
                     return 342;
                 }
-                if (hakononaka(p1, p2, p4) == 2) {
+                if (isInside(p1, p2, p4) == 2) {
                     return 343;
                 }//2つの線分は1点で重なるだけで、それ以外では重ならない
             }
 
-            if (hitosii(p2, p4, rhit)) {
-                if (hakononaka(p2, p3, p1) == 2) {
+            if (equal(p2, p4, rhit)) {
+                if (isInside(p2, p3, p1) == 2) {
                     return 351;
                 }
-                if (hakononaka(p4, p1, p3) == 2) {
+                if (isInside(p4, p1, p3) == 2) {
                     return 352;
                 }
-                if (hakononaka(p1, p2, p3) == 2) {
+                if (isInside(p1, p2, p3) == 2) {
                     return 353;
                 }//2つの線分は1点で重なるだけで、それ以外では重ならない
             }
 
             //2つの線分の端点どうしが重ならない場合
-            if ((hakononaka(p1, p3, p4) == 2) && (hakononaka(p3, p4, p2) == 2)) {
+            if ((isInside(p1, p3, p4) == 2) && (isInside(p3, p4, p2) == 2)) {
                 return 361;
             }//線分(p1,p2)に線分(p3,p4)が含まれる
-            if ((hakononaka(p1, p4, p3) == 2) && (hakononaka(p4, p3, p2) == 2)) {
+            if ((isInside(p1, p4, p3) == 2) && (isInside(p4, p3, p2) == 2)) {
                 return 362;
             }//線分(p1,p2)に線分(p3,p4)が含まれる
 
-            if ((hakononaka(p3, p1, p2) == 2) && (hakononaka(p1, p2, p4) == 2)) {
+            if ((isInside(p3, p1, p2) == 2) && (isInside(p1, p2, p4) == 2)) {
                 return 363;
             }//線分(p3,p4)に線分(p1,p2)が含まれる
-            if ((hakononaka(p3, p2, p1) == 2) && (hakononaka(p2, p1, p4) == 2)) {
+            if ((isInside(p3, p2, p1) == 2) && (isInside(p2, p1, p4) == 2)) {
                 return 364;
             }//線分(p3,p4)に線分(p1,p2)が含まれる
 
 
-            if ((hakononaka(p1, p3, p2) == 2) && (hakononaka(p3, p2, p4) == 2)) {
+            if ((isInside(p1, p3, p2) == 2) && (isInside(p3, p2, p4) == 2)) {
                 return 371;
             }//線分(p1,p2)のP2側と線分(p3,p4)のP3側が部分的に重なる
-            if ((hakononaka(p1, p4, p2) == 2) && (hakononaka(p4, p2, p3) == 2)) {
+            if ((isInside(p1, p4, p2) == 2) && (isInside(p4, p2, p3) == 2)) {
                 return 372;
             }//線分(p1,p2)のP2側と線分(p4,p3)のP4側が部分的に重なる
 
-            if ((hakononaka(p3, p1, p4) == 2) && (hakononaka(p1, p4, p2) == 2)) {
+            if ((isInside(p3, p1, p4) == 2) && (isInside(p1, p4, p2) == 2)) {
                 return 373;
             }//線分(p3,p4)のP4側と線分(p1,p2)のP1側が部分的に重なる
-            if ((hakononaka(p4, p1, p3) == 2) && (hakononaka(p1, p3, p2) == 2)) {
+            if ((isInside(p4, p1, p3) == 2) && (isInside(p1, p3, p2) == 2)) {
                 return 374;
             }//線分(p4,p3)のP3側と線分(p1,p2)のP1側が部分的に重なる
 
@@ -476,9 +469,9 @@ public class OritaCalc {
     // Specifically, when determining whether there is a point inside the line segment, if the point is slightly outside the line segment, it is judged to be sweet if it is inside the line segment. When drawing a development drawing with a drawing craftsman, if you do not use this sweet one, the intersection division of the T-shaped line segment will fail
     // But for some reason, using this sweeter one for folding estimation seems to result in an infinite loop, which doesn't work. This exact elucidation is unresolved 20161105
 
-    public int line_intersect_decide_sweet(Line s1, Line s2, double rhit, double rhei) {    //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-        double x1max = s1.getax();
-        double x1min = s1.getax();
+    public int line_intersect_decide_sweet(LineSegment s1, LineSegment s2, double rhit, double rhei) {    //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
+        double x1max = s1.getAx();
+        double x1min = s1.getAx();
         double y1max = s1.getay();
         double y1min = s1.getay();
         if (x1max < s1.getbx()) {
@@ -493,8 +486,8 @@ public class OritaCalc {
         if (y1min > s1.getby()) {
             y1min = s1.getby();
         }
-        double x2max = s2.getax();
-        double x2min = s2.getax();
+        double x2max = s2.getAx();
+        double x2min = s2.getAx();
         double y2max = s2.getay();
         double y2min = s2.getay();
         if (x2max < s2.getbx()) {
@@ -526,13 +519,13 @@ public class OritaCalc {
         //System.out.println("###########");
 
         Point p1 = new Point();
-        p1.set(s1.geta());
+        p1.set(s1.getA());
         Point p2 = new Point();
-        p2.set(s1.getb());
+        p2.set(s1.getB());
         Point p3 = new Point();
-        p3.set(s2.geta());
+        p3.set(s2.getA());
         Point p4 = new Point();
-        p4.set(s2.getb());
+        p4.set(s2.getB());
 
         StraightLine t1 = new StraightLine(p1, p2);
         StraightLine t2 = new StraightLine(p3, p4);
@@ -541,26 +534,26 @@ public class OritaCalc {
         // heikou_hantei(t1,t2,rhei)
 
         //例外処理　線分s1と線分s2が点の場合
-        if (((p1.getx() == p2.getx()) && (p1.gety() == p2.gety()))
+        if (((p1.getX() == p2.getX()) && (p1.getY() == p2.getY()))
                 &&
-                ((p3.getx() == p4.getx()) && (p3.gety() == p4.gety()))) {
-            if ((p1.getx() == p3.getx()) && (p1.gety() == p3.gety())) {
+                ((p3.getX() == p4.getX()) && (p3.getY() == p4.getY()))) {
+            if ((p1.getX() == p3.getX()) && (p1.getY() == p3.getY())) {
                 return 4;
             }
             return 0;
         }
 
         //例外処理　線分s1が点の場合
-        if ((p1.getx() == p2.getx()) && (p1.gety() == p2.gety())) {
-            if ((hakononaka(p3, p1, p4) >= 1) && (t2.dainyuukeisan(p1) == 0.0)) {
+        if ((p1.getX() == p2.getX()) && (p1.getY() == p2.getY())) {
+            if ((isInside(p3, p1, p4) >= 1) && (t2.dainyuukeisan(p1) == 0.0)) {
                 return 5;
             }
             return 0;
         }
 
         //例外処理　線分s2が点の場合
-        if ((p3.getx() == p4.getx()) && (p3.gety() == p4.gety())) {
-            if ((hakononaka(p1, p3, p2) >= 1) && (t1.dainyuukeisan(p3) == 0.0)) {
+        if ((p3.getX() == p4.getX()) && (p3.getY() == p4.getY())) {
+            if ((isInside(p1, p3, p2) >= 1) && (t1.dainyuukeisan(p3) == 0.0)) {
                 return 6;
             }
             return 0;
@@ -572,28 +565,28 @@ public class OritaCalc {
             pk.set(kouten_motome(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
             if ((hakononaka_amai(p1, pk, p2) >= 1)
                     && (hakononaka_amai(p3, pk, p4) >= 1)) {
-                if (hitosii(p1, p3, rhit)) {
+                if (equal(p1, p3, rhit)) {
                     return 21;
                 }//L字型
-                if (hitosii(p1, p4, rhit)) {
+                if (equal(p1, p4, rhit)) {
                     return 22;
                 }//L字型
-                if (hitosii(p2, p3, rhit)) {
+                if (equal(p2, p3, rhit)) {
                     return 23;
                 }//L字型
-                if (hitosii(p2, p4, rhit)) {
+                if (equal(p2, p4, rhit)) {
                     return 24;
                 }//L字型
-                if (hitosii(p1, pk, rhit)) {
+                if (equal(p1, pk, rhit)) {
                     return 25;
                 }//T字型 s1が縦棒
-                if (hitosii(p2, pk, rhit)) {
+                if (equal(p2, pk, rhit)) {
                     return 26;
                 }//T字型 s1が縦棒
-                if (hitosii(p3, pk, rhit)) {
+                if (equal(p3, pk, rhit)) {
                     return 27;
                 }//T字型 s2が縦棒
-                if (hitosii(p4, pk, rhit)) {
+                if (equal(p4, pk, rhit)) {
                     return 28;
                 }//T字型 s2が縦棒
                 return 1;
@@ -607,10 +600,10 @@ public class OritaCalc {
         }
 
         // ２つの線分が全く同じ
-        if (hitosii(p1, p3, rhit) && hitosii(p2, p4, rhit)) {
+        if (equal(p1, p3, rhit) && equal(p2, p4, rhit)) {
             return 31;
         }
-        if (hitosii(p1, p4, rhit) && hitosii(p2, p3, rhit)) {
+        if (equal(p1, p4, rhit) && equal(p2, p3, rhit)) {
             return 31;
         }
 
@@ -618,79 +611,79 @@ public class OritaCalc {
 
         //２つの直線が平行で、y切片も一致する
         if (heikou_hantei(t1, t2, rhei) == 2) {
-            if (hitosii(p1, p3, rhit)) { //2つの線分の端点どうしが1点で重なる場合
-                if (hakononaka(p1, p4, p2) == 2) {
+            if (equal(p1, p3, rhit)) { //2つの線分の端点どうしが1点で重なる場合
+                if (isInside(p1, p4, p2) == 2) {
                     return 321;
                 }//長い線分に短い線分が含まれる
-                if (hakononaka(p3, p2, p4) == 2) {
+                if (isInside(p3, p2, p4) == 2) {
                     return 322;
                 }//長い線分に短い線分が含まれる
-                if (hakononaka(p2, p1, p4) == 2) {
+                if (isInside(p2, p1, p4) == 2) {
                     return 323;
                 }//2つの線分は1点で重なるだけで、それ以外では重ならない
             }
 
-            if (hitosii(p1, p4, rhit)) {
-                if (hakononaka(p1, p3, p2) == 2) {
+            if (equal(p1, p4, rhit)) {
+                if (isInside(p1, p3, p2) == 2) {
                     return 331;
                 }//長い線分に短い線分が含まれる
-                if (hakononaka(p4, p2, p3) == 2) {
+                if (isInside(p4, p2, p3) == 2) {
                     return 332;
                 }//長い線分に短い線分が含まれる
-                if (hakononaka(p2, p1, p3) == 2) {
+                if (isInside(p2, p1, p3) == 2) {
                     return 333;
                 }//2つの線分は1点で重なるだけで、それ以外では重ならない
             }
 
-            if (hitosii(p2, p3, rhit)) {
-                if (hakononaka(p2, p4, p1) == 2) {
+            if (equal(p2, p3, rhit)) {
+                if (isInside(p2, p4, p1) == 2) {
                     return 341;
                 }//長い線分に短い線分が含まれる
-                if (hakononaka(p3, p1, p4) == 2) {
+                if (isInside(p3, p1, p4) == 2) {
                     return 342;
                 }//長い線分に短い線分が含まれる
-                if (hakononaka(p1, p2, p4) == 2) {
+                if (isInside(p1, p2, p4) == 2) {
                     return 343;
                 }//2つの線分は1点で重なるだけで、それ以外では重ならない
             }
 
-            if (hitosii(p2, p4, rhit)) {
-                if (hakononaka(p2, p3, p1) == 2) {
+            if (equal(p2, p4, rhit)) {
+                if (isInside(p2, p3, p1) == 2) {
                     return 351;
                 }//長い線分に短い線分が含まれる
-                if (hakononaka(p4, p1, p3) == 2) {
+                if (isInside(p4, p1, p3) == 2) {
                     return 352;
                 }//長い線分に短い線分が含まれる
-                if (hakononaka(p1, p2, p3) == 2) {
+                if (isInside(p1, p2, p3) == 2) {
                     return 353;
                 }//2つの線分は1点で重なるだけで、それ以外では重ならない
             }
 
             //2つの線分の端点どうしが重ならない場合
-            if ((hakononaka(p1, p3, p4) == 2) && (hakononaka(p3, p4, p2) == 2)) {
+            if ((isInside(p1, p3, p4) == 2) && (isInside(p3, p4, p2) == 2)) {
                 return 361;
             }//線分(p1,p2)に線分(p3,p4)が含まれる
-            if ((hakononaka(p1, p4, p3) == 2) && (hakononaka(p4, p3, p2) == 2)) {
+            if ((isInside(p1, p4, p3) == 2) && (isInside(p4, p3, p2) == 2)) {
                 return 362;
             }//線分(p1,p2)に線分(p3,p4)が含まれる
 
-            if ((hakononaka(p3, p1, p2) == 2) && (hakononaka(p1, p2, p4) == 2)) {
+            if ((isInside(p3, p1, p2) == 2) && (isInside(p1, p2, p4) == 2)) {
                 return 363;
             }//線分(p3,p4)に線分(p1,p2)が含まれる
-            if ((hakononaka(p3, p2, p1) == 2) && (hakononaka(p2, p1, p4) == 2)) {
+            if ((isInside(p3, p2, p1) == 2) && (isInside(p2, p1, p4) == 2)) {
                 return 364;
             }//線分(p3,p4)に線分(p1,p2)が含まれる
 
-            if ((hakononaka(p1, p3, p2) == 2) && (hakononaka(p3, p2, p4) == 2)) {
+            if ((isInside(p1, p3, p2) == 2) && (isInside(p3, p2, p4) == 2)) {
                 return 371;
             }
-            if ((hakononaka(p1, p4, p2) == 2) && (hakononaka(p4, p2, p3) == 2)) {
+            if ((isInside(p1, p4, p2) == 2) && (isInside(p4, p2, p3) == 2)) {
                 return 372;
             }
-            if ((hakononaka(p3, p1, p4) == 2) && (hakononaka(p1, p4, p2) == 2)) {
+            if ((isInside(p3, p1, p4) == 2) && (isInside(p1, p4, p2) == 2)) {
                 return 373;
             }
-            if ((hakononaka(p4, p1, p3) == 2) && (hakononaka(p1, p3, p2) == 2)) {
+            if ((isInside(p4, p1, p3) == 2) && (isInside(p1, p3, p2) == 2)) {
                 return 374;
             }
 
@@ -707,7 +700,7 @@ public class OritaCalc {
     }
 
     //２つの線分が平行かどうかを判定する関数。
-    public int heikou_hantei(Line s1, Line s2, double r) {
+    public int heikou_hantei(LineSegment s1, LineSegment s2, double r) {
         return heikou_hantei(Senbun2Tyokusen(s1), Senbun2Tyokusen(s2), r);
     }
 
@@ -780,38 +773,38 @@ public class OritaCalc {
     }
 
 
-    public StraightLine Senbun2Tyokusen(Line s) {//線分を含む直線を得る
-        StraightLine t = new StraightLine(s.geta(), s.getb());
+    public StraightLine Senbun2Tyokusen(LineSegment s) {//線分を含む直線を得る
+        StraightLine t = new StraightLine(s.getA(), s.getB());
         return t;
     }
 
     //２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
-    public Point kouten_motome(Line s1, Line s2) {
+    public Point kouten_motome(LineSegment s1, LineSegment s2) {
         return kouten_motome(Senbun2Tyokusen(s1), Senbun2Tyokusen(s2));
     }
 
     //線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
-    public Point kouten_motome(StraightLine t1, Line s2) {
+    public Point kouten_motome(StraightLine t1, LineSegment s2) {
         return kouten_motome(t1, Senbun2Tyokusen(s2));
     }
 
     //線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
-    public Point kouten_motome(Line s1, StraightLine t2) {
+    public Point kouten_motome(LineSegment s1, StraightLine t2) {
         return kouten_motome(Senbun2Tyokusen(s1), t2);
     }
 
 
     //A function that moves a line segment in parallel to the side (returns a new line segment without changing the original line segment)
-    public Line moveParallel(Line s, double d) {
-        StraightLine t = new StraightLine(s.geta(), s.getb());
-        StraightLine ta = new StraightLine(s.geta(), s.getb());
-        StraightLine tb = new StraightLine(s.geta(), s.getb());
-        ta.tyokkouka(s.geta());
-        tb.tyokkouka(s.getb());
-        StraightLine td = new StraightLine(s.geta(), s.getb());
+    public LineSegment moveParallel(LineSegment s, double d) {
+        StraightLine t = new StraightLine(s.getA(), s.getB());
+        StraightLine ta = new StraightLine(s.getA(), s.getB());
+        StraightLine tb = new StraightLine(s.getA(), s.getB());
+        ta.tyokkouka(s.getA());
+        tb.tyokkouka(s.getB());
+        StraightLine td = new StraightLine(s.getA(), s.getB());
         td.heikouidou(d);
 
-        Line sreturn = new Line(kouten_motome_01(ta, td), kouten_motome_01(tb, td));
+        LineSegment sreturn = new LineSegment(kouten_motome_01(ta, td), kouten_motome_01(tb, td));
 
         return sreturn;
     }
@@ -823,8 +816,8 @@ public class OritaCalc {
         double Mcd = Math.cos(d * Math.PI / 180.0);
         double Msd = Math.sin(d * Math.PI / 180.0);
 
-        double bx1 = Mcd * (b.getx() - a.getx()) - Msd * (b.gety() - a.gety()) + a.getx();
-        double by1 = Msd * (b.getx() - a.getx()) + Mcd * (b.gety() - a.gety()) + a.gety();
+        double bx1 = Mcd * (b.getX() - a.getX()) - Msd * (b.getY() - a.getY()) + a.getX();
+        double by1 = Msd * (b.getX() - a.getX()) + Mcd * (b.getY() - a.getY()) + a.getY();
 
 //double ax1=s0.getax();
 //double ay1=s0.getay();
@@ -840,8 +833,8 @@ public class OritaCalc {
         double Mcd = Math.cos(d * Math.PI / 180.0);
         double Msd = Math.sin(d * Math.PI / 180.0);
 
-        double bx1 = r * (Mcd * (b.getx() - a.getx()) - Msd * (b.gety() - a.gety())) + a.getx();
-        double by1 = r * (Msd * (b.getx() - a.getx()) + Mcd * (b.gety() - a.gety())) + a.gety();
+        double bx1 = r * (Mcd * (b.getX() - a.getX()) - Msd * (b.getY() - a.getY())) + a.getX();
+        double by1 = r * (Msd * (b.getX() - a.getX()) + Mcd * (b.getY() - a.getY())) + a.getY();
 
         Point t_return = new Point(bx1, by1);
 
@@ -851,8 +844,8 @@ public class OritaCalc {
     //------------------------------------
     //点aを中心に点bを元にしてabの距離がr倍の点を返す関数（元の点は変えずに新しい点を返す）20161224 未検証
     public Point ten_bai(Point a, Point b, double r) {
-        double bx1 = r * (b.getx() - a.getx()) + a.getx();
-        double by1 = r * (b.gety() - a.gety()) + a.gety();
+        double bx1 = r * (b.getX() - a.getX()) + a.getX();
+        double by1 = r * (b.getY() - a.getY()) + a.getY();
 
         Point t_return = new Point(bx1, by1);
 
@@ -863,8 +856,8 @@ public class OritaCalc {
 //------------------------------------
 
     //線分abをcを中心にr倍してd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
-    public Line Senbun_kaiten(Line s0, Point c, double d, double r) {
-        Line s_return = new Line(ten_kaiten(s0.geta(), c, d, r), ten_kaiten(s0.getb(), c, d, r));
+    public LineSegment Senbun_kaiten(LineSegment s0, Point c, double d, double r) {
+        LineSegment s_return = new LineSegment(ten_kaiten(s0.getA(), c, d, r), ten_kaiten(s0.getB(), c, d, r));
         return s_return;
     }
 
@@ -872,7 +865,7 @@ public class OritaCalc {
 // ------------------------------------
 
     //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
-    public Line Senbun_kaiten(Line s0, double d) {
+    public LineSegment Senbun_kaiten(LineSegment s0, double d) {
 //s0.getax(),s0.getay()
 
 //(Math.cos(d*3.14159265/180.0),-Math.sin(d*3.14159265/180.0) )  (s0.getbx()-s0.getax()) + (s0.getax())
@@ -883,19 +876,19 @@ public class OritaCalc {
         double Mcd = Math.cos(d * Math.PI / 180.0);
         double Msd = Math.sin(d * Math.PI / 180.0);
 
-        double bx1 = Mcd * (s0.getbx() - s0.getax()) - Msd * (s0.getby() - s0.getay()) + s0.getax();
-        double by1 = Msd * (s0.getbx() - s0.getax()) + Mcd * (s0.getby() - s0.getay()) + s0.getay();
+        double bx1 = Mcd * (s0.getbx() - s0.getAx()) - Msd * (s0.getby() - s0.getay()) + s0.getAx();
+        double by1 = Msd * (s0.getbx() - s0.getAx()) + Mcd * (s0.getby() - s0.getay()) + s0.getay();
 
-        double ax1 = s0.getax();
+        double ax1 = s0.getAx();
         double ay1 = s0.getay();
-        Line s_return = new Line(ax1, ay1, bx1, by1);
+        LineSegment s_return = new LineSegment(ax1, ay1, bx1, by1);
 
         return s_return;
     }
 
 
     //線分abをaを中心にr倍してd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
-    public Line Senbun_kaiten(Line s0, double d, double r) {
+    public LineSegment Senbun_kaiten(LineSegment s0, double d, double r) {
         //s0.getax(),s0.getay()
 
         //(Math.cos(d*3.14159265/180.0),-Math.sin(d*3.14159265/180.0) )  (s0.getbx()-s0.getax()) + (s0.getax())
@@ -904,43 +897,43 @@ public class OritaCalc {
         double Mcd = Math.cos(d * Math.PI / 180.0);
         double Msd = Math.sin(d * Math.PI / 180.0);
 
-        double bx1 = r * (Mcd * (s0.getbx() - s0.getax()) - Msd * (s0.getby() - s0.getay())) + s0.getax();
-        double by1 = r * (Msd * (s0.getbx() - s0.getax()) + Mcd * (s0.getby() - s0.getay())) + s0.getay();
+        double bx1 = r * (Mcd * (s0.getbx() - s0.getAx()) - Msd * (s0.getby() - s0.getay())) + s0.getAx();
+        double by1 = r * (Msd * (s0.getbx() - s0.getAx()) + Mcd * (s0.getby() - s0.getay())) + s0.getay();
 
-        double ax1 = s0.getax();
+        double ax1 = s0.getAx();
         double ay1 = s0.getay();
-        Line s_return = new Line(ax1, ay1, bx1, by1);
+        LineSegment s_return = new LineSegment(ax1, ay1, bx1, by1);
 
         return s_return;
     }
 
 
     //線分abをaを中心にr倍した線分を返す関数（元の線分は変えずに新しい線分を返す）
-    public Line Senbun_bai(Line s0, double r) {
+    public LineSegment Senbun_bai(LineSegment s0, double r) {
 
-        double bx1 = r * (s0.getbx() - s0.getax()) + s0.getax();
+        double bx1 = r * (s0.getbx() - s0.getAx()) + s0.getAx();
         double by1 = r * (s0.getby() - s0.getay()) + s0.getay();
 
-        double ax1 = s0.getax();
+        double ax1 = s0.getAx();
         double ay1 = s0.getay();
-        Line s_return = new Line(ax1, ay1, bx1, by1);
+        LineSegment s_return = new LineSegment(ax1, ay1, bx1, by1);
 
         return s_return;
     }
 
 
     //線分Aの、線分Jを軸とした対照位置にある線分Bを求める関数
-    public Line sentaisyou_senbun_motome(Line s0, Line jiku) {
+    public LineSegment sentaisyou_senbun_motome(LineSegment s0, LineSegment jiku) {
         Point p_a = new Point();
-        p_a.set(s0.geta());
+        p_a.set(s0.getA());
         Point p_b = new Point();
-        p_b.set(s0.getb());
+        p_b.set(s0.getB());
         Point jiku_a = new Point();
-        jiku_a.set(jiku.geta());
+        jiku_a.set(jiku.getA());
         Point jiku_b = new Point();
-        jiku_b.set(jiku.getb());
+        jiku_b.set(jiku.getB());
 
-        Line s1 = new Line();
+        LineSegment s1 = new LineSegment();
         s1.set(sentaisyou_ten_motome(jiku_a, jiku_b, p_a), sentaisyou_ten_motome(jiku_a, jiku_b, p_b));
 
         return s1;
@@ -960,7 +953,7 @@ public class OritaCalc {
         s2.tyokkouka(p);//点pを通って s1に直行する直線s2を求める。
 
         p1 = kouten_motome(s1, s2);
-        p2.set(2.0 * p1.getx() - p.getx(), 2.0 * p1.gety() - p.gety());
+        p2.set(2.0 * p1.getX() - p.getX(), 2.0 * p1.getY() - p.getY());
         return p2;
     }
 
@@ -975,7 +968,7 @@ public class OritaCalc {
         s2.tyokkouka(p);//点pを通って s1に直行する直線s2を求める。
 
         p1 = kouten_motome(s1, s2);
-        p2.set(2.0 * p1.getx() - p.getx(), 2.0 * p1.gety() - p.gety());
+        p2.set(2.0 * p1.getX() - p.getX(), 2.0 * p1.getY() - p.getY());
         return p2;
     }
 
@@ -1015,35 +1008,35 @@ public class OritaCalc {
 
 
     //線分s1とs2のなす角度
-    public double kakudo(Line s1, Line s2) {
+    public double angle(LineSegment s1, LineSegment s2) {
         Point a = new Point();
-        a.set(s1.geta());
+        a.set(s1.getA());
         Point b = new Point();
-        b.set(s1.getb());
+        b.set(s1.getB());
         Point c = new Point();
-        c.set(s2.geta());
+        c.set(s2.getA());
         Point d = new Point();
-        d.set(s2.getb());
+        d.set(s2.getB());
 
-        return kakudo_osame_0_360(kakudo(c, d) - kakudo(a, b));
+        return kakudo_osame_0_360(angle(c, d) - angle(a, b));
     }
 
 
     //ベクトルabとcdのなす角度
-    public double kakudo(Point a, Point b, Point c, Point d) {
-        return kakudo_osame_0_360(kakudo(c, d) - kakudo(a, b));
+    public double angle(Point a, Point b, Point c, Point d) {
+        return kakudo_osame_0_360(angle(c, d) - angle(a, b));
     }
 
     //三角形の内心を求める
     public Point naisin(Point ta, Point tb, Point tc) {
         double A, B, C, XA, XB, XC, YA, YB, YC, XD, YD, XE, YE, G, H, K, L, P, Q, XN, YN;
         Point tn = new Point();
-        XA = ta.getx();
-        YA = ta.gety();
-        XB = tb.getx();
-        YB = tb.gety();
-        XC = tc.getx();
-        YC = tc.gety();
+        XA = ta.getX();
+        YA = ta.getY();
+        XB = tb.getX();
+        YB = tb.getY();
+        XC = tc.getX();
+        YC = tc.getY();
 
         A = Math.sqrt((XC - XB) * (XC - XB) + (YC - YB) * (YC - YB));
         B = Math.sqrt((XA - XC) * (XA - XC) + (YA - YC) * (YA - YC));
@@ -1070,7 +1063,7 @@ public class OritaCalc {
     //内分点を求める。
     public Point naibun(Point a, Point b, double d_naibun_s, double d_naibun_t) {
         Point r_point = new Point(-10000.0, -10000.0);
-        if (kyori(a, b) < 0.000001) {
+        if (distance(a, b) < 0.000001) {
             return r_point;
         }
 
@@ -1084,8 +1077,8 @@ public class OritaCalc {
             return b;
         }
         if ((d_naibun_s != 0.0) && (d_naibun_t != 0.0)) {
-            Line s_ab = new Line(a, b);
-            double nx = (d_naibun_t * s_ab.getax() + d_naibun_s * s_ab.getbx()) / (d_naibun_s + d_naibun_t);
+            LineSegment s_ab = new LineSegment(a, b);
+            double nx = (d_naibun_t * s_ab.getAx() + d_naibun_s * s_ab.getbx()) / (d_naibun_s + d_naibun_t);
             double ny = (d_naibun_t * s_ab.getay() + d_naibun_s * s_ab.getby()) / (d_naibun_s + d_naibun_t);
             r_point.set(nx, ny);
             return r_point;
@@ -1096,7 +1089,7 @@ public class OritaCalc {
     // -------------------------------
     //中間点を求める。
     public Point tyuukanten(Point a, Point b) {
-        Point r_point = new Point((a.getx() + b.getx()) / 2.0, (a.gety() + b.gety()) / 2.0);
+        Point r_point = new Point((a.getX() + b.getX()) / 2.0, (a.getY() + b.getY()) / 2.0);
 
         return r_point;
     }
@@ -1120,7 +1113,7 @@ public class OritaCalc {
     }
 
     // -------------------------------
-    public Line en_to_en_no_kouten_wo_musubu_senbun(Circle e1, Circle e2) {
+    public LineSegment en_to_en_no_kouten_wo_musubu_senbun(Circle e1, Circle e2) {
 
 //System.out.println(" 20170301  e1="+e1.getx() +",    "+ e1.gety() +",    "+e1.getr());
 //System.out.println(" 20170301  e2="+e2.getx() +",    "+ e2.gety() +",    "+e2.getr());
@@ -1139,11 +1132,11 @@ public class OritaCalc {
 
 //Senbun r_s=new Senbun();
 
-        Line r_s = new Line(
-                kouten_t0t1.getx() + t0.getb() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
-                kouten_t0t1.gety() - t0.geta() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
-                kouten_t0t1.getx() - t0.getb() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
-                kouten_t0t1.gety() + t0.geta() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta())
+        LineSegment r_s = new LineSegment(
+                kouten_t0t1.getX() + t0.getb() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
+                kouten_t0t1.getY() - t0.geta() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
+                kouten_t0t1.getX() - t0.getb() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
+                kouten_t0t1.getY() + t0.geta() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta())
         );
 /*
 double ax,ay,bx,by;
@@ -1166,7 +1159,7 @@ r_s.set(ax,ay,bx,by);
 
 
     // --------qqqqqqqqqqqqqqq-----------------------
-    public Line en_to_tyokusen_no_kouten_wo_musubu_senbun(Circle e1, StraightLine t0) {
+    public LineSegment en_to_tyokusen_no_kouten_wo_musubu_senbun(Circle e1, StraightLine t0) {
 
 //System.out.println(" 20170301  e1="+e1.getx() +",    "+ e1.gety() +",    "+e1.getr());
 //System.out.println(" 20170301  e2="+e2.getx() +",    "+ e2.gety() +",    "+e2.getr());
@@ -1174,7 +1167,7 @@ r_s.set(ax,ay,bx,by);
 //En e2 = new En(sentaisyou_ten_motome(t0,e1.get_tyuusin()),e1.getr(),3);
 //Tyokusen t1 = new Tyokusen(e1.get_tyuusin(),e2.get_tyuusin());
         Point kouten_t0t1 = new Point();
-        kouten_t0t1.set(kage_motome(t0, e1.get_tyuusin()));
+        kouten_t0t1.set(shadow_request(t0, e1.get_tyuusin()));
         double nagasa_a = t0.calculateDistance(e1.get_tyuusin());  //t0とt1の交点からe1の中心までの長さ
 
 //double nagasa_a=kyori(kouten_t0t1,e1.get_tyuusin());  //t0とt1の交点からe1の中心までの長さ
@@ -1184,11 +1177,11 @@ r_s.set(ax,ay,bx,by);
 
 //Senbun r_s=new Senbun();
 
-        Line r_s = new Line(
-                kouten_t0t1.getx() + t0.getb() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
-                kouten_t0t1.gety() - t0.geta() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
-                kouten_t0t1.getx() - t0.getb() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
-                kouten_t0t1.gety() + t0.geta() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta())
+        LineSegment r_s = new LineSegment(
+                kouten_t0t1.getX() + t0.getb() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
+                kouten_t0t1.getY() - t0.geta() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
+                kouten_t0t1.getX() - t0.getb() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
+                kouten_t0t1.getY() + t0.geta() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta())
         );
 /*
 double ax,ay,bx,by;
@@ -1213,7 +1206,7 @@ r_s.set(ax,ay,bx,by);
     public double kyori_ensyuu(Point p0, Circle e0) {
 
 
-        return Math.abs(kyori(p0, e0.get_tyuusin()) - e0.getr());
+        return Math.abs(distance(p0, e0.get_tyuusin()) - e0.getr());
     }
 
     //Minを返す関数
@@ -1232,7 +1225,7 @@ r_s.set(ax,ay,bx,by);
     }
 
 
-    public Line nitoubunsen(Point t1, Point t2, double d0) {
+    public LineSegment nitoubunsen(Point t1, Point t2, double d0) {
 
 //s_step[i].geta(),s_step[j].geta(),200.0
         //double bx1=   r* (s0.getbx()-s0.getax())  +  s0.getax();
@@ -1242,23 +1235,23 @@ r_s.set(ax,ay,bx,by);
         //double ay1=s0.getay();
 
 
-        Point tm = new Point((t1.getx() + t2.getx()) / 2.0, (t1.gety() + t2.gety()) / 2.0);
+        Point tm = new Point((t1.getX() + t2.getX()) / 2.0, (t1.getY() + t2.getY()) / 2.0);
 
-        double bai = d0 / kyori(t1, t2);
+        double bai = d0 / distance(t1, t2);
 
-        Line s1 = new Line();
-        s1.set(Senbun_kaiten(new Line(tm, t1), 90.0, bai));
-        Line s2 = new Line();
-        s2.set(Senbun_kaiten(new Line(tm, t2), 90.0, bai));
+        LineSegment s1 = new LineSegment();
+        s1.set(Senbun_kaiten(new LineSegment(tm, t1), 90.0, bai));
+        LineSegment s2 = new LineSegment();
+        s2.set(Senbun_kaiten(new LineSegment(tm, t2), 90.0, bai));
 
-        Line s_return = new Line(s1.getb(), s2.getb());
+        LineSegment s_return = new LineSegment(s1.getB(), s2.getB());
 //Senbun s_return =new Senbun(t1, t2);
         return s_return;
     }
 
 
     //--------------------------------------------------------
-    public int Senbun_kasanari_hantei(Line s1, Line s2) {//0は重ならない。1は重なる。20201012追加
+    public int LineSegment_overlapping_hantei(LineSegment s1, LineSegment s2) {//0は重ならない。1は重なる。20201012追加
 
         int i_senbun_kousa_hantei = line_intersect_decide(s1, s2, 0.0001, 0.0001);
         int i_jikkou = 0;
@@ -1318,7 +1311,7 @@ r_s.set(ax,ay,bx,by);
     }
 
     //--------------------------------------------------------
-    public int Senbun_X_kousa_hantei(Line s1, Line s2) {//0はX交差しない。1は交差する。20201017追加
+    public int Senbun_X_kousa_hantei(LineSegment s1, LineSegment s2) {//0はX交差しない。1は交差する。20201017追加
 
         int i_senbun_kousa_hantei = line_intersect_decide(s1, s2, 0.0001, 0.0001);
         int i_jikkou = 0;

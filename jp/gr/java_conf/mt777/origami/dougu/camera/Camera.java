@@ -130,21 +130,21 @@ public class Camera {//実際の座標と、表示座標の仲立ち
 	public double get_hyouji_ichi_y(){return hyouji_ichi_y;}
 
 	public void set_camera_ichi(Point p){
-		set_camera_ichi_x(p.getx());
-		set_camera_ichi_y(p.gety());
+		set_camera_ichi_x(p.getX());
+		set_camera_ichi_y(p.getY());
 	}
 
 	public void set_hyouji_ichi(Point p){
-		set_hyouji_ichi_x(p.getx());
-		set_hyouji_ichi_y(p.gety());
+		set_hyouji_ichi_x(p.getX());
+		set_hyouji_ichi_y(p.getY());
 	}
 
 
 
 	public Point get_camera_ichi(){
 		Point t_ichi=new Point();
-		t_ichi.setx(camera_ichi_x);
-		t_ichi.sety(camera_ichi_y);
+		t_ichi.setX(camera_ichi_x);
+		t_ichi.setY(camera_ichi_y);
 		return t_ichi;
 	}
 
@@ -154,8 +154,8 @@ public class Camera {//実際の座標と、表示座標の仲立ち
 		Point t_tv =new Point();
 		double x1,y1;	
 		double x2,y2;
-		x1=t_ob.getx()-camera_ichi_x;
-		y1=t_ob.gety()-camera_ichi_y;
+		x1=t_ob.getX()-camera_ichi_x;
+		y1=t_ob.getY()-camera_ichi_y;
 		x2= cos_rad*x1+sin_rad*y1;
 		y2=-sin_rad*x1+cos_rad*y1;
 
@@ -167,18 +167,18 @@ public class Camera {//実際の座標と、表示座標の仲立ち
 
 		x2=x2*camera_bairitsu_x;
 		y2=y2*camera_bairitsu_y;
-		t_tv.setx(x2+hyouji_ichi_x);                         
-		t_tv.sety(y2+hyouji_ichi_y);
+		t_tv.setX(x2+hyouji_ichi_x);
+		t_tv.setY(y2+hyouji_ichi_y);
 		return t_tv;
 	}
 
 
 
-	public Line object2TV(Line s_ob){
-		Line s_tv =new Line();
+	public LineSegment object2TV(LineSegment s_ob){
+		LineSegment s_tv =new LineSegment();
 		s_tv.set(s_ob);
-		s_tv.seta(object2TV(s_ob.geta()));
-		s_tv.setb(object2TV(s_ob.getb()));
+		s_tv.seta(object2TV(s_ob.getA()));
+		s_tv.setb(object2TV(s_ob.getB()));
 		return s_tv;
 	}
 
@@ -187,8 +187,8 @@ public class Camera {//実際の座標と、表示座標の仲立ち
 		Point t_ob =new Point();
 		double x1,y1;	
 		double x2,y2;
-		x1=t_tv.getx();
-		y1=t_tv.gety();
+		x1=t_tv.getX();
+		y1=t_tv.getY();
 		x1=x1-hyouji_ichi_x;
 		y1=y1-hyouji_ichi_y;
 		x1=x1/camera_bairitsu_x;
@@ -202,22 +202,22 @@ public class Camera {//実際の座標と、表示座標の仲立ち
  
 		//x2= Math.cos(camera_rad)*x1-Math.sin(camera_rad)*y1;
 		//y2= Math.sin(camera_rad)*x1+Math.cos(camera_rad)*y1;
-		t_ob.setx(x2+camera_ichi_x);
-		t_ob.sety(y2+camera_ichi_y);
+		t_ob.setX(x2+camera_ichi_x);
+		t_ob.setY(y2+camera_ichi_y);
 		return t_ob;
 	}
 
-	public Line TV2object(Line s_tv){
-		Line s_ob =new Line();
+	public LineSegment TV2object(LineSegment s_tv){
+		LineSegment s_ob =new LineSegment();
 		s_ob.set(s_tv);
-		s_ob.seta(TV2object(s_tv.geta()));
-		s_ob.setb(TV2object(s_tv.getb()));
+		s_ob.seta(TV2object(s_tv.getA()));
+		s_ob.setb(TV2object(s_tv.getB()));
 		return s_ob;
 	}
 
 	public void hyouji_ichi_idou(Point tuika){
-		hyouji_ichi_x=hyouji_ichi_x+tuika.getx();
-		hyouji_ichi_y=hyouji_ichi_y+tuika.gety();
+		hyouji_ichi_x=hyouji_ichi_x+tuika.getX();
+		hyouji_ichi_y=hyouji_ichi_y+tuika.getY();
 	}
 
 	//TV上の表示は変化しないようにして、TV上の座標Ten　P　に対応する、被写体の位置にcamera位置をあわせる。

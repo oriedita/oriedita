@@ -78,26 +78,26 @@ public class Ten {//点の座標や方向ベクトルなどをあらわすとき
 
 public class Point_p extends Point {//Ten_pはTenに選択状態などの機能追加したもので、オリヒメver.3.037から追加。展開図職人の持つ点集合で使う。
 
-    byte i_sentaku = 0;//選択状態
+    byte i_state = 0;//選択状態
 
-    public void set_ten_sentaku_1() {
-        i_sentaku = 1;
+    public void setPointState1() {
+        i_state = 1;
     }
 
-    public void set_ten_sentaku_0() {
-        i_sentaku = 0;
+    public void setPointState0() {
+        i_state = 0;
     }
 
-    public void change_ten_sentaku() {
-        if (i_sentaku == 1) {
-            i_sentaku = 0;
-        } else if (i_sentaku == 0) {
-            i_sentaku = 1;
+    public void changePointState() {
+        if (i_state == 1) {
+            i_state = 0;
+        } else if (i_state == 0) {
+            i_state = 1;
         }
     }
 
-    public byte get_ten_sentaku() {
-        return i_sentaku;
+    public byte getPointState() {
+        return i_state;
     }
 
 

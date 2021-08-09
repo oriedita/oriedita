@@ -28,7 +28,7 @@ class SubThread extends Thread {
 
                 for (int i = 1; i <= mokuhyou; i++) {
                     orihime_app.oritatami_suitei();
-                    orihime_app.fname_and_number = fname + orihime_app.OZ.hakkenn_sita_kazu;//まとめ書き出しに使う。
+                    orihime_app.fname_and_number = fname + orihime_app.OZ.discovered_fold_cases;//まとめ書き出しに使う。
 
                     orihime_app.w_image_jikkoutyuu = true;
                     orihime_app.repaint();
@@ -42,7 +42,7 @@ class SubThread extends Thread {
                         }
                     }
                     if (orihime_app.OZ.different_search_flg == 0) {
-                        mokuhyou = orihime_app.OZ.hakkenn_sita_kazu;
+                        mokuhyou = orihime_app.OZ.discovered_fold_cases;
                     }
 
 
@@ -51,19 +51,19 @@ class SubThread extends Thread {
             }
             // -----------------------------------------------------------------
         } else if (orihime_app.i_sub_mode == 2) {
-            if (orihime_app.i_oritatami_bangou == orihime_app.OZ.hakkenn_sita_kazu) {
-                orihime_app.OZ.text_kekka = "Number of found solutions = " + orihime_app.OZ.hakkenn_sita_kazu + "  ";
+            if (orihime_app.i_oritatami_bangou == orihime_app.OZ.discovered_fold_cases) {
+                orihime_app.OZ.text_kekka = "Number of found solutions = " + orihime_app.OZ.discovered_fold_cases + "  ";
             }
 
             int mokuhyou = orihime_app.i_oritatami_bangou;
 
-            while (mokuhyou > orihime_app.OZ.hakkenn_sita_kazu) {
+            while (mokuhyou > orihime_app.OZ.discovered_fold_cases) {
                 orihime_app.oritatami_suitei();
                 orihime_app.repaint();
 
                 orihime_app.OZ.i_estimated_order = 6;
                 if (orihime_app.OZ.different_search_flg == 0) {
-                    mokuhyou = orihime_app.OZ.hakkenn_sita_kazu;
+                    mokuhyou = orihime_app.OZ.discovered_fold_cases;
                 }
 
             }

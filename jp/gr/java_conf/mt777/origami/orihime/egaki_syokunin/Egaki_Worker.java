@@ -27,7 +27,7 @@ import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
-public class Egaki_Syokunin {
+public class Egaki_Worker {
     OritaCalc oc = new OritaCalc(); //各種計算用の関数を使うためのクラスのインスタンス化
     //double r_ten=3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
     int ir_ten = 1;
@@ -50,8 +50,8 @@ public class Egaki_Syokunin {
     Undo_Box h_Ubox = new Undo_Box();
 
     Point moyori_point = new Point(100000.0, 100000.0); //マウス最寄の点。get_moyori_ten(Ten p)で求める。
-    Line moyori_line = new Line(100000.0, 100000.0, 100000.0, 100000.1); //マウス最寄の線分
-    Line moyori_step_line = new Line(100000.0, 100000.0, 100000.0, 100000.1); //マウス最寄のstep線分(線分追加のための準備をするための線分)。なお、ここで宣言する必要はないので、どこで宣言すべきか要検討20161113
+    LineSegment moyori_lineSegment = new LineSegment(100000.0, 100000.0, 100000.0, 100000.1); //マウス最寄の線分
+    LineSegment moyori_step_lineSegment = new LineSegment(100000.0, 100000.0, 100000.0, 100000.1); //マウス最寄のstep線分(線分追加のための準備をするための線分)。なお、ここで宣言する必要はないので、どこで宣言すべきか要検討20161113
     Circle moyori_ensyuu = new Circle(100000.0, 100000.0, 10.0, 8); //マウス最寄の円周を持つ円
     Circle moyori_step_ensyuu = new Circle(100000.0, 100000.0, 10.0, 8); //マウス最寄の円周を持つstep円
 
@@ -68,7 +68,7 @@ public class Egaki_Syokunin {
 
     public PolygonStore ori_v = new PolygonStore();    //ボロノイ図の線を格納する
 
-    Egaki_Syokunin_Dougubako e_s_dougubako = new Egaki_Syokunin_Dougubako(ori_s);
+    Egaki_Worker_Dougubako e_s_dougubako = new Egaki_Worker_Dougubako(ori_s);
 
     private final LineStore sen_s = new LineStore();    //基本枝構造のインスタンス化
     //private Senbunsyuugou sen_s;    //基本枝構造のインスタンス化
@@ -115,15 +115,15 @@ public class Egaki_Syokunin {
     double d_hantei_haba = 50.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<入力点が既存の点や線分と近いかどうかを判定する時の値
 
 
-    public int i_egaki_dankai;//折線を描く手順のどの段階にいるかの情報を格納
+    public int i_egaki_stage;//折線を描く手順のどの段階にいるかの情報を格納
     int i_en_egaki_dankai;//円を描く手順のどの段階にいるかの情報を格納
-    Line[] s_step = new Line[1024];//描画時の一時表示用に使う。s_step[0] は実際は使わず、s_step[1]から使う。
+    LineSegment[] s_step = new LineSegment[1024];//描画時の一時表示用に使う。s_step[0] は実際は使わず、s_step[1]から使う。
     Circle[] e_step = new Circle[1024];//描画時の一時表示用に使う。e_step[0] は実際は使わず、e_step[1]から使う。
 
 
     public int i_kouho_dankai;//折線を描く手順のどの候補かの情報を格納
     int i_en_kouho_dankai;//円を描く手順のどの候補かの情報を格納
-    Line[] s_kouho = new Line[16];//描画時の選択候補表示用に使う。s_kouho[0] は実際は使わず、s_kouho[1]から使う。
+    LineSegment[] s_kouho = new LineSegment[16];//描画時の選択候補表示用に使う。s_kouho[0] は実際は使わず、s_kouho[1]から使う。
     Circle[] e_kouho = new Circle[16];//描画時の選択候補表示用に使う。e_kouho[0] は実際は使わず、e_kouho[1]から使う。
 
 
@@ -172,7 +172,7 @@ public class Egaki_Syokunin {
 // **************　ここまで変数の定義　****************************************************************************************************
 // ****************************************************************************************************************************************
 
-    public Egaki_Syokunin(double r0, App app0) {  //コンストラクタ
+    public Egaki_Worker(double r0, App app0) {  //コンストラクタ
 
         orihime_app = app0;
 
@@ -193,14 +193,14 @@ public class Egaki_Syokunin {
         //taisyousei=0;
 
         for (int i = 0; i <= 1024 - 1; i++) {
-            s_step[i] = new Line();
+            s_step[i] = new LineSegment();
         }
         for (int i = 0; i <= 1024 - 1; i++) {
             e_step[i] = new Circle();
         }
 
         for (int i = 0; i <= 16 - 1; i++) {
-            s_kouho[i] = new Line();
+            s_kouho[i] = new LineSegment();
         }
         for (int i = 0; i <= 16 - 1; i++) {
             e_kouho[i] = new Circle();
@@ -228,17 +228,17 @@ public class Egaki_Syokunin {
         //taisyousei=0;
 
         camera.reset();
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
         i_en_egaki_dankai = 0;
 
     }
 
     public void reset_2() {
         //用紙の正方形を入力（開始）
-        ori_s.addsenbun(-200.0, -200.0, -200.0, 200.0, 0);
-        ori_s.addsenbun(-200.0, -200.0, 200.0, -200.0, 0);
-        ori_s.addsenbun(200.0, 200.0, -200.0, 200.0, 0);
-        ori_s.addsenbun(200.0, 200.0, 200.0, -200.0, 0);
+        ori_s.addLine(-200.0, -200.0, -200.0, 200.0, 0);
+        ori_s.addLine(-200.0, -200.0, 200.0, -200.0, 0);
+        ori_s.addLine(200.0, 200.0, -200.0, 200.0, 0);
+        ori_s.addLine(200.0, 200.0, 200.0, -200.0, 0);
         //用紙の正方形を入力（終了）
 
 
@@ -336,10 +336,10 @@ public class Egaki_Syokunin {
                         s = st[1].split("<", 2);
 
 						if (s[0].trim().equals("true")) {
-                            orihime_app.ckbox_mouse_settei.setSelected(true);
+                            orihime_app.ckbox_mouse_settings.setSelected(true);
                         }
                         if (s[0].trim().equals("false")) {
-                            orihime_app.ckbox_mouse_settei.setSelected(false);
+                            orihime_app.ckbox_mouse_settings.setSelected(false);
                         }
                     }
 
@@ -739,13 +739,13 @@ public class Egaki_Syokunin {
         }
 
         if (i_oriagarizu_yomikomi == 1) {
-            orihime_app.OZ.js.set_F_color(new Color(i_oriagarizu_F_color_R, i_oriagarizu_F_color_G, i_oriagarizu_F_color_B)); //表面の色
+            orihime_app.OZ.ct_worker.set_F_color(new Color(i_oriagarizu_F_color_R, i_oriagarizu_F_color_G, i_oriagarizu_F_color_B)); //表面の色
             orihime_app.Button_F_color.setBackground(new Color(i_oriagarizu_F_color_R, i_oriagarizu_F_color_G, i_oriagarizu_F_color_B));    //ボタンの色設定
 
-            orihime_app.OZ.js.set_B_color(new Color(i_oriagarizu_B_color_R, i_oriagarizu_B_color_G, i_oriagarizu_B_color_B));//裏面の色
+            orihime_app.OZ.ct_worker.set_B_color(new Color(i_oriagarizu_B_color_R, i_oriagarizu_B_color_G, i_oriagarizu_B_color_B));//裏面の色
             orihime_app.Button_B_color.setBackground(new Color(i_oriagarizu_B_color_R, i_oriagarizu_B_color_G, i_oriagarizu_B_color_B));//ボタンの色設定
 
-            orihime_app.OZ.js.set_L_color(new Color(i_oriagarizu_L_color_R, i_oriagarizu_L_color_G, i_oriagarizu_L_color_B));        //線の色
+            orihime_app.OZ.ct_worker.set_L_color(new Color(i_oriagarizu_L_color_R, i_oriagarizu_L_color_G, i_oriagarizu_L_color_B));        //線の色
             orihime_app.Button_L_color.setBackground(new Color(i_oriagarizu_L_color_R, i_oriagarizu_L_color_G, i_oriagarizu_L_color_B));        //ボタンの色設定
         }
     }
@@ -944,7 +944,7 @@ public class Egaki_Syokunin {
 
         //String text=new String();//文字列処理用のクラスのインスタンス化
         //double d;
-        Line s_tv = new Line();
+        LineSegment s_tv = new LineSegment();
         Point a = new Point();
         Point b = new Point();
 
@@ -1055,19 +1055,19 @@ public class Egaki_Syokunin {
 
 
                     s_tv.set(camera.object2TV(ori_s.get(i)));
-                    a.set(s_tv.geta());
-                    b.set(s_tv.getb());//a.set(s_tv.getax()+0.000001,s_tv.getay()+0.000001); b.set(s_tv.getbx()+0.000001,s_tv.getby()+0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+                    a.set(s_tv.getA());
+                    b.set(s_tv.getB());//a.set(s_tv.getax()+0.000001,s_tv.getay()+0.000001); b.set(s_tv.getbx()+0.000001,s_tv.getby()+0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
 
 //					g.drawLine( (int)a.getx(),(int)a.gety(),(int)b.getx(),(int)b.gety()); //直線
 
-                    BigDecimal b_ax = new BigDecimal(String.valueOf(a.getx()));
+                    BigDecimal b_ax = new BigDecimal(String.valueOf(a.getX()));
                     double x1 = b_ax.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                    BigDecimal b_ay = new BigDecimal(String.valueOf(a.gety()));
+                    BigDecimal b_ay = new BigDecimal(String.valueOf(a.getY()));
                     double y1 = b_ay.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                    BigDecimal b_bx = new BigDecimal(String.valueOf(b.getx()));
+                    BigDecimal b_bx = new BigDecimal(String.valueOf(b.getX()));
                     double x2 = b_bx.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                    BigDecimal b_by = new BigDecimal(String.valueOf(b.gety()));
+                    BigDecimal b_by = new BigDecimal(String.valueOf(b.getY()));
                     double y2 = b_by.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 
 
@@ -1216,10 +1216,10 @@ public class Egaki_Syokunin {
 
         // ----------------------------------------------------------------------
         memo1.addLine("<settei>");
-        if (orihime_app.ckbox_mouse_settei.isSelected()) {
+        if (orihime_app.ckbox_mouse_settings.isSelected()) {
             memo1.addLine("<ckbox_mouse_settei>true </ckbox_mouse_settei>");
         }
-        if (!orihime_app.ckbox_mouse_settei.isSelected()) {
+        if (!orihime_app.ckbox_mouse_settings.isSelected()) {
             memo1.addLine("<ckbox_mouse_settei>false</ckbox_mouse_settei>");
         }
 
@@ -1406,7 +1406,7 @@ public class Egaki_Syokunin {
 
 
             if (idel == 1) {
-                ori_s.delsenbun(i);
+                ori_s.deleteLine(i);
                 i = i - 1;
                 ieda = ori_s.getsousuu() + 1;    //<<<<<<<<<<<<<<<<<<
             }
@@ -1501,20 +1501,20 @@ public class Egaki_Syokunin {
         ori_s.kousabunkatu();
     }
 
-    public void ten_sakujyo() {
-        ori_s.ten_sakujyo();
+    public void point_removal() {
+        ori_s.point_removal();
     }
 
-    public void ten_sakujyo(double r) {
-        ori_s.ten_sakujyo(r);
+    public void point_removal(double r) {
+        ori_s.point_removal(r);
     }
 
-    public void jyuufuku_senbun_sakujyo() {
-        ori_s.jyuufuku_senbun_sakujyo();
+    public void overlapping_line_removal() {
+        ori_s.overlapping_line_removal();
     }
 
-    public void jyuufuku_senbun_sakujyo(double r) {
-        ori_s.jyuufuku_senbun_sakujyo(r);
+    public void overlapping_line_removal(double r) {
+        ori_s.overlapping_line_removal(r);
     }
 
 
@@ -1606,11 +1606,11 @@ public class Egaki_Syokunin {
         double d;
         OritaOekaki OO = new OritaOekaki();
 
-        Line s_tv = new Line();
+        LineSegment s_tv = new LineSegment();
         Point a = new Point();
         Point b = new Point();
 
-        Line s_ob = new Line();
+        LineSegment s_ob = new LineSegment();
 
 
         // ------------------------------------------------------
@@ -1636,11 +1636,11 @@ public class Egaki_Syokunin {
         double d;
         OritaOekaki OO = new OritaOekaki();
 
-        Line s_tv = new Line();
+        LineSegment s_tv = new LineSegment();
         Point a = new Point();
         Point b = new Point();
 
-        Line s_ob = new Line();
+        LineSegment s_ob = new LineSegment();
 
 
         // ------------------------------------------------------
@@ -1668,17 +1668,17 @@ public class Egaki_Syokunin {
 
 				s_tv.set(camera.object2TV(hoj_s.get(i)));
                 //a.set(s_tv.geta()); b.set(s_tv.getb());
-                a.set(s_tv.getax() + 0.000001, s_tv.getay() + 0.000001);
+                a.set(s_tv.getAx() + 0.000001, s_tv.getay() + 0.000001);
                 b.set(s_tv.getbx() + 0.000001, s_tv.getby() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
-                g.drawLine((int) a.getx(), (int) a.gety(), (int) b.getx(), (int) b.gety()); //直線
+                g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
                 if (fTenkaizuSenhaba < 2.0f) {//頂点の正方形を描く
                     g.setColor(Color.black);
                     //int i_haba=1;
                     int i_haba = ir_ten;
-                    g.fillRect((int) a.getx() - i_haba, (int) a.gety() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
-                    g.fillRect((int) b.getx() - i_haba, (int) b.gety() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く
+                    g.fillRect((int) a.getX() - i_haba, (int) a.getY() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
+                    g.fillRect((int) b.getX() - i_haba, (int) b.getY() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く
                 }
 
                 if (fTenkaizuSenhaba >= 2.0f) {//  太線
@@ -1696,19 +1696,19 @@ public class Egaki_Syokunin {
                         double d_haba = (double) fTenkaizuSenhaba / 2.0 + (double) ir_ten;//int i_haba=2;
 
                         g.setColor(Color.white);
-                        g2.fill(new Ellipse2D.Double(a.getx() - d_haba, a.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+                        g2.fill(new Ellipse2D.Double(a.getX() - d_haba, a.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
                         //g.fillOval( (int)a.getx()-i_haba/2,(int)a.gety()-i_haba/2,i_haba,i_haba); //円
 
                         g.setColor(Color.black);
-                        g2.draw(new Ellipse2D.Double(a.getx() - d_haba, a.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+                        g2.draw(new Ellipse2D.Double(a.getX() - d_haba, a.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
                         //g.drawOval( (int)a.getx()-i_haba/2,(int)a.gety()-i_haba/2,i_haba,i_haba); //円
 
                         g.setColor(Color.white);
-                        g2.fill(new Ellipse2D.Double(b.getx() - d_haba, b.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+                        g2.fill(new Ellipse2D.Double(b.getX() - d_haba, b.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
                         //g.fillOval( (int)b.getx()-i_haba/2,(int)b.gety()-i_haba/2,i_haba,i_haba); //円
 
                         g.setColor(Color.black);
-                        g2.draw(new Ellipse2D.Double(b.getx() - d_haba, b.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+                        g2.draw(new Ellipse2D.Double(b.getX() - d_haba, b.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
                         //g.drawOval( (int)b.getx()-i_haba/2,(int)b.gety()-i_haba/2,i_haba,i_haba); //円
                     }
 
@@ -1729,7 +1729,7 @@ public class Egaki_Syokunin {
         //Check1Senbには0番目からsize()-1番目までデータが入っている
         if (i_check1 == 1) {
             for (int i = 0; i < ori_s.check1_size(); i++) {
-                Line s_temp = new Line();
+                LineSegment s_temp = new LineSegment();
                 s_temp.set(ori_s.check1_getSenbun(i));
                 OO.yubisasi1(g, camera.object2TV(s_temp), 7.0, 3.0, 1);
             }
@@ -1737,7 +1737,7 @@ public class Egaki_Syokunin {
 
         if (i_check2 == 1) {
             for (int i = 0; i < ori_s.check2_size(); i++) {
-                Line s_temp = new Line();
+                LineSegment s_temp = new LineSegment();
                 s_temp.set(ori_s.check2_getSenbun(i));
                 OO.yubisasi2(g, camera.object2TV(s_temp), 7.0, 3.0, 1);
             }
@@ -1750,7 +1750,7 @@ public class Egaki_Syokunin {
         //System.out.println("ori_s.check4_size() = "+ori_s.check4_size());
         if (i_check4 == 1) {
             for (int i = 0; i < ori_s.check4_size(); i++) {
-                Line s_temp = new Line();
+                LineSegment s_temp = new LineSegment();
                 s_temp.set(ori_s.check4_getSenbun(i));
                 OO.yubisasi4(g, camera.object2TV(s_temp), i_ck4_color_toukado);
             }
@@ -1760,7 +1760,7 @@ public class Egaki_Syokunin {
         //Check3Senbには0番目からsize()-1番目までデータが入っている
         if (i_check3 == 1) {
             for (int i = 0; i < ori_s.check3_size(); i++) {
-                Line s_temp = new Line();
+                LineSegment s_temp = new LineSegment();
                 s_temp.set(ori_s.check3_getSenbun(i));
                 //OO.jyuuji(g,camera.object2TV(s_temp.geta()), 7.0 , 3.0 , 1);
                 OO.yubisasi3(g, camera.object2TV(s_temp), 7.0, 3.0, 1);
@@ -1805,7 +1805,7 @@ public class Egaki_Syokunin {
 
                 //円周の描画
                 d_haba = e_temp.getr() * camera.get_camera_bairitsu_x();//d_habaは描画時の円の半径。なお、camera.get_camera_bairitsu_x()＝camera.get_camera_bairitsu_y()を前提としている。
-                g2.draw(new Ellipse2D.Double(a.getx() - d_haba, a.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+                g2.draw(new Ellipse2D.Double(a.getX() - d_haba, a.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
 
 
                 // 点t_oをお絵かきするのに必要な手順
@@ -1848,7 +1848,7 @@ public class Egaki_Syokunin {
                     g.setColor(Color.black);
                     //int i_haba=1;
                     int i_haba = ir_ten;
-                    g.fillRect((int) a.getx() - i_haba, (int) a.gety() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
+                    g.fillRect((int) a.getX() - i_haba, (int) a.getY() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
                     //g.fillRect( (int)b.getx()-i_haba,(int)b.gety()-i_haba,2*i_haba+1,2*i_haba+1); //正方形を描く
                 }
 
@@ -1860,12 +1860,12 @@ public class Egaki_Syokunin {
 
 
                         g.setColor(Color.white);
-                        g2.fill(new Ellipse2D.Double(a.getx() - d_haba, a.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+                        g2.fill(new Ellipse2D.Double(a.getX() - d_haba, a.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
                         //g.fillOval( (int)a.getx()-i_haba/2,(int)a.gety()-i_haba/2,i_haba,i_haba); //円
 
 
                         g.setColor(Color.black);
-                        g2.draw(new Ellipse2D.Double(a.getx() - d_haba, a.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+                        g2.draw(new Ellipse2D.Double(a.getX() - d_haba, a.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
                         //g.drawOval( (int)a.getx()-i_haba/2,(int)a.gety()-i_haba/2,i_haba,i_haba); //円
 
                     }
@@ -1884,10 +1884,10 @@ public class Egaki_Syokunin {
 
                 s_tv.set(camera.object2TV(ori_s.get(i)));
 
-                a.set(s_tv.getax() + 0.000001, s_tv.getay() + 0.000001);
+                a.set(s_tv.getAx() + 0.000001, s_tv.getay() + 0.000001);
                 b.set(s_tv.getbx() + 0.000001, s_tv.getby() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
-                g.drawLine((int) a.getx(), (int) a.gety(), (int) b.getx(), (int) b.gety()); //直線
+                g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
             }
         }
@@ -1912,17 +1912,17 @@ public class Egaki_Syokunin {
 
                     s_tv.set(camera.object2TV(ori_s.get(i)));
                     //a.set(s_tv.geta()); b.set(s_tv.getb());
-                    a.set(s_tv.getax() + 0.000001, s_tv.getay() + 0.000001);
+                    a.set(s_tv.getAx() + 0.000001, s_tv.getay() + 0.000001);
                     b.set(s_tv.getbx() + 0.000001, s_tv.getby() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
-                    g.drawLine((int) a.getx(), (int) a.gety(), (int) b.getx(), (int) b.gety()); //直線
+                    g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
                     if (fTenkaizuSenhaba < 2.0f) {//頂点の黒い正方形を描く
                         g.setColor(Color.black);
                         //int i_haba=1;
                         int i_haba = ir_ten;
-                        g.fillRect((int) a.getx() - i_haba, (int) a.gety() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
-                        g.fillRect((int) b.getx() - i_haba, (int) b.gety() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く
+                        g.fillRect((int) a.getX() - i_haba, (int) a.getY() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
+                        g.fillRect((int) b.getX() - i_haba, (int) b.getY() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く
                     }
 
                     if (fTenkaizuSenhaba >= 2.0f) {//  太線
@@ -1933,20 +1933,20 @@ public class Egaki_Syokunin {
 
 
                             g.setColor(Color.white);
-                            g2.fill(new Ellipse2D.Double(a.getx() - d_haba, a.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+                            g2.fill(new Ellipse2D.Double(a.getX() - d_haba, a.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
                             //g.fillOval( (int)a.getx()-i_haba/2,(int)a.gety()-i_haba/2,i_haba,i_haba); //円
 
 
                             g.setColor(Color.black);
-                            g2.draw(new Ellipse2D.Double(a.getx() - d_haba, a.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+                            g2.draw(new Ellipse2D.Double(a.getX() - d_haba, a.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
                             //g.drawOval( (int)a.getx()-i_haba/2,(int)a.gety()-i_haba/2,i_haba,i_haba); //円
 
                             g.setColor(Color.white);
-                            g2.fill(new Ellipse2D.Double(b.getx() - d_haba, b.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+                            g2.fill(new Ellipse2D.Double(b.getX() - d_haba, b.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
                             //g.fillOval( (int)b.getx()-i_haba/2,(int)b.gety()-i_haba/2,i_haba,i_haba); //円
 
                             g.setColor(Color.black);
-                            g2.draw(new Ellipse2D.Double(b.getx() - d_haba, b.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+                            g2.draw(new Ellipse2D.Double(b.getX() - d_haba, b.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
                             //g.drawOval( (int)b.getx()-i_haba/2,(int)b.gety()-i_haba/2,i_haba,i_haba); //円
                         }
                     }
@@ -2014,19 +2014,19 @@ public class Egaki_Syokunin {
 
                     s_tv.set(camera.object2TV(ori_s.get(i)));
                     //a.set(s_tv.geta()); b.set(s_tv.getb());
-                    a.set(s_tv.getax() + 0.000001, s_tv.getay() + 0.000001);
+                    a.set(s_tv.getAx() + 0.000001, s_tv.getay() + 0.000001);
                     b.set(s_tv.getbx() + 0.000001, s_tv.getby() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
 
-                    g.drawLine((int) a.getx(), (int) a.gety(), (int) b.getx(), (int) b.gety()); //直線
+                    g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
 
                     if (fTenkaizuSenhaba < 2.0f) {//頂点の黒い正方形を描く
                         g.setColor(Color.black);
                         //int i_haba=1;
                         int i_haba = ir_ten;
-                        g.fillRect((int) a.getx() - i_haba, (int) a.gety() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
-                        g.fillRect((int) b.getx() - i_haba, (int) b.gety() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く
+                        g.fillRect((int) a.getX() - i_haba, (int) a.getY() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
+                        g.fillRect((int) b.getX() - i_haba, (int) b.getY() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く
                     }
 
 
@@ -2038,20 +2038,20 @@ public class Egaki_Syokunin {
 
 
                             g.setColor(Color.white);
-                            g2.fill(new Ellipse2D.Double(a.getx() - d_haba, a.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+                            g2.fill(new Ellipse2D.Double(a.getX() - d_haba, a.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
                             //g.fillOval( (int)a.getx()-i_haba/2,(int)a.gety()-i_haba/2,i_haba,i_haba); //円
 
 
                             g.setColor(Color.black);
-                            g2.draw(new Ellipse2D.Double(a.getx() - d_haba, a.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+                            g2.draw(new Ellipse2D.Double(a.getX() - d_haba, a.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
                             //g.drawOval( (int)a.getx()-i_haba/2,(int)a.gety()-i_haba/2,i_haba,i_haba); //円
 
                             g.setColor(Color.white);
-                            g2.fill(new Ellipse2D.Double(b.getx() - d_haba, b.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+                            g2.fill(new Ellipse2D.Double(b.getX() - d_haba, b.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
                             //g.fillOval( (int)b.getx()-i_haba/2,(int)b.gety()-i_haba/2,i_haba,i_haba); //円
 
                             g.setColor(Color.black);
-                            g2.draw(new Ellipse2D.Double(b.getx() - d_haba, b.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+                            g2.draw(new Ellipse2D.Double(b.getX() - d_haba, b.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
                             //g.drawOval( (int)b.getx()-i_haba/2,(int)b.gety()-i_haba/2,i_haba,i_haba); //円
                         }
 
@@ -2084,35 +2084,35 @@ public class Egaki_Syokunin {
 
         //線分入力時の一時的なs_step線分を描く　
 
-        if ((orihime_app.i_mouse_modeA == 61) && (i_egaki_dankai != 4)) {
+        if ((orihime_app.i_mouse_modeA == 61) && (i_egaki_stage != 4)) {
 		} else {
-            for (int i = 1; i <= i_egaki_dankai; i++) {
+            for (int i = 1; i <= i_egaki_stage; i++) {
                 g_setColor(g, s_step[i].getcolor());
                 g2.setStroke(new BasicStroke(fTenkaizuSenhaba, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
 
                 s_tv.set(camera.object2TV(s_step[i]));
                 //a.set(s_tv.geta()); b.set(s_tv.getb());
-                a.set(s_tv.getax() + 0.000001, s_tv.getay() + 0.000001);
+                a.set(s_tv.getAx() + 0.000001, s_tv.getay() + 0.000001);
                 b.set(s_tv.getbx() + 0.000001, s_tv.getby() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
 
-                g.drawLine((int) a.getx(), (int) a.gety(), (int) b.getx(), (int) b.gety()); //直線
+                g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
                 int i_haba_nyuiiryokuji = 3;
                 if (i_kou_mitudo_nyuuryoku == 1) {
                     i_haba_nyuiiryokuji = 2;
                 }
 
                 if (s_step[i].getiactive() == 1) {
-                    g.fillOval((int) a.getx() - i_haba_nyuiiryokuji, (int) a.gety() - i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji); //円
+                    g.fillOval((int) a.getX() - i_haba_nyuiiryokuji, (int) a.getY() - i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji); //円
                     //g.fillOval( (int)b.getx()-i_haba_nyuiiryokuji,(int)b.gety()-i_haba_nyuiiryokuji,2*i_haba_nyuiiryokuji,2*i_haba_nyuiiryokuji); //円
                 }
                 if (s_step[i].getiactive() == 2) {
                     //g.fillOval( (int)a.getx()-i_haba_nyuiiryokuji,(int)a.gety()-i_haba_nyuiiryokuji,2*i_haba_nyuiiryokuji,2*i_haba_nyuiiryokuji); //円
-                    g.fillOval((int) b.getx() - i_haba_nyuiiryokuji, (int) b.gety() - i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji); //円
+                    g.fillOval((int) b.getX() - i_haba_nyuiiryokuji, (int) b.getY() - i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji); //円
                 }
                 if (s_step[i].getiactive() == 3) {
-                    g.fillOval((int) a.getx() - i_haba_nyuiiryokuji, (int) a.gety() - i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji); //円
-                    g.fillOval((int) b.getx() - i_haba_nyuiiryokuji, (int) b.gety() - i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji); //円
+                    g.fillOval((int) a.getX() - i_haba_nyuiiryokuji, (int) a.getY() - i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji); //円
+                    g.fillOval((int) b.getX() - i_haba_nyuiiryokuji, (int) b.getY() - i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji, 2 * i_haba_nyuiiryokuji); //円
                 }
 
 
@@ -2129,10 +2129,10 @@ public class Egaki_Syokunin {
 
             s_tv.set(camera.object2TV(s_kouho[i]));
             //a.set(s_tv.geta()); b.set(s_tv.getb());
-            a.set(s_tv.getax() + 0.000001, s_tv.getay() + 0.000001);
+            a.set(s_tv.getAx() + 0.000001, s_tv.getay() + 0.000001);
             b.set(s_tv.getbx() + 0.000001, s_tv.getby() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
-            g.drawLine((int) a.getx(), (int) a.gety(), (int) b.getx(), (int) b.gety()); //直線
+            g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
             //int i_haba=ir_ten   +1;
             int i_haba = ir_ten + 5;
             //g.fillRect( (int)a.getx()-i_haba,(int)a.gety()-i_haba,2*i_haba+1,2*i_haba+1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
@@ -2140,26 +2140,26 @@ public class Egaki_Syokunin {
 
             if (s_kouho[i].getiactive() == 1) {
                 //g.fillRect( (int)a.getx()-i_haba,(int)a.gety()-i_haba,2*i_haba+1,2*i_haba+1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
-                g.drawLine((int) a.getx() - i_haba, (int) a.gety(), (int) a.getx() + i_haba, (int) a.gety()); //直線
-                g.drawLine((int) a.getx(), (int) a.gety() - i_haba, (int) a.getx(), (int) a.gety() + i_haba); //直線
+                g.drawLine((int) a.getX() - i_haba, (int) a.getY(), (int) a.getX() + i_haba, (int) a.getY()); //直線
+                g.drawLine((int) a.getX(), (int) a.getY() - i_haba, (int) a.getX(), (int) a.getY() + i_haba); //直線
 //g2.draw(new Ellipse2D.Double(a.getx()-(double)i_haba, a.gety()-(double)i_haba, 2.0*(double)i_haba,2.0*(double)i_haba));
             }
             if (s_kouho[i].getiactive() == 2) {
                 //g.fillRect( (int)b.getx()-i_haba,(int)b.gety()-i_haba,2*i_haba+1,2*i_haba+1); //正方形を描く
-                g.drawLine((int) b.getx() - i_haba, (int) b.gety(), (int) b.getx() + i_haba, (int) b.gety()); //直線
-                g.drawLine((int) b.getx(), (int) b.gety() - i_haba, (int) b.getx(), (int) b.gety() + i_haba); //直線
+                g.drawLine((int) b.getX() - i_haba, (int) b.getY(), (int) b.getX() + i_haba, (int) b.getY()); //直線
+                g.drawLine((int) b.getX(), (int) b.getY() - i_haba, (int) b.getX(), (int) b.getY() + i_haba); //直線
 //g2.draw(new Ellipse2D.Double(b.getx()-(double)i_haba, b.gety()-(double)i_haba, 2.0*(double)i_haba,2.0*(double)i_haba));
 
             }
             if (s_kouho[i].getiactive() == 3) {
                 //g.fillRect( (int)a.getx()-i_haba,(int)a.gety()-i_haba,2*i_haba+1,2*i_haba+1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
                 //g.fillRect( (int)b.getx()-i_haba,(int)b.gety()-i_haba,2*i_haba+1,2*i_haba+1); //正方形を描く
-                g.drawLine((int) a.getx() - i_haba, (int) a.gety(), (int) a.getx() + i_haba, (int) a.gety()); //直線
-                g.drawLine((int) a.getx(), (int) a.gety() - i_haba, (int) a.getx(), (int) a.gety() + i_haba); //直線
+                g.drawLine((int) a.getX() - i_haba, (int) a.getY(), (int) a.getX() + i_haba, (int) a.getY()); //直線
+                g.drawLine((int) a.getX(), (int) a.getY() - i_haba, (int) a.getX(), (int) a.getY() + i_haba); //直線
 //g2.draw(new Ellipse2D.Double(a.getx()-(double)i_haba, a.gety()-(double)i_haba, 2.0*(double)i_haba,2.0*(double)i_haba));
 
-                g.drawLine((int) b.getx() - i_haba, (int) b.gety(), (int) b.getx() + i_haba, (int) b.gety()); //直線
-                g.drawLine((int) b.getx(), (int) b.gety() - i_haba, (int) b.getx(), (int) b.gety() + i_haba); //直線
+                g.drawLine((int) b.getX() - i_haba, (int) b.getY(), (int) b.getX() + i_haba, (int) b.getY()); //直線
+                g.drawLine((int) b.getX(), (int) b.getY() - i_haba, (int) b.getX(), (int) b.getY() + i_haba); //直線
 //g2.draw(new Ellipse2D.Double(b.getx()-(double)i_haba, b.gety()-(double)i_haba, 2.0*(double)i_haba,2.0*(double)i_haba));
 
 
@@ -2174,13 +2174,13 @@ public class Egaki_Syokunin {
             g_setColor(g, e_step[i].getcolor());
             a.set(camera.object2TV(e_step[i].get_tyuusin()));//この場合のs_tvは描画座標系での円の中心の位置
             //a.set(s_tv.geta()); b.set(s_tv.getb());
-            a.set(a.getx() + 0.000001, a.gety() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+            a.set(a.getX() + 0.000001, a.getY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
             //g.drawLine( (int)a.getx(),(int)a.gety(),(int)b.getx(),(int)b.gety()); //直線
             double d_haba = e_step[i].getr() * camera.get_camera_bairitsu_x();//d_habaは描画時の円の半径。なお、camera.get_camera_bairitsu_x()＝camera.get_camera_bairitsu_y()を前提としている。
 
             //g2.fill(new Ellipse2D.Double(a.getx()-d_haba, a.gety()-d_haba, 2.0*d_haba,2.0*d_haba));
-            g2.draw(new Ellipse2D.Double(a.getx() - d_haba, a.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+            g2.draw(new Ellipse2D.Double(a.getX() - d_haba, a.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
             //g.drawOval( (int)a.getx()-i_haba/2,(int)a.gety()-i_haba/2,i_haba,i_haba); //円
         }
 
@@ -2271,7 +2271,7 @@ public class Egaki_Syokunin {
 
 
     public void set_i_egaki_dankai(int i) {
-        i_egaki_dankai = i;
+        i_egaki_stage = i;
     }
 
     public void set_i_en_egaki_dankai(int i) {
@@ -2304,7 +2304,7 @@ public class Egaki_Syokunin {
     //--------------------------
 //--------------------------
     public void add_en(Point t0, double dr, int ic) {
-        add_en(t0.getx(), t0.gety(), dr, ic);
+        add_en(t0.getX(), t0.getY(), dr, ic);
     }
 
     //--------------------------
@@ -2323,16 +2323,16 @@ public class Egaki_Syokunin {
 
 
     //--------------------------
-    public int addsenbun_hojyo(Line s0) {
-        hoj_s.addsenbun(s0);
+    public int addsenbun_hojyo(LineSegment s0) {
+        hoj_s.addLine(s0);
 
         return 1;
     }
 
     //--------------------------------------------
-    public int addsenbun(Line s0) {//0=変更なし、1=色の変化のみ、2=線分追加
+    public int addsenbun(LineSegment s0) {//0=変更なし、1=色の変化のみ、2=線分追加
 
-        ori_s.addsenbun(s0);//ori_sのsenbunの最後にs0の情報をを加えるだけ
+        ori_s.addLine(s0);//ori_sのsenbunの最後にs0の情報をを加えるだけ
         int sousuu_old = ori_s.getsousuu();
         ori_s.Senbun_en_kouten(ori_s.getsousuu(), ori_s.getsousuu(), 1, ori_s.cir_size());
 
@@ -2352,7 +2352,7 @@ public class Egaki_Syokunin {
         t1.set(ori_s.mottomo_tikai_Ten(t0));//ori_s.mottomo_tikai_Ten_sagasiは近い点がないと p_return.set(100000.0,100000.0)と返してくる
 
         t3.set(ori_s.mottomo_tikai_Tyuusin(t0));//ori_s.mottomo_tikai_Ten_sagasiは近い点がないと p_return.set(100000.0,100000.0)と返してくる
-        if (t0.kyori2jyou(t1) > t0.kyori2jyou(t3)) {
+        if (t0.distanceSquared(t1) > t0.distanceSquared(t3)) {
             t1.set(t3);
         }
 
@@ -2379,7 +2379,7 @@ public class Egaki_Syokunin {
         t1.set(ori_s.mottomo_tikai_Ten(t0));//ori_s.mottomo_tikai_Ten_sagasiは近い点がないと p_return.set(100000.0,100000.0)と返してくる
 
         t3.set(ori_s.mottomo_tikai_Tyuusin(t0));//ori_s.mottomo_tikai_Ten_sagasiは近い点がないと p_return.set(100000.0,100000.0)と返してくる
-        if (t0.kyori2jyou(t1) > t0.kyori2jyou(t3)) {
+        if (t0.distanceSquared(t1) > t0.distanceSquared(t3)) {
             t1.set(t3);
         }
 
@@ -2389,23 +2389,23 @@ public class Egaki_Syokunin {
         }
 
 
-        if (t0.kyori2jyou(t1) > t0.kyori2jyou(kus.moyori_kousi_ten(t0))) {
+        if (t0.distanceSquared(t1) > t0.distanceSquared(kus.moyori_kousi_ten(t0))) {
             return kus.moyori_kousi_ten(t0);
         }
         return t1;
     }
 
     //------------------------------
-    public Line get_moyori_senbun(Point t0) {
+    public LineSegment get_moyori_senbun(Point t0) {
         return ori_s.mottomo_tikai_Senbun(t0);
     }
 
     //------------------------------------------------------
-    public Line get_moyori_step_senbun(Point t0, int imin, int imax) {
+    public LineSegment get_moyori_step_senbun(Point t0, int imin, int imax) {
         int minrid = -100;
         double minr = 100000;//Senbun s1 =new Senbun(100000.0,100000.0,100000.0,100000.1);
         for (int i = imin; i <= imax; i++) {
-            double sk = oc.kyori_senbun(t0, s_step[i]);
+            double sk = oc.distance_lineSegment(t0, s_step[i]);
             if (minr > sk) {
                 minr = sk;
                 minrid = i;
@@ -2462,7 +2462,7 @@ public class Egaki_Syokunin {
             i_kouho_dankai = 0;
             p.set(camera.TV2object(p0));
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 i_kouho_dankai = 1;
                 s_kouho[1].set(moyori_point, moyori_point);
                 s_kouho[1].setcolor(i_c);
@@ -2480,7 +2480,7 @@ public class Egaki_Syokunin {
             i_kouho_dankai = 1;
             moyori_point.set(get_moyori_ten(p));
 
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 s_kouho[1].set(moyori_point, moyori_point);
             } else {
                 s_kouho[1].set(p, p);
@@ -2516,13 +2516,13 @@ public class Egaki_Syokunin {
 
     //マウスクリック----------------------------------------------------
     public void mPressed_m_00a(Point p0, int i_c) {
-        i_egaki_dankai = 1;
+        i_egaki_stage = 1;
         s_step[1].setiactive(2);
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) > d_hantei_haba) {
-            i_egaki_dankai = 0;
+        if (p.distance(moyori_point) > d_hantei_haba) {
+            i_egaki_stage = 0;
         }
         s_step[1].set(p, moyori_point);
         s_step[1].setcolor(i_c);
@@ -2537,23 +2537,23 @@ public class Egaki_Syokunin {
         if (i_kou_mitudo_nyuuryoku == 1) {
             i_kouho_dankai = 0;
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 i_kouho_dankai = 1;
                 s_kouho[1].set(moyori_point, moyori_point);
                 s_kouho[1].setcolor(i_c);
-                s_step[1].seta(s_kouho[1].geta());
+                s_step[1].seta(s_kouho[1].getA());
             }
         }
     }
 
     //マウスリリース--------------------------------------------------
     public void mReleased_m_00a(Point p0) {
-        if (i_egaki_dankai == 1) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 1) {
+            i_egaki_stage = 0;
 
             p.set(camera.TV2object(p0));
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) <= d_hantei_haba) {
+            if (p.distance(moyori_point) <= d_hantei_haba) {
                 s_step[1].seta(moyori_point);
                 if (s_step[1].getnagasa() > 0.00000001) {
                     //やりたい動作はここに書く
@@ -2575,13 +2575,13 @@ public class Egaki_Syokunin {
 
     //マウスクリック----------------------------------------------------
     public void mPressed_m_00b(Point p0, int i_c) {
-        i_egaki_dankai = 1;
+        i_egaki_stage = 1;
         s_step[1].setiactive(2);
         p.set(camera.TV2object(p0));
         s_step[1].set(p, p);
 
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) < d_hantei_haba) {
+        if (p.distance(moyori_point) < d_hantei_haba) {
             s_step[1].set(p, moyori_point);
         }
 
@@ -2597,23 +2597,23 @@ public class Egaki_Syokunin {
         if (i_kou_mitudo_nyuuryoku == 1) {
             moyori_point.set(get_moyori_ten(p));
             i_kouho_dankai = 1;
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 s_kouho[1].set(moyori_point, moyori_point);
             } else {
                 s_kouho[1].set(p, p);
             }
             s_kouho[1].setcolor(i_c);
-            s_step[1].seta(s_kouho[1].geta());
+            s_step[1].seta(s_kouho[1].getA());
         }
     }
 
     //マウスリリース--------------------------------------------------
     public void mReleased_m_00b(Point p0) {
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
         p.set(camera.TV2object(p0));
         s_step[1].seta(p);
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) <= d_hantei_haba) {
+        if (p.distance(moyori_point) <= d_hantei_haba) {
             s_step[1].seta(moyori_point);
         }
         if (s_step[1].getnagasa() > 0.00000001) {
@@ -2636,11 +2636,11 @@ public class Egaki_Syokunin {
 
     //マウス操作(i_mouse_modeA==28線分内分入力 でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_28(Point p0) {
-        i_egaki_dankai = 1;
+        i_egaki_stage = 1;
         s_step[1].setiactive(2);
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) < d_hantei_haba) {
+        if (p.distance(moyori_point) < d_hantei_haba) {
             s_step[1].set(p, moyori_point);
             s_step[1].setcolor(icol);
             return;
@@ -2657,26 +2657,26 @@ public class Egaki_Syokunin {
         if (i_kou_mitudo_nyuuryoku == 1) {
             moyori_point.set(get_moyori_ten(p));
             i_kouho_dankai = 1;
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 s_kouho[1].set(moyori_point, moyori_point);
             } else {
                 s_kouho[1].set(p, p);
             }
             s_kouho[1].setcolor(icol);
-            s_step[1].seta(s_kouho[1].geta());
+            s_step[1].seta(s_kouho[1].getA());
         }
         return;
     }
 
     //マウス操作(i_mouse_modeA==28線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_28(Point p0) {
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
         p.set(camera.TV2object(p0));
 
         s_step[1].seta(p);
         moyori_point.set(get_moyori_ten(p));
 
-        if (p.kyori(moyori_point) <= d_hantei_haba) {
+        if (p.distance(moyori_point) <= d_hantei_haba) {
             s_step[1].seta(moyori_point);
         }
         if (s_step[1].getnagasa() > 0.00000001) {
@@ -2689,11 +2689,11 @@ public class Egaki_Syokunin {
                 addsenbun(s_step[1]);
             }
             if ((d_naibun_s != 0.0) && (d_naibun_t != 0.0)) {
-                Line s_ad = new Line();
+                LineSegment s_ad = new LineSegment();
                 s_ad.setcolor(icol);
-                double nx = (d_naibun_t * s_step[1].getbx() + d_naibun_s * s_step[1].getax()) / (d_naibun_s + d_naibun_t);
+                double nx = (d_naibun_t * s_step[1].getbx() + d_naibun_s * s_step[1].getAx()) / (d_naibun_s + d_naibun_t);
                 double ny = (d_naibun_t * s_step[1].getby() + d_naibun_s * s_step[1].getay()) / (d_naibun_s + d_naibun_t);
-                s_ad.set(s_step[1].getax(), s_step[1].getay(), nx, ny);
+                s_ad.set(s_step[1].getAx(), s_step[1].getay(), nx, ny);
                 addsenbun(s_ad);
                 s_ad.set(s_step[1].getbx(), s_step[1].getby(), nx, ny);
                 addsenbun(s_ad);
@@ -2720,7 +2720,7 @@ public class Egaki_Syokunin {
             i_kouho_dankai = 1;
             moyori_point.set(get_moyori_ten(p));
 
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 s_kouho[1].set(moyori_point, moyori_point);
             } else {
                 s_kouho[1].set(p, p);
@@ -2740,12 +2740,12 @@ public class Egaki_Syokunin {
 
     //マウス操作(i_mouse_modeA==1線分入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_01(Point p0) {
-        i_egaki_dankai = 1;
+        i_egaki_stage = 1;
         s_step[1].setiactive(2);
         p.set(camera.TV2object(p0));
 
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) < d_hantei_haba) {
+        if (p.distance(moyori_point) < d_hantei_haba) {
             s_step[1].set(p, moyori_point);
             if (i_orisen_hojyosen == 0) {
                 s_step[1].setcolor(icol);
@@ -2776,7 +2776,7 @@ public class Egaki_Syokunin {
         if (i_kou_mitudo_nyuuryoku == 1) {
             moyori_point.set(get_moyori_ten(p));
             i_kouho_dankai = 1;
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 s_kouho[1].set(moyori_point, moyori_point);
             } else {
                 s_kouho[1].set(p, p);
@@ -2788,7 +2788,7 @@ public class Egaki_Syokunin {
             if (i_orisen_hojyosen == 1) {
                 s_kouho[1].setcolor(h_icol);
             }
-            s_step[1].seta(s_kouho[1].geta());
+            s_step[1].seta(s_kouho[1].getA());
         }
         return;
     }
@@ -2807,11 +2807,11 @@ public class Egaki_Syokunin {
 
     //マウス操作(i_mouse_modeA==1線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_01(Point p0) {
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
         p.set(camera.TV2object(p0));
         s_step[1].seta(p);
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) <= d_hantei_haba) {
+        if (p.distance(moyori_point) <= d_hantei_haba) {
             s_step[1].seta(moyori_point);
         }
         if (s_step[1].getnagasa() > 0.00000001) {
@@ -2845,13 +2845,13 @@ public class Egaki_Syokunin {
 
     //マウス操作(i_mouse_modeA==11線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_11(Point p0) {
-        if (i_egaki_dankai == 1) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 1) {
+            i_egaki_stage = 0;
 
             p.set(camera.TV2object(p0));
             moyori_point.set(get_moyori_ten(p));
             s_step[1].seta(moyori_point);
-            if (p.kyori(moyori_point) <= d_hantei_haba) {
+            if (p.distance(moyori_point) <= d_hantei_haba) {
                 if (s_step[1].getnagasa() > 0.00000001) {
                     addsenbun(s_step[1]);
                     kiroku();
@@ -2878,7 +2878,7 @@ public class Egaki_Syokunin {
             i_kouho_dankai = 1;
             moyori_point.set(get_moyori_ten(p));
 
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 s_kouho[1].set(moyori_point, moyori_point);
             } else {
                 s_kouho[1].set(p, p);
@@ -2907,7 +2907,7 @@ public class Egaki_Syokunin {
     int s_step_no_1_kara_rennzoku_no_ten_no_bangou() {//s_step[i]で最初から連続でTen（長さが０）が何番目まででてくるか番号を返す。点がない場合は0を返す
         int r_i = 0;
         int i_add = 1;
-        for (int i = 1; i <= i_egaki_dankai; i++) {
+        for (int i = 1; i <= i_egaki_stage; i++) {
             if (s_step[i].getnagasa() > 0.00000001) {
                 i_add = 0;
             }
@@ -2924,13 +2924,13 @@ public class Egaki_Syokunin {
         p.set(camera.TV2object(p0));
 
         //i_egaki_dankaiが従来のボロノイ母点だけになるように整理(まだ、点pをs_stepとしてボロノイ母点に加えるかどうかは決めていない)
-        i_egaki_dankai = s_step_no_1_kara_rennzoku_no_ten_no_bangou();//Tenの数
+        i_egaki_stage = s_step_no_1_kara_rennzoku_no_ten_no_bangou();//Tenの数
 
 
         //両端が新たに加えたpの最寄点からなる点状の線分s_tempを求める（最寄点がない場合はs_tempの両端はp）
-        Line s_temp = new Line();
+        LineSegment s_temp = new LineSegment();
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) < d_hantei_haba) {
+        if (p.distance(moyori_point) < d_hantei_haba) {
             s_temp.set(moyori_point, moyori_point);
             s_temp.setcolor(5);
         } else {
@@ -2948,8 +2948,8 @@ public class Egaki_Syokunin {
 			}
 		}
 */
-        for (int i = 1; i <= i_egaki_dankai; i++) {
-            if (oc.kyori(s_step[i].geta(), s_temp.geta()) <= d_hantei_haba) {
+        for (int i = 1; i <= i_egaki_stage; i++) {
+            if (oc.distance(s_step[i].getA(), s_temp.getA()) <= d_hantei_haba) {
                 i_mouse_modeA_62_ten_kasanari = i;
             }
         }
@@ -2962,9 +2962,9 @@ public class Egaki_Syokunin {
             //oc.hyouji("新しいボロノイ母点を加える　開始ーーーーーーーーーーーーーーーーーーーーー");
 
             //１個の新しいボロノイ母点を加える(ここでやっと、点pをs_stepとしてボロノイ母点に加えると決まった)
-            i_egaki_dankai = i_egaki_dankai + 1;
-            s_step[i_egaki_dankai].set(s_temp);
-            s_step[i_egaki_dankai].setiactive(3);//iactive=3の線は両端に円が描かれる。iactive=1の線はa端のみに円が描かれる。iactive=2の線はb端のみに円が描かれる
+            i_egaki_stage = i_egaki_stage + 1;
+            s_step[i_egaki_stage].set(s_temp);
+            s_step[i_egaki_stage].setiactive(3);//iactive=3の線は両端に円が描かれる。iactive=1の線はa端のみに円が描かれる。iactive=2の線はb端のみに円が描かれる
 
             //今までのボロノイ図を元に、１個の新しいボロノイ母点を加えたボロノイ図を作る--------------------------------------
             //System.out.println("---------------------------");
@@ -2982,24 +2982,24 @@ public class Egaki_Syokunin {
 
             //順番がi_mouse_modeA_62_ten_kasanariのボロノイ母点と順番が最後(=i_egaki_dankai)のボロノイ母点を入れ替える
             //s_step[i]の入れ替え
-            Line S_irekae = new Line();
+            LineSegment S_irekae = new LineSegment();
             S_irekae.set(s_step[i_mouse_modeA_62_ten_kasanari]);
-            s_step[i_mouse_modeA_62_ten_kasanari].set(s_step[i_egaki_dankai]);
-            s_step[i_egaki_dankai].set(S_irekae);
+            s_step[i_mouse_modeA_62_ten_kasanari].set(s_step[i_egaki_stage]);
+            s_step[i_egaki_stage].set(S_irekae);
 
 
             for (int j = 1; j <= ori_v.getsousuu(); j++) {
                 //ori_v内の線分のiactiveの入れ替え
                 if (ori_v.getiactive(j) == i_mouse_modeA_62_ten_kasanari) {
-                    ori_v.setiactive(j, i_egaki_dankai);
-                } else if (ori_v.getiactive(j) == i_egaki_dankai) {
+                    ori_v.setiactive(j, i_egaki_stage);
+                } else if (ori_v.getiactive(j) == i_egaki_stage) {
                     ori_v.setiactive(j, i_mouse_modeA_62_ten_kasanari);
                 }
 
                 //ori_v内の線分のicolの入れ替え
                 if (ori_v.getcolor(j) == i_mouse_modeA_62_ten_kasanari) {
-                    ori_v.setcolor(j, i_egaki_dankai);
-                } else if (ori_v.getcolor(j) == i_egaki_dankai) {
+                    ori_v.setcolor(j, i_egaki_stage);
+                } else if (ori_v.getcolor(j) == i_egaki_stage) {
                     ori_v.setcolor(j, i_mouse_modeA_62_ten_kasanari);
                 }
             }
@@ -3007,7 +3007,7 @@ public class Egaki_Syokunin {
 
             //順番が最後(=i_egaki_dankai)ののボロノイ母点を削除
 
-            i_egaki_dankai = i_egaki_dankai - 1;
+            i_egaki_stage = i_egaki_stage - 1;
 
             PolygonStore ori_v_temp = new PolygonStore();    //修正用のボロノイ図の線を格納する
 
@@ -3015,11 +3015,11 @@ public class Egaki_Syokunin {
             ori_v.unselect_all();
 
             //i_egaki_dankai+1のボロノイ母点からのボロノイ線分を選択状態にする
-            Line s_tem = new Line();
-            Line s_tem2 = new Line();
+            LineSegment s_tem = new LineSegment();
+            LineSegment s_tem2 = new LineSegment();
             for (int j = 1; j <= ori_v.getsousuu(); j++) {
                 s_tem.set(ori_v.get(j));//s_temとしてボロノイ母点からのボロノイ線分か判定
-                if (s_tem.getiactive() == i_egaki_dankai + 1) {//ボロノイ線分の2つのボロノイ頂点はiactiveとcolorに記録されている
+                if (s_tem.getiactive() == i_egaki_stage + 1) {//ボロノイ線分の2つのボロノイ頂点はiactiveとcolorに記録されている
                     ori_v.select(j);
                     for (int h = 1; h <= ori_v.getsousuu(); h++) {
                         s_tem2.set(ori_v.get(h));
@@ -3036,9 +3036,9 @@ public class Egaki_Syokunin {
                     Senb_boro_1p_motome(s_tem.getcolor());
 
                     for (int i = 0; i < Senb_boro_1p.size(); i++) {
-                        Line add_S = new Line();
-                        add_S.set((Line) Senb_boro_1p.get(i));
-                        Line add_S2 = new Line();
+                        LineSegment add_S = new LineSegment();
+                        add_S.set((LineSegment) Senb_boro_1p.get(i));
+                        LineSegment add_S2 = new LineSegment();
 
 
                         //ori_v_tempにadd_Sを追加するかどうかの事前チェック
@@ -3055,10 +3055,10 @@ public class Egaki_Syokunin {
                         //ori_v_tempにadd_Sを追加するかどうかの事前チェックはここまで
 
                         if (i_tuika == 1) {
-                            ori_v_temp.addsenbun((Line) Senb_boro_1p.get(i));
+                            ori_v_temp.addLine((LineSegment) Senb_boro_1p.get(i));
                         }
                     }
-                } else if (s_tem.getcolor() == i_egaki_dankai + 1) {//ボロノイ線分の2つのボロノイ頂点はiactiveとcolorに記録されている
+                } else if (s_tem.getcolor() == i_egaki_stage + 1) {//ボロノイ線分の2つのボロノイ頂点はiactiveとcolorに記録されている
                     ori_v.select(j);
                     for (int h = 1; h <= ori_v.getsousuu(); h++) {
                         s_tem2.set(ori_v.get(h));
@@ -3074,9 +3074,9 @@ public class Egaki_Syokunin {
                     Senb_boro_1p_motome(s_tem.getiactive());
 
                     for (int i = 0; i < Senb_boro_1p.size(); i++) {
-                        Line add_S = new Line();
-                        add_S.set((Line) Senb_boro_1p.get(i));
-                        Line add_S2 = new Line();
+                        LineSegment add_S = new LineSegment();
+                        add_S.set((LineSegment) Senb_boro_1p.get(i));
+                        LineSegment add_S2 = new LineSegment();
 
                         //ori_v_tempにadd_Sを追加するかどうかの事前チェック
                         int i_tuika = 1;//1なら追加する。0なら追加しない。
@@ -3092,7 +3092,7 @@ public class Egaki_Syokunin {
                         //ori_v_tempにadd_Sを追加するかどうかの事前チェックはここまで
 
                         if (i_tuika == 1) {
-                            ori_v_temp.addsenbun((Line) Senb_boro_1p.get(i));
+                            ori_v_temp.addLine((LineSegment) Senb_boro_1p.get(i));
                         }
                     }
 
@@ -3107,11 +3107,11 @@ public class Egaki_Syokunin {
             //ori_v_tempのボロノイ線分をボロノイ母点に加える
             //ori_v_temp.hyouji("ori_v_temp---------------------");
             for (int j = 1; j <= ori_v_temp.getsousuu(); j++) {
-                Line s_t = new Line();
+                LineSegment s_t = new LineSegment();
                 s_t.set(ori_v_temp.get(j));
                 //s_t.hyouji("  s_t  ");
                 //addsenbun_voronoi(s_t);//addsenbun_voronoiは交差分割をしている。交差分割でiactiveを使うので、iactiveを別途何かに転用したルーチンでは交差分割を使用できないのでaddsenbun_voronoiも使用できない
-                ori_v.addsenbun(s_t);
+                ori_v.addLine(s_t);
             }
 
 
@@ -3131,11 +3131,11 @@ public class Egaki_Syokunin {
         //System.out.println("i_egaki_dankai="+i_egaki_dankai+" :  ori_v.getsousuu()= "+ori_v.getsousuu());
 
         for (int i = 1; i <= imax; i++) {
-            i_egaki_dankai = i_egaki_dankai + 1;
-            s_step[i_egaki_dankai].set(ori_v.get(i));
+            i_egaki_stage = i_egaki_stage + 1;
+            s_step[i_egaki_stage].set(ori_v.get(i));
             //s_step[i_egaki_dankai].setiactive(3);
-            s_step[i_egaki_dankai].setiactive(0);
-            s_step[i_egaki_dankai].setcolor(5);
+            s_step[i_egaki_stage].setiactive(0);
+            s_step[i_egaki_stage].setcolor(5);
         }
 
 
@@ -3143,9 +3143,9 @@ public class Egaki_Syokunin {
 
 
     //--------------------------------------------
-    public int addsenbun_voronoi(Line s0) {//0=変更なし、1=色の変化のみ、2=線分追加
+    public int addsenbun_voronoi(LineSegment s0) {//0=変更なし、1=色の変化のみ、2=線分追加
 
-        ori_v.addsenbun(s0);//ori_vのsenbunの最後にs0の情報をを加えるだけ
+        ori_v.addLine(s0);//ori_vのsenbunの最後にs0の情報をを加えるだけ
         int sousuu_old = ori_v.getsousuu();
         ori_v.Senbun_en_kouten(ori_v.getsousuu(), ori_v.getsousuu(), 1, ori_v.cir_size());
 
@@ -3170,8 +3170,8 @@ public class Egaki_Syokunin {
 
         //i_egaki_dankai番目のボロノイ頂点とそれ以前のボロノイ頂点間の2等分線をori_vに追加
 
-        for (int i_e_d = 1; i_e_d <= i_egaki_dankai - 1; i_e_d++) {
-            addsenbun_voronoi(oc.nitoubunsen(s_step[i_e_d].geta(), s_step[i_egaki_dankai].geta(), 1000.0)); //kiroku();
+        for (int i_e_d = 1; i_e_d <= i_egaki_stage - 1; i_e_d++) {
+            addsenbun_voronoi(oc.nitoubunsen(s_step[i_e_d].getA(), s_step[i_egaki_stage].getA(), 1000.0)); //kiroku();
         }
 
         //ボロノイに適合するか判定
@@ -3180,7 +3180,7 @@ public class Egaki_Syokunin {
 
 
         //ボロノイに適合しないものを選択状態にする
-        Line s_tem = new Line();
+        LineSegment s_tem = new LineSegment();
         for (int j = 1; j <= ori_v.getsousuu(); j++) {
 
             //System.out.println("ボロノイ j= "+j);
@@ -3188,26 +3188,26 @@ public class Egaki_Syokunin {
 
             //s_tenのa端とボロノイの各頂点との距離の最短値v_min_aを求める
             double v_min_a = 1000000.0;
-            for (int i = 1; i <= i_egaki_dankai; i++) {
-                if (oc.kyori(s_step[i].geta(), s_tem.geta()) < v_min_a) {
-                    v_min_a = oc.kyori(s_step[i].geta(), s_tem.geta());
+            for (int i = 1; i <= i_egaki_stage; i++) {
+                if (oc.distance(s_step[i].getA(), s_tem.getA()) < v_min_a) {
+                    v_min_a = oc.distance(s_step[i].getA(), s_tem.getA());
                 }
             }
             //System.out.println("v_min_a= "+v_min_a);
             //s_tenのb端とボロノイの各頂点との距離の最短値v_min_bを求める
             double v_min_b = 1000000.0;
-            for (int i = 1; i <= i_egaki_dankai; i++) {
-                if (oc.kyori(s_step[i].geta(), s_tem.getb()) < v_min_b) {
-                    v_min_b = oc.kyori(s_step[i].geta(), s_tem.getb());
+            for (int i = 1; i <= i_egaki_stage; i++) {
+                if (oc.distance(s_step[i].getA(), s_tem.getB()) < v_min_b) {
+                    v_min_b = oc.distance(s_step[i].getA(), s_tem.getB());
                 }
             }
             //System.out.println("v_min_b= "+v_min_b);
 
 
             int a_tomo_b_tomo_mottomo_tikai_voronoi_tyouten_no_kazu = 0;//aともbとも最も近いボロノイ頂点の数　これが２なら対象線分はボロノイ図として残す
-            for (int i = 1; i <= i_egaki_dankai; i++) {
-                if (Math.abs(oc.kyori(s_step[i].geta(), s_tem.geta()) - v_min_a) < 0.00001) {
-                    if (Math.abs(oc.kyori(s_step[i].geta(), s_tem.getb()) - v_min_b) < 0.00001) {
+            for (int i = 1; i <= i_egaki_stage; i++) {
+                if (Math.abs(oc.distance(s_step[i].getA(), s_tem.getA()) - v_min_a) < 0.00001) {
+                    if (Math.abs(oc.distance(s_step[i].getA(), s_tem.getB()) - v_min_b) < 0.00001) {
                         a_tomo_b_tomo_mottomo_tikai_voronoi_tyouten_no_kazu = a_tomo_b_tomo_mottomo_tikai_voronoi_tyouten_no_kazu + 1;
 
 
@@ -3236,22 +3236,22 @@ public class Egaki_Syokunin {
 
 //------------------------------
 
-    public void voronoi_02_01(int tyuusinn_ten_bangou, Line add_line) {
+    public void voronoi_02_01(int tyuusinn_ten_bangou, LineSegment add_lineSegment) {
         //i_egaki_dankai番目のボロノイ頂点は　　s_step[i_egaki_dankai].geta()　　　
 
         //System.out.println("(0a)_add_senbun.getiactive()   = "+add_senbun.getiactive());
         //加える線分について整理
         //Senbun add_senbun =new Senbun();
         //add_senbun.set(oc.nitoubunsen(s_step[i_e_d].geta(),s_step[i_egaki_dankai].geta(),1000.0));
-        StraightLine add_straightLine = new StraightLine(add_line);
+        StraightLine add_straightLine = new StraightLine(add_lineSegment);
 
 
         int i_saisyo = Senb_boro_1p.size() - 1;
         for (int i = i_saisyo; i >= 0; i--) {
             //既存の線分について整理
-            Line kizon_line = new Line();
-            kizon_line.set((Line) Senb_boro_1p.get(i));
-            StraightLine kizon_straightLine = new StraightLine(kizon_line);
+            LineSegment kizon_lineSegment = new LineSegment();
+            kizon_lineSegment.set((LineSegment) Senb_boro_1p.get(i));
+            StraightLine kizon_straightLine = new StraightLine(kizon_lineSegment);
 
 
             //加える線分と既存の線分を戦わせる
@@ -3267,42 +3267,42 @@ public class Egaki_Syokunin {
                 Point kouten = new Point();
                 kouten.set(oc.kouten_motome(add_straightLine, kizon_straightLine));
 
-                if ((add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.geta()) <= 0) &&
-                        (add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.getb()) <= 0)) {
+                if ((add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].getA(), kizon_lineSegment.getA()) <= 0) &&
+                        (add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].getA(), kizon_lineSegment.getB()) <= 0)) {
                     Senb_boro_1p.remove(i);
-                } else if ((add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.geta()) == 1) &&
-                        (add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.getb()) == -1)) {
-                    kizon_line.set(kizon_line.geta(), kouten);
-                    if (kizon_line.getnagasa() < 0.0000001) {
+                } else if ((add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].getA(), kizon_lineSegment.getA()) == 1) &&
+                        (add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].getA(), kizon_lineSegment.getB()) == -1)) {
+                    kizon_lineSegment.set(kizon_lineSegment.getA(), kouten);
+                    if (kizon_lineSegment.getnagasa() < 0.0000001) {
                         Senb_boro_1p.remove(i);
                     } else {
-                        Senb_boro_1p.set(i, kizon_line);
+                        Senb_boro_1p.set(i, kizon_lineSegment);
                     }
-                } else if ((add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.geta()) == -1) &&
-                        (add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.getb()) == 1)) {
-                    kizon_line.set(kouten, kizon_line.getb());
-                    if (kizon_line.getnagasa() < 0.0000001) {
+                } else if ((add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].getA(), kizon_lineSegment.getA()) == -1) &&
+                        (add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].getA(), kizon_lineSegment.getB()) == 1)) {
+                    kizon_lineSegment.set(kouten, kizon_lineSegment.getB());
+                    if (kizon_lineSegment.getnagasa() < 0.0000001) {
                         Senb_boro_1p.remove(i);
                     } else {
-                        Senb_boro_1p.set(i, kizon_line);
+                        Senb_boro_1p.set(i, kizon_lineSegment);
                     }
                 }
 
                 //
 
-                if ((kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.geta()) <= 0) &&
-                        (kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.getb()) <= 0)) {
+                if ((kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].getA(), add_lineSegment.getA()) <= 0) &&
+                        (kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].getA(), add_lineSegment.getB()) <= 0)) {
                     return;
-                } else if ((kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.geta()) == 1) &&
-                        (kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.getb()) == -1)) {
-                    add_line.set(add_line.geta(), kouten);
-                    if (add_line.getnagasa() < 0.0000001) {
+                } else if ((kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].getA(), add_lineSegment.getA()) == 1) &&
+                        (kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].getA(), add_lineSegment.getB()) == -1)) {
+                    add_lineSegment.set(add_lineSegment.getA(), kouten);
+                    if (add_lineSegment.getnagasa() < 0.0000001) {
                         return;
                     }
-                } else if ((kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.geta()) == -1) &&
-                        (kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.getb()) == 1)) {
-                    add_line.set(kouten, add_line.getb());
-                    if (add_line.getnagasa() < 0.0000001) {
+                } else if ((kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].getA(), add_lineSegment.getA()) == -1) &&
+                        (kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].getA(), add_lineSegment.getB()) == 1)) {
+                    add_lineSegment.set(kouten, add_lineSegment.getB());
+                    if (add_lineSegment.getnagasa() < 0.0000001) {
                         return;
                     }
                 }
@@ -3310,9 +3310,9 @@ public class Egaki_Syokunin {
 
             } else if (i_heikou == 1) {//加える線分と既存の線分が平行で２直線が一致しない場合
 //System.out.println("     途中_加える線分と既存の線分が平行で２直線が一致しない");
-                if (add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), kizon_line.geta()) == -1) {
+                if (add_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].getA(), kizon_lineSegment.getA()) == -1) {
                     Senb_boro_1p.remove(i);
-                } else if (kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].geta(), add_line.geta()) == -1) {
+                } else if (kizon_straightLine.onajigawa(s_step[tyuusinn_ten_bangou].getA(), add_lineSegment.getA()) == -1) {
                     return;
                 }
 
@@ -3334,7 +3334,7 @@ public class Egaki_Syokunin {
         //System.out.println("  i_e_d="+i_e_d);
         //add_senbun.hyouji("voronoi_02_01_  add_senbun _最終");
         //System.out.println("(0b)_add_senbun.getiactive()   = "+add_senbun.getiactive());
-        Senb_boro_1p.add(add_line);
+        Senb_boro_1p.add(add_lineSegment);
 
 
     }
@@ -3348,22 +3348,22 @@ public class Egaki_Syokunin {
 
         //System.out.println("i_egaki_dankai="+i_egaki_dankai);
 
-        for (int i_e_d = 1; i_e_d <= i_egaki_dankai; i_e_d++) {
+        for (int i_e_d = 1; i_e_d <= i_egaki_stage; i_e_d++) {
             if (i_e_d != tyuusinn_ten_bangou) {
 
                 //加える線分を求める
-                Line add_line = new Line();
+                LineSegment add_lineSegment = new LineSegment();
 
-                add_line.set(oc.nitoubunsen(s_step[i_e_d].geta(), s_step[tyuusinn_ten_bangou].geta(), 1000.0));
+                add_lineSegment.set(oc.nitoubunsen(s_step[i_e_d].getA(), s_step[tyuusinn_ten_bangou].getA(), 1000.0));
 
                 if (i_e_d < tyuusinn_ten_bangou) {
-                    add_line.setiactive(i_e_d);
-                    add_line.setcolor(tyuusinn_ten_bangou);//ボロノイ線分の2つのボロノイ頂点はiactiveとcolorに記録する
+                    add_lineSegment.setiactive(i_e_d);
+                    add_lineSegment.setcolor(tyuusinn_ten_bangou);//ボロノイ線分の2つのボロノイ頂点はiactiveとcolorに記録する
                 } else {
-                    add_line.setiactive(tyuusinn_ten_bangou);
-                    add_line.setcolor(i_e_d);//ボロノイ線分の2つのボロノイ頂点はiactiveとcolorに記録する
+                    add_lineSegment.setiactive(tyuusinn_ten_bangou);
+                    add_lineSegment.setcolor(i_e_d);//ボロノイ線分の2つのボロノイ頂点はiactiveとcolorに記録する
                 }
-                voronoi_02_01(tyuusinn_ten_bangou, add_line);
+                voronoi_02_01(tyuusinn_ten_bangou, add_lineSegment);
 
             }
         }
@@ -3386,7 +3386,7 @@ public class Egaki_Syokunin {
     public void voronoi_02() {//i=1からi_egaki_dankaiまでのs_step[i]と、i_egaki_dankai-1までのボロノイ図からi_egaki_dankaiのボロノイ図を作成
 
         //i_egaki_dankai番目のボロノイ頂点を取り囲むボロノイ線分のアレイリストを得る。
-        Senb_boro_1p_motome(i_egaki_dankai);
+        Senb_boro_1p_motome(i_egaki_stage);
 
         //20181109ここでori_v.の既存のボロノイ線分の整理が必要
 
@@ -3394,14 +3394,14 @@ public class Egaki_Syokunin {
         ori_v.unselect_all();
 
         //
-        Line s_mae = new Line();
-        Line s_ato = new Line();
+        LineSegment s_mae = new LineSegment();
+        LineSegment s_ato = new LineSegment();
 
         for (int ia = 0; ia < Senb_boro_1p.size() - 1; ia++) {
             for (int ib = ia + 1; ib < Senb_boro_1p.size(); ib++) {
 
-                s_mae.set((Line) Senb_boro_1p.get(ia));
-                s_ato.set((Line) Senb_boro_1p.get(ib));
+                s_mae.set((LineSegment) Senb_boro_1p.get(ia));
+                s_ato.set((LineSegment) Senb_boro_1p.get(ib));
 
                 StraightLine t_mae = new StraightLine(s_mae);
                 StraightLine t_ato = new StraightLine(s_ato);
@@ -3423,7 +3423,7 @@ public class Egaki_Syokunin {
 
                 //20181109ここでori_v.の既存のボロノイ線分(iactive()が必ずicolorより小さくなっている)を探す
                 for (int j = 1; j <= ori_v.getsousuu(); j++) {
-                    Line s_kizon = new Line();
+                    LineSegment s_kizon = new LineSegment();
                     s_kizon.set(ori_v.get(j));
                     //System.out.println("  (2) s_kizon.getiactive()=" +s_kizon.getiactive() +" :  s_kizon.getcolor()=" +s_kizon.getcolor());
 
@@ -3459,21 +3459,21 @@ public class Egaki_Syokunin {
                             //System.out.println("kouten=" +kouten.getx()+" : "+kouten.gety());
 
 
-                            if ((t_mae.onajigawa(s_step[i_egaki_dankai].geta(), s_kizon.geta()) >= 0) &&
-                                    (t_mae.onajigawa(s_step[i_egaki_dankai].geta(), s_kizon.getb()) >= 0)) {
+                            if ((t_mae.onajigawa(s_step[i_egaki_stage].getA(), s_kizon.getA()) >= 0) &&
+                                    (t_mae.onajigawa(s_step[i_egaki_stage].getA(), s_kizon.getB()) >= 0)) {
                                 ori_v.select(j);
                             }
 
-                            if ((t_mae.onajigawa(s_step[i_egaki_dankai].geta(), s_kizon.geta()) == -1) &&
-                                    (t_mae.onajigawa(s_step[i_egaki_dankai].geta(), s_kizon.getb()) == 1)) {
+                            if ((t_mae.onajigawa(s_step[i_egaki_stage].getA(), s_kizon.getA()) == -1) &&
+                                    (t_mae.onajigawa(s_step[i_egaki_stage].getA(), s_kizon.getB()) == 1)) {
                                 //s_kizon.set(s_kizon.geta(),kouten);
-                                ori_v.set(j, s_kizon.geta(), kouten);
+                                ori_v.set(j, s_kizon.getA(), kouten);
                             }
 
-                            if ((t_mae.onajigawa(s_step[i_egaki_dankai].geta(), s_kizon.geta()) == 1) &&
-                                    (t_mae.onajigawa(s_step[i_egaki_dankai].geta(), s_kizon.getb()) == -1)) {
+                            if ((t_mae.onajigawa(s_step[i_egaki_stage].getA(), s_kizon.getA()) == 1) &&
+                                    (t_mae.onajigawa(s_step[i_egaki_stage].getA(), s_kizon.getB()) == -1)) {
                                 //s_kizon.set(kouten,s_kizon.getb());
-                                ori_v.set(j, kouten, s_kizon.getb());
+                                ori_v.set(j, kouten, s_kizon.getB());
                             }
 
                             //  }else{
@@ -3502,10 +3502,10 @@ public class Egaki_Syokunin {
 
         //ori_vのsenbunの最後にSenb_boro_1pの線分ををを加える
         for (int i = 0; i < Senb_boro_1p.size(); i++) {
-            Line add_S = new Line();
-            add_S.set((Line) Senb_boro_1p.get(i));
+            LineSegment add_S = new LineSegment();
+            add_S.set((LineSegment) Senb_boro_1p.get(i));
             //System.out.println("  add_S.getiactive()=" +add_S.getiactive());
-            ori_v.addsenbun((Line) Senb_boro_1p.get(i));
+            ori_v.addLine((LineSegment) Senb_boro_1p.get(i));
             //System.out.println("  ori_v.get(ori_v.getsousuu()).getiactive()=" +ori_v.get(ori_v.getsousuu()).getiactive());
 
         }
@@ -3584,20 +3584,20 @@ public class Egaki_Syokunin {
         p.set(camera.TV2object(p0));
         i_kouho_dankai = 0;
 
-        if (i_egaki_dankai == 0) {
+        if (i_egaki_stage == 0) {
             entyou_kouho_nbox.reset();
-            i_egaki_dankai = 1;
+            i_egaki_stage = 1;
 
             s_step[1].set(p, p);
             s_step[1].setcolor(5);//マゼンタ
             return;
         }
 
-        if (i_egaki_dankai >= 2) {
+        if (i_egaki_stage >= 2) {
 
-            i_egaki_dankai = i_egaki_dankai + 1;
-            s_step[i_egaki_dankai].set(p, p);
-            s_step[i_egaki_dankai].setcolor(5);//マゼンタ
+            i_egaki_stage = i_egaki_stage + 1;
+            s_step[i_egaki_stage].set(p, p);
+            s_step[i_egaki_stage].setcolor(5);//マゼンタ
             return;
         }
 
@@ -3606,21 +3606,21 @@ public class Egaki_Syokunin {
     //マウス操作(ドラッグしたとき)を行う関数
     public void mDragged_A_05or70(Point p0) {
         p.set(camera.TV2object(p0));
-        if (i_egaki_dankai == 1) {
-            s_step[i_egaki_dankai].setb(p);
+        if (i_egaki_stage == 1) {
+            s_step[i_egaki_stage].setb(p);
         }
-        if (i_egaki_dankai > 1) {
-            s_step[i_egaki_dankai].set(p, p);
+        if (i_egaki_stage > 1) {
+            s_step[i_egaki_stage].set(p, p);
         }
     }
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_05or70(Point p0) {
         p.set(camera.TV2object(p0));
-        moyori_line.set(get_moyori_senbun(p));
+        moyori_lineSegment.set(get_moyori_senbun(p));
 
 
-        if (i_egaki_dankai == 1) {
+        if (i_egaki_stage == 1) {
 
             s_step[1].setb(p);
 
@@ -3636,23 +3636,23 @@ public class Egaki_Syokunin {
                 //if(i_senbun_kousa_hantei== 28 ){ i_jikkou=1;}
 
                 if (i_jikkou == 1) {
-                    int_double i_d = new int_double(i, oc.kyori(s_step[1].geta(), oc.kouten_motome(ori_s.get(i), s_step[1])));
+                    int_double i_d = new int_double(i, oc.distance(s_step[1].getA(), oc.kouten_motome(ori_s.get(i), s_step[1])));
                     entyou_kouho_nbox.ire_i_tiisaijyun(i_d);
                 }
 
 
             }
             if ((entyou_kouho_nbox.getsousuu() == 0) && (s_step[1].getnagasa() <= 0.000001)) {//延長する候補になる折線を選ぶために描いた線分s_step[1]が点状のときの処理
-                if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
+                if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
                     int_double i_d = new int_double(ori_s.mottomo_tikai_senbun_sagasi(p), 1.0);//entyou_kouho_nboxに1本の情報しか入らないのでdoubleの部分はどうでもよいので適当に1.0にした。
                     entyou_kouho_nbox.ire_i_tiisaijyun(i_d);
 
-                    s_step[1].setb(oc.sentaisyou_ten_motome(moyori_line.geta(), moyori_line.getb(), p));
+                    s_step[1].setb(oc.sentaisyou_ten_motome(moyori_lineSegment.getA(), moyori_lineSegment.getB(), p));
 
                     s_step[1].set(//s_step[1]を短くして、表示時に目立たない様にする。
-                            oc.ten_bai(oc.tyuukanten(s_step[1].geta(), s_step[1].getb()), s_step[1].geta(), 0.00001 / s_step[1].getnagasa())
+                            oc.ten_bai(oc.tyuukanten(s_step[1].getA(), s_step[1].getB()), s_step[1].getA(), 0.00001 / s_step[1].getnagasa())
                             ,
-                            oc.ten_bai(oc.tyuukanten(s_step[1].geta(), s_step[1].getb()), s_step[1].getb(), 0.00001 / s_step[1].getnagasa())
+                            oc.ten_bai(oc.tyuukanten(s_step[1].getA(), s_step[1].getB()), s_step[1].getB(), 0.00001 / s_step[1].getnagasa())
                     );
 
                 }
@@ -3663,14 +3663,14 @@ public class Egaki_Syokunin {
 
 
             if (entyou_kouho_nbox.getsousuu() == 0) {
-                i_egaki_dankai = 0;
+                i_egaki_stage = 0;
                 return;
             }
             if (entyou_kouho_nbox.getsousuu() >= 0) {
 
-                i_egaki_dankai = 1 + entyou_kouho_nbox.getsousuu();
+                i_egaki_stage = 1 + entyou_kouho_nbox.getsousuu();
 
-                for (int i = 2; i <= i_egaki_dankai; i++) {
+                for (int i = 2; i <= i_egaki_stage; i++) {
                     s_step[i].set(ori_s.get(entyou_kouho_nbox.get_int(i - 1)));
                     s_step[i].setcolor(6);//グリーン
                 }
@@ -3680,34 +3680,34 @@ public class Egaki_Syokunin {
         }
 
 
-        if (i_egaki_dankai >= 3) {
-            if (oc.kyori_senbun(p, moyori_line) >= d_hantei_haba) {
-                i_egaki_dankai = 0;
+        if (i_egaki_stage >= 3) {
+            if (oc.distance_lineSegment(p, moyori_lineSegment) >= d_hantei_haba) {
+                i_egaki_stage = 0;
                 return;
             }
 
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
 
 
                 //最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがあるかどうかを判断する。
                 int i_senbun_entyou_mode = 0;// i_senbun_entyou_mode=0なら最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがない。1ならある。
                 for (int i = 1; i <= entyou_kouho_nbox.getsousuu(); i++) {
-                    if (oc.line_intersect_decide(ori_s.get(entyou_kouho_nbox.get_int(i)), moyori_line, 0.000001, 0.000001) == 31) {//線分が同じならoc.senbun_kousa_hantei==31
+                    if (oc.line_intersect_decide(ori_s.get(entyou_kouho_nbox.get_int(i)), moyori_lineSegment, 0.000001, 0.000001) == 31) {//線分が同じならoc.senbun_kousa_hantei==31
                         i_senbun_entyou_mode = 1;
                     }
                 }
 
 
-                Line add_sen = new Line();
+                LineSegment add_sen = new LineSegment();
                 //最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがない場合
                 if (i_senbun_entyou_mode == 0) {
                     int sousuu_old = ori_s.getsousuu();//(1)
                     for (int i = 1; i <= entyou_kouho_nbox.getsousuu(); i++) {
                         //最初に選んだ線分と2番目に選んだ線分が平行でない場合
-                        if (oc.heikou_hantei(ori_s.get(entyou_kouho_nbox.get_int(i)), moyori_line, 0.000001) == 0) { //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない
+                        if (oc.heikou_hantei(ori_s.get(entyou_kouho_nbox.get_int(i)), moyori_lineSegment, 0.000001) == 0) { //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない
                             //s_step[1]とs_step[2]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
                             Point kousa_point = new Point();
-                            kousa_point.set(oc.kouten_motome(ori_s.get(entyou_kouho_nbox.get_int(i)), moyori_line));
+                            kousa_point.set(oc.kouten_motome(ori_s.get(entyou_kouho_nbox.get_int(i)), moyori_lineSegment));
                             //add_sen =new Senbun(kousa_ten,ori_s.get(entyou_kouho_nbox.get_int(i)).get_tikai_hasi(kousa_ten));
                             add_sen.seta(kousa_point);
                             add_sen.setb(ori_s.get(entyou_kouho_nbox.get_int(i)).get_tikai_hasi(kousa_point));
@@ -3722,7 +3722,7 @@ public class Egaki_Syokunin {
                                 }
 
                                 //addsenbun(add_sen);
-                                ori_s.addsenbun(add_sen);//ori_sのsenbunの最後にs0の情報をを加えるだけ//(2)
+                                ori_s.addLine(add_sen);//ori_sのsenbunの最後にs0の情報をを加えるだけ//(2)
                             }
                         }
                     }
@@ -3737,12 +3737,12 @@ public class Egaki_Syokunin {
 
                     int sousuu_old = ori_s.getsousuu();//(1)
                     for (int i = 1; i <= entyou_kouho_nbox.getsousuu(); i++) {
-                        Line moto_no_sen = new Line();
+                        LineSegment moto_no_sen = new LineSegment();
                         moto_no_sen.set(ori_s.get(entyou_kouho_nbox.get_int(i)));
                         Point p_point = new Point();
                         p_point.set(oc.kouten_motome(moto_no_sen, s_step[1]));
 
-                        if (p_point.kyori(moto_no_sen.geta()) < p_point.kyori(moto_no_sen.getb())) {
+                        if (p_point.distance(moto_no_sen.getA()) < p_point.distance(moto_no_sen.getB())) {
                             moto_no_sen.a_b_koukan();
                         }
                         add_sen.set(kousatenmade_2(moto_no_sen));
@@ -3756,7 +3756,7 @@ public class Egaki_Syokunin {
                                 add_sen.setcolor(ori_s.get(entyou_kouho_nbox.get_int(i)).getcolor());
                             }
 
-                            ori_s.addsenbun(add_sen);//ori_sのsenbunの最後にs0の情報をを加えるだけ//(2)
+                            ori_s.addLine(add_sen);//ori_sのsenbunの最後にs0の情報をを加えるだけ//(2)
                         }
 
                     }
@@ -3770,7 +3770,7 @@ public class Egaki_Syokunin {
                 kiroku();
 
 
-                i_egaki_dankai = 0;
+                i_egaki_stage = 0;
                 return;
             }
         }
@@ -3789,7 +3789,7 @@ public class Egaki_Syokunin {
 
     //マウス操作(マウスを動かしたとき)を行う関数    //System.out.println("_");
     public void mMoved_A_71(Point p0) {
-        if (i_egaki_dankai == 0) {
+        if (i_egaki_stage == 0) {
             i_dousa_mode = 0;
             mMoved_A_01(p0);
             return;
@@ -3810,19 +3810,19 @@ public class Egaki_Syokunin {
         p.set(camera.TV2object(p0));
         double hantei_kyori = 0.000001;
 
-        if (p.kyori(moyori_point_memo) <= d_hantei_haba) {
-            i_egaki_dankai = 0;
+        if (p.distance(moyori_point_memo) <= d_hantei_haba) {
+            i_egaki_stage = 0;
         }
 
 
-        if (i_egaki_dankai == 0) {
+        if (i_egaki_stage == 0) {
 
 
             //任意の点が与えられたとき、端点もしくは格子点で最も近い点を得る
             moyori_point.set(get_moyori_ten(p));
             moyori_point_memo.set(moyori_point);
 
-            if (p.kyori(moyori_point) > d_hantei_haba) {
+            if (p.distance(moyori_point) > d_hantei_haba) {
                 moyori_point.set(p);
             }
 
@@ -3830,10 +3830,10 @@ public class Egaki_Syokunin {
             Narabebako_int_double nbox = new Narabebako_int_double();
             for (int i = 1; i <= ori_s.getsousuu(); i++) {
                 if ((0 <= ori_s.getcolor(i)) && (ori_s.getcolor(i) <= 2)) {
-                    if (moyori_point.kyori(ori_s.geta(i)) < hantei_kyori) {
-                        nbox.ire_i_tiisaijyun(new int_double(i, oc.kakudo(ori_s.geta(i), ori_s.getb(i))));
-                    } else if (moyori_point.kyori(ori_s.getb(i)) < hantei_kyori) {
-                        nbox.ire_i_tiisaijyun(new int_double(i, oc.kakudo(ori_s.getb(i), ori_s.geta(i))));
+                    if (moyori_point.distance(ori_s.geta(i)) < hantei_kyori) {
+                        nbox.ire_i_tiisaijyun(new int_double(i, oc.angle(ori_s.geta(i), ori_s.getb(i))));
+                    } else if (moyori_point.distance(ori_s.getb(i)) < hantei_kyori) {
+                        nbox.ire_i_tiisaijyun(new int_double(i, oc.angle(ori_s.getb(i), ori_s.geta(i))));
                     }
                 }
             }
@@ -3853,7 +3853,7 @@ public class Egaki_Syokunin {
         }
         if (i_dousa_mode == 38) {
             if (mPressed_A_38(p0) == 0) {
-                if (i_egaki_dankai == 0) {
+                if (i_egaki_stage == 0) {
                     mPressed_A_71(p0);
                 }
             }
@@ -3869,9 +3869,9 @@ public class Egaki_Syokunin {
             //if(i_dousa_mode==38){
             p.set(camera.TV2object(p0));
             moyori_point_memo.set(moyori_point);
-            if (p.kyori(moyori_point_memo) > d_hantei_haba) {
+            if (p.distance(moyori_point_memo) > d_hantei_haba) {
                 i_dousa_mode = 1;
-                i_egaki_dankai = 1;
+                i_egaki_stage = 1;
                 s_step[1].a_b_koukan();
                 s_step[1].setcolor(icol);
                 i_dousa_mode_henkou_kanousei = 0;
@@ -4176,7 +4176,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_07(Point p0) {
-        if ((i_egaki_dankai >= 0) && (i_egaki_dankai <= 2)) {
+        if ((i_egaki_stage >= 0) && (i_egaki_stage <= 2)) {
             mMoved_A_29(p0);//近い既存点のみ表示
         }
 
@@ -4189,22 +4189,22 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         Point p = new Point();
         p.set(camera.TV2object(p0));
 
-        if ((i_egaki_dankai >= 0) && (i_egaki_dankai <= 2)) {
+        if ((i_egaki_stage >= 0) && (i_egaki_stage <= 2)) {
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(icol);
+            if (p.distance(moyori_point) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(icol);
                 return;
             }
         }
 
-        if (i_egaki_dankai == 3) {
-            moyori_line.set(get_moyori_senbun(p));
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_line);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
-                s_step[i_egaki_dankai].setcolor(6);
+        if (i_egaki_stage == 3) {
+            moyori_lineSegment.set(get_moyori_senbun(p));
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_lineSegment);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
+                s_step[i_egaki_stage].setcolor(6);
                 return;
             }
         }
@@ -4218,24 +4218,24 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_07(Point p0) {
-        if (i_egaki_dankai == 4) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 4) {
+            i_egaki_stage = 0;
 
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
 
             //三角形の内心を求める	public Ten oc.naisin(Ten ta,Ten tb,Ten tc)
             Point naisin = new Point();
-            naisin.set(oc.naisin(s_step[1].geta(), s_step[2].geta(), s_step[3].geta()));
+            naisin.set(oc.naisin(s_step[1].getA(), s_step[2].getA(), s_step[3].getA()));
 
 
-            Line add_sen2 = new Line(s_step[2].geta(), naisin);
+            LineSegment add_sen2 = new LineSegment(s_step[2].getA(), naisin);
 
 
             //add_sen2とs_step[4]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
             Point kousa_point = new Point();
             kousa_point.set(oc.kouten_motome(add_sen2, s_step[4]));
 
-            Line add_sen = new Line(kousa_point, s_step[2].geta(), icol);
+            LineSegment add_sen = new LineSegment(kousa_point, s_step[2].getA(), icol);
             if (add_sen.getnagasa() > 0.00000001) {
                 addsenbun(add_sen);
                 kiroku();
@@ -4264,10 +4264,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) < d_hantei_haba) {
-            i_egaki_dankai = i_egaki_dankai + 1;
-            s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-            s_step[i_egaki_dankai].setcolor(icol);
+        if (p.distance(moyori_point) < d_hantei_haba) {
+            i_egaki_stage = i_egaki_stage + 1;
+            s_step[i_egaki_stage].set(moyori_point, moyori_point);
+            s_step[i_egaki_stage].setcolor(icol);
         }
 
 
@@ -4279,22 +4279,22 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_08(Point p0) {
-        if (i_egaki_dankai == 3) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 3) {
+            i_egaki_stage = 0;
 
             //三角形の内心を求める	public Ten oc.naisin(Ten ta,Ten tb,Ten tc)
             Point naisin = new Point();
-            naisin.set(oc.naisin(s_step[1].geta(), s_step[2].geta(), s_step[3].geta()));
+            naisin.set(oc.naisin(s_step[1].getA(), s_step[2].getA(), s_step[3].getA()));
 
-            Line add_sen1 = new Line(s_step[1].geta(), naisin, icol);
+            LineSegment add_sen1 = new LineSegment(s_step[1].getA(), naisin, icol);
             if (add_sen1.getnagasa() > 0.00000001) {
                 addsenbun(add_sen1);
             }
-            Line add_sen2 = new Line(s_step[2].geta(), naisin, icol);
+            LineSegment add_sen2 = new LineSegment(s_step[2].getA(), naisin, icol);
             if (add_sen2.getnagasa() > 0.00000001) {
                 addsenbun(add_sen2);
             }
-            Line add_sen3 = new Line(s_step[3].geta(), naisin, icol);
+            LineSegment add_sen3 = new LineSegment(s_step[3].getA(), naisin, icol);
             if (add_sen3.getnagasa() > 0.00000001) {
                 addsenbun(add_sen3);
             }
@@ -4337,10 +4337,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) < d_hantei_haba) {
-            i_egaki_dankai = i_egaki_dankai + 1;
-            s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-            s_step[i_egaki_dankai].setcolor(icol);
+        if (p.distance(moyori_point) < d_hantei_haba) {
+            i_egaki_stage = i_egaki_stage + 1;
+            s_step[i_egaki_stage].set(moyori_point, moyori_point);
+            s_step[i_egaki_stage].setcolor(icol);
         }
     }
 
@@ -4350,9 +4350,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_53(Point p0) {
-        if (i_egaki_dankai == 2) {
-            i_egaki_dankai = 0;
-            sokutei_nagasa_1 = oc.kyori(s_step[1].geta(), s_step[2].geta()) * (double) kus.bunsuu() / 400.0;
+        if (i_egaki_stage == 2) {
+            i_egaki_stage = 0;
+            sokutei_nagasa_1 = oc.distance(s_step[1].getA(), s_step[2].getA()) * (double) kus.bunsuu() / 400.0;
 
             orihime_app.sokutei_nagasa_1_hyouji(sokutei_nagasa_1);
             //kiroku();
@@ -4376,10 +4376,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) < d_hantei_haba) {
-            i_egaki_dankai = i_egaki_dankai + 1;
-            s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-            s_step[i_egaki_dankai].setcolor(icol);
+        if (p.distance(moyori_point) < d_hantei_haba) {
+            i_egaki_stage = i_egaki_stage + 1;
+            s_step[i_egaki_stage].set(moyori_point, moyori_point);
+            s_step[i_egaki_stage].setcolor(icol);
         }
     }
 
@@ -4389,9 +4389,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_54(Point p0) {
-        if (i_egaki_dankai == 2) {
-            i_egaki_dankai = 0;
-            sokutei_nagasa_2 = oc.kyori(s_step[1].geta(), s_step[2].geta()) * (double) kus.bunsuu() / 400.0;
+        if (i_egaki_stage == 2) {
+            i_egaki_stage = 0;
+            sokutei_nagasa_2 = oc.distance(s_step[1].getA(), s_step[2].getA()) * (double) kus.bunsuu() / 400.0;
 
             orihime_app.sokutei_nagasa_2_hyouji(sokutei_nagasa_2);
             //kiroku();
@@ -4415,10 +4415,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) < d_hantei_haba) {
-            i_egaki_dankai = i_egaki_dankai + 1;
-            s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-            s_step[i_egaki_dankai].setcolor(icol);
+        if (p.distance(moyori_point) < d_hantei_haba) {
+            i_egaki_stage = i_egaki_stage + 1;
+            s_step[i_egaki_stage].set(moyori_point, moyori_point);
+            s_step[i_egaki_stage].setcolor(icol);
         }
     }
 
@@ -4428,9 +4428,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_55(Point p0) {
-        if (i_egaki_dankai == 3) {
-            i_egaki_dankai = 0;
-            sokutei_kakudo_1 = oc.kakudo(s_step[2].geta(), s_step[3].geta(), s_step[2].geta(), s_step[1].geta());
+        if (i_egaki_stage == 3) {
+            i_egaki_stage = 0;
+            sokutei_kakudo_1 = oc.angle(s_step[2].getA(), s_step[3].getA(), s_step[2].getA(), s_step[1].getA());
             if (sokutei_kakudo_1 > 180.0) {
                 sokutei_kakudo_1 = sokutei_kakudo_1 - 360.0;
             }
@@ -4454,10 +4454,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) < d_hantei_haba) {
-            i_egaki_dankai = i_egaki_dankai + 1;
-            s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-            s_step[i_egaki_dankai].setcolor(icol);
+        if (p.distance(moyori_point) < d_hantei_haba) {
+            i_egaki_stage = i_egaki_stage + 1;
+            s_step[i_egaki_stage].set(moyori_point, moyori_point);
+            s_step[i_egaki_stage].setcolor(icol);
         }
     }
 
@@ -4467,9 +4467,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_56(Point p0) {
-        if (i_egaki_dankai == 3) {
-            i_egaki_dankai = 0;
-            sokutei_kakudo_2 = oc.kakudo(s_step[2].geta(), s_step[3].geta(), s_step[2].geta(), s_step[1].geta());
+        if (i_egaki_stage == 3) {
+            i_egaki_stage = 0;
+            sokutei_kakudo_2 = oc.angle(s_step[2].getA(), s_step[3].getA(), s_step[2].getA(), s_step[1].getA());
             if (sokutei_kakudo_2 > 180.0) {
                 sokutei_kakudo_2 = sokutei_kakudo_2 - 360.0;
             }
@@ -4491,10 +4491,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) < d_hantei_haba) {
-            i_egaki_dankai = i_egaki_dankai + 1;
-            s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-            s_step[i_egaki_dankai].setcolor(icol);
+        if (p.distance(moyori_point) < d_hantei_haba) {
+            i_egaki_stage = i_egaki_stage + 1;
+            s_step[i_egaki_stage].set(moyori_point, moyori_point);
+            s_step[i_egaki_stage].setcolor(icol);
         }
     }
 
@@ -4504,9 +4504,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_57(Point p0) {
-        if (i_egaki_dankai == 3) {
-            i_egaki_dankai = 0;
-            sokutei_kakudo_3 = oc.kakudo(s_step[2].geta(), s_step[3].geta(), s_step[2].geta(), s_step[1].geta());
+        if (i_egaki_stage == 3) {
+            i_egaki_stage = 0;
+            sokutei_kakudo_3 = oc.angle(s_step[2].getA(), s_step[3].getA(), s_step[2].getA(), s_step[1].getA());
             if (sokutei_kakudo_3 > 180.0) {
                 sokutei_kakudo_3 = sokutei_kakudo_3 - 360.0;
             }
@@ -4521,7 +4521,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_09(Point p0) {
-        if (i_egaki_dankai == 0) {
+        if (i_egaki_stage == 0) {
             mMoved_A_29(p0);//近い既存点のみ表示
         }
 
@@ -4534,25 +4534,25 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
-        if (i_egaki_dankai == 0) {
+        if (i_egaki_stage == 0) {
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(icol);
+            if (p.distance(moyori_point) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(icol);
                 return;
             }
         }
 
-        if (i_egaki_dankai == 1) {
-            moyori_line.set(get_moyori_senbun(p));
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_line);
-                s_step[i_egaki_dankai].setcolor(6);
+        if (i_egaki_stage == 1) {
+            moyori_lineSegment.set(get_moyori_senbun(p));
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_lineSegment);
+                s_step[i_egaki_stage].setcolor(6);
                 return;
             }
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             return;
 
 
@@ -4567,12 +4567,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_09(Point p0) {
-        if (i_egaki_dankai == 2) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 2) {
+            i_egaki_stage = 0;
             //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){
             //oc.Senbun2Tyokusen(Senbun s)//線分を含む直線を得る
 
-            Line add_sen = new Line(s_step[1].geta(), oc.kage_motome(oc.Senbun2Tyokusen(s_step[2]), s_step[1].geta()), icol);
+            LineSegment add_sen = new LineSegment(s_step[1].getA(), oc.shadow_request(oc.Senbun2Tyokusen(s_step[2]), s_step[1].getA()), icol);
             if (add_sen.getnagasa() > 0.00000001) {
                 addsenbun(add_sen);
                 kiroku();
@@ -4587,7 +4587,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_40(Point p0) {
-        if (i_egaki_dankai == 0) {
+        if (i_egaki_stage == 0) {
             mMoved_A_29(p0);//近い既存点のみ表示
         }
 
@@ -4600,22 +4600,22 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
-        if (i_egaki_dankai == 0) {
+        if (i_egaki_stage == 0) {
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(icol);
+            if (p.distance(moyori_point) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(icol);
                 return;
             }
         }
 
-        if (i_egaki_dankai == 1) {
-            moyori_line.set(get_moyori_senbun(p));
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_line);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
-                s_step[i_egaki_dankai].setcolor(6);
+        if (i_egaki_stage == 1) {
+            moyori_lineSegment.set(get_moyori_senbun(p));
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_lineSegment);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
+                s_step[i_egaki_stage].setcolor(6);
                 return;
             }
             //i_egaki_dankai=0;
@@ -4623,12 +4623,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
 
-        if (i_egaki_dankai == 2) {
-            moyori_line.set(get_moyori_senbun(p));
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_line);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
-                s_step[i_egaki_dankai].setcolor(6);
+        if (i_egaki_stage == 2) {
+            moyori_lineSegment.set(get_moyori_senbun(p));
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_lineSegment);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
+                s_step[i_egaki_stage].setcolor(6);
                 return;
             }
             //i_egaki_dankai=0;
@@ -4646,10 +4646,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_40(Point p0) {
-        if (i_egaki_dankai == 3) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 3) {
+            i_egaki_stage = 0;
             //s_step[1]を点状から、s_step[2]に平行な線分にする。
-            s_step[1].setb(new Point(s_step[1].getax() + s_step[2].getbx() - s_step[2].getax(), s_step[1].getay() + s_step[2].getby() - s_step[2].getay()));
+            s_step[1].setb(new Point(s_step[1].getAx() + s_step[2].getbx() - s_step[2].getAx(), s_step[1].getay() + s_step[2].getby() - s_step[2].getay()));
 
 
             //Ten kousa_ten =new Ten(); kousa_ten.set(oc.kouten_motome(s_step[1],s_step[3]));
@@ -4659,7 +4659,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             if (s_step_tuika_koutenmade(3, s_step[1], s_step[3], icol) > 0) {
                 addsenbun(s_step[4]);
                 kiroku();
-                i_egaki_dankai = 0;
+                i_egaki_stage = 0;
                 return;
             }
 
@@ -4675,7 +4675,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //------
     //i_egaki_dankaiがi_e_dのときに、線分s_oをTen aはそのままで、Ten b側をs_kの交点までのばした一時折線s_step[i_e_d+1](色はicolo)を追加。成功した場合は1、なんらかの不都合で追加できなかった場合は-500を返す。
-    public int s_step_tuika_koutenmade(int i_e_d, Line s_o, Line s_k, int icolo) {
+    public int s_step_tuika_koutenmade(int i_e_d, LineSegment s_o, LineSegment s_k, int icolo) {
 
         Point kousa_point = new Point();
 
@@ -4684,9 +4684,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
         if (oc.heikou_hantei(s_o, s_k, 0.0000001) == 2) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-            kousa_point.set(s_k.geta());
-            if (oc.kyori(s_o.geta(), s_k.geta()) > oc.kyori(s_o.geta(), s_k.getb())) {
-                kousa_point.set(s_k.getb());
+            kousa_point.set(s_k.getA());
+            if (oc.distance(s_o.getA(), s_k.getA()) > oc.distance(s_o.getA(), s_k.getB())) {
+                kousa_point.set(s_k.getB());
             }
 
 
@@ -4697,7 +4697,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
 
-        Line add_sen = new Line(kousa_point, s_o.geta(), icolo);
+        LineSegment add_sen = new LineSegment(kousa_point, s_o.getA(), icolo);
 
         if (add_sen.getnagasa() > 0.00000001) {
             s_step[i_e_d + 1].set(add_sen);
@@ -4720,10 +4720,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) < d_hantei_haba) {
-            i_egaki_dankai = i_egaki_dankai + 1;
-            s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-            s_step[i_egaki_dankai].setcolor(icol);
+        if (p.distance(moyori_point) < d_hantei_haba) {
+            i_egaki_stage = i_egaki_stage + 1;
+            s_step[i_egaki_stage].set(moyori_point, moyori_point);
+            s_step[i_egaki_stage].setcolor(icol);
         }
     }
 
@@ -4733,14 +4733,14 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_10(Point p0) {
-        if (i_egaki_dankai == 3) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 3) {
+            i_egaki_stage = 0;
 
             //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
             Point t_taisyou = new Point();
-            t_taisyou.set(oc.sentaisyou_ten_motome(s_step[2].geta(), s_step[3].geta(), s_step[1].geta()));
+            t_taisyou.set(oc.sentaisyou_ten_motome(s_step[2].getA(), s_step[3].getA(), s_step[1].getA()));
 
-            Line add_sen = new Line(s_step[2].geta(), t_taisyou);
+            LineSegment add_sen = new LineSegment(s_step[2].getA(), t_taisyou);
 
             add_sen.set(kousatenmade(add_sen));
             add_sen.setcolor(icol);
@@ -4761,21 +4761,21 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mPressed_A_52(Point p0) {
-        System.out.println("i_egaki_dankai=" + i_egaki_dankai);
+        System.out.println("i_egaki_dankai=" + i_egaki_stage);
 
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
 
-        i_egaki_dankai = i_egaki_dankai + 1;
-        if (p.kyori(moyori_point) < d_hantei_haba) {
-            s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-            s_step[i_egaki_dankai].setcolor(icol);
+        i_egaki_stage = i_egaki_stage + 1;
+        if (p.distance(moyori_point) < d_hantei_haba) {
+            s_step[i_egaki_stage].set(moyori_point, moyori_point);
+            s_step[i_egaki_stage].setcolor(icol);
         } else {
-            s_step[i_egaki_dankai].set(p, p);
-            s_step[i_egaki_dankai].setcolor(icol);
+            s_step[i_egaki_stage].set(p, p);
+            s_step[i_egaki_stage].setcolor(icol);
         }
 
-        System.out.println("i_egaki_dankai=" + i_egaki_dankai);
+        System.out.println("i_egaki_dankai=" + i_egaki_stage);
     }
 
     //マウス操作(ドラッグしたとき)を行う関数
@@ -4784,23 +4784,23 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_52(Point p0) {
-        if (i_egaki_dankai == 2) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 2) {
+            i_egaki_stage = 0;
 
-            Line add_line = new Line();
-            renzoku_orikaesi_new(s_step[1].geta(), s_step[2].geta());
-            for (int i = 1; i <= i_egaki_dankai; i++) {
+            LineSegment add_lineSegment = new LineSegment();
+            renzoku_orikaesi_new(s_step[1].getA(), s_step[2].getA());
+            for (int i = 1; i <= i_egaki_stage; i++) {
 
                 if (s_step[i].getnagasa() > 0.00000001) {
 
-                    add_line.set(s_step[i].geta(), s_step[i].getb());//要注意　s_stepは表示上の都合でアクティヴが0以外に設定されているのでadd_senbunにうつしかえてる20170507
-                    add_line.setcolor(icol);
-                    addsenbun(add_line);
+                    add_lineSegment.set(s_step[i].getA(), s_step[i].getB());//要注意　s_stepは表示上の都合でアクティヴが0以外に設定されているのでadd_senbunにうつしかえてる20170507
+                    add_lineSegment.setcolor(icol);
+                    addsenbun(add_lineSegment);
                 }
             }
             kiroku();
 
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
         }
     }
 
@@ -4829,13 +4829,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         //「再帰関数における、種の成長」交点が見つかった場合、交点まで伸びる線分をs_step[i_egaki_dankai]に追加
         //if(e_s_dougubako.get_kousaten_made_nobasi_orisen_fukumu_flg(a,b)==3){return;}
-        i_egaki_dankai = i_egaki_dankai + 1;
-        if (i_egaki_dankai > 100) {
+        i_egaki_stage = i_egaki_stage + 1;
+        if (i_egaki_stage > 100) {
             return;
         }//念のためにs_stepの上限を100に設定した
 
-        s_step[i_egaki_dankai].set(e_s_dougubako.get_kousaten_made_nobasi_senbun_new());//要注意　es1でうっかりs_stepにset.(senbun)やるとアクティヴでないので表示が小さくなる20170507
-        s_step[i_egaki_dankai].setiactive(3);
+        s_step[i_egaki_stage].set(e_s_dougubako.get_kousaten_made_nobasi_senbun_new());//要注意　es1でうっかりs_stepにset.(senbun)やるとアクティヴでないので表示が小さくなる20170507
+        s_step[i_egaki_stage].setiactive(3);
 
         System.out.println("20201129 saiki repaint ");
 
@@ -4843,13 +4843,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         //最も近い交点が折線とＸ字型の場合無条件に種を生成し、散布。
         if (e_s_dougubako.get_kousaten_made_nobasi_flg_new(a, b) == 1) {
-            Line kousaten_made_nobasi_saisyono_line = new Line();
-            kousaten_made_nobasi_saisyono_line.set(e_s_dougubako.get_kousaten_made_nobasi_saisyono_senbun_new());
+            LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
+            kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.get_kousaten_made_nobasi_saisyono_senbun_new());
 
             Point new_a = new Point();
             new_a.set(e_s_dougubako.get_kousaten_made_nobasi_ten_new());//Ten new_aは最も近い交点
             Point new_b = new Point();
-            new_b.set(oc.sentaisyou_ten_motome(kousaten_made_nobasi_saisyono_line.geta(), kousaten_made_nobasi_saisyono_line.getb(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+            new_b.set(oc.sentaisyou_ten_motome(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
             renzoku_orikaesi_new(new_a, new_b);//種の散布
             return;
@@ -4864,7 +4864,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             Narabebako_int_double t_m_s_nbox = new Narabebako_int_double();
 
-            t_m_s_nbox.set(ori_s.get_nbox_of_tyouten_b_syuui_orisen(e_s_dougubako.get_kousaten_made_nobasi_senbun_new().geta(), e_s_dougubako.get_kousaten_made_nobasi_senbun_new().getb()));
+            t_m_s_nbox.set(ori_s.get_nbox_of_tyouten_b_syuui_orisen(e_s_dougubako.get_kousaten_made_nobasi_senbun_new().getA(), e_s_dougubako.get_kousaten_made_nobasi_senbun_new().getB()));
 
             //System.out.println("20201129 t_m_s_nbox.getsousuu() = "+ t_m_s_nbox.getsousuu());
 
@@ -4890,13 +4890,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 StraightLine tyoku2 = new StraightLine(ori_s.get(t_m_s_nbox.get_int(1)));
                 i_kousa_flg = tyoku2.senbun_kousa_hantei_kuwasii(ori_s.get(t_m_s_nbox.get_int(2)));
                 if (i_kousa_flg == 3) {
-                    Line kousaten_made_nobasi_saisyono_line = new Line();
-                    kousaten_made_nobasi_saisyono_line.set(e_s_dougubako.get_kousaten_made_nobasi_saisyono_senbun_new());
+                    LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
+                    kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.get_kousaten_made_nobasi_saisyono_senbun_new());
 
                     Point new_a = new Point();
                     new_a.set(e_s_dougubako.get_kousaten_made_nobasi_ten_new());//Ten new_aは最も近い交点
                     Point new_b = new Point();
-                    new_b.set(oc.sentaisyou_ten_motome(kousaten_made_nobasi_saisyono_line.geta(), kousaten_made_nobasi_saisyono_line.getb(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                    new_b.set(oc.sentaisyou_ten_motome(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
                     renzoku_orikaesi_new(new_a, new_b);//種の散布
                     return;
@@ -4912,13 +4912,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     StraightLine tyoku2 = new StraightLine(ori_s.get(t_m_s_nbox.get_int(2)));
                     i_kousa_flg = tyoku2.senbun_kousa_hantei_kuwasii(ori_s.get(t_m_s_nbox.get_int(3)));
                     if (i_kousa_flg == 3) {
-                        Line kousaten_made_nobasi_saisyono_line = new Line();
-                        kousaten_made_nobasi_saisyono_line.set(e_s_dougubako.get_kousaten_made_nobasi_saisyono_senbun_new());
+                        LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
+                        kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.get_kousaten_made_nobasi_saisyono_senbun_new());
 
                         Point new_a = new Point();
                         new_a.set(e_s_dougubako.get_kousaten_made_nobasi_ten_new());//Ten new_aは最も近い交点
                         Point new_b = new Point();
-                        new_b.set(oc.sentaisyou_ten_motome(kousaten_made_nobasi_saisyono_line.geta(), kousaten_made_nobasi_saisyono_line.getb(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                        new_b.set(oc.sentaisyou_ten_motome(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
                         renzoku_orikaesi_new(new_a, new_b);//種の散布
                         return;
@@ -4930,13 +4930,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     StraightLine tyoku2 = new StraightLine(ori_s.get(t_m_s_nbox.get_int(3)));
                     i_kousa_flg = tyoku2.senbun_kousa_hantei_kuwasii(ori_s.get(t_m_s_nbox.get_int(1)));
                     if (i_kousa_flg == 3) {
-                        Line kousaten_made_nobasi_saisyono_line = new Line();
-                        kousaten_made_nobasi_saisyono_line.set(e_s_dougubako.get_kousaten_made_nobasi_saisyono_senbun_new());
+                        LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
+                        kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.get_kousaten_made_nobasi_saisyono_senbun_new());
 
                         Point new_a = new Point();
                         new_a.set(e_s_dougubako.get_kousaten_made_nobasi_ten_new());//Ten new_aは最も近い交点
                         Point new_b = new Point();
-                        new_b.set(oc.sentaisyou_ten_motome(kousaten_made_nobasi_saisyono_line.geta(), kousaten_made_nobasi_saisyono_line.getb(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                        new_b.set(oc.sentaisyou_ten_motome(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
                         renzoku_orikaesi_new(new_a, new_b);//種の散布
                         return;
@@ -4948,13 +4948,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     StraightLine tyoku2 = new StraightLine(ori_s.get(t_m_s_nbox.get_int(1)));
                     i_kousa_flg = tyoku2.senbun_kousa_hantei_kuwasii(ori_s.get(t_m_s_nbox.get_int(2)));
                     if (i_kousa_flg == 3) {
-                        Line kousaten_made_nobasi_saisyono_line = new Line();
-                        kousaten_made_nobasi_saisyono_line.set(e_s_dougubako.get_kousaten_made_nobasi_saisyono_senbun_new());
+                        LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
+                        kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.get_kousaten_made_nobasi_saisyono_senbun_new());
 
                         Point new_a = new Point();
                         new_a.set(e_s_dougubako.get_kousaten_made_nobasi_ten_new());//Ten new_aは最も近い交点
                         Point new_b = new Point();
-                        new_b.set(oc.sentaisyou_ten_motome(kousaten_made_nobasi_saisyono_line.geta(), kousaten_made_nobasi_saisyono_line.getb(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                        new_b.set(oc.sentaisyou_ten_motome(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
                         renzoku_orikaesi_new(new_a, new_b);//種の散布
                         return;
@@ -4998,24 +4998,24 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
         //if(e_s_dougubako.get_kousaten_made_nobasi_orisen_fukumu_flg(a,b)==3){return;}
 
-        i_egaki_dankai = i_egaki_dankai + 1;
-        if (i_egaki_dankai > 100) {
+        i_egaki_stage = i_egaki_stage + 1;
+        if (i_egaki_stage > 100) {
             return;
         }//念のためにs_stepの上限を100に設定した
 
-        s_step[i_egaki_dankai].set(e_s_dougubako.get_kousaten_made_nobasi_senbun(a, b));//要注意　es1でうっかりs_stepにset.(senbun)やるとアクティヴでないので表示が小さくなる20170507
-        s_step[i_egaki_dankai].setiactive(3);
+        s_step[i_egaki_stage].set(e_s_dougubako.get_kousaten_made_nobasi_senbun(a, b));//要注意　es1でうっかりs_stepにset.(senbun)やるとアクティヴでないので表示が小さくなる20170507
+        s_step[i_egaki_stage].setiactive(3);
 
         //求めた交点で、次のベクトルを発生する。
 
         if (e_s_dougubako.get_kousaten_made_nobasi_flg(a, b) == 1) {
-            Line kousaten_made_nobasi_saisyono_line = new Line();
-            kousaten_made_nobasi_saisyono_line.set(e_s_dougubako.get_kousaten_made_nobasi_saisyono_senbun(a, b));
+            LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
+            kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.get_kousaten_made_nobasi_saisyono_senbun(a, b));
 
             Point new_a = new Point();
             new_a.set(e_s_dougubako.get_kousaten_made_nobasi_ten(a, b));
             Point new_b = new Point();
-            new_b.set(oc.sentaisyou_ten_motome(kousaten_made_nobasi_saisyono_line.geta(), kousaten_made_nobasi_saisyono_line.getb(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+            new_b.set(oc.sentaisyou_ten_motome(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
             renzoku_orikaesi(new_a, new_b);
             return;
@@ -5034,24 +5034,24 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
         //if(e_s_dougubako.get_kousaten_made_nobasi_orisen_fukumu_flg(a,b)==3){return;}
 
-        i_egaki_dankai = i_egaki_dankai + 1;
-        if (i_egaki_dankai > 100) {
+        i_egaki_stage = i_egaki_stage + 1;
+        if (i_egaki_stage > 100) {
             return;
         }//念のためにs_stepの上限を100に設定した
 
-        s_step[i_egaki_dankai].set(e_s_dougubako.get_kousaten_made_nobasi_senbun(a, b));//要注意　es1でうっかりs_stepにset.(senbun)やるとアクティヴでないので表示が小さくなる20170507
-        s_step[i_egaki_dankai].setiactive(3);
+        s_step[i_egaki_stage].set(e_s_dougubako.get_kousaten_made_nobasi_senbun(a, b));//要注意　es1でうっかりs_stepにset.(senbun)やるとアクティヴでないので表示が小さくなる20170507
+        s_step[i_egaki_stage].setiactive(3);
 
         //求めた交点で、次のベクトルを発生する。
 
         if (e_s_dougubako.get_kousaten_made_nobasi_flg(a, b) == 1) {
-            Line kousaten_made_nobasi_saisyono_line = new Line();
-            kousaten_made_nobasi_saisyono_line.set(e_s_dougubako.get_kousaten_made_nobasi_saisyono_senbun(a, b));
+            LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
+            kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.get_kousaten_made_nobasi_saisyono_senbun(a, b));
 
             Point new_a = new Point();
             new_a.set(e_s_dougubako.get_kousaten_made_nobasi_ten(a, b));
             Point new_b = new Point();
-            new_b.set(oc.sentaisyou_ten_motome(kousaten_made_nobasi_saisyono_line.geta(), kousaten_made_nobasi_saisyono_line.getb(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+            new_b.set(oc.sentaisyou_ten_motome(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
             renzoku_orikaesi(new_a, new_b);
             return;
@@ -5088,11 +5088,11 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==27線分入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_27(Point p0) {
-        i_egaki_dankai = 1;
+        i_egaki_stage = 1;
         s_step[1].setiactive(2);
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) < d_hantei_haba) {
+        if (p.distance(moyori_point) < d_hantei_haba) {
             s_step[1].set(p, moyori_point);
             s_step[1].setcolor(icol);
             return;
@@ -5108,11 +5108,11 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         if (i_kou_mitudo_nyuuryoku == 1) {
             i_kouho_dankai = 0;
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 i_kouho_dankai = 1;
                 s_kouho[1].set(moyori_point, moyori_point);
                 s_kouho[1].setcolor(icol);
-                s_step[1].seta(s_kouho[1].geta());
+                s_step[1].seta(s_kouho[1].getA());
             }
         }
 
@@ -5121,22 +5121,22 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==27線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_27(Point p0) {
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
         p.set(camera.TV2object(p0));
 
         s_step[1].seta(p);
         moyori_point.set(get_moyori_ten(p));
 
-        if (p.kyori(moyori_point) <= d_hantei_haba) {
+        if (p.distance(moyori_point) <= d_hantei_haba) {
             s_step[1].seta(moyori_point);
         }
         if (s_step[1].getnagasa() > 0.00000001) {
             for (int i = 0; i <= i_orisen_bunkatu_suu - 1; i++) {
-                double ax = ((double) (i_orisen_bunkatu_suu - i) * s_step[1].getax() + (double) i * s_step[1].getbx()) / ((double) i_orisen_bunkatu_suu);
+                double ax = ((double) (i_orisen_bunkatu_suu - i) * s_step[1].getAx() + (double) i * s_step[1].getbx()) / ((double) i_orisen_bunkatu_suu);
                 double ay = ((double) (i_orisen_bunkatu_suu - i) * s_step[1].getay() + (double) i * s_step[1].getby()) / ((double) i_orisen_bunkatu_suu);
-                double bx = ((double) (i_orisen_bunkatu_suu - i - 1) * s_step[1].getax() + (double) (i + 1) * s_step[1].getbx()) / ((double) i_orisen_bunkatu_suu);
+                double bx = ((double) (i_orisen_bunkatu_suu - i - 1) * s_step[1].getAx() + (double) (i + 1) * s_step[1].getbx()) / ((double) i_orisen_bunkatu_suu);
                 double by = ((double) (i_orisen_bunkatu_suu - i - 1) * s_step[1].getay() + (double) (i + 1) * s_step[1].getby()) / ((double) i_orisen_bunkatu_suu);
-                Line s_ad = new Line(ax, ay, bx, by);
+                LineSegment s_ad = new LineSegment(ax, ay, bx, by);
                 s_ad.setcolor(icol);
                 addsenbun(s_ad);
             }
@@ -5158,7 +5158,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             i_kouho_dankai = 0;
             p.set(camera.TV2object(p0));
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 i_kouho_dankai = 1;
                 s_kouho[1].set(moyori_point, moyori_point);
                 s_kouho[1].setcolor(icol);
@@ -5173,31 +5173,31 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         p.set(camera.TV2object(p0));
 
-        if (i_egaki_dankai == 0) {    //第1段階として、点を選択
+        if (i_egaki_stage == 0) {    //第1段階として、点を選択
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(5);
+            if (p.distance(moyori_point) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(5);
             }
             return;
         }
 
-        if (i_egaki_dankai == 1) {    //第2段階として、点を選択
+        if (i_egaki_stage == 1) {    //第2段階として、点を選択
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) >= d_hantei_haba) {
-                i_egaki_dankai = 0;
+            if (p.distance(moyori_point) >= d_hantei_haba) {
+                i_egaki_stage = 0;
                 return;
             }
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
 
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
-                s_step[1].setb(s_step[2].getb());
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(i_egaki_stage);
+                s_step[1].setb(s_step[2].getB());
             }
             if (s_step[1].getnagasa() < 0.00000001) {
-                i_egaki_dankai = 0;
+                i_egaki_stage = 0;
             }
         }
 
@@ -5210,10 +5210,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==29正多角形入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_29(Point p0) {
-        if (i_egaki_dankai == 2) {
-            i_egaki_dankai = 0;
-            Line s_tane = new Line();
-            Line s_deki = new Line();
+        if (i_egaki_stage == 2) {
+            i_egaki_stage = 0;
+            LineSegment s_tane = new LineSegment();
+            LineSegment s_deki = new LineSegment();
 
 
             s_tane.set(s_step[1]);
@@ -5221,7 +5221,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             addsenbun(s_tane);
             for (int i = 2; i <= i_sei_takakukei; i++) {
                 s_deki.set(oc.Senbun_kaiten(s_tane, (double) (i_sei_takakukei - 2) * 180.0 / (double) i_sei_takakukei));
-                s_tane.set(s_deki.getb(), s_deki.geta());
+                s_tane.set(s_deki.getB(), s_deki.getA());
                 s_tane.setcolor(icol);
                 addsenbun(s_tane);
 
@@ -5241,13 +5241,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     //マウス操作(i_mouse_modeA==37　でボタンを押したとき)時の作業-------//System.out.println("A");---------------------------------------------
     public void mPressed_A_37(Point p0) {
         s_step[1].setiactive(2);
-        i_egaki_dankai = 1;
+        i_egaki_stage = 1;
 
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) > d_hantei_haba) {
-            i_egaki_dankai = 0;
+        if (p.distance(moyori_point) > d_hantei_haba) {
+            i_egaki_stage = 0;
         }
         s_step[1].set(p, moyori_point);
         s_step[1].setcolor(icol);
@@ -5272,8 +5272,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==37　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_37(Point p0) {
-        if (i_egaki_dankai == 1) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 1) {
+            i_egaki_stage = 0;
             Point syuusei_point = new Point(syuusei_ten_A_37(p0));
             s_step[1].seta(kouho_ten_A_37(syuusei_point));
             if (s_step[1].getnagasa() > 0.00000001) {
@@ -5300,10 +5300,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         if (id_kakudo_kei != 0) {
             d_kakudo_kei = 180.0 / (double) id_kakudo_kei;
-            d_rad = (Math.PI / 180) * d_kakudo_kei * (int) Math.round(oc.kakudo(s_step[2]) / d_kakudo_kei);
+            d_rad = (Math.PI / 180) * d_kakudo_kei * (int) Math.round(oc.angle(s_step[2]) / d_kakudo_kei);
         } else if (id_kakudo_kei == 0) {
             double[] jk = new double[7];
-            jk[0] = oc.kakudo(s_step[2]);//マウスで入力した線分がX軸となす角度
+            jk[0] = oc.angle(s_step[2]);//マウスで入力した線分がX軸となす角度
             jk[1] = d_jiyuu_kaku_1 - 180.0;
             jk[2] = d_jiyuu_kaku_2 - 180.0;
             jk[3] = d_jiyuu_kaku_3 - 180.0;
@@ -5320,7 +5320,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             }
         }
 
-        syuusei_point.set(oc.kage_motome(s_step[2].getb(), new Point(s_step[2].getbx() + Math.cos(d_rad), s_step[2].getby() + Math.sin(d_rad)), p));
+        syuusei_point.set(oc.shadow_request(s_step[2].getB(), new Point(s_step[2].getbx() + Math.cos(d_rad), s_step[2].getby() + Math.sin(d_rad)), p));
         return syuusei_point;
     }
 
@@ -5328,12 +5328,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     // ---
     public Point kouho_ten_A_37(Point syuusei_point) {
         moyori_point.set(get_moyori_ten(syuusei_point));
-        double zure_kakudo = oc.kakudo(s_step[2].getb(), syuusei_point, s_step[2].getb(), moyori_point);
+        double zure_kakudo = oc.angle(s_step[2].getB(), syuusei_point, s_step[2].getB(), moyori_point);
         int zure_flg = 0;
         if ((0.00001 < zure_kakudo) && (zure_kakudo <= 359.99999)) {
             zure_flg = 1;
         }
-        if ((zure_flg == 0) && (syuusei_point.kyori(moyori_point) <= d_hantei_haba)) {//最寄点が角度系にのっていて、修正点とも近い場合
+        if ((zure_flg == 0) && (syuusei_point.distance(moyori_point) <= d_hantei_haba)) {//最寄点が角度系にのっていて、修正点とも近い場合
             return moyori_point;
         }
         return syuusei_point;
@@ -5352,7 +5352,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     public void mPressed_A_box_select(Point p0) {
         p19_1.set(p0);
 
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
 
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
@@ -5378,8 +5378,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 //------------------------------------------------------------
 
     public void mDragged_A_box_select(Point p0) {
-        p19_2.set(p19_1.getx(), p0.gety());
-        p19_4.set(p0.getx(), p19_1.gety());
+        p19_2.set(p19_1.getX(), p0.getY());
+        p19_4.set(p0.getX(), p19_1.getY());
 
         p19_a.set(camera.TV2object(p19_1));
         p19_b.set(camera.TV2object(p19_2));
@@ -5391,7 +5391,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         s_step[3].set(p19_c, p19_d);
         s_step[4].set(p19_d, p19_a);
 
-        i_egaki_dankai = 4;//s_step[4]まで描画するために、この行が必要
+        i_egaki_stage = 4;//s_step[4]まで描画するために、この行が必要
 
     }
 
@@ -5405,9 +5405,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     //マウス操作(i_mouse_modeA==19  select　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_19(Point p0) {
         System.out.println("19  select_");
-        System.out.println("i_egaki_dankai=" + i_egaki_dankai);
+        System.out.println("i_egaki_dankai=" + i_egaki_stage);
 
-        if (i_egaki_dankai == 0) {//i_select_modeを決める
+        if (i_egaki_stage == 0) {//i_select_modeを決める
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
 
@@ -5485,10 +5485,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 
     public void mReleased_A_box_select(Point p0) {
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
 
         select(p19_1, p0);
-        if (p19_1.kyori(p0) <= 0.000001) {
+        if (p19_1.distance(p0) <= 0.000001) {
             p.set(camera.TV2object(p0));
             if (ori_s.mottomo_tikai_senbun_kyori(p) < d_hantei_haba) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
                 ori_s.select(ori_s.mottomo_tikai_senbun_sagasi(p));
@@ -5514,10 +5514,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     //マウス操作(i_mouse_modeA==20 select　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_20(Point p0) {
 
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
         unselect(p19_1, p0);
 
-        if (p19_1.kyori(p0) <= 0.000001) {
+        if (p19_1.distance(p0) <= 0.000001) {
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
             if (ori_s.mottomo_tikai_senbun_kyori(p) < d_hantei_haba) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
@@ -5530,7 +5530,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //---------------------
     public int get_i_egaki_dankai() {
-        return i_egaki_dankai;
+        return i_egaki_stage;
     }
 
     //---------------------
@@ -5555,10 +5555,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         Point p_d = new Point();
 
 
-        p0_a.set(p0a.getx(), p0a.gety());
-        p0_b.set(p0a.getx(), p0b.gety());
-        p0_c.set(p0b.getx(), p0b.gety());
-        p0_d.set(p0b.getx(), p0a.gety());
+        p0_a.set(p0a.getX(), p0a.getY());
+        p0_b.set(p0a.getX(), p0b.getY());
+        p0_c.set(p0b.getX(), p0b.getY());
+        p0_d.set(p0b.getX(), p0a.getY());
 
 
         p_a.set(camera.TV2object(p0_a));
@@ -5580,10 +5580,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         Point p_b = new Point();
         Point p_c = new Point();
         Point p_d = new Point();
-        p0_a.set(p0a.getx(), p0a.gety());
-        p0_b.set(p0a.getx(), p0b.gety());
-        p0_c.set(p0b.getx(), p0b.gety());
-        p0_d.set(p0b.getx(), p0a.gety());
+        p0_a.set(p0a.getX(), p0a.getY());
+        p0_b.set(p0a.getX(), p0b.getY());
+        p0_c.set(p0b.getX(), p0b.getY());
+        p0_d.set(p0b.getX(), p0a.getY());
         p_a.set(camera.TV2object(p0_a));
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
@@ -5609,7 +5609,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             i_kouho_dankai = 1;
             moyori_point.set(get_moyori_ten(p));
 
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 s_kouho[1].set(moyori_point, moyori_point);
             } else {
                 s_kouho[1].set(p, p);
@@ -5639,10 +5639,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         double kyori_min = 100000.0;
 
         p61_mode = 0;
-        if (i_egaki_dankai == 0) {
+        if (i_egaki_stage == 0) {
             p61_mode = 1;
         }
-        if (i_egaki_dankai == 4) {
+        if (i_egaki_stage == 4) {
             if (p61_TV_hako.inside(p0) == 0) {
                 p61_mode = 1;
             }
@@ -5651,19 +5651,19 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             }
 
 
-            kyori_min = oc.min(oc.kyori_senbun(p, p_ob1, p_ob2), oc.kyori_senbun(p, p_ob2, p_ob3), oc.kyori_senbun(p, p_ob3, p_ob4), oc.kyori_senbun(p, p_ob4, p_ob1));
+            kyori_min = oc.min(oc.distance_lineSegment(p, p_ob1, p_ob2), oc.distance_lineSegment(p, p_ob2, p_ob3), oc.distance_lineSegment(p, p_ob3, p_ob4), oc.distance_lineSegment(p, p_ob4, p_ob1));
             if (kyori_min < d_hantei_haba) {
                 p61_mode = 3;
             }
 
 
-            if (p.kyori(p_ob1) < d_hantei_haba) {
+            if (p.distance(p_ob1) < d_hantei_haba) {
                 p_new.set(p61_1);
                 p61_1.set(p61_3);
                 p61_3.set(p_new);
                 p61_mode = 2;
             }
-            if (p.kyori(p_ob2) < d_hantei_haba) {
+            if (p.distance(p_ob2) < d_hantei_haba) {
                 p_new.set(p61_2);
                 p61_2.set(p61_1);
                 p61_1.set(p61_4);
@@ -5671,13 +5671,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 p61_3.set(p_new);
                 p61_mode = 2;
             }
-            if (p.kyori(p_ob3) < d_hantei_haba) {
+            if (p.distance(p_ob3) < d_hantei_haba) {
                 p_new.set(p61_3);
                 p61_1.set(p61_1);
                 p61_3.set(p_new);
                 p61_mode = 2;
             }
-            if (p.kyori(p_ob4) < d_hantei_haba) {
+            if (p.distance(p_ob4) < d_hantei_haba) {
                 p_new.set(p61_4);
                 p61_4.set(p61_1);
                 p61_1.set(p61_2);
@@ -5690,7 +5690,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 
         if (p61_mode == 3) {
-            while (oc.kyori_senbun(p, p_ob1, p_ob2) != kyori_min) {
+            while (oc.distance_lineSegment(p, p_ob1, p_ob2) != kyori_min) {
                 p_new.set(p61_1);
                 p61_1.set(p61_2);
                 p61_2.set(p61_3);
@@ -5706,7 +5706,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
         if (p61_mode == 1) {
-            i_egaki_dankai = 4;
+            i_egaki_stage = 4;
             //s_step[1].setiactive(2);
 
 
@@ -5714,7 +5714,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             moyori_point.set(get_moyori_ten(p));
 
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 p_new.set(moyori_point);
 
             }
@@ -5778,34 +5778,34 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         if (i_kou_mitudo_nyuuryoku == 1) {
             moyori_point.set(get_moyori_ten(p));
             i_kouho_dankai = 1;
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 s_kouho[1].set(moyori_point, moyori_point);
             } else {
                 s_kouho[1].set(p, p);
             }
             s_kouho[1].setcolor(6);
 
-            p_new.set(s_kouho[1].geta());
+            p_new.set(s_kouho[1].getA());
         }
 
 
         if (p61_mode == 3) {
             if (
-                    (p61_1.getx() - p61_2.getx()) * (p61_1.getx() - p61_2.getx())
+                    (p61_1.getX() - p61_2.getX()) * (p61_1.getX() - p61_2.getX())
                             <
-                            (p61_1.gety() - p61_2.gety()) * (p61_1.gety() - p61_2.gety())
+                            (p61_1.getY() - p61_2.getY()) * (p61_1.getY() - p61_2.getY())
             ) {
-                p61_1.setx(camera.object2TV(p_new).getx());
-                p61_2.setx(camera.object2TV(p_new).getx());
+                p61_1.setX(camera.object2TV(p_new).getX());
+                p61_2.setX(camera.object2TV(p_new).getX());
             }
 
             if (
-                    (p61_1.getx() - p61_2.getx()) * (p61_1.getx() - p61_2.getx())
+                    (p61_1.getX() - p61_2.getX()) * (p61_1.getX() - p61_2.getX())
                             >
-                            (p61_1.gety() - p61_2.gety()) * (p61_1.gety() - p61_2.gety())
+                            (p61_1.getY() - p61_2.getY()) * (p61_1.getY() - p61_2.getY())
             ) {
-                p61_1.sety(camera.object2TV(p_new).gety());
-                p61_2.sety(camera.object2TV(p_new).gety());
+                p61_1.setY(camera.object2TV(p_new).getY());
+                p61_2.setY(camera.object2TV(p_new).getY());
             }
 
         }
@@ -5813,8 +5813,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         if (p61_mode == 1) {
             p61_3.set(camera.object2TV(p_new));
-            p61_2.set(p61_1.getx(), p61_3.gety());
-            p61_4.set(p61_3.getx(), p61_1.gety());
+            p61_2.set(p61_1.getX(), p61_3.getY());
+            p61_4.set(p61_3.getX(), p61_1.getY());
         }
 /*
 
@@ -5853,27 +5853,27 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //s_step[1].seta(p);
 
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) <= d_hantei_haba) {
+        if (p.distance(moyori_point) <= d_hantei_haba) {
             p_new.set(moyori_point);/*s_step[1].seta(moyori_ten);*/
         }
 
         if (p61_mode == 3) {
             if (
-                    (p61_1.getx() - p61_2.getx()) * (p61_1.getx() - p61_2.getx())
+                    (p61_1.getX() - p61_2.getX()) * (p61_1.getX() - p61_2.getX())
                             <
-                            (p61_1.gety() - p61_2.gety()) * (p61_1.gety() - p61_2.gety())
+                            (p61_1.getY() - p61_2.getY()) * (p61_1.getY() - p61_2.getY())
             ) {
-                p61_1.setx(camera.object2TV(p_new).getx());
-                p61_2.setx(camera.object2TV(p_new).getx());
+                p61_1.setX(camera.object2TV(p_new).getX());
+                p61_2.setX(camera.object2TV(p_new).getX());
             }
 
             if (
-                    (p61_1.getx() - p61_2.getx()) * (p61_1.getx() - p61_2.getx())
+                    (p61_1.getX() - p61_2.getX()) * (p61_1.getX() - p61_2.getX())
                             >
-                            (p61_1.gety() - p61_2.gety()) * (p61_1.gety() - p61_2.gety())
+                            (p61_1.getY() - p61_2.getY()) * (p61_1.getY() - p61_2.getY())
             ) {
-                p61_1.sety(camera.object2TV(p_new).gety());
-                p61_2.sety(camera.object2TV(p_new).gety());
+                p61_1.setY(camera.object2TV(p_new).getY());
+                p61_2.setY(camera.object2TV(p_new).getY());
             }
 
         }
@@ -5881,8 +5881,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         if (p61_mode == 1) {
             p61_3.set(camera.object2TV(p_new));
-            p61_2.set(p61_1.getx(), p61_3.gety());
-            p61_4.set(p61_3.getx(), p61_1.gety());
+            p61_2.set(p61_1.getX(), p61_3.getY());
+            p61_4.set(p61_3.getX(), p61_1.getY());
         }
 
 
@@ -5895,7 +5895,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 //System.out.println("aaaaaaaaa_"+p61_TV_hako.menseki_motome());
 
         if (p61_TV_hako.menseki_motome() * p61_TV_hako.menseki_motome() < 1.0) {
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
         }
 
 
@@ -5992,10 +5992,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //System.out.println("(3_1)zzzzz ori_s.check4_size() = "+ori_s.check4_size());
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
 
         //最寄の一つを削除
-        if (p19_1.kyori(p0) <= 0.000001) {//最寄の一つを削除
+        if (p19_1.distance(p0) <= 0.000001) {//最寄の一つを削除
             int i_sakujyo_mode = 10;//i_sakujyo_modeはここで定義・宣言している
             if (i_orisen_hojyosen == 0) {
                 i_sakujyo_mode = 0;
@@ -6047,7 +6047,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 if (rs_min < d_hantei_haba) {
                     if (ori_s.getcolor(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p)) < 3) {
                         ori_s.delsenbun_vertex(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p));
-                        en_seiri();
+                        circle_organize();
                         kiroku();
                     }
                 }
@@ -6063,7 +6063,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 if (rs_min < d_hantei_haba) {
                     if (ori_s.getcolor(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p)) == 0) {
                         ori_s.delsenbun_vertex(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p));
-                        en_seiri();
+                        circle_organize();
                         kiroku();
                     }
                 }
@@ -6082,14 +6082,14 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     if (rs_min < d_hantei_haba) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
                         if (ori_s.getcolor(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p)) == 3) {
                             ori_s.delsenbun_vertex(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p));
-                            en_seiri();
+                            circle_organize();
                             kiroku();
                         }
                     }
                 } else {
                     if (re_min < d_hantei_haba) {
                         ori_s.delen(ori_s.mottomo_tikai_en_sagasi_gyakujyun(p));
-                        en_seiri();
+                        circle_organize();
                         kiroku();
                     }
                 }
@@ -6116,10 +6116,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 
         //四角枠内の削除 //p19_1はselectの最初のTen。この条件は最初のTenと最後の点が遠いので、四角を発生させるということ。
-        if (p19_1.kyori(p0) > 0.000001) {
+        if (p19_1.distance(p0) > 0.000001) {
             if ((i_orisen_hojyosen == 0) || (i_orisen_hojyosen == 4)) { //折線の削除	//D_nisuru(p19_1,p0)で折線だけが削除される。
                 if (D_nisuru0(p19_1, p0) != 0) {
-                    en_seiri();
+                    circle_organize();
                     kiroku();
                 }
             }
@@ -6127,7 +6127,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             if (i_orisen_hojyosen == 2) {  //黒の折線のみ削除
                 if (D_nisuru2(p19_1, p0) != 0) {
-                    en_seiri();
+                    circle_organize();
                     kiroku();
                 }
             }
@@ -6135,7 +6135,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             if ((i_orisen_hojyosen == 3) || (i_orisen_hojyosen == 4)) {  //補助活線  //現状では削除しないときもUNDO用に記録されてしまう20161218
                 if (D_nisuru3(p19_1, p0) != 0) {
-                    en_seiri();
+                    circle_organize();
                     kiroku();
                 }
             }
@@ -6176,10 +6176,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         Point p_b = new Point();
         Point p_c = new Point();
         Point p_d = new Point();
-        p0_a.set(p0a.getx(), p0a.gety());
-        p0_b.set(p0a.getx(), p0b.gety());
-        p0_c.set(p0b.getx(), p0b.gety());
-        p0_d.set(p0b.getx(), p0a.gety());
+        p0_a.set(p0a.getX(), p0a.getY());
+        p0_b.set(p0a.getX(), p0b.getY());
+        p0_c.set(p0b.getX(), p0b.getY());
+        p0_d.set(p0b.getX(), p0a.getY());
         p_a.set(camera.TV2object(p0_a));
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
@@ -6197,10 +6197,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         Point p_b = new Point();
         Point p_c = new Point();
         Point p_d = new Point();
-        p0_a.set(p0a.getx(), p0a.gety());
-        p0_b.set(p0a.getx(), p0b.gety());
-        p0_c.set(p0b.getx(), p0b.gety());
-        p0_d.set(p0b.getx(), p0a.gety());
+        p0_a.set(p0a.getX(), p0a.getY());
+        p0_b.set(p0a.getX(), p0b.getY());
+        p0_c.set(p0b.getX(), p0b.getY());
+        p0_d.set(p0b.getX(), p0a.getY());
         p_a.set(camera.TV2object(p0_a));
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
@@ -6219,10 +6219,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         Point p_b = new Point();
         Point p_c = new Point();
         Point p_d = new Point();
-        p0_a.set(p0a.getx(), p0a.gety());
-        p0_b.set(p0a.getx(), p0b.gety());
-        p0_c.set(p0b.getx(), p0b.gety());
-        p0_d.set(p0b.getx(), p0a.gety());
+        p0_a.set(p0a.getX(), p0a.getY());
+        p0_b.set(p0a.getX(), p0b.getY());
+        p0_c.set(p0b.getX(), p0b.getY());
+        p0_d.set(p0b.getX(), p0a.getY());
         p_a.set(camera.TV2object(p0_a));
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
@@ -6240,10 +6240,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         Point p_b = new Point();
         Point p_c = new Point();
         Point p_d = new Point();
-        p0_a.set(p0a.getx(), p0a.gety());
-        p0_b.set(p0a.getx(), p0b.gety());
-        p0_c.set(p0b.getx(), p0b.gety());
-        p0_d.set(p0b.getx(), p0a.gety());
+        p0_a.set(p0a.getX(), p0a.getY());
+        p0_b.set(p0a.getX(), p0b.getY());
+        p0_c.set(p0b.getX(), p0b.getY());
+        p0_d.set(p0b.getX(), p0a.getY());
         p_a.set(camera.TV2object(p0_a));
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
@@ -6264,10 +6264,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         Point p_b = new Point();
         Point p_c = new Point();
         Point p_d = new Point();
-        p0_a.set(p0a.getx(), p0a.gety());
-        p0_b.set(p0a.getx(), p0b.gety());
-        p0_c.set(p0b.getx(), p0b.gety());
-        p0_d.set(p0b.getx(), p0a.gety());
+        p0_a.set(p0a.getX(), p0a.getY());
+        p0_b.set(p0a.getX(), p0b.getY());
+        p0_c.set(p0b.getX(), p0b.getY());
+        p0_d.set(p0b.getX(), p0a.getY());
         p_a.set(camera.TV2object(p0_a));
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
@@ -6287,10 +6287,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         Point p_b = new Point();
         Point p_c = new Point();
         Point p_d = new Point();
-        p0_a.set(p0a.getx(), p0a.gety());
-        p0_b.set(p0a.getx(), p0b.gety());
-        p0_c.set(p0b.getx(), p0b.gety());
-        p0_d.set(p0b.getx(), p0a.gety());
+        p0_a.set(p0a.getX(), p0a.getY());
+        p0_b.set(p0a.getX(), p0b.getY());
+        p0_c.set(p0b.getX(), p0b.getY());
+        p0_d.set(p0b.getX(), p0a.getY());
         p_a.set(camera.TV2object(p0_a));
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
@@ -6312,8 +6312,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==59 "特注プロパティ指定" でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_59(Point p0) {//補助活線と円
-        i_egaki_dankai = 0;
-        if (p19_1.kyori(p0) > 0.000001) {//現状では削除しないときもUNDO用に記録されてしまう20161218
+        i_egaki_stage = 0;
+        if (p19_1.distance(p0) > 0.000001) {//現状では削除しないときもUNDO用に記録されてしまう20161218
 
             //if(D_nisuru3(p19_1,p0)!=0){en_seiri();kiroku();}
             if (chenge_property_in_4kakukei(p19_1, p0) != 0) {
@@ -6322,7 +6322,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         }
 
-        if (p19_1.kyori(p0) <= 0.000001) {
+        if (p19_1.distance(p0) <= 0.000001) {
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
             double rs_min;
@@ -6417,9 +6417,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==58線_変換　でボタンを離したとき)を行う関数
     public void mReleased_A_58(Point p0) {//ここの処理の終わりに fix2(0.001,0.5);　をするのは、元から折線だったものと、補助線から変換した折線との組合せで頻発するT字型不接続を修正するため
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
 
-        if (p19_1.kyori(p0) > 0.000001) {//
+        if (p19_1.distance(p0) > 0.000001) {//
             if (MV_change(p19_1, p0) != 0) {
                 fix2(0.001, 0.5);
                 kiroku();
@@ -6427,7 +6427,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
 
-        if (p19_1.kyori(p0) <= 0.000001) {//
+        if (p19_1.distance(p0) <= 0.000001) {//
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
             if (ori_s.mottomo_tikai_senbun_kyori(p) < d_hantei_haba) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
@@ -6458,10 +6458,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         Point p_b = new Point();
         Point p_c = new Point();
         Point p_d = new Point();
-        p0_a.set(p0a.getx(), p0a.gety());
-        p0_b.set(p0a.getx(), p0b.gety());
-        p0_c.set(p0b.getx(), p0b.gety());
-        p0_d.set(p0b.getx(), p0a.gety());
+        p0_a.set(p0a.getX(), p0a.getY());
+        p0_b.set(p0a.getX(), p0b.getY());
+        p0_c.set(p0b.getX(), p0b.getY());
+        p0_d.set(p0b.getX(), p0a.getY());
         p_a.set(camera.TV2object(p0_a));
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
@@ -6480,18 +6480,18 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         minrid_30 = -1;
         if (ori_s.mottomo_tikai_senbun_kyori(p) < d_hantei_haba) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
             minrid_30 = ori_s.mottomo_tikai_senbun_sagasi(p);
-            Line s01 = new Line();
+            LineSegment s01 = new LineSegment();
             s01.set(oc.Senbun_bai(ori_s.get(minrid_30), 0.01));
-            ori_s.setb(minrid_30, s01.getb());
+            ori_s.setb(minrid_30, s01.getB());
         }
     }
 
     public void mDragged_A_30(Point p0) {//マウス操作(i_mouse_modeA==4線_変換　でドラッグしたとき)を行う関数
         if (minrid_30 > 0) {
 
-            Line s01 = new Line();
+            LineSegment s01 = new LineSegment();
             s01.set(oc.Senbun_bai(ori_s.get(minrid_30), 100.0));
-            ori_s.setb(minrid_30, s01.getb());
+            ori_s.setb(minrid_30, s01.getB());
             minrid_30 = -1;
         }
 
@@ -6505,9 +6505,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         if (minrid_30 > 0) {
 
-            Line s01 = new Line();
+            LineSegment s01 = new LineSegment();
             s01.set(oc.Senbun_bai(ori_s.get(minrid_30), 100.0));
-            ori_s.setb(minrid_30, s01.getb());
+            ori_s.setb(minrid_30, s01.getB());
 
             int ic_temp;
             ic_temp = ori_s.getcolor(minrid_30);
@@ -6564,10 +6564,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) < d_hantei_haba) {
-            i_egaki_dankai = i_egaki_dankai + 1;
-            s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-            s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
+        if (p.distance(moyori_point) < d_hantei_haba) {
+            i_egaki_stage = i_egaki_stage + 1;
+            s_step[i_egaki_stage].set(moyori_point, moyori_point);
+            s_step[i_egaki_stage].setcolor(i_egaki_stage);
         }
 
 
@@ -6579,8 +6579,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_06(Point p0) {
-        if (i_egaki_dankai == 3) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 3) {
+            i_egaki_stage = 0;
         }
 
 
@@ -6600,7 +6600,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     //マウス操作(マウスを動かしたとき)を行う関数    //System.out.println("_");
     public void mMoved_A_38(Point p0) {
         if (i_kou_mitudo_nyuuryoku == 1) {
-            if (i_egaki_dankai == 0) {
+            if (i_egaki_stage == 0) {
                 i_step_for38 = 0;
             }
 
@@ -6614,11 +6614,11 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //Ten p =new Ten();
                 p.set(camera.TV2object(p0));
 
-                moyori_line.set(get_moyori_step_senbun(p, 1, i_egaki_dankai));
-                if ((i_egaki_dankai >= 2) && (oc.kyori_senbun(p, moyori_line) < d_hantei_haba)) {
+                moyori_lineSegment.set(get_moyori_step_senbun(p, 1, i_egaki_stage));
+                if ((i_egaki_stage >= 2) && (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba)) {
 
                     i_kouho_dankai = 1;
-                    s_kouho[1].set(moyori_line);//s_kouho[1].setcolor(2);
+                    s_kouho[1].set(moyori_lineSegment);//s_kouho[1].setcolor(2);
                     return;
                 }
             }
@@ -6628,10 +6628,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 Point p = new Point();
                 p.set(camera.TV2object(p0));
 
-                moyori_line.set(get_moyori_senbun(p));
-                if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {//最寄の既存折線が近い場合
+                moyori_lineSegment.set(get_moyori_senbun(p));
+                if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {//最寄の既存折線が近い場合
                     i_kouho_dankai = 1;
-                    s_kouho[1].set(moyori_line);
+                    s_kouho[1].set(moyori_lineSegment);
                     //s_kouho[1].setcolor(2);
                     return;
                 }
@@ -6647,7 +6647,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         i_kouho_dankai = 0;
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
-        if (i_egaki_dankai == 0) {
+        if (i_egaki_stage == 0) {
             i_step_for38 = 0;
         }
 
@@ -6657,7 +6657,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             Point t1 = new Point();
             t1.set(ori_s.mottomo_tikai_Ten_with_icol_0_1_2(p));//点pに最も近い、「線分の端点」を返すori_s.mottomo_tikai_Tenは近い点がないと p_return.set(100000.0,100000.0)と返してくる
 
-            if (p.kyori(t1) < d_hantei_haba) {
+            if (p.distance(t1) < d_hantei_haba) {
                 //i_egaki_dankai=i_egaki_dankai+1;
                 //s_step[i_egaki_dankai].set(moyori_ten,moyori_ten);s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
 
@@ -6665,10 +6665,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 Narabebako_int_double nbox = new Narabebako_int_double();
                 for (int i = 1; i <= ori_s.getsousuu(); i++) {
                     if ((0 <= ori_s.getcolor(i)) && (ori_s.getcolor(i) <= 2)) {
-                        if (t1.kyori(ori_s.geta(i)) < hantei_kyori) {
-                            nbox.ire_i_tiisaijyun(new int_double(i, oc.kakudo(ori_s.geta(i), ori_s.getb(i))));
-                        } else if (t1.kyori(ori_s.getb(i)) < hantei_kyori) {
-                            nbox.ire_i_tiisaijyun(new int_double(i, oc.kakudo(ori_s.getb(i), ori_s.geta(i))));
+                        if (t1.distance(ori_s.geta(i)) < hantei_kyori) {
+                            nbox.ire_i_tiisaijyun(new int_double(i, oc.angle(ori_s.geta(i), ori_s.getb(i))));
+                        } else if (t1.distance(ori_s.getb(i)) < hantei_kyori) {
+                            nbox.ire_i_tiisaijyun(new int_double(i, oc.angle(ori_s.getb(i), ori_s.geta(i))));
                         }
                     }
                 }
@@ -6733,27 +6733,27 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         if ((kakukagenti / 2.0 > 0.0 + 0.000001) && (kakukagenti / 2.0 < add_kakudo_1 - 0.000001)) {
                             //if((kakukagenti/2.0>0.0-0.000001)&&(kakukagenti/2.0<add_kakudo_1+0.000001)){
 
-                            i_egaki_dankai = i_egaki_dankai + 1;
+                            i_egaki_stage = i_egaki_stage + 1;
 
                             //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d)
-                            Line s_kiso = new Line();
-                            if (t1.kyori(ori_s.geta(nbox.get_int(i))) < hantei_kyori) {
+                            LineSegment s_kiso = new LineSegment();
+                            if (t1.distance(ori_s.geta(nbox.get_int(i))) < hantei_kyori) {
                                 s_kiso.set(ori_s.geta(nbox.get_int(i)), ori_s.getb(nbox.get_int(i)));
-                            } else if (t1.kyori(ori_s.getb(nbox.get_int(i))) < hantei_kyori) {
+                            } else if (t1.distance(ori_s.getb(nbox.get_int(i))) < hantei_kyori) {
                                 s_kiso.set(ori_s.getb(nbox.get_int(i)), ori_s.geta(nbox.get_int(i)));
                             }
 
                             double s_kiso_nagasa = s_kiso.getnagasa();
 
-                            s_step[i_egaki_dankai].set(oc.Senbun_kaiten(s_kiso, kakukagenti / 2.0, kus.d_haba() / s_kiso_nagasa));
-                            s_step[i_egaki_dankai].setcolor(8);
-                            s_step[i_egaki_dankai].setiactive(0);
+                            s_step[i_egaki_stage].set(oc.Senbun_kaiten(s_kiso, kakukagenti / 2.0, kus.d_haba() / s_kiso_nagasa));
+                            s_step[i_egaki_stage].setcolor(8);
+                            s_step[i_egaki_stage].setiactive(0);
                         }
                     }
-                    if (i_egaki_dankai == 1) {
+                    if (i_egaki_stage == 1) {
                         i_step_for38 = 2;
                     }
-                    if (i_egaki_dankai > 1) {
+                    if (i_egaki_stage > 1) {
                         i_step_for38 = 1;
                     }
                 }
@@ -6762,31 +6762,31 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
         if (i_step_for38 == 1) {
-            moyori_line.set(get_moyori_step_senbun(p, 1, i_egaki_dankai));
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
+            moyori_lineSegment.set(get_moyori_step_senbun(p, 1, i_egaki_stage));
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
                 i_step_for38 = 2;
-                i_egaki_dankai = 1;
-                s_step[1].set(moyori_line);
+                i_egaki_stage = 1;
+                s_step[1].set(moyori_lineSegment);
 
                 //i_egaki_dankai=i_egaki_dankai+1;
                 //s_step[i_egaki_dankai].set(moyori_senbun);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
                 //s_step[i_egaki_dankai].setcolor(8);
                 return 0;
             }
-            if (oc.kyori_senbun(p, moyori_line) >= d_hantei_haba) {
-                i_egaki_dankai = 0;
+            if (oc.distance_lineSegment(p, moyori_lineSegment) >= d_hantei_haba) {
+                i_egaki_stage = 0;
                 return 0;
             }
         }
 
         if (i_step_for38 == 2) {
-            moyori_line.set(get_moyori_senbun(p));
+            moyori_lineSegment.set(get_moyori_senbun(p));
             //Senbun moyori_step_senbun =new Senbun(get_moyori_step_senbun(p,1,i_egaki_dankai));
-            Line moyori_step_line = new Line();
-            moyori_step_line.set(get_moyori_step_senbun(p, 1, i_egaki_dankai));
-            if (oc.kyori_senbun(p, moyori_line) >= d_hantei_haba) {//最寄の既存折線が遠くて選択無効の場合
+            LineSegment moyori_step_lineSegment = new LineSegment();
+            moyori_step_lineSegment.set(get_moyori_step_senbun(p, 1, i_egaki_stage));
+            if (oc.distance_lineSegment(p, moyori_lineSegment) >= d_hantei_haba) {//最寄の既存折線が遠くて選択無効の場合
                 //moyori_senbun.set(get_moyori_step_senbun(p,1,i_egaki_dankai));
-                if (oc.kyori_senbun(p, moyori_step_line) < d_hantei_haba) {//最寄のstep_senbunが近い場合
+                if (oc.distance_lineSegment(p, moyori_step_lineSegment) < d_hantei_haba) {//最寄のstep_senbunが近い場合
                     //System.out.println("20170129_1");
                     return 0;
                 }
@@ -6794,23 +6794,23 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //最寄のstep_senbunが遠い場合
                 //System.out.println("20170129_2");
 
-                i_egaki_dankai = 0;
+                i_egaki_stage = 0;
                 return 0;
             }
 
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {//最寄の既存折線が近い場合
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {//最寄の既存折線が近い場合
 
-                s_step[2].set(moyori_line);
+                s_step[2].set(moyori_lineSegment);
                 s_step[2].setcolor(6);
 
                 //System.out.println("20170129_3");
                 Point kousa_point = new Point();
                 kousa_point.set(oc.kouten_motome(s_step[1], s_step[2]));
-                Line add_sen = new Line(kousa_point, s_step[1].geta(), icol_temp);//20180503変更
+                LineSegment add_sen = new LineSegment(kousa_point, s_step[1].getA(), icol_temp);//20180503変更
                 if (add_sen.getnagasa() > 0.00000001) {//最寄の既存折線が有効の場合
                     addsenbun(add_sen);
                     kiroku();
-                    i_egaki_dankai = 0;
+                    i_egaki_stage = 0;
                     return 1;
 
                 }
@@ -6818,12 +6818,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //最寄の既存折線が無効の場合
 
                 //最寄のstep_senbunが近い場合
-                if (oc.kyori_senbun(p, moyori_step_line) < d_hantei_haba) {
+                if (oc.distance_lineSegment(p, moyori_step_lineSegment) < d_hantei_haba) {
                     return 0;
                 }
 
                 //最寄のstep_senbunが遠い場合
-                i_egaki_dankai = 0;
+                i_egaki_stage = 0;
                 return 0;
 
             }
@@ -6868,7 +6868,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(マウスを動かしたとき)を行う関数    //System.out.println("_");
     public void mMoved_A_39(Point p0) {
-        if (i_egaki_dankai == 0) {
+        if (i_egaki_stage == 0) {
             i_step_for39 = 0;
         }
         if (i_kou_mitudo_nyuuryoku == 1) {
@@ -6876,10 +6876,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
 
-            if (i_egaki_dankai == 0) {
+            if (i_egaki_stage == 0) {
                 i_step_for39 = 0;
             }
-            System.out.println("i_egaki_dankai= " + i_egaki_dankai + "  ;   i_step_for39= " + i_step_for39);
+            System.out.println("i_egaki_dankai= " + i_egaki_stage + "  ;   i_step_for39= " + i_step_for39);
 
             if (i_step_for39 == 0) {
                 mMoved_A_29(p0);
@@ -6896,16 +6896,16 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             }
 
             if (i_step_for39 == 1) {
-                moyori_line.set(get_moyori_step_senbun(p, 1, i_egaki_dankai));
-                if ((i_egaki_dankai >= 2) && (oc.kyori_senbun(p, moyori_line) < d_hantei_haba)) {
+                moyori_lineSegment.set(get_moyori_step_senbun(p, 1, i_egaki_stage));
+                if ((i_egaki_stage >= 2) && (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba)) {
                     //System.out.println("20170129_5");
                     i_kouho_dankai = 1;
-                    s_kouho[1].set(moyori_line);//s_kouho[1].setcolor(2);
+                    s_kouho[1].set(moyori_lineSegment);//s_kouho[1].setcolor(2);
                     return;
                 }
 
                 moyori_point.set(get_moyori_ten(p));
-                if (p.kyori(moyori_point) < d_hantei_haba) {
+                if (p.distance(moyori_point) < d_hantei_haba) {
                     //s_kouho[1].setb(moyori_ten);s_kouho[1].setcolor(2);
                     s_kouho[1].set(moyori_point, moyori_point);
                     s_kouho[1].setcolor(icol);
@@ -6919,7 +6919,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             if (i_step_for39 == 2) {//i_step_for39==2であれば、以下でs_step[1]を入力折線を確定する
                 moyori_point.set(get_moyori_ten(p));
 
-                if (moyori_point.kyori(s_step[1].geta()) < 0.00000001) {
+                if (moyori_point.distance(s_step[1].getA()) < 0.00000001) {
                     i_kouho_dankai = 1;
                     s_kouho[1].set(moyori_point, moyori_point);
                     s_kouho[1].setcolor(icol);
@@ -6931,9 +6931,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 }
 
 
-                if ((p.kyori(s_step[1].getb()) < d_hantei_haba) && (p.kyori(s_step[1].getb()) <= p.kyori(moyori_point))) {
+                if ((p.distance(s_step[1].getB()) < d_hantei_haba) && (p.distance(s_step[1].getB()) <= p.distance(moyori_point))) {
                     i_kouho_dankai = 1;
-                    s_kouho[1].set(s_step[1].getb(), s_step[1].getb());
+                    s_kouho[1].set(s_step[1].getB(), s_step[1].getB());
                     s_kouho[1].setcolor(icol);
                     System.out.println("i_step_for39_2_   2");
 
@@ -6941,7 +6941,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 }
 
 
-                if (p.kyori(moyori_point) < d_hantei_haba) {
+                if (p.distance(moyori_point) < d_hantei_haba) {
                     i_kouho_dankai = 1;
                     s_kouho[1].set(moyori_point, moyori_point);
                     s_kouho[1].setcolor(icol);
@@ -6950,11 +6950,11 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     return;
                 }
 
-                moyori_line.set(get_moyori_senbun(p));
-                Line moyori_step_line = new Line();
-                moyori_step_line.set(get_moyori_step_senbun(p, 1, i_egaki_dankai));
-                if (oc.kyori_senbun(p, moyori_line) >= d_hantei_haba) {//最寄の既存折線が遠い場合
-                    if (oc.kyori_senbun(p, moyori_step_line) < d_hantei_haba) {//最寄のstep_senbunが近い場合
+                moyori_lineSegment.set(get_moyori_senbun(p));
+                LineSegment moyori_step_lineSegment = new LineSegment();
+                moyori_step_lineSegment.set(get_moyori_step_senbun(p, 1, i_egaki_stage));
+                if (oc.distance_lineSegment(p, moyori_lineSegment) >= d_hantei_haba) {//最寄の既存折線が遠い場合
+                    if (oc.distance_lineSegment(p, moyori_step_lineSegment) < d_hantei_haba) {//最寄のstep_senbunが近い場合
                         return;
                     }
                     //最寄のstep_senbunが遠い場合
@@ -6963,9 +6963,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     return;
                 }
 
-                if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {//最寄の既存折線が近い場合
+                if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {//最寄の既存折線が近い場合
                     i_kouho_dankai = 1;
-                    s_kouho[1].set(moyori_line);
+                    s_kouho[1].set(moyori_lineSegment);
                     s_kouho[1].setcolor(icol);
 
                     System.out.println("i_step_for39_2_   5");
@@ -6984,7 +6984,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
 
-        if (i_egaki_dankai == 0) {
+        if (i_egaki_stage == 0) {
             i_step_for39 = 0;
         }
 
@@ -6997,7 +6997,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             //任意の点が与えられたとき、端点もしくは格子点で最も近い点を得る
             moyori_point.set(get_moyori_ten(p));
 
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 //i_egaki_dankai=i_egaki_dankai+1;
                 //s_step[i_egaki_dankai].set(moyori_ten,moyori_ten);s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
 
@@ -7005,10 +7005,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 Narabebako_int_double nbox = new Narabebako_int_double();
                 for (int i = 1; i <= ori_s.getsousuu(); i++) {
                     if ((0 <= ori_s.getcolor(i)) && (ori_s.getcolor(i) <= 2)) {
-                        if (moyori_point.kyori(ori_s.geta(i)) < hantei_kyori) {
-                            nbox.ire_i_tiisaijyun(new int_double(i, oc.kakudo(ori_s.geta(i), ori_s.getb(i))));
-                        } else if (moyori_point.kyori(ori_s.getb(i)) < hantei_kyori) {
-                            nbox.ire_i_tiisaijyun(new int_double(i, oc.kakudo(ori_s.getb(i), ori_s.geta(i))));
+                        if (moyori_point.distance(ori_s.geta(i)) < hantei_kyori) {
+                            nbox.ire_i_tiisaijyun(new int_double(i, oc.angle(ori_s.geta(i), ori_s.getb(i))));
+                        } else if (moyori_point.distance(ori_s.getb(i)) < hantei_kyori) {
+                            nbox.ire_i_tiisaijyun(new int_double(i, oc.angle(ori_s.getb(i), ori_s.geta(i))));
                         }
                     }
                 }
@@ -7062,21 +7062,21 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         }
 
                         if ((kakukagenti / 2.0 > 0.0 + 0.000001) && (kakukagenti / 2.0 < add_kakudo_1 - 0.000001)) {
-                            i_egaki_dankai = i_egaki_dankai + 1;
+                            i_egaki_stage = i_egaki_stage + 1;
 
                             //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d)
-                            Line s_kiso = new Line();
-                            if (moyori_point.kyori(ori_s.geta(nbox.get_int(i))) < hantei_kyori) {
+                            LineSegment s_kiso = new LineSegment();
+                            if (moyori_point.distance(ori_s.geta(nbox.get_int(i))) < hantei_kyori) {
                                 s_kiso.set(ori_s.geta(nbox.get_int(i)), ori_s.getb(nbox.get_int(i)));
-                            } else if (moyori_point.kyori(ori_s.getb(nbox.get_int(i))) < hantei_kyori) {
+                            } else if (moyori_point.distance(ori_s.getb(nbox.get_int(i))) < hantei_kyori) {
                                 s_kiso.set(ori_s.getb(nbox.get_int(i)), ori_s.geta(nbox.get_int(i)));
                             }
 
                             double s_kiso_nagasa = s_kiso.getnagasa();
 
-                            s_step[i_egaki_dankai].set(oc.Senbun_kaiten(s_kiso, kakukagenti / 2.0, kus.d_haba() / s_kiso_nagasa));
-                            s_step[i_egaki_dankai].setcolor(8);
-                            s_step[i_egaki_dankai].setiactive(1);
+                            s_step[i_egaki_stage].set(oc.Senbun_kaiten(s_kiso, kakukagenti / 2.0, kus.d_haba() / s_kiso_nagasa));
+                            s_step[i_egaki_stage].setcolor(8);
+                            s_step[i_egaki_stage].setiactive(1);
 
                         }
 
@@ -7084,16 +7084,16 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     //if(i_kouho_suu==1){i_step_for39=2;}
                     //if(i_kouho_suu>1){i_step_for39=1;}
 
-                    if (i_egaki_dankai == 1) {
+                    if (i_egaki_stage == 1) {
                         i_step_for39 = 2;
                     }
-                    if (i_egaki_dankai > 1) {
+                    if (i_egaki_stage > 1) {
                         i_step_for39 = 1;
                     }
                 }
 
-                if (i_egaki_dankai == 0) {//折畳み可能化線がない場合//System.out.println("_");
-                    i_egaki_dankai = 1;
+                if (i_egaki_stage == 0) {//折畳み可能化線がない場合//System.out.println("_");
+                    i_egaki_stage = 1;
                     i_step_for39 = 1;
                     s_step[1].set(moyori_point, moyori_point);
                     s_step[1].setcolor(8);
@@ -7106,26 +7106,26 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 
         if (i_step_for39 == 1) {
-            moyori_line.set(get_moyori_step_senbun(p, 1, i_egaki_dankai));
-            if ((i_egaki_dankai >= 2) && (oc.kyori_senbun(p, moyori_line) < d_hantei_haba)) {
+            moyori_lineSegment.set(get_moyori_step_senbun(p, 1, i_egaki_stage));
+            if ((i_egaki_stage >= 2) && (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba)) {
                 //if(oc.kyori_senbun( p,moyori_senbun)<d_hantei_haba){
                 //System.out.println("20170129_5");
                 i_step_for39 = 2;
-                i_egaki_dankai = 1;
-                s_step[1].set(moyori_line);
+                i_egaki_stage = 1;
+                s_step[1].set(moyori_lineSegment);
                 return;
             }
             //if(oc.kyori_senbun( p,moyori_senbun)>=d_hantei_haba){
             //System.out.println("");
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 s_step[1].setb(moyori_point);
                 i_step_for39 = 2;
-                i_egaki_dankai = 1;
+                i_egaki_stage = 1;
                 return;
             }
             //System.out.println("20170129_7");
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_kouho_dankai = 0;
             return;
             //}
@@ -7137,8 +7137,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             moyori_point.set(get_moyori_ten(p));
 
             //System.out.println("20170130_1");
-            if (moyori_point.kyori(s_step[1].geta()) < 0.00000001) {
-                i_egaki_dankai = 0;
+            if (moyori_point.distance(s_step[1].getA()) < 0.00000001) {
+                i_egaki_stage = 0;
                 i_kouho_dankai = 0;
                 return;
             }
@@ -7146,15 +7146,15 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             //else if(p.kyori(s_step[1].getb())< d_hantei_haba/2.5 ){
             //else if(p.kyori(s_step[1].getb())< d_hantei_haba ){
 
-            if ((p.kyori(s_step[1].getb()) < d_hantei_haba) &&
+            if ((p.distance(s_step[1].getB()) < d_hantei_haba) &&
                     (
-                            p.kyori(s_step[1].getb()) <= p.kyori(moyori_point)
+                            p.distance(s_step[1].getB()) <= p.distance(moyori_point)
                             //moyori_ten.kyori(s_step[1].getb())<0.00000001
                     )) {
-                Line add_sen = new Line(s_step[1].geta(), s_step[1].getb(), icol);
+                LineSegment add_sen = new LineSegment(s_step[1].getA(), s_step[1].getB(), icol);
                 addsenbun(add_sen);
                 kiroku();
-                i_egaki_dankai = 0;
+                i_egaki_stage = 0;
                 i_kouho_dankai = 0;
                 return;
             }
@@ -7165,17 +7165,17 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             //if(i_step_for39==2){
 
             //moyori_ten.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 s_step[1].setb(moyori_point);
                 return;
             }
 
 
-            moyori_line.set(get_moyori_senbun(p));
+            moyori_lineSegment.set(get_moyori_senbun(p));
 
-            Line moyori_step_line = new Line();
-            moyori_step_line.set(get_moyori_step_senbun(p, 1, i_egaki_dankai));
-            if (oc.kyori_senbun(p, moyori_line) >= d_hantei_haba) {//最寄の既存折線が遠い場合
+            LineSegment moyori_step_lineSegment = new LineSegment();
+            moyori_step_lineSegment.set(get_moyori_step_senbun(p, 1, i_egaki_stage));
+            if (oc.distance_lineSegment(p, moyori_lineSegment) >= d_hantei_haba) {//最寄の既存折線が遠い場合
                 //moyori_senbun.set(get_moyori_step_senbun(p,1,i_egaki_dankai));
 
 
@@ -7183,7 +7183,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //moyori_ten.set(ori_s.mottomo_tikai_Ten(p));if(p.kyori(moyori_ten)<d_hantei_haba){s_step[1].setb(moyori_ten);return;}
 
 
-                if (oc.kyori_senbun(p, moyori_step_line) < d_hantei_haba) {//最寄のstep_senbunが近い場合
+                if (oc.distance_lineSegment(p, moyori_step_lineSegment) < d_hantei_haba) {//最寄のstep_senbunが近い場合
 
                     //moyori_ten.set(get_moyori_ten(p));if(p.kyori(moyori_ten)<d_hantei_haba){s_step[1].setb(moyori_ten);return;}
 
@@ -7193,38 +7193,38 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //最寄のstep_senbunが遠い場合
 
                 //moyori_ten.set(get_moyori_ten(p));if(p.kyori(moyori_ten)<d_hantei_haba){s_step[1].setb(moyori_ten);return;}
-                i_egaki_dankai = 0;
+                i_egaki_stage = 0;
                 i_kouho_dankai = 0;
                 return;
             }
 
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {//最寄の既存折線が近い場合
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {//最寄の既存折線が近い場合
                 //moyori_ten.set(ori_s.mottomo_tikai_Ten(p));if(p.kyori(moyori_ten)<d_hantei_haba){s_step[1].setb(moyori_ten);return;}
-                s_step[2].set(moyori_line);
+                s_step[2].set(moyori_lineSegment);
                 s_step[2].setcolor(6);
                 //System.out.println("20170129_3");
                 Point kousa_point = new Point();
                 kousa_point.set(oc.kouten_motome(s_step[1], s_step[2]));
-                Line add_sen = new Line(kousa_point, s_step[1].geta(), icol);
+                LineSegment add_sen = new LineSegment(kousa_point, s_step[1].getA(), icol);
                 if (add_sen.getnagasa() > 0.00000001) {//最寄の既存折線が有効の場合
                     addsenbun(add_sen);
                     kiroku();
-                    i_egaki_dankai = 0;
+                    i_egaki_stage = 0;
                     i_kouho_dankai = 0;
                     return;
                 }
                 //最寄の既存折線が無効の場合
                 moyori_point.set(get_moyori_ten(p));
-                if (p.kyori(moyori_point) < d_hantei_haba) {
+                if (p.distance(moyori_point) < d_hantei_haba) {
                     s_step[1].setb(moyori_point);
                     return;
                 }
                 //最寄のstep_senbunが近い場合
-                if (oc.kyori_senbun(p, moyori_step_line) < d_hantei_haba) {
+                if (oc.distance_lineSegment(p, moyori_step_lineSegment) < d_hantei_haba) {
                     return;
                 }
                 //最寄のstep_senbunが遠い場合
-                i_egaki_dankai = 0;
+                i_egaki_stage = 0;
                 i_kouho_dankai = 0;
                 return;
 
@@ -7256,13 +7256,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==33魚の骨　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_33(Point p0) {
-        i_egaki_dankai = 1;
+        i_egaki_stage = 1;
 
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) > d_hantei_haba) {
-            i_egaki_dankai = 0;
+        if (p.distance(moyori_point) > d_hantei_haba) {
+            i_egaki_stage = 0;
         }
         s_step[1].set(p, moyori_point);
         s_step[1].setcolor(icol);
@@ -7278,8 +7278,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==33魚の骨　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_33(Point p0) {
-        if (i_egaki_dankai == 1) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 1) {
+            i_egaki_stage = 0;
 
             //s_step[1]を確定する
             //Ten p =new Ten();
@@ -7289,9 +7289,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             //s_step[1]を確定終了
 
 
-            if (p.kyori(moyori_point) <= d_hantei_haba) {  //マウスで指定した点が、最寄点と近かったときに実施
+            if (p.distance(moyori_point) <= d_hantei_haba) {  //マウスで指定した点が、最寄点と近かったときに実施
                 if (s_step[1].getnagasa() > 0.00000001) {  //s_step[1]が、線の時（=点状ではない時）に実施
-                    double dx = (s_step[1].getax() - s_step[1].getbx()) * kus.d_haba() / s_step[1].getnagasa();
+                    double dx = (s_step[1].getAx() - s_step[1].getbx()) * kus.d_haba() / s_step[1].getnagasa();
                     double dy = (s_step[1].getay() - s_step[1].getby()) * kus.d_haba() / s_step[1].getnagasa();
                     int icol_temp = icol;
                     //int imax=;
@@ -7310,7 +7310,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                             int i_sen = 0;
 
-                            Line adds = new Line(px, py, px - dy, py + dx);
+                            LineSegment adds = new LineSegment(px, py, px - dy, py + dx);
                             if (kouten_ari_nasi(adds) == 1) {
                                 adds.set(kousatenmade(adds));
                                 adds.setcolor(icol_temp);
@@ -7320,7 +7320,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                             }
 
 
-                            Line adds2 = new Line(px, py, px + dy, py - dx);
+                            LineSegment adds2 = new LineSegment(px, py, px + dy, py - dx);
                             if (kouten_ari_nasi(adds2) == 1) {
                                 adds2.set(kousatenmade(adds2));
                                 adds2.setcolor(icol_temp);
@@ -7364,13 +7364,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==35　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_35(Point p0) {
-        i_egaki_dankai = 1;
+        i_egaki_stage = 1;
 
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) > d_hantei_haba) {
-            i_egaki_dankai = 0;
+        if (p.distance(moyori_point) > d_hantei_haba) {
+            i_egaki_stage = 0;
         }
         s_step[1].set(p, moyori_point);
         s_step[1].setcolor(icol);
@@ -7391,13 +7391,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         Narabebako_int_double nbox = new Narabebako_int_double();
 
-        if (i_egaki_dankai == 1) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 1) {
+            i_egaki_stage = 0;
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
             moyori_point.set(get_moyori_ten(p));
             s_step[1].seta(moyori_point);
-            if (p.kyori(moyori_point) <= d_hantei_haba) {
+            if (p.distance(moyori_point) <= d_hantei_haba) {
                 if (s_step[1].getnagasa() > 0.00000001) {
                     int imax = ori_s.getsousuu();
                     for (int i = 1; i <= imax; i++) {
@@ -7418,16 +7418,16 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                             Point t_moto = new Point();
                             t_moto.set(ori_s.geta(i));
                             System.out.println("i_senbun_kousa_hantei_" + i_senbun_kousa_hantei);
-                            if (oc.kyori_senbun(t_moto, s_step[1]) < oc.kyori_senbun(ori_s.getb(i), s_step[1])) {
+                            if (oc.distance_lineSegment(t_moto, s_step[1]) < oc.distance_lineSegment(ori_s.getb(i), s_step[1])) {
                                 t_moto.set(ori_s.getb(i));
                             }
 
 
                             //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
                             Point t_taisyou = new Point();
-                            t_taisyou.set(oc.sentaisyou_ten_motome(s_step[1].geta(), s_step[1].getb(), t_moto));
+                            t_taisyou.set(oc.sentaisyou_ten_motome(s_step[1].getA(), s_step[1].getB(), t_moto));
 
-                            Line add_sen = new Line(oc.kouten_motome(ori_s.get(i), s_step[1]), t_taisyou);
+                            LineSegment add_sen = new LineSegment(oc.kouten_motome(ori_s.get(i), s_step[1]), t_taisyou);
 
                             add_sen.set(kousatenmade(add_sen));
                             add_sen.setcolor(ori_s.getcolor(i));
@@ -7450,29 +7450,29 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 //------
 
-    public Line kousatenmade(Line s0) {//s0を点aからb方向に、他の折線と交差するところまで延長する。新しい線分を返す//他の折線と交差しないなら、同じ線分を返す
-        Line add_sen = new Line();
+    public LineSegment kousatenmade(LineSegment s0) {//s0を点aからb方向に、他の折線と交差するところまで延長する。新しい線分を返す//他の折線と交差しないなら、同じ線分を返す
+        LineSegment add_sen = new LineSegment();
         add_sen.set(s0);
         Point kousa_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
-        double kousa_ten_kyori = kousa_point.kyori(add_sen.geta());
+        double kousa_ten_kyori = kousa_point.distance(add_sen.getA());
 
 
-        StraightLine tyoku1 = new StraightLine(add_sen.geta(), add_sen.getb());
+        StraightLine tyoku1 = new StraightLine(add_sen.getA(), add_sen.getB());
         int i_kousa_flg;
         for (int i = 1; i <= ori_s.getsousuu(); i++) {
             i_kousa_flg = tyoku1.senbun_kousa_hantei_kuwasii(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
 
             if ((i_kousa_flg == 1 || i_kousa_flg == 21) || i_kousa_flg == 22) {
                 kousa_point.set(oc.kouten_motome(tyoku1, ori_s.get(i)));
-                if (kousa_point.kyori(add_sen.geta()) > 0.00001) {
+                if (kousa_point.distance(add_sen.getA()) > 0.00001) {
 
-                    if (kousa_point.kyori(add_sen.geta()) < kousa_ten_kyori) {
+                    if (kousa_point.distance(add_sen.getA()) < kousa_ten_kyori) {
 
-                        double d_kakudo = oc.kakudo(add_sen.geta(), add_sen.getb(), add_sen.geta(), kousa_point);
+                        double d_kakudo = oc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
                         if (d_kakudo < 1.0 || d_kakudo > 359.0) {
                             //i_kouten_ari_nasi=1;
-                            kousa_ten_kyori = kousa_point.kyori(add_sen.geta());
-                            add_sen.set(add_sen.geta(), kousa_point);
+                            kousa_ten_kyori = kousa_point.distance(add_sen.getA());
+                            add_sen.set(add_sen.getA(), kousa_point);
                         }
                     }
                 }
@@ -7486,16 +7486,16 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 //------
 
-    public Line kousatenmade_2(Line s0) {//s0を点bからaの反対方向に、他の折線と交差するところまで延長する。新しい線分を返す//他の折線と交差しないなら、同じ線分を返す
-        Line add_sen = new Line();
+    public LineSegment kousatenmade_2(LineSegment s0) {//s0を点bからaの反対方向に、他の折線と交差するところまで延長する。新しい線分を返す//他の折線と交差しないなら、同じ線分を返す
+        LineSegment add_sen = new LineSegment();
         add_sen.set(s0);
         //Senbun add_sen;add_sen=s0;
 
 
         Point kousa_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
-        double kousa_ten_kyori = kousa_point.kyori(add_sen.geta());
+        double kousa_ten_kyori = kousa_point.distance(add_sen.getA());
 
-        StraightLine tyoku1 = new StraightLine(add_sen.geta(), add_sen.getb());
+        StraightLine tyoku1 = new StraightLine(add_sen.getA(), add_sen.getB());
         int i_kousa_flg;//元の線分を直線としたものと、他の線分の交差状態
         int i_senbun_kousa_flg;//元の線分と、他の線分の交差状態
 
@@ -7509,13 +7509,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 if (i_senbun_kousa_flg < 21 || i_senbun_kousa_flg > 28) {
                     //System.out.println("i_kousa_flg = "+i_kousa_flg  +      " ; i_senbun_kousa_flg = "+i_senbun_kousa_flg);
                     kousa_point.set(oc.kouten_motome(tyoku1, ori_s.get(i)));
-                    if (kousa_point.kyori(add_sen.geta()) > 0.00001) {
-                        if (kousa_point.kyori(add_sen.geta()) < kousa_ten_kyori) {
-                            double d_kakudo = oc.kakudo(add_sen.geta(), add_sen.getb(), add_sen.geta(), kousa_point);
+                    if (kousa_point.distance(add_sen.getA()) > 0.00001) {
+                        if (kousa_point.distance(add_sen.getA()) < kousa_ten_kyori) {
+                            double d_kakudo = oc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
                             if (d_kakudo < 1.0 || d_kakudo > 359.0) {
                                 //i_kouten_ari_nasi=1;
-                                kousa_ten_kyori = kousa_point.kyori(add_sen.geta());
-                                add_sen.set(add_sen.geta(), kousa_point);
+                                kousa_ten_kyori = kousa_point.distance(add_sen.getA());
+                                add_sen.set(add_sen.getA(), kousa_point);
                             }
                         }
                     }
@@ -7531,26 +7531,26 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     System.out.println("i_kousa_flg = " + i_kousa_flg + " ; i_senbun_kousa_flg = " + i_senbun_kousa_flg);
 
 
-                    kousa_point.set(ori_s.get(i).geta());
-                    if (kousa_point.kyori(add_sen.geta()) > 0.00001) {
-                        if (kousa_point.kyori(add_sen.geta()) < kousa_ten_kyori) {
-                            double d_kakudo = oc.kakudo(add_sen.geta(), add_sen.getb(), add_sen.geta(), kousa_point);
+                    kousa_point.set(ori_s.get(i).getA());
+                    if (kousa_point.distance(add_sen.getA()) > 0.00001) {
+                        if (kousa_point.distance(add_sen.getA()) < kousa_ten_kyori) {
+                            double d_kakudo = oc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
                             if (d_kakudo < 1.0 || d_kakudo > 359.0) {
                                 //i_kouten_ari_nasi=1;
-                                kousa_ten_kyori = kousa_point.kyori(add_sen.geta());
-                                add_sen.set(add_sen.geta(), kousa_point);
+                                kousa_ten_kyori = kousa_point.distance(add_sen.getA());
+                                add_sen.set(add_sen.getA(), kousa_point);
                             }
                         }
                     }
 
-                    kousa_point.set(ori_s.get(i).getb());
-                    if (kousa_point.kyori(add_sen.geta()) > 0.00001) {
-                        if (kousa_point.kyori(add_sen.geta()) < kousa_ten_kyori) {
-                            double d_kakudo = oc.kakudo(add_sen.geta(), add_sen.getb(), add_sen.geta(), kousa_point);
+                    kousa_point.set(ori_s.get(i).getB());
+                    if (kousa_point.distance(add_sen.getA()) > 0.00001) {
+                        if (kousa_point.distance(add_sen.getA()) < kousa_ten_kyori) {
+                            double d_kakudo = oc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
                             if (d_kakudo < 1.0 || d_kakudo > 359.0) {
                                 //i_kouten_ari_nasi=1;
-                                kousa_ten_kyori = kousa_point.kyori(add_sen.geta());
-                                add_sen.set(add_sen.geta(), kousa_point);
+                                kousa_ten_kyori = kousa_point.distance(add_sen.getA());
+                                add_sen.set(add_sen.getA(), kousa_point);
                             }
                         }
                     }
@@ -7563,31 +7563,31 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
 
-        add_sen.set(s0.getb(), add_sen.getb());
+        add_sen.set(s0.getB(), add_sen.getB());
         return add_sen;
     }
 
 //------
 //------
 
-    public int kouten_ari_nasi(Line s0) {//s0を点aからb方向に延長したら、他の折線と交差するなら、１しないなら０を返す。a店での交差する線分は、この関数では交差なしになる。
-        Line add_sen = new Line();
+    public int kouten_ari_nasi(LineSegment s0) {//s0を点aからb方向に延長したら、他の折線と交差するなら、１しないなら０を返す。a店での交差する線分は、この関数では交差なしになる。
+        LineSegment add_sen = new LineSegment();
         add_sen.set(s0);
         Point kousa_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
-        double kousa_ten_kyori = kousa_point.kyori(add_sen.geta());
+        double kousa_ten_kyori = kousa_point.distance(add_sen.getA());
 
 
-        StraightLine tyoku1 = new StraightLine(add_sen.geta(), add_sen.getb());
+        StraightLine tyoku1 = new StraightLine(add_sen.getA(), add_sen.getB());
         int i_kousa_flg;
         for (int i = 1; i <= ori_s.getsousuu(); i++) {
             i_kousa_flg = tyoku1.senbun_kousa_hantei_kuwasii(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
 
             if ((i_kousa_flg == 1 || i_kousa_flg == 21) || i_kousa_flg == 22) {
                 kousa_point.set(oc.kouten_motome(tyoku1, ori_s.get(i)));
-                if (kousa_point.kyori(add_sen.geta()) > 0.00001) {
+                if (kousa_point.distance(add_sen.getA()) > 0.00001) {
 
 
-                    double d_kakudo = oc.kakudo(add_sen.geta(), add_sen.getb(), add_sen.geta(), kousa_point);
+                    double d_kakudo = oc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
                     if (d_kakudo < 1.0 || d_kakudo > 359.0) {
                         return 1;
 
@@ -7652,18 +7652,18 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 			}
 		}
 */
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
         p.set(camera.TV2object(p0));
         s_step[1].seta(p);
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) <= d_hantei_haba) {
+        if (p.distance(moyori_point) <= d_hantei_haba) {
             s_step[1].seta(moyori_point);
         }
         if (s_step[1].getnagasa() > 0.00000001) {
             //やりたい動作はここに書く
 
             double addx, addy;
-            addx = -s_step[1].getbx() + s_step[1].getax();
+            addx = -s_step[1].getbx() + s_step[1].getAx();
             addy = -s_step[1].getby() + s_step[1].getay();
 
             PolygonStore ori_s_temp = new PolygonStore();    //セレクトされた折線だけ取り出すために使う
@@ -7739,18 +7739,18 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 			}
 		}
 */
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
         p.set(camera.TV2object(p0));
         s_step[1].seta(p);
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) <= d_hantei_haba) {
+        if (p.distance(moyori_point) <= d_hantei_haba) {
             s_step[1].seta(moyori_point);
         }
         if (s_step[1].getnagasa() > 0.00000001) {
             //やりたい動作はここに書く
 
             double addx, addy;
-            addx = -s_step[1].getbx() + s_step[1].getax();
+            addx = -s_step[1].getbx() + s_step[1].getAx();
             addy = -s_step[1].getby() + s_step[1].getay();
 
             PolygonStore ori_s_temp = new PolygonStore();    //セレクトされた折線だけ取り出すために使う
@@ -7788,33 +7788,33 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     public void mPressed_A_31(Point p0) {
         p.set(camera.TV2object(p0));
 
-        if (i_egaki_dankai == 0) {    //第1段階として、点を選択
+        if (i_egaki_stage == 0) {    //第1段階として、点を選択
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(5);
+            if (p.distance(moyori_point) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(5);
             }
             return;
         }
 
-        if (i_egaki_dankai == 1) {    //第2段階として、点を選択
+        if (i_egaki_stage == 1) {    //第2段階として、点を選択
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) >= d_hantei_haba) {
-                i_egaki_dankai = 0;
+            if (p.distance(moyori_point) >= d_hantei_haba) {
+                i_egaki_stage = 0;
                 i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 //点の選択が失敗した場合もi_select_mode=0にしないと、セレクトのつもりが動作モードがmove2p2pになったままになる
                 return;
             }
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
 
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(i_egaki_stage);
 
             }
-            if (oc.kyori(s_step[1].geta(), s_step[2].geta()) < 0.00000001) {
-                i_egaki_dankai = 0;
+            if (oc.distance(s_step[1].getA(), s_step[2].getA()) < 0.00000001) {
+                i_egaki_stage = 0;
                 i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
             }
@@ -7822,42 +7822,42 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
 
-        if (i_egaki_dankai == 2) {    //第3段階として、点を選択
+        if (i_egaki_stage == 2) {    //第3段階として、点を選択
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) >= d_hantei_haba) {
-                i_egaki_dankai = 0;
+            if (p.distance(moyori_point) >= d_hantei_haba) {
+                i_egaki_stage = 0;
                 i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
                 return;
 
             }
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
 
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(i_egaki_stage);
 
             }
             return;
         }
 
 
-        if (i_egaki_dankai == 3) {    //第4段階として、点を選択
+        if (i_egaki_stage == 3) {    //第4段階として、点を選択
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) >= d_hantei_haba) {
-                i_egaki_dankai = 0;
+            if (p.distance(moyori_point) >= d_hantei_haba) {
+                i_egaki_stage = 0;
                 i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 return;
             }
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
 
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(i_egaki_stage);
 
             }
-            if (oc.kyori(s_step[3].geta(), s_step[4].geta()) < 0.00000001) {
-                i_egaki_dankai = 0;
+            if (oc.distance(s_step[3].getA(), s_step[4].getA()) < 0.00000001) {
+                i_egaki_stage = 0;
                 i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
             }
@@ -7873,8 +7873,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==31move2p2p　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_31(Point p0) {
-        if (i_egaki_dankai == 4) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 4) {
+            i_egaki_stage = 0;
             i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
             //double addx,addy;
@@ -7885,7 +7885,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             PolygonStore ori_s_temp = new PolygonStore();    //セレクトされた折線だけ取り出すために使う
             ori_s_temp.setMemo(ori_s.getMemo_select_sentaku(2));//セレクトされた折線だけ取り出してori_s_tempを作る
             ori_s.del_selected_senbun_hayai();//セレクトされた折線を削除する。
-            ori_s_temp.move(s_step[1].geta(), s_step[2].geta(), s_step[3].geta(), s_step[4].geta());//全体を移動する
+            ori_s_temp.move(s_step[1].getA(), s_step[2].getA(), s_step[3].getA(), s_step[4].getA());//全体を移動する
 
             int sousuu_old = ori_s.getsousuu();
             ori_s.addMemo(ori_s_temp.getMemo());
@@ -7917,72 +7917,72 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     public void mPressed_A_32(Point p0) {
         p.set(camera.TV2object(p0));
 
-        if (i_egaki_dankai == 0) {    //第1段階として、点を選択
+        if (i_egaki_stage == 0) {    //第1段階として、点を選択
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(5);
+            if (p.distance(moyori_point) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(5);
             }
             return;
         }
 
-        if (i_egaki_dankai == 1) {    //第2段階として、点を選択
+        if (i_egaki_stage == 1) {    //第2段階として、点を選択
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) >= d_hantei_haba) {
-                i_egaki_dankai = 0;
+            if (p.distance(moyori_point) >= d_hantei_haba) {
+                i_egaki_stage = 0;
                 i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 return;
             }
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
 
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(i_egaki_stage);
 
             }
-            if (oc.kyori(s_step[1].geta(), s_step[2].geta()) < 0.00000001) {
-                i_egaki_dankai = 0;
+            if (oc.distance(s_step[1].getA(), s_step[2].getA()) < 0.00000001) {
+                i_egaki_stage = 0;
                 i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
-            }
-            return;
-        }
-
-
-        if (i_egaki_dankai == 2) {    //第3段階として、点を選択
-            moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) >= d_hantei_haba) {
-                i_egaki_dankai = 0;
-                i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
-                return;
-            }
-            if (p.kyori(moyori_point) < d_hantei_haba) {
-
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
-
             }
             return;
         }
 
 
-        if (i_egaki_dankai == 3) {    //第4段階として、点を選択
+        if (i_egaki_stage == 2) {    //第3段階として、点を選択
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) >= d_hantei_haba) {
-                i_egaki_dankai = 0;
+            if (p.distance(moyori_point) >= d_hantei_haba) {
+                i_egaki_stage = 0;
                 i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 return;
             }
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
 
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(i_egaki_stage);
 
             }
-            if (oc.kyori(s_step[3].geta(), s_step[4].geta()) < 0.00000001) {
-                i_egaki_dankai = 0;
+            return;
+        }
+
+
+        if (i_egaki_stage == 3) {    //第4段階として、点を選択
+            moyori_point.set(get_moyori_ten(p));
+            if (p.distance(moyori_point) >= d_hantei_haba) {
+                i_egaki_stage = 0;
+                i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+                return;
+            }
+            if (p.distance(moyori_point) < d_hantei_haba) {
+
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(i_egaki_stage);
+
+            }
+            if (oc.distance(s_step[3].getA(), s_step[4].getA()) < 0.00000001) {
+                i_egaki_stage = 0;
                 i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             }
             return;
@@ -7997,8 +7997,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==32copy2p2pp　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_32(Point p0) {
-        if (i_egaki_dankai == 4) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 4) {
+            i_egaki_stage = 0;
             i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             //double addx,addy;
             //addx=s_step[1].getbx()-s_step[1].getax();
@@ -8008,7 +8008,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             PolygonStore ori_s_temp = new PolygonStore();    //セレクトされた折線だけ取り出すために使う
             ori_s_temp.setMemo(ori_s.getMemo_select_sentaku(2));//セレクトされた折線だけ取り出してori_s_tempを作る
             //ori_s.del_selected_senbun_hayai();//セレクトされた折線を削除する。
-            ori_s_temp.move(s_step[1].geta(), s_step[2].geta(), s_step[3].geta(), s_step[4].geta());//全体を移動する
+            ori_s_temp.move(s_step[1].getA(), s_step[2].getA(), s_step[3].getA(), s_step[4].getA());//全体を移動する
 
             int sousuu_old = ori_s.getsousuu();
             ori_s.addMemo(ori_s_temp.getMemo());
@@ -8035,14 +8035,14 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         p.set(camera.TV2object(p0));
 
 
-        if (i_egaki_dankai == 0) {    //第1段階として、点を選択
+        if (i_egaki_stage == 0) {    //第1段階として、点を選択
 
 
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(5);
+            if (p.distance(moyori_point) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(5);
 
                 //s_step[i_egaki_dankai].set(moyori_senbun);        s_step[i_egaki_dankai].setcolor(5);
 
@@ -8050,22 +8050,22 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             return;
         }
 
-        if (i_egaki_dankai == 1) {    //第2段階として、点を選択
+        if (i_egaki_stage == 1) {    //第2段階として、点を選択
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) >= d_hantei_haba) {
-                i_egaki_dankai = 0;
+            if (p.distance(moyori_point) >= d_hantei_haba) {
+                i_egaki_stage = 0;
                 i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 return;
             }
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
 
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
-                s_step[1].setb(s_step[2].getb());
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(i_egaki_stage);
+                s_step[1].setb(s_step[2].getB());
             }
             if (s_step[1].getnagasa() < 0.00000001) {
-                i_egaki_dankai = 0;
+                i_egaki_stage = 0;
                 i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             }
         }
@@ -8093,10 +8093,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==12鏡映モード　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_12(Point p0) {
-        Line adds = new Line();
+        LineSegment adds = new LineSegment();
         //Orisensyuugou ori_s_temp =new Orisensyuugou();
-        if (i_egaki_dankai == 2) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 2) {
+            i_egaki_stage = 0;
             i_select_mode = 0;//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             int old_sousuu = ori_s.getsousuu();
 
@@ -8113,7 +8113,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     //ori_s_temp.addsenbun(adds.geta(),adds.getb());
                     //ori_s_temp.setcolor(ori_s.getsousuu(),ori_s.getcolor(i));
 
-                    ori_s.addsenbun(adds.geta(), adds.getb());
+                    ori_s.addLine(adds.getA(), adds.getB());
                     ori_s.setcolor(ori_s.getsousuu(), ori_s.getcolor(i));
                 }
             }
@@ -8175,13 +8175,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==34　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_34(Point p0) {
-        i_egaki_dankai = 1;
+        i_egaki_stage = 1;
 
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) > d_hantei_haba) {
-            i_egaki_dankai = 0;
+        if (p.distance(moyori_point) > d_hantei_haba) {
+            i_egaki_stage = 0;
         }
         s_step[1].set(p, moyori_point);
         s_step[1].setcolor(icol);
@@ -8209,13 +8209,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         Narabebako_int_double nbox = new Narabebako_int_double();
 
-        if (i_egaki_dankai == 1) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 1) {
+            i_egaki_stage = 0;
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
             moyori_point.set(get_moyori_ten(p));
             s_step[1].seta(moyori_point);
-            if (p.kyori(moyori_point) <= d_hantei_haba) {
+            if (p.distance(moyori_point) <= d_hantei_haba) {
                 if (s_step[1].getnagasa() > 0.00000001) {
                     for (int i = 1; i <= ori_s.getsousuu(); i++) {
 						/*
@@ -8241,8 +8241,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 						if(i_senbun_kousa_hantei== 374 ){ i_jikkou=1;}
 					*/
                         //if( i_jikkou==1){
-                        if (oc.Senbun_kasanari_hantei(ori_s.get(i), s_step[1]) == 1) {
-                            int_double i_d = new int_double(i, oc.kyori_senbun(s_step[1].getb(), ori_s.get(i)));
+                        if (oc.LineSegment_overlapping_hantei(ori_s.get(i), s_step[1]) == 1) {
+                            int_double i_d = new int_double(i, oc.distance_lineSegment(s_step[1].getB(), ori_s.get(i)));
                             nbox.ire_i_tiisaijyun(i_d);
                         }
 
@@ -8283,12 +8283,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==64　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_64(Point p0) {
-        i_egaki_dankai = 1;
+        i_egaki_stage = 1;
 
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) > d_hantei_haba) {
-            i_egaki_dankai = 0;
+        if (p.distance(moyori_point) > d_hantei_haba) {
+            i_egaki_stage = 0;
         }
         s_step[1].set(p, moyori_point);
         s_step[1].setcolor(5);
@@ -8306,12 +8306,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         Narabebako_int_double nbox = new Narabebako_int_double();
 
-        if (i_egaki_dankai == 1) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 1) {
+            i_egaki_stage = 0;
             p.set(camera.TV2object(p0));
             moyori_point.set(get_moyori_ten(p));
             s_step[1].seta(moyori_point);
-            if (p.kyori(moyori_point) <= d_hantei_haba) {
+            if (p.distance(moyori_point) <= d_hantei_haba) {
                 if (s_step[1].getnagasa() > 0.00000001) {
 
                     ori_s.D_nisuru_line(s_step[1], "l");//lは小文字のエル
@@ -8345,12 +8345,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     //マウス操作(i_mouse_modeA==65　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_65(Point p0) {
 
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
         p.set(camera.TV2object(p0));
 
         s_step[1].seta(p);
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) <= d_hantei_haba) {
+        if (p.distance(moyori_point) <= d_hantei_haba) {
             s_step[1].seta(moyori_point);
         }
         if (s_step[1].getnagasa() > 0.00000001) {
@@ -8377,11 +8377,11 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             p.set(camera.TV2object(p0));
             i_kouho_dankai = 1;
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) > p.kyori(s_step[1].geta())) {
-                moyori_point.set(s_step[1].geta());
+            if (p.distance(moyori_point) > p.distance(s_step[1].getA())) {
+                moyori_point.set(s_step[1].getA());
             }
 
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 s_kouho[1].set(moyori_point, moyori_point);
             } else {
                 s_kouho[1].set(p, p);
@@ -8398,22 +8398,22 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 //i_egaki_dankai==0なのはこの操作ボタンを押した直後の段階か、多角形が完成して、その後ボタンを押した後
         if (i_takakukei_kansei == 1) {
             i_takakukei_kansei = 0;
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
         }
 
-        i_egaki_dankai = i_egaki_dankai + 1;
-        s_step[i_egaki_dankai].setcolor(5);
+        i_egaki_stage = i_egaki_stage + 1;
+        s_step[i_egaki_stage].setcolor(5);
         p.set(camera.TV2object(p0));
 
-        if (i_egaki_dankai == 1) {
+        if (i_egaki_stage == 1) {
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) > d_hantei_haba) {
+            if (p.distance(moyori_point) > d_hantei_haba) {
                 moyori_point.set(p);
             }
-            s_step[i_egaki_dankai].set(moyori_point, p);
+            s_step[i_egaki_stage].set(moyori_point, p);
 
         } else {//ここでi_egaki_dankai=0となることはない。
-            s_step[i_egaki_dankai].set(s_step[i_egaki_dankai - 1].getb(), p);
+            s_step[i_egaki_stage].set(s_step[i_egaki_stage - 1].getB(), p);
         }
     }
 
@@ -8423,25 +8423,25 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //if(i_takakukei_kansei==0)//ここにくるときは必ずi_takakukei_kansei==0なのでif分は無意味
 
         p.set(camera.TV2object(p0));
-        s_step[i_egaki_dankai].setb(p);
+        s_step[i_egaki_stage].setb(p);
 
 
         if (i_kou_mitudo_nyuuryoku == 1) {
             i_kouho_dankai = 1;
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) > p.kyori(s_step[1].geta())) {
-                moyori_point.set(s_step[1].geta());
+            if (p.distance(moyori_point) > p.distance(s_step[1].getA())) {
+                moyori_point.set(s_step[1].getA());
             }
 
 
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 s_kouho[1].set(moyori_point, moyori_point);
             } else {
                 s_kouho[1].set(p, p);
             }
 
             //s_kouho[i_egaki_dankai].setcolor(icol);
-            s_step[i_egaki_dankai].setb(s_kouho[1].geta());
+            s_step[i_egaki_stage].setb(s_kouho[1].getA());
         }
 
 
@@ -8456,16 +8456,16 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) > d_hantei_haba) {
+        if (p.distance(moyori_point) > d_hantei_haba) {
             moyori_point.set(p);
         }
 
-        s_step[i_egaki_dankai].setb(moyori_point);
+        s_step[i_egaki_stage].setb(moyori_point);
 
 
-        if (i_egaki_dankai >= 2) {
-            if (p.kyori(s_step[1].geta()) <= d_hantei_haba) {
-                s_step[i_egaki_dankai].setb(s_step[1].geta());
+        if (i_egaki_stage >= 2) {
+            if (p.distance(s_step[1].getA()) <= d_hantei_haba) {
+                s_step[i_egaki_stage].setb(s_step[1].getA());
                 //i_O_F_C=1;
                 i_takakukei_kansei = 1;
             }
@@ -8479,9 +8479,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //int i_tekisetu=1;//外周部の形状が適切なら1、適切でないなら0
         //if(i_O_F_C==1){
         if (i_takakukei_kansei == 1) {
-            Polygon Taka = new Polygon(i_egaki_dankai);
-            for (int i = 1; i <= i_egaki_dankai; i++) {
-                Taka.set(i, s_step[i].geta());
+            Polygon Taka = new Polygon(i_egaki_stage);
+            for (int i = 1; i <= i_egaki_stage; i++) {
+                Taka.set(i, s_step[i].getA());
             }
 
 
@@ -8563,7 +8563,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         s_step[1].seta(p);
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) <= d_hantei_haba) {
+        if (p.distance(moyori_point) <= d_hantei_haba) {
             s_step[1].seta(moyori_point);
         }
         if (s_step[1].getnagasa() > 0.00000001) {
@@ -8600,7 +8600,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         s_step[1].seta(p);
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) <= d_hantei_haba) {
+        if (p.distance(moyori_point) <= d_hantei_haba) {
             s_step[1].seta(moyori_point);
         }
         if (s_step[1].getnagasa() > 0.00000001) {
@@ -8623,12 +8623,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==36　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_36(Point p0) {
-        i_egaki_dankai = 1;
+        i_egaki_stage = 1;
 
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) > d_hantei_haba) {
+        if (p.distance(moyori_point) > d_hantei_haba) {
             moyori_point.set(p);
         }
         s_step[1].set(p, moyori_point);
@@ -8658,12 +8658,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         Narabebako_int_double nbox = new Narabebako_int_double();
 
-        if (i_egaki_dankai == 1) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 1) {
+            i_egaki_stage = 0;
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) > d_hantei_haba) {
+            if (p.distance(moyori_point) > d_hantei_haba) {
                 moyori_point.set(p);
             }
             s_step[1].seta(moyori_point);
@@ -8701,7 +8701,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     //if(i_senbun_kousa_hantei== 374 ){ i_jikkou=1;}
 
                     if (i_jikkou == 1) {
-                        int_double i_d = new int_double(i, oc.kyori(s_step[1].getb(), oc.kouten_motome(ori_s.get(i), s_step[1])));
+                        int_double i_d = new int_double(i, oc.distance(s_step[1].getB(), oc.kouten_motome(ori_s.get(i), s_step[1])));
                         nbox.ire_i_tiisaijyun(i_d);
                     }
 
@@ -8769,25 +8769,25 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==63　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_63(Point p0) {
-        if (i_egaki_dankai == 0) {
+        if (i_egaki_stage == 0) {
             i_O_F_C = 0;
-            i_egaki_dankai = i_egaki_dankai + 1;
+            i_egaki_stage = i_egaki_stage + 1;
 
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
             //moyori_ten.set(get_moyori_ten(p));
             //if(p.kyori(moyori_ten)>d_hantei_haba){moyori_ten.set(p);}
-            s_step[i_egaki_dankai].set(p, p);
-            s_step[i_egaki_dankai].setcolor(7);
+            s_step[i_egaki_stage].set(p, p);
+            s_step[i_egaki_stage].setcolor(7);
             //k.addsenbun(p,p);
             //ieda=k.getsousuu();
             //k.setcolor(ieda,icol);
         } else {
             if (i_O_F_C == 0) {
-                i_egaki_dankai = i_egaki_dankai + 1;
+                i_egaki_stage = i_egaki_stage + 1;
                 p.set(camera.TV2object(p0));
-                s_step[i_egaki_dankai].set(s_step[i_egaki_dankai - 1].getb(), p);
-                s_step[i_egaki_dankai].setcolor(7);
+                s_step[i_egaki_stage].set(s_step[i_egaki_stage - 1].getB(), p);
+                s_step[i_egaki_stage].setcolor(7);
                 //   s_step[i_egaki_dankai-1].getb();
                 //k.addsenbun(p,p);
                 //ieda=k.getsousuu();
@@ -8803,7 +8803,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     public void mDragged_A_63(Point p0) {
         if (i_O_F_C == 0) {
             p.set(camera.TV2object(p0));
-            s_step[i_egaki_dankai].setb(p);
+            s_step[i_egaki_stage].setb(p);
         }
     }
 
@@ -8823,11 +8823,11 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         if (i_O_F_C == 0) {
             p.set(camera.TV2object(p0));
-            s_step[i_egaki_dankai].setb(p);
+            s_step[i_egaki_stage].setb(p);
 
 
-            if (p.kyori(s_step[1].geta()) <= d_hantei_haba) {
-                s_step[i_egaki_dankai].setb(s_step[1].geta());
+            if (p.distance(s_step[1].getA()) <= d_hantei_haba) {
+                s_step[i_egaki_stage].setb(s_step[1].getA());
                 i_O_F_C = 1;
                 //System.out.println("i_egaki_dankai = " + i_egaki_dankai );
                 //System.out.println("i_O_F_C = " +i_O_F_C );
@@ -8835,8 +8835,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 
             if (i_O_F_C == 1) {
-                if (i_egaki_dankai == 2) {
-                    i_egaki_dankai = 0;
+                if (i_egaki_stage == 2) {
+                    i_egaki_stage = 0;
                 }
             }
 
@@ -8847,7 +8847,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         if (i_O_F_C == 1) {
             Narabebako_int_double goukei_nbox = new Narabebako_int_double();
             Narabebako_int_double nbox = new Narabebako_int_double();
-            for (int i_s_step = 1; i_s_step <= i_egaki_dankai; i_s_step++) {
+            for (int i_s_step = 1; i_s_step <= i_egaki_stage; i_s_step++) {
                 nbox.reset();
                 for (int i = 1; i <= ori_s.getsousuu(); i++) {
 
@@ -8870,7 +8870,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 
                     if (i_jikkou == 1) {
-                        int_double i_d = new int_double(i, oc.kyori(s_step[i_s_step].geta(), oc.kouten_motome(ori_s.get(i), s_step[i_s_step])));
+                        int_double i_d = new int_double(i, oc.distance(s_step[i_s_step].getA(), oc.kouten_motome(ori_s.get(i), s_step[i_s_step])));
                         nbox.ire_i_tiisaijyun(i_d);
                     }
                 }
@@ -8895,7 +8895,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 } else if (goukei_nbox.getsousuu() == 0) {//外周部として選択した折線の数が0
                     i_hantai_color = 3;
                 } else {//外周部として選択した折線の数が偶数
-                    Line s_idou = new Line();
+                    LineSegment s_idou = new LineSegment();
                     s_idou.set(ori_s.get(goukei_nbox.get_int(1)));
 
                     for (int i = 2; i <= goukei_nbox.getsousuu(); i++) {
@@ -8903,14 +8903,14 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         s_idou.set(oc.sentaisyou_senbun_motome(s_idou, ori_s.get(goukei_nbox.get_int(i))));
                     }
                     i_hantai_color = 5;
-                    if (oc.hitosii(ori_s.get(goukei_nbox.get_int(1)).geta(), s_idou.geta(), 0.0001)) {
-                        if (oc.hitosii(ori_s.get(goukei_nbox.get_int(1)).getb(), s_idou.getb(), 0.0001)) {
+                    if (oc.equal(ori_s.get(goukei_nbox.get_int(1)).getA(), s_idou.getA(), 0.0001)) {
+                        if (oc.equal(ori_s.get(goukei_nbox.get_int(1)).getB(), s_idou.getB(), 0.0001)) {
                             i_hantai_color = 3;
                         }
                     }
                 }
 
-                for (int i_s_step = 1; i_s_step <= i_egaki_dankai; i_s_step++) {
+                for (int i_s_step = 1; i_s_step <= i_egaki_stage; i_s_step++) {
                     s_step[i_s_step].setcolor(i_hantai_color);
                 }
 
@@ -9007,16 +9007,16 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
 
-        if (i_egaki_dankai == 0) {    //第１段階として、線分を選択
-            moyori_line.set(get_moyori_senbun(p));
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
-                i_egaki_dankai = 1;
-                s_step[1].set(moyori_line);
+        if (i_egaki_stage == 0) {    //第１段階として、線分を選択
+            moyori_lineSegment.set(get_moyori_senbun(p));
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
+                i_egaki_stage = 1;
+                s_step[1].set(moyori_lineSegment);
                 s_step[1].setcolor(5);
             }
         }
 
-        if (i_egaki_dankai == i_jyunnbi_step_suu) {    //if(i_egaki_dankai==1){        //動作の準備として人間が選択するステップ数が終わった状態で実行
+        if (i_egaki_stage == i_jyunnbi_step_suu) {    //if(i_egaki_dankai==1){        //動作の準備として人間が選択するステップ数が終わった状態で実行
             int i_jyun;//i_jyunは線を描くとき順番に色を変えたいとき使う
             //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d) //    double d_kakudo_kei;double kakudo;
 
@@ -9027,7 +9027,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             }
 
             if (id_kakudo_kei != 0) {
-                Line s_kiso = new Line(s_step[1].geta(), s_step[1].getb());
+                LineSegment s_kiso = new LineSegment(s_step[1].getA(), s_step[1].getB());
                 kakudo = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= honsuu; i++) {
@@ -9035,18 +9035,18 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     if (i_jyun == 2) {
                         i_jyun = 0;
                     }
-                    i_egaki_dankai = i_egaki_dankai + 1;
+                    i_egaki_stage = i_egaki_stage + 1;
                     kakudo = kakudo + d_kakudo_kei;
-                    s_step[i_egaki_dankai].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
+                    s_step[i_egaki_stage].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
                     if (i_jyun == 0) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i_jyun == 1) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                 }
 
-                s_kiso.set(s_step[1].getb(), s_step[1].geta());
+                s_kiso.set(s_step[1].getB(), s_step[1].getA());
                 kakudo = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= honsuu; i++) {
@@ -9054,14 +9054,14 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     if (i_jyun == 2) {
                         i_jyun = 0;
                     }
-                    i_egaki_dankai = i_egaki_dankai + 1;
+                    i_egaki_stage = i_egaki_stage + 1;
                     kakudo = kakudo + d_kakudo_kei;
-                    s_step[i_egaki_dankai].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
+                    s_step[i_egaki_stage].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
                     if (i_jyun == 0) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i_jyun == 1) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                 }
             }
@@ -9075,7 +9075,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 jk[5] = 360.0 - d_jiyuu_kaku_1;
                 jk[6] = 360.0 - d_jiyuu_kaku_3;
 
-                Line s_kiso = new Line(s_step[1].geta(), s_step[1].getb());
+                LineSegment s_kiso = new LineSegment(s_step[1].getA(), s_step[1].getB());
                 kakudo = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= 6; i++) {
@@ -9083,30 +9083,30 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     if (i_jyun == 2) {
                         i_jyun = 0;
                     }
-                    i_egaki_dankai = i_egaki_dankai + 1;
+                    i_egaki_stage = i_egaki_stage + 1;
                     kakudo = jk[i];
-                    s_step[i_egaki_dankai].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
+                    s_step[i_egaki_stage].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
                     if (i == 1) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i == 2) {
-                        s_step[i_egaki_dankai].setcolor(8);
+                        s_step[i_egaki_stage].setcolor(8);
                     }
                     if (i == 3) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                     if (i == 4) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                     if (i == 5) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i == 6) {
-                        s_step[i_egaki_dankai].setcolor(8);
+                        s_step[i_egaki_stage].setcolor(8);
                     }
                 }
 
-                s_kiso.set(s_step[1].getb(), s_step[1].geta());
+                s_kiso.set(s_step[1].getB(), s_step[1].getA());
                 kakudo = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= 6; i++) {
@@ -9114,26 +9114,26 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     if (i_jyun == 2) {
                         i_jyun = 0;
                     }
-                    i_egaki_dankai = i_egaki_dankai + 1;
+                    i_egaki_stage = i_egaki_stage + 1;
                     kakudo = jk[i];
-                    s_step[i_egaki_dankai].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
+                    s_step[i_egaki_stage].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
                     if (i == 1) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i == 2) {
-                        s_step[i_egaki_dankai].setcolor(8);
+                        s_step[i_egaki_stage].setcolor(8);
                     }
                     if (i == 3) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                     if (i == 4) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                     if (i == 5) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i == 6) {
-                        s_step[i_egaki_dankai].setcolor(8);
+                        s_step[i_egaki_stage].setcolor(8);
                     }
                 }
             }
@@ -9143,24 +9143,24 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
 
-        if (i_egaki_dankai == i_jyunnbi_step_suu + (honsuu) + (honsuu)) {//19     //動作の準備としてソフトが返答するステップ数が終わった状態で実行
+        if (i_egaki_stage == i_jyunnbi_step_suu + (honsuu) + (honsuu)) {//19     //動作の準備としてソフトが返答するステップ数が終わった状態で実行
 
             int i_tikai_s_step_suu = 0;
 
             //s_step[2から10]までとs_step[11から19]まで
-            moyori_line.set(get_moyori_step_senbun(p, 2, 1 + (honsuu)));
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
+            moyori_lineSegment.set(get_moyori_step_senbun(p, 2, 1 + (honsuu)));
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
                 i_tikai_s_step_suu = i_tikai_s_step_suu + 1;
-                s_step[i_egaki_dankai].set(moyori_line);    //s_step[i_egaki_dankai].setcolor(2);//s_step[20]にinput
+                s_step[i_egaki_stage].set(moyori_lineSegment);    //s_step[i_egaki_dankai].setcolor(2);//s_step[20]にinput
             }
 
             //s_step[2から10]までとs_step[11から19]まで
-            moyori_line.set(get_moyori_step_senbun(p, 1 + (honsuu) + 1, 1 + (honsuu) + (honsuu)));
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
+            moyori_lineSegment.set(get_moyori_step_senbun(p, 1 + (honsuu) + 1, 1 + (honsuu) + (honsuu)));
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
                 i_tikai_s_step_suu = i_tikai_s_step_suu + 1;
-                s_step[i_egaki_dankai].set(moyori_line);    //s_step[i_egaki_dankai].setcolor(icol);
+                s_step[i_egaki_stage].set(moyori_lineSegment);    //s_step[i_egaki_dankai].setcolor(icol);
             }
 
             if (i_tikai_s_step_suu == 2) { //この段階でs_stepが[21]までうまってたら、s_step[20]とs_step[21]は共に加える折線なので、ここで処理を終えてしまう。
@@ -9169,7 +9169,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
                 //0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
 
-                if (oc.heikou_hantei(s_step[i_egaki_dankai - 1], s_step[i_egaki_dankai], 0.1) != 0) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
+                if (oc.heikou_hantei(s_step[i_egaki_stage - 1], s_step[i_egaki_stage], 0.1) != 0) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
 
                     //s_step[20]とs_step[21]と点pの距離  //public double kyori_senbun(Ten p0,Senbun s)
                     //if(oc.kyori_senbun(p, s_step[1+     (honsuu) +(honsuu)   +1]) >  oc.kyori_senbun(p, s_step[1+     (honsuu) +(honsuu)   +1+1])          ){
@@ -9178,24 +9178,24 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                     //i_egaki_dankai=i_egaki_dankai-1;
                     //i_egaki_dankai=i_egaki_dankai-2;
-                    i_egaki_dankai = 0;
+                    i_egaki_stage = 0;
                     return;
                 }
 
 
-                i_egaki_dankai = 0;
+                i_egaki_stage = 0;
 
                 //s_step[20]とs_step[21]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
                 Point kousa_point = new Point();
                 kousa_point.set(oc.kouten_motome(s_step[1 + (honsuu) + (honsuu) + 1], s_step[1 + (honsuu) + (honsuu) + 1 + 1]));
 
-                Line add_sen = new Line(kousa_point, s_step[1 + (honsuu) + (honsuu) + 1].geta());
+                LineSegment add_sen = new LineSegment(kousa_point, s_step[1 + (honsuu) + (honsuu) + 1].getA());
                 add_sen.setcolor(icol);
                 if (add_sen.getnagasa() > 0.00000001) {
                     addsenbun(add_sen);
                 }
 
-                Line add_sen2 = new Line(kousa_point, s_step[1 + (honsuu) + (honsuu) + 1 + 1].geta());
+                LineSegment add_sen2 = new LineSegment(kousa_point, s_step[1 + (honsuu) + (honsuu) + 1 + 1].getA());
                 add_sen2.setcolor(icol);
                 if (add_sen.getnagasa() > 0.00000001) {
                     addsenbun(add_sen2);
@@ -9203,7 +9203,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 kiroku();
             }
 
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             return;
         }
         return;
@@ -9225,7 +9225,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_17(Point p0) {
-        if (i_egaki_dankai <= 1) {
+        if (i_egaki_stage <= 1) {
             mMoved_A_11(p0);//近い既存点のみ表示
         }
     }
@@ -9246,12 +9246,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
 
-        if (i_egaki_dankai == 0) {    //第1段階として、点を選択
+        if (i_egaki_stage == 0) {    //第1段階として、点を選択
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(5);
+            if (p.distance(moyori_point) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(5);
 
                 //s_step[i_egaki_dankai].set(moyori_senbun);        s_step[i_egaki_dankai].setcolor(5);
 
@@ -9259,18 +9259,18 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             return;
         }
 
-        if (i_egaki_dankai == 1) {    //第2段階として、点を選択
+        if (i_egaki_stage == 1) {    //第2段階として、点を選択
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) >= d_hantei_haba) {
-                i_egaki_dankai = 0;
+            if (p.distance(moyori_point) >= d_hantei_haba) {
+                i_egaki_stage = 0;
                 return;
             }
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
 
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
-                s_step[1].setb(s_step[2].getb());
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(i_egaki_stage);
+                s_step[1].setb(s_step[2].getB());
 
 
             }
@@ -9278,7 +9278,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 // ------------------------------------------
 
-        if (i_egaki_dankai == i_jyunnbi_step_suu) {    //if(i_egaki_dankai==1){        //動作の準備として人間が選択するステップ数が終わった状態で実行
+        if (i_egaki_stage == i_jyunnbi_step_suu) {    //if(i_egaki_dankai==1){        //動作の準備として人間が選択するステップ数が終わった状態で実行
             int i_jyun;//i_jyunは線を描くとき順番に色を変えたいとき使う
             //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d) //    double d_kakudo_kei;double kakudo;
 
@@ -9290,7 +9290,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             if (id_kakudo_kei != 0) {
 
-                Line s_kiso = new Line(s_step[1].geta(), s_step[1].getb());
+                LineSegment s_kiso = new LineSegment(s_step[1].getA(), s_step[1].getB());
                 kakudo = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= honsuu; i++) {
@@ -9298,18 +9298,18 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     if (i_jyun == 2) {
                         i_jyun = 0;
                     }
-                    i_egaki_dankai = i_egaki_dankai + 1;
+                    i_egaki_stage = i_egaki_stage + 1;
                     kakudo = kakudo + d_kakudo_kei;
-                    s_step[i_egaki_dankai].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
+                    s_step[i_egaki_stage].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
                     if (i_jyun == 0) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i_jyun == 1) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                 }
 
-                s_kiso.set(s_step[1].getb(), s_step[1].geta());
+                s_kiso.set(s_step[1].getB(), s_step[1].getA());
                 kakudo = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= honsuu; i++) {
@@ -9317,14 +9317,14 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     if (i_jyun == 2) {
                         i_jyun = 0;
                     }
-                    i_egaki_dankai = i_egaki_dankai + 1;
+                    i_egaki_stage = i_egaki_stage + 1;
                     kakudo = kakudo + d_kakudo_kei;
-                    s_step[i_egaki_dankai].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
+                    s_step[i_egaki_stage].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
                     if (i_jyun == 0) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i_jyun == 1) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                 }
             }
@@ -9338,7 +9338,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 jk[5] = 360.0 - d_jiyuu_kaku_1;
                 jk[6] = 360.0 - d_jiyuu_kaku_3;
 
-                Line s_kiso = new Line(s_step[1].geta(), s_step[1].getb());
+                LineSegment s_kiso = new LineSegment(s_step[1].getA(), s_step[1].getB());
                 kakudo = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= 6; i++) {
@@ -9346,30 +9346,30 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     if (i_jyun == 2) {
                         i_jyun = 0;
                     }
-                    i_egaki_dankai = i_egaki_dankai + 1;
+                    i_egaki_stage = i_egaki_stage + 1;
                     kakudo = jk[i];
-                    s_step[i_egaki_dankai].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
+                    s_step[i_egaki_stage].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
                     if (i == 1) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i == 2) {
-                        s_step[i_egaki_dankai].setcolor(8);
+                        s_step[i_egaki_stage].setcolor(8);
                     }
                     if (i == 3) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                     if (i == 4) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                     if (i == 5) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i == 6) {
-                        s_step[i_egaki_dankai].setcolor(8);
+                        s_step[i_egaki_stage].setcolor(8);
                     }
                 }
 
-                s_kiso.set(s_step[1].getb(), s_step[1].geta());
+                s_kiso.set(s_step[1].getB(), s_step[1].getA());
                 kakudo = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= 6; i++) {
@@ -9377,26 +9377,26 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     if (i_jyun == 2) {
                         i_jyun = 0;
                     }
-                    i_egaki_dankai = i_egaki_dankai + 1;
+                    i_egaki_stage = i_egaki_stage + 1;
                     kakudo = jk[i];
-                    s_step[i_egaki_dankai].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
+                    s_step[i_egaki_stage].set(oc.Senbun_kaiten(s_kiso, kakudo, 10.0));
                     if (i == 1) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i == 2) {
-                        s_step[i_egaki_dankai].setcolor(8);
+                        s_step[i_egaki_stage].setcolor(8);
                     }
                     if (i == 3) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                     if (i == 4) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                     if (i == 5) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i == 6) {
-                        s_step[i_egaki_dankai].setcolor(8);
+                        s_step[i_egaki_stage].setcolor(8);
                     }
                 }
             }
@@ -9406,24 +9406,24 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
 
-        if (i_egaki_dankai == i_jyunnbi_step_suu + (honsuu) + (honsuu)) {//19     //動作の準備としてソフトが返答するステップ数が終わった状態で実行
+        if (i_egaki_stage == i_jyunnbi_step_suu + (honsuu) + (honsuu)) {//19     //動作の準備としてソフトが返答するステップ数が終わった状態で実行
 
             int i_tikai_s_step_suu = 0;
 
             //s_step[2から10]までとs_step[11から19]まで
-            moyori_line.set(get_moyori_step_senbun(p, 3, 2 + (honsuu)));
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
+            moyori_lineSegment.set(get_moyori_step_senbun(p, 3, 2 + (honsuu)));
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
                 i_tikai_s_step_suu = i_tikai_s_step_suu + 1;
-                s_step[i_egaki_dankai].set(moyori_line);    //s_step[i_egaki_dankai].setcolor(2);//s_step[20]にinput
+                s_step[i_egaki_stage].set(moyori_lineSegment);    //s_step[i_egaki_dankai].setcolor(2);//s_step[20]にinput
             }
 
             //s_step[2から10]までとs_step[11から19]まで
-            moyori_line.set(get_moyori_step_senbun(p, 2 + (honsuu) + 1, 2 + (honsuu) + (honsuu)));
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
+            moyori_lineSegment.set(get_moyori_step_senbun(p, 2 + (honsuu) + 1, 2 + (honsuu) + (honsuu)));
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
                 i_tikai_s_step_suu = i_tikai_s_step_suu + 1;
-                s_step[i_egaki_dankai].set(moyori_line);    //s_step[i_egaki_dankai].setcolor(icol);
+                s_step[i_egaki_stage].set(moyori_lineSegment);    //s_step[i_egaki_dankai].setcolor(icol);
             }
 
             if (i_tikai_s_step_suu == 2) { //この段階でs_stepが[21]までうまってたら、s_step[20]とs_step[21]は共に加える折線なので、ここで処理を終えてしまう。
@@ -9432,7 +9432,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
                 //0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
 
-                if (oc.heikou_hantei(s_step[i_egaki_dankai - 1], s_step[i_egaki_dankai], 0.1) != 0) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
+                if (oc.heikou_hantei(s_step[i_egaki_stage - 1], s_step[i_egaki_stage], 0.1) != 0) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
 
                     //s_step[20]とs_step[21]と点pの距離  //public double kyori_senbun(Ten p0,Senbun s)
                     //if(oc.kyori_senbun(p, s_step[1+     (honsuu) +(honsuu)   +1]) >  oc.kyori_senbun(p, s_step[1+     (honsuu) +(honsuu)   +1+1])          ){
@@ -9441,7 +9441,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                     //i_egaki_dankai=i_egaki_dankai-1;
                     //i_egaki_dankai=i_egaki_dankai-2;
-                    i_egaki_dankai = 0;
+                    i_egaki_stage = 0;
                     return;
                 }
 
@@ -9450,19 +9450,19 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 //System.out.println("cccccccccccccc");
 
 
-                i_egaki_dankai = 0;
+                i_egaki_stage = 0;
 
                 //s_step[20]とs_step[21]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
                 Point kousa_point = new Point();
                 kousa_point.set(oc.kouten_motome(s_step[2 + (honsuu) + (honsuu) + 1], s_step[2 + (honsuu) + (honsuu) + 1 + 1]));
 
-                Line add_sen = new Line(kousa_point, s_step[2 + (honsuu) + (honsuu) + 1].geta());
+                LineSegment add_sen = new LineSegment(kousa_point, s_step[2 + (honsuu) + (honsuu) + 1].getA());
                 add_sen.setcolor(icol);
                 if (add_sen.getnagasa() > 0.00000001) {
                     addsenbun(add_sen);
                 }
 
-                Line add_sen2 = new Line(kousa_point, s_step[2 + (honsuu) + (honsuu) + 2].geta());
+                LineSegment add_sen2 = new LineSegment(kousa_point, s_step[2 + (honsuu) + (honsuu) + 2].getA());
                 add_sen2.setcolor(icol);
                 if (add_sen.getnagasa() > 0.00000001) {
                     addsenbun(add_sen2);
@@ -9470,7 +9470,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 kiroku();
             }
 
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             return;
 
         }
@@ -9516,20 +9516,20 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
 
-        if ((i_egaki_dankai == 0) || (i_egaki_dankai == 1)) {
+        if ((i_egaki_stage == 0) || (i_egaki_stage == 1)) {
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
-                if (i_egaki_dankai == 0) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(i_egaki_stage);
+                if (i_egaki_stage == 0) {
                     return;
                 }
             }
         }
 
 
-        if (i_egaki_dankai == 2) {
+        if (i_egaki_stage == 2) {
             //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d)
 
 
@@ -9542,7 +9542,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             if (id_kakudo_kei != 0) {
 
 
-                Line s_kiso = new Line(s_step[2].geta(), s_step[1].geta());
+                LineSegment s_kiso = new LineSegment(s_step[2].getA(), s_step[1].getA());
                 kakudo = 0.0;
 
                 int i_jyun;
@@ -9553,14 +9553,14 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         i_jyun = 0;
                     }
 
-                    i_egaki_dankai = i_egaki_dankai + 1;
+                    i_egaki_stage = i_egaki_stage + 1;
                     kakudo = kakudo + d_kakudo_kei;
-                    s_step[i_egaki_dankai].set(oc.Senbun_kaiten(s_kiso, kakudo, 1.0));
+                    s_step[i_egaki_stage].set(oc.Senbun_kaiten(s_kiso, kakudo, 1.0));
                     if (i_jyun == 0) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i_jyun == 1) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                 }
 
@@ -9577,32 +9577,32 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 jk[6] = 360.0 - d_jiyuu_kaku_3;
 
 
-                Line s_kiso = new Line(s_step[2].geta(), s_step[1].geta());
+                LineSegment s_kiso = new LineSegment(s_step[2].getA(), s_step[1].getA());
                 kakudo = 0.0;
 
 
                 for (int i = 1; i <= 6; i++) {
 
-                    i_egaki_dankai = i_egaki_dankai + 1;
+                    i_egaki_stage = i_egaki_stage + 1;
                     kakudo = jk[i];
-                    s_step[i_egaki_dankai].set(oc.Senbun_kaiten(s_kiso, kakudo, 1.0));
+                    s_step[i_egaki_stage].set(oc.Senbun_kaiten(s_kiso, kakudo, 1.0));
                     if (i == 1) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                     if (i == 2) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i == 3) {
-                        s_step[i_egaki_dankai].setcolor(8);
+                        s_step[i_egaki_stage].setcolor(8);
                     }
                     if (i == 4) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                     if (i == 5) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i == 6) {
-                        s_step[i_egaki_dankai].setcolor(8);
+                        s_step[i_egaki_stage].setcolor(8);
                     }
                 }
 
@@ -9614,46 +9614,46 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
 
-        if (i_egaki_dankai == 2 + (honsuu)) {
-            moyori_line.set(get_moyori_step_senbun(p, 3, 2 + (honsuu)));
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_line);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
-                s_step[i_egaki_dankai].setcolor(2);
+        if (i_egaki_stage == 2 + (honsuu)) {
+            moyori_lineSegment.set(get_moyori_step_senbun(p, 3, 2 + (honsuu)));
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_lineSegment);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
+                s_step[i_egaki_stage].setcolor(2);
                 return;
             }
-            if (oc.kyori_senbun(p, moyori_line) >= d_hantei_haba) {
-                i_egaki_dankai = 0;
+            if (oc.distance_lineSegment(p, moyori_lineSegment) >= d_hantei_haba) {
+                i_egaki_stage = 0;
                 return;
             }
         }
 
 
-        if (i_egaki_dankai == 2 + (honsuu) + 1) {
+        if (i_egaki_stage == 2 + (honsuu) + 1) {
 
-            moyori_line.set(get_moyori_senbun(p));
-            if (oc.kyori_senbun(p, moyori_line) >= d_hantei_haba) {//最寄折線が遠かった場合
-                i_egaki_dankai = 0;
+            moyori_lineSegment.set(get_moyori_senbun(p));
+            if (oc.distance_lineSegment(p, moyori_lineSegment) >= d_hantei_haba) {//最寄折線が遠かった場合
+                i_egaki_stage = 0;
                 return;
             }
 
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_line);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
-                s_step[i_egaki_dankai].setcolor(6);
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_lineSegment);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
+                s_step[i_egaki_stage].setcolor(6);
                 //return;
             }
         }
 
 //		if(i_egaki_dankai==13){
-        if (i_egaki_dankai == 2 + (honsuu) + 1 + 1) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 2 + (honsuu) + 1 + 1) {
+            i_egaki_stage = 0;
 
             //s_step[12]とs_step[13]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
 //			Ten kousa_ten =new Ten(); kousa_ten.set(oc.kouten_motome(s_step[12],s_step[13]));
             Point kousa_point = new Point();
             kousa_point.set(oc.kouten_motome(s_step[2 + (honsuu) + 1], s_step[2 + (honsuu) + 1 + 1]));
-            Line add_sen = new Line(kousa_point, s_step[2].geta(), icol);
+            LineSegment add_sen = new LineSegment(kousa_point, s_step[2].getA(), icol);
             if (add_sen.getnagasa() > 0.00000001) {
                 addsenbun(add_sen);
                 kiroku();
@@ -9700,20 +9700,20 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
 
-        if ((i_egaki_dankai == 0) || (i_egaki_dankai == 1)) {
+        if ((i_egaki_stage == 0) || (i_egaki_stage == 1)) {
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
-                i_egaki_dankai = i_egaki_dankai + 1;
-                s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-                s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
-                if (i_egaki_dankai == 0) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
+                i_egaki_stage = i_egaki_stage + 1;
+                s_step[i_egaki_stage].set(moyori_point, moyori_point);
+                s_step[i_egaki_stage].setcolor(i_egaki_stage);
+                if (i_egaki_stage == 0) {
                     return;
                 }
             }
         }
 
 
-        if (i_egaki_dankai == 2) {
+        if (i_egaki_stage == 2) {
             //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d)
 
             if (id_kakudo_kei != 0) {
@@ -9724,7 +9724,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 
             if (id_kakudo_kei != 0) {
-                Line s_kiso = new Line(s_step[2].geta(), s_step[1].geta());
+                LineSegment s_kiso = new LineSegment(s_step[2].getA(), s_step[1].getA());
                 kakudo = 0.0;
 
                 int i_jyun;
@@ -9734,14 +9734,14 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     if (i_jyun == 2) {
                         i_jyun = 0;
                     }
-                    i_egaki_dankai = i_egaki_dankai + 1;
+                    i_egaki_stage = i_egaki_stage + 1;
                     kakudo = kakudo + d_kakudo_kei;
-                    s_step[i_egaki_dankai].set(oc.Senbun_kaiten(s_kiso, kakudo, 100.0));
+                    s_step[i_egaki_stage].set(oc.Senbun_kaiten(s_kiso, kakudo, 100.0));
                     if (i_jyun == 0) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i_jyun == 1) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                 }
             }
@@ -9757,33 +9757,33 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 jk[5] = 360.0 - d_jiyuu_kaku_1;
                 jk[6] = 360.0 - d_jiyuu_kaku_3;
 
-                Line s_kiso = new Line(s_step[2].geta(), s_step[1].geta());
+                LineSegment s_kiso = new LineSegment(s_step[2].getA(), s_step[1].getA());
                 kakudo = 0.0;
 
 
                 for (int i = 1; i <= 6; i++) {
                     //i_jyun=i_jyun+1;if(i_jyun==2){i_jyun=0;}
 
-                    i_egaki_dankai = i_egaki_dankai + 1;
+                    i_egaki_stage = i_egaki_stage + 1;
                     kakudo = jk[i];
-                    s_step[i_egaki_dankai].set(oc.Senbun_kaiten(s_kiso, kakudo, 100.0));
+                    s_step[i_egaki_stage].set(oc.Senbun_kaiten(s_kiso, kakudo, 100.0));
                     if (i == 1) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                     if (i == 2) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i == 3) {
-                        s_step[i_egaki_dankai].setcolor(8);
+                        s_step[i_egaki_stage].setcolor(8);
                     }
                     if (i == 4) {
-                        s_step[i_egaki_dankai].setcolor(4);
+                        s_step[i_egaki_stage].setcolor(4);
                     }
                     if (i == 5) {
-                        s_step[i_egaki_dankai].setcolor(6);
+                        s_step[i_egaki_stage].setcolor(6);
                     }
                     if (i == 6) {
-                        s_step[i_egaki_dankai].setcolor(8);
+                        s_step[i_egaki_stage].setcolor(8);
                     }
                 }
             }
@@ -9794,23 +9794,23 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 
         //if(i_egaki_dankai==11){
-        if (i_egaki_dankai == 2 + (honsuu)) {
-            i_egaki_dankai = 0;
-            moyori_step_line.set(get_moyori_step_senbun(p, 3, 2 + (honsuu)));
-            if (oc.kyori_senbun(p, moyori_step_line) >= d_hantei_haba) {
+        if (i_egaki_stage == 2 + (honsuu)) {
+            i_egaki_stage = 0;
+            moyori_step_lineSegment.set(get_moyori_step_senbun(p, 3, 2 + (honsuu)));
+            if (oc.distance_lineSegment(p, moyori_step_lineSegment) >= d_hantei_haba) {
                 return;
             }
 
-            if (oc.kyori_senbun(p, moyori_step_line) < d_hantei_haba) {
+            if (oc.distance_lineSegment(p, moyori_step_lineSegment) < d_hantei_haba) {
                 Point mokuhyou_point = new Point();
-                mokuhyou_point.set(oc.kage_motome(moyori_step_line, p));
+                mokuhyou_point.set(oc.shadow_request(moyori_step_lineSegment, p));
 
-                moyori_line.set(get_moyori_senbun(p));
-                if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {//最寄折線が近い場合
-                    if (oc.heikou_hantei(moyori_step_line, moyori_line, 0.000001) == 0) {//最寄折線が最寄step折線と平行の場合は除外
+                moyori_lineSegment.set(get_moyori_senbun(p));
+                if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {//最寄折線が近い場合
+                    if (oc.heikou_hantei(moyori_step_lineSegment, moyori_lineSegment, 0.000001) == 0) {//最寄折線が最寄step折線と平行の場合は除外
                         Point mokuhyou_point2 = new Point();
-                        mokuhyou_point2.set(oc.kouten_motome(moyori_step_line, moyori_line));
-                        if (p.kyori(mokuhyou_point) * 2.0 > p.kyori(mokuhyou_point2)) {
+                        mokuhyou_point2.set(oc.kouten_motome(moyori_step_lineSegment, moyori_lineSegment));
+                        if (p.distance(mokuhyou_point) * 2.0 > p.distance(mokuhyou_point2)) {
                             mokuhyou_point.set(mokuhyou_point2);
                         }
 
@@ -9818,8 +9818,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                 }
 
-                Line add_sen = new Line();
-                add_sen.set(mokuhyou_point, s_step[2].geta());
+                LineSegment add_sen = new LineSegment();
+                add_sen.set(mokuhyou_point, s_step[2].getA());
                 add_sen.setcolor(icol);
                 addsenbun(add_sen);
                 kiroku();
@@ -9893,17 +9893,17 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         p.set(camera.TV2object(p0));
         int mts_id;
         mts_id = ori_s.mottomo_tikai_senbun_sagasi(p);//mts_idは点pに最も近い線分の番号	public int ori_s.mottomo_tikai_senbun_sagasi(Ten p)
-        Line mts = new Line(ori_s.geta(mts_id), ori_s.getb(mts_id));//mtsは点pに最も近い線分
+        LineSegment mts = new LineSegment(ori_s.geta(mts_id), ori_s.getb(mts_id));//mtsは点pに最も近い線分
 
-        if (oc.kyori_senbun(p, mts) < d_hantei_haba) {
+        if (oc.distance_lineSegment(p, mts) < d_hantei_haba) {
             //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){}
             //線分を含む直線を得る public Tyokusen oc.Senbun2Tyokusen(Senbun s){}
             Point pk = new Point();
-            pk.set(oc.kage_motome(oc.Senbun2Tyokusen(mts), p));//pkは点pの（線分を含む直線上の）影
+            pk.set(oc.shadow_request(oc.Senbun2Tyokusen(mts), p));//pkは点pの（線分を含む直線上の）影
 
             //点paが、二点p1,p2を端点とする線分に点p1と点p2で直行する、2つの線分を含む長方形内にある場合は2を返す関数	public int oc.hakononaka(Ten p1,Ten pa,Ten p2){}
 
-            if (oc.hakononaka(mts.geta(), pk, mts.getb()) == 2) {
+            if (oc.isInside(mts.getA(), pk, mts.getB()) == 2) {
                 //線分の分割-----------------------------------------
                 ori_s.senbun_bunkatu(mts_id, pk);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
                 kiroku();
@@ -9944,8 +9944,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     // ------------------------------------------------------------
     public void all_s_step_to_orisen() {//20181014
 
-        Line add_sen = new Line();
-        for (int i = 1; i <= i_egaki_dankai; i++) {
+        LineSegment add_sen = new LineSegment();
+        for (int i = 1; i <= i_egaki_stage; i++) {
 
             if (s_step[i].getnagasa() > 0.00000001) {
                 add_sen.set(s_step[i]);
@@ -9953,7 +9953,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 addsenbun(add_sen);
             } else {
 
-                add_en(s_step[i].getax(), s_step[i].getay(), 5.0, 3);
+                add_en(s_step[i].getAx(), s_step[i].getay(), 5.0, 3);
             }
         }
         kiroku();
@@ -10036,15 +10036,15 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==23 でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_23(Point p0) {//ここの処理の終わりに fix2(0.001,0.5);　をするのは、元から折線だったものと、補助線から変換した折線との組合せで頻発するT字型不接続を修正するため
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
 
-        if (p19_1.kyori(p0) > 0.000001) {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
+        if (p19_1.distance(p0) > 0.000001) {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
             if (M_nisuru(p19_1, p0) != 0) {
                 fix2(0.001, 0.5);
                 kiroku();
             }
         }
-        if (p19_1.kyori(p0) <= 0.000001) {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
+        if (p19_1.distance(p0) <= 0.000001) {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
             if (ori_s.mottomo_tikai_senbun_kyori(p) < d_hantei_haba) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
@@ -10066,10 +10066,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         Point p_b = new Point();
         Point p_c = new Point();
         Point p_d = new Point();
-        p0_a.set(p0a.getx(), p0a.gety());
-        p0_b.set(p0a.getx(), p0b.gety());
-        p0_c.set(p0b.getx(), p0b.gety());
-        p0_d.set(p0b.getx(), p0a.gety());
+        p0_a.set(p0a.getX(), p0a.getY());
+        p0_b.set(p0a.getX(), p0b.getY());
+        p0_c.set(p0b.getX(), p0b.getY());
+        p0_d.set(p0b.getX(), p0a.getY());
         p_a.set(camera.TV2object(p0_a));
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
@@ -10092,16 +10092,16 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==24 でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_24(Point p0) {//ここの処理の終わりに fix2(0.001,0.5);　をするのは、元から折線だったものと、補助線から変換した折線との組合せで頻発するT字型不接続を修正するため
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
 
-        if (p19_1.kyori(p0) > 0.000001) {
+        if (p19_1.distance(p0) > 0.000001) {
             //V_nisuru(p19_1,p0);
             if (V_nisuru(p19_1, p0) != 0) {
                 fix2(0.001, 0.5);
                 kiroku();
             }
         }
-        if (p19_1.kyori(p0) <= 0.000001) {
+        if (p19_1.distance(p0) <= 0.000001) {
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
             if (ori_s.mottomo_tikai_senbun_kyori(p) < d_hantei_haba) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
@@ -10124,10 +10124,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         Point p_b = new Point();
         Point p_c = new Point();
         Point p_d = new Point();
-        p0_a.set(p0a.getx(), p0a.gety());
-        p0_b.set(p0a.getx(), p0b.gety());
-        p0_c.set(p0b.getx(), p0b.gety());
-        p0_d.set(p0b.getx(), p0a.gety());
+        p0_a.set(p0a.getX(), p0a.getY());
+        p0_b.set(p0a.getX(), p0b.getY());
+        p0_c.set(p0b.getX(), p0b.getY());
+        p0_d.set(p0b.getX(), p0a.getY());
         p_a.set(camera.TV2object(p0_a));
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
@@ -10149,19 +10149,19 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==25 でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_25(Point p0) {//ここの処理の終わりに fix2(0.001,0.5);　をするのは、元から折線だったものと、補助線から変換した折線との組合せで頻発するT字型不接続を修正するため
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
 
 
         //E_nisuru(p19_1,p0);
 
-        if (p19_1.kyori(p0) > 0.000001) {
+        if (p19_1.distance(p0) > 0.000001) {
             if (E_nisuru(p19_1, p0) != 0) {
                 fix2(0.001, 0.5);
                 kiroku();
             }
         }
 
-        if (p19_1.kyori(p0) <= 0.000001) {
+        if (p19_1.distance(p0) <= 0.000001) {
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
             if (ori_s.mottomo_tikai_senbun_kyori(p) < d_hantei_haba) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
@@ -10184,10 +10184,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         Point p_b = new Point();
         Point p_c = new Point();
         Point p_d = new Point();
-        p0_a.set(p0a.getx(), p0a.gety());
-        p0_b.set(p0a.getx(), p0b.gety());
-        p0_c.set(p0b.getx(), p0b.gety());
-        p0_d.set(p0b.getx(), p0a.gety());
+        p0_a.set(p0a.getX(), p0a.getY());
+        p0_b.set(p0a.getX(), p0b.getY());
+        p0_c.set(p0b.getX(), p0b.getY());
+        p0_d.set(p0b.getX(), p0a.getY());
         p_a.set(camera.TV2object(p0_a));
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
@@ -10210,29 +10210,29 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==60 でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_60(Point p0) {
-        i_egaki_dankai = 0;
+        i_egaki_stage = 0;
 
-        if (p19_1.kyori(p0) > 0.000001) {
+        if (p19_1.distance(p0) > 0.000001) {
             if (HK_nisuru(p19_1, p0) != 0) {
                 kiroku();
             }//この関数は不完全なのでまだ未公開20171126
         }
 
-        if (p19_1.kyori(p0) <= 0.000001) {
+        if (p19_1.distance(p0) <= 0.000001) {
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
             if (ori_s.mottomo_tikai_senbun_kyori(p) < d_hantei_haba) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
                 //ori_s.setcolor(ori_s.mottomo_tikai_senbun_sagasi(p),3);
                 if (ori_s.getcolor(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p)) < 3) {
 
-                    Line add_sen = new Line();
+                    LineSegment add_sen = new LineSegment();
                     add_sen.set(ori_s.get(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p)));
                     add_sen.setcolor(3);
 
                     ori_s.delsenbun_vertex(ori_s.mottomo_tikai_senbun_sagasi_gyakujyun(p));
                     addsenbun(add_sen);
 
-                    en_seiri();
+                    circle_organize();
                     kiroku();
                 }
 
@@ -10254,10 +10254,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         Point p_b = new Point();
         Point p_c = new Point();
         Point p_d = new Point();
-        p0_a.set(p0a.getx(), p0a.gety());
-        p0_b.set(p0a.getx(), p0b.gety());
-        p0_c.set(p0b.getx(), p0b.gety());
-        p0_d.set(p0b.getx(), p0a.gety());
+        p0_a.set(p0a.getX(), p0a.getY());
+        p0_b.set(p0a.getX(), p0b.getY());
+        p0_c.set(p0b.getX(), p0b.getY());
+        p0_d.set(p0b.getX(), p0a.getY());
         p_a.set(camera.TV2object(p0_a));
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
@@ -10268,7 +10268,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 //camera.object2TV
 
-    public Line get_s_step(int i) {
+    public LineSegment get_s_step(int i) {
         return s_step[i];
     }
 
@@ -10282,36 +10282,36 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
 
-        if (i_egaki_dankai == 3) {
-            i_egaki_dankai = 4;
+        if (i_egaki_stage == 3) {
+            i_egaki_stage = 4;
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 p.set(moyori_point);
             }
             s_step[4].set(p, p);
-            s_step[4].setcolor(i_egaki_dankai);
+            s_step[4].setcolor(i_egaki_stage);
         }
 
-        if (i_egaki_dankai == 2) {
-            i_egaki_dankai = 3;
+        if (i_egaki_stage == 2) {
+            i_egaki_stage = 3;
             moyori_point.set(get_moyori_ten(p));
-            if (p.kyori(moyori_point) < d_hantei_haba) {
+            if (p.distance(moyori_point) < d_hantei_haba) {
                 p.set(moyori_point);
             }
             s_step[3].set(p, p);
-            s_step[3].setcolor(i_egaki_dankai);
+            s_step[3].setcolor(i_egaki_stage);
         }
 
-        if (i_egaki_dankai == 1) {
-            i_egaki_dankai = 2;
+        if (i_egaki_stage == 1) {
+            i_egaki_stage = 2;
             s_step[2].set(p, p);
-            s_step[2].setcolor(i_egaki_dankai);
+            s_step[2].setcolor(i_egaki_stage);
         }
 
-        if (i_egaki_dankai == 0) {
-            i_egaki_dankai = 1;
+        if (i_egaki_stage == 0) {
+            i_egaki_stage = 1;
             s_step[1].set(p, p);
-            s_step[1].setcolor(i_egaki_dankai);
+            s_step[1].setcolor(i_egaki_stage);
         }
     }
 
@@ -10321,7 +10321,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public int mReleased_A_26(Point p0) {
-        return i_egaki_dankai;
+        return i_egaki_stage;
     }
 
 //------
@@ -10331,19 +10331,19 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==42 円入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_42(Point p0) {
-        i_egaki_dankai = 1;
+        i_egaki_stage = 1;
         i_en_egaki_dankai = 1;
 
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) > d_hantei_haba) {
-            i_egaki_dankai = 0;
+        if (p.distance(moyori_point) > d_hantei_haba) {
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 0;
         }
         s_step[1].set(p, moyori_point);
         s_step[1].setcolor(3);
-        e_step[1].set(moyori_point.getx(), moyori_point.gety(), 0.0);
+        e_step[1].set(moyori_point.getX(), moyori_point.getY(), 0.0);
         e_step[1].setcolor(3);
 
 
@@ -10361,22 +10361,22 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         s_step[1].seta(p);
-        e_step[1].setr(oc.kyori(s_step[1].geta(), s_step[1].getb()));
+        e_step[1].setr(oc.distance(s_step[1].getA(), s_step[1].getB()));
 
         //k.seta(ieda, p);
     }
 
     //マウス操作(i_mouse_modeA==42 円入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_42(Point p0) {
-        if (i_egaki_dankai == 1) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 1) {
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 0;
 
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
             moyori_point.set(get_moyori_ten(p));
             s_step[1].seta(moyori_point);
-            if (p.kyori(moyori_point) <= d_hantei_haba) {
+            if (p.distance(moyori_point) <= d_hantei_haba) {
                 if (s_step[1].getnagasa() > 0.00000001) {
                     //addsenbun(s_step[1]);
                     add_en(s_step[1].getbx(), s_step[1].getby(), s_step[1].getnagasa(), 3);
@@ -10403,21 +10403,21 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==47 円入力(フリー　)　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_47(Point p0) {
-        i_egaki_dankai = 1;
+        i_egaki_stage = 1;
         i_en_egaki_dankai = 1;
 
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) > d_hantei_haba) {
+        if (p.distance(moyori_point) > d_hantei_haba) {
             s_step[1].set(p, p);
             s_step[1].setcolor(3);
-            e_step[1].set(p.getx(), p.gety(), 0.0);
+            e_step[1].set(p.getX(), p.getY(), 0.0);
             e_step[1].setcolor(3);
         } else {
             s_step[1].set(p, moyori_point);
             s_step[1].setcolor(3);
-            e_step[1].set(moyori_point.getx(), moyori_point.gety(), 0.0);
+            e_step[1].set(moyori_point.getX(), moyori_point.getY(), 0.0);
             e_step[1].setcolor(3);
         }
     }
@@ -10427,20 +10427,20 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         s_step[1].seta(p);
-        e_step[1].setr(oc.kyori(s_step[1].geta(), s_step[1].getb()));
+        e_step[1].setr(oc.distance(s_step[1].getA(), s_step[1].getB()));
     }
 
     //マウス操作(i_mouse_modeA==47 円入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_47(Point p0) {
-        if (i_egaki_dankai == 1) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 1) {
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 0;
 
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
             moyori_point.set(get_moyori_ten(p));
 
-            if (p.kyori(moyori_point) <= d_hantei_haba) {
+            if (p.distance(moyori_point) <= d_hantei_haba) {
                 s_step[1].seta(moyori_point);
             } else {
                 s_step[1].seta(p);
@@ -10464,32 +10464,32 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
 
-        if (i_egaki_dankai == 0) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 0) {
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 0;
-            if (p.kyori(moyori_point) > d_hantei_haba) {
+            if (p.distance(moyori_point) > d_hantei_haba) {
                 return;
             }
 
-            i_egaki_dankai = 1;
+            i_egaki_stage = 1;
             i_en_egaki_dankai = 0;
             s_step[1].set(moyori_point, moyori_point);
             s_step[1].setcolor(3);
             return;
         }
 
-        if (i_egaki_dankai == 1) {
-            i_egaki_dankai = 1;
+        if (i_egaki_stage == 1) {
+            i_egaki_stage = 1;
             i_en_egaki_dankai = 0;
-            if (p.kyori(moyori_point) > d_hantei_haba) {
+            if (p.distance(moyori_point) > d_hantei_haba) {
                 return;
             }
 
-            i_egaki_dankai = 2;
+            i_egaki_stage = 2;
             i_en_egaki_dankai = 1;
             s_step[2].set(p, moyori_point);
             s_step[2].setcolor(3);
-            e_step[1].set(s_step[1].geta(), 0.0, 3);
+            e_step[1].set(s_step[1].getA(), 0.0, 3);
             return;
         }
 
@@ -10500,8 +10500,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     public void mDragged_A_44(Point p0) {
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
-        if (i_egaki_dankai == 2) {
-            i_egaki_dankai = 2;
+        if (i_egaki_stage == 2) {
+            i_egaki_stage = 2;
             i_en_egaki_dankai = 1;
             s_step[2].seta(p);
             e_step[1].setr(s_step[2].getnagasa());
@@ -10510,18 +10510,18 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==44 円 分離入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_44(Point p0) {
-        if (i_egaki_dankai == 2) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 2) {
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 0;
 
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
             moyori_point.set(get_moyori_ten(p));
             s_step[2].seta(moyori_point);
-            if (p.kyori(moyori_point) <= d_hantei_haba) {
+            if (p.distance(moyori_point) <= d_hantei_haba) {
                 if (s_step[2].getnagasa() > 0.00000001) {
                     addsenbun(s_step[2]);
-                    add_en(s_step[1].geta(), s_step[2].getnagasa(), 3);
+                    add_en(s_step[1].getA(), s_step[2].getnagasa(), 3);
                     kiroku();
                 }
             }
@@ -10551,12 +10551,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         moyori_ensyuu.set(get_moyori_ensyuu(p));
         moyori_point.set(get_moyori_ten(p));
 
-        if ((i_egaki_dankai == 0) && (i_en_egaki_dankai == 0)) {
+        if ((i_egaki_stage == 0) && (i_en_egaki_dankai == 0)) {
             if (oc.kyori_ensyuu(p, moyori_ensyuu) > d_hantei_haba) {
                 return;
             }
 
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 1;
             e_step[1].set(moyori_ensyuu);
             e_step[1].setcolor(6);
@@ -10564,12 +10564,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
 
-        if ((i_egaki_dankai == 0) && (i_en_egaki_dankai == 1)) {
-            if (p.kyori(moyori_point) > d_hantei_haba) {
+        if ((i_egaki_stage == 0) && (i_en_egaki_dankai == 1)) {
+            if (p.distance(moyori_point) > d_hantei_haba) {
                 return;
             }
 
-            i_egaki_dankai = 1;
+            i_egaki_stage = 1;
             i_en_egaki_dankai = 2;
             s_step[1].set(p, moyori_point);
             s_step[1].setcolor(3);
@@ -10583,7 +10583,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     public void mDragged_A_48(Point p0) {
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
-        if ((i_egaki_dankai == 1) && (i_en_egaki_dankai == 2)) {
+        if ((i_egaki_stage == 1) && (i_en_egaki_dankai == 2)) {
             s_step[1].seta(p);
             e_step[2].setr(e_step[1].getr() + s_step[1].getnagasa());
         }
@@ -10591,15 +10591,15 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==48 同心円　線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_48(Point p0) {
-        if ((i_egaki_dankai == 1) && (i_en_egaki_dankai == 2)) {
-            i_egaki_dankai = 0;
+        if ((i_egaki_stage == 1) && (i_en_egaki_dankai == 2)) {
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 0;
 
             //Ten p =new Ten();
             p.set(camera.TV2object(p0));
             moyori_point.set(get_moyori_ten(p));
             s_step[1].seta(moyori_point);
-            if (p.kyori(moyori_point) <= d_hantei_haba) {
+            if (p.distance(moyori_point) <= d_hantei_haba) {
                 if (s_step[1].getnagasa() > 0.00000001) {
                     addsenbun(s_step[1]);
                     e_step[2].setr(e_step[1].getr() + s_step[1].getnagasa());
@@ -10621,38 +10621,38 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         moyori_ensyuu.set(get_moyori_ensyuu(p));
         moyori_point.set(get_moyori_ten(p));
 
-        if ((i_egaki_dankai == 0) && (i_en_egaki_dankai == 0)) {
+        if ((i_egaki_stage == 0) && (i_en_egaki_dankai == 0)) {
             if (oc.kyori_ensyuu(p, moyori_ensyuu) > d_hantei_haba) {
                 return;
             }
 
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 1;
             e_step[1].set(moyori_ensyuu);
             e_step[1].setcolor(6);
             return;
         }
 
-        if ((i_egaki_dankai == 0) && (i_en_egaki_dankai == 1)) {
+        if ((i_egaki_stage == 0) && (i_en_egaki_dankai == 1)) {
             //if(p.kyori(moyori_ten)>d_hantei_haba){return;}
             if (oc.kyori_ensyuu(p, moyori_ensyuu) > d_hantei_haba) {
                 return;
             }
 
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 2;
             e_step[2].set(moyori_ensyuu);
             e_step[2].setcolor(8);
             return;
         }
 
-        if ((i_egaki_dankai == 0) && (i_en_egaki_dankai == 2)) {
+        if ((i_egaki_stage == 0) && (i_en_egaki_dankai == 2)) {
             //if(p.kyori(moyori_ten)>d_hantei_haba){return;}
             if (oc.kyori_ensyuu(p, moyori_ensyuu) > d_hantei_haba) {
                 return;
             }
 
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 3;
             e_step[3].set(moyori_ensyuu);
             e_step[3].setcolor(8);
@@ -10667,8 +10667,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(i_mouse_modeA==49 同心円　同心円入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_49(Point p0) {
-        if ((i_egaki_dankai == 0) && (i_en_egaki_dankai == 3)) {
-            i_egaki_dankai = 0;
+        if ((i_egaki_stage == 0) && (i_en_egaki_dankai == 3)) {
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 0;
             double add_r = e_step[3].getr() - e_step[2].getr();
             if (Math.abs(add_r) > 0.00000001) {
@@ -10694,22 +10694,22 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
 
-        if ((i_egaki_dankai == 0) && (i_en_egaki_dankai == 0)) {
-            moyori_line.set(get_moyori_senbun(p));
-            if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
-                i_egaki_dankai = 1;
+        if ((i_egaki_stage == 0) && (i_en_egaki_dankai == 0)) {
+            moyori_lineSegment.set(get_moyori_senbun(p));
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
+                i_egaki_stage = 1;
                 i_en_egaki_dankai = 0;
-                s_step[1].set(moyori_line);
+                s_step[1].set(moyori_lineSegment);
                 s_step[1].setcolor(6);
             }
             return;
         }
 
-        if ((i_egaki_dankai == 1) && (i_en_egaki_dankai == 0)) {
-            if (p.kyori(moyori_point) > d_hantei_haba) {
+        if ((i_egaki_stage == 1) && (i_en_egaki_dankai == 0)) {
+            if (p.distance(moyori_point) > d_hantei_haba) {
                 return;
             }
-            i_egaki_dankai = 4;
+            i_egaki_stage = 4;
             i_en_egaki_dankai = 0;
             s_step[2].set(p, moyori_point);
             s_step[2].setcolor(3);
@@ -10721,15 +10721,15 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
 
-        if ((i_egaki_dankai == 4) && (i_en_egaki_dankai == 0)) {
+        if ((i_egaki_stage == 4) && (i_en_egaki_dankai == 0)) {
             //if(p.kyori(moyori_ten)>d_hantei_haba){return;}
 
-            i_egaki_dankai = 3;
+            i_egaki_stage = 3;
             i_en_egaki_dankai = 0;
-            moyori_step_line.set(get_moyori_step_senbun(p, 3, 4));
+            moyori_step_lineSegment.set(get_moyori_step_senbun(p, 3, 4));
 
             //if(oc.kyori_senbun(p,moyori_step_senbun)>d_hantei_haba){return;}
-            s_step[3].set(moyori_step_line);
+            s_step[3].set(moyori_step_lineSegment);
             return;
         }
 
@@ -10740,7 +10740,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     public void mDragged_A_51(Point p0) {
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
-        if ((i_egaki_dankai == 4) && (i_en_egaki_dankai == 0)) {
+        if ((i_egaki_stage == 4) && (i_en_egaki_dankai == 0)) {
             s_step[2].seta(p);
             s_step[3].set(oc.moveParallel(s_step[1], s_step[2].getnagasa()));
             s_step[3].setcolor(8);
@@ -10755,9 +10755,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
 
-        if ((i_egaki_dankai == 4) && (i_en_egaki_dankai == 0)) {
-            if (p.kyori(moyori_point) >= d_hantei_haba) {
-                i_egaki_dankai = 1;
+        if ((i_egaki_stage == 4) && (i_en_egaki_dankai == 0)) {
+            if (p.distance(moyori_point) >= d_hantei_haba) {
+                i_egaki_stage = 1;
                 i_en_egaki_dankai = 0;
                 return;
             }
@@ -10765,7 +10765,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             s_step[2].seta(moyori_point);
 
             if (s_step[2].getnagasa() < 0.00000001) {
-                i_egaki_dankai = 1;
+                i_egaki_stage = 1;
                 i_en_egaki_dankai = 0;
                 return;
             }
@@ -10776,8 +10776,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
 
-        if ((i_egaki_dankai == 3) && (i_en_egaki_dankai == 0)) {
-            i_egaki_dankai = 0;
+        if ((i_egaki_stage == 3) && (i_en_egaki_dankai == 0)) {
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 0;
 
             s_step[3].setcolor(icol);
@@ -10801,13 +10801,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         moyori_ensyuu.set(get_moyori_ensyuu(p));
 
         if (i_en_egaki_dankai == 0) {
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 0;
             if (oc.kyori_ensyuu(p, moyori_ensyuu) > d_hantei_haba) {
                 return;
             }
 
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 1;
             e_step[1].set(moyori_ensyuu);
             e_step[1].setcolor(6);
@@ -10815,27 +10815,27 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
         if (i_en_egaki_dankai == 1) {
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 1;
             if (oc.kyori_ensyuu(p, moyori_ensyuu) > d_hantei_haba) {
                 return;
             }
 
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 2;
             e_step[2].set(moyori_ensyuu);
             e_step[2].setcolor(6);
             return;
         }
 
-        if (i_egaki_dankai > 1) {//			i_egaki_dankai=0;i_en_egaki_dankai=1;
-            moyori_step_line.set(get_moyori_step_senbun(p, 1, i_egaki_dankai));
+        if (i_egaki_stage > 1) {//			i_egaki_dankai=0;i_en_egaki_dankai=1;
+            moyori_step_lineSegment.set(get_moyori_step_senbun(p, 1, i_egaki_stage));
 
-            if (oc.kyori_senbun(p, moyori_step_line) > d_hantei_haba) {
+            if (oc.distance_lineSegment(p, moyori_step_lineSegment) > d_hantei_haba) {
                 return;
             }
-            s_step[1].set(moyori_step_line);
-            i_egaki_dankai = 1;
+            s_step[1].set(moyori_step_lineSegment);
+            i_egaki_stage = 1;
             i_en_egaki_dankai = 2;
 
             return;
@@ -10850,7 +10850,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_45(Point p0) {
-        if ((i_egaki_dankai == 0) && (i_en_egaki_dankai == 2)) {
+        if ((i_egaki_stage == 0) && (i_en_egaki_dankai == 2)) {
             Point c1 = new Point();
             c1.set(e_step[1].get_tyuusin());
             Point c2 = new Point();
@@ -10866,14 +10866,14 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             double xp = x2 - x1;
             double yp = y2 - y1;
 
-            if (c1.kyori(c2) < 0.000001) {
-                i_egaki_dankai = 0;
+            if (c1.distance(c2) < 0.000001) {
+                i_egaki_stage = 0;
                 i_en_egaki_dankai = 0;
                 return;
             }//接線0本の場合
 
             if ((xp * xp + yp * yp) < (r1 - r2) * (r1 - r2)) {
-                i_egaki_dankai = 0;
+                i_egaki_stage = 0;
                 i_en_egaki_dankai = 0;
                 return;
             }//接線0本の場合
@@ -10885,7 +10885,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 ty.tyokkouka(kouten);
                 s_step[1].set(oc.en_to_tyokusen_no_kouten_wo_musubu_senbun(new Circle(kouten, (r1 + r2) / 2.0, 0), ty));
 
-                i_egaki_dankai = 1;
+                i_egaki_stage = 1;
                 i_en_egaki_dankai = 2;
             }
 
@@ -10905,12 +10905,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 StraightLine t2 = new StraightLine(x1, y1, xr2, yr2);
                 t2.tyokkouka(new Point(xr2, yr2));
 
-                s_step[1].set(new Point(xr1, yr1), oc.kage_motome(t1, new Point(x2, y2)));
+                s_step[1].set(new Point(xr1, yr1), oc.shadow_request(t1, new Point(x2, y2)));
                 s_step[1].setcolor(8);
-                s_step[2].set(new Point(xr2, yr2), oc.kage_motome(t2, new Point(x2, y2)));
+                s_step[2].set(new Point(xr2, yr2), oc.shadow_request(t2, new Point(x2, y2)));
                 s_step[2].setcolor(8);
 
-                i_egaki_dankai = 2;
+                i_egaki_stage = 2;
                 i_en_egaki_dankai = 2;
 
             }
@@ -10931,9 +10931,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 StraightLine t2 = new StraightLine(x1, y1, xr2, yr2);
                 t2.tyokkouka(new Point(xr2, yr2));
 
-                s_step[1].set(new Point(xr1, yr1), oc.kage_motome(t1, new Point(x2, y2)));
+                s_step[1].set(new Point(xr1, yr1), oc.shadow_request(t1, new Point(x2, y2)));
                 s_step[1].setcolor(8);
-                s_step[2].set(new Point(xr2, yr2), oc.kage_motome(t2, new Point(x2, y2)));
+                s_step[2].set(new Point(xr2, yr2), oc.shadow_request(t2, new Point(x2, y2)));
                 s_step[2].setcolor(8);
 
                 // -----------------------
@@ -10946,7 +10946,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 s_step[3].setcolor(8);
                 // -----------------------
 
-                i_egaki_dankai = 3;
+                i_egaki_stage = 3;
                 i_en_egaki_dankai = 2;
             }
 
@@ -10982,27 +10982,27 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 StraightLine t4 = new StraightLine(x1, y1, xr4, yr4);
                 t4.tyokkouka(new Point(xr4, yr4));
 
-                s_step[1].set(new Point(xr1, yr1), oc.kage_motome(t1, new Point(x2, y2)));
+                s_step[1].set(new Point(xr1, yr1), oc.shadow_request(t1, new Point(x2, y2)));
                 s_step[1].setcolor(8);
-                s_step[2].set(new Point(xr2, yr2), oc.kage_motome(t2, new Point(x2, y2)));
+                s_step[2].set(new Point(xr2, yr2), oc.shadow_request(t2, new Point(x2, y2)));
                 s_step[2].setcolor(8);
-                s_step[3].set(new Point(xr3, yr3), oc.kage_motome(t3, new Point(x2, y2)));
+                s_step[3].set(new Point(xr3, yr3), oc.shadow_request(t3, new Point(x2, y2)));
                 s_step[3].setcolor(8);
-                s_step[4].set(new Point(xr4, yr4), oc.kage_motome(t4, new Point(x2, y2)));
+                s_step[4].set(new Point(xr4, yr4), oc.shadow_request(t4, new Point(x2, y2)));
                 s_step[4].setcolor(8);
 
                 //e_step[1].setcolor(3);
                 //e_step[2].setcolor(3);
 
-                i_egaki_dankai = 4;
+                i_egaki_stage = 4;
                 i_en_egaki_dankai = 2;
 
             }
         }
 
-        if (i_egaki_dankai == 1) {
+        if (i_egaki_stage == 1) {
 
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 0;
 
             s_step[1].setcolor(icol);
@@ -11027,25 +11027,25 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         moyori_ensyuu.set(get_moyori_ensyuu(p));
         moyori_point.set(get_moyori_ten(p));
 
-        if ((i_egaki_dankai == 0) && (i_en_egaki_dankai == 0)) {
+        if ((i_egaki_stage == 0) && (i_en_egaki_dankai == 0)) {
             if (oc.kyori_ensyuu(p, moyori_ensyuu) > d_hantei_haba) {
                 return;
             }
 
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 1;
             e_step[1].set(moyori_ensyuu);
             e_step[1].setcolor(6);
             return;
         }
 
-        if ((i_egaki_dankai == 0) && (i_en_egaki_dankai == 1)) {
+        if ((i_egaki_stage == 0) && (i_en_egaki_dankai == 1)) {
             //if(p.kyori(moyori_ten)>d_hantei_haba){return;}
             if (oc.kyori_ensyuu(p, moyori_ensyuu) > d_hantei_haba) {
                 return;
             }
 
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 2;
             e_step[2].set(moyori_ensyuu);
             e_step[2].setcolor(6);
@@ -11061,10 +11061,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_50(Point p0) {
-        if ((i_egaki_dankai == 0) && (i_en_egaki_dankai == 2)) {
-            i_egaki_dankai = 0;
+        if ((i_egaki_stage == 0) && (i_en_egaki_dankai == 2)) {
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 0;
-            double add_r = (oc.kyori(e_step[1].get_tyuusin(), e_step[2].get_tyuusin()) - e_step[1].getr() - e_step[2].getr()) * 0.5;
+            double add_r = (oc.distance(e_step[1].get_tyuusin(), e_step[2].get_tyuusin()) - e_step[1].getr() - e_step[2].getr()) * 0.5;
 
 
             if (Math.abs(add_r) > 0.00000001) {
@@ -11097,38 +11097,38 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         moyori_ensyuu.set(get_moyori_ensyuu(p));
 
-        if (i_egaki_dankai + i_en_egaki_dankai == 0) {
-            moyori_line.set(get_moyori_senbun(p));
+        if (i_egaki_stage + i_en_egaki_dankai == 0) {
+            moyori_lineSegment.set(get_moyori_senbun(p));
 
 
-            if (oc.kyori_senbun(p, moyori_line) < oc.kyori_ensyuu(p, moyori_ensyuu)) {//線分の方が円周より近い
-                i_egaki_dankai = 0;
+            if (oc.distance_lineSegment(p, moyori_lineSegment) < oc.kyori_ensyuu(p, moyori_ensyuu)) {//線分の方が円周より近い
+                i_egaki_stage = 0;
                 i_en_egaki_dankai = 0;
-                if (oc.kyori_senbun(p, moyori_line) > d_hantei_haba) {
+                if (oc.distance_lineSegment(p, moyori_lineSegment) > d_hantei_haba) {
                     return;
                 }
-                i_egaki_dankai = 1;
+                i_egaki_stage = 1;
                 i_en_egaki_dankai = 0;
-                s_step[1].set(moyori_line);
+                s_step[1].set(moyori_lineSegment);
                 s_step[1].setcolor(6);
                 return;
             }
 
 
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 0;
             if (oc.kyori_ensyuu(p, moyori_ensyuu) > d_hantei_haba) {
                 return;
             }
 
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 1;
             e_step[1].set(moyori_ensyuu);
             e_step[1].setcolor(6);
             return;
         }
 
-        if (i_egaki_dankai + i_en_egaki_dankai == 1) {
+        if (i_egaki_stage + i_en_egaki_dankai == 1) {
             if (oc.kyori_ensyuu(p, moyori_ensyuu) > d_hantei_haba) {
                 return;
             }
@@ -11147,17 +11147,17 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_46(Point p0) {
-        if ((i_egaki_dankai == 1) && (i_en_egaki_dankai == 1)) {
+        if ((i_egaki_stage == 1) && (i_en_egaki_dankai == 1)) {
 
             add_hanten(s_step[1], e_step[1]);
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 0;
 
         }
 
-        if ((i_egaki_dankai == 0) && (i_en_egaki_dankai == 2)) {
+        if ((i_egaki_stage == 0) && (i_en_egaki_dankai == 2)) {
             add_hanten(e_step[1], e_step[2]);
-            i_egaki_dankai = 0;
+            i_egaki_stage = 0;
             i_en_egaki_dankai = 0;
         }
 
@@ -11175,10 +11175,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) < d_hantei_haba) {
-            i_egaki_dankai = i_egaki_dankai + 1;
-            s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-            s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
+        if (p.distance(moyori_point) < d_hantei_haba) {
+            i_egaki_stage = i_egaki_stage + 1;
+            s_step[i_egaki_stage].set(moyori_point, moyori_point);
+            s_step[i_egaki_stage].setcolor(i_egaki_stage);
         }
 
 
@@ -11190,58 +11190,58 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_43(Point p0) {
-        if (i_egaki_dankai == 3) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 3) {
+            i_egaki_stage = 0;
 
-            Line sen1 = new Line(s_step[1].geta(), s_step[2].geta());
+            LineSegment sen1 = new LineSegment(s_step[1].getA(), s_step[2].getA());
             if (sen1.getnagasa() < 0.00000001) {
                 return;
             }
-            Line sen2 = new Line(s_step[2].geta(), s_step[3].geta());
+            LineSegment sen2 = new LineSegment(s_step[2].getA(), s_step[3].getA());
             if (sen2.getnagasa() < 0.00000001) {
                 return;
             }
-            Line sen3 = new Line(s_step[3].geta(), s_step[1].geta());
+            LineSegment sen3 = new LineSegment(s_step[3].getA(), s_step[1].getA());
             if (sen3.getnagasa() < 0.00000001) {
                 return;
             }
 
-            if (Math.abs(oc.kakudo(sen1, sen2) - 0.0) < 0.000001) {
+            if (Math.abs(oc.angle(sen1, sen2) - 0.0) < 0.000001) {
                 return;
             }
-            if (Math.abs(oc.kakudo(sen1, sen2) - 180.0) < 0.000001) {
+            if (Math.abs(oc.angle(sen1, sen2) - 180.0) < 0.000001) {
                 return;
             }
-            if (Math.abs(oc.kakudo(sen1, sen2) - 360.0) < 0.000001) {
-                return;
-            }
-
-            if (Math.abs(oc.kakudo(sen2, sen3) - 0.0) < 0.000001) {
-                return;
-            }
-            if (Math.abs(oc.kakudo(sen2, sen3) - 180.0) < 0.000001) {
-                return;
-            }
-            if (Math.abs(oc.kakudo(sen2, sen3) - 360.0) < 0.000001) {
+            if (Math.abs(oc.angle(sen1, sen2) - 360.0) < 0.000001) {
                 return;
             }
 
-            if (Math.abs(oc.kakudo(sen3, sen1) - 0.0) < 0.000001) {
+            if (Math.abs(oc.angle(sen2, sen3) - 0.0) < 0.000001) {
                 return;
             }
-            if (Math.abs(oc.kakudo(sen3, sen1) - 180.0) < 0.000001) {
+            if (Math.abs(oc.angle(sen2, sen3) - 180.0) < 0.000001) {
                 return;
             }
-            if (Math.abs(oc.kakudo(sen3, sen1) - 360.0) < 0.000001) {
+            if (Math.abs(oc.angle(sen2, sen3) - 360.0) < 0.000001) {
+                return;
+            }
+
+            if (Math.abs(oc.angle(sen3, sen1) - 0.0) < 0.000001) {
+                return;
+            }
+            if (Math.abs(oc.angle(sen3, sen1) - 180.0) < 0.000001) {
+                return;
+            }
+            if (Math.abs(oc.angle(sen3, sen1) - 360.0) < 0.000001) {
                 return;
             }
 
 
             StraightLine t1 = new StraightLine(sen1);
-            t1.tyokkouka(oc.naibun(sen1.geta(), sen1.getb(), 1.0, 1.0));
+            t1.tyokkouka(oc.naibun(sen1.getA(), sen1.getB(), 1.0, 1.0));
             StraightLine t2 = new StraightLine(sen2);
-            t2.tyokkouka(oc.naibun(sen2.geta(), sen2.getb(), 1.0, 1.0));
-            add_en(oc.kouten_motome(t1, t2), oc.kyori(s_step[1].geta(), oc.kouten_motome(t1, t2)), 3);
+            t2.tyokkouka(oc.naibun(sen2.getA(), sen2.getB(), 1.0, 1.0));
+            add_en(oc.kouten_motome(t1, t2), oc.distance(s_step[1].getA(), oc.kouten_motome(t1, t2)), 3);
             kiroku();
         }
     }
@@ -11339,10 +11339,10 @@ s_step[i_egaki_dankai].setcolor(6);
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         moyori_point.set(get_moyori_ten(p));
-        if (p.kyori(moyori_point) < d_hantei_haba) {
-            i_egaki_dankai = i_egaki_dankai + 1;
-            s_step[i_egaki_dankai].set(moyori_point, moyori_point);
-            s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
+        if (p.distance(moyori_point) < d_hantei_haba) {
+            i_egaki_stage = i_egaki_stage + 1;
+            s_step[i_egaki_stage].set(moyori_point, moyori_point);
+            s_step[i_egaki_stage].setcolor(i_egaki_stage);
         }
 
 
@@ -11354,8 +11354,8 @@ s_step[i_egaki_dankai].setcolor(6);
 
     //マウス操作(i_mouse_modeA==10001　でボタンを離したとき)を行う関数
     public void mReleased_A_10001(Point p0) {
-        if (i_egaki_dankai == 3) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 3) {
+            i_egaki_stage = 0;
         }
 
 
@@ -11368,11 +11368,11 @@ s_step[i_egaki_dankai].setcolor(6);
     public void mPressed_A_10002(Point p0) {
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
-        moyori_line.set(get_moyori_senbun(p));
-        if (oc.kyori_senbun(p, moyori_line) < d_hantei_haba) {
-            i_egaki_dankai = i_egaki_dankai + 1;
-            s_step[i_egaki_dankai].set(moyori_line);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
-            s_step[i_egaki_dankai].setcolor(6);
+        moyori_lineSegment.set(get_moyori_senbun(p));
+        if (oc.distance_lineSegment(p, moyori_lineSegment) < d_hantei_haba) {
+            i_egaki_stage = i_egaki_stage + 1;
+            s_step[i_egaki_stage].set(moyori_lineSegment);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
+            s_step[i_egaki_stage].setcolor(6);
         }
 
 
@@ -11384,8 +11384,8 @@ s_step[i_egaki_dankai].setcolor(6);
 
     //マウス操作(i_mouse_modeA==10002　でボタンを離したとき)を行う関数
     public void mReleased_A_10002(Point p0) {
-        if (i_egaki_dankai == 3) {
-            i_egaki_dankai = 0;
+        if (i_egaki_stage == 3) {
+            i_egaki_stage = 0;
         }
     }
 
@@ -11570,8 +11570,8 @@ s_step[i_egaki_dankai].setcolor(6);
         h_Ubox.set_i_undo_suu(i);
     }
 
-    public void en_seiri() {//全ての円を対象に整理をする。
-        ori_s.en_seiri();
+    public void circle_organize() {//Organize all circles.
+        ori_s.circle_organize();
     }
 
 
@@ -11580,8 +11580,8 @@ s_step[i_egaki_dankai].setcolor(6);
 
 
         //e0の円周が(x,y)を通るとき
-        if (Math.abs(oc.kyori(e0.get_tyuusin(), eh.get_tyuusin()) - e0.getr()) < 0.0000001) {
-            Line s_add = new Line();
+        if (Math.abs(oc.distance(e0.get_tyuusin(), eh.get_tyuusin()) - e0.getr()) < 0.0000001) {
+            LineSegment s_add = new LineSegment();
             s_add.set(eh.hanten_En2Senbun(e0));
             //s_add.setcolor(3);
             addsenbun(s_add);
@@ -11604,7 +11604,7 @@ s_step[i_egaki_dankai].setcolor(6);
     }
 
     // ---------------------------
-    public void add_hanten(Line s0, Circle eh) {
+    public void add_hanten(LineSegment s0, Circle eh) {
         StraightLine ty = new StraightLine(s0);
         //s0上に(x,y)がくるとき
         if (ty.calculateDistance(eh.get_tyuusin()) < 0.0000001) {

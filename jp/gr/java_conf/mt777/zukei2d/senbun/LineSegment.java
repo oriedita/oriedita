@@ -6,7 +6,7 @@ import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 //import  jp.gr.java_conf.mt777.zukei2d.*;
 import java.math.BigDecimal;
 
-public class Line {
+public class LineSegment {
     //OritaCalc oc =new OritaCalc();//各種計算用の関数を使うためのクラスのインスタンス化
     private final Point a = new Point(); //枝のa点
     private final Point b = new Point(); //枝のb
@@ -25,7 +25,7 @@ public class Line {
     int i_min_y;//端点のy座標の切り捨て時の小さいほう
 
     //コンストラクタ
-    public Line() {
+    public LineSegment() {
         a.set(0.0, 0.0);
         b.set(0.0, 0.0);
         iactive = 0;
@@ -37,7 +37,7 @@ public class Line {
         i_min_y = 0;
     }
 
-    public Line(Point t1, Point t2) {
+    public LineSegment(Point t1, Point t2) {
         a.set(t1);
         b.set(t2);
         iactive = 0;
@@ -49,7 +49,7 @@ public class Line {
         i_min_y = 0;
     }
 
-    public Line(Point t1, Point t2, int icollor) {
+    public LineSegment(Point t1, Point t2, int icollor) {
         a.set(t1);
         b.set(t2);
         iactive = 0;
@@ -61,7 +61,7 @@ public class Line {
         i_min_y = 0;
     }
 
-    public Line(double i1, double i2, double i3, double i4) {
+    public LineSegment(double i1, double i2, double i3, double i4) {
         a.set(i1, i2);
         b.set(i3, i4);
         iactive = 0;
@@ -100,14 +100,14 @@ public class Line {
     }
 
     public void hyouji(String str0) {
-        System.out.println(str0 + " (" + d2s(a.getx()) + " , " + d2s(a.gety()) + "),(" + d2s(b.getx()) + " , " + d2s(b.gety()) + ") ,ia=" + iactive + ",ic=" + icol + ",is=" + i_select);
+        System.out.println(str0 + " (" + d2s(a.getX()) + " , " + d2s(a.getY()) + "),(" + d2s(b.getX()) + " , " + d2s(b.getY()) + ") ,ia=" + iactive + ",ic=" + icol + ",is=" + i_select);
     }
 
 
     //-------------------------------------------
-    public void set(Line s) {
-        a.set(s.geta());
-        b.set(s.getb());
+    public void set(LineSegment s) {
+        a.set(s.getA());
+        b.set(s.getB());
         iactive = s.getiactive();
         icol = s.getcolor();
         i_select = s.get_i_select();
@@ -147,11 +147,11 @@ public class Line {
 
     //----------
     public void seta(Point p) {
-        set(p.getx(), p.gety(), b.getx(), b.gety());
+        set(p.getX(), p.getY(), b.getX(), b.getY());
     }
 
     public void setb(Point p) {
-        set(a.getx(), a.gety(), p.getx(), p.gety());
+        set(a.getX(), a.getY(), p.getX(), p.getY());
     }
 
     //public void seta(Ten p){a.set(p);}
@@ -184,7 +184,7 @@ public class Line {
     }
 
     public void set(Point p, Point q) {
-        set(p.getx(), p.gety(), q.getx(), q.gety());
+        set(p.getX(), p.getY(), q.getX(), q.getY());
     }
     //public void set(Ten p,Ten q              ){	a.set(p);  b.set(q);    			}
     //public void setb(Ten p){set(a.getx(),a.gety(),p.getx(),p.gety());}
@@ -235,10 +235,10 @@ public class Line {
     //この線分が、ある点と近いかどうかで活性化する。
     public void kasseika(Point p, double r) {
         iactive = 0;
-        if (p.kyori2jyou(a) <= r * r) {
+        if (p.distanceSquared(a) <= r * r) {
             iactive = 1;
         }
-        if (p.kyori2jyou(b) <= r * r) {
+        if (p.distanceSquared(b) <= r * r) {
             iactive = 2;
         }
         //if(oc.kyori(p,a)<=r){iactive=1;}
@@ -259,12 +259,12 @@ public class Line {
     }
 
 
-    public Point geta() {
-        return new Point(a.getx(), a.gety());
+    public Point getA() {
+        return new Point(a.getX(), a.getY());
     }
 
-    public Point getb() {
-        return new Point(b.getx(), b.gety());
+    public Point getB() {
+        return new Point(b.getX(), b.getY());
     }
 
 
@@ -272,14 +272,14 @@ public class Line {
 //	public Ten getb(){return b;}
 
     public Point get_tikai_hasi(Point p) {//点Pと近いほうの端点を返す
-        if (p.kyori2jyou(a) <= p.kyori2jyou(b)) {
+        if (p.distanceSquared(a) <= p.distanceSquared(b)) {
             return a;
         }
         return b;
     }
 
     public Point get_tooi_hasi(Point p) {//点Pと遠いいほうの端点を返す
-        if (p.kyori2jyou(a) >= p.kyori2jyou(b)) {
+        if (p.distanceSquared(a) >= p.distanceSquared(b)) {
             return a;
         }
         return b;
@@ -287,40 +287,40 @@ public class Line {
 
 
     public double getnagasa() {
-        return a.kyori(b);
+        return a.distance(b);
     }
     //public double getnagasa(){return oc.kyori(a,b);}
 
-    public double getax() {
-        return a.getx();
+    public double getAx() {
+        return a.getX();
     }
 
     public double getay() {
-        return a.gety();
+        return a.getY();
     }
 
     public double getbx() {
-        return b.getx();
+        return b.getX();
     }
 
     public double getby() {
-        return b.gety();
+        return b.getY();
     }
 
     public void setax(double d) {
-        a.setx(d);
+        a.setX(d);
     }
 
     public void setay(double d) {
-        a.sety(d);
+        a.setY(d);
     }
 
     public void setbx(double d) {
-        b.setx(d);
+        b.setX(d);
     }
 
     public void setby(double d) {
-        b.sety(d);
+        b.setY(d);
     }
 
 

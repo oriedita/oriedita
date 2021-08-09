@@ -76,8 +76,8 @@ public class Haikei_camera {//実際の座標と、表示座標の仲立ち
         Point pt3 = new Point();
 
         pt1.set(oc.ten_kaiten(new Point(p_kaiten_x, p_kaiten_y), pt, -get_kakudo()));
-        pt2.set(pt1.getx() - p_idou_x, pt1.gety() - p_idou_y);
-        pt3.set(pt2.getx() / p_bairitu, pt2.gety() / p_bairitu);
+        pt2.set(pt1.getX() - p_idou_x, pt1.getY() - p_idou_y);
+        pt3.set(pt2.getX() / p_bairitu, pt2.getY() / p_bairitu);
 
         return pt3;
     }
@@ -134,12 +134,12 @@ public class Haikei_camera {//実際の座標と、表示座標の仲立ち
     }
 
     public void parameter_keisan() {
-        p_bairitu = h3.kyori(h4) / h1.kyori(h2);
-        p_idou_x = (1.0 - p_bairitu) * h1.getx() + h3.getx() - h1.getx();
-        p_idou_y = (1.0 - p_bairitu) * h1.gety() + h3.gety() - h1.gety();
-        p_kaiten_kakudo = oc.kakudo(h1, h2, h3, h4);
-        p_kaiten_x = h3.getx();
-        p_kaiten_y = h3.gety();
+        p_bairitu = h3.distance(h4) / h1.distance(h2);
+        p_idou_x = (1.0 - p_bairitu) * h1.getX() + h3.getX() - h1.getX();
+        p_idou_y = (1.0 - p_bairitu) * h1.getY() + h3.getY() - h1.getY();
+        p_kaiten_kakudo = oc.angle(h1, h2, h3, h4);
+        p_kaiten_x = h3.getX();
+        p_kaiten_y = h3.getY();
 
         oc.hyouji("Haikei_camera--------------------parameter_keisan()");
         h1.hyouji(" h1  ");
@@ -164,11 +164,11 @@ public class Haikei_camera {//実際の座標と、表示座標の仲立ち
 
 
     public int get_x0() {
-        return (int) ((1.0 - p_bairitu) * h1.getx() + h3.getx() - h1.getx());
+        return (int) ((1.0 - p_bairitu) * h1.getX() + h3.getX() - h1.getX());
     }
 
     public int get_y0() {
-        return (int) ((1.0 - p_bairitu) * h1.gety() + h3.gety() - h1.gety());
+        return (int) ((1.0 - p_bairitu) * h1.getY() + h3.getY() - h1.getY());
     }
 
     public int get_x1() {

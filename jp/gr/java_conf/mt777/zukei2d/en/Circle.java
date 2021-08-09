@@ -21,9 +21,9 @@ public class Circle {//点の座標や方向ベクトルなどをあらわすと
 	public Circle(){x=0.0;y=0.0;r=0.0;icol=0;}//コンストラクタ
 	public Circle(double i, double j, double k, int m){x=i;y=j;r=k;icol=m;} //コンストラクタ
 	//public En(double a,Ten p,double b,Ten q){x=a*p.getx()+b*q.getx();y=a*p.gety()+b*q.gety();} //コンストラクタ
-	public Circle(Point tc, double k, int m){x=tc.getx();y=tc.gety();r=k;icol=m;} //コンストラクタ
-	public Circle(Line s0, int m){//コンストラクタ 線分を直径とする円
-		x=(s0.getax()+s0.getbx())/2.0;
+	public Circle(Point tc, double k, int m){x=tc.getX();y=tc.getY();r=k;icol=m;} //コンストラクタ
+	public Circle(LineSegment s0, int m){//コンストラクタ 線分を直径とする円
+		x=(s0.getAx()+s0.getbx())/2.0;
 		y=(s0.getay()+s0.getby())/2.0;
 		r=s0.getnagasa()/2.0;
 		icol=m;
@@ -33,10 +33,10 @@ public class Circle {//点の座標や方向ベクトルなどをあらわすと
   
 	public void set(Circle e){ x=e.getx();y=e.gety();r=e.getr();icol=e.getcolor();tpp=e.get_tpp();tpp_color=e.get_tpp_color();}
 	public void set(double i,double j,double k,int m){ x=i;y=j;r=k;icol=m;}
-	public void set(Point tc, double k, int m){x=tc.getx();y=tc.gety();r=k;icol=m;}
+	public void set(Point tc, double k, int m){x=tc.getX();y=tc.getY();r=k;icol=m;}
 	public void set(double i,double j,double k){ x=i;y=j;r=k;}
-	public void set(Line s0, int m){
-		x=(s0.getax()+s0.getbx())/2.0;
+	public void set(LineSegment s0, int m){
+		x=(s0.getAx()+s0.getbx())/2.0;
 		y=(s0.getay()+s0.getby())/2.0;
 		r=s0.getnagasa()/2.0;
 		icol=m;
@@ -112,7 +112,7 @@ public class Circle {//点の座標や方向ベクトルなどをあらわすと
 
 	//他の点を反転する関数----------------------------------------------------
 	public Point hanten(Point t0){//t0と(x,y)が同じ位置のときはエラーとなる。
-		double	x1=t0.getx()-x,y1=t0.gety()-y;
+		double	x1=t0.getX()-x,y1=t0.getY()-y;
 		double d1=Math.sqrt(x1*x1+y1*y1);
 		double d2,x2,y2,x3,y3;
 
@@ -152,25 +152,25 @@ public class Circle {//点の座標や方向ベクトルなどをあらわすと
 		
 		int ic=5;//if(e0.getcolor()==5){ic=3;}
 
-		return new Circle(new Line(   hanten(new Point(xa0,ya0)),hanten(new Point(xb0,yb0)) )   ,ic);
+		return new Circle(new LineSegment(   hanten(new Point(xa0,ya0)),hanten(new Point(xb0,yb0)) )   ,ic);
 	}
 
 	//(x,y)を通る他の円を線分に反転する関数----------------------------------------------------
-	public Line hanten_En2Senbun(Circle e0){//e0の円周が(x,y)を通るとき用　//e0の円周が(x,y)を通らないときはおかしな結果になる。
+	public LineSegment hanten_En2Senbun(Circle e0){//e0の円周が(x,y)を通るとき用　//e0の円周が(x,y)を通らないときはおかしな結果になる。
 		double	x1=e0.getx()-x,y1=e0.gety()-y;
 		Point th=new Point();th.set(hanten(new Point(x1*2.0+x,y1*2.0+y)));
-		Point t1=new Point();t1.set(th.getx()-x,th.gety()-y);
-		Point tha=new Point();tha.set(th.getx()+3.0*y1,th.gety()-3.0*x1);
-		Point thb=new Point();thb.set(th.getx()-3.0*y1,th.gety()+3.0*x1);
-		return new Line( tha,thb,3 ) ;
+		Point t1=new Point();t1.set(th.getX()-x,th.getY()-y);
+		Point tha=new Point();tha.set(th.getX()+3.0*y1,th.getY()-3.0*x1);
+		Point thb=new Point();thb.set(th.getX()-3.0*y1,th.getY()+3.0*x1);
+		return new LineSegment( tha,thb,3 ) ;
 	}
 
 
 	//(x,y)を通らない線分を他の円に反転する関数----------------------------------------------------
-	public Circle hanten_Senbun2En(Line s0){//s0が(x,y)を通るときはおかしな結果になる。
+	public Circle hanten_Senbun2En(LineSegment s0){//s0が(x,y)を通るときはおかしな結果になる。
 		StraightLine ty= new StraightLine(s0);
 		Point t0=new Point(); t0.set(ty.kage_motome(get_tyuusin()));
-		return new Circle(new Line(   hanten(t0),get_tyuusin() )   ,5);
+		return new Circle(new LineSegment(   hanten(t0),get_tyuusin() )   ,5);
 	}
 
 

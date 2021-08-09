@@ -165,11 +165,11 @@ public class Kousi {
         d_kousi_bx = d_kousi_haba * d_kousi_b_nagasa * Math.cos(d_rad);
         d_kousi_by = d_kousi_haba * d_kousi_b_nagasa * Math.sin(d_rad);
 
-        taikakusen_max = oc.kyori(new Point(0.0, 0.0), new Point(d_kousi_ax + d_kousi_bx, d_kousi_ay + d_kousi_by));
-        taikakusen_min = oc.kyori(new Point(d_kousi_ax, d_kousi_ay), new Point(d_kousi_bx, d_kousi_by));
+        taikakusen_max = oc.distance(new Point(0.0, 0.0), new Point(d_kousi_ax + d_kousi_bx, d_kousi_ay + d_kousi_by));
+        taikakusen_min = oc.distance(new Point(d_kousi_ax, d_kousi_ay), new Point(d_kousi_bx, d_kousi_by));
         if (taikakusen_max < taikakusen_min) {
-            taikakusen_min = oc.kyori(new Point(0.0, 0.0), new Point(d_kousi_ax + d_kousi_bx, d_kousi_ay + d_kousi_by));
-            taikakusen_max = oc.kyori(new Point(d_kousi_ax, d_kousi_ay), new Point(d_kousi_bx, d_kousi_by));
+            taikakusen_min = oc.distance(new Point(0.0, 0.0), new Point(d_kousi_ax + d_kousi_bx, d_kousi_ay + d_kousi_by));
+            taikakusen_max = oc.distance(new Point(d_kousi_ax, d_kousi_ay), new Point(d_kousi_bx, d_kousi_by));
         }
 
 
@@ -249,8 +249,8 @@ public class Kousi {
         double gby = ax / det;
 
 
-        double kx = t0.getx() - okx0;
-        double ky = t0.gety() - oky0;
+        double kx = t0.getX() - okx0;
+        double ky = t0.getY() - oky0;
 
         double sisuu_x = gax * kx + gbx * ky;
         double sisuu_y = gay * kx + gby * ky;
@@ -270,48 +270,48 @@ public class Kousi {
         Point p_d_sisuu = new Point();
         p_d_sisuu.set(get_sisuu(p_d));//p_dの格子系の指数
 
-        double a_sisuu_max = p_a_sisuu.getx();
-        if (p_b_sisuu.getx() > a_sisuu_max) {
-            a_sisuu_max = p_b_sisuu.getx();
+        double a_sisuu_max = p_a_sisuu.getX();
+        if (p_b_sisuu.getX() > a_sisuu_max) {
+            a_sisuu_max = p_b_sisuu.getX();
         }
-        if (p_c_sisuu.getx() > a_sisuu_max) {
-            a_sisuu_max = p_c_sisuu.getx();
+        if (p_c_sisuu.getX() > a_sisuu_max) {
+            a_sisuu_max = p_c_sisuu.getX();
         }
-        if (p_d_sisuu.getx() > a_sisuu_max) {
-            a_sisuu_max = p_d_sisuu.getx();
+        if (p_d_sisuu.getX() > a_sisuu_max) {
+            a_sisuu_max = p_d_sisuu.getX();
         }
         int kousi_a_max = (int) Math.ceil(a_sisuu_max);
-        double a_sisuu_min = p_a_sisuu.getx();
-        if (p_b_sisuu.getx() < a_sisuu_min) {
-            a_sisuu_min = p_b_sisuu.getx();
+        double a_sisuu_min = p_a_sisuu.getX();
+        if (p_b_sisuu.getX() < a_sisuu_min) {
+            a_sisuu_min = p_b_sisuu.getX();
         }
-        if (p_c_sisuu.getx() < a_sisuu_min) {
-            a_sisuu_min = p_c_sisuu.getx();
+        if (p_c_sisuu.getX() < a_sisuu_min) {
+            a_sisuu_min = p_c_sisuu.getX();
         }
-        if (p_d_sisuu.getx() < a_sisuu_min) {
-            a_sisuu_min = p_d_sisuu.getx();
+        if (p_d_sisuu.getX() < a_sisuu_min) {
+            a_sisuu_min = p_d_sisuu.getX();
         }
         int kousi_a_min = (int) Math.floor(a_sisuu_min);
-        double b_sisuu_max = p_a_sisuu.gety();
-        if (p_b_sisuu.gety() > b_sisuu_max) {
-            b_sisuu_max = p_b_sisuu.gety();
+        double b_sisuu_max = p_a_sisuu.getY();
+        if (p_b_sisuu.getY() > b_sisuu_max) {
+            b_sisuu_max = p_b_sisuu.getY();
         }
-        if (p_c_sisuu.gety() > b_sisuu_max) {
-            b_sisuu_max = p_c_sisuu.gety();
+        if (p_c_sisuu.getY() > b_sisuu_max) {
+            b_sisuu_max = p_c_sisuu.getY();
         }
-        if (p_d_sisuu.gety() > b_sisuu_max) {
-            b_sisuu_max = p_d_sisuu.gety();
+        if (p_d_sisuu.getY() > b_sisuu_max) {
+            b_sisuu_max = p_d_sisuu.getY();
         }
         int kousi_b_max = (int) Math.ceil(b_sisuu_max);
-        double b_sisuu_min = p_a_sisuu.gety();
-        if (p_b_sisuu.gety() < b_sisuu_min) {
-            b_sisuu_min = p_b_sisuu.gety();
+        double b_sisuu_min = p_a_sisuu.getY();
+        if (p_b_sisuu.getY() < b_sisuu_min) {
+            b_sisuu_min = p_b_sisuu.getY();
         }
-        if (p_c_sisuu.gety() < b_sisuu_min) {
-            b_sisuu_min = p_c_sisuu.gety();
+        if (p_c_sisuu.getY() < b_sisuu_min) {
+            b_sisuu_min = p_c_sisuu.getY();
         }
-        if (p_d_sisuu.gety() < b_sisuu_min) {
-            b_sisuu_min = p_d_sisuu.gety();
+        if (p_d_sisuu.getY() < b_sisuu_min) {
+            b_sisuu_min = p_d_sisuu.getY();
         }
         int kousi_b_min = (int) Math.floor(b_sisuu_min);
 
@@ -330,48 +330,48 @@ public class Kousi {
         Point p_d_sisuu = new Point();
         p_d_sisuu.set(get_sisuu(p_d));//p_dの格子系の指数
 
-        double a_sisuu_max = p_a_sisuu.getx();
-        if (p_b_sisuu.getx() > a_sisuu_max) {
-            a_sisuu_max = p_b_sisuu.getx();
+        double a_sisuu_max = p_a_sisuu.getX();
+        if (p_b_sisuu.getX() > a_sisuu_max) {
+            a_sisuu_max = p_b_sisuu.getX();
         }
-        if (p_c_sisuu.getx() > a_sisuu_max) {
-            a_sisuu_max = p_c_sisuu.getx();
+        if (p_c_sisuu.getX() > a_sisuu_max) {
+            a_sisuu_max = p_c_sisuu.getX();
         }
-        if (p_d_sisuu.getx() > a_sisuu_max) {
-            a_sisuu_max = p_d_sisuu.getx();
+        if (p_d_sisuu.getX() > a_sisuu_max) {
+            a_sisuu_max = p_d_sisuu.getX();
         }
         int kousi_a_max = (int) Math.ceil(a_sisuu_max);
-        double a_sisuu_min = p_a_sisuu.getx();
-        if (p_b_sisuu.getx() < a_sisuu_min) {
-            a_sisuu_min = p_b_sisuu.getx();
+        double a_sisuu_min = p_a_sisuu.getX();
+        if (p_b_sisuu.getX() < a_sisuu_min) {
+            a_sisuu_min = p_b_sisuu.getX();
         }
-        if (p_c_sisuu.getx() < a_sisuu_min) {
-            a_sisuu_min = p_c_sisuu.getx();
+        if (p_c_sisuu.getX() < a_sisuu_min) {
+            a_sisuu_min = p_c_sisuu.getX();
         }
-        if (p_d_sisuu.getx() < a_sisuu_min) {
-            a_sisuu_min = p_d_sisuu.getx();
+        if (p_d_sisuu.getX() < a_sisuu_min) {
+            a_sisuu_min = p_d_sisuu.getX();
         }
         int kousi_a_min = (int) Math.floor(a_sisuu_min);
-        double b_sisuu_max = p_a_sisuu.gety();
-        if (p_b_sisuu.gety() > b_sisuu_max) {
-            b_sisuu_max = p_b_sisuu.gety();
+        double b_sisuu_max = p_a_sisuu.getY();
+        if (p_b_sisuu.getY() > b_sisuu_max) {
+            b_sisuu_max = p_b_sisuu.getY();
         }
-        if (p_c_sisuu.gety() > b_sisuu_max) {
-            b_sisuu_max = p_c_sisuu.gety();
+        if (p_c_sisuu.getY() > b_sisuu_max) {
+            b_sisuu_max = p_c_sisuu.getY();
         }
-        if (p_d_sisuu.gety() > b_sisuu_max) {
-            b_sisuu_max = p_d_sisuu.gety();
+        if (p_d_sisuu.getY() > b_sisuu_max) {
+            b_sisuu_max = p_d_sisuu.getY();
         }
         int kousi_b_max = (int) Math.ceil(b_sisuu_max);
-        double b_sisuu_min = p_a_sisuu.gety();
-        if (p_b_sisuu.gety() < b_sisuu_min) {
-            b_sisuu_min = p_b_sisuu.gety();
+        double b_sisuu_min = p_a_sisuu.getY();
+        if (p_b_sisuu.getY() < b_sisuu_min) {
+            b_sisuu_min = p_b_sisuu.getY();
         }
-        if (p_c_sisuu.gety() < b_sisuu_min) {
-            b_sisuu_min = p_c_sisuu.gety();
+        if (p_c_sisuu.getY() < b_sisuu_min) {
+            b_sisuu_min = p_c_sisuu.getY();
         }
-        if (p_d_sisuu.gety() < b_sisuu_min) {
-            b_sisuu_min = p_d_sisuu.gety();
+        if (p_d_sisuu.getY() < b_sisuu_min) {
+            b_sisuu_min = p_d_sisuu.getY();
         }
         int kousi_b_min = (int) Math.floor(b_sisuu_min);
 
@@ -390,48 +390,48 @@ public class Kousi {
         Point p_d_sisuu = new Point();
         p_d_sisuu.set(get_sisuu(p_d));//p_dの格子系の指数
 
-        double a_sisuu_max = p_a_sisuu.getx();
-        if (p_b_sisuu.getx() > a_sisuu_max) {
-            a_sisuu_max = p_b_sisuu.getx();
+        double a_sisuu_max = p_a_sisuu.getX();
+        if (p_b_sisuu.getX() > a_sisuu_max) {
+            a_sisuu_max = p_b_sisuu.getX();
         }
-        if (p_c_sisuu.getx() > a_sisuu_max) {
-            a_sisuu_max = p_c_sisuu.getx();
+        if (p_c_sisuu.getX() > a_sisuu_max) {
+            a_sisuu_max = p_c_sisuu.getX();
         }
-        if (p_d_sisuu.getx() > a_sisuu_max) {
-            a_sisuu_max = p_d_sisuu.getx();
+        if (p_d_sisuu.getX() > a_sisuu_max) {
+            a_sisuu_max = p_d_sisuu.getX();
         }
         int kousi_a_max = (int) Math.ceil(a_sisuu_max);
-        double a_sisuu_min = p_a_sisuu.getx();
-        if (p_b_sisuu.getx() < a_sisuu_min) {
-            a_sisuu_min = p_b_sisuu.getx();
+        double a_sisuu_min = p_a_sisuu.getX();
+        if (p_b_sisuu.getX() < a_sisuu_min) {
+            a_sisuu_min = p_b_sisuu.getX();
         }
-        if (p_c_sisuu.getx() < a_sisuu_min) {
-            a_sisuu_min = p_c_sisuu.getx();
+        if (p_c_sisuu.getX() < a_sisuu_min) {
+            a_sisuu_min = p_c_sisuu.getX();
         }
-        if (p_d_sisuu.getx() < a_sisuu_min) {
-            a_sisuu_min = p_d_sisuu.getx();
+        if (p_d_sisuu.getX() < a_sisuu_min) {
+            a_sisuu_min = p_d_sisuu.getX();
         }
         int kousi_a_min = (int) Math.floor(a_sisuu_min);
-        double b_sisuu_max = p_a_sisuu.gety();
-        if (p_b_sisuu.gety() > b_sisuu_max) {
-            b_sisuu_max = p_b_sisuu.gety();
+        double b_sisuu_max = p_a_sisuu.getY();
+        if (p_b_sisuu.getY() > b_sisuu_max) {
+            b_sisuu_max = p_b_sisuu.getY();
         }
-        if (p_c_sisuu.gety() > b_sisuu_max) {
-            b_sisuu_max = p_c_sisuu.gety();
+        if (p_c_sisuu.getY() > b_sisuu_max) {
+            b_sisuu_max = p_c_sisuu.getY();
         }
-        if (p_d_sisuu.gety() > b_sisuu_max) {
-            b_sisuu_max = p_d_sisuu.gety();
+        if (p_d_sisuu.getY() > b_sisuu_max) {
+            b_sisuu_max = p_d_sisuu.getY();
         }
         int kousi_b_max = (int) Math.ceil(b_sisuu_max);
-        double b_sisuu_min = p_a_sisuu.gety();
-        if (p_b_sisuu.gety() < b_sisuu_min) {
-            b_sisuu_min = p_b_sisuu.gety();
+        double b_sisuu_min = p_a_sisuu.getY();
+        if (p_b_sisuu.getY() < b_sisuu_min) {
+            b_sisuu_min = p_b_sisuu.getY();
         }
-        if (p_c_sisuu.gety() < b_sisuu_min) {
-            b_sisuu_min = p_c_sisuu.gety();
+        if (p_c_sisuu.getY() < b_sisuu_min) {
+            b_sisuu_min = p_c_sisuu.getY();
         }
-        if (p_d_sisuu.gety() < b_sisuu_min) {
-            b_sisuu_min = p_d_sisuu.gety();
+        if (p_d_sisuu.getY() < b_sisuu_min) {
+            b_sisuu_min = p_d_sisuu.getY();
         }
         int kousi_b_min = (int) Math.floor(b_sisuu_min);
 
@@ -450,48 +450,48 @@ public class Kousi {
         Point p_d_sisuu = new Point();
         p_d_sisuu.set(get_sisuu(p_d));//p_dの格子系の指数
 
-        double a_sisuu_max = p_a_sisuu.getx();
-        if (p_b_sisuu.getx() > a_sisuu_max) {
-            a_sisuu_max = p_b_sisuu.getx();
+        double a_sisuu_max = p_a_sisuu.getX();
+        if (p_b_sisuu.getX() > a_sisuu_max) {
+            a_sisuu_max = p_b_sisuu.getX();
         }
-        if (p_c_sisuu.getx() > a_sisuu_max) {
-            a_sisuu_max = p_c_sisuu.getx();
+        if (p_c_sisuu.getX() > a_sisuu_max) {
+            a_sisuu_max = p_c_sisuu.getX();
         }
-        if (p_d_sisuu.getx() > a_sisuu_max) {
-            a_sisuu_max = p_d_sisuu.getx();
+        if (p_d_sisuu.getX() > a_sisuu_max) {
+            a_sisuu_max = p_d_sisuu.getX();
         }
         int kousi_a_max = (int) Math.ceil(a_sisuu_max);
-        double a_sisuu_min = p_a_sisuu.getx();
-        if (p_b_sisuu.getx() < a_sisuu_min) {
-            a_sisuu_min = p_b_sisuu.getx();
+        double a_sisuu_min = p_a_sisuu.getX();
+        if (p_b_sisuu.getX() < a_sisuu_min) {
+            a_sisuu_min = p_b_sisuu.getX();
         }
-        if (p_c_sisuu.getx() < a_sisuu_min) {
-            a_sisuu_min = p_c_sisuu.getx();
+        if (p_c_sisuu.getX() < a_sisuu_min) {
+            a_sisuu_min = p_c_sisuu.getX();
         }
-        if (p_d_sisuu.getx() < a_sisuu_min) {
-            a_sisuu_min = p_d_sisuu.getx();
+        if (p_d_sisuu.getX() < a_sisuu_min) {
+            a_sisuu_min = p_d_sisuu.getX();
         }
         int kousi_a_min = (int) Math.floor(a_sisuu_min);
-        double b_sisuu_max = p_a_sisuu.gety();
-        if (p_b_sisuu.gety() > b_sisuu_max) {
-            b_sisuu_max = p_b_sisuu.gety();
+        double b_sisuu_max = p_a_sisuu.getY();
+        if (p_b_sisuu.getY() > b_sisuu_max) {
+            b_sisuu_max = p_b_sisuu.getY();
         }
-        if (p_c_sisuu.gety() > b_sisuu_max) {
-            b_sisuu_max = p_c_sisuu.gety();
+        if (p_c_sisuu.getY() > b_sisuu_max) {
+            b_sisuu_max = p_c_sisuu.getY();
         }
-        if (p_d_sisuu.gety() > b_sisuu_max) {
-            b_sisuu_max = p_d_sisuu.gety();
+        if (p_d_sisuu.getY() > b_sisuu_max) {
+            b_sisuu_max = p_d_sisuu.getY();
         }
         int kousi_b_max = (int) Math.ceil(b_sisuu_max);
-        double b_sisuu_min = p_a_sisuu.gety();
-        if (p_b_sisuu.gety() < b_sisuu_min) {
-            b_sisuu_min = p_b_sisuu.gety();
+        double b_sisuu_min = p_a_sisuu.getY();
+        if (p_b_sisuu.getY() < b_sisuu_min) {
+            b_sisuu_min = p_b_sisuu.getY();
         }
-        if (p_c_sisuu.gety() < b_sisuu_min) {
-            b_sisuu_min = p_c_sisuu.gety();
+        if (p_c_sisuu.getY() < b_sisuu_min) {
+            b_sisuu_min = p_c_sisuu.getY();
         }
-        if (p_d_sisuu.gety() < b_sisuu_min) {
-            b_sisuu_min = p_d_sisuu.gety();
+        if (p_d_sisuu.getY() < b_sisuu_min) {
+            b_sisuu_min = p_d_sisuu.getY();
         }
         int kousi_b_min = (int) Math.floor(b_sisuu_min);
 
@@ -522,10 +522,10 @@ public class Kousi {
         //入力規定が1か2（正方格子）の場合の格子線の描画
         Graphics2D g2 = (Graphics2D) g;
 
-        Line s_tv = new Line();
+        LineSegment s_tv = new LineSegment();
         //Ten a =new Ten(); Ten b =new Ten();
 
-        Line s_ob = new Line();
+        LineSegment s_ob = new LineSegment();
 
 
         //格子線の描画
@@ -592,7 +592,7 @@ public class Kousi {
                             d_kousi_ax * i + d_kousi_bx * kousi_gamen_b_max + okx0,
                             d_kousi_ay * i + d_kousi_by * kousi_gamen_b_max + oky0);
                     s_tv.set(camera.object2TV(s_ob));
-                    g.drawLine((int) s_tv.getax(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
+                    g.drawLine((int) s_tv.getAx(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
                 }
 
                 for (int i = kousi_gamen_b_min; i <= kousi_gamen_b_max; i++) {
@@ -605,7 +605,7 @@ public class Kousi {
 
 
                     s_tv.set(camera.object2TV(s_ob));
-                    g.drawLine((int) s_tv.getax(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
+                    g.drawLine((int) s_tv.getAx(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
                 }
 
                 //一定数ごとに格子線の色を変える-----------------------------------------------
@@ -634,7 +634,7 @@ public class Kousi {
                                     d_kousi_ax * i + d_kousi_bx * kousi_gamen_b_max + okx0,
                                     d_kousi_ay * i + d_kousi_by * kousi_gamen_b_max + oky0);
                             s_tv.set(camera.object2TV(s_ob));
-                            g.drawLine((int) s_tv.getax(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
+                            g.drawLine((int) s_tv.getAx(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
                         }
                     }
 
@@ -653,7 +653,7 @@ public class Kousi {
 
 
                             s_tv.set(camera.object2TV(s_ob));
-                            g.drawLine((int) s_tv.getax(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
+                            g.drawLine((int) s_tv.getAx(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
                         }
                     }
 
@@ -774,8 +774,8 @@ if(p_d.gety()<p_y_min){p_y_min=p_d.gety();}if(p_y_min>-200.0-1.0){p_y_min=-200.0
         double kousi_y;
 
 
-        kousi_x = Math.round((t0.getx() - okx0) / d_haba()) * d_haba() + okx0;
-        kousi_y = Math.round((t0.gety() - oky0) / d_haba()) * d_haba() + oky0;
+        kousi_x = Math.round((t0.getX() - okx0) / d_haba()) * d_haba() + okx0;
+        kousi_y = Math.round((t0.getY() - oky0) / d_haba()) * d_haba() + oky0;
 
 
         if (bunsuu() > 0) {
@@ -783,10 +783,10 @@ if(p_d.gety()<p_y_min){p_y_min=p_d.gety();}if(p_y_min>-200.0-1.0){p_y_min=-200.0
             //用紙枠の中の格子点との近さを検討
             if (jyoutai() == 1) {
 
-                Point t_1 = new Point(t0.getx() - taikakusen_max, t0.gety() - taikakusen_max);
-                Point t_2 = new Point(t0.getx() - taikakusen_max, t0.gety() + taikakusen_max);
-                Point t_3 = new Point(t0.getx() + taikakusen_max, t0.gety() + taikakusen_max);
-                Point t_4 = new Point(t0.getx() + taikakusen_max, t0.gety() - taikakusen_max);
+                Point t_1 = new Point(t0.getX() - taikakusen_max, t0.getY() - taikakusen_max);
+                Point t_2 = new Point(t0.getX() - taikakusen_max, t0.getY() + taikakusen_max);
+                Point t_3 = new Point(t0.getX() + taikakusen_max, t0.getY() + taikakusen_max);
+                Point t_4 = new Point(t0.getX() + taikakusen_max, t0.getY() - taikakusen_max);
 
                 int kousi_a_max = get_a_sisuu_max(t_1, t_2, t_3, t_4);
                 int kousi_a_min = get_a_sisuu_min(t_1, t_2, t_3, t_4);
@@ -799,10 +799,10 @@ if(p_d.gety()<p_y_min){p_y_min=p_d.gety();}if(p_y_min>-200.0-1.0){p_y_min=-200.0
                     for (int j = kousi_b_min; j <= kousi_b_max; j++) {
 
                         Point t_tmp = new Point(okx0 + d_kousi_ax * i + d_kousi_bx * j, oky0 + d_kousi_ay * i + d_kousi_by * j);
-                        if (((-200.000001 <= t_tmp.getx()) && (t_tmp.getx() <= 200.000001)) && ((-200.000001 <= t_tmp.gety()) && (t_tmp.gety() <= 200.000001))) {
+                        if (((-200.000001 <= t_tmp.getX()) && (t_tmp.getX() <= 200.000001)) && ((-200.000001 <= t_tmp.getY()) && (t_tmp.getY() <= 200.000001))) {
 
-                            if (t0.kyori(t_tmp) <= kyori_min) {
-                                kyori_min = t0.kyori(t_tmp);
+                            if (t0.distance(t_tmp) <= kyori_min) {
+                                kyori_min = t0.distance(t_tmp);
                                 t2.set(t_tmp);
                             }
 
@@ -814,10 +814,10 @@ if(p_d.gety()<p_y_min){p_y_min=p_d.gety();}if(p_y_min>-200.0-1.0){p_y_min=-200.0
             //用紙枠の内外に関係なく格子点との近さを検討
             if (jyoutai() == 2) {
 
-                Point t_1 = new Point(t0.getx() - taikakusen_max, t0.gety() - taikakusen_max);
-                Point t_2 = new Point(t0.getx() - taikakusen_max, t0.gety() + taikakusen_max);
-                Point t_3 = new Point(t0.getx() + taikakusen_max, t0.gety() + taikakusen_max);
-                Point t_4 = new Point(t0.getx() + taikakusen_max, t0.gety() - taikakusen_max);
+                Point t_1 = new Point(t0.getX() - taikakusen_max, t0.getY() - taikakusen_max);
+                Point t_2 = new Point(t0.getX() - taikakusen_max, t0.getY() + taikakusen_max);
+                Point t_3 = new Point(t0.getX() + taikakusen_max, t0.getY() + taikakusen_max);
+                Point t_4 = new Point(t0.getX() + taikakusen_max, t0.getY() - taikakusen_max);
 
                 int kousi_a_max = get_a_sisuu_max(t_1, t_2, t_3, t_4);
                 int kousi_a_min = get_a_sisuu_min(t_1, t_2, t_3, t_4);
@@ -829,8 +829,8 @@ if(p_d.gety()<p_y_min){p_y_min=p_d.gety();}if(p_y_min>-200.0-1.0){p_y_min=-200.0
                 for (int i = kousi_a_min; i <= kousi_a_max; i++) {
                     for (int j = kousi_b_min; j <= kousi_b_max; j++) {
                         Point t_tmp = new Point(okx0 + d_kousi_ax * i + d_kousi_bx * j, oky0 + d_kousi_ay * i + d_kousi_by * j);
-                        if (t0.kyori(t_tmp) <= kyori_min) {
-                            kyori_min = t0.kyori(t_tmp);
+                        if (t0.distance(t_tmp) <= kyori_min) {
+                            kyori_min = t0.distance(t_tmp);
                             t2.set(t_tmp);
                         }
                     }

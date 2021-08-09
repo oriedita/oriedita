@@ -69,7 +69,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     //Jyuufuku_Jyunretu_hasseiki jjh = new Jyuufuku_Jyunretu_hasseiki();
     //AAAAAAAAAAAAAAAAAAAAAAAAAAA
 
-    public Egaki_Syokunin es1 = new Egaki_Syokunin(r, this);    //基本枝職人。マウスからの入力を受け付ける。
+    public Egaki_Worker es1 = new Egaki_Worker(r, this);    //基本枝職人。マウスからの入力を受け付ける。
 
     public Oriagari_Zu temp_OZ = new Oriagari_Zu(this);    //折りあがり図
     public Oriagari_Zu OZ;    //折りあがり図
@@ -264,7 +264,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     int i_undo_suu_om = 5;//text31はtext10を参考にしている
 
 
-    public JCheckBox ckbox_mouse_settei;//マウスの設定。チェックがあると、ホイールマウスとして動作設定
+    public JCheckBox ckbox_mouse_settings;//マウスの設定。チェックがあると、ホイールマウスとして動作設定
     public JCheckBox ckbox_ten_sagasi;//点を探す範囲
     public JCheckBox ckbox_ten_hanasi;//点を離すかどうか
     public JCheckBox ckbox_kou_mitudo_nyuuryoku;//高密度用入力をするかどうか
@@ -662,7 +662,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
                     OAZ.clear();
                     OAZ_add_new_Oriagari_Zu();
                     set_i_OAZ(0);
-                    settei_syokika_yosoku();
+                    configure_syokika_yosoku();
 
                     Button_F_color.setBackground(OZ.foldedFigure_F_color);    //ボタンの色設定
                     Button_B_color.setBackground(OZ.foldedFigure_B_color);    //ボタンの色設定
@@ -864,8 +864,8 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
 
 //マウス設定
-        ckbox_mouse_settei = new JCheckBox("");
-        ckbox_mouse_settei.addActionListener(new ActionListener() {
+        ckbox_mouse_settings = new JCheckBox("");
+        ckbox_mouse_settings.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 img_kaisetu_fname =
                         "qqq/ckbox_mouse_settei.png";
@@ -873,14 +873,14 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
                 repaint();
             }
         });
-        ckbox_mouse_settei.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        ckbox_mouse_settings.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
                 "ppp/ckbox_mouse_settei_off.png")));
-        ckbox_mouse_settei.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        ckbox_mouse_settings.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource(
                 "ppp/ckbox_mouse_settei_on.png")));
 
-        ckbox_mouse_settei.setMargin(new Insets(0, 0, 0, 0));
+        ckbox_mouse_settings.setMargin(new Insets(0, 0, 0, 0));
         pnln13.add(
-                ckbox_mouse_settei);
+                ckbox_mouse_settings);
 
 
 // -------------------------------------------------------------------
@@ -2816,7 +2816,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_all_s_step_to_orisen = new JButton("");//
         Button_all_s_step_to_orisen.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("i_egaki_dankai = " + es1.i_egaki_dankai);
+                System.out.println("i_egaki_dankai = " + es1.i_egaki_stage);
                 System.out.println("i_kouho_dankai = " + es1.i_kouho_dankai);
 
 
@@ -3332,8 +3332,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // ******西************************************************************************ 黒線のみの消しゴム
 
 // -------------;黒線のみの線分削除モード。
-        JButton Button_kuro_senbun_sakujyo = new JButton("");
-        Button_kuro_senbun_sakujyo.addActionListener(new ActionListener() {
+        JButton Button_kuro_lineSegment_removal = new JButton("");
+        Button_kuro_lineSegment_removal.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
                 img_kaisetu_fname = "qqq/kuro_senbun_sakujyo.png";
@@ -3350,10 +3350,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 repaint();
             }
         });
-        pnlw5.add(Button_kuro_senbun_sakujyo);
+        pnlw5.add(Button_kuro_lineSegment_removal);
 
-        Button_kuro_senbun_sakujyo.setMargin(new Insets(0, 0, 0, 0));
-        Button_kuro_senbun_sakujyo.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        Button_kuro_lineSegment_removal.setMargin(new Insets(0, 0, 0, 0));
+        Button_kuro_lineSegment_removal.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
                 "ppp/kuro_senbun_sakujyo.png")));
 
 
@@ -3393,10 +3393,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
                 img_kaisetu_fname = "qqq/eda_kesi.png";
                 readImageFromFile3();
-                es1.ten_sakujyo();
-                es1.jyuufuku_senbun_sakujyo();
+                es1.point_removal();
+                es1.overlapping_line_removal();
                 es1.eda_kesi(0.000001);
-                es1.en_seiri();
+                es1.circle_organize();
                 es1.kiroku();
                 es1.unselect_all();
                 Button_kyoutuu_sagyou();
@@ -6691,8 +6691,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
                 OZ.i_estimated_order = 6;
 
-                if (i_oritatami_bangou < OZ.hakkenn_sita_kazu) {
-                    settei_syokika_yosoku();//折り上がり予想の廃棄
+                if (i_oritatami_bangou < OZ.discovered_fold_cases) {
+                    configure_syokika_yosoku();//折り上がり予想の廃棄
                     OZ.i_estimated_order = 51;    //i_suitei_meirei=51はoritatami_suiteiの最初の推定図用カメラの設定は素通りするための設定。推定図用カメラの設定を素通りしたら、i_suitei_meirei=5に変更される。
                     //1例目の折り上がり予想はi_suitei_meirei=5を指定、2例目以降の折り上がり予想はi_suitei_meirei=6で実施される
                     //betu_sagasi_flg=1;
@@ -6764,7 +6764,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                     i_undo_suu_om = 0;
                 }
                 text31.setText(String.valueOf(i_undo_suu_om));
-                OZ.ts2.set_Ubox_undo_suu(i_undo_suu_om);                  //  <<<------------
+                OZ.cp_worker2.set_Ubox_undo_suu(i_undo_suu_om);                  //  <<<------------
 
 
             }
@@ -7138,7 +7138,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
                 //i_anti_alias=i_anti_alias+1;
                 //if(i_anti_alias>=2){i_anti_alias=0;}
-                OZ.js.change_i_anti_alias();
+                OZ.ct_worker.change_i_anti_alias();
                 repaint();
             }
         });
@@ -7155,7 +7155,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 Button_kyoutuu_sagyou();
                 img_kaisetu_fname = "qqq/kage.png";
                 readImageFromFile3();
-                OZ.js.change_i_kage();
+                OZ.ct_worker.change_i_kage();
                 repaint();
             }
         });
@@ -7184,7 +7184,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
                 OZ.foldedFigure_F_color = JColorChooser.showDialog(null, "F_col", Color.white);
                 if (OZ.foldedFigure_F_color != null) {
-                    OZ.js.set_F_color(OZ.foldedFigure_F_color);
+                    OZ.ct_worker.set_F_color(OZ.foldedFigure_F_color);
                 }
 
 
@@ -7225,7 +7225,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 OZ.foldedFigure_B_color = JColorChooser.showDialog(null, "B_col", Color.white);
 
                 if (OZ.foldedFigure_B_color != null) {
-                    OZ.js.set_B_color(OZ.foldedFigure_B_color);
+                    OZ.ct_worker.set_B_color(OZ.foldedFigure_B_color);
                 }
                 //以上でやりたいことは書き終わり
 
@@ -7264,7 +7264,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
                 OZ.foldedFigure_L_color = JColorChooser.showDialog(null, "L_col", Color.white);
                 if (OZ.foldedFigure_L_color != null) {
-                    OZ.js.set_L_color(OZ.foldedFigure_L_color);
+                    OZ.ct_worker.set_L_color(OZ.foldedFigure_L_color);
                 }
 
 
@@ -7363,7 +7363,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 OAZ.clear();
                 OAZ_add_new_Oriagari_Zu();
                 set_i_OAZ(0);
-                settei_syokika_yosoku();
+                configure_syokika_yosoku();
                 //折畳予測図のの初期化　終了
 
                 Button_kyoutuu_sagyou();
@@ -7403,7 +7403,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_sel_mou_wakukae();//セレクトされた折線がある状態で、セレクトされている折線の頂点をクリックした場合の動作モードの初期設定
 
         //折畳予測図のの初期化　開始
-        settei_syokika_yosoku();
+        configure_syokika_yosoku();
         //折畳予測図のの初期化　終了
 
         Button_kyoutuu_sagyou();
@@ -7430,13 +7430,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //Color oriagarizu_L_color=Color.black;//折り上がり図の線の色
 
 
-        OZ.js.set_F_color(OZ.foldedFigure_F_color); //折り上がり図の表面の色
+        OZ.ct_worker.set_F_color(OZ.foldedFigure_F_color); //折り上がり図の表面の色
         Button_F_color.setBackground(OZ.foldedFigure_F_color);    //ボタンの色設定
 
-        OZ.js.set_B_color(OZ.foldedFigure_B_color);//折り上がり図の裏面の色
+        OZ.ct_worker.set_B_color(OZ.foldedFigure_B_color);//折り上がり図の裏面の色
         Button_B_color.setBackground(OZ.foldedFigure_B_color);//ボタンの色設定
 
-        OZ.js.set_L_color(OZ.foldedFigure_L_color);        //折り上がり図の線の色
+        OZ.ct_worker.set_L_color(OZ.foldedFigure_L_color);        //折り上がり図の線の色
         Button_L_color.setBackground(OZ.foldedFigure_L_color);        //ボタンの色設定
 
 
@@ -7501,12 +7501,12 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             }
             //
             if (ckbox_cp_kaizen_oritatami.isSelected()) {//展開図のおかしい所（枝状の折り線等）を自動修正する
-                Egaki_Syokunin es2 = new Egaki_Syokunin(r, this);    //基本枝職人。マウスからの入力を受け付ける。
+                Egaki_Worker es2 = new Egaki_Worker(r, this);    //基本枝職人。マウスからの入力を受け付ける。
                 es2.setMemo_for_yomikomi(es1.ori_s.getMemo_for_select_oritatami());
-                es2.ten_sakujyo();
-                es2.jyuufuku_senbun_sakujyo();
+                es2.point_removal();
+                es2.overlapping_line_removal();
                 es2.eda_kesi(0.000001);
-                es2.en_seiri();
+                es2.circle_organize();
                 Ss0 = es2.get_for_oritatami();
             } else {
                 Ss0 = es1.get_for_select_oritatami();
@@ -7517,7 +7517,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             //
             //Ten ten_of_kijyunmen_old =new Ten(); ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());
-            point_of_referencePlane_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
+            point_of_referencePlane_old.set(OZ.cp_worker1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
             //これより前のOZは古いOZ
             oritatami_jyunbi();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、OAZ(0)共通パラメータを引き継がせる。
             //これより後のOZは新しいOZに変わる
@@ -7563,16 +7563,16 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         orz = (Oriagari_Zu) OAZ.get(0);//OAZ(0)(共通パラメータを保持する折上がり図）をorzに割り付ける
 
         //以下ではOAZ(0)の共通パラメータを、現在操作対象となっているOZに渡す
-        OZ.foldedFigure_F_color = orz.js.get_F_color();//20171223折り上がり図の表面の色の変更はOZ.oriagarizu_F_colorとOZ.js.set_F_colorの両方やる必要あり
-        OZ.js.set_F_color(OZ.foldedFigure_F_color); //折り上がり図の表面の色
+        OZ.foldedFigure_F_color = orz.ct_worker.get_F_color();//20171223折り上がり図の表面の色の変更はOZ.oriagarizu_F_colorとOZ.js.set_F_colorの両方やる必要あり
+        OZ.ct_worker.set_F_color(OZ.foldedFigure_F_color); //折り上がり図の表面の色
         Button_F_color.setBackground(OZ.foldedFigure_F_color);    //ボタンの色設定
 
-        OZ.foldedFigure_B_color = orz.js.get_B_color();//20171223折り上がり図の表面の色の変更はOZ.oriagarizu_F_colorとOZ.js.set_F_colorの両方やる必要あり
-        OZ.js.set_B_color(OZ.foldedFigure_B_color); //折り上がり図の表面の色
+        OZ.foldedFigure_B_color = orz.ct_worker.get_B_color();//20171223折り上がり図の表面の色の変更はOZ.oriagarizu_F_colorとOZ.js.set_F_colorの両方やる必要あり
+        OZ.ct_worker.set_B_color(OZ.foldedFigure_B_color); //折り上がり図の表面の色
         Button_B_color.setBackground(OZ.foldedFigure_B_color);    //ボタンの色設定
 
-        OZ.foldedFigure_L_color = orz.js.get_L_color();//20171223折り上がり図の表面の色の変更はOZ.oriagarizu_F_colorとOZ.js.set_F_colorの両方やる必要あり
-        OZ.js.set_L_color(OZ.foldedFigure_L_color); //折り上がり図の表面の色
+        OZ.foldedFigure_L_color = orz.ct_worker.get_L_color();//20171223折り上がり図の表面の色の変更はOZ.oriagarizu_F_colorとOZ.js.set_F_colorの両方やる必要あり
+        OZ.ct_worker.set_L_color(OZ.foldedFigure_L_color); //折り上がり図の表面の色
         Button_L_color.setBackground(OZ.foldedFigure_L_color);    //ボタンの色設定
         //以上でOAZ(0)の共通パラメータを、OZに渡す作業は終了
 
@@ -7680,7 +7680,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         sub.stop();
         i_SubThread = 0;
 
-        settei_syokika_yosoku();
+        configure_syokika_yosoku();
 
     }
 
@@ -7744,7 +7744,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //camera_haikei	;
 
         es1.setCamera(camera_of_orisen_nyuuryokuzu);
-        OZ.ts1.setCamera(camera_of_orisen_nyuuryokuzu);
+        OZ.cp_worker1.setCamera(camera_of_orisen_nyuuryokuzu);
 
         //折線入力か補助線入力か
         i_orisen_hojyosen = 0;
@@ -7752,7 +7752,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 //北辺
 
-        ckbox_mouse_settei.setSelected(true);//表示するかどうかの選択
+        ckbox_mouse_settings.setSelected(true);//表示するかどうかの選択
         ckbox_ten_sagasi.setSelected(false);//表示するかどうかの選択
         ckbox_ten_hanasi.setSelected(false);//es1.set_i_hanasi(0);          //表示するかどうかの選択
         ckbox_kou_mitudo_nyuuryoku.setSelected(false);
@@ -8259,28 +8259,28 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             //temp_i_cp_or_oriagari=0;
 
-            if (OZi.ts2.naibu_hantei_omote(p) > 0) {
+            if (OZi.cp_worker2.naibu_hantei_omote(p) > 0) {
                 if (((OZ_hyouji_mode == 1) || (OZ_hyouji_mode == 3)) || (OZ_hyouji_mode == 4)) {
                     temp_i_cp_or_oriagari = 1;
                     temp_i_OAZ = i;
                 }
             }
 
-            if (OZi.ts2.naibu_hantei_ura(p) > 0) {
+            if (OZi.cp_worker2.naibu_hantei_ura(p) > 0) {
                 if (((OZ_hyouji_mode == 2) || (OZ_hyouji_mode == 3)) || (OZ_hyouji_mode == 4)) {
                     temp_i_cp_or_oriagari = 2;
                     temp_i_OAZ = i;
                 }
             }
 
-            if (OZi.ts2.naibu_hantei_touka_omote(p) > 0) {
+            if (OZi.cp_worker2.naibu_hantei_touka_omote(p) > 0) {
                 if (OZ_hyouji_mode == 4) {
                     temp_i_cp_or_oriagari = 3;
                     temp_i_OAZ = i;
                 }
             }
 
-            if (OZi.ts2.naibu_hantei_touka_ura(p) > 0) {
+            if (OZi.cp_worker2.naibu_hantei_touka_ura(p) > 0) {
                 if (OZ_hyouji_mode == 4) {
                     temp_i_cp_or_oriagari = 4;
                     temp_i_OAZ = i;
@@ -8319,7 +8319,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
     public void mouseWheelMoved(MouseWheelEvent e) {
         //System.out.println("mouseWheelMoved   " +e.getWheelRotation());
-        if (ckbox_mouse_settei.isSelected()) {
+        if (ckbox_mouse_settings.isSelected()) {
 //System.out.println("ホイール");
             //	ホイールでundo,redo
             if ((e.isShiftDown()) || (i_mouse_right_button_on == 1)) {
@@ -9181,16 +9181,16 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
                 if (i_cp_or_oriagari == 0) {// 展開図移動。
-                    camera_of_orisen_nyuuryokuzu.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    camera_of_orisen_nyuuryokuzu.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                     es1.setCamera(camera_of_orisen_nyuuryokuzu);
                 } else if (i_cp_or_oriagari == 1) {
-                    OZ.camera_of_oriagari_front.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZ.camera_of_oriagari_front.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                 } else if (i_cp_or_oriagari == 2) {
-                    OZ.camera_of_oriagari_rear.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZ.camera_of_oriagari_rear.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                 } else if (i_cp_or_oriagari == 3) {
-                    OZ.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZ.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                 } else if (i_cp_or_oriagari == 4) {
-                    OZ.camera_of_transparant_rear.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZ.camera_of_transparant_rear.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                 }
 
                 mouse_temp0.set(p);
@@ -9219,7 +9219,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 es1.setCamera(camera_of_orisen_nyuuryokuzu);
                 es1.mDragged_A_01(p);
             } else if (i_mouse_modeA == 2) {
-                camera_of_orisen_nyuuryokuzu.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                camera_of_orisen_nyuuryokuzu.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                 es1.setCamera(camera_of_orisen_nyuuryokuzu);
 
 
@@ -9234,23 +9234,23 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 //OZi.d_oriagarizu_syukusyaku_keisuu=OZi.d_oriagarizu_syukusyaku_keisuu*d_bairitu;
 
 
-                    OZi.camera_of_foldedFigure.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZi.camera_of_foldedFigure.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                     //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_oriagari_front.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZi.camera_of_oriagari_front.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                     //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_oriagari_rear.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZi.camera_of_oriagari_rear.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                     //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZi.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                     //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_transparant_rear.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZi.camera_of_transparant_rear.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                     //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_y(d_bairitu);
 
@@ -9506,12 +9506,12 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 OZ.oriagari_sousa_mouse_drag(p);
             }    //折り上がり図操作
             else if (i_mouse_modeA == 102) {
-                OZ.camera_of_foldedFigure.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
-                OZ.camera_of_oriagari_front.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
-                OZ.camera_of_oriagari_rear.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                OZ.camera_of_foldedFigure.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
+                OZ.camera_of_oriagari_front.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
+                OZ.camera_of_oriagari_rear.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
 
-                OZ.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
-                OZ.camera_of_transparant_rear.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                OZ.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
+                OZ.camera_of_transparant_rear.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
 
                 mouse_temp0.set(p);//mouse_temp0は一時的に使うTen、mouse_temp0.tano_Ten_iti(p)はmouse_temp0から見たpの位置
 
@@ -9553,17 +9553,17 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 //if(ts2.naibu_hantei(p)==0){
                 if (i_cp_or_oriagari == 0) {
 
-                    camera_of_orisen_nyuuryokuzu.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    camera_of_orisen_nyuuryokuzu.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                     es1.setCamera(camera_of_orisen_nyuuryokuzu);
                 } else if (i_cp_or_oriagari == 1) {
-                    OZ.camera_of_oriagari_front.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZ.camera_of_oriagari_front.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                 } else if (i_cp_or_oriagari == 2) {
-                    OZ.camera_of_oriagari_rear.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZ.camera_of_oriagari_rear.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
 
                 } else if (i_cp_or_oriagari == 3) {
-                    OZ.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZ.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                 } else if (i_cp_or_oriagari == 4) {
-                    OZ.camera_of_transparant_rear.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZ.camera_of_transparant_rear.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                 }
 
                 mouse_temp0.set(p);
@@ -9604,7 +9604,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 es1.setCamera(camera_of_orisen_nyuuryokuzu);
                 es1.mReleased_A_01(p);
             } else if (i_mouse_modeA == 2) {
-                camera_of_orisen_nyuuryokuzu.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                camera_of_orisen_nyuuryokuzu.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                 es1.setCamera(camera_of_orisen_nyuuryokuzu);
 
 
@@ -9619,23 +9619,23 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 //OZi.d_oriagarizu_syukusyaku_keisuu=OZi.d_oriagarizu_syukusyaku_keisuu*d_bairitu;
 
 
-                    OZi.camera_of_foldedFigure.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZi.camera_of_foldedFigure.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                     //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_oriagari_front.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZi.camera_of_oriagari_front.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                     //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_oriagari_rear.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZi.camera_of_oriagari_rear.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                     //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZi.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                     //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_transparant_rear.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                    OZi.camera_of_transparant_rear.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
                     //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_y(d_bairitu);
 
@@ -9724,23 +9724,23 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                     //i_Lock_on_ori=1;
                     Button_kyoutuu_sagyou();
                     //System.out.println("i_mouse_modeA==4");
-                    Line s_1 = new Line();
+                    LineSegment s_1 = new LineSegment();
                     s_1.set(es1.get_s_step(1));
-                    Line s_2 = new Line();
+                    LineSegment s_2 = new LineSegment();
                     s_2.set(es1.get_s_step(2));
-                    Line s_3 = new Line();
+                    LineSegment s_3 = new LineSegment();
                     s_3.set(es1.get_s_step(3));
-                    Line s_4 = new Line();
+                    LineSegment s_4 = new LineSegment();
                     s_4.set(es1.get_s_step(4));
 
                     //int i_Lock_on_old=i_Lock_on;
                     i_Lock_on = 0;
                     Button_haikei_Lock_on.setBackground(Color.gray);
 
-                    haikei_set(camera_of_orisen_nyuuryokuzu.object2TV(s_1.geta()),
-                            camera_of_orisen_nyuuryokuzu.object2TV(s_2.geta()),
-                            camera_of_orisen_nyuuryokuzu.object2TV(s_3.geta()),
-                            camera_of_orisen_nyuuryokuzu.object2TV(s_4.geta()));
+                    haikei_set(camera_of_orisen_nyuuryokuzu.object2TV(s_1.getA()),
+                            camera_of_orisen_nyuuryokuzu.object2TV(s_2.getA()),
+                            camera_of_orisen_nyuuryokuzu.object2TV(s_3.getA()),
+                            camera_of_orisen_nyuuryokuzu.object2TV(s_4.getA()));
 
                     //	i_Lock_on=i_Lock_on_old;
 
@@ -9916,29 +9916,29 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             } else if (i_mouse_modeA == 101) {        //折り上がり図操作
                 OZ.oriagari_sousa_mouse_off(p);
             } else if (i_mouse_modeA == 102) {
-                OZ.camera_of_foldedFigure.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
-                OZ.camera_of_oriagari_front.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
-                OZ.camera_of_oriagari_rear.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                OZ.camera_of_foldedFigure.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
+                OZ.camera_of_oriagari_front.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
+                OZ.camera_of_oriagari_rear.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
 
-                OZ.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
-                OZ.camera_of_transparant_rear.hyouji_ichi_idou(mouse_temp0.tano_Ten_iti(p));
+                OZ.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
+                OZ.camera_of_transparant_rear.hyouji_ichi_idou(mouse_temp0.tano_Point_iti(p));
 
                 mouse_temp0.set(p);
 
             } else if (i_mouse_modeA == 103) {//基準面指定
                 int new_kijyunmen_id;
                 int old_kijyunmen_id;
-                old_kijyunmen_id = OZ.ts1.get_kijyunmen_id();
+                old_kijyunmen_id = OZ.cp_worker1.get_kijyunmen_id();
 
-                new_kijyunmen_id = OZ.ts1.set_referencePlane_id(p);
+                new_kijyunmen_id = OZ.cp_worker1.set_referencePlane_id(p);
                 System.out.println("kijyunmen_id = " + new_kijyunmen_id);
-                if (OZ.js.men_rating != null) {//20180227追加
+                if (OZ.ct_worker.men_rating != null) {//20180227追加
                     //System.out.println("OZ.js.men_rating.length = "+OZ.js.men_rating.length);
                     //System.out.println("OZ.js.nbox.getsousuu() = "+OZ.js.nbox.getsousuu());
 
                     System.out.println(
-                            "OZ.js.nbox.get_jyunjyo = " + OZ.js.nbox.get_jyunjyo(new_kijyunmen_id) + " , rating = " +
-                                    OZ.js.nbox.get_double(OZ.js.nbox.get_jyunjyo(new_kijyunmen_id))
+                            "OZ.js.nbox.get_jyunjyo = " + OZ.ct_worker.nbox.get_jyunjyo(new_kijyunmen_id) + " , rating = " +
+                                    OZ.ct_worker.nbox.get_double(OZ.ct_worker.nbox.get_jyunjyo(new_kijyunmen_id))
 
                     );
 
@@ -9985,7 +9985,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
     public void mouse_object_iti(Point p) {//この関数はmouseMoved等と違ってマウスイベントが起きても自動では認識されない
-        p_mouse_TV_iti.set(p.getx(), p.gety());
+        p_mouse_TV_iti.set(p.getX(), p.getY());
 
         p_mouse_object_iti.set(camera_of_orisen_nyuuryokuzu.TV2object(p_mouse_TV_iti));
         //System.out.println("mouse=("+p_mouse_object_iti.getx()+","+p_mouse_object_iti.gety()+")"  );
@@ -10183,15 +10183,15 @@ public void keyTyped(KeyEvent e){
         Oriagari_Zu OZi;
         for (int i = 1; i <= OAZ.size() - 1; i++) {
             OZi = (Oriagari_Zu) OAZ.get(i);
-            OZi.ts1.setCamera(camera_of_orisen_nyuuryokuzu);
+            OZi.cp_worker1.setCamera(camera_of_orisen_nyuuryokuzu);
         }
 
 //VVVVVVVVVVVVVVV以下のts2へのカメラセットはOriagari_zuのoekakiで実施しているので以下の5行はなくてもいいはず　20180225
-        OZ.ts2.setCamera(OZ.camera_of_foldedFigure);
-        OZ.ts2.setCam_front(OZ.camera_of_oriagari_front);
-        OZ.ts2.setCam_rear(OZ.camera_of_oriagari_rear);
-        OZ.ts2.setCam_transparent_front(OZ.camera_of_transparent_front);
-        OZ.ts2.setCam_transparent_rear(OZ.camera_of_transparant_rear);
+        OZ.cp_worker2.setCamera(OZ.camera_of_foldedFigure);
+        OZ.cp_worker2.setCam_front(OZ.camera_of_oriagari_front);
+        OZ.cp_worker2.setCam_rear(OZ.camera_of_oriagari_rear);
+        OZ.cp_worker2.setCam_transparent_front(OZ.camera_of_transparent_front);
+        OZ.cp_worker2.setCam_transparent_rear(OZ.camera_of_transparant_rear);
 //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 /*
 		//System.out.println("paint　+++++++++++++++++++++　透明化実施時の背景表示");
@@ -10252,7 +10252,7 @@ img_haikei=(Image)imageT;
         if (i_mejirusi_hyouji == 1) {
             if (OZ.display_flg > 0) {
                 //	ts1.setCamera(camera_of_orisen_nyuuryokuzu);
-                OZ.ts1.oekaki_kijyunmen_id_with_camera(bufferGraphics);//ts1が折り畳みを行う際の基準面を表示するのに使う。
+                OZ.cp_worker1.oekaki_kijyunmen_id_with_camera(bufferGraphics);//ts1が折り畳みを行う際の基準面を表示するのに使う。
             }
         }
 
@@ -10267,7 +10267,7 @@ img_haikei=(Image)imageT;
 
             g2.setStroke(new BasicStroke(2.0f));
             g2.setColor(new Color(255, 240, 0, 230));
-            g2.draw(new Ellipse2D.Double(p_mouse_TV_iti.getx() - d_haba, p_mouse_TV_iti.gety() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+            g2.draw(new Ellipse2D.Double(p_mouse_TV_iti.getX() - d_haba, p_mouse_TV_iti.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
         }
 
         //懐中電灯の光束等
@@ -10292,7 +10292,7 @@ img_haikei=(Image)imageT;
             //展開図情報の文字表示
             bufferGraphics.setColor(Color.black);
 
-            bufferGraphics.drawString("mouse= (   " + p_mouse_object_iti.getx() + "   ,   " + p_mouse_object_iti.gety() + "   )", 120, 75); //この表示内容はvoid kekka_syoriで決められる。
+            bufferGraphics.drawString("mouse= (   " + p_mouse_object_iti.getX() + "   ,   " + p_mouse_object_iti.getY() + "   )", 120, 75); //この表示内容はvoid kekka_syoriで決められる。
 
             bufferGraphics.drawString("L=" + es1.getsousuu(), 120, 90); //この表示内容はvoid kekka_syoriで決められる。
 
@@ -10305,14 +10305,14 @@ img_haikei=(Image)imageT;
                 Point kus_sisuu = new Point(es1.get_moyori_ten_sisuu(p_mouse_TV_iti));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
 
                 double dx_ind;
-                dx_ind = kus_sisuu.getx();
+                dx_ind = kus_sisuu.getX();
                 double dy_ind;
-                dy_ind = kus_sisuu.gety();
+                dy_ind = kus_sisuu.getY();
                 int ix_ind;
                 ix_ind = (int) Math.round(dx_ind);
                 int iy_ind;
                 iy_ind = (int) Math.round(dy_ind);
-                bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) p_mouse_TV_iti.getx() + 25, (int) p_mouse_TV_iti.gety() + 20); //この表示内容はvoid kekka_syoriで決められる。
+                bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) p_mouse_TV_iti.getX() + 25, (int) p_mouse_TV_iti.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
             }
 
             //bufferGraphics.drawString("index=" ,p_mouse_TV_iti.getx(),p_mouse_TV_iti.gety());
@@ -10337,7 +10337,7 @@ img_haikei=(Image)imageT;
         //Oriagari_Zu OZi;
         for (int i = 1; i <= OAZ.size() - 1; i++) {
             OZi = (Oriagari_Zu) OAZ.get(i);
-            OZi.oriagari_oekaki(bufferGraphics, i_mejirusi_hyouji);
+            OZi.foldUp_draw(bufferGraphics, i_mejirusi_hyouji);
         }
         //OZ = (Oriagari_Zu)OAZ.get(OAZ.size()-1);//折りあがり図
 
@@ -10369,8 +10369,8 @@ img_haikei=(Image)imageT;
             g2.setStroke(new BasicStroke(1.0f));
             //g2.setColor(new Color(0, 0, 0,255));
             g2.setColor(Color.black);
-            g2.drawLine((int) (p_mouse_TV_iti.getx()), (int) (p_mouse_TV_iti.gety()),
-                    (int) (p_mouse_TV_iti.getx() + d_haba), (int) (p_mouse_TV_iti.gety() + d_haba)); //直線
+            g2.drawLine((int) (p_mouse_TV_iti.getX()), (int) (p_mouse_TV_iti.getY()),
+                    (int) (p_mouse_TV_iti.getX() + d_haba), (int) (p_mouse_TV_iti.getY() + d_haba)); //直線
 
             //g2.drawLine( (int)(p_mouse_TV_iti.getx()+d_haba*0.5),  (int)(p_mouse_TV_iti.gety()+d_haba*0.5),
             //             (int)(p_mouse_TV_iti.getx()+d_haba),  (int)(p_mouse_TV_iti.gety()+d_haba*2.0)); //直線
@@ -10478,7 +10478,7 @@ double dvy=(double)ymin;
 */
     //----------------------------------------------------------
 
-    void settei_syokika_yosoku() {
+    void configure_syokika_yosoku() {
         OZ.text_kekka = "";
         OZ.display_flg = 0;//折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図
         OZ.hyouji_flg_backup = 0;//表示様式hyouji_flgの一時的バックアップ用
@@ -10504,7 +10504,7 @@ double dvy=(double)ymin;
 
 
         OZ.different_search_flg = 0;     //これは「別の重なりを探す」ことが有効の場合は１、無効の場合は０をとる。
-        OZ.hakkenn_sita_kazu = 0;    //折り重なり方で、何通り発見したかを格納する。
+        OZ.discovered_fold_cases = 0;    //折り重なり方で、何通り発見したかを格納する。
 
 
         i_mouseDragged_yuukou = 0;

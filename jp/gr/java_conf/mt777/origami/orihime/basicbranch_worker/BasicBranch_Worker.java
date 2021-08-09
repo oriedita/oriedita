@@ -22,7 +22,7 @@ public class BasicBranch_Worker {
     int icol;//線分の色
     int taisyousei;
 
-    Point pa = new Point(); //マウスボタンが押された位置からa点までのベクトル
+    Point pa = new Point(); //Vector from the position where the mouse button is pressed to point a
     Point pb = new Point(); //マウスボタンが押された位置からb点までのベクトル
 
     int ugokasi_mode = 0;    //枝を動かす動作モード。0=なにもしない、1=a点を動かす、2=b点を動かす、3=枝を平行移動 、4=新規追加
@@ -249,7 +249,7 @@ public class BasicBranch_Worker {
 
 
             if (idel == 1) {
-                k.delsenbun(i);
+                k.deleteLineSegment(i);
                 i = i - 1;
                 ieda = k.getTotal() + 1;    //<<<<<<<<<<<<<<<<<<
             }
@@ -259,35 +259,35 @@ public class BasicBranch_Worker {
     //枝を動かした後の処理を行う関数----------------------------------------------------
     public void eda_atosyori_01() {//枝の長さを変えずに、枝全体を平行移動して微調整する。
         //アクティブな帯の位置を微調整する
-        Point ab = new Point(1, k.getb(ieda), -1, k.geta(ieda));//アクティブな枝の、点aから点bへ向かうベクトル
-        Point ba = new Point(1, k.geta(ieda), -1, k.getb(ieda));//アクティブな枝の、点aから点bへ向かうベクトル
+        Point ab = new Point(1, k.getB(ieda), -1, k.getA(ieda));//アクティブな枝の、点aから点bへ向かうベクトル
+        Point ba = new Point(1, k.getA(ieda), -1, k.getB(ieda));//アクティブな枝の、点aから点bへ向かうベクトル
 
         int jeda;   //アクティブな枝と近い別の枝
         int jbasyo; //アクティブな枝と近い別の枝のどこが近いのかを示すための番号
 
         //　アクティブな枝のa点　と　別の枝　との距離が　ｒ　より近い場合
 
-        jeda = k.senbun_sagasi(k.geta(ieda), 2 * r, ieda);//アクティブな枝のa点と近い別の枝を求める。
-        jbasyo = k.senbun_busyo_sagasi(jeda, k.geta(ieda), 2 * r);//別の枝のどの部所が近いかを求める。
+        jeda = k.senbun_sagasi(k.getA(ieda), 2 * r, ieda);//アクティブな枝のa点と近い別の枝を求める。
+        jbasyo = k.senbun_busyo_sagasi(jeda, k.getA(ieda), 2 * r);//別の枝のどの部所が近いかを求める。
         if ((jeda != 0) && (jbasyo == 1)) { //アクティブな枝のa点と、別の枝のa点が近い場合
-            k.seta(ieda, k.geta(jeda));
-            k.setb(ieda, new Point(1, k.geta(ieda), 1, ab));//こう書いてもちゃんと動く様なので、このまま使う。
+            k.seta(ieda, k.getA(jeda));
+            k.setb(ieda, new Point(1, k.getA(ieda), 1, ab));//こう書いてもちゃんと動く様なので、このまま使う。
         }
         if ((jeda != 0) && (jbasyo == 2)) { //アクティブな枝のa点と、別の枝のb点が近い場合
-            k.seta(ieda, k.getb(jeda));
-            k.setb(ieda, new Point(1, k.geta(ieda), 1, ab));
+            k.seta(ieda, k.getB(jeda));
+            k.setb(ieda, new Point(1, k.getA(ieda), 1, ab));
         }
 
         //　アクティブな枝のb点　と　別の枝　との距離が　ｒ　より近い場合
-        jeda = k.senbun_sagasi(k.getb(ieda), 2 * r, ieda);//アクティブな枝のb点と近い別の枝を求める。
-        jbasyo = k.senbun_busyo_sagasi(jeda, k.getb(ieda), 2 * r);//別の枝のどの部所が近いかを求める。
+        jeda = k.senbun_sagasi(k.getB(ieda), 2 * r, ieda);//アクティブな枝のb点と近い別の枝を求める。
+        jbasyo = k.senbun_busyo_sagasi(jeda, k.getB(ieda), 2 * r);//別の枝のどの部所が近いかを求める。
         if ((jeda != 0) && (jbasyo == 1)) { //アクティブな枝のb点と、別の枝のa点が近い場合
-            k.setb(ieda, k.geta(jeda));
-            k.seta(ieda, new Point(1, k.getb(ieda), 1, ba));
+            k.setb(ieda, k.getA(jeda));
+            k.seta(ieda, new Point(1, k.getB(ieda), 1, ba));
         }
         if ((jeda != 0) && (jbasyo == 2)) { //アクティブな枝のb点と、別の枝のb点が近い場合
-            k.setb(ieda, k.getb(jeda));
-            k.seta(ieda, new Point(1, k.getb(ieda), 1, ba));
+            k.setb(ieda, k.getB(jeda));
+            k.seta(ieda, new Point(1, k.getB(ieda), 1, ba));
         }
     }
 
@@ -300,23 +300,23 @@ public class BasicBranch_Worker {
         int jbasyo; //アクティブな枝と近い別の枝のどこが近いのかを示すための番号
         if (k.getnagasa(ieda) >= r) {
             //　アクティブな枝のa点　と　別の枝との距離が　ｒ　より近い場合
-            jeda = k.senbun_sagasi(k.geta(ieda), r, ieda);//アクティブな枝のa点と近い別の枝を求める。
-            jbasyo = k.senbun_busyo_sagasi(jeda, k.geta(ieda), r);//別の枝のどの部所が近いかを求める。
+            jeda = k.senbun_sagasi(k.getA(ieda), r, ieda);//アクティブな枝のa点と近い別の枝を求める。
+            jbasyo = k.senbun_busyo_sagasi(jeda, k.getA(ieda), r);//別の枝のどの部所が近いかを求める。
             if ((jeda != 0) && (jbasyo == 1)) {
-                k.seta(ieda, k.geta(jeda));
+                k.seta(ieda, k.getA(jeda));
             }//アクティブな枝のa点と、別の枝のa点が近い場合
             if ((jeda != 0) && (jbasyo == 2)) {
-                k.seta(ieda, k.getb(jeda));
+                k.seta(ieda, k.getB(jeda));
             }//アクティブな枝のa点と、別の枝のb点が近い場合
 
             //　アクティブな枝(ieda)のb点　と　別の枝(jeda)との距離が　ｒ　より近い場合
-            jeda = k.senbun_sagasi(k.getb(ieda), r, ieda);//アクティブな枝のb点と近い別の枝を求める。
-            jbasyo = k.senbun_busyo_sagasi(jeda, k.getb(ieda), r);//別の枝のどの部所が近いかを求める。
+            jeda = k.senbun_sagasi(k.getB(ieda), r, ieda);//アクティブな枝のb点と近い別の枝を求める。
+            jbasyo = k.senbun_busyo_sagasi(jeda, k.getB(ieda), r);//別の枝のどの部所が近いかを求める。
             if ((jeda != 0) && (jbasyo == 1)) {
-                k.setb(ieda, k.geta(jeda));
+                k.setb(ieda, k.getA(jeda));
             }//アクティブな枝のb点と、別の枝のa点が近い場合
             if ((jeda != 0) && (jbasyo == 2)) {
-                k.setb(ieda, k.getb(jeda));
+                k.setb(ieda, k.getB(jeda));
             }//アクティブな枝のb点と、別の枝のb点が近い場合
 
             //以下は070317に追加 複数の線分が集まった頂点を別の頂点近くに持っていったときの後処理用
@@ -324,39 +324,39 @@ public class BasicBranch_Worker {
 
 
             //　アクティブな枝のa点　と　別の枝との距離が　ｒ　より近い場合
-            jeda = k.senbun_sagasi(k.geta(ieda), r, -10);//アクティブなieda枝のa点と近い別の枝を求める。
-            jbasyo = k.senbun_busyo_sagasi(jeda, k.geta(ieda), r);//別の枝のどの部所が近いかを求める。
+            jeda = k.senbun_sagasi(k.getA(ieda), r, -10);//アクティブなieda枝のa点と近い別の枝を求める。
+            jbasyo = k.senbun_busyo_sagasi(jeda, k.getA(ieda), r);//別の枝のどの部所が近いかを求める。
 
             if ((jeda != 0) && (jbasyo == 1)) {
-                k.kasseika(k.geta(jeda), r);
-                k.set(k.geta(jeda));
+                k.kasseika(k.getA(jeda), r);
+                k.set(k.getA(jeda));
             }//アクティブなieda枝のa点と、別の枝のa点が近い場合
             if ((jeda != 0) && (jbasyo == 2)) {
-                k.kasseika(k.getb(jeda), r);
-                k.set(k.getb(jeda));
+                k.kasseika(k.getB(jeda), r);
+                k.set(k.getB(jeda));
             }//アクティブなieda枝のa点と、別の枝のb点が近い場合
 
             //　アクティブな枝(ieda)のb点　と　別の枝(jeda)との距離が　ｒ　より近い場合
-            jeda = k.senbun_sagasi(k.getb(ieda), r, -10);//アクティブなieda枝のb点と近い別の枝を求める。
-            jbasyo = k.senbun_busyo_sagasi(jeda, k.getb(ieda), r);//別の枝のどの部所が近いかを求める。
+            jeda = k.senbun_sagasi(k.getB(ieda), r, -10);//アクティブなieda枝のb点と近い別の枝を求める。
+            jbasyo = k.senbun_busyo_sagasi(jeda, k.getB(ieda), r);//別の枝のどの部所が近いかを求める。
 
             if ((jeda != 0) && (jbasyo == 1)) {
-                k.kasseika(k.geta(jeda), r);
-                k.set(k.geta(jeda));
+                k.kasseika(k.getA(jeda), r);
+                k.set(k.getA(jeda));
             }//アクティブなieda枝のb点と、別の枝のa点が近い場合
             if ((jeda != 0) && (jbasyo == 2)) {
-                k.kasseika(k.getb(jeda), r);
-                k.set(k.getb(jeda));
+                k.kasseika(k.getB(jeda), r);
+                k.set(k.getB(jeda));
             }//アクティブなieda枝のb点と、別の枝のb点が近い場合
         }
 
     }
 
-    public void bunkatu_seiri() {
-        k.bunkatu_seiri();
+    public void split_seiri() {
+        k.split_arrangement();
     }
 
-    public void bunkatu_seiri_for_Smen_hassei() {
+    public void split_arrangement_for_Smen_hassei() {
         k.bunkatu_seiri_for_Smen_hassei();
     }//kとは線分集合のこと、Senbunsyuugou k =new Senbunsyuugou();
 
@@ -365,19 +365,19 @@ public class BasicBranch_Worker {
     }
 
     public void ten_sakujyo() {
-        k.ten_sakujyo();
+        k.point_removal();
     }
 
     public void ten_sakujyo(double r) {
-        k.ten_sakujyo(r);
+        k.point_removal(r);
     }
 
-    public void jyuufuku_senbun_sakujyo() {
-        k.jyuufuku_senbun_sakujyo();
+    public void overlapping_line_sakujyo() {
+        k.overlapping_line_removal();
     }
 
-    public void jyuufuku_senbun_sakujyo(double r) {
-        k.jyuufuku_senbun_sakujyo(r);
+    public void overlapping_line_sakujyo(double r) {
+        k.overlapping_line_removal(r);
     }
 
 
@@ -393,7 +393,7 @@ public class BasicBranch_Worker {
             int kr = 10;
             g.setColor(Color.red);
             for (int i = 1; i <= k.getTotal(); i++) {
-                if (oc.hitosii(k.geta(i), k.getb(i), r)) {
+                if (oc.equal(k.getA(i), k.getB(i), r)) {
                     g.fillOval((int) k.getax(i) - kr, (int) k.getay(i) - kr, 2 * kr, 2 * kr); //円
                 }
             }
@@ -412,14 +412,14 @@ public class BasicBranch_Worker {
         //-------------------------------
         if (taisyousei > 0) {
             g.setColor(Color.green);
-            tyuuoutai.oekaki(g);
+            tyuuoutai.draw(g);
             g.setColor(Color.black);
         }
 
         //  ごみ箱の描画
         g.setColor(new Color(150, 150, 150));
         //g.setColor(new Color(100,100,100));
-        gomibako.oekaki(g);
+        gomibako.draw(g);
         g.setColor(Color.black);
         g.drawString("ごみ箱", 18, 180);
 
@@ -445,17 +445,17 @@ public class BasicBranch_Worker {
         g.setColor(new Color(200, 200, 200));
         if (taisyousei > 0) {
             for (int i = 1; i <= k.getTotal(); i++) {
-                if ((k.geta(i).getx() < tyuuoutai_xmin)
+                if ((k.getA(i).getX() < tyuuoutai_xmin)
                         ||
-                        (k.getb(i).getx() < tyuuoutai_xmin)) {
-                    a.set(k.geta(i));
-                    b.set(k.getb(i));
-                    a.set(tyuuoutai_xmin + tyuuoutai_xmax - a.getx(), a.gety());
-                    b.set(tyuuoutai_xmin + tyuuoutai_xmax - b.getx(), b.gety());
+                        (k.getB(i).getX() < tyuuoutai_xmin)) {
+                    a.set(k.getA(i));
+                    b.set(k.getB(i));
+                    a.set(tyuuoutai_xmin + tyuuoutai_xmax - a.getX(), a.getY());
+                    b.set(tyuuoutai_xmin + tyuuoutai_xmax - b.getX(), b.getY());
 
-                    g.drawLine((int) a.getx(), (int) a.gety(), (int) b.getx(), (int) b.gety()); //直線
-                    g.drawOval((int) a.getx() - ir, (int) a.gety() - ir, 2 * ir, 2 * ir); //円
-                    g.drawOval((int) b.getx() - ir, (int) b.gety() - ir, 2 * ir, 2 * ir); //円
+                    g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
+                    g.drawOval((int) a.getX() - ir, (int) a.getY() - ir, 2 * ir, 2 * ir); //円
+                    g.drawOval((int) b.getX() - ir, (int) b.getY() - ir, 2 * ir, 2 * ir); //円
                 }
             }
         }
@@ -466,12 +466,12 @@ public class BasicBranch_Worker {
         if (icol == -2) { //角度系用icol=-2
             g.setColor(new Color(245, 245, 245));
             for (int i = 1; i <= k.getTotal(); i++) {
-                a.set(k.geta(i));
-                b.set(k.getb(i));
+                a.set(k.getA(i));
+                b.set(k.getB(i));
                 d = 0.0;
                 while (d < 360.0) {
-                    g.drawLine((int) a.getx(), (int) a.gety(), (int) (a.getx() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (a.gety() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
-                    g.drawLine((int) b.getx(), (int) b.gety(), (int) (b.getx() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (b.gety() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
+                    g.drawLine((int) a.getX(), (int) a.getY(), (int) (a.getX() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (a.getY() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
+                    g.drawLine((int) b.getX(), (int) b.getY(), (int) (b.getX() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (b.getY() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
                     d = d + kijyun_kakudo;
                 }
             }
@@ -479,11 +479,11 @@ public class BasicBranch_Worker {
             if (ieda <= k.getTotal()) {
                 g.setColor(new Color(205, 245, 245));
                 d = 0.0;
-                a.set(k.geta(ieda));
-                b.set(k.getb(ieda));
+                a.set(k.getA(ieda));
+                b.set(k.getB(ieda));
                 if (ugokasi_mode == 1) {
                     while (d < 360.0) {
-                        g.drawLine((int) a.getx(), (int) a.gety(), (int) (a.getx() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (a.gety() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
+                        g.drawLine((int) a.getX(), (int) a.getY(), (int) (a.getX() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (a.getY() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
                         //g.drawLine( (int)b.getx(),(int)b.gety(),(int)(b.getx()+L*Math.cos(d*3.14159265/180.0)),(int)(b.gety()+L*Math.sin(d*3.14159265/180.0))); //直線
                         d = d + kijyun_kakudo;
                     }
@@ -491,15 +491,15 @@ public class BasicBranch_Worker {
                 if (ugokasi_mode == 2) {
                     while (d < 360.0) {
                         //g.drawLine( (int)a.getx(),(int)a.gety(),(int)(a.getx()+L*Math.cos(d*3.14159265/180.0)),(int)(a.gety()+L*Math.sin(d*3.14159265/180.0))); //直線
-                        g.drawLine((int) b.getx(), (int) b.gety(), (int) (b.getx() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (b.gety() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
+                        g.drawLine((int) b.getX(), (int) b.getY(), (int) (b.getX() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (b.getY() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
                         d = d + kijyun_kakudo;
                     }
                 }
 
                 if (ugokasi_mode == 3) {
                     while (d < 360.0) {
-                        g.drawLine((int) a.getx(), (int) a.gety(), (int) (a.getx() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (a.gety() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
-                        g.drawLine((int) b.getx(), (int) b.gety(), (int) (b.getx() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (b.gety() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
+                        g.drawLine((int) a.getX(), (int) a.getY(), (int) (a.getX() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (a.getY() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
+                        g.drawLine((int) b.getX(), (int) b.getY(), (int) (b.getX() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (b.getY() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
                         d = d + kijyun_kakudo;
                     }
                 }
@@ -507,7 +507,7 @@ public class BasicBranch_Worker {
                 if (ugokasi_mode == 4) {
                     while (d < 360.0) {
                         //g.drawLine( (int)a.getx(),(int)a.gety(),(int)(a.getx()+L*Math.cos(d*3.14159265/180.0)),(int)(a.gety()+L*Math.sin(d*3.14159265/180.0))); //直線
-                        g.drawLine((int) b.getx(), (int) b.gety(), (int) (b.getx() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (b.gety() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
+                        g.drawLine((int) b.getX(), (int) b.getY(), (int) (b.getX() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (b.getY() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
                         d = d + kijyun_kakudo;
                     }
                 }
@@ -528,15 +528,15 @@ public class BasicBranch_Worker {
 */
 
         for (int i = 1; i <= k.getTotal(); i++) {
-            a.set(k.geta(i));
-            b.set(k.getb(i));
-            if (k.getcolor(i) == 0) {
+            a.set(k.getA(i));
+            b.set(k.getB(i));
+            if (k.getColor(i) == 0) {
                 g.setColor(Color.black);
             }
-            if (k.getcolor(i) == 1) {
+            if (k.getColor(i) == 1) {
                 g.setColor(Color.red);
             }
-            if (k.getcolor(i) == 2) {
+            if (k.getColor(i) == 2) {
                 g.setColor(Color.blue);
             }
             if (icol == -1) {
@@ -550,20 +550,20 @@ public class BasicBranch_Worker {
                     g.setColor(Color.black);
                 }
             }
-            g.drawLine((int) a.getx(), (int) a.gety(), (int) b.getx(), (int) b.gety()); //直線
+            g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
             if (iTenkaizuSenhaba != 1) {
-                OO.widthLine(g, k.get(i), iTenkaizuSenhaba, k.getcolor(i));
+                OO.widthLine(g, k.get(i), iTenkaizuSenhaba, k.getColor(i));
             }//  太線
             //  OO.habaLine( g,k.get(i),ir,k.getcolor(i));//  太線
 
             g.setColor(Color.white);
-            g.fillOval((int) a.getx() - ir, (int) a.gety() - ir, 2 * ir, 2 * ir); //円
-            g.fillOval((int) b.getx() - ir, (int) b.gety() - ir, 2 * ir, 2 * ir); //円
+            g.fillOval((int) a.getX() - ir, (int) a.getY() - ir, 2 * ir, 2 * ir); //円
+            g.fillOval((int) b.getX() - ir, (int) b.getY() - ir, 2 * ir, 2 * ir); //円
 
             g.setColor(Color.black);
-            g.drawOval((int) a.getx() - ir, (int) a.gety() - ir, 2 * ir, 2 * ir); //円
-            g.drawOval((int) b.getx() - ir, (int) b.gety() - ir, 2 * ir, 2 * ir); //円
+            g.drawOval((int) a.getX() - ir, (int) a.getY() - ir, 2 * ir, 2 * ir); //円
+            g.drawOval((int) b.getX() - ir, (int) b.getY() - ir, 2 * ir, 2 * ir); //円
         }
         g.setColor(Color.black);
     }
@@ -577,13 +577,13 @@ public class BasicBranch_Worker {
         double d;
         OritaOekaki OO = new OritaOekaki();
 
-        Line s_tv = new Line();
+        LineSegment s_tv = new LineSegment();
         Point a = new Point();
         Point b = new Point();
         int ir = (int) (r * camera.get_camera_bairitsu_x());
 
         //格子線の描画
-        Line s_ob = new Line();
+        LineSegment s_ob = new LineSegment();
         //入力規定が1か2（正方格子）の場合の格子線の描画
 
 
@@ -593,14 +593,14 @@ public class BasicBranch_Worker {
 //				g.drawLine( 	i_kousi_x_min,	kousi_haba*i,	i_kousi_x_max,	kousi_haba*i); //直線
                 s_ob.set(i_kousi_x_min, kousi_haba * i, i_kousi_x_max, kousi_haba * i);
                 s_tv.set(camera.object2TV(s_ob));
-                g.drawLine((int) s_tv.getax(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
+                g.drawLine((int) s_tv.getAx(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
 
             }
             for (int i = i_kousi_x_min / kousi_haba; i <= i_kousi_x_max / kousi_haba; i++) {
 //				g.drawLine(	kousi_haba*i,	i_kousi_y_min,	kousi_haba*i,	i_kousi_y_max); //直線
                 s_ob.set(kousi_haba * i, i_kousi_y_min, kousi_haba * i, i_kousi_y_max);
                 s_tv.set(camera.object2TV(s_ob));
-                g.drawLine((int) s_tv.getax(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
+                g.drawLine((int) s_tv.getAx(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
 
             }
 
@@ -614,7 +614,7 @@ public class BasicBranch_Worker {
                 for (int j = i_kousi_y_min / kousi_haba; j <= i_kousi_y_max / kousi_haba; j++) {
                     t_ob.set(kousi_haba * i, kousi_haba * j);
                     t_tv.set(camera.object2TV(t_ob));
-                    g.drawOval((int) t_tv.getx() - ir, (int) t_tv.gety() - ir, 2 * ir, 2 * ir); //円
+                    g.drawOval((int) t_tv.getX() - ir, (int) t_tv.getY() - ir, 2 * ir, 2 * ir); //円
 
                 }
             }
@@ -634,7 +634,7 @@ public class BasicBranch_Worker {
 //				g.drawLine( 	-3000,	sankaku_kousi_haba*i,	3000,	sankaku_kousi_haba*i); //直線
                 s_ob.set(-3000, sankaku_kousi_takasa * i, 3000, sankaku_kousi_takasa * i);
                 s_tv.set(camera.object2TV(s_ob));
-                g.drawLine((int) s_tv.getax(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
+                g.drawLine((int) s_tv.getAx(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
 
             }
 
@@ -642,7 +642,7 @@ public class BasicBranch_Worker {
             for (int i = -30; i <= 30; i++) {
                 s_ob.set(-3000, -3000.0 * sqr3 + 2.0 * sankaku_kousi_takasa * i, 3000, 3000.0 * sqr3 + 2.0 * sankaku_kousi_takasa * i);
                 s_tv.set(camera.object2TV(s_ob));
-                g.drawLine((int) s_tv.getax(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
+                g.drawLine((int) s_tv.getAx(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
             }
 
 
@@ -650,7 +650,7 @@ public class BasicBranch_Worker {
             for (int i = -30; i <= 30; i++) {
                 s_ob.set(-3000, -3000.0 * (-sqr3) + 2.0 * sankaku_kousi_takasa * i, 3000, 3000.0 * (-sqr3) + 2.0 * sankaku_kousi_takasa * i);
                 s_tv.set(camera.object2TV(s_ob));
-                g.drawLine((int) s_tv.getax(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
+                g.drawLine((int) s_tv.getAx(), (int) s_tv.getay(), (int) s_tv.getbx(), (int) s_tv.getby()); //直線
             }
 
             //格子点に丸を描く
@@ -662,12 +662,12 @@ public class BasicBranch_Worker {
                 for (int j = -30; j <= 30; j = j + 2) {
                     t_ob.set(kousi_haba * i, sankaku_kousi_takasa * j);
                     t_tv.set(camera.object2TV(t_ob));
-                    g.drawOval((int) t_tv.getx() - ir, (int) t_tv.gety() - ir, 2 * ir, 2 * ir); //円
+                    g.drawOval((int) t_tv.getX() - ir, (int) t_tv.getY() - ir, 2 * ir, 2 * ir); //円
                 }
                 for (int j = -31; j <= 31; j = j + 2) {
                     t_ob.set(kousi_haba * i + kousi_haba / 2.0, sankaku_kousi_takasa * j);
                     t_tv.set(camera.object2TV(t_ob));
-                    g.drawOval((int) t_tv.getx() - ir, (int) t_tv.gety() - ir, 2 * ir, 2 * ir); //円
+                    g.drawOval((int) t_tv.getX() - ir, (int) t_tv.getY() - ir, 2 * ir, 2 * ir); //円
                 }
 
             }
@@ -684,67 +684,67 @@ public class BasicBranch_Worker {
 
         for (int i = 1; i <= k.getTotal() - 1; i++) {
 
-            if (k.getcolor(i) == 0) {
+            if (k.getColor(i) == 0) {
                 g.setColor(Color.black);
             }
-            if (k.getcolor(i) == 1) {
+            if (k.getColor(i) == 1) {
                 g.setColor(Color.red);
             }
-            if (k.getcolor(i) == 2) {
+            if (k.getColor(i) == 2) {
                 g.setColor(Color.blue);
             }
 
             s_tv.set(camera.object2TV(k.get(i)));
-            a.set(s_tv.geta());
-            b.set(s_tv.getb());
+            a.set(s_tv.getA());
+            b.set(s_tv.getB());
 
-            g.drawLine((int) a.getx(), (int) a.gety(), (int) b.getx(), (int) b.gety()); //直線
+            g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
             if (iTenkaizuSenhaba != 1) {
-                OO.widthLine(g, s_tv, iTenkaizuSenhaba, k.getcolor(i));
+                OO.widthLine(g, s_tv, iTenkaizuSenhaba, k.getColor(i));
             }//  太線
 
             //OO.habaLine( g,s_tv,iTenkaizuSenhaba,k.getcolor(i));
 
             g.setColor(Color.white);
-            g.fillOval((int) a.getx() - ir, (int) a.gety() - ir, 2 * ir, 2 * ir); //円
-            g.fillOval((int) b.getx() - ir, (int) b.gety() - ir, 2 * ir, 2 * ir); //円
+            g.fillOval((int) a.getX() - ir, (int) a.getY() - ir, 2 * ir, 2 * ir); //円
+            g.fillOval((int) b.getX() - ir, (int) b.getY() - ir, 2 * ir, 2 * ir); //円
 
             g.setColor(Color.black);
-            g.drawOval((int) a.getx() - ir, (int) a.gety() - ir, 2 * ir, 2 * ir); //円
-            g.drawOval((int) b.getx() - ir, (int) b.gety() - ir, 2 * ir, 2 * ir); //円
+            g.drawOval((int) a.getX() - ir, (int) a.getY() - ir, 2 * ir, 2 * ir); //円
+            g.drawOval((int) b.getX() - ir, (int) b.getY() - ir, 2 * ir, 2 * ir); //円
         }
 
         int i = k.getTotal();
 
         if (i != 0) {
 
-            if (k.getcolor(i) == 0) {
+            if (k.getColor(i) == 0) {
                 g.setColor(Color.black);
             }
-            if (k.getcolor(i) == 1) {
+            if (k.getColor(i) == 1) {
                 g.setColor(Color.red);
             }
-            if (k.getcolor(i) == 2) {
+            if (k.getColor(i) == 2) {
                 g.setColor(Color.blue);
             }
 
             s_tv.set(camera.object2TV(k.get(i)));
-            a.set(s_tv.geta());
-            b.set(s_tv.getb());
+            a.set(s_tv.getA());
+            b.set(s_tv.getB());
 
-            g.drawLine((int) a.getx(), (int) a.gety(), (int) b.getx(), (int) b.gety()); //直線
+            g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
             if (iTenkaizuSenhaba != 1) {
-                OO.widthLine(g, s_tv, iTenkaizuSenhaba, k.getcolor(i));
+                OO.widthLine(g, s_tv, iTenkaizuSenhaba, k.getColor(i));
             }//  太線
 
             if (i_saigo_no_senbun_no_maru_kaku == 1) {
                 g.setColor(Color.white);
-                g.fillOval((int) a.getx() - ir, (int) a.gety() - ir, 2 * ir, 2 * ir); //円
-                g.fillOval((int) b.getx() - ir, (int) b.gety() - ir, 2 * ir, 2 * ir); //円
+                g.fillOval((int) a.getX() - ir, (int) a.getY() - ir, 2 * ir, 2 * ir); //円
+                g.fillOval((int) b.getX() - ir, (int) b.getY() - ir, 2 * ir, 2 * ir); //円
 
                 g.setColor(Color.black);
-                g.drawOval((int) a.getx() - ir, (int) a.gety() - ir, 2 * ir, 2 * ir); //円
-                g.drawOval((int) b.getx() - ir, (int) b.gety() - ir, 2 * ir, 2 * ir); //円
+                g.drawOval((int) a.getX() - ir, (int) a.getY() - ir, 2 * ir, 2 * ir); //円
+                g.drawOval((int) b.getX() - ir, (int) b.getY() - ir, 2 * ir, 2 * ir); //円
 
             }
         }
@@ -777,13 +777,13 @@ public class BasicBranch_Worker {
 
             if (nyuuryoku_houhou == 1) {
                 int mtsid = k.mottomo_tikai_senbun_sagasi(p);
-                k.addsenbun(k.getb(mtsid), p);
+                k.addLine(k.getB(mtsid), p);
 
-                k.set(mtsid, k.geta(mtsid), p, k.getcolor(mtsid), 0);
-                k.setcolor(k.getTotal(), k.getcolor(mtsid));
+                k.set(mtsid, k.getA(mtsid), p, k.getColor(mtsid), 0);
+                k.setColor(k.getTotal(), k.getColor(mtsid));
                 if (icol >= 0) {
-                    k.set(mtsid, k.geta(mtsid), p, icol, 0);
-                    k.setcolor(k.getTotal(), icol);
+                    k.set(mtsid, k.getA(mtsid), p, icol, 0);
+                    k.setColor(k.getTotal(), icol);
 
                 }
             }
@@ -792,11 +792,11 @@ public class BasicBranch_Worker {
             ieda = k.senbun_sagasi(p, r, 0);
             //基本枝構造の中の、どの枝とも遠い場合。
             if (ieda == 0) {
-                k.addsenbun(p, p);
+                k.addLine(p, p);
                 ieda = k.getTotal();
                 ugokasi_mode = 4;
                 if (icol >= 0) {
-                    k.setcolor(ieda, icol);
+                    k.setColor(ieda, icol);
                 }
             }
             //基本枝構造の中の、どれかの枝に近い場合。
@@ -808,11 +808,11 @@ public class BasicBranch_Worker {
                     ugokasi_mode = 2;
                 } //b点に近い場合。
                 if (3 == k.senbun_busyo_sagasi(ieda, p, r)) {                 //柄の部分に近い場合。
-                    pa.set(1, k.geta(ieda), -1, p);
-                    pb.set(1, k.getb(ieda), -1, p);
+                    pa.set(1, k.getA(ieda), -1, p);
+                    pb.set(1, k.getB(ieda), -1, p);
                     ugokasi_mode = 3;
                     if (icol >= 0) {
-                        k.setcolor(ieda, icol);
+                        k.setColor(ieda, icol);
                     }
                 }
             }
@@ -861,17 +861,17 @@ public class BasicBranch_Worker {
             //System.out.print("nh1 = ");System.out.print("nh1 = ")
 
             if (nhi == 1) {
-                k.addsenbun(p, p);
+                k.addLine(p, p);
                 nhPoint = p;
                 for (int i = 1; i <= k.getTotal() - 1; i++) {
-                    if (oc.hitosii(k.geta(i), p, 2.0 * r)) {
-                        k.set(k.getTotal(), k.geta(i), k.geta(i), 0, 0);
-                        nhPoint = k.geta(i);
+                    if (oc.equal(k.getA(i), p, 2.0 * r)) {
+                        k.set(k.getTotal(), k.getA(i), k.getA(i), 0, 0);
+                        nhPoint = k.getA(i);
                         break;
                     }
-                    if (oc.hitosii(k.getb(i), p, 2.0 * r)) {
-                        k.set(k.getTotal(), k.getb(i), k.getb(i), 0, 0);
-                        nhPoint = k.getb(i);
+                    if (oc.equal(k.getB(i), p, 2.0 * r)) {
+                        k.set(k.getTotal(), k.getB(i), k.getB(i), 0, 0);
+                        nhPoint = k.getB(i);
                         break;
                     }
                 }
@@ -880,15 +880,15 @@ public class BasicBranch_Worker {
             }
             if (nhi != 1) {   // set(int i, Ten p,Ten q,int ic,int ia)
 
-                k.addsenbun(nhPoint, p);
+                k.addLine(nhPoint, p);
                 for (int i = 1; i <= k.getTotal() - 1; i++) {
-                    if (oc.hitosii(k.geta(i), p, 2.0 * r)) {
-                        k.set(k.getTotal(), k.geta(i), k.getb(k.getTotal() - 1), 0, 0);
+                    if (oc.equal(k.getA(i), p, 2.0 * r)) {
+                        k.set(k.getTotal(), k.getA(i), k.getB(k.getTotal() - 1), 0, 0);
                         nhi = 0;
                         break;
                     }
-                    if (oc.hitosii(k.getb(i), p, 2.0 * r)) {
-                        k.set(k.getTotal(), k.getb(i), k.getb(k.getTotal() - 1), 0, 0);
+                    if (oc.equal(k.getB(i), p, 2.0 * r)) {
+                        k.set(k.getTotal(), k.getB(i), k.getB(k.getTotal() - 1), 0, 0);
                         nhi = 0;
                         break;
                     }
@@ -897,7 +897,7 @@ public class BasicBranch_Worker {
             }
 
             if (icol >= 0) {
-                k.setcolor(k.getTotal(), icol);
+                k.setColor(k.getTotal(), icol);
             }
         }
 
@@ -991,8 +991,8 @@ public class BasicBranch_Worker {
                     System.out.print(": ");
                     System.out.println(k.getiactive(i));
                     if (k.getiactive(i) >= 1) {
-                        k.seta(i, kitei_idou(k.geta(i)));
-                        k.setb(i, kitei_idou(k.getb(i)));
+                        k.seta(i, kitei_idou(k.getA(i)));
+                        k.setb(i, kitei_idou(k.getB(i)));
                     }
 
                 }
@@ -1005,17 +1005,17 @@ public class BasicBranch_Worker {
 
             //対称性がある場合の処理
             if (taisyousei > 0) {
-                if (((tyuuoutai_xmin < k.geta(ieda).getx()) && (k.geta(ieda).getx() < tyuuoutai_xmax))
+                if (((tyuuoutai_xmin < k.getA(ieda).getX()) && (k.getA(ieda).getX() < tyuuoutai_xmax))
                         &&
-                        ((tyuuoutai_xmin < k.getb(ieda).getx()) && (k.getb(ieda).getx() < tyuuoutai_xmax))) {
-                    k.seta(ieda, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.geta(ieda).gety()));
-                    k.setb(ieda, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.getb(ieda).gety()));
+                        ((tyuuoutai_xmin < k.getB(ieda).getX()) && (k.getB(ieda).getX() < tyuuoutai_xmax))) {
+                    k.seta(ieda, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.getA(ieda).getY()));
+                    k.setb(ieda, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.getB(ieda).getY()));
                 }
             }
 
             //ゴミ捨て。　これをやるとアクティブなieda枝の番号がずれるので、一応eda_atosyoriの後でやるようにする。
             if ((ugokasi_mode == 4) && (k.getnagasa(k.getTotal()) < r)) { //新規追加分の線分が点状の（長さがrより小さい）とき削除。
-                k.delsenbun(k.getTotal());
+                k.deleteLineSegment(k.getTotal());
             } else {
                 gomisute();//ごみ箱に入った線分の消去
             }
@@ -1049,13 +1049,13 @@ public class BasicBranch_Worker {
         if (nyuuryoku_houhou <= 1) {
             if (nyuuryoku_houhou == 1) {
                 int mtsid = k.mottomo_tikai_senbun_sagasi(p);
-                k.addsenbun(k.getb(mtsid), p);
+                k.addLine(k.getB(mtsid), p);
 
-                k.set(mtsid, k.geta(mtsid), p, k.getcolor(mtsid), 0);
-                k.setcolor(k.getTotal(), k.getcolor(mtsid));
+                k.set(mtsid, k.getA(mtsid), p, k.getColor(mtsid), 0);
+                k.setColor(k.getTotal(), k.getColor(mtsid));
                 if (icol >= 0) {
-                    k.set(mtsid, k.geta(mtsid), p, icol, 0);
-                    k.setcolor(k.getTotal(), icol);
+                    k.set(mtsid, k.getA(mtsid), p, icol, 0);
+                    k.setColor(k.getTotal(), icol);
                 }
             }
 
@@ -1063,11 +1063,11 @@ public class BasicBranch_Worker {
             ieda = k.senbun_sagasi(p, r, 0);
             //基本枝構造の中の、どの枝とも遠い場合。
             if (ieda == 0) {
-                k.addsenbun(p, p);
+                k.addLine(p, p);
                 ieda = k.getTotal();
                 ugokasi_mode = 4;
                 if (icol >= 0) {
-                    k.setcolor(ieda, icol);
+                    k.setColor(ieda, icol);
                 }
             }
             //基本枝構造の中の、どれかの枝に近い場合。
@@ -1079,11 +1079,11 @@ public class BasicBranch_Worker {
                     ugokasi_mode = 2;
                 } //b点に近い場合。
                 if (3 == k.senbun_busyo_sagasi(ieda, p, r)) {                 //柄の部分に近い場合。
-                    pa.set(1, k.geta(ieda), -1, p);
-                    pb.set(1, k.getb(ieda), -1, p);
+                    pa.set(1, k.getA(ieda), -1, p);
+                    pb.set(1, k.getB(ieda), -1, p);
                     ugokasi_mode = 3;
                     if (icol >= 0) {
-                        k.setcolor(ieda, icol);
+                        k.setColor(ieda, icol);
                     }
                 }
             }
@@ -1096,31 +1096,31 @@ public class BasicBranch_Worker {
             nhi = nhi + 1;
             //System.out.print("nh1 = ");System.out.print("nh1 = ")
             if (nhi == 1) {
-                k.addsenbun(p, p);
+                k.addLine(p, p);
                 nhPoint = p;
                 for (int i = 1; i <= k.getTotal() - 1; i++) {
-                    if (oc.hitosii(k.geta(i), p, 2.0 * r)) {
-                        k.set(k.getTotal(), k.geta(i), k.geta(i), 0, 0);
-                        nhPoint = k.geta(i);
+                    if (oc.equal(k.getA(i), p, 2.0 * r)) {
+                        k.set(k.getTotal(), k.getA(i), k.getA(i), 0, 0);
+                        nhPoint = k.getA(i);
                         break;
                     }
-                    if (oc.hitosii(k.getb(i), p, 2.0 * r)) {
-                        k.set(k.getTotal(), k.getb(i), k.getb(i), 0, 0);
-                        nhPoint = k.getb(i);
+                    if (oc.equal(k.getB(i), p, 2.0 * r)) {
+                        k.set(k.getTotal(), k.getB(i), k.getB(i), 0, 0);
+                        nhPoint = k.getB(i);
                         break;
                     }
                 }
             }
             if (nhi != 1) {   // set(int i, Ten p,Ten q,int ic,int ia)
-                k.addsenbun(nhPoint, p);
+                k.addLine(nhPoint, p);
                 for (int i = 1; i <= k.getTotal() - 1; i++) {
-                    if (oc.hitosii(k.geta(i), p, 2.0 * r)) {
-                        k.set(k.getTotal(), k.geta(i), k.getb(k.getTotal() - 1), 0, 0);
+                    if (oc.equal(k.getA(i), p, 2.0 * r)) {
+                        k.set(k.getTotal(), k.getA(i), k.getB(k.getTotal() - 1), 0, 0);
                         nhi = 0;
                         break;
                     }
-                    if (oc.hitosii(k.getb(i), p, 2.0 * r)) {
-                        k.set(k.getTotal(), k.getb(i), k.getb(k.getTotal() - 1), 0, 0);
+                    if (oc.equal(k.getB(i), p, 2.0 * r)) {
+                        k.set(k.getTotal(), k.getB(i), k.getB(k.getTotal() - 1), 0, 0);
                         nhi = 0;
                         break;
                     }
@@ -1128,7 +1128,7 @@ public class BasicBranch_Worker {
                 nhPoint = p;
             }
             if (icol >= 0) {
-                k.setcolor(k.getTotal(), icol);
+                k.setColor(k.getTotal(), icol);
             }
         }
     }
@@ -1186,8 +1186,8 @@ public class BasicBranch_Worker {
                     System.out.print(": ");
                     System.out.println(k.getiactive(i));
                     if (k.getiactive(i) >= 1) {
-                        k.seta(i, kitei_idou(k.geta(i)));
-                        k.setb(i, kitei_idou(k.getb(i)));
+                        k.seta(i, kitei_idou(k.getA(i)));
+                        k.setb(i, kitei_idou(k.getB(i)));
                     }
 
                 }
@@ -1197,17 +1197,17 @@ public class BasicBranch_Worker {
 
             //対称性がある場合の処理
             if (taisyousei > 0) {
-                if (((tyuuoutai_xmin < k.geta(ieda).getx()) && (k.geta(ieda).getx() < tyuuoutai_xmax))
+                if (((tyuuoutai_xmin < k.getA(ieda).getX()) && (k.getA(ieda).getX() < tyuuoutai_xmax))
                         &&
-                        ((tyuuoutai_xmin < k.getb(ieda).getx()) && (k.getb(ieda).getx() < tyuuoutai_xmax))) {
-                    k.seta(ieda, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.geta(ieda).gety()));
-                    k.setb(ieda, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.getb(ieda).gety()));
+                        ((tyuuoutai_xmin < k.getB(ieda).getX()) && (k.getB(ieda).getX() < tyuuoutai_xmax))) {
+                    k.seta(ieda, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.getA(ieda).getY()));
+                    k.setb(ieda, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, k.getB(ieda).getY()));
                 }
             }
 
             //ゴミ捨て。　これをやるとアクティブなieda枝の番号がずれるので、一応eda_atosyoriの後でやるようにする。
             if ((ugokasi_mode == 4) && (k.getnagasa(k.getTotal()) < r)) { //新規追加分の線分が点状の（長さがrより小さい）とき削除。
-                k.delsenbun(k.getTotal());
+                k.deleteLineSegment(k.getTotal());
             } else {
                 gomisute();//ごみ箱に入った線分の消去
             }
@@ -1228,9 +1228,9 @@ public class BasicBranch_Worker {
         i_saigo_no_senbun_no_maru_kaku = 0;
         Point p = new Point();
         p.set(camera.TV2object(p0));
-        k.addsenbun(p, p);
+        k.addLine(p, p);
         ieda = k.getTotal();
-        k.setcolor(ieda, icol);
+        k.setColor(ieda, icol);
     }
 
     //マウス操作(i_mouse_modeA==1線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
@@ -1254,8 +1254,8 @@ public class BasicBranch_Worker {
             //System.out.print("iactive 20150312"); System.out.print(i); System.out.print(": ");
             //System.out.println(k.getiactive(i));
             //if(k.getiactive(i)>=1){
-            k.seta(k.getTotal(), kitei_idou(k.geta(k.getTotal())));
-            k.setb(k.getTotal(), kitei_idou(k.getb(k.getTotal())));
+            k.seta(k.getTotal(), kitei_idou(k.getA(k.getTotal())));
+            k.setb(k.getTotal(), kitei_idou(k.getB(k.getTotal())));
             //}
             //}
         }
@@ -1263,18 +1263,18 @@ public class BasicBranch_Worker {
 
         if (nyuuryoku_kitei == 3) {
 
-            k.seta(k.getTotal(), sankaku_kitei_idou(k.geta(k.getTotal())));
-            k.setb(k.getTotal(), sankaku_kitei_idou(k.getb(k.getTotal())));
+            k.seta(k.getTotal(), sankaku_kitei_idou(k.getA(k.getTotal())));
+            k.setb(k.getTotal(), sankaku_kitei_idou(k.getB(k.getTotal())));
 
         }
 
 
         //今入力した線分が、今までに入力済みのどれかの線分と全く同じ位置で一致する場合は、今入力した線分の色だけ反映させて、今入力した線分は追加はしない。
-        int i_kasanari;
-        i_kasanari = k.kasanari_senbun_sagasi(k.getTotal());
-        if (i_kasanari > 0) {
-            k.setcolor(i_kasanari, k.getcolor(k.getTotal()));
-            k.delsenbun(getsousuu());
+        int i_overlapping;
+        i_overlapping = k.overlapping_lineSegment_search(k.getTotal());
+        if (i_overlapping > 0) {
+            k.setColor(i_overlapping, k.getColor(k.getTotal()));
+            k.deleteLineSegment(getsousuu());
         }
         k.kousabunkatu();//全く重なる線分がない状態で実施される。//2回やらないと反応しない場合がある。原因不明。
         k.kousabunkatu();
@@ -1289,7 +1289,7 @@ public class BasicBranch_Worker {
         for (int i = i_kousi_x_min / kousi_haba; i <= i_kousi_x_max / kousi_haba; i++) {
             for (int j = i_kousi_y_min / kousi_haba; j <= i_kousi_y_max / kousi_haba; j++) {
                 t_ob.set(kousi_haba * i, kousi_haba * j);
-                if (oc.kyori(t_ob, t1) < r) {
+                if (oc.distance(t_ob, t1) < r) {
                     return t_ob;
                 }
 
@@ -1309,13 +1309,13 @@ public class BasicBranch_Worker {
         for (int i = -30; i <= 30; i++) {
             for (int j = -30; j <= 30; j = j + 2) {
                 t_ob.set(kousi_haba * i, sankaku_kousi_takasa * j);
-                if (oc.kyori(t_ob, t1) < r) {
+                if (oc.distance(t_ob, t1) < r) {
                     return t_ob;
                 }
             }
             for (int j = -31; j <= 31; j = j + 2) {
                 t_ob.set(kousi_haba * i + kousi_haba / 2.0, sankaku_kousi_takasa * j);
-                if (oc.kyori(t_ob, t1) < r) {
+                if (oc.distance(t_ob, t1) < r) {
                     return t_ob;
                 }
             }
@@ -1374,7 +1374,7 @@ public class BasicBranch_Worker {
         double minr;
         minrid = k.mottomo_tikai_senbun_sagasi(p);
         if (k.senbun_busyo_sagasi(minrid, p, r) != 0) {
-            k.delsenbun(minrid);
+            k.deleteLineSegment(minrid);
         }
     }
 
@@ -1393,12 +1393,12 @@ public class BasicBranch_Worker {
         minrid = k.mottomo_tikai_senbun_sagasi(p);
         if (k.senbun_busyo_sagasi(minrid, p, r) != 0) {
             int ic_temp;
-            ic_temp = k.getcolor(minrid);
+            ic_temp = k.getColor(minrid);
             ic_temp = ic_temp + 1;
             if (ic_temp == 3) {
                 ic_temp = 0;
             }
-            k.setcolor(minrid, ic_temp);
+            k.setColor(minrid, ic_temp);
         }
 
 
