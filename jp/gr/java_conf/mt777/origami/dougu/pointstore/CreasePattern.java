@@ -14,11 +14,9 @@ import java.util.*;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 
-public class PointStore {
+public class CreasePattern {
 
     int numFaces_temp;
-
-//Ten_p tp=new Ten_p();
 
     int pointsTotal;               //実際に使う点の総数
     int sticksTotal;               //実際に使う棒の総数
@@ -45,7 +43,7 @@ public class PointStore {
 
     int[][] Face_adjacent;//Face_adjacent [i] [j] is the Stick number at the boundary between m [i] and m [j]. Stores 0 when m [i] and m [j] are not adjacent.
 
-    public PointStore() {
+    public CreasePattern() {
         reset();
     } //コンストラクタ
 
@@ -72,7 +70,7 @@ public class PointStore {
 
         for (int i = 0; i <= numPoints; i++) {
             t[i] = new Point_p();
-            set_T_renketu(i, 0, 0);
+            setPointLinking(i, 0, 0);
         }
 
         b = new Stick[numSticks + 1];
@@ -123,11 +121,11 @@ public class PointStore {
     }
 
     //---------------
-    private int get_T_renketu(int i, int j) {
+    private int getPointLinking(int i, int j) {
         return point_linking[i].get(j);
     }
 
-    private void set_T_renketu(int i, int j, int tid) {
+    private void setPointLinking(int i, int j, int tid) {
         if (j + 1 > point_linking[i].size()) {
             while (j + 1 > point_linking[i].size()) {
                 point_linking[i].add(0);
@@ -183,14 +181,14 @@ public class PointStore {
         }
     }
 
-    public void set(PointStore ts) {
+    public void set(CreasePattern ts) {
         pointsTotal = ts.getPointsTotal();
         sticksTotal = ts.getSticksTotal();
         facesTotal = ts.getFacesTotal();
         for (int i = 0; i <= pointsTotal; i++) {
             t[i].set(ts.getPoint(i));                                                         //  <<<-------
-            for (int j = 1; j <= ts.get_T_renketu(i, 0); j++) {
-                set_T_renketu(i, j, ts.get_T_renketu(i, j));
+            for (int j = 1; j <= ts.getPointLinking(i, 0); j++) {
+                setPointLinking(i, j, ts.getPointLinking(i, j));
             }
         }
         for (int i = 0; i <= sticksTotal; i++) {
@@ -199,7 +197,7 @@ public class PointStore {
             Stick_moti_Menid_max[i] = ts.get_Stick_moti_Menid_max(i);
         }
         for (int i = 0; i <= facesTotal; i++) {
-            m[i] = new Face(ts.getMen(i));
+            m[i] = new Face(ts.getFace(i));
             for (int j = 0; j <= facesTotal; j++) {
                 Face_adjacent[i][j] = ts.get_Men_tonari(i, j);
             }
@@ -467,7 +465,7 @@ public class PointStore {
     private Point insidePoint_surface(Face mn) {
         Polygon tk;
         tk = makePolygon(mn);
-        return tk.naibuTen_motome();
+        return tk.insidePoint_find();
     }
 
     //面積求める
@@ -528,7 +526,7 @@ public class PointStore {
         return stickToLineSegment(getStick(i));
     }    //棒のidからSenbunを得る
 
-    private Face getMen(int i) {
+    private Face getFace(int i) {
         return m[i];
     }   //面を得る
 
@@ -556,15 +554,15 @@ public class PointStore {
         return t[b[i].getEnd()].getY();
     }
 
-    public int getTenidsuu(int i) {
+    public int getPointsCount(int i) {
         return m[i].getPointsCount();
     }
 
-    public void setTen(int i, Point tn) {
+    public void setPoint(int i, Point tn) {
         t[i].set(tn);
     }                                                        //   <<<------------
 
-    private void setTen(int i, double x, double y) {
+    private void setPoint(int i, double x, double y) {
         t[i].set(x, y);
     }
 
@@ -589,10 +587,10 @@ public class PointStore {
 
     private void t_renketu_sakusei() {
         for (int k = 1; k <= sticksTotal; k++) {
-            set_T_renketu(b[k].getBegin(), 0, get_T_renketu(b[k].getBegin(), 0) + 1);
-            set_T_renketu(b[k].getBegin(), get_T_renketu(b[k].getBegin(), 0), b[k].getEnd());
-            set_T_renketu(b[k].getEnd(), 0, get_T_renketu(b[k].getEnd(), 0) + 1);
-            set_T_renketu(b[k].getEnd(), get_T_renketu(b[k].getEnd(), 0), b[k].getBegin());
+            setPointLinking(b[k].getBegin(), 0, getPointLinking(b[k].getBegin(), 0) + 1);
+            setPointLinking(b[k].getBegin(), getPointLinking(b[k].getBegin(), 0), b[k].getEnd());
+            setPointLinking(b[k].getEnd(), 0, getPointLinking(b[k].getEnd(), 0) + 1);
+            setPointLinking(b[k].getEnd(), getPointLinking(b[k].getEnd(), 0), b[k].getBegin());
         }
     }
 
@@ -610,16 +608,14 @@ public class PointStore {
         return 0;
     }
 
-    //点iから点jに進んで、次に、点jから点iの右隣に進む時の点の番号を求める。
-    private int getRTen(int i, int j) {
+    //Find the number of the point when going from point i to point j and then going from point j to the right side of point i.
+    private int getRPoint(int i, int j) {
         int n = 0;
-        double kakudo = 876.0;   //kakudoは適当な大きい数にしておく
-
-        // if(renketu_hantei(i,j)==0){return 0;}//点iと点jが連結していない時は0を返す
+        double angle = 876.0;   //Keep angle in a large number
 
         int iflg = 0;
-        for (int k = 1; k <= get_T_renketu(i, 0); k++) {
-            if (get_T_renketu(i, k) == j) {
+        for (int k = 1; k <= getPointLinking(i, 0); k++) {
+            if (getPointLinking(i, k) == j) {
                 iflg = 1;
             }
         }
@@ -628,13 +624,13 @@ public class PointStore {
             return 0;
         }//点iと点jが連結していない時は0を返す
 
-        for (int ik = 1; ik <= get_T_renketu(j, 0); ik++) {
+        for (int ik = 1; ik <= getPointLinking(j, 0); ik++) {
             int k;
-            k = get_T_renketu(j, ik);
+            k = getPointLinking(j, ik);
             if (k != i) {
-                if (oc.angle(t[j], t[i], t[j], t[k]) <= kakudo) {
+                if (oc.angle(t[j], t[i], t[j], t[k]) <= angle) {
                     n = k;
-                    kakudo = oc.angle(t[j], t[i], t[j], t[k]);
+                    angle = oc.angle(t[j], t[i], t[j], t[k]);
                 }
             }
         }
@@ -642,30 +638,30 @@ public class PointStore {
     }
     //--------------------------------
 
-    private Face Face_request(int i, int j) {//i番目の点、j番目の点から初めて右側の棒をたどって面を求める
-        Face mtemp = new Face();
-        //mtemp.reset();
-        mtemp.addPointId(i);
-        mtemp.addPointId(j);
+    private Face Face_request(int i, int j) {//Find the surface by following the bar on the right side for the first time from the i-th point and the j-th point.
+        Face tempFace = new Face();
+        //tempFace.reset();
+        tempFace.addPointId(i);
+        tempFace.addPointId(j);
         int nextT = 0;
 
-        nextT = getRTen(mtemp.getPointId(1), mtemp.getPointId(2));
-        while (nextT != mtemp.getPointId(1)) {
+        nextT = getRPoint(tempFace.getPointId(1), tempFace.getPointId(2));
+        while (nextT != tempFace.getPointId(1)) {
             if (nextT == 0) {
-                mtemp.reset();
-                return mtemp;
+                tempFace.reset();
+                return tempFace;
             }//エラー時の対応
-            mtemp.addPointId(nextT);
-            nextT = getRTen(mtemp.getPointId(mtemp.getPointsCount() - 1), mtemp.getPointId(mtemp.getPointsCount()));
+            tempFace.addPointId(nextT);
+            nextT = getRPoint(tempFace.getPointId(tempFace.getPointsCount() - 1), tempFace.getPointId(tempFace.getPointsCount()));
         }
-        mtemp.align();
-        return mtemp;
+        tempFace.align();
+        return tempFace;
     }
 
     //-------------------------------------
-    public void Menhassei() {
+    public void FaceOccurrence() {
         int flag1;
-        Face mtemp = new Face();
+        Face tempFace = new Face();
         facesTotal = 0;
         t_renketu_sakusei();
 
@@ -673,51 +669,46 @@ public class PointStore {
             //System.out.print("面発生　＝　"+i+"    ");System.out.println(Mensuu);
 
             //
-            mtemp = Face_request(b[i].getBegin(), b[i].getEnd());
+            tempFace = Face_request(b[i].getBegin(), b[i].getEnd());
             flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
             for (int j = 1; j <= facesTotal; j++) {
-                if (onaji_ka_hantei(mtemp, m[j]) == 1) {
+                if (onaji_ka_hantei(tempFace, m[j]) == 1) {
                     flag1 = 1;
                     break;
                 }
             }
 
-            if (((flag1 == 0) && (mtemp.getPointsCount() != 0)) &&
-                    (calculateArea(mtemp) > 0.0)) {
-                addFace(mtemp);
+            if (((flag1 == 0) && (tempFace.getPointsCount() != 0)) &&
+                    (calculateArea(tempFace) > 0.0)) {
+                addFace(tempFace);
             }
             //
 
-            mtemp = Face_request(b[i].getEnd(), b[i].getBegin());
+            tempFace = Face_request(b[i].getEnd(), b[i].getBegin());
             flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
             for (int j = 1; j <= facesTotal; j++) {
-                if (onaji_ka_hantei(mtemp, m[j]) == 1) {
+                if (onaji_ka_hantei(tempFace, m[j]) == 1) {
                     flag1 = 1;
                     break;
                 }
             }
 
-            if (((flag1 == 0) && (mtemp.getPointsCount() != 0)) && (calculateArea(mtemp) > 0.0)) {
+            if (((flag1 == 0) && (tempFace.getPointsCount() != 0)) && (calculateArea(tempFace) > 0.0)) {
                 //System.out.println("面発生ループ内　003");
-                addFace(mtemp);
+                addFace(tempFace);
                 //System.out.println("面発生ループ内　004");
             }
-
-            //-----
-            //	if(Mensuu%20==0){
-            //		System.out.print("今までに発生した面数　＝　");System.out.println(Mensuu);
-            //	}
         }
 
         System.out.print("全面数　＝　");
         System.out.println(facesTotal);
-        Men_tonari_sakusei();
+        Face_adjecent_create();
 
         //Bouの両側の面の登録
         for (int ib = 1; ib <= sticksTotal; ib++) {
 
-            Stick_moti_Menid_min[ib] = Stick_moti_Menid_min_sagasi(ib);
-            Stick_moti_Menid_max[ib] = Stick_moti_Menid_max_sagasi(ib);
+            Stick_moti_Menid_min[ib] = Stick_moti_Menid_min_search(ib);
+            Stick_moti_Menid_max[ib] = Stick_moti_Menid_max_search(ib);
         }
     }
 
@@ -801,7 +792,7 @@ public class PointStore {
 
     //--------------
     //棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
-    private int Stick_moti_Menid_min_sagasi(int ib) {
+    private int Stick_moti_Menid_min_search(int ib) {
         for (int im = 1; im <= facesTotal; im++) {
             if (Stick_moti_hantei(im, ib) == 1) {
                 return im;
@@ -811,7 +802,7 @@ public class PointStore {
     }
 
     //棒ibを境界として含む面(最大で2面ある)のうちでMenidの大きいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
-    private int Stick_moti_Menid_max_sagasi(int ib) {
+    private int Stick_moti_Menid_max_search(int ib) {
         for (int im = facesTotal; im >= 1; im--) {
             if (Stick_moti_hantei(im, ib) == 1) {
                 return im;
@@ -880,7 +871,7 @@ public class PointStore {
     }
 
     //------------------------------------------------------
-    private void Men_tonari_sakusei() {
+    private void Face_adjecent_create() {
         System.out.println("面となり作成　開始");
         for (int im = 1; im <= facesTotal - 1; im++) {
             for (int in = im + 1; in <= facesTotal; in++) {
@@ -906,7 +897,7 @@ public class PointStore {
 
                         if (((ima == ina) && (imb == inb)) || ((ima == inb) && (imb == ina))) {
                             int ib;
-                            ib = Bou_sagasi(ima, imb);
+                            ib = Stick_search(ima, imb);
                             Face_adjacent[im][in] = ib;
                             Face_adjacent[in][im] = ib;
                         }
@@ -918,8 +909,8 @@ public class PointStore {
         System.out.println("面となり作成　終了");
     }
 
-    //点t1とt2を含むBouの番号を返す
-    private int Bou_sagasi(int t1, int t2) {
+    //Returns the Stick number containing points t1 and t2
+    private int Stick_search(int t1, int t2) {
         for (int i = 1; i <= sticksTotal; i++) {
             if ((b[i].getBegin() == t1) && (b[i].getEnd() == t2)) {
                 return i;
@@ -931,30 +922,21 @@ public class PointStore {
         return 0;
     }
 
-    //Men[im]とMen[ib]が隣接するならその境界にある棒のid番号を返す。隣接しないなら0を返す
+    // If Face [im] and Face [ib] are adjacent, return the id number of the bar at the boundary. Returns 0 if not adjacent
     public int Face_tonari_hantei(int im, int in) {
-		/*
-		for(int i=1;i<=Bousuu;i++){
-       	        	if(( Bou_moti_hantei( im,i)==1)&&( Bou_moti_hantei( in,i)==1)){return i;}
-		}
-		return 0;
-		*/
         return Face_adjacent[im][in];
     }
 
     //
-    private void addFace(Face mtemp) {
+    private void addFace(Face tempFace) {
         facesTotal = facesTotal + 1;
-//System.out.println("点集合：addMen 1   Mensuu = "+Mensuu+"  Msuu = "+Msuu_temp );
 
         m[facesTotal].reset();
-        //for (int i=0; i<50; i++ ){m[Mensuu].setTenid(i,mtemp.getTenid(i));}
-//System.out.println("点集合：addMen 2   Mensuu = "+  Mensuu    );
-        for (int i = 1; i <= mtemp.getPointsCount(); i++) {
-            m[facesTotal].addPointId(mtemp.getPointId(i));
+        for (int i = 1; i <= tempFace.getPointsCount(); i++) {
+            m[facesTotal].addPointId(tempFace.getPointId(i));
         }
 //System.out.println("点集合：addMen 3   Mensuu = "+  Mensuu );
-        m[facesTotal].setColor(mtemp.getColor());
+        m[facesTotal].setColor(tempFace.getColor());
     }
 
     //与えられた座標と一定の距離より近い近傍にあって、かつ最も近い点の番号を返す。もし、一定の距離以内にTenがないなら0を返す。
@@ -975,8 +957,8 @@ public class PointStore {
     }
 
 
-    //与えられた座標と一定の距離より近い近傍にあって、かつ最も近い点の距離を返す。もし、一定の距離以内にTenがないなら1000000.0を返す。
-    public double mottomo_tikai_Point_distance(Point p, double r) {
+    //Returns the distance of the closest point that is closer than a certain distance to the given coordinates. If there is no Ten within a certain distance, 1000000.0 is returned.
+    public double closest_Point_distance(Point p, double r) {
         int ireturn = 0;
         double rmin = 1000000.0;
         double rtemp;
@@ -1084,7 +1066,7 @@ public class PointStore {
     public void statePointMove(Point ugokasu_maeno_sentaku_point, Point pa, Point pb) {
         Point p_u = new Point();
         p_u.set(ugokasu_maeno_sentaku_point.getX(), ugokasu_maeno_sentaku_point.getY());
-        p_u.move(pa.tano_Point_iti(pb));
+        p_u.move(pa.other_Point_position(pb));
 
         for (int i = 1; i <= pointsTotal; i++) {
             if (t[i].getPointState() == 1) {

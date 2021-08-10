@@ -118,15 +118,15 @@ public class Polygon {
 
             if (kh == 1) {
                 i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(oc.kouten_motome(s0, s));
+                kouten[i_kouten].set(oc.findIntersection(s0, s));
             }
             if (kh == 27) {
                 i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(oc.kouten_motome(s0, s));
+                kouten[i_kouten].set(oc.findIntersection(s0, s));
             }
             if (kh == 28) {
                 i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(oc.kouten_motome(s0, s));
+                kouten[i_kouten].set(oc.findIntersection(s0, s));
             }
             if (kh == 321) {
                 i_kouten = i_kouten + 1;
@@ -212,7 +212,7 @@ public class Polygon {
             }
 
             if (i != nbox.getsousuu()) {
-                i_nai = inside(oc.tyuukanten(kouten[nbox.get_int(i)], kouten[nbox.get_int(i + 1)]));
+                i_nai = inside(oc.midPoint(kouten[nbox.get_int(i)], kouten[nbox.get_int(i + 1)]));
                 if (i_nai == 0) {
                     soto = 1;
                 }
@@ -377,9 +377,9 @@ public class Polygon {
     }
 
 
-    //線分s0の一部でも凸多角形の内部（境界線も内部とみなす）に
-    //存在するとき1、しないなら0を返す
-    public int totu_kyoukai_naibu(LineSegment s0) {//s0の一部でも多角形に触れているなら1を返す。
+    // Even a part of the line segment s0 is inside the convex polygon (the boundary line is also regarded as the inside)
+    // Returns 1 if present, 0 otherwise
+    public int totu_boundary_inside(LineSegment s0) {// Returns 1 if even part of s0 touches a polygon.
         int iflag = 0;//
         int kh = 0; //oc.senbun_kousa_hantei(s0,s)の値の格納用
 
@@ -490,7 +490,7 @@ public class Polygon {
     }
 
     //ある点と多角形の距離（ある点と多角形の境界上の点の距離の最小値）を求める
-    public double kyori_motome(Point tn) {
+    public double distance_find(Point tn) {
         double kyori;
         kyori = oc.distance_lineSegment(tn, t[kakusuu], t[1]);
         for (int i = 1; i <= kakusuu - 1; i++) {
@@ -504,29 +504,29 @@ public class Polygon {
 
 
     //多角形の内部の点を求める
-    public Point naibuTen_motome() {
+    public Point insidePoint_find() {
         Point tn = new Point();
         Point tr = new Point();
-        double kyori;
-        kyori = -10.0;
+        double distance;
+        distance = -10.0;
 
         for (int i = 2; i <= kakusuu - 1; i++) {
-            tn.set(oc.naisin(t[i - 1], t[i], t[i + 1]));
-            if ((kyori < kyori_motome(tn)) && (inside(tn) == 2)) {
-                kyori = kyori_motome(tn);
+            tn.set(oc.center(t[i - 1], t[i], t[i + 1]));
+            if ((distance < distance_find(tn)) && (inside(tn) == 2)) {
+                distance = distance_find(tn);
                 tr.set(tn);
             }
         }
         //
-        tn.set(oc.naisin(t[kakusuu - 1], t[kakusuu], t[1]));
-        if ((kyori < kyori_motome(tn)) && (inside(tn) == 2)) {
-            kyori = kyori_motome(tn);
+        tn.set(oc.center(t[kakusuu - 1], t[kakusuu], t[1]));
+        if ((distance < distance_find(tn)) && (inside(tn) == 2)) {
+            distance = distance_find(tn);
             tr.set(tn);
         }
         //
-        tn.set(oc.naisin(t[kakusuu], t[1], t[2]));
-        if ((kyori < kyori_motome(tn)) && (inside(tn) == 2)) {
-            kyori = kyori_motome(tn);
+        tn.set(oc.center(t[kakusuu], t[1], t[2]));
+        if ((distance < distance_find(tn)) && (inside(tn) == 2)) {
+            distance = distance_find(tn);
             tr.set(tn);
         }
         //
@@ -535,12 +535,7 @@ public class Polygon {
 
     //描画-----------------------------------------------------------------
     public void draw(Graphics g) {
-		/*
-		for (int i=1; i<=kakusuu-1; i++ ){
-			g.drawLine( t[i].getx(),t[i].gety(),t[i+1].getx(),t[i+1].gety()); //直線
-		}
-		g.drawLine( t[kakusuu].getx(),t[kakusuu].gety(),t[1].getx(),t[1].gety()); //直線    
-		*/
+
         int[] x = new int[100];
         int[] y = new int[100];
         for (int i = 1; i <= kakusuu - 1; i++) {
@@ -549,12 +544,7 @@ public class Polygon {
         }
         x[0] = (int) t[kakusuu].getX();
         y[0] = (int) t[kakusuu].getY();
-        //  g.setColor(new Color(red,green,blue));
-        // g.setColor(Color.yellow);
         g.fillPolygon(x, y, kakusuu);
-        // g.setColor(Color.black);
-        //   g.drawString("gomi "+c.valueOf(f[1])+" : "+c.valueOf(f[2])+" : "
-        //                       +c.valueOf(f[3])+" : "+c.valueOf(f[4]),10,80);
     }
 
 

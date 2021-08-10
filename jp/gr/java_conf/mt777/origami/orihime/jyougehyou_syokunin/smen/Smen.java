@@ -16,9 +16,6 @@ public class Smen {//This class folds the development view and estimates the ove
 
     int Permutation_count = 1;
 
-
-    //Annaisyo ann = new Annaisyo();
-
     int[] FaceId2fromTop_counted_position;//面(Menid)の上から数えた位置を表す。
     int[] fromTop_counted_position2FaceId;//上から数えた位置の面を表す。
 
@@ -57,9 +54,7 @@ public class Smen {//This class folds the development view and estimates the ove
             fromTop_counted_position2FaceId[i] = 0;
         }
         if (FIdCount > 0) {
-            //System.out.println("20150309@@@@@@@2222222222222222222@@@@@@@@@" );
             jh = new Overlapping_Permutation_generator(FaceIdCount);
-            //System.out.println("20150309@@@@@@@333333333333333333@@@@@@@@@" );
             Permutation_first();
 
         }
@@ -384,6 +379,7 @@ public class Smen {//This class folds the development view and estimates the ove
     }
 
     //上下表にSmenによって何個の新情報が入るかを返す。
+    //Returns how many new information Smen will put in the top and bottom tables.
     public int sinki_jyouhou_suu(ClassTable jg) {
         int inew = 0;
         for (int i = 1; i <= FaceIdCount; i++) {
@@ -404,45 +400,43 @@ public class Smen {//This class folds the development view and estimates the ove
     }
     //
 
+    // jg [] [] treats the hierarchical relationship between all the faces of the development drawing before folding as one table.
+    // If jg [i] [j] is 1, surface i is above surface j. If it is 0, it is the lower side.
+    // If jg [i] [j] is -50, faces i and j overlap, but the hierarchical relationship is not determined.
+    // If jg [i] [j] is -100, then faces i and j do not overlap.
 
-    //  jg[][]は折る前の展開図のすべての面同士の上下関係を1つの表にまとめたものとして扱う
-    //　jg[i][j]が1なら面iは面jの上側。0なら下側。
-    //  jg[i][j]が-50なら、面iとjは重なが、上下関係は決められていない。
-    //jg[i][j]が-100なら、面iとjは重なるところがない。
-
-
-    public void setAnnaisyo(ClassTable jg) { //重複順列発生機の案内書をSmenで準備してやる。
-        int[] ueMenid = new int[FaceIdCount + 1];
-        int[] ueMenidFlg = new int[FaceIdCount + 1];//ueMenid[]が有効なら1、無効なら0
+    public void setGuideMap(ClassTable jg) { //I will prepare a guidebook for the permutations with repeat generator in Smen.
+        int[] ueFaceId = new int[FaceIdCount + 1];
+        int[] ueFaceIdFlg = new int[FaceIdCount + 1];//1 if ueFaceId [] is enabled, 0 if disabled
 
         for (int iMen = 1; iMen <= FaceIdCount; iMen++) {
-            int ueMenidsuu = 0;//ueMenid[]が、1からいくつまであるかを格納。
+            int ueFaceIdCount = 0;//Stores how many ueFaceId [] are from 1.
 
-            //まず、上にある面のSmenでのid番号をueMenid[]に収集
+            //First, collect the Smen id number of the upper surface in ueFaceId []
             for (int i = 1; i <= FaceIdCount; i++) {
                 if (jg.get(FaceId[i], FaceId[iMen]) == 1) {
-                    ueMenidsuu = ueMenidsuu + 1;
-                    ueMenid[ueMenidsuu] = i;
-                    ueMenidFlg[ueMenidsuu] = 1;
+                    ueFaceIdCount = ueFaceIdCount + 1;
+                    ueFaceId[ueFaceIdCount] = i;
+                    ueFaceIdFlg[ueFaceIdCount] = 1;
                 }
             }
 
-            //無効にするid番号のueMenidFlg[id]を0にする。
-            for (int i = 1; i <= ueMenidsuu - 1; i++) {
-                for (int j = i + 1; j <= ueMenidsuu; j++) {
-                    if (jg.get(FaceId[ueMenid[i]], FaceId[ueMenid[j]]) == 1) {
-                        ueMenidFlg[i] = 0;
+            //Set ueFaceIdFlg [id] of the id number to be invalid to 0.
+            for (int i = 1; i <= ueFaceIdCount - 1; i++) {
+                for (int j = i + 1; j <= ueFaceIdCount; j++) {
+                    if (jg.get(FaceId[ueFaceId[i]], FaceId[ueFaceId[j]]) == 1) {
+                        ueFaceIdFlg[i] = 0;
                     }
-                    if (jg.get(FaceId[ueMenid[j]], FaceId[ueMenid[i]]) == 1) {
-                        ueMenidFlg[j] = 0;
+                    if (jg.get(FaceId[ueFaceId[j]], FaceId[ueFaceId[i]]) == 1) {
+                        ueFaceIdFlg[j] = 0;
                     }
                 }
             }
 
-            //案内書に格納
-            for (int i = 1; i <= ueMenidsuu; i++) {
-                if (ueMenidFlg[i] == 1) {
-                    jh.addGuide(iMen, ueMenid[i]);
+            //Store in guidebook
+            for (int i = 1; i <= ueFaceIdCount; i++) {
+                if (ueFaceIdFlg[i] == 1) {
+                    jh.addGuide(iMen, ueFaceId[i]);
                 }
             }
 
@@ -451,8 +445,8 @@ public class Smen {//This class folds the development view and estimates the ove
     }
 
     //-----------------------------------------------------------
-    //上下表による、このSmenに含まれる面同士のペアの重なり分類が未定の統計をとる
-    public int overlapping_bunryi_mitei(ClassTable jg) {
+    //According to the table above and below, the overlapping classification of pairs of faces included in this Smen is undecided.
+    public int overlapping_classification_pending(ClassTable jg) {
         int iret = 0;
         for (int i = 1; i <= FaceIdCount - 1; i++) {
             for (int j = i + 1; j <= FaceIdCount; j++) {
@@ -465,8 +459,8 @@ public class Smen {//This class folds the development view and estimates the ove
     }
 
     //-----------------------------------------------------------
-    //上下表による、このSmenに含まれる面同士のペアの重なり分類が決定済みの統計をとる
-    public int kasanari_bunryi_ketteizumi(ClassTable jg) {
+    // According to the upper and lower tables, the overlapping classification of the pairs of faces included in this Smen is determined.
+    public int overlapping_classification_determined(ClassTable jg) {
         int iret = 0;
         for (int i = 1; i <= FaceIdCount - 1; i++) {
             for (int j = i + 1; j <= FaceIdCount; j++) {

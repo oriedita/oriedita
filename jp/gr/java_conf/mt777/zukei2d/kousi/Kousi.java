@@ -12,12 +12,6 @@ import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 public class Kousi {
-    //String c=new String();
-    //int kakusuu;             //何角形か
-    //ArrayList TenList = new ArrayList();
-
-    //Ten t[];//頂点
-
     OritaCalc oc = new OritaCalc();          //各種計算用の関数を使うためのクラスのインスタンス化
 
     double d_kousi_haba = 200.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<格子幅(double)
@@ -65,7 +59,6 @@ public class Kousi {
     int kousi_senhaba = 1;//格子の線幅
 
     public Kousi() {  //コンストラクタ
-
 
     }
 
@@ -139,7 +132,6 @@ public class Kousi {
         return d_kousi_haba;
     }
 
-    //public double get_d_kousi_haba(){return d_kousi_haba;}
     public int bunsuu() {
         return kousi_bunkatu_suu;
     }
@@ -151,13 +143,10 @@ public class Kousi {
         d_kousi_kakudo = -dkk;
 
         kousi_keisan();
-
-
     }
 
     // ----------------------------------------
     public void kousi_keisan() {
-
         d_kousi_ax = d_kousi_haba * d_kousi_a_nagasa;
         d_kousi_ay = d_kousi_haba * 0.0;
 
@@ -230,7 +219,7 @@ public class Kousi {
     }
 //------
 
-    public Point get_sisuu(Point t0) {//obj系座標のTenから、格子の指数を得る
+    public Point getIndex(Point t0) {//obj系座標のTenから、格子の指数を得る
         //行列 [d_kousi_ax, d_kousi_bx]によって[1]は格子ベクトルaに変換され、[1]は格子ベクトルbに変換される。
         //     [d_kousi_ay, d_kousi_by]        [0]　　　　　　　 　　　　　　[0]
         //この逆行列によってobj系座標のTenは格子の指数に変換される。
@@ -252,248 +241,248 @@ public class Kousi {
         double kx = t0.getX() - okx0;
         double ky = t0.getY() - oky0;
 
-        double sisuu_x = gax * kx + gbx * ky;
-        double sisuu_y = gay * kx + gby * ky;
+        double index_x = gax * kx + gbx * ky;
+        double index_y = gay * kx + gby * ky;
 
-        return new Point(sisuu_x, sisuu_y);
+        return new Point(index_x, index_y);
 
     }
 
     // ----------------------------
-    public int get_a_sisuu_min(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より小さい整数の指数を得る。
-        Point p_a_sisuu = new Point();
-        p_a_sisuu.set(get_sisuu(p_a));//p_aの格子系の指数
-        Point p_b_sisuu = new Point();
-        p_b_sisuu.set(get_sisuu(p_b));//p_bの格子系の指数
-        Point p_c_sisuu = new Point();
-        p_c_sisuu.set(get_sisuu(p_c));//p_cの格子系の指数
-        Point p_d_sisuu = new Point();
-        p_d_sisuu.set(get_sisuu(p_d));//p_dの格子系の指数
+    public int get_a_index_min(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より小さい整数の指数を得る。
+        Point p_a_index = new Point();
+        p_a_index.set(getIndex(p_a));//p_aの格子系の指数
+        Point p_b_index = new Point();
+        p_b_index.set(getIndex(p_b));//p_bの格子系の指数
+        Point p_c_index = new Point();
+        p_c_index.set(getIndex(p_c));//p_cの格子系の指数
+        Point p_d_index = new Point();
+        p_d_index.set(getIndex(p_d));//p_dの格子系の指数
 
-        double a_sisuu_max = p_a_sisuu.getX();
-        if (p_b_sisuu.getX() > a_sisuu_max) {
-            a_sisuu_max = p_b_sisuu.getX();
+        double a_index_max = p_a_index.getX();
+        if (p_b_index.getX() > a_index_max) {
+            a_index_max = p_b_index.getX();
         }
-        if (p_c_sisuu.getX() > a_sisuu_max) {
-            a_sisuu_max = p_c_sisuu.getX();
+        if (p_c_index.getX() > a_index_max) {
+            a_index_max = p_c_index.getX();
         }
-        if (p_d_sisuu.getX() > a_sisuu_max) {
-            a_sisuu_max = p_d_sisuu.getX();
+        if (p_d_index.getX() > a_index_max) {
+            a_index_max = p_d_index.getX();
         }
-        int kousi_a_max = (int) Math.ceil(a_sisuu_max);
-        double a_sisuu_min = p_a_sisuu.getX();
-        if (p_b_sisuu.getX() < a_sisuu_min) {
-            a_sisuu_min = p_b_sisuu.getX();
+        int kousi_a_max = (int) Math.ceil(a_index_max);
+        double a_index_min = p_a_index.getX();
+        if (p_b_index.getX() < a_index_min) {
+            a_index_min = p_b_index.getX();
         }
-        if (p_c_sisuu.getX() < a_sisuu_min) {
-            a_sisuu_min = p_c_sisuu.getX();
+        if (p_c_index.getX() < a_index_min) {
+            a_index_min = p_c_index.getX();
         }
-        if (p_d_sisuu.getX() < a_sisuu_min) {
-            a_sisuu_min = p_d_sisuu.getX();
+        if (p_d_index.getX() < a_index_min) {
+            a_index_min = p_d_index.getX();
         }
-        int kousi_a_min = (int) Math.floor(a_sisuu_min);
-        double b_sisuu_max = p_a_sisuu.getY();
-        if (p_b_sisuu.getY() > b_sisuu_max) {
-            b_sisuu_max = p_b_sisuu.getY();
+        int kousi_a_min = (int) Math.floor(a_index_min);
+        double b_index_max = p_a_index.getY();
+        if (p_b_index.getY() > b_index_max) {
+            b_index_max = p_b_index.getY();
         }
-        if (p_c_sisuu.getY() > b_sisuu_max) {
-            b_sisuu_max = p_c_sisuu.getY();
+        if (p_c_index.getY() > b_index_max) {
+            b_index_max = p_c_index.getY();
         }
-        if (p_d_sisuu.getY() > b_sisuu_max) {
-            b_sisuu_max = p_d_sisuu.getY();
+        if (p_d_index.getY() > b_index_max) {
+            b_index_max = p_d_index.getY();
         }
-        int kousi_b_max = (int) Math.ceil(b_sisuu_max);
-        double b_sisuu_min = p_a_sisuu.getY();
-        if (p_b_sisuu.getY() < b_sisuu_min) {
-            b_sisuu_min = p_b_sisuu.getY();
+        int kousi_b_max = (int) Math.ceil(b_index_max);
+        double b_index_min = p_a_index.getY();
+        if (p_b_index.getY() < b_index_min) {
+            b_index_min = p_b_index.getY();
         }
-        if (p_c_sisuu.getY() < b_sisuu_min) {
-            b_sisuu_min = p_c_sisuu.getY();
+        if (p_c_index.getY() < b_index_min) {
+            b_index_min = p_c_index.getY();
         }
-        if (p_d_sisuu.getY() < b_sisuu_min) {
-            b_sisuu_min = p_d_sisuu.getY();
+        if (p_d_index.getY() < b_index_min) {
+            b_index_min = p_d_index.getY();
         }
-        int kousi_b_min = (int) Math.floor(b_sisuu_min);
+        int kousi_b_min = (int) Math.floor(b_index_min);
 
         //AAAAAAAAAAAAAAAAAAA
         return kousi_a_min;
     }
 
     // ----------------------------
-    public int get_a_sisuu_max(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より大きい整数の指数を得る。
-        Point p_a_sisuu = new Point();
-        p_a_sisuu.set(get_sisuu(p_a));//p_aの格子系の指数
-        Point p_b_sisuu = new Point();
-        p_b_sisuu.set(get_sisuu(p_b));//p_bの格子系の指数
-        Point p_c_sisuu = new Point();
-        p_c_sisuu.set(get_sisuu(p_c));//p_cの格子系の指数
-        Point p_d_sisuu = new Point();
-        p_d_sisuu.set(get_sisuu(p_d));//p_dの格子系の指数
+    public int get_a_index_max(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より大きい整数の指数を得る。
+        Point p_a_index = new Point();
+        p_a_index.set(getIndex(p_a));//p_aの格子系の指数
+        Point p_b_index = new Point();
+        p_b_index.set(getIndex(p_b));//p_bの格子系の指数
+        Point p_c_index = new Point();
+        p_c_index.set(getIndex(p_c));//p_cの格子系の指数
+        Point p_d_index = new Point();
+        p_d_index.set(getIndex(p_d));//p_dの格子系の指数
 
-        double a_sisuu_max = p_a_sisuu.getX();
-        if (p_b_sisuu.getX() > a_sisuu_max) {
-            a_sisuu_max = p_b_sisuu.getX();
+        double a_index_max = p_a_index.getX();
+        if (p_b_index.getX() > a_index_max) {
+            a_index_max = p_b_index.getX();
         }
-        if (p_c_sisuu.getX() > a_sisuu_max) {
-            a_sisuu_max = p_c_sisuu.getX();
+        if (p_c_index.getX() > a_index_max) {
+            a_index_max = p_c_index.getX();
         }
-        if (p_d_sisuu.getX() > a_sisuu_max) {
-            a_sisuu_max = p_d_sisuu.getX();
+        if (p_d_index.getX() > a_index_max) {
+            a_index_max = p_d_index.getX();
         }
-        int kousi_a_max = (int) Math.ceil(a_sisuu_max);
-        double a_sisuu_min = p_a_sisuu.getX();
-        if (p_b_sisuu.getX() < a_sisuu_min) {
-            a_sisuu_min = p_b_sisuu.getX();
+        int kousi_a_max = (int) Math.ceil(a_index_max);
+        double a_index_min = p_a_index.getX();
+        if (p_b_index.getX() < a_index_min) {
+            a_index_min = p_b_index.getX();
         }
-        if (p_c_sisuu.getX() < a_sisuu_min) {
-            a_sisuu_min = p_c_sisuu.getX();
+        if (p_c_index.getX() < a_index_min) {
+            a_index_min = p_c_index.getX();
         }
-        if (p_d_sisuu.getX() < a_sisuu_min) {
-            a_sisuu_min = p_d_sisuu.getX();
+        if (p_d_index.getX() < a_index_min) {
+            a_index_min = p_d_index.getX();
         }
-        int kousi_a_min = (int) Math.floor(a_sisuu_min);
-        double b_sisuu_max = p_a_sisuu.getY();
-        if (p_b_sisuu.getY() > b_sisuu_max) {
-            b_sisuu_max = p_b_sisuu.getY();
+        int kousi_a_min = (int) Math.floor(a_index_min);
+        double b_index_max = p_a_index.getY();
+        if (p_b_index.getY() > b_index_max) {
+            b_index_max = p_b_index.getY();
         }
-        if (p_c_sisuu.getY() > b_sisuu_max) {
-            b_sisuu_max = p_c_sisuu.getY();
+        if (p_c_index.getY() > b_index_max) {
+            b_index_max = p_c_index.getY();
         }
-        if (p_d_sisuu.getY() > b_sisuu_max) {
-            b_sisuu_max = p_d_sisuu.getY();
+        if (p_d_index.getY() > b_index_max) {
+            b_index_max = p_d_index.getY();
         }
-        int kousi_b_max = (int) Math.ceil(b_sisuu_max);
-        double b_sisuu_min = p_a_sisuu.getY();
-        if (p_b_sisuu.getY() < b_sisuu_min) {
-            b_sisuu_min = p_b_sisuu.getY();
+        int kousi_b_max = (int) Math.ceil(b_index_max);
+        double b_index_min = p_a_index.getY();
+        if (p_b_index.getY() < b_index_min) {
+            b_index_min = p_b_index.getY();
         }
-        if (p_c_sisuu.getY() < b_sisuu_min) {
-            b_sisuu_min = p_c_sisuu.getY();
+        if (p_c_index.getY() < b_index_min) {
+            b_index_min = p_c_index.getY();
         }
-        if (p_d_sisuu.getY() < b_sisuu_min) {
-            b_sisuu_min = p_d_sisuu.getY();
+        if (p_d_index.getY() < b_index_min) {
+            b_index_min = p_d_index.getY();
         }
-        int kousi_b_min = (int) Math.floor(b_sisuu_min);
+        int kousi_b_min = (int) Math.floor(b_index_min);
 
         //AAAAAAAAAAAAAAAAAAA
         return kousi_a_max;
     }
 
     // ----------------------------
-    public int get_b_sisuu_min(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のbベクトルの指数より小さい整数の指数を得る。
-        Point p_a_sisuu = new Point();
-        p_a_sisuu.set(get_sisuu(p_a));//p_aの格子系の指数
-        Point p_b_sisuu = new Point();
-        p_b_sisuu.set(get_sisuu(p_b));//p_bの格子系の指数
-        Point p_c_sisuu = new Point();
-        p_c_sisuu.set(get_sisuu(p_c));//p_cの格子系の指数
-        Point p_d_sisuu = new Point();
-        p_d_sisuu.set(get_sisuu(p_d));//p_dの格子系の指数
+    public int get_b_index_min(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のbベクトルの指数より小さい整数の指数を得る。
+        Point p_a_index = new Point();
+        p_a_index.set(getIndex(p_a));//p_aの格子系の指数
+        Point p_b_index = new Point();
+        p_b_index.set(getIndex(p_b));//p_bの格子系の指数
+        Point p_c_index = new Point();
+        p_c_index.set(getIndex(p_c));//p_cの格子系の指数
+        Point p_d_index = new Point();
+        p_d_index.set(getIndex(p_d));//p_dの格子系の指数
 
-        double a_sisuu_max = p_a_sisuu.getX();
-        if (p_b_sisuu.getX() > a_sisuu_max) {
-            a_sisuu_max = p_b_sisuu.getX();
+        double a_index_max = p_a_index.getX();
+        if (p_b_index.getX() > a_index_max) {
+            a_index_max = p_b_index.getX();
         }
-        if (p_c_sisuu.getX() > a_sisuu_max) {
-            a_sisuu_max = p_c_sisuu.getX();
+        if (p_c_index.getX() > a_index_max) {
+            a_index_max = p_c_index.getX();
         }
-        if (p_d_sisuu.getX() > a_sisuu_max) {
-            a_sisuu_max = p_d_sisuu.getX();
+        if (p_d_index.getX() > a_index_max) {
+            a_index_max = p_d_index.getX();
         }
-        int kousi_a_max = (int) Math.ceil(a_sisuu_max);
-        double a_sisuu_min = p_a_sisuu.getX();
-        if (p_b_sisuu.getX() < a_sisuu_min) {
-            a_sisuu_min = p_b_sisuu.getX();
+        int kousi_a_max = (int) Math.ceil(a_index_max);
+        double a_index_min = p_a_index.getX();
+        if (p_b_index.getX() < a_index_min) {
+            a_index_min = p_b_index.getX();
         }
-        if (p_c_sisuu.getX() < a_sisuu_min) {
-            a_sisuu_min = p_c_sisuu.getX();
+        if (p_c_index.getX() < a_index_min) {
+            a_index_min = p_c_index.getX();
         }
-        if (p_d_sisuu.getX() < a_sisuu_min) {
-            a_sisuu_min = p_d_sisuu.getX();
+        if (p_d_index.getX() < a_index_min) {
+            a_index_min = p_d_index.getX();
         }
-        int kousi_a_min = (int) Math.floor(a_sisuu_min);
-        double b_sisuu_max = p_a_sisuu.getY();
-        if (p_b_sisuu.getY() > b_sisuu_max) {
-            b_sisuu_max = p_b_sisuu.getY();
+        int kousi_a_min = (int) Math.floor(a_index_min);
+        double b_index_max = p_a_index.getY();
+        if (p_b_index.getY() > b_index_max) {
+            b_index_max = p_b_index.getY();
         }
-        if (p_c_sisuu.getY() > b_sisuu_max) {
-            b_sisuu_max = p_c_sisuu.getY();
+        if (p_c_index.getY() > b_index_max) {
+            b_index_max = p_c_index.getY();
         }
-        if (p_d_sisuu.getY() > b_sisuu_max) {
-            b_sisuu_max = p_d_sisuu.getY();
+        if (p_d_index.getY() > b_index_max) {
+            b_index_max = p_d_index.getY();
         }
-        int kousi_b_max = (int) Math.ceil(b_sisuu_max);
-        double b_sisuu_min = p_a_sisuu.getY();
-        if (p_b_sisuu.getY() < b_sisuu_min) {
-            b_sisuu_min = p_b_sisuu.getY();
+        int kousi_b_max = (int) Math.ceil(b_index_max);
+        double b_index_min = p_a_index.getY();
+        if (p_b_index.getY() < b_index_min) {
+            b_index_min = p_b_index.getY();
         }
-        if (p_c_sisuu.getY() < b_sisuu_min) {
-            b_sisuu_min = p_c_sisuu.getY();
+        if (p_c_index.getY() < b_index_min) {
+            b_index_min = p_c_index.getY();
         }
-        if (p_d_sisuu.getY() < b_sisuu_min) {
-            b_sisuu_min = p_d_sisuu.getY();
+        if (p_d_index.getY() < b_index_min) {
+            b_index_min = p_d_index.getY();
         }
-        int kousi_b_min = (int) Math.floor(b_sisuu_min);
+        int kousi_b_min = (int) Math.floor(b_index_min);
 
         //AAAAAAAAAAAAAAAAAAA
         return kousi_b_min;
     }
 
     // ----------------------------
-    public int get_b_sisuu_max(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のbベクトルの指数より大きい整数の指数を得る。
-        Point p_a_sisuu = new Point();
-        p_a_sisuu.set(get_sisuu(p_a));//p_aの格子系の指数
-        Point p_b_sisuu = new Point();
-        p_b_sisuu.set(get_sisuu(p_b));//p_bの格子系の指数
-        Point p_c_sisuu = new Point();
-        p_c_sisuu.set(get_sisuu(p_c));//p_cの格子系の指数
-        Point p_d_sisuu = new Point();
-        p_d_sisuu.set(get_sisuu(p_d));//p_dの格子系の指数
+    public int get_b_index_max(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のbベクトルの指数より大きい整数の指数を得る。
+        Point p_a_index = new Point();
+        p_a_index.set(getIndex(p_a));//p_aの格子系の指数
+        Point p_b_index = new Point();
+        p_b_index.set(getIndex(p_b));//p_bの格子系の指数
+        Point p_c_index = new Point();
+        p_c_index.set(getIndex(p_c));//p_cの格子系の指数
+        Point p_d_index = new Point();
+        p_d_index.set(getIndex(p_d));//p_dの格子系の指数
 
-        double a_sisuu_max = p_a_sisuu.getX();
-        if (p_b_sisuu.getX() > a_sisuu_max) {
-            a_sisuu_max = p_b_sisuu.getX();
+        double a_index_max = p_a_index.getX();
+        if (p_b_index.getX() > a_index_max) {
+            a_index_max = p_b_index.getX();
         }
-        if (p_c_sisuu.getX() > a_sisuu_max) {
-            a_sisuu_max = p_c_sisuu.getX();
+        if (p_c_index.getX() > a_index_max) {
+            a_index_max = p_c_index.getX();
         }
-        if (p_d_sisuu.getX() > a_sisuu_max) {
-            a_sisuu_max = p_d_sisuu.getX();
+        if (p_d_index.getX() > a_index_max) {
+            a_index_max = p_d_index.getX();
         }
-        int kousi_a_max = (int) Math.ceil(a_sisuu_max);
-        double a_sisuu_min = p_a_sisuu.getX();
-        if (p_b_sisuu.getX() < a_sisuu_min) {
-            a_sisuu_min = p_b_sisuu.getX();
+        int kousi_a_max = (int) Math.ceil(a_index_max);
+        double a_index_min = p_a_index.getX();
+        if (p_b_index.getX() < a_index_min) {
+            a_index_min = p_b_index.getX();
         }
-        if (p_c_sisuu.getX() < a_sisuu_min) {
-            a_sisuu_min = p_c_sisuu.getX();
+        if (p_c_index.getX() < a_index_min) {
+            a_index_min = p_c_index.getX();
         }
-        if (p_d_sisuu.getX() < a_sisuu_min) {
-            a_sisuu_min = p_d_sisuu.getX();
+        if (p_d_index.getX() < a_index_min) {
+            a_index_min = p_d_index.getX();
         }
-        int kousi_a_min = (int) Math.floor(a_sisuu_min);
-        double b_sisuu_max = p_a_sisuu.getY();
-        if (p_b_sisuu.getY() > b_sisuu_max) {
-            b_sisuu_max = p_b_sisuu.getY();
+        int kousi_a_min = (int) Math.floor(a_index_min);
+        double b_index_max = p_a_index.getY();
+        if (p_b_index.getY() > b_index_max) {
+            b_index_max = p_b_index.getY();
         }
-        if (p_c_sisuu.getY() > b_sisuu_max) {
-            b_sisuu_max = p_c_sisuu.getY();
+        if (p_c_index.getY() > b_index_max) {
+            b_index_max = p_c_index.getY();
         }
-        if (p_d_sisuu.getY() > b_sisuu_max) {
-            b_sisuu_max = p_d_sisuu.getY();
+        if (p_d_index.getY() > b_index_max) {
+            b_index_max = p_d_index.getY();
         }
-        int kousi_b_max = (int) Math.ceil(b_sisuu_max);
-        double b_sisuu_min = p_a_sisuu.getY();
-        if (p_b_sisuu.getY() < b_sisuu_min) {
-            b_sisuu_min = p_b_sisuu.getY();
+        int kousi_b_max = (int) Math.ceil(b_index_max);
+        double b_index_min = p_a_index.getY();
+        if (p_b_index.getY() < b_index_min) {
+            b_index_min = p_b_index.getY();
         }
-        if (p_c_sisuu.getY() < b_sisuu_min) {
-            b_sisuu_min = p_c_sisuu.getY();
+        if (p_c_index.getY() < b_index_min) {
+            b_index_min = p_c_index.getY();
         }
-        if (p_d_sisuu.getY() < b_sisuu_min) {
-            b_sisuu_min = p_d_sisuu.getY();
+        if (p_d_index.getY() < b_index_min) {
+            b_index_min = p_d_index.getY();
         }
-        int kousi_b_min = (int) Math.floor(b_sisuu_min);
+        int kousi_b_min = (int) Math.floor(b_index_min);
 
         //AAAAAAAAAAAAAAAAAAA
         return kousi_b_max;
@@ -518,7 +507,7 @@ public class Kousi {
 
 
     //描画-----------------------------------------------------------------
-    public void oekaki(Graphics g, Camera camera, int p0x_max, int p0y_max, int i_irokae) {    //i_irokae=1なら一定数ごとに格子線の色を変える
+    public void draw(Graphics g, Camera camera, int p0x_max, int p0y_max, int i_irokae) {    //i_irokae=1なら一定数ごとに格子線の色を変える
         //入力規定が1か2（正方格子）の場合の格子線の描画
         Graphics2D g2 = (Graphics2D) g;
 
@@ -553,10 +542,10 @@ public class Kousi {
             p_d.set(camera.TV2object(p0_d));//画面の右上カドのobj系座標
 
 
-            int kousi_gamen_a_max = get_a_sisuu_max(p_a, p_b, p_c, p_d);
-            int kousi_gamen_a_min = get_a_sisuu_min(p_a, p_b, p_c, p_d);
-            int kousi_gamen_b_max = get_b_sisuu_max(p_a, p_b, p_c, p_d);
-            int kousi_gamen_b_min = get_b_sisuu_min(p_a, p_b, p_c, p_d);
+            int kousi_gamen_a_max = get_a_index_max(p_a, p_b, p_c, p_d);
+            int kousi_gamen_a_min = get_a_index_min(p_a, p_b, p_c, p_d);
+            int kousi_gamen_b_max = get_b_index_max(p_a, p_b, p_c, p_d);
+            int kousi_gamen_b_min = get_b_index_min(p_a, p_b, p_c, p_d);
 
             //-------------------------------------
             if (jyoutai() == 1) {
@@ -788,10 +777,10 @@ if(p_d.gety()<p_y_min){p_y_min=p_d.gety();}if(p_y_min>-200.0-1.0){p_y_min=-200.0
                 Point t_3 = new Point(t0.getX() + taikakusen_max, t0.getY() + taikakusen_max);
                 Point t_4 = new Point(t0.getX() + taikakusen_max, t0.getY() - taikakusen_max);
 
-                int kousi_a_max = get_a_sisuu_max(t_1, t_2, t_3, t_4);
-                int kousi_a_min = get_a_sisuu_min(t_1, t_2, t_3, t_4);
-                int kousi_b_max = get_b_sisuu_max(t_1, t_2, t_3, t_4);
-                int kousi_b_min = get_b_sisuu_min(t_1, t_2, t_3, t_4);
+                int kousi_a_max = get_a_index_max(t_1, t_2, t_3, t_4);
+                int kousi_a_min = get_a_index_min(t_1, t_2, t_3, t_4);
+                int kousi_b_max = get_b_index_max(t_1, t_2, t_3, t_4);
+                int kousi_b_min = get_b_index_min(t_1, t_2, t_3, t_4);
 
 
                 double kyori_min = taikakusen_max;
@@ -819,10 +808,10 @@ if(p_d.gety()<p_y_min){p_y_min=p_d.gety();}if(p_y_min>-200.0-1.0){p_y_min=-200.0
                 Point t_3 = new Point(t0.getX() + taikakusen_max, t0.getY() + taikakusen_max);
                 Point t_4 = new Point(t0.getX() + taikakusen_max, t0.getY() - taikakusen_max);
 
-                int kousi_a_max = get_a_sisuu_max(t_1, t_2, t_3, t_4);
-                int kousi_a_min = get_a_sisuu_min(t_1, t_2, t_3, t_4);
-                int kousi_b_max = get_b_sisuu_max(t_1, t_2, t_3, t_4);
-                int kousi_b_min = get_b_sisuu_min(t_1, t_2, t_3, t_4);
+                int kousi_a_max = get_a_index_max(t_1, t_2, t_3, t_4);
+                int kousi_a_min = get_a_index_min(t_1, t_2, t_3, t_4);
+                int kousi_b_max = get_b_index_max(t_1, t_2, t_3, t_4);
+                int kousi_b_min = get_b_index_min(t_1, t_2, t_3, t_4);
 
 
                 double kyori_min = taikakusen_max;

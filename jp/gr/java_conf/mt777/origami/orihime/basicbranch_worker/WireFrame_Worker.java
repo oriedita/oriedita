@@ -16,7 +16,7 @@ import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
-public class BasicBranch_Worker {
+public class WireFrame_Worker {
     OritaCalc oc = new OritaCalc(); //各種計算用の関数を使うためのクラスのインスタンス化
     double r = 3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
     int icol;//線分の色
@@ -30,7 +30,7 @@ public class BasicBranch_Worker {
 
     int i_saigo_no_senbun_no_maru_kaku = 1;    //1描く、0描かない
 
-    LineStore k = new LineStore();    //基本枝構造のインスタンス化
+    WireFrame k = new WireFrame();    //Instantiation of basic branch structure
     // Senbunsyuugou k ;    //基本枝構造
     Polygon gomibako = new Polygon(4);    //ゴミ箱のインスタンス化
     Polygon tyuuoutai = new Polygon(4);    //中央帯のインスタンス化
@@ -59,7 +59,7 @@ public class BasicBranch_Worker {
 
     //---------------------------------
     // Kihonshi_Syokunin(  Senbunsyuugou k0,double r0 ){  //コンストラクタ
-    public BasicBranch_Worker(double r0) {  //コンストラクタ
+    public WireFrame_Worker(double r0) {  //コンストラクタ
         r = r0;
         ugokasi_mode = 0;
         ieda = 0;
@@ -102,14 +102,13 @@ public class BasicBranch_Worker {
         //camera.set_camera_id(cam0.get_camera_id());
         camera.set_camera_kagami(cam0.get_camera_kagami());
 
-
-        camera.set_camera_ichi_x(cam0.get_camera_ichi_x());
-        camera.set_camera_ichi_y(cam0.get_camera_ichi_y());
-        camera.set_camera_bairitsu_x(cam0.get_camera_bairitsu_x());
-        camera.set_camera_bairitsu_y(cam0.get_camera_bairitsu_y());
-        camera.set_camera_kakudo(cam0.get_camera_kakudo());
-        camera.set_hyouji_ichi_x(cam0.get_hyouji_ichi_x());
-        camera.set_hyouji_ichi_y(cam0.get_hyouji_ichi_y());
+        camera.setCameraPositionX(cam0.getCameraPositionX());
+        camera.setCameraPositionY(cam0.getCameraPositionY());
+        camera.setCameraZoomX(cam0.getCameraZoomX());
+        camera.setCameraZoomY(cam0.getCameraZoomY());
+        camera.setCameraAngle(cam0.getCameraAngle());
+        camera.setDisplayPositionX(cam0.getDisplayPositionX());
+        camera.setDisplayPositionY(cam0.getDisplayPositionY());
     }
 
     //-----------------------------
@@ -123,12 +122,12 @@ public class BasicBranch_Worker {
     }
 
     //--------------------------------------------
-    public void set(LineStore ss) {
+    public void set(WireFrame ss) {
         k.set(ss);
     }
 
     //----------------------------------------------
-    public LineStore get() {
+    public WireFrame get() {
         return k;
     }
 
@@ -267,8 +266,8 @@ public class BasicBranch_Worker {
 
         //　アクティブな枝のa点　と　別の枝　との距離が　ｒ　より近い場合
 
-        jeda = k.senbun_sagasi(k.getA(ieda), 2 * r, ieda);//アクティブな枝のa点と近い別の枝を求める。
-        jbasyo = k.senbun_busyo_sagasi(jeda, k.getA(ieda), 2 * r);//別の枝のどの部所が近いかを求める。
+        jeda = k.lineSegment_search(k.getA(ieda), 2 * r, ieda);//アクティブな枝のa点と近い別の枝を求める。
+        jbasyo = k.lineSegment_position_search(jeda, k.getA(ieda), 2 * r);//別の枝のどの部所が近いかを求める。
         if ((jeda != 0) && (jbasyo == 1)) { //アクティブな枝のa点と、別の枝のa点が近い場合
             k.seta(ieda, k.getA(jeda));
             k.setb(ieda, new Point(1, k.getA(ieda), 1, ab));//こう書いてもちゃんと動く様なので、このまま使う。
@@ -279,8 +278,8 @@ public class BasicBranch_Worker {
         }
 
         //　アクティブな枝のb点　と　別の枝　との距離が　ｒ　より近い場合
-        jeda = k.senbun_sagasi(k.getB(ieda), 2 * r, ieda);//アクティブな枝のb点と近い別の枝を求める。
-        jbasyo = k.senbun_busyo_sagasi(jeda, k.getB(ieda), 2 * r);//別の枝のどの部所が近いかを求める。
+        jeda = k.lineSegment_search(k.getB(ieda), 2 * r, ieda);//アクティブな枝のb点と近い別の枝を求める。
+        jbasyo = k.lineSegment_position_search(jeda, k.getB(ieda), 2 * r);//別の枝のどの部所が近いかを求める。
         if ((jeda != 0) && (jbasyo == 1)) { //アクティブな枝のb点と、別の枝のa点が近い場合
             k.setb(ieda, k.getA(jeda));
             k.seta(ieda, new Point(1, k.getB(ieda), 1, ba));
@@ -300,8 +299,8 @@ public class BasicBranch_Worker {
         int jbasyo; //アクティブな枝と近い別の枝のどこが近いのかを示すための番号
         if (k.getnagasa(ieda) >= r) {
             //　アクティブな枝のa点　と　別の枝との距離が　ｒ　より近い場合
-            jeda = k.senbun_sagasi(k.getA(ieda), r, ieda);//アクティブな枝のa点と近い別の枝を求める。
-            jbasyo = k.senbun_busyo_sagasi(jeda, k.getA(ieda), r);//別の枝のどの部所が近いかを求める。
+            jeda = k.lineSegment_search(k.getA(ieda), r, ieda);//アクティブな枝のa点と近い別の枝を求める。
+            jbasyo = k.lineSegment_position_search(jeda, k.getA(ieda), r);//別の枝のどの部所が近いかを求める。
             if ((jeda != 0) && (jbasyo == 1)) {
                 k.seta(ieda, k.getA(jeda));
             }//アクティブな枝のa点と、別の枝のa点が近い場合
@@ -310,8 +309,8 @@ public class BasicBranch_Worker {
             }//アクティブな枝のa点と、別の枝のb点が近い場合
 
             //　アクティブな枝(ieda)のb点　と　別の枝(jeda)との距離が　ｒ　より近い場合
-            jeda = k.senbun_sagasi(k.getB(ieda), r, ieda);//アクティブな枝のb点と近い別の枝を求める。
-            jbasyo = k.senbun_busyo_sagasi(jeda, k.getB(ieda), r);//別の枝のどの部所が近いかを求める。
+            jeda = k.lineSegment_search(k.getB(ieda), r, ieda);//アクティブな枝のb点と近い別の枝を求める。
+            jbasyo = k.lineSegment_position_search(jeda, k.getB(ieda), r);//別の枝のどの部所が近いかを求める。
             if ((jeda != 0) && (jbasyo == 1)) {
                 k.setb(ieda, k.getA(jeda));
             }//アクティブな枝のb点と、別の枝のa点が近い場合
@@ -324,8 +323,8 @@ public class BasicBranch_Worker {
 
 
             //　アクティブな枝のa点　と　別の枝との距離が　ｒ　より近い場合
-            jeda = k.senbun_sagasi(k.getA(ieda), r, -10);//アクティブなieda枝のa点と近い別の枝を求める。
-            jbasyo = k.senbun_busyo_sagasi(jeda, k.getA(ieda), r);//別の枝のどの部所が近いかを求める。
+            jeda = k.lineSegment_search(k.getA(ieda), r, -10);//アクティブなieda枝のa点と近い別の枝を求める。
+            jbasyo = k.lineSegment_position_search(jeda, k.getA(ieda), r);//別の枝のどの部所が近いかを求める。
 
             if ((jeda != 0) && (jbasyo == 1)) {
                 k.kasseika(k.getA(jeda), r);
@@ -337,8 +336,8 @@ public class BasicBranch_Worker {
             }//アクティブなieda枝のa点と、別の枝のb点が近い場合
 
             //　アクティブな枝(ieda)のb点　と　別の枝(jeda)との距離が　ｒ　より近い場合
-            jeda = k.senbun_sagasi(k.getB(ieda), r, -10);//アクティブなieda枝のb点と近い別の枝を求める。
-            jbasyo = k.senbun_busyo_sagasi(jeda, k.getB(ieda), r);//別の枝のどの部所が近いかを求める。
+            jeda = k.lineSegment_search(k.getB(ieda), r, -10);//アクティブなieda枝のb点と近い別の枝を求める。
+            jbasyo = k.lineSegment_position_search(jeda, k.getB(ieda), r);//別の枝のどの部所が近いかを求める。
 
             if ((jeda != 0) && (jbasyo == 1)) {
                 k.kasseika(k.getA(jeda), r);
@@ -361,7 +360,7 @@ public class BasicBranch_Worker {
     }//kとは線分集合のこと、Senbunsyuugou k =new Senbunsyuugou();
 
     public void kousabunkatu() {
-        k.kousabunkatu();
+        k.intersect_divide();
     }
 
     public void ten_sakujyo() {
@@ -580,7 +579,7 @@ public class BasicBranch_Worker {
         LineSegment s_tv = new LineSegment();
         Point a = new Point();
         Point b = new Point();
-        int ir = (int) (r * camera.get_camera_bairitsu_x());
+        int ir = (int) (r * camera.getCameraZoomX());
 
         //格子線の描画
         LineSegment s_ob = new LineSegment();
@@ -776,7 +775,7 @@ public class BasicBranch_Worker {
         if (nyuuryoku_houhou <= 1) {
 
             if (nyuuryoku_houhou == 1) {
-                int mtsid = k.mottomo_tikai_senbun_sagasi(p);
+                int mtsid = k.mottomo_tikai_lineSegment_Search(p);
                 k.addLine(k.getB(mtsid), p);
 
                 k.set(mtsid, k.getA(mtsid), p, k.getColor(mtsid), 0);
@@ -789,7 +788,7 @@ public class BasicBranch_Worker {
             }
 
             //マウスと近い位置にある枝を探す。
-            ieda = k.senbun_sagasi(p, r, 0);
+            ieda = k.lineSegment_search(p, r, 0);
             //基本枝構造の中の、どの枝とも遠い場合。
             if (ieda == 0) {
                 k.addLine(p, p);
@@ -801,13 +800,13 @@ public class BasicBranch_Worker {
             }
             //基本枝構造の中の、どれかの枝に近い場合。
             else {
-                if (1 == k.senbun_busyo_sagasi(ieda, p, r)) {
+                if (1 == k.lineSegment_position_search(ieda, p, r)) {
                     ugokasi_mode = 1;
                 } //a点に近い場合。
-                if (2 == k.senbun_busyo_sagasi(ieda, p, r)) {
+                if (2 == k.lineSegment_position_search(ieda, p, r)) {
                     ugokasi_mode = 2;
                 } //b点に近い場合。
-                if (3 == k.senbun_busyo_sagasi(ieda, p, r)) {                 //柄の部分に近い場合。
+                if (3 == k.lineSegment_position_search(ieda, p, r)) {                 //柄の部分に近い場合。
                     pa.set(1, k.getA(ieda), -1, p);
                     pb.set(1, k.getB(ieda), -1, p);
                     ugokasi_mode = 3;
@@ -1048,7 +1047,7 @@ public class BasicBranch_Worker {
         }
         if (nyuuryoku_houhou <= 1) {
             if (nyuuryoku_houhou == 1) {
-                int mtsid = k.mottomo_tikai_senbun_sagasi(p);
+                int mtsid = k.mottomo_tikai_lineSegment_Search(p);
                 k.addLine(k.getB(mtsid), p);
 
                 k.set(mtsid, k.getA(mtsid), p, k.getColor(mtsid), 0);
@@ -1060,7 +1059,7 @@ public class BasicBranch_Worker {
             }
 
             //マウスと近い位置にある枝を探す。
-            ieda = k.senbun_sagasi(p, r, 0);
+            ieda = k.lineSegment_search(p, r, 0);
             //基本枝構造の中の、どの枝とも遠い場合。
             if (ieda == 0) {
                 k.addLine(p, p);
@@ -1072,13 +1071,13 @@ public class BasicBranch_Worker {
             }
             //基本枝構造の中の、どれかの枝に近い場合。
             else {
-                if (1 == k.senbun_busyo_sagasi(ieda, p, r)) {
+                if (1 == k.lineSegment_position_search(ieda, p, r)) {
                     ugokasi_mode = 1;
                 } //a点に近い場合。
-                if (2 == k.senbun_busyo_sagasi(ieda, p, r)) {
+                if (2 == k.lineSegment_position_search(ieda, p, r)) {
                     ugokasi_mode = 2;
                 } //b点に近い場合。
-                if (3 == k.senbun_busyo_sagasi(ieda, p, r)) {                 //柄の部分に近い場合。
+                if (3 == k.lineSegment_position_search(ieda, p, r)) {                 //柄の部分に近い場合。
                     pa.set(1, k.getA(ieda), -1, p);
                     pb.set(1, k.getB(ieda), -1, p);
                     ugokasi_mode = 3;
@@ -1276,8 +1275,8 @@ public class BasicBranch_Worker {
             k.setColor(i_overlapping, k.getColor(k.getTotal()));
             k.deleteLineSegment(getsousuu());
         }
-        k.kousabunkatu();//全く重なる線分がない状態で実施される。//2回やらないと反応しない場合がある。原因不明。
-        k.kousabunkatu();
+        k.intersect_divide();//全く重なる線分がない状態で実施される。//2回やらないと反応しない場合がある。原因不明。
+        k.intersect_divide();
 
 
     }
@@ -1372,8 +1371,8 @@ public class BasicBranch_Worker {
         p.set(camera.TV2object(p0));
         int minrid;
         double minr;
-        minrid = k.mottomo_tikai_senbun_sagasi(p);
-        if (k.senbun_busyo_sagasi(minrid, p, r) != 0) {
+        minrid = k.mottomo_tikai_lineSegment_Search(p);
+        if (k.lineSegment_position_search(minrid, p, r) != 0) {
             k.deleteLineSegment(minrid);
         }
     }
@@ -1390,8 +1389,8 @@ public class BasicBranch_Worker {
         p.set(camera.TV2object(p0));
         int minrid;
         double minr;
-        minrid = k.mottomo_tikai_senbun_sagasi(p);
-        if (k.senbun_busyo_sagasi(minrid, p, r) != 0) {
+        minrid = k.mottomo_tikai_lineSegment_Search(p);
+        if (k.lineSegment_position_search(minrid, p, r) != 0) {
             int ic_temp;
             ic_temp = k.getColor(minrid);
             ic_temp = ic_temp + 1;

@@ -15,12 +15,12 @@ import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 
-public class CreasePattern_Worker {//この展開図職人クラスは展開図としてのTensyuugou cを１つだけもつ。
+public class CreasePattern_Worker {//This crease pattern craftsman class has only one PointStore c as a crease pattern.
     //折り畳み等をやった結果得られるTensyuugouは外部に返すようにして、自分自身では保持しない。
     OritaCalc oc = new OritaCalc(); //各種計算用の関数を使うためのクラスのインスタンス化
     double r = 3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
 
-    PointStore c = new PointStore();    //展開図
+    CreasePattern c = new CreasePattern();    //展開図
 
     Undo_Box Ubox = new Undo_Box();
 
@@ -30,7 +30,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     int[] nextFaceId;//ある面の隣の面（基準面側）のid
     int[] associatedStickId;//ある面と隣の面（基準面側）の間の棒のid
 
-    HeikinZahyou[] tnew;//折った時の点の位置を格納
+    AverageCoordinates[] tnew;//折った時の点の位置を格納
 
     //  Ten naibuTen [] = new Ten[888];         //面の内部の点を格納
 
@@ -70,10 +70,10 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     }
 
     private void configure(int Tsuu, int Bsuu, int Msuu) {
-        HeikinZahyou[] t_new = new HeikinZahyou[Tsuu + 1];
+        AverageCoordinates[] t_new = new AverageCoordinates[Tsuu + 1];
         tnew = t_new;
         for (int i = 0; i <= Tsuu; i++) {
-            tnew[i] = new HeikinZahyou();
+            tnew[i] = new AverageCoordinates();
         }
         int[] i_Meniti = new int[Msuu + 1];
         iFacePosition = i_Meniti;
@@ -198,59 +198,59 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     //--------------------------------------------
     public void setCamera(Camera cam0) {
         camera.set_camera_kagami(cam0.get_camera_kagami());
-        camera.set_camera_ichi_x(cam0.get_camera_ichi_x());
-        camera.set_camera_ichi_y(cam0.get_camera_ichi_y());
-        camera.set_camera_bairitsu_x(cam0.get_camera_bairitsu_x());
-        camera.set_camera_bairitsu_y(cam0.get_camera_bairitsu_y());
-        camera.set_camera_kakudo(cam0.get_camera_kakudo());
-        camera.set_hyouji_ichi_x(cam0.get_hyouji_ichi_x());
-        camera.set_hyouji_ichi_y(cam0.get_hyouji_ichi_y());
+        camera.setCameraPositionX(cam0.getCameraPositionX());
+        camera.setCameraPositionY(cam0.getCameraPositionY());
+        camera.setCameraZoomX(cam0.getCameraZoomX());
+        camera.setCameraZoomY(cam0.getCameraZoomY());
+        camera.setCameraAngle(cam0.getCameraAngle());
+        camera.setDisplayPositionX(cam0.getDisplayPositionX());
+        camera.setDisplayPositionY(cam0.getDisplayPositionY());
     }
 
 
     public void setCam_front(Camera cam0) {
         cam_omote.set_camera_kagami(cam0.get_camera_kagami());
-        cam_omote.set_camera_ichi_x(cam0.get_camera_ichi_x());
-        cam_omote.set_camera_ichi_y(cam0.get_camera_ichi_y());
-        cam_omote.set_camera_bairitsu_x(cam0.get_camera_bairitsu_x());
-        cam_omote.set_camera_bairitsu_y(cam0.get_camera_bairitsu_y());
-        cam_omote.set_camera_kakudo(cam0.get_camera_kakudo());
-        cam_omote.set_hyouji_ichi_x(cam0.get_hyouji_ichi_x());
-        cam_omote.set_hyouji_ichi_y(cam0.get_hyouji_ichi_y());
+        cam_omote.setCameraPositionX(cam0.getCameraPositionX());
+        cam_omote.setCameraPositionY(cam0.getCameraPositionY());
+        cam_omote.setCameraZoomX(cam0.getCameraZoomX());
+        cam_omote.setCameraZoomY(cam0.getCameraZoomY());
+        cam_omote.setCameraAngle(cam0.getCameraAngle());
+        cam_omote.setDisplayPositionX(cam0.getDisplayPositionX());
+        cam_omote.setDisplayPositionY(cam0.getDisplayPositionY());
     }
 
     public void setCam_rear(Camera cam0) {
         cam_ura.set_camera_kagami(cam0.get_camera_kagami());
-        cam_ura.set_camera_ichi_x(cam0.get_camera_ichi_x());
-        cam_ura.set_camera_ichi_y(cam0.get_camera_ichi_y());
-        cam_ura.set_camera_bairitsu_x(cam0.get_camera_bairitsu_x());
-        cam_ura.set_camera_bairitsu_y(cam0.get_camera_bairitsu_y());
-        cam_ura.set_camera_kakudo(cam0.get_camera_kakudo());
-        cam_ura.set_hyouji_ichi_x(cam0.get_hyouji_ichi_x());
-        cam_ura.set_hyouji_ichi_y(cam0.get_hyouji_ichi_y());
+        cam_ura.setCameraPositionX(cam0.getCameraPositionX());
+        cam_ura.setCameraPositionY(cam0.getCameraPositionY());
+        cam_ura.setCameraZoomX(cam0.getCameraZoomX());
+        cam_ura.setCameraZoomY(cam0.getCameraZoomY());
+        cam_ura.setCameraAngle(cam0.getCameraAngle());
+        cam_ura.setDisplayPositionX(cam0.getDisplayPositionX());
+        cam_ura.setDisplayPositionY(cam0.getDisplayPositionY());
     }
 
 
     public void setCam_transparent_front(Camera cam0) {
         cam_touka_omote.set_camera_kagami(cam0.get_camera_kagami());
-        cam_touka_omote.set_camera_ichi_x(cam0.get_camera_ichi_x());
-        cam_touka_omote.set_camera_ichi_y(cam0.get_camera_ichi_y());
-        cam_touka_omote.set_camera_bairitsu_x(cam0.get_camera_bairitsu_x());
-        cam_touka_omote.set_camera_bairitsu_y(cam0.get_camera_bairitsu_y());
-        cam_touka_omote.set_camera_kakudo(cam0.get_camera_kakudo());
-        cam_touka_omote.set_hyouji_ichi_x(cam0.get_hyouji_ichi_x());
-        cam_touka_omote.set_hyouji_ichi_y(cam0.get_hyouji_ichi_y());
+        cam_touka_omote.setCameraPositionX(cam0.getCameraPositionX());
+        cam_touka_omote.setCameraPositionY(cam0.getCameraPositionY());
+        cam_touka_omote.setCameraZoomX(cam0.getCameraZoomX());
+        cam_touka_omote.setCameraZoomY(cam0.getCameraZoomY());
+        cam_touka_omote.setCameraAngle(cam0.getCameraAngle());
+        cam_touka_omote.setDisplayPositionX(cam0.getDisplayPositionX());
+        cam_touka_omote.setDisplayPositionY(cam0.getDisplayPositionY());
     }
 
     public void setCam_transparent_rear(Camera cam0) {
         cam_touka_ura.set_camera_kagami(cam0.get_camera_kagami());
-        cam_touka_ura.set_camera_ichi_x(cam0.get_camera_ichi_x());
-        cam_touka_ura.set_camera_ichi_y(cam0.get_camera_ichi_y());
-        cam_touka_ura.set_camera_bairitsu_x(cam0.get_camera_bairitsu_x());
-        cam_touka_ura.set_camera_bairitsu_y(cam0.get_camera_bairitsu_y());
-        cam_touka_ura.set_camera_kakudo(cam0.get_camera_kakudo());
-        cam_touka_ura.set_hyouji_ichi_x(cam0.get_hyouji_ichi_x());
-        cam_touka_ura.set_hyouji_ichi_y(cam0.get_hyouji_ichi_y());
+        cam_touka_ura.setCameraPositionX(cam0.getCameraPositionX());
+        cam_touka_ura.setCameraPositionY(cam0.getCameraPositionY());
+        cam_touka_ura.setCameraZoomX(cam0.getCameraZoomX());
+        cam_touka_ura.setCameraZoomY(cam0.getCameraZoomY());
+        cam_touka_ura.setCameraAngle(cam0.getCameraAngle());
+        cam_touka_ura.setDisplayPositionX(cam0.getDisplayPositionX());
+        cam_touka_ura.setDisplayPositionY(cam0.getDisplayPositionY());
     }
 
 
@@ -292,37 +292,31 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     //-------------------------------------------
     //折りたたみ推定（ここでできるのは面の重なりを考えていない針金図）
     //Folding estimation (What you can do here is a wire diagram that does not consider the overlap of surfaces)
-    public PointStore folding() {//折りたたみ推定
-        PointStore cn = new PointStore();    //展開図
-        cn.configure(c.getPointsTotal(), c.getSticksTotal(), c.getFacesTotal());
-        cn.set(c);
-
-
-//System.out.println("折りたたみ推定001   c.getTenx(1) = "+c.getTenx(1)+"   :   cn.getTenx(1) = "+cn.getTenx(1));
-
-        //kijyunmen_id=1;//基準になる面を指定する
+    public CreasePattern folding() {//折りたたみ推定
+        CreasePattern creasePattern = new CreasePattern();    //展開図
+        creasePattern.configure(c.getPointsTotal(), c.getSticksTotal(), c.getFacesTotal());
+        creasePattern.set(c);
 
         for (int i = 0; i <= c.getFacesTotal(); i++) {
             nextFaceId[i] = 0;
             associatedStickId[i] = 0;
             iFacePosition[i] = 0;
         }
-//System.out.println("折りたたみ推定002   c.getTenx(1) = "+c.getTenx(1)+"   :   cn.getTenx(1) = "+cn.getTenx(1));
-        //折りたたみの準備として面同士の位置関係を把握する
+        //Grasp the positional relationship between the faces in preparation for folding
         System.out.println("折りたたみの準備として面同士の位置関係を把握する");
         iFacePosition[referencePlane_id] = 1;
 
-        int imano_Meniti = 1;
-        int nokori_Mensuu;
-        nokori_Mensuu = c.getFacesTotal() - 1;
+        int current_face_position = 1;
+        int remaining_facesTotal;
+        remaining_facesTotal = c.getFacesTotal() - 1;
 
-        while (nokori_Mensuu > 0) {
+        while (remaining_facesTotal > 0) {
             for (int i = 1; i <= c.getFacesTotal(); i++) {
-                if (iFacePosition[i] == imano_Meniti) {
+                if (iFacePosition[i] == current_face_position) {
                     for (int j = 1; j <= c.getFacesTotal(); j++) {
                         int mth = c.Face_tonari_hantei(i, j);
                         if ((mth > 0) && (iFacePosition[j] == 0)) {
-                            iFacePosition[j] = imano_Meniti + 1;
+                            iFacePosition[j] = current_face_position + 1;
                             nextFaceId[j] = i;
                             associatedStickId[j] = mth;
                         }
@@ -330,37 +324,36 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
                 }
             }
 
-            imano_Meniti = imano_Meniti + 1;
+            current_face_position = current_face_position + 1;
 
-            nokori_Mensuu = 0;
+            remaining_facesTotal = 0;
             for (int i = 1; i <= c.getFacesTotal(); i++) {
                 if (iFacePosition[i] == 0) {
-                    nokori_Mensuu = nokori_Mensuu + 1;
+                    remaining_facesTotal = remaining_facesTotal + 1;
                 }
             }
 
-            System.out.println("nokori_Mensuu = " + nokori_Mensuu);
+            System.out.println("remaining_facesTotal = " + remaining_facesTotal);
         }
-//System.out.println("折りたたみ推定003   c.getTenx(1) = "+c.getTenx(1)+"   :   cn.getTenx(1) = "+cn.getTenx(1));
+
         System.out.println("折ったときの点の位置を求める。");
-        //折ったときの点の位置を求める。
-        //点itが面imに含まれる場合に、
-        //展開図が折られたときにどこに移動するかを、面imの移動によって求める。
+        // Find the position of the point when folded.
+        // If the point it is included in the face im
+        // Find where to move when the development drawing is folded by moving the face im.
 
         System.out.println("折ったときの点の位置を求める（開始）");
         for (int it = 1; it <= c.getPointsTotal(); it++) {
             tnew[it].reset();
             for (int im = 1; im <= c.getFacesTotal(); im++) {
                 if (c.Ten_moti_hantei(im, it) == 1) {//c.Ten_moti_hanteiは、Men[im]の境界にTen[it]が含まれるなら1、含まれないなら0を返す
-                    tnew[it].addTen(ori_idou(it, im));
-                    cn.setTen(it, tnew[it].getHeikin_Ten());
+                    tnew[it].addPoint(ori_idou(it, im));
+                    creasePattern.setPoint(it, tnew[it].getAveragePoint());
                 }
             }
         }
         System.out.println("折ったときの点の位置を求めた（終了）");
 
-//System.out.println("折りたたみ推定004   c.getTenx(1) = "+c.getTenx(1)+"   :   cn.getTenx(1) = "+cn.getTenx(1));
-        return cn;
+        return creasePattern;
     }
 
     //------------------------------------------------------------
@@ -382,9 +375,9 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 // ***********************************
 
     //Folding estimation (What you can do here is a wire diagram that does not consider the overlap of surfaces)
-    public PointStore surface_position_request() {//Folding estimate
+    public CreasePattern surface_position_request() {//Folding estimate
 
-        PointStore cn = new PointStore();    //展開図
+        CreasePattern cn = new CreasePattern();    //展開図
         cn.configure(c.getPointsTotal(), c.getSticksTotal(), c.getFacesTotal());
         cn.set(c);
 
@@ -441,7 +434,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 
 
     private Point sentaisyou_ten_motome(int bouid, Point tn) {//棒のidと、任意の点を与えて、idが対応する棒に対して、与えた点の線対称になる点を返す
-        return oc.sentaisyou_ten_motome(c.get_maeTen_from_Stick_id(bouid), c.get_atoTen_from_Bou_id(bouid), tn);
+        return oc.lineControl_point_find(c.get_maeTen_from_Stick_id(bouid), c.get_atoTen_from_Bou_id(bouid), tn);
     }
 
 
@@ -453,7 +446,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 
 
     //-------------------------------------------
-    public void set(PointStore ts) {
+    public void set(CreasePattern ts) {
         configure(ts.getPointsTotal(), ts.getSticksTotal(), ts.getFacesTotal());
         c.configure(ts.getPointsTotal(), ts.getSticksTotal(), ts.getFacesTotal());
         c.set(ts);
@@ -461,13 +454,13 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 
     }
 
-    public PointStore get() {
+    public CreasePattern get() {
         return c;
     }
 
     //------------------
-    public LineStore getLineStore() {
-        LineStore ss = new LineStore();    //基本枝構造のインスタンス化
+    public WireFrame getLineStore() {
+        WireFrame ss = new WireFrame();    //基本枝構造のインスタンス化
 
         ss.setTotal(c.getSticksTotal());
         for (int i = 1; i <= c.getSticksTotal(); i++) {
@@ -480,7 +473,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     //　ここは class Tenkaizu_Syokunin  の中です
 
     //--------------------------------------------------------------------------
-    public void lineStore2pointStore(LineStore lineStore) {
+    public void lineStore2pointStore(WireFrame wireFrame) {
 
         Point ti = new Point();
         reset();
@@ -490,13 +483,13 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
         int flag1;
         double x, y;
 
-        double[] addPointX = new double[lineStore.getTotal() + 1];//If you do not add +1 you will get an error when the number of faces is 1.
-        double[] addPointY = new double[lineStore.getTotal() + 1];//If you do not add +1 you will get an error when the number of faces is 1.
+        double[] addPointX = new double[wireFrame.getTotal() + 1];//If you do not add +1 you will get an error when the number of faces is 1.
+        double[] addPointY = new double[wireFrame.getTotal() + 1];//If you do not add +1 you will get an error when the number of faces is 1.
         int addPointNum = 0;
 
-        for (int i = 1; i <= lineStore.getTotal(); i++) {
+        for (int i = 1; i <= wireFrame.getTotal(); i++) {
             flag1 = 0;
-            ti = lineStore.getA(i);
+            ti = wireFrame.getA(i);
             x = ti.getX();
             y = ti.getY();
 
@@ -513,7 +506,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
                 addPointY[addPointNum] = y;
             }
             flag1 = 0;
-            ti = lineStore.getB(i);
+            ti = wireFrame.getB(i);
             x = ti.getX();
             y = ti.getY();
 
@@ -536,8 +529,8 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
         System.out.print("点の全数　addPointNum＝　");
         System.out.println(addPointNum);//System.out.println(c.getTensuu());
 
-        configure(addPointNum, lineStore.getTotal(), lineStore.getTotal() - addPointNum + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
-        c.configure(addPointNum, lineStore.getTotal(), lineStore.getTotal() - addPointNum + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
+        configure(addPointNum, wireFrame.getTotal(), wireFrame.getTotal() - addPointNum + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
+        c.configure(addPointNum, wireFrame.getTotal(), wireFrame.getTotal() - addPointNum + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
 
         for (int i = 1; i <= addPointNum; i++) {
             c.addPoint(addPointX[i], addPointY[i]);
@@ -547,25 +540,25 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
         //次に、Tensyuugou内で棒を定義する。
         System.out.println("線分集合->点集合：点集合内で棒の定義");
 
-        int[] ika2ic = new int[lineStore.getTotal() + 1];
-        int[] ikb2ic = new int[lineStore.getTotal() + 1];
-        for (int n = 1; n <= lineStore.getTotal(); n++) {
+        int[] ika2ic = new int[wireFrame.getTotal() + 1];
+        int[] ikb2ic = new int[wireFrame.getTotal() + 1];
+        for (int n = 1; n <= wireFrame.getTotal(); n++) {
             for (int i = 1; i <= c.getPointsTotal(); i++) {
-                if (oc.equal(lineStore.getA(n), c.getPoint(i))) {
+                if (oc.equal(wireFrame.getA(n), c.getPoint(i))) {
                     ika2ic[n] = i;
                     break;
                 }
             }
             for (int i = 1; i <= c.getPointsTotal(); i++) {
-                if (oc.equal(lineStore.getB(n), c.getPoint(i))) {
+                if (oc.equal(wireFrame.getB(n), c.getPoint(i))) {
                     ikb2ic[n] = i;
                     break;
                 }
             }
         }
 
-        for (int n = 1; n <= lineStore.getTotal(); n++) {
-            c.addStick(ika2ic[n], ikb2ic[n], lineStore.getColor(n));
+        for (int n = 1; n <= wireFrame.getTotal(); n++) {
+            c.addStick(ika2ic[n], ikb2ic[n], wireFrame.getColor(n));
         }
 
 
@@ -574,7 +567,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
         //
         System.out.println("線分集合->点集合：点集合内で面を発生　開始");
         //その次に、Tensyuugou内で面を発生させる。
-        c.Menhassei();
+        c.FaceOccurrence();
 
         System.out.println("線分集合->点集合：点集合内で面を発生　終了");
 
@@ -733,7 +726,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 
         Point p_u = new Point();
         p_u.set(ugokasu_maeno_sentaku_point.getX(), ugokasu_maeno_sentaku_point.getY());
-        p_u.move(pa.tano_Point_iti(pb));
+        p_u.move(pa.other_Point_position(pb));
 
         c.statePointMove(p_u);
 
@@ -762,7 +755,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
 
         Point p_u = new Point();
         p_u.set(ugokasu_maeno_sentaku_point.getX(), ugokasu_maeno_sentaku_point.getY());
-        p_u.move(pa.tano_Point_iti(pb));
+        p_u.move(pa.other_Point_position(pb));
 
         c.statePointMove(p_u);
 
@@ -1036,7 +1029,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
         Point p = new Point();
         p.set(camera.TV2object(p0));
 
-        return c.mottomo_tikai_Tenid(p, d_h_k / camera.get_camera_bairitsu_x());
+        return c.mottomo_tikai_Tenid(p, d_h_k / camera.getCameraZoomX());
     }
 
 
@@ -1045,11 +1038,11 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
         Point p = new Point();
         if (ip4 == 0) {
             p.set(cam_omote.TV2object(p0));
-            return c.mottomo_tikai_Tenid(p, d_h_k / cam_omote.get_camera_bairitsu_x());
+            return c.mottomo_tikai_Tenid(p, d_h_k / cam_omote.getCameraZoomX());
         }
         if (ip4 == 1) {
             p.set(cam_ura.TV2object(p0));
-            return c.mottomo_tikai_Tenid(p, d_h_k / cam_ura.get_camera_bairitsu_x());
+            return c.mottomo_tikai_Tenid(p, d_h_k / cam_ura.getCameraZoomX());
         }
         return 0;
     }
@@ -1061,7 +1054,7 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
     public double mottomo_tikai_Ten_kyori_with_camera(Point p0) {//p0はTV座標。リターンされるのはobでの距離
         Point p = new Point();
         p.set(camera.TV2object(p0));
-        return c.mottomo_tikai_Point_distance(p, d_h_k / camera.get_camera_bairitsu_x());
+        return c.closest_Point_distance(p, d_h_k / camera.getCameraZoomX());
     }
 
 
@@ -1070,11 +1063,11 @@ public class CreasePattern_Worker {//この展開図職人クラスは展開図�
         Point p = new Point();
         if (ip4 == 0) {
             p.set(cam_omote.TV2object(p0));
-            return c.mottomo_tikai_Point_distance(p, d_h_k / cam_omote.get_camera_bairitsu_x());
+            return c.closest_Point_distance(p, d_h_k / cam_omote.getCameraZoomX());
         }
         if (ip4 == 1) {
             p.set(cam_ura.TV2object(p0));
-            return c.mottomo_tikai_Point_distance(p, d_h_k / cam_ura.get_camera_bairitsu_x());
+            return c.closest_Point_distance(p, d_h_k / cam_ura.getCameraZoomX());
         }
         return 1000000.0;
     }

@@ -116,12 +116,12 @@ public class Overlapping_Permutation_generator {//重複順列発生機
         return ij[i];
     }
 
-    //順列を一番最初のものにする
+    //Make the permutation the very first
     public void Permutation_first() {
         next(0);
     }
 
-    //案内書情報の受け渡し
+    //Handing over of guide information
     public void addGuide(int iM, int i) {
         guides.add(iM, i);
     }

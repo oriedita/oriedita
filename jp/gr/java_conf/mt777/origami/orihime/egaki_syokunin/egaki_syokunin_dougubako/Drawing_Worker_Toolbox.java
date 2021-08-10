@@ -10,14 +10,14 @@ import jp.gr.java_conf.mt777.zukei2d.oritacalc.tyokusen.*;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
-public class Egaki_Worker_Dougubako {
+public class Drawing_Worker_Toolbox {
 
 
     OritaCalc oc = new OritaCalc(); //各種計算用の関数を使うためのクラスのインスタンス化
     PolygonStore ori_s;
 
 
-    public Egaki_Worker_Dougubako(PolygonStore o_s) {  //コンストラクタ
+    public Drawing_Worker_Toolbox(PolygonStore o_s) {  //コンストラクタ
         ori_s = o_s;
     }
 
@@ -29,7 +29,7 @@ public class Egaki_Worker_Dougubako {
     LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();//abを直線化したのと、最初にぶつかる既存の折線
 
     // -------------------
-    public void kousaten_made_nobasi_keisan_fukumu_lineSegment_musi(Point a, Point b) {//ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する//他の折線と交差しないなら、Ten aを返す
+    public void kousaten_made_nobasi_crossing_included_lineSegment_disregard(Point a, Point b) {//ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する//他の折線と交差しないなら、Point aを返す
         LineSegment s0 = new LineSegment();
         s0.set(a, b);
         LineSegment add_sen = new LineSegment();
@@ -41,13 +41,13 @@ public class Egaki_Worker_Dougubako {
 
         kousaten_made_nobasi_flg = 0;
         kousaten_made_nobasi_orisen_fukumu_flg = 0;
-        for (int i = 1; i <= ori_s.getsousuu(); i++) {
+        for (int i = 1; i <= ori_s.getTotal(); i++) {
 
-            i_kousa_flg = tyoku1.senbun_kousa_hantei_kuwasii(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+            i_kousa_flg = tyoku1.lineSegment_intersect_hantei_kuwasii(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
             //if(i_kousa_flg==3){kousaten_made_nobasi_orisen_fukumu_flg=3;}
             if ((i_kousa_flg == 1 || i_kousa_flg == 21) || i_kousa_flg == 22) {
 
-                kousa_point.set(oc.kouten_motome(tyoku1, ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
+                kousa_point.set(oc.findIntersection(tyoku1, ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
 
                 if (kousa_point.distance(add_sen.getA()) > 0.00001) {
 
@@ -91,20 +91,20 @@ public class Egaki_Worker_Dougubako {
 
         kousaten_made_nobasi_flg = 0;
         kousaten_made_nobasi_orisen_fukumu_flg = 0;
-        for (int i = 1; i <= ori_s.getsousuu(); i++) {
+        for (int i = 1; i <= ori_s.getTotal(); i++) {
 
 //System.out.println("000 20201129 col = "+ori_s.get(i).getcolor());  
-            if (ori_s.get(i).getcolor() < 3) {//System.out.println("  kousaten_made_nobasi_keisan_fukumu_senbun_musi_new 20201128");
+            if (ori_s.get(i).getColor() < 3) {//System.out.println("  kousaten_made_nobasi_keisan_fukumu_senbun_musi_new 20201128");
 //0=この直線は与えられた線分と交差しない、
 //1=X型で交差する、
 //21=線分のa点でT型で交差する、
 //22=線分のb点でT型で交差する、
 //3=線分は直線に含まれる。
-                i_kousa_flg = tyoku1.senbun_kousa_hantei_kuwasii(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+                i_kousa_flg = tyoku1.lineSegment_intersect_hantei_kuwasii(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
                 //if(i_kousa_flg==3){kousaten_made_nobasi_orisen_fukumu_flg=3;}
                 if ((i_kousa_flg == 1 || i_kousa_flg == 21) || i_kousa_flg == 22) {
 
-                    kousa_point.set(oc.kouten_motome(tyoku1, ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
+                    kousa_point.set(oc.findIntersection(tyoku1, ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
 
                     if (kousa_point.distance(add_sen.getA()) > 0.00001) {
 
@@ -166,7 +166,7 @@ public class Egaki_Worker_Dougubako {
 
     // -------------------
     public int get_kousaten_made_nobasi_flg(Point a, Point b) {//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-        kousaten_made_nobasi_keisan_fukumu_lineSegment_musi(a, b);
+        kousaten_made_nobasi_crossing_included_lineSegment_disregard(a, b);
         return kousaten_made_nobasi_flg;
     }
 // -------------------
@@ -178,7 +178,7 @@ public int get_kousaten_made_nobasi_orisen_fukumu_flg(Ten a,Ten b){//abを直線
 
     // -------------------
     public LineSegment get_kousaten_made_nobasi_senbun(Point a, Point b) {
-        kousaten_made_nobasi_keisan_fukumu_lineSegment_musi(a, b);
+        kousaten_made_nobasi_crossing_included_lineSegment_disregard(a, b);
         return kousaten_made_nobasi_lineSegment;
     }
 
@@ -190,7 +190,7 @@ public int get_kousaten_made_nobasi_orisen_fukumu_flg(Ten a,Ten b){//abを直線
 
     // -------------------
     public LineSegment get_kousaten_made_nobasi_saisyono_senbun(Point a, Point b) {
-        kousaten_made_nobasi_keisan_fukumu_lineSegment_musi(a, b);
+        kousaten_made_nobasi_crossing_included_lineSegment_disregard(a, b);
         return kousaten_made_nobasi_saisyono_lineSegment;
     }
 
@@ -203,7 +203,7 @@ public int get_kousaten_made_nobasi_orisen_fukumu_flg(Ten a,Ten b){//abを直線
 
     // -------------------
     public Point get_kousaten_made_nobasi_ten(Point a, Point b) {
-        kousaten_made_nobasi_keisan_fukumu_lineSegment_musi(a, b);
+        kousaten_made_nobasi_crossing_included_lineSegment_disregard(a, b);
         return kousaten_made_nobasi_point;
     }
 

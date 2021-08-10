@@ -1,14 +1,6 @@
 package jp.gr.java_conf.mt777.origami.orihime.oriagari_zu;
 
-//import java.awt.MouseInfo;
-//import java.awt.PointerInfo;
-
 import java.awt.*;
-//import java.awt.BorderLayout;
-
-//画像出力のため追加開始　20170107
-//import java.io.*;
-//画像出力のため追加終わり
 
 import jp.gr.java_conf.mt777.origami.orihime.*;
 import jp.gr.java_conf.mt777.origami.orihime.basicbranch_worker.*;
@@ -27,10 +19,7 @@ import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 
-//public class Oriagari_Zu extends Oriagari_Zu_00 {//Oriagari_Zuが基本となる折上がり予測アルゴリズム
-
 public class Oriagari_Zu {
-
     App orihime_app;
 
     double r = 3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
@@ -39,9 +28,9 @@ public class Oriagari_Zu {
     public double d_foldedFigure_syukusyaku_keisuu = 1.0;//折り上がり図の縮尺係数
     public double d_foldedFigure_kaiten_hosei = 0.0;//折り上がり図の回転表示角度の補正角度
 
-    public BasicBranch_Worker bb_worker = new BasicBranch_Worker(r);    //Basic branch craftsman. Before passing the point set of cp_worker2 to cp_worker3,
-    //cp_worker2の持つ点集合は棒が重なっていたりするかもしれないので、
-    //いったんbb_workerに渡して線分集合として整理する。
+    public WireFrame_Worker bb_worker = new WireFrame_Worker(r);    //Basic branch craftsman. Before passing the point set of cp_worker2 to cp_worker3,
+    // The point set of cp_worker2 may have overlapping bars, so
+    // Pass it to bb_worker once and organize it as a line segment set.
 
     public CreasePattern_Worker cp_worker1 = new CreasePattern_Worker(r);    //Net craftsman. Fold the input line segment set first to make a fold-up diagram of the wire-shaped point set.
     public CreasePattern_Worker cp_worker2 = new CreasePattern_Worker(r);    //Net craftsman. It holds the folded-up view of the wire-shaped point set created by cp_worker1 and functions as a line segment set.
@@ -65,36 +54,31 @@ public class Oriagari_Zu {
     public int i_estimated_order = 0;//Instructions on how far to perform folding estimation
     public int i_estimated_step = 0;//Display of how far the folding estimation has been completed
 
-    //表示用の値を格納する変数
-    public int ip1 = -1;//上下表職人の初期設定時に、折った後の表裏が同じ面が
-    //隣接するという誤差があれが0を、無ければ1000を格納する変数。
-    //ここでの初期値は(0か1000)以外の数ならなんでもいい。
-    public int ip2 = -1;//上下表職人が折り畳み可能な重なり方を探した際に、
-    //可能な重なり方がなければ0を、可能な重なり方があれば1000を格納する変数。
-    //ここでの初期値は(0か1000)以外の数ならなんでもいい。
+    //Variable to store the value for display
+    public int ip1 = -1;// At the time of initial setting of the upper and lower front craftsmen, the front and back sides are the same after folding
+    // A variable that stores 0 if there is an error of being adjacent, and 1000 if there is no error.
+    // The initial value here can be any number other than (0 or 1000).
+    public int ip2 = -1;// When the top and bottom craftsmen look for a foldable stacking method,
+    // A variable that stores 0 if there is no possible overlap, and 1000 if there is a possible overlap.
+    // The initial value here can be any number other than (0 or 1000).
     //int ip3a=1;
-    public int ip3 = 1;//cp_worker1が折り畳みを行う際の基準面を指定するのに使う。
+    public int ip3 = 1;// Used by cp_worker1 to specify the reference plane for folding.
 
-    public int ip4 = 0;//これは、cp_worker1の最初に裏返しをするかどうかを指定する。0ならしない。1なら裏返す。
+    public int ip4 = 0;// This specifies whether to flip over at the beginning of cp_worker1. Do not set to 0. If it is 1, turn it over.
 
-    public int ip5 = -1;    //上下表職人が一旦折り畳み可能な紙の重なりを示したあとで、
-    //さらに別の紙の重なりをさがす時の最初のct_worker.susumu(Smensuu)の結果。
-    //0なら新たにsusumu余地がなかった。0以外なら変化したSmenのidの最も小さい番号
+    public int ip5 = -1;    // After the top and bottom craftsmen once show the overlap of foldable paper,
+    // The result of the first ct_worker.susumu (Smensuu) when looking for yet another paper overlap. If it was
+    // 0, there was no room for new susumu. If non-zero, the smallest number of changed Smen ids
 
-    public int ip6 = -1;    //上下表職人が一旦折り畳み可能な紙の重なりを示したあとで、
-    //さらに別の紙の重なりをさがす時の ct_worker.kanou_kasanari_sagasi()の結果。
-    //0なら可能な重なりかたとなる状態は存在しない。
-    //1000なら別の重なり方が見つかった。
+    public int ip6 = -1;    // After the top and bottom craftsmen once show the overlap of foldable paper,
+    // The result of ct_worker.kanou_kasanari_sagasi () when looking for another paper overlap. If
+    // 0, there is no possible overlapping state.
+    // If it is 1000, another way of overlapping was found.
 
     public int different_search_flg = 0;     //これは「別の重なりを探す」ことが有効の場合は１、無効の場合は０をとる。
     public int discovered_fold_cases = 0;    //折り重なり方で、何通り発見したかを格納する。
 
-
-    //public int i_AS_matome =100;//折畳み推定の別解をまとめて出す個数//20171217 ver3.030では使われていない。
-
-
     public int transparent_transparency = 16;//Transparency when drawing a transparent diagram in color
-
 
     public int i_oriagari_sousa_mode = 1;//1 = When deformed, it becomes a wire diagram, and after deformation, the upper and lower tables are recalculated, the old mode,2 = A mode in which the folded figure remains even when deformed, and the upper and lower tables are basically not recalculated after deformation.
 
@@ -110,17 +94,12 @@ public class Oriagari_Zu {
     String c = "";                //文字列処理用のクラスのインスタンス化
     public String text_kekka;                //結果表示用文字列のクラスのインスタンス化
 
-
-    int i_fold_type = 0;//=0は通常の展開図の全折線を対象とした折り畳み推定、=1はselectされた折線を対象とした折り畳み推定、
-
-
     public int i_toukazu_color = 0;//透過図をカラーにするなら１、しないなら０
 
 
     // **************************************************
 //コンストラクタ
     public Oriagari_Zu(App app0) {
-
         orihime_app = app0;
 
         ct_worker = new ClassTable_Worker(app0);
@@ -152,66 +131,62 @@ public class Oriagari_Zu {
         different_search_flg = 0;
 
         matome_write_image_jikkoutyuu = false; //複数の折りあがり形の予測の書き出しがが実行中ならtureになる。20170615
-
-
     }
 
 
     //----------------------------------------------------------
     public void oriagari_camera_syokika() {
-
-
         //camera_of_oriagarizu	;
-        camera_of_foldedFigure.set_camera_ichi_x(0.0);
-        camera_of_foldedFigure.set_camera_ichi_y(0.0);
-        camera_of_foldedFigure.set_camera_kakudo(0.0);
+        camera_of_foldedFigure.setCameraPositionX(0.0);
+        camera_of_foldedFigure.setCameraPositionY(0.0);
+        camera_of_foldedFigure.setCameraAngle(0.0);
         camera_of_foldedFigure.set_camera_kagami(1.0);
-        camera_of_foldedFigure.set_camera_bairitsu_x(1.0);
-        camera_of_foldedFigure.set_camera_bairitsu_y(1.0);
-        camera_of_foldedFigure.set_hyouji_ichi_x(350.0);
-        camera_of_foldedFigure.set_hyouji_ichi_y(350.0);
+        camera_of_foldedFigure.setCameraZoomX(1.0);
+        camera_of_foldedFigure.setCameraZoomY(1.0);
+        camera_of_foldedFigure.setDisplayPositionX(350.0);
+        camera_of_foldedFigure.setDisplayPositionY(350.0);
 
 
         //camera_of_oriagari_omote	;
-        camera_of_oriagari_front.set_camera_ichi_x(0.0);
-        camera_of_oriagari_front.set_camera_ichi_y(0.0);
-        camera_of_oriagari_front.set_camera_kakudo(0.0);
+        camera_of_oriagari_front.setCameraPositionX(0.0);
+        camera_of_oriagari_front.setCameraPositionY(0.0);
+        camera_of_oriagari_front.setCameraAngle(0.0);
         camera_of_oriagari_front.set_camera_kagami(1.0);
-        camera_of_oriagari_front.set_camera_bairitsu_x(1.0);
-        camera_of_oriagari_front.set_camera_bairitsu_y(1.0);
-        camera_of_oriagari_front.set_hyouji_ichi_x(350.0);
-        camera_of_oriagari_front.set_hyouji_ichi_y(350.0);
+        camera_of_oriagari_front.setCameraZoomX(1.0);
+        camera_of_oriagari_front.setCameraZoomY(1.0);
+        camera_of_oriagari_front.setDisplayPositionX(350.0);
+        camera_of_oriagari_front.setDisplayPositionY(350.0);
 
         //camera_of_oriagari_ura	;
-        camera_of_oriagari_rear.set_camera_ichi_x(0.0);
-        camera_of_oriagari_rear.set_camera_ichi_y(0.0);
-        camera_of_oriagari_rear.set_camera_kakudo(0.0);
+        camera_of_oriagari_rear.setCameraPositionX(0.0);
+        camera_of_oriagari_rear.setCameraPositionY(0.0);
+        camera_of_oriagari_rear.setCameraAngle(0.0);
         camera_of_oriagari_rear.set_camera_kagami(-1.0);
-        camera_of_oriagari_rear.set_camera_bairitsu_x(1.0);
-        camera_of_oriagari_rear.set_camera_bairitsu_y(1.0);
-        camera_of_oriagari_rear.set_hyouji_ichi_x(350.0);
-        camera_of_oriagari_rear.set_hyouji_ichi_y(350.0);
+        camera_of_oriagari_rear.setCameraZoomX(1.0);
+        camera_of_oriagari_rear.setCameraZoomY(1.0);
+        camera_of_oriagari_rear.setDisplayPositionX(350.0);
+        camera_of_oriagari_rear.setDisplayPositionY(350.0);
 
 
         //camera_of_touka_omote	;
-        camera_of_transparent_front.set_camera_ichi_x(0.0);
-        camera_of_transparent_front.set_camera_ichi_y(0.0);
-        camera_of_transparent_front.set_camera_kakudo(0.0);
+        camera_of_transparent_front.setCameraPositionX(0.0);
+        camera_of_transparent_front.setCameraPositionY(0.0);
+        camera_of_transparent_front.setCameraAngle(0.0);
         camera_of_transparent_front.set_camera_kagami(1.0);
-        camera_of_transparent_front.set_camera_bairitsu_x(1.0);
-        camera_of_transparent_front.set_camera_bairitsu_y(1.0);
-        camera_of_transparent_front.set_hyouji_ichi_x(350.0);
-        camera_of_transparent_front.set_hyouji_ichi_y(350.0);
+        camera_of_transparent_front.setCameraZoomX(1.0);
+        camera_of_transparent_front.setCameraZoomY(1.0);
+        camera_of_transparent_front.setDisplayPositionX(350.0);
+        camera_of_transparent_front.setDisplayPositionY(350.0);
 
         //camera_of_touka_ura	;
-        camera_of_transparant_rear.set_camera_ichi_x(0.0);
-        camera_of_transparant_rear.set_camera_ichi_y(0.0);
-        camera_of_transparant_rear.set_camera_kakudo(0.0);
+        camera_of_transparant_rear.setCameraPositionX(0.0);
+        camera_of_transparant_rear.setCameraPositionY(0.0);
+        camera_of_transparant_rear.setCameraAngle(0.0);
         camera_of_transparant_rear.set_camera_kagami(-1.0);
-        camera_of_transparant_rear.set_camera_bairitsu_x(1.0);
-        camera_of_transparant_rear.set_camera_bairitsu_y(1.0);
-        camera_of_transparant_rear.set_hyouji_ichi_x(350.0);
-        camera_of_transparant_rear.set_hyouji_ichi_y(350.0);
+        camera_of_transparant_rear.setCameraZoomX(1.0);
+        camera_of_transparant_rear.setCameraZoomY(1.0);
+        camera_of_transparant_rear.setDisplayPositionX(350.0);
+        camera_of_transparant_rear.setDisplayPositionY(350.0);
 
 
     }
@@ -273,7 +248,7 @@ public class Oriagari_Zu {
 
         //折りあがり図（裏）の表示
         if (((ip4 == 1) || (ip4 == 2)) || (ip4 == 3)) {
-            camera_of_oriagari_rear.hyouji();
+            camera_of_oriagari_rear.display();
             ct_worker.setCamera(camera_of_oriagari_rear);
 
             //透過図の表示
@@ -445,14 +420,12 @@ public class Oriagari_Zu {
 
 //-----------------------------------
 
-    void oritatami_suitei_camera_configure(Camera camera_of_orisen_nyuuryokuzu, LineStore Ss0) {
-
-
-        d_foldedFigure_syukusyaku_keisuu = camera_of_orisen_nyuuryokuzu.get_camera_bairitsu_x();
+    void oritatami_suitei_camera_configure(Camera camera_of_orisen_nyuuryokuzu, WireFrame Ss0) {
+        d_foldedFigure_syukusyaku_keisuu = camera_of_orisen_nyuuryokuzu.getCameraZoomX();
         orihime_app.text29.setText(String.valueOf(d_foldedFigure_syukusyaku_keisuu));
         orihime_app.text29.setCaretPosition(0);
 
-        d_foldedFigure_kaiten_hosei = camera_of_orisen_nyuuryokuzu.get_camera_kakudo();
+        d_foldedFigure_kaiten_hosei = camera_of_orisen_nyuuryokuzu.getCameraAngle();
         orihime_app.text30.setText(String.valueOf(d_foldedFigure_kaiten_hosei));
         orihime_app.text30.setCaretPosition(0);
 
@@ -467,40 +440,40 @@ public class Oriagari_Zu {
         p0.set(camera_of_orisen_nyuuryokuzu.object2TV(p));
 
 
-        double d_camera_ichi_x = p.getX();
-        double d_camera_ichi_y = p.getY();
-        double d_hyouji_ichi_x = p0.getX();
-        double d_hyouji_ichi_y = p0.getY();
+        double d_camera_position_x = p.getX();
+        double d_camera_position_y = p.getY();
+        double d_display_position_x = p0.getX();
+        double d_display_position_y = p0.getY();
 
-        camera_of_foldedFigure.set_camera(camera_of_orisen_nyuuryokuzu);
-        camera_of_foldedFigure.set_camera_ichi_x(d_camera_ichi_x);
-        camera_of_foldedFigure.set_camera_ichi_y(d_camera_ichi_y);
-        camera_of_foldedFigure.set_hyouji_ichi_x(d_hyouji_ichi_x + 20.0);
-        camera_of_foldedFigure.set_hyouji_ichi_y(d_hyouji_ichi_y + 20.0);
+        camera_of_foldedFigure.setCamera(camera_of_orisen_nyuuryokuzu);
+        camera_of_foldedFigure.setCameraPositionX(d_camera_position_x);
+        camera_of_foldedFigure.setCameraPositionY(d_camera_position_y);
+        camera_of_foldedFigure.setDisplayPositionX(d_display_position_x + 20.0);
+        camera_of_foldedFigure.setDisplayPositionY(d_display_position_y + 20.0);
 
-        camera_of_oriagari_front.set_camera(camera_of_orisen_nyuuryokuzu);
-        camera_of_oriagari_front.set_camera_ichi_x(d_camera_ichi_x);
-        camera_of_oriagari_front.set_camera_ichi_y(d_camera_ichi_y);
-        camera_of_oriagari_front.set_hyouji_ichi_x(d_hyouji_ichi_x + 20.0);
-        camera_of_oriagari_front.set_hyouji_ichi_y(d_hyouji_ichi_y + 20.0);
+        camera_of_oriagari_front.setCamera(camera_of_orisen_nyuuryokuzu);
+        camera_of_oriagari_front.setCameraPositionX(d_camera_position_x);
+        camera_of_oriagari_front.setCameraPositionY(d_camera_position_y);
+        camera_of_oriagari_front.setDisplayPositionX(d_display_position_x + 20.0);
+        camera_of_oriagari_front.setDisplayPositionY(d_display_position_y + 20.0);
 
-        camera_of_oriagari_rear.set_camera(camera_of_orisen_nyuuryokuzu);
-        camera_of_oriagari_rear.set_camera_ichi_x(d_camera_ichi_x);
-        camera_of_oriagari_rear.set_camera_ichi_y(d_camera_ichi_y);
-        camera_of_oriagari_rear.set_hyouji_ichi_x(d_hyouji_ichi_x + 40.0);
-        camera_of_oriagari_rear.set_hyouji_ichi_y(d_hyouji_ichi_y + 20.0);
+        camera_of_oriagari_rear.setCamera(camera_of_orisen_nyuuryokuzu);
+        camera_of_oriagari_rear.setCameraPositionX(d_camera_position_x);
+        camera_of_oriagari_rear.setCameraPositionY(d_camera_position_y);
+        camera_of_oriagari_rear.setDisplayPositionX(d_display_position_x + 40.0);
+        camera_of_oriagari_rear.setDisplayPositionY(d_display_position_y + 20.0);
 
-        camera_of_transparent_front.set_camera(camera_of_orisen_nyuuryokuzu);
-        camera_of_transparent_front.set_camera_ichi_x(d_camera_ichi_x);
-        camera_of_transparent_front.set_camera_ichi_y(d_camera_ichi_y);
-        camera_of_transparent_front.set_hyouji_ichi_x(d_hyouji_ichi_x + 20.0);
-        camera_of_transparent_front.set_hyouji_ichi_y(d_hyouji_ichi_y + 0.0);
+        camera_of_transparent_front.setCamera(camera_of_orisen_nyuuryokuzu);
+        camera_of_transparent_front.setCameraPositionX(d_camera_position_x);
+        camera_of_transparent_front.setCameraPositionY(d_camera_position_y);
+        camera_of_transparent_front.setDisplayPositionX(d_display_position_x + 20.0);
+        camera_of_transparent_front.setDisplayPositionY(d_display_position_y + 0.0);
 
-        camera_of_transparant_rear.set_camera(camera_of_orisen_nyuuryokuzu);
-        camera_of_transparant_rear.set_camera_ichi_x(d_camera_ichi_x);
-        camera_of_transparant_rear.set_camera_ichi_y(d_camera_ichi_y);
-        camera_of_transparant_rear.set_hyouji_ichi_x(d_hyouji_ichi_x + 40.0);
-        camera_of_transparant_rear.set_hyouji_ichi_y(d_hyouji_ichi_y + 0.0);
+        camera_of_transparant_rear.setCamera(camera_of_orisen_nyuuryokuzu);
+        camera_of_transparant_rear.setCameraPositionX(d_camera_position_x);
+        camera_of_transparant_rear.setCameraPositionY(d_camera_position_y);
+        camera_of_transparant_rear.setDisplayPositionX(d_display_position_x + 40.0);
+        camera_of_transparant_rear.setDisplayPositionY(d_display_position_y + 0.0);
 
         double d_camera_kagami = camera_of_oriagari_rear.get_camera_kagami();
         camera_of_oriagari_rear.set_camera_kagami(d_camera_kagami * -1.0);
@@ -510,11 +483,8 @@ public class Oriagari_Zu {
     }
 
     //-----------------------------------
-    public void folding_estimated(Camera camera_of_orisen_nyuuryokuzu, LineStore Ss0) {//折畳み予測の最初に、cp_worker1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
-
-
+    public void folding_estimated(Camera camera_of_orisen_nyuuryokuzu, WireFrame wireFrame) {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
         int i_camera_estimated = 0;
-
 
         //-------------------------------折り上がり図表示用カメラの設定
 
@@ -527,22 +497,18 @@ public class Oriagari_Zu {
         if (i_estimated_order == 51) {
             i_estimated_order = 5;
         }
-
-
         //-------------------------------
-
-
         // suitei = estimated
         // dankai = step
         // meirei = order
         if ((i_estimated_step == 0) && (i_estimated_order == 1)) {
             estimated_initialize(); // estimated_initialize
-            folding_estimated_01(Ss0);
+            folding_estimated_01(wireFrame);
             i_estimated_step = 1;
             display_flg = 1;
         } else if ((i_estimated_step == 0) && (i_estimated_order == 2)) {
             estimated_initialize();
-            folding_estimated_01(Ss0);
+            folding_estimated_01(wireFrame);
             i_estimated_step = 1;
             display_flg = 1;
             folding_estimated_02();
@@ -550,7 +516,7 @@ public class Oriagari_Zu {
             display_flg = 2;
         } else if ((i_estimated_step == 0) && (i_estimated_order == 3)) {
             estimated_initialize();
-            folding_estimated_01(Ss0);
+            folding_estimated_01(wireFrame);
             i_estimated_step = 1;
             display_flg = 1;
             folding_estimated_02();
@@ -561,7 +527,7 @@ public class Oriagari_Zu {
             display_flg = 3;
         } else if ((i_estimated_step == 0) && (i_estimated_order == 5)) {
             estimated_initialize();
-            folding_estimated_01(Ss0);
+            folding_estimated_01(wireFrame);
             i_estimated_step = 1;
             display_flg = 1;
             folding_estimated_02();
@@ -658,51 +624,48 @@ public class Oriagari_Zu {
             display_flg = 5;
         }
 
-
         if (i_camera_estimated == 1) {
-            oritatami_suitei_camera_configure(camera_of_orisen_nyuuryokuzu, Ss0);
+            oritatami_suitei_camera_configure(camera_of_orisen_nyuuryokuzu, wireFrame);
         }
-
-
     }
 
     //--------------------------------------------------------------------------
-    public void oritatami_suitei_2col(Camera camera_of_orisen_nyuuryokuzu, LineStore Ss0) {//２色塗りわけ展開図
+    public void oritatami_suitei_2col(Camera camera_of_orisen_nyuuryokuzu, WireFrame Ss0) {//２色塗りわけ展開図
 
         //-------------------------------折り上がり図表示用カメラの設定
 
         //	if( (i_suitei_dankai==0)&&(i_suitei_meirei<=5) ){
 
-        d_foldedFigure_syukusyaku_keisuu = camera_of_orisen_nyuuryokuzu.get_camera_bairitsu_x();
+        d_foldedFigure_syukusyaku_keisuu = camera_of_orisen_nyuuryokuzu.getCameraZoomX();
         orihime_app.text29.setText(String.valueOf(d_foldedFigure_syukusyaku_keisuu));
         orihime_app.text29.setCaretPosition(0);
 
-        d_foldedFigure_kaiten_hosei = camera_of_orisen_nyuuryokuzu.get_camera_kakudo();
+        d_foldedFigure_kaiten_hosei = camera_of_orisen_nyuuryokuzu.getCameraAngle();
         orihime_app.text30.setText(String.valueOf(d_foldedFigure_kaiten_hosei));
         orihime_app.text30.setCaretPosition(0);
 
-        double d_hyouji_ichi_x = camera_of_orisen_nyuuryokuzu.get_hyouji_ichi_x();
-        double d_hyouji_ichi_y = camera_of_orisen_nyuuryokuzu.get_hyouji_ichi_y();
+        double d_display_position_x = camera_of_orisen_nyuuryokuzu.getDisplayPositionX();
+        double d_display_position_y = camera_of_orisen_nyuuryokuzu.getDisplayPositionY();
 
-        camera_of_foldedFigure.set_camera(camera_of_orisen_nyuuryokuzu);
-        camera_of_foldedFigure.set_hyouji_ichi_x(d_hyouji_ichi_x + 20.0);
-        camera_of_foldedFigure.set_hyouji_ichi_y(d_hyouji_ichi_y + 20.0);
+        camera_of_foldedFigure.setCamera(camera_of_orisen_nyuuryokuzu);
+        camera_of_foldedFigure.setDisplayPositionX(d_display_position_x + 20.0);
+        camera_of_foldedFigure.setDisplayPositionY(d_display_position_y + 20.0);
 
-        camera_of_oriagari_front.set_camera(camera_of_orisen_nyuuryokuzu);
-        camera_of_oriagari_front.set_hyouji_ichi_x(d_hyouji_ichi_x + 20.0);
-        camera_of_oriagari_front.set_hyouji_ichi_y(d_hyouji_ichi_y + 20.0);
+        camera_of_oriagari_front.setCamera(camera_of_orisen_nyuuryokuzu);
+        camera_of_oriagari_front.setDisplayPositionX(d_display_position_x + 20.0);
+        camera_of_oriagari_front.setDisplayPositionY(d_display_position_y + 20.0);
 
-        camera_of_oriagari_rear.set_camera(camera_of_orisen_nyuuryokuzu);
-        camera_of_oriagari_rear.set_hyouji_ichi_x(d_hyouji_ichi_x + 40.0);
-        camera_of_oriagari_rear.set_hyouji_ichi_y(d_hyouji_ichi_y + 20.0);
+        camera_of_oriagari_rear.setCamera(camera_of_orisen_nyuuryokuzu);
+        camera_of_oriagari_rear.setDisplayPositionX(d_display_position_x + 40.0);
+        camera_of_oriagari_rear.setDisplayPositionY(d_display_position_y + 20.0);
 
-        camera_of_transparent_front.set_camera(camera_of_orisen_nyuuryokuzu);
-        camera_of_transparent_front.set_hyouji_ichi_x(d_hyouji_ichi_x + 20.0);
-        camera_of_transparent_front.set_hyouji_ichi_y(d_hyouji_ichi_y + 0.0);
+        camera_of_transparent_front.setCamera(camera_of_orisen_nyuuryokuzu);
+        camera_of_transparent_front.setDisplayPositionX(d_display_position_x + 20.0);
+        camera_of_transparent_front.setDisplayPositionY(d_display_position_y + 0.0);
 
-        camera_of_transparant_rear.set_camera(camera_of_orisen_nyuuryokuzu);
-        camera_of_transparant_rear.set_hyouji_ichi_x(d_hyouji_ichi_x + 40.0);
-        camera_of_transparant_rear.set_hyouji_ichi_y(d_hyouji_ichi_y + 0.0);
+        camera_of_transparant_rear.setCamera(camera_of_orisen_nyuuryokuzu);
+        camera_of_transparant_rear.setDisplayPositionX(d_display_position_x + 40.0);
+        camera_of_transparant_rear.setDisplayPositionY(d_display_position_y + 0.0);
 
         double d_camera_kagami = camera_of_oriagari_rear.get_camera_kagami();
         camera_of_oriagari_rear.set_camera_kagami(d_camera_kagami * -1.0);
@@ -735,12 +698,12 @@ public class Oriagari_Zu {
 
 
     //-------------------------------bbbbbbb----
-    public int folding_estimated_01(LineStore Ss1) {
+    public int folding_estimated_01(WireFrame wireFrame) {
         System.out.println("＜＜＜＜＜oritatami_suitei_01;開始");
         bulletinBoard.write("<<<<oritatami_suitei_01;  start");
         //マウスの入力でes1の中に作った線分集合をcp_worker1に渡し、点集合(展開図に相当)にする
         // Pass the line segment set created in es1 to cp_worker1 by mouse input and make it a point set (corresponding to the development view).
-        cp_worker1.lineStore2pointStore(Ss1);
+        cp_worker1.lineStore2pointStore(wireFrame);
         ip3 = cp_worker1.set_referencePlane_id(ip3);
         ip3 = cp_worker1.set_referencePlane_id(orihime_app.point_of_referencePlane_old);//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
 

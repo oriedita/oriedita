@@ -77,47 +77,47 @@ public class StraightLine {
     }
 
 
-    public void hyouji(String str0) {
+    public void display(String str0) {
         System.out.println(str0 + "   " + a + " x + " + b + " y + " + c + " = 0.0 ");
     }
 
 
-    //平行移動
-    public void heikouidou(double d) {
+    //translation
+    public void translate(double d) {
         c = c + d * Math.sqrt(a * a + b * b);
     }
 
     //
     public void set(StraightLine t) {
-        a = t.geta();
-        b = t.getb();
-        c = t.getc();
+        a = t.getA();
+        b = t.getB();
+        c = t.getC();
         coefficient();
     }
 
     //
 
-    public void seta(double a0) {
+    public void setA(double a0) {
         a = a0;
     }
 
-    public void setb(double b0) {
+    public void setB(double b0) {
         a = b0;
     }
 
-    public void setc(double c0) {
+    public void setC(double c0) {
         a = c0;
     }
 
-    public double geta() {
+    public double getA() {
         return a;
     }
 
-    public double getb() {
+    public double getB() {
         return b;
     }
 
-    public double getc() {
+    public double getC() {
         return c;
     }
 
@@ -129,7 +129,7 @@ public class StraightLine {
     }
 
 
-    public double distance_2jyou_keisan(Point p) {//直線と点pとの距離の二乗
+    public double calculateDistanceSquared(Point p) {//The square of the distance between the straight line and the point p
         double x = p.getX();
         double y = p.getY();
         //return Math.abs((double) ((float)(a*x+b*y+c)/Math.sqrt((float)(a*a+b*b))));
@@ -137,7 +137,7 @@ public class StraightLine {
     }
 
 
-    public void tyokkouka(Point p) { //点（x,y)を通って ax+by+c=0に直交する直線 (bx-ay+d=0)に変換
+    public void orthogonalize(Point p) { //Converted to a straight line (bx-ay + d = 0) that passes through the point (x, y) and is orthogonal to ax + by + c = 0
         double e;
         double x = p.getX();
         double y = p.getY();
@@ -150,7 +150,7 @@ public class StraightLine {
     }
 
 
-    public int onajigawa(Point p1, Point p2) {//2点が直線の同じ側なら１、別の側なら-1、直線上の点があるなら０を返す
+    public int sameSide(Point p1, Point p2) {// Returns 1 if the two points are on the same side of the straight line, -1 if they are on the other side, 0 if there is a point on the straight line
         double dd = dainyuukeisan(p1) * dainyuukeisan(p2);
 		return Double.compare(dd, 0.0);
 	}
@@ -160,25 +160,11 @@ public class StraightLine {
         return a * p.getX() + b * p.getY() + c;
     }  //a*x+b*y+cにx,yを代入した値を返す
 
-    /*
-        public int senbun_kousa_hantei(Senbun s0){//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-            double d_a=dainyuukeisan(s0.geta());
-            double d_b=dainyuukeisan(s0.getb());
-
-            if(d_a*d_b>0.0){return 0;}
-            if(d_a*d_b<0.0){return 1;}
-            if(d_a==0.0&&d_b!=0){return 2;}
-            if(d_a!=0.0&&d_b==0){return 2;}
-
-            return 3;
-
-        }
-    */
-    public int senbun_kousa_hantei_kuwasii(LineSegment s0) {//0=この直線は与えられた線分と交差しない、1=X型で交差する、21=線分のa点でT型で交差する、22=線分のb点でT型で交差する、3=線分は直線に含まれる。
+    public int lineSegment_intersect_hantei_kuwasii(LineSegment s0) {//0 = This straight line does not intersect a given line segment, 1 = intersects at X type, 21 = intersects at point a of line segment at T type, 22 = intersects at point b of line segment at T type, 3 = Line segment is included in the straight line.
 
 
-        double d_a2 = distance_2jyou_keisan(s0.getA());
-        double d_b2 = distance_2jyou_keisan(s0.getB());
+        double d_a2 = calculateDistanceSquared(s0.getA());
+        double d_b2 = calculateDistanceSquared(s0.getB());
 
         if (d_a2 < 0.00000001 && d_b2 < 0.00000001) {
             return 3;
@@ -211,20 +197,20 @@ public class StraightLine {
     }
 
 
-    //他の直線との交点を求める関数　20170312追加
-    public Point kouten_motome(StraightLine t2) {
+    //Added 20170312 function to find intersections with other straight lines
+    public Point findIntersection(StraightLine t2) {
         double a1 = a, b1 = b, c1 = c;//直線t1, a1*x+b1*y+c1=0の各係数を求める。
-        double a2 = t2.geta(), b2 = t2.getb(), c2 = t2.getc();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
+        double a2 = t2.getA(), b2 = t2.getB(), c2 = t2.getC();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
 
         return new Point((b1 * c2 - b2 * c1) / (a1 * b2 - a2 * b1), (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1));
     }
 
 
     //直線上の点pの影の位置（点pと最も近い直線上の位置）を求める。　20170312追加
-    public Point kage_motome(Point p) {
+    public Point findShadow(Point p) {
         StraightLine t1 = new StraightLine(a, b, c);
-        t1.tyokkouka(p);//点p1を通って tに直行する直線を求める。
-        return kouten_motome(t1);
+        t1.orthogonalize(p);//点p1を通って tに直行する直線を求める。
+        return findIntersection(t1);
     }
 
 

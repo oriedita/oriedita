@@ -49,8 +49,6 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
     Camera camera = new Camera();
 
     App orihime_app;
-    Moji_sousa ms = new Moji_sousa();
-
 
     public double[] men_rating;
     public int[] i_men_rating;
@@ -86,13 +84,13 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
         //camera.set_camera_id(cam0.get_camera_id());
         camera.set_camera_kagami(cam0.get_camera_kagami());
 
-        camera.set_camera_ichi_x(cam0.get_camera_ichi_x());
-        camera.set_camera_ichi_y(cam0.get_camera_ichi_y());
-        camera.set_camera_bairitsu_x(cam0.get_camera_bairitsu_x());
-        camera.set_camera_bairitsu_y(cam0.get_camera_bairitsu_y());
-        camera.set_camera_kakudo(cam0.get_camera_kakudo());
-        camera.set_hyouji_ichi_x(cam0.get_hyouji_ichi_x());
-        camera.set_hyouji_ichi_y(cam0.get_hyouji_ichi_y());
+        camera.setCameraPositionX(cam0.getCameraPositionX());
+        camera.setCameraPositionY(cam0.getCameraPositionY());
+        camera.setCameraZoomX(cam0.getCameraZoomX());
+        camera.setCameraZoomY(cam0.getCameraZoomY());
+        camera.setCameraAngle(cam0.getCameraAngle());
+        camera.setDisplayPositionX(cam0.getDisplayPositionX());
+        camera.setDisplayPositionY(cam0.getDisplayPositionY());
     }
 
 
@@ -115,7 +113,7 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
          return Jyougehyou_settei_2   (                  orite,           otta_Men_zu,           Smen_zu);
        }
 */
-    public void Smen_configure(CreasePattern_Worker orite, PointStore otta_Men_zu, PointStore Smen_zu) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
+    public void Smen_configure(CreasePattern_Worker orite, CreasePattern otta_Men_zu, CreasePattern Smen_zu) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
         //面(折りたたむ前の展開図の面のこと)の上下表を作る。
         //これにはts2の持つ点集合（折りたたんだあとの面の位置関係の情報を持つ）と  <-------------otta_Men_zu
         //ts3の持つ点集合（針金図で面を細分割したSmenの情報を持つ）を使う。 <-------------Smen_zu
@@ -232,7 +230,7 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
 */
 
     //------------------------------------------------------
-    public int ClassTable_configure(CreasePattern_Worker orite, PointStore otta_Men_zu, PointStore Smen_zu) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
+    public int ClassTable_configure(CreasePattern_Worker orite, CreasePattern otta_Men_zu, CreasePattern Smen_zu) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
         orihime_app.bulletinBoard.write("           Jyougehyou_settei   step1   start ");
         int ireturn = 1000;
         jg.setFacesTotal(otta_Men_zu.getFacesTotal());
@@ -352,7 +350,7 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
         System.out.println("Smen毎に案内書を作る");
         for (int i = 1; i <= SmenTotal; i++) {
             //System.out.print("Smen");System.out.print(i);System.out.println("にて。");
-            s0[i].setAnnaisyo(jg);
+            s0[i].setGuideMap(jg);
         }
 
         //s0に優先順位をつける(このときjgの-100のところが変るところがある)
@@ -1477,8 +1475,8 @@ int ss; ss=getSmen_yuukou_suu();
         for (int ss = 1; ss <= Smen_yuukou_suu; ss++) {      //<<<<<<<<<<<<<<高速化のため変更。070417
 
             orihime_app.bulletinBoard.rewrite(7, "mujyun_Smen_motome( " + ss + ") , Menidsuu = " + s[ss].getFaceIdCount() + " , Men_pair_suu = " + s[ss].getFaceIdCount() * (s[ss].getFaceIdCount() - 1) / 2);
-            orihime_app.bulletinBoard.rewrite(8, " kasanari_bunryi_mitei = " + s[ss].overlapping_bunryi_mitei(jg));
-            orihime_app.bulletinBoard.rewrite(9, " kasanari_bunryi_ketteizumi = " + s[ss].kasanari_bunryi_ketteizumi(jg));
+            orihime_app.bulletinBoard.rewrite(8, " kasanari_bunryi_mitei = " + s[ss].overlapping_classification_pending(jg));
+            orihime_app.bulletinBoard.rewrite(9, " kasanari_bunryi_ketteizumi = " + s[ss].overlapping_classification_determined(jg));
 
 
             kks = s[ss].possible_overlapping_search(jg);
@@ -1583,7 +1581,7 @@ int ss; ss=getSmen_yuukou_suu();
     }
 
 
-    public void oekaki(Graphics g, CreasePattern_Worker orite, PointStore otta_Men_zu, PointStore Smen_zu, int omote_ura, int hyouji_flg) {
+    public void oekaki(Graphics g, CreasePattern_Worker orite, CreasePattern otta_Men_zu, CreasePattern Smen_zu, int omote_ura, int hyouji_flg) {
 
 
         //hyouji_flgは折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図
@@ -1623,15 +1621,15 @@ int ss; ss=getSmen_yuukou_suu();
                     }
                 }
 
-                for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
+                for (int i = 1; i <= Smen_zu.getPointsCount(im) - 1; i++) {
                     x[i] = gx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
                     y[i] = gy(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                 }
 
-                x[0] = gx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
-                y[0] = gy(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                x[0] = gx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
+                y[0] = gy(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
 
-                g.fillPolygon(x, y, Smen_zu.getTenidsuu(im));
+                g.fillPolygon(x, y, Smen_zu.getPointsCount(im));
             }
 
             g.setColor(Color.black);
@@ -1679,15 +1677,15 @@ int ss; ss=getSmen_yuukou_suu();
                 }
                 g.setColor(new Color(col_kosa, col_kosa, col_kosa));
 
-                for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
+                for (int i = 1; i <= Smen_zu.getPointsCount(im) - 1; i++) {
                     x[i] = gx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
                     y[i] = gy(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                 }
 
-                x[0] = gx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
-                y[0] = gy(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                x[0] = gx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
+                y[0] = gy(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
 
-                g.fillPolygon(x, y, Smen_zu.getTenidsuu(im));
+                g.fillPolygon(x, y, Smen_zu.getPointsCount(im));
             }
 
             g.setColor(Color.black);
@@ -1747,15 +1745,15 @@ int ss; ss=getSmen_yuukou_suu();
                 }
                 g.setColor(new Color(col_kosa, 0, 0));
 
-                for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
+                for (int i = 1; i <= Smen_zu.getPointsCount(im) - 1; i++) {
                     x[i] = gx(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
                     y[i] = gy(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                 }
 
-                x[0] = gx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
-                y[0] = gy(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                x[0] = gx(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
+                y[0] = gy(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
 
-                g.fillPolygon(x, y, Smen_zu.getTenidsuu(im));
+                g.fillPolygon(x, y, Smen_zu.getPointsCount(im));
             }
         }
     }
@@ -1777,7 +1775,7 @@ int ss; ss=getSmen_yuukou_suu();
 
     //---------------------------------------------------------
 
-    public Memo getMemo_for_svg_with_camera(CreasePattern_Worker orite, PointStore otta_Men_zu, PointStore Smen_zu) {//折り上がり図(hyouji_flg==5)
+    public Memo getMemo_for_svg_with_camera(CreasePattern_Worker orite, CreasePattern otta_Men_zu, CreasePattern Smen_zu) {//折り上がり図(hyouji_flg==5)
         int omote_ura = 0;
         if (camera.get_camera_kagami() == 1.0) {
             omote_ura = 0;
@@ -1832,10 +1830,10 @@ int ss; ss=getSmen_yuukou_suu();
 
 
                 if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
-                    str_stroke = ms.toHtmlColor(F_color);
+                    str_stroke = StringOp.toHtmlColor(F_color);
                 }//g.setColor(F_color)
                 if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
-                    str_stroke = ms.toHtmlColor(B_color);
+                    str_stroke = StringOp.toHtmlColor(B_color);
                 }//g.setColor(B_color)
 
 
@@ -1855,7 +1853,7 @@ int ss; ss=getSmen_yuukou_suu();
                 //折り上がり図を描くときのSmenの色を決めるのはここまで
 
                 //折り上がり図を描くときのim番目のSmenの多角形の頂点の座標（PC表示上）を求める
-                for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
+                for (int i = 1; i <= Smen_zu.getPointsCount(im) - 1; i++) {
                     t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
                     t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
@@ -1863,8 +1861,8 @@ int ss; ss=getSmen_yuukou_suu();
                     y[i] = gy(t1.getY());
                 }
 
-                t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
-                t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
+                t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getX());
                 y[0] = gy(t1.getY());
@@ -1873,7 +1871,7 @@ int ss; ss=getSmen_yuukou_suu();
                 //g2.fill(new Polygon(x,y,Smen_zu.getTenidsuu(im)));  //svg出力
 
                 str_zahyou = x[0] + "," + y[0];
-                for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
+                for (int i = 1; i <= Smen_zu.getPointsCount(im) - 1; i++) {
                     str_zahyou = str_zahyou + " " + x[i] + "," + y[i];
 
                 }
@@ -1915,7 +1913,7 @@ int ss; ss=getSmen_yuukou_suu();
         //g.setColor(L_color);//折り上がり図を描くときの棒の色を決める
 
         //str_stroke = "black";
-        str_stroke = ms.toHtmlColor(L_color);
+        str_stroke = StringOp.toHtmlColor(L_color);
 
         //System.out.println("上下表職人　oekaki_with_camera+++++++++++++++折紙表示　棒を描く");
         for (int ib = 1; ib <= Smen_zu.getSticksTotal(); ib++) {
@@ -1994,7 +1992,7 @@ int ss; ss=getSmen_yuukou_suu();
     }
     //---------------------------------------------------------
 
-    public void oekaki_with_camera(Graphics g, CreasePattern_Worker orite, PointStore otta_Men_zu, PointStore Smen_zu, int omote_ura, int hyouji_flg) {
+    public void oekaki_with_camera(Graphics g, CreasePattern_Worker orite, CreasePattern otta_Men_zu, CreasePattern Smen_zu, int omote_ura, int hyouji_flg) {
 
 
         //hyouji_flgは折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図
@@ -2045,7 +2043,7 @@ int ss; ss=getSmen_yuukou_suu();
                         }
                     }
 
-                    for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
+                    for (int i = 1; i <= Smen_zu.getPointsCount(im) - 1; i++) {
 
                         t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
                         t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
@@ -2056,15 +2054,15 @@ int ss; ss=getSmen_yuukou_suu();
                         //y[i]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,i)));
                     }
 
-                    t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
-                    t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                    t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
+                    t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
                     t1.set(camera.object2TV(t0));
                     x[0] = gx(t1.getX());
                     y[0] = gy(t1.getY());
                     //x[0]=gx(Smen_zu.getTenx(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
                     //y[0]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
 
-                    g.fillPolygon(x, y, Smen_zu.getTenidsuu(im));
+                    g.fillPolygon(x, y, Smen_zu.getPointsCount(im));
                 }
             }
 
@@ -2128,7 +2126,7 @@ int ss; ss=getSmen_yuukou_suu();
                 }
                 g.setColor(new Color(col_kosa, 0, 0));
 
-                for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
+                for (int i = 1; i <= Smen_zu.getPointsCount(im) - 1; i++) {
 
                     t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
                     t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
@@ -2141,8 +2139,8 @@ int ss; ss=getSmen_yuukou_suu();
                     //y[i]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,i)));
                 }
 
-                t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
-                t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
+                t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getX());
                 y[0] = gy(t1.getY());
@@ -2151,7 +2149,7 @@ int ss; ss=getSmen_yuukou_suu();
                 //x[0]=gx(Smen_zu.getTenx(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
                 //y[0]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
 
-                g.fillPolygon(x, y, Smen_zu.getTenidsuu(im));
+                g.fillPolygon(x, y, Smen_zu.getPointsCount(im));
             }
         }
 
@@ -2165,7 +2163,7 @@ int ss; ss=getSmen_yuukou_suu();
 
     //
     //---------------------------------------------------------
-    public Memo getMemo_wirediagram_for_svg_export(CreasePattern_Worker orite, PointStore otta_Men_zu, PointStore Smen_zu, int i_fill) {
+    public Memo getMemo_wirediagram_for_svg_export(CreasePattern_Worker orite, CreasePattern otta_Men_zu, CreasePattern Smen_zu, int i_fill) {
         //System.out.println("getMemo_hariganezu_for_svg_kakidasi");
         int omote_ura = 0;
         if (camera.get_camera_kagami() == 1.0) {
@@ -2229,7 +2227,7 @@ int ss; ss=getSmen_yuukou_suu();
                     b_t_tv_y.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + " ";
 
 
-            for (int i = 2; i <= otta_Men_zu.getTenidsuu(im); i++) {
+            for (int i = 2; i <= otta_Men_zu.getPointsCount(im); i++) {
                 text = text + "L ";
                 t_ob.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, i)));
                 t_ob.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, i)));
@@ -2265,18 +2263,18 @@ int ss; ss=getSmen_yuukou_suu();
             if (i_fill == 1) {
 
                 if (orite.getiMeniti(im) % 2 == 1) {
-                    str_fill = ms.toHtmlColor(F_color);
+                    str_fill = StringOp.toHtmlColor(F_color);
                 }
                 if (orite.getiMeniti(im) % 2 == 0) {
-                    str_fill = ms.toHtmlColor(B_color);
+                    str_fill = StringOp.toHtmlColor(B_color);
                 }
 
                 if (omote_ura == 1) {
                     if (orite.getiMeniti(im) % 2 == 1) {
-                        str_fill = ms.toHtmlColor(B_color);
+                        str_fill = StringOp.toHtmlColor(B_color);
                     }
                     if (orite.getiMeniti(im) % 2 == 0) {
-                        str_fill = ms.toHtmlColor(F_color);
+                        str_fill = StringOp.toHtmlColor(F_color);
                     }
 
 
@@ -2328,7 +2326,7 @@ int ss; ss=getSmen_yuukou_suu();
 
 
     //---------------------------------------------------------
-    public void oekaki_toukazu_with_camera(Graphics g, CreasePattern_Worker orite, PointStore otta_Men_zu, PointStore Smen_zu, int i_toukazu_color, int toukazu_toukado) {
+    public void oekaki_toukazu_with_camera(Graphics g, CreasePattern_Worker orite, CreasePattern otta_Men_zu, CreasePattern Smen_zu, int i_toukazu_color, int toukazu_toukado) {
         Graphics2D g2 = (Graphics2D) g;
 
         //System.out.println("上下表職人　oekaki_with_camera+++++++++++++++透過表示");
@@ -2363,7 +2361,7 @@ int ss; ss=getSmen_yuukou_suu();
 
             //面を描く
             for (int im = 1; im <= otta_Men_zu.getFacesTotal(); im++) {
-                for (int i = 1; i <= otta_Men_zu.getTenidsuu(im) - 1; i++) {
+                for (int i = 1; i <= otta_Men_zu.getPointsCount(im) - 1; i++) {
                     t0.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, i)));
                     t0.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
@@ -2371,12 +2369,12 @@ int ss; ss=getSmen_yuukou_suu();
                     y[i] = gy(t1.getY());
                 }
 
-                t0.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, otta_Men_zu.getTenidsuu(im))));
-                t0.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, otta_Men_zu.getTenidsuu(im))));
+                t0.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, otta_Men_zu.getPointsCount(im))));
+                t0.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, otta_Men_zu.getPointsCount(im))));
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getX());
                 y[0] = gy(t1.getY());
-                g.fillPolygon(x, y, otta_Men_zu.getTenidsuu(im));
+                g.fillPolygon(x, y, otta_Men_zu.getPointsCount(im));
                 //g.drawPolygon(x,y,otta_Men_zu.getTenidsuu(im));
             }
 
@@ -2434,7 +2432,7 @@ int ss; ss=getSmen_yuukou_suu();
                 //System.out.println("col_kosa="+col_kosa);
                 g.setColor(new Color(col_kosa, col_kosa, col_kosa));
 
-                for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
+                for (int i = 1; i <= Smen_zu.getPointsCount(im) - 1; i++) {
                     t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
                     t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
@@ -2442,12 +2440,12 @@ int ss; ss=getSmen_yuukou_suu();
                     y[i] = gy(t1.getY());
                 }
 
-                t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
-                t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
+                t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getX());
                 y[0] = gy(t1.getY());
-                g.fillPolygon(x, y, Smen_zu.getTenidsuu(im));
+                g.fillPolygon(x, y, Smen_zu.getPointsCount(im));
             }
 
             //棒を描く準備
@@ -2482,7 +2480,7 @@ int ss; ss=getSmen_yuukou_suu();
 
     //---------------------------------------------------------
 
-    public void oekaki_foldedFigure_with_camera(Graphics g, CreasePattern_Worker orite, PointStore otta_Men_zu, PointStore Smen_zu) {
+    public void oekaki_foldedFigure_with_camera(Graphics g, CreasePattern_Worker orite, CreasePattern otta_Men_zu, CreasePattern Smen_zu) {
         Graphics2D g2 = (Graphics2D) g;
         int omote_ura = 0;
         if (camera.get_camera_kagami() == 1.0) {
@@ -2558,7 +2556,7 @@ int ss; ss=getSmen_yuukou_suu();
 
                 //折り上がり図を描くときのim番目のSmenの多角形の頂点の座標（PC表示上）を求める
 
-                for (int i = 1; i <= Smen_zu.getTenidsuu(im) - 1; i++) {
+                for (int i = 1; i <= Smen_zu.getPointsCount(im) - 1; i++) {
 
                     t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
                     t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
@@ -2569,8 +2567,8 @@ int ss; ss=getSmen_yuukou_suu();
                     //y[i]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,i)));
                 }
 
-                t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
-                t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getTenidsuu(im))));
+                t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
+                t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getX());
                 y[0] = gy(t1.getY());
@@ -2579,7 +2577,7 @@ int ss; ss=getSmen_yuukou_suu();
 
                 //折り上がり図を描くときのim番目のSmenの多角形の頂点の座標（PC表示上）を求めるのはここまで
 
-                g2.fill(new Polygon(x, y, Smen_zu.getTenidsuu(im)));
+                g2.fill(new Polygon(x, y, Smen_zu.getPointsCount(im)));
                 //g.fillPolygon(x,y,Smen_zu.getTenidsuu(im));
             }
         }
@@ -2876,7 +2874,7 @@ int ss; ss=getSmen_yuukou_suu();
 
     //---------------------------------------------------------
 
-    public int bou_no_bangou_kara_kagenoaru_Smen_no_bangou_wo_motomeru(int ib, PointStore Smen_zu, int omote_ura) {//棒の番号から、その棒の影が発生するSmen の番号を求める。影が発生しない場合は0を返す。
+    public int bou_no_bangou_kara_kagenoaru_Smen_no_bangou_wo_motomeru(int ib, CreasePattern Smen_zu, int omote_ura) {//棒の番号から、その棒の影が発生するSmen の番号を求める。影が発生しない場合は0を返す。
 
         int i_return = 0;
 

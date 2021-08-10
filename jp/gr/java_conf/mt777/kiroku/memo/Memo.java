@@ -2,7 +2,7 @@ package jp.gr.java_conf.mt777.kiroku.memo;
 
 import java.util.*;
 
-public class Memo {//データ格納用のメモ帳
+public class Memo {//Notepad for data storage
     ArrayList<String> lines = new ArrayList<>();
     //---------------------------------
 

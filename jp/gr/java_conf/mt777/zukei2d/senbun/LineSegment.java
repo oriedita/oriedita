@@ -5,6 +5,7 @@ import java.awt.*;
 import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 //import  jp.gr.java_conf.mt777.zukei2d.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class LineSegment {
     //OritaCalc oc =new OritaCalc();//各種計算用の関数を使うためのクラスのインスタンス化
@@ -92,14 +93,14 @@ public class LineSegment {
         BigDecimal bd = new BigDecimal(d0);
 
         //小数第2位で四捨五入
-        BigDecimal bd1 = bd.setScale(1, BigDecimal.ROUND_HALF_UP);
+        BigDecimal bd1 = bd.setScale(1, RoundingMode.HALF_UP);
 
         String sr;
         sr = bd1.toString();
         return sr;
     }
 
-    public void hyouji(String str0) {
+    public void display(String str0) {
         System.out.println(str0 + " (" + d2s(a.getX()) + " , " + d2s(a.getY()) + "),(" + d2s(b.getX()) + " , " + d2s(b.getY()) + ") ,ia=" + iactive + ",ic=" + icol + ",is=" + i_select);
     }
 
@@ -109,7 +110,7 @@ public class LineSegment {
         a.set(s.getA());
         b.set(s.getB());
         iactive = s.getiactive();
-        icol = s.getcolor();
+        icol = s.getColor();
         i_select = s.get_i_select();
         i_max_x = s.get_i_max_x();
         i_min_x = s.get_i_min_x();
@@ -146,11 +147,11 @@ public class LineSegment {
     }
 
     //----------
-    public void seta(Point p) {
+    public void setA(Point p) {
         set(p.getX(), p.getY(), b.getX(), b.getY());
     }
 
-    public void setb(Point p) {
+    public void setB(Point p) {
         set(a.getX(), a.getY(), p.getX(), p.getY());
     }
 
@@ -161,10 +162,10 @@ public class LineSegment {
     //活性化された点の座標をpにする   !!!!!!!!!!!!この関数は間違えたとき、気づきにくいので危険、できれば別名に変える20170507
     public void set(Point p) {
         if (iactive == 1) {
-            seta(p);
+            setA(p);
         }
         if (iactive == 2) {
-            setb(p);
+            setB(p);
         }
         //if (iactive==1){a.set(p.getx(),p.gety());}
         //if (iactive==2){b.set(p.getx(),p.gety());}
@@ -211,7 +212,7 @@ public class LineSegment {
         icol = i;
     }
 
-    public int getcolor() {
+    public int getColor() {
         return icol;
     }
 
@@ -232,8 +233,8 @@ public class LineSegment {
         return i_select;
     }
 
-    //この線分が、ある点と近いかどうかで活性化する。
-    public void kasseika(Point p, double r) {
+    //This line segment is activated depending on whether it is close to a certain point.
+    public void activate(Point p, double r) {
         iactive = 0;
         if (p.distanceSquared(a) <= r * r) {
             iactive = 1;
@@ -245,14 +246,14 @@ public class LineSegment {
         //if(oc.kyori(p,b)<=r){iactive=2;}
     }
 
-    //この線分を非活性化
-    public void hikasseika() {
+    //Deactivate this line segment
+    public void deactivate() {
         iactive = 0;
     }
 
 
-    //両端点a,bの座標を交換
-    public void a_b_koukan() {
+    //Exchange the coordinates of both end points a and b
+    public void a_b_swap() {
         Point t_temp = new Point(a);
         a.set(b);
         b.set(t_temp);
@@ -271,25 +272,23 @@ public class LineSegment {
 //	public Ten geta(){return a;}
 //	public Ten getb(){return b;}
 
-    public Point get_tikai_hasi(Point p) {//点Pと近いほうの端点を返す
+    public Point getClosestEndpoint(Point p) {//Returns the endpoint closest to point P
         if (p.distanceSquared(a) <= p.distanceSquared(b)) {
             return a;
         }
         return b;
     }
 
-    public Point get_tooi_hasi(Point p) {//点Pと遠いいほうの端点を返す
+    public Point getFurthestEndpoint(Point p) {//点Pと遠いいほうの端点を返す
         if (p.distanceSquared(a) >= p.distanceSquared(b)) {
             return a;
         }
         return b;
     }
 
-
-    public double getnagasa() {
+    public double getLength() {
         return a.distance(b);
     }
-    //public double getnagasa(){return oc.kyori(a,b);}
 
     public double getAx() {
         return a.getX();

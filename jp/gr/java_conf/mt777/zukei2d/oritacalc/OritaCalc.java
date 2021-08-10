@@ -34,12 +34,12 @@ public class OritaCalc {
 
         StraightLine t1 = new StraightLine();
         t1.set(t);
-        t1.tyokkouka(p);//点p1を通って tに直行する直線u1を求める。
-        return kouten_motome(t, t1);
+        t1.orthogonalize(p);//点p1を通って tに直行する直線u1を求める。
+        return findIntersection(t, t1);
     }
 
     //点P0とP1を通る直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。
-    public Point shadow_request(Point p0, Point p1, Point p) {
+    public  Point shadow_request(Point p0, Point p1, Point p) {
         StraightLine t = new StraightLine(p0, p1);
         return shadow_request(t, p);
     }
@@ -126,9 +126,9 @@ public class OritaCalc {
     public int isInside(Point p1, Point pa, Point p2) {
         StraightLine t = new StraightLine(p1, p2);//p1,p2を通る直線tを求める。
         StraightLine u1 = new StraightLine(p1, p2);
-        u1.tyokkouka(p1);//点p1を通って tに直行する直線u1を求める。
+        u1.orthogonalize(p1);//点p1を通って tに直行する直線u1を求める。
         StraightLine u2 = new StraightLine(p1, p2);
-        u2.tyokkouka(p2);//点p2を通って tに直行する直線u2を求める。
+        u2.orthogonalize(p2);//点p2を通って tに直行する直線u2を求める。
 
         if (u1.dainyuukeisan(pa) * u2.dainyuukeisan(pa) == 0.0) {
             return 1;
@@ -146,9 +146,9 @@ public class OritaCalc {
     public int hakononaka_amai(Point p1, Point pa, Point p2) {
         StraightLine t = new StraightLine(p1, p2);//p1,p2を通る直線tを求める。
         StraightLine u1 = new StraightLine(p1, p2);
-        u1.tyokkouka(p1);//点p1を通って tに直行する直線u1を求める。
+        u1.orthogonalize(p1);//点p1を通って tに直行する直線u1を求める。
         StraightLine u2 = new StraightLine(p1, p2);
-        u2.tyokkouka(p2);//点p2を通って tに直行する直線u2を求める。
+        u2.orthogonalize(p2);//点p2を通って tに直行する直線u2を求める。
 
         //if(u1.dainyuukeisan(pa)*u2.dainyuukeisan(pa) ==0.0){return 1;}
 
@@ -168,7 +168,7 @@ public class OritaCalc {
 
     //点pが指定された線分とどの部所で近い(r以内)かどうかを判定する関数　---------------------------------
     //0=近くない、1=a点に近い、2=b点に近い、3=柄の部分に近い
-    public int senbun_busyo_sagasi(Point p, LineSegment s0, double r) {
+    public int lineSegment_busyo_search(Point p, LineSegment s0, double r) {
         if (r > distance(p, s0.getA())) {
             return 1;
         }//a点に近いかどうか
@@ -195,9 +195,9 @@ public class OritaCalc {
         //p1とp2が異なる場合
         StraightLine t = new StraightLine(p1, p2);//p1,p2を通る直線tを求める。
         StraightLine u = new StraightLine(p1, p2);
-        u.tyokkouka(p0);//点p0を通って tに直行する直線uを求める。
+        u.orthogonalize(p0);//点p0を通って tに直行する直線uを求める。
 
-        if (isInside(p1, kouten_motome(t, u), p2) >= 1) {
+        if (isInside(p1, findIntersection(t, u), p2) >= 1) {
             return t.calculateDistance(p0);
         }//tとuの交点がp1とp2の間にある場合。
         return Math.min(distance(p0, p1), distance(p0, p2));//tとuの交点がp1とp2の間にない場合。
@@ -329,7 +329,7 @@ public class OritaCalc {
         // System.out.println("AAAAAAAAAAAA");
         if (heikou_hantei(t1, t2, rhei) == 0) {    //２つの直線が平行でない
             Point pk = new Point();
-            pk.set(kouten_motome(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
+            pk.set(findIntersection(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
             if ((isInside(p1, pk, p2) >= 1)
                     && (isInside(p3, pk, p4) >= 1)) {
                 if (equal(p1, p3, rhit)) {
@@ -562,7 +562,7 @@ public class OritaCalc {
         // System.out.println("AAAAAAAAAAAA");
         if (heikou_hantei(t1, t2, rhei) == 0) {    //２つの直線が平行でない
             Point pk = new Point();
-            pk.set(kouten_motome(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
+            pk.set(findIntersection(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
             if ((hakononaka_amai(p1, pk, p2) >= 1)
                     && (hakononaka_amai(p3, pk, p4) >= 1)) {
                 if (equal(p1, p3, rhit)) {
@@ -701,14 +701,14 @@ public class OritaCalc {
 
     //２つの線分が平行かどうかを判定する関数。
     public int heikou_hantei(LineSegment s1, LineSegment s2, double r) {
-        return heikou_hantei(Senbun2Tyokusen(s1), Senbun2Tyokusen(s2), r);
+        return heikou_hantei(lineSegmentToStraightLine(s1), lineSegmentToStraightLine(s2), r);
     }
 
 
     public int heikou_hantei(StraightLine t1, StraightLine t2, double r) {//rは誤差の許容度。rが負なら厳密判定。
         //0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-        double a1 = t1.geta(), b1 = t1.getb(), c1 = t1.getc();//直線t1, a1*x+b1*y+c1=0の各係数を求める。
-        double a2 = t2.geta(), b2 = t2.getb(), c2 = t2.getc();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
+        double a1 = t1.getA(), b1 = t1.getB(), c1 = t1.getC();//直線t1, a1*x+b1*y+c1=0の各係数を求める。
+        double a2 = t2.getA(), b2 = t2.getB(), c2 = t2.getC();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
 
         //System.out.print("平行判定のr　＝　");System.out.println(r);
         //厳密に判定----------------------------------------
@@ -736,7 +736,7 @@ public class OritaCalc {
                 //原点（0、0）と各直線との距離を比較
                 //double kyoriT=Math.abs(c1/Math.sqrt(a1*a1+b1*b1)-c2/Math.sqrt(a2*a2+b2*b2));//20181027、ver3.049までのバグありの処理
                 //double kyoriT=Math.abs(   Math.abs(  c1/Math.sqrt(a1*a1+b1*b1)  )  -   Math.abs(  c2/Math.sqrt(a2*a2+b2*b2)  )      );//20181027、ver3.050以降のバグ無しの処理
-                double kyoriT = t2.calculateDistance(t1.kage_motome(new Point(0.0, 0.0)));//t1上の点とt2との距離//t1.kage_motome(new Ten(0.0,0.0))   は点（0,0）のt1上の影を求める（t1上の点ならなんでもいい）//20181115修正
+                double kyoriT = t2.calculateDistance(t1.findShadow(new Point(0.0, 0.0)));//t1上の点とt2との距離//t1.kage_motome(new Ten(0.0,0.0))   は点（0,0）のt1上の影を求める（t1上の点ならなんでもいい）//20181115修正
 
 
                 if (kyoriT < r) {//誤差を許容。
@@ -754,43 +754,40 @@ public class OritaCalc {
     }
 
 
-    //２つの直線の交点を求める関数
-    public Point kouten_motome(StraightLine t1, StraightLine t2) {
-        double a1 = t1.geta(), b1 = t1.getb(), c1 = t1.getc();//直線t1, a1*x+b1*y+c1=0の各係数を求める。
-        double a2 = t2.geta(), b2 = t2.getb(), c2 = t2.getc();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
-
-//System.out.println("   "+(b1*c2-b2*c1)/(a1*b2-a2*b1)+"::::::::"+(a2*c1-a1*c2)/(a1*b2-a2*b1));
+    //Function to find the intersection of two straight lines
+    public Point findIntersection(StraightLine t1, StraightLine t2) {
+        double a1 = t1.getA(), b1 = t1.getB(), c1 = t1.getC();//直線t1, a1*x+b1*y+c1=0の各係数を求める。
+        double a2 = t2.getA(), b2 = t2.getB(), c2 = t2.getC();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
 
         return new Point((b1 * c2 - b2 * c1) / (a1 * b2 - a2 * b1), (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1));
     }
 
 
-    //２つの直線の交点を求める関数(複製)
-    public Point kouten_motome_01(StraightLine t1, StraightLine t2) {
-        double a1 = t1.geta(), b1 = t1.getb(), c1 = t1.getc();//直線t1, a1*x+b1*y+c1=0の各係数を求める。
-        double a2 = t2.geta(), b2 = t2.getb(), c2 = t2.getc();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
+    //Function to find the intersection of two straight lines (replication)
+    public Point findIntersection_01(StraightLine t1, StraightLine t2) {
+        double a1 = t1.getA(), b1 = t1.getB(), c1 = t1.getC();//直線t1, a1*x+b1*y+c1=0の各係数を求める。
+        double a2 = t2.getA(), b2 = t2.getB(), c2 = t2.getC();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
         return new Point((b1 * c2 - b2 * c1) / (a1 * b2 - a2 * b1), (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1));
     }
 
 
-    public StraightLine Senbun2Tyokusen(LineSegment s) {//線分を含む直線を得る
-        StraightLine t = new StraightLine(s.getA(), s.getB());
-        return t;
+    public StraightLine lineSegmentToStraightLine(LineSegment s) {//線分を含む直線を得る
+        return new StraightLine(s.getA(), s.getB());
     }
 
     //２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
-    public Point kouten_motome(LineSegment s1, LineSegment s2) {
-        return kouten_motome(Senbun2Tyokusen(s1), Senbun2Tyokusen(s2));
+    public Point findIntersection(LineSegment s1, LineSegment s2) {
+        return findIntersection(lineSegmentToStraightLine(s1), lineSegmentToStraightLine(s2));
     }
 
     //線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
-    public Point kouten_motome(StraightLine t1, LineSegment s2) {
-        return kouten_motome(t1, Senbun2Tyokusen(s2));
+    public Point findIntersection(StraightLine t1, LineSegment s2) {
+        return findIntersection(t1, lineSegmentToStraightLine(s2));
     }
 
     //線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
-    public Point kouten_motome(LineSegment s1, StraightLine t2) {
-        return kouten_motome(Senbun2Tyokusen(s1), t2);
+    public Point findIntersection(LineSegment s1, StraightLine t2) {
+        return findIntersection(lineSegmentToStraightLine(s1), t2);
     }
 
 
@@ -799,19 +796,17 @@ public class OritaCalc {
         StraightLine t = new StraightLine(s.getA(), s.getB());
         StraightLine ta = new StraightLine(s.getA(), s.getB());
         StraightLine tb = new StraightLine(s.getA(), s.getB());
-        ta.tyokkouka(s.getA());
-        tb.tyokkouka(s.getB());
+        ta.orthogonalize(s.getA());
+        tb.orthogonalize(s.getB());
         StraightLine td = new StraightLine(s.getA(), s.getB());
-        td.heikouidou(d);
+        td.translate(d);
 
-        LineSegment sreturn = new LineSegment(kouten_motome_01(ta, td), kouten_motome_01(tb, td));
-
-        return sreturn;
+        return new LineSegment(findIntersection_01(ta, td), findIntersection_01(tb, td));
     }
 
     //------------------------------------
-    //点aを中心に点bをd度回転した点を返す関数（元の点は変えずに新しい点を返す）
-    public Point ten_kaiten(Point a, Point b, double d) {
+    //A function that returns a point obtained by rotating point b by d degrees around point a (returns a new point without changing the original point)
+    public Point point_rotate(Point a, Point b, double d) {
 
         double Mcd = Math.cos(d * Math.PI / 180.0);
         double Msd = Math.sin(d * Math.PI / 180.0);
@@ -827,8 +822,8 @@ public class OritaCalc {
     }
 
     //------------------------------------
-    //点aを中心に点bをd度回転しabの距離がr倍の点を返す関数（元の点は変えずに新しい点を返す）
-    public Point ten_kaiten(Point a, Point b, double d, double r) {
+    //A function that rotates point b by d degrees around point a and returns a point whose ab distance is r times (returns a new point without changing the original point)
+    public Point point_rotate(Point a, Point b, double d, double r) {
 
         double Mcd = Math.cos(d * Math.PI / 180.0);
         double Msd = Math.sin(d * Math.PI / 180.0);
@@ -842,8 +837,8 @@ public class OritaCalc {
     }
 
     //------------------------------------
-    //点aを中心に点bを元にしてabの距離がr倍の点を返す関数（元の点は変えずに新しい点を返す）20161224 未検証
-    public Point ten_bai(Point a, Point b, double r) {
+    //A function that returns a point centered on point a and based on point b with a distance of ab times r (returns a new point without changing the original point) 20161224 Unverified
+    public Point point_double(Point a, Point b, double r) {
         double bx1 = r * (b.getX() - a.getX()) + a.getX();
         double by1 = r * (b.getY() - a.getY()) + a.getY();
 
@@ -856,8 +851,8 @@ public class OritaCalc {
 //------------------------------------
 
     //線分abをcを中心にr倍してd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
-    public LineSegment Senbun_kaiten(LineSegment s0, Point c, double d, double r) {
-        LineSegment s_return = new LineSegment(ten_kaiten(s0.getA(), c, d, r), ten_kaiten(s0.getB(), c, d, r));
+    public LineSegment lineSegment_rotate(LineSegment s0, Point c, double d, double r) {
+        LineSegment s_return = new LineSegment(point_rotate(s0.getA(), c, d, r), point_rotate(s0.getB(), c, d, r));
         return s_return;
     }
 
@@ -865,7 +860,7 @@ public class OritaCalc {
 // ------------------------------------
 
     //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
-    public LineSegment Senbun_kaiten(LineSegment s0, double d) {
+    public LineSegment lineSegment_rotate(LineSegment s0, double d) {
 //s0.getax(),s0.getay()
 
 //(Math.cos(d*3.14159265/180.0),-Math.sin(d*3.14159265/180.0) )  (s0.getbx()-s0.getax()) + (s0.getax())
@@ -888,7 +883,7 @@ public class OritaCalc {
 
 
     //線分abをaを中心にr倍してd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
-    public LineSegment Senbun_kaiten(LineSegment s0, double d, double r) {
+    public LineSegment lineSegment_rotate(LineSegment s0, double d, double r) {
         //s0.getax(),s0.getay()
 
         //(Math.cos(d*3.14159265/180.0),-Math.sin(d*3.14159265/180.0) )  (s0.getbx()-s0.getax()) + (s0.getax())
@@ -902,23 +897,21 @@ public class OritaCalc {
 
         double ax1 = s0.getAx();
         double ay1 = s0.getay();
-        LineSegment s_return = new LineSegment(ax1, ay1, bx1, by1);
 
-        return s_return;
+        return new LineSegment(ax1, ay1, bx1, by1);
     }
 
 
-    //線分abをaを中心にr倍した線分を返す関数（元の線分は変えずに新しい線分を返す）
-    public LineSegment Senbun_bai(LineSegment s0, double r) {
+    //A function that returns a line segment obtained by multiplying the line segment ab by r with a as the center (returns a new line segment without changing the original line segment)
+    public LineSegment lineSegment_double(LineSegment s0, double r) {
 
         double bx1 = r * (s0.getbx() - s0.getAx()) + s0.getAx();
         double by1 = r * (s0.getby() - s0.getay()) + s0.getay();
 
         double ax1 = s0.getAx();
         double ay1 = s0.getay();
-        LineSegment s_return = new LineSegment(ax1, ay1, bx1, by1);
 
-        return s_return;
+        return new LineSegment(ax1, ay1, bx1, by1);
     }
 
 
@@ -934,14 +927,14 @@ public class OritaCalc {
         jiku_b.set(jiku.getB());
 
         LineSegment s1 = new LineSegment();
-        s1.set(sentaisyou_ten_motome(jiku_a, jiku_b, p_a), sentaisyou_ten_motome(jiku_a, jiku_b, p_b));
+        s1.set(lineControl_point_find(jiku_a, jiku_b, p_a), lineControl_point_find(jiku_a, jiku_b, p_b));
 
         return s1;
     }
 
 
     //直線t0に関して、点pの対照位置にある点を求める関数
-    public Point sentaisyou_ten_motome(StraightLine t0, Point p) {
+    public Point lineControl_point_find(StraightLine t0, Point p) {
         Point p1 = new Point();  // p1.set(s.geta());
         Point p2 = new Point();  // p2.set(s.getb());
 
@@ -950,30 +943,30 @@ public class OritaCalc {
         StraightLine s2 = new StraightLine();
         s2.set(t0);
 
-        s2.tyokkouka(p);//点pを通って s1に直行する直線s2を求める。
+        s2.orthogonalize(p);//点pを通って s1に直行する直線s2を求める。
 
-        p1 = kouten_motome(s1, s2);
+        p1 = findIntersection(s1, s2);
         p2.set(2.0 * p1.getX() - p.getX(), 2.0 * p1.getY() - p.getY());
         return p2;
     }
 
-    //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める関数
-    public Point sentaisyou_ten_motome(Point t1, Point t2, Point p) {
+    //A function that finds a point at the control position of point p with respect to a straight line passing through two points t1 and t2.
+    public Point lineControl_point_find(Point t1, Point t2, Point p) {
         Point p1 = new Point();  // p1.set(s.geta());
         Point p2 = new Point();  // p2.set(s.getb());
 
         StraightLine s1 = new StraightLine(t1, t2);
         StraightLine s2 = new StraightLine(t1, t2);
 
-        s2.tyokkouka(p);//点pを通って s1に直行する直線s2を求める。
+        s2.orthogonalize(p);//Find the straight line s2 that passes through the point p and is orthogonal to s1.
 
-        p1 = kouten_motome(s1, s2);
+        p1 = findIntersection(s1, s2);
         p2.set(2.0 * p1.getX() - p.getX(), 2.0 * p1.getY() - p.getY());
         return p2;
     }
 
     //角度を-180.0度より大きく180.0度以下に押さえる関数
-    public double kakudo_osame_m180_180(double kakudo) {
+    public double angle_between_m180_180(double kakudo) {
         while (kakudo <= -180.0) {
             kakudo = kakudo + 360.0;
         }
@@ -983,8 +976,8 @@ public class OritaCalc {
         return kakudo;
     }
 
-    //角度を0.0度以上360.0度未満に押さえる関数
-    public double kakudo_osame_0_360(double kakudo) {
+    //A function that keeps the angle between 0.0 degrees and 360.0 degrees
+    public double angle_between_0_360(double kakudo) {
         while (kakudo < 0.0) {
             kakudo = kakudo + 360.0;
         }
@@ -996,7 +989,7 @@ public class OritaCalc {
 
 
     //角度を0.0度以上kmax度未満に押さえる関数(円錐の頂点の伏見定理などで使う)
-    public double kakudo_osame_0_kmax(double kakudo, double kmax) {
+    public double angle_betwen_0_kmax(double kakudo, double kmax) {
         while (kakudo < 0.0) {
             kakudo = kakudo + kmax;
         }
@@ -1018,17 +1011,17 @@ public class OritaCalc {
         Point d = new Point();
         d.set(s2.getB());
 
-        return kakudo_osame_0_360(angle(c, d) - angle(a, b));
+        return angle_between_0_360(angle(c, d) - angle(a, b));
     }
 
 
     //ベクトルabとcdのなす角度
     public double angle(Point a, Point b, Point c, Point d) {
-        return kakudo_osame_0_360(angle(c, d) - angle(a, b));
+        return angle_between_0_360(angle(c, d) - angle(a, b));
     }
 
-    //三角形の内心を求める
-    public Point naisin(Point ta, Point tb, Point tc) {
+    //Find the inner heart of the triangle
+    public Point center(Point ta, Point tb, Point tc) {
         double A, B, C, XA, XB, XC, YA, YB, YC, XD, YD, XE, YE, G, H, K, L, P, Q, XN, YN;
         Point tn = new Point();
         XA = ta.getX();
@@ -1087,126 +1080,73 @@ public class OritaCalc {
     }
 
     // -------------------------------
-    //中間点を求める。
-    public Point tyuukanten(Point a, Point b) {
-        Point r_point = new Point((a.getX() + b.getX()) / 2.0, (a.getY() + b.getY()) / 2.0);
+    //Find the midpoint.
+    public Point midPoint(Point a, Point b) {
 
-        return r_point;
+        return new Point((a.getX() + b.getX()) / 2.0, (a.getY() + b.getY()) / 2.0);
     }
 
     // -------------------------------
-    public StraightLine en_to_en_no_kouten_wo_tooru_tyokusen(Circle e1, Circle e2) {
+    public StraightLine circle_to_circle_no_intersection_wo_tooru_straightLine(Circle e1, Circle e2) {
         double x1 = e1.getx();
         double y1 = e1.gety();
-        double r1 = e1.getr();
+        double r1 = e1.getRadius();
         double x2 = e2.getx();
         double y2 = e2.gety();
-        double r2 = e2.getr();
+        double r2 = e2.getRadius();
 
         double a = 2.0 * x1 - 2.0 * x2;
         double b = 2.0 * y1 - 2.0 * y2;
         double c = x2 * x2 - x1 * x1 + y2 * y2 - y1 * y1 + r1 * r1 - r2 * r2;
 
-        StraightLine r_t = new StraightLine(a, b, c);
-
-        return r_t;
+        return new StraightLine(a, b, c);
     }
 
     // -------------------------------
-    public LineSegment en_to_en_no_kouten_wo_musubu_senbun(Circle e1, Circle e2) {
-
-//System.out.println(" 20170301  e1="+e1.getx() +",    "+ e1.gety() +",    "+e1.getr());
-//System.out.println(" 20170301  e2="+e2.getx() +",    "+ e2.gety() +",    "+e2.getr());
-
+    public LineSegment circle_to_circle_no_intersection_wo_musubu_lineSegment(Circle e1, Circle e2) {
         StraightLine t0 = new StraightLine();
-        t0.set(en_to_en_no_kouten_wo_tooru_tyokusen(e1, e2));
-        StraightLine t1 = new StraightLine(e1.get_tyuusin(), e2.get_tyuusin());
-        Point kouten_t0t1 = new Point();
-        kouten_t0t1.set(kouten_motome(t0, t1));
-        double nagasa_a = t0.calculateDistance(e1.get_tyuusin());  //t0とt1の交点からe1の中心までの長さ
+        t0.set(circle_to_circle_no_intersection_wo_tooru_straightLine(e1, e2));
+        StraightLine t1 = new StraightLine(e1.getCenter(), e2.getCenter());
+        Point intersection_t0t1 = new Point();
+        intersection_t0t1.set(findIntersection(t0, t1));
+        double length_a = t0.calculateDistance(e1.getCenter());  //t0とt1の交点からe1の中心までの長さ
 
-//double nagasa_a=kyori(kouten_t0t1,e1.get_tyuusin());  //t0とt1の交点からe1の中心までの長さ
-        double nagasa_b = Math.sqrt(e1.getr() * e1.getr() - nagasa_a * nagasa_a); //t0とt1の交点からe1とe2の交点までの長さ
+//double length_a=kyori(intersection_t0t1,e1.get_tyuusin());  //t0とt1の交点からe1の中心までの長さ
+        double length_b = Math.sqrt(e1.getRadius() * e1.getRadius() - length_a * length_a); //t0とt1の交点からe1とe2の交点までの長さ
 //t0と平行な方向ベクトルは(t0.getb() , -t0.geta())
-//t0と平行な方向ベクトルで長さがnagasa_bのものは(t0.getb()*nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ) , -t0.geta()*nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ))
+//t0と平行な方向ベクトルで長さがnagasa_bのものは(t0.getb()*length_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ) , -t0.geta()*length_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ))
 
-//Senbun r_s=new Senbun();
-
-        LineSegment r_s = new LineSegment(
-                kouten_t0t1.getX() + t0.getb() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
-                kouten_t0t1.getY() - t0.geta() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
-                kouten_t0t1.getX() - t0.getb() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
-                kouten_t0t1.getY() + t0.geta() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta())
+        return new LineSegment(
+                intersection_t0t1.getX() + t0.getB() * length_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA()),
+                intersection_t0t1.getY() - t0.getA() * length_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA()),
+                intersection_t0t1.getX() - t0.getB() * length_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA()),
+                intersection_t0t1.getY() + t0.getA() * length_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA())
         );
-/*
-double ax,ay,bx,by;
-//System.out.println(" 20170301 nagasa_b "+nagasa_b);
-//System.out.println(" 20170301  "+nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta()));
-
-
-//ax=kouten_t0t1.getx()+t0.getb()*nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() );
-ax=kouten_t0t1.getx()+t0.getb()*  0.2;//  nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() );
-ay=kouten_t0t1.gety()-t0.geta()*  0.2;//  nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() );
-bx=kouten_t0t1.getx()-t0.getb()*  0.2;//  nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() );
-by=kouten_t0t1.gety()+t0.geta()*  0.2;//  nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() );
-Ten ta=new Ten(ax+1.0,ay);
-Ten tb=new Ten(bx,by+2.0);
-r_s.set(ax,ay,bx,by);
-*/
-
-        return r_s;
     }
 
 
     // --------qqqqqqqqqqqqqqq-----------------------
-    public LineSegment en_to_tyokusen_no_kouten_wo_musubu_senbun(Circle e1, StraightLine t0) {
+    public LineSegment circle_to_straightLine_no_kouten_wo_musubu_LineSegment(Circle e1, StraightLine t0) {
 
-//System.out.println(" 20170301  e1="+e1.getx() +",    "+ e1.gety() +",    "+e1.getr());
-//System.out.println(" 20170301  e2="+e2.getx() +",    "+ e2.gety() +",    "+e2.getr());
-
-//En e2 = new En(sentaisyou_ten_motome(t0,e1.get_tyuusin()),e1.getr(),3);
-//Tyokusen t1 = new Tyokusen(e1.get_tyuusin(),e2.get_tyuusin());
         Point kouten_t0t1 = new Point();
-        kouten_t0t1.set(shadow_request(t0, e1.get_tyuusin()));
-        double nagasa_a = t0.calculateDistance(e1.get_tyuusin());  //t0とt1の交点からe1の中心までの長さ
+        kouten_t0t1.set(shadow_request(t0, e1.getCenter()));
+        double nagasa_a = t0.calculateDistance(e1.getCenter());  //t0とt1の交点からe1の中心までの長さ
 
-//double nagasa_a=kyori(kouten_t0t1,e1.get_tyuusin());  //t0とt1の交点からe1の中心までの長さ
-        double nagasa_b = Math.sqrt(e1.getr() * e1.getr() - nagasa_a * nagasa_a); //t0とt1の交点からe1とe2の交点までの長さ
+        double nagasa_b = Math.sqrt(e1.getRadius() * e1.getRadius() - nagasa_a * nagasa_a); //t0とt1の交点からe1とe2の交点までの長さ
 //t0と平行な方向ベクトルは(t0.getb() , -t0.geta())
 //t0と平行な方向ベクトルで長さがnagasa_bのものは(t0.getb()*nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ) , -t0.geta()*nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ))
 
-//Senbun r_s=new Senbun();
-
-        LineSegment r_s = new LineSegment(
-                kouten_t0t1.getX() + t0.getb() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
-                kouten_t0t1.getY() - t0.geta() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
-                kouten_t0t1.getX() - t0.getb() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta()),
-                kouten_t0t1.getY() + t0.geta() * nagasa_b / Math.sqrt(t0.getb() * t0.getb() + t0.geta() * t0.geta())
+        return new LineSegment(
+                kouten_t0t1.getX() + t0.getB() * nagasa_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA()),
+                kouten_t0t1.getY() - t0.getA() * nagasa_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA()),
+                kouten_t0t1.getX() - t0.getB() * nagasa_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA()),
+                kouten_t0t1.getY() + t0.getA() * nagasa_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA())
         );
-/*
-double ax,ay,bx,by;
-//System.out.println(" 20170301 nagasa_b "+nagasa_b);
-//System.out.println(" 20170301  "+nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta()));
-
-
-//ax=kouten_t0t1.getx()+t0.getb()*nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() );
-ax=kouten_t0t1.getx()+t0.getb()*  0.2;//  nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() );
-ay=kouten_t0t1.gety()-t0.geta()*  0.2;//  nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() );
-bx=kouten_t0t1.getx()-t0.getb()*  0.2;//  nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() );
-by=kouten_t0t1.gety()+t0.geta()*  0.2;//  nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() );
-Ten ta=new Ten(ax+1.0,ay);
-Ten tb=new Ten(bx,by+2.0);
-r_s.set(ax,ay,bx,by);
-*/
-
-        return r_s;
     }
 
-    //点p0と、円e0の円周との間の距離を求める関数----------------------------------------------------
-    public double kyori_ensyuu(Point p0, Circle e0) {
-
-
-        return Math.abs(distance(p0, e0.get_tyuusin()) - e0.getr());
+    // Function to find the distance between the point p0 and the circumference of the circle e0 ------------------------------- --------------------- ---------------------
+    public double distance_circumference(Point p0, Circle e0) {
+        return Math.abs(distance(p0, e0.getCenter()) - e0.getRadius());
     }
 
     //Minを返す関数
@@ -1225,33 +1165,22 @@ r_s.set(ax,ay,bx,by);
     }
 
 
-    public LineSegment nitoubunsen(Point t1, Point t2, double d0) {
-
-//s_step[i].geta(),s_step[j].geta(),200.0
-        //double bx1=   r* (s0.getbx()-s0.getax())  +  s0.getax();
-        //double by1=   r* (s0.getby()-s0.getay())  +  s0.getay();
-
-        //double ax1=s0.getax();
-        //double ay1=s0.getay();
-
-
+    public LineSegment bisection(Point t1, Point t2, double d0) {
         Point tm = new Point((t1.getX() + t2.getX()) / 2.0, (t1.getY() + t2.getY()) / 2.0);
 
         double bai = d0 / distance(t1, t2);
 
         LineSegment s1 = new LineSegment();
-        s1.set(Senbun_kaiten(new LineSegment(tm, t1), 90.0, bai));
+        s1.set(lineSegment_rotate(new LineSegment(tm, t1), 90.0, bai));
         LineSegment s2 = new LineSegment();
-        s2.set(Senbun_kaiten(new LineSegment(tm, t2), 90.0, bai));
+        s2.set(lineSegment_rotate(new LineSegment(tm, t2), 90.0, bai));
 
-        LineSegment s_return = new LineSegment(s1.getB(), s2.getB());
-//Senbun s_return =new Senbun(t1, t2);
-        return s_return;
+        return new LineSegment(s1.getB(), s2.getB());
     }
 
 
     //--------------------------------------------------------
-    public int LineSegment_overlapping_hantei(LineSegment s1, LineSegment s2) {//0は重ならない。1は重なる。20201012追加
+    public int LineSegment_overlapping_decide(LineSegment s1, LineSegment s2) {//0は重ならない。1は重なる。20201012追加
 
         int i_senbun_kousa_hantei = line_intersect_decide(s1, s2, 0.0001, 0.0001);
         int i_jikkou = 0;

@@ -12,12 +12,12 @@ import java.util.*;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
-public class LineStore {
+public class WireFrame {
     int total;               //実際に使う線分の総数
     ArrayList<LineSegment> lineSegments = new ArrayList<>(); //線分のインスタンス化
     OritaCalc oc = new OritaCalc();          //各種計算用の関数を使うためのクラスのインスタンス化
 
-    public LineStore() {
+    public WireFrame() {
         reset();
     } //コンストラクタ
 
@@ -27,7 +27,7 @@ public class LineStore {
         lineSegments.add(new LineSegment());
     }
 
-    public void set(LineStore ss) {
+    public void set(WireFrame ss) {
         total = ss.getTotal();
         for (int i = 0; i <= total; i++) {
             LineSegment s;
@@ -114,13 +114,13 @@ public class LineStore {
     public void seta(int i, Point p) {
         LineSegment s;
         s = getLine(i);
-        s.seta(p);
+        s.setA(p);
     }
 
     public void setb(int i, Point p) {
         LineSegment s;
         s = getLine(i);
-        s.setb(p);
+        s.setB(p);
     }
 
     //i番目の線分の値を入力する
@@ -141,7 +141,7 @@ public class LineStore {
     public int getColor(int i) {
         LineSegment s;
         s = getLine(i);
-        return s.getcolor();
+        return s.getColor();
     }
 
     //i番目の線分の活性を出力する
@@ -163,7 +163,7 @@ public class LineStore {
             memo1.addLine("番号," + i);
             LineSegment s;
             s = getLine(i);
-            memo1.addLine("色," + s.getcolor());
+            memo1.addLine("色," + s.getColor());
             memo1.addLine("座標," + s.getAx() + "," + s.getay() + "," +
                     s.getbx() + "," + s.getby());
 
@@ -265,7 +265,7 @@ public class LineStore {
         System.out.println("分割整理　２、重複線分削除");
         overlapping_line_removal();//念のため、全く一致する線分が２つあれば１つを除く
         System.out.println("分割整理　３、交差分割");
-        kousabunkatu();
+        intersect_divide();
         System.out.println("分割整理　４、点削除");
         point_removal();             //折り畳み推定の針金図の整理のため、点状の線分を除く
         System.out.println("分割整理　５、重複線分削除");
@@ -298,7 +298,7 @@ public class LineStore {
         System.out.println("分割整理　２、重複線分削除前	getsousuu() = " + getTotal());
         overlapping_line_removal();//念のため、全く一致する線分が２つあれば１つを除く
         System.out.println("分割整理　３、交差分割前	getsousuu() = " + getTotal());
-        kousabunkatu();
+        intersect_divide();
         System.out.println("分割整理　４、点削除前	getsousuu() = " + getTotal());
         point_removal();             //折り畳み推定の針金図の整理のため、点状の線分を除く
         System.out.println("分割整理　５、重複線分削除前	getsousuu() = " + getTotal());
@@ -397,8 +397,8 @@ public class LineStore {
     }
 
     //交差している２つの線分の交点で２つの線分を分割する。　まったく重なる線分が２つあった場合は、なんの処理もなされないまま２つとも残る。
-    public void kousabunkatu() {
-        int ibunkatu = 1;//分割があれば1、なければ0
+    public void intersect_divide() {
+        int i_divide = 1;//分割があれば1、なければ0
 
         ArrayList<Integer> k_flg = new ArrayList<>();//交差分割の影響があることを示すフラッグ。
 
@@ -406,8 +406,8 @@ public class LineStore {
             k_flg.add(1);
         }
 
-        while (ibunkatu != 0) {
-            ibunkatu = 0;
+        while (i_divide != 0) {
+            i_divide = 0;
             for (int i = 1; i <= total; i++) {
                 Integer I_k_flag = (Integer) k_flg.get(i);
                 if (I_k_flag == 1) {
@@ -418,14 +418,14 @@ public class LineStore {
                             if (J_k_flag == 1) {
                                 int itemp = 0;
                                 int old_sousuu = total;
-                                itemp = kousabunkatu(i, j);
+                                itemp = intersect_divide(i, j);
                                 if (old_sousuu < total) {
                                     for (int is = old_sousuu + 1; is <= total; is++) {
                                         k_flg.add(1);
                                     }
                                 }
                                 if (itemp == 1) {
-                                    ibunkatu = ibunkatu + 1;
+                                    i_divide = i_divide + 1;
                                     k_flg.set(i, 1);
                                 }
                             }
@@ -439,7 +439,7 @@ public class LineStore {
 //---------------------
 
     //交差している２つの線分の交点で２つの線分を分割する。分割を行ったら1。行わなかったら0を返す。オリヒメ2.002から分割後の線の色も制御するようにした(重複部がある場合は一本化し、番号の遅いほうの色になる)。
-    public int kousabunkatu(int i, int j) {
+    public int intersect_divide(int i, int j) {
         if (i == j) {
             return 0;
         }
@@ -520,47 +520,47 @@ public class LineStore {
         }
 
         if (oc.line_intersect_decide(si, sj) == 1) {
-            pk.set(oc.kouten_motome(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
-            si.seta(p1);
-            si.setb(pk);
-            sj.seta(p3);
-            sj.setb(pk);
-            addLine(p2, pk, si.getcolor());
-            addLine(p4, pk, sj.getcolor());
+            pk.set(oc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
+            si.setA(p1);
+            si.setB(pk);
+            sj.setA(p3);
+            sj.setB(pk);
+            addLine(p2, pk, si.getColor());
+            addLine(p4, pk, sj.getColor());
             return 1;
         }
 
         //oc.senbun_kousa_hantei(si,sj)が21から24まではくの字型の交差で、なにもしない。
 
         if (oc.line_intersect_decide(si, sj) == 25) {
-            pk.set(oc.kouten_motome(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
-            sj.seta(p3);
-            sj.setb(pk);
-            addLine(p4, pk, sj.getcolor());
+            pk.set(oc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
+            sj.setA(p3);
+            sj.setB(pk);
+            addLine(p4, pk, sj.getColor());
             return 1;
         }
 
         if (oc.line_intersect_decide(si, sj) == 26) {
-            pk.set(oc.kouten_motome(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
-            sj.seta(p3);
-            sj.setb(pk);
-            addLine(p4, pk, sj.getcolor());
+            pk.set(oc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
+            sj.setA(p3);
+            sj.setB(pk);
+            addLine(p4, pk, sj.getColor());
             return 1;
         }
 
         if (oc.line_intersect_decide(si, sj) == 27) {
-            pk.set(oc.kouten_motome(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
-            si.seta(p1);
-            si.setb(pk);
-            addLine(p2, pk, si.getcolor());
+            pk.set(oc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
+            si.setA(p1);
+            si.setB(pk);
+            addLine(p2, pk, si.getColor());
             return 1;
         }
 
         if (oc.line_intersect_decide(si, sj) == 28) {
-            pk.set(oc.kouten_motome(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
-            si.seta(p1);
-            si.setb(pk);
-            addLine(p2, pk, si.getcolor());
+            pk.set(oc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
+            si.setA(p1);
+            si.setB(pk);
+            addLine(p2, pk, si.getColor());
             return 1;
         }
         //
@@ -570,13 +570,13 @@ public class LineStore {
 
 
         if (oc.line_intersect_decide(si, sj) == 321) {//2つの線分の端点どうし(p1とp3)が1点で重なる。siにsjが含まれる
-            si.seta(p2);
-            si.setb(p4);
+            si.setA(p2);
+            si.setB(p4);
 
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             sj.setcolor(overlapping_col);
 
@@ -586,12 +586,12 @@ public class LineStore {
         }
 
         if (oc.line_intersect_decide(si, sj) == 322) {//2つの線分の端点どうし(p1とp3)が1点で重なる。sjにsiが含まれる
-            sj.seta(p2);
-            sj.setb(p4);
+            sj.setA(p2);
+            sj.setB(p4);
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             si.setcolor(overlapping_col);
 
@@ -599,13 +599,13 @@ public class LineStore {
         }
 
         if (oc.line_intersect_decide(si, sj) == 331) {//2つの線分の端点どうし(p1とp4)が1点で重なる。siにsjが含まれる
-            si.seta(p2);
-            si.setb(p3);
+            si.setA(p2);
+            si.setB(p3);
 
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             sj.setcolor(overlapping_col);
 
@@ -613,24 +613,24 @@ public class LineStore {
         }
 
         if (oc.line_intersect_decide(si, sj) == 332) {//2つの線分の端点どうし(p1とp4)が1点で重なる。sjにsiが含まれる
-            sj.seta(p2);
-            sj.setb(p3);
+            sj.setA(p2);
+            sj.setB(p3);
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             si.setcolor(overlapping_col);
             return 1;
         }
 
         if (oc.line_intersect_decide(si, sj) == 341) {//2つの線分の端点どうし(p2とp3)が1点で重なる。siにsjが含まれる
-            si.seta(p1);
-            si.setb(p4);
+            si.setA(p1);
+            si.setB(p4);
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             sj.setcolor(overlapping_col);
 
@@ -638,12 +638,12 @@ public class LineStore {
         }
 
         if (oc.line_intersect_decide(si, sj) == 342) {//2つの線分の端点どうし(p2とp3)が1点で重なる。sjにsiが含まれる
-            sj.seta(p1);
-            sj.setb(p4);
+            sj.setA(p1);
+            sj.setB(p4);
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             si.setcolor(overlapping_col);
 
@@ -654,13 +654,13 @@ public class LineStore {
         if (oc.line_intersect_decide(si, sj) == 351) {//2つの線分の端点どうし(p2とp4)が1点で重なる。siにsjが含まれる
 
 
-            si.seta(p1);
-            si.setb(p3);
+            si.setA(p1);
+            si.setB(p3);
 
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             sj.setcolor(overlapping_col);
 
@@ -668,12 +668,12 @@ public class LineStore {
         }
 
         if (oc.line_intersect_decide(si, sj) == 352) {//2つの線分の端点どうし(p2とp4)が1点で重なる。sjにsiが含まれる
-            sj.seta(p1);
-            sj.setb(p3);
+            sj.setA(p1);
+            sj.setB(p3);
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             si.setcolor(overlapping_col);
 
@@ -682,14 +682,14 @@ public class LineStore {
 
 
         if (oc.line_intersect_decide(si, sj) == 361) {//p1-p3-p4-p2の順
-            si.seta(p1);
-            si.setb(p3);
+            si.setA(p1);
+            si.setB(p3);
 
-            addLine(p2, p4, si.getcolor());
+            addLine(p2, p4, si.getColor());
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             sj.setcolor(overlapping_col);
 
@@ -697,15 +697,15 @@ public class LineStore {
         }
 
         if (oc.line_intersect_decide(si, sj) == 362) {//p1-p4-p3-p2の順
-            si.seta(p1);
-            si.setb(p4);
+            si.setA(p1);
+            si.setB(p4);
 
-            addLine(p2, p3, si.getcolor());
+            addLine(p2, p3, si.getColor());
 
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             sj.setcolor(overlapping_col);
 
@@ -713,15 +713,15 @@ public class LineStore {
         }
 
         if (oc.line_intersect_decide(si, sj) == 363) {//p3-p1-p2-p4の順
-            sj.seta(p1);
-            sj.setb(p3);
+            sj.setA(p1);
+            sj.setB(p3);
 
-            addLine(p2, p4, sj.getcolor());
+            addLine(p2, p4, sj.getColor());
 
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             si.setcolor(overlapping_col);
 
@@ -729,15 +729,15 @@ public class LineStore {
         }
 
         if (oc.line_intersect_decide(si, sj) == 364) {//p3-p2-p1-p4の順
-            sj.seta(p1);
-            sj.setb(p4);
+            sj.setA(p1);
+            sj.setB(p4);
 
-            addLine(p2, p3, sj.getcolor());
+            addLine(p2, p3, sj.getColor());
 
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             si.setcolor(overlapping_col);
 
@@ -747,16 +747,16 @@ public class LineStore {
         //
         if (oc.line_intersect_decide(si, sj) == 371) {//p1-p3-p2-p4の順
             //System.out.println("371");
-            si.seta(p1);
-            si.setb(p3);
+            si.setA(p1);
+            si.setB(p3);
 
-            sj.seta(p2);
-            sj.setb(p4);
+            sj.setA(p2);
+            sj.setB(p4);
 
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             addLine(p2, p3, overlapping_col);
             return 1;
@@ -764,16 +764,16 @@ public class LineStore {
 
         if (oc.line_intersect_decide(si, sj) == 372) {//p1-p4-p2-p3の順
             //System.out.println("372");
-            si.seta(p1);
-            si.setb(p4);
+            si.setA(p1);
+            si.setB(p4);
 
-            sj.seta(p3);
-            sj.setb(p2);
+            sj.setA(p3);
+            sj.setB(p2);
 
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             addLine(p2, p4, overlapping_col);
             return 1;
@@ -781,14 +781,14 @@ public class LineStore {
 
         if (oc.line_intersect_decide(si, sj) == 373) {//p3-p1-p4-p2の順
             //System.out.println("373");
-            sj.seta(p1);
-            sj.setb(p3);
-            si.seta(p2);
-            si.setb(p4);
+            sj.setA(p1);
+            sj.setB(p3);
+            si.setA(p2);
+            si.setB(p4);
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             addLine(p1, p4, overlapping_col);
             return 1;
@@ -796,14 +796,14 @@ public class LineStore {
 
         if (oc.line_intersect_decide(si, sj) == 374) {//p4-p1-p3-p2の順
             //System.out.println("374");
-            sj.seta(p1);
-            sj.setb(p4);
-            si.seta(p3);
-            si.setb(p2);
+            sj.setA(p1);
+            sj.setB(p4);
+            si.setA(p3);
+            si.setB(p2);
             int overlapping_col;
-            overlapping_col = si.getcolor();
+            overlapping_col = si.getColor();
             if (i < j) {
-                overlapping_col = sj.getcolor();
+                overlapping_col = sj.getColor();
             }
             addLine(p1, p3, overlapping_col);
             return 1;
@@ -838,8 +838,8 @@ public class LineStore {
         LineSegment s;
         s = getLine(total);
 
-        s.seta(pi);
-        s.setb(pj);
+        s.setA(pi);
+        s.setB(pj);
     }
 
     //線分の削除-----------------------------------------
@@ -859,7 +859,7 @@ public class LineStore {
     public double getnagasa(int i) {
         LineSegment s;
         s = getLine(i);
-        return s.getnagasa();
+        return s.getLength();
     }
 
     //閉多角形を形成せず、枝状になっている線分を削除する。
@@ -935,20 +935,20 @@ public class LineStore {
     //もし対象外にする線分が無い場合は、jを0とか負の整数とかにする。
     //070317　追加機能　j　が　-10　の時は　活性化していない枝（getiactive(i)が0）を対象にする。
 
-    public int senbun_sagasi(Point p, double r, int j) {
+    public int lineSegment_search(Point p, double r, int j) {
         if (j == -10) {
             for (int i = 1; i <= total; i++) {
-                if (((senbun_busyo_sagasi(i, p, r) == 1) && (i != j)) && (getiactive(i) == 0)) {
+                if (((lineSegment_position_search(i, p, r) == 1) && (i != j)) && (getiactive(i) == 0)) {
                     return i;
                 }
             }
             for (int i = 1; i <= total; i++) {
-                if (((senbun_busyo_sagasi(i, p, r) == 2) && (i != j)) && (getiactive(i) == 0)) {
+                if (((lineSegment_position_search(i, p, r) == 2) && (i != j)) && (getiactive(i) == 0)) {
                     return i;
                 }
             }
             for (int i = 1; i <= total; i++) {
-                if (((senbun_busyo_sagasi(i, p, r) == 3) && (i != j)) && (getiactive(i) == 0)) {
+                if (((lineSegment_position_search(i, p, r) == 3) && (i != j)) && (getiactive(i) == 0)) {
                     return i;
                 }
             }
@@ -956,17 +956,17 @@ public class LineStore {
         }
 
         for (int i = 1; i <= total; i++) {
-            if ((senbun_busyo_sagasi(i, p, r) == 1) && (i != j)) {
+            if ((lineSegment_position_search(i, p, r) == 1) && (i != j)) {
                 return i;
             }
         }
         for (int i = 1; i <= total; i++) {
-            if ((senbun_busyo_sagasi(i, p, r) == 2) && (i != j)) {
+            if ((lineSegment_position_search(i, p, r) == 2) && (i != j)) {
                 return i;
             }
         }
         for (int i = 1; i <= total; i++) {
-            if ((senbun_busyo_sagasi(i, p, r) == 3) && (i != j)) {
+            if ((lineSegment_position_search(i, p, r) == 3) && (i != j)) {
                 return i;
             }
         }
@@ -976,7 +976,7 @@ public class LineStore {
 
     //点pが指定された線分とどの部所で近い(r以内)かどうかを判定する関数　---------------------------------
     //0=近くない、1=a点に近い、2=b点に近い、3=柄の部分に近い
-    public int senbun_busyo_sagasi(int i, Point p, double r) {
+    public int lineSegment_position_search(int i, Point p, double r) {
         if (r > oc.distance(p, getA(i))) {
             return 1;
         }//a点に近いかどうか
@@ -991,7 +991,7 @@ public class LineStore {
 
 
     //点pに最も近い線分の番号を返す
-    public int mottomo_tikai_senbun_sagasi(Point p) {
+    public int mottomo_tikai_lineSegment_Search(Point p) {
         int minrid = 0;
         double minr = 100000;
         for (int i = 1; i <= total; i++) {
@@ -1007,7 +1007,7 @@ public class LineStore {
 
 
     //点pに最も近い線分の端点を返す
-    public Point mottomo_tikai_Ten_sagasi(Point p) {
+    public Point mottomo_tikai_point_search(Point p) {
 
         Point p_return = new Point();
         p_return.set(100000.0, 100000.0);
@@ -1034,7 +1034,7 @@ public class LineStore {
         for (int i = 1; i <= total; i++) {
             LineSegment si;
             si = getLine(i);
-            si.kasseika(p, r);
+            si.activate(p, r);
         }
     }
 
@@ -1043,7 +1043,7 @@ public class LineStore {
         for (int i = 1; i <= total; i++) {
             LineSegment si;
             si = getLine(i);
-            si.hikasseika();
+            si.deactivate();
         }
     }
 
