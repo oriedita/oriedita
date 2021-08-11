@@ -6,35 +6,32 @@ import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
 import java.awt.*;
 
-public class OritaOekaki { //お絵かき用
+public class OritaDrawing { //For drawing
     OritaCalc oc = new OritaCalc();
 
-    //太線描画用
-    public void widthLine(Graphics g, Point a, Point b, double width, int icolor) {
-        LineSegment s = new LineSegment(a, b);
-        widthLine(g, s, width, icolor);
+    //For drawing thick lines
+    public void widthLine(Graphics g, Point a, Point b, double width, int iColor) {
+        widthLine(g, new LineSegment(a, b), width, iColor);
     }
 
-    public void widthLine(Graphics g, LineSegment s, double r, int icolor) {
-        if (icolor == 0) {
+    public void widthLine(Graphics g, LineSegment s, double r, int iColor) {
+        if (iColor == 0) {
             g.setColor(Color.black);
         }
-        if (icolor == 1) {
+        if (iColor == 1) {
             g.setColor(Color.red);
         }
-        if (icolor == 2) {
+        if (iColor == 2) {
             g.setColor(Color.blue);
         }
-        if (icolor == 3) {
+        if (iColor == 3) {
             g.setColor(Color.green);
         }
-        if (icolor == 4) {
+        if (iColor == 4) {
             g.setColor(Color.orange);
         }
-        LineSegment sp = new LineSegment();
-        LineSegment sm = new LineSegment();
-        sp = oc.moveParallel(s, r);
-        sm = oc.moveParallel(s, -r);
+        LineSegment sp = oc.moveParallel(s, r);
+        LineSegment sm = oc.moveParallel(s, -r);
 
         int[] x = new int[5];
         int[] y = new int[5];
@@ -48,15 +45,11 @@ public class OritaOekaki { //お絵かき用
         x[3] = (int) sm.getAx();
         y[3] = (int) sm.getay();
 
-        //  g.setColor(new Color(red,green,blue));
-        // g.setColor(Color.yellow);
         g.fillPolygon(x, y, 4);
     }
 
-    //指定されたTenを中心に十字を描く
-    public void jyuuji(Graphics g, Point t, double nagasa, double haba, int icolor) {
-
-//System.out.println("   O 20170201_1");
+    //Draw a cross around the designated Point
+    public void cross(Graphics g, Point t, double nagasa, double width, int icolor) {
         Point tx0 = new Point();
         Point tx1 = new Point();
         Point ty0 = new Point();
@@ -69,11 +62,8 @@ public class OritaOekaki { //お絵かき用
         ty0.setY(t.getY() - nagasa);
         ty1.setX(t.getX());
         ty1.setY(t.getY() + nagasa);
-//System.out.println("   O 20170201_2");
-        widthLine(g, tx0, tx1, haba, icolor);
-//System.out.println("   O 20170201_3");
-        widthLine(g, ty0, ty1, haba, icolor);
-//System.out.println("   O 20170201_4");
+        widthLine(g, tx0, tx1, width, icolor);
+        widthLine(g, ty0, ty1, width, icolor);
     }
 
     //指定されたTenを中心に指差し図を描く

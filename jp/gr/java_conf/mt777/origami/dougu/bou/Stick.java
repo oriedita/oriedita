@@ -1,35 +1,38 @@
 package jp.gr.java_conf.mt777.origami.dougu.bou;
 
+/**
+ * A line from a point to a point, begin and end refer to points.
+ */
 public class Stick {
     int begin;
     int end;
-    int icol;//If it is 0, there is no mountain valley. If 1, it's a mountain. If it is 2, it is a valley.
+    int iColor;//If it is 0, there is no mountain valley. If 1, it's a mountain. If it is 2, it is a valley.
 
     //コンストラクタ
     public Stick() {
         begin = 0;
         end = 0;
-        icol = 0;
+        iColor = 0;
     }
 
     //コンストラクタ
     public Stick(int ma, int at, int ic) {
         begin = ma;
         end = at;
-        icol = ic;
+        iColor = ic;
     }
 
-    //入力
-    public void set(Stick bu) {
-        begin = bu.getBegin();
-        end = bu.getEnd();
-        icol = bu.getColor();
+    //input
+    public void set(Stick stick) {
+        begin = stick.getBegin();
+        end = stick.getEnd();
+        iColor = stick.getColor();
     }
 
     public void set(int i, int j, int k) {
         begin = i;
         end = j;
-        icol = k;
+        iColor = k;
     }
 
     public void setBegin(int i) {
@@ -41,7 +44,7 @@ public class Stick {
     }
 
     public void setColor(int i) {
-        icol = i;
+        iColor = i;
     }
 
     //出力
@@ -54,12 +57,12 @@ public class Stick {
     }
 
     public int getColor() {
-        return icol;
+        return iColor;
     }
 
     public void reset() {
         begin = 0;
         end = 0;
-        icol = 0;
+        iColor = 0;
     }
 }

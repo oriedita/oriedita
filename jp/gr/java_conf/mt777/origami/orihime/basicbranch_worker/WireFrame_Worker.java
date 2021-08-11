@@ -32,8 +32,8 @@ public class WireFrame_Worker {
 
     WireFrame k = new WireFrame();    //Instantiation of basic branch structure
     // Senbunsyuugou k ;    //基本枝構造
-    Polygon gomibako = new Polygon(4);    //ゴミ箱のインスタンス化
-    Polygon tyuuoutai = new Polygon(4);    //中央帯のインスタンス化
+    Polygon trash = new Polygon(4);    //Trash instantiation
+    Polygon medianStrip = new Polygon(4);    //Median strip instantiation
     double tyuuoutai_xmin = 180.0;
     double tyuuoutai_xmax = 206.0;
     double tyuuoutai_ymin = 50.0;
@@ -64,15 +64,15 @@ public class WireFrame_Worker {
         ugokasi_mode = 0;
         ieda = 0;
         icol = 0;
-        gomibako.set(new Point(10.0, 150.0), 1, new Point(0.0, 0.0));
-        gomibako.set(new Point(10.0, 150.0), 2, new Point(50.0, 0.0));
-        gomibako.set(new Point(10.0, 150.0), 3, new Point(40.0, 50.0));
-        gomibako.set(new Point(10.0, 150.0), 4, new Point(10.0, 50.0));
+        trash.set(new Point(10.0, 150.0), 1, new Point(0.0, 0.0));
+        trash.set(new Point(10.0, 150.0), 2, new Point(50.0, 0.0));
+        trash.set(new Point(10.0, 150.0), 3, new Point(40.0, 50.0));
+        trash.set(new Point(10.0, 150.0), 4, new Point(10.0, 50.0));
 
-        tyuuoutai.set(1, new Point(tyuuoutai_xmin, tyuuoutai_ymin));
-        tyuuoutai.set(2, new Point(tyuuoutai_xmax, tyuuoutai_ymin));
-        tyuuoutai.set(3, new Point(tyuuoutai_xmax, tyuuoutai_ymax));
-        tyuuoutai.set(4, new Point(tyuuoutai_xmin, tyuuoutai_ymax));
+        medianStrip.set(1, new Point(tyuuoutai_xmin, tyuuoutai_ymin));
+        medianStrip.set(2, new Point(tyuuoutai_xmax, tyuuoutai_ymin));
+        medianStrip.set(3, new Point(tyuuoutai_xmax, tyuuoutai_ymax));
+        medianStrip.set(4, new Point(tyuuoutai_xmin, tyuuoutai_ymax));
 
         taisyousei = 0;
     }
@@ -100,7 +100,7 @@ public class WireFrame_Worker {
 
 
         //camera.set_camera_id(cam0.get_camera_id());
-        camera.set_camera_kagami(cam0.get_camera_kagami());
+        camera.setCameraMirror(cam0.getCameraMirror());
 
         camera.setCameraPositionX(cam0.getCameraPositionX());
         camera.setCameraPositionY(cam0.getCameraPositionY());
@@ -117,8 +117,8 @@ public class WireFrame_Worker {
     }
 
     //----------------
-    public void eda_kesi(double r) {
-        k.eda_kesi(r);
+    public void branch_trim(double r) {
+        k.branch_trim(r);
     }
 
     //--------------------------------------------
@@ -242,7 +242,7 @@ public class WireFrame_Worker {
             //if(gomibako.naibu(k.geta(i))>0){idel=1;}    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             //if(gomibako.kousa(k.get( i))){idel=1;}
 
-            if (gomibako.convex_inside(k.get(i)) == 1) {
+            if (trash.convex_inside(k.get(i)) == 1) {
                 idel = 1;
             }
 
@@ -386,22 +386,22 @@ public class WireFrame_Worker {
     public void oekaki(Graphics g, int iTenkaizuSenhaba) {
         String text = "";//文字列処理用のクラスのインスタンス化
         double d;
-        OritaOekaki OO = new OritaOekaki();
+        OritaDrawing OO = new OritaDrawing();
 
         if (kensa_houhou == 1) {//検査用
             int kr = 10;
             g.setColor(Color.red);
             for (int i = 1; i <= k.getTotal(); i++) {
                 if (oc.equal(k.getA(i), k.getB(i), r)) {
-                    g.fillOval((int) k.getax(i) - kr, (int) k.getay(i) - kr, 2 * kr, 2 * kr); //円
+                    g.fillOval((int) k.getax(i) - kr, (int) k.getay(i) - kr, 2 * kr, 2 * kr); //Circle
                 }
             }
             for (int i = 1; i <= k.getTotal() - 1; i++) {
                 for (int j = i + 1; j <= k.getTotal(); j++) {
                     if (oc.line_intersect_decide(k.get(i), k.get(j)) == 31) {
-                        OO.widthLine(g, k.get(i), kr, 1);//  太線
-                        g.fillOval((int) k.getax(i) - kr, (int) k.getay(i) - kr, 2 * kr, 2 * kr); //円
-                        g.fillOval((int) k.getbx(i) - kr, (int) k.getby(i) - kr, 2 * kr, 2 * kr); //円
+                        OO.widthLine(g, k.get(i), kr, 1);//  Thick line
+                        g.fillOval((int) k.getax(i) - kr, (int) k.getay(i) - kr, 2 * kr, 2 * kr); //Circle
+                        g.fillOval((int) k.getbx(i) - kr, (int) k.getby(i) - kr, 2 * kr, 2 * kr); //Circle
                     }
                 }
             }
@@ -411,14 +411,14 @@ public class WireFrame_Worker {
         //-------------------------------
         if (taisyousei > 0) {
             g.setColor(Color.green);
-            tyuuoutai.draw(g);
+            medianStrip.draw(g);
             g.setColor(Color.black);
         }
 
         //  ごみ箱の描画
         g.setColor(new Color(150, 150, 150));
         //g.setColor(new Color(100,100,100));
-        gomibako.draw(g);
+        trash.draw(g);
         g.setColor(Color.black);
         g.drawString("ごみ箱", 18, 180);
 
@@ -574,7 +574,7 @@ public class WireFrame_Worker {
     public void oekaki_with_camera(Graphics g, int iTenkaizuSenhaba) {
         String text = "";//文字列処理用のクラスのインスタンス化
         double d;
-        OritaOekaki OO = new OritaOekaki();
+        OritaDrawing OO = new OritaDrawing();
 
         LineSegment s_tv = new LineSegment();
         Point a = new Point();
@@ -676,7 +676,7 @@ public class WireFrame_Worker {
 
 
         //camera中心を十字で描く
-        OO.jyuuji(g, camera.object2TV(camera.get_camera_ichi()), 5.0, 2.0, 3);
+        OO.cross(g, camera.object2TV(camera.get_camera_position()), 5.0, 2.0, 3);
 
 
         //展開図の描画
@@ -762,7 +762,7 @@ public class WireFrame_Worker {
     public void mPressed(Point p) {
         //ゴミ箱がクリックされたら、単独の線分を削除する
 
-        if (gomibako.inside(p) >= 1) {
+        if (trash.inside(p) >= 1) {
             k.tanSenbun_sakujyo(r);
             nhi = 0;//入力方法が多角形の場合の初期化を行う
         }
@@ -1037,7 +1037,7 @@ public class WireFrame_Worker {
     //マウス操作(i_mouse_modeA==0　旧動作　見本のために残している。削除可----------------------------------------------------
     public void mPressed_A_00(Point p) {
         //ゴミ箱がクリックされたら、単独の線分を削除する
-        if (gomibako.inside(p) >= 1) {
+        if (trash.inside(p) >= 1) {
             k.tanSenbun_sakujyo(r);
             nhi = 0;//入力方法が多角形の場合の初期化を行う
         }

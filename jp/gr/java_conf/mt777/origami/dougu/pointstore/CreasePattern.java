@@ -21,12 +21,12 @@ public class CreasePattern {
     int pointsTotal;               //実際に使う点の総数
     int sticksTotal;               //実際に使う棒の総数
     int facesTotal;               //実際に使う面の総数
-    Point_p[] t;//点のインスタンス化
-    Stick[] b;//棒のインスタンス化
-    int[] Stick_moti_Menid_min;
-    int[] Stick_moti_Menid_max;
+    Point_p[] points;//点のインスタンス化
+    Stick[] sticks;//棒のインスタンス化
+    int[] Stick_moti_FaceId_min;
+    int[] Stick_moti_FaceId_max;
 
-    Face[] m;//面のインスタンス化
+    Face[] faces;//Face instantiation
 
     double[] Stick_x_max;
     double[] Stick_x_min;
@@ -59,7 +59,7 @@ public class CreasePattern {
 
         numFaces_temp = numFaces;
 
-        t = new Point_p[numPoints + 1];
+        points = new Point_p[numPoints + 1];
         point_linking = new ArrayList[numPoints + 1];
 
         point_linking[0] = new ArrayList<>();
@@ -69,31 +69,28 @@ public class CreasePattern {
         }
 
         for (int i = 0; i <= numPoints; i++) {
-            t[i] = new Point_p();
+            points[i] = new Point_p();
             setPointLinking(i, 0, 0);
         }
 
-        b = new Stick[numSticks + 1];
+        sticks = new Stick[numSticks + 1];
         int[] BMmin = new int[numSticks + 1];
         int[] BMmax = new int[numSticks + 1];
-        Stick_moti_Menid_min = BMmin;
-        Stick_moti_Menid_max = BMmax;
+        Stick_moti_FaceId_min = BMmin;
+        Stick_moti_FaceId_max = BMmax;
         for (int i = 0; i <= numSticks; i++) {
-            b[i] = new Stick();
-            Stick_moti_Menid_min[i] = 0;
-            Stick_moti_Menid_max[i] = 0;
+            sticks[i] = new Stick();
+            Stick_moti_FaceId_min[i] = 0;
+            Stick_moti_FaceId_max[i] = 0;
         }
 
-        m = new Face[numFaces + 1];
+        faces = new Face[numFaces + 1];
 
         Face_adjacent = new int[numFaces + 1][numFaces + 1];
 
         for (int i = 0; i <= numFaces; i++) {
-            //for(int i=0;i<=numFaces+1;i++){
-            m[i] = new Face();
+            faces[i] = new Face();
             for (int j = 0; j <= numFaces; j++) {
-                //for(int j=0;j<=numFaces+1;j++){
-
                 Face_adjacent[i][j] = 0;
             }
 
@@ -130,7 +127,7 @@ public class CreasePattern {
             while (j + 1 > point_linking[i].size()) {
                 point_linking[i].add(0);
             }
-        }//この文がないとうまく行かない。なぜこの文でないといけないかという理由が正確にはわからない。
+        }//It won't work without this sentence. I don't know exactly why it should be this sentence.
         point_linking[i].set(j, tid);
     }
 
@@ -138,7 +135,7 @@ public class CreasePattern {
     private double getAverage_x() {
         double x = 0.0;
         for (int i = 1; i <= pointsTotal; i++) {
-            x = x + t[i].getX();
+            x = x + points[i].getX();
         }
         return x / ((double) pointsTotal);
     }
@@ -146,7 +143,7 @@ public class CreasePattern {
     private double getAverage_y() {
         double y = 0.0;
         for (int i = 1; i <= pointsTotal; i++) {
-            y = y + t[i].getY();
+            y = y + points[i].getY();
         }
         return y / ((double) pointsTotal);
     }
@@ -157,27 +154,23 @@ public class CreasePattern {
         int icol;
         xh = getAverage_x();
         for (int i = 1; i <= pointsTotal; i++) {
-            t[i].setX(2.0 * xh - t[i].getX());
+            points[i].setX(2.0 * xh - points[i].getX());
         }
         for (int i = 1; i <= sticksTotal; i++) {
-            icol = b[i].getColor();
+            icol = sticks[i].getColor();
             if (icol == 1) {
-                b[i].setColor(2);
+                sticks[i].setColor(2);
             }
             if (icol == 2) {
-                b[i].setColor(1);
+                sticks[i].setColor(1);
             }
         }
 
     }
 
-
-    //public double menseki(int men_id) {return 1.0; }//   面の面積を返す
-
-
     public void parallelMove(double x, double y) {
         for (int i = 0; i <= pointsTotal; i++) {
-            t[i].parallel_move(x, y);
+            points[i].parallel_move(x, y);
         }
     }
 
@@ -186,40 +179,40 @@ public class CreasePattern {
         sticksTotal = ts.getSticksTotal();
         facesTotal = ts.getFacesTotal();
         for (int i = 0; i <= pointsTotal; i++) {
-            t[i].set(ts.getPoint(i));                                                         //  <<<-------
+            points[i].set(ts.getPoint(i));                                                         //  <<<-------
             for (int j = 1; j <= ts.getPointLinking(i, 0); j++) {
                 setPointLinking(i, j, ts.getPointLinking(i, j));
             }
         }
         for (int i = 0; i <= sticksTotal; i++) {
-            b[i].set(ts.getStick(i));
-            Stick_moti_Menid_min[i] = ts.get_Stick_moti_Menid_min(i);
-            Stick_moti_Menid_max[i] = ts.get_Stick_moti_Menid_max(i);
+            sticks[i].set(ts.getStick(i));
+            Stick_moti_FaceId_min[i] = ts.get_Stick_moti_Menid_min(i);
+            Stick_moti_FaceId_max[i] = ts.get_Stick_moti_Menid_max(i);
         }
         for (int i = 0; i <= facesTotal; i++) {
-            m[i] = new Face(ts.getFace(i));
+            faces[i] = new Face(ts.getFace(i));
             for (int j = 0; j <= facesTotal; j++) {
-                Face_adjacent[i][j] = ts.get_Men_tonari(i, j);
+                Face_adjacent[i][j] = ts.getFaceAdjecent(i, j);
             }
         }
     }
 
     public void set(int i, Point tn) {
-        t[i].set(tn);
+        points[i].set(tn);
     }                                               //  <<<-------
 
-    private int get_Men_tonari(int i, int j) {
+    private int getFaceAdjecent(int i, int j) {
         return Face_adjacent[i][j];
     }
 
     //
     private int get_Stick_moti_Menid_min(int i) {
-        return Stick_moti_Menid_min[i];
+        return Stick_moti_FaceId_min[i];
     }
 
     //
     private int get_Stick_moti_Menid_max(int i) {
-        return Stick_moti_Menid_max[i];
+        return Stick_moti_FaceId_max[i];
     }
 
     //
@@ -262,8 +255,8 @@ public class CreasePattern {
         return Surface_y_min[i];
     }
 
-    //点が面の内部にあるかどうかを判定する。0なら内部にない、1なら境界線上、2なら内部
-    public int kantan_inside(Point p, int n) {      //0=外部、　1=境界、　2=内部
+    //Determine if the point is inside a face. 0 is not inside, 1 is on the border, 2 is inside
+    public int simple_inside(Point p, int n) {      //0=外部、　1=境界、　2=内部
         //System.out.println("2016");
         if (p.getX() + 0.5 < Surface_x_min[n]) {
             return 0;
@@ -277,13 +270,12 @@ public class CreasePattern {
         if (p.getY() - 0.5 > Surface_y_max[n]) {
             return 0;
         }
-        //System.out.println("2017");
-        return inside(p, m[n]);
+        return inside(p, faces[n]);
     }
 
     //点が面の内部にあるかどうかを判定する。
     public int inside(Point p, int n) {      //0=外部、　1=境界、　2=内部
-        return inside(p, m[n]);
+        return inside(p, faces[n]);
     }
 
     //点が面の内部にあるかどうかを判定する。0なら内部にない、1なら境界線上、2なら内部
@@ -310,16 +302,16 @@ public class CreasePattern {
     //Men を多角形にする
     private Polygon makePolygon(Face mn) {
         Polygon tk = new Polygon(mn.getPointsCount());
-        tk.setkakusuu(mn.getPointsCount());
+        tk.setVerticesCount(mn.getPointsCount());
         for (int i = 0; i <= mn.getPointsCount(); i++) {
-            tk.set(i, t[mn.getPointId(i)]);
+            tk.set(i, points[mn.getPointId(i)]);
         }
         return tk;
     }
 
-    //線分s0の一部でも凸多角形の面の内部（境界線は内部とみなさない）に
-    //存在するとき1、しないなら0を返す。面が凹多角形の場合は結果がおかしくなるので使わないこと
-    public int kantan_totu_inside(int ib, int im) {
+    // Even a part of the line segment s0 is inside the surface of the convex polygon (the boundary line is not regarded as the inside)
+    // Returns 1 if it exists, 0 otherwise. If the surface is a concave polygon, the result will be strange, so do not use it.
+    public int simple_convex_inside(int ib, int im) {
         //バグがあるようだったが，多分取り除けた
         if (Stick_x_max[ib] + 0.5 < Surface_x_min[im]) {
             return 0;
@@ -334,7 +326,7 @@ public class CreasePattern {
             return 0;
         }
 
-        return convex_inside(new LineSegment(t[b[ib].getBegin()], t[b[ib].getEnd()]), m[im]);
+        return convex_inside(new LineSegment(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]), faces[im]);
     }
 
     private int convex_inside(LineSegment s0, Face mn) {
@@ -344,16 +336,16 @@ public class CreasePattern {
     }
 
     private int convex_inside(int ib, int im) {
-        return convex_inside(new LineSegment(t[b[ib].getBegin()], t[b[ib].getEnd()]), m[im]);
+        return convex_inside(new LineSegment(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]), faces[im]);
     }
 
     public int convex_inside(double d, int ib, int im) {
-        LineSegment sn = new LineSegment(t[b[ib].getBegin()], t[b[ib].getEnd()]);
-        return convex_inside(oc.moveParallel(sn, d), m[im]);
+        LineSegment sn = new LineSegment(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]);
+        return convex_inside(oc.moveParallel(sn, d), faces[im]);
     }
 
-    private int kantan_totu_inside(double d, int ib, int im) {
-        LineSegment sn = new LineSegment(t[b[ib].getBegin()], t[b[ib].getEnd()]);
+    private int simple_convex_inside(double d, int ib, int im) {
+        LineSegment sn = new LineSegment(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]);
         LineSegment snm = oc.moveParallel(sn, d);
         double s_x_max = snm.getAx();
         double s_x_min = snm.getAx();
@@ -385,19 +377,19 @@ public class CreasePattern {
             return 0;
         }
 
-        return convex_inside(snm, m[im]);
+        return convex_inside(snm, faces[im]);
     }
 
 
     //棒を線分にする
-    private LineSegment stickToLineSegment(Stick bu) {
-        return new LineSegment(t[bu.getBegin()], t[bu.getEnd()]);
+    private LineSegment stickToLineSegment(Stick stick) {
+        return new LineSegment(points[stick.getBegin()], points[stick.getEnd()]);
     }
 
     //Returns 1 if two Sticks are parallel and partially or wholly overlap, otherwise 0. If one point overlaps, 0 is returned.
     public int parallel_overlap(int ib1, int ib2) {
         int skh;
-        skh = oc.line_intersect_decide(stickToLineSegment(b[ib1]), stickToLineSegment(b[ib2]));
+        skh = oc.line_intersect_decide(stickToLineSegment(sticks[ib1]), stickToLineSegment(sticks[ib2]));
         if (skh == 31) {
             return 1;
         }
@@ -458,7 +450,7 @@ public class CreasePattern {
 
     //面の内部の点を求める
     public Point insidePoint_surface(int n) {
-        return insidePoint_surface(m[n]);
+        return insidePoint_surface(faces[n]);
     }
 
     //面の内部の点を求める
@@ -470,7 +462,7 @@ public class CreasePattern {
 
     //面積求める
     public double calculateArea(int n) {
-        return calculateArea(m[n]);
+        return calculateArea(faces[n]);
     }
 
 
@@ -493,104 +485,104 @@ public class CreasePattern {
     }   //面の総数を得る
 
     public int getPointId(int i, int j) {
-        return m[i].getPointId(j);
+        return faces[i].getPointId(j);
     }  // void setTensuu(int i){Tensuu=i;}
 
     // void setBousuu(int i){Bousuu=i;}
     public double getPointX(int i) {
-        return t[i].getX();
+        return points[i].getX();
     }
 
     public double getPointY(int i) {
-        return t[i].getY();
+        return points[i].getY();
     }
 
     public Point getPoint(int i) {
-        return t[i];
+        return points[i];
     }   //点を得る       <<<------------tは、スーパークラスのTenのサブクラスTen_Pクラスのオブジェクト。スーパークラスの変数にサブクラスのオブジェクトを代入可能なので、このまま使う。
 
     private Stick getStick(int i) {
-        return b[i];
+        return sticks[i];
     }   //棒を得る
 
-    public Point get_maeTen_from_Stick_id(int i) {
-        return t[getmae(i)];
+    public Point getBeginPointFromStickId(int i) {
+        return points[getBegin(i)];
     }    //棒のidから前点を得る              <<<------------　　同上
 
-    public Point get_atoTen_from_Bou_id(int i) {
-        return t[getato(i)];
+    public Point getEndPointFromStickId(int i) {
+        return points[getEnd(i)];
     }    //棒のidから後点を得る              <<<------------　　同上
 
 
-    public LineSegment get_Senbun_from_Bou_id(int i) {
+    public LineSegment getLineSegmentFromStickId(int i) {
         return stickToLineSegment(getStick(i));
     }    //棒のidからSenbunを得る
 
     private Face getFace(int i) {
-        return m[i];
+        return faces[i];
     }   //面を得る
 
-    public int getmae(int i) {
-        return b[i].getBegin();
+    public int getBegin(int i) {
+        return sticks[i].getBegin();
     } //棒のidから前点のidを得る
 
-    public int getato(int i) {
-        return b[i].getEnd();
+    public int getEnd(int i) {
+        return sticks[i].getEnd();
     } //棒のidから後点のidを得る
 
-    public double getmaex(int i) {
-        return t[b[i].getBegin()].getX();
+    public double getBeginX(int i) {
+        return points[sticks[i].getBegin()].getX();
     }
 
-    public double getmaey(int i) {
-        return t[b[i].getBegin()].getY();
+    public double getBeginY(int i) {
+        return points[sticks[i].getBegin()].getY();
     }
 
-    public double getatox(int i) {
-        return t[b[i].getEnd()].getX();
+    public double getEndX(int i) {
+        return points[sticks[i].getEnd()].getX();
     }
 
-    public double getatoy(int i) {
-        return t[b[i].getEnd()].getY();
+    public double getEndY(int i) {
+        return points[sticks[i].getEnd()].getY();
     }
 
     public int getPointsCount(int i) {
-        return m[i].getPointsCount();
+        return faces[i].getPointsCount();
     }
 
     public void setPoint(int i, Point tn) {
-        t[i].set(tn);
+        points[i].set(tn);
     }                                                        //   <<<------------
 
     private void setPoint(int i, double x, double y) {
-        t[i].set(x, y);
+        points[i].set(x, y);
     }
 
     public void addPoint(double x, double y) {
         pointsTotal = pointsTotal + 1;
-        t[pointsTotal].set(x, y);
+        points[pointsTotal].set(x, y);
     }   //点を加える
 
     public void addStick(int i, int j, int icol) {
         sticksTotal = sticksTotal + 1;
-        b[sticksTotal].set(i, j, icol);
+        sticks[sticksTotal].set(i, j, icol);
     }   //棒を加える
 
     //i番目の棒の色を入出力する
-    private void setcolor(int i, int icol) {
-        b[i].setColor(icol);
+    private void setColor(int i, int icol) {
+        sticks[i].setColor(icol);
     }
 
-    public int getcolor(int i) {
-        return b[i].getColor();
+    public int getColor(int i) {
+        return sticks[i].getColor();
     }
 
     private void t_renketu_sakusei() {
         for (int k = 1; k <= sticksTotal; k++) {
-            setPointLinking(b[k].getBegin(), 0, getPointLinking(b[k].getBegin(), 0) + 1);
-            setPointLinking(b[k].getBegin(), getPointLinking(b[k].getBegin(), 0), b[k].getEnd());
-            setPointLinking(b[k].getEnd(), 0, getPointLinking(b[k].getEnd(), 0) + 1);
-            setPointLinking(b[k].getEnd(), getPointLinking(b[k].getEnd(), 0), b[k].getBegin());
+            setPointLinking(sticks[k].getBegin(), 0, getPointLinking(sticks[k].getBegin(), 0) + 1);
+            setPointLinking(sticks[k].getBegin(), getPointLinking(sticks[k].getBegin(), 0), sticks[k].getEnd());
+            setPointLinking(sticks[k].getEnd(), 0, getPointLinking(sticks[k].getEnd(), 0) + 1);
+            setPointLinking(sticks[k].getEnd(), getPointLinking(sticks[k].getEnd(), 0), sticks[k].getBegin());
         }
     }
 
@@ -598,9 +590,9 @@ public class CreasePattern {
     private int renketu_hantei(int i, int j) {
         for (int k = 1; k <= sticksTotal; k++) {
             if (
-                    ((b[k].getBegin() == i) && (b[k].getEnd() == j))
+                    ((sticks[k].getBegin() == i) && (sticks[k].getEnd() == j))
                             ||
-                            ((b[k].getBegin() == j) && (b[k].getEnd() == i))
+                            ((sticks[k].getBegin() == j) && (sticks[k].getEnd() == i))
             ) {
                 return 1;
             }
@@ -628,9 +620,9 @@ public class CreasePattern {
             int k;
             k = getPointLinking(j, ik);
             if (k != i) {
-                if (oc.angle(t[j], t[i], t[j], t[k]) <= angle) {
+                if (oc.angle(points[j], points[i], points[j], points[k]) <= angle) {
                     n = k;
-                    angle = oc.angle(t[j], t[i], t[j], t[k]);
+                    angle = oc.angle(points[j], points[i], points[j], points[k]);
                 }
             }
         }
@@ -669,10 +661,10 @@ public class CreasePattern {
             //System.out.print("面発生　＝　"+i+"    ");System.out.println(Mensuu);
 
             //
-            tempFace = Face_request(b[i].getBegin(), b[i].getEnd());
+            tempFace = Face_request(sticks[i].getBegin(), sticks[i].getEnd());
             flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
             for (int j = 1; j <= facesTotal; j++) {
-                if (onaji_ka_hantei(tempFace, m[j]) == 1) {
+                if (onaji_ka_hantei(tempFace, faces[j]) == 1) {
                     flag1 = 1;
                     break;
                 }
@@ -684,10 +676,10 @@ public class CreasePattern {
             }
             //
 
-            tempFace = Face_request(b[i].getEnd(), b[i].getBegin());
+            tempFace = Face_request(sticks[i].getEnd(), sticks[i].getBegin());
             flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
             for (int j = 1; j <= facesTotal; j++) {
-                if (onaji_ka_hantei(tempFace, m[j]) == 1) {
+                if (onaji_ka_hantei(tempFace, faces[j]) == 1) {
                     flag1 = 1;
                     break;
                 }
@@ -707,8 +699,8 @@ public class CreasePattern {
         //Bouの両側の面の登録
         for (int ib = 1; ib <= sticksTotal; ib++) {
 
-            Stick_moti_Menid_min[ib] = Stick_moti_Menid_min_search(ib);
-            Stick_moti_Menid_max[ib] = Stick_moti_Menid_max_search(ib);
+            Stick_moti_FaceId_min[ib] = Stick_moti_Menid_min_search(ib);
+            Stick_moti_FaceId_max[ib] = Stick_moti_Menid_max_search(ib);
         }
     }
 
@@ -717,22 +709,22 @@ public class CreasePattern {
         //Bouの座標の最大最小を求める（これはここでやるより、Bouが加えられた直後にやるほうがよいかも知れない。）
         for (int ib = 1; ib <= sticksTotal; ib++) {
 
-            Stick_x_max[ib] = t[b[ib].getBegin()].getX();
-            Stick_x_min[ib] = t[b[ib].getBegin()].getX();
-            Stick_y_max[ib] = t[b[ib].getBegin()].getY();
-            Stick_y_min[ib] = t[b[ib].getBegin()].getY();
+            Stick_x_max[ib] = points[sticks[ib].getBegin()].getX();
+            Stick_x_min[ib] = points[sticks[ib].getBegin()].getX();
+            Stick_y_max[ib] = points[sticks[ib].getBegin()].getY();
+            Stick_y_min[ib] = points[sticks[ib].getBegin()].getY();
 
-            if (Stick_x_max[ib] < t[b[ib].getEnd()].getX()) {
-                Stick_x_max[ib] = t[b[ib].getEnd()].getX();
+            if (Stick_x_max[ib] < points[sticks[ib].getEnd()].getX()) {
+                Stick_x_max[ib] = points[sticks[ib].getEnd()].getX();
             }
-            if (Stick_x_min[ib] > t[b[ib].getEnd()].getX()) {
-                Stick_x_min[ib] = t[b[ib].getEnd()].getX();
+            if (Stick_x_min[ib] > points[sticks[ib].getEnd()].getX()) {
+                Stick_x_min[ib] = points[sticks[ib].getEnd()].getX();
             }
-            if (Stick_y_max[ib] < t[b[ib].getEnd()].getY()) {
-                Stick_y_max[ib] = t[b[ib].getEnd()].getY();
+            if (Stick_y_max[ib] < points[sticks[ib].getEnd()].getY()) {
+                Stick_y_max[ib] = points[sticks[ib].getEnd()].getY();
             }
-            if (Stick_y_min[ib] > t[b[ib].getEnd()].getY()) {
-                Stick_y_min[ib] = t[b[ib].getEnd()].getY();
+            if (Stick_y_min[ib] > points[sticks[ib].getEnd()].getY()) {
+                Stick_y_min[ib] = points[sticks[ib].getEnd()].getY();
             }
             MenMaxMinZahyou();
         }
@@ -741,47 +733,48 @@ public class CreasePattern {
     private void MenMaxMinZahyou() {
         //Menの座標の最大最小を求める
         for (int im = 1; im <= facesTotal; im++) {
-            Surface_x_max[im] = t[m[im].getPointId(1)].getX();
-            Surface_x_min[im] = t[m[im].getPointId(1)].getX();
-            Surface_y_max[im] = t[m[im].getPointId(1)].getY();
-            Surface_y_min[im] = t[m[im].getPointId(1)].getY();
-            for (int i = 2; i <= m[im].getPointsCount(); i++) {
-                if (Surface_x_max[im] < t[m[im].getPointId(i)].getX()) {
-                    Surface_x_max[im] = t[m[im].getPointId(i)].getX();
+            Surface_x_max[im] = points[faces[im].getPointId(1)].getX();
+            Surface_x_min[im] = points[faces[im].getPointId(1)].getX();
+            Surface_y_max[im] = points[faces[im].getPointId(1)].getY();
+            Surface_y_min[im] = points[faces[im].getPointId(1)].getY();
+            for (int i = 2; i <= faces[im].getPointsCount(); i++) {
+                if (Surface_x_max[im] < points[faces[im].getPointId(i)].getX()) {
+                    Surface_x_max[im] = points[faces[im].getPointId(i)].getX();
                 }
-                if (Surface_x_min[im] > t[m[im].getPointId(i)].getX()) {
-                    Surface_x_min[im] = t[m[im].getPointId(i)].getX();
+                if (Surface_x_min[im] > points[faces[im].getPointId(i)].getX()) {
+                    Surface_x_min[im] = points[faces[im].getPointId(i)].getX();
                 }
-                if (Surface_y_max[im] < t[m[im].getPointId(i)].getY()) {
-                    Surface_y_max[im] = t[m[im].getPointId(i)].getY();
+                if (Surface_y_max[im] < points[faces[im].getPointId(i)].getY()) {
+                    Surface_y_max[im] = points[faces[im].getPointId(i)].getY();
                 }
-                if (Surface_y_min[im] > t[m[im].getPointId(i)].getY()) {
-                    Surface_y_min[im] = t[m[im].getPointId(i)].getY();
+                if (Surface_y_min[im] > points[faces[im].getPointId(i)].getY()) {
+                    Surface_y_min[im] = points[faces[im].getPointId(i)].getY();
                 }
             }
         }
     }
 
 
-    public Point get_men_migiue_Ten(int im) {//imは面番号　。migiue	指定された番号の面を含む最小の長方形の右上の頂点を返す。　折り上がり図の裏返図の位置指定に使う。
-        //Menの座標の最大最小を求める
+    public Point getFaceUpperRightPoint(int im) {
+        //im is the surface number. upperRight Returns the upper right vertex of the smallest rectangle containing the face with the specified number. Used to specify the position of the inside-out view of the folded-up view.
+        //Find the maximum and minimum of Face's coordinates
 
-        double x_max = t[m[im].getPointId(1)].getX();
-        double x_min = t[m[im].getPointId(1)].getX();
-        double y_max = t[m[im].getPointId(1)].getY();
-        double y_min = t[m[im].getPointId(1)].getY();
-        for (int i = 2; i <= m[im].getPointsCount(); i++) {
-            if (x_max < t[m[im].getPointId(i)].getX()) {
-                x_max = t[m[im].getPointId(i)].getX();
+        double x_max = points[faces[im].getPointId(1)].getX();
+        double x_min = points[faces[im].getPointId(1)].getX();
+        double y_max = points[faces[im].getPointId(1)].getY();
+        double y_min = points[faces[im].getPointId(1)].getY();
+        for (int i = 2; i <= faces[im].getPointsCount(); i++) {
+            if (x_max < points[faces[im].getPointId(i)].getX()) {
+                x_max = points[faces[im].getPointId(i)].getX();
             }
-            if (x_min > t[m[im].getPointId(i)].getX()) {
-                x_min = t[m[im].getPointId(i)].getX();
+            if (x_min > points[faces[im].getPointId(i)].getX()) {
+                x_min = points[faces[im].getPointId(i)].getX();
             }
-            if (y_max < t[m[im].getPointId(i)].getY()) {
-                y_max = t[m[im].getPointId(i)].getY();
+            if (y_max < points[faces[im].getPointId(i)].getY()) {
+                y_max = points[faces[im].getPointId(i)].getY();
             }
-            if (y_min > t[m[im].getPointId(i)].getY()) {
-                y_min = t[m[im].getPointId(i)].getY();
+            if (y_min > points[faces[im].getPointId(i)].getY()) {
+                y_min = points[faces[im].getPointId(i)].getY();
             }
         }
 
@@ -794,7 +787,7 @@ public class CreasePattern {
     //棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
     private int Stick_moti_Menid_min_search(int ib) {
         for (int im = 1; im <= facesTotal; im++) {
-            if (Stick_moti_hantei(im, ib) == 1) {
+            if (Stick_moti_determine(im, ib) == 1) {
                 return im;
             }
         }
@@ -804,7 +797,7 @@ public class CreasePattern {
     //棒ibを境界として含む面(最大で2面ある)のうちでMenidの大きいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
     private int Stick_moti_Menid_max_search(int ib) {
         for (int im = facesTotal; im >= 1; im--) {
-            if (Stick_moti_hantei(im, ib) == 1) {
+            if (Stick_moti_determine(im, ib) == 1) {
                 return im;
             }
         }
@@ -815,12 +808,12 @@ public class CreasePattern {
 
     //Boundary of rods Boundary surface (two sides in yellow) Here, Menid of the proliferating branch of Menid was made.
     public int Stick_moti_Menid_min_motome(int ib) {
-        return Stick_moti_Menid_min[ib];
+        return Stick_moti_FaceId_min[ib];
     }
 
     //Returns the Menid with the larger Menid of the faces containing the bar ib as the boundary (there are up to two faces). Returns 0 if there is no face containing the bar as the boundary
     public int Stick_moti_Menid_max_motome(int ib) {
-        return Stick_moti_Menid_max[ib];
+        return Stick_moti_FaceId_max[ib];
     }
 
     //---------------
@@ -840,10 +833,10 @@ public class CreasePattern {
 
     }
 
-    //Men[im]の境界にTen[it]が含まれるなら1、含まれないなら0を返す
-    public int Ten_moti_hantei(int im, int it) {
-        for (int i = 1; i <= m[im].getPointsCount(); i++) {
-            if (it == m[im].getPointId(i)) {
+    //Returns 1 if the boundary of Face [im] contains Point [it], 0 if it does not.
+    public int Point_moti_determine(int im, int it) {
+        for (int i = 1; i <= faces[im].getPointsCount(); i++) {
+            if (it == faces[im].getPointId(i)) {
                 return 1;
             }
         }
@@ -851,19 +844,19 @@ public class CreasePattern {
     }
 
     //Men[im]の境界にBou[ib]が含まれるなら1、含まれないなら0を返す
-    private int Stick_moti_hantei(int im, int ib) {
-        for (int i = 1; i <= m[im].getPointsCount() - 1; i++) {
-            if ((b[ib].getBegin() == m[im].getPointId(i)) && (b[ib].getEnd() == m[im].getPointId(i + 1))) {
+    private int Stick_moti_determine(int im, int ib) {
+        for (int i = 1; i <= faces[im].getPointsCount() - 1; i++) {
+            if ((sticks[ib].getBegin() == faces[im].getPointId(i)) && (sticks[ib].getEnd() == faces[im].getPointId(i + 1))) {
                 return 1;
             }
-            if ((b[ib].getEnd() == m[im].getPointId(i)) && (b[ib].getBegin() == m[im].getPointId(i + 1))) {
+            if ((sticks[ib].getEnd() == faces[im].getPointId(i)) && (sticks[ib].getBegin() == faces[im].getPointId(i + 1))) {
                 return 1;
             }
         }
-        if ((b[ib].getBegin() == m[im].getPointId(m[im].getPointsCount())) && (b[ib].getEnd() == m[im].getPointId(1))) {
+        if ((sticks[ib].getBegin() == faces[im].getPointId(faces[im].getPointsCount())) && (sticks[ib].getEnd() == faces[im].getPointId(1))) {
             return 1;
         }
-        if ((b[ib].getEnd() == m[im].getPointId(m[im].getPointsCount())) && (b[ib].getBegin() == m[im].getPointId(1))) {
+        if ((sticks[ib].getEnd() == faces[im].getPointId(faces[im].getPointsCount())) && (sticks[ib].getBegin() == faces[im].getPointId(1))) {
             return 1;
         }
 
@@ -878,21 +871,21 @@ public class CreasePattern {
                 Face_adjacent[im][in] = 0;
                 Face_adjacent[in][im] = 0;
                 int ima, imb, ina, inb;
-                for (int iim = 1; iim <= m[im].getPointsCount(); iim++) {
-                    ima = m[im].getPointId(iim);
-                    if (iim == m[im].getPointsCount()) {
-                        imb = m[im].getPointId(1);
+                for (int iim = 1; iim <= faces[im].getPointsCount(); iim++) {
+                    ima = faces[im].getPointId(iim);
+                    if (iim == faces[im].getPointsCount()) {
+                        imb = faces[im].getPointId(1);
                     } else {
-                        imb = m[im].getPointId(iim + 1);
+                        imb = faces[im].getPointId(iim + 1);
                     }
 
-                    for (int iin = 1; iin <= m[in].getPointsCount(); iin++) {
-                        ina = m[in].getPointId(iin);
+                    for (int iin = 1; iin <= faces[in].getPointsCount(); iin++) {
+                        ina = faces[in].getPointId(iin);
 
-                        if (iin == m[in].getPointsCount()) {
-                            inb = m[in].getPointId(1);
+                        if (iin == faces[in].getPointsCount()) {
+                            inb = faces[in].getPointId(1);
                         } else {
-                            inb = m[in].getPointId(iin + 1);
+                            inb = faces[in].getPointId(iin + 1);
                         }
 
                         if (((ima == ina) && (imb == inb)) || ((ima == inb) && (imb == ina))) {
@@ -912,10 +905,10 @@ public class CreasePattern {
     //Returns the Stick number containing points t1 and t2
     private int Stick_search(int t1, int t2) {
         for (int i = 1; i <= sticksTotal; i++) {
-            if ((b[i].getBegin() == t1) && (b[i].getEnd() == t2)) {
+            if ((sticks[i].getBegin() == t1) && (sticks[i].getEnd() == t2)) {
                 return i;
             }
-            if ((b[i].getBegin() == t2) && (b[i].getEnd() == t1)) {
+            if ((sticks[i].getBegin() == t2) && (sticks[i].getEnd() == t1)) {
                 return i;
             }
         }
@@ -931,12 +924,12 @@ public class CreasePattern {
     private void addFace(Face tempFace) {
         facesTotal = facesTotal + 1;
 
-        m[facesTotal].reset();
+        faces[facesTotal].reset();
         for (int i = 1; i <= tempFace.getPointsCount(); i++) {
-            m[facesTotal].addPointId(tempFace.getPointId(i));
+            faces[facesTotal].addPointId(tempFace.getPointId(i));
         }
 //System.out.println("点集合：addMen 3   Mensuu = "+  Mensuu );
-        m[facesTotal].setColor(tempFace.getColor());
+        faces[facesTotal].setColor(tempFace.getColor());
     }
 
     //与えられた座標と一定の距離より近い近傍にあって、かつ最も近い点の番号を返す。もし、一定の距離以内にTenがないなら0を返す。
@@ -945,7 +938,7 @@ public class CreasePattern {
         double rmin = 1000000.0;
         double rtemp;
         for (int i = 1; i <= pointsTotal; i++) {
-            rtemp = oc.distance(p, t[i]);
+            rtemp = oc.distance(p, points[i]);
             if (rtemp < r) {
                 if (rtemp < rmin) {
                     rmin = rtemp;
@@ -963,7 +956,7 @@ public class CreasePattern {
         double rmin = 1000000.0;
         double rtemp;
         for (int i = 1; i <= pointsTotal; i++) {
-            rtemp = oc.distance(p, t[i]);
+            rtemp = oc.distance(p, points[i]);
             if (rtemp < r) {
                 if (rtemp < rmin) {
                     rmin = rtemp;
@@ -980,8 +973,8 @@ public class CreasePattern {
 
         for (int i = 1; i <= pointsTotal - 1; i++) {
             for (int j = i + 1; j <= pointsTotal; j++) {
-                if (oc.distance(t[i], t[j]) < r) {
-                    t[j].set(t[i]);
+                if (oc.distance(points[i], points[j]) < r) {
+                    points[j].set(points[i]);
                 }
             }
         }
@@ -994,10 +987,10 @@ public class CreasePattern {
             //   Senbun s =new Senbun();
             //     s.set( Bou2Senbun(b[ib])) ;
             for (int i = 1; i <= pointsTotal - 1; i++) {
-                if (oc.distance_lineSegment(t[i], t[b[ib].getBegin()], t[b[ib].getEnd()]) < r) {
+                if (oc.distance_lineSegment(points[i], points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]) < r) {
                     //Tyokusen ty =new Tyokusen(t[b[ib].getmae()],t[b[ib].getato()]);
                     //t[i].set( oc.kage_motome(ty,t[i]));
-                    t[i].set(oc.shadow_request(t[b[ib].getBegin()], t[b[ib].getEnd()], t[i]));
+                    points[i].set(oc.shadow_request(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()], points[i]));
                 }
             }
         }
@@ -1009,7 +1002,7 @@ public class CreasePattern {
         int r_int = 0;
         for (int i = 1; i <= pointsTotal; i++) {
 
-            if (t[i].getPointState() == 1) {
+            if (points[i].getPointState() == 1) {
                 r_int = r_int + 1;
             }
 
@@ -1019,34 +1012,34 @@ public class CreasePattern {
 
     //--------------------
     public void setPointState1(int i) {
-        t[i].setPointState1();
+        points[i].setPointState1();
     }
 
     //--------------------
     public void setPointState0(int i) {
-        t[i].setPointState0();
+        points[i].setPointState0();
     }
 
     //--------------------
     public void setAllPointState0() {
         for (int i = 1; i <= pointsTotal; i++) {
-            t[i].setPointState0();
+            points[i].setPointState0();
         }
     }
 
 
     //--------------------
     public void changePointState(int i) {
-        if (t[i].getPointState() == 1) {
-            t[i].setPointState0();
-        } else if (t[i].getPointState() == 0) {
-            t[i].setPointState1();
+        if (points[i].getPointState() == 1) {
+            points[i].setPointState0();
+        } else if (points[i].getPointState() == 0) {
+            points[i].setPointState1();
         }
     }
 
     //--------------------
     public byte getPointState(int i) {
-        return t[i].getPointState();
+        return points[i].getPointState();
     }
 
 
@@ -1054,7 +1047,7 @@ public class CreasePattern {
     public void statePointMove(Point p) {
         for (int i = 1; i <= pointsTotal; i++) {
 
-            if (t[i].getPointState() == 1) {
+            if (points[i].getPointState() == 1) {
                 set(i, p);
             }
 
@@ -1069,7 +1062,7 @@ public class CreasePattern {
         p_u.move(pa.other_Point_position(pb));
 
         for (int i = 1; i <= pointsTotal; i++) {
-            if (t[i].getPointState() == 1) {
+            if (points[i].getPointState() == 1) {
                 set(i, p_u);
             }
         }
@@ -1099,7 +1092,7 @@ public class CreasePattern {
 
         for (int i = 1; i <= pointsTotal; i++) {
             memo1.addLine("番号," + i);
-            memo1.addLine("座標," + t[i].getX() + "," + t[i].getY());
+            memo1.addLine("座標," + points[i].getX() + "," + points[i].getY());
         }
         memo1.addLine("</点>");
 
@@ -1158,7 +1151,7 @@ public class CreasePattern {
                 ax = Double.parseDouble(str);
                 str = tk.nextToken();
                 ay = Double.parseDouble(str);
-                t[ibangou].set(ax, ay);
+                points[ibangou].set(ax, ay);
             }
 
 

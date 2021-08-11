@@ -69,12 +69,12 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     //Jyuufuku_Jyunretu_hasseiki jjh = new Jyuufuku_Jyunretu_hasseiki();
     //AAAAAAAAAAAAAAAAAAAAAAAAAAA
 
-    public Drawing_Worker es1 = new Drawing_Worker(r, this);    //基本枝職人。マウスからの入力を受け付ける。
+    public Drawing_Worker es1 = new Drawing_Worker(r, this);    //Basic branch craftsman. Accepts input from the mouse.
 
-    public Oriagari_Zu temp_OZ = new Oriagari_Zu(this);    //折りあがり図
-    public Oriagari_Zu OZ;    //折りあがり図
+    public FoldedFigure temp_OZ = new FoldedFigure(this);    //Folded figure
+    public FoldedFigure OZ;    //Folded figure
 
-    ArrayList<Oriagari_Zu> OAZ = new ArrayList<>(); //折り上がり図のインスタンス化
+    ArrayList<FoldedFigure> OAZ = new ArrayList<>(); //Instantiation of fold-up diagram
 
     public WireFrame Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
 
@@ -522,7 +522,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
         //OAZ.clear();OAZ.add(new Oriagari_Zu(this));
         OAZ.clear();
         OAZ_add_new_Oriagari_Zu();
-        OZ = (Oriagari_Zu) OAZ.get(0);//折りあがり図
+        OZ = (FoldedFigure) OAZ.get(0);//折りあがり図
 
 
         //カメラの設定 ------------------------------------------------------------------
@@ -530,7 +530,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
         camera_of_orisen_nyuuryokuzu.setCameraPositionX(0.0);
         camera_of_orisen_nyuuryokuzu.setCameraPositionY(0.0);
         camera_of_orisen_nyuuryokuzu.setCameraAngle(0.0);
-        camera_of_orisen_nyuuryokuzu.set_camera_kagami(1.0);
+        camera_of_orisen_nyuuryokuzu.setCameraMirror(1.0);
         camera_of_orisen_nyuuryokuzu.setCameraZoomX(1.0);
         camera_of_orisen_nyuuryokuzu.setCameraZoomY(1.0);
         camera_of_orisen_nyuuryokuzu.setDisplayPositionX(350.0);
@@ -1296,12 +1296,12 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
 
 //20180122追加
-                Oriagari_Zu OZi;
+                FoldedFigure OZi;
                 for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                    OZi = (Oriagari_Zu) OAZ.get(i_oz);
+                    OZi = (FoldedFigure) OAZ.get(i_oz);
 
                     Point t_o2tv = new Point();
-                    t_o2tv = camera_of_orisen_nyuuryokuzu.object2TV(camera_of_orisen_nyuuryokuzu.get_camera_ichi());
+                    t_o2tv = camera_of_orisen_nyuuryokuzu.object2TV(camera_of_orisen_nyuuryokuzu.get_camera_position());
 
                     OZi.d_foldedFigure_syukusyaku_keisuu = OZi.d_foldedFigure_syukusyaku_keisuu * d_bairitu;
 
@@ -1377,12 +1377,12 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
                     double d_bairitu = d_syukusyaku_keisuu / d_syukusyaku_keisuu_old;
 
 
-                    Oriagari_Zu OZi;
+                    FoldedFigure OZi;
                     for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                        OZi = (Oriagari_Zu) OAZ.get(i_oz);
+                        OZi = (FoldedFigure) OAZ.get(i_oz);
 
                         Point t_o2tv = new Point();
-                        t_o2tv = camera_of_orisen_nyuuryokuzu.object2TV(camera_of_orisen_nyuuryokuzu.get_camera_ichi());
+                        t_o2tv = camera_of_orisen_nyuuryokuzu.object2TV(camera_of_orisen_nyuuryokuzu.get_camera_position());
 
                         OZi.d_foldedFigure_syukusyaku_keisuu = OZi.d_foldedFigure_syukusyaku_keisuu * d_bairitu;
 
@@ -1455,12 +1455,12 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
 
 //20180122追加
-                Oriagari_Zu OZi;
+                FoldedFigure OZi;
                 for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                    OZi = (Oriagari_Zu) OAZ.get(i_oz);
+                    OZi = (FoldedFigure) OAZ.get(i_oz);
 
                     Point t_o2tv = new Point();
-                    t_o2tv = camera_of_orisen_nyuuryokuzu.object2TV(camera_of_orisen_nyuuryokuzu.get_camera_ichi());
+                    t_o2tv = camera_of_orisen_nyuuryokuzu.object2TV(camera_of_orisen_nyuuryokuzu.get_camera_position());
 
                     OZi.d_foldedFigure_syukusyaku_keisuu = OZi.d_foldedFigure_syukusyaku_keisuu * d_bairitu;
 
@@ -3393,7 +3393,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 readImageFromFile3();
                 es1.point_removal();
                 es1.overlapping_line_removal();
-                es1.eda_kesi(0.000001);
+                es1.branch_trim(0.000001);
                 es1.circle_organize();
                 es1.kiroku();
                 es1.unselect_all();
@@ -6762,7 +6762,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                     i_undo_suu_om = 0;
                 }
                 text31.setText(String.valueOf(i_undo_suu_om));
-                OZ.cp_worker2.set_Ubox_undo_suu(i_undo_suu_om);                  //  <<<------------
+                OZ.cp_worker2.setUndoBoxUndoTotal(i_undo_suu_om);                  //  <<<------------
 
 
             }
@@ -7503,7 +7503,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 es2.setMemo_for_yomikomi(es1.ori_s.getMemo_for_select_oritatami());
                 es2.point_removal();
                 es2.overlapping_line_removal();
-                es2.eda_kesi(0.000001);
+                es2.branch_trim(0.000001);
                 es2.circle_organize();
                 Ss0 = es2.get_for_oritatami();
             } else {
@@ -7515,7 +7515,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             //
             //Ten ten_of_kijyunmen_old =new Ten(); ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());
-            point_of_referencePlane_old.set(OZ.cp_worker1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
+            point_of_referencePlane_old.set(OZ.cp_worker1.get_point_of_referencePlane_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
             //これより前のOZは古いOZ
             oritatami_jyunbi();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、OAZ(0)共通パラメータを引き継がせる。
             //これより後のOZは新しいOZに変わる
@@ -7557,8 +7557,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         set_i_OAZ(OAZ.size() - 1);//i_OAZ=i;OZ = (Oriagari_Zu)OAZ.get(i_OAZ); OZ(各操作の対象となる折上がり図）に、アレイリストに最新に追加された折上がり図を割り当てる)
 
-        Oriagari_Zu orz;
-        orz = (Oriagari_Zu) OAZ.get(0);//OAZ(0)(共通パラメータを保持する折上がり図）をorzに割り付ける
+        FoldedFigure orz;
+        orz = (FoldedFigure) OAZ.get(0);//OAZ(0)(共通パラメータを保持する折上がり図）をorzに割り付ける
 
         //以下ではOAZ(0)の共通パラメータを、現在操作対象となっているOZに渡す
         OZ.foldedFigure_F_color = orz.ct_worker.get_F_color();//20171223折り上がり図の表面の色の変更はOZ.oriagarizu_F_colorとOZ.js.set_F_colorの両方やる必要あり
@@ -7579,7 +7579,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
     // ------------------------------------------------------------------------------
     public void OAZ_add_new_Oriagari_Zu() {
 
-        OAZ.add(new Oriagari_Zu_01(this));
+        OAZ.add(new FoldedFigure_01(this));
 
         //	OZ = (Oriagari_Zu)OAZ.get(OAZ.size()-1);//折りあがり図
     }
@@ -7733,7 +7733,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         camera_of_orisen_nyuuryokuzu.setCameraPositionX(0.0);
         camera_of_orisen_nyuuryokuzu.setCameraPositionY(0.0);
         camera_of_orisen_nyuuryokuzu.setCameraAngle(0.0);
-        camera_of_orisen_nyuuryokuzu.set_camera_kagami(1.0);
+        camera_of_orisen_nyuuryokuzu.setCameraMirror(1.0);
         camera_of_orisen_nyuuryokuzu.setCameraZoomX(1.0);
         camera_of_orisen_nyuuryokuzu.setCameraZoomY(1.0);
         camera_of_orisen_nyuuryokuzu.setDisplayPositionX(350.0);
@@ -8210,9 +8210,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         int temp_i_OAZ = 0;
         int temp_i_cp_or_oriagari = 0;
-        Oriagari_Zu OZi;
+        FoldedFigure OZi;
         for (int i = 1; i <= OAZ.size() - 1; i++) {
-            OZi = (Oriagari_Zu) OAZ.get(i);
+            OZi = (FoldedFigure) OAZ.get(i);
 
 
             int OZ_hyouji_mode = 0;//折り上がり図表示なし
@@ -8294,7 +8294,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
     void set_i_OAZ(int i) {//OZが切り替わるときの処理
         System.out.println("i_OAZ = " + i_OAZ);
         i_OAZ = i;
-        OZ = (Oriagari_Zu) OAZ.get(i_OAZ);
+        OZ = (FoldedFigure) OAZ.get(i_OAZ);
         if (OZ.i_toukazu_color == 0) {
             ckbox_toukazu_color.setSelected(false);//透過図はカラー化しない。
         } else if (OZ.i_toukazu_color == 1) {
@@ -9134,7 +9134,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             es1.setCamera(camera_of_orisen_nyuuryokuzu);
             es1.mPressed_A_10002(p);
         } else if (i_mouse_modeA == 101) {        //折り上がり図操作
-            OZ.oriagari_sousa_mouse_on(p);
+            OZ.foldedFigure_operation_mouse_on(p);
         } else if (i_mouse_modeA == 102) {//折り上がり図移動
             OZ.camera_of_foldedFigure.camera_ichi_sitei_from_TV(p);
             OZ.camera_of_oriagari_front.camera_ichi_sitei_from_TV(p);
@@ -9222,9 +9222,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
 //20180225追加
-                Oriagari_Zu OZi;
+                FoldedFigure OZi;
                 for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                    OZi = (Oriagari_Zu) OAZ.get(i_oz);
+                    OZi = (FoldedFigure) OAZ.get(i_oz);
 
                     //Ten t_o2tv =new Ten();
                     //t_o2tv =camera_of_orisen_nyuuryokuzu.object2TV(camera_of_orisen_nyuuryokuzu.get_camera_ichi());
@@ -9501,7 +9501,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 es1.setCamera(camera_of_orisen_nyuuryokuzu);
                 es1.mDragged_A_10002(p);
             } else if (i_mouse_modeA == 101) {
-                OZ.oriagari_sousa_mouse_drag(p);
+                OZ.foldedFigure_operation_mouse_drag(p);
             }    //折り上がり図操作
             else if (i_mouse_modeA == 102) {
                 OZ.camera_of_foldedFigure.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
@@ -9607,9 +9607,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
 //20180225追加
-                Oriagari_Zu OZi;
+                FoldedFigure OZi;
                 for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                    OZi = (Oriagari_Zu) OAZ.get(i_oz);
+                    OZi = (FoldedFigure) OAZ.get(i_oz);
 
                     //Ten t_o2tv =new Ten();
                     //t_o2tv =camera_of_orisen_nyuuryokuzu.object2TV(camera_of_orisen_nyuuryokuzu.get_camera_ichi());
@@ -9926,7 +9926,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             } else if (i_mouse_modeA == 103) {//基準面指定
                 int new_kijyunmen_id;
                 int old_kijyunmen_id;
-                old_kijyunmen_id = OZ.cp_worker1.get_kijyunmen_id();
+                old_kijyunmen_id = OZ.cp_worker1.getReferencePlane_id();
 
                 new_kijyunmen_id = OZ.cp_worker1.set_referencePlane_id(p);
                 System.out.println("kijyunmen_id = " + new_kijyunmen_id);
@@ -10178,9 +10178,9 @@ public void keyTyped(KeyEvent e){
 
         es1.setCamera(camera_of_orisen_nyuuryokuzu);
 
-        Oriagari_Zu OZi;
+        FoldedFigure OZi;
         for (int i = 1; i <= OAZ.size() - 1; i++) {
-            OZi = (Oriagari_Zu) OAZ.get(i);
+            OZi = (FoldedFigure) OAZ.get(i);
             OZi.cp_worker1.setCamera(camera_of_orisen_nyuuryokuzu);
         }
 
@@ -10334,7 +10334,7 @@ img_haikei=(Image)imageT;
         //折り上がりの各種お絵かき
         //Oriagari_Zu OZi;
         for (int i = 1; i <= OAZ.size() - 1; i++) {
-            OZi = (Oriagari_Zu) OAZ.get(i);
+            OZi = (FoldedFigure) OAZ.get(i);
             OZi.foldUp_draw(bufferGraphics, i_mejirusi_hyouji);
         }
         //OZ = (Oriagari_Zu)OAZ.get(OAZ.size()-1);//折りあがり図
@@ -10621,9 +10621,9 @@ double dvy=(double)ymin;
                 //memo2=OZ.getMemo_for_svg_kakidasi();//20180227　各折り上がりのmemoと重複する作業なので削除
 
                 //各折り上がりのmemo
-                Oriagari_Zu OZi;
+                FoldedFigure OZi;
                 for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                    OZi = (Oriagari_Zu) OAZ.get(i_oz);
+                    OZi = (FoldedFigure) OAZ.get(i_oz);
 
                     memo2.addMemo(OZi.getMemo_for_svg_export());
 

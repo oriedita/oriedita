@@ -9,4 +9,4 @@ The goal of this project is to understand the underlying algorithms used in Orih
 
 Be warned that the translations in this repository can be quite poor or in some cases completely wrong. When in doubt a logical name was used. Comments were translated using online translation services and as such can contain weird structured sentences.
 
-The translation is focused around the `Oriagari_Zu` class which contains the basis of the folding algorithm.
+The translation is focused around the `FoldedFigure` (`Oriagari_Zu`) class which contains the basis of the folding algorithm.

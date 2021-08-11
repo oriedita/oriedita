@@ -19,7 +19,7 @@ import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 
-public class Oriagari_Zu {
+public class FoldedFigure {
     App orihime_app;
 
     double r = 3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
@@ -99,7 +99,7 @@ public class Oriagari_Zu {
 
     // **************************************************
 //コンストラクタ
-    public Oriagari_Zu(App app0) {
+    public FoldedFigure(App app0) {
         orihime_app = app0;
 
         ct_worker = new ClassTable_Worker(app0);
@@ -140,7 +140,7 @@ public class Oriagari_Zu {
         camera_of_foldedFigure.setCameraPositionX(0.0);
         camera_of_foldedFigure.setCameraPositionY(0.0);
         camera_of_foldedFigure.setCameraAngle(0.0);
-        camera_of_foldedFigure.set_camera_kagami(1.0);
+        camera_of_foldedFigure.setCameraMirror(1.0);
         camera_of_foldedFigure.setCameraZoomX(1.0);
         camera_of_foldedFigure.setCameraZoomY(1.0);
         camera_of_foldedFigure.setDisplayPositionX(350.0);
@@ -151,7 +151,7 @@ public class Oriagari_Zu {
         camera_of_oriagari_front.setCameraPositionX(0.0);
         camera_of_oriagari_front.setCameraPositionY(0.0);
         camera_of_oriagari_front.setCameraAngle(0.0);
-        camera_of_oriagari_front.set_camera_kagami(1.0);
+        camera_of_oriagari_front.setCameraMirror(1.0);
         camera_of_oriagari_front.setCameraZoomX(1.0);
         camera_of_oriagari_front.setCameraZoomY(1.0);
         camera_of_oriagari_front.setDisplayPositionX(350.0);
@@ -161,7 +161,7 @@ public class Oriagari_Zu {
         camera_of_oriagari_rear.setCameraPositionX(0.0);
         camera_of_oriagari_rear.setCameraPositionY(0.0);
         camera_of_oriagari_rear.setCameraAngle(0.0);
-        camera_of_oriagari_rear.set_camera_kagami(-1.0);
+        camera_of_oriagari_rear.setCameraMirror(-1.0);
         camera_of_oriagari_rear.setCameraZoomX(1.0);
         camera_of_oriagari_rear.setCameraZoomY(1.0);
         camera_of_oriagari_rear.setDisplayPositionX(350.0);
@@ -172,7 +172,7 @@ public class Oriagari_Zu {
         camera_of_transparent_front.setCameraPositionX(0.0);
         camera_of_transparent_front.setCameraPositionY(0.0);
         camera_of_transparent_front.setCameraAngle(0.0);
-        camera_of_transparent_front.set_camera_kagami(1.0);
+        camera_of_transparent_front.setCameraMirror(1.0);
         camera_of_transparent_front.setCameraZoomX(1.0);
         camera_of_transparent_front.setCameraZoomY(1.0);
         camera_of_transparent_front.setDisplayPositionX(350.0);
@@ -182,7 +182,7 @@ public class Oriagari_Zu {
         camera_of_transparant_rear.setCameraPositionX(0.0);
         camera_of_transparant_rear.setCameraPositionY(0.0);
         camera_of_transparant_rear.setCameraAngle(0.0);
-        camera_of_transparant_rear.set_camera_kagami(-1.0);
+        camera_of_transparant_rear.setCameraMirror(-1.0);
         camera_of_transparant_rear.setCameraZoomX(1.0);
         camera_of_transparant_rear.setCameraZoomY(1.0);
         camera_of_transparant_rear.setDisplayPositionX(350.0);
@@ -231,18 +231,18 @@ public class Oriagari_Zu {
             //透過図の表示
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
             if (display_flg == 3) {        // hyouji_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                ct_worker.oekaki_toukazu_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), i_toukazu_color, transparent_transparency);
+                ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), i_toukazu_color, transparent_transparency);
             }
 
             //折り上がり図の表示************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
             if (display_flg == 5) {
-                ct_worker.oekaki_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get());// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get());// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
             //折り上がり図の動かし中心の十字表示
             //System.out.println("paint　+++++++++++++++++++++　折り上がり図の動かし中心の十字表示)");
             if (i_mejirusi_hyouji == 1) {
-                ct_worker.oekaki_jyuuji_with_camera(bufferGraphics);
+                ct_worker.draw_cross_with_camera(bufferGraphics);
             }
         }
 
@@ -254,18 +254,18 @@ public class Oriagari_Zu {
             //透過図の表示
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
             if (display_flg == 3) {        // hyouji_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                ct_worker.oekaki_toukazu_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), i_toukazu_color, transparent_transparency);
+                ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), i_toukazu_color, transparent_transparency);
             }
 
             //折り上がり図の表示************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
             if (display_flg == 5) {
-                ct_worker.oekaki_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get());// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get());// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
             //折り上がり図の動かし中心の十字表示
             //System.out.println("paint　+++++++++++++++++++++　折り上がり図の動かし中心の十字表示)");
             if (i_mejirusi_hyouji == 1) {
-                ct_worker.oekaki_jyuuji_with_camera(bufferGraphics);
+                ct_worker.draw_cross_with_camera(bufferGraphics);
             }
         }
 
@@ -275,12 +275,12 @@ public class Oriagari_Zu {
             ct_worker.setCamera(camera_of_transparent_front);
             //透過図の表示
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
-            ct_worker.oekaki_toukazu_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), i_toukazu_color, transparent_transparency);
+            ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), i_toukazu_color, transparent_transparency);
 
             //折り上がり図の動かし中心の十字表示
             //System.out.println("paint　+++++++++++++++++++++　折り上がり図の動かし中心の十字表示)");
             if (i_mejirusi_hyouji == 1) {
-                ct_worker.oekaki_jyuuji_with_camera(bufferGraphics);
+                ct_worker.draw_cross_with_camera(bufferGraphics);
             }
 
             // ---------------------------------------------------------------------------------
@@ -288,12 +288,12 @@ public class Oriagari_Zu {
 
             //透過図の表示
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
-            ct_worker.oekaki_toukazu_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), i_toukazu_color, transparent_transparency);
+            ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), i_toukazu_color, transparent_transparency);
 
             //折り上がり図の動かし中心の十字表示
             //System.out.println("paint　+++++++++++++++++++++　折り上がり図の動かし中心の十字表示)");
             if (i_mejirusi_hyouji == 1) {
-                ct_worker.oekaki_jyuuji_with_camera(bufferGraphics);
+                ct_worker.draw_cross_with_camera(bufferGraphics);
             }
             // ---------------------------------------------------------------------------------
         }
@@ -302,7 +302,7 @@ public class Oriagari_Zu {
         //折り上がり図動かし時の針金図と展開図上の対応点の表示
 
 
-        for (int i = 1; i <= cp_worker1.getTensuu(); i++) {
+        for (int i = 1; i <= cp_worker1.getPointsTotal(); i++) {
             if (cp_worker1.getPointState(i) == 1) {
                 cp_worker1.oekaki_Ten_id_with_camera(bufferGraphics, i);
                 //	cp_worker2.oekaki_Ten_id_with_camera(bufferGraphics,i,ip4);
@@ -310,7 +310,7 @@ public class Oriagari_Zu {
         }
 
 
-        for (int i = 1; i <= cp_worker2.getTensuu(); i++) {
+        for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
             if (cp_worker2.getPointState(i) == 1) {
                 cp_worker1.oekaki_Ten_id_with_camera_green(bufferGraphics, i);
                 cp_worker2.oekaki_Ten_id_with_camera(bufferGraphics, i, ip4);
@@ -475,9 +475,9 @@ public class Oriagari_Zu {
         camera_of_transparant_rear.setDisplayPositionX(d_display_position_x + 40.0);
         camera_of_transparant_rear.setDisplayPositionY(d_display_position_y + 0.0);
 
-        double d_camera_kagami = camera_of_oriagari_rear.get_camera_kagami();
-        camera_of_oriagari_rear.set_camera_kagami(d_camera_kagami * -1.0);
-        camera_of_transparant_rear.set_camera_kagami(d_camera_kagami * -1.0);
+        double d_camera_mirror = camera_of_oriagari_rear.getCameraMirror();
+        camera_of_oriagari_rear.setCameraMirror(d_camera_mirror * -1.0);
+        camera_of_transparant_rear.setCameraMirror(d_camera_mirror * -1.0);
 
 
     }
@@ -667,9 +667,9 @@ public class Oriagari_Zu {
         camera_of_transparant_rear.setDisplayPositionX(d_display_position_x + 40.0);
         camera_of_transparant_rear.setDisplayPositionY(d_display_position_y + 0.0);
 
-        double d_camera_kagami = camera_of_oriagari_rear.get_camera_kagami();
-        camera_of_oriagari_rear.set_camera_kagami(d_camera_kagami * -1.0);
-        camera_of_transparant_rear.set_camera_kagami(d_camera_kagami * -1.0);
+        double d_camera_mirror = camera_of_oriagari_rear.getCameraMirror();
+        camera_of_oriagari_rear.setCameraMirror(d_camera_mirror * -1.0);
+        camera_of_transparant_rear.setCameraMirror(d_camera_mirror * -1.0);
         //	}
 
         //-------------------------------
@@ -690,9 +690,6 @@ public class Oriagari_Zu {
         i_estimated_step = 5;
         display_flg = 5;
         i_estimated_step = 10;
-        //if((OZ.hakkenn_sita_kazu==0)&&(OZ.betu_sagasi_flg==0)){ OZ.i_suitei_dankai=3; OZ.hyouji_flg=3;}
-
-        //return 1000;
     }
 //-----------------------------------
 
@@ -806,7 +803,7 @@ public class Oriagari_Zu {
                     discovered_fold_cases = discovered_fold_cases + 1;
                 }
 
-                ip5 = ct_worker.next(ct_worker.getSmen_yuukou_suu());//次の重なり探しの準備//ip5=0なら新たにsusumu余地がなかった。0以外なら変化したSmenのidの最も小さい番号
+                ip5 = ct_worker.next(ct_worker.getSmen_valid_number());//Preparation for the next overlap // If ip5 = 0, there was no room for new susumu. If non-zero, the smallest number of changed Smen ids
             }
         }
         orihime_app.bulletinBoard.clear();
@@ -824,9 +821,6 @@ public class Oriagari_Zu {
 
         return 1000;
     }
-
-//int oritatami_suitei_06(){return 1000;}
-
 
     public void toukazu_color_sage() {
         transparent_transparency = transparent_transparency / 2;
@@ -853,38 +847,38 @@ public class Oriagari_Zu {
 
 
     //-----------------------------------------------------------------------------------------------------uuuuuuu--
-    public void oriagari_sousa_mouse_on(Point p) {//Work when the left mouse button is pressed in the fold-up diagram operation
+    public void foldedFigure_operation_mouse_on(Point p) {//Work when the left mouse button is pressed in the fold-up diagram operation
         if (i_oriagari_sousa_mode == 1) {
-            oriagari_sousa_mouse_on_1(p);
+            foldedFigure_operation_mouse_on_1(p);
         }
         if (i_oriagari_sousa_mode == 2) {
-            oriagari_sousa_mouse_on_2(p);
+            foldedFigure_operation_mouse_on_2(p);
         }
     }
 
-    public void oriagari_sousa_mouse_drag(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
+    public void foldedFigure_operation_mouse_drag(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
         if (i_oriagari_sousa_mode == 1) {
-            oriagari_sousa_mouse_drag_1(p);
+            foldedFigure_operation_mouse_drag_1(p);
         }
         if (i_oriagari_sousa_mode == 2) {
-            oriagari_sousa_mouse_drag_2(p);
+            foldedFigure_operation_mouse_drag_2(p);
         }
     }
 
 
     public void oriagari_sousa_mouse_off(Point p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
         if (i_oriagari_sousa_mode == 1) {
-            oriagari_sousa_mouse_off_1(p);
+            foldedFigure_operation_mouse_off_1(p);
         }
         if (i_oriagari_sousa_mode == 2) {
-            oriagari_sousa_mouse_off_2(p);
+            foldedFigure_operation_mouse_off_2(p);
         }
     }
 
 
     //  =================================================================================================================================
     //-----------------------------------------------------------------------------------------------------uuuuuuu--
-    public void oriagari_sousa_mouse_on_1(Point p) {//折り上がり図操作でマウスの左ボタンを押したときの作業   折りずらし機能
+    public void foldedFigure_operation_mouse_on_1(Point p) {//Work when the left mouse button is pressed in the folding diagram operation Folding function
 
         p_m_left_on.set(new Point(p.getX(), p.getY()));
 
@@ -905,7 +899,7 @@ public class Oriagari_Zu {
             }
         }//i_mottomo_tikai_Tenidにpに最も近い点の番号を格納 ここまで
 
-        move_previous_selection_point.set(cp_worker2.getTen(i_most_near_PointId));
+        move_previous_selection_point.set(cp_worker2.getPoint(i_most_near_PointId));
 
 
         System.out.println("i_nanini_tikai = " + i_nanini_near);
@@ -927,9 +921,9 @@ public class Oriagari_Zu {
                 set_all_ten_sentaku_0();
                 //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                 Point ps = new Point();
-                ps.set(cp_worker2.getTen(i_most_near_PointId));
-                for (int i = 1; i <= cp_worker2.getTensuu(); i++) {
-                    if (ps.distance(cp_worker2.getTen(i)) < 0.0000001) {
+                ps.set(cp_worker2.getPoint(i_most_near_PointId));
+                for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
+                    if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
                         cp_worker1.setPointState1(i);
                     }
                 }
@@ -961,9 +955,9 @@ public class Oriagari_Zu {
 
                 //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                 Point ps = new Point();
-                ps.set(cp_worker2.getTen(i_most_near_PointId));
-                for (int i = 1; i <= cp_worker2.getTensuu(); i++) {
-                    if (ps.distance(cp_worker2.getTen(i)) < 0.0000001) {
+                ps.set(cp_worker2.getPoint(i_most_near_PointId));
+                for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
+                    if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
                         cp_worker1.setPointState1(i);
                     }
                 }
@@ -992,7 +986,7 @@ public class Oriagari_Zu {
     }
 
     //-------------
-    public void oriagari_sousa_mouse_drag_1(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
+    public void foldedFigure_operation_mouse_drag_1(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
 
         cp_worker2.setCamera(camera_of_foldedFigure);
         cp_worker2.setCam_front(camera_of_oriagari_front);
@@ -1013,7 +1007,7 @@ public class Oriagari_Zu {
     }
 
     //-------------
-    public void oriagari_sousa_mouse_off_1(Point p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
+    public void foldedFigure_operation_mouse_off_1(Point p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
         cp_worker2.setCamera(camera_of_foldedFigure);
         cp_worker2.setCam_front(camera_of_oriagari_front);
         cp_worker2.setCam_rear(camera_of_oriagari_rear);
@@ -1043,9 +1037,9 @@ public class Oriagari_Zu {
             cp_worker1.setAllPointState0();
             //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
             Point ps = new Point();
-            ps.set(cp_worker2.getTen(i_most_near_PointId));
-            for (int i = 1; i <= cp_worker2.getTensuu(); i++) {
-                if (ps.distance(cp_worker2.getTen(i)) < 0.0000001) {
+            ps.set(cp_worker2.getPoint(i_most_near_PointId));
+            for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
+                if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
                     cp_worker1.setPointState1(i);
                 }
             }
@@ -1056,7 +1050,7 @@ public class Oriagari_Zu {
 //  =================================================================================================================================
 //  ==========折り上がり図のまま変形操作===========================================================================================================
     //-----------------------------------------------------------------------------------------------------uuuuuuu--
-    public void oriagari_sousa_mouse_on_2(Point p) {//折り上がり図操作でマウスの左ボタンを押したときの作業
+    public void foldedFigure_operation_mouse_on_2(Point p) {//折り上がり図操作でマウスの左ボタンを押したときの作業
 
         p_m_left_on.set(new Point(p.getX(), p.getY()));
 
@@ -1077,7 +1071,7 @@ public class Oriagari_Zu {
             }
         }//i_mottomo_tikai_Tenidにpに最も近い点の番号を格納 ここまで
 
-        move_previous_selection_point.set(cp_worker2.getTen(i_most_near_PointId));
+        move_previous_selection_point.set(cp_worker2.getPoint(i_most_near_PointId));
 
 
         System.out.println("i_nanini_tikai = " + i_nanini_near);
@@ -1099,9 +1093,9 @@ public class Oriagari_Zu {
                 set_all_ten_sentaku_0();
                 //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                 Point ps = new Point();
-                ps.set(cp_worker2.getTen(i_most_near_PointId));
-                for (int i = 1; i <= cp_worker2.getTensuu(); i++) {
-                    if (ps.distance(cp_worker2.getTen(i)) < 0.0000001) {
+                ps.set(cp_worker2.getPoint(i_most_near_PointId));
+                for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
+                    if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
                         cp_worker1.setPointState1(i);
                     }
                 }
@@ -1133,9 +1127,9 @@ public class Oriagari_Zu {
 
                 //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                 Point ps = new Point();
-                ps.set(cp_worker2.getTen(i_most_near_PointId));
-                for (int i = 1; i <= cp_worker2.getTensuu(); i++) {
-                    if (ps.distance(cp_worker2.getTen(i)) < 0.0000001) {
+                ps.set(cp_worker2.getPoint(i_most_near_PointId));
+                for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
+                    if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
                         cp_worker1.setPointState1(i);
                     }
                 }
@@ -1164,7 +1158,7 @@ public class Oriagari_Zu {
     }
 
     //-------------
-    public void oriagari_sousa_mouse_drag_2(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
+    public void foldedFigure_operation_mouse_drag_2(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
 
         cp_worker2.setCamera(camera_of_foldedFigure);
         cp_worker2.setCam_front(camera_of_oriagari_front);
@@ -1185,7 +1179,7 @@ public class Oriagari_Zu {
     }
 
     //-------------
-    public void oriagari_sousa_mouse_off_2(Point p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
+    public void foldedFigure_operation_mouse_off_2(Point p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
         cp_worker2.setCamera(camera_of_foldedFigure);
         cp_worker2.setCam_front(camera_of_oriagari_front);
         cp_worker2.setCam_rear(camera_of_oriagari_rear);
@@ -1223,9 +1217,9 @@ public class Oriagari_Zu {
             cp_worker1.setAllPointState0();
             //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
             Point ps = new Point();
-            ps.set(cp_worker2.getTen(i_most_near_PointId));
-            for (int i = 1; i <= cp_worker2.getTensuu(); i++) {
-                if (ps.distance(cp_worker2.getTen(i)) < 0.0000001) {
+            ps.set(cp_worker2.getPoint(i_most_near_PointId));
+            for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
+                if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
                     cp_worker1.setPointState1(i);
                 }
             }
@@ -1240,7 +1234,7 @@ public class Oriagari_Zu {
 
 
     public void kiroku() {
-        cp_worker2.kiroku();
+        cp_worker2.record();
     }
 
     public void redo() {

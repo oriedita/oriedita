@@ -286,7 +286,7 @@ public class Drawing_Worker {
                     }        //  System.out.println(Integer.parseInt(s[0])) ;
                     if (st[0].equals("<camera_kagami")) {
                         s = st[1].split("<", 2);
-                        orihime_app.camera_of_orisen_nyuuryokuzu.set_camera_kagami(Double.parseDouble(s[0]));
+                        orihime_app.camera_of_orisen_nyuuryokuzu.setCameraMirror(Double.parseDouble(s[0]));
                     }
 
                     if (st[0].equals("<camera_bairitsu_x")) {
@@ -798,7 +798,7 @@ public class Drawing_Worker {
 
 
         //camera.set_camera_id(cam0.get_camera_id());
-        camera.set_camera_kagami(cam0.get_camera_kagami());
+        camera.setCameraMirror(cam0.getCameraMirror());
 
 
         camera.setCameraPositionX(cam0.getCameraPositionX());
@@ -824,8 +824,8 @@ public class Drawing_Worker {
     }
 
     //----------------
-    public void eda_kesi(double r) {
-        ori_s.eda_kesi(r);
+    public void branch_trim(double r) {
+        ori_s.branch_trim(r);
     }
     //--------------------------------------------
     //public void set(Senbunsyuugou ss){ori_s.set(ss);}
@@ -1200,7 +1200,7 @@ public class Drawing_Worker {
         memo1.addLine("<camera_ichi_x>" + camera.getCameraPositionX() + "</camera_ichi_x>");
         memo1.addLine("<camera_ichi_y>" + camera.getCameraPositionY() + "</camera_ichi_y>");
         memo1.addLine("<camera_kakudo>" + camera.getCameraAngle() + "</camera_kakudo>");
-        memo1.addLine("<camera_kagami>" + camera.get_camera_kagami() + "</camera_kagami>");
+        memo1.addLine("<camera_kagami>" + camera.getCameraMirror() + "</camera_kagami>");
         memo1.addLine("<camera_bairitsu_x>" + camera.getCameraZoomX() + "</camera_bairitsu_x>");
         memo1.addLine("<camera_bairitsu_y>" + camera.getCameraZoomY() + "</camera_bairitsu_y>");
         memo1.addLine("<hyouji_ichi_x>" + camera.getDisplayPositionX() + "</hyouji_ichi_x>");
@@ -1573,7 +1573,7 @@ public class Drawing_Worker {
             check4(0.0001);
         }
 
-        Ubox.kiroku(getMemo(s_title));
+        Ubox.record(getMemo(s_title));
     }
 
 
@@ -1588,7 +1588,7 @@ public class Drawing_Worker {
 
 
     public void h_kiroku() {
-        h_Ubox.kiroku(h_getMemo());
+        h_Ubox.record(h_getMemo());
     }
 
 
@@ -1598,7 +1598,7 @@ public class Drawing_Worker {
 
         String text = "";//文字列処理用のクラスのインスタンス化
         double d;
-        OritaOekaki OO = new OritaOekaki();
+        OritaDrawing OO = new OritaDrawing();
 
         LineSegment s_tv = new LineSegment();
         Point a = new Point();
@@ -1628,7 +1628,7 @@ public class Drawing_Worker {
 
         String text = "";//文字列処理用のクラスのインスタンス化
         double d;
-        OritaOekaki OO = new OritaOekaki();
+        OritaDrawing OO = new OritaDrawing();
 
         LineSegment s_tv = new LineSegment();
         Point a = new Point();
@@ -1766,7 +1766,7 @@ public class Drawing_Worker {
 
         //camera中心を十字で描く
         if (i_mejirusi_hyouji == 1) {
-            OO.jyuuji(g, camera.object2TV(camera.get_camera_ichi()), 5.0, 2.0, 3);
+            OO.cross(g, camera.object2TV(camera.get_camera_position()), 5.0, 2.0, 3);
         }
 
 
@@ -3253,7 +3253,7 @@ public class Drawing_Worker {
 //add_tyokusen.hyouji("     途中　add_tyokusen :");
 //kizon_tyokusen.hyouji("     途中　kizon_tyokusen :");
 
-            int i_heikou = oc.heikou_hantei(add_straightLine, kizon_straightLine, 0.0001);//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+            int i_heikou = oc.parallel_judgement(add_straightLine, kizon_straightLine, 0.0001);//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
 
 
             if (i_heikou == 0) {//加える線分と既存の線分が非平行の場合
@@ -3388,29 +3388,29 @@ public class Drawing_Worker {
         ori_v.unselect_all();
 
         //
-        LineSegment s_mae = new LineSegment();
-        LineSegment s_ato = new LineSegment();
+        LineSegment s_begin = new LineSegment();
+        LineSegment s_end = new LineSegment();
 
         for (int ia = 0; ia < Senb_boro_1p.size() - 1; ia++) {
             for (int ib = ia + 1; ib < Senb_boro_1p.size(); ib++) {
 
-                s_mae.set((LineSegment) Senb_boro_1p.get(ia));
-                s_ato.set((LineSegment) Senb_boro_1p.get(ib));
+                s_begin.set((LineSegment) Senb_boro_1p.get(ia));
+                s_end.set((LineSegment) Senb_boro_1p.get(ib));
 
-                StraightLine t_mae = new StraightLine(s_mae);
-                StraightLine t_ato = new StraightLine(s_ato);
+                StraightLine t_begin = new StraightLine(s_begin);
+                StraightLine t_end = new StraightLine(s_end);
 
-                int i_mae = s_mae.getiactive();//この場合iactiveには、そのボロノイ線分を加えたときの既存側のボロノイ母点の番号が入っている。
-                int i_ato = s_ato.getiactive();//この場合iactiveには、そのボロノイ線分を加えたときの既存側のボロノイ母点の番号が入っている。
+                int i_begin = s_begin.getiactive();//この場合iactiveには、そのボロノイ線分を加えたときの既存側のボロノイ母点の番号が入っている。
+                int i_end = s_end.getiactive();//この場合iactiveには、そのボロノイ線分を加えたときの既存側のボロノイ母点の番号が入っている。
 
 
-                if (i_mae > i_ato) {
-                    int i_temp = i_mae;
-                    i_mae = i_ato;
-                    i_ato = i_temp;
+                if (i_begin > i_end) {
+                    int i_temp = i_begin;
+                    i_begin = i_end;
+                    i_end = i_temp;
                 }
 
-                //System.out.println("(1) i_mae=" +i_mae +" :  i_ato=" +i_ato);
+                //System.out.println("(1) i_mae=" +i_mae +" :  i_end=" +i_end);
 
                 //新しいボロノイ母点を加えることでできる周囲のボロノイ線分が求まっている。このボロノイ線分の多角形を新セルということにする。
                 //新セルをori_vに加える前に、新セルの内部に入り込んでいるori_vの既存線分がないように処理をする。
@@ -3430,9 +3430,9 @@ public class Drawing_Worker {
                     }
 
 
-                    if (i_kizon_syou == i_mae) {
-                        if (i_kizon_dai == i_ato) {
-                            //System.out.println("i_mae=" +i_mae +" :  i_ato=" +i_ato);
+                    if (i_kizon_syou == i_begin) {
+                        if (i_kizon_dai == i_end) {
+                            //System.out.println("i_mae=" +i_mae +" :  i_end=" +i_end);
 
                             //System.out.println("ori_v.get(j)_  j=" +j);
 
@@ -3448,24 +3448,24 @@ public class Drawing_Worker {
                             //  if((ia+1==ib)||((ia==0)&&(ib==Senb_boro_1p.size()-1))){
 
                             Point kouten = new Point();
-                            kouten.set(oc.findIntersection(s_mae, s_kizon));
+                            kouten.set(oc.findIntersection(s_begin, s_kizon));
 
                             //System.out.println("kouten=" +kouten.getx()+" : "+kouten.gety());
 
 
-                            if ((t_mae.sameSide(s_step[i_egaki_stage].getA(), s_kizon.getA()) >= 0) &&
-                                    (t_mae.sameSide(s_step[i_egaki_stage].getA(), s_kizon.getB()) >= 0)) {
+                            if ((t_begin.sameSide(s_step[i_egaki_stage].getA(), s_kizon.getA()) >= 0) &&
+                                    (t_begin.sameSide(s_step[i_egaki_stage].getA(), s_kizon.getB()) >= 0)) {
                                 ori_v.select(j);
                             }
 
-                            if ((t_mae.sameSide(s_step[i_egaki_stage].getA(), s_kizon.getA()) == -1) &&
-                                    (t_mae.sameSide(s_step[i_egaki_stage].getA(), s_kizon.getB()) == 1)) {
+                            if ((t_begin.sameSide(s_step[i_egaki_stage].getA(), s_kizon.getA()) == -1) &&
+                                    (t_begin.sameSide(s_step[i_egaki_stage].getA(), s_kizon.getB()) == 1)) {
                                 //s_kizon.set(s_kizon.geta(),kouten);
                                 ori_v.set(j, s_kizon.getA(), kouten);
                             }
 
-                            if ((t_mae.sameSide(s_step[i_egaki_stage].getA(), s_kizon.getA()) == 1) &&
-                                    (t_mae.sameSide(s_step[i_egaki_stage].getA(), s_kizon.getB()) == -1)) {
+                            if ((t_begin.sameSide(s_step[i_egaki_stage].getA(), s_kizon.getA()) == 1) &&
+                                    (t_begin.sameSide(s_step[i_egaki_stage].getA(), s_kizon.getB()) == -1)) {
                                 //s_kizon.set(kouten,s_kizon.getb());
                                 ori_v.set(j, kouten, s_kizon.getB());
                             }
@@ -3641,7 +3641,7 @@ public class Drawing_Worker {
                     int_double i_d = new int_double(ori_s.mottomo_tikai_lineSegment_search(p), 1.0);//entyou_kouho_nboxに1本の情報しか入らないのでdoubleの部分はどうでもよいので適当に1.0にした。
                     entyou_kouho_nbox.ire_i_tiisaijyun(i_d);
 
-                    s_step[1].setB(oc.lineControl_point_find(closest_lineSegment.getA(), closest_lineSegment.getB(), p));
+                    s_step[1].setB(oc.lineSymmetry_point_find(closest_lineSegment.getA(), closest_lineSegment.getB(), p));
 
                     s_step[1].set(//s_step[1]を短くして、表示時に目立たない様にする。
                             oc.point_double(oc.midPoint(s_step[1].getA(), s_step[1].getB()), s_step[1].getA(), 0.00001 / s_step[1].getLength())
@@ -3698,7 +3698,7 @@ public class Drawing_Worker {
                     int sousuu_old = ori_s.getTotal();//(1)
                     for (int i = 1; i <= entyou_kouho_nbox.getsousuu(); i++) {
                         //最初に選んだ線分と2番目に選んだ線分が平行でない場合
-                        if (oc.heikou_hantei(ori_s.get(entyou_kouho_nbox.get_int(i)), closest_lineSegment, 0.000001) == 0) { //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない
+                        if (oc.parallel_judgement(ori_s.get(entyou_kouho_nbox.get_int(i)), closest_lineSegment, 0.000001) == 0) { //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない
                             //s_step[1]とs_step[2]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
                             Point kousa_point = new Point();
                             kousa_point.set(oc.findIntersection(ori_s.get(entyou_kouho_nbox.get_int(i)), closest_lineSegment));
@@ -4673,11 +4673,11 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         Point kousa_point = new Point();
 
-        if (oc.heikou_hantei(s_o, s_k, 0.0000001) == 1) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+        if (oc.parallel_judgement(s_o, s_k, 0.0000001) == 1) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
             return -500;
         }
 
-        if (oc.heikou_hantei(s_o, s_k, 0.0000001) == 2) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+        if (oc.parallel_judgement(s_o, s_k, 0.0000001) == 2) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
             kousa_point.set(s_k.getA());
             if (oc.distance(s_o.getA(), s_k.getA()) > oc.distance(s_o.getA(), s_k.getB())) {
                 kousa_point.set(s_k.getB());
@@ -4686,7 +4686,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         }
 
-        if (oc.heikou_hantei(s_o, s_k, 0.0000001) == 0) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+        if (oc.parallel_judgement(s_o, s_k, 0.0000001) == 0) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
             kousa_point.set(oc.findIntersection(s_o, s_k));
         }
 
@@ -4732,7 +4732,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
             Point t_taisyou = new Point();
-            t_taisyou.set(oc.lineControl_point_find(s_step[2].getA(), s_step[3].getA(), s_step[1].getA()));
+            t_taisyou.set(oc.lineSymmetry_point_find(s_step[2].getA(), s_step[3].getA(), s_step[1].getA()));
 
             LineSegment add_sen = new LineSegment(s_step[2].getA(), t_taisyou);
 
@@ -4843,7 +4843,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             Point new_a = new Point();
             new_a.set(e_s_dougubako.get_kousaten_made_nobasi_ten_new());//Ten new_aは最も近い交点
             Point new_b = new Point();
-            new_b.set(oc.lineControl_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+            new_b.set(oc.lineSymmetry_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
             renzoku_orikaesi_new(new_a, new_b);//種の散布
             return;
@@ -4890,7 +4890,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     Point new_a = new Point();
                     new_a.set(e_s_dougubako.get_kousaten_made_nobasi_ten_new());//Ten new_aは最も近い交点
                     Point new_b = new Point();
-                    new_b.set(oc.lineControl_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                    new_b.set(oc.lineSymmetry_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
                     renzoku_orikaesi_new(new_a, new_b);//種の散布
                     return;
@@ -4912,7 +4912,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         Point new_a = new Point();
                         new_a.set(e_s_dougubako.get_kousaten_made_nobasi_ten_new());//Ten new_aは最も近い交点
                         Point new_b = new Point();
-                        new_b.set(oc.lineControl_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                        new_b.set(oc.lineSymmetry_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
                         renzoku_orikaesi_new(new_a, new_b);//種の散布
                         return;
@@ -4930,7 +4930,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         Point new_a = new Point();
                         new_a.set(e_s_dougubako.get_kousaten_made_nobasi_ten_new());//Ten new_aは最も近い交点
                         Point new_b = new Point();
-                        new_b.set(oc.lineControl_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                        new_b.set(oc.lineSymmetry_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
                         renzoku_orikaesi_new(new_a, new_b);//種の散布
                         return;
@@ -4948,7 +4948,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         Point new_a = new Point();
                         new_a.set(e_s_dougubako.get_kousaten_made_nobasi_ten_new());//Ten new_aは最も近い交点
                         Point new_b = new Point();
-                        new_b.set(oc.lineControl_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                        new_b.set(oc.lineSymmetry_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
                         renzoku_orikaesi_new(new_a, new_b);//種の散布
                         return;
@@ -5009,7 +5009,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             Point new_a = new Point();
             new_a.set(e_s_dougubako.get_kousaten_made_nobasi_ten(a, b));
             Point new_b = new Point();
-            new_b.set(oc.lineControl_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+            new_b.set(oc.lineSymmetry_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
             renzoku_orikaesi(new_a, new_b);
             return;
@@ -5045,7 +5045,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             Point new_a = new Point();
             new_a.set(e_s_dougubako.get_kousaten_made_nobasi_ten(a, b));
             Point new_b = new Point();
-            new_b.set(oc.lineControl_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+            new_b.set(oc.lineSymmetry_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
             renzoku_orikaesi(new_a, new_b);
             return;
@@ -7419,7 +7419,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                             //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
                             Point t_taisyou = new Point();
-                            t_taisyou.set(oc.lineControl_point_find(s_step[1].getA(), s_step[1].getB(), t_moto));
+                            t_taisyou.set(oc.lineSymmetry_point_find(s_step[1].getA(), s_step[1].getB(), t_moto));
 
                             LineSegment add_sen = new LineSegment(oc.findIntersection(ori_s.get(i), s_step[1]), t_taisyou);
 
@@ -9163,7 +9163,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
                 //0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
 
-                if (oc.heikou_hantei(s_step[i_egaki_stage - 1], s_step[i_egaki_stage], 0.1) != 0) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
+                if (oc.parallel_judgement(s_step[i_egaki_stage - 1], s_step[i_egaki_stage], 0.1) != 0) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
 
                     //s_step[20]とs_step[21]と点pの距離  //public double kyori_senbun(Ten p0,Senbun s)
                     //if(oc.kyori_senbun(p, s_step[1+     (honsuu) +(honsuu)   +1]) >  oc.kyori_senbun(p, s_step[1+     (honsuu) +(honsuu)   +1+1])          ){
@@ -9426,7 +9426,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
                 //0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
 
-                if (oc.heikou_hantei(s_step[i_egaki_stage - 1], s_step[i_egaki_stage], 0.1) != 0) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
+                if (oc.parallel_judgement(s_step[i_egaki_stage - 1], s_step[i_egaki_stage], 0.1) != 0) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
 
                     //s_step[20]とs_step[21]と点pの距離  //public double kyori_senbun(Ten p0,Senbun s)
                     //if(oc.kyori_senbun(p, s_step[1+     (honsuu) +(honsuu)   +1]) >  oc.kyori_senbun(p, s_step[1+     (honsuu) +(honsuu)   +1+1])          ){
@@ -9801,7 +9801,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                 closest_lineSegment.set(get_moyori_senbun(p));
                 if (oc.distance_lineSegment(p, closest_lineSegment) < d_hantei_haba) {//最寄折線が近い場合
-                    if (oc.heikou_hantei(closest_step_lineSegment, closest_lineSegment, 0.000001) == 0) {//最寄折線が最寄step折線と平行の場合は除外
+                    if (oc.parallel_judgement(closest_step_lineSegment, closest_lineSegment, 0.000001) == 0) {//最寄折線が最寄step折線と平行の場合は除外
                         Point mokuhyou_point2 = new Point();
                         mokuhyou_point2.set(oc.findIntersection(closest_step_lineSegment, closest_lineSegment));
                         if (p.distance(mokuhyou_point) * 2.0 > p.distance(mokuhyou_point2)) {
@@ -11557,11 +11557,11 @@ s_step[i_egaki_dankai].setcolor(6);
     }
 
     public void set_Ubox_undo_suu(int i) {
-        Ubox.set_i_undo_suu(i);
+        Ubox.set_i_undo_total(i);
     }
 
     public void set_h_Ubox_undo_suu(int i) {
-        h_Ubox.set_i_undo_suu(i);
+        h_Ubox.set_i_undo_total(i);
     }
 
     public void circle_organize() {//Organize all circles.

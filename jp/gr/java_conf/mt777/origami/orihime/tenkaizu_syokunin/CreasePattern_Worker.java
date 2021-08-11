@@ -20,7 +20,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     OritaCalc oc = new OritaCalc(); //各種計算用の関数を使うためのクラスのインスタンス化
     double r = 3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
 
-    CreasePattern c = new CreasePattern();    //展開図
+    CreasePattern creasePattern = new CreasePattern();    //展開図
 
     Undo_Box Ubox = new Undo_Box();
 
@@ -50,73 +50,60 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
     public CreasePattern_Worker(double r0) {  //コンストラクタ
-        //	 reset();
         r = r0;
     }
 
     public void reset() {
         r = 3.0;
-        c.reset();
-        //for(int i=0;i<=c.getTensuu();i++){tnew[i].reset();}
+        creasePattern.reset();
 
         camera.reset();
         cam_omote.reset();
         cam_ura.reset();
 
-
         cam_touka_omote.reset();
         cam_touka_ura.reset();
-
     }
 
-    private void configure(int Tsuu, int Bsuu, int Msuu) {
-        AverageCoordinates[] t_new = new AverageCoordinates[Tsuu + 1];
-        tnew = t_new;
-        for (int i = 0; i <= Tsuu; i++) {
+    private void configure(int pointsTotal, int sticksTotal, int facesTotal) {
+        tnew = new AverageCoordinates[pointsTotal + 1];
+        for (int i = 0; i <= pointsTotal; i++) {
             tnew[i] = new AverageCoordinates();
         }
-        int[] i_Meniti = new int[Msuu + 1];
-        iFacePosition = i_Meniti;
-        int[] tonari_Menid = new int[Msuu + 1];
-        nextFaceId = tonari_Menid;         //ある面の隣の面（基準面側）のid
-        int[] kyoukai_Bouid = new int[Msuu + 1];
-        associatedStickId = kyoukai_Bouid;         //ある面と隣の面（基準面側）の間の棒のid
+        iFacePosition = new int[facesTotal + 1];
+        nextFaceId = new int[facesTotal + 1];         //The id of the surface (reference surface side) next to a certain surface
+        associatedStickId = new int[facesTotal + 1];         //The id of the bar between one surface and the next surface (reference surface side)
     }
 
-    //---------------
-    //public void Iti_sitei(double x, double y){c.Iti_sitei(x ,y);}
-
     //-----------
-    public void add_kijyunmen_id() {
+    public void add_referencePlane_id() {
         referencePlane_id = referencePlane_id + 1;
-        if (referencePlane_id > c.getFacesTotal()) {
+        if (referencePlane_id > creasePattern.getFacesTotal()) {
             referencePlane_id = 1;
         }
     }
 
 
     //-------------------------------------------
-    public int get_kijyunmen_id() {
+    public int getReferencePlane_id() {
         return referencePlane_id;
     }
 
 
     //-------------------------------------------
-    public Point get_kijyunmen_migiue_Ten() {
-
-        return c.get_men_migiue_Ten(referencePlane_id);
-
+    public Point getReferencePlaneUpperRightPoint() {
+        return creasePattern.getFaceUpperRightPoint(referencePlane_id);
     }
 
     //-------------------------------------------
-    public Point get_ten_of_kijyunmen_ob() {
+    public Point get_point_of_referencePlane_ob() {
 
         return point_of_referencePlane_ob;
 
     }
 
     //-------------------------------------------
-    public Point get_ten_of_kijyunmen_tv() {
+    public Point get_point_of_referencePlane_tv() {
 
         return camera.object2TV(point_of_referencePlane_ob);
 
@@ -128,14 +115,14 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         referencePlane_id = i;
 
 
-        if (referencePlane_id > c.getFacesTotal()) {
-            referencePlane_id = c.getFacesTotal();
+        if (referencePlane_id > creasePattern.getFacesTotal()) {
+            referencePlane_id = creasePattern.getFacesTotal();
         }
         if (referencePlane_id < 1) {
             referencePlane_id = 1;
         }
 
-        point_of_referencePlane_ob = c.insidePoint_surface(referencePlane_id);
+        point_of_referencePlane_ob = creasePattern.insidePoint_surface(referencePlane_id);
 
 
         return referencePlane_id;
@@ -146,8 +133,8 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     public int set_referencePlane_id(Point p0) {//実際に有効になっている基準面idを返す
         Point p = new Point();
         p.set(camera.TV2object(p0));
-        if (c.inside(p) > 0) {
-            referencePlane_id = c.inside(p);
+        if (creasePattern.inside(p) > 0) {
+            referencePlane_id = creasePattern.inside(p);
             point_of_referencePlane_ob.set(p);
         }//c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
         return referencePlane_id;
@@ -158,35 +145,35 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     public int naibu_hantei(Point p0) {//実際にp0がある面idを返す
         Point p = new Point();
         p.set(camera.TV2object(p0));
-        return c.inside(p);//c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
+        return creasePattern.inside(p);//c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     //-----------Ten p0が折り上がり図(表)の内部に有るかどうかを判定する
     public int naibu_hantei_omote(Point p0) {//実際にp0がある面idを返す
         Point p = new Point();
         p.set(cam_omote.TV2object(p0));
-        return c.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
+        return creasePattern.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     //-----------Ten p0が折り上がり図(裏)の内部に有るかどうかを判定する
     public int naibu_hantei_ura(Point p0) {//実際にp0がある面idを返す
         Point p = new Point();
         p.set(cam_ura.TV2object(p0));
-        return c.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
+        return creasePattern.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     //-----------Ten p0が折り上がり図に付属して表示される透過図(表)の内部に有るかどうかを判定する
     public int naibu_hantei_touka_omote(Point p0) {//実際にp0がある面idを返す
         Point p = new Point();
         p.set(cam_touka_omote.TV2object(p0));
-        return c.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
+        return creasePattern.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     //-----------Ten p0が折り上がり図に付属して表示される透過図(裏)の内部に有るかどうかを判定する
     public int naibu_hantei_touka_ura(Point p0) {//実際にp0がある面idを返す
         Point p = new Point();
         p.set(cam_touka_ura.TV2object(p0));
-        return c.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
+        return creasePattern.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
 
@@ -197,7 +184,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 
     //--------------------------------------------
     public void setCamera(Camera cam0) {
-        camera.set_camera_kagami(cam0.get_camera_kagami());
+        camera.setCameraMirror(cam0.getCameraMirror());
         camera.setCameraPositionX(cam0.getCameraPositionX());
         camera.setCameraPositionY(cam0.getCameraPositionY());
         camera.setCameraZoomX(cam0.getCameraZoomX());
@@ -209,7 +196,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 
 
     public void setCam_front(Camera cam0) {
-        cam_omote.set_camera_kagami(cam0.get_camera_kagami());
+        cam_omote.setCameraMirror(cam0.getCameraMirror());
         cam_omote.setCameraPositionX(cam0.getCameraPositionX());
         cam_omote.setCameraPositionY(cam0.getCameraPositionY());
         cam_omote.setCameraZoomX(cam0.getCameraZoomX());
@@ -220,7 +207,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     }
 
     public void setCam_rear(Camera cam0) {
-        cam_ura.set_camera_kagami(cam0.get_camera_kagami());
+        cam_ura.setCameraMirror(cam0.getCameraMirror());
         cam_ura.setCameraPositionX(cam0.getCameraPositionX());
         cam_ura.setCameraPositionY(cam0.getCameraPositionY());
         cam_ura.setCameraZoomX(cam0.getCameraZoomX());
@@ -232,7 +219,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 
 
     public void setCam_transparent_front(Camera cam0) {
-        cam_touka_omote.set_camera_kagami(cam0.get_camera_kagami());
+        cam_touka_omote.setCameraMirror(cam0.getCameraMirror());
         cam_touka_omote.setCameraPositionX(cam0.getCameraPositionX());
         cam_touka_omote.setCameraPositionY(cam0.getCameraPositionY());
         cam_touka_omote.setCameraZoomX(cam0.getCameraZoomX());
@@ -243,7 +230,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     }
 
     public void setCam_transparent_rear(Camera cam0) {
-        cam_touka_ura.set_camera_kagami(cam0.get_camera_kagami());
+        cam_touka_ura.setCameraMirror(cam0.getCameraMirror());
         cam_touka_ura.setCameraPositionX(cam0.getCameraPositionX());
         cam_touka_ura.setCameraPositionY(cam0.getCameraPositionY());
         cam_touka_ura.setCameraZoomX(cam0.getCameraZoomX());
@@ -256,36 +243,36 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 
     // ----------------
     public int getMensuu() {
-        return c.getFacesTotal();
+        return creasePattern.getFacesTotal();
     }
 
     //-------------
     public void heikou_idou(double x, double y) {
-        c.parallelMove(x, y);
+        creasePattern.parallelMove(x, y);
     }
 
     //
     public void uragaesi() {//重心の位置を中心に左右に裏返す。
-        c.turnOver();
+        creasePattern.turnOver();
     }
 
     //面の内部の点を求める//---------------------------------------
     public Point naibuTen_motome(int i) {
-        return c.insidePoint_surface(i);
+        return creasePattern.insidePoint_surface(i);
     }
 
     //点集合の持つ棒の総数を得る
-    public int getBousuu() {
-        return c.getSticksTotal();
+    public int getSticksTotal() {
+        return creasePattern.getSticksTotal();
     }
 
     //点集合の持つ棒の色を得る（点集合を展開図として扱う場合では、この色は山谷をあらわす）。
     public int getcolor(int i) {
-        return c.getcolor(i);
+        return creasePattern.getColor(i);
     }
 
     //-------------------------------------------
-    public int getiMeniti(int i) {
+    public int getIFacePosition(int i) {
         return iFacePosition[i];
     }
 
@@ -294,10 +281,10 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     //Folding estimation (What you can do here is a wire diagram that does not consider the overlap of surfaces)
     public CreasePattern folding() {//折りたたみ推定
         CreasePattern creasePattern = new CreasePattern();    //展開図
-        creasePattern.configure(c.getPointsTotal(), c.getSticksTotal(), c.getFacesTotal());
-        creasePattern.set(c);
+        creasePattern.configure(this.creasePattern.getPointsTotal(), this.creasePattern.getSticksTotal(), this.creasePattern.getFacesTotal());
+        creasePattern.set(this.creasePattern);
 
-        for (int i = 0; i <= c.getFacesTotal(); i++) {
+        for (int i = 0; i <= this.creasePattern.getFacesTotal(); i++) {
             nextFaceId[i] = 0;
             associatedStickId[i] = 0;
             iFacePosition[i] = 0;
@@ -308,13 +295,13 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 
         int current_face_position = 1;
         int remaining_facesTotal;
-        remaining_facesTotal = c.getFacesTotal() - 1;
+        remaining_facesTotal = this.creasePattern.getFacesTotal() - 1;
 
         while (remaining_facesTotal > 0) {
-            for (int i = 1; i <= c.getFacesTotal(); i++) {
+            for (int i = 1; i <= this.creasePattern.getFacesTotal(); i++) {
                 if (iFacePosition[i] == current_face_position) {
-                    for (int j = 1; j <= c.getFacesTotal(); j++) {
-                        int mth = c.Face_tonari_hantei(i, j);
+                    for (int j = 1; j <= this.creasePattern.getFacesTotal(); j++) {
+                        int mth = this.creasePattern.Face_tonari_hantei(i, j);
                         if ((mth > 0) && (iFacePosition[j] == 0)) {
                             iFacePosition[j] = current_face_position + 1;
                             nextFaceId[j] = i;
@@ -327,7 +314,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
             current_face_position = current_face_position + 1;
 
             remaining_facesTotal = 0;
-            for (int i = 1; i <= c.getFacesTotal(); i++) {
+            for (int i = 1; i <= this.creasePattern.getFacesTotal(); i++) {
                 if (iFacePosition[i] == 0) {
                     remaining_facesTotal = remaining_facesTotal + 1;
                 }
@@ -342,11 +329,11 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         // Find where to move when the development drawing is folded by moving the face im.
 
         System.out.println("折ったときの点の位置を求める（開始）");
-        for (int it = 1; it <= c.getPointsTotal(); it++) {
+        for (int it = 1; it <= this.creasePattern.getPointsTotal(); it++) {
             tnew[it].reset();
-            for (int im = 1; im <= c.getFacesTotal(); im++) {
-                if (c.Ten_moti_hantei(im, it) == 1) {//c.Ten_moti_hanteiは、Men[im]の境界にTen[it]が含まれるなら1、含まれないなら0を返す
-                    tnew[it].addPoint(ori_idou(it, im));
+            for (int im = 1; im <= this.creasePattern.getFacesTotal(); im++) {
+                if (this.creasePattern.Point_moti_determine(im, it) == 1) {//c.Ten_moti_hantei returns 1 if the boundary of Face [im] contains Point [it], 0 if it does not.
+                    tnew[it].addPoint(fold_movement(it, im));
                     creasePattern.setPoint(it, tnew[it].getAveragePoint());
                 }
             }
@@ -357,16 +344,16 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     }
 
     //------------------------------------------------------------
-    private Point ori_idou(int it, int im) { //点itが面imの一員として折られた場合の移動先の位置を求める関数
+    private Point fold_movement(int it, int im) { //A function that finds the position of the destination when the point it is folded as a member of the surface im
 
-        Point p = new Point();  // p1.set(s.geta());
-        p.set(c.getPoint(it));
-        int idousakino_Menid;
-        idousakino_Menid = im;//最初の面のid番号。これから基準面の方向に隣接する面をたどっていく。
-        while (idousakino_Menid != referencePlane_id) {
-            //p.set(sentaisyou_ten_motome(c.getBou(kyoukaiBouid[idousakino_Menid]),p));
-            p.set(sentaisyou_ten_motome(associatedStickId[idousakino_Menid], p));
-            idousakino_Menid = nextFaceId[idousakino_Menid];
+        Point p = new Point();
+        p.set(creasePattern.getPoint(it));
+        int idestination_faceId;
+        idestination_faceId = im;//The id number of the first face. From now on, we will follow the planes adjacent to the reference plane.
+        while (idestination_faceId != referencePlane_id) {
+            //p.set(sentaisyou_ten_motome(c.getBou(kyoukaiBouid[idestination_faceId]),p));
+            p.set(lineSymmetry_point_determine(associatedStickId[idestination_faceId], p));
+            idestination_faceId = nextFaceId[idestination_faceId];
         }
         return p;
     }
@@ -378,33 +365,27 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     public CreasePattern surface_position_request() {//Folding estimate
 
         CreasePattern cn = new CreasePattern();    //展開図
-        cn.configure(c.getPointsTotal(), c.getSticksTotal(), c.getFacesTotal());
-        cn.set(c);
+        cn.configure(creasePattern.getPointsTotal(), creasePattern.getSticksTotal(), creasePattern.getFacesTotal());
+        cn.set(creasePattern);
 
-
-//System.out.println("折りたたみ推定001   c.getTenx(1) = "+c.getTenx(1)+"   :   cn.getTenx(1) = "+cn.getTenx(1));
-
-        //kijyunmen_id=1;//基準になる面を指定する
-
-        for (int i = 0; i <= c.getFacesTotal(); i++) {
+        for (int i = 0; i <= creasePattern.getFacesTotal(); i++) {
             nextFaceId[i] = 0;
             associatedStickId[i] = 0;
             iFacePosition[i] = 0;
         }
-//System.out.println("折りたたみ推定002   c.getTenx(1) = "+c.getTenx(1)+"   :   cn.getTenx(1) = "+cn.getTenx(1));
         //Grasp the positional relationship between the faces in preparation for folding
         System.out.println("折りたたみの準備として面同士の位置関係を把握する");
         iFacePosition[referencePlane_id] = 1;
 
         int current_FacePosition = 1;
-        int remaining_FaceNum;
-        remaining_FaceNum = c.getFacesTotal() - 1;
+        int remaining_facesTotal;
+        remaining_facesTotal = creasePattern.getFacesTotal() - 1;
 
-        while (remaining_FaceNum > 0) {
-            for (int i = 1; i <= c.getFacesTotal(); i++) {
+        while (remaining_facesTotal > 0) {
+            for (int i = 1; i <= creasePattern.getFacesTotal(); i++) {
                 if (iFacePosition[i] == current_FacePosition) {
-                    for (int j = 1; j <= c.getFacesTotal(); j++) {
-                        int mth = c.Face_tonari_hantei(i, j);
+                    for (int j = 1; j <= creasePattern.getFacesTotal(); j++) {
+                        int mth = creasePattern.Face_tonari_hantei(i, j);
                         if ((mth > 0) && (iFacePosition[j] == 0)) {
                             iFacePosition[j] = current_FacePosition + 1;
                             nextFaceId[j] = i;
@@ -416,14 +397,14 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 
             current_FacePosition = current_FacePosition + 1;
 
-            remaining_FaceNum = 0;
-            for (int i = 1; i <= c.getFacesTotal(); i++) {
+            remaining_facesTotal = 0;
+            for (int i = 1; i <= creasePattern.getFacesTotal(); i++) {
                 if (iFacePosition[i] == 0) {
-                    remaining_FaceNum = remaining_FaceNum + 1;
+                    remaining_facesTotal = remaining_facesTotal + 1;
                 }
             }
 
-            System.out.println("remaining_FaceNum = " + remaining_FaceNum);
+            System.out.println("remaining_facesTotal = " + remaining_facesTotal);
         }
 
         return cn;
@@ -433,13 +414,13 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 // **********************************
 
 
-    private Point sentaisyou_ten_motome(int bouid, Point tn) {//棒のidと、任意の点を与えて、idが対応する棒に対して、与えた点の線対称になる点を返す
-        return oc.lineControl_point_find(c.get_maeTen_from_Stick_id(bouid), c.get_atoTen_from_Bou_id(bouid), tn);
+    private Point lineSymmetry_point_determine(int bouid, Point point) {//Given the id of the bar and any point, returns the point that is axisymmetric of the given point with respect to the corresponding bar.
+        return oc.lineSymmetry_point_find(creasePattern.getBeginPointFromStickId(bouid), creasePattern.getEndPointFromStickId(bouid), point);
     }
 
 
-    public int getTensuu() {
-        return c.getPointsTotal();
+    public int getPointsTotal() {
+        return creasePattern.getPointsTotal();
     }
 //	int getBousuu(){return c.getBousuu();}	
 //	int getMensuu(){return c.getMensuu();}	
@@ -448,23 +429,23 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     //-------------------------------------------
     public void set(CreasePattern ts) {
         configure(ts.getPointsTotal(), ts.getSticksTotal(), ts.getFacesTotal());
-        c.configure(ts.getPointsTotal(), ts.getSticksTotal(), ts.getFacesTotal());
-        c.set(ts);
+        creasePattern.configure(ts.getPointsTotal(), ts.getSticksTotal(), ts.getFacesTotal());
+        creasePattern.set(ts);
 //System.out.println("折りたたみset 001   c.getTenx(1) = "+c.getTenx(1));		
 
     }
 
     public CreasePattern get() {
-        return c;
+        return creasePattern;
     }
 
     //------------------
     public WireFrame getLineStore() {
         WireFrame ss = new WireFrame();    //基本枝構造のインスタンス化
 
-        ss.setTotal(c.getSticksTotal());
-        for (int i = 1; i <= c.getSticksTotal(); i++) {
-            ss.set(i, c.getPoint(c.getmae(i)), c.getPoint(c.getato(i)), c.getcolor(i), 0);
+        ss.setTotal(creasePattern.getSticksTotal());
+        for (int i = 1; i <= creasePattern.getSticksTotal(); i++) {
+            ss.set(i, creasePattern.getPoint(creasePattern.getBegin(i)), creasePattern.getPoint(creasePattern.getEnd(i)), creasePattern.getColor(i), 0);
         }
         return ss;
     }
@@ -530,10 +511,10 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         System.out.println(addPointNum);//System.out.println(c.getTensuu());
 
         configure(addPointNum, wireFrame.getTotal(), wireFrame.getTotal() - addPointNum + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
-        c.configure(addPointNum, wireFrame.getTotal(), wireFrame.getTotal() - addPointNum + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
+        creasePattern.configure(addPointNum, wireFrame.getTotal(), wireFrame.getTotal() - addPointNum + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
 
         for (int i = 1; i <= addPointNum; i++) {
-            c.addPoint(addPointX[i], addPointY[i]);
+            creasePattern.addPoint(addPointX[i], addPointY[i]);
 
         }
 
@@ -543,14 +524,14 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         int[] ika2ic = new int[wireFrame.getTotal() + 1];
         int[] ikb2ic = new int[wireFrame.getTotal() + 1];
         for (int n = 1; n <= wireFrame.getTotal(); n++) {
-            for (int i = 1; i <= c.getPointsTotal(); i++) {
-                if (oc.equal(wireFrame.getA(n), c.getPoint(i))) {
+            for (int i = 1; i <= creasePattern.getPointsTotal(); i++) {
+                if (oc.equal(wireFrame.getA(n), creasePattern.getPoint(i))) {
                     ika2ic[n] = i;
                     break;
                 }
             }
-            for (int i = 1; i <= c.getPointsTotal(); i++) {
-                if (oc.equal(wireFrame.getB(n), c.getPoint(i))) {
+            for (int i = 1; i <= creasePattern.getPointsTotal(); i++) {
+                if (oc.equal(wireFrame.getB(n), creasePattern.getPoint(i))) {
                     ikb2ic[n] = i;
                     break;
                 }
@@ -558,16 +539,16 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         }
 
         for (int n = 1; n <= wireFrame.getTotal(); n++) {
-            c.addStick(ika2ic[n], ikb2ic[n], wireFrame.getColor(n));
+            creasePattern.addStick(ika2ic[n], ikb2ic[n], wireFrame.getColor(n));
         }
 
 
         System.out.print("棒の全数　＝　");
-        System.out.println(c.getSticksTotal());
+        System.out.println(creasePattern.getSticksTotal());
         //
         System.out.println("線分集合->点集合：点集合内で面を発生　開始");
         //その次に、Tensyuugou内で面を発生させる。
-        c.FaceOccurrence();
+        creasePattern.FaceOccurrence();
 
         System.out.println("線分集合->点集合：点集合内で面を発生　終了");
 
@@ -578,12 +559,12 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 
     //棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
     public int Stick_moti_FaceId_min_request(int ib) {
-        return c.Stick_moti_Menid_min_motome(ib);
+        return creasePattern.Stick_moti_Menid_min_motome(ib);
     }
 
     //棒ibを境界として含む面(最大で2面ある)のうちでMenidの大きいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
     public int Bou_moti_Menid_max_motome(int ib) {
-        return c.Stick_moti_Menid_max_motome(ib);
+        return creasePattern.Stick_moti_Menid_max_motome(ib);
     }
 
     //　ここは class Tenkaizu_Syokunin  の中です
@@ -597,7 +578,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         if (ura_omote == 1) {
             pn.setX(-p.getX() + 2.0 * 700.0);
         }//裏側表示の場合の処理。
-        i_ugokasuTen = c.mottomo_tikai_Tenid(pn, r * 3);
+        i_ugokasuTen = creasePattern.mottomo_tikai_Tenid(pn, r * 3);
         return i_ugokasuTen;
     }
 
@@ -612,7 +593,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
             if (ura_omote == 1) {
                 pn.setX(-p.getX() + 2.0 * 700.0);
             }//裏側表示の場合の処理。
-            c.set(i_ugokasuTen, pn);
+            creasePattern.set(i_ugokasuTen, pn);
         }
         return i_ugokasuTen;
     }
@@ -628,7 +609,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
             if (ura_omote == 1) {
                 pn.setX(-p.getX() + 2.0 * 700.0);
             }//裏側表示の場合の処理。
-            c.set(i_ugokasuTen, pn);
+            creasePattern.set(i_ugokasuTen, pn);
         } //Tenを変更
         ireturn = i_ugokasuTen;
         i_ugokasuTen = 0;
@@ -656,7 +637,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         //Ten pn = new Ten(); pn.set(p);
         //i_ugokasuTen=c.mottomo_tikai_Tenid(pn,r*3);
 
-        i_ugokasuTen = c.mottomo_tikai_Tenid(p, r * 3);
+        i_ugokasuTen = creasePattern.mottomo_tikai_Tenid(p, r * 3);
         return i_ugokasuTen;
     }
 
@@ -691,7 +672,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
             p.set(cam_ura.TV2object(p0));
         }
 
-        c.statePointMove(p);
+        creasePattern.statePointMove(p);
 /*
 		if(i_ugokasuTen!=0){//Tenを変更
                 	//Ten pn = new Ten(); pn.set(p); 
@@ -728,7 +709,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         p_u.set(ugokasu_maeno_sentaku_point.getX(), ugokasu_maeno_sentaku_point.getY());
         p_u.move(pa.other_Point_position(pb));
 
-        c.statePointMove(p_u);
+        creasePattern.statePointMove(p_u);
 
 
     }
@@ -757,7 +738,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         p_u.set(ugokasu_maeno_sentaku_point.getX(), ugokasu_maeno_sentaku_point.getY());
         p_u.move(pa.other_Point_position(pb));
 
-        c.statePointMove(p_u);
+        creasePattern.statePointMove(p_u);
 
 
     }
@@ -781,7 +762,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         if (i_ugokasuTen != 0) {
             //Ten pn = new Ten(); pn.set(p);
             //c.set(i_ugokasuTen,pn);
-            c.set(i_ugokasuTen, p);
+            creasePattern.set(i_ugokasuTen, p);
 
         } //Tenを変更
 
@@ -804,7 +785,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         }
 
 
-        c.statePointMove(p);
+        creasePattern.statePointMove(p);
 
         //	if(i_ugokasuTen!=0){
 //			c.set(i_ugokasuTen,p); 
@@ -835,17 +816,17 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         //	for (int i=1; i<=c.getTensuu(); i++ ){ g.drawOval( gx(tnew[i].getx()-r),gy(tnew[i].gety()-r),2*ir,2*ir);} //円
         g.setColor(Color.black);
         //	for (int i=1; i<=c.getTensuu(); i++ ){ g.drawString( text.valueOf(i),gx(c.getTenx(i)),gy(c.getTeny(i)));}
-        for (int i = 1; i <= c.getSticksTotal(); i++) {
-            if (c.getcolor(i) == 0) {
+        for (int i = 1; i <= creasePattern.getSticksTotal(); i++) {
+            if (creasePattern.getColor(i) == 0) {
                 g.setColor(Color.black);
             }
-            if (c.getcolor(i) == 1) {
+            if (creasePattern.getColor(i) == 1) {
                 g.setColor(Color.red);
             }
-            if (c.getcolor(i) == 2) {
+            if (creasePattern.getColor(i) == 2) {
                 g.setColor(Color.blue);
             }
-            g.drawLine(gx(c.getmaex(i)), gy(c.getmaey(i)), gx(c.getatox(i)), gy(c.getatoy(i))); //直線
+            g.drawLine(gx(creasePattern.getBeginX(i)), gy(creasePattern.getBeginY(i)), gx(creasePattern.getEndX(i)), gy(creasePattern.getEndY(i))); //直線
             //g.drawLine( gx(tnew[c.getmae(i)].getx()),gy(tnew[c.getmae(i)].gety()), gx(tnew[c.getato(i)].getx()),gy(tnew[c.getato(i)].gety())); //直線
         }
     }
@@ -858,18 +839,18 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         LineSegment s_tv = new LineSegment();
         String text = "";//文字列処理用のクラスのインスタンス化
         g.setColor(Color.black);
-        for (int i = 1; i <= c.getSticksTotal(); i++) {
-            if (c.getcolor(i) == 0) {
+        for (int i = 1; i <= creasePattern.getSticksTotal(); i++) {
+            if (creasePattern.getColor(i) == 0) {
                 g.setColor(Color.black);
             }
-            if (c.getcolor(i) == 1) {
+            if (creasePattern.getColor(i) == 1) {
                 g.setColor(Color.red);
             }
-            if (c.getcolor(i) == 2) {
+            if (creasePattern.getColor(i) == 2) {
                 g.setColor(Color.blue);
             }
 
-            s_tv.set(camera.object2TV(c.get_Senbun_from_Bou_id(i)));
+            s_tv.set(camera.object2TV(creasePattern.getLineSegmentFromStickId(i)));
 
             g.drawLine(gx(s_tv.getAx()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
         }
@@ -878,7 +859,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     // ------------------------------
     public void oekaki_Ten_id_with_camera(Graphics g, int i) {    //点を描く
         Point tn = new Point();
-        tn.set(camera.object2TV(c.getPoint(i)));
+        tn.set(camera.object2TV(creasePattern.getPoint(i)));
         int ir = 7;//半径
         g.setColor(new Color(0, 255, 255, 100));//水色
         g.fillOval(gx(tn.getX()) - ir, gy(tn.getY()) - ir, 2 * ir, 2 * ir); //円
@@ -887,7 +868,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     // ------------------------------
     public void oekaki_Ten_id_with_camera_green(Graphics g, int i) {    //点を描く
         Point tn = new Point();
-        tn.set(camera.object2TV(c.getPoint(i)));
+        tn.set(camera.object2TV(creasePattern.getPoint(i)));
         int ir = 15;//半径
         g.setColor(new Color(0, 255, 0, 100));//緑色
         g.fillOval(gx(tn.getX()) - ir, gy(tn.getY()) - ir, 2 * ir, 2 * ir); //円
@@ -900,22 +881,22 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     public void oekaki_Ten_id_with_camera(Graphics g, int i, int ip4) {
         //点を描く
         Point tn = new Point();
-        tn.set(camera.object2TV(c.getPoint(i)));
+        tn.set(camera.object2TV(creasePattern.getPoint(i)));
         int ir = 10;//半径
         g.setColor(new Color(0, 255, 0, 50));//緑色
 
         if (ip4 == 0) {
-            tn.set(cam_omote.object2TV(c.getPoint(i)));
+            tn.set(cam_omote.object2TV(creasePattern.getPoint(i)));
             g.fillOval(gx(tn.getX()) - ir, gy(tn.getY()) - ir, 2 * ir, 2 * ir); //円
         }
         if (ip4 == 1) {
-            tn.set(cam_ura.object2TV(c.getPoint(i)));
+            tn.set(cam_ura.object2TV(creasePattern.getPoint(i)));
             g.fillOval(gx(tn.getX()) - ir, gy(tn.getY()) - ir, 2 * ir, 2 * ir); //円
         }
         if ((ip4 == 2) || (ip4 == 3)) {
-            tn.set(cam_omote.object2TV(c.getPoint(i)));
+            tn.set(cam_omote.object2TV(creasePattern.getPoint(i)));
             g.fillOval(gx(tn.getX()) - ir, gy(tn.getY()) - ir, 2 * ir, 2 * ir); //円
-            tn.set(cam_ura.object2TV(c.getPoint(i)));
+            tn.set(cam_ura.object2TV(creasePattern.getPoint(i)));
             g.fillOval(gx(tn.getX()) - ir, gy(tn.getY()) - ir, 2 * ir, 2 * ir); //円
         }
 
@@ -927,29 +908,29 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         LineSegment s_tv = new LineSegment();
         String text = "";//文字列処理用のクラスのインスタンス化
         g.setColor(Color.black);
-        for (int i = 1; i <= c.getSticksTotal(); i++) {
-            if (c.getcolor(i) == 0) {
+        for (int i = 1; i <= creasePattern.getSticksTotal(); i++) {
+            if (creasePattern.getColor(i) == 0) {
                 g.setColor(Color.black);
             }
-            if (c.getcolor(i) == 1) {
+            if (creasePattern.getColor(i) == 1) {
                 g.setColor(Color.red);
             }
-            if (c.getcolor(i) == 2) {
+            if (creasePattern.getColor(i) == 2) {
                 g.setColor(Color.blue);
             }
 
             if (ip4 == 0) {
-                s_tv.set(cam_omote.object2TV(c.get_Senbun_from_Bou_id(i)));
+                s_tv.set(cam_omote.object2TV(creasePattern.getLineSegmentFromStickId(i)));
                 g.drawLine(gx(s_tv.getAx()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
             }
             if (ip4 == 1) {
-                s_tv.set(cam_ura.object2TV(c.get_Senbun_from_Bou_id(i)));
+                s_tv.set(cam_ura.object2TV(creasePattern.getLineSegmentFromStickId(i)));
                 g.drawLine(gx(s_tv.getAx()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
             }
             if ((ip4 == 2) || (ip4 == 3)) {
-                s_tv.set(cam_omote.object2TV(c.get_Senbun_from_Bou_id(i)));
+                s_tv.set(cam_omote.object2TV(creasePattern.getLineSegmentFromStickId(i)));
                 g.drawLine(gx(s_tv.getAx()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
-                s_tv.set(cam_ura.object2TV(c.get_Senbun_from_Bou_id(i)));
+                s_tv.set(cam_ura.object2TV(creasePattern.getLineSegmentFromStickId(i)));
                 g.drawLine(gx(s_tv.getAx()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
             }
 
@@ -979,44 +960,44 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 
     //---------------------------------------------------
     public void Point_match(double r) {
-        c.Point_match(r);
+        creasePattern.Point_match(r);
     }
 
     public void Point_Stick_match(double r) {
-        c.Point_Stick_match(r);
+        creasePattern.Point_Stick_match(r);
     }
 
     //-------------------------------------------------
 
 
     public int getSelectedPointsNum() {
-        return c.getSelectedPointsNum();
+        return creasePattern.getSelectedPointsNum();
     }
 
 
     //--------------------
     public void setPointState1(int i) {
-        c.setPointState1(i);
+        creasePattern.setPointState1(i);
     }
 
     //--------------------
     public void setPointState0(int i) {
-        c.setPointState0(i);
+        creasePattern.setPointState0(i);
     }
 
     //--------------------
     public void setAllPointState0() {
-        c.setAllPointState0();
+        creasePattern.setAllPointState0();
     }
 
     //--------------------
     public void changePointState(int i) {
-        c.changePointState(i);
+        creasePattern.changePointState(i);
     }
 
     //--------------------
     public byte getPointState(int i) {
-        return c.getPointState(i);
+        return creasePattern.getPointState(i);
     }//i番目の点の選択状態が０か１かを得る
 
     //-----------------uuuuuuu---
@@ -1029,7 +1010,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         Point p = new Point();
         p.set(camera.TV2object(p0));
 
-        return c.mottomo_tikai_Tenid(p, d_h_k / camera.getCameraZoomX());
+        return creasePattern.mottomo_tikai_Tenid(p, d_h_k / camera.getCameraZoomX());
     }
 
 
@@ -1038,11 +1019,11 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         Point p = new Point();
         if (ip4 == 0) {
             p.set(cam_omote.TV2object(p0));
-            return c.mottomo_tikai_Tenid(p, d_h_k / cam_omote.getCameraZoomX());
+            return creasePattern.mottomo_tikai_Tenid(p, d_h_k / cam_omote.getCameraZoomX());
         }
         if (ip4 == 1) {
             p.set(cam_ura.TV2object(p0));
-            return c.mottomo_tikai_Tenid(p, d_h_k / cam_ura.getCameraZoomX());
+            return creasePattern.mottomo_tikai_Tenid(p, d_h_k / cam_ura.getCameraZoomX());
         }
         return 0;
     }
@@ -1054,7 +1035,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     public double mottomo_tikai_Ten_kyori_with_camera(Point p0) {//p0はTV座標。リターンされるのはobでの距離
         Point p = new Point();
         p.set(camera.TV2object(p0));
-        return c.closest_Point_distance(p, d_h_k / camera.getCameraZoomX());
+        return creasePattern.closest_Point_distance(p, d_h_k / camera.getCameraZoomX());
     }
 
 
@@ -1063,30 +1044,29 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         Point p = new Point();
         if (ip4 == 0) {
             p.set(cam_omote.TV2object(p0));
-            return c.closest_Point_distance(p, d_h_k / cam_omote.getCameraZoomX());
+            return creasePattern.closest_Point_distance(p, d_h_k / cam_omote.getCameraZoomX());
         }
         if (ip4 == 1) {
             p.set(cam_ura.TV2object(p0));
-            return c.closest_Point_distance(p, d_h_k / cam_ura.getCameraZoomX());
+            return creasePattern.closest_Point_distance(p, d_h_k / cam_ura.getCameraZoomX());
         }
         return 1000000.0;
     }
 
     // ------------------------------
-    public Point getTen(int i) {
-        return c.getPoint(i);
+    public Point getPoint(int i) {
+        return creasePattern.getPoint(i);
     }
 
 
     // ---------------------------------------------------------------------------------------------
-    public void set_Ubox_undo_suu(int i) {
-        Ubox.set_i_undo_suu(i);
+    public void setUndoBoxUndoTotal(int i) {
+        Ubox.set_i_undo_total(i);
     }
 
-//String s_title=new String(); //フレームの最上端に出てくるタイトルを保持するために使用
 
-    public void kiroku() {
-        Ubox.kiroku(getMemo());
+    public void record() {
+        Ubox.record(getMemo());
     }
 
 
@@ -1104,13 +1084,12 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 
 
     public Memo getMemo() {
-        return c.getMemo();
+        return creasePattern.getMemo();
     }
 
 
     public void setMemo_for_redo_undo(Memo memo1) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用
-
-        c.setMemo(memo1);
+        creasePattern.setMemo(memo1);
     }
 
 

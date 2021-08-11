@@ -3540,8 +3540,8 @@ public class PolygonStore {
         return s.getLength();
     }
 
-    //閉多角形を形成せず、枝状になっている線分を削除する。
-    public void eda_kesi(double r) {
+    //Remove the branching line segments without forming a closed polygon.
+    public void branch_trim(double r) {
         int iflga = 0;
         int iflgb = 0;
         for (int i = 1; i <= total; i++) {
@@ -3825,7 +3825,7 @@ public class PolygonStore {
     public double mottomo_tikai_senbun_kyori_heikou_jyogai(Point p, LineSegment s0) {
         double minr = 100000.0;
         for (int i = 1; i <= total; i++) {
-            if (oc.heikou_hantei(get(i), s0, 0.0001) == 0) {
+            if (oc.parallel_judgement(get(i), s0, 0.0001) == 0) {
 
                 double sk = oc.distance_lineSegment(p, get(i));
                 if (minr > sk) {

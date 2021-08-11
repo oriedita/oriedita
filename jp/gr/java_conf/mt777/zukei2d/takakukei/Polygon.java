@@ -9,62 +9,59 @@ import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
 public class Polygon {
     String c = "";
-    int kakusuu;             //何角形か
-    //ArrayList TenList = new ArrayList();
+    int verticesCount;             //何角形か
 
-    Point[] t;//頂点
+    Point[] vertices;//頂点
 
     OritaCalc oc = new OritaCalc();          //各種計算用の関数を使うためのクラスのインスタンス化
 
 
-    public Polygon(int kaku) {  //コンストラクタ
-        kakusuu = kaku;
-        Point[] t0 = new Point[kaku + 1];   //頂点
-        for (int i = 0; i <= kaku; i++) {
+    public Polygon(int verticesCount) {  //コンストラクタ
+        this.verticesCount = verticesCount;
+        Point[] t0 = new Point[verticesCount + 1];   //頂点
+        for (int i = 0; i <= verticesCount; i++) {
             t0[i] = new Point();
         }
         // red=255;green=0;blue=0;
-        t = t0;
+        vertices = t0;
     }
 
-    //多角形の角数をセットする
-    public void setkakusuu(int kaku) {
-        kakusuu = kaku;
+    //Set the number of angles of the polygon
+    public void setVerticesCount(int kaku) {
+        verticesCount = kaku;
     }
 
     public int getkakusuu() {
-        return kakusuu;
+        return verticesCount;
     }
 
     //多角形のi番目の頂点をセットする
     public void set(int i, Point p) {
-        t[i].set(p);
+        vertices[i].set(p);
     }
 
     //多角形のi番目の頂点をゲットする
     public Point get(int i) {
-        return t[i];
+        return vertices[i];
     }
 
     //点p0を基準に多角形のi番目の頂点をセットする
     public void set(Point p0, int i, Point p) {
-        t[i].set(p0.getX() + p.getX(), p0.getY() + p.getY());
+        vertices[i].set(p0.getX() + p.getX(), p0.getY() + p.getY());
     }
 
-    //線分が、この多角形の辺と交差する(true)かしない(false)か判定する関数----------------------------------
-    public boolean kousa(LineSegment s0) {
+    // A function that determines whether a line segment intersects (true) or not (false) with an edge of this polygon ------------------------- ---------
+    public boolean intersects(LineSegment s0) {
         int itrue = 0;
-        // Senbun s0 =new Senbun();
-        // s0.set(sa);
         LineSegment s = new LineSegment();
-        for (int i = 1; i <= kakusuu - 1; i++) {
-            s.set(t[i], t[i + 1]); //線分
+        for (int i = 1; i <= verticesCount - 1; i++) {
+            s.set(vertices[i], vertices[i + 1]); //line segment
             if (oc.line_intersect_decide(s0, s) >= 1) {
                 itrue = 1;
             }
         }
 
-        s.set(t[kakusuu], t[1]); //線分
+        s.set(vertices[verticesCount], vertices[1]); //line segment
         if (oc.line_intersect_decide(s0, s) >= 1) {
             itrue = 1;
         }
@@ -86,8 +83,8 @@ public class Polygon {
 
         int i_kouten = 0;
 
-        Point[] kouten = new Point[kakusuu * 2 + 3];   //交点
-        for (int i = 0; i <= kakusuu * 2 + 2; i++) {
+        Point[] kouten = new Point[verticesCount * 2 + 3];   //交点
+        for (int i = 0; i <= verticesCount * 2 + 2; i++) {
             kouten[i] = new Point();
         }
 
@@ -106,12 +103,12 @@ public class Polygon {
 
         LineSegment s = new LineSegment();
 
-        for (int i = 1; i <= kakusuu; i++) {
+        for (int i = 1; i <= verticesCount; i++) {
 
-            if (i == kakusuu) {
-                s.set(t[kakusuu], t[1]); //線分
+            if (i == verticesCount) {
+                s.set(vertices[verticesCount], vertices[1]); //線分
             } else {
-                s.set(t[i], t[i + 1]);
+                s.set(vertices[i], vertices[i + 1]);
             } //線分
 
             kh = oc.line_intersect_decide(s0, s);
@@ -295,8 +292,8 @@ public class Polygon {
         // Senbun s0 =new Senbun();
         // s0.set(sa);
         LineSegment s = new LineSegment();
-        for (int i = 1; i <= kakusuu - 1; i++) {
-            s.set(t[i], t[i + 1]); //線分
+        for (int i = 1; i <= verticesCount - 1; i++) {
+            s.set(vertices[i], vertices[i + 1]); //線分
             kh = oc.line_intersect_decide(s0, s);
             if (kh == 1) {
                 return 1;
@@ -318,7 +315,7 @@ public class Polygon {
             } //ここは実際にはkhが20以上30未満のときに実行される。
         }
 
-        s.set(t[kakusuu], t[1]); //線分
+        s.set(vertices[verticesCount], vertices[1]); //線分
         kh = oc.line_intersect_decide(s0, s);
         if (kh == 1) {
             return 1;
@@ -384,15 +381,15 @@ public class Polygon {
         int kh = 0; //oc.senbun_kousa_hantei(s0,s)の値の格納用
 
         LineSegment s = new LineSegment();
-        for (int i = 1; i <= kakusuu - 1; i++) {
-            s.set(t[i], t[i + 1]); //線分
+        for (int i = 1; i <= verticesCount - 1; i++) {
+            s.set(vertices[i], vertices[i + 1]); //線分
             kh = oc.line_intersect_decide(s0, s);
             if (kh != 0) {
                 return 1;
             }
         }
 
-        s.set(t[kakusuu], t[1]); //線分
+        s.set(vertices[verticesCount], vertices[1]); //線分
         kh = oc.line_intersect_decide(s0, s);
         if (kh != 0) {
             return 1;
@@ -419,14 +416,14 @@ public class Polygon {
         double rad = 0.0;//確実に外部にある点を作るときに使うラジアン。
 
         //まず、点pが多角形の境界線上にあるか判定する。
-        for (int i = 1; i <= kakusuu - 1; i++) {
-            s.set(t[i], t[i + 1]);
+        for (int i = 1; i <= verticesCount - 1; i++) {
+            s.set(vertices[i], vertices[i + 1]);
             //if(oc.kyori_senbun(p,s)==0){return 1;}//20201022delete
             if (oc.distance_lineSegment(p, s) < 0.01) {
                 return 1;
             }//20201022add
         }
-        s.set(t[kakusuu], t[1]);
+        s.set(vertices[verticesCount], vertices[1]);
         //if(oc.kyori_senbun(p,s)==0){return 1;}//20201022delete
         if (oc.distance_lineSegment(p, s) < 0.01) {
             return 1;
@@ -444,8 +441,8 @@ public class Polygon {
 
             sq.set(p, q);
 
-            for (int i = 1; i <= kakusuu - 1; i++) {
-                s.set(t[i], t[i + 1]); //線分
+            for (int i = 1; i <= verticesCount - 1; i++) {
+                s.set(vertices[i], vertices[i + 1]); //線分
                 if (oc.line_intersect_decide(sq, s, 0.0, 0.0) >= 1) {
                     kousakaisuu++;
                 }
@@ -454,7 +451,7 @@ public class Polygon {
                 }
             }
 
-            s.set(t[kakusuu], t[1]); //線分
+            s.set(vertices[verticesCount], vertices[1]); //線分
             if (oc.line_intersect_decide(sq, s, 0.0, 0.0) >= 1) {
                 kousakaisuu++;
             }
@@ -479,11 +476,11 @@ public class Polygon {
     public double menseki_motome() {
         double menseki = 0.0;
 
-        menseki = menseki + (t[kakusuu].getX() - t[2].getX()) * t[1].getY();
-        for (int i = 2; i <= kakusuu - 1; i++) {
-            menseki = menseki + (t[i - 1].getX() - t[i + 1].getX()) * t[i].getY();
+        menseki = menseki + (vertices[verticesCount].getX() - vertices[2].getX()) * vertices[1].getY();
+        for (int i = 2; i <= verticesCount - 1; i++) {
+            menseki = menseki + (vertices[i - 1].getX() - vertices[i + 1].getX()) * vertices[i].getY();
         }
-        menseki = menseki + (t[kakusuu - 1].getX() - t[1].getX()) * t[kakusuu].getY();
+        menseki = menseki + (vertices[verticesCount - 1].getX() - vertices[1].getX()) * vertices[verticesCount].getY();
         menseki = -0.5 * menseki;
 
         return menseki;
@@ -492,10 +489,10 @@ public class Polygon {
     //ある点と多角形の距離（ある点と多角形の境界上の点の距離の最小値）を求める
     public double distance_find(Point tn) {
         double kyori;
-        kyori = oc.distance_lineSegment(tn, t[kakusuu], t[1]);
-        for (int i = 1; i <= kakusuu - 1; i++) {
-            if (oc.distance_lineSegment(tn, t[i], t[i + 1]) < kyori) {
-                kyori = oc.distance_lineSegment(tn, t[i], t[i + 1]);
+        kyori = oc.distance_lineSegment(tn, vertices[verticesCount], vertices[1]);
+        for (int i = 1; i <= verticesCount - 1; i++) {
+            if (oc.distance_lineSegment(tn, vertices[i], vertices[i + 1]) < kyori) {
+                kyori = oc.distance_lineSegment(tn, vertices[i], vertices[i + 1]);
             }
         }
 
@@ -510,21 +507,21 @@ public class Polygon {
         double distance;
         distance = -10.0;
 
-        for (int i = 2; i <= kakusuu - 1; i++) {
-            tn.set(oc.center(t[i - 1], t[i], t[i + 1]));
+        for (int i = 2; i <= verticesCount - 1; i++) {
+            tn.set(oc.center(vertices[i - 1], vertices[i], vertices[i + 1]));
             if ((distance < distance_find(tn)) && (inside(tn) == 2)) {
                 distance = distance_find(tn);
                 tr.set(tn);
             }
         }
         //
-        tn.set(oc.center(t[kakusuu - 1], t[kakusuu], t[1]));
+        tn.set(oc.center(vertices[verticesCount - 1], vertices[verticesCount], vertices[1]));
         if ((distance < distance_find(tn)) && (inside(tn) == 2)) {
             distance = distance_find(tn);
             tr.set(tn);
         }
         //
-        tn.set(oc.center(t[kakusuu], t[1], t[2]));
+        tn.set(oc.center(vertices[verticesCount], vertices[1], vertices[2]));
         if ((distance < distance_find(tn)) && (inside(tn) == 2)) {
             distance = distance_find(tn);
             tr.set(tn);
@@ -538,22 +535,22 @@ public class Polygon {
 
         int[] x = new int[100];
         int[] y = new int[100];
-        for (int i = 1; i <= kakusuu - 1; i++) {
-            x[i] = (int) t[i].getX();
-            y[i] = (int) t[i].getY();
+        for (int i = 1; i <= verticesCount - 1; i++) {
+            x[i] = (int) vertices[i].getX();
+            y[i] = (int) vertices[i].getY();
         }
-        x[0] = (int) t[kakusuu].getX();
-        y[0] = (int) t[kakusuu].getY();
-        g.fillPolygon(x, y, kakusuu);
+        x[0] = (int) vertices[verticesCount].getX();
+        y[0] = (int) vertices[verticesCount].getY();
+        g.fillPolygon(x, y, verticesCount);
     }
 
 
     public double get_x_min() {
         double r;
-        r = t[1].getX();
-        for (int i = 2; i <= kakusuu; i++) {
-            if (r > t[i].getX()) {
-                r = t[i].getX();
+        r = vertices[1].getX();
+        for (int i = 2; i <= verticesCount; i++) {
+            if (r > vertices[i].getX()) {
+                r = vertices[i].getX();
             }
         }
         return r;
@@ -561,10 +558,10 @@ public class Polygon {
 
     public double get_x_max() {
         double r;
-        r = t[1].getX();
-        for (int i = 2; i <= kakusuu; i++) {
-            if (r < t[i].getX()) {
-                r = t[i].getX();
+        r = vertices[1].getX();
+        for (int i = 2; i <= verticesCount; i++) {
+            if (r < vertices[i].getX()) {
+                r = vertices[i].getX();
             }
         }
         return r;
@@ -572,10 +569,10 @@ public class Polygon {
 
     public double get_y_min() {
         double r;
-        r = t[1].getY();
-        for (int i = 2; i <= kakusuu; i++) {
-            if (r > t[i].getY()) {
-                r = t[i].getY();
+        r = vertices[1].getY();
+        for (int i = 2; i <= verticesCount; i++) {
+            if (r > vertices[i].getY()) {
+                r = vertices[i].getY();
             }
         }
         return r;
@@ -583,10 +580,10 @@ public class Polygon {
 
     public double get_y_max() {
         double r;
-        r = t[1].getY();
-        for (int i = 2; i <= kakusuu; i++) {
-            if (r < t[i].getY()) {
-                r = t[i].getY();
+        r = vertices[1].getY();
+        for (int i = 2; i <= verticesCount; i++) {
+            if (r < vertices[i].getY()) {
+                r = vertices[i].getY();
             }
         }
         return r;

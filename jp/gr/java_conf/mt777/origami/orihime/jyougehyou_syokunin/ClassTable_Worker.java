@@ -8,6 +8,7 @@ import jp.gr.java_conf.mt777.origami.orihime.jyougehyou_syokunin.smen.*;
 
 import java.awt.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Random;
 
 import jp.gr.java_conf.mt777.kiroku.memo.*;
@@ -27,8 +28,8 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
     //Jyougehyou jg;// =new Jyougehyou();
     //Jyougehyou jg_syokiti =new Jyougehyou();//展開図のみから得られる上下関係を記録しておく。
     int SmenTotal;//Smenの数
-    int Smen_yuukou_suu;//Smenは全て調べなくても、Faceの上下関係は網羅できる。Faceの上下関係を網羅するのに必要なSmenの数が優先順位の何番目までかをさがす。
-    int Menidsuu_max;//各Smenの持つMenidsuuの最大値。すなわち、最も紙に重なりが多いところの枚数。
+    int Smen_valid_number;//Smenは全て調べなくても、Faceの上下関係は網羅できる。Faceの上下関係を網羅するのに必要なSmenの数が優先順位の何番目までかをさがす。
+    int FaceIdCount_max;//各Smenの持つMenidsuuの最大値。すなわち、最も紙に重なりが多いところの枚数。
     //paint 用のint格納用VVVVVVVVVVVVVVVVVVVVVV
     int ip1 = 0; //0は折り畳み図の表側を表示するモード。1は折り畳み図の裏側を表示するモード。
     // int ip1,ip2,ip3,ip4,ip5;
@@ -40,7 +41,7 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
     //jg[i][j]が-100なら、面iとjは重なるところがない。
 
     Smen[] s0;//Smen_zuから得られるSmen
-    Smen[] s;//sは優先度の高い順にs0を並べ替えたもの。
+    Smen[] s;//s is s0 sorted in descending order of priority.
     int[] s0_no_yusenjyun;
     int[] yusenjyun_kara_s0id;
 
@@ -71,19 +72,16 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
     public void reset() {
         jg.reset();//jg_syokiti.reset();
         SmenTotal = 0;
-        Smen_yuukou_suu = 0;
+        Smen_valid_number = 0;
         ip1 = 0;
-        Menidsuu_max = 0;
+        FaceIdCount_max = 0;
         camera.reset();
     }
 
 
     //--------
     public void setCamera(Camera cam0) {
-
-        //camera.set_camera_id(cam0.get_camera_id());
-        camera.set_camera_kagami(cam0.get_camera_kagami());
-
+        camera.setCameraMirror(cam0.getCameraMirror());
         camera.setCameraPositionX(cam0.getCameraPositionX());
         camera.setCameraPositionY(cam0.getCameraPositionY());
         camera.setCameraZoomX(cam0.getCameraZoomX());
@@ -98,8 +96,8 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
         return SmenTotal;
     }
 
-    public int getSmen_yuukou_suu() {
-        return Smen_yuukou_suu;
+    public int getSmen_valid_number() {
+        return Smen_valid_number;
     }
 
     //　ここは  class Jyougehyou_Syokunin  の中です。
@@ -114,16 +112,14 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
        }
 */
     public void Smen_configure(CreasePattern_Worker orite, CreasePattern otta_Men_zu, CreasePattern Smen_zu) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
-        //面(折りたたむ前の展開図の面のこと)の上下表を作る。
-        //これにはts2の持つ点集合（折りたたんだあとの面の位置関係の情報を持つ）と  <-------------otta_Men_zu
-        //ts3の持つ点集合（針金図で面を細分割したSmenの情報を持つ）を使う。 <-------------Smen_zu
-        //また、ts1の持つ、折ったときの面の位置関係の情報も使う。
-
+        // Make an upper and lower table of faces (the faces in the unfolded view before folding).
+        // This includes the point set of ts2 (which has information on the positional relationship of the faces after folding) and <-------------otta_Men_zu
+        // Use the point set of ts3 (which has the information of Smen whose surface is subdivided in the wire diagram). <-------------Smen_zu
+        // Also, use the information on the positional relationship of the surface when folded, which ts1 has.
 
         System.out.println("Smenの初期設定");
         reset();
         SmenTotal = Smen_zu.getFacesTotal();
-        //4915                      System.out.print("Smensuu = "); System.out.println(Smensuu);System.exit(0);
 
         Smen[] s0_ori = new Smen[SmenTotal + 1];
         Smen[] s_ori = new Smen[SmenTotal + 1];
@@ -134,25 +130,14 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
         s0_no_yusenjyun = s0yj;
         yusenjyun_kara_s0id = yjs0;
 
-        //	Smensuu=Smen_zu.getMensuu();
-        //int ireturn=1000;
-
-        // Jyougehyou j_g =new Jyougehyou();
-        // jg=j_g;
-        //jg.setMensuu(otta_Men_zu.getMensuu());
-
-        //4926                     System.out.print("Smensuu = "); System.out.println(Smensuu);System.exit(0);
-
-        //
         for (int i = 0; i < SmenTotal + 1; i++) {
             s0[i] = new Smen(orihime_app);
             s[i] = s0[i];
             s0_no_yusenjyun[i] = 0;
             yusenjyun_kara_s0id[i] = i;
         }
-        //
 
-        //各Smenに含まれる面を記録する。
+        //Record the faces contained in each Smen。
         System.out.println("各Smenに含まれる面を記録するため、各Smenの内部点を登録");
         Point[] smen_naibuPoint = new Point[SmenTotal + 1];  //<<<<<<<<<<<<<<<<<<<<<<<<<<<オブジェクトの配列を動的に指定
         for (int i = 1; i <= SmenTotal; i++) {
@@ -162,46 +147,24 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
         System.out.println("各Smenに含まれる面を記録する");
         otta_Men_zu.BouMenMaxMinZahyou();//tttttttttt
 
-        int[] s0addMenid = new int[otta_Men_zu.getFacesTotal() + 1];  //Smenに追加する面を一時記録しておく
-
-/*
-		for(int i=1;i<=Smensuu;i++){
-		       int s0addMenidsuu=0;
-
-			for(int j=1;j<=jg.getMensuu();j++){
-				//if(otta_Men_zu.naibu(Smen_zu.naibuTen_motome(i),j)==2){
-				if(otta_Men_zu.kantan_naibu(Smen_naibuTen[i],j)==2){
-					s0[i].addMenid(j)	;//ここで面番号jは小さい方が先に追加される。
-				}
-			}
-                        s0[i].setKetasuu();
-		}
-*/
+        int[] s0addFaceId = new int[otta_Men_zu.getFacesTotal() + 1];  //Smenに追加する面を一時記録しておく
 
         for (int i = 1; i <= SmenTotal; i++) {
-            int s0addMenidsuu = 0;
-            //System.out.println("現在処理中のSmenは、"+i+" / "+Smensuu );
-            //for(int j=1;j<=jg.getMensuu();j++){
+            int s0addFaceTotal = 0;
 
             for (int j = 1; j <= otta_Men_zu.getFacesTotal(); j++) {
 
-                //System.out.print("現在処理中のSmenは、"+i+" / "+Smensuu +"     :::     "   +j+"/"+jg.getMensuu()+"-");
-                if (otta_Men_zu.kantan_inside(smen_naibuPoint[i], j) == 2) {
-                    //System.out.println(j);
-                    s0addMenidsuu = s0addMenidsuu + 1;
-                    s0addMenid[s0addMenidsuu] = j;
+                if (otta_Men_zu.simple_inside(smen_naibuPoint[i], j) == 2) {
+                    s0addFaceTotal = s0addFaceTotal + 1;
+                    s0addFaceId[s0addFaceTotal] = j;
                 }
 
             }
-            //if (s0addMenidsuu==0){
-            //System.out.println("**1** 現在処理中のSmenは、"+i+" / "+Smensuu+"  :::  s0addMenidsuu= "+s0addMenidsuu+" ::: 面積= "+Smen_zu.menseki_motome(i));
-            //}/////////20150308
 
-            s0[i].setNumDigits(s0addMenidsuu);
+            s0[i].setNumDigits(s0addFaceTotal);
 
-            //System.out.println("**2**");
-            for (int j = 1; j <= s0addMenidsuu; j++) {
-                s0[i].setMenid(j, s0addMenid[j]);//ここで面番号jは小さい方が先に追加される。
+            for (int j = 1; j <= s0addFaceTotal; j++) {
+                s0[i].setFaceId(j, s0addFaceId[j]);//ここで面番号jは小さい方が先に追加される。
             }
             //System.out.println("**3**");
         }
@@ -209,25 +172,14 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
         //4956                     System.out.print("Smensuu = "); System.out.println(Smensuu);System.exit(0);
         //ここまでで、Smensuu＝	Smen_zu.getMensuu()のままかわりなし。
         System.out.println("各Smenに含まれる面の数の内で最大のものを求める");
-        //各Smenに含まれる面の数の内で最大のものを求める。
-        Menidsuu_max = 0;
+        // Find the largest number of faces in each Smen.
+        FaceIdCount_max = 0;
         for (int i = 1; i <= SmenTotal; i++) {
-            if (s0[i].getFaceIdCount() > Menidsuu_max) {
-                Menidsuu_max = s0[i].getFaceIdCount();
+            if (s0[i].getFaceIdCount() > FaceIdCount_max) {
+                FaceIdCount_max = s0[i].getFaceIdCount();
             }
         }
     }
-
-// --------------------------------------------------------------------------------------------------------------------------
-/*
-	public int getMenidsuu_max(){
-		int M_id_max;M_id_max=0;
-		for(int i=1;i<=Smen_zu.getMensuu();i++){
-			if(s0[i].getMenidsuu()>M_id_max){M_id_max = s0[i].getMenidsuu();}
-		}
-		return M_id_max;
-	}
-*/
 
     //------------------------------------------------------
     public int ClassTable_configure(CreasePattern_Worker orite, CreasePattern otta_Men_zu, CreasePattern Smen_zu) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
@@ -235,40 +187,40 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
         int ireturn = 1000;
         jg.setFacesTotal(otta_Men_zu.getFacesTotal());
 
-        //山折り谷折りの情報から決定される上下関係を上下表に入れる
+        //Put the hierarchical relationship determined from the information of mountain folds and valley folds in the table above and below.
         System.out.println("山折り谷折りの情報から決定される上下関係を上下表に入れる");
         int Mid_min, Mid_max;
-        for (int ib = 1; ib <= orite.getBousuu(); ib++) {
+        for (int ib = 1; ib <= orite.getSticksTotal(); ib++) {
             Mid_min = orite.Stick_moti_FaceId_min_request(ib);
             Mid_max = orite.Bou_moti_Menid_max_motome(ib);
             if (Mid_min != Mid_max) {//展開図において、棒ibの両脇に面がある
                 //if(orite.getcolor(ib)==1){//赤い線で山折りを意味する
-                if (otta_Men_zu.getcolor(ib) == 1) {//赤い線で山折りを意味する
-                    if (orite.getiMeniti(Mid_min) % 2 == 1) {//面Mid_minは基準面と同じ向き(表面が上を向く)
+                if (otta_Men_zu.getColor(ib) == 1) {//赤い線で山折りを意味する
+                    if (orite.getIFacePosition(Mid_min) % 2 == 1) {//面Mid_minは基準面と同じ向き(表面が上を向く)
                         jg.set(Mid_min, Mid_max, 1);
                         jg.set(Mid_max, Mid_min, 0);
                     }
-                    if (orite.getiMeniti(Mid_max) % 2 == 1) {//面Mid_maxは基準面と同じ向き(表面が上を向く)
+                    if (orite.getIFacePosition(Mid_max) % 2 == 1) {//面Mid_maxは基準面と同じ向き(表面が上を向く)
                         jg.set(Mid_max, Mid_min, 1);
                         jg.set(Mid_min, Mid_max, 0);
                     }
                 }
                 //if(orite.getcolor(ib)==2){//青い線で谷折りを意味する
-                if (otta_Men_zu.getcolor(ib) == 2) {//青い線で谷折りを意味する
-                    if (orite.getiMeniti(Mid_min) % 2 == 1) {//面Mid_minは基準面と同じ向き(表面が上を向く)
+                if (otta_Men_zu.getColor(ib) == 2) {//青い線で谷折りを意味する
+                    if (orite.getIFacePosition(Mid_min) % 2 == 1) {//面Mid_minは基準面と同じ向き(表面が上を向く)
                         jg.set(Mid_min, Mid_max, 0);
                         jg.set(Mid_max, Mid_min, 1);
                     }
-                    if (orite.getiMeniti(Mid_max) % 2 == 1) {//面Mid_maxは基準面と同じ向き(表面が上を向く)
+                    if (orite.getIFacePosition(Mid_max) % 2 == 1) {//面Mid_maxは基準面と同じ向き(表面が上を向く)
                         jg.set(Mid_max, Mid_min, 0);
                         jg.set(Mid_min, Mid_max, 1);
                     }
                 }
 
-                if ((orite.getiMeniti(Mid_min) % 2 == 0) && (orite.getiMeniti(Mid_max) % 2 == 0)) {
+                if ((orite.getIFacePosition(Mid_min) % 2 == 0) && (orite.getIFacePosition(Mid_max) % 2 == 0)) {
                     ireturn = 0;
                 }
-                if ((orite.getiMeniti(Mid_min) % 2 == 1) && (orite.getiMeniti(Mid_max) % 2 == 1)) {
+                if ((orite.getIFacePosition(Mid_min) % 2 == 1) && (orite.getIFacePosition(Mid_max) % 2 == 1)) {
                     ireturn = 0;
                 }
             }
@@ -280,13 +232,13 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
         //等価条件を設定する。棒ibを境界として隣接する2つの面im1,im2が有る場合、折り畳み推定した場合に
         //棒ibの一部と重なる位置に有る面imは面im1と面im2に上下方向で挟まれることはない。このことから
         //gj[im1][im]=gj[im2][im]という等価条件が成り立つ。
-        for (int ib = 1; ib <= orite.getBousuu(); ib++) {
+        for (int ib = 1; ib <= orite.getSticksTotal(); ib++) {
             Mid_min = orite.Stick_moti_FaceId_min_request(ib);
             Mid_max = orite.Bou_moti_Menid_max_motome(ib);
             if (Mid_min != Mid_max) {//展開図において、棒ibの両脇に面がある
                 for (int im = 1; im <= jg.getFacesTotal(); im++) {
                     if ((im != Mid_min) && (im != Mid_max)) {
-                        if (otta_Men_zu.kantan_totu_inside(ib, im) == 1) {
+                        if (otta_Men_zu.simple_convex_inside(ib, im) == 1) {
                             //下の２つのifは暫定的な処理。あとで置き換え予定
                             if (otta_Men_zu.convex_inside(0.5, ib, im) == 1) {
                                 if (otta_Men_zu.convex_inside(-0.5, ib, im) == 1) {
@@ -307,8 +259,8 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
         //最初から3番目で間違いが起きているので、この3番目のところがSmenで何桁目かを求めて、この桁を１進める。
         int mi1, mi2, mj1, mj2;
 
-        for (int ib = 1; ib <= orite.getBousuu() - 1; ib++) {
-            for (int jb = ib + 1; jb <= orite.getBousuu(); jb++) {
+        for (int ib = 1; ib <= orite.getSticksTotal() - 1; ib++) {
+            for (int jb = ib + 1; jb <= orite.getSticksTotal(); jb++) {
                 if (otta_Men_zu.parallel_overlap(ib, jb) == 1) {
                     mi1 = orite.Stick_moti_FaceId_min_request(ib);
                     mi2 = orite.Bou_moti_Menid_max_motome(ib);
@@ -334,7 +286,7 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
         //追加推定
         int ituika;
 
-        ituika = tuika_suitei();
+        ituika = additional_estimation();
         if (ituika != 1000) {
             return ituika;
         }
@@ -367,7 +319,7 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
                 if (Smen_no_dokujisei[j] == 1) {
 
                     if (i != j) {//s0[j]がs0[i]を含むかをみる。
-                        if (Smen_i_ga_j_ni_fukumareru(i, j) == 1) {
+                        if (Smen_i_ga_j_ni_included(i, j) == 1) {
                             Smen_no_dokujisei[i] = 0;
                             break;
                         }
@@ -399,7 +351,7 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
             for (int is0 = 1; is0 <= SmenTotal; is0++) { //Smenを１からSmensuu番目までサーチ
                 int Sy;//Smenid_yusendo(is0)+Smen_no_dokujisei[is0] を格納
                 if (s0_no_yusenjyun[is0] == 0) {//まだ優先順位がついていないSmenだけを扱う
-                    Sy = Smenid_yusendo(is0)/*+Smen_no_dokujisei[is0]*/;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                    Sy = Smenid_priority(is0)/*+Smen_no_dokujisei[is0]*/;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                     if (yusendo_max < Sy) {
                         yusendo_max = Sy;
                         i_yusen = is0;// i_yusenがi番目の優先度を探している際の最も有力な候補の番号
@@ -451,7 +403,7 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
         for (int i = 1; i <= SmenTotal; i++) {
             //System.out.println(yusenjyun_kara_s0id[i]);
             if (i_yusendo_max[yusenjyun_kara_s0id[i]] != 0) {
-                Smen_yuukou_suu = i;       //早いが変な結果になることあり。
+                Smen_valid_number = i;       //早いが変な結果になることあり。
 //20191012 wwwww				Smen_yuukou_suu=Smensuu;//遅いが確実
 
                 //System.out.print("第");
@@ -503,7 +455,7 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
 		Smen_yuukou_suu=Smensuu;   //<<<<<<<<<<<<<<<<<<<<<<<
 */
         System.out.print("Smen有効数は　");
-        System.out.print(Smen_yuukou_suu);
+        System.out.print(Smen_valid_number);
         System.out.print("／");
         System.out.println(SmenTotal);
 
@@ -523,17 +475,12 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
 
 
         System.out.println("上下表初期設定終了");
-
-
-//		jg.jg_hozon();//山折り谷折りの情報から決定される上下関係を保存しておく。
-
-        //System.out.print("面数は1　");  System.out.println(s[1].getMenidsuu());
         return ireturn;
     }
 
     //------------------------------------------------------------
-    public int tuika_suitei() {
-        //山折り谷折りの情報から更に決定できる関係を推測していく。
+    public int additional_estimation() {
+        //We will infer relationships that can be further determined from the information on mountain folds and valley folds. 。
 
         int Mid;//3面の比較で中間にくる面
         int flg_c = 1;
@@ -560,14 +507,14 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
                             int sitaMenid_max = 0;
                             Mid = s0[iS].getMenid(iM);
 
-                            //考え方：あるSmenのある面Midについて考える。
-                            //このSmen以外で面Aは面Midの上側、面Bは面Midの下側と決まっていたとする。
-                            //一般に別々のSmenで、面Aは面Midの上側で、面Bは面Midの下側だったからと言って、面Aは面Bの上側とは決定できない。
-                            //しかし、ここがポイントだが、面A、面Mid、面Bがいっしょに含まれているSmenがあるなら、そのSmenの上下関係がわかっていなくても
-                            //面Aは面Bの上側となる。だから、この操作ではあるSmenから得る情報は３つの面がいっしょにあるかということである。
-                            //あるSmen内の上下関係は必要ない。
-                            //
-                            //ここの操作はあるSmenの上下関係を上下表から採集している。
+                            // Thinking: Think about a certain side Mid of a certain Smen.
+                            // Other than this Smen, it is assumed that surface A is above the surface Mid and surface B is below the surface Mid.
+                            // Generally, in separate Smen, surface A cannot be determined to be above surface B just because surface A is above surface Mid and surface B is below surface Mid.
+                            // However, this is the point, but if there is a Smen that includes surface A, surface Mid, and surface B together, even if you do not know the hierarchical relationship of that Smen
+                            // Surface A is above surface B. So, the information we get from Smen in this operation is whether there are three sides together.
+                            // There is no need for a hierarchical relationship within a Smen.
+                            // //
+                            // The operation here is collecting the hierarchical relationship of a certain Smen from the upper and lower tables.
                             for (int i = 1; i <= s0[iS].getFaceIdCount(); i++) {//Menid[iM]より上にある面。
                                 if (iM != i) {
                                     if (jg.get(Mid, s0[iS].getMenid(i)) == 0) {
@@ -581,14 +528,8 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
                                 }
                             }
 
-                            //  System.out.print("VVVVVVVVVVVueMenid_max:sitaMenid_max = ");System.out.print(ueMenid_max);
-                            //  System.out.print(":");System.out.println(sitaMenid_max);
-                            //
                             for (int iuM = 1; iuM <= ueMenid_max; iuM++) {//Menid[iM]より上にある面。
                                 for (int isM = 1; isM <= sitaMenid_max; isM++) {//Menid[iM]より下にある面。
-
-                                    //  System.out.print(ueMenid[iuM]);System.out.print("<-上:下->");System.out.println(sitaMenid[isM]);
-
 
                                     if (jg.get(ueMenid[iuM], sitaMenid[isM]) == 0) {
                                         return 2;
@@ -617,8 +558,6 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
 
 
                 }
-
-                //System.out.print("推測された関係の数 ＝ ");System.out.println(flg_b);
             }
 
             //
@@ -630,14 +569,13 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
             //System.out.println ("３面が関与する突き抜け条件から追加推定   " );
             //jg.addTouka_jyouken(im,Mid_min,im,Mid_max)qqqqqqqqqqqq
             //(im,Mid_min,im,Mid_max);
-            EquivalenceCondition tg = new EquivalenceCondition();
+            EquivalenceCondition tg;
 
             int flg_a = 1;
             while (flg_a >= 1) {
                 flg_a = 0;
                 for (int i = 1; i <= jg.getEquivalenceConditionTotal(); i++) {
                     tg = jg.getEquivalenceCondition(i);
-                    //if(onaji_Smen_ni_sonzai(tg.geta(),tg.getb(),tg.getd())==1) {
                     if (jg.get(tg.getA(), tg.getB()) == 1) {
                         if (jg.get(tg.getA(), tg.getD()) == 0) {
                             return 3;
@@ -711,17 +649,11 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
                             flg_c = flg_c + 1;
                         }
                     }
-                    // }
                 }
                 //System.out.print("推測された関係の数は ＝ ");System.out.println(flg_a);
             }
 
             //----------------
-
-//	System.out.println ("４面が関与する突き抜け条件から追加推定   " );
-            //jg.addTouka_jyouken(im,Mid_min,im,Mid_max)qqqqqqqqqqqq
-            //(im,Mid_min,im,Mid_max);
-            //Touka_jyouken tg = new Touka_jyouken();
 
             flg_a = 1;
             while (flg_a >= 1) {
@@ -1122,7 +1054,7 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
 
     //------------------------------------------
 
-    private int tuika_suitei_2() {
+    private int additional_estimation_2() {
         //山折り谷折りの情報から更に決定できる関係を推測していく。
 
         int Mid;//3面の比較で中間にくる面
@@ -1222,7 +1154,7 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
 
     //-----------------------------------------------------------------------------------------
 
-    private int Smen_i_ga_j_ni_fukumareru(int s0i, int s0j) { //含まれるなら１、ないなら０
+    private int Smen_i_ga_j_ni_included(int s0i, int s0j) { //1 if included, 0 otherwise
         if (s0[s0i].getFaceIdCount() > s0[s0j].getFaceIdCount()) {
             return 0;
         }
@@ -1243,11 +1175,11 @@ public class ClassTable_Worker {//Top and bottom table: Record and utilize what 
 
     }
 
-    //s0(Smen)の優先度を示す値を求める。この値が高いほうが優先度が上（配列の先頭に近い。）
-    int Smenid_yusendo(int s0id) {
+    //Find the value that indicates the priority of s0 (Smen). The higher this value, the higher the priority (closer to the beginning of the array).
+    int Smenid_priority(int s0id) {
         //return s0[s0id].getMenidsuu();
 
-        //現在の上下表にSmenを入れたら何個の上下関係が新たに登録されるかを調べる。
+        //Find out how many new hierarchies will be registered if you put Smen in the current top and bottom table.
         return s0[s0id].sinki_jyouhou_suu(jg);
 
 
@@ -1365,7 +1297,7 @@ int ss; ss=getSmen_yuukou_suu();
     public String Permutation_count() {
         String s0 = "";
 
-        for (int ss = 1; ss <= Smen_yuukou_suu; ss++) {
+        for (int ss = 1; ss <= Smen_valid_number; ss++) {
             s0 = s0 + " : " + s[ss].get_Permutation_count();
         }
         return s0;
@@ -1386,7 +1318,7 @@ int ss; ss=getSmen_yuukou_suu();
 
 //System.out.println(" Jyougehyou_syokunin          kanou_kasanari_sagasi()   ");
 //System.out.print("Smen有効数/Smensuu　" );System.out.print(Smen_yuukou_suu );System.out.print("／");System.out.println(Smensuu );
-        if (Smen_yuukou_suu == 0) {
+        if (Smen_valid_number == 0) {
             return 1000;
         }//Smen_yuukou_suu==0ということは、上下表に新たな情報を加えるSmenがないということ。すなわち、上下表がすべて埋まっているということを示すため、これ以上の重なり推定は不要。
 
@@ -1398,7 +1330,7 @@ int ss; ss=getSmen_yuukou_suu();
     public int kanou_kasanari_sagasi_self(int ss) {
         //orihime_ap.keijiban.tuiki("ss = "+ss  +"  :  Smen_yuukou_suu = "+Smen_yuukou_suu );
         //最終桁での処理
-        if (ss == Smen_yuukou_suu) {
+        if (ss == Smen_valid_number) {
 
             if (s[ss].possible_overlapping_search(jg) == 1000) {//==0ということは、可能な重なりかたとなる順列は存在しない。　==1000　このSmenは、矛盾はない状態になっている。
                 return 100;//折り畳み可能な順列組み合わせが見つかった。
@@ -1440,7 +1372,7 @@ int ss; ss=getSmen_yuukou_suu();
     }
 //------------------------------------------------------------------------------------------------------
 
-        //現在の順列状態から開始して、可能な重なりかたとなる状態を探す。なお、ここは高速化の余地がある。
+    //現在の順列状態から開始して、可能な重なりかたとなる状態を探す。なお、ここは高速化の余地がある。
     public int possible_overlapping_search() {      //これはjgを変えないはず。
         orihime_app.bulletinBoard.write("_ _______");
         orihime_app.bulletinBoard.write("__ ______");
@@ -1472,7 +1404,7 @@ int ss; ss=getSmen_yuukou_suu();
         int kks;
         jg.jg_restore();//<<<<<<<<<<<<<<<<<<<<<<<<<<<,,
 
-        for (int ss = 1; ss <= Smen_yuukou_suu; ss++) {      //<<<<<<<<<<<<<<高速化のため変更。070417
+        for (int ss = 1; ss <= Smen_valid_number; ss++) {      //<<<<<<<<<<<<<<高速化のため変更。070417
 
             orihime_app.bulletinBoard.rewrite(7, "mujyun_Smen_motome( " + ss + ") , Menidsuu = " + s[ss].getFaceIdCount() + " , Men_pair_suu = " + s[ss].getFaceIdCount() * (s[ss].getFaceIdCount() - 1) / 2);
             orihime_app.bulletinBoard.rewrite(8, " kasanari_bunryi_mitei = " + s[ss].overlapping_classification_pending(jg));
@@ -1492,8 +1424,8 @@ int ss; ss=getSmen_yuukou_suu();
 
         }
 
-        if (tuika_suitei() != 1000) {
-            return Smen_yuukou_suu;
+        if (additional_estimation() != 1000) {
+            return Smen_valid_number;
         } //ttttttttttt
 
         return 1000;
@@ -1605,18 +1537,18 @@ int ss; ss=getSmen_yuukou_suu();
                     Men_jyunban = s0[im].getFaceIdCount();
                 }
 
-                if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
+                if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
                     g.setColor(new Color(255, 255, 50));
                 }
-                if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
+                if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
                     g.setColor(new Color(233, 233, 233));
                 }
 
                 if (omote_ura == 1) {
-                    if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
+                    if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
                         g.setColor(new Color(255, 255, 50));
                     }
-                    if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
+                    if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
                         g.setColor(new Color(233, 233, 233));
                     }
                 }
@@ -1641,7 +1573,7 @@ int ss; ss=getSmen_yuukou_suu();
                 Mid_min = Smen_zu.Stick_moti_Menid_min_motome(ib);
                 Mid_max = Smen_zu.Stick_moti_Menid_max_motome(ib);
                 if (Mid_min == Mid_max) {//この棒は境界線なのでこの棒は描く。
-                    g.drawLine(gx(Smen_zu.getmaex(ib)), gy(Smen_zu.getmaey(ib)), gx(Smen_zu.getatox(ib)), gy(Smen_zu.getatoy(ib))); //直線
+                    g.drawLine(gx(Smen_zu.getBeginX(ib)), gy(Smen_zu.getBeginY(ib)), gx(Smen_zu.getEndX(ib)), gy(Smen_zu.getEndY(ib))); //直線
                 }
 
                 Men_jyunban_min = 1;
@@ -1659,7 +1591,7 @@ int ss; ss=getSmen_yuukou_suu();
                                 (s0[Mid_min].uekara_kazoeta_Menid(Men_jyunban_min) !=
                                         s0[Mid_max].uekara_kazoeta_Menid(Men_jyunban_max))
                 ) {//この棒で隣接するSmenの1番上の面は異なるので、この棒は描く。
-                    g.drawLine(gx(Smen_zu.getmaex(ib)), gy(Smen_zu.getmaey(ib)), gx(Smen_zu.getatox(ib)), gy(Smen_zu.getatoy(ib))); //直線
+                    g.drawLine(gx(Smen_zu.getBeginX(ib)), gy(Smen_zu.getBeginY(ib)), gx(Smen_zu.getEndX(ib)), gy(Smen_zu.getEndY(ib))); //直線
                 }
             }
         }
@@ -1694,7 +1626,7 @@ int ss; ss=getSmen_yuukou_suu();
             int Mid_min, Mid_max;
             int Men_jyunban_min, Men_jyunban_max;
             for (int ib = 1; ib <= Smen_zu.getSticksTotal(); ib++) {
-                g.drawLine(gx(Smen_zu.getmaex(ib)), gy(Smen_zu.getmaey(ib)), gx(Smen_zu.getatox(ib)), gy(Smen_zu.getatoy(ib))); //直線
+                g.drawLine(gx(Smen_zu.getBeginX(ib)), gy(Smen_zu.getBeginY(ib)), gx(Smen_zu.getEndX(ib)), gy(Smen_zu.getEndY(ib))); //直線
             }
         }
 /*
@@ -1735,7 +1667,7 @@ int ss; ss=getSmen_yuukou_suu();
 */
         //表示様式１Smenを描く
         if (hyouji_yousiki == 1) {
-            for (int iu = 1; iu <= Smen_yuukou_suu; iu++) {
+            for (int iu = 1; iu <= Smen_valid_number; iu++) {
                 int im;
                 im = yusenjyun_kara_s0id[iu]; //Smenの優先順位
                 int col_kosa;
@@ -1777,10 +1709,10 @@ int ss; ss=getSmen_yuukou_suu();
 
     public Memo getMemo_for_svg_with_camera(CreasePattern_Worker orite, CreasePattern otta_Men_zu, CreasePattern Smen_zu) {//折り上がり図(hyouji_flg==5)
         int omote_ura = 0;
-        if (camera.get_camera_kagami() == 1.0) {
+        if (camera.getCameraMirror() == 1.0) {
             omote_ura = 0;
         }//カメラの鏡設定が1なら、折り上がり図は表表示
-        if (camera.get_camera_kagami() == -1.0) {
+        if (camera.getCameraMirror() == -1.0) {
             omote_ura = 1;
         }//カメラの鏡設定が-1(x軸の符号を反転)なら、折り上がり図は裏表示
 
@@ -1829,10 +1761,10 @@ int ss; ss=getSmen_yuukou_suu();
                 }
 
 
-                if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
+                if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
                     str_stroke = StringOp.toHtmlColor(F_color);
                 }//g.setColor(F_color)
-                if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
+                if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
                     str_stroke = StringOp.toHtmlColor(B_color);
                 }//g.setColor(B_color)
 
@@ -1842,10 +1774,10 @@ int ss; ss=getSmen_yuukou_suu();
 
 
                 if (omote_ura == 1) {
-                    if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
+                    if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
                         str_stroke = "yellow";
                     }//g.setColor(F_color)
-                    if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
+                    if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
                         str_stroke = "gray";
                     }//g.setColor(B_color)
                 }
@@ -1949,7 +1881,7 @@ int ss; ss=getSmen_yuukou_suu();
             }
 
             if (oekaki_flg == 1) {//棒を描く。
-                s_ob.set(Smen_zu.getmaex(ib), Smen_zu.getmaey(ib), Smen_zu.getatox(ib), Smen_zu.getatoy(ib));
+                s_ob.set(Smen_zu.getBeginX(ib), Smen_zu.getBeginY(ib), Smen_zu.getEndX(ib), Smen_zu.getEndY(ib));
                 s_tv.set(camera.object2TV(s_ob));
                 //g.drawLine( gx(s_tv.getax()),gy(s_tv.getay()),gx(s_tv.getbx()),gy(s_tv.getby())); //svg に直線を出力
 
@@ -1996,7 +1928,7 @@ int ss; ss=getSmen_yuukou_suu();
 
 
         //hyouji_flgは折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図
-        OritaOekaki OO = new OritaOekaki();
+        OritaDrawing OO = new OritaDrawing();
         Point t0 = new Point();
         Point t1 = new Point();
         LineSegment s_ob = new LineSegment();
@@ -2027,18 +1959,18 @@ int ss; ss=getSmen_yuukou_suu();
                         Men_jyunban = s0[im].getFaceIdCount();
                     }
 
-                    if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
+                    if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
                         g.setColor(new Color(255, 255, 50));
                     }
-                    if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
+                    if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
                         g.setColor(new Color(233, 233, 233));
                     }
 
                     if (omote_ura == 1) {
-                        if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
+                        if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
                             g.setColor(new Color(255, 255, 50));
                         }
-                        if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
+                        if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
                             g.setColor(new Color(233, 233, 233));
                         }
                     }
@@ -2100,7 +2032,7 @@ int ss; ss=getSmen_yuukou_suu();
                 }
 
                 if (oekaki_flg == 1) {//棒を描く。
-                    s_ob.set(Smen_zu.getmaex(ib), Smen_zu.getmaey(ib), Smen_zu.getatox(ib), Smen_zu.getatoy(ib));
+                    s_ob.set(Smen_zu.getBeginX(ib), Smen_zu.getBeginY(ib), Smen_zu.getEndX(ib), Smen_zu.getEndY(ib));
                     s_tv.set(camera.object2TV(s_ob));
                     g.drawLine(gx(s_tv.getAx()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
                     //g.drawLine( gx(Smen_zu.getmaex(ib)),gy(Smen_zu.getmaey(ib)),gx(Smen_zu.getatox(ib)),gy(Smen_zu.getatoy(ib))); //直線
@@ -2116,7 +2048,7 @@ int ss; ss=getSmen_yuukou_suu();
 
         //表示様式１Smenを描く
         if (hyouji_yousiki == 1) {
-            for (int iu = 1; iu <= Smen_yuukou_suu; iu++) {
+            for (int iu = 1; iu <= Smen_valid_number; iu++) {
                 int im;
                 im = yusenjyun_kara_s0id[iu]; //Smenの優先順位
                 int col_kosa;
@@ -2144,18 +2076,14 @@ int ss; ss=getSmen_yuukou_suu();
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getX());
                 y[0] = gy(t1.getY());
-                //x[0]=gx(Smen_zu.getTenx(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
-                //y[0]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
-                //x[0]=gx(Smen_zu.getTenx(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
-                //y[0]=gy(Smen_zu.getTeny(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
 
                 g.fillPolygon(x, y, Smen_zu.getPointsCount(im));
             }
         }
 
 
-        //camera中心を十字で描く
-        OO.jyuuji(g, camera.object2TV(camera.get_camera_ichi()), 5.0, 2.0, 4);
+        //Draw the center of the camera with a cross
+        OO.cross(g, camera.object2TV(camera.get_camera_position()), 5.0, 2.0, 4);
 
 
     }
@@ -2166,10 +2094,10 @@ int ss; ss=getSmen_yuukou_suu();
     public Memo getMemo_wirediagram_for_svg_export(CreasePattern_Worker orite, CreasePattern otta_Men_zu, CreasePattern Smen_zu, int i_fill) {
         //System.out.println("getMemo_hariganezu_for_svg_kakidasi");
         int omote_ura = 0;
-        if (camera.get_camera_kagami() == 1.0) {
+        if (camera.getCameraMirror() == 1.0) {
             omote_ura = 0;
         }//カメラの鏡設定が1なら、折り上がり図は表表示
-        if (camera.get_camera_kagami() == -1.0) {
+        if (camera.getCameraMirror() == -1.0) {
             omote_ura = 1;
         }//カメラの鏡設定が-1(x軸の符号を反転)なら、折り上がり図は裏表示
 
@@ -2208,7 +2136,7 @@ int ss; ss=getSmen_yuukou_suu();
 
         for (int i_nbox = 1; i_nbox <= otta_Men_zu.getFacesTotal(); i_nbox++) {
             int im = 0;
-            if (camera.get_camera_kagami() == -1.0) {//カメラの鏡設定が-1(x軸の符号を反転)なら、折り上がり図は裏表示
+            if (camera.getCameraMirror() == -1.0) {//カメラの鏡設定が-1(x軸の符号を反転)なら、折り上がり図は裏表示
                 im = nbox.usirokara_get_int(i_nbox);
             } else {
                 im = nbox.get_int(i_nbox);
@@ -2223,8 +2151,8 @@ int ss; ss=getSmen_yuukou_suu();
             BigDecimal b_t_tv_x = new BigDecimal(String.valueOf(t_tv.getX()));
             BigDecimal b_t_tv_y = new BigDecimal(String.valueOf(t_tv.getY()));
 
-            text = text + b_t_tv_x.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + " " +
-                    b_t_tv_y.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + " ";
+            text = text + b_t_tv_x.setScale(2, RoundingMode.HALF_UP).doubleValue() + " " +
+                    b_t_tv_y.setScale(2, RoundingMode.HALF_UP).doubleValue() + " ";
 
 
             for (int i = 2; i <= otta_Men_zu.getPointsCount(im); i++) {
@@ -2235,25 +2163,11 @@ int ss; ss=getSmen_yuukou_suu();
                 BigDecimal b_t_tv_x_i = new BigDecimal(String.valueOf(t_tv.getX()));
                 BigDecimal b_t_tv_y_i = new BigDecimal(String.valueOf(t_tv.getY()));
 
-                text = text + b_t_tv_x_i.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + " " +
-                        b_t_tv_y_i.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + " ";
+                text = text + b_t_tv_x_i.setScale(2, RoundingMode.HALF_UP).doubleValue() + " " +
+                        b_t_tv_y_i.setScale(2, RoundingMode.HALF_UP).doubleValue() + " ";
             }
 
             text = text + "Z";
-
-
-//<polygon points="250 50 300 100 250 100" stroke="black" fill="none"/>
-//<path d="M 100 100 L 300 100 L 200 300 z" fill="red" stroke="blue" stroke-width="3" />
-/*
-					memo_temp.addGyou(    "<polygon points=\"" + str.valueOf( b_ax.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue()) + "\"" +
-							           " y1=\"" + str.valueOf( b_ay.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue()) + "\"" +
-							           " x2=\"" + str.valueOf( b_bx.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue()) + "\"" +
-							           " y2=\"" + str.valueOf( b_by.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue()) + "\"" +
-						      " style=\"" + "stroke:"+str_stroke + "\"" +
-						    " stroke-width=\"" + str_strokewidth + "\"" +" />"
-
-							);
-*/
 
             if (i_fill == 0) {
                 str_fill = "none";
@@ -2262,18 +2176,18 @@ int ss; ss=getSmen_yuukou_suu();
 
             if (i_fill == 1) {
 
-                if (orite.getiMeniti(im) % 2 == 1) {
+                if (orite.getIFacePosition(im) % 2 == 1) {
                     str_fill = StringOp.toHtmlColor(F_color);
                 }
-                if (orite.getiMeniti(im) % 2 == 0) {
+                if (orite.getIFacePosition(im) % 2 == 0) {
                     str_fill = StringOp.toHtmlColor(B_color);
                 }
 
                 if (omote_ura == 1) {
-                    if (orite.getiMeniti(im) % 2 == 1) {
+                    if (orite.getIFacePosition(im) % 2 == 1) {
                         str_fill = StringOp.toHtmlColor(B_color);
                     }
-                    if (orite.getiMeniti(im) % 2 == 0) {
+                    if (orite.getIFacePosition(im) % 2 == 0) {
                         str_fill = StringOp.toHtmlColor(F_color);
                     }
 
@@ -2293,134 +2207,85 @@ int ss; ss=getSmen_yuukou_suu();
 
         }
 
-/*
-
-//カラーの透過図
-//toukazu_toukado=col_hiku;
-		g.setColor(new Color(100,100, 100,50));
-
-		//面を描く
-		for (int im=1; im<=otta_Men_zu.getMensuu(); im++ ){
-			for (int i=1; i<=otta_Men_zu.getTenidsuu(im)-1; i++ ){
-				t0.setx(otta_Men_zu.getTenx(otta_Men_zu.getTenid(im,i)));
-				t0.sety(otta_Men_zu.getTeny(otta_Men_zu.getTenid(im,i)));
-				t1.set(camera.object2TV(t0));
-				x[i]=gx(t1.getx());
-				y[i]=gy(t1.gety());
-			}
-
-				t0.setx(otta_Men_zu.getTenx(otta_Men_zu.getTenid(im,otta_Men_zu.getTenidsuu(im))));
-				t0.sety(otta_Men_zu.getTeny(otta_Men_zu.getTenid(im,otta_Men_zu.getTenidsuu(im))));
-				t1.set(camera.object2TV(t0));
-				x[0]=gx(t1.getx());
-				y[0]=gy(t1.gety());
-			g.fillPolygon(x,y,otta_Men_zu.getTenidsuu(im));
-			//g.drawPolygon(x,y,otta_Men_zu.getTenidsuu(im));
-		}
-*/
-
-
         return memo_temp;
 
     }
 
 
     //---------------------------------------------------------
-    public void oekaki_toukazu_with_camera(Graphics g, CreasePattern_Worker orite, CreasePattern otta_Men_zu, CreasePattern Smen_zu, int i_toukazu_color, int toukazu_toukado) {
+    public void draw_transparency_with_camera(Graphics g, CreasePattern_Worker orite, CreasePattern otta_Face_figure, CreasePattern Smen_figure, int i_transparency_color, int transparency_toukado) {
         Graphics2D g2 = (Graphics2D) g;
 
         //System.out.println("上下表職人　oekaki_with_camera+++++++++++++++透過表示");
-        OritaOekaki OO = new OritaOekaki();
+        OritaDrawing OO = new OritaDrawing();
         Point t0 = new Point();
         Point t1 = new Point();
         LineSegment s_ob = new LineSegment();
         LineSegment s_tv = new LineSegment();
-        String text = "";//文字列処理用のクラスのインスタンス化
+        String text = "";//Instantiation of class for string processing
 
-        //面を描く準備
+        //Preparing to draw a face
         int[] x = new int[100];
         int[] y = new int[100];
 
-        //面の適切な濃さを求める
+        //Find the proper darkness of the surface
         int col_hiku = 0;
         int colmax = 255;
         int colmin = 30;//colmax=255(真っ白)以下、colmin=0(真っ黒)以上
-        //Menidsuu_maxは1以上であること
-        if (Menidsuu_max > 0) {
-            col_hiku = (colmax - colmin) / Menidsuu_max;
+        //Menidsuu_max must be 1 or greater
+        if (FaceIdCount_max > 0) {
+            col_hiku = (colmax - colmin) / FaceIdCount_max;
         }
-        //if(Menidsuu_max<=0){System.out.println("上下表職人　oekaki_toukazu_with_camera!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!    Menidsuu_max<=0  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");}
 
+        if (i_transparency_color == 1) {//カラーの透過図
 
-//if(orihime_ap.ckbox_toukazu_color.isSelected()){//カラーの透過図
-//if(orihime_ap.OZ.i_toukazu_color==1){//カラーの透過図
-        if (i_toukazu_color == 1) {//カラーの透過図
+            g.setColor(new Color(F_color.getRed(), F_color.getGreen(), F_color.getBlue(), transparency_toukado));
 
-//toukazu_toukado=col_hiku;
-            g.setColor(new Color(F_color.getRed(), F_color.getGreen(), F_color.getBlue(), toukazu_toukado));
-
-            //面を描く
-            for (int im = 1; im <= otta_Men_zu.getFacesTotal(); im++) {
-                for (int i = 1; i <= otta_Men_zu.getPointsCount(im) - 1; i++) {
-                    t0.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, i)));
-                    t0.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, i)));
+            //Draw a face
+            for (int im = 1; im <= otta_Face_figure.getFacesTotal(); im++) {
+                for (int i = 1; i <= otta_Face_figure.getPointsCount(im) - 1; i++) {
+                    t0.setX(otta_Face_figure.getPointX(otta_Face_figure.getPointId(im, i)));
+                    t0.setY(otta_Face_figure.getPointY(otta_Face_figure.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
                     x[i] = gx(t1.getX());
                     y[i] = gy(t1.getY());
                 }
 
-                t0.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, otta_Men_zu.getPointsCount(im))));
-                t0.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, otta_Men_zu.getPointsCount(im))));
+                t0.setX(otta_Face_figure.getPointX(otta_Face_figure.getPointId(im, otta_Face_figure.getPointsCount(im))));
+                t0.setY(otta_Face_figure.getPointY(otta_Face_figure.getPointId(im, otta_Face_figure.getPointsCount(im))));
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getX());
                 y[0] = gy(t1.getY());
-                g.fillPolygon(x, y, otta_Men_zu.getPointsCount(im));
-                //g.drawPolygon(x,y,otta_Men_zu.getTenidsuu(im));
+                g.fillPolygon(x, y, otta_Face_figure.getPointsCount(im));
             }
 
-            //棒を描く準備
-            //g.setColor(Color.black);
-
+            //Preparing to draw a stick
 
             if (i_anti_alias == 1) {
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);//アンチェイリアス　オン
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);//Anti-alias on
                 BasicStroke BStroke = new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-                g2.setStroke(BStroke);//線の太さや線の末端の形状
+                g2.setStroke(BStroke);//Line thickness and shape of the end of the line
             }
             if (i_anti_alias == 0) {
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オフ
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//Anti-alias off
                 BasicStroke BStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-                g2.setStroke(BStroke);//線の太さや線の末端の形状
+                g2.setStroke(BStroke);//Line thickness and shape of the end of the line
             }
 
-            g.setColor(new Color(F_color.getRed(), F_color.getGreen(), F_color.getBlue(), 2 * toukazu_toukado));
-            //棒を描く
+            g.setColor(new Color(F_color.getRed(), F_color.getGreen(), F_color.getBlue(), 2 * transparency_toukado));
+            //Draw a stick
             int Mid_min, Mid_max;
             int Men_jyunban_min, Men_jyunban_max;
-            for (int ib = 1; ib <= Smen_zu.getSticksTotal(); ib++) {
-                s_ob.set(Smen_zu.getmaex(ib), Smen_zu.getmaey(ib), Smen_zu.getatox(ib), Smen_zu.getatoy(ib));
+            for (int ib = 1; ib <= Smen_figure.getSticksTotal(); ib++) {
+                s_ob.set(Smen_figure.getBeginX(ib), Smen_figure.getBeginY(ib), Smen_figure.getEndX(ib), Smen_figure.getEndY(ib));
                 s_tv.set(camera.object2TV(s_ob));
                 g.drawLine(gx(s_tv.getAx()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
             }
-
-
-        } else {//白黒の透過図（旧式）
-
-
-
-/*
-		int col_hiku=0;int colmax=255;int colmin=30;//colmax=255(真っ白)以下、colmin=0(真っ黒)以上
-		//Menidsuu_maxは1以上であること
-		if(Menidsuu_max>0){col_hiku=(colmax-colmin)/Menidsuu_max;}
-		//if(Menidsuu_max<=0){System.out.println("上下表職人　oekaki_toukazu_with_camera!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!    Menidsuu_max<=0  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");}
-*/
+        } else {//Black and white transparent view (old style)
             int col_kosa;
 
-
-            for (int im = 1; im <= Smen_zu.getFacesTotal(); im++) {
-
+            for (int im = 1; im <= Smen_figure.getFacesTotal(); im++) {
                 col_kosa = colmax - col_hiku * (s0[im].getFaceIdCount());
-
 
                 if (col_kosa > 255) {
                     col_kosa = 255;
@@ -2429,68 +2294,64 @@ int ss; ss=getSmen_yuukou_suu();
                 if (col_kosa < 0) {
                     col_kosa = 0;
                 }
-                //System.out.println("col_kosa="+col_kosa);
                 g.setColor(new Color(col_kosa, col_kosa, col_kosa));
 
-                for (int i = 1; i <= Smen_zu.getPointsCount(im) - 1; i++) {
-                    t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, i)));
-                    t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, i)));
+                for (int i = 1; i <= Smen_figure.getPointsCount(im) - 1; i++) {
+                    t0.setX(Smen_figure.getPointX(Smen_figure.getPointId(im, i)));
+                    t0.setY(Smen_figure.getPointY(Smen_figure.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
                     x[i] = gx(t1.getX());
                     y[i] = gy(t1.getY());
                 }
 
-                t0.setX(Smen_zu.getPointX(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
-                t0.setY(Smen_zu.getPointY(Smen_zu.getPointId(im, Smen_zu.getPointsCount(im))));
+                t0.setX(Smen_figure.getPointX(Smen_figure.getPointId(im, Smen_figure.getPointsCount(im))));
+                t0.setY(Smen_figure.getPointY(Smen_figure.getPointId(im, Smen_figure.getPointsCount(im))));
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getX());
                 y[0] = gy(t1.getY());
-                g.fillPolygon(x, y, Smen_zu.getPointsCount(im));
+                g.fillPolygon(x, y, Smen_figure.getPointsCount(im));
             }
 
-            //棒を描く準備
+            //Prepare the stick
             g.setColor(Color.black);
 
-
             if (i_anti_alias == 1) {
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);//アンチェイリアス　オン
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);//Anti-alias on
                 BasicStroke BStroke = new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-                g2.setStroke(BStroke);//線の太さや線の末端の形状
+                g2.setStroke(BStroke);//Line thickness and shape of the end of the line
             }
             if (i_anti_alias == 0) {
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オフ
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//Anti-alias off
                 BasicStroke BStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-                g2.setStroke(BStroke);//線の太さや線の末端の形状
+                g2.setStroke(BStroke);//Line thickness and shape of the end of the line
             }
 
 
-            //棒を描く
+            //Draw a stick
             int Mid_min, Mid_max;
             int Men_jyunban_min, Men_jyunban_max;
-            for (int ib = 1; ib <= Smen_zu.getSticksTotal(); ib++) {
-                s_ob.set(Smen_zu.getmaex(ib), Smen_zu.getmaey(ib), Smen_zu.getatox(ib), Smen_zu.getatoy(ib));
+            for (int ib = 1; ib <= Smen_figure.getSticksTotal(); ib++) {
+                s_ob.set(Smen_figure.getBeginX(ib), Smen_figure.getBeginY(ib), Smen_figure.getEndX(ib), Smen_figure.getEndY(ib));
                 s_tv.set(camera.object2TV(s_ob));
-                g.drawLine(gx(s_tv.getAx()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
+                g.drawLine(gx(s_tv.getAx()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //Straight line
             }
-
         }
-
     }
 
 
     //---------------------------------------------------------
 
-    public void oekaki_foldedFigure_with_camera(Graphics g, CreasePattern_Worker orite, CreasePattern otta_Men_zu, CreasePattern Smen_zu) {
+    public void draw_foldedFigure_with_camera(Graphics g, CreasePattern_Worker orite, CreasePattern otta_Men_zu, CreasePattern Smen_zu) {
         Graphics2D g2 = (Graphics2D) g;
         int omote_ura = 0;
-        if (camera.get_camera_kagami() == 1.0) {
+        if (camera.getCameraMirror() == 1.0) {
             omote_ura = 0;
         }//カメラの鏡設定が1なら、折り上がり図は表表示
-        if (camera.get_camera_kagami() == -1.0) {
+        if (camera.getCameraMirror() == -1.0) {
             omote_ura = 1;
         }//カメラの鏡設定が-1(x軸の符号を反転)なら、折り上がり図は裏表示
         //System.out.println("上下表職人　oekaki_with_camera+++++++++++++++折紙表示　面を描く");
-        OritaOekaki OO = new OritaOekaki();
+        OritaDrawing OO = new OritaDrawing();
         Point t0 = new Point();
         Point t1 = new Point();
         LineSegment s_ob = new LineSegment();
@@ -2531,10 +2392,10 @@ int ss; ss=getSmen_yuukou_suu();
 
                 //if(orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban))%2==1){g.setColor(new Color(255,255,50));}
                 //if(orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban))%2==0){g.setColor(new Color(233,233,233));}
-                if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
+                if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
                     g.setColor(F_color);
                 }
-                if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
+                if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
                     g.setColor(B_color);
                 }
 
@@ -2543,10 +2404,10 @@ int ss; ss=getSmen_yuukou_suu();
                     //if(orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban))%2==0){g.setColor(new Color(255,255,50));}
                     //if(orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban))%2==1){g.setColor(new Color(233,233,233));}
 
-                    if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
+                    if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 0) {
                         g.setColor(F_color);
                     }
-                    if (orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
+                    if (orite.getIFacePosition(s0[im].uekara_kazoeta_Menid(Men_jyunban)) % 2 == 1) {
                         g.setColor(B_color);
                     }
                 }
@@ -2578,58 +2439,35 @@ int ss; ss=getSmen_yuukou_suu();
                 //折り上がり図を描くときのim番目のSmenの多角形の頂点の座標（PC表示上）を求めるのはここまで
 
                 g2.fill(new Polygon(x, y, Smen_zu.getPointsCount(im)));
-                //g.fillPolygon(x,y,Smen_zu.getTenidsuu(im));
             }
         }
         //面を描く　ここまで
 
-        //g.setColor(new Color(0,0,0));		//黒
-        //g.setColor(new Color(255,255,255));	//白
-
 
         //影をつける ------------------------------------------------------------------------------------
         if (i_kage == 1) {
-
             for (int ib = 1; ib <= Smen_zu.getSticksTotal(); ib++) {
                 int im = bou_no_bangou_kara_kagenoaru_Smen_no_bangou_wo_motomeru(ib, Smen_zu, omote_ura);//影をつけるSmenのid
                 if (im != 0) {//影を描く。
 
                     //折り上がり図を描くときのim番目のSmenの多角形の頂点の座標（PC表示上）を求める
-		   /*
-				for (int i=1; i<=Smen_zu.getTenidsuu(im)-1; i++ ){
-
-					t0.setx(Smen_zu.getTenx(Smen_zu.getTenid(im,i)));
-					t0.sety(Smen_zu.getTeny(Smen_zu.getTenid(im,i)));
-					t1.set(camera.object2TV(t0));
-					x[i]=gx(t1.getx());
-					y[i]=gy(t1.gety());
-				}
-
-				t0.setx(Smen_zu.getTenx(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
-				t0.sety(Smen_zu.getTeny(Smen_zu.getTenid(im,Smen_zu.getTenidsuu(im))));
-				t1.set(camera.object2TV(t0));
-				x[0]=gx(t1.getx());
-				y[0]=gy(t1.gety());
-
-				//折り上がり図を描くときのim番目のSmenの多角形の頂点の座標（PC表示上）を求めるのはここまで
-*/
 
 
                     //棒の座標   Smen_zu.getmaex(ib),Smen_zu.getmaey(ib)   -    Smen_zu.getatox(ib) , Smen_zu.getatoy(ib)
-                    Point b_mae = new Point(Smen_zu.getmaex(ib), Smen_zu.getmaey(ib));
-                    Point b_ato = new Point(Smen_zu.getatox(ib), Smen_zu.getatoy(ib));
-                    double b_nagasa = b_mae.distance(b_ato);
+                    Point b_begin = new Point(Smen_zu.getBeginX(ib), Smen_zu.getBeginY(ib));
+                    Point b_end = new Point(Smen_zu.getEndX(ib), Smen_zu.getEndY(ib));
+                    double b_nagasa = b_begin.distance(b_end);
 
                     //棒と直交するベクトル
-                    double o_btx = -(Smen_zu.getmaey(ib) - Smen_zu.getatoy(ib)) * 10.0 / b_nagasa;//棒と直交するxベクトル
-                    double o_bty = (Smen_zu.getmaex(ib) - Smen_zu.getatox(ib)) * 10.0 / b_nagasa;//棒と直交するyベクトル
+                    double o_btx = -(Smen_zu.getBeginY(ib) - Smen_zu.getEndY(ib)) * 10.0 / b_nagasa;//棒と直交するxベクトル
+                    double o_bty = (Smen_zu.getBeginX(ib) - Smen_zu.getEndX(ib)) * 10.0 / b_nagasa;//棒と直交するyベクトル
 
                     //棒の中点
                     double o_bmx, o_bmy;
                     double t_bmx, t_bmy;
 
-                    o_bmx = (Smen_zu.getmaex(ib) + Smen_zu.getatox(ib)) / 2.0;
-                    o_bmy = (Smen_zu.getmaey(ib) + Smen_zu.getatoy(ib)) / 2.0;
+                    o_bmx = (Smen_zu.getBeginX(ib) + Smen_zu.getEndX(ib)) / 2.0;
+                    o_bmy = (Smen_zu.getBeginY(ib) + Smen_zu.getEndY(ib)) / 2.0;
 
                     t0.setX(o_bmx);
                     t0.setY(o_bmy);
@@ -2659,8 +2497,8 @@ int ss; ss=getSmen_yuukou_suu();
                         //影の長方形
 
                         // ---------- [0] ----------------
-                        t0.setX(Smen_zu.getmaex(ib));
-                        t0.setY(Smen_zu.getmaey(ib));
+                        t0.setX(Smen_zu.getBeginX(ib));
+                        t0.setY(Smen_zu.getBeginY(ib));
                         t1.set(camera.object2TV(t0));
                         xd[0] = t1.getX();
                         yd[0] = t1.getY();
@@ -2668,8 +2506,8 @@ int ss; ss=getSmen_yuukou_suu();
                         y[0] = (int) yd[0];
 
                         // ---------- [1] ----------------
-                        t0.setX(Smen_zu.getmaex(ib) + o_btx);
-                        t0.setY(Smen_zu.getmaey(ib) + o_bty);
+                        t0.setX(Smen_zu.getBeginX(ib) + o_btx);
+                        t0.setY(Smen_zu.getBeginY(ib) + o_bty);
                         t1.set(camera.object2TV(t0));
                         xd[1] = t1.getX();
                         yd[1] = t1.getY();
@@ -2677,8 +2515,8 @@ int ss; ss=getSmen_yuukou_suu();
                         y[1] = (int) yd[1];
 
                         // ---------- [2] ----------------
-                        t0.setX(Smen_zu.getatox(ib) + o_btx);
-                        t0.setY(Smen_zu.getatoy(ib) + o_bty);
+                        t0.setX(Smen_zu.getEndX(ib) + o_btx);
+                        t0.setY(Smen_zu.getEndY(ib) + o_bty);
                         t1.set(camera.object2TV(t0));
                         xd[2] = t1.getX();
                         yd[2] = t1.getY();
@@ -2686,8 +2524,8 @@ int ss; ss=getSmen_yuukou_suu();
                         y[2] = (int) yd[2];
 
                         // ---------- [3] ----------------
-                        t0.setX(Smen_zu.getatox(ib));
-                        t0.setY(Smen_zu.getatoy(ib));
+                        t0.setX(Smen_zu.getEndX(ib));
+                        t0.setY(Smen_zu.getEndY(ib));
                         t1.set(camera.object2TV(t0));
                         xd[3] = t1.getX();
                         yd[3] = t1.getY();
@@ -2726,8 +2564,8 @@ int ss; ss=getSmen_yuukou_suu();
                         //影の長方形
 
                         // ---------- [0] ----------------
-                        t0.setX(Smen_zu.getmaex(ib));
-                        t0.setY(Smen_zu.getmaey(ib));
+                        t0.setX(Smen_zu.getBeginX(ib));
+                        t0.setY(Smen_zu.getBeginY(ib));
                         t1.set(camera.object2TV(t0));
                         xd[0] = t1.getX();
                         yd[0] = t1.getY();
@@ -2735,8 +2573,8 @@ int ss; ss=getSmen_yuukou_suu();
                         y[0] = (int) yd[0];
 
                         // ---------- [1] ----------------
-                        t0.setX(Smen_zu.getmaex(ib) + o_btx);
-                        t0.setY(Smen_zu.getmaey(ib) + o_bty);
+                        t0.setX(Smen_zu.getBeginX(ib) + o_btx);
+                        t0.setY(Smen_zu.getBeginY(ib) + o_bty);
                         t1.set(camera.object2TV(t0));
                         xd[1] = t1.getX();
                         yd[1] = t1.getY();
@@ -2744,8 +2582,8 @@ int ss; ss=getSmen_yuukou_suu();
                         y[1] = (int) yd[1];
 
                         // ---------- [2] ----------------
-                        t0.setX(Smen_zu.getatox(ib) + o_btx);
-                        t0.setY(Smen_zu.getatoy(ib) + o_bty);
+                        t0.setX(Smen_zu.getEndX(ib) + o_btx);
+                        t0.setY(Smen_zu.getEndY(ib) + o_bty);
                         t1.set(camera.object2TV(t0));
                         xd[2] = t1.getX();
                         yd[2] = t1.getY();
@@ -2753,8 +2591,8 @@ int ss; ss=getSmen_yuukou_suu();
                         y[2] = (int) yd[2];
 
                         // ---------- [3] ----------------
-                        t0.setX(Smen_zu.getatox(ib));
-                        t0.setY(Smen_zu.getatoy(ib));
+                        t0.setX(Smen_zu.getEndX(ib));
+                        t0.setY(Smen_zu.getEndY(ib));
                         t1.set(camera.object2TV(t0));
                         xd[3] = t1.getX();
                         yd[3] = t1.getY();
@@ -2790,10 +2628,6 @@ int ss; ss=getSmen_yuukou_suu();
 
         g.setColor(L_color);//g.setColor(Color.black);
 
-
-        //System.out.println("上下表職人　oekaki_with_camera+++++++++++++++折紙表示　棒を描く");
-
-
         for (int ib = 1; ib <= Smen_zu.getSticksTotal(); ib++) {
 
             int Mid_min, Mid_max; //棒の両側のSmenの番号の小さいほうがMid_min,　大きいほうがMid_max
@@ -2827,7 +2661,7 @@ int ss; ss=getSmen_yuukou_suu();
             }
 
             if (oekaki_flg == 1) {//棒を描く。
-                s_ob.set(Smen_zu.getmaex(ib), Smen_zu.getmaey(ib), Smen_zu.getatox(ib), Smen_zu.getatoy(ib));
+                s_ob.set(Smen_zu.getBeginX(ib), Smen_zu.getBeginY(ib), Smen_zu.getEndX(ib), Smen_zu.getEndY(ib));
                 s_tv.set(camera.object2TV(s_ob));
                 //g2.draw(new Line2D.Double( gx(s_tv.getax()),gy(s_tv.getay()),gx(s_tv.getbx()),gy(s_tv.getby())));
                 g.drawLine(gx(s_tv.getAx()), gy(s_tv.getay()), gx(s_tv.getbx()), gy(s_tv.getby())); //直線
@@ -2836,27 +2670,17 @@ int ss; ss=getSmen_yuukou_suu();
 
 
         }
-
-        //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オフ
-
-
-        //System.out.println("上下表職人　oekaki_with_camera+++++++++++++++折紙表示　終了");
-        //}
-
-
-        //camera中心を十字で描く
-        //OO.jyuuji(g,camera.object2TV(camera.get_camera_ichi()), 5.0 , 2.0 , 4);
     }
 
 
     //---------------------------------------------------------
-    public void oekaki_jyuuji_with_camera(Graphics g) {
+    public void draw_cross_with_camera(Graphics g) {
         //System.out.println("折り上がり図の動かし中心の十字表示");
         //System.out.println("上下表職人　oekaki_jyuuji_with_camera+++++++++++++++折り上がり図の動かし中心の十字表示");
-        OritaOekaki OO = new OritaOekaki();
+        OritaDrawing OO = new OritaDrawing();
 
         //camera中心を十字で描く
-        OO.jyuuji(g, camera.object2TV(camera.get_camera_ichi()), 5.0, 2.0, 4);
+        OO.cross(g, camera.object2TV(camera.get_camera_position()), 5.0, 2.0, 4);
     }
 
 

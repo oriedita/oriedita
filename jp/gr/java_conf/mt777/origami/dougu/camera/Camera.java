@@ -11,7 +11,7 @@ public class Camera {//実際の座標と、表示座標の仲立ち
 
     double camera_position_x, camera_position_y;
     double camera_angle;
-    double camera_kagami; //-1.0か1.0のどちらか　x軸だけ符号を変える       //鏡
+    double camera_mirror; //-Either 1.0 or 1.0 Change the sign only on the x-axis // Mirror
     double camera_zoom_x;
     double camera_zoom_y;
     double display_position_x, display_position_y;
@@ -32,7 +32,7 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         camera_rad = camera_angle * do2rad;
         sin_rad = Math.sin(camera_rad);
         cos_rad = Math.cos(camera_rad);
-        camera_kagami = 1.0;       //鏡
+        camera_mirror = 1.0;       //鏡
         camera_zoom_x = 1.0;
         camera_zoom_y = 1.0;
 
@@ -61,7 +61,7 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         camera_rad = camera_angle * do2rad;
         sin_rad = Math.sin(camera_rad);
         cos_rad = Math.cos(camera_rad);
-        camera_kagami = 1.0;       //鏡
+        camera_mirror = 1.0;       //鏡
         camera_zoom_x = 1.0;
         camera_zoom_y = 1.0;
 
@@ -85,8 +85,8 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         cos_rad = Math.cos(camera_rad);
     }
 
-    public void set_camera_kagami(double d) {
-        camera_kagami = d;
+    public void setCameraMirror(double d) {
+        camera_mirror = d;
     }       //鏡
 
     public void setCameraZoomX(double d) {
@@ -114,29 +114,26 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         display_position_y = d;
     }
 
-
-    //public int get_camera_id(){return camera_id;}
-
     public void setCamera(Camera c0) {
-        double d_camera_ichi_x = c0.getCameraPositionX();
-        double d_camera_ichi_y = c0.getCameraPositionY();
+        double d_camera_position_x = c0.getCameraPositionX();
+        double d_camera_position_y = c0.getCameraPositionY();
         double d_camera_angle = c0.getCameraAngle();
-        double d_camera_kagami = c0.get_camera_kagami();
+        double d_camera_mirror = c0.getCameraMirror();
         double d_camera_zoom_x = c0.getCameraZoomX();
         double d_camera_zoom_y = c0.getCameraZoomY();
 
-        double d_hyouji_ichi_x = c0.getDisplayPositionX();
-        double d_hyouji_ichi_y = c0.getDisplayPositionY();
+        double d_display_position_x = c0.getDisplayPositionX();
+        double d_display_position_y = c0.getDisplayPositionY();
 
-        setCameraPositionX(d_camera_ichi_x);
-        setCameraPositionY(d_camera_ichi_y);
+        setCameraPositionX(d_camera_position_x);
+        setCameraPositionY(d_camera_position_y);
         setCameraAngle(d_camera_angle);
-        set_camera_kagami(d_camera_kagami);
+        setCameraMirror(d_camera_mirror);
         setCameraZoomX(d_camera_zoom_x);
         setCameraZoomY(d_camera_zoom_y);
 
-        setDisplayPositionX(d_hyouji_ichi_x);
-        setDisplayPositionY(d_hyouji_ichi_y);
+        setDisplayPositionX(d_display_position_x);
+        setDisplayPositionY(d_display_position_y);
     }
 
     public void display() {//Display various parameters
@@ -145,7 +142,7 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         System.out.println("camera_ichi_x = " + camera_position_x);
         System.out.println("camera_ichi_y = " + camera_position_y);
         System.out.println("camera_kakudo = " + camera_angle);
-        System.out.println("camera_kagami = " + camera_kagami);
+        System.out.println("camera_kagami = " + camera_mirror);
         System.out.println("camera_bairitsu_x = " + camera_zoom_x);
         System.out.println("camera_bairitsu_y = " + camera_zoom_y);
 
@@ -167,8 +164,8 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         return camera_angle;
     }
 
-    public double get_camera_kagami() {
-        return camera_kagami;
+    public double getCameraMirror() {
+        return camera_mirror;
     }       //鏡
 
     public double getCameraZoomX() {
@@ -198,7 +195,7 @@ public class Camera {//実際の座標と、表示座標の仲立ち
     }
 
 
-    public Point get_camera_ichi() {
+    public Point get_camera_position() {
         Point t_ichi = new Point();
         t_ichi.setX(camera_position_x);
         t_ichi.setY(camera_position_y);
@@ -215,12 +212,7 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         x2 = cos_rad * x1 + sin_rad * y1;
         y2 = -sin_rad * x1 + cos_rad * y1;
 
-        //x2= Math.cos(camera_rad)*x1+Math.sin(camera_rad)*y1;
-        //y2=-Math.sin(camera_rad)*x1+Math.cos(camera_rad)*y1;
-        //System.out.println("camera_id =  "+  camera_id   +"   :in object2TV camera_kagami     =   "+camera_kagami);
-        x2 = x2 * camera_kagami;       //鏡
-
-
+        x2 = x2 * camera_mirror;       //鏡
         x2 = x2 * camera_zoom_x;
         y2 = y2 * camera_zoom_y;
         t_tv.setX(x2 + display_position_x);
@@ -249,7 +241,7 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         x1 = x1 / camera_zoom_x;
         y1 = y1 / camera_zoom_y;
 
-        x1 = x1 * camera_kagami;       //鏡
+        x1 = x1 * camera_mirror;       //鏡
 
         x2 = cos_rad * x1 - sin_rad * y1;
         y2 = sin_rad * x1 + cos_rad * y1;

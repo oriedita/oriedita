@@ -36,7 +36,7 @@ public class Smen {//This class folds the development view and estimates the ove
     }
 
     //--------------------------------------
-    //Ketasuuと順列発生機の初期設定。忘れずにすること。
+    //Initial settings for Ketasuu and permutation generators. Don't forget.
     public void setNumDigits(int FIdCount) {
         FaceIdCount = FIdCount;
 
@@ -72,7 +72,7 @@ public class Smen {//This class folds the development view and estimates the ove
 
 //--------------------------------------
 
-    public void setMenid(int i, int Mid) {
+    public void setFaceId(int i, int Mid) {
         FaceId[i] = Mid;
     }
 

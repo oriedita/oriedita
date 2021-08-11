@@ -57,7 +57,7 @@ public class Haikei_camera {//実際の座標と、表示座標の仲立ち
 
 
         //camera.set_camera_id(cam0.get_camera_id());
-        camera.set_camera_kagami(cam0.get_camera_kagami());
+        camera.setCameraMirror(cam0.getCameraMirror());
 
 
         camera.setCameraPositionX(cam0.getCameraPositionX());

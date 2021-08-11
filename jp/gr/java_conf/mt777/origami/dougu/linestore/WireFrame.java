@@ -13,9 +13,9 @@ import java.util.*;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 public class WireFrame {
-    int total;               //実際に使う線分の総数
-    ArrayList<LineSegment> lineSegments = new ArrayList<>(); //線分のインスタンス化
-    OritaCalc oc = new OritaCalc();          //各種計算用の関数を使うためのクラスのインスタンス化
+    int total;               //Total number of line segments actually used
+    ArrayList<LineSegment> lineSegments = new ArrayList<>(); //Instantiation of line segments
+    OritaCalc oc = new OritaCalc();          //Instantiation of classes to use functions for various calculations
 
     public WireFrame() {
         reset();
@@ -41,7 +41,7 @@ public class WireFrame {
             while (total + 1 > lineSegments.size()) {
                 lineSegments.add(new LineSegment());
             }
-        }//この文がないとうまく行かない。なぜこの文でないといけないかという理由が正確にはわからない。
+        }//It won't work without this sentence. I don't know exactly why it should be this sentence.
         return lineSegments.get(i);
     }
 
@@ -51,13 +51,13 @@ public class WireFrame {
             while (total + 1 > lineSegments.size()) {
                 lineSegments.add(new LineSegment());
             }
-        }//この文がないとうまく行かない。なぜこの文でないといけないかという理由が正確にはわからない。
+        }//It won't work without this sentence. I don't know exactly why it should be this sentence.
         if (i + 1 <= lineSegments.size()) {
             lineSegments.set(i, s);
-        } //なぜか、このifがないとうまく行かない
+        } //For some reason, it doesn't work without this if
     }
 
-    //線分の総数を得る
+    //Get the total number of line segments
     public int getTotal() {
         return total;
     }
@@ -66,13 +66,12 @@ public class WireFrame {
         total = i;
     }
 
-    //線分を得る
+    //Get a line segment
     public LineSegment get(int i) {
-        //Senbun s;s= sen(i);return s;
         return getLine(i);
     }
 
-    //i番目の線分の端点を得る
+    //Get the endpoint of the i-th line segment
     public Point getA(int i) {
         LineSegment s;
         s = getLine(i);
@@ -85,7 +84,7 @@ public class WireFrame {
         return s.getB();
     }
 
-    //i番目の線分の端点を得る
+    //Get the endpoint of the i-th line segment
     public double getax(int i) {
         LineSegment s;
         s = getLine(i);
@@ -110,7 +109,7 @@ public class WireFrame {
         return s.getby();
     }
 
-    //i番目の線分の端点の位置をセットする
+    //Set the position of the end point of the i-th line segment
     public void seta(int i, Point p) {
         LineSegment s;
         s = getLine(i);
@@ -123,123 +122,100 @@ public class WireFrame {
         s.setB(p);
     }
 
-    //i番目の線分の値を入力する
+    //Enter the value of the i-th line segment
     public void set(int i, Point p, Point q, int ic, int ia) {
         LineSegment s;
         s = getLine(i);
         s.set(p, q, ic, ia);
     }
 
-    //i番目の線分の色を入力する
+    //Enter the color of the i-th line segment
     public void setColor(int i, int icol) {
         LineSegment s;
         s = getLine(i);
         s.setcolor(icol);
     }
 
-    //i番目の線分の色を出力する
+    //Output the color of the i-th line segment
     public int getColor(int i) {
         LineSegment s;
         s = getLine(i);
         return s.getColor();
     }
 
-    //i番目の線分の活性を出力する
+    //Output the activity of the i-th line segment
     public int getiactive(int i) {
         LineSegment s;
         s = getLine(i);
         return s.getiactive();
     }
 
-    //線分集合の全線分の情報を Memoとして出力する。
+    //Output the information of all line segments of the line segment set as Memo.
     public Memo getMemo() {
-        String str = "";//文字列処理用のクラスのインスタンス化
-
         Memo memo1 = new Memo();
         memo1.reset();
-        memo1.addLine("<線分集合>");
+        memo1.addLine("<線分集合>"); // <Line segment set>
 
         for (int i = 1; i <= total; i++) {
-            memo1.addLine("番号," + i);
-            LineSegment s;
-            s = getLine(i);
-            memo1.addLine("色," + s.getColor());
+            memo1.addLine("番号," + i); // number,
+            LineSegment s = getLine(i);
+            memo1.addLine("色," + s.getColor()); // colour,
             memo1.addLine("座標," + s.getAx() + "," + s.getay() + "," +
-                    s.getbx() + "," + s.getby());
-
-
+                    s.getbx() + "," + s.getby()); // Coordinate,
         }
-
 
         return memo1;
     }
 
     //-----------------------------
     public void setMemo(Memo memo1) {
-        int yomiflg = 0;//0なら読み込みを行わない。1なら読み込む。
-        int ibangou = 0;
+        int yomiflg = 0;//If it is 0, it will not be read. If it is 1, read it.
+        int iNumber = 0;
         int ic = 0;
-
-        String st = "";
-        Double Dd = 0.0;
-        Integer Ii = 0;
 
         double ax, ay, bx, by;
         String str = "";
-        //int jtok;
 
-//オリヒメ用ファイル.orhを読む
+        //Read the file .orh for Orihime
 
-//最初に線分の総数を求める
-        int isen = 0;
+        //First find the total number of line segments
+        int iLine = 0;
         for (int i = 1; i <= memo1.getLineSize(); i++) {
-
-
             StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
-            //jtok=    tk.countTokens();
-
 
             str = tk.nextToken();
-            if (str.equals("<線分集合>")) {
+            if (str.equals("<線分集合>")) { // <Line segment set>
                 yomiflg = 1;
             }
 
-            if ((yomiflg == 1) && (str.equals("番号"))) {
-                isen = isen + 1;
-
+            if ((yomiflg == 1) && (str.equals("番号"))) { // number
+                iLine = iLine + 1;
             }
         }
 
-        total = isen;
-//最初に線分の総数が求められた
-        //
+        total = iLine;
+        //First the total number of line segments was calculated
 
         for (int i = 1; i <= memo1.getLineSize(); i++) {
-
-
             StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
-            //jtok=    tk.countTokens();
             str = tk.nextToken();
-            //  	System.out.println("::::::::::"+ str+"<<<<<" );
 
-            if (str.equals("<線分集合>")) {
+            if (str.equals("<線分集合>")) { // Line segment set
                 yomiflg = 1;
             }
 
-            if ((yomiflg == 1) && (str.equals("番号"))) {
+            if ((yomiflg == 1) && (str.equals("番号"))) { // number
                 str = tk.nextToken();
-                ibangou = Integer.parseInt(str);
+                iNumber = Integer.parseInt(str);
 
             }
-            if ((yomiflg == 1) && (str.equals("色"))) {
+            if ((yomiflg == 1) && (str.equals("色"))) { // colour
                 str = tk.nextToken();
                 ic = Integer.parseInt(str);
-                LineSegment s;
-                s = getLine(ibangou);
+                LineSegment s = getLine(iNumber);
                 s.setcolor(ic);
-
             }
-            if ((yomiflg == 1) && (str.equals("座標"))) {
+            if ((yomiflg == 1) && (str.equals("座標"))) { // coordinate
                 str = tk.nextToken();
                 ax = Double.parseDouble(str);
                 str = tk.nextToken();
@@ -249,10 +225,8 @@ public class WireFrame {
                 str = tk.nextToken();
                 by = Double.parseDouble(str);
 
-                LineSegment s;
-                s = getLine(ibangou);
+                LineSegment s = getLine(iNumber);
                 s.set(ax, ay, bx, by);
-                //	System.out.println(ax );
             }
         }
     }
@@ -289,9 +263,9 @@ public class WireFrame {
     }
 
 
-    //Smenを発生させるための線分集合の整理
+    //Arrangement of line segment sets to generate Smen
 
-    public void bunkatu_seiri_for_Smen_hassei() {//折り畳み推定などで得られる針金図の整理
+    public void bunkatu_seiri_for_Smen_hassei() {//Arrangement of wire diagrams obtained by folding estimation, etc.
         System.out.println("　　Senbunsyuugouの中で、Smenを発生させるための線分集合の整理");
         System.out.println("分割整理　１、点削除前	getsousuu() = " + getTotal());
         point_removal();          //念のため、点状の線分を除く
@@ -307,7 +281,7 @@ public class WireFrame {
     }
 
 
-    //点状の線分を削除
+    //Remove dotted line segments
     public void point_removal() {
         for (int i = 1; i <= total; i++) {
             LineSegment s;
@@ -330,7 +304,7 @@ public class WireFrame {
         }
     }
 
-    // 全く重なる線分が2本存在するときに番号の遅いほうを削除する。
+    // When there are two completely overlapping line segments, the one with the latest number is deleted.。
     public void overlapping_line_removal(double r) {
         int[] sakujyo_flg = new int[total + 1];
         LineSegment[] snew = new LineSegment[total + 1];
@@ -381,7 +355,7 @@ public class WireFrame {
     }
 
     //
-    public int overlapping_line_removal(int i, int j) {    //重複の削除をしたら1、しなければ0を返す
+    public int overlapping_line_removal(int i, int j) {    //Returns 1 if duplicates are removed, 0 otherwise
         if (i == j) {
             return 0;
         }
@@ -389,18 +363,18 @@ public class WireFrame {
         si = getLine(i);
         LineSegment sj;
         sj = getLine(j);
-        if (oc.line_intersect_decide(si, sj) == 31) {  //31はsiとsjが全く同じに重なることを示す
+        if (oc.line_intersect_decide(si, sj) == 31) {  //31 indicates that si and sj overlap exactly the same
             deleteLineSegment(j);
             return 1;
         }
         return 0;
     }
 
-    //交差している２つの線分の交点で２つの線分を分割する。　まったく重なる線分が２つあった場合は、なんの処理もなされないまま２つとも残る。
+    //Divide the two line segments at the intersection of the two intersecting line segments. If there were two line segments that completely overlapped, both would remain without any processing.
     public void intersect_divide() {
-        int i_divide = 1;//分割があれば1、なければ0
+        int i_divide = 1;//1 if there is a split, 0 if not
 
-        ArrayList<Integer> k_flg = new ArrayList<>();//交差分割の影響があることを示すフラッグ。
+        ArrayList<Integer> k_flg = new ArrayList<>();//A flag that indicates that there is an effect of crossing.
 
         for (int i = 0; i <= total + 1; i++) {
             k_flg.add(1);
@@ -409,7 +383,7 @@ public class WireFrame {
         while (i_divide != 0) {
             i_divide = 0;
             for (int i = 1; i <= total; i++) {
-                Integer I_k_flag = (Integer) k_flg.get(i);
+                Integer I_k_flag = k_flg.get(i);
                 if (I_k_flag == 1) {
                     k_flg.set(i, 0);
                     for (int j = 1; j <= total; j++) {
@@ -564,12 +538,12 @@ public class WireFrame {
             return 1;
         }
         //
-        if (oc.line_intersect_decide(si, sj) == 31) {//2つの線分がまったく同じ場合は、何もしない。
+        if (oc.line_intersect_decide(si, sj) == 31) {//If the two line segments are exactly the same, do nothing.
             return 0;
         }
 
 
-        if (oc.line_intersect_decide(si, sj) == 321) {//2つの線分の端点どうし(p1とp3)が1点で重なる。siにsjが含まれる
+        if (oc.line_intersect_decide(si, sj) == 321) {//The endpoints of two line segments (p1 and p3) overlap at one point. si contains sj
             si.setA(p2);
             si.setB(p4);
 
@@ -585,7 +559,7 @@ public class WireFrame {
 
         }
 
-        if (oc.line_intersect_decide(si, sj) == 322) {//2つの線分の端点どうし(p1とp3)が1点で重なる。sjにsiが含まれる
+        if (oc.line_intersect_decide(si, sj) == 322) {//The endpoints of two line segments (p1 and p3) overlap at one point. sj contains si
             sj.setA(p2);
             sj.setB(p4);
             int overlapping_col;
@@ -598,7 +572,7 @@ public class WireFrame {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 331) {//2つの線分の端点どうし(p1とp4)が1点で重なる。siにsjが含まれる
+        if (oc.line_intersect_decide(si, sj) == 331) {//The endpoints of two line segments (p1 and p4) overlap at one point. si contains sj
             si.setA(p2);
             si.setB(p3);
 
@@ -612,7 +586,7 @@ public class WireFrame {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 332) {//2つの線分の端点どうし(p1とp4)が1点で重なる。sjにsiが含まれる
+        if (oc.line_intersect_decide(si, sj) == 332) {//The endpoints of two line segments (p1 and p4) overlap at one point. sj contains si
             sj.setA(p2);
             sj.setB(p3);
             int overlapping_col;
@@ -624,7 +598,7 @@ public class WireFrame {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 341) {//2つの線分の端点どうし(p2とp3)が1点で重なる。siにsjが含まれる
+        if (oc.line_intersect_decide(si, sj) == 341) {//The endpoints of two line segments (p2 and p3) overlap at one point. si contains sj
             si.setA(p1);
             si.setB(p4);
             int overlapping_col;
@@ -637,7 +611,7 @@ public class WireFrame {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 342) {//2つの線分の端点どうし(p2とp3)が1点で重なる。sjにsiが含まれる
+        if (oc.line_intersect_decide(si, sj) == 342) {//The endpoints of two line segments (p2 and p3) overlap at one point. sj contains si
             sj.setA(p1);
             sj.setB(p4);
             int overlapping_col;
@@ -651,7 +625,7 @@ public class WireFrame {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 351) {//2つの線分の端点どうし(p2とp4)が1点で重なる。siにsjが含まれる
+        if (oc.line_intersect_decide(si, sj) == 351) {//The endpoints of two line segments (p2 and p4) overlap at one point. si contains sj
 
 
             si.setA(p1);
@@ -667,7 +641,7 @@ public class WireFrame {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 352) {//2つの線分の端点どうし(p2とp4)が1点で重なる。sjにsiが含まれる
+        if (oc.line_intersect_decide(si, sj) == 352) {//The endpoints of two line segments (p2 and p4) overlap at one point. sj contains si
             sj.setA(p1);
             sj.setB(p3);
             int overlapping_col;
@@ -681,7 +655,7 @@ public class WireFrame {
         }
 
 
-        if (oc.line_intersect_decide(si, sj) == 361) {//p1-p3-p4-p2の順
+        if (oc.line_intersect_decide(si, sj) == 361) {//In order of p1-p3-p4-p2
             si.setA(p1);
             si.setB(p3);
 
@@ -696,7 +670,7 @@ public class WireFrame {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 362) {//p1-p4-p3-p2の順
+        if (oc.line_intersect_decide(si, sj) == 362) {//In order of p1-p4-p3-p2
             si.setA(p1);
             si.setB(p4);
 
@@ -712,7 +686,7 @@ public class WireFrame {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 363) {//p3-p1-p2-p4の順
+        if (oc.line_intersect_decide(si, sj) == 363) {//In order of p3-p1-p2-p4
             sj.setA(p1);
             sj.setB(p3);
 
@@ -728,7 +702,7 @@ public class WireFrame {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 364) {//p3-p2-p1-p4の順
+        if (oc.line_intersect_decide(si, sj) == 364) {//In order of p3-p2-p1-p4
             sj.setA(p1);
             sj.setB(p4);
 
@@ -745,7 +719,7 @@ public class WireFrame {
         }
 
         //
-        if (oc.line_intersect_decide(si, sj) == 371) {//p1-p3-p2-p4の順
+        if (oc.line_intersect_decide(si, sj) == 371) {//In order of p1-p3-p2-p4
             //System.out.println("371");
             si.setA(p1);
             si.setB(p3);
@@ -762,7 +736,7 @@ public class WireFrame {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 372) {//p1-p4-p2-p3の順
+        if (oc.line_intersect_decide(si, sj) == 372) {//In order of p1-p4-p2-p3
             //System.out.println("372");
             si.setA(p1);
             si.setB(p4);
@@ -779,7 +753,7 @@ public class WireFrame {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 373) {//p3-p1-p4-p2の順
+        if (oc.line_intersect_decide(si, sj) == 373) {//In order of p3-p1-p4-p2
             //System.out.println("373");
             sj.setA(p1);
             sj.setB(p3);
@@ -794,7 +768,7 @@ public class WireFrame {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 374) {//p4-p1-p3-p2の順
+        if (oc.line_intersect_decide(si, sj) == 374) {//In order of p4-p1-p3-p2
             //System.out.println("374");
             sj.setA(p1);
             sj.setB(p4);
@@ -813,7 +787,7 @@ public class WireFrame {
     }
 
 
-    //線分の追加-------------------------------
+    //Add line segment-------------------------------
     public void addLine(Point pi, Point pj, int i_c) {
         total++;
 
@@ -822,7 +796,7 @@ public class WireFrame {
         s.set(pi, pj, i_c);
     }
 
-    //線分の追加-------------------------------
+    //Add line segment-------------------------------
     public void addLine(double ax, double ay, double bx, double by, int ic) {
         total++;
 
@@ -831,7 +805,7 @@ public class WireFrame {
         s.set(ax, ay, bx, by, ic);
     }
 
-    //線分の追加-------------------------------
+    //Add line segment-------------------------------
     public void addLine(Point pi, Point pj) {
         total++;
 
@@ -862,8 +836,8 @@ public class WireFrame {
         return s.getLength();
     }
 
-    //閉多角形を形成せず、枝状になっている線分を削除する。
-    public void eda_kesi(double r) {
+    //Remove the branching line segments without forming a closed polygon.
+    public void branch_trim(double r) {
         int iflga = 0;
         int iflgb = 0;
         for (int i = 1; i <= total; i++) {

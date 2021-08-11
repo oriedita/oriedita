@@ -225,13 +225,10 @@ public class OritaCalc {
     public int line_intersect_decide(LineSegment s1, LineSegment s2) {
         //return senbun_kousa_hantei( s1,s2,0.001,0.001) ;
         return line_intersect_decide(s1, s2, 0.01, 0.01);
-
-        //return senbun_kousa_hantei( s1,s2,0.000001,0.000001) ;
     }
 
 
     public int line_intersect_decide_sweet(LineSegment s1, LineSegment s2) {
-        //return senbun_kousa_hantei_amai( s1,s2,0.000001,0.000001) ;
         return line_intersect_decide_sweet(s1, s2, 0.01, 0.01);
     }
 
@@ -327,7 +324,7 @@ public class OritaCalc {
         }
 
         // System.out.println("AAAAAAAAAAAA");
-        if (heikou_hantei(t1, t2, rhei) == 0) {    //２つの直線が平行でない
+        if (parallel_judgement(t1, t2, rhei) == 0) {    //２つの直線が平行でない
             Point pk = new Point();
             pk.set(findIntersection(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
             if ((isInside(p1, pk, p2) >= 1)
@@ -361,7 +358,7 @@ public class OritaCalc {
             return 0;
         }
 
-        if (heikou_hantei(t1, t2, rhei) == 1) { //２つの直線が平行で、y切片は一致しない
+        if (parallel_judgement(t1, t2, rhei) == 1) { //２つの直線が平行で、y切片は一致しない
             // System.out.println("BBBBBBBBBBB");
             return 0;
         }
@@ -376,8 +373,8 @@ public class OritaCalc {
 
         // System.out.println("###########");
 
-        //２つの直線が平行で、y切片も一致する
-        if (heikou_hantei(t1, t2, rhei) == 2) {
+        //The two straight lines are parallel and the y-intercept matches
+        if (parallel_judgement(t1, t2, rhei) == 2) {
             if (equal(p1, p3, rhit)) { //2つの線分の端点どうしが1点で重なる場合
                 if (isInside(p1, p4, p2) == 2) {
                     return 321;
@@ -458,7 +455,7 @@ public class OritaCalc {
 
             return 0;
         }
-        return -1;//ここは何らかのエラーの時に通る。
+        return -1;//This passes in case of some error 。
 
     }
 
@@ -560,14 +557,14 @@ public class OritaCalc {
         }
 
         // System.out.println("AAAAAAAAAAAA");
-        if (heikou_hantei(t1, t2, rhei) == 0) {    //２つの直線が平行でない
+        if (parallel_judgement(t1, t2, rhei) == 0) {    //２つの直線が平行でない
             Point pk = new Point();
             pk.set(findIntersection(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
             if ((hakononaka_amai(p1, pk, p2) >= 1)
                     && (hakononaka_amai(p3, pk, p4) >= 1)) {
                 if (equal(p1, p3, rhit)) {
                     return 21;
-                }//L字型
+                }//L-shaped
                 if (equal(p1, p4, rhit)) {
                     return 22;
                 }//L字型
@@ -594,12 +591,12 @@ public class OritaCalc {
             return 0;
         }
 
-        if (heikou_hantei(t1, t2, rhei) == 1) { //２つの直線が平行で、y切片は一致しない
+        if (parallel_judgement(t1, t2, rhei) == 1) { //２つの直線が平行で、y切片は一致しない
             // System.out.println("BBBBBBBBBBB");
             return 0;
         }
 
-        // ２つの線分が全く同じ
+        // The two line segments are exactly the same
         if (equal(p1, p3, rhit) && equal(p2, p4, rhit)) {
             return 31;
         }
@@ -609,8 +606,8 @@ public class OritaCalc {
 
         // System.out.println("###########");
 
-        //２つの直線が平行で、y切片も一致する
-        if (heikou_hantei(t1, t2, rhei) == 2) {
+        //The two straight lines are parallel and the y-intercept matches
+        if (parallel_judgement(t1, t2, rhei) == 2) {
             if (equal(p1, p3, rhit)) { //2つの線分の端点どうしが1点で重なる場合
                 if (isInside(p1, p4, p2) == 2) {
                     return 321;
@@ -650,7 +647,7 @@ public class OritaCalc {
             if (equal(p2, p4, rhit)) {
                 if (isInside(p2, p3, p1) == 2) {
                     return 351;
-                }//長い線分に短い線分が含まれる
+                }//A long line segment contains a short line segment
                 if (isInside(p4, p1, p3) == 2) {
                     return 352;
                 }//長い線分に短い線分が含まれる
@@ -695,17 +692,17 @@ public class OritaCalc {
 
 
     //２つの直線が平行かどうかを判定する関数。
-    public int heikou_hantei(StraightLine t1, StraightLine t2) {
-        return heikou_hantei(t1, t2, 0.1);
+    public int parallel_judgement(StraightLine t1, StraightLine t2) {
+        return parallel_judgement(t1, t2, 0.1);
     }
 
     //２つの線分が平行かどうかを判定する関数。
-    public int heikou_hantei(LineSegment s1, LineSegment s2, double r) {
-        return heikou_hantei(lineSegmentToStraightLine(s1), lineSegmentToStraightLine(s2), r);
+    public int parallel_judgement(LineSegment s1, LineSegment s2, double r) {
+        return parallel_judgement(lineSegmentToStraightLine(s1), lineSegmentToStraightLine(s2), r);
     }
 
 
-    public int heikou_hantei(StraightLine t1, StraightLine t2, double r) {//rは誤差の許容度。rが負なら厳密判定。
+    public int parallel_judgement(StraightLine t1, StraightLine t2, double r) {//rは誤差の許容度。rが負なら厳密判定。
         //0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
         double a1 = t1.getA(), b1 = t1.getB(), c1 = t1.getC();//直線t1, a1*x+b1*y+c1=0の各係数を求める。
         double a2 = t2.getA(), b2 = t2.getB(), c2 = t2.getC();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
@@ -807,18 +804,13 @@ public class OritaCalc {
     //------------------------------------
     //A function that returns a point obtained by rotating point b by d degrees around point a (returns a new point without changing the original point)
     public Point point_rotate(Point a, Point b, double d) {
-
         double Mcd = Math.cos(d * Math.PI / 180.0);
         double Msd = Math.sin(d * Math.PI / 180.0);
 
         double bx1 = Mcd * (b.getX() - a.getX()) - Msd * (b.getY() - a.getY()) + a.getX();
         double by1 = Msd * (b.getX() - a.getX()) + Mcd * (b.getY() - a.getY()) + a.getY();
 
-//double ax1=s0.getax();
-//double ay1=s0.getay();
-        Point t_return = new Point(bx1, by1);
-
-        return t_return;
+        return new Point(bx1, by1);
     }
 
     //------------------------------------
@@ -831,9 +823,7 @@ public class OritaCalc {
         double bx1 = r * (Mcd * (b.getX() - a.getX()) - Msd * (b.getY() - a.getY())) + a.getX();
         double by1 = r * (Msd * (b.getX() - a.getX()) + Mcd * (b.getY() - a.getY())) + a.getY();
 
-        Point t_return = new Point(bx1, by1);
-
-        return t_return;
+        return new Point(bx1, by1);
     }
 
     //------------------------------------
@@ -842,9 +832,7 @@ public class OritaCalc {
         double bx1 = r * (b.getX() - a.getX()) + a.getX();
         double by1 = r * (b.getY() - a.getY()) + a.getY();
 
-        Point t_return = new Point(bx1, by1);
-
-        return t_return;
+        return new Point(bx1, by1);
     }
 
 
@@ -852,8 +840,7 @@ public class OritaCalc {
 
     //線分abをcを中心にr倍してd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
     public LineSegment lineSegment_rotate(LineSegment s0, Point c, double d, double r) {
-        LineSegment s_return = new LineSegment(point_rotate(s0.getA(), c, d, r), point_rotate(s0.getB(), c, d, r));
-        return s_return;
+        return new LineSegment(point_rotate(s0.getA(), c, d, r), point_rotate(s0.getB(), c, d, r));
     }
 
 
@@ -861,13 +848,6 @@ public class OritaCalc {
 
     //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
     public LineSegment lineSegment_rotate(LineSegment s0, double d) {
-//s0.getax(),s0.getay()
-
-//(Math.cos(d*3.14159265/180.0),-Math.sin(d*3.14159265/180.0) )  (s0.getbx()-s0.getax()) + (s0.getax())
-//(Math.sin(d*3.14159265/180.0), Math.cos(d*3.14159265/180.0) )  (s0.getby()-s0.getay())   (s0.getay())
-
-//double Mcd=Math.cos(d*3.14159265/180.0);
-//double Msd=Math.sin(d*3.14159265/180.0);
         double Mcd = Math.cos(d * Math.PI / 180.0);
         double Msd = Math.sin(d * Math.PI / 180.0);
 
@@ -876,19 +856,13 @@ public class OritaCalc {
 
         double ax1 = s0.getAx();
         double ay1 = s0.getay();
-        LineSegment s_return = new LineSegment(ax1, ay1, bx1, by1);
 
-        return s_return;
+        return new LineSegment(ax1, ay1, bx1, by1);
     }
 
 
     //線分abをaを中心にr倍してd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
     public LineSegment lineSegment_rotate(LineSegment s0, double d, double r) {
-        //s0.getax(),s0.getay()
-
-        //(Math.cos(d*3.14159265/180.0),-Math.sin(d*3.14159265/180.0) )  (s0.getbx()-s0.getax()) + (s0.getax())
-        //(Math.sin(d*3.14159265/180.0), Math.cos(d*3.14159265/180.0) )  (s0.getby()-s0.getay())   (s0.getay())
-
         double Mcd = Math.cos(d * Math.PI / 180.0);
         double Msd = Math.sin(d * Math.PI / 180.0);
 
@@ -927,14 +901,14 @@ public class OritaCalc {
         jiku_b.set(jiku.getB());
 
         LineSegment s1 = new LineSegment();
-        s1.set(lineControl_point_find(jiku_a, jiku_b, p_a), lineControl_point_find(jiku_a, jiku_b, p_b));
+        s1.set(lineSymmetry_point_find(jiku_a, jiku_b, p_a), lineSymmetry_point_find(jiku_a, jiku_b, p_b));
 
         return s1;
     }
 
 
     //直線t0に関して、点pの対照位置にある点を求める関数
-    public Point lineControl_point_find(StraightLine t0, Point p) {
+    public Point lineSymmetry_point_find(StraightLine t0, Point p) {
         Point p1 = new Point();  // p1.set(s.geta());
         Point p2 = new Point();  // p2.set(s.getb());
 
@@ -951,7 +925,7 @@ public class OritaCalc {
     }
 
     //A function that finds a point at the control position of point p with respect to a straight line passing through two points t1 and t2.
-    public Point lineControl_point_find(Point t1, Point t2, Point p) {
+    public Point lineSymmetry_point_find(Point t1, Point t2, Point p) {
         Point p1 = new Point();  // p1.set(s.geta());
         Point p2 = new Point();  // p2.set(s.getb());
 
@@ -1020,7 +994,9 @@ public class OritaCalc {
         return angle_between_0_360(angle(c, d) - angle(a, b));
     }
 
-    //Find the inner heart of the triangle
+    /**
+     * Find the inner heart of the triangle
+     */
     public Point center(Point ta, Point tb, Point tc) {
         double A, B, C, XA, XB, XC, YA, YB, YC, XD, YD, XE, YE, G, H, K, L, P, Q, XN, YN;
         Point tn = new Point();
@@ -1079,8 +1055,10 @@ public class OritaCalc {
         return r_point;
     }
 
-    // -------------------------------
-    //Find the midpoint.
+    /**
+     * -------------------------------
+     * Find the midpoint.
+     */
     public Point midPoint(Point a, Point b) {
 
         return new Point((a.getX() + b.getX()) / 2.0, (a.getY() + b.getY()) / 2.0);
