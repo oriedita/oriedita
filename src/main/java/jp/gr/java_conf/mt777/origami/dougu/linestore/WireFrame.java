@@ -9,9 +9,6 @@ import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
 
 import java.util.*;
 
-// -------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------
 public class WireFrame {
     int total;               //Total number of line segments actually used
     ArrayList<LineSegment> lineSegments = new ArrayList<>(); //Instantiation of line segments
@@ -19,7 +16,7 @@ public class WireFrame {
 
     public WireFrame() {
         reset();
-    } //コンストラクタ
+    }
 
     public void reset() {
         total = 0;
@@ -30,8 +27,7 @@ public class WireFrame {
     public void set(WireFrame ss) {
         total = ss.getTotal();
         for (int i = 0; i <= total; i++) {
-            LineSegment s;
-            s = getLine(i);
+            LineSegment s = getLine(i);
             s.set(ss.get(i));
         }
     }
@@ -73,81 +69,70 @@ public class WireFrame {
 
     //Get the endpoint of the i-th line segment
     public Point getA(int i) {
-        LineSegment s;
-        s = getLine(i);
+        LineSegment s = getLine(i);
         return s.getA();
     }
 
     public Point getB(int i) {
-        LineSegment s;
-        s = getLine(i);
+        LineSegment s = getLine(i);
         return s.getB();
     }
 
     //Get the endpoint of the i-th line segment
-    public double getax(int i) {
-        LineSegment s;
-        s = getLine(i);
+    public double getAX(int i) {
+        LineSegment s = getLine(i);
         return s.getAX();
     }
 
-    public double getbx(int i) {
+    public double getBX(int i) {
         LineSegment s;
         s = getLine(i);
         return s.getBX();
     }
 
-    public double getay(int i) {
-        LineSegment s;
-        s = getLine(i);
+    public double getAY(int i) {
+        LineSegment s = getLine(i);
         return s.getAY();
     }
 
-    public double getby(int i) {
-        LineSegment s;
-        s = getLine(i);
+    public double getBY(int i) {
+        LineSegment s = getLine(i);
         return s.getBY();
     }
 
     //Set the position of the end point of the i-th line segment
-    public void seta(int i, Point p) {
-        LineSegment s;
-        s = getLine(i);
+    public void setA(int i, Point p) {
+        LineSegment s = getLine(i);
         s.setA(p);
     }
 
-    public void setb(int i, Point p) {
-        LineSegment s;
-        s = getLine(i);
+    public void setB(int i, Point p) {
+        LineSegment s = getLine(i);
         s.setB(p);
     }
 
     //Enter the value of the i-th line segment
     public void set(int i, Point p, Point q, int ic, int ia) {
-        LineSegment s;
-        s = getLine(i);
+        LineSegment s = getLine(i);
         s.set(p, q, ic, ia);
     }
 
     //Enter the color of the i-th line segment
     public void setColor(int i, int icol) {
-        LineSegment s;
-        s = getLine(i);
-        s.setcolor(icol);
+        LineSegment s = getLine(i);
+        s.setColor(icol);
     }
 
     //Output the color of the i-th line segment
     public int getColor(int i) {
-        LineSegment s;
-        s = getLine(i);
+        LineSegment s = getLine(i);
         return s.getColor();
     }
 
     //Output the activity of the i-th line segment
     public int getiactive(int i) {
-        LineSegment s;
-        s = getLine(i);
-        return s.getiactive();
+        LineSegment s = getLine(i);
+        return s.getActive();
     }
 
     //Output the information of all line segments of the line segment set as Memo.
@@ -169,9 +154,9 @@ public class WireFrame {
 
     //-----------------------------
     public void setMemo(Memo memo1) {
-        int yomiflg = 0;//If it is 0, it will not be read. If it is 1, read it.
+        int reading_flag = 0;//If it is 0, it will not be read. If it is 1, read it.
         int iNumber = 0;
-        int ic = 0;
+        int ic;
 
         double ax, ay, bx, by;
         String str = "";
@@ -180,15 +165,15 @@ public class WireFrame {
 
         //First find the total number of line segments
         int iLine = 0;
-        for (int i = 1; i <= memo1.getLineSize(); i++) {
+        for (int i = 1; i <= memo1.getLineCount(); i++) {
             StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
 
             str = tk.nextToken();
             if (str.equals("<線分集合>")) { // <Line segment set>
-                yomiflg = 1;
+                reading_flag = 1;
             }
 
-            if ((yomiflg == 1) && (str.equals("番号"))) { // number
+            if ((reading_flag == 1) && (str.equals("番号"))) { // number
                 iLine = iLine + 1;
             }
         }
@@ -196,26 +181,26 @@ public class WireFrame {
         total = iLine;
         //First the total number of line segments was calculated
 
-        for (int i = 1; i <= memo1.getLineSize(); i++) {
+        for (int i = 1; i <= memo1.getLineCount(); i++) {
             StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
             str = tk.nextToken();
 
             if (str.equals("<線分集合>")) { // Line segment set
-                yomiflg = 1;
+                reading_flag = 1;
             }
 
-            if ((yomiflg == 1) && (str.equals("番号"))) { // number
+            if ((reading_flag == 1) && (str.equals("番号"))) { // number
                 str = tk.nextToken();
                 iNumber = Integer.parseInt(str);
 
             }
-            if ((yomiflg == 1) && (str.equals("色"))) { // colour
+            if ((reading_flag == 1) && (str.equals("色"))) { // colour
                 str = tk.nextToken();
                 ic = Integer.parseInt(str);
                 LineSegment s = getLine(iNumber);
-                s.setcolor(ic);
+                s.setColor(ic);
             }
-            if ((yomiflg == 1) && (str.equals("座標"))) { // coordinate
+            if ((reading_flag == 1) && (str.equals("座標"))) { // coordinate
                 str = tk.nextToken();
                 ax = Double.parseDouble(str);
                 str = tk.nextToken();
@@ -231,24 +216,24 @@ public class WireFrame {
         }
     }
 
-    //展開図入力時の線分集合の整理
+    //Arrangement of line segment set when inputting development drawing
 
-    public void split_arrangement() {//折り畳み推定などで得られる針金図の整理
+    public void split_arrangement() {//Arrangement of wire diagrams obtained by folding estimation, etc.
         System.out.println("分割整理　１、点削除");
-        point_removal();          //念のため、点状の線分を除く
+        point_removal();          //Just in case, remove the dotted line segment
         System.out.println("分割整理　２、重複線分削除");
-        overlapping_line_removal();//念のため、全く一致する線分が２つあれば１つを除く
+        overlapping_line_removal();//Just in case, if there are two line segments that match exactly, remove one.
         System.out.println("分割整理　３、交差分割");
         intersect_divide();
         System.out.println("分割整理　４、点削除");
-        point_removal();             //折り畳み推定の針金図の整理のため、点状の線分を除く
+        point_removal();             //Exclude dotted line segments to organize the wire diagram for folding estimation
         System.out.println("分割整理　５、重複線分削除");
-        overlapping_line_removal(); //折り畳み推定の針金図の整理のため、全く一致する線分が２つあれば１つを除く
+        overlapping_line_removal(); //If there are two line segments that match exactly, remove one to organize the wire diagram for folding estimation.
     }
 
 
-    //全線分の山谷を入れ替える。境界線等の山谷以外の線種は変化なし。
-    public void zen_yama_tani_henkan() {
+    //Replace the mountains and valleys of all lines. There is no change in line types other than mountains and valleys such as boundaries.
+    public void all_mountain_valley_change() {
         int ic_temp;
 
         for (int ic_id = 1; ic_id <= total; ic_id++) {
@@ -262,13 +247,11 @@ public class WireFrame {
         }
     }
 
-
     //Arrangement of line segment sets to generate Smen
-
     public void bunkatu_seiri_for_Smen_hassei() {//Arrangement of wire diagrams obtained by folding estimation, etc.
         System.out.println("　　Senbunsyuugouの中で、Smenを発生させるための線分集合の整理");
         System.out.println("分割整理　１、点削除前	getsousuu() = " + getTotal());
-        point_removal();          //念のため、点状の線分を除く
+        point_removal();          //Just in case, remove the dotted line segment
         System.out.println("分割整理　２、重複線分削除前	getsousuu() = " + getTotal());
         overlapping_line_removal();//念のため、全く一致する線分が２つあれば１つを除く
         System.out.println("分割整理　３、交差分割前	getsousuu() = " + getTotal());
@@ -412,7 +395,7 @@ public class WireFrame {
 
 //---------------------
 
-    //交差している２つの線分の交点で２つの線分を分割する。分割を行ったら1。行わなかったら0を返す。オリヒメ2.002から分割後の線の色も制御するようにした(重複部がある場合は一本化し、番号の遅いほうの色になる)。
+    //Divide the two line segments at the intersection of the two intersecting line segments. After splitting 1. Returns 0 if not done. From Orihime 2.002, the color of the line after splitting is also controlled (if there is an overlap, it will be unified and the color will be the one with the later number).
     public int intersect_divide(int i, int j) {
         if (i == j) {
             return 0;
@@ -432,7 +415,6 @@ public class WireFrame {
         Point p4 = new Point();
         p4.set(sj.getB());
         Point pk = new Point();
-
 
         double ixmax;
         double ixmin;
@@ -504,8 +486,6 @@ public class WireFrame {
             return 1;
         }
 
-        //oc.senbun_kousa_hantei(si,sj)が21から24まではくの字型の交差で、なにもしない。
-
         if (oc.line_intersect_decide(si, sj) == 25) {
             pk.set(oc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
             sj.setA(p3);
@@ -542,7 +522,6 @@ public class WireFrame {
             return 0;
         }
 
-
         if (oc.line_intersect_decide(si, sj) == 321) {//The endpoints of two line segments (p1 and p3) overlap at one point. si contains sj
             si.setA(p2);
             si.setB(p4);
@@ -552,11 +531,9 @@ public class WireFrame {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            sj.setcolor(overlapping_col);
+            sj.setColor(overlapping_col);
 
             return 1;
-
-
         }
 
         if (oc.line_intersect_decide(si, sj) == 322) {//The endpoints of two line segments (p1 and p3) overlap at one point. sj contains si
@@ -567,7 +544,7 @@ public class WireFrame {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            si.setcolor(overlapping_col);
+            si.setColor(overlapping_col);
 
             return 1;
         }
@@ -581,7 +558,7 @@ public class WireFrame {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            sj.setcolor(overlapping_col);
+            sj.setColor(overlapping_col);
 
             return 1;
         }
@@ -594,7 +571,7 @@ public class WireFrame {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            si.setcolor(overlapping_col);
+            si.setColor(overlapping_col);
             return 1;
         }
 
@@ -606,7 +583,7 @@ public class WireFrame {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            sj.setcolor(overlapping_col);
+            sj.setColor(overlapping_col);
 
             return 1;
         }
@@ -619,7 +596,7 @@ public class WireFrame {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            si.setcolor(overlapping_col);
+            si.setColor(overlapping_col);
 
 
             return 1;
@@ -636,7 +613,7 @@ public class WireFrame {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            sj.setcolor(overlapping_col);
+            sj.setColor(overlapping_col);
 
             return 1;
         }
@@ -649,7 +626,7 @@ public class WireFrame {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            si.setcolor(overlapping_col);
+            si.setColor(overlapping_col);
 
             return 1;
         }
@@ -665,7 +642,7 @@ public class WireFrame {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            sj.setcolor(overlapping_col);
+            sj.setColor(overlapping_col);
 
             return 1;
         }
@@ -681,7 +658,7 @@ public class WireFrame {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            sj.setcolor(overlapping_col);
+            sj.setColor(overlapping_col);
 
             return 1;
         }
@@ -697,7 +674,7 @@ public class WireFrame {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            si.setcolor(overlapping_col);
+            si.setColor(overlapping_col);
 
             return 1;
         }
@@ -713,14 +690,13 @@ public class WireFrame {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            si.setcolor(overlapping_col);
+            si.setColor(overlapping_col);
 
             return 1;
         }
 
         //
         if (oc.line_intersect_decide(si, sj) == 371) {//In order of p1-p3-p2-p4
-            //System.out.println("371");
             si.setA(p1);
             si.setB(p3);
 
@@ -737,7 +713,6 @@ public class WireFrame {
         }
 
         if (oc.line_intersect_decide(si, sj) == 372) {//In order of p1-p4-p2-p3
-            //System.out.println("372");
             si.setA(p1);
             si.setB(p4);
 
@@ -754,7 +729,6 @@ public class WireFrame {
         }
 
         if (oc.line_intersect_decide(si, sj) == 373) {//In order of p3-p1-p4-p2
-            //System.out.println("373");
             sj.setA(p1);
             sj.setB(p3);
             si.setA(p2);
@@ -769,7 +743,6 @@ public class WireFrame {
         }
 
         if (oc.line_intersect_decide(si, sj) == 374) {//In order of p4-p1-p3-p2
-            //System.out.println("374");
             sj.setA(p1);
             sj.setB(p4);
             si.setA(p3);
@@ -791,8 +764,7 @@ public class WireFrame {
     public void addLine(Point pi, Point pj, int i_c) {
         total++;
 
-        LineSegment s;
-        s = getLine(total);
+        LineSegment s = getLine(total);
         s.set(pi, pj, i_c);
     }
 
@@ -800,8 +772,7 @@ public class WireFrame {
     public void addLine(double ax, double ay, double bx, double by, int ic) {
         total++;
 
-        LineSegment s;
-        s = getLine(total);
+        LineSegment s = getLine(total);
         s.set(ax, ay, bx, by, ic);
     }
 
@@ -816,8 +787,8 @@ public class WireFrame {
         s.setB(pj);
     }
 
-    //線分の削除-----------------------------------------
-    public void deleteLineSegment(int j) {   //j番目の線分を削除する
+    //Delete line segment-----------------------------------------
+    public void deleteLineSegment(int j) {   //Delete the jth line segment
         for (int i = j; i <= total - 1; i++) {
             LineSegment si;
             si = getLine(i);
@@ -829,8 +800,8 @@ public class WireFrame {
         total--;
     }
 
-    //i番目の線分の長さを得る---------------------------
-    public double getnagasa(int i) {
+    //Get the length of the i-th line segment---------------------------
+    public double getLength(int i) {
         LineSegment s;
         s = getLine(i);
         return s.getLength();
@@ -838,8 +809,8 @@ public class WireFrame {
 
     //Remove the branching line segments without forming a closed polygon.
     public void branch_trim(double r) {
-        int iflga = 0;
-        int iflgb = 0;
+        int iflga;
+        int iflgb;
         for (int i = 1; i <= total; i++) {
             iflga = 0;
             iflgb = 0;
@@ -871,9 +842,9 @@ public class WireFrame {
         }
     }
 
-    //一本だけの離れてある線分を削除する。
-    public void tanSenbun_sakujyo(double r) {
-        int iflg = 0;
+    //Delete only one separated line segment
+    public void singleLineSegment_delete(double r) {
+        int iflg;
         for (int i = 1; i <= total; i++) {
             iflg = 0;
             LineSegment si;
@@ -905,10 +876,9 @@ public class WireFrame {
     }
 
 
-    //点pに近い(r以内)線分をさがし、その番号を返す関数(ただし、j番目の線分は対象外)。近い線分がなければ、0を返す---------------------------------
-    //もし対象外にする線分が無い場合は、jを0とか負の整数とかにする。
-    //070317　追加機能　j　が　-10　の時は　活性化していない枝（getiactive(i)が0）を対象にする。
-
+    // A function that searches for a line segment close to point p (within r) and returns that number (however, the jth line segment is out of scope). Returns 0 if there is no close line segment ---------------------------------
+    // If there is no line segment to exclude, set j to 0 or a negative integer.
+    // 070317 When the additional function j is -10, the unactivated branch (getiactive (i) is 0) is targeted.
     public int lineSegment_search(Point p, double r, int j) {
         if (j == -10) {
             for (int i = 1; i <= total; i++) {
@@ -948,24 +918,24 @@ public class WireFrame {
     }
 
 
-    //点pが指定された線分とどの部所で近い(r以内)かどうかを判定する関数　---------------------------------
-    //0=近くない、1=a点に近い、2=b点に近い、3=柄の部分に近い
+    // A function that determines where the point p is close to the specified line segment (within r) ------------------------ ---------
+    // 0 = not close, 1 = close to point a, 2 = close to point b, 3 = close to handle
     public int lineSegment_position_search(int i, Point p, double r) {
         if (r > oc.distance(p, getA(i))) {
             return 1;
-        }//a点に近いかどうか
+        }//Whether it is close to point a
         if (r > oc.distance(p, getB(i))) {
             return 2;
-        }//b点に近いかどうか
+        }//Whether it is close to point b
         if (r > oc.distance_lineSegment(p, get(i))) {
             return 3;
-        }//柄の部分に近いかどうか
+        }//Whether it is close to the handle
         return 0;
     }
 
 
-    //点pに最も近い線分の番号を返す
-    public int mottomo_tikai_lineSegment_Search(Point p) {
+    //Returns the number of the line segment closest to the point p
+    public int closest_lineSegment_Search(Point p) {
         int minrid = 0;
         double minr = 100000;
         for (int i = 1; i <= total; i++) {
@@ -973,16 +943,14 @@ public class WireFrame {
             if (minr > sk) {
                 minr = sk;
                 minrid = i;
-            }//柄の部分に近いかどうか
+            }//Whether it is close to the handle
 
         }
         return minrid;
     }
 
-
-    //点pに最も近い線分の端点を返す
-    public Point mottomo_tikai_point_search(Point p) {
-
+    //Returns the endpoint of the line segment closest to point p
+    public Point closest_point_search(Point p) {
         Point p_return = new Point();
         p_return.set(100000.0, 100000.0);
         Point p_temp = new Point();
@@ -995,46 +963,38 @@ public class WireFrame {
             if (p.distanceSquared(p_temp) < p.distanceSquared(p_return)) {
                 p_return.set(p_temp.getX(), p_temp.getY());
             }
-            //p_temp.set(geta(i));if(p.kyori(p_temp)<p.kyori(p_return) ) {p_return.set(p_temp.getx(),p_temp.gety()); }
-            //p_temp.set(getb(i));if(p.kyori(p_temp)<p.kyori(p_return) ) {p_return.set(p_temp.getx(),p_temp.gety()); }
-
         }
         return p_return;
     }
 
-
-    //点pの近くの線分の活性化
-    public void kasseika(Point p, double r) {
+    //Activation of line segments near point p
+    public void activate(Point p, double r) {
         for (int i = 1; i <= total; i++) {
-            LineSegment si;
-            si = getLine(i);
+            LineSegment si = getLine(i);
             si.activate(p, r);
         }
     }
 
-    //全線分の非活性化
-    public void hikasseika() {
+    //Inactivation of all lines
+    public void deactivate() {
         for (int i = 1; i <= total; i++) {
-            LineSegment si;
-            si = getLine(i);
+            LineSegment si = getLine(i);
             si.deactivate();
         }
     }
 
 
-    //線分の活性化されたものを点pの座標にする
+    //Make the activated line segment the coordinates of point p
     public void set(Point p) {
         for (int i = 1; i <= total; i++) {
-            LineSegment si;
-            si = getLine(i);
+            LineSegment si = getLine(i);
             si.set(p);
         }
 
     }
 
-    //線分集合の中の線分i0と、i0以外で、全く重なる線分があれば、その番号を返す。なければ-10を返す。
+    //If there is a line segment i0 in the line segment set and a line segment other than i0 that completely overlaps, the number is returned. If not, it returns -10.
     public int overlapping_lineSegment_search(int i0) {
-        //int minrid=0;double minr=100000;
         for (int i = 1; i <= total; i++) {
             if (i != i0) {
                 if (oc.line_intersect_decide(get(i), get(i0)) == 31) {
@@ -1043,9 +1003,5 @@ public class WireFrame {
             }
         }
         return -10;
-
-
     }
-
-
 }

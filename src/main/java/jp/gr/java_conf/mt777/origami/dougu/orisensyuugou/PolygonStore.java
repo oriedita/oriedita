@@ -48,20 +48,13 @@ public class PolygonStore {
         circles.add(new Circle());
     }
 
-    public void hyouji(String s0) {
-
+    public void display(String s0) {
         System.out.println(s0 + "  sousuu = " + total);
         for (int i = 1; i <= total; i++) {
-
             LineSegment s;
             s = getLineSegment(i);
             s.display(" ");
-
-            //System.out.println("  i=" +i +" ; ("+oc.d2s(getax(i))+" , "+oc.d2s(getay(i))+")---("+oc.d2s(getbx(i)+" , "+oc.d2s(getby(i)+")");
-
-
         }
-
     }
 
 
@@ -184,7 +177,7 @@ public class PolygonStore {
     public void setColor(int i, int icol) {
         LineSegment s;
         s = getLineSegment(i);
-        s.setcolor(icol);
+        s.setColor(icol);
     }
 
     //i番目の線分の色を出力する
@@ -249,7 +242,7 @@ public class PolygonStore {
     public void setiactive(int i, int iactive) {
         LineSegment s;
         s = getLineSegment(i);
-        s.setiactive(iactive);
+        s.setActive(iactive);
     }
 
 
@@ -257,7 +250,7 @@ public class PolygonStore {
     public int getiactive(int i) {
         LineSegment s;
         s = getLineSegment(i);
-        return s.getiactive();
+        return s.getActive();
     }
 
     //-----------------------------
@@ -300,7 +293,7 @@ public class PolygonStore {
             memo1.addLine("番号," + i);
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
-            memo1.addLine("中心と半径と色," + e_temp.getx() + "," + e_temp.gety() + "," + e_temp.getRadius() + "," + e_temp.getcolor());
+            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
 
             memo1.addLine("<tpp>" + e_temp.getCustomized() + "</tpp>");                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             memo1.addLine("<tpp_color_R>" + e_temp.getCustomizedColor().getRed() + "</tpp_color_R>");    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -341,7 +334,7 @@ public class PolygonStore {
                 memo1.addLine("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-                memo1.addLine("選択," + s.get_i_select());
+                memo1.addLine("選択," + s.getSelected());
                 memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
             }
         }
@@ -352,7 +345,7 @@ public class PolygonStore {
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
             //memo1.addGyou( "色,"+str.valueOf(e_temp.getcolor()));
-            memo1.addLine("中心と半径と色," + e_temp.getx() + "," + e_temp.gety() + "," + e_temp.getRadius() + "," + e_temp.getcolor());
+            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
 
             memo1.addLine("<tpp>" + e_temp.getCustomized() + "</tpp>");                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             memo1.addLine("<tpp_color_R>" + e_temp.getCustomizedColor().getRed() + "</tpp_color_R>");    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -436,7 +429,7 @@ public class PolygonStore {
         for (int i = 1; i <= total; i++) {
             LineSegment s;
             s = getLineSegment(i);
-            if ((s.getColor() < 3) && (s.get_i_select() == 2)) {
+            if ((s.getColor() < 3) && (s.getSelected() == 2)) {
                 ibangou = ibangou + 1;
                 memo1.addLine("番号," + ibangou);
 
@@ -468,7 +461,7 @@ public class PolygonStore {
         for (int i = 1; i <= total; i++) {
             LineSegment s;
             s = getLineSegment(i);
-            if ((s.getColor() < 3) && (s.get_i_select() == 2)) {
+            if ((s.getColor() < 3) && (s.getSelected() == 2)) {
                 ibangou = ibangou + 1;
                 //memo1.addGyou("番号,"+str.valueOf(ibangou));
 
@@ -523,7 +516,7 @@ public class PolygonStore {
 
         //最初に線分の総数を求める
         int isen = 0;
-        for (int i = 1; i <= memo1.getLineSize(); i++) {
+        for (int i = 1; i <= memo1.getLineCount(); i++) {
 
             StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
             //jtok=    tk.countTokens();
@@ -545,7 +538,7 @@ public class PolygonStore {
 
         Circle e_temp = new Circle();
 
-        for (int i = 1; i <= memo1.getLineSize(); i++) {
+        for (int i = 1; i <= memo1.getLineCount(); i++) {
             String str_i = memo1.getLine(i);
 
             //旧式の読み込み方法
@@ -577,7 +570,7 @@ public class PolygonStore {
                 ic = Integer.parseInt(str);
                 LineSegment s;
                 s = getLineSegment(ibangou);
-                s.setcolor(ic);
+                s.setColor(ic);
             }
 
             if (yomiflg == 1) {
@@ -622,7 +615,7 @@ public class PolygonStore {
                 is = Integer.parseInt(str);
                 LineSegment s;
                 s = getLineSegment(ibangou);
-                s.setiactive(is);
+                s.setActive(is);
             }
 
 
@@ -631,7 +624,7 @@ public class PolygonStore {
                 is = Integer.parseInt(str);
                 LineSegment s;
                 s = getLineSegment(ibangou);
-                s.set_i_select(is);
+                s.setSelected(is);
             }
             if ((yomiflg == 1) && (str.equals("座標"))) {
                 str = tk.nextToken();
@@ -729,7 +722,7 @@ public class PolygonStore {
 
         //最初に線分の総数を求める
         int isen = 0;
-        for (int i = 1; i <= memo1.getLineSize(); i++) {
+        for (int i = 1; i <= memo1.getLineCount(); i++) {
 
             StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
             //jtok=    tk.countTokens();
@@ -746,7 +739,7 @@ public class PolygonStore {
         //最初に補助線分の総数が求められた
         //
 
-        for (int i = 1; i <= memo1.getLineSize(); i++) {
+        for (int i = 1; i <= memo1.getLineCount(); i++) {
 
 
             StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
@@ -765,14 +758,14 @@ public class PolygonStore {
                 ic = Integer.parseInt(str);
                 LineSegment s;
                 s = getLineSegment(ibangou);
-                s.setcolor(ic);
+                s.setColor(ic);
             }
             if ((yomiflg == 1) && (str.equals("補助選択"))) {
                 str = tk.nextToken();
                 is = Integer.parseInt(str);
                 LineSegment s;
                 s = getLineSegment(ibangou);
-                s.set_i_select(is);
+                s.setSelected(is);
             }
             if ((yomiflg == 1) && (str.equals("補助座標"))) {
                 str = tk.nextToken();
@@ -811,7 +804,7 @@ public class PolygonStore {
 
         //最初に線分の総数を求める
         int isen = 0;
-        for (int i = 1; i <= memo1.getLineSize(); i++) {
+        for (int i = 1; i <= memo1.getLineCount(); i++) {
 
             StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
             //jtok=    tk.countTokens();
@@ -830,7 +823,7 @@ public class PolygonStore {
         //最初に線分の総数が求められた
         //
 
-        for (int i = 1; i <= memo1.getLineSize(); i++) {
+        for (int i = 1; i <= memo1.getLineCount(); i++) {
 
             String str_i = memo1.getLine(i);
 
@@ -858,7 +851,7 @@ public class PolygonStore {
                 ic = Integer.parseInt(str);
                 LineSegment s;
                 s = getLineSegment(ibangou);
-                s.setcolor(ic);
+                s.setColor(ic);
             }
 
             if (yomiflg == 1) {
@@ -1045,7 +1038,7 @@ public class PolygonStore {
             s = getLineSegment(i);
 
 
-            if (s.get_i_select() != ijyogai) {
+            if (s.getSelected() != ijyogai) {
                 iNumber = iNumber + 1;
                 memo1.addLine("番号," + iNumber);
                 memo1.addLine("色," + s.getColor());
@@ -1055,7 +1048,7 @@ public class PolygonStore {
                 memo1.addLine("<tpp_color_G>" + s.getCustomizedColor().getGreen() + "</tpp_color_G>");    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 memo1.addLine("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-                memo1.addLine("iactive," + s.getiactive());//20181110追加
+                memo1.addLine("iactive," + s.getActive());//20181110追加
                 memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
 
             }
@@ -1068,7 +1061,7 @@ public class PolygonStore {
             memo1.addLine("番号," + i);
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
-            memo1.addLine("中心と半径と色," + e_temp.getx() + "," + e_temp.gety() + "," + e_temp.getRadius() + "," + e_temp.getcolor());
+            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
 
             memo1.addLine("<tpp>" + e_temp.getCustomized() + "</tpp>");                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             memo1.addLine("<tpp_color_R>" + e_temp.getCustomizedColor().getRed() + "</tpp_color_R>");    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1094,7 +1087,7 @@ public class PolygonStore {
             LineSegment s;
             s = getLineSegment(i);
 
-            if (s.get_i_select() == isentaku) {
+            if (s.getSelected() == isentaku) {
                 iNumber = iNumber + 1;
                 memo1.addLine("番号," + iNumber);
                 memo1.addLine("色," + s.getColor());
@@ -1118,7 +1111,7 @@ public class PolygonStore {
         for (int i = 1; i <= total; i++) {
             LineSegment s;
             s = getLineSegment(i);
-            s.set_i_select(2);
+            s.setSelected(2);
         }
     }
 
@@ -1127,7 +1120,7 @@ public class PolygonStore {
         for (int i = 1; i <= total; i++) {
             LineSegment s;
             s = getLineSegment(i);
-            s.set_i_select(0);
+            s.setSelected(0);
         }
     }
 
@@ -1135,7 +1128,7 @@ public class PolygonStore {
     public void select(int i) {
         LineSegment s;
         s = getLineSegment(i);
-        s.set_i_select(2);
+        s.setSelected(2);
     }
 
     public void select(Point p1, Point p2, Point p3) {
@@ -1150,7 +1143,7 @@ public class PolygonStore {
             s = getLineSegment(i);
             if (triangle.totu_boundary_inside(s) == 1) {
 
-                s.set_i_select(2);
+                s.setSelected(2);
 
             }
         }
@@ -1169,7 +1162,7 @@ public class PolygonStore {
             s = getLineSegment(i);
             if (sikaku.totu_boundary_inside(s) == 1) {
 
-                s.set_i_select(2);
+                s.setSelected(2);
 
             }
         }
@@ -1188,7 +1181,7 @@ public class PolygonStore {
             s = getLineSegment(i);
             if (sankaku.totu_boundary_inside(s) == 1) {
 
-                s.set_i_select(0);
+                s.setSelected(0);
 
             }
         }
@@ -1207,7 +1200,7 @@ public class PolygonStore {
             s = getLineSegment(i);
             if (sikaku.totu_boundary_inside(s) == 1) {
 
-                s.set_i_select(0);
+                s.setSelected(0);
 
             }
         }
@@ -1256,7 +1249,7 @@ public class PolygonStore {
             LineSegment s;
             s = getLineSegment(i);
             if (sikaku.totu_boundary_inside(s) == 1) {
-                s.setcolor(1);
+                s.setColor(1);
                 i_r = 1;
             }
         }
@@ -1277,7 +1270,7 @@ public class PolygonStore {
             LineSegment s;
             s = getLineSegment(i);
             if (sikaku.totu_boundary_inside(s) == 1) {
-                s.setcolor(2);
+                s.setColor(2);
                 i_r = 1;
             }
         }
@@ -1298,7 +1291,7 @@ public class PolygonStore {
             LineSegment s;
             s = getLineSegment(i);
             if (sikaku.totu_boundary_inside(s) == 1) {
-                s.setcolor(0);
+                s.setColor(0);
                 i_r = 1;
             }
         }
@@ -1327,7 +1320,7 @@ public class PolygonStore {
 
                     LineSegment add_sen = new LineSegment();
                     add_sen.set(s);
-                    add_sen.setcolor(3);
+                    add_sen.setColor(3);
 
                     deleteLine(i);
                     addLine(add_sen);
@@ -1445,7 +1438,7 @@ public class PolygonStore {
             if (idel == 0) {
                 ii = ii + 1;
                 memo1.addLine("番号," + ii);
-                memo1.addLine("中心と半径と色," + e_temp.getx() + "," + e_temp.gety() + "," + e_temp.getRadius() + "," + e_temp.getcolor());
+                memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
             }
         }
 
@@ -1541,7 +1534,7 @@ public class PolygonStore {
             if (idel == 0) {
                 ii = ii + 1;
                 memo1.addLine("番号," + ii);
-                memo1.addLine("中心と半径と色," + e_temp.getx() + "," + e_temp.gety() + "," + e_temp.getRadius() + "," + e_temp.getcolor());
+                memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
             }
         }
 
@@ -1620,7 +1613,7 @@ public class PolygonStore {
             //if(idel==0){
             ii = ii + 1;
             memo1.addLine("番号," + ii);
-            memo1.addLine("中心と半径と色," + e_temp.getx() + "," + e_temp.gety() + "," + e_temp.getRadius() + "," + e_temp.getcolor());
+            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
             //}
         }
 
@@ -1678,7 +1671,7 @@ public class PolygonStore {
             e_temp.set(getCircle(i));//ec.set(e_temp.get_tyuusin());er=e_temp.getr();
             ii = ii + 1;
             memo1.addLine("番号," + ii);
-            memo1.addLine("中心と半径と色," + e_temp.getx() + "," + e_temp.gety() + "," + e_temp.getRadius() + "," + e_temp.getcolor());
+            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
         }
 
         reset();
@@ -1769,7 +1762,7 @@ public class PolygonStore {
             if (idel == 0) {
                 ii = ii + 1;
                 memo1.addLine("番号," + ii);
-                memo1.addLine("中心と半径と色," + e_temp.getx() + "," + e_temp.gety() + "," + e_temp.getRadius() + "," + e_temp.getcolor());
+                memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
             }
         }
 
@@ -1868,19 +1861,19 @@ public class PolygonStore {
     public void unselect(int i) {
         LineSegment s;
         s = getLineSegment(i);
-        s.set_i_select(0);
+        s.setSelected(0);
     }
 
     public int get_select(int i) {
         LineSegment s;
         s = getLineSegment(i);
-        return s.get_i_select();
+        return s.getSelected();
     }
 
     public void set_select(int i, int isel) {
         LineSegment s;
         s = getLineSegment(i);
-        s.set_i_select(isel);
+        s.setSelected(isel);
     }
 
 
@@ -2215,16 +2208,16 @@ public class PolygonStore {
         LineSegment sj;
         sj = getLineSegment(j);
 
-        if (si.get_i_max_x() < sj.get_i_min_x()) {
+        if (si.getMaxX() < sj.getMinX()) {
             return 0;
         }
-        if (sj.get_i_max_x() < si.get_i_min_x()) {
+        if (sj.getMaxX() < si.getMinX()) {
             return 0;
         }
-        if (si.get_i_max_y() < sj.get_i_min_y()) {
+        if (si.getMaxY() < sj.getMinY()) {
             return 0;
         }
-        if (sj.get_i_max_y() < si.get_i_min_y()) {
+        if (sj.getMaxY() < si.getMinY()) {
             return 0;
         }
         //		System.out.println("kousabunkatu_hayai 01");
@@ -2236,13 +2229,13 @@ public class PolygonStore {
 
 
         StraightLine tyoku0 = new StraightLine(si.getA(), si.getB());
-        intersect_flg0 = tyoku0.lineSegment_intersect_hantei_kuwasii(sj);//senbun_kousa_hantei(Senbun s0){//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+        intersect_flg0 = tyoku0.lineSegment_intersect_reverse_detail(sj);//senbun_kousa_hantei(Senbun s0){//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
         if (intersect_flg0 == 0) {
             return 0;
         }
 
         StraightLine tyoku1 = new StraightLine(sj.getA(), sj.getB());
-        intersect_flg1 = tyoku1.lineSegment_intersect_hantei_kuwasii(si);
+        intersect_flg1 = tyoku1.lineSegment_intersect_reverse_detail(si);
         if (intersect_flg0 == 0) {
             return 0;
         }
@@ -2483,7 +2476,7 @@ public class PolygonStore {
                 if ((si.getColor() != 3) && (sj.getColor() == 3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
-                sj.setcolor(si.getColor());
+                sj.setColor(si.getColor());
                 si.setA(sj.getB());
                 return 321;
             } else if (i_kousa_hantei == 322) {//(p1=p3)_p2_p4、siがsjに含まれる。
@@ -2504,7 +2497,7 @@ public class PolygonStore {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
-                sj.setcolor(si.getColor());
+                sj.setColor(si.getColor());
                 si.setA(sj.getA());
                 return 331;
             } else if (i_kousa_hantei == 332) {//(p1=p4)_p2_p3、siがsjに含まれる。
@@ -2527,7 +2520,7 @@ public class PolygonStore {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
-                sj.setcolor(si.getColor());
+                sj.setColor(si.getColor());
                 si.setB(sj.getB());
                 return 341;
 
@@ -2551,7 +2544,7 @@ public class PolygonStore {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
-                sj.setcolor(si.getColor());
+                sj.setColor(si.getColor());
                 si.setB(sj.getA());
                 return 351;
 
@@ -2576,7 +2569,7 @@ public class PolygonStore {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
-                sj.setcolor(si.getColor());
+                sj.setColor(si.getColor());
                 //addsenbun(sj.getb(),si.getb(),si.getcolor());
                 addLine(sj.getB(), si.getB(), si);
 
@@ -2590,7 +2583,7 @@ public class PolygonStore {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
-                sj.setcolor(si.getColor());
+                sj.setColor(si.getColor());
                 //addsenbun(sj.geta(),si.getb(),si.getcolor());
                 addLine(sj.getA(), si.getB(), si);
 
@@ -2745,16 +2738,16 @@ public class PolygonStore {
         LineSegment sj;
         sj = getLineSegment(j);
 
-        if (si.get_i_max_x() < sj.get_i_min_x()) {
+        if (si.getMaxX() < sj.getMinX()) {
             return 0;
         }//これはSenbunにi_max_xがちゃんと定義されているときでないとうまくいかない
-        if (sj.get_i_max_x() < si.get_i_min_x()) {
+        if (sj.getMaxX() < si.getMinX()) {
             return 0;
         }//これはSenbunにi_min_xがちゃんと定義されているときでないとうまくいかない
-        if (si.get_i_max_y() < sj.get_i_min_y()) {
+        if (si.getMaxY() < sj.getMinY()) {
             return 0;
         }//これはSenbunにi_max_yがちゃんと定義されているときでないとうまくいかない
-        if (sj.get_i_max_y() < si.get_i_min_y()) {
+        if (sj.getMaxY() < si.getMinY()) {
             return 0;
         }//これはSenbunにi_min_yがちゃんと定義されているときでないとうまくいかない
 
@@ -2888,7 +2881,7 @@ public class PolygonStore {
 //System.out.println("      888888888888888888888888888");
 
             if (oc.distance_lineSegment(si.getA(), sj) < 0.01) {
-                if (oc.lineSegment_busyo_search(si.getA(), sj, 0.01) == 3) { //20161107 わずかに届かない場合
+                if (oc.lineSegment_endpoint_search(si.getA(), sj, 0.01) == 3) { //20161107 わずかに届かない場合
                     pk.set(oc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
                     sj.setA(p3);
                     sj.setB(pk);
@@ -2898,7 +2891,7 @@ public class PolygonStore {
             }
 
             if (oc.distance_lineSegment(si.getB(), sj) < 0.01) {
-                if (oc.lineSegment_busyo_search(si.getB(), sj, 0.01) == 3) { //20161107 わずかに届かない場合
+                if (oc.lineSegment_endpoint_search(si.getB(), sj, 0.01) == 3) { //20161107 わずかに届かない場合
                     pk.set(oc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
                     sj.setA(p3);
                     sj.setB(pk);
@@ -2908,7 +2901,7 @@ public class PolygonStore {
             }
 
             if (oc.distance_lineSegment(sj.getA(), si) < 0.01) {
-                if (oc.lineSegment_busyo_search(sj.getA(), si, 0.01) == 3) { //20161107 わずかに届かない場合
+                if (oc.lineSegment_endpoint_search(sj.getA(), si, 0.01) == 3) { //20161107 わずかに届かない場合
                     pk.set(oc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
                     si.setA(p1);
                     si.setB(pk);
@@ -2918,7 +2911,7 @@ public class PolygonStore {
             }
 
             if (oc.distance_lineSegment(sj.getB(), si) < 0.01) {
-                if (oc.lineSegment_busyo_search(sj.getB(), si, 0.01) == 3) { //20161107 わずかに届かない場合
+                if (oc.lineSegment_endpoint_search(sj.getB(), si, 0.01) == 3) { //20161107 わずかに届かない場合
                     pk.set(oc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
                     si.setA(p1);
                     si.setB(pk);
@@ -2948,7 +2941,7 @@ public class PolygonStore {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            sj.setcolor(overlapping_col);
+            sj.setColor(overlapping_col);
 
             return 1;
 
@@ -2964,7 +2957,7 @@ public class PolygonStore {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            si.setcolor(overlapping_col);
+            si.setColor(overlapping_col);
 
             return 1;
         }
@@ -2979,7 +2972,7 @@ public class PolygonStore {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            sj.setcolor(overlapping_col);
+            sj.setColor(overlapping_col);
 
             return 1;
         }
@@ -2993,7 +2986,7 @@ public class PolygonStore {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            si.setcolor(overlapping_col);
+            si.setColor(overlapping_col);
             return 1;
         }
 
@@ -3006,7 +2999,7 @@ public class PolygonStore {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            sj.setcolor(overlapping_col);
+            sj.setColor(overlapping_col);
 
             return 1;
         }
@@ -3020,7 +3013,7 @@ public class PolygonStore {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            si.setcolor(overlapping_col);
+            si.setColor(overlapping_col);
 
 
             return 1;
@@ -3037,7 +3030,7 @@ public class PolygonStore {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            sj.setcolor(overlapping_col);
+            sj.setColor(overlapping_col);
 
             return 1;
         }
@@ -3051,7 +3044,7 @@ public class PolygonStore {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            si.setcolor(overlapping_col);
+            si.setColor(overlapping_col);
 
             return 1;
         }
@@ -3067,7 +3060,7 @@ public class PolygonStore {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            sj.setcolor(overlapping_col);
+            sj.setColor(overlapping_col);
 
             return 1;
         }
@@ -3083,7 +3076,7 @@ public class PolygonStore {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            sj.setcolor(overlapping_col);
+            sj.setColor(overlapping_col);
 
             return 1;
         }
@@ -3099,7 +3092,7 @@ public class PolygonStore {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            si.setcolor(overlapping_col);
+            si.setColor(overlapping_col);
 
             return 1;
         }
@@ -3115,7 +3108,7 @@ public class PolygonStore {
             if (i < j) {
                 overlapping_col = sj.getColor();
             }
-            si.setcolor(overlapping_col);
+            si.setColor(overlapping_col);
 
             return 1;
         }
@@ -3224,7 +3217,7 @@ public class PolygonStore {
                             addCircle(oc.naibun(ei.getCenter(), ej.getCenter(), -ei.getRadius(), ej.getRadius()), 0.0);
                         } else if (oc.distance(ei.getCenter(), ej.getCenter()) < Math.abs(ei.getRadius() - ej.getRadius())) {//2つの円は交差しない
 
-						} else {//2つの円は2点で交差
+						} else {//Two circles intersect at two points
                             LineSegment lineSegment = new LineSegment();
                             lineSegment.set(oc.circle_to_circle_no_intersection_wo_musubu_lineSegment(ei, ej));
 
@@ -3238,8 +3231,8 @@ public class PolygonStore {
     }
 
 
-    //円と折線の交点に半径0の円を発生-------------------------------
-    public void Senbun_en_kouten(int imin, int imax, int jmin, int jmax) {
+    //A circle with a radius of 0 is generated at the intersection of the circle and the polygonal line.-------------------------------
+    public void lineSegment_circle_intersection(int imin, int imax, int jmin, int jmax) {
         for (int i = imin; i <= imax; i++) {
             LineSegment si;
             si = getLineSegment(i);
@@ -3252,10 +3245,10 @@ public class PolygonStore {
                 Circle ej = new Circle();
                 ej.set(getCircle(j));
                 if (ej.getRadius() > 0.0000001) {//半径0の円は対象外
-                    double tc_kyori = ti.calculateDistance(ej.getCenter()); //直線と円の中心の距離
+                    double tc_kyori = ti.calculateDistance(ej.getCenter()); //Distance between the center of a straight line and a circle
 
 
-                    if (Math.abs(tc_kyori - ej.getRadius()) < 0.000001) {//円と直線は1点で交差
+                    if (Math.abs(tc_kyori - ej.getRadius()) < 0.000001) {//Circle and straight line intersect at one point
                         if (
                                 Math.abs(
                                         oc.distance_lineSegment(ej.getCenter(), si) - ej.getRadius()
@@ -3263,10 +3256,10 @@ public class PolygonStore {
                         ) {
                             addCircle(oc.shadow_request(ti, ej.getCenter()), 0.0);
                         }
-                    } else if (tc_kyori > ej.getRadius()) {//円と直線は交差しない
-					} else {//円と直線は2点で交差
+                    } else if (tc_kyori > ej.getRadius()) {//Circles and straight lines do not intersect
+					} else {//Circle and straight line intersect at two points
                         LineSegment k_senb = new LineSegment();
-                        k_senb.set(oc.circle_to_straightLine_no_kouten_wo_musubu_LineSegment(ej, ti));
+                        k_senb.set(oc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(ej, ti));
 
                         if (oc.distance_lineSegment(k_senb.getA(), si) < 0.00001) {
                             addCircle(k_senb.getA(), 0.0);
@@ -3475,7 +3468,7 @@ public class PolygonStore {
     //線分の追加-------------------------------
     public void addLine(LineSegment s0) {
         //addsenbun(s0.geta(),s0.getb(),s0.getcolor());//20181110コメントアウト
-        addLine(s0.getA(), s0.getB(), s0.getColor(), s0.getiactive());//20181110追加
+        addLine(s0.getA(), s0.getB(), s0.getColor(), s0.getActive());//20181110追加
     }
 
     //線分の削除-----------------------------------------
@@ -4702,8 +4695,8 @@ public class PolygonStore {
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
 
-            e_temp.setx(e_temp.getx() + dx);
-            e_temp.sety(e_temp.gety() + dy);
+            e_temp.setX(e_temp.getX() + dx);
+            e_temp.setY(e_temp.getY() + dy);
             cir_setEn(i, e_temp);
         }
 
@@ -5960,13 +5953,13 @@ public class PolygonStore {
             //線分s0が凸多角形の内部と境界線の両方に渡って存在するとき4、
             //線分s0の全部が凸多角形の内部（境界線は内部とみなさない）に存在するとき5、
 
-            if (Taka.naibu_gaibu_hantei(s) == 3) {
+            if (Taka.inside_outside_check(s) == 3) {
                 i_kono_orisen_wo_kaeru = 1;
             }
-            if (Taka.naibu_gaibu_hantei(s) == 4) {
+            if (Taka.inside_outside_check(s) == 4) {
                 i_kono_orisen_wo_kaeru = 1;
             }
-            if (Taka.naibu_gaibu_hantei(s) == 5) {
+            if (Taka.inside_outside_check(s) == 5) {
                 i_kono_orisen_wo_kaeru = 1;
             }
 
@@ -5977,10 +5970,10 @@ public class PolygonStore {
 */
             if (i_kono_orisen_wo_kaeru == 1) {
                 if (Dousa_mode.equals("select")) {
-                    s.set_i_select(2);
+                    s.setSelected(2);
                 }
                 if (Dousa_mode.equals("unselect")) {
-                    s.set_i_select(0);
+                    s.setSelected(0);
                 }
             }
         }
@@ -6008,10 +6001,10 @@ public class PolygonStore {
 
             if (i_kono_orisen_wo_kaeru == 1) {
                 if (Dousa_mode.equals("select_lX")) {
-                    s.set_i_select(2);
+                    s.setSelected(2);
                 }
                 if (Dousa_mode.equals("unselect_lX")) {
-                    s.set_i_select(0);
+                    s.setSelected(0);
                 }
             }
         }

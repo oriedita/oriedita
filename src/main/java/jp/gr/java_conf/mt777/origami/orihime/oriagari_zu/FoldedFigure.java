@@ -98,7 +98,6 @@ public class FoldedFigure {
 
 
     // **************************************************
-//コンストラクタ
     public FoldedFigure(App app0) {
         orihime_app = app0;
 
@@ -183,30 +182,28 @@ public class FoldedFigure {
         camera_of_transparent_rear.setCameraZoomY(1.0);
         camera_of_transparent_rear.setDisplayPositionX(350.0);
         camera_of_transparent_rear.setDisplayPositionY(350.0);
-
-
     }
 
     // ------------------------------------------------------------------------------------------
-    public void foldUp_draw(Graphics bufferGraphics, int i_mejirusi_hyouji) {
+    public void foldUp_draw(Graphics bufferGraphics, int i_mejirusi_display) {
 
-        //hyouji_flg==2,ip4==0  front
-        //hyouji_flg==2,ip4==1	rear
-        //hyouji_flg==2,ip4==2	front & rear
-        //hyouji_flg==2,ip4==3	front & rear
+        //display_flg==2,ip4==0  front
+        //display_flg==2,ip4==1	rear
+        //display_flg==2,ip4==2	front & rear
+        //display_flg==2,ip4==3	front & rear
 
-        //hyouji_flg==3,ip4==0  front
-        //hyouji_flg==3,ip4==1	rear
-        //hyouji_flg==3,ip4==2	front & rear
-        //hyouji_flg==3,ip4==3	front & rear
+        //display_flg==3,ip4==0  front
+        //display_flg==3,ip4==1	rear
+        //display_flg==3,ip4==2	front & rear
+        //display_flg==3,ip4==3	front & rear
 
-        //hyouji_flg==5,ip4==0  front
-        //hyouji_flg==5,ip4==1	rear
-        //hyouji_flg==5,ip4==2	front & rear
-        //hyouji_flg==5,ip4==3	front & rear & front2 & rear2
+        //display_flg==5,ip4==0  front
+        //display_flg==5,ip4==1	rear
+        //display_flg==5,ip4==2	front & rear
+        //display_flg==5,ip4==3	front & rear & front2 & rear2
 
 
-        //折り上がり図の表示はct_workerが行うので表示自体はcp_worker2にカメラをセットする必要はないが、その後、画面クリックをcp_worker2が判定したりするのでcp_worker2のカメラ更新は表示と同期して行う必要がある。
+        //Since ct_worker displays the folded figure, it is not necessary to set the camera in cp_worker2 for the display itself, but after that, cp_worker2 judges the screen click, so it is necessary to update the camera of cp_worker2 in synchronization with the display. ..
         cp_worker2.setCamera(camera_of_foldedFigure);
         cp_worker2.setCam_front(camera_of_foldedFigure_front);
         cp_worker2.setCam_rear(camera_of_foldedFigure_rear);
@@ -214,13 +211,12 @@ public class FoldedFigure {
         cp_worker2.setCam_transparent_rear(camera_of_transparent_rear);
 
 
-        //針金図の表示
-        //System.out.println("paint　+++++++++++++++++++++　針金図の表示");
+        //Wire diagram display
         if (display_flg == 2) {
             cp_worker2.drawing_with_camera(bufferGraphics, ip4);//The operation of the fold-up diagram moves the wire diagram of this cp_worker2.
         }
 
-        //折りあがり図（表）の表示
+        //Display of folded figure (table)
         if (((ip4 == 0) || (ip4 == 2)) || (ip4 == 3)) {
             ct_worker.setCamera(camera_of_foldedFigure_front);
 
@@ -235,20 +231,18 @@ public class FoldedFigure {
                 ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get());// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
-            //折り上がり図の動かし中心の十字表示
-            //System.out.println("paint　+++++++++++++++++++++　折り上がり図の動かし中心の十字表示)");
-            if (i_mejirusi_hyouji == 1) {
+            //Cross-shaped display at the center of movement of the folded figure
+            if (i_mejirusi_display == 1) {
                 ct_worker.draw_cross_with_camera(bufferGraphics);
             }
         }
 
-        //折りあがり図（裏）の表示
+        //Display of folded figure (back)
         if (((ip4 == 1) || (ip4 == 2)) || (ip4 == 3)) {
             camera_of_foldedFigure_rear.display();
             ct_worker.setCamera(camera_of_foldedFigure_rear);
 
-            //透過図の表示
-            //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
+            //Display of transparency
             if (display_flg == 3) {        // hyouji_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
                 ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), i_toukazu_color, transparent_transparency);
             }
@@ -258,9 +252,9 @@ public class FoldedFigure {
                 ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get());// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
-            //折り上がり図の動かし中心の十字表示
+            //Cross-shaped display at the center of movement of the folded figure
             //System.out.println("paint　+++++++++++++++++++++　折り上がり図の動かし中心の十字表示)");
-            if (i_mejirusi_hyouji == 1) {
+            if (i_mejirusi_display == 1) {
                 ct_worker.draw_cross_with_camera(bufferGraphics);
             }
         }
@@ -275,7 +269,7 @@ public class FoldedFigure {
 
             //折り上がり図の動かし中心の十字表示
             //System.out.println("paint　+++++++++++++++++++++　折り上がり図の動かし中心の十字表示)");
-            if (i_mejirusi_hyouji == 1) {
+            if (i_mejirusi_display == 1) {
                 ct_worker.draw_cross_with_camera(bufferGraphics);
             }
 
@@ -288,7 +282,7 @@ public class FoldedFigure {
 
             //折り上がり図の動かし中心の十字表示
             //System.out.println("paint　+++++++++++++++++++++　折り上がり図の動かし中心の十字表示)");
-            if (i_mejirusi_hyouji == 1) {
+            if (i_mejirusi_display == 1) {
                 ct_worker.draw_cross_with_camera(bufferGraphics);
             }
             // ---------------------------------------------------------------------------------

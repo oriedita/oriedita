@@ -302,7 +302,7 @@ public class CreasePattern {
     //Men を多角形にする
     private Polygon makePolygon(Face mn) {
         Polygon tk = new Polygon(mn.getPointsCount());
-        tk.setVerticesCount(mn.getPointsCount());
+        tk.setVertexCount(mn.getPointsCount());
         for (int i = 0; i <= mn.getPointsCount(); i++) {
             tk.set(i, points[mn.getPointId(i)]);
         }
@@ -469,7 +469,7 @@ public class CreasePattern {
     private double calculateArea(Face mn) {
         Polygon tk;
         tk = makePolygon(mn);
-        return tk.menseki_motome();
+        return tk.area_calculate();
     }
 
     public int getPointsTotal() {
@@ -1113,7 +1113,7 @@ public class CreasePattern {
         String str = "";
         double ax, ay;
 
-        for (int i = 1; i <= memo1.getLineSize(); i++) {
+        for (int i = 1; i <= memo1.getLineCount(); i++) {
 
             StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
             //jtok=    tk.countTokens();
@@ -1131,7 +1131,7 @@ public class CreasePattern {
         //sousuu =isen;
         //最初に補助線分の総数が求められた
 
-        for (int i = 1; i <= memo1.getLineSize(); i++) {
+        for (int i = 1; i <= memo1.getLineCount(); i++) {
 
 
             StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");

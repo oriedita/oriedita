@@ -102,7 +102,7 @@ public class WireFrame_Worker {
 
     //-----------------------------
     public void zen_yama_tani_henkan() {
-        wireFrame.zen_yama_tani_henkan();
+        wireFrame.all_mountain_valley_change();
     }
 
     //----------------
@@ -181,18 +181,15 @@ public class WireFrame_Worker {
     }
 
 
-    //不要な線分を消去する-----------------------------------------------
-    public void gomisute() {
+    //Erase unnecessary line segments-----------------------------------------------
+    public void garbageCollect() {
 
         for (int i = 1; i <= wireFrame.getTotal(); i++) {
             int idel = 0;
-            //if(gomibako.naibu(k.geta(i))>0){idel=1;}    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            //if(gomibako.kousa(k.get( i))){idel=1;}
 
             if (trash.convex_inside(wireFrame.get(i)) == 1) {
                 idel = 1;
             }
-
 
             if (idel == 1) {
                 wireFrame.deleteLineSegment(i);
@@ -216,24 +213,24 @@ public class WireFrame_Worker {
         jeda = wireFrame.lineSegment_search(wireFrame.getA(iActiveBranch), 2 * r, iActiveBranch);//アクティブな枝のa点と近い別の枝を求める。
         jbasyo = wireFrame.lineSegment_position_search(jeda, wireFrame.getA(iActiveBranch), 2 * r);//別の枝のどの部所が近いかを求める。
         if ((jeda != 0) && (jbasyo == 1)) { //アクティブな枝のa点と、別の枝のa点が近い場合
-            wireFrame.seta(iActiveBranch, wireFrame.getA(jeda));
-            wireFrame.setb(iActiveBranch, new Point(1, wireFrame.getA(iActiveBranch), 1, ab));//こう書いてもちゃんと動く様なので、このまま使う。
+            wireFrame.setA(iActiveBranch, wireFrame.getA(jeda));
+            wireFrame.setB(iActiveBranch, new Point(1, wireFrame.getA(iActiveBranch), 1, ab));//こう書いてもちゃんと動く様なので、このまま使う。
         }
         if ((jeda != 0) && (jbasyo == 2)) { //アクティブな枝のa点と、別の枝のb点が近い場合
-            wireFrame.seta(iActiveBranch, wireFrame.getB(jeda));
-            wireFrame.setb(iActiveBranch, new Point(1, wireFrame.getA(iActiveBranch), 1, ab));
+            wireFrame.setA(iActiveBranch, wireFrame.getB(jeda));
+            wireFrame.setB(iActiveBranch, new Point(1, wireFrame.getA(iActiveBranch), 1, ab));
         }
 
         //　アクティブな枝のb点　と　別の枝　との距離が　ｒ　より近い場合
         jeda = wireFrame.lineSegment_search(wireFrame.getB(iActiveBranch), 2 * r, iActiveBranch);//アクティブな枝のb点と近い別の枝を求める。
         jbasyo = wireFrame.lineSegment_position_search(jeda, wireFrame.getB(iActiveBranch), 2 * r);//別の枝のどの部所が近いかを求める。
         if ((jeda != 0) && (jbasyo == 1)) { //アクティブな枝のb点と、別の枝のa点が近い場合
-            wireFrame.setb(iActiveBranch, wireFrame.getA(jeda));
-            wireFrame.seta(iActiveBranch, new Point(1, wireFrame.getB(iActiveBranch), 1, ba));
+            wireFrame.setB(iActiveBranch, wireFrame.getA(jeda));
+            wireFrame.setA(iActiveBranch, new Point(1, wireFrame.getB(iActiveBranch), 1, ba));
         }
         if ((jeda != 0) && (jbasyo == 2)) { //アクティブな枝のb点と、別の枝のb点が近い場合
-            wireFrame.setb(iActiveBranch, wireFrame.getB(jeda));
-            wireFrame.seta(iActiveBranch, new Point(1, wireFrame.getB(iActiveBranch), 1, ba));
+            wireFrame.setB(iActiveBranch, wireFrame.getB(jeda));
+            wireFrame.setA(iActiveBranch, new Point(1, wireFrame.getB(iActiveBranch), 1, ba));
         }
     }
 
@@ -244,25 +241,25 @@ public class WireFrame_Worker {
 
         int jeda;   //アクティブな枝と近い別の枝
         int jbasyo; //アクティブな枝と近い別の枝のどこが近いのかを示すための番号
-        if (wireFrame.getnagasa(iActiveBranch) >= r) {
+        if (wireFrame.getLength(iActiveBranch) >= r) {
             //　アクティブな枝のa点　と　別の枝との距離が　ｒ　より近い場合
             jeda = wireFrame.lineSegment_search(wireFrame.getA(iActiveBranch), r, iActiveBranch);//アクティブな枝のa点と近い別の枝を求める。
             jbasyo = wireFrame.lineSegment_position_search(jeda, wireFrame.getA(iActiveBranch), r);//別の枝のどの部所が近いかを求める。
             if ((jeda != 0) && (jbasyo == 1)) {
-                wireFrame.seta(iActiveBranch, wireFrame.getA(jeda));
+                wireFrame.setA(iActiveBranch, wireFrame.getA(jeda));
             }//アクティブな枝のa点と、別の枝のa点が近い場合
             if ((jeda != 0) && (jbasyo == 2)) {
-                wireFrame.seta(iActiveBranch, wireFrame.getB(jeda));
+                wireFrame.setA(iActiveBranch, wireFrame.getB(jeda));
             }//アクティブな枝のa点と、別の枝のb点が近い場合
 
             //　アクティブな枝(ieda)のb点　と　別の枝(jeda)との距離が　ｒ　より近い場合
             jeda = wireFrame.lineSegment_search(wireFrame.getB(iActiveBranch), r, iActiveBranch);//アクティブな枝のb点と近い別の枝を求める。
             jbasyo = wireFrame.lineSegment_position_search(jeda, wireFrame.getB(iActiveBranch), r);//別の枝のどの部所が近いかを求める。
             if ((jeda != 0) && (jbasyo == 1)) {
-                wireFrame.setb(iActiveBranch, wireFrame.getA(jeda));
+                wireFrame.setB(iActiveBranch, wireFrame.getA(jeda));
             }//アクティブな枝のb点と、別の枝のa点が近い場合
             if ((jeda != 0) && (jbasyo == 2)) {
-                wireFrame.setb(iActiveBranch, wireFrame.getB(jeda));
+                wireFrame.setB(iActiveBranch, wireFrame.getB(jeda));
             }//アクティブな枝のb点と、別の枝のb点が近い場合
 
             //以下は070317に追加 複数の線分が集まった頂点を別の頂点近くに持っていったときの後処理用
@@ -274,11 +271,11 @@ public class WireFrame_Worker {
             jbasyo = wireFrame.lineSegment_position_search(jeda, wireFrame.getA(iActiveBranch), r);//別の枝のどの部所が近いかを求める。
 
             if ((jeda != 0) && (jbasyo == 1)) {
-                wireFrame.kasseika(wireFrame.getA(jeda), r);
+                wireFrame.activate(wireFrame.getA(jeda), r);
                 wireFrame.set(wireFrame.getA(jeda));
             }//アクティブなieda枝のa点と、別の枝のa点が近い場合
             if ((jeda != 0) && (jbasyo == 2)) {
-                wireFrame.kasseika(wireFrame.getB(jeda), r);
+                wireFrame.activate(wireFrame.getB(jeda), r);
                 wireFrame.set(wireFrame.getB(jeda));
             }//アクティブなieda枝のa点と、別の枝のb点が近い場合
 
@@ -287,11 +284,11 @@ public class WireFrame_Worker {
             jbasyo = wireFrame.lineSegment_position_search(jeda, wireFrame.getB(iActiveBranch), r);//別の枝のどの部所が近いかを求める。
 
             if ((jeda != 0) && (jbasyo == 1)) {
-                wireFrame.kasseika(wireFrame.getA(jeda), r);
+                wireFrame.activate(wireFrame.getA(jeda), r);
                 wireFrame.set(wireFrame.getA(jeda));
             }//アクティブなieda枝のb点と、別の枝のa点が近い場合
             if ((jeda != 0) && (jbasyo == 2)) {
-                wireFrame.kasseika(wireFrame.getB(jeda), r);
+                wireFrame.activate(wireFrame.getB(jeda), r);
                 wireFrame.set(wireFrame.getB(jeda));
             }//アクティブなieda枝のb点と、別の枝のb点が近い場合
         }
@@ -339,15 +336,15 @@ public class WireFrame_Worker {
             g.setColor(Color.red);
             for (int i = 1; i <= wireFrame.getTotal(); i++) {
                 if (oc.equal(wireFrame.getA(i), wireFrame.getB(i), r)) {
-                    g.fillOval((int) wireFrame.getax(i) - kr, (int) wireFrame.getay(i) - kr, 2 * kr, 2 * kr); //Circle
+                    g.fillOval((int) wireFrame.getAX(i) - kr, (int) wireFrame.getAY(i) - kr, 2 * kr, 2 * kr); //Circle
                 }
             }
             for (int i = 1; i <= wireFrame.getTotal() - 1; i++) {
                 for (int j = i + 1; j <= wireFrame.getTotal(); j++) {
                     if (oc.line_intersect_decide(wireFrame.get(i), wireFrame.get(j)) == 31) {
                         OO.widthLine(g, wireFrame.get(i), kr, 1);//  Thick line
-                        g.fillOval((int) wireFrame.getax(i) - kr, (int) wireFrame.getay(i) - kr, 2 * kr, 2 * kr); //Circle
-                        g.fillOval((int) wireFrame.getbx(i) - kr, (int) wireFrame.getby(i) - kr, 2 * kr, 2 * kr); //Circle
+                        g.fillOval((int) wireFrame.getAX(i) - kr, (int) wireFrame.getAY(i) - kr, 2 * kr, 2 * kr); //Circle
+                        g.fillOval((int) wireFrame.getBX(i) - kr, (int) wireFrame.getBY(i) - kr, 2 * kr, 2 * kr); //Circle
                     }
                 }
             }
@@ -475,10 +472,10 @@ public class WireFrame_Worker {
 			}
             if (icol == -2) {
                 g.setColor(new Color(100, 200, 0));//竹色
-                if (oc.kakudozure(wireFrame.get(i), kijyun_kakudo) < 2.0) {
+                if (oc.angle_difference(wireFrame.get(i), kijyun_kakudo) < 2.0) {
                     g.setColor(new Color(200, 100, 0));//おうど色
                 }
-                if (oc.kakudozure(wireFrame.get(i), kijyun_kakudo) < 0.5) {
+                if (oc.angle_difference(wireFrame.get(i), kijyun_kakudo) < 0.5) {
                     g.setColor(Color.black);
                 }
             }
@@ -696,7 +693,7 @@ public class WireFrame_Worker {
         //ゴミ箱がクリックされたら、単独の線分を削除する
 
         if (trash.inside(p) >= 1) {
-            wireFrame.tanSenbun_sakujyo(r);
+            wireFrame.singleLineSegment_delete(r);
             nhi = 0;//入力方法が多角形の場合の初期化を行う
         }
 
@@ -708,7 +705,7 @@ public class WireFrame_Worker {
         if (input_method <= 1) {
 
             if (input_method == 1) {
-                int mtsid = wireFrame.mottomo_tikai_lineSegment_Search(p);
+                int mtsid = wireFrame.closest_lineSegment_Search(p);
                 wireFrame.addLine(wireFrame.getB(mtsid), p);
 
                 wireFrame.set(mtsid, wireFrame.getA(mtsid), p, wireFrame.getColor(mtsid), 0);
@@ -763,7 +760,7 @@ public class WireFrame_Worker {
 	        System.out.print(k.getby(7)) ;System.out.println(",,,") ;
                 System.out.println(oc.senbun_kousa_hantei(k.get(6),k.get(7)));
 	   */
-            wireFrame.kasseika(p, r);
+            wireFrame.activate(p, r);
         }
         //--------------
         if (input_method == 2) {
@@ -853,8 +850,8 @@ public class WireFrame_Worker {
                 wireFrame.set(p);
             } //b点を変更
             if (move_mode == 3) {//枝を平行移動
-                wireFrame.seta(iActiveBranch, new Point(1, p, 1, pa));
-                wireFrame.setb(iActiveBranch, new Point(1, p, 1, pb));
+                wireFrame.setA(iActiveBranch, new Point(1, p, 1, pa));
+                wireFrame.setB(iActiveBranch, new Point(1, p, 1, pb));
             }
             if (move_mode == 4) {
                 wireFrame.set(p);
@@ -891,8 +888,8 @@ public class WireFrame_Worker {
                 wireFrame.set(p);
             } //b点を変更
             if (move_mode == 3) {//枝を平行移動
-                wireFrame.seta(iActiveBranch, new Point(1, p, 1, pa));
-                wireFrame.setb(iActiveBranch, new Point(1, p, 1, pb));
+                wireFrame.setA(iActiveBranch, new Point(1, p, 1, pa));
+                wireFrame.setB(iActiveBranch, new Point(1, p, 1, pb));
                 if (move_mode == 4) {
                     wireFrame.set(p);
                 }//a点を変更(ugokasi_mode==1)と同じ動作をする
@@ -923,8 +920,8 @@ public class WireFrame_Worker {
                     System.out.print(": ");
                     System.out.println(wireFrame.getiactive(i));
                     if (wireFrame.getiactive(i) >= 1) {
-                        wireFrame.seta(i, kitei_idou(wireFrame.getA(i)));
-                        wireFrame.setb(i, kitei_idou(wireFrame.getB(i)));
+                        wireFrame.setA(i, kitei_idou(wireFrame.getA(i)));
+                        wireFrame.setB(i, kitei_idou(wireFrame.getB(i)));
                     }
 
                 }
@@ -933,23 +930,23 @@ public class WireFrame_Worker {
             }
 
 
-            wireFrame.hikasseika(); //非活性化
+            wireFrame.deactivate(); //非活性化
 
             //対称性がある場合の処理
             if (taisyousei > 0) {
                 if (((tyuuoutai_xmin < wireFrame.getA(iActiveBranch).getX()) && (wireFrame.getA(iActiveBranch).getX() < tyuuoutai_xmax))
                         &&
                         ((tyuuoutai_xmin < wireFrame.getB(iActiveBranch).getX()) && (wireFrame.getB(iActiveBranch).getX() < tyuuoutai_xmax))) {
-                    wireFrame.seta(iActiveBranch, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, wireFrame.getA(iActiveBranch).getY()));
-                    wireFrame.setb(iActiveBranch, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, wireFrame.getB(iActiveBranch).getY()));
+                    wireFrame.setA(iActiveBranch, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, wireFrame.getA(iActiveBranch).getY()));
+                    wireFrame.setB(iActiveBranch, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, wireFrame.getB(iActiveBranch).getY()));
                 }
             }
 
             //ゴミ捨て。　これをやるとアクティブなieda枝の番号がずれるので、一応eda_atosyoriの後でやるようにする。
-            if ((move_mode == 4) && (wireFrame.getnagasa(wireFrame.getTotal()) < r)) { //新規追加分の線分が点状の（長さがrより小さい）とき削除。
+            if ((move_mode == 4) && (wireFrame.getLength(wireFrame.getTotal()) < r)) { //新規追加分の線分が点状の（長さがrより小さい）とき削除。
                 wireFrame.deleteLineSegment(wireFrame.getTotal());
             } else {
-                gomisute();//ごみ箱に入った線分の消去
+                garbageCollect();//Erasing line segments in the Recycle Bin
             }
 
 
@@ -971,7 +968,7 @@ public class WireFrame_Worker {
     public void mPressed_A_00(Point p) {
         //ゴミ箱がクリックされたら、単独の線分を削除する
         if (trash.inside(p) >= 1) {
-            wireFrame.tanSenbun_sakujyo(r);
+            wireFrame.singleLineSegment_delete(r);
             nhi = 0;//入力方法が多角形の場合の初期化を行う
         }
         // nyuuryoku_houhouは入力方法の指定。0なら通常の方法、1なら多角形入力、２なら直線を指定した点に引き寄せる
@@ -980,7 +977,7 @@ public class WireFrame_Worker {
         }
         if (input_method <= 1) {
             if (input_method == 1) {
-                int mtsid = wireFrame.mottomo_tikai_lineSegment_Search(p);
+                int mtsid = wireFrame.closest_lineSegment_Search(p);
                 wireFrame.addLine(wireFrame.getB(mtsid), p);
 
                 wireFrame.set(mtsid, wireFrame.getA(mtsid), p, wireFrame.getColor(mtsid), 0);
@@ -1021,7 +1018,7 @@ public class WireFrame_Worker {
             }
             System.out.print("ieda = ");
             System.out.println(iActiveBranch);
-            wireFrame.kasseika(p, r);
+            wireFrame.activate(p, r);
         }
         //--------------
         if (input_method == 2) {
@@ -1076,8 +1073,8 @@ public class WireFrame_Worker {
                 wireFrame.set(p);
             } //b点を変更
             if (move_mode == 3) {        //枝を平行移動
-                wireFrame.seta(iActiveBranch, new Point(1, p, 1, pa));
-                wireFrame.setb(iActiveBranch, new Point(1, p, 1, pb));
+                wireFrame.setA(iActiveBranch, new Point(1, p, 1, pa));
+                wireFrame.setB(iActiveBranch, new Point(1, p, 1, pb));
             }
             if (move_mode == 4) {
                 wireFrame.set(p);
@@ -1101,8 +1098,8 @@ public class WireFrame_Worker {
                 wireFrame.set(p);
             } //b点を変更
             if (move_mode == 3) {//枝を平行移動
-                wireFrame.seta(iActiveBranch, new Point(1, p, 1, pa));
-                wireFrame.setb(iActiveBranch, new Point(1, p, 1, pb));
+                wireFrame.setA(iActiveBranch, new Point(1, p, 1, pa));
+                wireFrame.setB(iActiveBranch, new Point(1, p, 1, pb));
                 if (move_mode == 4) {
                     wireFrame.set(p);
                 }//a点を変更(ugokasi_mode==1)と同じ動作をする
@@ -1118,30 +1115,30 @@ public class WireFrame_Worker {
                     System.out.print(": ");
                     System.out.println(wireFrame.getiactive(i));
                     if (wireFrame.getiactive(i) >= 1) {
-                        wireFrame.seta(i, kitei_idou(wireFrame.getA(i)));
-                        wireFrame.setb(i, kitei_idou(wireFrame.getB(i)));
+                        wireFrame.setA(i, kitei_idou(wireFrame.getA(i)));
+                        wireFrame.setB(i, kitei_idou(wireFrame.getB(i)));
                     }
 
                 }
             }
 
-            wireFrame.hikasseika(); //非活性化
+            wireFrame.deactivate(); //非活性化
 
             //対称性がある場合の処理
             if (taisyousei > 0) {
                 if (((tyuuoutai_xmin < wireFrame.getA(iActiveBranch).getX()) && (wireFrame.getA(iActiveBranch).getX() < tyuuoutai_xmax))
                         &&
                         ((tyuuoutai_xmin < wireFrame.getB(iActiveBranch).getX()) && (wireFrame.getB(iActiveBranch).getX() < tyuuoutai_xmax))) {
-                    wireFrame.seta(iActiveBranch, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, wireFrame.getA(iActiveBranch).getY()));
-                    wireFrame.setb(iActiveBranch, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, wireFrame.getB(iActiveBranch).getY()));
+                    wireFrame.setA(iActiveBranch, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, wireFrame.getA(iActiveBranch).getY()));
+                    wireFrame.setB(iActiveBranch, new Point((tyuuoutai_xmin + tyuuoutai_xmax) / 2, wireFrame.getB(iActiveBranch).getY()));
                 }
             }
 
-            //ゴミ捨て。　これをやるとアクティブなieda枝の番号がずれるので、一応eda_atosyoriの後でやるようにする。
-            if ((move_mode == 4) && (wireFrame.getnagasa(wireFrame.getTotal()) < r)) { //新規追加分の線分が点状の（長さがrより小さい）とき削除。
+            //Garbage disposal. If you do this, the number of the active ieda branch will shift, so for the time being, do it after eda_atosyori.
+            if ((move_mode == 4) && (wireFrame.getLength(wireFrame.getTotal()) < r)) { //新規追加分の線分が点状の（長さがrより小さい）とき削除。
                 wireFrame.deleteLineSegment(wireFrame.getTotal());
             } else {
-                gomisute();//ごみ箱に入った線分の消去
+                garbageCollect();//Erasing line segments in the Recycle Bin
             }
         }
         //--------------
@@ -1169,7 +1166,7 @@ public class WireFrame_Worker {
     public void mDragged_A_01(Point p0) {
         Point p = new Point();
         p.set(camera.TV2object(p0));
-        wireFrame.seta(iActiveBranch, p);
+        wireFrame.setA(iActiveBranch, p);
     }
 
     //マウス操作(i_mouse_modeA==1線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
@@ -1177,7 +1174,7 @@ public class WireFrame_Worker {
         i_saigo_no_lineSegment_no_maru_kaku = 1;
         Point p = new Point();
         p.set(camera.TV2object(p0));
-        wireFrame.seta(iActiveBranch, p);
+        wireFrame.setA(iActiveBranch, p);
         eda_atosyori_02();                //一端の点だけを移動して反対の端の点は動かさないで微調整する。 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
         //----------格子に乗せる
@@ -1186,8 +1183,8 @@ public class WireFrame_Worker {
             //System.out.print("iactive 20150312"); System.out.print(i); System.out.print(": ");
             //System.out.println(k.getiactive(i));
             //if(k.getiactive(i)>=1){
-            wireFrame.seta(wireFrame.getTotal(), kitei_idou(wireFrame.getA(wireFrame.getTotal())));
-            wireFrame.setb(wireFrame.getTotal(), kitei_idou(wireFrame.getB(wireFrame.getTotal())));
+            wireFrame.setA(wireFrame.getTotal(), kitei_idou(wireFrame.getA(wireFrame.getTotal())));
+            wireFrame.setB(wireFrame.getTotal(), kitei_idou(wireFrame.getB(wireFrame.getTotal())));
             //}
             //}
         }
@@ -1195,8 +1192,8 @@ public class WireFrame_Worker {
 
         if (input_rules == 3) {
 
-            wireFrame.seta(wireFrame.getTotal(), sankaku_kitei_idou(wireFrame.getA(wireFrame.getTotal())));
-            wireFrame.setb(wireFrame.getTotal(), sankaku_kitei_idou(wireFrame.getB(wireFrame.getTotal())));
+            wireFrame.setA(wireFrame.getTotal(), sankaku_kitei_idou(wireFrame.getA(wireFrame.getTotal())));
+            wireFrame.setB(wireFrame.getTotal(), sankaku_kitei_idou(wireFrame.getB(wireFrame.getTotal())));
 
         }
 
@@ -1304,7 +1301,7 @@ public class WireFrame_Worker {
         p.set(camera.TV2object(p0));
         int minrid;
         double minr;
-        minrid = wireFrame.mottomo_tikai_lineSegment_Search(p);
+        minrid = wireFrame.closest_lineSegment_Search(p);
         if (wireFrame.lineSegment_position_search(minrid, p, r) != 0) {
             wireFrame.deleteLineSegment(minrid);
         }
@@ -1322,7 +1319,7 @@ public class WireFrame_Worker {
         p.set(camera.TV2object(p0));
         int minrid;
         double minr;
-        minrid = wireFrame.mottomo_tikai_lineSegment_Search(p);
+        minrid = wireFrame.closest_lineSegment_Search(p);
         if (wireFrame.lineSegment_position_search(minrid, p, r) != 0) {
             int ic_temp;
             ic_temp = wireFrame.getColor(minrid);

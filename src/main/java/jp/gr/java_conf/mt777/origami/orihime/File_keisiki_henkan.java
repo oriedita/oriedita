@@ -48,7 +48,7 @@ public class File_keisiki_henkan {
         String str = "";
 
         int isen = 0;
-        for (int ig = 1; ig <= mem.getLineSize(); ig++) {
+        for (int ig = 1; ig <= mem.getLineCount(); ig++) {
             //  System.out.print("v,f,#eの読みこみ..."); System.out.println(ig);
             if (mem.getLine(ig).length() != 0) {
                 StringTokenizer tk = new StringTokenizer(mem.getLine(ig), " ");
@@ -194,7 +194,7 @@ public class File_keisiki_henkan {
         MemR.addLine("<線分集合>");
 
         //  int isen=0;
-        for (int ig = 1; ig <= mem.getLineSize(); ig++) {
+        for (int ig = 1; ig <= mem.getLineCount(); ig++) {
             //     System.out.print("cpファイルの行順番..."); System.out.println(ig);
             if (mem.getLine(ig).length() != 0) {
                 StringTokenizer tk = new StringTokenizer(mem.getLine(ig), " ");
@@ -272,7 +272,7 @@ public class File_keisiki_henkan {
         //MemR.addGyou("<線分集合>");
 
         //  int isen=0;
-        for (int ig = 1; ig <= mem.getLineSize(); ig++) {
+        for (int ig = 1; ig <= mem.getLineCount(); ig++) {
             //     System.out.print("cpファイルの行順番..."); System.out.println(ig);
             if (mem.getLine(ig).length() != 0) {
                 StringTokenizer tk = new StringTokenizer(mem.getLine(ig), ",");
@@ -332,7 +332,7 @@ public class File_keisiki_henkan {
         //MemR.addGyou("<線分集合>");
 
         //  int isen=0;
-        for (int ig = 1; ig <= mem.getLineSize(); ig++) {
+        for (int ig = 1; ig <= mem.getLineCount(); ig++) {
             //     System.out.print("cpファイルの行順番..."); System.out.println(ig);
             if (mem.getLine(ig).length() != 0) {
                 StringTokenizer tk = new StringTokenizer(mem.getLine(ig), ",");

@@ -6,48 +6,47 @@ import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.tyokusen.*;
 import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
-public class Circle {//点の座標や方向ベクトルなどをあらわすときに用いる
+public class Circle {//Used to represent point coordinates, direction vectors, etc.
 
-    double x, y, r;//中心の座標と半径
+    double x, y, r;//Center coordinates and radius
 
-    int icol;//色の指定　0=black,1=blue,2=red.
+    int color;//Color specification 　0=black,1=blue,2=red.
     int customized = 0;//Custom property parameters
-    Color customizedColor = new Color(100, 200, 200);//特注ある場合の色
+    Color customizedColor = new Color(100, 200, 200);//Color if custom made
 
     public Circle() {
         x = 0.0;
         y = 0.0;
         r = 0.0;
-        icol = 0;
-    }//コンストラクタ
+        color = 0;
+    }
 
     public Circle(double i, double j, double k, int m) {
         x = i;
         y = j;
         r = k;
-        icol = m;
-    } //コンストラクタ
+        color = m;
+    }
 
     public Circle(Point tc, double k, int m) {
         x = tc.getX();
         y = tc.getY();
         r = k;
-        icol = m;
-    } //コンストラクタ
+        color = m;
+    }
 
-    public Circle(LineSegment s0, int m) {//コンストラクタ 線分を直径とする円
+    public Circle(LineSegment s0, int m) {// A circle whose diameter is the constructor line segment
         x = (s0.getAX() + s0.getBX()) / 2.0;
         y = (s0.getAY() + s0.getBY()) / 2.0;
         r = s0.getLength() / 2.0;
-        icol = m;
+        color = m;
     }
 
-
     public void set(Circle e) {
-        x = e.getx();
-        y = e.gety();
+        x = e.getX();
+        y = e.getY();
         r = e.getRadius();
-        icol = e.getcolor();
+        color = e.setColor();
         customized = e.getCustomized();
         customizedColor = e.getCustomizedColor();
     }
@@ -56,14 +55,14 @@ public class Circle {//点の座標や方向ベクトルなどをあらわすと
         x = i;
         y = j;
         r = k;
-        icol = m;
+        color = m;
     }
 
     public void set(Point tc, double k, int m) {
         x = tc.getX();
         y = tc.getY();
         r = k;
-        icol = m;
+        color = m;
     }
 
     public void set(double i, double j, double k) {
@@ -76,26 +75,26 @@ public class Circle {//点の座標や方向ベクトルなどをあらわすと
         x = (s0.getAX() + s0.getBX()) / 2.0;
         y = (s0.getAY() + s0.getBY()) / 2.0;
         r = s0.getLength() / 2.0;
-        icol = m;
+        color = m;
     }
 
-    public void setx(double xx) {
+    public void setX(double xx) {
         x = xx;
     }
 
-    public void sety(double yy) {
+    public void setY(double yy) {
         y = yy;
     }
 
-    public void setr(double rr) {
+    public void setR(double rr) {
         r = rr;
     }
 
-    public double getx() {
+    public double getX() {
         return x;
     }
 
-    public double gety() {
+    public double getY() {
         return y;
     }
 
@@ -107,17 +106,16 @@ public class Circle {//点の座標や方向ベクトルなどをあらわすと
         x = 0.0;
         y = 0.0;
         r = 0.0;
-        icol = 0;
+        color = 0;
     }
 
-    public void setcolor(int i) {
-        icol = i;
+    public void setColor(int i) {
+        color = i;
     }
 
-    public int getcolor() {
-        return icol;
+    public int setColor() {
+        return color;
     }
-
 
     public void setCustomized(int i) {
         customized = i;
@@ -127,7 +125,6 @@ public class Circle {//点の座標や方向ベクトルなどをあらわすと
         return customized;
     }
 
-
     public void setCustomizedColor(Color c0) {
         customizedColor = c0;
     }
@@ -136,13 +133,8 @@ public class Circle {//点の座標や方向ベクトルなどをあらわすと
         return customizedColor;
     }
 
-    public void heikou_idou(double x1, double y1) {
-        x = x + x1;
-        y = y + y1;
-    }
-
     public Point getCenter() {
-        return new Point(getx(), gety());
+        return new Point(getX(), getY());
     }
 
     //Function that inverts other points ----------------------------------------------------
@@ -151,7 +143,6 @@ public class Circle {//点の座標や方向ベクトルなどをあらわすと
         double y1 = t0.getY() - y;
         double d1 = Math.sqrt(x1 * x1 + y1 * y1);
         double d2, x2, y2, x3, y3;
-
 
         if (Math.abs(d1 - r) < 0.0000001) {
             return t0;
@@ -165,9 +156,9 @@ public class Circle {//点の座標や方向ベクトルなどをあらわすと
     }
 
     //A function that inverts another circle to a circle ----------------------------------------------------
-    public Circle turnAround(Circle e0) {//e0の円周が(x,y)を通らないとき用　//e0の円周が(x,y)を通るときはエラーとなる。またe0の円周の内部に(x,y)がくるときもおかしな結果になるっぽい。
-        double x1 = e0.getx() - x;
-        double y1 = e0.gety() - y;
+    public Circle turnAround(Circle e0) {// For when the circumference of e0 does not pass through (x, y) // When the circumference of e0 passes through (x, y), an error occurs. Also, when (x, y) comes inside the circumference of e0, it seems that the result is strange.
+        double x1 = e0.getX() - x;
+        double y1 = e0.getY() - y;
         double d1 = Math.sqrt(x1 * x1 + y1 * y1);
         double da1 = d1 - e0.getRadius();
         double db1 = d1 + e0.getRadius();
@@ -197,14 +188,14 @@ public class Circle {//点の座標や方向ベクトルなどをあらわすと
             yb0 = yb1 + y;
         }
 
-        int ic = 5;//if(e0.getcolor()==5){ic=3;}
+        int ic = 5;
 
         return new Circle(new LineSegment(turnAround(new Point(xa0, ya0)), turnAround(new Point(xb0, yb0))), ic);
     }
 
-    //(x,y)を通る他の円を線分に反転する関数----------------------------------------------------
-    public LineSegment turnAround_CircleToLineSegment(Circle e0) {//e0の円周が(x,y)を通るとき用　//e0の円周が(x,y)を通らないときはおかしな結果になる。
-        double x1 = e0.getx() - x, y1 = e0.gety() - y;
+    //A function that inverts another circle passing through (x, y) into a line segment----------------------------------------------------
+    public LineSegment turnAround_CircleToLineSegment(Circle e0) {//For when the circumference of e0 passes through (x, y) // If the circumference of e0 does not pass through (x, y), the result will be strange.
+        double x1 = e0.getX() - x, y1 = e0.getY() - y;
         Point th = new Point();
         th.set(turnAround(new Point(x1 * 2.0 + x, y1 * 2.0 + y)));
         Point t1 = new Point();
@@ -217,8 +208,8 @@ public class Circle {//点の座標や方向ベクトルなどをあらわすと
     }
 
 
-    //(x,y)を通らない線分を他の円に反転する関数----------------------------------------------------
-    public Circle turnAround_LineSegmentToCircle(LineSegment s0) {//s0が(x,y)を通るときはおかしな結果になる。
+    //A function that inverts a line segment that does not pass through (x, y) to another circle----------------------------------------------------
+    public Circle turnAround_LineSegmentToCircle(LineSegment s0) {//Weird results when s0 passes through (x, y).
         StraightLine ty = new StraightLine(s0);
         Point t0 = new Point();
         t0.set(ty.findShadow(getCenter()));

@@ -286,8 +286,16 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
     public JCheckBox ckbox_toukazu_color;//透過図をカラー化する。
 
-    int i_ten_sagasi_hyouji, i_ten_hanasi_hyouji, i_kou_mitudo_nyuuryoku_hyouji, i_bun_hyouji, i_cp_hyouji, i_a0_hyouji, i_a1_hyouji;
-    int i_mejirusi_hyouji, i_cp_ue_hyouji, i_oritatami_keika_hyouji;
+    int i_point_sagasi_display;
+    int i_point_hanasi_display;
+    int i_kou_mitudo_nyuuryoku_display;
+    int i_bun_display;
+    int i_cp_display;
+    int i_a0_display;
+    int i_a1_display;
+    int i_mejirusi_display;
+    int i_cp_ue_display;
+    int i_oritatami_keika_display;
 
 
     //JLabel label;
@@ -522,7 +530,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
         //OAZ.clear();OAZ.add(new Oriagari_Zu(this));
         OAZ.clear();
         OAZ_add_new_Oriagari_Zu();
-        OZ = (FoldedFigure) OAZ.get(0);//折りあがり図
+        OZ = OAZ.get(0);//折りあがり図
 
 
         //カメラの設定 ------------------------------------------------------------------
@@ -630,13 +638,13 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
             i_mouseDragged_yuukou = 0;
             i_mouseReleased_yuukou = 0;
-            Memo memo_temp = new Memo();
+            Memo memo_temp;
 
             System.out.println("readFile2Memo() 開始");
             memo_temp = readFile2Memo();
             System.out.println("readFile2Memo() 終了");
 
-            if (memo_temp.getLineSize() > 0) {
+            if (memo_temp.getLineCount() > 0) {
                 //展開図の初期化　開始
                 //settei_syokika_cp();
                 tenkaizu_syokika();
@@ -740,8 +748,8 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
 
         Button_tyouhoukei_select.setMargin(new Insets(0, 0, 0, 0));
-        Button_tyouhoukei_select.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/tyouhoukei_select.png")));
+        Button_tyouhoukei_select.setIcon(createImageIcon(
+                "ppp/tyouhoukei_select.png"));
 
 // ------61;長方形内選択モード。ここまで
 
@@ -861,10 +869,8 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             readImageFromFile3();
             repaint();
         });
-        ckbox_mouse_settings.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_mouse_settei_off.png")));
-        ckbox_mouse_settings.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_mouse_settei_on.png")));
+        ckbox_mouse_settings.setIcon(createImageIcon("ppp/ckbox_mouse_settei_off.png"));
+        ckbox_mouse_settings.setSelectedIcon(createImageIcon("ppp/ckbox_mouse_settei_on.png"));
 
         ckbox_mouse_settings.setMargin(new Insets(0, 0, 0, 0));
         pnln13.add(
@@ -879,8 +885,8 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             readImageFromFile3();
             repaint();
         });
-        ckbox_point_search.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_ten_sagasi_off.png")));
-        ckbox_point_search.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_ten_sagasi_on.png")));
+        ckbox_point_search.setIcon(createImageIcon("ppp/ckbox_ten_sagasi_off.png"));
+        ckbox_point_search.setSelectedIcon(createImageIcon("ppp/ckbox_ten_sagasi_on.png"));
 
         ckbox_point_search.setMargin(new Insets(0, 0, 0, 0));
         pnln13.add(ckbox_point_search);
@@ -895,10 +901,10 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
             repaint();
         });
-        ckbox_ten_hanasi.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_ten_hanasi_off.png")));
-        ckbox_ten_hanasi.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_ten_hanasi_on.png")));
+        ckbox_ten_hanasi.setIcon(createImageIcon(
+                "ppp/ckbox_ten_hanasi_off.png"));
+        ckbox_ten_hanasi.setSelectedIcon(createImageIcon(
+                "ppp/ckbox_ten_hanasi_on.png"));
 
         ckbox_ten_hanasi.setMargin(new Insets(0, 0, 0, 0));
         pnln13.add(
@@ -920,10 +926,10 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             }
             repaint();
         });
-        ckbox_kou_mitudo_nyuuryoku.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_kou_mitudo_nyuuryoku_off.png")));
-        ckbox_kou_mitudo_nyuuryoku.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_kou_mitudo_nyuuryoku_on.png")));
+        ckbox_kou_mitudo_nyuuryoku.setIcon(createImageIcon(
+                "ppp/ckbox_kou_mitudo_nyuuryoku_off.png"));
+        ckbox_kou_mitudo_nyuuryoku.setSelectedIcon(createImageIcon(
+                "ppp/ckbox_kou_mitudo_nyuuryoku_on.png"));
 
         ckbox_kou_mitudo_nyuuryoku.setMargin(new Insets(0, 0, 0, 0));
         pnln13.add(ckbox_kou_mitudo_nyuuryoku);
@@ -936,8 +942,8 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             readImageFromFile3();
             repaint();
         });
-        ckbox_bun.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_bun_off.png")));
-        ckbox_bun.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_bun_on.png")));
+        ckbox_bun.setIcon(createImageIcon("ppp/ckbox_bun_off.png"));
+        ckbox_bun.setSelectedIcon(createImageIcon("ppp/ckbox_bun_on.png"));
         ckbox_bun.setMargin(new Insets(0, 0, 0, 0));
         pnln13.add(ckbox_bun);
 // -------------------------------------------------------------------
@@ -948,8 +954,8 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             readImageFromFile3();
             repaint();
         });
-        ckbox_cp.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_cp_off.png")));
-        ckbox_cp.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_cp_on.png")));
+        ckbox_cp.setIcon(createImageIcon("ppp/ckbox_cp_off.png"));
+        ckbox_cp.setSelectedIcon(createImageIcon("ppp/ckbox_cp_on.png"));
         ckbox_cp.setMargin(new Insets(0, 0, 0, 0));
         pnln13.add(ckbox_cp);
 // -------------------------------------------------------------------
@@ -960,8 +966,8 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             readImageFromFile3();
             repaint();
         });
-        ckbox_a0.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_a0_off.png")));
-        ckbox_a0.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_a0_on.png")));
+        ckbox_a0.setIcon(createImageIcon("ppp/ckbox_a0_off.png"));
+        ckbox_a0.setSelectedIcon(createImageIcon("ppp/ckbox_a0_on.png"));
 
 
         //ckbox_a0.setBackground(Color.cyan);
@@ -975,8 +981,8 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             readImageFromFile3();
             repaint();
         });
-        ckbox_a1.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_a1_off.png")));
-        ckbox_a1.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_a1_on.png")));
+        ckbox_a1.setIcon(createImageIcon("ppp/ckbox_a1_off.png"));
+        ckbox_a1.setSelectedIcon(createImageIcon("ppp/ckbox_a1_on.png"));
         ckbox_a1.setMargin(new Insets(0, 0, 0, 0));
         pnln13.add(ckbox_a1);
 // -------------------------------------------------------------------
@@ -989,10 +995,10 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
             repaint();
         });
-        ckbox_mejirusi.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_mejirusi_off.png")));
-        ckbox_mejirusi.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_mejirusi_on.png")));
+        ckbox_mejirusi.setIcon(createImageIcon(
+                "ppp/ckbox_mejirusi_off.png"));
+        ckbox_mejirusi.setSelectedIcon(createImageIcon(
+                "ppp/ckbox_mejirusi_on.png"));
 
         ckbox_mejirusi.setMargin(new Insets(0, 0, 0, 0));
         pnln13.add(
@@ -1008,10 +1014,10 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
             repaint();
         });
-        ckbox_cp_ue.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_cp_ue_off.png")));
-        ckbox_cp_ue.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_cp_ue_on.png")));
+        ckbox_cp_ue.setIcon(createImageIcon(
+                "ppp/ckbox_cp_ue_off.png"));
+        ckbox_cp_ue.setSelectedIcon(createImageIcon(
+                "ppp/ckbox_cp_ue_on.png"));
 
         ckbox_cp_ue.setMargin(new Insets(0, 0, 0, 0));
         pnln13.add(
@@ -1027,10 +1033,10 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
             repaint();
         });
-        ckbox_oritatami_keika.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_oritatami_keika_off.png")));
-        ckbox_oritatami_keika.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_oritatami_keika_on.png")));
+        ckbox_oritatami_keika.setIcon(createImageIcon(
+                "ppp/ckbox_oritatami_keika_off.png"));
+        ckbox_oritatami_keika.setSelectedIcon(createImageIcon(
+                "ppp/ckbox_oritatami_keika_on.png"));
 
         ckbox_oritatami_keika.setMargin(new Insets(0, 0, 0, 0));
 
@@ -1073,7 +1079,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         Lb01 = new JLabel();
         Lb01.setBounds(27, 2, 6, 20);
         //Lb01.setFont(new Font("Arial", Font.BOLD, 20));Lb01.setText("+");
-        Lb01.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/plus.png")));
+        Lb01.setIcon(createImageIcon("ppp/plus.png"));
         pnln11.add(Lb01);
 
         text4 = new JTextField("", 2);
@@ -1084,7 +1090,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         JLabel Lb02;
         Lb02 = new JLabel();
         Lb02.setBounds(58, 2, 9, 20);
-        Lb02.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/root.png")));
+        Lb02.setIcon(createImageIcon("ppp/root.png"));
         pnln11.add(Lb02);
 
         text5 = new JTextField("", 2);
@@ -1096,7 +1102,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         Lb03 = new JLabel();
         Lb03.setBounds(97, 2, 5, 23);
         //Lb03.setText(":");
-        Lb03.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/tenten.png")));
+        Lb03.setIcon(createImageIcon("ppp/tenten.png"));
         pnln10.add(Lb03);
 
 
@@ -1122,7 +1128,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         Lb04 = new JLabel();
         Lb04.setBounds(27, 2, 6, 20);
         //Lb04.setText("+");
-        Lb04.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/plus.png")));
+        Lb04.setIcon(createImageIcon("ppp/plus.png"));
         pnln12.add(Lb04);
 
         text7 = new JTextField("", 2);
@@ -1133,7 +1139,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         JLabel Lb05;
         Lb05 = new JLabel();
         Lb05.setBounds(58, 2, 9, 20);
-        Lb05.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/root.png")));
+        Lb05.setIcon(createImageIcon("ppp/root.png"));
         pnln12.add(Lb05);
 
         text8 = new JTextField("", 2);
@@ -1163,7 +1169,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         pnln10.add(Button_senbun_naibun_set);
 
         Button_senbun_naibun_set.setMargin(new Insets(0, 0, 0, 0));
-        //Button_senbun_bunkatu_set.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_senbun_bunkatu_set.setIcon(createImageIcon(
         //"ppp/senbun_bunkatu_set.png")));
 
 // ------1;線分比率set。ここまで
@@ -1191,8 +1197,8 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         pnln10.add(Button_senbun_n_nyuryoku);
 
         Button_senbun_n_nyuryoku.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_n_nyuryoku.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/senbun_n_nyuryoku.png")));
+        Button_senbun_n_nyuryoku.setIcon(createImageIcon(
+                "ppp/senbun_n_nyuryoku.png"));
 
 // ------28;線分入力モード。ここまで
 
@@ -1221,8 +1227,8 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         pnln.add(Button_tenkaizu_idiu);
 
         Button_tenkaizu_idiu.setMargin(new Insets(0, 0, 0, 0));
-        Button_tenkaizu_idiu.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/tenkaizu_idiu.png")));
+        Button_tenkaizu_idiu.setIcon(createImageIcon(
+                "ppp/tenkaizu_idiu.png"));
 
 // *****北*************************************************************************
 
@@ -1261,10 +1267,9 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //20180122追加
             FoldedFigure OZi;
             for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                OZi = (FoldedFigure) OAZ.get(i_oz);
+                OZi = OAZ.get(i_oz);
 
-                Point t_o2tv = new Point();
-                t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.get_camera_position());
+                Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.get_camera_position());
 
                 OZi.d_foldedFigure_syukusyaku_keisuu = OZi.d_foldedFigure_syukusyaku_keisuu * d_bairitu;
 
@@ -1300,8 +1305,8 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         pnln8.add(Button_tenkaizu_syukusyou);
         Button_tenkaizu_syukusyou.setBounds(1, 1, 28, 28);
         Button_tenkaizu_syukusyou.setMargin(new Insets(0, 0, 0, 0));
-        Button_tenkaizu_syukusyou.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/tenkaizu_syukusyou.png")));
+        Button_tenkaizu_syukusyou.setIcon(createImageIcon(
+                "ppp/tenkaizu_syukusyou.png"));
 
 
 // ****北**************************************************************************
@@ -1340,10 +1345,9 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
                 FoldedFigure OZi;
                 for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                    OZi = (FoldedFigure) OAZ.get(i_oz);
+                    OZi = OAZ.get(i_oz);
 
-                    Point t_o2tv = new Point();
-                    t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.get_camera_position());
+                    Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.get_camera_position());
 
                     OZi.d_foldedFigure_syukusyaku_keisuu = OZi.d_foldedFigure_syukusyaku_keisuu * d_bairitu;
 
@@ -1389,7 +1393,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         pnln8.add(Button_syukusyaku_keisuu_set);
 
         Button_syukusyaku_keisuu_set.setMargin(new Insets(0, 0, 0, 0));
-        //Button_syukusyaku_keisuu_set.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_syukusyaku_keisuu_set.setIcon(createImageIcon(
         //"ppp/syukusyaku_keisuu_set.png")));
 
 // ------縮尺係数set。ここまで
@@ -1416,10 +1420,9 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //20180122追加
             FoldedFigure OZi;
             for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                OZi = (FoldedFigure) OAZ.get(i_oz);
+                OZi = OAZ.get(i_oz);
 
-                Point t_o2tv = new Point();
-                t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.get_camera_position());
+                Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.get_camera_position());
 
                 OZi.d_foldedFigure_syukusyaku_keisuu = OZi.d_foldedFigure_syukusyaku_keisuu * d_bairitu;
 
@@ -1457,8 +1460,8 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         pnln8.add(Button_tenkaizu_kakudai);
         Button_tenkaizu_kakudai.setBounds(80, 1, 28, 28);
         Button_tenkaizu_kakudai.setMargin(new Insets(0, 0, 0, 0));
-        Button_tenkaizu_kakudai.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/tenkaizu_kakudai.png")));
+        Button_tenkaizu_kakudai.setIcon(createImageIcon(
+                "ppp/tenkaizu_kakudai.png"));
 
 
 // ******北************************************************************************
@@ -1493,8 +1496,8 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         Button_tenkaizu_p_kaiten.setBounds(1, 1, 33, 28);
 
         Button_tenkaizu_p_kaiten.setMargin(new Insets(0, 0, 0, 0));
-        Button_tenkaizu_p_kaiten.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/tenkaizu_p_kaiten.png")));
+        Button_tenkaizu_p_kaiten.setIcon(createImageIcon(
+                "ppp/tenkaizu_p_kaiten.png"));
 
 // ****北**************************************************************************
 //回転角度補正
@@ -1557,8 +1560,8 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
 
         Button_tenkaizu_m_kaiten.setMargin(new Insets(0, 0, 0, 0));
-        Button_tenkaizu_m_kaiten.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/tenkaizu_m_kaiten.png")));
+        Button_tenkaizu_m_kaiten.setIcon(createImageIcon(
+                "ppp/tenkaizu_m_kaiten.png"));
 
 
 // ******北************************************************************************
@@ -1634,7 +1637,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //oc.hyouji("旧背景カメラリセット");
 //h_cam.reset();
 //oc.hyouji(" ");
-            oc.hyouji("新背景カメラインスタンス化");
+            oc.display("新背景カメラインスタンス化");
             h_cam = new Haikei_camera();//20181202
 
             double dvx = hidari_ue_ix;
@@ -1902,8 +1905,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnln9.add(Button_senbun_yoke_henkan);
 
         Button_senbun_yoke_henkan.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_yoke_henkan.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/senbun_yoke_henkan.png")));
+        Button_senbun_yoke_henkan.setIcon(createImageIcon(
+                "ppp/senbun_yoke_henkan.png"));
 
 
 // ******************************************************************************
@@ -1934,8 +1937,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnln.add(Button_kaisetu);
 
         Button_kaisetu.setMargin(new Insets(0, 0, 0, 0));
-        Button_kaisetu.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/kaisetu.png")));
+        Button_kaisetu.setIcon(createImageIcon(
+                "ppp/kaisetu.png"));
 
 // ******************************************************************************
 
@@ -1977,8 +1980,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnlw26.add(Button_undo);
         Button_undo.setMargin(new Insets(0, 0, 0, 0));
-        Button_undo.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/undo.png")));
+        Button_undo.setIcon(createImageIcon(
+                "ppp/undo.png"));
 
 // *****西*************************************************************************
 
@@ -2024,8 +2027,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnlw26.add(Button_redo);
         Button_redo.setMargin(new Insets(0, 0, 0, 0));
-        Button_redo.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/redo.png")));
+        Button_redo.setIcon(createImageIcon(
+                "ppp/redo.png"));
 
 
 // ********************************************************
@@ -2065,8 +2068,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw23.add(Button_senhaba_sage);
 
         Button_senhaba_sage.setMargin(new Insets(0, 0, 0, 0));
-        Button_senhaba_sage.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/senhaba_sage.png")));
+        Button_senhaba_sage.setIcon(createImageIcon(
+                "ppp/senhaba_sage.png"));
 
 // ****西********************　線幅　上げ　******************************************************
 
@@ -2081,8 +2084,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw23.add(Button_senhaba_age);
 
         Button_senhaba_age.setMargin(new Insets(0, 0, 0, 0));
-        Button_senhaba_age.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/senhaba_age.png")));
+        Button_senhaba_age.setIcon(createImageIcon(
+                "ppp/senhaba_age.png"));
 
 
         //------------------------------------------------
@@ -2113,8 +2116,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw24.add(Button_point_width_reduce);
 
         Button_point_width_reduce.setMargin(new Insets(0, 0, 0, 0));
-        Button_point_width_reduce.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/tenhaba_sage.png")));
+        Button_point_width_reduce.setIcon(createImageIcon(
+                "ppp/tenhaba_sage.png"));
 
 // ****西*******************************　点幅　上げ　*******************************************
         JButton Button_point_width_increase = new JButton("");
@@ -2132,8 +2135,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw24.add(Button_point_width_increase);
 
         Button_point_width_increase.setMargin(new Insets(0, 0, 0, 0));
-        Button_point_width_increase.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/tenhaba_age.png")));
+        Button_point_width_increase.setIcon(createImageIcon(
+                "ppp/tenhaba_age.png"));
 
 // ******西*************展開図の線をアンチエイリアス表示にする***********************************************************
         JButton Button_anti_alias = new JButton("a_a");
@@ -2160,7 +2163,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw22.add(Button_anti_alias);
 
         Button_anti_alias.setMargin(new Insets(0, 0, 0, 0));
-        //Button_anti_alias.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_anti_alias.setIcon(createImageIcon(
         //  "ppp/anti_alias.png")));
 
 
@@ -2198,8 +2201,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw27.add(Button_orisen_hyougen);
 
         Button_orisen_hyougen.setMargin(new Insets(0, 0, 0, 0));
-        Button_orisen_hyougen.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/orisen_hyougen.png")));
+        Button_orisen_hyougen.setIcon(createImageIcon(
+                "ppp/orisen_hyougen.png"));
 
 
         //------------------------------------------------
@@ -2346,8 +2349,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
         Button_senbun_nyuryoku.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_nyuryoku.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/senbun_nyuryoku.png")));
+        Button_senbun_nyuryoku.setIcon(createImageIcon(
+                "ppp/senbun_nyuryoku.png"));
 
 // ------1;線分入力モード。ここまで
 
@@ -2370,8 +2373,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw1.add(Button_senbun_nyuryoku11);
 
         Button_senbun_nyuryoku11.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_nyuryoku11.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/senbun_nyuryoku11.png")));
+        Button_senbun_nyuryoku11.setIcon(createImageIcon(
+                "ppp/senbun_nyuryoku11.png"));
 
 
 // -------------11;線分入力モード。ここまで
@@ -2396,8 +2399,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
         Button_Voronoi.setMargin(new Insets(0, 0, 0, 0));
-        Button_Voronoi.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/Voronoi.png")));
+        Button_Voronoi.setIcon(createImageIcon(
+                "ppp/Voronoi.png"));
 
 // ------1;線分入力モード。ここまで
 // *******西***********************************************************************
@@ -2418,8 +2421,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw1.add(Button_oritatami_kanousen);
 
         Button_oritatami_kanousen.setMargin(new Insets(0, 0, 0, 0));
-        Button_oritatami_kanousen.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/oritatami_kanousen.png")));
+        Button_oritatami_kanousen.setIcon(createImageIcon(
+                "ppp/oritatami_kanousen.png"));
 
 
 // -------------38;折り畳み可能線入力。ここまで
@@ -2452,8 +2455,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw2.add(Button_senbun_entyou);
 
         Button_senbun_entyou.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_entyou.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/senbun_entyou.png")));
+        Button_senbun_entyou.setIcon(createImageIcon(
+                "ppp/senbun_entyou.png"));
 
 // -------------5;線分延長モード。ここまで
 // ******************************************************************************
@@ -2478,8 +2481,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw2.add(Button_senbun_entyou_2);
 
         Button_senbun_entyou_2.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_entyou_2.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/senbun_entyou_2.png")));
+        Button_senbun_entyou_2.setIcon(createImageIcon(
+                "ppp/senbun_entyou_2.png"));
 
 // -------------70;線分延長モード。ここまで
 // ******************************************************************************
@@ -2502,8 +2505,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw2.add(Button_kaku_toubun);
 
         Button_kaku_toubun.setMargin(new Insets(0, 0, 0, 0));
-        Button_kaku_toubun.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/kaku_toubun.png")));
+        Button_kaku_toubun.setIcon(createImageIcon(
+                "ppp/kaku_toubun.png"));
 
 // -------------7;角二等分線モード。ここまで
 
@@ -2525,8 +2528,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw2.add(Button_naishin);
 
         Button_naishin.setMargin(new Insets(0, 0, 0, 0));
-        Button_naishin.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/naishin.png")));
+        Button_naishin.setIcon(createImageIcon(
+                "ppp/naishin.png"));
 
 // -------------8;内心モード。ここまで
 
@@ -2559,8 +2562,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw3.add(Button_suisen);
 
         Button_suisen.setMargin(new Insets(0, 0, 0, 0));
-        Button_suisen.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/suisen.png")));
+        Button_suisen.setIcon(createImageIcon(
+                "ppp/suisen.png"));
 
 
 // -------------9;垂線おろしモード。ここまで
@@ -2584,8 +2587,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw3.add(Button_orikaesi);
 
         Button_orikaesi.setMargin(new Insets(0, 0, 0, 0));
-        Button_orikaesi.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/orikaesi.png")));
+        Button_orikaesi.setIcon(createImageIcon(
+                "ppp/orikaesi.png"));
 
 
 // -------------10;折り返しモード。ここまで
@@ -2609,8 +2612,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw3.add(Button_renzoku_orikaesi);
 
         Button_renzoku_orikaesi.setMargin(new Insets(0, 0, 0, 0));
-        Button_renzoku_orikaesi.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/renzoku_orikaesi.png")));
+        Button_renzoku_orikaesi.setIcon(createImageIcon(
+                "ppp/renzoku_orikaesi.png"));
 
 
 // -------------52;連続折り返しモード。ここまで
@@ -2640,8 +2643,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnlw4.add(Button_heikousen);
         Button_heikousen.setMargin(new Insets(0, 0, 0, 0));
-        Button_heikousen.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/heikousen.png")));
+        Button_heikousen.setIcon(createImageIcon(
+                "ppp/heikousen.png"));
 // -------------40;平行線入力モード。ここまで
 
 // -------------51;平行線　幅指定入力モード。
@@ -2659,8 +2662,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnlw4.add(Button_heikousen_haba_sitei);
         Button_heikousen_haba_sitei.setMargin(new Insets(0, 0, 0, 0));
-        Button_heikousen_haba_sitei.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/heikousen_haba_sitei.png")));
+        Button_heikousen_haba_sitei.setIcon(createImageIcon(
+                "ppp/heikousen_haba_sitei.png"));
 // -------------51;平行線　幅指定入力モード。ここまで
 
 
@@ -2682,8 +2685,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw4.add(Button_oritatami_kanousen_and_kousitenkei_simple);
 
         Button_oritatami_kanousen_and_kousitenkei_simple.setMargin(new Insets(0, 0, 0, 0));
-        Button_oritatami_kanousen_and_kousitenkei_simple.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/oritatami_kanousen_and_kousitenkei_simple.png")));
+        Button_oritatami_kanousen_and_kousitenkei_simple.setIcon(createImageIcon(
+                "ppp/oritatami_kanousen_and_kousitenkei_simple.png"));
 
 
 // -------------39;折り畳み可能線+格子点系入力。ここまで
@@ -2713,8 +2716,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnlw29.add(Button_all_s_step_to_orisen);
         Button_all_s_step_to_orisen.setMargin(new Insets(0, 0, 0, 0));
-        Button_all_s_step_to_orisen.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/all_s_step_to_orisen.png")));
+        Button_all_s_step_to_orisen.setIcon(createImageIcon(
+                "ppp/all_s_step_to_orisen.png"));
 
         //Button_v_del_all.setBackground(Color.green);
 
@@ -2737,8 +2740,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw29.add(Button_sakananohone);
 
         Button_sakananohone.setMargin(new Insets(0, 0, 0, 0));
-        Button_sakananohone.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/sakananohone.png")));
+        Button_sakananohone.setIcon(createImageIcon(
+                "ppp/sakananohone.png"));
 
 
 // -------------10;魚の骨モード。ここまで
@@ -2762,8 +2765,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw29.add(Button_fuku_orikaesi);
 
         Button_fuku_orikaesi.setMargin(new Insets(0, 0, 0, 0));
-        Button_fuku_orikaesi.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/fuku_orikaesi.png")));
+        Button_fuku_orikaesi.setIcon(createImageIcon(
+                "ppp/fuku_orikaesi.png"));
 
 
 // -------------35;複折り返しモード。ここまで
@@ -2814,7 +2817,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw15.add(Button_senbun_bunkatu_set);
 
         Button_senbun_bunkatu_set.setMargin(new Insets(0, 0, 0, 0));
-        //Button_senbun_bunkatu_set.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_senbun_bunkatu_set.setIcon(createImageIcon(
         //"ppp/senbun_bunkatu_set.png")));
 
 // ------1;線分分割数set。ここまで
@@ -2848,8 +2851,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw15.add(Button_senbun_b_nyuryoku);
 
         Button_senbun_b_nyuryoku.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_b_nyuryoku.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/senbun_b_nyuryoku.png")));
+        Button_senbun_b_nyuryoku.setIcon(createImageIcon(
+                "ppp/senbun_b_nyuryoku.png"));
 
 // ------27;線分入力モード。ここまで
 
@@ -2878,7 +2881,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
 		Button_tyouhoukei_select.setMargin(new Insets(0,0,0,0));
-		Button_tyouhoukei_select.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+		Button_tyouhoukei_select.setIcon(createImageIcon(
 		  "ppp/tyouhoukei_select.png")));
 
 // ------61;長方形内選択モード。ここまで
@@ -2920,7 +2923,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnlw6.add(Button_select_all);
         //Button_select_all.setMargin(new Insets(0,0,0,0));
-        //Button_select_all.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_select_all.setIcon(createImageIcon(
         //"ppp/select_all.png")));
         //Button_select_all.setBorder(new LineBorder(Color.green, 4, true));
         Button_select_all.setBackground(Color.green);
@@ -2968,7 +2971,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnlw7.add(Button_unselect_all);
         //Button_unselect_all.setMargin(new Insets(0,0,0,0));
-        //Button_unselect_all.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_unselect_all.setIcon(createImageIcon(
         //"ppp/unselect_all.png")));
         //Button_unselect_all.setBorder(new LineBorder(Color.green, 4, true));
         Button_unselect_all.setBackground(Color.green);
@@ -3005,7 +3008,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw16.add(Button_move);
         Button_move.setBackground(new Color(170, 220, 170));
         Button_move.setMargin(new Insets(0, 0, 0, 0));
-        //Button_move.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_move.setIcon(createImageIcon(
         //  "ppp/move.png")));
 // -------------21;移動モード。ここまで
 
@@ -3028,7 +3031,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw16.add(Button_move_2p2p);
         Button_move_2p2p.setBackground(new Color(170, 220, 170));
         Button_move_2p2p.setMargin(new Insets(0, 0, 0, 0));
-        //Button_move_2p2p.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_move_2p2p.setIcon(createImageIcon(
         //  "ppp/move_2p2p.png")));
 // -------------31;移動2p2pモード。ここまで
 
@@ -3061,7 +3064,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw17.add(Button_copy_paste);
         Button_copy_paste.setBackground(new Color(170, 220, 170));
         Button_copy_paste.setMargin(new Insets(0, 0, 0, 0));
-        //Button_copy_paste.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_copy_paste.setIcon(createImageIcon(
         //  "ppp/copy_paste.png")));
 // -------------22;コピーモード。ここまで
 
@@ -3084,7 +3087,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw17.add(Button_copy_paste_2p2p);
         Button_copy_paste_2p2p.setBackground(new Color(170, 220, 170));
         Button_copy_paste_2p2p.setMargin(new Insets(0, 0, 0, 0));
-        //Button_copy_paste_2p2p.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_copy_paste_2p2p.setIcon(createImageIcon(
         //  "ppp/copy_paste_2p2p.png")));
 // -------------32;コピー2p2pモード。ここまで
 
@@ -3115,8 +3118,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw35.add(Button_kyouei);
         Button_kyouei.setBackground(new Color(170, 220, 170));
         Button_kyouei.setMargin(new Insets(0, 0, 0, 0));
-        Button_kyouei.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/kyouei.png")));
+        Button_kyouei.setIcon(createImageIcon(
+                "ppp/kyouei.png"));
 
 
 // -------------12;鏡映モード。ここまで
@@ -3136,7 +3139,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnlw35.add(Button_del_selected_senbun);
         Button_del_selected_senbun.setMargin(new Insets(0, 0, 0, 0));
-        //Button_del_selected_senbun.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_del_selected_senbun.setIcon(createImageIcon(
         // "ppp/del_selected_senbun.png")));
 
 
@@ -3177,8 +3180,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw5.add(Button_senbun_sakujyo);
 
         Button_senbun_sakujyo.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_sakujyo.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/senbun_sakujyo.png")));
+        Button_senbun_sakujyo.setIcon(createImageIcon(
+                "ppp/senbun_sakujyo.png"));
 
 
 // ******西************************************************************************ 黒線のみの消しゴム
@@ -3203,8 +3206,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw5.add(Button_kuro_lineSegment_removal);
 
         Button_kuro_lineSegment_removal.setMargin(new Insets(0, 0, 0, 0));
-        Button_kuro_lineSegment_removal.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/kuro_senbun_sakujyo.png")));
+        Button_kuro_lineSegment_removal.setIcon(createImageIcon(
+                "ppp/kuro_senbun_sakujyo.png"));
 
 
 // ******西************************************************************************ 消しゴム(補助活線のみ)
@@ -3229,8 +3232,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw5.add(Button_senbun3_sakujyo);
 
         Button_senbun3_sakujyo.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun3_sakujyo.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/senbun3_sakujyo.png")));
+        Button_senbun3_sakujyo.setIcon(createImageIcon(
+                "ppp/senbun3_sakujyo.png"));
 
 
 // *********西*********************************************************************
@@ -3253,8 +3256,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
         Button_eda_kesi.setMargin(new Insets(0, 0, 0, 0));
-        Button_eda_kesi.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/eda_kesi.png")));
+        Button_eda_kesi.setIcon(createImageIcon(
+                "ppp/eda_kesi.png"));
 
 // ******西************************************************************************
 
@@ -3291,8 +3294,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_M_nisuru.setBackground(Color.white);
         Button_M_nisuru.setMargin(new Insets(0, 0, 0, 0));
 
-        Button_M_nisuru.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/M_nisuru.png")));
+        Button_M_nisuru.setIcon(createImageIcon(
+                "ppp/M_nisuru.png"));
 
 //Button_M_nisuru.setHorizontalTextPosition(JButton.RIGHT);
 
@@ -3317,8 +3320,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_V_nisuru.setBackground(Color.white);
         Button_V_nisuru.setMargin(new Insets(0, 0, 0, 0));
 
-        Button_V_nisuru.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/V_nisuru.png")));
+        Button_V_nisuru.setIcon(createImageIcon(
+                "ppp/V_nisuru.png"));
 // ******************************************************************************
         Button_E_nisuru = new JButton(" ");
         Button_E_nisuru.addActionListener(e -> {
@@ -3339,8 +3342,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_E_nisuru.setBackground(Color.white);
         Button_E_nisuru.setMargin(new Insets(0, 0, 0, 0));
 
-        Button_E_nisuru.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/E_nisuru.png")));
+        Button_E_nisuru.setIcon(createImageIcon(
+                "ppp/E_nisuru.png"));
 
 
 // ******************************************************************************
@@ -3364,8 +3367,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_HK_nisuru.setBackground(Color.white);
         Button_HK_nisuru.setMargin(new Insets(0, 0, 0, 0));
 
-        Button_HK_nisuru.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/HK_nisuru.png")));
+        Button_HK_nisuru.setIcon(createImageIcon(
+                "ppp/HK_nisuru.png"));
 
 
 // ******************************************************************************
@@ -3415,8 +3418,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         Button_senbun_henkan2.setBackground(Color.white);
         Button_senbun_henkan2.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_henkan2.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/senbun_henkan2.png")));
+        Button_senbun_henkan2.setIcon(createImageIcon(
+                "ppp/senbun_henkan2.png"));
 
 // ******西************************************************************************線分の色を黒、赤、、青、黒の順に変換
 
@@ -3437,8 +3440,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw28.add(Button_senbun_henkan);
 
         Button_senbun_henkan.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_henkan.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/senbun_henkan.png")));
+        Button_senbun_henkan.setIcon(createImageIcon(
+                "ppp/senbun_henkan.png"));
 
 
 // ******西************************************************************************
@@ -3478,8 +3481,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw21.add(Button_in_L_col_change);
 
         Button_in_L_col_change.setMargin(new Insets(0, 0, 0, 0));
-        Button_in_L_col_change.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/in_L_col_change.png")));
+        Button_in_L_col_change.setIcon(createImageIcon(
+                "ppp/in_L_col_change.png"));
 
 
 // ****************************************************************************** //線X交差色変換
@@ -3509,8 +3512,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw21.add(Button_on_L_col_change);
 
         Button_on_L_col_change.setMargin(new Insets(0, 0, 0, 0));
-        Button_on_L_col_change.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/on_L_col_change.png")));
+        Button_on_L_col_change.setIcon(createImageIcon(
+                "ppp/on_L_col_change.png"));
 
 
 // *******西***********************************************************************
@@ -3538,8 +3541,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw10.add(Button_v_add);
 
         Button_v_add.setMargin(new Insets(0, 0, 0, 0));
-        Button_v_add.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/v_add.png")));
+        Button_v_add.setIcon(createImageIcon(
+                "ppp/v_add.png"));
 
 
 // -------------14;点追加モード。ここまで
@@ -3561,8 +3564,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw10.add(Button_v_del);
 
         Button_v_del.setMargin(new Insets(0, 0, 0, 0));
-        Button_v_del.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/v_del.png")));
+        Button_v_del.setIcon(createImageIcon(
+                "ppp/v_del.png"));
 
 
 // -------------15;点削除モード。ここまで
@@ -3584,8 +3587,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw10.add(Button_v_del_cc);
 
         Button_v_del_cc.setMargin(new Insets(0, 0, 0, 0));
-        Button_v_del_cc.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/v_del_cc.png")));
+        Button_v_del_cc.setIcon(createImageIcon(
+                "ppp/v_del_cc.png"));
 
 
 // -------------15;点削除モード。ここまで
@@ -3617,8 +3620,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnlw13.add(Button_v_del_all);
         Button_v_del_all.setMargin(new Insets(0, 0, 0, 0));
-        Button_v_del_all.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/v_del_all.png")));
+        Button_v_del_all.setIcon(createImageIcon(
+                "ppp/v_del_all.png"));
 
         //Button_v_del_all.setBackground(Color.green);
 
@@ -3637,8 +3640,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnlw13.add(Button_v_del_all_cc);
         Button_v_del_all_cc.setMargin(new Insets(0, 0, 0, 0));
-        Button_v_del_all_cc.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/v_del_all_cc.png")));
+        Button_v_del_all_cc.setIcon(createImageIcon(
+                "ppp/v_del_all_cc.png"));
 
         //Button_v_del_all.setBackground(Color.green);
 
@@ -3714,8 +3717,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_kitei2.setBounds(0, 1, 20, 19);
 
         Button_kitei2.setMargin(new Insets(0, 0, 0, 0));
-        Button_kitei2.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/kitei2.png")));
+        Button_kitei2.setIcon(createImageIcon(
+                "ppp/kitei2.png"));
 
 
 // *****西*************************************************************************
@@ -3740,7 +3743,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw9.add(Button_syutoku);
         Button_syutoku.setBounds(55, 1, 15, 19);
         Button_syutoku.setMargin(new Insets(0, 0, 0, 0));
-        //Button_syutoku.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_syutoku.setIcon(createImageIcon(
         //  "ppp/syutoku.png")));
 
 
@@ -3784,8 +3787,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         Button_kitei.setBounds(70, 1, 20, 19);
         Button_kitei.setMargin(new Insets(0, 0, 0, 0));
-        Button_kitei.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/kitei.png")));
+        Button_kitei.setIcon(createImageIcon(
+                "ppp/kitei.png"));
 
 //------------------------------------//System.out.println("__");----
 
@@ -3837,8 +3840,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw34.add(Button_kousi_senhaba_sage);
         Button_kousi_senhaba_sage.setBounds(0, 1, 20, 19);
         Button_kousi_senhaba_sage.setMargin(new Insets(0, 0, 0, 0));
-        Button_kousi_senhaba_sage.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/kousi_senhaba_sage.png")));
+        Button_kousi_senhaba_sage.setIcon(createImageIcon(
+                "ppp/kousi_senhaba_sage.png"));
 
 // ****西**************************************************************************
 
@@ -3853,8 +3856,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw34.add(Button_kousi_senhaba_age);
         Button_kousi_senhaba_age.setBounds(20, 1, 20, 19);
         Button_kousi_senhaba_age.setMargin(new Insets(0, 0, 0, 0));
-        Button_kousi_senhaba_age.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/kousi_senhaba_age.png")));
+        Button_kousi_senhaba_age.setIcon(createImageIcon(
+                "ppp/kousi_senhaba_age.png"));
 
 // ---------------------------------------------------
 
@@ -3874,8 +3877,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw34.add(Button_i_kitei_jyoutai);
         Button_i_kitei_jyoutai.setBounds(40, 1, 69, 19);
         Button_i_kitei_jyoutai.setMargin(new Insets(0, 0, 0, 0));
-        Button_i_kitei_jyoutai.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/i_kitei_jyoutai.png")));
+        Button_i_kitei_jyoutai.setIcon(createImageIcon(
+                "ppp/i_kitei_jyoutai.png"));
 
 //------------------------------------------
 
@@ -3910,8 +3913,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw33.add(Button_memori_tate_idou);
         Button_memori_tate_idou.setBounds(0, 1, 20, 19);
         Button_memori_tate_idou.setMargin(new Insets(0, 0, 0, 0));
-        Button_memori_tate_idou.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/memori_tate_idou.png")));
+        Button_memori_tate_idou.setIcon(createImageIcon(
+                "ppp/memori_tate_idou.png"));
 
 // *****西*************************************************************************
 
@@ -3955,8 +3958,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_memori_yoko_idou.setBounds(70, 1, 20, 19);
 
         Button_memori_yoko_idou.setMargin(new Insets(0, 0, 0, 0));
-        Button_memori_yoko_idou.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/memori_yoko_idou.png")));
+        Button_memori_yoko_idou.setIcon(createImageIcon(
+                "ppp/memori_yoko_idou.png"));
 
 
 // -------------格子目盛り線の色の選択
@@ -3970,8 +3973,6 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
             //以下にやりたいことを書く
-            JColorChooser colorchooser = new JColorChooser();
-            //Color color = colorchooser.showDialog(null, "Col", Color.white    );
             Color color = JColorChooser.showDialog(null, "Col", new Color(180, 200, 180));
             if (color != null) {
                 kus.set_kousi_memori_color(color);
@@ -4014,7 +4015,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JLabel Lb08;
         Lb08 = new JLabel();
         Lb08.setBounds(32, 2, 8, 17);
-        Lb08.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/plus_min.png")));
+        Lb08.setIcon(createImageIcon("ppp/plus_min.png"));
         pnlw19.add(Lb08);
 
         text22 = new JTextField("", 2);
@@ -4025,7 +4026,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JLabel Lb09;
         Lb09 = new JLabel();
         Lb09.setBounds(70, 2, 9, 17);
-        Lb09.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/root_min.png")));
+        Lb09.setIcon(createImageIcon("ppp/root_min.png"));
         pnlw19.add(Lb09);
 
         text23 = new JTextField("", 2);
@@ -4052,7 +4053,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JLabel Lb06;
         Lb06 = new JLabel();
         Lb06.setBounds(32, 2, 8, 17);
-        Lb06.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/plus_min.png")));
+        Lb06.setIcon(createImageIcon("ppp/plus_min.png"));
         pnlw18.add(Lb06);
 
         text19 = new JTextField("", 2);
@@ -4063,7 +4064,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JLabel Lb07;
         Lb07 = new JLabel();
         Lb07.setBounds(70, 2, 9, 17);
-        Lb07.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/root_min.png")));
+        Lb07.setIcon(createImageIcon("ppp/root_min.png"));
         pnlw18.add(Lb07);
 
         text20 = new JTextField("", 2);
@@ -4100,7 +4101,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw14.add(Button_kousi_syutoku);
 
         Button_kousi_syutoku.setMargin(new Insets(0, 0, 0, 0));
-        //Button_kousi_syutoku.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_kousi_syutoku.setIcon(createImageIcon(
         //  "ppp/kousi_syutoku.png")));
 
 
@@ -4148,8 +4149,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             Button_kyoutuu_sagyou();
             repaint();
         });
-        ckbox_check1.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_check1_off.png")));
-        ckbox_check1.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_check1_on.png")));
+        ckbox_check1.setIcon(createImageIcon("ppp/ckbox_check1_off.png"));
+        ckbox_check1.setSelectedIcon(createImageIcon("ppp/ckbox_check1_on.png"));
         ckbox_check1.setBorderPainted(true);
         ckbox_check1.setMargin(new Insets(0, 0, 0, 0));
         pnle20.add(ckbox_check1);
@@ -4173,7 +4174,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle20.add(Button_fix1);
 
         Button_fix1.setMargin(new Insets(0, 0, 0, 0));
-        //Button_check.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_check.setIcon(createImageIcon(
         //"ppp/check.png")));
 
 
@@ -4203,8 +4204,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             Button_kyoutuu_sagyou();
             repaint();
         });
-        ckbox_check2.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_check2_off.png")));
-        ckbox_check2.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_check2_on.png")));
+        ckbox_check2.setIcon(createImageIcon("ppp/ckbox_check2_off.png"));
+        ckbox_check2.setSelectedIcon(createImageIcon("ppp/ckbox_check2_on.png"));
         ckbox_check2.setBorderPainted(true);
         ckbox_check2.setMargin(new Insets(0, 0, 0, 0));
         pnle21.add(ckbox_check2);
@@ -4228,7 +4229,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle21.add(Button_fix2);
 
         Button_fix2.setMargin(new Insets(0, 0, 0, 0));
-        //Button_check.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_check.setIcon(createImageIcon(
         //"ppp/check.png")));
 
 //------------------------------------------
@@ -4259,8 +4260,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             Button_kyoutuu_sagyou();
             repaint();
         });
-        ckbox_check3.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_check3_off.png")));
-        ckbox_check3.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_check3_on.png")));
+        ckbox_check3.setIcon(createImageIcon("ppp/ckbox_check3_off.png"));
+        ckbox_check3.setSelectedIcon(createImageIcon("ppp/ckbox_check3_on.png"));
         ckbox_check3.setBorderPainted(true);
         ckbox_check3.setMargin(new Insets(0, 0, 0, 0));
         pnle22.add(ckbox_check3);
@@ -4292,8 +4293,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             Button_kyoutuu_sagyou();
             repaint();
         });
-        ckbox_check4.setIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_check4_off.png")));
-        ckbox_check4.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource("ppp/ckbox_check4_on.png")));
+        ckbox_check4.setIcon(createImageIcon("ppp/ckbox_check4_off.png"));
+        ckbox_check4.setSelectedIcon(createImageIcon("ppp/ckbox_check4_on.png"));
         ckbox_check4.setBorderPainted(true);
         ckbox_check4.setMargin(new Insets(0, 0, 0, 0));
         pnle23.add(ckbox_check4);
@@ -4320,8 +4321,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle29.add(Button_ck4_color_sage);
 
         Button_ck4_color_sage.setMargin(new Insets(0, 0, 0, 0));
-        Button_ck4_color_sage.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ck4_color_sage.png")));
+        Button_ck4_color_sage.setIcon(createImageIcon(
+                "ppp/ck4_color_sage.png"));
 
 // ****東***頂点チェック結果表示円の色の濃さ調整　上げ***********************************************************************
 
@@ -4336,8 +4337,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle29.add(Button_ck4_color_age);
 
         Button_ck4_color_age.setMargin(new Insets(0, 0, 0, 0));
-        Button_ck4_color_age.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ck4_color_age.png")));
+        Button_ck4_color_age.setIcon(createImageIcon(
+                "ppp/ck4_color_age.png"));
 
 
 //------------------------------------------
@@ -4398,8 +4399,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnle6.add(Button_kakudo_kei_a_tiisaku);
         Button_kakudo_kei_a_tiisaku.setMargin(new Insets(0, 0, 0, 0));
-        Button_kakudo_kei_a_tiisaku.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/tiisaku.png")));
+        Button_kakudo_kei_a_tiisaku.setIcon(createImageIcon(
+                "ppp/tiisaku.png"));
         Button_kakudo_kei_a_tiisaku.setBounds(2, 2, 10, 20);
 
 
@@ -4491,8 +4492,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnle6.add(Button_kakudo_kei_a_ookiku);
         Button_kakudo_kei_a_ookiku.setMargin(new Insets(0, 0, 0, 0));
-        Button_kakudo_kei_a_ookiku.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ookiku.png")));
+        Button_kakudo_kei_a_ookiku.setIcon(createImageIcon(
+                "ppp/ookiku.png"));
 
         Button_kakudo_kei_a_ookiku.setBounds(100, 2, 10, 20);
 
@@ -4545,8 +4546,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnle7.add(Button_kakudo_kei_b_tiisaku);
         Button_kakudo_kei_b_tiisaku.setMargin(new Insets(0, 0, 0, 0));
-        Button_kakudo_kei_b_tiisaku.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/tiisaku.png")));
+        Button_kakudo_kei_b_tiisaku.setIcon(createImageIcon(
+                "ppp/tiisaku.png"));
         Button_kakudo_kei_b_tiisaku.setBounds(2, 2, 10, 20);
 
 
@@ -4638,8 +4639,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnle7.add(Button_kakudo_kei_b_ookiku);
         Button_kakudo_kei_b_ookiku.setMargin(new Insets(0, 0, 0, 0));
-        Button_kakudo_kei_b_ookiku.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ookiku.png")));
+        Button_kakudo_kei_b_ookiku.setIcon(createImageIcon(
+                "ppp/ookiku.png"));
 
         Button_kakudo_kei_b_ookiku.setBounds(100, 2, 10, 20);
 
@@ -4787,8 +4788,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle18.add(Button_jiyuu_kaku_set_a);
 
         Button_jiyuu_kaku_set_a.setMargin(new Insets(0, 0, 0, 0));
-        Button_jiyuu_kaku_set_a.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/jiyuu_kaku_set_a.png")));
+        Button_jiyuu_kaku_set_a.setIcon(createImageIcon(
+                "ppp/jiyuu_kaku_set_a.png"));
 
 // -----自由角set。ここまで
 
@@ -4858,8 +4859,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle19.add(Button_jiyuu_kaku_set_b);
 
         Button_jiyuu_kaku_set_b.setMargin(new Insets(0, 0, 0, 0));
-        Button_jiyuu_kaku_set_b.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/jiyuu_kaku_set_b.png")));
+        Button_jiyuu_kaku_set_b.setIcon(createImageIcon(
+                "ppp/jiyuu_kaku_set_b.png"));
 
 // -----自由角set。ここまで
 
@@ -4906,8 +4907,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle2.add(Button_deg);
 
         Button_deg.setMargin(new Insets(0, 0, 0, 0));
-        Button_deg.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/deg.png")));
+        Button_deg.setIcon(createImageIcon(
+                "ppp/deg.png"));
 // -------------13;角度系モード。ここまで
 
 
@@ -4929,8 +4930,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle2.add(Button_deg3);
 
         Button_deg3.setMargin(new Insets(0, 0, 0, 0));
-        Button_deg3.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/deg3.png")));
+        Button_deg3.setIcon(createImageIcon(
+                "ppp/deg3.png"));
 // ------東-------17;角度系モード。ここまで
 
 // -------------37;角度規格化線分入力モード。
@@ -4953,8 +4954,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle2.add(Button_senbun_nyuryoku37);
 
         Button_senbun_nyuryoku37.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_nyuryoku37.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/senbun_nyuryoku37.png")));
+        Button_senbun_nyuryoku37.setIcon(createImageIcon(
+                "ppp/senbun_nyuryoku37.png"));
 
 
 // -------------37;角度規格化線分入力モード。ここまで
@@ -4984,8 +4985,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle3.add(Button_deg2);
 
         Button_deg2.setMargin(new Insets(0, 0, 0, 0));
-        Button_deg2.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/deg2.png")));
+        Button_deg2.setIcon(createImageIcon(
+                "ppp/deg2.png"));
 // -------------16;角度系モード。ここまで
 
 // ----東---------18;角度系モード。2点指定、自由末端
@@ -5005,8 +5006,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle3.add(Button_deg4);
 
         Button_deg4.setMargin(new Insets(0, 0, 0, 0));
-        Button_deg4.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/deg4.png")));
+        Button_deg4.setIcon(createImageIcon(
+                "ppp/deg4.png"));
 // -------------18;角度系モード。ここまで
 
 
@@ -5057,7 +5058,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle5.add(Button_kakusuu_set);
 
         Button_kakusuu_set.setMargin(new Insets(0, 0, 0, 0));
-        //Button_senbun_bunkatu_set.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_senbun_bunkatu_set.setIcon(createImageIcon(
         //"ppp/senbun_bunkatu_set.png")));
 
 // ------1;角数set。ここまで
@@ -5089,8 +5090,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle5.add(Button_sei_takakukei);
 
         Button_sei_takakukei.setMargin(new Insets(0, 0, 0, 0));
-        Button_sei_takakukei.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/sei_takakukei.png")));
+        Button_sei_takakukei.setIcon(createImageIcon(
+                "ppp/sei_takakukei.png"));
 
 // ------29;正多角形入力モード。ここまで
 
@@ -5130,8 +5131,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle9.add(Button_en_nyuryoku_free);
 
         Button_en_nyuryoku_free.setMargin(new Insets(0, 0, 0, 0));
-        Button_en_nyuryoku_free.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/en_nyuryoku_free.png")));
+        Button_en_nyuryoku_free.setIcon(createImageIcon(
+                "ppp/en_nyuryoku_free.png"));
 
 
 // -------------47;円入力モード。ここまで
@@ -5153,8 +5154,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle9.add(Button_en_nyuryoku);
 
         Button_en_nyuryoku.setMargin(new Insets(0, 0, 0, 0));
-        Button_en_nyuryoku.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/en_nyuryoku.png")));
+        Button_en_nyuryoku.setIcon(createImageIcon(
+                "ppp/en_nyuryoku.png"));
 
 
 // -------------42;円入力モード。ここまで
@@ -5175,8 +5176,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle9.add(Button_en_bunri_nyuryoku);
 
         Button_en_bunri_nyuryoku.setMargin(new Insets(0, 0, 0, 0));
-        Button_en_bunri_nyuryoku.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/en_bunri_nyuryoku.png")));
+        Button_en_bunri_nyuryoku.setIcon(createImageIcon(
+                "ppp/en_bunri_nyuryoku.png"));
 
 
 // -------------44;円　分離入力モード。ここまで
@@ -5206,8 +5207,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle16.add(Button_dousin_en_tuika_s);
 
         Button_dousin_en_tuika_s.setMargin(new Insets(0, 0, 0, 0));
-        Button_dousin_en_tuika_s.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/dousin_en_tuika_s.png")));
+        Button_dousin_en_tuika_s.setIcon(createImageIcon(
+                "ppp/dousin_en_tuika_s.png"));
 
 // -------------48;円　同心円追加モード。ここまで
 
@@ -5227,8 +5228,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle16.add(Button_dousin_en_tuika_d);
 
         Button_dousin_en_tuika_d.setMargin(new Insets(0, 0, 0, 0));
-        Button_dousin_en_tuika_d.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/dousin_en_tuika_d.png")));
+        Button_dousin_en_tuika_d.setIcon(createImageIcon(
+                "ppp/dousin_en_tuika_d.png"));
 
 // -------------49;円　同心円追加モード。ここまで
 
@@ -5260,8 +5261,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle17.add(Button_en_en_dousin_en);
 
         Button_en_en_dousin_en.setMargin(new Insets(0, 0, 0, 0));
-        Button_en_en_dousin_en.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/en_en_dousin_en.png")));
+        Button_en_en_dousin_en.setIcon(createImageIcon(
+                "ppp/en_en_dousin_en.png"));
 
 // -------------50;2円の共通接線入力モード。ここまで
 
@@ -5282,8 +5283,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle17.add(Button_en_en_sessen);
 
         Button_en_en_sessen.setMargin(new Insets(0, 0, 0, 0));
-        Button_en_en_sessen.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/en_en_sessen.png")));
+        Button_en_en_sessen.setIcon(createImageIcon(
+                "ppp/en_en_sessen.png"));
 
 // -------------45;2円の共通接線入力モード。ここまで
 
@@ -5314,8 +5315,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle10.add(Button_en_3ten_nyuryoku);
 
         Button_en_3ten_nyuryoku.setMargin(new Insets(0, 0, 0, 0));
-        Button_en_3ten_nyuryoku.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/en_3ten_nyuryoku.png")));
+        Button_en_3ten_nyuryoku.setIcon(createImageIcon(
+                "ppp/en_3ten_nyuryoku.png"));
 
 // -------------43;3点円入力モード。ここまで
 
@@ -5337,8 +5338,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle10.add(Button_hanten);
 
         Button_hanten.setMargin(new Insets(0, 0, 0, 0));
-        Button_hanten.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/hanten.png")));
+        Button_hanten.setIcon(createImageIcon(
+                "ppp/hanten.png"));
 
 // -------------46;反転入力モード。ここまで
 
@@ -5386,7 +5387,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         //Button_sen_tokutyuu_color.setPreferredSize(new Dimension(25, 25));
         Button_sen_tokutyuu_color.setMargin(new Insets(0, 0, 0, 0));
-        //Button_sen_tokutyuu_color.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_sen_tokutyuu_color.setIcon(createImageIcon(
         //  "ppp/sen_tokutyuu_color.png")));
         pnle8.add(Button_sen_tokutyuu_color);
 
@@ -5413,8 +5414,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle8.add(Button_sen_tokutyuu_color_henkou);
 
         Button_sen_tokutyuu_color_henkou.setMargin(new Insets(0, 0, 0, 0));
-        Button_sen_tokutyuu_color_henkou.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/sen_tokutyuu_color_henkou.png")));
+        Button_sen_tokutyuu_color_henkou.setIcon(createImageIcon(
+                "ppp/sen_tokutyuu_color_henkou.png"));
 
 // ********東******************************
         //------------------------------------------------
@@ -5451,8 +5452,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnle12.add(Button_h_undo);
         Button_h_undo.setMargin(new Insets(0, 0, 0, 0));
-        Button_h_undo.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/h_undo.png")));
+        Button_h_undo.setIcon(createImageIcon(
+                "ppp/h_undo.png"));
 
 
 // *****東*************************************************************************
@@ -5501,8 +5502,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnle12.add(Button_h_redo);
         Button_h_redo.setMargin(new Insets(0, 0, 0, 0));
-        Button_h_redo.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/h_redo.png")));
+        Button_h_redo.setIcon(createImageIcon(
+                "ppp/h_redo.png"));
 
 
 // ********************************************************
@@ -5540,8 +5541,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle14.add(Button_h_senhaba_sage);
 
         Button_h_senhaba_sage.setMargin(new Insets(0, 0, 0, 0));
-        Button_h_senhaba_sage.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/h_senhaba_sage.png")));
+        Button_h_senhaba_sage.setIcon(createImageIcon(
+                "ppp/h_senhaba_sage.png"));
 
 // ****東**************************************************************************補助線の幅大きく
 
@@ -5556,8 +5557,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle14.add(Button_h_senhaba_age);
 
         Button_h_senhaba_age.setMargin(new Insets(0, 0, 0, 0));
-        Button_h_senhaba_age.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/h_senhaba_age.png")));
+        Button_h_senhaba_age.setIcon(createImageIcon(
+                "ppp/h_senhaba_age.png"));
 //icol=3 cyan
 //icol=4 orange
 //icol=5 mazenta
@@ -5620,8 +5621,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle13.add(Button_h_senbun_nyuryoku);
 
         Button_h_senbun_nyuryoku.setMargin(new Insets(0, 0, 0, 0));
-        Button_h_senbun_nyuryoku.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/h_senbun_nyuryoku.png")));
+        Button_h_senbun_nyuryoku.setIcon(createImageIcon(
+                "ppp/h_senbun_nyuryoku.png"));
 
 
 // -------------h_1;補助線入力モード。ここまで
@@ -5648,8 +5649,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle13.add(Button_h_senbun_sakujyo);
 
         Button_h_senbun_sakujyo.setMargin(new Insets(0, 0, 0, 0));
-        Button_h_senbun_sakujyo.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/h_senbun_sakujyo.png")));
+        Button_h_senbun_sakujyo.setIcon(createImageIcon(
+                "ppp/h_senbun_sakujyo.png"));
 
 // ******東************************************************************************
         //------------------------------------------------
@@ -5861,7 +5862,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle33.add(Button_tuika_kinou);
 
         Button_tuika_kinou.setMargin(new Insets(0, 0, 0, 0));
-        //Button_tuika_kinou.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_tuika_kinou.setIcon(createImageIcon(
         //  "ppp/tuika_kinou.png")));
 
 
@@ -5929,7 +5930,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             memo_temp = readFile2Memo();
             System.out.println("readFile2Memo() 終了");
 
-            if (memo_temp.getLineSize() > 0) {
+            if (memo_temp.getLineCount() > 0) {
                 es1.setMemo_for_yomikomi_tuika(memo_temp);
                 es1.record();
                 repaint();
@@ -5952,10 +5953,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             repaint();
         });
-        ckbox_cp_kaizen_oritatami.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_cp_kaizen_oritatami_off.png")));
-        ckbox_cp_kaizen_oritatami.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_cp_kaizen_oritatami_on.png")));
+        ckbox_cp_kaizen_oritatami.setIcon(createImageIcon(
+                "ppp/ckbox_cp_kaizen_oritatami_off.png"));
+        ckbox_cp_kaizen_oritatami.setSelectedIcon(createImageIcon(
+                "ppp/ckbox_cp_kaizen_oritatami_on.png"));
         ckbox_cp_kaizen_oritatami.setMargin(new Insets(0, 0, 0, 0));
         pnlw12.add(
                 ckbox_cp_kaizen_oritatami);
@@ -5970,10 +5971,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             repaint();
         });
-        ckbox_select_nokosi.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_select_nokosi_off.png")));
-        ckbox_select_nokosi.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_select_nokosi_on.png")));
+        ckbox_select_nokosi.setIcon(createImageIcon(
+                "ppp/ckbox_select_nokosi_off.png"));
+        ckbox_select_nokosi.setSelectedIcon(createImageIcon(
+                "ppp/ckbox_select_nokosi_on.png"));
         //ckbox_select_nokosi.setMargin(new Insets(0,0,0,0));
         pnlw12.add(
                 ckbox_select_nokosi);
@@ -6013,8 +6014,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw12.add(Button_2syoku_tenkaizu);
         Button_2syoku_tenkaizu.setBounds(81, 0, 30, 21);
         Button_2syoku_tenkaizu.setMargin(new Insets(0, 0, 0, 0));
-        Button_2syoku_tenkaizu.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/2syoku_tenkaizu.png")));
+        Button_2syoku_tenkaizu.setIcon(createImageIcon(
+                "ppp/2syoku_tenkaizu.png"));
 
 // -----------------------------------------------------------------------------------
 
@@ -6113,8 +6114,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_suitei_02.setBounds(0, 0, 20, 21);//20180210,4番目の21が23以上だとアイコン表示がかえって部分的にしか表示されない
 
         Button_suitei_02.setMargin(new Insets(0, 0, 0, 0));
-        Button_suitei_02.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/suitei_02.png")));
+        Button_suitei_02.setIcon(createImageIcon(
+                "ppp/suitei_02.png"));
 
 // *******南******************************************************************
 
@@ -6152,8 +6153,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
         Button_suitei_03.setMargin(new Insets(0, 0, 0, 0));
-        Button_suitei_03.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/suitei_03.png")));
+        Button_suitei_03.setIcon(createImageIcon(
+                "ppp/suitei_03.png"));
 
 
 // ******南*******************************************************************ccccccccccccccc
@@ -6176,10 +6177,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         ckbox_toukazu_color.setBounds(21, 0, 18, 21);
 
-        ckbox_toukazu_color.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_toukazu_color_off.png")));
-        ckbox_toukazu_color.setSelectedIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ckbox_toukazu_color_on.png")));
+        ckbox_toukazu_color.setIcon(createImageIcon(
+                "ppp/ckbox_toukazu_color_off.png"));
+        ckbox_toukazu_color.setSelectedIcon(createImageIcon(
+                "ppp/ckbox_toukazu_color_on.png"));
         ckbox_toukazu_color.setMargin(new Insets(0, 0, 0, 0));
         pnls4.add(
                 ckbox_toukazu_color);
@@ -6198,8 +6199,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnls4.add(Button_toukazu_color_sage);
         Button_toukazu_color_sage.setBounds(39, 0, 18, 21);
         Button_toukazu_color_sage.setMargin(new Insets(0, 0, 0, 0));
-        Button_toukazu_color_sage.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ck4_color_sage.png")));
+        Button_toukazu_color_sage.setIcon(createImageIcon(
+                "ppp/ck4_color_sage.png"));
 
 
 // *******透過図の色の濃さ調整　上げ***********************************************************************
@@ -6215,8 +6216,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnls4.add(Button_toukazu_color_age);
         Button_toukazu_color_age.setBounds(57, 0, 18, 21);
         Button_toukazu_color_age.setMargin(new Insets(0, 0, 0, 0));
-        Button_toukazu_color_age.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/ck4_color_age.png")));
+        Button_toukazu_color_age.setIcon(createImageIcon(
+                "ppp/ck4_color_age.png"));
 
 
 // ********南*****************************************************************
@@ -6241,8 +6242,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnls.add(Button_suitei_04);
 
         Button_suitei_04.setMargin(new Insets(0, 0, 0, 0));
-        Button_suitei_04.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/suitei_04.png")));
+        Button_suitei_04.setIcon(createImageIcon(
+                "ppp/suitei_04.png"));
 
 // *******南******************************************************************
 
@@ -6290,8 +6291,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnls.add(Button0b);
 
         Button0b.setMargin(new Insets(0, 0, 0, 0));
-        Button0b.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/Button0b.png")));
+        Button0b.setIcon(createImageIcon(
+                "ppp/Button0b.png"));
 
 
 // *****南********************************************************************
@@ -6375,7 +6376,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnls1.add(Button_bangou_sitei_suitei_hyouji);
 
         Button_bangou_sitei_suitei_hyouji.setMargin(new Insets(0, 0, 0, 0));
-        //Button_senbun_bunkatu_set.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_senbun_bunkatu_set.setIcon(createImageIcon(
         //"ppp/senbun_bunkatu_set.png")));
 
 // ------ここまで
@@ -6396,8 +6397,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnls.add(Button_undo_om);
         Button_undo_om.setMargin(new Insets(0, 0, 0, 0));
-        Button_undo_om.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/undo.png")));
+        Button_undo_om.setIcon(createImageIcon(
+                "ppp/undo.png"));
 
 // *****南*************************************************************************
 
@@ -6443,8 +6444,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnls.add(Button_redo_om);
         Button_redo_om.setMargin(new Insets(0, 0, 0, 0));
-        Button_redo_om.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/redo.png")));
+        Button_redo_om.setIcon(createImageIcon(
+                "ppp/redo.png"));
 
 
 // ********************************************************
@@ -6466,8 +6467,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         pnls.add(Button_oriagari_sousa);
         Button_oriagari_sousa.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_sousa.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/oriagari_sousa.png")));
+        Button_oriagari_sousa.setIcon(createImageIcon(
+                "ppp/oriagari_sousa.png"));
 
 // ******南*******************************************************************
 
@@ -6489,8 +6490,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
         Button_oriagari_sousa_2.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_sousa_2.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/oriagari_sousa_2.png")));
+        Button_oriagari_sousa_2.setIcon(createImageIcon("ppp/oriagari_sousa_2.png"));
 
 // *******南******************************************************************
         JButton Button_oriagari_idiu = new JButton("");// new JButton(	"F_move"	);
@@ -6507,8 +6507,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
         Button_oriagari_idiu.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_idiu.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/oriagari_idiu.png")));
+        Button_oriagari_idiu.setIcon(createImageIcon("ppp/oriagari_idiu.png"));
 
 // *******南******************************************************************
 
@@ -6554,8 +6553,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnls2.add(Button_oriagari_syukusyou);
         Button_oriagari_syukusyou.setBounds(1, 1, 28, 28);
         Button_oriagari_syukusyou.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_syukusyou.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/oriagari_syukusyou.png")));
+        Button_oriagari_syukusyou.setIcon(createImageIcon("ppp/oriagari_syukusyou.png"));
 
 
 // *******南******************************************************************
@@ -6648,8 +6646,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnls2.add(Button_oriagari_kakudai);
         Button_oriagari_kakudai.setBounds(80, 1, 28, 28);
         Button_oriagari_kakudai.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_kakudai.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/oriagari_kakudai.png")));
+        Button_oriagari_kakudai.setIcon(createImageIcon("ppp/oriagari_kakudai.png"));
 
 
 // *****南********************************************************************
@@ -6684,8 +6681,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnls3.add(Button_oriagari_p_kaiten);
         Button_oriagari_p_kaiten.setBounds(1, 1, 33, 28);
         Button_oriagari_p_kaiten.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_p_kaiten.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/oriagari_p_kaiten.png")));
+        Button_oriagari_p_kaiten.setIcon(createImageIcon("ppp/oriagari_p_kaiten.png"));
 
 
 // ****南**************************************************************************
@@ -6755,8 +6751,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnls3.add(Button_oriagari_m_kaiten);
         Button_oriagari_m_kaiten.setBounds(85, 1, 33, 28);
         Button_oriagari_m_kaiten.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_m_kaiten.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/oriagari_m_kaiten.png")));
+        Button_oriagari_m_kaiten.setIcon(createImageIcon("ppp/oriagari_m_kaiten.png"));
 
 // *******南******************************************************************
 
@@ -6777,7 +6772,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnls.add(Button_a_a);
 
         Button_a_a.setMargin(new Insets(0, 0, 0, 0));
-        //Button_a_a.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_a_a.setIcon(createImageIcon(
         //  "ppp/a_a.png")));
 // ******************************************************** //折りあがり図の影付け
 
@@ -6792,7 +6787,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnls.add(Button_kage);
 
         Button_kage.setMargin(new Insets(0, 0, 0, 0));
-        //Button_kage.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
+        //Button_kage.setIcon(createImageIcon(
         //  "ppp/kage.png")));
 // *********南****************************************************************
 // -------------折り上がり予測図表面の色の選択
@@ -6825,8 +6820,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         //Button_F_color.setPreferredSize(new Dimension(25, 25));
         Button_F_color.setMargin(new Insets(0, 0, 0, 0));
-        Button_F_color.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/F_color.png")));
+        Button_F_color.setIcon(createImageIcon("ppp/F_color.png"));
         pnls.add(Button_F_color);
 
 
@@ -6847,8 +6841,6 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             //System.out.println("readFile2Memo() 開始");
 
             //以下にやりたいことを書く
-            JColorChooser colorchooser = new JColorChooser();
-            //Color color = colorchooser.showDialog(null, "B_col", Color.white);
             OZ.foldedFigure_B_color = JColorChooser.showDialog(null, "B_col", Color.white);
 
             if (OZ.foldedFigure_B_color != null) {
@@ -6861,8 +6853,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         //Button_B_color.setPreferredSize(new Dimension(25, 25));
         Button_B_color.setMargin(new Insets(0, 0, 0, 0));
-        Button_B_color.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/B_color.png")));
+        Button_B_color.setIcon(createImageIcon("ppp/B_color.png"));
         pnls.add(Button_B_color);
 
 
@@ -6900,8 +6891,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         });
         //Button_L_color.setPreferredSize(new Dimension(25, 25));
         Button_L_color.setMargin(new Insets(0, 0, 0, 0));
-        Button_L_color.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/L_color.png")));
+        Button_L_color.setIcon(createImageIcon("ppp/L_color.png"));
         pnls.add(Button_L_color);
 
 
@@ -6928,8 +6918,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnls.add(Button_keisan_tyuusi);
 
         Button_keisan_tyuusi.setMargin(new Insets(0, 0, 0, 0));
-        Button_keisan_tyuusi.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/keisan_tyuusi.png")));
+        Button_keisan_tyuusi.setIcon(createImageIcon("ppp/keisan_tyuusi.png"));
 
 
 // *******南****************************************************************** 折り上がり予想の廃棄 ************************************************
@@ -6961,8 +6950,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnls.add(Button_settei_syokika);
 
         Button_settei_syokika.setMargin(new Insets(0, 0, 0, 0));
-        Button_settei_syokika.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/settei_syokika.png")));
+        Button_settei_syokika.setIcon(createImageIcon("ppp/settei_syokika.png"));
 
 // *******南*************bbbbbbbbbb*****************************************************全操作廃棄 (ﾉToT)ﾉ ┫:･'.::･  ****************************************************
 
@@ -6996,8 +6984,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnls.add(Button_zen_syokika);
 
         Button_zen_syokika.setMargin(new Insets(0, 0, 0, 0));
-        Button_zen_syokika.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-                "ppp/zen_syokika.png")));
+        Button_zen_syokika.setIcon(createImageIcon("ppp/zen_syokika.png"));
 
 // *******南*********ボタンの定義はここまで*******************************************************************************************************************************
 
@@ -7282,7 +7269,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         //int option = JOptionPane.showConfirmDialog(this, "展開図保存する？/Save CP？");
 
-        int option = JOptionPane.showConfirmDialog(this, new ImageIcon(getClass().getClassLoader().getResource("ppp/keisan_tyuusi_DLog.png")));
+        int option = JOptionPane.showConfirmDialog(this, createImageIcon("ppp/keisan_tyuusi_DLog.png"));
 
         if (option == JOptionPane.YES_OPTION) {
             i_mouseDragged_yuukou = 0;
@@ -7309,7 +7296,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         //int option = JOptionPane.showConfirmDialog(this, "データを保存しますか？/Save CP？");
 
-        int option = JOptionPane.showConfirmDialog(this, new ImageIcon(getClass().getClassLoader().getResource("ppp/owari.png")));
+        int option = JOptionPane.showConfirmDialog(this, createImageIcon("ppp/owari.png"));
 
         if (option == JOptionPane.YES_OPTION) {
             i_mouseDragged_yuukou = 0;
@@ -9729,55 +9716,55 @@ public void keyTyped(KeyEvent e){
         //int   i_mejirusi_hyouji,i_cp_ue_hyouji,i_oritatami_keika_hyouji;
 
         if (ckbox_point_search.isSelected()) {
-            i_ten_sagasi_hyouji = 1;
+            i_point_sagasi_display = 1;
         } else {
-            i_ten_sagasi_hyouji = 0;
+            i_point_sagasi_display = 0;
         }
         if (ckbox_ten_hanasi.isSelected()) {
-            i_ten_hanasi_hyouji = 1;
+            i_point_hanasi_display = 1;
         } else {
-            i_ten_hanasi_hyouji = 0;
+            i_point_hanasi_display = 0;
         }
         if (ckbox_kou_mitudo_nyuuryoku.isSelected()) {
-            i_kou_mitudo_nyuuryoku_hyouji = 1;
+            i_kou_mitudo_nyuuryoku_display = 1;
         } else {
-            i_kou_mitudo_nyuuryoku_hyouji = 0;
+            i_kou_mitudo_nyuuryoku_display = 0;
         }
         if (ckbox_bun.isSelected()) {
-            i_bun_hyouji = 1;
+            i_bun_display = 1;
         } else {
-            i_bun_hyouji = 0;
+            i_bun_display = 0;
         }
         if (ckbox_cp.isSelected()) {
-            i_cp_hyouji = 1;
+            i_cp_display = 1;
         } else {
-            i_cp_hyouji = 0;
+            i_cp_display = 0;
         }
         if (ckbox_a0.isSelected()) {
-            i_a0_hyouji = 1;
+            i_a0_display = 1;
         } else {
-            i_a0_hyouji = 0;
+            i_a0_display = 0;
         }
         if (ckbox_a1.isSelected()) {
-            i_a1_hyouji = 1;
+            i_a1_display = 1;
         } else {
-            i_a1_hyouji = 0;
+            i_a1_display = 0;
         }
 
         if (ckbox_mejirusi.isSelected()) {
-            i_mejirusi_hyouji = 1;
+            i_mejirusi_display = 1;
         } else {
-            i_mejirusi_hyouji = 0;
+            i_mejirusi_display = 0;
         }
         if (ckbox_cp_ue.isSelected()) {
-            i_cp_ue_hyouji = 1;
+            i_cp_ue_display = 1;
         } else {
-            i_cp_ue_hyouji = 0;
+            i_cp_ue_display = 0;
         }
         if (ckbox_oritatami_keika.isSelected()) {
-            i_oritatami_keika_hyouji = 1;
+            i_oritatami_keika_display = 1;
         } else {
-            i_oritatami_keika_hyouji = 0;
+            i_oritatami_keika_display = 0;
         }
 
 
@@ -9858,29 +9845,24 @@ img_haikei=(Image)imageT;
 
         //基準面の表示
         //System.out.println("paint　+++++++++++++++++++++　基準面の表示");
-        if (i_mejirusi_hyouji == 1) {
+        if (i_mejirusi_display == 1) {
             if (OZ.display_flg > 0) {
                 //	ts1.setCamera(camera_of_orisen_nyuuryokuzu);
                 OZ.cp_worker1.drawing_referencePlane_with_camera(bufferGraphics);//ts1が折り畳みを行う際の基準面を表示するのに使う。
             }
         }
 
-        //System.out.println("20170201_1");
-
-
         double d_haba = camera_of_orisen_input_diagram.getCameraZoomX() * es1.get_d_hantei_haba();
-        //懐中電灯（点の）探索範囲
-        if (i_ten_sagasi_hyouji == 1) {
+        //Flashlight (dot) search range
+        if (i_point_sagasi_display == 1) {
             g2.setColor(new Color(255, 240, 0, 30));
-            //g2.fill(new Ellipse2D.Double(p_mouse_TV_iti.getx()-d_haba, p_mouse_TV_iti.gety()-d_haba, 2.0*d_haba,2.0*d_haba));
-
             g2.setStroke(new BasicStroke(2.0f));
             g2.setColor(new Color(255, 240, 0, 230));
             g2.draw(new Ellipse2D.Double(p_mouse_TV_iti.getX() - d_haba, p_mouse_TV_iti.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
         }
 
-        //懐中電灯の光束等
-        if ((i_ten_sagasi_hyouji == 1) && (i_ten_hanasi_hyouji == 1)) {
+        //Luminous flux of flashlight, etc.
+        if ((i_point_sagasi_display == 1) && (i_point_hanasi_display == 1)) {
             g2.setStroke(new BasicStroke(2.0f));
             g2.setColor(new Color(255, 240, 0, 170));
         }
@@ -9891,13 +9873,9 @@ img_haikei=(Image)imageT;
         //if (ihaikeihyouji<=1) {
         //        es1.setCamera(camera_of_orisen_nyuuryokuzu);
 
-        //if(i_mejirusi_hyouji==1){js.oekaki_jyuuji_with_camera(bufferGraphics);}
-        es1.oekaki_with_camera(bufferGraphics, i_bun_hyouji, i_cp_hyouji, i_a0_hyouji, i_a1_hyouji, fTenkaizuSenhaba, i_orisen_hyougen, f_h_TenkaizuSenhaba, dim.width, dim.height, i_mejirusi_hyouji);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
-        //}
-        //	bufferGraphics.drawString(c.valueOf(k.getsousuu()),30,50);
-        //	bufferGraphics.drawString(c.valueOf(k.getsousuu()),30,70);
+        es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fTenkaizuSenhaba, i_orisen_hyougen, f_h_TenkaizuSenhaba, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
-        if (i_bun_hyouji == 1) {
+        if (i_bun_display == 1) {
             //展開図情報の文字表示
             bufferGraphics.setColor(Color.black);
 
@@ -9910,7 +9888,7 @@ img_haikei=(Image)imageT;
             bufferGraphics.drawString(OZ.text_kekka, 120, 105); //この表示内容はvoid kekka_syoriで決められる。
 
 
-            if (i_kou_mitudo_nyuuryoku_hyouji == 1) {
+            if (i_kou_mitudo_nyuuryoku_display == 1) {
                 Point kus_sisuu = new Point(es1.get_moyori_ten_sisuu(p_mouse_TV_iti));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
 
                 double dx_ind;
@@ -9924,20 +9902,13 @@ img_haikei=(Image)imageT;
                 bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) p_mouse_TV_iti.getX() + 25, (int) p_mouse_TV_iti.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
             }
 
-            //bufferGraphics.drawString("index=" ,p_mouse_TV_iti.getx(),p_mouse_TV_iti.gety());
-
-            //System.out.println("mouse=("+p_mouse_object_iti.getx()+","+p_mouse_object_iti.gety()+")"  );
-
-            //System.out.println("i_SubThread = "+i_SubThread);
             if (i_SubThread == 1) {
                 bufferGraphics.setColor(Color.red);
 
                 bufferGraphics.drawString("Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 120, 134); //この表示内容はvoid kekka_syoriで決められる。
                 bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 120, 148); //この表示内容はvoid kekka_syoriで決められる。
-                //bufferGraphics.setColor(Color.black);
             }
 
-            //bufferGraphics.drawString("wwwwwwwwwwwwwwwwwwwwwwww",320,105);
             bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         }
 
@@ -9945,14 +9916,14 @@ img_haikei=(Image)imageT;
         //折り上がりの各種お絵かき
         //Oriagari_Zu OZi;
         for (int i = 1; i <= OAZ.size() - 1; i++) {
-            OZi = (FoldedFigure) OAZ.get(i);
-            OZi.foldUp_draw(bufferGraphics, i_mejirusi_hyouji);
+            OZi = OAZ.get(i);
+            OZi.foldUp_draw(bufferGraphics, i_mejirusi_display);
         }
         //OZ = (Oriagari_Zu)OAZ.get(OAZ.size()-1);//折りあがり図
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
-        if (i_cp_ue_hyouji == 1) {
-            es1.oekaki_with_camera(bufferGraphics, i_bun_hyouji, i_cp_hyouji, i_a0_hyouji, i_a1_hyouji, fTenkaizuSenhaba, i_orisen_hyougen, f_h_TenkaizuSenhaba, dim.width, dim.height, i_mejirusi_hyouji);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+        if (i_cp_ue_display == 1) {
+            es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fTenkaizuSenhaba, i_orisen_hyougen, f_h_TenkaizuSenhaba, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
         }
 
 
@@ -9973,7 +9944,7 @@ img_haikei=(Image)imageT;
 
 
         //中央指示線
-        if (i_ten_hanasi_hyouji == 1) {
+        if (i_point_hanasi_display == 1) {
 
             g2.setStroke(new BasicStroke(1.0f));
             //g2.setColor(new Color(0, 0, 0,255));
@@ -10226,7 +10197,7 @@ double dvy=(double)ymin;
             if (fname.endsWith("svg")) {
                 //	Memo memo1; memo1=es1.getMemo_for_kakidasi();
                 Memo memo1;
-                memo1 = es1.getMemo_for_svg_export_with_camera(i_bun_hyouji, i_cp_hyouji, i_a0_hyouji, i_a1_hyouji, fTenkaizuSenhaba, i_orisen_hyougen, f_h_TenkaizuSenhaba, dim.width, dim.height, i_mejirusi_hyouji);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+                memo1 = es1.getMemo_for_svg_export_with_camera(i_bun_display, i_cp_display, i_a0_display, i_a1_display, fTenkaizuSenhaba, i_orisen_hyougen, f_h_TenkaizuSenhaba, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
                 Memo memo2 = new Memo();
                 //memo2=OZ.getMemo_for_svg_kakidasi();//20180227　各折り上がりのmemoと重複する作業なので削除
@@ -10234,7 +10205,7 @@ double dvy=(double)ymin;
                 //各折り上がりのmemo
                 FoldedFigure OZi;
                 for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                    OZi = (FoldedFigure) OAZ.get(i_oz);
+                    OZi = OAZ.get(i_oz);
 
                     memo2.addMemo(OZi.getMemo_for_svg_export());
 
@@ -10470,7 +10441,7 @@ double dvy=(double)ymin;
 
 
             PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fname)));
-            for (int i = 1; i <= memo1.getLineSize(); i++) {
+            for (int i = 1; i <= memo1.getLineCount(); i++) {
                 pw.println(memo1.getLine(i));
             }
             pw.close();
@@ -10547,6 +10518,9 @@ double dvy=(double)ymin;
         }
     }
 
+    private ImageIcon createImageIcon(String url) {
+        return new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource(url)));
+    }
 }
 
 // ****************************************************************************************************

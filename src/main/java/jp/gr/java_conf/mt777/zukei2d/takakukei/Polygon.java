@@ -1,25 +1,25 @@
 package jp.gr.java_conf.mt777.zukei2d.takakukei;
 
-import java.awt.*;
-
-import jp.gr.java_conf.mt777.zukei2d.senbun.*;
-import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
-import jp.gr.java_conf.mt777.seiretu.narabebako.*;
+import jp.gr.java_conf.mt777.seiretu.narabebako.SortingBox_int_double;
+import jp.gr.java_conf.mt777.seiretu.narabebako.int_double;
+import jp.gr.java_conf.mt777.zukei2d.oritacalc.OritaCalc;
+import jp.gr.java_conf.mt777.zukei2d.senbun.LineSegment;
 import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
+import java.awt.*;
+
 public class Polygon {
-    String c = "";
-    int verticesCount;             //何角形か
+    int vertexCount;             //How many vertices
 
-    Point[] vertices;//頂点
+    Point[] vertices;//vertex
 
-    OritaCalc oc = new OritaCalc();          //各種計算用の関数を使うためのクラスのインスタンス化
+    OritaCalc oc = new OritaCalc();          //Instantiation of classes to use functions for various calculations
 
 
-    public Polygon(int verticesCount) {  //コンストラクタ
-        this.verticesCount = verticesCount;
-        Point[] t0 = new Point[verticesCount + 1];   //頂点
-        for (int i = 0; i <= verticesCount; i++) {
+    public Polygon(int _vertexCount) {  //コンストラクタ
+        vertexCount = _vertexCount;
+        Point[] t0 = new Point[vertexCount + 1];   //頂点
+        for (int i = 0; i <= vertexCount; i++) {
             t0[i] = new Point();
         }
         // red=255;green=0;blue=0;
@@ -27,25 +27,25 @@ public class Polygon {
     }
 
     //Set the number of angles of the polygon
-    public void setVerticesCount(int kaku) {
-        verticesCount = kaku;
+    public void setVertexCount(int count) {
+        vertexCount = count;
     }
 
-    public int getkakusuu() {
-        return verticesCount;
+    public int getVertexCount() {
+        return vertexCount;
     }
 
-    //多角形のi番目の頂点をセットする
+    //Set the i-th vertex of the polygon
     public void set(int i, Point p) {
         vertices[i].set(p);
     }
 
-    //多角形のi番目の頂点をゲットする
+    //Get the i-th vertex of a polygon
     public Point get(int i) {
         return vertices[i];
     }
 
-    //点p0を基準に多角形のi番目の頂点をセットする
+    //Set the i-th vertex of the polygon with respect to the point p0
     public void set(Point p0, int i, Point p) {
         vertices[i].set(p0.getX() + p.getX(), p0.getY() + p.getY());
     }
@@ -54,14 +54,14 @@ public class Polygon {
     public boolean intersects(LineSegment s0) {
         int itrue = 0;
         LineSegment s = new LineSegment();
-        for (int i = 1; i <= verticesCount - 1; i++) {
+        for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]); //line segment
             if (oc.line_intersect_decide(s0, s) >= 1) {
                 itrue = 1;
             }
         }
 
-        s.set(vertices[verticesCount], vertices[1]); //line segment
+        s.set(vertices[vertexCount], vertices[1]); //line segment
         if (oc.line_intersect_decide(s0, s) >= 1) {
             itrue = 1;
         }
@@ -70,229 +70,217 @@ public class Polygon {
     }
 
 
-    //線分s0の全部が凸多角形の外部（境界線は内部とみなさない）に存在するとき0、
-    //線分s0が凸多角形の外部と境界線の両方に渡って存在するとき1、
-    //線分s0が凸多角形の内部と境界線と外部に渡って存在するとき2、
-    //線分s0の全部が凸多角形の境界線に存在するとき3、
-    //線分s0が凸多角形の内部と境界線の両方に渡って存在するとき4、
-    //線分s0の全部が凸多角形の内部（境界線は内部とみなさない）に存在するとき5、
-    //を返す
-    public int naibu_gaibu_hantei(LineSegment s0) {
+    // 0, when all of the line segment s0 exists outside the convex polygon (the boundary line is not considered inside)
+    // When the line segment s0 exists both outside the convex polygon and across the boundary line 1,
+    // When the line segment s0 exists inside the convex polygon, the boundary line, and the outside 2,
+    // When all of the line segments s0 are on the boundary of the convex polygon 3,
+    // When the line segment s0 exists both inside the convex polygon and across the boundary line 4,
+    // When all of the line segment s0 exists inside the convex polygon (the boundary line is not considered to be inside) 5,
+    //return it
+    public int inside_outside_check(LineSegment s0) {
 
         SortingBox_int_double nbox = new SortingBox_int_double();
 
-        int i_kouten = 0;
+        int i_intersection = 0;
 
-        Point[] kouten = new Point[verticesCount * 2 + 3];   //交点
-        for (int i = 0; i <= verticesCount * 2 + 2; i++) {
-            kouten[i] = new Point();
+        Point[] intersection = new Point[vertexCount * 2 + 3];
+        for (int i = 0; i <= vertexCount * 2 + 2; i++) {
+            intersection[i] = new Point();
         }
 
-        //kouten[0].set(s0.geta());
+        i_intersection = i_intersection + 1;
+        intersection[i_intersection].set(s0.getA());
 
-        //s0.geta()
-        i_kouten = i_kouten + 1;
-        kouten[i_kouten].set(s0.getA());
+        i_intersection = i_intersection + 1;
+        intersection[i_intersection].set(s0.getB());
 
-        //s0.getb()
-        i_kouten = i_kouten + 1;
-        kouten[i_kouten].set(s0.getB());
-
-        int iflag = 0;//
         int kh = 0; //oc.senbun_kousa_hantei(s0,s)の値の格納用
 
         LineSegment s = new LineSegment();
 
-        for (int i = 1; i <= verticesCount; i++) {
+        for (int i = 1; i <= vertexCount; i++) {
 
-            if (i == verticesCount) {
-                s.set(vertices[verticesCount], vertices[1]); //線分
+            if (i == vertexCount) {
+                s.set(vertices[vertexCount], vertices[1]); //Line segment
             } else {
                 s.set(vertices[i], vertices[i + 1]);
-            } //線分
+            } //Line segment
 
             kh = oc.line_intersect_decide(s0, s);
 
             if (kh == 1) {
-                i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(oc.findIntersection(s0, s));
+                i_intersection = i_intersection + 1;
+                intersection[i_intersection].set(oc.findIntersection(s0, s));
             }
             if (kh == 27) {
-                i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(oc.findIntersection(s0, s));
+                i_intersection = i_intersection + 1;
+                intersection[i_intersection].set(oc.findIntersection(s0, s));
             }
             if (kh == 28) {
-                i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(oc.findIntersection(s0, s));
+                i_intersection = i_intersection + 1;
+                intersection[i_intersection].set(oc.findIntersection(s0, s));
             }
             if (kh == 321) {
-                i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(s.getB());
+                i_intersection = i_intersection + 1;
+                intersection[i_intersection].set(s.getB());
             }
             if (kh == 331) {
-                i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(s.getA());
+                i_intersection = i_intersection + 1;
+                intersection[i_intersection].set(s.getA());
             }
             if (kh == 341) {
-                i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(s.getB());
+                i_intersection = i_intersection + 1;
+                intersection[i_intersection].set(s.getB());
             }
             if (kh == 351) {
-                i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(s.getA());
+                i_intersection = i_intersection + 1;
+                intersection[i_intersection].set(s.getA());
             }
-
 
             if (kh == 361) {
-                i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(s.getA());
-                i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(s.getB());
+                i_intersection = i_intersection + 1;
+                intersection[i_intersection].set(s.getA());
+                i_intersection = i_intersection + 1;
+                intersection[i_intersection].set(s.getB());
             }
             if (kh == 362) {
-                i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(s.getA());
-                i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(s.getB());
+                i_intersection = i_intersection + 1;
+                intersection[i_intersection].set(s.getA());
+                i_intersection = i_intersection + 1;
+                intersection[i_intersection].set(s.getB());
             }
 
             if (kh == 371) {
-                i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(s.getA());
+                i_intersection = i_intersection + 1;
+                intersection[i_intersection].set(s.getA());
             }
             if (kh == 371) {
-                i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(s.getB());
+                i_intersection = i_intersection + 1;
+                intersection[i_intersection].set(s.getB());
             }
             if (kh == 373) {
-                i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(s.getB());
+                i_intersection = i_intersection + 1;
+                intersection[i_intersection].set(s.getB());
             }
             if (kh == 374) {
-                i_kouten = i_kouten + 1;
-                kouten[i_kouten].set(s.getA());
+                i_intersection = i_intersection + 1;
+                intersection[i_intersection].set(s.getA());
             }
 
         }
 
-
-        for (int i = 1; i <= i_kouten; i++) {
-            nbox.container_i_smallest_first(new int_double(i, kouten[i].distance(s0.getA())));
+        for (int i = 1; i <= i_intersection; i++) {
+            nbox.container_i_smallest_first(new int_double(i, intersection[i].distance(s0.getA())));
         }
 
-        //線分s0の全部が凸多角形の外部（境界線は内部とみなさない）に存在するとき0、
-        //線分s0が凸多角形の外部と境界線の両方に渡って存在するとき1、
-        //線分s0が凸多角形の内部と境界線と外部に渡って存在するとき2、
-        //線分s0の全部が凸多角形の境界線に存在するとき3、
-        //線分s0が凸多角形の内部と境界線の両方に渡って存在するとき4、
-        //線分s0の全部が凸多角形の内部（境界線は内部とみなさない）に存在するとき5、
+        // 0, when all of the line segment s0 exists outside the convex polygon (the boundary line is not considered inside)
+        // When the line segment s0 exists both outside the convex polygon and across the boundary line 1,
+        // When the line segment s0 exists inside the convex polygon, the boundary line, and the outside 2,
+        // When all of the line segments s0 are on the boundary of the convex polygon 3,
+        // When the line segment s0 exists both inside the convex polygon and across the boundary line 4,
+        // When all of the line segment s0 exists inside the convex polygon (the boundary line is not considered to be inside) 5,
 
-//naibu(Ten p){      //0=外部、　1=境界、　2=内部
+// naibu (Temp) {// 0 = external, 1 = boundary, 2 = internal
 
-        int soto = 0;
-        int kyoukai = 0;
-        int naka = 0;
+        int outside = 0;
+        int border = 0;
+        int inside = 0;
 
         int i_nai = 0;
 
         for (int i = 1; i <= nbox.getTotal(); i++) {
 
-            i_nai = inside(kouten[nbox.getInt(i)]);
+            i_nai = inside(intersection[nbox.getInt(i)]);
             if (i_nai == 0) {
-                soto = 1;
+                outside = 1;
             }
             if (i_nai == 1) {
-                kyoukai = 1;
+                border = 1;
             }
             if (i_nai == 2) {
-                naka = 1;
+                inside = 1;
             }
 
             if (i != nbox.getTotal()) {
-                i_nai = inside(oc.midPoint(kouten[nbox.getInt(i)], kouten[nbox.getInt(i + 1)]));
+                i_nai = inside(oc.midPoint(intersection[nbox.getInt(i)], intersection[nbox.getInt(i + 1)]));
                 if (i_nai == 0) {
-                    soto = 1;
+                    outside = 1;
                 }
                 if (i_nai == 1) {
-                    kyoukai = 1;
+                    border = 1;
                 }
                 if (i_nai == 2) {
-                    naka = 1;
+                    inside = 1;
                 }
             }
         }
 
-        //線分s0の全部が凸多角形の外部（境界線は内部とみなさない）に存在するとき0、
-        //線分s0が凸多角形の外部と境界線の両方に渡って存在するとき1、
-        //線分s0が凸多角形の内部と境界線と外部に渡って存在するとき2、
-        //線分s0の全部が凸多角形の境界線に存在するとき3、
-        //線分s0が凸多角形の内部と境界線の両方に渡って存在するとき4、
-        //線分s0の全部が凸多角形の内部（境界線は内部とみなさない）に存在するとき5、
+        // 0, when all of the line segment s0 exists outside the convex polygon (the boundary line is not considered inside)
+        // When the line segment s0 exists both outside the convex polygon and across the boundary line 1,
+        // When the line segment s0 exists inside the convex polygon, the boundary line, and the outside 2,
+        // When all of the line segments s0 are on the boundary of the convex polygon 3,
+        // When the line segment s0 exists both inside the convex polygon and across the boundary line 4,
+        // When all of the line segment s0 exists inside the convex polygon (the boundary line is not considered to be inside) 5,
 
         int i_r = 0;
 
-        //if(soto==0){if(kyoukai==0){if(naka==0){i_r=-1;}}}
-        if (soto == 0) {
-            if (kyoukai == 0) {
-                if (naka == 1) {
+        if (outside == 0) {
+            if (border == 0) {
+                if (inside == 1) {
                     i_r = 5;
                 }
             }
         }
-        if (soto == 0) {
-            if (kyoukai == 1) {
-                if (naka == 0) {
+        if (outside == 0) {
+            if (border == 1) {
+                if (inside == 0) {
                     i_r = 3;
                 }
             }
         }
-        if (soto == 0) {
-            if (kyoukai == 1) {
-                if (naka == 1) {
+        if (outside == 0) {
+            if (border == 1) {
+                if (inside == 1) {
                     i_r = 4;
                 }
             }
         }
-        if (soto == 1) {
-            if (kyoukai == 0) {
-                if (naka == 0) {
+        if (outside == 1) {
+            if (border == 0) {
+                if (inside == 0) {
                     i_r = 0;
                 }
             }
         }
-        //if(soto==1){if(kyoukai==0){if(naka==1){i_r= -2;}}}
-        if (soto == 1) {
-            if (kyoukai == 1) {
-                if (naka == 0) {
+        if (outside == 1) {
+            if (border == 1) {
+                if (inside == 0) {
                     i_r = 1;
                 }
             }
         }
-        if (soto == 1) {
-            if (kyoukai == 1) {
-                if (naka == 1) {
+        if (outside == 1) {
+            if (border == 1) {
+                if (inside == 1) {
                     i_r = 2;
                 }
             }
         }
 
         return i_r;
-
-//return 0; 
     }
 
 
 //----------------------------------------------------------------------------------------------
 
-    //線分s0の一部でも凸多角形の内部（境界線は内部とみなさない）に
-    //存在するとき1、しないなら0を返す
+    // Even a part of the line segment s0 is inside the convex polygon (the boundary line is not regarded as the inside)
+    // Returns 1 if present, 0 otherwise
     public int convex_inside(LineSegment s0) {
         int iflag = 0;//
-        int kh = 0; //oc.senbun_kousa_hantei(s0,s)の値の格納用
-        // Senbun s0 =new Senbun();
-        // s0.set(sa);
+        int kh = 0; //For storing the value of oc.line_intersect_decide (s0, s)
+
         LineSegment s = new LineSegment();
-        for (int i = 1; i <= verticesCount - 1; i++) {
+        for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]); //線分
             kh = oc.line_intersect_decide(s0, s);
             if (kh == 1) {
@@ -312,10 +300,10 @@ public class Polygon {
             }
             if (kh >= 20) {
                 iflag = iflag + 1;
-            } //ここは実際にはkhが20以上30未満のときに実行される。
+            }// This is actually executed when kh is 20 or more and less than 30.
         }
 
-        s.set(vertices[verticesCount], vertices[1]); //線分
+        s.set(vertices[vertexCount], vertices[1]); //Line segment
         kh = oc.line_intersect_decide(s0, s);
         if (kh == 1) {
             return 1;
@@ -334,7 +322,7 @@ public class Polygon {
         }
         if (kh >= 20) {
             iflag = iflag + 1;
-        } //ここは実際にはkhが20以上30未満のときに実行される。
+        } //This is actually done when kh is greater than or equal to 20 and less than 30.
 
         if (iflag == 0) {
             if (inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == 2) {
@@ -370,18 +358,17 @@ public class Polygon {
             return 1;
         }
 
-        return 0;      //実際はここまでたどり着くような状態は起きないはず
+        return 0;      //In reality, there should be no situation where you can reach this point.
     }
 
 
     // Even a part of the line segment s0 is inside the convex polygon (the boundary line is also regarded as the inside)
     // Returns 1 if present, 0 otherwise
     public int totu_boundary_inside(LineSegment s0) {// Returns 1 if even part of s0 touches a polygon.
-        int iflag = 0;//
-        int kh = 0; //oc.senbun_kousa_hantei(s0,s)の値の格納用
+        int kh = 0; //oc.line_intersect_decide(s0,s)の値の格納用
 
         LineSegment s = new LineSegment();
-        for (int i = 1; i <= verticesCount - 1; i++) {
+        for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]); //線分
             kh = oc.line_intersect_decide(s0, s);
             if (kh != 0) {
@@ -389,7 +376,7 @@ public class Polygon {
             }
         }
 
-        s.set(vertices[verticesCount], vertices[1]); //線分
+        s.set(vertices[vertexCount], vertices[1]); //線分
         kh = oc.line_intersect_decide(s0, s);
         if (kh != 0) {
             return 1;
@@ -399,13 +386,12 @@ public class Polygon {
             return 1;
         }
 
-
         return 0;
     }
 
 
-    //点が、この多角形の内部にある(true)かない(false)か判定する関数----------------------------------
-    public int inside(Point p) {      //0=外部、　1=境界、　2=内部
+    //A function that determines if a point is inside this polygon (true) or not (false)----------------------------------
+    public int inside(Point p) {      //0 = outside, 1 = boundary, 2 = inside
         LineSegment s = new LineSegment();
         LineSegment sq = new LineSegment();
         Point q = new Point();
@@ -413,21 +399,19 @@ public class Polygon {
         int kousakaisuu = 0;
         int jyuuji_kousakaisuu = 0;
         int tekisetu = 0;
-        double rad = 0.0;//確実に外部にある点を作るときに使うラジアン。
+        double rad = 0.0;//A radian used to make sure that there is an external point.
 
-        //まず、点pが多角形の境界線上にあるか判定する。
-        for (int i = 1; i <= verticesCount - 1; i++) {
+        //First, it is determined whether the point p is on the boundary line of the polygon.
+        for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]);
-            //if(oc.kyori_senbun(p,s)==0){return 1;}//20201022delete
             if (oc.distance_lineSegment(p, s) < 0.01) {
                 return 1;
-            }//20201022add
+            }
         }
-        s.set(vertices[verticesCount], vertices[1]);
-        //if(oc.kyori_senbun(p,s)==0){return 1;}//20201022delete
+        s.set(vertices[vertexCount], vertices[1]);
         if (oc.distance_lineSegment(p, s) < 0.01) {
             return 1;
-        }//20201022add
+        }
 
         //点pが多角形の境界線上に無い場合、内部にあるか外部にあるか判定する
 
@@ -441,7 +425,7 @@ public class Polygon {
 
             sq.set(p, q);
 
-            for (int i = 1; i <= verticesCount - 1; i++) {
+            for (int i = 1; i <= vertexCount - 1; i++) {
                 s.set(vertices[i], vertices[i + 1]); //線分
                 if (oc.line_intersect_decide(sq, s, 0.0, 0.0) >= 1) {
                     kousakaisuu++;
@@ -451,7 +435,7 @@ public class Polygon {
                 }
             }
 
-            s.set(vertices[verticesCount], vertices[1]); //線分
+            s.set(vertices[vertexCount], vertices[1]); //線分
             if (oc.line_intersect_decide(sq, s, 0.0, 0.0) >= 1) {
                 kousakaisuu++;
             }
@@ -468,35 +452,34 @@ public class Polygon {
             return 2;
         } //交差回数が奇数なら内部
 
-        //if(jyuuji_kousakaisuu==1){return true; } //交差回数が奇数なら内部
         return 0;
     }
 
     //多角形の頂点座標を時計回りに順に（x1,y1），（x2,y2），...，（xn,yn）とした場合の面積を求める
-    public double menseki_motome() {
-        double menseki = 0.0;
+    public double area_calculate() {
+        double area = 0.0;
 
-        menseki = menseki + (vertices[verticesCount].getX() - vertices[2].getX()) * vertices[1].getY();
-        for (int i = 2; i <= verticesCount - 1; i++) {
-            menseki = menseki + (vertices[i - 1].getX() - vertices[i + 1].getX()) * vertices[i].getY();
+        area = area + (vertices[vertexCount].getX() - vertices[2].getX()) * vertices[1].getY();
+        for (int i = 2; i <= vertexCount - 1; i++) {
+            area = area + (vertices[i - 1].getX() - vertices[i + 1].getX()) * vertices[i].getY();
         }
-        menseki = menseki + (vertices[verticesCount - 1].getX() - vertices[1].getX()) * vertices[verticesCount].getY();
-        menseki = -0.5 * menseki;
+        area = area + (vertices[vertexCount - 1].getX() - vertices[1].getX()) * vertices[vertexCount].getY();
+        area = -0.5 * area;
 
-        return menseki;
+        return area;
     }
 
     //ある点と多角形の距離（ある点と多角形の境界上の点の距離の最小値）を求める
     public double distance_find(Point tn) {
-        double kyori;
-        kyori = oc.distance_lineSegment(tn, vertices[verticesCount], vertices[1]);
-        for (int i = 1; i <= verticesCount - 1; i++) {
-            if (oc.distance_lineSegment(tn, vertices[i], vertices[i + 1]) < kyori) {
-                kyori = oc.distance_lineSegment(tn, vertices[i], vertices[i + 1]);
+        double distance;
+        distance = oc.distance_lineSegment(tn, vertices[vertexCount], vertices[1]);
+        for (int i = 1; i <= vertexCount - 1; i++) {
+            if (oc.distance_lineSegment(tn, vertices[i], vertices[i + 1]) < distance) {
+                distance = oc.distance_lineSegment(tn, vertices[i], vertices[i + 1]);
             }
         }
 
-        return kyori;
+        return distance;
     }
 
 
@@ -504,10 +487,9 @@ public class Polygon {
     public Point insidePoint_find() {
         Point tn = new Point();
         Point tr = new Point();
-        double distance;
-        distance = -10.0;
+        double distance = -10.0;
 
-        for (int i = 2; i <= verticesCount - 1; i++) {
+        for (int i = 2; i <= vertexCount - 1; i++) {
             tn.set(oc.center(vertices[i - 1], vertices[i], vertices[i + 1]));
             if ((distance < distance_find(tn)) && (inside(tn) == 2)) {
                 distance = distance_find(tn);
@@ -515,13 +497,13 @@ public class Polygon {
             }
         }
         //
-        tn.set(oc.center(vertices[verticesCount - 1], vertices[verticesCount], vertices[1]));
+        tn.set(oc.center(vertices[vertexCount - 1], vertices[vertexCount], vertices[1]));
         if ((distance < distance_find(tn)) && (inside(tn) == 2)) {
             distance = distance_find(tn);
             tr.set(tn);
         }
         //
-        tn.set(oc.center(vertices[verticesCount], vertices[1], vertices[2]));
+        tn.set(oc.center(vertices[vertexCount], vertices[1], vertices[2]));
         if ((distance < distance_find(tn)) && (inside(tn) == 2)) {
             distance = distance_find(tn);
             tr.set(tn);
@@ -535,20 +517,20 @@ public class Polygon {
 
         int[] x = new int[100];
         int[] y = new int[100];
-        for (int i = 1; i <= verticesCount - 1; i++) {
+        for (int i = 1; i <= vertexCount - 1; i++) {
             x[i] = (int) vertices[i].getX();
             y[i] = (int) vertices[i].getY();
         }
-        x[0] = (int) vertices[verticesCount].getX();
-        y[0] = (int) vertices[verticesCount].getY();
-        g.fillPolygon(x, y, verticesCount);
+        x[0] = (int) vertices[vertexCount].getX();
+        y[0] = (int) vertices[vertexCount].getY();
+        g.fillPolygon(x, y, vertexCount);
     }
 
 
     public double get_x_min() {
         double r;
         r = vertices[1].getX();
-        for (int i = 2; i <= verticesCount; i++) {
+        for (int i = 2; i <= vertexCount; i++) {
             if (r > vertices[i].getX()) {
                 r = vertices[i].getX();
             }
@@ -559,7 +541,7 @@ public class Polygon {
     public double get_x_max() {
         double r;
         r = vertices[1].getX();
-        for (int i = 2; i <= verticesCount; i++) {
+        for (int i = 2; i <= vertexCount; i++) {
             if (r < vertices[i].getX()) {
                 r = vertices[i].getX();
             }
@@ -570,7 +552,7 @@ public class Polygon {
     public double get_y_min() {
         double r;
         r = vertices[1].getY();
-        for (int i = 2; i <= verticesCount; i++) {
+        for (int i = 2; i <= vertexCount; i++) {
             if (r > vertices[i].getY()) {
                 r = vertices[i].getY();
             }
@@ -581,13 +563,11 @@ public class Polygon {
     public double get_y_max() {
         double r;
         r = vertices[1].getY();
-        for (int i = 2; i <= verticesCount; i++) {
+        for (int i = 2; i <= vertexCount; i++) {
             if (r < vertices[i].getY()) {
                 r = vertices[i].getY();
             }
         }
         return r;
     }//多角形のy座標の最大値を求める
-
-
 }

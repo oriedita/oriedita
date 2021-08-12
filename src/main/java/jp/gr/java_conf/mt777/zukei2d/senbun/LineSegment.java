@@ -8,88 +8,86 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class LineSegment {
-    private final Point a = new Point(); //枝のa点
-    private final Point b = new Point(); //枝のb
-    int iactive;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
-    int icol;//色の指定　0=black,1=blue,2=red.
+    private final Point a = new Point(); //Branch a point
+    private final Point b = new Point(); //Branch b point
+    int active;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
+    int color;//Color specification 　0=black,1=blue,2=red.
 
     int customized = 0;//Custom property parameters
     Color customizedColor = new Color(100, 200, 200);//Color if custom made
 
-    int i_select;//0は選択されていない。1以上は場面に応じて適宜設定
-    int i_max_x;//端点のx座標の切り上げ時の大きいほう
-    int i_min_x;//端点のx座標の切り捨て時の小さいほう
-    int i_max_y;//端点のy座標の切り上げ時の大きいほう
-    int i_min_y;//端点のy座標の切り捨て時の小さいほう
+    int selected;//0 is not selected. 1 or more is set appropriately according to the situation
+    int maxX;//Larger when rounding up the x-coordinate of the end point
+    int minX;//The smaller one when truncating the x-coordinate of the end point
+    int maxY;//Larger when rounding up the y-coordinate of the end point
+    int minY;//The smaller one when truncating the y coordinate of the end point
 
     //コンストラクタ
     public LineSegment() {
         a.set(0.0, 0.0);
         b.set(0.0, 0.0);
-        iactive = 0;
-        icol = 0;
-        i_select = 0;
-        i_max_x = 0;
-        i_min_x = 0;
-        i_max_y = 0;
-        i_min_y = 0;
+        active = 0;
+        color = 0;
+        selected = 0;
+        maxX = 0;
+        minX = 0;
+        maxY = 0;
+        minY = 0;
     }
 
     public LineSegment(Point t1, Point t2) {
         a.set(t1);
         b.set(t2);
-        iactive = 0;
-        icol = 0;
-        i_select = 0;
-        i_max_x = 0;
-        i_min_x = 0;
-        i_max_y = 0;
-        i_min_y = 0;
+        active = 0;
+        color = 0;
+        selected = 0;
+        maxX = 0;
+        minX = 0;
+        maxY = 0;
+        minY = 0;
     }
 
     public LineSegment(Point t1, Point t2, int icollor) {
         a.set(t1);
         b.set(t2);
-        iactive = 0;
-        icol = icollor;
-        i_select = 0;
-        i_max_x = 0;
-        i_min_x = 0;
-        i_max_y = 0;
-        i_min_y = 0;
+        active = 0;
+        color = icollor;
+        selected = 0;
+        maxX = 0;
+        minX = 0;
+        maxY = 0;
+        minY = 0;
     }
 
     public LineSegment(double i1, double i2, double i3, double i4) {
         a.set(i1, i2);
         b.set(i3, i4);
-        iactive = 0;
-        icol = 0;
-        i_select = 0;
-        i_max_x = 0;
-        i_min_x = 0;
-        i_max_y = 0;
-        i_min_y = 0;
+        active = 0;
+        color = 0;
+        selected = 0;
+        maxX = 0;
+        minX = 0;
+        maxY = 0;
+        minY = 0;
     }
-
 
     public void reset() {
         a.set(0.0, 0.0);
         b.set(0.0, 0.0);
-        iactive = 0;
-        icol = 0;
-        i_select = 0;
-        i_max_x = 0;
-        i_min_x = 0;
-        i_max_y = 0;
-        i_min_y = 0;
+        active = 0;
+        color = 0;
+        selected = 0;
+        maxX = 0;
+        minX = 0;
+        maxY = 0;
+        minY = 0;
     }
 
-
-    //d2s ダブルをストリングに変える　小数点2桁目で四捨五入("");public void hyouji(String str0)にしか使っていない。
+    //d2s Double is changed to a string. Rounded to the second decimal place (""); public void display (String str0) is used only.
     public String d2s(double d0) {
         BigDecimal bd = new BigDecimal(d0);
 
-        //小数第2位で四捨五入
+        //Rounded to the first decimal place
         BigDecimal bd1 = bd.setScale(1, RoundingMode.HALF_UP);
 
         String sr;
@@ -98,7 +96,7 @@ public class LineSegment {
     }
 
     public void display(String str0) {
-        System.out.println(str0 + " (" + d2s(a.getX()) + " , " + d2s(a.getY()) + "),(" + d2s(b.getX()) + " , " + d2s(b.getY()) + ") ,ia=" + iactive + ",ic=" + icol + ",is=" + i_select);
+        System.out.println(str0 + " (" + d2s(a.getX()) + " , " + d2s(a.getY()) + "),(" + d2s(b.getX()) + " , " + d2s(b.getY()) + ") ,ia=" + active + ",ic=" + color + ",is=" + selected);
     }
 
 
@@ -106,41 +104,39 @@ public class LineSegment {
     public void set(LineSegment s) {
         a.set(s.getA());
         b.set(s.getB());
-        iactive = s.getiactive();
-        icol = s.getColor();
-        i_select = s.get_i_select();
-        i_max_x = s.get_i_max_x();
-        i_min_x = s.get_i_min_x();
-        i_max_y = s.get_i_max_y();
-        i_min_y = s.get_i_min_y();
+        active = s.getActive();
+        color = s.getColor();
+        selected = s.getSelected();
+        maxX = s.getMaxX();
+        minX = s.getMinX();
+        maxY = s.getMaxY();
+        minY = s.getMinY();
         setCustomized(s.getCustomized());
         setCustomizedColor(s.getCustomizedColor());
-
-
     }
 
     //----------
     public void set(double ax, double ay, double bx, double by) {
         a.set(ax, ay);
         b.set(bx, by);
-        i_max_x = (int) Math.ceil(ax);
-        i_min_x = (int) Math.floor(bx);
+        maxX = (int) Math.ceil(ax);
+        minX = (int) Math.floor(bx);
         if (ax < bx) {
-            i_max_x = (int) Math.ceil(bx);
-            i_min_x = (int) Math.floor(ax);
+            maxX = (int) Math.ceil(bx);
+            minX = (int) Math.floor(ax);
         }
-        i_max_y = (int) Math.ceil(ay);
-        i_min_y = (int) Math.floor(by);
+        maxY = (int) Math.ceil(ay);
+        minY = (int) Math.floor(by);
         if (ay < by) {
-            i_max_y = (int) Math.ceil(by);
-            i_min_y = (int) Math.floor(ay);
+            maxY = (int) Math.ceil(by);
+            minY = (int) Math.floor(ay);
         }
     }
 
     //----------
     public void set(double ax, double ay, double bx, double by, int ic) {
         set(ax, ay, bx, by);
-        icol = ic;
+        color = ic;
     }
 
     //----------
@@ -152,16 +148,13 @@ public class LineSegment {
         set(a.getX(), a.getY(), p.getX(), p.getY());
     }
 
-    //public void seta(Ten p){a.set(p);}
-    //public void setb(Ten p){b.set(p);}
-
     //----------
-    //活性化された点の座標をpにする   !!!!!!!!!!!!この関数は間違えたとき、気づきにくいので危険、できれば別名に変える20170507
+    //Set the coordinates of the activated point to p !!!!!!!!!!!! If you make a mistake, this function is dangerous because it is hard to notice, preferably change it to another name 20170507
     public void set(Point p) {
-        if (iactive == 1) {
+        if (active == 1) {
             setA(p);
         }
-        if (iactive == 2) {
+        if (active == 2) {
             setB(p);
         }
     }
@@ -170,13 +163,13 @@ public class LineSegment {
     //---------
     public void set(Point p, Point q, int ic, int ia) {
         set(p, q);
-        icol = ic;
-        iactive = ia;
+        color = ic;
+        active = ia;
     }
 
     public void set(Point p, Point q, int ic) {
         set(p, q);
-        icol = ic;
+        color = ic;
     }
 
     public void set(Point p, Point q) {
@@ -184,64 +177,62 @@ public class LineSegment {
     }
 
     //-------------------------------------------
-    public int get_i_max_x() {
-        return i_max_x;
+    public int getMaxX() {
+        return maxX;
     }
 
-    public int get_i_min_x() {
-        return i_min_x;
+    public int getMinX() {
+        return minX;
     }
 
-    public int get_i_max_y() {
-        return i_max_y;
+    public int getMaxY() {
+        return maxY;
     }
 
-    public int get_i_min_y() {
-        return i_min_y;
+    public int getMinY() {
+        return minY;
     }
 
 
-    public void setcolor(int i) {
-        icol = i;
+    public void setColor(int i) {
+        color = i;
     }
 
     public int getColor() {
-        return icol;
+        return color;
     }
 
-    public void setiactive(int i) {
-        iactive = i;
+    public void setActive(int i) {
+        active = i;
     }
 
-    public int getiactive() {
-        return iactive;
+    public int getActive() {
+        return active;
     }
 
-
-    public void set_i_select(int i) {
-        i_select = i;
+    public void setSelected(int i) {
+        selected = i;
     }
 
-    public int get_i_select() {
-        return i_select;
+    public int getSelected() {
+        return selected;
     }
 
     //This line segment is activated depending on whether it is close to a certain point.
     public void activate(Point p, double r) {
-        iactive = 0;
+        active = 0;
         if (p.distanceSquared(a) <= r * r) {
-            iactive = 1;
+            active = 1;
         }
         if (p.distanceSquared(b) <= r * r) {
-            iactive = 2;
+            active = 2;
         }
     }
 
     //Deactivate this line segment
     public void deactivate() {
-        iactive = 0;
+        active = 0;
     }
-
 
     //Exchange the coordinates of both end points a and b
     public void a_b_swap() {
@@ -293,19 +284,19 @@ public class LineSegment {
         return b.getY();
     }
 
-    public void setax(double d) {
+    public void setAX(double d) {
         a.setX(d);
     }
 
-    public void setay(double d) {
+    public void setAY(double d) {
         a.setY(d);
     }
 
-    public void setbx(double d) {
+    public void setBX(double d) {
         b.setX(d);
     }
 
-    public void setby(double d) {
+    public void setBY(double d) {
         b.setY(d);
     }
 

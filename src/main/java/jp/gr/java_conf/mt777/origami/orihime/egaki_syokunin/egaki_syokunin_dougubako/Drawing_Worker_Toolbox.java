@@ -43,7 +43,7 @@ public class Drawing_Worker_Toolbox {
         kousaten_made_nobasi_orisen_fukumu_flg = 0;
         for (int i = 1; i <= ori_s.getTotal(); i++) {
 
-            i_kousa_flg = tyoku1.lineSegment_intersect_hantei_kuwasii(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+            i_kousa_flg = tyoku1.lineSegment_intersect_reverse_detail(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
             //if(i_kousa_flg==3){kousaten_made_nobasi_orisen_fukumu_flg=3;}
             if ((i_kousa_flg == 1 || i_kousa_flg == 21) || i_kousa_flg == 22) {
 
@@ -100,7 +100,7 @@ public class Drawing_Worker_Toolbox {
 //21=線分のa点でT型で交差する、
 //22=線分のb点でT型で交差する、
 //3=線分は直線に含まれる。
-                i_kousa_flg = tyoku1.lineSegment_intersect_hantei_kuwasii(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+                i_kousa_flg = tyoku1.lineSegment_intersect_reverse_detail(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
                 //if(i_kousa_flg==3){kousaten_made_nobasi_orisen_fukumu_flg=3;}
                 if ((i_kousa_flg == 1 || i_kousa_flg == 21) || i_kousa_flg == 22) {
 

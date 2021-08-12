@@ -10,7 +10,7 @@ public class AverageCoordinates {
         x = 0.0;
         y = 0.0;
         total = 0;
-    } //コンストラクタ
+    }
 
     public void reset() {
         x = 0.0;

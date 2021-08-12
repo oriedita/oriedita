@@ -18,7 +18,7 @@ public class Memo {//Notepad for data storage
     }
 
     //
-    public int getLineSize() {
+    public int getLineCount() {
         return lines.size() - 1;
     }
 
@@ -35,26 +35,26 @@ public class Memo {//Notepad for data storage
 
     public void set(Memo m0) {
         Memo m1 = new Memo();
-        for (int i = 1; i <= m0.getLineSize(); i++) {
+        for (int i = 1; i <= m0.getLineCount(); i++) {
             m1.addLine(m0.getLine(i));
         }//m0はまずm1に複製され、m1がsetされる。こうするのは、自分自身をsetする場合riset()によって中身が消えてしまうことを防ぐため
 
         reset();
-        for (int i = 1; i <= m1.getLineSize(); i++) {
+        for (int i = 1; i <= m1.getLineCount(); i++) {
             addLine(m1.getLine(i));
         }
     }
 
     public void set_old(Memo m0) {
         reset();
-        for (int i = 1; i <= m0.getLineSize(); i++) {
+        for (int i = 1; i <= m0.getLineCount(); i++) {
             addLine(m0.getLine(i));
         }
     }
 
 
     public void addMemo(Memo m0) {
-        for (int i = 1; i <= m0.getLineSize(); i++) {
+        for (int i = 1; i <= m0.getLineCount(); i++) {
             addLine(m0.getLine(i));
         }
     }
@@ -62,7 +62,7 @@ public class Memo {//Notepad for data storage
 
     public void systemout() {
         System.out.println("memo naiyou kokokara  VVVVVVVVVVVVVVVVVVVVVVVVVVVVVV");
-        for (int i = 1; i <= getLineSize(); i++) {
+        for (int i = 1; i <= getLineCount(); i++) {
             System.out.println(getLine(i));
         }
         System.out.println("memo naiyou kokomade  AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");

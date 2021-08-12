@@ -141,11 +141,11 @@ public class Haikei_camera {//実際の座標と、表示座標の仲立ち
         p_kaiten_x = h3.getX();
         p_kaiten_y = h3.getY();
 
-        oc.hyouji("Haikei_camera--------------------parameter_keisan()");
-        h1.hyouji(" h1  ");
-        h2.hyouji(" h2  ");
-        h3.hyouji(" h3  ");
-        h4.hyouji(" h4  ");
+        oc.display("Haikei_camera--------------------parameter_keisan()");
+        h1.display(" h1  ");
+        h2.display(" h2  ");
+        h3.display(" h3  ");
+        h4.display(" h4  ");
 
 
     }
