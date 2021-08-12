@@ -3,38 +3,38 @@
 The following tweets by @meguro77 give information about the licensing model used by the original Orihime software.
 
 https://twitter.com/meguro77/status/1114706514688626688
-> ���łɁA�I���q���ɂ��āi�P�j
-> �I���q���͐܎��̓W�J�}����܂肠����`�𐄒肷��t���[�\�t�g�ł��B
-> �g�p�ɓ������ď����␧���͈�؂���܂���B�܂��g�p���ĉ����s�s���������Ă���҂͈�ؐӔC�𕉂��܂���B�I���q����I���q���ō�����}���ǂ��g���Ƃ��Ă���҂ւ̘A���͈�؂���܂���B
+> ついでに、オリヒメについて（１）
+> オリヒメは折紙の展開図から折りあがり形を推定するフリーソフトです。
+> 使用に当たって条件や制限は一切ありません。また使用して何か不都合があっても作者は一切責任を負いません。オリヒメやオリヒメで作った図をどう使うとしても作者への連絡は一切いりません。
 
 https://twitter.com/meguro77/status/1114709100145676288
-> �I���q���ɂ��āi�Q�j
-> �Ȃ̂ŁA�Ⴆ�ΐ܎��̍u�K��ŃI���q����L���Ŕz�z���邱�Ƃ����R�ɂ��Ă�����Ă��܂��܂��񂵁A���̌��ʂɍ�҂͈�؊֒m���܂���B
+> オリヒメについて（２）
+> なので、例えば折紙の講習会等でオリヒメを有償で配布することも自由にしてもらってかまいませんし、その結果に作者は一切関知しません。
 
 https://twitter.com/meguro77/status/1305978119426195456
-> ���̓��e�ɂ��ĕ⑫�B�����z�z���Ă���I���q����jar�t�@�C���̓t���[��JAVA]���g���Ă�̂ōĔz�z�������ł��B�������A�N�����L��JAVA�ƃI���q����g�ݍ��킹���ꍇ�A�L��JAVA�̋K��ł��̔z�z���L���ɂȂ肦�܂��B���̏ꍇ�̗����͗L����JAVA�ƃI���q����g�ݍ��킹���l�̕��S�ɂȂ�܂��B
+> この内容について補足。私が配布しているオリヒメのjarファイルはフリーのJAVA]を使ってるので再配布も無料です。ただし、誰かが有料JAVAとオリヒメを組み合わせた場合、有料JAVAの規定でその配布が有料になりえます。この場合の料金は有料のJAVAとオリヒメを組み合わせた人の負担になります。
 
 https://twitter.com/meguro77/status/1114712743301410816
-> �I���q���ɂ��āi�R�j
-> �I���q����JAVA�ŏ����Ă��āAjar�t�@�C���̌`���Ŕz�z���Ă��܂��B�Ȃ̂ŁAJAVA���������������Ă���E�B���h�E�Y�p�\�R���Ȃ�A�I���q���̓K���ȃo�[�W������jar�t�@�C�����_�E�����[�h���ă_�u���N���b�N���邾���œ����܂��BJAVA���������������Ă��Ȃ��ꍇ�ɂ́A�A�A
+> オリヒメについて（３）
+> オリヒメはJAVAで書いていて、jarファイルの形式で配布しています。なので、JAVAが動く環境が整っているウィンドウズパソコンなら、オリヒメの適当なバージョンのjarファイルをダウンロードしてダブルクリックするだけで動きます。JAVAが動く環境が整っていない場合には、、、
 
 https://twitter.com/meguro77/status/1114714378161381376
-> �I���q���ɂ��āi�S�j
-> JAVA���������������Ă��Ȃ��ꍇ�ɂ́AJRE�Ƃ����AJava�ō��ꂽ�A�v���P�[�V�����𓮂������߂̊��Z�b�g�����炩���߃p�\�R���ɃC���X�g�[�����Ă�����OK�ł��B
+> オリヒメについて（４）
+> JAVAが動く環境が整っていない場合には、JREという、Javaで作られたアプリケーションを動かすための環境セットをあらかじめパソコンにインストールしておけばOKです。
 
 https://twitter.com/meguro77/status/1114735331037679616
-> �I���q���ɂ��āi�T�j
-> �I���q����JAVA�̍ŋ߂̋@�\�͎g��Ȃ����j�Ȃ�̂ŁA�̂̃o�[�W������JRE�ł������͂��ł��B�܂��̂̃p�\�R���ł����ʂ͓����͂��ł��B
-> �Ȃ��AJAVA�ŏ����Ă���̂ŃE�B���h�E�Y�ȊO��OS�ł������Ƃ͎v���܂����A���쌟�؂�Windows7�ł����s���Ă��Ȃ��̂ł悭�킩��܂���B
+> オリヒメについて（５）
+> オリヒメはJAVAの最近の機能は使わない方針なるので、昔のバージョンのJREでも動くはずです。また昔のパソコンでも普通は動くはずです。
+> なお、JAVAで書いているのでウィンドウズ以外のOSでも動くとは思いますが、動作検証をWindows7でしか行っていないのでよくわかりません。
 
 https://twitter.com/meguro77/status/1114747464433561601
-> �I���q���ɂ��āi�U�j
-> �I���q���̎��s�t�@�C����jar�t�@�C���Ƃ��Ĕz�z���Ă��܂����A�\�[�X�R�[�h������jar�t�@�C���̒��ɑS�������Ă��܂��Bjar�t�@�C����zip�`���ň��k����Ă���̂ŁAzip�t�@�C���̉𓀃\�t�g��jar�t�@�C�����𓀂���΁A���̃\�[�X�R�[�h���S�Č���܂��B
+> オリヒメについて（６）
+> オリヒメの実行ファイルはjarファイルとして配布していますが、ソースコードもそのjarファイルの中に全部入っています。jarファイルはzip形式で圧縮されているので、zipファイルの解凍ソフトでjarファイルを解凍すれば、中のソースコードも全て見れます。
 
 https://twitter.com/meguro77/status/1114749415187554309
-> �I���q���ɂ��āi�V�j
-> ���̔z�z���Ă���I���q���͂ǂ�Ȏg���������Ă�����Ă����R�Ȃ̂Ń\�[�X�R�[�h���̏���������ҏW�A�Ĕz�z�������R�ɍs���Ă��������B
-> �Ȃ��A���̃I���q���Ɖ��ϓ��������̂�����킵���Ȃ�悤�ȏꍇ�́A���ς������̂́A���O���ł킩��₷�����Ă���������Ə�����܂��B
+> オリヒメについて（７）
+> 私の配布しているオリヒメはどんな使い方をしてもらっても自由なのでソースコード等の書き換えや編集、再配布等も自由に行ってください。
+> なお、元のオリヒメと改変等したものが紛らわしくなるような場合は、改変したものは、名前等でわかりやすくしていただけると助かります。
 
 # License (translated)
 Incidentally, about Orihime (1)

@@ -1,3 +1,0 @@
-del *.jar
-
-cmd /k 
