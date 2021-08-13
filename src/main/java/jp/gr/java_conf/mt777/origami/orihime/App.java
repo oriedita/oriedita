@@ -76,7 +76,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
     ArrayList<FoldedFigure> OAZ = new ArrayList<>(); //Instantiation of fold-up diagram
 
-    public WireFrame Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public LineSet Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
 
     int i_OAZ = 0;//OAZの何番目のOriagari_Zuがボタン操作や変形操作の対象となるかを指定
 
@@ -87,7 +87,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
     public Camera camera_of_orisen_input_diagram = new Camera();
 
-    Haikei_camera h_cam = new Haikei_camera();
+    Background_camera h_cam = new Background_camera();
 
     Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
@@ -647,7 +647,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
             if (memo_temp.getLineCount() > 0) {
                 //展開図の初期化　開始
                 //settei_syokika_cp();
-                tenkaizu_syokika();
+                developmentView_initialization();
                 //展開図パラメータの初期化
                 es1.reset();                                                //描き職人の初期化
 
@@ -655,7 +655,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
                 es1.set_i_kitei_jyoutai(0);
 
                 icol = 1;
-                es1.setcolor(icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
+                es1.setColor(icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
                 ButtonCol_irokesi();
                 ButtonCol_red.setForeground(Color.black);
                 ButtonCol_red.setBackground(Color.red);    //折線のボタンの色設定
@@ -1638,7 +1638,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //h_cam.reset();
 //oc.hyouji(" ");
             oc.display("新背景カメラインスタンス化");
-            h_cam = new Haikei_camera();//20181202
+            h_cam = new Background_camera();//20181202
 
             double dvx = hidari_ue_ix;
             double dvy = hidari_ue_iy;
@@ -1656,7 +1656,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             if (i_Lock_on == 1) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
                 h_cam.set_i_Lock_on(i_Lock_on);
                 h_cam.setCamera(camera_of_orisen_input_diagram);
-                h_cam.h3_obj_and_h4_obj_keisan();
+                h_cam.h3_obj_and_h4_obj_calculation();
             }
 
             repaint();
@@ -1700,8 +1700,8 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
                 //System.out.println("paint幅＝"+iw);
                 //System.out.println("paint高さ＝"+ih);
-                h_cam.set_haikei_haba(iw);
-                h_cam.set_haikei_takasa(ih);
+                h_cam.setBackgroundWidth(iw);
+                h_cam.setBackgroundHeight(ih);
 
                 //if(i_Lock_on==1){
                 haikei_byouga(g2_haikei, img_haikei);
@@ -1721,7 +1721,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //img_haikei=(Image)offsc_haikei;
 
 
-                h_cam = new Haikei_camera();
+                h_cam = new Background_camera();
 
                 double dvx = xmin;
                 double dvy = ymin;
@@ -1734,7 +1734,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
                 if (i_Lock_on == 1) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
                     h_cam.set_i_Lock_on(i_Lock_on);
                     h_cam.setCamera(camera_of_orisen_input_diagram);
-                    h_cam.h3_obj_and_h4_obj_keisan();
+                    h_cam.h3_obj_and_h4_obj_calculation();
                 }
 
 
@@ -1789,11 +1789,11 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             Button_haikei_kirikae.setBackground(Color.ORANGE);
 
 
-            h_cam = new Haikei_camera();//20181202
+            h_cam = new Background_camera();//20181202
             if (i_Lock_on == 1) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
                 h_cam.set_i_Lock_on(i_Lock_on);
                 h_cam.setCamera(camera_of_orisen_input_diagram);
-                h_cam.h3_obj_and_h4_obj_keisan();
+                h_cam.h3_obj_and_h4_obj_calculation();
             }
 
 
@@ -1866,7 +1866,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
                 h_cam.set_i_Lock_on(i_Lock_on);
                 h_cam.setCamera(camera_of_orisen_input_diagram);
-                h_cam.h3_obj_and_h4_obj_keisan();
+                h_cam.h3_obj_and_h4_obj_calculation();
             }
 
 
@@ -2231,25 +2231,19 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             ButtonCol_red.setForeground(Color.black);
             ButtonCol_red.setBackground(Color.red);
             icol = 1;
-            es1.setcolor(icol);
-            // Button_kyoutuu_sagyou();
-
-//iro_sitei_ato_ni_jissisuru_sagyou();
+            es1.setColor(icol);
 
             repaint();
         });
         pnlw25.add(ButtonCol_red);
         ButtonCol_red.setBackground(new Color(150, 150, 150));
         ButtonCol_red.setMargin(new Insets(0, 0, 0, 0));
-//ButtonCol_red.setImage("board.png");
 
 // ******西************************************************************************
 
         //-------------------------------------------------------------
         ButtonCol_blue = new JButton("V");
         ButtonCol_blue.addActionListener(e -> {
-
-//sub = new SubThread(this);
 
 
             img_kaisetu_fname = "qqq/ButtonCol_blue.png";
@@ -2258,10 +2252,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             ButtonCol_blue.setForeground(Color.black);
             ButtonCol_blue.setBackground(Color.blue);
             icol = 2;
-            es1.setcolor(icol);
-            // Button_kyoutuu_sagyou();
-
-//iro_sitei_ato_ni_jissisuru_sagyou();
+            es1.setColor(icol);
 
             repaint();
         });
@@ -2275,13 +2266,12 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         ButtonCol_black.addActionListener(e -> {
             img_kaisetu_fname = "qqq/ButtonCol_black.png";
             readImageFromFile3();
-            //ButtonCol_black 	= new JButton(	"Edge"	);ButtonCol_black.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
 
             ButtonCol_irokesi();
             ButtonCol_black.setForeground(Color.white);
             ButtonCol_black.setBackground(Color.black);
             icol = 0;
-            es1.setcolor(icol);
+            es1.setColor(icol);
             //  Button_kyoutuu_sagyou();
 
 //iro_sitei_ato_ni_jissisuru_sagyou();
@@ -2303,7 +2293,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             ButtonCol_cyan.setForeground(Color.black);
             ButtonCol_cyan.setBackground(Color.cyan);
             icol = 3;
-            es1.setcolor(icol);
+            es1.setColor(icol);
             //  Button_kyoutuu_sagyou();
 
 //iro_sitei_ato_ni_jissisuru_sagyou();
@@ -3467,7 +3457,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             if (icol == 0) {
                 icol = 1;
-                es1.setcolor(icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
+                es1.setColor(icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
                 ButtonCol_irokesi();
                 ButtonCol_red.setForeground(Color.black);
                 ButtonCol_red.setBackground(Color.red);    //折線のボタンの色設定
@@ -3498,7 +3488,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             if (icol == 0) {
                 icol = 2;
-                es1.setcolor(icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
+                es1.setColor(icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
                 ButtonCol_irokesi();
                 ButtonCol_blue.setForeground(Color.black);
                 ButtonCol_blue.setBackground(Color.blue);    //折線のボタンの色設定
@@ -5368,7 +5358,6 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             i_mouseDragged_yuukou = 0;
             i_mouseReleased_yuukou = 0;
             //以下にやりたいことを書く
-            JColorChooser colorchooser = new JColorChooser();
 
             Color color = JColorChooser.showDialog(null, "color", new Color(100, 200, 200));
             if (color != null) {
@@ -5924,7 +5913,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             i_mouseDragged_yuukou = 0;
             i_mouseReleased_yuukou = 0;
-            Memo memo_temp = new Memo();
+            Memo memo_temp;
 
             System.out.println("readFile2Memo() 開始");
             memo_temp = readFile2Memo();
@@ -6802,8 +6791,6 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             //System.out.println("readFile2Memo() 開始");
 
             //以下にやりたいことを書く
-            JColorChooser colorchooser = new JColorChooser();
-            //Color color = colorchooser.showDialog(null, "F_col", Color.white);
             //if(color != null){OZ.js.set_F_color(color);}
 
             OZ.foldedFigure_F_color = JColorChooser.showDialog(null, "F_col", Color.white);
@@ -6874,7 +6861,6 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             //System.out.println("readFile2Memo() 開始");
 
             //以下にやりたいことを書く
-            JColorChooser colorchooser = new JColorChooser();
             //Color color = colorchooser.showDialog(null, "L_col", Color.white);
             //if(color != null){js.set_L_color(color);}
 
@@ -6889,7 +6875,6 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             Button_L_color.setBackground(OZ.foldedFigure_L_color);    //ボタンの色設定
             repaint();
         });
-        //Button_L_color.setPreferredSize(new Dimension(25, 25));
         Button_L_color.setMargin(new Insets(0, 0, 0, 0));
         Button_L_color.setIcon(createImageIcon("ppp/L_color.png"));
         pnls.add(Button_L_color);
@@ -6962,7 +6947,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             //展開図の初期化　開始
             //settei_syokika_cp();//展開図パラメータの初期化
-            tenkaizu_syokika();
+            developmentView_initialization();
             //展開図の初期化　終了
             //
             //折畳予測図のの初期化　開始
@@ -6990,7 +6975,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         //展開図の初期化　開始
         //settei_syokika_cp();//展開図パラメータの初期化
-        tenkaizu_syokika();
+        developmentView_initialization();
         //展開図の初期化　終了
 
         i_undo_suu = 20;
@@ -7107,12 +7092,12 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             //
             if (ckbox_cp_kaizen_oritatami.isSelected()) {//展開図のおかしい所（枝状の折り線等）を自動修正する
                 Drawing_Worker es2 = new Drawing_Worker(r, this);    //基本枝職人。マウスからの入力を受け付ける。
-                es2.setMemo_for_yomikomi(es1.ori_s.getMemo_for_select_oritatami());
+                es2.setMemo_for_yomikomi(es1.ori_s.getMemo_for_select_folding());
                 es2.point_removal();
                 es2.overlapping_line_removal();
                 es2.branch_trim(0.000001);
                 es2.circle_organize();
-                Ss0 = es2.get_for_oritatami();
+                Ss0 = es2.get_for_folding();
             } else {
                 Ss0 = es1.get_for_select_oritatami();
             }
@@ -7164,8 +7149,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         set_i_OAZ(OAZ.size() - 1);//i_OAZ=i;OZ = (Oriagari_Zu)OAZ.get(i_OAZ); OZ(各操作の対象となる折上がり図）に、アレイリストに最新に追加された折上がり図を割り当てる)
 
-        FoldedFigure orz;
-        orz = (FoldedFigure) OAZ.get(0);//OAZ(0)(共通パラメータを保持する折上がり図）をorzに割り付ける
+        FoldedFigure orz = OAZ.get(0);//OAZ(0)(共通パラメータを保持する折上がり図）をorzに割り付ける
 
         //以下ではOAZ(0)の共通パラメータを、現在操作対象となっているOZに渡す
         OZ.foldedFigure_F_color = orz.ct_worker.get_F_color();//20171223折り上がり図の表面の色の変更はOZ.oriagarizu_F_colorとOZ.js.set_F_colorの両方やる必要あり
@@ -7226,12 +7210,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
         }
-
-
     }
-
-
-    //public int get_i_AS_matome_mode(){return i_AS_matome_mode; } //
 
     public void set_kousi_bunkatu_suu() {
         int nyuuryoku_kitei_old = nyuuryoku_kitei;
@@ -7328,7 +7307,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
     //----------------------------------------------------------
 
     // --------展開図の初期化-----------------------------
-    void tenkaizu_syokika() {
+    void developmentView_initialization() {
 
 //全体
         //描き職人の初期化
@@ -7428,7 +7407,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         //ペンの色の指定
         icol = 1;
-        es1.setcolor(icol);    //最初の折線の色を指定する。0は黒、1は赤、2は青。
+        es1.setColor(icol);    //最初の折線の色を指定する。0は黒、1は赤、2は青。
         ButtonCol_irokesi();
         ButtonCol_red.setForeground(Color.black);
         ButtonCol_red.setBackground(Color.red);    //折線のボタンの色設定
@@ -7892,7 +7871,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
     void set_i_OAZ(int i) {//OZが切り替わるときの処理
         System.out.println("i_OAZ = " + i_OAZ);
         i_OAZ = i;
-        OZ = (FoldedFigure) OAZ.get(i_OAZ);
+        OZ = OAZ.get(i_OAZ);
         if (OZ.i_toukazu_color == 0) {
             ckbox_toukazu_color.setSelected(false);//透過図はカラー化しない。
         } else if (OZ.i_toukazu_color == 1) {
@@ -7940,8 +7919,6 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             //	ホイールで拡大縮小
             if ((!e.isShiftDown()) && (i_mouse_right_button_on == 0)) {
-
-                double zoom;
 
                 // ---------------------------------------------------------------------hhhhhhhhh
 
@@ -8822,7 +8799,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 //20180225追加
                 FoldedFigure OZi;
                 for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                    OZi = (FoldedFigure) OAZ.get(i_oz);
+                    OZi = OAZ.get(i_oz);
 
                     //Ten t_o2tv =new Ten();
                     //t_o2tv =camera_of_orisen_nyuuryokuzu.object2TV(camera_of_orisen_nyuuryokuzu.get_camera_ichi());
@@ -9207,7 +9184,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 //20180225追加
                 FoldedFigure OZi;
                 for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                    OZi = (FoldedFigure) OAZ.get(i_oz);
+                    OZi = OAZ.get(i_oz);
 
                     //Ten t_o2tv =new Ten();
                     //t_o2tv =camera_of_orisen_nyuuryokuzu.object2TV(camera_of_orisen_nyuuryokuzu.get_camera_ichi());
@@ -9609,7 +9586,7 @@ public void keyTyped(KeyEvent e){
         h_cam.set_h3(t3);
         h_cam.set_h4(t4);
 
-        h_cam.parameter_keisan();
+        h_cam.parameter_calculation();
     }
 
     // ------------------------------------------------------
@@ -9626,8 +9603,8 @@ public void keyTyped(KeyEvent e){
         //if(i_Lock_on>=10){i_Lock_on=i_Lock_on-10;}
         if (i_Lock_on == 1) {
             h_cam.setCamera(camera_of_orisen_input_diagram);
-            h_cam.h3_and_h4_keisan();
-            h_cam.parameter_keisan();
+            h_cam.h3_and_h4_calculation();
+            h_cam.parameter_calculation();
         }
 
         AffineTransform at = new AffineTransform();
@@ -9778,7 +9755,7 @@ public void keyTyped(KeyEvent e){
 
         FoldedFigure OZi;
         for (int i = 1; i <= OAZ.size() - 1; i++) {
-            OZi = (FoldedFigure) OAZ.get(i);
+            OZi = OAZ.get(i);
             OZi.cp_worker1.setCamera(camera_of_orisen_input_diagram);
         }
 
@@ -9820,8 +9797,8 @@ img_haikei=(Image)imageT;
 
             //System.out.println("paint幅＝"+iw);
             //System.out.println("paint高さ＝"+ih);
-            h_cam.set_haikei_haba(iw);
-            h_cam.set_haikei_takasa(ih);
+            h_cam.setBackgroundWidth(iw);
+            h_cam.setBackgroundHeight(ih);
 
             //if(i_Lock_on==1){
             haikei_byouga(g2, img_haikei);
@@ -10075,8 +10052,8 @@ double dvy=(double)ymin;
         //ip4=0;//これは、ts1の最初に裏返しをするかどうかを指定する。0ならしない。1なら裏返す。//20170615 実行しないようにした（折りあがり図の表示状況を変えないようにするため）
 
         OZ.ip5 = -1;    //上下表職人が一旦折り畳み可能な紙の重なりを示したあとで、
-        //さらに別の紙の重なりをさがす時の最初のjs.susumu(Smensuu)の結果。
-        //0なら新たにsusumu余地がなかった。0以外なら変化したSmenのidの最も小さい番号
+        //さらに別の紙の重なりをさがす時の最初のjs.susumu(SubFaceTotal)の結果。
+        //0なら新たにsusumu余地がなかった。0以外なら変化したSubFaceのidの最も小さい番号
         OZ.ip6 = -1;    //上下表職人が一旦折り畳み可能な紙の重なりを示したあとで、
         //さらに別の紙の重なりをさがす時の js.kanou_kasanari_sagasi()の結果。
         //0なら可能な重なりかたとなる状態は存在しない。
@@ -10339,8 +10316,6 @@ double dvy=(double)ymin;
         }
 
         if (file_ok == 0) {
-            //frame_title=frame_title_0+"        "+"XXX";
-            //setTitle(frame_title);es1.set_title(frame_title);
             return memo_temp;
         }
 

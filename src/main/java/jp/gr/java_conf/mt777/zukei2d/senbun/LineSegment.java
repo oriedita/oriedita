@@ -47,11 +47,11 @@ public class LineSegment {
         minY = 0;
     }
 
-    public LineSegment(Point t1, Point t2, int icollor) {
+    public LineSegment(Point t1, Point t2, int color) {
         a.set(t1);
         b.set(t2);
         active = 0;
-        color = icollor;
+        this.color = color;
         selected = 0;
         maxX = 0;
         minX = 0;

@@ -183,7 +183,6 @@ public class File_keisiki_henkan {
         Memo MemR = new Memo();
 
         int ibangou = 0;
-        Double Dd = 0.0;
         double d1, d2, d3, d4;
         String str;
         int icol;
@@ -195,11 +194,9 @@ public class File_keisiki_henkan {
 
         //  int isen=0;
         for (int ig = 1; ig <= mem.getLineCount(); ig++) {
-            //     System.out.print("cpファイルの行順番..."); System.out.println(ig);
             if (mem.getLine(ig).length() != 0) {
                 StringTokenizer tk = new StringTokenizer(mem.getLine(ig), " ");
                 str = tk.nextToken();
-                //    System.out.print("..."+str+"..."); System.out.println(ig);
                 if (str.equals("1")) {
                     icol = 0;
                     ibangou = ibangou + 1;
@@ -207,19 +204,12 @@ public class File_keisiki_henkan {
                     d2 = Double.parseDouble(tk.nextToken());
                     d3 = Double.parseDouble(tk.nextToken());
                     d4 = Double.parseDouble(tk.nextToken());
-                    // if(d1>xmax){xmax=d1;}
-                    // if(d1<xmin){xmin=d1;}
-                    // if(d2>ymax){ymax=d2;}
-                    // if(d2<ymin){ymin=d2;}
                     MemR.addLine("番号," + ibangou);
-                    System.out.println("番号," + ibangou);
                     MemR.addLine("色," + icol);
-                    //System.out.println("色,"  +str.valueOf(icol) );
 
                     //d1=d1+350.0;d2=d2+350.0;d3=d3+350.0;d4=d4+350.0;//ORIPAからオリヒメへ移すときの座標調整
 
                     MemR.addLine("座標," + d1 + "," + d2 + "," + d3 + "," + d4);
-                    //System.out.println("座標,"+str.valueOf(d1)+","+str.valueOf(d2)+","+str.valueOf(d3)+","+str.valueOf(d4)     );
                 }
                 if (str.equals("2")) {
                     icol = 1;

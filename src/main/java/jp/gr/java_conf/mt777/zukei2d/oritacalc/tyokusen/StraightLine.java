@@ -137,13 +137,13 @@ public class StraightLine {
     }
 
     public int sameSide(Point p1, Point p2) {// Returns 1 if the two points are on the same side of the straight line, -1 if they are on the other side, 0 if there is a point on the straight line
-        double dd = substituteCalculation(p1) * substituteCalculation(p2);
+        double dd = assignmentCalculation(p1) * assignmentCalculation(p2);
         return Double.compare(dd, 0.0);
     }
 
-    public double substituteCalculation(Point p) {
+    public double assignmentCalculation(Point p) {
         return a * p.getX() + b * p.getY() + c;
-    }  //Returns the value obtained by substituting x and y for a * x + b * y + c
+    }  //Returns the value obtained by assigning x and y in a * x + b * y + c
 
 
     public int lineSegment_intersect_reverse_detail(LineSegment s0) {//0 = This straight line does not intersect a given line segment, 1 = intersects at X type, 21 = intersects at point a of line segment at T type, 22 = intersects at point b of line segment at T type, 3 = Line segment is included in the straight line.
@@ -163,8 +163,8 @@ public class StraightLine {
 
         //The following is the case when it is judged that neither point a nor point b of the line segment is on a straight line.
 
-        double d_a = substituteCalculation(s0.getA());
-        double d_b = substituteCalculation(s0.getB());
+        double d_a = assignmentCalculation(s0.getA());
+        double d_b = assignmentCalculation(s0.getB());
 
         if (d_a * d_b > 0.0) {
             return 0;

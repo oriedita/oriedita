@@ -63,15 +63,15 @@ public class Drawing_Worker {
 
     //  int i_saigo_no_senbun_no_maru_kaku=1;	//1描く、0描かない
 
-    public PolygonStore ori_s = new PolygonStore();    //Store polygonal lines
-    PolygonStore hoj_s = new PolygonStore();    //Store auxiliary lines
+    public FoldLineSet ori_s = new FoldLineSet();    //Store polygonal lines
+    FoldLineSet hoj_s = new FoldLineSet();    //Store auxiliary lines
 
 
-    public PolygonStore ori_v = new PolygonStore();    //Store Voronoi diagram lines
+    public FoldLineSet ori_v = new FoldLineSet();    //Store Voronoi diagram lines
 
     Drawing_Worker_Toolbox e_s_dougubako = new Drawing_Worker_Toolbox(ori_s);
 
-    private final WireFrame sen_s = new WireFrame();    //Instantiation of basic branch structure
+    private final LineSet sen_s = new LineSet();    //Instantiation of basic branch structure
 
     Polygon trash = new Polygon(4);    //Trash instantiation
     Polygon medianStrip = new Polygon(4);    //Median strip instantiation
@@ -231,12 +231,12 @@ public class Drawing_Worker {
     }
 
     public void reset_2() {
-        //用紙の正方形を入力（開始）
+        //Enter the paper square (start)
         ori_s.addLine(-200.0, -200.0, -200.0, 200.0, 0);
         ori_s.addLine(-200.0, -200.0, 200.0, -200.0, 0);
         ori_s.addLine(200.0, 200.0, -200.0, 200.0, 0);
         ori_s.addLine(200.0, 200.0, 200.0, -200.0, 0);
-        //用紙の正方形を入力（終了）
+        //Enter the paper square (end)
     }
 
 
@@ -755,7 +755,7 @@ public class Drawing_Worker {
         double addx, addy;
 
 
-        PolygonStore ori_s_temp = new PolygonStore();    //追加された折線だけ取り出すために使う
+        FoldLineSet ori_s_temp = new FoldLineSet();    //追加された折線だけ取り出すために使う
         ori_s_temp.setMemo(memo1);//追加された折線だけ取り出してori_s_tempを作る
         //ori_s.del_selected_senbun_hayai();//セレクトされた折線を削除する。
         addx = ori_s.get_x_max() + 100.0 - ori_s_temp.get_x_min();
@@ -819,7 +819,7 @@ public class Drawing_Worker {
     //public void set(Senbunsyuugou ss){ori_s.set(ss);}
 
     //----------------------------------------------
-    public WireFrame get() {
+    public LineSet get() {
         sen_s.setMemo(ori_s.getMemo());
         return sen_s;
 
@@ -827,19 +827,19 @@ public class Drawing_Worker {
     }
 
 
-    public WireFrame get_for_oritatami() {
-        sen_s.setMemo(ori_s.getMemo_for_oritatami());
+    public LineSet get_for_folding() {
+        sen_s.setMemo(ori_s.getMemo_for_folding());
         return sen_s;
     }
 
 
     //折畳み推定用にselectされた線分集合の折線数を intとして出力する。//icolが3(cyan＝水色)以上の補助線はカウントしない
     public int get_orisensuu_for_select_oritatami() {
-        return ori_s.get_orisensuu_for_select_oritatami();
+        return ori_s.get_foldLineTotal_for_select_folding();
     }
 
-    public WireFrame get_for_select_oritatami() {//selectした折線で折り畳み推定をする。
-        sen_s.setMemo(ori_s.getMemo_for_select_oritatami());
+    public LineSet get_for_select_oritatami() {//selectした折線で折り畳み推定をする。
+        sen_s.setMemo(ori_s.getMemo_for_select_folding());
         return sen_s;
     }
 
@@ -1366,7 +1366,7 @@ public class Drawing_Worker {
     //taisyousei=i;
     //}
     //---------------------------------
-    public void setcolor(int i) {
+    public void setColor(int i) {
         icol = i;
     }
 
@@ -1476,8 +1476,6 @@ public class Drawing_Worker {
     public void bunkatu_seiri() {
         ori_s.divide_seiri();
     }
-
-    //public void  bunkatu_seiri_for_Smen_hassei(){ori_s.bunkatu_seiri_for_Smen_hassei();}//ori_sとは線分集合のこと、Senbunsyuugou ori_s =new Senbunsyuugou();
 
     public void kousabunkatu() {
         ori_s.intersect_divide();
@@ -1713,7 +1711,7 @@ public class Drawing_Worker {
             for (int i = 0; i < ori_s.check1_size(); i++) {
                 LineSegment s_temp = new LineSegment();
                 s_temp.set(ori_s.check1_getSenbun(i));
-                OO.yubisasi1(g, camera.object2TV(s_temp), 7.0, 3.0, 1);
+                OO.pointingAt1(g, camera.object2TV(s_temp), 7.0, 3.0, 1);
             }
         }
 
@@ -1721,7 +1719,7 @@ public class Drawing_Worker {
             for (int i = 0; i < ori_s.check2_size(); i++) {
                 LineSegment s_temp = new LineSegment();
                 s_temp.set(ori_s.check2_getSenbun(i));
-                OO.yubisasi2(g, camera.object2TV(s_temp), 7.0, 3.0, 1);
+                OO.pointingAt2(g, camera.object2TV(s_temp), 7.0, 3.0, 1);
             }
         }
 
@@ -1734,7 +1732,7 @@ public class Drawing_Worker {
             for (int i = 0; i < ori_s.check4_size(); i++) {
                 LineSegment s_temp = new LineSegment();
                 s_temp.set(ori_s.check4_getSenbun(i));
-                OO.yubisasi4(g, camera.object2TV(s_temp), i_ck4_color_toukado);
+                OO.pointingAt4(g, camera.object2TV(s_temp), i_ck4_color_toukado);
             }
         }
 
@@ -1745,7 +1743,7 @@ public class Drawing_Worker {
                 LineSegment s_temp = new LineSegment();
                 s_temp.set(ori_s.check3_getSenbun(i));
                 //OO.jyuuji(g,camera.object2TV(s_temp.geta()), 7.0 , 3.0 , 1);
-                OO.yubisasi3(g, camera.object2TV(s_temp), 7.0, 3.0, 1);
+                OO.pointingAt3(g, camera.object2TV(s_temp), 7.0, 3.0, 1);
             }
         }
 
@@ -2971,10 +2969,10 @@ public class Drawing_Worker {
 
             for (int j = 1; j <= ori_v.getTotal(); j++) {
                 //ori_v内の線分のiactiveの入れ替え
-                if (ori_v.getiactive(j) == i_mouse_modeA_62_ten_kasanari) {
-                    ori_v.setiactive(j, i_egaki_stage);
-                } else if (ori_v.getiactive(j) == i_egaki_stage) {
-                    ori_v.setiactive(j, i_mouse_modeA_62_ten_kasanari);
+                if (ori_v.getActive(j) == i_mouse_modeA_62_ten_kasanari) {
+                    ori_v.setActive(j, i_egaki_stage);
+                } else if (ori_v.getActive(j) == i_egaki_stage) {
+                    ori_v.setActive(j, i_mouse_modeA_62_ten_kasanari);
                 }
 
                 //ori_v内の線分のicolの入れ替え
@@ -2990,7 +2988,7 @@ public class Drawing_Worker {
 
             i_egaki_stage = i_egaki_stage - 1;
 
-            PolygonStore ori_v_temp = new PolygonStore();    //修正用のボロノイ図の線を格納する
+            FoldLineSet ori_v_temp = new FoldLineSet();    //修正用のボロノイ図の線を格納する
 
             //ori_vの線分を最初に全て非選択にする
             ori_v.unselect_all();
@@ -3240,10 +3238,10 @@ public class Drawing_Worker {
 //add_tyokusen.hyouji("     途中　add_tyokusen :");
 //kizon_tyokusen.hyouji("     途中　kizon_tyokusen :");
 
-            int i_heikou = oc.parallel_judgement(add_straightLine, kizon_straightLine, 0.0001);//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+            OritaCalc.ParallelJudgement i_heikou = oc.parallel_judgement(add_straightLine, kizon_straightLine, 0.0001);//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
 
 
-            if (i_heikou == 0) {//加える線分と既存の線分が非平行の場合
+            if (i_heikou == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//加える線分と既存の線分が非平行の場合
 //System.out.println("     途中_加える線分と既存の線分が非平行");
                 Point kouten = new Point();
                 kouten.set(oc.findIntersection(add_straightLine, kizon_straightLine));
@@ -3289,7 +3287,7 @@ public class Drawing_Worker {
                 }
 
 
-            } else if (i_heikou == 1) {//加える線分と既存の線分が平行で２直線が一致しない場合
+            } else if (i_heikou == OritaCalc.ParallelJudgement.PARALLEL_NOT_EQUAL) {//加える線分と既存の線分が平行で２直線が一致しない場合
 //System.out.println("     途中_加える線分と既存の線分が平行で２直線が一致しない");
                 if (add_straightLine.sameSide(s_step[tyuusinn_ten_bangou].getA(), kizon_lineSegment.getA()) == -1) {
                     lineSegment_vonoroi_onePoint.remove(i);
@@ -3298,7 +3296,7 @@ public class Drawing_Worker {
                 }
 
 
-            } else if (i_heikou == 2) {//加える線分と既存の線分が平行で２直線が一致する場合
+            } else if (i_heikou == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {//加える線分と既存の線分が平行で２直線が一致する場合
 //System.out.println("     途中_加える線分と既存の線分が平行で２直線が一致する");
                 return;
             }
@@ -3381,8 +3379,8 @@ public class Drawing_Worker {
         for (int ia = 0; ia < lineSegment_vonoroi_onePoint.size() - 1; ia++) {
             for (int ib = ia + 1; ib < lineSegment_vonoroi_onePoint.size(); ib++) {
 
-                s_begin.set((LineSegment) lineSegment_vonoroi_onePoint.get(ia));
-                s_end.set((LineSegment) lineSegment_vonoroi_onePoint.get(ib));
+                s_begin.set(lineSegment_vonoroi_onePoint.get(ia));
+                s_end.set(lineSegment_vonoroi_onePoint.get(ib));
 
                 StraightLine t_begin = new StraightLine(s_begin);
                 StraightLine t_end = new StraightLine(s_end);
@@ -3685,7 +3683,7 @@ public class Drawing_Worker {
                     int sousuu_old = ori_s.getTotal();//(1)
                     for (int i = 1; i <= entyou_kouho_nbox.getTotal(); i++) {
                         //最初に選んだ線分と2番目に選んだ線分が平行でない場合
-                        if (oc.parallel_judgement(ori_s.get(entyou_kouho_nbox.getInt(i)), closest_lineSegment, 0.000001) == 0) { //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない
+                        if (oc.parallel_judgement(ori_s.get(entyou_kouho_nbox.getInt(i)), closest_lineSegment, 0.000001) == OritaCalc.ParallelJudgement.NOT_PARALLEL) { //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない
                             //s_step[1]とs_step[2]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
                             Point kousa_point = new Point();
                             kousa_point.set(oc.findIntersection(ori_s.get(entyou_kouho_nbox.getInt(i)), closest_lineSegment));
@@ -4660,11 +4658,11 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         Point kousa_point = new Point();
 
-        if (oc.parallel_judgement(s_o, s_k, 0.0000001) == 1) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+        if (oc.parallel_judgement(s_o, s_k, 0.0000001) == OritaCalc.ParallelJudgement.PARALLEL_NOT_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
             return -500;
         }
 
-        if (oc.parallel_judgement(s_o, s_k, 0.0000001) == 2) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+        if (oc.parallel_judgement(s_o, s_k, 0.0000001) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
             kousa_point.set(s_k.getA());
             if (oc.distance(s_o.getA(), s_k.getA()) > oc.distance(s_o.getA(), s_k.getB())) {
                 kousa_point.set(s_k.getB());
@@ -4673,7 +4671,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         }
 
-        if (oc.parallel_judgement(s_o, s_k, 0.0000001) == 0) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+        if (oc.parallel_judgement(s_o, s_k, 0.0000001) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
             kousa_point.set(oc.findIntersection(s_o, s_k));
         }
 
@@ -6458,7 +6456,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             minrid_30 = ori_s.mottomo_tikai_lineSegment_search(p);
             LineSegment s01 = new LineSegment();
             s01.set(oc.lineSegment_double(ori_s.get(minrid_30), 0.01));
-            ori_s.setb(minrid_30, s01.getB());
+            ori_s.setB(minrid_30, s01.getB());
         }
     }
 
@@ -6467,7 +6465,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             LineSegment s01 = new LineSegment();
             s01.set(oc.lineSegment_double(ori_s.get(minrid_30), 100.0));
-            ori_s.setb(minrid_30, s01.getB());
+            ori_s.setB(minrid_30, s01.getB());
             minrid_30 = -1;
         }
 
@@ -6483,7 +6481,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             LineSegment s01 = new LineSegment();
             s01.set(oc.lineSegment_double(ori_s.get(minrid_30), 100.0));
-            ori_s.setb(minrid_30, s01.getB());
+            ori_s.setB(minrid_30, s01.getB());
 
             int ic_temp;
             ic_temp = ori_s.getColor(minrid_30);
@@ -7640,7 +7638,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             addx = -s_step[1].getBX() + s_step[1].getAX();
             addy = -s_step[1].getBY() + s_step[1].getAY();
 
-            PolygonStore ori_s_temp = new PolygonStore();    //セレクトされた折線だけ取り出すために使う
+            FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
             ori_s_temp.setMemo(ori_s.getMemo_select_sentaku(2));//セレクトされた折線だけ取り出してori_s_tempを作る
             ori_s.del_selected_senbun_hayai();//セレクトされた折線を削除する。
             ori_s_temp.move(addx, addy);//全体を移動する
@@ -7727,7 +7725,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             addx = -s_step[1].getBX() + s_step[1].getAX();
             addy = -s_step[1].getBY() + s_step[1].getAY();
 
-            PolygonStore ori_s_temp = new PolygonStore();    //セレクトされた折線だけ取り出すために使う
+            FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
             ori_s_temp.setMemo(ori_s.getMemo_select_sentaku(2));//セレクトされた折線だけ取り出してori_s_tempを作る
             //ori_s.del_selected_senbun_hayai();//セレクトされた折線を削除する。moveと　copyの違いはこの行が有効かどうかの違い
             ori_s_temp.move(addx, addy);//全体を移動する
@@ -7856,7 +7854,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             //addy=s_step[1].getby()-s_step[1].getay();
 
 
-            PolygonStore ori_s_temp = new PolygonStore();    //セレクトされた折線だけ取り出すために使う
+            FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
             ori_s_temp.setMemo(ori_s.getMemo_select_sentaku(2));//セレクトされた折線だけ取り出してori_s_tempを作る
             ori_s.del_selected_senbun_hayai();//セレクトされた折線を削除する。
             ori_s_temp.move(s_step[1].getA(), s_step[2].getA(), s_step[3].getA(), s_step[4].getA());//全体を移動する
@@ -7979,7 +7977,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             //addy=s_step[1].getby()-s_step[1].getay();
 
 
-            PolygonStore ori_s_temp = new PolygonStore();    //セレクトされた折線だけ取り出すために使う
+            FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
             ori_s_temp.setMemo(ori_s.getMemo_select_sentaku(2));//セレクトされた折線だけ取り出してori_s_tempを作る
             //ori_s.del_selected_senbun_hayai();//セレクトされた折線を削除する。
             ori_s_temp.move(s_step[1].getA(), s_step[2].getA(), s_step[3].getA(), s_step[4].getA());//全体を移動する
@@ -8215,7 +8213,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 						if(i_senbun_kousa_hantei== 374 ){ i_jikkou=1;}
 					*/
                         //if( i_jikkou==1){
-                        if (oc.LineSegment_overlapping_decide(ori_s.get(i), s_step[1]) == 1) {
+                        if (oc.lineSegmentoverlapping(ori_s.get(i), s_step[1])) {
                             int_double i_d = new int_double(i, oc.distance_lineSegment(s_step[1].getB(), ori_s.get(i)));
                             nbox.container_i_smallest_first(i_d);
                         }
@@ -9143,7 +9141,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
                 //0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
 
-                if (oc.parallel_judgement(s_step[i_egaki_stage - 1], s_step[i_egaki_stage], 0.1) != 0) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
+                if (oc.parallel_judgement(s_step[i_egaki_stage - 1], s_step[i_egaki_stage], 0.1) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
 
                     //s_step[20]とs_step[21]と点pの距離  //public double kyori_senbun(Ten p0,Senbun s)
                     //if(oc.kyori_senbun(p, s_step[1+     (honsuu) +(honsuu)   +1]) >  oc.kyori_senbun(p, s_step[1+     (honsuu) +(honsuu)   +1+1])          ){
@@ -9406,7 +9404,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
                 //0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
 
-                if (oc.parallel_judgement(s_step[i_egaki_stage - 1], s_step[i_egaki_stage], 0.1) != 0) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
+                if (oc.parallel_judgement(s_step[i_egaki_stage - 1], s_step[i_egaki_stage], 0.1) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
 
                     //s_step[20]とs_step[21]と点pの距離  //public double kyori_senbun(Ten p0,Senbun s)
                     //if(oc.kyori_senbun(p, s_step[1+     (honsuu) +(honsuu)   +1]) >  oc.kyori_senbun(p, s_step[1+     (honsuu) +(honsuu)   +1+1])          ){
@@ -9781,7 +9779,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                 closest_lineSegment.set(get_moyori_senbun(p));
                 if (oc.distance_lineSegment(p, closest_lineSegment) < d_hantei_haba) {//最寄折線が近い場合
-                    if (oc.parallel_judgement(closest_step_lineSegment, closest_lineSegment, 0.000001) == 0) {//最寄折線が最寄step折線と平行の場合は除外
+                    if (oc.parallel_judgement(closest_step_lineSegment, closest_lineSegment, 0.000001) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//最寄折線が最寄step折線と平行の場合は除外
                         Point mokuhyou_point2 = new Point();
                         mokuhyou_point2.set(oc.findIntersection(closest_step_lineSegment, closest_lineSegment));
                         if (p.distance(mokuhyou_point) * 2.0 > p.distance(mokuhyou_point2)) {

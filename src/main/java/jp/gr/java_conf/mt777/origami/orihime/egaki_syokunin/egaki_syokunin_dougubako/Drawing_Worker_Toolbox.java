@@ -14,10 +14,10 @@ public class Drawing_Worker_Toolbox {
 
 
     OritaCalc oc = new OritaCalc(); //各種計算用の関数を使うためのクラスのインスタンス化
-    PolygonStore ori_s;
+    FoldLineSet ori_s;
 
 
-    public Drawing_Worker_Toolbox(PolygonStore o_s) {  //コンストラクタ
+    public Drawing_Worker_Toolbox(FoldLineSet o_s) {  //コンストラクタ
         ori_s = o_s;
     }
 

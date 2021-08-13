@@ -36,7 +36,7 @@ public class FoldedFigure {
     public CreasePattern_Worker cp_worker2 = new CreasePattern_Worker(r);    //Net craftsman. It holds the folded-up view of the wire-shaped point set created by cp_worker1 and functions as a line segment set.
     public CreasePattern_Worker cp_worker3 = new CreasePattern_Worker(r);    //Net craftsman. Organize the wire-shaped point set created by cp_worker1. It has functions such as recognizing a new surface.
 
-    public ClassTable_Worker ct_worker;
+    public HierarchyList_Worker ct_worker;
 
     public Camera camera_of_foldedFigure = new Camera();
     public Camera camera_of_foldedFigure_front = new Camera();//折り上がり
@@ -67,8 +67,8 @@ public class FoldedFigure {
     public int ip4 = 0;// This specifies whether to flip over at the beginning of cp_worker1. Do not set to 0. If it is 1, turn it over.
 
     public int ip5 = -1;    // After the top and bottom craftsmen once show the overlap of foldable paper,
-    // The result of the first ct_worker.susumu (Smensuu) when looking for yet another paper overlap. If it was
-    // 0, there was no room for new susumu. If non-zero, the smallest number of changed Smen ids
+    // The result of the first ct_worker.susumu (SubFaceTotal) when looking for yet another paper overlap. If it was
+    // 0, there was no room for new susumu. If non-zero, the smallest number of changed SubFace ids
 
     public int ip6 = -1;    // After the top and bottom craftsmen once show the overlap of foldable paper,
     // The result of ct_worker.kanou_kasanari_sagasi () when looking for another paper overlap. If
@@ -101,7 +101,7 @@ public class FoldedFigure {
     public FoldedFigure(App app0) {
         orihime_app = app0;
 
-        ct_worker = new ClassTable_Worker(app0);
+        ct_worker = new HierarchyList_Worker(app0);
         bulletinBoard = new BulletinBoard(app0);
 
         //Camera settings ------------------------------------------------------------------
@@ -410,7 +410,7 @@ public class FoldedFigure {
 
 //-----------------------------------
 
-    void oritatami_suitei_camera_configure(Camera camera_of_orisen_nyuuryokuzu, WireFrame Ss0) {
+    void oritatami_suitei_camera_configure(Camera camera_of_orisen_nyuuryokuzu, LineSet Ss0) {
         d_foldedFigure_syukusyaku_keisuu = camera_of_orisen_nyuuryokuzu.getCameraZoomX();
         orihime_app.text29.setText(String.valueOf(d_foldedFigure_syukusyaku_keisuu));
         orihime_app.text29.setCaretPosition(0);
@@ -473,7 +473,7 @@ public class FoldedFigure {
     }
 
     //-----------------------------------
-    public void folding_estimated(Camera camera_of_orisen_nyuuryokuzu, WireFrame wireFrame) {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public void folding_estimated(Camera camera_of_orisen_nyuuryokuzu, LineSet lineSet) {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
         int i_camera_estimated = 0;
 
         //-------------------------------折り上がり図表示用カメラの設定
@@ -493,12 +493,12 @@ public class FoldedFigure {
         // meirei = order
         if ((i_estimated_step == 0) && (i_estimated_order == 1)) {
             estimated_initialize(); // estimated_initialize
-            folding_estimated_01(wireFrame);
+            folding_estimated_01(lineSet);
             i_estimated_step = 1;
             display_flg = 1;
         } else if ((i_estimated_step == 0) && (i_estimated_order == 2)) {
             estimated_initialize();
-            folding_estimated_01(wireFrame);
+            folding_estimated_01(lineSet);
             i_estimated_step = 1;
             display_flg = 1;
             folding_estimated_02();
@@ -506,7 +506,7 @@ public class FoldedFigure {
             display_flg = 2;
         } else if ((i_estimated_step == 0) && (i_estimated_order == 3)) {
             estimated_initialize();
-            folding_estimated_01(wireFrame);
+            folding_estimated_01(lineSet);
             i_estimated_step = 1;
             display_flg = 1;
             folding_estimated_02();
@@ -517,7 +517,7 @@ public class FoldedFigure {
             display_flg = 3;
         } else if ((i_estimated_step == 0) && (i_estimated_order == 5)) {
             estimated_initialize();
-            folding_estimated_01(wireFrame);
+            folding_estimated_01(lineSet);
             i_estimated_step = 1;
             display_flg = 1;
             folding_estimated_02();
@@ -615,12 +615,12 @@ public class FoldedFigure {
         }
 
         if (i_camera_estimated == 1) {
-            oritatami_suitei_camera_configure(camera_of_orisen_nyuuryokuzu, wireFrame);
+            oritatami_suitei_camera_configure(camera_of_orisen_nyuuryokuzu, lineSet);
         }
     }
 
     //--------------------------------------------------------------------------
-    public void folding_settings_two_color(Camera camera_of_orisen_nyuuryokuzu, WireFrame Ss0) {//Two-color development drawing
+    public void folding_settings_two_color(Camera camera_of_orisen_nyuuryokuzu, LineSet Ss0) {//Two-color development drawing
 
         //-------------------------------折り上がり図表示用カメラの設定
 
@@ -685,12 +685,12 @@ public class FoldedFigure {
 
 
     //-------------------------------bbbbbbb----
-    public int folding_estimated_01(WireFrame wireFrame) {
+    public int folding_estimated_01(LineSet lineSet) {
         System.out.println("＜＜＜＜＜oritatami_suitei_01;開始");
         bulletinBoard.write("<<<<oritatami_suitei_01;  start");
         //マウスの入力でes1の中に作った線分集合をcp_worker1に渡し、点集合(展開図に相当)にする
         // Pass the line segment set created in es1 to cp_worker1 by mouse input and make it a point set (corresponding to the development view).
-        cp_worker1.lineStore2pointStore(wireFrame);
+        cp_worker1.lineStore2pointStore(lineSet);
         ip3 = cp_worker1.set_referencePlane_id(ip3);
         ip3 = cp_worker1.set_referencePlane_id(orihime_app.point_of_referencePlane_old);//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
 
@@ -731,28 +731,28 @@ public class FoldedFigure {
         bulletinBoard.write("<<<<oritatami_suitei_03;  start");
         //cp_worker2は折る前の展開図の面を保持した点集合を持っている。
         //折りたたんだ場合の面の上下関係を推定するにはcp_worker2の持つ針金図に応じて面を
-        //細分した（細分した面をSmenと言うことにする）点集合を使う。
-        //このSmen面に分割した点集合はcp_worker3が持つようにする。
+        //細分した（細分した面をSubFaceと言うことにする）点集合を使う。
+        //このSubFace面に分割した点集合はcp_worker3が持つようにする。
         //cp_worker2の持つ点集合をcp_worker3に渡す前に、cp_worker2の持つ点集合は棒が重なっていたりするかもしれないので、
         //いったんbb_workerに渡して線分集合として整理する。
         // cp_worker2 has a set of points that holds the faces of the unfolded view before folding.
         // To estimate the vertical relationship of the surface when folded, set the surface according to the wire diagram of cp_worker2.
-        // Use a set of subdivided points (let's call the subdivided surface Smen).
-        // Let cp_worker3 have the set of points divided into this Smen plane.
+        // Use a set of subdivided points (let's call the subdivided surface SubFace).
+        // Let cp_worker3 have the set of points divided into this SubFace plane.
         // Before passing the point set of cp_worker2 to cp_worker3, the point set of cp_worker2 may have overlapping bars, so
         // Pass it to bb_worker and organize it as a set of line segments.
         System.out.println("＜＜＜＜＜oritatami_suitei_03()_____基本枝職人bb_workerはcp_worker2から線分集合（針金図からできたもの）を受け取り、整理する。");
         bb_worker.set(cp_worker2.getLineStore());
         System.out.println("＜＜＜＜＜oritatami_suitei_03()_____基本枝職人bb_workerがbb_worker.bunkatu_seiri_for_Smen_hassei;実施。");
-        bb_worker.split_arrangement_for_Smen_hassei();//重なった線分や交差する線分折り畳み推定などで得られる針金図の整理
-        //展開図職人cp_worker3はbb_workerから点集合（cp_worker2の持つ針金図を整理したもの）を受け取り、Smenに分割する。
+        bb_worker.split_arrangement_for_SubFace_generation();//重なった線分や交差する線分折り畳み推定などで得られる針金図の整理
+        //展開図職人cp_worker3はbb_workerから点集合（cp_worker2の持つ針金図を整理したもの）を受け取り、SubFaceに分割する。
         System.out.println("＜＜＜＜＜oritatami_suitei_03()_____展開図職人cp_worker3はbb_workerから整理された線分集合を受け取り、Smenに分割する。");
         System.out.println("　　　oritatami_suitei_03()のcp_worker3.Senbunsyuugou2Tensyuugou(bb_worker.get());実施");
         cp_worker3.lineStore2pointStore(bb_worker.get());
 
         System.out.println("＜＜＜＜＜oritatami_suitei_03()_____上下表職人ct_workerは、展開図職人cp_worker3から点集合を受け取り、Smenを設定する。");
-        ct_worker.Smen_configure(cp_worker1, cp_worker2.get(), cp_worker3.get());
-        //If you want to make a transparent map up to this point, you can. The transmission diagram is a Smen diagram with density added.
+        ct_worker.SubFace_configure(cp_worker1, cp_worker2.get(), cp_worker3.get());
+        //If you want to make a transparent map up to this point, you can. The transmission diagram is a SubFace diagram with density added.
         return 1000;
     }
 
@@ -762,7 +762,7 @@ public class FoldedFigure {
         bulletinBoard.write("<<<<oritatami_suitei_04;  start");
         //Make an upper and lower table of faces (faces in the unfolded view before folding).
         // This includes the point set of cp_worker2 (which has information on the positional relationship of the faces after folding).
-        // Use the point set of cp_worker3 (which has the information of Smen whose surface is subdivided in the wire diagram).
+        // Use the point set of cp_worker3 (which has the information of SubFace whose surface is subdivided in the wire diagram).
         // Also, use the information on the positional relationship of the surface when folded, which cp_worker1 has.
         System.out.println("＜＜＜＜＜oritatami_suitei_04()_____上下表職人ct_workerが面(折りたたむ前の展開図の面のこと)の上下表を作る。");
 
@@ -793,7 +793,7 @@ public class FoldedFigure {
                     discovered_fold_cases = discovered_fold_cases + 1;
                 }
 
-                ip5 = ct_worker.next(ct_worker.getSmen_valid_number());//Preparation for the next overlap // If ip5 = 0, there was no room for new susumu. If non-zero, the smallest number of changed Smen ids
+                ip5 = ct_worker.next(ct_worker.getSubFace_valid_number());//Preparation for the next overlap // If ip5 = 0, there was no room for new susumu. If non-zero, the smallest number of changed SubFace ids
             }
         }
         orihime_app.bulletinBoard.clear();

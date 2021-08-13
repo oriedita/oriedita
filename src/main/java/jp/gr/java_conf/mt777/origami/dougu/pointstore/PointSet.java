@@ -14,7 +14,7 @@ import java.util.*;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 
-public class CreasePattern {
+public class PointSet {
 
     int numFaces_temp;
 
@@ -43,7 +43,7 @@ public class CreasePattern {
 
     int[][] Face_adjacent;//Face_adjacent [i] [j] is the Stick number at the boundary between m [i] and m [j]. Stores 0 when m [i] and m [j] are not adjacent.
 
-    public CreasePattern() {
+    public PointSet() {
         reset();
     } //コンストラクタ
 
@@ -174,7 +174,7 @@ public class CreasePattern {
         }
     }
 
-    public void set(CreasePattern ts) {
+    public void set(PointSet ts) {
         pointsTotal = ts.getPointsTotal();
         sticksTotal = ts.getSticksTotal();
         facesTotal = ts.getFacesTotal();

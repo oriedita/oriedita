@@ -66,48 +66,30 @@ public class OritaDrawing { //For drawing
         widthLine(g, ty0, ty1, width, icolor);
     }
 
-    //指定されたTenを中心に指差し図を描く
-    public void yubisasi1(Graphics g, LineSegment s_tv, double nagasa, double haba, int icolor) {
-        Graphics2D g2 = (Graphics2D) g;
-        //	g2.setStroke(new BasicStroke(15.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
-
+    //Draw a pointing diagram around the specified Point
+    public void pointingAt1(Graphics g, LineSegment s_tv, double nagasa, double haba, int icolor) {
         g.setColor(new Color(255, 165, 0, 100));//g.setColor(Color.ORANGE);
         g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
     }
 
-    //指定されたTenを中心に指差し図を描く
-    public void yubisasi2(Graphics g, LineSegment s_tv, double nagasa, double haba, int icolor) {
-        Graphics2D g2 = (Graphics2D) g;
-        //	g2.setStroke(new BasicStroke(15.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
-
+    //Draw a pointing diagram around the specified Point
+    public void pointingAt2(Graphics g, LineSegment s_tv, double nagasa, double haba, int icolor) {
         g.setColor(new Color(255, 165, 0, 100));//g.setColor(Color.ORANGE);
         g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
 
     }
 
-    //指定されたTenを中心に指差し図を描く
-    public void yubisasi3(Graphics g, LineSegment s_tv, double nagasa, double haba, int icolor) {
-        Graphics2D g2 = (Graphics2D) g;
-        //	g2.setStroke(new BasicStroke(15.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
-
-        g.setColor(new Color(255, 200, 0, 50));//g.setColor(Color.yellow);
+    //Draw a pointing diagram around the specified Point
+    public void pointingAt3(Graphics g, LineSegment s_tv, double nagasa, double haba, int icolor) {
+        g.setColor(new Color(255, 200, 0, 50));
         g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
     }
 
 
-    //指定されたTenを中心に指差し図を描く
-    public void yubisasi4(Graphics g, LineSegment s_tv, int icolor_toukado) {
-
-//System.out.println("OO.yubisasi4 "+s_tv.getax()+", "+s_tv.getay()+" - "+s_tv.getbx()+", "+s_tv.getby());
-
-        Graphics2D g2 = (Graphics2D) g;
-        //	g2.setStroke(new BasicStroke(15.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
-
-        g.setColor(new Color(255, 0, 147, icolor_toukado));
-        //g.setColor(Color.PINK);
+    //Draw a pointing diagram around the specified Point
+    public void pointingAt4(Graphics g, LineSegment s_tv, int color_transparency) {
+        g.setColor(new Color(255, 0, 147, color_transparency));
 
         g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
     }
-
-
 }

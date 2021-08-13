@@ -1,9 +1,9 @@
 package jp.gr.java_conf.mt777.origami.orihime.jyougehyou_syokunin.jyougehyou.touka_jyouken;
 
-public class EquivalenceCondition {//このクラスは上下表でjg[a][b]=jg[c][d]という関係を記録、活用するのに使う。
+//This class is used to record and utilize the relationship hierarchyList[a][b] = hierarchyList[c][d] in the hierarchy list.
+public class EquivalenceCondition {
     int a, b, c, d;
 
-    //コンストラクタ
     public EquivalenceCondition() {
         a = 0;
         b = 0;
@@ -11,7 +11,6 @@ public class EquivalenceCondition {//このクラスは上下表でjg[a][b]=jg[c
         d = 0;
     }
 
-    //コンストラクタ
     public EquivalenceCondition(int ia, int ib, int ic, int id) {
         a = ia;
         b = ib;
@@ -19,7 +18,6 @@ public class EquivalenceCondition {//このクラスは上下表でjg[a][b]=jg[c
         d = id;
     }
 
-    //
     public void reset() {
         a = 0;
         b = 0;
@@ -57,6 +55,6 @@ public class EquivalenceCondition {//このクラスは上下表でjg[a][b]=jg[c
         return d;
     }
 
-    //折り畳み推定の際の等価条件の登録は　addTouka_jyouken(im,Mid_min,im,Mid_max);  による
+    //Registration of the equivalence condition at the time of folding estimation is by addEquivalenceCondition(im, Mid_min, im, Mid_max) ;.
 
 }

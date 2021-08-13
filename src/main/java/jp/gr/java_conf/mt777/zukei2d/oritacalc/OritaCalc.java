@@ -1,10 +1,10 @@
 package jp.gr.java_conf.mt777.zukei2d.oritacalc;
 
-import jp.gr.java_conf.mt777.zukei2d.en.*;
-import jp.gr.java_conf.mt777.zukei2d.ten.*;
-import jp.gr.java_conf.mt777.zukei2d.oritacalc.tyokusen.*;
-import jp.gr.java_conf.mt777.zukei2d.senbun.*;
-//import  jp.gr.java_conf.mt777.zukei2d.Ten;
+import jp.gr.java_conf.mt777.zukei2d.en.Circle;
+import jp.gr.java_conf.mt777.zukei2d.oritacalc.tyokusen.StraightLine;
+import jp.gr.java_conf.mt777.zukei2d.senbun.LineSegment;
+import jp.gr.java_conf.mt777.zukei2d.ten.Point;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -35,7 +35,7 @@ public class OritaCalc {
     }
 
     //Find the position of the shadow of the point p on the straight line t passing through the points P0 and P1 (the position on the straight line t closest to the point p).
-    public  Point shadow_request(Point p0, Point p1, Point p) {
+    public Point shadow_request(Point p0, Point p1, Point p) {
         StraightLine t = new StraightLine(p0, p1);
         return shadow_request(t, p);
     }
@@ -124,10 +124,10 @@ public class OritaCalc {
         StraightLine u2 = new StraightLine(p1, p2);
         u2.orthogonalize(p2);//Find the straight line u2 that passes through the point p2 and is orthogonal to t.
 
-        if (u1.substituteCalculation(pa) * u2.substituteCalculation(pa) == 0.0) {
+        if (u1.assignmentCalculation(pa) * u2.assignmentCalculation(pa) == 0.0) {
             return 1;
         }
-        if (u1.substituteCalculation(pa) * u2.substituteCalculation(pa) < 0.0) {
+        if (u1.assignmentCalculation(pa) * u2.assignmentCalculation(pa) < 0.0) {
             return 2;
         }
         return 0;//If outside the box
@@ -150,7 +150,7 @@ public class OritaCalc {
             return 1;
         }
 
-        if (u1.substituteCalculation(pa) * u2.substituteCalculation(pa) < 0.0) {
+        if (u1.assignmentCalculation(pa) * u2.assignmentCalculation(pa) < 0.0) {
             return 2;
         }
         return 0;//If outside the box
@@ -289,7 +289,7 @@ public class OritaCalc {
 
         //Exception handling: When the line segment s1 is a point
         if ((p1.getX() == p2.getX()) && (p1.getY() == p2.getY())) {
-            if ((isInside(p3, p1, p4) >= 1) && (t2.substituteCalculation(p1) == 0.0)) {
+            if ((isInside(p3, p1, p4) >= 1) && (t2.assignmentCalculation(p1) == 0.0)) {
                 return 5;
             }
             return 0;
@@ -297,13 +297,13 @@ public class OritaCalc {
 
         //Exception handling: When the line segment s2 is a point
         if ((p3.getX() == p4.getX()) && (p3.getY() == p4.getY())) {
-            if ((isInside(p1, p3, p2) >= 1) && (t1.substituteCalculation(p3) == 0.0)) {
+            if ((isInside(p1, p3, p2) >= 1) && (t1.assignmentCalculation(p3) == 0.0)) {
                 return 6;
             }
             return 0;
         }
 
-        if (parallel_judgement(t1, t2, rhei) == 0) {    //Two straight lines are not parallel
+        if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.NOT_PARALLEL) {    //Two straight lines are not parallel
             Point pk = new Point();
             pk.set(findIntersection(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
             if ((isInside(p1, pk, p2) >= 1)
@@ -337,7 +337,7 @@ public class OritaCalc {
             return 0;
         }
 
-        if (parallel_judgement(t1, t2, rhei) == 1) { //Two straight lines are parallel and y-intercept does not match
+        if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.PARALLEL_NOT_EQUAL) { //Two straight lines are parallel and y-intercept does not match
             return 0;
         }
 
@@ -350,7 +350,7 @@ public class OritaCalc {
         }
 
         //The two straight lines are parallel and the y-intercept matches
-        if (parallel_judgement(t1, t2, rhei) == 2) {
+        if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.PARALLEL_EQUAL) {
             if (equal(p1, p3, rhit)) { //When the endpoints of two line segments overlap at one point
                 if (isInside(p1, p4, p2) == 2) {
                     return 321;
@@ -513,7 +513,7 @@ public class OritaCalc {
 
         //例外処理　線分s1が点の場合
         if ((p1.getX() == p2.getX()) && (p1.getY() == p2.getY())) {
-            if ((isInside(p3, p1, p4) >= 1) && (t2.substituteCalculation(p1) == 0.0)) {
+            if ((isInside(p3, p1, p4) >= 1) && (t2.assignmentCalculation(p1) == 0.0)) {
                 return 5;
             }
             return 0;
@@ -521,14 +521,14 @@ public class OritaCalc {
 
         //例外処理　線分s2が点の場合
         if ((p3.getX() == p4.getX()) && (p3.getY() == p4.getY())) {
-            if ((isInside(p1, p3, p2) >= 1) && (t1.substituteCalculation(p3) == 0.0)) {
+            if ((isInside(p1, p3, p2) >= 1) && (t1.assignmentCalculation(p3) == 0.0)) {
                 return 6;
             }
             return 0;
         }
 
         // System.out.println("AAAAAAAAAAAA");
-        if (parallel_judgement(t1, t2, rhei) == 0) {    //２つの直線が平行でない
+        if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.NOT_PARALLEL) {    //２つの直線が平行でない
             Point pk = new Point();
             pk.set(findIntersection(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
             if ((isInside_sweet(p1, pk, p2) >= 1)
@@ -562,7 +562,7 @@ public class OritaCalc {
             return 0;
         }
 
-        if (parallel_judgement(t1, t2, rhei) == 1) { //２つの直線が平行で、y切片は一致しない
+        if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.PARALLEL_NOT_EQUAL) { //２つの直線が平行で、y切片は一致しない
             return 0;
         }
 
@@ -575,7 +575,7 @@ public class OritaCalc {
         }
 
         //The two straight lines are parallel and the y-intercept matches
-        if (parallel_judgement(t1, t2, rhei) == 2) {
+        if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.PARALLEL_EQUAL) {
             if (equal(p1, p3, rhit)) { //2つの線分の端点どうしが1点で重なる場合
                 if (isInside(p1, p4, p2) == 2) {
                     return 321;
@@ -659,19 +659,30 @@ public class OritaCalc {
     }
 
 
+    public enum ParallelJudgement {
+        NOT_PARALLEL(0),
+        PARALLEL_NOT_EQUAL(1),
+        PARALLEL_EQUAL(2);
+
+        private final int value;
+
+        ParallelJudgement(int value) {
+            this.value = value;
+        }
+    }
+
     //A function that determines whether two straight lines are parallel.
-    public int parallel_judgement(StraightLine t1, StraightLine t2) {
+    public ParallelJudgement parallel_judgement(StraightLine t1, StraightLine t2) {
         return parallel_judgement(t1, t2, 0.1);
     }
 
     //A function that determines whether two line segments are parallel.
-    public int parallel_judgement(LineSegment s1, LineSegment s2, double r) {
+    public ParallelJudgement parallel_judgement(LineSegment s1, LineSegment s2, double r) {
         return parallel_judgement(lineSegmentToStraightLine(s1), lineSegmentToStraightLine(s2), r);
     }
 
-
-    public int parallel_judgement(StraightLine t1, StraightLine t2, double r) {//rは誤差の許容度。rが負なら厳密判定。
-        //0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+    public ParallelJudgement parallel_judgement(StraightLine t1, StraightLine t2, double r) {//rは誤差の許容度。rが負なら厳密判定。
+        //0 = not parallel, 1 = parallel and 2 straight lines do not match, 2 = parallel and 2 straight lines match
         double a1 = t1.getA(), b1 = t1.getB(), c1 = t1.getC();//直線t1, a1*x+b1*y+c1=0の各係数を求める。
         double a2 = t2.getA(), b2 = t2.getB(), c2 = t2.getC();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
 
@@ -682,11 +693,11 @@ public class OritaCalc {
             if (a1 * b2 - a2 * b1 == 0) {
                 //２直線は同一の場合
                 if ((a1 * a1 + b1 * b1) * c2 * c2 == (a2 * a2 + b2 * b2) * c1 * c1) {
-                    return 2;
+                    return ParallelJudgement.PARALLEL_EQUAL;
                 }//厳密に判定。
                 //２直線が異なる場合
                 else {
-                    return 1;
+                    return ParallelJudgement.PARALLEL_NOT_EQUAL;
                 }
             }
         }
@@ -705,19 +716,18 @@ public class OritaCalc {
 
 
                 if (kyoriT < r) {//誤差を許容。
-                    return 2;
+                    return ParallelJudgement.PARALLEL_EQUAL;
                 }
                 //２直線が異なる場合
                 else {
-                    return 1;
+                    return ParallelJudgement.PARALLEL_NOT_EQUAL;
                 }
             }
         }
 
         //２直線が非平行の場合-------------------------------------------------
-        return 0;
+        return ParallelJudgement.NOT_PARALLEL;
     }
-
 
     //Function to find the intersection of two straight lines
     public Point findIntersection(StraightLine t1, StraightLine t2) {
@@ -727,14 +737,12 @@ public class OritaCalc {
         return new Point((b1 * c2 - b2 * c1) / (a1 * b2 - a2 * b1), (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1));
     }
 
-
     //Function to find the intersection of two straight lines (replication)
     public Point findIntersection_01(StraightLine t1, StraightLine t2) {
         double a1 = t1.getA(), b1 = t1.getB(), c1 = t1.getC();//直線t1, a1*x+b1*y+c1=0の各係数を求める。
         double a2 = t2.getA(), b2 = t2.getB(), c2 = t2.getC();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
         return new Point((b1 * c2 - b2 * c1) / (a1 * b2 - a2 * b1), (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1));
     }
-
 
     public StraightLine lineSegmentToStraightLine(LineSegment s) {//Get a straight line containing a line segment
         return new StraightLine(s.getA(), s.getB());
@@ -754,7 +762,6 @@ public class OritaCalc {
     public Point findIntersection(LineSegment s1, StraightLine t2) {
         return findIntersection(lineSegmentToStraightLine(s1), t2);
     }
-
 
     //A function that moves a line segment in parallel to the side (returns a new line segment without changing the original line segment)
     public LineSegment moveParallel(LineSegment s, double d) {
@@ -803,16 +810,13 @@ public class OritaCalc {
         return new Point(bx1, by1);
     }
 
-
-//------------------------------------
-
     //線分abをcを中心にr倍してd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
     public LineSegment lineSegment_rotate(LineSegment s0, Point c, double d, double r) {
         return new LineSegment(point_rotate(s0.getA(), c, d, r), point_rotate(s0.getB(), c, d, r));
     }
 
 
-// ------------------------------------
+//------------------------------------
 
     //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
     public LineSegment lineSegment_rotate(LineSegment s0, double d) {
@@ -829,6 +833,8 @@ public class OritaCalc {
     }
 
 
+// ------------------------------------
+
     //線分abをaを中心にr倍してd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
     public LineSegment lineSegment_rotate(LineSegment s0, double d, double r) {
         double Mcd = Math.cos(d * Math.PI / 180.0);
@@ -843,7 +849,6 @@ public class OritaCalc {
         return new LineSegment(ax1, ay1, bx1, by1);
     }
 
-
     //A function that returns a line segment obtained by multiplying the line segment ab by r with a as the center (returns a new line segment without changing the original line segment)
     public LineSegment lineSegment_double(LineSegment s0, double r) {
 
@@ -855,7 +860,6 @@ public class OritaCalc {
 
         return new LineSegment(ax1, ay1, bx1, by1);
     }
-
 
     //線分Aの、線分Jを軸とした対照位置にある線分Bを求める関数
     public LineSegment sentaisyou_lineSegment_motome(LineSegment s0, LineSegment jiku) {
@@ -873,7 +877,6 @@ public class OritaCalc {
 
         return s1;
     }
-
 
     //Function to find the point at the control position of the point p with respect to the straight line t0
     public Point lineSymmetry_point_find(StraightLine t0, Point p) {
@@ -929,7 +932,6 @@ public class OritaCalc {
         return angle;
     }
 
-
     //角度を0.0度以上kmax度未満に押さえる関数(円錐の頂点の伏見定理などで使う)
     public double angle_betwen_0_kmax(double angle, double kmax) {
         while (angle < 0.0) {
@@ -940,7 +942,6 @@ public class OritaCalc {
         }
         return angle;
     }
-
 
     //The angle between the line segments s1 and s2
     public double angle(LineSegment s1, LineSegment s2) {
@@ -955,7 +956,6 @@ public class OritaCalc {
 
         return angle_between_0_360(angle(c, d) - angle(a, b));
     }
-
 
     //Angle between vectors ab and cd
     public double angle(Point a, Point b, Point c, Point d) {
@@ -1070,7 +1070,6 @@ public class OritaCalc {
         );
     }
 
-
     // --------qqqqqqqqqqqqqqq-----------------------
     public LineSegment circle_to_straightLine_no_intersect_wo_connect_LineSegment(Circle e1, StraightLine t0) {
 
@@ -1110,7 +1109,6 @@ public class OritaCalc {
         return min_d;
     }
 
-
     public LineSegment bisection(Point t1, Point t2, double d0) {
         Point tm = new Point((t1.getX() + t2.getX()) / 2.0, (t1.getY() + t2.getY()) / 2.0);
 
@@ -1124,63 +1122,62 @@ public class OritaCalc {
         return new LineSegment(s1.getB(), s2.getB());
     }
 
-
     //--------------------------------------------------------
-    public int LineSegment_overlapping_decide(LineSegment s1, LineSegment s2) {//0は重ならない。1は重なる。20201012追加
+    public boolean lineSegmentoverlapping(LineSegment s1, LineSegment s2) {//false do not overlap. true overlaps. 20201012 added
 
         int i_senbun_kousa_hantei = line_intersect_decide(s1, s2, 0.0001, 0.0001);
-        int i_jikkou = 0;
+        boolean i_jikkou = false;
         if (i_senbun_kousa_hantei == 31) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         if (i_senbun_kousa_hantei == 321) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         if (i_senbun_kousa_hantei == 322) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         if (i_senbun_kousa_hantei == 331) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         if (i_senbun_kousa_hantei == 332) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         if (i_senbun_kousa_hantei == 341) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         if (i_senbun_kousa_hantei == 342) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         if (i_senbun_kousa_hantei == 351) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         if (i_senbun_kousa_hantei == 352) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
 
         if (i_senbun_kousa_hantei == 361) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         if (i_senbun_kousa_hantei == 362) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         if (i_senbun_kousa_hantei == 363) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         if (i_senbun_kousa_hantei == 364) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         if (i_senbun_kousa_hantei == 371) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         if (i_senbun_kousa_hantei == 372) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         if (i_senbun_kousa_hantei == 373) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         if (i_senbun_kousa_hantei == 374) {
-            i_jikkou = 1;
+            i_jikkou = true;
         }
         return i_jikkou;
     }
@@ -1196,7 +1193,6 @@ public class OritaCalc {
 
         return i_jikkou;
     }
-
 
 //--------------------------------------------------------
 

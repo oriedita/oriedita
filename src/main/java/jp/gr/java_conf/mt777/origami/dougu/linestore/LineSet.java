@@ -9,12 +9,12 @@ import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
 
 import java.util.*;
 
-public class WireFrame {
+public class LineSet {
     int total;               //Total number of line segments actually used
     ArrayList<LineSegment> lineSegments = new ArrayList<>(); //Instantiation of line segments
     OritaCalc oc = new OritaCalc();          //Instantiation of classes to use functions for various calculations
 
-    public WireFrame() {
+    public LineSet() {
         reset();
     }
 
@@ -24,7 +24,7 @@ public class WireFrame {
         lineSegments.add(new LineSegment());
     }
 
-    public void set(WireFrame ss) {
+    public void set(LineSet ss) {
         total = ss.getTotal();
         for (int i = 0; i <= total; i++) {
             LineSegment s = getLine(i);
@@ -130,7 +130,7 @@ public class WireFrame {
     }
 
     //Output the activity of the i-th line segment
-    public int getiactive(int i) {
+    public int getActive(int i) {
         LineSegment s = getLine(i);
         return s.getActive();
     }
@@ -247,8 +247,8 @@ public class WireFrame {
         }
     }
 
-    //Arrangement of line segment sets to generate Smen
-    public void bunkatu_seiri_for_Smen_hassei() {//Arrangement of wire diagrams obtained by folding estimation, etc.
+    //Arrangement of line segment sets to generate SubFace
+    public void bunkatu_seiri_for_SubFace_generation() {//Arrangement of wire diagrams obtained by folding estimation, etc.
         System.out.println("　　Senbunsyuugouの中で、Smenを発生させるための線分集合の整理");
         System.out.println("分割整理　１、点削除前	getsousuu() = " + getTotal());
         point_removal();          //Just in case, remove the dotted line segment
@@ -882,17 +882,17 @@ public class WireFrame {
     public int lineSegment_search(Point p, double r, int j) {
         if (j == -10) {
             for (int i = 1; i <= total; i++) {
-                if (((lineSegment_position_search(i, p, r) == 1) && (i != j)) && (getiactive(i) == 0)) {
+                if (((lineSegment_position_search(i, p, r) == 1) && (i != j)) && (getActive(i) == 0)) {
                     return i;
                 }
             }
             for (int i = 1; i <= total; i++) {
-                if (((lineSegment_position_search(i, p, r) == 2) && (i != j)) && (getiactive(i) == 0)) {
+                if (((lineSegment_position_search(i, p, r) == 2) && (i != j)) && (getActive(i) == 0)) {
                     return i;
                 }
             }
             for (int i = 1; i <= total; i++) {
-                if (((lineSegment_position_search(i, p, r) == 3) && (i != j)) && (getiactive(i) == 0)) {
+                if (((lineSegment_position_search(i, p, r) == 3) && (i != j)) && (getActive(i) == 0)) {
                     return i;
                 }
             }

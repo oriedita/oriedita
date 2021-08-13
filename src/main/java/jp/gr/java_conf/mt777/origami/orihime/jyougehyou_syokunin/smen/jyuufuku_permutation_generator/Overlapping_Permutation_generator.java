@@ -2,40 +2,31 @@ package jp.gr.java_conf.mt777.origami.orihime.jyougehyou_syokunin.smen.jyuufuku_
 
 import jp.gr.java_conf.mt777.origami.orihime.jyougehyou_syokunin.smen.jyuufuku_permutation_generator.annaisyo.*;
 
-public class Overlapping_Permutation_generator {//重複順列発生機
-    //重複順列を発生させるクラスを改造して、Smen構成に応じた、面の重なり順列を効率良く発生させるクラス。
+public class Overlapping_Permutation_generator {//Permutations with repeat generator
+    //A class that efficiently generates overlapping permutations of faces according to the SubFace configuration by modifying the class that generates permutations with duplicates.
 
-    int[] ij;//重複順列を格納する。
-    int numDigits = 0;//重複順列の桁数。たとえば、桁数が5なら、1から5までの数字でできる順列を発生する
+    int[] ij;//Store permutations with duplicates.
+    int numDigits;//The number of digits in the permutations with repetition. For example, if the number of digits is 5, it will generate a permutation made up of numbers from 1 to 5.
     int i_traveler;//Traveler's position
     int[] map;//Map image. The number that came out by the way that each side is now. The current state of the road is not counted.
-    //Annaisyo ann = new Annaisyo();//案内書のイメージ。
-    GuideMap guides; //なぜか、この行の書き方ではコンパイルはokなのに実行中にエラーがでるが、下の行の書き方だとうまくいく
-    //  Annaisyo ann = new Annaisyo(0);
+    GuideMap guides; //For some reason, this line is ok to compile, but I get an error during execution, but the line below works fine.
 
 
-    public Overlapping_Permutation_generator(int k) {  //コンストラクタ
+    public Overlapping_Permutation_generator(int k) {
         numDigits = k;
         i_traveler = 0;
-        int[] ij0 = new int[k + 10];//重複順列を格納する。
-        int[] map0 = new int[k + 10];  //地図のイメージ。各面がいまいる道しるべまでに出てきた数。今の道しるべの状態は数えない。
+        int[] ij0 = new int[k + 10];//Store permutations with duplicates.
+        int[] map0 = new int[k + 10];  //Map image. The number that came out by the way that each side is now. The current state of the road is not counted.
         ij = ij0;
         map = map0;
         guides = new GuideMap(k + 10);
 
-//System.out.println("20150309@@@@@@@44444444444444444444@@@@@@@@@" );
         Permutation_first();
-//System.out.println("20150309@@@@@@@55555555555555555555@@@@@@@@@" );
     }
 
-    //---------------
-    //private void set_i_tabibito(int i){i_tabibito=i;}
-
-    // ----------------------------------------------------------------
     // Go from the current permutation to the next permutation.
     // Advance the kth digit by one, and set all k-1 digits and below to 1. The return value is the number of digits changed as a permutation
     // Return 0 if the current permutation is the last one.
-
     public int next(int idousuru_digit) {
         //Traveler movement When moving in the direction of increasing the number of digits
         // Follow the value of each ij [] as a guide. When the number of digits returns from the larger one to the smaller one, the value of each ij [] is changed.
@@ -50,32 +41,27 @@ public class Overlapping_Permutation_generator {//重複順列発生機
 
             if (i_traveler == 0) {
                 i_traveler = i_traveler + 1;
-                ij[i_traveler] = 0;//桁数大きくなる方に進む
+                ij[i_traveler] = 0;//Proceed to the larger number of digits
             }
 
-            ij[i_traveler] = mitisirube_tatekae(ij[i_traveler]);
+            ij[i_traveler] = guide_rebuild(ij[i_traveler]);
 
-            if (ij[i_traveler] <= numDigits) {//桁数大きくなる方に進む
+            if (ij[i_traveler] <= numDigits) {//Proceed to the larger number of digits
                 i_traveler = i_traveler + 1;
                 ij[i_traveler] = 0;
                 if (i_traveler == numDigits + 1) {
                     break;
                 }
-            } else {//桁数小さくなる方に戻る
+            } else {//Return to the one with the smaller number of digits
                 i_traveler = i_traveler - 1;
                 ireturn = i_traveler;
             }
         }
 
-
-//System.out.println("susumu("+idousuru_digit+")");
-//			for(int i=1;i<=Ketasuu;i++){System.out.print(ij[i] );System.out.print(",");}System.out.println();
-
         return ireturn;
     }
 
-    //
-    private int mitisirube_tatekae(int ig) {
+    private int guide_rebuild(int ig) {
 
         for (int i = 1; i <= numDigits; i++) {
             map[i] = 0;
@@ -85,7 +71,7 @@ public class Overlapping_Permutation_generator {//重複順列発生機
             map[ij[i]] = map[ij[i]] + 1;
         }
 
-        //ここはバグがないか検討を要する。
+        //It is necessary to consider whether there are any bugs here.
         int ignew = ig;
         while (true) {
             ignew = ignew + 1;
@@ -125,7 +111,4 @@ public class Overlapping_Permutation_generator {//重複順列発生機
     public void addGuide(int iM, int i) {
         guides.add(iM, i);
     }
-    //
-    //int getAnnai(int iM,int i){return ann.get(iM,i);}
-
 }
