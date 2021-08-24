@@ -188,7 +188,7 @@ public class WireFrame_Worker {
         for (int i = 1; i <= lineSet.getTotal(); i++) {
             int idel = 0;
 
-            if (trash.convex_inside(lineSet.get(i)) == 1) {
+            if (trash.convex_inside(lineSet.get(i))) {
                 idel = 1;
             }
 
@@ -342,7 +342,7 @@ public class WireFrame_Worker {
             }
             for (int i = 1; i <= lineSet.getTotal() - 1; i++) {
                 for (int j = i + 1; j <= lineSet.getTotal(); j++) {
-                    if (oc.line_intersect_decide(lineSet.get(i), lineSet.get(j)) == 31) {
+                    if (oc.line_intersect_decide(lineSet.get(i), lineSet.get(j)) == IntersectionState.PARALLEL_EQUAL_31) {
                         OO.widthLine(g, lineSet.get(i), kr, LineType.RED_1);//  Thick line
                         g.fillOval((int) lineSet.getAX(i) - kr, (int) lineSet.getAY(i) - kr, 2 * kr, 2 * kr); //Circle
                         g.fillOval((int) lineSet.getBX(i) - kr, (int) lineSet.getBY(i) - kr, 2 * kr, 2 * kr); //Circle

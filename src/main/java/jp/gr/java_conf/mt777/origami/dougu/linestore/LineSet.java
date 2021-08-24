@@ -304,11 +304,11 @@ public class LineSet {
                 LineSegment sj;
                 sj = getLine(j);
                 if (r <= -9999.9) {
-                    if (oc.line_intersect_decide(si, sj) == 31) {
+                    if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_EQUAL_31) {
                         sakujyo_flg[j] = 1;
                     }
                 } else {
-                    if (oc.line_intersect_decide(si, sj, r, r) == 31) {
+                    if (oc.line_intersect_decide(si, sj, r, r) == IntersectionState.PARALLEL_EQUAL_31) {
                         sakujyo_flg[j] = 1;
                     }
                 }
@@ -347,7 +347,7 @@ public class LineSet {
         si = getLine(i);
         LineSegment sj;
         sj = getLine(j);
-        if (oc.line_intersect_decide(si, sj) == 31) {  //31 indicates that si and sj overlap exactly the same
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_EQUAL_31) {  //31 indicates that si and sj overlap exactly the same
             deleteLineSegment(j);
             return 1;
         }
@@ -476,7 +476,7 @@ public class LineSet {
             return 0;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 1) {
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.INTERSECTS_1) {
             pk.set(oc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
             si.setA(p1);
             si.setB(pk);
@@ -487,7 +487,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 25) {
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25) {
             pk.set(oc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
             sj.setA(p3);
             sj.setB(pk);
@@ -495,7 +495,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 26) {
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26) {
             pk.set(oc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
             sj.setA(p3);
             sj.setB(pk);
@@ -503,7 +503,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 27) {
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27) {
             pk.set(oc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
             si.setA(p1);
             si.setB(pk);
@@ -511,7 +511,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 28) {
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28) {
             pk.set(oc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
             si.setA(p1);
             si.setB(pk);
@@ -519,11 +519,11 @@ public class LineSet {
             return 1;
         }
         //
-        if (oc.line_intersect_decide(si, sj) == 31) {//If the two line segments are exactly the same, do nothing.
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_EQUAL_31) {//If the two line segments are exactly the same, do nothing.
             return 0;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 321) {//The endpoints of two line segments (p1 and p3) overlap at one point. si contains sj
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321) {//The endpoints of two line segments (p1 and p3) overlap at one point. si contains sj
             si.setA(p2);
             si.setB(p4);
 
@@ -537,7 +537,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 322) {//The endpoints of two line segments (p1 and p3) overlap at one point. sj contains si
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_START_OF_S2_CONTAINS_START_OF_S1_322) {//The endpoints of two line segments (p1 and p3) overlap at one point. sj contains si
             sj.setA(p2);
             sj.setB(p4);
             LineType overlapping_col;
@@ -550,7 +550,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 331) {//The endpoints of two line segments (p1 and p4) overlap at one point. si contains sj
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331) {//The endpoints of two line segments (p1 and p4) overlap at one point. si contains sj
             si.setA(p2);
             si.setB(p3);
 
@@ -564,7 +564,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 332) {//The endpoints of two line segments (p1 and p4) overlap at one point. sj contains si
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_END_OF_S2_CONTAINS_START_OF_S1_332) {//The endpoints of two line segments (p1 and p4) overlap at one point. sj contains si
             sj.setA(p2);
             sj.setB(p3);
             LineType overlapping_col;
@@ -576,7 +576,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 341) {//The endpoints of two line segments (p2 and p3) overlap at one point. si contains sj
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341) {//The endpoints of two line segments (p2 and p3) overlap at one point. si contains sj
             si.setA(p1);
             si.setB(p4);
             LineType overlapping_col;
@@ -589,7 +589,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 342) {//The endpoints of two line segments (p2 and p3) overlap at one point. sj contains si
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_START_OF_S2_CONTAINS_END_OF_S1_342) {//The endpoints of two line segments (p2 and p3) overlap at one point. sj contains si
             sj.setA(p1);
             sj.setB(p4);
             LineType overlapping_col;
@@ -603,7 +603,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 351) {//The endpoints of two line segments (p2 and p4) overlap at one point. si contains sj
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351) {//The endpoints of two line segments (p2 and p4) overlap at one point. si contains sj
 
 
             si.setA(p1);
@@ -619,7 +619,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 352) {//The endpoints of two line segments (p2 and p4) overlap at one point. sj contains si
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352) {//The endpoints of two line segments (p2 and p4) overlap at one point. sj contains si
             sj.setA(p1);
             sj.setB(p3);
             LineType overlapping_col;
@@ -633,7 +633,7 @@ public class LineSet {
         }
 
 
-        if (oc.line_intersect_decide(si, sj) == 361) {//In order of p1-p3-p4-p2
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_S1_INCLUDES_S2_361) {//In order of p1-p3-p4-p2
             si.setA(p1);
             si.setB(p3);
 
@@ -648,7 +648,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 362) {//In order of p1-p4-p3-p2
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_S1_INCLUDES_S2_362) {//In order of p1-p4-p3-p2
             si.setA(p1);
             si.setB(p4);
 
@@ -664,7 +664,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 363) {//In order of p3-p1-p2-p4
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_S2_INCLUDES_S1_363) {//In order of p3-p1-p2-p4
             sj.setA(p1);
             sj.setB(p3);
 
@@ -680,7 +680,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 364) {//In order of p3-p2-p1-p4
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_S2_INCLUDES_S1_364) {//In order of p3-p2-p1-p4
             sj.setA(p1);
             sj.setB(p4);
 
@@ -697,7 +697,7 @@ public class LineSet {
         }
 
         //
-        if (oc.line_intersect_decide(si, sj) == 371) {//In order of p1-p3-p2-p4
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_S1_END_OVERLAPS_S2_START_371) {//In order of p1-p3-p2-p4
             si.setA(p1);
             si.setB(p3);
 
@@ -713,7 +713,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 372) {//In order of p1-p4-p2-p3
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_S1_END_OVERLAPS_S2_END_372) {//In order of p1-p4-p2-p3
             si.setA(p1);
             si.setB(p4);
 
@@ -729,7 +729,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 373) {//In order of p3-p1-p4-p2
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_S1_START_OVERLAPS_S2_END_373) {//In order of p3-p1-p4-p2
             sj.setA(p1);
             sj.setB(p3);
             si.setA(p2);
@@ -743,7 +743,7 @@ public class LineSet {
             return 1;
         }
 
-        if (oc.line_intersect_decide(si, sj) == 374) {//In order of p4-p1-p3-p2
+        if (oc.line_intersect_decide(si, sj) == IntersectionState.PARALLEL_S1_START_OVERLAPS_S2_START_374) {//In order of p4-p1-p3-p2
             sj.setA(p1);
             sj.setB(p4);
             si.setA(p3);
@@ -998,7 +998,7 @@ public class LineSet {
     public int overlapping_lineSegment_search(int i0) {
         for (int i = 1; i <= total; i++) {
             if (i != i0) {
-                if (oc.line_intersect_decide(get(i), get(i0)) == 31) {
+                if (oc.line_intersect_decide(get(i), get(i0)) == IntersectionState.PARALLEL_EQUAL_31) {
                     return i;
                 }
             }

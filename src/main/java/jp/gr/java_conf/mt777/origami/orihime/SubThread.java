@@ -41,7 +41,7 @@ class SubThread extends Thread {
                         } catch (InterruptedException e) {
                         }
                     }
-                    if (orihime_app.OZ.different_search_flg == 0) {
+                    if (!orihime_app.OZ.findAnotherOverlapValid) {
                         objective = orihime_app.OZ.discovered_fold_cases;
                     }
 
@@ -62,7 +62,7 @@ class SubThread extends Thread {
                 orihime_app.repaint();
 
                 orihime_app.OZ.i_estimated_order = 6;
-                if (orihime_app.OZ.different_search_flg == 0) {
+                if (!orihime_app.OZ.findAnotherOverlapValid) {
                     objective = orihime_app.OZ.discovered_fold_cases;
                 }
 

@@ -289,7 +289,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         for (int it = 1; it <= this.pointSet.getPointsTotal(); it++) {
             tnew[it].reset();
             for (int im = 1; im <= this.pointSet.getFacesTotal(); im++) {
-                if (this.pointSet.Point_moti_determine(im, it) == 1) {//c.Ten_moti_hantei returns 1 if the boundary of Face [im] contains Point [it], 0 if it does not.
+                if (this.pointSet.Point_moti_determine(im, it)) {//c.Ten_moti_hantei returns 1 if the boundary of Face [im] contains Point [it], 0 if it does not.
                     tnew[it].addPoint(fold_movement(it, im));
                     pointSet.setPoint(it, tnew[it].getAveragePoint());
                 }

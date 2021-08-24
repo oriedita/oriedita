@@ -312,40 +312,40 @@ public class PointSet {
 
     // Even a part of the line segment s0 is inside the surface of the convex polygon (the boundary line is not regarded as the inside)
     // Returns 1 if it exists, 0 otherwise. If the surface is a concave polygon, the result will be strange, so do not use it.
-    public int simple_convex_inside(int ib, int im) {
+    public boolean simple_convex_inside(int ib, int im) {
         //バグがあるようだったが，多分取り除けた
         if (Stick_x_max[ib] + 0.5 < Surface_x_min[im]) {
-            return 0;
+            return false;
         }
         if (Stick_x_min[ib] - 0.5 > Surface_x_max[im]) {
-            return 0;
+            return false;
         }
         if (Stick_y_max[ib] + 0.5 < Surface_y_min[im]) {
-            return 0;
+            return false;
         }
         if (Stick_y_min[ib] - 0.5 > Surface_y_max[im]) {
-            return 0;
+            return false;
         }
 
         return convex_inside(new LineSegment(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]), faces[im]);
     }
 
-    private int convex_inside(LineSegment s0, Face mn) {
+    private boolean convex_inside(LineSegment s0, Face mn) {
         Polygon tk;//=new Takakukei();
         tk = makePolygon(mn);
         return tk.convex_inside(s0);
     }
 
-    private int convex_inside(int ib, int im) {
+    private boolean convex_inside(int ib, int im) {
         return convex_inside(new LineSegment(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]), faces[im]);
     }
 
-    public int convex_inside(double d, int ib, int im) {
+    public boolean convex_inside(double d, int ib, int im) {
         LineSegment sn = new LineSegment(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]);
         return convex_inside(oc.moveParallel(sn, d), faces[im]);
     }
 
-    private int simple_convex_inside(double d, int ib, int im) {
+    private boolean simple_convex_inside(double d, int ib, int im) {
         LineSegment sn = new LineSegment(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]);
         LineSegment snm = oc.moveParallel(sn, d);
         double s_x_max = snm.getAX();
@@ -366,16 +366,16 @@ public class PointSet {
         }
 
         if (s_x_max + 0.5 < Surface_x_min[im]) {
-            return 0;
+            return false;
         }
         if (s_x_min - 0.5 > Surface_x_max[im]) {
-            return 0;
+            return false;
         }
         if (s_y_max + 0.5 < Surface_y_min[im]) {
-            return 0;
+            return false;
         }
         if (s_y_min - 0.5 > Surface_y_max[im]) {
-            return 0;
+            return false;
         }
 
         return convex_inside(snm, faces[im]);
@@ -388,64 +388,64 @@ public class PointSet {
     }
 
     //Returns 1 if two Sticks are parallel and partially or wholly overlap, otherwise 0. If one point overlaps, 0 is returned.
-    public int parallel_overlap(int ib1, int ib2) {
-        int skh;
+    public boolean parallel_overlap(int ib1, int ib2) {
+        IntersectionState skh;
         skh = oc.line_intersect_decide(stickToLineSegment(sticks[ib1]), stickToLineSegment(sticks[ib2]));
-        if (skh == 31) {
-            return 1;
+        if (skh == IntersectionState.PARALLEL_EQUAL_31) {
+            return true;
         }
-        if (skh == 321) {
-            return 1;
+        if (skh == IntersectionState.PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321) {
+            return true;
         }
-        if (skh == 322) {
-            return 1;
+        if (skh == IntersectionState.PARALLEL_START_OF_S2_CONTAINS_START_OF_S1_322) {
+            return true;
         }
-        if (skh == 331) {
-            return 1;
+        if (skh == IntersectionState.PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331) {
+            return true;
         }
-        if (skh == 332) {
-            return 1;
+        if (skh == IntersectionState.PARALLEL_END_OF_S2_CONTAINS_START_OF_S1_332) {
+            return true;
         }
-        if (skh == 341) {
-            return 1;
+        if (skh == IntersectionState.PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341) {
+            return true;
         }
-        if (skh == 342) {
-            return 1;
+        if (skh == IntersectionState.PARALLEL_START_OF_S2_CONTAINS_END_OF_S1_342) {
+            return true;
         }
-        if (skh == 351) {
-            return 1;
+        if (skh == IntersectionState.PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351) {
+            return true;
         }
-        if (skh == 352) {
-            return 1;
-        }
-
-        if (skh == 361) {
-            return 1;
-        }
-        if (skh == 362) {
-            return 1;
-        }
-        if (skh == 363) {
-            return 1;
-        }
-        if (skh == 364) {
-            return 1;
+        if (skh == IntersectionState.PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352) {
+            return true;
         }
 
-        if (skh == 371) {
-            return 1;
+        if (skh == IntersectionState.PARALLEL_S1_INCLUDES_S2_361) {
+            return true;
         }
-        if (skh == 372) {
-            return 1;
+        if (skh == IntersectionState.PARALLEL_S1_INCLUDES_S2_362) {
+            return true;
         }
-        if (skh == 373) {
-            return 1;
+        if (skh == IntersectionState.PARALLEL_S2_INCLUDES_S1_363) {
+            return true;
         }
-        if (skh == 374) {
-            return 1;
+        if (skh == IntersectionState.PARALLEL_S2_INCLUDES_S1_364) {
+            return true;
         }
 
-        return 0;
+        if (skh == IntersectionState.PARALLEL_S1_END_OVERLAPS_S2_START_371) {
+            return true;
+        }
+        if (skh == IntersectionState.PARALLEL_S1_END_OVERLAPS_S2_END_372) {
+            return true;
+        }
+        if (skh == IntersectionState.PARALLEL_S1_START_OVERLAPS_S2_END_373) {
+            return true;
+        }
+        if (skh == IntersectionState.PARALLEL_S1_START_OVERLAPS_S2_START_374) {
+            return true;
+        }
+
+        return false;
     }
 
 
@@ -588,17 +588,17 @@ public class PointSet {
     }
 
     //点iと点jが棒で連結していれば1、していなければ0を返す。
-    private int renketu_hantei(int i, int j) {
+    private boolean renketu_hantei(int i, int j) {
         for (int k = 1; k <= sticksTotal; k++) {
             if (
                     ((sticks[k].getBegin() == i) && (sticks[k].getEnd() == j))
                             ||
                             ((sticks[k].getBegin() == j) && (sticks[k].getEnd() == i))
             ) {
-                return 1;
+                return true;
             }
         }
-        return 0;
+        return false;
     }
 
     //Find the number of the point when going from point i to point j and then going from point j to the right side of point i.
@@ -665,7 +665,7 @@ public class PointSet {
             tempFace = Face_request(sticks[i].getBegin(), sticks[i].getEnd());
             flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
             for (int j = 1; j <= facesTotal; j++) {
-                if (onaji_ka_hantei(tempFace, faces[j]) == 1) {
+                if (equals(tempFace, faces[j])) {
                     flag1 = 1;
                     break;
                 }
@@ -680,7 +680,7 @@ public class PointSet {
             tempFace = Face_request(sticks[i].getEnd(), sticks[i].getBegin());
             flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
             for (int j = 1; j <= facesTotal; j++) {
-                if (onaji_ka_hantei(tempFace, faces[j]) == 1) {
+                if (equals(tempFace, faces[j])) {
                     flag1 = 1;
                     break;
                 }
@@ -788,7 +788,7 @@ public class PointSet {
     //棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
     private int Stick_moti_Menid_min_search(int ib) {
         for (int im = 1; im <= facesTotal; im++) {
-            if (Stick_moti_determine(im, ib) == 1) {
+            if (Stick_moti_determine(im, ib)) {
                 return im;
             }
         }
@@ -798,7 +798,7 @@ public class PointSet {
     //棒ibを境界として含む面(最大で2面ある)のうちでMenidの大きいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
     private int Stick_moti_Menid_max_search(int ib) {
         for (int im = facesTotal; im >= 1; im--) {
-            if (Stick_moti_determine(im, ib) == 1) {
+            if (Stick_moti_determine(im, ib)) {
                 return im;
             }
         }
@@ -818,50 +818,50 @@ public class PointSet {
     }
 
     //---------------
-    private int onaji_ka_hantei(Face m, Face n) { //同じなら1、違うなら0を返す
+    private boolean equals(Face m, Face n) { //Returns 1 if they are the same, 0 if they are different
 
         if (m.getPointsCount() != n.getPointsCount()) {
-            return 0;
+            return false;
         }
 
         for (int i = 1; i <= m.getPointsCount(); i++) {
             if (m.getPointId(i) != n.getPointId(i)) {
-                return 0;
+                return false;
             }
         }
 
-        return 1;
+        return true;
 
     }
 
     //Returns 1 if the boundary of Face [im] contains Point [it], 0 if it does not.
-    public int Point_moti_determine(int im, int it) {
+    public boolean Point_moti_determine(int im, int it) {
         for (int i = 1; i <= faces[im].getPointsCount(); i++) {
             if (it == faces[im].getPointId(i)) {
-                return 1;
+                return true;
             }
         }
-        return 0;
+        return false;
     }
 
     //Men[im]の境界にBou[ib]が含まれるなら1、含まれないなら0を返す
-    private int Stick_moti_determine(int im, int ib) {
+    private boolean Stick_moti_determine(int im, int ib) {
         for (int i = 1; i <= faces[im].getPointsCount() - 1; i++) {
             if ((sticks[ib].getBegin() == faces[im].getPointId(i)) && (sticks[ib].getEnd() == faces[im].getPointId(i + 1))) {
-                return 1;
+                return true;
             }
             if ((sticks[ib].getEnd() == faces[im].getPointId(i)) && (sticks[ib].getBegin() == faces[im].getPointId(i + 1))) {
-                return 1;
+                return true;
             }
         }
         if ((sticks[ib].getBegin() == faces[im].getPointId(faces[im].getPointsCount())) && (sticks[ib].getEnd() == faces[im].getPointId(1))) {
-            return 1;
+            return true;
         }
         if ((sticks[ib].getEnd() == faces[im].getPointId(faces[im].getPointsCount())) && (sticks[ib].getBegin() == faces[im].getPointId(1))) {
-            return 1;
+            return true;
         }
 
-        return 0;
+        return false;
     }
 
     //------------------------------------------------------

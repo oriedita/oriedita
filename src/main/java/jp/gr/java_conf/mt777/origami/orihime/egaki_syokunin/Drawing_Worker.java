@@ -1382,7 +1382,7 @@ public class Drawing_Worker {
             int idel = 0;
 
 
-            if (trash.convex_inside(ori_s.get(i)) == 1) {
+            if (trash.convex_inside(ori_s.get(i))) {
                 idel = 1;
             }
 
@@ -3603,10 +3603,10 @@ public class Drawing_Worker {
 
 
             for (int i = 1; i <= ori_s.getTotal(); i++) {
-                int i_senbun_kousa_hantei = oc.line_intersect_decide(ori_s.get(i), s_step[1], 0.0001, 0.0001);
+                IntersectionState i_senbun_kousa_hantei = oc.line_intersect_decide(ori_s.get(i), s_step[1], 0.0001, 0.0001);
                 int i_jikkou = 0;
 
-                if (i_senbun_kousa_hantei == 1) {
+                if (i_senbun_kousa_hantei == IntersectionState.INTERSECTS_1) {
                     i_jikkou = 1;
                 }
                 //if(i_senbun_kousa_hantei== 27 ){ i_jikkou=1;}
@@ -3669,7 +3669,7 @@ public class Drawing_Worker {
                 //最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがあるかどうかを判断する。
                 int i_senbun_entyou_mode = 0;// i_senbun_entyou_mode=0なら最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがない。1ならある。
                 for (int i = 1; i <= entyou_kouho_nbox.getTotal(); i++) {
-                    if (oc.line_intersect_decide(ori_s.get(entyou_kouho_nbox.getInt(i)), closest_lineSegment, 0.000001, 0.000001) == 31) {//線分が同じならoc.senbun_kousa_hantei==31
+                    if (oc.line_intersect_decide(ori_s.get(entyou_kouho_nbox.getInt(i)), closest_lineSegment, 0.000001, 0.000001) == IntersectionState.PARALLEL_EQUAL_31) {//線分が同じならoc.senbun_kousa_hantei==31
                         i_senbun_entyou_mode = 1;
                     }
                 }
@@ -3722,7 +3722,7 @@ public class Drawing_Worker {
                         if (p_point.distance(moto_no_sen.getA()) < p_point.distance(moto_no_sen.getB())) {
                             moto_no_sen.a_b_swap();
                         }
-                        add_sen.set(kousatenmade_2(moto_no_sen));
+                        add_sen.set(extendToIntersectionPoint_2(moto_no_sen));
 
 
                         if (add_sen.getLength() > 0.00000001) {
@@ -4719,7 +4719,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             LineSegment add_sen = new LineSegment(s_step[2].getA(), t_taisyou);
 
-            add_sen.set(kousatenmade(add_sen));
+            add_sen.set(extendToIntersectionPoint(add_sen));
             add_sen.setColor(icol);
             if (add_sen.getLength() > 0.00000001) {
                 addsenbun(add_sen);
@@ -7284,7 +7284,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                             LineSegment adds = new LineSegment(px, py, px - dy, py + dx);
                             if (kouten_ari_nasi(adds) == 1) {
-                                adds.set(kousatenmade(adds));
+                                adds.set(extendToIntersectionPoint(adds));
                                 adds.setColor(icol_temp);
 
                                 addsenbun(adds);
@@ -7294,7 +7294,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                             LineSegment adds2 = new LineSegment(px, py, px + dy, py - dx);
                             if (kouten_ari_nasi(adds2) == 1) {
-                                adds2.set(kousatenmade(adds2));
+                                adds2.set(extendToIntersectionPoint(adds2));
                                 adds2.setColor(icol_temp);
 
                                 addsenbun(adds2);
@@ -7373,16 +7373,16 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 if (s_step[1].getLength() > 0.00000001) {
                     int imax = ori_s.getTotal();
                     for (int i = 1; i <= imax; i++) {
-                        int i_senbun_kousa_hantei = oc.line_intersect_decide_sweet(ori_s.get(i), s_step[1], 0.01, 0.01);
+                        IntersectionState i_senbun_kousa_hantei = oc.line_intersect_decide_sweet(ori_s.get(i), s_step[1], 0.01, 0.01);
                         int i_jikkou = 0;
                         //if(i_senbun_kousa_hantei== 21 ){ i_jikkou=1;}//L字型
                         //if(i_senbun_kousa_hantei== 22 ){ i_jikkou=1;}//L字型
                         //if(i_senbun_kousa_hantei== 23 ){ i_jikkou=1;}//L字型
                         //if(i_senbun_kousa_hantei== 24 ){ i_jikkou=1;}//L字型
-                        if (i_senbun_kousa_hantei == 25) {
+                        if (i_senbun_kousa_hantei == IntersectionState.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25) {
                             i_jikkou = 1;
                         }//T字型 s1が縦棒
-                        if (i_senbun_kousa_hantei == 26) {
+                        if (i_senbun_kousa_hantei == IntersectionState.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26) {
                             i_jikkou = 1;
                         }//T字型 s1が縦棒
 
@@ -7401,7 +7401,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                             LineSegment add_sen = new LineSegment(oc.findIntersection(ori_s.get(i), s_step[1]), t_taisyou);
 
-                            add_sen.set(kousatenmade(add_sen));
+                            add_sen.set(extendToIntersectionPoint(add_sen));
                             add_sen.setColor(ori_s.getColor(i));
                             if (add_sen.getLength() > 0.00000001) {
                                 addsenbun(add_sen);
@@ -7422,7 +7422,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 //------
 
-    public LineSegment kousatenmade(LineSegment s0) {//s0を点aからb方向に、他の折線と交差するところまで延長する。新しい線分を返す//他の折線と交差しないなら、同じ線分を返す
+    public LineSegment extendToIntersectionPoint(LineSegment s0) {//Extend s0 from point a to b, until it intersects another polygonal line. Returns a new line // Returns the same line if it does not intersect another polygonal line
         LineSegment add_sen = new LineSegment();
         add_sen.set(s0);
         Point kousa_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
@@ -7458,7 +7458,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 //------
 
-    public LineSegment kousatenmade_2(LineSegment s0) {//s0を点bからaの反対方向に、他の折線と交差するところまで延長する。新しい線分を返す//他の折線と交差しないなら、同じ線分を返す
+    public LineSegment extendToIntersectionPoint_2(LineSegment s0) {//Extend s0 from point b in the opposite direction of a to the point where it intersects another polygonal line. Returns a new line // Returns the same line if it does not intersect another polygonal line
         LineSegment add_sen = new LineSegment();
         add_sen.set(s0);
         //Senbun add_sen;add_sen=s0;
@@ -7468,18 +7468,18 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         double kousa_ten_kyori = kousa_point.distance(add_sen.getA());
 
         StraightLine tyoku1 = new StraightLine(add_sen.getA(), add_sen.getB());
-        int i_kousa_flg;//元の線分を直線としたものと、他の線分の交差状態
-        int i_senbun_kousa_flg;//元の線分と、他の線分の交差状態
+        int i_intersection_flg;//元の線分を直線としたものと、他の線分の交差状態
+        IntersectionState i_lineSegment_intersection_flg;//元の線分と、他の線分の交差状態
 
         System.out.println("AAAAA_");
         for (int i = 1; i <= ori_s.getTotal(); i++) {
-            i_kousa_flg = tyoku1.lineSegment_intersect_reverse_detail(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+            i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
 
-            //i_senbun_kousa_flg=oc.senbun_kousa_hantei_amai( add_sen,ori_s.get(i),0.00001,0.00001);//20180408なぜかこの行の様にadd_senを使うと、i_senbun_kousa_flgがおかしくなる
-            i_senbun_kousa_flg = oc.line_intersect_decide_sweet(s0, ori_s.get(i), 0.00001, 0.00001);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
-            if ((i_kousa_flg == 1 || i_kousa_flg == 21) || i_kousa_flg == 22) {
-                if (i_senbun_kousa_flg < 21 || i_senbun_kousa_flg > 28) {
-                    //System.out.println("i_kousa_flg = "+i_kousa_flg  +      " ; i_senbun_kousa_flg = "+i_senbun_kousa_flg);
+            //i_lineSegment_intersection_flg=oc.senbun_kousa_hantei_amai( add_sen,ori_s.get(i),0.00001,0.00001);//20180408なぜかこの行の様にadd_senを使うと、i_senbun_kousa_flgがおかしくなる
+            i_lineSegment_intersection_flg = oc.line_intersect_decide_sweet(s0, ori_s.get(i), 0.00001, 0.00001);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
+            if ((i_intersection_flg == 1 || i_intersection_flg == 21) || i_intersection_flg == 22) {
+                if (!i_lineSegment_intersection_flg.isEndpointIntersection()) {
+                    //System.out.println("i_intersection_flg = "+i_intersection_flg  +      " ; i_lineSegment_intersection_flg = "+i_lineSegment_intersection_flg);
                     kousa_point.set(oc.findIntersection(tyoku1, ori_s.get(i)));
                     if (kousa_point.distance(add_sen.getA()) > 0.00001) {
                         if (kousa_point.distance(add_sen.getA()) < kousa_ten_kyori) {
@@ -7496,11 +7496,11 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 }
             }
 
-            if (i_kousa_flg == 3) {
-                if (i_senbun_kousa_flg != 31) {
+            if (i_intersection_flg == 3) {
+                if (i_lineSegment_intersection_flg != IntersectionState.PARALLEL_EQUAL_31) {
 
 
-                    System.out.println("i_kousa_flg = " + i_kousa_flg + " ; i_senbun_kousa_flg = " + i_senbun_kousa_flg);
+                    System.out.println("i_intersection_flg = " + i_intersection_flg + " ; i_lineSegment_intersection_flg = " + i_lineSegment_intersection_flg);
 
 
                     kousa_point.set(ori_s.get(i).getA());
@@ -8640,15 +8640,15 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             //if(p.kyori(moyori_ten)<=d_hantei_haba){
             if (s_step[1].getLength() > 0.00000001) {
                 for (int i = 1; i <= ori_s.getTotal(); i++) {
-                    int i_senbun_kousa_hantei = oc.line_intersect_decide(ori_s.get(i), s_step[1], 0.0001, 0.0001);
+                    IntersectionState i_senbun_kousa_hantei = oc.line_intersect_decide(ori_s.get(i), s_step[1], 0.0001, 0.0001);
                     int i_jikkou = 0;
-                    if (i_senbun_kousa_hantei == 1) {
+                    if (i_senbun_kousa_hantei == IntersectionState.INTERSECTS_1) {
                         i_jikkou = 1;
                     }
-                    if (i_senbun_kousa_hantei == 27) {
+                    if (i_senbun_kousa_hantei == IntersectionState.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27) {
                         i_jikkou = 1;
                     }
-                    if (i_senbun_kousa_hantei == 28) {
+                    if (i_senbun_kousa_hantei == IntersectionState.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28) {
                         i_jikkou = 1;
                     }
                     //if(i_senbun_kousa_hantei== 31 ){ i_jikkou=1;}
@@ -8821,14 +8821,14 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 nbox.reset();
                 for (int i = 1; i <= ori_s.getTotal(); i++) {
 
-                    int i_senbun_kousa_hantei = oc.line_intersect_decide(ori_s.get(i), s_step[i_s_step], 0.0001, 0.0001);
+                    IntersectionState i_senbun_kousa_hantei = oc.line_intersect_decide(ori_s.get(i), s_step[i_s_step], 0.0001, 0.0001);
                     int i_jikkou = 0;
 
-                    if ((i_senbun_kousa_hantei != 0) && (i_senbun_kousa_hantei != 1)) {
+                    if ((i_senbun_kousa_hantei != IntersectionState.NO_INTERSECTION_0) && (i_senbun_kousa_hantei != IntersectionState.INTERSECTS_1)) {
                         i_tekisetu = 0;
                     }
 
-                    if (i_senbun_kousa_hantei == 1) {
+                    if (i_senbun_kousa_hantei == IntersectionState.INTERSECTS_1) {
                         i_jikkou = 1;
                     }
                     //if(i_senbun_kousa_hantei== 27 ){ i_jikkou=1;}

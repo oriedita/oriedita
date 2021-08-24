@@ -6044,7 +6044,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             img_kaisetu_fname = "qqq/koteimen_sitei.png";
             readImageFromFile3();
-            if (OZ.display_flg > 0) {
+            if (OZ.display_flg != FoldedFigureDisplayStyle.NONE_0) {
                 i_mouse_modeA = 103;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
@@ -6155,11 +6155,11 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                     "qqq/ckbox_toukazu_color.png";
             readImageFromFile3();
             if (ckbox_toukazu_color.isSelected()) {
-                OZ.i_toukazu_color = 1;
+                OZ.transparencyColor = true;
                 System.out.println("ckbox_toukazu_color.isSelected()");
             }//カラーの透過図
             else {
-                OZ.i_toukazu_color = 0;
+                OZ.transparencyColor = false;
                 System.out.println("ckbox_toukazu_color.is not Selected()");
             }
             repaint();
@@ -6294,7 +6294,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             img_kaisetu_fname =
                     "qqq/AS_matome.png";
             readImageFromFile3();
-            if (OZ.different_search_flg == 1) {
+            if (OZ.findAnotherOverlapValid) {
                 //OZ.i_suitei_jissi_umu=0;//i_suitei_jissi_umuは、折り畳み推定の計算を実施したかどうかを表す。int i_suitei_jissi_umu=0なら実施しない。1なら実施した。
                 OZ.i_estimated_order = 6;
 
@@ -6765,18 +6765,18 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //  "ppp/a_a.png")));
 // ******************************************************** //折りあがり図の影付け
 
-        JButton Button_kage = new JButton("S");
-        Button_kage.addActionListener(e -> {
+        JButton Button_shadows = new JButton("S");
+        Button_shadows.addActionListener(e -> {
             Button_kyoutuu_sagyou();
             img_kaisetu_fname = "qqq/kage.png";
             readImageFromFile3();
-            OZ.ct_worker.change_i_kage();
+            OZ.ct_worker.changeDisplayShadows();
             repaint();
         });
-        pnls.add(Button_kage);
+        pnls.add(Button_shadows);
 
-        Button_kage.setMargin(new Insets(0, 0, 0, 0));
-        //Button_kage.setIcon(createImageIcon(
+        Button_shadows.setMargin(new Insets(0, 0, 0, 0));
+        //Button_shadows.setIcon(createImageIcon(
         //  "ppp/kage.png")));
 // *********南****************************************************************
 // -------------折り上がり予測図表面の色の選択
@@ -7793,42 +7793,42 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
             int OZ_hyouji_mode = 0;//折り上がり図表示なし
-            if ((OZi.display_flg == 2) && (OZi.ip4 == 0)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == 0)) {
                 OZ_hyouji_mode = 1;
             }//	omote
-            if ((OZi.display_flg == 2) && (OZi.ip4 == 1)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == 1)) {
                 OZ_hyouji_mode = 2;
             }//	ura
-            if ((OZi.display_flg == 2) && (OZi.ip4 == 2)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == 2)) {
                 OZ_hyouji_mode = 3;
             }//	omote & ura
-            if ((OZi.display_flg == 2) && (OZi.ip4 == 3)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == 3)) {
                 OZ_hyouji_mode = 3;
             }//	omote & ura
 
-            if ((OZi.display_flg == 3) && (OZi.ip4 == 0)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == 0)) {
                 OZ_hyouji_mode = 1;
             }//	omote
-            if ((OZi.display_flg == 3) && (OZi.ip4 == 1)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == 1)) {
                 OZ_hyouji_mode = 2;
             }//	ura
-            if ((OZi.display_flg == 3) && (OZi.ip4 == 2)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == 2)) {
                 OZ_hyouji_mode = 3;
             }//	omote & ura
-            if ((OZi.display_flg == 3) && (OZi.ip4 == 3)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == 3)) {
                 OZ_hyouji_mode = 3;
             }//	omote & ura
 
-            if ((OZi.display_flg == 5) && (OZi.ip4 == 0)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == 0)) {
                 OZ_hyouji_mode = 1;
             }//	omote
-            if ((OZi.display_flg == 5) && (OZi.ip4 == 1)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == 1)) {
                 OZ_hyouji_mode = 2;
             }//	ura
-            if ((OZi.display_flg == 5) && (OZi.ip4 == 2)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == 2)) {
                 OZ_hyouji_mode = 3;
             }//	omote & ura
-            if ((OZi.display_flg == 5) && (OZi.ip4 == 3)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == 3)) {
                 OZ_hyouji_mode = 4;
             }//	omote & ura & omote2 & ura2
 
@@ -7872,10 +7872,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         System.out.println("i_OAZ = " + i_OAZ);
         i_OAZ = i;
         OZ = OAZ.get(i_OAZ);
-        if (OZ.i_toukazu_color == 0) {
-            ckbox_toukazu_color.setSelected(false);//透過図はカラー化しない。
-        } else if (OZ.i_toukazu_color == 1) {
+        if (OZ.transparencyColor) {
             ckbox_toukazu_color.setSelected(true);//透過図はカラー化。
+        } else {
+            ckbox_toukazu_color.setSelected(false);//透過図はカラー化しない。
         }
     }
 // ---------------------------------------
@@ -9662,7 +9662,7 @@ public void keyTyped(KeyEvent e){
         //OritaCalc oc =new OritaCalc();
 
         //別の重なりさがし　のボタンの色の指定。
-        if (OZ.different_search_flg == 1) {
+        if (OZ.findAnotherOverlapValid) {
             Button3.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
             Button3.setForeground(Color.black);
 
@@ -9823,7 +9823,7 @@ img_haikei=(Image)imageT;
         //基準面の表示
         //System.out.println("paint　+++++++++++++++++++++　基準面の表示");
         if (i_mejirusi_display == 1) {
-            if (OZ.display_flg > 0) {
+            if (OZ.display_flg != FoldedFigureDisplayStyle.NONE_0) {
                 //	ts1.setCamera(camera_of_orisen_nyuuryokuzu);
                 OZ.cp_worker1.drawing_referencePlane_with_camera(bufferGraphics);//ts1が折り畳みを行う際の基準面を表示するのに使う。
             }
@@ -10037,8 +10037,8 @@ double dvy=(double)ymin;
 
     void configure_syokika_yosoku() {
         OZ.text_kekka = "";
-        OZ.display_flg = 0;//折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図
-        OZ.hyouji_flg_backup = 0;//表示様式hyouji_flgの一時的バックアップ用
+        OZ.display_flg = FoldedFigureDisplayStyle.NONE_0;//折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図
+        OZ.hyouji_flg_backup = FoldedFigureDisplayStyle.NONE_0;//表示様式hyouji_flgの一時的バックアップ用
 
         //表示用の値を格納する変数
         OZ.ip1 = -1;//上下表職人の初期設定時に、折った後の表裏が同じ面が
@@ -10060,7 +10060,7 @@ double dvy=(double)ymin;
         //1000なら別の重なり方が見つかった。
 
 
-        OZ.different_search_flg = 0;     //これは「別の重なりを探す」ことが有効の場合は１、無効の場合は０をとる。
+        OZ.findAnotherOverlapValid = false;     //これは「別の重なりを探す」ことが有効の場合は１、無効の場合は０をとる。
         OZ.discovered_fold_cases = 0;    //折り重なり方で、何通り発見したかを格納する。
 
 

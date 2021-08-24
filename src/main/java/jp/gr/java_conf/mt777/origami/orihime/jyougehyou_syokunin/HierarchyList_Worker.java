@@ -9,7 +9,6 @@ import jp.gr.java_conf.mt777.origami.orihime.jyougehyou_syokunin.smen.*;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Random;
 
 import jp.gr.java_conf.mt777.kiroku.memo.*;
 import jp.gr.java_conf.mt777.kiroku.moji_sousa.*;
@@ -40,7 +39,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
     int[] s0_no_yusenjyun;
     int[] yusenjyun_kara_s0id;
 
-    int i_kage = 0; //影を表示するかどうか。0は表示しない、1は表示する
+    boolean displayShadows = false; //Whether to display shadows. 0 is not displayed, 1 is displayed
 
     Camera camera = new Camera();
 
@@ -224,10 +223,10 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
             if (Mid_min != Mid_max) {//展開図において、棒ibの両脇に面がある
                 for (int im = 1; im <= hierarchyList.getFacesTotal(); im++) {
                     if ((im != Mid_min) && (im != Mid_max)) {
-                        if (otta_face_figure.simple_convex_inside(ib, im) == 1) {
+                        if (otta_face_figure.simple_convex_inside(ib, im)) {
                             //下の２つのifは暫定的な処理。あとで置き換え予定
-                            if (otta_face_figure.convex_inside(0.5, ib, im) == 1) {
-                                if (otta_face_figure.convex_inside(-0.5, ib, im) == 1) {
+                            if (otta_face_figure.convex_inside(0.5, ib, im)) {
+                                if (otta_face_figure.convex_inside(-0.5, ib, im)) {
                                     hierarchyList.addEquivalenceCondition(im, Mid_min, im, Mid_max);
                                 }
                             }
@@ -247,7 +246,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
 
         for (int ib = 1; ib <= orite.getSticksTotal() - 1; ib++) {
             for (int jb = ib + 1; jb <= orite.getSticksTotal(); jb++) {
-                if (otta_face_figure.parallel_overlap(ib, jb) == 1) {
+                if (otta_face_figure.parallel_overlap(ib, jb)) {
                     mi1 = orite.Stick_moti_FaceId_min_request(ib);
                     mi2 = orite.Stick_moti_FaceId_max_request(ib);
                     if (mi1 != mi2) {
@@ -1952,16 +1951,13 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
 
 
     //---------------------------------------------------------
-    public void draw_transparency_with_camera(Graphics g, CreasePattern_Worker orite, PointSet otta_Face_figure, PointSet subFace_figure, int i_transparency_color, int transparency_toukado) {
+    public void draw_transparency_with_camera(Graphics g, CreasePattern_Worker orite, PointSet otta_Face_figure, PointSet subFace_figure, boolean transparencyColor, int transparency_toukado) {
         Graphics2D g2 = (Graphics2D) g;
 
-        //System.out.println("上下表職人　oekaki_with_camera+++++++++++++++透過表示");
-        OritaDrawing OO = new OritaDrawing();
         Point t0 = new Point();
         Point t1 = new Point();
         LineSegment s_ob = new LineSegment();
         LineSegment s_tv = new LineSegment();
-        String text = "";//Instantiation of class for string processing
 
         //Preparing to draw a face
         int[] x = new int[100];
@@ -1976,7 +1972,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
             col_hiku = (colmax - colmin) / FaceIdCount_max;
         }
 
-        if (i_transparency_color == 1) {//カラーの透過図
+        if (transparencyColor) {//カラーの透過図
 
             g.setColor(new Color(F_color.getRed(), F_color.getGreen(), F_color.getBlue(), transparency_toukado));
 
@@ -2184,7 +2180,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
 
 
         //影をつける ------------------------------------------------------------------------------------
-        if (i_kage == 1) {
+        if (displayShadows) {
             for (int ib = 1; ib <= subFace_figure.getSticksTotal(); ib++) {
                 int im = bou_no_bangou_kara_kagenoaru_subFace_no_bangou_wo_motomeru(ib, subFace_figure, omote_ura);//影をつけるSubFaceのid
                 if (im != 0) {//影を描く。
@@ -2425,13 +2421,8 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
 
     //---------------------------------------------------------
 
-    public void change_i_kage() {
-
-        i_kage = i_kage + 1;
-        if (i_kage >= 2) {
-            i_kage = 0;
-        }
-
+    public void changeDisplayShadows() {
+        displayShadows = !displayShadows;
     }
 
 

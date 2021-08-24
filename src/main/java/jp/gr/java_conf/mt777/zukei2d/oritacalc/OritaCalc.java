@@ -210,15 +210,15 @@ public class OritaCalc {
     // 6 = Line segment s2 intersects at a point
     // Note! If p1 and p2 are the same, or p3 and p4 are the same, the result will be strange,
     // This function itself does not have a check mechanism, so it may be difficult to notice.
-    public int line_intersect_decide(LineSegment s1, LineSegment s2) {
+    public IntersectionState line_intersect_decide(LineSegment s1, LineSegment s2) {
         return line_intersect_decide(s1, s2, 0.01, 0.01);
     }
 
-    public int line_intersect_decide_sweet(LineSegment s1, LineSegment s2) {
+    public IntersectionState line_intersect_decide_sweet(LineSegment s1, LineSegment s2) {
         return line_intersect_decide_sweet(s1, s2, 0.01, 0.01);
     }
 
-    public int line_intersect_decide(LineSegment s1, LineSegment s2, double rhit, double rhei) {    //r_hitosii and r_heikouhantei are the allowable degree of deviation between hitosii and heikou_hantei
+    public IntersectionState line_intersect_decide(LineSegment s1, LineSegment s2, double rhit, double rhei) {    //r_hitosii and r_heikouhantei are the allowable degree of deviation between hitosii and heikou_hantei
         double x1max = s1.getAX();
         double x1min = s1.getAX();
         double y1max = s1.getAY();
@@ -253,16 +253,16 @@ public class OritaCalc {
         }
 
         if (x1max + rhit + 0.1 < x2min) {
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
         if (x1min - rhit - 0.1 > x2max) {
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
         if (y1max + rhit + 0.1 < y2min) {
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
         if (y1min - rhit - 0.1 > y2max) {
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
 
         Point p1 = new Point();
@@ -282,25 +282,25 @@ public class OritaCalc {
                 &&
                 ((p3.getX() == p4.getX()) && (p3.getY() == p4.getY()))) {
             if ((p1.getX() == p3.getX()) && (p1.getY() == p3.getY())) {
-                return 4;
+                return IntersectionState.INTERSECT_AT_POINT_4;
             }
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
 
         //Exception handling: When the line segment s1 is a point
         if ((p1.getX() == p2.getX()) && (p1.getY() == p2.getY())) {
             if ((isInside(p3, p1, p4) >= 1) && (t2.assignmentCalculation(p1) == 0.0)) {
-                return 5;
+                return IntersectionState.INTERSECT_AT_POINT_S1_5;
             }
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
 
         //Exception handling: When the line segment s2 is a point
         if ((p3.getX() == p4.getX()) && (p3.getY() == p4.getY())) {
             if ((isInside(p1, p3, p2) >= 1) && (t1.assignmentCalculation(p3) == 0.0)) {
-                return 6;
+                return IntersectionState.INTERSECT_AT_POINT_S2_6;
             }
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
 
         if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.NOT_PARALLEL) {    //Two straight lines are not parallel
@@ -309,130 +309,130 @@ public class OritaCalc {
             if ((isInside(p1, pk, p2) >= 1)
                     && (isInside(p3, pk, p4) >= 1)) {
                 if (equal(p1, p3, rhit)) {
-                    return 21;
+                    return IntersectionState.INTERSECTS_LSHAPE_S1_START_S2_START_21;
                 }//L-shaped
                 if (equal(p1, p4, rhit)) {
-                    return 22;
+                    return IntersectionState.INTERSECTS_LSHAPE_S1_START_S2_END_22;
                 }//L-shaped
                 if (equal(p2, p3, rhit)) {
-                    return 23;
+                    return IntersectionState.INTERSECTS_LSHAPE_S1_END_S2_START_23;
                 }//L-shaped
                 if (equal(p2, p4, rhit)) {
-                    return 24;
+                    return IntersectionState.INTERSECTs_LSHAPE_S1_END_S2_END_24;
                 }//L-shaped
                 if (equal(p1, pk, rhit)) {
-                    return 25;
+                    return IntersectionState.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25;
                 }//T-shaped s1 is a vertical bar
                 if (equal(p2, pk, rhit)) {
-                    return 26;
+                    return IntersectionState.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26;
                 }//T-shaped s1 is a vertical bar
                 if (equal(p3, pk, rhit)) {
-                    return 27;
+                    return IntersectionState.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27;
                 }//T-shaped s2 is a vertical bar
                 if (equal(p4, pk, rhit)) {
-                    return 28;
+                    return IntersectionState.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28;
                 }//T-shaped s2 is a vertical bar
-                return 1;                    // <<<<<<<<<<<<<<<<< return 1;
+                return IntersectionState.INTERSECTS_1;                    // <<<<<<<<<<<<<<<<< return 1;
             }
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
 
         if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.PARALLEL_NOT_EQUAL) { //Two straight lines are parallel and y-intercept does not match
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
 
         // The two line segments are exactly the same
         if (equal(p1, p3, rhit) && equal(p2, p4, rhit)) {
-            return 31;
+            return IntersectionState.PARALLEL_EQUAL_31;
         }
         if (equal(p1, p4, rhit) && equal(p2, p3, rhit)) {
-            return 31;
+            return IntersectionState.PARALLEL_EQUAL_31;
         }
 
         //The two straight lines are parallel and the y-intercept matches
         if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.PARALLEL_EQUAL) {
             if (equal(p1, p3, rhit)) { //When the endpoints of two line segments overlap at one point
                 if (isInside(p1, p4, p2) == 2) {
-                    return 321;
+                    return IntersectionState.PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321;
                 }
                 if (isInside(p3, p2, p4) == 2) {
-                    return 322;
+                    return IntersectionState.PARALLEL_START_OF_S2_CONTAINS_START_OF_S1_322;
                 }
                 if (isInside(p2, p1, p4) == 2) {
-                    return 323;
+                    return IntersectionState.PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323;
                 }//Two line segments only overlap at one point, not at any other point
             }
 
             if (equal(p1, p4, rhit)) {
                 if (isInside(p1, p3, p2) == 2) {
-                    return 331;
+                    return IntersectionState.PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331;
                 }
                 if (isInside(p4, p2, p3) == 2) {
-                    return 332;
+                    return IntersectionState.PARALLEL_END_OF_S2_CONTAINS_START_OF_S1_332;
                 }
                 if (isInside(p2, p1, p3) == 2) {
-                    return 333;
+                    return IntersectionState.PARALLEL_START_OF_S1_INTERSECTS_END_OF_S2_333;
                 }//Two line segments only overlap at one point, not at any other point
             }
 
             if (equal(p2, p3, rhit)) {
                 if (isInside(p2, p4, p1) == 2) {
-                    return 341;
+                    return IntersectionState.PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341;
                 }
                 if (isInside(p3, p1, p4) == 2) {
-                    return 342;
+                    return IntersectionState.PARALLEL_START_OF_S2_CONTAINS_END_OF_S1_342;
                 }
                 if (isInside(p1, p2, p4) == 2) {
-                    return 343;
+                    return IntersectionState.PARALLEL_END_OF_S1_INTERSECTS_START_OF_S2_343;
                 }//Two line segments only overlap at one point, not at any other point
             }
 
             if (equal(p2, p4, rhit)) {
                 if (isInside(p2, p3, p1) == 2) {
-                    return 351;
+                    return IntersectionState.PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351;
                 }
                 if (isInside(p4, p1, p3) == 2) {
-                    return 352;
+                    return IntersectionState.PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352;
                 }
                 if (isInside(p1, p2, p3) == 2) {
-                    return 353;
-                }//2つの線分は1点で重なるだけで、それ以外では重ならない
+                    return IntersectionState.PARALLEL_END_OF_S1_INTERSECTS_END_OF_S2_353;
+                }//Two line segments only overlap at one point, not at any other point
             }
 
-            //2つの線分の端点どうしが重ならない場合
+            //When the endpoints of two line segments do not overlap
             if ((isInside(p1, p3, p4) == 2) && (isInside(p3, p4, p2) == 2)) {
-                return 361;
-            }//線分(p1,p2)に線分(p3,p4)が含まれる
+                return IntersectionState.PARALLEL_S1_INCLUDES_S2_361;
+            }//Line segment (p1, p2) includes line segment (p3, p4)
             if ((isInside(p1, p4, p3) == 2) && (isInside(p4, p3, p2) == 2)) {
-                return 362;
-            }//線分(p1,p2)に線分(p3,p4)が含まれる
+                return IntersectionState.PARALLEL_S1_INCLUDES_S2_362;
+            }//Line segment (p1, p2) includes line segment (p3, p4)
 
             if ((isInside(p3, p1, p2) == 2) && (isInside(p1, p2, p4) == 2)) {
-                return 363;
-            }//線分(p3,p4)に線分(p1,p2)が含まれる
+                return IntersectionState.PARALLEL_S2_INCLUDES_S1_363;
+            }//Line segment (p3, p4) includes line segment (p1, p2)
             if ((isInside(p3, p2, p1) == 2) && (isInside(p2, p1, p4) == 2)) {
-                return 364;
-            }//線分(p3,p4)に線分(p1,p2)が含まれる
+                return IntersectionState.PARALLEL_S2_INCLUDES_S1_364;
+            }//Line segment (p3, p4) includes line segment (p1, p2)
 
 
             if ((isInside(p1, p3, p2) == 2) && (isInside(p3, p2, p4) == 2)) {
-                return 371;
-            }//線分(p1,p2)のP2側と線分(p3,p4)のP3側が部分的に重なる
+                return IntersectionState.PARALLEL_S1_END_OVERLAPS_S2_START_371;
+            }//The P2 side of the line segment (p1, p2) and the P3 side of the line segment (p3, p4) partially overlap.
             if ((isInside(p1, p4, p2) == 2) && (isInside(p4, p2, p3) == 2)) {
-                return 372;
-            }//線分(p1,p2)のP2側と線分(p4,p3)のP4側が部分的に重なる
+                return IntersectionState.PARALLEL_S1_END_OVERLAPS_S2_END_372;
+            }//The P2 side of the line segment (p1, p2) and the P4 side of the line segment (p4, p3) partially overlap.
 
             if ((isInside(p3, p1, p4) == 2) && (isInside(p1, p4, p2) == 2)) {
-                return 373;
-            }//線分(p3,p4)のP4側と線分(p1,p2)のP1側が部分的に重なる
+                return IntersectionState.PARALLEL_S1_START_OVERLAPS_S2_END_373;
+            }//The P4 side of the line segment (p3, p4) and the P1 side of the line segment (p1, p2) partially overlap.
             if ((isInside(p4, p1, p3) == 2) && (isInside(p1, p3, p2) == 2)) {
-                return 374;
-            }//線分(p4,p3)のP3側と線分(p1,p2)のP1側が部分的に重なる
+                return IntersectionState.PARALLEL_S1_START_OVERLAPS_S2_START_374;
+            }//The P3 side of the line segment (p4, p3) and the P1 side of the line segment (p1, p2) partially overlap.
 
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
-        return -1;//This passes in case of some error 。
 
+        return IntersectionState.ERROR;//This passes in case of some error 。
     }
 
 
@@ -442,7 +442,7 @@ public class OritaCalc {
     // Specifically, when determining whether there is a point inside the line segment, if the point is slightly outside the line segment, it is judged to be sweet if it is inside the line segment. When drawing a development drawing with a drawing craftsman, if you do not use this sweet one, the intersection division of the T-shaped line segment will fail
     // But for some reason, using this sweeter one for folding estimation seems to result in an infinite loop, which doesn't work. This exact elucidation is unresolved 20161105
 
-    public int line_intersect_decide_sweet(LineSegment s1, LineSegment s2, double rhit, double rhei) {    //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
+    public IntersectionState line_intersect_decide_sweet(LineSegment s1, LineSegment s2, double rhit, double rhei) {    //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
         double x1max = s1.getAX();
         double x1min = s1.getAX();
         double y1max = s1.getAY();
@@ -477,16 +477,16 @@ public class OritaCalc {
         }
 
         if (x1max + rhit + 0.1 < x2min) {
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
         if (x1min - rhit - 0.1 > x2max) {
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
         if (y1max + rhit + 0.1 < y2min) {
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
         if (y1min - rhit - 0.1 > y2max) {
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
 
         Point p1 = new Point();
@@ -506,25 +506,25 @@ public class OritaCalc {
                 &&
                 ((p3.getX() == p4.getX()) && (p3.getY() == p4.getY()))) {
             if ((p1.getX() == p3.getX()) && (p1.getY() == p3.getY())) {
-                return 4;
+                return IntersectionState.INTERSECT_AT_POINT_4;
             }
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
 
         //例外処理　線分s1が点の場合
         if ((p1.getX() == p2.getX()) && (p1.getY() == p2.getY())) {
             if ((isInside(p3, p1, p4) >= 1) && (t2.assignmentCalculation(p1) == 0.0)) {
-                return 5;
+                return IntersectionState.INTERSECT_AT_POINT_S1_5;
             }
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
 
         //例外処理　線分s2が点の場合
         if ((p3.getX() == p4.getX()) && (p3.getY() == p4.getY())) {
             if ((isInside(p1, p3, p2) >= 1) && (t1.assignmentCalculation(p3) == 0.0)) {
-                return 6;
+                return IntersectionState.INTERSECT_AT_POINT_S2_6;
             }
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
 
         // System.out.println("AAAAAAAAAAAA");
@@ -534,127 +534,127 @@ public class OritaCalc {
             if ((isInside_sweet(p1, pk, p2) >= 1)
                     && (isInside_sweet(p3, pk, p4) >= 1)) {
                 if (equal(p1, p3, rhit)) {
-                    return 21;
+                    return IntersectionState.INTERSECTS_LSHAPE_S1_START_S2_START_21;
                 }//L-shaped
                 if (equal(p1, p4, rhit)) {
-                    return 22;
+                    return IntersectionState.INTERSECTS_LSHAPE_S1_START_S2_END_22;
                 }//L字型
                 if (equal(p2, p3, rhit)) {
-                    return 23;
+                    return IntersectionState.INTERSECTS_LSHAPE_S1_END_S2_START_23;
                 }//L字型
                 if (equal(p2, p4, rhit)) {
-                    return 24;
+                    return IntersectionState.INTERSECTs_LSHAPE_S1_END_S2_END_24;
                 }//L字型
                 if (equal(p1, pk, rhit)) {
-                    return 25;
-                }//T字型 s1が縦棒
+                    return IntersectionState.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25;
+                }//T-shaped s1 is a vertical bar
                 if (equal(p2, pk, rhit)) {
-                    return 26;
-                }//T字型 s1が縦棒
+                    return IntersectionState.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26;
+                }//T-shaped s1 is a vertical bar
                 if (equal(p3, pk, rhit)) {
-                    return 27;
-                }//T字型 s2が縦棒
+                    return IntersectionState.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27;
+                }//T-shaped s2 is a vertical bar
                 if (equal(p4, pk, rhit)) {
-                    return 28;
-                }//T字型 s2が縦棒
-                return 1;
+                    return IntersectionState.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28;
+                }//T-shaped s2 is a vertical bar
+                return IntersectionState.INTERSECTS_1;
             }
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
 
         if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.PARALLEL_NOT_EQUAL) { //２つの直線が平行で、y切片は一致しない
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
 
         // The two line segments are exactly the same
         if (equal(p1, p3, rhit) && equal(p2, p4, rhit)) {
-            return 31;
+            return IntersectionState.PARALLEL_EQUAL_31;
         }
         if (equal(p1, p4, rhit) && equal(p2, p3, rhit)) {
-            return 31;
+            return IntersectionState.PARALLEL_EQUAL_31;
         }
 
         //The two straight lines are parallel and the y-intercept matches
         if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.PARALLEL_EQUAL) {
             if (equal(p1, p3, rhit)) { //2つの線分の端点どうしが1点で重なる場合
                 if (isInside(p1, p4, p2) == 2) {
-                    return 321;
-                }//長い線分に短い線分が含まれる
+                    return IntersectionState.PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321;
+                }//A long line segment contains a short line segment
                 if (isInside(p3, p2, p4) == 2) {
-                    return 322;
-                }//長い線分に短い線分が含まれる
+                    return IntersectionState.PARALLEL_START_OF_S2_CONTAINS_START_OF_S1_322;
+                }//A long line segment contains a short line segment
                 if (isInside(p2, p1, p4) == 2) {
-                    return 323;
+                    return IntersectionState.PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323;
                 }//2つの線分は1点で重なるだけで、それ以外では重ならない
             }
 
             if (equal(p1, p4, rhit)) {
                 if (isInside(p1, p3, p2) == 2) {
-                    return 331;
+                    return IntersectionState.PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331;
                 }//長い線分に短い線分が含まれる
                 if (isInside(p4, p2, p3) == 2) {
-                    return 332;
+                    return IntersectionState.PARALLEL_END_OF_S2_CONTAINS_START_OF_S1_332;
                 }//長い線分に短い線分が含まれる
                 if (isInside(p2, p1, p3) == 2) {
-                    return 333;
+                    return IntersectionState.PARALLEL_START_OF_S1_INTERSECTS_END_OF_S2_333;
                 }//2つの線分は1点で重なるだけで、それ以外では重ならない
             }
 
             if (equal(p2, p3, rhit)) {
                 if (isInside(p2, p4, p1) == 2) {
-                    return 341;
+                    return IntersectionState.PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341;
                 }//長い線分に短い線分が含まれる
                 if (isInside(p3, p1, p4) == 2) {
-                    return 342;
+                    return IntersectionState.PARALLEL_START_OF_S2_CONTAINS_END_OF_S1_342;
                 }//長い線分に短い線分が含まれる
                 if (isInside(p1, p2, p4) == 2) {
-                    return 343;
+                    return IntersectionState.PARALLEL_END_OF_S1_INTERSECTS_START_OF_S2_343;
                 }//2つの線分は1点で重なるだけで、それ以外では重ならない
             }
 
             if (equal(p2, p4, rhit)) {
                 if (isInside(p2, p3, p1) == 2) {
-                    return 351;
+                    return IntersectionState.PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351;
                 }//A long line segment contains a short line segment
                 if (isInside(p4, p1, p3) == 2) {
-                    return 352;
+                    return IntersectionState.PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352;
                 }//長い線分に短い線分が含まれる
                 if (isInside(p1, p2, p3) == 2) {
-                    return 353;
+                    return IntersectionState.PARALLEL_END_OF_S1_INTERSECTS_END_OF_S2_353;
                 }//2つの線分は1点で重なるだけで、それ以外では重ならない
             }
 
             //2つの線分の端点どうしが重ならない場合
             if ((isInside(p1, p3, p4) == 2) && (isInside(p3, p4, p2) == 2)) {
-                return 361;
+                return IntersectionState.PARALLEL_S1_INCLUDES_S2_361;
             }//線分(p1,p2)に線分(p3,p4)が含まれる
             if ((isInside(p1, p4, p3) == 2) && (isInside(p4, p3, p2) == 2)) {
-                return 362;
+                return IntersectionState.PARALLEL_S1_INCLUDES_S2_362;
             }//線分(p1,p2)に線分(p3,p4)が含まれる
 
             if ((isInside(p3, p1, p2) == 2) && (isInside(p1, p2, p4) == 2)) {
-                return 363;
+                return IntersectionState.PARALLEL_S2_INCLUDES_S1_363;
             }//線分(p3,p4)に線分(p1,p2)が含まれる
             if ((isInside(p3, p2, p1) == 2) && (isInside(p2, p1, p4) == 2)) {
-                return 364;
+                return IntersectionState.PARALLEL_S2_INCLUDES_S1_364;
             }//線分(p3,p4)に線分(p1,p2)が含まれる
 
             if ((isInside(p1, p3, p2) == 2) && (isInside(p3, p2, p4) == 2)) {
-                return 371;
+                return IntersectionState.PARALLEL_S1_END_OVERLAPS_S2_START_371;
             }
             if ((isInside(p1, p4, p2) == 2) && (isInside(p4, p2, p3) == 2)) {
-                return 372;
+                return IntersectionState.PARALLEL_S1_END_OVERLAPS_S2_END_372;
             }
             if ((isInside(p3, p1, p4) == 2) && (isInside(p1, p4, p2) == 2)) {
-                return 373;
+                return IntersectionState.PARALLEL_S1_START_OVERLAPS_S2_END_373;
             }
             if ((isInside(p4, p1, p3) == 2) && (isInside(p1, p3, p2) == 2)) {
-                return 374;
+                return IntersectionState.PARALLEL_S1_START_OVERLAPS_S2_START_374;
             }
 
-            return 0;
+            return IntersectionState.NO_INTERSECTION_0;
         }
-        return -1;//ここは何らかのエラーの時に通る。
+        return IntersectionState.ERROR;//ここは何らかのエラーの時に通る。
 
     }
 
@@ -1125,73 +1125,66 @@ public class OritaCalc {
     //--------------------------------------------------------
     public boolean lineSegmentoverlapping(LineSegment s1, LineSegment s2) {//false do not overlap. true overlaps. 20201012 added
 
-        int i_senbun_kousa_hantei = line_intersect_decide(s1, s2, 0.0001, 0.0001);
+        IntersectionState i_senbun_kousa_hantei = line_intersect_decide(s1, s2, 0.0001, 0.0001);
         boolean i_jikkou = false;
-        if (i_senbun_kousa_hantei == 31) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_EQUAL_31) {
             i_jikkou = true;
         }
-        if (i_senbun_kousa_hantei == 321) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321) {
             i_jikkou = true;
         }
-        if (i_senbun_kousa_hantei == 322) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_START_OF_S2_CONTAINS_START_OF_S1_322) {
             i_jikkou = true;
         }
-        if (i_senbun_kousa_hantei == 331) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331) {
             i_jikkou = true;
         }
-        if (i_senbun_kousa_hantei == 332) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_END_OF_S2_CONTAINS_START_OF_S1_332) {
             i_jikkou = true;
         }
-        if (i_senbun_kousa_hantei == 341) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341) {
             i_jikkou = true;
         }
-        if (i_senbun_kousa_hantei == 342) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_START_OF_S2_CONTAINS_END_OF_S1_342) {
             i_jikkou = true;
         }
-        if (i_senbun_kousa_hantei == 351) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351) {
             i_jikkou = true;
         }
-        if (i_senbun_kousa_hantei == 352) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352) {
             i_jikkou = true;
         }
 
-        if (i_senbun_kousa_hantei == 361) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_S1_INCLUDES_S2_361) {
             i_jikkou = true;
         }
-        if (i_senbun_kousa_hantei == 362) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_S1_INCLUDES_S2_362) {
             i_jikkou = true;
         }
-        if (i_senbun_kousa_hantei == 363) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_S2_INCLUDES_S1_363) {
             i_jikkou = true;
         }
-        if (i_senbun_kousa_hantei == 364) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_S2_INCLUDES_S1_364) {
             i_jikkou = true;
         }
-        if (i_senbun_kousa_hantei == 371) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_S1_END_OVERLAPS_S2_START_371) {
             i_jikkou = true;
         }
-        if (i_senbun_kousa_hantei == 372) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_S1_END_OVERLAPS_S2_END_372) {
             i_jikkou = true;
         }
-        if (i_senbun_kousa_hantei == 373) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_S1_START_OVERLAPS_S2_END_373) {
             i_jikkou = true;
         }
-        if (i_senbun_kousa_hantei == 374) {
+        if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_S1_START_OVERLAPS_S2_START_374) {
             i_jikkou = true;
         }
         return i_jikkou;
     }
 
     //--------------------------------------------------------
-    public int Senbun_X_kousa_hantei(LineSegment s1, LineSegment s2) {//0はX交差しない。1は交差する。20201017追加
-
-        int i_senbun_kousa_hantei = line_intersect_decide(s1, s2, 0.0001, 0.0001);
-        int i_jikkou = 0;
-        if (i_senbun_kousa_hantei == 1) {
-            i_jikkou = 1;
-        }
-
-        return i_jikkou;
+    public boolean Senbun_X_kousa_hantei(LineSegment s1, LineSegment s2) {//0はX交差しない。1は交差する。20201017追加
+        return line_intersect_decide(s1, s2, 0.0001, 0.0001) == IntersectionState.INTERSECTS_1;
     }
 
 //--------------------------------------------------------

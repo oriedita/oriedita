@@ -2,6 +2,7 @@ package jp.gr.java_conf.mt777.zukei2d.takakukei;
 
 import jp.gr.java_conf.mt777.seiretu.narabebako.SortingBox_int_double;
 import jp.gr.java_conf.mt777.seiretu.narabebako.int_double;
+import jp.gr.java_conf.mt777.zukei2d.oritacalc.IntersectionState;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.OritaCalc;
 import jp.gr.java_conf.mt777.zukei2d.senbun.LineSegment;
 import jp.gr.java_conf.mt777.zukei2d.ten.Point;
@@ -56,13 +57,13 @@ public class Polygon {
         LineSegment s = new LineSegment();
         for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]); //line segment
-            if (oc.line_intersect_decide(s0, s) >= 1) {
+            if (oc.line_intersect_decide(s0, s).isIntersection()) {
                 itrue = 1;
             }
         }
 
         s.set(vertices[vertexCount], vertices[1]); //line segment
-        if (oc.line_intersect_decide(s0, s) >= 1) {
+        if (oc.line_intersect_decide(s0, s).isIntersection()) {
             itrue = 1;
         }
 
@@ -94,7 +95,7 @@ public class Polygon {
         i_intersection = i_intersection + 1;
         intersection[i_intersection].set(s0.getB());
 
-        int kh = 0; //oc.senbun_kousa_hantei(s0,s)の値の格納用
+        IntersectionState kh = IntersectionState.NO_INTERSECTION_0; //oc.senbun_kousa_hantei(s0,s)の値の格納用
 
         LineSegment s = new LineSegment();
 
@@ -108,61 +109,61 @@ public class Polygon {
 
             kh = oc.line_intersect_decide(s0, s);
 
-            if (kh == 1) {
+            if (kh == IntersectionState.INTERSECTS_1) {
                 i_intersection = i_intersection + 1;
                 intersection[i_intersection].set(oc.findIntersection(s0, s));
             }
-            if (kh == 27) {
+            if (kh == IntersectionState.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27) {
                 i_intersection = i_intersection + 1;
                 intersection[i_intersection].set(oc.findIntersection(s0, s));
             }
-            if (kh == 28) {
+            if (kh == IntersectionState.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28) {
                 i_intersection = i_intersection + 1;
                 intersection[i_intersection].set(oc.findIntersection(s0, s));
             }
-            if (kh == 321) {
+            if (kh == IntersectionState.PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321) {
                 i_intersection = i_intersection + 1;
                 intersection[i_intersection].set(s.getB());
             }
-            if (kh == 331) {
+            if (kh == IntersectionState.PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331) {
                 i_intersection = i_intersection + 1;
                 intersection[i_intersection].set(s.getA());
             }
-            if (kh == 341) {
+            if (kh == IntersectionState.PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341) {
                 i_intersection = i_intersection + 1;
                 intersection[i_intersection].set(s.getB());
             }
-            if (kh == 351) {
+            if (kh == IntersectionState.PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351) {
                 i_intersection = i_intersection + 1;
                 intersection[i_intersection].set(s.getA());
             }
 
-            if (kh == 361) {
+            if (kh == IntersectionState.PARALLEL_S1_INCLUDES_S2_361) {
                 i_intersection = i_intersection + 1;
                 intersection[i_intersection].set(s.getA());
                 i_intersection = i_intersection + 1;
                 intersection[i_intersection].set(s.getB());
             }
-            if (kh == 362) {
+            if (kh == IntersectionState.PARALLEL_S1_INCLUDES_S2_362) {
                 i_intersection = i_intersection + 1;
                 intersection[i_intersection].set(s.getA());
                 i_intersection = i_intersection + 1;
                 intersection[i_intersection].set(s.getB());
             }
 
-            if (kh == 371) {
+            if (kh == IntersectionState.PARALLEL_S1_END_OVERLAPS_S2_START_371) {
                 i_intersection = i_intersection + 1;
                 intersection[i_intersection].set(s.getA());
             }
-            if (kh == 371) {
+            if (kh == IntersectionState.PARALLEL_S1_END_OVERLAPS_S2_START_371) {
                 i_intersection = i_intersection + 1;
                 intersection[i_intersection].set(s.getB());
             }
-            if (kh == 373) {
+            if (kh == IntersectionState.PARALLEL_S1_START_OVERLAPS_S2_END_373) {
                 i_intersection = i_intersection + 1;
                 intersection[i_intersection].set(s.getB());
             }
-            if (kh == 374) {
+            if (kh == IntersectionState.PARALLEL_S1_START_OVERLAPS_S2_START_374) {
                 i_intersection = i_intersection + 1;
                 intersection[i_intersection].set(s.getA());
             }
@@ -275,110 +276,110 @@ public class Polygon {
 
     // Even a part of the line segment s0 is inside the convex polygon (the boundary line is not regarded as the inside)
     // Returns 1 if present, 0 otherwise
-    public int convex_inside(LineSegment s0) {
+    public boolean convex_inside(LineSegment s0) {
         int iflag = 0;//
-        int kh = 0; //For storing the value of oc.line_intersect_decide (s0, s)
+        IntersectionState kh = IntersectionState.NO_INTERSECTION_0; //For storing the value of oc.line_intersect_decide (s0, s)
 
         LineSegment s = new LineSegment();
         for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]); //線分
             kh = oc.line_intersect_decide(s0, s);
-            if (kh == 1) {
-                return 1;
+            if (kh == IntersectionState.INTERSECTS_1) {
+                return true;
             }
-            if (kh == 4) {
-                return 0;
+            if (kh == IntersectionState.INTERSECT_AT_POINT_4) {
+                return false;
             }
-            if (kh == 5) {
-                return 0;
+            if (kh == IntersectionState.INTERSECT_AT_POINT_S1_5) {
+                return false;
             }
-            if (kh == 6) {
-                return 0;
+            if (kh == IntersectionState.INTERSECT_AT_POINT_S2_6) {
+                return false;
             }
-            if (kh >= 30) {
-                return 0;
+            if (kh.getState() >= 30) {
+                return false;
             }
-            if (kh >= 20) {
+            if (kh.getState() >= 20) {
                 iflag = iflag + 1;
             }// This is actually executed when kh is 20 or more and less than 30.
         }
 
         s.set(vertices[vertexCount], vertices[1]); //Line segment
         kh = oc.line_intersect_decide(s0, s);
-        if (kh == 1) {
-            return 1;
+        if (kh == IntersectionState.INTERSECTS_1) {
+            return true;
         }
-        if (kh == 4) {
-            return 0;
+        if (kh == IntersectionState.INTERSECT_AT_POINT_4) {
+            return false;
         }
-        if (kh == 5) {
-            return 0;
+        if (kh == IntersectionState.INTERSECT_AT_POINT_S1_5) {
+            return false;
         }
-        if (kh == 6) {
-            return 0;
+        if (kh == IntersectionState.INTERSECT_AT_POINT_S2_6) {
+            return false;
         }
-        if (kh >= 30) {
-            return 0;
+        if (kh.isParallel()) {
+            return false;
         }
-        if (kh >= 20) {
+        if (kh.isEndpointIntersection()) {
             iflag = iflag + 1;
-        } //This is actually done when kh is greater than or equal to 20 and less than 30.
+        }
 
         if (iflag == 0) {
             if (inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == 2) {
-                return 1;
+                return true;
             }
-            return 0;
+            return false;
         }
 
         if (iflag == 1) {
             if (inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == 2) {
-                return 1;
+                return true;
             }
-            return 0;
+            return false;
         }
 
         if (iflag == 2) {
             if (inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == 2) {
-                return 1;
+                return true;
             }
             if (inside(s0.getA()) == 2) {
-                return 1;
+                return true;
             }
             if (inside(s0.getB()) == 2) {
-                return 1;
+                return true;
             }
-            return 0;
+            return false;
         }
 
         if (iflag == 3) {
-            return 1;
+            return true;
         }
         if (iflag == 4) {
-            return 1;
+            return true;
         }
 
-        return 0;      //In reality, there should be no situation where you can reach this point.
+        return false;      //In reality, there should be no situation where you can reach this point.
     }
 
 
     // Even a part of the line segment s0 is inside the convex polygon (the boundary line is also regarded as the inside)
     // Returns 1 if present, 0 otherwise
     public int totu_boundary_inside(LineSegment s0) {// Returns 1 if even part of s0 touches a polygon.
-        int kh = 0; //oc.line_intersect_decide(s0,s)の値の格納用
+        IntersectionState kh = IntersectionState.NO_INTERSECTION_0; //oc.line_intersect_decide(s0,s)の値の格納用
 
         LineSegment s = new LineSegment();
         for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]); //線分
             kh = oc.line_intersect_decide(s0, s);
-            if (kh != 0) {
+            if (kh != IntersectionState.NO_INTERSECTION_0) {
                 return 1;
             }
         }
 
         s.set(vertices[vertexCount], vertices[1]); //線分
         kh = oc.line_intersect_decide(s0, s);
-        if (kh != 0) {
+        if (kh != IntersectionState.NO_INTERSECTION_0) {
             return 1;
         }
 
@@ -427,19 +428,19 @@ public class Polygon {
 
             for (int i = 1; i <= vertexCount - 1; i++) {
                 s.set(vertices[i], vertices[i + 1]); //線分
-                if (oc.line_intersect_decide(sq, s, 0.0, 0.0) >= 1) {
+                if (oc.line_intersect_decide(sq, s, 0.0, 0.0).isIntersection()) {
                     kousakaisuu++;
                 }
-                if (oc.line_intersect_decide(sq, s, 0.0, 0.0) == 1) {
+                if (oc.line_intersect_decide(sq, s, 0.0, 0.0) == IntersectionState.INTERSECTS_1) {
                     jyuuji_kousakaisuu++;
                 }
             }
 
             s.set(vertices[vertexCount], vertices[1]); //線分
-            if (oc.line_intersect_decide(sq, s, 0.0, 0.0) >= 1) {
+            if (oc.line_intersect_decide(sq, s, 0.0, 0.0).isIntersection()) {
                 kousakaisuu++;
             }
-            if (oc.line_intersect_decide(sq, s, 0.0, 0.0) == 1) {
+            if (oc.line_intersect_decide(sq, s, 0.0, 0.0) == IntersectionState.INTERSECTS_1) {
                 jyuuji_kousakaisuu++;
             }
 
