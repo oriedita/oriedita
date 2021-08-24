@@ -4,6 +4,7 @@ import java.awt.*;
 
 import jp.gr.java_conf.mt777.kiroku.memo.*;
 
+import jp.gr.java_conf.mt777.origami.orihime.LineType;
 import jp.gr.java_conf.mt777.zukei2d.en.*;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
@@ -159,19 +160,19 @@ public class FoldLineSet {
     }
 
     //i番目の線分の値を入力する
-    public void set(int i, Point p, Point q, int ic, int ia) {
+    public void set(int i, Point p, Point q, LineType ic, int ia) {
         LineSegment s = getLineSegment(i);
         s.set(p, q, ic, ia);
     }
 
     //i番目の線分の色を入力する
-    public void setColor(int i, int icol) {
+    public void setColor(int i, LineType icol) {
         LineSegment s = getLineSegment(i);
         s.setColor(icol);
     }
 
     //i番目の線分の色を出力する
-    public int getColor(int i) {
+    public LineType getColor(int i) {
         LineSegment s;
         s = getLineSegment(i);
         return s.getColor();
@@ -283,7 +284,7 @@ public class FoldLineSet {
             memo1.addLine("番号," + i);
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
-            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
+            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
 
             memo1.addLine("<tpp>" + e_temp.getCustomized() + "</tpp>");                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             memo1.addLine("<tpp_color_R>" + e_temp.getCustomizedColor().getRed() + "</tpp_color_R>");    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -333,7 +334,7 @@ public class FoldLineSet {
             memo1.addLine("番号," + i);
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
-            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
+            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
 
             memo1.addLine("<tpp>" + e_temp.getCustomized() + "</tpp>");                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             memo1.addLine("<tpp_color_R>" + e_temp.getCustomizedColor().getRed() + "</tpp_color_R>");    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -378,7 +379,7 @@ public class FoldLineSet {
         for (int i = 1; i <= total; i++) {
             LineSegment s;
             s = getLineSegment(i);
-            if (s.getColor() < 3) {
+            if (s.getColor().isFoldingLine()) {
                 ibangou = ibangou + 1;
                 memo1.addLine("番号," + ibangou);
 
@@ -407,7 +408,7 @@ public class FoldLineSet {
         for (int i = 1; i <= total; i++) {
             LineSegment s;
             s = getLineSegment(i);
-            if ((s.getColor() < 3) && (s.getSelected() == 2)) {
+            if ((s.getColor().getNumber() < 3) && (s.getSelected() == 2)) {
                 ibangou = ibangou + 1;
                 memo1.addLine("番号," + ibangou);
 
@@ -434,7 +435,7 @@ public class FoldLineSet {
         for (int i = 1; i <= total; i++) {
             LineSegment s;
             s = getLineSegment(i);
-            if ((s.getColor() < 3) && (s.getSelected() == 2)) {
+            if ((s.getColor().getNumber() < 3) && (s.getSelected() == 2)) {
                 ibangou = ibangou + 1;
             }
         }
@@ -459,7 +460,7 @@ public class FoldLineSet {
 
         int reading_flag = 0;//If it is 0, it will not be read. If it is 1, read it.
         int ibangou = 0;
-        int ic = 0;
+        LineType ic = LineType.BLACK_0;
         int is = 0;
 
 
@@ -526,7 +527,7 @@ public class FoldLineSet {
             }
             if ((reading_flag == 1) && (str.equals("色"))) {
                 str = tk.nextToken();
-                ic = Integer.parseInt(str);
+                ic = LineType.fromNumber(Integer.parseInt(str));
                 LineSegment s;
                 s = getLineSegment(ibangou);
                 s.setColor(ic);
@@ -621,7 +622,7 @@ public class FoldLineSet {
                 dr = Double.parseDouble(str);
 
                 str = tk.nextToken();
-                ic = Integer.parseInt(str);
+                ic = LineType.from(str);
 
 
                 getCircle(ibangou).set(dx, dy, dr, ic);
@@ -665,7 +666,7 @@ public class FoldLineSet {
     public void h_setMemo(Memo memo1) {
         int reading_flg = 0;//0なら読み込みを行わない。1なら読み込む。
         int ibangou = 0;
-        int ic = 0;
+        LineType ic = LineType.BLACK_0;
         int is = 0;
 
         double ax, ay, bx, by;
@@ -706,7 +707,7 @@ public class FoldLineSet {
             }
             if ((reading_flg == 1) && (str.equals("補助色"))) {
                 str = tk.nextToken();
-                ic = Integer.parseInt(str);
+                ic = LineType.from(str);
                 LineSegment s;
                 s = getLineSegment(ibangou);
                 s.setColor(ic);
@@ -740,7 +741,7 @@ public class FoldLineSet {
     public void addMemo(Memo memo1) {
         int reading_flag = 0;//0なら読み込みを行わない。1なら読み込む。
         int ibangou = 0;
-        int ic = 0;
+        LineType ic = LineType.BLACK_0;
 
         double ax, ay, bx, by;
         double dx, dy, dr;
@@ -791,7 +792,7 @@ public class FoldLineSet {
             }
             if ((reading_flag == 1) && (str.equals("色"))) {
                 str = tk.nextToken();
-                ic = Integer.parseInt(str);
+                ic = LineType.from(str);
                 LineSegment s;
                 s = getLineSegment(ibangou);
                 s.setColor(ic);
@@ -859,7 +860,7 @@ public class FoldLineSet {
 
             if ((reading_flag == 3) && (str.equals("番号"))) {
                 str = tk.nextToken();//ibangou=Ii.parseInt(str);
-                circles.add(new Circle(0.0, 0.0, 1.0, 1));
+                circles.add(new Circle(0.0, 0.0, 1.0, LineType.RED_1));
                 ibangou = cir_size();
             }
 
@@ -873,7 +874,7 @@ public class FoldLineSet {
                 dr = Double.parseDouble(str);
 
                 str = tk.nextToken();
-                ic = Integer.parseInt(str);
+                ic = LineType.from(str);
 
                 getCircle(ibangou).set(dx, dy, dr, ic);
             }
@@ -925,14 +926,14 @@ public class FoldLineSet {
 
     //全線分の山谷を入れ替える。境界線等の山谷以外の線種は変化なし。
     public void zen_yama_tani_henkan() {
-        int ic_temp;
+        LineType ic_temp;
 
         for (int ic_id = 1; ic_id <= total; ic_id++) {
             ic_temp = getColor(ic_id);
-            if (ic_temp == 1) {
-                ic_temp = 2;
-            } else if (ic_temp == 2) {
-                ic_temp = 1;
+            if (ic_temp == LineType.RED_1) {
+                ic_temp = LineType.BLUE_2;
+            } else if (ic_temp == LineType.BLUE_2) {
+                ic_temp = LineType.RED_1;
             }
             setColor(ic_id, ic_temp);
         }
@@ -992,7 +993,7 @@ public class FoldLineSet {
             memo1.addLine("番号," + i);
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
-            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
+            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
 
             memo1.addLine("<tpp>" + e_temp.getCustomized() + "</tpp>");                    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             memo1.addLine("<tpp_color_R>" + e_temp.getCustomizedColor().getRed() + "</tpp_color_R>");    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1151,12 +1152,12 @@ public class FoldLineSet {
             LineSegment s;
             s = getLineSegment(i);
             if (sikaku.totu_boundary_inside(s) == 1) {
-                int ic_temp;
+                LineType ic_temp;
                 ic_temp = getColor(i);/**/
-                if (ic_temp == 1) {
-                    setColor(i, 2);
-                } else if (ic_temp == 2) {
-                    setColor(i, 1);
+                if (ic_temp == LineType.RED_1) {
+                    setColor(i, LineType.BLUE_2);
+                } else if (ic_temp == LineType.BLUE_2) {
+                    setColor(i, LineType.RED_1);
                 }
                 i_r = 1;
             }
@@ -1180,7 +1181,7 @@ public class FoldLineSet {
             LineSegment s;
             s = getLineSegment(i);
             if (sikaku.totu_boundary_inside(s) == 1) {
-                s.setColor(1);
+                s.setColor(LineType.RED_1);
                 i_r = 1;
             }
         }
@@ -1201,7 +1202,7 @@ public class FoldLineSet {
             LineSegment s;
             s = getLineSegment(i);
             if (sikaku.totu_boundary_inside(s) == 1) {
-                s.setColor(2);
+                s.setColor(LineType.BLUE_2);
                 i_r = 1;
             }
         }
@@ -1222,7 +1223,7 @@ public class FoldLineSet {
             LineSegment s;
             s = getLineSegment(i);
             if (sikaku.totu_boundary_inside(s) == 1) {
-                s.setColor(0);
+                s.setColor(LineType.BLACK_0);
                 i_r = 1;
             }
         }
@@ -1243,7 +1244,7 @@ public class FoldLineSet {
 
         int okikae_suu = 0;
         for (int i = 1; i <= total; i++) {
-            if (getColor(i) < 3) {
+            if (getColor(i).isFoldingLine()) {
                 LineSegment s;
                 s = getLineSegment(i);
                 if (sikaku.totu_boundary_inside(s) == 1) {
@@ -1251,7 +1252,7 @@ public class FoldLineSet {
 
                     LineSegment add_sen = new LineSegment();
                     add_sen.set(s);
-                    add_sen.setColor(3);
+                    add_sen.setColor(LineType.CYAN_3);
 
                     deleteLine(i);
                     addLine(add_sen);
@@ -1369,7 +1370,7 @@ public class FoldLineSet {
             if (idel == 0) {
                 ii = ii + 1;
                 memo1.addLine("番号," + ii);
-                memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
+                memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
             }
         }
 
@@ -1465,7 +1466,7 @@ public class FoldLineSet {
             if (idel == 0) {
                 ii = ii + 1;
                 memo1.addLine("番号," + ii);
-                memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
+                memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
             }
         }
 
@@ -1502,10 +1503,10 @@ public class FoldLineSet {
             LineSegment s;
             s = getLineSegment(i);
 
-            if ((sikaku.totu_boundary_inside(s) == 1) && (getColor(i) < 3)) {
+            if ((sikaku.totu_boundary_inside(s) == 1) && getColor(i).isFoldingLine()) {
                 i_r = 1;
             }//黒赤青線はmemo1に書かれない。つまり削除される。
-            else if ((sikaku.totu_boundary_inside(s) != 1) || (getColor(i) >= 3)) {
+            else if ((sikaku.totu_boundary_inside(s) != 1) || !getColor(i).isFoldingLine()) {
                 ibangou = ibangou + 1;
                 memo1.addLine("番号," + ibangou);
                 //Senbun s;s= sen(i);
@@ -1544,7 +1545,7 @@ public class FoldLineSet {
             //if(idel==0){
             ii = ii + 1;
             memo1.addLine("番号," + ii);
-            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
+            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
             //}
         }
 
@@ -1584,10 +1585,10 @@ public class FoldLineSet {
             LineSegment s;
             s = getLineSegment(i);
 
-            if ((sikaku.totu_boundary_inside(s) == 1) && (getColor(i) == 0)) {
+            if ((sikaku.totu_boundary_inside(s) == 1) && (getColor(i) == LineType.BLACK_0)) {
                 i_r = 1;
             }//黒線はmemo1に書かれない。つまり削除される。
-            else if ((sikaku.totu_boundary_inside(s) != 1) || (getColor(i) >= 1)) {
+            else if ((sikaku.totu_boundary_inside(s) != 1) || (getColor(i) != LineType.BLACK_0)) {
                 ibangou = ibangou + 1;
                 memo1.addLine("番号," + ibangou);
                 memo1.addLine("色," + s.getColor());
@@ -1602,7 +1603,7 @@ public class FoldLineSet {
             e_temp.set(getCircle(i));//ec.set(e_temp.get_tyuusin());er=e_temp.getr();
             ii = ii + 1;
             memo1.addLine("番号," + ii);
-            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
+            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
         }
 
         reset();
@@ -1631,9 +1632,9 @@ public class FoldLineSet {
             LineSegment s;
             s = getLineSegment(i);
 
-            if ((sikaku.totu_boundary_inside(s) == 1) && (getColor(i) == 3)) {
+            if ((sikaku.totu_boundary_inside(s) == 1) && (getColor(i) == LineType.CYAN_3)) {
                 i_r = 1;
-            } else if ((sikaku.totu_boundary_inside(s) != 1) || (getColor(i) != 3)) {
+            } else if ((sikaku.totu_boundary_inside(s) != 1) || (getColor(i) != LineType.CYAN_3)) {
                 ibangou = ibangou + 1;
                 memo1.addLine("番号," + ibangou);
                 //Senbun s;s= sen(i);
@@ -1693,7 +1694,7 @@ public class FoldLineSet {
             if (idel == 0) {
                 ii = ii + 1;
                 memo1.addLine("番号," + ii);
-                memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.setColor());
+                memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
             }
         }
 
@@ -1722,7 +1723,7 @@ public class FoldLineSet {
             LineSegment s;
             s = getLineSegment(i);
 
-            if ((sikaku.totu_boundary_inside(s) == 1) && (getColor(i) == 3)) {
+            if ((sikaku.totu_boundary_inside(s) == 1) && (getColor(i) == LineType.CYAN_3)) {
                 i_r = 1;
                 setLineCustomized(i, 1);
                 setLineCustomizedColor(i, sen_tokutyuu_color);
@@ -2179,8 +2180,8 @@ public class FoldLineSet {
             //kousa_ten.set(oc.kouten_motome(tyoku0,tyoku1));
             //kousa_ten.set(oc.kouten_motome(tyoku0,tyoku1));
 
-            if (((si.getColor() != 3) && (sj.getColor() != 3))
-                    || ((si.getColor() == 3) && (sj.getColor() == 3))) {
+            if (((si.getColor() != LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3))
+                    || ((si.getColor() == LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3))) {
 
                 //addsenbun(kousa_ten,si.getb(),si.getcolor());
                 addLine(intersect_point, si.getB(), si);
@@ -2194,7 +2195,7 @@ public class FoldLineSet {
                 return 1;
             }
 
-            if ((si.getColor() == 3) && (sj.getColor() != 3)) {//加えるほうiが水色線（補助活線）、元からあるほうjが折線
+            if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {//加えるほうiが水色線（補助活線）、元からあるほうjが折線
 
                 //addsenbun(kousa_ten,si.getb(),si.getcolor());
                 addLine(intersect_point, si.getB(), si);
@@ -2207,7 +2208,7 @@ public class FoldLineSet {
                 return 2;
             }
 
-            if ((si.getColor() != 3) && (sj.getColor() == 3)) {//加えるほうiが折線、元からあるほうjが水色線（補助活線）
+            if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
                 //addsenbun(kousa_ten,si.getb(),si.getcolor());
                 //si.setb(kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
@@ -2233,8 +2234,8 @@ public class FoldLineSet {
             //ori_s.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(tyoku0,tyoku1));
 
-            if (((si.getColor() != 3) && (sj.getColor() != 3))
-                    || ((si.getColor() == 3) && (sj.getColor() == 3))) {
+            if (((si.getColor() != LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3))
+                    || ((si.getColor() == LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3))) {
                 //addsenbun(kousa_ten,sj.getb(),sj.getcolor());
                 addLine(intersect_point, sj.getB(), sj);
 
@@ -2242,11 +2243,11 @@ public class FoldLineSet {
                 return 121;
             }
 
-            if ((si.getColor() == 3) && (sj.getColor() != 3)) {//加えるほうiが水色線（補助活線）、元からあるほうjが折線
+            if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {//加えるほうiが水色線（補助活線）、元からあるほうjが折線
                 return 0;//T交差はしてるが、縦線が補助活線なので何もしないので、0でreturnする。
             }
 
-            if ((si.getColor() != 3) && (sj.getColor() == 3)) {//加えるほうiが折線、元からあるほうjが水色線（補助活線）
+            if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {//加えるほうiが折線、元からあるほうjが水色線（補助活線）
                 //addsenbun(kousa_ten,sj.getb(),sj.getcolor());
                 addLine(intersect_point, sj.getB(), sj);
 
@@ -2265,8 +2266,8 @@ public class FoldLineSet {
             //ori_s.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(tyoku0,tyoku1));
 
-            if (((si.getColor() != 3) && (sj.getColor() != 3))
-                    || ((si.getColor() == 3) && (sj.getColor() == 3))) {
+            if (((si.getColor() != LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3))
+                    || ((si.getColor() == LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3))) {
                 //addsenbun(kousa_ten,sj.getb(),sj.getcolor());
                 addLine(intersect_point, sj.getB(), sj);
 
@@ -2274,11 +2275,11 @@ public class FoldLineSet {
                 return 122;
             }
 
-            if ((si.getColor() == 3) && (sj.getColor() != 3)) {//加えるほうiが水色線（補助活線）、元からあるほうjが折線
+            if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {//加えるほうiが水色線（補助活線）、元からあるほうjが折線
                 return 0;//T交差はしてるが、縦線が補助活線なので何もしないので、0でreturnする。
             }
 
-            if ((si.getColor() != 3) && (sj.getColor() == 3)) {//加えるほうiが折線、元からあるほうjが水色線（補助活線）
+            if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {//加えるほうiが折線、元からあるほうjが水色線（補助活線）
                 //addsenbun(kousa_ten,sj.getb(),sj.getcolor());
                 addLine(intersect_point, sj.getB(), sj);
 
@@ -2297,8 +2298,8 @@ public class FoldLineSet {
             //ori_s.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(tyoku0,tyoku1));
 
-            if (((si.getColor() != 3) && (sj.getColor() != 3))
-                    || ((si.getColor() == 3) && (sj.getColor() == 3))) {
+            if (((si.getColor() != LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3))
+                    || ((si.getColor() == LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3))) {
                 //addsenbun(kousa_ten,si.getb(),si.getcolor());
                 addLine(intersect_point, si.getB(), si);
 
@@ -2306,7 +2307,7 @@ public class FoldLineSet {
                 return 211;
             }
 
-            if ((si.getColor() == 3) && (sj.getColor() != 3)) {//加えるほうiが水色線（補助活線）、元からあるほうjが折線
+            if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {//加えるほうiが水色線（補助活線）、元からあるほうjが折線
                 //addsenbun(kousa_ten,si.getb(),si.getcolor());
                 addLine(intersect_point, si.getB(), si);
 
@@ -2314,7 +2315,7 @@ public class FoldLineSet {
                 return 211;
             }
 
-            if ((si.getColor() != 3) && (sj.getColor() == 3)) {//加えるほうiが折線、元からあるほうjが水色線（補助活線）
+            if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {//加えるほうiが折線、元からあるほうjが水色線（補助活線）
                 return 0;//T交差はしてるが、縦線が補助活線なので何もしないので、0でreturnする。
             }
         }
@@ -2329,8 +2330,8 @@ public class FoldLineSet {
             //ori_s.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(tyoku0,tyoku1));
 
-            if (((si.getColor() != 3) && (sj.getColor() != 3))
-                    || ((si.getColor() == 3) && (sj.getColor() == 3))) {
+            if (((si.getColor() != LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3))
+                    || ((si.getColor() == LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3))) {
                 //addsenbun(kousa_ten,si.getb(),si.getcolor());
                 addLine(intersect_point, si.getB(), si);
 
@@ -2338,7 +2339,7 @@ public class FoldLineSet {
                 return 221;
             }
 
-            if ((si.getColor() == 3) && (sj.getColor() != 3)) {//加えるほうiが水色線（補助活線）、元からあるほうjが折線
+            if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {//加えるほうiが水色線（補助活線）、元からあるほうjが折線
                 //addsenbun(kousa_ten,si.getb(),si.getcolor());
                 addLine(intersect_point, si.getB(), si);
 
@@ -2346,7 +2347,7 @@ public class FoldLineSet {
                 return 221;
             }
 
-            if ((si.getColor() != 3) && (sj.getColor() == 3)) {//加えるほうiが折線、元からあるほうjが水色線（補助活線）
+            if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {//加えるほうiが折線、元からあるほうjが水色線（補助活線）
                 return 0;//T交差はしてるが、縦線が補助活線なので何もしないので、0でreturnする。
             }
 
@@ -2389,10 +2390,10 @@ public class FoldLineSet {
 
 
             if (i_kousa_hantei == 31) {// ２つの線分が全く同じ
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
@@ -2401,30 +2402,30 @@ public class FoldLineSet {
                 return 31;
 
             } else if (i_kousa_hantei == 321) {//(p1=p3)_p4_p2、siにsjが含まれる。
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
                 sj.setColor(si.getColor());
                 si.setA(sj.getB());
                 return 321;
             } else if (i_kousa_hantei == 322) {//(p1=p3)_p2_p4、siがsjに含まれる。
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
                 sj.setA(si.getB());
                 return 322;
             } else if (i_kousa_hantei == 331) {//(p1=p4)_p3_p2、siにsjが含まれる。
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
@@ -2432,10 +2433,10 @@ public class FoldLineSet {
                 si.setA(sj.getA());
                 return 331;
             } else if (i_kousa_hantei == 332) {//(p1=p4)_p2_p3、siがsjに含まれる。
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
@@ -2444,10 +2445,10 @@ public class FoldLineSet {
 
 
             } else if (i_kousa_hantei == 341) {//(p2=p3)_p4_p1、siにsjが含まれる。
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
@@ -2456,10 +2457,10 @@ public class FoldLineSet {
                 return 341;
 
             } else if (i_kousa_hantei == 342) {//(p2=p3)_p1_p4、siがsjに含まれる。
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
@@ -2468,10 +2469,10 @@ public class FoldLineSet {
 
 
             } else if (i_kousa_hantei == 351) {//(p2=p4)_p3_p1、siにsjが含まれる。
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
@@ -2481,10 +2482,10 @@ public class FoldLineSet {
 
 
             } else if (i_kousa_hantei == 352) {//(p2=p4)_p1_p3、siがsjに含まれる。
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
@@ -2493,10 +2494,10 @@ public class FoldLineSet {
 
 
             } else if (i_kousa_hantei == 361) {//線分(p1,p2)に線分(p3,p4)が含まれる ori_s_temp.senbun_bunkatu(s1.geta()); ori_s_temp.senbun_bunkatu(s1.getb());   ori_s.setiactive(i,100);//imax=imax-1;
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
@@ -2507,10 +2508,10 @@ public class FoldLineSet {
                 si.setB(sj.getA());
                 return 361;
             } else if (i_kousa_hantei == 362) {//線分(p1,p2)に線分(p4,p3)が含まれる; ori_s_temp.senbun_bunkatu(s1.getb());   ori_s.setiactive(i,100);//imax=imax-1;
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
@@ -2521,10 +2522,10 @@ public class FoldLineSet {
                 si.setB(sj.getB());
                 return 362;
             } else if (i_kousa_hantei == 363) {//線分(p3,p4)に線分(p1,p2)が含まれる ori_s.addsenbun(s0.getb(),s1.getb(),s1.getcolor());ori_s.setb(i,s0.geta());
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
@@ -2534,10 +2535,10 @@ public class FoldLineSet {
                 sj.setB(si.getA());
                 return 363;
             } else if (i_kousa_hantei == 364) {//線分(p3,p4)に線分(p2,p1)が含まれるori_s.addsenbun(s0.geta(),s1.getb(),s1.getcolor());ori_s.setb(i,s0.getb());
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
@@ -2549,10 +2550,10 @@ public class FoldLineSet {
 
 
             } else if (i_kousa_hantei == 371) {//線分(p1,p2)のP2側と線分(p3,p4)のP3側が部分的に重なる//ori_s_temp.senbun_bunkatu(s1.geta());ori_s.seta(i,s0.getb());
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
@@ -2564,10 +2565,10 @@ public class FoldLineSet {
                 return 371;
 
             } else if (i_kousa_hantei == 372) {//線分(p1,p2)のP2側と線分(p4,p3)のP4側が部分的に重なる//ori_s_temp.senbun_bunkatu(s1.getb());ori_s.setb(i,s0.getb());
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
@@ -2579,10 +2580,10 @@ public class FoldLineSet {
                 return 372;
 
             } else if (i_kousa_hantei == 373) {//線分(p3,p4)のP4側と線分(p1,p2)のP1側が部分的に重なる//ori_s_temp.senbun_bunkatu(s1.getb());ori_s.setb(i,s0.geta());
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
@@ -2594,10 +2595,10 @@ public class FoldLineSet {
                 return 373;
 
             } else if (i_kousa_hantei == 374) {//線分(p4,p3)のP3側と線分(p1,p2)のP1側が部分的に重なる//ori_s_temp.senbun_bunkatu(s1.geta());ori_s.seta(i,s0.geta());
-                if ((si.getColor() == 3) && (sj.getColor() != 3)) {
+                if ((si.getColor() == LineType.CYAN_3) && (sj.getColor() != LineType.CYAN_3)) {
                     return 0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
-                if ((si.getColor() != 3) && (sj.getColor() == 3)) {
+                if ((si.getColor() != LineType.CYAN_3) && (sj.getColor() == LineType.CYAN_3)) {
                     return 0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
@@ -2867,7 +2868,7 @@ public class FoldLineSet {
             si.setA(p2);
             si.setB(p4);
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -2883,7 +2884,7 @@ public class FoldLineSet {
 //System.out.println("                              322");
             sj.setA(p2);
             sj.setB(p4);
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -2898,7 +2899,7 @@ public class FoldLineSet {
             si.setA(p2);
             si.setB(p3);
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -2912,7 +2913,7 @@ public class FoldLineSet {
 //System.out.println("                              332");
             sj.setA(p2);
             sj.setB(p3);
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -2925,7 +2926,7 @@ public class FoldLineSet {
 //System.out.println("                              341");
             si.setA(p1);
             si.setB(p4);
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -2939,7 +2940,7 @@ public class FoldLineSet {
 //System.out.println("                              342");
             sj.setA(p1);
             sj.setB(p4);
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -2956,7 +2957,7 @@ public class FoldLineSet {
             si.setA(p1);
             si.setB(p3);
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -2970,7 +2971,7 @@ public class FoldLineSet {
 //System.out.println("                              352");
             sj.setA(p1);
             sj.setB(p3);
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -2986,7 +2987,7 @@ public class FoldLineSet {
             si.setB(p3);
 
             addLine(p2, p4, si.getColor());
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -3002,7 +3003,7 @@ public class FoldLineSet {
 
             addLine(p2, p3, si.getColor());
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -3018,7 +3019,7 @@ public class FoldLineSet {
 
             addLine(p2, p4, sj.getColor());
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -3034,7 +3035,7 @@ public class FoldLineSet {
 
             addLine(p2, p3, sj.getColor());
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -3053,7 +3054,7 @@ public class FoldLineSet {
             sj.setA(p2);
             sj.setB(p4);
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -3070,7 +3071,7 @@ public class FoldLineSet {
             sj.setA(p3);
             sj.setB(p2);
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -3085,7 +3086,7 @@ public class FoldLineSet {
             sj.setB(p3);
             si.setA(p2);
             si.setB(p4);
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -3100,7 +3101,7 @@ public class FoldLineSet {
             sj.setB(p4);
             si.setA(p3);
             si.setB(p2);
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -3116,7 +3117,7 @@ public class FoldLineSet {
     //円の追加-------------------------------
 
 
-    public void addCircle(double dx, double dy, double dr, int ic) {
+    public void addCircle(double dx, double dy, double dr, LineType ic) {
         circles.add(new Circle(dx, dy, dr, ic));
 
         //Senbun s;s= sen(sousuu);
@@ -3124,7 +3125,7 @@ public class FoldLineSet {
     }
 
     public void addCircle(Point t, double dr) {
-        addCircle(t.getX(), t.getY(), dr, 0);
+        addCircle(t.getX(), t.getY(), dr, LineType.BLACK_0);
     }
 
 
@@ -3294,9 +3295,9 @@ public class FoldLineSet {
                 si = getLineSegment(i);
                 if (oc.distance_lineSegment(ec_0, si) < 0.000001) {
 
-                    if (si.getColor() <= 2) {
+                    if (si.getColor().getNumber() <= 2) {
                         ir4 = ir4 + 1;
-                    } else if (si.getColor() == 3) {
+                    } else if (si.getColor() == LineType.CYAN_3) {
                         ir5 = ir5 + 1;
                     }
 
@@ -3347,7 +3348,7 @@ public class FoldLineSet {
 
 
     //線分の追加-------------------------------
-    public void addLine(Point pi, Point pj, int i_c) {
+    public void addLine(Point pi, Point pj, LineType i_c) {
         total++;
 
         LineSegment s;
@@ -3368,7 +3369,7 @@ public class FoldLineSet {
     }
 
     //線分の追加-------------------------------
-    public void addLine(Point pi, Point pj, int i_c, int i_a) {
+    public void addLine(Point pi, Point pj, LineType i_c, int i_a) {
         total++;
 
         LineSegment s;
@@ -3377,7 +3378,7 @@ public class FoldLineSet {
     }
 
     //線分の追加-------------------------------
-    public void addLine(double ax, double ay, double bx, double by, int ic) {
+    public void addLine(double ax, double ay, double bx, double by, LineType ic) {
         total++;
 
         LineSegment s;
@@ -3420,7 +3421,7 @@ public class FoldLineSet {
     public void senbun_bunkatu(int i, Point p) {   //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
 
         LineSegment s1 = new LineSegment(p, getB(i));//i番目の線分abをapに変える前に作っておく
-        int i_c;
+        LineType i_c;
         i_c = getColor(i);
 
         setB(i, p);//i番目の線分abをapに変える
@@ -3441,7 +3442,7 @@ public class FoldLineSet {
 */
 
     //i番目の線分の長さを得る---------------------------
-    public double getnagasa(int i) {
+    public double getLength(int i) {
         LineSegment s;
         s = getLineSegment(i);
         return s.getLength();
@@ -3747,7 +3748,7 @@ public class FoldLineSet {
     public Circle mottomo_tikai_ensyuu(Point p) {
         int minrid = 0;
         double minr = 100000.0;
-        Circle e1 = new Circle(100000.0, 100000.0, 1.0, 0);
+        Circle e1 = new Circle(100000.0, 100000.0, 1.0, LineType.BLACK_0);
         for (int i = 1; i <= cir_size(); i++) {
             double ek = oc.distance_circumference(p, getCircle(i));
             if (minr > ek) {
@@ -3830,7 +3831,7 @@ public class FoldLineSet {
         p_return.set(100000.0, 100000.0);
         Point p_temp = new Point();
         for (int i = 1; i <= total; i++) {
-            if ((0 <= getColor(i)) && (getColor(i) <= 2)) {
+            if (getColor(i).isFoldingLine()) {
                 p_temp.set(getA(i));
                 if (p.distanceSquared(p_temp) < p.distanceSquared(p_return)) {
                     p_return.set(p_temp.getX(), p_temp.getY());
@@ -3874,57 +3875,57 @@ public class FoldLineSet {
         //System.out.println("i_senbun_kousa_hantei="+ i_senbun_kousa_hantei+"---i_ten_"+i_ten);
         if (i_ten == 2) {
 
-            int i_c = 0;
-            if ((getColor(i) == 0) && (getColor(j) == 0)) {
-                i_c = 0;
+            LineType i_c = LineType.BLACK_0;
+            if ((getColor(i) == LineType.BLACK_0) && (getColor(j) == LineType.BLACK_0)) {
+                i_c = LineType.BLACK_0;
             }
-            if ((getColor(i) == 0) && (getColor(j) == 1)) {
-                i_c = 1;
+            if ((getColor(i) == LineType.BLACK_0) && (getColor(j) == LineType.RED_1)) {
+                i_c = LineType.RED_1;
             }
-            if ((getColor(i) == 0) && (getColor(j) == 2)) {
-                i_c = 2;
+            if ((getColor(i) == LineType.BLACK_0) && (getColor(j) == LineType.BLUE_2)) {
+                i_c = LineType.BLUE_2;
             }
-            if ((getColor(i) == 0) && (getColor(j) == 3)) {
+            if ((getColor(i) == LineType.BLACK_0) && (getColor(j) == LineType.CYAN_3)) {
                 return;
             }
 
-            if ((getColor(i) == 1) && (getColor(j) == 0)) {
-                i_c = 1;
+            if ((getColor(i) == LineType.RED_1) && (getColor(j) == LineType.BLACK_0)) {
+                i_c = LineType.RED_1;
             }
-            if ((getColor(i) == 1) && (getColor(j) == 1)) {
-                i_c = 1;
+            if ((getColor(i) == LineType.RED_1) && (getColor(j) == LineType.RED_1)) {
+                i_c = LineType.RED_1;
             }
-            if ((getColor(i) == 1) && (getColor(j) == 2)) {
-                i_c = 0;
+            if ((getColor(i) == LineType.RED_1) && (getColor(j) == LineType.BLUE_2)) {
+                i_c = LineType.BLACK_0;
             }
-            if ((getColor(i) == 1) && (getColor(j) == 3)) {
+            if ((getColor(i) == LineType.RED_1) && (getColor(j) == LineType.CYAN_3)) {
                 return;
             }
 
-            if ((getColor(i) == 2) && (getColor(j) == 0)) {
-                i_c = 2;
+            if ((getColor(i) == LineType.BLUE_2) && (getColor(j) == LineType.BLACK_0)) {
+                i_c = LineType.BLUE_2;
             }
-            if ((getColor(i) == 2) && (getColor(j) == 1)) {
-                i_c = 0;
+            if ((getColor(i) == LineType.BLUE_2) && (getColor(j) == LineType.RED_1)) {
+                i_c = LineType.BLACK_0;
             }
-            if ((getColor(i) == 2) && (getColor(j) == 2)) {
-                i_c = 2;
+            if ((getColor(i) == LineType.BLUE_2) && (getColor(j) == LineType.BLUE_2)) {
+                i_c = LineType.BLUE_2;
             }
-            if ((getColor(i) == 2) && (getColor(j) == 3)) {
+            if ((getColor(i) == LineType.BLUE_2) && (getColor(j) == LineType.CYAN_3)) {
                 return;
             }
 
-            if ((getColor(i) == 3) && (getColor(j) == 0)) {
+            if ((getColor(i) == LineType.CYAN_3) && (getColor(j) == LineType.BLACK_0)) {
                 return;
             }
-            if ((getColor(i) == 3) && (getColor(j) == 1)) {
+            if ((getColor(i) == LineType.CYAN_3) && (getColor(j) == LineType.RED_1)) {
                 return;
             }
-            if ((getColor(i) == 3) && (getColor(j) == 2)) {
+            if ((getColor(i) == LineType.CYAN_3) && (getColor(j) == LineType.BLUE_2)) {
                 return;
             }
             //if((getcolor(i)==3) && (getcolor(j)==3) ){i_c=3;}
-            if ((getColor(i) == 3) && (getColor(j) == 3)) {
+            if ((getColor(i) == LineType.CYAN_3) && (getColor(j) == LineType.CYAN_3)) {
                 return;
             }
 
@@ -3947,7 +3948,7 @@ public class FoldLineSet {
             for (int i = 1; i <= total - 1; i++) {
                 for (int j = i + 1; j <= total; j++) {
                     if (getColor(i) == getColor(j)) {//2本が同じ色なら実施
-                        if (getColor(i) != 3) {//補助活線は対象外
+                        if (getColor(i) != LineType.CYAN_3) {//補助活線は対象外
                             del_V(i, j);
                         }
                     }
@@ -4043,7 +4044,7 @@ public class FoldLineSet {
                 return 0;
             }//2本が同じ色でないなら実施せず
 
-            int i_c;
+            LineType i_c;
             i_c = getColor(ix);
 
             LineSegment s_ixb_iyb = new LineSegment(getB(ix), getB(iy));
@@ -4130,70 +4131,70 @@ public class FoldLineSet {
 
             //if(getcolor(ix)!=getcolor(iy)){return 0;}//2本が同じ色でないなら実施せず
 
-            if ((getColor(ix) == 0) && (getColor(iy) == 0)) {
-                setColor(ix, 0);
-                setColor(iy, 0);
+            if ((getColor(ix) == LineType.BLACK_0) && (getColor(iy) == LineType.BLACK_0)) {
+                setColor(ix, LineType.BLACK_0);
+                setColor(iy, LineType.BLACK_0);
             }
-            if ((getColor(ix) == 0) && (getColor(iy) == 1)) {
-                setColor(ix, 1);
-                setColor(iy, 1);
+            if ((getColor(ix) == LineType.BLACK_0) && (getColor(iy) == LineType.RED_1)) {
+                setColor(ix, LineType.RED_1);
+                setColor(iy, LineType.RED_1);
             }
-            if ((getColor(ix) == 0) && (getColor(iy) == 2)) {
-                setColor(ix, 2);
-                setColor(iy, 2);
+            if ((getColor(ix) == LineType.BLACK_0) && (getColor(iy) == LineType.BLUE_2)) {
+                setColor(ix, LineType.BLUE_2);
+                setColor(iy, LineType.BLUE_2);
             }
-            if ((getColor(ix) == 0) && (getColor(iy) == 3)) {
+            if ((getColor(ix) == LineType.BLACK_0) && (getColor(iy) == LineType.CYAN_3)) {
                 return 0;
             }
 
-            if ((getColor(ix) == 1) && (getColor(iy) == 0)) {
-                setColor(ix, 1);
-                setColor(iy, 1);
+            if ((getColor(ix) == LineType.RED_1) && (getColor(iy) == LineType.BLACK_0)) {
+                setColor(ix, LineType.RED_1);
+                setColor(iy, LineType.RED_1);
             }
-            if ((getColor(ix) == 1) && (getColor(iy) == 1)) {
-                setColor(ix, 1);
-                setColor(iy, 1);
+            if ((getColor(ix) == LineType.RED_1) && (getColor(iy) == LineType.RED_1)) {
+                setColor(ix, LineType.RED_1);
+                setColor(iy, LineType.RED_1);
             }
-            if ((getColor(ix) == 1) && (getColor(iy) == 2)) {
-                setColor(ix, 0);
-                setColor(iy, 0);
+            if ((getColor(ix) == LineType.RED_1) && (getColor(iy) == LineType.BLUE_2)) {
+                setColor(ix, LineType.BLACK_0);
+                setColor(iy, LineType.BLACK_0);
             }
-            if ((getColor(ix) == 1) && (getColor(iy) == 3)) {
+            if ((getColor(ix) == LineType.RED_1) && (getColor(iy) == LineType.CYAN_3)) {
                 return 0;
             }
 
-            if ((getColor(ix) == 2) && (getColor(iy) == 0)) {
-                setColor(ix, 2);
-                setColor(iy, 2);
+            if ((getColor(ix) == LineType.BLUE_2) && (getColor(iy) == LineType.BLACK_0)) {
+                setColor(ix, LineType.BLUE_2);
+                setColor(iy, LineType.BLUE_2);
             }
-            if ((getColor(ix) == 2) && (getColor(iy) == 1)) {
-                setColor(ix, 0);
-                setColor(iy, 0);
+            if ((getColor(ix) == LineType.BLUE_2) && (getColor(iy) == LineType.RED_1)) {
+                setColor(ix, LineType.BLACK_0);
+                setColor(iy, LineType.BLACK_0);
             }
-            if ((getColor(ix) == 2) && (getColor(iy) == 2)) {
-                setColor(ix, 2);
-                setColor(iy, 2);
+            if ((getColor(ix) == LineType.BLUE_2) && (getColor(iy) == LineType.BLUE_2)) {
+                setColor(ix, LineType.BLUE_2);
+                setColor(iy, LineType.BLUE_2);
             }
-            if ((getColor(ix) == 2) && (getColor(iy) == 3)) {
+            if ((getColor(ix) == LineType.BLUE_2) && (getColor(iy) == LineType.CYAN_3)) {
                 return 0;
             }
 
-            if ((getColor(ix) == 3) && (getColor(iy) == 0)) {
+            if ((getColor(ix) == LineType.CYAN_3) && (getColor(iy) == LineType.BLACK_0)) {
                 return 0;
             }
-            if ((getColor(ix) == 3) && (getColor(iy) == 1)) {
+            if ((getColor(ix) == LineType.CYAN_3) && (getColor(iy) == LineType.RED_1)) {
                 return 0;
             }
-            if ((getColor(ix) == 3) && (getColor(iy) == 2)) {
+            if ((getColor(ix) == LineType.CYAN_3) && (getColor(iy) == LineType.BLUE_2)) {
                 return 0;
             }
-            if ((getColor(ix) == 3) && (getColor(iy) == 3)) {
-                setColor(ix, 3);
-                setColor(iy, 3);
+            if ((getColor(ix) == LineType.CYAN_3) && (getColor(iy) == LineType.CYAN_3)) {
+                setColor(ix, LineType.CYAN_3);
+                setColor(iy, LineType.CYAN_3);
             }
 
 
-            int i_c;
+            LineType i_c;
             i_c = getColor(ix);
 
             LineSegment s_ixb_iyb = new LineSegment(getB(ix), getB(iy));
@@ -4314,7 +4315,7 @@ public class FoldLineSet {
                 p_temp.set(getB(i));
             }
             if (q.distanceSquared(p_temp) < r * r) {
-                if (getColor(i) == 1) {
+                if (getColor(i) == LineType.RED_1) {
                     i_return = i_return + 1;
                 }
             }
@@ -4342,7 +4343,7 @@ public class FoldLineSet {
                 p_temp.set(getB(i));
             }
             if (q.distanceSquared(p_temp) < r * r) {
-                if (getColor(i) == 2) {
+                if (getColor(i) == LineType.BLUE_2) {
                     i_return = i_return + 1;
                 }
             }
@@ -4370,7 +4371,7 @@ public class FoldLineSet {
                 p_temp.set(getB(i));
             }
             if (q.distanceSquared(p_temp) < r * r) {
-                if (getColor(i) == 0) {
+                if (getColor(i) == LineType.BLACK_0) {
                     i_return = i_return + 1;
                 }
             }
@@ -4398,7 +4399,7 @@ public class FoldLineSet {
                 p_temp.set(getB(i));
             }
             if (q.distanceSquared(p_temp) < r * r) {
-                if (getColor(i) >= 3) {
+                if (!getColor(i).isFoldingLine()) {
                     i_return = i_return + 1;
                 }
             }
@@ -4667,13 +4668,13 @@ public class FoldLineSet {
         Check1LineSegment.clear();
         unselect_all();
         for (int i = 1; i <= total - 1; i++) {
-            if (getColor(i) != 3) {
+            if (getColor(i) != LineType.CYAN_3) {
 
                 LineSegment si;
                 si = getLineSegment(i);
 
                 for (int j = i + 1; j <= total; j++) {
-                    if (getColor(j) != 3) {
+                    if (getColor(j) != LineType.CYAN_3) {
                         LineSegment sj;
                         sj = getLineSegment(j);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
 
@@ -4733,12 +4734,12 @@ public class FoldLineSet {
     public int fix1(double r_hitosii, double heikou_hantei) {//何もしなかったら0、何か修正したら1を返す。
         unselect_all();
         for (int i = 1; i <= total - 1; i++) {
-            if (getColor(i) != 3) {
+            if (getColor(i) != LineType.CYAN_3) {
 
                 LineSegment si;
                 si = getLineSegment(i);
                 for (int j = i + 1; j <= total; j++) {
-                    if (getColor(j) != 3) {
+                    if (getColor(j) != LineType.CYAN_3) {
                         LineSegment sj;
                         sj = getLineSegment(j);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                         //T字型交差
@@ -4798,12 +4799,12 @@ public class FoldLineSet {
 
         unselect_all();
         for (int i = 1; i <= total - 1; i++) {
-            if (getColor(i) != 3) {
+            if (getColor(i) != LineType.CYAN_3) {
 
                 LineSegment si;
                 si = getLineSegment(i);
                 for (int j = i + 1; j <= total; j++) {
-                    if (getColor(j) != 3) {
+                    if (getColor(j) != LineType.CYAN_3) {
                         LineSegment sj;
                         sj = getLineSegment(j);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
 
@@ -4839,12 +4840,12 @@ public class FoldLineSet {
     public int fix2(double r_hitosii, double heikou_hantei) {//何もしなかったら0、何か修正したら1を返す。
         unselect_all();
         for (int i = 1; i <= total - 1; i++) {
-            if (getColor(i) != 3) {
+            if (getColor(i) != LineType.CYAN_3) {
 
                 LineSegment si;
                 si = getLineSegment(i);
                 for (int j = i + 1; j <= total; j++) {
-                    if (getColor(j) != 3) {
+                    if (getColor(j) != LineType.CYAN_3) {
                         LineSegment sj;
                         sj = getLineSegment(j);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                         //T字型交差
@@ -4965,7 +4966,7 @@ public class FoldLineSet {
         Check3LineSegment.clear();
         unselect_all();
         for (int i = 1; i <= total; i++) {
-            if (getColor(i) != 3) {
+            if (getColor(i) != LineType.CYAN_3) {
                 LineSegment si;
                 si = getLineSegment(i);
                 Point p = new Point();
@@ -5089,7 +5090,7 @@ public class FoldLineSet {
 
         //Counting places to check
         for (int i = 1; i <= total; i++) {
-            if (getColor(i) != 3) {
+            if (getColor(i) != LineType.CYAN_3) {
 
                 LineSegment si;
                 si = getLineSegment(i);
@@ -5138,19 +5139,19 @@ public class FoldLineSet {
         for (int i = 1; i <= getTotal(); i++) {
             if ((p.distanceSquared(getA(i)) < r * r) || (p.distanceSquared(getB(i)) < r * r)) {
                 i_customized = i_customized + 1;
-                if (getColor(i) == 1) {
+                if (getColor(i) == LineType.RED_1) {
                     i_tss_red = i_tss_red + 1;
-                } else if (getColor(i) == 2) {
+                } else if (getColor(i) == LineType.BLUE_2) {
                     i_tss_blue = i_tss_blue + 1;
-                } else if (getColor(i) == 0) {
+                } else if (getColor(i) == LineType.BLACK_0) {
                     i_tss_black = i_tss_black + 1;
-                } else if (getColor(i) >= 3) {
+                } else if (getColor(i).getNumber() >= 3) {
                     i_tss_cyan = i_tss_cyan + 1;
                 }
             }
 
             //Put a polygonal line with p as the end point in Narabebako
-            if ((0 <= getColor(i)) && (getColor(i) <= 2)) { //Auxiliary live lines are excluded at this stage
+            if (getColor(i).isFoldingLine()) { //Auxiliary live lines are excluded at this stage
                 if (p.distance(getA(i)) < hantei_kyori) {
                     nbox.container_i_smallest_first(new int_double(i, oc.angle(getA(i), getB(i))));
                 } else if (p.distance(getB(i)) < hantei_kyori) {
@@ -5229,7 +5230,7 @@ public class FoldLineSet {
         Check4LineSegment.clear();
         unselect_all();
         for (int i = 1; i <= total; i++) {
-            if (getColor(i) != 3) {
+            if (getColor(i) != LineType.CYAN_3) {
                 LineSegment si;
                 si = getLineSegment(i);
                 Point p = new Point();
@@ -5342,7 +5343,7 @@ public class FoldLineSet {
         //t1を端点とする折線をNarabebakoに入れる
         SortingBox_int_double nbox = new SortingBox_int_double();
         for (int i = 1; i <= getTotal(); i++) {
-            if ((0 <= getColor(i)) && (getColor(i) <= 2)) { //この段階で補助活線は除く
+            if (getColor(i).isFoldingLine()) { //この段階で補助活線は除く
                 if (t1.distance(getA(i)) < hantei_kyori) {
                     nbox.container_i_smallest_first(new int_double(i, oc.angle(getA(i), getB(i))));
                 } else if (t1.distance(getB(i)) < hantei_kyori) {
@@ -5361,10 +5362,10 @@ public class FoldLineSet {
         int tikai_orisen_jyunban;
         int tooi_orisen_jyunban;
         if (nbox.getTotal() == 2) {//t1を端点とする折線の数が2のとき
-            if (getColor(nbox.getInt(1)) != 0) {//1本目が黒でないならダメ
+            if (getColor(nbox.getInt(1)) != LineType.BLACK_0) {//1本目が黒でないならダメ
                 return 0;
             }
-            if (getColor(nbox.getInt(2)) != 0) {//2本目が黒でないならダメ
+            if (getColor(nbox.getInt(2)) != LineType.BLACK_0) {//2本目が黒でないならダメ
                 return 0;
             }
 
@@ -5382,14 +5383,14 @@ public class FoldLineSet {
 
         int saisyo_ni_suru = -10;
         for (int i = 1; i <= nbox.getTotal() - 1; i++) {
-            if ((getColor(nbox.getInt(i)) == 0) &&
-                    (getColor(nbox.getInt(i + 1)) == 0)) {
+            if ((getColor(nbox.getInt(i)) == LineType.BLACK_0) &&
+                    (getColor(nbox.getInt(i + 1)) == LineType.BLACK_0)) {
                 saisyo_ni_suru = i + 1;
             }
         }
 
-        if ((getColor(nbox.getInt(nbox.getTotal())) == 0) &&
-                (getColor(nbox.getInt(1)) == 0)) {
+        if ((getColor(nbox.getInt(nbox.getTotal())) == LineType.BLACK_0) &&
+                (getColor(nbox.getInt(1)) == LineType.BLACK_0)) {
             saisyo_ni_suru = 1;
         }
 
@@ -5453,7 +5454,7 @@ public class FoldLineSet {
         //bを端点とする折線をNarabebakoに入れる
 
         for (int i = 1; i <= getTotal(); i++) {
-            if ((0 <= getColor(i)) && (getColor(i) <= 2)) { //この段階で補助活線は除く
+            if (getColor(i).isFoldingLine()) { //この段階で補助活線は除く
                 if (b.distance(getA(i)) < hantei_kyori) {
                     r_nbox.container_i_smallest_first(new int_double(i, oc.angle(b, a, getA(i), getB(i))));
                 } else if (b.distance(getB(i)) < hantei_kyori) {
@@ -5568,7 +5569,7 @@ public class FoldLineSet {
         //t1を端点とする折線をNarabebakoに入れる
         SortingBox_int_double nbox = new SortingBox_int_double();
         for (int i = 1; i <= getTotal(); i++) {
-            if ((0 <= getColor(i)) && (getColor(i) <= 2)) { //この段階で補助活線は除く
+            if (getColor(i).isFoldingLine()) { //この段階で補助活線は除く
                 if (t1.distance(getA(i)) < hantei_kyori) {
                     nbox.container_i_smallest_first(new int_double(i, oc.angle(getA(i), getB(i))));
                 } else if (t1.distance(getB(i)) < hantei_kyori) {

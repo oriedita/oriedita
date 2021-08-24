@@ -36,7 +36,10 @@ public class File_keisiki_henkan {
         ArrayList<Integer> itempL = new ArrayList<>();
         itempL.add(0);
 
-        int ia, ib, ic, id;
+        int ia;
+        int ib;
+        LineType ic;
+        int id;
         double d1, d2, d3, d4;
 
         double xmax = -10000.0;
@@ -100,7 +103,7 @@ public class File_keisiki_henkan {
                         }
                         if (iflg == 0) {
                             Boumax = Boumax + 1;
-                            bL.add(new Stick(Im1_itempL, I_itempL, 0));
+                            bL.add(new Stick(Im1_itempL, I_itempL, LineType.BLACK_0));
                         }
                     }
                 }
@@ -108,7 +111,7 @@ public class File_keisiki_henkan {
                 if (str.equals("#e")) {
                     ia = Integer.parseInt(tk.nextToken());
                     ib = Integer.parseInt(tk.nextToken());
-                    ic = Integer.parseInt(tk.nextToken());
+                    ic = LineType.from(tk.nextToken());
                     id = Integer.parseInt(tk.nextToken());
                     for (int i = 1; i <= Boumax; i++) {
                         bu = bL.get(i);
@@ -135,17 +138,17 @@ public class File_keisiki_henkan {
             //System.out.println("番号,"+str.valueOf(i));
             bu = bL.get(i);
 
-            int icol;
-            icol = bu.getColor() - 1;
+            LineType icol;
+            icol = LineType.fromNumber(bu.getColor().getNumber() - 1);
             bu.setColor(icol);
-            if (bu.getColor() == 1) {
-                icol = 2;
+            if (bu.getColor() == LineType.RED_1) {
+                icol = LineType.BLUE_2;
             }
-            if (bu.getColor() == 2) {
-                icol = 1;
+            if (bu.getColor() == LineType.BLUE_2) {
+                icol = LineType.RED_1;
             }
 
-            if (icol != 0) {
+            if (icol != LineType.BLACK_0) {
                 bu.setColor(icol);
             }
 

@@ -1,5 +1,6 @@
 package jp.gr.java_conf.mt777.zukei2d.oritaoekaki;
 
+import jp.gr.java_conf.mt777.origami.orihime.LineType;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
 import jp.gr.java_conf.mt777.zukei2d.ten.Point;
@@ -10,24 +11,24 @@ public class OritaDrawing { //For drawing
     OritaCalc oc = new OritaCalc();
 
     //For drawing thick lines
-    public void widthLine(Graphics g, Point a, Point b, double width, int iColor) {
+    public void widthLine(Graphics g, Point a, Point b, double width, LineType iColor) {
         widthLine(g, new LineSegment(a, b), width, iColor);
     }
 
-    public void widthLine(Graphics g, LineSegment s, double r, int iColor) {
-        if (iColor == 0) {
+    public void widthLine(Graphics g, LineSegment s, double r, LineType iColor) {
+        if (iColor == LineType.BLACK_0) {
             g.setColor(Color.black);
         }
-        if (iColor == 1) {
+        if (iColor == LineType.RED_1) {
             g.setColor(Color.red);
         }
-        if (iColor == 2) {
+        if (iColor == LineType.BLUE_2) {
             g.setColor(Color.blue);
         }
-        if (iColor == 3) {
+        if (iColor == LineType.CYAN_3) {
             g.setColor(Color.green);
         }
-        if (iColor == 4) {
+        if (iColor == LineType.ORANGE_4) {
             g.setColor(Color.orange);
         }
         LineSegment sp = oc.moveParallel(s, r);
@@ -49,38 +50,38 @@ public class OritaDrawing { //For drawing
     }
 
     //Draw a cross around the designated Point
-    public void cross(Graphics g, Point t, double nagasa, double width, int icolor) {
+    public void cross(Graphics g, Point t, double length, double width, LineType icolor) {
         Point tx0 = new Point();
         Point tx1 = new Point();
         Point ty0 = new Point();
         Point ty1 = new Point();
-        tx0.setX(t.getX() - nagasa);
+        tx0.setX(t.getX() - length);
         tx0.setY(t.getY());
-        tx1.setX(t.getX() + nagasa);
+        tx1.setX(t.getX() + length);
         tx1.setY(t.getY());
         ty0.setX(t.getX());
-        ty0.setY(t.getY() - nagasa);
+        ty0.setY(t.getY() - length);
         ty1.setX(t.getX());
-        ty1.setY(t.getY() + nagasa);
+        ty1.setY(t.getY() + length);
         widthLine(g, tx0, tx1, width, icolor);
         widthLine(g, ty0, ty1, width, icolor);
     }
 
     //Draw a pointing diagram around the specified Point
-    public void pointingAt1(Graphics g, LineSegment s_tv, double nagasa, double haba, int icolor) {
+    public void pointingAt1(Graphics g, LineSegment s_tv, double length, double haba, int icolor) {
         g.setColor(new Color(255, 165, 0, 100));//g.setColor(Color.ORANGE);
         g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
     }
 
     //Draw a pointing diagram around the specified Point
-    public void pointingAt2(Graphics g, LineSegment s_tv, double nagasa, double haba, int icolor) {
+    public void pointingAt2(Graphics g, LineSegment s_tv, double length, double haba, int icolor) {
         g.setColor(new Color(255, 165, 0, 100));//g.setColor(Color.ORANGE);
         g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
 
     }
 
     //Draw a pointing diagram around the specified Point
-    public void pointingAt3(Graphics g, LineSegment s_tv, double nagasa, double haba, int icolor) {
+    public void pointingAt3(Graphics g, LineSegment s_tv, double length, double haba, int icolor) {
         g.setColor(new Color(255, 200, 0, 50));
         g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
     }

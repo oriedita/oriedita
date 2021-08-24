@@ -7,6 +7,7 @@ import java.awt.*;
 
 import jp.gr.java_conf.mt777.kiroku.memo.*;
 
+import jp.gr.java_conf.mt777.origami.orihime.LineType;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
 import jp.gr.java_conf.mt777.zukei2d.oritaoekaki.*;
@@ -19,7 +20,7 @@ import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 public class WireFrame_Worker {
     OritaCalc oc = new OritaCalc(); //各種計算用の関数を使うためのクラスのインスタンス化
     double r = 3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
-    int icol;//線分の色
+    LineType icol;//線分の色
     int taisyousei;
 
     Point pa = new Point(); //Vector from the position where the mouse button is pressed to point a
@@ -63,7 +64,7 @@ public class WireFrame_Worker {
         r = r0;
         move_mode = 0;
         iActiveBranch = 0;
-        icol = 0;
+        icol = LineType.BLACK_0;
         trash.set(new Point(10.0, 150.0), 1, new Point(0.0, 0.0));
         trash.set(new Point(10.0, 150.0), 2, new Point(50.0, 0.0));
         trash.set(new Point(10.0, 150.0), 3, new Point(40.0, 50.0));
@@ -84,7 +85,7 @@ public class WireFrame_Worker {
         lineSet.reset();
         move_mode = 0;
         iActiveBranch = 0;
-        icol = 0;
+        icol = LineType.BLACK_0;
         taisyousei = 0;
 
         camera.reset();
@@ -170,7 +171,7 @@ public class WireFrame_Worker {
         taisyousei = i;
     }
 
-    public void setcolor(int i) {
+    public void setcolor(LineType i) {
         icol = i;
     }
     //
@@ -342,7 +343,7 @@ public class WireFrame_Worker {
             for (int i = 1; i <= lineSet.getTotal() - 1; i++) {
                 for (int j = i + 1; j <= lineSet.getTotal(); j++) {
                     if (oc.line_intersect_decide(lineSet.get(i), lineSet.get(j)) == 31) {
-                        OO.widthLine(g, lineSet.get(i), kr, 1);//  Thick line
+                        OO.widthLine(g, lineSet.get(i), kr, LineType.RED_1);//  Thick line
                         g.fillOval((int) lineSet.getAX(i) - kr, (int) lineSet.getAY(i) - kr, 2 * kr, 2 * kr); //Circle
                         g.fillOval((int) lineSet.getBX(i) - kr, (int) lineSet.getBY(i) - kr, 2 * kr, 2 * kr); //Circle
                     }
@@ -405,7 +406,7 @@ public class WireFrame_Worker {
 
         //対称性があってもなくても行う描画
         double L = 100.0;
-        if (icol == -2) { //角度系用icol=-2
+        if (icol == LineType.ANGLE) { //Angle system with icol=-2
             g.setColor(new Color(245, 245, 245));
             for (int i = 1; i <= lineSet.getTotal(); i++) {
                 a.set(lineSet.getA(i));
@@ -459,18 +460,18 @@ public class WireFrame_Worker {
         for (int i = 1; i <= lineSet.getTotal(); i++) {
             a.set(lineSet.getA(i));
             b.set(lineSet.getB(i));
-            if (lineSet.getColor(i) == 0) {
+            if (lineSet.getColor(i) == LineType.BLACK_0) {
                 g.setColor(Color.black);
             }
-            if (lineSet.getColor(i) == 1) {
+            if (lineSet.getColor(i) == LineType.RED_1) {
                 g.setColor(Color.red);
             }
-            if (lineSet.getColor(i) == 2) {
+            if (lineSet.getColor(i) == LineType.BLUE_2) {
                 g.setColor(Color.blue);
             }
-            if (icol == -1) {
+            if (icol == LineType.NONE) {
 			}
-            if (icol == -2) {
+            if (icol == LineType.ANGLE) {
                 g.setColor(new Color(100, 200, 0));//竹色
                 if (oc.angle_difference(lineSet.get(i), kijyun_kakudo) < 2.0) {
                     g.setColor(new Color(200, 100, 0));//おうど色
@@ -555,13 +556,13 @@ public class WireFrame_Worker {
 
 
         double sqr3 = 1.732051;
-        double sankaku_kousi_takasa;
-        sankaku_kousi_takasa = grid_width * sqr3 / 2.0;
+        double sankaku_grid_takasa;
+        sankaku_grid_takasa = grid_width * sqr3 / 2.0;
         if (input_rules == 3) {
             g.setColor(Color.gray);
             for (int i = -30; i <= 30; i++) {
 //				g.drawLine( 	-3000,	sankaku_kousi_haba*i,	3000,	sankaku_kousi_haba*i); //直線
-                s_ob.set(-3000, sankaku_kousi_takasa * i, 3000, sankaku_kousi_takasa * i);
+                s_ob.set(-3000, sankaku_grid_takasa * i, 3000, sankaku_grid_takasa * i);
                 s_tv.set(camera.object2TV(s_ob));
                 g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
 
@@ -569,7 +570,7 @@ public class WireFrame_Worker {
 
             //  y=sqr3*x + 2.0*sankaku_kousi_haba*i
             for (int i = -30; i <= 30; i++) {
-                s_ob.set(-3000, -3000.0 * sqr3 + 2.0 * sankaku_kousi_takasa * i, 3000, 3000.0 * sqr3 + 2.0 * sankaku_kousi_takasa * i);
+                s_ob.set(-3000, -3000.0 * sqr3 + 2.0 * sankaku_grid_takasa * i, 3000, 3000.0 * sqr3 + 2.0 * sankaku_grid_takasa * i);
                 s_tv.set(camera.object2TV(s_ob));
                 g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
             }
@@ -577,7 +578,7 @@ public class WireFrame_Worker {
 
             //  y=-sqr3*x + sankaku_kousi_haba*i
             for (int i = -30; i <= 30; i++) {
-                s_ob.set(-3000, -3000.0 * (-sqr3) + 2.0 * sankaku_kousi_takasa * i, 3000, 3000.0 * (-sqr3) + 2.0 * sankaku_kousi_takasa * i);
+                s_ob.set(-3000, -3000.0 * (-sqr3) + 2.0 * sankaku_grid_takasa * i, 3000, 3000.0 * (-sqr3) + 2.0 * sankaku_grid_takasa * i);
                 s_tv.set(camera.object2TV(s_ob));
                 g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
             }
@@ -589,12 +590,12 @@ public class WireFrame_Worker {
             Point t_tv = new Point();
             for (int i = -30; i <= 30; i++) {
                 for (int j = -30; j <= 30; j = j + 2) {
-                    t_ob.set(grid_width * i, sankaku_kousi_takasa * j);
+                    t_ob.set(grid_width * i, sankaku_grid_takasa * j);
                     t_tv.set(camera.object2TV(t_ob));
                     g.drawOval((int) t_tv.getX() - ir, (int) t_tv.getY() - ir, 2 * ir, 2 * ir); //円
                 }
                 for (int j = -31; j <= 31; j = j + 2) {
-                    t_ob.set(grid_width * i + grid_width / 2.0, sankaku_kousi_takasa * j);
+                    t_ob.set(grid_width * i + grid_width / 2.0, sankaku_grid_takasa * j);
                     t_tv.set(camera.object2TV(t_ob));
                     g.drawOval((int) t_tv.getX() - ir, (int) t_tv.getY() - ir, 2 * ir, 2 * ir); //円
                 }
@@ -606,20 +607,20 @@ public class WireFrame_Worker {
 
 
         //camera中心を十字で描く
-        OO.cross(g, camera.object2TV(camera.get_camera_position()), 5.0, 2.0, 3);
+        OO.cross(g, camera.object2TV(camera.get_camera_position()), 5.0, 2.0, LineType.CYAN_3);
 
 
         //展開図の描画
 
         for (int i = 1; i <= lineSet.getTotal() - 1; i++) {
 
-            if (lineSet.getColor(i) == 0) {
+            if (lineSet.getColor(i) == LineType.BLACK_0) {
                 g.setColor(Color.black);
             }
-            if (lineSet.getColor(i) == 1) {
+            if (lineSet.getColor(i) == LineType.RED_1) {
                 g.setColor(Color.red);
             }
-            if (lineSet.getColor(i) == 2) {
+            if (lineSet.getColor(i) == LineType.BLUE_2) {
                 g.setColor(Color.blue);
             }
 
@@ -647,13 +648,13 @@ public class WireFrame_Worker {
 
         if (i != 0) {
 
-            if (lineSet.getColor(i) == 0) {
+            if (lineSet.getColor(i) == LineType.BLACK_0) {
                 g.setColor(Color.black);
             }
-            if (lineSet.getColor(i) == 1) {
+            if (lineSet.getColor(i) == LineType.RED_1) {
                 g.setColor(Color.red);
             }
-            if (lineSet.getColor(i) == 2) {
+            if (lineSet.getColor(i) == LineType.BLUE_2) {
                 g.setColor(Color.blue);
             }
 
@@ -710,7 +711,7 @@ public class WireFrame_Worker {
 
                 lineSet.set(mtsid, lineSet.getA(mtsid), p, lineSet.getColor(mtsid), 0);
                 lineSet.setColor(lineSet.getTotal(), lineSet.getColor(mtsid));
-                if (icol >= 0) {
+                if (icol.getNumber() >= 0) {
                     lineSet.set(mtsid, lineSet.getA(mtsid), p, icol, 0);
                     lineSet.setColor(lineSet.getTotal(), icol);
 
@@ -724,7 +725,7 @@ public class WireFrame_Worker {
                 lineSet.addLine(p, p);
                 iActiveBranch = lineSet.getTotal();
                 move_mode = 4;
-                if (icol >= 0) {
+                if (icol.getNumber() >= 0) {
                     lineSet.setColor(iActiveBranch, icol);
                 }
             }
@@ -740,7 +741,7 @@ public class WireFrame_Worker {
                     pa.set(1, lineSet.getA(iActiveBranch), -1, p);
                     pb.set(1, lineSet.getB(iActiveBranch), -1, p);
                     move_mode = 3;
-                    if (icol >= 0) {
+                    if (icol.getNumber() >= 0) {
                         lineSet.setColor(iActiveBranch, icol);
                     }
                 }
@@ -794,12 +795,12 @@ public class WireFrame_Worker {
                 nhPoint = p;
                 for (int i = 1; i <= lineSet.getTotal() - 1; i++) {
                     if (oc.equal(lineSet.getA(i), p, 2.0 * r)) {
-                        lineSet.set(lineSet.getTotal(), lineSet.getA(i), lineSet.getA(i), 0, 0);
+                        lineSet.set(lineSet.getTotal(), lineSet.getA(i), lineSet.getA(i), LineType.BLACK_0, 0);
                         nhPoint = lineSet.getA(i);
                         break;
                     }
                     if (oc.equal(lineSet.getB(i), p, 2.0 * r)) {
-                        lineSet.set(lineSet.getTotal(), lineSet.getB(i), lineSet.getB(i), 0, 0);
+                        lineSet.set(lineSet.getTotal(), lineSet.getB(i), lineSet.getB(i), LineType.BLACK_0, 0);
                         nhPoint = lineSet.getB(i);
                         break;
                     }
@@ -812,12 +813,12 @@ public class WireFrame_Worker {
                 lineSet.addLine(nhPoint, p);
                 for (int i = 1; i <= lineSet.getTotal() - 1; i++) {
                     if (oc.equal(lineSet.getA(i), p, 2.0 * r)) {
-                        lineSet.set(lineSet.getTotal(), lineSet.getA(i), lineSet.getB(lineSet.getTotal() - 1), 0, 0);
+                        lineSet.set(lineSet.getTotal(), lineSet.getA(i), lineSet.getB(lineSet.getTotal() - 1), LineType.BLACK_0, 0);
                         nhi = 0;
                         break;
                     }
                     if (oc.equal(lineSet.getB(i), p, 2.0 * r)) {
-                        lineSet.set(lineSet.getTotal(), lineSet.getB(i), lineSet.getB(lineSet.getTotal() - 1), 0, 0);
+                        lineSet.set(lineSet.getTotal(), lineSet.getB(i), lineSet.getB(lineSet.getTotal() - 1), LineType.BLACK_0, 0);
                         nhi = 0;
                         break;
                     }
@@ -825,7 +826,7 @@ public class WireFrame_Worker {
                 nhPoint = p;
             }
 
-            if (icol >= 0) {
+            if (icol.getNumber() >= 0) {
                 lineSet.setColor(lineSet.getTotal(), icol);
             }
         }
@@ -982,7 +983,7 @@ public class WireFrame_Worker {
 
                 lineSet.set(mtsid, lineSet.getA(mtsid), p, lineSet.getColor(mtsid), 0);
                 lineSet.setColor(lineSet.getTotal(), lineSet.getColor(mtsid));
-                if (icol >= 0) {
+                if (icol.getNumber() >= 0) {
                     lineSet.set(mtsid, lineSet.getA(mtsid), p, icol, 0);
                     lineSet.setColor(lineSet.getTotal(), icol);
                 }
@@ -995,7 +996,7 @@ public class WireFrame_Worker {
                 lineSet.addLine(p, p);
                 iActiveBranch = lineSet.getTotal();
                 move_mode = 4;
-                if (icol >= 0) {
+                if (icol.getNumber() >= 0) {
                     lineSet.setColor(iActiveBranch, icol);
                 }
             }
@@ -1011,7 +1012,7 @@ public class WireFrame_Worker {
                     pa.set(1, lineSet.getA(iActiveBranch), -1, p);
                     pb.set(1, lineSet.getB(iActiveBranch), -1, p);
                     move_mode = 3;
-                    if (icol >= 0) {
+                    if (icol.getNumber() >= 0) {
                         lineSet.setColor(iActiveBranch, icol);
                     }
                 }
@@ -1029,12 +1030,12 @@ public class WireFrame_Worker {
                 nhPoint = p;
                 for (int i = 1; i <= lineSet.getTotal() - 1; i++) {
                     if (oc.equal(lineSet.getA(i), p, 2.0 * r)) {
-                        lineSet.set(lineSet.getTotal(), lineSet.getA(i), lineSet.getA(i), 0, 0);
+                        lineSet.set(lineSet.getTotal(), lineSet.getA(i), lineSet.getA(i), LineType.BLACK_0, 0);
                         nhPoint = lineSet.getA(i);
                         break;
                     }
                     if (oc.equal(lineSet.getB(i), p, 2.0 * r)) {
-                        lineSet.set(lineSet.getTotal(), lineSet.getB(i), lineSet.getB(i), 0, 0);
+                        lineSet.set(lineSet.getTotal(), lineSet.getB(i), lineSet.getB(i), LineType.BLACK_0, 0);
                         nhPoint = lineSet.getB(i);
                         break;
                     }
@@ -1044,19 +1045,19 @@ public class WireFrame_Worker {
                 lineSet.addLine(nhPoint, p);
                 for (int i = 1; i <= lineSet.getTotal() - 1; i++) {
                     if (oc.equal(lineSet.getA(i), p, 2.0 * r)) {
-                        lineSet.set(lineSet.getTotal(), lineSet.getA(i), lineSet.getB(lineSet.getTotal() - 1), 0, 0);
+                        lineSet.set(lineSet.getTotal(), lineSet.getA(i), lineSet.getB(lineSet.getTotal() - 1), LineType.BLACK_0, 0);
                         nhi = 0;
                         break;
                     }
                     if (oc.equal(lineSet.getB(i), p, 2.0 * r)) {
-                        lineSet.set(lineSet.getTotal(), lineSet.getB(i), lineSet.getB(lineSet.getTotal() - 1), 0, 0);
+                        lineSet.set(lineSet.getTotal(), lineSet.getB(i), lineSet.getB(lineSet.getTotal() - 1), LineType.BLACK_0, 0);
                         nhi = 0;
                         break;
                     }
                 }
                 nhPoint = p;
             }
-            if (icol >= 0) {
+            if (icol.getNumber() >= 0) {
                 lineSet.setColor(lineSet.getTotal(), icol);
             }
         }
@@ -1232,18 +1233,18 @@ public class WireFrame_Worker {
     //------------------------------------------------------
     public Point sankaku_kitei_idou(Point t1) {
         double sqr3 = 1.732051;
-        double sankaku_kousi_takasa;
-        sankaku_kousi_takasa = grid_width * sqr3 / 2.0;
+        double sankaku_grid_takasa;
+        sankaku_grid_takasa = grid_width * sqr3 / 2.0;
         Point t_ob = new Point();
         for (int i = -30; i <= 30; i++) {
             for (int j = -30; j <= 30; j = j + 2) {
-                t_ob.set(grid_width * i, sankaku_kousi_takasa * j);
+                t_ob.set(grid_width * i, sankaku_grid_takasa * j);
                 if (oc.distance(t_ob, t1) < r) {
                     return t_ob;
                 }
             }
             for (int j = -31; j <= 31; j = j + 2) {
-                t_ob.set(grid_width * i + grid_width / 2.0, sankaku_kousi_takasa * j);
+                t_ob.set(grid_width * i + grid_width / 2.0, sankaku_grid_takasa * j);
                 if (oc.distance(t_ob, t1) < r) {
                     return t_ob;
                 }
@@ -1321,11 +1322,11 @@ public class WireFrame_Worker {
         double minr;
         minrid = lineSet.closest_lineSegment_Search(p);
         if (lineSet.lineSegment_position_search(minrid, p, r) != 0) {
-            int ic_temp;
+            LineType ic_temp;
             ic_temp = lineSet.getColor(minrid);
-            ic_temp = ic_temp + 1;
-            if (ic_temp == 3) {
-                ic_temp = 0;
+            ic_temp = LineType.fromNumber(ic_temp.getNumber() + 1);
+            if (ic_temp == LineType.CYAN_3) {
+                ic_temp = LineType.BLACK_0;
             }
             lineSet.setColor(minrid, ic_temp);
         }

@@ -725,7 +725,7 @@ public class OritaCalc {
             }
         }
 
-        //２直線が非平行の場合-------------------------------------------------
+        //When two straight lines are non-parallel-------------------------------------------------
         return ParallelJudgement.NOT_PARALLEL;
     }
 
@@ -1060,7 +1060,7 @@ public class OritaCalc {
 //double length_a=kyori(intersection_t0t1,e1.get_tyuusin());  //t0とt1の交点からe1の中心までの長さ
         double length_b = Math.sqrt(e1.getRadius() * e1.getRadius() - length_a * length_a); //t0とt1の交点からe1とe2の交点までの長さ
 //t0と平行な方向ベクトルは(t0.getb() , -t0.geta())
-//t0と平行な方向ベクトルで長さがnagasa_bのものは(t0.getb()*length_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ) , -t0.geta()*length_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ))
+//t0と平行な方向ベクトルで長さがlength_bのものは(t0.getb()*length_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ) , -t0.geta()*length_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ))
 
         return new LineSegment(
                 intersection_t0t1.getX() + t0.getB() * length_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA()),
@@ -1075,17 +1075,17 @@ public class OritaCalc {
 
         Point kouten_t0t1 = new Point();
         kouten_t0t1.set(shadow_request(t0, e1.getCenter()));
-        double nagasa_a = t0.calculateDistance(e1.getCenter());  //t0とt1の交点からe1の中心までの長さ
+        double length_a = t0.calculateDistance(e1.getCenter());  //t0とt1の交点からe1の中心までの長さ
 
-        double nagasa_b = Math.sqrt(e1.getRadius() * e1.getRadius() - nagasa_a * nagasa_a); //t0とt1の交点からe1とe2の交点までの長さ
+        double length_b = Math.sqrt(e1.getRadius() * e1.getRadius() - length_a * length_a); //t0とt1の交点からe1とe2の交点までの長さ
 //t0と平行な方向ベクトルは(t0.getb() , -t0.geta())
-//t0と平行な方向ベクトルで長さがnagasa_bのものは(t0.getb()*nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ) , -t0.geta()*nagasa_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ))
+//t0と平行な方向ベクトルで長さがnagasa_bのものは(t0.getb()*length_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ) , -t0.geta()*length_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ))
 
         return new LineSegment(
-                kouten_t0t1.getX() + t0.getB() * nagasa_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA()),
-                kouten_t0t1.getY() - t0.getA() * nagasa_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA()),
-                kouten_t0t1.getX() - t0.getB() * nagasa_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA()),
-                kouten_t0t1.getY() + t0.getA() * nagasa_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA())
+                kouten_t0t1.getX() + t0.getB() * length_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA()),
+                kouten_t0t1.getY() - t0.getA() * length_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA()),
+                kouten_t0t1.getX() - t0.getB() * length_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA()),
+                kouten_t0t1.getY() + t0.getA() * length_b / Math.sqrt(t0.getB() * t0.getB() + t0.getA() * t0.getA())
         );
     }
 

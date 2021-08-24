@@ -2,6 +2,7 @@ package jp.gr.java_conf.mt777.zukei2d.senbun;
 
 import java.awt.*;
 
+import jp.gr.java_conf.mt777.origami.orihime.LineType;
 import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 //import  jp.gr.java_conf.mt777.zukei2d.*;
 import java.math.BigDecimal;
@@ -11,7 +12,7 @@ public class LineSegment {
     private final Point a = new Point(); //Branch a point
     private final Point b = new Point(); //Branch b point
     int active;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
-    int color;//Color specification 　0=black,1=blue,2=red.
+    LineType color;//Color specification 　0=black,1=blue,2=red.
 
     int customized = 0;//Custom property parameters
     Color customizedColor = new Color(100, 200, 200);//Color if custom made
@@ -27,7 +28,7 @@ public class LineSegment {
         a.set(0.0, 0.0);
         b.set(0.0, 0.0);
         active = 0;
-        color = 0;
+        color = LineType.BLACK_0;
         selected = 0;
         maxX = 0;
         minX = 0;
@@ -39,7 +40,7 @@ public class LineSegment {
         a.set(t1);
         b.set(t2);
         active = 0;
-        color = 0;
+        color = LineType.BLACK_0;
         selected = 0;
         maxX = 0;
         minX = 0;
@@ -47,7 +48,7 @@ public class LineSegment {
         minY = 0;
     }
 
-    public LineSegment(Point t1, Point t2, int color) {
+    public LineSegment(Point t1, Point t2, LineType color) {
         a.set(t1);
         b.set(t2);
         active = 0;
@@ -63,7 +64,7 @@ public class LineSegment {
         a.set(i1, i2);
         b.set(i3, i4);
         active = 0;
-        color = 0;
+        color = LineType.BLACK_0;
         selected = 0;
         maxX = 0;
         minX = 0;
@@ -75,7 +76,7 @@ public class LineSegment {
         a.set(0.0, 0.0);
         b.set(0.0, 0.0);
         active = 0;
-        color = 0;
+        color = LineType.BLACK_0;
         selected = 0;
         maxX = 0;
         minX = 0;
@@ -134,7 +135,7 @@ public class LineSegment {
     }
 
     //----------
-    public void set(double ax, double ay, double bx, double by, int ic) {
+    public void set(double ax, double ay, double bx, double by, LineType ic) {
         set(ax, ay, bx, by);
         color = ic;
     }
@@ -161,13 +162,13 @@ public class LineSegment {
 
 
     //---------
-    public void set(Point p, Point q, int ic, int ia) {
+    public void set(Point p, Point q, LineType ic, int ia) {
         set(p, q);
         color = ic;
         active = ia;
     }
 
-    public void set(Point p, Point q, int ic) {
+    public void set(Point p, Point q, LineType ic) {
         set(p, q);
         color = ic;
     }
@@ -194,11 +195,11 @@ public class LineSegment {
     }
 
 
-    public void setColor(int i) {
+    public void setColor(LineType i) {
         color = i;
     }
 
-    public int getColor() {
+    public LineType getColor() {
         return color;
     }
 

@@ -1,5 +1,6 @@
 package jp.gr.java_conf.mt777.origami.dougu.pointstore;
 
+import jp.gr.java_conf.mt777.origami.orihime.LineType;
 import jp.gr.java_conf.mt777.zukei2d.ten.*;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
@@ -151,18 +152,18 @@ public class PointSet {
     //
     public void turnOver() {//Turn it over to the left and right around the position of the center of gravity.
         double xh;
-        int icol;
+        LineType icol;
         xh = getAverage_x();
         for (int i = 1; i <= pointsTotal; i++) {
             points[i].setX(2.0 * xh - points[i].getX());
         }
         for (int i = 1; i <= sticksTotal; i++) {
             icol = sticks[i].getColor();
-            if (icol == 1) {
-                sticks[i].setColor(2);
+            if (icol == LineType.RED_1) {
+                sticks[i].setColor(LineType.BLUE_2);
             }
-            if (icol == 2) {
-                sticks[i].setColor(1);
+            if (icol == LineType.BLUE_2) {
+                sticks[i].setColor(LineType.RED_1);
             }
         }
 
@@ -563,17 +564,17 @@ public class PointSet {
         points[pointsTotal].set(x, y);
     }   //点を加える
 
-    public void addStick(int i, int j, int icol) {
+    public void addStick(int i, int j, LineType icol) {
         sticksTotal = sticksTotal + 1;
         sticks[sticksTotal].set(i, j, icol);
     }   //棒を加える
 
     //i番目の棒の色を入出力する
-    private void setColor(int i, int icol) {
+    private void setColor(int i, LineType icol) {
         sticks[i].setColor(icol);
     }
 
-    public int getColor(int i) {
+    public LineType getColor(int i) {
         return sticks[i].getColor();
     }
 

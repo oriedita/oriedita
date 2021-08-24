@@ -8,7 +8,7 @@ public class BulletinBoard {
 
     int ix0 = 120;//掲示板の左上端のX座標
     int iy0 = 200;//掲示板の左上端のY座標
-    int i_kankaku = 20;//掲示板の行の間隔
+    int i_interval = 20;//掲示板の行の間隔
 
     String s01 = "";
     String s02 = "";
@@ -155,16 +155,16 @@ public class BulletinBoard {
         Graphics2D g2 = (Graphics2D) g;
 
         g.setColor(Color.blue);
-        g.drawString(s01, ix0, iy0 + 1 * i_kankaku);
-        g.drawString(s02, ix0, iy0 + 2 * i_kankaku);
-        g.drawString(s03, ix0, iy0 + 3 * i_kankaku);
-        g.drawString(s04, ix0, iy0 + 4 * i_kankaku);
-        g.drawString(s05, ix0, iy0 + 5 * i_kankaku);
-        g.drawString(s06, ix0, iy0 + 6 * i_kankaku);
-        g.drawString(s07, ix0, iy0 + 7 * i_kankaku);
-        g.drawString(s08, ix0, iy0 + 8 * i_kankaku);
-        g.drawString(s09, ix0, iy0 + 9 * i_kankaku);
-        g.drawString(s10, ix0, iy0 + 10 * i_kankaku);
+        g.drawString(s01, ix0, iy0 + 1 * i_interval);
+        g.drawString(s02, ix0, iy0 + 2 * i_interval);
+        g.drawString(s03, ix0, iy0 + 3 * i_interval);
+        g.drawString(s04, ix0, iy0 + 4 * i_interval);
+        g.drawString(s05, ix0, iy0 + 5 * i_interval);
+        g.drawString(s06, ix0, iy0 + 6 * i_interval);
+        g.drawString(s07, ix0, iy0 + 7 * i_interval);
+        g.drawString(s08, ix0, iy0 + 8 * i_interval);
+        g.drawString(s09, ix0, iy0 + 9 * i_interval);
+        g.drawString(s10, ix0, iy0 + 10 * i_interval);
 
     }
 

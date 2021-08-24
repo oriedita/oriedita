@@ -33,7 +33,7 @@ import jp.gr.java_conf.mt777.kiroku.memo.*;
 import jp.gr.java_conf.mt777.kiroku.moji_sousa.*;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
-import jp.gr.java_conf.mt777.zukei2d.kousi.*;
+import jp.gr.java_conf.mt777.zukei2d.grid.*;
 import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
 /*///a アプレット用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
@@ -91,8 +91,8 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
     Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
-    int icol;//基本枝職人の枝の色を指定する。0は黒、1は赤、2は赤。//icol=0 black	//icol=1 red	//icol=2 blue	//icol=3 cyan	//icol=4 orange	//icol=5 mazenta	//icol=6 green	//icol=7 yellow	//icol=8 new Color(210,0,255) //紫
-    int h_icol;//補助線の枝の色を指定する。
+    LineType icol;//基本枝職人の枝の色を指定する。0は黒、1は赤、2は赤。//icol=0 black	//icol=1 red	//icol=2 blue	//icol=3 cyan	//icol=4 orange	//icol=5 mazenta	//icol=6 green	//icol=7 yellow	//icol=8 new Color(210,0,255) //紫
+    LineType h_icol;//補助線の枝の色を指定する。
 
     int iro_sitei_ato_ni_jissisuru_sagyou_bangou = 1;//黒赤青水の色指定後に実施する作業の番号
 
@@ -227,24 +227,24 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     double d_jiyuu_kaku_f = 100.0;
 
     public JTextField text18;
-    public double d_kousi_x_a = 1.0;
+    public double d_grid_x_a = 1.0;
     public JTextField text19;
-    public double d_kousi_x_b = 0.0;
+    public double d_grid_x_b = 0.0;
     public JTextField text20;
-    public double d_kousi_x_c = 0.0;
+    public double d_grid_x_c = 0.0;
 
     public JTextField text21;
-    public double d_kousi_y_a = 1.0;
+    public double d_grid_y_a = 1.0;
     public JTextField text22;
-    public double d_kousi_y_b = 0.0;
+    public double d_grid_y_b = 0.0;
     public JTextField text23;
-    public double d_kousi_y_c = 0.0;
+    public double d_grid_y_c = 0.0;
 
     public JTextField text24;
-    public double d_kousi_kakudo = 90.0;
+    public double d_grid_angle = 90.0;
 
     public JTextField text25;
-    public int memori_kankaku = 5;
+    public int scale_interval = 5;
 
     JTextField text26;
     int i_folded_cases = 1;//折り畳み推定の何番目を表示するか指定
@@ -303,8 +303,8 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     //text2 = new JTextField("a2", 5);
     // label = new JLabel();
 
-    JLabel label_nagasa_sokutei_1 = new JLabel("");
-    JLabel label_nagasa_sokutei_2 = new JLabel("");
+    JLabel label_length_sokutei_1 = new JLabel("");
+    JLabel label_length_sokutei_2 = new JLabel("");
     JLabel label_kakudo_sokutei_1 = new JLabel("");
     JLabel label_kakudo_sokutei_2 = new JLabel("");
     JLabel label_kakudo_sokutei_3 = new JLabel("");
@@ -351,9 +351,9 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     int i_mouseDragged_yuukou = 0;
     int i_mouseReleased_yuukou = 0;//0は、マウス操作を無視。1はマウス操作有効。ファイルボックスのon-offなどで、予期せぬmouseDraggedやmouseReleasedが発生したとき、それを拾わないように0に設定する。これらは、マウスがクリックされたときに、1有効指定にする。
 
-    double sokutei_nagasa_1 = 0.0;
-    double sokutei_nagasa_2 = 0.0;
-    double sokutei_nagasa_3 = 0.0;
+    double sokutei_length_1 = 0.0;
+    double sokutei_length_2 = 0.0;
+    double sokutei_length_3 = 0.0;
     double sokutei_kakudo_1 = 0.0;
     double sokutei_kakudo_2 = 0.0;
     double sokutei_kakudo_3 = 0.0;
@@ -558,7 +558,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
         addMouseWheelListener(this);
         //addKeyListener(this);
 
-        icol = -1;
+        icol = LineType.NONE;
         //step=1;
         myTh = null;
         // 初期表示
@@ -651,10 +651,10 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
                 //展開図パラメータの初期化
                 es1.reset();                                                //描き職人の初期化
 
-                //nyuuryoku_kitei=8; es1.set_kousi_bunkatu_suu(nyuuryoku_kitei); //es1.reset_2();				//格子幅の指定
-                es1.set_i_kitei_jyoutai(0);
+                //nyuuryoku_kitei=8; es1.set_grid_bunkatu_suu(nyuuryoku_kitei); //es1.reset_2();				//格子幅の指定
+                es1.set_i_base_state(GridState.HIDDEN);
 
-                icol = 1;
+                icol = LineType.RED_1;
                 es1.setColor(icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
                 ButtonCol_irokesi();
                 ButtonCol_red.setForeground(Color.black);
@@ -2230,7 +2230,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             ButtonCol_irokesi();
             ButtonCol_red.setForeground(Color.black);
             ButtonCol_red.setBackground(Color.red);
-            icol = 1;
+            icol = LineType.RED_1;
             es1.setColor(icol);
 
             repaint();
@@ -2251,7 +2251,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             ButtonCol_irokesi();
             ButtonCol_blue.setForeground(Color.black);
             ButtonCol_blue.setBackground(Color.blue);
-            icol = 2;
+            icol = LineType.BLUE_2;
             es1.setColor(icol);
 
             repaint();
@@ -2270,7 +2270,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             ButtonCol_irokesi();
             ButtonCol_black.setForeground(Color.white);
             ButtonCol_black.setBackground(Color.black);
-            icol = 0;
+            icol = LineType.BLACK_0;
             es1.setColor(icol);
             //  Button_kyoutuu_sagyou();
 
@@ -2292,7 +2292,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             ButtonCol_irokesi();
             ButtonCol_cyan.setForeground(Color.black);
             ButtonCol_cyan.setBackground(Color.cyan);
-            icol = 3;
+            icol = LineType.CYAN_3;
             es1.setColor(icol);
             //  Button_kyoutuu_sagyou();
 
@@ -3455,8 +3455,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 34;
 
 
-            if (icol == 0) {
-                icol = 1;
+            if (icol == LineType.BLACK_0) {
+                icol = LineType.RED_1;
                 es1.setColor(icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
                 ButtonCol_irokesi();
                 ButtonCol_red.setForeground(Color.black);
@@ -3486,8 +3486,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 36;
 
 
-            if (icol == 0) {
-                icol = 2;
+            if (icol == LineType.BLACK_0) {
+                icol = LineType.BLUE_2;
                 es1.setColor(icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
                 ButtonCol_irokesi();
                 ButtonCol_blue.setForeground(Color.black);
@@ -3699,7 +3699,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             //ボタンの色変え(ここまで)
 
             text1.setText(String.valueOf(nyuuryoku_kitei));
-            es1.set_kousi_bunkatu_suu(nyuuryoku_kitei);
+            es1.set_grid_bunkatu_suu(nyuuryoku_kitei);
             //Button_kyoutuu_sagyou();
             repaint();
         });
@@ -3726,7 +3726,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             img_kaisetu_fname = "qqq/syutoku.png";
             readImageFromFile3();
-            set_kousi_bunkatu_suu();
+            set_grid_bunkatu_suu();
 
 
         });
@@ -3769,7 +3769,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             }
             //ボタンの色変え(ここまで)
             text1.setText(String.valueOf(nyuuryoku_kitei));
-            es1.set_kousi_bunkatu_suu(nyuuryoku_kitei);
+            es1.set_grid_bunkatu_suu(nyuuryoku_kitei);
             //Button_kyoutuu_sagyou();
             repaint();
         });
@@ -3783,8 +3783,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 //------------------------------------//System.out.println("__");----
 
 // -------------格子線の色の選択
-        JButton Button_kousi_color = new JButton("C");
-        Button_kousi_color.addActionListener(e -> {
+        JButton Button_grid_color = new JButton("C");
+        Button_grid_color.addActionListener(e -> {
             img_kaisetu_fname = "qqq/kousi_color.png";
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
@@ -3801,9 +3801,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             repaint();
         });
-        Button_kousi_color.setBounds(94, 1, 15, 19);
-        Button_kousi_color.setMargin(new Insets(0, 0, 0, 0));
-        pnlw9.add(Button_kousi_color);
+        Button_grid_color.setBounds(94, 1, 15, 19);
+        Button_grid_color.setMargin(new Insets(0, 0, 0, 0));
+        pnlw9.add(Button_grid_color);
 
         //重要注意　読み込みや書き出しでファイルダイアログのボックスが開くと、それをフレームに重なる位置で操作した場合、ファイルボックスが消えたときに、
         //マウスのドラッグとリリースが発生する。このため、余計な操作がされてしまう可能性がある。なお、このときマウスクリックは発生しない。
@@ -3819,34 +3819,34 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw.add(pnlw34);
 
 // ****西**************************************************************************
-        JButton Button_kousi_senhaba_sage = new JButton("");
-        Button_kousi_senhaba_sage.addActionListener(e -> {
+        JButton Button_grid_senhaba_sage = new JButton("");
+        Button_grid_senhaba_sage.addActionListener(e -> {
             kus.grid_senhaba_sage();
             img_kaisetu_fname = "qqq/kousi_senhaba_sage.png";
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
             repaint();
         });
-        pnlw34.add(Button_kousi_senhaba_sage);
-        Button_kousi_senhaba_sage.setBounds(0, 1, 20, 19);
-        Button_kousi_senhaba_sage.setMargin(new Insets(0, 0, 0, 0));
-        Button_kousi_senhaba_sage.setIcon(createImageIcon(
+        pnlw34.add(Button_grid_senhaba_sage);
+        Button_grid_senhaba_sage.setBounds(0, 1, 20, 19);
+        Button_grid_senhaba_sage.setMargin(new Insets(0, 0, 0, 0));
+        Button_grid_senhaba_sage.setIcon(createImageIcon(
                 "ppp/kousi_senhaba_sage.png"));
 
 // ****西**************************************************************************
 
-        JButton Button_kousi_senhaba_age = new JButton("");
-        Button_kousi_senhaba_age.addActionListener(e -> {
+        JButton Button_grid_senhaba_age = new JButton("");
+        Button_grid_senhaba_age.addActionListener(e -> {
             kus.grid_senhaba_age();
             img_kaisetu_fname = "qqq/kousi_senhaba_age.png";
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
             repaint();
         });
-        pnlw34.add(Button_kousi_senhaba_age);
-        Button_kousi_senhaba_age.setBounds(20, 1, 20, 19);
-        Button_kousi_senhaba_age.setMargin(new Insets(0, 0, 0, 0));
-        Button_kousi_senhaba_age.setIcon(createImageIcon(
+        pnlw34.add(Button_grid_senhaba_age);
+        Button_grid_senhaba_age.setBounds(20, 1, 20, 19);
+        Button_grid_senhaba_age.setMargin(new Insets(0, 0, 0, 0));
+        Button_grid_senhaba_age.setIcon(createImageIcon(
                 "ppp/kousi_senhaba_age.png"));
 
 // ---------------------------------------------------
@@ -3860,7 +3860,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             img_kaisetu_fname = "qqq/i_kitei_jyoutai.png";
             readImageFromFile3();
 
-            es1.set_i_kitei_jyoutai(es1.get_i_kitei_jyoutai() + 1);
+            es1.set_i_base_state(es1.getBaseState().advance());
             //Button_kyoutuu_sagyou();
             repaint();
         });
@@ -3915,24 +3915,24 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw33.add(text25);
 
 // *****西*************************************************************************
-        JButton Button_memori_kankaku_syutoku = new JButton("S");
-        Button_memori_kankaku_syutoku.addActionListener(e -> {
+        JButton Button_scale_interval_syutoku = new JButton("S");
+        Button_scale_interval_syutoku.addActionListener(e -> {
             img_kaisetu_fname = "qqq/memori_kankaku_syutoku.png";
             readImageFromFile3();
-            int memori_kankaku_old = memori_kankaku;
-            memori_kankaku = StringOp.String2int(text25.getText(), memori_kankaku_old);
-            if (memori_kankaku < 0) {
-                memori_kankaku = 1;
+            int scale_interval_old = scale_interval;
+            scale_interval = StringOp.String2int(text25.getText(), scale_interval_old);
+            if (scale_interval < 0) {
+                scale_interval = 1;
             }
-            text25.setText(String.valueOf(memori_kankaku));
+            text25.setText(String.valueOf(scale_interval));
             //es1.set_Ubox_undo_suu(i_undo_suu);
-            es1.set_a_to_heikouna_memori_kannkaku(memori_kankaku);
-            es1.set_b_to_heikouna_memori_kannkaku(memori_kankaku);
+            es1.set_a_to_parallel_scale_interval(scale_interval);
+            es1.set_b_to_parallel_scale_interval(scale_interval);
 
         });
-        pnlw33.add(Button_memori_kankaku_syutoku);
-        Button_memori_kankaku_syutoku.setBounds(55, 1, 15, 19);
-        Button_memori_kankaku_syutoku.setMargin(new Insets(0, 0, 0, 0));
+        pnlw33.add(Button_scale_interval_syutoku);
+        Button_scale_interval_syutoku.setBounds(55, 1, 15, 19);
+        Button_scale_interval_syutoku.setMargin(new Insets(0, 0, 0, 0));
 
 // *****西*************************************************************************
 
@@ -3953,8 +3953,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
 // -------------格子目盛り線の色の選択
-        JButton Button_kousi_memori_color = new JButton("C");
-        Button_kousi_memori_color.addActionListener(e -> {
+        JButton Button_grid_scale_color = new JButton("C");
+        Button_grid_scale_color.addActionListener(e -> {
             img_kaisetu_fname = "qqq/kousi_memori_color.png";
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
@@ -3965,15 +3965,15 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             //以下にやりたいことを書く
             Color color = JColorChooser.showDialog(null, "Col", new Color(180, 200, 180));
             if (color != null) {
-                kus.set_kousi_memori_color(color);
+                kus.setGridScaleColor(color);
             }
             //以上でやりたいことは書き終わり
 
             repaint();
         });
-        Button_kousi_memori_color.setBounds(94, 1, 15, 19);
-        Button_kousi_memori_color.setMargin(new Insets(0, 0, 0, 0));
-        pnlw33.add(Button_kousi_memori_color);
+        Button_grid_scale_color.setBounds(94, 1, 15, 19);
+        Button_grid_scale_color.setMargin(new Insets(0, 0, 0, 0));
+        pnlw33.add(Button_grid_scale_color);
 
 
         //重要注意　読み込みや書き出しでファイルダイアログのボックスが開くと、それをフレームに重なる位置で操作した場合、ファイルボックスが消えたときに、
@@ -4080,18 +4080,18 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw14.add(text24);
 
 // *****西*************************************************************************
-        JButton Button_kousi_syutoku = new JButton("Set");
-        Button_kousi_syutoku.addActionListener(e -> {
+        JButton Button_grid_syutoku = new JButton("Set");
+        Button_grid_syutoku.addActionListener(e -> {
             img_kaisetu_fname = "qqq/kousi_syutoku.png";
             readImageFromFile3();
             setGrid();
             //Button_kyoutuu_sagyou();
             repaint();
         });
-        pnlw14.add(Button_kousi_syutoku);
+        pnlw14.add(Button_grid_syutoku);
 
-        Button_kousi_syutoku.setMargin(new Insets(0, 0, 0, 0));
-        //Button_kousi_syutoku.setIcon(createImageIcon(
+        Button_grid_syutoku.setMargin(new Insets(0, 0, 0, 0));
+        //Button_grid_syutoku.setIcon(createImageIcon(
         //  "ppp/kousi_syutoku.png")));
 
 
@@ -5560,7 +5560,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             readImageFromFile3();
             Button_h_Col_irokesi();
             Button_Col_orange.setBackground(Color.ORANGE);
-            h_icol = 4;
+            h_icol = LineType.ORANGE_4;
             es1.h_setcolor(h_icol);
             Button_kyoutuu_sagyou();
             repaint();
@@ -5575,7 +5575,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             readImageFromFile3();
             Button_h_Col_irokesi();
             Button_Col_yellow.setBackground(Color.yellow);
-            h_icol = 7;
+            h_icol = LineType.YELLOW_7;
             es1.h_setcolor(h_icol);
             Button_kyoutuu_sagyou();
             repaint();
@@ -5662,8 +5662,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnle.add(pnle24);
 
 // -------------長さ1測定モード。
-        JButton Button_nagasa_sokutei_1 = new JButton("L1=");
-        Button_nagasa_sokutei_1.addActionListener(e -> {
+        JButton Button_length_sokutei_1 = new JButton("L1=");
+        Button_length_sokutei_1.addActionListener(e -> {
             img_kaisetu_fname = "qqq/nagasa_sokutei_1.png";
             readImageFromFile3();
             i_mouse_modeA = 53;
@@ -5673,17 +5673,17 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             Button_kyoutuu_sagyou();
             repaint();
         });
-        Button_nagasa_sokutei_1.setBounds(2, 2, 30, 20);
-        pnle24.add(Button_nagasa_sokutei_1);
-        Button_nagasa_sokutei_1.setBorder(border);
-        Button_nagasa_sokutei_1.setMargin(new Insets(0, 0, 0, 0));
+        Button_length_sokutei_1.setBounds(2, 2, 30, 20);
+        pnle24.add(Button_length_sokutei_1);
+        Button_length_sokutei_1.setBorder(border);
+        Button_length_sokutei_1.setMargin(new Insets(0, 0, 0, 0));
 // -------------長さ1測定モード。ここまで
-        label_nagasa_sokutei_1.setOpaque(true);
-        label_nagasa_sokutei_1.setBackground(Color.white);
-        label_nagasa_sokutei_1.setText("");
-        label_nagasa_sokutei_1.setBorder(border);
-        label_nagasa_sokutei_1.setBounds(30, 2, 80, 20);
-        pnle24.add(label_nagasa_sokutei_1);
+        label_length_sokutei_1.setOpaque(true);
+        label_length_sokutei_1.setBackground(Color.white);
+        label_length_sokutei_1.setText("");
+        label_length_sokutei_1.setBorder(border);
+        label_length_sokutei_1.setBounds(30, 2, 80, 20);
+        pnle24.add(label_length_sokutei_1);
 // -------------
 
 
@@ -5695,8 +5695,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //------------------------------------------------
         pnle.add(pnle25);
 // -------------長さ2測定モード。
-        JButton Button_nagasa_sokutei_2 = new JButton("L2=");
-        Button_nagasa_sokutei_2.addActionListener(e -> {
+        JButton Button_length_sokutei_2 = new JButton("L2=");
+        Button_length_sokutei_2.addActionListener(e -> {
             img_kaisetu_fname = "qqq/nagasa_sokutei_2.png";
             readImageFromFile3();
             i_mouse_modeA = 54;
@@ -5706,17 +5706,17 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             Button_kyoutuu_sagyou();
             repaint();
         });
-        Button_nagasa_sokutei_2.setBounds(2, 2, 30, 20);
-        pnle25.add(Button_nagasa_sokutei_2);
-        Button_nagasa_sokutei_2.setBorder(border);
-        Button_nagasa_sokutei_2.setMargin(new Insets(0, 0, 0, 0));
+        Button_length_sokutei_2.setBounds(2, 2, 30, 20);
+        pnle25.add(Button_length_sokutei_2);
+        Button_length_sokutei_2.setBorder(border);
+        Button_length_sokutei_2.setMargin(new Insets(0, 0, 0, 0));
 // -------------長さ2測定モード。ここまで
-        label_nagasa_sokutei_2.setOpaque(true);
-        label_nagasa_sokutei_2.setBackground(Color.white);
-        label_nagasa_sokutei_2.setText("");
-        label_nagasa_sokutei_2.setBorder(border);
-        label_nagasa_sokutei_2.setBounds(30, 2, 80, 20);
-        pnle25.add(label_nagasa_sokutei_2);
+        label_length_sokutei_2.setOpaque(true);
+        label_length_sokutei_2.setBackground(Color.white);
+        label_length_sokutei_2.setText("");
+        label_length_sokutei_2.setBorder(border);
+        label_length_sokutei_2.setBounds(30, 2, 80, 20);
+        pnle25.add(label_length_sokutei_2);
 // -------------
 
 
@@ -6984,10 +6984,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         text31.setText(String.valueOf(i_undo_suu_om));
         i_h_undo_suu = 20;
         text11.setText(String.valueOf(i_h_undo_suu));
-        memori_kankaku = 5;
-        text25.setText(String.valueOf(memori_kankaku));
-        es1.set_a_to_heikouna_memori_kannkaku(memori_kankaku);
-        es1.set_b_to_heikouna_memori_kannkaku(memori_kankaku);
+        scale_interval = 5;
+        text25.setText(String.valueOf(scale_interval));
+        es1.set_a_to_parallel_scale_interval(scale_interval);
+        es1.set_b_to_parallel_scale_interval(scale_interval);
 
         i_sel_mou_mode = 1;
         Button_sel_mou_wakukae();//セレクトされた折線がある状態で、セレクトされている折線の頂点をクリックした場合の動作モードの初期設定
@@ -7176,23 +7176,23 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
     }
 
 
-    public void sokutei_nagasa_1_hyouji(double d0) {
-        label_nagasa_sokutei_1.setText(String.valueOf(d0));
+    public void measured_length_1_hyouji(double d0) {
+        label_length_sokutei_1.setText(String.valueOf(d0));
     }
 
-    public void sokutei_nagasa_2_hyouji(double d0) {
-        label_nagasa_sokutei_2.setText(String.valueOf(d0));
+    public void measured_length_2_hyouji(double d0) {
+        label_length_sokutei_2.setText(String.valueOf(d0));
     }
 
-    public void sokutei_kakudo_1_hyouji(double d0) {
+    public void measured_angle_1_hyouji(double d0) {
         label_kakudo_sokutei_1.setText(String.valueOf(d0));
     }
 
-    public void sokutei_kakudo_2_hyouji(double d0) {
+    public void measured_angle_2_hyouji(double d0) {
         label_kakudo_sokutei_2.setText(String.valueOf(d0));
     }
 
-    public void sokutei_kakudo_3_hyouji(double d0) {
+    public void measured_angle_3_hyouji(double d0) {
         label_kakudo_sokutei_3.setText(String.valueOf(d0));
     }
 
@@ -7212,14 +7212,14 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         }
     }
 
-    public void set_kousi_bunkatu_suu() {
+    public void set_grid_bunkatu_suu() {
         int nyuuryoku_kitei_old = nyuuryoku_kitei;
         nyuuryoku_kitei = StringOp.String2int(text1.getText(), nyuuryoku_kitei_old);
         if (nyuuryoku_kitei < 1) {
             nyuuryoku_kitei = 1;
         }
         text1.setText(String.valueOf(nyuuryoku_kitei));
-        es1.set_kousi_bunkatu_suu(nyuuryoku_kitei);
+        es1.set_grid_bunkatu_suu(nyuuryoku_kitei);
     }
     // ----------------------------------------------------------
 
@@ -7406,7 +7406,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         i_orisen_hyougen = 1;
 
         //ペンの色の指定
-        icol = 1;
+        icol = LineType.RED_1;
         es1.setColor(icol);    //最初の折線の色を指定する。0は黒、1は赤、2は青。
         ButtonCol_irokesi();
         ButtonCol_red.setForeground(Color.black);
@@ -7421,28 +7421,28 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         //格子分割数の指定
         text1.setText("8");
-        set_kousi_bunkatu_suu();
+        set_grid_bunkatu_suu();
 
         //格子の適用範囲の指定
-        es1.set_i_kitei_jyoutai(1);//格子の状態を用紙内適用にする。
+        es1.set_i_base_state(GridState.WITHIN_PAPER);//格子の状態を用紙内適用にする。
 
         //任意格子
-        d_kousi_x_a = 0.0;
-        text18.setText(String.valueOf(d_kousi_x_a));
-        d_kousi_x_b = 1.0;
-        text19.setText(String.valueOf(d_kousi_x_b));
-        d_kousi_x_c = 1.0;
-        text20.setText(String.valueOf(d_kousi_x_c));
+        d_grid_x_a = 0.0;
+        text18.setText(String.valueOf(d_grid_x_a));
+        d_grid_x_b = 1.0;
+        text19.setText(String.valueOf(d_grid_x_b));
+        d_grid_x_c = 1.0;
+        text20.setText(String.valueOf(d_grid_x_c));
 
-        d_kousi_y_a = 0.0;
-        text21.setText(String.valueOf(d_kousi_y_a));
-        d_kousi_y_b = 1.0;
-        text22.setText(String.valueOf(d_kousi_y_b));
-        d_kousi_y_c = 1.0;
-        text23.setText(String.valueOf(d_kousi_y_c));
+        d_grid_y_a = 0.0;
+        text21.setText(String.valueOf(d_grid_y_a));
+        d_grid_y_b = 1.0;
+        text22.setText(String.valueOf(d_grid_y_b));
+        d_grid_y_c = 1.0;
+        text23.setText(String.valueOf(d_grid_y_c));
 
-        d_kousi_kakudo = 90.0;
-        text24.setText(String.valueOf(d_kousi_kakudo));
+        d_grid_angle = 90.0;
+        text24.setText(String.valueOf(d_grid_angle));
 
         setGrid();
 //--------------------------------------------
@@ -7470,7 +7470,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         text9.setText(String.valueOf(i_sei_takakukei));
 
         //補助画線の色
-        h_icol = 4;
+        h_icol = LineType.ORANGE_4;
         es1.h_setcolor(h_icol);                                        //最初の補助線の色を指定する。4はオレンジ、7は黄。
         Button_h_Col_irokesi();
         Button_Col_orange.setForeground(Color.black);
@@ -7486,79 +7486,79 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
     // *******************************************************************************************************
-    public double d_kousi_x_nagasa;
-    public double d_kousi_y_nagasa;
+    public double d_grid_x_length;
+    public double d_grid_y_length;
 
     public void setGrid() {
-        double d_kousi_x_a_old = d_kousi_x_a;
-        double d_kousi_x_b_old = d_kousi_x_b;
-        double d_kousi_x_c_old = d_kousi_x_c;
-        double d_kousi_y_a_old = d_kousi_y_a;
-        double d_kousi_y_b_old = d_kousi_y_b;
-        double d_kousi_y_c_old = d_kousi_y_c;
+        double d_grid_x_a_old = d_grid_x_a;
+        double d_grid_x_b_old = d_grid_x_b;
+        double d_grid_x_c_old = d_grid_x_c;
+        double d_grid_y_a_old = d_grid_y_a;
+        double d_grid_y_b_old = d_grid_y_b;
+        double d_grid_y_c_old = d_grid_y_c;
 
-        double d_kousi_kakudo_old = d_kousi_kakudo;
+        double d_grid_angle_old = d_grid_angle;
 
-        d_kousi_x_a = String2double(text18.getText(), d_kousi_x_a_old);
-        d_kousi_x_b = String2double(text19.getText(), d_kousi_x_b_old);
-        d_kousi_x_c = String2double(text20.getText(), d_kousi_x_c_old);
-        if (d_kousi_x_c < 0.0) {
-            d_kousi_x_c = 0.0;
+        d_grid_x_a = String2double(text18.getText(), d_grid_x_a_old);
+        d_grid_x_b = String2double(text19.getText(), d_grid_x_b_old);
+        d_grid_x_c = String2double(text20.getText(), d_grid_x_c_old);
+        if (d_grid_x_c < 0.0) {
+            d_grid_x_c = 0.0;
         }
-        d_kousi_y_a = String2double(text21.getText(), d_kousi_y_a_old);
-        d_kousi_y_b = String2double(text22.getText(), d_kousi_y_b_old);
-        d_kousi_y_c = String2double(text23.getText(), d_kousi_y_c_old);
-        if (d_kousi_y_c < 0.0) {
-            d_kousi_y_c = 0.0;
-        }
-
-        d_kousi_kakudo = String2double(text24.getText(), d_kousi_kakudo_old);
-        if (Math.abs(oc.angle_between_0_360(d_kousi_kakudo)) < 0.1) {
-            d_kousi_kakudo = 90.0;
-        }
-        if (Math.abs(oc.angle_between_0_360(d_kousi_kakudo - 180.0)) < 0.1) {
-            d_kousi_kakudo = 90.0;
-        }
-        if (Math.abs(oc.angle_between_0_360(d_kousi_kakudo - 360.0)) < 0.1) {
-            d_kousi_kakudo = 90.0;
+        d_grid_y_a = String2double(text21.getText(), d_grid_y_a_old);
+        d_grid_y_b = String2double(text22.getText(), d_grid_y_b_old);
+        d_grid_y_c = String2double(text23.getText(), d_grid_y_c_old);
+        if (d_grid_y_c < 0.0) {
+            d_grid_y_c = 0.0;
         }
 
-
-        d_kousi_x_nagasa = d_kousi_x_a + d_kousi_x_b * Math.sqrt(d_kousi_x_c);
-        if (d_kousi_x_nagasa < 0.0) {
-            d_kousi_x_a = 1.0;
-            d_kousi_x_b = 0.0;
-            d_kousi_x_c = 0.0;
+        d_grid_angle = String2double(text24.getText(), d_grid_angle_old);
+        if (Math.abs(oc.angle_between_0_360(d_grid_angle)) < 0.1) {
+            d_grid_angle = 90.0;
         }
-        d_kousi_y_nagasa = d_kousi_y_a + d_kousi_y_b * Math.sqrt(d_kousi_y_c);
-        if (d_kousi_y_nagasa < 0.0) {
-            d_kousi_y_a = 1.0;
-            d_kousi_y_b = 0.0;
-            d_kousi_y_c = 0.0;
+        if (Math.abs(oc.angle_between_0_360(d_grid_angle - 180.0)) < 0.1) {
+            d_grid_angle = 90.0;
         }
-        if (Math.abs(d_kousi_x_nagasa) < 0.0001) {
-            d_kousi_x_a = 1.0;
-            d_kousi_x_b = 0.0;
-            d_kousi_x_c = 0.0;
-            d_kousi_x_nagasa = d_kousi_x_a + d_kousi_x_b * Math.sqrt(d_kousi_x_c);
-        }
-        if (Math.abs(d_kousi_y_nagasa) < 0.0001) {
-            d_kousi_y_a = 1.0;
-            d_kousi_y_b = 0.0;
-            d_kousi_y_c = 0.0;
-            d_kousi_y_nagasa = d_kousi_y_a + d_kousi_y_b * Math.sqrt(d_kousi_y_c);
+        if (Math.abs(oc.angle_between_0_360(d_grid_angle - 360.0)) < 0.1) {
+            d_grid_angle = 90.0;
         }
 
-        text18.setText(String.valueOf(d_kousi_x_a));
-        text19.setText(String.valueOf(d_kousi_x_b));
-        text20.setText(String.valueOf(d_kousi_x_c));
-        text21.setText(String.valueOf(d_kousi_y_a));
-        text22.setText(String.valueOf(d_kousi_y_b));
-        text23.setText(String.valueOf(d_kousi_y_c));
 
-        text24.setText(String.valueOf(d_kousi_kakudo));
+        d_grid_x_length = d_grid_x_a + d_grid_x_b * Math.sqrt(d_grid_x_c);
+        if (d_grid_x_length < 0.0) {
+            d_grid_x_a = 1.0;
+            d_grid_x_b = 0.0;
+            d_grid_x_c = 0.0;
+        }
+        d_grid_y_length = d_grid_y_a + d_grid_y_b * Math.sqrt(d_grid_y_c);
+        if (d_grid_y_length < 0.0) {
+            d_grid_y_a = 1.0;
+            d_grid_y_b = 0.0;
+            d_grid_y_c = 0.0;
+        }
+        if (Math.abs(d_grid_x_length) < 0.0001) {
+            d_grid_x_a = 1.0;
+            d_grid_x_b = 0.0;
+            d_grid_x_c = 0.0;
+            d_grid_x_length = d_grid_x_a + d_grid_x_b * Math.sqrt(d_grid_x_c);
+        }
+        if (Math.abs(d_grid_y_length) < 0.0001) {
+            d_grid_y_a = 1.0;
+            d_grid_y_b = 0.0;
+            d_grid_y_c = 0.0;
+            d_grid_y_length = d_grid_y_a + d_grid_y_b * Math.sqrt(d_grid_y_c);
+        }
 
-        es1.set_d_grid(d_kousi_x_nagasa, d_kousi_y_nagasa, d_kousi_kakudo);
+        text18.setText(String.valueOf(d_grid_x_a));
+        text19.setText(String.valueOf(d_grid_x_b));
+        text20.setText(String.valueOf(d_grid_x_c));
+        text21.setText(String.valueOf(d_grid_y_a));
+        text22.setText(String.valueOf(d_grid_y_b));
+        text23.setText(String.valueOf(d_grid_y_c));
+
+        text24.setText(String.valueOf(d_grid_angle));
+
+        es1.set_d_grid(d_grid_x_length, d_grid_y_length, d_grid_angle);
     }
 
 

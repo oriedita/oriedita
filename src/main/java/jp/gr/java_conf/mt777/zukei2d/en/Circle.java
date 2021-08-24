@@ -2,6 +2,7 @@ package jp.gr.java_conf.mt777.zukei2d.en;
 
 import java.awt.*;
 
+import jp.gr.java_conf.mt777.origami.orihime.LineType;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.tyokusen.*;
 import jp.gr.java_conf.mt777.zukei2d.ten.Point;
@@ -10,7 +11,7 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
 
     double x, y, r;//Center coordinates and radius
 
-    int color;//Color specification 　0=black,1=blue,2=red.
+    LineType color;//Color specification 　0=black,1=blue,2=red.
     int customized = 0;//Custom property parameters
     Color customizedColor = new Color(100, 200, 200);//Color if custom made
 
@@ -18,24 +19,24 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
         x = 0.0;
         y = 0.0;
         r = 0.0;
-        color = 0;
+        color = LineType.BLACK_0;
     }
 
-    public Circle(double i, double j, double k, int m) {
+    public Circle(double i, double j, double k, LineType m) {
         x = i;
         y = j;
         r = k;
         color = m;
     }
 
-    public Circle(Point tc, double k, int m) {
+    public Circle(Point tc, double k, LineType m) {
         x = tc.getX();
         y = tc.getY();
         r = k;
         color = m;
     }
 
-    public Circle(LineSegment s0, int m) {// A circle whose diameter is the constructor line segment
+    public Circle(LineSegment s0, LineType m) {// A circle whose diameter is the constructor line segment
         x = (s0.getAX() + s0.getBX()) / 2.0;
         y = (s0.getAY() + s0.getBY()) / 2.0;
         r = s0.getLength() / 2.0;
@@ -46,19 +47,19 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
         x = e.getX();
         y = e.getY();
         r = e.getRadius();
-        color = e.setColor();
+        color = e.getColor();
         customized = e.getCustomized();
         customizedColor = e.getCustomizedColor();
     }
 
-    public void set(double i, double j, double k, int m) {
+    public void set(double i, double j, double k, LineType m) {
         x = i;
         y = j;
         r = k;
         color = m;
     }
 
-    public void set(Point tc, double k, int m) {
+    public void set(Point tc, double k, LineType m) {
         x = tc.getX();
         y = tc.getY();
         r = k;
@@ -71,7 +72,7 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
         r = k;
     }
 
-    public void set(LineSegment s0, int m) {
+    public void set(LineSegment s0, LineType m) {
         x = (s0.getAX() + s0.getBX()) / 2.0;
         y = (s0.getAY() + s0.getBY()) / 2.0;
         r = s0.getLength() / 2.0;
@@ -106,14 +107,14 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
         x = 0.0;
         y = 0.0;
         r = 0.0;
-        color = 0;
+        color = LineType.BLACK_0;
     }
 
-    public void setColor(int i) {
+    public void setColor(LineType i) {
         color = i;
     }
 
-    public int setColor() {
+    public LineType getColor() {
         return color;
     }
 
@@ -188,7 +189,7 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
             yb0 = yb1 + y;
         }
 
-        int ic = 5;
+        LineType ic = LineType.MAGENTA_5;
 
         return new Circle(new LineSegment(turnAround(new Point(xa0, ya0)), turnAround(new Point(xb0, yb0))), ic);
     }
@@ -204,7 +205,7 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
         tha.set(th.getX() + 3.0 * y1, th.getY() - 3.0 * x1);
         Point thb = new Point();
         thb.set(th.getX() - 3.0 * y1, th.getY() + 3.0 * x1);
-        return new LineSegment(tha, thb, 3);
+        return new LineSegment(tha, thb, LineType.CYAN_3);
     }
 
 
@@ -213,6 +214,6 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
         StraightLine ty = new StraightLine(s0);
         Point t0 = new Point();
         t0.set(ty.findShadow(getCenter()));
-        return new Circle(new LineSegment(turnAround(t0), getCenter()), 5);
+        return new Circle(new LineSegment(turnAround(t0), getCenter()), LineType.MAGENTA_5);
     }
 }

@@ -94,7 +94,7 @@ public class Drawing_Worker_Toolbox {
         for (int i = 1; i <= ori_s.getTotal(); i++) {
 
 //System.out.println("000 20201129 col = "+ori_s.get(i).getcolor());  
-            if (ori_s.get(i).getColor() < 3) {//System.out.println("  kousaten_made_nobasi_keisan_fukumu_senbun_musi_new 20201128");
+            if (ori_s.get(i).getColor().isFoldingLine()) {//System.out.println("  kousaten_made_nobasi_keisan_fukumu_senbun_musi_new 20201128");
 //0=この直線は与えられた線分と交差しない、
 //1=X型で交差する、
 //21=線分のa点でT型で交差する、

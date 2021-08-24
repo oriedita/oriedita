@@ -2,6 +2,7 @@ package jp.gr.java_conf.mt777.origami.dougu.linestore;
 
 import jp.gr.java_conf.mt777.kiroku.memo.*;
 
+import jp.gr.java_conf.mt777.origami.orihime.LineType;
 import jp.gr.java_conf.mt777.zukei2d.ten.*;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
 import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
@@ -112,19 +113,19 @@ public class LineSet {
     }
 
     //Enter the value of the i-th line segment
-    public void set(int i, Point p, Point q, int ic, int ia) {
+    public void set(int i, Point p, Point q, LineType ic, int ia) {
         LineSegment s = getLine(i);
         s.set(p, q, ic, ia);
     }
 
     //Enter the color of the i-th line segment
-    public void setColor(int i, int icol) {
+    public void setColor(int i, LineType icol) {
         LineSegment s = getLine(i);
         s.setColor(icol);
     }
 
     //Output the color of the i-th line segment
-    public int getColor(int i) {
+    public LineType getColor(int i) {
         LineSegment s = getLine(i);
         return s.getColor();
     }
@@ -156,7 +157,7 @@ public class LineSet {
     public void setMemo(Memo memo1) {
         int reading_flag = 0;//If it is 0, it will not be read. If it is 1, read it.
         int iNumber = 0;
-        int ic;
+        LineType ic;
 
         double ax, ay, bx, by;
         String str = "";
@@ -196,7 +197,7 @@ public class LineSet {
             }
             if ((reading_flag == 1) && (str.equals("色"))) { // colour
                 str = tk.nextToken();
-                ic = Integer.parseInt(str);
+                ic = LineType.fromNumber(Integer.parseInt(str));
                 LineSegment s = getLine(iNumber);
                 s.setColor(ic);
             }
@@ -234,14 +235,14 @@ public class LineSet {
 
     //Replace the mountains and valleys of all lines. There is no change in line types other than mountains and valleys such as boundaries.
     public void all_mountain_valley_change() {
-        int ic_temp;
+        LineType ic_temp;
 
         for (int ic_id = 1; ic_id <= total; ic_id++) {
             ic_temp = getColor(ic_id);
-            if (ic_temp == 1) {
-                ic_temp = 2;
-            } else if (ic_temp == 2) {
-                ic_temp = 1;
+            if (ic_temp == LineType.RED_1) {
+                ic_temp = LineType.BLUE_2;
+            } else if (ic_temp == LineType.BLUE_2) {
+                ic_temp = LineType.RED_1;
             }
             setColor(ic_id, ic_temp);
         }
@@ -526,7 +527,7 @@ public class LineSet {
             si.setA(p2);
             si.setB(p4);
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -539,7 +540,7 @@ public class LineSet {
         if (oc.line_intersect_decide(si, sj) == 322) {//The endpoints of two line segments (p1 and p3) overlap at one point. sj contains si
             sj.setA(p2);
             sj.setB(p4);
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -553,7 +554,7 @@ public class LineSet {
             si.setA(p2);
             si.setB(p3);
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -566,7 +567,7 @@ public class LineSet {
         if (oc.line_intersect_decide(si, sj) == 332) {//The endpoints of two line segments (p1 and p4) overlap at one point. sj contains si
             sj.setA(p2);
             sj.setB(p3);
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -578,7 +579,7 @@ public class LineSet {
         if (oc.line_intersect_decide(si, sj) == 341) {//The endpoints of two line segments (p2 and p3) overlap at one point. si contains sj
             si.setA(p1);
             si.setB(p4);
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -591,7 +592,7 @@ public class LineSet {
         if (oc.line_intersect_decide(si, sj) == 342) {//The endpoints of two line segments (p2 and p3) overlap at one point. sj contains si
             sj.setA(p1);
             sj.setB(p4);
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -608,7 +609,7 @@ public class LineSet {
             si.setA(p1);
             si.setB(p3);
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -621,7 +622,7 @@ public class LineSet {
         if (oc.line_intersect_decide(si, sj) == 352) {//The endpoints of two line segments (p2 and p4) overlap at one point. sj contains si
             sj.setA(p1);
             sj.setB(p3);
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -637,7 +638,7 @@ public class LineSet {
             si.setB(p3);
 
             addLine(p2, p4, si.getColor());
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -653,7 +654,7 @@ public class LineSet {
 
             addLine(p2, p3, si.getColor());
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -669,7 +670,7 @@ public class LineSet {
 
             addLine(p2, p4, sj.getColor());
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -685,7 +686,7 @@ public class LineSet {
 
             addLine(p2, p3, sj.getColor());
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -703,7 +704,7 @@ public class LineSet {
             sj.setA(p2);
             sj.setB(p4);
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -719,7 +720,7 @@ public class LineSet {
             sj.setA(p3);
             sj.setB(p2);
 
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -733,7 +734,7 @@ public class LineSet {
             sj.setB(p3);
             si.setA(p2);
             si.setB(p4);
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -747,7 +748,7 @@ public class LineSet {
             sj.setB(p4);
             si.setA(p3);
             si.setB(p2);
-            int overlapping_col;
+            LineType overlapping_col;
             overlapping_col = si.getColor();
             if (i < j) {
                 overlapping_col = sj.getColor();
@@ -761,7 +762,7 @@ public class LineSet {
 
 
     //Add line segment-------------------------------
-    public void addLine(Point pi, Point pj, int i_c) {
+    public void addLine(Point pi, Point pj, LineType i_c) {
         total++;
 
         LineSegment s = getLine(total);
@@ -769,7 +770,7 @@ public class LineSet {
     }
 
     //Add line segment-------------------------------
-    public void addLine(double ax, double ay, double bx, double by, int ic) {
+    public void addLine(double ax, double ay, double bx, double by, LineType ic) {
         total++;
 
         LineSegment s = getLine(total);

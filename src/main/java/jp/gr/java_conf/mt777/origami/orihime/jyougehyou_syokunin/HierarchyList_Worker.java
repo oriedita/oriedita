@@ -182,7 +182,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
             Mid_min = orite.Stick_moti_FaceId_min_request(ib);
             Mid_max = orite.Stick_moti_FaceId_max_request(ib);
             if (Mid_min != Mid_max) {//展開図において、棒ibの両脇に面がある
-                if (otta_face_figure.getColor(ib) == 1) {//赤い線で山折りを意味する
+                if (otta_face_figure.getColor(ib) == LineType.RED_1) {//赤い線で山折りを意味する
                     if (orite.getIFacePosition(Mid_min) % 2 == 1) {//面Mid_minは基準面と同じ向き(表面が上を向く)
                         hierarchyList.set(Mid_min, Mid_max, 1);
                         hierarchyList.set(Mid_max, Mid_min, 0);
@@ -192,7 +192,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                         hierarchyList.set(Mid_min, Mid_max, 0);
                     }
                 }
-                if (otta_face_figure.getColor(ib) == 2) {//青い線で谷折りを意味する
+                if (otta_face_figure.getColor(ib) == LineType.BLUE_2) {//青い線で谷折りを意味する
                     if (orite.getIFacePosition(Mid_min) % 2 == 1) {//面Mid_minは基準面と同じ向き(表面が上を向く)
                         hierarchyList.set(Mid_min, Mid_max, 0);
                         hierarchyList.set(Mid_max, Mid_min, 1);
@@ -1822,7 +1822,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
 
 
         //Draw the center of the camera with a cross
-        OO.cross(g, camera.object2TV(camera.get_camera_position()), 5.0, 2.0, 4);
+        OO.cross(g, camera.object2TV(camera.get_camera_position()), 5.0, 2.0, LineType.ORANGE_4);
 
 
     }
@@ -2195,11 +2195,11 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                     //棒の座標   subFace_figure.getmaex(ib),subFace_figure.getmaey(ib)   -    subFace_figure.getatox(ib) , subFace_figure.getatoy(ib)
                     Point b_begin = new Point(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib));
                     Point b_end = new Point(subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
-                    double b_nagasa = b_begin.distance(b_end);
+                    double b_length = b_begin.distance(b_end);
 
                     //棒と直交するベクトル
-                    double o_btx = -(subFace_figure.getBeginY(ib) - subFace_figure.getEndY(ib)) * 10.0 / b_nagasa;//棒と直交するxベクトル
-                    double o_bty = (subFace_figure.getBeginX(ib) - subFace_figure.getEndX(ib)) * 10.0 / b_nagasa;//棒と直交するyベクトル
+                    double o_btx = -(subFace_figure.getBeginY(ib) - subFace_figure.getEndY(ib)) * 10.0 / b_length;//棒と直交するxベクトル
+                    double o_bty = (subFace_figure.getBeginX(ib) - subFace_figure.getEndX(ib)) * 10.0 / b_length;//棒と直交するyベクトル
 
                     //棒の中点
                     double o_bmx, o_bmy;
@@ -2419,7 +2419,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         OritaDrawing OO = new OritaDrawing();
 
         //camera中心を十字で描く
-        OO.cross(g, camera.object2TV(camera.get_camera_position()), 5.0, 2.0, 4);
+        OO.cross(g, camera.object2TV(camera.get_camera_position()), 5.0, 2.0, LineType.ORANGE_4);
     }
 
 

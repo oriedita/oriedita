@@ -1,4 +1,4 @@
-package jp.gr.java_conf.mt777.zukei2d.kousi;
+package jp.gr.java_conf.mt777.zukei2d.grid;
 
 import jp.gr.java_conf.mt777.origami.dougu.camera.*;
 
@@ -16,9 +16,9 @@ public class Grid {
 
     double d_grid_haba = 200.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<格子幅(double)
 
-    double d_grid_a_nagasa = 1.0;
-    double d_grid_b_nagasa = 1.0;
-    double d_grid_kakudo = -90.0;
+    double d_grid_a_length = 1.0;
+    double d_grid_b_length = 1.0;
+    double d_grid_angle = -90.0;
 
     double d_grid_ax = 1.0;//格子の横方向の単位ベクトルのX成分の比率
     double d_grid_ay = 0.0;//格子の横方向の単位ベクトルのY成分の比率
@@ -33,25 +33,20 @@ public class Grid {
     double taikakusen_min = 1.0;//単位胞の対角線の短いほう
 
 
-    int i_kitei_jyoutai = 1;//基底（格子）の状況=0は全域で無効だが、格子幅だけは既存端点への引き寄せ半径の設定に使うので有効、状況=1は用紙内のみ有効、状況=2は全領域で有効
+    GridState i_base_state = GridState.WITHIN_PAPER;//Base (grid) status = 0 is invalid for the whole area, but only the grid width is valid since it is used to set the radius of attraction to the existing endpoint, status = 1 is valid only within the paper, and status = 2 is valid for the whole area.
 
 
-    //用紙の分割なしならkousi_zahyou[0から1]なのでkousi_bunkatu_suuは１、kousi_bunkatu_suu
-    //用紙の2分割ならkousi_zahyou[0,1,2]なのでkousi_bunkatu_suuは2、
-    //用紙の4分割ならkousi_zahyou[0,1,2,3,4]なのでkousi_bunkatu_suuは4、
+    //用紙の分割なしならgrid_zahyou[0から1]なのでgrid_bunkatu_suuは１、grid_bunkatu_suu
+    //用紙の2分割ならgrid_zahyou[0,1,2]なのでgrid_bunkatu_suuは2、
+    //用紙の4分割ならgrid_zahyou[0,1,2,3,4]なのでgrid_bunkatu_suuは4、
     int grid_bunkatu_suu = 2;
-    //int kousi_zahyou[] = new int[1024000];
-    //double d_kousi_zahyou[] = new double[1024000];
 
-    //int i_kousi_x_min =-1000;int i_kousi_x_max =2000;int i_kousi_y_min =-1000;int i_kousi_y_max =1000;
-
-
-    int a_to_heikouna_memori_kannkaku = 5;
-    int a_to_heikouna_memori_iti = 0;
+    int a_to_parallel_scale_interval = 5;
+    int a_to_parallel_scale_position = 0;
 
 
-    int b_to_heikouna_memori_kannkaku = 5;
-    int b_to_heikouna_memori_iti = 0;
+    int b_to_parallel_scale_interval = 5;
+    int b_to_parallel_scale_position = 0;
 
     Color grid_color = new Color(230, 230, 230);//格子線の色
     Color grid_scale_color = new Color(180, 200, 180);//格子目盛り線の色
@@ -63,41 +58,41 @@ public class Grid {
     }
 
     // ------------------------------------------------------
-    public void set_a_to_heikouna_memori_kannkaku(int i) {
-        a_to_heikouna_memori_kannkaku = i;
-        if (a_to_heikouna_memori_iti >= a_to_heikouna_memori_kannkaku) {
-            a_to_heikouna_memori_iti = 0;
+    public void set_a_to_parallel_scale_interval(int i) {
+        a_to_parallel_scale_interval = i;
+        if (a_to_parallel_scale_position >= a_to_parallel_scale_interval) {
+            a_to_parallel_scale_position = 0;
         }
     }
 
-    public void set_b_to_heikouna_memori_kannkaku(int i) {
-        b_to_heikouna_memori_kannkaku = i;
-        if (b_to_heikouna_memori_iti >= b_to_heikouna_memori_kannkaku) {
-            b_to_heikouna_memori_iti = 0;
+    public void set_b_to_parallel_scale_interval(int i) {
+        b_to_parallel_scale_interval = i;
+        if (b_to_parallel_scale_position >= b_to_parallel_scale_interval) {
+            b_to_parallel_scale_position = 0;
         }
     }
 
-    public void a_to_heikouna_memori_iti_idou() {
-        a_to_heikouna_memori_iti = a_to_heikouna_memori_iti + 1;
-        if (a_to_heikouna_memori_iti >= a_to_heikouna_memori_kannkaku) {
-            a_to_heikouna_memori_iti = 0;
+    public void a_to_parallel_scale_position_change() {
+        a_to_parallel_scale_position = a_to_parallel_scale_position + 1;
+        if (a_to_parallel_scale_position >= a_to_parallel_scale_interval) {
+            a_to_parallel_scale_position = 0;
         }
     }
 
-    public void b_to_heikouna_memori_iti_idou() {
-        b_to_heikouna_memori_iti = b_to_heikouna_memori_iti + 1;
-        if (b_to_heikouna_memori_iti >= b_to_heikouna_memori_kannkaku) {
-            b_to_heikouna_memori_iti = 0;
+    public void b_to_parallel_scale_position_change() {
+        b_to_parallel_scale_position = b_to_parallel_scale_position + 1;
+        if (b_to_parallel_scale_position >= b_to_parallel_scale_interval) {
+            b_to_parallel_scale_position = 0;
         }
     }
 
 
-    public void set_a_to_heikouna_memori_iti(int i0) {
-        a_to_heikouna_memori_iti = i0;
+    public void set_a_to_parallel_scale_position(int i0) {
+        a_to_parallel_scale_position = i0;
     }
 
-    public void set_b_to_heikouna_memori_iti(int i0) {
-        b_to_heikouna_memori_iti = i0;
+    public void set_b_to_parallel_scale_position(int i0) {
+        b_to_parallel_scale_position = i0;
     }
 
     public void setGridLineWidth(int i0) {
@@ -105,12 +100,12 @@ public class Grid {
     }
 
 
-    public int get_a_to_heikouna_memori_iti() {
-        return a_to_heikouna_memori_iti;
+    public int get_a_to_parallel_scale_position() {
+        return a_to_parallel_scale_position;
     }
 
-    public int get_b_to_heikouna_memori_iti() {
-        return b_to_heikouna_memori_iti;
+    public int get_b_to_parallel_scale_position() {
+        return b_to_parallel_scale_position;
     }
 
     public int getGridLIneWidth() {
@@ -138,21 +133,21 @@ public class Grid {
 
     // ----------------------------------------
     public void set_d_grid(double dkxn, double dkyn, double dkk) {
-        d_grid_a_nagasa = dkxn;
-        d_grid_b_nagasa = dkyn;
-        d_grid_kakudo = -dkk;
+        d_grid_a_length = dkxn;
+        d_grid_b_length = dkyn;
+        d_grid_angle = -dkk;
 
         grid_keisan();
     }
 
     // ----------------------------------------
     public void grid_keisan() {
-        d_grid_ax = d_grid_haba * d_grid_a_nagasa;
+        d_grid_ax = d_grid_haba * d_grid_a_length;
         d_grid_ay = d_grid_haba * 0.0;
 
-        double d_rad = (Math.PI / 180) * d_grid_kakudo;
-        d_grid_bx = d_grid_haba * d_grid_b_nagasa * Math.cos(d_rad);
-        d_grid_by = d_grid_haba * d_grid_b_nagasa * Math.sin(d_rad);
+        double d_rad = (Math.PI / 180) * d_grid_angle;
+        d_grid_bx = d_grid_haba * d_grid_b_length * Math.cos(d_rad);
+        d_grid_by = d_grid_haba * d_grid_b_length * Math.sin(d_rad);
 
         taikakusen_max = oc.distance(new Point(0.0, 0.0), new Point(d_grid_ax + d_grid_bx, d_grid_ay + d_grid_by));
         taikakusen_min = oc.distance(new Point(d_grid_ax, d_grid_ay), new Point(d_grid_bx, d_grid_by));
@@ -162,15 +157,15 @@ public class Grid {
         }
 
 
-        if (jyoutai() == 1) {
-            if (Math.abs(d_grid_a_nagasa - 1.0) > 0.000001) {
-                set_i_kitei_jyoutai(2);
+        if (state() == GridState.WITHIN_PAPER) {
+            if (Math.abs(d_grid_a_length - 1.0) > 0.000001) {
+                set_i_base_state(GridState.FULL);
             }
-            if (Math.abs(d_grid_b_nagasa - 1.0) > 0.000001) {
-                set_i_kitei_jyoutai(2);
+            if (Math.abs(d_grid_b_length - 1.0) > 0.000001) {
+                set_i_base_state(GridState.FULL);
             }
-            if (Math.abs(d_grid_kakudo - (-90.0)) > 0.000001) {
-                set_i_kitei_jyoutai(2);
+            if (Math.abs(d_grid_angle - (-90.0)) > 0.000001) {
+                set_i_base_state(GridState.FULL);
             }
         }
 
@@ -190,38 +185,38 @@ public class Grid {
     }
 // ----------------------------------------
 
-    public void set_i_kitei_jyoutai(int i) {
-        i_kitei_jyoutai = i;
-        if (i_kitei_jyoutai > 2) {
-            i_kitei_jyoutai = 0;
+    public void set_i_base_state(GridState i) {
+        i_base_state = i;
+        if (i_base_state.getState() > 2) {
+            i_base_state = GridState.HIDDEN;
         }
-        if (i_kitei_jyoutai < 0) {
-            i_kitei_jyoutai = 2;
+        if (i_base_state.getState() < 0) {
+            i_base_state = GridState.FULL;
         }
 
-        if (jyoutai() == 1) {
-            if (Math.abs(d_grid_a_nagasa - 1.0) > 0.000001) {
-                set_i_kitei_jyoutai(2);
+        if (state() == GridState.WITHIN_PAPER) {
+            if (Math.abs(d_grid_a_length - 1.0) > 0.000001) {
+                set_i_base_state(GridState.FULL);
             }
-            if (Math.abs(d_grid_b_nagasa - 1.0) > 0.000001) {
-                set_i_kitei_jyoutai(2);
+            if (Math.abs(d_grid_b_length - 1.0) > 0.000001) {
+                set_i_base_state(GridState.FULL);
             }
-            if (Math.abs(d_grid_kakudo - (-90.0)) > 0.000001) {
-                set_i_kitei_jyoutai(2);
+            if (Math.abs(d_grid_angle - (-90.0)) > 0.000001) {
+                set_i_base_state(GridState.FULL);
             }
         }
     }
 
     //------
-    //public int  get_i_kitei_jyoutai() {return i_kitei_jyoutai	;}
-    public int jyoutai() {
-        return i_kitei_jyoutai;
+    //public int  get_i_kitei_jyoutai() {return i_base_state	;}
+    public GridState state() {
+        return i_base_state;
     }
 //------
 
     public Point getIndex(Point t0) {//obj系座標のTenから、格子の指数を得る
-        //行列 [d_kousi_ax, d_kousi_bx]によって[1]は格子ベクトルaに変換され、[1]は格子ベクトルbに変換される。
-        //     [d_kousi_ay, d_kousi_by]        [0]　　　　　　　 　　　　　　[0]
+        //行列 [d_grid_ax, d_grid_bx]によって[1]は格子ベクトルaに変換され、[1]は格子ベクトルbに変換される。
+        //     [d_grid_ay, d_grid_by]        [0]　　　　　　　 　　　　　　[0]
         //この逆行列によってobj系座標のTenは格子の指数に変換される。
         //　　　　　
         //行列の記号の定義
@@ -269,7 +264,7 @@ public class Grid {
         if (p_d_index.getX() > a_index_max) {
             a_index_max = p_d_index.getX();
         }
-        int kousi_a_max = (int) Math.ceil(a_index_max);
+        int grid_a_max = (int) Math.ceil(a_index_max);
         double a_index_min = p_a_index.getX();
         if (p_b_index.getX() < a_index_min) {
             a_index_min = p_b_index.getX();
@@ -280,7 +275,7 @@ public class Grid {
         if (p_d_index.getX() < a_index_min) {
             a_index_min = p_d_index.getX();
         }
-        int kousi_a_min = (int) Math.floor(a_index_min);
+        int grid_a_min = (int) Math.floor(a_index_min);
         double b_index_max = p_a_index.getY();
         if (p_b_index.getY() > b_index_max) {
             b_index_max = p_b_index.getY();
@@ -291,7 +286,7 @@ public class Grid {
         if (p_d_index.getY() > b_index_max) {
             b_index_max = p_d_index.getY();
         }
-        int kousi_b_max = (int) Math.ceil(b_index_max);
+        int grid_b_max = (int) Math.ceil(b_index_max);
         double b_index_min = p_a_index.getY();
         if (p_b_index.getY() < b_index_min) {
             b_index_min = p_b_index.getY();
@@ -302,10 +297,10 @@ public class Grid {
         if (p_d_index.getY() < b_index_min) {
             b_index_min = p_d_index.getY();
         }
-        int kousi_b_min = (int) Math.floor(b_index_min);
+        int grid_b_min = (int) Math.floor(b_index_min);
 
         //AAAAAAAAAAAAAAAAAAA
-        return kousi_a_min;
+        return grid_a_min;
     }
 
     // ----------------------------
@@ -329,7 +324,7 @@ public class Grid {
         if (p_d_index.getX() > a_index_max) {
             a_index_max = p_d_index.getX();
         }
-        int kousi_a_max = (int) Math.ceil(a_index_max);
+        int grid_a_max = (int) Math.ceil(a_index_max);
         double a_index_min = p_a_index.getX();
         if (p_b_index.getX() < a_index_min) {
             a_index_min = p_b_index.getX();
@@ -340,7 +335,7 @@ public class Grid {
         if (p_d_index.getX() < a_index_min) {
             a_index_min = p_d_index.getX();
         }
-        int kousi_a_min = (int) Math.floor(a_index_min);
+        int grid_a_min = (int) Math.floor(a_index_min);
         double b_index_max = p_a_index.getY();
         if (p_b_index.getY() > b_index_max) {
             b_index_max = p_b_index.getY();
@@ -351,7 +346,7 @@ public class Grid {
         if (p_d_index.getY() > b_index_max) {
             b_index_max = p_d_index.getY();
         }
-        int kousi_b_max = (int) Math.ceil(b_index_max);
+        int grid_b_max = (int) Math.ceil(b_index_max);
         double b_index_min = p_a_index.getY();
         if (p_b_index.getY() < b_index_min) {
             b_index_min = p_b_index.getY();
@@ -362,10 +357,10 @@ public class Grid {
         if (p_d_index.getY() < b_index_min) {
             b_index_min = p_d_index.getY();
         }
-        int kousi_b_min = (int) Math.floor(b_index_min);
+        int grid_b_min = (int) Math.floor(b_index_min);
 
         //AAAAAAAAAAAAAAAAAAA
-        return kousi_a_max;
+        return grid_a_max;
     }
 
     // ----------------------------
@@ -389,7 +384,7 @@ public class Grid {
         if (p_d_index.getX() > a_index_max) {
             a_index_max = p_d_index.getX();
         }
-        int kousi_a_max = (int) Math.ceil(a_index_max);
+        int grid_a_max = (int) Math.ceil(a_index_max);
         double a_index_min = p_a_index.getX();
         if (p_b_index.getX() < a_index_min) {
             a_index_min = p_b_index.getX();
@@ -400,7 +395,7 @@ public class Grid {
         if (p_d_index.getX() < a_index_min) {
             a_index_min = p_d_index.getX();
         }
-        int kousi_a_min = (int) Math.floor(a_index_min);
+        int grid_a_min = (int) Math.floor(a_index_min);
         double b_index_max = p_a_index.getY();
         if (p_b_index.getY() > b_index_max) {
             b_index_max = p_b_index.getY();
@@ -411,7 +406,7 @@ public class Grid {
         if (p_d_index.getY() > b_index_max) {
             b_index_max = p_d_index.getY();
         }
-        int kousi_b_max = (int) Math.ceil(b_index_max);
+        int grid_b_max = (int) Math.ceil(b_index_max);
         double b_index_min = p_a_index.getY();
         if (p_b_index.getY() < b_index_min) {
             b_index_min = p_b_index.getY();
@@ -422,10 +417,10 @@ public class Grid {
         if (p_d_index.getY() < b_index_min) {
             b_index_min = p_d_index.getY();
         }
-        int kousi_b_min = (int) Math.floor(b_index_min);
+        int grid_b_min = (int) Math.floor(b_index_min);
 
         //AAAAAAAAAAAAAAAAAAA
-        return kousi_b_min;
+        return grid_b_min;
     }
 
     // ----------------------------
@@ -449,7 +444,7 @@ public class Grid {
         if (p_d_index.getX() > a_index_max) {
             a_index_max = p_d_index.getX();
         }
-        int kousi_a_max = (int) Math.ceil(a_index_max);
+        int grid_a_max = (int) Math.ceil(a_index_max);
         double a_index_min = p_a_index.getX();
         if (p_b_index.getX() < a_index_min) {
             a_index_min = p_b_index.getX();
@@ -460,7 +455,7 @@ public class Grid {
         if (p_d_index.getX() < a_index_min) {
             a_index_min = p_d_index.getX();
         }
-        int kousi_a_min = (int) Math.floor(a_index_min);
+        int grid_a_min = (int) Math.floor(a_index_min);
         double b_index_max = p_a_index.getY();
         if (p_b_index.getY() > b_index_max) {
             b_index_max = p_b_index.getY();
@@ -471,7 +466,7 @@ public class Grid {
         if (p_d_index.getY() > b_index_max) {
             b_index_max = p_d_index.getY();
         }
-        int kousi_b_max = (int) Math.ceil(b_index_max);
+        int grid_b_max = (int) Math.ceil(b_index_max);
         double b_index_min = p_a_index.getY();
         if (p_b_index.getY() < b_index_min) {
             b_index_min = p_b_index.getY();
@@ -482,10 +477,10 @@ public class Grid {
         if (p_d_index.getY() < b_index_min) {
             b_index_min = p_d_index.getY();
         }
-        int kousi_b_min = (int) Math.floor(b_index_min);
+        int grid_b_min = (int) Math.floor(b_index_min);
 
         //AAAAAAAAAAAAAAAAAAA
-        return kousi_b_max;
+        return grid_b_max;
     }
 
 
@@ -497,11 +492,11 @@ public class Grid {
         return grid_color;
     }
 
-    public void set_kousi_memori_color(Color color0) {
+    public void setGridScaleColor(Color color0) {
         grid_scale_color = color0;
     }
 
-    public Color get_kousi_memori_color() {
+    public Color get_grid_scale_color() {
         return grid_scale_color;
     }
 
@@ -522,7 +517,7 @@ public class Grid {
         g2.setStroke(new BasicStroke((float) gridLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状
 
 
-        if (jyoutai() != 0) {
+        if (state() != GridState.HIDDEN) {
             Point p0_a = new Point();
             p0_a.set(0, 0);//画面の左上カドのTV系座標
             Point p0_b = new Point();
@@ -542,55 +537,55 @@ public class Grid {
             p_d.set(camera.TV2object(p0_d));//画面の右上カドのobj系座標
 
 
-            int kousi_gamen_a_max = get_a_index_max(p_a, p_b, p_c, p_d);
-            int kousi_gamen_a_min = get_a_index_min(p_a, p_b, p_c, p_d);
-            int kousi_gamen_b_max = get_b_index_max(p_a, p_b, p_c, p_d);
-            int kousi_gamen_b_min = get_b_index_min(p_a, p_b, p_c, p_d);
+            int grid_gamen_a_max = get_a_index_max(p_a, p_b, p_c, p_d);
+            int grid_gamen_a_min = get_a_index_min(p_a, p_b, p_c, p_d);
+            int grid_gamen_b_max = get_b_index_max(p_a, p_b, p_c, p_d);
+            int grid_gamen_b_min = get_b_index_min(p_a, p_b, p_c, p_d);
 
             //-------------------------------------
-            if (jyoutai() == 1) {
+            if (state() == GridState.WITHIN_PAPER) {
 
-                int kousi_yousi_x_max = bunsuu();
-                int kousi_yousi_x_min = 0;
-                int kousi_yousi_y_max = bunsuu();
-                int kousi_yousi_y_min = 0;
+                int grid_yousi_x_max = bunsuu();
+                int grid_yousi_x_min = 0;
+                int grid_yousi_y_max = bunsuu();
+                int grid_yousi_y_min = 0;
 
-                if (kousi_gamen_a_max > kousi_yousi_x_max) {
-                    kousi_gamen_a_max = kousi_yousi_x_max;
+                if (grid_gamen_a_max > grid_yousi_x_max) {
+                    grid_gamen_a_max = grid_yousi_x_max;
                 }
-                if (kousi_gamen_a_min < kousi_yousi_x_min) {
-                    kousi_gamen_a_min = kousi_yousi_x_min;
+                if (grid_gamen_a_min < grid_yousi_x_min) {
+                    grid_gamen_a_min = grid_yousi_x_min;
                 }
-                if (kousi_gamen_b_max > kousi_yousi_y_max) {
-                    kousi_gamen_b_max = kousi_yousi_y_max;
+                if (grid_gamen_b_max > grid_yousi_y_max) {
+                    grid_gamen_b_max = grid_yousi_y_max;
                 }
-                if (kousi_gamen_b_min < kousi_yousi_y_min) {
-                    kousi_gamen_b_min = kousi_yousi_y_min;
+                if (grid_gamen_b_min < grid_yousi_y_min) {
+                    grid_gamen_b_min = grid_yousi_y_min;
                 }
 
             }
 
-            if (jyoutai() <= 2) {
+            if (state().getState() <= 2) {
                 //g.setColor(new Color(230, 230, 230));
                 g.setColor(grid_color);
-                for (int i = kousi_gamen_a_min; i <= kousi_gamen_a_max; i++) {
+                for (int i = grid_gamen_a_min; i <= grid_gamen_a_max; i++) {
                     //double k_zah = d_haba()*i;
 
-                    s_ob.set(d_grid_ax * i + d_grid_bx * kousi_gamen_b_min + okx0,
-                            d_grid_ay * i + d_grid_by * kousi_gamen_b_min + oky0,
-                            d_grid_ax * i + d_grid_bx * kousi_gamen_b_max + okx0,
-                            d_grid_ay * i + d_grid_by * kousi_gamen_b_max + oky0);
+                    s_ob.set(d_grid_ax * i + d_grid_bx * grid_gamen_b_min + okx0,
+                            d_grid_ay * i + d_grid_by * grid_gamen_b_min + oky0,
+                            d_grid_ax * i + d_grid_bx * grid_gamen_b_max + okx0,
+                            d_grid_ay * i + d_grid_by * grid_gamen_b_max + oky0);
                     s_tv.set(camera.object2TV(s_ob));
                     g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
                 }
 
-                for (int i = kousi_gamen_b_min; i <= kousi_gamen_b_max; i++) {
+                for (int i = grid_gamen_b_min; i <= grid_gamen_b_max; i++) {
                     //double k_zah = d_haba()*i;
 
-                    s_ob.set(d_grid_ax * kousi_gamen_a_min + d_grid_bx * i + okx0,
-                            d_grid_ay * kousi_gamen_a_min + d_grid_by * i + oky0,
-                            d_grid_ax * kousi_gamen_a_max + d_grid_bx * i + okx0,
-                            d_grid_ay * kousi_gamen_a_max + d_grid_by * i + oky0);
+                    s_ob.set(d_grid_ax * grid_gamen_a_min + d_grid_bx * i + okx0,
+                            d_grid_ay * grid_gamen_a_min + d_grid_by * i + oky0,
+                            d_grid_ax * grid_gamen_a_max + d_grid_bx * i + okx0,
+                            d_grid_ay * grid_gamen_a_max + d_grid_by * i + oky0);
 
 
                     s_tv.set(camera.object2TV(s_ob));
@@ -604,41 +599,41 @@ public class Grid {
                     g.setColor(grid_scale_color);
 
 //System.out.println("20170526  ********************");
-//System.out.println("b_to_heikouna_memori_kannkaku = "+b_to_heikouna_memori_kannkaku);
+//System.out.println("b_to_parallel_scale_interval = "+b_to_parallel_scale_interval);
 
                     int i_jyouyo;//剰余
 
-                    for (int i = kousi_gamen_a_min; i <= kousi_gamen_a_max; i++) {
+                    for (int i = grid_gamen_a_min; i <= grid_gamen_a_max; i++) {
 //System.out.println("	i = "+i);
-//System.out.println("	i % b_to_heikouna_memori_kannkaku = "+i % b_to_heikouna_memori_kannkaku);
-                        i_jyouyo = i % b_to_heikouna_memori_kannkaku;
+//System.out.println("	i % b_to_parallel_scale_interval = "+i % b_to_parallel_scale_interval);
+                        i_jyouyo = i % b_to_parallel_scale_interval;
                         if (i_jyouyo < 0) {
-                            i_jyouyo = i_jyouyo + b_to_heikouna_memori_kannkaku;
+                            i_jyouyo = i_jyouyo + b_to_parallel_scale_interval;
                         }
-                        if (i_jyouyo == b_to_heikouna_memori_iti) {
+                        if (i_jyouyo == b_to_parallel_scale_position) {
 
 
-                            s_ob.set(d_grid_ax * i + d_grid_bx * kousi_gamen_b_min + okx0,
-                                    d_grid_ay * i + d_grid_by * kousi_gamen_b_min + oky0,
-                                    d_grid_ax * i + d_grid_bx * kousi_gamen_b_max + okx0,
-                                    d_grid_ay * i + d_grid_by * kousi_gamen_b_max + oky0);
+                            s_ob.set(d_grid_ax * i + d_grid_bx * grid_gamen_b_min + okx0,
+                                    d_grid_ay * i + d_grid_by * grid_gamen_b_min + oky0,
+                                    d_grid_ax * i + d_grid_bx * grid_gamen_b_max + okx0,
+                                    d_grid_ay * i + d_grid_by * grid_gamen_b_max + oky0);
                             s_tv.set(camera.object2TV(s_ob));
                             g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
                         }
                     }
 
-                    for (int i = kousi_gamen_b_min; i <= kousi_gamen_b_max; i++) {
-                        i_jyouyo = i % a_to_heikouna_memori_kannkaku;
+                    for (int i = grid_gamen_b_min; i <= grid_gamen_b_max; i++) {
+                        i_jyouyo = i % a_to_parallel_scale_interval;
                         if (i_jyouyo < 0) {
-                            i_jyouyo = i_jyouyo + a_to_heikouna_memori_kannkaku;
+                            i_jyouyo = i_jyouyo + a_to_parallel_scale_interval;
                         }
 
-                        if (i_jyouyo == a_to_heikouna_memori_iti) {
+                        if (i_jyouyo == a_to_parallel_scale_position) {
 
-                            s_ob.set(d_grid_ax * kousi_gamen_a_min + d_grid_bx * i + okx0,
-                                    d_grid_ay * kousi_gamen_a_min + d_grid_by * i + oky0,
-                                    d_grid_ax * kousi_gamen_a_max + d_grid_bx * i + okx0,
-                                    d_grid_ay * kousi_gamen_a_max + d_grid_by * i + oky0);
+                            s_ob.set(d_grid_ax * grid_gamen_a_min + d_grid_bx * i + okx0,
+                                    d_grid_ay * grid_gamen_a_min + d_grid_by * i + oky0,
+                                    d_grid_ax * grid_gamen_a_max + d_grid_bx * i + okx0,
+                                    d_grid_ay * grid_gamen_a_max + d_grid_by * i + oky0);
 
 
                             s_tv.set(camera.object2TV(s_ob));
@@ -756,36 +751,36 @@ if(p_d.gety()<p_y_min){p_y_min=p_d.gety();}if(p_y_min>-200.0-1.0){p_y_min=-200.0
 
     // --------------------------
 
-    public Point moyori_kousi_ten(Point t0) {
+    public Point moyori_grid_point(Point t0) {
 
         Point t2 = new Point(); //格子点
-        double kousi_x;
-        double kousi_y;
+        double grid_x;
+        double grid_y;
 
 
-        kousi_x = Math.round((t0.getX() - okx0) / d_haba()) * d_haba() + okx0;
-        kousi_y = Math.round((t0.getY() - oky0) / d_haba()) * d_haba() + oky0;
+        grid_x = Math.round((t0.getX() - okx0) / d_haba()) * d_haba() + okx0;
+        grid_y = Math.round((t0.getY() - oky0) / d_haba()) * d_haba() + oky0;
 
 
         if (bunsuu() > 0) {
 
             //用紙枠の中の格子点との近さを検討
-            if (jyoutai() == 1) {
+            if (state() == GridState.WITHIN_PAPER) {
 
                 Point t_1 = new Point(t0.getX() - taikakusen_max, t0.getY() - taikakusen_max);
                 Point t_2 = new Point(t0.getX() - taikakusen_max, t0.getY() + taikakusen_max);
                 Point t_3 = new Point(t0.getX() + taikakusen_max, t0.getY() + taikakusen_max);
                 Point t_4 = new Point(t0.getX() + taikakusen_max, t0.getY() - taikakusen_max);
 
-                int kousi_a_max = get_a_index_max(t_1, t_2, t_3, t_4);
-                int kousi_a_min = get_a_index_min(t_1, t_2, t_3, t_4);
-                int kousi_b_max = get_b_index_max(t_1, t_2, t_3, t_4);
-                int kousi_b_min = get_b_index_min(t_1, t_2, t_3, t_4);
+                int grid_a_max = get_a_index_max(t_1, t_2, t_3, t_4);
+                int grid_a_min = get_a_index_min(t_1, t_2, t_3, t_4);
+                int grid_b_max = get_b_index_max(t_1, t_2, t_3, t_4);
+                int grid_b_min = get_b_index_min(t_1, t_2, t_3, t_4);
 
 
                 double kyori_min = taikakusen_max;
-                for (int i = kousi_a_min; i <= kousi_a_max; i++) {
-                    for (int j = kousi_b_min; j <= kousi_b_max; j++) {
+                for (int i = grid_a_min; i <= grid_a_max; i++) {
+                    for (int j = grid_b_min; j <= grid_b_max; j++) {
 
                         Point t_tmp = new Point(okx0 + d_grid_ax * i + d_grid_bx * j, oky0 + d_grid_ay * i + d_grid_by * j);
                         if (((-200.000001 <= t_tmp.getX()) && (t_tmp.getX() <= 200.000001)) && ((-200.000001 <= t_tmp.getY()) && (t_tmp.getY() <= 200.000001))) {
@@ -800,23 +795,23 @@ if(p_d.gety()<p_y_min){p_y_min=p_d.gety();}if(p_y_min>-200.0-1.0){p_y_min=-200.0
                 }
             }
 
-            //用紙枠の内外に関係なく格子点との近さを検討
-            if (jyoutai() == 2) {
+            //Consider the proximity to the grid points regardless of the inside or outside of the paper frame
+            if (state() == GridState.FULL) {
 
                 Point t_1 = new Point(t0.getX() - taikakusen_max, t0.getY() - taikakusen_max);
                 Point t_2 = new Point(t0.getX() - taikakusen_max, t0.getY() + taikakusen_max);
                 Point t_3 = new Point(t0.getX() + taikakusen_max, t0.getY() + taikakusen_max);
                 Point t_4 = new Point(t0.getX() + taikakusen_max, t0.getY() - taikakusen_max);
 
-                int kousi_a_max = get_a_index_max(t_1, t_2, t_3, t_4);
-                int kousi_a_min = get_a_index_min(t_1, t_2, t_3, t_4);
-                int kousi_b_max = get_b_index_max(t_1, t_2, t_3, t_4);
-                int kousi_b_min = get_b_index_min(t_1, t_2, t_3, t_4);
+                int grid_a_max = get_a_index_max(t_1, t_2, t_3, t_4);
+                int grid_a_min = get_a_index_min(t_1, t_2, t_3, t_4);
+                int grid_b_max = get_b_index_max(t_1, t_2, t_3, t_4);
+                int grid_b_min = get_b_index_min(t_1, t_2, t_3, t_4);
 
 
                 double kyori_min = taikakusen_max;
-                for (int i = kousi_a_min; i <= kousi_a_max; i++) {
-                    for (int j = kousi_b_min; j <= kousi_b_max; j++) {
+                for (int i = grid_a_min; i <= grid_a_max; i++) {
+                    for (int j = grid_b_min; j <= grid_b_max; j++) {
                         Point t_tmp = new Point(okx0 + d_grid_ax * i + d_grid_bx * j, oky0 + d_grid_ay * i + d_grid_by * j);
                         if (t0.distance(t_tmp) <= kyori_min) {
                             kyori_min = t0.distance(t_tmp);

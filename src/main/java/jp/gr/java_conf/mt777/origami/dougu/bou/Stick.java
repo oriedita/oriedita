@@ -1,22 +1,24 @@
 package jp.gr.java_conf.mt777.origami.dougu.bou;
 
+import jp.gr.java_conf.mt777.origami.orihime.LineType;
+
 /**
  * A line from a point to a point, begin and end refer to points.
  */
 public class Stick {
     int begin;
     int end;
-    int iColor;//If it is 0, there is no mountain valley. If 1, it's a mountain. If it is 2, it is a valley.
+    LineType iColor;//If it is 0, there is no mountain valley. If 1, it's a mountain. If it is 2, it is a valley.
 
     //コンストラクタ
     public Stick() {
         begin = 0;
         end = 0;
-        iColor = 0;
+        iColor = LineType.BLACK_0;
     }
 
     //コンストラクタ
-    public Stick(int ma, int at, int ic) {
+    public Stick(int ma, int at, LineType ic) {
         begin = ma;
         end = at;
         iColor = ic;
@@ -29,7 +31,7 @@ public class Stick {
         iColor = stick.getColor();
     }
 
-    public void set(int i, int j, int k) {
+    public void set(int i, int j, LineType k) {
         begin = i;
         end = j;
         iColor = k;
@@ -43,7 +45,7 @@ public class Stick {
         end = i;
     }
 
-    public void setColor(int i) {
+    public void setColor(LineType i) {
         iColor = i;
     }
 
@@ -56,13 +58,13 @@ public class Stick {
         return end;
     }
 
-    public int getColor() {
+    public LineType getColor() {
         return iColor;
     }
 
     public void reset() {
         begin = 0;
         end = 0;
-        iColor = 0;
+        iColor = LineType.BLACK_0;
     }
 }

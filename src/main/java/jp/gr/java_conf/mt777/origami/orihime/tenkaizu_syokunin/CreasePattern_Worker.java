@@ -5,6 +5,7 @@ import java.awt.*;
 import jp.gr.java_conf.mt777.origami.dougu.linestore.*;
 import jp.gr.java_conf.mt777.origami.dougu.camera.*;
 import jp.gr.java_conf.mt777.origami.dougu.pointstore.*;
+import jp.gr.java_conf.mt777.origami.orihime.LineType;
 import jp.gr.java_conf.mt777.origami.orihime.undo_box.*;
 import jp.gr.java_conf.mt777.kiroku.memo.*;
 import jp.gr.java_conf.mt777.zukei2d.senbun.*;
@@ -223,7 +224,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     }
 
     //点集合の持つ棒の色を得る（点集合を展開図として扱う場合では、この色は山谷をあらわす）。
-    public int getcolor(int i) {
+    public LineType getColor(int i) {
         return pointSet.getColor(i);
     }
 
@@ -726,13 +727,13 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         g.setColor(Color.black);
         //	for (int i=1; i<=c.getTensuu(); i++ ){ g.drawString( text.valueOf(i),gx(c.getTenx(i)),gy(c.getTeny(i)));}
         for (int i = 1; i <= pointSet.getSticksTotal(); i++) {
-            if (pointSet.getColor(i) == 0) {
+            if (pointSet.getColor(i) == LineType.BLACK_0) {
                 g.setColor(Color.black);
             }
-            if (pointSet.getColor(i) == 1) {
+            if (pointSet.getColor(i) == LineType.RED_1) {
                 g.setColor(Color.red);
             }
-            if (pointSet.getColor(i) == 2) {
+            if (pointSet.getColor(i) == LineType.BLUE_2) {
                 g.setColor(Color.blue);
             }
             g.drawLine(gx(pointSet.getBeginX(i)), gy(pointSet.getBeginY(i)), gx(pointSet.getEndX(i)), gy(pointSet.getEndY(i))); //直線
@@ -746,13 +747,13 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         LineSegment s_tv = new LineSegment();
         g.setColor(Color.black);
         for (int i = 1; i <= pointSet.getSticksTotal(); i++) {
-            if (pointSet.getColor(i) == 0) {
+            if (pointSet.getColor(i) == LineType.BLACK_0) {
                 g.setColor(Color.black);
             }
-            if (pointSet.getColor(i) == 1) {
+            if (pointSet.getColor(i) == LineType.RED_1) {
                 g.setColor(Color.red);
             }
-            if (pointSet.getColor(i) == 2) {
+            if (pointSet.getColor(i) == LineType.BLUE_2) {
                 g.setColor(Color.blue);
             }
 
@@ -808,13 +809,13 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         LineSegment s_tv = new LineSegment();
         g.setColor(Color.black);
         for (int i = 1; i <= pointSet.getSticksTotal(); i++) {
-            if (pointSet.getColor(i) == 0) {
+            if (pointSet.getColor(i) == LineType.BLACK_0) {
                 g.setColor(Color.black);
             }
-            if (pointSet.getColor(i) == 1) {
+            if (pointSet.getColor(i) == LineType.RED_1) {
                 g.setColor(Color.red);
             }
-            if (pointSet.getColor(i) == 2) {
+            if (pointSet.getColor(i) == LineType.BLUE_2) {
                 g.setColor(Color.blue);
             }
 
