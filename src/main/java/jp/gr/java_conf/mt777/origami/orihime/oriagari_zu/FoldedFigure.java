@@ -14,16 +14,10 @@ import jp.gr.java_conf.mt777.kiroku.memo.*;
 
 import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
-
-// -------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------
-
 public class FoldedFigure {
     App orihime_app;
 
     double r = 3.0;                   //Criteria for determining the radius of the circles at both ends of the straight line of the basic branch structure and the proximity of the branches to various points
-
 
     public double d_foldedFigure_syukusyaku_keisuu = 1.0;//折り上がり図の縮尺係数
     public double d_foldedFigure_kaiten_hosei = 0.0;//折り上がり図の回転表示角度の補正角度
@@ -64,7 +58,7 @@ public class FoldedFigure {
     //int ip3a=1;
     public int ip3 = 1;// Used by cp_worker1 to specify the reference plane for folding.
 
-    public int ip4 = 0;// This specifies whether to flip over at the beginning of cp_worker1. Do not set to 0. If it is 1, turn it over.
+    public FoldedFigureState ip4 = FoldedFigureState.FRONT_0;// This specifies whether to flip over at the beginning of cp_worker1. Do not set to 0. If it is 1, turn it over.
 
     public int ip5 = -1;    // After the top and bottom craftsmen once show the overlap of foldable paper,
     // The result of the first ct_worker.susumu (SubFaceTotal) when looking for yet another paper overlap. If it was
@@ -214,18 +208,18 @@ public class FoldedFigure {
         }
 
         //Display of folded figure (table)
-        if (((ip4 == 0) || (ip4 == 2)) || (ip4 == 3)) {
+        if (((ip4 == FoldedFigureState.FRONT_0) || (ip4 == FoldedFigureState.BOTH_2)) || (ip4 == FoldedFigureState.TRANSPARENT_3)) {
             ct_worker.setCamera(camera_of_foldedFigure_front);
 
             //透過図の表示
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
             if (display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) {        // display_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
+                ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
             }
 
             //折り上がり図の表示************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
             if (display_flg == FoldedFigureDisplayStyle.PAPER_5) {
-                ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get());// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker3.get());// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
             //Cross-shaped display at the center of movement of the folded figure
@@ -235,18 +229,18 @@ public class FoldedFigure {
         }
 
         //Display of folded figure (back)
-        if (((ip4 == 1) || (ip4 == 2)) || (ip4 == 3)) {
+        if (((ip4 == FoldedFigureState.BACK_1) || (ip4 == FoldedFigureState.BOTH_2)) || (ip4 == FoldedFigureState.TRANSPARENT_3)) {
             camera_of_foldedFigure_rear.display();
             ct_worker.setCamera(camera_of_foldedFigure_rear);
 
             //Display of transparency
             if (display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) {        // display_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
+                ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
             }
 
             //Display of folded figure ************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
             if (display_flg == FoldedFigureDisplayStyle.PAPER_5) {
-                ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get());// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker3.get());// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
             //Cross-shaped display at the center of movement of the folded figure
@@ -257,12 +251,12 @@ public class FoldedFigure {
         }
 
         //透過図（折りあがり図表示時に追加する分）
-        if ((ip4 == 3) && (display_flg == FoldedFigureDisplayStyle.PAPER_5)) {
+        if ((ip4 == FoldedFigureState.TRANSPARENT_3) && (display_flg == FoldedFigureDisplayStyle.PAPER_5)) {
             // ---------------------------------------------------------------------------------
             ct_worker.setCamera(camera_of_transparent_front);
             //透過図の表示
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
-            ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
+            ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
 
             //折り上がり図の動かし中心の十字表示
             //System.out.println("paint　+++++++++++++++++++++　折り上がり図の動かし中心の十字表示)");
@@ -275,7 +269,7 @@ public class FoldedFigure {
 
             //透過図の表示
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
-            ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
+            ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
 
             //折り上がり図の動かし中心の十字表示
             //System.out.println("paint　+++++++++++++++++++++　折り上がり図の動かし中心の十字表示)");
@@ -336,50 +330,46 @@ public class FoldedFigure {
 
         //針金図のsvg
         if (display_flg == FoldedFigureDisplayStyle.WIRE_2) {
-            memo_temp.addMemo(ct_worker.getMemo_wirediagram_for_svg_export(cp_worker1, cp_worker2.get(), cp_worker3.get(), 0));//４番目の整数は０なら面の枠のみ、１なら面を塗る
+            memo_temp.addMemo(ct_worker.getMemo_wirediagram_for_svg_export(cp_worker1, cp_worker2.get(), 0));//４番目の整数は０なら面の枠のみ、１なら面を塗る
         }
 
         //折りあがり図（表）のsvg
-        if (((ip4 == 0) || (ip4 == 2)) || (ip4 == 3)) {
+        if (((ip4 == FoldedFigureState.FRONT_0) || (ip4 == FoldedFigureState.BOTH_2)) || (ip4 == FoldedFigureState.TRANSPARENT_3)) {
             ct_worker.setCamera(camera_of_foldedFigure_front);
 
             //透過図のsvg
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
             if (display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) {        // display_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                memo_temp.addMemo(ct_worker.getMemo_wirediagram_for_svg_export(cp_worker1, cp_worker2.get(), cp_worker3.get(), 1));
+                memo_temp.addMemo(ct_worker.getMemo_wirediagram_for_svg_export(cp_worker1, cp_worker2.get(), 1));
             }
 
             //折り上がり図のsvg************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
             if (display_flg == FoldedFigureDisplayStyle.PAPER_5) {
                 //ct_worker.oekaki_oriagarizu_with_camera(bufferGraphics,cp_worker1,cp_worker2.get(),cp_worker3.get());// display_flg; Specify the display style of the folded figure. If it is 5, it is the same as when you actually fold the origami paper. If it is 3, it is a transparent view. If it is 2, it is a wire diagram.
-                memo_temp.addMemo(ct_worker.getMemo_for_svg_with_camera(cp_worker1, cp_worker2.get(), cp_worker3.get()));// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                memo_temp.addMemo(ct_worker.getMemo_for_svg_with_camera(cp_worker1, cp_worker3.get()));// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
 
             }
         }
 
         //折りあがり図（裏）のsvg
-        if (((ip4 == 1) || (ip4 == 2)) || (ip4 == 3)) {
+        if (((ip4 == FoldedFigureState.BACK_1) || (ip4 == FoldedFigureState.BOTH_2)) || (ip4 == FoldedFigureState.TRANSPARENT_3)) {
 
             ct_worker.setCamera(camera_of_foldedFigure_rear);
 
             //透過図のsvg
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
             if (display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) {        // display_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                memo_temp.addMemo(ct_worker.getMemo_wirediagram_for_svg_export(cp_worker1, cp_worker2.get(), cp_worker3.get(), 1));
+                memo_temp.addMemo(ct_worker.getMemo_wirediagram_for_svg_export(cp_worker1, cp_worker2.get(), 1));
             }
 
             //折り上がり図のsvg************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
             if (display_flg == FoldedFigureDisplayStyle.PAPER_5) {
-                //ct_worker.oekaki_oriagarizu_with_camera(bufferGraphics,cp_worker1,cp_worker2.get(),cp_worker3.get());// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
-                memo_temp.addMemo(ct_worker.getMemo_for_svg_with_camera(cp_worker1, cp_worker2.get(), cp_worker3.get()));// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
-
+                memo_temp.addMemo(ct_worker.getMemo_for_svg_with_camera(cp_worker1, cp_worker3.get()));// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
-
-
         }
 
         //透過図（折りあがり図表示時に追加する分）
-        if ((ip4 == 3) && (display_flg == FoldedFigureDisplayStyle.PAPER_5)) {
+        if ((ip4 == FoldedFigureState.TRANSPARENT_3) && (display_flg == FoldedFigureDisplayStyle.PAPER_5)) {
             // ---------------------------------------------------------------------------------
             ct_worker.setCamera(camera_of_transparent_front);
             //透過図のsvg
@@ -748,7 +738,7 @@ public class FoldedFigure {
         cp_worker3.lineStore2pointStore(bb_worker.get());
 
         System.out.println("＜＜＜＜＜oritatami_suitei_03()_____上下表職人ct_workerは、展開図職人cp_worker3から点集合を受け取り、Smenを設定する。");
-        ct_worker.SubFace_configure(cp_worker1, cp_worker2.get(), cp_worker3.get());
+        ct_worker.SubFace_configure(cp_worker2.get(), cp_worker3.get());
         //If you want to make a transparent map up to this point, you can. The transmission diagram is a SubFace diagram with density added.
         return 1000;
     }
@@ -765,7 +755,7 @@ public class FoldedFigure {
 
         ip1 = 0;
         findAnotherOverlapValid = false;
-        ip1 = ct_worker.ClassTable_configure(cp_worker1, cp_worker2.get(), cp_worker3.get());   //ip1=折った後の表裏が同じ面が隣接するという誤りがあれば0を、無ければ1000を格納する変数。
+        ip1 = ct_worker.ClassTable_configure(cp_worker1, cp_worker2.get());   //ip1=折った後の表裏が同じ面が隣接するという誤りがあれば0を、無ければ1000を格納する変数。
         if (ip1 == 1000) {
             ip1 = 1000;
             findAnotherOverlapValid = true;
@@ -828,7 +818,7 @@ public class FoldedFigure {
 
     private Point p_m_left_on = new Point();//Coordinates when the left mouse button is pressed
     private int i_nanini_near = 0;//Point p is close to the point in the development view = 1, close to the point in the folded view = 2, not close to either = 0
-    private int i_most_near_PointId;
+    private int i_closestPointId;
     private int i_point_selection = 0;//Both cp_worker1 and cp_worker2 are not selected (situation i_point_selection = 0), cp_worker1 is selected and cp_worker2 is not selected (situation i_point_selection = 1), and the vertex is cp_worker2 selected (situation i_point_selection = 2).
     private Point move_previous_selection_point = new Point();//動かす前の選択した点の座標
 
@@ -873,20 +863,20 @@ public class FoldedFigure {
         cp_worker2.setCam_front(camera_of_foldedFigure_front);
         cp_worker2.setCam_rear(camera_of_foldedFigure_rear);
 
-        //i_mottomo_tikai_Tenidにpに最も近い点の番号を格納。近い点がまったくない場合はi_mottomo_tikai_Tenid=0
+        //i_closestPointIdにpに最も近い点の番号を格納。近い点がまったくない場合はi_closestPointId=0
         i_nanini_near = 0;//展開図の点に近い=1、折り上がり図の点に近い=2、どちらにも近くない=0
-        i_most_near_PointId = cp_worker1.closestPointId_with_camera(p);
-        if (i_most_near_PointId != 0) {
+        i_closestPointId = cp_worker1.closestPointId_with_camera(p);
+        if (i_closestPointId != 0) {
             i_nanini_near = 1;
         }
         if (cp_worker2.closestPointId_with_camera(p, ip4) != 0) {
             if (cp_worker1.closest_point_distance_with_camera(p) > cp_worker2.closest_point_distance_with_camera(p, ip4)) {
-                i_most_near_PointId = cp_worker2.closestPointId_with_camera(p, ip4);
+                i_closestPointId = cp_worker2.closestPointId_with_camera(p, ip4);
                 i_nanini_near = 2;
             }
-        }//i_mottomo_tikai_Tenidにpに最も近い点の番号を格納 ここまで
+        }//i_closestPointIdにpに最も近い点の番号を格納 ここまで
 
-        move_previous_selection_point.set(cp_worker2.getPoint(i_most_near_PointId));
+        move_previous_selection_point.set(cp_worker2.getPoint(i_closestPointId));
 
 
         System.out.println("i_nanini_tikai = " + i_nanini_near);
@@ -895,10 +885,10 @@ public class FoldedFigure {
 
             //i_ten_sentakuを決める
             i_point_selection = 0;
-            if (cp_worker1.getPointState(i_most_near_PointId) == 1) {
+            if (cp_worker1.getPointState(i_closestPointId) == 1) {
                 i_point_selection = 1;
             }
-            if (cp_worker2.getPointState(i_most_near_PointId) == 1) {
+            if (cp_worker2.getPointState(i_closestPointId) == 1) {
                 i_point_selection = 2;
             }
             //i_ten_sentakuを決める  ここまで
@@ -906,19 +896,19 @@ public class FoldedFigure {
 
             if (i_point_selection == 0) {
                 set_all_ten_sentaku_0();
-                //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
+                //折り上がり図でi_closestPointIdと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                 Point ps = new Point();
-                ps.set(cp_worker2.getPoint(i_most_near_PointId));
+                ps.set(cp_worker2.getPoint(i_closestPointId));
                 for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                     if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
                         cp_worker1.setPointState1(i);
                     }
                 }
-                cp_worker2.changePointState(i_most_near_PointId);
+                cp_worker2.changePointState(i_closestPointId);
             } else if (i_point_selection == 1) {
-                cp_worker2.changePointState(i_most_near_PointId);
+                cp_worker2.changePointState(i_closestPointId);
             } else if (i_point_selection == 2) {
-                cp_worker2.changePointState(i_most_near_PointId);
+                cp_worker2.changePointState(i_closestPointId);
             }
 
 
@@ -928,7 +918,7 @@ public class FoldedFigure {
 
             //i_ten_sentakuを決める
             i_point_selection = 0;
-            if (cp_worker1.getPointState(i_most_near_PointId) == 1) {
+            if (cp_worker1.getPointState(i_closestPointId) == 1) {
                 i_point_selection = 1;
                 if (cp_worker2.getSelectedPointsNum() > 0) {
                     i_point_selection = 2;
@@ -940,19 +930,18 @@ public class FoldedFigure {
             if (i_point_selection == 0) {
                 set_all_ten_sentaku_0();
 
-                //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
+                //折り上がり図でi_closestPointIdと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                 Point ps = new Point();
-                ps.set(cp_worker2.getPoint(i_most_near_PointId));
+                ps.set(cp_worker2.getPoint(i_closestPointId));
                 for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                     if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
                         cp_worker1.setPointState1(i);
                     }
                 }
-                cp_worker2.changePointState(i_most_near_PointId);
+                cp_worker2.changePointState(i_closestPointId);
             } else if (i_point_selection == 1) {
-                cp_worker2.changePointState(i_most_near_PointId);
+                cp_worker2.changePointState(i_closestPointId);
             } else if (i_point_selection == 2) {
-                //cp_worker2.change_ten_sentaku(i_mottomo_tikai_Tenid);
             }
 
 
@@ -1022,9 +1011,9 @@ public class FoldedFigure {
 
 
             cp_worker1.setAllPointState0();
-            //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
+            //折り上がり図でi_closestPointIdと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
             Point ps = new Point();
-            ps.set(cp_worker2.getPoint(i_most_near_PointId));
+            ps.set(cp_worker2.getPoint(i_closestPointId));
             for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                 if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
                     cp_worker1.setPointState1(i);
@@ -1045,20 +1034,20 @@ public class FoldedFigure {
         cp_worker2.setCam_front(camera_of_foldedFigure_front);
         cp_worker2.setCam_rear(camera_of_foldedFigure_rear);
 
-        //i_mottomo_tikai_Tenidにpに最も近い点の番号を格納。近い点がまったくない場合はi_mottomo_tikai_Tenid=0
+        //i_closestPointIdにpに最も近い点の番号を格納。近い点がまったくない場合はi_mottomo_tikai_Tenid=0
         i_nanini_near = 0;//展開図の点に近い=1、折り上がり図の点に近い=2、どちらにも近くない=0
-        i_most_near_PointId = cp_worker1.closestPointId_with_camera(p);
-        if (i_most_near_PointId != 0) {
+        i_closestPointId = cp_worker1.closestPointId_with_camera(p);
+        if (i_closestPointId != 0) {
             i_nanini_near = 1;
         }
         if (cp_worker2.closestPointId_with_camera(p, ip4) != 0) {
             if (cp_worker1.closest_point_distance_with_camera(p) > cp_worker2.closest_point_distance_with_camera(p, ip4)) {
-                i_most_near_PointId = cp_worker2.closestPointId_with_camera(p, ip4);
+                i_closestPointId = cp_worker2.closestPointId_with_camera(p, ip4);
                 i_nanini_near = 2;
             }
         }//i_mottomo_tikai_Tenidにpに最も近い点の番号を格納 ここまで
 
-        move_previous_selection_point.set(cp_worker2.getPoint(i_most_near_PointId));
+        move_previous_selection_point.set(cp_worker2.getPoint(i_closestPointId));
 
 
         System.out.println("i_nanini_tikai = " + i_nanini_near);
@@ -1067,10 +1056,10 @@ public class FoldedFigure {
 
             //i_ten_sentakuを決める
             i_point_selection = 0;
-            if (cp_worker1.getPointState(i_most_near_PointId) == 1) {
+            if (cp_worker1.getPointState(i_closestPointId) == 1) {
                 i_point_selection = 1;
             }
-            if (cp_worker2.getPointState(i_most_near_PointId) == 1) {
+            if (cp_worker2.getPointState(i_closestPointId) == 1) {
                 i_point_selection = 2;
             }
             //i_ten_sentakuを決める  ここまで
@@ -1080,17 +1069,17 @@ public class FoldedFigure {
                 set_all_ten_sentaku_0();
                 //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                 Point ps = new Point();
-                ps.set(cp_worker2.getPoint(i_most_near_PointId));
+                ps.set(cp_worker2.getPoint(i_closestPointId));
                 for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                     if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
                         cp_worker1.setPointState1(i);
                     }
                 }
-                cp_worker2.changePointState(i_most_near_PointId);
+                cp_worker2.changePointState(i_closestPointId);
             } else if (i_point_selection == 1) {
-                cp_worker2.changePointState(i_most_near_PointId);
+                cp_worker2.changePointState(i_closestPointId);
             } else if (i_point_selection == 2) {
-                cp_worker2.changePointState(i_most_near_PointId);
+                cp_worker2.changePointState(i_closestPointId);
             }
 
 
@@ -1100,7 +1089,7 @@ public class FoldedFigure {
 
             //i_ten_sentakuを決める
             i_point_selection = 0;
-            if (cp_worker1.getPointState(i_most_near_PointId) == 1) {
+            if (cp_worker1.getPointState(i_closestPointId) == 1) {
                 i_point_selection = 1;
                 if (cp_worker2.getSelectedPointsNum() > 0) {
                     i_point_selection = 2;
@@ -1114,15 +1103,15 @@ public class FoldedFigure {
 
                 //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                 Point ps = new Point();
-                ps.set(cp_worker2.getPoint(i_most_near_PointId));
+                ps.set(cp_worker2.getPoint(i_closestPointId));
                 for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                     if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
                         cp_worker1.setPointState1(i);
                     }
                 }
-                cp_worker2.changePointState(i_most_near_PointId);
+                cp_worker2.changePointState(i_closestPointId);
             } else if (i_point_selection == 1) {
-                cp_worker2.changePointState(i_most_near_PointId);
+                cp_worker2.changePointState(i_closestPointId);
             } else if (i_point_selection == 2) {
                 //cp_worker2.change_ten_sentaku(i_mottomo_tikai_Tenid);
             }
@@ -1204,7 +1193,7 @@ public class FoldedFigure {
             cp_worker1.setAllPointState0();
             //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
             Point ps = new Point();
-            ps.set(cp_worker2.getPoint(i_most_near_PointId));
+            ps.set(cp_worker2.getPoint(i_closestPointId));
             for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                 if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
                     cp_worker1.setPointState1(i);

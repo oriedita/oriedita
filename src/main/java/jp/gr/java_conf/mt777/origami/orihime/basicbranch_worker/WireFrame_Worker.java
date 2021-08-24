@@ -18,7 +18,6 @@ import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 public class WireFrame_Worker {
-    OritaCalc oc = new OritaCalc(); //各種計算用の関数を使うためのクラスのインスタンス化
     double r = 3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
     LineType icol;//線分の色
     int taisyousei;
@@ -26,7 +25,7 @@ public class WireFrame_Worker {
     Point pa = new Point(); //Vector from the position where the mouse button is pressed to point a
     Point pb = new Point(); //マウスボタンが押された位置からb点までのベクトル
 
-    int move_mode = 0;    //Operation mode to move the branches. 0 = Do nothing, 1 = Move point a, 2 = Move point b, 3 = Translate branch, 4 = Add new
+    MoveMode move_mode = MoveMode.NOTHING;    //Operation mode to move the branches. 0 = Do nothing, 1 = Move point a, 2 = Move point b, 3 = Translate branch, 4 = Add new
     int iActiveBranch;              //Active branch number
 
     int i_saigo_no_lineSegment_no_maru_kaku = 1;    //1 draw, 0 not draw
@@ -62,7 +61,7 @@ public class WireFrame_Worker {
     // Kihonshi_Syokunin(  Senbunsyuugou k0,double r0 ){  //コンストラクタ
     public WireFrame_Worker(double r0) {  //コンストラクタ
         r = r0;
-        move_mode = 0;
+        move_mode = MoveMode.NOTHING;
         iActiveBranch = 0;
         icol = LineType.BLACK_0;
         trash.set(new Point(10.0, 150.0), 1, new Point(0.0, 0.0));
@@ -83,7 +82,7 @@ public class WireFrame_Worker {
     public void reset() {
         r = 2.0;
         lineSet.reset();
-        move_mode = 0;
+        move_mode = MoveMode.NOTHING;
         iActiveBranch = 0;
         icol = LineType.BLACK_0;
         taisyousei = 0;
@@ -184,7 +183,6 @@ public class WireFrame_Worker {
 
     //Erase unnecessary line segments-----------------------------------------------
     public void garbageCollect() {
-
         for (int i = 1; i <= lineSet.getTotal(); i++) {
             int idel = 0;
 
@@ -236,12 +234,12 @@ public class WireFrame_Worker {
     }
 
 
-    //枝を動かした後の処理を行う関数----------------------------------------------------
-    public void eda_atosyori_02() {//一端の点だけを移動して反対の端の点は動かさないで微調整する。
+    //Function that performs processing after moving a branch ----------------------------------------------------
+    public void branch_after_processing_02() {//Make fine adjustments by moving only the point at one end and not moving the point at the opposite end.
         //アクティブな帯の位置を微調整する
 
-        int jeda;   //アクティブな枝と近い別の枝
-        int jbasyo; //アクティブな枝と近い別の枝のどこが近いのかを示すための番号
+        int jeda;   //Another branch close to the active branch
+        int jbasyo; //A number to indicate where the active branch is close to another branch
         if (lineSet.getLength(iActiveBranch) >= r) {
             //　アクティブな枝のa点　と　別の枝との距離が　ｒ　より近い場合
             jeda = lineSet.lineSegment_search(lineSet.getA(iActiveBranch), r, iActiveBranch);//アクティブな枝のa点と近い別の枝を求める。
@@ -336,13 +334,13 @@ public class WireFrame_Worker {
             int kr = 10;
             g.setColor(Color.red);
             for (int i = 1; i <= lineSet.getTotal(); i++) {
-                if (oc.equal(lineSet.getA(i), lineSet.getB(i), r)) {
+                if (OritaCalc.equal(lineSet.getA(i), lineSet.getB(i), r)) {
                     g.fillOval((int) lineSet.getAX(i) - kr, (int) lineSet.getAY(i) - kr, 2 * kr, 2 * kr); //Circle
                 }
             }
             for (int i = 1; i <= lineSet.getTotal() - 1; i++) {
                 for (int j = i + 1; j <= lineSet.getTotal(); j++) {
-                    if (oc.line_intersect_decide(lineSet.get(i), lineSet.get(j)) == IntersectionState.PARALLEL_EQUAL_31) {
+                    if (OritaCalc.line_intersect_decide(lineSet.get(i), lineSet.get(j)) == IntersectionState.PARALLEL_EQUAL_31) {
                         OO.widthLine(g, lineSet.get(i), kr, LineType.RED_1);//  Thick line
                         g.fillOval((int) lineSet.getAX(i) - kr, (int) lineSet.getAY(i) - kr, 2 * kr, 2 * kr); //Circle
                         g.fillOval((int) lineSet.getBX(i) - kr, (int) lineSet.getBY(i) - kr, 2 * kr, 2 * kr); //Circle
@@ -361,7 +359,6 @@ public class WireFrame_Worker {
 
         //  ごみ箱の描画
         g.setColor(new Color(150, 150, 150));
-        //g.setColor(new Color(100,100,100));
         trash.draw(g);
         g.setColor(Color.black);
         g.drawString("ごみ箱", 18, 180);
@@ -424,14 +421,14 @@ public class WireFrame_Worker {
                 d = 0.0;
                 a.set(lineSet.getA(iActiveBranch));
                 b.set(lineSet.getB(iActiveBranch));
-                if (move_mode == 1) {
+                if (move_mode == MoveMode.MOVE_POINT_A) {
                     while (d < 360.0) {
                         g.drawLine((int) a.getX(), (int) a.getY(), (int) (a.getX() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (a.getY() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
                         //g.drawLine( (int)b.getx(),(int)b.gety(),(int)(b.getx()+L*Math.cos(d*3.14159265/180.0)),(int)(b.gety()+L*Math.sin(d*3.14159265/180.0))); //直線
                         d = d + kijyun_kakudo;
                     }
                 }
-                if (move_mode == 2) {
+                if (move_mode == MoveMode.MOVE_POINT_B) {
                     while (d < 360.0) {
                         //g.drawLine( (int)a.getx(),(int)a.gety(),(int)(a.getx()+L*Math.cos(d*3.14159265/180.0)),(int)(a.gety()+L*Math.sin(d*3.14159265/180.0))); //直線
                         g.drawLine((int) b.getX(), (int) b.getY(), (int) (b.getX() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (b.getY() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
@@ -439,7 +436,7 @@ public class WireFrame_Worker {
                     }
                 }
 
-                if (move_mode == 3) {
+                if (move_mode == MoveMode.TRANSLATE_BRANCH) {
                     while (d < 360.0) {
                         g.drawLine((int) a.getX(), (int) a.getY(), (int) (a.getX() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (a.getY() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
                         g.drawLine((int) b.getX(), (int) b.getY(), (int) (b.getX() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (b.getY() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
@@ -447,7 +444,7 @@ public class WireFrame_Worker {
                     }
                 }
 
-                if (move_mode == 4) {
+                if (move_mode == MoveMode.ADD_NEW) {
                     while (d < 360.0) {
                         //g.drawLine( (int)a.getx(),(int)a.gety(),(int)(a.getx()+L*Math.cos(d*3.14159265/180.0)),(int)(a.gety()+L*Math.sin(d*3.14159265/180.0))); //直線
                         g.drawLine((int) b.getX(), (int) b.getY(), (int) (b.getX() + L * Math.cos(d * 3.14159265 / 180.0)), (int) (b.getY() + L * Math.sin(d * 3.14159265 / 180.0))); //直線
@@ -473,10 +470,10 @@ public class WireFrame_Worker {
 			}
             if (icol == LineType.ANGLE) {
                 g.setColor(new Color(100, 200, 0));//竹色
-                if (oc.angle_difference(lineSet.get(i), kijyun_kakudo) < 2.0) {
+                if (OritaCalc.angle_difference(lineSet.get(i), kijyun_kakudo) < 2.0) {
                     g.setColor(new Color(200, 100, 0));//おうど色
                 }
-                if (oc.angle_difference(lineSet.get(i), kijyun_kakudo) < 0.5) {
+                if (OritaCalc.angle_difference(lineSet.get(i), kijyun_kakudo) < 0.5) {
                     g.setColor(Color.black);
                 }
             }
@@ -485,7 +482,6 @@ public class WireFrame_Worker {
             if (iTenkaizuSenhaba != 1) {
                 OO.widthLine(g, lineSet.get(i), iTenkaizuSenhaba, lineSet.getColor(i));
             }//  太線
-            //  OO.habaLine( g,k.get(i),ir,k.getcolor(i));//  太線
 
             g.setColor(Color.white);
             g.fillOval((int) a.getX() - ir, (int) a.getY() - ir, 2 * ir, 2 * ir); //円
@@ -724,7 +720,7 @@ public class WireFrame_Worker {
             if (iActiveBranch == 0) {
                 lineSet.addLine(p, p);
                 iActiveBranch = lineSet.getTotal();
-                move_mode = 4;
+                move_mode = MoveMode.ADD_NEW;
                 if (icol.getNumber() >= 0) {
                     lineSet.setColor(iActiveBranch, icol);
                 }
@@ -732,15 +728,15 @@ public class WireFrame_Worker {
             //基本枝構造の中の、どれかの枝に近い場合。
             else {
                 if (1 == lineSet.lineSegment_position_search(iActiveBranch, p, r)) {
-                    move_mode = 1;
+                    move_mode = MoveMode.MOVE_POINT_A;
                 } //a点に近い場合。
                 if (2 == lineSet.lineSegment_position_search(iActiveBranch, p, r)) {
-                    move_mode = 2;
+                    move_mode = MoveMode.MOVE_POINT_B;
                 } //b点に近い場合。
                 if (3 == lineSet.lineSegment_position_search(iActiveBranch, p, r)) {                 //柄の部分に近い場合。
                     pa.set(1, lineSet.getA(iActiveBranch), -1, p);
                     pb.set(1, lineSet.getB(iActiveBranch), -1, p);
-                    move_mode = 3;
+                    move_mode = MoveMode.TRANSLATE_BRANCH;
                     if (icol.getNumber() >= 0) {
                         lineSet.setColor(iActiveBranch, icol);
                     }
@@ -765,26 +761,6 @@ public class WireFrame_Worker {
         }
         //--------------
         if (input_method == 2) {
-	    /*     ugokasi_mode=0;
-	     		// 枝の平行移動はできるようにする。
-                ieda=k.senbun_sagasi(p,r,0);
-				//基本枝構造の中の、どれかの枝に近い場合。
-		if( ieda!=0){
-			if(3==k.senbun_busyo_sagasi(ieda,p,r)){                 //柄の部分に近い場合。
-				pa.set(1,k.geta(ieda),-1,p);
-				pb.set(1,k.getb(ieda),-1,p);
-				ugokasi_mode=3 ;
-				if(icol>=0){k.setcolor(ieda,icol);}
-			}
-		k.kasseika(p,r);
-                }
-
-		//
-
-
-	        //---------
-
-	       else{ */
 
             nhi = nhi + 1;
 
@@ -794,12 +770,12 @@ public class WireFrame_Worker {
                 lineSet.addLine(p, p);
                 nhPoint = p;
                 for (int i = 1; i <= lineSet.getTotal() - 1; i++) {
-                    if (oc.equal(lineSet.getA(i), p, 2.0 * r)) {
+                    if (OritaCalc.equal(lineSet.getA(i), p, 2.0 * r)) {
                         lineSet.set(lineSet.getTotal(), lineSet.getA(i), lineSet.getA(i), LineType.BLACK_0, 0);
                         nhPoint = lineSet.getA(i);
                         break;
                     }
-                    if (oc.equal(lineSet.getB(i), p, 2.0 * r)) {
+                    if (OritaCalc.equal(lineSet.getB(i), p, 2.0 * r)) {
                         lineSet.set(lineSet.getTotal(), lineSet.getB(i), lineSet.getB(i), LineType.BLACK_0, 0);
                         nhPoint = lineSet.getB(i);
                         break;
@@ -812,12 +788,12 @@ public class WireFrame_Worker {
 
                 lineSet.addLine(nhPoint, p);
                 for (int i = 1; i <= lineSet.getTotal() - 1; i++) {
-                    if (oc.equal(lineSet.getA(i), p, 2.0 * r)) {
+                    if (OritaCalc.equal(lineSet.getA(i), p, 2.0 * r)) {
                         lineSet.set(lineSet.getTotal(), lineSet.getA(i), lineSet.getB(lineSet.getTotal() - 1), LineType.BLACK_0, 0);
                         nhi = 0;
                         break;
                     }
-                    if (oc.equal(lineSet.getB(i), p, 2.0 * r)) {
+                    if (OritaCalc.equal(lineSet.getB(i), p, 2.0 * r)) {
                         lineSet.set(lineSet.getTotal(), lineSet.getB(i), lineSet.getB(lineSet.getTotal() - 1), LineType.BLACK_0, 0);
                         nhi = 0;
                         break;
@@ -844,29 +820,23 @@ public class WireFrame_Worker {
 
         if (input_method <= 1) {
 
-            if (move_mode == 1) {
+            if (move_mode == MoveMode.MOVE_POINT_A) {
                 lineSet.set(p);
             } //a点を変更
-            if (move_mode == 2) {
+            if (move_mode == MoveMode.MOVE_POINT_B) {
                 lineSet.set(p);
             } //b点を変更
-            if (move_mode == 3) {//枝を平行移動
+            if (move_mode == MoveMode.TRANSLATE_BRANCH) {//枝を平行移動
                 lineSet.setA(iActiveBranch, new Point(1, p, 1, pa));
                 lineSet.setB(iActiveBranch, new Point(1, p, 1, pb));
             }
-            if (move_mode == 4) {
+            if (move_mode == MoveMode.ADD_NEW) {
                 lineSet.set(p);
             } //a点を変更(ugokasi_mode==1)と同じ動作をする
 
         }
         //--------------
         if (input_method == 1) {
-	    /*
-		if(ugokasi_mode==3){//枝を平行移動
-			k.seta(ieda,new Ten(1,p,1,pa));
-			k.setb(ieda,new Ten(1,p,1,pb));
-		}
-	     */
         }
 
         //--------------
@@ -882,16 +852,16 @@ public class WireFrame_Worker {
 
         if (input_method <= 1) {
 
-            if (move_mode == 1) {
+            if (move_mode == MoveMode.MOVE_POINT_A) {
                 lineSet.set(p);
             } //a点を変更
-            if (move_mode == 2) {
+            if (move_mode == MoveMode.MOVE_POINT_B) {
                 lineSet.set(p);
             } //b点を変更
-            if (move_mode == 3) {//枝を平行移動
+            if (move_mode == MoveMode.TRANSLATE_BRANCH) {//枝を平行移動
                 lineSet.setA(iActiveBranch, new Point(1, p, 1, pa));
                 lineSet.setB(iActiveBranch, new Point(1, p, 1, pb));
-                if (move_mode == 4) {
+                if (move_mode == MoveMode.ADD_NEW) {
                     lineSet.set(p);
                 }//a点を変更(ugokasi_mode==1)と同じ動作をする
 
@@ -899,18 +869,11 @@ public class WireFrame_Worker {
             //
 
             //eda_atosyori_01();                //枝の長さを変えずに、枝全体を平行移動して微調整する。<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            eda_atosyori_02();                //一端の点だけを移動して反対の端の点は動かさないで微調整する。 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            branch_after_processing_02();                //Make fine adjustments by moving only the point at one end and not moving the point at the opposite end.  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
             //----------格子に乗せる
             if ((input_rules == 1) || (input_rules == 2)) {
-                //  int i=get_ieda();
-                //  k.seta(i,kitei_idou(k.geta(i)));
-                //  k.setb(i,kitei_idou(k.getb(i)));
-
-                // k.set(kitei_idou(p)) ;
-
-
                 for (int i = 1; i <= lineSet.getTotal(); i++) {
                     // Ten tn=new Ten();
                     //tn.set(k.get(i));
@@ -944,7 +907,7 @@ public class WireFrame_Worker {
             }
 
             //ゴミ捨て。　これをやるとアクティブなieda枝の番号がずれるので、一応eda_atosyoriの後でやるようにする。
-            if ((move_mode == 4) && (lineSet.getLength(lineSet.getTotal()) < r)) { //新規追加分の線分が点状の（長さがrより小さい）とき削除。
+            if ((move_mode == MoveMode.ADD_NEW) && (lineSet.getLength(lineSet.getTotal()) < r)) { //新規追加分の線分が点状の（長さがrより小さい）とき削除。
                 lineSet.deleteLineSegment(lineSet.getTotal());
             } else {
                 garbageCollect();//Erasing line segments in the Recycle Bin
@@ -995,7 +958,7 @@ public class WireFrame_Worker {
             if (iActiveBranch == 0) {
                 lineSet.addLine(p, p);
                 iActiveBranch = lineSet.getTotal();
-                move_mode = 4;
+                move_mode = MoveMode.ADD_NEW;
                 if (icol.getNumber() >= 0) {
                     lineSet.setColor(iActiveBranch, icol);
                 }
@@ -1003,15 +966,15 @@ public class WireFrame_Worker {
             //基本枝構造の中の、どれかの枝に近い場合。
             else {
                 if (1 == lineSet.lineSegment_position_search(iActiveBranch, p, r)) {
-                    move_mode = 1;
+                    move_mode = MoveMode.MOVE_POINT_A;
                 } //a点に近い場合。
                 if (2 == lineSet.lineSegment_position_search(iActiveBranch, p, r)) {
-                    move_mode = 2;
+                    move_mode = MoveMode.MOVE_POINT_B;
                 } //b点に近い場合。
                 if (3 == lineSet.lineSegment_position_search(iActiveBranch, p, r)) {                 //柄の部分に近い場合。
                     pa.set(1, lineSet.getA(iActiveBranch), -1, p);
                     pb.set(1, lineSet.getB(iActiveBranch), -1, p);
-                    move_mode = 3;
+                    move_mode = MoveMode.TRANSLATE_BRANCH;
                     if (icol.getNumber() >= 0) {
                         lineSet.setColor(iActiveBranch, icol);
                     }
@@ -1029,12 +992,12 @@ public class WireFrame_Worker {
                 lineSet.addLine(p, p);
                 nhPoint = p;
                 for (int i = 1; i <= lineSet.getTotal() - 1; i++) {
-                    if (oc.equal(lineSet.getA(i), p, 2.0 * r)) {
+                    if (OritaCalc.equal(lineSet.getA(i), p, 2.0 * r)) {
                         lineSet.set(lineSet.getTotal(), lineSet.getA(i), lineSet.getA(i), LineType.BLACK_0, 0);
                         nhPoint = lineSet.getA(i);
                         break;
                     }
-                    if (oc.equal(lineSet.getB(i), p, 2.0 * r)) {
+                    if (OritaCalc.equal(lineSet.getB(i), p, 2.0 * r)) {
                         lineSet.set(lineSet.getTotal(), lineSet.getB(i), lineSet.getB(i), LineType.BLACK_0, 0);
                         nhPoint = lineSet.getB(i);
                         break;
@@ -1044,12 +1007,12 @@ public class WireFrame_Worker {
             if (nhi != 1) {   // set(int i, Ten p,Ten q,int ic,int ia)
                 lineSet.addLine(nhPoint, p);
                 for (int i = 1; i <= lineSet.getTotal() - 1; i++) {
-                    if (oc.equal(lineSet.getA(i), p, 2.0 * r)) {
+                    if (OritaCalc.equal(lineSet.getA(i), p, 2.0 * r)) {
                         lineSet.set(lineSet.getTotal(), lineSet.getA(i), lineSet.getB(lineSet.getTotal() - 1), LineType.BLACK_0, 0);
                         nhi = 0;
                         break;
                     }
-                    if (oc.equal(lineSet.getB(i), p, 2.0 * r)) {
+                    if (OritaCalc.equal(lineSet.getB(i), p, 2.0 * r)) {
                         lineSet.set(lineSet.getTotal(), lineSet.getB(i), lineSet.getB(lineSet.getTotal() - 1), LineType.BLACK_0, 0);
                         nhi = 0;
                         break;
@@ -1067,17 +1030,17 @@ public class WireFrame_Worker {
     //マウス操作(i_mouse_modeA==0　旧動作　見本のために残している。削除可----------------------------------------------------
     public void mDragged_A_00(Point p) {
         if (input_method <= 1) {
-            if (move_mode == 1) {
+            if (move_mode == MoveMode.MOVE_POINT_A) {
                 lineSet.set(p);
             } //a点を変更
-            if (move_mode == 2) {
+            if (move_mode == MoveMode.MOVE_POINT_B) {
                 lineSet.set(p);
             } //b点を変更
-            if (move_mode == 3) {        //枝を平行移動
+            if (move_mode == MoveMode.TRANSLATE_BRANCH) {        //枝を平行移動
                 lineSet.setA(iActiveBranch, new Point(1, p, 1, pa));
                 lineSet.setB(iActiveBranch, new Point(1, p, 1, pb));
             }
-            if (move_mode == 4) {
+            if (move_mode == MoveMode.ADD_NEW) {
                 lineSet.set(p);
             } //a点を変更(ugokasi_mode==1)と同じ動作をする
         }
@@ -1092,21 +1055,21 @@ public class WireFrame_Worker {
     //マウス操作(i_mouse_modeA==0　旧動作　見本のために残している。削除可----------------------------------------------------
     public void mReleased_A_00(Point p) {
         if (input_method <= 1) {
-            if (move_mode == 1) {
+            if (move_mode == MoveMode.MOVE_POINT_A) {
                 lineSet.set(p);
             } //a点を変更
-            if (move_mode == 2) {
+            if (move_mode == MoveMode.MOVE_POINT_B) {
                 lineSet.set(p);
             } //b点を変更
-            if (move_mode == 3) {//枝を平行移動
+            if (move_mode == MoveMode.TRANSLATE_BRANCH) {//枝を平行移動
                 lineSet.setA(iActiveBranch, new Point(1, p, 1, pa));
                 lineSet.setB(iActiveBranch, new Point(1, p, 1, pb));
-                if (move_mode == 4) {
+                if (move_mode == MoveMode.ADD_NEW) {
                     lineSet.set(p);
                 }//a点を変更(ugokasi_mode==1)と同じ動作をする
             }
             //eda_atosyori_01();                //枝の長さを変えずに、枝全体を平行移動して微調整する。<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-            eda_atosyori_02();                //一端の点だけを移動して反対の端の点は動かさないで微調整する。 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            branch_after_processing_02();                //一端の点だけを移動して反対の端の点は動かさないで微調整する。 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
             //----------格子に乗せる
             if (input_rules >= 1) {
@@ -1136,7 +1099,7 @@ public class WireFrame_Worker {
             }
 
             //Garbage disposal. If you do this, the number of the active ieda branch will shift, so for the time being, do it after eda_atosyori.
-            if ((move_mode == 4) && (lineSet.getLength(lineSet.getTotal()) < r)) { //新規追加分の線分が点状の（長さがrより小さい）とき削除。
+            if ((move_mode == MoveMode.ADD_NEW) && (lineSet.getLength(lineSet.getTotal()) < r)) { //新規追加分の線分が点状の（長さがrより小さい）とき削除。
                 lineSet.deleteLineSegment(lineSet.getTotal());
             } else {
                 garbageCollect();//Erasing line segments in the Recycle Bin
@@ -1176,7 +1139,7 @@ public class WireFrame_Worker {
         Point p = new Point();
         p.set(camera.TV2object(p0));
         lineSet.setA(iActiveBranch, p);
-        eda_atosyori_02();                //一端の点だけを移動して反対の端の点は動かさないで微調整する。 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        branch_after_processing_02();                //一端の点だけを移動して反対の端の点は動かさないで微調整する。 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
         //----------格子に乗せる
         if ((input_rules == 1) || (input_rules == 2)) {
@@ -1219,7 +1182,7 @@ public class WireFrame_Worker {
         for (int i = i_grid_x_min / grid_width; i <= i_grid_x_max / grid_width; i++) {
             for (int j = i_grid_y_min / grid_width; j <= i_grid_y_max / grid_width; j++) {
                 t_ob.set(grid_width * i, grid_width * j);
-                if (oc.distance(t_ob, t1) < r) {
+                if (OritaCalc.distance(t_ob, t1) < r) {
                     return t_ob;
                 }
 
@@ -1239,13 +1202,13 @@ public class WireFrame_Worker {
         for (int i = -30; i <= 30; i++) {
             for (int j = -30; j <= 30; j = j + 2) {
                 t_ob.set(grid_width * i, sankaku_grid_takasa * j);
-                if (oc.distance(t_ob, t1) < r) {
+                if (OritaCalc.distance(t_ob, t1) < r) {
                     return t_ob;
                 }
             }
             for (int j = -31; j <= 31; j = j + 2) {
                 t_ob.set(grid_width * i + grid_width / 2.0, sankaku_grid_takasa * j);
-                if (oc.distance(t_ob, t1) < r) {
+                if (OritaCalc.distance(t_ob, t1) < r) {
                     return t_ob;
                 }
             }

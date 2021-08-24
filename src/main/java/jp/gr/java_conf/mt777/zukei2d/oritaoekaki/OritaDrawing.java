@@ -8,8 +8,6 @@ import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 import java.awt.*;
 
 public class OritaDrawing { //For drawing
-    OritaCalc oc = new OritaCalc();
-
     //For drawing thick lines
     public void widthLine(Graphics g, Point a, Point b, double width, LineType iColor) {
         widthLine(g, new LineSegment(a, b), width, iColor);
@@ -31,8 +29,8 @@ public class OritaDrawing { //For drawing
         if (iColor == LineType.ORANGE_4) {
             g.setColor(Color.orange);
         }
-        LineSegment sp = oc.moveParallel(s, r);
-        LineSegment sm = oc.moveParallel(s, -r);
+        LineSegment sp = OritaCalc.moveParallel(s, r);
+        LineSegment sm = OritaCalc.moveParallel(s, -r);
 
         int[] x = new int[5];
         int[] y = new int[5];

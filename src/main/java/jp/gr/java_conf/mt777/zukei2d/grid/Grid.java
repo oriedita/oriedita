@@ -12,8 +12,6 @@ import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 public class Grid {
-    OritaCalc oc = new OritaCalc();          //各種計算用の関数を使うためのクラスのインスタンス化
-
     double d_grid_haba = 200.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<格子幅(double)
 
     double d_grid_a_length = 1.0;
@@ -149,11 +147,11 @@ public class Grid {
         d_grid_bx = d_grid_haba * d_grid_b_length * Math.cos(d_rad);
         d_grid_by = d_grid_haba * d_grid_b_length * Math.sin(d_rad);
 
-        taikakusen_max = oc.distance(new Point(0.0, 0.0), new Point(d_grid_ax + d_grid_bx, d_grid_ay + d_grid_by));
-        taikakusen_min = oc.distance(new Point(d_grid_ax, d_grid_ay), new Point(d_grid_bx, d_grid_by));
+        taikakusen_max = OritaCalc.distance(new Point(0.0, 0.0), new Point(d_grid_ax + d_grid_bx, d_grid_ay + d_grid_by));
+        taikakusen_min = OritaCalc.distance(new Point(d_grid_ax, d_grid_ay), new Point(d_grid_bx, d_grid_by));
         if (taikakusen_max < taikakusen_min) {
-            taikakusen_min = oc.distance(new Point(0.0, 0.0), new Point(d_grid_ax + d_grid_bx, d_grid_ay + d_grid_by));
-            taikakusen_max = oc.distance(new Point(d_grid_ax, d_grid_ay), new Point(d_grid_bx, d_grid_by));
+            taikakusen_min = OritaCalc.distance(new Point(0.0, 0.0), new Point(d_grid_ax + d_grid_bx, d_grid_ay + d_grid_by));
+            taikakusen_max = OritaCalc.distance(new Point(d_grid_ax, d_grid_ay), new Point(d_grid_bx, d_grid_by));
         }
 
 

@@ -39,7 +39,6 @@ public class PointSet {
     double[] Surface_y_max;
     double[] Surface_y_min;
 
-    OritaCalc oc = new OritaCalc();          //Instantiation of classes to use functions for various calculations
     ArrayList<Integer>[] point_linking;//t_renketu[i][j]はt[i]に連決しているPointの番号。t[0]には、Temの数を格納。
 
     int[][] Face_adjacent;//Face_adjacent [i] [j] is the Stick number at the boundary between m [i] and m [j]. Stores 0 when m [i] and m [j] are not adjacent.
@@ -342,12 +341,12 @@ public class PointSet {
 
     public boolean convex_inside(double d, int ib, int im) {
         LineSegment sn = new LineSegment(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]);
-        return convex_inside(oc.moveParallel(sn, d), faces[im]);
+        return convex_inside(OritaCalc.moveParallel(sn, d), faces[im]);
     }
 
     private boolean simple_convex_inside(double d, int ib, int im) {
         LineSegment sn = new LineSegment(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]);
-        LineSegment snm = oc.moveParallel(sn, d);
+        LineSegment snm = OritaCalc.moveParallel(sn, d);
         double s_x_max = snm.getAX();
         double s_x_min = snm.getAX();
         double s_y_max = snm.getAY();
@@ -390,62 +389,9 @@ public class PointSet {
     //Returns 1 if two Sticks are parallel and partially or wholly overlap, otherwise 0. If one point overlaps, 0 is returned.
     public boolean parallel_overlap(int ib1, int ib2) {
         IntersectionState skh;
-        skh = oc.line_intersect_decide(stickToLineSegment(sticks[ib1]), stickToLineSegment(sticks[ib2]));
-        if (skh == IntersectionState.PARALLEL_EQUAL_31) {
-            return true;
-        }
-        if (skh == IntersectionState.PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321) {
-            return true;
-        }
-        if (skh == IntersectionState.PARALLEL_START_OF_S2_CONTAINS_START_OF_S1_322) {
-            return true;
-        }
-        if (skh == IntersectionState.PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331) {
-            return true;
-        }
-        if (skh == IntersectionState.PARALLEL_END_OF_S2_CONTAINS_START_OF_S1_332) {
-            return true;
-        }
-        if (skh == IntersectionState.PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341) {
-            return true;
-        }
-        if (skh == IntersectionState.PARALLEL_START_OF_S2_CONTAINS_END_OF_S1_342) {
-            return true;
-        }
-        if (skh == IntersectionState.PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351) {
-            return true;
-        }
-        if (skh == IntersectionState.PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352) {
-            return true;
-        }
+        skh = OritaCalc.line_intersect_decide(stickToLineSegment(sticks[ib1]), stickToLineSegment(sticks[ib2]));
 
-        if (skh == IntersectionState.PARALLEL_S1_INCLUDES_S2_361) {
-            return true;
-        }
-        if (skh == IntersectionState.PARALLEL_S1_INCLUDES_S2_362) {
-            return true;
-        }
-        if (skh == IntersectionState.PARALLEL_S2_INCLUDES_S1_363) {
-            return true;
-        }
-        if (skh == IntersectionState.PARALLEL_S2_INCLUDES_S1_364) {
-            return true;
-        }
-
-        if (skh == IntersectionState.PARALLEL_S1_END_OVERLAPS_S2_START_371) {
-            return true;
-        }
-        if (skh == IntersectionState.PARALLEL_S1_END_OVERLAPS_S2_END_372) {
-            return true;
-        }
-        if (skh == IntersectionState.PARALLEL_S1_START_OVERLAPS_S2_END_373) {
-            return true;
-        }
-        if (skh == IntersectionState.PARALLEL_S1_START_OVERLAPS_S2_START_374) {
-            return true;
-        }
-
-        return false;
+        return skh.isSegmentOverlapping();
     }
 
 
@@ -621,9 +567,9 @@ public class PointSet {
             int k;
             k = getPointLinking(j, ik);
             if (k != i) {
-                if (oc.angle(points[j], points[i], points[j], points[k]) <= angle) {
+                if (OritaCalc.angle(points[j], points[i], points[j], points[k]) <= angle) {
                     n = k;
-                    angle = oc.angle(points[j], points[i], points[j], points[k]);
+                    angle = OritaCalc.angle(points[j], points[i], points[j], points[k]);
                 }
             }
         }
@@ -636,7 +582,7 @@ public class PointSet {
         //tempFace.reset();
         tempFace.addPointId(i);
         tempFace.addPointId(j);
-        int nextT = 0;
+        int nextT;
 
         nextT = getRPoint(tempFace.getPointId(1), tempFace.getPointId(2));
         while (nextT != tempFace.getPointId(1)) {
@@ -654,7 +600,7 @@ public class PointSet {
     //-------------------------------------
     public void FaceOccurrence() {
         int flag1;
-        Face tempFace = new Face();
+        Face tempFace;
         facesTotal = 0;
         t_renketu_sakusei();
 
@@ -857,11 +803,7 @@ public class PointSet {
         if ((sticks[ib].getBegin() == faces[im].getPointId(faces[im].getPointsCount())) && (sticks[ib].getEnd() == faces[im].getPointId(1))) {
             return true;
         }
-        if ((sticks[ib].getEnd() == faces[im].getPointId(faces[im].getPointsCount())) && (sticks[ib].getBegin() == faces[im].getPointId(1))) {
-            return true;
-        }
-
-        return false;
+        return (sticks[ib].getEnd() == faces[im].getPointId(faces[im].getPointsCount())) && (sticks[ib].getBegin() == faces[im].getPointId(1));
     }
 
     //------------------------------------------------------
@@ -938,7 +880,7 @@ public class PointSet {
         double rmin = 1000000.0;
         double rtemp;
         for (int i = 1; i <= pointsTotal; i++) {
-            rtemp = oc.distance(p, points[i]);
+            rtemp = OritaCalc.distance(p, points[i]);
             if (rtemp < r) {
                 if (rtemp < rmin) {
                     rmin = rtemp;
@@ -952,15 +894,13 @@ public class PointSet {
 
     //Returns the distance of the closest point that is closer than a certain distance to the given coordinates. If there is no Ten within a certain distance, 1000000.0 is returned.
     public double closest_Point_distance(Point p, double r) {
-        int ireturn = 0;
         double rmin = 1000000.0;
         double rtemp;
         for (int i = 1; i <= pointsTotal; i++) {
-            rtemp = oc.distance(p, points[i]);
+            rtemp = OritaCalc.distance(p, points[i]);
             if (rtemp < r) {
                 if (rtemp < rmin) {
                     rmin = rtemp;
-                    ireturn = i;
                 }
             }
         }
@@ -973,7 +913,7 @@ public class PointSet {
 
         for (int i = 1; i <= pointsTotal - 1; i++) {
             for (int j = i + 1; j <= pointsTotal; j++) {
-                if (oc.distance(points[i], points[j]) < r) {
+                if (OritaCalc.distance(points[i], points[j]) < r) {
                     points[j].set(points[i]);
                 }
             }
@@ -987,10 +927,10 @@ public class PointSet {
             //   Senbun s =new Senbun();
             //     s.set( Bou2Senbun(b[ib])) ;
             for (int i = 1; i <= pointsTotal - 1; i++) {
-                if (oc.distance_lineSegment(points[i], points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]) < r) {
+                if (OritaCalc.distance_lineSegment(points[i], points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]) < r) {
                     //Tyokusen ty =new Tyokusen(t[b[ib].getmae()],t[b[ib].getato()]);
                     //t[i].set( oc.kage_motome(ty,t[i]));
-                    points[i].set(oc.shadow_request(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()], points[i]));
+                    points[i].set(OritaCalc.shadow_request(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()], points[i]));
                 }
             }
         }
@@ -1083,8 +1023,6 @@ public class PointSet {
 
     //線分集合の全線分の情報を Memoとして出力する。 //undo,redoの記録用に使う
     public Memo getMemo() {
-        String str = "";//文字列処理用のクラスのインスタンス化
-
         Memo memo1 = new Memo();
         memo1.reset();
 
@@ -1136,9 +1074,7 @@ public class PointSet {
 
 
             StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
-            //jtok=    tk.countTokens();
             str = tk.nextToken();
-            //  	System.out.println("::::::::::"+ str+"<<<<<" );
             if (str.equals("<点>")) {
                 yomiflg = 1;
             }

@@ -79,8 +79,8 @@ public class SortingBox_int_double {//Arrange and store data in ascending order 
         }
     }
 
-    //Make the 1st int_double getTotal, the 2nd 1st, 3rd 2nd ,,, getTotal 1st getTotal-1st
-    public void jyunkai2wo1nisuru() {
+    // Move the second element to the first, third to the second, etc. Move the first element to the end of the list.
+    public void shift() {
         SortingBox_int_double nbox = new SortingBox_int_double();
         for (int i = 2; i <= getTotal(); i++) {
             nbox.add(get_i_d(i));

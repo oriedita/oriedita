@@ -11,9 +11,6 @@ import jp.gr.java_conf.mt777.zukei2d.oritacalc.tyokusen.*;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 public class Drawing_Worker_Toolbox {
-
-
-    OritaCalc oc = new OritaCalc(); //各種計算用の関数を使うためのクラスのインスタンス化
     FoldLineSet ori_s;
 
 
@@ -47,12 +44,12 @@ public class Drawing_Worker_Toolbox {
             //if(i_kousa_flg==3){kousaten_made_nobasi_orisen_fukumu_flg=3;}
             if ((i_kousa_flg == 1 || i_kousa_flg == 21) || i_kousa_flg == 22) {
 
-                kousa_point.set(oc.findIntersection(tyoku1, ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
+                kousa_point.set(OritaCalc.findIntersection(tyoku1, ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
 
                 if (kousa_point.distance(add_sen.getA()) > 0.00001) {
 
                     if (kousa_point.distance(add_sen.getA()) < kousa_ten_kyori) {
-                        double d_kakudo = oc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
+                        double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
 
                         if (d_kakudo < 1.0 || d_kakudo > 359.0) {
 
@@ -104,12 +101,12 @@ public class Drawing_Worker_Toolbox {
                 //if(i_kousa_flg==3){kousaten_made_nobasi_orisen_fukumu_flg=3;}
                 if ((i_kousa_flg == 1 || i_kousa_flg == 21) || i_kousa_flg == 22) {
 
-                    kousa_point.set(oc.findIntersection(tyoku1, ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
+                    kousa_point.set(OritaCalc.findIntersection(tyoku1, ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
 
                     if (kousa_point.distance(add_sen.getA()) > 0.00001) {
 
                         if (kousa_point.distance(add_sen.getA()) < kousa_ten_kyori) {
-                            double d_kakudo = oc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
+                            double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
 
                             if (d_kakudo < 1.0 || d_kakudo > 359.0) {
 //System.out.println("20201129 col = "+ori_s.get(i).getcolor());  
@@ -133,29 +130,6 @@ public class Drawing_Worker_Toolbox {
         kousaten_made_nobasi_lineSegment.set(add_sen);//System.out.println("kousaten_made_nobasi_senbun.set 20201129 kousaten_made_nobasi_keisan_fukumu_senbun_musi_new");
         kousaten_made_nobasi_point.set(add_sen.getB());
     }
-
-
-
-/*
-	折線集合の関数//点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の黒い線分が出ているか（頂点とr以内に端点がある線分の数）	
-	public int tyouten_syuui_sensuu_black(Ten p,double r) {
-
-		Ten q = new Ten();   q.set(mottomo_tikai_Ten(p));//qは点pに近い方の端点
-		Ten p_temp = new Ten(); 
-
-
-		int i_return;i_return=0;
-
-		for(int i=1;i<=sousuu;i++){
-			p_temp.set(geta(i));if(q.kyori2jyou(getb(i))<q.kyori2jyou(geta(i)) ) {p_temp.set(getb(i)); }			
-			if(q.kyori2jyou(p_temp)<r*r) { if(getcolor(i)==0 ) {  i_return=i_return+1; }}
-
-		}
-
-		return i_return;
-	}
-
-*/
 
     // -------------------
     public int get_kousaten_made_nobasi_flg_new(Point a, Point b) {//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。

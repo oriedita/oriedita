@@ -54,3 +54,9 @@
 | `memori` | | `scale` `division` | 目盛り
 | `byouga` | | `drawing` | 描画
 | `naibu` | | `inside` / `internal` | 内部
+| `tyouten` | `chouten` | `vertex` | 頂点
+| `tikai` | `chikai` | `close` / `near` | 近い
+| `mottomo` | | `most` | 最も
+| `kyori` | | `distance` | 距離
+| `kazu` | | `number` / `amount` | 数
+| `jyogai` | `igai` | `except` / `excluding` | 以外

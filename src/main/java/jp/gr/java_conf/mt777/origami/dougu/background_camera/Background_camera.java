@@ -11,7 +11,6 @@ public class Background_camera {//Mediation between actual coordinates and displ
 // Enlarge a times around the point h1 on the background image. Next, the background image is translated so that h1 overlaps the point h3 on the developed view. A function that rotates and pastes the developed view of this state so that it looks like it is rotated b degrees around h3, and then restores the rotation of the coordinates.
 // The arguments are Graphics2D g2h, Image imgh, Point h1, Point h2, Point h3, Point h4
 // Make h2 and h4 also overlap
-    OritaCalc oc = new OritaCalc();
     Point h1 = new Point();
     Point h2 = new Point();
     Point h3 = new Point();
@@ -67,7 +66,7 @@ public class Background_camera {//Mediation between actual coordinates and displ
         Point pt2 = new Point();
         Point pt3 = new Point();
 
-        pt1.set(oc.point_rotate(new Point(p_rotation_x, p_rotation_y), pt, -get_angle()));
+        pt1.set(OritaCalc.point_rotate(new Point(p_rotation_x, p_rotation_y), pt, -get_angle()));
         pt2.set(pt1.getX() - p_idou_x, pt1.getY() - p_idou_y);
         pt3.set(pt2.getX() / p_bairitu, pt2.getY() / p_bairitu);
 
@@ -126,11 +125,11 @@ public class Background_camera {//Mediation between actual coordinates and displ
         p_bairitu = h3.distance(h4) / h1.distance(h2);
         p_idou_x = (1.0 - p_bairitu) * h1.getX() + h3.getX() - h1.getX();
         p_idou_y = (1.0 - p_bairitu) * h1.getY() + h3.getY() - h1.getY();
-        p_rotation_angle = oc.angle(h1, h2, h3, h4);
+        p_rotation_angle = OritaCalc.angle(h1, h2, h3, h4);
         p_rotation_x = h3.getX();
         p_rotation_y = h3.getY();
 
-        oc.display("Haikei_camera--------------------parameter_keisan()");
+        OritaCalc.display("Haikei_camera--------------------parameter_keisan()");
         h1.display(" h1  ");
         h2.display(" h2  ");
         h3.display(" h3  ");

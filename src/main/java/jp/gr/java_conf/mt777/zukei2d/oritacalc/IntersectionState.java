@@ -1,17 +1,17 @@
 package jp.gr.java_conf.mt777.zukei2d.oritacalc;
 
 /**
- *  0 = Do not intersect,
- *  1 = Two line segments are not parallel and intersect at one point in a crossroads shape,
- *  2nd generation = Two line segments are not parallel and intersect in a T-junction or dogleg shape at one point
- *  3 = Two line segments are parallel and intersect
- *  4 = Line segment s1 and line segment s2 intersect at a point
- *  5 = Line segment s1 intersects at a point
- *  6 = Line segment s2 intersects at a point
- *  Note! If p1 and p2 are the same, or p3 and p4 are the same, the result will be strange,
- *  This function itself does not have a check mechanism, so it may be difficult to notice.
- *
- *  Is always about two lines s1 (p1, p2) and s2 (p3, p4)
+ * 0 = Do not intersect,
+ * 1 = Two line segments are not parallel and intersect at one point in a crossroads shape,
+ * 2nd generation = Two line segments are not parallel and intersect in a T-junction or dogleg shape at one point
+ * 3 = Two line segments are parallel and intersect
+ * 4 = Line segment s1 and line segment s2 intersect at a point
+ * 5 = Line segment s1 intersects at a point
+ * 6 = Line segment s2 intersects at a point
+ * Note! If p1 and p2 are the same, or p3 and p4 are the same, the result will be strange,
+ * This function itself does not have a check mechanism, so it may be difficult to notice.
+ * <p>
+ * Is always about two lines s1 (p1, p2) and s2 (p3, p4)
  */
 public enum IntersectionState {
     ERROR(-1),
@@ -195,6 +195,29 @@ public enum IntersectionState {
 
     public boolean isParallel() {
         return state >= 30;
+    }
+
+    public boolean isSegmentOverlapping() {
+        return switch (this) {
+            case PARALLEL_EQUAL_31,
+                    PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321,
+                    PARALLEL_START_OF_S2_CONTAINS_START_OF_S1_322,
+                    PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331,
+                    PARALLEL_END_OF_S2_CONTAINS_START_OF_S1_332,
+                    PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341,
+                    PARALLEL_START_OF_S2_CONTAINS_END_OF_S1_342,
+                    PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351,
+                    PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352,
+                    PARALLEL_S1_INCLUDES_S2_361,
+                    PARALLEL_S1_INCLUDES_S2_362,
+                    PARALLEL_S2_INCLUDES_S1_363,
+                    PARALLEL_S2_INCLUDES_S1_364,
+                    PARALLEL_S1_END_OVERLAPS_S2_START_371,
+                    PARALLEL_S1_END_OVERLAPS_S2_END_372,
+                    PARALLEL_S1_START_OVERLAPS_S2_END_373,
+                    PARALLEL_S1_START_OVERLAPS_S2_START_374 -> true;
+            default -> false;
+        };
     }
 
     @Override

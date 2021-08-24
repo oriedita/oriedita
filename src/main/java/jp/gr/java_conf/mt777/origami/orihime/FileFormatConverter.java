@@ -9,7 +9,7 @@ import java.util.*;
 public class FileFormatConverter {
 
     //---------------
-    Memo obj2orihime(Memo mem) {
+    static Memo obj2orihime(Memo mem) {
         System.out.println("objファイルをオリヒメ用にする");
         Memo MemR = new Memo();
         int jtok;
@@ -152,7 +152,7 @@ public class FileFormatConverter {
         return MemR;
     }
 
-    Memo cp2orihime(Memo mem) {
+    static Memo cp2orihime(Memo mem) {
         System.out.println("cpファイルをオリヒメ用にする");
         System.out.println("cpファイルをオリヒメ用にする");
         Memo MemR = new Memo();
@@ -219,7 +219,7 @@ public class FileFormatConverter {
         return MemR;
     }
 
-    Memo orihime2cp(Memo mem) {
+    static Memo orihime2cp(Memo mem) {
         System.out.println("オリヒメ用ファイルをcp用にする");
         Memo MemR = new Memo();
         int ibangou = 0;
@@ -254,7 +254,7 @@ public class FileFormatConverter {
         return MemR;
     }
 
-    Memo orihime2svg(Memo mem) {//これはes1.getMemo_for_kakidasi()を入力して展開図の生データのsvgを出力
+    static Memo orihime2svg(Memo mem) {//これはes1.getMemo_for_kakidasi()を入力して展開図の生データのsvgを出力
         System.out.println("オリヒメ用ファイルをsvg用にする");
         Memo MemR = new Memo();
         int ibangou = 0;
@@ -314,7 +314,7 @@ public class FileFormatConverter {
         return MemR;
     }
 
-    Memo orihime2svg(Memo mem_tenkaizu, Memo mem_oriagarizu) {
+    static Memo orihime2svg(Memo mem_tenkaizu, Memo mem_oriagarizu) {
         System.out.println("svg画像出力");
         Memo MemR = new Memo();
 
