@@ -25,7 +25,7 @@ import jp.gr.java_conf.mt777.origami.orihime.oriagari_zu.*;
 import jp.gr.java_conf.mt777.origami.orihime.egaki_syokunin.*;
 
 import jp.gr.java_conf.mt777.origami.dougu.camera.*;
-import jp.gr.java_conf.mt777.origami.dougu.haikei_camera.*;
+import jp.gr.java_conf.mt777.origami.dougu.background_camera.*;
 import jp.gr.java_conf.mt777.origami.dougu.keijiban.*;
 import jp.gr.java_conf.mt777.origami.dougu.linestore.*;
 import jp.gr.java_conf.mt777.kiroku.memo.*;
@@ -57,7 +57,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     double r = 3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
     Memo memo1 = new Memo();
 
-    File_keisiki_henkan file_henkan = new File_keisiki_henkan();
+    FileFormatConverter file_henkan = new FileFormatConverter();
 
     OritaCalc oc = new OritaCalc();
 
@@ -94,11 +94,11 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     LineType icol;//基本枝職人の枝の色を指定する。0は黒、1は赤、2は赤。//icol=0 black	//icol=1 red	//icol=2 blue	//icol=3 cyan	//icol=4 orange	//icol=5 mazenta	//icol=6 green	//icol=7 yellow	//icol=8 new Color(210,0,255) //紫
     LineType h_icol;//補助線の枝の色を指定する。
 
-    int iro_sitei_ato_ni_jissisuru_sagyou_bangou = 1;//黒赤青水の色指定後に実施する作業の番号
+    int iro_sitei_ato_ni_jissisuru_sagyou_bangou = 1;//Number of work to be performed after specifying the color of black, red, blue, and water
 
 
     boolean w_image_running = false;//Folding together execution. If a single image export is in progress, it will be true.
-    //boolean matome_write_image_jikkoutyuu = false;//matome_write_imageが実行中ならtureになる。これは、複数の折りあがり形の予測の書き出しがかすれないように使う。20170613
+    //boolean summary_write_image_during_execution = false;//matome_write_imageが実行中ならtureになる。これは、複数の折りあがり形の予測の書き出しがかすれないように使う。20170613
 
     String fname_and_number;//まとめ書き出しに使う。
 
@@ -131,7 +131,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     //Button	Button0 ;
     //Button	Button0a ;
 
-    int kakudokei_input_id = 1;//角度系の入力方法の指定　kakudokei_input_id=1は線分指定、2は2点指定
+    int kakudokei_input_id = 1;//Specifying the input method of the angle system kakudokei_input_id = 1 specifies the line segment, 2 specifies 2 points
 
     int id_kakudo_kei_a = 12;//角度系の180度を割る数の格納_a
     int id_kakudo_kei_b = 8;//角度系の180度を割る数の格納_b
@@ -160,8 +160,8 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     JButton Button_Col_yellow;                    //補助線2の色の指定に用いる
 
 
-    JButton Button_haikei_Lock_on;//背景のロックオン
-    JButton Button_haikei_kirikae;//背景を表示するかどうかの指定
+    JButton Button_background_Lock_on;//背景のロックオン
+    JButton Button_background_kirikae;//背景を表示するかどうかの指定
 
     //Button ButtonCol_green15   ;                    //折線の色の指定に用いる
     //Button ButtonCol_green20  ;                    //折線の色の指定に用いる
@@ -310,19 +310,14 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     JLabel label_kakudo_sokutei_3 = new JLabel("");
 
 
-    Image img_haikei;       //背景用の画像
-    String img_haikei_fname;
+    Image img_background;       //Image for background
+    String img_background_fname;
 
-    Image img_kaisetu;       //解説用の画像
-    String img_kaisetu_fname;
+    Image img_explanation;       //Image for explanation
+    String img_explanation_fname;
 
     // バッファー画面用設定VVVVVVVVVVVVVVVVVVVVVVVVVVVV
     Graphics bufferGraphics;
-
-    int hx3 = 80;
-    int hy3 = 80;//展開図の描画点C
-    int hx4 = 160;
-    int hy4 = 160;//展開図の描画点D
 
     // バッファー画面用設定はここまでAAAAAAAAAAAAAAAAAAA
 
@@ -332,21 +327,20 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     Point p_mouse_object_iti = new Point();//マウスのオブジェクト座標上の位置
     Point p_mouse_TV_iti = new Point();//マウスのTV座標上の位置
 
-    // アプレットの幅と高さ
+    // Applet width and height
     Dimension dim;
 
-
-    int ihaikeihyouji = 0;//0なら背景を表示しない。1なら表示する。2は無い。
-    int ikaisetuhyouji = 1;//0なら解説を表示しない。1なら表示する。2は無い。
-    public int iTenkaizuSenhaba = 1;//展開図の線の太さ。
-    public int i_h_TenkaizuSenhaba = 3;//非干渉補助線の線の太さ
-    float fTenkaizuSenhaba = (float) iTenkaizuSenhaba;
-    float f_h_TenkaizuSenhaba = (float) i_h_TenkaizuSenhaba;
+    int iDisplayBackground = 0;//If it is 0, the background is not displayed. If it is 1, display it. There is no 2.
+    int iDisplayExplanation = 1;//If it is 0, the explanation is not displayed. If it is 1, display it. There is no 2.
+    public int iLineWidth = 1;//The thickness of the line in the development view.
+    public int i_h_lineWidth = 3;//Line thickness of non-interference auxiliary line
+    float fLineWidth = (float) iLineWidth;
+    float f_h_lineWidth = (float) i_h_lineWidth;
 
     int nyuuryoku_houhou = 0;    //入力方法の指定。0なら通常の方法、1なら多角形入力、２なら直線を指定した点に引き寄せる
     int kensa_houhou = 0;        //図の検査方法の指定。0なら検査しない。1なら線分集合の検査をする。
 
-    public int i_mouse_modeA = 71;//マウスの動作に対する反応を規定する。1なら線分入力モード。2なら展開図調整(移動)。101なら折り上がり図の操作。
+    public MouseMode i_mouse_modeA = MouseMode.FOLDABLE_LINE_DRAW_71;//Defines the response to mouse movements. If it is 1, the line segment input mode. If it is 2, adjust the development view (move). If it is 101, operate the folded figure.
 
     int i_mouseDragged_yuukou = 0;
     int i_mouseReleased_yuukou = 0;//0は、マウス操作を無視。1はマウス操作有効。ファイルボックスのon-offなどで、予期せぬmouseDraggedやmouseReleasedが発生したとき、それを拾わないように0に設定する。これらは、マウスがクリックされたときに、1有効指定にする。
@@ -380,9 +374,9 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     //BufferedImage  offscreen = new BufferedImage(1, 1,  BufferedImage.TYPE_INT_BGR);							//20170107_new
     BufferedImage offscreen = null;//20181205new
 
-    BufferedImage offsc_haikei = null;//20181205add
+    BufferedImage offsc_background = null;//20181205add
 
-    int flg61 = 0;//枠設定時につかう　20180524
+    int flg61 = 0;//Used when setting the frame 　20180524
 
     int flg_wi = 0;//writeimage時につかう　1にするとpaintの関数の終了部にwriteimageするようにする。これは、paintの変更が書き出されるイメージに反映されないことを防ぐための工夫。20180528
     String fname_wi;
@@ -631,7 +625,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
         JButton Button_yomi = new JButton("Open");
         Button_yomi.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/yomi.png";
+            img_explanation_fname = "qqq/yomi.png";
             readImageFromFile3();
 
             Button_kyoutuu_sagyou();
@@ -714,7 +708,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
         //Button	Button_kaki		= new Button(	"Save_data"	);Button_kaki.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
         JButton Button_kaki = new JButton("Save");
         Button_kaki.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kaki.png";
+            img_explanation_fname = "qqq/kaki.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             i_mouseDragged_yuukou = 0;
@@ -732,11 +726,11 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 // -----61;長方形内選択モード。
         JButton Button_tyouhoukei_select = new JButton("");
         Button_tyouhoukei_select.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/tyouhoukei_select.png";
+            img_explanation_fname = "qqq/tyouhoukei_select.png";
             readImageFromFile3();
             i_orisen_hojyosen = 0;//=0は折線入力　=1は補助線入力モード
             es1.set_i_orisen_hojyosen(i_orisen_hojyosen);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
-            i_mouse_modeA = 61;
+            i_mouse_modeA = MouseMode.OPERATION_FRAME_CREATE_61;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 1;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -748,8 +742,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
 
         Button_tyouhoukei_select.setMargin(new Insets(0, 0, 0, 0));
-        Button_tyouhoukei_select.setIcon(createImageIcon(
-                "ppp/tyouhoukei_select.png"));
+        Button_tyouhoukei_select.setIcon(createImageIcon("ppp/tyouhoukei_select.png"));
 
 // ------61;長方形内選択モード。ここまで
 
@@ -759,9 +752,9 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
         JButton Button_writeImage = new JButton("Im_s");
         Button_writeImage.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/writeImage.png";
+            img_explanation_fname = "qqq/writeImage.png";
             readImageFromFile3();
-            if (i_mouse_modeA != 61) {
+            if (i_mouse_modeA != MouseMode.OPERATION_FRAME_CREATE_61) {
                 Button_kyoutuu_sagyou();
                 es1.set_i_egaki_dankai(0);
             }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
@@ -782,7 +775,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 		JButton	Button_toumei		= new JButton(	"T"		);
 			Button_toumei.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
 
-		img_kaisetu_fname="qqq/toumei.png";readImageFromFile3();
+		img_explanation_fname="qqq/toumei.png";readImageFromFile3();
 							//if(i_mouse_modeA!=61){Button_kyoutuu_sagyou();es1.set_i_egaki_dankai(0);}//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
 							//i_mouseDragged_yuukou=0; i_mouseReleased_yuukou=0;
 //System.out.println("0    i_toumeika="+i_toumeika);
@@ -864,7 +857,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //マウス設定
         ckbox_mouse_settings = new JCheckBox("");
         ckbox_mouse_settings.addActionListener(e -> {
-            img_kaisetu_fname =
+            img_explanation_fname =
                     "qqq/ckbox_mouse_settei.png";
             readImageFromFile3();
             repaint();
@@ -881,7 +874,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //点探し
         ckbox_point_search = new JCheckBox("");
         ckbox_point_search.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/ckbox_ten_sagasi.png";
+            img_explanation_fname = "qqq/ckbox_ten_sagasi.png";
             readImageFromFile3();
             repaint();
         });
@@ -895,7 +888,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //点離し
         ckbox_ten_hanasi = new JCheckBox("");
         ckbox_ten_hanasi.addActionListener(e -> {
-            img_kaisetu_fname =
+            img_explanation_fname =
                     "qqq/ckbox_ten_hanasi.png";
             readImageFromFile3();
 
@@ -913,7 +906,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //高密度入力
         ckbox_kou_mitudo_nyuuryoku = new JCheckBox("");
         ckbox_kou_mitudo_nyuuryoku.addActionListener(e -> {
-            img_kaisetu_fname =
+            img_explanation_fname =
                     "qqq/ckbox_kou_mitudo_nyuuryoku.png";
             readImageFromFile3();
 
@@ -938,7 +931,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //文表示
         ckbox_bun = new JCheckBox("");
         ckbox_bun.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/ckbox_bun.png";
+            img_explanation_fname = "qqq/ckbox_bun.png";
             readImageFromFile3();
             repaint();
         });
@@ -950,7 +943,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //折線表示
         ckbox_cp = new JCheckBox("");
         ckbox_cp.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/ckbox_cp.png";
+            img_explanation_fname = "qqq/ckbox_cp.png";
             readImageFromFile3();
             repaint();
         });
@@ -962,7 +955,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //補助活線表示
         ckbox_a0 = new JCheckBox("");
         ckbox_a0.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/ckbox_a0.png";
+            img_explanation_fname = "qqq/ckbox_a0.png";
             readImageFromFile3();
             repaint();
         });
@@ -977,7 +970,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //補助画線表示
         ckbox_a1 = new JCheckBox("");
         ckbox_a1.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/ckbox_a1.png";
+            img_explanation_fname = "qqq/ckbox_a1.png";
             readImageFromFile3();
             repaint();
         });
@@ -989,7 +982,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //十字や基準面などの目印画線
         ckbox_mejirusi = new JCheckBox("");
         ckbox_mejirusi.addActionListener(e -> {
-            img_kaisetu_fname =
+            img_explanation_fname =
                     "qqq/ckbox_mejirusi.png";
             readImageFromFile3();
 
@@ -1008,7 +1001,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //折りあがり図を補助線の手前側にするかどうか
         ckbox_cp_ue = new JCheckBox("");
         ckbox_cp_ue.addActionListener(e -> {
-            img_kaisetu_fname =
+            img_explanation_fname =
                     "qqq/ckbox_cp_ue.png";
             readImageFromFile3();
 
@@ -1027,7 +1020,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //折り畳み経過の表示
         ckbox_oritatami_keika = new JCheckBox("");
         ckbox_oritatami_keika.addActionListener(e -> {
-            img_kaisetu_fname =
+            img_explanation_fname =
                     "qqq/ckbox_oritatami_keika.png";
             readImageFromFile3();
 
@@ -1151,14 +1144,14 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 // -------------------------------------------------------------------------------線分入力モード。比率set
 
         //Button	Button_senbun_naibun_set
-// -----1;線分比率set
+// -----1;Line segment ratio set
         JButton Button_senbun_naibun_set = new JButton("Set");
         Button_senbun_naibun_set.addActionListener(e -> {
             set_naibun();
 
-            img_kaisetu_fname = "qqq/senbun_naibun_set.png";
+            img_explanation_fname = "qqq/senbun_naibun_set.png";
             readImageFromFile3();
-            i_mouse_modeA = 28;
+            i_mouse_modeA = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 28;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -1183,9 +1176,9 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         Button_senbun_n_nyuryoku.addActionListener(e -> {
             set_naibun();
 
-            img_kaisetu_fname = "qqq/senbun_n_nyuryoku.png";
+            img_explanation_fname = "qqq/senbun_n_nyuryoku.png";
             readImageFromFile3();
-            i_mouse_modeA = 28;
+            i_mouse_modeA = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 28;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -1216,10 +1209,10 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         JButton Button_tenkaizu_idiu = new JButton("");
         Button_tenkaizu_idiu.addActionListener(e -> {
             //JButton	Button_tenkaizu_idiu	= new JButton(	"CP_move"	);Button_tenkaizu_idiu.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-            img_kaisetu_fname = "qqq/tenkaizu_idiu.png";
+            img_explanation_fname = "qqq/tenkaizu_idiu.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 2;
+            i_mouse_modeA = MouseMode.MOVE_CREASE_PATTERN_2;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             repaint();
@@ -1252,7 +1245,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         JButton Button_tenkaizu_syukusyou = new JButton("");
         Button_tenkaizu_syukusyou.addActionListener(e -> {
 //		JButton	Button_tenkaizu_syukusyou	= new JButton(	"CP_z_out"	);Button_tenkaizu_syukusyou.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-            img_kaisetu_fname = "qqq/tenkaizu_syukusyou.png";
+            img_explanation_fname = "qqq/tenkaizu_syukusyou.png";
             readImageFromFile3();
 
 
@@ -1384,7 +1377,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             repaint();
 
             //}
-            img_kaisetu_fname = "qqq/syukusyaku_keisuu_set.png";
+            img_explanation_fname = "qqq/syukusyaku_keisuu_set.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             repaint();
@@ -1403,7 +1396,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         JButton Button_tenkaizu_kakudai = new JButton("");
         Button_tenkaizu_kakudai.addActionListener(e -> {
 //		Button	Button_tenkaizu_kakudai	= new Button(	"CP_z_in"	);Button_tenkaizu_kakudai.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-            img_kaisetu_fname = "qqq/tenkaizu_kakudai.png";
+            img_explanation_fname = "qqq/tenkaizu_kakudai.png";
             readImageFromFile3();
             //double bairitsu;
             //bairitsu=camera_of_orisen_nyuuryokuzu.get_camera_bairitsu_x();
@@ -1481,7 +1474,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 // *****北*************展開の回転************************************************************
         JButton Button_tenkaizu_p_kaiten = new JButton("");
         Button_tenkaizu_p_kaiten.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/tenkaizu_p_kaiten.png";
+            img_explanation_fname = "qqq/tenkaizu_p_kaiten.png";
             readImageFromFile3();
 
             d_kaiten_hosei = oc.angle_between_m180_180(d_kaiten_hosei + 11.25);
@@ -1528,7 +1521,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             repaint();
 
 
-            img_kaisetu_fname = "qqq/kaiten_hosei_set.png";
+            img_explanation_fname = "qqq/kaiten_hosei_set.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             repaint();
@@ -1546,7 +1539,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         JButton Button_tenkaizu_m_kaiten = new JButton("");
         Button_tenkaizu_m_kaiten.addActionListener(e -> {
 //		JButton	Button_tenkaizu_m_kaiten	= new JButton(	"CP-rot"	);Button_tenkaizu_m_kaiten.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-            img_kaisetu_fname = "qqq/tenkaizu_m_kaiten.png";
+            img_explanation_fname = "qqq/tenkaizu_m_kaiten.png";
             readImageFromFile3();
             d_kaiten_hosei = oc.angle_between_m180_180(d_kaiten_hosei - 11.25);
             camera_of_orisen_input_diagram.setCameraAngle(d_kaiten_hosei);
@@ -1574,7 +1567,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         JButton Button_toumei = new JButton("T");
         Button_toumei.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/toumei.png";
+            img_explanation_fname = "qqq/toumei.png";
             readImageFromFile3();
             //if(i_mouse_modeA!=61){Button_kyoutuu_sagyou();es1.set_i_egaki_dankai(0);}//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
             //i_mouseDragged_yuukou=0; i_mouseReleased_yuukou=0;
@@ -1633,7 +1626,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             }//100だけ待たせるための行。この行がないと、jarファイルで実行したとき、オリヒメ自身をキャプチャするおそれあり。InterruptedException ieのieは最初はeだった。20181125
             setVisible(true);
 
-            img_haikei = imageT;
+            img_background = imageT;
 //oc.hyouji("旧背景カメラリセット");
 //h_cam.reset();
 //oc.hyouji(" ");
@@ -1643,15 +1636,15 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             double dvx = hidari_ue_ix;
             double dvy = hidari_ue_iy;
 
-            haikei_set(new Point(120.0, 120.0),
+            background_set(new Point(120.0, 120.0),
                     new Point(120.0 + 10.0, 120.0),
                     new Point(dvx, dvy),
                     new Point(dvx + 10.0, dvy));
 
 
 //背景表示の各条件を設定
-            ihaikeihyouji = 1;
-            Button_haikei_kirikae.setBackground(Color.ORANGE);
+            iDisplayBackground = 1;
+            Button_background_kirikae.setBackground(Color.ORANGE);
 
             if (i_Lock_on == 1) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
                 h_cam.set_i_Lock_on(i_Lock_on);
@@ -1681,22 +1674,20 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //  observer - イメージがさらに変換されることが通知されるオブジェクト
 
 // *****北*************************************************************************
-        JButton Button_haikei_trim = new JButton("Tr");
-        Button_haikei_trim.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/haikei_trim.png";
+        JButton Button_background_trim = new JButton("Tr");
+        Button_background_trim.addActionListener(e -> {
+            img_explanation_fname = "qqq/haikei_trim.png";
             readImageFromFile3();
 
 
-            offsc_haikei = new BufferedImage(2000, 1100, BufferedImage.TYPE_INT_ARGB);
-//offsc_haikei  = new BufferedImage(2000, 1100,  BufferedImage.TYPE_INT_BGR)	;//TYPE_INT_BGRだとトリムした画像を回転したりすると色が落ちる20181206
+            offsc_background = new BufferedImage(2000, 1100, BufferedImage.TYPE_INT_ARGB);
+//offsc_background  = new BufferedImage(2000, 1100,  BufferedImage.TYPE_INT_BGR)	;//TYPE_INT_BGRだとトリムした画像を回転したりすると色が落ちる20181206
 
-            Graphics bufferGraphics_haikei;
-            bufferGraphics_haikei = offsc_haikei.createGraphics();    //20170107_new
-            Graphics2D g2_haikei = (Graphics2D) bufferGraphics_haikei;
+            Graphics2D g2_background = offsc_background.createGraphics();
             //背景表示
-            if ((img_haikei != null) && (ihaikeihyouji >= 1)) {
-                int iw = img_haikei.getWidth(null);//イメージの幅を取得
-                int ih = img_haikei.getHeight(null);//イメージの高さを取得
+            if ((img_background != null) && (iDisplayBackground >= 1)) {
+                int iw = img_background.getWidth(null);//イメージの幅を取得
+                int ih = img_background.getHeight(null);//イメージの高さを取得
 
                 //System.out.println("paint幅＝"+iw);
                 //System.out.println("paint高さ＝"+ih);
@@ -1704,21 +1695,21 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
                 h_cam.setBackgroundHeight(ih);
 
                 //if(i_Lock_on==1){
-                haikei_byouga(g2_haikei, img_haikei);
+                drawBackground(g2_background, img_background);
                 //}
 
             }
 
 
 //枠設定時の背景を枠内のみ残してトリム 20181204
-            if ((i_mouse_modeA == 61) && (es1.get_i_egaki_dankai() == 4)) {//枠線が表示されている状態
+            if ((i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) && (es1.get_i_egaki_dankai() == 4)) {//枠線が表示されている状態
                 int xmin = (int) es1.p61_TV_hako.get_x_min();
                 int xmax = (int) es1.p61_TV_hako.get_x_max();
                 int ymin = (int) es1.p61_TV_hako.get_y_min();
                 int ymax = (int) es1.p61_TV_hako.get_y_max();
 
-                img_haikei = offsc_haikei.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin);
-//img_haikei=(Image)offsc_haikei;
+                img_background = offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin);
+//img_background=(Image)offsc_background;
 
 
                 h_cam = new Background_camera();
@@ -1726,7 +1717,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
                 double dvx = xmin;
                 double dvy = ymin;
 
-                haikei_set(new Point(120.0, 120.0),
+                background_set(new Point(120.0, 120.0),
                         new Point(120.0 + 10.0, 120.0),
                         new Point(dvx, dvy),
                         new Point(dvx + 10.0, dvy));
@@ -1740,21 +1731,21 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
             }
         });
-        Button_haikei_trim.setMargin(new Insets(0, 0, 0, 0));
-        pnln.add(Button_haikei_trim);
+        Button_background_trim.setMargin(new Insets(0, 0, 0, 0));
+        pnln.add(Button_background_trim);
 
 // *******北***********************************************************************
 /*
 int width, height;
 BufferedImage offsc_haikei2;
 BufferedImage write;
-width=img_haikei.getWidth(null);
-height=img_haikei.getHeight(null);
+width=img_background.getWidth(null);
+height=img_background.getHeight(null);
 write=new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
 for(int w=0; w<width; w++){
 for(int h=0; h<height; h++){
-write.setRGB(w, h, offsc_haikei.getRGB(w,h));
+write.setRGB(w, h, offsc_background.getRGB(w,h));
 }
 }
 */
@@ -1770,9 +1761,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnln.add(pnln9);
         //------------------------------------------------
 
-        JButton Button_haikei = new JButton("BG");
-        Button_haikei.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/haikei.png";
+        JButton Button_background = new JButton("BG");
+        Button_background.addActionListener(e -> {
+            img_explanation_fname = "qqq/haikei.png";
             readImageFromFile3();
 
             //i_Lock_on=0;
@@ -1785,8 +1776,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
             //readImageFromFile2();
-            ihaikeihyouji = 1;
-            Button_haikei_kirikae.setBackground(Color.ORANGE);
+            iDisplayBackground = 1;
+            Button_background_kirikae.setBackground(Color.ORANGE);
 
 
             h_cam = new Background_camera();//20181202
@@ -1800,43 +1791,43 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             repaint();
 
         });
-        Button_haikei.setMargin(new Insets(0, 0, 0, 0));
-        Button_haikei.setBackground(Color.ORANGE);
-        pnln9.add(Button_haikei);
+        Button_background.setMargin(new Insets(0, 0, 0, 0));
+        Button_background.setBackground(Color.ORANGE);
+        pnln9.add(Button_background);
 // ******************************************************************************
-        //Button	Button_haikei_kirikae 	= new Button(	"on_off"	);Button_haikei_kirikae.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-        Button_haikei_kirikae = new JButton("off");
-        Button_haikei_kirikae.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/haikei_kirikae.png";
+        //Button	Button_background_kirikae 	= new Button(	"on_off"	);Button_background_kirikae.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
+        Button_background_kirikae = new JButton("off");
+        Button_background_kirikae.addActionListener(e -> {
+            img_explanation_fname = "qqq/haikei_kirikae.png";
             readImageFromFile3();
 //Button_kyoutuu_sagyou();
-            ihaikeihyouji = ihaikeihyouji + 1;
-            if (ihaikeihyouji == 2) {
-                ihaikeihyouji = 0;
+            iDisplayBackground = iDisplayBackground + 1;
+            if (iDisplayBackground == 2) {
+                iDisplayBackground = 0;
             }
 
-            if (ihaikeihyouji == 0) {
-                Button_haikei_kirikae.setBackground(Color.gray);
+            if (iDisplayBackground == 0) {
+                Button_background_kirikae.setBackground(Color.gray);
             }
 
-            if (ihaikeihyouji == 1) {
-                Button_haikei_kirikae.setBackground(Color.ORANGE);
+            if (iDisplayBackground == 1) {
+                Button_background_kirikae.setBackground(Color.ORANGE);
             }
 
             repaint();
         });
-        Button_haikei_kirikae.setMargin(new Insets(0, 0, 0, 0));
-        Button_haikei_kirikae.setBackground(Color.ORANGE);
-        pnln9.add(Button_haikei_kirikae);
+        Button_background_kirikae.setMargin(new Insets(0, 0, 0, 0));
+        Button_background_kirikae.setBackground(Color.ORANGE);
+        pnln9.add(Button_background_kirikae);
 
 
 // ******************************************************************************
         JButton Button_set_BG = new JButton("S");
         Button_set_BG.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/set_BG.png";
+            img_explanation_fname = "qqq/set_BG.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 26;
+            i_mouse_modeA = MouseMode.BACKGROUND_CHANGE_POSITION_26;
             Button_kyoutuu_sagyou();
             repaint();
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
@@ -1847,9 +1838,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnln9.add(Button_set_BG);
 
 // ******北************************************************************************
-        Button_haikei_Lock_on = new JButton("L");
-        Button_haikei_Lock_on.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/haikei_Lock_on.png";
+        Button_background_Lock_on = new JButton("L");
+        Button_background_Lock_on.addActionListener(e -> {
+            img_explanation_fname = "qqq/haikei_Lock_on.png";
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
 
@@ -1862,7 +1853,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
             if (i_Lock_on == 1) {
-                Button_haikei_Lock_on.setBackground(Color.ORANGE);
+                Button_background_Lock_on.setBackground(Color.ORANGE);
 
                 h_cam.set_i_Lock_on(i_Lock_on);
                 h_cam.setCamera(camera_of_orisen_input_diagram);
@@ -1871,7 +1862,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
             if (i_Lock_on == 0) {
-                Button_haikei_Lock_on.setBackground(Color.gray);
+                Button_background_Lock_on.setBackground(Color.gray);
 
                 h_cam.set_i_Lock_on(i_Lock_on);
                 //h_cam.setCamera(camera_of_orisen_nyuuryokuzu);
@@ -1879,13 +1870,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             }
 
 
-            //ihaikeihyouji=ihaikeihyouji+1 ;
-            //if(ihaikeihyouji==2){ihaikeihyouji=0;}
+            //iDisplayBackground=iDisplayBackground+1 ;
+            //if(iDisplayBackground==2){iDisplayBackground=0;}
             repaint();
         });
-        Button_haikei_Lock_on.setMargin(new Insets(0, 0, 0, 0));
+        Button_background_Lock_on.setMargin(new Insets(0, 0, 0, 0));
 
-        pnln9.add(Button_haikei_Lock_on);
+        pnln9.add(Button_background_Lock_on);
 
 
 // ******北************************************************************************　線分除けて線種変換
@@ -1893,9 +1884,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_senbun_yoke_henkan = new JButton("");//new JButton(	"L_chan"	);
         Button_senbun_yoke_henkan.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/senbun_yoke_henkan.png";
+            img_explanation_fname = "qqq/senbun_yoke_henkan.png";
             readImageFromFile3();
-            i_mouse_modeA = 30;
+            i_mouse_modeA = MouseMode.CREASE_ADVANCE_TYPE_30;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -1921,14 +1912,14 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             //Button_kyoutuu_sagyou();
 
-            ikaisetuhyouji = ikaisetuhyouji + 1;
-            if (ikaisetuhyouji == 2) {
-                ikaisetuhyouji = 0;
+            iDisplayExplanation = iDisplayExplanation + 1;
+            if (iDisplayExplanation == 2) {
+                iDisplayExplanation = 0;
             }
-//System.out.println("ikaisetuhyouji="+ikaisetuhyouji);
+//System.out.println("iDisplayExplanation="+iDisplayExplanation);
             i_mouseDragged_yuukou = 0;
             i_mouseReleased_yuukou = 0;
-//img_kaisetu_fname="kaisetu.png";readImageFromFile3();
+//img_explanation_fname="kaisetu.png";readImageFromFile3();
             //readImageFromFile2();
 
             repaint();
@@ -1971,7 +1962,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_undo = new JButton("");
         Button_undo.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/undo.png";
+            img_explanation_fname = "qqq/undo.png";
             readImageFromFile3();
             //es1.setMemo(Ubox.getMemo());
             setTitle(es1.undo());
@@ -1995,7 +1986,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_undo_syutoku.addActionListener(e -> {
 
 
-            img_kaisetu_fname = "qqq/undo_syutoku.png";
+            img_explanation_fname = "qqq/undo_syutoku.png";
             readImageFromFile3();
             int i_undo_suu_old = i_undo_suu;
             i_undo_suu = StringOp.String2int(text10.getText(), i_undo_suu_old);
@@ -2018,7 +2009,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_redo.addActionListener(e -> {
 
 
-            img_kaisetu_fname = "qqq/redo.png";
+            img_explanation_fname = "qqq/redo.png";
             readImageFromFile3();
 
             setTitle(es1.redo());
@@ -2055,12 +2046,12 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // ****西*********************　線幅　下げ　*****************************************************
         JButton Button_senhaba_sage = new JButton("");
         Button_senhaba_sage.addActionListener(e -> {
-            iTenkaizuSenhaba = iTenkaizuSenhaba - 2;
-            if (iTenkaizuSenhaba < 1) {
-                iTenkaizuSenhaba = 1;
+            iLineWidth = iLineWidth - 2;
+            if (iLineWidth < 1) {
+                iLineWidth = 1;
             }
-            //else{iTenkaizuSenhaba=1;}
-            img_kaisetu_fname = "qqq/senhaba_sage.png";
+            //else{iLineWidth=1;}
+            img_explanation_fname = "qqq/senhaba_sage.png";
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
             repaint();
@@ -2075,8 +2066,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_senhaba_age = new JButton("");
         Button_senhaba_age.addActionListener(e -> {
-            iTenkaizuSenhaba = iTenkaizuSenhaba + 2;
-            img_kaisetu_fname = "qqq/senhaba_age.png";
+            iLineWidth = iLineWidth + 2;
+            img_explanation_fname = "qqq/senhaba_age.png";
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
             repaint();
@@ -2101,7 +2092,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_point_width_reduce = new JButton("");
         Button_point_width_reduce.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/tenhaba_sage.png";
+            img_explanation_fname = "qqq/tenhaba_sage.png";
             readImageFromFile3();
 
             ir_ten = ir_ten - 1;
@@ -2122,7 +2113,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // ****西*******************************　点幅　上げ　*******************************************
         JButton Button_point_width_increase = new JButton("");
         Button_point_width_increase.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/tenhaba_age.png";
+            img_explanation_fname = "qqq/tenhaba_age.png";
             readImageFromFile3();
 
             ir_ten = ir_ten + 1;
@@ -2153,7 +2144,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             if (i_anti_alias == 1) {
                 senhaba_for_anti_alias = 1.2;
             }
-            img_kaisetu_fname = "qqq/anti_alias.png";
+            img_explanation_fname = "qqq/anti_alias.png";
             readImageFromFile3();
 
 
@@ -2193,7 +2184,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 i_orisen_hyougen = 1;
             }
 
-            img_kaisetu_fname = "qqq/orisen_hyougen.png";
+            img_explanation_fname = "qqq/orisen_hyougen.png";
             readImageFromFile3();
 
             repaint();
@@ -2225,7 +2216,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //-------------------------------------------------------------
         ButtonCol_red = new JButton("M");
         ButtonCol_red.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/ButtonCol_red.png";
+            img_explanation_fname = "qqq/ButtonCol_red.png";
             readImageFromFile3();
             ButtonCol_irokesi();
             ButtonCol_red.setForeground(Color.black);
@@ -2246,7 +2237,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         ButtonCol_blue.addActionListener(e -> {
 
 
-            img_kaisetu_fname = "qqq/ButtonCol_blue.png";
+            img_explanation_fname = "qqq/ButtonCol_blue.png";
             readImageFromFile3();
             ButtonCol_irokesi();
             ButtonCol_blue.setForeground(Color.black);
@@ -2264,7 +2255,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         ButtonCol_black = new JButton("E");
         ButtonCol_black.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/ButtonCol_black.png";
+            img_explanation_fname = "qqq/ButtonCol_black.png";
             readImageFromFile3();
 
             ButtonCol_irokesi();
@@ -2286,7 +2277,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         ButtonCol_cyan = new JButton("A");
         ButtonCol_cyan.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/ButtonCol_cyan.png";
+            img_explanation_fname = "qqq/ButtonCol_cyan.png";
             readImageFromFile3();
 
             ButtonCol_irokesi();
@@ -2323,11 +2314,11 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -----1;線分入力モード。
         JButton Button_senbun_nyuryoku = new JButton("");
         Button_senbun_nyuryoku.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/senbun_nyuryoku.png";
+            img_explanation_fname = "qqq/senbun_nyuryoku.png";
             readImageFromFile3();
             i_orisen_hojyosen = 0;//=0は折線入力　=1は補助線入力モード
             es1.set_i_orisen_hojyosen(i_orisen_hojyosen);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
-            i_mouse_modeA = 1;
+            i_mouse_modeA = MouseMode.DRAW_CREASE_FREE_1;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 1;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2349,9 +2340,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_senbun_nyuryoku11 = new JButton("");
         Button_senbun_nyuryoku11.addActionListener(e -> {
             //Button	Button_senbun_nyuryoku11	= new Button(	"L_draw11"	);Button_senbun_nyuryoku11.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-            img_kaisetu_fname = "qqq/senbun_nyuryoku11.png";
+            img_explanation_fname = "qqq/senbun_nyuryoku11.png";
             readImageFromFile3();
-            i_mouse_modeA = 11;
+            i_mouse_modeA = MouseMode.DRAW_CREASE_RESTRICTED_11;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 11;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2373,11 +2364,11 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_Voronoi = new JButton("");
         Button_Voronoi.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/Voronoi.png";
+            img_explanation_fname = "qqq/Voronoi.png";
             readImageFromFile3();
             i_orisen_hojyosen = 0;//=0は折線入力　=1は補助線入力モード
             es1.set_i_orisen_hojyosen(i_orisen_hojyosen);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
-            i_mouse_modeA = 62;
+            i_mouse_modeA = MouseMode.VONOROI_CREATE_62;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 62;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2389,18 +2380,17 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
         Button_Voronoi.setMargin(new Insets(0, 0, 0, 0));
-        Button_Voronoi.setIcon(createImageIcon(
-                "ppp/Voronoi.png"));
+        Button_Voronoi.setIcon(createImageIcon("ppp/Voronoi.png"));
 
 // ------1;線分入力モード。ここまで
 // *******西***********************************************************************
 // -------------38;折り畳み可能線入力
         JButton Button_oritatami_kanousen = new JButton("");
         Button_oritatami_kanousen.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/oritatami_kanousen.png";
+            img_explanation_fname = "qqq/oritatami_kanousen.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 38;
+            i_mouse_modeA = MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 38;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2429,10 +2419,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // 5 5 5 5 5 -------------5;線分延長モード。
         JButton Button_senbun_entyou = new JButton("");//Button_senbun_entyou	= new JButton(	"L_en"	);
         Button_senbun_entyou.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/senbun_entyou.png";
+            img_explanation_fname = "qqq/senbun_entyou.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 5;
+            i_mouse_modeA = MouseMode.LENGTHEN_CREASE_5;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 5;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2455,10 +2445,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // 70 70 70 -------------70;線分延長モード。
         JButton Button_senbun_entyou_2 = new JButton("");//Button_senbun_entyou	= new JButton(	"L_en"	);
         Button_senbun_entyou_2.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/senbun_entyou_2.png";
+            img_explanation_fname = "qqq/senbun_entyou_2.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 70;
+            i_mouse_modeA = MouseMode.CREASE_LENGTHEN_70;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 5;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2471,20 +2461,19 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         pnlw2.add(Button_senbun_entyou_2);
 
         Button_senbun_entyou_2.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_entyou_2.setIcon(createImageIcon(
-                "ppp/senbun_entyou_2.png"));
+        Button_senbun_entyou_2.setIcon(createImageIcon("ppp/senbun_entyou_2.png"));
 
 // -------------70;線分延長モード。ここまで
 // ******************************************************************************
 
 
-// -------------7;角二等分線モード。
+// -------------7;Square bisector mode。
         JButton Button_kaku_toubun = new JButton("");//Button_kaku_toubun	= new JButton(	"kaku_toubun"	);
         Button_kaku_toubun.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kaku_toubun.png";
+            img_explanation_fname = "qqq/kaku_toubun.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 7;
+            i_mouse_modeA = MouseMode.SQUARE_BISECTOR_7;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 7;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2501,13 +2490,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------7;角二等分線モード。ここまで
 
 // ******************************************************************************
-// -------------8;内心モード。
+// -------------8;Inward mode 。
         JButton Button_naishin = new JButton("");//Button_naishin	= new JButton(	"naishin"	);
         Button_naishin.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/naishin.png";
+            img_explanation_fname = "qqq/naishin.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 8;
+            i_mouse_modeA = MouseMode.INWARD_8;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 8;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2535,13 +2524,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
 // *******西***********************************************************************
-// -------------9;垂線おろしモード。
+// -------------9;Perpendicular line down mode.
         JButton Button_suisen = new JButton("");//Button_suisen	= new JButton(	"suisen"	);
         Button_suisen.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/suisen.png";
+            img_explanation_fname = "qqq/suisen.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 9;
+            i_mouse_modeA = MouseMode.PERPENDICULAR_DRAW_9;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 9;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2560,13 +2549,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
 // *******西***********************************************************************
-// -------------10;折り返しモード。
+// -------------10;Wrap mode.
         JButton Button_orikaesi = new JButton("");//Button_orikaesi	= new JButton(	"orikaesi"	);
         Button_orikaesi.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/orikaesi.png";
+            img_explanation_fname = "qqq/orikaesi.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 10;
+            i_mouse_modeA = MouseMode.SYMMETRIC_DRAW_10;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 10;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2585,13 +2574,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
 // *******西***********************************************************************
-// -------------52;連続折り返しモード。
+// -------------52;Continuous wrap mode.
         JButton Button_renzoku_orikaesi = new JButton("");
         Button_renzoku_orikaesi.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/renzoku_orikaesi.png";
+            img_explanation_fname = "qqq/renzoku_orikaesi.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 52;
+            i_mouse_modeA = MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 52;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2618,12 +2607,12 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
 // *******西***********************************************************************
-// -------------40;平行線入力モード。
+// -------------40;Parallel line input mode.
         JButton Button_heikousen = new JButton("");//Button_suisen	= new JButton(	"suisen"	);
         Button_heikousen.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/heikousen.png";
+            img_explanation_fname = "qqq/heikousen.png";
             readImageFromFile3();
-            i_mouse_modeA = 40;
+            i_mouse_modeA = MouseMode.PARALLEL_DRAW_40;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 40;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2637,12 +2626,12 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 "ppp/heikousen.png"));
 // -------------40;平行線入力モード。ここまで
 
-// -------------51;平行線　幅指定入力モード。
+// -------------51;Parallel line width specification input mode.
         JButton Button_heikousen_haba_sitei = new JButton("");
         Button_heikousen_haba_sitei.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/heikousen_haba_sitei.png";
+            img_explanation_fname = "qqq/heikousen_haba_sitei.png";
             readImageFromFile3();
-            i_mouse_modeA = 51;
+            i_mouse_modeA = MouseMode.PARALLEL_DRAW_WIDTH_51;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 51;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2658,13 +2647,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
 // *******西***********************************************************************
-// -------------71;折り畳み可能線+格子点系入力
+// -------------71;Foldable line + grid point system input
         JButton Button_oritatami_kanousen_and_kousitenkei_simple = new JButton("");
         Button_oritatami_kanousen_and_kousitenkei_simple.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/oritatami_kanousen_and_kousitenkei_simple.png";
+            img_explanation_fname = "qqq/oritatami_kanousen_and_kousitenkei_simple.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 71;
+            i_mouse_modeA = MouseMode.FOLDABLE_LINE_DRAW_71;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 71;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2692,11 +2681,11 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // ******西**********全kouho線分(線分入力時の一時的な線分)を実折線に変換モード**************************************************************
         JButton Button_all_s_step_to_orisen = new JButton("");//
         Button_all_s_step_to_orisen.addActionListener(e -> {
-            System.out.println("i_egaki_dankai = " + es1.i_egaki_stage);
-            System.out.println("i_kouho_dankai = " + es1.i_kouho_dankai);
+            System.out.println("i_egaki_dankai = " + es1.i_drawing_stage);
+            System.out.println("i_kouho_dankai = " + es1.i_candidate_stage);
 
 
-            img_kaisetu_fname = "qqq/all_s_step_to_orisen.png";
+            img_explanation_fname = "qqq/all_s_step_to_orisen.png";
             readImageFromFile3();
             //i_mouse_modeA=19;System.out.println("i_mouse_modeA = "+i_mouse_modeA);
             //es1.v_del_all_cc();
@@ -2712,14 +2701,14 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //Button_v_del_all.setBackground(Color.green);
 
 // ********西**********************************************************************
-// -------------33;魚の骨モード。
+// -------------33;Fish bone mode.
 
         JButton Button_sakananohone = new JButton("");
         Button_sakananohone.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/sakananohone.png";
+            img_explanation_fname = "qqq/sakananohone.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 33;
+            i_mouse_modeA = MouseMode.FISH_BONE_DRAW_33;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 33;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2738,13 +2727,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
 // *******西***********************************************************************
-// -------------35;複折り返しモード。
+// -------------35;Double wrap mode.
         JButton Button_fuku_orikaesi = new JButton("");//Button_orikaesi	= new JButton(	"orikaesi"	);
         Button_fuku_orikaesi.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/fuku_orikaesi.png";
+            img_explanation_fname = "qqq/fuku_orikaesi.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 35;
+            i_mouse_modeA = MouseMode.DOUBLE_SYMMETRIC_DRAW_35;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 35;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2783,7 +2772,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------------------------------------------------------------------------
 
         //Button	Button_senbun_bunkatu_set
-// -----1;線分分割数set
+// -----1;Line segment division number set
         JButton Button_senbun_bunkatu_set = new JButton("Set");
         Button_senbun_bunkatu_set.addActionListener(e -> {
 
@@ -2795,9 +2784,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             text2.setText(String.valueOf(i_orisen_bunkatu_suu));
             es1.set_i_orisen_bunkatu_suu(i_orisen_bunkatu_suu);
 
-            img_kaisetu_fname = "qqq/senbun_bunkatu_set.png";
+            img_explanation_fname = "qqq/senbun_bunkatu_set.png";
             readImageFromFile3();
-            i_mouse_modeA = 27;
+            i_mouse_modeA = MouseMode.LINE_SEGMENT_DIVISION_27;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 27;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2816,7 +2805,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------------------------------------------------------------------------
 
 
-// -----27;線分分割入力モード。
+// -----27;Line segment division input mode.
         JButton Button_senbun_b_nyuryoku = new JButton("");
         Button_senbun_b_nyuryoku.addActionListener(e -> {
 
@@ -2828,9 +2817,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             text2.setText(String.valueOf(i_orisen_bunkatu_suu));
             es1.set_i_orisen_bunkatu_suu(i_orisen_bunkatu_suu);
 
-            img_kaisetu_fname = "qqq/senbun_b_nyuryoku.png";
+            img_explanation_fname = "qqq/senbun_b_nyuryoku.png";
             readImageFromFile3();
-            i_mouse_modeA = 27;
+            i_mouse_modeA = MouseMode.LINE_SEGMENT_DIVISION_27;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 27;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2859,7 +2848,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -----61;長方形内選択モード。
 		JButton	Button_tyouhoukei_select	= new JButton(	""	);
 			Button_tyouhoukei_select.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-	img_kaisetu_fname="qqq/tyouhoukei_select.png";readImageFromFile3();
+	img_explanation_fname="qqq/tyouhoukei_select.png";readImageFromFile3();
 						i_orisen_hojyosen=0;//=0は折線入力　=1は補助線入力モード
 						es1.set_i_orisen_hojyosen(i_orisen_hojyosen);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
 						i_mouse_modeA=61;iro_sitei_ato_ni_jissisuru_sagyou_bangou=1;
@@ -2882,10 +2871,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_select =
                 new JButton("sel");
         Button_select.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/Select.png";
+            img_explanation_fname = "qqq/Select.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 19;
+            i_mouse_modeA = MouseMode.CREASE_SELECT_19;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             Button_kyoutuu_sagyou();
             repaint();
@@ -2904,7 +2893,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_select_all = new JButton("s_al");//
         Button_select_all.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/select_all.png";
+            img_explanation_fname = "qqq/select_all.png";
             readImageFromFile3();
             //i_mouse_modeA=19;
             es1.select_all();
@@ -2932,10 +2921,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_unselect =
                 new JButton("unsel");
         Button_unselect.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/unselect.png";
+            img_explanation_fname = "qqq/unselect.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 20;
+            i_mouse_modeA = MouseMode.CREASE_UNSELECT_20;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             Button_kyoutuu_sagyou();
             repaint();
@@ -2952,7 +2941,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_unselect_all = new JButton("uns_al");//
         Button_unselect_all.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/unselect_all.png";
+            img_explanation_fname = "qqq/unselect_all.png";
             readImageFromFile3();
             //i_mouse_modeA=19;
             es1.unselect_all();
@@ -2982,13 +2971,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_move = new JButton("move");
         Button_move.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/move.png";
+            img_explanation_fname = "qqq/move.png";
             readImageFromFile3();
             i_sel_mou_mode = 1;
             Button_sel_mou_wakukae();
 
 
-            i_mouse_modeA = 21;
+            i_mouse_modeA = MouseMode.CREASE_MOVE_21;
             Button_kyoutuu_sagyou();
             repaint();
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
@@ -3007,13 +2996,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_move_2p2p = new JButton("mv_4p");
         Button_move_2p2p.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/move_2p2p.png";
+            img_explanation_fname = "qqq/move_2p2p.png";
             readImageFromFile3();
             i_sel_mou_mode = 2;
             Button_sel_mou_wakukae();
 
 
-            i_mouse_modeA = 31;
+            i_mouse_modeA = MouseMode.CREASE_MOVE_4P_31;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             Button_kyoutuu_sagyou();
             repaint();
@@ -3040,13 +3029,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_copy_paste = new JButton("copy");
         Button_copy_paste.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/copy_paste.png";
+            img_explanation_fname = "qqq/copy_paste.png";
             readImageFromFile3();
             i_sel_mou_mode = 3;
             Button_sel_mou_wakukae();
 
 
-            i_mouse_modeA = 22;
+            i_mouse_modeA = MouseMode.CREASE_COPY_22;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             Button_kyoutuu_sagyou();
             repaint();
@@ -3063,13 +3052,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_copy_paste_2p2p = new JButton("cp_4p");
         Button_copy_paste_2p2p.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/copy_paste_2p2p.png";
+            img_explanation_fname = "qqq/copy_paste_2p2p.png";
             readImageFromFile3();
             i_sel_mou_mode = 4;
             Button_sel_mou_wakukae();
 
 
-            i_mouse_modeA = 32;
+            i_mouse_modeA = MouseMode.CREASE_COPY_4P_32;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             Button_kyoutuu_sagyou();
             repaint();
@@ -3095,12 +3084,12 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_kyouei = new JButton("");//new JButton(	"kyouei"	);
         Button_kyouei.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/kyouei.png";
+            img_explanation_fname = "qqq/kyouei.png";
             readImageFromFile3();
             i_sel_mou_mode = 5;
             Button_sel_mou_wakukae();
 
-            i_mouse_modeA = 12;
+            i_mouse_modeA = MouseMode.DRAW_CREASE_SYMMETRIC_12;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             Button_kyoutuu_sagyou();
             repaint();
@@ -3120,7 +3109,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_del_selected_senbun = new JButton("d_s_L");//new JButton(	"del_sel_L"	);
         Button_del_selected_senbun.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/del_selected_senbun.png";
+            img_explanation_fname = "qqq/del_selected_senbun.png";
             readImageFromFile3();
             es1.del_selected_senbun();
             es1.record();
@@ -3154,9 +3143,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_senbun_sakujyo = new JButton("");
         Button_senbun_sakujyo.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/senbun_sakujyo.png";
+            img_explanation_fname = "qqq/senbun_sakujyo.png";
             readImageFromFile3();
-            i_mouse_modeA = 3;
+            i_mouse_modeA = MouseMode.LINE_SEGMENT_DELETE_3;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
 
@@ -3180,9 +3169,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_kuro_lineSegment_removal = new JButton("");
         Button_kuro_lineSegment_removal.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/kuro_senbun_sakujyo.png";
+            img_explanation_fname = "qqq/kuro_senbun_sakujyo.png";
             readImageFromFile3();
-            i_mouse_modeA = 3;
+            i_mouse_modeA = MouseMode.LINE_SEGMENT_DELETE_3;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
 
@@ -3206,9 +3195,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_senbun3_sakujyo = new JButton("");
         Button_senbun3_sakujyo.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/senbun3_sakujyo.png";
+            img_explanation_fname = "qqq/senbun3_sakujyo.png";
             readImageFromFile3();
-            i_mouse_modeA = 3;
+            i_mouse_modeA = MouseMode.LINE_SEGMENT_DELETE_3;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
 
@@ -3231,7 +3220,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_eda_kesi = new JButton("");//JButton	Button_eda_kesi		= new JButton(	"Trim"	);
         Button_eda_kesi.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/eda_kesi.png";
+            img_explanation_fname = "qqq/eda_kesi.png";
             readImageFromFile3();
             es1.point_removal();
             es1.overlapping_line_removal();
@@ -3265,13 +3254,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // *******西***********************************************************************
         Button_M_nisuru = new JButton(" ");
         Button_M_nisuru.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/M_nisuru.png";
+            img_explanation_fname = "qqq/M_nisuru.png";
             readImageFromFile3();
             Button_irokesi();
             Button_M_nisuru.setForeground(Color.black);
             Button_M_nisuru.setBackground(Color.red);
             //icol=1;es1.setcolor(icol);
-            i_mouse_modeA = 23;
+            i_mouse_modeA = MouseMode.CREASE_MAKE_MOUNTAIN_23;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -3293,13 +3282,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // ******************************************************************************
         Button_V_nisuru = new JButton(" ");
         Button_V_nisuru.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/V_nisuru.png";
+            img_explanation_fname = "qqq/V_nisuru.png";
             readImageFromFile3();
             Button_irokesi();
             Button_V_nisuru.setForeground(Color.black);
             Button_V_nisuru.setBackground(Color.blue);
             //icol=1;es1.setcolor(icol);
-            i_mouse_modeA = 24;
+            i_mouse_modeA = MouseMode.CREASE_MAKE_VALLEY_24;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -3315,13 +3304,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // ******************************************************************************
         Button_E_nisuru = new JButton(" ");
         Button_E_nisuru.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/E_nisuru.png";
+            img_explanation_fname = "qqq/E_nisuru.png";
             readImageFromFile3();
             Button_irokesi();
             Button_E_nisuru.setForeground(Color.white);
             Button_E_nisuru.setBackground(Color.black);
             //icol=1;es1.setcolor(icol);
-            i_mouse_modeA = 25;
+            i_mouse_modeA = MouseMode.CREASE_MAKE_EDGE_25;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -3332,21 +3321,20 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_E_nisuru.setBackground(Color.white);
         Button_E_nisuru.setMargin(new Insets(0, 0, 0, 0));
 
-        Button_E_nisuru.setIcon(createImageIcon(
-                "ppp/E_nisuru.png"));
+        Button_E_nisuru.setIcon(createImageIcon("ppp/E_nisuru.png"));
 
 
 // ******************************************************************************
 
         Button_HK_nisuru = new JButton(" ");//HKとは補助活線のこと
         Button_HK_nisuru.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/HK_nisuru.png";
+            img_explanation_fname = "qqq/HK_nisuru.png";
             readImageFromFile3();
             Button_irokesi();
             Button_HK_nisuru.setForeground(Color.white);
             Button_HK_nisuru.setBackground(new Color(100, 200, 200));
             //icol=1;es1.setcolor(icol);
-            i_mouse_modeA = 60;
+            i_mouse_modeA = MouseMode.CREASE_MAKE_AUX_60;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -3357,8 +3345,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_HK_nisuru.setBackground(Color.white);
         Button_HK_nisuru.setMargin(new Insets(0, 0, 0, 0));
 
-        Button_HK_nisuru.setIcon(createImageIcon(
-                "ppp/HK_nisuru.png"));
+        Button_HK_nisuru.setIcon(createImageIcon("ppp/HK_nisuru.png"));
 
 
 // ******************************************************************************
@@ -3375,7 +3362,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // *****西*************************************************************************
         JButton Button_zen_yama_tani_henkan = new JButton("AC");
         Button_zen_yama_tani_henkan.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/zen_yama_tani_henkan.png";
+            img_explanation_fname = "qqq/zen_yama_tani_henkan.png";
             readImageFromFile3();
             es1.zen_yama_tani_henkan();
             es1.unselect_all();
@@ -3390,14 +3377,14 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_senbun_henkan2 = new JButton("");//new JButton(	"L_chan"	);
         Button_senbun_henkan2.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/senbun_henkan2.png";
+            img_explanation_fname = "qqq/senbun_henkan2.png";
             readImageFromFile3();
             Button_irokesi();
             //Button_senbun_henkan2.setForeground(Color.black);
             Button_senbun_henkan2.setBackground(new Color(138, 43, 226));
 
 
-            i_mouse_modeA = 58;
+            i_mouse_modeA = MouseMode.CREASE_TOGGLE_MV_58;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -3416,11 +3403,11 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_senbun_henkan = new JButton("");//new JButton(	"L_chan"	);
         Button_senbun_henkan.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/senbun_henkan.png";
+            img_explanation_fname = "qqq/senbun_henkan.png";
             readImageFromFile3();
             Button_irokesi();
 
-            i_mouse_modeA = 4;
+            i_mouse_modeA = MouseMode.CHANGE_CREASE_TYPE_4;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -3447,10 +3434,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_in_L_col_change = new JButton("");//new JButton(	"in_L_col_change"	);
         Button_in_L_col_change.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/in_L_col_change.png";
+            img_explanation_fname = "qqq/in_L_col_change.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 34;
+            i_mouse_modeA = MouseMode.CREASE_MAKE_MV_34;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 34;
 
@@ -3479,9 +3466,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_on_L_col_change = new JButton("");//new JButton(	"on_L_col_change"	);
         Button_on_L_col_change.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/on_L_col_change.png";
+            img_explanation_fname = "qqq/on_L_col_change.png";
             readImageFromFile3();
-            i_mouse_modeA = 36;
+            i_mouse_modeA = MouseMode.CREASES_ALTERNATE_MV_36;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 36;
 
@@ -3515,13 +3502,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         pnlw.add(pnlw10);
         //------------------------------------------------
-// -------------14;点追加モード。
+// -------------14;Point addition mode.
         JButton Button_v_add = new JButton("");// new JButton(	"V_add"	);
         Button_v_add.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/v_add.png";
+            img_explanation_fname = "qqq/v_add.png";
             readImageFromFile3();
-            i_mouse_modeA = 14;
+            i_mouse_modeA = MouseMode.DRAW_POINT_14;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -3541,10 +3528,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------15;点削除モード。
         JButton Button_v_del = new JButton("");//new JButton(	"V_del"	);
         Button_v_del.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/v_del.png";
+            img_explanation_fname = "qqq/v_del.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 15;
+            i_mouse_modeA = MouseMode.DELETE_POINT_15;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -3564,10 +3551,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------15;点削除モード（カラーチェンジ）。
         JButton Button_v_del_cc = new JButton("");//new JButton(	"V_del"	);
         Button_v_del_cc.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/v_del_cc.png";
+            img_explanation_fname = "qqq/v_del_cc.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 41;
+            i_mouse_modeA = MouseMode.VERTEX_DELETE_ON_CREASE_41;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -3600,7 +3587,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_v_del_all = new JButton("");//
         Button_v_del_all.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/v_del_all.png";
+            img_explanation_fname = "qqq/v_del_all.png";
             readImageFromFile3();
             //i_mouse_modeA=19;
             es1.v_del_all();
@@ -3620,7 +3607,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_v_del_all_cc = new JButton("");//
         Button_v_del_all_cc.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/v_del_all_cc.png";
+            img_explanation_fname = "qqq/v_del_all_cc.png";
             readImageFromFile3();
             //i_mouse_modeA=19;
             es1.v_del_all_cc();
@@ -3665,7 +3652,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //格子表示2
         Button_kitei2 = new JButton("");//new JButton(	"Grid2"	);
         Button_kitei2.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kitei2.png";
+            img_explanation_fname = "qqq/kitei2.png";
             readImageFromFile3();
 
             nyuuryoku_kitei = nyuuryoku_kitei / 2;
@@ -3724,7 +3711,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_syutoku.addActionListener(e -> {
 
 
-            img_kaisetu_fname = "qqq/syutoku.png";
+            img_explanation_fname = "qqq/syutoku.png";
             readImageFromFile3();
             set_grid_bunkatu_suu();
 
@@ -3742,7 +3729,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_kitei = new JButton("");// new JButton(	"Grid"	);
 
         Button_kitei.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kitei.png";
+            img_explanation_fname = "qqq/kitei.png";
             readImageFromFile3();
 
             nyuuryoku_kitei = nyuuryoku_kitei * 2;
@@ -3785,7 +3772,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------格子線の色の選択
         JButton Button_grid_color = new JButton("C");
         Button_grid_color.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kousi_color.png";
+            img_explanation_fname = "qqq/kousi_color.png";
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
             i_mouseDragged_yuukou = 0;
@@ -3822,7 +3809,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_grid_senhaba_sage = new JButton("");
         Button_grid_senhaba_sage.addActionListener(e -> {
             kus.grid_senhaba_sage();
-            img_kaisetu_fname = "qqq/kousi_senhaba_sage.png";
+            img_explanation_fname = "qqq/kousi_senhaba_sage.png";
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
             repaint();
@@ -3838,7 +3825,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_grid_senhaba_age = new JButton("");
         Button_grid_senhaba_age.addActionListener(e -> {
             kus.grid_senhaba_age();
-            img_kaisetu_fname = "qqq/kousi_senhaba_age.png";
+            img_explanation_fname = "qqq/kousi_senhaba_age.png";
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
             repaint();
@@ -3857,7 +3844,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_i_kitei_jyoutai.addActionListener(e -> {
 
 
-            img_kaisetu_fname = "qqq/i_kitei_jyoutai.png";
+            img_explanation_fname = "qqq/i_kitei_jyoutai.png";
             readImageFromFile3();
 
             es1.set_i_base_state(es1.getBaseState().advance());
@@ -3893,7 +3880,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_memori_tate_idou = new JButton("");
         Button_memori_tate_idou.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/memori_tate_idou.png";
+            img_explanation_fname = "qqq/memori_tate_idou.png";
             readImageFromFile3();
             es1.a_to_heikouna_memori_iti_idou();
 
@@ -3917,7 +3904,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // *****西*************************************************************************
         JButton Button_scale_interval_syutoku = new JButton("S");
         Button_scale_interval_syutoku.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/memori_kankaku_syutoku.png";
+            img_explanation_fname = "qqq/memori_kankaku_syutoku.png";
             readImageFromFile3();
             int scale_interval_old = scale_interval;
             scale_interval = StringOp.String2int(text25.getText(), scale_interval_old);
@@ -3938,7 +3925,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_memori_yoko_idou = new JButton("");
         Button_memori_yoko_idou.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/memori_yoko_idou.png";
+            img_explanation_fname = "qqq/memori_yoko_idou.png";
             readImageFromFile3();
 
             es1.b_to_heikouna_memori_iti_idou();
@@ -3955,7 +3942,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------格子目盛り線の色の選択
         JButton Button_grid_scale_color = new JButton("C");
         Button_grid_scale_color.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kousi_memori_color.png";
+            img_explanation_fname = "qqq/kousi_memori_color.png";
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
             i_mouseDragged_yuukou = 0;
@@ -4082,7 +4069,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // *****西*************************************************************************
         JButton Button_grid_syutoku = new JButton("Set");
         Button_grid_syutoku.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kousi_syutoku.png";
+            img_explanation_fname = "qqq/kousi_syutoku.png";
             readImageFromFile3();
             setGrid();
             //Button_kyoutuu_sagyou();
@@ -4126,7 +4113,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         ckbox_check1 = new JCheckBox("ckO");
         ckbox_check1.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/check1.png";
+            img_explanation_fname = "qqq/check1.png";
             readImageFromFile3();
             es1.unselect_all();
 
@@ -4153,7 +4140,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_fix1.addActionListener(e -> {
 
 
-            img_kaisetu_fname = "qqq/fix1.png";
+            img_explanation_fname = "qqq/fix1.png";
             readImageFromFile3();
             es1.unselect_all();
             es1.fix1(0.001, 0.5);
@@ -4181,7 +4168,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         ckbox_check2 = new JCheckBox("ckT");
         ckbox_check2.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/check2.png";
+            img_explanation_fname = "qqq/check2.png";
             readImageFromFile3();
             es1.unselect_all();
 
@@ -4208,7 +4195,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_fix2.addActionListener(e -> {
 
 
-            img_kaisetu_fname = "qqq/fix2.png";
+            img_explanation_fname = "qqq/fix2.png";
             readImageFromFile3();
             es1.unselect_all();
             es1.fix2(0.001, 0.5);
@@ -4237,7 +4224,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         ckbox_check3 = new JCheckBox("check A");
         ckbox_check3.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/check3.png";
+            img_explanation_fname = "qqq/check3.png";
             readImageFromFile3();
             es1.unselect_all();
 
@@ -4270,7 +4257,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         ckbox_check4 = new JCheckBox("cAMV");
         ckbox_check4.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/check4.png";
+            img_explanation_fname = "qqq/check4.png";
             readImageFromFile3();
             es1.unselect_all();
 
@@ -4303,7 +4290,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_ck4_color_sage = new JButton("");
         Button_ck4_color_sage.addActionListener(e -> {
             es1.ck4_color_sage();
-            img_kaisetu_fname = "qqq/ck4_color_sage.png";
+            img_explanation_fname = "qqq/ck4_color_sage.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             repaint();
@@ -4319,7 +4306,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_ck4_color_age = new JButton("");
         Button_ck4_color_age.addActionListener(e -> {
             es1.ck4_color_age();
-            img_kaisetu_fname = "qqq/ck4_color_age.png";
+            img_explanation_fname = "qqq/ck4_color_age.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             repaint();
@@ -4355,27 +4342,27 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_kakudo_kei_a_tiisaku = new JButton("");
         Button_kakudo_kei_a_tiisaku.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kakudo_kei_a_tiisaku.png";
+            img_explanation_fname = "qqq/kakudo_kei_a_tiisaku.png";
             readImageFromFile3();
 
             if (kakudokei_input_id == 1) {
-                i_mouse_modeA = 13;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 2) {
-                i_mouse_modeA = 16;
+                i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 3) {
-                i_mouse_modeA = 17;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 4) {
-                i_mouse_modeA = 18;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 5) {
-                i_mouse_modeA = 37;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
 
@@ -4401,27 +4388,27 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //-------------------------------------------------------------
         Button_kakudo_kei_a = new JButton("180/" + id_kakudo_kei_a + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_a)) * 1000)) / 1000.0);
         Button_kakudo_kei_a.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kakudo_kei_a.png";
+            img_explanation_fname = "qqq/kakudo_kei_a.png";
             readImageFromFile3();
 
             if (kakudokei_input_id == 1) {
-                i_mouse_modeA = 13;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 2) {
-                i_mouse_modeA = 16;
+                i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 3) {
-                i_mouse_modeA = 17;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 4) {
-                i_mouse_modeA = 18;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 5) {
-                i_mouse_modeA = 37;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
 
@@ -4445,27 +4432,27 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_kakudo_kei_a_ookiku = new JButton("");
         Button_kakudo_kei_a_ookiku.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kakudo_kei_a_ookiku.png";
+            img_explanation_fname = "qqq/kakudo_kei_a_ookiku.png";
             readImageFromFile3();
 
             if (kakudokei_input_id == 1) {
-                i_mouse_modeA = 13;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 2) {
-                i_mouse_modeA = 16;
+                i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 3) {
-                i_mouse_modeA = 17;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 4) {
-                i_mouse_modeA = 18;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 5) {
-                i_mouse_modeA = 37;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
 
@@ -4502,27 +4489,27 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_kakudo_kei_b_tiisaku = new JButton("");
         Button_kakudo_kei_b_tiisaku.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kakudo_kei_b_tiisaku.png";
+            img_explanation_fname = "qqq/kakudo_kei_b_tiisaku.png";
             readImageFromFile3();
 
             if (kakudokei_input_id == 1) {
-                i_mouse_modeA = 13;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 2) {
-                i_mouse_modeA = 16;
+                i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 3) {
-                i_mouse_modeA = 17;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 4) {
-                i_mouse_modeA = 18;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 5) {
-                i_mouse_modeA = 37;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
 
@@ -4548,27 +4535,27 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //-------------------------------------------------------------
         Button_kakudo_kei_b = new JButton("180/" + id_kakudo_kei_b + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_b)) * 1000)) / 1000.0);
         Button_kakudo_kei_b.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kakudo_kei_b.png";
+            img_explanation_fname = "qqq/kakudo_kei_b.png";
             readImageFromFile3();
 
             if (kakudokei_input_id == 1) {
-                i_mouse_modeA = 13;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 2) {
-                i_mouse_modeA = 16;
+                i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 3) {
-                i_mouse_modeA = 17;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 4) {
-                i_mouse_modeA = 18;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 5) {
-                i_mouse_modeA = 37;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
 
@@ -4592,27 +4579,27 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_kakudo_kei_b_ookiku = new JButton("");
         Button_kakudo_kei_b_ookiku.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kakudo_kei_b_ookiku.png";
+            img_explanation_fname = "qqq/kakudo_kei_b_ookiku.png";
             readImageFromFile3();
 
             if (kakudokei_input_id == 1) {
-                i_mouse_modeA = 13;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 2) {
-                i_mouse_modeA = 16;
+                i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 3) {
-                i_mouse_modeA = 17;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 4) {
-                i_mouse_modeA = 18;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 5) {
-                i_mouse_modeA = 37;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
 
@@ -4640,27 +4627,27 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // ******************************************************************************
         JButton Button_id_kakudo_kei_12 = new JButton("180/12= 15");
         Button_id_kakudo_kei_12.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/id_kakudo_kei_12.png";
+            img_explanation_fname = "qqq/id_kakudo_kei_12.png";
             readImageFromFile3();
 
             if (kakudokei_input_id == 1) {
-                i_mouse_modeA = 13;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 2) {
-                i_mouse_modeA = 16;
+                i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 3) {
-                i_mouse_modeA = 17;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 4) {
-                i_mouse_modeA = 18;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 5) {
-                i_mouse_modeA = 37;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
 
@@ -4679,27 +4666,27 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_id_kakudo_kei_08 = new JButton("180/8= 22.5");
         Button_id_kakudo_kei_08.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/id_kakudo_kei_08.png";
+            img_explanation_fname = "qqq/id_kakudo_kei_08.png";
             readImageFromFile3();
 
             if (kakudokei_input_id == 1) {
-                i_mouse_modeA = 13;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 2) {
-                i_mouse_modeA = 16;
+                i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 3) {
-                i_mouse_modeA = 17;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 4) {
-                i_mouse_modeA = 18;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 5) {
-                i_mouse_modeA = 37;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
 
@@ -4745,27 +4732,27 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_jiyuu_kaku_set_a.addActionListener(e -> {
 
             set_jiyuu_kaku_abc();
-            img_kaisetu_fname = "qqq/jiyuu_kaku_set_a.png";
+            img_explanation_fname = "qqq/jiyuu_kaku_set_a.png";
             readImageFromFile3();
 
             if (kakudokei_input_id == 1) {
-                i_mouse_modeA = 13;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 2) {
-                i_mouse_modeA = 16;
+                i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 3) {
-                i_mouse_modeA = 17;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 4) {
-                i_mouse_modeA = 18;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 5) {
-                i_mouse_modeA = 37;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
 
@@ -4816,27 +4803,27 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_jiyuu_kaku_set_b.addActionListener(e -> {
 //set_naibun();
             set_jiyuu_kaku_def();
-            img_kaisetu_fname = "qqq/jiyuu_kaku_set_b.png";
+            img_explanation_fname = "qqq/jiyuu_kaku_set_b.png";
             readImageFromFile3();
 
             if (kakudokei_input_id == 1) {
-                i_mouse_modeA = 13;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 2) {
-                i_mouse_modeA = 16;
+                i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 3) {
-                i_mouse_modeA = 17;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 4) {
-                i_mouse_modeA = 18;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             if (kakudokei_input_id == 5) {
-                i_mouse_modeA = 37;
+                i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
 
@@ -4882,11 +4869,11 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------13;角度系モード。
         JButton Button_deg = new JButton("");//new JButton(	"kakudokei"	);
         Button_deg.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/deg.png";
+            img_explanation_fname = "qqq/deg.png";
             readImageFromFile3();
 
             kakudokei_input_id = 1;
-            i_mouse_modeA = 13;
+            i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
 
@@ -4905,11 +4892,11 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -----東--------17;角度系モード。//2点指定
         JButton Button_deg3 = new JButton("");//new JButton(	"kakudokei_3"	);
         Button_deg3.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/deg3.png";
+            img_explanation_fname = "qqq/deg3.png";
             readImageFromFile3();
 
             kakudokei_input_id = 3;
-            i_mouse_modeA = 17;
+            i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
 
@@ -4928,10 +4915,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_senbun_nyuryoku37 = new JButton("");
         Button_senbun_nyuryoku37.addActionListener(e -> {
             //Button	Button_senbun_nyuryoku37	= new Button(	"L_draw11"	);Button_senbun_nyuryoku11.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-            img_kaisetu_fname = "qqq/senbun_nyuryoku37.png";
+            img_explanation_fname = "qqq/senbun_nyuryoku37.png";
             readImageFromFile3();
             kakudokei_input_id = 5;
-            i_mouse_modeA = 37;
+            i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -4958,14 +4945,14 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         //------------------------------------------------
         pnle.add(pnle3);
-// ----東---------16;角度系モード。
+// ----東---------16;Angle system mode.
         JButton Button_deg2 = new JButton("");//new JButton(	"kakudokei_2"	);
         Button_deg2.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/deg2.png";
+            img_explanation_fname = "qqq/deg2.png";
             readImageFromFile3();
             kakudokei_input_id = 2;
-            i_mouse_modeA = 16;
+            i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -4983,10 +4970,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_deg4 = new JButton("");//new JButton(	"kakudokei_4"	);
         Button_deg4.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/deg4.png";
+            img_explanation_fname = "qqq/deg4.png";
             readImageFromFile3();
             kakudokei_input_id = 4;
-            i_mouse_modeA = 18;
+            i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5037,9 +5024,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             text9.setText(String.valueOf(i_sei_takakukei));
             es1.set_i_sei_takakukei(i_sei_takakukei);
 
-            img_kaisetu_fname = "qqq/kakusuu_set.png";
+            img_explanation_fname = "qqq/kakusuu_set.png";
             readImageFromFile3();
-            i_mouse_modeA = 29;
+            i_mouse_modeA = MouseMode.POLYGON_SET_NO_CORNERS_29;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             Button_kyoutuu_sagyou();
@@ -5068,9 +5055,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             text9.setText(String.valueOf(i_sei_takakukei));
             es1.set_i_sei_takakukei(i_sei_takakukei);
 
-            img_kaisetu_fname = "qqq/sei_takakukei.png";
+            img_explanation_fname = "qqq/sei_takakukei.png";
             readImageFromFile3();
-            i_mouse_modeA = 29;
+            i_mouse_modeA = MouseMode.POLYGON_SET_NO_CORNERS_29;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = 29;
             Button_kyoutuu_sagyou();
@@ -5108,9 +5095,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------47;円入力モード。(フリー)
         JButton Button_en_nyuryoku_free = new JButton("");
         Button_en_nyuryoku_free.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/en_nyuryoku_free.png";
+            img_explanation_fname = "qqq/en_nyuryoku_free.png";
             readImageFromFile3();
-            i_mouse_modeA = 47;
+            i_mouse_modeA = MouseMode.CIRCLE_DRAW_FREE_47;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5131,9 +5118,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------42;円入力モード。
         JButton Button_en_nyuryoku = new JButton("");
         Button_en_nyuryoku.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/en_nyuryoku.png";
+            img_explanation_fname = "qqq/en_nyuryoku.png";
             readImageFromFile3();
-            i_mouse_modeA = 42;
+            i_mouse_modeA = MouseMode.CIRCLE_DRAW_42;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5150,12 +5137,12 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 // -------------42;円入力モード。ここまで
 
-// -------------44;円　分離入力モード。(中心と半径とを離して指定する)
+// -------------44;Circle separate input mode. (Specify the center and radius apart)
         JButton Button_en_bunri_nyuryoku = new JButton("");
         Button_en_bunri_nyuryoku.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/en_bunri_nyuryoku.png";
+            img_explanation_fname = "qqq/en_bunri_nyuryoku.png";
             readImageFromFile3();
-            i_mouse_modeA = 44;
+            i_mouse_modeA = MouseMode.CIRCLE_DRAW_SEPARATE_44;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5184,9 +5171,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------48;円　同心円追加モード。(元円の円周と同心円の円周との幅は線分で指定する)
         JButton Button_dousin_en_tuika_s = new JButton("");
         Button_dousin_en_tuika_s.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/dousin_en_tuika_s.png";
+            img_explanation_fname = "qqq/dousin_en_tuika_s.png";
             readImageFromFile3();
-            i_mouse_modeA = 48;
+            i_mouse_modeA = MouseMode.CIRCLE_DRAW_CONCENTRIC_48;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5205,9 +5192,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------49;円　同心円追加モード。(元円の円周と同心円の円周との幅は他の同心円の組で指定する)
         JButton Button_dousin_en_tuika_d = new JButton("");
         Button_dousin_en_tuika_d.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/dousin_en_tuika_d.png";
+            img_explanation_fname = "qqq/dousin_en_tuika_d.png";
             readImageFromFile3();
-            i_mouse_modeA = 49;
+            i_mouse_modeA = MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5235,13 +5222,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //------------------------------------------------
 
 
-// -------------50;2円を指定し、それぞれの円に同心円を加える。それぞれの同心円の組にできる帯領域の幅が等しくなるようにして、加えられた同心円同士が接するようにする。
+// -------------50;Specify 2 circles and add concentric circles to each circle. Make sure that the widths of the band regions formed in each concentric pair are equal so that the added concentric circles touch each other.
         JButton Button_en_en_dousin_en = new JButton("");
         Button_en_en_dousin_en.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/en_en_dousin_en.png";
+            img_explanation_fname = "qqq/en_en_dousin_en.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 50;
+            i_mouse_modeA = MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5260,10 +5247,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------45;2円の共通接線入力モード。
         JButton Button_en_en_sessen = new JButton("");
         Button_en_en_sessen.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/en_en_sessen.png";
+            img_explanation_fname = "qqq/en_en_sessen.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 45;
+            i_mouse_modeA = MouseMode.CIRCLE_DRAW_TANGENT_LINE_45;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5292,10 +5279,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------43;3点円入力モード。
         JButton Button_en_3ten_nyuryoku = new JButton("");
         Button_en_3ten_nyuryoku.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/en_3ten_nyuryoku.png";
+            img_explanation_fname = "qqq/en_3ten_nyuryoku.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 43;
+            i_mouse_modeA = MouseMode.CIRCLE_DRAW_THREE_POINT_43;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5312,13 +5299,13 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
 // ******************************************************************************
-// -------------46;反転入力モード。
+// -------------46;Inverted input mode.
         JButton Button_hanten = new JButton("");
         Button_hanten.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/hanten.png";
+            img_explanation_fname = "qqq/hanten.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 46;
+            i_mouse_modeA = MouseMode.INVERTED_INPUT_46;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5352,7 +5339,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // ---------補助線や円の色を特注で変えるさいの指定色の指定
         Button_sen_tokutyuu_color = new JButton("C_col ");
         Button_sen_tokutyuu_color.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/sen_tokutyuu_color.png";
+            img_explanation_fname = "qqq/sen_tokutyuu_color.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             i_mouseDragged_yuukou = 0;
@@ -5368,7 +5355,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             //以上でやりたいことは書き終わり
             Button_sen_tokutyuu_color.setBackground(sen_tokutyuu_color);    //ボタンの色設定
 
-            i_mouse_modeA = 59;
+            i_mouse_modeA = MouseMode.CIRCLE_CHANGE_COLOR_59;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             es1.set_sen_tokutyuu_color(sen_tokutyuu_color);
 
@@ -5389,10 +5376,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_sen_tokutyuu_color_henkou = new JButton("");
         Button_sen_tokutyuu_color_henkou.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/sen_tokutyuu_color_henkou.png";
+            img_explanation_fname = "qqq/sen_tokutyuu_color_henkou.png";
             readImageFromFile3();
             //	if(sen_tokutyuu_color != null){
-            i_mouse_modeA = 59;
+            i_mouse_modeA = MouseMode.CIRCLE_CHANGE_COLOR_59;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             es1.set_sen_tokutyuu_color(sen_tokutyuu_color);
             //	}
@@ -5432,7 +5419,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_h_undo = new JButton("");
         Button_h_undo.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/undo.png";
+            img_explanation_fname = "qqq/undo.png";
             readImageFromFile3();
 
             es1.h_undo();
@@ -5458,7 +5445,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_h_undo_syutoku.addActionListener(e -> {
 
 
-            img_kaisetu_fname = "qqq/h_undo_syutoku.png";
+            img_explanation_fname = "qqq/h_undo_syutoku.png";
             readImageFromFile3();
             int i_h_undo_suu_old = i_undo_suu;
             i_h_undo_suu = StringOp.String2int(text11.getText(), i_h_undo_suu_old);
@@ -5482,7 +5469,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_h_redo.addActionListener(e -> {
 
 
-            img_kaisetu_fname = "qqq/h_redo.png";
+            img_explanation_fname = "qqq/h_redo.png";
             readImageFromFile3();
 
             es1.h_redo();
@@ -5517,12 +5504,12 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // ****東**************************************************************************補助線の幅小さく
         JButton Button_h_senhaba_sage = new JButton("");
         Button_h_senhaba_sage.addActionListener(e -> {
-            i_h_TenkaizuSenhaba = i_h_TenkaizuSenhaba - 2;
-            if (i_h_TenkaizuSenhaba < 3) {
-                i_h_TenkaizuSenhaba = 3;
+            i_h_lineWidth = i_h_lineWidth - 2;
+            if (i_h_lineWidth < 3) {
+                i_h_lineWidth = 3;
             }
 
-            img_kaisetu_fname = "qqq/h_senhaba_sage.png";
+            img_explanation_fname = "qqq/h_senhaba_sage.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             repaint();
@@ -5537,8 +5524,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_h_senhaba_age = new JButton("");
         Button_h_senhaba_age.addActionListener(e -> {
-            i_h_TenkaizuSenhaba = i_h_TenkaizuSenhaba + 2;
-            img_kaisetu_fname = "qqq/h_senhaba_age.png";
+            i_h_lineWidth = i_h_lineWidth + 2;
+            img_explanation_fname = "qqq/h_senhaba_age.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             repaint();
@@ -5556,7 +5543,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // ******東************************************************************************
         Button_Col_orange = new JButton("a1");
         Button_Col_orange.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/Button_Col_orange.png";
+            img_explanation_fname = "qqq/Button_Col_orange.png";
             readImageFromFile3();
             Button_h_Col_irokesi();
             Button_Col_orange.setBackground(Color.ORANGE);
@@ -5571,7 +5558,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // ******東************************************************************************
         Button_Col_yellow = new JButton("a2");
         Button_Col_yellow.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/Button_Col_yellow.png";
+            img_explanation_fname = "qqq/Button_Col_yellow.png";
             readImageFromFile3();
             Button_h_Col_irokesi();
             Button_Col_yellow.setBackground(Color.yellow);
@@ -5595,9 +5582,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------h_1;補助線入力モード。
         JButton Button_h_senbun_nyuryoku = new JButton("");
         Button_h_senbun_nyuryoku.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/h_senbun_nyuryoku.png";
+            img_explanation_fname = "qqq/h_senbun_nyuryoku.png";
             readImageFromFile3();
-            i_mouse_modeA = 1;
+            i_mouse_modeA = MouseMode.DRAW_CREASE_FREE_1;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5622,9 +5609,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_h_senbun_sakujyo = new JButton("");
         Button_h_senbun_sakujyo.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/h_senbun_sakujyo.png";
+            img_explanation_fname = "qqq/h_senbun_sakujyo.png";
             readImageFromFile3();
-            i_mouse_modeA = 3;
+            i_mouse_modeA = MouseMode.LINE_SEGMENT_DELETE_3;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
 
@@ -5664,9 +5651,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------長さ1測定モード。
         JButton Button_length_sokutei_1 = new JButton("L1=");
         Button_length_sokutei_1.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/nagasa_sokutei_1.png";
+            img_explanation_fname = "qqq/nagasa_sokutei_1.png";
             readImageFromFile3();
-            i_mouse_modeA = 53;
+            i_mouse_modeA = MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5697,9 +5684,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------長さ2測定モード。
         JButton Button_length_sokutei_2 = new JButton("L2=");
         Button_length_sokutei_2.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/nagasa_sokutei_2.png";
+            img_explanation_fname = "qqq/nagasa_sokutei_2.png";
             readImageFromFile3();
-            i_mouse_modeA = 54;
+            i_mouse_modeA = MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5730,9 +5717,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------角度1測定モード。
         JButton Button_kakudo_sokutei_1 = new JButton("A1=");
         Button_kakudo_sokutei_1.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kakudo_sokutei_1.png";
+            img_explanation_fname = "qqq/kakudo_sokutei_1.png";
             readImageFromFile3();
-            i_mouse_modeA = 55;
+            i_mouse_modeA = MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5762,9 +5749,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------角度2測定モード。
         JButton Button_kakudo_sokutei_2 = new JButton("A2=");
         Button_kakudo_sokutei_2.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kakudo_sokutei_2.png";
+            img_explanation_fname = "qqq/kakudo_sokutei_2.png";
             readImageFromFile3();
-            i_mouse_modeA = 56;
+            i_mouse_modeA = MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5794,9 +5781,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------角度3測定モード。
         JButton Button_kakudo_sokutei_3 = new JButton("A3=");
         Button_kakudo_sokutei_3.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/kakudo_sokutei_3.png";
+            img_explanation_fname = "qqq/kakudo_sokutei_3.png";
             readImageFromFile3();
-            i_mouse_modeA = 57;
+            i_mouse_modeA = MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -5829,7 +5816,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // -------------追加フレーム表示
         JButton Button_tuika_kinou = new JButton("ad_fnc");//追加機能を英語で訳すと additional function
         Button_tuika_kinou.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/tuika_kinou.png";
+            img_explanation_fname = "qqq/tuika_kinou.png";
             readImageFromFile3();
             //i_mouse_modeA=57;
             //System.out.println("i_mouse_modeA = "+i_mouse_modeA);
@@ -5906,7 +5893,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_yomi_tuika = new JButton("Op");
         Button_yomi_tuika.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/yomi_tuika.png";
+            img_explanation_fname = "qqq/yomi_tuika.png";
             readImageFromFile3();
 
             Button_kyoutuu_sagyou();
@@ -5936,7 +5923,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 //cpを折畳み前に自動改善する
         ckbox_cp_kaizen_oritatami = new JCheckBox("");
         ckbox_cp_kaizen_oritatami.addActionListener(e -> {
-            img_kaisetu_fname =
+            img_explanation_fname =
                     "qqq/ckbox_cp_kaizen_oritatami.png";
             readImageFromFile3();
 
@@ -5954,7 +5941,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 //select状態を他の操作をしてもなるべく残す
         ckbox_select_nokosi = new JCheckBox("");
         ckbox_select_nokosi.addActionListener(e -> {
-            img_kaisetu_fname =
+            img_explanation_fname =
                     "qqq/ckbox_select_nokosi.png";
             readImageFromFile3();
 
@@ -5973,7 +5960,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // ***西****************************************************************** ２色展開図************************************************
         JButton Button_2syoku_tenkaizu = new JButton("");//new JButton(	"Del_F"	);
         Button_2syoku_tenkaizu.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/2syoku_tenkaizu.png";
+            img_explanation_fname = "qqq/2syoku_tenkaizu.png";
             readImageFromFile3();
 
             //	i_fold_type=1;
@@ -6022,7 +6009,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_suitei_01 = new JButton("CP_rcg");
         Button_suitei_01.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/suitei_01.png";
+            img_explanation_fname = "qqq/suitei_01.png";
             readImageFromFile3();
 
             oritatame(get_i_fold_type(), 1);//引数の意味は(i_fold_type , i_suitei_meirei);
@@ -6042,10 +6029,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_koteimen_sitei = new JButton("S_face");
         Button_koteimen_sitei.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/koteimen_sitei.png";
+            img_explanation_fname = "qqq/koteimen_sitei.png";
             readImageFromFile3();
             if (OZ.display_flg != FoldedFigureDisplayStyle.NONE_0) {
-                i_mouse_modeA = 103;
+                i_mouse_modeA = MouseMode.CHANGE_STANDARD_FACE_103;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             Button_kyoutuu_sagyou();
@@ -6083,7 +6070,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_suitei_02 = new JButton("");//new JButton(	"Wire_gr"	)
         Button_suitei_02.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/suitei_02.png";
+            img_explanation_fname = "qqq/suitei_02.png";
             readImageFromFile3();
 
 
@@ -6124,7 +6111,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_suitei_03 = new JButton("");//透過図表示new JButton(	"Transparent_gr"	);
         Button_suitei_03.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/suitei_03.png";
+            img_explanation_fname = "qqq/suitei_03.png";
             readImageFromFile3();
 
             oritatame(get_i_fold_type(), 3);//引数の意味は(i_fold_type , i_suitei_meirei);
@@ -6151,7 +6138,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         ckbox_toukazu_color = new JCheckBox("");
         ckbox_toukazu_color.addActionListener(e -> {
-            img_kaisetu_fname =
+            img_explanation_fname =
                     "qqq/ckbox_toukazu_color.png";
             readImageFromFile3();
             if (ckbox_toukazu_color.isSelected()) {
@@ -6180,7 +6167,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_toukazu_color_sage = new JButton("");
         Button_toukazu_color_sage.addActionListener(e -> {
             OZ.toukazu_color_sage();
-            img_kaisetu_fname = "qqq/toukazu_color_sage.png";
+            img_explanation_fname = "qqq/toukazu_color_sage.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             repaint();
@@ -6197,7 +6184,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_toukazu_color_age = new JButton("");
         Button_toukazu_color_age.addActionListener(e -> {
             OZ.toukazu_color_age();
-            img_kaisetu_fname = "qqq/toukazu_color_age.png";
+            img_explanation_fname = "qqq/toukazu_color_age.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             repaint();
@@ -6212,7 +6199,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // ********南*****************************************************************
         JButton Button_suitei_04 = new JButton("Fold");
         Button_suitei_04.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/suitei_04.png";
+            img_explanation_fname = "qqq/suitei_04.png";
             readImageFromFile3();
 
             //i_fold_type=0;//=0なにもしない、=1通常の展開図の全折線を対象とした折り畳み推定、=2はselectされた折線を対象とした折り畳み推定、=3は折畳み状態を変更
@@ -6241,7 +6228,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //-------------------------------------
         Button3 = new JButton("a_s");//Button3 = new JButton(	"Another sol"	);
         Button3.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/Button3.png";
+            img_explanation_fname = "qqq/Button3.png";
             readImageFromFile3();
 
             //OZ.i_suitei_jissi_umu=0;//i_suitei_jissi_umuは、折り畳み推定の計算を実施したかどうかを表す。int i_suitei_jissi_umu=0なら実施しない。1なら実施した。
@@ -6264,14 +6251,14 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button0b = new JButton("");//new JButton(	"Back"		);
         Button0b.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/Button0b.png";
+            img_explanation_fname = "qqq/Button0b.png";
             readImageFromFile3();
             //ip4==0 表、ip4==1　裏、ip4==2、ip4==3　両方と透過
             OZ.ip4 = OZ.ip4 + 1;
             if (OZ.ip4 == 4) {
                 OZ.ip4 = 0;
             }
-            if ((i_mouse_modeA == 101) && (OZ.ip4 == 2)) {
+            if ((i_mouse_modeA == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (OZ.ip4 == 2)) {
                 OZ.ip4 = 0;
             }//折り上がり予想図動かしのとき、動かしできなくなるモードを避けるために追加
             Button_kyoutuu_sagyou();
@@ -6291,7 +6278,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 //i_AS_matome_mode =1;//1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVer3.008から追加
             i_sub_mode = 1;
-            img_kaisetu_fname =
+            img_explanation_fname =
                     "qqq/AS_matome.png";
             readImageFromFile3();
             if (OZ.findAnotherOverlapValid) {
@@ -6357,7 +6344,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             }
 
 
-            img_kaisetu_fname = "qqq/bangou_sitei_suitei_hyouji.png";
+            img_explanation_fname = "qqq/bangou_sitei_suitei_hyouji.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             repaint();
@@ -6377,7 +6364,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_undo_om = new JButton("");//_omは折り上がり図モディファイ（変形）の意味
         Button_undo_om.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/undo.png";
+            img_explanation_fname = "qqq/undo.png";
             readImageFromFile3();
 
             OZ.undo();
@@ -6401,7 +6388,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_undo_syutoku_om.addActionListener(e -> {
 
 
-            img_kaisetu_fname = "qqq/undo_syutoku.png";
+            img_explanation_fname = "qqq/undo_syutoku.png";
             readImageFromFile3();
             int i_undo_suu_om_old = i_undo_suu_om;
             i_undo_suu_om = StringOp.String2int(text31.getText(), i_undo_suu_om_old);
@@ -6424,7 +6411,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         Button_redo_om.addActionListener(e -> {
 
 
-            img_kaisetu_fname = "qqq/redo.png";
+            img_explanation_fname = "qqq/redo.png";
             readImageFromFile3();
 
             OZ.redo();
@@ -6443,12 +6430,12 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // ******南*******************************************************************
         JButton Button_oriagari_sousa = new JButton("");//折り上がり図操作　針金図(	"F_Modify"		)
         Button_oriagari_sousa.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/oriagari_sousa.png";
+            img_explanation_fname = "qqq/oriagari_sousa.png";
             readImageFromFile3();
             OZ.i_foldedFigure_operation_mode = 1;
             OZ.set_all_ten_sentaku_0();
             OZ.kiroku();
-            i_mouse_modeA = 101;
+            i_mouse_modeA = MouseMode.MODIFY_CALCULATED_SHAPE_101;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             Button_kyoutuu_sagyou();
@@ -6463,12 +6450,12 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         JButton Button_oriagari_sousa_2 = new JButton("");//new JButton(	"F_Modify"		)
         Button_oriagari_sousa_2.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/oriagari_sousa_2.png";
+            img_explanation_fname = "qqq/oriagari_sousa_2.png";
             readImageFromFile3();
             OZ.i_foldedFigure_operation_mode = 2;
             OZ.set_all_ten_sentaku_0();
             OZ.kiroku();
-            i_mouse_modeA = 101;
+            i_mouse_modeA = MouseMode.MODIFY_CALCULATED_SHAPE_101;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
 
@@ -6484,10 +6471,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // *******南******************************************************************
         JButton Button_oriagari_idiu = new JButton("");// new JButton(	"F_move"	);
         Button_oriagari_idiu.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/oriagari_idiu.png";
+            img_explanation_fname = "qqq/oriagari_idiu.png";
             readImageFromFile3();
 
-            i_mouse_modeA = 102;
+            i_mouse_modeA = MouseMode.MOVE_CALCULATED_SHAPE_102;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             Button_kyoutuu_sagyou();
             //repaint();
@@ -6513,7 +6500,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // ********南*****************************************************************
         JButton Button_oriagari_syukusyou = new JButton("");// new JButton(	"F_z_out"	);
         Button_oriagari_syukusyou.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/oriagari_syukusyou.png";
+            img_explanation_fname = "qqq/oriagari_syukusyou.png";
             readImageFromFile3();
 
 
@@ -6587,7 +6574,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             repaint();
 
             //}
-            img_kaisetu_fname = "qqq/oriagarizu_syukusyaku_keisuu_set.png";
+            img_explanation_fname = "qqq/oriagarizu_syukusyaku_keisuu_set.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             repaint();
@@ -6607,7 +6594,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_oriagari_kakudai = new JButton("");//new JButton(	"F_z_in"	);
         Button_oriagari_kakudai.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/oriagari_kakudai.png";
+            img_explanation_fname = "qqq/oriagari_kakudai.png";
             readImageFromFile3();
 
             OZ.d_foldedFigure_syukusyaku_keisuu = OZ.d_foldedFigure_syukusyaku_keisuu * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
@@ -6651,7 +6638,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 // *****南********************************************************************
         JButton Button_oriagari_p_kaiten = new JButton("");//new JButton(	"F+rot"	);
         Button_oriagari_p_kaiten.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/oriagari_p_kaiten.png";
+            img_explanation_fname = "qqq/oriagari_p_kaiten.png";
             readImageFromFile3();
 
             OZ.d_foldedFigure_kaiten_hosei = oc.angle_between_m180_180(OZ.d_foldedFigure_kaiten_hosei + 11.25);
@@ -6703,7 +6690,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             repaint();
 
 
-            img_kaisetu_fname = "qqq/oriagarizu_kaiten_hosei_set.png";
+            img_explanation_fname = "qqq/oriagarizu_kaiten_hosei_set.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             repaint();
@@ -6721,7 +6708,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_oriagari_m_kaiten = new JButton("");//new JButton(	"F-rot"	);
         Button_oriagari_m_kaiten.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/oriagari_m_kaiten.png";
+            img_explanation_fname = "qqq/oriagari_m_kaiten.png";
             readImageFromFile3();
             OZ.d_foldedFigure_kaiten_hosei = oc.angle_between_m180_180(OZ.d_foldedFigure_kaiten_hosei - 11.25);
             OZ.camera_of_foldedFigure.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
@@ -6750,7 +6737,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_a_a = new JButton("a_a");
         Button_a_a.addActionListener(e -> {
             Button_kyoutuu_sagyou();
-            img_kaisetu_fname = "qqq/a_a.png";
+            img_explanation_fname = "qqq/a_a.png";
             readImageFromFile3();
 
             //i_anti_alias=i_anti_alias+1;
@@ -6768,7 +6755,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_shadows = new JButton("S");
         Button_shadows.addActionListener(e -> {
             Button_kyoutuu_sagyou();
-            img_kaisetu_fname = "qqq/kage.png";
+            img_explanation_fname = "qqq/kage.png";
             readImageFromFile3();
             OZ.ct_worker.changeDisplayShadows();
             repaint();
@@ -6783,7 +6770,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         Button_F_color = new JButton(" ");
         Button_F_color.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/F_color.png";
+            img_explanation_fname = "qqq/F_color.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             i_mouseDragged_yuukou = 0;
@@ -6820,7 +6807,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         Button_B_color = new JButton(" ");
         Button_B_color.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/B_color.png";
+            img_explanation_fname = "qqq/B_color.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             i_mouseDragged_yuukou = 0;
@@ -6853,7 +6840,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         Button_L_color = new JButton(" ");
         Button_L_color.addActionListener(e -> {
-            img_kaisetu_fname = "qqq/L_color.png";
+            img_explanation_fname = "qqq/L_color.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
             i_mouseDragged_yuukou = 0;
@@ -6889,7 +6876,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_keisan_tyuusi = new JButton("");//折り上がり予想の計算の中止
         Button_keisan_tyuusi.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/keisan_tyuusi.png";
+            img_explanation_fname = "qqq/keisan_tyuusi.png";
             readImageFromFile3();
 
             if (i_SubThread == 1) {
@@ -6910,7 +6897,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_settei_syokika = new JButton("");//new JButton(	"Del_F"	);
         Button_settei_syokika.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/settei_syokika.png";
+            img_explanation_fname = "qqq/settei_syokika.png";
             readImageFromFile3();
 
 
@@ -6942,7 +6929,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         JButton Button_zen_syokika = new JButton("");//new JButton(	"Del_all"	);
         Button_zen_syokika.addActionListener(e -> {
 
-            img_kaisetu_fname = "qqq/zen_syokika.png";
+            img_explanation_fname = "qqq/zen_syokika.png";
             readImageFromFile3();
 
             //展開図の初期化　開始
@@ -6960,7 +6947,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             Button_kyoutuu_sagyou();
             repaint();
-            i_mouse_modeA = 71;
+            i_mouse_modeA = MouseMode.FOLDABLE_LINE_DRAW_71;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.record();
@@ -7000,7 +6987,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         repaint();
 
-        img_kaisetu_fname = "qqq/a__hajimeni.png";
+        img_explanation_fname = "qqq/a__hajimeni.png";
         readImageFromFile3();
 
         Button_sen_tokutyuu_color.setBackground(sen_tokutyuu_color);//特注色の指定色表示
@@ -7176,7 +7163,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
     }
 
 
-    public void measured_length_1_hyouji(double d0) {
+    public void measured_length_1_display(double d0) {
         label_length_sokutei_1.setText(String.valueOf(d0));
     }
 
@@ -7202,11 +7189,11 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         if (iro_sitei_ato_ni_jissisuru_sagyou_bangou == 1) {
             i_orisen_hojyosen = 0;//=0は折線入力　=1は補助線入力モード
             es1.set_i_orisen_hojyosen(i_orisen_hojyosen);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
-            i_mouse_modeA = 1;
+            i_mouse_modeA = MouseMode.DRAW_CREASE_FREE_1;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
         } else if (iro_sitei_ato_ni_jissisuru_sagyou_bangou == 11) {
-            i_mouse_modeA = 11;
+            i_mouse_modeA = MouseMode.DRAW_CREASE_RESTRICTED_11;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
         }
@@ -7380,19 +7367,19 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
         //背景表示
-        ihaikeihyouji = 1;
-        Button_haikei_kirikae.setBackground(Color.ORANGE);
+        iDisplayBackground = 1;
+        Button_background_kirikae.setBackground(Color.ORANGE);
 
         //背景ロックオン
         i_Lock_on = 0;
         i_Lock_on_ori = 0;
-        Button_haikei_Lock_on.setBackground(Color.gray);
+        Button_background_Lock_on.setBackground(Color.gray);
 
 //西辺
 
 
         //展開図の線の太さ。
-        iTenkaizuSenhaba = 1;
+        iLineWidth = 1;
 
         //頂点のしるしの幅
         ir_ten = 1;
@@ -7762,7 +7749,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
     // *******************************************************************************************zzzzzzzzzzzz
-    public void i_cp_or_oriagari_hantei(Point p) {//マウスで得られたTenが、展開図や折り上がり図などのどれを指しているのか判定する関数
+    public void i_cp_or_oriagari_hantei(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
         //20171216
         //hyouji_flg==2,ip4==0  omote
         //hyouji_flg==2,ip4==1	ura
@@ -7792,78 +7779,78 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             OZi = (FoldedFigure) OAZ.get(i);
 
 
-            int OZ_hyouji_mode = 0;//折り上がり図表示なし
+            int OZ_display_mode = 0;//No fold-up diagram display
             if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == 0)) {
-                OZ_hyouji_mode = 1;
+                OZ_display_mode = 1;
             }//	omote
             if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == 1)) {
-                OZ_hyouji_mode = 2;
+                OZ_display_mode = 2;
             }//	ura
             if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == 2)) {
-                OZ_hyouji_mode = 3;
+                OZ_display_mode = 3;
             }//	omote & ura
             if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == 3)) {
-                OZ_hyouji_mode = 3;
+                OZ_display_mode = 3;
             }//	omote & ura
 
             if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == 0)) {
-                OZ_hyouji_mode = 1;
+                OZ_display_mode = 1;
             }//	omote
             if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == 1)) {
-                OZ_hyouji_mode = 2;
+                OZ_display_mode = 2;
             }//	ura
             if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == 2)) {
-                OZ_hyouji_mode = 3;
+                OZ_display_mode = 3;
             }//	omote & ura
             if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == 3)) {
-                OZ_hyouji_mode = 3;
+                OZ_display_mode = 3;
             }//	omote & ura
 
             if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == 0)) {
-                OZ_hyouji_mode = 1;
+                OZ_display_mode = 1;
             }//	omote
             if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == 1)) {
-                OZ_hyouji_mode = 2;
+                OZ_display_mode = 2;
             }//	ura
             if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == 2)) {
-                OZ_hyouji_mode = 3;
+                OZ_display_mode = 3;
             }//	omote & ura
             if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == 3)) {
-                OZ_hyouji_mode = 4;
+                OZ_display_mode = 4;
             }//	omote & ura & omote2 & ura2
 
             //temp_i_cp_or_oriagari=0;
 
-            if (OZi.cp_worker2.naibu_hantei_front(p) > 0) {
-                if (((OZ_hyouji_mode == 1) || (OZ_hyouji_mode == 3)) || (OZ_hyouji_mode == 4)) {
+            if (OZi.cp_worker2.isInsideFront(p) > 0) {
+                if (((OZ_display_mode == 1) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
                     temp_i_cp_or_oriagari = 1;
                     temp_i_OAZ = i;
                 }
             }
 
-            if (OZi.cp_worker2.naibu_hantei_rear(p) > 0) {
-                if (((OZ_hyouji_mode == 2) || (OZ_hyouji_mode == 3)) || (OZ_hyouji_mode == 4)) {
+            if (OZi.cp_worker2.isInsideRear(p) > 0) {
+                if (((OZ_display_mode == 2) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
                     temp_i_cp_or_oriagari = 2;
                     temp_i_OAZ = i;
                 }
             }
 
-            if (OZi.cp_worker2.naibu_hantei_transparent_front(p) > 0) {
-                if (OZ_hyouji_mode == 4) {
+            if (OZi.cp_worker2.isInsideTransparentFront(p) > 0) {
+                if (OZ_display_mode == 4) {
                     temp_i_cp_or_oriagari = 3;
                     temp_i_OAZ = i;
                 }
             }
 
-            if (OZi.cp_worker2.naibu_hantei_transparent_rear(p) > 0) {
-                if (OZ_hyouji_mode == 4) {
+            if (OZi.cp_worker2.isInsideTransparentRear(p) > 0) {
+                if (OZ_display_mode == 4) {
                     temp_i_cp_or_oriagari = 4;
                     temp_i_OAZ = i;
                 }
             }
         }
         i_cp_or_oriagari = temp_i_cp_or_oriagari;
-//if(temp_i_OAZ!=0){set_i_OAZ(temp_i_OAZ);}
+
         set_i_OAZ(temp_i_OAZ);
     }
 
@@ -7895,7 +7882,6 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
     public void mouseWheelMoved(MouseWheelEvent e) {
         //System.out.println("mouseWheelMoved   " +e.getWheelRotation());
         if (ckbox_mouse_settings.isSelected()) {
-//System.out.println("ホイール");
             //	ホイールでundo,redo
             if ((e.isShiftDown()) || (i_mouse_right_button_on == 1)) {
                 i_mouse_undo_redo_mode = 1;
@@ -7903,16 +7889,11 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 Button_kyoutuu_sagyou();
                 es1.modosi_i_orisen_hojyosen();
                 if (e.getWheelRotation() == -1) {
-
                     setTitle(es1.redo());
-                    //Button_kyoutuu_sagyou();
                     repaint();
                 } else {
-
                     setTitle(es1.undo());
-                    //Button_kyoutuu_sagyou();
                     repaint();
-
                 }
 
             }
@@ -7924,84 +7905,42 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
                 Point p = new Point(e2p(e));
                 i_cp_or_oriagari_hantei(p);
-//System.out.println("ホイールで拡大縮小　i_cp_or_oriagari=　" +i_cp_or_oriagari);
                 if (i_cp_or_oriagari == 0) {
                     if (e.getWheelRotation() == -1) {
                         d_syukusyaku_keisuu = d_syukusyaku_keisuu * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
-                        camera_of_orisen_input_diagram.setCameraZoomX(d_syukusyaku_keisuu);
-                        camera_of_orisen_input_diagram.setCameraZoomY(d_syukusyaku_keisuu);
-                        text27.setText(String.valueOf(d_syukusyaku_keisuu));
-                        text27.setCaretPosition(0);
                     } else {
                         d_syukusyaku_keisuu = d_syukusyaku_keisuu / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
-                        camera_of_orisen_input_diagram.setCameraZoomX(d_syukusyaku_keisuu);
-                        camera_of_orisen_input_diagram.setCameraZoomY(d_syukusyaku_keisuu);
-                        text27.setText(String.valueOf(d_syukusyaku_keisuu));
-                        text27.setCaretPosition(0);
                     }
-
-
-//for (int i=1;i<=OAZ.size()-1;i++){set_i_OAZ(i);}
-
-
+                    camera_of_orisen_input_diagram.setCameraZoomX(d_syukusyaku_keisuu);
+                    camera_of_orisen_input_diagram.setCameraZoomY(d_syukusyaku_keisuu);
+                    text27.setText(String.valueOf(d_syukusyaku_keisuu));
+                    text27.setCaretPosition(0);
                     // ---------------------------------------------------------------------
                 } else {
                     if (e.getWheelRotation() == -1) {
-
-
                         OZ.d_foldedFigure_syukusyaku_keisuu = OZ.d_foldedFigure_syukusyaku_keisuu * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
-                        OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                        OZ.camera_of_foldedFigure.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
-
-                        OZ.camera_of_foldedFigure_front.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                        OZ.camera_of_foldedFigure_front.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
-
-                        OZ.camera_of_foldedFigure_rear.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                        OZ.camera_of_foldedFigure_rear.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
-
-                        OZ.camera_of_transparent_front.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                        OZ.camera_of_transparent_front.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
-
-                        OZ.camera_of_transparent_rear.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                        OZ.camera_of_transparent_rear.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
-
-                        text29.setText(String.valueOf(OZ.d_foldedFigure_syukusyaku_keisuu));
-                        text29.setCaretPosition(0);
-
-
                     } else {
-
                         OZ.d_foldedFigure_syukusyaku_keisuu = OZ.d_foldedFigure_syukusyaku_keisuu / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
-                        OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                        OZ.camera_of_foldedFigure.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
-
-                        OZ.camera_of_foldedFigure_front.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                        OZ.camera_of_foldedFigure_front.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
-
-                        OZ.camera_of_foldedFigure_rear.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                        OZ.camera_of_foldedFigure_rear.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
-
-                        OZ.camera_of_transparent_front.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                        OZ.camera_of_transparent_front.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
-
-                        OZ.camera_of_transparent_rear.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                        OZ.camera_of_transparent_rear.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
-
-                        text29.setText(String.valueOf(OZ.d_foldedFigure_syukusyaku_keisuu));
-                        text29.setCaretPosition(0);
-
-
                     }
+                    OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
+                    OZ.camera_of_foldedFigure.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+                    OZ.camera_of_foldedFigure_front.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
+                    OZ.camera_of_foldedFigure_front.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+                    OZ.camera_of_foldedFigure_rear.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
+                    OZ.camera_of_foldedFigure_rear.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+                    OZ.camera_of_transparent_front.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
+                    OZ.camera_of_transparent_front.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+                    OZ.camera_of_transparent_rear.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
+                    OZ.camera_of_transparent_rear.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+                    text29.setText(String.valueOf(OZ.d_foldedFigure_syukusyaku_keisuu));
+                    text29.setCaretPosition(0);
                 }
                 // ---------------------------------------------------------------------
 
                 mouse_object_iti(p_mouse_TV_iti);
                 repaint();
-
             }
-
         }
-
     }
 
 
@@ -8051,65 +7990,65 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         Point p = new Point(e2p(e));
         mouse_object_iti(p);
-        if (i_mouse_modeA == 0) {
-        } else if (i_mouse_modeA == 1) {
+        if (i_mouse_modeA == MouseMode.UNUSED_0) {
+        } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_FREE_1) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_01(p);
         }   //1 線分入力モード（フリー）
         //else if(i_mouse_modeA==2)  {		}						       //2 展開図移動。
         //else if(i_mouse_modeA==3)  { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_03(p);}//線分削除モード。
         //else if(i_mouse_modeA==4)  { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_04(p);}//senbun_henkan 黒赤青
-        else if (i_mouse_modeA == 5) {
+        else if (i_mouse_modeA == MouseMode.LENGTHEN_CREASE_5) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_05(p);
         }//線分延長モード。
         //else if(i_mouse_modeA==6)  { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_06(p);}//2点から等距離線分モード。
-        else if (i_mouse_modeA == 7) {
+        else if (i_mouse_modeA == MouseMode.SQUARE_BISECTOR_7) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_07(p);
         }//角二等分線モード。
-        else if (i_mouse_modeA == 8) {
+        else if (i_mouse_modeA == MouseMode.INWARD_8) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_08(p);
         }//内心モード。
-        else if (i_mouse_modeA == 9) {
+        else if (i_mouse_modeA == MouseMode.PERPENDICULAR_DRAW_9) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_09(p);
         }//垂線おろしモード。
-        else if (i_mouse_modeA == 10) {
+        else if (i_mouse_modeA == MouseMode.SYMMETRIC_DRAW_10) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_10(p);
         }//折り返しモード。
-        else if (i_mouse_modeA == 11) {
+        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_RESTRICTED_11) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_11(p);
         }//線分入力モード。(制限)
-        else if (i_mouse_modeA == 12) {
+        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_SYMMETRIC_12) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_12(p);
         }//鏡映モード。
         //else if(i_mouse_modeA==13) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_13(p);}//角度系モード（１番目）。//線分指定、交点まで
         //else if(i_mouse_modeA==14) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_14(p);}//点追加モード。
         //else if(i_mouse_modeA==15) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_15(p);}//点削除モード。
-        else if (i_mouse_modeA == 16) {
+        else if (i_mouse_modeA == MouseMode.ANGLE_SYSTEM_16) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_16(p);
         }//角度系モード（４番目）。2点指定し、線分まで
-        else if (i_mouse_modeA == 17) {
+        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_17(p);
         }//角度系モード（２番目）。//2点指定、交点まで
-        else if (i_mouse_modeA == 18) {
+        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_18(p);
         }//角度系モード（５番目）。2点指定、自由末端
         //else if(i_mouse_modeA==19) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_19(p);}//select　に使う
         //else if(i_mouse_modeA==20) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_20(p);}//unselect　に使う
-        else if (i_mouse_modeA == 21) {
+        else if (i_mouse_modeA == MouseMode.CREASE_MOVE_21) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_21(p);
         }//move　に使う
-        else if (i_mouse_modeA == 22) {
+        else if (i_mouse_modeA == MouseMode.CREASE_COPY_22) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_22(p);
         }//copy_paste　に使う
@@ -8117,56 +8056,56 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //else if(i_mouse_modeA==24) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_24(p);}//--->V　に使う
         //else if(i_mouse_modeA==25) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_25(p);}//--->E　に使う
         //else if(i_mouse_modeA==26) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_26(p);}//背景セット　に使う
-        else if (i_mouse_modeA == 27) {
+        else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_DIVISION_27) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_27(p);
         }//線分分割入力　に使う
-        else if (i_mouse_modeA == 28) {
+        else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_RATIO_SET_28) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_28(p);
         }//線分内分入力　に使う
-        else if (i_mouse_modeA == 29) {
+        else if (i_mouse_modeA == MouseMode.POLYGON_SET_NO_CORNERS_29) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_29(p);
         }//正多角形入力　に使う
         //else if(i_mouse_modeA==30) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_30(p);}//除け_線変換　に使う
-        else if (i_mouse_modeA == 31) {
+        else if (i_mouse_modeA == MouseMode.CREASE_MOVE_4P_31) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_31(p);
         }//move 2p2p　に使う
-        else if (i_mouse_modeA == 32) {
+        else if (i_mouse_modeA == MouseMode.CREASE_COPY_4P_32) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_32(p);
         }//copy 2p2p　　に使う
-        else if (i_mouse_modeA == 33) {
+        else if (i_mouse_modeA == MouseMode.FISH_BONE_DRAW_33) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_33(p);
         }//魚の骨　に使う
-        else if (i_mouse_modeA == 34) {
+        else if (i_mouse_modeA == MouseMode.CREASE_MAKE_MV_34) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_34(p);
         }//準備としてだけ使う線分に重複している折線を順に山谷にするの　に使う
-        else if (i_mouse_modeA == 35) {
+        else if (i_mouse_modeA == MouseMode.DOUBLE_SYMMETRIC_DRAW_35) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_35(p);
         }//複折り返し　入力した線分に接触している折線を折り返し　に使う
-        else if (i_mouse_modeA == 36) {
+        else if (i_mouse_modeA == MouseMode.CREASES_ALTERNATE_MV_36) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_36(p);
         }//準備としてだけ使う線分にX交差している折線を順に山谷にするの　に使う
-        else if (i_mouse_modeA == 37) {
+        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_37(p);
         }//角度系モード（３番目）。角度規格化線分入力モード。角度規格化折線入力　に使う
-        else if (i_mouse_modeA == 38) {
+        else if (i_mouse_modeA == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_38(p);
         }//折り畳み可能線追加
-        else if (i_mouse_modeA == 39) {
+        else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_INPUT_39) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_39(p);
         }//折り畳み可能線+格子点系入力
-        else if (i_mouse_modeA == 40) {
+        else if (i_mouse_modeA == MouseMode.PARALLEL_DRAW_40) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_40(p);
         }//平行線入力
@@ -8181,27 +8120,27 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //else if(i_mouse_modeA==49) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_49(p);}//円　同心円追加モード。(元円の円周と同心円の円周との幅は他の同心円の組で指定する)
         //else if(i_mouse_modeA==50) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_50(p);}//2円を指定し、それぞれの円に同心円を加える。それぞれの同心円の組にできる帯領域の幅が等しくなるようにして、加えられた同心円同士が接するようにする。
         //else if(i_mouse_modeA==51) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_51(p);}//平行線　幅指定入力モード。
-        else if (i_mouse_modeA == 52) {
+        else if (i_mouse_modeA == MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_52(p);
         }//連続折り返しモード　に使う
-        else if (i_mouse_modeA == 53) {
+        else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_53(p);
         }//長さ測定１　に使う
-        else if (i_mouse_modeA == 54) {
+        else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_54(p);
         }//長さ測定２　に使う
-        else if (i_mouse_modeA == 55) {
+        else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_55(p);
         }//角度測定１　に使う
-        else if (i_mouse_modeA == 56) {
+        else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_56(p);
         }//角度測定２　に使う
-        else if (i_mouse_modeA == 57) {
+        else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_57(p);
         }//角度測定３　に使う
@@ -8209,47 +8148,47 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //else if(i_mouse_modeA==59) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_59(p);}//特注プロパティ指定
         //else if(i_mouse_modeA==60) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_60(p);}//--->HK　に使う//HKとは補助活線のこと
 
-        else if (i_mouse_modeA == 61) {
+        else if (i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_61(p);
         }//長方形内選択（paintの選択に似せた選択機能）に使う
-        else if (i_mouse_modeA == 62) {
+        else if (i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_62(p);
         }//ボロノイ図　に使う
-        else if (i_mouse_modeA == 63) {
+        else if (i_mouse_modeA == MouseMode.FLAT_FOLDABLE_CHECK_63) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_63(p);
         }//外周部折り畳みチェックに使う
-        else if (i_mouse_modeA == 64) {
+        else if (i_mouse_modeA == MouseMode.CREASE_DELETE_OVERLAPPING_64) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_64(p);
         }//線内削除　に使う
-        else if (i_mouse_modeA == 65) {
+        else if (i_mouse_modeA == MouseMode.CREASE_DELETE_INTERSECTING_65) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_65(p);
         }//lX　直線で折線削除に使う
-        else if (i_mouse_modeA == 66) {
+        else if (i_mouse_modeA == MouseMode.SELECT_POLYGON_66) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_66(p);
         }//選択＿多角形　に使う
-        else if (i_mouse_modeA == 67) {
+        else if (i_mouse_modeA == MouseMode.UNSELECT_POLYGON_67) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_67(p);
         }//非選択＿多角形　に使う
-        else if (i_mouse_modeA == 68) {
+        else if (i_mouse_modeA == MouseMode.SELECT_LINE_INTERSECTING_68) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_68(p);
         }//選択＿ｌX　に使う
-        else if (i_mouse_modeA == 69) {
+        else if (i_mouse_modeA == MouseMode.UNSELECT_LINE_INTERSECTING_69) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_69(p);
         }//非選択＿ｌX　　に使う
-        else if (i_mouse_modeA == 70) {
+        else if (i_mouse_modeA == MouseMode.CREASE_LENGTHEN_70) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_70(p);
         }//線分延長モード(延長する元の折線のクリックだけで実行されるタイプ)　に使う
-        else if (i_mouse_modeA == 71) {
+        else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_DRAW_71) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mMoved_A_71(p);
         }//複数の線分延長モード　に使う
@@ -8322,18 +8261,18 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             if (cnt == 3) {
 
                 System.out.println("3_Click");//("トリプルクリック"
-                if (i_mouse_modeA == 19) {
+                if (i_mouse_modeA == MouseMode.CREASE_SELECT_19) {
                     if (ckbox_add_frame_SelectAnd3click_isSelected == 1) {
                         if (i_sel_mou_mode == 1) {//=1はmove、=2はmove4p、=3はcopy、=4はcopy4p、=5は鏡映像
-                            i_mouse_modeA = 21;
+                            i_mouse_modeA = MouseMode.CREASE_MOVE_21;
                         } else if (i_sel_mou_mode == 2) {//=1はmove、=2はmove4p、=3はcopy、=4はcopy4p、=5は鏡映像
-                            i_mouse_modeA = 31;
+                            i_mouse_modeA = MouseMode.CREASE_MOVE_4P_31;
                         } else if (i_sel_mou_mode == 3) {//=1はmove、=2はmove4p、=3はcopy、=4はcopy4p、=5は鏡映像
-                            i_mouse_modeA = 22;
+                            i_mouse_modeA = MouseMode.CREASE_COPY_22;
                         } else if (i_sel_mou_mode == 4) {//=1はmove、=2はmove4p、=3はcopy、=4はcopy4p、=5は鏡映像
-                            i_mouse_modeA = 32;
+                            i_mouse_modeA = MouseMode.CREASE_COPY_4P_32;
                         } else if (i_sel_mou_mode == 5) {//=1はmove、=2はmove4p、=3はcopy、=4はcopy4p、=5は鏡映像
-                            i_mouse_modeA = 12;
+                            i_mouse_modeA = MouseMode.DRAW_CREASE_SYMMETRIC_12;
                         }
 
 
@@ -8377,7 +8316,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
         } else if (btn == MouseEvent.BUTTON3) {//右ボタンクリック
             //System.out.println("右ボタンクリック");
-            if (i_mouse_modeA == 62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
+            if (i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
             } else {
                 i_mouse_right_button_on = 1;
 
@@ -8398,288 +8337,288 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //}  //20201010　コメントアウト
 
 
-        if (i_mouse_modeA == 0) {
-        } else if (i_mouse_modeA == 1) {
+        if (i_mouse_modeA == MouseMode.UNUSED_0) {
+        } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_FREE_1) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_01(p);
         }   //1 線分入力モード（フリー）
-        else if (i_mouse_modeA == 2) {                                       //2 展開図移動。
+        else if (i_mouse_modeA == MouseMode.MOVE_CREASE_PATTERN_2) {                                       //2 展開図移動。
             camera_of_orisen_input_diagram.camera_ichi_sitei_from_TV(p);
             mouse_temp0.set(p);
-        } else if (i_mouse_modeA == 3) {
+        } else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_DELETE_3) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_03(p);
         }//線分削除モード。
-        else if (i_mouse_modeA == 4) {
+        else if (i_mouse_modeA == MouseMode.CHANGE_CREASE_TYPE_4) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_04(p);
         }//senbun_henkan 黒赤青
-        else if (i_mouse_modeA == 5) {
+        else if (i_mouse_modeA == MouseMode.LENGTHEN_CREASE_5) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_05(p);
         }//線分延長モード。
-        else if (i_mouse_modeA == 6) {
+        else if (i_mouse_modeA == MouseMode.UNUSED_6) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_06(p);
         }//2点から等距離線分モード。
-        else if (i_mouse_modeA == 7) {
+        else if (i_mouse_modeA == MouseMode.SQUARE_BISECTOR_7) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_07(p);
         }//角二等分線モード。
-        else if (i_mouse_modeA == 8) {
+        else if (i_mouse_modeA == MouseMode.INWARD_8) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_08(p);
         }//内心モード。
-        else if (i_mouse_modeA == 9) {
+        else if (i_mouse_modeA == MouseMode.PERPENDICULAR_DRAW_9) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_09(p);
         }//垂線おろしモード。
-        else if (i_mouse_modeA == 10) {
+        else if (i_mouse_modeA == MouseMode.SYMMETRIC_DRAW_10) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_10(p);
         }//折り返しモード。
-        else if (i_mouse_modeA == 11) {
+        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_RESTRICTED_11) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_11(p);
         }//線分入力モード。(制限)
-        else if (i_mouse_modeA == 12) {
+        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_SYMMETRIC_12) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_12(p);
         }//鏡映モード。
-        else if (i_mouse_modeA == 13) {
+        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_13(p);
         }//角度系モード（１番目）。//線分指定、交点まで
-        else if (i_mouse_modeA == 14) {
+        else if (i_mouse_modeA == MouseMode.DRAW_POINT_14) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_14(p);
         }//点追加モード。
-        else if (i_mouse_modeA == 15) {
+        else if (i_mouse_modeA == MouseMode.DELETE_POINT_15) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_15(p);
         }//点削除モード。
-        else if (i_mouse_modeA == 16) {
+        else if (i_mouse_modeA == MouseMode.ANGLE_SYSTEM_16) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_16(p);
         }//角度系モード（４番目）。2点指定し、線分まで
-        else if (i_mouse_modeA == 17) {
+        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_17(p);
         }//角度系モード（２番目）。//2点指定、交点まで
-        else if (i_mouse_modeA == 18) {
+        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_18(p);
         }//角度系モード（５番目）。2点指定、自由末端
-        else if (i_mouse_modeA == 19) {
+        else if (i_mouse_modeA == MouseMode.CREASE_SELECT_19) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_19(p);
         }//select　に使う
-        else if (i_mouse_modeA == 20) {
+        else if (i_mouse_modeA == MouseMode.CREASE_UNSELECT_20) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_20(p);
         }//unselect　に使う
-        else if (i_mouse_modeA == 21) {
+        else if (i_mouse_modeA == MouseMode.CREASE_MOVE_21) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_21(p);
         }//move　に使う
-        else if (i_mouse_modeA == 22) {
+        else if (i_mouse_modeA == MouseMode.CREASE_COPY_22) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_22(p);
         }//copy_paste　に使う
-        else if (i_mouse_modeA == 23) {
+        else if (i_mouse_modeA == MouseMode.CREASE_MAKE_MOUNTAIN_23) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_23(p);
         }//--->M　に使う
-        else if (i_mouse_modeA == 24) {
+        else if (i_mouse_modeA == MouseMode.CREASE_MAKE_VALLEY_24) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_24(p);
         }//--->V　に使う
-        else if (i_mouse_modeA == 25) {
+        else if (i_mouse_modeA == MouseMode.CREASE_MAKE_EDGE_25) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_25(p);
         }//--->E　に使う
-        else if (i_mouse_modeA == 26) {
+        else if (i_mouse_modeA == MouseMode.BACKGROUND_CHANGE_POSITION_26) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_26(p);
         }//背景セット　に使う
-        else if (i_mouse_modeA == 27) {
+        else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_DIVISION_27) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_27(p);
         }//線分分割入力　に使う
-        else if (i_mouse_modeA == 28) {
+        else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_RATIO_SET_28) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_28(p);
         }//線分内分入力　に使う
-        else if (i_mouse_modeA == 29) {
+        else if (i_mouse_modeA == MouseMode.POLYGON_SET_NO_CORNERS_29) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_29(p);
         }//正多角形入力　に使う
-        else if (i_mouse_modeA == 30) {
+        else if (i_mouse_modeA == MouseMode.CREASE_ADVANCE_TYPE_30) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_30(p);
         }//除け_線変換　に使う
-        else if (i_mouse_modeA == 31) {
+        else if (i_mouse_modeA == MouseMode.CREASE_MOVE_4P_31) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_31(p);
         }//move 2p2p　に使う
-        else if (i_mouse_modeA == 32) {
+        else if (i_mouse_modeA == MouseMode.CREASE_COPY_4P_32) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_32(p);
         }//copy 2p2p　　に使う
-        else if (i_mouse_modeA == 33) {
+        else if (i_mouse_modeA == MouseMode.FISH_BONE_DRAW_33) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_33(p);
         }//魚の骨　に使う
-        else if (i_mouse_modeA == 34) {
+        else if (i_mouse_modeA == MouseMode.CREASE_MAKE_MV_34) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_34(p);
         }//準備としてだけ使う線分に重複している折線を順に山谷にするの　に使う
-        else if (i_mouse_modeA == 35) {
+        else if (i_mouse_modeA == MouseMode.DOUBLE_SYMMETRIC_DRAW_35) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_35(p);
         }//複折り返し　入力した線分に接触している折線を折り返し　に使う
-        else if (i_mouse_modeA == 36) {
+        else if (i_mouse_modeA == MouseMode.CREASES_ALTERNATE_MV_36) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_36(p);
         }//準備としてだけ使う線分にX交差している折線を順に山谷にするの　に使う
-        else if (i_mouse_modeA == 37) {
+        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_37(p);
         }//角度系モード（３番目）。角度規格化線分入力モード。角度規格化折線入力　に使う
-        else if (i_mouse_modeA == 38) {
+        else if (i_mouse_modeA == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_38(p);
         }//折り畳み可能線追加
-        else if (i_mouse_modeA == 39) {
+        else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_INPUT_39) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_39(p);
         }//折り畳み可能線+格子点系入力
-        else if (i_mouse_modeA == 40) {
+        else if (i_mouse_modeA == MouseMode.PARALLEL_DRAW_40) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_40(p);
         }//平行線入力
-        else if (i_mouse_modeA == 41) {
+        else if (i_mouse_modeA == MouseMode.VERTEX_DELETE_ON_CREASE_41) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_41(p);
         }//点削除（線カラーチェンジ）　に使う
-        else if (i_mouse_modeA == 42) {
+        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_42) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_42(p);
         }//円入力　に使う
-        else if (i_mouse_modeA == 43) {
+        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_THREE_POINT_43) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_43(p);
         }//円の3点入力　に使う
-        else if (i_mouse_modeA == 44) {
+        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_SEPARATE_44) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_44(p);
         }//円　分離入力　に使う
-        else if (i_mouse_modeA == 45) {
+        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_TANGENT_LINE_45) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_45(p);
         }//2円の接線　に使う
-        else if (i_mouse_modeA == 46) {
+        else if (i_mouse_modeA == MouseMode.INVERTED_INPUT_46) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_46(p);
         }//反転　に使う
-        else if (i_mouse_modeA == 47) {
+        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_FREE_47) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_47(p);
         }//円入力モード。(フリー)
-        else if (i_mouse_modeA == 48) {
+        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_48) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_48(p);
         }//円　同心円追加モード。(元円の円周と同心円の円周との幅は線分で指定する)
-        else if (i_mouse_modeA == 49) {
+        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_49(p);
         }//円　同心円追加モード。(元円の円周と同心円の円周との幅は他の同心円の組で指定する)
-        else if (i_mouse_modeA == 50) {
+        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_50(p);
         }//2円を指定し、それぞれの円に同心円を加える。それぞれの同心円の組にできる帯領域の幅が等しくなるようにして、加えられた同心円同士が接するようにする。
-        else if (i_mouse_modeA == 51) {
+        else if (i_mouse_modeA == MouseMode.PARALLEL_DRAW_WIDTH_51) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_51(p);
         }//平行線　幅指定入力モード。
-        else if (i_mouse_modeA == 52) {
+        else if (i_mouse_modeA == MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_52(p);
         }//連続折り返しモードに使う
-        else if (i_mouse_modeA == 53) {
+        else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_53(p);
         }//長さ測定１　に使う
-        else if (i_mouse_modeA == 54) {
+        else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_54(p);
         }//長さ測定２　に使う
-        else if (i_mouse_modeA == 55) {
+        else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_55(p);
         }//角度測定１　に使う
-        else if (i_mouse_modeA == 56) {
+        else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_56(p);
         }//角度測定２　に使う
-        else if (i_mouse_modeA == 57) {
+        else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_57(p);
         }//角度測定３　に使う
-        else if (i_mouse_modeA == 58) {
+        else if (i_mouse_modeA == MouseMode.CREASE_TOGGLE_MV_58) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_58(p);
         }//senbun_henkan 赤青
-        else if (i_mouse_modeA == 59) {
+        else if (i_mouse_modeA == MouseMode.CIRCLE_CHANGE_COLOR_59) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_59(p);
         }//特注プロパティ指定
-        else if (i_mouse_modeA == 60) {
+        else if (i_mouse_modeA == MouseMode.CREASE_MAKE_AUX_60) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_60(p);
         }//--->HK　に使う//HKとは補助活線のこと
 
-        else if (i_mouse_modeA == 61) {
+        else if (i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_61(p);
         }//長方形内選択（paintの選択に似せた選択機能）に使う
-        else if (i_mouse_modeA == 62) {
+        else if (i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_62(p);
         }//ボロノイ図　に使う
-        else if (i_mouse_modeA == 63) {
+        else if (i_mouse_modeA == MouseMode.FLAT_FOLDABLE_CHECK_63) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_63(p);
         }//外周部折り畳みチェックに使う
-        else if (i_mouse_modeA == 64) {
+        else if (i_mouse_modeA == MouseMode.CREASE_DELETE_OVERLAPPING_64) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_64(p);
         }//線内削除　に使う
-        else if (i_mouse_modeA == 65) {
+        else if (i_mouse_modeA == MouseMode.CREASE_DELETE_INTERSECTING_65) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_65(p);
         }//lX線内削除　に使う
-        else if (i_mouse_modeA == 66) {
+        else if (i_mouse_modeA == MouseMode.SELECT_POLYGON_66) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_66(p);
         }//unselect　に使う
-        else if (i_mouse_modeA == 67) {
+        else if (i_mouse_modeA == MouseMode.UNSELECT_POLYGON_67) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_67(p);
         }//unselect　に使う
-        else if (i_mouse_modeA == 68) {
+        else if (i_mouse_modeA == MouseMode.SELECT_LINE_INTERSECTING_68) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_68(p);
         }//unselect　に使う
-        else if (i_mouse_modeA == 69) {
+        else if (i_mouse_modeA == MouseMode.UNSELECT_LINE_INTERSECTING_69) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_69(p);
         }//unselect　に使う
-        else if (i_mouse_modeA == 70) {
+        else if (i_mouse_modeA == MouseMode.CREASE_LENGTHEN_70) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_70(p);
         }//unselect　に使う
-        else if (i_mouse_modeA == 71) {
+        else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_DRAW_71) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_71(p);
         }//unselect　に使う
@@ -8702,15 +8641,15 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
         //else if(i_mouse_modeA==88) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mPressed_A_88(p);}//unselect　に使う
         //else if(i_mouse_modeA==89) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mPressed_A_89(p);}//unselect　に使う
 
-        else if (i_mouse_modeA == 10001) {
+        else if (i_mouse_modeA == MouseMode.UNUSED_10001) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_10001(p);
-        } else if (i_mouse_modeA == 10002) {
+        } else if (i_mouse_modeA == MouseMode.UNUSED_10002) {
             es1.setCamera(camera_of_orisen_input_diagram);
             es1.mPressed_A_10002(p);
-        } else if (i_mouse_modeA == 101) {        //折り上がり図操作
+        } else if (i_mouse_modeA == MouseMode.MODIFY_CALCULATED_SHAPE_101) {        //折り上がり図操作
             OZ.foldedFigure_operation_mouse_on(p);
-        } else if (i_mouse_modeA == 102) {//折り上がり図移動
+        } else if (i_mouse_modeA == MouseMode.MOVE_CALCULATED_SHAPE_102) {//折り上がり図移動
             OZ.camera_of_foldedFigure.camera_ichi_sitei_from_TV(p);
             OZ.camera_of_foldedFigure_front.camera_ichi_sitei_from_TV(p);
             OZ.camera_of_foldedFigure_rear.camera_ichi_sitei_from_TV(p);
@@ -8719,11 +8658,11 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             OZ.camera_of_transparent_rear.camera_ichi_sitei_from_TV(p);
 
             mouse_temp0.set(p);
-        } else if (i_mouse_modeA == 103) {
+        } else if (i_mouse_modeA == MouseMode.CHANGE_STANDARD_FACE_103) {
             //ts1.set_kijyunmen_id(p);
         }//基準面指定
-        else if (i_mouse_modeA == 7) {
-        } else if (i_mouse_modeA == 8) {
+        else if (i_mouse_modeA == MouseMode.SQUARE_BISECTOR_7) {
+        } else if (i_mouse_modeA == MouseMode.INWARD_8) {
         } else {
         }
         repaint();
@@ -8772,7 +8711,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             } else if (btn == MouseEvent.BUTTON3) {
                 //System.out.println("右ボタンクリック");
-                if (i_mouse_modeA == 62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
+                if (i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
                 } else {
                     if (i_mouse_undo_redo_mode == 1) {
                         return;
@@ -8787,11 +8726,11 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             //}  //20201010　コメントアウト
 
 
-            if (i_mouse_modeA == 0) {
-            } else if (i_mouse_modeA == 1) {
+            if (i_mouse_modeA == MouseMode.UNUSED_0) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_FREE_1) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_01(p);
-            } else if (i_mouse_modeA == 2) {
+            } else if (i_mouse_modeA == MouseMode.MOVE_CREASE_PATTERN_2) {
                 camera_of_orisen_input_diagram.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
                 es1.setCamera(camera_of_orisen_input_diagram);
 
@@ -8836,216 +8775,216 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 mouse_temp0.set(p);
 
 
-            } else if (i_mouse_modeA == 3) {
+            } else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_DELETE_3) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_03(p);
-            } else if (i_mouse_modeA == 4) {
+            } else if (i_mouse_modeA == MouseMode.CHANGE_CREASE_TYPE_4) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_04(p);
-            } else if (i_mouse_modeA == 5) {
+            } else if (i_mouse_modeA == MouseMode.LENGTHEN_CREASE_5) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_05(p);
-            } else if (i_mouse_modeA == 6) {
+            } else if (i_mouse_modeA == MouseMode.UNUSED_6) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_06(p);
-            } else if (i_mouse_modeA == 7) {
+            } else if (i_mouse_modeA == MouseMode.SQUARE_BISECTOR_7) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_07(p);
-            } else if (i_mouse_modeA == 8) {
+            } else if (i_mouse_modeA == MouseMode.INWARD_8) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_08(p);
-            } else if (i_mouse_modeA == 9) {
+            } else if (i_mouse_modeA == MouseMode.PERPENDICULAR_DRAW_9) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_09(p);
-            } else if (i_mouse_modeA == 10) {
+            } else if (i_mouse_modeA == MouseMode.SYMMETRIC_DRAW_10) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_10(p);
-            } else if (i_mouse_modeA == 11) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_RESTRICTED_11) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_11(p);
-            } else if (i_mouse_modeA == 12) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_SYMMETRIC_12) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_12(p);
-            } else if (i_mouse_modeA == 13) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_13(p);
-            } else if (i_mouse_modeA == 14) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_POINT_14) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_14(p);
-            } else if (i_mouse_modeA == 15) {
+            } else if (i_mouse_modeA == MouseMode.DELETE_POINT_15) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_15(p);
-            } else if (i_mouse_modeA == 16) {
+            } else if (i_mouse_modeA == MouseMode.ANGLE_SYSTEM_16) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_16(p);
-            } else if (i_mouse_modeA == 17) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_17(p);
-            } else if (i_mouse_modeA == 18) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_18(p);
-            } else if (i_mouse_modeA == 19) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_SELECT_19) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_19(p);
-            } else if (i_mouse_modeA == 20) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_UNSELECT_20) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_20(p);
-            } else if (i_mouse_modeA == 21) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_MOVE_21) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_21(p);
-            } else if (i_mouse_modeA == 22) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_COPY_22) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_22(p);
-            } else if (i_mouse_modeA == 23) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_MOUNTAIN_23) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_23(p);
-            } else if (i_mouse_modeA == 24) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_VALLEY_24) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_24(p);
-            } else if (i_mouse_modeA == 25) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_EDGE_25) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_25(p);
-            } else if (i_mouse_modeA == 26) {
+            } else if (i_mouse_modeA == MouseMode.BACKGROUND_CHANGE_POSITION_26) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_26(p);
-            } else if (i_mouse_modeA == 27) {
+            } else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_DIVISION_27) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_27(p);
-            } else if (i_mouse_modeA == 28) {
+            } else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_RATIO_SET_28) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_28(p);
-            } else if (i_mouse_modeA == 29) {
+            } else if (i_mouse_modeA == MouseMode.POLYGON_SET_NO_CORNERS_29) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_29(p);
-            } else if (i_mouse_modeA == 30) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_ADVANCE_TYPE_30) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_30(p);
-            } else if (i_mouse_modeA == 31) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_MOVE_4P_31) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_31(p);
-            } else if (i_mouse_modeA == 32) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_COPY_4P_32) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_32(p);
-            } else if (i_mouse_modeA == 33) {
+            } else if (i_mouse_modeA == MouseMode.FISH_BONE_DRAW_33) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_33(p);
-            } else if (i_mouse_modeA == 34) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_MV_34) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_34(p);
-            } else if (i_mouse_modeA == 35) {
+            } else if (i_mouse_modeA == MouseMode.DOUBLE_SYMMETRIC_DRAW_35) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_35(p);
-            } else if (i_mouse_modeA == 36) {
+            } else if (i_mouse_modeA == MouseMode.CREASES_ALTERNATE_MV_36) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_36(p);
-            } else if (i_mouse_modeA == 37) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_37(p);
-            } else if (i_mouse_modeA == 38) {
+            } else if (i_mouse_modeA == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_38(p);
-            } else if (i_mouse_modeA == 39) {
+            } else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_INPUT_39) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_39(p);
-            } else if (i_mouse_modeA == 40) {
+            } else if (i_mouse_modeA == MouseMode.PARALLEL_DRAW_40) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_40(p);
-            } else if (i_mouse_modeA == 41) {
+            } else if (i_mouse_modeA == MouseMode.VERTEX_DELETE_ON_CREASE_41) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_41(p);
-            } else if (i_mouse_modeA == 42) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_42) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_42(p);
-            } else if (i_mouse_modeA == 43) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_THREE_POINT_43) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_43(p);
-            } else if (i_mouse_modeA == 44) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_SEPARATE_44) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_44(p);
-            } else if (i_mouse_modeA == 45) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_TANGENT_LINE_45) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_45(p);
-            } else if (i_mouse_modeA == 46) {
+            } else if (i_mouse_modeA == MouseMode.INVERTED_INPUT_46) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_46(p);
-            } else if (i_mouse_modeA == 47) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_FREE_47) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_47(p);
-            } else if (i_mouse_modeA == 48) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_48) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_48(p);
-            } else if (i_mouse_modeA == 49) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_49(p);
-            } else if (i_mouse_modeA == 50) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_50(p);
-            } else if (i_mouse_modeA == 51) {
+            } else if (i_mouse_modeA == MouseMode.PARALLEL_DRAW_WIDTH_51) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_51(p);
-            } else if (i_mouse_modeA == 52) {
+            } else if (i_mouse_modeA == MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_52(p);
-            } else if (i_mouse_modeA == 53) {
+            } else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_53(p);
-            } else if (i_mouse_modeA == 54) {
+            } else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_54(p);
-            } else if (i_mouse_modeA == 55) {
+            } else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_55(p);
-            } else if (i_mouse_modeA == 56) {
+            } else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_56(p);
-            } else if (i_mouse_modeA == 57) {
+            } else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_57(p);
-            } else if (i_mouse_modeA == 58) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_TOGGLE_MV_58) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_58(p);
             }//senbun_henkan 赤青
-            else if (i_mouse_modeA == 59) {
+            else if (i_mouse_modeA == MouseMode.CIRCLE_CHANGE_COLOR_59) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_59(p);
-            } else if (i_mouse_modeA == 60) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_AUX_60) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_60(p);
-            } else if (i_mouse_modeA == 61) {
+            } else if (i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_61(p);
             }//長方形内選択（paintの選択に似せた選択機能）に使う
-            else if (i_mouse_modeA == 62) {
+            else if (i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_62(p);
             }//ボロノイ図　に使う
-            else if (i_mouse_modeA == 63) {
+            else if (i_mouse_modeA == MouseMode.FLAT_FOLDABLE_CHECK_63) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_63(p);
             }//外周部折り畳みチェックに使う
-            else if (i_mouse_modeA == 64) {
+            else if (i_mouse_modeA == MouseMode.CREASE_DELETE_OVERLAPPING_64) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_64(p);
             }//線内削除　に使う
-            else if (i_mouse_modeA == 65) {
+            else if (i_mouse_modeA == MouseMode.CREASE_DELETE_INTERSECTING_65) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_65(p);
-            } else if (i_mouse_modeA == 66) {
+            } else if (i_mouse_modeA == MouseMode.SELECT_POLYGON_66) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_66(p);
-            } else if (i_mouse_modeA == 67) {
+            } else if (i_mouse_modeA == MouseMode.UNSELECT_POLYGON_67) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_67(p);
-            } else if (i_mouse_modeA == 68) {
+            } else if (i_mouse_modeA == MouseMode.SELECT_LINE_INTERSECTING_68) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_68(p);
-            } else if (i_mouse_modeA == 69) {
+            } else if (i_mouse_modeA == MouseMode.UNSELECT_LINE_INTERSECTING_69) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_69(p);
-            } else if (i_mouse_modeA == 70) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_LENGTHEN_70) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_70(p);
-            } else if (i_mouse_modeA == 71) {
+            } else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_DRAW_71) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_71(p);
             }
@@ -9069,16 +9008,16 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             //else if(i_mouse_modeA==89) {es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mDragged_A_89(p);}
 
 
-            else if (i_mouse_modeA == 10001) {
+            else if (i_mouse_modeA == MouseMode.UNUSED_10001) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_10001(p);
-            } else if (i_mouse_modeA == 10002) {
+            } else if (i_mouse_modeA == MouseMode.UNUSED_10002) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_10002(p);
-            } else if (i_mouse_modeA == 101) {
+            } else if (i_mouse_modeA == MouseMode.MODIFY_CALCULATED_SHAPE_101) {
                 OZ.foldedFigure_operation_mouse_drag(p);
             }    //折り上がり図操作
-            else if (i_mouse_modeA == 102) {
+            else if (i_mouse_modeA == MouseMode.MOVE_CALCULATED_SHAPE_102) {
                 OZ.camera_of_foldedFigure.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
                 OZ.camera_of_foldedFigure_front.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
                 OZ.camera_of_foldedFigure_rear.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
@@ -9088,10 +9027,10 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
                 mouse_temp0.set(p);//mouse_temp0は一時的に使うTen、mouse_temp0.tano_Ten_iti(p)はmouse_temp0から見たpの位置
 
-            } else if (i_mouse_modeA == 103) {
+            } else if (i_mouse_modeA == MouseMode.CHANGE_STANDARD_FACE_103) {
             }//基準面指定
-            else if (i_mouse_modeA == 7) {
-            } else if (i_mouse_modeA == 8) {
+            else if (i_mouse_modeA == MouseMode.SQUARE_BISECTOR_7) {
+            } else if (i_mouse_modeA == MouseMode.INWARD_8) {
             } else {
             }
 
@@ -9147,7 +9086,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
             } else if (btn == MouseEvent.BUTTON3) {
                 //System.out.println("右ボタンクリック");
-                if (i_mouse_modeA == 62) {
+                if (i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {
                     repaint();//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
                 } else {
 
@@ -9172,11 +9111,11 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             //}  //20201010　コメントアウト
 
 
-            if (i_mouse_modeA == 0) {
-            } else if (i_mouse_modeA == 1) {
+            if (i_mouse_modeA == MouseMode.UNUSED_0) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_FREE_1) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_01(p);
-            } else if (i_mouse_modeA == 2) {
+            } else if (i_mouse_modeA == MouseMode.MOVE_CREASE_PATTERN_2) {
                 camera_of_orisen_input_diagram.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
                 es1.setCamera(camera_of_orisen_input_diagram);
 
@@ -9221,76 +9160,76 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                 mouse_temp0.set(p);
 
 
-            } else if (i_mouse_modeA == 3) {
+            } else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_DELETE_3) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_03(p);
-            } else if (i_mouse_modeA == 4) {
+            } else if (i_mouse_modeA == MouseMode.CHANGE_CREASE_TYPE_4) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_04(p);
-            } else if (i_mouse_modeA == 5) {
+            } else if (i_mouse_modeA == MouseMode.LENGTHEN_CREASE_5) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_05(p);
-            } else if (i_mouse_modeA == 6) {
+            } else if (i_mouse_modeA == MouseMode.UNUSED_6) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_06(p);
-            } else if (i_mouse_modeA == 7) {
+            } else if (i_mouse_modeA == MouseMode.SQUARE_BISECTOR_7) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_07(p);
-            } else if (i_mouse_modeA == 8) {
+            } else if (i_mouse_modeA == MouseMode.INWARD_8) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_08(p);
-            } else if (i_mouse_modeA == 9) {
+            } else if (i_mouse_modeA == MouseMode.PERPENDICULAR_DRAW_9) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_09(p);
-            } else if (i_mouse_modeA == 10) {
+            } else if (i_mouse_modeA == MouseMode.SYMMETRIC_DRAW_10) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_10(p);
-            } else if (i_mouse_modeA == 11) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_RESTRICTED_11) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_11(p);
-            } else if (i_mouse_modeA == 12) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_SYMMETRIC_12) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_12(p);
-            } else if (i_mouse_modeA == 13) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_13(p);
-            } else if (i_mouse_modeA == 14) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_POINT_14) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_14(p);
-            } else if (i_mouse_modeA == 15) {
+            } else if (i_mouse_modeA == MouseMode.DELETE_POINT_15) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_15(p);
-            } else if (i_mouse_modeA == 16) {
+            } else if (i_mouse_modeA == MouseMode.ANGLE_SYSTEM_16) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_16(p);
-            } else if (i_mouse_modeA == 17) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_17(p);
-            } else if (i_mouse_modeA == 18) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_18(p);
-            } else if (i_mouse_modeA == 19) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_SELECT_19) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_19(p);
-            } else if (i_mouse_modeA == 20) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_UNSELECT_20) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_20(p);
-            } else if (i_mouse_modeA == 21) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_MOVE_21) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_21(p);
-            } else if (i_mouse_modeA == 22) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_COPY_22) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_22(p);
-            } else if (i_mouse_modeA == 23) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_MOUNTAIN_23) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_23(p);
-            } else if (i_mouse_modeA == 24) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_VALLEY_24) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_24(p);
-            } else if (i_mouse_modeA == 25) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_EDGE_25) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_25(p);
-            } else if (i_mouse_modeA == 26) {
+            } else if (i_mouse_modeA == MouseMode.BACKGROUND_CHANGE_POSITION_26) {
                 es1.setCamera(camera_of_orisen_input_diagram);
 
                 if (es1.mReleased_A_26(p) == 4) {
@@ -9308,9 +9247,9 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
                     //int i_Lock_on_old=i_Lock_on;
                     i_Lock_on = 0;
-                    Button_haikei_Lock_on.setBackground(Color.gray);
+                    Button_background_Lock_on.setBackground(Color.gray);
 
-                    haikei_set(camera_of_orisen_input_diagram.object2TV(s_1.getA()),
+                    background_set(camera_of_orisen_input_diagram.object2TV(s_1.getA()),
                             camera_of_orisen_input_diagram.object2TV(s_2.getA()),
                             camera_of_orisen_input_diagram.object2TV(s_3.getA()),
                             camera_of_orisen_input_diagram.object2TV(s_4.getA()));
@@ -9319,144 +9258,144 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
 
                 }
-            } else if (i_mouse_modeA == 27) {
+            } else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_DIVISION_27) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_27(p);
-            } else if (i_mouse_modeA == 28) {
+            } else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_RATIO_SET_28) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_28(p);
-            } else if (i_mouse_modeA == 29) {
+            } else if (i_mouse_modeA == MouseMode.POLYGON_SET_NO_CORNERS_29) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_29(p);
-            } else if (i_mouse_modeA == 30) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_ADVANCE_TYPE_30) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_30(p);
-            } else if (i_mouse_modeA == 31) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_MOVE_4P_31) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_31(p);
-            } else if (i_mouse_modeA == 32) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_COPY_4P_32) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_32(p);
-            } else if (i_mouse_modeA == 33) {
+            } else if (i_mouse_modeA == MouseMode.FISH_BONE_DRAW_33) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_33(p);
-            } else if (i_mouse_modeA == 34) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_MV_34) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_34(p);
-            } else if (i_mouse_modeA == 35) {
+            } else if (i_mouse_modeA == MouseMode.DOUBLE_SYMMETRIC_DRAW_35) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_35(p);
-            } else if (i_mouse_modeA == 36) {
+            } else if (i_mouse_modeA == MouseMode.CREASES_ALTERNATE_MV_36) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_36(p);
-            } else if (i_mouse_modeA == 37) {
+            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_37(p);
-            } else if (i_mouse_modeA == 38) {
+            } else if (i_mouse_modeA == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_38(p);
-            } else if (i_mouse_modeA == 39) {
+            } else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_INPUT_39) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_39(p);
-            } else if (i_mouse_modeA == 40) {
+            } else if (i_mouse_modeA == MouseMode.PARALLEL_DRAW_40) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_40(p);
-            } else if (i_mouse_modeA == 41) {
+            } else if (i_mouse_modeA == MouseMode.VERTEX_DELETE_ON_CREASE_41) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_41(p);
-            } else if (i_mouse_modeA == 42) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_42) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_42(p);
-            } else if (i_mouse_modeA == 43) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_THREE_POINT_43) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_43(p);
-            } else if (i_mouse_modeA == 44) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_SEPARATE_44) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_44(p);
-            } else if (i_mouse_modeA == 45) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_TANGENT_LINE_45) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_45(p);
-            } else if (i_mouse_modeA == 46) {
+            } else if (i_mouse_modeA == MouseMode.INVERTED_INPUT_46) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_46(p);
-            } else if (i_mouse_modeA == 47) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_FREE_47) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_47(p);
-            } else if (i_mouse_modeA == 48) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_48) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_48(p);
-            } else if (i_mouse_modeA == 49) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_49(p);
-            } else if (i_mouse_modeA == 50) {
+            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_50(p);
-            } else if (i_mouse_modeA == 51) {
+            } else if (i_mouse_modeA == MouseMode.PARALLEL_DRAW_WIDTH_51) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_51(p);
-            } else if (i_mouse_modeA == 52) {
+            } else if (i_mouse_modeA == MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_52(p);
-            } else if (i_mouse_modeA == 53) {
+            } else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_53(p);
-            } else if (i_mouse_modeA == 54) {
+            } else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_54(p);
-            } else if (i_mouse_modeA == 55) {
+            } else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_55(p);
-            } else if (i_mouse_modeA == 56) {
+            } else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_56(p);
-            } else if (i_mouse_modeA == 57) {
+            } else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_57(p);
-            } else if (i_mouse_modeA == 58) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_TOGGLE_MV_58) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_58(p);
             }//senbun_henkan 赤青
-            else if (i_mouse_modeA == 59) {
+            else if (i_mouse_modeA == MouseMode.CIRCLE_CHANGE_COLOR_59) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_59(p);
-            } else if (i_mouse_modeA == 60) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_AUX_60) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_60(p);
-            } else if (i_mouse_modeA == 61) {
+            } else if (i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_61(p);
             }//長方形内選択（paintの選択に似せた選択機能）に使う
-            else if (i_mouse_modeA == 62) {
+            else if (i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_62(p);
             }//ボロノイ図　に使う
-            else if (i_mouse_modeA == 63) {
+            else if (i_mouse_modeA == MouseMode.FLAT_FOLDABLE_CHECK_63) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_63(p);
             }//外周部折り畳みチェックに使う
-            else if (i_mouse_modeA == 64) {
+            else if (i_mouse_modeA == MouseMode.CREASE_DELETE_OVERLAPPING_64) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_64(p);
             }//線内削除　に使う
-            else if (i_mouse_modeA == 65) {
+            else if (i_mouse_modeA == MouseMode.CREASE_DELETE_INTERSECTING_65) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_65(p);
-            } else if (i_mouse_modeA == 66) {
+            } else if (i_mouse_modeA == MouseMode.SELECT_POLYGON_66) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_66(p);
-            } else if (i_mouse_modeA == 67) {
+            } else if (i_mouse_modeA == MouseMode.UNSELECT_POLYGON_67) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_67(p);
-            } else if (i_mouse_modeA == 68) {
+            } else if (i_mouse_modeA == MouseMode.SELECT_LINE_INTERSECTING_68) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_68(p);
-            } else if (i_mouse_modeA == 69) {
+            } else if (i_mouse_modeA == MouseMode.UNSELECT_LINE_INTERSECTING_69) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_69(p);
-            } else if (i_mouse_modeA == 70) {
+            } else if (i_mouse_modeA == MouseMode.CREASE_LENGTHEN_70) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_70(p);
-            } else if (i_mouse_modeA == 71) {
+            } else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_DRAW_71) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_71(p);
             }
@@ -9480,15 +9419,15 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
             //else if(i_mouse_modeA==89){es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mReleased_A_89(p);}
 
 
-            else if (i_mouse_modeA == 10001) {
+            else if (i_mouse_modeA == MouseMode.UNUSED_10001) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_10001(p);
-            } else if (i_mouse_modeA == 10002) {
+            } else if (i_mouse_modeA == MouseMode.UNUSED_10002) {
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_10002(p);
-            } else if (i_mouse_modeA == 101) {        //折り上がり図操作
+            } else if (i_mouse_modeA == MouseMode.MODIFY_CALCULATED_SHAPE_101) {        //折り上がり図操作
                 OZ.foldedFigure_operation_mouse_off(p);
-            } else if (i_mouse_modeA == 102) {
+            } else if (i_mouse_modeA == MouseMode.MOVE_CALCULATED_SHAPE_102) {
                 OZ.camera_of_foldedFigure.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
                 OZ.camera_of_foldedFigure_front.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
                 OZ.camera_of_foldedFigure_rear.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
@@ -9498,7 +9437,7 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
 
                 mouse_temp0.set(p);
 
-            } else if (i_mouse_modeA == 103) {//基準面指定
+            } else if (i_mouse_modeA == MouseMode.CHANGE_STANDARD_FACE_103) {//基準面指定
                 int new_kijyunmen_id;
                 int old_kijyunmen_id;
                 old_kijyunmen_id = OZ.cp_worker1.getReferencePlane_id();
@@ -9520,8 +9459,8 @@ write.setRGB(w, h, offsc_haikei.getRGB(w,h));
                     OZ.i_estimated_step = 1;
                 }
 
-            } else if (i_mouse_modeA == 7) {
-            } else if (i_mouse_modeA == 8) {
+            } else if (i_mouse_modeA == MouseMode.SQUARE_BISECTOR_7) {
+            } else if (i_mouse_modeA == MouseMode.INWARD_8) {
             } else {
             }
 
@@ -9580,7 +9519,7 @@ public void keyTyped(KeyEvent e){
 
 
     // ------------------------------------------------------
-    public void haikei_set(Point t1, Point t2, Point t3, Point t4) {
+    public void background_set(Point t1, Point t2, Point t3, Point t4) {
         h_cam.set_h1(t1);
         h_cam.set_h2(t2);
         h_cam.set_h3(t3);
@@ -9590,7 +9529,7 @@ public void keyTyped(KeyEvent e){
     }
 
     // ------------------------------------------------------
-    public void haikei_byouga(Graphics2D g2h, Image imgh) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
+    public void drawBackground(Graphics2D g2h, Image imgh) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
         //背景画を、画像の左上はしを、ウィンドウの(0,0)に合わせて回転や拡大なしで表示した場合を基準状態とする。
         //背景画上の点h1を中心としてa倍拡大する。次に、h1を展開図上の点h3と重なるように背景画を平行移動する。
         //この状態の展開図を、h3を中心にb度回転したよう見えるように座標を回転させて貼り付けて、その後、座標の回転を元に戻すという関数。
@@ -9633,16 +9572,16 @@ public void keyTyped(KeyEvent e){
         //Graphics2D g2d = (Graphics2D)g;
         //BasicStroke BStroke = new BasicStroke(1.0f);g2.setStroke(BStroke);//線の太さ
 
-        //float fTenkaizuSenhaba=(float)iTenkaizuSenhaba;	float f_h_TenkaizuSenhaba=(float)i_h_TenkaizuSenhaba;
-        fTenkaizuSenhaba = (float) iTenkaizuSenhaba;
-        f_h_TenkaizuSenhaba = (float) i_h_TenkaizuSenhaba;
+        //float fLineWidth=(float)iLineWidth;	float f_h_lineWidth=(float)i_h_lineWidth;
+        fLineWidth = (float) iLineWidth;
+        f_h_lineWidth = (float) i_h_lineWidth;
 
         if (i_anti_alias == 1) {
-            fTenkaizuSenhaba = fTenkaizuSenhaba + 0.2f;
-            f_h_TenkaizuSenhaba = f_h_TenkaizuSenhaba + 0.2f;
+            fLineWidth = fLineWidth + 0.2f;
+            f_h_lineWidth = f_h_lineWidth + 0.2f;
         }
 
-        BasicStroke BStroke = new BasicStroke(fTenkaizuSenhaba, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
+        BasicStroke BStroke = new BasicStroke(fLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
         g2.setStroke(BStroke);//線の太さや線の末端の形状
 
         //BasicStroke BStroke = new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);g2.setStroke(BStroke);//線の太さや線の末端の形状
@@ -9766,34 +9705,12 @@ public void keyTyped(KeyEvent e){
         OZ.cp_worker2.setCam_transparent_front(OZ.camera_of_transparent_front);
         OZ.cp_worker2.setCam_transparent_rear(OZ.camera_of_transparent_rear);
 //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-/*
-		//System.out.println("paint　+++++++++++++++++++++　透明化実施時の背景表示");
-		//透明化実施時の背景表示
-
-		if (i_toumeika==1) {
-//g2.drawImage((Image)imageT,100,100,this);
-//oc.hyouji("透明化実施時の背景表示1");
-
-img_haikei=(Image)imageT;
-			int iw=img_haikei.getWidth(this);//イメージの幅を取得
-			int ih=img_haikei.getHeight(this);//イメージの高さを取得
-
-			//System.out.println("paint幅＝"+iw);
-			//System.out.println("paint高さ＝"+ih);
-			h_cam.set_haikei_haba((double)iw);
-			h_cam.set_haikei_takasa((double)ih);
-
-			//if(i_Lock_on==1){
-				haikei_byouga(g2,img_haikei);
-			//}
-		}
-*/
 
         //System.out.println("paint　+++++++++++++++++++++　背景表示");
         //背景表示
-        if ((img_haikei != null) && (ihaikeihyouji >= 1)) {
-            int iw = img_haikei.getWidth(this);//イメージの幅を取得
-            int ih = img_haikei.getHeight(this);//イメージの高さを取得
+        if ((img_background != null) && (iDisplayBackground >= 1)) {
+            int iw = img_background.getWidth(this);//イメージの幅を取得
+            int ih = img_background.getHeight(this);//イメージの高さを取得
 
             //System.out.println("paint幅＝"+iw);
             //System.out.println("paint高さ＝"+ih);
@@ -9801,22 +9718,22 @@ img_haikei=(Image)imageT;
             h_cam.setBackgroundHeight(ih);
 
             //if(i_Lock_on==1){
-            haikei_byouga(g2, img_haikei);
+            drawBackground(g2, img_background);
             //}
         }
 
         //格子表示
-        //es1.kousi_oekaki_with_camera(bufferGraphics,i_bun_hyouji,i_cp_hyouji,i_a0_hyouji,i_a1_hyouji,fTenkaizuSenhaba,i_orisen_hyougen,f_h_TenkaizuSenhaba,dim.width,dim.height);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+        //es1.kousi_oekaki_with_camera(bufferGraphics,i_bun_hyouji,i_cp_hyouji,i_a0_hyouji,i_a1_hyouji,fLineWidth,i_orisen_hyougen,f_h_lineWidth,dim.width,dim.height);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
 
 
         //解説表示
-        //System.out.println("paint　+++++++++++++++++++++　解説表示  " +ikaisetuhyouji );
-        if ((img_kaisetu != null) && (ikaisetuhyouji >= 1)) {
-            bufferGraphics.drawImage(img_kaisetu, 650, 100, this);//80,80,は描画開始位置
+        //System.out.println("paint　+++++++++++++++++++++　解説表示  " +iDisplayExplanation );
+        if ((img_explanation != null) && (iDisplayExplanation >= 1)) {
+            bufferGraphics.drawImage(img_explanation, 650, 100, this);//80,80,は描画開始位置
 
-            //bufferGraphics.drawImage(img_kaisetu,600,150,this);//80,80,は描画開始位置
-            //	System.out.println("paint幅＝"+img_haikei.getWidth(this));
-            //	System.out.println("paint高さ＝"+img_haikei.getHeight(this));
+            //bufferGraphics.drawImage(img_explanation,600,150,this);//80,80,は描画開始位置
+            //	System.out.println("paint幅＝"+img_background.getWidth(this));
+            //	System.out.println("paint高さ＝"+img_background.getHeight(this));
         }
 
 
@@ -9847,10 +9764,10 @@ img_haikei=(Image)imageT;
 
         //展開図表示
         //System.out.println("paint　+++++++++++++++++++++　展開図表示(展開図動かし中心の十字を含む)");
-        //if (ihaikeihyouji<=1) {
+        //if (iDisplayBackground<=1) {
         //        es1.setCamera(camera_of_orisen_nyuuryokuzu);
 
-        es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fTenkaizuSenhaba, i_orisen_hyougen, f_h_TenkaizuSenhaba, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+        es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, i_orisen_hyougen, f_h_lineWidth, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
         if (i_bun_display == 1) {
             //展開図情報の文字表示
@@ -9864,18 +9781,13 @@ img_haikei=(Image)imageT;
             //結果の文字表示
             bufferGraphics.drawString(OZ.text_kekka, 120, 105); //この表示内容はvoid kekka_syoriで決められる。
 
-
             if (i_kou_mitudo_nyuuryoku_display == 1) {
                 Point kus_sisuu = new Point(es1.get_moyori_ten_sisuu(p_mouse_TV_iti));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
 
-                double dx_ind;
-                dx_ind = kus_sisuu.getX();
-                double dy_ind;
-                dy_ind = kus_sisuu.getY();
-                int ix_ind;
-                ix_ind = (int) Math.round(dx_ind);
-                int iy_ind;
-                iy_ind = (int) Math.round(dy_ind);
+                double dx_ind = kus_sisuu.getX();
+                double dy_ind = kus_sisuu.getY();
+                int ix_ind = (int) Math.round(dx_ind);
+                int iy_ind = (int) Math.round(dy_ind);
                 bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) p_mouse_TV_iti.getX() + 25, (int) p_mouse_TV_iti.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
             }
 
@@ -9900,11 +9812,8 @@ img_haikei=(Image)imageT;
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
         if (i_cp_ue_display == 1) {
-            es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fTenkaizuSenhaba, i_orisen_hyougen, f_h_TenkaizuSenhaba, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+            es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, i_orisen_hyougen, f_h_lineWidth, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
         }
-
-
-        //System.out.println("20170201_5");
 
         //アンチェイリアス
         if (i_anti_alias == 1) {
@@ -9922,15 +9831,10 @@ img_haikei=(Image)imageT;
 
         //中央指示線
         if (i_point_hanasi_display == 1) {
-
             g2.setStroke(new BasicStroke(1.0f));
-            //g2.setColor(new Color(0, 0, 0,255));
             g2.setColor(Color.black);
             g2.drawLine((int) (p_mouse_TV_iti.getX()), (int) (p_mouse_TV_iti.getY()),
                     (int) (p_mouse_TV_iti.getX() + d_haba), (int) (p_mouse_TV_iti.getY() + d_haba)); //直線
-
-            //g2.drawLine( (int)(p_mouse_TV_iti.getx()+d_haba*0.5),  (int)(p_mouse_TV_iti.gety()+d_haba*0.5),
-            //             (int)(p_mouse_TV_iti.getx()+d_haba),  (int)(p_mouse_TV_iti.gety()+d_haba*2.0)); //直線
         }
 
 
@@ -9939,55 +9843,14 @@ img_haikei=(Image)imageT;
 
         // オフスクリーンイメージを実際に描画する。オフスクリーンの幅は最初は 0,0。
         g.drawImage(offscreen, 0, 0, this);
-        //System.out.println("paint　+++++++++++++++++++++　paint終了");
 
-        //System.out.println("20170201_6");System.exit(0);
-
-
-/*
-//20181204
-//枠設定時の背景を枠内のみ残してトリム 20181204
-		if((i_mouse_modeA==61)&&(es1.get_i_egaki_dankai()==4)){//枠線が表示されている状態
-					int xmin=(int)es1.p61_TV_hako.get_x_min();
-					int xmax=(int)es1.p61_TV_hako.get_x_max();
-					int ymin=(int)es1.p61_TV_hako.get_y_min();
-					int ymax=(int)es1.p61_TV_hako.get_y_max();
-
-img_haikei=(Image)offscreen.getSubimage(xmin,ymin,xmax-xmin+1,ymax-ymin+1);
-//img_haikei=(Image)imageT.getSubimage(xmin,ymin,xmax-xmin+1,ymax-ymin+1);
-h_cam= new Haikei_camera();
-
-double dvx=(double)xmin;
-double dvy=(double)ymin;
-
-				haikei_set(	new Ten(120.0,120.0),
-						new Ten(120.0+10.0,120.0),
-						new Ten(dvx,dvy),
-						new Ten(dvx+10.0,dvy)   );
-
-						if(i_Lock_on==1){//20181202  このifが無いとlock on のときに背景がうまく表示できない
-							h_cam.set_i_Lock_on(i_Lock_on);
-							h_cam.setCamera(camera_of_orisen_nyuuryokuzu);
-							h_cam.h3_obj_and_h4_obj_keisan();
-						}
-
-
-
-		}
-
-
-
-*/
-
-
-        if (OZ.matome_write_image_jikkoutyuu) {//まとめ書き出し実行中の意味)
+        if (OZ.summary_write_image_during_execution) {//Meaning during summary writing)
             writeImageFile(fname_and_number);
 
             w_image_running = false;
         }
 
-
-        if (flg_wi == 1) {//枠あり書き出し時の制御用20180525
+        if (flg_wi == 1) {//For control when exporting with a frame 20180525
             flg_wi = 0;
             writeImageFile(fname_wi);
         }
@@ -10009,36 +9872,12 @@ double dvy=(double)ymin;
 
     }
 
-
-    //----------------------------------------------------------
-/*        void suitei_syokika(){
-		OZ.text_kekka="";
-		OZ.ks2.reset();
-		OZ.ts1.reset();
-		OZ.ts2.reset();
-		OZ.ts3.reset();
-		OZ.js.reset();
-
-		//oriagari_camera_syokika();		//20170615 実行しないようにした（折りあがり図の表示状況を変えないようにするため）
-		//ts2.setCamera(camera_of_oriagarizu);	//20170615 実行しないようにした（折りあがり図の表示状況を変えないようにするため）
-		//js.setCamera(camera_of_oriagarizu);	//20170615 実行しないようにした（折りあがり図の表示状況を変えないようにするため）
-
-		OZ.hyouji_flg=0;//折り上がり図の表示様式の指定。1なら展開図整理、2なら針金図。3なら透過図。5なら実際に折り紙を折った場合と同じ。
-		OZ.i_suitei_meirei=0;//折り畳み推定をどの段階まで行うかの指示
-		OZ.i_suitei_dankai=0;//折り畳み推定がどの段階までできたかの表示
-		OZ.betu_sagasi_flg=0;
-
-		OZ.matome_write_image_jikkoutyuu = false; //複数の折りあがり形の予測の書き出しがが実行中ならtureになる。20170615
-
-
-	}
-*/
     //----------------------------------------------------------
 
     void configure_syokika_yosoku() {
         OZ.text_kekka = "";
         OZ.display_flg = FoldedFigureDisplayStyle.NONE_0;//折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図
-        OZ.hyouji_flg_backup = FoldedFigureDisplayStyle.NONE_0;//表示様式hyouji_flgの一時的バックアップ用
+        OZ.display_flg_backup = FoldedFigureDisplayStyle.NONE_0;//表示様式hyouji_flgの一時的バックアップ用
 
         //表示用の値を格納する変数
         OZ.ip1 = -1;//上下表職人の初期設定時に、折った後の表裏が同じ面が
@@ -10072,50 +9911,37 @@ double dvy=(double)ymin;
 
     }
 
-    //----------------------
-    //   void reset(){		settei_syokika_cp();		settei_syokika_yosoku();		repaint();	}
-
-
     ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     //---------------------------------------------------------
     void readImageFromFile() {
-
         FileDialog fd = new FileDialog(this, "Select Image File.", FileDialog.LOAD);
         fd.setVisible(true);
-        img_haikei_fname = fd.getDirectory() + fd.getFile();
-        int ihaikeihyouji_old;
-        ihaikeihyouji_old = ihaikeihyouji;
+        img_background_fname = fd.getDirectory() + fd.getFile();
+        int iDisplayBackground_old;
+        iDisplayBackground_old = iDisplayBackground;
         try {
 
 
             if (fd.getFile() != null) {
 
                 Toolkit tk = Toolkit.getDefaultToolkit();
-                img_haikei = tk.getImage(img_haikei_fname);
-                //img_haikei = tk.getImage(img_haikei_fname);
+                img_background = tk.getImage(img_background_fname);
 
-                if (img_haikei != null) {
-                    ihaikeihyouji = 1;
-                    Button_haikei_kirikae.setBackground(Color.ORANGE);
+                if (img_background != null) {
+                    iDisplayBackground = 1;
+                    Button_background_kirikae.setBackground(Color.ORANGE);
                     i_Lock_on = 0;
                     i_Lock_on_ori = 0;
-                    Button_haikei_Lock_on.setBackground(Color.gray);
+                    Button_background_Lock_on.setBackground(Color.gray);
                 }
-
-                //c1.repaint();
             }
 
         } catch (Exception e) {
-            //System.out.println(e);
-            ihaikeihyouji = ihaikeihyouji_old;
-            if (ihaikeihyouji == 0) {
-                Button_haikei_kirikae.setBackground(Color.gray);
+            iDisplayBackground = iDisplayBackground_old;
+            if (iDisplayBackground == 0) {
+                Button_background_kirikae.setBackground(Color.gray);
             }
         }
-//repaint();
-        //System.out.println("01幅＝"+img_haikei.getWidth(this));
-        //System.out.println("01高さ＝"+img_haikei.getHeight(this));
-
     }
 
 
@@ -10125,7 +9951,7 @@ double dvy=(double)ymin;
         //String String fname_wi
         fname_wi = selectFileName("file name for Img save");
         flg61 = 0;
-        if ((i_mouse_modeA == 61) && (es1.get_i_egaki_dankai() == 4)) {
+        if ((i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) && (es1.get_i_egaki_dankai() == 4)) {
             flg61 = 1;
             es1.set_i_egaki_dankai(0);
 
@@ -10174,7 +10000,7 @@ double dvy=(double)ymin;
             if (fname.endsWith("svg")) {
                 //	Memo memo1; memo1=es1.getMemo_for_kakidasi();
                 Memo memo1;
-                memo1 = es1.getMemo_for_svg_export_with_camera(i_bun_display, i_cp_display, i_a0_display, i_a1_display, fTenkaizuSenhaba, i_orisen_hyougen, f_h_TenkaizuSenhaba, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+                memo1 = es1.getMemo_for_svg_export_with_camera(i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, i_orisen_hyougen, f_h_lineWidth, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
                 Memo memo2 = new Memo();
                 //memo2=OZ.getMemo_for_svg_kakidasi();//20180227　各折り上がりのmemoと重複する作業なので削除
@@ -10255,11 +10081,11 @@ double dvy=(double)ymin;
     void readImageFromFile2() {//これは使っていないので消していい
         try {
             Toolkit tk = Toolkit.getDefaultToolkit();
-            img_haikei = tk.getImage(img_haikei_fname);
+            img_background = tk.getImage(img_background_fname);
 
-            if (img_haikei != null) {
-                ihaikeihyouji = 1;
-                Button_haikei_kirikae.setBackground(Color.ORANGE);
+            if (img_background != null) {
+                iDisplayBackground = 1;
+                Button_background_kirikae.setBackground(Color.ORANGE);
             }
 
             //c1.repaint();
@@ -10267,29 +10093,29 @@ double dvy=(double)ymin;
             System.out.println(e);
         }
         repaint();
-        System.out.println("02幅＝" + img_haikei.getWidth(this));
-        System.out.println("02高さ＝" + img_haikei.getHeight(this));
+        System.out.println("02幅＝" + img_background.getWidth(this));
+        System.out.println("02高さ＝" + img_background.getHeight(this));
 
     }
 
 
     void readImageFromFile3() {
-        URL url = getClass().getClassLoader().getResource(img_kaisetu_fname);
+        URL url = getClass().getClassLoader().getResource(img_explanation_fname);
 //URL url = getClass().getClassLoader().getResource("qqq/hajimeni.png");
 
         try {
             Toolkit tk = Toolkit.getDefaultToolkit();
-            //img_kaisetu = tk.getImage(img_kaisetu_fname);
-            img_kaisetu = tk.getImage(url);
-            //if (img_kaisetu != null) {ikaisetuhyouji=1; }
+            //img_explanation = tk.getImage(img_explanation_fname);
+            img_explanation = tk.getImage(url);
+            //if (img_explanation != null) {iDisplayExplanation=1; }
 
             //c1.repaint();
         } catch (Exception e) {
             System.out.println(e);
         }
         repaint();
-        //	System.out.println("02幅＝"+img_haikei.getWidth(this));
-        //	System.out.println("02高さ＝"+img_haikei.getHeight(this));
+        //	System.out.println("02幅＝"+img_background.getWidth(this));
+        //	System.out.println("02高さ＝"+img_background.getHeight(this));
 
     }
 

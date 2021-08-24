@@ -22,7 +22,7 @@ class SubThread extends Thread {
 
             String fname = orihime_app.selectFileName("file name for Img save");
             if (fname != null) {
-                orihime_app.OZ.matome_write_image_jikkoutyuu = true;//まとめ書き出し実行中の意味
+                orihime_app.OZ.summary_write_image_during_execution = true;//まとめ書き出し実行中の意味
 
                 int objective = 100;
 
@@ -47,7 +47,7 @@ class SubThread extends Thread {
 
 
                 }
-                orihime_app.OZ.matome_write_image_jikkoutyuu = false;
+                orihime_app.OZ.summary_write_image_during_execution = false;
             }
             // -----------------------------------------------------------------
         } else if (orihime_app.i_sub_mode == 2) {

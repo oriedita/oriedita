@@ -1,4 +1,4 @@
-package jp.gr.java_conf.mt777.origami.dougu.haikei_camera;
+package jp.gr.java_conf.mt777.origami.dougu.background_camera;
 
 
 import jp.gr.java_conf.mt777.zukei2d.ten.*;
@@ -9,7 +9,7 @@ public class Background_camera {//Mediation between actual coordinates and displ
 
     // The background image is based on the case where the upper left corner of the image is displayed according to (0,0) of the window without rotation or enlargement.
 // Enlarge a times around the point h1 on the background image. Next, the background image is translated so that h1 overlaps the point h3 on the developed view. A function that rotates and pastes the developed view of this state so that it looks like it is rotated b degrees around h3, and then restores the rotation of the coordinates.
-// The arguments are Graphics2D g2h, Image imgh, Ten h1, Ten h2, Ten h3, Ten h4
+// The arguments are Graphics2D g2h, Image imgh, Point h1, Point h2, Point h3, Point h4
 // Make h2 and h4 also overlap
     OritaCalc oc = new OritaCalc();
     Point h1 = new Point();
@@ -188,7 +188,6 @@ public class Background_camera {//Mediation between actual coordinates and displ
         h3.set(camera.object2TV(h3_obj));
         h4.set(camera.object2TV(h4_obj));
     }
-
 }
 
 

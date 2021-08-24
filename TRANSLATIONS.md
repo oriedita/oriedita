@@ -52,3 +52,5 @@
 | `yubisasi` | `yubisashi` | `pointing at` | 指差し
 | `heikouna` | | `parallel` | 平行な
 | `memori` | | `scale` `division` | 目盛り
+| `byouga` | | `drawing` | 描画
+| `naibu` | | `inside` / `internal` | 内部

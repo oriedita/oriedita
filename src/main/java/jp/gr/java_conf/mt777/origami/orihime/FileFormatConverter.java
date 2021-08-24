@@ -6,31 +6,25 @@ import jp.gr.java_conf.mt777.zukei2d.ten.*;
 
 import java.util.*;
 
-public class File_keisiki_henkan {
-
-    //public File_keisiki_henkan(){   } //コンストラクタ
+public class FileFormatConverter {
 
     //---------------
     Memo obj2orihime(Memo mem) {
         System.out.println("objファイルをオリヒメ用にする");
         Memo MemR = new Memo();
-        int ibangou = 0;
         int jtok;
-        String st = "";
-        Double Dd = 0.0;
-        Integer Ii = 0;
 
         ArrayList<Point> tL = new ArrayList<>();
 
         tL.add(new Point());
 
-        Point tn = new Point();
+        Point tn;
         int Tenmax = 0;
 
-        ArrayList<Stick> bL = new ArrayList<>();
-        bL.add(new Stick());
+        ArrayList<Stick> stickList = new ArrayList<>();
+        stickList.add(new Stick());
 
-        Stick bu = new Stick();
+        Stick stick;
         int Boumax = 0;
 
         ArrayList<Integer> itempL = new ArrayList<>();
@@ -47,12 +41,9 @@ public class File_keisiki_henkan {
         double ymax = -10000.0;
         double ymin = 10000.0;
 
-        double ax, ay, bx, by;
         String str = "";
 
-        int isen = 0;
         for (int ig = 1; ig <= mem.getLineCount(); ig++) {
-            //  System.out.print("v,f,#eの読みこみ..."); System.out.println(ig);
             if (mem.getLine(ig).length() != 0) {
                 StringTokenizer tk = new StringTokenizer(mem.getLine(ig), " ");
                 jtok = tk.countTokens();
@@ -93,17 +84,17 @@ public class File_keisiki_henkan {
                         Integer I_itempL = itempL.get(i);
                         Integer Im1_itempL = itempL.get(i - 1);
                         for (int j = 1; j <= Boumax; j++) {
-                            bu = bL.get(j);
-                            if ((bu.getBegin() == Im1_itempL) && (bu.getEnd() == I_itempL)) {
+                            stick = stickList.get(j);
+                            if ((stick.getBegin() == Im1_itempL) && (stick.getEnd() == I_itempL)) {
                                 iflg = iflg + 1;
                             }
-                            if ((bu.getBegin() == I_itempL) && (bu.getEnd() == Im1_itempL)) {
+                            if ((stick.getBegin() == I_itempL) && (stick.getEnd() == Im1_itempL)) {
                                 iflg = iflg + 1;
                             }
                         }
                         if (iflg == 0) {
                             Boumax = Boumax + 1;
-                            bL.add(new Stick(Im1_itempL, I_itempL, LineType.BLACK_0));
+                            stickList.add(new Stick(Im1_itempL, I_itempL, LineType.BLACK_0));
                         }
                     }
                 }
@@ -114,72 +105,53 @@ public class File_keisiki_henkan {
                     ic = LineType.from(tk.nextToken());
                     id = Integer.parseInt(tk.nextToken());
                     for (int i = 1; i <= Boumax; i++) {
-                        bu = bL.get(i);
-                        if ((bu.getBegin() == ia) && (bu.getEnd() == ib)) {
-                            bu.setColor(ic);
+                        stick = stickList.get(i);
+                        if ((stick.getBegin() == ia) && (stick.getEnd() == ib)) {
+                            stick.setColor(ic);
                         }
-                        if ((bu.getBegin() == ib) && (bu.getEnd() == ia)) {
-                            bu.setColor(ic);
+                        if ((stick.getBegin() == ib) && (stick.getEnd() == ia)) {
+                            stick.setColor(ic);
                         }
                     }
                 }
             }
-            //	str=tk.nextToken();
-            //	System.out.print("jtok=" );System.out.println(jtok);
-            //	System.out.println(mem.getGyou(i));
         }
-
-        //  writeMemo2File(MemR) ;
 
         MemR.reset();
         MemR.addLine("<線分集合>");
         for (int i = 1; i <= Boumax; i++) {
             MemR.addLine("番号," + i);
-            //System.out.println("番号,"+str.valueOf(i));
-            bu = bL.get(i);
+            stick = stickList.get(i);
 
             LineType icol;
-            icol = LineType.fromNumber(bu.getColor().getNumber() - 1);
-            bu.setColor(icol);
-            if (bu.getColor() == LineType.RED_1) {
+            icol = LineType.fromNumber(stick.getColor().getNumber() - 1);
+            stick.setColor(icol);
+            if (stick.getColor() == LineType.RED_1) {
                 icol = LineType.BLUE_2;
             }
-            if (bu.getColor() == LineType.BLUE_2) {
+            if (stick.getColor() == LineType.BLUE_2) {
                 icol = LineType.RED_1;
             }
 
             if (icol != LineType.BLACK_0) {
-                bu.setColor(icol);
+                stick.setColor(icol);
             }
 
             MemR.addLine("色," + icol);
 
-            tn = tL.get(bu.getBegin());
+            tn = tL.get(stick.getBegin());
             d1 = tn.getX();
             d2 = tn.getY();
 
-            tn = tL.get(bu.getEnd());
+            tn = tL.get(stick.getEnd());
             d3 = tn.getX();
             d4 = tn.getY();
 
-            //d1=d1-xmin+150.0;
-            //d2=d2-ymin+150.0;
-            //d3=d3-xmin+150.0;
-            //d4=d4-ymin+150.0;
-
             MemR.addLine("座標," + d1 + "," + d2 + "," + d3 + "," + d4);
-
-            //System.out.println("座標,"+str.valueOf(d1)+","+str.valueOf(d2)+","+str.valueOf(d3)+","+str.valueOf(d4)     );
-            //MemR.addGyou("座標,"+str.valueOf(t[b[i].getmae()].getx())+","
-            //+str.valueOf(t[b[i].getmae()].gety())+","
-            //+str.valueOf(t[b[i].getato()].getx())+","
-            //+str.valueOf(t[b[i].getato()].gety())     );
-            //
         }
         return MemR;
     }
 
-    //---------------
     Memo cp2orihime(Memo mem) {
         System.out.println("cpファイルをオリヒメ用にする");
         System.out.println("cpファイルをオリヒメ用にする");
@@ -195,7 +167,6 @@ public class File_keisiki_henkan {
         MemR.reset();
         MemR.addLine("<線分集合>");
 
-        //  int isen=0;
         for (int ig = 1; ig <= mem.getLineCount(); ig++) {
             if (mem.getLine(ig).length() != 0) {
                 StringTokenizer tk = new StringTokenizer(mem.getLine(ig), " ");
@@ -247,14 +218,11 @@ public class File_keisiki_henkan {
 
         return MemR;
     }
-    //-----------------------------------------------------------------------------------------------------
 
     Memo orihime2cp(Memo mem) {
         System.out.println("オリヒメ用ファイルをcp用にする");
         Memo MemR = new Memo();
         int ibangou = 0;
-        Integer Ii = 0;
-        Double Dd = 0.0;
         double d1, d2, d3, d4;
         String str;
         int icol = 0;
@@ -262,15 +230,11 @@ public class File_keisiki_henkan {
         //オリヒメ　0.Contour, 1.Mountain, 2.Valley　、ORIPA 1.Contour, 2.Mountain, 3.Valley
 
         MemR.reset();
-        //MemR.addGyou("<線分集合>");
 
-        //  int isen=0;
         for (int ig = 1; ig <= mem.getLineCount(); ig++) {
-            //     System.out.print("cpファイルの行順番..."); System.out.println(ig);
             if (mem.getLine(ig).length() != 0) {
                 StringTokenizer tk = new StringTokenizer(mem.getLine(ig), ",");
                 str = tk.nextToken();
-                //    System.out.print("..."+str+"..."); System.out.println(ig);
                 if (str.equals("番号")) {
                     ibangou = ibangou + 1;
                 }
@@ -282,33 +246,18 @@ public class File_keisiki_henkan {
                     d2 = Double.parseDouble(tk.nextToken());
                     d3 = Double.parseDouble(tk.nextToken());
                     d4 = Double.parseDouble(tk.nextToken());
-                    // if(d1>xmax){xmax=d1;}
-                    // if(d1<xmin){xmin=d1;}
-                    // if(d2>ymax){ymax=d2;}
-                    // if(d2<ymin){ymin=d2;}
-                    //MemR.addGyou("番号,"+str.valueOf(ibangou));
-                    //System.out.println("番号,"+str.valueOf(ibangou));
 
-                    //System.out.println("色,"  +str.valueOf(icol) );
-
-                    //d1=d1-350.0;d2=d2-350.0;d3=d3-350.0;d4=d4-350.0;//オリヒメからORIPAへ移すときの座標調整
                     MemR.addLine(icol + " " + d1 + " " + d2 + " " + d3 + " " + d4);
-                    //MemR.addGyou("座標,"+str.valueOf(d1)+","+str.valueOf(d2)+","+str.valueOf(d3)+","+str.valueOf(d4)     );
-                    //System.out.println("座標,"+str.valueOf(d1)+","+str.valueOf(d2)+","+str.valueOf(d3)+","+str.valueOf(d4)     );
                 }
             }
         }
         return MemR;
     }
 
-    //-----------------------------------------------------------------------------------------------------
-
     Memo orihime2svg(Memo mem) {//これはes1.getMemo_for_kakidasi()を入力して展開図の生データのsvgを出力
         System.out.println("オリヒメ用ファイルをsvg用にする");
         Memo MemR = new Memo();
         int ibangou = 0;
-        Integer Ii = 0;
-        Double Dd = 0.0;
         double d1, d2, d3, d4;
         String str = "";
         String str_stroke = "";
@@ -322,9 +271,6 @@ public class File_keisiki_henkan {
 
         MemR.addLine("<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">");
 
-        //MemR.addGyou("<線分集合>");
-
-        //  int isen=0;
         for (int ig = 1; ig <= mem.getLineCount(); ig++) {
             //     System.out.print("cpファイルの行順番..."); System.out.println(ig);
             if (mem.getLine(ig).length() != 0) {
@@ -353,7 +299,6 @@ public class File_keisiki_henkan {
                     d3 = Double.parseDouble(tk.nextToken());
                     d4 = Double.parseDouble(tk.nextToken());
 
-
                     MemR.addLine("<line x1=\"" + d1 + "\"" +
                             " y1=\"" + d2 + "\"" +
                             " x2=\"" + d3 + "\"" +
@@ -361,38 +306,13 @@ public class File_keisiki_henkan {
                             " stroke=\"" + str_stroke + "\"" +
                             " stroke-width=\"" + str_strokewidth + "\"" + " />"
                     );
-                    //	<line x1="0" y1="10" x2="200" y2="10" stroke="black" y="10" stroke-width="1" />
                 }
             }
-
         }
 
         MemR.addLine("</svg>");
         return MemR;
     }
-
-/*
-<svg xmlns="http://www.w3.org/2000/svg"
-     xmlns:xlink="http://www.w3.org/1999/xlink">
-  <circle cx="100" cy="100" r="100" fill="red" />
-  <rect x="130" y="130" width="300" height="200" fill="blue" />
-</svg>
-
-
-<line x1="0" y1="10" x2="200" y2="10"
-      stroke="black" y="10" stroke-width="1" />
-<line x1="0" y1="30" x2="200" y2="30"
-      stroke="black" y="10" stroke-width="2" />
-<line x1="0" y1="50" x2="200" y2="50"
-      stroke="black" y="10" stroke-width="4" />
-<line x1="0" y1="70" x2="200" y2="70"
-      stroke="black" y="10" stroke-width="6" />
-
-
-
-
-
-*/
 
     Memo orihime2svg(Memo mem_tenkaizu, Memo mem_oriagarizu) {
         System.out.println("svg画像出力");
@@ -408,8 +328,4 @@ public class File_keisiki_henkan {
         MemR.addLine("</svg>");
         return MemR;
     }
-
-
-    //----------------
-
 }

@@ -136,35 +136,35 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 
 
     //-----------Ten p0が折り上がり図の内部に有るかどうかを判定する
-    public int naibu_hantei(Point p0) {//実際にp0がある面idを返す
+    public int isInside(Point p0) {//実際にp0がある面idを返す
         Point p = new Point();
         p.set(camera.TV2object(p0));
         return pointSet.inside(p);//c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     //-----------Ten p0が折り上がり図(表)の内部に有るかどうかを判定する
-    public int naibu_hantei_front(Point p0) {//実際にp0がある面idを返す
+    public int isInsideFront(Point p0) {//実際にp0がある面idを返す
         Point p = new Point();
         p.set(cam_front.TV2object(p0));
         return pointSet.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
-    //-----------Ten p0が折り上がり図(裏)の内部に有るかどうかを判定する
-    public int naibu_hantei_rear(Point p0) {//実際にp0がある面idを返す
+    //----------- Determine if Ten p0 is inside the folded view (back)
+    public int isInsideRear(Point p0) {//実際にp0がある面idを返す
         Point p = new Point();
         p.set(cam_rear.TV2object(p0));
         return pointSet.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     //-----------Ten p0が折り上がり図に付属して表示される透過図(表)の内部に有るかどうかを判定する
-    public int naibu_hantei_transparent_front(Point p0) {//実際にp0がある面idを返す
+    public int isInsideTransparentFront(Point p0) {//実際にp0がある面idを返す
         Point p = new Point();
         p.set(cam_transparent_front.TV2object(p0));
         return pointSet.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     //-----------Ten p0が折り上がり図に付属して表示される透過図(裏)の内部に有るかどうかを判定する
-    public int naibu_hantei_transparent_rear(Point p0) {//実際にp0がある面idを返す
+    public int isInsideTransparentRear(Point p0) {//実際にp0がある面idを返す
         Point p = new Point();
         p.set(cam_transparent_rear.TV2object(p0));
         return pointSet.inside(p);//Tensyuugou c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。

@@ -48,8 +48,8 @@ public class FoldedFigure {
     public Color foldedFigure_B_color = new Color(233, 233, 233);//The color of the back side of the folded figure
     public Color foldedFigure_L_color = Color.black;//Folded line color
 
-    public FoldedFigureDisplayStyle hyouji_flg_backup = FoldedFigureDisplayStyle.DEVELOPMENT_4;//For temporary backup of display format display_flg
-    //int hyouji_flg_backup=4;//表示様式hyouji_flgの一時的バックアップ用
+    public FoldedFigureDisplayStyle display_flg_backup = FoldedFigureDisplayStyle.DEVELOPMENT_4;//For temporary backup of display format display_flg
+    //int display_flg_backup=4;//表示様式display_flgの一時的バックアップ用
     public FoldedFigureDisplayStyle display_flg = FoldedFigureDisplayStyle.NONE_0;//Designation of the display style of the folded figure. 1 is a development drawing, 2 is a wire drawing. If it is 3, it is a transparent view. If it is 4, it is the same as when you actually fold the origami paper.
     public int i_estimated_order = 0;//Instructions on how far to perform folding estimation
     public int i_estimated_step = 0;//Display of how far the folding estimation has been completed
@@ -85,7 +85,7 @@ public class FoldedFigure {
     public BulletinBoard bulletinBoard;
 
     public boolean w_image_jikkoutyuu = false;//折畳みまとめ実行の。単一回のイメージ書き出しが実行中ならtureになる。
-    public boolean matome_write_image_jikkoutyuu = false;//matome_write_imageが実行中ならtureになる。これは、複数の折りあがり形の予測の書き出しがかすれないように使う。20170613
+    public boolean summary_write_image_during_execution = false;//matome_write_imageが実行中ならtureになる。これは、複数の折りあがり形の予測の書き出しがかすれないように使う。20170613
 
     //各種変数の定義
     String c = "";                //文字列処理用のクラスのインスタンス化
@@ -122,7 +122,7 @@ public class FoldedFigure {
         i_estimated_step = 0;//折り畳み推定がどの段階までできたかの表示
         findAnotherOverlapValid = false;
 
-        matome_write_image_jikkoutyuu = false; //複数の折りあがり形の予測の書き出しがが実行中ならtureになる。20170615
+        summary_write_image_during_execution = false; //複数の折りあがり形の予測の書き出しがが実行中ならtureになる。20170615
     }
 
 
@@ -219,13 +219,13 @@ public class FoldedFigure {
 
             //透過図の表示
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
-            if (display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) {        // hyouji_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
+            if (display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) {        // display_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
                 ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
             }
 
             //折り上がり図の表示************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
             if (display_flg == FoldedFigureDisplayStyle.PAPER_5) {
-                ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get());// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get());// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
             //Cross-shaped display at the center of movement of the folded figure
@@ -240,13 +240,13 @@ public class FoldedFigure {
             ct_worker.setCamera(camera_of_foldedFigure_rear);
 
             //Display of transparency
-            if (display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) {        // hyouji_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
+            if (display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) {        // display_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
                 ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
             }
 
             //Display of folded figure ************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
             if (display_flg == FoldedFigureDisplayStyle.PAPER_5) {
-                ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get());// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get());// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
             //Cross-shaped display at the center of movement of the folded figure
@@ -345,14 +345,14 @@ public class FoldedFigure {
 
             //透過図のsvg
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
-            if (display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) {        // hyouji_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
+            if (display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) {        // display_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
                 memo_temp.addMemo(ct_worker.getMemo_wirediagram_for_svg_export(cp_worker1, cp_worker2.get(), cp_worker3.get(), 1));
             }
 
             //折り上がり図のsvg************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
             if (display_flg == FoldedFigureDisplayStyle.PAPER_5) {
-                //ct_worker.oekaki_oriagarizu_with_camera(bufferGraphics,cp_worker1,cp_worker2.get(),cp_worker3.get());// hyouji_flg; Specify the display style of the folded figure. If it is 5, it is the same as when you actually fold the origami paper. If it is 3, it is a transparent view. If it is 2, it is a wire diagram.
-                memo_temp.addMemo(ct_worker.getMemo_for_svg_with_camera(cp_worker1, cp_worker2.get(), cp_worker3.get()));// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                //ct_worker.oekaki_oriagarizu_with_camera(bufferGraphics,cp_worker1,cp_worker2.get(),cp_worker3.get());// display_flg; Specify the display style of the folded figure. If it is 5, it is the same as when you actually fold the origami paper. If it is 3, it is a transparent view. If it is 2, it is a wire diagram.
+                memo_temp.addMemo(ct_worker.getMemo_for_svg_with_camera(cp_worker1, cp_worker2.get(), cp_worker3.get()));// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
 
             }
         }
@@ -364,14 +364,14 @@ public class FoldedFigure {
 
             //透過図のsvg
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
-            if (display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) {        // hyouji_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
+            if (display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) {        // display_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
                 memo_temp.addMemo(ct_worker.getMemo_wirediagram_for_svg_export(cp_worker1, cp_worker2.get(), cp_worker3.get(), 1));
             }
 
             //折り上がり図のsvg************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
             if (display_flg == FoldedFigureDisplayStyle.PAPER_5) {
-                //ct_worker.oekaki_oriagarizu_with_camera(bufferGraphics,cp_worker1,cp_worker2.get(),cp_worker3.get());// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
-                memo_temp.addMemo(ct_worker.getMemo_for_svg_with_camera(cp_worker1, cp_worker2.get(), cp_worker3.get()));// hyouji_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                //ct_worker.oekaki_oriagarizu_with_camera(bufferGraphics,cp_worker1,cp_worker2.get(),cp_worker3.get());// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                memo_temp.addMemo(ct_worker.getMemo_for_svg_with_camera(cp_worker1, cp_worker2.get(), cp_worker3.get()));// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
 
             }
 
@@ -958,7 +958,7 @@ public class FoldedFigure {
 
             if (i_foldedFigure_operation_mode == 1) {
 
-                hyouji_flg_backup = display_flg;   //20180216  //hyouji_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                display_flg_backup = display_flg;   //20180216  //display_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
                 display_flg = FoldedFigureDisplayStyle.WIRE_2;            //20180216
             }
 
@@ -1004,7 +1004,7 @@ public class FoldedFigure {
 
         if (i_nanini_near == 2) {
 
-            display_flg = hyouji_flg_backup;//20180216
+            display_flg = display_flg_backup;//20180216
 
             cp_worker2.mReleased_sentakuten_ugokasi_with_camera(move_previous_selection_point, p_m_left_on, p, ip4);
             if (p_m_left_on.distance(p) > 0.0000001) {
@@ -1130,7 +1130,7 @@ public class FoldedFigure {
 
             if (i_foldedFigure_operation_mode == 1) {
 
-                hyouji_flg_backup = display_flg;   //20180216  //hyouji_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                display_flg_backup = display_flg;   //20180216  //display_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
                 display_flg = FoldedFigureDisplayStyle.WIRE_2;            //20180216
             }
 
@@ -1183,14 +1183,14 @@ public class FoldedFigure {
 
 
                 if (i_foldedFigure_operation_mode == 1) {
-                    display_flg = hyouji_flg_backup;//20180216
+                    display_flg = display_flg_backup;//20180216
                 }
                 if (display_flg == FoldedFigureDisplayStyle.WIRE_2) {
                 }
 
 
 //if(i_oriagari_sousa_mode==1){
-                //if(hyouji_flg==5){i_suitei_meirei=5;orihime_ap.oritatami_suitei();}//オリジナル 20180124 これ以外だと、表示いったんもどるようでうざい
+                //if(display_flg==5){i_suitei_meirei=5;orihime_ap.oritatami_suitei();}//オリジナル 20180124 これ以外だと、表示いったんもどるようでうざい
 //}
 //if(i_oriagari_sousa_mode==2){
                 folding_estimated_03();//20180216

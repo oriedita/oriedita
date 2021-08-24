@@ -633,7 +633,7 @@ public class WireFrame_Worker {
                 OO.widthLine(g, s_tv, iTenkaizuSenhaba, lineSet.getColor(i));
             }//  太線
 
-            //OO.habaLine( g,s_tv,iTenkaizuSenhaba,k.getcolor(i));
+            //OO.habaLine( g,s_tv,iLineWidth,k.getcolor(i));
 
             g.setColor(Color.white);
             g.fillOval((int) a.getX() - ir, (int) a.getY() - ir, 2 * ir, 2 * ir); //円

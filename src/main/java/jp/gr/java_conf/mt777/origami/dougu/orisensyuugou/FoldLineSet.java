@@ -1,19 +1,20 @@
 package jp.gr.java_conf.mt777.origami.dougu.orisensyuugou;
 
-import java.awt.*;
-
-import jp.gr.java_conf.mt777.kiroku.memo.*;
-
+import jp.gr.java_conf.mt777.kiroku.memo.Memo;
 import jp.gr.java_conf.mt777.origami.orihime.LineType;
-import jp.gr.java_conf.mt777.zukei2d.en.*;
-import jp.gr.java_conf.mt777.zukei2d.senbun.*;
-import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
-import jp.gr.java_conf.mt777.zukei2d.oritacalc.tyokusen.*;
-import jp.gr.java_conf.mt777.seiretu.narabebako.*;
+import jp.gr.java_conf.mt777.seiretu.narabebako.SortingBox_int_double;
+import jp.gr.java_conf.mt777.seiretu.narabebako.int_double;
+import jp.gr.java_conf.mt777.zukei2d.en.Circle;
+import jp.gr.java_conf.mt777.zukei2d.oritacalc.IntersectionState;
+import jp.gr.java_conf.mt777.zukei2d.oritacalc.OritaCalc;
+import jp.gr.java_conf.mt777.zukei2d.oritacalc.tyokusen.StraightLine;
+import jp.gr.java_conf.mt777.zukei2d.senbun.LineSegment;
 import jp.gr.java_conf.mt777.zukei2d.takakukei.Polygon;
 import jp.gr.java_conf.mt777.zukei2d.ten.Point;
 
-import java.util.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
@@ -31,6 +32,27 @@ public class FoldLineSet {
 
 
     ArrayList<Circle> circles = new ArrayList<>(); //円のインスタンス化
+    //Setting variables used to load custom properties
+    String[] st_new;
+    String[] s_new;
+    int i_customized = 0;
+    int i_customized_color_R = 0;
+    int i_customized_color_G = 0;
+    int i_customized_color_B = 0;
+    //点Qを指定し、線分AQとQCを削除し線分ACを追加（ただしQを端点とするのは2本の線分のみ）//実施したときは1、何もしなかったときは0を返す。
+//手順は（１）マウスクリックで点pが決まる。
+//（２）点p最も近い展開図に含まれる端点qが決まる。
+//（３）展開図中の折線でその端点のうち、qに近いほうと、qとの距離がr以下の場合、その折線は点qと連結しているとして
+//
+//
+//
+//
+//
+//
+//
+//
+    int[] i_s = new int[2];//この変数はdel_Vとtyouten_syuui_sensuuとで共通に使う。tyouten_syuui_sensuuで、頂点回りの折線数が2のときにその2折線の番号を入れる変数。なお、折線数が3以上のときは意味を成さない。//qを端点とする2本の線分の番号
+    double fushimi_hantei_kakudo_goukei = 360.0;
 
     public FoldLineSet() {
         reset();
@@ -178,6 +200,8 @@ public class FoldLineSet {
         return s.getColor();
     }
 
+//
+
     //
     public void setLineCustomized(int i, int customized) {
         LineSegment s;
@@ -227,7 +251,8 @@ public class FoldLineSet {
         return e.getCustomizedColor();
     }
 
-//
+
+//-----------------------------
 
     //i番目の線分の活性を入力する
     public void setActive(int i, int iactive) {
@@ -236,12 +261,31 @@ public class FoldLineSet {
         s.setActive(iactive);
     }
 
-
     //i番目の線分の活性を出力する
     public int getActive(int i) {
         LineSegment s;
         s = getLineSegment(i);
         return s.getActive();
+    }
+
+    public int getVonoroiA(int i) {
+        return getLineSegment(i).getVonoroiA();
+    }
+
+    public int getVonoroiB(int i) {
+        return getLineSegment(i).getVonoroiB();
+    }
+
+//-----------------------------
+
+    public void setVonoroiA(int i, int a) {
+        getLineSegment(i).setVonoroiA(a);
+    }
+
+//-----------------------------
+
+    public void setVonoroiB(int i, int b) {
+        getLineSegment(i).setVonoroiB(b);
     }
 
     //-----------------------------
@@ -298,10 +342,6 @@ public class FoldLineSet {
         return memo1;
     }
 
-
-//-----------------------------
-
-
     //Output the information of all line segments of the line segment set as Memo. // Iactive does not write out the fold line of excluding in the memo
     public Memo getMemo_active_excluding(int excluding) {
         String str = "";//文字列処理用のクラスのインスタンス化
@@ -344,7 +384,6 @@ public class FoldLineSet {
 
         return memo1;
     }
-
 
     //-----------------------------
     //Outputs the information of all line segments of the auxiliary line segment set as Memo.
@@ -397,6 +436,8 @@ public class FoldLineSet {
         return memo1;
     }
 
+//-----------------------------
+
     //-----------------------------
     //Output the line segment set information as Memo for folding estimation. // Do not write out auxiliary lines with icol of 3 (cyan = light blue) or more in the memo
     public Memo getMemo_for_select_folding() {
@@ -426,6 +467,7 @@ public class FoldLineSet {
         return memo1;
     }
 
+
 //-----------------------------
 
     //折畳み推定用にselectされた線分集合の折線数を intとして出力する。//icolが3(cyan＝水色)以上の補助線はカウントしない
@@ -441,20 +483,6 @@ public class FoldLineSet {
         }
         return ibangou;
     }
-
-//-----------------------------
-
-
-    //Setting variables used to load custom properties
-    String[] st_new;
-    String[] s_new;
-    int i_customized = 0;
-    int i_customized_color_R = 0;
-    int i_customized_color_G = 0;
-    int i_customized_color_B = 0;
-
-//-----------------------------
-
 
     public String setMemo(Memo memo1) {//The return value is the title used for recording undo and redo.
 
@@ -527,7 +555,7 @@ public class FoldLineSet {
             }
             if ((reading_flag == 1) && (str.equals("色"))) {
                 str = tk.nextToken();
-                ic = LineType.fromNumber(Integer.parseInt(str));
+                ic = LineType.from(str);
                 LineSegment s;
                 s = getLineSegment(ibangou);
                 s.setColor(ic);
@@ -576,6 +604,20 @@ public class FoldLineSet {
                 LineSegment s;
                 s = getLineSegment(ibangou);
                 s.setActive(is);
+            }
+
+            if ((reading_flag == 1) && (str.equals("iva"))) {
+                str = tk.nextToken();
+                is = Integer.parseInt(str);
+                LineSegment s = getLineSegment(ibangou);
+                s.setVonoroiA(is);
+            }
+
+            if ((reading_flag == 1) && (str.equals("ivb"))) {
+                str = tk.nextToken();
+                is = Integer.parseInt(str);
+                LineSegment s = getLineSegment(ibangou);
+                s.setVonoroiB(is);
             }
 
 
@@ -660,8 +702,8 @@ public class FoldLineSet {
         return r_title;
     }
 
-
 //-----------------------------
+    //展開図入力時の線分集合の整理
 
     public void h_setMemo(Memo memo1) {
         int reading_flg = 0;//0なら読み込みを行わない。1なら読み込む。
@@ -735,7 +777,6 @@ public class FoldLineSet {
             }
         }
     }
-
 
     //-----------------------------
     public void addMemo(Memo memo1) {
@@ -845,7 +886,7 @@ public class FoldLineSet {
                 str = tk.nextToken();
                 by = Double.parseDouble(str);
 
-				LineSegment s = getLineSegment(ibangou);
+                LineSegment s = getLineSegment(ibangou);
                 s.set(ax, ay, bx, by);
                 //	System.out.println(ax );
             }
@@ -908,8 +949,7 @@ public class FoldLineSet {
         }
     }
 
-//-----------------------------
-    //展開図入力時の線分集合の整理
+    //SubFaceを発生させるための線分集合の整理
 
     public void divide_seiri() {//折り畳み推定などで得られる針金図の整理
         System.out.println("分割整理　１、点削除");
@@ -923,6 +963,8 @@ public class FoldLineSet {
         System.out.println("分割整理　５、重複線分削除");
         overlapping_line_removal(); //折り畳み推定の針金図の整理のため、全く一致する線分が２つあれば１つを除く
     }
+
+//--------------------------------------------------------------------------------------------------
 
     //全線分の山谷を入れ替える。境界線等の山谷以外の線種は変化なし。
     public void zen_yama_tani_henkan() {
@@ -938,8 +980,9 @@ public class FoldLineSet {
             setColor(ic_id, ic_temp);
         }
     }
+//-----------------------------
 
-    //SubFaceを発生させるための線分集合の整理
+//--------------------------------------------------------------------------------------------------
 
     public void bunkatu_seiri_for_SubFace_hassei() {//折り畳み推定などで得られる針金図の整理
         System.out.println("　　Orisensyuugouの中で、Smenを発生させるための線分集合の整理");
@@ -955,8 +998,6 @@ public class FoldLineSet {
         overlapping_line_removal(); //折り畳み推定の針金図の整理のため、全く一致する線分が２つあれば１つを除く
         System.out.println("分割整理　５、重複線分削除後	getsousuu() = " + getTotal());
     }
-
-//--------------------------------------------------------------------------------------------------
 
     //線分集合の全線分の情報を Memoとして出力する。//selectがijyogaiの折線はメモに書き出さない
     public Memo getMemo_select_jyogai(int ijyogai) {
@@ -981,8 +1022,9 @@ public class FoldLineSet {
                 memo1.addLine("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
                 memo1.addLine("iactive," + s.getActive());//20181110追加
+                memo1.addLine("iva," + s.getVonoroiA());
+                memo1.addLine("ivb," + s.getVonoroiB());
                 memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
-
             }
 
         }
@@ -1004,9 +1046,6 @@ public class FoldLineSet {
 
         return memo1;
     }
-//-----------------------------
-
-//--------------------------------------------------------------------------------------------------
 
     //線分集合の全線分の情報を Memoとして出力する。//selectがisentakuの折線をメモに書き出す
     public Memo getMemo_select_sentaku(int isentaku) {
@@ -1047,7 +1086,6 @@ public class FoldLineSet {
         }
     }
 
-
     public void unselect_all() {
         for (int i = 1; i <= total; i++) {
             LineSegment s;
@@ -1055,7 +1093,6 @@ public class FoldLineSet {
             s.setSelected(0);
         }
     }
-
 
     public void select(int i) {
         LineSegment s;
@@ -1100,7 +1137,6 @@ public class FoldLineSet {
         }
     }
 
-
     public void unselect(Point p1, Point p2, Point p3) {
         Polygon sankaku = new Polygon(3);
         sankaku.set(1, p1);
@@ -1118,6 +1154,7 @@ public class FoldLineSet {
             }
         }
     }
+//--------------------------------
 
     public void unselect(Point p1, Point p2, Point p3, Point p4) {
         //Ten p1 = new Ten();   p1.set(si.geta());
@@ -1164,8 +1201,6 @@ public class FoldLineSet {
         }
         return i_r;
     }
-//--------------------------------
-
 
     //--------------------------------
     public int M_nisuru(Point p1, Point p2, Point p3, Point p4) {
@@ -1209,6 +1244,15 @@ public class FoldLineSet {
         return i_r;
     }
 
+
+//public int Senbun_kasanari_hantei(Senbun s1,Senbun s2){//0は重ならない。1は重なる。20201012追加
+
+
+//-----------------------wwwwwwwwwwwwwww---------
+
+    //public int Senbun_X_kousa_hantei(Senbun s1,Senbun s2){//0はX交差しない。1は交差する。20201017追加
+    //  if (s.substring(4, 7).equals("boa")) {
+
     //--------------------------------
     public int E_nisuru(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
@@ -1230,6 +1274,9 @@ public class FoldLineSet {
         return i_r;
 
     }
+
+
+//--------------------------------
 
     //--------------------------------
     public int HK_nisuru(Point p1, Point p2, Point p3, Point p4) {
@@ -1282,15 +1329,6 @@ public class FoldLineSet {
         return i_r;
 
     }
-
-
-//public int Senbun_kasanari_hantei(Senbun s1,Senbun s2){//0は重ならない。1は重なる。20201012追加
-
-
-//-----------------------wwwwwwwwwwwwwww---------
-
-    //public int Senbun_X_kousa_hantei(Senbun s1,Senbun s2){//0はX交差しない。1は交差する。20201017追加
-    //  if (s.substring(4, 7).equals("boa")) {
 
     public int D_nisuru_line(LineSegment s_step1, String Dousa_mode) {
         //"l"  lXは小文字のエル。Senbun s_step1と重複する部分のある線分を削除するモード。
@@ -1381,10 +1419,6 @@ public class FoldLineSet {
 
         return i_r;
     }
-
-
-//--------------------------------
-
 
     //-----------------------wwwwwwwwwwwwwww---------
     public int D_nisuru(Point p1, Point p2, Point p3, Point p4) {
@@ -1478,7 +1512,6 @@ public class FoldLineSet {
         return i_r;
     }
 
-
     //--------------------------------
     public int D_nisuru0(Point p1, Point p2, Point p3, Point p4) {//折線のみ削除
 
@@ -1564,6 +1597,8 @@ public class FoldLineSet {
     }
 
 
+//--------------------------------
+
     //--------------------------------
 //--------------------------------
     public int D_nisuru2(Point p1, Point p2, Point p3, Point p4) {//折線のみ削除
@@ -1609,6 +1644,8 @@ public class FoldLineSet {
         return i_r;
     }
 
+
+//--------------------------------
 
     //--------------------------------
     public int D_nisuru3(Point p1, Point p2, Point p3, Point p4) {//補助活線のみ削除
@@ -1703,9 +1740,6 @@ public class FoldLineSet {
         return i_r;
     }
 
-
-//--------------------------------
-
     //--------------------------------
     public int chenge_property_in_4kakukei(Point p1, Point p2, Point p3, Point p4, Color sen_tokutyuu_color) {//4角形の中にある円や補助活線の色などのプロパティを変える
         int i_r = 0;
@@ -1783,10 +1817,6 @@ public class FoldLineSet {
         return i_r;
     }
 
-
-//--------------------------------
-
-
     public void unselect(int i) {
         LineSegment s;
         s = getLineSegment(i);
@@ -1805,14 +1835,14 @@ public class FoldLineSet {
         s.setSelected(isel);
     }
 
-
     //----------------------------------------
-    public void del_selected_senbun_hayai() {
+    public void del_selected_lineSegment_fast() {
         Memo memo_temp = new Memo();
         memo_temp.set(getMemo_select_jyogai(2));
         reset();
         setMemo(memo_temp);
     }
+//--------------------------------------------------------
 
     //----------------------------------------
     public void del_selected_senbun() {
@@ -1833,7 +1863,6 @@ public class FoldLineSet {
         }
         return 0;
     }
-//--------------------------------------------------------
 
     //点状の線分を削除
     public void point_removal() {
@@ -1924,7 +1953,6 @@ public class FoldLineSet {
         return 0;
     }
 
-
     //Divide the two line segments at the intersection of the two intersecting line segments. If there were two line segments that completely overlapped, both would remain without any processing.
     public void intersect_divide_symple() {//System.out.println("1234567890   k_symple");
         int i_Flag = 1;
@@ -1933,7 +1961,6 @@ public class FoldLineSet {
             i_Flag = intersect_divide_symple_roop();
         }
     }
-
 
     public int intersect_divide_symple_roop() {//1回交差分割があったら、直ちに1をリターンする。交差分割がまったくないなら0をリターンする。、
 //int jj=0;
@@ -1952,7 +1979,6 @@ public class FoldLineSet {
         }
         return 0;
     }
-
 
     //------------------zzzzzzzzz-------------------------------------------------------------------
     //Divide the two line segments at the intersection of the two intersecting line segments. If there were two line segments that completely overlapped, both would remain without any processing.
@@ -2129,6 +2155,8 @@ public class FoldLineSet {
         reset();
         setMemo(memo_temp);
     }
+
+//---------------------
 
     //---------------------
     public int kousabunkatu_hayai(int i, int j) {//iは加える方(2)、jは元からある方(1)//=0 交差せず
@@ -2613,6 +2641,9 @@ public class FoldLineSet {
         return 0;
     }
 
+
+    //円の追加-------------------------------
+
     //---------------------
     //交差している２つの線分の交点で２つの線分を分割する。　まったく重なる線分が２つあった場合は、なんの処理もなされないまま２つとも残る。
     public void intersect_divide() {
@@ -2653,8 +2684,6 @@ public class FoldLineSet {
             }
         }
     }
-
-//---------------------
 
     //交差している２つの線分の交点で２つの線分を分割する。分割を行ったら1。行わなかったら0を返す。オリヒメ2.002から分割後の線の色も制御するようにした(重複部がある場合は一本化し、番号の遅いほうの色になる)。
     public int intersect_divide(int i, int j) {
@@ -3110,10 +3139,6 @@ public class FoldLineSet {
         return 0;
     }
 
-
-    //円の追加-------------------------------
-
-
     public void addCircle(double dx, double dy, double dr, LineType ic) {
         circles.add(new Circle(dx, dy, dr, ic));
 
@@ -3124,7 +3149,6 @@ public class FoldLineSet {
     public void addCircle(Point t, double dr) {
         addCircle(t.getX(), t.getY(), dr, LineType.BLACK_0);
     }
-
 
     //Generates a circle with a radius of 0 at the intersection of circles -------------------------------
     public void circle_circle_intersection(int imin, int imax, int jmin, int jmax) {
@@ -3138,15 +3162,15 @@ public class FoldLineSet {
                     ej.set(getCircle(j));
                     if (ej.getRadius() > 0.0000001) {//半径0の円は対象外
                         if (oc.distance(ei.getCenter(), ej.getCenter()) < 0.000001) {//2つの円は同心円で交差しない
-						} else if (Math.abs(oc.distance(ei.getCenter(), ej.getCenter()) - ei.getRadius() - ej.getRadius()) < 0.0001) {//2つの円は1点で交差
+                        } else if (Math.abs(oc.distance(ei.getCenter(), ej.getCenter()) - ei.getRadius() - ej.getRadius()) < 0.0001) {//2つの円は1点で交差
                             addCircle(oc.naibun(ei.getCenter(), ej.getCenter(), ei.getRadius(), ej.getRadius()), 0.0);
                         } else if (oc.distance(ei.getCenter(), ej.getCenter()) > ei.getRadius() + ej.getRadius()) {//2つの円は交差しない
 
-						} else if (Math.abs(oc.distance(ei.getCenter(), ej.getCenter()) - Math.abs(ei.getRadius() - ej.getRadius())) < 0.0001) {//2つの円は1点で交差
+                        } else if (Math.abs(oc.distance(ei.getCenter(), ej.getCenter()) - Math.abs(ei.getRadius() - ej.getRadius())) < 0.0001) {//2つの円は1点で交差
                             addCircle(oc.naibun(ei.getCenter(), ej.getCenter(), -ei.getRadius(), ej.getRadius()), 0.0);
                         } else if (oc.distance(ei.getCenter(), ej.getCenter()) < Math.abs(ei.getRadius() - ej.getRadius())) {//2つの円は交差しない
 
-						} else {//Two circles intersect at two points
+                        } else {//Two circles intersect at two points
                             LineSegment lineSegment = new LineSegment();
                             lineSegment.set(oc.circle_to_circle_no_intersection_wo_musubu_lineSegment(ei, ej));
 
@@ -3158,7 +3182,6 @@ public class FoldLineSet {
             }
         }
     }
-
 
     //A circle with a radius of 0 is generated at the intersection of the circle and the polygonal line.-------------------------------
     public void lineSegment_circle_intersection(int imin, int imax, int jmin, int jmax) {
@@ -3186,7 +3209,7 @@ public class FoldLineSet {
                             addCircle(oc.shadow_request(ti, ej.getCenter()), 0.0);
                         }
                     } else if (tc_kyori > ej.getRadius()) {//Circles and straight lines do not intersect
-					} else {//Circle and straight line intersect at two points
+                    } else {//Circle and straight line intersect at two points
                         LineSegment k_senb = new LineSegment();
                         k_senb.set(oc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(ej, ti));
 
@@ -3203,7 +3226,6 @@ public class FoldLineSet {
             //}
         }
     }
-
 
     //円の削除-----------------------------------------
     public void delen(int j) {   //j番目の円を削除する
@@ -3240,7 +3262,6 @@ public class FoldLineSet {
             circle_organize(i);
         }
     }
-
 
     //円の状態表示-----------------------------------------
     public int en_jyoutai(int i0, int i_mode) {   //i番目の円の状態を示す。
@@ -3343,7 +3364,6 @@ public class FoldLineSet {
         return 100000;
     }
 
-
     //線分の追加-------------------------------
     public void addLine(Point pi, Point pj, LineType i_c) {
         total++;
@@ -3366,15 +3386,15 @@ public class FoldLineSet {
     }
 
     //線分の追加-------------------------------
-    public void addLine(Point pi, Point pj, LineType i_c, int i_a) {
+    public void addLine(Point pi, Point pj, LineType i_c, int i_a, int v_a, int v_b) {
         total++;
 
         LineSegment s;
         s = getLineSegment(total);
-        s.set(pi, pj, i_c, i_a);
+        s.set(pi, pj, i_c, i_a, v_a, v_b);
     }
 
-    //線分の追加-------------------------------
+    //Add line segment -------------------------------
     public void addLine(double ax, double ay, double bx, double by, LineType ic) {
         total++;
 
@@ -3396,9 +3416,19 @@ public class FoldLineSet {
 
     //線分の追加-------------------------------
     public void addLine(LineSegment s0) {
-        //addsenbun(s0.geta(),s0.getb(),s0.getcolor());//20181110コメントアウト
-        addLine(s0.getA(), s0.getB(), s0.getColor(), s0.getActive());//20181110追加
+        addLine(s0.getA(), s0.getB(), s0.getColor(), s0.getActive(), s0.getVonoroiA(), s0.getVonoroiB());//20181110追加
     }
+
+/*
+	public void senbun_binkatu(int i,Ten p){   //pとi番目の線分の端点aとの線分を加え、pとi番目の線分の端点bとの線分を加え、i番目の線分を削除する
+		int i_c;i_c=getcolor(i);
+		Senbun s1 =new Senbun(geta(i),p);
+		Senbun s2 =new Senbun(getb(i),p);
+		delsenbun(i);
+		addsenbun(s1);setcolor(getsousuu(),i_c);
+		addsenbun(s2);setcolor(getsousuu(),i_c);
+	}
+*/
 
     //線分の削除-----------------------------------------
     public void deleteLine(int j) {   //j番目の線分を削除する  このsi= sen(i)は大丈夫なのだろうか????????si= sen(i)　20161106
@@ -3413,7 +3443,6 @@ public class FoldLineSet {
         total--;
     }
 
-
     //線分の分割-----------------qqqqq------------------------
     public void senbun_bunkatu(int i, Point p) {   //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
 
@@ -3427,23 +3456,14 @@ public class FoldLineSet {
         setColor(getTotal(), i_c);
     }
 
-/*
-	public void senbun_binkatu(int i,Ten p){   //pとi番目の線分の端点aとの線分を加え、pとi番目の線分の端点bとの線分を加え、i番目の線分を削除する
-		int i_c;i_c=getcolor(i);
-		Senbun s1 =new Senbun(geta(i),p);
-		Senbun s2 =new Senbun(getb(i),p);
-		delsenbun(i);
-		addsenbun(s1);setcolor(getsousuu(),i_c);
-		addsenbun(s2);setcolor(getsousuu(),i_c);
-	}
-*/
-
     //i番目の線分の長さを得る---------------------------
     public double getLength(int i) {
         LineSegment s;
         s = getLineSegment(i);
         return s.getLength();
     }
+
+//----------------------------------------------------
 
     //Remove the branching line segments without forming a closed polygon.
     public void branch_trim(double r) {
@@ -3480,6 +3500,11 @@ public class FoldLineSet {
         }
     }
 
+
+    //点pに近い(r以内)線分をさがし、その番号を返す関数(ただし、j番目の線分は対象外)。近い線分がなければ、0を返す---------------------------------
+    //もし対象外にする線分が無い場合は、jを0とか負の整数とかにする。
+    //070317　追加機能　j　が　-10　の時は　活性化していない枝（getiactive(i)が0）を対象にする。
+
     //-----------------------------------------------
     public void delsenbun_vertex(int i) {//i番目の折線を消すとき、その折線の端点も消せる場合は消す
         Point pa = new Point();
@@ -3491,9 +3516,6 @@ public class FoldLineSet {
         del_V(pa, 0.000001, 0.000001);
         del_V(pb, 0.000001, 0.000001);
     }
-
-//----------------------------------------------------
-
 
     //一本だけの離れてある線分を削除する。
     public void tanSenbun_sakujyo(double r) {
@@ -3527,11 +3549,6 @@ public class FoldLineSet {
             }
         }
     }
-
-
-    //点pに近い(r以内)線分をさがし、その番号を返す関数(ただし、j番目の線分は対象外)。近い線分がなければ、0を返す---------------------------------
-    //もし対象外にする線分が無い場合は、jを0とか負の整数とかにする。
-    //070317　追加機能　j　が　-10　の時は　活性化していない枝（getiactive(i)が0）を対象にする。
 
     public int lineSegment_search(Point p, double r, int j) {
         if (j == -10) {
@@ -3586,7 +3603,6 @@ public class FoldLineSet {
         return 0;
     }
 
-
     //点pに最も近い円（円周と中心の両方を考慮する）の番号を返す
     public int mottomo_tikai_en_search(Point p) {
 
@@ -3618,7 +3634,6 @@ public class FoldLineSet {
 
     }
 
-
     //点pに最も近い円の番号を逆順で（番号の大きいほうが優先という意味）探して返す
     public int mottomo_tikai_circle_search_gyakujyun(Point p) {
         int minrid = 0;
@@ -3648,7 +3663,6 @@ public class FoldLineSet {
 
     }
 
-
     //点pに最も近い円の番号での、その距離を返す
     public double mottomo_tikai_en_kyori(Point p) {
         int minrid = 0;
@@ -3677,7 +3691,6 @@ public class FoldLineSet {
         return minr;
     }
 
-
     //点pに最も近い線分の番号を返す
     public int mottomo_tikai_lineSegment_search(Point p) {
         int minrid = 0;
@@ -3692,7 +3705,6 @@ public class FoldLineSet {
         }
         return minrid;
     }
-
 
     //点pに最も近い線分の番号を逆から（番号の大きいほうから小さいほうへという意味）探して返す
     public int mottomo_tikai_lineSegment_search_gyakujyun(Point p) {
@@ -3709,7 +3721,6 @@ public class FoldLineSet {
         return minrid;
     }
 
-
     //点pに最も近い線分の番号での、その距離を返す
     public double mottomo_tikai_senbun_kyori(Point p) {
         int minrid = 0;
@@ -3725,7 +3736,6 @@ public class FoldLineSet {
         return minr;
     }
 
-
     //点pに最も近い線分の番号での、その距離を返す。ただし線分s0と平行な折線が調査の対象外。つまり、平行な折線が重なっていても近い距離にあるとはみなされない。
     public double mottomo_tikai_senbun_kyori_heikou_jyogai(Point p, LineSegment s0) {
         double minr = 100000.0;
@@ -3740,7 +3750,6 @@ public class FoldLineSet {
         }
         return minr;
     }
-
 
     public Circle mottomo_tikai_ensyuu(Point p) {
         int minrid = 0;
@@ -3761,7 +3770,6 @@ public class FoldLineSet {
         return getCircle(minrid);
     }
 
-
     public LineSegment mottomo_tikai_Senbun(Point p) {
         int minrid = 0;
         double minr = 100000.0;
@@ -3781,7 +3789,6 @@ public class FoldLineSet {
 
         return get(minrid);
     }
-
 
     //点pに最も近い、「線分の端点」を返す
     //public Ten mottomo_tikai_Ten_sagasi(Ten p) {
@@ -3822,6 +3829,8 @@ public class FoldLineSet {
         return p_return;
     }
 
+// ---------------------------
+
     //点pに最も近い、「線分の端点」を返す。ただし、補助活線は対象外
     public Point mottomo_tikai_Ten_with_icol_0_1_2(Point p) {
         Point p_return = new Point();
@@ -3844,28 +3853,28 @@ public class FoldLineSet {
     }
 
     // ---------------------------
-    public void del_V(int i, int j) {//2本の折線が同じ色で、他の折線の端点がない場合に点消しをする
+    public void del_V(int i, int j) {//Erasing when two fold lines are the same color and there are no end points for other fold lines
         //if(getcolor(i)!=getcolor(j)){return;}//2本が同じ色でないなら実施せず
 
         IntersectionState i_senbun_kousa_hantei;
         i_senbun_kousa_hantei = oc.line_intersect_decide(get(i), get(j), 0.00001, 0.00001);
 
-        LineSegment addsen = new LineSegment();
+        LineSegment addLine = new LineSegment();
         int i_ten = 0;
         if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323) {
-            addsen.set(getB(i), getB(j));
+            addLine.set(getB(i), getB(j));
             i_ten = tyouten_syuui_sensuu(getA(i), 0.00001);
         }
         if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_START_OF_S1_INTERSECTS_END_OF_S2_333) {
-            addsen.set(getB(i), getA(j));
+            addLine.set(getB(i), getA(j));
             i_ten = tyouten_syuui_sensuu(getA(i), 0.00001);
         }
         if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_END_OF_S1_INTERSECTS_START_OF_S2_343) {
-            addsen.set(getA(i), getB(j));
+            addLine.set(getA(i), getB(j));
             i_ten = tyouten_syuui_sensuu(getB(i), 0.00001);
         }
         if (i_senbun_kousa_hantei == IntersectionState.PARALLEL_END_OF_S1_INTERSECTS_END_OF_S2_353) {
-            addsen.set(getA(i), getA(j));
+            addLine.set(getA(i), getA(j));
             i_ten = tyouten_syuui_sensuu(getB(i), 0.00001);
         }
 
@@ -3921,21 +3930,17 @@ public class FoldLineSet {
             if ((getColor(i) == LineType.CYAN_3) && (getColor(j) == LineType.BLUE_2)) {
                 return;
             }
-            //if((getcolor(i)==3) && (getcolor(j)==3) ){i_c=3;}
             if ((getColor(i) == LineType.CYAN_3) && (getColor(j) == LineType.CYAN_3)) {
                 return;
             }
 
             deleteLine(j);
             deleteLine(i);
-            addLine(addsen);
+            addLine(addLine);
             setColor(getTotal(), i_c);
         }//p2,p1,p4 ixb_ixa,iya_iyb
 
     }
-
-// ---------------------------
-
 
     public void del_V_all() {
 
@@ -3944,8 +3949,8 @@ public class FoldLineSet {
             sousuu_old = total;
             for (int i = 1; i <= total - 1; i++) {
                 for (int j = i + 1; j <= total; j++) {
-                    if (getColor(i) == getColor(j)) {//2本が同じ色なら実施
-                        if (getColor(i) != LineType.CYAN_3) {//補助活線は対象外
+                    if (getColor(i) == getColor(j)) {//If the two are the same color, carry out
+                        if (getColor(i) != LineType.CYAN_3) {//Auxiliary live line is not applicable
                             del_V(i, j);
                         }
                     }
@@ -3970,19 +3975,7 @@ public class FoldLineSet {
     }
 
 
-    //点Qを指定し、線分AQとQCを削除し線分ACを追加（ただしQを端点とするのは2本の線分のみ）//実施したときは1、何もしなかったときは0を返す。
-//手順は（１）マウスクリックで点pが決まる。
-//（２）点p最も近い展開図に含まれる端点qが決まる。
-//（３）展開図中の折線でその端点のうち、qに近いほうと、qとの距離がr以下の場合、その折線は点qと連結しているとして
-//
-//
-//
-//
-//
-//
-//
-//
-    int[] i_s = new int[2];//この変数はdel_Vとtyouten_syuui_sensuuとで共通に使う。tyouten_syuui_sensuuで、頂点回りの折線数が2のときにその2折線の番号を入れる変数。なお、折線数が3以上のときは意味を成さない。//qを端点とする2本の線分の番号
+// -------------------------------------------------------------------------------------------------------------
 
     public int del_V(Point p, double hikiyose_hankei, double r) {
         int i_return;
@@ -4084,9 +4077,6 @@ public class FoldLineSet {
 
         return 0;
     }
-
-
-// -------------------------------------------------------------------------------------------------------------
 
     public int del_V_cc(Point p, double hikiyose_hankei, double r) {//2つの折線の色が違った場合カラーチェンジして、点削除する。黒赤は赤赤、黒青は青青、青赤は黒にする
         int i_return;
@@ -4230,7 +4220,10 @@ public class FoldLineSet {
 
         return 0;
     }
+//--------------------------------------------
 
+
+//--------------------------------------------
 
     //点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の線分が出ているか（頂点とr以内に端点がある線分の数）//del_V用の関数
     public int tyouten_syuui_sensuu_for_del_V(Point p, double r) {//del_V用の関数
@@ -4261,11 +4254,7 @@ public class FoldLineSet {
     }
 //--------------------------------------------
 
-
-//--------------------------------------------
-
-
-    //点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の線分が出ているか（頂点とr以内に端点がある線分の数）
+    //If the end point of the line segment closest to the point p and the end point closer to the point p is the apex, how many line segments are present (the number of line segments having an end point within the apex and r).
     public int tyouten_syuui_sensuu(Point p, double r) {
 
         Point q = new Point();
@@ -4292,8 +4281,6 @@ public class FoldLineSet {
 
         return i_return;
     }
-//--------------------------------------------
-
 
     //点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の赤い線分が出ているか（頂点とr以内に端点がある線分の数）
     public int tyouten_syuui_sensuu_red(Point p, double r) {
@@ -4406,6 +4393,7 @@ public class FoldLineSet {
         return i_return;
     }
 
+//--------------------------------------------
 
     //--------------------------------------------
     //点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の選択された線分が出ているか。　20180918追加（頂点とr以内に端点がある線分の数）
@@ -4435,9 +4423,6 @@ public class FoldLineSet {
         return i_return;
     }
 
-//--------------------------------------------
-
-
     //点pの近くの線分の活性化
     public void kasseika(Point p, double r) {
         for (int i = 1; i <= total; i++) {
@@ -4455,7 +4440,6 @@ public class FoldLineSet {
             si.deactivate();
         }
     }
-
 
     //線分の活性化されたものを点pの座標にする
     public void set(Point p) {
@@ -4481,7 +4465,6 @@ public class FoldLineSet {
 
 
     }
-
 
     //線分s0と全く重なる線分が線分集合の中の線分にあれば、その番号を返す。なければ-10を返す。
     public int overlapping_lineSegment_search(LineSegment s0) {
@@ -4557,7 +4540,6 @@ public class FoldLineSet {
 
     }
 
-
     //点pにもっとも近い折線をその点pの影で分割する。ただし、点pの影がどれか折線の端点と同じとみなされる場合は何もしない。
     public void senbun_bunkatu(Point p) {//点pが折線の端点と一致していないことが前提
 
@@ -4577,7 +4559,6 @@ public class FoldLineSet {
         senbun_bunkatu(mts_id, pk);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
     }
 
-
     //折線iをその点pの影で分割する。ただし、点pの影がどれか折線の端点と同じとみなされる場合は何もしない。
     public int senbun_bunkatu(Point p, int i) {//何もしない=0,分割した=1
 
@@ -4595,7 +4576,6 @@ public class FoldLineSet {
         return 1;
 
     }
-
 
     public void add_sonomama(FoldLineSet o_temp) {//別の折線集合の折線を追加する。単に追加するだけで、他の処理は一切しない。
         for (int i = 1; i <= o_temp.getTotal(); i++) {
@@ -4632,7 +4612,6 @@ public class FoldLineSet {
 
     }
 
-
     public void move(Point ta, Point tb, Point tc, Point td) {//折線集合全体の位置を移動する。
         double d;
         d = oc.angle(ta, tb, tc, td);
@@ -4659,7 +4638,6 @@ public class FoldLineSet {
             setB(i, temp_b);
         }
     }
-
 
     public void check1(double r_hitosii, double heikou_hantei) {
         Check1LineSegment.clear();
@@ -4727,6 +4705,7 @@ public class FoldLineSet {
         }
     }
 
+// ***********************************
 
     public int fix1(double r_hitosii, double heikou_hantei) {//何もしなかったら0、何か修正したら1を返す。
         unselect_all();
@@ -4789,8 +4768,6 @@ public class FoldLineSet {
         return 0;
     }
 
-// ***********************************
-
     public void check2(double r_hitosii, double heikou_hantei) {
         Check2LineSegment.clear();
 
@@ -4832,7 +4809,6 @@ public class FoldLineSet {
             }
         }
     }
-
 
     public int fix2(double r_hitosii, double heikou_hantei) {//何もしなかったら0、何か修正したら1を返す。
         unselect_all();
@@ -4876,7 +4852,6 @@ public class FoldLineSet {
         return 0;
     }
 
-
     // ***********************************ppppppppppppqqqqqq
 //Cirには1番目からcir_size()番目までデータが入っている
     public int cir_size() {
@@ -4917,7 +4892,6 @@ public class FoldLineSet {
 //	System.out.println("(3)cir_setEn(i,e_temp)  "+ j+";" +cir_getEn(j).getx()+"," +cir_getEn(j).gety()+"," +cir_getEn(j).getr());
 //}
     }
-
 
     public int check1_size() {
         return Check1LineSegment.size();
@@ -5062,7 +5036,6 @@ public class FoldLineSet {
 
 
     }
-
 
     // -----------------------------------------------------
     public int Check4Point_overlapping_check(Point p0) {
@@ -5220,6 +5193,8 @@ public class FoldLineSet {
     }
 
 
+// **************************************
+
     // -----------------------------------------------------
     public void check4_old(double r) {
         //_oldをとればオリジナルのcheck4(double r)関数として作動する
@@ -5327,9 +5302,6 @@ public class FoldLineSet {
 
     }
 
-
-// **************************************
-
     //Ten p に最も近い用紙辺部の端点が拡張伏見定理を満たすか判定
     public int kakutyou_fushimi_hantei_henbu(Point p) {//return　0=満たさない、　1=満たす。　
         double hantei_kyori = 0.00001;
@@ -5351,6 +5323,10 @@ public class FoldLineSet {
 
         return kakutyou_fushimi_hantei_henbu(p, nbox);
     }
+
+
+// -------------------------------------------------------
+// **************************************
 
     // ---------------------------------
     public int kakutyou_fushimi_hantei_henbu(Point p, SortingBox_int_double nbox) {//return　0=満たさない、　1=満たす。　
@@ -5440,8 +5416,10 @@ public class FoldLineSet {
     }
 
 
-// -------------------------------------------------------
-// **************************************
+    //ベクトルabとcdのなす角度//oc.kakudo(Ten a,Ten b,Ten c,Ten d){return kakudo_osame_0_360(kakudo(c,d)-kakudo(a,b));}
+
+
+// ---------------------------------
 
     //bを端点とする折線が入ったNarabebakoを得る。線分baとのなす角が小さい順に並んでいる。
     public SortingBox_int_double get_nbox_of_tyouten_b_syuui_orisen(Point a, Point b) {
@@ -5464,11 +5442,7 @@ public class FoldLineSet {
     }
 
 
-    //ベクトルabとcdのなす角度//oc.kakudo(Ten a,Ten b,Ten c,Ten d){return kakudo_osame_0_360(kakudo(c,d)-kakudo(a,b));}
-
-
-// ---------------------------------
-
+// ***************************************************************
 
     public SortingBox_int_double kakutyou_fushimi_hantei_henbu_tejyun(SortingBox_int_double nbox0) {//拡張伏見定理のようにして辺部の点で隣接する３角度を1つの角度にするか辺部の角を削る操作
         SortingBox_int_double nboxtemp = new SortingBox_int_double();
@@ -5548,13 +5522,7 @@ public class FoldLineSet {
         }
         return nbox1;
     }
-
-
 // ***************************************************************
-
-    double fushimi_hantei_kakudo_goukei = 360.0;
-// ***************************************************************
-
 
     //Ten p に最も近い用紙内部の端点が拡張伏見定理を満たすか判定
     public int kakutyou_fushimi_hantei_naibu(Point p) {//return　0=満たさない、　1=満たす。　

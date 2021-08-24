@@ -40,21 +40,7 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         display_position_y = 0.0;
     }
 
-    /*
-        public Camera(double cx,double cy,double b_x,double b_y,double k,double hx,double hy){//コンストラクタ
-            do2rad=3.14159265/180.0;
-            rad2do=180.0/3.14159265;
-            camera_ichi_x=cx;
-            camera_ichi_y=cy;
-            camera_bairitsu_x=b_x;camera_bairitsu_y=b_y;
-            camera_kakudo=k;camera_rad=camera_kakudo*do2rad;  sin_rad=Math.sin(camera_rad);  cos_rad=Math.cos(camera_rad);
-            hyouji_ichi_x=hx;
-            hyouji_ichi_y=hy;
-        }
-    */
     public void reset() {
-        //camera_id=0;
-
         camera_position_x = 0.0;
         camera_position_y = 0.0;
         camera_angle = 0.0;
@@ -266,10 +252,8 @@ public class Camera {//実際の座標と、表示座標の仲立ち
 
     //TV上の表示は変化しないようにして、TV上の座標Ten　P　に対応する、被写体の位置にcamera位置をあわせる。
     public void camera_ichi_sitei_from_TV(Point p) {
-
         set_camera_ichi(TV2object(p));
         set_hyouji_ichi(p);
-
     }
 
 

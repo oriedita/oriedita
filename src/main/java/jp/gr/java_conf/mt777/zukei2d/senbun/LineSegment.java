@@ -34,6 +34,8 @@ public class LineSegment {
         minX = 0;
         maxY = 0;
         minY = 0;
+        vonoroiA = 0;
+        vonoroiB = 0;
     }
 
     public LineSegment(Point t1, Point t2) {
@@ -46,6 +48,8 @@ public class LineSegment {
         minX = 0;
         maxY = 0;
         minY = 0;
+        vonoroiA = 0;
+        vonoroiB = 0;
     }
 
     public LineSegment(Point t1, Point t2, LineType color) {
@@ -58,6 +62,8 @@ public class LineSegment {
         minX = 0;
         maxY = 0;
         minY = 0;
+        vonoroiA = 0;
+        vonoroiB = 0;
     }
 
     public LineSegment(double i1, double i2, double i3, double i4) {
@@ -70,6 +76,8 @@ public class LineSegment {
         minX = 0;
         maxY = 0;
         minY = 0;
+        vonoroiA = 0;
+        vonoroiB = 0;
     }
 
     public void reset() {
@@ -82,6 +90,8 @@ public class LineSegment {
         minX = 0;
         maxY = 0;
         minY = 0;
+        vonoroiA = 0;
+        vonoroiB = 0;
     }
 
     //d2s Double is changed to a string. Rounded to the second decimal place (""); public void display (String str0) is used only.
@@ -112,6 +122,8 @@ public class LineSegment {
         minX = s.getMinX();
         maxY = s.getMaxY();
         minY = s.getMinY();
+        vonoroiA = s.getVonoroiA();
+        vonoroiB = s.getVonoroiB();
         setCustomized(s.getCustomized());
         setCustomizedColor(s.getCustomizedColor());
     }
@@ -166,6 +178,12 @@ public class LineSegment {
         set(p, q);
         color = ic;
         active = ia;
+    }
+
+    public void set(Point p, Point q, LineType ic, int ia, int v_a, int v_b) {
+        set(p,q,ic,ia);
+        vonoroiA = v_a;
+        vonoroiB = v_b;
     }
 
     public void set(Point p, Point q, LineType ic) {
@@ -316,5 +334,25 @@ public class LineSegment {
 
     public Color getCustomizedColor() {
         return customizedColor;
+    }
+
+    int vonoroiA;
+    int vonoroiB;
+
+    public void setVonoroiA(int i) {
+        vonoroiA = i;
+    }
+
+
+    public void setVonoroiB(int i) {
+        vonoroiB = i;
+    }
+
+    public int getVonoroiA() {
+        return vonoroiA;
+    }
+
+    public int getVonoroiB() {
+        return vonoroiB;
     }
 }

@@ -197,7 +197,7 @@ public class LineSet {
             }
             if ((reading_flag == 1) && (str.equals("色"))) { // colour
                 str = tk.nextToken();
-                ic = LineType.fromNumber(Integer.parseInt(str));
+                ic = LineType.from(str);
                 LineSegment s = getLine(iNumber);
                 s.setColor(ic);
             }
