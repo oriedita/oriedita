@@ -67,7 +67,7 @@ class SubThread extends Thread {
             // -----------------------------------------------------------------
         } else if (orihime_app.subThreadMode == Mode.FOLDING_ESTIMATE_SPECIFIC_2) {
             if (orihime_app.i_folded_cases == orihime_app.OZ.discovered_fold_cases) {
-                orihime_app.OZ.text_kekka = "Number of found solutions = " + orihime_app.OZ.discovered_fold_cases + "  ";
+                orihime_app.OZ.text_result = "Number of found solutions = " + orihime_app.OZ.discovered_fold_cases + "  ";
             }
 
             int objective = orihime_app.i_folded_cases;
@@ -93,7 +93,7 @@ class SubThread extends Thread {
 
         long stop = System.currentTimeMillis();
         long L = stop - start;
-        orihime_app.OZ.text_kekka = orihime_app.OZ.text_kekka + "     Computation time " + L + " msec.";
+        orihime_app.OZ.text_result = orihime_app.OZ.text_result + "     Computation time " + L + " msec.";
 
         orihime_app.subThreadRunning = false;
         orihime_app.repaint();

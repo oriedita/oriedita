@@ -336,7 +336,7 @@ public class Polygon {
 
     // Even a part of the line segment s0 is inside the convex polygon (the boundary line is also regarded as the inside)
     // Returns 1 if present, 0 otherwise
-    public int totu_boundary_inside(LineSegment s0) {// Returns 1 if even part of s0 touches a polygon.
+    public boolean totu_boundary_inside(LineSegment s0) {// Returns 1 if even part of s0 touches a polygon.
         LineSegment.Intersection kh; //oc.line_intersect_decide(s0,s)の値の格納用
 
         LineSegment s = new LineSegment();
@@ -344,21 +344,21 @@ public class Polygon {
             s.set(vertices[i], vertices[i + 1]); //線分
             kh = OritaCalc.line_intersect_decide(s0, s);
             if (kh != LineSegment.Intersection.NO_INTERSECTION_0) {
-                return 1;
+                return true;
             }
         }
 
         s.set(vertices[vertexCount], vertices[1]); //線分
         kh = OritaCalc.line_intersect_decide(s0, s);
         if (kh != LineSegment.Intersection.NO_INTERSECTION_0) {
-            return 1;
+            return true;
         }
 
         if (inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == 2) {
-            return 1;
+            return true;
         }
 
-        return 0;
+        return false;
     }
 
 

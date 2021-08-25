@@ -64,3 +64,6 @@
 | `ura` | | `back` | 裏
 | `omote ura` | | `flipped` | | Front = back
 | `hojyosen` | `hojosen` | `additional line` | 補助線
+| `nobasi` | `nobasu` | `lengthen` | 伸ばす
+| `hayai` | | `fast` | 早い
+| `syuui` | `shuui` | `surrounding` | 周囲

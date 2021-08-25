@@ -18,7 +18,7 @@ import jp.gr.java_conf.mt777.graphic2d.point.Point;
 // -------------------------------------------------------------------------------------
 
 public class CreasePattern_Worker {//This crease pattern craftsman class has only one PointStore c as a crease pattern.
-    //折り畳み等をやった結果得られるTensyuugouは外部に返すようにして、自分自身では保持しない。
+    //PointSet obtained as a result of folding etc. should be returned to the outside and not held by oneself.
     double r;                   //Criteria for determining the radius of the circles at both ends of the straight line of the basic branch structure and the proximity of the branches to various points
 
     PointSet pointSet = new PointSet();    //Development view
@@ -26,15 +26,15 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     Undo_Box Ubox = new Undo_Box();
 
     //VVVVVVVVVVVV oritatami　と　oekaki で使う変数　の定義　VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-    int[] iFacePosition;//ある面が基準面と何面離れているかを示す。基準面では1、基準面の隣では2、その隣では3という様に値を入れる
+    int[] iFacePosition;//Indicates how far a surface is from the reference surface. Enter a value such as 1, next to the reference plane, 2, next to the reference plane, and 3 next to it.
     int referencePlaneId;
-    int[] nextFaceId;//ある面の隣の面（基準面側）のid
-    int[] associatedLineId;//ある面と隣の面（基準面側）の間の棒のid
+    int[] nextFaceId;//The id of the surface (reference surface side) next to a certain surface
+    int[] associatedLineId;//The id of the bar between one side and the next side (reference plane side)
 
-    AverageCoordinates[] tnew;//折った時の点の位置を格納
+    AverageCoordinates[] tnew;//Stores the position of the point when folded
 
-    //マウスでTenを選択した場合のTenの番号を格納
-    public int i_ugokasuTen = 0;
+    //Stores the Ten number when Ten is selected with the mouse
+    public int activePoint = 0;
 
     Camera camera = new Camera();
     Camera cam_front = new Camera();
@@ -45,8 +45,6 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 
 
     public Point point_of_referencePlane_ob = new Point();
-
-    //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
     public CreasePattern_Worker(double r0) {  //コンストラクタ
         r = r0;
@@ -74,7 +72,6 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         associatedLineId = new int[numFaces + 1];         //The id of the bar between one surface and the next surface (reference surface side)
     }
 
-    //-----------
     public void addReferencePlaneId() {
         referencePlaneId = referencePlaneId + 1;
         if (referencePlaneId > pointSet.getNumFaces()) {
@@ -82,29 +79,14 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         }
     }
 
-
-    //-------------------------------------------
     public int getReferencePlaneId() {
         return referencePlaneId;
     }
 
-
-    //-------------------------------------------
-    public Point getReferencePlaneUpperRightPoint() {
-        return pointSet.getFaceUpperRightPoint(referencePlaneId);
-    }
-
-    //-------------------------------------------
-    public Point get_point_of_referencePlane_ob() {
-        return point_of_referencePlane_ob;
-    }
-
-    //-------------------------------------------
     public Point get_point_of_referencePlane_tv() {
         return camera.object2TV(point_of_referencePlane_ob);
     }
 
-    //-------------------------------------------
     public int setReferencePlaneId(int i) {
         referencePlaneId = i;
 
@@ -121,23 +103,23 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     }
 
 
-    //-----------これは基準面指定モードでマウスを押されたときの対応201503
-    public int setReferencePlaneId(Point p0) {//実際に有効になっている基準面idを返す
+    //----------- This is the correspondence when the mouse is pressed in the reference plane specification mode 201503
+    public int setReferencePlaneId(Point p0) {//Returns the datum id that is actually valid
         Point p = new Point();
         p.set(camera.TV2object(p0));
         if (pointSet.inside(p) > 0) {
             referencePlaneId = pointSet.inside(p);
             point_of_referencePlane_ob.set(p);
-        }//c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
+        }//If c.inside(p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, and if it is a positive number, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
         return referencePlaneId;
     }
 
 
-    //-----------Ten p0が折り上がり図の内部に有るかどうかを判定する
-    public int isInside(Point p0) {//実際にp0がある面idを返す
+    //----------- Determine if Point p0 is inside the fold-up diagram
+    public int isInside(Point p0) {//Returns the face id where p0 is actually
         Point p = new Point();
         p.set(camera.TV2object(p0));
-        return pointSet.inside(p);//c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
+        return pointSet.inside(p);//If c.inside(p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, and if it is a positive number, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
     }
 
     //-----------Ten p0が折り上がり図(表)の内部に有るかどうかを判定する
@@ -195,44 +177,20 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         cam_transparent_rear.setCamera(cam0);
     }
 
-
-    // ----------------
-    public int getFacesTotal() {
-        return pointSet.getNumFaces();
-    }
-
-    //-------------
-    public void parallelMove(double x, double y) {
-        pointSet.parallelMove(x, y);
-    }
-
-    //
-    public void turnOver() {//重心の位置を中心に左右に裏返す。
-        pointSet.turnOver();
-    }
-
-    //面の内部の点を求める//---------------------------------------
-    public Point naibuTen_motome(int i) {
-        return pointSet.insidePoint_surface(i);
-    }
-
-    //点集合の持つ棒の総数を得る
+    //Get the total number of lines in the point set
     public int getNumLines() {
         return pointSet.getNumLines();
     }
 
-    //点集合の持つ棒の色を得る（点集合を展開図として扱う場合では、この色は山谷をあらわす）。
+    //Obtain the color of the line of the point set (when the point set is treated as a development view, this color represents a mountain valley).
     public LineColor getColor(int i) {
         return pointSet.getColor(i);
     }
 
-    //-------------------------------------------
     public int getIFacePosition(int i) {
         return iFacePosition[i];
     }
 
-    //-------------------------------------------
-    //折りたたみ推定（ここでできるのは面の重なりを考えていない針金図）
     //Folding estimation (What you can do here is a wire diagram that does not consider the overlap of surfaces)
     public PointSet folding() {//折りたたみ推定
         PointSet pointSet = new PointSet();    //展開図
@@ -249,8 +207,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         iFacePosition[referencePlaneId] = 1;
 
         int current_face_position = 1;
-        int remaining_facesTotal;
-        remaining_facesTotal = this.pointSet.getNumFaces() - 1;
+        int remaining_facesTotal = this.pointSet.getNumFaces() - 1;
 
         while (remaining_facesTotal > 0) {
             for (int i = 1; i <= this.pointSet.getNumFaces(); i++) {
@@ -298,13 +255,10 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         return pointSet;
     }
 
-    //------------------------------------------------------------
     private Point fold_movement(int it, int im) { //A function that finds the position of the destination when the point it is folded as a member of the surface im
-
         Point p = new Point();
         p.set(pointSet.getPoint(it));
-        int idestination_faceId;
-        idestination_faceId = im;//The id number of the first face. From now on, we will follow the planes adjacent to the reference plane.
+        int idestination_faceId = im;//The id number of the first face. From now on, we will follow the planes adjacent to the reference plane.
         while (idestination_faceId != referencePlaneId) {
             p.set(lineSymmetry_point_determine(associatedLineId[idestination_faceId], p));
             idestination_faceId = nextFaceId[idestination_faceId];
@@ -312,8 +266,6 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         return p;
     }
 
-
-// ***********************************
 
     //Folding estimation (What you can do here is a wire diagram that does not consider the overlap of surfaces)
     public PointSet surface_position_request() {//Folding estimate
@@ -331,8 +283,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         iFacePosition[referencePlaneId] = 1;
 
         int current_FacePosition = 1;
-        int remaining_facesTotal;
-        remaining_facesTotal = pointSet.getNumFaces() - 1;
+        int remaining_facesTotal = pointSet.getNumFaces() - 1;
 
         while (remaining_facesTotal > 0) {
             for (int i = 1; i <= pointSet.getNumFaces(); i++) {
@@ -363,21 +314,14 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         return cn;
     }
 
-
-// **********************************
-
-
     private Point lineSymmetry_point_determine(int lineId, Point point) {//Given the id of the bar and any point, returns the point that is axisymmetric of the given point with respect to the corresponding bar.
         return OritaCalc.lineSymmetry_point_find(pointSet.getBeginPointFromLineId(lineId), pointSet.getEndPointFromLineId(lineId), point);
     }
-
 
     public int getPointsTotal() {
         return pointSet.getNumPoints();
     }
 
-
-    //-------------------------------------------
     public void set(PointSet ts) {
         configure(ts.getNumPoints(), ts.getNumLines(), ts.getNumFaces());
         pointSet.configure(ts.getNumPoints(), ts.getNumLines(), ts.getNumFaces());
@@ -388,7 +332,6 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         return pointSet;
     }
 
-    //------------------
     public LineSegmentSet getLineStore() {
         LineSegmentSet ss = new LineSegmentSet();    //Instantiation of basic branch structure
 
@@ -399,60 +342,52 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         return ss;
     }
 
-
-    //　ここは class Tenkaizu_Syokunin  の中です
-
-    //--------------------------------------------------------------------------
     public void lineStore2pointStore(LineSegmentSet lineSegmentSet) {
-
         Point ti;
         reset();
 
-        //まず、Tensyuugou内で点を定義する。
+        //First, define a point in PointSet.
         System.out.println("線分集合->点集合：点集合内で点の定義");
-        int flag1;
+        boolean flag1;
         double x, y;
 
-        double[] addPointX = new double[lineSegmentSet.getNumLineSegments() + 1];//If you do not add +1 you will get an error when the number of faces is 1.
-        double[] addPointY = new double[lineSegmentSet.getNumLineSegments() + 1];//If you do not add +1 you will get an error when the number of faces is 1.
+        double[] addPointX = new double[lineSegmentSet.getNumLineSegments() + 1]; // If you do not add +1 you will get an error when the number of faces is 1.
+        double[] addPointY = new double[lineSegmentSet.getNumLineSegments() + 1]; // If you do not add +1 you will get an error when the number of faces is 1.
         int addPointNum = 0;
 
         for (int i = 1; i <= lineSegmentSet.getNumLineSegments(); i++) {
-            flag1 = 0;
+            flag1 = false;
             ti = lineSegmentSet.getA(i);
             x = ti.getX();
             y = ti.getY();
 
             for (int j = 1; j <= addPointNum; j++) {
                 if (OritaCalc.equal(ti, new Point(addPointX[j], addPointY[j]))) {
-                    flag1 = 1;
+                    flag1 = true;
                 }
             }
 
 
-            if (flag1 == 0) {
+            if (!flag1) {
                 addPointNum = addPointNum + 1;
                 addPointX[addPointNum] = x;
                 addPointY[addPointNum] = y;
             }
-            flag1 = 0;
+            flag1 = true;
             ti = lineSegmentSet.getB(i);
             x = ti.getX();
             y = ti.getY();
 
             for (int j = 1; j <= addPointNum; j++) {
                 if (OritaCalc.equal(ti, new Point(addPointX[j], addPointY[j]))) {
-                    flag1 = 1;
+                    flag1 = true;
                 }
             }
 
-
-            if (flag1 == 0) {
-                //	c.addTen(x,y);
+            if (!flag1) {
                 addPointNum = addPointNum + 1;
                 addPointX[addPointNum] = x;
                 addPointY[addPointNum] = y;
-
             }
         }
 
@@ -464,7 +399,6 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 
         for (int i = 1; i <= addPointNum; i++) {
             pointSet.addPoint(addPointX[i], addPointY[i]);
-
         }
 
         //次に、Tensyuugou内で棒を定義する。
@@ -491,7 +425,6 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
             pointSet.addLine(ika2ic[n], ikb2ic[n], lineSegmentSet.getColor(n));
         }
 
-
         System.out.print("棒の全数　＝　");
         System.out.println(pointSet.getNumLines());
         //
@@ -500,113 +433,43 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         pointSet.FaceOccurrence();
 
         System.out.println("線分集合->点集合：点集合内で面を発生　終了");
-
     }
 
-
-//----------------------------------------------------------------------------------------------------------------------------------------    
-
-    //棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
-    public int lineInFaceBorder_min_request(int ib) {
-        return pointSet.lineInFaceBorder_min_lookup(ib);
+    //Returns the faceId with the smaller faceId of the faces containing the line lineId as the boundary (there are up to two faces). Returns 0 if there is no face containing the line as the boundary
+    public int lineInFaceBorder_min_request(int lineId) {
+        return pointSet.lineInFaceBorder_min_lookup(lineId);
     }
 
-    //棒ibを境界として含む面(最大で2面ある)のうちでMenidの大きいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
-    public int lineInFaceBorder_max_request(int ib) {
-        return pointSet.lineInFaceBorder_max_lookup(ib);
+    //Returns the faceId with the larger faceId among the faces containing the line lineId as the boundary (there are two faces at the maximum). Returns 0 if there is no face containing the line as the boundary
+    public int lineInFaceBorder_max_request(int lineId) {
+        return pointSet.lineInFaceBorder_max_lookup(lineId);
     }
 
-    //　ここは class Tenkaizu_Syokunin  の中です
-
-
-    //マウス操作(ボタンを押したとき)時の作業----------------------------------------------------
-    public int mPressed(Point p, int ura_omote) {
-        //マウスと近い位置にあるTenを探す。
-        Point pn = new Point();
-        pn.set(p);
-        if (ura_omote == 1) {
-            pn.setX(-p.getX() + 2.0 * 700.0);
-        }//裏側表示の場合の処理。
-        i_ugokasuTen = pointSet.closestPointId(pn, r * 3);
-        return i_ugokasuTen;
-    }
-
-    //マウス操作(ドラッグしたとき)を行う関数----------------------------------------------------
-    public int mDragged(Point p, int ura_omote) {
-
-
-        if (i_ugokasuTen != 0) {//Tenを変更
-
-            Point pn = new Point();
-            pn.set(p);
-            if (ura_omote == 1) {
-                pn.setX(-p.getX() + 2.0 * 700.0);
-            }//裏側表示の場合の処理。
-            pointSet.set(i_ugokasuTen, pn);
+    public void mDragged_selectedPoint_move_with_camera(Point ugokasu_maeno_sentaku_point, Point p0, Point p1, FoldedFigure.State ip4) {   //Move the selected point
+        Point pa = new Point();
+        if (ip4 == FoldedFigure.State.FRONT_0) {
+            pa.set(cam_front.TV2object(p0));
         }
-        return i_ugokasuTen;
-    }
-
-
-    //マウス操作(ボタンを離したとき)を行う関数----------------------------------------------------
-    public int mReleased(Point p, int ura_omote) {
-        int ireturn = 0;
-
-        if (i_ugokasuTen != 0) {
-            Point pn = new Point();
-            pn.set(p);
-            if (ura_omote == 1) {
-                pn.setX(-p.getX() + 2.0 * 700.0);
-            }//裏側表示の場合の処理。
-            pointSet.set(i_ugokasuTen, pn);
-        } //Tenを変更
-        ireturn = i_ugokasuTen;
-        i_ugokasuTen = 0;
-        return ireturn;
-
-    }
-
-
-//マウス操作 with camera
-
-    //マウス操作(ボタンを押したとき)時の作業----------------------------------------------------
-
-
-    public int mPressed_with_camera(Point p0, int ip4) {
-        Point p = new Point();
-        if (ip4 == 0) {
-            p.set(cam_front.TV2object(p0));
-        }
-        if (ip4 == 1) {
-            p.set(cam_rear.TV2object(p0));
+        if (ip4 == FoldedFigure.State.BACK_1) {
+            pa.set(cam_rear.TV2object(p0));
         }
 
-
-        //マウスと近い位置にあるTenを探す。
-
-        i_ugokasuTen = pointSet.closestPointId(p, r * 3);
-        return i_ugokasuTen;
-    }
-
-
-    //--------------------------------------------------
-    public void mDragged_sentakuten_ugokasi_with_camera(Point p0, int ip4) {   //選択された点を動かす
-
-        Point p = new Point();
-        if (ip4 == 0) {
-            p.set(cam_front.TV2object(p0));
+        Point pb = new Point();
+        if (ip4 == FoldedFigure.State.FRONT_0) {
+            pb.set(cam_front.TV2object(p1));
         }
-        if (ip4 == 1) {
-            p.set(cam_rear.TV2object(p0));
+        if (ip4 == FoldedFigure.State.BACK_1) {
+            pb.set(cam_rear.TV2object(p1));
         }
 
-        pointSet.statePointMove(p);
+        Point p_u = new Point();
+        p_u.set(ugokasu_maeno_sentaku_point.getX(), ugokasu_maeno_sentaku_point.getY());
+        p_u.move(pa.other_Point_position(pb));
+
+        pointSet.statePointMove(p_u);
     }
 
-
-    //--------------------------------------------------
-    public void mDragged_sentakuten_ugokasi_with_camera(Point ugokasu_maeno_sentaku_point, Point p0, Point p1, FoldedFigure.State ip4) {   //選択された点を動かす
-
+    public void mReleased_selectedPoint_move_with_camera(Point ugokasu_maeno_sentaku_point, Point p0, Point p1, FoldedFigure.State ip4) {   //選択された点を動かす
         Point pa = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
             pa.set(cam_front.TV2object(p0));
@@ -630,75 +493,6 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 
         pointSet.statePointMove(p_u);
     }
-
-    //--------------------------------------------------
-    public void mReleased_sentakuten_ugokasi_with_camera(Point ugokasu_maeno_sentaku_point, Point p0, Point p1, FoldedFigure.State ip4) {   //選択された点を動かす
-
-        Point pa = new Point();
-        if (ip4 == FoldedFigure.State.FRONT_0) {
-            pa.set(cam_front.TV2object(p0));
-        }
-        if (ip4 == FoldedFigure.State.BACK_1) {
-            pa.set(cam_rear.TV2object(p0));
-        }
-
-        Point pb = new Point();
-        if (ip4 == FoldedFigure.State.FRONT_0) {
-            pb.set(cam_front.TV2object(p1));
-        }
-        if (ip4 == FoldedFigure.State.BACK_1) {
-            pb.set(cam_rear.TV2object(p1));
-        }
-
-
-        Point p_u = new Point();
-        p_u.set(ugokasu_maeno_sentaku_point.getX(), ugokasu_maeno_sentaku_point.getY());
-        p_u.move(pa.other_Point_position(pb));
-
-        pointSet.statePointMove(p_u);
-    }
-
-    //マウス操作(ボタンを離したとき)を行う関数----------------------------------------------------
-
-
-    public int mReleased_with_camera(Point p0, int ip4) {
-
-        Point p = new Point();
-        if (ip4 == 0) {
-            p.set(cam_front.TV2object(p0));
-        }
-        if (ip4 == 1) {
-            p.set(cam_rear.TV2object(p0));
-        }
-
-
-        int ireturn = 0;
-
-        if (i_ugokasuTen != 0) {
-            pointSet.set(i_ugokasuTen, p);
-        } //Tenを変更
-
-
-        ireturn = i_ugokasuTen;
-        i_ugokasuTen = 0;
-        return ireturn;
-    }
-
-// -----------------------
-
-    public void mReleased_sentakuten_ugokasi_with_camera(Point p0, int ip4) {
-
-        Point p = new Point();
-        if (ip4 == 0) {
-            p.set(cam_front.TV2object(p0));
-        }
-        if (ip4 == 1) {
-            p.set(cam_rear.TV2object(p0));
-        }
-
-        pointSet.statePointMove(p);
-    }
-
 
     //Numerical conversion function when drawing a figure -----------------------------------------------------------------
 
@@ -712,49 +506,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 
     //Drawing of development view -----------------------------------------------------------------
 
-    //　ここは class Tenkaizu_Syokunin  の中です
 
-    public void drawing(Graphics g) {
-        g.setColor(Color.black);
-
-        for (int i = 1; i <= pointSet.getNumLines(); i++) {
-            if (pointSet.getColor(i) == LineColor.BLACK_0) {
-                g.setColor(Color.black);
-            }
-            if (pointSet.getColor(i) == LineColor.RED_1) {
-                g.setColor(Color.red);
-            }
-            if (pointSet.getColor(i) == LineColor.BLUE_2) {
-                g.setColor(Color.blue);
-            }
-            g.drawLine(gx(pointSet.getBeginX(i)), gy(pointSet.getBeginY(i)), gx(pointSet.getEndX(i)), gy(pointSet.getEndY(i))); //直線
-        }
-    }
-
-
-    //展開図の描画 with camera-----------------------------------------------------------------
-
-    public void drawing_with_camera(Graphics g) {
-        LineSegment s_tv = new LineSegment();
-        g.setColor(Color.black);
-        for (int i = 1; i <= pointSet.getNumLines(); i++) {
-            if (pointSet.getColor(i) == LineColor.BLACK_0) {
-                g.setColor(Color.black);
-            }
-            if (pointSet.getColor(i) == LineColor.RED_1) {
-                g.setColor(Color.red);
-            }
-            if (pointSet.getColor(i) == LineColor.BLUE_2) {
-                g.setColor(Color.blue);
-            }
-
-            s_tv.set(camera.object2TV(pointSet.getLineSegmentFromLineId(i)));
-
-            g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //直線
-        }
-    }
-
-    // ------------------------------
     public void drawing_pointId_with_camera(Graphics g, int i) {    //点を描く
         Point tn = new Point();
         tn.set(camera.object2TV(pointSet.getPoint(i)));
@@ -773,7 +525,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     }
 
     public void drawing_pointId_with_camera(Graphics g, int i, FoldedFigure.State ip4) {
-        //点を描く
+        //Draw a dot
         Point point = new Point();
         point.set(camera.object2TV(pointSet.getPoint(i)));
         int radius = 10;//半径
@@ -794,7 +546,6 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
             g.fillOval(gx(point.getX()) - radius, gy(point.getY()) - radius, 2 * radius, 2 * radius); //円
         }
     }
-
 
     public void drawing_with_camera(Graphics g, FoldedFigure.State ip4) {
         LineSegment s_tv = new LineSegment();
@@ -827,9 +578,8 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         }
     }
 
-
     public void drawing_referencePlane_with_camera(Graphics g) {
-        //面内部の点を描く
+        //Draw a point inside the surface
         Point point = new Point();
         point.set(camera.object2TV(point_of_referencePlane_ob));
 
@@ -843,55 +593,34 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         g.setColor(Color.black);
     }
 
-
-    //---------------------------------------------------
-    public void Point_match(double r) {
-        pointSet.pointMatch(r);
-    }
-
-    public void point_line_match(double r) {
-        pointSet.pointLineMatch(r);
-    }
-
-    //-------------------------------------------------
-
-
     public int getSelectedPointsNum() {
         return pointSet.getSelectedPointsNum();
     }
 
-
-    //--------------------
     public void setPointState1(int i) {
         pointSet.setPointState1(i);
     }
 
-    //--------------------
     public void setPointState0(int i) {
         pointSet.setPointState0(i);
     }
 
-    //--------------------
     public void setAllPointState0() {
         pointSet.setAllPointState0();
     }
 
-    //--------------------
     public void changePointState(int i) {
         pointSet.changePointState(i);
     }
 
-    //--------------------
+    //Get whether the i-th point is selected as 0 or 1.
     public boolean getPointState(int i) {
         return pointSet.getPointState(i);
-    }//i番目の点の選択状態が０か１かを得る
+    }
 
-    //-----------------uuuuuuu---
+    double d_h_k = 10.0;//Judgment distance whether the neighborhood is closer than a certain distance
 
-
-    double d_h_k = 10.0;//一定の距離より近い近傍かの判定距離
-
-    //与えられた座標と一定の距離より近い近傍にあって、かつ最も近い点の番号を返す。もし、一定の距離以内にTenがないなら0を返す。
+    //Returns the number of the closest point that is closer than a certain distance to the given coordinates. If there is no Point within a certain distance, 0 is returned.
     public int closestPointId_with_camera(Point p0) {//展開図用
         Point p = new Point();
         p.set(camera.TV2object(p0));
@@ -900,7 +629,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
     }
 
 
-    //与えられた座標と一定の距離より近い近傍にあって、かつ最も近い点の番号を返す。もし、一定の距離以内にTenがないなら0を返す。
+    //Returns the number of the closest point that is closer than a certain distance to the given coordinates. If there is no Point within a certain distance, 0 is returned.
     public int closestPointId_with_camera(Point p0, FoldedFigure.State ip4) {//折り上がり図用
         Point p = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
@@ -914,19 +643,16 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         return 0;
     }
 
-
-    //--------------------
-
-    //与えられた座標と一定の距離より近い近傍にあって、かつ最も近い点の距離を返す。もし、一定の距離以内にTenがないなら1000000.0を返す。
-    public double closest_point_distance_with_camera(Point p0) {//p0はTV座標。リターンされるのはobでの距離
+    //Returns the distance of the closest point that is closer than a certain distance to the given coordinates. If there is no Point within a certain distance, 1000000.0 is returned.
+    public double closest_point_distance_with_camera(Point p0) {//p0 is the TV coordinate. It is the distance at ob that is returned
         Point p = new Point();
         p.set(camera.TV2object(p0));
         return pointSet.closest_Point_distance(p, d_h_k / camera.getCameraZoomX());
     }
 
 
-    //与えられた座標と一定の距離より近い近傍にあって、かつ最も近い点の距離を返す。もし、一定の距離以内にTenがないなら1000000.0を返す。
-    public double closest_point_distance_with_camera(Point p0, FoldedFigure.State ip4) {//p0はTV座標。リターンされるのはobでの距離
+    //Returns the distance of the closest point that is closer than a certain distance to the given coordinates. If there is no Point within a certain distance, 1000000.0 is returned.
+    public double closest_point_distance_with_camera(Point p0, FoldedFigure.State ip4) {//p0 is the TV coordinate. It is the distance at ob that is returned
         Point p = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
             p.set(cam_front.TV2object(p0));
@@ -939,44 +665,31 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
         return 1000000.0;
     }
 
-    // ------------------------------
     public Point getPoint(int i) {
         return pointSet.getPoint(i);
     }
 
-
-    // ---------------------------------------------------------------------------------------------
     public void setUndoBoxUndoTotal(int i) {
         Ubox.set_i_undo_total(i);
     }
-
 
     public void record() {
         Ubox.record(getMemo());
     }
 
-
     public void undo() {
         setMemo_for_redo_undo(Ubox.undo());
     }
-
 
     public void redo() {
         setMemo_for_redo_undo(Ubox.redo());
     }
 
-
     public Memo getMemo() {
         return pointSet.getMemo();
     }
 
-
     public void setMemo_for_redo_undo(Memo memo1) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用
         pointSet.setMemo(memo1);
     }
-
-
-//折り上がり図変形で変更されるのは　c.sentaku_ten_move(p_u);cはTensyuugou
-
-
-}   //　 class Tenkaizu_Syokunin  はここまでです
+}

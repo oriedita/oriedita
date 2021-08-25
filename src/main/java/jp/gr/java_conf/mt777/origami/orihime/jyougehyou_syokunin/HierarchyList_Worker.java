@@ -19,8 +19,8 @@ import jp.gr.java_conf.mt777.graphic2d.oritaoekaki.*;
 import jp.gr.java_conf.mt777.seiretu.narabebako.*;
 import jp.gr.java_conf.mt777.graphic2d.point.Point;
 
-
-public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind of vertical relationship the surface of the developed view before folding will be after folding.
+//HierarchyList: Record and utilize what kind of vertical relationship the surface of the developed view before folding will be after folding.
+public class HierarchyList_Worker {
     HierarchyList hierarchyList = new HierarchyList();
     int SubFaceTotal;//SubFaceの数
     int SubFace_valid_number;//SubFaceは全て調べなくても、Faceの上下関係は網羅できる。Faceの上下関係を網羅するのに必要なSubFaceの数が優先順位の何番目までかをさがす。
@@ -32,7 +32,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
     //  hierarchyList[i][j]が-50なら、面iとjは重なが、上下関係は決められていない。
     //hierarchyList[i][j]が-100なら、面iとjは重なるところがない。
 
-    SubFace[] s0;//SubFace_figureから得られるSubFace
+    SubFace[] s0;//SubFace obtained from SubFace_figure
     SubFace[] s;//s is s0 sorted in descending order of priority.
     int[] s0_no_yusenjyun;
     int[] yusenjyun_kara_s0id;
@@ -48,13 +48,11 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
 
     public SortingBox_int_double nbox = new SortingBox_int_double();//20180227　nboxにはmenのidがmen_ratingと組になって、men_ratingの小さい順に並べ替えられて入っている。
 
-    //-----------------------------------------------------------------
     public HierarchyList_Worker(App app0) {
         orihime_app = app0;
         reset();
     }
 
-    //-----------------------------------------------------------------
     public void reset() {
         hierarchyList.reset();
         SubFaceTotal = 0;
@@ -64,15 +62,8 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         camera.reset();
     }
 
-
-    //--------
     public void setCamera(Camera cam0) {
         camera.setCamera(cam0);
-    }
-
-
-    public int getSubFaceTotal() {
-        return SubFaceTotal;
     }
 
     public int getSubFace_valid_number() {
@@ -82,8 +73,6 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
     //　ここは  class Jyougehyou_Syokunin  の中です。
     //上下表の初期設定。展開図に1頂点から奇数の折線がでる誤りがある場合0を返す。それが無ければ1000を返す。
     //展開図に山谷折線の拡張による誤りがある場合2を返す。
-
-    //----------------------------------------------------------------------
 
     public void SubFace_configure(PointSet otta_Face_figure, PointSet SubFace_figure) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
         // Make an upper and lower table of faces (the faces in the unfolded view before folding).
@@ -149,8 +138,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         }
     }
 
-    //------------------------------------------------------
-    public int ClassTable_configure(CreasePattern_Worker orite, PointSet otta_face_figure) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
+    public int HierarchyList_configure(CreasePattern_Worker orite, PointSet otta_face_figure) {
         orihime_app.bulletinBoard.write("           Jyougehyou_settei   step1   start ");
         int ireturn = 1000;
         hierarchyList.setFacesTotal(otta_face_figure.getNumFaces());
@@ -1857,7 +1845,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
     //---------------------------------------------------------
     public void draw_cross_with_camera(Graphics g) {
         //camera中心を十字で描く
-        OritaDrawing.cross(g, camera.object2TV(camera.get_camera_position()), 5.0, 2.0, LineColor.ORANGE_4);
+        OritaDrawing.cross(g, camera.object2TV(camera.getCameraPosition()), 5.0, 2.0, LineColor.ORANGE_4);
     }
 
 
@@ -2028,8 +2016,6 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         return top_men_id;
     }
 
-//-----------------------------------
-
     private int get_s_top_id_without_rated_face(int ism) {//ismはs面のid
         int Mensuu = s0[ism].getFaceIdCount();//FaceStackでの面数//FaceStack s0[];//FaceStack_figureから得られるFaceStack
         for (int jyunban = 1; jyunban <= Mensuu; jyunban++) {
@@ -2040,8 +2026,6 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         }
         return 0;
     }
-
-// -----------------------------
 
     private int get_maketa_kazu_goukei_without_rated_face(int men_id) {
         int i_make = 0;
@@ -2055,8 +2039,6 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         return i_make;
     }
 
-
-    //-----------------------------------
     private int get_subFace_de_maketa_kazu_without_rated_Face(int ism, int men_id) {//ismはFaceStackのid
         int FaceCount = s0[ism].getFaceIdCount();//FaceStackでの面数//FaceStack s0[];//FaceStack_figureから得られるFaceStack
         int maketa_kazu = 0;

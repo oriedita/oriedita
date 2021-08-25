@@ -380,6 +380,9 @@ public class LineSegment {
          */
         INTERSECTS_1(1),
 
+        INTERSECTS_AUX_2(2),
+        INTERSECTS_AUX_3(3),
+
         /**
          * Exception handling: When line segment s1 and line segment s2 are points.
          */
@@ -430,6 +433,11 @@ public class LineSegment {
          * s1 and s2 are equal.
          */
         PARALLEL_EQUAL_31(31),
+
+        INTERSECT_T_A_121(121),
+        INTERSECT_T_B_122(122),
+        INTERSECT_T_A_211(211),
+        INTERSECT_T_B_221(221),
 
         /**
          * The endpoints of two line segments (p1 and p3) overlap at one point. s1 contains s2.

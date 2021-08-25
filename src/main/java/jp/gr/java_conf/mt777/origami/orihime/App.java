@@ -83,7 +83,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     public boolean antiAlias = false;//展開図のアンチェイリアスをするかしないか。する=1、しない=0
     public double lineWidthForAntiAlias = 1.0;//展開図のアンチェイリアスをするなら=1.2、しない=1.0
 
-    public int ir_ten = 1;//Specify the shape of the points in the development view
+    public int ir_point = 1;//Specify the shape of the points in the development view
 
     public LineStyle lineStyle = LineStyle.COLOR;//折線の表現、1＝色、2=色と形状、3=黒で1点鎖線、4=黒で2点鎖線
 
@@ -107,7 +107,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     JButton Button0b;                    //対称性の指定に用いる
     JButton Button3;                    //操作の指定に用いる（追加推定一個だけ）
     JButton Button_AS_matome;                    //操作の指定に用いる（追加推定100個）
-    JButton Button_bangou_sitei_suitei_hyouji;
+    JButton Button_bangou_sitei_suitei_display;
 
     JButton Button_kitei;
     JButton Button_kitei2;
@@ -229,7 +229,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     public JCheckBox ckbox_check3;//check3
     public JCheckBox ckbox_check4;//check4
 
-    public JCheckBox ckbox_mejirusi;//十字や基準面などの目印画線
+    public JCheckBox ckbox_mark;//Marking lines such as crosses and reference planes
     public JCheckBox ckbox_cp_ue;//展開図を折り上がり予想図の上に描く
     public JCheckBox ckbox_oritatami_keika;//折り上がり予想の途中経過の書き出し
 
@@ -246,7 +246,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     boolean i_cp_display;
     boolean i_a0_display;
     boolean i_a1_display;
-    boolean i_mejirusi_display;
+    boolean i_mark_display;
     boolean i_cp_ue_display;
     boolean i_oritatami_keika_display;
 
@@ -691,7 +691,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
             readImageFromFile3();
             if (i_mouse_modeA != MouseMode.OPERATION_FRAME_CREATE_61) {
                 Button_kyoutuu_sagyou();
-                es1.set_i_egaki_dankai(0);
+                es1.setDrawingStage(0);
             }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
@@ -915,22 +915,22 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         pnln13.add(ckbox_a1);
 // -------------------------------------------------------------------
 //十字や基準面などの目印画線
-        ckbox_mejirusi = new JCheckBox("");
-        ckbox_mejirusi.addActionListener(e -> {
+        ckbox_mark = new JCheckBox("");
+        ckbox_mark.addActionListener(e -> {
             img_explanation_fname =
                     "qqq/ckbox_mejirusi.png";
             readImageFromFile3();
 
             repaint();
         });
-        ckbox_mejirusi.setIcon(createImageIcon(
+        ckbox_mark.setIcon(createImageIcon(
                 "ppp/ckbox_mejirusi_off.png"));
-        ckbox_mejirusi.setSelectedIcon(createImageIcon(
+        ckbox_mark.setSelectedIcon(createImageIcon(
                 "ppp/ckbox_mejirusi_on.png"));
 
-        ckbox_mejirusi.setMargin(new Insets(0, 0, 0, 0));
+        ckbox_mark.setMargin(new Insets(0, 0, 0, 0));
         pnln13.add(
-                ckbox_mejirusi);
+                ckbox_mark);
 
 // -------------------------------------------------------------------
 //折りあがり図を補助線の手前側にするかどうか
@@ -1197,9 +1197,9 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
                 OZi = OAZ.get(i_oz);
 
-                Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.get_camera_position());
+                Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.getCameraPosition());
 
-                OZi.d_foldedFigure_syukusyaku_keisuu = OZi.d_foldedFigure_syukusyaku_keisuu * d_bairitu;
+                OZi.d_foldedFigure_scale_factor = OZi.d_foldedFigure_scale_factor * d_bairitu;
 
                 OZi.camera_of_foldedFigure.camera_ichi_sitei_from_TV(t_o2tv);
                 OZi.camera_of_foldedFigure.kakezan_camera_zoom_x(d_bairitu);
@@ -1220,7 +1220,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
                 OZi.camera_of_transparent_rear.camera_ichi_sitei_from_TV(t_o2tv);
                 OZi.camera_of_transparent_rear.kakezan_camera_zoom_x(d_bairitu);
                 OZi.camera_of_transparent_rear.kakezan_camera_zoom_y(d_bairitu);
-                text29.setText(String.valueOf(OZi.d_foldedFigure_syukusyaku_keisuu));
+                text29.setText(String.valueOf(OZi.d_foldedFigure_scale_factor));
                 text29.setCaretPosition(0);
             }
 //20180122追加　ここまで
@@ -1275,9 +1275,9 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
                 for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
                     OZi = OAZ.get(i_oz);
 
-                    Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.get_camera_position());
+                    Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.getCameraPosition());
 
-                    OZi.d_foldedFigure_syukusyaku_keisuu = OZi.d_foldedFigure_syukusyaku_keisuu * d_bairitu;
+                    OZi.d_foldedFigure_scale_factor = OZi.d_foldedFigure_scale_factor * d_bairitu;
 
 
                     OZi.camera_of_foldedFigure.camera_ichi_sitei_from_TV(t_o2tv);
@@ -1300,7 +1300,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
                     OZi.camera_of_transparent_rear.kakezan_camera_zoom_x(d_bairitu);
                     OZi.camera_of_transparent_rear.kakezan_camera_zoom_y(d_bairitu);
 
-                    text29.setText(String.valueOf(OZ.d_foldedFigure_syukusyaku_keisuu));
+                    text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
                     text29.setCaretPosition(0);
                 }
 //20180225追加　ここまで
@@ -1350,9 +1350,9 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
                 OZi = OAZ.get(i_oz);
 
-                Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.get_camera_position());
+                Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.getCameraPosition());
 
-                OZi.d_foldedFigure_syukusyaku_keisuu = OZi.d_foldedFigure_syukusyaku_keisuu * d_bairitu;
+                OZi.d_foldedFigure_scale_factor = OZi.d_foldedFigure_scale_factor * d_bairitu;
 
 
                 OZi.camera_of_foldedFigure.camera_ichi_sitei_from_TV(t_o2tv);
@@ -1375,7 +1375,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
                 OZi.camera_of_transparent_rear.kakezan_camera_zoom_x(d_bairitu);
                 OZi.camera_of_transparent_rear.kakezan_camera_zoom_y(d_bairitu);
 
-                text29.setText(String.valueOf(OZ.d_foldedFigure_syukusyaku_keisuu));
+                text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
                 text29.setCaretPosition(0);
             }
 //20180122追加　ここまで
@@ -1637,7 +1637,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
 
 //枠設定時の背景を枠内のみ残してトリム 20181204
-            if ((i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) && (es1.get_i_egaki_dankai() == 4)) {//枠線が表示されている状態
+            if ((i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) && (es1.getDrawingStage() == 4)) {//枠線が表示されている状態
                 int xmin = (int) es1.operationFrameBox.getXMin();
                 int xmax = (int) es1.operationFrameBox.getXMax();
                 int ymin = (int) es1.operationFrameBox.getYMin();
@@ -2021,11 +2021,11 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/tenhaba_sage.png";
             readImageFromFile3();
 
-            ir_ten = ir_ten - 1;
-            if (ir_ten < 0) {
-                ir_ten = 0;
+            ir_point = ir_point - 1;
+            if (ir_point < 0) {
+                ir_point = 0;
             }
-            es1.set_ir_ten(ir_ten);
+            es1.set_ir_ten(ir_point);
 
             //Button_kyoutuu_sagyou();
             repaint();
@@ -2042,9 +2042,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/tenhaba_age.png";
             readImageFromFile3();
 
-            ir_ten = ir_ten + 1;
-            //if(ir_ten<0){ir_ten=0;}
-            es1.set_ir_ten(ir_ten);
+            ir_point = ir_point + 1;
+            //if(ir_point<0){ir_point=0;}
+            es1.set_ir_ten(ir_point);
 
             //Button_kyoutuu_sagyou();
             repaint();
@@ -5947,7 +5947,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
             img_explanation_fname = "qqq/koteimen_sitei.png";
             readImageFromFile3();
-            if (OZ.display_flg != FoldedFigureDisplayStyle.NONE_0) {
+            if (OZ.display_flg != FoldedFigure.DisplayStyle.NONE_0) {
                 i_mouse_modeA = MouseMode.CHANGE_STANDARD_FACE_103;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
@@ -6226,8 +6226,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         pnls1.add(text26);
 // -------------------------------------------------------------------------------
 // -----;	//折り畳み推定の指定番目を表示する
-        Button_bangou_sitei_suitei_hyouji = new JButton("Go");
-        Button_bangou_sitei_suitei_hyouji.addActionListener(e -> {
+        Button_bangou_sitei_suitei_display = new JButton("Go");
+        Button_bangou_sitei_suitei_display.addActionListener(e -> {
 
             int i_oritatami_bangou_old = i_folded_cases;
             i_folded_cases = StringOp.String2int(text26.getText(), i_oritatami_bangou_old);
@@ -6261,9 +6261,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             Button_kyoutuu_sagyou();
             repaint();
         });
-        pnls1.add(Button_bangou_sitei_suitei_hyouji);
+        pnls1.add(Button_bangou_sitei_suitei_display);
 
-        Button_bangou_sitei_suitei_hyouji.setMargin(new Insets(0, 0, 0, 0));
+        Button_bangou_sitei_suitei_display.setMargin(new Insets(0, 0, 0, 0));
         //Button_lineSegment_division_set.setIcon(createImageIcon(
         //"ppp/senbun_bunkatu_set.png")));
 
@@ -6345,7 +6345,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/oriagari_sousa.png";
             readImageFromFile3();
             OZ.i_foldedFigure_operation_mode = 1;
-            OZ.set_all_ten_sentaku_0();
+            OZ.setAllPointState0();
             OZ.record();
             i_mouse_modeA = MouseMode.MODIFY_CALCULATED_SHAPE_101;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
@@ -6365,7 +6365,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/oriagari_sousa_2.png";
             readImageFromFile3();
             OZ.i_foldedFigure_operation_mode = 2;
-            OZ.set_all_ten_sentaku_0();
+            OZ.setAllPointState0();
             OZ.record();
             i_mouse_modeA = MouseMode.MODIFY_CALCULATED_SHAPE_101;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
@@ -6416,23 +6416,23 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
 
 
-            OZ.d_foldedFigure_syukusyaku_keisuu = OZ.d_foldedFigure_syukusyaku_keisuu / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
-            OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-            OZ.camera_of_foldedFigure.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+            OZ.d_foldedFigure_scale_factor = OZ.d_foldedFigure_scale_factor / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
+            OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+            OZ.camera_of_foldedFigure.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
 
-            OZ.camera_of_foldedFigure_front.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-            OZ.camera_of_foldedFigure_front.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+            OZ.camera_of_foldedFigure_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+            OZ.camera_of_foldedFigure_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
 
-            OZ.camera_of_foldedFigure_rear.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-            OZ.camera_of_foldedFigure_rear.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+            OZ.camera_of_foldedFigure_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+            OZ.camera_of_foldedFigure_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
 
-            OZ.camera_of_transparent_front.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-            OZ.camera_of_transparent_front.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+            OZ.camera_of_transparent_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+            OZ.camera_of_transparent_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
 
-            OZ.camera_of_transparent_rear.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-            OZ.camera_of_transparent_rear.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+            OZ.camera_of_transparent_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+            OZ.camera_of_transparent_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
 
-            text29.setText(String.valueOf(OZ.d_foldedFigure_syukusyaku_keisuu));
+            text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
             text29.setCaretPosition(0);
 
             Button_kyoutuu_sagyou();
@@ -6459,29 +6459,29 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         Button_oriagarizu_syukusyaku_keisuu_set.addActionListener(e -> {
             //set_syukusyaku_keisuu();
             //public void set_syukusyaku_keisuu(){
-            double d_oriagarizu_syukusyaku_keisuu_old = OZ.d_foldedFigure_syukusyaku_keisuu;
-            OZ.d_foldedFigure_syukusyaku_keisuu = String2double(text29.getText(), d_oriagarizu_syukusyaku_keisuu_old);
-            if (OZ.d_foldedFigure_syukusyaku_keisuu <= 0.0) {
-                OZ.d_foldedFigure_syukusyaku_keisuu = d_oriagarizu_syukusyaku_keisuu_old;
+            double d_oriagarizu_syukusyaku_keisuu_old = OZ.d_foldedFigure_scale_factor;
+            OZ.d_foldedFigure_scale_factor = String2double(text29.getText(), d_oriagarizu_syukusyaku_keisuu_old);
+            if (OZ.d_foldedFigure_scale_factor <= 0.0) {
+                OZ.d_foldedFigure_scale_factor = d_oriagarizu_syukusyaku_keisuu_old;
             }
-            text29.setText(String.valueOf(OZ.d_foldedFigure_syukusyaku_keisuu));
-            if (OZ.d_foldedFigure_syukusyaku_keisuu != d_oriagarizu_syukusyaku_keisuu_old) {
-                OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                OZ.camera_of_foldedFigure.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+            text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
+            if (OZ.d_foldedFigure_scale_factor != d_oriagarizu_syukusyaku_keisuu_old) {
+                OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+                OZ.camera_of_foldedFigure.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
 
-                OZ.camera_of_foldedFigure_front.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                OZ.camera_of_foldedFigure_front.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+                OZ.camera_of_foldedFigure_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+                OZ.camera_of_foldedFigure_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
 
-                OZ.camera_of_foldedFigure_rear.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                OZ.camera_of_foldedFigure_rear.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+                OZ.camera_of_foldedFigure_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+                OZ.camera_of_foldedFigure_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
 
-                OZ.camera_of_transparent_front.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                OZ.camera_of_transparent_front.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+                OZ.camera_of_transparent_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+                OZ.camera_of_transparent_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
 
-                OZ.camera_of_transparent_rear.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                OZ.camera_of_transparent_rear.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+                OZ.camera_of_transparent_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+                OZ.camera_of_transparent_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
             }
-            text29.setText(String.valueOf(OZ.d_foldedFigure_syukusyaku_keisuu));
+            text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
             text29.setCaretPosition(0);
             repaint();
 
@@ -6509,23 +6509,23 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/oriagari_kakudai.png";
             readImageFromFile3();
 
-            OZ.d_foldedFigure_syukusyaku_keisuu = OZ.d_foldedFigure_syukusyaku_keisuu * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
-            OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-            OZ.camera_of_foldedFigure.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+            OZ.d_foldedFigure_scale_factor = OZ.d_foldedFigure_scale_factor * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
+            OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+            OZ.camera_of_foldedFigure.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
 
-            OZ.camera_of_foldedFigure_front.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-            OZ.camera_of_foldedFigure_front.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+            OZ.camera_of_foldedFigure_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+            OZ.camera_of_foldedFigure_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
 
-            OZ.camera_of_foldedFigure_rear.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-            OZ.camera_of_foldedFigure_rear.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+            OZ.camera_of_foldedFigure_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+            OZ.camera_of_foldedFigure_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
 
-            OZ.camera_of_transparent_front.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-            OZ.camera_of_transparent_front.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+            OZ.camera_of_transparent_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+            OZ.camera_of_transparent_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
 
-            OZ.camera_of_transparent_rear.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-            OZ.camera_of_transparent_rear.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
+            OZ.camera_of_transparent_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+            OZ.camera_of_transparent_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
 
-            text29.setText(String.valueOf(OZ.d_foldedFigure_syukusyaku_keisuu));
+            text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
             text29.setCaretPosition(0);
 
             Button_kyoutuu_sagyou();
@@ -6553,14 +6553,14 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/oriagari_p_kaiten.png";
             readImageFromFile3();
 
-            OZ.d_foldedFigure_kaiten_hosei = OritaCalc.angle_between_m180_180(OZ.d_foldedFigure_kaiten_hosei + 11.25);
-            OZ.camera_of_foldedFigure.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
-            OZ.camera_of_foldedFigure_front.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
-            OZ.camera_of_foldedFigure_rear.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
-            OZ.camera_of_transparent_front.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
-            OZ.camera_of_transparent_rear.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
+            OZ.d_foldedFigure_rotation_correction = OritaCalc.angle_between_m180_180(OZ.d_foldedFigure_rotation_correction + 11.25);
+            OZ.camera_of_foldedFigure.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
+            OZ.camera_of_foldedFigure_front.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
+            OZ.camera_of_foldedFigure_rear.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
+            OZ.camera_of_transparent_front.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
+            OZ.camera_of_transparent_rear.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
 
-            text30.setText(String.valueOf(OZ.d_foldedFigure_kaiten_hosei));
+            text30.setText(String.valueOf(OZ.d_foldedFigure_rotation_correction));
             text30.setCaretPosition(0);
 
             Button_kyoutuu_sagyou();
@@ -6584,20 +6584,20 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 // -----回転角度補正set
         JButton Button_oriagarizu_kaiten_hosei_set = new JButton("S");
         Button_oriagarizu_kaiten_hosei_set.addActionListener(e -> {
-            double d_oriagarizu_kaiten_hosei_old = OZ.d_foldedFigure_kaiten_hosei;
-            OZ.d_foldedFigure_kaiten_hosei = OritaCalc.angle_between_m180_180(String2double(text30.getText(), d_oriagarizu_kaiten_hosei_old));
+            double d_oriagarizu_kaiten_hosei_old = OZ.d_foldedFigure_rotation_correction;
+            OZ.d_foldedFigure_rotation_correction = OritaCalc.angle_between_m180_180(String2double(text30.getText(), d_oriagarizu_kaiten_hosei_old));
 
-            text30.setText(String.valueOf(OZ.d_foldedFigure_kaiten_hosei));
+            text30.setText(String.valueOf(OZ.d_foldedFigure_rotation_correction));
 
-            if (OZ.d_foldedFigure_kaiten_hosei != d_oriagarizu_kaiten_hosei_old) {
+            if (OZ.d_foldedFigure_rotation_correction != d_oriagarizu_kaiten_hosei_old) {
 
-                OZ.camera_of_foldedFigure.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
-                OZ.camera_of_foldedFigure_front.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
-                OZ.camera_of_foldedFigure_rear.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
-                OZ.camera_of_transparent_front.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
-                OZ.camera_of_transparent_rear.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
+                OZ.camera_of_foldedFigure.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
+                OZ.camera_of_foldedFigure_front.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
+                OZ.camera_of_foldedFigure_rear.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
+                OZ.camera_of_transparent_front.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
+                OZ.camera_of_transparent_rear.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
             }
-            text30.setText(String.valueOf(OZ.d_foldedFigure_kaiten_hosei));
+            text30.setText(String.valueOf(OZ.d_foldedFigure_rotation_correction));
             text30.setCaretPosition(0);
             repaint();
 
@@ -6622,14 +6622,14 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
             img_explanation_fname = "qqq/oriagari_m_kaiten.png";
             readImageFromFile3();
-            OZ.d_foldedFigure_kaiten_hosei = OritaCalc.angle_between_m180_180(OZ.d_foldedFigure_kaiten_hosei - 11.25);
-            OZ.camera_of_foldedFigure.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
-            OZ.camera_of_foldedFigure_front.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
-            OZ.camera_of_foldedFigure_rear.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
-            OZ.camera_of_transparent_front.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
-            OZ.camera_of_transparent_rear.setCameraAngle(OZ.d_foldedFigure_kaiten_hosei);
+            OZ.d_foldedFigure_rotation_correction = OritaCalc.angle_between_m180_180(OZ.d_foldedFigure_rotation_correction - 11.25);
+            OZ.camera_of_foldedFigure.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
+            OZ.camera_of_foldedFigure_front.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
+            OZ.camera_of_foldedFigure_rear.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
+            OZ.camera_of_transparent_front.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
+            OZ.camera_of_transparent_rear.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
 
-            text30.setText(String.valueOf(OZ.d_foldedFigure_kaiten_hosei));
+            text30.setText(String.valueOf(OZ.d_foldedFigure_rotation_correction));
             text30.setCaretPosition(0);
 
 
@@ -6859,7 +6859,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.record();
-            es1.h_kiroku();
+            es1.h_record();
         });
         pnls.add(Button_zen_syokika);
 
@@ -6907,7 +6907,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //Ubox.test1();
         es1.record();
-        es1.h_kiroku();
+        es1.h_record();
 
         //折り上がり図の色指定
         //Color oriagarizu_F_color=new Color(255,255,50);//折り上がり図の表面の色
@@ -7218,7 +7218,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         ckbox_cp.setSelected(true);//折線を表示するかどうかの選択
         ckbox_a0.setSelected(true);//補助活線を表示するかどうかの選択
         ckbox_a1.setSelected(true);//補助画線を表示するかどうかの選択
-        ckbox_mejirusi.setSelected(true);//十字や基準面などの目印画線
+        ckbox_mark.setSelected(true);//十字や基準面などの目印画線
         ckbox_cp_ue.setSelected(false);//展開図を折り上がり予想図の上に描く
         ckbox_oritatami_keika.setSelected(false);//折り上がり予想の途中経過の書き出し
         ckbox_cp_kaizen_oritatami.setSelected(false);//cpを折畳み前に自動改善する
@@ -7246,10 +7246,10 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         d_kaiten_hosei = 0.0;
         text28.setText(String.valueOf(d_kaiten_hosei));//回転表示角度の補正係数
 
-        OZ.d_foldedFigure_syukusyaku_keisuu = 1.0;
-        text29.setText(String.valueOf(OZ.d_foldedFigure_syukusyaku_keisuu));//折り上がり図の縮尺係数
-        OZ.d_foldedFigure_kaiten_hosei = 0.0;
-        text30.setText(String.valueOf(OZ.d_foldedFigure_kaiten_hosei));//折り上がり図の回転表示角度の補正角度
+        OZ.d_foldedFigure_scale_factor = 1.0;
+        text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));//折り上がり図の縮尺係数
+        OZ.d_foldedFigure_rotation_correction = 0.0;
+        text30.setText(String.valueOf(OZ.d_foldedFigure_rotation_correction));//折り上がり図の回転表示角度の補正角度
 
 
         //背景表示
@@ -7268,7 +7268,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         iLineWidth = 1;
 
         //頂点のしるしの幅
-        ir_ten = 1;
+        ir_point = 1;
 
 
         //基本枝構造の直線の両端の円の半径、（以前は枝と各種ポイントの近さの判定基準）
@@ -7605,7 +7605,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
 
     void Button_kyoutuu_sagyou() {
-        es1.set_i_egaki_dankai(0);
+        es1.setDrawingStage(0);
         es1.set_i_en_egaki_dankai(0);
         es1.set_s_step_iactive(3);//要注意　es1でうっかりs_stepにset.(senbun)やるとアクティヴでないので表示が小さくなる20170507
         es1.ori_v.reset();
@@ -7644,42 +7644,42 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
 
             int OZ_display_mode = 0;//No fold-up diagram display
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
+            if ((OZi.display_flg == FoldedFigure.DisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
                 OZ_display_mode = 1;
             }//	omote
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.BACK_1)) {
+            if ((OZi.display_flg == FoldedFigure.DisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.BACK_1)) {
                 OZ_display_mode = 2;
             }//	ura
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.BOTH_2)) {
+            if ((OZi.display_flg == FoldedFigure.DisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.BOTH_2)) {
                 OZ_display_mode = 3;
             }//	omote & ura
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
+            if ((OZi.display_flg == FoldedFigure.DisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
                 OZ_display_mode = 3;
             }//	omote & ura
 
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
+            if ((OZi.display_flg == FoldedFigure.DisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
                 OZ_display_mode = 1;
             }//	omote
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.BACK_1)) {
+            if ((OZi.display_flg == FoldedFigure.DisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.BACK_1)) {
                 OZ_display_mode = 2;
             }//	ura
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.BOTH_2)) {
+            if ((OZi.display_flg == FoldedFigure.DisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.BOTH_2)) {
                 OZ_display_mode = 3;
             }//	omote & ura
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
+            if ((OZi.display_flg == FoldedFigure.DisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
                 OZ_display_mode = 3;
             }//	omote & ura
 
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
+            if ((OZi.display_flg == FoldedFigure.DisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
                 OZ_display_mode = 1;
             }//	omote
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.BACK_1)) {
+            if ((OZi.display_flg == FoldedFigure.DisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.BACK_1)) {
                 OZ_display_mode = 2;
             }//	ura
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.BOTH_2)) {
+            if ((OZi.display_flg == FoldedFigure.DisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.BOTH_2)) {
                 OZ_display_mode = 3;
             }//	omote & ura
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
+            if ((OZi.display_flg == FoldedFigure.DisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
                 OZ_display_mode = 4;
             }//	omote & ura & omote2 & ura2
 
@@ -7779,21 +7779,21 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                     // ---------------------------------------------------------------------
                 } else {
                     if (e.getWheelRotation() == -1) {
-                        OZ.d_foldedFigure_syukusyaku_keisuu = OZ.d_foldedFigure_syukusyaku_keisuu * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
+                        OZ.d_foldedFigure_scale_factor = OZ.d_foldedFigure_scale_factor * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
                     } else {
-                        OZ.d_foldedFigure_syukusyaku_keisuu = OZ.d_foldedFigure_syukusyaku_keisuu / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
+                        OZ.d_foldedFigure_scale_factor = OZ.d_foldedFigure_scale_factor / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
                     }
-                    OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                    OZ.camera_of_foldedFigure.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
-                    OZ.camera_of_foldedFigure_front.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                    OZ.camera_of_foldedFigure_front.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
-                    OZ.camera_of_foldedFigure_rear.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                    OZ.camera_of_foldedFigure_rear.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
-                    OZ.camera_of_transparent_front.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                    OZ.camera_of_transparent_front.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
-                    OZ.camera_of_transparent_rear.setCameraZoomX(OZ.d_foldedFigure_syukusyaku_keisuu);
-                    OZ.camera_of_transparent_rear.setCameraZoomY(OZ.d_foldedFigure_syukusyaku_keisuu);
-                    text29.setText(String.valueOf(OZ.d_foldedFigure_syukusyaku_keisuu));
+                    OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+                    OZ.camera_of_foldedFigure.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
+                    OZ.camera_of_foldedFigure_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+                    OZ.camera_of_foldedFigure_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
+                    OZ.camera_of_foldedFigure_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+                    OZ.camera_of_foldedFigure_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
+                    OZ.camera_of_transparent_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+                    OZ.camera_of_transparent_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
+                    OZ.camera_of_transparent_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
+                    OZ.camera_of_transparent_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
+                    text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
                     text29.setCaretPosition(0);
                 }
                 // ---------------------------------------------------------------------
@@ -8533,16 +8533,16 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
 
                 if (i_cp_or_oriagari == 0) {// 展開図移動。
-                    camera_of_orisen_input_diagram.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
                     es1.setCamera(camera_of_orisen_input_diagram);
                 } else if (i_cp_or_oriagari == 1) {
-                    OZ.camera_of_foldedFigure_front.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
                 } else if (i_cp_or_oriagari == 2) {
-                    OZ.camera_of_foldedFigure_rear.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
                 } else if (i_cp_or_oriagari == 3) {
-                    OZ.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
                 } else if (i_cp_or_oriagari == 4) {
-                    OZ.camera_of_transparent_rear.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
                 }
 
                 mouse_temp0.set(p);
@@ -8571,7 +8571,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mDragged_A_01(p);
             } else if (i_mouse_modeA == MouseMode.MOVE_CREASE_PATTERN_2) {
-                camera_of_orisen_input_diagram.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
                 es1.setCamera(camera_of_orisen_input_diagram);
 
 
@@ -8586,23 +8586,23 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 //OZi.d_oriagarizu_syukusyaku_keisuu=OZi.d_oriagarizu_syukusyaku_keisuu*d_bairitu;
 
 
-                    OZi.camera_of_foldedFigure.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_foldedFigure.displayPositionMove(mouse_temp0.other_Point_position(p));
                     //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_foldedFigure_front.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
                     //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_foldedFigure_rear.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
                     //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
                     //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_transparent_rear.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
                     //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_y(d_bairitu);
 
@@ -8838,12 +8838,12 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                 OZ.foldedFigure_operation_mouse_drag(p);
             }    //折り上がり図操作
             else if (i_mouse_modeA == MouseMode.MOVE_CALCULATED_SHAPE_102) {
-                OZ.camera_of_foldedFigure.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
-                OZ.camera_of_foldedFigure_front.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
-                OZ.camera_of_foldedFigure_rear.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                OZ.camera_of_foldedFigure.displayPositionMove(mouse_temp0.other_Point_position(p));
+                OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
 
-                OZ.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
-                OZ.camera_of_transparent_rear.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
 
                 mouse_temp0.set(p);//mouse_temp0は一時的に使うTen、mouse_temp0.tano_Ten_iti(p)はmouse_temp0から見たpの位置
 
@@ -8881,17 +8881,17 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                 //if(ts2.naibu_hantei(p)==0){
                 if (i_cp_or_oriagari == 0) {
 
-                    camera_of_orisen_input_diagram.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
                     es1.setCamera(camera_of_orisen_input_diagram);
                 } else if (i_cp_or_oriagari == 1) {
-                    OZ.camera_of_foldedFigure_front.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
                 } else if (i_cp_or_oriagari == 2) {
-                    OZ.camera_of_foldedFigure_rear.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
 
                 } else if (i_cp_or_oriagari == 3) {
-                    OZ.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
                 } else if (i_cp_or_oriagari == 4) {
-                    OZ.camera_of_transparent_rear.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
                 }
 
                 mouse_temp0.set(p);
@@ -8932,7 +8932,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mReleased_A_01(p);
             } else if (i_mouse_modeA == MouseMode.MOVE_CREASE_PATTERN_2) {
-                camera_of_orisen_input_diagram.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
                 es1.setCamera(camera_of_orisen_input_diagram);
 
 
@@ -8947,23 +8947,23 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 //OZi.d_oriagarizu_syukusyaku_keisuu=OZi.d_oriagarizu_syukusyaku_keisuu*d_bairitu;
 
 
-                    OZi.camera_of_foldedFigure.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_foldedFigure.displayPositionMove(mouse_temp0.other_Point_position(p));
                     //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_foldedFigure_front.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
                     //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_foldedFigure_rear.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
                     //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
                     //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_y(d_bairitu);
 
-                    OZi.camera_of_transparent_rear.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
                     //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_x(d_bairitu);
                     //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_y(d_bairitu);
 
@@ -9225,12 +9225,12 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             } else if (i_mouse_modeA == MouseMode.MODIFY_CALCULATED_SHAPE_101) {        //折り上がり図操作
                 OZ.foldedFigure_operation_mouse_off(p);
             } else if (i_mouse_modeA == MouseMode.MOVE_CALCULATED_SHAPE_102) {
-                OZ.camera_of_foldedFigure.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
-                OZ.camera_of_foldedFigure_front.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
-                OZ.camera_of_foldedFigure_rear.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                OZ.camera_of_foldedFigure.displayPositionMove(mouse_temp0.other_Point_position(p));
+                OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
 
-                OZ.camera_of_transparent_front.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
-                OZ.camera_of_transparent_rear.hyouji_ichi_idou(mouse_temp0.other_Point_position(p));
+                OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
 
                 mouse_temp0.set(p);
 
@@ -9371,8 +9371,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             Button_AS_matome.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
             Button_AS_matome.setForeground(Color.black);
 
-            Button_bangou_sitei_suitei_hyouji.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
-            Button_bangou_sitei_suitei_hyouji.setForeground(Color.black);
+            Button_bangou_sitei_suitei_display.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
+            Button_bangou_sitei_suitei_display.setForeground(Color.black);
         } else {
             Button3.setBackground(new Color(201, 201, 201));
             Button3.setForeground(Color.gray);
@@ -9380,8 +9380,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             Button_AS_matome.setBackground(new Color(201, 201, 201));
             Button_AS_matome.setForeground(Color.gray);
 
-            Button_bangou_sitei_suitei_hyouji.setBackground(new Color(201, 201, 201));
-            Button_bangou_sitei_suitei_hyouji.setForeground(Color.gray);
+            Button_bangou_sitei_suitei_display.setBackground(new Color(201, 201, 201));
+            Button_bangou_sitei_suitei_display.setForeground(Color.gray);
         }
 
         // バッファー画面のクリア
@@ -9402,7 +9402,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         i_a0_display = ckbox_a0.isSelected();
         i_a1_display = ckbox_a1.isSelected();
 
-        i_mejirusi_display = ckbox_mejirusi.isSelected();
+        i_mark_display = ckbox_mark.isSelected();
         i_cp_ue_display = ckbox_cp_ue.isSelected();
         i_oritatami_keika_display = ckbox_oritatami_keika.isSelected();
 
@@ -9462,8 +9462,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //基準面の表示
         //System.out.println("paint　+++++++++++++++++++++　基準面の表示");
-        if (i_mejirusi_display) {
-            if (OZ.display_flg != FoldedFigureDisplayStyle.NONE_0) {
+        if (i_mark_display) {
+            if (OZ.display_flg != FoldedFigure.DisplayStyle.NONE_0) {
                 //	ts1.setCamera(camera_of_orisen_nyuuryokuzu);
                 OZ.cp_worker1.drawing_referencePlane_with_camera(bufferGraphics);//ts1が折り畳みを行う際の基準面を表示するのに使う。
             }
@@ -9490,7 +9490,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //if (iDisplayBackground<=1) {
         //        es1.setCamera(camera_of_orisen_nyuuryokuzu);
 
-        es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, lineStyle, f_h_lineWidth, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+        es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, lineStyle, f_h_lineWidth, dim.width, dim.height, i_mark_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
         if (i_bun_display) {
             //展開図情報の文字表示
@@ -9502,7 +9502,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
             //System.out.println("paint　+++++++++++++++++++++　結果の文字表示");
             //結果の文字表示
-            bufferGraphics.drawString(OZ.text_kekka, 120, 105); //この表示内容はvoid kekka_syoriで決められる。
+            bufferGraphics.drawString(OZ.text_result, 120, 105); //この表示内容はvoid kekka_syoriで決められる。
 
             if (i_kou_mitudo_nyuuryoku_display) {
                 Point kus_sisuu = new Point(es1.get_moyori_ten_sisuu(p_mouse_TV_iti));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
@@ -9529,13 +9529,13 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //Oriagari_Zu OZi;
         for (int i = 1; i <= OAZ.size() - 1; i++) {
             OZi = OAZ.get(i);
-            OZi.foldUp_draw(bufferGraphics, i_mejirusi_display);
+            OZi.foldUp_draw(bufferGraphics, i_mark_display);
         }
         //OZ = (Oriagari_Zu)OAZ.get(OAZ.size()-1);//折りあがり図
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
         if (i_cp_ue_display) {
-            es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, lineStyle, f_h_lineWidth, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+            es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, lineStyle, f_h_lineWidth, dim.width, dim.height, i_mark_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
         }
 
         //アンチェイリアス
@@ -9574,7 +9574,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         }
         if (flg61) {
             flg61 = false;
-            es1.set_i_egaki_dankai(4);
+            es1.setDrawingStage(4);
         }
 
         //paint_jikkoutyuu=false;
@@ -9591,9 +9591,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
     //----------------------------------------------------------
 
     void configure_syokika_yosoku() {
-        OZ.text_kekka = "";
-        OZ.display_flg = FoldedFigureDisplayStyle.NONE_0;//折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図
-        OZ.display_flg_backup = FoldedFigureDisplayStyle.NONE_0;//表示様式hyouji_flgの一時的バックアップ用
+        OZ.text_result = "";
+        OZ.display_flg = FoldedFigure.DisplayStyle.NONE_0;//折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図
+        OZ.display_flg_backup = FoldedFigure.DisplayStyle.NONE_0;//表示様式hyouji_flgの一時的バックアップ用
 
         //表示用の値を格納する変数
         OZ.ip1 = -1;//上下表職人の初期設定時に、折った後の表裏が同じ面が
@@ -9664,9 +9664,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //String String fname_wi
         fname_wi = selectFileName("file name for Img save");
         flg61 = false;
-        if ((i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) && (es1.get_i_egaki_dankai() == 4)) {
+        if ((i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) && (es1.getDrawingStage() == 4)) {
             flg61 = true;
-            es1.set_i_egaki_dankai(0);
+            es1.setDrawingStage(0);
         }
 
         if (fname_wi != null) {
@@ -9696,7 +9696,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
             if (fname.endsWith("svg")) {
                 Memo memo1;
-                memo1 = es1.getMemo_for_svg_export_with_camera(i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, lineStyle, f_h_lineWidth, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+                memo1 = es1.getMemo_for_svg_export_with_camera(i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, lineStyle, f_h_lineWidth, dim.width, dim.height, i_mark_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
                 Memo memo2 = new Memo();
 

@@ -115,16 +115,6 @@ public class SubFace {//This class folds the development view and estimates the 
         return 0;//There is no permutation that can overlap
     }
 
-    // ここは　class SubFace の中だよ。
-
-
-    // Based on the current permutation state, the id number of the i-th plane counting from the top is returned.
-
-    private int get_fromTop_count_itino_FaceId(int i) {
-        return FaceId[getPermutation(i)];
-    }
-
-
     //Based on the current upper and lower tables, the id number of the i-th surface counting from the top is stored.
     public void set_FaceId2fromTop_counted_position(HierarchyList hierarchyList) {
         for (int i = 1; i <= FaceIdCount; i++) {
@@ -205,11 +195,9 @@ public class SubFace {//This class folds the development view and estimates the 
         return 1000;
     }
 
-    //
-
     private int penetration_inconsistent_digits_request(HierarchyList hierarchyList) {
         int ketaMim = 1000;
-        int tmk = 1000;
+        int tmk;
         for (int i = 1; i <= hierarchyList.getEquivalenceConditionTotal(); i++) {
             tmk = penetration_inconsistent_digits_request(hierarchyList.getEquivalenceCondition(i));
 
@@ -255,8 +243,6 @@ public class SubFace {//This class folds the development view and estimates the 
         return 1000;
     }
 
-    //
-
     private int u_penetration_inconsistent_digits_request(HierarchyList hierarchyList) {
         int ketaMim = 1000;
         int tmk = 1000;
@@ -272,8 +258,6 @@ public class SubFace {//This class folds the development view and estimates the 
 
 
     }
-    // ここは　class SubFace の中だよ。
-
 
     // Check from the top side to find out at what number the contradiction occurs.
     // At this time, hierarchyList does not change. This SubFace returns 1000 if there is no contradiction.
@@ -342,10 +326,8 @@ public class SubFace {//This class folds the development view and estimates the 
                 }
             }
         }
-        //
         return inew;
     }
-    //
 
     // hierarchyList[][] treats the hierarchical relationship between all the faces of the development drawing before folding as one table.
     // If hierarchyList[i][j] is 1, surface i is above surface j. If it is 0, it is the lower side.
@@ -390,7 +372,6 @@ public class SubFace {//This class folds the development view and estimates the 
 
     }
 
-    //-----------------------------------------------------------
     //According to the table above and below, the overlapping classification of pairs of faces included in this SubFace is undecided.
     public int overlapping_classification_pending(HierarchyList hierarchyList) {
         int iret = 0;
@@ -404,7 +385,6 @@ public class SubFace {//This class folds the development view and estimates the 
         return iret;
     }
 
-    //-----------------------------------------------------------
     // According to the upper and lower tables, the overlapping classification of the pairs of faces included in this SubFace is determined.
     public int overlapping_classification_determined(HierarchyList hierarchyList) {
         int iret = 0;

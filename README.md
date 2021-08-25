@@ -1,4 +1,4 @@
-# Orihime - Translation
+# Orihime オリヒメ - Translation
 
 Orihime is an awesome tool that is used by origami designers to design new origami models. Orihime is developed by MT777 and can be downloaded from  http://mt777.html.xdomain.jp/. Undertrox developed orihimeMod, which adds some extra features to the Orihime software, this version can be downloaded from https://github.com/undertrox/orihimeMod
 
@@ -41,3 +41,7 @@ java -jar ./target/orihime-3.060-SNAPSHOT.jar
 | SubFace | Smen | Stack of faces in the folded view
 | Drawing_Worker | Egaki_Syokunin | Responsible for drawing and handling user input on the canvas.
 | HierarchyList_Worker | Jyougehyou_Syokunin | Responsible for calculating the hierarchy of folded models.
+
+## Notes
+
+Extended Fushimi (Husimi) Theorem (used in FoldLineSet) is a version of [Kawasaki's Theorem](https://en.wikipedia.org/wiki/Kawasaki%27s_theorem) for flatfoldability of vertices in a crease pattern, specifically for 4-crease vertices.

@@ -7,9 +7,6 @@ import jp.gr.java_conf.mt777.graphic2d.linesegment.*;
 import jp.gr.java_conf.mt777.graphic2d.oritacalc.*;
 import jp.gr.java_conf.mt777.graphic2d.oritacalc.straightline.*;
 
-// -------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------
 public class Drawing_Worker_Toolbox {
     FoldLineSet ori_s;
 
@@ -17,175 +14,135 @@ public class Drawing_Worker_Toolbox {
         ori_s = o_s;
     }
 
-    //ベクトルab(=s0)を点aからb方向に、最初に他の折線と交差するところまで延長する
-    LineSegment kousaten_made_nobasi_lineSegment = new LineSegment();
-    Point kousaten_made_nobasi_point = new Point();
-    StraightLine.Intersection kousaten_made_nobasi_flg = StraightLine.Intersection.NONE_0;//abを伸ばした最初の交点の状況
-    int kousaten_made_nobasi_orisen_fukumu_flg = 0;//abを直線化したのが、既存の折線を含むなら3
-    LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();//abを直線化したのと、最初にぶつかる既存の折線
+    // Extend the vector ab (= s0) from point a to b until it first intersects another polygonal line
+    LineSegment lengthenUntilIntersectionLineSegment = new LineSegment();
+    Point lengthenUntilIntersectionPoint = new Point();
+    StraightLine.Intersection lengthenUntilIntersection_flg = StraightLine.Intersection.NONE_0;//The situation of the first intersection where ab was extended
+    int lengthenUntilIntersectionFoldLineIncluded_flg = 0;//If ab is straightened, including existing polygonal lines, 3
+    LineSegment lengthenUntilIntersectionFirstLineSegment = new LineSegment();//Straightening ab and the existing polygonal line that hits first
 
-    // -------------------
-    public void kousaten_made_nobasi_crossing_included_lineSegment_disregard(Point a, Point b) {//ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する//他の折線と交差しないなら、Point aを返す
+    //Extend the vector ab (= s0) from point a to b, until it first intersects another fold line (ignoring the line segment contained in the straight line) // If it does not intersect another fold line, set Point a return
+    public void lengthenUntilIntersectionDisregardIncludedLineSegment(Point a, Point b) {
         LineSegment s0 = new LineSegment();
         s0.set(a, b);
-        LineSegment add_sen = new LineSegment();
-        add_sen.set(s0);
-        Point kousa_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
-        double kousa_ten_kyori = kousa_point.distance(add_sen.getA());
-        StraightLine tyoku1 = new StraightLine(add_sen.getA(), add_sen.getB());
-        StraightLine.Intersection i_kousa_flg;
+        LineSegment addLine = new LineSegment();
+        addLine.set(s0);
+        Point cross_point = new Point(1000000.0, 1000000.0); //This method can cause errors. If it is true, you should take points of x_max and y_max or more for all lines. Will be fixed in the future 20161120
+        double crossPointDistance = cross_point.distance(addLine.getA());
+        StraightLine straightLine = new StraightLine(addLine.getA(), addLine.getB());
+        StraightLine.Intersection i_cross_flg;
 
-        kousaten_made_nobasi_flg = StraightLine.Intersection.NONE_0;
-        kousaten_made_nobasi_orisen_fukumu_flg = 0;
+        lengthenUntilIntersection_flg = StraightLine.Intersection.NONE_0;
+        lengthenUntilIntersectionFoldLineIncluded_flg = 0;
         for (int i = 1; i <= ori_s.getTotal(); i++) {
+            i_cross_flg = straightLine.lineSegment_intersect_reverse_detail(ori_s.get(i));//0 = This straight line does not intersect a given line segment, 1 = X type intersects, 2 = T type intersects, 3 = Line segment is included in the straight line.
+            if ((i_cross_flg == StraightLine.Intersection.INTERSECT_X_1 || i_cross_flg == StraightLine.Intersection.INTERSECT_T_A_21) || i_cross_flg == StraightLine.Intersection.INTERSECT_T_B_22) {
 
-            i_kousa_flg = tyoku1.lineSegment_intersect_reverse_detail(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-            //if(i_kousa_flg==3){kousaten_made_nobasi_orisen_fukumu_flg=3;}
-            if ((i_kousa_flg == StraightLine.Intersection.INTERSECT_X_1 || i_kousa_flg == StraightLine.Intersection.INTERSECT_T_A_21) || i_kousa_flg == StraightLine.Intersection.INTERSECT_T_B_22) {
+                cross_point.set(OritaCalc.findIntersection(straightLine, ori_s.get(i)));//A function that considers a line segment as a straight line and finds the intersection with another straight line. Even if it does not intersect as a line segment, it returns the intersection when it intersects as a straight line
 
-                kousa_point.set(OritaCalc.findIntersection(tyoku1, ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
+                if (cross_point.distance(addLine.getA()) > 0.00001) {
 
-                if (kousa_point.distance(add_sen.getA()) > 0.00001) {
-
-                    if (kousa_point.distance(add_sen.getA()) < kousa_ten_kyori) {
-                        double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
+                    if (cross_point.distance(addLine.getA()) < crossPointDistance) {
+                        double d_kakudo = OritaCalc.angle(addLine.getA(), addLine.getB(), addLine.getA(), cross_point);
 
                         if (d_kakudo < 1.0 || d_kakudo > 359.0) {
 
-                            kousa_ten_kyori = kousa_point.distance(add_sen.getA());
-                            add_sen.set(add_sen.getA(), kousa_point);
+                            crossPointDistance = cross_point.distance(addLine.getA());
+                            addLine.set(addLine.getA(), cross_point);
 
-                            kousaten_made_nobasi_flg = i_kousa_flg;
-                            kousaten_made_nobasi_saisyono_lineSegment.set(ori_s.get(i));
-
+                            lengthenUntilIntersection_flg = i_cross_flg;
+                            lengthenUntilIntersectionFirstLineSegment.set(ori_s.get(i));
                         }
-
                     }
-
                 }
-
             }
-
         }
-        //return add_sen.getb();
 
-        kousaten_made_nobasi_lineSegment.set(add_sen);//System.out.println("kousaten_made_nobasi_senbun.set 20201129 kousaten_made_nobasi_keisan_fukumu_senbun_musi");
-        kousaten_made_nobasi_point.set(add_sen.getB());
+        lengthenUntilIntersectionLineSegment.set(addLine);
+        lengthenUntilIntersectionPoint.set(addLine.getB());
     }
 
 
-    // -------------------
-    public void kousaten_made_nobasi_keisan_fukumu_senbun_musi_new(Point a, Point b) {//ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する//他の折線と交差しないなら、Ten aを返す
+    public void lengthenUntilIntersectionCalculateDisregardIncludedLineSegment_new(Point a, Point b) {//Extend the vector ab (= s0) from point a to b, until it first intersects another fold line (ignoring the line segment contained in the straight line) // If it does not intersect another fold line, Ten a return
         LineSegment s0 = new LineSegment();
         s0.set(a, b);
-        LineSegment add_sen = new LineSegment();
-        add_sen.set(s0);
+        LineSegment addLine = new LineSegment();
+        addLine.set(s0);
         Point kousa_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
-        double kousa_ten_kyori = kousa_point.distance(add_sen.getA());
-        StraightLine tyoku1 = new StraightLine(add_sen.getA(), add_sen.getB());
+        double kousa_point_distance = kousa_point.distance(addLine.getA());
+        StraightLine straightLine = new StraightLine(addLine.getA(), addLine.getB());
         StraightLine.Intersection i_kousa_flg;
 
-        kousaten_made_nobasi_flg = StraightLine.Intersection.NONE_0;
-        kousaten_made_nobasi_orisen_fukumu_flg = 0;
+        lengthenUntilIntersection_flg = StraightLine.Intersection.NONE_0;
+        lengthenUntilIntersectionFoldLineIncluded_flg = 0;
         for (int i = 1; i <= ori_s.getTotal(); i++) {
-
-//System.out.println("000 20201129 col = "+ori_s.get(i).getcolor());  
-            if (ori_s.get(i).getColor().isFoldingLine()) {//System.out.println("  kousaten_made_nobasi_keisan_fukumu_senbun_musi_new 20201128");
-//0=この直線は与えられた線分と交差しない、
-//1=X型で交差する、
-//21=線分のa点でT型で交差する、
-//22=線分のb点でT型で交差する、
-//3=線分は直線に含まれる。
-                i_kousa_flg = tyoku1.lineSegment_intersect_reverse_detail(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-                //if(i_kousa_flg==3){kousaten_made_nobasi_orisen_fukumu_flg=3;}
+            if (ori_s.get(i).getColor().isFoldingLine()) {
+// 0 = This straight line does not intersect the given line segment,
+// 1 = X type intersects,
+// 21 = T-shaped intersection at point a of the line segment,
+// 22 = T-shaped intersection at point b of the line segment,
+// 3 = Line segments are included in the straight line.
+                i_kousa_flg = straightLine.lineSegment_intersect_reverse_detail(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+                //if(i_kousa_flg==3){lengthenUntilIntersectionFoldLineIncluded_flg=3;}
                 if ((i_kousa_flg == StraightLine.Intersection.INTERSECT_X_1 || i_kousa_flg == StraightLine.Intersection.INTERSECT_T_A_21) || i_kousa_flg == StraightLine.Intersection.INTERSECT_T_B_22) {
 
-                    kousa_point.set(OritaCalc.findIntersection(tyoku1, ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
+                    kousa_point.set(OritaCalc.findIntersection(straightLine, ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
 
-                    if (kousa_point.distance(add_sen.getA()) > 0.00001) {
+                    if (kousa_point.distance(addLine.getA()) > 0.00001) {
 
-                        if (kousa_point.distance(add_sen.getA()) < kousa_ten_kyori) {
-                            double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
+                        if (kousa_point.distance(addLine.getA()) < kousa_point_distance) {
+                            double d_kakudo = OritaCalc.angle(addLine.getA(), addLine.getB(), addLine.getA(), kousa_point);
 
                             if (d_kakudo < 1.0 || d_kakudo > 359.0) {
-                                kousa_ten_kyori = kousa_point.distance(add_sen.getA());
-                                add_sen.set(add_sen.getA(), kousa_point);
+                                kousa_point_distance = kousa_point.distance(addLine.getA());
+                                addLine.set(addLine.getA(), kousa_point);
 
-                                kousaten_made_nobasi_flg = i_kousa_flg;
-                                kousaten_made_nobasi_saisyono_lineSegment.set(ori_s.get(i));
-
+                                lengthenUntilIntersection_flg = i_kousa_flg;
+                                lengthenUntilIntersectionFirstLineSegment.set(ori_s.get(i));
                             }
-
                         }
-
                     }
-
                 }
             }
         }
-        //return add_sen.getb();
 
-        kousaten_made_nobasi_lineSegment.set(add_sen);//System.out.println("kousaten_made_nobasi_senbun.set 20201129 kousaten_made_nobasi_keisan_fukumu_senbun_musi_new");
-        kousaten_made_nobasi_point.set(add_sen.getB());
+        lengthenUntilIntersectionLineSegment.set(addLine);
+        lengthenUntilIntersectionPoint.set(addLine.getB());
     }
 
-    // -------------------
-    public StraightLine.Intersection get_kousaten_made_nobasi_flg_new(Point a, Point b) {//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-        //kousaten_made_nobasi_keisan_fukumu_senbun_musi_new(a,b);
-        return kousaten_made_nobasi_flg;
+    public StraightLine.Intersection getLengthenUntilIntersectionFlg_new(Point a, Point b) {// 0 = This straight line does not intersect the given line segment, 1 = X type intersects, 2 = T type intersects, 3 = Line segment is included in the straight line.
+        return lengthenUntilIntersection_flg;
     }
 
-
-    // -------------------
-    public StraightLine.Intersection get_kousaten_made_nobasi_flg(Point a, Point b) {//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-        kousaten_made_nobasi_crossing_included_lineSegment_disregard(a, b);
-        return kousaten_made_nobasi_flg;
+    public StraightLine.Intersection getLengthenUntilIntersectionFlg(Point a, Point b) {//0 = This straight line does not intersect a given line segment, 1 = X type intersects, 2 = T type intersects, 3 = Line segment is included in the straight line.
+        lengthenUntilIntersectionDisregardIncludedLineSegment(a, b);
+        return lengthenUntilIntersection_flg;
     }
 
-    // -------------------
-    public LineSegment get_kousaten_made_nobasi_senbun(Point a, Point b) {
-        kousaten_made_nobasi_crossing_included_lineSegment_disregard(a, b);
-        return kousaten_made_nobasi_lineSegment;
+    public LineSegment getLengthenUntilIntersectionLineSegment(Point a, Point b) {
+        lengthenUntilIntersectionDisregardIncludedLineSegment(a, b);
+        return lengthenUntilIntersectionLineSegment;
     }
 
-    // -------------------
-    public LineSegment get_kousaten_made_nobasi_senbun_new() {
-        //kousaten_made_nobasi_keisan_fukumu_senbun_musi_new(a,b);
-        return kousaten_made_nobasi_lineSegment;
+    public LineSegment getLengthenUntilIntersectionLineSegment_new() {
+        return lengthenUntilIntersectionLineSegment;
     }
 
-    // -------------------
-    public LineSegment get_kousaten_made_nobasi_saisyono_senbun(Point a, Point b) {
-        kousaten_made_nobasi_crossing_included_lineSegment_disregard(a, b);
-        return kousaten_made_nobasi_saisyono_lineSegment;
+    public LineSegment getLengthenUntilIntersectionFirstLineSegment(Point a, Point b) {
+        lengthenUntilIntersectionDisregardIncludedLineSegment(a, b);
+        return lengthenUntilIntersectionFirstLineSegment;
     }
 
-    // -------------------
-    public LineSegment get_kousaten_made_nobasi_saisyono_senbun_new() {
-        return kousaten_made_nobasi_saisyono_lineSegment;
+    public LineSegment getLengthenUntilIntersectionFirstLineSegment_new() {
+        return lengthenUntilIntersectionFirstLineSegment;
     }
 
-
-    // -------------------
-    public Point get_kousaten_made_nobasi_ten(Point a, Point b) {
-        kousaten_made_nobasi_crossing_included_lineSegment_disregard(a, b);
-        return kousaten_made_nobasi_point;
+    public Point getLengthenUntilIntersectionPoint(Point a, Point b) {
+        lengthenUntilIntersectionDisregardIncludedLineSegment(a, b);
+        return lengthenUntilIntersectionPoint;
     }
 
-    public Point get_kousaten_made_nobasi_ten_new() {
-        return kousaten_made_nobasi_point;
+    public Point getLengthenUntilIntersectionPoint_new() {
+        return lengthenUntilIntersectionPoint;
     }
-
-    //--------------------------------------------
-
-    //メモ
-    //icol=0 black
-    //icol=1 red
-    //icol=2 blue
-    //icol=3 cyan
-    //icol=4 orange
-    //icol=5 mazenta
-    //icol=6 green
-    //icol=7 yellow
-    //icol=8 new Color(210,0,255) //紫
 }

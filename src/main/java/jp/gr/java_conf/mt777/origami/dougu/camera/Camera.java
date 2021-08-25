@@ -1,13 +1,9 @@
 package jp.gr.java_conf.mt777.origami.dougu.camera;
 
-//import java.util.*;
-
 import jp.gr.java_conf.mt777.graphic2d.point.*;
 import jp.gr.java_conf.mt777.graphic2d.linesegment.*;
 
 public class Camera {//実際の座標と、表示座標の仲立ち
-
-    //int camera_id;//cameraの識別用。名前の変わりに使うだけ
 
     double camera_position_x, camera_position_y;
     double camera_angle;
@@ -22,8 +18,6 @@ public class Camera {//実際の座標と、表示座標の仲立ち
 
 
     public Camera() {//コンストラクタ
-
-        //camera_id=0;
         do2rad = 3.14159265 / 180.0;
         rad2do = 180.0 / 3.14159265;
         camera_position_x = 0.0;
@@ -174,22 +168,22 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         return display_position_y;
     }
 
-    public void set_camera_ichi(Point p) {
+    public void setCameraPosition(Point p) {
         setCameraPositionX(p.getX());
         setCameraPositionY(p.getY());
     }
 
-    public void set_hyouji_ichi(Point p) {
+    public void setDisplayPosition(Point p) {
         setDisplayPositionX(p.getX());
         setDisplayPositionY(p.getY());
     }
 
 
-    public Point get_camera_position() {
-        Point t_ichi = new Point();
-        t_ichi.setX(camera_position_x);
-        t_ichi.setY(camera_position_y);
-        return t_ichi;
+    public Point getCameraPosition() {
+        Point pointPosition = new Point();
+        pointPosition.setX(camera_position_x);
+        pointPosition.setY(camera_position_y);
+        return pointPosition;
     }
 
 
@@ -249,15 +243,15 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         return s_ob;
     }
 
-    public void hyouji_ichi_idou(Point tuika) {
+    public void displayPositionMove(Point tuika) {
         display_position_x = display_position_x + tuika.getX();
         display_position_y = display_position_y + tuika.getY();
     }
 
     //TV上の表示は変化しないようにして、TV上の座標Ten　P　に対応する、被写体の位置にcamera位置をあわせる。
     public void camera_ichi_sitei_from_TV(Point p) {
-        set_camera_ichi(TV2object(p));
-        set_hyouji_ichi(p);
+        setCameraPosition(TV2object(p));
+        setDisplayPosition(p);
     }
 
 
