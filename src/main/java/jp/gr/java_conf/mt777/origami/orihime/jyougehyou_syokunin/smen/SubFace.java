@@ -73,7 +73,7 @@ public class SubFace {//This class folds the development view and estimates the 
 
     public void Permutation_first() {
         if (getFaceIdCount() > 0) {
-            permutationGenerator.Permutation_first();
+            permutationGenerator.reset();
             Permutation_count = 1;
         }
     } //Return to the first permutation.
@@ -272,8 +272,6 @@ public class SubFace {//This class folds the development view and estimates the 
 
 
     }
-
-
     // ここは　class SubFace の中だよ。
 
 

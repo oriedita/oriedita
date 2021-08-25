@@ -25,3 +25,19 @@ After compiling and packaging the jar is placed in the `target` directory.
 ```bash
 java -jar ./target/orihime-3.060-SNAPSHOT.jar
 ```
+
+## Terminology
+
+| Class Name | Original Name | Description |
+|---|---|---|
+| Line | Bou | A line between two points in a PointSet
+| Face | Men | A collection of connected points in a PointSet
+| Point | Ten | A point as x and y coordinates
+| LineSegment | Senbun | A line consisting of two points
+| Polygon | Takakukei | A polygon consisting of multiple points
+| Grid | Kousi | The background grid
+| StraightLine | Tyokusen | A line with a,b,c such that a * x + b * y + c = 0
+| Circle | En | A circle with x and y for position and r for radius.
+| SubFace | Smen | Stack of faces in the folded view
+| Drawing_Worker | Egaki_Syokunin | Responsible for drawing and handling user input on the canvas.
+| HierarchyList_Worker | Jyougehyou_Syokunin | Responsible for calculating the hierarchy of folded models.

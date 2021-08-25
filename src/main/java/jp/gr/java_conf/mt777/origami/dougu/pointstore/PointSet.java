@@ -1,62 +1,60 @@
 package jp.gr.java_conf.mt777.origami.dougu.pointstore;
 
-import jp.gr.java_conf.mt777.origami.orihime.LineType;
-import jp.gr.java_conf.mt777.zukei2d.ten.*;
-import jp.gr.java_conf.mt777.zukei2d.senbun.*;
-import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
-import jp.gr.java_conf.mt777.zukei2d.takakukei.*;
-import jp.gr.java_conf.mt777.origami.dougu.bou.*;
-import jp.gr.java_conf.mt777.origami.dougu.men.*;
-import jp.gr.java_conf.mt777.kiroku.memo.*;
+import jp.gr.java_conf.mt777.graphic2d.linesegment.LineSegment;
+import jp.gr.java_conf.mt777.graphic2d.oritacalc.OritaCalc;
+import jp.gr.java_conf.mt777.graphic2d.point.Point;
+import jp.gr.java_conf.mt777.graphic2d.point.Point_p;
+import jp.gr.java_conf.mt777.graphic2d.polygon.Polygon;
+import jp.gr.java_conf.mt777.kiroku.memo.Memo;
+import jp.gr.java_conf.mt777.origami.dougu.bou.Line;
+import jp.gr.java_conf.mt777.origami.dougu.men.Face;
+import jp.gr.java_conf.mt777.origami.orihime.LineColor;
 
-import java.util.*;
-
-// -------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class PointSet {
 
     int numFaces_temp;
 
-    int pointsTotal;               //実際に使う点の総数
-    int sticksTotal;               //実際に使う棒の総数
-    int facesTotal;               //実際に使う面の総数
-    Point_p[] points;//点のインスタンス化
-    Stick[] sticks;//棒のインスタンス化
-    int[] Stick_moti_FaceId_min;
-    int[] Stick_moti_FaceId_max;
+    int numPoints;               //Total number of points actually used
+    int numLines;               //Total number of lines actually used
+    int numFaces;               //Total number of faces actually used
 
-    Face[] faces;//Face instantiation
+    Point_p[] points;//Instantiation of points
+    Line[] lines;//Instantiation of lines
+    int[] lineInFaceBorder_min;
+    int[] lineInFaceBorder_max;
 
-    double[] Stick_x_max;
-    double[] Stick_x_min;
-    double[] Stick_y_max;
-    double[] Stick_y_min;
+    Face[] faces; //Face instantiation
 
-    double[] Surface_x_max;
-    double[] Surface_x_min;
-    double[] Surface_y_max;
-    double[] Surface_y_min;
+    double[] line_x_max;
+    double[] line_x_min;
+    double[] line_y_max;
+    double[] line_y_min;
 
-    ArrayList<Integer>[] point_linking;//t_renketu[i][j]はt[i]に連決しているPointの番号。t[0]には、Temの数を格納。
+    double[] face_x_max;
+    double[] face_x_min;
+    double[] face_y_max;
+    double[] face_y_min;
 
-    int[][] Face_adjacent;//Face_adjacent [i] [j] is the Stick number at the boundary between m [i] and m [j]. Stores 0 when m [i] and m [j] are not adjacent.
+    ArrayList<Integer>[] point_linking;//point_linking [i] [j] is the number of points connected to t [i]. The number of Tem is stored in t [0].
+
+    int[][] face_adjacent;//face_adjacent [i] [j] is the Line number at the boundary between m [i] and m [j]. Stores 0 when m [i] and m [j] are not adjacent.
 
     public PointSet() {
         reset();
-    } //コンストラクタ
-
-    //---------------------------------------
-    public void reset() {
-        pointsTotal = 0;
-        sticksTotal = 0;
-        facesTotal = 0;
     }
 
     //---------------------------------------
-    public void configure(int numPoints, int numSticks, int numFaces) { //Make sure it passes at the beginning and after a reset.
+    public void reset() {
+        numPoints = 0;
+        numLines = 0;
+        numFaces = 0;
+    }
 
+    //---------------------------------------
+    public void configure(int numPoints, int numLines, int numFaces) { //Make sure it passes at the beginning and after a reset.
         numFaces_temp = numFaces;
 
         points = new Point_p[numPoints + 1];
@@ -73,48 +71,36 @@ public class PointSet {
             setPointLinking(i, 0, 0);
         }
 
-        sticks = new Stick[numSticks + 1];
-        int[] BMmin = new int[numSticks + 1];
-        int[] BMmax = new int[numSticks + 1];
-        Stick_moti_FaceId_min = BMmin;
-        Stick_moti_FaceId_max = BMmax;
-        for (int i = 0; i <= numSticks; i++) {
-            sticks[i] = new Stick();
-            Stick_moti_FaceId_min[i] = 0;
-            Stick_moti_FaceId_max[i] = 0;
+        lines = new Line[numLines + 1];
+        lineInFaceBorder_min = new int[numLines + 1];
+        lineInFaceBorder_max = new int[numLines + 1];
+        for (int i = 0; i <= numLines; i++) {
+            lines[i] = new Line();
+            lineInFaceBorder_min[i] = 0;
+            lineInFaceBorder_max[i] = 0;
         }
 
         faces = new Face[numFaces + 1];
 
-        Face_adjacent = new int[numFaces + 1][numFaces + 1];
+        face_adjacent = new int[numFaces + 1][numFaces + 1];
 
         for (int i = 0; i <= numFaces; i++) {
             faces[i] = new Face();
             for (int j = 0; j <= numFaces; j++) {
-                Face_adjacent[i][j] = 0;
+                face_adjacent[i][j] = 0;
             }
 
         }
 
-        double[] Bxmax = new double[numSticks + 1];
-        double[] Bxmin = new double[numSticks + 1];
-        double[] Bymax = new double[numSticks + 1];
-        double[] Bymin = new double[numSticks + 1];
+        line_x_max = new double[numLines + 1];
+        line_x_min = new double[numLines + 1];
+        line_y_max = new double[numLines + 1];
+        line_y_min = new double[numLines + 1];
 
-        double[] Mxmax = new double[numFaces + 1];
-        double[] Mxmin = new double[numFaces + 1];
-        double[] Mymax = new double[numFaces + 1];
-        double[] Mymin = new double[numFaces + 1];
-
-        Stick_x_max = Bxmax;
-        Stick_x_min = Bxmin;
-        Stick_y_max = Bymax;
-        Stick_y_min = Bymin;
-
-        Surface_x_max = Mxmax;
-        Surface_x_min = Mxmin;
-        Surface_y_max = Mymax;
-        Surface_y_min = Mymin;
+        face_x_max = new double[numFaces + 1];
+        face_x_min = new double[numFaces + 1];
+        face_y_max = new double[numFaces + 1];
+        face_y_min = new double[numFaces + 1];
     }
 
     //---------------
@@ -134,65 +120,65 @@ public class PointSet {
     //------------------------------
     private double getAverage_x() {
         double x = 0.0;
-        for (int i = 1; i <= pointsTotal; i++) {
+        for (int i = 1; i <= numPoints; i++) {
             x = x + points[i].getX();
         }
-        return x / ((double) pointsTotal);
+        return x / ((double) numPoints);
     }
 
     private double getAverage_y() {
         double y = 0.0;
-        for (int i = 1; i <= pointsTotal; i++) {
+        for (int i = 1; i <= numPoints; i++) {
             y = y + points[i].getY();
         }
-        return y / ((double) pointsTotal);
+        return y / ((double) numPoints);
     }
 
     //
     public void turnOver() {//Turn it over to the left and right around the position of the center of gravity.
         double xh;
-        LineType icol;
+        LineColor icol;
         xh = getAverage_x();
-        for (int i = 1; i <= pointsTotal; i++) {
+        for (int i = 1; i <= numPoints; i++) {
             points[i].setX(2.0 * xh - points[i].getX());
         }
-        for (int i = 1; i <= sticksTotal; i++) {
-            icol = sticks[i].getColor();
-            if (icol == LineType.RED_1) {
-                sticks[i].setColor(LineType.BLUE_2);
+        for (int i = 1; i <= numLines; i++) {
+            icol = lines[i].getColor();
+            if (icol == LineColor.RED_1) {
+                lines[i].setColor(LineColor.BLUE_2);
             }
-            if (icol == LineType.BLUE_2) {
-                sticks[i].setColor(LineType.RED_1);
+            if (icol == LineColor.BLUE_2) {
+                lines[i].setColor(LineColor.RED_1);
             }
         }
 
     }
 
     public void parallelMove(double x, double y) {
-        for (int i = 0; i <= pointsTotal; i++) {
+        for (int i = 0; i <= numPoints; i++) {
             points[i].parallel_move(x, y);
         }
     }
 
     public void set(PointSet ts) {
-        pointsTotal = ts.getPointsTotal();
-        sticksTotal = ts.getSticksTotal();
-        facesTotal = ts.getFacesTotal();
-        for (int i = 0; i <= pointsTotal; i++) {
+        numPoints = ts.getNumPoints();
+        numLines = ts.getNumLines();
+        numFaces = ts.getNumFaces();
+        for (int i = 0; i <= numPoints; i++) {
             points[i].set(ts.getPoint(i));                                                         //  <<<-------
             for (int j = 1; j <= ts.getPointLinking(i, 0); j++) {
                 setPointLinking(i, j, ts.getPointLinking(i, j));
             }
         }
-        for (int i = 0; i <= sticksTotal; i++) {
-            sticks[i].set(ts.getStick(i));
-            Stick_moti_FaceId_min[i] = ts.get_Stick_moti_Menid_min(i);
-            Stick_moti_FaceId_max[i] = ts.get_Stick_moti_Menid_max(i);
+        for (int i = 0; i <= numLines; i++) {
+            lines[i].set(ts.getLine(i));
+            lineInFaceBorder_min[i] = ts.get_lineInFaceBorder_min(i);
+            lineInFaceBorder_max[i] = ts.get_lineInFaceBorder_max(i);
         }
-        for (int i = 0; i <= facesTotal; i++) {
+        for (int i = 0; i <= numFaces; i++) {
             faces[i] = new Face(ts.getFace(i));
-            for (int j = 0; j <= facesTotal; j++) {
-                Face_adjacent[i][j] = ts.getFaceAdjecent(i, j);
+            for (int j = 0; j <= numFaces; j++) {
+                face_adjacent[i][j] = ts.getFaceAdjecent(i, j);
             }
         }
     }
@@ -202,92 +188,91 @@ public class PointSet {
     }                                               //  <<<-------
 
     private int getFaceAdjecent(int i, int j) {
-        return Face_adjacent[i][j];
+        return face_adjacent[i][j];
     }
 
     //
-    private int get_Stick_moti_Menid_min(int i) {
-        return Stick_moti_FaceId_min[i];
+    private int get_lineInFaceBorder_min(int i) {
+        return lineInFaceBorder_min[i];
     }
 
     //
-    private int get_Stick_moti_Menid_max(int i) {
-        return Stick_moti_FaceId_max[i];
+    private int get_lineInFaceBorder_max(int i) {
+        return lineInFaceBorder_max[i];
     }
 
     //
-    private double get_Stick_x_max(int i) {
-        return Stick_x_max[i];
+    private double get_line_x_max(int i) {
+        return line_x_max[i];
     }
 
     //
-    private double get_Stick_x_min(int i) {
-        return Stick_x_min[i];
+    private double get_line_x_min(int i) {
+        return line_x_min[i];
     }
 
     //
-    private double get_Stick_y_max(int i) {
-        return Stick_y_max[i];
+    private double get_line_y_max(int i) {
+        return line_y_max[i];
     }
 
     //
-    private double get_Stick_y_min(int i) {
-        return Stick_y_min[i];
+    private double get_line_y_min(int i) {
+        return line_y_min[i];
     }
 
     //
-    private double get_Surface_x_max(int i) {
-        return Surface_x_max[i];
+    private double get_face_x_max(int i) {
+        return face_x_max[i];
     }
 
     //
-    private double get_Surface_x_min(int i) {
-        return Surface_x_min[i];
+    private double get_face_x_min(int i) {
+        return face_x_min[i];
     }
 
     //
-    private double get_Surface_y_max(int i) {
-        return Surface_y_max[i];
+    private double get_face_y_max(int i) {
+        return face_y_max[i];
     }
 
     //
-    private double get_Surface_y_min(int i) {
-        return Surface_y_min[i];
+    private double get_face_y_min(int i) {
+        return face_y_min[i];
     }
 
     //Determine if the point is inside a face. 0 is not inside, 1 is on the border, 2 is inside
-    public int simple_inside(Point p, int n) {      //0=外部、　1=境界、　2=内部
-        //System.out.println("2016");
-        if (p.getX() + 0.5 < Surface_x_min[n]) {
+    public int simple_inside(Point p, int n) {    // 0 = external, 1 = boundary, 2 = internal
+        if (p.getX() + 0.5 < face_x_min[n]) {
             return 0;
         }
-        if (p.getX() - 0.5 > Surface_x_max[n]) {
+        if (p.getX() - 0.5 > face_x_max[n]) {
             return 0;
         }
-        if (p.getY() + 0.5 < Surface_y_min[n]) {
+        if (p.getY() + 0.5 < face_y_min[n]) {
             return 0;
         }
-        if (p.getY() - 0.5 > Surface_y_max[n]) {
+        if (p.getY() - 0.5 > face_y_max[n]) {
             return 0;
         }
         return inside(p, faces[n]);
     }
 
-    //点が面の内部にあるかどうかを判定する。
+    //Determine if the point is inside a face.
     public int inside(Point p, int n) {      //0=外部、　1=境界、　2=内部
         return inside(p, faces[n]);
     }
 
-    //点が面の内部にあるかどうかを判定する。0なら内部にない、1なら境界線上、2なら内部
-    private int inside(Point p, Face mn) {      //0=外部、　1=境界、　2=内部
-        Polygon tk;
-        tk = makePolygon(mn);
-        return tk.inside(p);
+    //Determine if the point is inside a face. 0 is not inside, 1 is on the border, 2 is inside
+    private int inside(Point point, Face face) {      //0=外部、　1=境界、　2=内部
+        Polygon polygon;
+        polygon = makePolygon(face);
+        return polygon.inside(point);
     }
 
     //Determine which surface the point is inside. If it is 0, it is not inside any surface, if it is negative, it is on the boundary line, and if it is a positive number, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
     public int inside(Point p) {
-        for (int i = 1; i <= getFacesTotal(); i++) {
+        for (int i = 1; i <= getNumFaces(); i++) {
             if (inside(p, i) == 2) {
                 return i;
             }
@@ -299,34 +284,34 @@ public class PointSet {
     }
 
 
-    //Men を多角形にする
-    private Polygon makePolygon(Face mn) {
-        Polygon tk = new Polygon(mn.getPointsCount());
-        tk.setVertexCount(mn.getPointsCount());
-        for (int i = 0; i <= mn.getPointsCount(); i++) {
-            tk.set(i, points[mn.getPointId(i)]);
+    //Make Face polygonal
+    private Polygon makePolygon(Face face) {
+        Polygon polygon = new Polygon(face.getPointsCount());
+        polygon.setVertexCount(face.getPointsCount());
+        for (int i = 0; i <= face.getPointsCount(); i++) {
+            polygon.set(i, points[face.getPointId(i)]);
         }
-        return tk;
+        return polygon;
     }
 
     // Even a part of the line segment s0 is inside the surface of the convex polygon (the boundary line is not regarded as the inside)
     // Returns 1 if it exists, 0 otherwise. If the surface is a concave polygon, the result will be strange, so do not use it.
     public boolean simple_convex_inside(int ib, int im) {
         //バグがあるようだったが，多分取り除けた
-        if (Stick_x_max[ib] + 0.5 < Surface_x_min[im]) {
+        if (line_x_max[ib] + 0.5 < face_x_min[im]) {
             return false;
         }
-        if (Stick_x_min[ib] - 0.5 > Surface_x_max[im]) {
+        if (line_x_min[ib] - 0.5 > face_x_max[im]) {
             return false;
         }
-        if (Stick_y_max[ib] + 0.5 < Surface_y_min[im]) {
+        if (line_y_max[ib] + 0.5 < face_y_min[im]) {
             return false;
         }
-        if (Stick_y_min[ib] - 0.5 > Surface_y_max[im]) {
+        if (line_y_min[ib] - 0.5 > face_y_max[im]) {
             return false;
         }
 
-        return convex_inside(new LineSegment(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]), faces[im]);
+        return convex_inside(new LineSegment(points[lines[ib].getBegin()], points[lines[ib].getEnd()]), faces[im]);
     }
 
     private boolean convex_inside(LineSegment s0, Face mn) {
@@ -336,16 +321,16 @@ public class PointSet {
     }
 
     private boolean convex_inside(int ib, int im) {
-        return convex_inside(new LineSegment(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]), faces[im]);
+        return convex_inside(new LineSegment(points[lines[ib].getBegin()], points[lines[ib].getEnd()]), faces[im]);
     }
 
     public boolean convex_inside(double d, int ib, int im) {
-        LineSegment sn = new LineSegment(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]);
+        LineSegment sn = new LineSegment(points[lines[ib].getBegin()], points[lines[ib].getEnd()]);
         return convex_inside(OritaCalc.moveParallel(sn, d), faces[im]);
     }
 
     private boolean simple_convex_inside(double d, int ib, int im) {
-        LineSegment sn = new LineSegment(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]);
+        LineSegment sn = new LineSegment(points[lines[ib].getBegin()], points[lines[ib].getEnd()]);
         LineSegment snm = OritaCalc.moveParallel(sn, d);
         double s_x_max = snm.getAX();
         double s_x_min = snm.getAX();
@@ -364,16 +349,16 @@ public class PointSet {
             s_y_min = snm.getBY();
         }
 
-        if (s_x_max + 0.5 < Surface_x_min[im]) {
+        if (s_x_max + 0.5 < face_x_min[im]) {
             return false;
         }
-        if (s_x_min - 0.5 > Surface_x_max[im]) {
+        if (s_x_min - 0.5 > face_x_max[im]) {
             return false;
         }
-        if (s_y_max + 0.5 < Surface_y_min[im]) {
+        if (s_y_max + 0.5 < face_y_min[im]) {
             return false;
         }
-        if (s_y_min - 0.5 > Surface_y_max[im]) {
+        if (s_y_min - 0.5 > face_y_max[im]) {
             return false;
         }
 
@@ -381,15 +366,15 @@ public class PointSet {
     }
 
 
-    //棒を線分にする
-    private LineSegment stickToLineSegment(Stick stick) {
-        return new LineSegment(points[stick.getBegin()], points[stick.getEnd()]);
+    //Make a line a line segment
+    private LineSegment lineToLineSegment(Line line) {
+        return new LineSegment(points[line.getBegin()], points[line.getEnd()]);
     }
 
-    //Returns 1 if two Sticks are parallel and partially or wholly overlap, otherwise 0. If one point overlaps, 0 is returned.
+    //Returns 1 if two lines are parallel and partially or wholly overlap, otherwise 0. If one point overlaps, 0 is returned.
     public boolean parallel_overlap(int ib1, int ib2) {
-        IntersectionState skh;
-        skh = OritaCalc.line_intersect_decide(stickToLineSegment(sticks[ib1]), stickToLineSegment(sticks[ib2]));
+        LineSegment.Intersection skh;
+        skh = OritaCalc.line_intersect_decide(lineToLineSegment(lines[ib1]), lineToLineSegment(lines[ib2]));
 
         return skh.isSegmentOverlapping();
     }
@@ -416,26 +401,25 @@ public class PointSet {
     private double calculateArea(Face mn) {
         Polygon tk;
         tk = makePolygon(mn);
-        return tk.area_calculate();
+        return tk.calculateArea();
     }
 
-    public int getPointsTotal() {
-        return pointsTotal;
-    }   //点の総数を得る
+    public int getNumPoints() {
+        return numPoints;
+    }   //Get the total number of points
 
-    public int getSticksTotal() {
-        return sticksTotal;
+    public int getNumLines() {
+        return numLines;
     }   //棒の総数を得る
 
-    public int getFacesTotal() {
-        return facesTotal;
+    public int getNumFaces() {
+        return numFaces;
     }   //面の総数を得る
 
     public int getPointId(int i, int j) {
         return faces[i].getPointId(j);
     }  // void setTensuu(int i){Tensuu=i;}
 
-    // void setBousuu(int i){Bousuu=i;}
     public double getPointX(int i) {
         return points[i].getX();
     }
@@ -448,21 +432,21 @@ public class PointSet {
         return points[i];
     }   //点を得る       <<<------------tは、スーパークラスのTenのサブクラスTen_Pクラスのオブジェクト。スーパークラスの変数にサブクラスのオブジェクトを代入可能なので、このまま使う。
 
-    private Stick getStick(int i) {
-        return sticks[i];
+    private Line getLine(int i) {
+        return lines[i];
     }   //棒を得る
 
-    public Point getBeginPointFromStickId(int i) {
+    public Point getBeginPointFromLineId(int i) {
         return points[getBegin(i)];
     }    //棒のidから前点を得る              <<<------------　　同上
 
-    public Point getEndPointFromStickId(int i) {
+    public Point getEndPointFromLineId(int i) {
         return points[getEnd(i)];
     }    //棒のidから後点を得る              <<<------------　　同上
 
 
-    public LineSegment getLineSegmentFromStickId(int i) {
-        return stickToLineSegment(getStick(i));
+    public LineSegment getLineSegmentFromLineId(int i) {
+        return lineToLineSegment(getLine(i));
     }    //棒のidからSenbunを得る
 
     private Face getFace(int i) {
@@ -470,27 +454,27 @@ public class PointSet {
     }   //面を得る
 
     public int getBegin(int i) {
-        return sticks[i].getBegin();
+        return lines[i].getBegin();
     } //棒のidから前点のidを得る
 
     public int getEnd(int i) {
-        return sticks[i].getEnd();
+        return lines[i].getEnd();
     } //棒のidから後点のidを得る
 
     public double getBeginX(int i) {
-        return points[sticks[i].getBegin()].getX();
+        return points[lines[i].getBegin()].getX();
     }
 
     public double getBeginY(int i) {
-        return points[sticks[i].getBegin()].getY();
+        return points[lines[i].getBegin()].getY();
     }
 
     public double getEndX(int i) {
-        return points[sticks[i].getEnd()].getX();
+        return points[lines[i].getEnd()].getX();
     }
 
     public double getEndY(int i) {
-        return points[sticks[i].getEnd()].getY();
+        return points[lines[i].getEnd()].getY();
     }
 
     public int getPointsCount(int i) {
@@ -506,40 +490,40 @@ public class PointSet {
     }
 
     public void addPoint(double x, double y) {
-        pointsTotal = pointsTotal + 1;
-        points[pointsTotal].set(x, y);
+        numPoints = numPoints + 1;
+        points[numPoints].set(x, y);
     }   //点を加える
 
-    public void addStick(int i, int j, LineType icol) {
-        sticksTotal = sticksTotal + 1;
-        sticks[sticksTotal].set(i, j, icol);
+    public void addLine(int i, int j, LineColor icol) {
+        numLines = numLines + 1;
+        lines[numLines].set(i, j, icol);
     }   //棒を加える
 
     //i番目の棒の色を入出力する
-    private void setColor(int i, LineType icol) {
-        sticks[i].setColor(icol);
+    private void setColor(int i, LineColor icol) {
+        lines[i].setColor(icol);
     }
 
-    public LineType getColor(int i) {
-        return sticks[i].getColor();
+    public LineColor getColor(int i) {
+        return lines[i].getColor();
     }
 
     private void t_renketu_sakusei() {
-        for (int k = 1; k <= sticksTotal; k++) {
-            setPointLinking(sticks[k].getBegin(), 0, getPointLinking(sticks[k].getBegin(), 0) + 1);
-            setPointLinking(sticks[k].getBegin(), getPointLinking(sticks[k].getBegin(), 0), sticks[k].getEnd());
-            setPointLinking(sticks[k].getEnd(), 0, getPointLinking(sticks[k].getEnd(), 0) + 1);
-            setPointLinking(sticks[k].getEnd(), getPointLinking(sticks[k].getEnd(), 0), sticks[k].getBegin());
+        for (int k = 1; k <= numLines; k++) {
+            setPointLinking(lines[k].getBegin(), 0, getPointLinking(lines[k].getBegin(), 0) + 1);
+            setPointLinking(lines[k].getBegin(), getPointLinking(lines[k].getBegin(), 0), lines[k].getEnd());
+            setPointLinking(lines[k].getEnd(), 0, getPointLinking(lines[k].getEnd(), 0) + 1);
+            setPointLinking(lines[k].getEnd(), getPointLinking(lines[k].getEnd(), 0), lines[k].getBegin());
         }
     }
 
     //点iと点jが棒で連結していれば1、していなければ0を返す。
-    private boolean renketu_hantei(int i, int j) {
-        for (int k = 1; k <= sticksTotal; k++) {
+    private boolean renketu_decision(int i, int j) {
+        for (int k = 1; k <= numLines; k++) {
             if (
-                    ((sticks[k].getBegin() == i) && (sticks[k].getEnd() == j))
+                    ((lines[k].getBegin() == i) && (lines[k].getEnd() == j))
                             ||
-                            ((sticks[k].getBegin() == j) && (sticks[k].getEnd() == i))
+                            ((lines[k].getBegin() == j) && (lines[k].getEnd() == i))
             ) {
                 return true;
             }
@@ -552,14 +536,15 @@ public class PointSet {
         int n = 0;
         double angle = 876.0;   //Keep angle in a large number
 
-        int iflg = 0;
+        boolean iflg = false;
         for (int k = 1; k <= getPointLinking(i, 0); k++) {
             if (getPointLinking(i, k) == j) {
-                iflg = 1;
+                iflg = true;
+                break;
             }
         }
 
-        if (iflg == 0) {
+        if (!iflg) {
             return 0;
         }//点iと点jが連結していない時は0を返す
 
@@ -579,7 +564,6 @@ public class PointSet {
 
     private Face Face_request(int i, int j) {//Find the surface by following the bar on the right side for the first time from the i-th point and the j-th point.
         Face tempFace = new Face();
-        //tempFace.reset();
         tempFace.addPointId(i);
         tempFace.addPointId(j);
         int nextT;
@@ -601,16 +585,13 @@ public class PointSet {
     public void FaceOccurrence() {
         int flag1;
         Face tempFace;
-        facesTotal = 0;
+        numFaces = 0;
         t_renketu_sakusei();
 
-        for (int i = 1; i <= sticksTotal; i++) {
-            //System.out.print("面発生　＝　"+i+"    ");System.out.println(Mensuu);
-
-            //
-            tempFace = Face_request(sticks[i].getBegin(), sticks[i].getEnd());
+        for (int i = 1; i <= numLines; i++) {
+            tempFace = Face_request(lines[i].getBegin(), lines[i].getEnd());
             flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
-            for (int j = 1; j <= facesTotal; j++) {
+            for (int j = 1; j <= numFaces; j++) {
                 if (equals(tempFace, faces[j])) {
                     flag1 = 1;
                     break;
@@ -623,9 +604,9 @@ public class PointSet {
             }
             //
 
-            tempFace = Face_request(sticks[i].getEnd(), sticks[i].getBegin());
+            tempFace = Face_request(lines[i].getEnd(), lines[i].getBegin());
             flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
-            for (int j = 1; j <= facesTotal; j++) {
+            for (int j = 1; j <= numFaces; j++) {
                 if (equals(tempFace, faces[j])) {
                     flag1 = 1;
                     break;
@@ -633,69 +614,66 @@ public class PointSet {
             }
 
             if (((flag1 == 0) && (tempFace.getPointsCount() != 0)) && (calculateArea(tempFace) > 0.0)) {
-                //System.out.println("面発生ループ内　003");
                 addFace(tempFace);
-                //System.out.println("面発生ループ内　004");
             }
         }
 
         System.out.print("全面数　＝　");
-        System.out.println(facesTotal);
-        Face_adjecent_create();
+        System.out.println(numFaces);
+        Face_adjacent_create();
 
-        //Bouの両側の面の登録
-        for (int ib = 1; ib <= sticksTotal; ib++) {
-
-            Stick_moti_FaceId_min[ib] = Stick_moti_Menid_min_search(ib);
-            Stick_moti_FaceId_max[ib] = Stick_moti_Menid_max_search(ib);
+        //Registration of both sides of line
+        for (int ib = 1; ib <= numLines; ib++) {
+            lineInFaceBorder_min[ib] = lineinFaceBorder_min_search(ib);
+            lineInFaceBorder_max[ib] = lineInFaceBorder_max_search(ib);
         }
     }
 
     //BouやMenの座標の最大値、最小値を求める。kantan_totu_naibu関数にのみ用いる。kantan_totu_naibu関数を使うなら折り畳み推定毎にやる必要あり。
-    public void BouMenMaxMinZahyou() {
-        //Bouの座標の最大最小を求める（これはここでやるより、Bouが加えられた直後にやるほうがよいかも知れない。）
-        for (int ib = 1; ib <= sticksTotal; ib++) {
+    public void LineFaceMaxMinCoordinate() {
+        //Find the maximum and minimum coordinates of Line (this may be better done immediately after Line is added than done here)
+        for (int ib = 1; ib <= numLines; ib++) {
 
-            Stick_x_max[ib] = points[sticks[ib].getBegin()].getX();
-            Stick_x_min[ib] = points[sticks[ib].getBegin()].getX();
-            Stick_y_max[ib] = points[sticks[ib].getBegin()].getY();
-            Stick_y_min[ib] = points[sticks[ib].getBegin()].getY();
+            line_x_max[ib] = points[lines[ib].getBegin()].getX();
+            line_x_min[ib] = points[lines[ib].getBegin()].getX();
+            line_y_max[ib] = points[lines[ib].getBegin()].getY();
+            line_y_min[ib] = points[lines[ib].getBegin()].getY();
 
-            if (Stick_x_max[ib] < points[sticks[ib].getEnd()].getX()) {
-                Stick_x_max[ib] = points[sticks[ib].getEnd()].getX();
+            if (line_x_max[ib] < points[lines[ib].getEnd()].getX()) {
+                line_x_max[ib] = points[lines[ib].getEnd()].getX();
             }
-            if (Stick_x_min[ib] > points[sticks[ib].getEnd()].getX()) {
-                Stick_x_min[ib] = points[sticks[ib].getEnd()].getX();
+            if (line_x_min[ib] > points[lines[ib].getEnd()].getX()) {
+                line_x_min[ib] = points[lines[ib].getEnd()].getX();
             }
-            if (Stick_y_max[ib] < points[sticks[ib].getEnd()].getY()) {
-                Stick_y_max[ib] = points[sticks[ib].getEnd()].getY();
+            if (line_y_max[ib] < points[lines[ib].getEnd()].getY()) {
+                line_y_max[ib] = points[lines[ib].getEnd()].getY();
             }
-            if (Stick_y_min[ib] > points[sticks[ib].getEnd()].getY()) {
-                Stick_y_min[ib] = points[sticks[ib].getEnd()].getY();
+            if (line_y_min[ib] > points[lines[ib].getEnd()].getY()) {
+                line_y_min[ib] = points[lines[ib].getEnd()].getY();
             }
-            MenMaxMinZahyou();
+            faceMaxMinCoordinate();
         }
     }
 
-    private void MenMaxMinZahyou() {
-        //Menの座標の最大最小を求める
-        for (int im = 1; im <= facesTotal; im++) {
-            Surface_x_max[im] = points[faces[im].getPointId(1)].getX();
-            Surface_x_min[im] = points[faces[im].getPointId(1)].getX();
-            Surface_y_max[im] = points[faces[im].getPointId(1)].getY();
-            Surface_y_min[im] = points[faces[im].getPointId(1)].getY();
-            for (int i = 2; i <= faces[im].getPointsCount(); i++) {
-                if (Surface_x_max[im] < points[faces[im].getPointId(i)].getX()) {
-                    Surface_x_max[im] = points[faces[im].getPointId(i)].getX();
+    private void faceMaxMinCoordinate() {
+        //Find the maximum and minimum of Face's coordinates
+        for (int faceId = 1; faceId <= numFaces; faceId++) {
+            face_x_max[faceId] = points[faces[faceId].getPointId(1)].getX();
+            face_x_min[faceId] = points[faces[faceId].getPointId(1)].getX();
+            face_y_max[faceId] = points[faces[faceId].getPointId(1)].getY();
+            face_y_min[faceId] = points[faces[faceId].getPointId(1)].getY();
+            for (int i = 2; i <= faces[faceId].getPointsCount(); i++) {
+                if (face_x_max[faceId] < points[faces[faceId].getPointId(i)].getX()) {
+                    face_x_max[faceId] = points[faces[faceId].getPointId(i)].getX();
                 }
-                if (Surface_x_min[im] > points[faces[im].getPointId(i)].getX()) {
-                    Surface_x_min[im] = points[faces[im].getPointId(i)].getX();
+                if (face_x_min[faceId] > points[faces[faceId].getPointId(i)].getX()) {
+                    face_x_min[faceId] = points[faces[faceId].getPointId(i)].getX();
                 }
-                if (Surface_y_max[im] < points[faces[im].getPointId(i)].getY()) {
-                    Surface_y_max[im] = points[faces[im].getPointId(i)].getY();
+                if (face_y_max[faceId] < points[faces[faceId].getPointId(i)].getY()) {
+                    face_y_max[faceId] = points[faces[faceId].getPointId(i)].getY();
                 }
-                if (Surface_y_min[im] > points[faces[im].getPointId(i)].getY()) {
-                    Surface_y_min[im] = points[faces[im].getPointId(i)].getY();
+                if (face_y_min[faceId] > points[faces[faceId].getPointId(i)].getY()) {
+                    face_y_min[faceId] = points[faces[faceId].getPointId(i)].getY();
                 }
             }
         }
@@ -731,21 +709,21 @@ public class PointSet {
 
 
     //--------------
-    //棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
-    private int Stick_moti_Menid_min_search(int ib) {
-        for (int im = 1; im <= facesTotal; im++) {
-            if (Stick_moti_determine(im, ib)) {
-                return im;
+    //Returns the faceId with the smaller faceId of the faces containing the bar lineId as the boundary (there are up to two faces). Returns 0 if there is no face containing the bar as the boundary
+    private int lineinFaceBorder_min_search(int lineId) {
+        for (int faceId = 1; faceId <= numFaces; faceId++) {
+            if (lineInFaceBorder(faceId, lineId)) {
+                return faceId;
             }
         }
         return 0;
     }
 
-    //棒ibを境界として含む面(最大で2面ある)のうちでMenidの大きいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
-    private int Stick_moti_Menid_max_search(int ib) {
-        for (int im = facesTotal; im >= 1; im--) {
-            if (Stick_moti_determine(im, ib)) {
-                return im;
+    //Returns the faceId with the larger faceId among the faces containing the line lineId as the boundary (there are two faces at the maximum). Returns 0 if there is no face containing the bar as the boundary
+    private int lineInFaceBorder_max_search(int lineId) {
+        for (int faceId = numFaces; faceId >= 1; faceId--) {
+            if (lineInFaceBorder(faceId, lineId)) {
+                return faceId;
             }
         }
         return 0;
@@ -753,19 +731,18 @@ public class PointSet {
 
     //---------------
 
-    //Boundary of rods Boundary surface (two sides in yellow) Here, Menid of the proliferating branch of Menid was made.
-    public int Stick_moti_Menid_min_motome(int ib) {
-        return Stick_moti_FaceId_min[ib];
+    //Boundary of lines Boundary surface (two sides in yellow) Here, faceId of the proliferating branch of faceId was made.
+    public int lineInFaceBorder_min_lookup(int lineId) {
+        return lineInFaceBorder_min[lineId];
     }
 
-    //Returns the Menid with the larger Menid of the faces containing the bar ib as the boundary (there are up to two faces). Returns 0 if there is no face containing the bar as the boundary
-    public int Stick_moti_Menid_max_motome(int ib) {
-        return Stick_moti_FaceId_max[ib];
+    //Returns the faceId with the larger faceId of the faces containing the bar lineId as the boundary (there are up to two faces). Returns 0 if there is no face containing the line as the boundary
+    public int lineInFaceBorder_max_lookup(int lineId) {
+        return lineInFaceBorder_max[lineId];
     }
 
     //---------------
     private boolean equals(Face m, Face n) { //Returns 1 if they are the same, 0 if they are different
-
         if (m.getPointsCount() != n.getPointsCount()) {
             return false;
         }
@@ -780,39 +757,39 @@ public class PointSet {
 
     }
 
-    //Returns 1 if the boundary of Face [im] contains Point [it], 0 if it does not.
-    public boolean Point_moti_determine(int im, int it) {
-        for (int i = 1; i <= faces[im].getPointsCount(); i++) {
-            if (it == faces[im].getPointId(i)) {
+    //Returns 1 if the boundary of Face [faceId] contains Point [pointId], 0 if pointId does not.
+    public boolean pointInFaceBorder(int faceId, int pointId) {
+        for (int i = 1; i <= faces[faceId].getPointsCount(); i++) {
+            if (pointId == faces[faceId].getPointId(i)) {
                 return true;
             }
         }
         return false;
     }
 
-    //Men[im]の境界にBou[ib]が含まれるなら1、含まれないなら0を返す
-    private boolean Stick_moti_determine(int im, int ib) {
-        for (int i = 1; i <= faces[im].getPointsCount() - 1; i++) {
-            if ((sticks[ib].getBegin() == faces[im].getPointId(i)) && (sticks[ib].getEnd() == faces[im].getPointId(i + 1))) {
+    //Returns true if line [lineId] is included in the boundary of face [faceId], false if it is not included
+    private boolean lineInFaceBorder(int faceId, int lineId) {
+        for (int i = 1; i <= faces[faceId].getPointsCount() - 1; i++) {
+            if ((lines[lineId].getBegin() == faces[faceId].getPointId(i)) && (lines[lineId].getEnd() == faces[faceId].getPointId(i + 1))) {
                 return true;
             }
-            if ((sticks[ib].getEnd() == faces[im].getPointId(i)) && (sticks[ib].getBegin() == faces[im].getPointId(i + 1))) {
+            if ((lines[lineId].getEnd() == faces[faceId].getPointId(i)) && (lines[lineId].getBegin() == faces[faceId].getPointId(i + 1))) {
                 return true;
             }
         }
-        if ((sticks[ib].getBegin() == faces[im].getPointId(faces[im].getPointsCount())) && (sticks[ib].getEnd() == faces[im].getPointId(1))) {
+        if ((lines[lineId].getBegin() == faces[faceId].getPointId(faces[faceId].getPointsCount())) && (lines[lineId].getEnd() == faces[faceId].getPointId(1))) {
             return true;
         }
-        return (sticks[ib].getEnd() == faces[im].getPointId(faces[im].getPointsCount())) && (sticks[ib].getBegin() == faces[im].getPointId(1));
+        return (lines[lineId].getEnd() == faces[faceId].getPointId(faces[faceId].getPointsCount())) && (lines[lineId].getBegin() == faces[faceId].getPointId(1));
     }
 
     //------------------------------------------------------
-    private void Face_adjecent_create() {
+    private void Face_adjacent_create() {
         System.out.println("面となり作成　開始");
-        for (int im = 1; im <= facesTotal - 1; im++) {
-            for (int in = im + 1; in <= facesTotal; in++) {
-                Face_adjacent[im][in] = 0;
-                Face_adjacent[in][im] = 0;
+        for (int im = 1; im <= numFaces - 1; im++) {
+            for (int in = im + 1; in <= numFaces; in++) {
+                face_adjacent[im][in] = 0;
+                face_adjacent[in][im] = 0;
                 int ima, imb, ina, inb;
                 for (int iim = 1; iim <= faces[im].getPointsCount(); iim++) {
                     ima = faces[im].getPointId(iim);
@@ -833,9 +810,9 @@ public class PointSet {
 
                         if (((ima == ina) && (imb == inb)) || ((ima == inb) && (imb == ina))) {
                             int ib;
-                            ib = Stick_search(ima, imb);
-                            Face_adjacent[im][in] = ib;
-                            Face_adjacent[in][im] = ib;
+                            ib = line_search(ima, imb);
+                            face_adjacent[im][in] = ib;
+                            face_adjacent[in][im] = ib;
                         }
                     }
                 }
@@ -845,13 +822,13 @@ public class PointSet {
         System.out.println("面となり作成　終了");
     }
 
-    //Returns the Stick number containing points t1 and t2
-    private int Stick_search(int t1, int t2) {
-        for (int i = 1; i <= sticksTotal; i++) {
-            if ((sticks[i].getBegin() == t1) && (sticks[i].getEnd() == t2)) {
+    //Returns the line number containing points t1 and t2
+    private int line_search(int t1, int t2) {
+        for (int i = 1; i <= numLines; i++) {
+            if ((lines[i].getBegin() == t1) && (lines[i].getEnd() == t2)) {
                 return i;
             }
-            if ((sticks[i].getBegin() == t2) && (sticks[i].getEnd() == t1)) {
+            if ((lines[i].getBegin() == t2) && (lines[i].getEnd() == t1)) {
                 return i;
             }
         }
@@ -859,27 +836,28 @@ public class PointSet {
     }
 
     // If Face [im] and Face [ib] are adjacent, return the id number of the bar at the boundary. Returns 0 if not adjacent
-    public int Face_tonari_hantei(int im, int in) {
-        return Face_adjacent[im][in];
+    public int Face_adjacent_determine(int im, int in) {
+        return face_adjacent[im][in];
     }
 
-    //
     private void addFace(Face tempFace) {
-        facesTotal = facesTotal + 1;
+        numFaces = numFaces + 1;
 
-        faces[facesTotal].reset();
+        faces[numFaces].reset();
         for (int i = 1; i <= tempFace.getPointsCount(); i++) {
-            faces[facesTotal].addPointId(tempFace.getPointId(i));
+            faces[numFaces].addPointId(tempFace.getPointId(i));
         }
-        faces[facesTotal].setColor(tempFace.getColor());
+        faces[numFaces].setColor(tempFace.getColor());
     }
 
-    //Returns the number of the closest point that is closer than a certain distance to the given coordinates. If there is no Ten within a certain distance, 0 is returned.
+    /**
+     * Returns the number of the closest point that is closer than a certain distance to the given coordinates. If there is no Ten within a certain distance, 0 is returned.
+     */
     public int closestPointId(Point p, double r) {
         int ireturn = 0;
         double rmin = 1000000.0;
         double rtemp;
-        for (int i = 1; i <= pointsTotal; i++) {
+        for (int i = 1; i <= numPoints; i++) {
             rtemp = OritaCalc.distance(p, points[i]);
             if (rtemp < r) {
                 if (rtemp < rmin) {
@@ -892,11 +870,13 @@ public class PointSet {
     }
 
 
-    //Returns the distance of the closest point that is closer than a certain distance to the given coordinates. If there is no Ten within a certain distance, 1000000.0 is returned.
+    /**
+     * Returns the distance of the closest point that is closer than a certain distance to the given coordinates. If there is no Ten within a certain distance, 1000000.0 is returned.
+     */
     public double closest_Point_distance(Point p, double r) {
         double rmin = 1000000.0;
         double rtemp;
-        for (int i = 1; i <= pointsTotal; i++) {
+        for (int i = 1; i <= numPoints; i++) {
             rtemp = OritaCalc.distance(p, points[i]);
             if (rtemp < r) {
                 if (rtemp < rmin) {
@@ -908,11 +888,12 @@ public class PointSet {
     }
 
 
-    //一定の距離より近い位置関係にあるTen同士の位置を、共に番号の若い方の位置にする。
-    public void Point_match(double r) {
-
-        for (int i = 1; i <= pointsTotal - 1; i++) {
-            for (int j = i + 1; j <= pointsTotal; j++) {
+    /**
+     * The positions of the Points that are closer than a certain distance are set to the positions with the lower numbers.
+     */
+    public void pointMatch(double r) {
+        for (int i = 1; i <= numPoints - 1; i++) {
+            for (int j = i + 1; j <= numPoints; j++) {
                 if (OritaCalc.distance(points[i], points[j]) < r) {
                     points[j].set(points[i]);
                 }
@@ -920,29 +901,25 @@ public class PointSet {
         }
     }
 
-    // When Point is closer to Stick than a certain distance, the position of Point should be on top of Stick.
-    public void Point_Stick_match(double r) {
-        //int ireturn=0;double rmin=10000.0; double rtemp;
-        for (int ib = 1; ib <= sticksTotal; ib++) {
-            //   Senbun s =new Senbun();
-            //     s.set( Bou2Senbun(b[ib])) ;
-            for (int i = 1; i <= pointsTotal - 1; i++) {
-                if (OritaCalc.distance_lineSegment(points[i], points[sticks[ib].getBegin()], points[sticks[ib].getEnd()]) < r) {
-                    //Tyokusen ty =new Tyokusen(t[b[ib].getmae()],t[b[ib].getato()]);
-                    //t[i].set( oc.kage_motome(ty,t[i]));
-                    points[i].set(OritaCalc.shadow_request(points[sticks[ib].getBegin()], points[sticks[ib].getEnd()], points[i]));
+    /**
+     * When Point is closer to Line than a certain distance, the position of Point should be on top of Line.
+     */
+    public void pointLineMatch(double r) {
+        for (int ib = 1; ib <= numLines; ib++) {
+            for (int i = 1; i <= numPoints - 1; i++) {
+                if (OritaCalc.distance_lineSegment(points[i], points[lines[ib].getBegin()], points[lines[ib].getEnd()]) < r) {
+                    points[i].set(OritaCalc.shadow_request(points[lines[ib].getBegin()], points[lines[ib].getEnd()], points[i]));
                 }
             }
         }
-        //  return ireturn;
     }
 
     //--------------------
     public int getSelectedPointsNum() {
         int r_int = 0;
-        for (int i = 1; i <= pointsTotal; i++) {
+        for (int i = 1; i <= numPoints; i++) {
 
-            if (points[i].getPointState() == 1) {
+            if (points[i].getPointState()) {
                 r_int = r_int + 1;
             }
 
@@ -962,7 +939,7 @@ public class PointSet {
 
     //--------------------
     public void setAllPointState0() {
-        for (int i = 1; i <= pointsTotal; i++) {
+        for (int i = 1; i <= numPoints; i++) {
             points[i].setPointState0();
         }
     }
@@ -970,135 +947,102 @@ public class PointSet {
 
     //--------------------
     public void changePointState(int i) {
-        if (points[i].getPointState() == 1) {
-            points[i].setPointState0();
-        } else if (points[i].getPointState() == 0) {
-            points[i].setPointState1();
+        Point_p point = points[i];
+        if (point.getPointState()) {
+            point.setPointState0();
+        } else {
+            point.setPointState1();
         }
     }
 
-    //--------------------
-    public byte getPointState(int i) {
+    public boolean getPointState(int i) {
         return points[i].getPointState();
     }
 
-
-    //--------------------
     public void statePointMove(Point p) {
-        for (int i = 1; i <= pointsTotal; i++) {
+        for (int i = 1; i <= numPoints; i++) {
 
-            if (points[i].getPointState() == 1) {
+            if (points[i].getPointState()) {
                 set(i, p);
             }
-
         }
-
     }
 
-    //--------------------
     public void statePointMove(Point ugokasu_maeno_sentaku_point, Point pa, Point pb) {
         Point p_u = new Point();
         p_u.set(ugokasu_maeno_sentaku_point.getX(), ugokasu_maeno_sentaku_point.getY());
         p_u.move(pa.other_Point_position(pb));
 
-        for (int i = 1; i <= pointsTotal; i++) {
-            if (points[i].getPointState() == 1) {
+        for (int i = 1; i <= numPoints; i++) {
+            if (points[i].getPointState()) {
                 set(i, p_u);
             }
         }
     }
 
-    //--------------------
-
-
-/*
-
-		for(int i=1;i<=Tensuu;i++){
-			if(t[i].get_ten_sentaku()==1){
-				set(i,p_u);
-			}
-		}
-*/
-
-
-    //線分集合の全線分の情報を Memoとして出力する。 //undo,redoの記録用に使う
+    /**
+     * Output the information of all line segments of the line segment set as Memo. // Used for recording undo and redo
+     */
     public Memo getMemo() {
         Memo memo1 = new Memo();
         memo1.reset();
 
         memo1.addLine("<点>");
 
-        for (int i = 1; i <= pointsTotal; i++) {
+        for (int i = 1; i <= numPoints; i++) {
             memo1.addLine("番号," + i);
             memo1.addLine("座標," + points[i].getX() + "," + points[i].getY());
         }
         memo1.addLine("</点>");
 
-
         return memo1;
     }
 
-    // -----------------------------------------------------
     public void setMemo(Memo memo1) {
-        //最初に点の総数を求める
+        //First find the total number of points
 
-        int yomiflg = 0;//0なら読み込みを行わない。1なら読み込む。
-        int ibangou = 0;
-        Double Dd = 0.0;
-        Integer Ii = 0;
+        boolean read_flg = false;// If it is 0, it will not be read. If it is 1, read it.
+        int number = 0;
 
-        int iten = 0;
+        int point = 0;
 
-        String str = "";
+        String str;
         double ax, ay;
 
         for (int i = 1; i <= memo1.getLineCount(); i++) {
-
             StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
-            //jtok=    tk.countTokens();
 
             str = tk.nextToken();
             if (str.equals("<点>")) {
-                yomiflg = 1;
+                read_flg = true;
             } else if (str.equals("</点>")) {
-                yomiflg = 0;
+                read_flg = false;
             }
-            if ((yomiflg == 1) && (str.equals("番号"))) {
-                iten = iten + 1;
+            if (read_flg && str.equals("番号")) {
+                point = point + 1;
             }
         }
-        //sousuu =isen;
-        //最初に補助線分の総数が求められた
+        //First the total number of auxiliary line segments was calculated
+
+        read_flg = false;
 
         for (int i = 1; i <= memo1.getLineCount(); i++) {
-
-
             StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
             str = tk.nextToken();
             if (str.equals("<点>")) {
-                yomiflg = 1;
+                read_flg = true;
             }
-            if ((yomiflg == 1) && (str.equals("番号"))) {
+            if (read_flg && str.equals("番号")) {
                 str = tk.nextToken();
-                ibangou = Integer.parseInt(str);
+                number = Integer.parseInt(str);
             }
-            if ((yomiflg == 1) && (str.equals("座標"))) {
+            if (read_flg && str.equals("座標")) {
                 str = tk.nextToken();
                 ax = Double.parseDouble(str);
                 str = tk.nextToken();
                 ay = Double.parseDouble(str);
-                points[ibangou].set(ax, ay);
+                points[number].set(ax, ay);
             }
-
-
         }
-
-
     }
-
-
-//-----------------------------
-
-
 }
-

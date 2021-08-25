@@ -1,8 +1,8 @@
 package jp.gr.java_conf.mt777.origami.dougu.background_camera;
 
 
-import jp.gr.java_conf.mt777.zukei2d.ten.*;
-import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
+import jp.gr.java_conf.mt777.graphic2d.point.*;
+import jp.gr.java_conf.mt777.graphic2d.oritacalc.*;
 import jp.gr.java_conf.mt777.origami.dougu.camera.*;
 
 public class Background_camera {//Mediation between actual coordinates and display coordinates
@@ -31,7 +31,7 @@ public class Background_camera {//Mediation between actual coordinates and displ
     double p_rotation_x = 0.0;
     double p_rotation_y = 0.0;
 
-    int i_Lock_on = 0;
+    boolean i_Lock_on = false;
 
     public Background_camera() {//コンストラクタ
         reset();
@@ -174,7 +174,7 @@ public class Background_camera {//Mediation between actual coordinates and displ
     }
 
 
-    public void set_i_Lock_on(int i_L) {
+    public void set_i_Lock_on(boolean i_L) {
         i_Lock_on = i_L;
     }
 

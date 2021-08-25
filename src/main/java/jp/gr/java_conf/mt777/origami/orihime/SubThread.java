@@ -9,17 +9,35 @@ class SubThread extends Thread {
         orihime_app = app0;
     }
 
+    enum Mode {
+        /**
+         * Execution of folding estimate 5. It is not a mode to put out different solutions of folding estimation at once.
+         */
+        FOLDING_ESTIMATE_0,
+        /**
+         * Execution of folding estimate 5. Another solution for folding estimation is put together.
+         *
+         * Saves 100 image files
+         */
+        FOLDING_ESTIMATE_SAVE_100_1,
+        FOLDING_ESTIMATE_SPECIFIC_2,
+        CHECK_CAMV_3,
+
+        /**
+         * Two-color development drawing
+         */
+        TWO_COLORED_4,
+    }
+
     public void run() {
         long start = System.currentTimeMillis();
 
         // -----------------------------------------------------------------
-        if (orihime_app.i_sub_mode == 0) {
-
+        if (orihime_app.subThreadMode == Mode.FOLDING_ESTIMATE_0) {
             orihime_app.folding_estimated();
             orihime_app.repaint();
             // -----------------------------------------------------------------
-        } else if (orihime_app.i_sub_mode == 1) {
-
+        } else if (orihime_app.subThreadMode == Mode.FOLDING_ESTIMATE_SAVE_100_1) {
             String fname = orihime_app.selectFileName("file name for Img save");
             if (fname != null) {
                 orihime_app.OZ.summary_write_image_during_execution = true;//まとめ書き出し実行中の意味
@@ -34,7 +52,6 @@ class SubThread extends Thread {
                     orihime_app.repaint();
 
                     while (orihime_app.w_image_running) {// If this is not included, the exported image may be omitted.
-
                         // Wait 10 milliseconds. In addition, it is unknown whether 10 is appropriate 20170611
                         try {
                             Thread.sleep(10);
@@ -44,13 +61,11 @@ class SubThread extends Thread {
                     if (!orihime_app.OZ.findAnotherOverlapValid) {
                         objective = orihime_app.OZ.discovered_fold_cases;
                     }
-
-
                 }
                 orihime_app.OZ.summary_write_image_during_execution = false;
             }
             // -----------------------------------------------------------------
-        } else if (orihime_app.i_sub_mode == 2) {
+        } else if (orihime_app.subThreadMode == Mode.FOLDING_ESTIMATE_SPECIFIC_2) {
             if (orihime_app.i_folded_cases == orihime_app.OZ.discovered_fold_cases) {
                 orihime_app.OZ.text_kekka = "Number of found solutions = " + orihime_app.OZ.discovered_fold_cases + "  ";
             }
@@ -65,15 +80,13 @@ class SubThread extends Thread {
                 if (!orihime_app.OZ.findAnotherOverlapValid) {
                     objective = orihime_app.OZ.discovered_fold_cases;
                 }
-
             }
 
-            //orihime_ap.OZ.i_suitei_jissi_umu=1;
             // -----------------------------------------------------------------
-        } else if (orihime_app.i_sub_mode == 3) {
+        } else if (orihime_app.subThreadMode == Mode.CHECK_CAMV_3) {
             orihime_app.es1.ap_check4(orihime_app.d_ap_check4);
             // -----------------------------------------------------------------
-        } else if (orihime_app.i_sub_mode == 4) {//Two-color development drawing
+        } else if (orihime_app.subThreadMode == Mode.TWO_COLORED_4) {//Two-color development drawing
             orihime_app.folding_settings_two_color();
         }
         // -----------------------------------------------------------------
@@ -82,7 +95,7 @@ class SubThread extends Thread {
         long L = stop - start;
         orihime_app.OZ.text_kekka = orihime_app.OZ.text_kekka + "     Computation time " + L + " msec.";
 
-        orihime_app.i_SubThread = 0;
+        orihime_app.subThreadRunning = false;
         orihime_app.repaint();
     }
 }

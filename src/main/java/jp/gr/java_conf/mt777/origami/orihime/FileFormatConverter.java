@@ -2,7 +2,7 @@ package jp.gr.java_conf.mt777.origami.orihime;
 
 import jp.gr.java_conf.mt777.origami.dougu.bou.*;
 import jp.gr.java_conf.mt777.kiroku.memo.*;
-import jp.gr.java_conf.mt777.zukei2d.ten.*;
+import jp.gr.java_conf.mt777.graphic2d.point.*;
 
 import java.util.*;
 
@@ -21,10 +21,10 @@ public class FileFormatConverter {
         Point tn;
         int Tenmax = 0;
 
-        ArrayList<Stick> stickList = new ArrayList<>();
-        stickList.add(new Stick());
+        ArrayList<Line> lineList = new ArrayList<>();
+        lineList.add(new Line());
 
-        Stick stick;
+        Line line;
         int Boumax = 0;
 
         ArrayList<Integer> itempL = new ArrayList<>();
@@ -32,7 +32,7 @@ public class FileFormatConverter {
 
         int ia;
         int ib;
-        LineType ic;
+        LineColor ic;
         int id;
         double d1, d2, d3, d4;
 
@@ -84,17 +84,17 @@ public class FileFormatConverter {
                         Integer I_itempL = itempL.get(i);
                         Integer Im1_itempL = itempL.get(i - 1);
                         for (int j = 1; j <= Boumax; j++) {
-                            stick = stickList.get(j);
-                            if ((stick.getBegin() == Im1_itempL) && (stick.getEnd() == I_itempL)) {
+                            line = lineList.get(j);
+                            if ((line.getBegin() == Im1_itempL) && (line.getEnd() == I_itempL)) {
                                 iflg = iflg + 1;
                             }
-                            if ((stick.getBegin() == I_itempL) && (stick.getEnd() == Im1_itempL)) {
+                            if ((line.getBegin() == I_itempL) && (line.getEnd() == Im1_itempL)) {
                                 iflg = iflg + 1;
                             }
                         }
                         if (iflg == 0) {
                             Boumax = Boumax + 1;
-                            stickList.add(new Stick(Im1_itempL, I_itempL, LineType.BLACK_0));
+                            lineList.add(new Line(Im1_itempL, I_itempL, LineColor.BLACK_0));
                         }
                     }
                 }
@@ -102,15 +102,15 @@ public class FileFormatConverter {
                 if (str.equals("#e")) {
                     ia = Integer.parseInt(tk.nextToken());
                     ib = Integer.parseInt(tk.nextToken());
-                    ic = LineType.from(tk.nextToken());
+                    ic = LineColor.from(tk.nextToken());
                     id = Integer.parseInt(tk.nextToken());
                     for (int i = 1; i <= Boumax; i++) {
-                        stick = stickList.get(i);
-                        if ((stick.getBegin() == ia) && (stick.getEnd() == ib)) {
-                            stick.setColor(ic);
+                        line = lineList.get(i);
+                        if ((line.getBegin() == ia) && (line.getEnd() == ib)) {
+                            line.setColor(ic);
                         }
-                        if ((stick.getBegin() == ib) && (stick.getEnd() == ia)) {
-                            stick.setColor(ic);
+                        if ((line.getBegin() == ib) && (line.getEnd() == ia)) {
+                            line.setColor(ic);
                         }
                     }
                 }
@@ -121,29 +121,29 @@ public class FileFormatConverter {
         MemR.addLine("<線分集合>");
         for (int i = 1; i <= Boumax; i++) {
             MemR.addLine("番号," + i);
-            stick = stickList.get(i);
+            line = lineList.get(i);
 
-            LineType icol;
-            icol = LineType.fromNumber(stick.getColor().getNumber() - 1);
-            stick.setColor(icol);
-            if (stick.getColor() == LineType.RED_1) {
-                icol = LineType.BLUE_2;
+            LineColor icol;
+            icol = LineColor.fromNumber(line.getColor().getNumber() - 1);
+            line.setColor(icol);
+            if (line.getColor() == LineColor.RED_1) {
+                icol = LineColor.BLUE_2;
             }
-            if (stick.getColor() == LineType.BLUE_2) {
-                icol = LineType.RED_1;
+            if (line.getColor() == LineColor.BLUE_2) {
+                icol = LineColor.RED_1;
             }
 
-            if (icol != LineType.BLACK_0) {
-                stick.setColor(icol);
+            if (icol != LineColor.BLACK_0) {
+                line.setColor(icol);
             }
 
             MemR.addLine("色," + icol);
 
-            tn = tL.get(stick.getBegin());
+            tn = tL.get(line.getBegin());
             d1 = tn.getX();
             d2 = tn.getY();
 
-            tn = tL.get(stick.getEnd());
+            tn = tL.get(line.getEnd());
             d3 = tn.getX();
             d4 = tn.getY();
 

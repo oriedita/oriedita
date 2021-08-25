@@ -7,7 +7,7 @@
 | `sen` | | `line` | 線 |
 | `men` | | `face` / `surface` | 面
 | `smen` | | `sub face` | - | Probably combination of sabu and men
-| `bou`|  | `stick` | 棒 | A different type of line
+| `bou`|  | `line` | 棒 | A different type of line
 | `ten` | | `point` | 点 |
 | `kousi` | koushi | `grid` | 格子 |
 | `en` | | `circle` | 円 |
@@ -60,3 +60,7 @@
 | `kyori` | | `distance` | 距離
 | `kazu` | | `number` / `amount` | 数
 | `jyogai` | `igai` | `except` / `excluding` | 以外
+| `omote` | | `front` | 表
+| `ura` | | `back` | 裏
+| `omote ura` | | `flipped` | | Front = back
+| `hojyosen` | `hojosen` | `additional line` | 補助線

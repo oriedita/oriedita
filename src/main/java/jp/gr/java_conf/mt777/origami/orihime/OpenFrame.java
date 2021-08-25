@@ -11,14 +11,14 @@ import static jp.gr.java_conf.mt777.origami.orihime.ResourceUtil.createImageIcon
 
 class OpenFrame extends Frame implements ActionListener {
     public JCheckBox ckbox_add_frame_SelectAnd3click;//20200930
-    //変数の宣言
+    //Variable declaration
     App orihime_app;
 
-    //スレッド作成時に実行される処理
+    //Process executed when thread is created
 
     //	public OpenFrame(String name) {
     public OpenFrame(String name, App app0) {
-        super(name);//本来、子コンストラクタは先頭で親コンストラクタを呼び出さなければならない。superは親インスタンスを示す。
+        super(name);//Originally, the child constructor must call the parent constructor at the beginning. super indicates the parent instance.
 
         orihime_app = app0;
 
@@ -33,13 +33,13 @@ class OpenFrame extends Frame implements ActionListener {
         );
 
         setResizable(false);
-        //ユーザーがこのフレームのサイズを変更できるかどうかを設定します。
+        //Sets whether the user can resize this frame.
 
-        //このフレームの装飾の有効化と無効化を切り替えます。
+        //Toggle between enabling and disabling decorations for this frame.
 
-        addWindowListener(new WindowAdapter() {//終了ボタンを有効化
+        addWindowListener(new WindowAdapter() {//Toggle between enabling and disabling decorations for this frame.
             public void windowClosing(WindowEvent evt) {
-                orihime_app.i_add_frame = 0;
+                orihime_app.i_add_frame = false;
                 dispose();
             }
 
@@ -67,18 +67,17 @@ class OpenFrame extends Frame implements ActionListener {
                 System.out.println("windowDeactivatedwwwwwwwwwwww");
             }
 
-        });//終了ボタンを有効化 ここまで。
+        });//Enable the end button So far.
 
-        //追加フレームのレイアウト等条件設定
+        //Setting conditions such as layout of additional frames
         setLayout(new GridLayout(1, 1));
         setBackground(Color.PINK);
 
-        //左辺（西側）パネルの作成
+        //Creating the left side (west side) panel
 
 
         Panel pnl_00 = new Panel();
         pnl_00.setBackground(Color.PINK);
-        //pnl_00.setLayout(new GridLayout(30, 1));
         pnl_00.setLayout(new GridLayout(10, 1));
         add(pnl_00);
 
@@ -90,19 +89,15 @@ class OpenFrame extends Frame implements ActionListener {
 
 //------------------------------------------------
 
-//チェックボックス
-//20200930ここから
+//Checkbox
+//20200930 From here
         ckbox_add_frame_SelectAnd3click = new JCheckBox("sel<=>mcm");
         ckbox_add_frame_SelectAnd3click.addActionListener(e -> {
             orihime_app.img_explanation_fname =
                     "qqq/af/ckbox_add_frame_SelectAnd3click.png";
             orihime_app.readImageFromFile3();
 
-            if (ckbox_add_frame_SelectAnd3click_isSelected() == 1) {
-                orihime_app.ckbox_add_frame_SelectAnd3click_isSelected = 1;
-            } else {
-                orihime_app.ckbox_add_frame_SelectAnd3click_isSelected = 0;
-            }
+            orihime_app.ckbox_add_frame_SelectAnd3click_isSelected = ckbox_add_frame_SelectAnd3click_isSelected();
             orihime_app.repaint();
         });
         ckbox_add_frame_SelectAnd3click.setIcon(createImageIcon("ppp/af/ckbox_add_frame_SelectAnd3click_off.png"));
@@ -112,11 +107,9 @@ class OpenFrame extends Frame implements ActionListener {
         ckbox_add_frame_SelectAnd3click.setMargin(new Insets(0, 0, 0, 0));
         pnl_01.add(
                 ckbox_add_frame_SelectAnd3click);
-//20200930 ここまで
+//20200930 to this point
 
 //----------------------------------------------------------------------------------------------
-
-
         JButton Button_O_F_check =
                 new JButton("O_F_check");
         Button_O_F_check.addActionListener(e -> {
@@ -127,13 +120,10 @@ class OpenFrame extends Frame implements ActionListener {
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
             orihime_app.Button_kyoutuu_sagyou();
             orihime_app.repaint();
-
-
         });
         pnl_01.add(Button_O_F_check);
 
         Button_O_F_check.setMargin(new Insets(0, 0, 0, 0));
-
 
 //-----------------------------------------------
 
@@ -149,7 +139,7 @@ class OpenFrame extends Frame implements ActionListener {
             orihime_app.readImageFromFile3();
 
             orihime_app.i_mouse_modeA = MouseMode.FOLDABLE_LINE_INPUT_39;
-            orihime_app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = 39;
+            orihime_app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.FOLDABLE_LINE_INPUT_39;
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
 
             orihime_app.es1.unselect_all();
@@ -162,7 +152,7 @@ class OpenFrame extends Frame implements ActionListener {
         Button_oritatami_kanousen_and_kousitenkei.setIcon(createImageIcon("ppp/oritatami_kanousen_and_kousitenkei.png"));
 
 
-// -------------39;折り畳み可能線+格子点系入力。ここまで
+// -------------39;Foldable line + grid point system input. to this point
 //------------------------------------------------
 
         Panel pnl_03 = new Panel();
@@ -170,11 +160,9 @@ class OpenFrame extends Frame implements ActionListener {
         pnl_03.setLayout(new GridLayout(1, 3));
         pnl_00.add(pnl_03);
 //----------------------------------------------------------------------------------------------
-
 //------------------------------------------------
 
-        JButton Button_select_polygon =
-                new JButton("select_polygon");
+        JButton Button_select_polygon = new JButton("select_polygon");
         Button_select_polygon.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/select_polygon.png";
             orihime_app.readImageFromFile3();
@@ -188,17 +176,13 @@ class OpenFrame extends Frame implements ActionListener {
         });
         pnl_03.add(Button_select_polygon);
 
-        //Button_select_polygon.setBorder(new LineBorder(Color.green, 4, true));
         Button_select_polygon.setBackground(Color.green);
-        //Button_select_polygon.setBackground(Color.white);
         Button_select_polygon.setMargin(new Insets(0, 0, 0, 0));
 
-
 //------------------------------------------------
 //------------------------------------------------
 
-        JButton Button_unselect_polygon =
-                new JButton("unselect_polygon");
+        JButton Button_unselect_polygon = new JButton("unselect_polygon");
         Button_unselect_polygon.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/unselect_polygon.png";
             orihime_app.readImageFromFile3();
@@ -221,12 +205,9 @@ class OpenFrame extends Frame implements ActionListener {
         pnl_04.setLayout(new GridLayout(1, 3));
         pnl_00.add(pnl_04);
 
-
 //------------------------------------------------
 
-
-        JButton Button_select_lX =
-                new JButton("select_lX");
+        JButton Button_select_lX = new JButton("select_lX");
         Button_select_lX.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/select_lX.png";
             orihime_app.readImageFromFile3();
@@ -235,20 +216,15 @@ class OpenFrame extends Frame implements ActionListener {
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
             orihime_app.Button_kyoutuu_sagyou();
             orihime_app.repaint();
-
-
         });
         pnl_04.add(Button_select_lX);
 
-        //Button_select_lX.setBorder(new LineBorder(Color.green, 4, true));
         Button_select_lX.setBackground(Color.green);
-        //Button_select_lX.setBackground(Color.white);
         Button_select_lX.setMargin(new Insets(0, 0, 0, 0));
 
 
 //------------------------------------------------
-        JButton Button_unselect_lX =
-                new JButton("unselect_lX");
+        JButton Button_unselect_lX = new JButton("unselect_lX");
         Button_unselect_lX.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/unselect_lX.png";
             orihime_app.readImageFromFile3();
@@ -257,14 +233,11 @@ class OpenFrame extends Frame implements ActionListener {
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
             orihime_app.Button_kyoutuu_sagyou();
             orihime_app.repaint();
-
-
         });
         pnl_04.add(Button_unselect_lX);
 
         Button_unselect_lX.setBackground(Color.green);
         Button_unselect_lX.setMargin(new Insets(0, 0, 0, 0));
-
 
 //----------------------------------------------------------------------------------------------
         Panel pnl_05 = new Panel();
@@ -282,15 +255,12 @@ class OpenFrame extends Frame implements ActionListener {
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
             orihime_app.Button_kyoutuu_sagyou();
             orihime_app.repaint();
-
-
         });
         pnl_05.add(Button_Del_l);
 
         Button_Del_l.setMargin(new Insets(0, 0, 0, 0));
 
 //------------------------------------------------
-
 
         JButton Button_Del_l_X = new JButton("Del_l_X");
         Button_Del_l_X.addActionListener(e -> {
@@ -310,25 +280,21 @@ class OpenFrame extends Frame implements ActionListener {
 
 //------------------------------------------------
 
-//追加フレーム表示の最初にやること
+//What to do at the beginning of the additional frame display
 
-//20200930 ckbox_add_frame_to_front.setSelected(true);//表示するかどうかの選択
+//20200930 ckbox_add_frame_to_front.setSelected(true);//Select whether to display
 
-        //表示するかどうかの選択
-        ckbox_add_frame_SelectAnd3click.setSelected(orihime_app.ckbox_add_frame_SelectAnd3click_isSelected == 1);//表示するかどうかの選択
+        //Select whether to display
+        ckbox_add_frame_SelectAnd3click.setSelected(orihime_app.ckbox_add_frame_SelectAnd3click_isSelected);//Select whether to display
 
 
         setVisible(true);
     }
 //----------------------------------------------------------------------
 
-    public int ckbox_add_frame_SelectAnd3click_isSelected() {
-        if (ckbox_add_frame_SelectAnd3click.isSelected()) {
-            return 1;
-        }
-        return 0;
+    public boolean ckbox_add_frame_SelectAnd3click_isSelected() {
+        return ckbox_add_frame_SelectAnd3click.isSelected();
     }
-
 
     public void actionPerformed(ActionEvent e) {
         System.out.println("20190522_");

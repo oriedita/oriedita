@@ -6,13 +6,13 @@ public class StringOp {//データ格納用のメモ帳
 
     public static int String2int(String str0, int henkan_error_modoriti) {
 
-        int s_hantei;
-        s_hantei = String2suuti_hantei(str0);
+        int s_decision;
+        s_decision = String2suuti_decision(str0);
 
-        if (s_hantei == 1) {
+        if (s_decision == 1) {
             return Integer.parseInt(str0);
         }
-        if (s_hantei == 2) {
+        if (s_decision == 2) {
             double d0;
             d0 = Double.parseDouble(str0);
             return (int) Math.round(d0);
@@ -23,13 +23,13 @@ public class StringOp {//データ格納用のメモ帳
 
     public static double String2double(String str0, double henkan_error_modoriti) {
 
-        int s_hantei;
-        s_hantei = String2suuti_hantei(str0);
+        int s_decision;
+        s_decision = String2suuti_decision(str0);
 
-        if (s_hantei == 1) {
+        if (s_decision == 1) {
             return Integer.parseInt(str0);
         }
-        if (s_hantei == 2) {
+        if (s_decision == 2) {
             return Double.parseDouble(str0);
         }
 
@@ -54,7 +54,7 @@ public class StringOp {//データ格納用のメモ帳
         }
     }
 
-    public static int String2suuti_hantei(String str0) {//stringを数値としてみた場合に型を判定する。double=2。int=1。数値ではない=0
+    public static int String2suuti_decision(String str0) {//stringを数値としてみた場合に型を判定する。double=2。int=1。数値ではない=0
         int i_r = 0;
         if (String2double_confirm(str0) == 1) {
             i_r = 2;
@@ -72,8 +72,8 @@ public class StringOp {//データ格納用のメモ帳
         if (col == null) {
             return "#FFFFFF";
         }
-        String str = "";
-        String colCode = "";
+        String str;
+        String colCode;
 
         str = "#";
 

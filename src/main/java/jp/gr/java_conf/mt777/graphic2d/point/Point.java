@@ -1,4 +1,4 @@
-package jp.gr.java_conf.mt777.zukei2d.ten;
+package jp.gr.java_conf.mt777.graphic2d.point;
 
 public class Point {
     //Used to represent point coordinates, direction vectors, etc.

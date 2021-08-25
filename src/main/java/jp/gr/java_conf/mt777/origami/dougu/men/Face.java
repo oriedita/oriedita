@@ -7,15 +7,12 @@ public class Face {
     int Tenidsuu;
     int icol;
 
-    //Ten kanrenTen =new Ten();//面に関連する点を格納。面内部の点とかを格納するのに使う。必ずしも使う必要は無いので、使わないときは無視していい。
-    //コンストラクタ
     public Face() {
         Tenidsuu = 0;
         icol = 0;
         TenidL.add(0);
     }
 
-    //コンストラクタ
     public Face(Face mn) {
         Tenidsuu = mn.getPointsCount();
         icol = mn.getColor();
@@ -90,6 +87,4 @@ public class Face {
             okikae();
         }
     }
-
-
 }

@@ -1,7 +1,7 @@
-package jp.gr.java_conf.mt777.zukei2d.oritacalc.tyokusen;
+package jp.gr.java_conf.mt777.graphic2d.oritacalc.straightline;
 
-import jp.gr.java_conf.mt777.zukei2d.senbun.LineSegment;
-import jp.gr.java_conf.mt777.zukei2d.ten.Point;
+import jp.gr.java_conf.mt777.graphic2d.linesegment.LineSegment;
+import jp.gr.java_conf.mt777.graphic2d.point.Point;
 
 public class StraightLine {
     //Note! If p1 = p2, the result will be strange, but it may be hard to notice because this function does not have a check mechanism.
@@ -146,19 +146,19 @@ public class StraightLine {
     }  //Returns the value obtained by assigning x and y in a * x + b * y + c
 
 
-    public int lineSegment_intersect_reverse_detail(LineSegment s0) {//0 = This straight line does not intersect a given line segment, 1 = intersects at X type, 21 = intersects at point a of line segment at T type, 22 = intersects at point b of line segment at T type, 3 = Line segment is included in the straight line.
+    public Intersection lineSegment_intersect_reverse_detail(LineSegment s0) {//0 = This straight line does not intersect a given line segment, 1 = intersects at X type, 21 = intersects at point a of line segment at T type, 22 = intersects at point b of line segment at T type, 3 = Line segment is included in the straight line.
         double d_a2 = calculateDistanceSquared(s0.getA());
         double d_b2 = calculateDistanceSquared(s0.getB());
 
         if (d_a2 < 0.00000001 && d_b2 < 0.00000001) {
-            return 3;
+            return Intersection.INCLUDED_3;
         }
 
         if (d_a2 < 0.00000001 && d_b2 >= 0.00000001) {
-            return 21;
+            return Intersection.INTERSECT_T_A_21;
         }
         if (d_a2 >= 0.00000001 && d_b2 < 0.00000001) {
-            return 22;
+            return Intersection.INTERSECT_T_B_22;
         }
 
         //The following is the case when it is judged that neither point a nor point b of the line segment is on a straight line.
@@ -167,13 +167,13 @@ public class StraightLine {
         double d_b = assignmentCalculation(s0.getB());
 
         if (d_a * d_b > 0.0) {
-            return 0;
+            return Intersection.NONE_0;
         }
         if (d_a * d_b < 0.0) {
-            return 1;
+            return Intersection.INTERSECT_X_1;
         }
 
-        return 3;
+        return Intersection.INCLUDED_3;
     }
 
     //Added 20170312 function to find intersections with other straight lines
@@ -189,5 +189,30 @@ public class StraightLine {
         StraightLine t1 = new StraightLine(a, b, c);
         t1.orthogonalize(p);//Find a straight line that passes through the point p1 and is orthogonal to t.
         return findIntersection(t1);
+    }
+
+    /**
+     * Intersection of a StraightLine and a line segment
+     */
+    public enum Intersection {
+        NONE_0(0),
+        INTERSECT_X_1(1),
+        INTERSECT_T_A_21(21),
+        INTERSECT_T_B_22(22),
+        INCLUDED_3(3),
+        ;
+
+        int type;
+
+        Intersection(int type) {
+            this.type = type;
+        }
+
+        public boolean isIntersecting() {
+            return switch (this) {
+                case INTERSECT_X_1, INTERSECT_T_A_21, INTERSECT_T_B_22 -> true;
+                default -> false;
+            };
+        }
     }
 }

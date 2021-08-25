@@ -1,37 +1,37 @@
 package jp.gr.java_conf.mt777.origami.dougu.bou;
 
-import jp.gr.java_conf.mt777.origami.orihime.LineType;
+import jp.gr.java_conf.mt777.origami.orihime.LineColor;
 
 /**
- * A line from a point to a point, begin and end refer to points.
+ * A line from a point to a point, begin and end refer to points in a PointSet
  */
-public class Stick {
+public class Line {
     int begin;
     int end;
-    LineType iColor;//If it is 0, there is no mountain valley. If 1, it's a mountain. If it is 2, it is a valley.
+    LineColor iColor;//If it is 0, there is no mountain valley. If 1, it's a mountain. If it is 2, it is a valley.
 
     //コンストラクタ
-    public Stick() {
+    public Line() {
         begin = 0;
         end = 0;
-        iColor = LineType.BLACK_0;
+        iColor = LineColor.BLACK_0;
     }
 
     //コンストラクタ
-    public Stick(int ma, int at, LineType ic) {
+    public Line(int ma, int at, LineColor ic) {
         begin = ma;
         end = at;
         iColor = ic;
     }
 
     //input
-    public void set(Stick stick) {
-        begin = stick.getBegin();
-        end = stick.getEnd();
-        iColor = stick.getColor();
+    public void set(Line line) {
+        begin = line.getBegin();
+        end = line.getEnd();
+        iColor = line.getColor();
     }
 
-    public void set(int i, int j, LineType k) {
+    public void set(int i, int j, LineColor k) {
         begin = i;
         end = j;
         iColor = k;
@@ -45,7 +45,7 @@ public class Stick {
         end = i;
     }
 
-    public void setColor(LineType i) {
+    public void setColor(LineColor i) {
         iColor = i;
     }
 
@@ -58,13 +58,13 @@ public class Stick {
         return end;
     }
 
-    public LineType getColor() {
+    public LineColor getColor() {
         return iColor;
     }
 
     public void reset() {
         begin = 0;
         end = 0;
-        iColor = LineType.BLACK_0;
+        iColor = LineColor.BLACK_0;
     }
 }

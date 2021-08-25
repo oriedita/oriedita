@@ -1,32 +1,35 @@
-package jp.gr.java_conf.mt777.zukei2d.oritaoekaki;
+package jp.gr.java_conf.mt777.graphic2d.oritaoekaki;
 
-import jp.gr.java_conf.mt777.origami.orihime.LineType;
-import jp.gr.java_conf.mt777.zukei2d.senbun.*;
-import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
-import jp.gr.java_conf.mt777.zukei2d.ten.Point;
+import jp.gr.java_conf.mt777.origami.orihime.LineColor;
+import jp.gr.java_conf.mt777.graphic2d.linesegment.*;
+import jp.gr.java_conf.mt777.graphic2d.oritacalc.*;
+import jp.gr.java_conf.mt777.graphic2d.point.Point;
 
 import java.awt.*;
 
-public class OritaDrawing { //For drawing
+/**
+ * Static utility class for drawing
+ */
+public class OritaDrawing {
     //For drawing thick lines
-    public void widthLine(Graphics g, Point a, Point b, double width, LineType iColor) {
+    public static void widthLine(Graphics g, Point a, Point b, double width, LineColor iColor) {
         widthLine(g, new LineSegment(a, b), width, iColor);
     }
 
-    public void widthLine(Graphics g, LineSegment s, double r, LineType iColor) {
-        if (iColor == LineType.BLACK_0) {
+    public static void widthLine(Graphics g, LineSegment s, double r, LineColor iColor) {
+        if (iColor == LineColor.BLACK_0) {
             g.setColor(Color.black);
         }
-        if (iColor == LineType.RED_1) {
+        if (iColor == LineColor.RED_1) {
             g.setColor(Color.red);
         }
-        if (iColor == LineType.BLUE_2) {
+        if (iColor == LineColor.BLUE_2) {
             g.setColor(Color.blue);
         }
-        if (iColor == LineType.CYAN_3) {
+        if (iColor == LineColor.CYAN_3) {
             g.setColor(Color.green);
         }
-        if (iColor == LineType.ORANGE_4) {
+        if (iColor == LineColor.ORANGE_4) {
             g.setColor(Color.orange);
         }
         LineSegment sp = OritaCalc.moveParallel(s, r);
@@ -48,7 +51,7 @@ public class OritaDrawing { //For drawing
     }
 
     //Draw a cross around the designated Point
-    public void cross(Graphics g, Point t, double length, double width, LineType icolor) {
+    public static void cross(Graphics g, Point t, double length, double width, LineColor icolor) {
         Point tx0 = new Point();
         Point tx1 = new Point();
         Point ty0 = new Point();
@@ -66,27 +69,27 @@ public class OritaDrawing { //For drawing
     }
 
     //Draw a pointing diagram around the specified Point
-    public void pointingAt1(Graphics g, LineSegment s_tv, double length, double haba, int icolor) {
+    public static void pointingAt1(Graphics g, LineSegment s_tv, double length, double haba, int icolor) {
         g.setColor(new Color(255, 165, 0, 100));//g.setColor(Color.ORANGE);
         g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
     }
 
     //Draw a pointing diagram around the specified Point
-    public void pointingAt2(Graphics g, LineSegment s_tv, double length, double haba, int icolor) {
+    public static void pointingAt2(Graphics g, LineSegment s_tv, double length, double haba, int icolor) {
         g.setColor(new Color(255, 165, 0, 100));//g.setColor(Color.ORANGE);
         g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
 
     }
 
     //Draw a pointing diagram around the specified Point
-    public void pointingAt3(Graphics g, LineSegment s_tv, double length, double haba, int icolor) {
+    public static void pointingAt3(Graphics g, LineSegment s_tv, double length, double haba, int icolor) {
         g.setColor(new Color(255, 200, 0, 50));
         g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
     }
 
 
     //Draw a pointing diagram around the specified Point
-    public void pointingAt4(Graphics g, LineSegment s_tv, int color_transparency) {
+    public static void pointingAt4(Graphics g, LineSegment s_tv, int color_transparency) {
         g.setColor(new Color(255, 0, 147, color_transparency));
 
         g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線

@@ -1,6 +1,6 @@
-package jp.gr.java_conf.mt777.zukei2d.heikinzahyou;
+package jp.gr.java_conf.mt777.graphic2d.averagecoordinates;
 
-import jp.gr.java_conf.mt777.zukei2d.ten.*;
+import jp.gr.java_conf.mt777.graphic2d.point.*;
 
 public class AverageCoordinates {
     double x, y;

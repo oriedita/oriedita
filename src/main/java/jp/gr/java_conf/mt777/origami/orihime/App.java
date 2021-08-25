@@ -1,25 +1,16 @@
 package jp.gr.java_conf.mt777.origami.orihime;
 
-//import java.awt.MouseInfo;
-//import java.awt.PointerInfo;
-
 import java.awt.*;
-//import java.awt.BorderLayout;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
-//import javax.swing.Jframe.*;
-//import javax.swing.Jpanel.*;;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.*;
 import java.net.URL;
 
-//画像出力のため追加開始　20170107
 import javax.imageio.*;
 import java.awt.image.*;
-//import java.io.*;
-//画像出力のため追加終わり
 
 import jp.gr.java_conf.mt777.origami.orihime.oriagari_zu.*;
 import jp.gr.java_conf.mt777.origami.orihime.egaki_syokunin.*;
@@ -31,17 +22,12 @@ import jp.gr.java_conf.mt777.origami.dougu.linestore.*;
 import jp.gr.java_conf.mt777.kiroku.memo.*;
 
 import jp.gr.java_conf.mt777.kiroku.moji_sousa.*;
-import jp.gr.java_conf.mt777.zukei2d.senbun.*;
-import jp.gr.java_conf.mt777.zukei2d.oritacalc.*;
-import jp.gr.java_conf.mt777.zukei2d.grid.*;
-import jp.gr.java_conf.mt777.zukei2d.ten.Point;
+import jp.gr.java_conf.mt777.graphic2d.linesegment.*;
+import jp.gr.java_conf.mt777.graphic2d.oritacalc.*;
+import jp.gr.java_conf.mt777.graphic2d.grid.*;
+import jp.gr.java_conf.mt777.graphic2d.point.Point;
 
-/*///a アプレット用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
-import java.applet.*; 
-/*///a アプレット用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
-////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。  
 import java.io.*;
-////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
 
 import java.util.*;
 
@@ -60,12 +46,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     Memo memo1 = new Memo();
 
     SubThread sub;
-
-    int i_SubThread = 0;//SubThread（折畳み計算）実行中なら１、実行していないなら０
-
-    //テスト用  VVVVVVVVVVVVVVVVV
-    //Jyuufuku_Jyunretu_hasseiki jjh = new Jyuufuku_Jyunretu_hasseiki();
-    //AAAAAAAAAAAAAAAAAAAAAAAAAAA
+    boolean subThreadRunning = false;//1 if SubThread (folding calculation) is running, 0 if not running
 
     public Drawing_Worker es1 = new Drawing_Worker(r, this);    //Basic branch craftsman. Accepts input from the mouse.
 
@@ -74,11 +55,10 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
     ArrayList<FoldedFigure> OAZ = new ArrayList<>(); //Instantiation of fold-up diagram
 
-    public LineSet Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public LineSegmentSet Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
 
-    int i_OAZ = 0;//OAZの何番目のOriagari_Zuがボタン操作や変形操作の対象となるかを指定
-
-
+    int i_OAZ = 0;//Specify which number of OAZ Oriagari_Zu is the target of button operation or transformation operation 
+    
     public Grid kus = es1.grid;
 
     public BulletinBoard bulletinBoard = new BulletinBoard(this);
@@ -89,32 +69,30 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
     Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
-    LineType icol;//基本枝職人の枝の色を指定する。0は黒、1は赤、2は赤。//icol=0 black	//icol=1 red	//icol=2 blue	//icol=3 cyan	//icol=4 orange	//icol=5 mazenta	//icol=6 green	//icol=7 yellow	//icol=8 new Color(210,0,255) //紫
-    LineType h_icol;//補助線の枝の色を指定する。
+    LineColor icol;//基本枝職人の枝の色を指定する。0は黒、1は赤、2は赤。//icol=0 black	//icol=1 red	//icol=2 blue	//icol=3 cyan	//icol=4 orange	//icol=5 mazenta	//icol=6 green	//icol=7 yellow	//icol=8 new Color(210,0,255) //紫
+    LineColor h_icol;//補助線の枝の色を指定する。
 
-    int iro_sitei_ato_ni_jissisuru_sagyou_bangou = 1;//Number of work to be performed after specifying the color of black, red, blue, and water
+    MouseMode iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_FREE_1;//Number of work to be performed after specifying the color of black, red, blue, and water
 
 
-    boolean w_image_running = false;//Folding together execution. If a single image export is in progress, it will be true.
-    //boolean summary_write_image_during_execution = false;//matome_write_imageが実行中ならtureになる。これは、複数の折りあがり形の予測の書き出しがかすれないように使う。20170613
+    boolean w_image_running = false; // Folding together execution. If a single image export is in progress, it will be true.
 
     String fname_and_number;//まとめ書き出しに使う。
 
 
-    public int i_anti_alias = 0;//展開図のアンチェイリアスをするかしないか。する=1、しない=0
-    public double senhaba_for_anti_alias = 1.0;//展開図のアンチェイリアスをするなら=1.2、しない=1.0
+    public boolean antiAlias = false;//展開図のアンチェイリアスをするかしないか。する=1、しない=0
+    public double lineWidthForAntiAlias = 1.0;//展開図のアンチェイリアスをするなら=1.2、しない=1.0
 
-    public int ir_ten = 1;//展開図の点の形状を指定
+    public int ir_ten = 1;//Specify the shape of the points in the development view
 
-    public int i_orisen_hyougen = 1;//折線の表現、1＝色、2=色と形状、3=黒で1点鎖線、4=黒で2点鎖線
+    public LineStyle lineStyle = LineStyle.COLOR;//折線の表現、1＝色、2=色と形状、3=黒で1点鎖線、4=黒で2点鎖線
 
     //各種変数の定義
     public String c = "";                //文字列処理用のクラスのインスタンス化
-    //public String text_kekka=new String();                //結果表示用文字列のクラスのインスタンス化
     String frame_title_0 = "";//フレームのタイトルの根本部分
     String frame_title = "";//フレームのタイトルの全体
 
-    int i_orisen_hojyosen = 0;//=0は折線入力　=1は補助線入力モード
+    Drawing_Worker.FoldLineAdditionalInputMode foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
 
 
     //アプレット用public void init()または、アプリケーション用public ap() 以外のクラスでも使用されるパネルの部品の宣言はここでしておく。
@@ -126,12 +104,10 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     int id_kakudo_kei_a = 12;//角度系の180度を割る数の格納_a
     int id_kakudo_kei_b = 8;//角度系の180度を割る数の格納_b
 
-
     JButton Button0b;                    //対称性の指定に用いる
     JButton Button3;                    //操作の指定に用いる（追加推定一個だけ）
     JButton Button_AS_matome;                    //操作の指定に用いる（追加推定100個）
     JButton Button_bangou_sitei_suitei_hyouji;
-
 
     JButton Button_kitei;
     JButton Button_kitei2;
@@ -140,10 +116,8 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     JButton ButtonCol_red;                    //折線の色の指定に用いる
     JButton ButtonCol_cyan;                    //折線(補助線)の色の指定に用いる
 
-
     JButton Button_Col_orange;                    //補助線1の色の指定に用いる
     JButton Button_Col_yellow;                    //補助線2の色の指定に用いる
-
 
     JButton Button_background_Lock_on;//背景のロックオン
     JButton Button_background_kirikae;//背景を表示するかどうかの指定
@@ -158,7 +132,6 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
     JButton Button_senbun_henkan2;//線分の色を赤から青、青から赤に変換
 
-
     public JButton Button_F_color;                    //折り上がり図の表の色の指定に用いる
     public JButton Button_B_color;                    //折り上がり図の裏の色の指定に用いる
     public JButton Button_L_color;                    //折り上がり図の線の色の指定に用いる
@@ -166,11 +139,10 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     public Color sen_tokutyuu_color = new Color(100, 200, 200);//補助線や円の色を特注的に変える場合の指定色
     public JButton Button_sen_tokutyuu_color;                    //折り上がり図の表の色の指定に用いる
 
-
     public JTextField text1;
     public int nyuuryoku_kitei = 0;    //格子の分割数　　　　（入力規定の指定。0なら規定無し、1なら蛇腹入力。
     JTextField text2;
-    int i_orisen_bunkatu_suu = 1;//free折線入力で、折線の等分割されている数
+    int foldLineDividingNumber = 1;//free折線入力で、折線の等分割されている数
 
     JTextField text3;
     double d_orisen_naibun_a = 1.0;
@@ -186,7 +158,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     double d_orisen_naibun_f = 2.0;
 
     JTextField text9;
-    int i_sei_takakukei = 5;
+    int numPolygonCorners = 5;
 
     JTextField text10;
     int i_undo_suu = 20;//text31はtext10を参考にしている
@@ -267,29 +239,22 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
     public JCheckBox ckbox_toukazu_color;//透過図をカラー化する。
 
-    int i_point_sagasi_display;
-    int i_point_hanasi_display;
-    int i_kou_mitudo_nyuuryoku_display;
-    int i_bun_display;
-    int i_cp_display;
-    int i_a0_display;
-    int i_a1_display;
-    int i_mejirusi_display;
-    int i_cp_ue_display;
-    int i_oritatami_keika_display;
-
-
-    //JLabel label;
-    // text1 = new JTextField("a1", 5);
-    //text2 = new JTextField("a2", 5);
-    // label = new JLabel();
+    boolean i_point_sagasi_display;
+    boolean i_point_hanasi_display;
+    boolean i_kou_mitudo_nyuuryoku_display;
+    boolean i_bun_display;
+    boolean i_cp_display;
+    boolean i_a0_display;
+    boolean i_a1_display;
+    boolean i_mejirusi_display;
+    boolean i_cp_ue_display;
+    boolean i_oritatami_keika_display;
 
     JLabel label_length_sokutei_1 = new JLabel("");
     JLabel label_length_sokutei_2 = new JLabel("");
     JLabel label_kakudo_sokutei_1 = new JLabel("");
     JLabel label_kakudo_sokutei_2 = new JLabel("");
     JLabel label_kakudo_sokutei_3 = new JLabel("");
-
 
     Image img_background;       //Image for background
     String img_background_fname;
@@ -302,8 +267,8 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
     // バッファー画面用設定はここまでAAAAAAAAAAAAAAAAAAA
 
-    int i_Lock_on_ori = 0;//背景をロックオンする＝１、しない＝０
-    int i_Lock_on = 0;//背景をロックオンする＝１、しない＝０
+    boolean i_Lock_on_ori = false;//背景をロックオンする＝１、しない＝０
+    boolean i_Lock_on = false;//背景をロックオンする＝１、しない＝０
 
     Point p_mouse_object_iti = new Point();//マウスのオブジェクト座標上の位置
     Point p_mouse_TV_iti = new Point();//マウスのTV座標上の位置
@@ -323,24 +288,17 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
     public MouseMode i_mouse_modeA = MouseMode.FOLDABLE_LINE_DRAW_71;//Defines the response to mouse movements. If it is 1, the line segment input mode. If it is 2, adjust the development view (move). If it is 101, operate the folded figure.
 
-    int i_mouseDragged_yuukou = 0;
-    int i_mouseReleased_yuukou = 0;//0は、マウス操作を無視。1はマウス操作有効。ファイルボックスのon-offなどで、予期せぬmouseDraggedやmouseReleasedが発生したとき、それを拾わないように0に設定する。これらは、マウスがクリックされたときに、1有効指定にする。
-
-    double sokutei_length_1 = 0.0;
-    double sokutei_length_2 = 0.0;
-    double sokutei_length_3 = 0.0;
-    double sokutei_kakudo_1 = 0.0;
-    double sokutei_kakudo_2 = 0.0;
-    double sokutei_kakudo_3 = 0.0;
+    boolean i_mouseDragged_valid = false;
+    boolean i_mouseReleased_valid = false;//0 ignores mouse operation. 1 is valid for mouse operation. When an unexpected mouseDragged or mouseReleased occurs due to on-off of the file box, set it to 0 so that it will not be picked up. These are set to 1 valid when the mouse is clicked.
 
     //int i_AS_matome =100;//折畳み推定の別解をまとめて出す個数
     //int i_AS_matome_mode =0;//1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVe r3.008から追加
 
-    int i_sub_mode = 0;
-    //i_sub_mode サブスレッドの動作規定。
-    //0=折畳推定5の実行。折畳み推定の別解をまとめて出すモードではない。
-    //1=折畳推定5の実行。折畳み推定の別解をまとめて出す。
-    //2=
+    SubThread.Mode subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_0;
+    // subThreadMode Subthread operation rules.
+    // 0 = Execution of folding estimate 5. It is not a mode to put out different solutions of folding estimation at once.
+    // 1 = Execution of folding estimate 5. Another solution for folding estimation is put together.
+    // 2 =
 
 
     Thread myTh;                              //スレッドクラスのインスタンス化
@@ -357,15 +315,14 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
     BufferedImage offsc_background = null;//20181205add
 
-    int flg61 = 0;//Used when setting the frame 　20180524
+    boolean flg61 = false;//Used when setting the frame 　20180524
 
-    int flg_wi = 0;//writeimage時につかう　1にするとpaintの関数の終了部にwriteimageするようにする。これは、paintの変更が書き出されるイメージに反映されないことを防ぐための工夫。20180528
+    boolean flg_wi = false;//writeimage時につかう　1にするとpaintの関数の終了部にwriteimageするようにする。これは、paintの変更が書き出されるイメージに反映されないことを防ぐための工夫。20180528
     String fname_wi;
 
 
-    public int i_sel_mou_mode;//セレクトしてマウス操作をする際にどの操作をするかの指定。セレクト後にセレクト済みの点を選択し自動的にセレクト前提のマウス操作に切り替えるときに使う。
+    public int i_sel_mou_mode;//Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
     //=1はmove、=2はmove4p、=3はcopy、=4はcopy4p、=5は鏡映像
-
 
     JButton Button_move;
     JButton Button_move_2p2p;
@@ -387,10 +344,10 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
     int migi_sita_iy = 44;
 
     Frame add_frame;
-    int i_add_frame = 0;//1=add_frameが存在する。,0=存在しない。
+    boolean i_add_frame = false;//1=add_frameが存在する。,0=存在しない。
 
     //int ckbox_add_frame_to_front_isSelected=1;//1=add_frameは常に前面。,0前後は、操作に応じて。 20200930
-    int ckbox_add_frame_SelectAnd3click_isSelected = 0;//1=折線セレクト状態でトリプルクリックするとmoveやcopy等の動作モードに移行する。 20200930
+    boolean ckbox_add_frame_SelectAnd3click_isSelected = false;//1=折線セレクト状態でトリプルクリックするとmoveやcopy等の動作モードに移行する。 20200930
 
     //ここまでが変数等の定義
 // **************************************************************************************************************
@@ -525,15 +482,12 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
         //camera_haikei	;
         //カメラの設定はここまで----------------------------------------------------
 
-
-        //text_kekka="";
-
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
         //addKeyListener(this);
 
-        icol = LineType.NONE;
+        icol = LineColor.NONE;
         //step=1;
         myTh = null;
         // 初期表示
@@ -611,8 +565,8 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
             Button_kyoutuu_sagyou();
 
-            i_mouseDragged_yuukou = 0;
-            i_mouseReleased_yuukou = 0;
+            i_mouseDragged_valid = false;
+            i_mouseReleased_valid = false;
             Memo memo_temp;
 
             System.out.println("readFile2Memo() 開始");
@@ -627,9 +581,9 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
                 es1.reset();                                                //描き職人の初期化
 
                 //nyuuryoku_kitei=8; es1.set_grid_bunkatu_suu(nyuuryoku_kitei); //es1.reset_2();				//格子幅の指定
-                es1.set_i_base_state(GridState.HIDDEN);
+                es1.setBaseState(Grid.State.HIDDEN);
 
-                icol = LineType.RED_1;
+                icol = LineColor.RED_1;
                 es1.setColor(icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
                 ButtonCol_irokesi();
                 ButtonCol_red.setForeground(Color.black);
@@ -682,7 +636,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
         //重要注意　読み込みや書き出しでファイルダイアログのボックスが開くと、それをフレームに重なる位置で操作した場合、ファイルボックスが消えたときに、
         //マウスのドラッグとリリースが発生する。このため、余計な操作がされてしまう可能性がある。なお、このときマウスクリックは発生しない。
-        // i_mouseDragged_yuukou=0;や i_mouseReleased_yuukou=0;は、この余計な操作を防ぐために指定している。
+        // i_mouseDragged_valid=0;や i_mouseReleased_valid=0;は、この余計な操作を防ぐために指定している。
 
 
 // ******************************************************************************データ書き出し
@@ -692,8 +646,8 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
             img_explanation_fname = "qqq/kaki.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
-            i_mouseDragged_yuukou = 0;
-            i_mouseReleased_yuukou = 0;
+            i_mouseDragged_valid = false;
+            i_mouseReleased_valid = false;
             writeMemo2File();
             es1.record();
         });
@@ -709,10 +663,10 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
         Button_tyouhoukei_select.addActionListener(e -> {
             img_explanation_fname = "qqq/tyouhoukei_select.png";
             readImageFromFile3();
-            i_orisen_hojyosen = 0;//=0は折線入力　=1は補助線入力モード
-            es1.set_i_orisen_hojyosen(i_orisen_hojyosen);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
+            foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
+            es1.setFoldLineAdditional(foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
             i_mouse_modeA = MouseMode.OPERATION_FRAME_CREATE_61;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 1;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_FREE_1;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -739,8 +693,8 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
                 Button_kyoutuu_sagyou();
                 es1.set_i_egaki_dankai(0);
             }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
-            i_mouseDragged_yuukou = 0;
-            i_mouseReleased_yuukou = 0;
+            i_mouseDragged_valid = false;
+            i_mouseReleased_valid = false;
 
 
             writeImage();
@@ -758,7 +712,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
 		img_explanation_fname="qqq/toumei.png";readImageFromFile3();
 							//if(i_mouse_modeA!=61){Button_kyoutuu_sagyou();es1.set_i_egaki_dankai(0);}//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
-							//i_mouseDragged_yuukou=0; i_mouseReleased_yuukou=0;
+							//i_mouseDragged_valid=0; i_mouseReleased_valid=0;
 //System.out.println("0    i_toumeika="+i_toumeika);
  Robot robot;
 
@@ -893,10 +847,10 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
             if (ckbox_kou_mitudo_nyuuryoku.isSelected()) {
                 System.out.println(" kou_mitudo_nyuuryoku on");
-                es1.set_i_kou_mitudo_nyuuryoku(1);
+                es1.set_i_kou_mitudo_nyuuryoku(true);
             } else {
                 System.out.println(" kou_mitudo_nyuuryoku off");
-                es1.set_i_kou_mitudo_nyuuryoku(0);
+                es1.set_i_kou_mitudo_nyuuryoku(false);
             }
             repaint();
         });
@@ -1133,7 +1087,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             img_explanation_fname = "qqq/senbun_naibun_set.png";
             readImageFromFile3();
             i_mouse_modeA = MouseMode.LINE_SEGMENT_RATIO_SET_28;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 28;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             Button_kyoutuu_sagyou();
@@ -1143,7 +1097,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         pnln10.add(Button_senbun_naibun_set);
 
         Button_senbun_naibun_set.setMargin(new Insets(0, 0, 0, 0));
-        //Button_senbun_bunkatu_set.setIcon(createImageIcon(
+        //Button_lineSegment_division_set.setIcon(createImageIcon(
         //"ppp/senbun_bunkatu_set.png")));
 
 // ------1;線分比率set。ここまで
@@ -1160,7 +1114,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             img_explanation_fname = "qqq/senbun_n_nyuryoku.png";
             readImageFromFile3();
             i_mouse_modeA = MouseMode.LINE_SEGMENT_RATIO_SET_28;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 28;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -1551,7 +1505,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             img_explanation_fname = "qqq/toumei.png";
             readImageFromFile3();
             //if(i_mouse_modeA!=61){Button_kyoutuu_sagyou();es1.set_i_egaki_dankai(0);}//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
-            //i_mouseDragged_yuukou=0; i_mouseReleased_yuukou=0;
+            //i_mouseDragged_valid=0; i_mouseReleased_valid=0;
 //System.out.println("0    i_toumeika="+i_toumeika);
             Robot robot;
 
@@ -1627,7 +1581,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
             iDisplayBackground = 1;
             Button_background_kirikae.setBackground(Color.ORANGE);
 
-            if (i_Lock_on == 1) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
+            if (i_Lock_on) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
                 h_cam.set_i_Lock_on(i_Lock_on);
                 h_cam.setCamera(camera_of_orisen_input_diagram);
                 h_cam.h3_obj_and_h4_obj_calculation();
@@ -1684,10 +1638,10 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
 //枠設定時の背景を枠内のみ残してトリム 20181204
             if ((i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) && (es1.get_i_egaki_dankai() == 4)) {//枠線が表示されている状態
-                int xmin = (int) es1.p61_TV_hako.get_x_min();
-                int xmax = (int) es1.p61_TV_hako.get_x_max();
-                int ymin = (int) es1.p61_TV_hako.get_y_min();
-                int ymax = (int) es1.p61_TV_hako.get_y_max();
+                int xmin = (int) es1.operationFrameBox.getXMin();
+                int xmax = (int) es1.operationFrameBox.getXMax();
+                int ymin = (int) es1.operationFrameBox.getYMin();
+                int ymax = (int) es1.operationFrameBox.getYMax();
 
                 img_background = offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin);
 //img_background=(Image)offsc_background;
@@ -1695,15 +1649,12 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
                 h_cam = new Background_camera();
 
-                double dvx = xmin;
-                double dvy = ymin;
-
                 background_set(new Point(120.0, 120.0),
                         new Point(120.0 + 10.0, 120.0),
-                        new Point(dvx, dvy),
-                        new Point(dvx + 10.0, dvy));
+                        new Point(xmin, ymin),
+                        new Point((double) xmin + 10.0, ymin));
 
-                if (i_Lock_on == 1) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
+                if (i_Lock_on) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
                     h_cam.set_i_Lock_on(i_Lock_on);
                     h_cam.setCamera(camera_of_orisen_input_diagram);
                     h_cam.h3_obj_and_h4_obj_calculation();
@@ -1749,8 +1700,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
             //i_Lock_on=0;
             //Button_kyoutuu_sagyou();
-            i_mouseDragged_yuukou = 0;
-            i_mouseReleased_yuukou = 0;
+            i_mouseDragged_valid = false;
+            i_mouseReleased_valid = false;
 
 
             readImageFromFile();
@@ -1762,7 +1713,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
 
             h_cam = new Background_camera();//20181202
-            if (i_Lock_on == 1) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
+            if (i_Lock_on) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
                 h_cam.set_i_Lock_on(i_Lock_on);
                 h_cam.setCamera(camera_of_orisen_input_diagram);
                 h_cam.h3_obj_and_h4_obj_calculation();
@@ -1825,24 +1776,18 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
 
-            i_Lock_on_ori = i_Lock_on_ori + 1;
-            if (i_Lock_on_ori >= 2) {
-                i_Lock_on_ori = 0;
-            }
+            i_Lock_on_ori = !i_Lock_on_ori;
             i_Lock_on = i_Lock_on_ori;
             //System.out.println("i_Lock_on    ="+i_Lock_on);
 
 
-            if (i_Lock_on == 1) {
+            if (i_Lock_on) {
                 Button_background_Lock_on.setBackground(Color.ORANGE);
 
                 h_cam.set_i_Lock_on(i_Lock_on);
                 h_cam.setCamera(camera_of_orisen_input_diagram);
                 h_cam.h3_obj_and_h4_obj_calculation();
-            }
-
-
-            if (i_Lock_on == 0) {
+            } else {
                 Button_background_Lock_on.setBackground(Color.gray);
 
                 h_cam.set_i_Lock_on(i_Lock_on);
@@ -1898,8 +1843,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                 iDisplayExplanation = 0;
             }
 //System.out.println("iDisplayExplanation="+iDisplayExplanation);
-            i_mouseDragged_yuukou = 0;
-            i_mouseReleased_yuukou = 0;
+            i_mouseDragged_valid = false;
+            i_mouseReleased_valid = false;
 //img_explanation_fname="kaisetu.png";readImageFromFile3();
             //readImageFromFile2();
 
@@ -2113,23 +2058,17 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 // ******西*************展開図の線をアンチエイリアス表示にする***********************************************************
         JButton Button_anti_alias = new JButton("a_a");
         Button_anti_alias.addActionListener(e -> {
-            //Button_kyoutuu_sagyou();
-            i_anti_alias = i_anti_alias + 1;
-            if (i_anti_alias >= 2) {
-                i_anti_alias = 0;
+            antiAlias = !antiAlias;
+
+            if (antiAlias) {
+                lineWidthForAntiAlias = 1.2;
+            } else {
+                lineWidthForAntiAlias = 1.0;
             }
 
-            if (i_anti_alias == 0) {
-                senhaba_for_anti_alias = 1.0;
-            }
-            if (i_anti_alias == 1) {
-                senhaba_for_anti_alias = 1.2;
-            }
             img_explanation_fname = "qqq/anti_alias.png";
             readImageFromFile3();
 
-
-            //js.set_i_anti_alias(i_anti_alias);
             repaint();
         });
         pnlw22.add(Button_anti_alias);
@@ -2160,10 +2099,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         Button_orisen_hyougen.addActionListener(e -> {
 
             Button_kyoutuu_sagyou();
-            i_orisen_hyougen = i_orisen_hyougen + 1;
-            if (i_orisen_hyougen >= 5) {
-                i_orisen_hyougen = 1;
-            }
+            lineStyle = lineStyle.advance();
 
             img_explanation_fname = "qqq/orisen_hyougen.png";
             readImageFromFile3();
@@ -2202,7 +2138,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             ButtonCol_irokesi();
             ButtonCol_red.setForeground(Color.black);
             ButtonCol_red.setBackground(Color.red);
-            icol = LineType.RED_1;
+            icol = LineColor.RED_1;
             es1.setColor(icol);
 
             repaint();
@@ -2223,7 +2159,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             ButtonCol_irokesi();
             ButtonCol_blue.setForeground(Color.black);
             ButtonCol_blue.setBackground(Color.blue);
-            icol = LineType.BLUE_2;
+            icol = LineColor.BLUE_2;
             es1.setColor(icol);
 
             repaint();
@@ -2242,7 +2178,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             ButtonCol_irokesi();
             ButtonCol_black.setForeground(Color.white);
             ButtonCol_black.setBackground(Color.black);
-            icol = LineType.BLACK_0;
+            icol = LineColor.BLACK_0;
             es1.setColor(icol);
             //  Button_kyoutuu_sagyou();
 
@@ -2264,7 +2200,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             ButtonCol_irokesi();
             ButtonCol_cyan.setForeground(Color.black);
             ButtonCol_cyan.setBackground(Color.cyan);
-            icol = LineType.CYAN_3;
+            icol = LineColor.CYAN_3;
             es1.setColor(icol);
             //  Button_kyoutuu_sagyou();
 
@@ -2297,10 +2233,10 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         Button_senbun_nyuryoku.addActionListener(e -> {
             img_explanation_fname = "qqq/senbun_nyuryoku.png";
             readImageFromFile3();
-            i_orisen_hojyosen = 0;//=0は折線入力　=1は補助線入力モード
-            es1.set_i_orisen_hojyosen(i_orisen_hojyosen);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
+            foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
+            es1.setFoldLineAdditional(foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
             i_mouse_modeA = MouseMode.DRAW_CREASE_FREE_1;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 1;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_FREE_1;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2324,7 +2260,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/senbun_nyuryoku11.png";
             readImageFromFile3();
             i_mouse_modeA = MouseMode.DRAW_CREASE_RESTRICTED_11;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 11;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_RESTRICTED_11;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2347,10 +2283,10 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         Button_Voronoi.addActionListener(e -> {
             img_explanation_fname = "qqq/Voronoi.png";
             readImageFromFile3();
-            i_orisen_hojyosen = 0;//=0は折線入力　=1は補助線入力モード
-            es1.set_i_orisen_hojyosen(i_orisen_hojyosen);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
+            foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
+            es1.setFoldLineAdditional(foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
             i_mouse_modeA = MouseMode.VONOROI_CREATE_62;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 62;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.VONOROI_CREATE_62;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2372,7 +2308,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
 
             i_mouse_modeA = MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 38;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2404,7 +2340,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
 
             i_mouse_modeA = MouseMode.LENGTHEN_CREASE_5;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 5;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LENGTHEN_CREASE_5;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2430,7 +2366,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
 
             i_mouse_modeA = MouseMode.CREASE_LENGTHEN_70;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 5;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LENGTHEN_CREASE_5;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2455,7 +2391,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
 
             i_mouse_modeA = MouseMode.SQUARE_BISECTOR_7;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 7;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.SQUARE_BISECTOR_7;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2478,7 +2414,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
 
             i_mouse_modeA = MouseMode.INWARD_8;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 8;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.INWARD_8;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2512,7 +2448,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
 
             i_mouse_modeA = MouseMode.PERPENDICULAR_DRAW_9;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 9;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.PERPENDICULAR_DRAW_9;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2537,7 +2473,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
 
             i_mouse_modeA = MouseMode.SYMMETRIC_DRAW_10;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 10;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.SYMMETRIC_DRAW_10;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2562,7 +2498,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
 
             i_mouse_modeA = MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 52;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2594,7 +2530,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/heikousen.png";
             readImageFromFile3();
             i_mouse_modeA = MouseMode.PARALLEL_DRAW_40;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 40;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.PARALLEL_DRAW_40;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2613,7 +2549,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/heikousen_haba_sitei.png";
             readImageFromFile3();
             i_mouse_modeA = MouseMode.PARALLEL_DRAW_WIDTH_51;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 51;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.PARALLEL_DRAW_WIDTH_51;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2635,7 +2571,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
 
             i_mouse_modeA = MouseMode.FOLDABLE_LINE_DRAW_71;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 71;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.FOLDABLE_LINE_DRAW_71;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2690,7 +2626,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
 
             i_mouse_modeA = MouseMode.FISH_BONE_DRAW_33;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 33;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.FISH_BONE_DRAW_33;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2715,7 +2651,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
 
             i_mouse_modeA = MouseMode.DOUBLE_SYMMETRIC_DRAW_35;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 35;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DOUBLE_SYMMETRIC_DRAW_35;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2752,32 +2688,32 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
 // -------------------------------------------------------------------------------
 
-        //Button	Button_senbun_bunkatu_set
+        //Button	Button_lineSegment_division_set
 // -----1;Line segment division number set
-        JButton Button_senbun_bunkatu_set = new JButton("Set");
-        Button_senbun_bunkatu_set.addActionListener(e -> {
+        JButton Button_lineSegment_division_set = new JButton("Set");
+        Button_lineSegment_division_set.addActionListener(e -> {
 
-            int i_orisen_bunkatu_suu_old = i_orisen_bunkatu_suu;
-            i_orisen_bunkatu_suu = StringOp.String2int(text2.getText(), i_orisen_bunkatu_suu_old);
-            if (i_orisen_bunkatu_suu < 1) {
-                i_orisen_bunkatu_suu = 1;
+            int i_orisen_bunkatu_suu_old = foldLineDividingNumber;
+            foldLineDividingNumber = StringOp.String2int(text2.getText(), i_orisen_bunkatu_suu_old);
+            if (foldLineDividingNumber < 1) {
+                foldLineDividingNumber = 1;
             }
-            text2.setText(String.valueOf(i_orisen_bunkatu_suu));
-            es1.set_i_orisen_bunkatu_suu(i_orisen_bunkatu_suu);
+            text2.setText(String.valueOf(foldLineDividingNumber));
+            es1.setFoldLineDividingNumber(foldLineDividingNumber);
 
             img_explanation_fname = "qqq/senbun_bunkatu_set.png";
             readImageFromFile3();
             i_mouse_modeA = MouseMode.LINE_SEGMENT_DIVISION_27;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 27;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_DIVISION_27;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             Button_kyoutuu_sagyou();
             repaint();
         });
-        pnlw15.add(Button_senbun_bunkatu_set);
+        pnlw15.add(Button_lineSegment_division_set);
 
-        Button_senbun_bunkatu_set.setMargin(new Insets(0, 0, 0, 0));
-        //Button_senbun_bunkatu_set.setIcon(createImageIcon(
+        Button_lineSegment_division_set.setMargin(new Insets(0, 0, 0, 0));
+        //Button_lineSegment_division_set.setIcon(createImageIcon(
         //"ppp/senbun_bunkatu_set.png")));
 
 // ------1;線分分割数set。ここまで
@@ -2790,18 +2726,18 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         JButton Button_senbun_b_nyuryoku = new JButton("");
         Button_senbun_b_nyuryoku.addActionListener(e -> {
 
-            int i_orisen_bunkatu_suu_old = i_orisen_bunkatu_suu;
-            i_orisen_bunkatu_suu = StringOp.String2int(text2.getText(), i_orisen_bunkatu_suu_old);
-            if (i_orisen_bunkatu_suu < 1) {
-                i_orisen_bunkatu_suu = 1;
+            int i_orisen_bunkatu_suu_old = foldLineDividingNumber;
+            foldLineDividingNumber = StringOp.String2int(text2.getText(), i_orisen_bunkatu_suu_old);
+            if (foldLineDividingNumber < 1) {
+                foldLineDividingNumber = 1;
             }
-            text2.setText(String.valueOf(i_orisen_bunkatu_suu));
-            es1.set_i_orisen_bunkatu_suu(i_orisen_bunkatu_suu);
+            text2.setText(String.valueOf(foldLineDividingNumber));
+            es1.setFoldLineDividingNumber(foldLineDividingNumber);
 
             img_explanation_fname = "qqq/senbun_b_nyuryoku.png";
             readImageFromFile3();
             i_mouse_modeA = MouseMode.LINE_SEGMENT_DIVISION_27;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 27;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_DIVISION_27;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
@@ -2830,8 +2766,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 		JButton	Button_tyouhoukei_select	= new JButton(	""	);
 			Button_tyouhoukei_select.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
 	img_explanation_fname="qqq/tyouhoukei_select.png";readImageFromFile3();
-						i_orisen_hojyosen=0;//=0は折線入力　=1は補助線入力モード
-						es1.set_i_orisen_hojyosen(i_orisen_hojyosen);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
+						foldLineAdditionalInputMode=0;//=0は折線入力　=1は補助線入力モード
+						es1.set_i_orisen_hojyosen(foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
 						i_mouse_modeA=61;iro_sitei_ato_ni_jissisuru_sagyou_bangou=1;
 						System.out.println("i_mouse_modeA = "+i_mouse_modeA);
 
@@ -3130,8 +3066,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
 
-            i_orisen_hojyosen = 0;//=0は折線入力　=1は補助線入力モード
-            es1.set_i_orisen_hojyosen(i_orisen_hojyosen);
+            foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
+            es1.setFoldLineAdditional(foldLineAdditionalInputMode);
 
             es1.unselect_all();
             Button_kyoutuu_sagyou();
@@ -3156,8 +3092,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
 
-            i_orisen_hojyosen = 2;//=2は黒の折線削除モード
-            es1.set_i_orisen_hojyosen(i_orisen_hojyosen);
+            foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.BLACK_LINE_2;//= 2 is the black polygonal line deletion mode
+            es1.setFoldLineAdditional(foldLineAdditionalInputMode);
 
             es1.unselect_all();
             Button_kyoutuu_sagyou();
@@ -3182,8 +3118,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
 
-            i_orisen_hojyosen = 3;//=0は折線入力　=1は補助線入力モード =3は補助活線のみ対象
-            es1.set_i_orisen_hojyosen(i_orisen_hojyosen);
+            foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.AUX_LIVE_LINE_3;//= 0 is polygonal line input = 1 is auxiliary line input mode = 3 is for auxiliary live line only
+            es1.setFoldLineAdditional(foldLineAdditionalInputMode);
 
             es1.unselect_all();
             Button_kyoutuu_sagyou();
@@ -3420,11 +3356,11 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
             i_mouse_modeA = MouseMode.CREASE_MAKE_MV_34;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 34;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.CREASE_MAKE_MV_34;
 
 
-            if (icol == LineType.BLACK_0) {
-                icol = LineType.RED_1;
+            if (icol == LineColor.BLACK_0) {
+                icol = LineColor.RED_1;
                 es1.setColor(icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
                 ButtonCol_irokesi();
                 ButtonCol_red.setForeground(Color.black);
@@ -3451,11 +3387,11 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
             i_mouse_modeA = MouseMode.CREASES_ALTERNATE_MV_36;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 36;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.CREASES_ALTERNATE_MV_36;
 
 
-            if (icol == LineType.BLACK_0) {
-                icol = LineType.BLUE_2;
+            if (icol == LineColor.BLACK_0) {
+                icol = LineColor.BLUE_2;
                 es1.setColor(icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
                 ButtonCol_irokesi();
                 ButtonCol_blue.setForeground(Color.black);
@@ -3756,8 +3692,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/kousi_color.png";
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
-            i_mouseDragged_yuukou = 0;
-            i_mouseReleased_yuukou = 0;
+            i_mouseDragged_valid = false;
+            i_mouseReleased_valid = false;
 
             //以下にやりたいことを書く
             Color color = JColorChooser.showDialog(null, "Col", new Color(230, 230, 230));
@@ -3774,7 +3710,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //重要注意　読み込みや書き出しでファイルダイアログのボックスが開くと、それをフレームに重なる位置で操作した場合、ファイルボックスが消えたときに、
         //マウスのドラッグとリリースが発生する。このため、余計な操作がされてしまう可能性がある。なお、このときマウスクリックは発生しない。
-        // i_mouseDragged_yuukou=0;や i_mouseReleased_yuukou=0;は、この余計な操作を防ぐために指定している。
+        // i_mouseDragged_valid=0;や i_mouseReleased_valid=0;は、この余計な操作を防ぐために指定している。
 
 // ********西**********************************************************************
         //------------------------------------------------
@@ -3788,7 +3724,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 // ****西**************************************************************************
         JButton Button_grid_senhaba_sage = new JButton("");
         Button_grid_senhaba_sage.addActionListener(e -> {
-            kus.grid_senhaba_sage();
+            kus.decreaseGridLineWidth();
             img_explanation_fname = "qqq/kousi_senhaba_sage.png";
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
@@ -3804,7 +3740,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         JButton Button_grid_senhaba_age = new JButton("");
         Button_grid_senhaba_age.addActionListener(e -> {
-            kus.grid_senhaba_age();
+            kus.increaseGridLineWidth();
             img_explanation_fname = "qqq/kousi_senhaba_age.png";
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
@@ -3827,7 +3763,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/i_kitei_jyoutai.png";
             readImageFromFile3();
 
-            es1.set_i_base_state(es1.getBaseState().advance());
+            es1.setBaseState(es1.getBaseState().advance());
             //Button_kyoutuu_sagyou();
             repaint();
         });
@@ -3925,8 +3861,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/kousi_memori_color.png";
             readImageFromFile3();
             //Button_kyoutuu_sagyou();
-            i_mouseDragged_yuukou = 0;
-            i_mouseReleased_yuukou = 0;
+            i_mouseDragged_valid = false;
+            i_mouseReleased_valid = false;
 
 
             //以下にやりたいことを書く
@@ -3945,7 +3881,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //重要注意　読み込みや書き出しでファイルダイアログのボックスが開くと、それをフレームに重なる位置で操作した場合、ファイルボックスが消えたときに、
         //マウスのドラッグとリリースが発生する。このため、余計な操作がされてしまう可能性がある。なお、このときマウスクリックは発生しない。
-        // i_mouseDragged_yuukou=0;や i_mouseReleased_yuukou=0;は、この余計な操作を防ぐために指定している。
+        // i_mouseDragged_valid=0;や i_mouseReleased_valid=0;は、この余計な操作を防ぐために指定している。
 
 
 // ********************************************************
@@ -4099,9 +4035,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
             if (ckbox_check1.isSelected()) {
                 es1.check1(0.001, 0.5);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-                es1.set_i_check1(1);
+                es1.set_i_check1(true);
             } else {
-                es1.set_i_check1(0);
+                es1.set_i_check1(false);
             }
             Button_kyoutuu_sagyou();
             repaint();
@@ -4154,9 +4090,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
             if (ckbox_check2.isSelected()) {
                 es1.check2(0.01, 0.5);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-                es1.set_i_check2(1);
+                es1.setCheck2(true);
             } else {
-                es1.set_i_check2(0);
+                es1.setCheck2(false);
             }
             Button_kyoutuu_sagyou();
             repaint();
@@ -4210,9 +4146,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
             if (ckbox_check3.isSelected()) {
                 es1.check3(0.0001);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-                es1.set_i_check3(1);
+                es1.setCheck3(true);
             } else {
-                es1.set_i_check3(0);
+                es1.setCheck3(false);
             }
             Button_kyoutuu_sagyou();
             repaint();
@@ -4243,9 +4179,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
             if (ckbox_check4.isSelected()) {
                 es1.check4(0.0001);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-                es1.set_i_check4(1);
+                es1.setCheck4(true);
             } else {
-                es1.set_i_check4(0);
+                es1.setCheck4(false);
             }
             Button_kyoutuu_sagyou();
             repaint();
@@ -4988,21 +4924,21 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
 // -------------------------------------------------------------------------------
 
-        //Button	Button_senbun_bunkatu_set
+        //Button	Button_lineSegment_division_set
 // -----1;	角数set
         JButton Button_kakusuu_set = new JButton("Set");
         Button_kakusuu_set.addActionListener(e -> {
 
-            int i_sei_takakukei_old = i_sei_takakukei;
-            i_sei_takakukei = StringOp.String2int(text9.getText(), i_sei_takakukei_old);
-            if (i_sei_takakukei < 3) {
-                i_sei_takakukei = 3;
+            int numPolygonCornersOld = numPolygonCorners;
+            numPolygonCorners = StringOp.String2int(text9.getText(), numPolygonCornersOld);
+            if (numPolygonCorners < 3) {
+                numPolygonCorners = 3;
             }
-            if (i_sei_takakukei > 100) {
-                i_sei_takakukei = 100;
+            if (numPolygonCorners > 100) {
+                numPolygonCorners = 100;
             }
-            text9.setText(String.valueOf(i_sei_takakukei));
-            es1.set_i_sei_takakukei(i_sei_takakukei);
+            text9.setText(String.valueOf(numPolygonCorners));
+            es1.setNumPolygonCorners(numPolygonCorners);
 
             img_explanation_fname = "qqq/kakusuu_set.png";
             readImageFromFile3();
@@ -5015,7 +4951,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         pnle5.add(Button_kakusuu_set);
 
         Button_kakusuu_set.setMargin(new Insets(0, 0, 0, 0));
-        //Button_senbun_bunkatu_set.setIcon(createImageIcon(
+        //Button_lineSegment_division_set.setIcon(createImageIcon(
         //"ppp/senbun_bunkatu_set.png")));
 
 // ------1;角数set。ここまで
@@ -5027,19 +4963,19 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         JButton Button_sei_takakukei = new JButton("");
         Button_sei_takakukei.addActionListener(e -> {
 
-            int i_sei_takakukei_old = i_sei_takakukei;
-            i_sei_takakukei = StringOp.String2int(text9.getText(), i_sei_takakukei_old);
-            if (i_sei_takakukei < 3) {
-                i_sei_takakukei = 3;
+            int i_sei_takakukei_old = numPolygonCorners;
+            numPolygonCorners = StringOp.String2int(text9.getText(), i_sei_takakukei_old);
+            if (numPolygonCorners < 3) {
+                numPolygonCorners = 3;
             }
-            text9.setText(String.valueOf(i_sei_takakukei));
-            es1.set_i_sei_takakukei(i_sei_takakukei);
+            text9.setText(String.valueOf(numPolygonCorners));
+            es1.setNumPolygonCorners(numPolygonCorners);
 
             img_explanation_fname = "qqq/sei_takakukei.png";
             readImageFromFile3();
             i_mouse_modeA = MouseMode.POLYGON_SET_NO_CORNERS_29;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = 29;
+            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.POLYGON_SET_NO_CORNERS_29;
             Button_kyoutuu_sagyou();
             repaint();
             es1.unselect_all();
@@ -5322,8 +5258,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/sen_tokutyuu_color.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
-            i_mouseDragged_yuukou = 0;
-            i_mouseReleased_yuukou = 0;
+            i_mouseDragged_valid = false;
+            i_mouseReleased_valid = false;
             //以下にやりたいことを書く
 
             Color color = JColorChooser.showDialog(null, "color", new Color(100, 200, 200));
@@ -5349,7 +5285,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //重要注意　読み込みや書き出しでファイルダイアログのボックスが開くと、それをフレームに重なる位置で操作した場合、ファイルボックスが消えたときに、
         //マウスのドラッグとリリースが発生する。このため、余計な操作がされてしまう可能性がある。なお、このときマウスクリックは発生しない。
-        // i_mouseDragged_yuukou=0;や i_mouseReleased_yuukou=0;は、この余計な操作を防ぐために指定している。
+        // i_mouseDragged_valid=0;や i_mouseReleased_valid=0;は、この余計な操作を防ぐために指定している。
 // --------------------------------------
 
 // -------------;線分色特注変更(補助活線のみ)
@@ -5527,7 +5463,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
             Button_h_Col_irokesi();
             Button_Col_orange.setBackground(Color.ORANGE);
-            h_icol = LineType.ORANGE_4;
+            h_icol = LineColor.ORANGE_4;
             es1.h_setcolor(h_icol);
             Button_kyoutuu_sagyou();
             repaint();
@@ -5542,7 +5478,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
             Button_h_Col_irokesi();
             Button_Col_yellow.setBackground(Color.yellow);
-            h_icol = LineType.YELLOW_7;
+            h_icol = LineColor.YELLOW_7;
             es1.h_setcolor(h_icol);
             Button_kyoutuu_sagyou();
             repaint();
@@ -5570,8 +5506,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             repaint();
-            i_orisen_hojyosen = 1;//=0は折線入力　=1は補助線入力モード
-            es1.set_i_orisen_hojyosen(i_orisen_hojyosen);
+            foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.AUX_LINE_1;//=0は折線入力　=1は補助線入力モード
+            es1.setFoldLineAdditional(foldLineAdditionalInputMode);
         });
 
         pnle13.add(Button_h_senbun_nyuryoku);
@@ -5595,8 +5531,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
 
-            i_orisen_hojyosen = 1;//=0は折線入力　=1は補助線入力モード
-            es1.set_i_orisen_hojyosen(i_orisen_hojyosen);
+            foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.AUX_LINE_1;//= 0 is polygonal line input = 1 is auxiliary line input mode
+            es1.setFoldLineAdditional(foldLineAdditionalInputMode);
 
             es1.unselect_all();
             Button_kyoutuu_sagyou();
@@ -5878,8 +5814,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
             Button_kyoutuu_sagyou();
 
-            i_mouseDragged_yuukou = 0;
-            i_mouseReleased_yuukou = 0;
+            i_mouseDragged_valid = false;
+            i_mouseReleased_valid = false;
             Memo memo_temp;
 
             System.out.println("readFile2Memo() 開始");
@@ -5955,9 +5891,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                 //OZ.ts1.Senbunsyuugou2Tensyuugou(es1.get_for_select_oritatami());
                 OZ.i_estimated_order = 5;
 
-                if (i_SubThread == 0) {
-                    i_SubThread = 1;
-                    i_sub_mode = 4;
+                if (!subThreadRunning) {
+                    subThreadRunning = true;
+                    subThreadMode = SubThread.Mode.TWO_COLORED_4;
                     mks();//新しいスレッドを作る
                     sub.start();
                 }
@@ -6215,9 +6151,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             OZ.i_estimated_order = 6;
 
 
-            i_sub_mode = 0;//1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかう。
-            if (i_SubThread == 0) {
-                i_SubThread = 1;
+            subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_0;//1 = Put together another solution for folding estimation. 0 = It is not a mode to put out different solutions of folding estimation at once. This variable is used to change the behavior of subthreads.
+            if (!subThreadRunning) {
+                subThreadRunning = true;
                 mks();//新しいスレッドを作る
                 sub.start();
             }
@@ -6235,8 +6171,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
             //ip4 == 0 front, ip4 == 1 back, ip4 == 2, ip4 == 3 both transparent
             OZ.ip4 = OZ.ip4.advance();
-            if ((i_mouse_modeA == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (OZ.ip4 == FoldedFigureState.BOTH_2)) {
-                OZ.ip4 = FoldedFigureState.FRONT_0;
+            if ((i_mouse_modeA == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (OZ.ip4 == FoldedFigure.State.BOTH_2)) {
+                OZ.ip4 = FoldedFigure.State.FRONT_0;
             }//Fold-up forecast map Added to avoid the mode that can not be moved when moving
             Button_kyoutuu_sagyou();
             repaint();
@@ -6254,16 +6190,15 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         Button_AS_matome.addActionListener(e -> {
 
 //i_AS_matome_mode =1;//1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVer3.008から追加
-            i_sub_mode = 1;
-            img_explanation_fname =
-                    "qqq/AS_matome.png";
+            subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_SAVE_100_1;
+            img_explanation_fname = "qqq/AS_matome.png";
             readImageFromFile3();
             if (OZ.findAnotherOverlapValid) {
                 //OZ.i_suitei_jissi_umu=0;//i_suitei_jissi_umuは、折り畳み推定の計算を実施したかどうかを表す。int i_suitei_jissi_umu=0なら実施しない。1なら実施した。
                 OZ.i_estimated_order = 6;
 
-                if (i_SubThread == 0) {
-                    i_SubThread = 1;
+                if (!subThreadRunning) {
+                    subThreadRunning = true;
                     mks();//新しいスレッドを作る
                     sub.start();
 
@@ -6313,9 +6248,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
             //OZ.i_suitei_jissi_umu=0;//i_suitei_jissi_umuは、折り畳み推定の計算を実施したかどうかを表す。int i_suitei_jissi_umu=0なら実施しない。1なら実施した。
 
-            i_sub_mode = 2;
-            if (i_SubThread == 0) {
-                i_SubThread = 1;
+            subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_SPECIFIC_2;
+            if (!subThreadRunning) {
+                subThreadRunning = true;
                 mks();//新しいスレッドを作る
                 sub.start();
             }
@@ -6329,7 +6264,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         pnls1.add(Button_bangou_sitei_suitei_hyouji);
 
         Button_bangou_sitei_suitei_hyouji.setMargin(new Insets(0, 0, 0, 0));
-        //Button_senbun_bunkatu_set.setIcon(createImageIcon(
+        //Button_lineSegment_division_set.setIcon(createImageIcon(
         //"ppp/senbun_bunkatu_set.png")));
 
 // ------ここまで
@@ -6411,7 +6346,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
             OZ.i_foldedFigure_operation_mode = 1;
             OZ.set_all_ten_sentaku_0();
-            OZ.kiroku();
+            OZ.record();
             i_mouse_modeA = MouseMode.MODIFY_CALCULATED_SHAPE_101;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -6431,7 +6366,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
             OZ.i_foldedFigure_operation_mode = 2;
             OZ.set_all_ten_sentaku_0();
-            OZ.kiroku();
+            OZ.record();
             i_mouse_modeA = MouseMode.MODIFY_CALCULATED_SHAPE_101;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -6717,9 +6652,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/a_a.png";
             readImageFromFile3();
 
-            //i_anti_alias=i_anti_alias+1;
-            //if(i_anti_alias>=2){i_anti_alias=0;}
-            OZ.ct_worker.change_i_anti_alias();
+            OZ.ct_worker.toggleAntiAlias();
             repaint();
         });
         pnls.add(Button_a_a);
@@ -6734,7 +6667,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             Button_kyoutuu_sagyou();
             img_explanation_fname = "qqq/kage.png";
             readImageFromFile3();
-            OZ.ct_worker.changeDisplayShadows();
+            OZ.ct_worker.toggleDisplayShadows();
             repaint();
         });
         pnls.add(Button_shadows);
@@ -6750,8 +6683,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/F_color.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
-            i_mouseDragged_yuukou = 0;
-            i_mouseReleased_yuukou = 0;
+            i_mouseDragged_valid = false;
+            i_mouseReleased_valid = false;
             //System.out.println("readFile2Memo() 開始");
 
             //以下にやりたいことを書く
@@ -6777,7 +6710,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //重要注意　読み込みや書き出しでファイルダイアログのボックスが開くと、それをフレームに重なる位置で操作した場合、ファイルボックスが消えたときに、
         //マウスのドラッグとリリースが発生する。このため、余計な操作がされてしまう可能性がある。なお、このときマウスクリックは発生しない。
-        // i_mouseDragged_yuukou=0;や i_mouseReleased_yuukou=0;は、この余計な操作を防ぐために指定している。
+        // i_mouseDragged_valid=0;や i_mouseReleased_valid=0;は、この余計な操作を防ぐために指定している。
 
 
 // -------------折り上がり予測図裏面の色の選択
@@ -6787,8 +6720,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/B_color.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
-            i_mouseDragged_yuukou = 0;
-            i_mouseReleased_yuukou = 0;
+            i_mouseDragged_valid = false;
+            i_mouseReleased_valid = false;
             //System.out.println("readFile2Memo() 開始");
 
             //以下にやりたいことを書く
@@ -6810,7 +6743,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //重要注意　読み込みや書き出しでファイルダイアログのボックスが開くと、それをフレームに重なる位置で操作した場合、ファイルボックスが消えたときに、
         //マウスのドラッグとリリースが発生する。このため、余計な操作がされてしまう可能性がある。なお、このときマウスクリックは発生しない。
-        // i_mouseDragged_yuukou=0;や i_mouseReleased_yuukou=0;は、この余計な操作を防ぐために指定している。
+        // i_mouseDragged_valid=0;や i_mouseReleased_valid=0;は、この余計な操作を防ぐために指定している。
 
 
 // -------------折り上がり予測図　線の色の選択
@@ -6820,8 +6753,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/L_color.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
-            i_mouseDragged_yuukou = 0;
-            i_mouseReleased_yuukou = 0;
+            i_mouseDragged_valid = false;
+            i_mouseReleased_valid = false;
             //System.out.println("readFile2Memo() 開始");
 
             //以下にやりたいことを書く
@@ -6846,7 +6779,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //重要注意　読み込みや書き出しでファイルダイアログのボックスが開くと、それをフレームに重なる位置で操作した場合、ファイルボックスが消えたときに、
         //マウスのドラッグとリリースが発生する。このため、余計な操作がされてしまう可能性がある。なお、このときマウスクリックは発生しない。
-        // i_mouseDragged_yuukou=0;や i_mouseReleased_yuukou=0;は、この余計な操作を防ぐために指定している。
+        // i_mouseDragged_valid=0;や i_mouseReleased_valid=0;は、この余計な操作を防ぐために指定している。
 
 
 // *******南******************************************************************
@@ -6856,13 +6789,11 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/keisan_tyuusi.png";
             readImageFromFile3();
 
-            if (i_SubThread == 1) {
+            if (subThreadRunning) {
                 keisan_tyuusi();
-                //sub.stop();i_SubThread=0;
             }
 
             Button_kyoutuu_sagyou();
-            //repaint();
         });
         pnls.add(Button_keisan_tyuusi);
 
@@ -6971,7 +6902,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         // 測定長さと角度の表示
 
-        es1.sokutei_hyouji();
+        es1.measurement_display();
         es1.setCamera(camera_of_orisen_input_diagram);
 
         //Ubox.test1();
@@ -7081,9 +7012,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             //OZ.i_suitei_jissi_umu=0;	//i_suitei_jissi_umuは、折り畳み推定の計算を実施したかどうかを表す。int i_suitei_jissi_umu=0なら実施しない。1なら実施した。
             OZ.i_estimated_order = i_suitei_meirei;
 
-            if (i_SubThread == 0) {
-                i_SubThread = 1;
-                i_sub_mode = 0;//1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVer3.008から追加
+            if (!subThreadRunning) {
+                subThreadRunning = true;
+                subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_0;//1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVer3.008から追加
                 mks();//新しいスレッドを作る
                 sub.start();
             }
@@ -7092,9 +7023,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         } else if (i_fold_type == 3) {
             OZ.i_estimated_order = i_suitei_meirei;
 
-            if (i_SubThread == 0) {
-                i_SubThread = 1;
-                i_sub_mode = 0;//1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVer3.008から追加
+            if (!subThreadRunning) {
+                subThreadRunning = true;
+                subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_0;//1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVer3.008から追加
                 mks();//新しいスレッドを作る
                 sub.start();
             }
@@ -7133,10 +7064,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
     // ------------------------------------------------------------------------------
     public void OAZ_add_new_Oriagari_Zu() {
-
         OAZ.add(new FoldedFigure_01(this));
-
-        //	OZ = (Oriagari_Zu)OAZ.get(OAZ.size()-1);//折りあがり図
     }
 
 
@@ -7144,32 +7072,32 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         label_length_sokutei_1.setText(String.valueOf(d0));
     }
 
-    public void measured_length_2_hyouji(double d0) {
+    public void measured_length_2_display(double d0) {
         label_length_sokutei_2.setText(String.valueOf(d0));
     }
 
-    public void measured_angle_1_hyouji(double d0) {
+    public void measured_angle_1_display(double d0) {
         label_kakudo_sokutei_1.setText(String.valueOf(d0));
     }
 
-    public void measured_angle_2_hyouji(double d0) {
+    public void measured_angle_2_display(double d0) {
         label_kakudo_sokutei_2.setText(String.valueOf(d0));
     }
 
-    public void measured_angle_3_hyouji(double d0) {
+    public void measured_angle_3_display(double d0) {
         label_kakudo_sokutei_3.setText(String.valueOf(d0));
     }
 
 // ----------------------------------
 
     public void iro_sitei_ato_ni_jissisuru_sagyou() {
-        if (iro_sitei_ato_ni_jissisuru_sagyou_bangou == 1) {
-            i_orisen_hojyosen = 0;//=0は折線入力　=1は補助線入力モード
-            es1.set_i_orisen_hojyosen(i_orisen_hojyosen);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
+        if (iro_sitei_ato_ni_jissisuru_sagyou_bangou == MouseMode.DRAW_CREASE_FREE_1) {
+            foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
+            es1.setFoldLineAdditional(foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
             i_mouse_modeA = MouseMode.DRAW_CREASE_FREE_1;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
-        } else if (iro_sitei_ato_ni_jissisuru_sagyou_bangou == 11) {
+        } else if (iro_sitei_ato_ni_jissisuru_sagyou_bangou == MouseMode.DRAW_CREASE_RESTRICTED_11) {
             i_mouse_modeA = MouseMode.DRAW_CREASE_RESTRICTED_11;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -7191,7 +7119,6 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         JLabel label = new JLabel(
                 "<html>２色塗りわけ展開図を描くためには、あらかじめ対象範囲を選択してください（selectボタンを使う）。<br>" +
                         "To get 2-Colored crease pattern, select the target range in advance (use the select button).<html>");
-        //label.setForeground(Color.RED);
         JOptionPane.showMessageDialog(this, label);
     }
 
@@ -7201,22 +7128,17 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         JLabel label = new JLabel(
                 "<html>新たに折り上がり図を描くためには、あらかじめ対象範囲を選択してください（selectボタンを使う）。<br>" +
                         "To calculate new folded shape, select the target clease lines range in advance (use the select button).<html>");
-        //label.setForeground(Color.RED);
         JOptionPane.showMessageDialog(this, label);
     }
     // ----------------------------------------------------------
 
 
     public void keisan_tyuusi() {
-
-
-        //int option = JOptionPane.showConfirmDialog(this, "展開図保存する？/Save CP？");
-
         int option = JOptionPane.showConfirmDialog(this, createImageIcon("ppp/keisan_tyuusi_DLog.png"));
 
         if (option == JOptionPane.YES_OPTION) {
-            i_mouseDragged_yuukou = 0;
-            i_mouseReleased_yuukou = 0;
+            i_mouseDragged_valid = false;
+            i_mouseReleased_valid = false;
             writeMemo2File();
             es1.record();
         } else if (option == JOptionPane.NO_OPTION) {
@@ -7224,9 +7146,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             return;
         }
 
-
         sub.stop();
-        i_SubThread = 0;
+        subThreadRunning = false;
 
         configure_syokika_yosoku();
 
@@ -7235,38 +7156,28 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
     // ----------------------------------------------------------
 
     public void owari() {
-
-
-        //int option = JOptionPane.showConfirmDialog(this, "データを保存しますか？/Save CP？");
-
         int option = JOptionPane.showConfirmDialog(this, createImageIcon("ppp/owari.png"));
 
         if (option == JOptionPane.YES_OPTION) {
-            i_mouseDragged_yuukou = 0;
-            i_mouseReleased_yuukou = 0;
+            i_mouseDragged_valid = false;
+            i_mouseReleased_valid = false;
             writeMemo2File();
-            if (i_SubThread == 1) {
+            if (subThreadRunning) {
                 sub.stop();
             }
             System.exit(0);
         } else if (option == JOptionPane.NO_OPTION) {
-            if (i_SubThread == 1) {
+            if (subThreadRunning) {
                 sub.stop();
             }
             System.exit(0);
         } else if (option == JOptionPane.CANCEL_OPTION) {
             return;
         }
-
-
     }
 
 
 // *******************************************************************************************************
-
-
-    //  void settei_syokika_cp(){	}
-
 
     //----------------------------------------------------------
 
@@ -7295,16 +7206,14 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         OZ.cp_worker1.setCamera(camera_of_orisen_input_diagram);
 
         //折線入力か補助線入力か
-        i_orisen_hojyosen = 0;
-
-
+        foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;
 //北辺
 
         ckbox_mouse_settings.setSelected(true);//表示するかどうかの選択
         ckbox_point_search.setSelected(false);//表示するかどうかの選択
         ckbox_ten_hanasi.setSelected(false);//es1.set_i_hanasi(0);          //表示するかどうかの選択
         ckbox_kou_mitudo_nyuuryoku.setSelected(false);
-        es1.set_i_kou_mitudo_nyuuryoku(0);          //高密度入力するかどうかの選択
+        es1.set_i_kou_mitudo_nyuuryoku(false);          //高密度入力するかどうかの選択
         ckbox_bun.setSelected(true);//文を表示するかどうかの選択
         ckbox_cp.setSelected(true);//折線を表示するかどうかの選択
         ckbox_a0.setSelected(true);//補助活線を表示するかどうかの選択
@@ -7348,8 +7257,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         Button_background_kirikae.setBackground(Color.ORANGE);
 
         //背景ロックオン
-        i_Lock_on = 0;
-        i_Lock_on_ori = 0;
+        i_Lock_on = false;
+        i_Lock_on_ori = false;
         Button_background_Lock_on.setBackground(Color.gray);
 
 //西辺
@@ -7367,10 +7276,10 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //es1.set_r(r);
 
         //折線表現を色で表す
-        i_orisen_hyougen = 1;
+        lineStyle = LineStyle.COLOR;
 
         //ペンの色の指定
-        icol = LineType.RED_1;
+        icol = LineColor.RED_1;
         es1.setColor(icol);    //最初の折線の色を指定する。0は黒、1は赤、2は青。
         ButtonCol_irokesi();
         ButtonCol_red.setForeground(Color.black);
@@ -7378,9 +7287,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
 
         //折線分割数
-        i_orisen_bunkatu_suu = 2;
-        text2.setText(String.valueOf(i_orisen_bunkatu_suu));
-        es1.set_i_orisen_bunkatu_suu(i_orisen_bunkatu_suu);//フリー折線入力時の分割数
+        foldLineDividingNumber = 2;
+        text2.setText(String.valueOf(foldLineDividingNumber));
+        es1.setFoldLineDividingNumber(foldLineDividingNumber);//フリー折線入力時の分割数
 
 
         //格子分割数の指定
@@ -7388,7 +7297,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         set_grid_bunkatu_suu();
 
         //格子の適用範囲の指定
-        es1.set_i_base_state(GridState.WITHIN_PAPER);//格子の状態を用紙内適用にする。
+        es1.setBaseState(Grid.State.WITHIN_PAPER);//格子の状態を用紙内適用にする。
 
         //任意格子
         d_grid_x_a = 0.0;
@@ -7430,22 +7339,20 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         text17.setText(String.valueOf(d_jiyuu_kaku_f));
 
         //多角形の角数
-        i_sei_takakukei = 5;
-        text9.setText(String.valueOf(i_sei_takakukei));
+        numPolygonCorners = 5;
+        text9.setText(String.valueOf(numPolygonCorners));
 
         //補助画線の色
-        h_icol = LineType.ORANGE_4;
+        h_icol = LineColor.ORANGE_4;
         es1.h_setcolor(h_icol);                                        //最初の補助線の色を指定する。4はオレンジ、7は黄。
         Button_h_Col_irokesi();
         Button_Col_orange.setForeground(Color.black);
         Button_Col_orange.setBackground(Color.ORANGE);    //補助線のボタンの色設定
 
-        //ckbox_check1.setSelected(false);//checkするかどうかの選択
-        //ckbox_check2.setSelected(false);//checkするかどうかの選択
         ckbox_check3.setSelected(false);//checkするかどうかの選択
-        es1.set_i_check3(0);
+        es1.setCheck3(false);
         ckbox_check4.setSelected(false);//checkするかどうかの選択
-        es1.set_i_check4(0);
+        es1.setCheck4(false);
     }
 
 
@@ -7529,17 +7436,15 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
     // *******************************************************************************************************
     public void Frame_tuika() {
         //Frame add_frame
-        if (i_add_frame == 1) {
+        if (i_add_frame) {
             System.out.println("111 i_add_frame=" + i_add_frame);
             add_frame.dispose();
             add_frame = new OpenFrame("add_frame", this);
-        }
-
-        if (i_add_frame == 0) {
+        } else {
             System.out.println("000 i_add_frame=" + i_add_frame);
             add_frame = new OpenFrame("add_frame", this);
         }
-        i_add_frame = 1;
+        i_add_frame = true;
         add_frame.toFront();
     }
 
@@ -7590,11 +7495,6 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         text8.setText(String.valueOf(d_orisen_naibun_f));
 
         es1.set_d_naibun_st(d_naibun_s, d_naibun_t);
-
-        //if(i_orisen_bunkatu_suu<1){i_orisen_bunkatu_suu=1;}
-        //text2.setText(String.valueOf(i_orisen_bunkatu_suu));
-
-
     }
 
 
@@ -7671,11 +7571,6 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         Button_HK_nisuru.setForeground(Color.black); //HKとは補助活線のこと
         Button_senbun_henkan2.setForeground(Color.black);
 
-        //Button_M_nisuru.setBackground(new Color(150,150,150));
-        //Button_V_nisuru.setBackground(new Color(150,150,150));
-        //Button_E_nisuru.setBackground(new Color(150,150,150));
-        //Button_HK_nisuru.setBackground(new Color(150,150,150));
-
         Button_M_nisuru.setBackground(Color.white);
         Button_V_nisuru.setBackground(Color.white);
         Button_E_nisuru.setBackground(Color.white);
@@ -7685,7 +7580,6 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
     //--------------------------------------------------------
     void ButtonCol_irokesi() {
-
         ButtonCol_black.setForeground(Color.black);
         ButtonCol_blue.setForeground(Color.black);
         ButtonCol_red.setForeground(Color.black);
@@ -7704,13 +7598,6 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         Button_Col_yellow.setBackground(new Color(150, 150, 150));
     }
 
-
-    //アプレットの初期化を行う関数----------------------------------------------------
-    //public void start() {;}
-
-    //アプレットの後処理を行う関数----------------------------------------------------
-    //public void stop() {;}
-
     //アプレットの最終処理を行う関数----------------------------------------------------
     public void destroy() {
         removeMouseListener(this);
@@ -7726,7 +7613,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
 
     // *******************************************************************************************zzzzzzzzzzzz
-    public void i_cp_or_oriagari_hantei(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
+    public void i_cp_or_oriagari_decide(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
         //20171216
         //hyouji_flg==2,ip4==0  omote
         //hyouji_flg==2,ip4==1	ura
@@ -7757,42 +7644,42 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
 
             int OZ_display_mode = 0;//No fold-up diagram display
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigureState.FRONT_0)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
                 OZ_display_mode = 1;
             }//	omote
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigureState.BACK_1)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.BACK_1)) {
                 OZ_display_mode = 2;
             }//	ura
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigureState.BOTH_2)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.BOTH_2)) {
                 OZ_display_mode = 3;
             }//	omote & ura
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigureState.TRANSPARENT_3)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
                 OZ_display_mode = 3;
             }//	omote & ura
 
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigureState.FRONT_0)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
                 OZ_display_mode = 1;
             }//	omote
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigureState.BACK_1)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.BACK_1)) {
                 OZ_display_mode = 2;
             }//	ura
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigureState.BOTH_2)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.BOTH_2)) {
                 OZ_display_mode = 3;
             }//	omote & ura
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigureState.TRANSPARENT_3)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
                 OZ_display_mode = 3;
             }//	omote & ura
 
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigureState.FRONT_0)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
                 OZ_display_mode = 1;
             }//	omote
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigureState.BACK_1)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.BACK_1)) {
                 OZ_display_mode = 2;
             }//	ura
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigureState.BOTH_2)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.BOTH_2)) {
                 OZ_display_mode = 3;
             }//	omote & ura
-            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigureState.TRANSPARENT_3)) {
+            if ((OZi.display_flg == FoldedFigureDisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
                 OZ_display_mode = 4;
             }//	omote & ura & omote2 & ura2
 
@@ -7846,7 +7733,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
     int i_mouse_undo_redo_mode = 0;//マウスでundo、redoするモードなら1
 
 
-    int i_cp_or_oriagari = 0;//マウスホイールの対象がcp展開図なら0、折り上がり図(表)なら1、折り上がり図(裏)なら2、透過図(表)なら3、透過図(裏)なら4
+    int i_cp_or_oriagari = 0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
 
 
     //=============================================================================
@@ -7861,7 +7748,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                 i_mouse_undo_redo_mode = 1;
                 es1.unselect_all();
                 Button_kyoutuu_sagyou();
-                es1.modosi_i_orisen_hojyosen();
+                es1.modosi_foldLineAdditional();
                 if (e.getWheelRotation() == -1) {
                     setTitle(es1.redo());
                     repaint();
@@ -7878,7 +7765,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                 // ---------------------------------------------------------------------hhhhhhhhh
 
                 Point p = new Point(e2p(e));
-                i_cp_or_oriagari_hantei(p);
+                i_cp_or_oriagari_decide(p);
                 if (i_cp_or_oriagari == 0) {
                     if (e.getWheelRotation() == -1) {
                         d_syukusyaku_keisuu = d_syukusyaku_keisuu * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
@@ -7927,7 +7814,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         double d_haba = 0.0;
         if (ckbox_ten_hanasi.isSelected()) {
-            d_haba = camera_of_orisen_input_diagram.getCameraZoomX() * es1.get_d_hantei_haba();
+            d_haba = camera_of_orisen_input_diagram.getCameraZoomX() * es1.get_d_decision_width();
         }
         return new Point(e.getX() - (int) d_haba, e.getY() - (int) d_haba);
     }
@@ -8217,8 +8104,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //PointerInfo pointerInfo = MouseInfo.getPointerInfo();
         //MouseInfo.getPointerInfo();
 
-        i_mouseDragged_yuukou = 1;
-        i_mouseReleased_yuukou = 1;
+        i_mouseDragged_valid = true;
+        i_mouseReleased_valid = true;
 
 
         //if (ckbox_mouse_settei.isSelected()){   //20201010　コメントアウト
@@ -8236,7 +8123,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
                 System.out.println("3_Click");//("トリプルクリック"
                 if (i_mouse_modeA == MouseMode.CREASE_SELECT_19) {
-                    if (ckbox_add_frame_SelectAnd3click_isSelected == 1) {
+                    if (ckbox_add_frame_SelectAnd3click_isSelected) {
                         if (i_sel_mou_mode == 1) {//=1はmove、=2はmove4p、=3はcopy、=4はcopy4p、=5は鏡映像
                             i_mouse_modeA = MouseMode.CREASE_MOVE_21;
                         } else if (i_sel_mou_mode == 2) {//=1はmove、=2はmove4p、=3はcopy、=4はcopy4p、=5は鏡映像
@@ -8262,7 +8149,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         } else if (btn == MouseEvent.BUTTON2) {
             System.out.println("中ボタンクリック");
 
-            i_cp_or_oriagari_hantei(p);
+            i_cp_or_oriagari_decide(p);
 
             System.out.println("i_cp_or_oriagari = " + i_cp_or_oriagari);
 
@@ -8298,8 +8185,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                 es1.setCamera(camera_of_orisen_input_diagram);
                 es1.mPressed_A_03(p);
 
-                i_orisen_hojyosen = 4;//=0は折線入力　=1は補助線入力モード、４は両方に作用
-                es1.set_i_orisen_hojyosen(i_orisen_hojyosen);
+                foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.BOTH_4;//= 0 is polygonal line input = 1 is auxiliary line input mode, 4 is for both
+                es1.setFoldLineAdditional(foldLineAdditionalInputMode);
 
             }
             repaint();
@@ -8626,7 +8513,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
     //マウス操作(ドラッグしたとき)を行う関数---------- System.out.println("A");------------------------------------------
     public void mouseDragged(MouseEvent e) {
 
-        if (i_mouseDragged_yuukou == 1) {
+        if (i_mouseDragged_valid) {
 
             //Ten p =new Ten(e.getX(),e.getY());
             Point p = new Point(e2p(e));
@@ -8970,7 +8857,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
     }
 
     public void add_frame_to_Front() {
-        if (i_add_frame == 1) {
+        if (i_add_frame) {
             add_frame.toFront();
         }//20201004追加機能フレームがあるなら全面に出す。
 
@@ -8979,7 +8866,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
     //マウス操作(ボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(MouseEvent e) {
-        if (i_mouseReleased_yuukou == 1) {
+        if (i_mouseReleased_valid) {
             //Ten p =new Ten(e.getX(),e.getY());
             Point p = new Point(e2p(e));
 
@@ -9009,8 +8896,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
                 mouse_temp0.set(p);
                 repaint();
-                i_mouseDragged_yuukou = 0;
-                i_mouseReleased_yuukou = 0;
+                i_mouseDragged_valid = false;
+                i_mouseReleased_valid = false;
                 return;//
 
             } else if (btn == MouseEvent.BUTTON3) {
@@ -9029,9 +8916,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                     es1.setCamera(camera_of_orisen_input_diagram);
                     es1.mReleased_A_03(p);
                     repaint();//なんでここにrepaintがあるか検討した方がよいかも。20181208
-                    es1.modosi_i_orisen_hojyosen();
-                    i_mouseDragged_yuukou = 0;
-                    i_mouseReleased_yuukou = 0;
+                    es1.modosi_foldLineAdditional();
+                    i_mouseDragged_valid = false;
+                    i_mouseReleased_valid = false;
                     //線分削除モード。
                 }
                 return;
@@ -9175,7 +9062,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                     s_4.set(es1.get_s_step(4));
 
                     //int i_Lock_on_old=i_Lock_on;
-                    i_Lock_on = 0;
+                    i_Lock_on = false;
                     Button_background_Lock_on.setBackground(Color.gray);
 
                     background_set(camera_of_orisen_input_diagram.object2TV(s_1.getA()),
@@ -9350,14 +9237,11 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             } else if (i_mouse_modeA == MouseMode.CHANGE_STANDARD_FACE_103) {//基準面指定
                 int new_kijyunmen_id;
                 int old_kijyunmen_id;
-                old_kijyunmen_id = OZ.cp_worker1.getReferencePlane_id();
+                old_kijyunmen_id = OZ.cp_worker1.getReferencePlaneId();
 
-                new_kijyunmen_id = OZ.cp_worker1.set_referencePlane_id(p);
+                new_kijyunmen_id = OZ.cp_worker1.setReferencePlaneId(p);
                 System.out.println("kijyunmen_id = " + new_kijyunmen_id);
                 if (OZ.ct_worker.face_rating != null) {//20180227追加
-                    //System.out.println("OZ.js.face_rating.length = "+OZ.js.face_rating.length);
-                    //System.out.println("OZ.js.nbox.getsousuu() = "+OZ.js.nbox.getsousuu());
-
                     System.out.println(
                             "OZ.js.nbox.get_jyunjyo = " + OZ.ct_worker.nbox.getSequence(new_kijyunmen_id) + " , rating = " +
                                     OZ.ct_worker.nbox.getDouble(OZ.ct_worker.nbox.getSequence(new_kijyunmen_id))
@@ -9375,8 +9259,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         }
 
-        i_mouseDragged_yuukou = 0;
-        i_mouseReleased_yuukou = 0;
+        i_mouseDragged_valid = false;
+        i_mouseReleased_valid = false;
     }
 
     //マウス操作(ボタンをクリックしたとき)を行う関数----------------------------------------------------
@@ -9428,7 +9312,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //最初に
 
         //if(i_Lock_on>=10){i_Lock_on=i_Lock_on-10;}
-        if (i_Lock_on == 1) {
+        if (i_Lock_on == true) {
             h_cam.setCamera(camera_of_orisen_input_diagram);
             h_cam.h3_and_h4_calculation();
             h_cam.parameter_calculation();
@@ -9464,7 +9348,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         fLineWidth = (float) iLineWidth;
         f_h_lineWidth = (float) i_h_lineWidth;
 
-        if (i_anti_alias == 1) {
+        if (antiAlias) {
             fLineWidth = fLineWidth + 0.2f;
             f_h_lineWidth = f_h_lineWidth + 0.2f;
         }
@@ -9473,12 +9357,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         g2.setStroke(BStroke);//線の太さや線の末端の形状
 
         //BasicStroke BStroke = new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);g2.setStroke(BStroke);//線の太さや線の末端の形状
-        if (i_anti_alias == 1) {
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);//アンチエイリアス　オン
-        }
-        if (i_anti_alias == 0) {
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチエイリアス　オフ
-        }
+        //アンチエイリアス　オフ
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチエイリアス　オン
 
         g2.setBackground(Color.WHITE);    //この行は、画像をファイルに書き出そうとしてBufferedImageクラスを使う場合、デフォルトで背景が黒になるので、それを避けるための意味　20170107
         //画像をファイルに書き出さすことはやめて、、BufferedImageクラスを使わず、Imageクラスだけですむなら不要の行
@@ -9514,57 +9394,17 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //int   i_ten_sagasi_hyouji, i_ten_hanasi_hyouji,i_kou_mitudo_nyuuryoku_hyouji,i_bun_hyouji,i_cp_hyouji,i_a0_hyouji,i_a1_hyouji;
         //int   i_mejirusi_hyouji,i_cp_ue_hyouji,i_oritatami_keika_hyouji;
 
-        if (ckbox_point_search.isSelected()) {
-            i_point_sagasi_display = 1;
-        } else {
-            i_point_sagasi_display = 0;
-        }
-        if (ckbox_ten_hanasi.isSelected()) {
-            i_point_hanasi_display = 1;
-        } else {
-            i_point_hanasi_display = 0;
-        }
-        if (ckbox_kou_mitudo_nyuuryoku.isSelected()) {
-            i_kou_mitudo_nyuuryoku_display = 1;
-        } else {
-            i_kou_mitudo_nyuuryoku_display = 0;
-        }
-        if (ckbox_bun.isSelected()) {
-            i_bun_display = 1;
-        } else {
-            i_bun_display = 0;
-        }
-        if (ckbox_cp.isSelected()) {
-            i_cp_display = 1;
-        } else {
-            i_cp_display = 0;
-        }
-        if (ckbox_a0.isSelected()) {
-            i_a0_display = 1;
-        } else {
-            i_a0_display = 0;
-        }
-        if (ckbox_a1.isSelected()) {
-            i_a1_display = 1;
-        } else {
-            i_a1_display = 0;
-        }
+        i_point_sagasi_display = ckbox_point_search.isSelected();
+        i_point_hanasi_display = ckbox_ten_hanasi.isSelected();
+        i_kou_mitudo_nyuuryoku_display = ckbox_kou_mitudo_nyuuryoku.isSelected();
+        i_bun_display = ckbox_bun.isSelected();
+        i_cp_display = ckbox_cp.isSelected();
+        i_a0_display = ckbox_a0.isSelected();
+        i_a1_display = ckbox_a1.isSelected();
 
-        if (ckbox_mejirusi.isSelected()) {
-            i_mejirusi_display = 1;
-        } else {
-            i_mejirusi_display = 0;
-        }
-        if (ckbox_cp_ue.isSelected()) {
-            i_cp_ue_display = 1;
-        } else {
-            i_cp_ue_display = 0;
-        }
-        if (ckbox_oritatami_keika.isSelected()) {
-            i_oritatami_keika_display = 1;
-        } else {
-            i_oritatami_keika_display = 0;
-        }
+        i_mejirusi_display = ckbox_mejirusi.isSelected();
+        i_cp_ue_display = ckbox_cp_ue.isSelected();
+        i_oritatami_keika_display = ckbox_oritatami_keika.isSelected();
 
 
         bufferGraphics.setColor(Color.red);
@@ -9606,7 +9446,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         }
 
         //格子表示
-        //es1.kousi_oekaki_with_camera(bufferGraphics,i_bun_hyouji,i_cp_hyouji,i_a0_hyouji,i_a1_hyouji,fLineWidth,i_orisen_hyougen,f_h_lineWidth,dim.width,dim.height);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+        //es1.kousi_oekaki_with_camera(bufferGraphics,i_bun_hyouji,i_cp_hyouji,i_a0_hyouji,i_a1_hyouji,fLineWidth,lineStyle,f_h_lineWidth,dim.width,dim.height);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
 
 
         //解説表示
@@ -9622,16 +9462,16 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //基準面の表示
         //System.out.println("paint　+++++++++++++++++++++　基準面の表示");
-        if (i_mejirusi_display == 1) {
+        if (i_mejirusi_display) {
             if (OZ.display_flg != FoldedFigureDisplayStyle.NONE_0) {
                 //	ts1.setCamera(camera_of_orisen_nyuuryokuzu);
                 OZ.cp_worker1.drawing_referencePlane_with_camera(bufferGraphics);//ts1が折り畳みを行う際の基準面を表示するのに使う。
             }
         }
 
-        double d_haba = camera_of_orisen_input_diagram.getCameraZoomX() * es1.get_d_hantei_haba();
+        double d_haba = camera_of_orisen_input_diagram.getCameraZoomX() * es1.get_d_decision_width();
         //Flashlight (dot) search range
-        if (i_point_sagasi_display == 1) {
+        if (i_point_sagasi_display) {
             g2.setColor(new Color(255, 240, 0, 30));
             g2.setStroke(new BasicStroke(2.0f));
             g2.setColor(new Color(255, 240, 0, 230));
@@ -9639,7 +9479,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         }
 
         //Luminous flux of flashlight, etc.
-        if ((i_point_sagasi_display == 1) && (i_point_hanasi_display == 1)) {
+        if (i_point_sagasi_display && i_point_hanasi_display) {
             g2.setStroke(new BasicStroke(2.0f));
             g2.setColor(new Color(255, 240, 0, 170));
         }
@@ -9650,9 +9490,9 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //if (iDisplayBackground<=1) {
         //        es1.setCamera(camera_of_orisen_nyuuryokuzu);
 
-        es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, i_orisen_hyougen, f_h_lineWidth, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+        es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, lineStyle, f_h_lineWidth, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
-        if (i_bun_display == 1) {
+        if (i_bun_display) {
             //展開図情報の文字表示
             bufferGraphics.setColor(Color.black);
 
@@ -9664,7 +9504,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             //結果の文字表示
             bufferGraphics.drawString(OZ.text_kekka, 120, 105); //この表示内容はvoid kekka_syoriで決められる。
 
-            if (i_kou_mitudo_nyuuryoku_display == 1) {
+            if (i_kou_mitudo_nyuuryoku_display) {
                 Point kus_sisuu = new Point(es1.get_moyori_ten_sisuu(p_mouse_TV_iti));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
 
                 double dx_ind = kus_sisuu.getX();
@@ -9674,7 +9514,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                 bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) p_mouse_TV_iti.getX() + 25, (int) p_mouse_TV_iti.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
             }
 
-            if (i_SubThread == 1) {
+            if (subThreadRunning) {
                 bufferGraphics.setColor(Color.red);
 
                 bufferGraphics.drawString("Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 120, 134); //この表示内容はvoid kekka_syoriで決められる。
@@ -9694,26 +9534,21 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //OZ = (Oriagari_Zu)OAZ.get(OAZ.size()-1);//折りあがり図
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
-        if (i_cp_ue_display == 1) {
-            es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, i_orisen_hyougen, f_h_lineWidth, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+        if (i_cp_ue_display) {
+            es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, lineStyle, f_h_lineWidth, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
         }
 
         //アンチェイリアス
-        if (i_anti_alias == 1) {
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);//アンチェイリアス　オン
-        }
-        if (i_anti_alias == 0) {
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オフ
-        }
+        //アンチェイリアス　オフ
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オン
 
         //	bufferGraphics.drawString(c.valueOf(oc.kakudo(new Ten(0.0,0.0),new Ten( 10.0, 0.0))), 30,170);
         //      bufferGraphics.drawString(c.valueOf(778),150,150);
         //test_oekaki();
         //System.out.println("paint　+++++++++++++++++++++　bufferGraphicsへの描画終了");
 
-
         //中央指示線
-        if (i_point_hanasi_display == 1) {
+        if (i_point_hanasi_display) {
             g2.setStroke(new BasicStroke(1.0f));
             g2.setColor(Color.black);
             g2.drawLine((int) (p_mouse_TV_iti.getX()), (int) (p_mouse_TV_iti.getY()),
@@ -9733,12 +9568,12 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             w_image_running = false;
         }
 
-        if (flg_wi == 1) {//For control when exporting with a frame 20180525
-            flg_wi = 0;
+        if (flg_wi) {//For control when exporting with a frame 20180525
+            flg_wi = false;
             writeImageFile(fname_wi);
         }
-        if (flg61 == 1) {
-            flg61 = 0;
+        if (flg61) {
+            flg61 = false;
             es1.set_i_egaki_dankai(4);
         }
 
@@ -9784,8 +9619,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         OZ.discovered_fold_cases = 0;    //折り重なり方で、何通り発見したかを格納する。
 
 
-        i_mouseDragged_yuukou = 0;
-        int i_mouseReleased_yuukou = 0;//0は、マウス操作を無視。1はマウス操作有効。ファイルボックスのon-offなどで、予期せぬmouseDraggedやmouseReleasedが発生したとき、それを拾わないように0に設定する。これらは、マウスがクリックされたときに、1有効指定にする。
+        i_mouseDragged_valid = false;
+        i_mouseReleased_valid = false;//0は、マウス操作を無視。1はマウス操作有効。ファイルボックスのon-offなどで、予期せぬmouseDraggedやmouseReleasedが発生したとき、それを拾わないように0に設定する。これらは、マウスがクリックされたときに、1有効指定にする。
 
         OZ.estimated_initialize();
         bulletinBoard.clear();
@@ -9801,18 +9636,15 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         int iDisplayBackground_old;
         iDisplayBackground_old = iDisplayBackground;
         try {
-
-
             if (fd.getFile() != null) {
-
                 Toolkit tk = Toolkit.getDefaultToolkit();
                 img_background = tk.getImage(img_background_fname);
 
                 if (img_background != null) {
                     iDisplayBackground = 1;
                     Button_background_kirikae.setBackground(Color.ORANGE);
-                    i_Lock_on = 0;
-                    i_Lock_on_ori = 0;
+                    i_Lock_on = false;
+                    i_Lock_on_ori = false;
                     Button_background_Lock_on.setBackground(Color.gray);
                 }
             }
@@ -9831,14 +9663,14 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //String String fname_wi
         fname_wi = selectFileName("file name for Img save");
-        flg61 = 0;
+        flg61 = false;
         if ((i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) && (es1.get_i_egaki_dankai() == 4)) {
-            flg61 = 1;
+            flg61 = true;
             es1.set_i_egaki_dankai(0);
         }
 
         if (fname_wi != null) {
-            flg_wi = 1;
+            flg_wi = true;
             repaint();//緑の枠線を書き出さないために必要
         }
     }
@@ -9864,7 +9696,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
             if (fname.endsWith("svg")) {
                 Memo memo1;
-                memo1 = es1.getMemo_for_svg_export_with_camera(i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, i_orisen_hyougen, f_h_lineWidth, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+                memo1 = es1.getMemo_for_svg_export_with_camera(i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, lineStyle, f_h_lineWidth, dim.width, dim.height, i_mejirusi_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
                 Memo memo2 = new Memo();
 
@@ -9874,10 +9706,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                     OZi = OAZ.get(i_oz);
 
                     memo2.addMemo(OZi.getMemo_for_svg_export());
-
-
                 }
-
 
                 memoAndName2File(FileFormatConverter.orihime2svg(memo1, memo2), fname);
                 return;
@@ -9895,11 +9724,11 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             //	ファイル保存
 
             try {
-                if (flg61 == 1) { //枠設定時の枠内のみ書き出し 20180524
-                    int xmin = (int) es1.p61_TV_hako.get_x_min();
-                    int xmax = (int) es1.p61_TV_hako.get_x_max();
-                    int ymin = (int) es1.p61_TV_hako.get_y_min();
-                    int ymax = (int) es1.p61_TV_hako.get_y_max();
+                if (flg61) { //枠設定時の枠内のみ書き出し 20180524
+                    int xmin = (int) es1.operationFrameBox.getXMin();
+                    int xmax = (int) es1.operationFrameBox.getXMax();
+                    int ymin = (int) es1.operationFrameBox.getYMin();
+                    int ymax = (int) es1.operationFrameBox.getYMax();
 
                     if (i == 1) {
                         ImageIO.write(offscreen.getSubimage(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1), "png", new File(fname));
@@ -10145,14 +9974,14 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
     public void check4(double r) {
         d_ap_check4 = r;
-        if (i_SubThread == 0) {
-            i_sub_mode = 3;//3=頂点周りの折畳み可能性判定、1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVer3.008から追加
+        if (!subThreadRunning) {
+            subThreadMode = SubThread.Mode.CHECK_CAMV_3;//3=頂点周りの折畳み可能性判定、1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVer3.008から追加
 
-            i_SubThread = 1;
+            subThreadRunning = true;
             mks();//新しいスレッドを作る
             sub.start();
-        } else if (i_SubThread == 1) {
-            if (i_sub_mode == 3) {
+        } else {
+            if (subThreadMode == SubThread.Mode.CHECK_CAMV_3) {
                 sub.stop();
                 mks();//新しいスレッドを作る
                 sub.start();

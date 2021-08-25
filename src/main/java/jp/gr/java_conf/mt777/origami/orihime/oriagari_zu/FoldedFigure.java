@@ -12,7 +12,7 @@ import jp.gr.java_conf.mt777.origami.dougu.keijiban.*;
 import jp.gr.java_conf.mt777.origami.dougu.linestore.*;
 import jp.gr.java_conf.mt777.kiroku.memo.*;
 
-import jp.gr.java_conf.mt777.zukei2d.ten.Point;
+import jp.gr.java_conf.mt777.graphic2d.point.Point;
 
 public class FoldedFigure {
     App orihime_app;
@@ -58,7 +58,7 @@ public class FoldedFigure {
     //int ip3a=1;
     public int ip3 = 1;// Used by cp_worker1 to specify the reference plane for folding.
 
-    public FoldedFigureState ip4 = FoldedFigureState.FRONT_0;// This specifies whether to flip over at the beginning of cp_worker1. Do not set to 0. If it is 1, turn it over.
+    public State ip4 = State.FRONT_0;// This specifies whether to flip over at the beginning of cp_worker1. Do not set to 0. If it is 1, turn it over.
 
     public int ip5 = -1;    // After the top and bottom craftsmen once show the overlap of foldable paper,
     // The result of the first ct_worker.susumu (SubFaceTotal) when looking for yet another paper overlap. If it was
@@ -176,7 +176,7 @@ public class FoldedFigure {
     }
 
     // ------------------------------------------------------------------------------------------
-    public void foldUp_draw(Graphics bufferGraphics, int i_mejirusi_display) {
+    public void foldUp_draw(Graphics bufferGraphics, boolean i_mejirusi_display) {
 
         //display_flg==2,ip4==0  front
         //display_flg==2,ip4==1	rear
@@ -208,7 +208,7 @@ public class FoldedFigure {
         }
 
         //Display of folded figure (table)
-        if (((ip4 == FoldedFigureState.FRONT_0) || (ip4 == FoldedFigureState.BOTH_2)) || (ip4 == FoldedFigureState.TRANSPARENT_3)) {
+        if (((ip4 == State.FRONT_0) || (ip4 == State.BOTH_2)) || (ip4 == State.TRANSPARENT_3)) {
             ct_worker.setCamera(camera_of_foldedFigure_front);
 
             //透過図の表示
@@ -223,13 +223,13 @@ public class FoldedFigure {
             }
 
             //Cross-shaped display at the center of movement of the folded figure
-            if (i_mejirusi_display == 1) {
+            if (i_mejirusi_display) {
                 ct_worker.draw_cross_with_camera(bufferGraphics);
             }
         }
 
         //Display of folded figure (back)
-        if (((ip4 == FoldedFigureState.BACK_1) || (ip4 == FoldedFigureState.BOTH_2)) || (ip4 == FoldedFigureState.TRANSPARENT_3)) {
+        if (((ip4 == State.BACK_1) || (ip4 == State.BOTH_2)) || (ip4 == State.TRANSPARENT_3)) {
             camera_of_foldedFigure_rear.display();
             ct_worker.setCamera(camera_of_foldedFigure_rear);
 
@@ -245,13 +245,13 @@ public class FoldedFigure {
 
             //Cross-shaped display at the center of movement of the folded figure
             //System.out.println("paint　+++++++++++++++++++++　折り上がり図の動かし中心の十字表示)");
-            if (i_mejirusi_display == 1) {
+            if (i_mejirusi_display) {
                 ct_worker.draw_cross_with_camera(bufferGraphics);
             }
         }
 
         //透過図（折りあがり図表示時に追加する分）
-        if ((ip4 == FoldedFigureState.TRANSPARENT_3) && (display_flg == FoldedFigureDisplayStyle.PAPER_5)) {
+        if ((ip4 == State.TRANSPARENT_3) && (display_flg == FoldedFigureDisplayStyle.PAPER_5)) {
             // ---------------------------------------------------------------------------------
             ct_worker.setCamera(camera_of_transparent_front);
             //透過図の表示
@@ -260,7 +260,7 @@ public class FoldedFigure {
 
             //折り上がり図の動かし中心の十字表示
             //System.out.println("paint　+++++++++++++++++++++　折り上がり図の動かし中心の十字表示)");
-            if (i_mejirusi_display == 1) {
+            if (i_mejirusi_display) {
                 ct_worker.draw_cross_with_camera(bufferGraphics);
             }
 
@@ -273,7 +273,7 @@ public class FoldedFigure {
 
             //折り上がり図の動かし中心の十字表示
             //System.out.println("paint　+++++++++++++++++++++　折り上がり図の動かし中心の十字表示)");
-            if (i_mejirusi_display == 1) {
+            if (i_mejirusi_display) {
                 ct_worker.draw_cross_with_camera(bufferGraphics);
             }
             // ---------------------------------------------------------------------------------
@@ -284,7 +284,7 @@ public class FoldedFigure {
 
 
         for (int i = 1; i <= cp_worker1.getPointsTotal(); i++) {
-            if (cp_worker1.getPointState(i) == 1) {
+            if (cp_worker1.getPointState(i)) {
                 cp_worker1.drawing_pointId_with_camera(bufferGraphics, i);
                 //	cp_worker2.oekaki_Ten_id_with_camera(bufferGraphics,i,ip4);
             }
@@ -292,7 +292,7 @@ public class FoldedFigure {
 
 
         for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
-            if (cp_worker2.getPointState(i) == 1) {
+            if (cp_worker2.getPointState(i)) {
                 cp_worker1.drawing_pointId_with_camera_green(bufferGraphics, i);
                 cp_worker2.drawing_pointId_with_camera(bufferGraphics, i, ip4);
             }
@@ -334,7 +334,7 @@ public class FoldedFigure {
         }
 
         //折りあがり図（表）のsvg
-        if (((ip4 == FoldedFigureState.FRONT_0) || (ip4 == FoldedFigureState.BOTH_2)) || (ip4 == FoldedFigureState.TRANSPARENT_3)) {
+        if (((ip4 == State.FRONT_0) || (ip4 == State.BOTH_2)) || (ip4 == State.TRANSPARENT_3)) {
             ct_worker.setCamera(camera_of_foldedFigure_front);
 
             //透過図のsvg
@@ -352,7 +352,7 @@ public class FoldedFigure {
         }
 
         //折りあがり図（裏）のsvg
-        if (((ip4 == FoldedFigureState.BACK_1) || (ip4 == FoldedFigureState.BOTH_2)) || (ip4 == FoldedFigureState.TRANSPARENT_3)) {
+        if (((ip4 == State.BACK_1) || (ip4 == State.BOTH_2)) || (ip4 == State.TRANSPARENT_3)) {
 
             ct_worker.setCamera(camera_of_foldedFigure_rear);
 
@@ -369,7 +369,7 @@ public class FoldedFigure {
         }
 
         //透過図（折りあがり図表示時に追加する分）
-        if ((ip4 == FoldedFigureState.TRANSPARENT_3) && (display_flg == FoldedFigureDisplayStyle.PAPER_5)) {
+        if ((ip4 == State.TRANSPARENT_3) && (display_flg == FoldedFigureDisplayStyle.PAPER_5)) {
             // ---------------------------------------------------------------------------------
             ct_worker.setCamera(camera_of_transparent_front);
             //透過図のsvg
@@ -397,7 +397,7 @@ public class FoldedFigure {
 
 //-----------------------------------
 
-    void oritatami_suitei_camera_configure(Camera camera_of_orisen_nyuuryokuzu, LineSet Ss0) {
+    void oritatami_suitei_camera_configure(Camera camera_of_orisen_nyuuryokuzu, LineSegmentSet Ss0) {
         d_foldedFigure_syukusyaku_keisuu = camera_of_orisen_nyuuryokuzu.getCameraZoomX();
         orihime_app.text29.setText(String.valueOf(d_foldedFigure_syukusyaku_keisuu));
         orihime_app.text29.setCaretPosition(0);
@@ -460,7 +460,7 @@ public class FoldedFigure {
     }
 
     //-----------------------------------
-    public void folding_estimated(Camera camera_of_orisen_nyuuryokuzu, LineSet lineSet) {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public void folding_estimated(Camera camera_of_orisen_nyuuryokuzu, LineSegmentSet lineSegmentSet) {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
         int i_camera_estimated = 0;
 
         //-------------------------------折り上がり図表示用カメラの設定
@@ -480,12 +480,12 @@ public class FoldedFigure {
         // meirei = order
         if ((i_estimated_step == 0) && (i_estimated_order == 1)) {
             estimated_initialize(); // estimated_initialize
-            folding_estimated_01(lineSet);
+            folding_estimated_01(lineSegmentSet);
             i_estimated_step = 1;
             display_flg = FoldedFigureDisplayStyle.DEVELOPMENT_1;
         } else if ((i_estimated_step == 0) && (i_estimated_order == 2)) {
             estimated_initialize();
-            folding_estimated_01(lineSet);
+            folding_estimated_01(lineSegmentSet);
             i_estimated_step = 1;
             display_flg = FoldedFigureDisplayStyle.DEVELOPMENT_1;
             folding_estimated_02();
@@ -493,7 +493,7 @@ public class FoldedFigure {
             display_flg = FoldedFigureDisplayStyle.WIRE_2;
         } else if ((i_estimated_step == 0) && (i_estimated_order == 3)) {
             estimated_initialize();
-            folding_estimated_01(lineSet);
+            folding_estimated_01(lineSegmentSet);
             i_estimated_step = 1;
             display_flg = FoldedFigureDisplayStyle.DEVELOPMENT_1;
             folding_estimated_02();
@@ -504,7 +504,7 @@ public class FoldedFigure {
             display_flg = FoldedFigureDisplayStyle.TRANSPARENT_3;
         } else if ((i_estimated_step == 0) && (i_estimated_order == 5)) {
             estimated_initialize();
-            folding_estimated_01(lineSet);
+            folding_estimated_01(lineSegmentSet);
             i_estimated_step = 1;
             display_flg = FoldedFigureDisplayStyle.DEVELOPMENT_1;
             folding_estimated_02();
@@ -602,12 +602,12 @@ public class FoldedFigure {
         }
 
         if (i_camera_estimated == 1) {
-            oritatami_suitei_camera_configure(camera_of_orisen_nyuuryokuzu, lineSet);
+            oritatami_suitei_camera_configure(camera_of_orisen_nyuuryokuzu, lineSegmentSet);
         }
     }
 
     //--------------------------------------------------------------------------
-    public void folding_settings_two_color(Camera camera_of_orisen_nyuuryokuzu, LineSet Ss0) {//Two-color development drawing
+    public void folding_settings_two_color(Camera camera_of_orisen_nyuuryokuzu, LineSegmentSet Ss0) {//Two-color development drawing
 
         //-------------------------------折り上がり図表示用カメラの設定
 
@@ -672,14 +672,14 @@ public class FoldedFigure {
 
 
     //-------------------------------bbbbbbb----
-    public int folding_estimated_01(LineSet lineSet) {
+    public int folding_estimated_01(LineSegmentSet lineSegmentSet) {
         System.out.println("＜＜＜＜＜oritatami_suitei_01;開始");
         bulletinBoard.write("<<<<oritatami_suitei_01;  start");
         //マウスの入力でes1の中に作った線分集合をcp_worker1に渡し、点集合(展開図に相当)にする
         // Pass the line segment set created in es1 to cp_worker1 by mouse input and make it a point set (corresponding to the development view).
-        cp_worker1.lineStore2pointStore(lineSet);
-        ip3 = cp_worker1.set_referencePlane_id(ip3);
-        ip3 = cp_worker1.set_referencePlane_id(orihime_app.point_of_referencePlane_old);//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
+        cp_worker1.lineStore2pointStore(lineSegmentSet);
+        ip3 = cp_worker1.setReferencePlaneId(ip3);
+        ip3 = cp_worker1.setReferencePlaneId(orihime_app.point_of_referencePlane_old);//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
 
         return 1000;
     }
@@ -755,7 +755,7 @@ public class FoldedFigure {
 
         ip1 = 0;
         findAnotherOverlapValid = false;
-        ip1 = ct_worker.ClassTable_configure(cp_worker1, cp_worker2.get());   //ip1=折った後の表裏が同じ面が隣接するという誤りがあれば0を、無ければ1000を格納する変数。
+        ip1 = ct_worker.ClassTable_configure(cp_worker1, cp_worker2.get());   //ip1 = A variable that stores 0 if there is an error that the front and back sides are adjacent after folding, and 1000 if there is no error.
         if (ip1 == 1000) {
             ip1 = 1000;
             findAnotherOverlapValid = true;
@@ -885,10 +885,10 @@ public class FoldedFigure {
 
             //i_ten_sentakuを決める
             i_point_selection = 0;
-            if (cp_worker1.getPointState(i_closestPointId) == 1) {
+            if (cp_worker1.getPointState(i_closestPointId)) {
                 i_point_selection = 1;
             }
-            if (cp_worker2.getPointState(i_closestPointId) == 1) {
+            if (cp_worker2.getPointState(i_closestPointId)) {
                 i_point_selection = 2;
             }
             //i_ten_sentakuを決める  ここまで
@@ -918,7 +918,7 @@ public class FoldedFigure {
 
             //i_ten_sentakuを決める
             i_point_selection = 0;
-            if (cp_worker1.getPointState(i_closestPointId) == 1) {
+            if (cp_worker1.getPointState(i_closestPointId)) {
                 i_point_selection = 1;
                 if (cp_worker2.getSelectedPointsNum() > 0) {
                     i_point_selection = 2;
@@ -997,7 +997,7 @@ public class FoldedFigure {
 
             cp_worker2.mReleased_sentakuten_ugokasi_with_camera(move_previous_selection_point, p_m_left_on, p, ip4);
             if (p_m_left_on.distance(p) > 0.0000001) {
-                kiroku();
+                record();
                 i_estimated_step = 2;
 
                 if (display_flg == FoldedFigureDisplayStyle.WIRE_2) {
@@ -1056,10 +1056,10 @@ public class FoldedFigure {
 
             //i_ten_sentakuを決める
             i_point_selection = 0;
-            if (cp_worker1.getPointState(i_closestPointId) == 1) {
+            if (cp_worker1.getPointState(i_closestPointId)) {
                 i_point_selection = 1;
             }
-            if (cp_worker2.getPointState(i_closestPointId) == 1) {
+            if (cp_worker2.getPointState(i_closestPointId)) {
                 i_point_selection = 2;
             }
             //i_ten_sentakuを決める  ここまで
@@ -1089,7 +1089,7 @@ public class FoldedFigure {
 
             //i_ten_sentakuを決める
             i_point_selection = 0;
-            if (cp_worker1.getPointState(i_closestPointId) == 1) {
+            if (cp_worker1.getPointState(i_closestPointId)) {
                 i_point_selection = 1;
                 if (cp_worker2.getSelectedPointsNum() > 0) {
                     i_point_selection = 2;
@@ -1116,21 +1116,14 @@ public class FoldedFigure {
                 //cp_worker2.change_ten_sentaku(i_mottomo_tikai_Tenid);
             }
 
-
             if (i_foldedFigure_operation_mode == 1) {
-
                 display_flg_backup = display_flg;   //20180216  //display_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
                 display_flg = FoldedFigureDisplayStyle.WIRE_2;            //20180216
             }
-
-
         }
-
 
         System.out.println("cp_worker1.get_ten_sentakusuu() = " + cp_worker1.getSelectedPointsNum());
         System.out.println("cp_worker2.get_ten_sentakusuu() = " + cp_worker2.getSelectedPointsNum());
-
-
     }
 
     //-------------
@@ -1166,7 +1159,7 @@ public class FoldedFigure {
         if (i_nanini_near == 2) {
             cp_worker2.mReleased_sentakuten_ugokasi_with_camera(move_previous_selection_point, p_m_left_on, p, ip4);
             if (p_m_left_on.distance(p) > 0.0000001) {
-                kiroku();
+                record();
                 //if(cp_worker2.get_ten_sentakusuu()!=0){
                 i_estimated_step = 2;
 
@@ -1209,7 +1202,7 @@ public class FoldedFigure {
 //  =================================================================================================================================
 
 
-    public void kiroku() {
+    public void record() {
         cp_worker2.record();
     }
 
@@ -1229,4 +1222,16 @@ public class FoldedFigure {
         cp_worker2.setAllPointState0();
     }
     //--------------------
+
+    public enum State {
+        FRONT_0,
+        BACK_1,
+        BOTH_2,
+        TRANSPARENT_3,
+        ;
+
+        public State advance() {
+            return State.values()[(ordinal() + 1) % State.values().length];
+        }
+    }
 }

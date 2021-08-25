@@ -1,8 +1,6 @@
 package jp.gr.java_conf.mt777.origami.orihime;
 
-import javax.sound.sampled.Line;
-
-public enum LineType {
+public enum LineColor {
     ANGLE(-2),
     NONE(-1),
     BLACK_0(0),
@@ -16,13 +14,13 @@ public enum LineType {
     PURPLE_8(8),
     OTHER_9(9);
 
-    private int type;
+    private final int type;
 
-    LineType(int type) {
+    LineColor(int type) {
         this.type = type;
     }
 
-    public static LineType fromNumber(int type) {
+    public static LineColor fromNumber(int type) {
         for (var val : values()) {
             if (val.getNumber() == type) {
                 return val;
@@ -32,11 +30,11 @@ public enum LineType {
         throw new IllegalArgumentException("Type " + type + " unknown");
     }
 
-    public static LineType from(String type) {
+    public static LineColor from(String type) {
         return fromNumber(Integer.parseInt(type));
     }
 
-    public LineType advanceFolding() {
+    public LineColor advanceFolding() {
         if (!isFoldingLine()) {
             throw new IllegalArgumentException("Cannot advance folding on non folding line " + type);
         }

@@ -13,11 +13,11 @@ import java.math.RoundingMode;
 import jp.gr.java_conf.mt777.kiroku.memo.*;
 import jp.gr.java_conf.mt777.kiroku.moji_sousa.*;
 import jp.gr.java_conf.mt777.origami.dougu.camera.*;
-import jp.gr.java_conf.mt777.zukei2d.senbun.*;
+import jp.gr.java_conf.mt777.graphic2d.linesegment.*;
 import jp.gr.java_conf.mt777.origami.orihime.jyougehyou_syokunin.jyougehyou.touka_jyouken.*;
-import jp.gr.java_conf.mt777.zukei2d.oritaoekaki.*;
+import jp.gr.java_conf.mt777.graphic2d.oritaoekaki.*;
 import jp.gr.java_conf.mt777.seiretu.narabebako.*;
-import jp.gr.java_conf.mt777.zukei2d.ten.Point;
+import jp.gr.java_conf.mt777.graphic2d.point.Point;
 
 
 public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind of vertical relationship the surface of the developed view before folding will be after folding.
@@ -26,7 +26,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
     int SubFace_valid_number;//SubFaceは全て調べなくても、Faceの上下関係は網羅できる。Faceの上下関係を網羅するのに必要なSubFaceの数が優先順位の何番目までかをさがす。
     int FaceIdCount_max;//各SubFaceの持つMenidsuuの最大値。すなわち、最も紙に重なりが多いところの枚数。
     //paint 用のint格納用VVVVVVVVVVVVVVVVVVVVVV
-    int ip1 = 0; //0は折り畳み図の表側を表示するモード。1は折り畳み図の裏側を表示するモード。
+    boolean ip1_flipped = false; //0 is the mode to display the front side of the folding diagram. 1 is a mode to display the back side of the folding diagram.
     //  hierarchyList[][]は折る前の展開図のすべての面同士の上下関係を1つの表にまとめたものとして扱う
     //　hierarchyList[i][j]が1なら面iは面jの上側。0なら下側。
     //  hierarchyList[i][j]が-50なら、面iとjは重なが、上下関係は決められていない。
@@ -59,7 +59,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         hierarchyList.reset();
         SubFaceTotal = 0;
         SubFace_valid_number = 0;
-        ip1 = 0;
+        ip1_flipped = false;
         FaceIdCount_max = 0;
         camera.reset();
     }
@@ -93,16 +93,12 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
 
         System.out.println("Smenの初期設定");
         reset();
-        SubFaceTotal = SubFace_figure.getFacesTotal();
+        SubFaceTotal = SubFace_figure.getNumFaces();
 
-        SubFace[] s0_ori = new SubFace[SubFaceTotal + 1];
-        SubFace[] s_ori = new SubFace[SubFaceTotal + 1];
-        s0 = s0_ori;
-        s = s_ori;
-        int[] s0yj = new int[SubFaceTotal + 1];
-        int[] yjs0 = new int[SubFaceTotal + 1];
-        s0_no_yusenjyun = s0yj;
-        yusenjyun_kara_s0id = yjs0;
+        s0 = new SubFace[SubFaceTotal + 1];
+        s = new SubFace[SubFaceTotal + 1];
+        s0_no_yusenjyun = new int[SubFaceTotal + 1];
+        yusenjyun_kara_s0id = new int[SubFaceTotal + 1];
 
         for (int i = 0; i < SubFaceTotal + 1; i++) {
             s0[i] = new SubFace(orihime_app);
@@ -119,14 +115,14 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         }
 
         System.out.println("各Smenに含まれる面を記録する");
-        otta_Face_figure.BouMenMaxMinZahyou();//tttttttttt
+        otta_Face_figure.LineFaceMaxMinCoordinate();//tttttttttt
 
-        int[] s0addFaceId = new int[otta_Face_figure.getFacesTotal() + 1];  //SubFaceに追加する面を一時記録しておく
+        int[] s0addFaceId = new int[otta_Face_figure.getNumFaces() + 1];  //SubFaceに追加する面を一時記録しておく
 
         for (int i = 1; i <= SubFaceTotal; i++) {
             int s0addFaceTotal = 0;
 
-            for (int j = 1; j <= otta_Face_figure.getFacesTotal(); j++) {
+            for (int j = 1; j <= otta_Face_figure.getNumFaces(); j++) {
 
                 if (otta_Face_figure.simple_inside(subFace_insidePoint[i], j) == 2) {
                     s0addFaceTotal = s0addFaceTotal + 1;
@@ -157,40 +153,40 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
     public int ClassTable_configure(CreasePattern_Worker orite, PointSet otta_face_figure) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
         orihime_app.bulletinBoard.write("           Jyougehyou_settei   step1   start ");
         int ireturn = 1000;
-        hierarchyList.setFacesTotal(otta_face_figure.getFacesTotal());
+        hierarchyList.setFacesTotal(otta_face_figure.getNumFaces());
 
         //Put the hierarchical relationship determined from the information of mountain folds and valley folds in the table above and below.
         System.out.println("山折り谷折りの情報から決定される上下関係を上下表に入れる");
-        int Mid_min, Mid_max;
-        for (int ib = 1; ib <= orite.getSticksTotal(); ib++) {
-            Mid_min = orite.Stick_moti_FaceId_min_request(ib);
-            Mid_max = orite.Stick_moti_FaceId_max_request(ib);
-            if (Mid_min != Mid_max) {//展開図において、棒ibの両脇に面がある
-                if (otta_face_figure.getColor(ib) == LineType.RED_1) {//赤い線で山折りを意味する
-                    if (orite.getIFacePosition(Mid_min) % 2 == 1) {//面Mid_minは基準面と同じ向き(表面が上を向く)
-                        hierarchyList.set(Mid_min, Mid_max, 1);
-                        hierarchyList.set(Mid_max, Mid_min, 0);
+        int faceId_min, faceId_max;
+        for (int ib = 1; ib <= orite.getNumLines(); ib++) {
+            faceId_min = orite.lineInFaceBorder_min_request(ib);
+            faceId_max = orite.lineInFaceBorder_max_request(ib);
+            if (faceId_min != faceId_max) {//展開図において、棒ibの両脇に面がある
+                if (otta_face_figure.getColor(ib) == LineColor.RED_1) {//赤い線で山折りを意味する
+                    if (orite.getIFacePosition(faceId_min) % 2 == 1) {//面Mid_minは基準面と同じ向き(表面が上を向く)
+                        hierarchyList.set(faceId_min, faceId_max, 1);
+                        hierarchyList.set(faceId_max, faceId_min, 0);
                     }
-                    if (orite.getIFacePosition(Mid_max) % 2 == 1) {//面Mid_maxは基準面と同じ向き(表面が上を向く)
-                        hierarchyList.set(Mid_max, Mid_min, 1);
-                        hierarchyList.set(Mid_min, Mid_max, 0);
+                    if (orite.getIFacePosition(faceId_max) % 2 == 1) {//面Mid_maxは基準面と同じ向き(表面が上を向く)
+                        hierarchyList.set(faceId_max, faceId_min, 1);
+                        hierarchyList.set(faceId_min, faceId_max, 0);
                     }
                 }
-                if (otta_face_figure.getColor(ib) == LineType.BLUE_2) {//青い線で谷折りを意味する
-                    if (orite.getIFacePosition(Mid_min) % 2 == 1) {//面Mid_minは基準面と同じ向き(表面が上を向く)
-                        hierarchyList.set(Mid_min, Mid_max, 0);
-                        hierarchyList.set(Mid_max, Mid_min, 1);
+                if (otta_face_figure.getColor(ib) == LineColor.BLUE_2) {//青い線で谷折りを意味する
+                    if (orite.getIFacePosition(faceId_min) % 2 == 1) {//面Mid_minは基準面と同じ向き(表面が上を向く)
+                        hierarchyList.set(faceId_min, faceId_max, 0);
+                        hierarchyList.set(faceId_max, faceId_min, 1);
                     }
-                    if (orite.getIFacePosition(Mid_max) % 2 == 1) {//面Mid_maxは基準面と同じ向き(表面が上を向く)
-                        hierarchyList.set(Mid_max, Mid_min, 0);
-                        hierarchyList.set(Mid_min, Mid_max, 1);
+                    if (orite.getIFacePosition(faceId_max) % 2 == 1) {//面Mid_maxは基準面と同じ向き(表面が上を向く)
+                        hierarchyList.set(faceId_max, faceId_min, 0);
+                        hierarchyList.set(faceId_min, faceId_max, 1);
                     }
                 }
 
-                if ((orite.getIFacePosition(Mid_min) % 2 == 0) && (orite.getIFacePosition(Mid_max) % 2 == 0)) {
+                if ((orite.getIFacePosition(faceId_min) % 2 == 0) && (orite.getIFacePosition(faceId_max) % 2 == 0)) {
                     ireturn = 0;
                 }
-                if ((orite.getIFacePosition(Mid_min) % 2 == 1) && (orite.getIFacePosition(Mid_max) % 2 == 1)) {
+                if ((orite.getIFacePosition(faceId_min) % 2 == 1) && (orite.getIFacePosition(faceId_max) % 2 == 1)) {
                     ireturn = 0;
                 }
             }
@@ -202,17 +198,17 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         //等価条件を設定する。棒ibを境界として隣接する2つの面im1,im2が有る場合、折り畳み推定した場合に
         //棒ibの一部と重なる位置に有る面imは面im1と面im2に上下方向で挟まれることはない。このことから
         //gj[im1][im]=gj[im2][im]という等価条件が成り立つ。
-        for (int ib = 1; ib <= orite.getSticksTotal(); ib++) {
-            Mid_min = orite.Stick_moti_FaceId_min_request(ib);
-            Mid_max = orite.Stick_moti_FaceId_max_request(ib);
-            if (Mid_min != Mid_max) {//展開図において、棒ibの両脇に面がある
+        for (int ib = 1; ib <= orite.getNumLines(); ib++) {
+            faceId_min = orite.lineInFaceBorder_min_request(ib);
+            faceId_max = orite.lineInFaceBorder_max_request(ib);
+            if (faceId_min != faceId_max) {//展開図において、棒ibの両脇に面がある
                 for (int im = 1; im <= hierarchyList.getFacesTotal(); im++) {
-                    if ((im != Mid_min) && (im != Mid_max)) {
+                    if ((im != faceId_min) && (im != faceId_max)) {
                         if (otta_face_figure.simple_convex_inside(ib, im)) {
                             //下の２つのifは暫定的な処理。あとで置き換え予定
                             if (otta_face_figure.convex_inside(0.5, ib, im)) {
                                 if (otta_face_figure.convex_inside(-0.5, ib, im)) {
-                                    hierarchyList.addEquivalenceCondition(im, Mid_min, im, Mid_max);
+                                    hierarchyList.addEquivalenceCondition(im, faceId_min, im, faceId_max);
                                 }
                             }
                         }
@@ -229,14 +225,14 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         //最初から3番目で間違いが起きているので、この3番目のところがSubFaceで何桁目かを求めて、この桁を１進める。
         int mi1, mi2, mj1, mj2;
 
-        for (int ib = 1; ib <= orite.getSticksTotal() - 1; ib++) {
-            for (int jb = ib + 1; jb <= orite.getSticksTotal(); jb++) {
+        for (int ib = 1; ib <= orite.getNumLines() - 1; ib++) {
+            for (int jb = ib + 1; jb <= orite.getNumLines(); jb++) {
                 if (otta_face_figure.parallel_overlap(ib, jb)) {
-                    mi1 = orite.Stick_moti_FaceId_min_request(ib);
-                    mi2 = orite.Stick_moti_FaceId_max_request(ib);
+                    mi1 = orite.lineInFaceBorder_min_request(ib);
+                    mi2 = orite.lineInFaceBorder_max_request(ib);
                     if (mi1 != mi2) {
-                        mj1 = orite.Stick_moti_FaceId_min_request(jb);
-                        mj2 = orite.Stick_moti_FaceId_max_request(jb);
+                        mj1 = orite.lineInFaceBorder_min_request(jb);
+                        mj2 = orite.lineInFaceBorder_max_request(jb);
                         if (mj1 != mj2) {
                             if (mi1 * mi2 * mj1 * mj2 != 0) {
                                 if (onaji_subFace_ni_sonzai(mi1, mi2, mj1, mj2)) {
@@ -253,9 +249,8 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
 
         orihime_app.bulletinBoard.write("           Jyougehyou_settei   step4   start ");
         //Additional estimation
-        int additional;
 
-        additional = additional_estimation();
+        int additional = additional_estimation();
         if (additional != 1000) {
             return additional;
         }
@@ -347,7 +342,6 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
 
 
         for (int i = 1; i <= SubFaceTotal; i++) {
-            //System.out.println(yusenjyun_kara_s0id[i]);
             if (i_yusendo_max[yusenjyun_kara_s0id[i]] != 0) {
                 SubFace_valid_number = i;       //早いが変な結果になることあり。
 //20191012 wwwww				SubFace_yuukou_suu=SubFaceTotal;//遅いが確実
@@ -945,7 +939,6 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         System.out.println("追加推定 終了------------------------＊＊＊＊ここまで20150310＊＊＊＊＊＊＊＊＊＊＊");
 
         return 1000;
-
     }
 
     //------------------------------------------
@@ -1176,50 +1169,34 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
     }
 
 
-    int i_anti_alias = 1;
-    double senhaba_for_anti_alias = 1.2;
+    boolean antiAlias = true;
+    double lineWidthForAntiAlias = 1.2;
 
     //---------------------------------------------------------
 
+    public void toggleAntiAlias() {
 
-    public void set_i_anti_alias(int i) {
-        i_anti_alias = i;
-    }
+        antiAlias = !antiAlias;
 
-    public void change_i_anti_alias() {
-
-        i_anti_alias = i_anti_alias + 1;
-        if (i_anti_alias >= 2) {
-            i_anti_alias = 0;
-        }
-
-        if (i_anti_alias == 0) {
-            senhaba_for_anti_alias = 1.0;
-        }
-        if (i_anti_alias == 1) {
-            senhaba_for_anti_alias = 1.2;
+        if (antiAlias) {
+            lineWidthForAntiAlias = 1.2;
+        } else {
+            lineWidthForAntiAlias = 1.0;
         }
 
     }
-
 
     //---------------------------------------------------------
 
     public Memo getMemo_for_svg_with_camera(CreasePattern_Worker orite, PointSet subFace_figure) {//折り上がり図(hyouji_flg==5)
-        int omote_ura = 0;
-        if (camera.getCameraMirror() == 1.0) {
-            omote_ura = 0;
-        }//カメラの鏡設定が1なら、折り上がり図は表表示
-        if (camera.getCameraMirror() == -1.0) {
-            omote_ura = 1;
-        }//カメラの鏡設定が-1(x軸の符号を反転)なら、折り上がり図は裏表示
+        boolean front_back = camera.isCameraMirrored();
 
         Point t0 = new Point();
         Point t1 = new Point();
         LineSegment s_ob = new LineSegment();
         LineSegment s_tv = new LineSegment();
 
-        ip1 = omote_ura;
+        ip1_flipped = front_back;
 
         Memo memo_temp = new Memo();
 
@@ -1241,14 +1218,13 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         //ここまでで、上下表の情報がSubFaceの各面に入った
 
         //面を描く
-        //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オフ
         int face_order;
         for (int im = 1; im <= SubFaceTotal; im++) {//imは各SubFaceの番号
             if (s0[im].getFaceIdCount() > 0) {//MenidsuuはSubFace(折り畳み推定してえられた針金図を細分割した面)で重なっているMen(折りたたむ前の展開図の面)の数。これが0なら、ドーナツ状の穴の面なので描画対象外
 
                 //Determine the color of the imth SubFace when drawing a fold-up diagram
                 face_order = 1;
-                if (omote_ura == 1) {
+                if (front_back) {
                     face_order = s0[im].getFaceIdCount();
                 }
 
@@ -1260,7 +1236,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                     str_stroke = StringOp.toHtmlColor(B_color);
                 }//g.setColor(B_color)
 
-                if (omote_ura == 1) {
+                if (front_back) {
                     if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(face_order)) % 2 == 0) {
                         str_stroke = "yellow";
                     }//g.setColor(F_color)
@@ -1287,8 +1263,6 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                 y[0] = gy(t1.getY());
                 //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求めるのはここまで
 
-                //g2.fill(new Polygon(x,y,subFace_figure.getTenidsuu(im)));  //svg出力
-
                 str_zahyou = new StringBuilder(x[0] + "," + y[0]);
                 for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
                     str_zahyou.append(" ").append(x[i]).append(",").append(y[i]);
@@ -1308,38 +1282,38 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
 
         str_stroke = StringOp.toHtmlColor(L_color);
 
-        for (int ib = 1; ib <= subFace_figure.getSticksTotal(); ib++) {
-            int Mid_min, Mid_max; //棒の両側のSubFaceの番号の小さいほうがMid_min,　大きいほうがMid_max
-            int Men_jyunban_min, Men_jyunban_max;//PC画面に表示したときSubFace(Mid_min) で見える面の番号がMen_jyunban_min、SubFace(Mid_max) で見える面の番号がMen_jyunban_max
-            int oekaki_flg;
+        for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
+            int faceId_min, faceId_max; //棒の両側のSubFaceの番号の小さいほうがMid_min,　大きいほうがMid_max
+            int faceOrderMin, faceOrderMax;//PC画面に表示したときSubFace(faceId_min) で見える面の番号がMen_jyunban_min、SubFace(faceId_max) で見える面の番号がMen_jyunban_max
+            boolean drawing_flg;
 
-            oekaki_flg = 0;
-            Mid_min = subFace_figure.Stick_moti_Menid_min_motome(ib);//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
-            Mid_max = subFace_figure.Stick_moti_Menid_max_motome(ib);
+            drawing_flg = false;
+            faceId_min = subFace_figure.lineInFaceBorder_min_lookup(ib);//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
+            faceId_max = subFace_figure.lineInFaceBorder_max_lookup(ib);
 
-            if (s0[Mid_min].getFaceIdCount() == 0) {
-                oekaki_flg = 1;
+            if (s0[faceId_min].getFaceIdCount() == 0) {
+                drawing_flg = true;
             }//menをもたない、ドーナツの穴状のSubFaceは境界の棒を描く
-            else if (s0[Mid_max].getFaceIdCount() == 0) {
-                oekaki_flg = 1;
-            } else if (Mid_min == Mid_max) {
-                oekaki_flg = 1;
+            else if (s0[faceId_max].getFaceIdCount() == 0) {
+                drawing_flg = true;
+            } else if (faceId_min == faceId_max) {
+                drawing_flg = true;
             }//一本の棒の片面だけにSubFace有り
             else {
-                Men_jyunban_min = 1;
-                if (omote_ura == 1) {
-                    Men_jyunban_min = s0[Mid_min].getFaceIdCount();
+                faceOrderMin = 1;
+                if (front_back) {
+                    faceOrderMin = s0[faceId_min].getFaceIdCount();
                 }
-                Men_jyunban_max = 1;
-                if (omote_ura == 1) {
-                    Men_jyunban_max = s0[Mid_max].getFaceIdCount();
+                faceOrderMax = 1;
+                if (front_back) {
+                    faceOrderMax = s0[faceId_max].getFaceIdCount();
                 }
-                if (s0[Mid_min].fromTop_count_FaceId(Men_jyunban_min) != s0[Mid_max].fromTop_count_FaceId(Men_jyunban_max)) {
-                    oekaki_flg = 1;
+                if (s0[faceId_min].fromTop_count_FaceId(faceOrderMin) != s0[faceId_max].fromTop_count_FaceId(faceOrderMax)) {
+                    drawing_flg = true;
                 }//この棒で隣接するSubFaceの1番上の面は異なるので、この棒は描く。
             }
 
-            if (oekaki_flg == 1) {//棒を描く。
+            if (drawing_flg) {//棒を描く。
                 s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
                 s_tv.set(camera.object2TV(s_ob));
 
@@ -1350,7 +1324,6 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                 BigDecimal b_ay = new BigDecimal(String.valueOf(a.getY()));
                 BigDecimal b_bx = new BigDecimal(String.valueOf(b.getX()));
                 BigDecimal b_by = new BigDecimal(String.valueOf(b.getY()));
-
 
                 memo_temp.addLine("<line x1=\"" + b_ax.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
                         " y1=\"" + b_ay.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
@@ -1367,23 +1340,15 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
     }
     //---------------------------------------------------------
 
-
     //
     //---------------------------------------------------------
     public Memo getMemo_wirediagram_for_svg_export(CreasePattern_Worker orite, PointSet otta_Men_zu, int i_fill) {
-        //System.out.println("getMemo_hariganezu_for_svg_kakidasi");
-        int omote_ura = 0;
-        if (camera.getCameraMirror() == 1.0) {
-            omote_ura = 0;
-        }//カメラの鏡設定が1なら、折り上がり図は表表示
-        if (camera.getCameraMirror() == -1.0) {
-            omote_ura = 1;
-        }//カメラの鏡設定が-1(x軸の符号を反転)なら、折り上がり図は裏表示
+        boolean flipped = camera.isCameraMirrored();
 
         Point t_ob = new Point();
         Point t_tv = new Point();
 
-        ip1 = omote_ura;
+        ip1_flipped = flipped;
 
         Memo memo_temp = new Memo();
 
@@ -1396,12 +1361,11 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
 
         rating2();
 
-
         //面を描く準備
 
         //BigDecimalのコンストラクタの引数は浮動小数点数型と文字列型どちらもok。引数が浮動小数点数型は誤差が発生。正確な値を扱うためには、引数は文字列型で指定。
 
-        for (int i_nbox = 1; i_nbox <= otta_Men_zu.getFacesTotal(); i_nbox++) {
+        for (int i_nbox = 1; i_nbox <= otta_Men_zu.getNumFaces(); i_nbox++) {
             int im;
             if (camera.getCameraMirror() == -1.0) {//カメラの鏡設定が-1(x軸の符号を反転)なら、折り上がり図は裏表示
                 im = nbox.backwards_get_int(i_nbox);
@@ -1448,18 +1412,14 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                     str_fill = StringOp.toHtmlColor(B_color);
                 }
 
-                if (omote_ura == 1) {
+                if (flipped) {
                     if (orite.getIFacePosition(im) % 2 == 1) {
                         str_fill = StringOp.toHtmlColor(B_color);
                     }
                     if (orite.getIFacePosition(im) % 2 == 0) {
                         str_fill = StringOp.toHtmlColor(F_color);
                     }
-
-
                 }
-
-
             }
 
             memo_temp.addLine("<path d=\"" + text + "\"" +
@@ -1468,12 +1428,9 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                     //" fill=\"none\"" +" />"
                     " fill=\"" + str_fill + "\"" + " />"
             );
-
-
         }
 
         return memo_temp;
-
     }
 
 
@@ -1500,11 +1457,10 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         }
 
         if (transparencyColor) {//カラーの透過図
-
             g.setColor(new Color(F_color.getRed(), F_color.getGreen(), F_color.getBlue(), transparency_toukado));
 
             //Draw a face
-            for (int im = 1; im <= otta_Face_figure.getFacesTotal(); im++) {
+            for (int im = 1; im <= otta_Face_figure.getNumFaces(); im++) {
                 for (int i = 1; i <= otta_Face_figure.getPointsCount(im) - 1; i++) {
                     t0.setX(otta_Face_figure.getPointX(otta_Face_figure.getPointId(im, i)));
                     t0.setY(otta_Face_figure.getPointY(otta_Face_figure.getPointId(im, i)));
@@ -1521,22 +1477,21 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                 g.fillPolygon(x, y, otta_Face_figure.getPointsCount(im));
             }
 
-            //Preparing to draw a stick
+            //Preparing to draw a line
 
-            if (i_anti_alias == 1) {
+            if (antiAlias) {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);//Anti-alias on
                 BasicStroke BStroke = new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
                 g2.setStroke(BStroke);//Line thickness and shape of the end of the line
-            }
-            if (i_anti_alias == 0) {
+            } else {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//Anti-alias off
                 BasicStroke BStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
                 g2.setStroke(BStroke);//Line thickness and shape of the end of the line
             }
 
             g.setColor(new Color(F_color.getRed(), F_color.getGreen(), F_color.getBlue(), 2 * transparency_toukado));
-            //Draw a stick
-            for (int ib = 1; ib <= subFace_figure.getSticksTotal(); ib++) {
+            //Draw a line
+            for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
                 s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
                 s_tv.set(camera.object2TV(s_ob));
                 g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //直線
@@ -1544,7 +1499,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         } else {//Black and white transparent view (old style)
             int col_kosa;
 
-            for (int im = 1; im <= subFace_figure.getFacesTotal(); im++) {
+            for (int im = 1; im <= subFace_figure.getNumFaces(); im++) {
                 col_kosa = colmax - col_hiku * (s0[im].getFaceIdCount());
 
                 if (col_kosa > 255) {
@@ -1572,23 +1527,21 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                 g.fillPolygon(x, y, subFace_figure.getPointsCount(im));
             }
 
-            //Prepare the stick
+            //Prepare the line
             g.setColor(Color.black);
 
-            if (i_anti_alias == 1) {
+            if (antiAlias) {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);//Anti-alias on
                 BasicStroke BStroke = new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
                 g2.setStroke(BStroke);//Line thickness and shape of the end of the line
-            }
-            if (i_anti_alias == 0) {
+            } else {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//Anti-alias off
                 BasicStroke BStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
                 g2.setStroke(BStroke);//Line thickness and shape of the end of the line
             }
 
-
-            //Draw a stick
-            for (int ib = 1; ib <= subFace_figure.getSticksTotal(); ib++) {
+            //Draw a line
+            for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
                 s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
                 s_tv.set(camera.object2TV(s_ob));
                 g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //Straight line
@@ -1601,22 +1554,15 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
 
     public void draw_foldedFigure_with_camera(Graphics g, CreasePattern_Worker orite, PointSet subFace_figure) {
         Graphics2D g2 = (Graphics2D) g;
-        int omote_ura = 0;
-        if (camera.getCameraMirror() == 1.0) {
-            omote_ura = 0;
-        }//カメラの鏡設定が1なら、折り上がり図は表表示
-        if (camera.getCameraMirror() == -1.0) {
-            omote_ura = 1;
-        }//カメラの鏡設定が-1(x軸の符号を反転)なら、折り上がり図は裏表示
-        //System.out.println("上下表職人　oekaki_with_camera+++++++++++++++折紙表示　面を描く");
+        boolean flipped = camera.isCameraMirrored();
+
         Point t0 = new Point();
         Point t1 = new Point();
         LineSegment s_ob = new LineSegment();
         LineSegment s_tv = new LineSegment();
-        ip1 = omote_ura;
-        //  System.out.println(Smensuu);
+        ip1_flipped = flipped;
 
-        //面を描く
+        //Draw a face
         int[] x = new int[100];
         int[] y = new int[100];
 
@@ -1636,42 +1582,35 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         //面を描く-----------------------------------------------------------------------------------------------------
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オフ
 
-        int Men_jyunban;
+        int faceOrder;
         for (int im = 1; im <= SubFaceTotal; im++) {//imは各SubFaceの番号
             if (s0[im].getFaceIdCount() > 0) {//MenidsuuはSubFace(折り畳み推定してえられた針金図を細分割した面)で重なっているMen(折りたたむ前の展開図の面)の数。これが0なら、ドーナツ状の穴の面なので描画対象外
-
-                //折り上がり図を描くときのim番目のSubFaceの色を決める
-                Men_jyunban = 1;
-                if (omote_ura == 1) {
-                    Men_jyunban = s0[im].getFaceIdCount();
+                //Determine the color of the im-th SubFace when drawing a fold-up diagram
+                faceOrder = 1;
+                if (flipped) {
+                    faceOrder = s0[im].getFaceIdCount();
                 }
 
-                //if(orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban))%2==1){g.setColor(new Color(255,255,50));}
-                //if(orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban))%2==0){g.setColor(new Color(233,233,233));}
-                if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(Men_jyunban)) % 2 == 1) {
+                if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(faceOrder)) % 2 == 1) {
                     g.setColor(F_color);
                 }
-                if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(Men_jyunban)) % 2 == 0) {
+                if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(faceOrder)) % 2 == 0) {
                     g.setColor(B_color);
                 }
 
-
-                if (omote_ura == 1) {
-                    //if(orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban))%2==0){g.setColor(new Color(255,255,50));}
-                    //if(orite.getiMeniti(s0[im].uekara_kazoeta_Menid(Men_jyunban))%2==1){g.setColor(new Color(233,233,233));}
-
-                    if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(Men_jyunban)) % 2 == 0) {
+                if (flipped) {
+                    if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(faceOrder)) % 2 == 0) {
                         g.setColor(F_color);
                     }
-                    if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(Men_jyunban)) % 2 == 1) {
+                    if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(faceOrder)) % 2 == 1) {
                         g.setColor(B_color);
                     }
                 }
 
 
-                //折り上がり図を描くときのSubFaceの色を決めるのはここまで
+                //This is the end of deciding the color of SubFace when drawing a folded figure
 
-                //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求める
+                //Find the coordinates (on the PC display) of the vertices of the im-th SubFace polygon when drawing a fold-up diagram.
 
                 for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
 
@@ -1680,8 +1619,6 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                     t1.set(camera.object2TV(t0));
                     x[i] = gx(t1.getX());
                     y[i] = gy(t1.getY());
-                    //x[i]=gx(subFace_figure.getTenx(subFace_figure.getTenid(im,i)));
-                    //y[i]=gy(subFace_figure.getTeny(subFace_figure.getTenid(im,i)));
                 }
 
                 t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
@@ -1689,41 +1626,39 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getX());
                 y[0] = gy(t1.getY());
-                //x[0]=gx(subFace_figure.getTenx(subFace_figure.getTenid(im,subFace_figure.getTenidsuu(im))));
-                //y[0]=gy(subFace_figure.getTeny(subFace_figure.getTenid(im,subFace_figure.getTenidsuu(im))));
 
-                //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求めるのはここまで
+                //This is the end of finding the coordinates (on the PC display) of the vertices of the im-th SubFace polygon when drawing a fold-up diagram.
 
                 g2.fill(new Polygon(x, y, subFace_figure.getPointsCount(im)));
             }
         }
-        //面を描く　ここまで
+        //Draw a surface so far
 
 
-        //影をつける ------------------------------------------------------------------------------------
+        //Add a shadow  ------------------------------------------------------------------------------------
         if (displayShadows) {
-            for (int ib = 1; ib <= subFace_figure.getSticksTotal(); ib++) {
-                int im = bou_no_bangou_kara_kagenoaru_subFace_no_bangou_wo_motomeru(ib, subFace_figure, omote_ura);//影をつけるSubFaceのid
+            for (int lineId = 1; lineId <= subFace_figure.getNumLines(); lineId++) {
+                int im = line_no_bangou_kara_kagenoaru_subFace_no_bangou_wo_motomeru(lineId, subFace_figure, flipped);//影をつけるSubFaceのid
                 if (im != 0) {//影を描く。
 
                     //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求める
 
 
-                    //棒の座標   subFace_figure.getmaex(ib),subFace_figure.getmaey(ib)   -    subFace_figure.getatox(ib) , subFace_figure.getatoy(ib)
-                    Point b_begin = new Point(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib));
-                    Point b_end = new Point(subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
+                    //棒の座標   subFace_figure.getmaex(lineId),subFace_figure.getmaey(lineId)   -    subFace_figure.getatox(lineId) , subFace_figure.getatoy(lineId)
+                    Point b_begin = new Point(subFace_figure.getBeginX(lineId), subFace_figure.getBeginY(lineId));
+                    Point b_end = new Point(subFace_figure.getEndX(lineId), subFace_figure.getEndY(lineId));
                     double b_length = b_begin.distance(b_end);
 
                     //棒と直交するベクトル
-                    double o_btx = -(subFace_figure.getBeginY(ib) - subFace_figure.getEndY(ib)) * 10.0 / b_length;//棒と直交するxベクトル
-                    double o_bty = (subFace_figure.getBeginX(ib) - subFace_figure.getEndX(ib)) * 10.0 / b_length;//棒と直交するyベクトル
+                    double o_btx = -(subFace_figure.getBeginY(lineId) - subFace_figure.getEndY(lineId)) * 10.0 / b_length;//棒と直交するxベクトル
+                    double o_bty = (subFace_figure.getBeginX(lineId) - subFace_figure.getEndX(lineId)) * 10.0 / b_length;//棒と直交するyベクトル
 
                     //棒の中点
                     double o_bmx, o_bmy;
                     double t_bmx, t_bmy;
 
-                    o_bmx = (subFace_figure.getBeginX(ib) + subFace_figure.getEndX(ib)) / 2.0;
-                    o_bmy = (subFace_figure.getBeginY(ib) + subFace_figure.getEndY(ib)) / 2.0;
+                    o_bmx = (subFace_figure.getBeginX(lineId) + subFace_figure.getEndX(lineId)) / 2.0;
+                    o_bmy = (subFace_figure.getBeginY(lineId) + subFace_figure.getEndY(lineId)) / 2.0;
 
                     t0.setX(o_bmx);
                     t0.setY(o_bmy);
@@ -1753,8 +1688,8 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                         //影の長方形
 
                         // ---------- [0] ----------------
-                        t0.setX(subFace_figure.getBeginX(ib));
-                        t0.setY(subFace_figure.getBeginY(ib));
+                        t0.setX(subFace_figure.getBeginX(lineId));
+                        t0.setY(subFace_figure.getBeginY(lineId));
                         t1.set(camera.object2TV(t0));
                         xd[0] = t1.getX();
                         yd[0] = t1.getY();
@@ -1762,8 +1697,8 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                         y[0] = (int) yd[0];
 
                         // ---------- [1] ----------------
-                        t0.setX(subFace_figure.getBeginX(ib) + o_btx);
-                        t0.setY(subFace_figure.getBeginY(ib) + o_bty);
+                        t0.setX(subFace_figure.getBeginX(lineId) + o_btx);
+                        t0.setY(subFace_figure.getBeginY(lineId) + o_bty);
                         t1.set(camera.object2TV(t0));
                         xd[1] = t1.getX();
                         yd[1] = t1.getY();
@@ -1771,8 +1706,8 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                         y[1] = (int) yd[1];
 
                         // ---------- [2] ----------------
-                        t0.setX(subFace_figure.getEndX(ib) + o_btx);
-                        t0.setY(subFace_figure.getEndY(ib) + o_bty);
+                        t0.setX(subFace_figure.getEndX(lineId) + o_btx);
+                        t0.setY(subFace_figure.getEndY(lineId) + o_bty);
                         t1.set(camera.object2TV(t0));
                         xd[2] = t1.getX();
                         yd[2] = t1.getY();
@@ -1780,8 +1715,8 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                         y[2] = (int) yd[2];
 
                         // ---------- [3] ----------------
-                        t0.setX(subFace_figure.getEndX(ib));
-                        t0.setY(subFace_figure.getEndY(ib));
+                        t0.setX(subFace_figure.getEndX(lineId));
+                        t0.setY(subFace_figure.getEndY(lineId));
                         t1.set(camera.object2TV(t0));
                         xd[3] = t1.getX();
                         yd[3] = t1.getY();
@@ -1789,24 +1724,18 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                         y[3] = (int) yd[3];
 
                         g2.setPaint(new GradientPaint((float) t_bmx, (float) t_bmy, new Color(0, 0, 0, 50), (float) t_bmtx, (float) t_bmty, new Color(0, 0, 0, 0)));
-                        //g2.setPaint( new GradientPaint( (float)xd[0], (float)yd[0], new Color(0,0,0,50),     (float)xd[1], (float)yd[1],  new Color(0,0,0,0)  ));
-
 
                         g2.fill(new Polygon(x, y, 4));
 
                     }
-
-
                     //----------------------------------棒と直交するxベクトルの向きを変えて影を描画
                     o_btx = -o_btx;//棒と直交するxベクトル
                     o_bty = -o_bty;//棒と直交するyベクトル
-
 
                     //-----------------------------------------------
                     //棒の中点を通る直交線上の点
                     o_bmtx = o_bmx + o_btx;
                     o_bmty = o_bmy + o_bty;
-
 
                     if (subFace_figure.inside(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), im) != 0) {//0=外部、　1=境界、　2=内部
 
@@ -1814,12 +1743,11 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                         t0.setY(o_bmty);
                         t1.set(camera.object2TV(t0));
 
-
                         //影の長方形
 
                         // ---------- [0] ----------------
-                        t0.setX(subFace_figure.getBeginX(ib));
-                        t0.setY(subFace_figure.getBeginY(ib));
+                        t0.setX(subFace_figure.getBeginX(lineId));
+                        t0.setY(subFace_figure.getBeginY(lineId));
                         t1.set(camera.object2TV(t0));
                         xd[0] = t1.getX();
                         yd[0] = t1.getY();
@@ -1827,8 +1755,8 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                         y[0] = (int) yd[0];
 
                         // ---------- [1] ----------------
-                        t0.setX(subFace_figure.getBeginX(ib) + o_btx);
-                        t0.setY(subFace_figure.getBeginY(ib) + o_bty);
+                        t0.setX(subFace_figure.getBeginX(lineId) + o_btx);
+                        t0.setY(subFace_figure.getBeginY(lineId) + o_bty);
                         t1.set(camera.object2TV(t0));
                         xd[1] = t1.getX();
                         yd[1] = t1.getY();
@@ -1836,8 +1764,8 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                         y[1] = (int) yd[1];
 
                         // ---------- [2] ----------------
-                        t0.setX(subFace_figure.getEndX(ib) + o_btx);
-                        t0.setY(subFace_figure.getEndY(ib) + o_bty);
+                        t0.setX(subFace_figure.getEndX(lineId) + o_btx);
+                        t0.setY(subFace_figure.getEndY(lineId) + o_bty);
                         t1.set(camera.object2TV(t0));
                         xd[2] = t1.getX();
                         yd[2] = t1.getY();
@@ -1845,8 +1773,8 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
                         y[2] = (int) yd[2];
 
                         // ---------- [3] ----------------
-                        t0.setX(subFace_figure.getEndX(ib));
-                        t0.setY(subFace_figure.getEndY(ib));
+                        t0.setX(subFace_figure.getEndX(lineId));
+                        t0.setY(subFace_figure.getEndY(lineId));
                         t1.set(camera.object2TV(t0));
                         xd[3] = t1.getX();
                         yd[3] = t1.getY();
@@ -1869,12 +1797,11 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         //棒を描く-----------------------------------------------------------------------------------------
 
 
-        if (i_anti_alias == 1) {
+        if (antiAlias) {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);//アンチェイリアス　オン
             BasicStroke BStroke = new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
             g2.setStroke(BStroke);//線の太さや線の末端の形状
-        }
-        if (i_anti_alias == 0) {
+        } else {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オフ
             BasicStroke BStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
             g2.setStroke(BStroke);//線の太さや線の末端の形状
@@ -1882,39 +1809,39 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
 
         g.setColor(L_color);//g.setColor(Color.black);
 
-        for (int ib = 1; ib <= subFace_figure.getSticksTotal(); ib++) {
+        for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
 
             int Mid_min, Mid_max; //棒の両側のSubFaceの番号の小さいほうがMid_min,　大きいほうがMid_max
-            int Men_jyunban_min, Men_jyunban_max;//PC画面に表示したときSubFace(Mid_min) で見える面の番号がMen_jyunban_min、SubFace(Mid_max) で見える面の番号がMen_jyunban_max
-            int oekaki_flg;
+            int faceOrderMin, faceOrderMax;//PC画面に表示したときSubFace(Mid_min) で見える面の番号がMen_jyunban_min、SubFace(Mid_max) で見える面の番号がMen_jyunban_max
+            boolean drawing_flag;
 
-            oekaki_flg = 0;
-            Mid_min = subFace_figure.Stick_moti_Menid_min_motome(ib);//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
-            Mid_max = subFace_figure.Stick_moti_Menid_max_motome(ib);
+            drawing_flag = false;
+            Mid_min = subFace_figure.lineInFaceBorder_min_lookup(ib);//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
+            Mid_max = subFace_figure.lineInFaceBorder_max_lookup(ib);
 
             if (s0[Mid_min].getFaceIdCount() == 0) {
-                oekaki_flg = 1;
+                drawing_flag = true;
             }//menをもたない、ドーナツの穴状のSubFaceは境界の棒を描く
             else if (s0[Mid_max].getFaceIdCount() == 0) {
-                oekaki_flg = 1;
+                drawing_flag = true;
             } else if (Mid_min == Mid_max) {
-                oekaki_flg = 1;
+                drawing_flag = true;
             }//一本の棒の片面だけにSubFace有り
             else {
-                Men_jyunban_min = 1;
-                if (omote_ura == 1) {
-                    Men_jyunban_min = s0[Mid_min].getFaceIdCount();
+                faceOrderMin = 1;
+                if (flipped) {
+                    faceOrderMin = s0[Mid_min].getFaceIdCount();
                 }
-                Men_jyunban_max = 1;
-                if (omote_ura == 1) {
-                    Men_jyunban_max = s0[Mid_max].getFaceIdCount();
+                faceOrderMax = 1;
+                if (flipped) {
+                    faceOrderMax = s0[Mid_max].getFaceIdCount();
                 }
-                if (s0[Mid_min].fromTop_count_FaceId(Men_jyunban_min) != s0[Mid_max].fromTop_count_FaceId(Men_jyunban_max)) {
-                    oekaki_flg = 1;
+                if (s0[Mid_min].fromTop_count_FaceId(faceOrderMin) != s0[Mid_max].fromTop_count_FaceId(faceOrderMax)) {
+                    drawing_flag = true;
                 }//この棒で隣接するSubFaceの1番上の面は異なるので、この棒は描く。
             }
 
-            if (oekaki_flg == 1) {//棒を描く。
+            if (drawing_flag) {//棒を描く。
                 s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
                 s_tv.set(camera.object2TV(s_ob));
                 //g2.draw(new Line2D.Double( gx(s_tv.getax()),gy(s_tv.getay()),gx(s_tv.getbx()),gy(s_tv.getby())));
@@ -1929,55 +1856,51 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
 
     //---------------------------------------------------------
     public void draw_cross_with_camera(Graphics g) {
-        //System.out.println("折り上がり図の動かし中心の十字表示");
-        //System.out.println("上下表職人　oekaki_jyuuji_with_camera+++++++++++++++折り上がり図の動かし中心の十字表示");
-        OritaDrawing OO = new OritaDrawing();
-
         //camera中心を十字で描く
-        OO.cross(g, camera.object2TV(camera.get_camera_position()), 5.0, 2.0, LineType.ORANGE_4);
+        OritaDrawing.cross(g, camera.object2TV(camera.get_camera_position()), 5.0, 2.0, LineColor.ORANGE_4);
     }
 
 
     //---------------------------------------------------------
 
-    public void changeDisplayShadows() {
+    public void toggleDisplayShadows() {
         displayShadows = !displayShadows;
     }
 
 
     //---------------------------------------------------------
 
-    public int bou_no_bangou_kara_kagenoaru_subFace_no_bangou_wo_motomeru(int ib, PointSet subFace_figure, int omote_ura) {//棒の番号から、その棒の影が発生するSubFace の番号を求める。影が発生しない場合は0を返す。
+    public int line_no_bangou_kara_kagenoaru_subFace_no_bangou_wo_motomeru(int ib, PointSet subFace_figure, boolean flipped) {//棒の番号から、その棒の影が発生するSubFace の番号を求める。影が発生しない場合は0を返す。
 
         int i_return;
 
-        int Mid_min, Mid_max; //棒の両側のSubFaceの番号の小さいほうがMid_min,　大きいほうがMid_max
-        int Men_jyunban_min, Men_jyunban_max;//PC画面に表示したときSubFace(Mid_min) で見える面の、そのSubFaceでの重なり順がMen_jyunban_min、SubFace(Mid_max) で見える面のそのSubFaceでの重なり順がMen_jyunban_max
+        int faceId_min, faceId_max; //棒の両側のSubFaceの番号の小さいほうがMid_min,　大きいほうがMid_max
+        int faceOrderMin, faceordermax;//PC画面に表示したときSubFace(faceId_min) で見える面の、そのSubFaceでの重なり順がMen_jyunban_min、SubFace(faceId_max) で見える面のそのSubFaceでの重なり順がMen_jyunban_max
 
-        Mid_min = subFace_figure.Stick_moti_Menid_min_motome(ib);//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
-        Mid_max = subFace_figure.Stick_moti_Menid_max_motome(ib);
+        faceId_min = subFace_figure.lineInFaceBorder_min_lookup(ib);//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
+        faceId_max = subFace_figure.lineInFaceBorder_max_lookup(ib);
 
-        if (s0[Mid_min].getFaceIdCount() == 0) {
+        if (s0[faceId_min].getFaceIdCount() == 0) {
             return 0;
         }//menをもたない、ドーナツの穴状のSubFaceとの境界の棒には影なし
-        if (s0[Mid_max].getFaceIdCount() == 0) {
+        if (s0[faceId_max].getFaceIdCount() == 0) {
             return 0;
         }//menをもたない、ドーナツの穴状のFaceStackとの境界の棒には影なし
-        if (Mid_min == Mid_max) {
+        if (faceId_min == faceId_max) {
             return 0;
         }//一本の棒の片面だけにFaceStack有り
 
-        Men_jyunban_min = 1;
-        if (omote_ura == 1) {
-            Men_jyunban_min = s0[Mid_min].getFaceIdCount();
+        faceOrderMin = 1;
+        if (flipped) {
+            faceOrderMin = s0[faceId_min].getFaceIdCount();
         }
-        Men_jyunban_max = 1;
-        if (omote_ura == 1) {
-            Men_jyunban_max = s0[Mid_max].getFaceIdCount();
+        faceordermax = 1;
+        if (flipped) {
+            faceordermax = s0[faceId_max].getFaceIdCount();
         }
 
-        int Mid_min_mieteru_men_id = s0[Mid_min].fromTop_count_FaceId(Men_jyunban_min);
-        int Mid_max_mieteru_men_id = s0[Mid_max].fromTop_count_FaceId(Men_jyunban_max);
+        int Mid_min_mieteru_men_id = s0[faceId_min].fromTop_count_FaceId(faceOrderMin);
+        int Mid_max_mieteru_men_id = s0[faceId_max].fromTop_count_FaceId(faceordermax);
         if (Mid_min_mieteru_men_id == Mid_max_mieteru_men_id) {
             return 0;
         }//この棒で隣接するFaceStackで見えてる面が同じなので、棒自体が描かれず影もなし。
@@ -1995,16 +1918,16 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
             return 0;
         }//この棒で隣接するFaceStackで見えてる面の上下関係ない（重ならない）ので、影はなし
 
-        i_return = Mid_min;
+        i_return = faceId_min;
         if (hierarchyList.get(Mid_min_mieteru_men_id, Mid_max_mieteru_men_id) == 1) {
-            i_return = Mid_max;
+            i_return = faceId_max;
         }
 
-        if (omote_ura == 1) {
-            if (i_return == Mid_min) {
-                return Mid_max;
+        if (flipped) {
+            if (i_return == faceId_min) {
+                return faceId_max;
             } else {
-                return Mid_min;
+                return faceId_min;
             }
         }
 
@@ -2074,7 +1997,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
         }
 
         for (int i = 1; i <= SubFaceTotal; i++) {
-            int s_top_id = get_s_top_id_without_rated_men(i);//各s面の（レートがついた面は除く）一番上の面。s_top_id=0ならそのs面にはレートが未定の面はない
+            int s_top_id = get_s_top_id_without_rated_face(i);//各s面の（レートがついた面は除く）一番上の面。s_top_id=0ならそのs面にはレートが未定の面はない
 
 
             if (s_top_id != 0) {
@@ -2107,7 +2030,7 @@ public class HierarchyList_Worker {//HierarchyList: Record and utilize what kind
 
 //-----------------------------------
 
-    private int get_s_top_id_without_rated_men(int ism) {//ismはs面のid
+    private int get_s_top_id_without_rated_face(int ism) {//ismはs面のid
         int Mensuu = s0[ism].getFaceIdCount();//FaceStackでの面数//FaceStack s0[];//FaceStack_figureから得られるFaceStack
         for (int jyunban = 1; jyunban <= Mensuu; jyunban++) {
             int im = s0[ism].fromTop_count_FaceId(jyunban);

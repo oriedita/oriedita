@@ -58,16 +58,6 @@ public class Memo {//Notepad for data storage
             addLine(m0.getLine(i));
         }
     }
-
-
-    public void systemout() {
-        System.out.println("memo naiyou kokokara  VVVVVVVVVVVVVVVVVVVVVVVVVVVVVV");
-        for (int i = 1; i <= getLineCount(); i++) {
-            System.out.println(getLine(i));
-        }
-        System.out.println("memo naiyou kokomade  AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-    }
-
 }
 
 

@@ -2,8 +2,8 @@ package jp.gr.java_conf.mt777.origami.dougu.camera;
 
 //import java.util.*;
 
-import jp.gr.java_conf.mt777.zukei2d.ten.*;
-import jp.gr.java_conf.mt777.zukei2d.senbun.*;
+import jp.gr.java_conf.mt777.graphic2d.point.*;
+import jp.gr.java_conf.mt777.graphic2d.linesegment.*;
 
 public class Camera {//実際の座標と、表示座標の仲立ち
 
@@ -153,6 +153,10 @@ public class Camera {//実際の座標と、表示座標の仲立ち
     public double getCameraMirror() {
         return camera_mirror;
     }       //鏡
+
+    public boolean isCameraMirrored() {
+        return camera_mirror == -1.0;
+    }
 
     public double getCameraZoomX() {
         return camera_zoom_x;
