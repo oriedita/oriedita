@@ -373,7 +373,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
                 addPointX[addPointNum] = x;
                 addPointY[addPointNum] = y;
             }
-            flag1 = true;
+            flag1 = false;
             ti = lineSegmentSet.getB(i);
             x = ti.getX();
             y = ti.getY();
