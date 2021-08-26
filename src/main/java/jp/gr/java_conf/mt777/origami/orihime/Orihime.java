@@ -1,7 +1,11 @@
 package jp.gr.java_conf.mt777.origami.orihime;
 
+import com.formdev.flatlaf.FlatLightLaf;
+
 public class Orihime {
     public static void main(String[] argv) {
+        FlatLightLaf.setup();
+
         App frame = new App();//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Rewrite location
 
         frame.setSize(1200, 700);

@@ -34,7 +34,7 @@ import static jp.gr.java_conf.mt777.origami.orihime.ResourceUtil.createImageIcon
 // -------------------------------------------------------------------------------------
 
 //public class ap extends Frame implements ActionListener,MouseListener, MouseMotionListener,MouseWheelListener,KeyListener{                                                                  
-public class App extends Frame implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener {
+public class App extends JFrame implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener {
 
     public FoldedFigure temp_OZ = new FoldedFigure(this);    //Folded figure
     public FoldedFigure OZ;    //Folded figure
@@ -274,7 +274,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
     ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     public App() {
-        super("ORIHIME Ver.3.060");//Specify the title and execute the constructor
+        setTitle("ORIHIME Ver.3.060");//Specify the title and execute the constructor
         frame_title_0 = getTitle();
         frame_title = frame_title_0;//Store title in variable
         es1.setTitle(frame_title);
@@ -416,7 +416,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
 
         Panel pnln = new Panel();
-        pnln.setBackground(Color.PINK);//new Color(red,green,blue)
+//         pnln.setBackground(Color.PINK);//new Color(red,green,blue)
         pnln.setLayout(new FlowLayout(FlowLayout.LEFT));
         //上辺（北側）パネルをレイアウトに貼り付け
 
@@ -429,7 +429,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
         //------------------------------------------------
         Panel pnln1 = new Panel();
-        pnln1.setBackground(Color.PINK);
+//         pnln1.setBackground(Color.PINK);
         pnln1.setLayout(new GridLayout(1, 2));
 
         pnln.add(pnln1);
@@ -658,7 +658,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 
         //------------------------------------------------
         Panel pnln2 = new Panel();
-        pnln2.setBackground(Color.PINK);
+//         pnln2.setBackground(Color.PINK);
         pnln2.setLayout(new GridLayout(1, 2));
 
         pnln.add(pnln2);
@@ -670,7 +670,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //ここからチェックボックスの連続
         //------------------------------------------------
         Panel pnln13 = new Panel();
-        pnln13.setBackground(Color.PINK);
+//         pnln13.setBackground(Color.PINK);
         pnln13.setLayout(new GridLayout(1, 7));
 
         pnln.add(pnln13);
@@ -862,7 +862,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
         //------------------------------------------------
         JPanel pnln10 = new JPanel();
         pnln10.setPreferredSize(new Dimension(247, 27));
-        pnln10.setBackground(Color.PINK);
+//         pnln10.setBackground(Color.PINK);
         //pnln10.setLayout(new GridLayout(1,4));
         //pnln10.setLayout(new FlowLayout(FlowLayout.CENTER));
         pnln10.setLayout(null);
@@ -1022,7 +1022,7 @@ try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせる�
 //-----------------------------------------------------------------------------------
         //------------------------------------------------
         Panel pnln7 = new Panel();
-        pnln7.setBackground(Color.PINK);
+//         pnln7.setBackground(Color.PINK);
         pnln7.setLayout(new GridLayout(1, 1));
 
         //pnln.add(pnln7);
@@ -1575,7 +1575,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnln9 = new Panel();
-        pnln9.setBackground(Color.PINK);
+//         pnln9.setBackground(Color.PINK);
         pnln9.setLayout(new GridLayout(1, 5));
 
         pnln.add(pnln9);
@@ -1755,7 +1755,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
 
         Panel pnlw = new Panel();
-        pnlw.setBackground(Color.PINK);
+//         pnlw.setBackground(Color.PINK);
         pnlw.setLayout(new GridLayout(32, 1));
 
 
@@ -1766,7 +1766,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw26 = new Panel();
-        pnlw26.setBackground(Color.PINK);
+//         pnlw26.setBackground(Color.PINK);
         pnlw26.setLayout(new GridLayout(1, 3));
 
         pnlw.add(pnlw26);
@@ -1843,7 +1843,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw22 = new Panel();
-        pnlw22.setBackground(Color.PINK);
+//         pnlw22.setBackground(Color.PINK);
         pnlw22.setLayout(new GridLayout(1, 3));
 
         pnlw.add(pnlw22);
@@ -1851,7 +1851,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw23 = new Panel();
-        pnlw23.setBackground(Color.PINK);
+//         pnlw23.setBackground(Color.PINK);
         pnlw23.setLayout(new GridLayout(1, 2));
 
         pnlw22.add(pnlw23);
@@ -1895,7 +1895,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw24 = new Panel();
-        pnlw24.setBackground(Color.PINK);
+//         pnlw24.setBackground(Color.PINK);
         pnlw24.setLayout(new GridLayout(1, 2));
 
         pnlw22.add(pnlw24);
@@ -1968,7 +1968,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw27 = new Panel();
-        pnlw27.setBackground(Color.PINK);
+//         pnlw27.setBackground(Color.PINK);
         pnlw27.setLayout(new GridLayout(1, 4));
 
         pnlw.add(pnlw27);
@@ -1976,7 +1976,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw30 = new Panel();
-        pnlw30.setBackground(Color.PINK);
+//         pnlw30.setBackground(Color.PINK);
         pnlw30.setLayout(new GridLayout(1, 4));
 
         pnlw27.add(pnlw30);
@@ -2003,7 +2003,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw31 = new Panel();
-        pnlw31.setBackground(Color.PINK);
+//         pnlw31.setBackground(Color.PINK);
         pnlw31.setLayout(new GridLayout(1, 4));
 
         pnlw27.add(pnlw31);
@@ -2011,7 +2011,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 // ******西************************************************************************
         //------------------------------------------------
         Panel pnlw25 = new Panel();
-        pnlw25.setBackground(Color.PINK);
+//         pnlw25.setBackground(Color.PINK);
         pnlw25.setLayout(new GridLayout(1, 4));
 
         pnlw.add(pnlw25);
@@ -2110,7 +2110,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 // ******西************************************************************************
         //------------------------------------------------
         Panel pnlw1 = new Panel();
-        pnlw1.setBackground(Color.PINK);
+//         pnlw1.setBackground(Color.PINK);
         pnlw1.setLayout(new GridLayout(1, 3));
         pnlw.add(pnlw1);//パネルpnlw1をpnlwに貼り付け
 
@@ -2216,7 +2216,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw2 = new Panel();
-        pnlw2.setBackground(Color.PINK);
+//         pnlw2.setBackground(Color.PINK);
         pnlw2.setLayout(new GridLayout(1, 4));
         pnlw.add(pnlw2);//パネルpnlw2をpnlwに貼り付け
 
@@ -2323,7 +2323,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw3 = new Panel();
-        pnlw3.setBackground(Color.PINK);
+//         pnlw3.setBackground(Color.PINK);
         pnlw3.setLayout(new GridLayout(1, 3));
         pnlw.add(pnlw3);
 
@@ -2406,7 +2406,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 // *******西***********************************************************************
         //------------------------------------------------
         Panel pnlw4 = new Panel();
-        pnlw4.setBackground(Color.PINK);
+//         pnlw4.setBackground(Color.PINK);
         pnlw4.setLayout(new GridLayout(1, 3));
         pnlw.add(pnlw4);
 
@@ -2477,7 +2477,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw29 = new Panel();
-        pnlw29.setBackground(Color.PINK);
+//         pnlw29.setBackground(Color.PINK);
         pnlw29.setLayout(new GridLayout(1, 2));
         pnlw.add(pnlw29);
         //------------------------------------------------
@@ -2561,7 +2561,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw15 = new Panel();
-        pnlw15.setBackground(Color.PINK);
+//         pnlw15.setBackground(Color.PINK);
         pnlw15.setLayout(new GridLayout(1, 3));
 
         pnlw.add(pnlw15);
@@ -2643,7 +2643,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw6 = new Panel();
-        pnlw6.setBackground(Color.PINK);
+//         pnlw6.setBackground(Color.PINK);
         pnlw6.setLayout(new GridLayout(1, 3));
         pnlw.add(pnlw6);
 /*
@@ -2717,7 +2717,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw7 = new Panel();
-        pnlw7.setBackground(Color.PINK);
+//         pnlw7.setBackground(Color.PINK);
         pnlw7.setLayout(new GridLayout(1, 2));
         pnlw.add(pnlw7);
 
@@ -2767,7 +2767,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw16 = new Panel();
-        pnlw16.setBackground(Color.PINK);
+//         pnlw16.setBackground(Color.PINK);
         pnlw16.setLayout(new GridLayout(1, 2));
         pnlw.add(pnlw16);
 
@@ -2825,7 +2825,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw17 = new Panel();
-        pnlw17.setBackground(Color.PINK);
+//         pnlw17.setBackground(Color.PINK);
         pnlw17.setLayout(new GridLayout(1, 2));
         pnlw.add(pnlw17);
 
@@ -2880,7 +2880,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw35 = new Panel();
-        pnlw35.setBackground(Color.PINK);
+//         pnlw35.setBackground(Color.PINK);
         pnlw35.setLayout(new GridLayout(1, 2));
         pnlw.add(pnlw35);
 
@@ -2937,7 +2937,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw5 = new Panel();
-        pnlw5.setBackground(Color.PINK);
+//         pnlw5.setBackground(Color.PINK);
         pnlw5.setLayout(new GridLayout(1, 2));
         pnlw.add(pnlw5);
 
@@ -3051,7 +3051,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw8 = new Panel();
-        pnlw8.setBackground(Color.PINK);
+//         pnlw8.setBackground(Color.PINK);
         pnlw8.setLayout(new GridLayout(1, 4));
         //------------------------------------------------
         pnlw.add(pnlw8);
@@ -3157,7 +3157,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw28 = new Panel();
-        pnlw28.setBackground(Color.PINK);
+//         pnlw28.setBackground(Color.PINK);
         pnlw28.setLayout(new GridLayout(1, 2));
 
         //------------------------------------------------
@@ -3230,7 +3230,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw21 = new Panel();
-        pnlw21.setBackground(Color.PINK);
+//         pnlw21.setBackground(Color.PINK);
         pnlw21.setLayout(new GridLayout(1, 3));
         //------------------------------------------------
         pnlw.add(pnlw21);
@@ -3302,7 +3302,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw10 = new Panel();
-        pnlw10.setBackground(Color.PINK);
+//         pnlw10.setBackground(Color.PINK);
         pnlw10.setLayout(new GridLayout(1, 4));
 
         pnlw.add(pnlw10);
@@ -3380,7 +3380,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw13 = new Panel();
-        pnlw13.setBackground(Color.PINK);
+//         pnlw13.setBackground(Color.PINK);
         pnlw13.setLayout(new GridLayout(1, 3));
 
         //------------------------------------------------
@@ -3433,7 +3433,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw32 = new Panel();
-        pnlw32.setBackground(Color.PINK);
+//         pnlw32.setBackground(Color.PINK);
         pnlw32.setLayout(new GridLayout(1, 3));
 
         //------------------------------------------------
@@ -3445,7 +3445,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //------------------------------------------------
         Panel pnlw9 = new Panel();
         pnlw9.setBounds(2, 2, 93, 20);
-        pnlw9.setBackground(Color.PINK);
+//         pnlw9.setBackground(Color.PINK);
         pnlw9.setLayout(null);
         //pnlw9.setLayout(new GridLayout(1,5));
         //------------------------------------------------
@@ -3604,7 +3604,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //------------------------------------------------
         Panel pnlw34 = new Panel();
         pnlw34.setBounds(2, 2, 93, 20);
-        pnlw34.setBackground(Color.PINK);
+//         pnlw34.setBackground(Color.PINK);
         pnlw34.setLayout(null);
         //------------------------------------------------
         pnlw.add(pnlw34);
@@ -3668,14 +3668,14 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         //Panel   pnlw33 = new Panel();
-        //	pnlw33.setBackground(Color.PINK);
+//         //	pnlw33.setBackground(Color.PINK);
         //	pnlw33.setLayout(new GridLayout(1,3));
         //pnlw.add(pnlw33);
         //------------------------------------------------
         //------------------------------------------------
         Panel pnlw33 = new Panel();
         pnlw33.setBounds(2, 2, 93, 20);
-        pnlw33.setBackground(Color.PINK);
+//         pnlw33.setBackground(Color.PINK);
         pnlw33.setLayout(null);
         //------------------------------------------------
         pnlw.add(pnlw33);
@@ -3779,7 +3779,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         JPanel pnlw19 = new JPanel();
         //pnlw19.setBounds(103, 2, 93, 20);
         pnlw19.setBounds(2, 2, 93, 20);
-        pnlw19.setBackground(Color.PINK);
+//         pnlw19.setBackground(Color.PINK);
         pnlw19.setLayout(null);
         //pnlw19.setBorder(new LineBorder(Color.black, 1));
 
@@ -3819,7 +3819,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         JPanel pnlw18 = new JPanel();
 
         pnlw18.setBounds(2, 2, 70, 20);
-        pnlw18.setBackground(Color.PINK);
+//         pnlw18.setBackground(Color.PINK);
         pnlw18.setLayout(null);
         //pnlw18.setBorder(new LineBorder(Color.black, 1));
 
@@ -3857,7 +3857,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 // *****西*************************************************************************
         //------------------------------------------------
         Panel pnlw14 = new Panel();
-        pnlw14.setBackground(Color.PINK);
+//         pnlw14.setBackground(Color.PINK);
         pnlw14.setLayout(new GridLayout(1, 4));
         //pnlw9.setLayout(new FlowLayout(FlowLayout.LEFT));
         //pnlw9.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -3897,7 +3897,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         // *************************************************
         //右辺（東側）パネルの作成
         Panel pnle = new Panel();
-        pnle.setBackground(Color.PINK);
+//         pnle.setBackground(Color.PINK);
         pnle.setLayout(new GridLayout(28, 1));
 
         //右辺（東側）パネルをレイアウトに貼り付け
@@ -3908,7 +3908,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnle20 = new Panel();
-        pnle20.setBackground(Color.PINK);
+//         pnle20.setBackground(Color.PINK);
         pnle20.setLayout(new GridLayout(1, 2));
         pnle.add(pnle20);
         //------------------------------------------------
@@ -3962,7 +3962,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 //------------------------------------------
         //------------------------------------------------
         Panel pnle21 = new Panel();
-        pnle21.setBackground(Color.PINK);
+//         pnle21.setBackground(Color.PINK);
         pnle21.setLayout(new GridLayout(1, 2));
         pnle.add(pnle21);
         //------------------------------------------------
@@ -4019,7 +4019,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 // ***東****チェック系***********************************************************************
         //------------------------------------------------
         Panel pnle22 = new Panel();
-        pnle22.setBackground(Color.PINK);
+//         pnle22.setBackground(Color.PINK);
         pnle22.setLayout(new GridLayout(1, 2));
         //pnle.add(pnle22);
         //------------------------------------------------
@@ -4053,7 +4053,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 //---------------頂点のチェック---------------------------
         //------------------------------------------------
         Panel pnle23 = new Panel();
-        pnle23.setBackground(Color.PINK);
+//         pnle23.setBackground(Color.PINK);
         pnle23.setLayout(new GridLayout(1, 2));
         pnle.add(pnle23);
         //------------------------------------------------
@@ -4083,7 +4083,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 // ****東**************************************************************************
         //------------------------------------------------
         Panel pnle29 = new Panel();
-        pnle29.setBackground(Color.PINK);
+//         pnle29.setBackground(Color.PINK);
         pnle29.setLayout(new GridLayout(1, 2));
         pnle23.add(pnle29);
         //------------------------------------------------
@@ -4127,7 +4127,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnle4 = new Panel();
-        pnle4.setBackground(Color.PINK);
+//         pnle4.setBackground(Color.PINK);
         pnle4.setLayout(new GridLayout(1, 3));
 
         pnle.add(pnle4);
@@ -4136,7 +4136,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnle6 = new Panel();
-        pnle6.setBackground(Color.PINK);
+//         pnle6.setBackground(Color.PINK);
         //pnle6.setLayout(new FlowLayout(FlowLayout.LEFT));
         pnle6.setLayout(null);
         //------------------------------------------------
@@ -4283,7 +4283,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnle7 = new Panel();
-        pnle7.setBackground(Color.PINK);
+//         pnle7.setBackground(Color.PINK);
         //pnle6.setLayout(new FlowLayout(FlowLayout.LEFT));
         pnle7.setLayout(null);
         //------------------------------------------------
@@ -4507,7 +4507,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         JPanel pnle18 = new JPanel();
         //pnlw33.setPreferredSize(new Dimension(93, 23));
         pnle18.setBounds(2, 2, 102, 21);
-        pnle18.setBackground(Color.pink);
+//         pnle18.setBackground(Color.pink);
         //pnln12.setLayout(new FlowLayout(FlowLayout.LEFT));
         pnle18.setLayout(null);
         //pnle18.setBorder(new LineBorder(Color.black, 1));
@@ -4579,7 +4579,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         JPanel pnle19 = new JPanel();
         pnle19.setBounds(2, 2, 102, 21);
-        pnle19.setBackground(Color.pink);
+//         pnle19.setBackground(Color.pink);
         pnle19.setLayout(null);
         //pnle19.setBorder(new LineBorder(Color.black, 1));
 
@@ -4654,7 +4654,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnle1 = new Panel();
-        pnle1.setBackground(Color.PINK);
+//         pnle1.setBackground(Color.PINK);
         pnle1.setLayout(new GridLayout(1, 3));
 
         //------------------------------------------------
@@ -4663,7 +4663,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnle2 = new Panel();
-        pnle2.setBackground(Color.PINK);
+//         pnle2.setBackground(Color.PINK);
         pnle2.setLayout(new GridLayout(1, 3));
 
         //------------------------------------------------
@@ -4744,7 +4744,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnle3 = new Panel();
-        pnle3.setBackground(Color.PINK);
+//         pnle3.setBackground(Color.PINK);
         pnle3.setLayout(new GridLayout(1, 2));
 
         //------------------------------------------------
@@ -4797,7 +4797,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnle5 = new Panel();
-        pnle5.setBackground(Color.PINK);
+//         pnle5.setBackground(Color.PINK);
         pnle5.setLayout(new GridLayout(1, 3));
 
         pnle.add(pnle5);
@@ -4880,7 +4880,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnle31 = new Panel();
-        pnle31.setBackground(Color.PINK);
+//         pnle31.setBackground(Color.PINK);
         pnle31.setLayout(new GridLayout(1, 2));
         pnle.add(pnle31);
         //------------------------------------------------
@@ -4891,7 +4891,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 // ********東******************************
         //------------------------------------------------
         Panel pnle9 = new Panel();
-        pnle9.setBackground(Color.PINK);
+//         pnle9.setBackground(Color.PINK);
         pnle9.setLayout(new GridLayout(1, 2));
         //------------------------------------------------
         pnle.add(pnle9);
@@ -4965,7 +4965,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnle16 = new Panel();
-        pnle16.setBackground(Color.PINK);
+//         pnle16.setBackground(Color.PINK);
         pnle16.setLayout(new GridLayout(1, 3));
 
         pnle.add(pnle16);
@@ -5019,7 +5019,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnle17 = new Panel();
-        pnle17.setBackground(Color.PINK);
+//         pnle17.setBackground(Color.PINK);
         pnle17.setLayout(new GridLayout(1, 3));
 
         pnle.add(pnle17);
@@ -5073,7 +5073,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 // ********東******************************
         //------------------------------------------------
         Panel pnle10 = new Panel();
-        pnle10.setBackground(Color.PINK);
+//         pnle10.setBackground(Color.PINK);
         pnle10.setLayout(new GridLayout(1, 3));
         //------------------------------------------------
         pnle.add(pnle10);
@@ -5127,7 +5127,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnle32 = new Panel();
-        pnle32.setBackground(Color.PINK);
+//         pnle32.setBackground(Color.PINK);
         pnle32.setLayout(new GridLayout(1, 2));
         pnle.add(pnle32);
         //------------------------------------------------
@@ -5200,7 +5200,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 // ********東******************************
         //------------------------------------------------
         Panel pnle15 = new Panel();
-        pnle15.setBackground(Color.PINK);
+//         pnle15.setBackground(Color.PINK);
         pnle15.setLayout(new GridLayout(1, 2));
         //------------------------------------------------
         //pnle.add(pnle15);
@@ -5213,7 +5213,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnle12 = new Panel();
-        pnle12.setBackground(Color.PINK);
+//         pnle12.setBackground(Color.PINK);
         pnle12.setLayout(new GridLayout(1, 3));
 
         pnle.add(pnle12);
@@ -5291,7 +5291,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 // ********東******************************
         //------------------------------------------------
         Panel pnle11 = new Panel();
-        pnle11.setBackground(Color.PINK);
+//         pnle11.setBackground(Color.PINK);
         pnle11.setLayout(new GridLayout(1, 2));
         //------------------------------------------------
         pnle.add(pnle11);
@@ -5300,7 +5300,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 // ********東******************************
         //------------------------------------------------
         Panel pnle14 = new Panel();
-        pnle14.setBackground(Color.PINK);
+//         pnle14.setBackground(Color.PINK);
         pnle14.setLayout(new GridLayout(1, 2));
         //------------------------------------------------
         pnle11.add(pnle14);
@@ -5378,7 +5378,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnle13 = new Panel();
-        pnle13.setBackground(Color.PINK);
+//         pnle13.setBackground(Color.PINK);
         pnle13.setLayout(new GridLayout(1, 2));
         //------------------------------------------------
         pnle.add(pnle13);
@@ -5435,7 +5435,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 // ******東************************************************************************
         //------------------------------------------------
         Panel pnle30 = new Panel();
-        pnle30.setBackground(Color.PINK);
+//         pnle30.setBackground(Color.PINK);
         pnle30.setLayout(new GridLayout(1, 2));
         pnle.add(pnle30);
         //------------------------------------------------
@@ -5447,7 +5447,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //------------------------------------------------
         Panel pnle24 = new Panel();
         pnle24.setBounds(2, 2, 93, 20);
-        pnle24.setBackground(Color.PINK);
+//         pnle24.setBackground(Color.PINK);
         pnle24.setLayout(null);
         //------------------------------------------------
         pnle.add(pnle24);
@@ -5481,7 +5481,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //------------------------------------------------
         Panel pnle25 = new Panel();
         pnle25.setBounds(2, 2, 93, 20);
-        pnle25.setBackground(Color.PINK);
+//         pnle25.setBackground(Color.PINK);
         pnle25.setLayout(null);
         //------------------------------------------------
         pnle.add(pnle25);
@@ -5514,7 +5514,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //------------------------------------------------
         Panel pnle26 = new Panel();
         pnle26.setBounds(2, 2, 93, 20);
-        pnle26.setBackground(Color.PINK);
+//         pnle26.setBackground(Color.PINK);
         pnle26.setLayout(null);
         //------------------------------------------------
         pnle.add(pnle26);
@@ -5546,7 +5546,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //------------------------------------------------
         Panel pnle27 = new Panel();
         pnle27.setBounds(2, 2, 93, 20);
-        pnle27.setBackground(Color.PINK);
+//         pnle27.setBackground(Color.PINK);
         pnle27.setLayout(null);
         //------------------------------------------------
         pnle.add(pnle27);
@@ -5578,7 +5578,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //------------------------------------------------
         Panel pnle28 = new Panel();
         pnle28.setBounds(2, 2, 93, 20);
-        pnle28.setBackground(Color.PINK);
+//         pnle28.setBackground(Color.PINK);
         pnle28.setLayout(null);
         //------------------------------------------------
         pnle.add(pnle28);
@@ -5611,7 +5611,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnle33 = new Panel();
-        pnle33.setBackground(Color.PINK);
+//         pnle33.setBackground(Color.PINK);
         pnle33.setLayout(new GridLayout(1, 2));
         pnle.add(pnle33);
         //------------------------------------------------
@@ -5658,7 +5658,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //下辺（南側）パネルの作成
         //Panel pnls = new Panel();pnls.setBackground(new Color(0,70,0));
         Panel pnls = new Panel();
-        pnls.setBackground(Color.PINK);
+//         pnls.setBackground(Color.PINK);
         pnls.setLayout(new FlowLayout(FlowLayout.LEFT));
         //下辺（南側）パネルをレイアウトに貼り付け
         add("South", pnls); //Frame用
@@ -5667,7 +5667,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnlw11 = new Panel();
-        pnlw11.setBackground(Color.PINK);
+//         pnlw11.setBackground(Color.PINK);
         pnlw11.setLayout(new GridLayout(1, 3));
 
         //------------------------------------------------
@@ -5675,7 +5675,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 /*
 		//------------------------------------------------
 		Panel   pnlw12 = new Panel();
-			pnlw12.setBackground(Color.PINK);
+// 			pnlw12.setBackground(Color.PINK);
 			pnlw12.setLayout(new GridLayout(1,4));
 
 		//------------------------------------------------
@@ -5685,7 +5685,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //------------------------------------------------
         JPanel pnlw12 = new JPanel();
         pnlw12.setPreferredSize(new Dimension(76, 30));
-        pnlw12.setBackground(Color.PINK);
+//         pnlw12.setBackground(Color.PINK);
         pnlw12.setLayout(null);
         //pnlw12.setBorder(new LineBorder(Color.black, 1));
         pnlw.add(pnlw12);
@@ -5802,7 +5802,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         JPanel pnlw20 = new JPanel();
-        pnlw20.setBackground(Color.PINK);
+//         pnlw20.setBackground(Color.PINK);
         pnlw20.setLayout(new GridLayout(1, 2));
         //pnlw20.setBorder(new LineBorder(Color.black, 1));
         pnlw.add(pnlw20);
@@ -5854,7 +5854,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         //------------------------------------------------
         JPanel pnlw36 = new JPanel();
         pnlw36.setPreferredSize(new Dimension(76, 21));
-        pnlw36.setBackground(Color.PINK);
+//         pnlw36.setBackground(Color.PINK);
         pnlw36.setLayout(null);
         //pnlw36.setBorder(new LineBorder(Color.black, 1));
         pnlw.add(pnlw36);
@@ -5862,7 +5862,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
 		/* ------------------------------------------------
 		Panel   pnlw36 = new Panel();
-			pnlw36.setBackground(Color.PINK);
+// 			pnlw36.setBackground(Color.PINK);
 			pnlw36.setLayout(new GridLayout(1,2));
 		pnlw.add(pnlw36);
 		------------------------------------------------
@@ -6102,7 +6102,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         //------------------------------------------------
         Panel pnls1 = new Panel();
-        pnls1.setBackground(Color.PINK);
+//         pnls1.setBackground(Color.PINK);
         pnls1.setLayout(new GridLayout(1, 2));
 
         pnls.add(pnls1);
