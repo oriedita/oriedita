@@ -492,7 +492,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
                 //折畳予測図のの初期化　終了
 
                 es1.setCamera(camera_of_orisen_input_diagram);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
-                es1.setMemo_for_yomikomi(memo_temp);
+                es1.setMemo_for_reading(memo_temp);
                 es1.record();
 
 
@@ -3169,7 +3169,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         Button_zen_yama_tani_henkan.addActionListener(e -> {
             img_explanation_fname = "qqq/zen_yama_tani_henkan.png";
             readImageFromFile3();
-            es1.zen_yama_tani_henkan();
+            es1.allMountainValleyChange();
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             repaint();
@@ -5711,7 +5711,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             System.out.println("readFile2Memo() 終了");
 
             if (memo_temp.getLineCount() > 0) {
-                es1.setMemo_for_yomikomi_tuika(memo_temp);
+                es1.setMemo_for_reading_tuika(memo_temp);
                 es1.record();
                 repaint();
             }
@@ -5768,13 +5768,13 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             readImageFromFile3();
 
             //	i_fold_type=1;
-            Ss0 = es1.get_for_select_oritatami();
+            Ss0 = es1.getForSelectFolding();
 
-            if (es1.get_orisensuu_for_select_oritatami() == 0) {        //折り線選択無し
+            if (es1.getFoldLineTotalForSelectFolding() == 0) {        //折り線選択無し
                 keikoku_sentaku_sareta_orisen_ga_nai();//警告　選択された折線がない
 
 
-            } else if (es1.get_orisensuu_for_select_oritatami() > 0) {
+            } else if (es1.getFoldLineTotalForSelectFolding() > 0) {
                 oritatami_jyunbi();//ここでOZがOAZ(0)からOAZ(i)に切り替わる
                 //OZ.ts1.Senbunsyuugou2Tensyuugou(es1.get_for_select_oritatami());
                 OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
@@ -6834,13 +6834,13 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
     private int get_i_fold_type() {
 
         int i_fold_type;//=0なにもしない、=1通常の展開図の全折線を対象とした折り畳み推定、=2はselectされた折線を対象とした折り畳み推定、=3は折畳み状態を変更
-        System.out.println("OAZ.size() = " + OAZ.size() + "    : i_OAZ = " + i_OAZ + "    : es1.get_orisensuu_for_select_oritatami() = " + es1.get_orisensuu_for_select_oritatami());
+        System.out.println("OAZ.size() = " + OAZ.size() + "    : i_OAZ = " + i_OAZ + "    : es1.get_orisensuu_for_select_oritatami() = " + es1.getFoldLineTotalForSelectFolding());
         i_fold_type = 0;
         if (OAZ.size() == 1) {                        //折り上がり系図無し
             if (i_OAZ == 0) {                            //展開図指定
-                if (es1.get_orisensuu_for_select_oritatami() == 0) {        //折り線選択無し
+                if (es1.getFoldLineTotalForSelectFolding() == 0) {        //折り線選択無し
                     i_fold_type = 1;//全展開図で折畳み
-                } else if (es1.get_orisensuu_for_select_oritatami() > 0) {        //折り線選択有り
+                } else if (es1.getFoldLineTotalForSelectFolding() > 0) {        //折り線選択有り
                     i_fold_type = 2;//選択された展開図で折畳み
                 }
             } else if (i_OAZ > 0) {                        //折り上がり系図指定
@@ -6848,17 +6848,17 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             }
         } else if (OAZ.size() > 1) {                        //折り上がり系図有り
             if (i_OAZ == 0) {                            //展開図指定
-                if (es1.get_orisensuu_for_select_oritatami() == 0) {        //折り線選択無し
+                if (es1.getFoldLineTotalForSelectFolding() == 0) {        //折り線選択無し
                     System.out.println("get_i_fold_type() 20180108");
                     i_fold_type = 0;//何もしない
                     //i_fold_type=1;//全展開図で折畳み
-                } else if (es1.get_orisensuu_for_select_oritatami() > 0) {        //折り線選択有り
+                } else if (es1.getFoldLineTotalForSelectFolding() > 0) {        //折り線選択有り
                     i_fold_type = 2;//選択された展開図で折畳み
                 }
             } else if (i_OAZ > 0) {                        //折り上がり系図指定
-                if (es1.get_orisensuu_for_select_oritatami() == 0) {        //折り線選択無し
+                if (es1.getFoldLineTotalForSelectFolding() == 0) {        //折り線選択無し
                     i_fold_type = 3;//指定された折り上がり系図で折畳み
-                } else if (es1.get_orisensuu_for_select_oritatami() > 0) {        //折り線選択有り
+                } else if (es1.getFoldLineTotalForSelectFolding() > 0) {        //折り線選択有り
                     i_fold_type = 2;//選択された展開図で折畳み
                 }
             }
@@ -6881,14 +6881,14 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             //
             if (ckbox_cp_kaizen_oritatami.isSelected()) {//展開図のおかしい所（枝状の折り線等）を自動修正する
                 Drawing_Worker es2 = new Drawing_Worker(r, this);    //基本枝職人。マウスからの入力を受け付ける。
-                es2.setMemo_for_yomikomi(es1.ori_s.getMemo_for_select_folding());
+                es2.setMemo_for_reading(es1.foldLines.getMemo_for_select_folding());
                 es2.point_removal();
                 es2.overlapping_line_removal();
                 es2.branch_trim(0.000001);
                 es2.circle_organize();
                 Ss0 = es2.get_for_folding();
             } else {
-                Ss0 = es1.get_for_select_oritatami();
+                Ss0 = es1.getForSelectFolding();
             }
 
 
@@ -7480,7 +7480,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         es1.setDrawingStage(0);
         es1.set_i_en_egaki_dankai(0);
         es1.set_s_step_iactive(LineSegment.ActiveState.ACTIVE_BOTH_3);//要注意　es1でうっかりs_stepにset.(senbun)やるとアクティヴでないので表示が小さくなる20170507
-        es1.ori_v.reset();
+        es1.vonoroiLines.reset();
     }
 
 
