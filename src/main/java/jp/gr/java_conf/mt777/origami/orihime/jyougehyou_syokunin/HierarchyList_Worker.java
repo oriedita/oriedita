@@ -989,28 +989,28 @@ public class HierarchyList_Worker {
     //zzzzzzzz
 
     public int next(int ss) {
-        int isusumu;//=0の場合SubFaceが変わる（桁が変るようなイメージ）。
-        int Sid;//変化が及んだSubFaceのid番号
+        int isusumu;//When = 0, SubFace changes (image that digits change).
+        int subfaceId;//SubFace id number that has changed
         isusumu = 0;
-        //ss+1番目以上のSubFaceはみな初期値にする。SubFaceに含まれる面数が0のときはエラーになる。
+        //All SubFaces above ss + 1 are set to the initial values. An error occurs when the number of faces included in SubFace is 0.
 
         for (int i = ss + 1; i <= SubFaceTotal; i++) {
             s[i].Permutation_first();
         }
         //The overlapping state of the surfaces is changed in order from the one with the largest id number of the SubFace.
-        Sid = ss;
+        subfaceId = ss;
         for (int i = ss; i >= 1; i--) {
             if (isusumu == 0) {
                 isusumu = s[i].next(s[i].getFaceIdCount());
-                Sid = i;
+                subfaceId = i;
             }
 
         }
         if (isusumu == 0) {
-            Sid = 0;
+            subfaceId = 0;
         }
 
-        return Sid;
+        return subfaceId;
     }
 
     //---------------------------------------------------------------------------------------------------------------------------------------------
@@ -1021,33 +1021,6 @@ public class HierarchyList_Worker {
             s0.append(" : ").append(s[ss].get_Permutation_count());
         }
         return s0.toString();
-    }
-
-    //---------------------------------------------------------------------------------------------------------------------------------------------
-    public int kanou_kasanari_sagasi_self(int ss) {
-        // Processing at the last digit
-        if (ss == SubFace_valid_number) {
-
-            if (s[ss].possible_overlapping_search(hierarchyList) == 1000) {//==0ということは、可能な重なりかたとなる順列は存在しない。　==1000　このSubFaceは、矛盾はない状態になっている。
-                return 100;//折り畳み可能な順列組み合わせが見つかった。
-            } else {
-                return 0;
-            }
-        }
-
-        //最終桁以外での処理
-        if (s[ss].possible_overlapping_search(hierarchyList) == 1000) {//==0ということは、可能な重なりかたとなる順列は存在しない。　==1000　このSubFaceは、矛盾はない状態になっている。
-            while (kanou_kasanari_sagasi_self(ss + 1) == 0) {//次の桁で可能な重なりかたとなる順列は存在しない
-                if (s[ss].next() == 0) {
-                    return 0;
-                }//この桁では進めない（新たな順列は無い）
-
-            }
-
-            return 1000;//A foldable permutation combination was found.
-        }
-
-        return 0;
     }
 
     //Start with the current permutation state and look for possible overlapping states. There is room for speeding up here.
@@ -1323,7 +1296,7 @@ public class HierarchyList_Worker {
 
     //
     //---------------------------------------------------------
-    public Memo getMemo_wirediagram_for_svg_export(CreasePattern_Worker orite, PointSet otta_Men_zu, int i_fill) {
+    public Memo getMemo_wirediagram_for_svg_export(CreasePattern_Worker orite, PointSet otta_Men_zu, boolean i_fill) {
         boolean flipped = camera.isCameraMirrored();
 
         Point t_ob = new Point();
@@ -1379,12 +1352,10 @@ public class HierarchyList_Worker {
 
             text.append("Z");
 
-            if (i_fill == 0) {
+            if (!i_fill) {
                 str_fill = "none";
 
-            }
-
-            if (i_fill == 1) {
+            } else {
 
                 if (orite.getIFacePosition(im) % 2 == 1) {
                     str_fill = StringOp.toHtmlColor(F_color);

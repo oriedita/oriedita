@@ -191,52 +191,42 @@ public class PointSet {
         return face_adjacent[i][j];
     }
 
-    //
     private int get_lineInFaceBorder_min(int i) {
         return lineInFaceBorder_min[i];
     }
 
-    //
     private int get_lineInFaceBorder_max(int i) {
         return lineInFaceBorder_max[i];
     }
 
-    //
     private double get_line_x_max(int i) {
         return line_x_max[i];
     }
 
-    //
     private double get_line_x_min(int i) {
         return line_x_min[i];
     }
 
-    //
     private double get_line_y_max(int i) {
         return line_y_max[i];
     }
 
-    //
     private double get_line_y_min(int i) {
         return line_y_min[i];
     }
 
-    //
     private double get_face_x_max(int i) {
         return face_x_max[i];
     }
 
-    //
     private double get_face_x_min(int i) {
         return face_x_min[i];
     }
 
-    //
     private double get_face_y_max(int i) {
         return face_y_max[i];
     }
 
-    //
     private double get_face_y_min(int i) {
         return face_y_min[i];
     }

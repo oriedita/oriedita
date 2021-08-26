@@ -68,7 +68,7 @@ public class App extends Frame implements ActionListener, MouseListener, MouseMo
 
     //アプレット用public void init()または、アプリケーション用public ap() 以外のクラスでも使用されるパネルの部品の宣言はここでしておく。
     //アプレット用public void init()または、アプリケーション用public ap() の中だけで使用されるパネルの部品の宣言ぅラスの中でする。
-    //基本的に部品の見かけが変化するものはここで宣言する。
+    //Those that basically change the appearance of the parts are declared here.
     public JTextField text24;
     public double d_grid_angle = 90.0;
     public JTextField text25;
@@ -5970,7 +5970,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         JButton Button_toukazu_color_sage = new JButton("");
         Button_toukazu_color_sage.addActionListener(e -> {
-            OZ.toukazu_color_sage();
+            OZ.decreaseTransparency();
             img_explanation_fname = "qqq/toukazu_color_sage.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
@@ -5987,7 +5987,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
         JButton Button_toukazu_color_age = new JButton("");
         Button_toukazu_color_age.addActionListener(e -> {
-            OZ.toukazu_color_age();
+            OZ.increaseTransparency();
             img_explanation_fname = "qqq/toukazu_color_age.png";
             readImageFromFile3();
             Button_kyoutuu_sagyou();
@@ -9427,10 +9427,10 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         OZ.display_flg_backup = FoldedFigure.DisplayStyle.NONE_0;//表示様式hyouji_flgの一時的バックアップ用
 
         //表示用の値を格納する変数
-        OZ.ip1 = -1;//上下表職人の初期設定時に、折った後の表裏が同じ面が
+        OZ.ip1_anotherOverlapValid = -1;//上下表職人の初期設定時に、折った後の表裏が同じ面が
         //隣接するという誤差があれが0を、無ければ1000を格納する変数。
         //ここでの初期値は(0か1000)以外の数ならなんでもいい。
-        OZ.ip2 = -1;//上下表職人が折り畳み可能な重なり方を探した際に、
+        OZ.ip2_possibleOverlap = -1;//上下表職人が折り畳み可能な重なり方を探した際に、
         //可能な重なり方がなければ0を、可能な重なり方があれば1000を格納する変数。
         //ここでの初期値は(0か1000)以外の数ならなんでもいい。
         OZ.ip3 = 1;//ts1が折り畳みを行う際の基準面を指定するのに使う。
