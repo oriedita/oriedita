@@ -247,7 +247,7 @@ public class LineSegmentSet {
     }
 
     //Arrangement of line segment sets to generate SubFace
-    public void bunkatu_seiri_for_SubFace_generation() {//Arrangement of wire diagrams obtained by folding estimation, etc.
+    public void split_arrangement_for_SubFace_generation() {//Arrangement of wire diagrams obtained by folding estimation, etc.
         System.out.println("　　Senbunsyuugouの中で、Smenを発生させるための線分集合の整理");
         System.out.println("分割整理　１、点削除前	getsousuu() = " + getNumLineSegments());
         point_removal();          //Just in case, remove the dotted line segment
@@ -261,7 +261,6 @@ public class LineSegmentSet {
         overlapping_line_removal(); //折り畳み推定の針金図の整理のため、全く一致する線分が２つあれば１つを除く
         System.out.println("分割整理　５、重複線分削除後	getsousuu() = " + getNumLineSegments());
     }
-
 
     //Remove dotted line segments
     public void point_removal() {
@@ -353,32 +352,32 @@ public class LineSegmentSet {
     public void intersect_divide() {
         int i_divide = 1;//1 if there is a split, 0 if not
 
-        ArrayList<Integer> k_flg = new ArrayList<>();//A flag that indicates that there is an effect of crossing.
+        ArrayList<Boolean> k_flg = new ArrayList<>();//A flag that indicates that there is an effect of crossing.
 
         for (int i = 0; i <= numLineSegments + 1; i++) {
-            k_flg.add(1);
+            k_flg.add(true);
         }
 
         while (i_divide != 0) {
             i_divide = 0;
             for (int i = 1; i <= numLineSegments; i++) {
-                Integer I_k_flag = k_flg.get(i);
-                if (I_k_flag == 1) {
-                    k_flg.set(i, 0);
+                boolean I_k_flag = k_flg.get(i);
+                if (I_k_flag) {
+                    k_flg.set(i, false);
                     for (int j = 1; j <= numLineSegments; j++) {
                         if (i != j) {
-                            Integer J_k_flag = k_flg.get(j);
-                            if (J_k_flag == 1) {
+                            boolean J_k_flag = k_flg.get(j);
+                            if (J_k_flag) {
                                 int old_sousuu = numLineSegments;
                                 boolean itemp = intersect_divide(i, j);
                                 if (old_sousuu < numLineSegments) {
                                     for (int is = old_sousuu + 1; is <= numLineSegments; is++) {
-                                        k_flg.add(1);
+                                        k_flg.add(true);
                                     }
                                 }
                                 if (itemp) {
-                                    i_divide = i_divide + 1;
-                                    k_flg.set(i, 1);
+                                    i_divide++;
+                                    k_flg.set(i, true);
                                 }
                             }
                         }
@@ -431,7 +430,7 @@ public class LineSegmentSet {
         LineSegment.Intersection intersect_decide = OritaCalc.line_intersect_decide(si, sj);
         switch (intersect_decide) {
             case INTERSECTS_1:
-                pk.set(OritaCalc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
+                pk.set(OritaCalc.findIntersection(si, sj));
 
                 si.setA(p1);
                 si.setB(pk);
@@ -442,7 +441,7 @@ public class LineSegmentSet {
                 return true;
             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25:
             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26:
-                pk.set(OritaCalc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
+                pk.set(OritaCalc.findIntersection(si, sj));
 
                 sj.setA(p3);
                 sj.setB(pk);
@@ -451,7 +450,7 @@ public class LineSegmentSet {
 
             case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27:
             case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28:
-                pk.set(OritaCalc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
+                pk.set(OritaCalc.findIntersection(si, sj));
 
                 si.setA(p1);
                 si.setB(pk);

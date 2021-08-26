@@ -6,9 +6,9 @@ import java.awt.*;
 
 public class BulletinBoard {
 
-    int ix0 = 120;//掲示板の左上端のX座標
-    int iy0 = 200;//掲示板の左上端のY座標
-    int i_interval = 20;//掲示板の行の間隔
+    int ix0 = 120;//X coordinate of the upper left corner of the bulletin board
+    int iy0 = 200;//Y coordinate at the upper left corner of the bulletin board
+    int i_interval = 20;//Line spacing on the bulletin board
 
     String s01 = "";
     String s02 = "";
@@ -22,14 +22,11 @@ public class BulletinBoard {
     String s10 = "";
     App orihime_app;
 
-
-    //コンストラクタ
     public BulletinBoard(App app0) {
-
         orihime_app = app0;
     }
 
-    //入力
+    //input
     public void set_s01(String s0) {
         s01 = s0;
     }
@@ -69,7 +66,6 @@ public class BulletinBoard {
     public void set_s10(String s0) {
         s10 = s0;
     }
-
 
     public void write(String s0) {
         s01 = s02;
@@ -120,7 +116,6 @@ public class BulletinBoard {
     }
 
     public void clear() {
-
         s01 = "";
         s02 = "";
         s03 = "";
@@ -133,27 +128,13 @@ public class BulletinBoard {
         s10 = "";
 
         repaint();
-
     }
-
-    //出力
-    //public int get(){return 1;}
-
-
-    public void reset() {
-        ;
-    }
-
 
     public void repaint() {
         orihime_app.repaint();
     }
 
-
-    //
     public void draw(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-
         g.setColor(Color.blue);
         g.drawString(s01, ix0, iy0 + 1 * i_interval);
         g.drawString(s02, ix0, iy0 + 2 * i_interval);
@@ -165,7 +146,5 @@ public class BulletinBoard {
         g.drawString(s08, ix0, iy0 + 8 * i_interval);
         g.drawString(s09, ix0, iy0 + 9 * i_interval);
         g.drawString(s10, ix0, iy0 + 10 * i_interval);
-
     }
-
 }

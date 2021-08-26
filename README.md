@@ -36,11 +36,27 @@ java -jar ./target/orihime-3.060-SNAPSHOT.jar
 | LineSegment | Senbun | A line consisting of two points
 | Polygon | Takakukei | A polygon consisting of multiple points
 | Grid | Kousi | The background grid
-| StraightLine | Tyokusen | A line with a,b,c such that a * x + b * y + c = 0
+| StraightLine | Tyokusen | A line with `a,b,c` such that `a * x + b * y + c = 0`
 | Circle | En | A circle with x and y for position and r for radius.
 | SubFace | Smen | Stack of faces in the folded view
 | Drawing_Worker | Egaki_Syokunin | Responsible for drawing and handling user input on the canvas.
 | HierarchyList_Worker | Jyougehyou_Syokunin | Responsible for calculating the hierarchy of folded models.
+| HierarchyList | Jyougehyou | Keeps track of the height of faces in a crease pattern
+| FoldedFigure | Oriagari_Zu | Contains an estimated folded crease pattern
+| EquivalenceCondition | Touka_Jyouken | 
+| FoldLineSet | Orisensyuugou |
+| PointSet | Tensyuugou 
+| LineSegmentSet | Senbunsyuugou |
+| BulletinBoard | Keijiban | Notice at the top of the canvas
+| Drawing_Worker | Egaki_Syokunin
+| Drawing_Worker_Toolbox | Egaki_Syukunin_Dougubako
+| GuideMap | Annaisyo
+| Overlapping_Permutation_generator | Jyuufuku_Jyunretu_hasseiki
+| CreasePattern_Worker | Tenkaizu_Syokunin
+| SortingBox_int_double | Narabebako_int_double
+| Background_camera | Haikei_camera
+| StringOp | Moji_sousa
+
 
 ## Notes
 

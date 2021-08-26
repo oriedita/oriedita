@@ -1,5 +1,6 @@
 package jp.gr.java_conf.mt777.origami.orihime.jyougehyou_syokunin;
 
+import jp.gr.java_conf.mt777.graphic2d.polygon.Polygon.Intersection;
 import jp.gr.java_conf.mt777.origami.orihime.*;
 import jp.gr.java_conf.mt777.origami.orihime.tenkaizu_syokunin.*;
 import jp.gr.java_conf.mt777.origami.dougu.pointstore.*;
@@ -113,7 +114,7 @@ public class HierarchyList_Worker {
 
             for (int j = 1; j <= otta_Face_figure.getNumFaces(); j++) {
 
-                if (otta_Face_figure.simple_inside(subFace_insidePoint[i], j) == 2) {
+                if (otta_Face_figure.simple_inside(subFace_insidePoint[i], j) == jp.gr.java_conf.mt777.graphic2d.polygon.Polygon.Intersection.INSIDE) {
                     s0addFaceTotal = s0addFaceTotal + 1;
                     s0addFaceId[s0addFaceTotal] = j;
                 }
@@ -1024,7 +1025,7 @@ public class HierarchyList_Worker {
 
     //---------------------------------------------------------------------------------------------------------------------------------------------
     public int kanou_kasanari_sagasi_self(int ss) {
-        //最終桁での処理
+        // Processing at the last digit
         if (ss == SubFace_valid_number) {
 
             if (s[ss].possible_overlapping_search(hierarchyList) == 1000) {//==0ということは、可能な重なりかたとなる順列は存在しない。　==1000　このSubFaceは、矛盾はない状態になっている。
@@ -1032,14 +1033,10 @@ public class HierarchyList_Worker {
             } else {
                 return 0;
             }
-
         }
-
 
         //最終桁以外での処理
         if (s[ss].possible_overlapping_search(hierarchyList) == 1000) {//==0ということは、可能な重なりかたとなる順列は存在しない。　==1000　このSubFaceは、矛盾はない状態になっている。
-
-
             while (kanou_kasanari_sagasi_self(ss + 1) == 0) {//次の桁で可能な重なりかたとなる順列は存在しない
                 if (s[ss].next() == 0) {
                     return 0;
@@ -1047,15 +1044,11 @@ public class HierarchyList_Worker {
 
             }
 
-            return 1000;//折り畳み可能な順列組み合わせが見つかった。
-
+            return 1000;//A foldable permutation combination was found.
         }
 
         return 0;
     }
-
-
-    //------------------------------------------------------------------------------------------------------
 
     //Start with the current permutation state and look for possible overlapping states. There is room for speeding up here.
     public int possible_overlapping_search() {      //This should not change the hierarchyList.
@@ -1595,13 +1588,11 @@ public class HierarchyList_Worker {
                     }
                 }
 
-
                 //This is the end of deciding the color of SubFace when drawing a folded figure
 
                 //Find the coordinates (on the PC display) of the vertices of the im-th SubFace polygon when drawing a fold-up diagram.
 
                 for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
-
                     t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, i)));
                     t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
@@ -1620,7 +1611,7 @@ public class HierarchyList_Worker {
                 g2.fill(new Polygon(x, y, subFace_figure.getPointsCount(im)));
             }
         }
-        //Draw a surface so far
+        // Draw a surface so far
 
 
         //Add a shadow  ------------------------------------------------------------------------------------
@@ -1628,9 +1619,7 @@ public class HierarchyList_Worker {
             for (int lineId = 1; lineId <= subFace_figure.getNumLines(); lineId++) {
                 int im = line_no_bangou_kara_kagenoaru_subFace_no_bangou_wo_motomeru(lineId, subFace_figure, flipped);//影をつけるSubFaceのid
                 if (im != 0) {//影を描く。
-
                     //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求める
-
 
                     //棒の座標   subFace_figure.getmaex(lineId),subFace_figure.getmaey(lineId)   -    subFace_figure.getatox(lineId) , subFace_figure.getatoy(lineId)
                     Point b_begin = new Point(subFace_figure.getBeginX(lineId), subFace_figure.getBeginY(lineId));
@@ -1658,20 +1647,16 @@ public class HierarchyList_Worker {
                     double o_bmtx, o_bmty;
                     double t_bmtx, t_bmty;
 
-
                     //棒の中点を通る直交線上の点
                     o_bmtx = o_bmx + o_btx;
                     o_bmty = o_bmy + o_bty;
 
-                    if (subFace_figure.inside(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), im) != 0) {//0=外部、　1=境界、　2=内部
-
-
+                    if (subFace_figure.inside(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), im) != Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
                         t0.setX(o_bmtx);
                         t0.setY(o_bmty);
                         t1.set(camera.object2TV(t0));
                         t_bmtx = t1.getX();
                         t_bmty = t1.getY();
-
 
                         //影の長方形
 
@@ -1725,7 +1710,7 @@ public class HierarchyList_Worker {
                     o_bmtx = o_bmx + o_btx;
                     o_bmty = o_bmy + o_bty;
 
-                    if (subFace_figure.inside(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), im) != 0) {//0=外部、　1=境界、　2=内部
+                    if (subFace_figure.inside(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), im) != Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
 
                         t0.setX(o_bmtx);
                         t0.setY(o_bmty);
@@ -1774,10 +1759,6 @@ public class HierarchyList_Worker {
                         g2.setPaint(new GradientPaint((float) xd[0], (float) yd[0], new Color(0, 0, 0, 50), (float) xd[1], (float) yd[1], new Color(0, 0, 0, 0)));
                         g2.fill(new Polygon(x, y, 4));
                     }
-
-//-------------------------------------------------------
-
-
                 }
             }
         }//影をつけるは、ここで終わり
@@ -1832,34 +1813,23 @@ public class HierarchyList_Worker {
             if (drawing_flag) {//棒を描く。
                 s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
                 s_tv.set(camera.object2TV(s_ob));
-                //g2.draw(new Line2D.Double( gx(s_tv.getax()),gy(s_tv.getay()),gx(s_tv.getbx()),gy(s_tv.getby())));
                 g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //直線
-                //g.drawLine( gx(subFace_figure.getmaex(ib)),gy(subFace_figure.getmaey(ib)),gx(subFace_figure.getatox(ib)),gy(subFace_figure.getatoy(ib))); //直線
             }
-
-
         }
     }
 
 
     //---------------------------------------------------------
     public void draw_cross_with_camera(Graphics g) {
-        //camera中心を十字で描く
+        //Draw the center of the camera with a cross
         OritaDrawing.cross(g, camera.object2TV(camera.getCameraPosition()), 5.0, 2.0, LineColor.ORANGE_4);
     }
-
-
-    //---------------------------------------------------------
 
     public void toggleDisplayShadows() {
         displayShadows = !displayShadows;
     }
 
-
-    //---------------------------------------------------------
-
     public int line_no_bangou_kara_kagenoaru_subFace_no_bangou_wo_motomeru(int ib, PointSet subFace_figure, boolean flipped) {//棒の番号から、その棒の影が発生するSubFace の番号を求める。影が発生しない場合は0を返す。
-
         int i_return;
 
         int faceId_min, faceId_max; //棒の両側のSubFaceの番号の小さいほうがMid_min,　大きいほうがMid_max
@@ -1922,13 +1892,8 @@ public class HierarchyList_Worker {
         return i_return;
     }
 
-// -----------------------------
-
-
-//-----------------------------------
-
-    int makesuu0no_menno_kazu = 0;//上に他の面がない状態で順位付けできる面の数
-    int makesuu1ijyouno_menno_kazu = 0;//上に他の面が1以上ある状態でないと順位付けできない面の数
+    int makesuu0no_menno_amount = 0;//Number of faces that can be ranked without any other faces on top
+    int makesuu1ijyouno_menno_amount = 0;//Number of faces that can only be ranked if there is one or more other faces on top
 
     private void rating2() {
         int hierarchyListFacesTotal = hierarchyList.getFacesTotal();//面の総数を求める。
@@ -1937,8 +1902,8 @@ public class HierarchyList_Worker {
         i_face_rating = new int[hierarchyListFacesTotal + 1];
 
 
-        makesuu0no_menno_kazu = 0;//上に他の面がない状態で順位付けできる面の数
-        makesuu1ijyouno_menno_kazu = 0;//上に他の面が1以上ある状態でないと順位付けできない面の数
+        makesuu0no_menno_amount = 0;//Number of faces that can be ranked without any other faces on top
+        makesuu1ijyouno_menno_amount = 0;//Number of faces that can only be ranked if there is one or more other faces on top
 
 
         for (int i = 0; i <= hierarchyListFacesTotal; i++) {
@@ -1957,42 +1922,37 @@ public class HierarchyList_Worker {
             face_rating[top_men_id] = i_rate;
         }
 
-        System.out.println("上に他の面がない状態で順位付けできた面の数 = " + makesuu0no_menno_kazu);
-        System.out.println("上に他の面が1以上ある状態で順位付けした面の数 = " + makesuu1ijyouno_menno_kazu);
+        System.out.println("上に他の面がない状態で順位付けできた面の数 = " + makesuu0no_menno_amount);
+        System.out.println("上に他の面が1以上ある状態で順位付けした面の数 = " + makesuu1ijyouno_menno_amount);
 
         nbox.reset();
         for (int i = 1; i <= hierarchyList.getFacesTotal(); i++) {
             nbox.container_i_smallest_first(new int_double(i, face_rating[i]));
         }
     }
-//------------------------------------------------------------
-//以下の各関数ではFaceStackとしてs0[]を使う20180305
-
+    //Each of the following functions uses s0 [] as FaceStack 20180305
 
     private int top_face_id_ga_maketa_kazu_goukei_without_rated_face = 0;
 
-    //------------------------------------------------------------
     private int get_top_face_id_without_rated_face() {
         int top_men_id = 0;
         top_face_id_ga_maketa_kazu_goukei_without_rated_face = hierarchyList.getFacesTotal() + 100;
 
-
         int hierarchyListFacesTotal = hierarchyList.getFacesTotal();//Find the total number of faces.
 
-        int[] i_kentouzumi = new int[hierarchyListFacesTotal + 1];//検討済みの面IDは１にする
+        boolean[] i_kentouzumi = new boolean[hierarchyListFacesTotal + 1];//検討済みの面IDは１にする
         for (int i = 0; i <= hierarchyListFacesTotal; i++) {
-            i_kentouzumi[i] = 0;
+            i_kentouzumi[i] = false;
         }
 
         for (int i = 1; i <= SubFaceTotal; i++) {
             int s_top_id = get_s_top_id_without_rated_face(i);//各s面の（レートがついた面は除く）一番上の面。s_top_id=0ならそのs面にはレートが未定の面はない
 
-
             if (s_top_id != 0) {
-                if (i_kentouzumi[s_top_id] == 0) {
+                if (!i_kentouzumi[s_top_id]) {
                     int mkg = get_maketa_kazu_goukei_without_rated_face(s_top_id);
                     if (mkg == 0) {
-                        makesuu0no_menno_kazu = makesuu0no_menno_kazu + 1;
+                        makesuu0no_menno_amount++;
                         return s_top_id;
                     }//ここは、これでよいか要検討20180306
                     if (top_face_id_ga_maketa_kazu_goukei_without_rated_face > mkg) {
@@ -2002,15 +1962,15 @@ public class HierarchyList_Worker {
                 }
             }
 
-            i_kentouzumi[s_top_id] = 1;
+            i_kentouzumi[s_top_id] = true;
         }
 
-        //makesuu0no_menno_kazu=0;//上に他の面がない状態で順位付けできる面の数
-        //makesuu1ijyouno_menno_kazu=0;//上に他の面が1以上ある状態でないと順位付けできない面の数
+        //makesuu0no_menno_amount=0;//上に他の面がない状態で順位付けできる面の数
+        //makesuu1ijyouno_menno_amount=0;//上に他の面が1以上ある状態でないと順位付けできない面の数
         if (top_face_id_ga_maketa_kazu_goukei_without_rated_face == 0) {
-            makesuu0no_menno_kazu = makesuu0no_menno_kazu + 1;
+            makesuu0no_menno_amount++;
         } else if (top_face_id_ga_maketa_kazu_goukei_without_rated_face > 0) {
-            makesuu1ijyouno_menno_kazu = makesuu1ijyouno_menno_kazu + 1;
+            makesuu1ijyouno_menno_amount = makesuu1ijyouno_menno_amount + 1;
         }
 
         return top_men_id;
@@ -2049,7 +2009,7 @@ public class HierarchyList_Worker {
                 return maketa_kazu;
             }
             if (i_face_rating[im] == 0) {
-                maketa_kazu = maketa_kazu + 1;
+                maketa_kazu++;
             }
         }
         return 0;

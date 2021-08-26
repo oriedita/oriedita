@@ -3,7 +3,7 @@ package jp.gr.java_conf.mt777.origami.dougu.camera;
 import jp.gr.java_conf.mt777.graphic2d.point.*;
 import jp.gr.java_conf.mt777.graphic2d.linesegment.*;
 
-public class Camera {//実際の座標と、表示座標の仲立ち
+public class Camera { // Mediation between actual coordinates and display coordinates
 
     double camera_position_x, camera_position_y;
     double camera_angle;
@@ -12,14 +12,13 @@ public class Camera {//実際の座標と、表示座標の仲立ち
     double camera_zoom_y;
     double display_position_x, display_position_y;
 
-    double do2rad, rad2do;
+    double do2rad = 3.14159265 / 180.0;
     double camera_rad;
-    double sin_rad, cos_rad;
+    double sin_rad;
+    double cos_rad;
 
 
-    public Camera() {//コンストラクタ
-        do2rad = 3.14159265 / 180.0;
-        rad2do = 180.0 / 3.14159265;
+    public Camera() {
         camera_position_x = 0.0;
         camera_position_y = 0.0;
         camera_angle = 0.0;
@@ -49,7 +48,6 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         display_position_y = 0.0;
     }
 
-    //public void set_camera_id(int i){camera_id=i;}
     public void setCameraPositionX(double d) {
         camera_position_x = d;
     }
@@ -77,14 +75,13 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         camera_zoom_y = d;
     }
 
-    public void kakezan_camera_zoom_x(double d) {
+    public void multiplyCameraZoomX(double d) {
         camera_zoom_x = d * camera_zoom_x;
     }
 
-    public void kakezan_camera_zoom_y(double d) {
+    public void multiplyCameraZoomY(double d) {
         camera_zoom_y = d * camera_zoom_y;
     }
-
 
     public void setDisplayPositionX(double d) {
         display_position_x = d;
@@ -117,7 +114,6 @@ public class Camera {//実際の座標と、表示座標の仲立ち
     }
 
     public void display() {//Display various parameters
-
         System.out.println("camera.hyouji() VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV ");
         System.out.println("camera_ichi_x = " + camera_position_x);
         System.out.println("camera_ichi_y = " + camera_position_y);
@@ -178,14 +174,12 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         setDisplayPositionY(p.getY());
     }
 
-
     public Point getCameraPosition() {
         Point pointPosition = new Point();
         pointPosition.setX(camera_position_x);
         pointPosition.setY(camera_position_y);
         return pointPosition;
     }
-
 
     public Point object2TV(Point t_ob) {
         Point t_tv = new Point();
@@ -204,7 +198,6 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         return t_tv;
     }
 
-
     public LineSegment object2TV(LineSegment s_ob) {
         LineSegment s_tv = new LineSegment();
         s_tv.set(s_ob);
@@ -212,7 +205,6 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         s_tv.setB(object2TV(s_ob.getB()));
         return s_tv;
     }
-
 
     public Point TV2object(Point t_tv) {
         Point t_ob = new Point();
@@ -248,7 +240,7 @@ public class Camera {//実際の座標と、表示座標の仲立ち
         display_position_y = display_position_y + tuika.getY();
     }
 
-    //TV上の表示は変化しないようにして、TV上の座標Ten　P　に対応する、被写体の位置にcamera位置をあわせる。
+    //Make sure that the display on the TV does not change, and adjust the camera position to the position of the subject corresponding to the coordinates Ten P on the TV.
     public void camera_ichi_sitei_from_TV(Point p) {
         setCameraPosition(TV2object(p));
         setDisplayPosition(p);

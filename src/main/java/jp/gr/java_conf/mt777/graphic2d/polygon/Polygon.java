@@ -66,11 +66,22 @@ public class Polygon {
         return itrue == 1;
     }
 
+    /**
+     * A Point or LineSegment intersecting a Polygon
+     */
     public enum Intersection {
         /**
          * When all of the line segment s0 exists outside the convex polygon (the boundary line is not considered inside)
          */
         OUTSIDE,
+        /**
+         * When all of the line segments s0 are on the boundary of the convex polygon
+         */
+        BORDER,
+        /**
+         * When all of the line segment s0 exists inside the convex polygon (the boundary line is not considered to be inside)
+         */
+        INSIDE,
         /**
          * When the line segment s0 exists both outside the convex polygon and across the boundary line
          */
@@ -80,17 +91,9 @@ public class Polygon {
          */
         OUTSIDE_BORDER_INSIDE,
         /**
-         * When all of the line segments s0 are on the boundary of the convex polygon
-         */
-        BORDER,
-        /**
          * When the line segment s0 exists both inside the convex polygon and across the boundary line
          */
         BORDER_INSIDE,
-        /**
-         * When all of the line segment s0 exists inside the convex polygon (the boundary line is not considered to be inside)
-         */
-        INSIDE,
         ;
 
         public static Intersection create(boolean outside, boolean border, boolean inside) {
@@ -124,10 +127,10 @@ public class Polygon {
             intersection[i] = new Point();
         }
 
-        i_intersection = i_intersection + 1;
+        i_intersection++;
         intersection[i_intersection].set(s0.getA());
 
-        i_intersection = i_intersection + 1;
+        i_intersection++;
         intersection[i_intersection].set(s0.getB());
 
         LineSegment.Intersection kh; //oc.senbun_kousa_hantei(s0,s)の値の格納用
@@ -135,7 +138,6 @@ public class Polygon {
         LineSegment s = new LineSegment();
 
         for (int i = 1; i <= vertexCount; i++) {
-
             if (i == vertexCount) {
                 s.set(vertices[vertexCount], vertices[1]); //Line segment
             } else {
@@ -145,61 +147,61 @@ public class Polygon {
             kh = OritaCalc.line_intersect_decide(s0, s);
 
             if (kh == LineSegment.Intersection.INTERSECTS_1) {
-                i_intersection = i_intersection + 1;
+                i_intersection++;
                 intersection[i_intersection].set(OritaCalc.findIntersection(s0, s));
             }
             if (kh == LineSegment.Intersection.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27) {
-                i_intersection = i_intersection + 1;
+                i_intersection++;
                 intersection[i_intersection].set(OritaCalc.findIntersection(s0, s));
             }
             if (kh == LineSegment.Intersection.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28) {
-                i_intersection = i_intersection + 1;
+                i_intersection++;
                 intersection[i_intersection].set(OritaCalc.findIntersection(s0, s));
             }
             if (kh == LineSegment.Intersection.PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321) {
-                i_intersection = i_intersection + 1;
+                i_intersection++;
                 intersection[i_intersection].set(s.getB());
             }
             if (kh == LineSegment.Intersection.PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331) {
-                i_intersection = i_intersection + 1;
+                i_intersection++;
                 intersection[i_intersection].set(s.getA());
             }
             if (kh == LineSegment.Intersection.PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341) {
-                i_intersection = i_intersection + 1;
+                i_intersection++;
                 intersection[i_intersection].set(s.getB());
             }
             if (kh == LineSegment.Intersection.PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351) {
-                i_intersection = i_intersection + 1;
+                i_intersection++;
                 intersection[i_intersection].set(s.getA());
             }
 
             if (kh == LineSegment.Intersection.PARALLEL_S1_INCLUDES_S2_361) {
-                i_intersection = i_intersection + 1;
+                i_intersection++;
                 intersection[i_intersection].set(s.getA());
-                i_intersection = i_intersection + 1;
+                i_intersection++;
                 intersection[i_intersection].set(s.getB());
             }
             if (kh == LineSegment.Intersection.PARALLEL_S1_INCLUDES_S2_362) {
-                i_intersection = i_intersection + 1;
+                i_intersection++;
                 intersection[i_intersection].set(s.getA());
-                i_intersection = i_intersection + 1;
+                i_intersection++;
                 intersection[i_intersection].set(s.getB());
             }
 
             if (kh == LineSegment.Intersection.PARALLEL_S1_END_OVERLAPS_S2_START_371) {
-                i_intersection = i_intersection + 1;
+                i_intersection++;
                 intersection[i_intersection].set(s.getA());
             }
             if (kh == LineSegment.Intersection.PARALLEL_S1_END_OVERLAPS_S2_START_371) {
-                i_intersection = i_intersection + 1;
+                i_intersection++;
                 intersection[i_intersection].set(s.getB());
             }
             if (kh == LineSegment.Intersection.PARALLEL_S1_START_OVERLAPS_S2_END_373) {
-                i_intersection = i_intersection + 1;
+                i_intersection++;
                 intersection[i_intersection].set(s.getB());
             }
             if (kh == LineSegment.Intersection.PARALLEL_S1_START_OVERLAPS_S2_START_374) {
-                i_intersection = i_intersection + 1;
+                i_intersection++;
                 intersection[i_intersection].set(s.getA());
             }
 
@@ -222,30 +224,30 @@ public class Polygon {
         boolean border = false;
         boolean inside = false;
 
-        int i_nai;
+        Intersection i_nai;
 
         for (int i = 1; i <= nbox.getTotal(); i++) {
 
             i_nai = inside(intersection[nbox.getInt(i)]);
-            if (i_nai == 0) {
+            if (i_nai == Intersection.OUTSIDE) {
                 outside = true;
             }
-            if (i_nai == 1) {
+            if (i_nai == Intersection.BORDER) {
                 border = true;
             }
-            if (i_nai == 2) {
+            if (i_nai == Intersection.BORDER) {
                 inside = true;
             }
 
             if (i != nbox.getTotal()) {
                 i_nai = inside(OritaCalc.midPoint(intersection[nbox.getInt(i)], intersection[nbox.getInt(i + 1)]));
-                if (i_nai == 0) {
+                if (i_nai == Intersection.OUTSIDE) {
                     outside = true;
                 }
-                if (i_nai == 1) {
+                if (i_nai == Intersection.BORDER) {
                     border = true;
                 }
-                if (i_nai == 2) {
+                if (i_nai == Intersection.INSIDE) {
                     inside = true;
                 }
             }
@@ -254,9 +256,6 @@ public class Polygon {
 
         return Polygon.Intersection.create(outside, border, inside);
     }
-
-
-//----------------------------------------------------------------------------------------------
 
     // Even a part of the line segment s0 is inside the convex polygon (the boundary line is not regarded as the inside)
     // Returns 1 if present, 0 otherwise
@@ -310,21 +309,21 @@ public class Polygon {
         }
 
         if (iflag == 0) {
-            return inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == 2;
+            return inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE;
         }
 
         if (iflag == 1) {
-            return inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == 2;
+            return inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE;
         }
 
         if (iflag == 2) {
-            if (inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == 2) {
+            if (inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE) {
                 return true;
             }
-            if (inside(s0.getA()) == 2) {
+            if (inside(s0.getA()) == Intersection.INSIDE) {
                 return true;
             }
-            return inside(s0.getB()) == 2;
+            return inside(s0.getB()) == Intersection.INSIDE;
         }
 
         if (iflag == 3) {
@@ -354,7 +353,7 @@ public class Polygon {
             return true;
         }
 
-        if (inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == 2) {
+        if (inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE) {
             return true;
         }
 
@@ -363,7 +362,7 @@ public class Polygon {
 
 
     //A function that determines if a point is inside this polygon (true) or not (false)----------------------------------
-    public int inside(Point p) {      //0 = outside, 1 = boundary, 2 = inside
+    public Intersection inside(Point p) {      //0 = outside, 1 = boundary, 2 = inside
         LineSegment s = new LineSegment();
         LineSegment sq = new LineSegment();
         Point q = new Point();
@@ -377,12 +376,12 @@ public class Polygon {
         for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]);
             if (OritaCalc.distance_lineSegment(p, s) < 0.01) {
-                return 1;
+                return Intersection.BORDER;
             }
         }
         s.set(vertices[vertexCount], vertices[1]);
         if (OritaCalc.distance_lineSegment(p, s) < 0.01) {
-            return 1;
+            return Intersection.OUTSIDE;
         }
 
         //点pが多角形の境界線上に無い場合、内部にあるか外部にあるか判定する
@@ -421,10 +420,10 @@ public class Polygon {
         }
 
         if (kousakaisuu % 2 == 1) {
-            return 2;
+            return Intersection.INSIDE;
         } //交差回数が奇数なら内部
 
-        return 0;
+        return Intersection.OUTSIDE;
     }
 
     //Find the area when the vertex coordinates of the polygon are clockwise (x1, y1), (x2, y2), ..., (xn, yn).
@@ -463,20 +462,20 @@ public class Polygon {
 
         for (int i = 2; i <= vertexCount - 1; i++) {
             tn.set(OritaCalc.center(vertices[i - 1], vertices[i], vertices[i + 1]));
-            if ((distance < findDistance(tn)) && (inside(tn) == 2)) {
+            if ((distance < findDistance(tn)) && (inside(tn) == Intersection.INSIDE)) {
                 distance = findDistance(tn);
                 tr.set(tn);
             }
         }
         //
         tn.set(OritaCalc.center(vertices[vertexCount - 1], vertices[vertexCount], vertices[1]));
-        if ((distance < findDistance(tn)) && (inside(tn) == 2)) {
+        if ((distance < findDistance(tn)) && (inside(tn) == Intersection.INSIDE)) {
             distance = findDistance(tn);
             tr.set(tn);
         }
         //
         tn.set(OritaCalc.center(vertices[vertexCount], vertices[1], vertices[2]));
-        if ((distance < findDistance(tn)) && (inside(tn) == 2)) {
+        if ((distance < findDistance(tn)) && (inside(tn) == Intersection.INSIDE)) {
             distance = findDistance(tn);
             tr.set(tn);
         }

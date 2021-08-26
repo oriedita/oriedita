@@ -6,11 +6,10 @@ import jp.gr.java_conf.mt777.graphic2d.oritacalc.*;
 import jp.gr.java_conf.mt777.origami.dougu.camera.*;
 
 public class Background_camera {//Mediation between actual coordinates and display coordinates
-
     // The background image is based on the case where the upper left corner of the image is displayed according to (0,0) of the window without rotation or enlargement.
-// Enlarge a times around the point h1 on the background image. Next, the background image is translated so that h1 overlaps the point h3 on the developed view. A function that rotates and pastes the developed view of this state so that it looks like it is rotated b degrees around h3, and then restores the rotation of the coordinates.
-// The arguments are Graphics2D g2h, Image imgh, Point h1, Point h2, Point h3, Point h4
-// Make h2 and h4 also overlap
+    // Enlarge a times around the point h1 on the background image. Next, the background image is translated so that h1 overlaps the point h3 on the developed view. A function that rotates and pastes the developed view of this state so that it looks like it is rotated b degrees around h3, and then restores the rotation of the coordinates.
+    // The arguments are Graphics2D g2h, Image imgh, Point h1, Point h2, Point h3, Point h4
+    // Make h2 and h4 also overlap
     Point h1 = new Point();
     Point h2 = new Point();
     Point h3 = new Point();
@@ -46,27 +45,16 @@ public class Background_camera {//Mediation between actual coordinates and displ
         parameter_calculation();
     }
 
-
     public void setCamera(Camera cam0) {
-        camera.setCameraMirror(cam0.getCameraMirror());
-
-
-        camera.setCameraPositionX(cam0.getCameraPositionX());
-        camera.setCameraPositionY(cam0.getCameraPositionY());
-        camera.setCameraZoomX(cam0.getCameraZoomX());
-        camera.setCameraZoomY(cam0.getCameraZoomY());
-        camera.setCameraAngle(cam0.getCameraAngle());
-        camera.setDisplayPositionX(cam0.getDisplayPositionX());
-        camera.setDisplayPositionY(cam0.getDisplayPositionY());
+        camera.setCamera(cam0);
     }
-
 
     public Point get_kijyun_jyoutai_position(Point pt) {
         Point pt1 = new Point();
         Point pt2 = new Point();
         Point pt3 = new Point();
 
-        pt1.set(OritaCalc.point_rotate(new Point(p_rotation_x, p_rotation_y), pt, -get_angle()));
+        pt1.set(OritaCalc.point_rotate(new Point(p_rotation_x, p_rotation_y), pt, -getAngle()));
         pt2.set(pt1.getX() - p_idou_x, pt1.getY() - p_idou_y);
         pt3.set(pt2.getX() / p_bairitu, pt2.getY() / p_bairitu);
 
@@ -136,7 +124,6 @@ public class Background_camera {//Mediation between actual coordinates and displ
         h4.display(" h4  ");
     }
 
-
     public void setBackgroundWidth(double d0) {
         background_width = d0;
     }
@@ -161,7 +148,7 @@ public class Background_camera {//Mediation between actual coordinates and displ
         return (int) (background_height * p_bairitu);
     }
 
-    public double get_angle() {
+    public double getAngle() {
         return p_rotation_angle;
     }
 
@@ -172,7 +159,6 @@ public class Background_camera {//Mediation between actual coordinates and displ
     public int get_cy() {
         return (int) p_rotation_y;
     }
-
 
     public void set_i_Lock_on(boolean i_L) {
         i_Lock_on = i_L;

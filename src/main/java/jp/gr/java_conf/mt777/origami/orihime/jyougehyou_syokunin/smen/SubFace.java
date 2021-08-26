@@ -28,12 +28,10 @@ public class SubFace {//This class folds the development view and estimates the 
         reset();
     }
 
-
     private void reset() {
         faceIdCount = 0;
     }
 
-    //--------------------------------------
     //Initial settings for Ketasuu and permutation generators. Don't forget.
     public void setNumDigits(int FIdCount) {
         faceIdCount = FIdCount;
@@ -79,7 +77,6 @@ public class SubFace {//This class folds the development view and estimates the 
     } //Return to the first permutation.
 
 
-    //--------------------------------------
     public int next() {
         return 0;
     }

@@ -2,8 +2,16 @@ package jp.gr.java_conf.mt777.origami.dougu.men;
 
 import java.util.*;
 
+/**
+ * Groups a set of points found in a PointSet
+ *
+ * @see jp.gr.java_conf.mt777.graphic2d.point.Point
+ * @see jp.gr.java_conf.mt777.origami.dougu.pointstore.PointSet
+ */
 public class Face {
+    // 1-indexed list
     ArrayList<Integer> pointIdList = new ArrayList<>();
+
     int numPoints;
     int icol;
 
@@ -37,16 +45,16 @@ public class Face {
         numPoints = i;
     }
 
-    public void addPointId(int Tid) {
+    public void addPointId(int pointId) {
         numPoints = numPoints + 1;
-        pointIdList.add(Tid);
+        pointIdList.add(pointId);
     }
 
     public int getPointId(int i) {
 		return pointIdList.get(i);
     }
 
-    private void okikae() { //Tenid[n+1]の値をTenid[n]の値に置き換える。Tenid[1]の値は、最後のTenidにする
+    private void replace() { //Replace the value of pointIdList[n + 1] with the value of pointId[n]. The value of PointId[1] should be the last PointId
         for (int i = 1; i <= numPoints; i++) {
             pointIdList.set(i - 1, getPointId(i));
         }
@@ -63,7 +71,7 @@ public class Face {
         return icol;
     }
 
-    public int getMinimumPointId() {    //面mptempに含まれる棒のidの最小値を求める。
+    public int getMinimumPointId() {    //Find the minimum id of the line contained in the surface mptemp.
         int idmin = getPointId(1);
         for (int i = 2; i <= numPoints; i++) {
             if (idmin > getPointId(i)) {
@@ -73,11 +81,11 @@ public class Face {
         return idmin;
     }
 
-    public void align() { //Tenid[1]の値がTenid[]のなかで最小になるように整列する。
+    public void align() { //Align so that the value of PointId [1] is the smallest in PointId [].
         int idmin;
         idmin = getMinimumPointId();
         while (getPointId(1) != idmin) {
-            okikae();
+            replace();
         }
     }
 }

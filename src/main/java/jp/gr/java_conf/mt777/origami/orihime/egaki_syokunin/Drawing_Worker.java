@@ -39,14 +39,11 @@ public class Drawing_Worker {
     public int i_drawing_stage;//Stores information about the stage of the procedure for drawing a polygonal line
     public int i_candidate_stage;//Stores information about which candidate for the procedure to draw a polygonal line
     public Polygon operationFrameBox = new Polygon(4);    //Instantiation of selection box (TV coordinates)
-    public boolean i_O_F_C = false;//外周部チェック時の外周を表す線分の入力状況。0は入力未完了、1は入力完了（線分が閉多角形になっている。）
+    public boolean i_O_F_C = false;//Input status of a line segment representing the outer circumference when checking the outer circumference. 0 is input not completed, 1 is input completed (line segment is a closed polygon)
     int ir_point = 1;
-    LineColor icol;//Line segment color
-    LineColor h_icol = LineColor.ORANGE_4;//Auxiliary line color
-    int i_hanasi = 0;//マウス位置と入力点の座標を離すなら１、離さないなら０
+    LineColor lineColor;//Line segment color
+    LineColor auxLineColor = LineColor.ORANGE_4;//Auxiliary line color
     boolean i_kou_mitudo_nyuuryoku = false;//1 if you use the input assist function for fine grid display, 0 if you do not use it
-    Point pa = new Point(); //マウスボタンが押された位置からa点までのベクトル
-    Point pb = new Point(); //マウスボタンが押された位置からb点までのベクトル
     Color circle_custom_color;//Stores custom colors for circles and auxiliary hot lines
     Undo_Box Ubox = new Undo_Box();
     Undo_Box h_Ubox = new Undo_Box();
@@ -54,21 +51,12 @@ public class Drawing_Worker {
     LineSegment closest_lineSegment = new LineSegment(100000.0, 100000.0, 100000.0, 100000.1); //マウス最寄の線分
     LineSegment closest_step_lineSegment = new LineSegment(100000.0, 100000.0, 100000.0, 100000.1); //マウス最寄のstep線分(線分追加のための準備をするための線分)。なお、ここで宣言する必要はないので、どこで宣言すべきか要検討20161113
     Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
-    Circle closest_step_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Step circle with the circumference closest to the mouse
     FoldLineAdditionalInputMode i_foldLine_additional = FoldLineAdditionalInputMode.POLY_LINE_0;//= 0 is polygonal line input = 1 is auxiliary line input mode (when inputting a line segment, these two). When deleting a line segment, the value becomes as follows. = 0 is the deletion of the polygonal line, = 1 is the deletion of the auxiliary picture line, = 2 is the deletion of the black line, = 3 is the deletion of the auxiliary live line, = 4 is the folding line, the auxiliary live line and the auxiliary picture line.
-    int i_branch;              //Active branch number
     FoldLineSet hoj_s = new FoldLineSet();    //Store auxiliary lines
     Drawing_Worker_Toolbox e_s_dougubako = new Drawing_Worker_Toolbox(ori_s);
-    Polygon trash = new Polygon(4);    //Trash instantiation
-    Polygon medianStrip = new Polygon(4);    //Median strip instantiation
-    double medianStrip_xmin = 180.0;
-    double medianStrip_xmax = 206.0;
-    double medianStrip_ymin = 50.0;
-    double medianStrip_ymax = 300.0;
-    double kijyun_kakudo = 22.5; //<<<<<<<<<<<<<<<<<<<<<<<基準角度<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    int id_kakudo_kei = 8;//  180/id_kakudo_keiが角度系を表す。たとえば、id_kakudo_kei=3なら180/3＝60度系、id_kakudo_kei=5なら180/5＝36度系
-    double d_kakudo_kei;//d_kakudo_kei=180.0/(double)id_kakudo_kei
-    double kakudo;
+    int id_angle_system = 8;//180 / id_angle_system represents the angular system. For example, if id_angle_system = 3, 180/3 = 60 degrees, if id_angle_system = 5, 180/5 = 36 degrees
+    double d_angle_system;//d_angle_system=180.0/(double)id_angle_system
+    double angle;
     int foldLineDividingNumber = 1;
     double d_naibun_s;
     double d_naibun_t;
@@ -108,8 +96,8 @@ public class Drawing_Worker {
     Point p = new Point();
     ArrayList<LineSegment> lineSegment_vonoroi_onePoint = new ArrayList<>(); //Line segment around one point in Voronoi diagram
     // ****************************************************************************************************************************************
-// **************　Variable definition so far　****************************************************************************************************
-// ****************************************************************************************************************************************
+    // **************　Variable definition so far　****************************************************************************************************
+    // ****************************************************************************************************************************************
     // ------------------------------------------------------------------------------------------------------------
     int i_mouse_modeA_62_point_overlapping;//Newly added p does not overlap with previously added Point = 0, overlaps = 1
     SortingBox_int_double entyou_kouho_nbox = new SortingBox_int_double();
@@ -128,9 +116,9 @@ public class Drawing_Worker {
     int i_select_mode = 0;//=0は通常のセレクト操作
     //30 30 30 30 30 30 30 30 30 30 30 30 除け_線_変換
     int minrid_30;
-    int i_step_for38 = 0;
+    int i_step_for_move_4p = 0;
     //39 39 39 39 39 39 39    i_mouse_modeA==39　;折り畳み可能線入力  qqqqqqqqq
-    int i_step_for39 = 0;//i_step_for39=2の場合は、step線が1本だけになっていて、次の操作で入力折線が確定する状態
+    int i_step_for_copy_4p = 0;//i_step_for_copy_4p=2の場合は、step線が1本だけになっていて、次の操作で入力折線が確定する状態
     int i_takakukei_kansei = 0;//多角形が完成したら1、未完成なら0
     // ------------
     FoldLineAdditionalInputMode i_foldLine_additional_old = FoldLineAdditionalInputMode.POLY_LINE_0;
@@ -138,20 +126,7 @@ public class Drawing_Worker {
     public Drawing_Worker(double r0, App app0) {  //コンストラクタ
         orihime_app = app0;
 
-        //r_ten=r0;
-        i_branch = 0;
-        icol = LineColor.BLACK_0;
-        trash.set(new Point(10.0, 150.0), 1, new Point(0.0, 0.0));
-        trash.set(new Point(10.0, 150.0), 2, new Point(50.0, 0.0));
-        trash.set(new Point(10.0, 150.0), 3, new Point(40.0, 50.0));
-        trash.set(new Point(10.0, 150.0), 4, new Point(10.0, 50.0));
-
-        medianStrip.set(1, new Point(medianStrip_xmin, medianStrip_ymin));
-        medianStrip.set(2, new Point(medianStrip_xmax, medianStrip_ymin));
-        medianStrip.set(3, new Point(medianStrip_xmax, medianStrip_ymax));
-        medianStrip.set(4, new Point(medianStrip_xmin, medianStrip_ymax));
-
-        //taisyousei=0;
+        lineColor = LineColor.BLACK_0;
 
         for (int i = 0; i <= 1024 - 1; i++) {
             s_step[i] = new LineSegment();
@@ -179,7 +154,6 @@ public class Drawing_Worker {
         ir_point = 1;
         ori_s.reset();
         hoj_s.reset();
-        i_branch = 0;
 
         camera.reset();
         i_drawing_stage = 0;
@@ -737,17 +711,11 @@ public class Drawing_Worker {
         return ori_s.getTotal();
     }
 
-    //-----------------------------
-    public void set_kijyun_kakudo(double x) {
-        kijyun_kakudo = x;
-    } //<<<<<<<<<<<<<<<<<<<<<<<基準角度<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
     //------------------------
     public Memo getMemo() {
         return ori_s.getMemo();
     }
 
-    //getMemo(String s_title)はundo,redoのkiroku用
     public Memo getMemo(String s_title) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoのkiroku用
         Memo memo_temp = new Memo();
         memo_temp.set(ori_s.getMemo(s_title));
@@ -779,7 +747,7 @@ public class Drawing_Worker {
         Point a = new Point();
         Point b = new Point();
 
-        String str_stroke = "";
+        String str_stroke;
         String str_strokewidth;
         str_strokewidth = Integer.toString(orihime_app.iLineWidth);
 
@@ -965,12 +933,7 @@ public class Drawing_Worker {
 
     //---------------------------------
     public void setColor(LineColor i) {
-        icol = i;
-    }
-
-    //---------------------------------
-    public int get_ieda() {
-        return i_branch;
+        lineColor = i;
     }
 
     public void point_removal() {
@@ -1526,7 +1489,7 @@ public class Drawing_Worker {
     }
 
     public void set_id_kakudo_kei(int i) {
-        id_kakudo_kei = i;
+        id_angle_system = i;
     }
 
     // ------------------------------------
@@ -1567,9 +1530,9 @@ public class Drawing_Worker {
     }
 
     //--------------------------------------------
-    public int addLineSegment(LineSegment s0) {//0=変更なし、1=色の変化のみ、2=線分追加
+    public int addLineSegment(LineSegment s0) {//0 = No change, 1 = Color change only, 2 = Line segment added
 
-        ori_s.addLine(s0);//ori_sのsenbunの最後にs0の情報をを加えるだけ
+        ori_s.addLine(s0);//Just add the information of s0 to the end of senbun of ori_s
         int sousuu_old = ori_s.getTotal();
         ori_s.lineSegment_circle_intersection(ori_s.getTotal(), ori_s.getTotal(), 1, ori_s.numCircles());
 
@@ -1610,7 +1573,7 @@ public class Drawing_Worker {
     }
 
     //------------------------------
-    public LineSegment get_moyori_senbun(Point t0) {
+    public LineSegment getClosestLineSegment(Point t0) {
         return ori_s.closestLineSegment(t0);
     }
 
@@ -1828,7 +1791,7 @@ public class Drawing_Worker {
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_28(Point p0) {
-        mMoved_m_00a(p0, icol);//マウスで選択できる候補点を表示する。近くに既成の点があるときはその点、無いときはマウスの位置自身が候補点となる。
+        mMoved_m_00a(p0, lineColor);//マウスで選択できる候補点を表示する。近くに既成の点があるときはその点、無いときはマウスの位置自身が候補点となる。
 
     }
 
@@ -1840,11 +1803,11 @@ public class Drawing_Worker {
         closest_point.set(getClosestPoint(p));
         if (p.distance(closest_point) < d_decision_width) {
             s_step[1].set(p, closest_point);
-            s_step[1].setColor(icol);
+            s_step[1].setColor(lineColor);
             return;
         }
         s_step[1].set(p, p);
-        s_step[1].setColor(icol);
+        s_step[1].setColor(lineColor);
     }
 
     //マウス操作(i_mouse_modeA==28線分入力 でドラッグしたとき)を行う関数----------------------------------------------------
@@ -1860,7 +1823,7 @@ public class Drawing_Worker {
             } else {
                 s_kouho[1].set(p, p);
             }
-            s_kouho[1].setColor(icol);
+            s_kouho[1].setColor(lineColor);
             s_step[1].setA(s_kouho[1].getA());
         }
         return;
@@ -1888,7 +1851,7 @@ public class Drawing_Worker {
             }
             if ((d_naibun_s != 0.0) && (d_naibun_t != 0.0)) {
                 LineSegment s_ad = new LineSegment();
-                s_ad.setColor(icol);
+                s_ad.setColor(lineColor);
                 double nx = (d_naibun_t * s_step[1].getBX() + d_naibun_s * s_step[1].getAX()) / (d_naibun_s + d_naibun_t);
                 double ny = (d_naibun_t * s_step[1].getBY() + d_naibun_s * s_step[1].getAY()) / (d_naibun_s + d_naibun_t);
                 s_ad.set(s_step[1].getAX(), s_step[1].getAY(), nx, ny);
@@ -1919,10 +1882,10 @@ public class Drawing_Worker {
             }
 
             if (i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                s_kouho[1].setColor(icol);
+                s_kouho[1].setColor(lineColor);
             }
             if (i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                s_kouho[1].setColor(h_icol);
+                s_kouho[1].setColor(auxLineColor);
             }
 
         }
@@ -1941,20 +1904,20 @@ public class Drawing_Worker {
         if (p.distance(closest_point) < d_decision_width) {
             s_step[1].set(p, closest_point);
             if (i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                s_step[1].setColor(icol);
+                s_step[1].setColor(lineColor);
             }
             if (i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                s_step[1].setColor(h_icol);
+                s_step[1].setColor(auxLineColor);
             }
             return;
         }
 
         s_step[1].set(p, p);
         if (i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
-            s_step[1].setColor(icol);
+            s_step[1].setColor(lineColor);
         }
         if (i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) {
-            s_step[1].setColor(h_icol);
+            s_step[1].setColor(auxLineColor);
         }
     }
 
@@ -1977,10 +1940,10 @@ public class Drawing_Worker {
                 s_kouho[1].set(p, p);
             }
             if (i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                s_kouho[1].setColor(icol);
+                s_kouho[1].setColor(lineColor);
             }
             if (i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                s_kouho[1].setColor(h_icol);
+                s_kouho[1].setColor(auxLineColor);
             }
             s_step[1].setA(s_kouho[1].getA());
         }
@@ -2024,19 +1987,19 @@ public class Drawing_Worker {
     //11 11 11 11 11 11 11 11 11 11 11
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_11(Point p0) {
-        mMoved_m_00a(p0, icol);
+        mMoved_m_00a(p0, lineColor);
     }//近い既存点のみ表示
 
     //マウス操作(i_mouse_modeA==11線分入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_11(Point p0) {
-        mPressed_m_00a(p0, icol);
+        mPressed_m_00a(p0, lineColor);
     }
 
 //------
 
     //マウス操作(i_mouse_modeA==11線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_11(Point p0) {
-        mDragged_m_00a(p0, icol);
+        mDragged_m_00a(p0, lineColor);
     }//近い既存点のみ表示
 
     //マウス操作(i_mouse_modeA==11線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
@@ -2072,10 +2035,10 @@ public class Drawing_Worker {
             }
 
             if (i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                s_kouho[1].setColor(icol);
+                s_kouho[1].setColor(lineColor);
             }
             if (i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                s_kouho[1].setColor(h_icol);
+                s_kouho[1].setColor(auxLineColor);
             }
 
         }
@@ -2257,7 +2220,7 @@ public class Drawing_Worker {
                 }
             }
             //選択状態のものを削除
-            ori_v.del_selected_lineSegment_fast();
+            ori_v.delSelectedLineSegmentFast();
             ori_v.del_V_all(); //You may not need this line
 
             //ori_v_tempのボロノイ線分をボロノイ母点に加える
@@ -2377,7 +2340,7 @@ public class Drawing_Worker {
 
 
         //選択状態のものを削除
-        ori_v.del_selected_lineSegment_fast();
+        ori_v.delSelectedLineSegmentFast();
 
         ori_v.del_V_all(); //この行はいらないかも
 
@@ -2577,7 +2540,7 @@ public class Drawing_Worker {
 
         //for (int i=1; i<=ori_v.getsousuu(); i++ ){System.out.println("    (1)  i= " + i +  ":  ori_v.get(i).getiactive()=  " +  ori_v.get(i).getiactive());}
         //選択状態のものを削除
-        ori_v.del_selected_lineSegment_fast();
+        ori_v.delSelectedLineSegmentFast();
 
         ori_v.del_V_all(); //この行はいらないかも
 
@@ -2663,9 +2626,9 @@ int i_step_for71=0;//i_step_for71=2の場合は、step線が1本だけになっ�
 				Narabebako_int_double nbox =new Narabebako_int_double();
 				for (int i=1; i<=ori_s.getsousuu(); i++ ){ if((0<=ori_s.getcolor(i))&&(ori_s.getcolor(i)<=2)){
 					if(moyori_ten.kyori(ori_s.geta(i))<hantei_kyori){
-						nbox.ire_i_tiisaijyun(new int_double( i  , oc.kakudo(ori_s.geta(i),ori_s.getb(i)) ));
+						nbox.ire_i_tiisaijyun(new int_double( i  , oc.angle(ori_s.geta(i),ori_s.getb(i)) ));
 					}else if(moyori_ten.kyori(ori_s.getb(i))<hantei_kyori){
-						nbox.ire_i_tiisaijyun(new int_double( i  , oc.kakudo(ori_s.getb(i),ori_s.geta(i)) ));
+						nbox.ire_i_tiisaijyun(new int_double( i  , oc.angle(ori_s.getb(i),ori_s.geta(i)) ));
 					}
 				}}
 				//System.out.println("nbox.getsousuu()="+nbox.getsousuu());
@@ -2784,7 +2747,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 				p.kyori(s_step[1].getb())<=p.kyori(moyori_ten)
 				//moyori_ten.kyori(s_step[1].getb())<0.00000001
 				)){
-				Senbun add_sen =new Senbun(s_step[1].geta(),s_step[1].getb(),icol);
+				Senbun add_sen =new Senbun(s_step[1].geta(),s_step[1].getb(),lineColor);
 				addsenbun(add_sen);
 				kiroku();
 				i_egaki_dankai=0;i_candidate_stage=0;
@@ -2794,7 +2757,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 		//}
 
 
-		//if(i_step_for39==2){
+		//if(i_step_for_copy_4p==2){
 
 			//moyori_ten.set(get_moyori_ten(p));
 			if(p.kyori(moyori_ten)<d_decision_width){
@@ -2837,7 +2800,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 				s_step[2].setcolor(6);
 				//System.out.println("20170129_3");
 				Ten kousa_ten =new Ten(); kousa_ten.set(oc.kouten_motome(s_step[1],s_step[2]));
-				Senbun add_sen =new Senbun(kousa_ten,s_step[1].geta(),icol);
+				Senbun add_sen =new Senbun(kousa_ten,s_step[1].geta(),lineColor);
 				if(add_sen.getnagasa()>0.00000001){//最寄の既存折線が有効の場合
 					addsenbun(add_sen);
 					kiroku();
@@ -2916,7 +2879,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(マウスを動かしたとき)を行う関数    //System.out.println("_");
     public void mMoved_A_05or70(Point p0) {
-        mMoved_m_003(p0, icol);
+        mMoved_m_003(p0, lineColor);
     }//常にマウスの位置のみが候補点
 
     //マウス操作(ボタンを押したとき)時の作業
@@ -2957,7 +2920,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     //マウス操作(ボタンを離したとき)を行う関数
     public void mReleased_A_05or70(Point p0) {
         p.set(camera.TV2object(p0));
-        closest_lineSegment.set(get_moyori_senbun(p));
+        closest_lineSegment.set(getClosestLineSegment(p));
 
 
         if (i_drawing_stage == 1) {
@@ -3055,7 +3018,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                             if (add_sen.getLength() > 0.00000001) {
                                 if (orihime_app.i_mouse_modeA == MouseMode.LENGTHEN_CREASE_5) {
-                                    add_sen.setColor(icol);
+                                    add_sen.setColor(lineColor);
                                 }
                                 if (orihime_app.i_mouse_modeA == MouseMode.CREASE_LENGTHEN_70) {
                                     add_sen.setColor(ori_s.get(entyou_kouho_nbox.getInt(i)).getColor());
@@ -3090,7 +3053,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                         if (add_sen.getLength() > 0.00000001) {
                             if (orihime_app.i_mouse_modeA == MouseMode.LENGTHEN_CREASE_5) {
-                                add_sen.setColor(icol);
+                                add_sen.setColor(lineColor);
                             }
                             if (orihime_app.i_mouse_modeA == MouseMode.CREASE_LENGTHEN_70) {
                                 add_sen.setColor(ori_s.get(entyou_kouho_nbox.getInt(i)).getColor());
@@ -3202,7 +3165,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 i_dousa_mode = 1;
                 i_drawing_stage = 1;
                 s_step[1].a_b_swap();
-                s_step[1].setColor(icol);
+                s_step[1].setColor(lineColor);
                 i_dousa_mode_henkou_kanousei = 0;
             }
 
@@ -3246,13 +3209,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             if (p.distance(closest_point) < d_decision_width) {
                 i_drawing_stage = i_drawing_stage + 1;
                 s_step[i_drawing_stage].set(closest_point, closest_point);
-                s_step[i_drawing_stage].setColor(icol);
+                s_step[i_drawing_stage].setColor(lineColor);
                 return;
             }
         }
 
         if (i_drawing_stage == 3) {
-            closest_lineSegment.set(get_moyori_senbun(p));
+            closest_lineSegment.set(getClosestLineSegment(p));
             if (OritaCalc.distance_lineSegment(p, closest_lineSegment) < d_decision_width) {
                 i_drawing_stage = i_drawing_stage + 1;
                 s_step[i_drawing_stage].set(closest_lineSegment);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
@@ -3283,7 +3246,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             Point kousa_point = new Point();
             kousa_point.set(OritaCalc.findIntersection(add_sen2, s_step[4]));
 
-            LineSegment add_sen = new LineSegment(kousa_point, s_step[2].getA(), icol);
+            LineSegment add_sen = new LineSegment(kousa_point, s_step[2].getA(), lineColor);
             if (add_sen.getLength() > 0.00000001) {
                 addLineSegment(add_sen);
                 record();
@@ -3312,7 +3275,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         if (p.distance(closest_point) < d_decision_width) {
             i_drawing_stage = i_drawing_stage + 1;
             s_step[i_drawing_stage].set(closest_point, closest_point);
-            s_step[i_drawing_stage].setColor(icol);
+            s_step[i_drawing_stage].setColor(lineColor);
         }
 
 
@@ -3331,15 +3294,15 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             Point naisin = new Point();
             naisin.set(OritaCalc.center(s_step[1].getA(), s_step[2].getA(), s_step[3].getA()));
 
-            LineSegment add_sen1 = new LineSegment(s_step[1].getA(), naisin, icol);
+            LineSegment add_sen1 = new LineSegment(s_step[1].getA(), naisin, lineColor);
             if (add_sen1.getLength() > 0.00000001) {
                 addLineSegment(add_sen1);
             }
-            LineSegment add_sen2 = new LineSegment(s_step[2].getA(), naisin, icol);
+            LineSegment add_sen2 = new LineSegment(s_step[2].getA(), naisin, lineColor);
             if (add_sen2.getLength() > 0.00000001) {
                 addLineSegment(add_sen2);
             }
-            LineSegment add_sen3 = new LineSegment(s_step[3].getA(), naisin, icol);
+            LineSegment add_sen3 = new LineSegment(s_step[3].getA(), naisin, lineColor);
             if (add_sen3.getLength() > 0.00000001) {
                 addLineSegment(add_sen3);
             }
@@ -3387,7 +3350,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         if (p.distance(closest_point) < d_decision_width) {
             i_drawing_stage = i_drawing_stage + 1;
             s_step[i_drawing_stage].set(closest_point, closest_point);
-            s_step[i_drawing_stage].setColor(icol);
+            s_step[i_drawing_stage].setColor(lineColor);
         }
     }
 
@@ -3424,7 +3387,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         if (p.distance(closest_point) < d_decision_width) {
             i_drawing_stage = i_drawing_stage + 1;
             s_step[i_drawing_stage].set(closest_point, closest_point);
-            s_step[i_drawing_stage].setColor(icol);
+            s_step[i_drawing_stage].setColor(lineColor);
         }
     }
 
@@ -3464,7 +3427,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         if (p.distance(closest_point) < d_decision_width) {
             i_drawing_stage = i_drawing_stage + 1;
             s_step[i_drawing_stage].set(closest_point, closest_point);
-            s_step[i_drawing_stage].setColor(icol);
+            s_step[i_drawing_stage].setColor(lineColor);
         }
     }
 
@@ -3504,7 +3467,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         if (p.distance(closest_point) < d_decision_width) {
             i_drawing_stage = i_drawing_stage + 1;
             s_step[i_drawing_stage].set(closest_point, closest_point);
-            s_step[i_drawing_stage].setColor(icol);
+            s_step[i_drawing_stage].setColor(lineColor);
         }
     }
 
@@ -3543,7 +3506,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         if (p.distance(closest_point) < d_decision_width) {
             i_drawing_stage = i_drawing_stage + 1;
             s_step[i_drawing_stage].set(closest_point, closest_point);
-            s_step[i_drawing_stage].setColor(icol);
+            s_step[i_drawing_stage].setColor(lineColor);
         }
     }
 
@@ -3586,13 +3549,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             if (p.distance(closest_point) < d_decision_width) {
                 i_drawing_stage = i_drawing_stage + 1;
                 s_step[i_drawing_stage].set(closest_point, closest_point);
-                s_step[i_drawing_stage].setColor(icol);
+                s_step[i_drawing_stage].setColor(lineColor);
                 return;
             }
         }
 
         if (i_drawing_stage == 1) {
-            closest_lineSegment.set(get_moyori_senbun(p));
+            closest_lineSegment.set(getClosestLineSegment(p));
             if (OritaCalc.distance_lineSegment(p, closest_lineSegment) < d_decision_width) {
                 i_drawing_stage = i_drawing_stage + 1;
                 s_step[i_drawing_stage].set(closest_lineSegment);
@@ -3615,7 +3578,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){
             //oc.Senbun2Tyokusen(Senbun s)//線分を含む直線を得る
 
-            LineSegment add_sen = new LineSegment(s_step[1].getA(), OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(s_step[2]), s_step[1].getA()), icol);
+            LineSegment add_sen = new LineSegment(s_step[1].getA(), OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(s_step[2]), s_step[1].getA()), lineColor);
             if (add_sen.getLength() > 0.00000001) {
                 addLineSegment(add_sen);
                 record();
@@ -3648,13 +3611,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             if (p.distance(closest_point) < d_decision_width) {
                 i_drawing_stage = i_drawing_stage + 1;
                 s_step[i_drawing_stage].set(closest_point, closest_point);
-                s_step[i_drawing_stage].setColor(icol);
+                s_step[i_drawing_stage].setColor(lineColor);
                 return;
             }
         }
 
         if (i_drawing_stage == 1) {
-            closest_lineSegment.set(get_moyori_senbun(p));
+            closest_lineSegment.set(getClosestLineSegment(p));
             if (OritaCalc.distance_lineSegment(p, closest_lineSegment) < d_decision_width) {
                 i_drawing_stage = i_drawing_stage + 1;
                 s_step[i_drawing_stage].set(closest_lineSegment);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
@@ -3667,7 +3630,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 
         if (i_drawing_stage == 2) {
-            closest_lineSegment.set(get_moyori_senbun(p));
+            closest_lineSegment.set(getClosestLineSegment(p));
             if (OritaCalc.distance_lineSegment(p, closest_lineSegment) < d_decision_width) {
                 i_drawing_stage = i_drawing_stage + 1;
                 s_step[i_drawing_stage].set(closest_lineSegment);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
@@ -3694,9 +3657,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             //Ten kousa_ten =new Ten(); kousa_ten.set(oc.kouten_motome(s_step[1],s_step[3]));
 
-            //Senbun add_sen =new Senbun(kousa_ten,s_step[1].geta(),icol);
+            //Senbun add_sen =new Senbun(kousa_ten,s_step[1].geta(),lineColor);
 
-            if (s_step_tuika_koutenmade(3, s_step[1], s_step[3], icol) > 0) {
+            if (s_step_tuika_koutenmade(3, s_step[1], s_step[3], lineColor) > 0) {
                 addLineSegment(s_step[4]);
                 record();
                 i_drawing_stage = 0;
@@ -3759,7 +3722,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         if (p.distance(closest_point) < d_decision_width) {
             i_drawing_stage = i_drawing_stage + 1;
             s_step[i_drawing_stage].set(closest_point, closest_point);
-            s_step[i_drawing_stage].setColor(icol);
+            s_step[i_drawing_stage].setColor(lineColor);
         }
     }
 
@@ -3785,7 +3748,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             LineSegment add_sen = new LineSegment(s_step[2].getA(), t_taisyou);
 
             add_sen.set(extendToIntersectionPoint(add_sen));
-            add_sen.setColor(icol);
+            add_sen.setColor(lineColor);
             if (add_sen.getLength() > 0.00000001) {
                 addLineSegment(add_sen);
                 record();
@@ -3808,10 +3771,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         i_drawing_stage = i_drawing_stage + 1;
         if (p.distance(closest_point) < d_decision_width) {
             s_step[i_drawing_stage].set(closest_point, closest_point);
-            s_step[i_drawing_stage].setColor(icol);
+            s_step[i_drawing_stage].setColor(lineColor);
         } else {
             s_step[i_drawing_stage].set(p, p);
-            s_step[i_drawing_stage].setColor(icol);
+            s_step[i_drawing_stage].setColor(lineColor);
         }
 
         System.out.println("i_egaki_dankai=" + i_drawing_stage);
@@ -3831,7 +3794,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             for (int i = 1; i <= i_drawing_stage; i++) {
                 if (s_step[i].getLength() > 0.00000001) {
                     add_lineSegment.set(s_step[i].getA(), s_step[i].getB());//要注意　s_stepは表示上の都合でアクティヴが0以外に設定されているのでadd_senbunにうつしかえてる20170507
-                    add_lineSegment.setColor(icol);
+                    add_lineSegment.setColor(lineColor);
                     addLineSegment(add_lineSegment);
                 }
             }
@@ -4059,7 +4022,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_27(Point p0) {
-        mMoved_m_00a(p0, icol);//マウスで選択できる候補点を表示する。近くに既成の点があるときはその点、無いときはマウスの位置自身が候補点となる。
+        mMoved_m_00a(p0, lineColor);//マウスで選択できる候補点を表示する。近くに既成の点があるときはその点、無いときはマウスの位置自身が候補点となる。
     }
 
     //マウス操作(i_mouse_modeA==27線分入力　でボタンを押したとき)時の作業----------------------------------------------------
@@ -4070,11 +4033,11 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         closest_point.set(getClosestPoint(p));
         if (p.distance(closest_point) < d_decision_width) {
             s_step[1].set(p, closest_point);
-            s_step[1].setColor(icol);
+            s_step[1].setColor(lineColor);
             return;
         }
         s_step[1].set(p, p);
-        s_step[1].setColor(icol);
+        s_step[1].setColor(lineColor);
     }
 
 
@@ -4090,7 +4053,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             if (p.distance(closest_point) < d_decision_width) {
                 i_candidate_stage = 1;
                 s_kouho[1].set(closest_point, closest_point);
-                s_kouho[1].setColor(icol);
+                s_kouho[1].setColor(lineColor);
                 s_step[1].setA(s_kouho[1].getA());
             }
         }
@@ -4116,7 +4079,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 double bx = ((double) (foldLineDividingNumber - i - 1) * s_step[1].getAX() + (double) (i + 1) * s_step[1].getBX()) / ((double) foldLineDividingNumber);
                 double by = ((double) (foldLineDividingNumber - i - 1) * s_step[1].getAY() + (double) (i + 1) * s_step[1].getBY()) / ((double) foldLineDividingNumber);
                 LineSegment s_ad = new LineSegment(ax, ay, bx, by);
-                s_ad.setColor(icol);
+                s_ad.setColor(lineColor);
                 addLineSegment(s_ad);
             }
             record();
@@ -4134,7 +4097,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             if (p.distance(closest_point) < d_decision_width) {
                 i_candidate_stage = 1;
                 s_kouho[1].set(closest_point, closest_point);
-                s_kouho[1].setColor(icol);
+                s_kouho[1].setColor(lineColor);
             }
         }
     }
@@ -4187,12 +4150,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 
             s_tane.set(s_step[1]);
-            s_tane.setColor(icol);
+            s_tane.setColor(lineColor);
             addLineSegment(s_tane);
             for (int i = 2; i <= numPolygonCorners; i++) {
                 s_deki.set(OritaCalc.lineSegment_rotate(s_tane, (double) (numPolygonCorners - 2) * 180.0 / (double) numPolygonCorners));
                 s_tane.set(s_deki.getB(), s_deki.getA());
-                s_tane.setColor(icol);
+                s_tane.setColor(lineColor);
                 addLineSegment(s_tane);
 
             }
@@ -4219,7 +4182,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             i_drawing_stage = 0;
         }
         s_step[1].set(p, closest_point);
-        s_step[1].setColor(icol);
+        s_step[1].setColor(lineColor);
 
         s_step[2].set(s_step[1]);//ここではs_step[2]は表示されない、計算用の線分
     }
@@ -4232,7 +4195,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         if (i_kou_mitudo_nyuuryoku) {
             i_candidate_stage = 1;
             s_kouho[1].set(kouho_ten_A_37(syuusei_point), kouho_ten_A_37(syuusei_point));
-            s_kouho[1].setColor(icol);
+            s_kouho[1].setColor(lineColor);
             s_step[1].setA(kouho_ten_A_37(syuusei_point));
         }
 
@@ -4264,9 +4227,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         double d_rad = 0.0;
         s_step[2].setA(p);
 
-        if (id_kakudo_kei != 0) {
-            d_kakudo_kei = 180.0 / (double) id_kakudo_kei;
-            d_rad = (Math.PI / 180) * d_kakudo_kei * (int) Math.round(OritaCalc.angle(s_step[2]) / d_kakudo_kei);
+        if (id_angle_system != 0) {
+            d_angle_system = 180.0 / (double) id_angle_system;
+            d_rad = (Math.PI / 180) * d_angle_system * (int) Math.round(OritaCalc.angle(s_step[2]) / d_angle_system);
         } else {
             double[] jk = new double[7];
             jk[0] = OritaCalc.angle(s_step[2]);//マウスで入力した線分がX軸となす角度
@@ -4540,7 +4503,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 s_kouho[1].set(p, p);
             }
 
-            //s_kouho[1].setcolor(icol);
+            //s_kouho[1].setcolor(lineColor);
             s_kouho[1].setColor(LineColor.GREEN_6);
         }
     }
@@ -4565,10 +4528,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             operationFrameMode = OperationFrameMode.CREATE_1;
         }
         if (i_drawing_stage == 4) {
-            if (operationFrameBox.inside(p0) == 0) {
+            if (operationFrameBox.inside(p0) == Polygon.Intersection.OUTSIDE) {
                 operationFrameMode = OperationFrameMode.CREATE_1;
-            }
-            if (operationFrameBox.inside(p0) > 0) {
+            } else {
                 operationFrameMode = OperationFrameMode.MOVE_BOX_4;
             }
 
@@ -4923,7 +4885,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             }
 
 
-            if (i_foldLine_additional == FoldLineAdditionalInputMode.BLACK_LINE_2) {  //黒の折線のみ削除
+            if (i_foldLine_additional == FoldLineAdditionalInputMode.BLACK_LINE_2) {  //Delete only the black polygonal line
                 if (D_nisuru2(p19_1, p0) != 0) {
                     circle_organize();
                     record();
@@ -4931,7 +4893,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             }
 
 
-            if ((i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LIVE_LINE_3) || (i_foldLine_additional == FoldLineAdditionalInputMode.BOTH_4)) {  //補助活線  //現状では削除しないときもUNDO用に記録されてしまう20161218
+            if ((i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LIVE_LINE_3) || (i_foldLine_additional == FoldLineAdditionalInputMode.BOTH_4)) {  //Auxiliary live line // Currently it is recorded for undo even if it is not deleted 20161218
                 if (D_nisuru3(p19_1, p0) != 0) {
                     circle_organize();
                     record();
@@ -5371,14 +5333,14 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     public void mMoved_A_38(Point p0) {
         if (i_kou_mitudo_nyuuryoku) {
             if (i_drawing_stage == 0) {
-                i_step_for38 = 0;
+                i_step_for_move_4p = 0;
             }
 
-            if (i_step_for38 == 0) {
+            if (i_step_for_move_4p == 0) {
                 mMoved_A_29(p0);
             }
 
-            if (i_step_for38 == 1) {
+            if (i_step_for_move_4p == 1) {
                 s_kouho[1].setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
                 i_candidate_stage = 0;
                 //Ten p =new Ten();
@@ -5393,12 +5355,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 }
             }
 
-            if (i_step_for38 == 2) {
+            if (i_step_for_move_4p == 2) {
                 i_candidate_stage = 0;
                 Point p = new Point();
                 p.set(camera.TV2object(p0));
 
-                closest_lineSegment.set(get_moyori_senbun(p));
+                closest_lineSegment.set(getClosestLineSegment(p));
                 if (OritaCalc.distance_lineSegment(p, closest_lineSegment) < d_decision_width) {//最寄の既存折線が近い場合
                     i_candidate_stage = 1;
                     s_kouho[1].set(closest_lineSegment);
@@ -5417,10 +5379,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
         if (i_drawing_stage == 0) {
-            i_step_for38 = 0;
+            i_step_for_move_4p = 0;
         }
 
-        if (i_step_for38 == 0) {
+        if (i_step_for_move_4p == 0) {
             double hantei_kyori = 0.000001;
 
             Point t1 = new Point();
@@ -5445,7 +5407,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //System.out.println("20170126_4");
 
                 if (nbox.getTotal() % 2 == 1) {//t1を端点とする折線の数が奇数のときだけif{}内の処理をする
-                    icol_temp = icol;
+                    icol_temp = lineColor;
                     if (nbox.getTotal() == 1) {
                         icol_temp = ori_s.get(nbox.getInt(1)).getColor();
                     }//20180503この行追加。これは、折線が1本だけの頂点から折り畳み可能線追加機能で、その折線の延長を行った場合に、線の色を延長前の折線と合わせるため
@@ -5520,20 +5482,20 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         }
                     }
                     if (i_drawing_stage == 1) {
-                        i_step_for38 = 2;
+                        i_step_for_move_4p = 2;
                     }
                     if (i_drawing_stage > 1) {
-                        i_step_for38 = 1;
+                        i_step_for_move_4p = 1;
                     }
                 }
             }
             return 0;
         }
 
-        if (i_step_for38 == 1) {
+        if (i_step_for_move_4p == 1) {
             closest_lineSegment.set(get_moyori_step_senbun(p, 1, i_drawing_stage));
             if (OritaCalc.distance_lineSegment(p, closest_lineSegment) < d_decision_width) {
-                i_step_for38 = 2;
+                i_step_for_move_4p = 2;
                 i_drawing_stage = 1;
                 s_step[1].set(closest_lineSegment);
 
@@ -5548,8 +5510,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             }
         }
 
-        if (i_step_for38 == 2) {
-            closest_lineSegment.set(get_moyori_senbun(p));
+        if (i_step_for_move_4p == 2) {
+            closest_lineSegment.set(getClosestLineSegment(p));
             //Senbun moyori_step_senbun =new Senbun(get_moyori_step_senbun(p,1,i_egaki_dankai));
             LineSegment moyori_step_lineSegment = new LineSegment();
             moyori_step_lineSegment.set(get_moyori_step_senbun(p, 1, i_drawing_stage));
@@ -5633,7 +5595,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     //マウス操作(マウスを動かしたとき)を行う関数    //System.out.println("_");
     public void mMoved_A_39(Point p0) {
         if (i_drawing_stage == 0) {
-            i_step_for39 = 0;
+            i_step_for_copy_4p = 0;
         }
         if (i_kou_mitudo_nyuuryoku) {
             i_candidate_stage = 0;
@@ -5641,11 +5603,11 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             p.set(camera.TV2object(p0));
 
             if (i_drawing_stage == 0) {
-                i_step_for39 = 0;
+                i_step_for_copy_4p = 0;
             }
-            System.out.println("i_egaki_dankai= " + i_drawing_stage + "  ;   i_step_for39= " + i_step_for39);
+            System.out.println("i_egaki_dankai= " + i_drawing_stage + "  ;   i_step_for_copy_4p= " + i_step_for_copy_4p);
 
-            if (i_step_for39 == 0) {
+            if (i_step_for_copy_4p == 0) {
                 mMoved_A_29(p0);
 			/*	double hantei_kyori=0.000001;
 				//任意の点が与えられたとき、端点もしくは格子点で最も近い点を得る
@@ -5653,13 +5615,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 				if(p.kyori(moyori_ten)<d_decision_width){
 					i_candidate_stage=1;
 					s_kouho[1].set(moyori_ten,moyori_ten);
-				 	s_kouho[1].setcolor(icol);
+				 	s_kouho[1].setcolor(lineColor);
 				}
 				return;
 			*/
             }
 
-            if (i_step_for39 == 1) {
+            if (i_step_for_copy_4p == 1) {
                 closest_lineSegment.set(get_moyori_step_senbun(p, 1, i_drawing_stage));
                 if ((i_drawing_stage >= 2) && (OritaCalc.distance_lineSegment(p, closest_lineSegment) < d_decision_width)) {
                     //System.out.println("20170129_5");
@@ -5672,7 +5634,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 if (p.distance(closest_point) < d_decision_width) {
                     //s_kouho[1].setb(moyori_ten);s_kouho[1].setcolor(2);
                     s_kouho[1].set(closest_point, closest_point);
-                    s_kouho[1].setColor(icol);
+                    s_kouho[1].setColor(lineColor);
                     i_candidate_stage = 1;
                     return;
                 }
@@ -5680,13 +5642,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             }
 
 
-            if (i_step_for39 == 2) {//i_step_for39==2であれば、以下でs_step[1]を入力折線を確定する
+            if (i_step_for_copy_4p == 2) {//i_step_for_copy_4p==2であれば、以下でs_step[1]を入力折線を確定する
                 closest_point.set(getClosestPoint(p));
 
                 if (closest_point.distance(s_step[1].getA()) < 0.00000001) {
                     i_candidate_stage = 1;
                     s_kouho[1].set(closest_point, closest_point);
-                    s_kouho[1].setColor(icol);
+                    s_kouho[1].setColor(lineColor);
                     System.out.println("i_step_for39_2_   1");
 
                     return;
@@ -5698,7 +5660,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 if ((p.distance(s_step[1].getB()) < d_decision_width) && (p.distance(s_step[1].getB()) <= p.distance(closest_point))) {
                     i_candidate_stage = 1;
                     s_kouho[1].set(s_step[1].getB(), s_step[1].getB());
-                    s_kouho[1].setColor(icol);
+                    s_kouho[1].setColor(lineColor);
                     System.out.println("i_step_for39_2_   2");
 
                     return;
@@ -5708,13 +5670,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 if (p.distance(closest_point) < d_decision_width) {
                     i_candidate_stage = 1;
                     s_kouho[1].set(closest_point, closest_point);
-                    s_kouho[1].setColor(icol);
+                    s_kouho[1].setColor(lineColor);
                     System.out.println("i_step_for39_2_   3");
 
                     return;
                 }
 
-                closest_lineSegment.set(get_moyori_senbun(p));
+                closest_lineSegment.set(getClosestLineSegment(p));
                 LineSegment moyori_step_lineSegment = new LineSegment();
                 moyori_step_lineSegment.set(get_moyori_step_senbun(p, 1, i_drawing_stage));
                 if (OritaCalc.distance_lineSegment(p, closest_lineSegment) >= d_decision_width) {//最寄の既存折線が遠い場合
@@ -5730,7 +5692,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 if (OritaCalc.distance_lineSegment(p, closest_lineSegment) < d_decision_width) {//最寄の既存折線が近い場合
                     i_candidate_stage = 1;
                     s_kouho[1].set(closest_lineSegment);
-                    s_kouho[1].setColor(icol);
+                    s_kouho[1].setColor(lineColor);
 
                     System.out.println("i_step_for39_2_   5");
                     return;
@@ -5748,13 +5710,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         p.set(camera.TV2object(p0));
 
         if (i_drawing_stage == 0) {
-            i_step_for39 = 0;
+            i_step_for_copy_4p = 0;
         }
 
 
-        //if(i_egaki_dankai==0){i_step_for39=0;}
+        //if(i_egaki_dankai==0){i_step_for_copy_4p=0;}
 
-        if (i_step_for39 == 0) {
+        if (i_step_for_copy_4p == 0) {
             double decision_distance = 0.000001;
 
             //任意の点が与えられたとき、端点もしくは格子点で最も近い点を得る
@@ -5844,20 +5806,20 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         }
 
                     }
-                    //if(i_kouho_suu==1){i_step_for39=2;}
-                    //if(i_kouho_suu>1){i_step_for39=1;}
+                    //if(i_kouho_suu==1){i_step_for_copy_4p=2;}
+                    //if(i_kouho_suu>1){i_step_for_copy_4p=1;}
 
                     if (i_drawing_stage == 1) {
-                        i_step_for39 = 2;
+                        i_step_for_copy_4p = 2;
                     }
                     if (i_drawing_stage > 1) {
-                        i_step_for39 = 1;
+                        i_step_for_copy_4p = 1;
                     }
                 }
 
                 if (i_drawing_stage == 0) {//折畳み可能化線がない場合//System.out.println("_");
                     i_drawing_stage = 1;
-                    i_step_for39 = 1;
+                    i_step_for_copy_4p = 1;
                     s_step[1].set(closest_point, closest_point);
                     s_step[1].setColor(LineColor.PURPLE_8);
                     s_step[1].setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
@@ -5868,12 +5830,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
 
-        if (i_step_for39 == 1) {
+        if (i_step_for_copy_4p == 1) {
             closest_lineSegment.set(get_moyori_step_senbun(p, 1, i_drawing_stage));
             if ((i_drawing_stage >= 2) && (OritaCalc.distance_lineSegment(p, closest_lineSegment) < d_decision_width)) {
                 //if(oc.kyori_senbun( p,moyori_senbun)<d_decision_width){
                 //System.out.println("20170129_5");
-                i_step_for39 = 2;
+                i_step_for_copy_4p = 2;
                 i_drawing_stage = 1;
                 s_step[1].set(closest_lineSegment);
                 return;
@@ -5883,7 +5845,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             closest_point.set(getClosestPoint(p));
             if (p.distance(closest_point) < d_decision_width) {
                 s_step[1].setB(closest_point);
-                i_step_for39 = 2;
+                i_step_for_copy_4p = 2;
                 i_drawing_stage = 1;
                 return;
             }
@@ -5896,7 +5858,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
 
 
-        if (i_step_for39 == 2) {//i_step_for39==2であれば、以下でs_step[1]を入力折線を確定する
+        if (i_step_for_copy_4p == 2) {//i_step_for_copy_4p==2であれば、以下でs_step[1]を入力折線を確定する
             closest_point.set(getClosestPoint(p));
 
             //System.out.println("20170130_1");
@@ -5914,7 +5876,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                             p.distance(s_step[1].getB()) <= p.distance(closest_point)
                             //moyori_ten.kyori(s_step[1].getb())<0.00000001
                     )) {
-                LineSegment add_sen = new LineSegment(s_step[1].getA(), s_step[1].getB(), icol);
+                LineSegment add_sen = new LineSegment(s_step[1].getA(), s_step[1].getB(), lineColor);
                 addLineSegment(add_sen);
                 record();
                 i_drawing_stage = 0;
@@ -5925,7 +5887,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             //}
 
 
-            //if(i_step_for39==2){
+            //if(i_step_for_copy_4p==2){
 
             //moyori_ten.set(get_moyori_ten(p));
             if (p.distance(closest_point) < d_decision_width) {
@@ -5934,7 +5896,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             }
 
 
-            closest_lineSegment.set(get_moyori_senbun(p));
+            closest_lineSegment.set(getClosestLineSegment(p));
 
             LineSegment moyori_step_lineSegment = new LineSegment();
             moyori_step_lineSegment.set(get_moyori_step_senbun(p, 1, i_drawing_stage));
@@ -5968,7 +5930,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //System.out.println("20170129_3");
                 Point kousa_point = new Point();
                 kousa_point.set(OritaCalc.findIntersection(s_step[1], s_step[2]));
-                LineSegment add_sen = new LineSegment(kousa_point, s_step[1].getA(), icol);
+                LineSegment add_sen = new LineSegment(kousa_point, s_step[1].getA(), lineColor);
                 if (add_sen.getLength() > 0.00000001) {//最寄の既存折線が有効の場合
                     addLineSegment(add_sen);
                     record();
@@ -6026,10 +5988,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             i_drawing_stage = 0;
         }
         s_step[1].set(p, closest_point);
-        s_step[1].setColor(icol);
+        s_step[1].setColor(lineColor);
         //k.addsenbun(p,p);
         //ieda=k.getsousuu();
-        //k.setcolor(ieda,icol);
+        //k.setcolor(ieda,lineColor);
     }
 
     //マウス操作(i_mouse_modeA==33魚の骨　でドラッグしたとき)を行う関数----------------------------------------------------
@@ -6057,7 +6019,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 if (s_step[1].getLength() > 0.00000001) {  //s_step[1]が、線の時（=点状ではない時）に実施
                     double dx = (s_step[1].getAX() - s_step[1].getBX()) * grid.d_width() / s_step[1].getLength();
                     double dy = (s_step[1].getAY() - s_step[1].getBY()) * grid.d_width() / s_step[1].getLength();
-                    LineColor icol_temp = icol;
+                    LineColor icol_temp = lineColor;
                     //int imax=;
 
                     Point pxy = new Point();
@@ -6135,10 +6097,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             i_drawing_stage = 0;
         }
         s_step[1].set(p, closest_point);
-        s_step[1].setColor(icol);
+        s_step[1].setColor(lineColor);
         //k.addsenbun(p,p);
         //ieda=k.getsousuu();
-        //k.setcolor(ieda,icol);
+        //k.setcolor(ieda,lineColor);
     }
 
     public void mDragged_A_35(Point p0) {
@@ -6430,7 +6392,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
             ori_s_temp.setMemo(ori_s.getMemoSelectOption(2));//セレクトされた折線だけ取り出してori_s_tempを作る
-            ori_s.del_selected_lineSegment_fast();//セレクトされた折線を削除する。
+            ori_s.delSelectedLineSegmentFast();//セレクトされた折線を削除する。
             ori_s_temp.move(addx, addy);//全体を移動する
 
             int sousuu_old = ori_s.getTotal();
@@ -6651,7 +6613,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
             ori_s_temp.setMemo(ori_s.getMemoSelectOption(2));//セレクトされた折線だけ取り出してori_s_tempを作る
-            ori_s.del_selected_lineSegment_fast();//セレクトされた折線を削除する。
+            ori_s.delSelectedLineSegmentFast();//セレクトされた折線を削除する。
             ori_s_temp.move(s_step[1].getA(), s_step[2].getA(), s_step[3].getA(), s_step[4].getA());//全体を移動する
 
             int sousuu_old = ori_s.getTotal();
@@ -6832,10 +6794,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 		moyori_ten.set(get_moyori_ten(p));
 		if(p.kyori(moyori_ten)>d_decision_width){i_egaki_dankai=0;}
-		s_step[1].set(p,moyori_ten);s_step[1].setcolor(icol);
+		s_step[1].set(p,moyori_ten);s_step[1].setcolor(lineColor);
 		//k.addsenbun(p,p);
 		//ieda=k.getsousuu();
-		//k.setcolor(ieda,icol);
+		//k.setcolor(ieda,lineColor);
 */
     }
 
@@ -6856,7 +6818,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
     //addsenbun(adds);
     //ieda=ori_s.getsousuu();
-    //ori_s.setcolor(ieda,icol); qqqqqqqqq
+    //ori_s.setcolor(ieda,lineColor); qqqqqqqqq
     //ori_s.kousabunkatu_symple();
     //ori_s.kousabunkatu();ori_s.kousabunkatu_symple();
 
@@ -6918,7 +6880,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     //-------------------------
     public void del_selected_senbun() {
         //ori_s.del_selected_senbun();
-        ori_s.del_selected_lineSegment_fast();
+        ori_s.delSelectedLineSegmentFast();
         //Memo memo_temp = new Memo();memo_temp.set(ori_s.getMemo_select_jyogai(2));
         //ori_s.reset();
         //ori_s.setMemo(memo_temp);
@@ -6940,10 +6902,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             i_drawing_stage = 0;
         }
         s_step[1].set(p, closest_point);
-        s_step[1].setColor(icol);
+        s_step[1].setColor(lineColor);
         //k.addsenbun(p,p);
         //ieda=k.getsousuu();
-        //k.setcolor(ieda,icol);
+        //k.setcolor(ieda,lineColor);
     }
 /*
 	public void mDragged_A_34(Ten p0) {
@@ -7009,7 +6971,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                     //System.out.println("i_d_sousuu"+nbox.getsousuu());
 
-                    LineColor icol_temp = icol;
+                    LineColor icol_temp = lineColor;
 
                     for (int i = 1; i <= nbox.getTotal(); i++) {
 
@@ -7192,7 +7154,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 s_kouho[1].set(p, p);
             }
 
-            //s_kouho[i_egaki_dankai].setcolor(icol);
+            //s_kouho[i_egaki_dankai].setcolor(lineColor);
             s_step[i_drawing_stage].setB(s_kouho[1].getA());
         }
 
@@ -7379,10 +7341,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             closest_point.set(p);
         }
         s_step[1].set(p, closest_point);
-        s_step[1].setColor(icol);
+        s_step[1].setColor(lineColor);
         //k.addsenbun(p,p);
         //ieda=k.getsousuu();
-        //k.setcolor(ieda,icol);
+        //k.setcolor(ieda,lineColor);
     }
 
     //マウス操作(i_mouse_modeA==36　でドラッグしたとき)を行う関数----------------------------------------------------
@@ -7456,7 +7418,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                 System.out.println("i_d_sousuu" + nbox.getTotal());
 
-                LineColor icol_temp = icol;
+                LineColor icol_temp = lineColor;
 
                 for (int i = 1; i <= nbox.getTotal(); i++) {
 
@@ -7496,9 +7458,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 			if(p.kyori(moyori_ten)<d_decision_width){  s_kouho[1].set(moyori_ten,moyori_ten);}
 			else{					s_kouho[1].set(p,p);}
 
-			//s_kouho[1].setcolor(icol);
-			if(i_foldLine_additional==0){s_kouho[1].setcolor(icol);}
-			if(i_foldLine_additional==1){s_kouho[1].setcolor(h_icol);}
+			//s_kouho[1].setcolor(lineColor);
+			if(i_foldLine_additional==0){s_kouho[1].setcolor(lineColor);}
+			if(i_foldLine_additional==1){s_kouho[1].setcolor(auxLineColor);}
 
 			return;
 		}
@@ -7506,11 +7468,11 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     }
 
 
-//icol=3 cyan
-//icol=4 orange
-//icol=5 mazenta
-//icol=6 green
-//icol=7 yellow
+//lineColor=3 cyan
+//lineColor=4 orange
+//lineColor=5 mazenta
+//lineColor=6 green
+//lineColor=7 yellow
 
     //マウス操作(i_mouse_modeA==63　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_63(Point p0) {
@@ -7526,7 +7488,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             s_step[i_drawing_stage].setColor(LineColor.YELLOW_7);
             //k.addsenbun(p,p);
             //ieda=k.getsousuu();
-            //k.setcolor(ieda,icol);
+            //k.setcolor(ieda,lineColor);
         } else {
             if (!i_O_F_C) {
                 i_drawing_stage = i_drawing_stage + 1;
@@ -7536,7 +7498,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 //   s_step[i_egaki_dankai-1].getb();
                 //k.addsenbun(p,p);
                 //ieda=k.getsousuu();
-                //k.setcolor(ieda,icol);
+                //k.setcolor(ieda,lineColor);
             }
         }
 
@@ -7710,7 +7672,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
 					System.out.println("i_d_sousuu"+nbox.getsousuu());
 
-					int icol_temp=icol;
+					int icol_temp=lineColor;
 
 					for (int i=1; i<=nbox.getsousuu(); i++ ){
 
@@ -7741,9 +7703,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     public void mPressed_A_13(Point p0) {
 
         int honsuu = 0;//1つの端点周りに描く線の本数
-        if (id_kakudo_kei != 0) {
-            honsuu = id_kakudo_kei * 2 - 1;
-        } else if (id_kakudo_kei == 0) {
+        if (id_angle_system != 0) {
+            honsuu = id_angle_system * 2 - 1;
+        } else if (id_angle_system == 0) {
             honsuu = 6;
         }
 
@@ -7753,7 +7715,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         p.set(camera.TV2object(p0));
 
         if (i_drawing_stage == 0) {    //第１段階として、線分を選択
-            closest_lineSegment.set(get_moyori_senbun(p));
+            closest_lineSegment.set(getClosestLineSegment(p));
             if (OritaCalc.distance_lineSegment(p, closest_lineSegment) < d_decision_width) {
                 i_drawing_stage = 1;
                 s_step[1].set(closest_lineSegment);
@@ -7763,17 +7725,17 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         if (i_drawing_stage == i_jyunnbi_step_suu) {    //if(i_egaki_dankai==1){        //動作の準備として人間が選択するステップ数が終わった状態で実行
             int i_jyun;//i_jyunは線を描くとき順番に色を変えたいとき使う
-            //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d) //    double d_kakudo_kei;double kakudo;
+            //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d) //    double d_angle_system;double angle;
 
-            if (id_kakudo_kei != 0) {
-                d_kakudo_kei = 180.0 / (double) id_kakudo_kei;
-            } else if (id_kakudo_kei == 0) {
-                d_kakudo_kei = 180.0 / 4.0;
+            if (id_angle_system != 0) {
+                d_angle_system = 180.0 / (double) id_angle_system;
+            } else if (id_angle_system == 0) {
+                d_angle_system = 180.0 / 4.0;
             }
 
-            if (id_kakudo_kei != 0) {
+            if (id_angle_system != 0) {
                 LineSegment s_kiso = new LineSegment(s_step[1].getA(), s_step[1].getB());
-                kakudo = 0.0;
+                angle = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= honsuu; i++) {
                     i_jyun = i_jyun + 1;
@@ -7781,8 +7743,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         i_jyun = 0;
                     }
                     i_drawing_stage = i_drawing_stage + 1;
-                    kakudo = kakudo + d_kakudo_kei;
-                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, kakudo, 10.0));
+                    angle = angle + d_angle_system;
+                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
                     if (i_jyun == 0) {
                         s_step[i_drawing_stage].setColor(LineColor.GREEN_6);
                     }
@@ -7792,7 +7754,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 }
 
                 s_kiso.set(s_step[1].getB(), s_step[1].getA());
-                kakudo = 0.0;
+                angle = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= honsuu; i++) {
                     i_jyun = i_jyun + 1;
@@ -7800,8 +7762,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         i_jyun = 0;
                     }
                     i_drawing_stage = i_drawing_stage + 1;
-                    kakudo = kakudo + d_kakudo_kei;
-                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, kakudo, 10.0));
+                    angle = angle + d_angle_system;
+                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
                     if (i_jyun == 0) {
                         s_step[i_drawing_stage].setColor(LineColor.GREEN_6);
                     }
@@ -7810,7 +7772,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     }
                 }
             }
-            if (id_kakudo_kei == 0) {
+            if (id_angle_system == 0) {
                 double[] jk = new double[7];
                 jk[0] = 0.0;
                 jk[1] = d_jiyuu_kaku_2;
@@ -7821,7 +7783,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 jk[6] = 360.0 - d_jiyuu_kaku_3;
 
                 LineSegment s_kiso = new LineSegment(s_step[1].getA(), s_step[1].getB());
-                kakudo = 0.0;
+                angle = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= 6; i++) {
                     i_jyun = i_jyun + 1;
@@ -7829,8 +7791,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         i_jyun = 0;
                     }
                     i_drawing_stage = i_drawing_stage + 1;
-                    kakudo = jk[i];
-                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, kakudo, 10.0));
+                    angle = jk[i];
+                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
                     if (i == 1) {
                         s_step[i_drawing_stage].setColor(LineColor.GREEN_6);
                     }
@@ -7852,7 +7814,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 }
 
                 s_kiso.set(s_step[1].getB(), s_step[1].getA());
-                kakudo = 0.0;
+                angle = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= 6; i++) {
                     i_jyun = i_jyun + 1;
@@ -7860,8 +7822,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         i_jyun = 0;
                     }
                     i_drawing_stage = i_drawing_stage + 1;
-                    kakudo = jk[i];
-                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, kakudo, 10.0));
+                    angle = jk[i];
+                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
                     if (i == 1) {
                         s_step[i_drawing_stage].setColor(LineColor.GREEN_6);
                     }
@@ -7905,7 +7867,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             if (OritaCalc.distance_lineSegment(p, closest_lineSegment) < d_decision_width) {
                 i_drawing_stage = i_drawing_stage + 1;
                 i_tikai_s_step_suu = i_tikai_s_step_suu + 1;
-                s_step[i_drawing_stage].set(closest_lineSegment);    //s_step[i_egaki_dankai].setcolor(icol);
+                s_step[i_drawing_stage].set(closest_lineSegment);    //s_step[i_egaki_dankai].setcolor(lineColor);
             }
 
             if (i_tikai_s_step_suu == 2) { //この段階でs_stepが[21]までうまってたら、s_step[20]とs_step[21]は共に加える折線なので、ここで処理を終えてしまう。
@@ -7935,13 +7897,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 kousa_point.set(OritaCalc.findIntersection(s_step[1 + (honsuu) + (honsuu) + 1], s_step[1 + (honsuu) + (honsuu) + 1 + 1]));
 
                 LineSegment add_sen = new LineSegment(kousa_point, s_step[1 + (honsuu) + (honsuu) + 1].getA());
-                add_sen.setColor(icol);
+                add_sen.setColor(lineColor);
                 if (add_sen.getLength() > 0.00000001) {
                     addLineSegment(add_sen);
                 }
 
                 LineSegment add_sen2 = new LineSegment(kousa_point, s_step[1 + (honsuu) + (honsuu) + 1 + 1].getA());
-                add_sen2.setColor(icol);
+                add_sen2.setColor(lineColor);
                 if (add_sen.getLength() > 0.00000001) {
                     addLineSegment(add_sen2);
                 }
@@ -7979,9 +7941,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     public void mPressed_A_17(Point p0) {
 
         int honsuu = 0;//1つの端点周りに描く線の本数
-        if (id_kakudo_kei != 0) {
-            honsuu = id_kakudo_kei * 2 - 1;
-        } else if (id_kakudo_kei == 0) {
+        if (id_angle_system != 0) {
+            honsuu = id_angle_system * 2 - 1;
+        } else if (id_angle_system == 0) {
             honsuu = 6;
         }
 
@@ -8024,18 +7986,18 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         if (i_drawing_stage == i_jyunnbi_step_suu) {    //if(i_egaki_dankai==1){        //動作の準備として人間が選択するステップ数が終わった状態で実行
             int i_jyun;//i_jyunは線を描くとき順番に色を変えたいとき使う
-            //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d) //    double d_kakudo_kei;double kakudo;
+            //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d) //    double d_angle_system;double angle;
 
-            if (id_kakudo_kei != 0) {
-                d_kakudo_kei = 180.0 / (double) id_kakudo_kei;
-            } else if (id_kakudo_kei == 0) {
-                d_kakudo_kei = 180.0 / 4.0;
+            if (id_angle_system != 0) {
+                d_angle_system = 180.0 / (double) id_angle_system;
+            } else if (id_angle_system == 0) {
+                d_angle_system = 180.0 / 4.0;
             }
 
-            if (id_kakudo_kei != 0) {
+            if (id_angle_system != 0) {
 
                 LineSegment s_kiso = new LineSegment(s_step[1].getA(), s_step[1].getB());
-                kakudo = 0.0;
+                angle = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= honsuu; i++) {
                     i_jyun = i_jyun + 1;
@@ -8043,8 +8005,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         i_jyun = 0;
                     }
                     i_drawing_stage = i_drawing_stage + 1;
-                    kakudo = kakudo + d_kakudo_kei;
-                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, kakudo, 10.0));
+                    angle = angle + d_angle_system;
+                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
                     if (i_jyun == 0) {
                         s_step[i_drawing_stage].setColor(LineColor.GREEN_6);
                     }
@@ -8054,7 +8016,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 }
 
                 s_kiso.set(s_step[1].getB(), s_step[1].getA());
-                kakudo = 0.0;
+                angle = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= honsuu; i++) {
                     i_jyun = i_jyun + 1;
@@ -8062,8 +8024,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         i_jyun = 0;
                     }
                     i_drawing_stage = i_drawing_stage + 1;
-                    kakudo = kakudo + d_kakudo_kei;
-                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, kakudo, 10.0));
+                    angle = angle + d_angle_system;
+                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
                     if (i_jyun == 0) {
                         s_step[i_drawing_stage].setColor(LineColor.GREEN_6);
                     }
@@ -8072,7 +8034,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     }
                 }
             }
-            if (id_kakudo_kei == 0) {
+            if (id_angle_system == 0) {
                 double[] jk = new double[7];
                 jk[0] = 0.0;
                 jk[1] = d_jiyuu_kaku_2;
@@ -8083,7 +8045,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 jk[6] = 360.0 - d_jiyuu_kaku_3;
 
                 LineSegment s_kiso = new LineSegment(s_step[1].getA(), s_step[1].getB());
-                kakudo = 0.0;
+                angle = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= 6; i++) {
                     i_jyun = i_jyun + 1;
@@ -8091,8 +8053,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         i_jyun = 0;
                     }
                     i_drawing_stage = i_drawing_stage + 1;
-                    kakudo = jk[i];
-                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, kakudo, 10.0));
+                    angle = jk[i];
+                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
                     if (i == 1) {
                         s_step[i_drawing_stage].setColor(LineColor.GREEN_6);
                     }
@@ -8114,7 +8076,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 }
 
                 s_kiso.set(s_step[1].getB(), s_step[1].getA());
-                kakudo = 0.0;
+                angle = 0.0;
                 i_jyun = 0;
                 for (int i = 1; i <= 6; i++) {
                     i_jyun = i_jyun + 1;
@@ -8122,8 +8084,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         i_jyun = 0;
                     }
                     i_drawing_stage = i_drawing_stage + 1;
-                    kakudo = jk[i];
-                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, kakudo, 10.0));
+                    angle = jk[i];
+                    s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
                     if (i == 1) {
                         s_step[i_drawing_stage].setColor(LineColor.GREEN_6);
                     }
@@ -8167,7 +8129,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             if (OritaCalc.distance_lineSegment(p, closest_lineSegment) < d_decision_width) {
                 i_drawing_stage = i_drawing_stage + 1;
                 i_tikai_s_step_suu = i_tikai_s_step_suu + 1;
-                s_step[i_drawing_stage].set(closest_lineSegment);    //s_step[i_egaki_dankai].setcolor(icol);
+                s_step[i_drawing_stage].set(closest_lineSegment);    //s_step[i_egaki_dankai].setcolor(lineColor);
             }
 
             if (i_tikai_s_step_suu == 2) { //この段階でs_stepが[21]までうまってたら、s_step[20]とs_step[21]は共に加える折線なので、ここで処理を終えてしまう。
@@ -8201,13 +8163,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 kousa_point.set(OritaCalc.findIntersection(s_step[2 + (honsuu) + (honsuu) + 1], s_step[2 + (honsuu) + (honsuu) + 1 + 1]));
 
                 LineSegment add_sen = new LineSegment(kousa_point, s_step[2 + (honsuu) + (honsuu) + 1].getA());
-                add_sen.setColor(icol);
+                add_sen.setColor(lineColor);
                 if (add_sen.getLength() > 0.00000001) {
                     addLineSegment(add_sen);
                 }
 
                 LineSegment add_sen2 = new LineSegment(kousa_point, s_step[2 + (honsuu) + (honsuu) + 2].getA());
-                add_sen2.setColor(icol);
+                add_sen2.setColor(lineColor);
                 if (add_sen.getLength() > 0.00000001) {
                     addLineSegment(add_sen2);
                 }
@@ -8247,9 +8209,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     public void mPressed_A_16(Point p0) {
 
         int honsuu = 0;//1つの端点周りに描く線の本数
-        if (id_kakudo_kei != 0) {
-            honsuu = id_kakudo_kei * 2 - 1;
-        } else if (id_kakudo_kei == 0) {
+        if (id_angle_system != 0) {
+            honsuu = id_angle_system * 2 - 1;
+        } else if (id_angle_system == 0) {
             honsuu = 6;
         }
 
@@ -8276,13 +8238,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d)
 
 
-            if (id_kakudo_kei != 0) {
-                d_kakudo_kei = 180.0 / (double) id_kakudo_kei;
-            } else if (id_kakudo_kei == 0) {
-                d_kakudo_kei = 180.0 / 4.0;
+            if (id_angle_system != 0) {
+                d_angle_system = 180.0 / (double) id_angle_system;
+            } else if (id_angle_system == 0) {
+                d_angle_system = 180.0 / 4.0;
             }
 
-            if (id_kakudo_kei != 0) {
+            if (id_angle_system != 0) {
 
 
                 LineSegment s_kiso = new LineSegment(s_step[2].getA(), s_step[1].getA());
@@ -8297,7 +8259,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     }
 
                     i_drawing_stage = i_drawing_stage + 1;
-                    kakudo = kakudo + d_kakudo_kei;
+                    kakudo = kakudo + d_angle_system;
                     s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, kakudo, 1.0));
                     if (i_jyun == 0) {
                         s_step[i_drawing_stage].setColor(LineColor.GREEN_6);
@@ -8309,7 +8271,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             }
 
-            if (id_kakudo_kei == 0) {
+            if (id_angle_system == 0) {
                 double[] jk = new double[7];
                 jk[0] = 0.0;
                 jk[1] = d_jiyuu_kaku_2;
@@ -8374,7 +8336,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
         if (i_drawing_stage == 2 + (honsuu) + 1) {
 
-            closest_lineSegment.set(get_moyori_senbun(p));
+            closest_lineSegment.set(getClosestLineSegment(p));
             if (OritaCalc.distance_lineSegment(p, closest_lineSegment) >= d_decision_width) {//最寄折線が遠かった場合
                 i_drawing_stage = 0;
                 return;
@@ -8396,7 +8358,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 //			Ten kousa_ten =new Ten(); kousa_ten.set(oc.kouten_motome(s_step[12],s_step[13]));
             Point kousa_point = new Point();
             kousa_point.set(OritaCalc.findIntersection(s_step[2 + (honsuu) + 1], s_step[2 + (honsuu) + 1 + 1]));
-            LineSegment add_sen = new LineSegment(kousa_point, s_step[2].getA(), icol);
+            LineSegment add_sen = new LineSegment(kousa_point, s_step[2].getA(), lineColor);
             if (add_sen.getLength() > 0.00000001) {
                 addLineSegment(add_sen);
                 record();
@@ -8431,9 +8393,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     public void mPressed_A_18(Point p0) {
 
         int honsuu = 0;//1つの端点周りに描く線の本数
-        if (id_kakudo_kei != 0) {
-            honsuu = id_kakudo_kei * 2 - 1;
-        } else if (id_kakudo_kei == 0) {
+        if (id_angle_system != 0) {
+            honsuu = id_angle_system * 2 - 1;
+        } else if (id_angle_system == 0) {
             honsuu = 6;
         }
 
@@ -8459,14 +8421,14 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         if (i_drawing_stage == 2) {
             //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d)
 
-            if (id_kakudo_kei != 0) {
-                d_kakudo_kei = 180.0 / (double) id_kakudo_kei;
-            } else if (id_kakudo_kei == 0) {
-                d_kakudo_kei = 180.0 / 4.0;
+            if (id_angle_system != 0) {
+                d_angle_system = 180.0 / (double) id_angle_system;
+            } else if (id_angle_system == 0) {
+                d_angle_system = 180.0 / 4.0;
             }
 
 
-            if (id_kakudo_kei != 0) {
+            if (id_angle_system != 0) {
                 LineSegment s_kiso = new LineSegment(s_step[2].getA(), s_step[1].getA());
                 kakudo = 0.0;
 
@@ -8478,7 +8440,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                         i_jyun = 0;
                     }
                     i_drawing_stage = i_drawing_stage + 1;
-                    kakudo = kakudo + d_kakudo_kei;
+                    kakudo = kakudo + d_angle_system;
                     s_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, kakudo, 100.0));
                     if (i_jyun == 0) {
                         s_step[i_drawing_stage].setColor(LineColor.GREEN_6);
@@ -8490,7 +8452,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             }
 
 
-            if (id_kakudo_kei == 0) {
+            if (id_angle_system == 0) {
                 double[] jk = new double[7];
                 jk[0] = 0.0;
                 jk[1] = d_jiyuu_kaku_2;
@@ -8548,7 +8510,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 Point mokuhyou_point = new Point();
                 mokuhyou_point.set(OritaCalc.findProjection(closest_step_lineSegment, p));
 
-                closest_lineSegment.set(get_moyori_senbun(p));
+                closest_lineSegment.set(getClosestLineSegment(p));
                 if (OritaCalc.distance_lineSegment(p, closest_lineSegment) < d_decision_width) {//最寄折線が近い場合
                     if (OritaCalc.parallel_judgement(closest_step_lineSegment, closest_lineSegment, 0.000001) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//最寄折線が最寄step折線と平行の場合は除外
                         Point mokuhyou_point2 = new Point();
@@ -8563,7 +8525,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
                 LineSegment add_sen = new LineSegment();
                 add_sen.set(mokuhyou_point, s_step[2].getA());
-                add_sen.setColor(icol);
+                add_sen.setColor(lineColor);
                 addLineSegment(add_sen);
                 record();
             }
@@ -8691,7 +8653,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             if (s_step[i].getLength() > 0.00000001) {
                 add_sen.set(s_step[i]);
-                add_sen.setColor(icol);
+                add_sen.setColor(lineColor);
                 addLineSegment(add_sen);
             } else {
 
@@ -9084,7 +9046,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 //s_step[1].set(new Ten(200.0,200.0),new Ten(300.0,300.0));
         //k.addsenbun(p,p);
         //ieda=k.getsousuu();
-        //k.setcolor(ieda,icol);
+        //k.setcolor(ieda,lineColor);
     }
 
     //マウス操作(i_mouse_modeA==42 円入力　でドラッグしたとき)を行う関数----------------------------------------------------
@@ -9427,7 +9389,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         closest_point.set(getClosestPoint(p));
 
         if ((i_drawing_stage == 0) && (i_circle_drawing_stage == 0)) {
-            closest_lineSegment.set(get_moyori_senbun(p));
+            closest_lineSegment.set(getClosestLineSegment(p));
             if (OritaCalc.distance_lineSegment(p, closest_lineSegment) < d_decision_width) {
                 i_drawing_stage = 1;
                 i_circle_drawing_stage = 0;
@@ -9512,7 +9474,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             i_drawing_stage = 0;
             i_circle_drawing_stage = 0;
 
-            s_step[3].setColor(icol);
+            s_step[3].setColor(lineColor);
             addLineSegment(s_step[3]);
             record();
 
@@ -9737,7 +9699,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             i_drawing_stage = 0;
             i_circle_drawing_stage = 0;
 
-            s_step[1].setColor(icol);
+            s_step[1].setColor(lineColor);
             addLineSegment(s_step[1]);
             record();
 
@@ -9830,7 +9792,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         closest_circumference.set(get_moyori_ensyuu(p));
 
         if (i_drawing_stage + i_circle_drawing_stage == 0) {
-            closest_lineSegment.set(get_moyori_senbun(p));
+            closest_lineSegment.set(getClosestLineSegment(p));
 
 
             if (OritaCalc.distance_lineSegment(p, closest_lineSegment) < OritaCalc.distance_circumference(p, closest_circumference)) {//線分の方が円周より近い
@@ -10093,7 +10055,7 @@ s_step[i_egaki_dankai].setcolor(6);
     public void mPressed_A_10002(Point p0) {
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
-        closest_lineSegment.set(get_moyori_senbun(p));
+        closest_lineSegment.set(getClosestLineSegment(p));
         if (OritaCalc.distance_lineSegment(p, closest_lineSegment) < d_decision_width) {
             i_drawing_stage = i_drawing_stage + 1;
             s_step[i_drawing_stage].set(closest_lineSegment);//s_step[i_egaki_dankai].setcolor(i_egaki_dankai);
@@ -10178,7 +10140,7 @@ s_step[i_egaki_dankai].setcolor(6);
 // ------------
 
     public void fix1(double r_hitosii, double heikou_hantei) {
-        while (ori_s.fix1(r_hitosii, heikou_hantei) == 1) {
+        while (ori_s.fix1(r_hitosii, heikou_hantei)) {
         }
         //ori_s.addsenbun  delsenbunを実施しているところでcheckを実施
         if (check1) {
@@ -10265,7 +10227,7 @@ s_step[i_egaki_dankai].setcolor(6);
     }
 
     public void h_setcolor(LineColor i) {
-        h_icol = i;
+        auxLineColor = i;
     }
 
     public void set_Ubox_undo_suu(int i) {
@@ -10406,15 +10368,15 @@ cからベクトルacと一値性を持つベクトルを求める、
     //--------------------------------------------
 
     //メモ
-    //icol=0 black
-    //icol=1 red
-    //icol=2 blue
-    //icol=3 cyan
-    //icol=4 orange
-    //icol=5 mazenta
-    //icol=6 green
-    //icol=7 yellow
-    //icol=8 new Color(210,0,255) //紫
+    //lineColor=0 black
+    //lineColor=1 red
+    //lineColor=2 blue
+    //lineColor=3 cyan
+    //lineColor=4 orange
+    //lineColor=5 mazenta
+    //lineColor=6 green
+    //lineColor=7 yellow
+    //lineColor=8 new Color(210,0,255) //紫
 
 
 }

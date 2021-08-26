@@ -242,29 +242,29 @@ public class PointSet {
     }
 
     //Determine if the point is inside a face. 0 is not inside, 1 is on the border, 2 is inside
-    public int simple_inside(Point p, int n) {    // 0 = external, 1 = boundary, 2 = internal
+    public Polygon.Intersection simple_inside(Point p, int n) {    // 0 = external, 1 = boundary, 2 = internal
         if (p.getX() + 0.5 < face_x_min[n]) {
-            return 0;
+            return Polygon.Intersection.OUTSIDE;
         }
         if (p.getX() - 0.5 > face_x_max[n]) {
-            return 0;
+            return Polygon.Intersection.OUTSIDE;
         }
         if (p.getY() + 0.5 < face_y_min[n]) {
-            return 0;
+            return Polygon.Intersection.OUTSIDE;
         }
         if (p.getY() - 0.5 > face_y_max[n]) {
-            return 0;
+            return Polygon.Intersection.OUTSIDE;
         }
         return inside(p, faces[n]);
     }
 
     //Determine if the point is inside a face.
-    public int inside(Point p, int n) {      //0=外部、　1=境界、　2=内部
+    public Polygon.Intersection inside(Point p, int n) {      //0=外部、　1=境界、　2=内部
         return inside(p, faces[n]);
     }
 
     //Determine if the point is inside a face. 0 is not inside, 1 is on the border, 2 is inside
-    private int inside(Point point, Face face) {      //0=外部、　1=境界、　2=内部
+    private Polygon.Intersection inside(Point point, Face face) {      //0=外部、　1=境界、　2=内部
         Polygon polygon;
         polygon = makePolygon(face);
         return polygon.inside(point);
@@ -273,10 +273,10 @@ public class PointSet {
     //Determine which surface the point is inside. If it is 0, it is not inside any surface, if it is negative, it is on the boundary line, and if it is a positive number, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
     public int inside(Point p) {
         for (int i = 1; i <= getNumFaces(); i++) {
-            if (inside(p, i) == 2) {
+            if (inside(p, i) == Polygon.Intersection.INSIDE) {
                 return i;
             }
-            if (inside(p, i) == 1) {
+            if (inside(p, i) == Polygon.Intersection.BORDER) {
                 return -i;
             }
         }

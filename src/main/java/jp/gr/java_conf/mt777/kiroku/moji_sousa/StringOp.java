@@ -99,10 +99,4 @@ public class StringOp {//データ格納用のメモ帳
 
         return str;
     }
-
-
 }
-
-
-
-

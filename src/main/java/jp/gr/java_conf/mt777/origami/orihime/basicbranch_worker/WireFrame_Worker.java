@@ -1,18 +1,6 @@
 package jp.gr.java_conf.mt777.origami.orihime.basicbranch_worker;
 
 import jp.gr.java_conf.mt777.origami.dougu.linestore.*;
-import jp.gr.java_conf.mt777.origami.dougu.camera.*;
-
-import java.awt.*;
-
-import jp.gr.java_conf.mt777.kiroku.memo.*;
-
-import jp.gr.java_conf.mt777.origami.orihime.LineColor;
-import jp.gr.java_conf.mt777.graphic2d.linesegment.*;
-import jp.gr.java_conf.mt777.graphic2d.oritacalc.*;
-import jp.gr.java_conf.mt777.graphic2d.oritaoekaki.*;
-import jp.gr.java_conf.mt777.graphic2d.polygon.Polygon;
-import jp.gr.java_conf.mt777.graphic2d.point.Point;
 
 public class WireFrame_Worker {
     LineSegmentSet lineSegmentSet = new LineSegmentSet();    //Instantiation of basic branch structure
@@ -33,6 +21,6 @@ public class WireFrame_Worker {
     }
 
     public void split_arrangement_for_SubFace_generation() {
-        lineSegmentSet.bunkatu_seiri_for_SubFace_generation();
-    }//kとは線分集合のこと、Senbunsyuugou k =new Senbunsyuugou();
+        lineSegmentSet.split_arrangement_for_SubFace_generation();
+    }//k is a set of line segments, LineSegmentSet k = new LineSegmentSet ();
 }
