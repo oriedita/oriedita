@@ -13,23 +13,23 @@ public class OritaCalc {
         System.out.println(s0);
     }
 
-    //Find the position of the shadow of the point p on the straight line t (the position on the straight line t closest to the point p).
-    public static Point shadow_request(StraightLine t, Point p) {
+    //Find the position of the projection of the point p on the straight line t (the position on the straight line t closest to the point p).
+    public static Point findProjection(StraightLine t, Point p) {
         StraightLine t1 = new StraightLine();
         t1.set(t);
         t1.orthogonalize(p);//Find the straight line u1 that passes through the point p1 and is orthogonal to t.
         return findIntersection(t, t1);
     }
 
-    //Find the position of the shadow of the point p on the straight line t passing through the points P0 and P1 (the position on the straight line t closest to the point p).
-    public static Point shadow_request(Point p0, Point p1, Point p) {
+    //Find the position of the projection of the point p on the straight line t passing through the points P0 and P1 (the position on the straight line t closest to the point p).
+    public static Point findProjection(Point p0, Point p1, Point p) {
         StraightLine t = new StraightLine(p0, p1);
-        return shadow_request(t, p);
+        return findProjection(t, p);
     }
 
-    //Find the position of the shadow of the point p on the straight line t including the line segment s0 (the position on the straight line t closest to the point p).
-    public static Point shadow_request(LineSegment s0, Point p) {
-        return shadow_request(s0.getA(), s0.getB(), p);
+    //Find the position of the projection of the point p on the straight line t including the line segment s0 (the position on the straight line t closest to the point p).
+    public static Point findProjection(LineSegment s0, Point p) {
+        return findProjection(s0.getA(), s0.getB(), p);
     }
 
     //A function that determines whether two points are in the same position (true) or different (false) -------------------------------- -
@@ -680,7 +680,7 @@ public class OritaCalc {
 
 
                 //原点（0、0）と各直線との距離を比較
-                double kyoriT = t2.calculateDistance(t1.findShadow(new Point(0.0, 0.0)));//t1上の点とt2との距離//t1.kage_motome(new Ten(0.0,0.0))   は点（0,0）のt1上の影を求める（t1上の点ならなんでもいい）//20181115修正
+                double kyoriT = t2.calculateDistance(t1.findProjection(new Point(0.0, 0.0)));//t1上の点とt2との距離//t1.kage_motome(new Ten(0.0,0.0))   は点（0,0）のt1上の影を求める（t1上の点ならなんでもいい）//20181115修正
 
 
                 if (kyoriT < r) {//誤差を許容。
@@ -1013,7 +1013,7 @@ public class OritaCalc {
     public static LineSegment circle_to_straightLine_no_intersect_wo_connect_LineSegment(Circle e1, StraightLine t0) {
 
         Point kouten_t0t1 = new Point();
-        kouten_t0t1.set(shadow_request(t0, e1.getCenter()));
+        kouten_t0t1.set(findProjection(t0, e1.getCenter()));
         double length_a = t0.calculateDistance(e1.getCenter());  //t0とt1の交点からe1の中心までの長さ
 
         double length_b = Math.sqrt(e1.getRadius() * e1.getRadius() - length_a * length_a); //t0とt1の交点からe1とe2の交点までの長さ

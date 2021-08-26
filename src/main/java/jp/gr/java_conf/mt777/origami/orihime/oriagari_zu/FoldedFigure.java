@@ -42,10 +42,43 @@ public class FoldedFigure {
     public Color foldedFigure_B_color = new Color(233, 233, 233);//The color of the back side of the folded figure
     public Color foldedFigure_L_color = Color.black;//Folded line color
 
-    public DisplayStyle display_flg_backup = DisplayStyle.DEVELOPMENT_4;//For temporary backup of display format display_flg
-    public DisplayStyle display_flg = DisplayStyle.NONE_0;//Designation of the display style of the folded figure. 1 is a development drawing, 2 is a wire drawing. If it is 3, it is a transparent view. If it is 4, it is the same as when you actually fold the origami paper.
-    public int i_estimated_order = 0;//Instructions on how far to perform folding estimation
-    public int i_estimated_step = 0;//Display of how far the folding estimation has been completed
+    public DisplayStyle display_flg_backup = DisplayStyle.DEVELOPMENT_4;//For temporary backup of display format displayStyle
+    public DisplayStyle displayStyle = DisplayStyle.NONE_0;//Designation of the display style of the folded figure. 1 is a development drawing, 2 is a wire drawing. If it is 3, it is a transparent view. If it is 4, it is the same as when you actually fold the origami paper.
+
+    public enum EstimationOrder {
+        ORDER_0,
+        ORDER_1,
+        ORDER_2,
+        ORDER_3,
+        ORDER_4,
+        ORDER_5,
+        ORDER_6,
+        ORDER_51,
+        ;
+
+        public boolean isBelowOrEqual5() {
+            return switch(this) {
+                case ORDER_0,ORDER_1, ORDER_2, ORDER_3,ORDER_4, ORDER_5 -> true;
+                default -> false;
+            };
+        }
+    }
+    public EstimationOrder estimationOrder = EstimationOrder.ORDER_0;//Instructions on how far to perform folding estimation
+    
+    public enum EstimationStep {
+        STEP_0,
+        STEP_1,
+        STEP_2,
+        STEP_3,
+        STEP_4,
+        STEP_5,
+        STEP_6,
+        STEP_7,
+        STEP_8,
+        STEP_9,
+        STEP_10,
+    }
+    public EstimationStep estimationStep = EstimationStep.STEP_0;//Display of how far the folding estimation has been completed
 
     //Variable to store the value for display
     public int ip1 = -1;// At the time of initial setting of the upper and lower front craftsmen, the front and back sides are the same after folding
@@ -105,9 +138,9 @@ public class FoldedFigure {
         cp_worker3.reset();
         ct_worker.reset();
 
-        display_flg = DisplayStyle.NONE_0;
-        i_estimated_order = 0;//Instructions on how far to perform folding estimation
-        i_estimated_step = 0;//Display of how far the folding estimation has been completed
+        displayStyle = DisplayStyle.NONE_0;
+        estimationOrder = EstimationOrder.ORDER_0;//Instructions on how far to perform folding estimation
+        estimationStep = EstimationStep.STEP_0;//Display of how far the folding estimation has been completed
         findAnotherOverlapValid = false;
 
         summary_write_image_during_execution = false; //If the export of multiple folded forecasts is in progress, it will be ture. 20170615
@@ -168,20 +201,20 @@ public class FoldedFigure {
     }
 
     public void foldUp_draw(Graphics bufferGraphics, boolean i_mark_display) {
-        //display_flg==2,ip4==0  front
-        //display_flg==2,ip4==1	rear
-        //display_flg==2,ip4==2	front & rear
-        //display_flg==2,ip4==3	front & rear
+        //displayStyle==2,ip4==0  front
+        //displayStyle==2,ip4==1	rear
+        //displayStyle==2,ip4==2	front & rear
+        //displayStyle==2,ip4==3	front & rear
 
-        //display_flg==3,ip4==0  front
-        //display_flg==3,ip4==1	rear
-        //display_flg==3,ip4==2	front & rear
-        //display_flg==3,ip4==3	front & rear
+        //displayStyle==3,ip4==0  front
+        //displayStyle==3,ip4==1	rear
+        //displayStyle==3,ip4==2	front & rear
+        //displayStyle==3,ip4==3	front & rear
 
-        //display_flg==5,ip4==0  front
-        //display_flg==5,ip4==1	rear
-        //display_flg==5,ip4==2	front & rear
-        //display_flg==5,ip4==3	front & rear & front2 & rear2
+        //displayStyle==5,ip4==0  front
+        //displayStyle==5,ip4==1	rear
+        //displayStyle==5,ip4==2	front & rear
+        //displayStyle==5,ip4==3	front & rear & front2 & rear2
 
         //Since ct_worker displays the folded figure, it is not necessary to set the camera in cp_worker2 for the display itself, but after that, cp_worker2 judges the screen click, so it is necessary to update the camera of cp_worker2 in synchronization with the display. ..
         cp_worker2.setCamera(camera_of_foldedFigure);
@@ -192,7 +225,7 @@ public class FoldedFigure {
 
 
         //Wire diagram display
-        if (display_flg == DisplayStyle.WIRE_2) {
+        if (displayStyle == DisplayStyle.WIRE_2) {
             cp_worker2.drawing_with_camera(bufferGraphics, ip4);//The operation of the fold-up diagram moves the wire diagram of this cp_worker2.
         }
 
@@ -201,13 +234,13 @@ public class FoldedFigure {
             ct_worker.setCamera(camera_of_foldedFigure_front);
 
             //透過図の表示
-            if (display_flg == DisplayStyle.TRANSPARENT_3) {        // display_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
+            if (displayStyle == DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
                 ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
             }
 
             //折り上がり図の表示************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
-            if (display_flg == DisplayStyle.PAPER_5) {
-                ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker3.get());// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+            if (displayStyle == DisplayStyle.PAPER_5) {
+                ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker3.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
             //Cross-shaped display at the center of movement of the folded figure
@@ -222,13 +255,13 @@ public class FoldedFigure {
             ct_worker.setCamera(camera_of_foldedFigure_rear);
 
             //Display of transparency
-            if (display_flg == DisplayStyle.TRANSPARENT_3) {        // display_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
+            if (displayStyle == DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
                 ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
             }
 
             //Display of folded figure ************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
-            if (display_flg == DisplayStyle.PAPER_5) {
-                ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker3.get());// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+            if (displayStyle == DisplayStyle.PAPER_5) {
+                ct_worker.draw_foldedFigure_with_camera(bufferGraphics, cp_worker1, cp_worker3.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
             //Cross-shaped display at the center of movement of the folded figure
@@ -239,7 +272,7 @@ public class FoldedFigure {
         }
 
         //透過図（折りあがり図表示時に追加する分）
-        if ((ip4 == State.TRANSPARENT_3) && (display_flg == DisplayStyle.PAPER_5)) {
+        if ((ip4 == State.TRANSPARENT_3) && (displayStyle == DisplayStyle.PAPER_5)) {
             // ---------------------------------------------------------------------------------
             ct_worker.setCamera(camera_of_transparent_front);
             //透過図の表示
@@ -292,7 +325,7 @@ public class FoldedFigure {
         Memo memo_temp = new Memo();
 
         //針金図のsvg
-        if (display_flg == DisplayStyle.WIRE_2) {
+        if (displayStyle == DisplayStyle.WIRE_2) {
             memo_temp.addMemo(ct_worker.getMemo_wirediagram_for_svg_export(cp_worker1, cp_worker2.get(), 0));//４番目の整数は０なら面の枠のみ、１なら面を塗る
         }
 
@@ -302,14 +335,14 @@ public class FoldedFigure {
 
             //透過図のsvg
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
-            if (display_flg == DisplayStyle.TRANSPARENT_3) {        // display_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
+            if (displayStyle == DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
                 memo_temp.addMemo(ct_worker.getMemo_wirediagram_for_svg_export(cp_worker1, cp_worker2.get(), 1));
             }
 
             //折り上がり図のsvg************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
-            if (display_flg == DisplayStyle.PAPER_5) {
-                //ct_worker.oekaki_oriagarizu_with_camera(bufferGraphics,cp_worker1,cp_worker2.get(),cp_worker3.get());// display_flg; Specify the display style of the folded figure. If it is 5, it is the same as when you actually fold the origami paper. If it is 3, it is a transparent view. If it is 2, it is a wire diagram.
-                memo_temp.addMemo(ct_worker.getMemo_for_svg_with_camera(cp_worker1, cp_worker3.get()));// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+            if (displayStyle == DisplayStyle.PAPER_5) {
+                //ct_worker.oekaki_oriagarizu_with_camera(bufferGraphics,cp_worker1,cp_worker2.get(),cp_worker3.get());// displayStyle; Specify the display style of the folded figure. If it is 5, it is the same as when you actually fold the origami paper. If it is 3, it is a transparent view. If it is 2, it is a wire diagram.
+                memo_temp.addMemo(ct_worker.getMemo_for_svg_with_camera(cp_worker1, cp_worker3.get()));// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
 
             }
         }
@@ -321,18 +354,18 @@ public class FoldedFigure {
 
             //透過図のsvg
             //System.out.println("paint　+++++++++++++++++++++　透過図の表示");
-            if (display_flg == DisplayStyle.TRANSPARENT_3) {        // display_flg;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
+            if (displayStyle == DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
                 memo_temp.addMemo(ct_worker.getMemo_wirediagram_for_svg_export(cp_worker1, cp_worker2.get(), 1));
             }
 
             //折り上がり図のsvg************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
-            if (display_flg == DisplayStyle.PAPER_5) {
-                memo_temp.addMemo(ct_worker.getMemo_for_svg_with_camera(cp_worker1, cp_worker3.get()));// display_flg;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+            if (displayStyle == DisplayStyle.PAPER_5) {
+                memo_temp.addMemo(ct_worker.getMemo_for_svg_with_camera(cp_worker1, cp_worker3.get()));// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
         }
 
         //透過図（折りあがり図表示時に追加する分）
-        if ((ip4 == State.TRANSPARENT_3) && (display_flg == DisplayStyle.PAPER_5)) {
+        if ((ip4 == State.TRANSPARENT_3) && (displayStyle == DisplayStyle.PAPER_5)) {
             // ---------------------------------------------------------------------------------
             ct_worker.setCamera(camera_of_transparent_front);
             //透過図のsvg
@@ -404,142 +437,140 @@ public class FoldedFigure {
     public void folding_estimated(Camera camera_of_orisen_nyuuryokuzu, LineSegmentSet lineSegmentSet) {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
         int i_camera_estimated = 0;
 
-        //-------------------------------折り上がり図表示用カメラの設定
+        //-------------------------------Folded view display camera settings
 
-        if ((i_estimated_step == 0) && (i_estimated_order <= 5)) {
+        if ((estimationStep == EstimationStep.STEP_0) && (estimationOrder.isBelowOrEqual5())) {
             i_camera_estimated = 1;
-
-
         }
 
-        if (i_estimated_order == 51) {
-            i_estimated_order = 5;
+        if (estimationOrder == EstimationOrder.ORDER_51) {
+            estimationOrder = EstimationOrder.ORDER_5;
         }
         //-------------------------------
         // suitei = estimated
         // dankai = step
         // meirei = order
-        if ((i_estimated_step == 0) && (i_estimated_order == 1)) {
+        if ((estimationStep == EstimationStep.STEP_0) && (estimationOrder == EstimationOrder.ORDER_1)) {
             estimated_initialize(); // estimated_initialize
             folding_estimated_01(lineSegmentSet);
-            i_estimated_step = 1;
-            display_flg = DisplayStyle.DEVELOPMENT_1;
-        } else if ((i_estimated_step == 0) && (i_estimated_order == 2)) {
+            estimationStep = EstimationStep.STEP_1;
+            displayStyle = DisplayStyle.DEVELOPMENT_1;
+        } else if ((estimationStep == EstimationStep.STEP_0) && (estimationOrder == EstimationOrder.ORDER_2)) {
             estimated_initialize();
             folding_estimated_01(lineSegmentSet);
-            i_estimated_step = 1;
-            display_flg = DisplayStyle.DEVELOPMENT_1;
+            estimationStep = EstimationStep.STEP_1;
+            displayStyle = DisplayStyle.DEVELOPMENT_1;
             folding_estimated_02();
-            i_estimated_step = 2;
-            display_flg = DisplayStyle.WIRE_2;
-        } else if ((i_estimated_step == 0) && (i_estimated_order == 3)) {
+            estimationStep = EstimationStep.STEP_2;
+            displayStyle = DisplayStyle.WIRE_2;
+        } else if ((estimationStep == EstimationStep.STEP_0) && (estimationOrder == EstimationOrder.ORDER_3)) {
             estimated_initialize();
             folding_estimated_01(lineSegmentSet);
-            i_estimated_step = 1;
-            display_flg = DisplayStyle.DEVELOPMENT_1;
+            estimationStep = EstimationStep.STEP_1;
+            displayStyle = DisplayStyle.DEVELOPMENT_1;
             folding_estimated_02();
-            i_estimated_step = 2;
-            display_flg = DisplayStyle.WIRE_2;
+            estimationStep = EstimationStep.STEP_2;
+            displayStyle = DisplayStyle.WIRE_2;
             folding_estimated_03();
-            i_estimated_step = 3;
-            display_flg = DisplayStyle.TRANSPARENT_3;
-        } else if ((i_estimated_step == 0) && (i_estimated_order == 5)) {
+            estimationStep = EstimationStep.STEP_3;
+            displayStyle = DisplayStyle.TRANSPARENT_3;
+        } else if ((estimationStep == EstimationStep.STEP_0) && (estimationOrder == EstimationOrder.ORDER_5)) {
             estimated_initialize();
             folding_estimated_01(lineSegmentSet);
-            i_estimated_step = 1;
-            display_flg = DisplayStyle.DEVELOPMENT_1;
+            estimationStep = EstimationStep.STEP_1;
+            displayStyle = DisplayStyle.DEVELOPMENT_1;
             folding_estimated_02();
-            i_estimated_step = 2;
-            display_flg = DisplayStyle.WIRE_2;
+            estimationStep = EstimationStep.STEP_2;
+            displayStyle = DisplayStyle.WIRE_2;
             folding_estimated_03();
-            i_estimated_step = 3;
-            display_flg = DisplayStyle.TRANSPARENT_3;
+            estimationStep = EstimationStep.STEP_3;
+            displayStyle = DisplayStyle.TRANSPARENT_3;
             folding_estimated_04();
-            i_estimated_step = 4;
-            display_flg = DisplayStyle.DEVELOPMENT_4;
+            estimationStep = EstimationStep.STEP_4;
+            displayStyle = DisplayStyle.DEVELOPMENT_4;
             folding_estimated_05();
-            i_estimated_step = 5;
-            display_flg = DisplayStyle.PAPER_5;
+            estimationStep = EstimationStep.STEP_5;
+            displayStyle = DisplayStyle.PAPER_5;
             if ((discovered_fold_cases == 0) && (!findAnotherOverlapValid)) {
-                i_estimated_step = 3;
-                display_flg = DisplayStyle.TRANSPARENT_3;
+                estimationStep = EstimationStep.STEP_3;
+                displayStyle = DisplayStyle.TRANSPARENT_3;
             }
-        } else if ((i_estimated_step == 1) && (i_estimated_order == 1)) {
-        } else if ((i_estimated_step == 1) && (i_estimated_order == 2)) {
+        } else if ((estimationStep == EstimationStep.STEP_1) && (estimationOrder == EstimationOrder.ORDER_1)) {
+        } else if ((estimationStep == EstimationStep.STEP_1) && (estimationOrder == EstimationOrder.ORDER_2)) {
             folding_estimated_02();
-            i_estimated_step = 2;
-            display_flg = DisplayStyle.WIRE_2;
-        } else if ((i_estimated_step == 1) && (i_estimated_order == 3)) {
+            estimationStep = EstimationStep.STEP_2;
+            displayStyle = DisplayStyle.WIRE_2;
+        } else if ((estimationStep == EstimationStep.STEP_1) && (estimationOrder == EstimationOrder.ORDER_3)) {
             folding_estimated_02();
-            i_estimated_step = 2;
-            display_flg = DisplayStyle.WIRE_2;
+            estimationStep = EstimationStep.STEP_2;
+            displayStyle = DisplayStyle.WIRE_2;
             folding_estimated_03();
-            i_estimated_step = 3;
-            display_flg = DisplayStyle.TRANSPARENT_3;
-        } else if ((i_estimated_step == 1) && (i_estimated_order == 5)) {
+            estimationStep = EstimationStep.STEP_3;
+            displayStyle = DisplayStyle.TRANSPARENT_3;
+        } else if ((estimationStep == EstimationStep.STEP_1) && (estimationOrder == EstimationOrder.ORDER_5)) {
             folding_estimated_02();
-            i_estimated_step = 2;
-            display_flg = DisplayStyle.WIRE_2;
+            estimationStep = EstimationStep.STEP_2;
+            displayStyle = DisplayStyle.WIRE_2;
             folding_estimated_03();
-            i_estimated_step = 3;
-            display_flg = DisplayStyle.TRANSPARENT_3;
+            estimationStep = EstimationStep.STEP_3;
+            displayStyle = DisplayStyle.TRANSPARENT_3;
             folding_estimated_04();
-            i_estimated_step = 4;
-            display_flg = DisplayStyle.DEVELOPMENT_4;
+            estimationStep = EstimationStep.STEP_4;
+            displayStyle = DisplayStyle.DEVELOPMENT_4;
             folding_estimated_05();
-            i_estimated_step = 5;
-            display_flg = DisplayStyle.PAPER_5;
+            estimationStep = EstimationStep.STEP_5;
+            displayStyle = DisplayStyle.PAPER_5;
             if ((discovered_fold_cases == 0) && (!findAnotherOverlapValid)) {
-                i_estimated_step = 3;
-                display_flg = DisplayStyle.TRANSPARENT_3;
+                estimationStep = EstimationStep.STEP_3;
+                displayStyle = DisplayStyle.TRANSPARENT_3;
             }
-        } else if ((i_estimated_step == 2) && (i_estimated_order == 1)) {
-        } else if ((i_estimated_step == 2) && (i_estimated_order == 2)) {
-        } else if ((i_estimated_step == 2) && (i_estimated_order == 3)) {
+        } else if ((estimationStep == EstimationStep.STEP_2) && (estimationOrder == EstimationOrder.ORDER_1)) {
+        } else if ((estimationStep == EstimationStep.STEP_2) && (estimationOrder == EstimationOrder.ORDER_2)) {
+        } else if ((estimationStep == EstimationStep.STEP_2) && (estimationOrder == EstimationOrder.ORDER_3)) {
             folding_estimated_03();
-            i_estimated_step = 3;
-            display_flg = DisplayStyle.TRANSPARENT_3;
-        } else if ((i_estimated_step == 2) && (i_estimated_order == 5)) {
+            estimationStep = EstimationStep.STEP_3;
+            displayStyle = DisplayStyle.TRANSPARENT_3;
+        } else if ((estimationStep == EstimationStep.STEP_2) && (estimationOrder == EstimationOrder.ORDER_5)) {
             folding_estimated_03();
-            i_estimated_step = 3;
-            display_flg = DisplayStyle.TRANSPARENT_3;
+            estimationStep = EstimationStep.STEP_3;
+            displayStyle = DisplayStyle.TRANSPARENT_3;
             folding_estimated_04();
-            i_estimated_step = 4;
-            display_flg = DisplayStyle.DEVELOPMENT_4;
+            estimationStep = EstimationStep.STEP_4;
+            displayStyle = DisplayStyle.DEVELOPMENT_4;
             folding_estimated_05();
-            i_estimated_step = 5;
-            display_flg = DisplayStyle.PAPER_5;
+            estimationStep = EstimationStep.STEP_5;
+            displayStyle = DisplayStyle.PAPER_5;
             if ((discovered_fold_cases == 0) && !findAnotherOverlapValid) {
-                i_estimated_step = 3;
-                display_flg = DisplayStyle.TRANSPARENT_3;
+                estimationStep = EstimationStep.STEP_3;
+                displayStyle = DisplayStyle.TRANSPARENT_3;
             }
-        } else if ((i_estimated_step == 3) && (i_estimated_order == 1)) {
-        } else if ((i_estimated_step == 3) && (i_estimated_order == 2)) {
-            display_flg = DisplayStyle.WIRE_2;
-        } else if ((i_estimated_step == 3) && (i_estimated_order == 3)) {
-            display_flg = DisplayStyle.TRANSPARENT_3;
-        } else if ((i_estimated_step == 3) && (i_estimated_order == 5)) {
+        } else if ((estimationStep == EstimationStep.STEP_3) && (estimationOrder == EstimationOrder.ORDER_1)) {
+        } else if ((estimationStep == EstimationStep.STEP_3) && (estimationOrder == EstimationOrder.ORDER_2)) {
+            displayStyle = DisplayStyle.WIRE_2;
+        } else if ((estimationStep == EstimationStep.STEP_3) && (estimationOrder == EstimationOrder.ORDER_3)) {
+            displayStyle = DisplayStyle.TRANSPARENT_3;
+        } else if ((estimationStep == EstimationStep.STEP_3) && (estimationOrder == EstimationOrder.ORDER_5)) {
             folding_estimated_04();
-            i_estimated_step = 4;
-            display_flg = DisplayStyle.DEVELOPMENT_4;
+            estimationStep = EstimationStep.STEP_4;
+            displayStyle = DisplayStyle.DEVELOPMENT_4;
             folding_estimated_05();
-            i_estimated_step = 5;
-            display_flg = DisplayStyle.PAPER_5;
+            estimationStep = EstimationStep.STEP_5;
+            displayStyle = DisplayStyle.PAPER_5;
             if ((discovered_fold_cases == 0) && !findAnotherOverlapValid) {
-                i_estimated_step = 3;
-                display_flg = DisplayStyle.TRANSPARENT_3;
+                estimationStep = EstimationStep.STEP_3;
+                displayStyle = DisplayStyle.TRANSPARENT_3;
             }
-        } else if ((i_estimated_step == 5) && (i_estimated_order == 1)) {
-        } else if ((i_estimated_step == 5) && (i_estimated_order == 2)) {
-            display_flg = DisplayStyle.WIRE_2;
-        } else if ((i_estimated_step == 5) && (i_estimated_order == 3)) {
-            display_flg = DisplayStyle.TRANSPARENT_3;
-        } else if ((i_estimated_step == 5) && (i_estimated_order == 5)) {
-            display_flg = DisplayStyle.PAPER_5;
-        } else if ((i_estimated_step == 5) && (i_estimated_order == 6)) {
+        } else if ((estimationStep == EstimationStep.STEP_5) && (estimationOrder == EstimationOrder.ORDER_1)) {
+        } else if ((estimationStep == EstimationStep.STEP_5) && (estimationOrder == EstimationOrder.ORDER_2)) {
+            displayStyle = DisplayStyle.WIRE_2;
+        } else if ((estimationStep == EstimationStep.STEP_5) && (estimationOrder == EstimationOrder.ORDER_3)) {
+            displayStyle = DisplayStyle.TRANSPARENT_3;
+        } else if ((estimationStep == EstimationStep.STEP_5) && (estimationOrder == EstimationOrder.ORDER_5)) {
+            displayStyle = DisplayStyle.PAPER_5;
+        } else if ((estimationStep == EstimationStep.STEP_5) && (estimationOrder == EstimationOrder.ORDER_6)) {
             folding_estimated_05();
-            i_estimated_step = 5;
-            display_flg = DisplayStyle.PAPER_5;
+            estimationStep = EstimationStep.STEP_5;
+            displayStyle = DisplayStyle.PAPER_5;
         }
 
         if (i_camera_estimated == 1) {
@@ -587,21 +618,21 @@ public class FoldedFigure {
 
         estimated_initialize();
         folding_estimated_01(Ss0);
-        i_estimated_step = 1;
-        display_flg = DisplayStyle.DEVELOPMENT_1;
+        estimationStep = EstimationStep.STEP_1;
+        displayStyle = DisplayStyle.DEVELOPMENT_1;
         oritatami_suitei_02col();
-        i_estimated_step = 2;
-        display_flg = DisplayStyle.WIRE_2;
+        estimationStep = EstimationStep.STEP_2;
+        displayStyle = DisplayStyle.WIRE_2;
         folding_estimated_03();
-        i_estimated_step = 3;
-        display_flg = DisplayStyle.TRANSPARENT_3;
+        estimationStep = EstimationStep.STEP_3;
+        displayStyle = DisplayStyle.TRANSPARENT_3;
         folding_estimated_04();
-        i_estimated_step = 4;
-        display_flg = DisplayStyle.DEVELOPMENT_4;
+        estimationStep = EstimationStep.STEP_4;
+        displayStyle = DisplayStyle.DEVELOPMENT_4;
         folding_estimated_05();
-        i_estimated_step = 5;
-        display_flg = DisplayStyle.PAPER_5;
-        i_estimated_step = 10;
+        estimationStep = EstimationStep.STEP_5;
+        displayStyle = DisplayStyle.PAPER_5;
+        estimationStep = EstimationStep.STEP_10;
     }
 
     public int folding_estimated_01(LineSegmentSet lineSegmentSet) {
@@ -695,7 +726,7 @@ public class FoldedFigure {
         System.out.println("＜＜＜＜＜oritatami_suitei_05()_____上下表職人ct_workerがct_worker.kanou_kasanari_sagasi()実施。");
         orihime_app.bulletinBoard.write("<<<<oritatami_suitei_05()  ___ct_worker.kanou_kasanari_sagasi()  start");
 
-        if ((i_estimated_step == 4) || (i_estimated_step == 5)) {
+        if ((estimationStep == EstimationStep.STEP_4) || (estimationStep == EstimationStep.STEP_5)) {
             if (findAnotherOverlapValid) {
 
                 ip2 = ct_worker.possible_overlapping_search();//ip2=上下表職人が折り畳み可能な重なり方を探した際に、可能な重なり方がなければ0を、可能な重なり方があれば1000を格納する変数。
@@ -858,8 +889,8 @@ public class FoldedFigure {
             }
 
             if (i_foldedFigure_operation_mode == 1) {
-                display_flg_backup = display_flg;   //20180216  //display_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
-                display_flg = DisplayStyle.WIRE_2;            //20180216
+                display_flg_backup = displayStyle;   //20180216  //display_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                displayStyle = DisplayStyle.WIRE_2;            //20180216
             }
         }
 
@@ -894,18 +925,18 @@ public class FoldedFigure {
         }
 
         if (i_nanini_near == 2) {
-            display_flg = display_flg_backup;//20180216
+            displayStyle = display_flg_backup;//20180216
 
             cp_worker2.mReleased_selectedPoint_move_with_camera(move_previous_selection_point, p_m_left_on, p, ip4);
             if (p_m_left_on.distance(p) > 0.0000001) {
                 record();
-                i_estimated_step = 2;
+                estimationStep = EstimationStep.STEP_2;
 
-                if (display_flg == DisplayStyle.WIRE_2) {
+                if (displayStyle == DisplayStyle.WIRE_2) {
                 }
 
-                if (display_flg == DisplayStyle.PAPER_5) {
-                    i_estimated_order = 5;
+                if (displayStyle == DisplayStyle.PAPER_5) {
+                    estimationOrder = EstimationOrder.ORDER_5;
                     orihime_app.folding_estimated();
                 }//オリジナル 20180124 これ以外だと、表示いったんもどるようでうざい
             }
@@ -1011,8 +1042,8 @@ public class FoldedFigure {
             }
 
             if (i_foldedFigure_operation_mode == 1) {
-                display_flg_backup = display_flg;   //20180216  //display_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
-                display_flg = DisplayStyle.WIRE_2;            //20180216
+                display_flg_backup = displayStyle;   //20180216  //display_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                displayStyle = DisplayStyle.WIRE_2;            //20180216
             }
         }
 
@@ -1051,12 +1082,12 @@ public class FoldedFigure {
             cp_worker2.mReleased_selectedPoint_move_with_camera(move_previous_selection_point, p_m_left_on, p, ip4);
             if (p_m_left_on.distance(p) > 0.0000001) {
                 record();
-                i_estimated_step = 2;
+                estimationStep = EstimationStep.STEP_2;
 
                 if (i_foldedFigure_operation_mode == 1) {
-                    display_flg = display_flg_backup;//20180216
+                    displayStyle = display_flg_backup;//20180216
                 }
-                if (display_flg == DisplayStyle.WIRE_2) {
+                if (displayStyle == DisplayStyle.WIRE_2) {
                 }
 
                 folding_estimated_03();//20180216

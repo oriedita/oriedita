@@ -426,8 +426,6 @@ public class Grid {
     }
 
 
-    // --------------------------
-
     public Point closestGridPoint(Point t0) {
         Point t2 = new Point(); //格子点
 

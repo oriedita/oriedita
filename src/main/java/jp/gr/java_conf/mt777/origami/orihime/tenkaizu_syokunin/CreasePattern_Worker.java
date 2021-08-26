@@ -337,7 +337,7 @@ public class CreasePattern_Worker {//This crease pattern craftsman class has onl
 
         ss.setNumLineSegments(pointSet.getNumLines());
         for (int i = 1; i <= pointSet.getNumLines(); i++) {
-            ss.set(i, pointSet.getPoint(pointSet.getBegin(i)), pointSet.getPoint(pointSet.getEnd(i)), pointSet.getColor(i), 0);
+            ss.set(i, pointSet.getPoint(pointSet.getBegin(i)), pointSet.getPoint(pointSet.getEnd(i)), pointSet.getColor(i), LineSegment.ActiveState.INACTIVE_0);
         }
         return ss;
     }

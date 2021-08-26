@@ -213,7 +213,7 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
     public Circle turnAround_LineSegmentToCircle(LineSegment s0) {//Weird results when s0 passes through (x, y).
         StraightLine ty = new StraightLine(s0);
         Point t0 = new Point();
-        t0.set(ty.findShadow(getCenter()));
+        t0.set(ty.findProjection(getCenter()));
         return new Circle(new LineSegment(turnAround(t0), getCenter()), LineColor.MAGENTA_5);
     }
 }

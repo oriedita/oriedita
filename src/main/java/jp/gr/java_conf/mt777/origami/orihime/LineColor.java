@@ -46,6 +46,13 @@ public enum LineColor {
         return fromNumber(type + 1);
     }
 
+    public LineColor changeMV() {
+        if (this == RED_1) return BLUE_2;
+        if (this == BLUE_2) return RED_1;
+
+        return this;
+    }
+
     public int getNumber() {
         return this.type;
     }

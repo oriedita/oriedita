@@ -11,10 +11,10 @@ import jp.gr.java_conf.mt777.origami.dougu.men.Face;
 import jp.gr.java_conf.mt777.origami.orihime.LineColor;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class PointSet {
-
     int numFaces_temp;
 
     int numPoints;               //Total number of points actually used
@@ -38,7 +38,7 @@ public class PointSet {
     double[] face_y_max;
     double[] face_y_min;
 
-    ArrayList<Integer>[] point_linking;//point_linking [i] [j] is the number of points connected to t [i]. The number of Tem is stored in t [0].
+    List<List<Integer>> point_linking;//point_linking [i] [j] is the number of points connected to t [i]. The number of Tem is stored in t [0].
 
     int[][] face_adjacent;//face_adjacent [i] [j] is the Line number at the boundary between m [i] and m [j]. Stores 0 when m [i] and m [j] are not adjacent.
 
@@ -58,12 +58,13 @@ public class PointSet {
         numFaces_temp = numFaces;
 
         points = new Point_p[numPoints + 1];
-        point_linking = new ArrayList[numPoints + 1];
+        point_linking = new ArrayList<>(numPoints + 1);
 
-        point_linking[0] = new ArrayList<>();
+        point_linking.add(new ArrayList<>());
         for (int i = 0; i <= numPoints; i++) {
-            point_linking[i] = new ArrayList<>();
-            point_linking[i].add(0);
+            List<Integer> list = new ArrayList<>();
+            list.add(0);
+            point_linking.add(list);
         }
 
         for (int i = 0; i <= numPoints; i++) {
@@ -89,7 +90,6 @@ public class PointSet {
             for (int j = 0; j <= numFaces; j++) {
                 face_adjacent[i][j] = 0;
             }
-
         }
 
         line_x_max = new double[numLines + 1];
@@ -105,16 +105,16 @@ public class PointSet {
 
     //---------------
     private int getPointLinking(int i, int j) {
-        return point_linking[i].get(j);
+        return point_linking.get(i).get(j);
     }
 
     private void setPointLinking(int i, int j, int tid) {
-        if (j + 1 > point_linking[i].size()) {
-            while (j + 1 > point_linking[i].size()) {
-                point_linking[i].add(0);
+        if (j + 1 > point_linking.get(i).size()) {
+            while (j + 1 > point_linking.get(i).size()) {
+                point_linking.get(i).add(0);
             }
         }//It won't work without this sentence. I don't know exactly why it should be this sentence.
-        point_linking[i].set(j, tid);
+        point_linking.get(i).set(j, tid);
     }
 
     //------------------------------
@@ -283,12 +283,11 @@ public class PointSet {
         return 0;
     }
 
-
     //Make Face polygonal
     private Polygon makePolygon(Face face) {
-        Polygon polygon = new Polygon(face.getPointsCount());
-        polygon.setVertexCount(face.getPointsCount());
-        for (int i = 0; i <= face.getPointsCount(); i++) {
+        Polygon polygon = new Polygon(face.getNumPoints());
+        polygon.setVertexCount(face.getNumPoints());
+        for (int i = 0; i <= face.getNumPoints(); i++) {
             polygon.set(i, points[face.getPointId(i)]);
         }
         return polygon;
@@ -478,7 +477,7 @@ public class PointSet {
     }
 
     public int getPointsCount(int i) {
-        return faces[i].getPointsCount();
+        return faces[i].getNumPoints();
     }
 
     public void setPoint(int i, Point tn) {
@@ -575,7 +574,7 @@ public class PointSet {
                 return tempFace;
             }//エラー時の対応
             tempFace.addPointId(nextT);
-            nextT = getRPoint(tempFace.getPointId(tempFace.getPointsCount() - 1), tempFace.getPointId(tempFace.getPointsCount()));
+            nextT = getRPoint(tempFace.getPointId(tempFace.getNumPoints() - 1), tempFace.getPointId(tempFace.getNumPoints()));
         }
         tempFace.align();
         return tempFace;
@@ -598,7 +597,7 @@ public class PointSet {
                 }
             }
 
-            if (((flag1 == 0) && (tempFace.getPointsCount() != 0)) &&
+            if (((flag1 == 0) && (tempFace.getNumPoints() != 0)) &&
                     (calculateArea(tempFace) > 0.0)) {
                 addFace(tempFace);
             }
@@ -613,7 +612,7 @@ public class PointSet {
                 }
             }
 
-            if (((flag1 == 0) && (tempFace.getPointsCount() != 0)) && (calculateArea(tempFace) > 0.0)) {
+            if (((flag1 == 0) && (tempFace.getNumPoints() != 0)) && (calculateArea(tempFace) > 0.0)) {
                 addFace(tempFace);
             }
         }
@@ -662,7 +661,7 @@ public class PointSet {
             face_x_min[faceId] = points[faces[faceId].getPointId(1)].getX();
             face_y_max[faceId] = points[faces[faceId].getPointId(1)].getY();
             face_y_min[faceId] = points[faces[faceId].getPointId(1)].getY();
-            for (int i = 2; i <= faces[faceId].getPointsCount(); i++) {
+            for (int i = 2; i <= faces[faceId].getNumPoints(); i++) {
                 if (face_x_max[faceId] < points[faces[faceId].getPointId(i)].getX()) {
                     face_x_max[faceId] = points[faces[faceId].getPointId(i)].getX();
                 }
@@ -688,7 +687,7 @@ public class PointSet {
         double x_min = points[faces[im].getPointId(1)].getX();
         double y_max = points[faces[im].getPointId(1)].getY();
         double y_min = points[faces[im].getPointId(1)].getY();
-        for (int i = 2; i <= faces[im].getPointsCount(); i++) {
+        for (int i = 2; i <= faces[im].getNumPoints(); i++) {
             if (x_max < points[faces[im].getPointId(i)].getX()) {
                 x_max = points[faces[im].getPointId(i)].getX();
             }
@@ -743,11 +742,11 @@ public class PointSet {
 
     //---------------
     private boolean equals(Face m, Face n) { //Returns 1 if they are the same, 0 if they are different
-        if (m.getPointsCount() != n.getPointsCount()) {
+        if (m.getNumPoints() != n.getNumPoints()) {
             return false;
         }
 
-        for (int i = 1; i <= m.getPointsCount(); i++) {
+        for (int i = 1; i <= m.getNumPoints(); i++) {
             if (m.getPointId(i) != n.getPointId(i)) {
                 return false;
             }
@@ -759,7 +758,7 @@ public class PointSet {
 
     //Returns 1 if the boundary of Face [faceId] contains Point [pointId], 0 if pointId does not.
     public boolean pointInFaceBorder(int faceId, int pointId) {
-        for (int i = 1; i <= faces[faceId].getPointsCount(); i++) {
+        for (int i = 1; i <= faces[faceId].getNumPoints(); i++) {
             if (pointId == faces[faceId].getPointId(i)) {
                 return true;
             }
@@ -769,7 +768,7 @@ public class PointSet {
 
     //Returns true if line [lineId] is included in the boundary of face [faceId], false if it is not included
     private boolean lineInFaceBorder(int faceId, int lineId) {
-        for (int i = 1; i <= faces[faceId].getPointsCount() - 1; i++) {
+        for (int i = 1; i <= faces[faceId].getNumPoints() - 1; i++) {
             if ((lines[lineId].getBegin() == faces[faceId].getPointId(i)) && (lines[lineId].getEnd() == faces[faceId].getPointId(i + 1))) {
                 return true;
             }
@@ -777,10 +776,10 @@ public class PointSet {
                 return true;
             }
         }
-        if ((lines[lineId].getBegin() == faces[faceId].getPointId(faces[faceId].getPointsCount())) && (lines[lineId].getEnd() == faces[faceId].getPointId(1))) {
+        if ((lines[lineId].getBegin() == faces[faceId].getPointId(faces[faceId].getNumPoints())) && (lines[lineId].getEnd() == faces[faceId].getPointId(1))) {
             return true;
         }
-        return (lines[lineId].getEnd() == faces[faceId].getPointId(faces[faceId].getPointsCount())) && (lines[lineId].getBegin() == faces[faceId].getPointId(1));
+        return (lines[lineId].getEnd() == faces[faceId].getPointId(faces[faceId].getNumPoints())) && (lines[lineId].getBegin() == faces[faceId].getPointId(1));
     }
 
     //------------------------------------------------------
@@ -791,18 +790,18 @@ public class PointSet {
                 face_adjacent[im][in] = 0;
                 face_adjacent[in][im] = 0;
                 int ima, imb, ina, inb;
-                for (int iim = 1; iim <= faces[im].getPointsCount(); iim++) {
+                for (int iim = 1; iim <= faces[im].getNumPoints(); iim++) {
                     ima = faces[im].getPointId(iim);
-                    if (iim == faces[im].getPointsCount()) {
+                    if (iim == faces[im].getNumPoints()) {
                         imb = faces[im].getPointId(1);
                     } else {
                         imb = faces[im].getPointId(iim + 1);
                     }
 
-                    for (int iin = 1; iin <= faces[in].getPointsCount(); iin++) {
+                    for (int iin = 1; iin <= faces[in].getNumPoints(); iin++) {
                         ina = faces[in].getPointId(iin);
 
-                        if (iin == faces[in].getPointsCount()) {
+                        if (iin == faces[in].getNumPoints()) {
                             inb = faces[in].getPointId(1);
                         } else {
                             inb = faces[in].getPointId(iin + 1);
@@ -844,7 +843,7 @@ public class PointSet {
         numFaces = numFaces + 1;
 
         faces[numFaces].reset();
-        for (int i = 1; i <= tempFace.getPointsCount(); i++) {
+        for (int i = 1; i <= tempFace.getNumPoints(); i++) {
             faces[numFaces].addPointId(tempFace.getPointId(i));
         }
         faces[numFaces].setColor(tempFace.getColor());
@@ -908,7 +907,7 @@ public class PointSet {
         for (int ib = 1; ib <= numLines; ib++) {
             for (int i = 1; i <= numPoints - 1; i++) {
                 if (OritaCalc.distance_lineSegment(points[i], points[lines[ib].getBegin()], points[lines[ib].getEnd()]) < r) {
-                    points[i].set(OritaCalc.shadow_request(points[lines[ib].getBegin()], points[lines[ib].getEnd()], points[i]));
+                    points[i].set(OritaCalc.findProjection(points[lines[ib].getBegin()], points[lines[ib].getEnd()], points[i]));
                 }
             }
         }

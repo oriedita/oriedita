@@ -8,7 +8,6 @@ import java.util.*;
 
 public class FileFormatConverter {
 
-    //---------------
     static Memo obj2orihime(Memo mem) {
         System.out.println("objファイルをオリヒメ用にする");
         Memo MemR = new Memo();
@@ -263,7 +262,7 @@ public class FileFormatConverter {
         String str_stroke = "";
         String str_strokewidth = "";
         str_strokewidth = "1";
-        int icol = 0;
+        LineColor icol = LineColor.BLACK_0;
 
         //オリヒメ　0.Contour, 1.Mountain, 2.Valley　、ORIPA 1.Contour, 2.Mountain, 3.Valley
 
@@ -281,14 +280,14 @@ public class FileFormatConverter {
                     ibangou = ibangou + 1;
                 }
                 if (str.equals("色")) {
-                    icol = Integer.parseInt(tk.nextToken());
+                    icol = LineColor.from(tk.nextToken());
                 }
                 str_stroke = "black";
-                if (icol == 0) {
+                if (icol == LineColor.BLACK_0) {
                     str_stroke = "black";
-                } else if (icol == 1) {
+                } else if (icol == LineColor.RED_1) {
                     str_stroke = "red";
-                } else if (icol == 2) {
+                } else if (icol == LineColor.BLUE_2) {
                     str_stroke = "blue";
                 }
 

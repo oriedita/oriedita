@@ -11,12 +11,9 @@ import static jp.gr.java_conf.mt777.origami.orihime.ResourceUtil.createImageIcon
 
 class OpenFrame extends Frame implements ActionListener {
     public JCheckBox ckbox_add_frame_SelectAnd3click;//20200930
-    //Variable declaration
     App orihime_app;
 
     //Process executed when thread is created
-
-    //	public OpenFrame(String name) {
     public OpenFrame(String name, App app0) {
         super(name);//Originally, the child constructor must call the parent constructor at the beginning. super indicates the parent instance.
 
@@ -87,14 +84,11 @@ class OpenFrame extends Frame implements ActionListener {
         pnl_00.add(pnl_01);
 
 
-//------------------------------------------------
-
 //Checkbox
 //20200930 From here
         ckbox_add_frame_SelectAnd3click = new JCheckBox("sel<=>mcm");
         ckbox_add_frame_SelectAnd3click.addActionListener(e -> {
-            orihime_app.img_explanation_fname =
-                    "qqq/af/ckbox_add_frame_SelectAnd3click.png";
+            orihime_app.img_explanation_fname = "qqq/af/ckbox_add_frame_SelectAnd3click.png";
             orihime_app.readImageFromFile3();
 
             orihime_app.ckbox_add_frame_SelectAnd3click_isSelected = ckbox_add_frame_SelectAnd3click_isSelected();
@@ -110,8 +104,7 @@ class OpenFrame extends Frame implements ActionListener {
 //20200930 to this point
 
 //----------------------------------------------------------------------------------------------
-        JButton Button_O_F_check =
-                new JButton("O_F_check");
+        JButton Button_O_F_check = new JButton("O_F_check");
         Button_O_F_check.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/O_F_check.png";
             orihime_app.readImageFromFile3();
@@ -278,19 +271,15 @@ class OpenFrame extends Frame implements ActionListener {
 
         Button_Del_l_X.setMargin(new Insets(0, 0, 0, 0));
 
-//------------------------------------------------
+        //------------------------------------------------
 
-//What to do at the beginning of the additional frame display
-
-//20200930 ckbox_add_frame_to_front.setSelected(true);//Select whether to display
+        //What to do at the beginning of the additional frame display
 
         //Select whether to display
         ckbox_add_frame_SelectAnd3click.setSelected(orihime_app.ckbox_add_frame_SelectAnd3click_isSelected);//Select whether to display
 
-
         setVisible(true);
     }
-//----------------------------------------------------------------------
 
     public boolean ckbox_add_frame_SelectAnd3click_isSelected() {
         return ckbox_add_frame_SelectAnd3click.isSelected();

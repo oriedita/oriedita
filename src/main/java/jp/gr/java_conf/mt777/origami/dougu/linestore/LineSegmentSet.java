@@ -119,7 +119,7 @@ public class LineSegmentSet {
     /**
      * Enter the value of the i-th line segment
      */
-    public void set(int i, Point p, Point q, LineColor ic, int ia) {
+    public void set(int i, Point p, Point q, LineColor ic, LineSegment.ActiveState ia) {
         LineSegment s = getLine(i);
         s.set(p, q, ic, ia);
     }
@@ -143,7 +143,7 @@ public class LineSegmentSet {
     /**
      * Output the activity of the i-th line segment
      */
-    public int getActive(int i) {
+    public LineSegment.ActiveState getActive(int i) {
         LineSegment s = getLine(i);
         return s.getActive();
     }
@@ -244,24 +244,6 @@ public class LineSegmentSet {
         point_removal();             //Exclude dotted line segments to organize the wire diagram for folding estimation
         System.out.println("分割整理　５、重複線分削除");
         overlapping_line_removal(); //If there are two line segments that match exactly, remove one to organize the wire diagram for folding estimation.
-    }
-
-
-    /**
-     * Replace the mountains and valleys of all lines. There is no change in line types other than mountains and valleys such as boundaries.
-     */
-    public void changeAllMountainValley() {
-        LineColor ic_temp;
-
-        for (int ic_id = 1; ic_id <= numLineSegments; ic_id++) {
-            ic_temp = getColor(ic_id);
-            if (ic_temp == LineColor.RED_1) {
-                ic_temp = LineColor.BLUE_2;
-            } else if (ic_temp == LineColor.BLUE_2) {
-                ic_temp = LineColor.RED_1;
-            }
-            setColor(ic_id, ic_temp);
-        }
     }
 
     //Arrangement of line segment sets to generate SubFace
@@ -831,17 +813,17 @@ public class LineSegmentSet {
     public int lineSegment_search(Point p, double r, int j) {
         if (j == -10) {
             for (int i = 1; i <= numLineSegments; i++) {
-                if (((lineSegment_position_search(i, p, r) == 1) && (i != j)) && (getActive(i) == 0)) {
+                if (((lineSegment_position_search(i, p, r) == 1) && (i != j)) && (getActive(i) == LineSegment.ActiveState.INACTIVE_0)) {
                     return i;
                 }
             }
             for (int i = 1; i <= numLineSegments; i++) {
-                if (((lineSegment_position_search(i, p, r) == 2) && (i != j)) && (getActive(i) == 0)) {
+                if (((lineSegment_position_search(i, p, r) == 2) && (i != j)) && (getActive(i) == LineSegment.ActiveState.INACTIVE_0)) {
                     return i;
                 }
             }
             for (int i = 1; i <= numLineSegments; i++) {
-                if (((lineSegment_position_search(i, p, r) == 3) && (i != j)) && (getActive(i) == 0)) {
+                if (((lineSegment_position_search(i, p, r) == 3) && (i != j)) && (getActive(i) == LineSegment.ActiveState.INACTIVE_0)) {
                     return i;
                 }
             }

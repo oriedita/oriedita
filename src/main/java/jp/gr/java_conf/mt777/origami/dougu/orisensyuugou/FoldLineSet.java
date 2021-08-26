@@ -13,20 +13,21 @@ import jp.gr.java_conf.mt777.seiretu.narabebako.int_double;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 public class FoldLineSet {
     int total;               //Total number of line segments actually used
-    ArrayList<LineSegment> lineSegments = new ArrayList<>(); //折線とする線分のインスタンス化
+    List<LineSegment> lineSegments = new ArrayList<>(); //折線とする線分のインスタンス化
 
-    ArrayList<LineSegment> Check1LineSegment = new ArrayList<>(); //Instantiation of line segments to store check information
-    ArrayList<LineSegment> Check2LineSegment = new ArrayList<>(); //Instantiation of line segments to store check information
-    ArrayList<LineSegment> Check3LineSegment = new ArrayList<>(); //Instantiation of line segments to store check information
-    ArrayList<LineSegment> Check4LineSegment = new ArrayList<>(); //Instantiation of line segments to store check information
-    ArrayList<Point> check4Point = new ArrayList<>(); //Instantiation of points to check
+    List<LineSegment> Check1LineSegment = new ArrayList<>(); //Instantiation of line segments to store check information
+    List<LineSegment> Check2LineSegment = new ArrayList<>(); //Instantiation of line segments to store check information
+    List<LineSegment> Check3LineSegment = new ArrayList<>(); //Instantiation of line segments to store check information
+    List<LineSegment> Check4LineSegment = new ArrayList<>(); //Instantiation of line segments to store check information
+    List<Point> check4Point = new ArrayList<>(); //Instantiation of points to check
 
 
-    ArrayList<Circle> circles = new ArrayList<>(); //円のインスタンス化
+    List<Circle> circles = new ArrayList<>(); //円のインスタンス化
     //Setting variables used to load custom properties
     String[] st_new;
     String[] s_new;
@@ -153,7 +154,7 @@ public class FoldLineSet {
     }
 
     //Enter the value of the i-th line segment
-    public void set(int i, Point p, Point q, LineColor ic, int ia) {
+    public void set(int i, Point p, Point q, LineColor ic, LineSegment.ActiveState ia) {
         LineSegment s = getLineSegment(i);
         s.set(p, q, ic, ia);
     }
@@ -206,14 +207,14 @@ public class FoldLineSet {
     }
 
     //Enter the activity of the i-th line segment
-    public void setActive(int i, int iactive) {
+    public void setActive(int i, LineSegment.ActiveState iactive) {
         LineSegment s;
         s = getLineSegment(i);
         s.setActive(iactive);
     }
 
     //Output the activity of the i-th line segment
-    public int getActive(int i) {
+    public LineSegment.ActiveState getActive(int i) {
         LineSegment s;
         s = getLineSegment(i);
         return s.getActive();
@@ -264,7 +265,7 @@ public class FoldLineSet {
         }
 
         memo1.addLine("<円集合>");
-        for (int i = 1; i <= cir_size(); i++) {
+        for (int i = 1; i <= numCircles(); i++) {
             memo1.addLine("番号," + i);
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
@@ -280,7 +281,7 @@ public class FoldLineSet {
     }
 
     //Output the information of all line segments of the line segment set as Memo. // Iactive does not write out the fold line of excluding in the memo
-    public Memo getMemo_active_excluding(int excluding) {
+    public Memo getMemo_active_excluding(LineSegment.ActiveState excluding) {
         Memo memo1 = new Memo();
         memo1.reset();
         memo1.addLine("<線分集合>");
@@ -305,7 +306,7 @@ public class FoldLineSet {
         }
 
         memo1.addLine("<円集合>");
-        for (int i = 1; i <= cir_size(); i++) {
+        for (int i = 1; i <= numCircles(); i++) {
             memo1.addLine("番号," + i);
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
@@ -377,7 +378,7 @@ public class FoldLineSet {
         int number = 0;
         for (int i = 1; i <= total; i++) {
             LineSegment s = getLineSegment(i);
-            if ((s.getColor().getNumber() < 3) && (s.getSelected() == 2)) {
+            if ((s.getColor().isFoldingLine()) && (s.getSelected() == 2)) {
                 number++;
                 memo1.addLine("番号," + number);
 
@@ -413,7 +414,7 @@ public class FoldLineSet {
         int reading_flag = 0;//If it is 0, it will not be read. If it is 1, read it.
         int number = 0;
         LineColor ic;
-        int is;
+        LineSegment.ActiveState is;
 
 
         String r_title;
@@ -510,30 +511,30 @@ public class FoldLineSet {
 
             if ((reading_flag == 1) && (str.equals("iactive"))) {//20181110追加
                 str = tk.nextToken();
-                is = Integer.parseInt(str);
+                is = LineSegment.ActiveState.valueOf(str);
                 LineSegment s = getLineSegment(number);
                 s.setActive(is);
             }
 
             if ((reading_flag == 1) && (str.equals("iva"))) {
                 str = tk.nextToken();
-                is = Integer.parseInt(str);
+                int iva = Integer.parseInt(str);
                 LineSegment s = getLineSegment(number);
-                s.setVonoroiA(is);
+                s.setVonoroiA(iva);
             }
 
             if ((reading_flag == 1) && (str.equals("ivb"))) {
                 str = tk.nextToken();
-                is = Integer.parseInt(str);
+                int ivb = Integer.parseInt(str);
                 LineSegment s = getLineSegment(number);
-                s.setVonoroiB(is);
+                s.setVonoroiB(ivb);
             }
 
             if ((reading_flag == 1) && (str.equals("選択"))) {
                 str = tk.nextToken();
-                is = Integer.parseInt(str);
+                int isel = Integer.parseInt(str);
                 LineSegment s = getLineSegment(number);
-                s.setSelected(is);
+                s.setSelected(isel);
             }
             if ((reading_flag == 1) && (str.equals("座標"))) {
                 str = tk.nextToken();
@@ -776,7 +777,7 @@ public class FoldLineSet {
             if ((reading_flag == 3) && (str.equals("番号"))) {
                 str = tk.nextToken();
                 circles.add(new Circle(0.0, 0.0, 1.0, LineColor.RED_1));
-                number = cir_size();
+                number = numCircles();
             }
 
             if ((reading_flag == 3) && (str.equals("中心と半径と色"))) {
@@ -823,16 +824,8 @@ public class FoldLineSet {
 
     //Replace the mountains and valleys of all lines. There is no change in line types other than mountains and valleys such as boundaries.
     public void allMountainValleyChange() {
-        LineColor ic_temp;
-
         for (int ic_id = 1; ic_id <= total; ic_id++) {
-            ic_temp = getColor(ic_id);
-            if (ic_temp == LineColor.RED_1) {
-                ic_temp = LineColor.BLUE_2;
-            } else if (ic_temp == LineColor.BLUE_2) {
-                ic_temp = LineColor.RED_1;
-            }
-            setColor(ic_id, ic_temp);
+            setColor(ic_id, getColor(ic_id).changeMV());
         }
     }
 
@@ -866,7 +859,7 @@ public class FoldLineSet {
 
 
         memo1.addLine("<円集合>");
-        for (int i = 1; i <= cir_size(); i++) {
+        for (int i = 1; i <= numCircles(); i++) {
             memo1.addLine("番号," + i);
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
@@ -1187,7 +1180,7 @@ public class FoldLineSet {
 
         memo1.addLine("<円集合>");
         int ii = 0;
-        for (int i = 1; i <= cir_size(); i++) {
+        for (int i = 1; i <= numCircles(); i++) {
             boolean idel = false;
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
@@ -1248,7 +1241,7 @@ public class FoldLineSet {
 
         memo1.addLine("<円集合>");
         int ii = 0;
-        for (int i = 1; i <= cir_size(); i++) {
+        for (int i = 1; i <= numCircles(); i++) {
             boolean idel = false;
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
@@ -1327,7 +1320,7 @@ public class FoldLineSet {
 
         memo1.addLine("<円集合>");
         int ii = 0;
-        for (int i = 1; i <= cir_size(); i++) {
+        for (int i = 1; i <= numCircles(); i++) {
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));//ec.set(e_temp.get_tyuusin());er=e_temp.getr();
 
@@ -1373,7 +1366,7 @@ public class FoldLineSet {
 
         memo1.addLine("<円集合>");
         int ii = 0;
-        for (int i = 1; i <= cir_size(); i++) {
+        for (int i = 1; i <= numCircles(); i++) {
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));//ec.set(e_temp.get_tyuusin());er=e_temp.getr();
             ii = ii + 1;
@@ -1425,7 +1418,7 @@ public class FoldLineSet {
 
         memo1.addLine("<円集合>");
         int ii = 0;
-        for (int i = 1; i <= cir_size(); i++) {
+        for (int i = 1; i <= numCircles(); i++) {
             boolean idel = false;
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
@@ -1502,7 +1495,7 @@ public class FoldLineSet {
         LineSegment s4 = new LineSegment(p4, p1);
 
         //("<円集合>");
-        for (int i = 1; i <= cir_size(); i++) {
+        for (int i = 1; i <= numCircles(); i++) {
             int i_change = 0;
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
@@ -1662,7 +1655,7 @@ public class FoldLineSet {
     //Divide the two line segments at the intersection of the two intersecting line segments. If there were two line segments that completely overlapped, both would remain without any processing.
     public void intersect_divide(int i1, int i2, int i3, int i4) {//Crossing division when i3 to i4 fold lines are added to the original i1 to i2 fold lines
         for (int i = 1; i <= total; i++) {
-            setActive(i, 0);
+            setActive(i, LineSegment.ActiveState.INACTIVE_0);
         }//削除すべき線は iactive=100とする
         //System.out.println("1234567890   kousabunkatu");
         ArrayList<Integer> k_flg = new ArrayList<>();//交差分割の影響があることを示すフラッグ。
@@ -1767,7 +1760,7 @@ public class FoldLineSet {
         }
 
         Memo memo_temp = new Memo();
-        memo_temp.set(getMemo_active_excluding(100));
+        memo_temp.set(getMemo_active_excluding(LineSegment.ActiveState.MARK_FOR_DELETION_100));
         reset();
         setMemo(memo_temp);
     }
@@ -1849,7 +1842,7 @@ public class FoldLineSet {
         if ((intersect_flg0 == StraightLine.Intersection.INTERSECT_X_1) && (intersect_flg1 == StraightLine.Intersection.INTERSECT_T_A_21)) {//加える折線と既存の折線はT型(加える折線が縦、既存の折線が横)で交わる(縦のa点で交わる)
 
             Point pk = new Point();
-            pk.set(OritaCalc.shadow_request(OritaCalc.lineSegmentToStraightLine(sj), si.getA()));//pkは点pの（線分を含む直線上の）影
+            pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(sj), si.getA()));//pkは点pの（線分を含む直線上の）影
             intersect_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
             //ori_s.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(straightLine0,straightLine1));
@@ -1879,7 +1872,7 @@ public class FoldLineSet {
         // --------------------------------------
         if ((intersect_flg0 == StraightLine.Intersection.INTERSECT_X_1) && (intersect_flg1 == StraightLine.Intersection.INTERSECT_T_B_22)) {//加える折線と既存の折線はT型(加える折線が縦、既存の折線が横)で交わる(縦のb点で交わる)
             Point pk = new Point();
-            pk.set(OritaCalc.shadow_request(OritaCalc.lineSegmentToStraightLine(sj), si.getB()));//pkは点pの（線分を含む直線上の）影
+            pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(sj), si.getB()));//pkは点pの（線分を含む直線上の）影
             intersect_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
             //ori_s.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(straightLine0,straightLine1));
@@ -1909,7 +1902,7 @@ public class FoldLineSet {
         // --------------------------------------
         if ((intersect_flg0 == StraightLine.Intersection.INTERSECT_T_A_21) && (intersect_flg1 == StraightLine.Intersection.INTERSECT_X_1)) {//The added fold line and the existing fold line intersect at a T shape (the added fold line is horizontal and the existing fold line is vertical) (intersect at the vertical a point).
             Point pk = new Point();
-            pk.set(OritaCalc.shadow_request(OritaCalc.lineSegmentToStraightLine(si), sj.getA()));//pk is the shadow (on a straight line including the line segment) of point p
+            pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(si), sj.getA()));//pk is the projection (on a straight line including the line segment) of point p
             intersect_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
             //ori_s.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //This is the end of the operation 			kousa_ten.set(oc.kouten_motome(straightLine0,straightLine1));
@@ -1939,7 +1932,7 @@ public class FoldLineSet {
         // --------------------------------------
         if ((intersect_flg0 == StraightLine.Intersection.INTERSECT_T_B_22) && (intersect_flg1 == StraightLine.Intersection.INTERSECT_X_1)) {//The added fold line and the existing fold line intersect at a T shape (the added fold line is horizontal and the existing fold line is vertical) (intersect at the vertical a point).
             Point pk = new Point();
-            pk.set(OritaCalc.shadow_request(OritaCalc.lineSegmentToStraightLine(si), sj.getB()));//pkは点pの（線分を含む直線上の）影
+            pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(si), sj.getB()));//pkは点pの（線分を含む直線上の）影
             intersect_point.set(pk);//The intersection is the shadow of the end point of s0 on the polygonal line i 20161129
             //ori_s.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(straightLine0,straightLine1));
@@ -1983,7 +1976,7 @@ public class FoldLineSet {
             LineSegment.Intersection i_intersection_decision = OritaCalc.line_intersect_decide(si, sj, 0.000001, 0.000001);//iは加える方(2)、jは元からある方(1)
 
 
-            if (i_intersection_decision == LineSegment.Intersection.PARALLEL_EQUAL_31) {// ２つの線分が全く同じ
+            if (i_intersection_decision == LineSegment.Intersection.PARALLEL_EQUAL_31) {//The two line segments are exactly the same
                 if ((si.getColor() == LineColor.CYAN_3) && (sj.getColor() != LineColor.CYAN_3)) {
                     return LineSegment.Intersection.NO_INTERSECTION_0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
@@ -1991,7 +1984,7 @@ public class FoldLineSet {
                     return LineSegment.Intersection.NO_INTERSECTION_0;
                 }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
-                setActive(j, 100);
+                setActive(j, LineSegment.ActiveState.MARK_FOR_DELETION_100);
                 return LineSegment.Intersection.PARALLEL_EQUAL_31;
 
             } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321) {//(p1=p3)_p4_p2、siにsjが含まれる。
@@ -2725,7 +2718,7 @@ public class FoldLineSet {
                                         OritaCalc.distance_lineSegment(ej.getCenter(), si) - ej.getRadius()
                                 ) < 0.000001
                         ) {
-                            addCircle(OritaCalc.shadow_request(ti, ej.getCenter()), 0.0);
+                            addCircle(OritaCalc.findProjection(ti, ej.getCenter()), 0.0);
                         }
                     } else if (tc_kyori > ej.getRadius()) {//Circles and straight lines do not intersect
                     } else {//Circle and straight line intersect at two points
@@ -2776,7 +2769,7 @@ public class FoldLineSet {
 
     //円の整理-----------------------------------------
     public void circle_organize() {//全ての円を対象に整理をする。
-        for (int i = cir_size(); i >= 1; i--) {
+        for (int i = numCircles(); i >= 1; i--) {
             circle_organize(i);
         }
     }
@@ -2806,7 +2799,7 @@ public class FoldLineSet {
         int ir5 = 0;
 
         if (er_0 < 0.0000001) {
-            for (int i = 1; i <= cir_size(); i++) {
+            for (int i = 1; i <= numCircles(); i++) {
                 if (i != i0) {
                     e_temp.set(getCircle(i));
                     er_1 = e_temp.getRadius();
@@ -2898,7 +2891,7 @@ public class FoldLineSet {
     }
 
     //線分の追加-------------------------------
-    public void addLine(Point pi, Point pj, LineColor i_c, int i_a, int v_a, int v_b) {
+    public void addLine(Point pi, Point pj, LineColor i_c, LineSegment.ActiveState i_a, int v_a, int v_b) {
         total++;
 
         LineSegment s;
@@ -3008,7 +3001,7 @@ public class FoldLineSet {
         int minrid = 0;
         double minr = 100000;
         double rtemp;
-        for (int i = 1; i <= cir_size(); i++) {
+        for (int i = 1; i <= numCircles(); i++) {
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
 
@@ -3032,7 +3025,7 @@ public class FoldLineSet {
     public double closestCircleDistance(Point p) {
         double minr = 100000;
         double rtemp;
-        for (int i = 1; i <= cir_size(); i++) {
+        for (int i = 1; i <= numCircles(); i++) {
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
 
@@ -3113,7 +3106,7 @@ public class FoldLineSet {
         int minrid = 0;
         double minr = 100000.0;
         Circle e1 = new Circle(100000.0, 100000.0, 1.0, LineColor.BLACK_0);
-        for (int i = 1; i <= cir_size(); i++) {
+        for (int i = 1; i <= numCircles(); i++) {
             double ek = OritaCalc.distance_circumference(p, getCircle(i));
             if (minr > ek) {
                 minr = ek;
@@ -3172,7 +3165,7 @@ public class FoldLineSet {
         Point p_return = new Point();
         p_return.set(100000.0, 100000.0);
         Point p_temp = new Point();
-        for (int i = 1; i <= cir_size(); i++) {
+        for (int i = 1; i <= numCircles(); i++) {
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
             p_temp.set(e_temp.getCenter());
@@ -3699,7 +3692,7 @@ public class FoldLineSet {
 
     }
 
-    //Divide the polygonal line i by the shadow of the point p. However, if the shadow of point p is considered to be the same as the end point of any polygonal line, nothing is done.
+    //Divide the polygonal line i by the projection of the point p. However, if the projection of point p is considered to be the same as the end point of any polygonal line, nothing is done.
     public int lineSegment_bunkatu(Point p, int i) {//何もしない=0,分割した=1
 
         int mts_id;
@@ -3709,7 +3702,7 @@ public class FoldLineSet {
         //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){}
         //線分を含む直線を得る public Tyokusen oc.Senbun2Tyokusen(Senbun s){}
         Point pk = new Point();
-        pk.set(OritaCalc.shadow_request(OritaCalc.lineSegmentToStraightLine(mts), p));//pkは点pの（線分を含む直線上の）影
+        pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(mts), p));//pkは点pの（線分を含む直線上の）影
         //線分の分割-----------------------------------------
         lineSegment_bunkatu(mts_id, pk);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
         return 1;
@@ -3730,7 +3723,7 @@ public class FoldLineSet {
             setB(i, temp_b);
         }
 
-        for (int i = 1; i <= cir_size(); i++) {
+        for (int i = 1; i <= numCircles(); i++) {
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
 
@@ -3740,7 +3733,7 @@ public class FoldLineSet {
         }
     }
 
-    public void move(Point ta, Point tb, Point tc, Point td) {//折線集合全体の位置を移動する。
+    public void move(Point ta, Point tb, Point tc, Point td) {//Move the position of the entire set of polygonal lines.
         double d = OritaCalc.angle(ta, tb, tc, td);
         double r = tc.distance(td) / ta.distance(tb);
 
@@ -3767,8 +3760,7 @@ public class FoldLineSet {
         for (int i = 1; i <= total - 1; i++) {
             if (getColor(i) != LineColor.CYAN_3) {
 
-                LineSegment si;
-                si = getLineSegment(i);
+                LineSegment si = getLineSegment(i);
 
                 for (int j = i + 1; j <= total; j++) {
                     if (getColor(j) != LineColor.CYAN_3) {
@@ -3976,7 +3968,7 @@ public class FoldLineSet {
 
     // ***********************************ppppppppppppqqqqqq
 //Cirには1番目からcir_size()番目までデータが入っている
-    public int cir_size() {
+    public int numCircles() {
         return circles.size() - 1;
     }
 
@@ -3988,8 +3980,8 @@ public class FoldLineSet {
         //iの指定があったとき、EnはCirのi-1番目に格納される　
         //i>cir_size()のときは、Cirのi-1番目の円はまだ定義されていないので、とりあえずi-1番目まで円を存在させる必要がある
 
-        if (i > cir_size()) {
-            while (i > cir_size()) {
+        if (i > numCircles()) {
+            while (i > numCircles()) {
                 circles.add(new Circle());
             }
         }
@@ -4016,23 +4008,23 @@ public class FoldLineSet {
         return Check4LineSegment.size();
     }//Check4Senbには0番目からsize()-1番目までデータが入っている
 
-    public int check4_T_size() {
+    public int check4_point_size() {
         return check4Point.size();
     }//Check4Tenには0番目からsize()-1番目までデータが入っている
 
-    public LineSegment check1_getSenbun(int i) {
+    public LineSegment check1_getLineSegment(int i) {
         return Check1LineSegment.get(i);
     }
 
-    public LineSegment check2_getSenbun(int i) {
+    public LineSegment check2_getLineSegment(int i) {
         return Check2LineSegment.get(i);
     }
 
-    public LineSegment check3_getSenbun(int i) {
+    public LineSegment check3_getLineSegment(int i) {
         return Check3LineSegment.get(i);
     }
 
-    public LineSegment check4_getSenbun(int i) {
+    public LineSegment check4_getLineSegment(int i) {
         return Check4LineSegment.get(i);
     }
 
@@ -4040,7 +4032,7 @@ public class FoldLineSet {
         return check4Point.get(i);
     }
 
-    public void check3(double r) {//頂点周囲の線数チェック
+    public void check3(double r) {//Check the number of lines around the vertex
         Check3LineSegment.clear();
         unselect_all();
         for (int i = 1; i <= total; i++) {
@@ -4119,7 +4111,7 @@ public class FoldLineSet {
 
     // -----------------------------------------------------
     public int Check4Point_overlapping_check(Point p0) {
-        for (int i = 0; i < check4_T_size(); i++) {
+        for (int i = 0; i < check4_point_size(); i++) {
             Point p = new Point();
             p.set(check4_getPoint(i));
             if ((-0.00000001 < p0.getX() - p.getX()) && (p0.getX() - p.getX() < 0.00000001)) {
@@ -4159,10 +4151,10 @@ public class FoldLineSet {
             }
         }
 
-        System.out.println("check4_T_size() = " + check4_T_size());
+        System.out.println("check4_T_size() = " + check4_point_size());
 
         //Selection of whether the place to be checked can be folded flat
-        for (int i = 0; i < check4_T_size(); i++) {
+        for (int i = 0; i < check4_point_size(); i++) {
             Point p = new Point();
             p.set(check4_getPoint(i));
 
@@ -4208,138 +4200,24 @@ public class FoldLineSet {
             }
         }
 
-
-        // 判定開始-------------------------------------------
-
-        if ((i_tss_black != 0) && (i_tss_black != 2)) {//黒線がないか2本以外の場合はおかしい。
+        // Judgment start-------------------------------------------
+        if ((i_tss_black != 0) && (i_tss_black != 2)) {//It is strange if there are no black lines or if there are other than two lines.
             return false;
         }
 
-        if (i_tss_black == 0) {//黒線がない場合
-            if (Math.abs(i_tss_red - i_tss_blue) != 2) {//用紙内部の点で前川定理を満たさないのはダメ
+        if (i_tss_black == 0) {//If there is no black line
+            if (Math.abs(i_tss_red - i_tss_blue) != 2) {//Do not satisfy Maekawa's theorem in terms of the inside of the paper
                 return false;
             }
 
             return extended_fushimi_decide_inside(p, nbox);
         }
 
-        if (i_tss_black == 2) {//黒線が2本の場合
-            return extended_fushimi_decide_sides(p, nbox);
-        }
-        return true;
+        //When there are two black lines
+        return extended_fushimi_decide_sides(p, nbox);
     }
 
-    // -----------------------------------------------------
-    public void check4_old(double r) {
-        //_oldをとればオリジナルのcheck4(double r)関数として作動する
-        //頂点周囲の線数チェック
-        Check4LineSegment.clear();
-        unselect_all();
-        for (int i = 1; i <= total; i++) {
-            if (getColor(i) != LineColor.CYAN_3) {
-                LineSegment si;
-                si = getLineSegment(i);
-                Point p = new Point();
-                int tss;    //tss%2==0 偶数、==1 奇数
-                int tss_red;
-                int tss_blue;
-                int tss_black;
-                int tss_cyan;
-
-                //-----------------
-                p.set(si.getA());
-                tss = vertex_surrounding_lineCount(p, r);
-                tss_red = vertex_surrounding_lineCount_red(p, r);
-                tss_blue = vertex_surrounding_lineCount_blue(p, r);
-                tss_black = vertex_surrounding_lineCount_black(p, r);
-                tss_cyan = vertex_surrounding_lineCount_auxiliary_live_line(p, r);
-                //System.out.println("senbun("+i+") a : tss="+tss+", tss_red="+tss_red+", tss_blue="+tss_blue+", tss_black="+tss_black+", tss_cyan="+tss_cyan);
-                //-----------------
-
-                if ((tss_black != 0) && (tss_black != 2)) {//黒線がないか2本以外の場合はおかしい。
-                    //System.out.println("20170216_1");
-                    Check4LineSegment.add(new LineSegment(p, p));//set_select(i,2);
-
-                }
-
-
-                if (tss_black == 0) {//黒線がない場合
-                    if (tss - tss_cyan == tss_red + tss_blue) {//（前提として境界は黒で、山谷未設定折線はないこと。）頂点周囲に赤か青しかない。つまり、用紙内部の点
-
-                        if (Math.abs(tss_red - tss_blue) != 2) {//用紙内部の点で前川定理を満たさないのはダメ
-                            //System.out.println("20170216_2");
-                            Check4LineSegment.add(new LineSegment(p, p));//set_select(i,2);
-                        }
-                    }
-                    if (!extended_fushimi_decide_inside(p)) {
-                        //System.out.println("20170216_3");
-                        Check4LineSegment.add(new LineSegment(p, p));//set_select(i,2);
-                    }
-
-
-                }
-
-                if (tss_black == 2) {//黒線が2本の場合
-                    if (!extended_fushimi_decide_sides(p)) {
-                        //System.out.println("20170216_3");
-                        Check4LineSegment.add(new LineSegment(p, p));//set_select(i,2);
-                    }
-                }
-
-
-                //-----------------
-
-
-                //-----------------
-                p.set(si.getB());
-                tss = vertex_surrounding_lineCount(p, r);
-                tss_red = vertex_surrounding_lineCount_red(p, r);
-                tss_blue = vertex_surrounding_lineCount_blue(p, r);
-                tss_black = vertex_surrounding_lineCount_black(p, r);
-                tss_cyan = vertex_surrounding_lineCount_auxiliary_live_line(p, r);
-                //System.out.println("senbun("+i+")  b : tss="+tss+", tss_red="+tss_red+", tss_blue="+tss_blue+", tss_black="+tss_black+", tss_cyan="+tss_cyan);
-
-                //-----------------
-                if ((tss_black != 0) && (tss_black != 2)) {//黒線がないか2本以外の場合はおかしい。
-                    //System.out.println("20170216_4");
-                    Check4LineSegment.add(new LineSegment(p, p));//set_select(i,2);
-                }
-
-                if (tss_black == 0) {//黒線がない場合
-                    if (tss - tss_cyan == tss_red + tss_blue) {//（前提として境界は黒で、山谷未設定折線はないこと。）頂点周囲に赤か青しかない。つまり、用紙内部の点
-                        if (Math.abs(tss_red - tss_blue) != 2) {//用紙内部の点で前川定理を満たさないのはダメ
-                            //System.out.println("20170216_5");
-                            Check4LineSegment.add(new LineSegment(p, p));//set_select(i,2);
-                        }
-                    }
-                    if (!extended_fushimi_decide_inside(p)) {
-                        //System.out.println("20170216_6");
-                        Check4LineSegment.add(new LineSegment(p, p));//set_select(i,2);
-                    }
-
-
-                }
-
-
-                if (tss_black == 2) {//黒線が2本の場合
-                    if (!extended_fushimi_decide_sides(p)) {
-                        //System.out.println("20170216_3");
-                        Check4LineSegment.add(new LineSegment(p, p));//set_select(i,2);
-                    }
-                }
-
-
-                //-----------------
-            }
-        }
-
-
-    }
-
-
-// **************************************
-
-    //Ten p に最も近い用紙辺部の端点が拡張伏見定理を満たすか判定
+    //Point p に最も近い用紙辺部の端点が拡張伏見定理を満たすか判定
     public boolean extended_fushimi_decide_sides(Point p) {//return　0=満たさない、　1=満たす。　
         double hantei_kyori = 0.00001;
 

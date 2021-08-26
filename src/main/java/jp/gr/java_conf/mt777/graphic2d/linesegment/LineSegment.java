@@ -11,7 +11,7 @@ import java.math.RoundingMode;
 public class LineSegment {
     private final Point a = new Point(); //Branch a point
     private final Point b = new Point(); //Branch b point
-    int active;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
+    ActiveState active;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
     LineColor color;//Color specification 　0=black,1=blue,2=red.
 
     int customized = 0;//Custom property parameters
@@ -27,7 +27,7 @@ public class LineSegment {
     public LineSegment() {
         a.set(0.0, 0.0);
         b.set(0.0, 0.0);
-        active = 0;
+        active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
         maxX = 0;
@@ -41,7 +41,7 @@ public class LineSegment {
     public LineSegment(Point t1, Point t2) {
         a.set(t1);
         b.set(t2);
-        active = 0;
+        active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
         maxX = 0;
@@ -55,7 +55,7 @@ public class LineSegment {
     public LineSegment(Point t1, Point t2, LineColor color) {
         a.set(t1);
         b.set(t2);
-        active = 0;
+        active = ActiveState.INACTIVE_0;
         this.color = color;
         selected = 0;
         maxX = 0;
@@ -69,7 +69,7 @@ public class LineSegment {
     public LineSegment(double i1, double i2, double i3, double i4) {
         a.set(i1, i2);
         b.set(i3, i4);
-        active = 0;
+        active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
         maxX = 0;
@@ -83,7 +83,7 @@ public class LineSegment {
     public void reset() {
         a.set(0.0, 0.0);
         b.set(0.0, 0.0);
-        active = 0;
+        active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
         maxX = 0;
@@ -164,23 +164,23 @@ public class LineSegment {
     //----------
     //Set the coordinates of the activated point to p !!!!!!!!!!!! If you make a mistake, this function is dangerous because it is hard to notice, preferably change it to another name 20170507
     public void set(Point p) {
-        if (active == 1) {
+        if (active == ActiveState.ACTIVE_A_1) {
             setA(p);
         }
-        if (active == 2) {
+        if (active == ActiveState.ACTIVE_B_2) {
             setB(p);
         }
     }
 
 
     //---------
-    public void set(Point p, Point q, LineColor ic, int ia) {
+    public void set(Point p, Point q, LineColor ic, ActiveState ia) {
         set(p, q);
         color = ic;
         active = ia;
     }
 
-    public void set(Point p, Point q, LineColor ic, int ia, int v_a, int v_b) {
+    public void set(Point p, Point q, LineColor ic, ActiveState ia, int v_a, int v_b) {
         set(p,q,ic,ia);
         vonoroiA = v_a;
         vonoroiB = v_b;
@@ -221,11 +221,11 @@ public class LineSegment {
         return color;
     }
 
-    public void setActive(int i) {
+    public void setActive(ActiveState i) {
         active = i;
     }
 
-    public int getActive() {
+    public ActiveState getActive() {
         return active;
     }
 
@@ -239,18 +239,18 @@ public class LineSegment {
 
     //This line segment is activated depending on whether it is close to a certain point.
     public void activate(Point p, double r) {
-        active = 0;
+        active = ActiveState.INACTIVE_0;
         if (p.distanceSquared(a) <= r * r) {
-            active = 1;
+            active = ActiveState.ACTIVE_A_1;
         }
         if (p.distanceSquared(b) <= r * r) {
-            active = 2;
+            active = ActiveState.ACTIVE_B_2;
         }
     }
 
     //Deactivate this line segment
     public void deactivate() {
-        active = 0;
+        active = ActiveState.INACTIVE_0;
     }
 
     //Exchange the coordinates of both end points a and b
@@ -588,5 +588,16 @@ public class LineSegment {
         public String toString() {
             return Integer.toString(state);
         }
+    }
+
+    /**
+     * 0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
+     */
+    public enum ActiveState {
+        INACTIVE_0,
+        ACTIVE_A_1,
+        ACTIVE_B_2,
+        ACTIVE_BOTH_3,
+        MARK_FOR_DELETION_100,
     }
 }

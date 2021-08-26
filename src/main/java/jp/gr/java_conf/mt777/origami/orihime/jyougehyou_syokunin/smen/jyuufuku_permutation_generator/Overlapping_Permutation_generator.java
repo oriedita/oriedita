@@ -38,20 +38,20 @@ public class Overlapping_Permutation_generator {//Permutations with repeat gener
         while (i_traveler <= numDigits) {
 
             if (i_traveler == 0) {
-                i_traveler = i_traveler + 1;
+                i_traveler++;
                 ij[i_traveler] = 0;// Proceed to the larger number of digits
             }
 
             ij[i_traveler] = rebuildGuide(ij[i_traveler]);
 
             if (ij[i_traveler] <= numDigits) {// Proceed to the larger number of digits
-                i_traveler = i_traveler + 1;
+                i_traveler++;
                 ij[i_traveler] = 0;
                 if (i_traveler == numDigits + 1) {
                     break;
                 }
             } else {// Return to the one with the smaller number of digits
-                i_traveler = i_traveler - 1;
+                i_traveler--;
                 ireturn = i_traveler;
             }
         }
@@ -72,7 +72,7 @@ public class Overlapping_Permutation_generator {//Permutations with repeat gener
         // It is necessary to consider whether there are any bugs here.
         int ignew = ig;
         while (true) {
-            ignew = ignew + 1;
+            ignew++;
             if (ignew > numDigits) {
                 break;
             }

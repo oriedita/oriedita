@@ -80,7 +80,6 @@ public class StraightLine {
         c = c + d * Math.sqrt(a * a + b * b);
     }
 
-    //
     public void set(StraightLine t) {
         a = t.getA();
         b = t.getB();
@@ -184,8 +183,8 @@ public class StraightLine {
         return new Point((b1 * c2 - b2 * c1) / (a1 * b2 - a2 * b1), (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1));
     }
 
-    //Find the position of the shadow of the point p on the straight line (the position on the straight line closest to the point p). 20170312 added
-    public Point findShadow(Point p) {
+    //Find the position of the projection of the point p on the straight line (the position on the straight line closest to the point p). 20170312 added
+    public Point findProjection(Point p) {
         StraightLine t1 = new StraightLine(a, b, c);
         t1.orthogonalize(p);//Find a straight line that passes through the point p1 and is orthogonal to t.
         return findIntersection(t1);
