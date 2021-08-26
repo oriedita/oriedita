@@ -165,7 +165,6 @@ public class Grid {
         }
     }
 
-
     public void decreaseGridLineWidth() {
         gridLineWidth = gridLineWidth - 2;
         if (gridLineWidth < 1) {
@@ -221,17 +220,18 @@ public class Grid {
         Point p_c_index = new Point(getIndex(p_c));
         Point p_d_index = new Point(getIndex(p_d));
 
-        double b_index_min = p_a_index.getY();
-        if (p_b_index.getY() < b_index_min) {
-            b_index_min = p_b_index.getY();
+        double a_index_min = p_a_index.getX();
+        if (p_b_index.getX() < a_index_min) {
+            a_index_min = p_b_index.getX();
         }
-        if (p_c_index.getY() < b_index_min) {
-            b_index_min = p_c_index.getY();
+        if (p_c_index.getX() < a_index_min) {
+            a_index_min = p_c_index.getX();
         }
-        if (p_d_index.getY() < b_index_min) {
-            b_index_min = p_d_index.getY();
+        if (p_d_index.getX() < a_index_min) {
+            a_index_min = p_d_index.getX();
         }
-        return (int) Math.floor(b_index_min);
+
+        return (int) Math.floor(a_index_min);
     }
 
     public int get_a_index_max(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より大きい整数の指数を得る。
@@ -260,17 +260,18 @@ public class Grid {
         Point p_c_index = new Point(getIndex(p_c));
         Point p_d_index = new Point(getIndex(p_d));
 
-        double a_index_min = p_a_index.getX();
-        if (p_b_index.getX() < a_index_min) {
-            a_index_min = p_b_index.getX();
+        double b_index_min = p_a_index.getY();
+        if (p_b_index.getY() < b_index_min) {
+            b_index_min = p_b_index.getY();
         }
-        if (p_c_index.getX() < a_index_min) {
-            a_index_min = p_c_index.getX();
+        if (p_c_index.getY() < b_index_min) {
+            b_index_min = p_c_index.getY();
         }
-        if (p_d_index.getX() < a_index_min) {
-            a_index_min = p_d_index.getX();
+        if (p_d_index.getY() < b_index_min) {
+            b_index_min = p_d_index.getY();
         }
-        return (int) Math.floor(a_index_min);
+
+        return (int) Math.floor(b_index_min);
     }
 
     public int get_b_index_max(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のbベクトルの指数より大きい整数の指数を得る。
@@ -289,6 +290,7 @@ public class Grid {
         if (p_d_index.getY() > b_index_max) {
             b_index_max = p_d_index.getY();
         }
+
         return (int) Math.ceil(b_index_max);
     }
 
@@ -357,6 +359,7 @@ public class Grid {
             if (grid_screen_b_min < grid_yousi_y_min) {
                 grid_screen_b_min = grid_yousi_y_min;
             }
+
         }
 
         g.setColor(grid_color);
@@ -421,23 +424,19 @@ public class Grid {
             }
             //一定数ごとに格子線の色を変える　ここまで--------------------------------------------
         }
-
-
     }
-
 
     public Point closestGridPoint(Point t0) {
         Point t2 = new Point(); //格子点
-
-        if (baseState == State.HIDDEN) {
-            return t2;
-        }
 
         if (grid_division_number <= 0) {
             return t2;
         }
 
-        // Consider the proximity to the grid points in the paper frame
+        if (baseState == State.HIDDEN) {
+            return t2;
+        }
+
         Point t_1 = new Point(t0.getX() - diagonal_max, t0.getY() - diagonal_max);
         Point t_2 = new Point(t0.getX() - diagonal_max, t0.getY() + diagonal_max);
         Point t_3 = new Point(t0.getX() + diagonal_max, t0.getY() + diagonal_max);
@@ -448,7 +447,6 @@ public class Grid {
         int grid_b_max = get_b_index_max(t_1, t_2, t_3, t_4);
         int grid_b_min = get_b_index_min(t_1, t_2, t_3, t_4);
 
-        //Consider the proximity to the grid points regardless of the inside or outside of the paper frame
         double distance_min = diagonal_max;
         for (int i = grid_a_min; i <= grid_a_max; i++) {
             for (int j = grid_b_min; j <= grid_b_max; j++) {

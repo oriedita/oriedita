@@ -1132,7 +1132,7 @@ public class FoldedFigure {
         ;
 
         public State advance() {
-            return State.values()[(ordinal() + 1) % State.values().length];
+            return values()[(ordinal() + 1) % values().length];
         }
     }
 
