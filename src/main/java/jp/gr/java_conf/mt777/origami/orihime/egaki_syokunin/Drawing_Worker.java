@@ -7608,10 +7608,10 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
     //マウス操作(ボタンを押したとき)時の作業
     public void mPressed_A_18(Point p0) {
 
-        int honsuu = 0;//1つの端点周りに描く線の本数
+        int honsuu = 0;//Number of lines drawn around one endpoint
         if (id_angle_system != 0) {
             honsuu = id_angle_system * 2 - 1;
-        } else if (id_angle_system == 0) {
+        } else {
             honsuu = 6;
         }
 
@@ -7638,7 +7638,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             if (id_angle_system != 0) {
                 d_angle_system = 180.0 / (double) id_angle_system;
-            } else if (id_angle_system == 0) {
+            } else {
                 d_angle_system = 180.0 / 4.0;
             }
 
@@ -7677,11 +7677,8 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 jk[6] = 360.0 - d_jiyuu_kaku_3;
 
                 LineSegment s_kiso = new LineSegment(line_step[2].getA(), line_step[1].getA());
-                kakudo = 0.0;
 
                 for (int i = 1; i <= 6; i++) {
-                    //i_jyun=i_jyun+1;if(i_jyun==2){i_jyun=0;}
-
                     i_drawing_stage = i_drawing_stage + 1;
                     kakudo = jk[i];
                     line_step[i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, kakudo, 100.0));
@@ -7781,8 +7778,6 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             }
 
         }
-        return;
-
     }
 
     //マウス操作(ドラッグしたとき)を行う関数
@@ -8173,14 +8168,6 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         line_step[1].setColor(LineColor.CYAN_3);
         circle_step[1].set(closest_point.getX(), closest_point.getY(), 0.0);
         circle_step[1].setColor(LineColor.CYAN_3);
-
-
-//System.out.println("20170225  line_step[1].getax()"+line_step[1].getax());
-
-//line_step[1].set(new Ten(200.0,200.0),new Ten(300.0,300.0));
-        //k.addsenbun(p,p);
-        //ieda=k.getsousuu();
-        //k.setcolor(ieda,lineColor);
     }
 
     //マウス操作(i_mouse_modeA==42 円入力　でドラッグしたとき)を行う関数----------------------------------------------------
@@ -8201,7 +8188,6 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             line_step[1].setA(closest_point);
             if (p.distance(closest_point) <= d_decision_width) {
                 if (line_step[1].getLength() > 0.00000001) {
-                    //addsenbun(line_step[1]);
                     addCircle(line_step[1].getBX(), line_step[1].getBY(), line_step[1].getLength(), LineColor.CYAN_3);
                     record();
                 }
@@ -9246,14 +9232,13 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         grid.set_b_to_parallel_scale_interval(i);
     }
 
-    public void a_to_heikouna_memori_iti_idou() {
+    public void a_to_parallel_scale_position_change() {
         grid.a_to_parallel_scale_position_change();
     }
 
-    public void b_to_heikouna_memori_iti_idou() {
+    public void b_to_parallel_scale_position_change() {
         grid.b_to_parallel_scale_position_change();
     }
-
 
     public enum FoldLineAdditionalInputMode {
         POLY_LINE_0,

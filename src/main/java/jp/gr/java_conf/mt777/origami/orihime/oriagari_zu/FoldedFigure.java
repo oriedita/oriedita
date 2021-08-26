@@ -768,14 +768,14 @@ public class FoldedFigure {
             transparent_transparency = 64;
         }
     }    //20180819バグ修正　透過度の最大値がこれまで128で、プログラムで線の描画時に２倍するとく、256となり、透過度の上限255オーバーで、オリヒメ自体が
-    //フリーズした。これは、128を127の変えることでもフリーズはなくなるが、透過度は２の倍数にしておかないと、2分の一にしたとき値がずれるかもしれないので、透過度の最大値は64としておくことにする。
+    //It froze. This can be done by changing 128 to 127 to eliminate the freeze, but if the transparency is not set to a multiple of 2, the value may shift when it is halved, so the maximum transparency is set to 64. I will leave it.
 
 
-    private Point p_m_left_on = new Point();//Coordinates when the left mouse button is pressed
+    private final Point p_m_left_on = new Point();//Coordinates when the left mouse button is pressed
     private int i_nanini_near = 0;//Point p is close to the point in the development view = 1, close to the point in the folded view = 2, not close to either = 0
     private int i_closestPointId;
     private int i_point_selection = 0;//Both cp_worker1 and cp_worker2 are not selected (situation i_point_selection = 0), cp_worker1 is selected and cp_worker2 is not selected (situation i_point_selection = 1), and the vertex is cp_worker2 selected (situation i_point_selection = 2).
-    private Point move_previous_selection_point = new Point();//動かす前の選択した点の座標
+    private final Point move_previous_selection_point = new Point();//動かす前の選択した点の座標
 
     public void foldedFigure_operation_mouse_on(Point p) {//Work when the left mouse button is pressed in the fold-up diagram operation
         if (i_foldedFigure_operation_mode == 1) {
@@ -786,7 +786,7 @@ public class FoldedFigure {
         }
     }
 
-    public void foldedFigure_operation_mouse_drag(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
+    public void foldedFigure_operation_mouse_drag(Point p) {//Work when dragging while holding down the left mouse button in the fold-up diagram operation
         if (i_foldedFigure_operation_mode == 1) {
             foldedFigure_operation_mouse_drag_1(p);
         }
@@ -795,7 +795,7 @@ public class FoldedFigure {
         }
     }
 
-    public void foldedFigure_operation_mouse_off(Point p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
+    public void foldedFigure_operation_mouse_off(Point p) {//Work when the left mouse button is released during the folding diagram operation
         if (i_foldedFigure_operation_mode == 1) {
             foldedFigure_operation_mouse_off_1(p);
         }
@@ -811,8 +811,8 @@ public class FoldedFigure {
         cp_worker2.setCam_front(camera_of_foldedFigure_front);
         cp_worker2.setCam_rear(camera_of_foldedFigure_rear);
 
-        //i_closestPointIdにpに最も近い点の番号を格納。近い点がまったくない場合はi_closestPointId=0
-        i_nanini_near = 0;//展開図の点に近い=1、折り上がり図の点に近い=2、どちらにも近くない=0
+        //Store the number of the point closest to p in i_closestPointId. I_closestPointId = 0 if there are no close points
+        i_nanini_near = 0;//Close to the point in the development view = 1, close to the point in the folded view = 2, not close to either = 0
         i_closestPointId = cp_worker1.closestPointId_with_camera(p);
         if (i_closestPointId != 0) {
             i_nanini_near = 1;
@@ -822,7 +822,7 @@ public class FoldedFigure {
                 i_closestPointId = cp_worker2.closestPointId_with_camera(p, ip4);
                 i_nanini_near = 2;
             }
-        }//i_closestPointIdにpに最も近い点の番号を格納 ここまで
+        }//Store the number of the point closest to p in i_closestPointId
 
         move_previous_selection_point.set(cp_worker2.getPoint(i_closestPointId));
 
@@ -830,7 +830,7 @@ public class FoldedFigure {
         System.out.println("i_nanini_tikai = " + i_nanini_near);
 
         if (i_nanini_near == 1) {
-            //i_ten_sentakuを決める
+            //Decide i_point_selection
             i_point_selection = 0;
             if (cp_worker1.getPointState(i_closestPointId)) {
                 i_point_selection = 1;
@@ -838,12 +838,12 @@ public class FoldedFigure {
             if (cp_worker2.getPointState(i_closestPointId)) {
                 i_point_selection = 2;
             }
-            //i_ten_sentakuを決める  ここまで
+            //Decide i_point_selection so far
 
 
             if (i_point_selection == 0) {
                 setAllPointState0();
-                //折り上がり図でi_closestPointIdと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
+                //Find the number of the point at the same position as i_closestPointId in the fold-up diagram, and mark the point with that number as selected with cp_worker1.
                 Point ps = new Point();
                 ps.set(cp_worker2.getPoint(i_closestPointId));
                 for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {

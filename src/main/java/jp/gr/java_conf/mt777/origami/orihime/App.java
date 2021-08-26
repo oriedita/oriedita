@@ -3686,7 +3686,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         Button_memori_tate_idou.addActionListener(e -> {
             img_explanation_fname = "qqq/memori_tate_idou.png";
             readImageFromFile3();
-            es1.a_to_heikouna_memori_iti_idou();
+            es1.a_to_parallel_scale_position_change();
 
             //Button_kyoutuu_sagyou();
             repaint();
@@ -3732,7 +3732,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/memori_yoko_idou.png";
             readImageFromFile3();
 
-            es1.b_to_heikouna_memori_iti_idou();
+            es1.b_to_parallel_scale_position_change();
             //Button_kyoutuu_sagyou();repaint();
         });
         pnlw33.add(Button_memori_yoko_idou);
