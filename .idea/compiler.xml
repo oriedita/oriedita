@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="orihime" target="15" />
+      <module name="orihime" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
