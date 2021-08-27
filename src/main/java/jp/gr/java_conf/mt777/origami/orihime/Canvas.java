@@ -171,7 +171,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             //展開図情報の文字表示
             bufferGraphics.setColor(Color.black);
 
-            bufferGraphics.drawString("mouse= ( %.2f, %.2f )".formatted(orihime_app.p_mouse_object_position.getX(), orihime_app.p_mouse_object_position.getY()), 10, 10); //この表示内容はvoid kekka_syoriで決められる。
+            bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f )", orihime_app.p_mouse_object_position.getX(), orihime_app.p_mouse_object_position.getY()), 10, 10); //この表示内容はvoid kekka_syoriで決められる。
 
             bufferGraphics.drawString("L=" + orihime_app.es1.getTotal(), 10, 25); //この表示内容はvoid kekka_syoriで決められる。
 
