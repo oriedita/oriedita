@@ -6,8 +6,8 @@ import java.awt.*;
 
 public class BulletinBoard {
 
-    int ix0 = 120;//X coordinate of the upper left corner of the bulletin board
-    int iy0 = 200;//Y coordinate at the upper left corner of the bulletin board
+    int ix0 = 10;//X coordinate of the upper left corner of the bulletin board
+    int iy0 = 135;//Y coordinate at the upper left corner of the bulletin board
     int i_interval = 20;//Line spacing on the bulletin board
 
     String s01 = "";

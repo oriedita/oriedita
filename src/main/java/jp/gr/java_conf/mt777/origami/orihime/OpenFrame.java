@@ -9,14 +9,15 @@ import java.awt.event.WindowEvent;
 
 import static jp.gr.java_conf.mt777.origami.orihime.ResourceUtil.createImageIcon;
 
-class OpenFrame extends Frame implements ActionListener {
+class OpenFrame extends JDialog implements ActionListener {
     public JCheckBox ckbox_add_frame_SelectAnd3click;//20200930
     App orihime_app;
 
     //Process executed when thread is created
     public OpenFrame(String name, App app0) {
-        super(name);//Originally, the child constructor must call the parent constructor at the beginning. super indicates the parent instance.
+        super(app0, name);//Originally, the child constructor must call the parent constructor at the beginning. super indicates the parent instance.
 
+        setAlwaysOnTop(true);
         orihime_app = app0;
 
         setSize(300, 250);
@@ -67,19 +68,17 @@ class OpenFrame extends Frame implements ActionListener {
         });//Enable the end button So far.
 
         //Setting conditions such as layout of additional frames
-        setLayout(new GridLayout(1, 1));
-        setBackground(Color.PINK);
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new GridLayout(1, 1));
 
         //Creating the left side (west side) panel
 
 
-        Panel pnl_00 = new Panel();
-        pnl_00.setBackground(Color.PINK);
+        JPanel pnl_00 = new JPanel();
         pnl_00.setLayout(new GridLayout(10, 1));
-        add(pnl_00);
+        contentPane.add(pnl_00);
 
-        Panel pnl_01 = new Panel();
-        pnl_01.setBackground(Color.PINK);
+        JPanel pnl_01 = new JPanel();
         pnl_01.setLayout(new GridLayout(1, 3));
         pnl_00.add(pnl_01);
 
@@ -89,14 +88,13 @@ class OpenFrame extends Frame implements ActionListener {
         ckbox_add_frame_SelectAnd3click = new JCheckBox("sel<=>mcm");
         ckbox_add_frame_SelectAnd3click.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/ckbox_add_frame_SelectAnd3click.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.ckbox_add_frame_SelectAnd3click_isSelected = ckbox_add_frame_SelectAnd3click_isSelected();
             orihime_app.repaint();
         });
         ckbox_add_frame_SelectAnd3click.setIcon(createImageIcon("ppp/af/ckbox_add_frame_SelectAnd3click_off.png"));
         ckbox_add_frame_SelectAnd3click.setSelectedIcon(createImageIcon("ppp/af/ckbox_add_frame_SelectAnd3click_on.png"));
-        ckbox_add_frame_SelectAnd3click.setBackground(Color.PINK);
         ckbox_add_frame_SelectAnd3click.setBorderPainted(false);
         ckbox_add_frame_SelectAnd3click.setMargin(new Insets(0, 0, 0, 0));
         pnl_01.add(
@@ -107,7 +105,7 @@ class OpenFrame extends Frame implements ActionListener {
         JButton Button_O_F_check = new JButton("O_F_check");
         Button_O_F_check.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/O_F_check.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.FLAT_FOLDABLE_CHECK_63;
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
@@ -120,8 +118,7 @@ class OpenFrame extends Frame implements ActionListener {
 
 //-----------------------------------------------
 
-        Panel pnl_02 = new Panel();
-        pnl_02.setBackground(Color.PINK);
+        JPanel pnl_02 = new JPanel();
         pnl_02.setLayout(new GridLayout(1, 3));
         pnl_00.add(pnl_02);
 //------------------------------------------------
@@ -129,7 +126,7 @@ class OpenFrame extends Frame implements ActionListener {
         JButton Button_oritatami_kanousen_and_kousitenkei = new JButton("");
         Button_oritatami_kanousen_and_kousitenkei.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/oritatami_kanousen_and_kousitenkei.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.FOLDABLE_LINE_INPUT_39;
             orihime_app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.FOLDABLE_LINE_INPUT_39;
@@ -148,8 +145,7 @@ class OpenFrame extends Frame implements ActionListener {
 // -------------39;Foldable line + grid point system input. to this point
 //------------------------------------------------
 
-        Panel pnl_03 = new Panel();
-        pnl_03.setBackground(Color.PINK);
+        JPanel pnl_03 = new JPanel();
         pnl_03.setLayout(new GridLayout(1, 3));
         pnl_00.add(pnl_03);
 //----------------------------------------------------------------------------------------------
@@ -158,14 +154,12 @@ class OpenFrame extends Frame implements ActionListener {
         JButton Button_select_polygon = new JButton("select_polygon");
         Button_select_polygon.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/select_polygon.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.SELECT_POLYGON_66;
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
             orihime_app.Button_kyoutuu_sagyou();
             orihime_app.repaint();
-
-
         });
         pnl_03.add(Button_select_polygon);
 
@@ -178,7 +172,7 @@ class OpenFrame extends Frame implements ActionListener {
         JButton Button_unselect_polygon = new JButton("unselect_polygon");
         Button_unselect_polygon.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/unselect_polygon.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.UNSELECT_POLYGON_67;
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
@@ -193,8 +187,8 @@ class OpenFrame extends Frame implements ActionListener {
         Button_unselect_polygon.setMargin(new Insets(0, 0, 0, 0));
 
 //------------------------------------------------
-        Panel pnl_04 = new Panel();
-        pnl_04.setBackground(Color.PINK);
+        JPanel pnl_04 = new JPanel();
+//        pnl_04.setBackground(Color.PINK);
         pnl_04.setLayout(new GridLayout(1, 3));
         pnl_00.add(pnl_04);
 
@@ -203,7 +197,7 @@ class OpenFrame extends Frame implements ActionListener {
         JButton Button_select_lX = new JButton("select_lX");
         Button_select_lX.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/select_lX.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.SELECT_LINE_INTERSECTING_68;
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
@@ -220,7 +214,7 @@ class OpenFrame extends Frame implements ActionListener {
         JButton Button_unselect_lX = new JButton("unselect_lX");
         Button_unselect_lX.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/unselect_lX.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.UNSELECT_LINE_INTERSECTING_69;
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
@@ -233,8 +227,8 @@ class OpenFrame extends Frame implements ActionListener {
         Button_unselect_lX.setMargin(new Insets(0, 0, 0, 0));
 
 //----------------------------------------------------------------------------------------------
-        Panel pnl_05 = new Panel();
-        pnl_05.setBackground(Color.PINK);
+        JPanel pnl_05 = new JPanel();
+//        pnl_05.setBackground(Color.PINK);
         pnl_05.setLayout(new GridLayout(1, 3));
         pnl_00.add(pnl_05);
 
@@ -242,7 +236,7 @@ class OpenFrame extends Frame implements ActionListener {
         JButton Button_Del_l = new JButton("Del_l");
         Button_Del_l.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/Del_l.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.CREASE_DELETE_OVERLAPPING_64;
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
@@ -258,7 +252,7 @@ class OpenFrame extends Frame implements ActionListener {
         JButton Button_Del_l_X = new JButton("Del_l_X");
         Button_Del_l_X.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/Del_l_X.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.CREASE_DELETE_INTERSECTING_65;
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);

@@ -10,6 +10,18 @@ Be warned that the translations in this repository can be quite poor or in some 
 
 The translation is focused around the `FoldedFigure` (`Oriagari_Zu`) class which contains the basis of the folding algorithm.
 
+# Changes made
+
+- Translate (most) comments
+- Translate classnames
+- Translate (most) variable names
+- Replace integer variables containing only 0/1 with booleans
+- Replace integer variables containing a specific set of values with enums
+- Remove left over `java.awt` components
+- Remove dead code
+- Change Look and Feel
+- Improve Swing code
+
 ## Building
 
 This version of the code uses [maven](https://maven.apache.org/) to build.

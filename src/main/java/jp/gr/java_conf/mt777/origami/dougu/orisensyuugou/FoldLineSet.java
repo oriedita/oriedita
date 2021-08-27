@@ -2669,11 +2669,11 @@ public class FoldLineSet {
                     if (ej.getRadius() > 0.0000001) {//Circles with a radius of 0 are not applicable
                         if (OritaCalc.distance(ei.getCenter(), ej.getCenter()) < 0.000001) {//Two circles are concentric and do not intersect
                         } else if (Math.abs(OritaCalc.distance(ei.getCenter(), ej.getCenter()) - ei.getRadius() - ej.getRadius()) < 0.0001) {//Two circles intersect at one point
-                            addCircle(OritaCalc.naibun(ei.getCenter(), ej.getCenter(), ei.getRadius(), ej.getRadius()), 0.0);
+                            addCircle(OritaCalc.internalDivisionRatio(ei.getCenter(), ej.getCenter(), ei.getRadius(), ej.getRadius()), 0.0);
                         } else if (OritaCalc.distance(ei.getCenter(), ej.getCenter()) > ei.getRadius() + ej.getRadius()) {//Two circles do not intersect
 
                         } else if (Math.abs(OritaCalc.distance(ei.getCenter(), ej.getCenter()) - Math.abs(ei.getRadius() - ej.getRadius())) < 0.0001) {//Two circles intersect at one point
-                            addCircle(OritaCalc.naibun(ei.getCenter(), ej.getCenter(), -ei.getRadius(), ej.getRadius()), 0.0);
+                            addCircle(OritaCalc.internalDivisionRatio(ei.getCenter(), ej.getCenter(), -ei.getRadius(), ej.getRadius()), 0.0);
                         } else if (OritaCalc.distance(ei.getCenter(), ej.getCenter()) < Math.abs(ei.getRadius() - ej.getRadius())) {//Two circles do not intersect
 
                         } else {//Two circles intersect at two points

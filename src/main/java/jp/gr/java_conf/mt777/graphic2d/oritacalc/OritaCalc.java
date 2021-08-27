@@ -937,25 +937,25 @@ public class OritaCalc {
 
     // -------------------------------
     //Find the internal division point.
-    public static Point naibun(Point a, Point b, double d_naibun_s, double d_naibun_t) {
+    public static Point internalDivisionRatio(Point a, Point b, double d_internalDivisionRatio_s, double d_internalDivisionRatio_t) {
         Point r_point = new Point(-10000.0, -10000.0);
         if (distance(a, b) < 0.000001) {
             return r_point;
         }
 
-        if (d_naibun_s == 0.0) {
-            if (d_naibun_t == 0.0) {
+        if (d_internalDivisionRatio_s == 0.0) {
+            if (d_internalDivisionRatio_t == 0.0) {
                 return r_point;
             } else {
                 return a;
             }
         } else {
-            if (d_naibun_t == 0.0) {
+            if (d_internalDivisionRatio_t == 0.0) {
                 return b;
             } else {
                 LineSegment s_ab = new LineSegment(a, b);
-                double nx = (d_naibun_t * s_ab.getAX() + d_naibun_s * s_ab.getBX()) / (d_naibun_s + d_naibun_t);
-                double ny = (d_naibun_t * s_ab.getAY() + d_naibun_s * s_ab.getBY()) / (d_naibun_s + d_naibun_t);
+                double nx = (d_internalDivisionRatio_t * s_ab.getAX() + d_internalDivisionRatio_s * s_ab.getBX()) / (d_internalDivisionRatio_s + d_internalDivisionRatio_t);
+                double ny = (d_internalDivisionRatio_t * s_ab.getAY() + d_internalDivisionRatio_s * s_ab.getBY()) / (d_internalDivisionRatio_s + d_internalDivisionRatio_t);
                 r_point.set(nx, ny);
                 return r_point;
             }

@@ -36,7 +36,7 @@ public class Drawing_Worker {
     public int i_candidate_stage;//Stores information about which candidate for the procedure to draw a polygonal line
     public Polygon operationFrameBox = new Polygon(4);    //Instantiation of selection box (TV coordinates)
     public boolean i_O_F_C = false;//Input status of a line segment representing the outer circumference when checking the outer circumference. 0 is input not completed, 1 is input completed (line segment is a closed polygon)
-    int ir_point = 1;
+    int pointSize = 1;
     LineColor lineColor;//Line segment color
     LineColor auxLineColor = LineColor.ORANGE_4;//Auxiliary line color
     boolean i_kou_mitudo_nyuuryoku = false;//1 if you use the input assist function for fine grid display, 0 if you do not use it
@@ -54,11 +54,11 @@ public class Drawing_Worker {
     double d_angle_system;//d_angle_system=180.0/(double)id_angle_system
     double angle;
     int foldLineDividingNumber = 1;
-    double d_naibun_s;
-    double d_naibun_t;
-    double d_jiyuu_kaku_1;
-    double d_jiyuu_kaku_2;
-    double d_jiyuu_kaku_3;
+    double d_internalDivisionRatio_s;
+    double d_internalDivisionRatio_t;
+    double d_restricted_angle_1;
+    double d_restricted_angle_2;
+    double d_restricted_angle_3;
     int numPolygonCorners = 5;
     double d_decision_width = 50.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<入力点が既存の点や線分と近いかどうかを判定する時の値
     int i_circle_drawing_stage;//Stores information about which stage of the circle drawing procedure
@@ -146,7 +146,7 @@ public class Drawing_Worker {
     }
 
     public void reset() {
-        ir_point = 1;
+        pointSize = 1;
         foldLines.reset();
         auxLines.reset();
 
@@ -327,8 +327,8 @@ public class Drawing_Worker {
 
                     if (st[0].equals("<ir_ten")) {
                         s = st[1].split("<", 2);
-                        orihime_app.ir_point = Integer.parseInt(s[0]);
-                        set_ir_ten(orihime_app.ir_point);
+                        orihime_app.pointSize = Integer.parseInt(s[0]);
+                        setPointSize(orihime_app.pointSize);
                     }
 
                     if (st[0].equals("<i_orisen_hyougen")) {
@@ -646,8 +646,8 @@ public class Drawing_Worker {
 
     //--------------------------------------------
     //public void set_r(double r0){r_ten=r0;}
-    public void set_ir_ten(int i0) {
-        ir_point = i0;
+    public void setPointSize(int i0) {
+        pointSize = i0;
     }
 
     public void set_grid_bunkatu_suu(int i) {
@@ -760,9 +760,9 @@ public class Drawing_Worker {
                             " stroke=\"" + str_stroke + "\"" +
                             " stroke-width=\"" + str_strokewidth + "\"" + " />");
 
-                    if (ir_point != 0) {
+                    if (pointSize != 0) {
                         if (fTenkaizuSenhaba < 2.0f) {//Draw a black square at the vertex
-                            int i_haba = ir_point;
+                            int i_haba = pointSize;
 
                             memo_temp.addLine("<rect style=\"fill:#000000;stroke:#000000;stroke-width:1\"" +
                                     " width=\"" + (2.0 * (double) i_haba + 1.0) + "\"" +
@@ -781,8 +781,8 @@ public class Drawing_Worker {
                     }
 
                     if (fTenkaizuSenhaba >= 2.0f) {//  Thick line
-                        if (ir_point != 0) {
-                            double d_haba = (double) fTenkaizuSenhaba / 2.0 + (double) ir_point;//int i_haba=2;
+                        if (pointSize != 0) {
+                            double d_haba = (double) fTenkaizuSenhaba / 2.0 + (double) pointSize;//int i_haba=2;
 
                             memo_temp.addLine("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
                                     " r=\"" + d_haba + "\"" +
@@ -836,7 +836,7 @@ public class Drawing_Worker {
         //The thickness of the line in the development view.
         memo1.addLine("<iTenkaizuSenhaba>" + orihime_app.iLineWidth + "</iTenkaizuSenhaba>");
         //Width of vertex sign
-        memo1.addLine("<ir_ten>" + orihime_app.ir_point + "</ir_ten>");
+        memo1.addLine("<ir_ten>" + orihime_app.pointSize + "</ir_ten>");
         //Express the polygonal line expression with color
         memo1.addLine("<i_orisen_hyougen>" + orihime_app.lineStyle + "</i_orisen_hyougen>");
         memo1.addLine("<i_anti_alias>" + orihime_app.antiAlias + "</i_anti_alias>");
@@ -1006,7 +1006,7 @@ public class Drawing_Worker {
 
                 if (fWireFrameLineWidth < 2.0f) {//Draw a square at the vertex
                     g.setColor(Color.black);
-                    int i_haba = ir_point;
+                    int i_haba = pointSize;
                     g.fillRect((int) a.getX() - i_haba, (int) a.getY() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
                     g.fillRect((int) b.getX() - i_haba, (int) b.getY() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く
                 }
@@ -1014,8 +1014,8 @@ public class Drawing_Worker {
                 if (fWireFrameLineWidth >= 2.0f) {//  Thick line
                     g2.setStroke(new BasicStroke(1.0f + f_h_WireframeLineWidth % 1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状
 
-                    if (ir_point != 0) {
-                        double d_haba = (double) fWireFrameLineWidth / 2.0 + (double) ir_point;
+                    if (pointSize != 0) {
+                        double d_haba = (double) fWireFrameLineWidth / 2.0 + (double) pointSize;
 
                         g.setColor(Color.white);
                         g2.fill(new Ellipse2D.Double(a.getX() - d_haba, a.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
@@ -1134,14 +1134,14 @@ public class Drawing_Worker {
                 //円の中心の描画
                 if (fWireFrameLineWidth < 2.0f) {//中心の黒い正方形を描く
                     g.setColor(Color.black);
-                    int i_haba = ir_point;
+                    int i_haba = pointSize;
                     g.fillRect((int) a.getX() - i_haba, (int) a.getY() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
                 }
 
                 if (fWireFrameLineWidth >= 2.0f) {//  太線指定時の中心を示す黒い小円を描く
                     g2.setStroke(new BasicStroke(1.0f + fWireFrameLineWidth % 1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
-                    if (ir_point != 0) {
-                        d_haba = (double) fWireFrameLineWidth / 2.0 + (double) ir_point;
+                    if (pointSize != 0) {
+                        d_haba = (double) fWireFrameLineWidth / 2.0 + (double) pointSize;
 
 
                         g.setColor(Color.white);
@@ -1190,15 +1190,15 @@ public class Drawing_Worker {
 
                     if (fWireFrameLineWidth < 2.0f) {//頂点の黒い正方形を描く
                         g.setColor(Color.black);
-                        int i_haba = ir_point;
+                        int i_haba = pointSize;
                         g.fillRect((int) a.getX() - i_haba, (int) a.getY() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
                         g.fillRect((int) b.getX() - i_haba, (int) b.getY() - i_haba, 2 * i_haba + 1, 2 * i_haba + 1); //正方形を描く
                     }
 
                     if (fWireFrameLineWidth >= 2.0f) {//  太線
                         g2.setStroke(new BasicStroke(1.0f + fWireFrameLineWidth % 1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
-                        if (ir_point != 0) {
-                            double d_haba = (double) fWireFrameLineWidth / 2.0 + (double) ir_point;
+                        if (pointSize != 0) {
+                            double d_haba = (double) fWireFrameLineWidth / 2.0 + (double) pointSize;
 
                             g.setColor(Color.white);
                             g2.fill(new Ellipse2D.Double(a.getX() - d_haba, a.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
@@ -1280,7 +1280,7 @@ public class Drawing_Worker {
 
                     if (fWireFrameLineWidth < 2.0f) {//頂点の黒い正方形を描く
                         g.setColor(Color.black);
-                        int i_width = ir_point;
+                        int i_width = pointSize;
                         g.fillRect((int) a.getX() - i_width, (int) a.getY() - i_width, 2 * i_width + 1, 2 * i_width + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
                         g.fillRect((int) b.getX() - i_width, (int) b.getY() - i_width, 2 * i_width + 1, 2 * i_width + 1); //正方形を描く
                     }
@@ -1288,8 +1288,8 @@ public class Drawing_Worker {
 
                     if (fWireFrameLineWidth >= 2.0f) {//  太線
                         g2.setStroke(new BasicStroke(1.0f + fWireFrameLineWidth % 1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
-                        if (ir_point != 0) {
-                            double d_haba = (double) fWireFrameLineWidth / 2.0 + (double) ir_point;
+                        if (pointSize != 0) {
+                            double d_haba = (double) fWireFrameLineWidth / 2.0 + (double) pointSize;
 
 
                             g.setColor(Color.white);
@@ -1375,7 +1375,7 @@ public class Drawing_Worker {
             b.set(s_tv.getBX() + 0.000001, s_tv.getBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
             g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
-            int i_haba = ir_point + 5;
+            int i_haba = pointSize + 5;
 
             if (line_candidate[i].getActive() == LineSegment.ActiveState.ACTIVE_A_1) {
                 g.drawLine((int) a.getX() - i_haba, (int) a.getY(), (int) a.getX() + i_haba, (int) a.getY()); //直線
@@ -1410,7 +1410,7 @@ public class Drawing_Worker {
         g.setColor(Color.black);
 
         if (i_bun_display) {
-            g.drawString(text_cp_setumei, 120, 120);
+            g.drawString(text_cp_setumei, 10, 55);
         }
     }
 
@@ -1748,19 +1748,19 @@ public class Drawing_Worker {
             line_step[1].setA(closest_point);
         }
         if (line_step[1].getLength() > 0.00000001) {
-            if ((d_naibun_s == 0.0) && (d_naibun_t == 0.0)) {
+            if ((d_internalDivisionRatio_s == 0.0) && (d_internalDivisionRatio_t == 0.0)) {
             }
-            if ((d_naibun_s == 0.0) && (d_naibun_t != 0.0)) {
+            if ((d_internalDivisionRatio_s == 0.0) && (d_internalDivisionRatio_t != 0.0)) {
                 addLineSegment(line_step[1]);
             }
-            if ((d_naibun_s != 0.0) && (d_naibun_t == 0.0)) {
+            if ((d_internalDivisionRatio_s != 0.0) && (d_internalDivisionRatio_t == 0.0)) {
                 addLineSegment(line_step[1]);
             }
-            if ((d_naibun_s != 0.0) && (d_naibun_t != 0.0)) {
+            if ((d_internalDivisionRatio_s != 0.0) && (d_internalDivisionRatio_t != 0.0)) {
                 LineSegment s_ad = new LineSegment();
                 s_ad.setColor(lineColor);
-                double nx = (d_naibun_t * line_step[1].getBX() + d_naibun_s * line_step[1].getAX()) / (d_naibun_s + d_naibun_t);
-                double ny = (d_naibun_t * line_step[1].getBY() + d_naibun_s * line_step[1].getAY()) / (d_naibun_s + d_naibun_t);
+                double nx = (d_internalDivisionRatio_t * line_step[1].getBX() + d_internalDivisionRatio_s * line_step[1].getAX()) / (d_internalDivisionRatio_s + d_internalDivisionRatio_t);
+                double ny = (d_internalDivisionRatio_t * line_step[1].getBY() + d_internalDivisionRatio_s * line_step[1].getAY()) / (d_internalDivisionRatio_s + d_internalDivisionRatio_t);
                 s_ad.set(line_step[1].getAX(), line_step[1].getAY(), nx, ny);
                 addLineSegment(s_ad);
                 s_ad.set(line_step[1].getBX(), line_step[1].getBY(), nx, ny);
@@ -4036,12 +4036,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         } else {
             double[] jk = new double[7];
             jk[0] = OritaCalc.angle(line_step[2]);//マウスで入力した線分がX軸となす角度
-            jk[1] = d_jiyuu_kaku_1 - 180.0;
-            jk[2] = d_jiyuu_kaku_2 - 180.0;
-            jk[3] = d_jiyuu_kaku_3 - 180.0;
-            jk[4] = 360.0 - d_jiyuu_kaku_1 - 180.0;
-            jk[5] = 360.0 - d_jiyuu_kaku_2 - 180.0;
-            jk[6] = 360.0 - d_jiyuu_kaku_3 - 180.0;
+            jk[1] = d_restricted_angle_1 - 180.0;
+            jk[2] = d_restricted_angle_2 - 180.0;
+            jk[3] = d_restricted_angle_3 - 180.0;
+            jk[4] = 360.0 - d_restricted_angle_1 - 180.0;
+            jk[5] = 360.0 - d_restricted_angle_2 - 180.0;
+            jk[6] = 360.0 - d_restricted_angle_3 - 180.0;
 
             double d_kakudo_sa_min = 1000.0;
             for (int i = 1; i <= 6; i++) {
@@ -7019,12 +7019,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             if (id_angle_system == 0) {
                 double[] jk = new double[7];
                 jk[0] = 0.0;
-                jk[1] = d_jiyuu_kaku_2;
-                jk[2] = d_jiyuu_kaku_1;
-                jk[3] = d_jiyuu_kaku_3;
-                jk[4] = 360.0 - d_jiyuu_kaku_2;
-                jk[5] = 360.0 - d_jiyuu_kaku_1;
-                jk[6] = 360.0 - d_jiyuu_kaku_3;
+                jk[1] = d_restricted_angle_2;
+                jk[2] = d_restricted_angle_1;
+                jk[3] = d_restricted_angle_3;
+                jk[4] = 360.0 - d_restricted_angle_2;
+                jk[5] = 360.0 - d_restricted_angle_1;
+                jk[6] = 360.0 - d_restricted_angle_3;
 
                 LineSegment s_kiso = new LineSegment(line_step[1].getA(), line_step[1].getB());
                 angle = 0.0;
@@ -7268,12 +7268,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             if (id_angle_system == 0) {
                 double[] jk = new double[7];
                 jk[0] = 0.0;
-                jk[1] = d_jiyuu_kaku_2;
-                jk[2] = d_jiyuu_kaku_1;
-                jk[3] = d_jiyuu_kaku_3;
-                jk[4] = 360.0 - d_jiyuu_kaku_2;
-                jk[5] = 360.0 - d_jiyuu_kaku_1;
-                jk[6] = 360.0 - d_jiyuu_kaku_3;
+                jk[1] = d_restricted_angle_2;
+                jk[2] = d_restricted_angle_1;
+                jk[3] = d_restricted_angle_3;
+                jk[4] = 360.0 - d_restricted_angle_2;
+                jk[5] = 360.0 - d_restricted_angle_1;
+                jk[6] = 360.0 - d_restricted_angle_3;
 
                 LineSegment s_kiso = new LineSegment(line_step[1].getA(), line_step[1].getB());
                 angle = 0.0;
@@ -7491,12 +7491,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             if (id_angle_system == 0) {
                 double[] jk = new double[7];
                 jk[0] = 0.0;
-                jk[1] = d_jiyuu_kaku_2;
-                jk[2] = d_jiyuu_kaku_1;
-                jk[3] = d_jiyuu_kaku_3;
-                jk[4] = 360.0 - d_jiyuu_kaku_2;
-                jk[5] = 360.0 - d_jiyuu_kaku_1;
-                jk[6] = 360.0 - d_jiyuu_kaku_3;
+                jk[1] = d_restricted_angle_2;
+                jk[2] = d_restricted_angle_1;
+                jk[3] = d_restricted_angle_3;
+                jk[4] = 360.0 - d_restricted_angle_2;
+                jk[5] = 360.0 - d_restricted_angle_1;
+                jk[6] = 360.0 - d_restricted_angle_3;
 
 
                 LineSegment s_kiso = new LineSegment(line_step[2].getA(), line_step[1].getA());
@@ -7669,12 +7669,12 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             if (id_angle_system == 0) {
                 double[] jk = new double[7];
                 jk[0] = 0.0;
-                jk[1] = d_jiyuu_kaku_2;
-                jk[2] = d_jiyuu_kaku_1;
-                jk[3] = d_jiyuu_kaku_3;
-                jk[4] = 360.0 - d_jiyuu_kaku_2;
-                jk[5] = 360.0 - d_jiyuu_kaku_1;
-                jk[6] = 360.0 - d_jiyuu_kaku_3;
+                jk[1] = d_restricted_angle_2;
+                jk[2] = d_restricted_angle_1;
+                jk[3] = d_restricted_angle_3;
+                jk[4] = 360.0 - d_restricted_angle_2;
+                jk[5] = 360.0 - d_restricted_angle_1;
+                jk[6] = 360.0 - d_restricted_angle_3;
 
                 LineSegment s_kiso = new LineSegment(line_step[2].getA(), line_step[1].getA());
 
@@ -8651,7 +8651,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
 
             if (Math.abs((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2)) < 0.0000001) {//外接線1本の場合
                 Point kouten = new Point();
-                kouten.set(OritaCalc.naibun(c1, c2, -r1, r2));
+                kouten.set(OritaCalc.internalDivisionRatio(c1, c2, -r1, r2));
                 StraightLine ty = new StraightLine(c1, kouten);
                 ty.orthogonalize(kouten);
                 line_step[1].set(OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(new Circle(kouten, (r1 + r2) / 2.0, LineColor.BLACK_0), ty));
@@ -8710,7 +8710,7 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                 // -----------------------
 
                 Point kouten = new Point();
-                kouten.set(OritaCalc.naibun(c1, c2, r1, r2));
+                kouten.set(OritaCalc.internalDivisionRatio(c1, c2, r1, r2));
                 StraightLine ty = new StraightLine(c1, kouten);
                 ty.orthogonalize(kouten);
                 line_step[3].set(OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(new Circle(kouten, (r1 + r2) / 2.0, LineColor.BLACK_0), ty));
@@ -8986,9 +8986,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
             }
 
             StraightLine t1 = new StraightLine(sen1);
-            t1.orthogonalize(OritaCalc.naibun(sen1.getA(), sen1.getB(), 1.0, 1.0));
+            t1.orthogonalize(OritaCalc.internalDivisionRatio(sen1.getA(), sen1.getB(), 1.0, 1.0));
             StraightLine t2 = new StraightLine(sen2);
-            t2.orthogonalize(OritaCalc.naibun(sen2.getA(), sen2.getB(), 1.0, 1.0));
+            t2.orthogonalize(OritaCalc.internalDivisionRatio(sen2.getA(), sen2.getB(), 1.0, 1.0));
             addCircle(OritaCalc.findIntersection(t1, t2), OritaCalc.distance(line_step[1].getA(), OritaCalc.findIntersection(t1, t2)), LineColor.CYAN_3);
             record();
         }
@@ -9057,15 +9057,15 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         }
     }
 
-    public void set_d_naibun_st(double ds, double dt) {
-        d_naibun_s = ds;
-        d_naibun_t = dt;
+    public void set_d_internalDivisionRatio_st(double ds, double dt) {
+        d_internalDivisionRatio_s = ds;
+        d_internalDivisionRatio_t = dt;
     }
 
-    public void set_d_jiyuu_kaku(double d_1, double d_2, double d_3) {
-        d_jiyuu_kaku_1 = d_1;
-        d_jiyuu_kaku_2 = d_2;
-        d_jiyuu_kaku_3 = d_3;
+    public void set_d_restricted_angle(double d_1, double d_2, double d_3) {
+        d_restricted_angle_1 = d_1;
+        d_restricted_angle_2 = d_2;
+        d_restricted_angle_3 = d_3;
     }
 
     public void setNumPolygonCorners(int i) {
