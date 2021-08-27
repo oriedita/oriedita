@@ -12,11 +12,12 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 
+/**
+ * Panel in the center of the main view.
+ */
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
     private final Drawing_Worker es1;
-    public FoldedFigure OZ;    //Folded figure
-
-    private App orihime_app;
+    private final App orihime_app;
 
     Graphics bufferGraphics;
     BufferedImage offscreen = null;//20181205new
@@ -44,10 +45,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     public void paintComponent(Graphics g) {
         //「f」を付けることでfloat型の数値として記述することができる
         Graphics2D g2 = (Graphics2D) bufferGraphics;
-        //Graphics2D g2d = (Graphics2D)g;
-        //BasicStroke BStroke = new BasicStroke(1.0f);g2.setStroke(BStroke);//線の太さ
 
-        //float fLineWidth=(float)iLineWidth;	float f_h_lineWidth=(float)i_h_lineWidth;
         orihime_app.fLineWidth = (float) orihime_app.iLineWidth;
         orihime_app.f_h_lineWidth = (float) orihime_app.i_h_lineWidth;
 
@@ -59,7 +57,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         BasicStroke BStroke = new BasicStroke(orihime_app.fLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
         g2.setStroke(BStroke);//線の太さや線の末端の形状
 
-        //BasicStroke BStroke = new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);g2.setStroke(BStroke);//線の太さや線の末端の形状
         //アンチエイリアス　オフ
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, orihime_app.antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチエイリアス　オン
 
@@ -91,27 +88,22 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         orihime_app.dim = getSize();
         bufferGraphics.clearRect(0, 0, orihime_app.dim.width, orihime_app.dim.height);
 
-        //int   i_ten_sagasi_hyouji, i_ten_hanasi_hyouji,i_kou_mitudo_nyuuryoku_hyouji,i_bun_hyouji,i_cp_hyouji,i_a0_hyouji,i_a1_hyouji;
-        //int   i_mejirusi_hyouji,i_cp_ue_hyouji,i_oritatami_keika_hyouji;
+        orihime_app.displayPointSpotlight = orihime_app.ckbox_point_search.isSelected();
+        orihime_app.displayPointOffset = orihime_app.ckbox_ten_hanasi.isSelected();
+        orihime_app.displayGridInputAssist = orihime_app.ckbox_kou_mitudo_nyuuryoku.isSelected();
+        orihime_app.displayComments = orihime_app.ckbox_bun.isSelected();
+        orihime_app.displayCpLines = orihime_app.ckbox_cp.isSelected();
+        orihime_app.displayAuxLines = orihime_app.ckbox_a0.isSelected();
+        orihime_app.displayLiveAuxLines = orihime_app.ckbox_a1.isSelected();
 
-        orihime_app.i_point_sagasi_display = orihime_app.ckbox_point_search.isSelected();
-        orihime_app.i_point_hanasi_display = orihime_app.ckbox_ten_hanasi.isSelected();
-        orihime_app.i_kou_mitudo_nyuuryoku_display = orihime_app.ckbox_kou_mitudo_nyuuryoku.isSelected();
-        orihime_app.i_bun_display = orihime_app.ckbox_bun.isSelected();
-        orihime_app.i_cp_display = orihime_app.ckbox_cp.isSelected();
-        orihime_app.i_a0_display = orihime_app.ckbox_a0.isSelected();
-        orihime_app.i_a1_display = orihime_app.ckbox_a1.isSelected();
-
-        orihime_app.i_mark_display = orihime_app.ckbox_mark.isSelected();
-        orihime_app.i_cp_ue_display = orihime_app.ckbox_cp_ue.isSelected();
-        orihime_app.i_oritatami_keika_display = orihime_app.ckbox_oritatami_keika.isSelected();
-
+        orihime_app.displayMarkings = orihime_app.ckbox_mark.isSelected();
+        orihime_app.displayCreasePatternOnTop = orihime_app.ckbox_cp_ue.isSelected();
+        orihime_app.displayFoldingProgress = orihime_app.ckbox_oritatami_keika.isSelected();
 
         bufferGraphics.setColor(Color.red);
         //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
         //カメラのセット
-
         orihime_app.es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
 
         FoldedFigure OZi;
@@ -130,34 +122,26 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         //System.out.println("paint　+++++++++++++++++++++　背景表示");
         //背景表示
-        if ((orihime_app.img_background != null) && (orihime_app.iDisplayBackground >= 1)) {
+        if ((orihime_app.img_background != null) && orihime_app.displayBackground) {
             int iw = orihime_app.img_background.getWidth(this);//イメージの幅を取得
             int ih = orihime_app.img_background.getHeight(this);//イメージの高さを取得
 
-            //System.out.println("paint幅＝"+iw);
-            //System.out.println("paint高さ＝"+ih);
             orihime_app.h_cam.setBackgroundWidth(iw);
             orihime_app.h_cam.setBackgroundHeight(ih);
 
-            //if(i_Lock_on==1){
             drawBackground(g2, orihime_app.img_background);
-            //}
         }
 
         //格子表示
-        //es1.kousi_oekaki_with_camera(bufferGraphics,i_bun_hyouji,i_cp_hyouji,i_a0_hyouji,i_a1_hyouji,fLineWidth,lineStyle,f_h_lineWidth,dim.width,dim.height);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
-
 
         //解説表示
-        //System.out.println("paint　+++++++++++++++++++++　解説表示  " +iDisplayExplanation );
-        if ((orihime_app.img_explanation != null) && (orihime_app.iDisplayExplanation >= 1)) {
+        if ((orihime_app.img_explanation != null) && orihime_app.displayExplanation) {
             bufferGraphics.drawImage(orihime_app.img_explanation, 650, 100, this);//80,80,は描画開始位置
         }
 
 
         //基準面の表示
-        //System.out.println("paint　+++++++++++++++++++++　基準面の表示");
-        if (orihime_app.i_mark_display) {
+        if (orihime_app.displayMarkings) {
             if (orihime_app.OZ.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
                 //	ts1.setCamera(camera_of_orisen_nyuuryokuzu);
                 orihime_app.OZ.cp_worker1.drawing_referencePlane_with_camera(bufferGraphics);//ts1が折り畳みを行う際の基準面を表示するのに使う。
@@ -166,47 +150,42 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         double d_haba = orihime_app.camera_of_orisen_input_diagram.getCameraZoomX() * orihime_app.es1.get_d_decision_width();
         //Flashlight (dot) search range
-        if (orihime_app.i_point_sagasi_display) {
+        if (orihime_app.displayPointSpotlight) {
             g2.setColor(new Color(255, 240, 0, 30));
             g2.setStroke(new BasicStroke(2.0f));
             g2.setColor(new Color(255, 240, 0, 230));
-            g2.draw(new Ellipse2D.Double(orihime_app.p_mouse_TV_iti.getX() - d_haba, orihime_app.p_mouse_TV_iti.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+            g2.draw(new Ellipse2D.Double(orihime_app.p_mouse_TV_position.getX() - d_haba, orihime_app.p_mouse_TV_position.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
         }
 
         //Luminous flux of flashlight, etc.
-        if (orihime_app.i_point_sagasi_display && orihime_app.i_point_hanasi_display) {
+        if (orihime_app.displayPointSpotlight && orihime_app.displayPointOffset) {
             g2.setStroke(new BasicStroke(2.0f));
             g2.setColor(new Color(255, 240, 0, 170));
         }
 
 
         //展開図表示
-        //System.out.println("paint　+++++++++++++++++++++　展開図表示(展開図動かし中心の十字を含む)");
-        //if (iDisplayBackground<=1) {
-        //        es1.setCamera(camera_of_orisen_nyuuryokuzu);
+        es1.draw_with_camera(bufferGraphics, orihime_app.displayComments, orihime_app.displayCpLines, orihime_app.displayAuxLines, orihime_app.displayLiveAuxLines, orihime_app.fLineWidth, orihime_app.lineStyle, orihime_app.f_h_lineWidth, orihime_app.dim.width, orihime_app.dim.height, orihime_app.displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
-        es1.draw_with_camera(bufferGraphics, orihime_app.i_bun_display, orihime_app.i_cp_display, orihime_app.i_a0_display, orihime_app.i_a1_display, orihime_app.fLineWidth, orihime_app.lineStyle, orihime_app.f_h_lineWidth, orihime_app.dim.width, orihime_app.dim.height, orihime_app.i_mark_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
-
-        if (orihime_app.i_bun_display) {
+        if (orihime_app.displayComments) {
             //展開図情報の文字表示
             bufferGraphics.setColor(Color.black);
 
-            bufferGraphics.drawString("mouse= ( %.2f, %.2f )".formatted(orihime_app.p_mouse_object_iti.getX(), orihime_app.p_mouse_object_iti.getY()), 10, 10); //この表示内容はvoid kekka_syoriで決められる。
+            bufferGraphics.drawString("mouse= ( %.2f, %.2f )".formatted(orihime_app.p_mouse_object_position.getX(), orihime_app.p_mouse_object_position.getY()), 10, 10); //この表示内容はvoid kekka_syoriで決められる。
 
             bufferGraphics.drawString("L=" + orihime_app.es1.getTotal(), 10, 25); //この表示内容はvoid kekka_syoriで決められる。
 
-            //System.out.println("paint　+++++++++++++++++++++　結果の文字表示");
             //結果の文字表示
             bufferGraphics.drawString(orihime_app.OZ.text_result, 10, 40); //この表示内容はvoid kekka_syoriで決められる。
 
-            if (orihime_app.i_kou_mitudo_nyuuryoku_display) {
-                jp.gr.java_conf.mt777.graphic2d.point.Point kus_sisuu = new Point(orihime_app.es1.get_moyori_ten_sisuu(orihime_app.p_mouse_TV_iti));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
+            if (orihime_app.displayGridInputAssist) {
+                jp.gr.java_conf.mt777.graphic2d.point.Point kus_sisuu = new Point(orihime_app.es1.get_moyori_ten_sisuu(orihime_app.p_mouse_TV_position));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
 
                 double dx_ind = kus_sisuu.getX();
                 double dy_ind = kus_sisuu.getY();
                 int ix_ind = (int) Math.round(dx_ind);
                 int iy_ind = (int) Math.round(dy_ind);
-                bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) orihime_app.p_mouse_TV_iti.getX() + 25, (int) orihime_app.p_mouse_TV_iti.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
+                bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) orihime_app.p_mouse_TV_position.getX() + 25, (int) orihime_app.p_mouse_TV_position.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
             }
 
             if (orihime_app.subThreadRunning) {
@@ -221,38 +200,29 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 
         //折り上がりの各種お絵かき
-        //Oriagari_Zu OZi;
         for (int i = 1; i <= orihime_app.OAZ.size() - 1; i++) {
             OZi = orihime_app.OAZ.get(i);
-            OZi.foldUp_draw(bufferGraphics, orihime_app.i_mark_display);
+            OZi.foldUp_draw(bufferGraphics, orihime_app.displayMarkings);
         }
-        //OZ = (Oriagari_Zu)OAZ.get(OAZ.size()-1);//折りあがり図
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
-        if (orihime_app.i_cp_ue_display) {
-            es1.draw_with_camera(bufferGraphics, orihime_app.i_bun_display, orihime_app.i_cp_display, orihime_app.i_a0_display, orihime_app.i_a1_display, orihime_app.fLineWidth, orihime_app.lineStyle, orihime_app.f_h_lineWidth, orihime_app.dim.width, orihime_app.dim.height, orihime_app.i_mark_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+        if (orihime_app.displayCreasePatternOnTop) {
+            es1.draw_with_camera(bufferGraphics, orihime_app.displayComments, orihime_app.displayCpLines, orihime_app.displayAuxLines, orihime_app.displayLiveAuxLines, orihime_app.fLineWidth, orihime_app.lineStyle, orihime_app.f_h_lineWidth, orihime_app.dim.width, orihime_app.dim.height, orihime_app.displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
         }
 
         //アンチェイリアス
         //アンチェイリアス　オフ
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, orihime_app.antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オン
 
-        //	bufferGraphics.drawString(c.valueOf(oc.kakudo(new Ten(0.0,0.0),new Ten( 10.0, 0.0))), 30,170);
-        //      bufferGraphics.drawString(c.valueOf(778),150,150);
-        //test_oekaki();
-        //System.out.println("paint　+++++++++++++++++++++　bufferGraphicsへの描画終了");
-
-        //中央指示線
-        if (orihime_app.i_point_hanasi_display) {
+        //Central indicator
+        if (orihime_app.displayPointOffset) {
             g2.setStroke(new BasicStroke(1.0f));
             g2.setColor(Color.black);
-            g2.drawLine((int) (orihime_app.p_mouse_TV_iti.getX()), (int) (orihime_app.p_mouse_TV_iti.getY()),
-                    (int) (orihime_app.p_mouse_TV_iti.getX() + d_haba), (int) (orihime_app.p_mouse_TV_iti.getY() + d_haba)); //直線
+            g2.drawLine((int) (orihime_app.p_mouse_TV_position.getX()), (int) (orihime_app.p_mouse_TV_position.getY()),
+                    (int) (orihime_app.p_mouse_TV_position.getX() + d_haba), (int) (orihime_app.p_mouse_TV_position.getY() + d_haba)); //直線
         }
 
-
         //描画したい内容はここまでAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-
 
         // オフスクリーンイメージを実際に描画する。オフスクリーンの幅は最初は 0,0。
         g.drawImage(offscreen, 0, 0, this);
@@ -282,9 +252,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //
 
         //最初に
-
-        //if(i_Lock_on>=10){i_Lock_on=i_Lock_on-10;}
-        if (orihime_app.i_Lock_on) {
+        if (orihime_app.lockBackground) {
             orihime_app.h_cam.setCamera(orihime_app.camera_of_orisen_input_diagram);
             orihime_app.h_cam.h3_and_h4_calculation();
             orihime_app.h_cam.parameter_calculation();
@@ -1380,7 +1348,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     LineSegment s_4 = new LineSegment();
                     s_4.set(es1.get_s_step(4));
 
-                    orihime_app.i_Lock_on = false;
+                    orihime_app.lockBackground = false;
                     orihime_app.Button_background_Lock_on.setBackground(Color.gray);
 
                     orihime_app.background_set(orihime_app.camera_of_orisen_input_diagram.object2TV(s_1.getA()),
@@ -1599,13 +1567,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 orihime_app.i_cp_or_oriagari_decide(p);
                 if (orihime_app.i_cp_or_oriagari == 0) {
                     if (e.getWheelRotation() == -1) {
-                        orihime_app.d_syukusyaku_keisuu = orihime_app.d_syukusyaku_keisuu * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
+                        orihime_app.scaleFactor = orihime_app.scaleFactor * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
                     } else {
-                        orihime_app.d_syukusyaku_keisuu = orihime_app.d_syukusyaku_keisuu / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
+                        orihime_app.scaleFactor = orihime_app.scaleFactor / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
                     }
-                    orihime_app.camera_of_orisen_input_diagram.setCameraZoomX(orihime_app.d_syukusyaku_keisuu);
-                    orihime_app.camera_of_orisen_input_diagram.setCameraZoomY(orihime_app.d_syukusyaku_keisuu);
-                    orihime_app.text27.setText(String.valueOf(orihime_app.d_syukusyaku_keisuu));
+                    orihime_app.camera_of_orisen_input_diagram.setCameraZoomX(orihime_app.scaleFactor);
+                    orihime_app.camera_of_orisen_input_diagram.setCameraZoomY(orihime_app.scaleFactor);
+                    orihime_app.text27.setText(String.valueOf(orihime_app.scaleFactor));
                     orihime_app.text27.setCaretPosition(0);
                     // ---------------------------------------------------------------------
                 } else {
@@ -1629,7 +1597,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 }
                 // ---------------------------------------------------------------------
 
-                orihime_app.mouse_object_iti(orihime_app.p_mouse_TV_iti);
+                orihime_app.mouse_object_iti(orihime_app.p_mouse_TV_position);
                 repaint();
             }
         }

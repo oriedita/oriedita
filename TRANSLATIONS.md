@@ -67,3 +67,4 @@
 | `nobasi` | `nobasu` | `lengthen` | 伸ばす
 | `hayai` | | `fast` | 早い
 | `syuui` | `shuui` | `surrounding` | 周囲
+| `naibun` | | `internal division ratio` |

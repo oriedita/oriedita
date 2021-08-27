@@ -70,10 +70,10 @@ class SubThread extends Thread {
             }
 
             case FOLDING_ESTIMATE_SPECIFIC_2 -> {
-                if (orihime_app.i_folded_cases == orihime_app.OZ.discovered_fold_cases) {
+                if (orihime_app.foldedCases == orihime_app.OZ.discovered_fold_cases) {
                     orihime_app.OZ.text_result = "Number of found solutions = " + orihime_app.OZ.discovered_fold_cases + "  ";
                 }
-                int objective = orihime_app.i_folded_cases;
+                int objective = orihime_app.foldedCases;
                 while (objective > orihime_app.OZ.discovered_fold_cases) {
                     orihime_app.folding_estimated();
                     orihime_app.repaint();

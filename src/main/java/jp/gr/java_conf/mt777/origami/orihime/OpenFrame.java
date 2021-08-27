@@ -88,7 +88,7 @@ class OpenFrame extends JDialog implements ActionListener {
         ckbox_add_frame_SelectAnd3click = new JCheckBox("sel<=>mcm");
         ckbox_add_frame_SelectAnd3click.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/ckbox_add_frame_SelectAnd3click.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.ckbox_add_frame_SelectAnd3click_isSelected = ckbox_add_frame_SelectAnd3click_isSelected();
             orihime_app.repaint();
@@ -105,7 +105,7 @@ class OpenFrame extends JDialog implements ActionListener {
         JButton Button_O_F_check = new JButton("O_F_check");
         Button_O_F_check.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/O_F_check.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.FLAT_FOLDABLE_CHECK_63;
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
@@ -126,7 +126,7 @@ class OpenFrame extends JDialog implements ActionListener {
         JButton Button_oritatami_kanousen_and_kousitenkei = new JButton("");
         Button_oritatami_kanousen_and_kousitenkei.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/oritatami_kanousen_and_kousitenkei.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.FOLDABLE_LINE_INPUT_39;
             orihime_app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.FOLDABLE_LINE_INPUT_39;
@@ -154,7 +154,7 @@ class OpenFrame extends JDialog implements ActionListener {
         JButton Button_select_polygon = new JButton("select_polygon");
         Button_select_polygon.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/select_polygon.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.SELECT_POLYGON_66;
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
@@ -172,7 +172,7 @@ class OpenFrame extends JDialog implements ActionListener {
         JButton Button_unselect_polygon = new JButton("unselect_polygon");
         Button_unselect_polygon.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/unselect_polygon.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.UNSELECT_POLYGON_67;
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
@@ -197,7 +197,7 @@ class OpenFrame extends JDialog implements ActionListener {
         JButton Button_select_lX = new JButton("select_lX");
         Button_select_lX.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/select_lX.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.SELECT_LINE_INTERSECTING_68;
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
@@ -214,7 +214,7 @@ class OpenFrame extends JDialog implements ActionListener {
         JButton Button_unselect_lX = new JButton("unselect_lX");
         Button_unselect_lX.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/unselect_lX.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.UNSELECT_LINE_INTERSECTING_69;
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
@@ -236,7 +236,7 @@ class OpenFrame extends JDialog implements ActionListener {
         JButton Button_Del_l = new JButton("Del_l");
         Button_Del_l.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/Del_l.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.CREASE_DELETE_OVERLAPPING_64;
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
@@ -252,7 +252,7 @@ class OpenFrame extends JDialog implements ActionListener {
         JButton Button_Del_l_X = new JButton("Del_l_X");
         Button_Del_l_X.addActionListener(e -> {
             orihime_app.img_explanation_fname = "qqq/af/Del_l_X.png";
-            orihime_app.readImageFromFile3();
+            orihime_app.updateExplanation();
 
             orihime_app.i_mouse_modeA = MouseMode.CREASE_DELETE_INTERSECTING_65;
             System.out.println("i_mouse_modeA = " + orihime_app.i_mouse_modeA);
