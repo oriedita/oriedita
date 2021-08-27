@@ -29,9 +29,3 @@ jobs:
       with:
         name: orihime-jar
         path: target/orihime-*.jar
-        
-    - name: Release
-      uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        files: target/orihime-*.jar
