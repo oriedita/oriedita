@@ -18,7 +18,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
@@ -29,11 +28,6 @@ import java.util.ArrayList;
 
 import static jp.gr.java_conf.mt777.origami.orihime.ResourceUtil.createImageIcon;
 
-// -------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------
-// -------------------------------------------------------------------------------------
-
-//public class ap extends Frame implements ActionListener,MouseListener, MouseMotionListener,MouseWheelListener,KeyListener{                                                                  
 public class App extends JFrame implements ActionListener {
 
     public FoldedFigure temp_OZ = new FoldedFigure(this);    //Folded figure
@@ -76,19 +70,19 @@ public class App extends JFrame implements ActionListener {
     public JTextField text29;//double d_oriagarizu_syukusyaku_keisuu=1.0;//折り上がり図の縮尺係数
     public JTextField text30;
     public JCheckBox ckbox_mouse_settings;//マウスの設定。チェックがあると、ホイールマウスとして動作設定
-    public JCheckBox ckbox_point_search;//点を探す範囲
-    public JCheckBox ckbox_ten_hanasi;//点を離すかどうか
-    public JCheckBox ckbox_kou_mitudo_nyuuryoku;//高密度用入力をするかどうか
-    public JCheckBox ckbox_bun;//文章
-    public JCheckBox ckbox_cp;//折線
-    public JCheckBox ckbox_a0;//補助活線cyan
-    public JCheckBox ckbox_a1;//補助画線
+    public JCheckBoxMenuItem ckbox_point_search;//点を探す範囲
+    public JCheckBoxMenuItem ckbox_ten_hanasi;//点を離すかどうか
+    public JCheckBoxMenuItem ckbox_kou_mitudo_nyuuryoku;//高密度用入力をするかどうか
+    public JCheckBoxMenuItem ckbox_bun;//文章
+    public JCheckBoxMenuItem ckbox_cp;//折線
+    public JCheckBoxMenuItem ckbox_a0;//補助活線cyan
+    public JCheckBoxMenuItem ckbox_a1;//補助画線
     public JCheckBox ckbox_check1;//check1
     public JCheckBox ckbox_check2;//check2
     public JCheckBox ckbox_check3;//check3
     public JCheckBox ckbox_check4;//check4
-    public JCheckBox ckbox_mark;//Marking lines such as crosses and reference planes
-    public JCheckBox ckbox_cp_ue;//展開図を折り上がり予想図の上に描く
+    public JCheckBoxMenuItem ckbox_mark;//Marking lines such as crosses and reference planes
+    public JCheckBoxMenuItem ckbox_cp_ue;//展開図を折り上がり予想図の上に描く
     public JCheckBox ckbox_oritatami_keika;//折り上がり予想の途中経過の書き出し
     public JCheckBox ckbox_cp_kaizen_oritatami;//cpを折畳み前に自動改善する。
     public JCheckBox ckbox_select_nokosi;//select状態を他の操作をしてもなるべく残す
@@ -235,8 +229,6 @@ public class App extends JFrame implements ActionListener {
     //画像出力するため20170107_oldと書かれた行をコメントアウトし、20170107_newの行を有効にした。
     //画像出力不要で元にもどすなら、20170107_oldと書かれた行を有効にし、20170107_newの行をコメントアウトにすればよい。（この変更はOrihime.javaの中だけに2箇所ある）
     // オフスクリーン
-    //Image offscreen;															//20170107_old
-    //BufferedImage  offscreen = new BufferedImage(1, 1,  BufferedImage.TYPE_INT_BGR);							//20170107_new
     BufferedImage offsc_background = null;//20181205add
     boolean flg61 = false;//Used when setting the frame 　20180524
     //= 1 is move, = 2 is move4p, = 3 is copy, = 4 is copy4p, = 5 is mirror image
@@ -346,17 +338,9 @@ public class App extends JFrame implements ActionListener {
 
         //バッファー画面の設定はここまで----------------------------------------------------
 
-
-//	public Oriagari_Zu OZ = new Oriagari_Zu(this);    //折りあがり図
-//	public Oriagari_Zu OZ;    //折りあがり図
-//	ArrayList OAZ = new ArrayList(); //折り上がり図のインスタンス化
-
-
-        //OAZ.clear();OAZ.add(new Oriagari_Zu(this));
         OAZ.clear();
         OAZ_add_new_Oriagari_Zu();
         OZ = OAZ.get(0);//折りあがり図
-
 
         //カメラの設定 ------------------------------------------------------------------
         //camera_of_orisen_nyuuryokuzu	;
@@ -378,6 +362,8 @@ public class App extends JFrame implements ActionListener {
         //step=1;
         myTh = null;
         // 初期表示
+
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("fishbase.png")));
 
         // レイアウトの作成レイアウトの作成の部分は”初体験Java”のP179等を参照
 
@@ -401,6 +387,10 @@ public class App extends JFrame implements ActionListener {
 //pnln25未定義
 //pnln30未定義
 
+        JMenuBar menuBar = new JMenuBar();
+
+        setJMenuBar(menuBar);
+
 
         JPanel pnln = new JPanel();
 //         pnln.setBackground(Color.PINK);//new Color(red,green,blue)
@@ -415,11 +405,12 @@ public class App extends JFrame implements ActionListener {
 // ****************************************************************************************************************************
 
         //------------------------------------------------
-        JPanel pnln1 = new JPanel();
+        JMenu pnln1 = new JMenu("File");
+        pnln1.setMnemonic('F');
 //         pnln1.setBackground(Color.PINK);
-        pnln1.setLayout(new GridLayout(1, 2));
+//        pnln1.setLayout(new GridLayout(1, 2));
 
-        pnln.add(pnln1);
+        menuBar.add(pnln1);
         //------------------------------------------------
 
 
@@ -433,7 +424,8 @@ public class App extends JFrame implements ActionListener {
 
 // ******************************************************************************データ読み込み
 
-        JButton Button_yomi = new JButton("Open");
+        JMenuItem Button_yomi = new JMenuItem("Open");
+        Button_yomi.setMnemonic('O');
         Button_yomi.addActionListener(e -> {
             img_explanation_fname = "qqq/yomi.png";
             readImageFromFile3();
@@ -450,7 +442,6 @@ public class App extends JFrame implements ActionListener {
 
             if (memo_temp.getLineCount() > 0) {
                 //展開図の初期化　開始
-                //settei_syokika_cp();
                 developmentView_initialization();
                 //展開図パラメータの初期化
                 es1.reset();                                                //描き職人の初期化
@@ -491,11 +482,6 @@ public class App extends JFrame implements ActionListener {
                 d_kaiten_hosei = camera_of_orisen_input_diagram.getCameraAngle();
                 text28.setText(String.valueOf(d_kaiten_hosei));//回転表示角度の補正係数
                 text28.setCaretPosition(0);
-
-
-                //	OZ.d_oriagarizu_syukusyaku_keisuu=1.0	;text29.setText(String.valueOf(OZ.d_oriagarizu_syukusyaku_keisuu));//折り上がり図の縮尺係数
-                //	OZ.d_oriagarizu_kaiten_hosei=0.0		;text30.setText(String.valueOf(OZ.d_oriagarizu_kaiten_hosei));//折り上がり図の回転表示角度の補正角度
-
 // -----------------20180503追加ここまで
 
 
@@ -516,7 +502,8 @@ public class App extends JFrame implements ActionListener {
 
 // ******************************************************************************データ書き出し
         //Button	Button_kaki		= new Button(	"Save_data"	);Button_kaki.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-        JButton Button_kaki = new JButton("Save");
+        JMenuItem Button_kaki = new JMenuItem("Save");
+        Button_kaki.setMnemonic('S');
         Button_kaki.addActionListener(e -> {
             img_explanation_fname = "qqq/kaki.png";
             readImageFromFile3();
@@ -527,7 +514,7 @@ public class App extends JFrame implements ActionListener {
             es1.record();
         });
         Button_kaki.setMargin(new Insets(0, 0, 0, 0));
-        pnln1.add(Button_kaki);//Button_kaki.setIcon(icon);//Button_kaki.setSize(2000,2000);
+        pnln1.add(Button_kaki);
 
 
 // ******北************************************************************************
@@ -586,19 +573,14 @@ public class App extends JFrame implements ActionListener {
 
 // ******************************************************************************
 
-
-        //------------------------------------------------
-        JPanel pnln2 = new JPanel();
-//         pnln2.setBackground(Color.PINK);
-        pnln2.setLayout(new GridLayout(1, 2));
-
-        pnln.add(pnln2);
-        //------------------------------------------------
-
-
 // ******北************************************************************************表示するものの選択
 
 //ここからチェックボックスの連続
+
+        JMenu menu_view = new JMenu("View");
+        menu_view.setMnemonic('V');
+
+        menuBar.add(menu_view);
         //------------------------------------------------
         JPanel pnln13 = new JPanel();
 //         pnln13.setBackground(Color.PINK);
@@ -606,7 +588,6 @@ public class App extends JFrame implements ActionListener {
 
         pnln.add(pnln13);
         //------------------------------------------------
-
 
 //マウス設定
         ckbox_mouse_settings = new JCheckBox("");
@@ -626,21 +607,21 @@ public class App extends JFrame implements ActionListener {
 
 // -------------------------------------------------------------------
 //点探し
-        ckbox_point_search = new JCheckBox("");
+        ckbox_point_search = new JCheckBoxMenuItem("Show point range");
         ckbox_point_search.addActionListener(e -> {
             img_explanation_fname = "qqq/ckbox_ten_sagasi.png";
             readImageFromFile3();
             canvas.repaint();
         });
-        ckbox_point_search.setIcon(createImageIcon("ppp/ckbox_ten_sagasi_off.png"));
-        ckbox_point_search.setSelectedIcon(createImageIcon("ppp/ckbox_ten_sagasi_on.png"));
+//        ckbox_point_search.setIcon(createImageIcon("ppp/ckbox_ten_sagasi_off.png"));
+//        ckbox_point_search.setSelectedIcon(createImageIcon("ppp/ckbox_ten_sagasi_on.png"));
 
         ckbox_point_search.setMargin(new Insets(0, 0, 0, 0));
-        pnln13.add(ckbox_point_search);
+        menu_view.add(ckbox_point_search);
 
 // -------------------------------------------------------------------
 //点離し
-        ckbox_ten_hanasi = new JCheckBox("");
+        ckbox_ten_hanasi = new JCheckBoxMenuItem("Offset cursor");
         ckbox_ten_hanasi.addActionListener(e -> {
             img_explanation_fname =
                     "qqq/ckbox_ten_hanasi.png";
@@ -648,17 +629,17 @@ public class App extends JFrame implements ActionListener {
 
             canvas.repaint();
         });
-        ckbox_ten_hanasi.setIcon(createImageIcon(
-                "ppp/ckbox_ten_hanasi_off.png"));
-        ckbox_ten_hanasi.setSelectedIcon(createImageIcon(
-                "ppp/ckbox_ten_hanasi_on.png"));
+//        ckbox_ten_hanasi.setIcon(createImageIcon(
+//                "ppp/ckbox_ten_hanasi_off.png"));
+//        ckbox_ten_hanasi.setSelectedIcon(createImageIcon(
+//                "ppp/ckbox_ten_hanasi_on.png"));
 
         ckbox_ten_hanasi.setMargin(new Insets(0, 0, 0, 0));
-        pnln13.add(
+        menu_view.add(
                 ckbox_ten_hanasi);
 // -------------------------------------------------------------------
 //高密度入力
-        ckbox_kou_mitudo_nyuuryoku = new JCheckBox("");
+        ckbox_kou_mitudo_nyuuryoku = new JCheckBoxMenuItem("Grid input assist");
         ckbox_kou_mitudo_nyuuryoku.addActionListener(e -> {
             img_explanation_fname =
                     "qqq/ckbox_kou_mitudo_nyuuryoku.png";
@@ -673,68 +654,68 @@ public class App extends JFrame implements ActionListener {
             }
             canvas.repaint();
         });
-        ckbox_kou_mitudo_nyuuryoku.setIcon(createImageIcon(
-                "ppp/ckbox_kou_mitudo_nyuuryoku_off.png"));
-        ckbox_kou_mitudo_nyuuryoku.setSelectedIcon(createImageIcon(
-                "ppp/ckbox_kou_mitudo_nyuuryoku_on.png"));
+//        ckbox_kou_mitudo_nyuuryoku.setIcon(createImageIcon(
+//                "ppp/ckbox_kou_mitudo_nyuuryoku_off.png"));
+//        ckbox_kou_mitudo_nyuuryoku.setSelectedIcon(createImageIcon(
+//                "ppp/ckbox_kou_mitudo_nyuuryoku_on.png"));
 
         ckbox_kou_mitudo_nyuuryoku.setMargin(new Insets(0, 0, 0, 0));
-        pnln13.add(ckbox_kou_mitudo_nyuuryoku);
+        menu_view.add(ckbox_kou_mitudo_nyuuryoku);
 // -------------------------------------------------------------------
 
 //文表示
-        ckbox_bun = new JCheckBox("");
+        ckbox_bun = new JCheckBoxMenuItem("Display comments");
         ckbox_bun.addActionListener(e -> {
             img_explanation_fname = "qqq/ckbox_bun.png";
             readImageFromFile3();
             canvas.repaint();
         });
-        ckbox_bun.setIcon(createImageIcon("ppp/ckbox_bun_off.png"));
-        ckbox_bun.setSelectedIcon(createImageIcon("ppp/ckbox_bun_on.png"));
+//        ckbox_bun.setIcon(createImageIcon("ppp/ckbox_bun_off.png"));
+//        ckbox_bun.setSelectedIcon(createImageIcon("ppp/ckbox_bun_on.png"));
         ckbox_bun.setMargin(new Insets(0, 0, 0, 0));
-        pnln13.add(ckbox_bun);
+        menu_view.add(ckbox_bun);
 // -------------------------------------------------------------------
 //折線表示
-        ckbox_cp = new JCheckBox("");
+        ckbox_cp = new JCheckBoxMenuItem("Display cp lines");
         ckbox_cp.addActionListener(e -> {
             img_explanation_fname = "qqq/ckbox_cp.png";
             readImageFromFile3();
             canvas.repaint();
         });
-        ckbox_cp.setIcon(createImageIcon("ppp/ckbox_cp_off.png"));
-        ckbox_cp.setSelectedIcon(createImageIcon("ppp/ckbox_cp_on.png"));
+//        ckbox_cp.setIcon(createImageIcon("ppp/ckbox_cp_off.png"));
+//        ckbox_cp.setSelectedIcon(createImageIcon("ppp/ckbox_cp_on.png"));
         ckbox_cp.setMargin(new Insets(0, 0, 0, 0));
-        pnln13.add(ckbox_cp);
+        menu_view.add(ckbox_cp);
 // -------------------------------------------------------------------
 //補助活線表示
-        ckbox_a0 = new JCheckBox("");
+        ckbox_a0 = new JCheckBoxMenuItem("Display aux lines");
         ckbox_a0.addActionListener(e -> {
             img_explanation_fname = "qqq/ckbox_a0.png";
             readImageFromFile3();
             canvas.repaint();
         });
-        ckbox_a0.setIcon(createImageIcon("ppp/ckbox_a0_off.png"));
-        ckbox_a0.setSelectedIcon(createImageIcon("ppp/ckbox_a0_on.png"));
+//        ckbox_a0.setIcon(createImageIcon("ppp/ckbox_a0_off.png"));
+//        ckbox_a0.setSelectedIcon(createImageIcon("ppp/ckbox_a0_on.png"));
 
 
         //ckbox_a0.setBackground(Color.cyan);
         ckbox_a0.setMargin(new Insets(0, 0, 0, 0));
-        pnln13.add(ckbox_a0);
+        menu_view.add(ckbox_a0);
 // -------------------------------------------------------------------
 //補助画線表示
-        ckbox_a1 = new JCheckBox("");
+        ckbox_a1 = new JCheckBoxMenuItem("Display live aux lines");
         ckbox_a1.addActionListener(e -> {
             img_explanation_fname = "qqq/ckbox_a1.png";
             readImageFromFile3();
             canvas.repaint();
         });
-        ckbox_a1.setIcon(createImageIcon("ppp/ckbox_a1_off.png"));
-        ckbox_a1.setSelectedIcon(createImageIcon("ppp/ckbox_a1_on.png"));
+//        ckbox_a1.setIcon(createImageIcon("ppp/ckbox_a1_off.png"));
+//        ckbox_a1.setSelectedIcon(createImageIcon("ppp/ckbox_a1_on.png"));
         ckbox_a1.setMargin(new Insets(0, 0, 0, 0));
-        pnln13.add(ckbox_a1);
+        menu_view.add(ckbox_a1);
 // -------------------------------------------------------------------
 //十字や基準面などの目印画線
-        ckbox_mark = new JCheckBox("");
+        ckbox_mark = new JCheckBoxMenuItem("Display standard face marks");
         ckbox_mark.addActionListener(e -> {
             img_explanation_fname =
                     "qqq/ckbox_mejirusi.png";
@@ -742,18 +723,18 @@ public class App extends JFrame implements ActionListener {
 
             canvas.repaint();
         });
-        ckbox_mark.setIcon(createImageIcon(
-                "ppp/ckbox_mejirusi_off.png"));
-        ckbox_mark.setSelectedIcon(createImageIcon(
-                "ppp/ckbox_mejirusi_on.png"));
+//        ckbox_mark.setIcon(createImageIcon(
+//                "ppp/ckbox_mejirusi_off.png"));
+//        ckbox_mark.setSelectedIcon(createImageIcon(
+//                "ppp/ckbox_mejirusi_on.png"));
 
         ckbox_mark.setMargin(new Insets(0, 0, 0, 0));
-        pnln13.add(
+        menu_view.add(
                 ckbox_mark);
 
 // -------------------------------------------------------------------
 //折りあがり図を補助線の手前側にするかどうか
-        ckbox_cp_ue = new JCheckBox("");
+        ckbox_cp_ue = new JCheckBoxMenuItem("Crease pattern on top");
         ckbox_cp_ue.addActionListener(e -> {
             img_explanation_fname =
                     "qqq/ckbox_cp_ue.png";
@@ -761,13 +742,13 @@ public class App extends JFrame implements ActionListener {
 
             canvas.repaint();
         });
-        ckbox_cp_ue.setIcon(createImageIcon(
-                "ppp/ckbox_cp_ue_off.png"));
-        ckbox_cp_ue.setSelectedIcon(createImageIcon(
-                "ppp/ckbox_cp_ue_on.png"));
+//        ckbox_cp_ue.setIcon(createImageIcon(
+//                "ppp/ckbox_cp_ue_off.png"));
+//        ckbox_cp_ue.setSelectedIcon(createImageIcon(
+//                "ppp/ckbox_cp_ue_on.png"));
 
         ckbox_cp_ue.setMargin(new Insets(0, 0, 0, 0));
-        pnln13.add(
+        menu_view.add(
                 ckbox_cp_ue);
 
 // -------------------------------------------------------------------
@@ -1478,28 +1459,10 @@ public class App extends JFrame implements ActionListener {
         Button_background_trim.setMargin(new Insets(0, 0, 0, 0));
         pnln.add(Button_background_trim);
 
-// *******北***********************************************************************
-/*
-int width, height;
-BufferedImage offsc_haikei2;
-BufferedImage write;
-width=img_background.getWidth(null);
-height=img_background.getHeight(null);
-write=new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
-for(int w=0; w<width; w++){
-for(int h=0; h<height; h++){
-write.setRGB(w, h, offsc_background.getRGB(w,h));
-}
-}
-*/
-// *******北***********************************************************************
-
 ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
 
         //------------------------------------------------
         JPanel pnln9 = new JPanel();
-//         pnln9.setBackground(Color.PINK);
         pnln9.setLayout(new GridLayout(1, 5));
 
         pnln.add(pnln9);
@@ -1510,16 +1473,11 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
             img_explanation_fname = "qqq/haikei.png";
             readImageFromFile3();
 
-            //i_Lock_on=0;
-            //Button_kyoutuu_sagyou();
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
 
-
             readImageFromFile();
 
-
-            //readImageFromFile2();
             iDisplayBackground = 1;
             Button_background_kirikae.setBackground(Color.ORANGE);
 
@@ -1531,9 +1489,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                 h_cam.h3_obj_and_h4_obj_calculation();
             }
 
-
             canvas.repaint();
-
         });
         Button_background.setMargin(new Insets(0, 0, 0, 0));
         Button_background.setBackground(Color.ORANGE);
@@ -1544,7 +1500,6 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         Button_background_kirikae.addActionListener(e -> {
             img_explanation_fname = "qqq/haikei_kirikae.png";
             readImageFromFile3();
-//Button_kyoutuu_sagyou();
             iDisplayBackground = iDisplayBackground + 1;
             if (iDisplayBackground == 2) {
                 iDisplayBackground = 0;
@@ -1603,13 +1558,8 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                 Button_background_Lock_on.setBackground(Color.gray);
 
                 h_cam.set_i_Lock_on(i_Lock_on);
-                //h_cam.setCamera(camera_of_orisen_nyuuryokuzu);
-                //h_cam.h3_obj_and_h4_obj_keisan();
             }
 
-
-            //iDisplayBackground=iDisplayBackground+1 ;
-            //if(iDisplayBackground==2){iDisplayBackground=0;}
             canvas.repaint();
         });
         Button_background_Lock_on.setMargin(new Insets(0, 0, 0, 0));
@@ -1645,25 +1595,19 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
 // *******北*********************************************************************** 解説
         //JButton	Button_kaisetu		= new JButton(	"kaisetu"		);Button_kaisetu.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-        JButton Button_kaisetu = new JButton("Help");
+        JMenuItem Button_kaisetu = new JMenuItem("Help");
         Button_kaisetu.addActionListener(e -> {
-
-            //Button_kyoutuu_sagyou();
-
             iDisplayExplanation = iDisplayExplanation + 1;
             if (iDisplayExplanation == 2) {
                 iDisplayExplanation = 0;
             }
-//System.out.println("iDisplayExplanation="+iDisplayExplanation);
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
-//img_explanation_fname="kaisetu.png";readImageFromFile3();
-            //readImageFromFile2();
 
             canvas.repaint();
         });
         Button_kaisetu.setMargin(new Insets(0, 0, 0, 0));
-        pnln.add(Button_kaisetu);
+        menuBar.add(Button_kaisetu);
 
         Button_kaisetu.setMargin(new Insets(0, 0, 0, 0));
         Button_kaisetu.setIcon(createImageIcon("ppp/kaisetu.png"));
