@@ -14,10 +14,16 @@ import java.awt.image.BufferedImage;
 
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
     private final Drawing_Worker es1;
+    public FoldedFigure OZ;    //Folded figure
+
     private App orihime_app;
 
     Graphics bufferGraphics;
     BufferedImage offscreen = null;//20181205new
+
+    boolean flg_wi = false;//writeimage時につかう　1にするとpaintの関数の終了部にwriteimageするようにする。これは、paintの変更が書き出されるイメージに反映されないことを防ぐための工夫。20180528
+    int btn = 0;//Stores which button in the center of the left and right is pressed. 1 =
+    Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
     public Canvas(App app0) {
         orihime_app = app0;
@@ -30,6 +36,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         addMouseWheelListener(this);
         
         es1 = app0.es1;
+
+        orihime_app.dim = getSize();
     }
 
     @Override
@@ -83,9 +91,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         orihime_app.dim = getSize();
         bufferGraphics.clearRect(0, 0, orihime_app.dim.width, orihime_app.dim.height);
 
-        //System.out.println("画面サイズ=(" + dim.width + " , " + dim.height  + ")"  );
-
-
         //int   i_ten_sagasi_hyouji, i_ten_hanasi_hyouji,i_kou_mitudo_nyuuryoku_hyouji,i_bun_hyouji,i_cp_hyouji,i_a0_hyouji,i_a1_hyouji;
         //int   i_mejirusi_hyouji,i_cp_ue_hyouji,i_oritatami_keika_hyouji;
 
@@ -104,7 +109,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         bufferGraphics.setColor(Color.red);
         //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-
 
         //カメラのセット
 
@@ -148,10 +152,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //System.out.println("paint　+++++++++++++++++++++　解説表示  " +iDisplayExplanation );
         if ((orihime_app.img_explanation != null) && (orihime_app.iDisplayExplanation >= 1)) {
             bufferGraphics.drawImage(orihime_app.img_explanation, 650, 100, this);//80,80,は描画開始位置
-
-            //bufferGraphics.drawImage(img_explanation,600,150,this);//80,80,は描画開始位置
-            //	System.out.println("paint幅＝"+img_background.getWidth(this));
-            //	System.out.println("paint高さ＝"+img_background.getHeight(this));
         }
 
 
@@ -185,19 +185,19 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //if (iDisplayBackground<=1) {
         //        es1.setCamera(camera_of_orisen_nyuuryokuzu);
 
-        orihime_app.es1.draw_with_camera(bufferGraphics, orihime_app.i_bun_display, orihime_app.i_cp_display, orihime_app.i_a0_display, orihime_app.i_a1_display, orihime_app.fLineWidth, orihime_app.lineStyle, orihime_app.f_h_lineWidth, orihime_app.dim.width, orihime_app.dim.height, orihime_app.i_mark_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+        es1.draw_with_camera(bufferGraphics, orihime_app.i_bun_display, orihime_app.i_cp_display, orihime_app.i_a0_display, orihime_app.i_a1_display, orihime_app.fLineWidth, orihime_app.lineStyle, orihime_app.f_h_lineWidth, orihime_app.dim.width, orihime_app.dim.height, orihime_app.i_mark_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
         if (orihime_app.i_bun_display) {
             //展開図情報の文字表示
             bufferGraphics.setColor(Color.black);
 
-            bufferGraphics.drawString("mouse= (   " + orihime_app.p_mouse_object_iti.getX() + "   ,   " + orihime_app.p_mouse_object_iti.getY() + "   )", 120, 75); //この表示内容はvoid kekka_syoriで決められる。
+            bufferGraphics.drawString("mouse= ( %.2f, %.2f )".formatted(orihime_app.p_mouse_object_iti.getX(), orihime_app.p_mouse_object_iti.getY()), 10, 10); //この表示内容はvoid kekka_syoriで決められる。
 
-            bufferGraphics.drawString("L=" + orihime_app.es1.getTotal(), 120, 90); //この表示内容はvoid kekka_syoriで決められる。
+            bufferGraphics.drawString("L=" + orihime_app.es1.getTotal(), 10, 25); //この表示内容はvoid kekka_syoriで決められる。
 
             //System.out.println("paint　+++++++++++++++++++++　結果の文字表示");
             //結果の文字表示
-            bufferGraphics.drawString(orihime_app.OZ.text_result, 120, 105); //この表示内容はvoid kekka_syoriで決められる。
+            bufferGraphics.drawString(orihime_app.OZ.text_result, 10, 40); //この表示内容はvoid kekka_syoriで決められる。
 
             if (orihime_app.i_kou_mitudo_nyuuryoku_display) {
                 jp.gr.java_conf.mt777.graphic2d.point.Point kus_sisuu = new Point(orihime_app.es1.get_moyori_ten_sisuu(orihime_app.p_mouse_TV_iti));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
@@ -212,8 +212,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             if (orihime_app.subThreadRunning) {
                 bufferGraphics.setColor(Color.red);
 
-                bufferGraphics.drawString("Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 120, 134); //この表示内容はvoid kekka_syoriで決められる。
-                bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 120, 148); //この表示内容はvoid kekka_syoriで決められる。
+                bufferGraphics.drawString("Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 10, 69); //この表示内容はvoid kekka_syoriで決められる。
+                bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 10, 83); //この表示内容はvoid kekka_syoriで決められる。
             }
 
             orihime_app.bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -230,7 +230,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
         if (orihime_app.i_cp_ue_display) {
-            orihime_app.es1.draw_with_camera(bufferGraphics, orihime_app.i_bun_display, orihime_app.i_cp_display, orihime_app.i_a0_display, orihime_app.i_a1_display, orihime_app.fLineWidth, orihime_app.lineStyle, orihime_app.f_h_lineWidth, orihime_app.dim.width, orihime_app.dim.height, orihime_app.i_mark_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+            es1.draw_with_camera(bufferGraphics, orihime_app.i_bun_display, orihime_app.i_cp_display, orihime_app.i_a0_display, orihime_app.i_a1_display, orihime_app.fLineWidth, orihime_app.lineStyle, orihime_app.f_h_lineWidth, orihime_app.dim.width, orihime_app.dim.height, orihime_app.i_mark_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
         }
 
         //アンチェイリアス
@@ -263,13 +263,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             orihime_app.w_image_running = false;
         }
 
-        if (orihime_app.flg_wi) {//For control when exporting with a frame 20180525
-            orihime_app.flg_wi = false;
+        if (flg_wi) {//For control when exporting with a frame 20180525
+            flg_wi = false;
             orihime_app.writeImageFile(orihime_app.fname_wi);
         }
         if (orihime_app.flg61) {
             orihime_app.flg61 = false;
-            orihime_app.es1.setDrawingStage(4);
+            es1.setDrawingStage(4);
         }
     }
 
@@ -363,8 +363,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
             es1.mMoved_A_18(p);
         }//角度系モード（５番目）。2点指定、自由末端
-        //else if(orihime_app.i_mouse_modeA==19) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_19(p);}//select　に使う
-        //else if(orihime_app.i_mouse_modeA==20) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_20(p);}//unselect　に使う
         else if (orihime_app.i_mouse_modeA == MouseMode.CREASE_MOVE_21) {
             es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
             es1.mMoved_A_21(p);
@@ -373,10 +371,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
             es1.mMoved_A_22(p);
         }//copy_paste　に使う
-        //else if(orihime_app.i_mouse_modeA==23) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_23(p);}//--->M　に使う
-        //else if(orihime_app.i_mouse_modeA==24) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_24(p);}//--->V　に使う
-        //else if(orihime_app.i_mouse_modeA==25) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_25(p);}//--->E　に使う
-        //else if(orihime_app.i_mouse_modeA==26) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_26(p);}//背景セット　に使う
         else if (orihime_app.i_mouse_modeA == MouseMode.LINE_SEGMENT_DIVISION_27) {
             es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
             es1.mMoved_A_27(p);
@@ -389,7 +383,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
             es1.mMoved_A_29(p);
         }//正多角形入力　に使う
-        //else if(orihime_app.i_mouse_modeA==30) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_30(p);}//除け_線変換　に使う
         else if (orihime_app.i_mouse_modeA == MouseMode.CREASE_MOVE_4P_31) {
             es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
             es1.mMoved_A_31(p);
@@ -430,17 +423,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
             es1.mMoved_A_40(p);
         }//平行線入力
-        //else if(orihime_app.i_mouse_modeA==41) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_41(p);}//点削除（線カラーチェンジ）　に使う
-        //else if(orihime_app.i_mouse_modeA==42) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_42(p);}//円入力　に使う
-        //else if(orihime_app.i_mouse_modeA==43) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_43(p);}//円の3点入力　に使う
-        //else if(orihime_app.i_mouse_modeA==44) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_44(p);}//円　分離入力　に使う
-        //else if(orihime_app.i_mouse_modeA==45) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_45(p);}//2円の接線　に使う
-        //else if(orihime_app.i_mouse_modeA==46) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_46(p);}//反転　に使う
-        //else if(orihime_app.i_mouse_modeA==47) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_47(p);}//円入力モード。(フリー)
-        //else if(orihime_app.i_mouse_modeA==48) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_48(p);}//円　同心円追加モード。(元円の円周と同心円の円周との幅は線分で指定する)
-        //else if(orihime_app.i_mouse_modeA==49) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_49(p);}//円　同心円追加モード。(元円の円周と同心円の円周との幅は他の同心円の組で指定する)
-        //else if(orihime_app.i_mouse_modeA==50) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_50(p);}//2円を指定し、それぞれの円に同心円を加える。それぞれの同心円の組にできる帯領域の幅が等しくなるようにして、加えられた同心円同士が接するようにする。
-        //else if(orihime_app.i_mouse_modeA==51) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_51(p);}//平行線　幅指定入力モード。
         else if (orihime_app.i_mouse_modeA == MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52) {
             es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
             es1.mMoved_A_52(p);
@@ -465,10 +447,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
             es1.mMoved_A_57(p);
         }//角度測定３　に使う
-        //else if(orihime_app.i_mouse_modeA==58) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_58(p);}//senbun_henkan 赤青
-        //else if(orihime_app.i_mouse_modeA==59) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_59(p);}//特注プロパティ指定
-        //else if(orihime_app.i_mouse_modeA==60) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_60(p);}//--->HK　に使う//HKとは補助活線のこと
-
         else if (orihime_app.i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) {
             es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
             es1.mMoved_A_61(p);
@@ -521,27 +499,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     //マウス操作(ボタンを押したとき)を行う関数----------------------------------------------------
     public void mousePressed(MouseEvent e) {
-
-        //Ten p =new Ten(e.getX(),e.getY());
         Point p = new Point(orihime_app.e2p(e));
-
-
-//wwwwwwwwwwww
-        //PointerInfo pointerInfo = MouseInfo.getPointerInfo();
-        //MouseInfo.getPointerInfo();
 
         orihime_app.i_mouseDragged_valid = true;
         orihime_app.i_mouseReleased_valid = true;
 
-
-        //if (ckbox_mouse_settei.isSelected()){   //20201010　コメントアウト
-        orihime_app.btn = e.getButton();
+        btn = e.getButton();
         orihime_app.i_ClickCount = e.getClickCount();
 
         //---------ボタンの種類による動作変更-----------------------------------------
-
-
-        if (orihime_app.btn == MouseEvent.BUTTON1) {
+        if (btn == MouseEvent.BUTTON1) {
             int cnt = e.getClickCount();
             if (cnt == 3) {
                 System.out.println("3_Click");//("トリプルクリック"
@@ -559,7 +526,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     }
                 }
             }
-        } else if (orihime_app.btn == MouseEvent.BUTTON2) {
+        } else if (btn == MouseEvent.BUTTON2) {
             System.out.println("中ボタンクリック");
 
             orihime_app.i_cp_or_oriagari_decide(p);
@@ -578,11 +545,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 orihime_app.OZ.camera_of_transparent_rear.camera_ichi_sitei_from_TV(p);
             }
 
-            orihime_app.mouse_temp0.set(p);
+            mouse_temp0.set(p);
             repaint();
             return;
 
-        } else if (orihime_app.btn == MouseEvent.BUTTON3) {//右ボタンクリック
+        } else if (btn == MouseEvent.BUTTON3) {//右ボタンクリック
             if (orihime_app.i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
             } else {
                 orihime_app.i_mouse_right_button_on = true;
@@ -611,7 +578,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         }   //1 線分入力モード（フリー）
         else if (orihime_app.i_mouse_modeA == MouseMode.MOVE_CREASE_PATTERN_2) {                                       //2 展開図移動。
             orihime_app.camera_of_orisen_input_diagram.camera_ichi_sitei_from_TV(p);
-            orihime_app.mouse_temp0.set(p);
+            mouse_temp0.set(p);
         } else if (orihime_app.i_mouse_modeA == MouseMode.LINE_SEGMENT_DELETE_3) {
             es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
             es1.mPressed_A_03(p);
@@ -906,7 +873,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             orihime_app.OZ.camera_of_transparent_front.camera_ichi_sitei_from_TV(p);
             orihime_app.OZ.camera_of_transparent_rear.camera_ichi_sitei_from_TV(p);
 
-            orihime_app.mouse_temp0.set(p);
+            mouse_temp0.set(p);
         } else if (orihime_app.i_mouse_modeA == MouseMode.CHANGE_STANDARD_FACE_103) {
             //ts1.set_kijyunmen_id(p);
         }//Reference plane designation
@@ -920,43 +887,33 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     public void mouseDragged(MouseEvent e) {
 
         if (orihime_app.i_mouseDragged_valid) {
-
-            //Ten p =new Ten(e.getX(),e.getY());
             Point p = new Point(orihime_app.e2p(e));
             orihime_app.mouse_object_iti(p);
 
             //if (ckbox_mouse_settei.isSelected()){  //20201010　コメントアウト
             //---------ボタンの種類による動作変更-----------------------------------------
-            if (orihime_app.btn == MouseEvent.BUTTON1) {
+            if (btn == MouseEvent.BUTTON1) {
 
 
-            } else if (orihime_app.btn == MouseEvent.BUTTON2) {
-                //System.out.println("中ボタンクリック");
-                //if(ts2.naibu_hantei(p)==0){
-                //i_cp_or_oriagari=0;
-                //if(ts2.naibu_hantei_ura(p)>0){i_cp_or_oriagari=2;}
-                //if(ts2.naibu_hantei_omote(p)>0){i_cp_or_oriagari=1;}
-
-
+            } else if (btn == MouseEvent.BUTTON2) {
                 if (orihime_app.i_cp_or_oriagari == 0) {// 展開図移動。
-                    orihime_app.camera_of_orisen_input_diagram.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                    orihime_app.camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
                     es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
                 } else if (orihime_app.i_cp_or_oriagari == 1) {
-                    orihime_app.OZ.camera_of_foldedFigure_front.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                    orihime_app.OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
                 } else if (orihime_app.i_cp_or_oriagari == 2) {
-                    orihime_app.OZ.camera_of_foldedFigure_rear.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                    orihime_app.OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
                 } else if (orihime_app.i_cp_or_oriagari == 3) {
-                    orihime_app.OZ.camera_of_transparent_front.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                    orihime_app.OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
                 } else if (orihime_app.i_cp_or_oriagari == 4) {
-                    orihime_app.OZ.camera_of_transparent_rear.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                    orihime_app.OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
                 }
 
-                orihime_app.mouse_temp0.set(p);
+                mouse_temp0.set(p);
                 repaint();
                 return;
 
-            } else if (orihime_app.btn == MouseEvent.BUTTON3) {
-                //System.out.println("右ボタンクリック");
+            } else if (btn == MouseEvent.BUTTON3) {
                 if (orihime_app.i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
                 } else {
                     if (orihime_app.i_mouse_undo_redo_mode) {
@@ -968,7 +925,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 repaint();
                 return;
             }
-            //-----------------------------System.out.println("a");----------------------
             //}  //20201010　コメントアウト
 
 
@@ -977,7 +933,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
                 es1.mDragged_A_01(p);
             } else if (orihime_app.i_mouse_modeA == MouseMode.MOVE_CREASE_PATTERN_2) {
-                orihime_app.camera_of_orisen_input_diagram.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                orihime_app.camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
                 es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
 
 
@@ -992,35 +948,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 //OZi.d_oriagarizu_syukusyaku_keisuu=OZi.d_oriagarizu_syukusyaku_keisuu*d_bairitu;
 
 
-                    OZi.camera_of_foldedFigure.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_foldedFigure_front.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_foldedFigure_rear.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_transparent_front.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_transparent_rear.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    //text29.setText(String.valueOf(OZ.d_oriagarizu_syukusyaku_keisuu));
-                    //text29.setCaretPosition(0);
+                    OZi.camera_of_foldedFigure.displayPositionMove(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
                 }
 //20180225追加　ここまで
 
-
-                orihime_app.mouse_temp0.set(p);
-
-
+                mouse_temp0.set(p);
             } else if (orihime_app.i_mouse_modeA == MouseMode.LINE_SEGMENT_DELETE_3) {
                 es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
                 es1.mDragged_A_03(p);
@@ -1243,31 +1179,26 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 orihime_app.OZ.foldedFigure_operation_mouse_drag(p);
             }    //折り上がり図操作
             else if (orihime_app.i_mouse_modeA == MouseMode.MOVE_CALCULATED_SHAPE_102) {
-                orihime_app.OZ.camera_of_foldedFigure.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                orihime_app.OZ.camera_of_foldedFigure_front.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                orihime_app.OZ.camera_of_foldedFigure_rear.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                orihime_app.OZ.camera_of_foldedFigure.displayPositionMove(mouse_temp0.other_Point_position(p));
+                orihime_app.OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                orihime_app.OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
 
-                orihime_app.OZ.camera_of_transparent_front.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                orihime_app.OZ.camera_of_transparent_rear.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                orihime_app.OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                orihime_app.OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
 
-                orihime_app.mouse_temp0.set(p);//mouse_temp0は一時的に使うTen、mouse_temp0.tano_Ten_iti(p)はmouse_temp0から見たpの位置
+                mouse_temp0.set(p);//mouse_temp0は一時的に使うTen、mouse_temp0.tano_Ten_iti(p)はmouse_temp0から見たpの位置
 
             } else if (orihime_app.i_mouse_modeA == MouseMode.CHANGE_STANDARD_FACE_103) {
             }//基準面指定
 
             repaint();
         }
-
-        //add_frame_to_Front();
     }
 
     //マウス操作(ボタンをクリックしたとき)を行う関数----------------------------------------------------
     public void mouseClicked(MouseEvent e) {
         //何もしない
-
-
     }
-
 
     //マウス操作(カーソルが有効領域内に入ったとき)を行う関数----------------------------------------------------
     public void mouseEntered(MouseEvent e) {
@@ -1282,40 +1213,35 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     //マウス操作(ボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(MouseEvent e) {
         if (orihime_app.i_mouseReleased_valid) {
-            //Ten p =new Ten(e.getX(),e.getY());
             Point p = new Point(orihime_app.e2p(e));
 
 
-            //if (ckbox_mouse_settei.isSelected()){  //20201010　コメントアウト
             //---------ボタンの種類による動作変更-----------------------------------------
-            if (orihime_app.btn == MouseEvent.BUTTON1) {
+            if (btn == MouseEvent.BUTTON1) {
                 //
 
-            } else if (orihime_app.btn == MouseEvent.BUTTON2) {
-                //System.out.println("中ボタンクリック");
-                //if(ts2.naibu_hantei(p)==0){
+            } else if (btn == MouseEvent.BUTTON2) {
                 if (orihime_app.i_cp_or_oriagari == 0) {
-
-                    orihime_app.camera_of_orisen_input_diagram.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                    orihime_app.camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
                     es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
                 } else if (orihime_app.i_cp_or_oriagari == 1) {
-                    orihime_app.OZ.camera_of_foldedFigure_front.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                    orihime_app.OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
                 } else if (orihime_app.i_cp_or_oriagari == 2) {
-                    orihime_app.OZ.camera_of_foldedFigure_rear.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                    orihime_app.OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
 
                 } else if (orihime_app.i_cp_or_oriagari == 3) {
-                    orihime_app.OZ.camera_of_transparent_front.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                    orihime_app.OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
                 } else if (orihime_app.i_cp_or_oriagari == 4) {
-                    orihime_app.OZ.camera_of_transparent_rear.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                    orihime_app.OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
                 }
 
-                orihime_app.mouse_temp0.set(p);
+                mouse_temp0.set(p);
                 repaint();
                 orihime_app.i_mouseDragged_valid = false;
                 orihime_app.i_mouseReleased_valid = false;
                 return;//
 
-            } else if (orihime_app.btn == MouseEvent.BUTTON3) {
+            } else if (btn == MouseEvent.BUTTON3) {
                 //System.out.println("右ボタンクリック");
                 if (orihime_app.i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {
                     repaint();//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
@@ -1347,7 +1273,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
                 es1.mReleased_A_01(p);
             } else if (orihime_app.i_mouse_modeA == MouseMode.MOVE_CREASE_PATTERN_2) {
-                orihime_app.camera_of_orisen_input_diagram.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                orihime_app.camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
                 es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
 
 
@@ -1362,35 +1288,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 //OZi.d_oriagarizu_syukusyaku_keisuu=OZi.d_oriagarizu_syukusyaku_keisuu*d_bairitu;
 
 
-                    OZi.camera_of_foldedFigure.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_foldedFigure_front.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_foldedFigure_rear.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_transparent_front.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_transparent_rear.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    //text29.setText(String.valueOf(OZ.d_oriagarizu_syukusyaku_keisuu));
-                    //text29.setCaretPosition(0);
+                    OZi.camera_of_foldedFigure.displayPositionMove(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                    OZi.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
                 }
 //20180225追加　ここまで
 
-
-                orihime_app.mouse_temp0.set(p);
-
-
+                mouse_temp0.set(p);
             } else if (orihime_app.i_mouse_modeA == MouseMode.LINE_SEGMENT_DELETE_3) {
                 es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
                 es1.mReleased_A_03(p);
@@ -1464,9 +1370,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
 
                 if (es1.mReleased_A_26(p) == 4) {
-                    //i_Lock_on_ori=1;
                     orihime_app.Button_kyoutuu_sagyou();
-                    //System.out.println("i_mouse_modeA==4");
                     LineSegment s_1 = new LineSegment();
                     s_1.set(es1.get_s_step(1));
                     LineSegment s_2 = new LineSegment();
@@ -1476,7 +1380,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     LineSegment s_4 = new LineSegment();
                     s_4.set(es1.get_s_step(4));
 
-                    //int i_Lock_on_old=i_Lock_on;
                     orihime_app.i_Lock_on = false;
                     orihime_app.Button_background_Lock_on.setBackground(Color.gray);
 
@@ -1484,10 +1387,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                             orihime_app.camera_of_orisen_input_diagram.object2TV(s_2.getA()),
                             orihime_app.camera_of_orisen_input_diagram.object2TV(s_3.getA()),
                             orihime_app.camera_of_orisen_input_diagram.object2TV(s_4.getA()));
-
-                    //	i_Lock_on=i_Lock_on_old;
-
-
                 }
             } else if (orihime_app.i_mouse_modeA == MouseMode.LINE_SEGMENT_DIVISION_27) {
                 es1.setCamera(orihime_app.camera_of_orisen_input_diagram);
@@ -1638,14 +1537,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             } else if (orihime_app.i_mouse_modeA == MouseMode.MODIFY_CALCULATED_SHAPE_101) {        //折り上がり図操作
                 orihime_app.OZ.foldedFigure_operation_mouse_off(p);
             } else if (orihime_app.i_mouse_modeA == MouseMode.MOVE_CALCULATED_SHAPE_102) {
-                orihime_app.OZ.camera_of_foldedFigure.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                orihime_app.OZ.camera_of_foldedFigure_front.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                orihime_app.OZ.camera_of_foldedFigure_rear.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                orihime_app.OZ.camera_of_foldedFigure.displayPositionMove(mouse_temp0.other_Point_position(p));
+                orihime_app.OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                orihime_app.OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
 
-                orihime_app.OZ.camera_of_transparent_front.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
-                orihime_app.OZ.camera_of_transparent_rear.displayPositionMove(orihime_app.mouse_temp0.other_Point_position(p));
+                orihime_app.OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                orihime_app.OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
 
-                orihime_app.mouse_temp0.set(p);
+                mouse_temp0.set(p);
 
             } else if (orihime_app.i_mouse_modeA == MouseMode.CHANGE_STANDARD_FACE_103) {//基準面指定
                 int new_referencePlane_id;
@@ -1665,11 +1564,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 if ((new_referencePlane_id != old_referencePlane_id) && (orihime_app.OZ.estimationStep != FoldedFigure.EstimationStep.STEP_0)) {
                     orihime_app.OZ.estimationStep = FoldedFigure.EstimationStep.STEP_1;
                 }
-
             }
 
             repaint();
-
         }
 
         orihime_app.i_mouseDragged_valid = false;
@@ -1677,7 +1574,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     }
 
     public void mouseWheelMoved(MouseWheelEvent e) {
-        //System.out.println("mouseWheelMoved   " +e.getWheelRotation());
         if (orihime_app.ckbox_mouse_settings.isSelected()) {
             //	ホイールでundo,redo
             if ((e.isShiftDown()) || (orihime_app.i_mouse_right_button_on)) {
@@ -1692,7 +1588,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     orihime_app.setTitle(es1.undo());
                     repaint();
                 }
-
             }
 
             //	ホイールで拡大縮小

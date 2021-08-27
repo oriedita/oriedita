@@ -13,7 +13,6 @@ public class Orihime {
 
             frame.setSize(1200, 700);
             frame.setLocationRelativeTo(null);//If you want to put the application window in the center of the screen, use the setLocationRelativeTo () method. If you pass null, it will always be in the center.
-
             frame.setVisible(true);
         });
     }

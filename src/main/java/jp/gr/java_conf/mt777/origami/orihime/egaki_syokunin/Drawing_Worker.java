@@ -1410,7 +1410,7 @@ public class Drawing_Worker {
         g.setColor(Color.black);
 
         if (i_bun_display) {
-            g.drawString(text_cp_setumei, 120, 120);
+            g.drawString(text_cp_setumei, 10, 55);
         }
     }
 
