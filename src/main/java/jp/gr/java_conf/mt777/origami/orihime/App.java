@@ -3811,13 +3811,24 @@ public class App extends JFrame implements ActionListener {
             img_explanation_fname = "qqq/kakudo_kei_a_tiisaku.png";
             updateExplanation();
 
-            i_mouse_modeA = switch (angle_system_input_id) {
-                case DEG_1 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                case DEG_2 ->  MouseMode.ANGLE_SYSTEM_16;
-                case DEG_3 ->  MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                case DEG_4 ->  MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                case DEG_5 ->  MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-            };
+            switch (angle_system_input_id) {
+                case DEG_1:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    break;
+                case DEG_2:
+                    i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    break;
+                case DEG_3:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    break;
+                case DEG_4:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    break;
+                case DEG_5:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    break;
+            }
+            ;
 
             id_kakudo_kei_a = id_kakudo_kei_a + 1;//if(id_kakudo_kei_a<2){id_kakudo_kei_a=2;}
             Button_kakudo_kei_a.setText("180/" + id_kakudo_kei_a + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_a)) * 1000)) / 1000.0);
@@ -3844,13 +3855,23 @@ public class App extends JFrame implements ActionListener {
             img_explanation_fname = "qqq/kakudo_kei_a.png";
             updateExplanation();
 
-            i_mouse_modeA = switch (angle_system_input_id) {
-                case DEG_1 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                case DEG_2 -> MouseMode.ANGLE_SYSTEM_16;
-                case DEG_3 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                case DEG_4 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                case DEG_5 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-            };
+            switch (angle_system_input_id) {
+                case DEG_1:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    break;
+                case DEG_2:
+                    i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    break;
+                case DEG_3:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    break;
+                case DEG_4:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    break;
+                case DEG_5:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    break;
+            }
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -3877,13 +3898,23 @@ public class App extends JFrame implements ActionListener {
             img_explanation_fname = "qqq/kakudo_kei_a_ookiku.png";
             updateExplanation();
 
-            i_mouse_modeA = switch (angle_system_input_id) {
-                case DEG_1 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                case DEG_2 -> MouseMode.ANGLE_SYSTEM_16;
-                case DEG_3 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                case DEG_4 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                case DEG_5 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-            };
+            switch (angle_system_input_id) {
+                case DEG_1:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    break;
+                case DEG_2:
+                    i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    break;
+                case DEG_3:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    break;
+                case DEG_4:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    break;
+                case DEG_5:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    break;
+            }
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -3923,13 +3954,23 @@ public class App extends JFrame implements ActionListener {
             img_explanation_fname = "qqq/kakudo_kei_b_tiisaku.png";
             updateExplanation();
 
-            i_mouse_modeA = switch (angle_system_input_id) {
-                case DEG_1 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                case DEG_2 -> MouseMode.ANGLE_SYSTEM_16;
-                case DEG_3 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                case DEG_4 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                case DEG_5 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-            };
+            switch (angle_system_input_id) {
+                case DEG_1:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    break;
+                case DEG_2:
+                    i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    break;
+                case DEG_3:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    break;
+                case DEG_4:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    break;
+                case DEG_5:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    break;
+            }
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -3958,13 +3999,23 @@ public class App extends JFrame implements ActionListener {
             img_explanation_fname = "qqq/kakudo_kei_b.png";
             updateExplanation();
 
-            i_mouse_modeA = switch (angle_system_input_id) {
-                case DEG_1 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                case DEG_2 -> MouseMode.ANGLE_SYSTEM_16;
-                case DEG_3 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                case DEG_4 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                case DEG_5 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-            };
+            switch (angle_system_input_id) {
+                case DEG_1:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    break;
+                case DEG_2:
+                    i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    break;
+                case DEG_3:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    break;
+                case DEG_4:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    break;
+                case DEG_5:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    break;
+            }
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -3991,13 +4042,23 @@ public class App extends JFrame implements ActionListener {
             img_explanation_fname = "qqq/kakudo_kei_b_ookiku.png";
             updateExplanation();
 
-            i_mouse_modeA = switch (angle_system_input_id) {
-                case DEG_1 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                case DEG_2 -> MouseMode.ANGLE_SYSTEM_16;
-                case DEG_3 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                case DEG_4 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                case DEG_5 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-            };
+            switch (angle_system_input_id) {
+                case DEG_1:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    break;
+                case DEG_2:
+                    i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    break;
+                case DEG_3:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    break;
+                case DEG_4:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    break;
+                case DEG_5:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    break;
+            }
 
             id_kakudo_kei_b = id_kakudo_kei_b - 1;
             if (id_kakudo_kei_b < 2) {
@@ -4025,13 +4086,23 @@ public class App extends JFrame implements ActionListener {
             img_explanation_fname = "qqq/id_kakudo_kei_12.png";
             updateExplanation();
 
-            i_mouse_modeA = switch (angle_system_input_id) {
-                case DEG_1 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                case DEG_2 -> MouseMode.ANGLE_SYSTEM_16;
-                case DEG_3 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                case DEG_4 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                case DEG_5 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-            };
+            switch (angle_system_input_id) {
+                case DEG_1:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    break;
+                case DEG_2:
+                    i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    break;
+                case DEG_3:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    break;
+                case DEG_4:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    break;
+                case DEG_5:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    break;
+            }
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -4053,13 +4124,23 @@ public class App extends JFrame implements ActionListener {
             img_explanation_fname = "qqq/id_kakudo_kei_08.png";
             updateExplanation();
 
-            i_mouse_modeA = switch (angle_system_input_id) {
-                case DEG_1 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                case DEG_2 -> MouseMode.ANGLE_SYSTEM_16;
-                case DEG_3 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                case DEG_4 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                case DEG_5 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-            };
+            switch (angle_system_input_id) {
+                case DEG_1:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    break;
+                case DEG_2:
+                    i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    break;
+                case DEG_3:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    break;
+                case DEG_4:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    break;
+                case DEG_5:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    break;
+            }
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -4108,13 +4189,23 @@ public class App extends JFrame implements ActionListener {
             img_explanation_fname = "qqq/jiyuu_kaku_set_a.png";
             updateExplanation();
 
-            i_mouse_modeA = switch (angle_system_input_id) {
-                case DEG_1 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                case DEG_2 -> MouseMode.ANGLE_SYSTEM_16;
-                case DEG_3 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                case DEG_4 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                case DEG_5 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-            };
+            switch (angle_system_input_id) {
+                case DEG_1:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    break;
+                case DEG_2:
+                    i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    break;
+                case DEG_3:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    break;
+                case DEG_4:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    break;
+                case DEG_5:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    break;
+            }
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -4166,13 +4257,23 @@ public class App extends JFrame implements ActionListener {
             img_explanation_fname = "qqq/jiyuu_kaku_set_b.png";
             updateExplanation();
 
-            i_mouse_modeA = switch (angle_system_input_id) {
-                case DEG_1 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                case DEG_2 -> MouseMode.ANGLE_SYSTEM_16;
-                case DEG_3 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                case DEG_4 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                case DEG_5 -> MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-            };
+            switch (angle_system_input_id) {
+                case DEG_1:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    break;
+                case DEG_2:
+                    i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    break;
+                case DEG_3:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    break;
+                case DEG_4:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    break;
+                case DEG_5:
+                    i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    break;
+            }
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -6962,11 +7063,21 @@ public class App extends JFrame implements ActionListener {
 
 
         switch (i_sel_mou_mode) {
-            case MOVE_1 -> Button_move.setBorder(new LineBorder(Color.green, 3, false));
-            case MOVE4P_2 -> Button_move_2p2p.setBorder(new LineBorder(Color.green, 3, false));
-            case COPY_3 -> Button_copy_paste.setBorder(new LineBorder(Color.green, 3, false));
-            case COPY4P_4 -> Button_copy_paste_2p2p.setBorder(new LineBorder(Color.green, 3, false));
-            case MIRROR_5 -> Button_kyouei.setBorder(new LineBorder(Color.green, 3, false));
+            case MOVE_1:
+                Button_move.setBorder(new LineBorder(Color.green, 3, false));
+                break;
+            case MOVE4P_2:
+                Button_move_2p2p.setBorder(new LineBorder(Color.green, 3, false));
+                break;
+            case COPY_3:
+                Button_copy_paste.setBorder(new LineBorder(Color.green, 3, false));
+                break;
+            case COPY4P_4:
+                Button_copy_paste_2p2p.setBorder(new LineBorder(Color.green, 3, false));
+                break;
+            case MIRROR_5:
+                Button_kyouei.setBorder(new LineBorder(Color.green, 3, false));
+                break;
         }
     }
 

@@ -562,26 +562,28 @@ public class LineSegment {
         }
 
         public boolean isSegmentOverlapping() {
-            return switch (this) {
-                case PARALLEL_EQUAL_31,
-                        PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321,
-                        PARALLEL_START_OF_S2_CONTAINS_START_OF_S1_322,
-                        PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331,
-                        PARALLEL_END_OF_S2_CONTAINS_START_OF_S1_332,
-                        PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341,
-                        PARALLEL_START_OF_S2_CONTAINS_END_OF_S1_342,
-                        PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351,
-                        PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352,
-                        PARALLEL_S1_INCLUDES_S2_361,
-                        PARALLEL_S1_INCLUDES_S2_362,
-                        PARALLEL_S2_INCLUDES_S1_363,
-                        PARALLEL_S2_INCLUDES_S1_364,
-                        PARALLEL_S1_END_OVERLAPS_S2_START_371,
-                        PARALLEL_S1_END_OVERLAPS_S2_END_372,
-                        PARALLEL_S1_START_OVERLAPS_S2_END_373,
-                        PARALLEL_S1_START_OVERLAPS_S2_START_374 -> true;
-                default -> false;
-            };
+            switch (this) {
+                case PARALLEL_EQUAL_31:
+                case PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321:
+                case PARALLEL_START_OF_S2_CONTAINS_START_OF_S1_322:
+                case PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331:
+                case PARALLEL_END_OF_S2_CONTAINS_START_OF_S1_332:
+                case PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341:
+                case PARALLEL_START_OF_S2_CONTAINS_END_OF_S1_342:
+                case PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351:
+                case PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352:
+                case PARALLEL_S1_INCLUDES_S2_361:
+                case PARALLEL_S1_INCLUDES_S2_362:
+                case PARALLEL_S2_INCLUDES_S1_363:
+                case PARALLEL_S2_INCLUDES_S1_364:
+                case PARALLEL_S1_END_OVERLAPS_S2_START_371:
+                case PARALLEL_S1_END_OVERLAPS_S2_END_372:
+                case PARALLEL_S1_START_OVERLAPS_S2_END_373:
+                case PARALLEL_S1_START_OVERLAPS_S2_START_374:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         @Override

@@ -713,30 +713,63 @@ public class Drawing_Worker {
             for (int i = 1; i <= foldLines.getTotal(); i++) {
                 LineColor color = foldLines.getColor(i);
                 if (color.isFoldingLine()) {
-                    str_stroke = switch (color) {
-                        case BLACK_0 -> "black";
-                        case RED_1 -> "red";
-                        case BLUE_2 -> "blue";
-                        default -> throw new IllegalStateException("Not a folding line: " + color);
-                    };
+                    switch (color) {
+                        case BLACK_0:
+                            str_stroke = "black";
+                            break;
+                        case RED_1:
+                            str_stroke = "red";
+                            break;
+                        case BLUE_2:
+                            str_stroke = "blue";
+                            break;
+                        default:
+                            throw new IllegalStateException("Not a folding line: " + color);
+                    }
 
                     if (lineStyle == LineStyle.BLACK_TWO_DOT || lineStyle == LineStyle.BLACK_ONE_DOT) {
                         str_stroke = "black";
                     }
 
-                    String str_stroke_dasharray = switch (lineStyle) {
-                        case COLOR -> "";
-                        case COLOR_AND_SHAPE, BLACK_ONE_DOT -> switch (color) {
-                            case RED_1 -> "stroke-dasharray=\"10 3 3 3\""; //基本指定A　　線の太さや線の末端の形状
-                            case BLUE_2 -> "stroke-dasharray=\"8 8\""; //dash_M1,一点鎖線
-                            default -> "";
-                        };
-                        case BLACK_TWO_DOT -> switch (color) {
-                            case RED_1 -> "stroke-dasharray=\"10 3 3 3 3 3\""; //基本指定A　　線の太さや線の末端の形状
-                            case BLUE_2 -> "stroke-dasharray=\"8 8\""; //dash_M2,二点鎖線
-                            default -> "";
-                        };
-                    };
+                    String str_stroke_dasharray;
+                    switch (lineStyle) {
+                        case COLOR:
+                            str_stroke_dasharray = "";
+                            break;
+                        case COLOR_AND_SHAPE:
+                        case BLACK_ONE_DOT:
+                            //基本指定A　　線の太さや線の末端の形状
+                            //dash_M1,一点鎖線
+                            switch (color) {
+                                case RED_1:
+                                    str_stroke_dasharray = "stroke-dasharray=\"10 3 3 3\"";
+                                    break;
+                                case BLUE_2:
+                                    str_stroke_dasharray = "stroke-dasharray=\"8 8\"";
+                                    break;
+                                default:
+                                    str_stroke_dasharray = "";
+                                    break;
+                            }
+                            break;
+                        case BLACK_TWO_DOT:
+                            //基本指定A　　線の太さや線の末端の形状
+                            //dash_M2,二点鎖線
+                            switch (color) {
+                                case RED_1:
+                                    str_stroke_dasharray = "stroke-dasharray=\"10 3 3 3 3 3\"";
+                                    break;
+                                case BLUE_2:
+                                    str_stroke_dasharray = "stroke-dasharray=\"8 8\"";
+                                    break;
+                                default:
+                                    str_stroke_dasharray = "";
+                                    break;
+                            }
+                            break;
+                        default:
+                            throw new IllegalArgumentException();
+                    }
 
                     s_tv.set(camera.object2TV(foldLines.get(i)));
                     a.set(s_tv.getA());
@@ -1232,11 +1265,11 @@ public class Drawing_Worker {
             for (int i = 1; i <= foldLines.getTotal(); i++) {
                 if (foldLines.getColor(i) != LineColor.CYAN_3) {
                     switch (lineStyle) {
-                        case COLOR -> {
+                        case COLOR:
                             g_setColor(g, foldLines.getColor(i));
                             g2.setStroke(new BasicStroke(fWireFrameLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
-                        }
-                        case COLOR_AND_SHAPE -> {
+                            break;
+                        case COLOR_AND_SHAPE:
                             g_setColor(g, foldLines.getColor(i));
                             if (foldLines.getColor(i) == LineColor.BLACK_0) {
                                 g2.setStroke(new BasicStroke(fWireFrameLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
@@ -1247,8 +1280,8 @@ public class Drawing_Worker {
                             if (foldLines.getColor(i) == LineColor.BLUE_2) {
                                 g2.setStroke(new BasicStroke(fWireFrameLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash_V, 0.0f));
                             }//破線//線の太さや線の末端の形状
-                        }
-                        case BLACK_ONE_DOT -> {
+                            break;
+                        case BLACK_ONE_DOT:
                             if (foldLines.getColor(i) == LineColor.BLACK_0) {
                                 g2.setStroke(new BasicStroke(fWireFrameLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                             }//基本指定A　　線の太さや線の末端の形状
@@ -1258,8 +1291,8 @@ public class Drawing_Worker {
                             if (foldLines.getColor(i) == LineColor.BLUE_2) {
                                 g2.setStroke(new BasicStroke(fWireFrameLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash_V, 0.0f));
                             }//破線//線の太さや線の末端の形状
-                        }
-                        case BLACK_TWO_DOT -> {
+                            break;
+                        case BLACK_TWO_DOT:
                             if (foldLines.getColor(i) == LineColor.BLACK_0) {
                                 g2.setStroke(new BasicStroke(fWireFrameLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
                             }//基本指定A　　線の太さや線の末端の形状
@@ -1269,7 +1302,7 @@ public class Drawing_Worker {
                             if (foldLines.getColor(i) == LineColor.BLUE_2) {
                                 g2.setStroke(new BasicStroke(fWireFrameLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash_V, 0.0f));
                             }//破線//線の太さや線の末端の形状
-                        }
+                            break;
                     }
 
                     s_tv.set(camera.object2TV(foldLines.get(i)));
@@ -1417,15 +1450,33 @@ public class Drawing_Worker {
     // -------------------------------------------------------------------------------------------------------------------------------
     public void g_setColor(Graphics g, LineColor i) {
         switch (i) {
-            case BLACK_0 -> g.setColor(Color.black);
-            case RED_1 -> g.setColor(Color.red);
-            case BLUE_2 -> g.setColor(Color.blue);
-            case CYAN_3 -> g.setColor(new Color(100, 200, 200));
-            case ORANGE_4 -> g.setColor(Color.orange);
-            case MAGENTA_5 -> g.setColor(Color.magenta);
-            case GREEN_6 -> g.setColor(Color.green);
-            case YELLOW_7 -> g.setColor(Color.yellow);
-            case PURPLE_8 -> g.setColor(new Color(210, 0, 255));
+            case BLACK_0:
+                g.setColor(Color.black);
+                break;
+            case RED_1:
+                g.setColor(Color.red);
+                break;
+            case BLUE_2:
+                g.setColor(Color.blue);
+                break;
+            case CYAN_3:
+                g.setColor(new Color(100, 200, 200));
+                break;
+            case ORANGE_4:
+                g.setColor(Color.orange);
+                break;
+            case MAGENTA_5:
+                g.setColor(Color.magenta);
+                break;
+            case GREEN_6:
+                g.setColor(Color.green);
+                break;
+            case YELLOW_7:
+                g.setColor(Color.yellow);
+                break;
+            case PURPLE_8:
+                g.setColor(new Color(210, 0, 255));
+                break;
         }
     }
 
@@ -4580,11 +4631,19 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
         if (p19_1.distance(p0) <= 0.000001) {//最寄の一つを削除
             int i_removal_mode;//i_removal_mode is defined and declared here
             switch (i_foldLine_additional) {
-                case POLY_LINE_0 -> i_removal_mode = 0;
-                case BLACK_LINE_2 -> i_removal_mode = 2;
-                case AUX_LIVE_LINE_3 -> i_removal_mode = 3;
-                case AUX_LINE_1 -> i_removal_mode = 1;
-                case BOTH_4 -> {
+                case POLY_LINE_0:
+                    i_removal_mode = 0;
+                    break;
+                case BLACK_LINE_2:
+                    i_removal_mode = 2;
+                    break;
+                case AUX_LIVE_LINE_3:
+                    i_removal_mode = 3;
+                    break;
+                case AUX_LINE_1:
+                    i_removal_mode = 1;
+                    break;
+                case BOTH_4:
                     i_removal_mode = 10;
                     double rs_min = foldLines.closestLineSegmentDistance(p);//点pに最も近い線分(折線と補助活線)の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
                     double re_min = foldLines.closestCircleDistance(p);//点pに最も近い円の番号での、その距離を返す	public double mottomo_tikai_en_kyori(Ten p)
@@ -4602,8 +4661,9 @@ if(nbox.getsousuu()==1){add_kakudo_1=360.0;}
                     if ((hoj_rs_min < rs_min) && (hoj_rs_min < re_min)) {
                         i_removal_mode = 1;
                     }
-                }
-                default -> throw new IllegalArgumentException();
+                    break;
+                default:
+                    throw new IllegalArgumentException();
             }
 
 

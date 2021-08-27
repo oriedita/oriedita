@@ -34,13 +34,13 @@ class SubThread extends Thread {
     public void run() {
         long start = System.currentTimeMillis();
 
+        //Two-color development drawing
         switch (orihime_app.subThreadMode) {
-            case FOLDING_ESTIMATE_0 -> {
+            case FOLDING_ESTIMATE_0:
                 orihime_app.folding_estimated();
                 orihime_app.repaint();
-            }
-
-            case FOLDING_ESTIMATE_SAVE_100_1 -> {
+                break;
+            case FOLDING_ESTIMATE_SAVE_100_1:
                 String fname = orihime_app.selectFileName("file name for Img save");
                 if (fname != null) {
                     orihime_app.OZ.summary_write_image_during_execution = true;//まとめ書き出し実行中の意味
@@ -67,9 +67,8 @@ class SubThread extends Thread {
                     }
                     orihime_app.OZ.summary_write_image_during_execution = false;
                 }
-            }
-
-            case FOLDING_ESTIMATE_SPECIFIC_2 -> {
+                break;
+            case FOLDING_ESTIMATE_SPECIFIC_2:
                 if (orihime_app.foldedCases == orihime_app.OZ.discovered_fold_cases) {
                     orihime_app.OZ.text_result = "Number of found solutions = " + orihime_app.OZ.discovered_fold_cases + "  ";
                 }
@@ -83,12 +82,13 @@ class SubThread extends Thread {
                         objective = orihime_app.OZ.discovered_fold_cases;
                     }
                 }
-            }
-
-            case CHECK_CAMV_3 -> orihime_app.es1.ap_check4(orihime_app.d_ap_check4);
-
-            //Two-color development drawing
-            case TWO_COLORED_4 -> orihime_app.folding_settings_two_color();
+                break;
+            case CHECK_CAMV_3:
+                orihime_app.es1.ap_check4(orihime_app.d_ap_check4);
+                break;
+            case TWO_COLORED_4:
+                orihime_app.folding_settings_two_color();
+                break;
         }
 
         long stop = System.currentTimeMillis();

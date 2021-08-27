@@ -4399,13 +4399,15 @@ public class FoldLineSet {
             //The following is when the two line types are blue-blue or red-red
             LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.line_intersect_decide(get(nbox.getInt(1)), get(nbox.getInt(2)), 0.00001, 0.00001);
 
-            return switch (i_senbun_kousa_hantei) {
-                case PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323,
-                        PARALLEL_START_OF_S1_INTERSECTS_END_OF_S2_333,
-                        PARALLEL_END_OF_S1_INTERSECTS_END_OF_S2_353,
-                        PARALLEL_END_OF_S1_INTERSECTS_START_OF_S2_343 -> true;
-                default -> false;
-            };
+            switch (i_senbun_kousa_hantei) {
+                case PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323:
+                case PARALLEL_START_OF_S1_INTERSECTS_END_OF_S2_333:
+                case PARALLEL_END_OF_S1_INTERSECTS_END_OF_S2_353:
+                case PARALLEL_END_OF_S1_INTERSECTS_START_OF_S2_343:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         //以下はt1を端点とする折線の数が4以上の偶数のとき

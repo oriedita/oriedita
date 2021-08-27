@@ -736,10 +736,9 @@ public class FoldedFigure {
             //Decide i_point_selection so far
 
 
-            switch (i_point_selection) {
-                case NONE_0 -> {
+            switch (i_point_selection) {//Find the number of the point at the same position as i_closestPointId in the fold-up diagram, and mark the point with that number as selected with cp_worker1.
+                case NONE_0:
                     setAllPointState0();
-                    //Find the number of the point at the same position as i_closestPointId in the fold-up diagram, and mark the point with that number as selected with cp_worker1.
                     Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
@@ -748,8 +747,11 @@ public class FoldedFigure {
                         }
                     }
                     cp_worker2.changePointState(i_closestPointId);
-                }
-                case WORKER_1, WORKER_2 -> cp_worker2.changePointState(i_closestPointId);
+                    break;
+                case WORKER_1:
+                case WORKER_2:
+                    cp_worker2.changePointState(i_closestPointId);
+                    break;
             }
         }
 
@@ -765,11 +767,9 @@ public class FoldedFigure {
             //Decide i_point_selection so far
             System.out.println("i_ten_sentaku = " + i_point_selection);
 
-            switch (i_point_selection) {
-                case NONE_0 -> {
+            switch (i_point_selection) {//Find the number of the point at the same position as i_closestPointId in the fold-up diagram, and mark the point with that number as selected with cp_worker1.
+                case NONE_0:
                     setAllPointState0();
-
-                    //Find the number of the point at the same position as i_closestPointId in the fold-up diagram, and mark the point with that number as selected with cp_worker1.
                     Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
@@ -778,8 +778,10 @@ public class FoldedFigure {
                         }
                     }
                     cp_worker2.changePointState(i_closestPointId);
-                }
-                case WORKER_1 -> cp_worker2.changePointState(i_closestPointId);
+                    break;
+                case WORKER_1:
+                    cp_worker2.changePointState(i_closestPointId);
+                    break;
             }
 
             if (i_foldedFigure_operation_mode == 1) {
@@ -887,10 +889,9 @@ public class FoldedFigure {
             }
             //i_ten_sentakuを決める  ここまで
 
-            switch (i_point_selection) {
-                case NONE_0 -> {
+            switch (i_point_selection) {//折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
+                case NONE_0:
                     setAllPointState0();
-                    //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                     Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
@@ -899,8 +900,11 @@ public class FoldedFigure {
                         }
                     }
                     cp_worker2.changePointState(i_closestPointId);
-                }
-                case WORKER_1, WORKER_2 -> cp_worker2.changePointState(i_closestPointId);
+                    break;
+                case WORKER_1:
+                case WORKER_2:
+                    cp_worker2.changePointState(i_closestPointId);
+                    break;
             }
         }
 
@@ -916,11 +920,9 @@ public class FoldedFigure {
             //i_ten_sentakuを決める  ここまで
             System.out.println("i_ten_sentaku = " + i_point_selection);
 
-            switch (i_point_selection) {
-                case NONE_0 -> {
+            switch (i_point_selection) {//折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
+                case NONE_0:
                     setAllPointState0();
-
-                    //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                     Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
@@ -929,8 +931,10 @@ public class FoldedFigure {
                         }
                     }
                     cp_worker2.changePointState(i_closestPointId);
-                }
-                case WORKER_1 -> cp_worker2.changePointState(i_closestPointId);
+                    break;
+                case WORKER_1:
+                    cp_worker2.changePointState(i_closestPointId);
+                    break;
             }
 
             if (i_foldedFigure_operation_mode == 1) {
@@ -1028,10 +1032,17 @@ public class FoldedFigure {
         ;
 
         public boolean isBelowOrEqual5() {
-            return switch (this) {
-                case ORDER_0, ORDER_1, ORDER_2, ORDER_3, ORDER_4, ORDER_5 -> true;
-                default -> false;
-            };
+            switch (this) {
+                case ORDER_0:
+                case ORDER_1:
+                case ORDER_2:
+                case ORDER_3:
+                case ORDER_4:
+                case ORDER_5:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 

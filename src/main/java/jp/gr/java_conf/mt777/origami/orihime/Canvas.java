@@ -482,13 +482,23 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 System.out.println("3_Click");//("トリプルクリック"
                 if (orihime_app.i_mouse_modeA == MouseMode.CREASE_SELECT_19) {
                     if (orihime_app.ckbox_add_frame_SelectAnd3click_isSelected) {
-                        orihime_app.i_mouse_modeA = switch (orihime_app.i_sel_mou_mode) {
-                            case MOVE_1 -> MouseMode.CREASE_MOVE_21;
-                            case MOVE4P_2 -> MouseMode.CREASE_MOVE_4P_31;
-                            case COPY_3 -> MouseMode.CREASE_COPY_22;
-                            case COPY4P_4 -> MouseMode.CREASE_COPY_4P_32;
-                            case MIRROR_5 -> MouseMode.DRAW_CREASE_SYMMETRIC_12;
-                        };
+                        switch (orihime_app.i_sel_mou_mode) {
+                            case MOVE_1:
+                                orihime_app.i_mouse_modeA = MouseMode.CREASE_MOVE_21;
+                                break;
+                            case MOVE4P_2:
+                                orihime_app.i_mouse_modeA = MouseMode.CREASE_MOVE_4P_31;
+                                break;
+                            case COPY_3:
+                                orihime_app.i_mouse_modeA = MouseMode.CREASE_COPY_22;
+                                break;
+                            case COPY4P_4:
+                                orihime_app.i_mouse_modeA = MouseMode.CREASE_COPY_4P_32;
+                                break;
+                            case MIRROR_5:
+                                orihime_app.i_mouse_modeA = MouseMode.DRAW_CREASE_SYMMETRIC_12;
+                                break;
+                        }
 
                         System.out.println("i_mouse_modeA=" + orihime_app.i_mouse_modeA);
                     }
