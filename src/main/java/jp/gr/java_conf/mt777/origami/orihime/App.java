@@ -208,7 +208,6 @@ public class App extends JFrame implements ActionListener {
     Image img_explanation;       //Image for explanation
     String img_explanation_fname;
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
-    Graphics bufferGraphics;
     Canvas canvas;
     boolean i_Lock_on_ori = false;//背景をロックオンする＝１、しない＝０
     boolean i_Lock_on = false;//背景をロックオンする＝１、しない＝０
@@ -238,7 +237,6 @@ public class App extends JFrame implements ActionListener {
     // オフスクリーン
     //Image offscreen;															//20170107_old
     //BufferedImage  offscreen = new BufferedImage(1, 1,  BufferedImage.TYPE_INT_BGR);							//20170107_new
-    BufferedImage offscreen = null;//20181205new
     BufferedImage offsc_background = null;//20181205add
     boolean flg61 = false;//Used when setting the frame 　20180524
     //= 1 is move, = 2 is move4p, = 3 is copy, = 4 is copy4p, = 5 is mirror image
@@ -324,7 +322,6 @@ public class App extends JFrame implements ActionListener {
             public void windowLostFocus(WindowEvent evt) {
                 System.out.println("windowLostFocus_20200929");
             }
-
         });//オリヒメのメインウィンドウのフォーカスが変化したときの処理 ここまで。
         //--------------------------------------------------------------------------------------------------
 
@@ -339,8 +336,6 @@ public class App extends JFrame implements ActionListener {
         //画像出力するため20170107_oldと書かれた行をコメントアウトし、20170107_newの行を有効にした。
         //画像出力不要で元にもどすなら、20170107_oldと書かれた行を有効にし、20170107_newの行をコメントアウトにすればよい。（この変更はOrihime.javaの中だけに2箇所ある）
         //offscreen = createImage(2000,1100)					;	bufferGraphics = offscreen.getGraphics();	//20170107_old
-        offscreen = new BufferedImage(2000, 1100, BufferedImage.TYPE_INT_BGR);
-        bufferGraphics = offscreen.createGraphics();    //20170107_new
 
         //アプレットでは以前はdim = getSize()して、createImage(dim.width,dim.height);としたが、最初からcreateImage(2000,1100); のほうが、ウィンド拡大時もちゃんと書ける。
         //ただし、アプレットで最初から(2000,1100)より大きいウィンド表示時は端がちゃんと書けなくなってしまうはず。
@@ -379,21 +374,13 @@ public class App extends JFrame implements ActionListener {
 
         //camera_haikei	;
         //カメラの設定はここまで----------------------------------------------------
-
-//        addMouseListener(this);
-//        addMouseMotionListener(this);
-//        addMouseWheelListener(this);
-        //addKeyListener(this);
-
         icol = LineColor.NONE;
         //step=1;
         myTh = null;
         // 初期表示
-//        getContentPane().setBackground(Color.white);
 
         // レイアウトの作成レイアウトの作成の部分は”初体験Java”のP179等を参照
 
-//        setLayout(new BorderLayout());//Frame用
         Container contentPane = getContentPane();//JFrame用
         contentPane.setLayout(new BorderLayout());
 
@@ -1456,15 +1443,10 @@ public class App extends JFrame implements ActionListener {
                 int iw = img_background.getWidth(null);//イメージの幅を取得
                 int ih = img_background.getHeight(null);//イメージの高さを取得
 
-                //System.out.println("paint幅＝"+iw);
-                //System.out.println("paint高さ＝"+ih);
                 h_cam.setBackgroundWidth(iw);
                 h_cam.setBackgroundHeight(ih);
 
-                //if(i_Lock_on==1){
                 drawBackground(g2_background, img_background);
-                //}
-
             }
 
 
@@ -1476,8 +1458,6 @@ public class App extends JFrame implements ActionListener {
                 int ymax = (int) es1.operationFrameBox.getYMax();
 
                 img_background = offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin);
-//img_background=(Image)offsc_background;
-
 
                 h_cam = new Background_camera();
 
@@ -7650,255 +7630,6 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
     }
 
-    // ------------------------------------------------------
-
-
-    //----------------------------------------------------
-    //ペイントを行う関数----------------------------------
-    //----------------------------------------------------
-//    public void paint(Graphics g) {
-//        super.paint(g);
-////        canvas.repaint();
-////        //「f」を付けることでfloat型の数値として記述することができる
-////        Graphics2D g2 = (Graphics2D) bufferGraphics;
-////        //Graphics2D g2d = (Graphics2D)g;
-////        //BasicStroke BStroke = new BasicStroke(1.0f);g2.setStroke(BStroke);//線の太さ
-////
-////        //float fLineWidth=(float)iLineWidth;	float f_h_lineWidth=(float)i_h_lineWidth;
-////        fLineWidth = (float) iLineWidth;
-////        f_h_lineWidth = (float) i_h_lineWidth;
-////
-////        if (antiAlias) {
-////            fLineWidth = fLineWidth + 0.2f;
-////            f_h_lineWidth = f_h_lineWidth + 0.2f;
-////        }
-////
-////        BasicStroke BStroke = new BasicStroke(fLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-////        g2.setStroke(BStroke);//線の太さや線の末端の形状
-////
-////        //BasicStroke BStroke = new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);g2.setStroke(BStroke);//線の太さや線の末端の形状
-////        //アンチエイリアス　オフ
-////        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチエイリアス　オン
-////
-////        g2.setBackground(Color.WHITE);    //この行は、画像をファイルに書き出そうとしてBufferedImageクラスを使う場合、デフォルトで背景が黒になるので、それを避けるための意味　20170107
-////        //画像をファイルに書き出さすことはやめて、、BufferedImageクラスを使わず、Imageクラスだけですむなら不要の行
-////
-////        //別の重なりさがし　のボタンの色の指定。
-////        if (OZ.findAnotherOverlapValid) {
-////            Button3.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
-////            Button3.setForeground(Color.black);
-////
-////            Button_AS_matome.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
-////            Button_AS_matome.setForeground(Color.black);
-////
-////            Button_bangou_sitei_suitei_display.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
-////            Button_bangou_sitei_suitei_display.setForeground(Color.black);
-////        } else {
-////            Button3.setBackground(new Color(201, 201, 201));
-////            Button3.setForeground(Color.gray);
-////
-////            Button_AS_matome.setBackground(new Color(201, 201, 201));
-////            Button_AS_matome.setForeground(Color.gray);
-////
-////            Button_bangou_sitei_suitei_display.setBackground(new Color(201, 201, 201));
-////            Button_bangou_sitei_suitei_display.setForeground(Color.gray);
-////        }
-////
-////        // バッファー画面のクリア
-////        dim = getContentPane().getSize();
-////        bufferGraphics.clearRect(0, 0, dim.width, dim.height);
-////
-////        //System.out.println("画面サイズ=(" + dim.width + " , " + dim.height  + ")"  );
-////
-////
-////        //int   i_ten_sagasi_hyouji, i_ten_hanasi_hyouji,i_kou_mitudo_nyuuryoku_hyouji,i_bun_hyouji,i_cp_hyouji,i_a0_hyouji,i_a1_hyouji;
-////        //int   i_mejirusi_hyouji,i_cp_ue_hyouji,i_oritatami_keika_hyouji;
-////
-////        i_point_sagasi_display = ckbox_point_search.isSelected();
-////        i_point_hanasi_display = ckbox_ten_hanasi.isSelected();
-////        i_kou_mitudo_nyuuryoku_display = ckbox_kou_mitudo_nyuuryoku.isSelected();
-////        i_bun_display = ckbox_bun.isSelected();
-////        i_cp_display = ckbox_cp.isSelected();
-////        i_a0_display = ckbox_a0.isSelected();
-////        i_a1_display = ckbox_a1.isSelected();
-////
-////        i_mark_display = ckbox_mark.isSelected();
-////        i_cp_ue_display = ckbox_cp_ue.isSelected();
-////        i_oritatami_keika_display = ckbox_oritatami_keika.isSelected();
-////
-////
-////        bufferGraphics.setColor(Color.red);
-////        //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-////
-////
-////        //カメラのセット
-////
-////        es1.setCamera(camera_of_orisen_input_diagram);
-////
-////        FoldedFigure OZi;
-////        for (int i = 1; i <= OAZ.size() - 1; i++) {
-////            OZi = OAZ.get(i);
-////            OZi.cp_worker1.setCamera(camera_of_orisen_input_diagram);
-////        }
-////
-//////VVVVVVVVVVVVVVV以下のts2へのカメラセットはOriagari_zuのoekakiで実施しているので以下の5行はなくてもいいはず　20180225
-////        OZ.cp_worker2.setCamera(OZ.camera_of_foldedFigure);
-////        OZ.cp_worker2.setCam_front(OZ.camera_of_foldedFigure_front);
-////        OZ.cp_worker2.setCam_rear(OZ.camera_of_foldedFigure_rear);
-////        OZ.cp_worker2.setCam_transparent_front(OZ.camera_of_transparent_front);
-////        OZ.cp_worker2.setCam_transparent_rear(OZ.camera_of_transparent_rear);
-//////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-////
-////        //System.out.println("paint　+++++++++++++++++++++　背景表示");
-////        //背景表示
-////        if ((img_background != null) && (iDisplayBackground >= 1)) {
-////            int iw = img_background.getWidth(this);//イメージの幅を取得
-////            int ih = img_background.getHeight(this);//イメージの高さを取得
-////
-////            //System.out.println("paint幅＝"+iw);
-////            //System.out.println("paint高さ＝"+ih);
-////            h_cam.setBackgroundWidth(iw);
-////            h_cam.setBackgroundHeight(ih);
-////
-////            //if(i_Lock_on==1){
-////            drawBackground(g2, img_background);
-////            //}
-////        }
-////
-////        //格子表示
-////        //es1.kousi_oekaki_with_camera(bufferGraphics,i_bun_hyouji,i_cp_hyouji,i_a0_hyouji,i_a1_hyouji,fLineWidth,lineStyle,f_h_lineWidth,dim.width,dim.height);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
-////
-////
-////        //解説表示
-////        //System.out.println("paint　+++++++++++++++++++++　解説表示  " +iDisplayExplanation );
-////        if ((img_explanation != null) && (iDisplayExplanation >= 1)) {
-////            bufferGraphics.drawImage(img_explanation, 650, 100, this);//80,80,は描画開始位置
-////
-////            //bufferGraphics.drawImage(img_explanation,600,150,this);//80,80,は描画開始位置
-////            //	System.out.println("paint幅＝"+img_background.getWidth(this));
-////            //	System.out.println("paint高さ＝"+img_background.getHeight(this));
-////        }
-////
-////
-////        //基準面の表示
-////        //System.out.println("paint　+++++++++++++++++++++　基準面の表示");
-////        if (i_mark_display) {
-////            if (OZ.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
-////                //	ts1.setCamera(camera_of_orisen_nyuuryokuzu);
-////                OZ.cp_worker1.drawing_referencePlane_with_camera(bufferGraphics);//ts1が折り畳みを行う際の基準面を表示するのに使う。
-////            }
-////        }
-////
-////        double d_haba = camera_of_orisen_input_diagram.getCameraZoomX() * es1.get_d_decision_width();
-////        //Flashlight (dot) search range
-////        if (i_point_sagasi_display) {
-////            g2.setColor(new Color(255, 240, 0, 30));
-////            g2.setStroke(new BasicStroke(2.0f));
-////            g2.setColor(new Color(255, 240, 0, 230));
-////            g2.draw(new Ellipse2D.Double(p_mouse_TV_iti.getX() - d_haba, p_mouse_TV_iti.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
-////        }
-////
-////        //Luminous flux of flashlight, etc.
-////        if (i_point_sagasi_display && i_point_hanasi_display) {
-////            g2.setStroke(new BasicStroke(2.0f));
-////            g2.setColor(new Color(255, 240, 0, 170));
-////        }
-////
-////
-////        //展開図表示
-////        //System.out.println("paint　+++++++++++++++++++++　展開図表示(展開図動かし中心の十字を含む)");
-////        //if (iDisplayBackground<=1) {
-////        //        es1.setCamera(camera_of_orisen_nyuuryokuzu);
-////
-////        es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, lineStyle, f_h_lineWidth, dim.width, dim.height, i_mark_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
-////
-////        if (i_bun_display) {
-////            //展開図情報の文字表示
-////            bufferGraphics.setColor(Color.black);
-////
-////            bufferGraphics.drawString("mouse= (   " + p_mouse_object_iti.getX() + "   ,   " + p_mouse_object_iti.getY() + "   )", 120, 75); //この表示内容はvoid kekka_syoriで決められる。
-////
-////            bufferGraphics.drawString("L=" + es1.getTotal(), 120, 90); //この表示内容はvoid kekka_syoriで決められる。
-////
-////            //System.out.println("paint　+++++++++++++++++++++　結果の文字表示");
-////            //結果の文字表示
-////            bufferGraphics.drawString(OZ.text_result, 120, 105); //この表示内容はvoid kekka_syoriで決められる。
-////
-////            if (i_kou_mitudo_nyuuryoku_display) {
-////                Point kus_sisuu = new Point(es1.get_moyori_ten_sisuu(p_mouse_TV_iti));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
-////
-////                double dx_ind = kus_sisuu.getX();
-////                double dy_ind = kus_sisuu.getY();
-////                int ix_ind = (int) Math.round(dx_ind);
-////                int iy_ind = (int) Math.round(dy_ind);
-////                bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) p_mouse_TV_iti.getX() + 25, (int) p_mouse_TV_iti.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
-////            }
-////
-////            if (subThreadRunning) {
-////                bufferGraphics.setColor(Color.red);
-////
-////                bufferGraphics.drawString("Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 120, 134); //この表示内容はvoid kekka_syoriで決められる。
-////                bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 120, 148); //この表示内容はvoid kekka_syoriで決められる。
-////            }
-////
-////            bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-////        }
-////
-////
-////        //折り上がりの各種お絵かき
-////        //Oriagari_Zu OZi;
-////        for (int i = 1; i <= OAZ.size() - 1; i++) {
-////            OZi = OAZ.get(i);
-////            OZi.foldUp_draw(bufferGraphics, i_mark_display);
-////        }
-////        //OZ = (Oriagari_Zu)OAZ.get(OAZ.size()-1);//折りあがり図
-////
-////        //展開図を折り上がり図の上に描くために、展開図を再表示する
-////        if (i_cp_ue_display) {
-////            es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, lineStyle, f_h_lineWidth, dim.width, dim.height, i_mark_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
-////        }
-////
-////        //アンチェイリアス
-////        //アンチェイリアス　オフ
-////        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オン
-////
-////        //	bufferGraphics.drawString(c.valueOf(oc.kakudo(new Ten(0.0,0.0),new Ten( 10.0, 0.0))), 30,170);
-////        //      bufferGraphics.drawString(c.valueOf(778),150,150);
-////        //test_oekaki();
-////        //System.out.println("paint　+++++++++++++++++++++　bufferGraphicsへの描画終了");
-////
-////        //中央指示線
-////        if (i_point_hanasi_display) {
-////            g2.setStroke(new BasicStroke(1.0f));
-////            g2.setColor(Color.black);
-////            g2.drawLine((int) (p_mouse_TV_iti.getX()), (int) (p_mouse_TV_iti.getY()),
-////                    (int) (p_mouse_TV_iti.getX() + d_haba), (int) (p_mouse_TV_iti.getY() + d_haba)); //直線
-////        }
-////
-////
-////        //描画したい内容はここまでAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-////
-////
-////        // Actually draw the off-screen image. The offscreen width is initially 0,0.
-////        g.drawImage(offscreen, 0, 0, this);
-////
-////        if (OZ.summary_write_image_during_execution) {//Meaning during summary writing)
-////            writeImageFile(fname_and_number);
-////
-////            w_image_running = false;
-////        }
-////
-////        if (flg_wi) {//For control when exporting with a frame 20180525
-////            flg_wi = false;
-////            writeImageFile(fname_wi);
-////        }
-////        if (flg61) {
-////            flg61 = false;
-////            es1.setDrawingStage(4);
-////        }
-//    }
-
-
     void configure_syokika_yosoku() {
         OZ.text_result = "";
         OZ.displayStyle = FoldedFigure.DisplayStyle.NONE_0;//折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図
@@ -8037,19 +7768,19 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
                     int ymax = (int) es1.operationFrameBox.getYMax();
 
                     if (i == 1) {
-                        ImageIO.write(offscreen.getSubimage(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1), "png", new File(fname));
+                        ImageIO.write(canvas.offscreen.getSubimage(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1), "png", new File(fname));
                     }
                     if (i == 2) {
-                        ImageIO.write(offscreen.getSubimage(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1), "jpg", new File(fname));
+                        ImageIO.write(canvas.offscreen.getSubimage(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1), "jpg", new File(fname));
                     }
 
                 } else {//枠無しの場合の全体書き出し
                     System.out.println("2018-529_");
                     if (i == 1) {
-                        ImageIO.write(offscreen.getSubimage(upperLeft_ix, upperLeft_iy, dim.width - lowerRight_ix - upperLeft_ix, dim.height - lowerRight_iy - upperLeft_iy), "png", new File(fname));
+                        ImageIO.write(canvas.offscreen.getSubimage(upperLeft_ix, upperLeft_iy, dim.width - lowerRight_ix - upperLeft_ix, dim.height - lowerRight_iy - upperLeft_iy), "png", new File(fname));
                     }
                     if (i == 2) {
-                        ImageIO.write(offscreen.getSubimage(upperLeft_ix, upperLeft_iy, dim.width - lowerRight_ix - upperLeft_ix, dim.height - lowerRight_iy - upperLeft_iy), "jpg", new File(fname));
+                        ImageIO.write(canvas.offscreen.getSubimage(upperLeft_ix, upperLeft_iy, dim.width - lowerRight_ix - upperLeft_ix, dim.height - lowerRight_iy - upperLeft_iy), "jpg", new File(fname));
                     }
                 }
             } catch (Exception e) {
