@@ -34,7 +34,7 @@ import static jp.gr.java_conf.mt777.origami.orihime.ResourceUtil.createImageIcon
 // -------------------------------------------------------------------------------------
 
 //public class ap extends Frame implements ActionListener,MouseListener, MouseMotionListener,MouseWheelListener,KeyListener{                                                                  
-public class App extends JFrame implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener {
+public class App extends JFrame implements ActionListener {
 
     public FoldedFigure temp_OZ = new FoldedFigure(this);    //Folded figure
     public FoldedFigure OZ;    //Folded figure
@@ -208,8 +208,9 @@ public class App extends JFrame implements ActionListener, MouseListener, MouseM
     String img_background_fname;
     Image img_explanation;       //Image for explanation
     String img_explanation_fname;
-    // バッファー画面用設定VVVVVVVVVVVVVVVVVVVVVVVVVVVV
+    // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
     Graphics bufferGraphics;
+    Canvas canvas;
     boolean i_Lock_on_ori = false;//背景をロックオンする＝１、しない＝０
     boolean i_Lock_on = false;//背景をロックオンする＝１、しない＝０
     Point p_mouse_object_iti = new Point();//マウスのオブジェクト座標上の位置
@@ -383,22 +384,25 @@ public class App extends JFrame implements ActionListener, MouseListener, MouseM
         //camera_haikei	;
         //カメラの設定はここまで----------------------------------------------------
 
-        addMouseListener(this);
-        addMouseMotionListener(this);
-        addMouseWheelListener(this);
+//        addMouseListener(this);
+//        addMouseMotionListener(this);
+//        addMouseWheelListener(this);
         //addKeyListener(this);
 
         icol = LineColor.NONE;
         //step=1;
         myTh = null;
         // 初期表示
-        setBackground(Color.white);
+        getContentPane().setBackground(Color.white);
 
         // レイアウトの作成レイアウトの作成の部分は”初体験Java”のP179等を参照
 
-        setLayout(new BorderLayout());//Frame用
-        //Container contentPane = getContentPane();//JFrame用
+//        setLayout(new BorderLayout());//Frame用
+        Container contentPane = getContentPane();//JFrame用
+        contentPane.setLayout(new BorderLayout());
 
+        canvas = new Canvas(this);
+        contentPane.add("Center", canvas);
 
         // *************************************************
         //上辺（北側）パネルの構築*************************
@@ -420,7 +424,7 @@ public class App extends JFrame implements ActionListener, MouseListener, MouseM
         pnln.setLayout(new FlowLayout(FlowLayout.LEFT));
         //上辺（北側）パネルをレイアウトに貼り付け
 
-        add("North", pnln); //Frame用
+        contentPane.add("North", pnln); //Frame用
 
         //Buttonを作ってパネルにはりつける。
 ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
@@ -591,62 +595,6 @@ public class App extends JFrame implements ActionListener, MouseListener, MouseM
         Button_writeImage.setMargin(new Insets(0, 0, 0, 0));
         //Button_writeImage.setBackground(Color.ORANGE);
         pnln.add(Button_writeImage);
-
-// ******************************************************************************
-/*
-//透明化
-		JButton	Button_toumei		= new JButton(	"T"		);
-			Button_toumei.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-
-		img_explanation_fname="qqq/toumei.png";readImageFromFile3();
-							//if(i_mouse_modeA!=61){Button_kyoutuu_sagyou();es1.set_i_egaki_dankai(0);}//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
-							//i_mouseDragged_valid=0; i_mouseReleased_valid=0;
-//System.out.println("0    i_toumeika="+i_toumeika);
- Robot robot;
-
-        try {
-            robot = new Robot();
-        } catch (AWTException ex) {
-            ex.printStackTrace();
-            return;
-        }
-
-        // 範囲を指定してキャプチャ
-
-        Rectangle bounds = getBounds();
-        Insets insets = getInsets();
-
-        bounds = new Rectangle(bounds.x + insets.left,
-                               bounds.y + insets.top,
-                               bounds.width - insets.left - insets.right,
-                               bounds.height - insets.top - insets.bottom);
-
-        hide();
-try{Thread.sleep(50);}catch (InterruptedException ie){}//30だけ待たせるための行。この行がないと、jarファイルで実行したとき、オリヒメ自身をキャプチャするおそれあり。InterruptedException ieのieは最初はeだった。20181125
-        imageT = robot.createScreenCapture(bounds);
-try{Thread.sleep(50);}catch (InterruptedException ie){}////30だけ待たせるための行。この行がないと、jarファイルで実行したとき、オリヒメ自身をキャプチャするおそれあり。InterruptedException ieのieは最初はeだった。20181125
-        show();
-
-
-
-
-	//
-	i_toumeika=i_toumeika+1;if(i_toumeika==2){i_toumeika=0;}
-
-
-
-
-//System.out.println("1      i_toumeika="+i_toumeika);
-
-							//writeImage();
-							//repaint();
-		}});Button_toumei.setMargin(new Insets(0,0,0,0));
-		//Button_writeImage.setBackground(Color.ORANGE);
-		pnln.add(Button_toumei);
-
-
-*/
-
 
 // ******************************************************************************
 ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
@@ -1760,7 +1708,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
 
         //パネルpnlwをレイアウト左辺（西側）に貼り付け
-        add("West", pnlw); //Frame用
+        contentPane.add("West", pnlw); //Frame用
         //contentPane.add(pnlw, BorderLayout.WEST);//JFrame用
 // ****西**************************************************************************
 
@@ -3901,7 +3849,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         pnle.setLayout(new GridLayout(28, 1));
 
         //右辺（東側）パネルをレイアウトに貼り付け
-        add("East", pnle); //Frame用
+        contentPane.add("East", pnle); //Frame用
         //contentPane.add(pnle, BorderLayout.EAST);//JFrame用
 //------------------------------------------------
 
@@ -5661,7 +5609,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 //         pnls.setBackground(Color.PINK);
         pnls.setLayout(new FlowLayout(FlowLayout.LEFT));
         //下辺（南側）パネルをレイアウトに貼り付け
-        add("South", pnls); //Frame用
+        contentPane.add("South", pnls); //Frame用
         //contentPane.add(pnls, BorderLayout.SOUTH);//JFrame用
 
 
@@ -7473,7 +7421,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
     //アプレットの最終処理を行う関数----------------------------------------------------
     public void destroy() {
-        removeMouseListener(this);
+//        removeMouseListener(this);
     }//removeMouseMotionListenerやremoveMouseWheelListenerはどうなる？　20170401
 
     void Button_kyoutuu_sagyou() {
@@ -7632,69 +7580,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
 
 //10001;test1 入力準備として点を３つ指定する
 
-    public void mouseWheelMoved(MouseWheelEvent e) {
-        //System.out.println("mouseWheelMoved   " +e.getWheelRotation());
-        if (ckbox_mouse_settings.isSelected()) {
-            //	ホイールでundo,redo
-            if ((e.isShiftDown()) || (i_mouse_right_button_on)) {
-                i_mouse_undo_redo_mode = true;
-                es1.unselect_all();
-                Button_kyoutuu_sagyou();
-                es1.modosi_foldLineAdditional();
-                if (e.getWheelRotation() == -1) {
-                    setTitle(es1.redo());
-                    repaint();
-                } else {
-                    setTitle(es1.undo());
-                    repaint();
-                }
 
-            }
-
-            //	ホイールで拡大縮小
-            if ((!e.isShiftDown()) && (!i_mouse_right_button_on)) {
-
-                // ---------------------------------------------------------------------hhhhhhhhh
-
-                Point p = new Point(e2p(e));
-                i_cp_or_oriagari_decide(p);
-                if (i_cp_or_oriagari == 0) {
-                    if (e.getWheelRotation() == -1) {
-                        d_syukusyaku_keisuu = d_syukusyaku_keisuu * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
-                    } else {
-                        d_syukusyaku_keisuu = d_syukusyaku_keisuu / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
-                    }
-                    camera_of_orisen_input_diagram.setCameraZoomX(d_syukusyaku_keisuu);
-                    camera_of_orisen_input_diagram.setCameraZoomY(d_syukusyaku_keisuu);
-                    text27.setText(String.valueOf(d_syukusyaku_keisuu));
-                    text27.setCaretPosition(0);
-                    // ---------------------------------------------------------------------
-                } else {
-                    if (e.getWheelRotation() == -1) {
-                        OZ.d_foldedFigure_scale_factor = OZ.d_foldedFigure_scale_factor * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
-                    } else {
-                        OZ.d_foldedFigure_scale_factor = OZ.d_foldedFigure_scale_factor / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
-                    }
-                    OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-                    OZ.camera_of_foldedFigure.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-                    OZ.camera_of_foldedFigure_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-                    OZ.camera_of_foldedFigure_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-                    OZ.camera_of_foldedFigure_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-                    OZ.camera_of_foldedFigure_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-                    OZ.camera_of_transparent_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-                    OZ.camera_of_transparent_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-                    OZ.camera_of_transparent_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-                    OZ.camera_of_transparent_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-                    text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
-                    text29.setCaretPosition(0);
-                }
-                // ---------------------------------------------------------------------
-
-                mouse_object_iti(p_mouse_TV_iti);
-                repaint();
-            }
-        }
-    }
 
     public Point e2p(MouseEvent e) {
 
@@ -7705,991 +7591,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
         return new Point(e.getX() - (int) d_haba, e.getY() - (int) d_haba);
     }
 
-    // マウス操作(マウスが動いた時)を行う関数----------------------------------------------------
-    public void mouseMoved(MouseEvent e) {
-        //何もしない
-        //  final Point mouseLocation = MouseInfo.getPointerInfo().getLocation();//これは多分J2SE 5.0「Tiger」以降で作動するコード
 
-        Point p = new Point(e2p(e));
-        mouse_object_iti(p);
-        if (i_mouse_modeA == MouseMode.UNUSED_0) {
-        } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_FREE_1) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_01(p);
-        }   //1 線分入力モード（フリー）
-        //else if(i_mouse_modeA==2)  {		}						       //2 展開図移動。
-        //else if(i_mouse_modeA==3)  { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_03(p);}//線分削除モード。
-        //else if(i_mouse_modeA==4)  { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_04(p);}//senbun_henkan 黒赤青
-        else if (i_mouse_modeA == MouseMode.LENGTHEN_CREASE_5) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_05(p);
-        }//線分延長モード。
-        //else if(i_mouse_modeA==6)  { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_06(p);}//2点から等距離線分モード。
-        else if (i_mouse_modeA == MouseMode.SQUARE_BISECTOR_7) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_07(p);
-        }//角二等分線モード。
-        else if (i_mouse_modeA == MouseMode.INWARD_8) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_08(p);
-        }//内心モード。
-        else if (i_mouse_modeA == MouseMode.PERPENDICULAR_DRAW_9) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_09(p);
-        }//垂線おろしモード。
-        else if (i_mouse_modeA == MouseMode.SYMMETRIC_DRAW_10) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_10(p);
-        }//折り返しモード。
-        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_RESTRICTED_11) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_11(p);
-        }//線分入力モード。(制限)
-        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_SYMMETRIC_12) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_12(p);
-        }//鏡映モード。
-        //else if(i_mouse_modeA==13) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_13(p);}//角度系モード（１番目）。//線分指定、交点まで
-        //else if(i_mouse_modeA==14) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_14(p);}//点追加モード。
-        //else if(i_mouse_modeA==15) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_15(p);}//点削除モード。
-        else if (i_mouse_modeA == MouseMode.ANGLE_SYSTEM_16) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_16(p);
-        }//角度系モード（４番目）。2点指定し、線分まで
-        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_17(p);
-        }//角度系モード（２番目）。//2点指定、交点まで
-        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_18(p);
-        }//角度系モード（５番目）。2点指定、自由末端
-        //else if(i_mouse_modeA==19) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_19(p);}//select　に使う
-        //else if(i_mouse_modeA==20) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_20(p);}//unselect　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_MOVE_21) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_21(p);
-        }//move　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_COPY_22) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_22(p);
-        }//copy_paste　に使う
-        //else if(i_mouse_modeA==23) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_23(p);}//--->M　に使う
-        //else if(i_mouse_modeA==24) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_24(p);}//--->V　に使う
-        //else if(i_mouse_modeA==25) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_25(p);}//--->E　に使う
-        //else if(i_mouse_modeA==26) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_26(p);}//背景セット　に使う
-        else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_DIVISION_27) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_27(p);
-        }//線分分割入力　に使う
-        else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_RATIO_SET_28) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_28(p);
-        }//線分内分入力　に使う
-        else if (i_mouse_modeA == MouseMode.POLYGON_SET_NO_CORNERS_29) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_29(p);
-        }//正多角形入力　に使う
-        //else if(i_mouse_modeA==30) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_30(p);}//除け_線変換　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_MOVE_4P_31) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_31(p);
-        }//move 2p2p　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_COPY_4P_32) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_32(p);
-        }//copy 2p2p　　に使う
-        else if (i_mouse_modeA == MouseMode.FISH_BONE_DRAW_33) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_33(p);
-        }//魚の骨　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_MAKE_MV_34) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_34(p);
-        }//準備としてだけ使う線分に重複している折線を順に山谷にするの　に使う
-        else if (i_mouse_modeA == MouseMode.DOUBLE_SYMMETRIC_DRAW_35) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_35(p);
-        }//複折り返し　入力した線分に接触している折線を折り返し　に使う
-        else if (i_mouse_modeA == MouseMode.CREASES_ALTERNATE_MV_36) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_36(p);
-        }//準備としてだけ使う線分にX交差している折線を順に山谷にするの　に使う
-        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_37(p);
-        }//角度系モード（３番目）。角度規格化線分入力モード。角度規格化折線入力　に使う
-        else if (i_mouse_modeA == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_38(p);
-        }//折り畳み可能線追加
-        else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_INPUT_39) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_39(p);
-        }//折り畳み可能線+格子点系入力
-        else if (i_mouse_modeA == MouseMode.PARALLEL_DRAW_40) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_40(p);
-        }//平行線入力
-        //else if(i_mouse_modeA==41) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_41(p);}//点削除（線カラーチェンジ）　に使う
-        //else if(i_mouse_modeA==42) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_42(p);}//円入力　に使う
-        //else if(i_mouse_modeA==43) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_43(p);}//円の3点入力　に使う
-        //else if(i_mouse_modeA==44) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_44(p);}//円　分離入力　に使う
-        //else if(i_mouse_modeA==45) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_45(p);}//2円の接線　に使う
-        //else if(i_mouse_modeA==46) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_46(p);}//反転　に使う
-        //else if(i_mouse_modeA==47) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_47(p);}//円入力モード。(フリー)
-        //else if(i_mouse_modeA==48) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_48(p);}//円　同心円追加モード。(元円の円周と同心円の円周との幅は線分で指定する)
-        //else if(i_mouse_modeA==49) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_49(p);}//円　同心円追加モード。(元円の円周と同心円の円周との幅は他の同心円の組で指定する)
-        //else if(i_mouse_modeA==50) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_50(p);}//2円を指定し、それぞれの円に同心円を加える。それぞれの同心円の組にできる帯領域の幅が等しくなるようにして、加えられた同心円同士が接するようにする。
-        //else if(i_mouse_modeA==51) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_51(p);}//平行線　幅指定入力モード。
-        else if (i_mouse_modeA == MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_52(p);
-        }//連続折り返しモード　に使う
-        else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_53(p);
-        }//長さ測定１　に使う
-        else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_54(p);
-        }//長さ測定２　に使う
-        else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_55(p);
-        }//角度測定１　に使う
-        else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_56(p);
-        }//角度測定２　に使う
-        else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_57(p);
-        }//角度測定３　に使う
-        //else if(i_mouse_modeA==58) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_58(p);}//senbun_henkan 赤青
-        //else if(i_mouse_modeA==59) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_59(p);}//特注プロパティ指定
-        //else if(i_mouse_modeA==60) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_60(p);}//--->HK　に使う//HKとは補助活線のこと
-
-        else if (i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_61(p);
-        }//長方形内選択（paintの選択に似せた選択機能）に使う
-        else if (i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_62(p);
-        }//ボロノイ図　に使う
-        else if (i_mouse_modeA == MouseMode.FLAT_FOLDABLE_CHECK_63) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_63(p);
-        }//外周部折り畳みチェックに使う
-        else if (i_mouse_modeA == MouseMode.CREASE_DELETE_OVERLAPPING_64) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_64(p);
-        }//線内削除　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_DELETE_INTERSECTING_65) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_65(p);
-        }//lX　直線で折線削除に使う
-        else if (i_mouse_modeA == MouseMode.SELECT_POLYGON_66) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_66(p);
-        }//選択＿多角形　に使う
-        else if (i_mouse_modeA == MouseMode.UNSELECT_POLYGON_67) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_67(p);
-        }//非選択＿多角形　に使う
-        else if (i_mouse_modeA == MouseMode.SELECT_LINE_INTERSECTING_68) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_68(p);
-        }//選択＿ｌX　に使う
-        else if (i_mouse_modeA == MouseMode.UNSELECT_LINE_INTERSECTING_69) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_69(p);
-        }//非選択＿ｌX　　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_LENGTHEN_70) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_70(p);
-        }//線分延長モード(延長する元の折線のクリックだけで実行されるタイプ)　に使う
-        else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_DRAW_71) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mMoved_A_71(p);
-        }//複数の線分延長モード　に使う
-        //else if(i_mouse_modeA==72) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_72(p);}//unselect　に使う
-        //else if(i_mouse_modeA==73) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_73(p);}//unselect　に使う
-        //else if(i_mouse_modeA==74) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_74(p);}//unselect　に使う
-        //else if(i_mouse_modeA==75) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_75(p);}//unselect　に使う
-        //else if(i_mouse_modeA==76) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_76(p);}//unselect　に使う
-        //else if(i_mouse_modeA==77) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_77(p);}//unselect　に使う
-        //else if(i_mouse_modeA==78) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_78(p);}//unselect　に使う
-        //else if(i_mouse_modeA==79) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_79(p);}//unselect　に使う
-        //else if(i_mouse_modeA==80) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_80(p);}//unselect　に使う
-        //else if(i_mouse_modeA==81) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_81(p);}//unselect　に使う
-        //else if(i_mouse_modeA==82) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_82(p);}//unselect　に使う
-        //else if(i_mouse_modeA==83) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_83(p);}//unselect　に使う
-        //else if(i_mouse_modeA==84) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_84(p);}//unselect　に使う
-        //else if(i_mouse_modeA==85) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_85(p);}//unselect　に使う
-        //else if(i_mouse_modeA==86) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_86(p);}//unselect　に使う
-        //else if(i_mouse_modeA==87) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_87(p);}//unselect　に使う
-        //else if(i_mouse_modeA==88) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_88(p);}//unselect　に使う
-        //else if(i_mouse_modeA==89) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_89(p);}//unselect　に使う
-
-
-        //else if(i_mouse_modeA==10001)  { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_10001(p);}
-        //else if(i_mouse_modeA==10002)  { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_10002(p);}
-
-        //else if(i_mouse_modeA==101){		}	//折り上がり図操作
-        //else if(i_mouse_modeA==102){		}	//折り上がり図移動
-
-        //else if(i_mouse_modeA==103){		}//基準面指定
-        //else if(i_mouse_modeA==7){;}
-        //else if(i_mouse_modeA==8){;}
-        else {
-        }
-
-        repaint();
-    }
-
-    //マウス操作(ボタンを押したとき)を行う関数----------------------------------------------------
-    public void mousePressed(MouseEvent e) {
-
-        //Ten p =new Ten(e.getX(),e.getY());
-        Point p = new Point(e2p(e));
-
-
-//wwwwwwwwwwww
-        //PointerInfo pointerInfo = MouseInfo.getPointerInfo();
-        //MouseInfo.getPointerInfo();
-
-        i_mouseDragged_valid = true;
-        i_mouseReleased_valid = true;
-
-
-        //if (ckbox_mouse_settei.isSelected()){   //20201010　コメントアウト
-        btn = e.getButton();
-        i_ClickCount = e.getClickCount();
-
-        //---------ボタンの種類による動作変更-----------------------------------------
-
-
-        if (btn == MouseEvent.BUTTON1) {
-            int cnt = e.getClickCount();
-            if (cnt == 3) {
-                System.out.println("3_Click");//("トリプルクリック"
-                if (i_mouse_modeA == MouseMode.CREASE_SELECT_19) {
-                    if (ckbox_add_frame_SelectAnd3click_isSelected) {
-                        i_mouse_modeA = switch (i_sel_mou_mode) {
-                            case MOVE_1 -> MouseMode.CREASE_MOVE_21;
-                            case MOVE4P_2 -> MouseMode.CREASE_MOVE_4P_31;
-                            case COPY_3 -> MouseMode.CREASE_COPY_22;
-                            case COPY4P_4 -> MouseMode.CREASE_COPY_4P_32;
-                            case MIRROR_5 -> MouseMode.DRAW_CREASE_SYMMETRIC_12;
-                        };
-
-                        System.out.println("i_mouse_modeA=" + i_mouse_modeA);
-                    }
-                }
-            }
-        } else if (btn == MouseEvent.BUTTON2) {
-            System.out.println("中ボタンクリック");
-
-            i_cp_or_oriagari_decide(p);
-
-            System.out.println("i_cp_or_oriagari = " + i_cp_or_oriagari);
-
-            if (i_cp_or_oriagari == 0) {// 展開図移動。
-                camera_of_orisen_input_diagram.camera_ichi_sitei_from_TV(p);
-            } else if (i_cp_or_oriagari == 1) {
-                OZ.camera_of_foldedFigure_front.camera_ichi_sitei_from_TV(p);
-            } else if (i_cp_or_oriagari == 2) {
-                OZ.camera_of_foldedFigure_rear.camera_ichi_sitei_from_TV(p);
-            } else if (i_cp_or_oriagari == 3) {
-                OZ.camera_of_transparent_front.camera_ichi_sitei_from_TV(p);
-            } else if (i_cp_or_oriagari == 4) {
-                OZ.camera_of_transparent_rear.camera_ichi_sitei_from_TV(p);
-            }
-
-            mouse_temp0.set(p);
-            repaint();
-            return;
-
-        } else if (btn == MouseEvent.BUTTON3) {//右ボタンクリック
-            if (i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
-            } else {
-                i_mouse_right_button_on = true;
-
-                //線分削除モード。
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mPressed_A_03(p);
-
-                foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.BOTH_4;//= 0 is polygonal line input = 1 is auxiliary line input mode, 4 is for both
-                es1.setFoldLineAdditional(foldLineAdditionalInputMode);
-
-            }
-            repaint();
-
-            return;
-        }
-        //-----------------------------System.out.println("a");----------------------
-
-        //}  //20201010　コメントアウト
-
-
-        if (i_mouse_modeA == MouseMode.UNUSED_0) {
-        } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_FREE_1) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_01(p);
-        }   //1 線分入力モード（フリー）
-        else if (i_mouse_modeA == MouseMode.MOVE_CREASE_PATTERN_2) {                                       //2 展開図移動。
-            camera_of_orisen_input_diagram.camera_ichi_sitei_from_TV(p);
-            mouse_temp0.set(p);
-        } else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_DELETE_3) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_03(p);
-        }//線分削除モード。
-        else if (i_mouse_modeA == MouseMode.CHANGE_CREASE_TYPE_4) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_04(p);
-        }//senbun_henkan 黒赤青
-        else if (i_mouse_modeA == MouseMode.LENGTHEN_CREASE_5) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_05(p);
-        }//線分延長モード。
-        else if (i_mouse_modeA == MouseMode.UNUSED_6) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_06(p);
-        }//2点から等距離線分モード。
-        else if (i_mouse_modeA == MouseMode.SQUARE_BISECTOR_7) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_07(p);
-        }//角二等分線モード。
-        else if (i_mouse_modeA == MouseMode.INWARD_8) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_08(p);
-        }//内心モード。
-        else if (i_mouse_modeA == MouseMode.PERPENDICULAR_DRAW_9) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_09(p);
-        }//垂線おろしモード。
-        else if (i_mouse_modeA == MouseMode.SYMMETRIC_DRAW_10) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_10(p);
-        }//折り返しモード。
-        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_RESTRICTED_11) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_11(p);
-        }//線分入力モード。(制限)
-        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_SYMMETRIC_12) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_12(p);
-        }//鏡映モード。
-        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_13(p);
-        }//角度系モード（１番目）。//線分指定、交点まで
-        else if (i_mouse_modeA == MouseMode.DRAW_POINT_14) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_14(p);
-        }//点追加モード。
-        else if (i_mouse_modeA == MouseMode.DELETE_POINT_15) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_15(p);
-        }//点削除モード。
-        else if (i_mouse_modeA == MouseMode.ANGLE_SYSTEM_16) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_16(p);
-        }//角度系モード（４番目）。2点指定し、線分まで
-        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_17(p);
-        }//角度系モード（２番目）。//2点指定、交点まで
-        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_18(p);
-        }//角度系モード（５番目）。2点指定、自由末端
-        else if (i_mouse_modeA == MouseMode.CREASE_SELECT_19) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_19(p);
-        }//select　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_UNSELECT_20) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_20(p);
-        }//unselect　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_MOVE_21) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_21(p);
-        }//move　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_COPY_22) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_22(p);
-        }//copy_paste　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_MAKE_MOUNTAIN_23) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_23(p);
-        }//--->M　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_MAKE_VALLEY_24) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_24(p);
-        }//--->V　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_MAKE_EDGE_25) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_25(p);
-        }//--->E　に使う
-        else if (i_mouse_modeA == MouseMode.BACKGROUND_CHANGE_POSITION_26) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_26(p);
-        }//背景セット　に使う
-        else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_DIVISION_27) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_27(p);
-        }//線分分割入力　に使う
-        else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_RATIO_SET_28) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_28(p);
-        }//線分内分入力　に使う
-        else if (i_mouse_modeA == MouseMode.POLYGON_SET_NO_CORNERS_29) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_29(p);
-        }//正多角形入力　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_ADVANCE_TYPE_30) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_30(p);
-        }//除け_線変換　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_MOVE_4P_31) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_31(p);
-        }//move 2p2p　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_COPY_4P_32) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_32(p);
-        }//copy 2p2p　　に使う
-        else if (i_mouse_modeA == MouseMode.FISH_BONE_DRAW_33) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_33(p);
-        }//魚の骨　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_MAKE_MV_34) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_34(p);
-        }//準備としてだけ使う線分に重複している折線を順に山谷にするの　に使う
-        else if (i_mouse_modeA == MouseMode.DOUBLE_SYMMETRIC_DRAW_35) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_35(p);
-        }//複折り返し　入力した線分に接触している折線を折り返し　に使う
-        else if (i_mouse_modeA == MouseMode.CREASES_ALTERNATE_MV_36) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_36(p);
-        }//準備としてだけ使う線分にX交差している折線を順に山谷にするの　に使う
-        else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_37(p);
-        }//角度系モード（３番目）。角度規格化線分入力モード。角度規格化折線入力　に使う
-        else if (i_mouse_modeA == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_38(p);
-        }//折り畳み可能線追加
-        else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_INPUT_39) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_39(p);
-        }//折り畳み可能線+格子点系入力
-        else if (i_mouse_modeA == MouseMode.PARALLEL_DRAW_40) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_40(p);
-        }//平行線入力
-        else if (i_mouse_modeA == MouseMode.VERTEX_DELETE_ON_CREASE_41) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_41(p);
-        }//点削除（線カラーチェンジ）　に使う
-        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_42) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_42(p);
-        }//円入力　に使う
-        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_THREE_POINT_43) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_43(p);
-        }//円の3点入力　に使う
-        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_SEPARATE_44) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_44(p);
-        }//円　分離入力　に使う
-        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_TANGENT_LINE_45) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_45(p);
-        }//2円の接線　に使う
-        else if (i_mouse_modeA == MouseMode.INVERTED_INPUT_46) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_46(p);
-        }//反転　に使う
-        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_FREE_47) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_47(p);
-        }//円入力モード。(フリー)
-        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_48) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_48(p);
-        }//円　同心円追加モード。(元円の円周と同心円の円周との幅は線分で指定する)
-        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_49(p);
-        }//円　同心円追加モード。(元円の円周と同心円の円周との幅は他の同心円の組で指定する)
-        else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_50(p);
-        }//2円を指定し、それぞれの円に同心円を加える。それぞれの同心円の組にできる帯領域の幅が等しくなるようにして、加えられた同心円同士が接するようにする。
-        else if (i_mouse_modeA == MouseMode.PARALLEL_DRAW_WIDTH_51) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_51(p);
-        }//平行線　幅指定入力モード。
-        else if (i_mouse_modeA == MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_52(p);
-        }//連続折り返しモードに使う
-        else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_53(p);
-        }//長さ測定１　に使う
-        else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_54(p);
-        }//長さ測定２　に使う
-        else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_55(p);
-        }//角度測定１　に使う
-        else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_56(p);
-        }//角度測定２　に使う
-        else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_57(p);
-        }//角度測定３　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_TOGGLE_MV_58) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_58(p);
-        }//senbun_henkan 赤青
-        else if (i_mouse_modeA == MouseMode.CIRCLE_CHANGE_COLOR_59) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_59(p);
-        }//特注プロパティ指定
-        else if (i_mouse_modeA == MouseMode.CREASE_MAKE_AUX_60) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_60(p);
-        }//--->HK　に使う//HKとは補助活線のこと
-
-        else if (i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_61(p);
-        }//長方形内選択（paintの選択に似せた選択機能）に使う
-        else if (i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_62(p);
-        }//ボロノイ図　に使う
-        else if (i_mouse_modeA == MouseMode.FLAT_FOLDABLE_CHECK_63) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_63(p);
-        }//外周部折り畳みチェックに使う
-        else if (i_mouse_modeA == MouseMode.CREASE_DELETE_OVERLAPPING_64) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_64(p);
-        }//線内削除　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_DELETE_INTERSECTING_65) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_65(p);
-        }//lX線内削除　に使う
-        else if (i_mouse_modeA == MouseMode.SELECT_POLYGON_66) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_66(p);
-        }//unselect　に使う
-        else if (i_mouse_modeA == MouseMode.UNSELECT_POLYGON_67) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_67(p);
-        }//unselect　に使う
-        else if (i_mouse_modeA == MouseMode.SELECT_LINE_INTERSECTING_68) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_68(p);
-        }//unselect　に使う
-        else if (i_mouse_modeA == MouseMode.UNSELECT_LINE_INTERSECTING_69) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_69(p);
-        }//unselect　に使う
-        else if (i_mouse_modeA == MouseMode.CREASE_LENGTHEN_70) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_70(p);
-        }//unselect　に使う
-        else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_DRAW_71) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_71(p);
-        }//unselect　に使う
-
-        else if (i_mouse_modeA == MouseMode.UNUSED_10001) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_10001(p);
-        } else if (i_mouse_modeA == MouseMode.UNUSED_10002) {
-            es1.setCamera(camera_of_orisen_input_diagram);
-            es1.mPressed_A_10002(p);
-        } else if (i_mouse_modeA == MouseMode.MODIFY_CALCULATED_SHAPE_101) {        //折り上がり図操作
-            OZ.foldedFigure_operation_mouse_on(p);
-        } else if (i_mouse_modeA == MouseMode.MOVE_CALCULATED_SHAPE_102) {//折り上がり図移動
-            OZ.camera_of_foldedFigure.camera_ichi_sitei_from_TV(p);
-            OZ.camera_of_foldedFigure_front.camera_ichi_sitei_from_TV(p);
-            OZ.camera_of_foldedFigure_rear.camera_ichi_sitei_from_TV(p);
-
-            OZ.camera_of_transparent_front.camera_ichi_sitei_from_TV(p);
-            OZ.camera_of_transparent_rear.camera_ichi_sitei_from_TV(p);
-
-            mouse_temp0.set(p);
-        } else if (i_mouse_modeA == MouseMode.CHANGE_STANDARD_FACE_103) {
-            //ts1.set_kijyunmen_id(p);
-        }//Reference plane designation
-
-        repaint();
-
-        //add_frame_to_Front();
-    }
-
-    //マウス操作(ドラッグしたとき)を行う関数---------- System.out.println("A");------------------------------------------
-    public void mouseDragged(MouseEvent e) {
-
-        if (i_mouseDragged_valid) {
-
-            //Ten p =new Ten(e.getX(),e.getY());
-            Point p = new Point(e2p(e));
-            mouse_object_iti(p);
-
-            //if (ckbox_mouse_settei.isSelected()){  //20201010　コメントアウト
-            //---------ボタンの種類による動作変更-----------------------------------------
-            if (btn == MouseEvent.BUTTON1) {
-
-
-            } else if (btn == MouseEvent.BUTTON2) {
-                //System.out.println("中ボタンクリック");
-                //if(ts2.naibu_hantei(p)==0){
-                //i_cp_or_oriagari=0;
-                //if(ts2.naibu_hantei_ura(p)>0){i_cp_or_oriagari=2;}
-                //if(ts2.naibu_hantei_omote(p)>0){i_cp_or_oriagari=1;}
-
-
-                if (i_cp_or_oriagari == 0) {// 展開図移動。
-                    camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    es1.setCamera(camera_of_orisen_input_diagram);
-                } else if (i_cp_or_oriagari == 1) {
-                    OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                } else if (i_cp_or_oriagari == 2) {
-                    OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
-                } else if (i_cp_or_oriagari == 3) {
-                    OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                } else if (i_cp_or_oriagari == 4) {
-                    OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
-                }
-
-                mouse_temp0.set(p);
-                repaint();
-                return;
-
-            } else if (btn == MouseEvent.BUTTON3) {
-                //System.out.println("右ボタンクリック");
-                if (i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
-                } else {
-                    if (i_mouse_undo_redo_mode) {
-                        return;
-                    }//undo,redoモード。
-                    es1.setCamera(camera_of_orisen_input_diagram);
-                    es1.mDragged_A_03(p);//線分削除モード。
-                }
-                repaint();
-                return;
-            }
-            //-----------------------------System.out.println("a");----------------------
-            //}  //20201010　コメントアウト
-
-
-            if (i_mouse_modeA == MouseMode.UNUSED_0) {
-            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_FREE_1) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_01(p);
-            } else if (i_mouse_modeA == MouseMode.MOVE_CREASE_PATTERN_2) {
-                camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
-                es1.setCamera(camera_of_orisen_input_diagram);
-
-
-//20180225追加
-                FoldedFigure OZi;
-                for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                    OZi = OAZ.get(i_oz);
-
-                    //Ten t_o2tv =new Ten();
-                    //t_o2tv =camera_of_orisen_nyuuryokuzu.object2TV(camera_of_orisen_nyuuryokuzu.get_camera_ichi());
-
-//OZi.d_oriagarizu_syukusyaku_keisuu=OZi.d_oriagarizu_syukusyaku_keisuu*d_bairitu;
-
-
-                    OZi.camera_of_foldedFigure.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    //text29.setText(String.valueOf(OZ.d_oriagarizu_syukusyaku_keisuu));
-                    //text29.setCaretPosition(0);
-                }
-//20180225追加　ここまで
-
-
-                mouse_temp0.set(p);
-
-
-            } else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_DELETE_3) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_03(p);
-            } else if (i_mouse_modeA == MouseMode.CHANGE_CREASE_TYPE_4) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_04(p);
-            } else if (i_mouse_modeA == MouseMode.LENGTHEN_CREASE_5) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_05(p);
-            } else if (i_mouse_modeA == MouseMode.UNUSED_6) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_06(p);
-            } else if (i_mouse_modeA == MouseMode.SQUARE_BISECTOR_7) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_07(p);
-            } else if (i_mouse_modeA == MouseMode.INWARD_8) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_08(p);
-            } else if (i_mouse_modeA == MouseMode.PERPENDICULAR_DRAW_9) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_09(p);
-            } else if (i_mouse_modeA == MouseMode.SYMMETRIC_DRAW_10) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_10(p);
-            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_RESTRICTED_11) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_11(p);
-            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_SYMMETRIC_12) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_12(p);
-            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_13(p);
-            } else if (i_mouse_modeA == MouseMode.DRAW_POINT_14) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_14(p);
-            } else if (i_mouse_modeA == MouseMode.DELETE_POINT_15) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_15(p);
-            } else if (i_mouse_modeA == MouseMode.ANGLE_SYSTEM_16) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_16(p);
-            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_17(p);
-            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_18(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_SELECT_19) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_19(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_UNSELECT_20) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_20(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_MOVE_21) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_21(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_COPY_22) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_22(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_MOUNTAIN_23) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_23(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_VALLEY_24) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_24(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_EDGE_25) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_25(p);
-            } else if (i_mouse_modeA == MouseMode.BACKGROUND_CHANGE_POSITION_26) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_26(p);
-            } else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_DIVISION_27) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_27(p);
-            } else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_RATIO_SET_28) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_28(p);
-            } else if (i_mouse_modeA == MouseMode.POLYGON_SET_NO_CORNERS_29) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_29(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_ADVANCE_TYPE_30) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_30(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_MOVE_4P_31) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_31(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_COPY_4P_32) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_32(p);
-            } else if (i_mouse_modeA == MouseMode.FISH_BONE_DRAW_33) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_33(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_MV_34) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_34(p);
-            } else if (i_mouse_modeA == MouseMode.DOUBLE_SYMMETRIC_DRAW_35) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_35(p);
-            } else if (i_mouse_modeA == MouseMode.CREASES_ALTERNATE_MV_36) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_36(p);
-            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_37(p);
-            } else if (i_mouse_modeA == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_38(p);
-            } else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_INPUT_39) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_39(p);
-            } else if (i_mouse_modeA == MouseMode.PARALLEL_DRAW_40) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_40(p);
-            } else if (i_mouse_modeA == MouseMode.VERTEX_DELETE_ON_CREASE_41) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_41(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_42) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_42(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_THREE_POINT_43) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_43(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_SEPARATE_44) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_44(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_TANGENT_LINE_45) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_45(p);
-            } else if (i_mouse_modeA == MouseMode.INVERTED_INPUT_46) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_46(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_FREE_47) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_47(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_48) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_48(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_49(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_50(p);
-            } else if (i_mouse_modeA == MouseMode.PARALLEL_DRAW_WIDTH_51) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_51(p);
-            } else if (i_mouse_modeA == MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_52(p);
-            } else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_53(p);
-            } else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_54(p);
-            } else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_55(p);
-            } else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_56(p);
-            } else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_57(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_TOGGLE_MV_58) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_58(p);
-            }//senbun_henkan 赤青
-            else if (i_mouse_modeA == MouseMode.CIRCLE_CHANGE_COLOR_59) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_59(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_AUX_60) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_60(p);
-            } else if (i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_61(p);
-            }//長方形内選択（paintの選択に似せた選択機能）に使う
-            else if (i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_62(p);
-            }//ボロノイ図　に使う
-            else if (i_mouse_modeA == MouseMode.FLAT_FOLDABLE_CHECK_63) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_63(p);
-            }//外周部折り畳みチェックに使う
-            else if (i_mouse_modeA == MouseMode.CREASE_DELETE_OVERLAPPING_64) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_64(p);
-            }//線内削除　に使う
-            else if (i_mouse_modeA == MouseMode.CREASE_DELETE_INTERSECTING_65) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_65(p);
-            } else if (i_mouse_modeA == MouseMode.SELECT_POLYGON_66) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_66(p);
-            } else if (i_mouse_modeA == MouseMode.UNSELECT_POLYGON_67) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_67(p);
-            } else if (i_mouse_modeA == MouseMode.SELECT_LINE_INTERSECTING_68) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_68(p);
-            } else if (i_mouse_modeA == MouseMode.UNSELECT_LINE_INTERSECTING_69) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_69(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_LENGTHEN_70) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_70(p);
-            } else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_DRAW_71) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_71(p);
-            } else if (i_mouse_modeA == MouseMode.UNUSED_10001) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_10001(p);
-            } else if (i_mouse_modeA == MouseMode.UNUSED_10002) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mDragged_A_10002(p);
-            } else if (i_mouse_modeA == MouseMode.MODIFY_CALCULATED_SHAPE_101) {
-                OZ.foldedFigure_operation_mouse_drag(p);
-            }    //折り上がり図操作
-            else if (i_mouse_modeA == MouseMode.MOVE_CALCULATED_SHAPE_102) {
-                OZ.camera_of_foldedFigure.displayPositionMove(mouse_temp0.other_Point_position(p));
-                OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
-
-                OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
-
-                mouse_temp0.set(p);//mouse_temp0は一時的に使うTen、mouse_temp0.tano_Ten_iti(p)はmouse_temp0から見たpの位置
-
-            } else if (i_mouse_modeA == MouseMode.CHANGE_STANDARD_FACE_103) {
-            }//基準面指定
-
-            repaint();
-        }
-
-        //add_frame_to_Front();
-    }
 
     public void add_frame_to_Front() {
         if (i_add_frame) {
@@ -8699,419 +7601,7 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
     }
 
 
-    //マウス操作(ボタンを離したとき)を行う関数----------------------------------------------------
-    public void mouseReleased(MouseEvent e) {
-        if (i_mouseReleased_valid) {
-            //Ten p =new Ten(e.getX(),e.getY());
-            Point p = new Point(e2p(e));
 
-
-            //if (ckbox_mouse_settei.isSelected()){  //20201010　コメントアウト
-            //---------ボタンの種類による動作変更-----------------------------------------
-            if (btn == MouseEvent.BUTTON1) {
-                //
-
-            } else if (btn == MouseEvent.BUTTON2) {
-                //System.out.println("中ボタンクリック");
-                //if(ts2.naibu_hantei(p)==0){
-                if (i_cp_or_oriagari == 0) {
-
-                    camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    es1.setCamera(camera_of_orisen_input_diagram);
-                } else if (i_cp_or_oriagari == 1) {
-                    OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                } else if (i_cp_or_oriagari == 2) {
-                    OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
-
-                } else if (i_cp_or_oriagari == 3) {
-                    OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                } else if (i_cp_or_oriagari == 4) {
-                    OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
-                }
-
-                mouse_temp0.set(p);
-                repaint();
-                i_mouseDragged_valid = false;
-                i_mouseReleased_valid = false;
-                return;//
-
-            } else if (btn == MouseEvent.BUTTON3) {
-                //System.out.println("右ボタンクリック");
-                if (i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {
-                    repaint();//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
-                } else {
-
-                    i_mouse_right_button_on = false;
-
-                    //if(i_mouse_undo_redo_mode==1){i_mouse_undo_redo_mode=0;es1.unselect_all();Button_kyoutuu_sagyou();es1.modosi_i_orisen_hojyosen();return;}
-                    if (i_mouse_undo_redo_mode) {
-                        i_mouse_undo_redo_mode = false;
-                        return;
-                    } //undo,redoモード。
-                    es1.setCamera(camera_of_orisen_input_diagram);
-                    es1.mReleased_A_03(p);
-                    repaint();//なんでここにrepaintがあるか検討した方がよいかも。20181208
-                    es1.modosi_foldLineAdditional();
-                    i_mouseDragged_valid = false;
-                    i_mouseReleased_valid = false;
-                    //線分削除モード。
-                }
-                return;
-            }
-            //----------------------------System.out.println("a");-----------------------
-            //}  //20201010　コメントアウト
-
-
-            if (i_mouse_modeA == MouseMode.UNUSED_0) {
-            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_FREE_1) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_01(p);
-            } else if (i_mouse_modeA == MouseMode.MOVE_CREASE_PATTERN_2) {
-                camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
-                es1.setCamera(camera_of_orisen_input_diagram);
-
-
-//20180225追加
-                FoldedFigure OZi;
-                for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                    OZi = OAZ.get(i_oz);
-
-                    //Ten t_o2tv =new Ten();
-                    //t_o2tv =camera_of_orisen_nyuuryokuzu.object2TV(camera_of_orisen_nyuuryokuzu.get_camera_ichi());
-
-//OZi.d_oriagarizu_syukusyaku_keisuu=OZi.d_oriagarizu_syukusyaku_keisuu*d_bairitu;
-
-
-                    OZi.camera_of_foldedFigure.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_oriagarizu.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_oriagari_omote.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_oriagari_ura.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_touka_omote.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    OZi.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_x(d_bairitu);
-                    //OZi.camera_of_touka_ura.kakezan_camera_bairitsu_y(d_bairitu);
-
-                    //text29.setText(String.valueOf(OZ.d_oriagarizu_syukusyaku_keisuu));
-                    //text29.setCaretPosition(0);
-                }
-//20180225追加　ここまで
-
-
-                mouse_temp0.set(p);
-
-
-            } else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_DELETE_3) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_03(p);
-            } else if (i_mouse_modeA == MouseMode.CHANGE_CREASE_TYPE_4) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_04(p);
-            } else if (i_mouse_modeA == MouseMode.LENGTHEN_CREASE_5) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_05(p);
-            } else if (i_mouse_modeA == MouseMode.UNUSED_6) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_06(p);
-            } else if (i_mouse_modeA == MouseMode.SQUARE_BISECTOR_7) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_07(p);
-            } else if (i_mouse_modeA == MouseMode.INWARD_8) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_08(p);
-            } else if (i_mouse_modeA == MouseMode.PERPENDICULAR_DRAW_9) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_09(p);
-            } else if (i_mouse_modeA == MouseMode.SYMMETRIC_DRAW_10) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_10(p);
-            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_RESTRICTED_11) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_11(p);
-            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_SYMMETRIC_12) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_12(p);
-            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_13(p);
-            } else if (i_mouse_modeA == MouseMode.DRAW_POINT_14) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_14(p);
-            } else if (i_mouse_modeA == MouseMode.DELETE_POINT_15) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_15(p);
-            } else if (i_mouse_modeA == MouseMode.ANGLE_SYSTEM_16) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_16(p);
-            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_17(p);
-            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_18(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_SELECT_19) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_19(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_UNSELECT_20) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_20(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_MOVE_21) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_21(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_COPY_22) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_22(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_MOUNTAIN_23) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_23(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_VALLEY_24) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_24(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_EDGE_25) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_25(p);
-            } else if (i_mouse_modeA == MouseMode.BACKGROUND_CHANGE_POSITION_26) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-
-                if (es1.mReleased_A_26(p) == 4) {
-                    //i_Lock_on_ori=1;
-                    Button_kyoutuu_sagyou();
-                    //System.out.println("i_mouse_modeA==4");
-                    LineSegment s_1 = new LineSegment();
-                    s_1.set(es1.get_s_step(1));
-                    LineSegment s_2 = new LineSegment();
-                    s_2.set(es1.get_s_step(2));
-                    LineSegment s_3 = new LineSegment();
-                    s_3.set(es1.get_s_step(3));
-                    LineSegment s_4 = new LineSegment();
-                    s_4.set(es1.get_s_step(4));
-
-                    //int i_Lock_on_old=i_Lock_on;
-                    i_Lock_on = false;
-                    Button_background_Lock_on.setBackground(Color.gray);
-
-                    background_set(camera_of_orisen_input_diagram.object2TV(s_1.getA()),
-                            camera_of_orisen_input_diagram.object2TV(s_2.getA()),
-                            camera_of_orisen_input_diagram.object2TV(s_3.getA()),
-                            camera_of_orisen_input_diagram.object2TV(s_4.getA()));
-
-                    //	i_Lock_on=i_Lock_on_old;
-
-
-                }
-            } else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_DIVISION_27) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_27(p);
-            } else if (i_mouse_modeA == MouseMode.LINE_SEGMENT_RATIO_SET_28) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_28(p);
-            } else if (i_mouse_modeA == MouseMode.POLYGON_SET_NO_CORNERS_29) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_29(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_ADVANCE_TYPE_30) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_30(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_MOVE_4P_31) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_31(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_COPY_4P_32) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_32(p);
-            } else if (i_mouse_modeA == MouseMode.FISH_BONE_DRAW_33) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_33(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_MV_34) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_34(p);
-            } else if (i_mouse_modeA == MouseMode.DOUBLE_SYMMETRIC_DRAW_35) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_35(p);
-            } else if (i_mouse_modeA == MouseMode.CREASES_ALTERNATE_MV_36) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_36(p);
-            } else if (i_mouse_modeA == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_37(p);
-            } else if (i_mouse_modeA == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_38(p);
-            } else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_INPUT_39) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_39(p);
-            } else if (i_mouse_modeA == MouseMode.PARALLEL_DRAW_40) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_40(p);
-            } else if (i_mouse_modeA == MouseMode.VERTEX_DELETE_ON_CREASE_41) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_41(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_42) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_42(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_THREE_POINT_43) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_43(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_SEPARATE_44) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_44(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_TANGENT_LINE_45) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_45(p);
-            } else if (i_mouse_modeA == MouseMode.INVERTED_INPUT_46) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_46(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_FREE_47) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_47(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_48) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_48(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_49(p);
-            } else if (i_mouse_modeA == MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_50(p);
-            } else if (i_mouse_modeA == MouseMode.PARALLEL_DRAW_WIDTH_51) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_51(p);
-            } else if (i_mouse_modeA == MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_52(p);
-            } else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_53(p);
-            } else if (i_mouse_modeA == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_54(p);
-            } else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_55(p);
-            } else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_56(p);
-            } else if (i_mouse_modeA == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_57(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_TOGGLE_MV_58) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_58(p);
-            }//senbun_henkan 赤青
-            else if (i_mouse_modeA == MouseMode.CIRCLE_CHANGE_COLOR_59) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_59(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_MAKE_AUX_60) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_60(p);
-            } else if (i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_61(p);
-            }//長方形内選択（paintの選択に似せた選択機能）に使う
-            else if (i_mouse_modeA == MouseMode.VONOROI_CREATE_62) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_62(p);
-            }//ボロノイ図　に使う
-            else if (i_mouse_modeA == MouseMode.FLAT_FOLDABLE_CHECK_63) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_63(p);
-            }//外周部折り畳みチェックに使う
-            else if (i_mouse_modeA == MouseMode.CREASE_DELETE_OVERLAPPING_64) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_64(p);
-            }//線内削除　に使う
-            else if (i_mouse_modeA == MouseMode.CREASE_DELETE_INTERSECTING_65) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_65(p);
-            } else if (i_mouse_modeA == MouseMode.SELECT_POLYGON_66) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_66(p);
-            } else if (i_mouse_modeA == MouseMode.UNSELECT_POLYGON_67) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_67(p);
-            } else if (i_mouse_modeA == MouseMode.SELECT_LINE_INTERSECTING_68) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_68(p);
-            } else if (i_mouse_modeA == MouseMode.UNSELECT_LINE_INTERSECTING_69) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_69(p);
-            } else if (i_mouse_modeA == MouseMode.CREASE_LENGTHEN_70) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_70(p);
-            } else if (i_mouse_modeA == MouseMode.FOLDABLE_LINE_DRAW_71) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_71(p);
-            } else if (i_mouse_modeA == MouseMode.UNUSED_10001) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_10001(p);
-            } else if (i_mouse_modeA == MouseMode.UNUSED_10002) {
-                es1.setCamera(camera_of_orisen_input_diagram);
-                es1.mReleased_A_10002(p);
-            } else if (i_mouse_modeA == MouseMode.MODIFY_CALCULATED_SHAPE_101) {        //折り上がり図操作
-                OZ.foldedFigure_operation_mouse_off(p);
-            } else if (i_mouse_modeA == MouseMode.MOVE_CALCULATED_SHAPE_102) {
-                OZ.camera_of_foldedFigure.displayPositionMove(mouse_temp0.other_Point_position(p));
-                OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
-
-                OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
-
-                mouse_temp0.set(p);
-
-            } else if (i_mouse_modeA == MouseMode.CHANGE_STANDARD_FACE_103) {//基準面指定
-                int new_referencePlane_id;
-                int old_referencePlane_id;
-                old_referencePlane_id = OZ.cp_worker1.getReferencePlaneId();
-
-                new_referencePlane_id = OZ.cp_worker1.setReferencePlaneId(p);
-                System.out.println("kijyunmen_id = " + new_referencePlane_id);
-                if (OZ.ct_worker.face_rating != null) {//20180227追加
-                    System.out.println(
-                            "OZ.js.nbox.get_jyunjyo = " + OZ.ct_worker.nbox.getSequence(new_referencePlane_id) + " , rating = " +
-                                    OZ.ct_worker.nbox.getDouble(OZ.ct_worker.nbox.getSequence(new_referencePlane_id))
-
-                    );
-
-                }
-                if ((new_referencePlane_id != old_referencePlane_id) && (OZ.estimationStep != FoldedFigure.EstimationStep.STEP_0)) {
-                    OZ.estimationStep = FoldedFigure.EstimationStep.STEP_1;
-                }
-
-            }
-
-            repaint();
-
-        }
-
-        i_mouseDragged_valid = false;
-        i_mouseReleased_valid = false;
-    }
-
-    //マウス操作(ボタンをクリックしたとき)を行う関数----------------------------------------------------
-    public void mouseClicked(MouseEvent e) {
-        //何もしない
-
-
-    }
-
-    //マウス操作(カーソルが有効領域内に入ったとき)を行う関数----------------------------------------------------
-    public void mouseEntered(MouseEvent e) {
-        //何もしない
-    }
-
-    //マウス操作(カーソルが有効領域外に出たとき)を行う関数----------------------------------------------------
-    public void mouseExited(MouseEvent e) {
-        //何もしない
-    }
 
 
     // --------------------------------------------------
@@ -9172,243 +7662,244 @@ write.setRGB(w, h, offsc_background.getRGB(w,h));
     //ペイントを行う関数----------------------------------
     //----------------------------------------------------
     public void paint(Graphics g) {
-        //「f」を付けることでfloat型の数値として記述することができる
-        Graphics2D g2 = (Graphics2D) bufferGraphics;
-        //Graphics2D g2d = (Graphics2D)g;
-        //BasicStroke BStroke = new BasicStroke(1.0f);g2.setStroke(BStroke);//線の太さ
-
-        //float fLineWidth=(float)iLineWidth;	float f_h_lineWidth=(float)i_h_lineWidth;
-        fLineWidth = (float) iLineWidth;
-        f_h_lineWidth = (float) i_h_lineWidth;
-
-        if (antiAlias) {
-            fLineWidth = fLineWidth + 0.2f;
-            f_h_lineWidth = f_h_lineWidth + 0.2f;
-        }
-
-        BasicStroke BStroke = new BasicStroke(fLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-        g2.setStroke(BStroke);//線の太さや線の末端の形状
-
-        //BasicStroke BStroke = new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);g2.setStroke(BStroke);//線の太さや線の末端の形状
-        //アンチエイリアス　オフ
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチエイリアス　オン
-
-        g2.setBackground(Color.WHITE);    //この行は、画像をファイルに書き出そうとしてBufferedImageクラスを使う場合、デフォルトで背景が黒になるので、それを避けるための意味　20170107
-        //画像をファイルに書き出さすことはやめて、、BufferedImageクラスを使わず、Imageクラスだけですむなら不要の行
-
-        //別の重なりさがし　のボタンの色の指定。
-        if (OZ.findAnotherOverlapValid) {
-            Button3.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
-            Button3.setForeground(Color.black);
-
-            Button_AS_matome.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
-            Button_AS_matome.setForeground(Color.black);
-
-            Button_bangou_sitei_suitei_display.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
-            Button_bangou_sitei_suitei_display.setForeground(Color.black);
-        } else {
-            Button3.setBackground(new Color(201, 201, 201));
-            Button3.setForeground(Color.gray);
-
-            Button_AS_matome.setBackground(new Color(201, 201, 201));
-            Button_AS_matome.setForeground(Color.gray);
-
-            Button_bangou_sitei_suitei_display.setBackground(new Color(201, 201, 201));
-            Button_bangou_sitei_suitei_display.setForeground(Color.gray);
-        }
-
-        // バッファー画面のクリア
-        dim = getSize();
-        bufferGraphics.clearRect(0, 0, dim.width, dim.height);
-
-        //System.out.println("画面サイズ=(" + dim.width + " , " + dim.height  + ")"  );
-
-
-        //int   i_ten_sagasi_hyouji, i_ten_hanasi_hyouji,i_kou_mitudo_nyuuryoku_hyouji,i_bun_hyouji,i_cp_hyouji,i_a0_hyouji,i_a1_hyouji;
-        //int   i_mejirusi_hyouji,i_cp_ue_hyouji,i_oritatami_keika_hyouji;
-
-        i_point_sagasi_display = ckbox_point_search.isSelected();
-        i_point_hanasi_display = ckbox_ten_hanasi.isSelected();
-        i_kou_mitudo_nyuuryoku_display = ckbox_kou_mitudo_nyuuryoku.isSelected();
-        i_bun_display = ckbox_bun.isSelected();
-        i_cp_display = ckbox_cp.isSelected();
-        i_a0_display = ckbox_a0.isSelected();
-        i_a1_display = ckbox_a1.isSelected();
-
-        i_mark_display = ckbox_mark.isSelected();
-        i_cp_ue_display = ckbox_cp_ue.isSelected();
-        i_oritatami_keika_display = ckbox_oritatami_keika.isSelected();
-
-
-        bufferGraphics.setColor(Color.red);
-        //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-
-
-        //カメラのセット
-
-        es1.setCamera(camera_of_orisen_input_diagram);
-
-        FoldedFigure OZi;
-        for (int i = 1; i <= OAZ.size() - 1; i++) {
-            OZi = OAZ.get(i);
-            OZi.cp_worker1.setCamera(camera_of_orisen_input_diagram);
-        }
-
-//VVVVVVVVVVVVVVV以下のts2へのカメラセットはOriagari_zuのoekakiで実施しているので以下の5行はなくてもいいはず　20180225
-        OZ.cp_worker2.setCamera(OZ.camera_of_foldedFigure);
-        OZ.cp_worker2.setCam_front(OZ.camera_of_foldedFigure_front);
-        OZ.cp_worker2.setCam_rear(OZ.camera_of_foldedFigure_rear);
-        OZ.cp_worker2.setCam_transparent_front(OZ.camera_of_transparent_front);
-        OZ.cp_worker2.setCam_transparent_rear(OZ.camera_of_transparent_rear);
-//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-
-        //System.out.println("paint　+++++++++++++++++++++　背景表示");
-        //背景表示
-        if ((img_background != null) && (iDisplayBackground >= 1)) {
-            int iw = img_background.getWidth(this);//イメージの幅を取得
-            int ih = img_background.getHeight(this);//イメージの高さを取得
-
-            //System.out.println("paint幅＝"+iw);
-            //System.out.println("paint高さ＝"+ih);
-            h_cam.setBackgroundWidth(iw);
-            h_cam.setBackgroundHeight(ih);
-
-            //if(i_Lock_on==1){
-            drawBackground(g2, img_background);
-            //}
-        }
-
-        //格子表示
-        //es1.kousi_oekaki_with_camera(bufferGraphics,i_bun_hyouji,i_cp_hyouji,i_a0_hyouji,i_a1_hyouji,fLineWidth,lineStyle,f_h_lineWidth,dim.width,dim.height);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
-
-
-        //解説表示
-        //System.out.println("paint　+++++++++++++++++++++　解説表示  " +iDisplayExplanation );
-        if ((img_explanation != null) && (iDisplayExplanation >= 1)) {
-            bufferGraphics.drawImage(img_explanation, 650, 100, this);//80,80,は描画開始位置
-
-            //bufferGraphics.drawImage(img_explanation,600,150,this);//80,80,は描画開始位置
-            //	System.out.println("paint幅＝"+img_background.getWidth(this));
-            //	System.out.println("paint高さ＝"+img_background.getHeight(this));
-        }
-
-
-        //基準面の表示
-        //System.out.println("paint　+++++++++++++++++++++　基準面の表示");
-        if (i_mark_display) {
-            if (OZ.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
-                //	ts1.setCamera(camera_of_orisen_nyuuryokuzu);
-                OZ.cp_worker1.drawing_referencePlane_with_camera(bufferGraphics);//ts1が折り畳みを行う際の基準面を表示するのに使う。
-            }
-        }
-
-        double d_haba = camera_of_orisen_input_diagram.getCameraZoomX() * es1.get_d_decision_width();
-        //Flashlight (dot) search range
-        if (i_point_sagasi_display) {
-            g2.setColor(new Color(255, 240, 0, 30));
-            g2.setStroke(new BasicStroke(2.0f));
-            g2.setColor(new Color(255, 240, 0, 230));
-            g2.draw(new Ellipse2D.Double(p_mouse_TV_iti.getX() - d_haba, p_mouse_TV_iti.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
-        }
-
-        //Luminous flux of flashlight, etc.
-        if (i_point_sagasi_display && i_point_hanasi_display) {
-            g2.setStroke(new BasicStroke(2.0f));
-            g2.setColor(new Color(255, 240, 0, 170));
-        }
-
-
-        //展開図表示
-        //System.out.println("paint　+++++++++++++++++++++　展開図表示(展開図動かし中心の十字を含む)");
-        //if (iDisplayBackground<=1) {
-        //        es1.setCamera(camera_of_orisen_nyuuryokuzu);
-
-        es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, lineStyle, f_h_lineWidth, dim.width, dim.height, i_mark_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
-
-        if (i_bun_display) {
-            //展開図情報の文字表示
-            bufferGraphics.setColor(Color.black);
-
-            bufferGraphics.drawString("mouse= (   " + p_mouse_object_iti.getX() + "   ,   " + p_mouse_object_iti.getY() + "   )", 120, 75); //この表示内容はvoid kekka_syoriで決められる。
-
-            bufferGraphics.drawString("L=" + es1.getTotal(), 120, 90); //この表示内容はvoid kekka_syoriで決められる。
-
-            //System.out.println("paint　+++++++++++++++++++++　結果の文字表示");
-            //結果の文字表示
-            bufferGraphics.drawString(OZ.text_result, 120, 105); //この表示内容はvoid kekka_syoriで決められる。
-
-            if (i_kou_mitudo_nyuuryoku_display) {
-                Point kus_sisuu = new Point(es1.get_moyori_ten_sisuu(p_mouse_TV_iti));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
-
-                double dx_ind = kus_sisuu.getX();
-                double dy_ind = kus_sisuu.getY();
-                int ix_ind = (int) Math.round(dx_ind);
-                int iy_ind = (int) Math.round(dy_ind);
-                bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) p_mouse_TV_iti.getX() + 25, (int) p_mouse_TV_iti.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
-            }
-
-            if (subThreadRunning) {
-                bufferGraphics.setColor(Color.red);
-
-                bufferGraphics.drawString("Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 120, 134); //この表示内容はvoid kekka_syoriで決められる。
-                bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 120, 148); //この表示内容はvoid kekka_syoriで決められる。
-            }
-
-            bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        }
-
-
-        //折り上がりの各種お絵かき
-        //Oriagari_Zu OZi;
-        for (int i = 1; i <= OAZ.size() - 1; i++) {
-            OZi = OAZ.get(i);
-            OZi.foldUp_draw(bufferGraphics, i_mark_display);
-        }
-        //OZ = (Oriagari_Zu)OAZ.get(OAZ.size()-1);//折りあがり図
-
-        //展開図を折り上がり図の上に描くために、展開図を再表示する
-        if (i_cp_ue_display) {
-            es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, lineStyle, f_h_lineWidth, dim.width, dim.height, i_mark_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
-        }
-
-        //アンチェイリアス
-        //アンチェイリアス　オフ
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オン
-
-        //	bufferGraphics.drawString(c.valueOf(oc.kakudo(new Ten(0.0,0.0),new Ten( 10.0, 0.0))), 30,170);
-        //      bufferGraphics.drawString(c.valueOf(778),150,150);
-        //test_oekaki();
-        //System.out.println("paint　+++++++++++++++++++++　bufferGraphicsへの描画終了");
-
-        //中央指示線
-        if (i_point_hanasi_display) {
-            g2.setStroke(new BasicStroke(1.0f));
-            g2.setColor(Color.black);
-            g2.drawLine((int) (p_mouse_TV_iti.getX()), (int) (p_mouse_TV_iti.getY()),
-                    (int) (p_mouse_TV_iti.getX() + d_haba), (int) (p_mouse_TV_iti.getY() + d_haba)); //直線
-        }
-
-
-        //描画したい内容はここまでAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-
-
-        // オフスクリーンイメージを実際に描画する。オフスクリーンの幅は最初は 0,0。
-        g.drawImage(offscreen, 0, 0, this);
-
-        if (OZ.summary_write_image_during_execution) {//Meaning during summary writing)
-            writeImageFile(fname_and_number);
-
-            w_image_running = false;
-        }
-
-        if (flg_wi) {//For control when exporting with a frame 20180525
-            flg_wi = false;
-            writeImageFile(fname_wi);
-        }
-        if (flg61) {
-            flg61 = false;
-            es1.setDrawingStage(4);
-        }
+        canvas.repaint();
+//        //「f」を付けることでfloat型の数値として記述することができる
+//        Graphics2D g2 = (Graphics2D) bufferGraphics;
+//        //Graphics2D g2d = (Graphics2D)g;
+//        //BasicStroke BStroke = new BasicStroke(1.0f);g2.setStroke(BStroke);//線の太さ
+//
+//        //float fLineWidth=(float)iLineWidth;	float f_h_lineWidth=(float)i_h_lineWidth;
+//        fLineWidth = (float) iLineWidth;
+//        f_h_lineWidth = (float) i_h_lineWidth;
+//
+//        if (antiAlias) {
+//            fLineWidth = fLineWidth + 0.2f;
+//            f_h_lineWidth = f_h_lineWidth + 0.2f;
+//        }
+//
+//        BasicStroke BStroke = new BasicStroke(fLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
+//        g2.setStroke(BStroke);//線の太さや線の末端の形状
+//
+//        //BasicStroke BStroke = new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);g2.setStroke(BStroke);//線の太さや線の末端の形状
+//        //アンチエイリアス　オフ
+//        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチエイリアス　オン
+//
+//        g2.setBackground(Color.WHITE);    //この行は、画像をファイルに書き出そうとしてBufferedImageクラスを使う場合、デフォルトで背景が黒になるので、それを避けるための意味　20170107
+//        //画像をファイルに書き出さすことはやめて、、BufferedImageクラスを使わず、Imageクラスだけですむなら不要の行
+//
+//        //別の重なりさがし　のボタンの色の指定。
+//        if (OZ.findAnotherOverlapValid) {
+//            Button3.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
+//            Button3.setForeground(Color.black);
+//
+//            Button_AS_matome.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
+//            Button_AS_matome.setForeground(Color.black);
+//
+//            Button_bangou_sitei_suitei_display.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
+//            Button_bangou_sitei_suitei_display.setForeground(Color.black);
+//        } else {
+//            Button3.setBackground(new Color(201, 201, 201));
+//            Button3.setForeground(Color.gray);
+//
+//            Button_AS_matome.setBackground(new Color(201, 201, 201));
+//            Button_AS_matome.setForeground(Color.gray);
+//
+//            Button_bangou_sitei_suitei_display.setBackground(new Color(201, 201, 201));
+//            Button_bangou_sitei_suitei_display.setForeground(Color.gray);
+//        }
+//
+//        // バッファー画面のクリア
+//        dim = getContentPane().getSize();
+//        bufferGraphics.clearRect(0, 0, dim.width, dim.height);
+//
+//        //System.out.println("画面サイズ=(" + dim.width + " , " + dim.height  + ")"  );
+//
+//
+//        //int   i_ten_sagasi_hyouji, i_ten_hanasi_hyouji,i_kou_mitudo_nyuuryoku_hyouji,i_bun_hyouji,i_cp_hyouji,i_a0_hyouji,i_a1_hyouji;
+//        //int   i_mejirusi_hyouji,i_cp_ue_hyouji,i_oritatami_keika_hyouji;
+//
+//        i_point_sagasi_display = ckbox_point_search.isSelected();
+//        i_point_hanasi_display = ckbox_ten_hanasi.isSelected();
+//        i_kou_mitudo_nyuuryoku_display = ckbox_kou_mitudo_nyuuryoku.isSelected();
+//        i_bun_display = ckbox_bun.isSelected();
+//        i_cp_display = ckbox_cp.isSelected();
+//        i_a0_display = ckbox_a0.isSelected();
+//        i_a1_display = ckbox_a1.isSelected();
+//
+//        i_mark_display = ckbox_mark.isSelected();
+//        i_cp_ue_display = ckbox_cp_ue.isSelected();
+//        i_oritatami_keika_display = ckbox_oritatami_keika.isSelected();
+//
+//
+//        bufferGraphics.setColor(Color.red);
+//        //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+//
+//
+//        //カメラのセット
+//
+//        es1.setCamera(camera_of_orisen_input_diagram);
+//
+//        FoldedFigure OZi;
+//        for (int i = 1; i <= OAZ.size() - 1; i++) {
+//            OZi = OAZ.get(i);
+//            OZi.cp_worker1.setCamera(camera_of_orisen_input_diagram);
+//        }
+//
+////VVVVVVVVVVVVVVV以下のts2へのカメラセットはOriagari_zuのoekakiで実施しているので以下の5行はなくてもいいはず　20180225
+//        OZ.cp_worker2.setCamera(OZ.camera_of_foldedFigure);
+//        OZ.cp_worker2.setCam_front(OZ.camera_of_foldedFigure_front);
+//        OZ.cp_worker2.setCam_rear(OZ.camera_of_foldedFigure_rear);
+//        OZ.cp_worker2.setCam_transparent_front(OZ.camera_of_transparent_front);
+//        OZ.cp_worker2.setCam_transparent_rear(OZ.camera_of_transparent_rear);
+////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+//
+//        //System.out.println("paint　+++++++++++++++++++++　背景表示");
+//        //背景表示
+//        if ((img_background != null) && (iDisplayBackground >= 1)) {
+//            int iw = img_background.getWidth(this);//イメージの幅を取得
+//            int ih = img_background.getHeight(this);//イメージの高さを取得
+//
+//            //System.out.println("paint幅＝"+iw);
+//            //System.out.println("paint高さ＝"+ih);
+//            h_cam.setBackgroundWidth(iw);
+//            h_cam.setBackgroundHeight(ih);
+//
+//            //if(i_Lock_on==1){
+//            drawBackground(g2, img_background);
+//            //}
+//        }
+//
+//        //格子表示
+//        //es1.kousi_oekaki_with_camera(bufferGraphics,i_bun_hyouji,i_cp_hyouji,i_a0_hyouji,i_a1_hyouji,fLineWidth,lineStyle,f_h_lineWidth,dim.width,dim.height);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+//
+//
+//        //解説表示
+//        //System.out.println("paint　+++++++++++++++++++++　解説表示  " +iDisplayExplanation );
+//        if ((img_explanation != null) && (iDisplayExplanation >= 1)) {
+//            bufferGraphics.drawImage(img_explanation, 650, 100, this);//80,80,は描画開始位置
+//
+//            //bufferGraphics.drawImage(img_explanation,600,150,this);//80,80,は描画開始位置
+//            //	System.out.println("paint幅＝"+img_background.getWidth(this));
+//            //	System.out.println("paint高さ＝"+img_background.getHeight(this));
+//        }
+//
+//
+//        //基準面の表示
+//        //System.out.println("paint　+++++++++++++++++++++　基準面の表示");
+//        if (i_mark_display) {
+//            if (OZ.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
+//                //	ts1.setCamera(camera_of_orisen_nyuuryokuzu);
+//                OZ.cp_worker1.drawing_referencePlane_with_camera(bufferGraphics);//ts1が折り畳みを行う際の基準面を表示するのに使う。
+//            }
+//        }
+//
+//        double d_haba = camera_of_orisen_input_diagram.getCameraZoomX() * es1.get_d_decision_width();
+//        //Flashlight (dot) search range
+//        if (i_point_sagasi_display) {
+//            g2.setColor(new Color(255, 240, 0, 30));
+//            g2.setStroke(new BasicStroke(2.0f));
+//            g2.setColor(new Color(255, 240, 0, 230));
+//            g2.draw(new Ellipse2D.Double(p_mouse_TV_iti.getX() - d_haba, p_mouse_TV_iti.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+//        }
+//
+//        //Luminous flux of flashlight, etc.
+//        if (i_point_sagasi_display && i_point_hanasi_display) {
+//            g2.setStroke(new BasicStroke(2.0f));
+//            g2.setColor(new Color(255, 240, 0, 170));
+//        }
+//
+//
+//        //展開図表示
+//        //System.out.println("paint　+++++++++++++++++++++　展開図表示(展開図動かし中心の十字を含む)");
+//        //if (iDisplayBackground<=1) {
+//        //        es1.setCamera(camera_of_orisen_nyuuryokuzu);
+//
+//        es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, lineStyle, f_h_lineWidth, dim.width, dim.height, i_mark_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+//
+//        if (i_bun_display) {
+//            //展開図情報の文字表示
+//            bufferGraphics.setColor(Color.black);
+//
+//            bufferGraphics.drawString("mouse= (   " + p_mouse_object_iti.getX() + "   ,   " + p_mouse_object_iti.getY() + "   )", 120, 75); //この表示内容はvoid kekka_syoriで決められる。
+//
+//            bufferGraphics.drawString("L=" + es1.getTotal(), 120, 90); //この表示内容はvoid kekka_syoriで決められる。
+//
+//            //System.out.println("paint　+++++++++++++++++++++　結果の文字表示");
+//            //結果の文字表示
+//            bufferGraphics.drawString(OZ.text_result, 120, 105); //この表示内容はvoid kekka_syoriで決められる。
+//
+//            if (i_kou_mitudo_nyuuryoku_display) {
+//                Point kus_sisuu = new Point(es1.get_moyori_ten_sisuu(p_mouse_TV_iti));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
+//
+//                double dx_ind = kus_sisuu.getX();
+//                double dy_ind = kus_sisuu.getY();
+//                int ix_ind = (int) Math.round(dx_ind);
+//                int iy_ind = (int) Math.round(dy_ind);
+//                bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) p_mouse_TV_iti.getX() + 25, (int) p_mouse_TV_iti.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
+//            }
+//
+//            if (subThreadRunning) {
+//                bufferGraphics.setColor(Color.red);
+//
+//                bufferGraphics.drawString("Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 120, 134); //この表示内容はvoid kekka_syoriで決められる。
+//                bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 120, 148); //この表示内容はvoid kekka_syoriで決められる。
+//            }
+//
+//            bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+//        }
+//
+//
+//        //折り上がりの各種お絵かき
+//        //Oriagari_Zu OZi;
+//        for (int i = 1; i <= OAZ.size() - 1; i++) {
+//            OZi = OAZ.get(i);
+//            OZi.foldUp_draw(bufferGraphics, i_mark_display);
+//        }
+//        //OZ = (Oriagari_Zu)OAZ.get(OAZ.size()-1);//折りあがり図
+//
+//        //展開図を折り上がり図の上に描くために、展開図を再表示する
+//        if (i_cp_ue_display) {
+//            es1.draw_with_camera(bufferGraphics, i_bun_display, i_cp_display, i_a0_display, i_a1_display, fLineWidth, lineStyle, f_h_lineWidth, dim.width, dim.height, i_mark_display);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+//        }
+//
+//        //アンチェイリアス
+//        //アンチェイリアス　オフ
+//        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オン
+//
+//        //	bufferGraphics.drawString(c.valueOf(oc.kakudo(new Ten(0.0,0.0),new Ten( 10.0, 0.0))), 30,170);
+//        //      bufferGraphics.drawString(c.valueOf(778),150,150);
+//        //test_oekaki();
+//        //System.out.println("paint　+++++++++++++++++++++　bufferGraphicsへの描画終了");
+//
+//        //中央指示線
+//        if (i_point_hanasi_display) {
+//            g2.setStroke(new BasicStroke(1.0f));
+//            g2.setColor(Color.black);
+//            g2.drawLine((int) (p_mouse_TV_iti.getX()), (int) (p_mouse_TV_iti.getY()),
+//                    (int) (p_mouse_TV_iti.getX() + d_haba), (int) (p_mouse_TV_iti.getY() + d_haba)); //直線
+//        }
+//
+//
+//        //描画したい内容はここまでAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+//
+//
+//        // Actually draw the off-screen image. The offscreen width is initially 0,0.
+//        g.drawImage(offscreen, 0, 0, this);
+//
+//        if (OZ.summary_write_image_during_execution) {//Meaning during summary writing)
+//            writeImageFile(fname_and_number);
+//
+//            w_image_running = false;
+//        }
+//
+//        if (flg_wi) {//For control when exporting with a frame 20180525
+//            flg_wi = false;
+//            writeImageFile(fname_wi);
+//        }
+//        if (flg61) {
+//            flg61 = false;
+//            es1.setDrawingStage(4);
+//        }
     }
 
 

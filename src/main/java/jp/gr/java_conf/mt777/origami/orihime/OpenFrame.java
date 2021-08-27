@@ -9,7 +9,7 @@ import java.awt.event.WindowEvent;
 
 import static jp.gr.java_conf.mt777.origami.orihime.ResourceUtil.createImageIcon;
 
-class OpenFrame extends Frame implements ActionListener {
+class OpenFrame extends JFrame implements ActionListener {
     public JCheckBox ckbox_add_frame_SelectAnd3click;//20200930
     App orihime_app;
 
@@ -67,19 +67,19 @@ class OpenFrame extends Frame implements ActionListener {
         });//Enable the end button So far.
 
         //Setting conditions such as layout of additional frames
-        setLayout(new GridLayout(1, 1));
-        setBackground(Color.PINK);
+        getContentPane().setLayout(new GridLayout(1, 1));
+//        setBackground(Color.PINK);
 
         //Creating the left side (west side) panel
 
 
         Panel pnl_00 = new Panel();
-        pnl_00.setBackground(Color.PINK);
+//        pnl_00.setBackground(Color.PINK);
         pnl_00.setLayout(new GridLayout(10, 1));
-        add(pnl_00);
+        getContentPane().add(pnl_00);
 
         Panel pnl_01 = new Panel();
-        pnl_01.setBackground(Color.PINK);
+//        pnl_01.setBackground(Color.PINK);
         pnl_01.setLayout(new GridLayout(1, 3));
         pnl_00.add(pnl_01);
 
@@ -96,7 +96,7 @@ class OpenFrame extends Frame implements ActionListener {
         });
         ckbox_add_frame_SelectAnd3click.setIcon(createImageIcon("ppp/af/ckbox_add_frame_SelectAnd3click_off.png"));
         ckbox_add_frame_SelectAnd3click.setSelectedIcon(createImageIcon("ppp/af/ckbox_add_frame_SelectAnd3click_on.png"));
-        ckbox_add_frame_SelectAnd3click.setBackground(Color.PINK);
+//        ckbox_add_frame_SelectAnd3click.setBackground(Color.PINK);
         ckbox_add_frame_SelectAnd3click.setBorderPainted(false);
         ckbox_add_frame_SelectAnd3click.setMargin(new Insets(0, 0, 0, 0));
         pnl_01.add(
@@ -121,7 +121,7 @@ class OpenFrame extends Frame implements ActionListener {
 //-----------------------------------------------
 
         Panel pnl_02 = new Panel();
-        pnl_02.setBackground(Color.PINK);
+//        pnl_02.setBackground(Color.PINK);
         pnl_02.setLayout(new GridLayout(1, 3));
         pnl_00.add(pnl_02);
 //------------------------------------------------
@@ -149,7 +149,7 @@ class OpenFrame extends Frame implements ActionListener {
 //------------------------------------------------
 
         Panel pnl_03 = new Panel();
-        pnl_03.setBackground(Color.PINK);
+//        pnl_03.setBackground(Color.PINK);
         pnl_03.setLayout(new GridLayout(1, 3));
         pnl_00.add(pnl_03);
 //----------------------------------------------------------------------------------------------
@@ -194,7 +194,7 @@ class OpenFrame extends Frame implements ActionListener {
 
 //------------------------------------------------
         Panel pnl_04 = new Panel();
-        pnl_04.setBackground(Color.PINK);
+//        pnl_04.setBackground(Color.PINK);
         pnl_04.setLayout(new GridLayout(1, 3));
         pnl_00.add(pnl_04);
 
@@ -234,7 +234,7 @@ class OpenFrame extends Frame implements ActionListener {
 
 //----------------------------------------------------------------------------------------------
         Panel pnl_05 = new Panel();
-        pnl_05.setBackground(Color.PINK);
+//        pnl_05.setBackground(Color.PINK);
         pnl_05.setLayout(new GridLayout(1, 3));
         pnl_00.add(pnl_05);
 
