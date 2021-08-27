@@ -43,17 +43,6 @@ public class LineSegmentSet {
         return lineSegments.get(i);
     }
 
-    private void setLine(int i, LineSegment s) {
-        if (numLineSegments + 1 > lineSegments.size()) {
-            while (numLineSegments + 1 > lineSegments.size()) {
-                lineSegments.add(new LineSegment());
-            }
-        }//It won't work without this sentence. I don't know exactly why it should be this sentence.
-        if (i + 1 <= lineSegments.size()) {
-            lineSegments.set(i, s);
-        } //For some reason, it doesn't work without this if
-    }
-
     //Get the total number of line segments
     public int getNumLineSegments() {
         return numLineSegments;
@@ -228,38 +217,6 @@ public class LineSegmentSet {
                 s.set(ax, ay, bx, by);
             }
         }
-    }
-
-    /**
-     * Arrangement of line segment set when inputting development drawing
-     */
-    public void split_arrangement() {//Arrangement of wire diagrams obtained by folding estimation, etc.
-        System.out.println("分割整理　１、点削除");
-        point_removal();          //Just in case, remove the dotted line segment
-        System.out.println("分割整理　２、重複線分削除");
-        overlapping_line_removal();//Just in case, if there are two line segments that match exactly, remove one.
-        System.out.println("分割整理　３、交差分割");
-        intersect_divide();
-        System.out.println("分割整理　４、点削除");
-        point_removal();             //Exclude dotted line segments to organize the wire diagram for folding estimation
-        System.out.println("分割整理　５、重複線分削除");
-        overlapping_line_removal(); //If there are two line segments that match exactly, remove one to organize the wire diagram for folding estimation.
-    }
-
-    //Arrangement of line segment sets to generate SubFace
-    public void split_arrangement_for_SubFace_generation() {//Arrangement of wire diagrams obtained by folding estimation, etc.
-        System.out.println("　　Senbunsyuugouの中で、Smenを発生させるための線分集合の整理");
-        System.out.println("分割整理　１、点削除前	getsousuu() = " + getNumLineSegments());
-        point_removal();          //Just in case, remove the dotted line segment
-        System.out.println("分割整理　２、重複線分削除前	getsousuu() = " + getNumLineSegments());
-        overlapping_line_removal();//念のため、全く一致する線分が２つあれば１つを除く
-        System.out.println("分割整理　３、交差分割前	getsousuu() = " + getNumLineSegments());
-        intersect_divide();
-        System.out.println("分割整理　４、点削除前	getsousuu() = " + getNumLineSegments());
-        point_removal();             //折り畳み推定の針金図の整理のため、点状の線分を除く
-        System.out.println("分割整理　５、重複線分削除前	getsousuu() = " + getNumLineSegments());
-        overlapping_line_removal(); //折り畳み推定の針金図の整理のため、全く一致する線分が２つあれば１つを除く
-        System.out.println("分割整理　５、重複線分削除後	getsousuu() = " + getNumLineSegments());
     }
 
     //Remove dotted line segments
@@ -724,14 +681,6 @@ public class LineSegmentSet {
     }
 
     /**
-     * Get the length of the i-th line segment
-     */
-    public double getLength(int i) {
-        LineSegment s = getLine(i);
-        return s.getLength();
-    }
-
-    /**
      * Remove the branching line segments without forming a closed polygon.
      */
     public void branch_trim(double r) {
@@ -769,162 +718,6 @@ public class LineSegmentSet {
     }
 
     /**
-     * Delete only one separated line segment
-     */
-    public void singleLineSegment_delete(double r) {
-        boolean iflg;
-        for (int i = 1; i <= numLineSegments; i++) {
-            iflg = false;
-            LineSegment si;
-            si = getLine(i);
-            for (int j = 1; j <= numLineSegments; j++) {
-                if (i != j) {
-                    LineSegment sj;
-                    sj = getLine(j);
-                    if (OritaCalc.distance(si.getA(), sj.getA()) < r) {
-                        iflg = true;
-                    }
-                    if (OritaCalc.distance(si.getB(), sj.getB()) < r) {
-                        iflg = true;
-                    }
-                    if (OritaCalc.distance(si.getA(), sj.getB()) < r) {
-                        iflg = true;
-                    }
-                    if (OritaCalc.distance(si.getB(), sj.getA()) < r) {
-                        iflg = true;
-                    }
-                }
-            }
-
-            if (!iflg) {
-                deleteLineSegment(i);
-                i = 1;
-            }
-        }
-    }
-
-
-    /**
-     * A function that searches for a line segment close to point p (within r) and returns that number (however, the jth line segment is out of scope). Returns 0 if there is no close line segment ---------------------------------
-     * If there is no line segment to exclude, set j to 0 or a negative integer.
-     * 070317 When the additional function j is -10, the unactivated branch (getiactive (i) is 0) is targeted.
-     */
-    public int lineSegment_search(Point p, double r, int j) {
-        if (j == -10) {
-            for (int i = 1; i <= numLineSegments; i++) {
-                if (((lineSegment_position_search(i, p, r) == 1) && (i != j)) && (getActive(i) == LineSegment.ActiveState.INACTIVE_0)) {
-                    return i;
-                }
-            }
-            for (int i = 1; i <= numLineSegments; i++) {
-                if (((lineSegment_position_search(i, p, r) == 2) && (i != j)) && (getActive(i) == LineSegment.ActiveState.INACTIVE_0)) {
-                    return i;
-                }
-            }
-            for (int i = 1; i <= numLineSegments; i++) {
-                if (((lineSegment_position_search(i, p, r) == 3) && (i != j)) && (getActive(i) == LineSegment.ActiveState.INACTIVE_0)) {
-                    return i;
-                }
-            }
-            return 0;
-        }
-
-        for (int i = 1; i <= numLineSegments; i++) {
-            if ((lineSegment_position_search(i, p, r) == 1) && (i != j)) {
-                return i;
-            }
-        }
-        for (int i = 1; i <= numLineSegments; i++) {
-            if ((lineSegment_position_search(i, p, r) == 2) && (i != j)) {
-                return i;
-            }
-        }
-        for (int i = 1; i <= numLineSegments; i++) {
-            if ((lineSegment_position_search(i, p, r) == 3) && (i != j)) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
-
-    /**
-     * A function that determines where the point p is close to the specified line segment (within r)
-     * 0 = not close, 1 = close to point a, 2 = close to point b, 3 = close to handle
-     */
-    public int lineSegment_position_search(int i, Point p, double r) {
-        if (r > OritaCalc.distance(p, getA(i))) {
-            return 1;
-        }//Whether it is close to point a
-        if (r > OritaCalc.distance(p, getB(i))) {
-            return 2;
-        }//Whether it is close to point b
-        if (r > OritaCalc.distance_lineSegment(p, get(i))) {
-            return 3;
-        }//Whether it is close to the handle
-        return 0;
-    }
-
-
-    /**
-     * Returns the number of the line segment closest to the point p
-     */
-    public int closest_lineSegment_Search(Point p) {
-        int minrid = 0;
-        double minr = 100000;
-        for (int i = 1; i <= numLineSegments; i++) {
-            double sk = OritaCalc.distance_lineSegment(p, get(i));
-            if (minr > sk) {
-                minr = sk;
-                minrid = i;
-            }//Whether it is close to the handle
-
-        }
-        return minrid;
-    }
-
-    /**
-     * Returns the endpoint of the line segment closest to point p
-     */
-    public Point closest_point_search(Point p) {
-        Point p_return = new Point();
-        p_return.set(100000.0, 100000.0);
-        Point p_temp = new Point();
-        for (int i = 1; i <= numLineSegments; i++) {
-            p_temp.set(getA(i));
-            if (p.distanceSquared(p_temp) < p.distanceSquared(p_return)) {
-                p_return.set(p_temp.getX(), p_temp.getY());
-            }
-            p_temp.set(getB(i));
-            if (p.distanceSquared(p_temp) < p.distanceSquared(p_return)) {
-                p_return.set(p_temp.getX(), p_temp.getY());
-            }
-        }
-        return p_return;
-    }
-
-    /**
-     * Activation of line segments near point p
-     */
-    public void activate(Point p, double r) {
-        for (int i = 1; i <= numLineSegments; i++) {
-            LineSegment si = getLine(i);
-            si.activate(p, r);
-        }
-    }
-
-    /**
-     * Inactivation of all lines
-     */
-    public void deactivate() {
-        for (int i = 1; i <= numLineSegments; i++) {
-            LineSegment si = getLine(i);
-            si.deactivate();
-        }
-    }
-
-
-    /**
      * Make the activated line segment the coordinates of point p
      */
     public void set(Point p) {
@@ -933,19 +726,5 @@ public class LineSegmentSet {
             si.set(p);
         }
 
-    }
-
-    /**
-     * If there is a line segment i0 in the line segment set and a line segment other than i0 that completely overlaps, the number is returned. If not, it returns -10.
-     */
-    public int overlapping_lineSegment_search(int i0) {
-        for (int i = 1; i <= numLineSegments; i++) {
-            if (i != i0) {
-                if (OritaCalc.line_intersect_decide(get(i), get(i0)) == LineSegment.Intersection.PARALLEL_EQUAL_31) {
-                    return i;
-                }
-            }
-        }
-        return -10;
     }
 }
