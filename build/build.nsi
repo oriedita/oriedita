@@ -13,16 +13,16 @@ SilentInstall silent
 RequestExecutionLevel user
 ShowInstDetails hide
 
-OutFile "..\target\Orihime-${VERSION}.exe"
-Icon "orihime.ico"
+OutFile "..\target\OrigamiEditor-${VERSION}.exe"
+Icon "origami-editor.ico"
 VIProductVersion 1.0.0.00000
-VIAddVersionKey ProductName "Orihime"
+VIAddVersionKey ProductName "Origami Editor"
 VIAddVersionKey LegalCopyright "Copyright (c) 2021"
-VIAddVersionKey FileDescription "Orihime"
+VIAddVersionKey FileDescription "Origami Editor"
 VIAddVersionKey FileVersion 1.0.0.00000
 VIAddVersionKey ProductVersion "1.0 / OpenJRE 15.0.1 (x64)"
-VIAddVersionKey InternalName "Orihime"
-VIAddVersionKey OriginalFilename "Orihime.exe"
+VIAddVersionKey InternalName "origami-editor"
+VIAddVersionKey OriginalFilename "OrigamiEditor.exe"
 
 Section
   SetOverwrite off
@@ -32,9 +32,9 @@ Section
 
   InitPluginsDir
   SetOutPath $PluginsDir
-  File "..\target\orihime-${VERSION}.jar"
+  File "..\target\origami-editor-${VERSION}.jar"
   SetOutPath $TEMP
   ${GetParameters} $R0
-  nsExec::Exec '"$TEMP\jre\bin\java.exe" -jar $PluginsDir\orihime-${VERSION}.jar $R0'
+  nsExec::Exec '"$TEMP\jre\bin\java.exe" -jar $PluginsDir\origami-editor-${VERSION}.jar $R0'
   RMDir /r $PluginsDir
 SectionEnd

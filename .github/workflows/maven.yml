@@ -27,5 +27,5 @@ jobs:
       
     - uses: actions/upload-artifact@v2
       with:
-        name: orihime-jar
-        path: target/orihime-*.jar
+        name: origami-editor-jar
+        path: target/origami-editor-*.jar

@@ -11,7 +11,7 @@ echo $project_version > ../target/version
 rm -r ../target/jre 2> $null
 
 # Read dependencies of jar
-$deps = jdeps --print-module-deps ../target/orihime-$project_version.jar
+$deps = jdeps --print-module-deps ../target/origami-editor-$project_version.jar
 
 # Create a slimmed down jre
 jlink --add-modules $deps --output ../target/jre --strip-debug --compress 2 --no-header-files --no-man-pages

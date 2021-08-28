@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/orihime.iml" filepath="$PROJECT_DIR$/orihime.iml" />
+      <module fileurl="file://$PROJECT_DIR$/origami-editor.iml" filepath="$PROJECT_DIR$/origami-editor.iml" />
     </modules>
   </component>
 </project>

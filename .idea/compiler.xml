@@ -6,11 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="orihime" />
+        <module name="origami-editor" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="orihime" target="11" />
+      <module name="origami-editor" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

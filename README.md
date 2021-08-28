@@ -1,16 +1,12 @@
-# Orihime オリヒメ - Translation
+# Origami Editor
 
-_This a fork of Orihime and not affiliated with the original version._
-
-Orihime is an awesome tool that is used by origami designers to design new origami models. Orihime is developed by MT777 and can be downloaded from  http://mt777.html.xdomain.jp/. Undertrox developed orihimeMod, which adds some extra features to the Orihime software, this version can be downloaded from https://github.com/undertrox/orihimeMod
+_This a fork of Orihime オリヒメ and not affiliated with the original version._ Orihime is an awesome tool that is used by origami designers to design new origami models. Orihime is developed by MT777 and can be downloaded from  http://mt777.html.xdomain.jp/. Undertrox developed orihimeMod, which adds some extra features to the Orihime software, this version can be downloaded from https://github.com/undertrox/orihimeMod
 
 This is an effort to translate the Orihime source code to English. No functional changes are made to the source code and this repository should build a version of Orihime which is as close as possible to the `orihime3.060.jar` file distributed by MT777 on http://mt777.html.xdomain.jp/
 
 The goal of this project is to understand the underlying algorithms used in Orihime.
 
 Be warned that the translations in this repository can be quite poor or in some cases completely wrong. When in doubt a logical name was used. Comments were translated using online translation services and as such can contain weird structured sentences.
-
-The translation is focused around the `FoldedFigure` (`Oriagari_Zu`) class which contains the basis of the folding algorithm.
 
 # Changes made
 
@@ -37,7 +33,7 @@ mvn clean package
 After compiling and packaging the jar is placed in the `target` directory.
 
 ```bash
-java -jar ./target/orihime-3.060-SNAPSHOT.jar
+java -jar ./target/origami-editor-3.060-SNAPSHOT.jar
 ```
 
 ## Creating a  Windows executable

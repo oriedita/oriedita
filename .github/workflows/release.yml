@@ -23,4 +23,4 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: target/orihime-*.jar
+          files: target/origami-editor-*.jar
