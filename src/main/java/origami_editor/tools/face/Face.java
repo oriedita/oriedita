@@ -1,4 +1,4 @@
-package origami_editor.tools.men;
+package origami_editor.tools.face;
 
 import origami_editor.graphic2d.point.Point;
 import origami_editor.tools.pointset.PointSet;
