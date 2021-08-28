@@ -1,13 +1,19 @@
-name: Release Jar
+name: Release Jar and exe
 
 on:
   push:
     tags:
       - "v*.*.*"
-
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  create_installer:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os:
+          - 'windows-latest'
+#          - 'ubuntu-20.04'
+#          - 'macos-latest'
 
     steps:
       - uses: actions/checkout@v2
@@ -17,10 +23,27 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           cache: maven
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
+
+      - name: 'Install makensis (apt)'
+        run: sudo apt update && sudo apt install -y nsis nsis-pluginapi
+        if: ${{ matrix.os == 'ubuntu-20.04' }}
+
+      - name: 'Install makensis (homebrew)'
+        run: brew update && brew install makensis
+        if: ${{ matrix.os == 'macos-latest' }}
+
+      - name: 'Set Plugin permissions'
+        run: sudo chown -R $(whoami) /usr/share/nsis/Plugins/
+        if: ${{ matrix.os == 'ubuntu-20.04' }}
+
+      - name: Create nsis installer
+        uses: joncloud/makensis-action@v3.3
+        with:
+          script-file: build/build.nsi
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: target/origami-editor-*.jar
+          files: |
+            target/origami-editor-*.exe
+            target/origami-editor-*.jar

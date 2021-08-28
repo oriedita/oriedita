@@ -13,7 +13,7 @@ SilentInstall silent
 RequestExecutionLevel user
 ShowInstDetails hide
 
-OutFile "..\target\OrigamiEditor-${VERSION}.exe"
+OutFile "..\target\origami-editor-${VERSION}.exe"
 Icon "origami-editor.ico"
 VIProductVersion 1.0.0.00000
 VIAddVersionKey ProductName "Origami Editor"
@@ -22,7 +22,7 @@ VIAddVersionKey FileDescription "Origami Editor"
 VIAddVersionKey FileVersion 1.0.0.00000
 VIAddVersionKey ProductVersion "1.0 / OpenJRE 15.0.1 (x64)"
 VIAddVersionKey InternalName "origami-editor"
-VIAddVersionKey OriginalFilename "OrigamiEditor.exe"
+VIAddVersionKey OriginalFilename "origami-editor.exe"
 
 Section
   SetOverwrite off

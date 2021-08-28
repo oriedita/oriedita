@@ -40,7 +40,7 @@ java -jar ./target/origami-editor-3.060-SNAPSHOT.jar
 
 To create a Windows executable NSIS is used, other required tools are PowerShell (pwsh.exe) and a JDK which is in the path.
 
-Execute `build/build.nsi` using `makensis` or the NSIS application. A file called `Orihime-<version>.exe`, this file contains a Java installation and is portable.
+Execute `build/build.nsi` using `makensis` or the NSIS application. A file called `origami-editor-<version>.exe`, this file contains a Java installation and is portable.
 
 ```bash
 makensis build/build.nsi
