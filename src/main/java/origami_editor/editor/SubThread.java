@@ -1,6 +1,6 @@
 package origami_editor.editor;
 
-import origami_editor.editor.oriagari_zu.FoldedFigure;
+import origami_editor.editor.folded_figure.FoldedFigure;
 
 class SubThread extends Thread {
     //Variable declaration

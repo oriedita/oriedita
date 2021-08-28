@@ -2,7 +2,7 @@ package origami_editor.editor;
 
 import origami_editor.graphic2d.point.Point;
 import origami_editor.record.memo.Memo;
-import origami_editor.tools.bou.Line;
+import origami_editor.tools.line.Line;
 
 import java.util.*;
 

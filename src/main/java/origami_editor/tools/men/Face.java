@@ -1,7 +1,7 @@
 package origami_editor.tools.men;
 
 import origami_editor.graphic2d.point.Point;
-import origami_editor.tools.pointstore.PointSet;
+import origami_editor.tools.pointset.PointSet;
 
 import java.util.*;
 

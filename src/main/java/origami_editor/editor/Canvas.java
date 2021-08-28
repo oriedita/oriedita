@@ -2,8 +2,8 @@ package origami_editor.editor;
 
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.point.Point;
-import origami_editor.editor.egaki_syokunin.Drawing_Worker;
-import origami_editor.editor.oriagari_zu.FoldedFigure;
+import origami_editor.editor.drawing_worker.Drawing_Worker;
+import origami_editor.editor.folded_figure.FoldedFigure;
 
 import javax.swing.*;
 import java.awt.*;

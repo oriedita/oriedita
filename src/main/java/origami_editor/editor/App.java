@@ -1,17 +1,17 @@
 package origami_editor.editor;
 
-import origami_editor.editor.egaki_syokunin.Drawing_Worker;
-import origami_editor.editor.oriagari_zu.FoldedFigure;
-import origami_editor.editor.oriagari_zu.FoldedFigure_01;
+import origami_editor.editor.drawing_worker.Drawing_Worker;
+import origami_editor.editor.folded_figure.FoldedFigure;
+import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.graphic2d.grid.Grid;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
 import origami_editor.graphic2d.point.Point;
 import origami_editor.record.memo.Memo;
-import origami_editor.record.moji_sousa.StringOp;
+import origami_editor.record.string_op.StringOp;
 import origami_editor.tools.background_camera.Background_camera;
 import origami_editor.tools.camera.Camera;
-import origami_editor.tools.keijiban.BulletinBoard;
+import origami_editor.tools.bulletinboard.BulletinBoard;
 import origami_editor.tools.linestore.LineSegmentSet;
 
 import javax.imageio.ImageIO;

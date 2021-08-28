@@ -3,8 +3,8 @@ package origami_editor.graphic2d.polygon;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
 import origami_editor.graphic2d.point.Point;
-import origami_editor.seiretu.narabebako.SortingBox_int_double;
-import origami_editor.seiretu.narabebako.int_double;
+import origami_editor.sortingbox.SortingBox_int_double;
+import origami_editor.sortingbox.int_double;
 
 import java.awt.*;
 
