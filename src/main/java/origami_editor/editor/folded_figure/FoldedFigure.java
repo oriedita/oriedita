@@ -33,7 +33,7 @@ public class FoldedFigure {
     public EstimationOrder estimationOrder = EstimationOrder.ORDER_0;//Instructions on how far to perform folding estimation
     public EstimationStep estimationStep = EstimationStep.STEP_0;//Display of how far the folding estimation has been completed
     //Variable to store the value for display
-    public int ip1_anotherOverlapValid = -1;// At the time of initial setting of the upper and lower front craftsmen, the front and back sides are the same after folding
+    public HierarchyList_Worker.HierarchyListStatus ip1_anotherOverlapValid = HierarchyList_Worker.HierarchyListStatus.UNKNOWN_N1;// At the time of initial setting of the upper and lower front craftsmen, the front and back sides are the same after folding
     // A variable that stores 0 if there is an error of being adjacent, and 1000 if there is no error.
     // The initial value here can be any number other than (0 or 1000).
     public int ip2_possibleOverlap = -1;// When the top and bottom craftsmen look for a foldable stacking method,
@@ -615,10 +615,10 @@ public class FoldedFigure {
         // Also, use the information on the positional relationship of the surface when folded, which cp_worker1 has.
         System.out.println("＜＜＜＜＜oritatami_suitei_04()_____上下表職人ct_workerが面(折りたたむ前の展開図の面のこと)の上下表を作る。");
 
-        ip1_anotherOverlapValid = 0;
+        ip1_anotherOverlapValid = HierarchyList_Worker.HierarchyListStatus.UNKNOWN_0;
         findAnotherOverlapValid = false;
         ip1_anotherOverlapValid = ct_worker.HierarchyList_configure(cp_worker1, cp_worker2.get());   //ip1_anotherOverlapValid = A variable that stores 0 if there is an error that the front and back sides are adjacent after folding, and 1000 if there is no error.
-        if (ip1_anotherOverlapValid == 1000) {
+        if (ip1_anotherOverlapValid == HierarchyList_Worker.HierarchyListStatus.UNKNOWN_1000) {
             findAnotherOverlapValid = true;
         }
         discovered_fold_cases = 0;

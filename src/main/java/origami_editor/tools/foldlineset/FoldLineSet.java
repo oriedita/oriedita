@@ -921,7 +921,7 @@ public class FoldLineSet {
     }
 
     public void select(Point p1, Point p2, Point p3) {
-        origami_editor.graphic2d.polygon.Polygon triangle = new origami_editor.graphic2d.polygon.Polygon(3);
+        Polygon triangle = new Polygon(3);
         triangle.set(1, p1);
         triangle.set(2, p2);
         triangle.set(3, p3);
@@ -936,7 +936,7 @@ public class FoldLineSet {
     }
 
     public void select(Point p1, Point p2, Point p3, Point p4) {
-        origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
+        Polygon sikaku = new Polygon(4);
         sikaku.set(1, p1);
         sikaku.set(2, p2);
         sikaku.set(3, p3);
@@ -954,7 +954,7 @@ public class FoldLineSet {
     }
 
     public void unselect(Point p1, Point p2, Point p3) {
-        origami_editor.graphic2d.polygon.Polygon sankaku = new origami_editor.graphic2d.polygon.Polygon(3);
+        Polygon sankaku = new Polygon(3);
         sankaku.set(1, p1);
         sankaku.set(2, p2);
         sankaku.set(3, p3);
@@ -974,7 +974,7 @@ public class FoldLineSet {
 
     public void unselect(Point p1, Point p2, Point p3, Point p4) {
         //Ten p1 = new Ten();   p1.set(si.geta());
-        origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
+        Polygon sikaku = new Polygon(4);
         sikaku.set(1, p1);
         sikaku.set(2, p2);
         sikaku.set(3, p3);
@@ -993,7 +993,7 @@ public class FoldLineSet {
     public int MV_change(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
-        origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
+        Polygon sikaku = new Polygon(4);
         sikaku.set(1, p1);
         sikaku.set(2, p2);
         sikaku.set(3, p3);
@@ -1017,10 +1017,10 @@ public class FoldLineSet {
     }
 
     //--------------------------------
-    public int M_nisuru(Point p1, Point p2, Point p3, Point p4) {
+    public int insideToMountain(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
-        origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
+        Polygon sikaku = new Polygon(4);
         sikaku.set(1, p1);
         sikaku.set(2, p2);
         sikaku.set(3, p3);
@@ -1038,10 +1038,10 @@ public class FoldLineSet {
     }
 
     //--------------------------------
-    public int V_nisuru(Point p1, Point p2, Point p3, Point p4) {
+    public int insideToValley(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
-        origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
+        Polygon sikaku = new Polygon(4);
         sikaku.set(1, p1);
         sikaku.set(2, p2);
         sikaku.set(3, p3);
@@ -1059,10 +1059,10 @@ public class FoldLineSet {
     }
 
 
-    public int E_nisuru(Point p1, Point p2, Point p3, Point p4) {
+    public int insideToEdge(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
-        origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
+        Polygon sikaku = new Polygon(4);
         sikaku.set(1, p1);
         sikaku.set(2, p2);
         sikaku.set(3, p3);
@@ -1084,10 +1084,10 @@ public class FoldLineSet {
 //--------------------------------
 
     //--------------------------------
-    public int HK_nisuru(Point p1, Point p2, Point p3, Point p4) {
+    public int insideToAux(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
-        origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
+        Polygon sikaku = new Polygon(4);
         sikaku.set(1, p1);
         sikaku.set(2, p2);
         sikaku.set(3, p3);
@@ -1131,7 +1131,7 @@ public class FoldLineSet {
 
     }
 
-    public int D_nisuru_line(LineSegment s_step1, String Dousa_mode) {
+    public int deleteInsideLine(LineSegment s_step1, String Dousa_mode) {
         //"l"  lXは小文字のエル。Senbun s_step1と重複する部分のある線分を削除するモード。
         //"lX" lXは小文字のエルと大文字のエックス。Senbun s_step1と重複する部分のある線分やX交差する線分を削除するモード。
         int i_r = 0;//たくさんある折線のうち、一本でも削除すれば1、1本も削除しないなら0。
@@ -1203,9 +1203,9 @@ public class FoldLineSet {
     }
 
     //-----------------------wwwwwwwwwwwwwww---------
-    public int D_nisuru(Point p1, Point p2, Point p3, Point p4) {
+    public int deleteInside(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
-        origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
+        Polygon sikaku = new Polygon(4);
         sikaku.set(1, p1);
         sikaku.set(2, p2);
         sikaku.set(3, p3);
@@ -1290,9 +1290,9 @@ public class FoldLineSet {
     }
 
     //--------------------------------
-    public int D_nisuru0(Point p1, Point p2, Point p3, Point p4) {//Delete only the polygonal line
+    public int deleteInside_foldingLine(Point p1, Point p2, Point p3, Point p4) {//Delete only the polygonal line
         int i_r = 0;
-        origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
+        Polygon sikaku = new Polygon(4);
         sikaku.set(1, p1);
         sikaku.set(2, p2);
         sikaku.set(3, p3);
@@ -1336,9 +1336,9 @@ public class FoldLineSet {
         return i_r;
     }
 
-    public int D_nisuru2(Point p1, Point p2, Point p3, Point p4) {//折線のみ削除
+    public int deleteInside_edge(Point p1, Point p2, Point p3, Point p4) {//Delete only the polygonal line
         int i_r = 0;
-        origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
+        Polygon sikaku = new Polygon(4);
         sikaku.set(1, p1);
         sikaku.set(2, p2);
         sikaku.set(3, p3);
@@ -1379,9 +1379,9 @@ public class FoldLineSet {
         return i_r;
     }
 
-    public int D_nisuru3(Point p1, Point p2, Point p3, Point p4) {//Delete only auxiliary live line
+    public int deleteInside_aux(Point p1, Point p2, Point p3, Point p4) {//Delete only auxiliary live line
         int i_r = 0;
-        origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
+        Polygon sikaku = new Polygon(4);
         sikaku.set(1, p1);
         sikaku.set(2, p2);
         sikaku.set(3, p3);
@@ -1467,7 +1467,7 @@ public class FoldLineSet {
     //--------------------------------
     public int chenge_property_in_4kakukei(Point p1, Point p2, Point p3, Point p4, Color sen_tokutyuu_color) {//Change properties such as the color of circles and auxiliary live lines inside a quadrangle
         int i_r = 0;
-        origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
+        Polygon sikaku = new Polygon(4);
         sikaku.set(1, p1);
         sikaku.set(2, p2);
         sikaku.set(3, p3);
@@ -4572,7 +4572,7 @@ public class FoldLineSet {
         return dm;
     }
 
-    public void select_Takakukei(origami_editor.graphic2d.polygon.Polygon polygon, String Dousa_mode) {
+    public void select_Takakukei(Polygon polygon, String Dousa_mode) {
         //select_lX,unselect_lX
         //"lX" lXは小文字のエルと大文字のエックス。Senbun s_step1と重複する部分のある線分やX交差する線分を対象にするモード。
 
@@ -4582,12 +4582,12 @@ public class FoldLineSet {
             i_kono_foldLine_wo_kaeru = false;
             LineSegment s = getLineSegment(i);
 
-            origami_editor.graphic2d.polygon.Polygon.Intersection intersection = polygon.inside_outside_check(s);
+            Polygon.Intersection intersection = polygon.inside_outside_check(s);
 
-            if (intersection == origami_editor.graphic2d.polygon.Polygon.Intersection.BORDER) {
+            if (intersection == Polygon.Intersection.BORDER) {
                 i_kono_foldLine_wo_kaeru = true;
             }
-            if (intersection == origami_editor.graphic2d.polygon.Polygon.Intersection.BORDER_INSIDE) {
+            if (intersection == Polygon.Intersection.BORDER_INSIDE) {
                 i_kono_foldLine_wo_kaeru = true;
             }
             if (intersection == Polygon.Intersection.INSIDE) {

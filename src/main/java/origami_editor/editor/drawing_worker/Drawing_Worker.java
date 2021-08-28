@@ -4343,7 +4343,7 @@ public class Drawing_Worker {
         //四角枠内の削除 //p19_1はselectの最初のTen。この条件は最初のTenと最後の点が遠いので、四角を発生させるということ。
         if (p19_1.distance(p0) > 0.000001) {
             if ((i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) || (i_foldLine_additional == FoldLineAdditionalInputMode.BOTH_4)) { //折線の削除	//D_nisuru(p19_1,p0)で折線だけが削除される。
-                if (D_nisuru0(p19_1, p0) != 0) {
+                if (deleteInside_foldingLine(p19_1, p0) != 0) {
                     circle_organize();
                     record();
                 }
@@ -4351,7 +4351,7 @@ public class Drawing_Worker {
 
 
             if (i_foldLine_additional == FoldLineAdditionalInputMode.BLACK_LINE_2) {  //Delete only the black polygonal line
-                if (D_nisuru2(p19_1, p0) != 0) {
+                if (deleteInside_edge(p19_1, p0) != 0) {
                     circle_organize();
                     record();
                 }
@@ -4359,14 +4359,14 @@ public class Drawing_Worker {
 
 
             if ((i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LIVE_LINE_3) || (i_foldLine_additional == FoldLineAdditionalInputMode.BOTH_4)) {  //Auxiliary live line // Currently it is recorded for undo even if it is not deleted 20161218
-                if (D_nisuru3(p19_1, p0) != 0) {
+                if (deleteInside_aux(p19_1, p0) != 0) {
                     circle_organize();
                     record();
                 }
             }
 
             if ((i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) || (i_foldLine_additional == FoldLineAdditionalInputMode.BOTH_4)) { //補助絵線	//現状では削除しないときもUNDO用に記録されてしまう20161218
-                if (D_nisuru1(p19_1, p0) != 0) {
+                if (deleteInside(p19_1, p0) != 0) {
                     record();
                 }
             }
@@ -4392,7 +4392,7 @@ public class Drawing_Worker {
 
 //--------------------
 
-    public int D_nisuru0(Point p0a, Point p0b) {
+    public int deleteInside_foldingLine(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -4410,10 +4410,10 @@ public class Drawing_Worker {
         p_c.set(camera.TV2object(p0_c));
         p_d.set(camera.TV2object(p0_d));
 
-        return foldLines.D_nisuru0(p_a, p_b, p_c, p_d);
+        return foldLines.deleteInside_foldingLine(p_a, p_b, p_c, p_d);
     }
 
-    public int D_nisuru2(Point p0a, Point p0b) {
+    public int deleteInside_edge(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -4430,10 +4430,10 @@ public class Drawing_Worker {
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
         p_d.set(camera.TV2object(p0_d));
-        return foldLines.D_nisuru2(p_a, p_b, p_c, p_d);
+        return foldLines.deleteInside_edge(p_a, p_b, p_c, p_d);
     }
 
-    public int D_nisuru3(Point p0a, Point p0b) {
+    public int deleteInside_aux(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -4450,7 +4450,7 @@ public class Drawing_Worker {
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
         p_d.set(camera.TV2object(p0_d));
-        return foldLines.D_nisuru3(p_a, p_b, p_c, p_d);
+        return foldLines.deleteInside_aux(p_a, p_b, p_c, p_d);
     }
 
     public int chenge_property_in_4kakukei(Point p0a, Point p0b) {
@@ -4473,7 +4473,7 @@ public class Drawing_Worker {
         return foldLines.chenge_property_in_4kakukei(p_a, p_b, p_c, p_d, circle_custom_color);
     }
 
-    public int D_nisuru1(Point p0a, Point p0b) {
+    public int deleteInside(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -4490,7 +4490,7 @@ public class Drawing_Worker {
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
         p_d.set(camera.TV2object(p0_d));
-        return auxLines.D_nisuru(p_a, p_b, p_c, p_d);
+        return auxLines.deleteInside(p_a, p_b, p_c, p_d);
     }
 
     //59 59 59 59 59 59 59 59 59 59
@@ -4812,23 +4812,23 @@ public class Drawing_Worker {
                     for (int i = 1; i <= nbox.getTotal(); i++) {//iは角加減値を求める最初の折線のid
                         //折線が奇数の頂点周りの角加減値を2.0で割ると角加減値の最初折線と、折り畳み可能にするための追加の折線との角度になる。
                         double kakukagenti = 0.0;
-                        int tikai_orisen_jyunban;
-                        int tooi_orisen_jyunban;
+                        int tikai_foldLine_jyunban;
+                        int tooi_foldLine_jyunban;
                         for (int k = 1; k <= nbox.getTotal(); k++) {//kは角加減値を求める角度の順番
-                            tikai_orisen_jyunban = i + k - 1;
-                            if (tikai_orisen_jyunban > nbox.getTotal()) {
-                                tikai_orisen_jyunban = tikai_orisen_jyunban - nbox.getTotal();
+                            tikai_foldLine_jyunban = i + k - 1;
+                            if (tikai_foldLine_jyunban > nbox.getTotal()) {
+                                tikai_foldLine_jyunban = tikai_foldLine_jyunban - nbox.getTotal();
                             }
-                            tooi_orisen_jyunban = i + k;
-                            if (tooi_orisen_jyunban > nbox.getTotal()) {
-                                tooi_orisen_jyunban = tooi_orisen_jyunban - nbox.getTotal();
+                            tooi_foldLine_jyunban = i + k;
+                            if (tooi_foldLine_jyunban > nbox.getTotal()) {
+                                tooi_foldLine_jyunban = tooi_foldLine_jyunban - nbox.getTotal();
                             }
 
-                            double add_kakudo = OritaCalc.angle_between_0_360(nbox.getDouble(tooi_orisen_jyunban) - nbox.getDouble(tikai_orisen_jyunban));
+                            double add_angle = OritaCalc.angle_between_0_360(nbox.getDouble(tooi_foldLine_jyunban) - nbox.getDouble(tikai_foldLine_jyunban));
                             if (k % 2 == 1) {
-                                kakukagenti = kakukagenti + add_kakudo;
+                                kakukagenti = kakukagenti + add_angle;
                             } else if (k % 2 == 0) {
-                                kakukagenti = kakukagenti - add_kakudo;
+                                kakukagenti = kakukagenti - add_angle;
                             }
                         }
 
@@ -4838,16 +4838,16 @@ public class Drawing_Worker {
 
                         //System.out.println("kakukagenti="+kakukagenti);
                         //チェック用に角加減値の最初の角度の中にkakukagenti/2.0があるかを確認する
-                        tikai_orisen_jyunban = i;
-                        if (tikai_orisen_jyunban > nbox.getTotal()) {
-                            tikai_orisen_jyunban = tikai_orisen_jyunban - nbox.getTotal();
+                        tikai_foldLine_jyunban = i;
+                        if (tikai_foldLine_jyunban > nbox.getTotal()) {
+                            tikai_foldLine_jyunban = tikai_foldLine_jyunban - nbox.getTotal();
                         }
-                        tooi_orisen_jyunban = i + 1;
-                        if (tooi_orisen_jyunban > nbox.getTotal()) {
-                            tooi_orisen_jyunban = tooi_orisen_jyunban - nbox.getTotal();
+                        tooi_foldLine_jyunban = i + 1;
+                        if (tooi_foldLine_jyunban > nbox.getTotal()) {
+                            tooi_foldLine_jyunban = tooi_foldLine_jyunban - nbox.getTotal();
                         }
 
-                        double add_kakudo_1 = OritaCalc.angle_between_0_360(nbox.getDouble(tooi_orisen_jyunban) - nbox.getDouble(tikai_orisen_jyunban));
+                        double add_kakudo_1 = OritaCalc.angle_between_0_360(nbox.getDouble(tooi_foldLine_jyunban) - nbox.getDouble(tikai_foldLine_jyunban));
                         if (nbox.getTotal() == 1) {
                             add_kakudo_1 = 360.0;
                         }
@@ -6093,7 +6093,7 @@ public class Drawing_Worker {
             if (p.distance(closest_point) <= d_decision_width) {
                 if (line_step[1].getLength() > 0.00000001) {
 
-                    foldLines.D_nisuru_line(line_step[1], "l");//lは小文字のエル
+                    foldLines.deleteInsideLine(line_step[1], "l");//lは小文字のエル
 
                     record();
 
@@ -6135,7 +6135,7 @@ public class Drawing_Worker {
         }
         if (line_step[1].getLength() > 0.00000001) {
             //やりたい動作はここに書く
-            foldLines.D_nisuru_line(line_step[1], "lX");//lXは小文字のエルと大文字のエックス
+            foldLines.deleteInsideLine(line_step[1], "lX");//lXは小文字のエルと大文字のエックス
             record();
         }
     }
@@ -7522,7 +7522,7 @@ public class Drawing_Worker {
         i_drawing_stage = 0;
 
         if (p19_1.distance(p0) > 0.000001) {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
-            if (M_nisuru(p19_1, p0) != 0) {
+            if (insideToMountain(p19_1, p0) != 0) {
                 fix2(0.001, 0.5);
                 record();
             }
@@ -7540,7 +7540,7 @@ public class Drawing_Worker {
     }
 
     //--------------------
-    public int M_nisuru(Point p0a, Point p0b) {
+    public int insideToMountain(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -7557,7 +7557,7 @@ public class Drawing_Worker {
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
         p_d.set(camera.TV2object(p0_d));
-        return foldLines.M_nisuru(p_a, p_b, p_c, p_d);
+        return foldLines.insideToMountain(p_a, p_b, p_c, p_d);
     }
 
     //---------------------
@@ -7577,7 +7577,7 @@ public class Drawing_Worker {
         i_drawing_stage = 0;
 
         if (p19_1.distance(p0) > 0.000001) {
-            if (V_nisuru(p19_1, p0) != 0) {
+            if (insideToValley(p19_1, p0) != 0) {
                 fix2(0.001, 0.5);
                 record();
             }
@@ -7592,7 +7592,7 @@ public class Drawing_Worker {
         }
     }
 
-    public int V_nisuru(Point p0a, Point p0b) {
+    public int insideToValley(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -7609,7 +7609,7 @@ public class Drawing_Worker {
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
         p_d.set(camera.TV2object(p0_d));
-        return foldLines.V_nisuru(p_a, p_b, p_c, p_d);
+        return foldLines.insideToValley(p_a, p_b, p_c, p_d);
     }
 
     //---------------------
@@ -7629,7 +7629,7 @@ public class Drawing_Worker {
         i_drawing_stage = 0;
 
         if (p19_1.distance(p0) > 0.000001) {
-            if (E_nisuru(p19_1, p0) != 0) {
+            if (insideToEdge(p19_1, p0) != 0) {
                 fix2(0.001, 0.5);
                 record();
             }
@@ -7646,7 +7646,7 @@ public class Drawing_Worker {
         }
     }
 
-    public int E_nisuru(Point p0a, Point p0b) {
+    public int insideToEdge(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -7663,7 +7663,7 @@ public class Drawing_Worker {
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
         p_d.set(camera.TV2object(p0_d));
-        return foldLines.E_nisuru(p_a, p_b, p_c, p_d);
+        return foldLines.insideToEdge(p_a, p_b, p_c, p_d);
     }
 
     //60 60 60 60 60
@@ -7682,7 +7682,7 @@ public class Drawing_Worker {
         i_drawing_stage = 0;
 
         if (p19_1.distance(p0) > 0.000001) {
-            if (HK_nisuru(p19_1, p0) != 0) {
+            if (insideToAux(p19_1, p0) != 0) {
                 record();
             }//この関数は不完全なのでまだ未公開20171126
         }
@@ -7708,7 +7708,7 @@ public class Drawing_Worker {
     }
 
     //--------------------
-    public int HK_nisuru(Point p0a, Point p0b) {
+    public int insideToAux(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -7725,7 +7725,7 @@ public class Drawing_Worker {
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
         p_d.set(camera.TV2object(p0_d));
-        return foldLines.HK_nisuru(p_a, p_b, p_c, p_d);
+        return foldLines.insideToAux(p_a, p_b, p_c, p_d);
     }
 
     public LineSegment get_s_step(int i) {

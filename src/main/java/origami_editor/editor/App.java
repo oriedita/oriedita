@@ -3,6 +3,7 @@ package origami_editor.editor;
 import origami_editor.editor.drawing_worker.Drawing_Worker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
+import origami_editor.editor.hierarchylist_worker.HierarchyList_Worker;
 import origami_editor.editor.layout.WrapLayout;
 import origami_editor.graphic2d.grid.Grid;
 import origami_editor.graphic2d.linesegment.LineSegment;
@@ -117,8 +118,8 @@ public class App extends JFrame implements ActionListener {
     String frame_title;//フレームのタイトルの全体
     Drawing_Worker.FoldLineAdditionalInputMode foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
     AngleSystemInputType angle_system_input_id = AngleSystemInputType.DEG_1;//Specifying the input method of the angle system angle_system_input_id = AngleSystemInputType.DEG_1 specifies the line segment, 2 specifies 2 points
-    int id_kakudo_kei_a = 12;//角度系の180度を割る数の格納_a
-    int id_kakudo_kei_b = 8;//角度系の180度を割る数の格納_b
+    int id_angle_system_a = 12;//角度系の180度を割る数の格納_a
+    int id_angle_system_b = 8;//Storage of numbers that divide the angle system by 180 degrees_b
     JButton Button0b;                    //対称性の指定に用いる
     JButton Button_another_solution;                    //操作の指定に用いる（追加推定一個だけ）
     JButton Button_AS_matome;                    //操作の指定に用いる（追加推定100個）
@@ -133,12 +134,12 @@ public class App extends JFrame implements ActionListener {
     JButton Button_Col_yellow;                    //補助線2の色の指定に用いる
     JButton Button_background_Lock_on;//背景のロックオン
     JButton Button_background_kirikae;//背景を表示するかどうかの指定
-    JButton Button_kakudo_kei_a;            //角度系で180を割る数を格納_a
-    JButton Button_kakudo_kei_b;            //角度系で180を割る数を格納_b
-    JButton Button_M_nisuru;                    //元がどんな種類の折線でも、山折りにする
-    JButton Button_V_nisuru;                    //元がどんな種類の折線でも、谷折りにする
-    JButton Button_E_nisuru;                    //元がどんな種類の折線でも、境界線もしくは山谷未設定線にする
-    JButton Button_HK_nisuru;                    //元がどんな種類の折線でも、補助活線にする
+    JButton Button_angle_system_a;            //角度系で180を割る数を格納_a
+    JButton Button_angle_system_b;            //角度系で180を割る数を格納_b
+    JButton Button_to_mountain;                    //元がどんな種類の折線でも、山折りにする
+    JButton Buton_to_valley;                    //元がどんな種類の折線でも、谷折りにする
+    JButton Button_to_edge;                    //元がどんな種類の折線でも、境界線もしくは山谷未設定線にする
+    JButton Button_to_aux_live;                    //元がどんな種類の折線でも、補助活線にする
     JButton Button_senbun_henkan2;//線分の色を赤から青、青から赤に変換
     JTextField text2;
     int foldLineDividingNumber = 1;//free折線入力で、折線の等分割されている数
@@ -2655,13 +2656,13 @@ public class App extends JFrame implements ActionListener {
         pnlw.add(pnlw8);
 
 // *******西***********************************************************************
-        Button_M_nisuru = new JButton(" ");
-        Button_M_nisuru.addActionListener(e -> {
+        Button_to_mountain = new JButton(" ");
+        Button_to_mountain.addActionListener(e -> {
             img_explanation_fname = "qqq/M_nisuru.png";
             updateExplanation();
             Button_reset();
-            Button_M_nisuru.setForeground(Color.black);
-            Button_M_nisuru.setBackground(Color.red);
+            Button_to_mountain.setForeground(Color.black);
+            Button_to_mountain.setBackground(Color.red);
             //icol=1;es1.setcolor(icol);
             i_mouse_modeA = MouseMode.CREASE_MAKE_MOUNTAIN_23;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
@@ -2672,24 +2673,24 @@ public class App extends JFrame implements ActionListener {
 
 
         });
-        pnlw8.add(Button_M_nisuru);
-        Button_M_nisuru.setBackground(Color.white);
-        Button_M_nisuru.setMargin(new Insets(0, 0, 0, 0));
+        pnlw8.add(Button_to_mountain);
+        Button_to_mountain.setBackground(Color.white);
+        Button_to_mountain.setMargin(new Insets(0, 0, 0, 0));
 
-        Button_M_nisuru.setIcon(createImageIcon(
+        Button_to_mountain.setIcon(createImageIcon(
                 "ppp/M_nisuru.png"));
 
-//Button_M_nisuru.setHorizontalTextPosition(JButton.RIGHT);
+//Button_to_mountain.setHorizontalTextPosition(JButton.RIGHT);
 
 
 // ******************************************************************************
-        Button_V_nisuru = new JButton(" ");
-        Button_V_nisuru.addActionListener(e -> {
+        Buton_to_valley = new JButton(" ");
+        Buton_to_valley.addActionListener(e -> {
             img_explanation_fname = "qqq/V_nisuru.png";
             updateExplanation();
             Button_reset();
-            Button_V_nisuru.setForeground(Color.black);
-            Button_V_nisuru.setBackground(Color.blue);
+            Buton_to_valley.setForeground(Color.black);
+            Buton_to_valley.setBackground(Color.blue);
             //icol=1;es1.setcolor(icol);
             i_mouse_modeA = MouseMode.CREASE_MAKE_VALLEY_24;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
@@ -2698,20 +2699,20 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        pnlw8.add(Button_V_nisuru);
-        Button_V_nisuru.setBackground(Color.white);
-        Button_V_nisuru.setMargin(new Insets(0, 0, 0, 0));
+        pnlw8.add(Buton_to_valley);
+        Buton_to_valley.setBackground(Color.white);
+        Buton_to_valley.setMargin(new Insets(0, 0, 0, 0));
 
-        Button_V_nisuru.setIcon(createImageIcon(
+        Buton_to_valley.setIcon(createImageIcon(
                 "ppp/V_nisuru.png"));
 // ******************************************************************************
-        Button_E_nisuru = new JButton(" ");
-        Button_E_nisuru.addActionListener(e -> {
+        Button_to_edge = new JButton(" ");
+        Button_to_edge.addActionListener(e -> {
             img_explanation_fname = "qqq/E_nisuru.png";
             updateExplanation();
             Button_reset();
-            Button_E_nisuru.setForeground(Color.white);
-            Button_E_nisuru.setBackground(Color.black);
+            Button_to_edge.setForeground(Color.white);
+            Button_to_edge.setBackground(Color.black);
             //icol=1;es1.setcolor(icol);
             i_mouse_modeA = MouseMode.CREASE_MAKE_EDGE_25;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
@@ -2720,22 +2721,22 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        pnlw8.add(Button_E_nisuru);
-        Button_E_nisuru.setBackground(Color.white);
-        Button_E_nisuru.setMargin(new Insets(0, 0, 0, 0));
+        pnlw8.add(Button_to_edge);
+        Button_to_edge.setBackground(Color.white);
+        Button_to_edge.setMargin(new Insets(0, 0, 0, 0));
 
-        Button_E_nisuru.setIcon(createImageIcon("ppp/E_nisuru.png"));
+        Button_to_edge.setIcon(createImageIcon("ppp/E_nisuru.png"));
 
 
 // ******************************************************************************
 
-        Button_HK_nisuru = new JButton(" ");//HKとは補助活線のこと
-        Button_HK_nisuru.addActionListener(e -> {
+        Button_to_aux_live = new JButton(" ");//HKとは補助活線のこと
+        Button_to_aux_live.addActionListener(e -> {
             img_explanation_fname = "qqq/HK_nisuru.png";
             updateExplanation();
             Button_reset();
-            Button_HK_nisuru.setForeground(Color.white);
-            Button_HK_nisuru.setBackground(new Color(100, 200, 200));
+            Button_to_aux_live.setForeground(Color.white);
+            Button_to_aux_live.setBackground(new Color(100, 200, 200));
             //icol=1;es1.setcolor(icol);
             i_mouse_modeA = MouseMode.CREASE_MAKE_AUX_60;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
@@ -2744,11 +2745,11 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        pnlw8.add(Button_HK_nisuru);
-        Button_HK_nisuru.setBackground(Color.white);
-        Button_HK_nisuru.setMargin(new Insets(0, 0, 0, 0));
+        pnlw8.add(Button_to_aux_live);
+        Button_to_aux_live.setBackground(Color.white);
+        Button_to_aux_live.setMargin(new Insets(0, 0, 0, 0));
 
-        Button_HK_nisuru.setIcon(createImageIcon("ppp/HK_nisuru.png"));
+        Button_to_aux_live.setIcon(createImageIcon("ppp/HK_nisuru.png"));
 
 
 // ******************************************************************************
@@ -3724,8 +3725,8 @@ public class App extends JFrame implements ActionListener {
 
 // 東***　角度系入力　***************************************************************************
 
-        JButton Button_kakudo_kei_a_tiisaku = new JButton("");
-        Button_kakudo_kei_a_tiisaku.addActionListener(e -> {
+        JButton Button_angle_kei_a_tiisaku = new JButton("");
+        Button_angle_kei_a_tiisaku.addActionListener(e -> {
             img_explanation_fname = "qqq/kakudo_kei_a_tiisaku.png";
             updateExplanation();
 
@@ -3748,19 +3749,19 @@ public class App extends JFrame implements ActionListener {
             }
             ;
 
-            id_kakudo_kei_a = id_kakudo_kei_a + 1;//if(id_kakudo_kei_a<2){id_kakudo_kei_a=2;}
-            Button_kakudo_kei_a.setText("180/" + id_kakudo_kei_a + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_a)) * 1000)) / 1000.0);
+            id_angle_system_a = id_angle_system_a + 1;//if(id_angle_system_a<2){id_angle_system_a=2;}
+            Button_angle_system_a.setText("180/" + id_angle_system_a + "=" + (double) (Math.round((180.0 / ((double) id_angle_system_a)) * 1000)) / 1000.0);
 
-            es1.set_id_angle_system(id_kakudo_kei_a);
+            es1.set_id_angle_system(id_angle_system_a);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        pnle6.add(Button_kakudo_kei_a_tiisaku);
-        Button_kakudo_kei_a_tiisaku.setMargin(new Insets(0, 0, 0, 0));
-        Button_kakudo_kei_a_tiisaku.setIcon(createImageIcon(
+        pnle6.add(Button_angle_kei_a_tiisaku);
+        Button_angle_kei_a_tiisaku.setMargin(new Insets(0, 0, 0, 0));
+        Button_angle_kei_a_tiisaku.setIcon(createImageIcon(
                 "ppp/tiisaku.png"));
-        Button_kakudo_kei_a_tiisaku.setBounds(2, 2, 10, 20);
+        Button_angle_kei_a_tiisaku.setBounds(2, 2, 10, 20);
 
 
         //Button_id_kakudo_kei_18.setHorizontalAlignment(JButton.LEFT);
@@ -3768,8 +3769,8 @@ public class App extends JFrame implements ActionListener {
 
 
         //-------------------------------------------------------------
-        Button_kakudo_kei_a = new JButton("180/" + id_kakudo_kei_a + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_a)) * 1000)) / 1000.0);
-        Button_kakudo_kei_a.addActionListener(e -> {
+        Button_angle_system_a = new JButton("180/" + id_angle_system_a + "=" + (double) (Math.round((180.0 / ((double) id_angle_system_a)) * 1000)) / 1000.0);
+        Button_angle_system_a.addActionListener(e -> {
             img_explanation_fname = "qqq/kakudo_kei_a.png";
             updateExplanation();
 
@@ -3793,19 +3794,19 @@ public class App extends JFrame implements ActionListener {
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
-            Button_kakudo_kei_a.setText("180/" + id_kakudo_kei_a + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_a)) * 1000)) / 1000.0);
+            Button_angle_system_a.setText("180/" + id_angle_system_a + "=" + (double) (Math.round((180.0 / ((double) id_angle_system_a)) * 1000)) / 1000.0);
 
-            es1.set_id_angle_system(id_kakudo_kei_a);
+            es1.set_id_angle_system(id_angle_system_a);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        pnle6.add(Button_kakudo_kei_a);
+        pnle6.add(Button_angle_system_a);
 //ButtonCol_red.setBackground(new Color(150,150,150));
-        Button_kakudo_kei_a.setMargin(new Insets(0, 0, 0, 0));
+        Button_angle_system_a.setMargin(new Insets(0, 0, 0, 0));
 //ButtonCol_red.setImage("board.png");
 
-        Button_kakudo_kei_a.setBounds(10, 2, 90, 20);
+        Button_angle_system_a.setBounds(10, 2, 90, 20);
 
 
 // *東**　角度系入力　***************************************************************************
@@ -3836,13 +3837,13 @@ public class App extends JFrame implements ActionListener {
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
-            id_kakudo_kei_a = id_kakudo_kei_a - 1;
-            if (id_kakudo_kei_a < 2) {
-                id_kakudo_kei_a = 2;
+            id_angle_system_a = id_angle_system_a - 1;
+            if (id_angle_system_a < 2) {
+                id_angle_system_a = 2;
             }
-            Button_kakudo_kei_a.setText("180/" + id_kakudo_kei_a + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_a)) * 1000)) / 1000.0);
+            Button_angle_system_a.setText("180/" + id_angle_system_a + "=" + (double) (Math.round((180.0 / ((double) id_angle_system_a)) * 1000)) / 1000.0);
 
-            es1.set_id_angle_system(id_kakudo_kei_a);
+            es1.set_id_angle_system(id_angle_system_a);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
@@ -3892,10 +3893,10 @@ public class App extends JFrame implements ActionListener {
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
-            id_kakudo_kei_b = id_kakudo_kei_b + 1;//if(id_kakudo_kei_b<2){id_kakudo_kei_b=2;}
-            Button_kakudo_kei_b.setText("180/" + id_kakudo_kei_b + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_b)) * 1000)) / 1000.0);
+            id_angle_system_b = id_angle_system_b + 1;//if(id_angle_system_b<2){id_angle_system_b=2;}
+            Button_angle_system_b.setText("180/" + id_angle_system_b + "=" + (double) (Math.round((180.0 / ((double) id_angle_system_b)) * 1000)) / 1000.0);
 
-            es1.set_id_angle_system(id_kakudo_kei_b);
+            es1.set_id_angle_system(id_angle_system_b);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
@@ -3912,8 +3913,8 @@ public class App extends JFrame implements ActionListener {
 
 
         //-------------------------------------------------------------
-        Button_kakudo_kei_b = new JButton("180/" + id_kakudo_kei_b + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_b)) * 1000)) / 1000.0);
-        Button_kakudo_kei_b.addActionListener(e -> {
+        Button_angle_system_b = new JButton("180/" + id_angle_system_b + "=" + (double) (Math.round((180.0 / ((double) id_angle_system_b)) * 1000)) / 1000.0);
+        Button_angle_system_b.addActionListener(e -> {
             img_explanation_fname = "qqq/kakudo_kei_b.png";
             updateExplanation();
 
@@ -3937,19 +3938,19 @@ public class App extends JFrame implements ActionListener {
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
-            Button_kakudo_kei_b.setText("180/" + id_kakudo_kei_b + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_b)) * 1000)) / 1000.0);
+            Button_angle_system_b.setText("180/" + id_angle_system_b + "=" + (double) (Math.round((180.0 / ((double) id_angle_system_b)) * 1000)) / 1000.0);
 
-            es1.set_id_angle_system(id_kakudo_kei_b);
+            es1.set_id_angle_system(id_angle_system_b);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        pnle7.add(Button_kakudo_kei_b);
+        pnle7.add(Button_angle_system_b);
 //ButtonCol_red.setBackground(new Color(150,150,150));
-        Button_kakudo_kei_b.setMargin(new Insets(0, 0, 0, 0));
+        Button_angle_system_b.setMargin(new Insets(0, 0, 0, 0));
 //ButtonCol_red.setImage("board.png");
 
-        Button_kakudo_kei_b.setBounds(10, 2, 90, 20);
+        Button_angle_system_b.setBounds(10, 2, 90, 20);
 
 
 // 東******************************************************************************
@@ -3978,13 +3979,13 @@ public class App extends JFrame implements ActionListener {
                     break;
             }
 
-            id_kakudo_kei_b = id_kakudo_kei_b - 1;
-            if (id_kakudo_kei_b < 2) {
-                id_kakudo_kei_b = 2;
+            id_angle_system_b = id_angle_system_b - 1;
+            if (id_angle_system_b < 2) {
+                id_angle_system_b = 2;
             }
-            Button_kakudo_kei_b.setText("180/" + id_kakudo_kei_b + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_b)) * 1000)) / 1000.0);
+            Button_angle_system_b.setText("180/" + id_angle_system_b + "=" + (double) (Math.round((180.0 / ((double) id_angle_system_b)) * 1000)) / 1000.0);
 
-            es1.set_id_angle_system(id_kakudo_kei_b);
+            es1.set_id_angle_system(id_angle_system_b);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
@@ -6824,16 +6825,16 @@ public class App extends JFrame implements ActionListener {
 
     //--------------------------------------------------------
     void Button_reset() {
-        Button_M_nisuru.setForeground(Color.black);
-        Button_V_nisuru.setForeground(Color.black);
-        Button_E_nisuru.setForeground(Color.black);
-        Button_HK_nisuru.setForeground(Color.black); //HKとは補助活線のこと
+        Button_to_mountain.setForeground(Color.black);
+        Buton_to_valley.setForeground(Color.black);
+        Button_to_edge.setForeground(Color.black);
+        Button_to_aux_live.setForeground(Color.black); //HKとは補助活線のこと
         Button_senbun_henkan2.setForeground(Color.black);
 
-        Button_M_nisuru.setBackground(Color.white);
-        Button_V_nisuru.setBackground(Color.white);
-        Button_E_nisuru.setBackground(Color.white);
-        Button_HK_nisuru.setBackground(Color.white);
+        Button_to_mountain.setBackground(Color.white);
+        Buton_to_valley.setBackground(Color.white);
+        Button_to_edge.setBackground(Color.white);
+        Button_to_aux_live.setBackground(Color.white);
         Button_senbun_henkan2.setBackground(Color.white);
     }
 
@@ -7079,7 +7080,7 @@ public class App extends JFrame implements ActionListener {
         OZ.display_flg_backup = FoldedFigure.DisplayStyle.NONE_0;//表示様式hyouji_flgの一時的バックアップ用
 
         //表示用の値を格納する変数
-        OZ.ip1_anotherOverlapValid = -1;//上下表職人の初期設定時に、折った後の表裏が同じ面が
+        OZ.ip1_anotherOverlapValid = HierarchyList_Worker.HierarchyListStatus.UNKNOWN_N1;//上下表職人の初期設定時に、折った後の表裏が同じ面が
         //隣接するという誤差があれが0を、無ければ1000を格納する変数。
         //ここでの初期値は(0か1000)以外の数ならなんでもいい。
         OZ.ip2_possibleOverlap = -1;//上下表職人が折り畳み可能な重なり方を探した際に、

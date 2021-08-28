@@ -117,7 +117,7 @@ public class SubFace {//This class folds the development view and estimates the 
         for (int i = 1; i <= faceIdCount; i++) {
             FaceId2fromTop_counted_position[i] = 0;
             for (int j = 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[i], faceIdList[j]) == 1) {
+                if (hierarchyList.get(faceIdList[i], faceIdList[j]) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
                     FaceId2fromTop_counted_position[i] = FaceId2fromTop_counted_position[i] + 1;
                 }
             }
@@ -153,7 +153,7 @@ public class SubFace {//This class folds the development view and estimates the 
     private int overlapping_inconsistent_digits_request(HierarchyList hierarchyList) {
         for (int i = 1; i <= faceIdCount - 1; i++) {
             for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == 0) {
+                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
                     return i;
                 }
             }
@@ -279,11 +279,11 @@ public class SubFace {//This class folds the development view and estimates the 
     public void hierarchyList_at_subFace_wo_input(HierarchyList hierarchyList) {
         for (int i = 1; i <= faceIdCount; i++) {
             for (int j = 1; j <= i - 1; j++) {
-                hierarchyList.set(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)], 0);
+                hierarchyList.set(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)], HierarchyList.HierarchyListCondition.UNKNOWN_0);
             }
 
             for (int j = i + 1; j <= faceIdCount; j++) {
-                hierarchyList.set(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)], 1);
+                hierarchyList.set(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)], HierarchyList.HierarchyListCondition.UNKNOWN_1);
             }
         }
     }
@@ -293,14 +293,14 @@ public class SubFace {//This class folds the development view and estimates the 
     public void hierarchyList_ni_subFace_no_manager_wo_input(HierarchyList hierarchyList) {
         for (int i = 1; i <= faceIdCount; i++) {
             for (int j = 1; j <= i - 1; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == -100) {
-                    hierarchyList.set(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)], -50);
+                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.HierarchyListCondition.EMPTY_N100) {
+                    hierarchyList.set(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)], HierarchyList.HierarchyListCondition.UNKNOWN_N50);
                 }
             }
 
             for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == -100) {
-                    hierarchyList.set(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)], -50);
+                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.HierarchyListCondition.EMPTY_N100) {
+                    hierarchyList.set(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)], HierarchyList.HierarchyListCondition.UNKNOWN_N50);
                 }
             }
         }
@@ -312,13 +312,13 @@ public class SubFace {//This class folds the development view and estimates the 
         int inew = 0;
         for (int i = 1; i <= faceIdCount; i++) {
             for (int j = 1; j <= i - 1; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == -100) {
+                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.HierarchyListCondition.EMPTY_N100) {
                     inew = inew + 1;
                 }
             }
 
             for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == -100) {
+                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.HierarchyListCondition.EMPTY_N100) {
                     inew = inew + 1;
                 }
             }
@@ -339,7 +339,7 @@ public class SubFace {//This class folds the development view and estimates the 
 
             //First, collect the SubFace id number of the upper surface in ueFaceId []
             for (int i = 1; i <= faceIdCount; i++) {
-                if (hierarchyList.get(faceIdList[i], faceIdList[faceIndex]) == 1) {
+                if (hierarchyList.get(faceIdList[i], faceIdList[faceIndex]) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
                     ueFaceIdCount = ueFaceIdCount + 1;
                     ueFaceId[ueFaceIdCount] = i;
                     ueFaceIdFlg[ueFaceIdCount] = 1;
@@ -349,10 +349,10 @@ public class SubFace {//This class folds the development view and estimates the 
             //Set ueFaceIdFlg [id] of the id number to be invalid to 0.
             for (int i = 1; i <= ueFaceIdCount - 1; i++) {
                 for (int j = i + 1; j <= ueFaceIdCount; j++) {
-                    if (hierarchyList.get(faceIdList[ueFaceId[i]], faceIdList[ueFaceId[j]]) == 1) {
+                    if (hierarchyList.get(faceIdList[ueFaceId[i]], faceIdList[ueFaceId[j]]) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
                         ueFaceIdFlg[i] = 0;
                     }
-                    if (hierarchyList.get(faceIdList[ueFaceId[j]], faceIdList[ueFaceId[i]]) == 1) {
+                    if (hierarchyList.get(faceIdList[ueFaceId[j]], faceIdList[ueFaceId[i]]) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
                         ueFaceIdFlg[j] = 0;
                     }
                 }
@@ -374,7 +374,7 @@ public class SubFace {//This class folds the development view and estimates the 
         int iret = 0;
         for (int i = 1; i <= faceIdCount - 1; i++) {
             for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == -100) {
+                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.HierarchyListCondition.EMPTY_N100) {
                     iret++;
                 }//20171021本当は-50のつもりだったが現状は-100となっている
             }
@@ -387,10 +387,10 @@ public class SubFace {//This class folds the development view and estimates the 
         int iret = 0;
         for (int i = 1; i <= faceIdCount - 1; i++) {
             for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == 0) {
+                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
                     iret++;
                 }
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == 1) {
+                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
                     iret++;
                 }
             }

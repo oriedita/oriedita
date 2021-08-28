@@ -12,9 +12,21 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     // If hierarchyList[i][j] is 1, surface i is above surface j. If it is 0, it is the lower side.
     // If hierarchyList[i][j] is -50, faces i and j overlap, but the hierarchical relationship is not determined.
     // If hierarchyList[i][j] is -100, then faces i and j do not overlap.
-    int[][] hierarchyList;
-    int[][] hierarchyList_copy;
+    HierarchyListCondition[][] hierarchyList;
+    HierarchyListCondition[][] hierarchyList_copy;
     int EquivalenceConditionTotal;   //A combination that can cause a situation in which another surface penetrates the boundary between two adjacent surfaces.
+
+    public enum HierarchyListCondition {
+        UNKNOWN_0,
+        UNKNOWN_1,
+        UNKNOWN_N50,
+        EMPTY_N100,
+        ;
+
+        public boolean isEmpty() {
+            return this == UNKNOWN_N50 || this == EMPTY_N100;
+        }
+    }
 
     ArrayList<EquivalenceCondition> tL = new ArrayList<>();
 
@@ -52,24 +64,24 @@ public class HierarchyList {//This class is used to record and utilize the hiera
         }
     }
 
-    public void set(int i, int j, int condition) {
+    public void set(int i, int j, HierarchyListCondition condition) {
         hierarchyList[i][j] = condition;
     }
 
-    public int get(int i, int j) {
+    public HierarchyListCondition get(int i, int j) {
         return hierarchyList[i][j];
     }
 
     public void setFacesTotal(int iM) {
         facesTotal = iM;
 
-        hierarchyList = new int[facesTotal + 1][facesTotal + 1];
-        hierarchyList_copy = new int[facesTotal + 1][facesTotal + 1];
+        hierarchyList = new HierarchyListCondition[facesTotal + 1][facesTotal + 1];
+        hierarchyList_copy = new HierarchyListCondition[facesTotal + 1][facesTotal + 1];
 
         for (int i = 0; i <= facesTotal; i++) {
             for (int j = 0; j <= facesTotal; j++) {
-                hierarchyList[i][j] = -100;
-                hierarchyList_copy[i][j] = -100;
+                hierarchyList[i][j] = HierarchyListCondition.EMPTY_N100;
+                hierarchyList_copy[i][j] = HierarchyListCondition.EMPTY_N100;
             }
         }
     }
