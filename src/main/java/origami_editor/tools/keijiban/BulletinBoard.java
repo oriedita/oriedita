@@ -1,6 +1,5 @@
 package origami_editor.tools.keijiban;
 
-import jp.gr.java_conf.mt777.origami.editor.*;
 import origami_editor.editor.App;
 
 import java.awt.*;

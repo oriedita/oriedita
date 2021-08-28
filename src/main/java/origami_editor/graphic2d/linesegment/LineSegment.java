@@ -4,7 +4,6 @@ import java.awt.*;
 
 import origami_editor.editor.LineColor;
 import origami_editor.graphic2d.point.Point;
-//import  jp.gr.java_conf.mt777.zukei2d.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 

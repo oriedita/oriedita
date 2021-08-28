@@ -1,11 +1,5 @@
 package origami_editor.editor.egaki_syokunin.egaki_syokunin_dougubako;
 
-import jp.gr.java_conf.mt777.origami.dougu.orisensyuugou.*;
-
-import jp.gr.java_conf.mt777.graphic2d.point.*;
-import jp.gr.java_conf.mt777.graphic2d.linesegment.*;
-import jp.gr.java_conf.mt777.graphic2d.oritacalc.*;
-import jp.gr.java_conf.mt777.graphic2d.oritacalc.straightline.*;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
 import origami_editor.graphic2d.oritacalc.straightline.StraightLine;

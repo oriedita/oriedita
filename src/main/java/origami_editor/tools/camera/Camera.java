@@ -1,7 +1,5 @@
 package origami_editor.tools.camera;
 
-import jp.gr.java_conf.mt777.graphic2d.point.*;
-import jp.gr.java_conf.mt777.graphic2d.linesegment.*;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.point.Point;
 

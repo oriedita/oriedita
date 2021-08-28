@@ -7,23 +7,11 @@ import origami_editor.editor.tenkaizu_syokunin.CreasePattern_Worker;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritaoekaki.OritaDrawing;
 import origami_editor.graphic2d.polygon.Polygon.Intersection;
-import jp.gr.java_conf.mt777.origami.editor.*;
-import jp.gr.java_conf.mt777.origami.editor.tenkaizu_syokunin.*;
-import jp.gr.java_conf.mt777.origami.dougu.pointstore.*;
-import jp.gr.java_conf.mt777.origami.editor.jyougehyou_syokunin.jyougehyou.*;
-import jp.gr.java_conf.mt777.origami.editor.jyougehyou_syokunin.smen.*;
 
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import jp.gr.java_conf.mt777.kiroku.memo.*;
-import jp.gr.java_conf.mt777.kiroku.moji_sousa.*;
-import jp.gr.java_conf.mt777.origami.dougu.camera.*;
-import jp.gr.java_conf.mt777.graphic2d.linesegment.*;
-import jp.gr.java_conf.mt777.origami.editor.jyougehyou_syokunin.jyougehyou.touka_jyouken.*;
-import jp.gr.java_conf.mt777.graphic2d.oritaoekaki.*;
-import jp.gr.java_conf.mt777.seiretu.narabebako.*;
 import origami_editor.graphic2d.point.Point;
 import origami_editor.record.memo.Memo;
 import origami_editor.record.moji_sousa.StringOp;

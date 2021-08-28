@@ -1,9 +1,5 @@
 package origami_editor.tools.background_camera;
 
-
-import jp.gr.java_conf.mt777.graphic2d.point.*;
-import jp.gr.java_conf.mt777.graphic2d.oritacalc.*;
-import jp.gr.java_conf.mt777.origami.dougu.camera.*;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
 import origami_editor.graphic2d.point.Point;
 import origami_editor.tools.camera.Camera;

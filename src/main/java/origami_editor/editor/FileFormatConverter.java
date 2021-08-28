@@ -1,8 +1,5 @@
 package origami_editor.editor;
 
-import jp.gr.java_conf.mt777.origami.dougu.bou.*;
-import jp.gr.java_conf.mt777.kiroku.memo.*;
-import jp.gr.java_conf.mt777.graphic2d.point.*;
 import origami_editor.graphic2d.point.Point;
 import origami_editor.record.memo.Memo;
 import origami_editor.tools.bou.Line;

@@ -1,6 +1,5 @@
 package origami_editor.editor.basicbranch_worker;
 
-import jp.gr.java_conf.mt777.origami.dougu.linestore.*;
 import origami_editor.tools.linestore.LineSegmentSet;
 
 public class WireFrame_Worker {

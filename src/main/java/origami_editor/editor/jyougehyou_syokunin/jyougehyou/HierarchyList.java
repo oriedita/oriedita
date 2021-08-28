@@ -1,7 +1,6 @@
 package origami_editor.editor.jyougehyou_syokunin.jyougehyou;
 
 
-import jp.gr.java_conf.mt777.origami.editor.jyougehyou_syokunin.jyougehyou.touka_jyouken.*;
 import origami_editor.editor.jyougehyou_syokunin.jyougehyou.touka_jyouken.EquivalenceCondition;
 
 import java.util.*;

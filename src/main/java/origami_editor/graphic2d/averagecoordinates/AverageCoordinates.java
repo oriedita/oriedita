@@ -1,6 +1,5 @@
 package origami_editor.graphic2d.averagecoordinates;
 
-import jp.gr.java_conf.mt777.graphic2d.point.*;
 import origami_editor.graphic2d.point.Point;
 
 public class AverageCoordinates {

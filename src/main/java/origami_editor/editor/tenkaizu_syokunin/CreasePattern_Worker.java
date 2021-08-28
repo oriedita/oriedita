@@ -2,18 +2,10 @@ package origami_editor.editor.tenkaizu_syokunin;
 
 import java.awt.*;
 
-import jp.gr.java_conf.mt777.origami.dougu.linestore.*;
-import jp.gr.java_conf.mt777.origami.dougu.camera.*;
-import jp.gr.java_conf.mt777.origami.dougu.pointstore.*;
 import origami_editor.graphic2d.averagecoordinates.AverageCoordinates;
 import origami_editor.tools.linestore.LineSegmentSet;
 import origami_editor.editor.LineColor;
 import origami_editor.editor.oriagari_zu.FoldedFigure;
-import jp.gr.java_conf.mt777.origami.editor.undo_box.*;
-import jp.gr.java_conf.mt777.kiroku.memo.*;
-import jp.gr.java_conf.mt777.graphic2d.linesegment.*;
-import jp.gr.java_conf.mt777.graphic2d.averagecoordinates.*;
-import jp.gr.java_conf.mt777.graphic2d.oritacalc.*;
 import origami_editor.graphic2d.point.Point;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.OritaCalc;

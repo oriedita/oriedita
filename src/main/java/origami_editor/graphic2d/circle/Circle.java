@@ -5,8 +5,6 @@ import java.awt.*;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.straightline.StraightLine;
 import origami_editor.editor.LineColor;
-import jp.gr.java_conf.mt777.graphic2d.linesegment.*;
-import jp.gr.java_conf.mt777.graphic2d.oritacalc.straightline.*;
 import origami_editor.graphic2d.point.Point;
 
 public class Circle {//Used to represent point coordinates, direction vectors, etc.
