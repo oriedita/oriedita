@@ -5,7 +5,7 @@ on:
     tags:
       - "v*.*.*"
 jobs:
-  create_installer:
+  create_executable:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -36,7 +36,7 @@ jobs:
         run: sudo chown -R $(whoami) /usr/share/nsis/Plugins/
         if: ${{ matrix.os == 'ubuntu-20.04' }}
 
-      - name: Create nsis installer
+      - name: Create nsis executable
         uses: joncloud/makensis-action@v3.3
         with:
           script-file: build/build.nsi
