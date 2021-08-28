@@ -29,7 +29,7 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
         color = m;
     }
 
-    public Circle(origami_editor.graphic2d.point.Point tc, double k, LineColor m) {
+    public Circle(Point tc, double k, LineColor m) {
         x = tc.getX();
         y = tc.getY();
         r = k;
@@ -59,7 +59,7 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
         color = m;
     }
 
-    public void set(origami_editor.graphic2d.point.Point tc, double k, LineColor m) {
+    public void set(Point tc, double k, LineColor m) {
         x = tc.getX();
         y = tc.getY();
         r = k;
@@ -134,12 +134,12 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
         return customizedColor;
     }
 
-    public origami_editor.graphic2d.point.Point getCenter() {
-        return new origami_editor.graphic2d.point.Point(getX(), getY());
+    public Point getCenter() {
+        return new Point(getX(), getY());
     }
 
     //Function that inverts other points ----------------------------------------------------
-    public origami_editor.graphic2d.point.Point turnAround(origami_editor.graphic2d.point.Point t0) {//An error occurs when t0 and (x, y) are in the same position.
+    public Point turnAround(Point t0) {//An error occurs when t0 and (x, y) are in the same position.
         double x1 = t0.getX() - x;
         double y1 = t0.getY() - y;
         double d1 = Math.sqrt(x1 * x1 + y1 * y1);
@@ -153,7 +153,7 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
         y2 = d2 * y1 / d1;
         x3 = x2 + x;
         y3 = y2 + y;
-        return new origami_editor.graphic2d.point.Point(x3, y3);
+        return new Point(x3, y3);
     }
 
     //A function that inverts another circle to a circle ----------------------------------------------------
@@ -191,19 +191,19 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
 
         LineColor ic = LineColor.MAGENTA_5;
 
-        return new Circle(new LineSegment(turnAround(new origami_editor.graphic2d.point.Point(xa0, ya0)), turnAround(new origami_editor.graphic2d.point.Point(xb0, yb0))), ic);
+        return new Circle(new LineSegment(turnAround(new Point(xa0, ya0)), turnAround(new Point(xb0, yb0))), ic);
     }
 
     //A function that inverts another circle passing through (x, y) into a line segment----------------------------------------------------
     public LineSegment turnAround_CircleToLineSegment(Circle e0) {//For when the circumference of e0 passes through (x, y) // If the circumference of e0 does not pass through (x, y), the result will be strange.
         double x1 = e0.getX() - x, y1 = e0.getY() - y;
-        origami_editor.graphic2d.point.Point th = new origami_editor.graphic2d.point.Point();
-        th.set(turnAround(new origami_editor.graphic2d.point.Point(x1 * 2.0 + x, y1 * 2.0 + y)));
-        origami_editor.graphic2d.point.Point t1 = new origami_editor.graphic2d.point.Point();
+        Point th = new Point();
+        th.set(turnAround(new Point(x1 * 2.0 + x, y1 * 2.0 + y)));
+        Point t1 = new Point();
         t1.set(th.getX() - x, th.getY() - y);
-        origami_editor.graphic2d.point.Point tha = new origami_editor.graphic2d.point.Point();
+        Point tha = new Point();
         tha.set(th.getX() + 3.0 * y1, th.getY() - 3.0 * x1);
-        origami_editor.graphic2d.point.Point thb = new origami_editor.graphic2d.point.Point();
+        Point thb = new Point();
         thb.set(th.getX() - 3.0 * y1, th.getY() + 3.0 * x1);
         return new LineSegment(tha, thb, LineColor.CYAN_3);
     }
@@ -212,7 +212,7 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
     //A function that inverts a line segment that does not pass through (x, y) to another circle----------------------------------------------------
     public Circle turnAround_LineSegmentToCircle(LineSegment s0) {//Weird results when s0 passes through (x, y).
         StraightLine ty = new StraightLine(s0);
-        origami_editor.graphic2d.point.Point t0 = new Point();
+        Point t0 = new Point();
         t0.set(ty.findProjection(getCenter()));
         return new Circle(new LineSegment(turnAround(t0), getCenter()), LineColor.MAGENTA_5);
     }

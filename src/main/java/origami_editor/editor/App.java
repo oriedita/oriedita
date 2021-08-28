@@ -3,6 +3,7 @@ package origami_editor.editor;
 import origami_editor.editor.drawing_worker.Drawing_Worker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
+import origami_editor.editor.layout.WrapLayout;
 import origami_editor.graphic2d.grid.Grid;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
@@ -25,6 +26,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+
+import static origami_editor.editor.ResourceUtil.createImageIcon;
 
 public class App extends JFrame implements ActionListener {
 
@@ -80,16 +83,16 @@ public class App extends JFrame implements ActionListener {
     public JCheckBox ckbox_check4;//check4
     public JCheckBoxMenuItem ckbox_mark;//Marking lines such as crosses and reference planes
     public JCheckBoxMenuItem ckbox_cp_ue;//展開図を折り上がり予想図の上に描く
-    public JCheckBox ckbox_oritatami_keika;//折り上がり予想の途中経過の書き出し
-    public JCheckBox ckbox_cp_kaizen_oritatami;//cpを折畳み前に自動改善する。
+    public JCheckBox ckbox_folding_keika;//折り上がり予想の途中経過の書き出し
+    public JCheckBox ckbox_cp_kaizen_folding;//cpを折畳み前に自動改善する。
     public JCheckBox ckbox_select_nokosi;//select状態を他の操作をしてもなるべく残す
     public JCheckBox ckbox_toukazu_color;//透過図をカラー化する。
     public int iLineWidth = 1;//The thickness of the line in the development view.
     public int i_h_lineWidth = 3;//Line thickness of non-interference auxiliary line
     public MouseMode i_mouse_modeA = MouseMode.FOLDABLE_LINE_DRAW_71;//Defines the response to mouse movements. If it is 1, the line segment input mode. If it is 2, adjust the development view (move). If it is 101, operate the folded figure.
-    public OperationMode i_sel_mou_mode;//Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
+    public SelectionOperationMode selectionOperationMode;//Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
     // ------------------------------------------------------------------------
-    public origami_editor.graphic2d.point.Point point_of_referencePlane_old = new origami_editor.graphic2d.point.Point(); //ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
+    public Point point_of_referencePlane_old = new Point(); //ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
     // *******************************************************************************************************
     public double d_grid_x_length;
     public double d_grid_y_length;
@@ -117,11 +120,11 @@ public class App extends JFrame implements ActionListener {
     int id_kakudo_kei_a = 12;//角度系の180度を割る数の格納_a
     int id_kakudo_kei_b = 8;//角度系の180度を割る数の格納_b
     JButton Button0b;                    //対称性の指定に用いる
-    JButton Button3;                    //操作の指定に用いる（追加推定一個だけ）
+    JButton Button_another_solution;                    //操作の指定に用いる（追加推定一個だけ）
     JButton Button_AS_matome;                    //操作の指定に用いる（追加推定100個）
-    JButton Button_bangou_sitei_suitei_display;
-    JButton Button_kitei;
-    JButton Button_kitei2;
+    JButton Button_bangou_sitei_estimated_display;
+    JButton Button_grid_increase;
+    JButton Button_grid_decrease;
     JButton ButtonCol_black;                    //折線の色の指定に用いる
     JButton ButtonCol_blue;                    //折線の色の指定に用いる
     JButton ButtonCol_red;                    //折線の色の指定に用いる
@@ -201,8 +204,8 @@ public class App extends JFrame implements ActionListener {
     Canvas canvas;
     boolean lockBackground_ori = false;//Lock on background = 1, not = 0
     boolean lockBackground = false;//Lock on background = 1, not = 0
-    origami_editor.graphic2d.point.Point p_mouse_object_position = new origami_editor.graphic2d.point.Point();//マウスのオブジェクト座標上の位置
-    origami_editor.graphic2d.point.Point p_mouse_TV_position = new origami_editor.graphic2d.point.Point();//マウスのTV座標上の位置
+    Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
+    Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
     // Applet width and height
     Dimension dim;
     boolean displayBackground = false;//If it is 0, the background is not displayed. If it is 1, display it. There is no 2.
@@ -247,7 +250,14 @@ public class App extends JFrame implements ActionListener {
 // **************************************************************************************************************************
     boolean i_mouse_right_button_on = false;//1 if the right mouse button is on, 0 if off
     boolean i_mouse_undo_redo_mode = false;//1 for undo and redo mode with mouse
-    int i_cp_or_oriagari = 0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
+    public enum MouseWheelTarget {
+        CREASEPATTERN_0,
+        FOLDED_FRONT_1,
+        FOLDED_BACK_2,
+        TRANSPARENT_FRONT_3,
+        TRANSPARENT_BACK_4,
+    }
+    MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASEPATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
     int i_ClickCount = 0;//Don't you need this variable? 21181208
     double d_ap_check4 = 0.0;
     ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
@@ -262,8 +272,7 @@ public class App extends JFrame implements ActionListener {
             //終了ボタンを有効化
             public void windowClosing(WindowEvent evt) {
                 System.out.println("windowClosing_20200928");
-                //owari();//ウィンドウ上辺右端のXを押したときに行う作業
-                System.exit(0);
+                closing();//Work to be done when pressing X at the right end of the upper side of the window
             }//終了ボタンを有効化 ここまで。
 
             public void windowOpened(WindowEvent eve) {
@@ -314,17 +323,6 @@ public class App extends JFrame implements ActionListener {
         // 幅と高さをたずねる
         dim = getSize();
         System.out.println(" dim 001 :" + dim.width + " , " + dim.height);//多分削除可能
-
-        //画像出力するため20170107_oldと書かれた行をコメントアウトし、20170107_newの行を有効にした。
-        //画像出力不要で元にもどすなら、20170107_oldと書かれた行を有効にし、20170107_newの行をコメントアウトにすればよい。（この変更はOrihime.javaの中だけに2箇所ある）
-        //offscreen = createImage(2000,1100)					;	bufferGraphics = offscreen.getGraphics();	//20170107_old
-
-        //アプレットでは以前はdim = getSize()して、createImage(dim.width,dim.height);としたが、最初からcreateImage(2000,1100); のほうが、ウィンド拡大時もちゃんと書ける。
-        //ただし、アプレットで最初から(2000,1100)より大きいウィンド表示時は端がちゃんと書けなくなってしまうはず。
-////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
-//		offscreen = createImage(2000,1100);
-////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される
-
 
         //バッファー画面の設定はここまで----------------------------------------------------
 
@@ -397,8 +395,6 @@ public class App extends JFrame implements ActionListener {
         //------------------------------------------------
         JMenu pnln1 = new JMenu("File");
         pnln1.setMnemonic('F');
-//         pnln1.setBackground(Color.PINK);
-//        pnln1.setLayout(new GridLayout(1, 2));
 
         menuBar.add(pnln1);
         //------------------------------------------------
@@ -440,7 +436,7 @@ public class App extends JFrame implements ActionListener {
 
                 icol = LineColor.RED_1;
                 es1.setColor(icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
-                ButtonCol_irokesi();
+                ButtonCol_reset();
                 ButtonCol_red.setForeground(Color.black);
                 ButtonCol_red.setBackground(Color.red);    //折線のボタンの色設定
                 //展開図の初期化　終了
@@ -521,7 +517,7 @@ public class App extends JFrame implements ActionListener {
 
 
         Button_tyouhoukei_select.setMargin(new Insets(0, 0, 0, 0));
-        Button_tyouhoukei_select.setIcon(ResourceUtil.createImageIcon("ppp/tyouhoukei_select.png"));
+        Button_tyouhoukei_select.setIcon(createImageIcon("ppp/tyouhoukei_select.png"));
 
 // ------61;長方形内選択モード。ここまで
 
@@ -574,8 +570,8 @@ public class App extends JFrame implements ActionListener {
             updateExplanation();
             canvas.repaint();
         });
-        ckbox_mouse_settings.setIcon(ResourceUtil.createImageIcon("ppp/ckbox_mouse_settei_off.png"));
-        ckbox_mouse_settings.setSelectedIcon(ResourceUtil.createImageIcon("ppp/ckbox_mouse_settei_on.png"));
+        ckbox_mouse_settings.setIcon(createImageIcon("ppp/ckbox_mouse_settei_off.png"));
+        ckbox_mouse_settings.setSelectedIcon(createImageIcon("ppp/ckbox_mouse_settei_on.png"));
 
         ckbox_mouse_settings.setMargin(new Insets(0, 0, 0, 0));
         pnln13.add(ckbox_mouse_settings);
@@ -697,20 +693,20 @@ public class App extends JFrame implements ActionListener {
 
 // -------------------------------------------------------------------
 //折り畳み経過の表示
-        ckbox_oritatami_keika = new JCheckBox("");
-        ckbox_oritatami_keika.addActionListener(e -> {
+        ckbox_folding_keika = new JCheckBox("");
+        ckbox_folding_keika.addActionListener(e -> {
             img_explanation_fname =
                     "qqq/ckbox_oritatami_keika.png";
             updateExplanation();
 
             canvas.repaint();
         });
-        ckbox_oritatami_keika.setIcon(ResourceUtil.createImageIcon(
+        ckbox_folding_keika.setIcon(createImageIcon(
                 "ppp/ckbox_oritatami_keika_off.png"));
-        ckbox_oritatami_keika.setSelectedIcon(ResourceUtil.createImageIcon(
+        ckbox_folding_keika.setSelectedIcon(createImageIcon(
                 "ppp/ckbox_oritatami_keika_on.png"));
 
-        ckbox_oritatami_keika.setMargin(new Insets(0, 0, 0, 0));
+        ckbox_folding_keika.setMargin(new Insets(0, 0, 0, 0));
 
 // ******北************************************************************************
 
@@ -741,7 +737,7 @@ public class App extends JFrame implements ActionListener {
         JLabel Lb01;
         Lb01 = new JLabel();
         Lb01.setSize(new Dimension(6,20));
-        Lb01.setIcon(ResourceUtil.createImageIcon("ppp/plus.png"));
+        Lb01.setIcon(createImageIcon("ppp/plus.png"));
         pnln11.add(Lb01);
 
         text4 = new JTextField("", 2);
@@ -752,7 +748,7 @@ public class App extends JFrame implements ActionListener {
         JLabel Lb02;
         Lb02 = new JLabel();
         Lb01.setSize(new Dimension(9,20));
-        Lb02.setIcon(ResourceUtil.createImageIcon("ppp/root.png"));
+        Lb02.setIcon(createImageIcon("ppp/root.png"));
         pnln11.add(Lb02);
 
         text5 = new JTextField("", 2);
@@ -762,7 +758,7 @@ public class App extends JFrame implements ActionListener {
         JLabel Lb03;
         Lb03 = new JLabel();
         Lb01.setSize(new Dimension(5,23));
-        Lb03.setIcon(ResourceUtil.createImageIcon("ppp/tenten.png"));
+        Lb03.setIcon(createImageIcon("ppp/tenten.png"));
         pnln10.add(Lb03);
 
         //------------------------------------------------
@@ -781,7 +777,7 @@ public class App extends JFrame implements ActionListener {
         JLabel Lb04;
         Lb04 = new JLabel();
         Lb04.setSize(new Dimension(6, 20));
-        Lb04.setIcon(ResourceUtil.createImageIcon("ppp/plus.png"));
+        Lb04.setIcon(createImageIcon("ppp/plus.png"));
         pnln12.add(Lb04);
 
         text7 = new JTextField("", 2);
@@ -791,7 +787,7 @@ public class App extends JFrame implements ActionListener {
         JLabel Lb05;
         Lb05 = new JLabel();
         Lb05.setSize(new Dimension(9, 20));
-        Lb05.setIcon(ResourceUtil.createImageIcon("ppp/root.png"));
+        Lb05.setIcon(createImageIcon("ppp/root.png"));
         pnln12.add(Lb05);
 
         text8 = new JTextField("", 2);
@@ -845,7 +841,7 @@ public class App extends JFrame implements ActionListener {
         pnln10.add(Button_senbun_n_nyuryoku);
 
         Button_senbun_n_nyuryoku.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_n_nyuryoku.setIcon(ResourceUtil.createImageIcon(
+        Button_senbun_n_nyuryoku.setIcon(createImageIcon(
                 "ppp/senbun_n_nyuryoku.png"));
 
 // ------28;線分入力モード。ここまで
@@ -874,7 +870,7 @@ public class App extends JFrame implements ActionListener {
         });
         pnln.add(Button_tenkaizu_idiu);
 
-        Button_tenkaizu_idiu.setIcon(ResourceUtil.createImageIcon(
+        Button_tenkaizu_idiu.setIcon(createImageIcon(
                 "ppp/tenkaizu_idiu.png"));
 
 // *****北*************************************************************************
@@ -908,7 +904,7 @@ public class App extends JFrame implements ActionListener {
             for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
                 OZi = OAZ.get(i_oz);
 
-                origami_editor.graphic2d.point.Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.getCameraPosition());
+                Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.getCameraPosition());
 
                 OZi.d_foldedFigure_scale_factor = OZi.d_foldedFigure_scale_factor * d_bairitu;
 
@@ -942,7 +938,7 @@ public class App extends JFrame implements ActionListener {
             canvas.repaint();
         });
         pnln8.add(Button_tenkaizu_syukusyou);
-        Button_tenkaizu_syukusyou.setIcon(ResourceUtil.createImageIcon("ppp/tenkaizu_syukusyou.png"));
+        Button_tenkaizu_syukusyou.setIcon(createImageIcon("ppp/tenkaizu_syukusyou.png"));
 
 
 // ****北**************************************************************************
@@ -974,7 +970,7 @@ public class App extends JFrame implements ActionListener {
                 for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
                     OZi = OAZ.get(i_oz);
 
-                    origami_editor.graphic2d.point.Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.getCameraPosition());
+                    Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.getCameraPosition());
 
                     OZi.d_foldedFigure_scale_factor = OZi.d_foldedFigure_scale_factor * d_bairitu;
 
@@ -1037,7 +1033,7 @@ public class App extends JFrame implements ActionListener {
             for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
                 OZi = OAZ.get(i_oz);
 
-                origami_editor.graphic2d.point.Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.getCameraPosition());
+                Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.getCameraPosition());
 
                 OZi.d_foldedFigure_scale_factor = OZi.d_foldedFigure_scale_factor * d_bairitu;
 
@@ -1073,7 +1069,7 @@ public class App extends JFrame implements ActionListener {
             canvas.repaint();
         });
         pnln8.add(Button_tenkaizu_kakudai);
-        Button_tenkaizu_kakudai.setIcon(ResourceUtil.createImageIcon("ppp/tenkaizu_kakudai.png"));
+        Button_tenkaizu_kakudai.setIcon(createImageIcon("ppp/tenkaizu_kakudai.png"));
 
 
 // ******北************************************************************************
@@ -1102,7 +1098,7 @@ public class App extends JFrame implements ActionListener {
             canvas.repaint();
         });
         pnln14.add(Button_tenkaizu_p_kaiten);
-        Button_tenkaizu_p_kaiten.setIcon(ResourceUtil.createImageIcon("ppp/tenkaizu_p_kaiten.png"));
+        Button_tenkaizu_p_kaiten.setIcon(createImageIcon("ppp/tenkaizu_p_kaiten.png"));
 
 // ****北**************************************************************************
 //回転角度補正
@@ -1152,7 +1148,7 @@ public class App extends JFrame implements ActionListener {
         pnln14.add(Button_tenkaizu_m_kaiten);
 
 
-        Button_tenkaizu_m_kaiten.setIcon(ResourceUtil.createImageIcon("ppp/tenkaizu_m_kaiten.png"));
+        Button_tenkaizu_m_kaiten.setIcon(createImageIcon("ppp/tenkaizu_m_kaiten.png"));
 
 //背景のPC画面を背景画として読み込む
         JButton Button_toumei = new JButton("T");
@@ -1213,10 +1209,10 @@ public class App extends JFrame implements ActionListener {
             double dvx = upperLeft_ix;
             double dvy = upperLeft_iy;
 
-            background_set(new origami_editor.graphic2d.point.Point(120.0, 120.0),
-                    new origami_editor.graphic2d.point.Point(120.0 + 10.0, 120.0),
-                    new origami_editor.graphic2d.point.Point(dvx, dvy),
-                    new origami_editor.graphic2d.point.Point(dvx + 10.0, dvy));
+            background_set(new Point(120.0, 120.0),
+                    new Point(120.0 + 10.0, 120.0),
+                    new Point(dvx, dvy),
+                    new Point(dvx + 10.0, dvy));
 
 
 //背景表示の各条件を設定
@@ -1278,10 +1274,10 @@ public class App extends JFrame implements ActionListener {
 
                 h_cam = new Background_camera();
 
-                background_set(new origami_editor.graphic2d.point.Point(120.0, 120.0),
-                        new origami_editor.graphic2d.point.Point(120.0 + 10.0, 120.0),
-                        new origami_editor.graphic2d.point.Point(xmin, ymin),
-                        new origami_editor.graphic2d.point.Point((double) xmin + 10.0, ymin));
+                background_set(new Point(120.0, 120.0),
+                        new Point(120.0 + 10.0, 120.0),
+                        new Point(xmin, ymin),
+                        new Point((double) xmin + 10.0, ymin));
 
                 if (lockBackground) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
                     h_cam.set_i_Lock_on(lockBackground);
@@ -1411,7 +1407,7 @@ public class App extends JFrame implements ActionListener {
         pnln9.add(Button_senbun_yoke_henkan);
 
         Button_senbun_yoke_henkan.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_yoke_henkan.setIcon(ResourceUtil.createImageIcon("ppp/senbun_yoke_henkan.png"));
+        Button_senbun_yoke_henkan.setIcon(createImageIcon("ppp/senbun_yoke_henkan.png"));
 
 
 // ******************************************************************************
@@ -1473,7 +1469,7 @@ public class App extends JFrame implements ActionListener {
         });
         pnlw26.add(Button_undo);
         Button_undo.setMargin(new Insets(0, 0, 0, 0));
-        Button_undo.setIcon(ResourceUtil.createImageIcon(
+        Button_undo.setIcon(createImageIcon(
                 "ppp/undo.png"));
 
 // *****西*************************************************************************
@@ -1513,7 +1509,7 @@ public class App extends JFrame implements ActionListener {
         });
         pnlw26.add(Button_redo);
         Button_redo.setMargin(new Insets(0, 0, 0, 0));
-        Button_redo.setIcon(ResourceUtil.createImageIcon(
+        Button_redo.setIcon(createImageIcon(
                 "ppp/redo.png"));
 
 
@@ -1529,37 +1525,35 @@ public class App extends JFrame implements ActionListener {
         //------------------------------------------------
 
 // ****西*********************　線幅　下げ　*****************************************************
-        JButton Button_senhaba_sage = new JButton("");
-        Button_senhaba_sage.addActionListener(e -> {
+        JButton Button_lineWidth_decrease = new JButton("");
+        Button_lineWidth_decrease.addActionListener(e -> {
             iLineWidth = iLineWidth - 2;
             if (iLineWidth < 1) {
                 iLineWidth = 1;
             }
-            //else{iLineWidth=1;}
             img_explanation_fname = "qqq/senhaba_sage.png";
             updateExplanation();
-            //Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        pnlw23.add(Button_senhaba_sage);
+        pnlw23.add(Button_lineWidth_decrease);
 
-        Button_senhaba_sage.setMargin(new Insets(0, 0, 0, 0));
-        Button_senhaba_sage.setIcon(ResourceUtil.createImageIcon(
+        Button_lineWidth_decrease.setMargin(new Insets(0, 0, 0, 0));
+        Button_lineWidth_decrease.setIcon(createImageIcon(
                 "ppp/senhaba_sage.png"));
 
 // ****西********************　線幅　上げ　******************************************************
 
-        JButton Button_senhaba_age = new JButton("");
-        Button_senhaba_age.addActionListener(e -> {
+        JButton Button_lineWidth_increase = new JButton("");
+        Button_lineWidth_increase.addActionListener(e -> {
             iLineWidth = iLineWidth + 2;
             img_explanation_fname = "qqq/senhaba_age.png";
             updateExplanation();
             canvas.repaint();
         });
-        pnlw23.add(Button_senhaba_age);
+        pnlw23.add(Button_lineWidth_increase);
 
-        Button_senhaba_age.setMargin(new Insets(0, 0, 0, 0));
-        Button_senhaba_age.setIcon(ResourceUtil.createImageIcon(
+        Button_lineWidth_increase.setMargin(new Insets(0, 0, 0, 0));
+        Button_lineWidth_increase.setIcon(createImageIcon(
                 "ppp/senhaba_age.png"));
 
 
@@ -1587,7 +1581,7 @@ public class App extends JFrame implements ActionListener {
         pnlw24.add(Button_point_width_reduce);
 
         Button_point_width_reduce.setMargin(new Insets(0, 0, 0, 0));
-        Button_point_width_reduce.setIcon(ResourceUtil.createImageIcon(
+        Button_point_width_reduce.setIcon(createImageIcon(
                 "ppp/tenhaba_sage.png"));
 
 // ****西*******************************　点幅　上げ　*******************************************
@@ -1606,7 +1600,7 @@ public class App extends JFrame implements ActionListener {
         pnlw24.add(Button_point_width_increase);
 
         Button_point_width_increase.setMargin(new Insets(0, 0, 0, 0));
-        Button_point_width_increase.setIcon(ResourceUtil.createImageIcon(
+        Button_point_width_increase.setIcon(createImageIcon(
                 "ppp/tenhaba_age.png"));
 
 // ******西*************展開図の線をアンチエイリアス表示にする***********************************************************
@@ -1657,7 +1651,7 @@ public class App extends JFrame implements ActionListener {
         pnlw27.add(Button_orisen_hyougen);
 
         Button_orisen_hyougen.setMargin(new Insets(0, 0, 0, 0));
-        Button_orisen_hyougen.setIcon(ResourceUtil.createImageIcon(
+        Button_orisen_hyougen.setIcon(createImageIcon(
                 "ppp/orisen_hyougen.png"));
 
 
@@ -1683,7 +1677,7 @@ public class App extends JFrame implements ActionListener {
         ButtonCol_red.addActionListener(e -> {
             img_explanation_fname = "qqq/ButtonCol_red.png";
             updateExplanation();
-            ButtonCol_irokesi();
+            ButtonCol_reset();
             ButtonCol_red.setForeground(Color.black);
             ButtonCol_red.setBackground(Color.red);
             icol = LineColor.RED_1;
@@ -1704,7 +1698,7 @@ public class App extends JFrame implements ActionListener {
 
             img_explanation_fname = "qqq/ButtonCol_blue.png";
             updateExplanation();
-            ButtonCol_irokesi();
+            ButtonCol_reset();
             ButtonCol_blue.setForeground(Color.black);
             ButtonCol_blue.setBackground(Color.blue);
             icol = LineColor.BLUE_2;
@@ -1723,7 +1717,7 @@ public class App extends JFrame implements ActionListener {
             img_explanation_fname = "qqq/ButtonCol_black.png";
             updateExplanation();
 
-            ButtonCol_irokesi();
+            ButtonCol_reset();
             ButtonCol_black.setForeground(Color.white);
             ButtonCol_black.setBackground(Color.black);
             icol = LineColor.BLACK_0;
@@ -1745,7 +1739,7 @@ public class App extends JFrame implements ActionListener {
             img_explanation_fname = "qqq/ButtonCol_cyan.png";
             updateExplanation();
 
-            ButtonCol_irokesi();
+            ButtonCol_reset();
             ButtonCol_cyan.setForeground(Color.black);
             ButtonCol_cyan.setBackground(Color.cyan);
             icol = LineColor.CYAN_3;
@@ -1795,7 +1789,7 @@ public class App extends JFrame implements ActionListener {
 
 
         Button_senbun_nyuryoku.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_nyuryoku.setIcon(ResourceUtil.createImageIcon(
+        Button_senbun_nyuryoku.setIcon(createImageIcon(
                 "ppp/senbun_nyuryoku.png"));
 
 // ------1;線分入力モード。ここまで
@@ -1819,7 +1813,7 @@ public class App extends JFrame implements ActionListener {
         pnlw1.add(Button_senbun_nyuryoku11);
 
         Button_senbun_nyuryoku11.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_nyuryoku11.setIcon(ResourceUtil.createImageIcon(
+        Button_senbun_nyuryoku11.setIcon(createImageIcon(
                 "ppp/senbun_nyuryoku11.png"));
 
 
@@ -1845,13 +1839,13 @@ public class App extends JFrame implements ActionListener {
 
 
         Button_Voronoi.setMargin(new Insets(0, 0, 0, 0));
-        Button_Voronoi.setIcon(ResourceUtil.createImageIcon("ppp/Voronoi.png"));
+        Button_Voronoi.setIcon(createImageIcon("ppp/Voronoi.png"));
 
 // ------1;線分入力モード。ここまで
 // *******西***********************************************************************
 // -------------38;折り畳み可能線入力
-        JButton Button_oritatami_kanousen = new JButton("");
-        Button_oritatami_kanousen.addActionListener(e -> {
+        JButton Button_folding_kanousen = new JButton("");
+        Button_folding_kanousen.addActionListener(e -> {
             img_explanation_fname = "qqq/oritatami_kanousen.png";
             updateExplanation();
 
@@ -1863,10 +1857,10 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        pnlw1.add(Button_oritatami_kanousen);
+        pnlw1.add(Button_folding_kanousen);
 
-        Button_oritatami_kanousen.setMargin(new Insets(0, 0, 0, 0));
-        Button_oritatami_kanousen.setIcon(ResourceUtil.createImageIcon(
+        Button_folding_kanousen.setMargin(new Insets(0, 0, 0, 0));
+        Button_folding_kanousen.setIcon(createImageIcon(
                 "ppp/oritatami_kanousen.png"));
 
 
@@ -1900,7 +1894,7 @@ public class App extends JFrame implements ActionListener {
         pnlw2.add(Button_senbun_entyou);
 
         Button_senbun_entyou.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_entyou.setIcon(ResourceUtil.createImageIcon(
+        Button_senbun_entyou.setIcon(createImageIcon(
                 "ppp/senbun_entyou.png"));
 
 // -------------5;線分延長モード。ここまで
@@ -1926,7 +1920,7 @@ public class App extends JFrame implements ActionListener {
         pnlw2.add(Button_senbun_entyou_2);
 
         Button_senbun_entyou_2.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_entyou_2.setIcon(ResourceUtil.createImageIcon("ppp/senbun_entyou_2.png"));
+        Button_senbun_entyou_2.setIcon(createImageIcon("ppp/senbun_entyou_2.png"));
 
 // -------------70;線分延長モード。ここまで
 // ******************************************************************************
@@ -1949,7 +1943,7 @@ public class App extends JFrame implements ActionListener {
         pnlw2.add(Button_kaku_toubun);
 
         Button_kaku_toubun.setMargin(new Insets(0, 0, 0, 0));
-        Button_kaku_toubun.setIcon(ResourceUtil.createImageIcon(
+        Button_kaku_toubun.setIcon(createImageIcon(
                 "ppp/kaku_toubun.png"));
 
 // -------------7;角二等分線モード。ここまで
@@ -1972,7 +1966,7 @@ public class App extends JFrame implements ActionListener {
         pnlw2.add(Button_naishin);
 
         Button_naishin.setMargin(new Insets(0, 0, 0, 0));
-        Button_naishin.setIcon(ResourceUtil.createImageIcon(
+        Button_naishin.setIcon(createImageIcon(
                 "ppp/naishin.png"));
 
 // -------------8;内心モード。ここまで
@@ -2006,7 +2000,7 @@ public class App extends JFrame implements ActionListener {
         pnlw3.add(Button_suisen);
 
         Button_suisen.setMargin(new Insets(0, 0, 0, 0));
-        Button_suisen.setIcon(ResourceUtil.createImageIcon(
+        Button_suisen.setIcon(createImageIcon(
                 "ppp/suisen.png"));
 
 
@@ -2031,7 +2025,7 @@ public class App extends JFrame implements ActionListener {
         pnlw3.add(Button_orikaesi);
 
         Button_orikaesi.setMargin(new Insets(0, 0, 0, 0));
-        Button_orikaesi.setIcon(ResourceUtil.createImageIcon(
+        Button_orikaesi.setIcon(createImageIcon(
                 "ppp/orikaesi.png"));
 
 
@@ -2056,7 +2050,7 @@ public class App extends JFrame implements ActionListener {
         pnlw3.add(Button_renzoku_orikaesi);
 
         Button_renzoku_orikaesi.setMargin(new Insets(0, 0, 0, 0));
-        Button_renzoku_orikaesi.setIcon(ResourceUtil.createImageIcon(
+        Button_renzoku_orikaesi.setIcon(createImageIcon(
                 "ppp/renzoku_orikaesi.png"));
 
 
@@ -2087,13 +2081,13 @@ public class App extends JFrame implements ActionListener {
         });
         pnlw4.add(Button_heikousen);
         Button_heikousen.setMargin(new Insets(0, 0, 0, 0));
-        Button_heikousen.setIcon(ResourceUtil.createImageIcon(
+        Button_heikousen.setIcon(createImageIcon(
                 "ppp/heikousen.png"));
 // -------------40;平行線入力モード。ここまで
 
 // -------------51;Parallel line width specification input mode.
-        JButton Button_heikousen_haba_sitei = new JButton("");
-        Button_heikousen_haba_sitei.addActionListener(e -> {
+        JButton Button_heikousen_width_sitei = new JButton("");
+        Button_heikousen_width_sitei.addActionListener(e -> {
             img_explanation_fname = "qqq/heikousen_haba_sitei.png";
             updateExplanation();
             i_mouse_modeA = MouseMode.PARALLEL_DRAW_WIDTH_51;
@@ -2104,9 +2098,9 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        pnlw4.add(Button_heikousen_haba_sitei);
-        Button_heikousen_haba_sitei.setMargin(new Insets(0, 0, 0, 0));
-        Button_heikousen_haba_sitei.setIcon(ResourceUtil.createImageIcon(
+        pnlw4.add(Button_heikousen_width_sitei);
+        Button_heikousen_width_sitei.setMargin(new Insets(0, 0, 0, 0));
+        Button_heikousen_width_sitei.setIcon(createImageIcon(
                 "ppp/heikousen_haba_sitei.png"));
 // -------------51;平行線　幅指定入力モード。ここまで
 
@@ -2129,7 +2123,7 @@ public class App extends JFrame implements ActionListener {
         pnlw4.add(Button_oritatami_kanousen_and_kousitenkei_simple);
 
         Button_oritatami_kanousen_and_kousitenkei_simple.setMargin(new Insets(0, 0, 0, 0));
-        Button_oritatami_kanousen_and_kousitenkei_simple.setIcon(ResourceUtil.createImageIcon(
+        Button_oritatami_kanousen_and_kousitenkei_simple.setIcon(createImageIcon(
                 "ppp/oritatami_kanousen_and_kousitenkei_simple.png"));
 
 
@@ -2149,18 +2143,15 @@ public class App extends JFrame implements ActionListener {
             System.out.println("i_egaki_dankai = " + es1.i_drawing_stage);
             System.out.println("i_kouho_dankai = " + es1.i_candidate_stage);
 
-
             img_explanation_fname = "qqq/all_s_step_to_orisen.png";
             updateExplanation();
-            //i_mouse_modeA=19;System.out.println("i_mouse_modeA = "+i_mouse_modeA);
-            //es1.v_del_all_cc();
             es1.all_s_step_to_orisen();
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
         pnlw29.add(Button_all_s_step_to_orisen);
         Button_all_s_step_to_orisen.setMargin(new Insets(0, 0, 0, 0));
-        Button_all_s_step_to_orisen.setIcon(ResourceUtil.createImageIcon(
+        Button_all_s_step_to_orisen.setIcon(createImageIcon(
                 "ppp/all_s_step_to_orisen.png"));
 
         //Button_v_del_all.setBackground(Color.green);
@@ -2184,8 +2175,7 @@ public class App extends JFrame implements ActionListener {
         pnlw29.add(Button_sakananohone);
 
         Button_sakananohone.setMargin(new Insets(0, 0, 0, 0));
-        Button_sakananohone.setIcon(ResourceUtil.createImageIcon(
-                "ppp/sakananohone.png"));
+        Button_sakananohone.setIcon(createImageIcon("ppp/sakananohone.png"));
 
 
 // -------------10;魚の骨モード。ここまで
@@ -2209,8 +2199,7 @@ public class App extends JFrame implements ActionListener {
         pnlw29.add(Button_fuku_orikaesi);
 
         Button_fuku_orikaesi.setMargin(new Insets(0, 0, 0, 0));
-        Button_fuku_orikaesi.setIcon(ResourceUtil.createImageIcon(
-                "ppp/fuku_orikaesi.png"));
+        Button_fuku_orikaesi.setIcon(createImageIcon("ppp/fuku_orikaesi.png"));
 
 
 // -------------35;複折り返しモード。ここまで
@@ -2221,7 +2210,6 @@ public class App extends JFrame implements ActionListener {
 
         //------------------------------------------------
         JPanel pnlw15 = new JPanel();
-//         pnlw15.setBackground(Color.PINK);
         pnlw15.setLayout(new GridLayout(1, 3));
 
         pnlw.add(pnlw15);
@@ -2261,8 +2249,6 @@ public class App extends JFrame implements ActionListener {
         pnlw15.add(Button_lineSegment_division_set);
 
         Button_lineSegment_division_set.setMargin(new Insets(0, 0, 0, 0));
-        //Button_lineSegment_division_set.setIcon(createImageIcon(
-        //"ppp/senbun_bunkatu_set.png")));
 
 // ------1;線分分割数set。ここまで
 
@@ -2295,7 +2281,7 @@ public class App extends JFrame implements ActionListener {
         pnlw15.add(Button_senbun_b_nyuryoku);
 
         Button_senbun_b_nyuryoku.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_b_nyuryoku.setIcon(ResourceUtil.createImageIcon(
+        Button_senbun_b_nyuryoku.setIcon(createImageIcon(
                 "ppp/senbun_b_nyuryoku.png"));
 
 // ------27;線分入力モード。ここまで
@@ -2303,33 +2289,9 @@ public class App extends JFrame implements ActionListener {
 
         //------------------------------------------------
         JPanel pnlw6 = new JPanel();
-//         pnlw6.setBackground(Color.PINK);
         pnlw6.setLayout(new GridLayout(1, 3));
         pnlw.add(pnlw6);
-/*
-// ******西************************************************************************
 
-		//Button	Button_senbun_nyuryoku	= new Button(	"L_draw"	);Button_senbun_nyuryoku.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-// -----61;長方形内選択モード。
-		JButton	Button_tyouhoukei_select	= new JButton(	""	);
-			Button_tyouhoukei_select.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-	img_explanation_fname="qqq/tyouhoukei_select.png";readImageFromFile3();
-						foldLineAdditionalInputMode=0;//=0は折線入力　=1は補助線入力モード
-						es1.set_i_orisen_hojyosen(foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
-						i_mouse_modeA=61;iro_sitei_ato_ni_jissisuru_sagyou_bangou=1;
-						System.out.println("i_mouse_modeA = "+i_mouse_modeA);
-
-						es1.unselect_all();Button_kyoutuu_sagyou();repaint();
-	  }});
-		pnlw6.add(Button_tyouhoukei_select);
-
-
-		Button_tyouhoukei_select.setMargin(new Insets(0,0,0,0));
-		Button_tyouhoukei_select.setIcon(createImageIcon(
-		  "ppp/tyouhoukei_select.png")));
-
-// ------61;長方形内選択モード。ここまで
-*/
 
 // ******西************************************************************************
 //------------------------------------------------
@@ -2346,11 +2308,8 @@ public class App extends JFrame implements ActionListener {
         });
         pnlw6.add(Button_select);
 
-        //Button_select.setBorder(new LineBorder(Color.green, 4, true));
         Button_select.setBackground(Color.green);
-        //Button_select.setBackground(Color.white);
         Button_select.setMargin(new Insets(0, 0, 0, 0));
-
 
 //------------------------------------------------
 
@@ -2360,16 +2319,11 @@ public class App extends JFrame implements ActionListener {
 
             img_explanation_fname = "qqq/select_all.png";
             updateExplanation();
-            //i_mouse_modeA=19;
             es1.select_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
         pnlw6.add(Button_select_all);
-        //Button_select_all.setMargin(new Insets(0,0,0,0));
-        //Button_select_all.setIcon(createImageIcon(
-        //"ppp/select_all.png")));
-        //Button_select_all.setBorder(new LineBorder(Color.green, 4, true));
         Button_select_all.setBackground(Color.green);
         Button_select_all.setMargin(new Insets(0, 0, 0, 0));
 
@@ -2377,7 +2331,6 @@ public class App extends JFrame implements ActionListener {
 
         //------------------------------------------------
         JPanel pnlw7 = new JPanel();
-//         pnlw7.setBackground(Color.PINK);
         pnlw7.setLayout(new GridLayout(1, 2));
         pnlw.add(pnlw7);
 
@@ -2395,8 +2348,6 @@ public class App extends JFrame implements ActionListener {
             canvas.repaint();
         });
         pnlw7.add(Button_unselect);
-        // Button_unselect.setBackground(new Color(200,150,150));
-        //Button_unselect.setBorder(new LineBorder(Color.green, 4, true));
         Button_unselect.setBackground(Color.green);
         Button_unselect.setMargin(new Insets(0, 0, 0, 0));
 
@@ -2408,16 +2359,11 @@ public class App extends JFrame implements ActionListener {
 
             img_explanation_fname = "qqq/unselect_all.png";
             updateExplanation();
-            //i_mouse_modeA=19;
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
         pnlw7.add(Button_unselect_all);
-        //Button_unselect_all.setMargin(new Insets(0,0,0,0));
-        //Button_unselect_all.setIcon(createImageIcon(
-        //"ppp/unselect_all.png")));
-        //Button_unselect_all.setBorder(new LineBorder(Color.green, 4, true));
         Button_unselect_all.setBackground(Color.green);
         Button_unselect_all.setMargin(new Insets(0, 0, 0, 0));
 // ******************************************************************************
@@ -2438,22 +2384,17 @@ public class App extends JFrame implements ActionListener {
 
             img_explanation_fname = "qqq/move.png";
             updateExplanation();
-            i_sel_mou_mode = OperationMode.MOVE_1;
+            selectionOperationMode = SelectionOperationMode.MOVE_1;
             Button_sel_mou_wakukae();
-
 
             i_mouse_modeA = MouseMode.CREASE_MOVE_21;
             Button_kyoutuu_sagyou();
             canvas.repaint();
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-
-
         });
         pnlw16.add(Button_move);
         Button_move.setBackground(new Color(170, 220, 170));
         Button_move.setMargin(new Insets(0, 0, 0, 0));
-        //Button_move.setIcon(createImageIcon(
-        //  "ppp/move.png")));
 // -------------21;移動モード。ここまで
 
 
@@ -2463,7 +2404,7 @@ public class App extends JFrame implements ActionListener {
 
             img_explanation_fname = "qqq/move_2p2p.png";
             updateExplanation();
-            i_sel_mou_mode = OperationMode.MOVE4P_2;
+            selectionOperationMode = SelectionOperationMode.MOVE4P_2;
             Button_sel_mou_wakukae();
 
 
@@ -2475,8 +2416,6 @@ public class App extends JFrame implements ActionListener {
         pnlw16.add(Button_move_2p2p);
         Button_move_2p2p.setBackground(new Color(170, 220, 170));
         Button_move_2p2p.setMargin(new Insets(0, 0, 0, 0));
-        //Button_move_2p2p.setIcon(createImageIcon(
-        //  "ppp/move_2p2p.png")));
 // -------------31;移動2p2pモード。ここまで
 
 
@@ -2485,7 +2424,6 @@ public class App extends JFrame implements ActionListener {
 
         //------------------------------------------------
         JPanel pnlw17 = new JPanel();
-//         pnlw17.setBackground(Color.PINK);
         pnlw17.setLayout(new GridLayout(1, 2));
         pnlw.add(pnlw17);
 
@@ -2496,7 +2434,7 @@ public class App extends JFrame implements ActionListener {
 
             img_explanation_fname = "qqq/copy_paste.png";
             updateExplanation();
-            i_sel_mou_mode = OperationMode.COPY_3;
+            selectionOperationMode = SelectionOperationMode.COPY_3;
             Button_sel_mou_wakukae();
 
 
@@ -2519,7 +2457,7 @@ public class App extends JFrame implements ActionListener {
 
             img_explanation_fname = "qqq/copy_paste_2p2p.png";
             updateExplanation();
-            i_sel_mou_mode = OperationMode.COPY4P_4;
+            selectionOperationMode = SelectionOperationMode.COPY4P_4;
             Button_sel_mou_wakukae();
 
 
@@ -2551,7 +2489,7 @@ public class App extends JFrame implements ActionListener {
 
             img_explanation_fname = "qqq/kyouei.png";
             updateExplanation();
-            i_sel_mou_mode = OperationMode.MIRROR_5;
+            selectionOperationMode = SelectionOperationMode.MIRROR_5;
             Button_sel_mou_wakukae();
 
             i_mouse_modeA = MouseMode.DRAW_CREASE_SYMMETRIC_12;
@@ -2562,7 +2500,7 @@ public class App extends JFrame implements ActionListener {
         pnlw35.add(Button_kyouei);
         Button_kyouei.setBackground(new Color(170, 220, 170));
         Button_kyouei.setMargin(new Insets(0, 0, 0, 0));
-        Button_kyouei.setIcon(ResourceUtil.createImageIcon(
+        Button_kyouei.setIcon(createImageIcon(
                 "ppp/kyouei.png"));
 
 
@@ -2624,7 +2562,7 @@ public class App extends JFrame implements ActionListener {
         pnlw5.add(Button_senbun_sakujyo);
 
         Button_senbun_sakujyo.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_sakujyo.setIcon(ResourceUtil.createImageIcon(
+        Button_senbun_sakujyo.setIcon(createImageIcon(
                 "ppp/senbun_sakujyo.png"));
 
 
@@ -2650,7 +2588,7 @@ public class App extends JFrame implements ActionListener {
         pnlw5.add(Button_kuro_lineSegment_removal);
 
         Button_kuro_lineSegment_removal.setMargin(new Insets(0, 0, 0, 0));
-        Button_kuro_lineSegment_removal.setIcon(ResourceUtil.createImageIcon(
+        Button_kuro_lineSegment_removal.setIcon(createImageIcon(
                 "ppp/kuro_senbun_sakujyo.png"));
 
 
@@ -2676,7 +2614,7 @@ public class App extends JFrame implements ActionListener {
         pnlw5.add(Button_senbun3_sakujyo);
 
         Button_senbun3_sakujyo.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun3_sakujyo.setIcon(ResourceUtil.createImageIcon(
+        Button_senbun3_sakujyo.setIcon(createImageIcon(
                 "ppp/senbun3_sakujyo.png"));
 
 
@@ -2700,7 +2638,7 @@ public class App extends JFrame implements ActionListener {
 
 
         Button_eda_kesi.setMargin(new Insets(0, 0, 0, 0));
-        Button_eda_kesi.setIcon(ResourceUtil.createImageIcon(
+        Button_eda_kesi.setIcon(createImageIcon(
                 "ppp/eda_kesi.png"));
 
 // ******西************************************************************************
@@ -2721,7 +2659,7 @@ public class App extends JFrame implements ActionListener {
         Button_M_nisuru.addActionListener(e -> {
             img_explanation_fname = "qqq/M_nisuru.png";
             updateExplanation();
-            Button_irokesi();
+            Button_reset();
             Button_M_nisuru.setForeground(Color.black);
             Button_M_nisuru.setBackground(Color.red);
             //icol=1;es1.setcolor(icol);
@@ -2738,7 +2676,7 @@ public class App extends JFrame implements ActionListener {
         Button_M_nisuru.setBackground(Color.white);
         Button_M_nisuru.setMargin(new Insets(0, 0, 0, 0));
 
-        Button_M_nisuru.setIcon(ResourceUtil.createImageIcon(
+        Button_M_nisuru.setIcon(createImageIcon(
                 "ppp/M_nisuru.png"));
 
 //Button_M_nisuru.setHorizontalTextPosition(JButton.RIGHT);
@@ -2749,7 +2687,7 @@ public class App extends JFrame implements ActionListener {
         Button_V_nisuru.addActionListener(e -> {
             img_explanation_fname = "qqq/V_nisuru.png";
             updateExplanation();
-            Button_irokesi();
+            Button_reset();
             Button_V_nisuru.setForeground(Color.black);
             Button_V_nisuru.setBackground(Color.blue);
             //icol=1;es1.setcolor(icol);
@@ -2764,14 +2702,14 @@ public class App extends JFrame implements ActionListener {
         Button_V_nisuru.setBackground(Color.white);
         Button_V_nisuru.setMargin(new Insets(0, 0, 0, 0));
 
-        Button_V_nisuru.setIcon(ResourceUtil.createImageIcon(
+        Button_V_nisuru.setIcon(createImageIcon(
                 "ppp/V_nisuru.png"));
 // ******************************************************************************
         Button_E_nisuru = new JButton(" ");
         Button_E_nisuru.addActionListener(e -> {
             img_explanation_fname = "qqq/E_nisuru.png";
             updateExplanation();
-            Button_irokesi();
+            Button_reset();
             Button_E_nisuru.setForeground(Color.white);
             Button_E_nisuru.setBackground(Color.black);
             //icol=1;es1.setcolor(icol);
@@ -2786,7 +2724,7 @@ public class App extends JFrame implements ActionListener {
         Button_E_nisuru.setBackground(Color.white);
         Button_E_nisuru.setMargin(new Insets(0, 0, 0, 0));
 
-        Button_E_nisuru.setIcon(ResourceUtil.createImageIcon("ppp/E_nisuru.png"));
+        Button_E_nisuru.setIcon(createImageIcon("ppp/E_nisuru.png"));
 
 
 // ******************************************************************************
@@ -2795,7 +2733,7 @@ public class App extends JFrame implements ActionListener {
         Button_HK_nisuru.addActionListener(e -> {
             img_explanation_fname = "qqq/HK_nisuru.png";
             updateExplanation();
-            Button_irokesi();
+            Button_reset();
             Button_HK_nisuru.setForeground(Color.white);
             Button_HK_nisuru.setBackground(new Color(100, 200, 200));
             //icol=1;es1.setcolor(icol);
@@ -2810,7 +2748,7 @@ public class App extends JFrame implements ActionListener {
         Button_HK_nisuru.setBackground(Color.white);
         Button_HK_nisuru.setMargin(new Insets(0, 0, 0, 0));
 
-        Button_HK_nisuru.setIcon(ResourceUtil.createImageIcon("ppp/HK_nisuru.png"));
+        Button_HK_nisuru.setIcon(createImageIcon("ppp/HK_nisuru.png"));
 
 
 // ******************************************************************************
@@ -2838,16 +2776,13 @@ public class App extends JFrame implements ActionListener {
         Button_zen_yama_tani_henkan.setMargin(new Insets(0, 0, 0, 0));
 // ******西************************************************************************線分の色を赤から青、青から赤に変換
 
-        //JButton	Button_senbun_henkan2	= new JButton(	""	);//new JButton(	"L_chan"	);
         Button_senbun_henkan2 = new JButton("");//new JButton(	"L_chan"	);
         Button_senbun_henkan2.addActionListener(e -> {
 
             img_explanation_fname = "qqq/senbun_henkan2.png";
             updateExplanation();
-            Button_irokesi();
-            //Button_senbun_henkan2.setForeground(Color.black);
+            Button_reset();
             Button_senbun_henkan2.setBackground(new Color(138, 43, 226));
-
 
             i_mouse_modeA = MouseMode.CREASE_TOGGLE_MV_58;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
@@ -2860,7 +2795,7 @@ public class App extends JFrame implements ActionListener {
 
         Button_senbun_henkan2.setBackground(Color.white);
         Button_senbun_henkan2.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_henkan2.setIcon(ResourceUtil.createImageIcon(
+        Button_senbun_henkan2.setIcon(createImageIcon(
                 "ppp/senbun_henkan2.png"));
 
 // ******西************************************************************************線分の色を黒、赤、、青、黒の順に変換
@@ -2870,7 +2805,7 @@ public class App extends JFrame implements ActionListener {
 
             img_explanation_fname = "qqq/senbun_henkan.png";
             updateExplanation();
-            Button_irokesi();
+            Button_reset();
 
             i_mouse_modeA = MouseMode.CHANGE_CREASE_TYPE_4;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
@@ -2882,15 +2817,13 @@ public class App extends JFrame implements ActionListener {
         pnlw28.add(Button_senbun_henkan);
 
         Button_senbun_henkan.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_henkan.setIcon(ResourceUtil.createImageIcon(
-                "ppp/senbun_henkan.png"));
+        Button_senbun_henkan.setIcon(createImageIcon("ppp/senbun_henkan.png"));
 
 
 // ******西************************************************************************
 
         //------------------------------------------------
         JPanel pnlw21 = new JPanel();
-//         pnlw21.setBackground(Color.PINK);
         pnlw21.setLayout(new GridLayout(1, 3));
         //------------------------------------------------
         pnlw.add(pnlw21);
@@ -2910,7 +2843,7 @@ public class App extends JFrame implements ActionListener {
             if (icol == LineColor.BLACK_0) {
                 icol = LineColor.RED_1;
                 es1.setColor(icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
-                ButtonCol_irokesi();
+                ButtonCol_reset();
                 ButtonCol_red.setForeground(Color.black);
                 ButtonCol_red.setBackground(Color.red);    //折線のボタンの色設定
             }
@@ -2923,7 +2856,7 @@ public class App extends JFrame implements ActionListener {
         pnlw21.add(Button_in_L_col_change);
 
         Button_in_L_col_change.setMargin(new Insets(0, 0, 0, 0));
-        Button_in_L_col_change.setIcon(ResourceUtil.createImageIcon(
+        Button_in_L_col_change.setIcon(createImageIcon(
                 "ppp/in_L_col_change.png"));
 
 
@@ -2941,7 +2874,7 @@ public class App extends JFrame implements ActionListener {
             if (icol == LineColor.BLACK_0) {
                 icol = LineColor.BLUE_2;
                 es1.setColor(icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
-                ButtonCol_irokesi();
+                ButtonCol_reset();
                 ButtonCol_blue.setForeground(Color.black);
                 ButtonCol_blue.setBackground(Color.blue);    //折線のボタンの色設定
             }
@@ -2954,15 +2887,13 @@ public class App extends JFrame implements ActionListener {
         pnlw21.add(Button_on_L_col_change);
 
         Button_on_L_col_change.setMargin(new Insets(0, 0, 0, 0));
-        Button_on_L_col_change.setIcon(ResourceUtil.createImageIcon(
-                "ppp/on_L_col_change.png"));
+        Button_on_L_col_change.setIcon(createImageIcon("ppp/on_L_col_change.png"));
 
 
 // *******西***********************************************************************
 
         //------------------------------------------------
         JPanel pnlw10 = new JPanel();
-//         pnlw10.setBackground(Color.PINK);
         pnlw10.setLayout(new GridLayout(1, 4));
 
         pnlw.add(pnlw10);
@@ -2983,8 +2914,7 @@ public class App extends JFrame implements ActionListener {
         pnlw10.add(Button_v_add);
 
         Button_v_add.setMargin(new Insets(0, 0, 0, 0));
-        Button_v_add.setIcon(ResourceUtil.createImageIcon(
-                "ppp/v_add.png"));
+        Button_v_add.setIcon(createImageIcon("ppp/v_add.png"));
 
 
 // -------------14;点追加モード。ここまで
@@ -3006,7 +2936,7 @@ public class App extends JFrame implements ActionListener {
         pnlw10.add(Button_v_del);
 
         Button_v_del.setMargin(new Insets(0, 0, 0, 0));
-        Button_v_del.setIcon(ResourceUtil.createImageIcon(
+        Button_v_del.setIcon(createImageIcon(
                 "ppp/v_del.png"));
 
 
@@ -3029,7 +2959,7 @@ public class App extends JFrame implements ActionListener {
         pnlw10.add(Button_v_del_cc);
 
         Button_v_del_cc.setMargin(new Insets(0, 0, 0, 0));
-        Button_v_del_cc.setIcon(ResourceUtil.createImageIcon(
+        Button_v_del_cc.setIcon(createImageIcon(
                 "ppp/v_del_cc.png"));
 
 
@@ -3062,7 +2992,7 @@ public class App extends JFrame implements ActionListener {
         });
         pnlw13.add(Button_v_del_all);
         Button_v_del_all.setMargin(new Insets(0, 0, 0, 0));
-        Button_v_del_all.setIcon(ResourceUtil.createImageIcon(
+        Button_v_del_all.setIcon(createImageIcon(
                 "ppp/v_del_all.png"));
 
         //Button_v_del_all.setBackground(Color.green);
@@ -3074,7 +3004,6 @@ public class App extends JFrame implements ActionListener {
 
             img_explanation_fname = "qqq/v_del_all_cc.png";
             updateExplanation();
-            //i_mouse_modeA=19;
             es1.v_del_all_cc();
             System.out.println("es1.v_del_all_cc()");
             Button_kyoutuu_sagyou();
@@ -3082,11 +3011,8 @@ public class App extends JFrame implements ActionListener {
         });
         pnlw13.add(Button_v_del_all_cc);
         Button_v_del_all_cc.setMargin(new Insets(0, 0, 0, 0));
-        Button_v_del_all_cc.setIcon(ResourceUtil.createImageIcon(
+        Button_v_del_all_cc.setIcon(createImageIcon(
                 "ppp/v_del_all_cc.png"));
-
-        //Button_v_del_all.setBackground(Color.green);
-
 
 // ****西**************************************************************************
 
@@ -3115,8 +3041,8 @@ public class App extends JFrame implements ActionListener {
 // *******西***********************************************************************
 //------------------------------------------------
         //格子表示2
-        Button_kitei2 = new JButton("");//new JButton(	"Grid2"	);
-        Button_kitei2.addActionListener(e -> {
+        Button_grid_decrease = new JButton("");//new JButton(	"Grid2"	);
+        Button_grid_decrease.addActionListener(e -> {
             img_explanation_fname = "qqq/kitei2.png";
             updateExplanation();
 
@@ -3131,36 +3057,34 @@ public class App extends JFrame implements ActionListener {
 
             //ボタンの色変え
             if (nyuuryoku_kitei >= 1) {
-                Button_kitei.setForeground(Color.black);
-                Button_kitei.setBackground(Color.white);
+                Button_grid_increase.setForeground(Color.black);
+                Button_grid_increase.setBackground(Color.white);
             }
             if (nyuuryoku_kitei == 0) {
-                Button_kitei.setForeground(Color.black);
-                Button_kitei.setBackground(new Color(0, 200, 200));
+                Button_grid_increase.setForeground(Color.black);
+                Button_grid_increase.setBackground(new Color(0, 200, 200));
             }
             //ボタンの色変え(ここまで)
             //ボタンの色変え
             if (nyuuryoku_kitei >= 1) {
-                Button_kitei2.setForeground(Color.black);
-                Button_kitei2.setBackground(Color.white);
+                Button_grid_decrease.setForeground(Color.black);
+                Button_grid_decrease.setBackground(Color.white);
             }
             if (nyuuryoku_kitei == 0) {
-                Button_kitei2.setForeground(Color.black);
-                Button_kitei2.setBackground(new Color(0, 200, 200));
+                Button_grid_decrease.setForeground(Color.black);
+                Button_grid_decrease.setBackground(new Color(0, 200, 200));
             }
             //ボタンの色変え(ここまで)
 
             text1.setText(String.valueOf(nyuuryoku_kitei));
-            es1.set_grid_bunkatu_suu(nyuuryoku_kitei);
-            //Button_kyoutuu_sagyou();
+            es1.setGridDivisionNumber(nyuuryoku_kitei);
             canvas.repaint();
         });
-        pnlw9.add(Button_kitei2);
-        Button_kitei2.setBounds(0, 1, 20, 19);
+        pnlw9.add(Button_grid_decrease);
+        Button_grid_decrease.setBounds(0, 1, 20, 19);
 
-        Button_kitei2.setMargin(new Insets(0, 0, 0, 0));
-        Button_kitei2.setIcon(ResourceUtil.createImageIcon(
-                "ppp/kitei2.png"));
+        Button_grid_decrease.setMargin(new Insets(0, 0, 0, 0));
+        Button_grid_decrease.setIcon(createImageIcon("ppp/kitei2.png"));
 
 
 // *****西*************************************************************************
@@ -3185,51 +3109,47 @@ public class App extends JFrame implements ActionListener {
         pnlw9.add(Button_syutoku);
         Button_syutoku.setBounds(55, 1, 15, 19);
         Button_syutoku.setMargin(new Insets(0, 0, 0, 0));
-        //Button_syutoku.setIcon(createImageIcon(
-        //  "ppp/syutoku.png")));
 
 
 //-------西-----------------------------------------
         //格子表示
-        Button_kitei = new JButton("");// new JButton(	"Grid"	);
+        Button_grid_increase = new JButton("");// new JButton(	"Grid"	);
 
-        Button_kitei.addActionListener(e -> {
+        Button_grid_increase.addActionListener(e -> {
             img_explanation_fname = "qqq/kitei.png";
             updateExplanation();
 
             nyuuryoku_kitei = nyuuryoku_kitei * 2;
-            //if(nyuuryoku_kitei>20){nyuuryoku_kitei=20;}
 
             //ボタンの色変え
             if (nyuuryoku_kitei >= 1) {
-                Button_kitei.setForeground(Color.black);
-                Button_kitei.setBackground(Color.white);
+                Button_grid_increase.setForeground(Color.black);
+                Button_grid_increase.setBackground(Color.white);
             }
             if (nyuuryoku_kitei == 0) {
-                Button_kitei.setForeground(Color.black);
-                Button_kitei.setBackground(new Color(0, 200, 200));
+                Button_grid_increase.setForeground(Color.black);
+                Button_grid_increase.setBackground(new Color(0, 200, 200));
             }
             //ボタンの色変え(ここまで)
             //ボタンの色変え
             if (nyuuryoku_kitei >= 1) {
-                Button_kitei2.setForeground(Color.black);
-                Button_kitei2.setBackground(Color.white);
+                Button_grid_decrease.setForeground(Color.black);
+                Button_grid_decrease.setBackground(Color.white);
             }
             if (nyuuryoku_kitei == 0) {
-                Button_kitei2.setForeground(Color.black);
-                Button_kitei2.setBackground(new Color(0, 200, 200));
+                Button_grid_decrease.setForeground(Color.black);
+                Button_grid_decrease.setBackground(new Color(0, 200, 200));
             }
             //ボタンの色変え(ここまで)
             text1.setText(String.valueOf(nyuuryoku_kitei));
-            es1.set_grid_bunkatu_suu(nyuuryoku_kitei);
-            //Button_kyoutuu_sagyou();
+            es1.setGridDivisionNumber(nyuuryoku_kitei);
             canvas.repaint();
         });
-        pnlw9.add(Button_kitei);
+        pnlw9.add(Button_grid_increase);
 
-        Button_kitei.setBounds(70, 1, 20, 19);
-        Button_kitei.setMargin(new Insets(0, 0, 0, 0));
-        Button_kitei.setIcon(ResourceUtil.createImageIcon(
+        Button_grid_increase.setBounds(70, 1, 20, 19);
+        Button_grid_increase.setMargin(new Insets(0, 0, 0, 0));
+        Button_grid_increase.setIcon(createImageIcon(
                 "ppp/kitei.png"));
 
 //------------------------------------//System.out.println("__");----
@@ -3270,34 +3190,34 @@ public class App extends JFrame implements ActionListener {
         pnlw.add(pnlw34);
 
 // ****西**************************************************************************
-        JButton Button_grid_senhaba_sage = new JButton("");
-        Button_grid_senhaba_sage.addActionListener(e -> {
+        JButton Button_grid_lineWidth_decrease = new JButton("");
+        Button_grid_lineWidth_decrease.addActionListener(e -> {
             kus.decreaseGridLineWidth();
             img_explanation_fname = "qqq/kousi_senhaba_sage.png";
             updateExplanation();
             //Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        pnlw34.add(Button_grid_senhaba_sage);
-        Button_grid_senhaba_sage.setBounds(0, 1, 20, 19);
-        Button_grid_senhaba_sage.setMargin(new Insets(0, 0, 0, 0));
-        Button_grid_senhaba_sage.setIcon(ResourceUtil.createImageIcon(
+        pnlw34.add(Button_grid_lineWidth_decrease);
+        Button_grid_lineWidth_decrease.setBounds(0, 1, 20, 19);
+        Button_grid_lineWidth_decrease.setMargin(new Insets(0, 0, 0, 0));
+        Button_grid_lineWidth_decrease.setIcon(createImageIcon(
                 "ppp/kousi_senhaba_sage.png"));
 
 // ****西**************************************************************************
 
-        JButton Button_grid_senhaba_age = new JButton("");
-        Button_grid_senhaba_age.addActionListener(e -> {
+        JButton Button_grid_lineWidthIncrease = new JButton("");
+        Button_grid_lineWidthIncrease.addActionListener(e -> {
             kus.increaseGridLineWidth();
             img_explanation_fname = "qqq/kousi_senhaba_age.png";
             updateExplanation();
             //Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        pnlw34.add(Button_grid_senhaba_age);
-        Button_grid_senhaba_age.setBounds(20, 1, 20, 19);
-        Button_grid_senhaba_age.setMargin(new Insets(0, 0, 0, 0));
-        Button_grid_senhaba_age.setIcon(ResourceUtil.createImageIcon(
+        pnlw34.add(Button_grid_lineWidthIncrease);
+        Button_grid_lineWidthIncrease.setBounds(20, 1, 20, 19);
+        Button_grid_lineWidthIncrease.setMargin(new Insets(0, 0, 0, 0));
+        Button_grid_lineWidthIncrease.setIcon(createImageIcon(
                 "ppp/kousi_senhaba_age.png"));
 
 // ---------------------------------------------------
@@ -3318,7 +3238,7 @@ public class App extends JFrame implements ActionListener {
         pnlw34.add(Button_i_kitei_jyoutai);
         Button_i_kitei_jyoutai.setBounds(40, 1, 69, 19);
         Button_i_kitei_jyoutai.setMargin(new Insets(0, 0, 0, 0));
-        Button_i_kitei_jyoutai.setIcon(ResourceUtil.createImageIcon(
+        Button_i_kitei_jyoutai.setIcon(createImageIcon(
                 "ppp/i_kitei_jyoutai.png"));
 
 //------------------------------------------
@@ -3354,7 +3274,7 @@ public class App extends JFrame implements ActionListener {
         pnlw33.add(Button_memori_tate_idou);
         Button_memori_tate_idou.setBounds(0, 1, 20, 19);
         Button_memori_tate_idou.setMargin(new Insets(0, 0, 0, 0));
-        Button_memori_tate_idou.setIcon(ResourceUtil.createImageIcon(
+        Button_memori_tate_idou.setIcon(createImageIcon(
                 "ppp/memori_tate_idou.png"));
 
 // *****西*************************************************************************
@@ -3399,7 +3319,7 @@ public class App extends JFrame implements ActionListener {
         Button_memori_yoko_idou.setBounds(70, 1, 20, 19);
 
         Button_memori_yoko_idou.setMargin(new Insets(0, 0, 0, 0));
-        Button_memori_yoko_idou.setIcon(ResourceUtil.createImageIcon(
+        Button_memori_yoko_idou.setIcon(createImageIcon(
                 "ppp/memori_yoko_idou.png"));
 
 
@@ -3456,7 +3376,7 @@ public class App extends JFrame implements ActionListener {
         JLabel Lb08;
         Lb08 = new JLabel();
         Lb08.setBounds(32, 2, 8, 17);
-        Lb08.setIcon(ResourceUtil.createImageIcon("ppp/plus_min.png"));
+        Lb08.setIcon(createImageIcon("ppp/plus_min.png"));
         pnlw19.add(Lb08);
 
         text22 = new JTextField("", 2);
@@ -3467,7 +3387,7 @@ public class App extends JFrame implements ActionListener {
         JLabel Lb09;
         Lb09 = new JLabel();
         Lb09.setBounds(70, 2, 9, 17);
-        Lb09.setIcon(ResourceUtil.createImageIcon("ppp/root_min.png"));
+        Lb09.setIcon(createImageIcon("ppp/root_min.png"));
         pnlw19.add(Lb09);
 
         text23 = new JTextField("", 2);
@@ -3494,7 +3414,7 @@ public class App extends JFrame implements ActionListener {
         JLabel Lb06;
         Lb06 = new JLabel();
         Lb06.setBounds(32, 2, 8, 17);
-        Lb06.setIcon(ResourceUtil.createImageIcon("ppp/plus_min.png"));
+        Lb06.setIcon(createImageIcon("ppp/plus_min.png"));
         pnlw18.add(Lb06);
 
         text19 = new JTextField("", 2);
@@ -3505,7 +3425,7 @@ public class App extends JFrame implements ActionListener {
         JLabel Lb07;
         Lb07 = new JLabel();
         Lb07.setBounds(70, 2, 9, 17);
-        Lb07.setIcon(ResourceUtil.createImageIcon("ppp/root_min.png"));
+        Lb07.setIcon(createImageIcon("ppp/root_min.png"));
         pnlw18.add(Lb07);
 
         text20 = new JTextField("", 2);
@@ -3590,8 +3510,8 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        ckbox_check1.setIcon(ResourceUtil.createImageIcon("ppp/ckbox_check1_off.png"));
-        ckbox_check1.setSelectedIcon(ResourceUtil.createImageIcon("ppp/ckbox_check1_on.png"));
+        ckbox_check1.setIcon(createImageIcon("ppp/ckbox_check1_off.png"));
+        ckbox_check1.setSelectedIcon(createImageIcon("ppp/ckbox_check1_on.png"));
         ckbox_check1.setBorderPainted(true);
         ckbox_check1.setMargin(new Insets(0, 0, 0, 0));
         pnle20.add(ckbox_check1);
@@ -3645,8 +3565,8 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        ckbox_check2.setIcon(ResourceUtil.createImageIcon("ppp/ckbox_check2_off.png"));
-        ckbox_check2.setSelectedIcon(ResourceUtil.createImageIcon("ppp/ckbox_check2_on.png"));
+        ckbox_check2.setIcon(createImageIcon("ppp/ckbox_check2_off.png"));
+        ckbox_check2.setSelectedIcon(createImageIcon("ppp/ckbox_check2_on.png"));
         ckbox_check2.setBorderPainted(true);
         ckbox_check2.setMargin(new Insets(0, 0, 0, 0));
         pnle21.add(ckbox_check2);
@@ -3701,8 +3621,8 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        ckbox_check3.setIcon(ResourceUtil.createImageIcon("ppp/ckbox_check3_off.png"));
-        ckbox_check3.setSelectedIcon(ResourceUtil.createImageIcon("ppp/ckbox_check3_on.png"));
+        ckbox_check3.setIcon(createImageIcon("ppp/ckbox_check3_off.png"));
+        ckbox_check3.setSelectedIcon(createImageIcon("ppp/ckbox_check3_on.png"));
         ckbox_check3.setBorderPainted(true);
         ckbox_check3.setMargin(new Insets(0, 0, 0, 0));
         pnle22.add(ckbox_check3);
@@ -3734,8 +3654,8 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        ckbox_check4.setIcon(ResourceUtil.createImageIcon("ppp/ckbox_check4_off.png"));
-        ckbox_check4.setSelectedIcon(ResourceUtil.createImageIcon("ppp/ckbox_check4_on.png"));
+        ckbox_check4.setIcon(createImageIcon("ppp/ckbox_check4_off.png"));
+        ckbox_check4.setSelectedIcon(createImageIcon("ppp/ckbox_check4_on.png"));
         ckbox_check4.setBorderPainted(true);
         ckbox_check4.setMargin(new Insets(0, 0, 0, 0));
         pnle23.add(ckbox_check4);
@@ -3762,7 +3682,7 @@ public class App extends JFrame implements ActionListener {
         pnle29.add(Button_ck4_color_sage);
 
         Button_ck4_color_sage.setMargin(new Insets(0, 0, 0, 0));
-        Button_ck4_color_sage.setIcon(ResourceUtil.createImageIcon(
+        Button_ck4_color_sage.setIcon(createImageIcon(
                 "ppp/ck4_color_sage.png"));
 
 // ****東***頂点チェック結果表示円の色の濃さ調整　上げ***********************************************************************
@@ -3778,7 +3698,7 @@ public class App extends JFrame implements ActionListener {
         pnle29.add(Button_ck4_color_age);
 
         Button_ck4_color_age.setMargin(new Insets(0, 0, 0, 0));
-        Button_ck4_color_age.setIcon(ResourceUtil.createImageIcon(
+        Button_ck4_color_age.setIcon(createImageIcon(
                 "ppp/ck4_color_age.png"));
 
 
@@ -3831,14 +3751,14 @@ public class App extends JFrame implements ActionListener {
             id_kakudo_kei_a = id_kakudo_kei_a + 1;//if(id_kakudo_kei_a<2){id_kakudo_kei_a=2;}
             Button_kakudo_kei_a.setText("180/" + id_kakudo_kei_a + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_a)) * 1000)) / 1000.0);
 
-            es1.set_id_kakudo_kei(id_kakudo_kei_a);
+            es1.set_id_angle_system(id_kakudo_kei_a);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
         pnle6.add(Button_kakudo_kei_a_tiisaku);
         Button_kakudo_kei_a_tiisaku.setMargin(new Insets(0, 0, 0, 0));
-        Button_kakudo_kei_a_tiisaku.setIcon(ResourceUtil.createImageIcon(
+        Button_kakudo_kei_a_tiisaku.setIcon(createImageIcon(
                 "ppp/tiisaku.png"));
         Button_kakudo_kei_a_tiisaku.setBounds(2, 2, 10, 20);
 
@@ -3875,7 +3795,7 @@ public class App extends JFrame implements ActionListener {
 
             Button_kakudo_kei_a.setText("180/" + id_kakudo_kei_a + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_a)) * 1000)) / 1000.0);
 
-            es1.set_id_kakudo_kei(id_kakudo_kei_a);
+            es1.set_id_angle_system(id_kakudo_kei_a);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
@@ -3922,14 +3842,14 @@ public class App extends JFrame implements ActionListener {
             }
             Button_kakudo_kei_a.setText("180/" + id_kakudo_kei_a + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_a)) * 1000)) / 1000.0);
 
-            es1.set_id_kakudo_kei(id_kakudo_kei_a);
+            es1.set_id_angle_system(id_kakudo_kei_a);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
         pnle6.add(Button_kakudo_kei_a_ookiku);
         Button_kakudo_kei_a_ookiku.setMargin(new Insets(0, 0, 0, 0));
-        Button_kakudo_kei_a_ookiku.setIcon(ResourceUtil.createImageIcon(
+        Button_kakudo_kei_a_ookiku.setIcon(createImageIcon(
                 "ppp/ookiku.png"));
 
         Button_kakudo_kei_a_ookiku.setBounds(100, 2, 10, 20);
@@ -3975,14 +3895,14 @@ public class App extends JFrame implements ActionListener {
             id_kakudo_kei_b = id_kakudo_kei_b + 1;//if(id_kakudo_kei_b<2){id_kakudo_kei_b=2;}
             Button_kakudo_kei_b.setText("180/" + id_kakudo_kei_b + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_b)) * 1000)) / 1000.0);
 
-            es1.set_id_kakudo_kei(id_kakudo_kei_b);
+            es1.set_id_angle_system(id_kakudo_kei_b);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
         pnle7.add(Button_kakudo_kei_b_tiisaku);
         Button_kakudo_kei_b_tiisaku.setMargin(new Insets(0, 0, 0, 0));
-        Button_kakudo_kei_b_tiisaku.setIcon(ResourceUtil.createImageIcon(
+        Button_kakudo_kei_b_tiisaku.setIcon(createImageIcon(
                 "ppp/tiisaku.png"));
         Button_kakudo_kei_b_tiisaku.setBounds(2, 2, 10, 20);
 
@@ -4019,7 +3939,7 @@ public class App extends JFrame implements ActionListener {
 
             Button_kakudo_kei_b.setText("180/" + id_kakudo_kei_b + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_b)) * 1000)) / 1000.0);
 
-            es1.set_id_kakudo_kei(id_kakudo_kei_b);
+            es1.set_id_angle_system(id_kakudo_kei_b);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
@@ -4064,14 +3984,14 @@ public class App extends JFrame implements ActionListener {
             }
             Button_kakudo_kei_b.setText("180/" + id_kakudo_kei_b + "=" + (double) (Math.round((180.0 / ((double) id_kakudo_kei_b)) * 1000)) / 1000.0);
 
-            es1.set_id_kakudo_kei(id_kakudo_kei_b);
+            es1.set_id_angle_system(id_kakudo_kei_b);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
         pnle7.add(Button_kakudo_kei_b_increase);
         Button_kakudo_kei_b_increase.setMargin(new Insets(0, 0, 0, 0));
-        Button_kakudo_kei_b_increase.setIcon(ResourceUtil.createImageIcon("ppp/ookiku.png"));
+        Button_kakudo_kei_b_increase.setIcon(createImageIcon("ppp/ookiku.png"));
 
         Button_kakudo_kei_b_increase.setBounds(100, 2, 10, 20);
 
@@ -4104,7 +4024,7 @@ public class App extends JFrame implements ActionListener {
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
-            es1.set_id_kakudo_kei(12);
+            es1.set_id_angle_system(12);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
@@ -4142,7 +4062,7 @@ public class App extends JFrame implements ActionListener {
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
-            es1.set_id_kakudo_kei(8);
+            es1.set_id_angle_system(8);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
@@ -4207,7 +4127,7 @@ public class App extends JFrame implements ActionListener {
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
-            es1.set_id_kakudo_kei(0);
+            es1.set_id_angle_system(0);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
@@ -4216,7 +4136,7 @@ public class App extends JFrame implements ActionListener {
         pnle18.add(Button_restricted_angle_set_a);
 
         Button_restricted_angle_set_a.setMargin(new Insets(0, 0, 0, 0));
-        Button_restricted_angle_set_a.setIcon(ResourceUtil.createImageIcon("ppp/jiyuu_kaku_set_a.png"));
+        Button_restricted_angle_set_a.setIcon(createImageIcon("ppp/jiyuu_kaku_set_a.png"));
 
 // -----自由角set。ここまで
 
@@ -4275,7 +4195,7 @@ public class App extends JFrame implements ActionListener {
 
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
-            es1.set_id_kakudo_kei(0);
+            es1.set_id_angle_system(0);
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
@@ -4284,7 +4204,7 @@ public class App extends JFrame implements ActionListener {
         pnle19.add(Button_restricted_angle_set_b);
 
         Button_restricted_angle_set_b.setMargin(new Insets(0, 0, 0, 0));
-        Button_restricted_angle_set_b.setIcon(ResourceUtil.createImageIcon(
+        Button_restricted_angle_set_b.setIcon(createImageIcon(
                 "ppp/jiyuu_kaku_set_b.png"));
 
 // -----自由角set。ここまで
@@ -4328,7 +4248,7 @@ public class App extends JFrame implements ActionListener {
         pnle2.add(Button_deg);
 
         Button_deg.setMargin(new Insets(0, 0, 0, 0));
-        Button_deg.setIcon(ResourceUtil.createImageIcon(
+        Button_deg.setIcon(createImageIcon(
                 "ppp/deg.png"));
 // -------------13;角度系モード。ここまで
 
@@ -4351,7 +4271,7 @@ public class App extends JFrame implements ActionListener {
         pnle2.add(Button_deg3);
 
         Button_deg3.setMargin(new Insets(0, 0, 0, 0));
-        Button_deg3.setIcon(ResourceUtil.createImageIcon(
+        Button_deg3.setIcon(createImageIcon(
                 "ppp/deg3.png"));
 // ------東-------17;角度系モード。ここまで
 
@@ -4375,7 +4295,7 @@ public class App extends JFrame implements ActionListener {
         pnle2.add(Button_senbun_nyuryoku37);
 
         Button_senbun_nyuryoku37.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_nyuryoku37.setIcon(ResourceUtil.createImageIcon(
+        Button_senbun_nyuryoku37.setIcon(createImageIcon(
                 "ppp/senbun_nyuryoku37.png"));
 
 
@@ -4404,7 +4324,7 @@ public class App extends JFrame implements ActionListener {
         pnle3.add(Button_deg2);
 
         Button_deg2.setMargin(new Insets(0, 0, 0, 0));
-        Button_deg2.setIcon(ResourceUtil.createImageIcon("ppp/deg2.png"));
+        Button_deg2.setIcon(createImageIcon("ppp/deg2.png"));
 // -------------16;角度系モード。ここまで
 
 // ----東---------18;角度系モード。2点指定、自由末端
@@ -4424,7 +4344,7 @@ public class App extends JFrame implements ActionListener {
         pnle3.add(Button_deg4);
 
         Button_deg4.setMargin(new Insets(0, 0, 0, 0));
-        Button_deg4.setIcon(ResourceUtil.createImageIcon("ppp/deg4.png"));
+        Button_deg4.setIcon(createImageIcon("ppp/deg4.png"));
 // -------------18;角度系モード。ここまで
 
 
@@ -4506,7 +4426,7 @@ public class App extends JFrame implements ActionListener {
         pnle5.add(Button_sei_takakukei);
 
         Button_sei_takakukei.setMargin(new Insets(0, 0, 0, 0));
-        Button_sei_takakukei.setIcon(ResourceUtil.createImageIcon("ppp/sei_takakukei.png"));
+        Button_sei_takakukei.setIcon(createImageIcon("ppp/sei_takakukei.png"));
 
 // ------29;正多角形入力モード。ここまで
 
@@ -4546,7 +4466,7 @@ public class App extends JFrame implements ActionListener {
         pnle9.add(Button_en_nyuryoku_free);
 
         Button_en_nyuryoku_free.setMargin(new Insets(0, 0, 0, 0));
-        Button_en_nyuryoku_free.setIcon(ResourceUtil.createImageIcon(
+        Button_en_nyuryoku_free.setIcon(createImageIcon(
                 "ppp/en_nyuryoku_free.png"));
 
 
@@ -4569,7 +4489,7 @@ public class App extends JFrame implements ActionListener {
         pnle9.add(Button_en_nyuryoku);
 
         Button_en_nyuryoku.setMargin(new Insets(0, 0, 0, 0));
-        Button_en_nyuryoku.setIcon(ResourceUtil.createImageIcon(
+        Button_en_nyuryoku.setIcon(createImageIcon(
                 "ppp/en_nyuryoku.png"));
 
 
@@ -4591,7 +4511,7 @@ public class App extends JFrame implements ActionListener {
         pnle9.add(Button_en_bunri_nyuryoku);
 
         Button_en_bunri_nyuryoku.setMargin(new Insets(0, 0, 0, 0));
-        Button_en_bunri_nyuryoku.setIcon(ResourceUtil.createImageIcon(
+        Button_en_bunri_nyuryoku.setIcon(createImageIcon(
                 "ppp/en_bunri_nyuryoku.png"));
 
 
@@ -4622,7 +4542,7 @@ public class App extends JFrame implements ActionListener {
         pnle16.add(Button_dousin_en_tuika_s);
 
         Button_dousin_en_tuika_s.setMargin(new Insets(0, 0, 0, 0));
-        Button_dousin_en_tuika_s.setIcon(ResourceUtil.createImageIcon(
+        Button_dousin_en_tuika_s.setIcon(createImageIcon(
                 "ppp/dousin_en_tuika_s.png"));
 
 // -------------48;円　同心円追加モード。ここまで
@@ -4643,7 +4563,7 @@ public class App extends JFrame implements ActionListener {
         pnle16.add(Button_dousin_en_tuika_d);
 
         Button_dousin_en_tuika_d.setMargin(new Insets(0, 0, 0, 0));
-        Button_dousin_en_tuika_d.setIcon(ResourceUtil.createImageIcon(
+        Button_dousin_en_tuika_d.setIcon(createImageIcon(
                 "ppp/dousin_en_tuika_d.png"));
 
 // -------------49;円　同心円追加モード。ここまで
@@ -4676,7 +4596,7 @@ public class App extends JFrame implements ActionListener {
         pnle17.add(Button_en_en_dousin_en);
 
         Button_en_en_dousin_en.setMargin(new Insets(0, 0, 0, 0));
-        Button_en_en_dousin_en.setIcon(ResourceUtil.createImageIcon(
+        Button_en_en_dousin_en.setIcon(createImageIcon(
                 "ppp/en_en_dousin_en.png"));
 
 // -------------50;2円の共通接線入力モード。ここまで
@@ -4698,7 +4618,7 @@ public class App extends JFrame implements ActionListener {
         pnle17.add(Button_en_en_sessen);
 
         Button_en_en_sessen.setMargin(new Insets(0, 0, 0, 0));
-        Button_en_en_sessen.setIcon(ResourceUtil.createImageIcon(
+        Button_en_en_sessen.setIcon(createImageIcon(
                 "ppp/en_en_sessen.png"));
 
 // -------------45;2円の共通接線入力モード。ここまで
@@ -4730,7 +4650,7 @@ public class App extends JFrame implements ActionListener {
         pnle10.add(Button_en_3ten_nyuryoku);
 
         Button_en_3ten_nyuryoku.setMargin(new Insets(0, 0, 0, 0));
-        Button_en_3ten_nyuryoku.setIcon(ResourceUtil.createImageIcon(
+        Button_en_3ten_nyuryoku.setIcon(createImageIcon(
                 "ppp/en_3ten_nyuryoku.png"));
 
 // -------------43;3点円入力モード。ここまで
@@ -4753,7 +4673,7 @@ public class App extends JFrame implements ActionListener {
         pnle10.add(Button_hanten);
 
         Button_hanten.setMargin(new Insets(0, 0, 0, 0));
-        Button_hanten.setIcon(ResourceUtil.createImageIcon(
+        Button_hanten.setIcon(createImageIcon(
                 "ppp/hanten.png"));
 
 // -------------46;反転入力モード。ここまで
@@ -4799,10 +4719,7 @@ public class App extends JFrame implements ActionListener {
 
             canvas.repaint();
         });
-        //Button_sen_tokutyuu_color.setPreferredSize(new Dimension(25, 25));
         Button_sen_tokutyuu_color.setMargin(new Insets(0, 0, 0, 0));
-        //Button_sen_tokutyuu_color.setIcon(createImageIcon(
-        //  "ppp/sen_tokutyuu_color.png")));
         pnle8.add(Button_sen_tokutyuu_color);
 
         //重要注意　読み込みや書き出しでファイルダイアログのボックスが開くと、それをフレームに重なる位置で操作した場合、ファイルボックスが消えたときに、
@@ -4816,11 +4733,9 @@ public class App extends JFrame implements ActionListener {
 
             img_explanation_fname = "qqq/sen_tokutyuu_color_henkou.png";
             updateExplanation();
-            //	if(sen_tokutyuu_color != null){
             i_mouse_modeA = MouseMode.CIRCLE_CHANGE_COLOR_59;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             es1.set_sen_tokutyuu_color(sen_tokutyuu_color);
-            //	}
             es1.unselect_all();
             Button_kyoutuu_sagyou();
             canvas.repaint();
@@ -4828,16 +4743,14 @@ public class App extends JFrame implements ActionListener {
         pnle8.add(Button_sen_tokutyuu_color_henkou);
 
         Button_sen_tokutyuu_color_henkou.setMargin(new Insets(0, 0, 0, 0));
-        Button_sen_tokutyuu_color_henkou.setIcon(ResourceUtil.createImageIcon(
+        Button_sen_tokutyuu_color_henkou.setIcon(createImageIcon(
                 "ppp/sen_tokutyuu_color_henkou.png"));
 
 // ********東******************************
         //------------------------------------------------
         JPanel pnle15 = new JPanel();
-//         pnle15.setBackground(Color.PINK);
         pnle15.setLayout(new GridLayout(1, 2));
         //------------------------------------------------
-        //pnle.add(pnle15);
 
 
 // *************** 補助線　折線とは相互作用せず、ただの絵として振舞う *************************************
@@ -4847,7 +4760,6 @@ public class App extends JFrame implements ActionListener {
 
         //------------------------------------------------
         JPanel pnle12 = new JPanel();
-//         pnle12.setBackground(Color.PINK);
         pnle12.setLayout(new GridLayout(1, 3));
 
         pnle.add(pnle12);
@@ -4866,8 +4778,7 @@ public class App extends JFrame implements ActionListener {
         });
         pnle12.add(Button_h_undo);
         Button_h_undo.setMargin(new Insets(0, 0, 0, 0));
-        Button_h_undo.setIcon(ResourceUtil.createImageIcon(
-                "ppp/h_undo.png"));
+        Button_h_undo.setIcon(createImageIcon("ppp/h_undo.png"));
 
 
 // *****東*************************************************************************
@@ -4916,8 +4827,7 @@ public class App extends JFrame implements ActionListener {
         });
         pnle12.add(Button_h_redo);
         Button_h_redo.setMargin(new Insets(0, 0, 0, 0));
-        Button_h_redo.setIcon(ResourceUtil.createImageIcon(
-                "ppp/h_redo.png"));
+        Button_h_redo.setIcon(createImageIcon("ppp/h_redo.png"));
 
 
 // ********************************************************
@@ -4925,7 +4835,6 @@ public class App extends JFrame implements ActionListener {
 // ********東******************************
         //------------------------------------------------
         JPanel pnle11 = new JPanel();
-//         pnle11.setBackground(Color.PINK);
         pnle11.setLayout(new GridLayout(1, 2));
         //------------------------------------------------
         pnle.add(pnle11);
@@ -4934,14 +4843,13 @@ public class App extends JFrame implements ActionListener {
 // ********東******************************
         //------------------------------------------------
         JPanel pnle14 = new JPanel();
-//         pnle14.setBackground(Color.PINK);
         pnle14.setLayout(new GridLayout(1, 2));
         //------------------------------------------------
         pnle11.add(pnle14);
 
 // ****東**************************************************************************補助線の幅小さく
-        JButton Button_h_senhaba_sage = new JButton("");
-        Button_h_senhaba_sage.addActionListener(e -> {
+        JButton Button_h_lineWidthDecrease = new JButton("");
+        Button_h_lineWidthDecrease.addActionListener(e -> {
             i_h_lineWidth = i_h_lineWidth - 2;
             if (i_h_lineWidth < 3) {
                 i_h_lineWidth = 3;
@@ -4952,26 +4860,26 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        pnle14.add(Button_h_senhaba_sage);
+        pnle14.add(Button_h_lineWidthDecrease);
 
-        Button_h_senhaba_sage.setMargin(new Insets(0, 0, 0, 0));
-        Button_h_senhaba_sage.setIcon(ResourceUtil.createImageIcon(
+        Button_h_lineWidthDecrease.setMargin(new Insets(0, 0, 0, 0));
+        Button_h_lineWidthDecrease.setIcon(createImageIcon(
                 "ppp/h_senhaba_sage.png"));
 
 // ****東**************************************************************************補助線の幅大きく
 
-        JButton Button_h_senhaba_age = new JButton("");
-        Button_h_senhaba_age.addActionListener(e -> {
+        JButton Button_h_lineWidthIncrease = new JButton("");
+        Button_h_lineWidthIncrease.addActionListener(e -> {
             i_h_lineWidth = i_h_lineWidth + 2;
             img_explanation_fname = "qqq/h_senhaba_age.png";
             updateExplanation();
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        pnle14.add(Button_h_senhaba_age);
+        pnle14.add(Button_h_lineWidthIncrease);
 
-        Button_h_senhaba_age.setMargin(new Insets(0, 0, 0, 0));
-        Button_h_senhaba_age.setIcon(ResourceUtil.createImageIcon(
+        Button_h_lineWidthIncrease.setMargin(new Insets(0, 0, 0, 0));
+        Button_h_lineWidthIncrease.setIcon(createImageIcon(
                 "ppp/h_senhaba_age.png"));
 //icol=3 cyan
 //icol=4 orange
@@ -4983,7 +4891,7 @@ public class App extends JFrame implements ActionListener {
         Button_Col_orange.addActionListener(e -> {
             img_explanation_fname = "qqq/Button_Col_orange.png";
             updateExplanation();
-            Button_h_Col_irokesi();
+            Button_h_Col_reset();
             Button_Col_orange.setBackground(Color.ORANGE);
             h_icol = LineColor.ORANGE_4;
             es1.h_setcolor(h_icol);
@@ -4998,7 +4906,7 @@ public class App extends JFrame implements ActionListener {
         Button_Col_yellow.addActionListener(e -> {
             img_explanation_fname = "qqq/Button_Col_yellow.png";
             updateExplanation();
-            Button_h_Col_irokesi();
+            Button_h_Col_reset();
             Button_Col_yellow.setBackground(Color.yellow);
             h_icol = LineColor.YELLOW_7;
             es1.h_setcolor(h_icol);
@@ -5035,8 +4943,7 @@ public class App extends JFrame implements ActionListener {
         pnle13.add(Button_h_senbun_nyuryoku);
 
         Button_h_senbun_nyuryoku.setMargin(new Insets(0, 0, 0, 0));
-        Button_h_senbun_nyuryoku.setIcon(ResourceUtil.createImageIcon(
-                "ppp/h_senbun_nyuryoku.png"));
+        Button_h_senbun_nyuryoku.setIcon(createImageIcon("ppp/h_senbun_nyuryoku.png"));
 
 
 // -------------h_1;補助線入力モード。ここまで
@@ -5046,7 +4953,6 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_h_senbun_sakujyo = new JButton("");
         Button_h_senbun_sakujyo.addActionListener(e -> {
-
             img_explanation_fname = "qqq/h_senbun_sakujyo.png";
             updateExplanation();
             i_mouse_modeA = MouseMode.LINE_SEGMENT_DELETE_3;
@@ -5063,13 +4969,12 @@ public class App extends JFrame implements ActionListener {
         pnle13.add(Button_h_senbun_sakujyo);
 
         Button_h_senbun_sakujyo.setMargin(new Insets(0, 0, 0, 0));
-        Button_h_senbun_sakujyo.setIcon(ResourceUtil.createImageIcon(
+        Button_h_senbun_sakujyo.setIcon(createImageIcon(
                 "ppp/h_senbun_sakujyo.png"));
 
 // ******東************************************************************************
         //------------------------------------------------
         JPanel pnle30 = new JPanel();
-//         pnle30.setBackground(Color.PINK);
         pnle30.setLayout(new GridLayout(1, 2));
         pnle.add(pnle30);
         //------------------------------------------------
@@ -5081,7 +4986,6 @@ public class App extends JFrame implements ActionListener {
         //------------------------------------------------
         JPanel pnle24 = new JPanel();
         pnle24.setBounds(2, 2, 93, 20);
-//         pnle24.setBackground(Color.PINK);
         pnle24.setLayout(null);
         //------------------------------------------------
         pnle.add(pnle24);
@@ -5111,11 +5015,9 @@ public class App extends JFrame implements ActionListener {
         pnle24.add(label_length_sokutei_1);
 // -------------
 
-
         //------------------------------------------------
         JPanel pnle25 = new JPanel();
         pnle25.setBounds(2, 2, 93, 20);
-//         pnle25.setBackground(Color.PINK);
         pnle25.setLayout(null);
         //------------------------------------------------
         pnle.add(pnle25);
@@ -5148,7 +5050,6 @@ public class App extends JFrame implements ActionListener {
         //------------------------------------------------
         JPanel pnle26 = new JPanel();
         pnle26.setBounds(2, 2, 93, 20);
-//         pnle26.setBackground(Color.PINK);
         pnle26.setLayout(null);
         //------------------------------------------------
         pnle.add(pnle26);
@@ -5212,7 +5113,6 @@ public class App extends JFrame implements ActionListener {
         //------------------------------------------------
         JPanel pnle28 = new JPanel();
         pnle28.setBounds(2, 2, 93, 20);
-//         pnle28.setBackground(Color.PINK);
         pnle28.setLayout(null);
         //------------------------------------------------
         pnle.add(pnle28);
@@ -5245,7 +5145,6 @@ public class App extends JFrame implements ActionListener {
 
         //------------------------------------------------
         JPanel pnle33 = new JPanel();
-//         pnle33.setBackground(Color.PINK);
         pnle33.setLayout(new GridLayout(1, 2));
         pnle.add(pnle33);
         //------------------------------------------------
@@ -5256,28 +5155,13 @@ public class App extends JFrame implements ActionListener {
         Button_tuika_kinou.addActionListener(e -> {
             img_explanation_fname = "qqq/tuika_kinou.png";
             updateExplanation();
-            //i_mouse_modeA=57;
-            //System.out.println("i_mouse_modeA = "+i_mouse_modeA);
 
-            //es1.unselect_all();Button_kyoutuu_sagyou();repaint();
-
-//JFrame frame = new OpenFrame("First Frame");
-//new OpenFrame("Additional Frame");
             Frame_tuika();
             add_frame.toFront();
-            //Frame frame = new OpenFrame("First Frame",this);
-
-
-            //frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-
-//subete_no_sagyou_go_no_kyoutuu_syori();//20190519 add
         });
         pnle33.add(Button_tuika_kinou);
 
         Button_tuika_kinou.setMargin(new Insets(0, 0, 0, 0));
-        //Button_tuika_kinou.setIcon(createImageIcon(
-        //  "ppp/tuika_kinou.png")));
 
 
 // -------------追加フレーム表示。ここまで
@@ -5290,41 +5174,26 @@ public class App extends JFrame implements ActionListener {
         //下辺（南側）パネルの構築*************************
         // *************************************************
         //下辺（南側）パネルの作成
-        //Panel pnls = new JPanel();pnls.setBackground(new Color(0,70,0));
         JPanel pnls = new JPanel();
-//         pnls.setBackground(Color.PINK);
-        pnls.setLayout(new FlowLayout(FlowLayout.LEFT));
+        pnls.setLayout(new WrapLayout(WrapLayout.LEFT));
         //下辺（南側）パネルをレイアウトに貼り付け
         contentPane.add("South", pnls); //Frame用
-        //contentPane.add(pnls, BorderLayout.SOUTH);//JFrame用
 
 
         //------------------------------------------------
         JPanel pnlw11 = new JPanel();
-//         pnlw11.setBackground(Color.PINK);
         pnlw11.setLayout(new GridLayout(1, 3));
 
         //------------------------------------------------
         pnlw.add(pnlw11);
-/*
-		//------------------------------------------------
-		Panel   pnlw12 = new JPanel();
-// 			pnlw12.setBackground(Color.PINK);
-			pnlw12.setLayout(new GridLayout(1,4));
 
-		//------------------------------------------------
-		pnlw.add(pnlw12);
-*/
 
         //------------------------------------------------
         JPanel pnlw12 = new JPanel();
         pnlw12.setPreferredSize(new Dimension(76, 30));
-//         pnlw12.setBackground(Color.PINK);
         pnlw12.setLayout(null);
-        //pnlw12.setBorder(new LineBorder(Color.black, 1));
         pnlw.add(pnlw12);
         //------------------------------------------------
-
 
 // ***西***************************************************************************データ読み込み追加
 
@@ -5351,30 +5220,27 @@ public class App extends JFrame implements ActionListener {
             }
         });
         Button_yomi_tuika.setBounds(0, 0, 30, 21);
-        //Button_yomi.setPreferredSize(new Dimension(25, 25));
         Button_yomi_tuika.setMargin(new Insets(0, 0, 0, 0));
-        //Button_yomi.setIcon(icon);
         pnlw12.add(Button_yomi_tuika);
 
 
 // -------------------------------------------------------------------
 //cpを折畳み前に自動改善する
-        ckbox_cp_kaizen_oritatami = new JCheckBox("");
-        ckbox_cp_kaizen_oritatami.addActionListener(e -> {
+        ckbox_cp_kaizen_folding = new JCheckBox("");
+        ckbox_cp_kaizen_folding.addActionListener(e -> {
             img_explanation_fname =
                     "qqq/ckbox_cp_kaizen_oritatami.png";
             updateExplanation();
 
             canvas.repaint();
         });
-        ckbox_cp_kaizen_oritatami.setIcon(ResourceUtil.createImageIcon(
+        ckbox_cp_kaizen_folding.setIcon(createImageIcon(
                 "ppp/ckbox_cp_kaizen_oritatami_off.png"));
-        ckbox_cp_kaizen_oritatami.setSelectedIcon(ResourceUtil.createImageIcon(
+        ckbox_cp_kaizen_folding.setSelectedIcon(createImageIcon(
                 "ppp/ckbox_cp_kaizen_oritatami_on.png"));
-        ckbox_cp_kaizen_oritatami.setMargin(new Insets(0, 0, 0, 0));
-        pnlw12.add(
-                ckbox_cp_kaizen_oritatami);
-        ckbox_cp_kaizen_oritatami.setBounds(31, 0, 20, 21);
+        ckbox_cp_kaizen_folding.setMargin(new Insets(0, 0, 0, 0));
+        pnlw12.add(ckbox_cp_kaizen_folding);
+        ckbox_cp_kaizen_folding.setBounds(31, 0, 20, 21);
 // -------------------------------------------------------------------
 //select状態を他の操作をしてもなるべく残す
         ckbox_select_nokosi = new JCheckBox("");
@@ -5385,13 +5251,11 @@ public class App extends JFrame implements ActionListener {
 
             canvas.repaint();
         });
-        ckbox_select_nokosi.setIcon(ResourceUtil.createImageIcon(
+        ckbox_select_nokosi.setIcon(createImageIcon(
                 "ppp/ckbox_select_nokosi_off.png"));
-        ckbox_select_nokosi.setSelectedIcon(ResourceUtil.createImageIcon(
+        ckbox_select_nokosi.setSelectedIcon(createImageIcon(
                 "ppp/ckbox_select_nokosi_on.png"));
-        //ckbox_select_nokosi.setMargin(new Insets(0,0,0,0));
-        pnlw12.add(
-                ckbox_select_nokosi);
+        pnlw12.add(ckbox_select_nokosi);
         ckbox_select_nokosi.setBounds(51, 0, 30, 21);
 
 
@@ -5401,7 +5265,6 @@ public class App extends JFrame implements ActionListener {
             img_explanation_fname = "qqq/2syoku_tenkaizu.png";
             updateExplanation();
 
-            //	i_fold_type=1;
             Ss0 = es1.getForSelectFolding();
 
             if (es1.getFoldLineTotalForSelectFolding() == 0) {        //折り線選択無し
@@ -5409,8 +5272,7 @@ public class App extends JFrame implements ActionListener {
 
 
             } else if (es1.getFoldLineTotalForSelectFolding() > 0) {
-                oritatami_jyunbi();//ここでOZがOAZ(0)からOAZ(i)に切り替わる
-                //OZ.ts1.Senbunsyuugou2Tensyuugou(es1.get_for_select_oritatami());
+                folding_prepare();//ここでOZがOAZ(0)からOAZ(i)に切り替わる
                 OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
 
                 if (!subThreadRunning) {
@@ -5428,36 +5290,26 @@ public class App extends JFrame implements ActionListener {
         pnlw12.add(Button_2syoku_tenkaizu);
         Button_2syoku_tenkaizu.setBounds(81, 0, 30, 21);
         Button_2syoku_tenkaizu.setMargin(new Insets(0, 0, 0, 0));
-        Button_2syoku_tenkaizu.setIcon(ResourceUtil.createImageIcon(
-                "ppp/2syoku_tenkaizu.png"));
-
-// -----------------------------------------------------------------------------------
+        Button_2syoku_tenkaizu.setIcon(createImageIcon("ppp/2syoku_tenkaizu.png"));
 
 
-        //------------------------------------------------
         JPanel pnlw20 = new JPanel();
-//         pnlw20.setBackground(Color.PINK);
         pnlw20.setLayout(new GridLayout(1, 2));
-        //pnlw20.setBorder(new LineBorder(Color.black, 1));
         pnlw.add(pnlw20);
-        //------------------------------------------------
 
-
-        // **********南***************************************************************
 
         JButton Button_suitei_01 = new JButton("CP_rcg");
         Button_suitei_01.addActionListener(e -> {
             img_explanation_fname = "qqq/suitei_01.png";
             updateExplanation();
 
-            oritatame(get_i_fold_type(), FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
+            oritatame(getFoldType(), FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
             if (ckbox_select_nokosi.isSelected()) {
             } else {
                 es1.unselect_all();
             }
-            //OZ.i_suitei_dankai=1;
 
-            Button_kyoutuu_sagyou();//repaint();
+            Button_kyoutuu_sagyou();
         });
         pnlw20.add(Button_suitei_01);
         Button_suitei_01.setMargin(new Insets(0, 0, 0, 0));
@@ -5474,9 +5326,6 @@ public class App extends JFrame implements ActionListener {
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
             Button_kyoutuu_sagyou();
-            //OZ.i_suitei_dankai=1;
-
-
         });
         pnlw20.add(Button_koteimen_sitei);
 
@@ -5488,47 +5337,30 @@ public class App extends JFrame implements ActionListener {
         //------------------------------------------------
         JPanel pnlw36 = new JPanel();
         pnlw36.setPreferredSize(new Dimension(76, 21));
-//         pnlw36.setBackground(Color.PINK);
         pnlw36.setLayout(null);
-        //pnlw36.setBorder(new LineBorder(Color.black, 1));
         pnlw.add(pnlw36);
         //------------------------------------------------
 
-		/* ------------------------------------------------
-		Panel   pnlw36 = new JPanel();
-// 			pnlw36.setBackground(Color.PINK);
-			pnlw36.setLayout(new GridLayout(1,2));
-		pnlw.add(pnlw36);
-		------------------------------------------------
-		*/
-
-
 // *******南******************************************************************
 
-
-        JButton Button_suitei_02 = new JButton("");//new JButton(	"Wire_gr"	)
+        JButton Button_suitei_02 = new JButton("");
         Button_suitei_02.addActionListener(e -> {
             img_explanation_fname = "qqq/suitei_02.png";
             updateExplanation();
 
-
-            oritatame(get_i_fold_type(), FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
-            if (ckbox_select_nokosi.isSelected()) {
-            } else {
+            oritatame(getFoldType(), FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
+            if (!ckbox_select_nokosi.isSelected()) {
                 es1.unselect_all();
             }
 
             Button_kyoutuu_sagyou();
-            //repaint();
-
-
         });
         pnlw36.add(Button_suitei_02);
 
         Button_suitei_02.setBounds(0, 0, 20, 21);//20180210,4番目の21が23以上だとアイコン表示がかえって部分的にしか表示されない
 
         Button_suitei_02.setMargin(new Insets(0, 0, 0, 0));
-        Button_suitei_02.setIcon(ResourceUtil.createImageIcon(
+        Button_suitei_02.setIcon(createImageIcon(
                 "ppp/suitei_02.png"));
 
 // *******南******************************************************************
@@ -5539,7 +5371,6 @@ public class App extends JFrame implements ActionListener {
         pnls4.setPreferredSize(new Dimension(76, 21));//pnls4.setPreferredSize(new Dimension(76, 30)
         pnls4.setBackground(Color.white);
         pnls4.setLayout(null);
-        //pnls4.setBorder(new LineBorder(Color.black, 1));
         pnlw36.add(pnls4);
         pnls4.setBounds(30, 0, 76, 21);//20180210,4番目の21が23以上だとアイコン表示がかえって部分的にしか表示されない
 
@@ -5552,23 +5383,20 @@ public class App extends JFrame implements ActionListener {
             img_explanation_fname = "qqq/suitei_03.png";
             updateExplanation();
 
-            oritatame(get_i_fold_type(), FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
+            oritatame(getFoldType(), FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
 
             if (ckbox_select_nokosi.isSelected()) {
             } else {
                 es1.unselect_all();
             }
             Button_kyoutuu_sagyou();
-            //repaint();
-
         });
         pnls4.add(Button_suitei_03);
         Button_suitei_03.setBounds(1, 0, 20, 21);//Button_suitei_03.setBounds(1, 1, 20, 28);
 
 
         Button_suitei_03.setMargin(new Insets(0, 0, 0, 0));
-        Button_suitei_03.setIcon(ResourceUtil.createImageIcon(
-                "ppp/suitei_03.png"));
+        Button_suitei_03.setIcon(createImageIcon("ppp/suitei_03.png"));
 
 
 // ******南*******************************************************************ccccccccccccccc
@@ -5591,13 +5419,12 @@ public class App extends JFrame implements ActionListener {
         });
         ckbox_toukazu_color.setBounds(21, 0, 18, 21);
 
-        ckbox_toukazu_color.setIcon(ResourceUtil.createImageIcon(
+        ckbox_toukazu_color.setIcon(createImageIcon(
                 "ppp/ckbox_toukazu_color_off.png"));
-        ckbox_toukazu_color.setSelectedIcon(ResourceUtil.createImageIcon(
+        ckbox_toukazu_color.setSelectedIcon(createImageIcon(
                 "ppp/ckbox_toukazu_color_on.png"));
         ckbox_toukazu_color.setMargin(new Insets(0, 0, 0, 0));
-        pnls4.add(
-                ckbox_toukazu_color);
+        pnls4.add(ckbox_toukazu_color);
 
 
 // *******透過図の色の濃さ調整　下げ***********************************************************************
@@ -5613,7 +5440,7 @@ public class App extends JFrame implements ActionListener {
         pnls4.add(Button_toukazu_color_sage);
         Button_toukazu_color_sage.setBounds(39, 0, 18, 21);
         Button_toukazu_color_sage.setMargin(new Insets(0, 0, 0, 0));
-        Button_toukazu_color_sage.setIcon(ResourceUtil.createImageIcon(
+        Button_toukazu_color_sage.setIcon(createImageIcon(
                 "ppp/ck4_color_sage.png"));
 
 
@@ -5630,20 +5457,18 @@ public class App extends JFrame implements ActionListener {
         pnls4.add(Button_toukazu_color_age);
         Button_toukazu_color_age.setBounds(57, 0, 18, 21);
         Button_toukazu_color_age.setMargin(new Insets(0, 0, 0, 0));
-        Button_toukazu_color_age.setIcon(ResourceUtil.createImageIcon(
+        Button_toukazu_color_age.setIcon(createImageIcon(
                 "ppp/ck4_color_age.png"));
 
 
 // ********南*****************************************************************
-        JButton Button_suitei_04 = new JButton("Fold");
-        Button_suitei_04.addActionListener(e -> {
+        JButton Button_fold = new JButton("Fold");
+        Button_fold.addActionListener(e -> {
             img_explanation_fname = "qqq/suitei_04.png";
             updateExplanation();
 
-            //i_fold_type=0;//=0なにもしない、=1通常の展開図の全折線を対象とした折り畳み推定、=2はselectされた折線を対象とした折り畳み推定、=3は折畳み状態を変更
-
-            System.out.println("20180220 get_i_fold_type() = " + get_i_fold_type());
-            oritatame(get_i_fold_type(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
+            System.out.println("20180220 get_i_fold_type() = " + getFoldType());
+            oritatame(getFoldType(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
 
             if (ckbox_select_nokosi.isSelected()) {
             } else {
@@ -5653,25 +5478,21 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
 
         });
-        pnls.add(Button_suitei_04);
+        pnls.add(Button_fold);
 
-        Button_suitei_04.setMargin(new Insets(0, 0, 0, 0));
-        Button_suitei_04.setIcon(ResourceUtil.createImageIcon(
-                "ppp/suitei_04.png"));
+        Button_fold.setIcon(createImageIcon("ppp/suitei_04.png"));
 
 // *******南******************************************************************
 
 
 // *****南********************************************************************
         //-------------------------------------
-        Button3 = new JButton("a_s");//Button3 = new JButton(	"Another sol"	);
-        Button3.addActionListener(e -> {
+        Button_another_solution = new JButton("a_s");
+        Button_another_solution.addActionListener(e -> {
             img_explanation_fname = "qqq/Button3.png";
             updateExplanation();
 
-            //OZ.i_suitei_jissi_umu=0;//i_suitei_jissi_umuは、折り畳み推定の計算を実施したかどうかを表す。int i_suitei_jissi_umu=0なら実施しない。1なら実施した。
             OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
-
 
             subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_0;//1 = Put together another solution for folding estimation. 0 = It is not a mode to put out different solutions of folding estimation at once. This variable is used to change the behavior of subthreads.
             if (!subThreadRunning) {
@@ -5680,8 +5501,7 @@ public class App extends JFrame implements ActionListener {
                 sub.start();
             }
         });
-        pnls.add(Button3);
-        Button3.setMargin(new Insets(0, 0, 0, 0));
+        pnls.add(Button_another_solution);
 
 
 // *******南***************************************************** //System.out.println("裏表");*************
@@ -5691,7 +5511,6 @@ public class App extends JFrame implements ActionListener {
 
             img_explanation_fname = "qqq/Button0b.png";
             updateExplanation();
-            //ip4 == 0 front, ip4 == 1 back, ip4 == 2, ip4 == 3 both transparent
             OZ.ip4 = OZ.ip4.advance();
             if ((i_mouse_modeA == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (OZ.ip4 == FoldedFigure.State.BOTH_2)) {
                 OZ.ip4 = FoldedFigure.State.FRONT_0;
@@ -5701,9 +5520,7 @@ public class App extends JFrame implements ActionListener {
         });
         pnls.add(Button0b);
 
-        Button0b.setMargin(new Insets(0, 0, 0, 0));
-        Button0b.setIcon(ResourceUtil.createImageIcon(
-                "ppp/Button0b.png"));
+        Button0b.setIcon(createImageIcon("ppp/Button0b.png"));
 
 
 // *****南********************************************************************
@@ -5711,7 +5528,6 @@ public class App extends JFrame implements ActionListener {
         Button_AS_matome = new JButton("AS100");
         Button_AS_matome.addActionListener(e -> {
 
-//i_AS_matome_mode =1;//1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVer3.008から追加
             subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_SAVE_100_1;
             img_explanation_fname = "qqq/AS_matome.png";
             updateExplanation();
@@ -5728,7 +5544,6 @@ public class App extends JFrame implements ActionListener {
             }
         });
         pnls.add(Button_AS_matome);
-        Button_AS_matome.setMargin(new Insets(0, 0, 0, 0));
 
 
 // **********南***************************************************************
@@ -5736,11 +5551,8 @@ public class App extends JFrame implements ActionListener {
 
         //------------------------------------------------
         JPanel pnls1 = new JPanel();
-//         pnls1.setBackground(Color.PINK);
         pnls1.setLayout(new GridLayout(1, 2));
-
         pnls.add(pnls1);
-        //------------------------------------------------
 
 // -----
         text26 = new JTextField("", 2);
@@ -5748,11 +5560,11 @@ public class App extends JFrame implements ActionListener {
         pnls1.add(text26);
 // -------------------------------------------------------------------------------
 // -----;	//折り畳み推定の指定番目を表示する
-        Button_bangou_sitei_suitei_display = new JButton("Go");
-        Button_bangou_sitei_suitei_display.addActionListener(e -> {
+        Button_bangou_sitei_estimated_display = new JButton("Go");
+        Button_bangou_sitei_estimated_display.addActionListener(e -> {
 
-            int i_oritatami_bangou_old = foldedCases;
-            foldedCases = StringOp.String2int(text26.getText(), i_oritatami_bangou_old);
+            int foldedCases_old = foldedCases;
+            foldedCases = StringOp.String2int(text26.getText(), foldedCases_old);
             if (foldedCases < 1) {
                 foldedCases = 1;
             }
@@ -5765,10 +5577,7 @@ public class App extends JFrame implements ActionListener {
                 configure_syokika_yosoku();//折り上がり予想の廃棄
                 OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_51;    //i_suitei_meirei=51はoritatami_suiteiの最初の推定図用カメラの設定は素通りするための設定。推定図用カメラの設定を素通りしたら、i_suitei_meirei=5に変更される。
                 //1例目の折り上がり予想はi_suitei_meirei=5を指定、2例目以降の折り上がり予想はi_suitei_meirei=6で実施される
-                //betu_sagasi_flg=1;
             }
-
-            //OZ.i_suitei_jissi_umu=0;//i_suitei_jissi_umuは、折り畳み推定の計算を実施したかどうかを表す。int i_suitei_jissi_umu=0なら実施しない。1なら実施した。
 
             subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_SPECIFIC_2;
             if (!subThreadRunning) {
@@ -5777,24 +5586,17 @@ public class App extends JFrame implements ActionListener {
                 sub.start();
             }
 
-
             img_explanation_fname = "qqq/bangou_sitei_suitei_hyouji.png";
             updateExplanation();
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        pnls1.add(Button_bangou_sitei_suitei_display);
-
-        Button_bangou_sitei_suitei_display.setMargin(new Insets(0, 0, 0, 0));
-        //Button_lineSegment_division_set.setIcon(createImageIcon(
-        //"ppp/senbun_bunkatu_set.png")));
+        pnls1.add(Button_bangou_sitei_estimated_display);
 
 // ------ここまで
 
 
 //折り上がり図	のredoとundo
-
-// *****南*************************************************************************rrrrrrrrr
 
         JButton Button_undo_om = new JButton("");//_omは折り上がり図モディファイ（変形）の意味
         Button_undo_om.addActionListener(e -> {
@@ -5807,7 +5609,7 @@ public class App extends JFrame implements ActionListener {
         });
         pnls.add(Button_undo_om);
         Button_undo_om.setMargin(new Insets(0, 0, 0, 0));
-        Button_undo_om.setIcon(ResourceUtil.createImageIcon(
+        Button_undo_om.setIcon(createImageIcon(
                 "ppp/undo.png"));
 
 // *****南*************************************************************************
@@ -5854,8 +5656,7 @@ public class App extends JFrame implements ActionListener {
         });
         pnls.add(Button_redo_om);
         Button_redo_om.setMargin(new Insets(0, 0, 0, 0));
-        Button_redo_om.setIcon(ResourceUtil.createImageIcon(
-                "ppp/redo.png"));
+        Button_redo_om.setIcon(createImageIcon("ppp/redo.png"));
 
 
 // ********************************************************
@@ -5873,12 +5674,9 @@ public class App extends JFrame implements ActionListener {
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             Button_kyoutuu_sagyou();
-            //repaint();
         });
         pnls.add(Button_oriagari_sousa);
-        Button_oriagari_sousa.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_sousa.setIcon(ResourceUtil.createImageIcon(
-                "ppp/oriagari_sousa.png"));
+        Button_oriagari_sousa.setIcon(createImageIcon("ppp/oriagari_sousa.png"));
 
 // ******南*******************************************************************
 
@@ -5900,7 +5698,7 @@ public class App extends JFrame implements ActionListener {
 
 
         Button_oriagari_sousa_2.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_sousa_2.setIcon(ResourceUtil.createImageIcon("ppp/oriagari_sousa_2.png"));
+        Button_oriagari_sousa_2.setIcon(createImageIcon("ppp/oriagari_sousa_2.png"));
 
 // *******南******************************************************************
         JButton Button_oriagari_idiu = new JButton("");// new JButton(	"F_move"	);
@@ -5917,15 +5715,14 @@ public class App extends JFrame implements ActionListener {
 
 
         Button_oriagari_idiu.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_idiu.setIcon(ResourceUtil.createImageIcon("ppp/oriagari_idiu.png"));
+        Button_oriagari_idiu.setIcon(createImageIcon("ppp/oriagari_idiu.png"));
 
 // *******南******************************************************************
 
         //------------------------------------------------
         JPanel pnls2 = new JPanel();
-        pnls2.setPreferredSize(new Dimension(109, 30));
         pnls2.setBackground(Color.white);
-        pnls2.setLayout(null);
+        pnls2.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
         pnls2.setBorder(new LineBorder(Color.black, 1));
         pnls.add(pnls2);
         //------------------------------------------------
@@ -5961,15 +5758,13 @@ public class App extends JFrame implements ActionListener {
             canvas.repaint();
         });
         pnls2.add(Button_oriagari_syukusyou);
-        Button_oriagari_syukusyou.setBounds(1, 1, 28, 28);
         Button_oriagari_syukusyou.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_syukusyou.setIcon(ResourceUtil.createImageIcon("ppp/oriagari_syukusyou.png"));
+        Button_oriagari_syukusyou.setIcon(createImageIcon("ppp/oriagari_syukusyou.png"));
 
 
 // *******南******************************************************************
 
         text29 = new JTextField("", 2);
-        text29.setBounds(29, 4, 35, 24);
         text29.setHorizontalAlignment(JTextField.RIGHT);
 
         pnls2.add(text29);
@@ -6013,7 +5808,6 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        Button_oriagarizu_syukusyaku_keisuu_set.setBounds(65, 4, 14, 24);
         pnls2.add(Button_oriagarizu_syukusyaku_keisuu_set);
 
         Button_oriagarizu_syukusyaku_keisuu_set.setMargin(new Insets(0, 0, 0, 0));
@@ -6023,9 +5817,7 @@ public class App extends JFrame implements ActionListener {
 
 
 // ****南**************************************************************************
-
-
-        JButton Button_oriagari_kakudai = new JButton("");//new JButton(	"F_z_in"	);
+        JButton Button_oriagari_kakudai = new JButton("");
         Button_oriagari_kakudai.addActionListener(e -> {
 
             img_explanation_fname = "qqq/oriagari_kakudai.png";
@@ -6054,17 +5846,15 @@ public class App extends JFrame implements ActionListener {
             canvas.repaint();
         });
         pnls2.add(Button_oriagari_kakudai);
-        Button_oriagari_kakudai.setBounds(80, 1, 28, 28);
         Button_oriagari_kakudai.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_kakudai.setIcon(ResourceUtil.createImageIcon("ppp/oriagari_kakudai.png"));
+        Button_oriagari_kakudai.setIcon(createImageIcon("ppp/oriagari_kakudai.png"));
 
 
 // *****南********************************************************************
         //------------------------------------------------
         JPanel pnls3 = new JPanel();
-        pnls3.setPreferredSize(new Dimension(119, 30));
         pnls3.setBackground(Color.white);
-        pnls3.setLayout(null);
+        pnls3.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
         pnls3.setBorder(new LineBorder(Color.black, 1));
         pnls.add(pnls3);
         //------------------------------------------------
@@ -6089,15 +5879,13 @@ public class App extends JFrame implements ActionListener {
             canvas.repaint();
         });
         pnls3.add(Button_oriagari_p_kaiten);
-        Button_oriagari_p_kaiten.setBounds(1, 1, 33, 28);
         Button_oriagari_p_kaiten.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_p_kaiten.setIcon(ResourceUtil.createImageIcon("ppp/oriagari_p_kaiten.png"));
+        Button_oriagari_p_kaiten.setIcon(createImageIcon("ppp/oriagari_p_kaiten.png"));
 
 
 // ****南**************************************************************************
 //回転角度補正
         text30 = new JTextField("", 2);
-        text30.setBounds(34, 4, 35, 24);
         text30.setHorizontalAlignment(JTextField.RIGHT);
         pnls3.add(text30);
 
@@ -6129,7 +5917,6 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
             canvas.repaint();
         });
-        Button_oriagarizu_kaiten_hosei_set.setBounds(70, 4, 14, 24);
         pnls3.add(Button_oriagarizu_kaiten_hosei_set);
 
         Button_oriagarizu_kaiten_hosei_set.setMargin(new Insets(0, 0, 0, 0));
@@ -6159,9 +5946,8 @@ public class App extends JFrame implements ActionListener {
             canvas.repaint();
         });
         pnls3.add(Button_oriagari_m_kaiten);
-        Button_oriagari_m_kaiten.setBounds(85, 1, 33, 28);
         Button_oriagari_m_kaiten.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_m_kaiten.setIcon(ResourceUtil.createImageIcon("ppp/oriagari_m_kaiten.png"));
+        Button_oriagari_m_kaiten.setIcon(createImageIcon("ppp/oriagari_m_kaiten.png"));
 
 // *******南******************************************************************
 
@@ -6180,8 +5966,6 @@ public class App extends JFrame implements ActionListener {
         pnls.add(Button_a_a);
 
         Button_a_a.setMargin(new Insets(0, 0, 0, 0));
-        //Button_a_a.setIcon(createImageIcon(
-        //  "ppp/a_a.png")));
 // ******************************************************** //折りあがり図の影付け
 
         JButton Button_shadows = new JButton("S");
@@ -6195,8 +5979,6 @@ public class App extends JFrame implements ActionListener {
         pnls.add(Button_shadows);
 
         Button_shadows.setMargin(new Insets(0, 0, 0, 0));
-        //Button_shadows.setIcon(createImageIcon(
-        //  "ppp/kage.png")));
 // *********南****************************************************************
 // -------------折り上がり予測図表面の色の選択
 
@@ -6207,16 +5989,13 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
-            //System.out.println("readFile2Memo() 開始");
 
             //以下にやりたいことを書く
-            //if(color != null){OZ.js.set_F_color(color);}
 
             OZ.foldedFigure_F_color = JColorChooser.showDialog(null, "F_col", Color.white);
             if (OZ.foldedFigure_F_color != null) {
                 OZ.ct_worker.set_F_color(OZ.foldedFigure_F_color);
             }
-
 
             //以上でやりたいことは書き終わり
 
@@ -6224,9 +6003,8 @@ public class App extends JFrame implements ActionListener {
 
             canvas.repaint();
         });
-        //Button_F_color.setPreferredSize(new Dimension(25, 25));
         Button_F_color.setMargin(new Insets(0, 0, 0, 0));
-        Button_F_color.setIcon(ResourceUtil.createImageIcon("ppp/F_color.png"));
+        Button_F_color.setIcon(createImageIcon("ppp/F_color.png"));
         pnls.add(Button_F_color);
 
 
@@ -6244,7 +6022,6 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
-            //System.out.println("readFile2Memo() 開始");
 
             //以下にやりたいことを書く
             OZ.foldedFigure_B_color = JColorChooser.showDialog(null, "B_col", Color.white);
@@ -6257,9 +6034,8 @@ public class App extends JFrame implements ActionListener {
             Button_B_color.setBackground(OZ.foldedFigure_B_color);    //ボタンの色設定
             canvas.repaint();
         });
-        //Button_B_color.setPreferredSize(new Dimension(25, 25));
         Button_B_color.setMargin(new Insets(0, 0, 0, 0));
-        Button_B_color.setIcon(ResourceUtil.createImageIcon("ppp/B_color.png"));
+        Button_B_color.setIcon(createImageIcon("ppp/B_color.png"));
         pnls.add(Button_B_color);
 
 
@@ -6277,11 +6053,8 @@ public class App extends JFrame implements ActionListener {
             Button_kyoutuu_sagyou();
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
-            //System.out.println("readFile2Memo() 開始");
 
             //以下にやりたいことを書く
-            //Color color = colorchooser.showDialog(null, "L_col", Color.white);
-            //if(color != null){js.set_L_color(color);}
 
             OZ.foldedFigure_L_color = JColorChooser.showDialog(null, "L_col", Color.white);
             if (OZ.foldedFigure_L_color != null) {
@@ -6295,7 +6068,7 @@ public class App extends JFrame implements ActionListener {
             canvas.repaint();
         });
         Button_L_color.setMargin(new Insets(0, 0, 0, 0));
-        Button_L_color.setIcon(ResourceUtil.createImageIcon("ppp/L_color.png"));
+        Button_L_color.setIcon(createImageIcon("ppp/L_color.png"));
         pnls.add(Button_L_color);
 
 
@@ -6320,7 +6093,7 @@ public class App extends JFrame implements ActionListener {
         pnls.add(Button_keisan_tyuusi);
 
         Button_keisan_tyuusi.setMargin(new Insets(0, 0, 0, 0));
-        Button_keisan_tyuusi.setIcon(ResourceUtil.createImageIcon("ppp/keisan_tyuusi.png"));
+        Button_keisan_tyuusi.setIcon(createImageIcon("ppp/keisan_tyuusi.png"));
 
 
 // *******南****************************************************************** 折り上がり予想の廃棄 ************************************************
@@ -6343,7 +6116,6 @@ public class App extends JFrame implements ActionListener {
                 OAZ.remove(i_OAZ);
                 set_i_OAZ(i_OAZ);
             }
-            //settei_syokika_yosoku();
 
             Button_kyoutuu_sagyou();
             canvas.repaint();
@@ -6352,7 +6124,7 @@ public class App extends JFrame implements ActionListener {
         pnls.add(Button_settei_syokika);
 
         Button_settei_syokika.setMargin(new Insets(0, 0, 0, 0));
-        Button_settei_syokika.setIcon(ResourceUtil.createImageIcon("ppp/settei_syokika.png"));
+        Button_settei_syokika.setIcon(createImageIcon("ppp/settei_syokika.png"));
 
 // *******南*************bbbbbbbbbb*****************************************************全操作廃棄 (ﾉToT)ﾉ ┫:･'.::･  ****************************************************
 
@@ -6386,7 +6158,7 @@ public class App extends JFrame implements ActionListener {
         pnls.add(Button_zen_syokika);
 
         Button_zen_syokika.setMargin(new Insets(0, 0, 0, 0));
-        Button_zen_syokika.setIcon(ResourceUtil.createImageIcon("ppp/zen_syokika.png"));
+        Button_zen_syokika.setIcon(createImageIcon("ppp/zen_syokika.png"));
 
 // *******南*********ボタンの定義はここまで*******************************************************************************************************************************
 
@@ -6406,7 +6178,7 @@ public class App extends JFrame implements ActionListener {
         es1.set_a_to_parallel_scale_interval(scale_interval);
         es1.set_b_to_parallel_scale_interval(scale_interval);
 
-        i_sel_mou_mode = OperationMode.MOVE_1;
+        selectionOperationMode = SelectionOperationMode.MOVE_1;
         Button_sel_mou_wakukae();//セレクトされた折線がある状態で、セレクトされている折線の頂点をクリックした場合の動作モードの初期設定
 
         //折畳予測図のの初期化　開始
@@ -6431,12 +6203,6 @@ public class App extends JFrame implements ActionListener {
         es1.record();
         es1.h_record();
 
-        //折り上がり図の色指定
-        //Color oriagarizu_F_color=new Color(255,255,50);//折り上がり図の表面の色
-        //Color oriagarizu_B_color=new Color(233,233,233);//折り上がり図の裏面の色
-        //Color oriagarizu_L_color=Color.black;//折り上がり図の線の色
-
-
         OZ.ct_worker.set_F_color(OZ.foldedFigure_F_color); //折り上がり図の表面の色
         Button_F_color.setBackground(OZ.foldedFigure_F_color);    //ボタンの色設定
 
@@ -6445,75 +6211,62 @@ public class App extends JFrame implements ActionListener {
 
         OZ.ct_worker.set_L_color(OZ.foldedFigure_L_color);        //折り上がり図の線の色
         Button_L_color.setBackground(OZ.foldedFigure_L_color);        //ボタンの色設定
-
-
-        //wwwwwwwwwwwwwwwwwwwwwww
-
-
     }//------------------------------------------ボタンの定義等、ここまでがコンストラクタとして起動直後に最初に実行される内容
 
     //ここまでが変数等の定義
-// **************************************************************************************************************
-    public void run() {
-        while (true) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                break;
-            }
-            //  myThスレッドで実行させたい内容はここに書く。
-        }
+
+    public enum FoldType {
+        NOTHING_0,
+        FOR_ALL_LINES_1,
+        FOR_SELECTED_LINES_2,
+        CHANGING_FOLDED_3,
     }
 
-    private int get_i_fold_type() {
+    private FoldType getFoldType() {
 
-        int i_fold_type;//=0なにもしない、=1通常の展開図の全折線を対象とした折り畳み推定、=2はselectされた折線を対象とした折り畳み推定、=3は折畳み状態を変更
-        System.out.println("OAZ.size() = " + OAZ.size() + "    : i_OAZ = " + i_OAZ + "    : es1.get_orisensuu_for_select_oritatami() = " + es1.getFoldLineTotalForSelectFolding());
-        i_fold_type = 0;
+        FoldType i_fold_type;//= 0 Do nothing, = 1 Folding estimation for all fold lines in the normal development view, = 2 for fold estimation for selected fold lines, = 3 for changing the folding state
+        int foldLineTotalForSelectFolding = es1.getFoldLineTotalForSelectFolding();
+        System.out.println("OAZ.size() = " + OAZ.size() + "    : i_OAZ = " + i_OAZ + "    : es1.get_orisensuu_for_select_oritatami() = " + foldLineTotalForSelectFolding);
         if (OAZ.size() == 1) {                        //折り上がり系図無し
             if (i_OAZ == 0) {                            //展開図指定
-                if (es1.getFoldLineTotalForSelectFolding() == 0) {        //折り線選択無し
-                    i_fold_type = 1;//全展開図で折畳み
-                } else if (es1.getFoldLineTotalForSelectFolding() > 0) {        //折り線選択有り
-                    i_fold_type = 2;//選択された展開図で折畳み
+                if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
+                    i_fold_type = FoldType.FOR_ALL_LINES_1;//全展開図で折畳み
+                } else {        //折り線選択有り
+                    i_fold_type = FoldType.FOR_SELECTED_LINES_2;//選択された展開図で折畳み
                 }
-            } else if (i_OAZ > 0) {                        //折り上がり系図指定
-                i_fold_type = 0;//有り得ない
+            } else {                        //折り上がり系図指定
+                i_fold_type = FoldType.NOTHING_0;//有り得ない
             }
-        } else if (OAZ.size() > 1) {                        //折り上がり系図有り
+        } else {                        //折り上がり系図有り
             if (i_OAZ == 0) {                            //展開図指定
-                if (es1.getFoldLineTotalForSelectFolding() == 0) {        //折り線選択無し
-                    System.out.println("get_i_fold_type() 20180108");
-                    i_fold_type = 0;//何もしない
-                    //i_fold_type=1;//全展開図で折畳み
-                } else if (es1.getFoldLineTotalForSelectFolding() > 0) {        //折り線選択有り
-                    i_fold_type = 2;//選択された展開図で折畳み
+                if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
+                    i_fold_type = FoldType.NOTHING_0;//何もしない
+                } else {        //折り線選択有り
+                    i_fold_type = FoldType.FOR_SELECTED_LINES_2;//選択された展開図で折畳み
                 }
-            } else if (i_OAZ > 0) {                        //折り上がり系図指定
-                if (es1.getFoldLineTotalForSelectFolding() == 0) {        //折り線選択無し
-                    i_fold_type = 3;//指定された折り上がり系図で折畳み
-                } else if (es1.getFoldLineTotalForSelectFolding() > 0) {        //折り線選択有り
-                    i_fold_type = 2;//選択された展開図で折畳み
+            } else {                        //折り上がり系図指定
+                if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
+                    i_fold_type = FoldType.CHANGING_FOLDED_3;//指定された折り上がり系図で折畳み
+                } else {        //折り線選択有り
+                    i_fold_type = FoldType.FOR_SELECTED_LINES_2;//選択された展開図で折畳み
                 }
             }
         }
-
 
         return i_fold_type;
     }
 
-    //
-    private void oritatame(int i_fold_type, FoldedFigure.EstimationOrder i_suitei_meirei) {//引数の意味は(i_fold_type , i_suitei_meirei)
+    private void oritatame(FoldType i_fold_type, FoldedFigure.EstimationOrder i_suitei_meirei) {//引数の意味は(i_fold_type , i_suitei_meirei)
         //i_fold_typeはget_i_fold_type()関数で取得する。
         //i_fold_type=0なにもしない、=1通常の展開図の全折線を対象とした折り畳み推定、=2はselectされた折線を対象とした折り畳み推定、=3は折畳み状態を変更
-        if (i_fold_type == 0) {
+        if (i_fold_type == FoldType.NOTHING_0) {
             System.out.println(" oritatame 20180108");
-        } else if ((i_fold_type == 1) || (i_fold_type == 2)) {
-            if (i_fold_type == 1) {
+        } else if ((i_fold_type == FoldType.FOR_ALL_LINES_1) || (i_fold_type == FoldType.FOR_SELECTED_LINES_2)) {
+            if (i_fold_type == FoldType.FOR_ALL_LINES_1) {
                 es1.select_all();
             }
             //
-            if (ckbox_cp_kaizen_oritatami.isSelected()) {//展開図のおかしい所（枝状の折り線等）を自動修正する
+            if (ckbox_cp_kaizen_folding.isSelected()) {//展開図のおかしい所（枝状の折り線等）を自動修正する
                 Drawing_Worker es2 = new Drawing_Worker(r, this);    //基本枝職人。マウスからの入力を受け付ける。
                 es2.setMemo_for_reading(es1.foldLines.getMemo_for_select_folding());
                 es2.point_removal();
@@ -6525,19 +6278,11 @@ public class App extends JFrame implements ActionListener {
                 Ss0 = es1.getForSelectFolding();
             }
 
-
-//bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-
-            //
-            //Ten ten_of_kijyunmen_old =new Ten(); ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());
             point_of_referencePlane_old.set(OZ.cp_worker1.get_point_of_referencePlane_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
             //これより前のOZは古いOZ
-            oritatami_jyunbi();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、OAZ(0)共通パラメータを引き継がせる。
+            folding_prepare();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、OAZ(0)共通パラメータを引き継がせる。
             //これより後のOZは新しいOZに変わる
-            //OZ.ts1.set_kijyunmen_id(ten_of_kijyunmen_old);
 
-
-            //OZ.i_suitei_jissi_umu=0;	//i_suitei_jissi_umuは、折り畳み推定の計算を実施したかどうかを表す。int i_suitei_jissi_umu=0なら実施しない。1なら実施した。
             OZ.estimationOrder = i_suitei_meirei;
 
             if (!subThreadRunning) {
@@ -6547,8 +6292,7 @@ public class App extends JFrame implements ActionListener {
                 sub.start();
             }
 
-
-        } else if (i_fold_type == 3) {
+        } else if (i_fold_type == FoldType.CHANGING_FOLDED_3) {
             OZ.estimationOrder = i_suitei_meirei;
 
             if (!subThreadRunning) {
@@ -6560,8 +6304,7 @@ public class App extends JFrame implements ActionListener {
         }
     }
 
-    void oritatami_jyunbi() {//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、OAZ(0)共通パラメータを引き継がせる。
-
+    void folding_prepare() {//Add one new folding diagram to the OAZ array list, specify it as the operation target, and inherit the OAZ (0) common parameters.
         System.out.println(" oritatami_jyunbi 20180107");
 
         OAZ_add_new_Oriagari_Zu(); //OAZのアレイリストに、新しく折り上がり図をひとつ追加する。
@@ -6645,7 +6388,7 @@ public class App extends JFrame implements ActionListener {
             nyuuryoku_kitei = 1;
         }
         text1.setText(String.valueOf(nyuuryoku_kitei));
-        es1.set_grid_bunkatu_suu(nyuuryoku_kitei);
+        es1.setGridDivisionNumber(nyuuryoku_kitei);
     }
 
     public void keikoku_sentaku_sareta_orisen_ga_nai() {
@@ -6663,7 +6406,7 @@ public class App extends JFrame implements ActionListener {
     }
 
     public void keisan_tyuusi() {
-        int option = JOptionPane.showConfirmDialog(this, ResourceUtil.createImageIcon("ppp/keisan_tyuusi_DLog.png"));
+        int option = JOptionPane.showConfirmDialog(this, createImageIcon("ppp/keisan_tyuusi_DLog.png"));
 
         if (option == JOptionPane.YES_OPTION) {
             i_mouseDragged_valid = false;
@@ -6681,8 +6424,8 @@ public class App extends JFrame implements ActionListener {
         configure_syokika_yosoku();
     }
 
-    public void owari() {
-        int option = JOptionPane.showConfirmDialog(this, ResourceUtil.createImageIcon("ppp/owari.png"));
+    public void closing() {
+        int option = JOptionPane.showConfirmDialog(this, createImageIcon("ppp/owari.png"));
 
         if (option == JOptionPane.YES_OPTION) {
             i_mouseDragged_valid = false;
@@ -6741,8 +6484,8 @@ public class App extends JFrame implements ActionListener {
         ckbox_a1.setSelected(true);//補助画線を表示するかどうかの選択
         ckbox_mark.setSelected(true);//十字や基準面などの目印画線
         ckbox_cp_ue.setSelected(false);//展開図を折り上がり予想図の上に描く
-        ckbox_oritatami_keika.setSelected(false);//折り上がり予想の途中経過の書き出し
-        ckbox_cp_kaizen_oritatami.setSelected(false);//cpを折畳み前に自動改善する
+        ckbox_folding_keika.setSelected(false);//折り上がり予想の途中経過の書き出し
+        ckbox_cp_kaizen_folding.setSelected(false);//cpを折畳み前に自動改善する
         ckbox_select_nokosi.setSelected(false);//select状態を折畳み操作をしてもなるべく残す
         ckbox_toukazu_color.setSelected(false);//透過図をカラー化する。
 
@@ -6802,7 +6545,7 @@ public class App extends JFrame implements ActionListener {
         //ペンの色の指定
         icol = LineColor.RED_1;
         es1.setColor(icol);    //最初の折線の色を指定する。0は黒、1は赤、2は青。
-        ButtonCol_irokesi();
+        ButtonCol_reset();
         ButtonCol_red.setForeground(Color.black);
         ButtonCol_red.setBackground(Color.red);    //折線のボタンの色設定
 
@@ -6842,7 +6585,7 @@ public class App extends JFrame implements ActionListener {
 //--------------------------------------------
 //東辺
         //角度系入力を22.5度系にする。
-        es1.set_id_kakudo_kei(8);
+        es1.set_id_angle_system(8);
 
         //自由角度
         d_restricted_angle_a = 40.0;
@@ -6866,7 +6609,7 @@ public class App extends JFrame implements ActionListener {
         //補助画線の色
         h_icol = LineColor.ORANGE_4;
         es1.h_setcolor(h_icol);                                        //最初の補助線の色を指定する。4はオレンジ、7は黄。
-        Button_h_Col_irokesi();
+        Button_h_Col_reset();
         Button_Col_orange.setForeground(Color.black);
         Button_Col_orange.setBackground(Color.ORANGE);    //補助線のボタンの色設定
 
@@ -6948,7 +6691,7 @@ public class App extends JFrame implements ActionListener {
 
         text24.setText(String.valueOf(d_grid_angle));
 
-        es1.set_d_grid(d_grid_x_length, d_grid_y_length, d_grid_angle);
+        es1.setGrid(d_grid_x_length, d_grid_y_length, d_grid_angle);
     }
 
 // ------------------------------------------------------
@@ -7060,7 +6803,7 @@ public class App extends JFrame implements ActionListener {
         Button_kyouei.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
 
 
-        switch (i_sel_mou_mode) {
+        switch (selectionOperationMode) {
             case MOVE_1:
                 Button_move.setBorder(new LineBorder(Color.green, 3, false));
                 break;
@@ -7080,7 +6823,7 @@ public class App extends JFrame implements ActionListener {
     }
 
     //--------------------------------------------------------
-    void Button_irokesi() {
+    void Button_reset() {
         Button_M_nisuru.setForeground(Color.black);
         Button_V_nisuru.setForeground(Color.black);
         Button_E_nisuru.setForeground(Color.black);
@@ -7095,7 +6838,7 @@ public class App extends JFrame implements ActionListener {
     }
 
     //--------------------------------------------------------
-    void ButtonCol_irokesi() {
+    void ButtonCol_reset() {
         ButtonCol_black.setForeground(Color.black);
         ButtonCol_blue.setForeground(Color.black);
         ButtonCol_red.setForeground(Color.black);
@@ -7108,26 +6851,21 @@ public class App extends JFrame implements ActionListener {
     }
 
     //--------------------------------------------------------
-    void Button_h_Col_irokesi() {
+    void Button_h_Col_reset() {
         Button_Col_orange.setBackground(new Color(150, 150, 150));
         Button_Col_yellow.setBackground(new Color(150, 150, 150));
     }
 // ---------------------------------------
-
-    //アプレットの最終処理を行う関数----------------------------------------------------
-    public void destroy() {
-//        removeMouseListener(this);
-    }//removeMouseMotionListenerやremoveMouseWheelListenerはどうなる？　20170401
-
+    
     void Button_kyoutuu_sagyou() {
         es1.setDrawingStage(0);
-        es1.set_i_en_egaki_dankai(0);
+        es1.set_i_circle_drawing_stage(0);
         es1.set_s_step_iactive(LineSegment.ActiveState.ACTIVE_BOTH_3);//要注意　es1でうっかりs_stepにset.(senbun)やるとアクティヴでないので表示が小さくなる20170507
         es1.vonoroiLines.reset();
     }
 
     // *******************************************************************************************zzzzzzzzzzzz
-    public void i_cp_or_oriagari_decide(origami_editor.graphic2d.point.Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
+    public void i_cp_or_oriagari_decide(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
         //20171216
         //hyouji_flg==2,ip4==0  omote
         //hyouji_flg==2,ip4==1	ura
@@ -7151,7 +6889,7 @@ public class App extends JFrame implements ActionListener {
         //OZ_hyouji_mode=4;  omote & ura & omote2 & ura2
 
         int temp_i_OAZ = 0;
-        int temp_i_cp_or_oriagari = 0;
+        MouseWheelTarget temp_i_cp_or_oriagari = MouseWheelTarget.CREASEPATTERN_0;
         FoldedFigure OZi;
         for (int i = 1; i <= OAZ.size() - 1; i++) {
             OZi = OAZ.get(i);
@@ -7201,28 +6939,28 @@ public class App extends JFrame implements ActionListener {
 
             if (OZi.cp_worker2.isInsideFront(p) > 0) {
                 if (((OZ_display_mode == 1) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
-                    temp_i_cp_or_oriagari = 1;
+                    temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_FRONT_1;
                     temp_i_OAZ = i;
                 }
             }
 
             if (OZi.cp_worker2.isInsideRear(p) > 0) {
                 if (((OZ_display_mode == 2) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
-                    temp_i_cp_or_oriagari = 2;
+                    temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_BACK_2;
                     temp_i_OAZ = i;
                 }
             }
 
             if (OZi.cp_worker2.isInsideTransparentFront(p) > 0) {
                 if (OZ_display_mode == 4) {
-                    temp_i_cp_or_oriagari = 3;
+                    temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_FRONT_3;
                     temp_i_OAZ = i;
                 }
             }
 
             if (OZi.cp_worker2.isInsideTransparentRear(p) > 0) {
                 if (OZ_display_mode == 4) {
-                    temp_i_cp_or_oriagari = 4;
+                    temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_BACK_4;
                     temp_i_OAZ = i;
                 }
             }
@@ -7251,13 +6989,13 @@ public class App extends JFrame implements ActionListener {
     //マウス操作(移動やボタン操作)を行う関数------------------------------
     //----------------------------------------------------------------------
 
-    public origami_editor.graphic2d.point.Point e2p(MouseEvent e) {
+    public Point e2p(MouseEvent e) {
 
-        double d_haba = 0.0;
+        double d_width = 0.0;
         if (ckbox_ten_hanasi.isSelected()) {
-            d_haba = camera_of_orisen_input_diagram.getCameraZoomX() * es1.get_d_decision_width();
+            d_width = camera_of_orisen_input_diagram.getCameraZoomX() * es1.get_d_decision_width();
         }
-        return new origami_editor.graphic2d.point.Point(e.getX() - (int) d_haba, e.getY() - (int) d_haba);
+        return new Point(e.getX() - (int) d_width, e.getY() - (int) d_width);
     }
 
 
@@ -7284,14 +7022,7 @@ public class App extends JFrame implements ActionListener {
 
 //10001;test1 入力準備として点を３つ指定する
 
-    public void add_frame_to_Front() {
-        if (i_add_frame) {
-            add_frame.toFront();
-        }//20201004追加機能フレームがあるなら全面に出す。
-
-    }
-
-    public void mouse_object_iti(origami_editor.graphic2d.point.Point p) {//この関数はmouseMoved等と違ってマウスイベントが起きても自動では認識されない
+    public void mouse_object_position(Point p) {//この関数はmouseMoved等と違ってマウスイベントが起きても自動では認識されない
         p_mouse_TV_position.set(p.getX(), p.getY());
 
         p_mouse_object_position.set(camera_of_orisen_input_diagram.TV2object(p_mouse_TV_position));
@@ -7301,7 +7032,7 @@ public class App extends JFrame implements ActionListener {
     // --------------------------------------------------
 
     // ------------------------------------------------------
-    public void background_set(origami_editor.graphic2d.point.Point t1, origami_editor.graphic2d.point.Point t2, origami_editor.graphic2d.point.Point t3, Point t4) {
+    public void background_set(Point t1, Point t2, Point t3, Point t4) {
         h_cam.set_h1(t1);
         h_cam.set_h2(t2);
         h_cam.set_h3(t3);
@@ -7682,7 +7413,8 @@ public class App extends JFrame implements ActionListener {
         DEG_5,
     }
 
-    public enum OperationMode {
+    public enum SelectionOperationMode {
+        NORMAL_0,
         MOVE_1,
         MOVE4P_2,
         COPY_3,

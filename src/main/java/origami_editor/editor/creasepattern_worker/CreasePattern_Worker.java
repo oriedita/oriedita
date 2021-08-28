@@ -38,7 +38,7 @@ public class CreasePattern_Worker {
     Camera cam_transparent_front = new Camera();
     Camera cam_transparent_rear = new Camera();
 
-    public origami_editor.graphic2d.point.Point point_of_referencePlane_ob = new origami_editor.graphic2d.point.Point();
+    public Point point_of_referencePlane_ob = new Point();
 
     public CreasePattern_Worker(double r0) {  //コンストラクタ
         r = r0;
@@ -77,7 +77,7 @@ public class CreasePattern_Worker {
         return referencePlaneId;
     }
 
-    public origami_editor.graphic2d.point.Point get_point_of_referencePlane_tv() {
+    public Point get_point_of_referencePlane_tv() {
         return camera.object2TV(point_of_referencePlane_ob);
     }
 
@@ -100,8 +100,8 @@ public class CreasePattern_Worker {
     /**
      * This is the correspondence when the mouse is pressed in the reference plane specification mode 201503
      */
-    public int setReferencePlaneId(origami_editor.graphic2d.point.Point p0) {//Returns the datum id that is actually valid
-        origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point();
+    public int setReferencePlaneId(Point p0) {//Returns the datum id that is actually valid
+        Point p = new Point();
         p.set(camera.TV2object(p0));
         if (pointSet.inside(p) > 0) {
             referencePlaneId = pointSet.inside(p);
@@ -114,8 +114,8 @@ public class CreasePattern_Worker {
     /**
      * Determine if Point p0 is inside the fold-up diagram
      */
-    public int isInside(origami_editor.graphic2d.point.Point p0) {//Returns the face id where p0 is actually
-        origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point();
+    public int isInside(Point p0) {//Returns the face id where p0 is actually
+        Point p = new Point();
         p.set(camera.TV2object(p0));
         return pointSet.inside(p);//If c.inside(p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, and if it is a positive number, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
     }
@@ -123,8 +123,8 @@ public class CreasePattern_Worker {
     /**
      * Determine if Point p0 is inside the fold-up diagram (table)
      */
-    public int isInsideFront(origami_editor.graphic2d.point.Point p0) {//Returns the face id where p0 is actually
-        origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point();
+    public int isInsideFront(Point p0) {//Returns the face id where p0 is actually
+        Point p = new Point();
         p.set(cam_front.TV2object(p0));
         return pointSet.inside(p);//If PointSet c.inside (p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, if it is positive, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
     }
@@ -132,8 +132,8 @@ public class CreasePattern_Worker {
     /**
      * Determine if Point p0 is inside the folded view (back)
      */
-    public int isInsideRear(origami_editor.graphic2d.point.Point p0) {//Returns the face id where p0 is actually
-        origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point();
+    public int isInsideRear(Point p0) {//Returns the face id where p0 is actually
+        Point p = new Point();
         p.set(cam_rear.TV2object(p0));
         return pointSet.inside(p);//If PointSet c.inside (p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, if it is positive, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
     }
@@ -141,15 +141,15 @@ public class CreasePattern_Worker {
     /**
      * Determine if Point p0 is inside the transparent view (table) that is attached to the folded view
      */
-    public int isInsideTransparentFront(origami_editor.graphic2d.point.Point p0) {//実際にp0がある面idを返す
-        origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point();
+    public int isInsideTransparentFront(Point p0) {//実際にp0がある面idを返す
+        Point p = new Point();
         p.set(cam_transparent_front.TV2object(p0));
         return pointSet.inside(p);// PointSet c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     // Determine if Point p0 is inside the transparent view (back) that is attached to the folded view
-    public int isInsideTransparentRear(origami_editor.graphic2d.point.Point p0) {//Returns the face id where p0 is actually
-        origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point();
+    public int isInsideTransparentRear(Point p0) {//Returns the face id where p0 is actually
+        Point p = new Point();
         p.set(cam_transparent_rear.TV2object(p0));
         return pointSet.inside(p);//If PointSet c.inside (p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, if it is positive, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
     }
@@ -262,8 +262,8 @@ public class CreasePattern_Worker {
         return pointSet;
     }
 
-    private origami_editor.graphic2d.point.Point fold_movement(int it, int im) { //A function that finds the position of the destination when the point it is folded as a member of the surface im
-        origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point();
+    private Point fold_movement(int it, int im) { //A function that finds the position of the destination when the point it is folded as a member of the surface im
+        Point p = new Point();
         p.set(pointSet.getPoint(it));
         int idestination_faceId = im;//The id number of the first face. From now on, we will follow the planes adjacent to the reference plane.
         while (idestination_faceId != referencePlaneId) {
@@ -321,7 +321,7 @@ public class CreasePattern_Worker {
         return cn;
     }
 
-    private origami_editor.graphic2d.point.Point lineSymmetry_point_determine(int lineId, origami_editor.graphic2d.point.Point point) {//Given the id of the bar and any point, returns the point that is axisymmetric of the given point with respect to the corresponding bar.
+    private Point lineSymmetry_point_determine(int lineId, Point point) {//Given the id of the bar and any point, returns the point that is axisymmetric of the given point with respect to the corresponding bar.
         return OritaCalc.lineSymmetry_point_find(pointSet.getBeginPointFromLineId(lineId), pointSet.getEndPointFromLineId(lineId), point);
     }
 
@@ -350,7 +350,7 @@ public class CreasePattern_Worker {
     }
 
     public void lineStore2pointStore(LineSegmentSet lineSegmentSet) {
-        origami_editor.graphic2d.point.Point ti;
+        Point ti;
         reset();
 
         //First, define a point in PointSet.
@@ -369,7 +369,7 @@ public class CreasePattern_Worker {
             y = ti.getY();
 
             for (int j = 1; j <= addPointNum; j++) {
-                if (OritaCalc.equal(ti, new origami_editor.graphic2d.point.Point(addPointX[j], addPointY[j]))) {
+                if (OritaCalc.equal(ti, new Point(addPointX[j], addPointY[j]))) {
                     flag1 = true;
                 }
             }
@@ -385,7 +385,7 @@ public class CreasePattern_Worker {
             y = ti.getY();
 
             for (int j = 1; j <= addPointNum; j++) {
-                if (OritaCalc.equal(ti, new origami_editor.graphic2d.point.Point(addPointX[j], addPointY[j]))) {
+                if (OritaCalc.equal(ti, new Point(addPointX[j], addPointY[j]))) {
                     flag1 = true;
                 }
             }
@@ -455,8 +455,8 @@ public class CreasePattern_Worker {
         return pointSet.lineInFaceBorder_max_lookup(lineId);
     }
 
-    public void mDragged_selectedPoint_move_with_camera(origami_editor.graphic2d.point.Point ugokasu_maeno_sentaku_point, origami_editor.graphic2d.point.Point p0, origami_editor.graphic2d.point.Point p1, FoldedFigure.State ip4) {   //Move the selected point
-        origami_editor.graphic2d.point.Point pa = new origami_editor.graphic2d.point.Point();
+    public void mDragged_selectedPoint_move_with_camera(Point ugokasu_maeno_sentaku_point, Point p0, Point p1, FoldedFigure.State ip4) {   //Move the selected point
+        Point pa = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
             pa.set(cam_front.TV2object(p0));
         }
@@ -464,7 +464,7 @@ public class CreasePattern_Worker {
             pa.set(cam_rear.TV2object(p0));
         }
 
-        origami_editor.graphic2d.point.Point pb = new origami_editor.graphic2d.point.Point();
+        Point pb = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
             pb.set(cam_front.TV2object(p1));
         }
@@ -472,15 +472,15 @@ public class CreasePattern_Worker {
             pb.set(cam_rear.TV2object(p1));
         }
 
-        origami_editor.graphic2d.point.Point p_u = new origami_editor.graphic2d.point.Point();
+        Point p_u = new Point();
         p_u.set(ugokasu_maeno_sentaku_point.getX(), ugokasu_maeno_sentaku_point.getY());
         p_u.move(pa.other_Point_position(pb));
 
         pointSet.statePointMove(p_u);
     }
 
-    public void mReleased_selectedPoint_move_with_camera(origami_editor.graphic2d.point.Point ugokasu_maeno_sentaku_point, origami_editor.graphic2d.point.Point p0, origami_editor.graphic2d.point.Point p1, FoldedFigure.State ip4) {   // Move the selected point
-        origami_editor.graphic2d.point.Point pa = new origami_editor.graphic2d.point.Point();
+    public void mReleased_selectedPoint_move_with_camera(Point ugokasu_maeno_sentaku_point, Point p0, Point p1, FoldedFigure.State ip4) {   // Move the selected point
+        Point pa = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
             pa.set(cam_front.TV2object(p0));
         }
@@ -488,7 +488,7 @@ public class CreasePattern_Worker {
             pa.set(cam_rear.TV2object(p0));
         }
 
-        origami_editor.graphic2d.point.Point pb = new origami_editor.graphic2d.point.Point();
+        Point pb = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
             pb.set(cam_front.TV2object(p1));
         }
@@ -497,7 +497,7 @@ public class CreasePattern_Worker {
         }
 
 
-        origami_editor.graphic2d.point.Point p_u = new origami_editor.graphic2d.point.Point();
+        Point p_u = new Point();
         p_u.set(ugokasu_maeno_sentaku_point.getX(), ugokasu_maeno_sentaku_point.getY());
         p_u.move(pa.other_Point_position(pb));
 
@@ -518,7 +518,7 @@ public class CreasePattern_Worker {
 
 
     public void drawing_pointId_with_camera(Graphics g, int i) {    //Draw a dot
-        origami_editor.graphic2d.point.Point tn = new origami_editor.graphic2d.point.Point();
+        Point tn = new Point();
         tn.set(camera.object2TV(pointSet.getPoint(i)));
         int radius = 7;//radius
         g.setColor(new Color(0, 255, 255, 100));//light blue
@@ -526,7 +526,7 @@ public class CreasePattern_Worker {
     }
 
     public void drawing_pointId_with_camera_green(Graphics g, int i) {    //Draw a dot
-        origami_editor.graphic2d.point.Point tn = new origami_editor.graphic2d.point.Point();
+        Point tn = new Point();
         tn.set(camera.object2TV(pointSet.getPoint(i)));
         int radius = 15;//半径
         g.setColor(new Color(0, 255, 0, 100));//green
@@ -535,7 +535,7 @@ public class CreasePattern_Worker {
 
     public void drawing_pointId_with_camera(Graphics g, int i, FoldedFigure.State ip4) {
         //Draw a dot
-        origami_editor.graphic2d.point.Point point = new origami_editor.graphic2d.point.Point();
+        Point point = new Point();
         point.set(camera.object2TV(pointSet.getPoint(i)));
         int radius = 10;//半径
         g.setColor(new Color(0, 255, 0, 50));//緑色
@@ -589,7 +589,7 @@ public class CreasePattern_Worker {
 
     public void drawing_referencePlane_with_camera(Graphics g) {
         //Draw a point inside the surface
-        origami_editor.graphic2d.point.Point point = new origami_editor.graphic2d.point.Point();
+        Point point = new Point();
         point.set(camera.object2TV(point_of_referencePlane_ob));
 
         g.setColor(new Color(200, 50, 255, 90));
@@ -634,8 +634,8 @@ public class CreasePattern_Worker {
     /**
      * Returns the number of the closest point that is closer than a certain distance to the given coordinates. If there is no Point within a certain distance, 0 is returned.
      */
-    public int closestPointId_with_camera(origami_editor.graphic2d.point.Point p0) {//For development view
-        origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point();
+    public int closestPointId_with_camera(Point p0) {//For development view
+        Point p = new Point();
         p.set(camera.TV2object(p0));
 
         return pointSet.closestPointId(p, d_h_k / camera.getCameraZoomX());
@@ -644,8 +644,8 @@ public class CreasePattern_Worker {
     /**
      * Returns the number of the closest point that is closer than a certain distance to the given coordinates. If there is no Point within a certain distance, 0 is returned.
      */
-    public int closestPointId_with_camera(origami_editor.graphic2d.point.Point p0, FoldedFigure.State ip4) {//折り上がり図用
-        origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point();
+    public int closestPointId_with_camera(Point p0, FoldedFigure.State ip4) {//折り上がり図用
+        Point p = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
             p.set(cam_front.TV2object(p0));
             return pointSet.closestPointId(p, d_h_k / cam_front.getCameraZoomX());
@@ -660,8 +660,8 @@ public class CreasePattern_Worker {
     /**
      * Returns the distance of the closest point that is closer than a certain distance to the given coordinates. If there is no Point within a certain distance, 1000000.0 is returned.
      */
-    public double closest_point_distance_with_camera(origami_editor.graphic2d.point.Point p0) {//p0 is the TV coordinate. It is the distance at ob that is returned
-        origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point();
+    public double closest_point_distance_with_camera(Point p0) {//p0 is the TV coordinate. It is the distance at ob that is returned
+        Point p = new Point();
         p.set(camera.TV2object(p0));
         return pointSet.closest_Point_distance(p, d_h_k / camera.getCameraZoomX());
     }
@@ -669,8 +669,8 @@ public class CreasePattern_Worker {
     /**
      * Returns the distance of the closest point that is closer than a certain distance to the given coordinates. If there is no Point within a certain distance, 1000000.0 is returned.
      */
-    public double closest_point_distance_with_camera(origami_editor.graphic2d.point.Point p0, FoldedFigure.State ip4) {//p0 is the TV coordinate. It is the distance at ob that is returned
-        origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point();
+    public double closest_point_distance_with_camera(Point p0, FoldedFigure.State ip4) {//p0 is the TV coordinate. It is the distance at ob that is returned
+        Point p = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
             p.set(cam_front.TV2object(p0));
             return pointSet.closest_Point_distance(p, d_h_k / cam_front.getCameraZoomX());

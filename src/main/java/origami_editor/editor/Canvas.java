@@ -24,7 +24,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     boolean flg_wi = false;//writeimage時につかう　1にするとpaintの関数の終了部にwriteimageするようにする。これは、paintの変更が書き出されるイメージに反映されないことを防ぐための工夫。20180528
     int btn = 0;//Stores which button in the center of the left and right is pressed. 1 =
-    origami_editor.graphic2d.point.Point mouse_temp0 = new origami_editor.graphic2d.point.Point();//マウスの動作対応時に、一時的に使うTen
+    Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
     public Canvas(App app0) {
         app = app0;
@@ -65,23 +65,23 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         //別の重なりさがし　のボタンの色の指定。
         if (app.OZ.findAnotherOverlapValid) {
-            app.Button3.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
-            app.Button3.setForeground(Color.black);
+            app.Button_another_solution.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
+            app.Button_another_solution.setForeground(Color.black);
 
             app.Button_AS_matome.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
             app.Button_AS_matome.setForeground(Color.black);
 
-            app.Button_bangou_sitei_suitei_display.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
-            app.Button_bangou_sitei_suitei_display.setForeground(Color.black);
+            app.Button_bangou_sitei_estimated_display.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
+            app.Button_bangou_sitei_estimated_display.setForeground(Color.black);
         } else {
-            app.Button3.setBackground(new Color(201, 201, 201));
-            app.Button3.setForeground(Color.gray);
+            app.Button_another_solution.setBackground(new Color(201, 201, 201));
+            app.Button_another_solution.setForeground(Color.gray);
 
             app.Button_AS_matome.setBackground(new Color(201, 201, 201));
             app.Button_AS_matome.setForeground(Color.gray);
 
-            app.Button_bangou_sitei_suitei_display.setBackground(new Color(201, 201, 201));
-            app.Button_bangou_sitei_suitei_display.setForeground(Color.gray);
+            app.Button_bangou_sitei_estimated_display.setBackground(new Color(201, 201, 201));
+            app.Button_bangou_sitei_estimated_display.setForeground(Color.gray);
         }
 
         // バッファー画面のクリア
@@ -98,7 +98,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         app.displayMarkings = app.ckbox_mark.isSelected();
         app.displayCreasePatternOnTop = app.ckbox_cp_ue.isSelected();
-        app.displayFoldingProgress = app.ckbox_oritatami_keika.isSelected();
+        app.displayFoldingProgress = app.ckbox_folding_keika.isSelected();
 
         bufferGraphics.setColor(Color.red);
         //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
@@ -148,13 +148,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             }
         }
 
-        double d_haba = app.camera_of_orisen_input_diagram.getCameraZoomX() * app.es1.get_d_decision_width();
+        double d_width = app.camera_of_orisen_input_diagram.getCameraZoomX() * app.es1.get_d_decision_width();
         //Flashlight (dot) search range
         if (app.displayPointSpotlight) {
             g2.setColor(new Color(255, 240, 0, 30));
             g2.setStroke(new BasicStroke(2.0f));
             g2.setColor(new Color(255, 240, 0, 230));
-            g2.draw(new Ellipse2D.Double(app.p_mouse_TV_position.getX() - d_haba, app.p_mouse_TV_position.getY() - d_haba, 2.0 * d_haba, 2.0 * d_haba));
+            g2.draw(new Ellipse2D.Double(app.p_mouse_TV_position.getX() - d_width, app.p_mouse_TV_position.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
         }
 
         //Luminous flux of flashlight, etc.
@@ -179,7 +179,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             bufferGraphics.drawString(app.OZ.text_result, 10, 40); //この表示内容はvoid kekka_syoriで決められる。
 
             if (app.displayGridInputAssist) {
-                origami_editor.graphic2d.point.Point kus_sisuu = new origami_editor.graphic2d.point.Point(app.es1.get_moyori_ten_sisuu(app.p_mouse_TV_position));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
+                Point kus_sisuu = new Point(app.es1.get_moyori_ten_sisuu(app.p_mouse_TV_position));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
 
                 double dx_ind = kus_sisuu.getX();
                 double dy_ind = kus_sisuu.getY();
@@ -219,7 +219,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             g2.setStroke(new BasicStroke(1.0f));
             g2.setColor(Color.black);
             g2.drawLine((int) (app.p_mouse_TV_position.getX()), (int) (app.p_mouse_TV_position.getY()),
-                    (int) (app.p_mouse_TV_position.getX() + d_haba), (int) (app.p_mouse_TV_position.getY() + d_haba)); //直線
+                    (int) (app.p_mouse_TV_position.getX() + d_width), (int) (app.p_mouse_TV_position.getY() + d_width)); //直線
         }
 
         //描画したい内容はここまでAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -277,8 +277,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //何もしない
         //  final Point mouseLocation = MouseInfo.getPointerInfo().getLocation();//これは多分J2SE 5.0「Tiger」以降で作動するコード
 
-        origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point(app.e2p(e));
-        app.mouse_object_iti(p);
+        Point p = new Point(app.e2p(e));
+        app.mouse_object_position(p);
         if (app.i_mouse_modeA == MouseMode.UNUSED_0) {
         } else if (app.i_mouse_modeA == MouseMode.DRAW_CREASE_FREE_1) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
@@ -467,7 +467,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     //マウス操作(ボタンを押したとき)を行う関数----------------------------------------------------
     public void mousePressed(MouseEvent e) {
-        origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point(app.e2p(e));
+        Point p = new Point(app.e2p(e));
 
         app.i_mouseDragged_valid = true;
         app.i_mouseReleased_valid = true;
@@ -482,7 +482,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 System.out.println("3_Click");//("トリプルクリック"
                 if (app.i_mouse_modeA == MouseMode.CREASE_SELECT_19) {
                     if (app.ckbox_add_frame_SelectAnd3click_isSelected) {
-                        switch (app.i_sel_mou_mode) {
+                        switch (app.selectionOperationMode) {
                             case MOVE_1:
                                 app.i_mouse_modeA = MouseMode.CREASE_MOVE_21;
                                 break;
@@ -511,16 +511,22 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
             System.out.println("i_cp_or_oriagari = " + app.i_cp_or_oriagari);
 
-            if (app.i_cp_or_oriagari == 0) {// 展開図移動。
-                app.camera_of_orisen_input_diagram.camera_ichi_sitei_from_TV(p);
-            } else if (app.i_cp_or_oriagari == 1) {
-                app.OZ.camera_of_foldedFigure_front.camera_ichi_sitei_from_TV(p);
-            } else if (app.i_cp_or_oriagari == 2) {
-                app.OZ.camera_of_foldedFigure_rear.camera_ichi_sitei_from_TV(p);
-            } else if (app.i_cp_or_oriagari == 3) {
-                app.OZ.camera_of_transparent_front.camera_ichi_sitei_from_TV(p);
-            } else if (app.i_cp_or_oriagari == 4) {
-                app.OZ.camera_of_transparent_rear.camera_ichi_sitei_from_TV(p);
+            switch (app.i_cp_or_oriagari) {
+                case CREASEPATTERN_0: // 展開図移動。
+                    app.camera_of_orisen_input_diagram.camera_ichi_sitei_from_TV(p);
+                    break;
+                case FOLDED_FRONT_1:
+                    app.OZ.camera_of_foldedFigure_front.camera_ichi_sitei_from_TV(p);
+                    break;
+                case FOLDED_BACK_2:
+                    app.OZ.camera_of_foldedFigure_rear.camera_ichi_sitei_from_TV(p);
+                    break;
+                case TRANSPARENT_FRONT_3:
+                    app.OZ.camera_of_transparent_front.camera_ichi_sitei_from_TV(p);
+                    break;
+                case TRANSPARENT_BACK_4:
+                    app.OZ.camera_of_transparent_rear.camera_ichi_sitei_from_TV(p);
+                    break;
             }
 
             mouse_temp0.set(p);
@@ -865,8 +871,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     public void mouseDragged(MouseEvent e) {
 
         if (app.i_mouseDragged_valid) {
-            origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point(app.e2p(e));
-            app.mouse_object_iti(p);
+            Point p = new Point(app.e2p(e));
+            app.mouse_object_position(p);
 
             //if (ckbox_mouse_settei.isSelected()){  //20201010　コメントアウト
             //---------ボタンの種類による動作変更-----------------------------------------
@@ -874,17 +880,23 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 
             } else if (btn == MouseEvent.BUTTON2) {
-                if (app.i_cp_or_oriagari == 0) {// 展開図移動。
-                    app.camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    es1.setCamera(app.camera_of_orisen_input_diagram);
-                } else if (app.i_cp_or_oriagari == 1) {
-                    app.OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                } else if (app.i_cp_or_oriagari == 2) {
-                    app.OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
-                } else if (app.i_cp_or_oriagari == 3) {
-                    app.OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                } else if (app.i_cp_or_oriagari == 4) {
-                    app.OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
+                switch (app.i_cp_or_oriagari) {
+                    case CREASEPATTERN_0: // 展開図移動。
+                        app.camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        es1.setCamera(app.camera_of_orisen_input_diagram);
+                        break;
+                    case FOLDED_FRONT_1:
+                        app.OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        break;
+                    case FOLDED_BACK_2:
+                        app.OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        break;
+                    case TRANSPARENT_FRONT_3:
+                        app.OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        break;
+                    case TRANSPARENT_BACK_4:
+                        app.OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        break;
                 }
 
                 mouse_temp0.set(p);
@@ -1191,7 +1203,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     //マウス操作(ボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(MouseEvent e) {
         if (app.i_mouseReleased_valid) {
-            origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point(app.e2p(e));
+            Point p = new Point(app.e2p(e));
 
 
             //---------ボタンの種類による動作変更-----------------------------------------
@@ -1199,18 +1211,23 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 //
 
             } else if (btn == MouseEvent.BUTTON2) {
-                if (app.i_cp_or_oriagari == 0) {
-                    app.camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    es1.setCamera(app.camera_of_orisen_input_diagram);
-                } else if (app.i_cp_or_oriagari == 1) {
-                    app.OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                } else if (app.i_cp_or_oriagari == 2) {
-                    app.OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
-
-                } else if (app.i_cp_or_oriagari == 3) {
-                    app.OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
-                } else if (app.i_cp_or_oriagari == 4) {
-                    app.OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
+                switch (app.i_cp_or_oriagari) {
+                    case CREASEPATTERN_0:
+                        app.camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        es1.setCamera(app.camera_of_orisen_input_diagram);
+                        break;
+                    case FOLDED_FRONT_1:
+                        app.OZ.camera_of_foldedFigure_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        break;
+                    case FOLDED_BACK_2:
+                        app.OZ.camera_of_foldedFigure_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        break;
+                    case TRANSPARENT_FRONT_3:
+                        app.OZ.camera_of_transparent_front.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        break;
+                    case TRANSPARENT_BACK_4:
+                        app.OZ.camera_of_transparent_rear.displayPositionMove(mouse_temp0.other_Point_position(p));
+                        break;
                 }
 
                 mouse_temp0.set(p);
@@ -1571,11 +1588,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             //	ホイールで拡大縮小
             if ((!e.isShiftDown()) && (!app.i_mouse_right_button_on)) {
 
-                // ---------------------------------------------------------------------hhhhhhhhh
-
-                origami_editor.graphic2d.point.Point p = new Point(app.e2p(e));
+                Point p = new Point(app.e2p(e));
                 app.i_cp_or_oriagari_decide(p);
-                if (app.i_cp_or_oriagari == 0) {
+                if (app.i_cp_or_oriagari == App.MouseWheelTarget.CREASEPATTERN_0) {
                     if (e.getWheelRotation() == -1) {
                         app.scaleFactor = app.scaleFactor * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
                     } else {
@@ -1607,7 +1622,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 }
                 // ---------------------------------------------------------------------
 
-                app.mouse_object_iti(app.p_mouse_TV_position);
+                app.mouse_object_position(app.p_mouse_TV_position);
                 repaint();
             }
         }

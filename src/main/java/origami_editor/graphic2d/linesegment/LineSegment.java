@@ -8,8 +8,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class LineSegment {
-    private final origami_editor.graphic2d.point.Point a = new origami_editor.graphic2d.point.Point(); //Branch a point
-    private final origami_editor.graphic2d.point.Point b = new origami_editor.graphic2d.point.Point(); //Branch b point
+    private final Point a = new Point(); //Branch a point
+    private final Point b = new Point(); //Branch b point
     ActiveState active;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
     LineColor color;//Color specification 　0=black,1=blue,2=red.
 
@@ -37,7 +37,7 @@ public class LineSegment {
         vonoroiB = 0;
     }
 
-    public LineSegment(origami_editor.graphic2d.point.Point t1, origami_editor.graphic2d.point.Point t2) {
+    public LineSegment(Point t1, Point t2) {
         a.set(t1);
         b.set(t2);
         active = ActiveState.INACTIVE_0;
@@ -51,7 +51,7 @@ public class LineSegment {
         vonoroiB = 0;
     }
 
-    public LineSegment(origami_editor.graphic2d.point.Point t1, origami_editor.graphic2d.point.Point t2, LineColor color) {
+    public LineSegment(Point t1, Point t2, LineColor color) {
         a.set(t1);
         b.set(t2);
         active = ActiveState.INACTIVE_0;
@@ -152,17 +152,17 @@ public class LineSegment {
     }
 
     //----------
-    public void setA(origami_editor.graphic2d.point.Point p) {
+    public void setA(Point p) {
         set(p.getX(), p.getY(), b.getX(), b.getY());
     }
 
-    public void setB(origami_editor.graphic2d.point.Point p) {
+    public void setB(Point p) {
         set(a.getX(), a.getY(), p.getX(), p.getY());
     }
 
     //----------
     //Set the coordinates of the activated point to p !!!!!!!!!!!! If you make a mistake, this function is dangerous because it is hard to notice, preferably change it to another name 20170507
-    public void set(origami_editor.graphic2d.point.Point p) {
+    public void set(Point p) {
         if (active == ActiveState.ACTIVE_A_1) {
             setA(p);
         }
@@ -173,24 +173,24 @@ public class LineSegment {
 
 
     //---------
-    public void set(origami_editor.graphic2d.point.Point p, origami_editor.graphic2d.point.Point q, LineColor ic, ActiveState ia) {
+    public void set(Point p, Point q, LineColor ic, ActiveState ia) {
         set(p, q);
         color = ic;
         active = ia;
     }
 
-    public void set(origami_editor.graphic2d.point.Point p, origami_editor.graphic2d.point.Point q, LineColor ic, ActiveState ia, int v_a, int v_b) {
+    public void set(Point p, Point q, LineColor ic, ActiveState ia, int v_a, int v_b) {
         set(p,q,ic,ia);
         vonoroiA = v_a;
         vonoroiB = v_b;
     }
 
-    public void set(origami_editor.graphic2d.point.Point p, origami_editor.graphic2d.point.Point q, LineColor ic) {
+    public void set(Point p, Point q, LineColor ic) {
         set(p, q);
         color = ic;
     }
 
-    public void set(origami_editor.graphic2d.point.Point p, origami_editor.graphic2d.point.Point q) {
+    public void set(Point p, Point q) {
         set(p.getX(), p.getY(), q.getX(), q.getY());
     }
 
@@ -237,7 +237,7 @@ public class LineSegment {
     }
 
     //This line segment is activated depending on whether it is close to a certain point.
-    public void activate(origami_editor.graphic2d.point.Point p, double r) {
+    public void activate(Point p, double r) {
         active = ActiveState.INACTIVE_0;
         if (p.distanceSquared(a) <= r * r) {
             active = ActiveState.ACTIVE_A_1;
@@ -254,28 +254,28 @@ public class LineSegment {
 
     //Exchange the coordinates of both end points a and b
     public void a_b_swap() {
-        origami_editor.graphic2d.point.Point t_temp = new origami_editor.graphic2d.point.Point(a);
+        Point t_temp = new Point(a);
         a.set(b);
         b.set(t_temp);
     }
 
 
-    public origami_editor.graphic2d.point.Point getA() {
-        return new origami_editor.graphic2d.point.Point(a.getX(), a.getY());
+    public Point getA() {
+        return new Point(a.getX(), a.getY());
     }
 
-    public origami_editor.graphic2d.point.Point getB() {
-        return new origami_editor.graphic2d.point.Point(b.getX(), b.getY());
+    public Point getB() {
+        return new Point(b.getX(), b.getY());
     }
 
-    public origami_editor.graphic2d.point.Point getClosestEndpoint(origami_editor.graphic2d.point.Point p) {//Returns the endpoint closest to point P
+    public Point getClosestEndpoint(Point p) {//Returns the endpoint closest to point P
         if (p.distanceSquared(a) <= p.distanceSquared(b)) {
             return a;
         }
         return b;
     }
 
-    public origami_editor.graphic2d.point.Point getFurthestEndpoint(Point p) {//Returns the point P and the farther end point
+    public Point getFurthestEndpoint(Point p) {//Returns the point P and the farther end point
         if (p.distanceSquared(a) >= p.distanceSquared(b)) {
             return a;
         }

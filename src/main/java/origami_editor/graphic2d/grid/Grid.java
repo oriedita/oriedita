@@ -107,7 +107,7 @@ public class Grid {
 
 
     // ------------------------------------------------------
-    public void set_grid_bunkatu_suu(int i) {
+    public void setGridDivisionNumber(int i) {
         grid_division_number = i;
         d_grid_width = 400.0 / (double) grid_division_number;
 
@@ -115,7 +115,7 @@ public class Grid {
     }
 
     // ------------------------------------------------------
-    public double d_width() {
+    public double getGridWidth() {
         return d_grid_width;
     }
 
@@ -124,7 +124,7 @@ public class Grid {
     }
 
     // ----------------------------------------
-    public void set_d_grid(double dkxn, double dkyn, double dkk) {
+    public void setGrid(double dkxn, double dkyn, double dkk) {
         d_grid_a_length = dkxn;
         d_grid_b_length = dkyn;
         d_grid_angle = -dkk;

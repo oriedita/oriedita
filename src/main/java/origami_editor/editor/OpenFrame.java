@@ -121,8 +121,8 @@ class OpenFrame extends JDialog implements ActionListener {
         pnl_00.add(pnl_02);
 //------------------------------------------------
 // -------------39;Foldable line + grid point system input
-        JButton Button_oritatami_kanousen_and_kousitenkei = new JButton("");
-        Button_oritatami_kanousen_and_kousitenkei.addActionListener(e -> {
+        JButton Button_folding_kanousen_and_kousitenkei = new JButton("");
+        Button_folding_kanousen_and_kousitenkei.addActionListener(e -> {
             app.img_explanation_fname = "qqq/oritatami_kanousen_and_kousitenkei.png";
             app.updateExplanation();
 
@@ -134,10 +134,10 @@ class OpenFrame extends JDialog implements ActionListener {
             app.Button_kyoutuu_sagyou();
             app.repaint();
         });
-        pnl_02.add(Button_oritatami_kanousen_and_kousitenkei);
+        pnl_02.add(Button_folding_kanousen_and_kousitenkei);
 
-        Button_oritatami_kanousen_and_kousitenkei.setMargin(new Insets(0, 0, 0, 0));
-        Button_oritatami_kanousen_and_kousitenkei.setIcon(ResourceUtil.createImageIcon("ppp/oritatami_kanousen_and_kousitenkei.png"));
+        Button_folding_kanousen_and_kousitenkei.setMargin(new Insets(0, 0, 0, 0));
+        Button_folding_kanousen_and_kousitenkei.setIcon(ResourceUtil.createImageIcon("ppp/oritatami_kanousen_and_kousitenkei.png"));
 
 
 // -------------39;Foldable line + grid point system input. to this point

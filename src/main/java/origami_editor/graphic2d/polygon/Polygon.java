@@ -11,13 +11,13 @@ import java.awt.*;
 public class Polygon {
     int vertexCount;             //How many vertices
 
-    origami_editor.graphic2d.point.Point[] vertices;//vertex
+    Point[] vertices;//vertex
 
     public Polygon(int _vertexCount) {
         vertexCount = _vertexCount;
-        origami_editor.graphic2d.point.Point[] t0 = new origami_editor.graphic2d.point.Point[vertexCount + 1];   //vertex
+        Point[] t0 = new Point[vertexCount + 1];   //vertex
         for (int i = 0; i <= vertexCount; i++) {
-            t0[i] = new origami_editor.graphic2d.point.Point();
+            t0[i] = new Point();
         }
         // red=255;green=0;blue=0;
         vertices = t0;
@@ -33,17 +33,17 @@ public class Polygon {
     }
 
     //Set the i-th vertex of the polygon
-    public void set(int i, origami_editor.graphic2d.point.Point p) {
+    public void set(int i, Point p) {
         vertices[i].set(p);
     }
 
     //Get the i-th vertex of a polygon
-    public origami_editor.graphic2d.point.Point get(int i) {
+    public Point get(int i) {
         return vertices[i];
     }
 
     //Set the i-th vertex of the polygon with respect to the point p0
-    public void set(origami_editor.graphic2d.point.Point p0, int i, origami_editor.graphic2d.point.Point p) {
+    public void set(Point p0, int i, Point p) {
         vertices[i].set(p0.getX() + p.getX(), p0.getY() + p.getY());
     }
 
@@ -122,9 +122,9 @@ public class Polygon {
 
         int i_intersection = 0;
 
-        origami_editor.graphic2d.point.Point[] intersection = new origami_editor.graphic2d.point.Point[vertexCount * 2 + 3];
+        Point[] intersection = new Point[vertexCount * 2 + 3];
         for (int i = 0; i <= vertexCount * 2 + 2; i++) {
-            intersection[i] = new origami_editor.graphic2d.point.Point();
+            intersection[i] = new Point();
         }
 
         i_intersection++;
@@ -309,15 +309,15 @@ public class Polygon {
         }
 
         if (iflag == 0) {
-            return inside(new origami_editor.graphic2d.point.Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE;
+            return inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE;
         }
 
         if (iflag == 1) {
-            return inside(new origami_editor.graphic2d.point.Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE;
+            return inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE;
         }
 
         if (iflag == 2) {
-            if (inside(new origami_editor.graphic2d.point.Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE) {
+            if (inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE) {
                 return true;
             }
             if (inside(s0.getA()) == Intersection.INSIDE) {
@@ -353,7 +353,7 @@ public class Polygon {
             return true;
         }
 
-        if (inside(new origami_editor.graphic2d.point.Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE) {
+        if (inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE) {
             return true;
         }
 
@@ -362,10 +362,10 @@ public class Polygon {
 
 
     //A function that determines if a point is inside this polygon (true) or not (false)----------------------------------
-    public Intersection inside(origami_editor.graphic2d.point.Point p) {      //0 = outside, 1 = boundary, 2 = inside
+    public Intersection inside(Point p) {      //0 = outside, 1 = boundary, 2 = inside
         LineSegment s = new LineSegment();
         LineSegment sq = new LineSegment();
-        origami_editor.graphic2d.point.Point q = new origami_editor.graphic2d.point.Point();
+        Point q = new Point();
 
         int kousakaisuu = 0;
         int jyuuji_kousakaisuu;
@@ -441,7 +441,7 @@ public class Polygon {
     }
 
     //Find the distance between a point and a polygon (the minimum value of the distance between a point and a point on the boundary of the polygon)
-    public double findDistance(origami_editor.graphic2d.point.Point tn) {
+    public double findDistance(Point tn) {
         double distance;
         distance = OritaCalc.distance_lineSegment(tn, vertices[vertexCount], vertices[1]);
         for (int i = 1; i <= vertexCount - 1; i++) {
@@ -455,9 +455,9 @@ public class Polygon {
 
 
     //Find the points inside the polygon
-    public origami_editor.graphic2d.point.Point insidePoint_find() {
-        origami_editor.graphic2d.point.Point tn = new origami_editor.graphic2d.point.Point();
-        origami_editor.graphic2d.point.Point tr = new Point();
+    public Point insidePoint_find() {
+        Point tn = new Point();
+        Point tr = new Point();
         double distance = -10.0;
 
         for (int i = 2; i <= vertexCount - 1; i++) {

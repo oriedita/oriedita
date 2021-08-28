@@ -13,8 +13,8 @@ import origami_editor.editor.hierarchylist_worker.HierarchyList_Worker;
 import java.awt.*;
 
 public class FoldedFigure {
-    private final origami_editor.graphic2d.point.Point p_m_left_on = new origami_editor.graphic2d.point.Point();//Coordinates when the left mouse button is pressed
-    private final origami_editor.graphic2d.point.Point move_previous_selection_point = new origami_editor.graphic2d.point.Point();//動かす前の選択した点の座標
+    private final Point p_m_left_on = new Point();//Coordinates when the left mouse button is pressed
+    private final Point move_previous_selection_point = new Point();//動かす前の選択した点の座標
     public double d_foldedFigure_scale_factor = 1.0;//Scale factor of folded view
     public double d_foldedFigure_rotation_correction = 0.0;//Correction angle of rotation display angle of folded view
     public HierarchyList_Worker ct_worker;
@@ -299,8 +299,8 @@ public class FoldedFigure {
 
         System.out.println("cp_worker1.ten_of_kijyunmen_ob     " + cp_worker1.point_of_referencePlane_ob.getX());
 
-        origami_editor.graphic2d.point.Point p0 = new origami_editor.graphic2d.point.Point();
-        origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point();
+        Point p0 = new Point();
+        Point p = new Point();
 
         p.set(cp_worker1.point_of_referencePlane_ob);
         p0.set(camera_of_orisen_nyuuryokuzu.object2TV(p));
@@ -531,7 +531,7 @@ public class FoldedFigure {
         folding_estimated_01(Ss0);
         estimationStep = EstimationStep.STEP_1;
         displayStyle = DisplayStyle.DEVELOPMENT_1;
-        oritatami_suitei_02col();
+        folding_estimated_02col();
         estimationStep = EstimationStep.STEP_2;
         displayStyle = DisplayStyle.WIRE_2;
         folding_estimated_03();
@@ -574,7 +574,7 @@ public class FoldedFigure {
         return 1000;
     }
 
-    public int oritatami_suitei_02col() {//20171225　２色塗りわけをするための特別推定（折り畳み位置を推定しない）
+    public int folding_estimated_02col() {//20171225　２色塗りわけをするための特別推定（折り畳み位置を推定しない）
         System.out.println("＜＜＜＜＜oritatami_suitei_02;開始");
         bulletinBoard.write("<<<<oritatami_suitei_02;  start");
         cp_worker2.set(cp_worker1.surface_position_request());
@@ -673,7 +673,7 @@ public class FoldedFigure {
         }
     }    //20180819 Bug fix: The maximum value of transparency has been 128 so far, and when the line is drawn by the program, it becomes 256, and the upper limit of transparency is over 255, and Orihime itself
 
-    public void foldedFigure_operation_mouse_on(origami_editor.graphic2d.point.Point p) {//Work when the left mouse button is pressed in the fold-up diagram operation
+    public void foldedFigure_operation_mouse_on(Point p) {//Work when the left mouse button is pressed in the fold-up diagram operation
         if (i_foldedFigure_operation_mode == 1) {
             foldedFigure_operation_mouse_on_1(p);
         }
@@ -682,7 +682,7 @@ public class FoldedFigure {
         }
     }
 
-    public void foldedFigure_operation_mouse_drag(origami_editor.graphic2d.point.Point p) {//Work when dragging while holding down the left mouse button in the fold-up diagram operation
+    public void foldedFigure_operation_mouse_drag(Point p) {//Work when dragging while holding down the left mouse button in the fold-up diagram operation
         if (i_foldedFigure_operation_mode == 1) {
             foldedFigure_operation_mouse_drag_1(p);
         }
@@ -691,7 +691,7 @@ public class FoldedFigure {
         }
     }
 
-    public void foldedFigure_operation_mouse_off(origami_editor.graphic2d.point.Point p) {//Work when the left mouse button is released during the folding diagram operation
+    public void foldedFigure_operation_mouse_off(Point p) {//Work when the left mouse button is released during the folding diagram operation
         if (i_foldedFigure_operation_mode == 1) {
             foldedFigure_operation_mouse_off_1(p);
         }
@@ -700,8 +700,8 @@ public class FoldedFigure {
         }
     }
 
-    public void foldedFigure_operation_mouse_on_1(origami_editor.graphic2d.point.Point p) {//Work when the left mouse button is pressed in the folding diagram operation Folding function
-        p_m_left_on.set(new origami_editor.graphic2d.point.Point(p.getX(), p.getY()));
+    public void foldedFigure_operation_mouse_on_1(Point p) {//Work when the left mouse button is pressed in the folding diagram operation Folding function
+        p_m_left_on.set(new Point(p.getX(), p.getY()));
 
         cp_worker2.setCamera(camera_of_foldedFigure);
         cp_worker2.setCam_front(camera_of_foldedFigure_front);
@@ -739,7 +739,7 @@ public class FoldedFigure {
             switch (i_point_selection) {//Find the number of the point at the same position as i_closestPointId in the fold-up diagram, and mark the point with that number as selected with cp_worker1.
                 case NONE_0:
                     setAllPointState0();
-                    origami_editor.graphic2d.point.Point ps = new origami_editor.graphic2d.point.Point();
+                    Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                         if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
@@ -770,7 +770,7 @@ public class FoldedFigure {
             switch (i_point_selection) {//Find the number of the point at the same position as i_closestPointId in the fold-up diagram, and mark the point with that number as selected with cp_worker1.
                 case NONE_0:
                     setAllPointState0();
-                    origami_editor.graphic2d.point.Point ps = new origami_editor.graphic2d.point.Point();
+                    Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                         if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
@@ -794,7 +794,7 @@ public class FoldedFigure {
         System.out.println("cp_worker2.get_ten_sentakusuu() = " + cp_worker2.getSelectedPointsNum());
     }
 
-    public void foldedFigure_operation_mouse_drag_1(origami_editor.graphic2d.point.Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
+    public void foldedFigure_operation_mouse_drag_1(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
         cp_worker2.setCamera(camera_of_foldedFigure);
         cp_worker2.setCam_front(camera_of_foldedFigure_front);
         cp_worker2.setCam_rear(camera_of_foldedFigure_rear);
@@ -812,7 +812,7 @@ public class FoldedFigure {
     }
 
     //-------------
-    public void foldedFigure_operation_mouse_off_1(origami_editor.graphic2d.point.Point p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
+    public void foldedFigure_operation_mouse_off_1(Point p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
         cp_worker2.setCamera(camera_of_foldedFigure);
         cp_worker2.setCam_front(camera_of_foldedFigure_front);
         cp_worker2.setCam_rear(camera_of_foldedFigure_rear);
@@ -839,7 +839,7 @@ public class FoldedFigure {
 
             cp_worker1.setAllPointState0();
             //折り上がり図でi_closestPointIdと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
-            origami_editor.graphic2d.point.Point ps = new origami_editor.graphic2d.point.Point();
+            Point ps = new Point();
             ps.set(cp_worker2.getPoint(i_closestPointId));
             for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                 if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
@@ -853,8 +853,8 @@ public class FoldedFigure {
     //  =================================================================================================================================
     //  ==========折り上がり図のまま変形操作===========================================================================================================
     //-----------------------------------------------------------------------------------------------------uuuuuuu--
-    public void foldedFigure_operation_mouse_on_2(origami_editor.graphic2d.point.Point p) {//Work when the left mouse button is pressed in the fold-up diagram operation
-        p_m_left_on.set(new origami_editor.graphic2d.point.Point(p.getX(), p.getY()));
+    public void foldedFigure_operation_mouse_on_2(Point p) {//Work when the left mouse button is pressed in the fold-up diagram operation
+        p_m_left_on.set(new Point(p.getX(), p.getY()));
 
         cp_worker2.setCamera(camera_of_foldedFigure);
         cp_worker2.setCam_front(camera_of_foldedFigure_front);
@@ -892,7 +892,7 @@ public class FoldedFigure {
             switch (i_point_selection) {//折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                 case NONE_0:
                     setAllPointState0();
-                    origami_editor.graphic2d.point.Point ps = new origami_editor.graphic2d.point.Point();
+                    Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                         if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
@@ -923,7 +923,7 @@ public class FoldedFigure {
             switch (i_point_selection) {//折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                 case NONE_0:
                     setAllPointState0();
-                    origami_editor.graphic2d.point.Point ps = new origami_editor.graphic2d.point.Point();
+                    Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                         if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
@@ -948,7 +948,7 @@ public class FoldedFigure {
     }
 
     //-------------
-    public void foldedFigure_operation_mouse_drag_2(origami_editor.graphic2d.point.Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
+    public void foldedFigure_operation_mouse_drag_2(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
         cp_worker2.setCamera(camera_of_foldedFigure);
         cp_worker2.setCam_front(camera_of_foldedFigure_front);
         cp_worker2.setCam_rear(camera_of_foldedFigure_rear);
@@ -966,7 +966,7 @@ public class FoldedFigure {
     }
 
     //-------------
-    public void foldedFigure_operation_mouse_off_2(origami_editor.graphic2d.point.Point p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
+    public void foldedFigure_operation_mouse_off_2(Point p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
         cp_worker2.setCamera(camera_of_foldedFigure);
         cp_worker2.setCam_front(camera_of_foldedFigure_front);
         cp_worker2.setCam_rear(camera_of_foldedFigure_rear);
@@ -991,7 +991,7 @@ public class FoldedFigure {
 
             cp_worker1.setAllPointState0();
             //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
-            origami_editor.graphic2d.point.Point ps = new Point();
+            Point ps = new Point();
             ps.set(cp_worker2.getPoint(i_closestPointId));
             for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                 if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {

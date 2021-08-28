@@ -24,7 +24,7 @@ public class FoldLineSet {
     List<LineSegment> Check2LineSegment = new ArrayList<>(); //Instantiation of line segments to store check information
     List<LineSegment> Check3LineSegment = new ArrayList<>(); //Instantiation of line segments to store check information
     List<LineSegment> Check4LineSegment = new ArrayList<>(); //Instantiation of line segments to store check information
-    List<origami_editor.graphic2d.point.Point> check4Point = new ArrayList<>(); //Instantiation of points to check
+    List<Point> check4Point = new ArrayList<>(); //Instantiation of points to check
 
 
     List<Circle> circles = new ArrayList<>(); //円のインスタンス化
@@ -96,13 +96,13 @@ public class FoldLineSet {
     }
 
     //Get the endpoint of the i-th line segment
-    public origami_editor.graphic2d.point.Point getA(int i) {
+    public Point getA(int i) {
         LineSegment s;
         s = getLineSegment(i);
         return s.getA();
     }
 
-    public origami_editor.graphic2d.point.Point getB(int i) {
+    public Point getB(int i) {
         LineSegment s;
         s = getLineSegment(i);
         return s.getB();
@@ -134,27 +134,27 @@ public class FoldLineSet {
     }
 
     //Set the position of the end point of the i-th line segment
-    public void setA(int i, origami_editor.graphic2d.point.Point p) {
+    public void setA(int i, Point p) {
         LineSegment s;
         s = getLineSegment(i);
         s.setA(p);
     }
 
-    public void setB(int i, origami_editor.graphic2d.point.Point p) {
+    public void setB(int i, Point p) {
         LineSegment s;
         s = getLineSegment(i);
         s.setB(p);
     }
 
     //Enter the value of the i-th line segment
-    public void set(int i, origami_editor.graphic2d.point.Point p, origami_editor.graphic2d.point.Point q) {
+    public void set(int i, Point p, Point q) {
         LineSegment s = getLineSegment(i);
         s.setA(p);
         s.setB(q);
     }
 
     //Enter the value of the i-th line segment
-    public void set(int i, origami_editor.graphic2d.point.Point p, origami_editor.graphic2d.point.Point q, LineColor ic, LineSegment.ActiveState ia) {
+    public void set(int i, Point p, Point q, LineColor ic, LineSegment.ActiveState ia) {
         LineSegment s = getLineSegment(i);
         s.set(p, q, ic, ia);
     }
@@ -920,7 +920,7 @@ public class FoldLineSet {
         s.setSelected(2);
     }
 
-    public void select(origami_editor.graphic2d.point.Point p1, origami_editor.graphic2d.point.Point p2, origami_editor.graphic2d.point.Point p3) {
+    public void select(Point p1, Point p2, Point p3) {
         origami_editor.graphic2d.polygon.Polygon triangle = new origami_editor.graphic2d.polygon.Polygon(3);
         triangle.set(1, p1);
         triangle.set(2, p2);
@@ -935,7 +935,7 @@ public class FoldLineSet {
         }
     }
 
-    public void select(origami_editor.graphic2d.point.Point p1, origami_editor.graphic2d.point.Point p2, origami_editor.graphic2d.point.Point p3, origami_editor.graphic2d.point.Point p4) {
+    public void select(Point p1, Point p2, Point p3, Point p4) {
         origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
         sikaku.set(1, p1);
         sikaku.set(2, p2);
@@ -953,7 +953,7 @@ public class FoldLineSet {
         }
     }
 
-    public void unselect(origami_editor.graphic2d.point.Point p1, origami_editor.graphic2d.point.Point p2, origami_editor.graphic2d.point.Point p3) {
+    public void unselect(Point p1, Point p2, Point p3) {
         origami_editor.graphic2d.polygon.Polygon sankaku = new origami_editor.graphic2d.polygon.Polygon(3);
         sankaku.set(1, p1);
         sankaku.set(2, p2);
@@ -972,7 +972,7 @@ public class FoldLineSet {
     }
 //--------------------------------
 
-    public void unselect(origami_editor.graphic2d.point.Point p1, origami_editor.graphic2d.point.Point p2, origami_editor.graphic2d.point.Point p3, origami_editor.graphic2d.point.Point p4) {
+    public void unselect(Point p1, Point p2, Point p3, Point p4) {
         //Ten p1 = new Ten();   p1.set(si.geta());
         origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
         sikaku.set(1, p1);
@@ -990,7 +990,7 @@ public class FoldLineSet {
     }
 
     //--------------------------------
-    public int MV_change(origami_editor.graphic2d.point.Point p1, origami_editor.graphic2d.point.Point p2, origami_editor.graphic2d.point.Point p3, origami_editor.graphic2d.point.Point p4) {
+    public int MV_change(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
         origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
@@ -1017,7 +1017,7 @@ public class FoldLineSet {
     }
 
     //--------------------------------
-    public int M_nisuru(origami_editor.graphic2d.point.Point p1, origami_editor.graphic2d.point.Point p2, origami_editor.graphic2d.point.Point p3, origami_editor.graphic2d.point.Point p4) {
+    public int M_nisuru(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
         origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
@@ -1038,7 +1038,7 @@ public class FoldLineSet {
     }
 
     //--------------------------------
-    public int V_nisuru(origami_editor.graphic2d.point.Point p1, origami_editor.graphic2d.point.Point p2, origami_editor.graphic2d.point.Point p3, origami_editor.graphic2d.point.Point p4) {
+    public int V_nisuru(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
         origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
@@ -1059,7 +1059,7 @@ public class FoldLineSet {
     }
 
 
-    public int E_nisuru(origami_editor.graphic2d.point.Point p1, origami_editor.graphic2d.point.Point p2, origami_editor.graphic2d.point.Point p3, origami_editor.graphic2d.point.Point p4) {
+    public int E_nisuru(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
         origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
@@ -1084,7 +1084,7 @@ public class FoldLineSet {
 //--------------------------------
 
     //--------------------------------
-    public int HK_nisuru(origami_editor.graphic2d.point.Point p1, origami_editor.graphic2d.point.Point p2, origami_editor.graphic2d.point.Point p3, origami_editor.graphic2d.point.Point p4) {
+    public int HK_nisuru(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         //Ten p1 = new Ten();   p1.set(si.geta());
         origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
@@ -1176,7 +1176,7 @@ public class FoldLineSet {
             }
         }
 
-        origami_editor.graphic2d.point.Point ec = new origami_editor.graphic2d.point.Point();//円の中心座標を入れる変数
+        Point ec = new Point();//円の中心座標を入れる変数
 
         memo1.addLine("<円集合>");
         int ii = 0;
@@ -1203,7 +1203,7 @@ public class FoldLineSet {
     }
 
     //-----------------------wwwwwwwwwwwwwww---------
-    public int D_nisuru(origami_editor.graphic2d.point.Point p1, origami_editor.graphic2d.point.Point p2, origami_editor.graphic2d.point.Point p3, origami_editor.graphic2d.point.Point p4) {
+    public int D_nisuru(Point p1, Point p2, Point p3, Point p4) {
         int i_r = 0;
         origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
         sikaku.set(1, p1);
@@ -1231,7 +1231,7 @@ public class FoldLineSet {
             }
         }
 
-        origami_editor.graphic2d.point.Point ec = new origami_editor.graphic2d.point.Point();//円の中心座標を入れる変数
+        Point ec = new Point();//円の中心座標を入れる変数
         double er;//円の中心座標を入れる変数
 
         LineSegment s1 = new LineSegment(p1, p2);
@@ -1290,7 +1290,7 @@ public class FoldLineSet {
     }
 
     //--------------------------------
-    public int D_nisuru0(origami_editor.graphic2d.point.Point p1, origami_editor.graphic2d.point.Point p2, origami_editor.graphic2d.point.Point p3, origami_editor.graphic2d.point.Point p4) {//Delete only the polygonal line
+    public int D_nisuru0(Point p1, Point p2, Point p3, Point p4) {//Delete only the polygonal line
         int i_r = 0;
         origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
         sikaku.set(1, p1);
@@ -1336,7 +1336,7 @@ public class FoldLineSet {
         return i_r;
     }
 
-    public int D_nisuru2(origami_editor.graphic2d.point.Point p1, origami_editor.graphic2d.point.Point p2, origami_editor.graphic2d.point.Point p3, origami_editor.graphic2d.point.Point p4) {//折線のみ削除
+    public int D_nisuru2(Point p1, Point p2, Point p3, Point p4) {//折線のみ削除
         int i_r = 0;
         origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
         sikaku.set(1, p1);
@@ -1379,7 +1379,7 @@ public class FoldLineSet {
         return i_r;
     }
 
-    public int D_nisuru3(origami_editor.graphic2d.point.Point p1, origami_editor.graphic2d.point.Point p2, origami_editor.graphic2d.point.Point p3, origami_editor.graphic2d.point.Point p4) {//Delete only auxiliary live line
+    public int D_nisuru3(Point p1, Point p2, Point p3, Point p4) {//Delete only auxiliary live line
         int i_r = 0;
         origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
         sikaku.set(1, p1);
@@ -1406,7 +1406,7 @@ public class FoldLineSet {
             }
         }
 
-        origami_editor.graphic2d.point.Point ec = new origami_editor.graphic2d.point.Point();//円の中心座標を入れる変数
+        Point ec = new Point();//円の中心座標を入れる変数
         double er;//円の中心座標を入れる変数
 
         LineSegment s1 = new LineSegment(p1, p2);
@@ -1465,7 +1465,7 @@ public class FoldLineSet {
     }
 
     //--------------------------------
-    public int chenge_property_in_4kakukei(origami_editor.graphic2d.point.Point p1, origami_editor.graphic2d.point.Point p2, origami_editor.graphic2d.point.Point p3, origami_editor.graphic2d.point.Point p4, Color sen_tokutyuu_color) {//Change properties such as the color of circles and auxiliary live lines inside a quadrangle
+    public int chenge_property_in_4kakukei(Point p1, Point p2, Point p3, Point p4, Color sen_tokutyuu_color) {//Change properties such as the color of circles and auxiliary live lines inside a quadrangle
         int i_r = 0;
         origami_editor.graphic2d.polygon.Polygon sikaku = new origami_editor.graphic2d.polygon.Polygon(4);
         sikaku.set(1, p1);
@@ -1484,7 +1484,7 @@ public class FoldLineSet {
             }
         }
 
-        origami_editor.graphic2d.point.Point ec = new origami_editor.graphic2d.point.Point();//円の中心座標を入れる変数
+        Point ec = new Point();//円の中心座標を入れる変数
         double er;//円の中心座標を入れる変数
 
         LineSegment s1 = new LineSegment(p1, p2);
@@ -1779,7 +1779,7 @@ public class FoldLineSet {
         if (sj.getMaxY() < si.getMinY()) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        origami_editor.graphic2d.point.Point intersect_point = new origami_editor.graphic2d.point.Point();
+        Point intersect_point = new Point();
         StraightLine.Intersection intersect_flg0, intersect_flg1;
 
         // Here, as the idea of "how two line segments A and B intersect", (1) make the line segment A a straight line, and make the line segment B a line segment as it is (2) a line segment. Think of whether the two endpoints of B are both on one side of the straight line, or separately on both sides of the straight line.
@@ -1839,7 +1839,7 @@ public class FoldLineSet {
         // --------------------------------------
         if ((intersect_flg0 == StraightLine.Intersection.INTERSECT_X_1) && (intersect_flg1 == StraightLine.Intersection.INTERSECT_T_A_21)) {//加える折線と既存の折線はT型(加える折線が縦、既存の折線が横)で交わる(縦のa点で交わる)
 
-            origami_editor.graphic2d.point.Point pk = new origami_editor.graphic2d.point.Point();
+            Point pk = new Point();
             pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(sj), si.getA()));//pkは点pの（線分を含む直線上の）影
             intersect_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
             //foldLines.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
@@ -1869,7 +1869,7 @@ public class FoldLineSet {
         //	T交差(加える折線のb点で交わる)
         // --------------------------------------
         if ((intersect_flg0 == StraightLine.Intersection.INTERSECT_X_1) && (intersect_flg1 == StraightLine.Intersection.INTERSECT_T_B_22)) {//加える折線と既存の折線はT型(加える折線が縦、既存の折線が横)で交わる(縦のb点で交わる)
-            origami_editor.graphic2d.point.Point pk = new origami_editor.graphic2d.point.Point();
+            Point pk = new Point();
             pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(sj), si.getB()));//pkは点pの（線分を含む直線上の）影
             intersect_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
             //foldLines.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
@@ -1899,7 +1899,7 @@ public class FoldLineSet {
         //	T intersection (intersect at point a of the original polygonal line)
         // --------------------------------------
         if ((intersect_flg0 == StraightLine.Intersection.INTERSECT_T_A_21) && (intersect_flg1 == StraightLine.Intersection.INTERSECT_X_1)) {//The added fold line and the existing fold line intersect at a T shape (the added fold line is horizontal and the existing fold line is vertical) (intersect at the vertical a point).
-            origami_editor.graphic2d.point.Point pk = new origami_editor.graphic2d.point.Point();
+            Point pk = new Point();
             pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(si), sj.getA()));//pk is the projection (on a straight line including the line segment) of point p
             intersect_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
             //foldLines.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
@@ -1929,7 +1929,7 @@ public class FoldLineSet {
         //	T intersection (intersect at point b of the original polygonal line)
         // --------------------------------------
         if ((intersect_flg0 == StraightLine.Intersection.INTERSECT_T_B_22) && (intersect_flg1 == StraightLine.Intersection.INTERSECT_X_1)) {//The added fold line and the existing fold line intersect at a T shape (the added fold line is horizontal and the existing fold line is vertical) (intersect at the vertical a point).
-            origami_editor.graphic2d.point.Point pk = new origami_editor.graphic2d.point.Point();
+            Point pk = new Point();
             pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(si), sj.getB()));//pkは点pの（線分を含む直線上の）影
             intersect_point.set(pk);//The intersection is the shadow of the end point of s0 on the polygonal line i 20161129
             //foldLines.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
@@ -1960,13 +1960,13 @@ public class FoldLineSet {
         //	加える折線と既存の折線は平行
         // --------------------------------------
         if (intersect_flg0 == StraightLine.Intersection.INCLUDED_3) {//加える折線と既存の折線は同一直線上にある
-            origami_editor.graphic2d.point.Point p1 = new origami_editor.graphic2d.point.Point();
+            Point p1 = new Point();
             p1.set(si.getA());
-            origami_editor.graphic2d.point.Point p2 = new origami_editor.graphic2d.point.Point();
+            Point p2 = new Point();
             p2.set(si.getB());
-            origami_editor.graphic2d.point.Point p3 = new origami_editor.graphic2d.point.Point();
+            Point p3 = new Point();
             p3.set(sj.getA());
-            origami_editor.graphic2d.point.Point p4 = new origami_editor.graphic2d.point.Point();
+            Point p4 = new Point();
             p4.set(sj.getB());
 
             //setiactive(j,100)とされた折線は、kousabunkatu(int i1,int i2,int i3,int i4)の操作が戻った後で削除される。
@@ -2257,15 +2257,15 @@ public class FoldLineSet {
             return false;
         }//これはSenbunにi_min_yがちゃんと定義されているときでないとうまくいかない
 
-        origami_editor.graphic2d.point.Point p1 = new origami_editor.graphic2d.point.Point();
+        Point p1 = new Point();
         p1.set(si.getA());
-        origami_editor.graphic2d.point.Point p2 = new origami_editor.graphic2d.point.Point();
+        Point p2 = new Point();
         p2.set(si.getB());
-        origami_editor.graphic2d.point.Point p3 = new origami_editor.graphic2d.point.Point();
+        Point p3 = new Point();
         p3.set(sj.getA());
-        origami_editor.graphic2d.point.Point p4 = new origami_editor.graphic2d.point.Point();
+        Point p4 = new Point();
         p4.set(sj.getB());
-        origami_editor.graphic2d.point.Point pk = new origami_editor.graphic2d.point.Point();
+        Point pk = new Point();
 
         double ixmax;
         double ixmin;
@@ -2652,7 +2652,7 @@ public class FoldLineSet {
         circles.add(new Circle(dx, dy, dr, ic));
     }
 
-    public void addCircle(origami_editor.graphic2d.point.Point t, double dr) {
+    public void addCircle(Point t, double dr) {
         addCircle(t.getX(), t.getY(), dr, LineColor.BLACK_0);
     }
 
@@ -2777,11 +2777,11 @@ public class FoldLineSet {
         Circle e_temp = new Circle();
         e_temp.set(getCircle(i0));
         double er_0 = e_temp.getRadius();
-        origami_editor.graphic2d.point.Point ec_0 = new origami_editor.graphic2d.point.Point();
+        Point ec_0 = new Point();
         ec_0.set(e_temp.getCenter());
 
         double er_1;
-        origami_editor.graphic2d.point.Point ec_1 = new origami_editor.graphic2d.point.Point();
+        Point ec_1 = new Point();
 
         int ir1 = 0;
         int ir2 = 0;
@@ -2862,7 +2862,7 @@ public class FoldLineSet {
     }
 
     //線分の追加-------------------------------
-    public void addLine(origami_editor.graphic2d.point.Point pi, origami_editor.graphic2d.point.Point pj, LineColor i_c) {
+    public void addLine(Point pi, Point pj, LineColor i_c) {
         total++;
 
         LineSegment s;
@@ -2871,7 +2871,7 @@ public class FoldLineSet {
     }
 
     //線分の追加-------------------------------wwwwwwwwww
-    public void addLine(origami_editor.graphic2d.point.Point pi, origami_editor.graphic2d.point.Point pj, LineSegment s0) {//Ten piからTen pjまでの線分を追加。この追加する線分のその他のパラメータはs0と同じ
+    public void addLine(Point pi, Point pj, LineSegment s0) {//Ten piからTen pjまでの線分を追加。この追加する線分のその他のパラメータはs0と同じ
         total++;
 
         LineSegment s;
@@ -2881,7 +2881,7 @@ public class FoldLineSet {
     }
 
     //線分の追加-------------------------------
-    public void addLine(origami_editor.graphic2d.point.Point pi, origami_editor.graphic2d.point.Point pj, LineColor i_c, LineSegment.ActiveState i_a, int v_a, int v_b) {
+    public void addLine(Point pi, Point pj, LineColor i_c, LineSegment.ActiveState i_a, int v_a, int v_b) {
         total++;
 
         LineSegment s;
@@ -2899,7 +2899,7 @@ public class FoldLineSet {
     }
 
     //線分の追加-------------------------------
-    public void addLine(origami_editor.graphic2d.point.Point pi, origami_editor.graphic2d.point.Point pj) {
+    public void addLine(Point pi, Point pj) {
         total++;
 
         LineSegment s;
@@ -2925,7 +2925,7 @@ public class FoldLineSet {
     }
 
     //線分の分割-----------------qqqqq------------------------
-    public void lineSegment_bunkatu(int i, origami_editor.graphic2d.point.Point p) {   //Divide the i-th line segment (end points a and b) at point p. Change the i-th line segment ab to ap and add the line segment pb.
+    public void lineSegment_bunkatu(int i, Point p) {   //Divide the i-th line segment (end points a and b) at point p. Change the i-th line segment ab to ap and add the line segment pb.
 
         LineSegment s1 = new LineSegment(p, getB(i));//Create the i-th line segment ab before changing it to ap
         LineColor i_c = getColor(i);
@@ -2972,9 +2972,9 @@ public class FoldLineSet {
     }
 
     public void deleteLineSegment_vertex(int i) {//When erasing the i-th fold line, if the end point of the fold line can also be erased, erase it.
-        origami_editor.graphic2d.point.Point pa = new origami_editor.graphic2d.point.Point();
+        Point pa = new Point();
         pa.set(getA(i));
-        origami_editor.graphic2d.point.Point pb = new origami_editor.graphic2d.point.Point();
+        Point pb = new Point();
         pb.set(getB(i));
         deleteLine(i);
 
@@ -2983,7 +2983,7 @@ public class FoldLineSet {
     }
 
     //Find and return the number of the circle closest to the point p in reverse order (the higher the number means priority)
-    public int closest_circle_search_reverse_order(origami_editor.graphic2d.point.Point p) {
+    public int closest_circle_search_reverse_order(Point p) {
         int minrid = 0;
         double minr = 100000;
         double rtemp;
@@ -3008,7 +3008,7 @@ public class FoldLineSet {
     }
 
     // Returns the distance at the number of the circle closest to the point p
-    public double closestCircleDistance(origami_editor.graphic2d.point.Point p) {
+    public double closestCircleDistance(Point p) {
         double minr = 100000;
         double rtemp;
         for (int i = 1; i <= numCircles(); i++) {
@@ -3031,7 +3031,7 @@ public class FoldLineSet {
     }
 
     //Returns the number of the line segment closest to the point p
-    public int closestLineSegmentSearch(origami_editor.graphic2d.point.Point p) {
+    public int closestLineSegmentSearch(Point p) {
         int minrid = 0;
         double minr = 100000;
         for (int i = 1; i <= total; i++) {
@@ -3046,7 +3046,7 @@ public class FoldLineSet {
     }
 
     //Find and return the number of the line segment closest to the point p from the opposite (meaning from the larger number to the smaller number)
-    public int closestLineSegmentSearchReversedOrder(origami_editor.graphic2d.point.Point p) {
+    public int closestLineSegmentSearchReversedOrder(Point p) {
         int minrid = 0;
         double minr = 100000;
         for (int i = total; i >= 1; i--) {
@@ -3061,7 +3061,7 @@ public class FoldLineSet {
     }
 
     //Returns the distance at the number of the line segment closest to the point p
-    public double closestLineSegmentDistance(origami_editor.graphic2d.point.Point p) {
+    public double closestLineSegmentDistance(Point p) {
         double minr = 100000.0;
         for (int i = 1; i <= total; i++) {
             double sk = OritaCalc.distance_lineSegment(p, get(i));
@@ -3074,7 +3074,7 @@ public class FoldLineSet {
     }
 
     //Returns the distance at the number of the line segment closest to the point p. However, the polygonal line parallel to the line segment s0 is not included in the survey. That is, even if parallel polygonal lines overlap, they are not considered to be close to each other.
-    public double closestLineSegmentDistanceExcludingParallel(origami_editor.graphic2d.point.Point p, LineSegment s0) {
+    public double closestLineSegmentDistanceExcludingParallel(Point p, LineSegment s0) {
         double minr = 100000.0;
         for (int i = 1; i <= total; i++) {
             if (OritaCalc.parallel_judgement(get(i), s0, 0.0001) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
@@ -3088,7 +3088,7 @@ public class FoldLineSet {
         return minr;
     }
 
-    public Circle closestCircleMidpoint(origami_editor.graphic2d.point.Point p) {
+    public Circle closestCircleMidpoint(Point p) {
         int minrid = 0;
         double minr = 100000.0;
         Circle e1 = new Circle(100000.0, 100000.0, 1.0, LineColor.BLACK_0);
@@ -3107,7 +3107,7 @@ public class FoldLineSet {
         return getCircle(minrid);
     }
 
-    public LineSegment closestLineSegment(origami_editor.graphic2d.point.Point p) {
+    public LineSegment closestLineSegment(Point p) {
         int minrid = 0;
         double minr = 100000.0;
         LineSegment s1 = new LineSegment(100000.0, 100000.0, 100000.0, 100000.1);
@@ -3127,10 +3127,10 @@ public class FoldLineSet {
     }
 
     //Returns the "end point of the line segment" closest to the point p
-    public origami_editor.graphic2d.point.Point closestPoint(origami_editor.graphic2d.point.Point p) {
-        origami_editor.graphic2d.point.Point p_return = new origami_editor.graphic2d.point.Point();
+    public Point closestPoint(Point p) {
+        Point p_return = new Point();
         p_return.set(100000.0, 100000.0);
-        origami_editor.graphic2d.point.Point p_temp = new origami_editor.graphic2d.point.Point();
+        Point p_temp = new Point();
         for (int i = 1; i <= total; i++) {
             p_temp.set(getA(i));
             if (p.distanceSquared(p_temp) < p.distanceSquared(p_return)) {
@@ -3146,10 +3146,10 @@ public class FoldLineSet {
     }
 
     //Returns the "center point of the circle" closest to the point p
-    public origami_editor.graphic2d.point.Point closestCenter(origami_editor.graphic2d.point.Point p) {
-        origami_editor.graphic2d.point.Point p_return = new origami_editor.graphic2d.point.Point();
+    public Point closestCenter(Point p) {
+        Point p_return = new Point();
         p_return.set(100000.0, 100000.0);
-        origami_editor.graphic2d.point.Point p_temp = new origami_editor.graphic2d.point.Point();
+        Point p_temp = new Point();
         for (int i = 1; i <= numCircles(); i++) {
             Circle e_temp = new Circle();
             e_temp.set(getCircle(i));
@@ -3162,10 +3162,10 @@ public class FoldLineSet {
     }
 
     //Returns the "end point of the line segment" closest to the point p. However, auxiliary live lines are not applicable
-    public origami_editor.graphic2d.point.Point closestPointOfFoldLine(origami_editor.graphic2d.point.Point p) {
-        origami_editor.graphic2d.point.Point p_return = new origami_editor.graphic2d.point.Point();
+    public Point closestPointOfFoldLine(Point p) {
+        Point p_return = new Point();
         p_return.set(100000.0, 100000.0);
-        origami_editor.graphic2d.point.Point p_temp = new origami_editor.graphic2d.point.Point();
+        Point p_temp = new Point();
         for (int i = 1; i <= total; i++) {
             if (getColor(i).isFoldingLine()) {
                 p_temp.set(getA(i));
@@ -3294,8 +3294,8 @@ public class FoldLineSet {
         }
     }
 
-    public int del_V(origami_editor.graphic2d.point.Point p, double hikiyose_hankei, double r) {
-        origami_editor.graphic2d.point.Point q = new origami_editor.graphic2d.point.Point();
+    public int del_V(Point p, double hikiyose_hankei, double r) {
+        Point q = new Point();
         q.set(closestPoint(p));//q is the end point closer to the point p
         if (q.distanceSquared(p) > hikiyose_hankei * hikiyose_hankei) {
             return 0;
@@ -3372,8 +3372,8 @@ public class FoldLineSet {
     }
 
 
-    public int del_V_cc(origami_editor.graphic2d.point.Point p, double hikiyose_hankei, double r) {//2つの折線の色が違った場合カラーチェンジして、点削除する。黒赤は赤赤、黒青は青青、青赤は黒にする
-        origami_editor.graphic2d.point.Point q = new origami_editor.graphic2d.point.Point();
+    public int del_V_cc(Point p, double hikiyose_hankei, double r) {//2つの折線の色が違った場合カラーチェンジして、点削除する。黒赤は赤赤、黒青は青青、青赤は黒にする
+        Point q = new Point();
         q.set(closestPoint(p));//qは点pに近い方の端点
         if (q.distanceSquared(p) > hikiyose_hankei * hikiyose_hankei) {
             return 0;
@@ -3507,10 +3507,10 @@ public class FoldLineSet {
 
     //If the end point of the line segment closest to the point p and the end point closer to the point p is the apex, how many line segments are out (the number of line segments with an end point within the apex and r)
     // for del_V Function of
-    public int vertex_syuui_numLines_for_del_V(origami_editor.graphic2d.point.Point p, double r) {//del_V用の関数
-        origami_editor.graphic2d.point.Point q = new origami_editor.graphic2d.point.Point();
+    public int vertex_syuui_numLines_for_del_V(Point p, double r) {//del_V用の関数
+        Point q = new Point();
         q.set(closestPoint(p));//qは点pに近い方の端点
-        origami_editor.graphic2d.point.Point p_temp = new origami_editor.graphic2d.point.Point();
+        Point p_temp = new Point();
 
 
         int i_return;
@@ -3534,10 +3534,10 @@ public class FoldLineSet {
     }
 
     //If the end point of the line segment closest to the point p and the end point closer to the point p is the vertex, how many line segments are present (the number of line segments having an end point within the vertex and r).
-    public int vertex_surrounding_lineCount(origami_editor.graphic2d.point.Point p, double r) {
-        origami_editor.graphic2d.point.Point q = new origami_editor.graphic2d.point.Point();
+    public int vertex_surrounding_lineCount(Point p, double r) {
+        Point q = new Point();
         q.set(closestPoint(p));//qは点pに近い方の端点
-        origami_editor.graphic2d.point.Point p_temp = new origami_editor.graphic2d.point.Point();
+        Point p_temp = new Point();
 
         int i_return;
         i_return = 0;
@@ -3557,10 +3557,10 @@ public class FoldLineSet {
     }
 
     //If the end point of the line segment closest to the point p and the end point closer to the point p is the vertex, how many red line segments appear (the number of line segments having an end point within the vertex and r).
-    public int vertex_surrounding_lineCount_red(origami_editor.graphic2d.point.Point p, double r) {
-        origami_editor.graphic2d.point.Point q = new origami_editor.graphic2d.point.Point();
+    public int vertex_surrounding_lineCount_red(Point p, double r) {
+        Point q = new Point();
         q.set(closestPoint(p));//q is the end point closer to the point p
-        origami_editor.graphic2d.point.Point p_temp = new origami_editor.graphic2d.point.Point();
+        Point p_temp = new Point();
 
         int i_return = 0;
 
@@ -3582,10 +3582,10 @@ public class FoldLineSet {
 
     //--------------------------------------------
     //If the end point of the line segment closest to the point p and the end point closer to the point p is the vertex, how many blue line segments appear (the number of line segments having an end point within the vertex and r).
-    public int vertex_surrounding_lineCount_blue(origami_editor.graphic2d.point.Point p, double r) {
-        origami_editor.graphic2d.point.Point q = new origami_editor.graphic2d.point.Point();
+    public int vertex_surrounding_lineCount_blue(Point p, double r) {
+        Point q = new Point();
         q.set(closestPoint(p));//qは点pに近い方の端点
-        origami_editor.graphic2d.point.Point p_temp = new origami_editor.graphic2d.point.Point();
+        Point p_temp = new Point();
 
         int i_return;
         i_return = 0;
@@ -3608,10 +3608,10 @@ public class FoldLineSet {
 
     //--------------------------------------------
     //If the end point of the line segment closest to the point p and the end point closer to the point p is the vertex, how many black line segments appear (the number of line segments having an end point within the vertex and r).
-    public int vertex_surrounding_lineCount_black(origami_editor.graphic2d.point.Point p, double r) {
-        origami_editor.graphic2d.point.Point q = new origami_editor.graphic2d.point.Point();
+    public int vertex_surrounding_lineCount_black(Point p, double r) {
+        Point q = new Point();
         q.set(closestPoint(p));//qは点pに近い方の端点
-        origami_editor.graphic2d.point.Point p_temp = new origami_editor.graphic2d.point.Point();
+        Point p_temp = new Point();
 
         int i_return = 0;
 
@@ -3632,10 +3632,10 @@ public class FoldLineSet {
 
     //--------------------------------------------
     //If the end point of the line segment closest to the point p and the end point closer to the point p is the vertex, how many auxiliary live lines are present (the number of line segments having an end point within the vertex and r).
-    public int vertex_surrounding_lineCount_auxiliary_live_line(origami_editor.graphic2d.point.Point p, double r) {
-        origami_editor.graphic2d.point.Point q = new origami_editor.graphic2d.point.Point();
+    public int vertex_surrounding_lineCount_auxiliary_live_line(Point p, double r) {
+        Point q = new Point();
         q.set(closestPoint(p));//qは点pに近い方の端点
-        origami_editor.graphic2d.point.Point p_temp = new origami_editor.graphic2d.point.Point();
+        Point p_temp = new Point();
 
 
         int i_return = 0;
@@ -3657,7 +3657,7 @@ public class FoldLineSet {
 
 
     //線分の活性化されたものを点pの座標にする
-    public void set(origami_editor.graphic2d.point.Point p) {
+    public void set(Point p) {
         for (int i = 1; i <= total; i++) {
             LineSegment si;
             si = getLineSegment(i);
@@ -3666,7 +3666,7 @@ public class FoldLineSet {
     }
 
     //Divide the polygonal line i by the projection of the point p. However, if the projection of point p is considered to be the same as the end point of any polygonal line, nothing is done.
-    public int lineSegment_bunkatu(origami_editor.graphic2d.point.Point p, int i) {//何もしない=0,分割した=1
+    public int lineSegment_bunkatu(Point p, int i) {//何もしない=0,分割した=1
 
         int mts_id;
         mts_id = i;
@@ -3674,7 +3674,7 @@ public class FoldLineSet {
 
         //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){}
         //線分を含む直線を得る public Tyokusen oc.Senbun2Tyokusen(Senbun s){}
-        origami_editor.graphic2d.point.Point pk = new origami_editor.graphic2d.point.Point();
+        Point pk = new Point();
         pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(mts), p));//pkは点pの（線分を含む直線上の）影
         //線分の分割-----------------------------------------
         lineSegment_bunkatu(mts_id, pk);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
@@ -3682,8 +3682,8 @@ public class FoldLineSet {
     }
 
     public void move(double dx, double dy) {//折線集合全体の位置を移動する。
-        origami_editor.graphic2d.point.Point temp_a = new origami_editor.graphic2d.point.Point();
-        origami_editor.graphic2d.point.Point temp_b = new origami_editor.graphic2d.point.Point();
+        Point temp_a = new Point();
+        Point temp_b = new Point();
         for (int i = 1; i <= getTotal(); i++) {
             temp_a.set(getA(i));
             temp_b.set(getB(i));
@@ -3705,15 +3705,15 @@ public class FoldLineSet {
         }
     }
 
-    public void move(origami_editor.graphic2d.point.Point ta, origami_editor.graphic2d.point.Point tb, origami_editor.graphic2d.point.Point tc, origami_editor.graphic2d.point.Point td) {//Move the position of the entire set of polygonal lines.
+    public void move(Point ta, Point tb, Point tc, Point td) {//Move the position of the entire set of polygonal lines.
         double d = OritaCalc.angle(ta, tb, tc, td);
         double r = tc.distance(td) / ta.distance(tb);
 
         double dx = tc.getX() - ta.getX();
         double dy = tc.getY() - ta.getY();
 
-        origami_editor.graphic2d.point.Point temp_a = new origami_editor.graphic2d.point.Point();
-        origami_editor.graphic2d.point.Point temp_b = new origami_editor.graphic2d.point.Point();
+        Point temp_a = new Point();
+        Point temp_b = new Point();
         for (int i = 1; i <= getTotal(); i++) {
             temp_a.set(OritaCalc.point_rotate(ta, getA(i), d, r));
             temp_b.set(OritaCalc.point_rotate(ta, getB(i), d, r));
@@ -3997,7 +3997,7 @@ public class FoldLineSet {
         return Check4LineSegment.get(i);
     }
 
-    public origami_editor.graphic2d.point.Point check4_getPoint(int i) {
+    public Point check4_getPoint(int i) {
         return check4Point.get(i);
     }
 
@@ -4008,7 +4008,7 @@ public class FoldLineSet {
             if (getColor(i) != LineColor.CYAN_3) {
                 LineSegment si;
                 si = getLineSegment(i);
-                origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point();
+                Point p = new Point();
                 int tss;    //頂点の周りの折線の数。　tss%2==0 偶数、==1 奇数
                 int tss_red;    //Number of mountain fold lines around the vertex 。
                 int tss_blue;    //頂点の周りの谷折線の数。
@@ -4078,9 +4078,9 @@ public class FoldLineSet {
         }
     }
 
-    public int Check4Point_overlapping_check(origami_editor.graphic2d.point.Point p0) {
+    public int Check4Point_overlapping_check(Point p0) {
         for (int i = 0; i < check4_point_size(); i++) {
-            origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point();
+            Point p = new Point();
             p.set(check4_getPoint(i));
             if ((-0.00000001 < p0.getX() - p.getX()) && (p0.getX() - p.getX() < 0.00000001)) {
                 if ((-0.00000001 < p0.getY() - p.getY()) && (p0.getY() - p.getY() < 0.00000001)) {
@@ -4104,13 +4104,13 @@ public class FoldLineSet {
                 LineSegment si;
                 si = getLineSegment(i);
 
-                origami_editor.graphic2d.point.Point pa = new origami_editor.graphic2d.point.Point();
+                Point pa = new Point();
                 pa.set(si.getA());
                 if (Check4Point_overlapping_check(pa) == 0) {
                     check4Point.add(pa);
                 }
 
-                origami_editor.graphic2d.point.Point pb = new origami_editor.graphic2d.point.Point();
+                Point pb = new Point();
                 pb.set(si.getB());
                 if (Check4Point_overlapping_check(pb) == 0) {
                     check4Point.add(pb);
@@ -4122,7 +4122,7 @@ public class FoldLineSet {
 
         //Selection of whether the place to be checked can be folded flat
         for (int i = 0; i < check4_point_size(); i++) {
-            origami_editor.graphic2d.point.Point p = new origami_editor.graphic2d.point.Point();
+            Point p = new Point();
             p.set(check4_getPoint(i));
 
             if (!i_flat_ok(p, r)) {
@@ -4131,7 +4131,7 @@ public class FoldLineSet {
         }
     }
 
-    public boolean i_flat_ok(origami_editor.graphic2d.point.Point p, double r) {//Foldable flat = 1
+    public boolean i_flat_ok(Point p, double r) {//Foldable flat = 1
         double hantei_kyori = 0.00001;
         //If the end point of the line segment closest to the point p and the end point closer to the point p is the apex, how many line segments are present (the number of line segments having an end point within the apex and r).
         int i_customized = 0;    //i_customized% 2 == 0 even, == 1 odd
@@ -4184,10 +4184,10 @@ public class FoldLineSet {
     }
 
     //Point p に最も近い用紙辺部の端点が拡張伏見定理を満たすか判定
-    public boolean extended_fushimi_decide_sides(origami_editor.graphic2d.point.Point p) {//return　0=満たさない、　1=満たす。　
+    public boolean extended_fushimi_decide_sides(Point p) {//return　0=満たさない、　1=満たす。　
         double hantei_kyori = 0.00001;
 
-        origami_editor.graphic2d.point.Point t1 = new origami_editor.graphic2d.point.Point();
+        Point t1 = new Point();
         t1.set(closestPointOfFoldLine(p));//点pに最も近い、「線分の端点」を返すori_s.closestPointは近い点がないと p_return.set(100000.0,100000.0)と返してくる
 
         //t1を端点とする折線をNarabebakoに入れる
@@ -4206,7 +4206,7 @@ public class FoldLineSet {
     }
 
     // ---------------------------------
-    public boolean extended_fushimi_decide_sides(origami_editor.graphic2d.point.Point p, SortingBox_int_double nbox) {//return　0=満たさない、　1=満たす。　
+    public boolean extended_fushimi_decide_sides(Point p, SortingBox_int_double nbox) {//return　0=満たさない、　1=満たす。　
         if (nbox.getTotal() == 2) {//t1を端点とする折線の数が2のとき
             if (getColor(nbox.getInt(1)) != LineColor.BLACK_0) {//1本目が黒でないならダメ
                 return false;
@@ -4275,7 +4275,7 @@ public class FoldLineSet {
     }
 
     //Obtain SortingBox with a polygonal line starting at b. They are arranged in ascending order of angle with the line segment ba.
-    public SortingBox_int_double get_SortingBox_of_vertex_b_surrounding_foldLine(origami_editor.graphic2d.point.Point a, origami_editor.graphic2d.point.Point b) {
+    public SortingBox_int_double get_SortingBox_of_vertex_b_surrounding_foldLine(Point a, Point b) {
         SortingBox_int_double r_nbox = new SortingBox_int_double();
         double hantei_kyori = 0.00001;
 
@@ -4363,10 +4363,10 @@ public class FoldLineSet {
     }
 
     //Determine if the endpoint inside the paper closest to Point p satisfies the extended Fushimi theorem
-    public boolean extended_fushimi_decide_inside(origami_editor.graphic2d.point.Point p) {//return　0=満たさない、　1=満たす。　
+    public boolean extended_fushimi_decide_inside(Point p) {//return　0=満たさない、　1=満たす。　
         double hantei_kyori = 0.00001;
 
-        origami_editor.graphic2d.point.Point t1 = new origami_editor.graphic2d.point.Point();
+        Point t1 = new Point();
         t1.set(closestPointOfFoldLine(p));//点pに最も近い、「線分の端点」を返すori_s.mottomo_tikai_Tenは近い点がないと p_return.set(100000.0,100000.0)と返してくる
 
         //t1を端点とする折線をNarabebakoに入れる

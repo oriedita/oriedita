@@ -12,7 +12,7 @@ import java.awt.*;
  */
 public class OritaDrawing {
     //For drawing thick lines
-    public static void widthLine(Graphics g, origami_editor.graphic2d.point.Point a, origami_editor.graphic2d.point.Point b, double width, LineColor iColor) {
+    public static void widthLine(Graphics g, Point a, Point b, double width, LineColor iColor) {
         widthLine(g, new LineSegment(a, b), width, iColor);
     }
 
@@ -51,11 +51,11 @@ public class OritaDrawing {
     }
 
     //Draw a cross around the designated Point
-    public static void cross(Graphics g, origami_editor.graphic2d.point.Point t, double length, double width, LineColor icolor) {
-        origami_editor.graphic2d.point.Point tx0 = new origami_editor.graphic2d.point.Point();
-        origami_editor.graphic2d.point.Point tx1 = new origami_editor.graphic2d.point.Point();
-        origami_editor.graphic2d.point.Point ty0 = new origami_editor.graphic2d.point.Point();
-        origami_editor.graphic2d.point.Point ty1 = new Point();
+    public static void cross(Graphics g, Point t, double length, double width, LineColor icolor) {
+        Point tx0 = new Point();
+        Point tx1 = new Point();
+        Point ty0 = new Point();
+        Point ty1 = new Point();
         tx0.setX(t.getX() - length);
         tx0.setY(t.getY());
         tx1.setX(t.getX() + length);
@@ -69,20 +69,20 @@ public class OritaDrawing {
     }
 
     //Draw a pointing diagram around the specified Point
-    public static void pointingAt1(Graphics g, LineSegment s_tv, double length, double haba, int icolor) {
+    public static void pointingAt1(Graphics g, LineSegment s_tv, double length, double width, int icolor) {
         g.setColor(new Color(255, 165, 0, 100));//g.setColor(Color.ORANGE);
         g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
     }
 
     //Draw a pointing diagram around the specified Point
-    public static void pointingAt2(Graphics g, LineSegment s_tv, double length, double haba, int icolor) {
+    public static void pointingAt2(Graphics g, LineSegment s_tv, double length, double width, int icolor) {
         g.setColor(new Color(255, 165, 0, 100));//g.setColor(Color.ORANGE);
         g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
 
     }
 
     //Draw a pointing diagram around the specified Point
-    public static void pointingAt3(Graphics g, LineSegment s_tv, double length, double haba, int icolor) {
+    public static void pointingAt3(Graphics g, LineSegment s_tv, double length, double width, int icolor) {
         g.setColor(new Color(255, 200, 0, 50));
         g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
     }
