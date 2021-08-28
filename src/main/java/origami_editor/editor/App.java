@@ -252,7 +252,7 @@ public class App extends JFrame implements ActionListener {
     double d_ap_check4 = 0.0;
     ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     public App() {
-        setTitle("ORIHIME Ver.3.060");//Specify the title and execute the constructor
+        setTitle("Origami Editor 1.0.0");//Specify the title and execute the constructor
         frame_title_0 = getTitle();
         frame_title = frame_title_0;//Store title in variable
         es1.setTitle(frame_title);
