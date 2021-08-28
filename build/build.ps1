@@ -1,5 +1,3 @@
-$java_version = jdeps -version
-
 # Clean build the project
 mvn -f .. -q clean package
 
@@ -7,6 +5,9 @@ mvn -f .. -q clean package
 $project_version =  mvn -f .. org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -D"expression=project.version" -q -D"forceStdout"
 
 echo $project_version > ../target/version
+
+$java_version = jdeps -version
+echo $java_version > ../target/java_version
 
 rm -r ../target/jre 2> $null
 

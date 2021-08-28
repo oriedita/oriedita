@@ -4,6 +4,7 @@
 !execute 'pwsh.exe -File "./build.ps1"'
 
 !define /file VERSION ../target/version
+!define /file JAVA_VERSION ../target/java_version
 
 !include LogicLib.nsh
 !include WinMessages.nsh
@@ -15,12 +16,12 @@ ShowInstDetails hide
 
 OutFile "..\target\origami-editor-${VERSION}.exe"
 Icon "origami-editor.ico"
-VIProductVersion 1.0.0.00000
+VIProductVersion ${VERSION}.0
 VIAddVersionKey ProductName "Origami Editor"
 VIAddVersionKey LegalCopyright "Copyright (c) 2021"
 VIAddVersionKey FileDescription "Origami Editor"
-VIAddVersionKey FileVersion 1.0.0.00000
-VIAddVersionKey ProductVersion "1.0 / OpenJRE 15.0.1 (x64)"
+VIAddVersionKey FileVersion ${VERSION}.0
+VIAddVersionKey ProductVersion "${VERSION} / OpenJRE ${JAVA_VERSION} (x64)"
 VIAddVersionKey InternalName "origami-editor"
 VIAddVersionKey OriginalFilename "origami-editor.exe"
 
