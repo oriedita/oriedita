@@ -13,7 +13,6 @@ public class Undo_Box {
     LinkedList<Memo> Mem = new LinkedList<>(); //Create a LinkedList object
 
     public Undo_Box() {
-        Mem.clear();
         for (int i = 0; i <= undoTotal; i++) {
             Mem.add(new Memo());
         }
@@ -57,7 +56,7 @@ public class Undo_Box {
         return Mem.get(recordPosition);
     }
 
-    public void set_i_undo_total(int i_new) {
+    public void setUndoTotal(int i_new) {
         if (undoTotal <= i_new) {
             for (int i = undoTotal + 1; i <= i_new; i++) {
                 Mem.add(new Memo());

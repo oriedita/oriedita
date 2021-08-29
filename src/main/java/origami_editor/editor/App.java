@@ -200,7 +200,6 @@ public class App extends JFrame implements ActionListener {
     Image img_background;       //Image for background
     String img_background_fname;
     Image img_explanation;       //Image for explanation
-    String img_explanation_fname;
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
     Canvas canvas;
     boolean lockBackground_ori = false;//Lock on background = 1, not = 0
@@ -244,11 +243,11 @@ public class App extends JFrame implements ActionListener {
     int lowerRight_ix = 0;
     int lowerRight_iy = 0;
     JDialog add_frame;
-    boolean i_add_frame = false;//1=add_frameが存在する。,0=存在しない。
+    boolean showAddFrame = false;//1=add_frameが存在する。,0=存在しない。
     boolean ckbox_add_frame_SelectAnd3click_isSelected = false;//1=折線セレクト状態でトリプルクリックするとmoveやcopy等の動作モードに移行する。 20200930
     // **************************************************************************************************************************
-// **************************************************************************************************************************
-// **************************************************************************************************************************
+    // **************************************************************************************************************************
+    // **************************************************************************************************************************
     boolean i_mouse_right_button_on = false;//1 if the right mouse button is on, 0 if off
     boolean i_mouse_undo_redo_mode = false;//1 for undo and redo mode with mouse
     public enum MouseWheelTarget {
@@ -414,10 +413,9 @@ public class App extends JFrame implements ActionListener {
         JMenuItem Button_yomi = new JMenuItem("Open");
         Button_yomi.setMnemonic('O');
         Button_yomi.addActionListener(e -> {
-            img_explanation_fname = "qqq/yomi.png";
-            updateExplanation();
+            setHelp("qqq/yomi.png");
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
 
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
@@ -484,9 +482,8 @@ public class App extends JFrame implements ActionListener {
         JMenuItem Button_kaki = new JMenuItem("Save");
         Button_kaki.setMnemonic('S');
         Button_kaki.addActionListener(e -> {
-            img_explanation_fname = "qqq/kaki.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/kaki.png");
+            Button_shared_operation();
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
             writeMemo2File();
@@ -502,8 +499,7 @@ public class App extends JFrame implements ActionListener {
 // -----61;長方形内選択モード。
         JButton Button_tyouhoukei_select = new JButton("");
         Button_tyouhoukei_select.addActionListener(e -> {
-            img_explanation_fname = "qqq/tyouhoukei_select.png";
-            updateExplanation();
+            setHelp("qqq/tyouhoukei_select.png");
             foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
             es1.setFoldLineAdditional(foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
             i_mouse_modeA = MouseMode.OPERATION_FRAME_CREATE_61;
@@ -511,7 +507,7 @@ public class App extends JFrame implements ActionListener {
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnln.add(Button_tyouhoukei_select);
@@ -526,10 +522,9 @@ public class App extends JFrame implements ActionListener {
 // *****************************************************************************画像書き出し
         JButton Button_writeImage = new JButton("Im_s");
         Button_writeImage.addActionListener(e -> {
-            img_explanation_fname = "qqq/writeImage.png";
-            updateExplanation();
+            setHelp("qqq/writeImage.png");
             if (i_mouse_modeA != MouseMode.OPERATION_FRAME_CREATE_61) {
-                Button_kyoutuu_sagyou();
+                Button_shared_operation();
                 es1.setDrawingStage(0);
             }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
             i_mouseDragged_valid = false;
@@ -566,9 +561,7 @@ public class App extends JFrame implements ActionListener {
 //マウス設定
         ckbox_mouse_settings = new JCheckBox("");
         ckbox_mouse_settings.addActionListener(e -> {
-            img_explanation_fname =
-                    "qqq/ckbox_mouse_settei.png";
-            updateExplanation();
+            setHelp("qqq/ckbox_mouse_settei.png");
             canvas.repaint();
         });
         ckbox_mouse_settings.setIcon(createImageIcon("ppp/ckbox_mouse_settei_off.png"));
@@ -582,8 +575,7 @@ public class App extends JFrame implements ActionListener {
 //点探し
         ckbox_point_search = new JCheckBoxMenuItem("Show point range");
         ckbox_point_search.addActionListener(e -> {
-            img_explanation_fname = "qqq/ckbox_ten_sagasi.png";
-            updateExplanation();
+            setHelp("qqq/ckbox_ten_sagasi.png");
             canvas.repaint();
         });
         menu_view.add(ckbox_point_search);
@@ -592,9 +584,7 @@ public class App extends JFrame implements ActionListener {
 //点離し
         ckbox_ten_hanasi = new JCheckBoxMenuItem("Offset cursor");
         ckbox_ten_hanasi.addActionListener(e -> {
-            img_explanation_fname =
-                    "qqq/ckbox_ten_hanasi.png";
-            updateExplanation();
+            setHelp("qqq/ckbox_ten_hanasi.png");
 
             canvas.repaint();
         });
@@ -604,9 +594,7 @@ public class App extends JFrame implements ActionListener {
 //高密度入力
         ckbox_kou_mitudo_nyuuryoku = new JCheckBoxMenuItem("Grid input assist");
         ckbox_kou_mitudo_nyuuryoku.addActionListener(e -> {
-            img_explanation_fname =
-                    "qqq/ckbox_kou_mitudo_nyuuryoku.png";
-            updateExplanation();
+            setHelp("qqq/ckbox_kou_mitudo_nyuuryoku.png");
 
             if (ckbox_kou_mitudo_nyuuryoku.isSelected()) {
                 System.out.println(" kou_mitudo_nyuuryoku on");
@@ -623,8 +611,7 @@ public class App extends JFrame implements ActionListener {
 //文表示
         ckbox_bun = new JCheckBoxMenuItem("Display comments");
         ckbox_bun.addActionListener(e -> {
-            img_explanation_fname = "qqq/ckbox_bun.png";
-            updateExplanation();
+            setHelp("qqq/ckbox_bun.png");
             canvas.repaint();
         });
         menu_view.add(ckbox_bun);
@@ -632,8 +619,7 @@ public class App extends JFrame implements ActionListener {
 //折線表示
         ckbox_cp = new JCheckBoxMenuItem("Display cp lines");
         ckbox_cp.addActionListener(e -> {
-            img_explanation_fname = "qqq/ckbox_cp.png";
-            updateExplanation();
+            setHelp("qqq/ckbox_cp.png");
             canvas.repaint();
         });
         menu_view.add(ckbox_cp);
@@ -641,8 +627,7 @@ public class App extends JFrame implements ActionListener {
 //補助活線表示
         ckbox_a0 = new JCheckBoxMenuItem("Display aux lines");
         ckbox_a0.addActionListener(e -> {
-            img_explanation_fname = "qqq/ckbox_a0.png";
-            updateExplanation();
+            setHelp("qqq/ckbox_a0.png");
             canvas.repaint();
         });
         menu_view.add(ckbox_a0);
@@ -650,8 +635,7 @@ public class App extends JFrame implements ActionListener {
 //補助画線表示
         ckbox_a1 = new JCheckBoxMenuItem("Display live aux lines");
         ckbox_a1.addActionListener(e -> {
-            img_explanation_fname = "qqq/ckbox_a1.png";
-            updateExplanation();
+            setHelp("qqq/ckbox_a1.png");
             canvas.repaint();
         });
         menu_view.add(ckbox_a1);
@@ -659,9 +643,7 @@ public class App extends JFrame implements ActionListener {
 //十字や基準面などの目印画線
         ckbox_mark = new JCheckBoxMenuItem("Display standard face marks");
         ckbox_mark.addActionListener(e -> {
-            img_explanation_fname =
-                    "qqq/ckbox_mejirusi.png";
-            updateExplanation();
+            setHelp("qqq/ckbox_mejirusi.png");
 
             canvas.repaint();
         });
@@ -678,9 +660,7 @@ public class App extends JFrame implements ActionListener {
 //折りあがり図を補助線の手前側にするかどうか
         ckbox_cp_ue = new JCheckBoxMenuItem("Crease pattern on top");
         ckbox_cp_ue.addActionListener(e -> {
-            img_explanation_fname =
-                    "qqq/ckbox_cp_ue.png";
-            updateExplanation();
+            setHelp("qqq/ckbox_cp_ue.png");
 
             canvas.repaint();
         });
@@ -696,9 +676,7 @@ public class App extends JFrame implements ActionListener {
 //折り畳み経過の表示
         ckbox_folding_keika = new JCheckBox("");
         ckbox_folding_keika.addActionListener(e -> {
-            img_explanation_fname =
-                    "qqq/ckbox_oritatami_keika.png";
-            updateExplanation();
+            setHelp("qqq/ckbox_oritatami_keika.png");
 
             canvas.repaint();
         });
@@ -803,13 +781,12 @@ public class App extends JFrame implements ActionListener {
         Button_senbun_internalDivisionRatio_set.addActionListener(e -> {
             setInternalDivisionRatio();
 
-            img_explanation_fname = "qqq/senbun_naibun_set.png";
-            updateExplanation();
+            setHelp("qqq/senbun_naibun_set.png");
             i_mouse_modeA = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         Button_senbun_internalDivisionRatio_set.setBounds(197, 2, 25, 23);
@@ -828,14 +805,13 @@ public class App extends JFrame implements ActionListener {
         Button_senbun_n_nyuryoku.addActionListener(e -> {
             setInternalDivisionRatio();
 
-            img_explanation_fname = "qqq/senbun_n_nyuryoku.png";
-            updateExplanation();
+            setHelp("qqq/senbun_n_nyuryoku.png");
             i_mouse_modeA = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         Button_senbun_n_nyuryoku.setBounds(223, 2, 23, 23);
@@ -861,8 +837,7 @@ public class App extends JFrame implements ActionListener {
         JButton Button_tenkaizu_idiu = new JButton("");
         Button_tenkaizu_idiu.addActionListener(e -> {
             //JButton	Button_tenkaizu_idiu	= new JButton(	"CP_move"	);Button_tenkaizu_idiu.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-            img_explanation_fname = "qqq/tenkaizu_idiu.png";
-            updateExplanation();
+            setHelp("qqq/tenkaizu_idiu.png");
 
             i_mouse_modeA = MouseMode.MOVE_CREASE_PATTERN_2;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
@@ -892,8 +867,7 @@ public class App extends JFrame implements ActionListener {
 // *****北*************************************************************************sssssssssssssss
         JButton Button_tenkaizu_syukusyou = new JButton("");
         Button_tenkaizu_syukusyou.addActionListener(e -> {
-            img_explanation_fname = "qqq/tenkaizu_syukusyou.png";
-            updateExplanation();
+            setHelp("qqq/tenkaizu_syukusyou.png");
 
             double d_bairitu = 1.0 / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
             scaleFactor = scaleFactor / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
@@ -1007,9 +981,8 @@ public class App extends JFrame implements ActionListener {
             text27.setCaretPosition(0);
             canvas.repaint();
 
-            img_explanation_fname = "qqq/syukusyaku_keisuu_set.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/syukusyaku_keisuu_set.png");
+            Button_shared_operation();
             canvas.repaint();
         });
         pnln8.add(Button_syukusyaku_keisuu_set);
@@ -1020,8 +993,7 @@ public class App extends JFrame implements ActionListener {
 // ****北**************************************************************************
         JButton Button_tenkaizu_kakudai = new JButton("");
         Button_tenkaizu_kakudai.addActionListener(e -> {
-            img_explanation_fname = "qqq/tenkaizu_kakudai.png";
-            updateExplanation();
+            setHelp("qqq/tenkaizu_kakudai.png");
 
             double d_bairitu = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
             scaleFactor = scaleFactor * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
@@ -1087,8 +1059,7 @@ public class App extends JFrame implements ActionListener {
 // *****北*************展開の回転************************************************************
         JButton Button_tenkaizu_p_kaiten = new JButton("");
         Button_tenkaizu_p_kaiten.addActionListener(e -> {
-            img_explanation_fname = "qqq/tenkaizu_p_kaiten.png";
-            updateExplanation();
+            setHelp("qqq/tenkaizu_p_kaiten.png");
 
             rotationCorrection = OritaCalc.angle_between_m180_180(rotationCorrection + 11.25);
             camera_of_orisen_input_diagram.setCameraAngle(rotationCorrection);
@@ -1125,9 +1096,8 @@ public class App extends JFrame implements ActionListener {
             canvas.repaint();
 
 
-            img_explanation_fname = "qqq/kaiten_hosei_set.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/kaiten_hosei_set.png");
+            Button_shared_operation();
             canvas.repaint();
         });
         pnln14.add(Button_kaiten_hosei_set);
@@ -1138,8 +1108,7 @@ public class App extends JFrame implements ActionListener {
 // *****北*************************************************************************
         JButton Button_tenkaizu_m_kaiten = new JButton("");
         Button_tenkaizu_m_kaiten.addActionListener(e -> {
-            img_explanation_fname = "qqq/tenkaizu_m_kaiten.png";
-            updateExplanation();
+            setHelp("qqq/tenkaizu_m_kaiten.png");
             rotationCorrection = OritaCalc.angle_between_m180_180(rotationCorrection - 11.25);
             camera_of_orisen_input_diagram.setCameraAngle(rotationCorrection);
             text28.setText(String.valueOf(rotationCorrection));
@@ -1155,8 +1124,7 @@ public class App extends JFrame implements ActionListener {
         JButton Button_toumei = new JButton("T");
         Button_toumei.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/toumei.png";
-            updateExplanation();
+            setHelp("qqq/toumei.png");
             Robot robot;
 
             try {
@@ -1245,8 +1213,7 @@ public class App extends JFrame implements ActionListener {
 // *****北*************************************************************************
         JButton Button_background_trim = new JButton("Tr");
         Button_background_trim.addActionListener(e -> {
-            img_explanation_fname = "qqq/haikei_trim.png";
-            updateExplanation();
+            setHelp("qqq/haikei_trim.png");
 
 
             offsc_background = new BufferedImage(2000, 1100, BufferedImage.TYPE_INT_ARGB);
@@ -1302,8 +1269,7 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_background = new JButton("BG");
         Button_background.addActionListener(e -> {
-            img_explanation_fname = "qqq/haikei.png";
-            updateExplanation();
+            setHelp("qqq/haikei.png");
 
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
@@ -1329,8 +1295,7 @@ public class App extends JFrame implements ActionListener {
 
         Button_background_kirikae = new JButton("off");
         Button_background_kirikae.addActionListener(e -> {
-            img_explanation_fname = "qqq/haikei_kirikae.png";
-            updateExplanation();
+            setHelp("qqq/haikei_kirikae.png");
 
             displayBackground = !displayBackground;
 
@@ -1350,11 +1315,10 @@ public class App extends JFrame implements ActionListener {
 // ******************************************************************************
         JButton Button_set_BG = new JButton("S");
         Button_set_BG.addActionListener(e -> {
-            img_explanation_fname = "qqq/set_BG.png";
-            updateExplanation();
+            setHelp("qqq/set_BG.png");
 
             i_mouse_modeA = MouseMode.BACKGROUND_CHANGE_POSITION_26;
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -1366,8 +1330,7 @@ public class App extends JFrame implements ActionListener {
 // ******北************************************************************************
         Button_background_Lock_on = new JButton("L");
         Button_background_Lock_on.addActionListener(e -> {
-            img_explanation_fname = "qqq/haikei_Lock_on.png";
-            updateExplanation();
+            setHelp("qqq/haikei_Lock_on.png");
 
             lockBackground_ori = !lockBackground_ori;
             lockBackground = lockBackground_ori;
@@ -1396,13 +1359,12 @@ public class App extends JFrame implements ActionListener {
         JButton Button_senbun_yoke_henkan = new JButton("");
         Button_senbun_yoke_henkan.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/senbun_yoke_henkan.png";
-            updateExplanation();
+            setHelp("qqq/senbun_yoke_henkan.png");
             i_mouse_modeA = MouseMode.CREASE_ADVANCE_TYPE_30;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnln9.add(Button_senbun_yoke_henkan);
@@ -1461,11 +1423,10 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_undo = new JButton("");
         Button_undo.addActionListener(e -> {
-            img_explanation_fname = "qqq/undo.png";
-            updateExplanation();
+            setHelp("qqq/undo.png");
             //es1.setMemo(Ubox.getMemo());
             setTitle(es1.undo());
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw26.add(Button_undo);
@@ -1482,8 +1443,7 @@ public class App extends JFrame implements ActionListener {
 // *****西*************************************************************************
         JButton Button_undo_syutoku = new JButton("S");
         Button_undo_syutoku.addActionListener(e -> {
-            img_explanation_fname = "qqq/undo_syutoku.png";
-            updateExplanation();
+            setHelp("qqq/undo_syutoku.png");
             int i_undo_suu_old = i_undo_suu;
             i_undo_suu = StringOp.String2int(text10.getText(), i_undo_suu_old);
             if (i_undo_suu < 0) {
@@ -1501,11 +1461,10 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_redo = new JButton("");
         Button_redo.addActionListener(e -> {
-            img_explanation_fname = "qqq/redo.png";
-            updateExplanation();
+            setHelp("qqq/redo.png");
 
             setTitle(es1.redo());
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw26.add(Button_redo);
@@ -1532,8 +1491,7 @@ public class App extends JFrame implements ActionListener {
             if (iLineWidth < 1) {
                 iLineWidth = 1;
             }
-            img_explanation_fname = "qqq/senhaba_sage.png";
-            updateExplanation();
+            setHelp("qqq/senhaba_sage.png");
             canvas.repaint();
         });
         pnlw23.add(Button_lineWidth_decrease);
@@ -1547,8 +1505,7 @@ public class App extends JFrame implements ActionListener {
         JButton Button_lineWidth_increase = new JButton("");
         Button_lineWidth_increase.addActionListener(e -> {
             iLineWidth = iLineWidth + 2;
-            img_explanation_fname = "qqq/senhaba_age.png";
-            updateExplanation();
+            setHelp("qqq/senhaba_age.png");
             canvas.repaint();
         });
         pnlw23.add(Button_lineWidth_increase);
@@ -1568,8 +1525,7 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_point_width_reduce = new JButton("");
         Button_point_width_reduce.addActionListener(e -> {
-            img_explanation_fname = "qqq/tenhaba_sage.png";
-            updateExplanation();
+            setHelp("qqq/tenhaba_sage.png");
 
             pointSize = pointSize - 1;
             if (pointSize < 0) {
@@ -1588,8 +1544,7 @@ public class App extends JFrame implements ActionListener {
 // ****西*******************************　点幅　上げ　*******************************************
         JButton Button_point_width_increase = new JButton("");
         Button_point_width_increase.addActionListener(e -> {
-            img_explanation_fname = "qqq/tenhaba_age.png";
-            updateExplanation();
+            setHelp("qqq/tenhaba_age.png");
 
             pointSize = pointSize + 1;
             //if(pointSize<0){pointSize=0;}
@@ -1609,8 +1564,7 @@ public class App extends JFrame implements ActionListener {
         Button_anti_alias.addActionListener(e -> {
             antiAlias = !antiAlias;
 
-            img_explanation_fname = "qqq/anti_alias.png";
-            updateExplanation();
+            setHelp("qqq/anti_alias.png");
 
             canvas.repaint();
         });
@@ -1641,11 +1595,10 @@ public class App extends JFrame implements ActionListener {
         JButton Button_orisen_hyougen = new JButton("");
         Button_orisen_hyougen.addActionListener(e -> {
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             lineStyle = lineStyle.advance();
 
-            img_explanation_fname = "qqq/orisen_hyougen.png";
-            updateExplanation();
+            setHelp("qqq/orisen_hyougen.png");
 
             canvas.repaint();
         });
@@ -1676,8 +1629,7 @@ public class App extends JFrame implements ActionListener {
         //-------------------------------------------------------------
         ButtonCol_red = new JButton("M");
         ButtonCol_red.addActionListener(e -> {
-            img_explanation_fname = "qqq/ButtonCol_red.png";
-            updateExplanation();
+            setHelp("qqq/ButtonCol_red.png");
             ButtonCol_reset();
             ButtonCol_red.setForeground(Color.black);
             ButtonCol_red.setBackground(Color.red);
@@ -1697,8 +1649,7 @@ public class App extends JFrame implements ActionListener {
         ButtonCol_blue.addActionListener(e -> {
 
 
-            img_explanation_fname = "qqq/ButtonCol_blue.png";
-            updateExplanation();
+            setHelp("qqq/ButtonCol_blue.png");
             ButtonCol_reset();
             ButtonCol_blue.setForeground(Color.black);
             ButtonCol_blue.setBackground(Color.blue);
@@ -1715,8 +1666,7 @@ public class App extends JFrame implements ActionListener {
 
         ButtonCol_black = new JButton("E");
         ButtonCol_black.addActionListener(e -> {
-            img_explanation_fname = "qqq/ButtonCol_black.png";
-            updateExplanation();
+            setHelp("qqq/ButtonCol_black.png");
 
             ButtonCol_reset();
             ButtonCol_black.setForeground(Color.white);
@@ -1737,8 +1687,7 @@ public class App extends JFrame implements ActionListener {
 
         ButtonCol_cyan = new JButton("A");
         ButtonCol_cyan.addActionListener(e -> {
-            img_explanation_fname = "qqq/ButtonCol_cyan.png";
-            updateExplanation();
+            setHelp("qqq/ButtonCol_cyan.png");
 
             ButtonCol_reset();
             ButtonCol_cyan.setForeground(Color.black);
@@ -1774,8 +1723,7 @@ public class App extends JFrame implements ActionListener {
 // -----1;線分入力モード。
         JButton Button_senbun_nyuryoku = new JButton("");
         Button_senbun_nyuryoku.addActionListener(e -> {
-            img_explanation_fname = "qqq/senbun_nyuryoku.png";
-            updateExplanation();
+            setHelp("qqq/senbun_nyuryoku.png");
             foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
             es1.setFoldLineAdditional(foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
             i_mouse_modeA = MouseMode.DRAW_CREASE_FREE_1;
@@ -1783,7 +1731,7 @@ public class App extends JFrame implements ActionListener {
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw1.add(Button_senbun_nyuryoku);
@@ -1800,14 +1748,13 @@ public class App extends JFrame implements ActionListener {
         JButton Button_senbun_nyuryoku11 = new JButton("");
         Button_senbun_nyuryoku11.addActionListener(e -> {
             //Button	Button_senbun_nyuryoku11	= new Button(	"L_draw11"	);Button_senbun_nyuryoku11.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-            img_explanation_fname = "qqq/senbun_nyuryoku11.png";
-            updateExplanation();
+            setHelp("qqq/senbun_nyuryoku11.png");
             i_mouse_modeA = MouseMode.DRAW_CREASE_RESTRICTED_11;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_RESTRICTED_11;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
 
@@ -1824,8 +1771,7 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_Voronoi = new JButton("");
         Button_Voronoi.addActionListener(e -> {
-            img_explanation_fname = "qqq/Voronoi.png";
-            updateExplanation();
+            setHelp("qqq/Voronoi.png");
             foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
             es1.setFoldLineAdditional(foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
             i_mouse_modeA = MouseMode.VONOROI_CREATE_62;
@@ -1833,7 +1779,7 @@ public class App extends JFrame implements ActionListener {
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw1.add(Button_Voronoi);
@@ -1847,15 +1793,14 @@ public class App extends JFrame implements ActionListener {
 // -------------38;折り畳み可能線入力
         JButton Button_folding_kanousen = new JButton("");
         Button_folding_kanousen.addActionListener(e -> {
-            img_explanation_fname = "qqq/oritatami_kanousen.png";
-            updateExplanation();
+            setHelp("qqq/oritatami_kanousen.png");
 
             i_mouse_modeA = MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw1.add(Button_folding_kanousen);
@@ -1879,15 +1824,14 @@ public class App extends JFrame implements ActionListener {
 // 5 5 5 5 5 -------------5;線分延長モード。
         JButton Button_senbun_entyou = new JButton("");//Button_senbun_entyou	= new JButton(	"L_en"	);
         Button_senbun_entyou.addActionListener(e -> {
-            img_explanation_fname = "qqq/senbun_entyou.png";
-            updateExplanation();
+            setHelp("qqq/senbun_entyou.png");
 
             i_mouse_modeA = MouseMode.LENGTHEN_CREASE_5;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LENGTHEN_CREASE_5;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
 
 
@@ -1905,15 +1849,14 @@ public class App extends JFrame implements ActionListener {
 // 70 70 70 -------------70;線分延長モード。
         JButton Button_senbun_entyou_2 = new JButton("");//Button_senbun_entyou	= new JButton(	"L_en"	);
         Button_senbun_entyou_2.addActionListener(e -> {
-            img_explanation_fname = "qqq/senbun_entyou_2.png";
-            updateExplanation();
+            setHelp("qqq/senbun_entyou_2.png");
 
             i_mouse_modeA = MouseMode.CREASE_LENGTHEN_70;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LENGTHEN_CREASE_5;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
 
 
@@ -1930,15 +1873,14 @@ public class App extends JFrame implements ActionListener {
 // -------------7;Square bisector mode。
         JButton Button_kaku_toubun = new JButton("");//Button_kaku_toubun	= new JButton(	"kaku_toubun"	);
         Button_kaku_toubun.addActionListener(e -> {
-            img_explanation_fname = "qqq/kaku_toubun.png";
-            updateExplanation();
+            setHelp("qqq/kaku_toubun.png");
 
             i_mouse_modeA = MouseMode.SQUARE_BISECTOR_7;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.SQUARE_BISECTOR_7;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw2.add(Button_kaku_toubun);
@@ -1953,15 +1895,14 @@ public class App extends JFrame implements ActionListener {
 // -------------8;Inward mode 。
         JButton Button_naishin = new JButton("");//Button_naishin	= new JButton(	"naishin"	);
         Button_naishin.addActionListener(e -> {
-            img_explanation_fname = "qqq/naishin.png";
-            updateExplanation();
+            setHelp("qqq/naishin.png");
 
             i_mouse_modeA = MouseMode.INWARD_8;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.INWARD_8;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw2.add(Button_naishin);
@@ -1987,15 +1928,14 @@ public class App extends JFrame implements ActionListener {
 // -------------9;Perpendicular line down mode.
         JButton Button_suisen = new JButton("");//Button_suisen	= new JButton(	"suisen"	);
         Button_suisen.addActionListener(e -> {
-            img_explanation_fname = "qqq/suisen.png";
-            updateExplanation();
+            setHelp("qqq/suisen.png");
 
             i_mouse_modeA = MouseMode.PERPENDICULAR_DRAW_9;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.PERPENDICULAR_DRAW_9;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw3.add(Button_suisen);
@@ -2012,15 +1952,14 @@ public class App extends JFrame implements ActionListener {
 // -------------10;Wrap mode.
         JButton Button_orikaesi = new JButton("");//Button_orikaesi	= new JButton(	"orikaesi"	);
         Button_orikaesi.addActionListener(e -> {
-            img_explanation_fname = "qqq/orikaesi.png";
-            updateExplanation();
+            setHelp("qqq/orikaesi.png");
 
             i_mouse_modeA = MouseMode.SYMMETRIC_DRAW_10;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.SYMMETRIC_DRAW_10;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw3.add(Button_orikaesi);
@@ -2037,15 +1976,14 @@ public class App extends JFrame implements ActionListener {
 // -------------52;Continuous wrap mode.
         JButton Button_renzoku_orikaesi = new JButton("");
         Button_renzoku_orikaesi.addActionListener(e -> {
-            img_explanation_fname = "qqq/renzoku_orikaesi.png";
-            updateExplanation();
+            setHelp("qqq/renzoku_orikaesi.png");
 
             i_mouse_modeA = MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw3.add(Button_renzoku_orikaesi);
@@ -2070,14 +2008,13 @@ public class App extends JFrame implements ActionListener {
 // -------------40;Parallel line input mode.
         JButton Button_heikousen = new JButton("");//Button_suisen	= new JButton(	"suisen"	);
         Button_heikousen.addActionListener(e -> {
-            img_explanation_fname = "qqq/heikousen.png";
-            updateExplanation();
+            setHelp("qqq/heikousen.png");
             i_mouse_modeA = MouseMode.PARALLEL_DRAW_40;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.PARALLEL_DRAW_40;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw4.add(Button_heikousen);
@@ -2089,14 +2026,13 @@ public class App extends JFrame implements ActionListener {
 // -------------51;Parallel line width specification input mode.
         JButton Button_heikousen_width_sitei = new JButton("");
         Button_heikousen_width_sitei.addActionListener(e -> {
-            img_explanation_fname = "qqq/heikousen_haba_sitei.png";
-            updateExplanation();
+            setHelp("qqq/heikousen_haba_sitei.png");
             i_mouse_modeA = MouseMode.PARALLEL_DRAW_WIDTH_51;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.PARALLEL_DRAW_WIDTH_51;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw4.add(Button_heikousen_width_sitei);
@@ -2110,15 +2046,14 @@ public class App extends JFrame implements ActionListener {
 // -------------71;Foldable line + grid point system input
         JButton Button_oritatami_kanousen_and_kousitenkei_simple = new JButton("");
         Button_oritatami_kanousen_and_kousitenkei_simple.addActionListener(e -> {
-            img_explanation_fname = "qqq/oritatami_kanousen_and_kousitenkei_simple.png";
-            updateExplanation();
+            setHelp("qqq/oritatami_kanousen_and_kousitenkei_simple.png");
 
             i_mouse_modeA = MouseMode.FOLDABLE_LINE_DRAW_71;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.FOLDABLE_LINE_DRAW_71;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw4.add(Button_oritatami_kanousen_and_kousitenkei_simple);
@@ -2144,10 +2079,9 @@ public class App extends JFrame implements ActionListener {
             System.out.println("i_egaki_dankai = " + es1.i_drawing_stage);
             System.out.println("i_kouho_dankai = " + es1.i_candidate_stage);
 
-            img_explanation_fname = "qqq/all_s_step_to_orisen.png";
-            updateExplanation();
+            setHelp("qqq/all_s_step_to_orisen.png");
             es1.all_s_step_to_orisen();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw29.add(Button_all_s_step_to_orisen);
@@ -2162,15 +2096,14 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_sakananohone = new JButton("");
         Button_sakananohone.addActionListener(e -> {
-            img_explanation_fname = "qqq/sakananohone.png";
-            updateExplanation();
+            setHelp("qqq/sakananohone.png");
 
             i_mouse_modeA = MouseMode.FISH_BONE_DRAW_33;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.FISH_BONE_DRAW_33;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw29.add(Button_sakananohone);
@@ -2186,15 +2119,14 @@ public class App extends JFrame implements ActionListener {
 // -------------35;Double wrap mode.
         JButton Button_fuku_orikaesi = new JButton("");//Button_orikaesi	= new JButton(	"orikaesi"	);
         Button_fuku_orikaesi.addActionListener(e -> {
-            img_explanation_fname = "qqq/fuku_orikaesi.png";
-            updateExplanation();
+            setHelp("qqq/fuku_orikaesi.png");
 
             i_mouse_modeA = MouseMode.DOUBLE_SYMMETRIC_DRAW_35;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DOUBLE_SYMMETRIC_DRAW_35;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw29.add(Button_fuku_orikaesi);
@@ -2238,13 +2170,12 @@ public class App extends JFrame implements ActionListener {
             text2.setText(String.valueOf(foldLineDividingNumber));
             es1.setFoldLineDividingNumber(foldLineDividingNumber);
 
-            img_explanation_fname = "qqq/senbun_bunkatu_set.png";
-            updateExplanation();
+            setHelp("qqq/senbun_bunkatu_set.png");
             i_mouse_modeA = MouseMode.LINE_SEGMENT_DIVISION_27;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_DIVISION_27;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw15.add(Button_lineSegment_division_set);
@@ -2269,14 +2200,13 @@ public class App extends JFrame implements ActionListener {
             text2.setText(String.valueOf(foldLineDividingNumber));
             es1.setFoldLineDividingNumber(foldLineDividingNumber);
 
-            img_explanation_fname = "qqq/senbun_b_nyuryoku.png";
-            updateExplanation();
+            setHelp("qqq/senbun_b_nyuryoku.png");
             i_mouse_modeA = MouseMode.LINE_SEGMENT_DIVISION_27;
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_DIVISION_27;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw15.add(Button_senbun_b_nyuryoku);
@@ -2299,12 +2229,11 @@ public class App extends JFrame implements ActionListener {
         JButton Button_select =
                 new JButton("sel");
         Button_select.addActionListener(e -> {
-            img_explanation_fname = "qqq/Select.png";
-            updateExplanation();
+            setHelp("qqq/Select.png");
 
             i_mouse_modeA = MouseMode.CREASE_SELECT_19;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw6.add(Button_select);
@@ -2318,10 +2247,9 @@ public class App extends JFrame implements ActionListener {
         JButton Button_select_all = new JButton("s_al");//
         Button_select_all.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/select_all.png";
-            updateExplanation();
+            setHelp("qqq/select_all.png");
             es1.select_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw6.add(Button_select_all);
@@ -2340,12 +2268,11 @@ public class App extends JFrame implements ActionListener {
         JButton Button_unselect =
                 new JButton("unsel");
         Button_unselect.addActionListener(e -> {
-            img_explanation_fname = "qqq/unselect.png";
-            updateExplanation();
+            setHelp("qqq/unselect.png");
 
             i_mouse_modeA = MouseMode.CREASE_UNSELECT_20;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw7.add(Button_unselect);
@@ -2358,10 +2285,9 @@ public class App extends JFrame implements ActionListener {
         JButton Button_unselect_all = new JButton("uns_al");//
         Button_unselect_all.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/unselect_all.png";
-            updateExplanation();
+            setHelp("qqq/unselect_all.png");
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw7.add(Button_unselect_all);
@@ -2383,13 +2309,12 @@ public class App extends JFrame implements ActionListener {
         Button_move = new JButton("move");
         Button_move.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/move.png";
-            updateExplanation();
+            setHelp("qqq/move.png");
             selectionOperationMode = SelectionOperationMode.MOVE_1;
             Button_sel_mou_wakukae();
 
             i_mouse_modeA = MouseMode.CREASE_MOVE_21;
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
         });
@@ -2403,15 +2328,14 @@ public class App extends JFrame implements ActionListener {
         Button_move_2p2p = new JButton("mv_4p");
         Button_move_2p2p.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/move_2p2p.png";
-            updateExplanation();
+            setHelp("qqq/move_2p2p.png");
             selectionOperationMode = SelectionOperationMode.MOVE4P_2;
             Button_sel_mou_wakukae();
 
 
             i_mouse_modeA = MouseMode.CREASE_MOVE_4P_31;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw16.add(Button_move_2p2p);
@@ -2433,15 +2357,14 @@ public class App extends JFrame implements ActionListener {
         Button_copy_paste = new JButton("copy");
         Button_copy_paste.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/copy_paste.png";
-            updateExplanation();
+            setHelp("qqq/copy_paste.png");
             selectionOperationMode = SelectionOperationMode.COPY_3;
             Button_sel_mou_wakukae();
 
 
             i_mouse_modeA = MouseMode.CREASE_COPY_22;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw17.add(Button_copy_paste);
@@ -2456,15 +2379,14 @@ public class App extends JFrame implements ActionListener {
         Button_copy_paste_2p2p = new JButton("cp_4p");
         Button_copy_paste_2p2p.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/copy_paste_2p2p.png";
-            updateExplanation();
+            setHelp("qqq/copy_paste_2p2p.png");
             selectionOperationMode = SelectionOperationMode.COPY4P_4;
             Button_sel_mou_wakukae();
 
 
             i_mouse_modeA = MouseMode.CREASE_COPY_4P_32;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw17.add(Button_copy_paste_2p2p);
@@ -2488,14 +2410,13 @@ public class App extends JFrame implements ActionListener {
         Button_kyouei = new JButton("");//new JButton(	"kyouei"	);
         Button_kyouei.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/kyouei.png";
-            updateExplanation();
+            setHelp("qqq/kyouei.png");
             selectionOperationMode = SelectionOperationMode.MIRROR_5;
             Button_sel_mou_wakukae();
 
             i_mouse_modeA = MouseMode.DRAW_CREASE_SYMMETRIC_12;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw35.add(Button_kyouei);
@@ -2513,11 +2434,10 @@ public class App extends JFrame implements ActionListener {
         JButton Button_del_selected_senbun = new JButton("d_s_L");//new JButton(	"del_sel_L"	);
         Button_del_selected_senbun.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/del_selected_senbun.png";
-            updateExplanation();
+            setHelp("qqq/del_selected_senbun.png");
             es1.del_selected_senbun();
             es1.record();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw35.add(Button_del_selected_senbun);
@@ -2547,8 +2467,7 @@ public class App extends JFrame implements ActionListener {
         JButton Button_senbun_sakujyo = new JButton("");
         Button_senbun_sakujyo.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/senbun_sakujyo.png";
-            updateExplanation();
+            setHelp("qqq/senbun_sakujyo.png");
             i_mouse_modeA = MouseMode.LINE_SEGMENT_DELETE_3;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2557,7 +2476,7 @@ public class App extends JFrame implements ActionListener {
             es1.setFoldLineAdditional(foldLineAdditionalInputMode);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw5.add(Button_senbun_sakujyo);
@@ -2573,8 +2492,7 @@ public class App extends JFrame implements ActionListener {
         JButton Button_kuro_lineSegment_removal = new JButton("");
         Button_kuro_lineSegment_removal.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/kuro_senbun_sakujyo.png";
-            updateExplanation();
+            setHelp("qqq/kuro_senbun_sakujyo.png");
             i_mouse_modeA = MouseMode.LINE_SEGMENT_DELETE_3;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2583,7 +2501,7 @@ public class App extends JFrame implements ActionListener {
             es1.setFoldLineAdditional(foldLineAdditionalInputMode);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw5.add(Button_kuro_lineSegment_removal);
@@ -2599,8 +2517,7 @@ public class App extends JFrame implements ActionListener {
         JButton Button_senbun3_sakujyo = new JButton("");
         Button_senbun3_sakujyo.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/senbun3_sakujyo.png";
-            updateExplanation();
+            setHelp("qqq/senbun3_sakujyo.png");
             i_mouse_modeA = MouseMode.LINE_SEGMENT_DELETE_3;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -2609,7 +2526,7 @@ public class App extends JFrame implements ActionListener {
             es1.setFoldLineAdditional(foldLineAdditionalInputMode);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw5.add(Button_senbun3_sakujyo);
@@ -2624,15 +2541,14 @@ public class App extends JFrame implements ActionListener {
         JButton Button_eda_kesi = new JButton("");//JButton	Button_eda_kesi		= new JButton(	"Trim"	);
         Button_eda_kesi.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/eda_kesi.png";
-            updateExplanation();
+            setHelp("qqq/eda_kesi.png");
             es1.point_removal();
             es1.overlapping_line_removal();
             es1.branch_trim(0.000001);
             es1.circle_organize();
             es1.record();
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw5.add(Button_eda_kesi);
@@ -2658,8 +2574,7 @@ public class App extends JFrame implements ActionListener {
 // *******西***********************************************************************
         Button_to_mountain = new JButton(" ");
         Button_to_mountain.addActionListener(e -> {
-            img_explanation_fname = "qqq/M_nisuru.png";
-            updateExplanation();
+            setHelp("qqq/M_nisuru.png");
             Button_reset();
             Button_to_mountain.setForeground(Color.black);
             Button_to_mountain.setBackground(Color.red);
@@ -2668,7 +2583,7 @@ public class App extends JFrame implements ActionListener {
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
 
 
@@ -2686,8 +2601,7 @@ public class App extends JFrame implements ActionListener {
 // ******************************************************************************
         Buton_to_valley = new JButton(" ");
         Buton_to_valley.addActionListener(e -> {
-            img_explanation_fname = "qqq/V_nisuru.png";
-            updateExplanation();
+            setHelp("qqq/V_nisuru.png");
             Button_reset();
             Buton_to_valley.setForeground(Color.black);
             Buton_to_valley.setBackground(Color.blue);
@@ -2696,7 +2610,7 @@ public class App extends JFrame implements ActionListener {
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw8.add(Buton_to_valley);
@@ -2708,8 +2622,7 @@ public class App extends JFrame implements ActionListener {
 // ******************************************************************************
         Button_to_edge = new JButton(" ");
         Button_to_edge.addActionListener(e -> {
-            img_explanation_fname = "qqq/E_nisuru.png";
-            updateExplanation();
+            setHelp("qqq/E_nisuru.png");
             Button_reset();
             Button_to_edge.setForeground(Color.white);
             Button_to_edge.setBackground(Color.black);
@@ -2718,7 +2631,7 @@ public class App extends JFrame implements ActionListener {
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw8.add(Button_to_edge);
@@ -2732,8 +2645,7 @@ public class App extends JFrame implements ActionListener {
 
         Button_to_aux_live = new JButton(" ");//HKとは補助活線のこと
         Button_to_aux_live.addActionListener(e -> {
-            img_explanation_fname = "qqq/HK_nisuru.png";
-            updateExplanation();
+            setHelp("qqq/HK_nisuru.png");
             Button_reset();
             Button_to_aux_live.setForeground(Color.white);
             Button_to_aux_live.setBackground(new Color(100, 200, 200));
@@ -2742,7 +2654,7 @@ public class App extends JFrame implements ActionListener {
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw8.add(Button_to_aux_live);
@@ -2766,11 +2678,10 @@ public class App extends JFrame implements ActionListener {
 // *****西*************************************************************************
         JButton Button_zen_yama_tani_henkan = new JButton("AC");
         Button_zen_yama_tani_henkan.addActionListener(e -> {
-            img_explanation_fname = "qqq/zen_yama_tani_henkan.png";
-            updateExplanation();
+            setHelp("qqq/zen_yama_tani_henkan.png");
             es1.allMountainValleyChange();
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw28.add(Button_zen_yama_tani_henkan);
@@ -2780,8 +2691,7 @@ public class App extends JFrame implements ActionListener {
         Button_senbun_henkan2 = new JButton("");//new JButton(	"L_chan"	);
         Button_senbun_henkan2.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/senbun_henkan2.png";
-            updateExplanation();
+            setHelp("qqq/senbun_henkan2.png");
             Button_reset();
             Button_senbun_henkan2.setBackground(new Color(138, 43, 226));
 
@@ -2789,7 +2699,7 @@ public class App extends JFrame implements ActionListener {
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw28.add(Button_senbun_henkan2);
@@ -2804,15 +2714,14 @@ public class App extends JFrame implements ActionListener {
         JButton Button_senbun_henkan = new JButton("");//new JButton(	"L_chan"	);
         Button_senbun_henkan.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/senbun_henkan.png";
-            updateExplanation();
+            setHelp("qqq/senbun_henkan.png");
             Button_reset();
 
             i_mouse_modeA = MouseMode.CHANGE_CREASE_TYPE_4;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw28.add(Button_senbun_henkan);
@@ -2833,8 +2742,7 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_in_L_col_change = new JButton("");//new JButton(	"in_L_col_change"	);
         Button_in_L_col_change.addActionListener(e -> {
-            img_explanation_fname = "qqq/in_L_col_change.png";
-            updateExplanation();
+            setHelp("qqq/in_L_col_change.png");
 
             i_mouse_modeA = MouseMode.CREASE_MAKE_MV_34;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
@@ -2851,7 +2759,7 @@ public class App extends JFrame implements ActionListener {
 
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw21.add(Button_in_L_col_change);
@@ -2865,8 +2773,7 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_on_L_col_change = new JButton("");//new JButton(	"on_L_col_change"	);
         Button_on_L_col_change.addActionListener(e -> {
-            img_explanation_fname = "qqq/on_L_col_change.png";
-            updateExplanation();
+            setHelp("qqq/on_L_col_change.png");
             i_mouse_modeA = MouseMode.CREASES_ALTERNATE_MV_36;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.CREASES_ALTERNATE_MV_36;
@@ -2882,7 +2789,7 @@ public class App extends JFrame implements ActionListener {
 
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw21.add(Button_on_L_col_change);
@@ -2903,13 +2810,12 @@ public class App extends JFrame implements ActionListener {
         JButton Button_v_add = new JButton("");// new JButton(	"V_add"	);
         Button_v_add.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/v_add.png";
-            updateExplanation();
+            setHelp("qqq/v_add.png");
             i_mouse_modeA = MouseMode.DRAW_POINT_14;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw10.add(Button_v_add);
@@ -2924,14 +2830,13 @@ public class App extends JFrame implements ActionListener {
 // -------------15;点削除モード。
         JButton Button_v_del = new JButton("");//new JButton(	"V_del"	);
         Button_v_del.addActionListener(e -> {
-            img_explanation_fname = "qqq/v_del.png";
-            updateExplanation();
+            setHelp("qqq/v_del.png");
 
             i_mouse_modeA = MouseMode.DELETE_POINT_15;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw10.add(Button_v_del);
@@ -2947,14 +2852,13 @@ public class App extends JFrame implements ActionListener {
 // -------------15;点削除モード（カラーチェンジ）。
         JButton Button_v_del_cc = new JButton("");//new JButton(	"V_del"	);
         Button_v_del_cc.addActionListener(e -> {
-            img_explanation_fname = "qqq/v_del_cc.png";
-            updateExplanation();
+            setHelp("qqq/v_del_cc.png");
 
             i_mouse_modeA = MouseMode.VERTEX_DELETE_ON_CREASE_41;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw10.add(Button_v_del_cc);
@@ -2983,12 +2887,11 @@ public class App extends JFrame implements ActionListener {
         JButton Button_v_del_all = new JButton("");//
         Button_v_del_all.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/v_del_all.png";
-            updateExplanation();
+            setHelp("qqq/v_del_all.png");
             //i_mouse_modeA=19;
             es1.v_del_all();
             System.out.println("es1.v_del_all()");
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw13.add(Button_v_del_all);
@@ -3003,11 +2906,10 @@ public class App extends JFrame implements ActionListener {
         JButton Button_v_del_all_cc = new JButton("");//
         Button_v_del_all_cc.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/v_del_all_cc.png";
-            updateExplanation();
+            setHelp("qqq/v_del_all_cc.png");
             es1.v_del_all_cc();
             System.out.println("es1.v_del_all_cc()");
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnlw13.add(Button_v_del_all_cc);
@@ -3044,8 +2946,7 @@ public class App extends JFrame implements ActionListener {
         //格子表示2
         Button_grid_decrease = new JButton("");//new JButton(	"Grid2"	);
         Button_grid_decrease.addActionListener(e -> {
-            img_explanation_fname = "qqq/kitei2.png";
-            updateExplanation();
+            setHelp("qqq/kitei2.png");
 
             nyuuryoku_kitei = nyuuryoku_kitei / 2;
             if (nyuuryoku_kitei < 1) {
@@ -3101,8 +3002,7 @@ public class App extends JFrame implements ActionListener {
         Button_syutoku.addActionListener(e -> {
 
 
-            img_explanation_fname = "qqq/syutoku.png";
-            updateExplanation();
+            setHelp("qqq/syutoku.png");
             set_grid_bunkatu_suu();
 
 
@@ -3117,8 +3017,7 @@ public class App extends JFrame implements ActionListener {
         Button_grid_increase = new JButton("");// new JButton(	"Grid"	);
 
         Button_grid_increase.addActionListener(e -> {
-            img_explanation_fname = "qqq/kitei.png";
-            updateExplanation();
+            setHelp("qqq/kitei.png");
 
             nyuuryoku_kitei = nyuuryoku_kitei * 2;
 
@@ -3158,8 +3057,7 @@ public class App extends JFrame implements ActionListener {
 // -------------格子線の色の選択
         JButton Button_grid_color = new JButton("C");
         Button_grid_color.addActionListener(e -> {
-            img_explanation_fname = "qqq/kousi_color.png";
-            updateExplanation();
+            setHelp("qqq/kousi_color.png");
             //Button_kyoutuu_sagyou();
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
@@ -3194,8 +3092,7 @@ public class App extends JFrame implements ActionListener {
         JButton Button_grid_lineWidth_decrease = new JButton("");
         Button_grid_lineWidth_decrease.addActionListener(e -> {
             kus.decreaseGridLineWidth();
-            img_explanation_fname = "qqq/kousi_senhaba_sage.png";
-            updateExplanation();
+            setHelp("qqq/kousi_senhaba_sage.png");
             //Button_kyoutuu_sagyou();
             canvas.repaint();
         });
@@ -3210,8 +3107,7 @@ public class App extends JFrame implements ActionListener {
         JButton Button_grid_lineWidthIncrease = new JButton("");
         Button_grid_lineWidthIncrease.addActionListener(e -> {
             kus.increaseGridLineWidth();
-            img_explanation_fname = "qqq/kousi_senhaba_age.png";
-            updateExplanation();
+            setHelp("qqq/kousi_senhaba_age.png");
             //Button_kyoutuu_sagyou();
             canvas.repaint();
         });
@@ -3229,8 +3125,7 @@ public class App extends JFrame implements ActionListener {
         Button_i_kitei_jyoutai.addActionListener(e -> {
 
 
-            img_explanation_fname = "qqq/i_kitei_jyoutai.png";
-            updateExplanation();
+            setHelp("qqq/i_kitei_jyoutai.png");
 
             es1.setBaseState(es1.getBaseState().advance());
             //Button_kyoutuu_sagyou();
@@ -3265,8 +3160,7 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_memori_tate_idou = new JButton("");
         Button_memori_tate_idou.addActionListener(e -> {
-            img_explanation_fname = "qqq/memori_tate_idou.png";
-            updateExplanation();
+            setHelp("qqq/memori_tate_idou.png");
             es1.a_to_parallel_scale_position_change();
 
             //Button_kyoutuu_sagyou();
@@ -3289,8 +3183,7 @@ public class App extends JFrame implements ActionListener {
 // *****西*************************************************************************
         JButton Button_scale_interval_syutoku = new JButton("S");
         Button_scale_interval_syutoku.addActionListener(e -> {
-            img_explanation_fname = "qqq/memori_kankaku_syutoku.png";
-            updateExplanation();
+            setHelp("qqq/memori_kankaku_syutoku.png");
             int scale_interval_old = scale_interval;
             scale_interval = StringOp.String2int(text25.getText(), scale_interval_old);
             if (scale_interval < 0) {
@@ -3310,8 +3203,7 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_memori_yoko_idou = new JButton("");
         Button_memori_yoko_idou.addActionListener(e -> {
-            img_explanation_fname = "qqq/memori_yoko_idou.png";
-            updateExplanation();
+            setHelp("qqq/memori_yoko_idou.png");
 
             es1.b_to_parallel_scale_position_change();
             //Button_kyoutuu_sagyou();repaint();
@@ -3327,8 +3219,7 @@ public class App extends JFrame implements ActionListener {
 // -------------格子目盛り線の色の選択
         JButton Button_grid_scale_color = new JButton("C");
         Button_grid_scale_color.addActionListener(e -> {
-            img_explanation_fname = "qqq/kousi_memori_color.png";
-            updateExplanation();
+            setHelp("qqq/kousi_memori_color.png");
             //Button_kyoutuu_sagyou();
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
@@ -3454,8 +3345,7 @@ public class App extends JFrame implements ActionListener {
 // *****西*************************************************************************
         JButton Button_grid_syutoku = new JButton("Set");
         Button_grid_syutoku.addActionListener(e -> {
-            img_explanation_fname = "qqq/kousi_syutoku.png";
-            updateExplanation();
+            setHelp("qqq/kousi_syutoku.png");
             setGrid();
             //Button_kyoutuu_sagyou();
             canvas.repaint();
@@ -3498,8 +3388,7 @@ public class App extends JFrame implements ActionListener {
 
         ckbox_check1 = new JCheckBox("ckO");
         ckbox_check1.addActionListener(e -> {
-            img_explanation_fname = "qqq/check1.png";
-            updateExplanation();
+            setHelp("qqq/check1.png");
             es1.unselect_all();
 
             if (ckbox_check1.isSelected()) {
@@ -3508,7 +3397,7 @@ public class App extends JFrame implements ActionListener {
             } else {
                 es1.set_i_check1(false);
             }
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         ckbox_check1.setIcon(createImageIcon("ppp/ckbox_check1_off.png"));
@@ -3525,12 +3414,11 @@ public class App extends JFrame implements ActionListener {
         Button_fix1.addActionListener(e -> {
 
 
-            img_explanation_fname = "qqq/fix1.png";
-            updateExplanation();
+            setHelp("qqq/fix1.png");
             es1.unselect_all();
             es1.fix1(0.001, 0.5);
             es1.check1(0.001, 0.5);
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle20.add(Button_fix1);
@@ -3553,8 +3441,7 @@ public class App extends JFrame implements ActionListener {
 
         ckbox_check2 = new JCheckBox("ckT");
         ckbox_check2.addActionListener(e -> {
-            img_explanation_fname = "qqq/check2.png";
-            updateExplanation();
+            setHelp("qqq/check2.png");
             es1.unselect_all();
 
             if (ckbox_check2.isSelected()) {
@@ -3563,7 +3450,7 @@ public class App extends JFrame implements ActionListener {
             } else {
                 es1.setCheck2(false);
             }
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         ckbox_check2.setIcon(createImageIcon("ppp/ckbox_check2_off.png"));
@@ -3580,12 +3467,11 @@ public class App extends JFrame implements ActionListener {
         Button_fix2.addActionListener(e -> {
 
 
-            img_explanation_fname = "qqq/fix2.png";
-            updateExplanation();
+            setHelp("qqq/fix2.png");
             es1.unselect_all();
             es1.fix2(0.001, 0.5);
             es1.check2(0.001, 0.5);
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle21.add(Button_fix2);
@@ -3609,8 +3495,7 @@ public class App extends JFrame implements ActionListener {
 
         ckbox_check3 = new JCheckBox("check A");
         ckbox_check3.addActionListener(e -> {
-            img_explanation_fname = "qqq/check3.png";
-            updateExplanation();
+            setHelp("qqq/check3.png");
             es1.unselect_all();
 
             if (ckbox_check3.isSelected()) {
@@ -3619,7 +3504,7 @@ public class App extends JFrame implements ActionListener {
             } else {
                 es1.setCheck3(false);
             }
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         ckbox_check3.setIcon(createImageIcon("ppp/ckbox_check3_off.png"));
@@ -3642,8 +3527,7 @@ public class App extends JFrame implements ActionListener {
 
         ckbox_check4 = new JCheckBox("cAMV");
         ckbox_check4.addActionListener(e -> {
-            img_explanation_fname = "qqq/check4.png";
-            updateExplanation();
+            setHelp("qqq/check4.png");
             es1.unselect_all();
 
             if (ckbox_check4.isSelected()) {
@@ -3652,7 +3536,7 @@ public class App extends JFrame implements ActionListener {
             } else {
                 es1.setCheck4(false);
             }
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         ckbox_check4.setIcon(createImageIcon("ppp/ckbox_check4_off.png"));
@@ -3675,9 +3559,8 @@ public class App extends JFrame implements ActionListener {
         JButton Button_ck4_color_sage = new JButton("");
         Button_ck4_color_sage.addActionListener(e -> {
             es1.ck4_color_sage();
-            img_explanation_fname = "qqq/ck4_color_sage.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/ck4_color_sage.png");
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle29.add(Button_ck4_color_sage);
@@ -3691,9 +3574,8 @@ public class App extends JFrame implements ActionListener {
         JButton Button_ck4_color_age = new JButton("");
         Button_ck4_color_age.addActionListener(e -> {
             es1.ck4_color_age();
-            img_explanation_fname = "qqq/ck4_color_age.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/ck4_color_age.png");
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle29.add(Button_ck4_color_age);
@@ -3727,8 +3609,7 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_angle_kei_a_tiisaku = new JButton("");
         Button_angle_kei_a_tiisaku.addActionListener(e -> {
-            img_explanation_fname = "qqq/kakudo_kei_a_tiisaku.png";
-            updateExplanation();
+            setHelp("qqq/kakudo_kei_a_tiisaku.png");
 
             switch (angle_system_input_id) {
                 case DEG_1:
@@ -3754,7 +3635,7 @@ public class App extends JFrame implements ActionListener {
 
             es1.set_id_angle_system(id_angle_system_a);
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle6.add(Button_angle_kei_a_tiisaku);
@@ -3771,8 +3652,7 @@ public class App extends JFrame implements ActionListener {
         //-------------------------------------------------------------
         Button_angle_system_a = new JButton("180/" + id_angle_system_a + "=" + (double) (Math.round((180.0 / ((double) id_angle_system_a)) * 1000)) / 1000.0);
         Button_angle_system_a.addActionListener(e -> {
-            img_explanation_fname = "qqq/kakudo_kei_a.png";
-            updateExplanation();
+            setHelp("qqq/kakudo_kei_a.png");
 
             switch (angle_system_input_id) {
                 case DEG_1:
@@ -3798,7 +3678,7 @@ public class App extends JFrame implements ActionListener {
 
             es1.set_id_angle_system(id_angle_system_a);
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle6.add(Button_angle_system_a);
@@ -3814,8 +3694,7 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_kakudo_kei_a_ookiku = new JButton("");
         Button_kakudo_kei_a_ookiku.addActionListener(e -> {
-            img_explanation_fname = "qqq/kakudo_kei_a_ookiku.png";
-            updateExplanation();
+            setHelp("qqq/kakudo_kei_a_ookiku.png");
 
             switch (angle_system_input_id) {
                 case DEG_1:
@@ -3845,7 +3724,7 @@ public class App extends JFrame implements ActionListener {
 
             es1.set_id_angle_system(id_angle_system_a);
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle6.add(Button_kakudo_kei_a_ookiku);
@@ -3870,8 +3749,7 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_kakudo_kei_b_tiisaku = new JButton("");
         Button_kakudo_kei_b_tiisaku.addActionListener(e -> {
-            img_explanation_fname = "qqq/kakudo_kei_b_tiisaku.png";
-            updateExplanation();
+            setHelp("qqq/kakudo_kei_b_tiisaku.png");
 
             switch (angle_system_input_id) {
                 case DEG_1:
@@ -3898,7 +3776,7 @@ public class App extends JFrame implements ActionListener {
 
             es1.set_id_angle_system(id_angle_system_b);
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle7.add(Button_kakudo_kei_b_tiisaku);
@@ -3915,8 +3793,7 @@ public class App extends JFrame implements ActionListener {
         //-------------------------------------------------------------
         Button_angle_system_b = new JButton("180/" + id_angle_system_b + "=" + (double) (Math.round((180.0 / ((double) id_angle_system_b)) * 1000)) / 1000.0);
         Button_angle_system_b.addActionListener(e -> {
-            img_explanation_fname = "qqq/kakudo_kei_b.png";
-            updateExplanation();
+            setHelp("qqq/kakudo_kei_b.png");
 
             switch (angle_system_input_id) {
                 case DEG_1:
@@ -3942,7 +3819,7 @@ public class App extends JFrame implements ActionListener {
 
             es1.set_id_angle_system(id_angle_system_b);
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle7.add(Button_angle_system_b);
@@ -3958,8 +3835,7 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_kakudo_kei_b_increase = new JButton("");
         Button_kakudo_kei_b_increase.addActionListener(e -> {
-            img_explanation_fname = "qqq/kakudo_kei_b_ookiku.png";
-            updateExplanation();
+            setHelp("qqq/kakudo_kei_b_ookiku.png");
 
             switch (angle_system_input_id) {
                 case DEG_1:
@@ -3987,7 +3863,7 @@ public class App extends JFrame implements ActionListener {
 
             es1.set_id_angle_system(id_angle_system_b);
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle7.add(Button_kakudo_kei_b_increase);
@@ -4002,8 +3878,7 @@ public class App extends JFrame implements ActionListener {
 // ******************************************************************************
         JButton Button_id_kakudo_kei_12 = new JButton("180/12= 15");
         Button_id_kakudo_kei_12.addActionListener(e -> {
-            img_explanation_fname = "qqq/id_kakudo_kei_12.png";
-            updateExplanation();
+            setHelp("qqq/id_kakudo_kei_12.png");
 
             switch (angle_system_input_id) {
                 case DEG_1:
@@ -4027,7 +3902,7 @@ public class App extends JFrame implements ActionListener {
 
             es1.set_id_angle_system(12);
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         //      pnle.add(Button_id_kakudo_kei_12);
@@ -4040,8 +3915,7 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_id_kakudo_kei_08 = new JButton("180/8= 22.5");
         Button_id_kakudo_kei_08.addActionListener(e -> {
-            img_explanation_fname = "qqq/id_kakudo_kei_08.png";
-            updateExplanation();
+            setHelp("qqq/id_kakudo_kei_08.png");
 
             switch (angle_system_input_id) {
                 case DEG_1:
@@ -4065,7 +3939,7 @@ public class App extends JFrame implements ActionListener {
 
             es1.set_id_angle_system(8);
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         // pnle.add(Button_id_kakudo_kei_08);
@@ -4105,8 +3979,7 @@ public class App extends JFrame implements ActionListener {
         Button_restricted_angle_set_a.addActionListener(e -> {
 
             set_restricted_angle_abc();
-            img_explanation_fname = "qqq/jiyuu_kaku_set_a.png";
-            updateExplanation();
+            setHelp("qqq/jiyuu_kaku_set_a.png");
 
             switch (angle_system_input_id) {
                 case DEG_1:
@@ -4130,7 +4003,7 @@ public class App extends JFrame implements ActionListener {
 
             es1.set_id_angle_system(0);
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         Button_restricted_angle_set_a.setBounds(101, 2, 10, 19);
@@ -4173,8 +4046,7 @@ public class App extends JFrame implements ActionListener {
         JButton Button_restricted_angle_set_b = new JButton("");
         Button_restricted_angle_set_b.addActionListener(e -> {
             set_restricted_angle_def();
-            img_explanation_fname = "qqq/jiyuu_kaku_set_b.png";
-            updateExplanation();
+            setHelp("qqq/jiyuu_kaku_set_b.png");
 
             switch (angle_system_input_id) {
                 case DEG_1:
@@ -4198,7 +4070,7 @@ public class App extends JFrame implements ActionListener {
 
             es1.set_id_angle_system(0);
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         Button_restricted_angle_set_b.setBounds(101, 2, 10, 19);
@@ -4234,8 +4106,7 @@ public class App extends JFrame implements ActionListener {
 // -------------13;角度系モード。
         JButton Button_deg = new JButton("");//new JButton(	"kakudokei"	);
         Button_deg.addActionListener(e -> {
-            img_explanation_fname = "qqq/deg.png";
-            updateExplanation();
+            setHelp("qqq/deg.png");
 
             angle_system_input_id = AngleSystemInputType.DEG_1;
             i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
@@ -4243,7 +4114,7 @@ public class App extends JFrame implements ActionListener {
 
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle2.add(Button_deg);
@@ -4257,8 +4128,7 @@ public class App extends JFrame implements ActionListener {
 // -----東--------17;角度系モード。//2点指定
         JButton Button_deg3 = new JButton("");//new JButton(	"kakudokei_3"	);
         Button_deg3.addActionListener(e -> {
-            img_explanation_fname = "qqq/deg3.png";
-            updateExplanation();
+            setHelp("qqq/deg3.png");
 
             angle_system_input_id = AngleSystemInputType.DEG_3;
             i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
@@ -4266,7 +4136,7 @@ public class App extends JFrame implements ActionListener {
 
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle2.add(Button_deg3);
@@ -4280,14 +4150,13 @@ public class App extends JFrame implements ActionListener {
         JButton Button_senbun_nyuryoku37 = new JButton("");
         Button_senbun_nyuryoku37.addActionListener(e -> {
             //Button	Button_senbun_nyuryoku37	= new Button(	"L_draw11"	);Button_senbun_nyuryoku11.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-            img_explanation_fname = "qqq/senbun_nyuryoku37.png";
-            updateExplanation();
+            setHelp("qqq/senbun_nyuryoku37.png");
             angle_system_input_id = AngleSystemInputType.DEG_5;
             i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
 
 //System.out.println("AAAAA_1a");
@@ -4312,14 +4181,13 @@ public class App extends JFrame implements ActionListener {
         JButton Button_deg2 = new JButton("");
         Button_deg2.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/deg2.png";
-            updateExplanation();
+            setHelp("qqq/deg2.png");
             angle_system_input_id = AngleSystemInputType.DEG_2;
             i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle3.add(Button_deg2);
@@ -4332,14 +4200,13 @@ public class App extends JFrame implements ActionListener {
         JButton Button_deg4 = new JButton("");
         Button_deg4.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/deg4.png";
-            updateExplanation();
+            setHelp("qqq/deg4.png");
             angle_system_input_id = AngleSystemInputType.DEG_4;
             i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle3.add(Button_deg4);
@@ -4384,12 +4251,11 @@ public class App extends JFrame implements ActionListener {
             text9.setText(String.valueOf(numPolygonCorners));
             es1.setNumPolygonCorners(numPolygonCorners);
 
-            img_explanation_fname = "qqq/kakusuu_set.png";
-            updateExplanation();
+            setHelp("qqq/kakusuu_set.png");
             i_mouse_modeA = MouseMode.POLYGON_SET_NO_CORNERS_29;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle5.add(Button_kakusuu_set);
@@ -4415,12 +4281,11 @@ public class App extends JFrame implements ActionListener {
             text9.setText(String.valueOf(numPolygonCorners));
             es1.setNumPolygonCorners(numPolygonCorners);
 
-            img_explanation_fname = "qqq/sei_takakukei.png";
-            updateExplanation();
+            setHelp("qqq/sei_takakukei.png");
             i_mouse_modeA = MouseMode.POLYGON_SET_NO_CORNERS_29;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.POLYGON_SET_NO_CORNERS_29;
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
             es1.unselect_all();
         });
@@ -4454,13 +4319,12 @@ public class App extends JFrame implements ActionListener {
 // -------------47;円入力モード。(フリー)
         JButton Button_en_nyuryoku_free = new JButton("");
         Button_en_nyuryoku_free.addActionListener(e -> {
-            img_explanation_fname = "qqq/en_nyuryoku_free.png";
-            updateExplanation();
+            setHelp("qqq/en_nyuryoku_free.png");
             i_mouse_modeA = MouseMode.CIRCLE_DRAW_FREE_47;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
 
@@ -4477,13 +4341,12 @@ public class App extends JFrame implements ActionListener {
 // -------------42;円入力モード。
         JButton Button_en_nyuryoku = new JButton("");
         Button_en_nyuryoku.addActionListener(e -> {
-            img_explanation_fname = "qqq/en_nyuryoku.png";
-            updateExplanation();
+            setHelp("qqq/en_nyuryoku.png");
             i_mouse_modeA = MouseMode.CIRCLE_DRAW_42;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
 
@@ -4499,13 +4362,12 @@ public class App extends JFrame implements ActionListener {
 // -------------44;Circle separate input mode. (Specify the center and radius apart)
         JButton Button_en_bunri_nyuryoku = new JButton("");
         Button_en_bunri_nyuryoku.addActionListener(e -> {
-            img_explanation_fname = "qqq/en_bunri_nyuryoku.png";
-            updateExplanation();
+            setHelp("qqq/en_bunri_nyuryoku.png");
             i_mouse_modeA = MouseMode.CIRCLE_DRAW_SEPARATE_44;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
 
@@ -4530,13 +4392,12 @@ public class App extends JFrame implements ActionListener {
 // -------------48;円　同心円追加モード。(元円の円周と同心円の円周との幅は線分で指定する)
         JButton Button_dousin_en_tuika_s = new JButton("");
         Button_dousin_en_tuika_s.addActionListener(e -> {
-            img_explanation_fname = "qqq/dousin_en_tuika_s.png";
-            updateExplanation();
+            setHelp("qqq/dousin_en_tuika_s.png");
             i_mouse_modeA = MouseMode.CIRCLE_DRAW_CONCENTRIC_48;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
 
@@ -4551,13 +4412,12 @@ public class App extends JFrame implements ActionListener {
 // -------------49;円　同心円追加モード。(元円の円周と同心円の円周との幅は他の同心円の組で指定する)
         JButton Button_dousin_en_tuika_d = new JButton("");
         Button_dousin_en_tuika_d.addActionListener(e -> {
-            img_explanation_fname = "qqq/dousin_en_tuika_d.png";
-            updateExplanation();
+            setHelp("qqq/dousin_en_tuika_d.png");
             i_mouse_modeA = MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
 
@@ -4584,14 +4444,13 @@ public class App extends JFrame implements ActionListener {
 // -------------50;Specify 2 circles and add concentric circles to each circle. Make sure that the widths of the band regions formed in each concentric pair are equal so that the added concentric circles touch each other.
         JButton Button_en_en_dousin_en = new JButton("");
         Button_en_en_dousin_en.addActionListener(e -> {
-            img_explanation_fname = "qqq/en_en_dousin_en.png";
-            updateExplanation();
+            setHelp("qqq/en_en_dousin_en.png");
 
             i_mouse_modeA = MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle17.add(Button_en_en_dousin_en);
@@ -4606,14 +4465,13 @@ public class App extends JFrame implements ActionListener {
 // -------------45;2円の共通接線入力モード。
         JButton Button_en_en_sessen = new JButton("");
         Button_en_en_sessen.addActionListener(e -> {
-            img_explanation_fname = "qqq/en_en_sessen.png";
-            updateExplanation();
+            setHelp("qqq/en_en_sessen.png");
 
             i_mouse_modeA = MouseMode.CIRCLE_DRAW_TANGENT_LINE_45;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle17.add(Button_en_en_sessen);
@@ -4638,14 +4496,13 @@ public class App extends JFrame implements ActionListener {
 // -------------43;3点円入力モード。
         JButton Button_en_3ten_nyuryoku = new JButton("");
         Button_en_3ten_nyuryoku.addActionListener(e -> {
-            img_explanation_fname = "qqq/en_3ten_nyuryoku.png";
-            updateExplanation();
+            setHelp("qqq/en_3ten_nyuryoku.png");
 
             i_mouse_modeA = MouseMode.CIRCLE_DRAW_THREE_POINT_43;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle10.add(Button_en_3ten_nyuryoku);
@@ -4661,14 +4518,13 @@ public class App extends JFrame implements ActionListener {
 // -------------46;Inverted input mode.
         JButton Button_hanten = new JButton("");
         Button_hanten.addActionListener(e -> {
-            img_explanation_fname = "qqq/hanten.png";
-            updateExplanation();
+            setHelp("qqq/hanten.png");
 
             i_mouse_modeA = MouseMode.INVERTED_INPUT_46;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle10.add(Button_hanten);
@@ -4698,9 +4554,8 @@ public class App extends JFrame implements ActionListener {
 // ---------補助線や円の色を特注で変えるさいの指定色の指定
         Button_sen_tokutyuu_color = new JButton("C_col ");
         Button_sen_tokutyuu_color.addActionListener(e -> {
-            img_explanation_fname = "qqq/sen_tokutyuu_color.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/sen_tokutyuu_color.png");
+            Button_shared_operation();
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
             //以下にやりたいことを書く
@@ -4732,13 +4587,12 @@ public class App extends JFrame implements ActionListener {
         JButton Button_sen_tokutyuu_color_henkou = new JButton("");
         Button_sen_tokutyuu_color_henkou.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/sen_tokutyuu_color_henkou.png";
-            updateExplanation();
+            setHelp("qqq/sen_tokutyuu_color_henkou.png");
             i_mouse_modeA = MouseMode.CIRCLE_CHANGE_COLOR_59;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             es1.set_sen_tokutyuu_color(sen_tokutyuu_color);
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle8.add(Button_sen_tokutyuu_color_henkou);
@@ -4770,11 +4624,10 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_h_undo = new JButton("");
         Button_h_undo.addActionListener(e -> {
-            img_explanation_fname = "qqq/undo.png";
-            updateExplanation();
+            setHelp("qqq/undo.png");
 
             es1.h_undo();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle12.add(Button_h_undo);
@@ -4795,8 +4648,7 @@ public class App extends JFrame implements ActionListener {
         Button_h_undo_syutoku.addActionListener(e -> {
 
 
-            img_explanation_fname = "qqq/h_undo_syutoku.png";
-            updateExplanation();
+            setHelp("qqq/h_undo_syutoku.png");
             int i_h_undo_suu_old = i_undo_suu;
             i_h_undo_suu = StringOp.String2int(text11.getText(), i_h_undo_suu_old);
             if (i_h_undo_suu < 0) {
@@ -4819,11 +4671,10 @@ public class App extends JFrame implements ActionListener {
         Button_h_redo.addActionListener(e -> {
 
 
-            img_explanation_fname = "qqq/h_redo.png";
-            updateExplanation();
+            setHelp("qqq/h_redo.png");
 
             es1.h_redo();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle12.add(Button_h_redo);
@@ -4856,9 +4707,8 @@ public class App extends JFrame implements ActionListener {
                 i_h_lineWidth = 3;
             }
 
-            img_explanation_fname = "qqq/h_senhaba_sage.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/h_senhaba_sage.png");
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle14.add(Button_h_lineWidthDecrease);
@@ -4872,9 +4722,8 @@ public class App extends JFrame implements ActionListener {
         JButton Button_h_lineWidthIncrease = new JButton("");
         Button_h_lineWidthIncrease.addActionListener(e -> {
             i_h_lineWidth = i_h_lineWidth + 2;
-            img_explanation_fname = "qqq/h_senhaba_age.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/h_senhaba_age.png");
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle14.add(Button_h_lineWidthIncrease);
@@ -4890,13 +4739,12 @@ public class App extends JFrame implements ActionListener {
 // ******東************************************************************************
         Button_Col_orange = new JButton("a1");
         Button_Col_orange.addActionListener(e -> {
-            img_explanation_fname = "qqq/Button_Col_orange.png";
-            updateExplanation();
+            setHelp("qqq/Button_Col_orange.png");
             Button_h_Col_reset();
             Button_Col_orange.setBackground(Color.ORANGE);
             h_icol = LineColor.ORANGE_4;
             es1.h_setcolor(h_icol);
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle11.add(Button_Col_orange);
@@ -4905,13 +4753,12 @@ public class App extends JFrame implements ActionListener {
 // ******東************************************************************************
         Button_Col_yellow = new JButton("a2");
         Button_Col_yellow.addActionListener(e -> {
-            img_explanation_fname = "qqq/Button_Col_yellow.png";
-            updateExplanation();
+            setHelp("qqq/Button_Col_yellow.png");
             Button_h_Col_reset();
             Button_Col_yellow.setBackground(Color.yellow);
             h_icol = LineColor.YELLOW_7;
             es1.h_setcolor(h_icol);
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle11.add(Button_Col_yellow);
@@ -4929,13 +4776,12 @@ public class App extends JFrame implements ActionListener {
 // -------------h_1;補助線入力モード。
         JButton Button_h_senbun_nyuryoku = new JButton("");
         Button_h_senbun_nyuryoku.addActionListener(e -> {
-            img_explanation_fname = "qqq/h_senbun_nyuryoku.png";
-            updateExplanation();
+            setHelp("qqq/h_senbun_nyuryoku.png");
             i_mouse_modeA = MouseMode.DRAW_CREASE_FREE_1;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
             foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.AUX_LINE_1;//=0は折線入力　=1は補助線入力モード
             es1.setFoldLineAdditional(foldLineAdditionalInputMode);
@@ -4954,8 +4800,7 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_h_senbun_sakujyo = new JButton("");
         Button_h_senbun_sakujyo.addActionListener(e -> {
-            img_explanation_fname = "qqq/h_senbun_sakujyo.png";
-            updateExplanation();
+            setHelp("qqq/h_senbun_sakujyo.png");
             i_mouse_modeA = MouseMode.LINE_SEGMENT_DELETE_3;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
@@ -4964,7 +4809,7 @@ public class App extends JFrame implements ActionListener {
             es1.setFoldLineAdditional(foldLineAdditionalInputMode);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnle13.add(Button_h_senbun_sakujyo);
@@ -4994,13 +4839,12 @@ public class App extends JFrame implements ActionListener {
 // -------------長さ1測定モード。
         JButton Button_length_sokutei_1 = new JButton("L1=");
         Button_length_sokutei_1.addActionListener(e -> {
-            img_explanation_fname = "qqq/nagasa_sokutei_1.png";
-            updateExplanation();
+            setHelp("qqq/nagasa_sokutei_1.png");
             i_mouse_modeA = MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         Button_length_sokutei_1.setBounds(2, 2, 30, 20);
@@ -5025,13 +4869,12 @@ public class App extends JFrame implements ActionListener {
 // -------------長さ2測定モード。
         JButton Button_length_sokutei_2 = new JButton("L2=");
         Button_length_sokutei_2.addActionListener(e -> {
-            img_explanation_fname = "qqq/nagasa_sokutei_2.png";
-            updateExplanation();
+            setHelp("qqq/nagasa_sokutei_2.png");
             i_mouse_modeA = MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         Button_length_sokutei_2.setBounds(2, 2, 30, 20);
@@ -5057,13 +4900,12 @@ public class App extends JFrame implements ActionListener {
 // -------------角度1測定モード。
         JButton Button_kakudo_sokutei_1 = new JButton("A1=");
         Button_kakudo_sokutei_1.addActionListener(e -> {
-            img_explanation_fname = "qqq/kakudo_sokutei_1.png";
-            updateExplanation();
+            setHelp("qqq/kakudo_sokutei_1.png");
             i_mouse_modeA = MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         Button_kakudo_sokutei_1.setBounds(2, 2, 30, 20);
@@ -5089,13 +4931,12 @@ public class App extends JFrame implements ActionListener {
 // -------------角度2測定モード。
         JButton Button_kakudo_sokutei_2 = new JButton("A2=");
         Button_kakudo_sokutei_2.addActionListener(e -> {
-            img_explanation_fname = "qqq/kakudo_sokutei_2.png";
-            updateExplanation();
+            setHelp("qqq/kakudo_sokutei_2.png");
             i_mouse_modeA = MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         Button_kakudo_sokutei_2.setBounds(2, 2, 30, 20);
@@ -5120,13 +4961,12 @@ public class App extends JFrame implements ActionListener {
 // -------------角度3測定モード。
         JButton Button_kakudo_sokutei_3 = new JButton("A3=");
         Button_kakudo_sokutei_3.addActionListener(e -> {
-            img_explanation_fname = "qqq/kakudo_sokutei_3.png";
-            updateExplanation();
+            setHelp("qqq/kakudo_sokutei_3.png");
             i_mouse_modeA = MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         Button_kakudo_sokutei_3.setBounds(2, 2, 30, 20);
@@ -5154,8 +4994,7 @@ public class App extends JFrame implements ActionListener {
 // -------------追加フレーム表示
         JButton Button_tuika_kinou = new JButton("ad_fnc");//追加機能を英語で訳すと additional function
         Button_tuika_kinou.addActionListener(e -> {
-            img_explanation_fname = "qqq/tuika_kinou.png";
-            updateExplanation();
+            setHelp("qqq/tuika_kinou.png");
 
             Frame_tuika();
             add_frame.toFront();
@@ -5201,10 +5040,9 @@ public class App extends JFrame implements ActionListener {
         JButton Button_yomi_tuika = new JButton("Op");
         Button_yomi_tuika.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/yomi_tuika.png";
-            updateExplanation();
+            setHelp("qqq/yomi_tuika.png");
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
 
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
@@ -5229,9 +5067,7 @@ public class App extends JFrame implements ActionListener {
 //cpを折畳み前に自動改善する
         ckbox_cp_kaizen_folding = new JCheckBox("");
         ckbox_cp_kaizen_folding.addActionListener(e -> {
-            img_explanation_fname =
-                    "qqq/ckbox_cp_kaizen_oritatami.png";
-            updateExplanation();
+            setHelp("qqq/ckbox_cp_kaizen_oritatami.png");
 
             canvas.repaint();
         });
@@ -5246,9 +5082,7 @@ public class App extends JFrame implements ActionListener {
 //select状態を他の操作をしてもなるべく残す
         ckbox_select_nokosi = new JCheckBox("");
         ckbox_select_nokosi.addActionListener(e -> {
-            img_explanation_fname =
-                    "qqq/ckbox_select_nokosi.png";
-            updateExplanation();
+            setHelp("qqq/ckbox_select_nokosi.png");
 
             canvas.repaint();
         });
@@ -5263,8 +5097,7 @@ public class App extends JFrame implements ActionListener {
 // ***西****************************************************************** ２色展開図************************************************
         JButton Button_2syoku_tenkaizu = new JButton("");//new JButton(	"Del_F"	);
         Button_2syoku_tenkaizu.addActionListener(e -> {
-            img_explanation_fname = "qqq/2syoku_tenkaizu.png";
-            updateExplanation();
+            setHelp("qqq/2syoku_tenkaizu.png");
 
             Ss0 = es1.getForSelectFolding();
 
@@ -5285,7 +5118,7 @@ public class App extends JFrame implements ActionListener {
             }
 
             es1.unselect_all();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
 
         });
         pnlw12.add(Button_2syoku_tenkaizu);
@@ -5301,8 +5134,7 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_suitei_01 = new JButton("CP_rcg");
         Button_suitei_01.addActionListener(e -> {
-            img_explanation_fname = "qqq/suitei_01.png";
-            updateExplanation();
+            setHelp("qqq/suitei_01.png");
 
             oritatame(getFoldType(), FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
             if (ckbox_select_nokosi.isSelected()) {
@@ -5310,7 +5142,7 @@ public class App extends JFrame implements ActionListener {
                 es1.unselect_all();
             }
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
         });
         pnlw20.add(Button_suitei_01);
         Button_suitei_01.setMargin(new Insets(0, 0, 0, 0));
@@ -5320,13 +5152,12 @@ public class App extends JFrame implements ActionListener {
         JButton Button_koteimen_sitei = new JButton("S_face");
         Button_koteimen_sitei.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/koteimen_sitei.png";
-            updateExplanation();
+            setHelp("qqq/koteimen_sitei.png");
             if (OZ.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
                 i_mouse_modeA = MouseMode.CHANGE_STANDARD_FACE_103;
                 System.out.println("i_mouse_modeA = " + i_mouse_modeA);
             }
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
         });
         pnlw20.add(Button_koteimen_sitei);
 
@@ -5346,15 +5177,14 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_suitei_02 = new JButton("");
         Button_suitei_02.addActionListener(e -> {
-            img_explanation_fname = "qqq/suitei_02.png";
-            updateExplanation();
+            setHelp("qqq/suitei_02.png");
 
             oritatame(getFoldType(), FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
             if (!ckbox_select_nokosi.isSelected()) {
                 es1.unselect_all();
             }
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
         });
         pnlw36.add(Button_suitei_02);
 
@@ -5381,8 +5211,7 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_suitei_03 = new JButton("");//透過図表示new JButton(	"Transparent_gr"	);
         Button_suitei_03.addActionListener(e -> {
-            img_explanation_fname = "qqq/suitei_03.png";
-            updateExplanation();
+            setHelp("qqq/suitei_03.png");
 
             oritatame(getFoldType(), FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
 
@@ -5390,7 +5219,7 @@ public class App extends JFrame implements ActionListener {
             } else {
                 es1.unselect_all();
             }
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
         });
         pnls4.add(Button_suitei_03);
         Button_suitei_03.setBounds(1, 0, 20, 21);//Button_suitei_03.setBounds(1, 1, 20, 28);
@@ -5405,9 +5234,7 @@ public class App extends JFrame implements ActionListener {
 
         ckbox_toukazu_color = new JCheckBox("");
         ckbox_toukazu_color.addActionListener(e -> {
-            img_explanation_fname =
-                    "qqq/ckbox_toukazu_color.png";
-            updateExplanation();
+            setHelp("qqq/ckbox_toukazu_color.png");
             if (ckbox_toukazu_color.isSelected()) {
                 OZ.transparencyColor = true;
                 System.out.println("ckbox_toukazu_color.isSelected()");
@@ -5433,9 +5260,8 @@ public class App extends JFrame implements ActionListener {
         JButton Button_toukazu_color_sage = new JButton("");
         Button_toukazu_color_sage.addActionListener(e -> {
             OZ.decreaseTransparency();
-            img_explanation_fname = "qqq/toukazu_color_sage.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/toukazu_color_sage.png");
+            Button_shared_operation();
             canvas.repaint();
         });
         pnls4.add(Button_toukazu_color_sage);
@@ -5450,9 +5276,8 @@ public class App extends JFrame implements ActionListener {
         JButton Button_toukazu_color_age = new JButton("");
         Button_toukazu_color_age.addActionListener(e -> {
             OZ.increaseTransparency();
-            img_explanation_fname = "qqq/toukazu_color_age.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/toukazu_color_age.png");
+            Button_shared_operation();
             canvas.repaint();
         });
         pnls4.add(Button_toukazu_color_age);
@@ -5465,8 +5290,7 @@ public class App extends JFrame implements ActionListener {
 // ********南*****************************************************************
         JButton Button_fold = new JButton("Fold");
         Button_fold.addActionListener(e -> {
-            img_explanation_fname = "qqq/suitei_04.png";
-            updateExplanation();
+            setHelp("qqq/suitei_04.png");
 
             System.out.println("20180220 get_i_fold_type() = " + getFoldType());
             oritatame(getFoldType(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
@@ -5476,7 +5300,7 @@ public class App extends JFrame implements ActionListener {
                 es1.unselect_all();
             }
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
 
         });
         pnls.add(Button_fold);
@@ -5490,8 +5314,7 @@ public class App extends JFrame implements ActionListener {
         //-------------------------------------
         Button_another_solution = new JButton("a_s");
         Button_another_solution.addActionListener(e -> {
-            img_explanation_fname = "qqq/Button3.png";
-            updateExplanation();
+            setHelp("qqq/Button3.png");
 
             OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
@@ -5510,13 +5333,12 @@ public class App extends JFrame implements ActionListener {
         Button0b = new JButton("");//new JButton(	"Back"		);
         Button0b.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/Button0b.png";
-            updateExplanation();
+            setHelp("qqq/Button0b.png");
             OZ.ip4 = OZ.ip4.advance();
             if ((i_mouse_modeA == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (OZ.ip4 == FoldedFigure.State.BOTH_2)) {
                 OZ.ip4 = FoldedFigure.State.FRONT_0;
             }//Fold-up forecast map Added to avoid the mode that can not be moved when moving
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnls.add(Button0b);
@@ -5530,8 +5352,7 @@ public class App extends JFrame implements ActionListener {
         Button_AS_matome.addActionListener(e -> {
 
             subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_SAVE_100_1;
-            img_explanation_fname = "qqq/AS_matome.png";
-            updateExplanation();
+            setHelp("qqq/AS_matome.png");
             if (OZ.findAnotherOverlapValid) {
                 //OZ.i_suitei_jissi_umu=0;//i_suitei_jissi_umuは、折り畳み推定の計算を実施したかどうかを表す。int i_suitei_jissi_umu=0なら実施しない。1なら実施した。
                 OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
@@ -5587,9 +5408,8 @@ public class App extends JFrame implements ActionListener {
                 sub.start();
             }
 
-            img_explanation_fname = "qqq/bangou_sitei_suitei_hyouji.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/bangou_sitei_suitei_hyouji.png");
+            Button_shared_operation();
             canvas.repaint();
         });
         pnls1.add(Button_bangou_sitei_estimated_display);
@@ -5601,11 +5421,10 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_undo_om = new JButton("");//_omは折り上がり図モディファイ（変形）の意味
         Button_undo_om.addActionListener(e -> {
-            img_explanation_fname = "qqq/undo.png";
-            updateExplanation();
+            setHelp("qqq/undo.png");
 
             OZ.undo();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnls.add(Button_undo_om);
@@ -5625,8 +5444,7 @@ public class App extends JFrame implements ActionListener {
         Button_undo_syutoku_om.addActionListener(e -> {
 
 
-            img_explanation_fname = "qqq/undo_syutoku.png";
-            updateExplanation();
+            setHelp("qqq/undo_syutoku.png");
             int i_undo_suu_om_old = i_undo_suu_om;
             i_undo_suu_om = StringOp.String2int(text31.getText(), i_undo_suu_om_old);
             if (i_undo_suu < 0) {
@@ -5648,11 +5466,10 @@ public class App extends JFrame implements ActionListener {
         Button_redo_om.addActionListener(e -> {
 
 
-            img_explanation_fname = "qqq/redo.png";
-            updateExplanation();
+            setHelp("qqq/redo.png");
 
             OZ.redo();
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnls.add(Button_redo_om);
@@ -5666,15 +5483,14 @@ public class App extends JFrame implements ActionListener {
 // ******南*******************************************************************
         JButton Button_oriagari_sousa = new JButton("");//折り上がり図操作　針金図(	"F_Modify"		)
         Button_oriagari_sousa.addActionListener(e -> {
-            img_explanation_fname = "qqq/oriagari_sousa.png";
-            updateExplanation();
+            setHelp("qqq/oriagari_sousa.png");
             OZ.i_foldedFigure_operation_mode = 1;
-            OZ.setAllPointState0();
+            OZ.setAllPointStateFalse();
             OZ.record();
             i_mouse_modeA = MouseMode.MODIFY_CALCULATED_SHAPE_101;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
         });
         pnls.add(Button_oriagari_sousa);
         Button_oriagari_sousa.setIcon(createImageIcon("ppp/oriagari_sousa.png"));
@@ -5683,16 +5499,15 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_oriagari_sousa_2 = new JButton("");//new JButton(	"F_Modify"		)
         Button_oriagari_sousa_2.addActionListener(e -> {
-            img_explanation_fname = "qqq/oriagari_sousa_2.png";
-            updateExplanation();
+            setHelp("qqq/oriagari_sousa_2.png");
             OZ.i_foldedFigure_operation_mode = 2;
-            OZ.setAllPointState0();
+            OZ.setAllPointStateFalse();
             OZ.record();
             i_mouse_modeA = MouseMode.MODIFY_CALCULATED_SHAPE_101;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             //repaint();
         });
         pnls.add(Button_oriagari_sousa_2);
@@ -5704,12 +5519,11 @@ public class App extends JFrame implements ActionListener {
 // *******南******************************************************************
         JButton Button_oriagari_idiu = new JButton("");// new JButton(	"F_move"	);
         Button_oriagari_idiu.addActionListener(e -> {
-            img_explanation_fname = "qqq/oriagari_idiu.png";
-            updateExplanation();
+            setHelp("qqq/oriagari_idiu.png");
 
             i_mouse_modeA = MouseMode.MOVE_CALCULATED_SHAPE_102;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             //repaint();
         });
         pnls.add(Button_oriagari_idiu);
@@ -5732,8 +5546,7 @@ public class App extends JFrame implements ActionListener {
 // ********南*****************************************************************
         JButton Button_oriagari_syukusyou = new JButton("");// new JButton(	"F_z_out"	);
         Button_oriagari_syukusyou.addActionListener(e -> {
-            img_explanation_fname = "qqq/oriagari_syukusyou.png";
-            updateExplanation();
+            setHelp("qqq/oriagari_syukusyou.png");
 
 
             OZ.d_foldedFigure_scale_factor = OZ.d_foldedFigure_scale_factor / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
@@ -5755,7 +5568,7 @@ public class App extends JFrame implements ActionListener {
             text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
             text29.setCaretPosition(0);
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnls2.add(Button_oriagari_syukusyou);
@@ -5804,9 +5617,8 @@ public class App extends JFrame implements ActionListener {
             canvas.repaint();
 
             //}
-            img_explanation_fname = "qqq/oriagarizu_syukusyaku_keisuu_set.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/oriagarizu_syukusyaku_keisuu_set.png");
+            Button_shared_operation();
             canvas.repaint();
         });
         pnls2.add(Button_oriagarizu_syukusyaku_keisuu_set);
@@ -5821,8 +5633,7 @@ public class App extends JFrame implements ActionListener {
         JButton Button_oriagari_kakudai = new JButton("");
         Button_oriagari_kakudai.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/oriagari_kakudai.png";
-            updateExplanation();
+            setHelp("qqq/oriagari_kakudai.png");
 
             OZ.d_foldedFigure_scale_factor = OZ.d_foldedFigure_scale_factor * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
             OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
@@ -5843,7 +5654,7 @@ public class App extends JFrame implements ActionListener {
             text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
             text29.setCaretPosition(0);
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnls2.add(Button_oriagari_kakudai);
@@ -5863,8 +5674,7 @@ public class App extends JFrame implements ActionListener {
 // *****南********************************************************************
         JButton Button_oriagari_p_kaiten = new JButton("");//new JButton(	"F+rot"	);
         Button_oriagari_p_kaiten.addActionListener(e -> {
-            img_explanation_fname = "qqq/oriagari_p_kaiten.png";
-            updateExplanation();
+            setHelp("qqq/oriagari_p_kaiten.png");
 
             OZ.d_foldedFigure_rotation_correction = OritaCalc.angle_between_m180_180(OZ.d_foldedFigure_rotation_correction + 11.25);
             OZ.camera_of_foldedFigure.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
@@ -5876,7 +5686,7 @@ public class App extends JFrame implements ActionListener {
             text30.setText(String.valueOf(OZ.d_foldedFigure_rotation_correction));
             text30.setCaretPosition(0);
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnls3.add(Button_oriagari_p_kaiten);
@@ -5913,9 +5723,8 @@ public class App extends JFrame implements ActionListener {
             canvas.repaint();
 
 
-            img_explanation_fname = "qqq/oriagarizu_kaiten_hosei_set.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/oriagarizu_kaiten_hosei_set.png");
+            Button_shared_operation();
             canvas.repaint();
         });
         pnls3.add(Button_oriagarizu_kaiten_hosei_set);
@@ -5930,8 +5739,7 @@ public class App extends JFrame implements ActionListener {
         JButton Button_oriagari_m_kaiten = new JButton("");//new JButton(	"F-rot"	);
         Button_oriagari_m_kaiten.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/oriagari_m_kaiten.png";
-            updateExplanation();
+            setHelp("qqq/oriagari_m_kaiten.png");
             OZ.d_foldedFigure_rotation_correction = OritaCalc.angle_between_m180_180(OZ.d_foldedFigure_rotation_correction - 11.25);
             OZ.camera_of_foldedFigure.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
             OZ.camera_of_foldedFigure_front.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
@@ -5943,7 +5751,7 @@ public class App extends JFrame implements ActionListener {
             text30.setCaretPosition(0);
 
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
         });
         pnls3.add(Button_oriagari_m_kaiten);
@@ -5957,9 +5765,8 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_a_a = new JButton("a_a");
         Button_a_a.addActionListener(e -> {
-            Button_kyoutuu_sagyou();
-            img_explanation_fname = "qqq/a_a.png";
-            updateExplanation();
+            Button_shared_operation();
+            setHelp("qqq/a_a.png");
 
             OZ.ct_worker.toggleAntiAlias();
             canvas.repaint();
@@ -5971,9 +5778,8 @@ public class App extends JFrame implements ActionListener {
 
         JButton Button_shadows = new JButton("S");
         Button_shadows.addActionListener(e -> {
-            Button_kyoutuu_sagyou();
-            img_explanation_fname = "qqq/kage.png";
-            updateExplanation();
+            Button_shared_operation();
+            setHelp("qqq/kage.png");
             OZ.ct_worker.toggleDisplayShadows();
             canvas.repaint();
         });
@@ -5985,9 +5791,8 @@ public class App extends JFrame implements ActionListener {
 
         Button_F_color = new JButton(" ");
         Button_F_color.addActionListener(e -> {
-            img_explanation_fname = "qqq/F_color.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/F_color.png");
+            Button_shared_operation();
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
 
@@ -6018,9 +5823,8 @@ public class App extends JFrame implements ActionListener {
 
         Button_B_color = new JButton(" ");
         Button_B_color.addActionListener(e -> {
-            img_explanation_fname = "qqq/B_color.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/B_color.png");
+            Button_shared_operation();
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
 
@@ -6049,9 +5853,8 @@ public class App extends JFrame implements ActionListener {
 
         Button_L_color = new JButton(" ");
         Button_L_color.addActionListener(e -> {
-            img_explanation_fname = "qqq/L_color.png";
-            updateExplanation();
-            Button_kyoutuu_sagyou();
+            setHelp("qqq/L_color.png");
+            Button_shared_operation();
             i_mouseDragged_valid = false;
             i_mouseReleased_valid = false;
 
@@ -6082,14 +5885,13 @@ public class App extends JFrame implements ActionListener {
         JButton Button_keisan_tyuusi = new JButton("");//折り上がり予想の計算の中止
         Button_keisan_tyuusi.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/keisan_tyuusi.png";
-            updateExplanation();
+            setHelp("qqq/keisan_tyuusi.png");
 
             if (subThreadRunning) {
                 keisan_tyuusi();
             }
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
         });
         pnls.add(Button_keisan_tyuusi);
 
@@ -6101,8 +5903,7 @@ public class App extends JFrame implements ActionListener {
         JButton Button_settei_syokika = new JButton("");//new JButton(	"Del_F"	);
         Button_settei_syokika.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/settei_syokika.png";
-            updateExplanation();
+            setHelp("qqq/settei_syokika.png");
 
 
             if (i_OAZ == 0) {
@@ -6118,7 +5919,7 @@ public class App extends JFrame implements ActionListener {
                 set_i_OAZ(i_OAZ);
             }
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
 
         });
@@ -6132,8 +5933,7 @@ public class App extends JFrame implements ActionListener {
         JButton Button_zen_syokika = new JButton("");//new JButton(	"Del_all"	);
         Button_zen_syokika.addActionListener(e -> {
 
-            img_explanation_fname = "qqq/zen_syokika.png";
-            updateExplanation();
+            setHelp("qqq/zen_syokika.png");
 
             //展開図の初期化　開始
             //settei_syokika_cp();//展開図パラメータの初期化
@@ -6148,7 +5948,7 @@ public class App extends JFrame implements ActionListener {
             configure_syokika_yosoku();
             //折畳予測図のの初期化　終了
 
-            Button_kyoutuu_sagyou();
+            Button_shared_operation();
             canvas.repaint();
             i_mouse_modeA = MouseMode.FOLDABLE_LINE_DRAW_71;
             System.out.println("i_mouse_modeA = " + i_mouse_modeA);
@@ -6186,12 +5986,11 @@ public class App extends JFrame implements ActionListener {
         configure_syokika_yosoku();
         //折畳予測図のの初期化　終了
 
-        Button_kyoutuu_sagyou();
+        Button_shared_operation();
 
         canvas.repaint();
 
-        img_explanation_fname = "qqq/a__hajimeni.png";
-        updateExplanation();
+        setHelp("qqq/a__hajimeni.png");
 
         Button_sen_tokutyuu_color.setBackground(sen_tokutyuu_color);//特注色の指定色表示
 
@@ -6700,15 +6499,15 @@ public class App extends JFrame implements ActionListener {
     // *******************************************************************************************************
     public void Frame_tuika() {
         //Frame add_frame
-        if (i_add_frame) {
-            System.out.println("111 i_add_frame=" + i_add_frame);
+        if (showAddFrame) {
+            System.out.println("111 showAddFrame=" + showAddFrame);
             add_frame.dispose();
             add_frame = new OpenFrame("add_frame", this);
         } else {
-            System.out.println("000 i_add_frame=" + i_add_frame);
+            System.out.println("000 showAddFrame=" + showAddFrame);
             add_frame = new OpenFrame("add_frame", this);
         }
-        i_add_frame = true;
+        showAddFrame = true;
         add_frame.toFront();
     }
 
@@ -6858,7 +6657,7 @@ public class App extends JFrame implements ActionListener {
     }
 // ---------------------------------------
     
-    void Button_kyoutuu_sagyou() {
+    void Button_shared_operation() {
         es1.setDrawingStage(0);
         es1.set_i_circle_drawing_stage(0);
         es1.set_s_step_iactive(LineSegment.ActiveState.ACTIVE_BOTH_3);//要注意　es1でうっかりs_stepにset.(senbun)やるとアクティヴでないので表示が小さくなる20170507
@@ -7231,9 +7030,9 @@ public class App extends JFrame implements ActionListener {
         }
 
     }
-
-    void updateExplanation() {
-        URL url = getClass().getClassLoader().getResource(img_explanation_fname);
+    
+    void setHelp(String resource) {
+        URL url = getClass().getClassLoader().getResource(resource);
 
         try {
             Toolkit tk = Toolkit.getDefaultToolkit();

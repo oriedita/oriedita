@@ -8814,11 +8814,11 @@ public class Drawing_Worker {
     }
 
     public void set_Ubox_undo_suu(int i) {
-        Ubox.set_i_undo_total(i);
+        Ubox.setUndoTotal(i);
     }
 
     public void set_h_Ubox_undo_suu(int i) {
-        h_Ubox.set_i_undo_total(i);
+        h_Ubox.setUndoTotal(i);
     }
 
     public void circle_organize() {//Organize all circles.

@@ -121,4 +121,8 @@
       </item>
     </group>
   </component>
+  <component name="uidesigner-configuration">
+    <option name="INSTRUMENT_CLASSES" value="false" />
+    <option name="DEFAULT_LAYOUT_MANAGER" value="BorderLayout" />
+  </component>
 </project>

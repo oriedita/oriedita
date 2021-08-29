@@ -606,16 +606,16 @@ public class CreasePattern_Worker {
         return pointSet.getSelectedPointsNum();
     }
 
-    public void setPointState1(int i) {
-        pointSet.setPointState1(i);
+    public void setPointStateTrue(int i) {
+        pointSet.setPointStateTrue(i);
     }
 
-    public void setPointState0(int i) {
-        pointSet.setPointState0(i);
+    public void setPointStateFalse(int i) {
+        pointSet.setPointStateFalse(i);
     }
 
-    public void setAllPointState0() {
-        pointSet.setAllPointState0();
+    public void setAllPointStateFalse() {
+        pointSet.setAllPointStateFalse();
     }
 
     public void changePointState(int i) {
@@ -687,7 +687,7 @@ public class CreasePattern_Worker {
     }
 
     public void setUndoBoxUndoTotal(int i) {
-        Ubox.set_i_undo_total(i);
+        Ubox.setUndoTotal(i);
     }
 
     public void record() {

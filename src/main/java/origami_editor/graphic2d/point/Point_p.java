@@ -10,11 +10,11 @@ public class Point_p extends Point {
      */
     boolean i_state = false;
 
-    public void setPointState1() {
+    public void setPointStateTrue() {
         i_state = true;
     }
 
-    public void setPointState0() {
+    public void setPointStateFalse() {
         i_state = false;
     }
 

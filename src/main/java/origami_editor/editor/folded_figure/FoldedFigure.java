@@ -738,12 +738,12 @@ public class FoldedFigure {
 
             switch (i_point_selection) {//Find the number of the point at the same position as i_closestPointId in the fold-up diagram, and mark the point with that number as selected with cp_worker1.
                 case NONE_0:
-                    setAllPointState0();
+                    setAllPointStateFalse();
                     Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                         if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
-                            cp_worker1.setPointState1(i);
+                            cp_worker1.setPointStateTrue(i);
                         }
                     }
                     cp_worker2.changePointState(i_closestPointId);
@@ -769,12 +769,12 @@ public class FoldedFigure {
 
             switch (i_point_selection) {//Find the number of the point at the same position as i_closestPointId in the fold-up diagram, and mark the point with that number as selected with cp_worker1.
                 case NONE_0:
-                    setAllPointState0();
+                    setAllPointStateFalse();
                     Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                         if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
-                            cp_worker1.setPointState1(i);
+                            cp_worker1.setPointStateTrue(i);
                         }
                     }
                     cp_worker2.changePointState(i_closestPointId);
@@ -837,13 +837,13 @@ public class FoldedFigure {
                 }//オリジナル 20180124 これ以外だと、表示いったんもどるようでうざい
             }
 
-            cp_worker1.setAllPointState0();
+            cp_worker1.setAllPointStateFalse();
             //折り上がり図でi_closestPointIdと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
             Point ps = new Point();
             ps.set(cp_worker2.getPoint(i_closestPointId));
             for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                 if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
-                    cp_worker1.setPointState1(i);
+                    cp_worker1.setPointStateTrue(i);
                 }
             }
         }
@@ -891,12 +891,12 @@ public class FoldedFigure {
 
             switch (i_point_selection) {//折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                 case NONE_0:
-                    setAllPointState0();
+                    setAllPointStateFalse();
                     Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                         if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
-                            cp_worker1.setPointState1(i);
+                            cp_worker1.setPointStateTrue(i);
                         }
                     }
                     cp_worker2.changePointState(i_closestPointId);
@@ -922,12 +922,12 @@ public class FoldedFigure {
 
             switch (i_point_selection) {//折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                 case NONE_0:
-                    setAllPointState0();
+                    setAllPointStateFalse();
                     Point ps = new Point();
                     ps.set(cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                         if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
-                            cp_worker1.setPointState1(i);
+                            cp_worker1.setPointStateTrue(i);
                         }
                     }
                     cp_worker2.changePointState(i_closestPointId);
@@ -989,13 +989,13 @@ public class FoldedFigure {
                 folding_estimated_03();//20180216
             }
 
-            cp_worker1.setAllPointState0();
+            cp_worker1.setAllPointStateFalse();
             //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
             Point ps = new Point();
             ps.set(cp_worker2.getPoint(i_closestPointId));
             for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
                 if (ps.distance(cp_worker2.getPoint(i)) < 0.0000001) {
-                    cp_worker1.setPointState1(i);
+                    cp_worker1.setPointStateTrue(i);
                 }
             }
         }
@@ -1015,9 +1015,9 @@ public class FoldedFigure {
         folding_estimated_03();
     }
 
-    public void setAllPointState0() {
-        cp_worker1.setAllPointState0();
-        cp_worker2.setAllPointState0();
+    public void setAllPointStateFalse() {
+        cp_worker1.setAllPointStateFalse();
+        cp_worker2.setAllPointStateFalse();
     }
 
     public enum EstimationOrder {

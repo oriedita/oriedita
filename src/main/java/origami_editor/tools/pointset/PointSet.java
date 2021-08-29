@@ -917,19 +917,19 @@ public class PointSet {
     }
 
     //--------------------
-    public void setPointState1(int i) {
-        points[i].setPointState1();
+    public void setPointStateTrue(int i) {
+        points[i].setPointStateTrue();
     }
 
     //--------------------
-    public void setPointState0(int i) {
-        points[i].setPointState0();
+    public void setPointStateFalse(int i) {
+        points[i].setPointStateFalse();
     }
 
     //--------------------
-    public void setAllPointState0() {
+    public void setAllPointStateFalse() {
         for (int i = 1; i <= numPoints; i++) {
-            points[i].setPointState0();
+            points[i].setPointStateFalse();
         }
     }
 
@@ -938,9 +938,9 @@ public class PointSet {
     public void changePointState(int i) {
         Point_p point = points[i];
         if (point.getPointState()) {
-            point.setPointState0();
+            point.setPointStateFalse();
         } else {
-            point.setPointState1();
+            point.setPointStateTrue();
         }
     }
 

@@ -1365,7 +1365,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 es1.setCamera(app.camera_of_orisen_input_diagram);
 
                 if (es1.mReleased_A_26(p) == 4) {
-                    app.Button_kyoutuu_sagyou();
+                    app.Button_shared_operation();
                     LineSegment s_1 = new LineSegment();
                     s_1.set(es1.get_s_step(1));
                     LineSegment s_2 = new LineSegment();
@@ -1574,7 +1574,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             if ((e.isShiftDown()) || (app.i_mouse_right_button_on)) {
                 app.i_mouse_undo_redo_mode = true;
                 es1.unselect_all();
-                app.Button_kyoutuu_sagyou();
+                app.Button_shared_operation();
                 es1.modosi_foldLineAdditional();
                 if (e.getWheelRotation() == -1) {
                     app.setTitle(es1.redo());
