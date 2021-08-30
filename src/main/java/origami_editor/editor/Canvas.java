@@ -735,7 +735,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mPressed_A_45(p);
         }//2円の接線　に使う
-        else if (app.i_mouse_modeA == MouseMode.INVERTED_INPUT_46) {
+        else if (app.i_mouse_modeA == MouseMode.CIRCLE_DRAW_INVERTED_46) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mPressed_A_46(p);
         }//反転　に使う
@@ -1076,7 +1076,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             } else if (app.i_mouse_modeA == MouseMode.CIRCLE_DRAW_TANGENT_LINE_45) {
                 es1.setCamera(app.camera_of_orisen_input_diagram);
                 es1.mDragged_A_45(p);
-            } else if (app.i_mouse_modeA == MouseMode.INVERTED_INPUT_46) {
+            } else if (app.i_mouse_modeA == MouseMode.CIRCLE_DRAW_INVERTED_46) {
                 es1.setCamera(app.camera_of_orisen_input_diagram);
                 es1.mDragged_A_46(p);
             } else if (app.i_mouse_modeA == MouseMode.CIRCLE_DRAW_FREE_47) {
@@ -1440,7 +1440,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             } else if (app.i_mouse_modeA == MouseMode.CIRCLE_DRAW_TANGENT_LINE_45) {
                 es1.setCamera(app.camera_of_orisen_input_diagram);
                 es1.mReleased_A_45(p);
-            } else if (app.i_mouse_modeA == MouseMode.INVERTED_INPUT_46) {
+            } else if (app.i_mouse_modeA == MouseMode.CIRCLE_DRAW_INVERTED_46) {
                 es1.setCamera(app.camera_of_orisen_input_diagram);
                 es1.mReleased_A_46(p);
             } else if (app.i_mouse_modeA == MouseMode.CIRCLE_DRAW_FREE_47) {
