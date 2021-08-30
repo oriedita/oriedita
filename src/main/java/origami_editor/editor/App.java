@@ -1,10 +1,10 @@
 package origami_editor.editor;
 
+import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.drawing_worker.Drawing_Worker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.editor.hierarchylist_worker.HierarchyList_Worker;
-import origami_editor.editor.layout.WrapLayout;
 import origami_editor.graphic2d.grid.Grid;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
@@ -68,8 +68,8 @@ public class App extends JFrame implements ActionListener {
     public double d_grid_angle = 90.0;
     public JTextField text25;
     public int scale_interval = 5;
-    public JTextField text29;//double d_oriagarizu_syukusyaku_keisuu=1.0;//折り上がり図の縮尺係数
-    public JTextField text30;
+    public JTextField foldedFigureSizeTextField;//double d_oriagarizu_syukusyaku_keisuu=1.0;//折り上がり図の縮尺係数
+    public JTextField foldedFigureRotateTextField;
     public JCheckBox ckbox_mouse_settings;//マウスの設定。チェックがあると、ホイールマウスとして動作設定
     public JCheckBoxMenuItem ckbox_point_search;//点を探す範囲
     public JCheckBoxMenuItem ckbox_ten_hanasi;//点を離すかどうか
@@ -103,7 +103,7 @@ public class App extends JFrame implements ActionListener {
     public final Drawing_Worker es1 = new Drawing_Worker(r, this);    //Basic branch craftsman. Accepts input from the mouse.
     public Grid kus = es1.grid;
     Memo memo1 = new Memo();
-    SubThread sub;
+    public SubThread sub;
     boolean subThreadRunning = false;//1 if SubThread (folding calculation) is running, 0 if not running
     ArrayList<FoldedFigure> OAZ = new ArrayList<>(); //Instantiation of fold-up diagram
     int i_OAZ = 0;//Specify which number of OAZ Oriagari_Zu is the target of button operation or transformation operation 
@@ -120,7 +120,6 @@ public class App extends JFrame implements ActionListener {
     AngleSystemInputType angle_system_input_id = AngleSystemInputType.DEG_1;//Specifying the input method of the angle system angle_system_input_id = AngleSystemInputType.DEG_1 specifies the line segment, 2 specifies 2 points
     int id_angle_system_a = 12;//角度系の180度を割る数の格納_a
     int id_angle_system_b = 8;//Storage of numbers that divide the angle system by 180 degrees_b
-    JButton Button0b;                    //対称性の指定に用いる
     JButton Button_another_solution;                    //操作の指定に用いる（追加推定一個だけ）
     JButton Button_AS_matome;                    //操作の指定に用いる（追加推定100個）
     JButton Button_bangou_sitei_estimated_display;
@@ -157,7 +156,7 @@ public class App extends JFrame implements ActionListener {
     double d_orisen_internalDivisionRatio_f = 2.0;
     JTextField text9;
     int numPolygonCorners = 5;
-    JTextField text10;
+    UndoRedo undoRedo;
     int i_undo_suu = 20;//text31はtext10を参考にしている
     JTextField text11;
     int i_h_undo_suu = 20;
@@ -179,7 +178,7 @@ public class App extends JFrame implements ActionListener {
     double scaleFactor = 1.0;//Scale factor
     JTextField text28;
     double rotationCorrection = 0.0;//Correction angle of rotation display angle
-    JTextField text31;
+    UndoRedo foldedFigureUndoRedo;
     int i_undo_suu_om = 5;//text31はtext10を参考にしている
     boolean displayPointSpotlight;
     boolean displayPointOffset;
@@ -201,7 +200,7 @@ public class App extends JFrame implements ActionListener {
     String img_background_fname;
     Image img_explanation;       //Image for explanation
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
-    Canvas canvas;
+    public Canvas canvas;
     boolean lockBackground_ori = false;//Lock on background = 1, not = 0
     boolean lockBackground = false;//Lock on background = 1, not = 0
     Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
@@ -902,8 +901,8 @@ public class App extends JFrame implements ActionListener {
                 OZi.camera_of_transparent_rear.camera_ichi_sitei_from_TV(t_o2tv);
                 OZi.camera_of_transparent_rear.multiplyCameraZoomX(d_bairitu);
                 OZi.camera_of_transparent_rear.multiplyCameraZoomY(d_bairitu);
-                text29.setText(String.valueOf(OZi.d_foldedFigure_scale_factor));
-                text29.setCaretPosition(0);
+                foldedFigureSizeTextField.setText(String.valueOf(OZi.d_foldedFigure_scale_factor));
+                foldedFigureSizeTextField.setCaretPosition(0);
             }
 //20180122追加　ここまで
 
@@ -970,8 +969,8 @@ public class App extends JFrame implements ActionListener {
                     OZi.camera_of_transparent_rear.multiplyCameraZoomX(d_bairitu);
                     OZi.camera_of_transparent_rear.multiplyCameraZoomY(d_bairitu);
 
-                    text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
-                    text29.setCaretPosition(0);
+                    foldedFigureSizeTextField.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
+                    foldedFigureSizeTextField.setCaretPosition(0);
                 }
 //20180225追加　ここまで
 
@@ -1031,8 +1030,8 @@ public class App extends JFrame implements ActionListener {
                 OZi.camera_of_transparent_rear.multiplyCameraZoomX(d_bairitu);
                 OZi.camera_of_transparent_rear.multiplyCameraZoomY(d_bairitu);
 
-                text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
-                text29.setCaretPosition(0);
+                foldedFigureSizeTextField.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
+                foldedFigureSizeTextField.setCaretPosition(0);
             }
 //20180122追加　ここまで
 
@@ -1412,66 +1411,34 @@ public class App extends JFrame implements ActionListener {
         //パネルpnlwをレイアウト左辺（西側）に貼り付け
         contentPane.add("West", pnlw); //Frame用
 
-        //------------------------------------------------
-        JPanel pnlw26 = new JPanel();
-        pnlw26.setLayout(new GridLayout(1, 3));
+        undoRedo = new UndoRedo();
 
-        pnlw.add(pnlw26);
-        //------------------------------------------------
-
-// *****西******************* Un Do ******************************************************
-
-        JButton Button_undo = new JButton("");
-        Button_undo.addActionListener(e -> {
+        undoRedo.addUndoActionListener(e -> {
             setHelp("qqq/undo.png");
-            //es1.setMemo(Ubox.getMemo());
+
             setTitle(es1.undo());
             Button_shared_operation();
             canvas.repaint();
         });
-        pnlw26.add(Button_undo);
-        Button_undo.setMargin(new Insets(0, 0, 0, 0));
-        Button_undo.setIcon(createImageIcon(
-                "ppp/undo.png"));
-
-// *****西*************************************************************************
-
-        text10 = new JTextField("", 1);
-        text10.setHorizontalAlignment(JTextField.RIGHT);
-
-        pnlw26.add(text10);
-// *****西*************************************************************************
-        JButton Button_undo_syutoku = new JButton("S");
-        Button_undo_syutoku.addActionListener(e -> {
-            setHelp("qqq/undo_syutoku.png");
-            int i_undo_suu_old = i_undo_suu;
-            i_undo_suu = StringOp.String2int(text10.getText(), i_undo_suu_old);
-            if (i_undo_suu < 0) {
-                i_undo_suu = 0;
-            }
-            text10.setText(String.valueOf(i_undo_suu));
-            es1.set_Ubox_undo_suu(i_undo_suu);
-        });
-        pnlw26.add(Button_undo_syutoku);
-
-        Button_undo_syutoku.setMargin(new Insets(0, 0, 0, 0));
-
-
-// *****西*********************** Re Do **************************************************
-
-        JButton Button_redo = new JButton("");
-        Button_redo.addActionListener(e -> {
+        undoRedo.addRedoActionListener(e -> {
             setHelp("qqq/redo.png");
 
             setTitle(es1.redo());
             Button_shared_operation();
             canvas.repaint();
         });
-        pnlw26.add(Button_redo);
-        Button_redo.setMargin(new Insets(0, 0, 0, 0));
-        Button_redo.setIcon(createImageIcon(
-                "ppp/redo.png"));
+        undoRedo.addSetUndoCountActionListener(e -> {
+            setHelp("qqq/undo_syutoku.png");
+            int i_undo_suu_old = i_undo_suu;
+            i_undo_suu = StringOp.String2int(undoRedo.getText(), i_undo_suu_old);
+            if (i_undo_suu < 0) {
+                i_undo_suu = 0;
+            }
+            undoRedo.setText(String.valueOf(i_undo_suu));
+            es1.set_Ubox_undo_suu(i_undo_suu);
+        });
 
+        pnlw.add(undoRedo);
 
         JPanel pnlw22 = new JPanel();
         pnlw22.setLayout(new GridLayout(1, 3));
@@ -5010,22 +4977,6 @@ public class App extends JFrame implements ActionListener {
 // ***東***************************************************************************************************************************************************************************
 
 
-        // *************************************************
-        //下辺（南側）パネルの構築*************************
-        // *************************************************
-        //下辺（南側）パネルの作成
-        JPanel pnls = new JPanel();
-        pnls.setLayout(new WrapLayout(WrapLayout.LEFT));
-        //下辺（南側）パネルをレイアウトに貼り付け
-        contentPane.add("South", pnls); //Frame用
-
-
-        //------------------------------------------------
-        JPanel pnlw11 = new JPanel();
-        pnlw11.setLayout(new GridLayout(1, 3));
-
-        //------------------------------------------------
-        pnlw.add(pnlw11);
 
 
         //------------------------------------------------
@@ -5286,680 +5237,21 @@ public class App extends JFrame implements ActionListener {
         Button_toukazu_color_age.setIcon(createImageIcon(
                 "ppp/ck4_color_age.png"));
 
-
-// ********南*****************************************************************
-        JButton Button_fold = new JButton("Fold");
-        Button_fold.addActionListener(e -> {
-            setHelp("qqq/suitei_04.png");
-
-            System.out.println("20180220 get_i_fold_type() = " + getFoldType());
-            oritatame(getFoldType(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
-
-            if (ckbox_select_nokosi.isSelected()) {
-            } else {
-                es1.unselect_all();
-            }
-
-            Button_shared_operation();
-
-        });
-        pnls.add(Button_fold);
-
-        Button_fold.setIcon(createImageIcon("ppp/suitei_04.png"));
-
-// *******南******************************************************************
-
-
-// *****南********************************************************************
-        //-------------------------------------
-        Button_another_solution = new JButton("a_s");
-        Button_another_solution.addActionListener(e -> {
-            setHelp("qqq/Button3.png");
-
-            OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
-
-            subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_0;//1 = Put together another solution for folding estimation. 0 = It is not a mode to put out different solutions of folding estimation at once. This variable is used to change the behavior of subthreads.
-            if (!subThreadRunning) {
-                subThreadRunning = true;
-                mks();//新しいスレッドを作る
-                sub.start();
-            }
-        });
-        pnls.add(Button_another_solution);
-
-
-// *******南***************************************************** //System.out.println("裏表");*************
-        //------------------------------------------------------------------------------------------------------
-        Button0b = new JButton("");//new JButton(	"Back"		);
-        Button0b.addActionListener(e -> {
-
-            setHelp("qqq/Button0b.png");
-            OZ.ip4 = OZ.ip4.advance();
-            if ((i_mouse_modeA == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (OZ.ip4 == FoldedFigure.State.BOTH_2)) {
-                OZ.ip4 = FoldedFigure.State.FRONT_0;
-            }//Fold-up forecast map Added to avoid the mode that can not be moved when moving
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        pnls.add(Button0b);
-
-        Button0b.setIcon(createImageIcon("ppp/Button0b.png"));
-
-
-// *****南********************************************************************
-        //-------------------------------------
-        Button_AS_matome = new JButton("AS100");
-        Button_AS_matome.addActionListener(e -> {
-
-            subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_SAVE_100_1;
-            setHelp("qqq/AS_matome.png");
-            if (OZ.findAnotherOverlapValid) {
-                //OZ.i_suitei_jissi_umu=0;//i_suitei_jissi_umuは、折り畳み推定の計算を実施したかどうかを表す。int i_suitei_jissi_umu=0なら実施しない。1なら実施した。
-                OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
-
-                if (!subThreadRunning) {
-                    subThreadRunning = true;
-                    mks();//新しいスレッドを作る
-                    sub.start();
-
-                }
-            }
-        });
-        pnls.add(Button_AS_matome);
-
-
-// **********南***************************************************************
-
-
-        //------------------------------------------------
-        JPanel pnls1 = new JPanel();
-        pnls1.setLayout(new GridLayout(1, 2));
-        pnls.add(pnls1);
-
-// -----
-        text26 = new JTextField("", 2);
-        text26.setHorizontalAlignment(JTextField.RIGHT);
-        pnls1.add(text26);
-// -------------------------------------------------------------------------------
-// -----;	//折り畳み推定の指定番目を表示する
-        Button_bangou_sitei_estimated_display = new JButton("Go");
-        Button_bangou_sitei_estimated_display.addActionListener(e -> {
-
-            int foldedCases_old = foldedCases;
-            foldedCases = StringOp.String2int(text26.getText(), foldedCases_old);
-            if (foldedCases < 1) {
-                foldedCases = 1;
-            }
-
-            text26.setText(String.valueOf(foldedCases));
-
-            OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
-
-            if (foldedCases < OZ.discovered_fold_cases) {
-                configure_syokika_yosoku();//折り上がり予想の廃棄
-                OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_51;    //i_suitei_meirei=51はoritatami_suiteiの最初の推定図用カメラの設定は素通りするための設定。推定図用カメラの設定を素通りしたら、i_suitei_meirei=5に変更される。
-                //1例目の折り上がり予想はi_suitei_meirei=5を指定、2例目以降の折り上がり予想はi_suitei_meirei=6で実施される
-            }
-
-            subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_SPECIFIC_2;
-            if (!subThreadRunning) {
-                subThreadRunning = true;
-                mks();//新しいスレッドを作る
-                sub.start();
-            }
-
-            setHelp("qqq/bangou_sitei_suitei_hyouji.png");
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        pnls1.add(Button_bangou_sitei_estimated_display);
-
-// ------ここまで
-
-
-//折り上がり図	のredoとundo
-
-        JButton Button_undo_om = new JButton("");//_omは折り上がり図モディファイ（変形）の意味
-        Button_undo_om.addActionListener(e -> {
-            setHelp("qqq/undo.png");
-
-            OZ.undo();
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        pnls.add(Button_undo_om);
-        Button_undo_om.setMargin(new Insets(0, 0, 0, 0));
-        Button_undo_om.setIcon(createImageIcon(
-                "ppp/undo.png"));
-
-// *****南*************************************************************************
-
-
-        text31 = new JTextField("", 1);
-        text31.setHorizontalAlignment(JTextField.RIGHT);
-
-        pnls.add(text31);
-// *****南*************************************************************************
-        JButton Button_undo_syutoku_om = new JButton("S");
-        Button_undo_syutoku_om.addActionListener(e -> {
-
-
-            setHelp("qqq/undo_syutoku.png");
-            int i_undo_suu_om_old = i_undo_suu_om;
-            i_undo_suu_om = StringOp.String2int(text31.getText(), i_undo_suu_om_old);
-            if (i_undo_suu < 0) {
-                i_undo_suu_om = 0;
-            }
-            text31.setText(String.valueOf(i_undo_suu_om));
-            OZ.cp_worker2.setUndoBoxUndoTotal(i_undo_suu_om);                  //  <<<------------
-
-
-        });
-        pnls.add(Button_undo_syutoku_om);
-
-        Button_undo_syutoku_om.setMargin(new Insets(0, 0, 0, 0));
-
-
-// *****南*************************************************************************
-
-        JButton Button_redo_om = new JButton("");
-        Button_redo_om.addActionListener(e -> {
-
-
-            setHelp("qqq/redo.png");
-
-            OZ.redo();
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        pnls.add(Button_redo_om);
-        Button_redo_om.setMargin(new Insets(0, 0, 0, 0));
-        Button_redo_om.setIcon(createImageIcon("ppp/redo.png"));
-
-
-// ********************************************************
-
-
-// ******南*******************************************************************
-        JButton Button_oriagari_sousa = new JButton("");//折り上がり図操作　針金図(	"F_Modify"		)
-        Button_oriagari_sousa.addActionListener(e -> {
-            setHelp("qqq/oriagari_sousa.png");
-            OZ.i_foldedFigure_operation_mode = 1;
-            OZ.setAllPointStateFalse();
-            OZ.record();
-            i_mouse_modeA = MouseMode.MODIFY_CALCULATED_SHAPE_101;
-            System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-
-            Button_shared_operation();
-        });
-        pnls.add(Button_oriagari_sousa);
-        Button_oriagari_sousa.setIcon(createImageIcon("ppp/oriagari_sousa.png"));
-
-// ******南*******************************************************************
-
-        JButton Button_oriagari_sousa_2 = new JButton("");//new JButton(	"F_Modify"		)
-        Button_oriagari_sousa_2.addActionListener(e -> {
-            setHelp("qqq/oriagari_sousa_2.png");
-            OZ.i_foldedFigure_operation_mode = 2;
-            OZ.setAllPointStateFalse();
-            OZ.record();
-            i_mouse_modeA = MouseMode.MODIFY_CALCULATED_SHAPE_101;
-            System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-
-
-            Button_shared_operation();
-            //repaint();
-        });
-        pnls.add(Button_oriagari_sousa_2);
-
-
-        Button_oriagari_sousa_2.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_sousa_2.setIcon(createImageIcon("ppp/oriagari_sousa_2.png"));
-
-// *******南******************************************************************
-        JButton Button_oriagari_idiu = new JButton("");// new JButton(	"F_move"	);
-        Button_oriagari_idiu.addActionListener(e -> {
-            setHelp("qqq/oriagari_idiu.png");
-
-            i_mouse_modeA = MouseMode.MOVE_CALCULATED_SHAPE_102;
-            System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-            Button_shared_operation();
-            //repaint();
-        });
-        pnls.add(Button_oriagari_idiu);
-
-
-        Button_oriagari_idiu.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_idiu.setIcon(createImageIcon("ppp/oriagari_idiu.png"));
-
-// *******南******************************************************************
-
-        //------------------------------------------------
-        JPanel pnls2 = new JPanel();
-        pnls2.setBackground(Color.white);
-        pnls2.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
-        pnls2.setBorder(new LineBorder(Color.black, 1));
-        pnls.add(pnls2);
-        //------------------------------------------------
-
-
-// ********南*****************************************************************
-        JButton Button_oriagari_syukusyou = new JButton("");// new JButton(	"F_z_out"	);
-        Button_oriagari_syukusyou.addActionListener(e -> {
-            setHelp("qqq/oriagari_syukusyou.png");
-
-
-            OZ.d_foldedFigure_scale_factor = OZ.d_foldedFigure_scale_factor / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
-            OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-            OZ.camera_of_foldedFigure.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-
-            OZ.camera_of_foldedFigure_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-            OZ.camera_of_foldedFigure_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-
-            OZ.camera_of_foldedFigure_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-            OZ.camera_of_foldedFigure_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-
-            OZ.camera_of_transparent_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-            OZ.camera_of_transparent_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-
-            OZ.camera_of_transparent_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-            OZ.camera_of_transparent_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-
-            text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
-            text29.setCaretPosition(0);
-
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        pnls2.add(Button_oriagari_syukusyou);
-        Button_oriagari_syukusyou.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_syukusyou.setIcon(createImageIcon("ppp/oriagari_syukusyou.png"));
-
-
-// *******南******************************************************************
-
-        text29 = new JTextField("", 2);
-        text29.setHorizontalAlignment(JTextField.RIGHT);
-
-        pnls2.add(text29);
-
-// ****南**************************************************************************
-
-// -----縮尺係数set
-        JButton Button_oriagarizu_syukusyaku_keisuu_set = new JButton("S");
-        Button_oriagarizu_syukusyaku_keisuu_set.addActionListener(e -> {
-            //set_syukusyaku_keisuu();
-            //public void set_syukusyaku_keisuu(){
-            double d_oriagarizu_syukusyaku_keisuu_old = OZ.d_foldedFigure_scale_factor;
-            OZ.d_foldedFigure_scale_factor = String2double(text29.getText(), d_oriagarizu_syukusyaku_keisuu_old);
-            if (OZ.d_foldedFigure_scale_factor <= 0.0) {
-                OZ.d_foldedFigure_scale_factor = d_oriagarizu_syukusyaku_keisuu_old;
-            }
-            text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
-            if (OZ.d_foldedFigure_scale_factor != d_oriagarizu_syukusyaku_keisuu_old) {
-                OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-                OZ.camera_of_foldedFigure.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-
-                OZ.camera_of_foldedFigure_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-                OZ.camera_of_foldedFigure_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-
-                OZ.camera_of_foldedFigure_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-                OZ.camera_of_foldedFigure_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-
-                OZ.camera_of_transparent_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-                OZ.camera_of_transparent_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-
-                OZ.camera_of_transparent_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-                OZ.camera_of_transparent_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-            }
-            text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
-            text29.setCaretPosition(0);
-            canvas.repaint();
-
-            //}
-            setHelp("qqq/oriagarizu_syukusyaku_keisuu_set.png");
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        pnls2.add(Button_oriagarizu_syukusyaku_keisuu_set);
-
-        Button_oriagarizu_syukusyaku_keisuu_set.setMargin(new Insets(0, 0, 0, 0));
-
-
-// ------縮尺係数set。ここまで
-
-
-// ****南**************************************************************************
-        JButton Button_oriagari_kakudai = new JButton("");
-        Button_oriagari_kakudai.addActionListener(e -> {
-
-            setHelp("qqq/oriagari_kakudai.png");
-
-            OZ.d_foldedFigure_scale_factor = OZ.d_foldedFigure_scale_factor * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
-            OZ.camera_of_foldedFigure.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-            OZ.camera_of_foldedFigure.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-
-            OZ.camera_of_foldedFigure_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-            OZ.camera_of_foldedFigure_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-
-            OZ.camera_of_foldedFigure_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-            OZ.camera_of_foldedFigure_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-
-            OZ.camera_of_transparent_front.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-            OZ.camera_of_transparent_front.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-
-            OZ.camera_of_transparent_rear.setCameraZoomX(OZ.d_foldedFigure_scale_factor);
-            OZ.camera_of_transparent_rear.setCameraZoomY(OZ.d_foldedFigure_scale_factor);
-
-            text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
-            text29.setCaretPosition(0);
-
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        pnls2.add(Button_oriagari_kakudai);
-        Button_oriagari_kakudai.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_kakudai.setIcon(createImageIcon("ppp/oriagari_kakudai.png"));
-
-
-// *****南********************************************************************
-        //------------------------------------------------
-        JPanel pnls3 = new JPanel();
-        pnls3.setBackground(Color.white);
-        pnls3.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
-        pnls3.setBorder(new LineBorder(Color.black, 1));
-        pnls.add(pnls3);
-        //------------------------------------------------
-
-// *****南********************************************************************
-        JButton Button_oriagari_p_kaiten = new JButton("");//new JButton(	"F+rot"	);
-        Button_oriagari_p_kaiten.addActionListener(e -> {
-            setHelp("qqq/oriagari_p_kaiten.png");
-
-            OZ.d_foldedFigure_rotation_correction = OritaCalc.angle_between_m180_180(OZ.d_foldedFigure_rotation_correction + 11.25);
-            OZ.camera_of_foldedFigure.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
-            OZ.camera_of_foldedFigure_front.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
-            OZ.camera_of_foldedFigure_rear.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
-            OZ.camera_of_transparent_front.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
-            OZ.camera_of_transparent_rear.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
-
-            text30.setText(String.valueOf(OZ.d_foldedFigure_rotation_correction));
-            text30.setCaretPosition(0);
-
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        pnls3.add(Button_oriagari_p_kaiten);
-        Button_oriagari_p_kaiten.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_p_kaiten.setIcon(createImageIcon("ppp/oriagari_p_kaiten.png"));
-
-
-// ****南**************************************************************************
-//回転角度補正
-        text30 = new JTextField("", 2);
-        text30.setHorizontalAlignment(JTextField.RIGHT);
-        pnls3.add(text30);
-
-// ****南**************************************************************************
-
-// -----回転角度補正set
-        JButton Button_oriagarizu_kaiten_hosei_set = new JButton("S");
-        Button_oriagarizu_kaiten_hosei_set.addActionListener(e -> {
-            double d_oriagarizu_kaiten_hosei_old = OZ.d_foldedFigure_rotation_correction;
-            OZ.d_foldedFigure_rotation_correction = OritaCalc.angle_between_m180_180(String2double(text30.getText(), d_oriagarizu_kaiten_hosei_old));
-
-            text30.setText(String.valueOf(OZ.d_foldedFigure_rotation_correction));
-
-            if (OZ.d_foldedFigure_rotation_correction != d_oriagarizu_kaiten_hosei_old) {
-
-                OZ.camera_of_foldedFigure.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
-                OZ.camera_of_foldedFigure_front.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
-                OZ.camera_of_foldedFigure_rear.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
-                OZ.camera_of_transparent_front.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
-                OZ.camera_of_transparent_rear.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
-            }
-            text30.setText(String.valueOf(OZ.d_foldedFigure_rotation_correction));
-            text30.setCaretPosition(0);
-            canvas.repaint();
-
-
-            setHelp("qqq/oriagarizu_kaiten_hosei_set.png");
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        pnls3.add(Button_oriagarizu_kaiten_hosei_set);
-
-        Button_oriagarizu_kaiten_hosei_set.setMargin(new Insets(0, 0, 0, 0));
-
-
-// ------回転角度補正set。ここまで
-
-
-// ******南*******************************************************************
-        JButton Button_oriagari_m_kaiten = new JButton("");//new JButton(	"F-rot"	);
-        Button_oriagari_m_kaiten.addActionListener(e -> {
-
-            setHelp("qqq/oriagari_m_kaiten.png");
-            OZ.d_foldedFigure_rotation_correction = OritaCalc.angle_between_m180_180(OZ.d_foldedFigure_rotation_correction - 11.25);
-            OZ.camera_of_foldedFigure.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
-            OZ.camera_of_foldedFigure_front.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
-            OZ.camera_of_foldedFigure_rear.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
-            OZ.camera_of_transparent_front.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
-            OZ.camera_of_transparent_rear.setCameraAngle(OZ.d_foldedFigure_rotation_correction);
-
-            text30.setText(String.valueOf(OZ.d_foldedFigure_rotation_correction));
-            text30.setCaretPosition(0);
-
-
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        pnls3.add(Button_oriagari_m_kaiten);
-        Button_oriagari_m_kaiten.setMargin(new Insets(0, 0, 0, 0));
-        Button_oriagari_m_kaiten.setIcon(createImageIcon("ppp/oriagari_m_kaiten.png"));
-
-// *******南******************************************************************
-
-
-// ******************************************************** //折りあがり図のanti_aliasアンチェイリアスの変更
-
-        JButton Button_a_a = new JButton("a_a");
-        Button_a_a.addActionListener(e -> {
-            Button_shared_operation();
-            setHelp("qqq/a_a.png");
-
-            OZ.ct_worker.toggleAntiAlias();
-            canvas.repaint();
-        });
-        pnls.add(Button_a_a);
-
-        Button_a_a.setMargin(new Insets(0, 0, 0, 0));
-// ******************************************************** //折りあがり図の影付け
-
-        JButton Button_shadows = new JButton("S");
-        Button_shadows.addActionListener(e -> {
-            Button_shared_operation();
-            setHelp("qqq/kage.png");
-            OZ.ct_worker.toggleDisplayShadows();
-            canvas.repaint();
-        });
-        pnls.add(Button_shadows);
-
-        Button_shadows.setMargin(new Insets(0, 0, 0, 0));
-// *********南****************************************************************
-// -------------折り上がり予測図表面の色の選択
-
-        Button_F_color = new JButton(" ");
-        Button_F_color.addActionListener(e -> {
-            setHelp("qqq/F_color.png");
-            Button_shared_operation();
-            i_mouseDragged_valid = false;
-            i_mouseReleased_valid = false;
-
-            //以下にやりたいことを書く
-
-            OZ.foldedFigure_F_color = JColorChooser.showDialog(null, "F_col", Color.white);
-            if (OZ.foldedFigure_F_color != null) {
-                OZ.ct_worker.set_F_color(OZ.foldedFigure_F_color);
-            }
-
-            //以上でやりたいことは書き終わり
-
-            Button_F_color.setBackground(OZ.foldedFigure_F_color);    //ボタンの色設定
-
-            canvas.repaint();
-        });
-        Button_F_color.setMargin(new Insets(0, 0, 0, 0));
-        Button_F_color.setIcon(createImageIcon("ppp/F_color.png"));
-        pnls.add(Button_F_color);
-
-
-        //重要注意　読み込みや書き出しでファイルダイアログのボックスが開くと、それをフレームに重なる位置で操作した場合、ファイルボックスが消えたときに、
-        //マウスのドラッグとリリースが発生する。このため、余計な操作がされてしまう可能性がある。なお、このときマウスクリックは発生しない。
-        // i_mouseDragged_valid=0;や i_mouseReleased_valid=0;は、この余計な操作を防ぐために指定している。
-
-
-// -------------折り上がり予測図裏面の色の選択
-
-        Button_B_color = new JButton(" ");
-        Button_B_color.addActionListener(e -> {
-            setHelp("qqq/B_color.png");
-            Button_shared_operation();
-            i_mouseDragged_valid = false;
-            i_mouseReleased_valid = false;
-
-            //以下にやりたいことを書く
-            OZ.foldedFigure_B_color = JColorChooser.showDialog(null, "B_col", Color.white);
-
-            if (OZ.foldedFigure_B_color != null) {
-                OZ.ct_worker.set_B_color(OZ.foldedFigure_B_color);
-            }
-            //以上でやりたいことは書き終わり
-
-            Button_B_color.setBackground(OZ.foldedFigure_B_color);    //ボタンの色設定
-            canvas.repaint();
-        });
-        Button_B_color.setMargin(new Insets(0, 0, 0, 0));
-        Button_B_color.setIcon(createImageIcon("ppp/B_color.png"));
-        pnls.add(Button_B_color);
-
-
-        //重要注意　読み込みや書き出しでファイルダイアログのボックスが開くと、それをフレームに重なる位置で操作した場合、ファイルボックスが消えたときに、
-        //マウスのドラッグとリリースが発生する。このため、余計な操作がされてしまう可能性がある。なお、このときマウスクリックは発生しない。
-        // i_mouseDragged_valid=0;や i_mouseReleased_valid=0;は、この余計な操作を防ぐために指定している。
-
-
-// -------------折り上がり予測図　線の色の選択
-
-        Button_L_color = new JButton(" ");
-        Button_L_color.addActionListener(e -> {
-            setHelp("qqq/L_color.png");
-            Button_shared_operation();
-            i_mouseDragged_valid = false;
-            i_mouseReleased_valid = false;
-
-            //以下にやりたいことを書く
-
-            OZ.foldedFigure_L_color = JColorChooser.showDialog(null, "L_col", Color.white);
-            if (OZ.foldedFigure_L_color != null) {
-                OZ.ct_worker.set_L_color(OZ.foldedFigure_L_color);
-            }
-
-
-            //以上でやりたいことは書き終わり
-
-            Button_L_color.setBackground(OZ.foldedFigure_L_color);    //ボタンの色設定
-            canvas.repaint();
-        });
-        Button_L_color.setMargin(new Insets(0, 0, 0, 0));
-        Button_L_color.setIcon(createImageIcon("ppp/L_color.png"));
-        pnls.add(Button_L_color);
-
-
-        //重要注意　読み込みや書き出しでファイルダイアログのボックスが開くと、それをフレームに重なる位置で操作した場合、ファイルボックスが消えたときに、
-        //マウスのドラッグとリリースが発生する。このため、余計な操作がされてしまう可能性がある。なお、このときマウスクリックは発生しない。
-        // i_mouseDragged_valid=0;や i_mouseReleased_valid=0;は、この余計な操作を防ぐために指定している。
-
-
-// *******南******************************************************************
-        JButton Button_keisan_tyuusi = new JButton("");//折り上がり予想の計算の中止
-        Button_keisan_tyuusi.addActionListener(e -> {
-
-            setHelp("qqq/keisan_tyuusi.png");
-
-            if (subThreadRunning) {
-                keisan_tyuusi();
-            }
-
-            Button_shared_operation();
-        });
-        pnls.add(Button_keisan_tyuusi);
-
-        Button_keisan_tyuusi.setMargin(new Insets(0, 0, 0, 0));
-        Button_keisan_tyuusi.setIcon(createImageIcon("ppp/keisan_tyuusi.png"));
-
-
-// *******南****************************************************************** 折り上がり予想の廃棄 ************************************************
-        JButton Button_settei_syokika = new JButton("");//new JButton(	"Del_F"	);
-        Button_settei_syokika.addActionListener(e -> {
-
-            setHelp("qqq/settei_syokika.png");
-
-
-            if (i_OAZ == 0) {
-                return;
-            }
-            OZ = temp_OZ;//20171223この行は不要かもしれないが、一瞬でもOZが示すOriagari_Zuがなくなることがないように念のために入れておく
-            if (i_OAZ == OAZ.size() - 1) {
-                OAZ.remove(i_OAZ);
-                set_i_OAZ(OAZ.size() - 1);
-            }
-            if (i_OAZ < OAZ.size() - 1) {
-                OAZ.remove(i_OAZ);
-                set_i_OAZ(i_OAZ);
-            }
-
-            Button_shared_operation();
-            canvas.repaint();
-
-        });
-        pnls.add(Button_settei_syokika);
-
-        Button_settei_syokika.setMargin(new Insets(0, 0, 0, 0));
-        Button_settei_syokika.setIcon(createImageIcon("ppp/settei_syokika.png"));
-
-// *******南*************bbbbbbbbbb*****************************************************全操作廃棄 (ﾉToT)ﾉ ┫:･'.::･  ****************************************************
-
-        JButton Button_zen_syokika = new JButton("");//new JButton(	"Del_all"	);
-        Button_zen_syokika.addActionListener(e -> {
-
-            setHelp("qqq/zen_syokika.png");
-
-            //展開図の初期化　開始
-            //settei_syokika_cp();//展開図パラメータの初期化
-            developmentView_initialization();
-            //展開図の初期化　終了
-            //
-            //折畳予測図のの初期化　開始
-            OZ = temp_OZ;//20171223この行は不要かもしれないが、一瞬でもOZが示すOriagari_Zuがなくなることがないように念のために入れておく
-            OAZ.clear();
-            OAZ_add_new_Oriagari_Zu();
-            set_i_OAZ(0);
-            configure_syokika_yosoku();
-            //折畳予測図のの初期化　終了
-
-            Button_shared_operation();
-            canvas.repaint();
-            i_mouse_modeA = MouseMode.FOLDABLE_LINE_DRAW_71;
-            System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-
-            es1.record();
-            es1.h_record();
-        });
-        pnls.add(Button_zen_syokika);
-
-        Button_zen_syokika.setMargin(new Insets(0, 0, 0, 0));
-        Button_zen_syokika.setIcon(createImageIcon("ppp/zen_syokika.png"));
+        // Paste the bottom (south side) panel into the layout
+        SouthPanel southPanel = new SouthPanel(this);
+
+        contentPane.add("South", southPanel); //Frame用
+
+        Button_AS_matome = southPanel.getAs100Button();
+        text26 = southPanel.getGoToFoldedFigureTextField();
+        Button_bangou_sitei_estimated_display = southPanel.getGoToFoldedFigureButton();
+        Button_another_solution = southPanel.getAnotherSolutionButton();
+        foldedFigureUndoRedo = southPanel.getUndoRedo();
+        foldedFigureSizeTextField = southPanel.getFoldedFigureResizeTextField();
+        foldedFigureRotateTextField = southPanel.getFoldedFigureRotateTextField();
+        Button_F_color = southPanel.getFCButton();
+        Button_B_color = southPanel.getBCButton();
+        Button_L_color = southPanel.getLCButton();
 
 // *******南*********ボタンの定義はここまで*******************************************************************************************************************************
 
@@ -5969,9 +5261,9 @@ public class App extends JFrame implements ActionListener {
         //展開図の初期化　終了
 
         i_undo_suu = 20;
-        text10.setText(String.valueOf(i_undo_suu));
+        undoRedo.setText(String.valueOf(i_undo_suu));
         i_undo_suu_om = 5;
-        text31.setText(String.valueOf(i_undo_suu_om));
+        foldedFigureUndoRedo.setText(String.valueOf(i_undo_suu_om));
         i_h_undo_suu = 20;
         text11.setText(String.valueOf(i_h_undo_suu));
         scale_interval = 5;
@@ -6022,7 +5314,7 @@ public class App extends JFrame implements ActionListener {
         CHANGING_FOLDED_3,
     }
 
-    private FoldType getFoldType() {
+    public FoldType getFoldType() {
 
         FoldType i_fold_type;//= 0 Do nothing, = 1 Folding estimation for all fold lines in the normal development view, = 2 for fold estimation for selected fold lines, = 3 for changing the folding state
         int foldLineTotalForSelectFolding = es1.getFoldLineTotalForSelectFolding();
@@ -6056,7 +5348,7 @@ public class App extends JFrame implements ActionListener {
         return i_fold_type;
     }
 
-    private void oritatame(FoldType i_fold_type, FoldedFigure.EstimationOrder i_suitei_meirei) {//引数の意味は(i_fold_type , i_suitei_meirei)
+    public void oritatame(FoldType i_fold_type, FoldedFigure.EstimationOrder i_suitei_meirei) {//引数の意味は(i_fold_type , i_suitei_meirei)
         //i_fold_typeはget_i_fold_type()関数で取得する。
         //i_fold_type=0なにもしない、=1通常の展開図の全折線を対象とした折り畳み推定、=2はselectされた折線を対象とした折り畳み推定、=3は折畳み状態を変更
         if (i_fold_type == FoldType.NOTHING_0) {
@@ -6311,9 +5603,9 @@ public class App extends JFrame implements ActionListener {
         text28.setText(String.valueOf(rotationCorrection));//回転表示角度の補正係数
 
         OZ.d_foldedFigure_scale_factor = 1.0;
-        text29.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));//折り上がり図の縮尺係数
+        foldedFigureSizeTextField.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));//折り上がり図の縮尺係数
         OZ.d_foldedFigure_rotation_correction = 0.0;
-        text30.setText(String.valueOf(OZ.d_foldedFigure_rotation_correction));//折り上がり図の回転表示角度の補正角度
+        foldedFigureRotateTextField.setText(String.valueOf(OZ.d_foldedFigure_rotation_correction));//折り上がり図の回転表示角度の補正角度
 
 
         //背景表示
@@ -6657,7 +5949,7 @@ public class App extends JFrame implements ActionListener {
     }
 // ---------------------------------------
     
-    void Button_shared_operation() {
+    public void Button_shared_operation() {
         es1.setDrawingStage(0);
         es1.set_i_circle_drawing_stage(0);
         es1.set_s_step_iactive(LineSegment.ActiveState.ACTIVE_BOTH_3);//要注意　es1でうっかりs_stepにset.(senbun)やるとアクティヴでないので表示が小さくなる20170507
@@ -7031,7 +6323,7 @@ public class App extends JFrame implements ActionListener {
 
     }
     
-    void setHelp(String resource) {
+    public void setHelp(String resource) {
         URL url = getClass().getClassLoader().getResource(resource);
 
         try {

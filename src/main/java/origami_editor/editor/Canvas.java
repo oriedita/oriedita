@@ -1617,8 +1617,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     app.OZ.camera_of_transparent_front.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
                     app.OZ.camera_of_transparent_rear.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
                     app.OZ.camera_of_transparent_rear.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-                    app.text29.setText(String.valueOf(app.OZ.d_foldedFigure_scale_factor));
-                    app.text29.setCaretPosition(0);
+                    app.foldedFigureSizeTextField.setText(String.valueOf(app.OZ.d_foldedFigure_scale_factor));
+                    app.foldedFigureSizeTextField.setCaretPosition(0);
                 }
                 // ---------------------------------------------------------------------
 

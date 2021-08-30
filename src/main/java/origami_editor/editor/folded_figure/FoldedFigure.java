@@ -290,12 +290,12 @@ public class FoldedFigure {
 
     void oritatami_suitei_camera_configure(Camera camera_of_orisen_nyuuryokuzu, LineSegmentSet Ss0) {
         d_foldedFigure_scale_factor = camera_of_orisen_nyuuryokuzu.getCameraZoomX();
-        app.text29.setText(String.valueOf(d_foldedFigure_scale_factor));
-        app.text29.setCaretPosition(0);
+        app.foldedFigureSizeTextField.setText(String.valueOf(d_foldedFigure_scale_factor));
+        app.foldedFigureSizeTextField.setCaretPosition(0);
 
         d_foldedFigure_rotation_correction = camera_of_orisen_nyuuryokuzu.getCameraAngle();
-        app.text30.setText(String.valueOf(d_foldedFigure_rotation_correction));
-        app.text30.setCaretPosition(0);
+        app.foldedFigureRotateTextField.setText(String.valueOf(d_foldedFigure_rotation_correction));
+        app.foldedFigureRotateTextField.setCaretPosition(0);
 
         System.out.println("cp_worker1.ten_of_kijyunmen_ob     " + cp_worker1.point_of_referencePlane_ob.getX());
 
@@ -493,12 +493,12 @@ public class FoldedFigure {
         //Folded view display camera settings
 
         d_foldedFigure_scale_factor = camera_of_foldLine_diagram.getCameraZoomX();
-        app.text29.setText(String.valueOf(d_foldedFigure_scale_factor));
-        app.text29.setCaretPosition(0);
+        app.foldedFigureSizeTextField.setText(String.valueOf(d_foldedFigure_scale_factor));
+        app.foldedFigureSizeTextField.setCaretPosition(0);
 
         d_foldedFigure_rotation_correction = camera_of_foldLine_diagram.getCameraAngle();
-        app.text30.setText(String.valueOf(d_foldedFigure_rotation_correction));
-        app.text30.setCaretPosition(0);
+        app.foldedFigureRotateTextField.setText(String.valueOf(d_foldedFigure_rotation_correction));
+        app.foldedFigureRotateTextField.setCaretPosition(0);
 
         double d_display_position_x = camera_of_foldLine_diagram.getDisplayPositionX();
         double d_display_position_y = camera_of_foldLine_diagram.getDisplayPositionY();

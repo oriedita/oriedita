@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="origami_editor.editor.SouthPanel">
+  <grid id="27dc6" binding="panel1" custom-create="true" default-binding="true" layout-manager="FlowLayout" hgap="1" vgap="1" flow-align="1">
+    <constraints>
+      <xy x="20" y="20" width="2311" height="42"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="1bcec" class="javax.swing.JButton" binding="foldButton" default-binding="true">
+        <constraints/>
+        <properties>
+          <icon value="ppp/suitei_04.png"/>
+          <text value="Fold"/>
+        </properties>
+      </component>
+      <component id="f9856" class="javax.swing.JButton" binding="anotherSolutionButton" default-binding="true">
+        <constraints/>
+        <properties>
+          <text value="a_s"/>
+        </properties>
+      </component>
+      <component id="98479" class="javax.swing.JButton" binding="flipButton">
+        <constraints/>
+        <properties>
+          <icon value="ppp/Button0b.png"/>
+        </properties>
+      </component>
+      <component id="f160c" class="javax.swing.JButton" binding="As100Button">
+        <constraints/>
+        <properties>
+          <text value="AS100"/>
+        </properties>
+      </component>
+      <component id="4df7a" class="javax.swing.JTextField" binding="goToFoldedFigureTextField">
+        <constraints/>
+        <properties/>
+      </component>
+      <component id="a8323" class="javax.swing.JButton" binding="goToFoldedFigureButton">
+        <constraints/>
+        <properties>
+          <text value="Go"/>
+        </properties>
+      </component>
+      <nested-form id="ade5e" form-file="origami_editor/editor/component/UndoRedo.form" binding="undoRedo">
+        <constraints/>
+      </nested-form>
+      <component id="3a7f3" class="javax.swing.JButton" binding="oriagari_sousaButton">
+        <constraints/>
+        <properties>
+          <icon value="ppp/oriagari_sousa.png"/>
+        </properties>
+      </component>
+      <component id="632cf" class="javax.swing.JButton" binding="oriagari_sousa_2Button">
+        <constraints/>
+        <properties>
+          <icon value="ppp/oriagari_sousa_2.png"/>
+        </properties>
+      </component>
+      <component id="ca53d" class="javax.swing.JButton" binding="foldedFigureMove">
+        <constraints/>
+        <properties>
+          <icon value="ppp/oriagari_idiu.png"/>
+        </properties>
+      </component>
+      <nested-form id="af3c" form-file="origami_editor/editor/component/FoldedFigureRotate.form" binding="foldedFigureRotate" custom-create="true">
+        <constraints/>
+      </nested-form>
+      <nested-form id="ba1bf" form-file="origami_editor/editor/component/FoldedFigureResize.form" binding="foldedFigureResize" custom-create="true">
+        <constraints/>
+      </nested-form>
+      <component id="c4" class="javax.swing.JButton" binding="a_aButton" default-binding="true">
+        <constraints/>
+        <properties>
+          <text value="a_a"/>
+        </properties>
+      </component>
+      <component id="d5485" class="javax.swing.JButton" binding="shadowButton">
+        <constraints/>
+        <properties>
+          <text value="S"/>
+        </properties>
+      </component>
+      <component id="1ee29" class="javax.swing.JButton" binding="FCButton" default-binding="true">
+        <constraints/>
+        <properties>
+          <icon value="ppp/F_color.png"/>
+        </properties>
+      </component>
+      <component id="55752" class="javax.swing.JButton" binding="BCButton" default-binding="true">
+        <constraints/>
+        <properties>
+          <icon value="ppp/B_color.png"/>
+        </properties>
+      </component>
+      <component id="f6ce8" class="javax.swing.JButton" binding="LCButton" default-binding="true">
+        <constraints/>
+        <properties>
+          <icon value="ppp/L_color.png"/>
+        </properties>
+      </component>
+      <component id="98e1" class="javax.swing.JButton" binding="haltButton">
+        <constraints/>
+        <properties>
+          <icon value="ppp/keisan_tyuusi.png"/>
+        </properties>
+      </component>
+      <component id="4b27d" class="javax.swing.JButton" binding="trashButton">
+        <constraints/>
+        <properties>
+          <icon value="ppp/settei_syokika.png"/>
+        </properties>
+      </component>
+      <component id="88f83" class="javax.swing.JButton" binding="resetButton">
+        <constraints/>
+        <properties>
+          <icon value="ppp/zen_syokika.png"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
