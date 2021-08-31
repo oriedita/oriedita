@@ -64,11 +64,11 @@ public class SouthPanel extends JPanel {
         flipButton.addActionListener(e -> {
             app.setHelp("qqq/Button0b.png");
             app.OZ.ip4 = app.OZ.ip4.advance();
-            if ((app.i_mouse_modeA == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (app.OZ.ip4 == FoldedFigure.State.BOTH_2)) {
+            if ((app.mouseMode == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (app.OZ.ip4 == FoldedFigure.State.BOTH_2)) {
                 app.OZ.ip4 = FoldedFigure.State.FRONT_0;
             }//Fold-up forecast map Added to avoid the mode that can not be moved when moving
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         As100Button.addActionListener(e -> {
             app.subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_SAVE_100_1;
@@ -95,7 +95,7 @@ public class SouthPanel extends JPanel {
             app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
             if (app.foldedCases < app.OZ.discovered_fold_cases) {
-                app.configure_syokika_yosoku();//折り上がり予想の廃棄
+                app.configure_initialize_prediction();//折り上がり予想の廃棄
                 app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_51;    //i_suitei_meirei=51はoritatami_suiteiの最初の推定図用カメラの設定は素通りするための設定。推定図用カメラの設定を素通りしたら、i_suitei_meirei=5に変更される。
                 //1例目の折り上がり予想はi_suitei_meirei=5を指定、2例目以降の折り上がり予想はi_suitei_meirei=6で実施される
             }
@@ -109,7 +109,7 @@ public class SouthPanel extends JPanel {
 
             app.setHelp("qqq/bangou_sitei_suitei_hyouji.png");
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
 
         undoRedo.addUndoActionListener(e -> {
@@ -117,14 +117,14 @@ public class SouthPanel extends JPanel {
 
             app.OZ.undo();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         undoRedo.addRedoActionListener(e -> {
             app.setHelp("qqq/redo.png");
 
             app.OZ.redo();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         undoRedo.addSetUndoCountActionListener(e -> {
             app.setHelp("qqq/undo_syutoku.png");
@@ -141,8 +141,8 @@ public class SouthPanel extends JPanel {
             app.OZ.i_foldedFigure_operation_mode = 1;
             app.OZ.setAllPointStateFalse();
             app.OZ.record();
-            app.i_mouse_modeA = MouseMode.MODIFY_CALCULATED_SHAPE_101;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.MODIFY_CALCULATED_SHAPE_101;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.Button_shared_operation();
         });
@@ -151,8 +151,8 @@ public class SouthPanel extends JPanel {
             app.OZ.i_foldedFigure_operation_mode = 2;
             app.OZ.setAllPointStateFalse();
             app.OZ.record();
-            app.i_mouse_modeA = MouseMode.MODIFY_CALCULATED_SHAPE_101;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.MODIFY_CALCULATED_SHAPE_101;
+            System.out.println("mouseMode = " + app.mouseMode);
 
 
             app.Button_shared_operation();
@@ -160,8 +160,8 @@ public class SouthPanel extends JPanel {
         foldedFigureMove.addActionListener(e -> {
             app.setHelp("qqq/oriagari_idiu.png");
 
-            app.i_mouse_modeA = MouseMode.MOVE_CALCULATED_SHAPE_102;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.MOVE_CALCULATED_SHAPE_102;
+            System.out.println("mouseMode = " + app.mouseMode);
             app.Button_shared_operation();
         });
         a_aButton.addActionListener(e -> {
@@ -169,19 +169,19 @@ public class SouthPanel extends JPanel {
             app.setHelp("qqq/a_a.png");
 
             app.OZ.ct_worker.toggleAntiAlias();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         shadowButton.addActionListener(e -> {
             app.Button_shared_operation();
             app.setHelp("qqq/kage.png");
             app.OZ.ct_worker.toggleDisplayShadows();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         FCButton.addActionListener(e -> {
             app.setHelp("qqq/F_color.png");
             app.Button_shared_operation();
-            app.i_mouseDragged_valid = false;
-            app.i_mouseReleased_valid = false;
+            app.mouseDraggedValid = false;
+            app.mouseReleasedValid = false;
 
             //以下にやりたいことを書く
 
@@ -194,13 +194,13 @@ public class SouthPanel extends JPanel {
 
             app.Button_F_color.setBackground(app.OZ.foldedFigure_F_color);    //ボタンの色設定
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         BCButton.addActionListener(e -> {
             app.setHelp("qqq/B_color.png");
             app.Button_shared_operation();
-            app.i_mouseDragged_valid = false;
-            app.i_mouseReleased_valid = false;
+            app.mouseDraggedValid = false;
+            app.mouseReleasedValid = false;
 
             //以下にやりたいことを書く
             app.OZ.foldedFigure_B_color = JColorChooser.showDialog(null, "B_col", Color.white);
@@ -211,13 +211,13 @@ public class SouthPanel extends JPanel {
             //以上でやりたいことは書き終わり
 
             app.Button_B_color.setBackground(app.OZ.foldedFigure_B_color);    //ボタンの色設定
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         LCButton.addActionListener(e -> {
             app.setHelp("qqq/L_color.png");
             app.Button_shared_operation();
-            app.i_mouseDragged_valid = false;
-            app.i_mouseReleased_valid = false;
+            app.mouseDraggedValid = false;
+            app.mouseReleasedValid = false;
 
             //以下にやりたいことを書く
 
@@ -230,13 +230,13 @@ public class SouthPanel extends JPanel {
             //以上でやりたいことは書き終わり
 
             app.Button_L_color.setBackground(app.OZ.foldedFigure_L_color);    //ボタンの色設定
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         haltButton.addActionListener(e -> {
             app.setHelp("qqq/keisan_tyuusi.png");
 
             if (app.subThreadRunning) {
-                app.keisan_tyuusi();
+                app.halt();
             }
 
             app.Button_shared_operation();
@@ -244,21 +244,21 @@ public class SouthPanel extends JPanel {
         trashButton.addActionListener(e -> {
             app.setHelp("qqq/settei_syokika.png");
 
-            if (app.i_OAZ == 0) {
+            if (app.foldedFigureIndex == 0) {
                 return;
             }
             app.OZ = app.temp_OZ;//20171223この行は不要かもしれないが、一瞬でもOZが示すOriagari_Zuがなくなることがないように念のために入れておく
-            if (app.i_OAZ == app.OAZ.size() - 1) {
-                app.OAZ.remove(app.i_OAZ);
-                app.set_i_OAZ(app.OAZ.size() - 1);
+            if (app.foldedFigureIndex == app.foldedFigures.size() - 1) {
+                app.foldedFigures.remove(app.foldedFigureIndex);
+                app.set_i_OAZ(app.foldedFigures.size() - 1);
             }
-            if (app.i_OAZ < app.OAZ.size() - 1) {
-                app.OAZ.remove(app.i_OAZ);
-                app.set_i_OAZ(app.i_OAZ);
+            if (app.foldedFigureIndex < app.foldedFigures.size() - 1) {
+                app.foldedFigures.remove(app.foldedFigureIndex);
+                app.set_i_OAZ(app.foldedFigureIndex);
             }
 
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         resetButton.addActionListener(e -> {
 
@@ -271,16 +271,16 @@ public class SouthPanel extends JPanel {
             //
             //折畳予測図のの初期化　開始
             app.OZ = app.temp_OZ;//20171223この行は不要かもしれないが、一瞬でもOZが示すOriagari_Zuがなくなることがないように念のために入れておく
-            app.OAZ.clear();
-            app.OAZ_add_new_Oriagari_Zu();
+            app.foldedFigures.clear();
+            app.addNewFoldedFigure();
             app.set_i_OAZ(0);
-            app.configure_syokika_yosoku();
+            app.configure_initialize_prediction();
             //折畳予測図のの初期化　終了
 
             app.Button_shared_operation();
-            app.canvas.repaint();
-            app.i_mouse_modeA = MouseMode.FOLDABLE_LINE_DRAW_71;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.repaintCanvas();
+            app.mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.record();
             app.es1.h_record();

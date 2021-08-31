@@ -84,7 +84,7 @@ public class EastPanel extends JPanel {
                 app.es1.set_i_check1(false);
             }
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         fxOButton.addActionListener(e -> {
 
@@ -93,7 +93,7 @@ public class EastPanel extends JPanel {
             app.es1.fix1(0.001, 0.5);
             app.es1.check1(0.001, 0.5);
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         ckTCheckBox.addActionListener(e -> {
             app.setHelp("qqq/check2.png");
@@ -106,7 +106,7 @@ public class EastPanel extends JPanel {
                 app.es1.setCheck2(false);
             }
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         fxTButton.addActionListener(e -> {
             app.setHelp("qqq/fix2.png");
@@ -114,7 +114,7 @@ public class EastPanel extends JPanel {
             app.es1.fix2(0.001, 0.5);
             app.es1.check2(0.001, 0.5);
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         cAMVCheckBox.addActionListener(e -> {
             app.setHelp("qqq/check4.png");
@@ -127,38 +127,38 @@ public class EastPanel extends JPanel {
                 app.es1.setCheck4(false);
             }
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         ck4_colorDecreaseButton.addActionListener(e -> {
             app.es1.ck4_color_sage();
             app.setHelp("qqq/ck4_color_sage.png");
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         ck4_colorIncreaseButton.addActionListener(e -> {
             app.es1.ck4_color_age();
             app.setHelp("qqq/ck4_color_age.png");
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         angleSystemADecreaseButton.addActionListener(e -> {
             app.setHelp("qqq/kakudo_kei_a_tiisaku.png");
 
             switch (app.angle_system_input_id) {
                 case DEG_1:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                     break;
                 case DEG_2:
-                    app.i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
                     break;
                 case DEG_3:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                     break;
                 case DEG_4:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                     break;
                 case DEG_5:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                     break;
             }
 
@@ -168,7 +168,7 @@ public class EastPanel extends JPanel {
             app.es1.set_id_angle_system(app.id_angle_system_a);
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
 
         angleSystemAButton.setText("180/" + app.id_angle_system_a + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_a)) * 1000)) / 1000.0);
@@ -177,53 +177,53 @@ public class EastPanel extends JPanel {
 
             switch (app.angle_system_input_id) {
                 case DEG_1:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                     break;
                 case DEG_2:
-                    app.i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
                     break;
                 case DEG_3:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                     break;
                 case DEG_4:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                     break;
                 case DEG_5:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                     break;
             }
 
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             angleSystemAButton.setText("180/" + app.id_angle_system_a + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_a)) * 1000)) / 1000.0);
 
             app.es1.set_id_angle_system(app.id_angle_system_a);
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         angleSystemAIncreaseButton.addActionListener(e -> {
             app.setHelp("qqq/kakudo_kei_a_ookiku.png");
 
             switch (app.angle_system_input_id) {
                 case DEG_1:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                     break;
                 case DEG_2:
-                    app.i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
                     break;
                 case DEG_3:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                     break;
                 case DEG_4:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                     break;
                 case DEG_5:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                     break;
             }
 
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.id_angle_system_a = app.id_angle_system_a - 1;
             if (app.id_angle_system_a < 2) {
@@ -234,7 +234,7 @@ public class EastPanel extends JPanel {
             app.es1.set_id_angle_system(app.id_angle_system_a);
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
 
         angleSystemBDecreaseButton.addActionListener(e -> {
@@ -242,23 +242,23 @@ public class EastPanel extends JPanel {
 
             switch (app.angle_system_input_id) {
                 case DEG_1:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                     break;
                 case DEG_2:
-                    app.i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
                     break;
                 case DEG_3:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                     break;
                 case DEG_4:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                     break;
                 case DEG_5:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                     break;
             }
 
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.id_angle_system_b = app.id_angle_system_b + 1;//if(id_angle_system_b<2){id_angle_system_b=2;}
             angleSystemBButton.setText("180/" + app.id_angle_system_b + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_b)) * 1000)) / 1000.0);
@@ -266,7 +266,7 @@ public class EastPanel extends JPanel {
             app.es1.set_id_angle_system(app.id_angle_system_b);
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
 
         angleSystemBButton.setText("180/" + app.id_angle_system_b + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_b)) * 1000)) / 1000.0);
@@ -275,49 +275,49 @@ public class EastPanel extends JPanel {
 
             switch (app.angle_system_input_id) {
                 case DEG_1:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                     break;
                 case DEG_2:
-                    app.i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
                     break;
                 case DEG_3:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                     break;
                 case DEG_4:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                     break;
                 case DEG_5:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                     break;
             }
 
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             angleSystemBButton.setText("180/" + app.id_angle_system_b + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_b)) * 1000)) / 1000.0);
 
             app.es1.set_id_angle_system(app.id_angle_system_b);
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         angleSystemBIncreaseButton.addActionListener(e -> {
             app.setHelp("qqq/kakudo_kei_b_ookiku.png");
 
             switch (app.angle_system_input_id) {
                 case DEG_1:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                     break;
                 case DEG_2:
-                    app.i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
                     break;
                 case DEG_3:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                     break;
                 case DEG_4:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                     break;
                 case DEG_5:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                     break;
             }
 
@@ -330,7 +330,7 @@ public class EastPanel extends JPanel {
             app.es1.set_id_angle_system(app.id_angle_system_b);
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         restrictedAngleABCSetButton.addActionListener(e -> {
             app.set_restricted_angle_abc();
@@ -338,113 +338,113 @@ public class EastPanel extends JPanel {
 
             switch (app.angle_system_input_id) {
                 case DEG_1:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                     break;
                 case DEG_2:
-                    app.i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
                     break;
                 case DEG_3:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                     break;
                 case DEG_4:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                     break;
                 case DEG_5:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                     break;
             }
 
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.set_id_angle_system(0);
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
 
         restrictedAngleSetDEFButton.addActionListener(e -> {
-            app.set_restricted_angle_def();
+            app.setRestrictedAngleDEF();
             app.setHelp("qqq/jiyuu_kaku_set_b.png");
 
             switch (app.angle_system_input_id) {
                 case DEG_1:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                     break;
                 case DEG_2:
-                    app.i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
+                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
                     break;
                 case DEG_3:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
                     break;
                 case DEG_4:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
                     break;
                 case DEG_5:
-                    app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
                     break;
             }
 
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.set_id_angle_system(0);
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         degButton.addActionListener(e -> {
             app.setHelp("qqq/deg.png");
 
             app.angle_system_input_id = App.AngleSystemInputType.DEG_1;
-            app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+            System.out.println("mouseMode = " + app.mouseMode);
 
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         deg3Button.addActionListener(e -> {
             app.setHelp("qqq/deg3.png");
 
             app.angle_system_input_id = App.AngleSystemInputType.DEG_3;
-            app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+            System.out.println("mouseMode = " + app.mouseMode);
 
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         angleRestrictedButton.addActionListener(e -> {
             app.setHelp("qqq/senbun_nyuryoku37.png");
             app.angle_system_input_id = App.AngleSystemInputType.DEG_5;
-            app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         deg2Button.addActionListener(e -> {
 
             app.setHelp("qqq/deg2.png");
             app.angle_system_input_id = App.AngleSystemInputType.DEG_2;
-            app.i_mouse_modeA = MouseMode.ANGLE_SYSTEM_16;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         deg4Button.addActionListener(e -> {
             app.setHelp("qqq/deg4.png");
             app.angle_system_input_id = App.AngleSystemInputType.DEG_4;
-            app.i_mouse_modeA = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         polygonSizeSetButton.addActionListener(e -> {
             int numPolygonCornersOld = app.numPolygonCorners;
@@ -459,11 +459,11 @@ public class EastPanel extends JPanel {
             app.es1.setNumPolygonCorners(app.numPolygonCorners);
 
             app.setHelp("qqq/kakusuu_set.png");
-            app.i_mouse_modeA = MouseMode.POLYGON_SET_NO_CORNERS_29;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.POLYGON_SET_NO_CORNERS_29;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         regularPolygonButton.addActionListener(e -> {
             int numPolygonCorners_old = app.numPolygonCorners;
@@ -475,134 +475,134 @@ public class EastPanel extends JPanel {
             app.es1.setNumPolygonCorners(app.numPolygonCorners);
 
             app.setHelp("qqq/sei_takakukei.png");
-            app.i_mouse_modeA = MouseMode.POLYGON_SET_NO_CORNERS_29;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.POLYGON_SET_NO_CORNERS_29;
+            System.out.println("mouseMode = " + app.mouseMode);
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.POLYGON_SET_NO_CORNERS_29;
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
             app.es1.unselect_all();
         });
         circleDrawFreeButton.addActionListener(e -> {
             app.setHelp("qqq/en_nyuryoku_free.png");
-            app.i_mouse_modeA = MouseMode.CIRCLE_DRAW_FREE_47;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CIRCLE_DRAW_FREE_47;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         circleDrawButton.addActionListener(e -> {
             app.setHelp("qqq/en_nyuryoku.png");
-            app.i_mouse_modeA = MouseMode.CIRCLE_DRAW_42;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CIRCLE_DRAW_42;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         circleDrawSeparateButton.addActionListener(e -> {
             app.setHelp("qqq/en_bunri_nyuryoku.png");
-            app.i_mouse_modeA = MouseMode.CIRCLE_DRAW_SEPARATE_44;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CIRCLE_DRAW_SEPARATE_44;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         circleDrawConcentricButton.addActionListener(e -> {
             app.setHelp("qqq/dousin_en_tuika_s.png");
-            app.i_mouse_modeA = MouseMode.CIRCLE_DRAW_CONCENTRIC_48;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CIRCLE_DRAW_CONCENTRIC_48;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         circleDrawConcentricSelectButton.addActionListener(e -> {
             app.setHelp("qqq/dousin_en_tuika_d.png");
-            app.i_mouse_modeA = MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         circleDrawTwoConcentricButton.addActionListener(e -> {
             app.setHelp("qqq/en_en_dousin_en.png");
 
-            app.i_mouse_modeA = MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         circleDrawTangentLineButton.addActionListener(e -> {
             app.setHelp("qqq/en_en_sessen.png");
 
-            app.i_mouse_modeA = MouseMode.CIRCLE_DRAW_TANGENT_LINE_45;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CIRCLE_DRAW_TANGENT_LINE_45;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         circleDrawThreePointButton.addActionListener(e -> {
             app.setHelp("qqq/en_3ten_nyuryoku.png");
 
-            app.i_mouse_modeA = MouseMode.CIRCLE_DRAW_THREE_POINT_43;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CIRCLE_DRAW_THREE_POINT_43;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         circleDrawInvertedButton.addActionListener(e -> {
             app.setHelp("qqq/hanten.png");
 
-            app.i_mouse_modeA = MouseMode.CIRCLE_DRAW_INVERTED_46;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CIRCLE_DRAW_INVERTED_46;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         c_colButton.addActionListener(e -> {
             app.setHelp("qqq/sen_tokutyuu_color.png");
             app.Button_shared_operation();
-            app.i_mouseDragged_valid = false;
-            app.i_mouseReleased_valid = false;
+            app.mouseDraggedValid = false;
+            app.mouseReleasedValid = false;
             //以下にやりたいことを書く
 
             Color color = JColorChooser.showDialog(null, "color", new Color(100, 200, 200));
             if (color != null) {
-                app.sen_tokutyuu_color = color;
+                app.circleCustomizedColor = color;
             }
 
             //以上でやりたいことは書き終わり
-            c_colButton.setBackground(app.sen_tokutyuu_color);    //ボタンの色設定
+            c_colButton.setBackground(app.circleCustomizedColor);    //ボタンの色設定
 
-            app.i_mouse_modeA = MouseMode.CIRCLE_CHANGE_COLOR_59;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
-            app.es1.set_sen_tokutyuu_color(app.sen_tokutyuu_color);
+            app.mouseMode = MouseMode.CIRCLE_CHANGE_COLOR_59;
+            System.out.println("mouseMode = " + app.mouseMode);
+            app.es1.set_sen_tokutyuu_color(app.circleCustomizedColor);
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         sen_tokutyuu_color_henkouButton.addActionListener(e -> {
             app.setHelp("qqq/sen_tokutyuu_color_henkou.png");
-            app.i_mouse_modeA = MouseMode.CIRCLE_CHANGE_COLOR_59;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
-            app.es1.set_sen_tokutyuu_color(app.sen_tokutyuu_color);
+            app.mouseMode = MouseMode.CIRCLE_CHANGE_COLOR_59;
+            System.out.println("mouseMode = " + app.mouseMode);
+            app.es1.set_sen_tokutyuu_color(app.circleCustomizedColor);
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         h_undoButton.addActionListener(e -> {
             app.setHelp("qqq/undo.png");
 
             app.es1.h_undo();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         h_undoTotalSetButton.addActionListener(e -> {
             app.setHelp("qqq/h_undo_syutoku.png");
@@ -619,57 +619,57 @@ public class EastPanel extends JPanel {
 
             app.es1.h_redo();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         h_senhaba_sageButton.addActionListener(e -> {
-            app.i_h_lineWidth = app.i_h_lineWidth - 2;
-            if (app.i_h_lineWidth < 3) {
-                app.i_h_lineWidth = 3;
+            app.displayAuxLineWidth = app.displayAuxLineWidth - 2;
+            if (app.displayAuxLineWidth < 3) {
+                app.displayAuxLineWidth = 3;
             }
 
             app.setHelp("qqq/h_senhaba_sage.png");
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         h_senhaba_ageButton.addActionListener(e -> {
-            app.i_h_lineWidth = app.i_h_lineWidth + 2;
+            app.displayAuxLineWidth = app.displayAuxLineWidth + 2;
             app.setHelp("qqq/h_senhaba_age.png");
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         colOrangeButton.addActionListener(e -> {
             app.setHelp("qqq/Button_Col_orange.png");
-            app.Button_h_Col_reset();
+            app.auxColorButtonReset();
             colOrangeButton.setBackground(Color.ORANGE);
-            app.h_icol = LineColor.ORANGE_4;
-            app.es1.h_setcolor(app.h_icol);
+            app.currentAuxLineColor = LineColor.ORANGE_4;
+            app.es1.h_setcolor(app.currentAuxLineColor);
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         colYellowButton.addActionListener(e -> {
             app.setHelp("qqq/Button_Col_yellow.png");
-            app.Button_h_Col_reset();
+            app.auxColorButtonReset();
             colYellowButton.setBackground(Color.yellow);
-            app.h_icol = LineColor.YELLOW_7;
-            app.es1.h_setcolor(app.h_icol);
+            app.currentAuxLineColor = LineColor.YELLOW_7;
+            app.es1.h_setcolor(app.currentAuxLineColor);
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         h_senbun_nyuryokuButton.addActionListener(e -> {
             app.setHelp("qqq/h_senbun_nyuryoku.png");
-            app.i_mouse_modeA = MouseMode.DRAW_CREASE_FREE_1;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.DRAW_CREASE_FREE_1;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
             app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.AUX_LINE_1;//=0は折線入力　=1は補助線入力モード
             app.es1.setFoldLineAdditional(app.foldLineAdditionalInputMode);
         });
         h_senbun_sakujyoButton.addActionListener(e -> {
             app.setHelp("qqq/h_senbun_sakujyo.png");
-            app.i_mouse_modeA = MouseMode.LINE_SEGMENT_DELETE_3;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.LINE_SEGMENT_DELETE_3;
+            System.out.println("mouseMode = " + app.mouseMode);
 
 
             app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.AUX_LINE_1;//= 0 is polygonal line input = 1 is auxiliary line input mode
@@ -677,52 +677,52 @@ public class EastPanel extends JPanel {
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         l1Button.addActionListener(e -> {
             app.setHelp("qqq/nagasa_sokutei_1.png");
-            app.i_mouse_modeA = MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         l2Button.addActionListener(e -> {
             app.setHelp("qqq/nagasa_sokutei_2.png");
-            app.i_mouse_modeA = MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         a1Button.addActionListener(e -> {
             app.setHelp("qqq/kakudo_sokutei_1.png");
-            app.i_mouse_modeA = MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         a2Button.addActionListener(e -> {
             app.setHelp("qqq/kakudo_sokutei_2.png");
-            app.i_mouse_modeA = MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         a3Button.addActionListener(e -> {
             app.setHelp("qqq/kakudo_sokutei_3.png");
-            app.i_mouse_modeA = MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         ad_fncButton.addActionListener(e -> {
             app.setHelp("qqq/tuika_kinou.png");

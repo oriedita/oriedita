@@ -7,7 +7,6 @@ import origami_editor.record.memo.Memo;
 import origami_editor.record.string_op.StringOp;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class WestPanel extends JPanel {
@@ -42,7 +41,7 @@ public class WestPanel extends JPanel {
     private JButton sakananohoneButton;
     private JButton fuku_orikaesiButton;
     private JButton senbun_b_nyuryokuButton;
-    private JButton kyoueiButton;
+    private JButton reflectButton;
     private JButton selectButton;
     private JButton unselectButton;
     private JButton selectAllButton;
@@ -95,9 +94,9 @@ public class WestPanel extends JPanel {
     private JButton koteimen_siteiButton;
     private JButton suitei_02Button;
     private JButton suitei_03Button;
-    private JCheckBox ckbox_toukazu_color;
-    private JButton toukazu_color_sageButton;
-    private JButton toukazu_color_ageButton;
+    private JCheckBox coloredXRayButton;
+    private JButton coloredXRayDecreaseButton;
+    private JButton coloredXRayIncreaseButton;
     private JButton colRedButton;
     private JButton colBlueButton;
     private JButton colBlackButton;
@@ -108,8 +107,8 @@ public class WestPanel extends JPanel {
         return undoRedo;
     }
 
-    public JCheckBox getCkbox_toukazu_color() {
-        return ckbox_toukazu_color;
+    public JCheckBox getColoredXRayButton() {
+        return coloredXRayButton;
     }
 
     public JCheckBox getCkbox_cp_kaizen_folding() {
@@ -171,14 +170,14 @@ public class WestPanel extends JPanel {
 
             app.setTitle(app.es1.undo());
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         undoRedo.addRedoActionListener(e -> {
             app.setHelp("qqq/redo.png");
 
             app.setTitle(app.es1.redo());
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         undoRedo.addSetUndoCountActionListener(e -> {
             app.setHelp("qqq/undo_syutoku.png");
@@ -191,17 +190,17 @@ public class WestPanel extends JPanel {
             app.es1.set_Ubox_undo_suu(app.i_undo_suu);
         });
         lineWidthDecreaseButton.addActionListener(e -> {
-            app.iLineWidth = app.iLineWidth - 2;
-            if (app.iLineWidth < 1) {
-                app.iLineWidth = 1;
+            app.displayLineWidth = app.displayLineWidth - 2;
+            if (app.displayLineWidth < 1) {
+                app.displayLineWidth = 1;
             }
             app.setHelp("qqq/senhaba_sage.png");
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         lineWidthIncreaseButton.addActionListener(e -> {
-            app.iLineWidth = app.iLineWidth + 2;
+            app.displayLineWidth = app.displayLineWidth + 2;
             app.setHelp("qqq/senhaba_age.png");
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         pointSizeDecreaseButton.addActionListener(e -> {
             app.setHelp("qqq/tenhaba_sage.png");
@@ -212,7 +211,7 @@ public class WestPanel extends JPanel {
             }
             app.es1.setPointSize(app.pointSize);
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         pointSizeIncreaseButton.addActionListener(e -> {
             app.setHelp("qqq/tenhaba_age.png");
@@ -220,14 +219,14 @@ public class WestPanel extends JPanel {
             app.pointSize = app.pointSize + 1;
             app.es1.setPointSize(app.pointSize);
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         antiAliasToggleButton.addActionListener(e -> {
             app.antiAlias = !app.antiAlias;
 
             app.setHelp("qqq/anti_alias.png");
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         lineStyleChangeButton.addActionListener(e -> {
             app.Button_shared_operation();
@@ -235,203 +234,203 @@ public class WestPanel extends JPanel {
 
             app.setHelp("qqq/orisen_hyougen.png");
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         colRedButton.addActionListener(e -> {
             app.setHelp("qqq/ButtonCol_red.png");
-            app.ButtonCol_reset();
+            app.buttonColorReset();
             colRedButton.setForeground(Color.black);
             colRedButton.setBackground(Color.red);
-            app.icol = LineColor.RED_1;
-            app.es1.setColor(app.icol);
+            app.currentLineColor = LineColor.RED_1;
+            app.es1.setColor(app.currentLineColor);
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         colBlueButton.addActionListener(e -> {
 
             app.setHelp("qqq/ButtonCol_blue.png");
-            app.ButtonCol_reset();
+            app.buttonColorReset();
             colBlueButton.setForeground(Color.black);
             colBlueButton.setBackground(Color.blue);
-            app.icol = LineColor.BLUE_2;
-            app.es1.setColor(app.icol);
+            app.currentLineColor = LineColor.BLUE_2;
+            app.es1.setColor(app.currentLineColor);
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         colBlackButton.addActionListener(e -> {
             app.setHelp("qqq/ButtonCol_black.png");
 
-            app.ButtonCol_reset();
+            app.buttonColorReset();
             colBlackButton.setForeground(Color.white);
             colBlackButton.setBackground(Color.black);
-            app.icol = LineColor.BLACK_0;
-            app.es1.setColor(app.icol);
+            app.currentLineColor = LineColor.BLACK_0;
+            app.es1.setColor(app.currentLineColor);
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         colCyanButton.addActionListener(e -> {
             app.setHelp("qqq/ButtonCol_cyan.png");
 
-            app.ButtonCol_reset();
+            app.buttonColorReset();
             colCyanButton.setForeground(Color.black);
             colCyanButton.setBackground(Color.cyan);
-            app.icol = LineColor.CYAN_3;
-            app.es1.setColor(app.icol);
+            app.currentLineColor = LineColor.CYAN_3;
+            app.es1.setColor(app.currentLineColor);
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         senbun_nyuryokuButton.addActionListener(e -> {
             app.setHelp("qqq/senbun_nyuryoku.png");
             app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
             app.es1.setFoldLineAdditional(app.foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
-            app.i_mouse_modeA = MouseMode.DRAW_CREASE_FREE_1;
+            app.mouseMode = MouseMode.DRAW_CREASE_FREE_1;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_FREE_1;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         senbun_nyuryoku11Button.addActionListener(e -> {
             app.setHelp("qqq/senbun_nyuryoku11.png");
-            app.i_mouse_modeA = MouseMode.DRAW_CREASE_RESTRICTED_11;
+            app.mouseMode = MouseMode.DRAW_CREASE_RESTRICTED_11;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_RESTRICTED_11;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         voronoiButton.addActionListener(e -> {
             app.setHelp("qqq/Voronoi.png");
             app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
             app.es1.setFoldLineAdditional(app.foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
-            app.i_mouse_modeA = MouseMode.VONOROI_CREATE_62;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.VONOROI_CREATE_62;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.VORONOI_CREATE_62;
+            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.VORONOI_CREATE_62;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         oritatami_kanousenButton.addActionListener(e -> {
             app.setHelp("qqq/oritatami_kanousen.png");
 
-            app.i_mouse_modeA = MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
+            app.mouseMode = MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         senbun_entyouButton.addActionListener(e -> {
             app.setHelp("qqq/senbun_entyou.png");
 
-            app.i_mouse_modeA = MouseMode.LENGTHEN_CREASE_5;
+            app.mouseMode = MouseMode.LENGTHEN_CREASE_5;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LENGTHEN_CREASE_5;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         senbun_entyou_2Button.addActionListener(e -> {
             app.setHelp("qqq/senbun_entyou_2.png");
 
-            app.i_mouse_modeA = MouseMode.CREASE_LENGTHEN_70;
+            app.mouseMode = MouseMode.CREASE_LENGTHEN_70;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LENGTHEN_CREASE_5;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         kaku_toubunButton.addActionListener(e -> {
             app.setHelp("qqq/kaku_toubun.png");
 
-            app.i_mouse_modeA = MouseMode.SQUARE_BISECTOR_7;
+            app.mouseMode = MouseMode.SQUARE_BISECTOR_7;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.SQUARE_BISECTOR_7;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         naishinButton.addActionListener(e -> {
             app.setHelp("qqq/naishin.png");
 
-            app.i_mouse_modeA = MouseMode.INWARD_8;
+            app.mouseMode = MouseMode.INWARD_8;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.INWARD_8;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         suisenButton.addActionListener(e -> {
             app.setHelp("qqq/suisen.png");
 
-            app.i_mouse_modeA = MouseMode.PERPENDICULAR_DRAW_9;
+            app.mouseMode = MouseMode.PERPENDICULAR_DRAW_9;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.PERPENDICULAR_DRAW_9;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         orikaesiButton.addActionListener(e -> {
             app.setHelp("qqq/orikaesi.png");
 
-            app.i_mouse_modeA = MouseMode.SYMMETRIC_DRAW_10;
+            app.mouseMode = MouseMode.SYMMETRIC_DRAW_10;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.SYMMETRIC_DRAW_10;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         renzoku_orikaesiButton.addActionListener(e -> {
             app.setHelp("qqq/renzoku_orikaesi.png");
 
-            app.i_mouse_modeA = MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52;
+            app.mouseMode = MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         heikousenButton.addActionListener(e -> {
             app.setHelp("qqq/heikousen.png");
-            app.i_mouse_modeA = MouseMode.PARALLEL_DRAW_40;
+            app.mouseMode = MouseMode.PARALLEL_DRAW_40;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.PARALLEL_DRAW_40;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         heikousen_haba_siteiButton.addActionListener(e -> {
             app.setHelp("qqq/heikousen_haba_sitei.png");
-            app.i_mouse_modeA = MouseMode.PARALLEL_DRAW_WIDTH_51;
+            app.mouseMode = MouseMode.PARALLEL_DRAW_WIDTH_51;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.PARALLEL_DRAW_WIDTH_51;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         oritatami_kanousen_and_kousitenkei_simpleButton.addActionListener(e -> {
             app.setHelp("qqq/oritatami_kanousen_and_kousitenkei_simple.png");
 
-            app.i_mouse_modeA = MouseMode.FOLDABLE_LINE_DRAW_71;
+            app.mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.FOLDABLE_LINE_DRAW_71;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         all_s_step_to_orisenButton.addActionListener(e -> {
             System.out.println("i_egaki_dankai = " + app.es1.i_drawing_stage);
@@ -440,29 +439,29 @@ public class WestPanel extends JPanel {
             app.setHelp("qqq/all_s_step_to_orisen.png");
             app.es1.all_s_step_to_orisen();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         sakananohoneButton.addActionListener(e -> {
             app.setHelp("qqq/sakananohone.png");
 
-            app.i_mouse_modeA = MouseMode.FISH_BONE_DRAW_33;
+            app.mouseMode = MouseMode.FISH_BONE_DRAW_33;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.FISH_BONE_DRAW_33;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         fuku_orikaesiButton.addActionListener(e -> {
             app.setHelp("qqq/fuku_orikaesi.png");
 
-            app.i_mouse_modeA = MouseMode.DOUBLE_SYMMETRIC_DRAW_35;
+            app.mouseMode = MouseMode.DOUBLE_SYMMETRIC_DRAW_35;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DOUBLE_SYMMETRIC_DRAW_35;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         lineSegmentDivisionSetButton.addActionListener(e -> {
 
@@ -475,12 +474,12 @@ public class WestPanel extends JPanel {
             app.es1.setFoldLineDividingNumber(app.foldLineDividingNumber);
 
             app.setHelp("qqq/senbun_bunkatu_set.png");
-            app.i_mouse_modeA = MouseMode.LINE_SEGMENT_DIVISION_27;
+            app.mouseMode = MouseMode.LINE_SEGMENT_DIVISION_27;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_DIVISION_27;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         senbun_b_nyuryokuButton.addActionListener(e -> {
 
@@ -493,53 +492,53 @@ public class WestPanel extends JPanel {
             app.es1.setFoldLineDividingNumber(app.foldLineDividingNumber);
 
             app.setHelp("qqq/senbun_b_nyuryoku.png");
-            app.i_mouse_modeA = MouseMode.LINE_SEGMENT_DIVISION_27;
+            app.mouseMode = MouseMode.LINE_SEGMENT_DIVISION_27;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_DIVISION_27;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         selectButton.addActionListener(e -> {
             app.setHelp("qqq/Select.png");
 
-            app.i_mouse_modeA = MouseMode.CREASE_SELECT_19;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CREASE_SELECT_19;
+            System.out.println("mouseMode = " + app.mouseMode);
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         selectAllButton.addActionListener(e -> {
 
             app.setHelp("qqq/select_all.png");
             app.es1.select_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         unselectButton.addActionListener(e -> {
             app.setHelp("qqq/unselect.png");
 
-            app.i_mouse_modeA = MouseMode.CREASE_UNSELECT_20;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CREASE_UNSELECT_20;
+            System.out.println("mouseMode = " + app.mouseMode);
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         unselectAllButton.addActionListener(e -> {
 
             app.setHelp("qqq/unselect_all.png");
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         moveButton.addActionListener(e -> {
             app.setHelp("qqq/move.png");
             app.selectionOperationMode = App.SelectionOperationMode.MOVE_1;
             app.Button_sel_mou_wakukae();
 
-            app.i_mouse_modeA = MouseMode.CREASE_MOVE_21;
+            app.mouseMode = MouseMode.CREASE_MOVE_21;
             app.Button_shared_operation();
-            app.canvas.repaint();
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.repaintCanvas();
+            System.out.println("mouseMode = " + app.mouseMode);
         });
         move2p2pButton.addActionListener(e -> {
             app.setHelp("qqq/move_2p2p.png");
@@ -547,10 +546,10 @@ public class WestPanel extends JPanel {
             app.Button_sel_mou_wakukae();
 
 
-            app.i_mouse_modeA = MouseMode.CREASE_MOVE_4P_31;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CREASE_MOVE_4P_31;
+            System.out.println("mouseMode = " + app.mouseMode);
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         copyButton.addActionListener(e -> {
             app.setHelp("qqq/copy_paste.png");
@@ -558,10 +557,10 @@ public class WestPanel extends JPanel {
             app.Button_sel_mou_wakukae();
 
 
-            app.i_mouse_modeA = MouseMode.CREASE_COPY_22;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CREASE_COPY_22;
+            System.out.println("mouseMode = " + app.mouseMode);
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         copy2p2pButton.addActionListener(e -> {
             app.setHelp("qqq/copy_paste_2p2p.png");
@@ -569,32 +568,32 @@ public class WestPanel extends JPanel {
             app.Button_sel_mou_wakukae();
 
 
-            app.i_mouse_modeA = MouseMode.CREASE_COPY_4P_32;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CREASE_COPY_4P_32;
+            System.out.println("mouseMode = " + app.mouseMode);
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
-        kyoueiButton.addActionListener(e -> {
+        reflectButton.addActionListener(e -> {
             app.setHelp("qqq/kyouei.png");
             app.selectionOperationMode = App.SelectionOperationMode.MIRROR_5;
             app.Button_sel_mou_wakukae();
 
-            app.i_mouse_modeA = MouseMode.DRAW_CREASE_SYMMETRIC_12;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.DRAW_CREASE_SYMMETRIC_12;
+            System.out.println("mouseMode = " + app.mouseMode);
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         deleteSelectedLineSegmentButton.addActionListener(e -> {
             app.setHelp("qqq/del_selected_senbun.png");
             app.es1.del_selected_senbun();
             app.es1.record();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         senbun_sakujyoButton.addActionListener(e -> {
             app.setHelp("qqq/senbun_sakujyo.png");
-            app.i_mouse_modeA = MouseMode.LINE_SEGMENT_DELETE_3;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.LINE_SEGMENT_DELETE_3;
+            System.out.println("mouseMode = " + app.mouseMode);
 
 
             app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
@@ -602,12 +601,12 @@ public class WestPanel extends JPanel {
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         kuro_senbun_sakujyoButton.addActionListener(e -> {
             app.setHelp("qqq/kuro_senbun_sakujyo.png");
-            app.i_mouse_modeA = MouseMode.LINE_SEGMENT_DELETE_3;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.LINE_SEGMENT_DELETE_3;
+            System.out.println("mouseMode = " + app.mouseMode);
 
 
             app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.BLACK_LINE_2;//= 2 is the black polygonal line deletion mode
@@ -615,12 +614,12 @@ public class WestPanel extends JPanel {
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         senbun3_sakujyoButton.addActionListener(e -> {
             app.setHelp("qqq/senbun3_sakujyo.png");
-            app.i_mouse_modeA = MouseMode.LINE_SEGMENT_DELETE_3;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.LINE_SEGMENT_DELETE_3;
+            System.out.println("mouseMode = " + app.mouseMode);
 
 
             app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.AUX_LIVE_LINE_3;//= 0 is polygonal line input = 1 is auxiliary line input mode = 3 is for auxiliary live line only
@@ -628,7 +627,7 @@ public class WestPanel extends JPanel {
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         eda_kesiButton.addActionListener(e -> {
             app.setHelp("qqq/eda_kesi.png");
@@ -639,247 +638,247 @@ public class WestPanel extends JPanel {
             app.es1.record();
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         M_nisuruButton.addActionListener(e -> {
             app.setHelp("qqq/M_nisuru.png");
-            app.Button_reset();
+            app.buttonReset();
             M_nisuruButton.setForeground(Color.black);
             M_nisuruButton.setBackground(Color.red);
-            //icol=1;es1.setcolor(icol);
-            app.i_mouse_modeA = MouseMode.CREASE_MAKE_MOUNTAIN_23;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            //currentLineColor=1;es1.setcolor(currentLineColor);
+            app.mouseMode = MouseMode.CREASE_MAKE_MOUNTAIN_23;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         V_nisuruButton.addActionListener(e -> {
             app.setHelp("qqq/V_nisuru.png");
-            app.Button_reset();
+            app.buttonReset();
             V_nisuruButton.setForeground(Color.black);
             V_nisuruButton.setBackground(Color.blue);
-            //icol=1;es1.setcolor(icol);
-            app.i_mouse_modeA = MouseMode.CREASE_MAKE_VALLEY_24;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            //currentLineColor=1;es1.setcolor(currentLineColor);
+            app.mouseMode = MouseMode.CREASE_MAKE_VALLEY_24;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         E_nisuruButton.addActionListener(e -> {
             app.setHelp("qqq/E_nisuru.png");
-            app.Button_reset();
+            app.buttonReset();
             E_nisuruButton.setForeground(Color.white);
             E_nisuruButton.setBackground(Color.black);
-            //icol=1;es1.setcolor(icol);
-            app.i_mouse_modeA = MouseMode.CREASE_MAKE_EDGE_25;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            //currentLineColor=1;es1.setcolor(currentLineColor);
+            app.mouseMode = MouseMode.CREASE_MAKE_EDGE_25;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         HK_nisuruButton.addActionListener(e -> {
             app.setHelp("qqq/HK_nisuru.png");
-            app.Button_reset();
+            app.buttonReset();
             HK_nisuruButton.setForeground(Color.white);
             HK_nisuruButton.setBackground(new Color(100, 200, 200));
-            //icol=1;es1.setcolor(icol);
-            app.i_mouse_modeA = MouseMode.CREASE_MAKE_AUX_60;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            //currentLineColor=1;es1.setcolor(currentLineColor);
+            app.mouseMode = MouseMode.CREASE_MAKE_AUX_60;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         zen_yama_tani_henkanButton.addActionListener(e -> {
             app.setHelp("qqq/zen_yama_tani_henkan.png");
             app.es1.allMountainValleyChange();
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         senbun_henkan2Button.addActionListener(e -> {
             app.setHelp("qqq/senbun_henkan2.png");
-            app.Button_reset();
+            app.buttonReset();
             senbun_henkan2Button.setBackground(new Color(138, 43, 226));
 
-            app.i_mouse_modeA = MouseMode.CREASE_TOGGLE_MV_58;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CREASE_TOGGLE_MV_58;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         senbun_henkanButton.addActionListener(e -> {
             app.setHelp("qqq/senbun_henkan.png");
-            app.Button_reset();
+            app.buttonReset();
 
-            app.i_mouse_modeA = MouseMode.CHANGE_CREASE_TYPE_4;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CHANGE_CREASE_TYPE_4;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         in_L_col_changeButton.addActionListener(e -> {
             app.setHelp("qqq/in_L_col_change.png");
 
-            app.i_mouse_modeA = MouseMode.CREASE_MAKE_MV_34;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CREASE_MAKE_MV_34;
+            System.out.println("mouseMode = " + app.mouseMode);
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.CREASE_MAKE_MV_34;
 
-            if (app.icol == LineColor.BLACK_0) {
-                app.icol = LineColor.RED_1;
-                app.es1.setColor(app.icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
-                app.ButtonCol_reset();
+            if (app.currentLineColor == LineColor.BLACK_0) {
+                app.currentLineColor = LineColor.RED_1;
+                app.es1.setColor(app.currentLineColor);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
+                app.buttonColorReset();
                 colRedButton.setForeground(Color.black);
                 colRedButton.setBackground(Color.red);    //折線のボタンの色設定
             }
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         on_L_col_changeButton.addActionListener(e -> {
             app.setHelp("qqq/on_L_col_change.png");
-            app.i_mouse_modeA = MouseMode.CREASES_ALTERNATE_MV_36;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CREASES_ALTERNATE_MV_36;
+            System.out.println("mouseMode = " + app.mouseMode);
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.CREASES_ALTERNATE_MV_36;
 
 
-            if (app.icol == LineColor.BLACK_0) {
-                app.icol = LineColor.BLUE_2;
-                app.es1.setColor(app.icol);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
-                app.ButtonCol_reset();
+            if (app.currentLineColor == LineColor.BLACK_0) {
+                app.currentLineColor = LineColor.BLUE_2;
+                app.es1.setColor(app.currentLineColor);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
+                app.buttonColorReset();
                 colBlueButton.setForeground(Color.black);
                 colBlueButton.setBackground(Color.blue);    //折線のボタンの色設定
             }
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         v_addButton.addActionListener(e -> {
             app.setHelp("qqq/v_add.png");
-            app.i_mouse_modeA = MouseMode.DRAW_POINT_14;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.DRAW_POINT_14;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         v_delButton.addActionListener(e -> {
             app.setHelp("qqq/v_del.png");
 
-            app.i_mouse_modeA = MouseMode.DELETE_POINT_15;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.DELETE_POINT_15;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         v_del_ccButton.addActionListener(e -> {
             app.setHelp("qqq/v_del_cc.png");
 
-            app.i_mouse_modeA = MouseMode.VERTEX_DELETE_ON_CREASE_41;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.VERTEX_DELETE_ON_CREASE_41;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         v_del_allButton.addActionListener(e -> {
             app.setHelp("qqq/v_del_all.png");
-            //i_mouse_modeA=19;
+            //mouseMode=19;
             app.es1.v_del_all();
             System.out.println("es1.v_del_all()");
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         v_del_all_ccButton.addActionListener(e -> {
             app.setHelp("qqq/v_del_all_cc.png");
             app.es1.v_del_all_cc();
             System.out.println("es1.v_del_all_cc()");
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         gridSizeDecreaseButton.addActionListener(e -> {
             app.setHelp("qqq/kitei2.png");
 
-            app.nyuuryoku_kitei = app.nyuuryoku_kitei / 2;
-            if (app.nyuuryoku_kitei < 1) {
-                app.nyuuryoku_kitei = 1;
+            app.gridSize = app.gridSize / 2;
+            if (app.gridSize < 1) {
+                app.gridSize = 1;
             }
 
-            if (app.nyuuryoku_kitei < -0) {
-                app.nyuuryoku_kitei = -1;
+            if (app.gridSize < -0) {
+                app.gridSize = -1;
             }
 
             //ボタンの色変え
-            if (app.nyuuryoku_kitei >= 1) {
+            if (app.gridSize >= 1) {
                 gridSizeIncreaseButton.setForeground(Color.black);
                 gridSizeIncreaseButton.setBackground(Color.white);
             }
-            if (app.nyuuryoku_kitei == 0) {
+            if (app.gridSize == 0) {
                 gridSizeIncreaseButton.setForeground(Color.black);
                 gridSizeIncreaseButton.setBackground(new Color(0, 200, 200));
             }
             //ボタンの色変え(ここまで)
             //ボタンの色変え
-            if (app.nyuuryoku_kitei >= 1) {
+            if (app.gridSize >= 1) {
                 gridSizeDecreaseButton.setForeground(Color.black);
                 gridSizeDecreaseButton.setBackground(Color.white);
             }
-            if (app.nyuuryoku_kitei == 0) {
+            if (app.gridSize == 0) {
                 gridSizeDecreaseButton.setForeground(Color.black);
                 gridSizeDecreaseButton.setBackground(new Color(0, 200, 200));
             }
             //ボタンの色変え(ここまで)
 
-            gridSizeTextField.setText(String.valueOf(app.nyuuryoku_kitei));
-            app.es1.setGridDivisionNumber(app.nyuuryoku_kitei);
-            app.canvas.repaint();
+            gridSizeTextField.setText(String.valueOf(app.gridSize));
+            app.es1.setGridSize(app.gridSize);
+            app.repaintCanvas();
         });
         gridSizeSetButton.addActionListener(e -> {
             app.setHelp("qqq/syutoku.png");
-            app.set_grid_bunkatu_suu();
+            app.setGridSize();
         });
         gridSizeIncreaseButton.addActionListener(e -> {
             app.setHelp("qqq/kitei.png");
 
-            app.nyuuryoku_kitei = app.nyuuryoku_kitei * 2;
+            app.gridSize = app.gridSize * 2;
 
             //ボタンの色変え
-            if (app.nyuuryoku_kitei >= 1) {
+            if (app.gridSize >= 1) {
                 gridSizeIncreaseButton.setForeground(Color.black);
                 gridSizeIncreaseButton.setBackground(Color.white);
             }
-            if (app.nyuuryoku_kitei == 0) {
+            if (app.gridSize == 0) {
                 gridSizeIncreaseButton.setForeground(Color.black);
                 gridSizeIncreaseButton.setBackground(new Color(0, 200, 200));
             }
             //ボタンの色変え(ここまで)
             //ボタンの色変え
-            if (app.nyuuryoku_kitei >= 1) {
+            if (app.gridSize >= 1) {
                 gridSizeDecreaseButton.setForeground(Color.black);
                 gridSizeDecreaseButton.setBackground(Color.white);
             }
-            if (app.nyuuryoku_kitei == 0) {
+            if (app.gridSize == 0) {
                 gridSizeDecreaseButton.setForeground(Color.black);
                 gridSizeDecreaseButton.setBackground(new Color(0, 200, 200));
             }
             //ボタンの色変え(ここまで)
-            gridSizeTextField.setText(String.valueOf(app.nyuuryoku_kitei));
-            app.es1.setGridDivisionNumber(app.nyuuryoku_kitei);
-            app.canvas.repaint();
+            gridSizeTextField.setText(String.valueOf(app.gridSize));
+            app.es1.setGridSize(app.gridSize);
+            app.repaintCanvas();
         });
         gridColorButton.addActionListener(e -> {
             app.setHelp("qqq/kousi_color.png");
             //Button_kyoutuu_sagyou();
-            app.i_mouseDragged_valid = false;
-            app.i_mouseReleased_valid = false;
+            app.mouseDraggedValid = false;
+            app.mouseReleasedValid = false;
 
             //以下にやりたいことを書く
             Color color = JColorChooser.showDialog(null, "Col", new Color(230, 230, 230));
@@ -888,29 +887,29 @@ public class WestPanel extends JPanel {
             }
             //以上でやりたいことは書き終わり
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         gridLineWidthDecreaseButton.addActionListener(e -> {
             app.kus.decreaseGridLineWidth();
             app.setHelp("qqq/kousi_senhaba_sage.png");
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         gridLineWidthIncreaseButton.addActionListener(e -> {
             app.kus.increaseGridLineWidth();
             app.setHelp("qqq/kousi_senhaba_age.png");
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         i_kitei_jyoutaiButton.addActionListener(e -> {
             app.setHelp("qqq/i_kitei_jyoutai.png");
 
             app.es1.setBaseState(app.es1.getBaseState().advance());
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         memori_tate_idouButton.addActionListener(e -> {
             app.setHelp("qqq/memori_tate_idou.png");
             app.es1.a_to_parallel_scale_position_change();
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         memori_kankaku_syutokuButton.addActionListener(e -> {
             app.setHelp("qqq/memori_kankaku_syutoku.png");
@@ -930,8 +929,8 @@ public class WestPanel extends JPanel {
         });
         intervalGridColorButton.addActionListener(e -> {
             app.setHelp("qqq/kousi_memori_color.png");
-            app.i_mouseDragged_valid = false;
-            app.i_mouseReleased_valid = false;
+            app.mouseDraggedValid = false;
+            app.mouseReleasedValid = false;
 
 
             //以下にやりたいことを書く
@@ -941,20 +940,20 @@ public class WestPanel extends JPanel {
             }
             //以上でやりたいことは書き終わり
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         setGridParametersButton.addActionListener(e -> {
             app.setHelp("qqq/kousi_syutoku.png");
             app.setGrid();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         inputDataButton.addActionListener(e -> {
             app.setHelp("qqq/yomi_tuika.png");
 
             app.Button_shared_operation();
 
-            app.i_mouseDragged_valid = false;
-            app.i_mouseReleased_valid = false;
+            app.mouseDraggedValid = false;
+            app.mouseReleasedValid = false;
             Memo memo_temp;
 
             System.out.println("readFile2Memo() 開始");
@@ -964,18 +963,18 @@ public class WestPanel extends JPanel {
             if (memo_temp.getLineCount() > 0) {
                 app.es1.setMemo_for_reading_tuika(memo_temp);
                 app.es1.record();
-                app.canvas.repaint();
+                app.repaintCanvas();
             }
         });
         ckbox_cp_kaizen_folding.addActionListener(e -> {
             app.setHelp("qqq/ckbox_cp_kaizen_oritatami.png");
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         ckbox_select_nokosi.addActionListener(e -> {
             app.setHelp("qqq/ckbox_select_nokosi.png");
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         drawTwoColoredCpButton.addActionListener(e -> {
             app.setHelp("qqq/2syoku_tenkaizu.png");
@@ -983,7 +982,7 @@ public class WestPanel extends JPanel {
             app.Ss0 = app.es1.getForSelectFolding();
 
             if (app.es1.getFoldLineTotalForSelectFolding() == 0) {        //折り線選択無し
-                app.keikoku_sentaku_sareta_orisen_ga_nai();//警告　選択された折線がない
+                app.noSelectedPolygonalLineWarning();//Warning: There is no selected polygonal line
 
 
             } else if (app.es1.getFoldLineTotalForSelectFolding() > 0) {
@@ -1015,8 +1014,8 @@ public class WestPanel extends JPanel {
         koteimen_siteiButton.addActionListener(e -> {
             app.setHelp("qqq/koteimen_sitei.png");
             if (app.OZ.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
-                app.i_mouse_modeA = MouseMode.CHANGE_STANDARD_FACE_103;
-                System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+                app.mouseMode = MouseMode.CHANGE_STANDARD_FACE_103;
+                System.out.println("mouseMode = " + app.mouseMode);
             }
             app.Button_shared_operation();
         });
@@ -1041,29 +1040,29 @@ public class WestPanel extends JPanel {
             }
             app.Button_shared_operation();
         });
-        ckbox_toukazu_color.addActionListener(e -> {
+        coloredXRayButton.addActionListener(e -> {
             app.setHelp("qqq/ckbox_toukazu_color.png");
-            if (ckbox_toukazu_color.isSelected()) {
+            if (coloredXRayButton.isSelected()) {
                 app.OZ.transparencyColor = true;
-                System.out.println("ckbox_toukazu_color.isSelected()");
+                System.out.println("coloredXRayButton.isSelected()");
             }//カラーの透過図
             else {
                 app.OZ.transparencyColor = false;
-                System.out.println("ckbox_toukazu_color.is not Selected()");
+                System.out.println("coloredXRayButton.is not Selected()");
             }
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
-        toukazu_color_sageButton.addActionListener(e -> {
+        coloredXRayDecreaseButton.addActionListener(e -> {
             app.OZ.decreaseTransparency();
             app.setHelp("qqq/toukazu_color_sage.png");
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
-        toukazu_color_ageButton.addActionListener(e -> {
+        coloredXRayIncreaseButton.addActionListener(e -> {
             app.OZ.increaseTransparency();
             app.setHelp("qqq/toukazu_color_age.png");
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
     }
 
@@ -1091,8 +1090,8 @@ public class WestPanel extends JPanel {
         return HK_nisuruButton;
     }
 
-    public JButton getKyoueiButton() {
-        return kyoueiButton;
+    public JButton getReflectButton() {
+        return reflectButton;
     }
 
     public JButton getMoveButton() {
@@ -1153,7 +1152,6 @@ public class WestPanel extends JPanel {
         panel1.add(panel2, gbc);
         lineWidthDecreaseButton = new JButton();
         lineWidthDecreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senhaba_sage.png")));
-        lineWidthDecreaseButton.setMinimumSize(new Dimension(30, 30));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -1162,7 +1160,6 @@ public class WestPanel extends JPanel {
         panel2.add(lineWidthDecreaseButton, gbc);
         lineWidthIncreaseButton = new JButton();
         lineWidthIncreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senhaba_age.png")));
-        lineWidthIncreaseButton.setMinimumSize(new Dimension(30, 30));
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -1171,7 +1168,6 @@ public class WestPanel extends JPanel {
         panel2.add(lineWidthIncreaseButton, gbc);
         pointSizeDecreaseButton = new JButton();
         pointSizeDecreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenhaba_sage.png")));
-        pointSizeDecreaseButton.setMinimumSize(new Dimension(30, 30));
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
@@ -1180,7 +1176,6 @@ public class WestPanel extends JPanel {
         panel2.add(pointSizeDecreaseButton, gbc);
         pointSizeIncreaseButton = new JButton();
         pointSizeIncreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenhaba_age.png")));
-        pointSizeIncreaseButton.setMinimumSize(new Dimension(30, 30));
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 0;
@@ -1738,23 +1733,23 @@ public class WestPanel extends JPanel {
         gbc.gridx = 1;
         gbc.gridy = 0;
         panel19.add(suitei_03Button, gbc);
-        ckbox_toukazu_color = new JCheckBox();
+        coloredXRayButton = new JCheckBox();
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
-        panel19.add(ckbox_toukazu_color, gbc);
-        toukazu_color_sageButton = new JButton();
-        toukazu_color_sageButton.setIcon(new ImageIcon(getClass().getResource("/ppp/ck4_color_sage.png")));
+        panel19.add(coloredXRayButton, gbc);
+        coloredXRayDecreaseButton = new JButton();
+        coloredXRayDecreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/ck4_color_sage.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 0;
-        panel19.add(toukazu_color_sageButton, gbc);
-        toukazu_color_ageButton = new JButton();
-        toukazu_color_ageButton.setIcon(new ImageIcon(getClass().getResource("/ppp/ck4_color_age.png")));
+        panel19.add(coloredXRayDecreaseButton, gbc);
+        coloredXRayIncreaseButton = new JButton();
+        coloredXRayIncreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/ck4_color_age.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 4;
         gbc.gridy = 0;
-        panel19.add(toukazu_color_ageButton, gbc);
+        panel19.add(coloredXRayIncreaseButton, gbc);
         final JPanel panel20 = new JPanel();
         panel20.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
@@ -1770,7 +1765,7 @@ public class WestPanel extends JPanel {
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
         panel20.add(senbun_nyuryokuButton, gbc);
         senbun_nyuryoku11Button = new JButton();
         senbun_nyuryoku11Button.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku11.png")));
@@ -1779,7 +1774,7 @@ public class WestPanel extends JPanel {
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
         panel20.add(senbun_nyuryoku11Button, gbc);
         voronoiButton = new JButton();
         voronoiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/Voronoi.png")));
@@ -1788,7 +1783,7 @@ public class WestPanel extends JPanel {
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
         panel20.add(voronoiButton, gbc);
         oritatami_kanousenButton = new JButton();
         oritatami_kanousenButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oritatami_kanousen.png")));
@@ -1797,7 +1792,7 @@ public class WestPanel extends JPanel {
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
         panel20.add(oritatami_kanousenButton, gbc);
         senbun_entyouButton = new JButton();
         senbun_entyouButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_entyou.png")));
@@ -1806,7 +1801,7 @@ public class WestPanel extends JPanel {
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
         panel20.add(senbun_entyouButton, gbc);
         senbun_entyou_2Button = new JButton();
         senbun_entyou_2Button.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_entyou_2.png")));
@@ -1815,7 +1810,7 @@ public class WestPanel extends JPanel {
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
         panel20.add(senbun_entyou_2Button, gbc);
         kaku_toubunButton = new JButton();
         kaku_toubunButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kaku_toubun.png")));
@@ -1824,7 +1819,7 @@ public class WestPanel extends JPanel {
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
         panel20.add(kaku_toubunButton, gbc);
         naishinButton = new JButton();
         naishinButton.setIcon(new ImageIcon(getClass().getResource("/ppp/naishin.png")));
@@ -1833,7 +1828,7 @@ public class WestPanel extends JPanel {
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
         panel20.add(naishinButton, gbc);
         final JPanel panel21 = new JPanel();
         panel21.setLayout(new GridBagLayout());
@@ -2041,17 +2036,17 @@ public class WestPanel extends JPanel {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel22.add(copy2p2pButton, gbc);
-        kyoueiButton = new JButton();
-        kyoueiButton.setBackground(new Color(-5579606));
-        kyoueiButton.setEnabled(true);
-        kyoueiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kyouei.png")));
+        reflectButton = new JButton();
+        reflectButton.setBackground(new Color(-5579606));
+        reflectButton.setEnabled(true);
+        reflectButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kyouei.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel22.add(kyoueiButton, gbc);
+        panel22.add(reflectButton, gbc);
         deleteSelectedLineSegmentButton = new JButton();
         deleteSelectedLineSegmentButton.setText("d_s_L");
         gbc = new GridBagConstraints();

@@ -15,7 +15,7 @@ public class Grid {
 
     double d_grid_a_length = 1.0;
     double d_grid_b_length = 1.0;
-    double d_grid_angle = -90.0;
+    double gridAngle = -90.0;
 
     double d_grid_ax = 1.0;//格子の横方向の単位ベクトルのX成分の比率
     double d_grid_ay = 0.0;//格子の横方向の単位ベクトルのY成分の比率
@@ -31,10 +31,10 @@ public class Grid {
 
     State baseState = State.WITHIN_PAPER;//Base (grid) status = 0 is invalid for the whole area, but only the grid width is valid since it is used to set the radius of attraction to the existing endpoint, status = 1 is valid only within the paper, and status = 2 is valid for the whole area.
 
-    //用紙の分割なしならgrid_zahyou[0から1]なのでgrid_bunkatu_suuは１、grid_division_number
+    //用紙の分割なしならgrid_zahyou[0から1]なのでgrid_bunkatu_suuは１、gridSize
     //用紙の2分割ならgrid_zahyou[0,1,2]なのでgrid_bunkatu_suuは2、
     //用紙の4分割ならgrid_zahyou[0,1,2,3,4]なのでgrid_bunkatu_suuは4、
-    int grid_division_number = 2;
+    int gridSize = 2;
 
     int a_to_parallel_scale_interval = 5;
     int a_to_parallel_scale_position = 0;
@@ -107,9 +107,9 @@ public class Grid {
 
 
     // ------------------------------------------------------
-    public void setGridDivisionNumber(int i) {
-        grid_division_number = i;
-        d_grid_width = 400.0 / (double) grid_division_number;
+    public void setGridSize(int i) {
+        gridSize = i;
+        d_grid_width = 400.0 / (double) gridSize;
 
         calculateGrid();
     }
@@ -120,14 +120,14 @@ public class Grid {
     }
 
     public int divisionNumber() {
-        return grid_division_number;
+        return gridSize;
     }
 
     // ----------------------------------------
     public void setGrid(double dkxn, double dkyn, double dkk) {
         d_grid_a_length = dkxn;
         d_grid_b_length = dkyn;
-        d_grid_angle = -dkk;
+        gridAngle = -dkk;
 
         calculateGrid();
     }
@@ -137,7 +137,7 @@ public class Grid {
         d_grid_ax = d_grid_width * d_grid_a_length;
         d_grid_ay = d_grid_width * 0.0;
 
-        double d_rad = (Math.PI / 180) * d_grid_angle;
+        double d_rad = (Math.PI / 180) * gridAngle;
         d_grid_bx = d_grid_width * d_grid_b_length * Math.cos(d_rad);
         d_grid_by = d_grid_width * d_grid_b_length * Math.sin(d_rad);
 
@@ -159,7 +159,7 @@ public class Grid {
             if (Math.abs(d_grid_b_length - 1.0) > 0.000001) {
                 setBaseState(State.FULL);
             }
-            if (Math.abs(d_grid_angle - (-90.0)) > 0.000001) {
+            if (Math.abs(gridAngle - (-90.0)) > 0.000001) {
                 setBaseState(State.FULL);
             }
         }
@@ -429,7 +429,7 @@ public class Grid {
     public Point closestGridPoint(Point t0) {
         Point t2 = new Point(); //格子点
 
-        if (grid_division_number <= 0) {
+        if (gridSize <= 0) {
             return t2;
         }
 

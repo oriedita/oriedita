@@ -28,11 +28,11 @@ public class NorthPanel extends JPanel {
     private JTextField ratioDTextField;
     private JTextField ratioETextField;
     private JTextField ratioFTextField;
-    private JTextField tenkaizu_syukusyouTextField;
+    private JTextField scaleFactorTextField;
     private JButton tenkaizu_syukusyouSetButton;
-    private JTextField tenkaizu_kaitenTextField;
+    private JTextField rotationTextField;
     private JButton tenkaizu_kaitenSetButton;
-    private JButton toumeiButton;
+    private JButton transparentButton;
     private JButton backgroundTrimButton;
     private JButton readBackgroundButton;
     private JButton backgroundToggleButton;
@@ -40,8 +40,8 @@ public class NorthPanel extends JPanel {
     private JButton backgroundLockButton;
     private JCheckBox mouseSettingsCheckBox;
 
-    public JTextField getTenkaizu_kaitenTextField() {
-        return tenkaizu_kaitenTextField;
+    public JTextField getRotationTextField() {
+        return rotationTextField;
     }
 
     public JButton getBackgroundToggleButton() {
@@ -62,59 +62,59 @@ public class NorthPanel extends JPanel {
             app.setHelp("qqq/tyouhoukei_select.png");
             app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
             app.es1.setFoldLineAdditional(app.foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
-            app.i_mouse_modeA = MouseMode.OPERATION_FRAME_CREATE_61;
+            app.mouseMode = MouseMode.OPERATION_FRAME_CREATE_61;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_FREE_1;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         writeImageButton.addActionListener(e -> {
             app.setHelp("qqq/writeImage.png");
-            if (app.i_mouse_modeA != MouseMode.OPERATION_FRAME_CREATE_61) {
+            if (app.mouseMode != MouseMode.OPERATION_FRAME_CREATE_61) {
                 app.Button_shared_operation();
                 app.es1.setDrawingStage(0);
             }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
-            app.i_mouseDragged_valid = false;
-            app.i_mouseReleased_valid = false;
+            app.mouseDraggedValid = false;
+            app.mouseReleasedValid = false;
 
             app.writeImage();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         mouseSettingsCheckBox.addActionListener(e -> {
             app.setHelp("qqq/ckbox_mouse_settei.png");
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         lineSegmentInternalDivisionRatioSetButton.addActionListener(e -> {
             app.setInternalDivisionRatio();
 
             app.setHelp("qqq/senbun_naibun_set.png");
-            app.i_mouse_modeA = MouseMode.LINE_SEGMENT_RATIO_SET_28;
+            app.mouseMode = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_RATIO_SET_28;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         drawLineSegmentInternalDivisionRatioButton.addActionListener(e -> {
             app.setInternalDivisionRatio();
             app.setHelp("qqq/senbun_n_nyuryoku.png");
-            app.i_mouse_modeA = MouseMode.LINE_SEGMENT_RATIO_SET_28;
+            app.mouseMode = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_RATIO_SET_28;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         tenkaizu_idiuButton.addActionListener(e -> {
             app.setHelp("qqq/tenkaizu_idiu.png");
 
-            app.i_mouse_modeA = MouseMode.MOVE_CREASE_PATTERN_2;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.MOVE_CREASE_PATTERN_2;
+            System.out.println("mouseMode = " + app.mouseMode);
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         tenkaizu_syukusyouButton.addActionListener(e -> {
             app.setHelp("qqq/tenkaizu_syukusyou.png");
@@ -126,8 +126,8 @@ public class NorthPanel extends JPanel {
 
 //20180122追加
             FoldedFigure OZi;
-            for (int i_oz = 1; i_oz <= app.OAZ.size() - 1; i_oz++) {
-                OZi = app.OAZ.get(i_oz);
+            for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
+                OZi = app.foldedFigures.get(i_oz);
 
                 Point t_o2tv = app.camera_of_orisen_input_diagram.object2TV(app.camera_of_orisen_input_diagram.getCameraPosition());
 
@@ -158,17 +158,17 @@ public class NorthPanel extends JPanel {
 //20180122追加　ここまで
 
 
-            tenkaizu_syukusyouTextField.setText(String.valueOf(app.scaleFactor));
-            tenkaizu_syukusyouTextField.setCaretPosition(0);
-            app.canvas.repaint();
+            scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
+            scaleFactorTextField.setCaretPosition(0);
+            app.repaintCanvas();
         });
         tenkaizu_syukusyouSetButton.addActionListener(e -> {
             double d_syukusyaku_keisuu_old = app.scaleFactor;
-            app.scaleFactor = app.String2double(tenkaizu_syukusyouTextField.getText(), d_syukusyaku_keisuu_old);
+            app.scaleFactor = app.String2double(scaleFactorTextField.getText(), d_syukusyaku_keisuu_old);
             if (app.scaleFactor <= 0.0) {
                 app.scaleFactor = d_syukusyaku_keisuu_old;
             }
-            tenkaizu_syukusyouTextField.setText(String.valueOf(app.scaleFactor));
+            scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
             if (app.scaleFactor != d_syukusyaku_keisuu_old) {
                 app.camera_of_orisen_input_diagram.setCameraZoomX(app.scaleFactor);
                 app.camera_of_orisen_input_diagram.setCameraZoomY(app.scaleFactor);
@@ -179,8 +179,8 @@ public class NorthPanel extends JPanel {
 
 
                 FoldedFigure OZi;
-                for (int i_oz = 1; i_oz <= app.OAZ.size() - 1; i_oz++) {
-                    OZi = app.OAZ.get(i_oz);
+                for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
+                    OZi = app.foldedFigures.get(i_oz);
 
                     Point t_o2tv = app.camera_of_orisen_input_diagram.object2TV(app.camera_of_orisen_input_diagram.getCameraPosition());
 
@@ -214,13 +214,13 @@ public class NorthPanel extends JPanel {
 
 
             }
-            tenkaizu_syukusyouTextField.setText(String.valueOf(app.scaleFactor));
-            tenkaizu_syukusyouTextField.setCaretPosition(0);
-            app.canvas.repaint();
+            scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
+            scaleFactorTextField.setCaretPosition(0);
+            app.repaintCanvas();
 
             app.setHelp("qqq/syukusyaku_keisuu_set.png");
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         tenkaizu_kakudaiButton.addActionListener(e -> {
             app.setHelp("qqq/tenkaizu_kakudai.png");
@@ -233,8 +233,8 @@ public class NorthPanel extends JPanel {
 
 //20180122追加
             FoldedFigure OZi;
-            for (int i_oz = 1; i_oz <= app.OAZ.size() - 1; i_oz++) {
-                OZi = app.OAZ.get(i_oz);
+            for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
+                OZi = app.foldedFigures.get(i_oz);
 
                 Point t_o2tv = app.camera_of_orisen_input_diagram.object2TV(app.camera_of_orisen_input_diagram.getCameraPosition());
 
@@ -267,48 +267,48 @@ public class NorthPanel extends JPanel {
 //20180122追加　ここまで
 
 
-            tenkaizu_syukusyouTextField.setText(String.valueOf(app.scaleFactor));
-            tenkaizu_syukusyouTextField.setCaretPosition(0);
-            app.canvas.repaint();
+            scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
+            scaleFactorTextField.setCaretPosition(0);
+            app.repaintCanvas();
         });
         tenkaizu_p_kaitenButton.addActionListener(e -> {
             app.setHelp("qqq/tenkaizu_p_kaiten.png");
 
             app.rotationCorrection = OritaCalc.angle_between_m180_180(app.rotationCorrection + 11.25);
             app.camera_of_orisen_input_diagram.setCameraAngle(app.rotationCorrection);
-            tenkaizu_kaitenTextField.setText(String.valueOf(app.rotationCorrection));
-            tenkaizu_kaitenTextField.setCaretPosition(0);
+            rotationTextField.setText(String.valueOf(app.rotationCorrection));
+            rotationTextField.setCaretPosition(0);
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         tenkaizu_kaitenSetButton.addActionListener(e -> {
             double d_kaiten_hosei_old = app.rotationCorrection;
-            app.rotationCorrection = OritaCalc.angle_between_m180_180(app.String2double(tenkaizu_kaitenTextField.getText(), d_kaiten_hosei_old));
+            app.rotationCorrection = OritaCalc.angle_between_m180_180(app.String2double(rotationTextField.getText(), d_kaiten_hosei_old));
 
-            tenkaizu_kaitenTextField.setText(String.valueOf(app.rotationCorrection));
+            rotationTextField.setText(String.valueOf(app.rotationCorrection));
 
             if (app.rotationCorrection != d_kaiten_hosei_old) {
                 app.camera_of_orisen_input_diagram.setCameraAngle(app.rotationCorrection);
             }
 
-            tenkaizu_kaitenTextField.setText(String.valueOf(app.rotationCorrection));
-            tenkaizu_kaitenTextField.setCaretPosition(0);
-            app.canvas.repaint();
+            rotationTextField.setText(String.valueOf(app.rotationCorrection));
+            rotationTextField.setCaretPosition(0);
+            app.repaintCanvas();
 
 
             app.setHelp("qqq/kaiten_hosei_set.png");
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         tenkaizu_m_kaitenButton.addActionListener(e -> {
             app.setHelp("qqq/tenkaizu_m_kaiten.png");
             app.rotationCorrection = OritaCalc.angle_between_m180_180(app.rotationCorrection - 11.25);
             app.camera_of_orisen_input_diagram.setCameraAngle(app.rotationCorrection);
-            tenkaizu_kaitenTextField.setText(String.valueOf(app.rotationCorrection));
-            tenkaizu_kaitenTextField.setCaretPosition(0);
-            app.canvas.repaint();
+            rotationTextField.setText(String.valueOf(app.rotationCorrection));
+            rotationTextField.setCaretPosition(0);
+            app.repaintCanvas();
         });
-        toumeiButton.addActionListener(e -> {
+        transparentButton.addActionListener(e -> {
 
             app.setHelp("qqq/toumei.png");
             Robot robot;
@@ -331,19 +331,19 @@ public class NorthPanel extends JPanel {
 
 
             //左上端から、左上で描画用画面の見える限界位置へのベクトル
-            //int upperLeft_ix=115;
-            //int upperLeft_iy=60;
+            //int upperLeftX=115;
+            //int upperLeftY=60;
 
             //右下端から、右下で描画用画面の見える限界位置へのベクトル
-            //int lowerRight_ix=115;
-            //int lowerRight_iy=40;
+            //int lowerRightX=115;
+            //int lowerRightY=40;
 
             //int i_dx=115;int i_dy=0;
 
             bounds = new Rectangle(bounds.x + canvasBounds.x,
                     bounds.y + canvasBounds.y,
-                    canvasBounds.width - app.upperLeft_ix - app.lowerRight_ix,
-                    canvasBounds.height - app.upperLeft_iy - app.lowerRight_iy);
+                    canvasBounds.width - app.upperLeftX - app.lowerRightX,
+                    canvasBounds.height - app.upperLeftY - app.lowerRightY);
 
             app.setVisible(false);
             try {
@@ -361,8 +361,8 @@ public class NorthPanel extends JPanel {
             OritaCalc.display("新背景カメラインスタンス化");
             app.h_cam = new Background_camera();//20181202
 
-            double dvx = app.upperLeft_ix;
-            double dvy = app.upperLeft_iy;
+            double dvx = app.upperLeftX;
+            double dvy = app.upperLeftY;
 
             app.background_set(new Point(120.0, 120.0),
                     new Point(120.0 + 10.0, 120.0),
@@ -372,7 +372,7 @@ public class NorthPanel extends JPanel {
 
 //背景表示の各条件を設定
             app.displayBackground = true;
-            app.Button_background_kirikae.setBackground(Color.ORANGE);
+            app.backgroundToggleButton.setBackground(Color.ORANGE);
 
             if (app.lockBackground) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
                 app.h_cam.set_i_Lock_on(app.lockBackground);
@@ -380,7 +380,7 @@ public class NorthPanel extends JPanel {
                 app.h_cam.h3_obj_and_h4_obj_calculation();
             }
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         backgroundTrimButton.addActionListener(e -> {
             app.setHelp("qqq/haikei_trim.png");
@@ -402,7 +402,7 @@ public class NorthPanel extends JPanel {
 
 
 //枠設定時の背景を枠内のみ残してトリム 20181204
-            if ((app.i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) && (app.es1.getDrawingStage() == 4)) {//枠線が表示されている状態
+            if ((app.mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (app.es1.getDrawingStage() == 4)) {//枠線が表示されている状態
                 int xmin = (int) app.es1.operationFrameBox.getXMin();
                 int xmax = (int) app.es1.operationFrameBox.getXMax();
                 int ymin = (int) app.es1.operationFrameBox.getYMin();
@@ -427,8 +427,8 @@ public class NorthPanel extends JPanel {
         readBackgroundButton.addActionListener(e -> {
             app.setHelp("qqq/haikei.png");
 
-            app.i_mouseDragged_valid = false;
-            app.i_mouseReleased_valid = false;
+            app.mouseDraggedValid = false;
+            app.mouseReleasedValid = false;
 
             app.readImageFromFile();
 
@@ -443,7 +443,7 @@ public class NorthPanel extends JPanel {
                 app.h_cam.h3_obj_and_h4_obj_calculation();
             }
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         backgroundToggleButton.addActionListener(e -> {
             app.setHelp("qqq/haikei_kirikae.png");
@@ -456,15 +456,15 @@ public class NorthPanel extends JPanel {
                 backgroundToggleButton.setBackground(Color.ORANGE);
             }
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         backgroundSetPositionButton.addActionListener(e -> {
             app.setHelp("qqq/set_BG.png");
 
-            app.i_mouse_modeA = MouseMode.BACKGROUND_CHANGE_POSITION_26;
+            app.mouseMode = MouseMode.BACKGROUND_CHANGE_POSITION_26;
             app.Button_shared_operation();
-            app.canvas.repaint();
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.repaintCanvas();
+            System.out.println("mouseMode = " + app.mouseMode);
         });
         backgroundLockButton.addActionListener(e -> {
             app.setHelp("qqq/haikei_Lock_on.png");
@@ -484,21 +484,21 @@ public class NorthPanel extends JPanel {
                 app.h_cam.set_i_Lock_on(app.lockBackground);
             }
 
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         senbun_yoke_henkanButton.addActionListener(e -> {
             app.setHelp("qqq/senbun_yoke_henkan.png");
-            app.i_mouse_modeA = MouseMode.CREASE_ADVANCE_TYPE_30;
-            System.out.println("i_mouse_modeA = " + app.i_mouse_modeA);
+            app.mouseMode = MouseMode.CREASE_ADVANCE_TYPE_30;
+            System.out.println("mouseMode = " + app.mouseMode);
 
             app.es1.unselect_all();
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
     }
 
-    public JTextField getTenkaizu_syukusyouTextField() {
-        return tenkaizu_syukusyouTextField;
+    public JTextField getScaleFactorTextField() {
+        return scaleFactorTextField;
     }
 
     public JTextField getRatioATextField() {
@@ -697,14 +697,14 @@ public class NorthPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         panel4.add(tenkaizu_syukusyouButton, gbc);
-        tenkaizu_syukusyouTextField = new JTextField();
-        tenkaizu_syukusyouTextField.setColumns(2);
-        tenkaizu_syukusyouTextField.setText("1.0");
+        scaleFactorTextField = new JTextField();
+        scaleFactorTextField.setColumns(2);
+        scaleFactorTextField.setText("1.0");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel4.add(tenkaizu_syukusyouTextField, gbc);
+        panel4.add(scaleFactorTextField, gbc);
         tenkaizu_syukusyouSetButton = new JButton();
         tenkaizu_syukusyouSetButton.setText("S");
         gbc = new GridBagConstraints();
@@ -733,14 +733,14 @@ public class NorthPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         panel5.add(tenkaizu_p_kaitenButton, gbc);
-        tenkaizu_kaitenTextField = new JTextField();
-        tenkaizu_kaitenTextField.setColumns(2);
-        tenkaizu_kaitenTextField.setEnabled(true);
+        rotationTextField = new JTextField();
+        rotationTextField.setColumns(2);
+        rotationTextField.setEnabled(true);
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel5.add(tenkaizu_kaitenTextField, gbc);
+        panel5.add(rotationTextField, gbc);
         tenkaizu_kaitenSetButton = new JButton();
         tenkaizu_kaitenSetButton.setText("S");
         gbc = new GridBagConstraints();
@@ -755,13 +755,13 @@ public class NorthPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         panel5.add(tenkaizu_m_kaitenButton, gbc);
-        toumeiButton = new JButton();
-        toumeiButton.setText("T");
+        transparentButton = new JButton();
+        transparentButton.setText("T");
         gbc = new GridBagConstraints();
         gbc.gridx = 7;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
-        rootPanel.add(toumeiButton, gbc);
+        rootPanel.add(transparentButton, gbc);
         backgroundTrimButton = new JButton();
         backgroundTrimButton.setText("Tr");
         gbc = new GridBagConstraints();

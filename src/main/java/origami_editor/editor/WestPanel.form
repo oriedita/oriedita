@@ -756,14 +756,14 @@
               <icon value="ppp/suitei_03.png"/>
             </properties>
           </component>
-          <component id="27953" class="javax.swing.JCheckBox" binding="ckbox_toukazu_color">
+          <component id="27953" class="javax.swing.JCheckBox" binding="coloredXRayButton">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties/>
           </component>
-          <component id="4e3fb" class="javax.swing.JButton" binding="toukazu_color_sageButton">
+          <component id="4e3fb" class="javax.swing.JButton" binding="coloredXRayDecreaseButton">
             <constraints>
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
@@ -772,7 +772,7 @@
               <icon value="ppp/ck4_color_sage.png"/>
             </properties>
           </component>
-          <component id="5bcfb" class="javax.swing.JButton" binding="toukazu_color_ageButton">
+          <component id="5bcfb" class="javax.swing.JButton" binding="coloredXRayIncreaseButton">
             <constraints>
               <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
@@ -1076,7 +1076,7 @@
               <text value="cp_4p"/>
             </properties>
           </component>
-          <component id="85fbe" class="javax.swing.JButton" binding="kyoueiButton">
+          <component id="85fbe" class="javax.swing.JButton" binding="reflectButton">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>

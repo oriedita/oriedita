@@ -43,11 +43,11 @@ public class FoldedFigureResize extends JPanel {
             }
             foldedFigureSizeTextField.setText(String.valueOf(app.OZ.d_foldedFigure_scale_factor));
             foldedFigureSizeTextField.setCaretPosition(0);
-            app.canvas.repaint();
+            app.repaintCanvas();
 
             app.setHelp("qqq/oriagarizu_syukusyaku_keisuu_set.png");
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         foldedFigureSizeDecreaseButton.addActionListener(e -> {
             app.setHelp("qqq/oriagari_syukusyou.png");
@@ -72,7 +72,7 @@ public class FoldedFigureResize extends JPanel {
             foldedFigureSizeTextField.setCaretPosition(0);
 
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         foldedFigureSizeIncreaseButton.addActionListener(e -> {
             app.setHelp("qqq/oriagari_kakudai.png");
@@ -97,7 +97,7 @@ public class FoldedFigureResize extends JPanel {
             foldedFigureSizeTextField.setCaretPosition(0);
 
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
     }
 

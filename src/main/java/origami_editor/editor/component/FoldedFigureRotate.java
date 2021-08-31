@@ -33,7 +33,7 @@ public class FoldedFigureRotate extends JPanel {
             foldedFigureRotateTextField.setCaretPosition(0);
 
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         foldedFigureRotateSetButton.addActionListener(e -> {
             double d_foldedFigure_rotation_correction_old = app.OZ.d_foldedFigure_rotation_correction;
@@ -51,12 +51,12 @@ public class FoldedFigureRotate extends JPanel {
             }
             foldedFigureRotateTextField.setText(String.valueOf(app.OZ.d_foldedFigure_rotation_correction));
             foldedFigureRotateTextField.setCaretPosition(0);
-            app.canvas.repaint();
+            app.repaintCanvas();
 
 
             app.setHelp("qqq/oriagarizu_kaiten_hosei_set.png");
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
         foldedFigureRotateClockwiseButton.addActionListener(e -> {
             app.setHelp("qqq/oriagari_m_kaiten.png");
@@ -71,7 +71,7 @@ public class FoldedFigureRotate extends JPanel {
             foldedFigureRotateTextField.setCaretPosition(0);
 
             app.Button_shared_operation();
-            app.canvas.repaint();
+            app.repaintCanvas();
         });
     }
 

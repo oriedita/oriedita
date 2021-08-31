@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class Drawing_Worker {
     private final LineSegmentSet sen_s = new LineSegmentSet();    //Instantiation of basic branch structure
     public FoldLineSet foldLines = new FoldLineSet();    //Store polygonal lines
-    public FoldLineSet vonoroiLines = new FoldLineSet();    //Store Voronoi diagram lines
+    public FoldLineSet voronoiLines = new FoldLineSet();    //Store Voronoi diagram lines
     public Grid grid = new Grid();
     public int i_drawing_stage;//Stores information about the stage of the procedure for drawing a polygonal line
     public int i_candidate_stage;//Stores information about which candidate for the procedure to draw a polygonal line
@@ -83,14 +83,14 @@ public class Drawing_Worker {
     int i_ck4_color_toukado = 100;
     App app;
     LineColor icol_temp = LineColor.BLACK_0;//Used for temporary memory of color specification
-    //i_mouse_modeA==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
+    //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
     Point operationFrame_p1 = new Point();//TV座標
     Point operationFrame_p2 = new Point();//TV座標
     Point operationFrame_p3 = new Point();//TV座標
     Point operationFrame_p4 = new Point();//TV座標
     OperationFrameMode operationFrameMode = OperationFrameMode.NONE_0;// = 1 Create a new selection box. = 2 Move points. 3 Move the sides. 4 Move the selection box.
     Point p = new Point();
-    ArrayList<LineSegment> lineSegment_vonoroi_onePoint = new ArrayList<>(); //Line segment around one point in Voronoi diagram
+    ArrayList<LineSegment> lineSegment_voronoi_onePoint = new ArrayList<>(); //Line segment around one point in Voronoi diagram
     // ****************************************************************************************************************************************
     // **************　Variable definition so far　****************************************************************************************************
     // ****************************************************************************************************************************************
@@ -114,7 +114,7 @@ public class Drawing_Worker {
     //30 30 30 30 30 30 30 30 30 30 30 30 除け_線_変換
     int minrid_30;
     int i_step_for_move_4p = 0;
-    //39 39 39 39 39 39 39    i_mouse_modeA==39　;折り畳み可能線入力  qqqqqqqqq
+    //39 39 39 39 39 39 39    mouseMode==39　;折り畳み可能線入力  qqqqqqqqq
     int i_step_for_copy_4p = 0;//i_step_for_copy_4p=2の場合は、step線が1本だけになっていて、次の操作で入力折線が確定する状態
     boolean i_takakukei_kansei = false;//多角形が完成したら1、未完成なら0
     // ------------
@@ -166,12 +166,12 @@ public class Drawing_Worker {
     }
 
     public void measurement_display() {
-        app.measured_length_1_display(measured_length_1);
-        app.measured_length_2_display(measured_length_2);
+        app.displayMeasuredLength1(measured_length_1);
+        app.displayMeasuredLength2(measured_length_2);
 
-        app.measured_angle_1_display(measured_angle_1);
-        app.measured_angle_2_display(measured_angle_2);
-        app.measured_angle_3_display(measured_angle_3);
+        app.displayMeasuredAngle1(measured_angle_1);
+        app.displayMeasuredAngle2(measured_angle_2);
+        app.displayMeasuredAngle3(measured_angle_3);
     }
 
     public void Memo_jyouhou_toridasi(Memo memo1) {
@@ -323,7 +323,7 @@ public class Drawing_Worker {
 
                     if (st[0].equals("<iTenkaizuSenhaba")) {
                         s = st[1].split("<", 2);
-                        app.iLineWidth = Integer.parseInt(s[0]);
+                        app.displayLineWidth = Integer.parseInt(s[0]);
                     }
 
                     if (st[0].equals("<ir_ten")) {
@@ -366,8 +366,8 @@ public class Drawing_Worker {
 
                     if (st[0].equals("<nyuuryoku_kitei")) {
                         s = st[1].split("<", 2);
-                        app.text1.setText(s[0]);
-                        app.set_grid_bunkatu_suu();
+                        app.gridSizeTextField.setText(s[0]);
+                        app.setGridSize();
 
                     }
 
@@ -395,33 +395,33 @@ public class Drawing_Worker {
 
                     if (st[0].equals("<d_kousi_x_a")) {
                         s = st[1].split("<", 2);
-                        app.text18.setText(s[0]);
+                        app.gridXATextField.setText(s[0]);
                     }
                     if (st[0].equals("<d_kousi_x_b")) {
                         s = st[1].split("<", 2);
-                        app.text19.setText(s[0]);
+                        app.gridXBTextField.setText(s[0]);
                     }
                     if (st[0].equals("<d_kousi_x_c")) {
                         s = st[1].split("<", 2);
-                        app.text20.setText(s[0]);
+                        app.gridXCTextField.setText(s[0]);
                     }
 
                     if (st[0].equals("<d_kousi_y_a")) {
                         s = st[1].split("<", 2);
-                        app.text21.setText(s[0]);
+                        app.gridYATextField.setText(s[0]);
                     }
                     if (st[0].equals("<d_kousi_y_b")) {
                         s = st[1].split("<", 2);
-                        app.text22.setText(s[0]);
+                        app.gridYBTextField.setText(s[0]);
                     }
                     if (st[0].equals("<d_kousi_y_c")) {
                         s = st[1].split("<", 2);
-                        app.text23.setText(s[0]);
+                        app.gridYCTextField.setText(s[0]);
                     }
 
                     if (st[0].equals("<d_kousi_kakudo")) {
                         s = st[1].split("<", 2);
-                        app.text24.setText(s[0]);
+                        app.gridAngleTextField.setText(s[0]);
                     }
 
                     app.setGrid();
@@ -587,17 +587,17 @@ public class Drawing_Worker {
     public void setMemo_for_reading_tuika(Memo memo1) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<For reading data
         double addx, addy;
 
-        FoldLineSet ori_s_temp = new FoldLineSet();    //追加された折線だけ取り出すために使う
-        ori_s_temp.setMemo(memo1);//追加された折線だけ取り出してori_s_tempを作る
-        addx = foldLines.get_x_max() + 100.0 - ori_s_temp.get_x_min();
-        addy = foldLines.get_y_max() - ori_s_temp.get_y_max();
+        FoldLineSet tempFoldLineSet = new FoldLineSet();    //追加された折線だけ取り出すために使う
+        tempFoldLineSet.setMemo(memo1);//追加された折線だけ取り出してori_s_tempを作る
+        addx = foldLines.get_x_max() + 100.0 - tempFoldLineSet.get_x_min();
+        addy = foldLines.get_y_max() - tempFoldLineSet.get_y_max();
 
-        ori_s_temp.move(addx, addy);//全体を移動する
+        tempFoldLineSet.move(addx, addy);//全体を移動する
 
-        int sousuu_old = foldLines.getTotal();
-        foldLines.addMemo(ori_s_temp.getMemo());
-        int sousuu_new = foldLines.getTotal();
-        foldLines.intersect_divide(1, sousuu_old, sousuu_old + 1, sousuu_new);
+        int total_old = foldLines.getTotal();
+        foldLines.addMemo(tempFoldLineSet.getMemo());
+        int total_new = foldLines.getTotal();
+        foldLines.intersect_divide(1, total_old, total_old + 1, total_new);
 
         foldLines.unselect_all();
         record();
@@ -650,8 +650,8 @@ public class Drawing_Worker {
         pointSize = i0;
     }
 
-    public void setGridDivisionNumber(int i) {
-        grid.setGridDivisionNumber(i);
+    public void setGridSize(int i) {
+        grid.setGridSize(i);
         text_cp_setumei = "1/" + grid.divisionNumber();
         calculateDecisionWidth();
     }
@@ -706,7 +706,7 @@ public class Drawing_Worker {
 
         String str_stroke;
         String str_strokewidth;
-        str_strokewidth = Integer.toString(app.iLineWidth);
+        str_strokewidth = Integer.toString(app.displayLineWidth);
 
         //Drawing of development drawing Polygonal lines other than auxiliary live lines
         if (i_cp_display) {
@@ -867,7 +867,7 @@ public class Drawing_Worker {
         memo1.addLine("<ckbox_cp_ue>" + app.ckbox_cp_ue.isSelected() + "</ckbox_cp_ue>");
         memo1.addLine("<ckbox_oritatami_keika>" + app.ckbox_folding_keika.isSelected() + "</ckbox_oritatami_keika>");
         //The thickness of the line in the development view.
-        memo1.addLine("<iTenkaizuSenhaba>" + app.iLineWidth + "</iTenkaizuSenhaba>");
+        memo1.addLine("<iTenkaizuSenhaba>" + app.displayLineWidth + "</iTenkaizuSenhaba>");
         //Width of vertex sign
         memo1.addLine("<ir_ten>" + app.pointSize + "</ir_ten>");
         //Express the polygonal line expression with color
@@ -877,7 +877,7 @@ public class Drawing_Worker {
 
         memo1.addLine("<Kousi>");
         memo1.addLine("<i_kitei_jyoutai>" + getBaseState() + "</i_kitei_jyoutai>");
-        memo1.addLine("<nyuuryoku_kitei>" + app.nyuuryoku_kitei + "</nyuuryoku_kitei>");
+        memo1.addLine("<nyuuryoku_kitei>" + app.gridSize + "</nyuuryoku_kitei>");
 
         memo1.addLine("<memori_kankaku>" + app.scale_interval + "</memori_kankaku>");
         memo1.addLine("<a_to_heikouna_memori_iti>" + grid.get_a_to_parallel_scale_position() + "</a_to_heikouna_memori_iti>");
@@ -1336,8 +1336,8 @@ public class Drawing_Worker {
             }
         }
 
-        //i_mouse_modeA==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
-        if (app.i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) {
+        //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
+        if (app.mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) {
             Point p1 = new Point();
             p1.set(camera.TV2object(operationFrame_p1));
             Point p2 = new Point();
@@ -1360,7 +1360,7 @@ public class Drawing_Worker {
 
         //線分入力時の一時的なs_step線分を描く　
 
-        if ((app.i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) && (i_drawing_stage != 4)) {
+        if ((app.mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (i_drawing_stage != 4)) {
         } else {
             for (int i = 1; i <= i_drawing_stage; i++) {
                 g_setColor(g, line_step[i].getColor());
@@ -1531,9 +1531,9 @@ public class Drawing_Worker {
 
 
 //--------------------------------------------
-//28 28 28 28 28 28 28 28  i_mouse_modeA==28線分内分入力
+//28 28 28 28 28 28 28 28  mouseMode==28線分内分入力
     //動作概要
-    //i_mouse_modeA==1と線分内分以外は同じ
+    //mouseMode==1と線分内分以外は同じ
 
     public Point getClosestPoint(Point t0) {
         // When dividing paper 1/1 Only the end point of the folding line is the reference point. The grid point never becomes the reference point.
@@ -1582,7 +1582,7 @@ public class Drawing_Worker {
     }
 
 
-//1 1 1 1 1 1 01 01 01 01 01 11111111111 i_mouse_modeA==1線分入力 111111111111111111111111111111111
+//1 1 1 1 1 1 01 01 01 01 01 11111111111 mouseMode==1線分入力 111111111111111111111111111111111
     //動作概要　
     //マウスボタン押されたとき　
     //用紙1/1分割時 		折線の端点のみが基準点。格子点が基準点になることはない。
@@ -1733,7 +1733,7 @@ public class Drawing_Worker {
 
     }
 
-    //マウス操作(i_mouse_modeA==28線分内分入力 でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==28線分内分入力 でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_28(Point p0) {
         i_drawing_stage = 1;
         line_step[1].setActive(LineSegment.ActiveState.ACTIVE_B_2);
@@ -1748,7 +1748,7 @@ public class Drawing_Worker {
         line_step[1].setColor(lineColor);
     }
 
-    //マウス操作(i_mouse_modeA==28線分入力 でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==28線分入力 でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_28(Point p0) {
         p.set(camera.TV2object(p0));
         line_step[1].setA(p);
@@ -1766,7 +1766,7 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==28線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==28線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_28(Point p0) {
         i_drawing_stage = 0;
         p.set(camera.TV2object(p0));
@@ -1831,7 +1831,7 @@ public class Drawing_Worker {
 
     // -----------------------------------------------
 
-    //マウス操作(i_mouse_modeA==1線分入力　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==1線分入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_01(Point p0) {
         i_drawing_stage = 1;
         line_step[1].setActive(LineSegment.ActiveState.ACTIVE_B_2);
@@ -1860,7 +1860,7 @@ public class Drawing_Worker {
 
     // --------------------------------------------
 
-    //マウス操作(i_mouse_modeA==1線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==1線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_01(Point p0) {
         p.set(camera.TV2object(p0));
 
@@ -1896,7 +1896,7 @@ public class Drawing_Worker {
         return new Point(grid.getIndex(closest_point));
     }
 
-    //マウス操作(i_mouse_modeA==1線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==1線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_01(Point p0) {
         i_drawing_stage = 0;
         p.set(camera.TV2object(p0));
@@ -1923,19 +1923,19 @@ public class Drawing_Worker {
         mMoved_m_00a(p0, lineColor);
     }//近い既存点のみ表示
 
-    //マウス操作(i_mouse_modeA==11線分入力　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==11線分入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_11(Point p0) {
         mPressed_m_00a(p0, lineColor);
     }
 
 //------
 
-    //マウス操作(i_mouse_modeA==11線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==11線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_11(Point p0) {
         mDragged_m_00a(p0, lineColor);
     }//近い既存点のみ表示
 
-    //マウス操作(i_mouse_modeA==11線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==11線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_11(Point p0) {
         if (i_drawing_stage == 1) {
             i_drawing_stage = 0;
@@ -1952,7 +1952,7 @@ public class Drawing_Worker {
         }
     }
 
-    //Function to operate the mouse (i_mouse_modeA == 62 Voronoi when the mouse is moved)
+    //Function to operate the mouse (mouseMode == 62 Voronoi when the mouse is moved)
     public void mMoved_A_62(Point p0) {
         if (i_kou_mitudo_nyuuryoku) {
             line_candidate[1].setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
@@ -1993,7 +1993,7 @@ public class Drawing_Worker {
 
 //-------------------------------------------------------------------------------------------------------------------------------
 
-    //マウス操作(i_mouse_modeA==62ボロノイ　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==62ボロノイ　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_62(Point p0) {
         p.set(camera.TV2object(p0));
 
@@ -2043,19 +2043,19 @@ public class Drawing_Worker {
             line_step[i_drawing_stage].set(S_replace);
 
 
-            for (int j = 1; j <= vonoroiLines.getTotal(); j++) {
-                //Swapping the vonoroiA of the line segment in vonoroiLines
-                if (vonoroiLines.getVonoroiA(j) == i_mouse_modeA_62_point_overlapping) {
-                    vonoroiLines.setVonoroiA(j, i_drawing_stage);
-                } else if (vonoroiLines.getVonoroiA(j) == i_drawing_stage) {
-                    vonoroiLines.setVonoroiA(j, i_mouse_modeA_62_point_overlapping);
+            for (int j = 1; j <= voronoiLines.getTotal(); j++) {
+                //Swapping the voronoiA of the line segment in voronoiLines
+                if (voronoiLines.getVoronoiA(j) == i_mouse_modeA_62_point_overlapping) {
+                    voronoiLines.setVoronoiA(j, i_drawing_stage);
+                } else if (voronoiLines.getVoronoiA(j) == i_drawing_stage) {
+                    voronoiLines.setVoronoiA(j, i_mouse_modeA_62_point_overlapping);
                 }
 
-                //Replacing the vonoroiB of the line segment in vonoroiLines
-                if (vonoroiLines.getVonoroiB(j) == i_mouse_modeA_62_point_overlapping) {
-                    vonoroiLines.setVonoroiB(j, i_drawing_stage);
-                } else if (vonoroiLines.getVonoroiB(j) == i_drawing_stage) {
-                    vonoroiLines.setVonoroiB(j, i_mouse_modeA_62_point_overlapping);
+                //Replacing the voronoiB of the line segment in voronoiLines
+                if (voronoiLines.getVoronoiB(j) == i_mouse_modeA_62_point_overlapping) {
+                    voronoiLines.setVoronoiB(j, i_drawing_stage);
+                } else if (voronoiLines.getVoronoiB(j) == i_drawing_stage) {
+                    voronoiLines.setVoronoiB(j, i_mouse_modeA_62_point_overlapping);
                 }
             }
 
@@ -2066,31 +2066,31 @@ public class Drawing_Worker {
 
             FoldLineSet ori_v_temp = new FoldLineSet();    //修正用のボロノイ図の線を格納する
 
-            //Deselect all vonoroiLines line segments first
-            vonoroiLines.unselect_all();
+            //Deselect all voronoiLines line segments first
+            voronoiLines.unselect_all();
 
             //i_egaki_dankai+1のボロノイ母点からのボロノイ線分を選択状態にする
             LineSegment s_tem = new LineSegment();
             LineSegment s_tem2 = new LineSegment();
-            for (int j = 1; j <= vonoroiLines.getTotal(); j++) {
-                s_tem.set(vonoroiLines.get(j));//s_temとしてボロノイ母点からのボロノイ線分か判定
-                if (s_tem.getVonoroiA() == i_drawing_stage + 1) {//The two Voronoi vertices of the Voronoi line segment are recorded in vonoroiA and vonoroiB.
-                    vonoroiLines.select(j);
-                    for (int h = 1; h <= vonoroiLines.getTotal(); h++) {
-                        s_tem2.set(vonoroiLines.get(h));
-                        if (s_tem.getVonoroiB() == s_tem2.getVonoroiB()) {
-                            vonoroiLines.select(h);
+            for (int j = 1; j <= voronoiLines.getTotal(); j++) {
+                s_tem.set(voronoiLines.get(j));//s_temとしてボロノイ母点からのボロノイ線分か判定
+                if (s_tem.getVoronoiA() == i_drawing_stage + 1) {//The two Voronoi vertices of the Voronoi line segment are recorded in voronoiA and voronoiB.
+                    voronoiLines.select(j);
+                    for (int h = 1; h <= voronoiLines.getTotal(); h++) {
+                        s_tem2.set(voronoiLines.get(h));
+                        if (s_tem.getVoronoiB() == s_tem2.getVoronoiB()) {
+                            voronoiLines.select(h);
                         }
-                        if (s_tem.getVonoroiB() == s_tem2.getVonoroiA()) {
-                            vonoroiLines.select(h);
+                        if (s_tem.getVoronoiB() == s_tem2.getVoronoiA()) {
+                            voronoiLines.select(h);
                         }
                     }
 
 
                     //削除されるi_egaki_dankai+1番目のボロノイ母点と組になる、もう一つのボロノイ母点を取り囲むボロノイ線分のアレイリストを得る。
-                    Senb_boro_1p_motome(s_tem.getVonoroiB());
+                    Senb_boro_1p_motome(s_tem.getVoronoiB());
 
-                    for (LineSegment lineSegment : lineSegment_vonoroi_onePoint) {
+                    for (LineSegment lineSegment : lineSegment_voronoi_onePoint) {
                         LineSegment add_S = new LineSegment();
                         add_S.set(lineSegment);
                         LineSegment add_S2 = new LineSegment();
@@ -2100,10 +2100,10 @@ public class Drawing_Worker {
                         boolean i_tuika = true;//1なら追加する。0なら追加しない。
                         for (int h = 1; h <= ori_v_temp.getTotal(); h++) {
                             add_S2.set(ori_v_temp.get(h));
-                            if ((add_S.getVonoroiB() == add_S2.getVonoroiB()) && (add_S.getVonoroiA() == add_S2.getVonoroiA())) {
+                            if ((add_S.getVoronoiB() == add_S2.getVoronoiB()) && (add_S.getVoronoiA() == add_S2.getVoronoiA())) {
                                 i_tuika = false;
                             }
-                            if ((add_S.getVonoroiB() == add_S2.getVonoroiA()) && (add_S.getVonoroiA() == add_S2.getVonoroiB())) {
+                            if ((add_S.getVoronoiB() == add_S2.getVoronoiA()) && (add_S.getVoronoiA() == add_S2.getVoronoiB())) {
                                 i_tuika = false;
                             }
                         }
@@ -2113,22 +2113,22 @@ public class Drawing_Worker {
                             ori_v_temp.addLine(lineSegment);
                         }
                     }
-                } else if (s_tem.getVonoroiB() == i_drawing_stage + 1) {//The two Voronoi vertices of the Voronoi line segment are recorded in iactive and color.
-                    vonoroiLines.select(j);
-                    for (int h = 1; h <= vonoroiLines.getTotal(); h++) {
-                        s_tem2.set(vonoroiLines.get(h));
-                        if (s_tem.getVonoroiA() == s_tem2.getVonoroiB()) {
-                            vonoroiLines.select(h);
+                } else if (s_tem.getVoronoiB() == i_drawing_stage + 1) {//The two Voronoi vertices of the Voronoi line segment are recorded in iactive and color.
+                    voronoiLines.select(j);
+                    for (int h = 1; h <= voronoiLines.getTotal(); h++) {
+                        s_tem2.set(voronoiLines.get(h));
+                        if (s_tem.getVoronoiA() == s_tem2.getVoronoiB()) {
+                            voronoiLines.select(h);
                         }
-                        if (s_tem.getVonoroiA() == s_tem2.getVonoroiA()) {
-                            vonoroiLines.select(h);
+                        if (s_tem.getVoronoiA() == s_tem2.getVoronoiA()) {
+                            voronoiLines.select(h);
                         }
                     }
 
                     //削除されるi_egaki_dankai+1番目のボロノイ母点と組になる、もう一つのボロノイ母点を取り囲むボロノイ線分のアレイリストを得る。
-                    Senb_boro_1p_motome(s_tem.getVonoroiA());
+                    Senb_boro_1p_motome(s_tem.getVoronoiA());
 
-                    for (LineSegment lineSegment : lineSegment_vonoroi_onePoint) {
+                    for (LineSegment lineSegment : lineSegment_voronoi_onePoint) {
                         LineSegment add_S = new LineSegment();
                         add_S.set(lineSegment);
                         LineSegment add_S2 = new LineSegment();
@@ -2137,10 +2137,10 @@ public class Drawing_Worker {
                         boolean i_tuika = true;//1なら追加する。0なら追加しない。
                         for (int h = 1; h <= ori_v_temp.getTotal(); h++) {
                             add_S2.set(ori_v_temp.get(h));
-                            if ((add_S.getVonoroiB() == add_S2.getVonoroiB()) && (add_S.getVonoroiA() == add_S2.getVonoroiA())) {
+                            if ((add_S.getVoronoiB() == add_S2.getVoronoiB()) && (add_S.getVoronoiA() == add_S2.getVoronoiA())) {
                                 i_tuika = false;
                             }
-                            if ((add_S.getVonoroiB() == add_S2.getVonoroiA()) && (add_S.getVonoroiA() == add_S2.getVonoroiB())) {
+                            if ((add_S.getVoronoiB() == add_S2.getVoronoiA()) && (add_S.getVoronoiA() == add_S2.getVoronoiB())) {
                                 i_tuika = false;
                             }
                         }
@@ -2153,23 +2153,23 @@ public class Drawing_Worker {
                 }
             }
             //選択状態のものを削除
-            vonoroiLines.delSelectedLineSegmentFast();
-            vonoroiLines.del_V_all(); //You may not need this line
+            voronoiLines.delSelectedLineSegmentFast();
+            voronoiLines.del_V_all(); //You may not need this line
 
             for (int j = 1; j <= ori_v_temp.getTotal(); j++) {
                 LineSegment s_t = new LineSegment();
                 s_t.set(ori_v_temp.get(j));
-                vonoroiLines.addLine(s_t);
+                voronoiLines.addLine(s_t);
             }
 
-            vonoroiLines.del_V_all();
+            voronoiLines.del_V_all();
 
         }
 
 
         //ボロノイ図も表示するようにs_stepの後にボロノイ図の線を入れる
 
-        int imax = vonoroiLines.getTotal();
+        int imax = voronoiLines.getTotal();
         if (imax > 1020) {
             imax = 1020;
         }
@@ -2177,7 +2177,7 @@ public class Drawing_Worker {
 
         for (int i = 1; i <= imax; i++) {
             i_drawing_stage = i_drawing_stage + 1;
-            line_step[i_drawing_stage].set(vonoroiLines.get(i));
+            line_step[i_drawing_stage].set(voronoiLines.get(i));
             line_step[i_drawing_stage].setActive(LineSegment.ActiveState.INACTIVE_0);
             line_step[i_drawing_stage].setColor(LineColor.MAGENTA_5);
         }
@@ -2186,29 +2186,29 @@ public class Drawing_Worker {
     }
 
     //--------------------------------------------
-    public void addLineSegmentVonoroi(LineSegment s0) {
+    public void addLineSegmentVoronoi(LineSegment s0) {
 
-        vonoroiLines.addLine(s0);//ori_vのsenbunの最後にs0の情報をを加えるだけ
-        int sousuu_old = vonoroiLines.getTotal();
-        vonoroiLines.lineSegment_circle_intersection(vonoroiLines.getTotal(), vonoroiLines.getTotal(), 1, vonoroiLines.numCircles());
+        voronoiLines.addLine(s0);//ori_vのsenbunの最後にs0の情報をを加えるだけ
+        int sousuu_old = voronoiLines.getTotal();
+        voronoiLines.lineSegment_circle_intersection(voronoiLines.getTotal(), voronoiLines.getTotal(), 1, voronoiLines.numCircles());
 
-        vonoroiLines.intersect_divide(1, sousuu_old - 1, sousuu_old, sousuu_old);
+        voronoiLines.intersect_divide(1, sousuu_old - 1, sousuu_old, sousuu_old);
     }
 
     // -----------------------------------------------------------------------------
-    //マウス操作(i_mouse_modeA==62ボロノイ　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==62ボロノイ　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_62(Point p0) {
     }
 
     // -----------------------------------------------------------------------------
-    //マウス操作(i_mouse_modeA==62ボロノイ　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==62ボロノイ　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_62(Point p0) {
     }
 
 //--------------------------------------
 
 
-//71 71 71 71 71 71 71 71 71 71 71 71 71 71    i_mouse_modeA==71　;線分延長モード
+//71 71 71 71 71 71 71 71 71 71 71 71 71 71    mouseMode==71　;線分延長モード
 
     public void voronoi_02_01(int tyuusinn_ten_bangou, LineSegment add_lineSegment) {
         //i_egaki_dankai番目のボロノイ頂点は　　line_step[i_egaki_dankai].geta()　　　
@@ -2216,11 +2216,11 @@ public class Drawing_Worker {
         //Organize the line segments to be added
         StraightLine add_straightLine = new StraightLine(add_lineSegment);
 
-        int i_saisyo = lineSegment_vonoroi_onePoint.size() - 1;
+        int i_saisyo = lineSegment_voronoi_onePoint.size() - 1;
         for (int i = i_saisyo; i >= 0; i--) {
             //Organize existing line segments
             LineSegment existing_lineSegment = new LineSegment();
-            existing_lineSegment.set(lineSegment_vonoroi_onePoint.get(i));
+            existing_lineSegment.set(lineSegment_voronoi_onePoint.get(i));
             StraightLine existing_straightLine = new StraightLine(existing_lineSegment);
 
             //Fight the line segment to be added with the existing line segment
@@ -2233,22 +2233,22 @@ public class Drawing_Worker {
 
                 if ((add_straightLine.sameSide(line_step[tyuusinn_ten_bangou].getA(), existing_lineSegment.getA()) <= 0) &&
                         (add_straightLine.sameSide(line_step[tyuusinn_ten_bangou].getA(), existing_lineSegment.getB()) <= 0)) {
-                    lineSegment_vonoroi_onePoint.remove(i);
+                    lineSegment_voronoi_onePoint.remove(i);
                 } else if ((add_straightLine.sameSide(line_step[tyuusinn_ten_bangou].getA(), existing_lineSegment.getA()) == 1) &&
                         (add_straightLine.sameSide(line_step[tyuusinn_ten_bangou].getA(), existing_lineSegment.getB()) == -1)) {
                     existing_lineSegment.set(existing_lineSegment.getA(), intersection);
                     if (existing_lineSegment.getLength() < 0.0000001) {
-                        lineSegment_vonoroi_onePoint.remove(i);
+                        lineSegment_voronoi_onePoint.remove(i);
                     } else {
-                        lineSegment_vonoroi_onePoint.set(i, existing_lineSegment);
+                        lineSegment_voronoi_onePoint.set(i, existing_lineSegment);
                     }
                 } else if ((add_straightLine.sameSide(line_step[tyuusinn_ten_bangou].getA(), existing_lineSegment.getA()) == -1) &&
                         (add_straightLine.sameSide(line_step[tyuusinn_ten_bangou].getA(), existing_lineSegment.getB()) == 1)) {
                     existing_lineSegment.set(intersection, existing_lineSegment.getB());
                     if (existing_lineSegment.getLength() < 0.0000001) {
-                        lineSegment_vonoroi_onePoint.remove(i);
+                        lineSegment_voronoi_onePoint.remove(i);
                     } else {
-                        lineSegment_vonoroi_onePoint.set(i, existing_lineSegment);
+                        lineSegment_voronoi_onePoint.set(i, existing_lineSegment);
                     }
                 }
 
@@ -2272,7 +2272,7 @@ public class Drawing_Worker {
 
             } else if (parallel == OritaCalc.ParallelJudgement.PARALLEL_NOT_EQUAL) {//When the line segment to be added and the existing line segment are parallel and the two straight lines do not match
                 if (add_straightLine.sameSide(line_step[tyuusinn_ten_bangou].getA(), existing_lineSegment.getA()) == -1) {
-                    lineSegment_vonoroi_onePoint.remove(i);
+                    lineSegment_voronoi_onePoint.remove(i);
                 } else if (existing_straightLine.sameSide(line_step[tyuusinn_ten_bangou].getA(), add_lineSegment.getA()) == -1) {
                     return;
                 }
@@ -2281,12 +2281,12 @@ public class Drawing_Worker {
             }
         }
 
-        lineSegment_vonoroi_onePoint.add(add_lineSegment);
+        lineSegment_voronoi_onePoint.add(add_lineSegment);
     }
 
     public void Senb_boro_1p_motome(int center_point_count) {//It can be used when line_step contains only Voronoi mother points. Get Senb_boro_1p as a set of Voronoi line segments around center_point_count
         //i_egaki_dankai Obtain an array list of Voronoi line segments surrounding the third Voronoi vertex. // i_egaki_dankai The third Voronoi apex is line_step [i_egaki_dankai] .geta ()
-        lineSegment_vonoroi_onePoint.clear();
+        lineSegment_voronoi_onePoint.clear();
 
         for (int i_e_d = 1; i_e_d <= i_drawing_stage; i_e_d++) {
             if (i_e_d != center_point_count) {
@@ -2298,11 +2298,11 @@ public class Drawing_Worker {
                 System.out.println("center_point_count= " + center_point_count + " ,i_e_d= " + i_e_d);
 
                 if (i_e_d < center_point_count) {
-                    add_lineSegment.setVonoroiA(i_e_d);
-                    add_lineSegment.setVonoroiB(center_point_count);//Record the two Voronoi vertices of the Voronoi line segment in iactive and color
+                    add_lineSegment.setVoronoiA(i_e_d);
+                    add_lineSegment.setVoronoiB(center_point_count);//Record the two Voronoi vertices of the Voronoi line segment in iactive and color
                 } else {
-                    add_lineSegment.setVonoroiA(center_point_count);
-                    add_lineSegment.setVonoroiB(i_e_d);//Record the two Voronoi vertices of the Voronoi line segment in iactive and color
+                    add_lineSegment.setVoronoiA(center_point_count);
+                    add_lineSegment.setVoronoiB(i_e_d);//Record the two Voronoi vertices of the Voronoi line segment in iactive and color
                 }
                 voronoi_02_01(center_point_count, add_lineSegment);
             }
@@ -2317,23 +2317,22 @@ public class Drawing_Worker {
         //20181109ここでori_v.の既存のボロノイ線分の整理が必要
 
         //ori_vの線分を最初に全て非選択にする
-        vonoroiLines.unselect_all();
+        voronoiLines.unselect_all();
 
         //
         LineSegment s_begin = new LineSegment();
         LineSegment s_end = new LineSegment();
 
-        for (int ia = 0; ia < lineSegment_vonoroi_onePoint.size() - 1; ia++) {
-            for (int ib = ia + 1; ib < lineSegment_vonoroi_onePoint.size(); ib++) {
+        for (int ia = 0; ia < lineSegment_voronoi_onePoint.size() - 1; ia++) {
+            for (int ib = ia + 1; ib < lineSegment_voronoi_onePoint.size(); ib++) {
 
-                s_begin.set(lineSegment_vonoroi_onePoint.get(ia));
-                s_end.set(lineSegment_vonoroi_onePoint.get(ib));
+                s_begin.set(lineSegment_voronoi_onePoint.get(ia));
+                s_end.set(lineSegment_voronoi_onePoint.get(ib));
 
                 StraightLine t_begin = new StraightLine(s_begin);
 
-                int i_begin = s_begin.getVonoroiA();//In this case, vonoroiA contains the number of the existing Voronoi mother point when the Voronoi line segment is added.
-                int i_end = s_end.getVonoroiA();//In this case, vonoroiA contains the number of the existing Voronoi mother point when the Voronoi line segment is added.
-
+                int i_begin = s_begin.getVoronoiA();//In this case, voronoiA contains the number of the existing Voronoi mother point when the Voronoi line segment is added.
+                int i_end = s_end.getVoronoiA();//In this case, voronoiA contains the number of the existing Voronoi mother point when the Voronoi line segment is added.
 
                 if (i_begin > i_end) {
                     int i_temp = i_begin;
@@ -2342,19 +2341,19 @@ public class Drawing_Worker {
                 }
 
                 //The surrounding Voronoi line segment created by adding a new Voronoi matrix is being sought. The polygon of this Voronoi line segment is called a new cell.
-                // Before adding a new cell to vonoroiLines, process so that there is no existing line segment of vonoroiLines that is inside the new cell.
+                // Before adding a new cell to voronoiLines, process so that there is no existing line segment of voronoiLines that is inside the new cell.
 
                 //20181109ここでori_v.の既存のボロノイ線分(iactive()が必ずicolorより小さくなっている)を探す
-                for (int j = 1; j <= vonoroiLines.getTotal(); j++) {
+                for (int j = 1; j <= voronoiLines.getTotal(); j++) {
                     LineSegment s_kizon = new LineSegment();
-                    s_kizon.set(vonoroiLines.get(j));
+                    s_kizon.set(voronoiLines.get(j));
 
-                    int i_kizon_syou = s_kizon.getVonoroiA();
-                    int i_kizon_dai = s_kizon.getVonoroiB();
+                    int i_kizon_syou = s_kizon.getVoronoiA();
+                    int i_kizon_dai = s_kizon.getVoronoiB();
 
                     if (i_kizon_syou > i_kizon_dai) {
-                        i_kizon_dai = s_kizon.getVonoroiA();
-                        i_kizon_syou = s_kizon.getVonoroiB();
+                        i_kizon_dai = s_kizon.getVoronoiA();
+                        i_kizon_syou = s_kizon.getVoronoiB();
                     }
 
                     if (i_kizon_syou == i_begin) {
@@ -2373,17 +2372,17 @@ public class Drawing_Worker {
 
                             if ((t_begin.sameSide(line_step[i_drawing_stage].getA(), s_kizon.getA()) >= 0) &&
                                     (t_begin.sameSide(line_step[i_drawing_stage].getA(), s_kizon.getB()) >= 0)) {
-                                vonoroiLines.select(j);
+                                voronoiLines.select(j);
                             }
 
                             if ((t_begin.sameSide(line_step[i_drawing_stage].getA(), s_kizon.getA()) == -1) &&
                                     (t_begin.sameSide(line_step[i_drawing_stage].getA(), s_kizon.getB()) == 1)) {
-                                vonoroiLines.set(j, s_kizon.getA(), kouten);
+                                voronoiLines.set(j, s_kizon.getA(), kouten);
                             }
 
                             if ((t_begin.sameSide(line_step[i_drawing_stage].getA(), s_kizon.getA()) == 1) &&
                                     (t_begin.sameSide(line_step[i_drawing_stage].getA(), s_kizon.getB()) == -1)) {
-                                vonoroiLines.set(j, kouten, s_kizon.getB());
+                                voronoiLines.set(j, kouten, s_kizon.getB());
                             }
                         }
                     }
@@ -2391,22 +2390,22 @@ public class Drawing_Worker {
             }
         }
 
-        //for (int i=1; i<=vonoroiLines.getsousuu(); i++ ){System.out.println("    (1)  i= " + i +  ":  vonoroiLines.get(i).getiactive()=  " +  vonoroiLines.get(i).getiactive());}
+        //for (int i=1; i<=voronoiLines.getsousuu(); i++ ){System.out.println("    (1)  i= " + i +  ":  voronoiLines.get(i).getiactive()=  " +  voronoiLines.get(i).getiactive());}
         //選択状態のものを削除
-        vonoroiLines.delSelectedLineSegmentFast();
+        voronoiLines.delSelectedLineSegmentFast();
 
-        vonoroiLines.del_V_all(); //この行はいらないかも
+        voronoiLines.del_V_all(); //この行はいらないかも
 
 
-        //Add the line segment of Senb_boro_1p to the end of senbun of vonoroiLines
-        for (LineSegment lineSegment : lineSegment_vonoroi_onePoint) {
+        //Add the line segment of Senb_boro_1p to the end of senbun of voronoiLines
+        for (LineSegment lineSegment : lineSegment_voronoi_onePoint) {
             LineSegment add_S = new LineSegment();
             add_S.set(lineSegment);
-            vonoroiLines.addLine(lineSegment);
+            voronoiLines.addLine(lineSegment);
         }
     }
 
-    //5 5 5 5 5 55555555555555555    i_mouse_modeA==5　;線分延長モード
+    //5 5 5 5 5 55555555555555555    mouseMode==5　;線分延長モード
     //マウス操作(マウスを動かしたとき)を行う関数    //System.out.println("_");
     public void mMoved_A_05(Point p0) {
         mMoved_A_05or70(p0);
@@ -2427,9 +2426,9 @@ public class Drawing_Worker {
         mReleased_A_05or70(p0);
     }
 
-//7777777777777777777    i_mouse_modeA==7;角二等分線モード　
+//7777777777777777777    mouseMode==7;角二等分線モード　
 
-    //70 70 70 70 70 70 70 70 70 70 70 70 70 70    i_mouse_modeA==70　;線分延長モード
+    //70 70 70 70 70 70 70 70 70 70 70 70 70 70    mouseMode==70　;線分延長モード
     //マウス操作(マウスを動かしたとき)を行う関数    //System.out.println("_");
     public void mMoved_A_70(Point p0) {
         mMoved_A_05or70(p0);
@@ -2453,7 +2452,7 @@ public class Drawing_Worker {
 //------
 
 
-//88888888888888888888888    i_mouse_modeA==8　;内心モード。
+//88888888888888888888888    mouseMode==8　;内心モード。
 
     //マウス操作(マウスを動かしたとき)を行う関数    //System.out.println("_");
     public void mMoved_A_05or70(Point p0) {
@@ -2593,10 +2592,10 @@ public class Drawing_Worker {
 
 
                             if (addLineSegment.getLength() > 0.00000001) {
-                                if (app.i_mouse_modeA == MouseMode.LENGTHEN_CREASE_5) {
+                                if (app.mouseMode == MouseMode.LENGTHEN_CREASE_5) {
                                     addLineSegment.setColor(lineColor);
                                 }
-                                if (app.i_mouse_modeA == MouseMode.CREASE_LENGTHEN_70) {
+                                if (app.mouseMode == MouseMode.CREASE_LENGTHEN_70) {
                                     addLineSegment.setColor(foldLines.get(entyou_kouho_nbox.getInt(i)).getColor());
                                 }
 
@@ -2628,10 +2627,10 @@ public class Drawing_Worker {
 
 
                         if (addLineSegment.getLength() > 0.00000001) {
-                            if (app.i_mouse_modeA == MouseMode.LENGTHEN_CREASE_5) {
+                            if (app.mouseMode == MouseMode.LENGTHEN_CREASE_5) {
                                 addLineSegment.setColor(lineColor);
                             }
-                            if (app.i_mouse_modeA == MouseMode.CREASE_LENGTHEN_70) {
+                            if (app.mouseMode == MouseMode.CREASE_LENGTHEN_70) {
                                 addLineSegment.setColor(foldLines.get(entyou_kouho_nbox.getInt(i)).getColor());
                             }
 
@@ -2899,7 +2898,7 @@ public class Drawing_Worker {
         return measured_angle_3;
     }
 
-    //53 53 53 53 53 53 53 53 53    i_mouse_modeA==53　;長さ測定１モード。
+    //53 53 53 53 53 53 53 53 53    mouseMode==53　;長さ測定１モード。
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_53(Point p0) {
         mMoved_A_29(p0);
@@ -2926,12 +2925,12 @@ public class Drawing_Worker {
             i_drawing_stage = 0;
             measured_length_1 = OritaCalc.distance(line_step[1].getA(), line_step[2].getA()) * (double) grid.divisionNumber() / 400.0;
 
-            app.measured_length_1_display(measured_length_1);
+            app.displayMeasuredLength1(measured_length_1);
         }
     }
 
     //------
-//54 54 54 54 54 54 54 54 54    i_mouse_modeA==54　;長さ測定2モード。
+//54 54 54 54 54 54 54 54 54    mouseMode==54　;長さ測定2モード。
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_54(Point p0) {
         mMoved_A_29(p0);
@@ -2958,16 +2957,16 @@ public class Drawing_Worker {
             i_drawing_stage = 0;
             measured_length_2 = OritaCalc.distance(line_step[1].getA(), line_step[2].getA()) * (double) grid.divisionNumber() / 400.0;
 
-            app.measured_length_2_display(measured_length_2);
+            app.displayMeasuredLength2(measured_length_2);
         }
     }
 //------
 
 
-//999999999999999999    i_mouse_modeA==9　;垂線おろしモード
+//999999999999999999    mouseMode==9　;垂線おろしモード
 
     //------
-//55 55 55 55 55 55 55 55 55    i_mouse_modeA==55　;角度測定1モード。
+//55 55 55 55 55 55 55 55 55    mouseMode==55　;角度測定1モード。
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_55(Point p0) {
         mMoved_A_29(p0);
@@ -2997,15 +2996,15 @@ public class Drawing_Worker {
                 measured_angle_1 = measured_angle_1 - 360.0;
             }
 
-            app.measured_angle_1_display(measured_angle_1);
+            app.displayMeasuredAngle1(measured_angle_1);
         }
     }
 //------
 //------
-//40 40 40 40 40 40     i_mouse_modeA==40　;平行線入力モード
+//40 40 40 40 40 40     mouseMode==40　;平行線入力モード
 
     //------
-//56 56 56 56 56 56 56 56 56    i_mouse_modeA==56　;角度測定2モード。
+//56 56 56 56 56 56 56 56 56    mouseMode==56　;角度測定2モード。
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_56(Point p0) {
         mMoved_A_29(p0);
@@ -3034,19 +3033,19 @@ public class Drawing_Worker {
             if (measured_angle_2 > 180.0) {
                 measured_angle_2 = measured_angle_2 - 360.0;
             }
-            app.measured_angle_2_display(measured_angle_2);
+            app.displayMeasuredAngle2(measured_angle_2);
         }
     }
 
     //------
-//57 57 57 57 57 57 57 57 57    i_mouse_modeA==57　;角度測定3モード。
+//57 57 57 57 57 57 57 57 57    mouseMode==57　;角度測定3モード。
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_57(Point p0) {
         mMoved_A_29(p0);
     }//近い既存点のみ表示
 
 
-//10 10 10 10 10    i_mouse_modeA==10　;折り返しモード
+//10 10 10 10 10    mouseMode==10　;折り返しモード
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mPressed_A_57(Point p0) {
@@ -3071,7 +3070,7 @@ public class Drawing_Worker {
             if (measured_angle_3 > 180.0) {
                 measured_angle_3 = measured_angle_3 - 360.0;
             }
-            app.measured_angle_3_display(measured_angle_3);
+            app.displayMeasuredAngle3(measured_angle_3);
         }
     }
 
@@ -3082,7 +3081,7 @@ public class Drawing_Worker {
         }
     }
 
-//52 52 52 52 52    i_mouse_modeA==52　;連続折り返しモード ****************************************
+//52 52 52 52 52    mouseMode==52　;連続折り返しモード ****************************************
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mPressed_A_09(Point p0) {
@@ -3205,9 +3204,9 @@ public class Drawing_Worker {
 
 
 //--------------------------------------------
-//27 27 27 27 27 27 27 27  i_mouse_modeA==27線分分割	入力 27 27 27 27 27 27 27 27
+//27 27 27 27 27 27 27 27  mouseMode==27線分分割	入力 27 27 27 27 27 27 27 27
     //動作概要　
-    //i_mouse_modeA==1と線分分割以外は同じ　
+    //mouseMode==1と線分分割以外は同じ　
     //
 
     //------
@@ -3261,9 +3260,9 @@ public class Drawing_Worker {
     }
 
 //--------------------------------------------
-//29 29 29 29 29 29 29 29  i_mouse_modeA==29正多角形入力	入力 29 29 29 29 29 29 29 29
+//29 29 29 29 29 29 29 29  mouseMode==29正多角形入力	入力 29 29 29 29 29 29 29 29
     //動作概要　
-    //i_mouse_modeA==1と線分分割以外は同じ　
+    //mouseMode==1と線分分割以外は同じ　
     //
 
     //マウス操作(ボタンを離したとき)を行う関数
@@ -3512,7 +3511,7 @@ public class Drawing_Worker {
         mMoved_m_00a(p0, lineColor);//マウスで選択できる候補点を表示する。近くに既成の点があるときはその点、無いときはマウスの位置自身が候補点となる。
     }
 
-    //マウス操作(i_mouse_modeA==27線分入力　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==27線分入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_27(Point p0) {
         i_drawing_stage = 1;
         line_step[1].setActive(LineSegment.ActiveState.ACTIVE_B_2);
@@ -3530,7 +3529,7 @@ public class Drawing_Worker {
 
 // 19 19 19 19 19 19 19 19 19 select 選択
 
-    //マウス操作(i_mouse_modeA==27線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==27線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_27(Point p0) {
         p.set(camera.TV2object(p0));
         line_step[1].setA(p);
@@ -3548,7 +3547,7 @@ public class Drawing_Worker {
 
     }
 
-    //マウス操作(i_mouse_modeA==27線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==27線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_27(Point p0) {
         i_drawing_stage = 0;
         p.set(camera.TV2object(p0));
@@ -3589,7 +3588,7 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==29正多角形入力　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==29正多角形入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_29(Point p0) {
         line_step[1].setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
 
@@ -3624,11 +3623,11 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==29正多角形入力　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==29正多角形入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_29(Point p0) {
     }
 
-    //マウス操作(i_mouse_modeA==29正多角形入力　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==29正多角形入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_29(Point p0) {
         if (i_drawing_stage == 2) {
             i_drawing_stage = 0;
@@ -3657,7 +3656,7 @@ public class Drawing_Worker {
         mMoved_A_29(p0);
     }//近い既存点のみ表示
 
-    //マウス操作(i_mouse_modeA==37　でボタンを押したとき)時の作業-------//System.out.println("A");---------------------------------------------
+    //マウス操作(mouseMode==37　でボタンを押したとき)時の作業-------//System.out.println("A");---------------------------------------------
     public void mPressed_A_37(Point p0) {
         line_step[1].setActive(LineSegment.ActiveState.ACTIVE_B_2);
         i_drawing_stage = 1;
@@ -3674,7 +3673,7 @@ public class Drawing_Worker {
         line_step[2].set(line_step[1]);//ここではs_step[2]は表示されない、計算用の線分
     }
 
-    //マウス操作(i_mouse_modeA==37　でドラッグしたとき)を行う関数--------------//System.out.println("A");--------------------------------------
+    //マウス操作(mouseMode==37　でドラッグしたとき)を行う関数--------------//System.out.println("A");--------------------------------------
     public void mDragged_A_37(Point p0) {
         Point syuusei_point = new Point(syuusei_point_A_37(p0));
         line_step[1].setA(syuusei_point);
@@ -3688,7 +3687,7 @@ public class Drawing_Worker {
 
     }
 
-    //マウス操作(i_mouse_modeA==37　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==37　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_37(Point p0) {
         if (i_drawing_stage == 1) {
             i_drawing_stage = 0;
@@ -3788,7 +3787,7 @@ public class Drawing_Worker {
         i_drawing_stage = 4;//line_step[4]まで描画するために、この行が必要
     }
 
-    //マウス操作(i_mouse_modeA==19  select　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==19  select　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_19(Point p0) {
         System.out.println("19  select_");
         System.out.println("i_egaki_dankai=" + i_drawing_stage);
@@ -3821,7 +3820,7 @@ public class Drawing_Worker {
 
 //20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20
 
-    //マウス操作(i_mouse_modeA==19 select　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==19 select　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_19(Point p0) {
         //mDragged_A_box_select( p0);
         switch (i_select_mode) {
@@ -3846,7 +3845,7 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==19 select　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==19 select　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_19(Point p0) {
         switch (i_select_mode) {
             case NORMAL_0:
@@ -3882,17 +3881,17 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==19  select　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==19  select　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_20(Point p0) {
         mPressed_A_box_select(p0);
     }
 
-    //マウス操作(i_mouse_modeA==19 select　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==19 select　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_20(Point p0) {
         mDragged_A_box_select(p0);
     }
 
-    //マウス操作(i_mouse_modeA==20 select　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==20 select　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_20(Point p0) {
         i_drawing_stage = 0;
         unselect(p19_1, p0);
@@ -3914,7 +3913,7 @@ public class Drawing_Worker {
         i_drawing_stage = i;
     }
 
-//61 61 61 61 61 61 61 61 61 61 61 61 i_mouse_modeA==61//長方形内選択（paintの選択に似せた選択機能）に使う
+//61 61 61 61 61 61 61 61 61 61 61 61 mouseMode==61//長方形内選択（paintの選択に似せた選択機能）に使う
     //動作概要　
     //マウスボタン押されたとき　
     //用紙1/1分割時 		折線の端点のみが基準点。格子点が基準点になることはない。
@@ -3981,7 +3980,7 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==61　長方形内選択でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==61　長方形内選択でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_61(Point p0) {
         p.set(camera.TV2object(p0));
         Point p_new = new Point();
@@ -4080,7 +4079,7 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==61　長方形内選択でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==61　長方形内選択でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_61(Point p0) {
 
         p.set(camera.TV2object(p0));
@@ -4139,7 +4138,7 @@ public class Drawing_Worker {
 
 //--------------------
 
-    //マウス操作(i_mouse_modeA==61 長方形内選択　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==61 長方形内選択　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_61(Point p0) {
 
         p.set(camera.TV2object(p0));
@@ -4191,7 +4190,7 @@ public class Drawing_Worker {
 //--------------------
 
     //3 3 3 3 3 33333333333333333333333333333333333333333333333333333333
-    //マウス操作(i_mouse_modeA==3,23 "線分削除" でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==3,23 "線分削除" でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_03(Point p0) {
         //System.out.println("(1)zzzzz foldLines.check4_size() = "+foldLines.check4_size());
         if (i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
@@ -4214,7 +4213,7 @@ public class Drawing_Worker {
     }
 //--------------------
 
-    //マウス操作(i_mouse_modeA==3,23でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==3,23でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_03(Point p0) {
         //System.out.println("(2)zzzzz foldLines.check4_size() = "+foldLines.check4_size());
         if (i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
@@ -4236,7 +4235,7 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==3,23 でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==3,23 でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_03(Point p0) {//折線と補助活線と円
         //System.out.println("(3_1)zzzzz foldLines.check4_size() = "+foldLines.check4_size());
         //Ten p =new Ten();
@@ -4494,17 +4493,17 @@ public class Drawing_Worker {
     }
 
     //59 59 59 59 59 59 59 59 59 59
-    //マウス操作(i_mouse_modeA==59 "特注プロパティ指定" でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==59 "特注プロパティ指定" でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_59(Point p0) {
         mPressed_A_box_select(p0);   //折線と補助活線と補助絵線
     }
 
-    //マウス操作(i_mouse_modeA==59 "特注プロパティ指定"でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==59 "特注プロパティ指定"でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_59(Point p0) {
         mDragged_A_box_select(p0);
     }
 
-    //マウス操作(i_mouse_modeA==59 "特注プロパティ指定" でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==59 "特注プロパティ指定" でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_59(Point p0) {//補助活線と円
         i_drawing_stage = 0;
         if (p19_1.distance(p0) > 0.000001) {//現状では削除しないときもUNDO用に記録されてしまう20161218
@@ -4539,12 +4538,12 @@ public class Drawing_Worker {
 
     //4 4 4 4 4 444444444444444444444444444444444444444444444444444444444
     public void mPressed_A_04(Point p0) {
-    }//マウス操作(i_mouse_modeA==4線_変換　でボタンを押したとき)時の作業
+    }//マウス操作(mouseMode==4線_変換　でボタンを押したとき)時の作業
 
     public void mDragged_A_04(Point p0) {
-    }//マウス操作(i_mouse_modeA==4線_変換　でドラッグしたとき)を行う関数
+    }//マウス操作(mouseMode==4線_変換　でドラッグしたとき)を行う関数
 
-    //マウス操作(i_mouse_modeA==4線_変換　でボタンを離したとき)を行う関数
+    //マウス操作(mouseMode==4線_変換　でボタンを離したとき)を行う関数
     public void mReleased_A_04(Point p0) {
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
@@ -4566,13 +4565,13 @@ public class Drawing_Worker {
 //58 58 58 58 58 58 58 58 58 58
     public void mPressed_A_58(Point p0) {
         mPressed_A_box_select(p0);
-    }//マウス操作(i_mouse_modeA==58線_変換　でボタンを押したとき)時の作業
+    }//マウス操作(mouseMode==58線_変換　でボタンを押したとき)時の作業
 
     public void mDragged_A_58(Point p0) {
         mDragged_A_box_select(p0);
-    }//マウス操作(i_mouse_modeA==58線_変換　でドラッグしたとき)を行う関数
+    }//マウス操作(mouseMode==58線_変換　でドラッグしたとき)を行う関数
 
-    //マウス操作(i_mouse_modeA==58線_変換　でボタンを離したとき)を行う関数
+    //マウス操作(mouseMode==58線_変換　でボタンを離したとき)を行う関数
     public void mReleased_A_58(Point p0) {//ここの処理の終わりに fix2(0.001,0.5);　をするのは、元から折線だったものと、補助線から変換した折線との組合せで頻発するT字型不接続を修正するため
         i_drawing_stage = 0;
 
@@ -4626,7 +4625,7 @@ public class Drawing_Worker {
 //------
 
 
-//i_mouse_modeA;マウスの動作に対する反応を規定する。
+//mouseMode;マウスの動作に対する反応を規定する。
 // -------------1;線分入力モード。
 //2;展開図調整(移動)。
 //3;"L_del"
@@ -4648,9 +4647,9 @@ public class Drawing_Worker {
 //10001;test1 入力準備として点を３つ指定する
 
 
-//66666666666666666666    i_mouse_modeA==6　;2点から等距離線分モード
+//66666666666666666666    mouseMode==6　;2点から等距離線分モード
 
-    public void mPressed_A_30(Point p0) {    //マウス操作(i_mouse_modeA==4線_変換　でボタンを押したとき)時の作業
+    public void mPressed_A_30(Point p0) {    //マウス操作(mouseMode==4線_変換　でボタンを押したとき)時の作業
         p.set(camera.TV2object(p0));
         minrid_30 = -1;
         if (foldLines.closestLineSegmentDistance(p) < d_decision_width) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
@@ -4661,7 +4660,7 @@ public class Drawing_Worker {
         }
     }
 
-    public void mDragged_A_30(Point p0) {//マウス操作(i_mouse_modeA==4線_変換　でドラッグしたとき)を行う関数
+    public void mDragged_A_30(Point p0) {//マウス操作(mouseMode==4線_変換　でドラッグしたとき)を行う関数
         if (minrid_30 > 0) {
 
             LineSegment s01 = new LineSegment();
@@ -4672,7 +4671,7 @@ public class Drawing_Worker {
 
     }
 
-    //マウス操作(i_mouse_modeA==30 除け_線_変換　でボタンを離したとき)を行う関数（背景に展開図がある場合用）
+    //マウス操作(mouseMode==30 除け_線_変換　でボタンを離したとき)を行う関数（背景に展開図がある場合用）
     public void mReleased_A_30(Point p0) {
         p.set(camera.TV2object(p0));
 
@@ -4710,7 +4709,7 @@ public class Drawing_Worker {
 //------折り畳み可能線入力
 
 
-//38 38 38 38 38 38 38    i_mouse_modeA==38　;折り畳み可能線入力  qqqqqqqqq
+//38 38 38 38 38 38 38    mouseMode==38　;折り畳み可能線入力  qqqqqqqqq
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mPressed_A_06(Point p0) {
@@ -5283,7 +5282,7 @@ public class Drawing_Worker {
         mMoved_A_11(p0);
     }//近い既存点のみ表示
 
-    //マウス操作(i_mouse_modeA==33魚の骨　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==33魚の骨　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_33(Point p0) {
         i_drawing_stage = 1;
 
@@ -5296,7 +5295,7 @@ public class Drawing_Worker {
         line_step[1].setColor(lineColor);
     }
 
-    //マウス操作(i_mouse_modeA==33魚の骨　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==33魚の骨　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_33(Point p0) {
         mDragged_A_11(p0);
     }
@@ -5304,7 +5303,7 @@ public class Drawing_Worker {
 
 //35 35 35 35 35 35 35 35 35 35 35複折り返し   入力した線分に接触している折線を折り返し　に使う
 
-    //マウス操作(i_mouse_modeA==33魚の骨　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==33魚の骨　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_33(Point p0) {
         if (i_drawing_stage == 1) {
             i_drawing_stage = 0;
@@ -5372,9 +5371,9 @@ public class Drawing_Worker {
         mMoved_A_11(p0);
     }//近い既存点のみ表示
 
-    //マウス操作(i_mouse_modeA==35　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==35　でドラッグしたとき)を行う関数----------------------------------------------------
 
-    //マウス操作(i_mouse_modeA==35　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==35　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_35(Point p0) {
         i_drawing_stage = 1;
 
@@ -5392,7 +5391,7 @@ public class Drawing_Worker {
     }
 
 
-    //マウス操作(i_mouse_modeA==35　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==35　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_35(Point p0) {
         if (i_drawing_stage == 1) {
             i_drawing_stage = 0;
@@ -5541,7 +5540,7 @@ public class Drawing_Worker {
     }
 
 
-//21 21 21 21 21    i_mouse_modeA==21　;移動モード
+//21 21 21 21 21    mouseMode==21　;移動モード
 
     public int kouten_ari_nasi(LineSegment s0) {//If s0 is extended from the point a to the b direction and intersects with another polygonal line, 0 is returned if it is not 1. The intersecting line segments at the a store have no intersection with this function.
         LineSegment add_line = new LineSegment();
@@ -5588,7 +5587,7 @@ public class Drawing_Worker {
 
 //-------------------------
 
-//22 22 22 22 22    i_mouse_modeA==22　;コピペモード
+//22 22 22 22 22    mouseMode==22　;コピペモード
 
     //マウスリリース----------------------------------------------------
     public void mReleased_A_21(Point p0) {
@@ -5622,7 +5621,7 @@ public class Drawing_Worker {
             foldLines.unselect_all();
             record();
 
-            app.i_mouse_modeA = MouseMode.CREASE_SELECT_19;//20200930 add セレクトした折線に作業して、その後またセレクトできる状態に戻すための行
+            app.mouseMode = MouseMode.CREASE_SELECT_19;//20200930 add セレクトした折線に作業して、その後またセレクトできる状態に戻すための行
         }
     }
 
@@ -5643,10 +5642,10 @@ public class Drawing_Worker {
 
 
 //--------------------------------------------
-//31 31 31 31 31 31 31 31  i_mouse_modeA==31move2p2p	入力 31 31 31 31 31 31 31 31
+//31 31 31 31 31 31 31 31  mouseMode==31move2p2p	入力 31 31 31 31 31 31 31 31
 
 //動作概要　
-//i_mouse_modeA==1と線分分割以外は同じ　
+//mouseMode==1と線分分割以外は同じ　
 //
 
     //マウスリリース----------------------------------------------------
@@ -5679,7 +5678,7 @@ public class Drawing_Worker {
             foldLines.unselect_all();
             record();
 
-            app.i_mouse_modeA = MouseMode.CREASE_SELECT_19;//20200930 add セレクトした折線に作業して、その後またセレクトできる状態に戻すための行
+            app.mouseMode = MouseMode.CREASE_SELECT_19;//20200930 add セレクトした折線に作業して、その後またセレクトできる状態に戻すための行
         }
     }
 
@@ -5688,7 +5687,7 @@ public class Drawing_Worker {
         mMoved_A_11(p0);
     }//近い既存点のみ表示
 
-    //マウス操作(i_mouse_modeA==31move2p2p　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==31move2p2p　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_31(Point p0) {
         p.set(camera.TV2object(p0));
 
@@ -5768,7 +5767,7 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==31move2p2p　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==31move2p2p　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_31(Point p0) {
     }
 
@@ -5776,13 +5775,13 @@ public class Drawing_Worker {
 
 
 //--------------------------------------------
-//32 32 32 32 32 32 32 32  i_mouse_modeA==32copy2p2p	入力 32 32 32 32 32 32 32 32
+//32 32 32 32 32 32 32 32  mouseMode==32copy2p2p	入力 32 32 32 32 32 32 32 32
 
 //動作概要　
-//i_mouse_modeA==1と線分分割以外は同じ　
+//mouseMode==1と線分分割以外は同じ　
 //
 
-    //マウス操作(i_mouse_modeA==31move2p2p　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==31move2p2p　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_31(Point p0) {
         if (i_drawing_stage == 4) {
             i_drawing_stage = 0;
@@ -5800,7 +5799,7 @@ public class Drawing_Worker {
 
             foldLines.unselect_all();
             record();
-            app.i_mouse_modeA = MouseMode.CREASE_SELECT_19;//20200930 add セレクトした折線に作業して、その後またセレクトできる状態に戻すための行
+            app.mouseMode = MouseMode.CREASE_SELECT_19;//20200930 add セレクトした折線に作業して、その後またセレクトできる状態に戻すための行
         }
     }
 
@@ -5809,7 +5808,7 @@ public class Drawing_Worker {
         mMoved_A_11(p0);
     }//近い既存点のみ表示
 
-    //マウス操作(i_mouse_modeA==32copy2p2p2p2p　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==32copy2p2p2p2p　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_32(Point p0) {
         p.set(camera.TV2object(p0));
 
@@ -5884,13 +5883,13 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==32copy2p2p　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==32copy2p2p　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_32(Point p0) {
     }
 
 //  ********************************************
 
-    //マウス操作(i_mouse_modeA==32copy2p2pp　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==32copy2p2pp　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_32(Point p0) {
         if (i_drawing_stage == 4) {
             i_drawing_stage = 0;
@@ -5906,17 +5905,17 @@ public class Drawing_Worker {
             foldLines.intersect_divide(1, sousuu_old, sousuu_old + 1, sousuu_new);
 
             record();
-            app.i_mouse_modeA = MouseMode.CREASE_SELECT_19;//20200930 add セレクトした折線に作業して、その後またセレクトできる状態に戻すための行
+            app.mouseMode = MouseMode.CREASE_SELECT_19;//20200930 add セレクトした折線に作業して、その後またセレクトできる状態に戻すための行
         }
     }
 
-    //12 12 12 12 12    i_mouse_modeA==12　;鏡映モード
+    //12 12 12 12 12    mouseMode==12　;鏡映モード
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_12(Point p0) {
         mMoved_A_11(p0);
     }//近い既存点のみ表示
 
-    //マウス操作(i_mouse_modeA==12鏡映モード　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==12鏡映モード　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_12(Point p0) {
         p.set(camera.TV2object(p0));
 
@@ -5951,11 +5950,11 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==12鏡映モード　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==12鏡映モード　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_12(Point p0) {
     }
 
-    //マウス操作(i_mouse_modeA==12鏡映モード　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==12鏡映モード　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_12(Point p0) {
         LineSegment adds = new LineSegment();
         if (i_drawing_stage == 2) {
@@ -5979,7 +5978,7 @@ public class Drawing_Worker {
 
             foldLines.unselect_all();
             record();
-            app.i_mouse_modeA = MouseMode.CREASE_SELECT_19;//20200930 add セレクトした折線に作業して、その後またセレクトできる状態に戻すための行
+            app.mouseMode = MouseMode.CREASE_SELECT_19;//20200930 add セレクトした折線に作業して、その後またセレクトできる状態に戻すための行
         }
     }
 
@@ -5994,7 +5993,7 @@ public class Drawing_Worker {
         mMoved_A_11(p0);
     }//近い既存点のみ表示
 
-    //マウス操作(i_mouse_modeA==34　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==34　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_34(Point p0) {
         i_drawing_stage = 1;
 
@@ -6007,7 +6006,7 @@ public class Drawing_Worker {
         line_step[1].setColor(lineColor);
     }
 
-    //マウス操作(i_mouse_modeA==34　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==34　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_34(Point p0) {
         mDragged_A_11(p0);
     }
@@ -6015,7 +6014,7 @@ public class Drawing_Worker {
 
 //64 64 64 64 64 64 64 64 64 64 64 64 64入力した線分に重複している折線を削除する
 
-    //マウス操作(i_mouse_modeA==34　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==34　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_34(Point p0) {
 
         SortingBox_int_double nbox = new SortingBox_int_double();
@@ -6059,7 +6058,7 @@ public class Drawing_Worker {
         mMoved_A_11(p0);
     }//近い既存点のみ表示
 
-    //マウス操作(i_mouse_modeA==64　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==64　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_64(Point p0) {
         i_drawing_stage = 1;
 
@@ -6072,7 +6071,7 @@ public class Drawing_Worker {
         line_step[1].setColor(LineColor.MAGENTA_5);
     }
 
-    //マウス操作(i_mouse_modeA==64　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==64　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_64(Point p0) {
         mDragged_A_11(p0);
     }
@@ -6080,7 +6079,7 @@ public class Drawing_Worker {
 
 //65 65 65 65 65 65 65 65 65 65 65 65 65入力した線分に重複している折線やX交差している折線を削除する
 
-    //マウス操作(i_mouse_modeA==64　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==64　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_64(Point p0) {
 
         SortingBox_int_double nbox = new SortingBox_int_double();
@@ -6122,7 +6121,7 @@ public class Drawing_Worker {
 //多角形を入力(既存頂点への引き寄せあるが既存頂点が遠い場合は引き寄せ無し)し、何らかの作業を行うセット
     //マウス操作(マウスを動かしたとき)を行う関数
 
-    //マウス操作(i_mouse_modeA==65　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==65　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_65(Point p0) {
 
         i_drawing_stage = 0;
@@ -6362,7 +6361,7 @@ public class Drawing_Worker {
         mMoved_A_28(p0);
     }//近い既存点のみ表示
 
-    //マウス操作(i_mouse_modeA==36　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==36　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_36(Point p0) {
         i_drawing_stage = 1;
 
@@ -6375,13 +6374,13 @@ public class Drawing_Worker {
         line_step[1].setColor(lineColor);
     }
 
-    //マウス操作(i_mouse_modeA==36　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==36　でドラッグしたとき)を行う関数----------------------------------------------------
 
     public void mDragged_A_36(Point p0) {
         mDragged_A_28(p0);
     }
 
-    //マウス操作(i_mouse_modeA==36　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==36　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_36(Point p0) {
         SortingBox_int_double nbox = new SortingBox_int_double();
 
@@ -6451,7 +6450,7 @@ public class Drawing_Worker {
 //lineColor=6 green
 //lineColor=7 yellow
 
-    //マウス操作(i_mouse_modeA==63　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==63　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_63(Point p0) {
         if (i_drawing_stage == 0) {
             i_O_F_C = false;
@@ -6472,7 +6471,7 @@ public class Drawing_Worker {
     }
 
 
-    //マウス操作(i_mouse_modeA==63　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==63　でドラッグしたとき)を行う関数----------------------------------------------------
 
     public void mDragged_A_63(Point p0) {
         if (!i_O_F_C) {
@@ -6481,7 +6480,7 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==63　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==63　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_63(Point p0) {
 
 
@@ -6579,7 +6578,7 @@ public class Drawing_Worker {
 
 
 //--------------------------------------------------------------------------------
-//13 13 13 13 13 13    i_mouse_modeA==13　;角度系モード//線分指定、交点まで
+//13 13 13 13 13 13    mouseMode==13　;角度系モード//線分指定、交点まで
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mPressed_A_13(Point p0) {
@@ -6801,7 +6800,7 @@ public class Drawing_Worker {
 
 
 //--------------------------------------------------------------------------------
-//17 17 17 17 17 17    i_mouse_modeA==17　;角度系モード
+//17 17 17 17 17 17    mouseMode==17　;角度系モード
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_17(Point p0) {
@@ -7052,7 +7051,7 @@ public class Drawing_Worker {
 
 //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
-//16 16 16 16 16 16    i_mouse_modeA==16　;角度系モード
+//16 16 16 16 16 16    mouseMode==16　;角度系モード
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_16(Point p0) {
@@ -7235,7 +7234,7 @@ public class Drawing_Worker {
 
 //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
-//18 18 18 18 18 18    i_mouse_modeA==18　;角度系モード
+//18 18 18 18 18 18    mouseMode==18　;角度系モード
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_18(Point p0) {
@@ -7390,7 +7389,7 @@ public class Drawing_Worker {
 //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
 
-//14 14 14 14 14 14 14 14 14    i_mouse_modeA==14　;V追加モード
+//14 14 14 14 14 14 14 14 14    mouseMode==14　;V追加モード
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mPressed_A_14(Point p0) {
@@ -7458,7 +7457,7 @@ public class Drawing_Worker {
         record();
     }
 
-//15 15 15 15 15 15 15 15 15    i_mouse_modeA==15　;V削除モード
+//15 15 15 15 15 15 15 15 15    mouseMode==15　;V削除モード
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mPressed_A_15(Point p0) {
@@ -7481,7 +7480,7 @@ public class Drawing_Worker {
 
 //------
 
-//41 41 41 41 41 41 41 41    i_mouse_modeA==41　;V削除モード(2つの折線の色が違った場合カラーチェンジして、点削除する。黒赤は赤赤、黒青は青青、青赤は黒にする)
+//41 41 41 41 41 41 41 41    mouseMode==41　;V削除モード(2つの折線の色が違った場合カラーチェンジして、点削除する。黒赤は赤赤、黒青は青青、青赤は黒にする)
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mPressed_A_41(Point p0) {
@@ -7507,17 +7506,17 @@ public class Drawing_Worker {
 
     //-------------------------
 //23 23 23 23 23
-    //マウス操作(i_mouse_modeA==23 "->M" でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==23 "->M" でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_23(Point p0) {
         mPressed_A_box_select(p0);
     }
 
-    //マウス操作(i_mouse_modeA==23でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==23でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_23(Point p0) {
         mDragged_A_box_select(p0);
     }
 
-    //マウス操作(i_mouse_modeA==23 でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==23 でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_23(Point p0) {//ここの処理の終わりに fix2(0.001,0.5);　をするのは、元から折線だったものと、補助線から変換した折線との組合せで頻発するT字型不接続を修正するため
         i_drawing_stage = 0;
 
@@ -7562,17 +7561,17 @@ public class Drawing_Worker {
 
     //---------------------
 //24 24 24 24 24
-    //マウス操作(i_mouse_modeA==24 "->V" でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==24 "->V" でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_24(Point p0) {
         mPressed_A_box_select(p0);
     }
 
-    //マウス操作(i_mouse_modeA==24でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==24でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_24(Point p0) {
         mDragged_A_box_select(p0);
     }
 
-    //マウス操作(i_mouse_modeA==24 でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==24 でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_24(Point p0) {//ここの処理の終わりに fix2(0.001,0.5);　をするのは、元から折線だったものと、補助線から変換した折線との組合せで頻発するT字型不接続を修正するため
         i_drawing_stage = 0;
 
@@ -7614,17 +7613,17 @@ public class Drawing_Worker {
 
     //---------------------
 //25 25 25 25 25
-    //マウス操作(i_mouse_modeA==25 "->E" でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==25 "->E" でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_25(Point p0) {
         mPressed_A_box_select(p0);
     }
 
-    //マウス操作(i_mouse_modeA==25でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==25でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_25(Point p0) {
         mDragged_A_box_select(p0);
     }
 
-    //マウス操作(i_mouse_modeA==25 でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==25 でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_25(Point p0) {//ここの処理の終わりに fix2(0.001,0.5);　をするのは、元から折線だったものと、補助線から変換した折線との組合せで頻発するT字型不接続を修正するため
         i_drawing_stage = 0;
 
@@ -7667,17 +7666,17 @@ public class Drawing_Worker {
     }
 
     //60 60 60 60 60
-    //マウス操作(i_mouse_modeA==60 "->HK" でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==60 "->HK" でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_60(Point p0) {
         mPressed_A_box_select(p0);
     }
 
-    //マウス操作(i_mouse_modeA==60でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==60でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_60(Point p0) {
         mDragged_A_box_select(p0);
     }
 
-    //マウス操作(i_mouse_modeA==60 でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==60 でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_60(Point p0) {
         i_drawing_stage = 0;
 
@@ -7733,7 +7732,7 @@ public class Drawing_Worker {
     }
 
 
-//26 26 26 26    i_mouse_modeA==26　;背景setモード。
+//26 26 26 26    mouseMode==26　;背景setモード。
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mPressed_A_26(Point p0) {
@@ -7789,7 +7788,7 @@ public class Drawing_Worker {
 
 //42 42 42 42 42 42 42 42 42 42 42 42 42 42 42　ここから
 
-    //マウス操作(i_mouse_modeA==42 円入力　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==42 円入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_42(Point p0) {
         i_drawing_stage = 1;
         i_circle_drawing_stage = 1;
@@ -7807,14 +7806,14 @@ public class Drawing_Worker {
         circle_step[1].setColor(LineColor.CYAN_3);
     }
 
-    //マウス操作(i_mouse_modeA==42 円入力　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==42 円入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_42(Point p0) {
         p.set(camera.TV2object(p0));
         line_step[1].setA(p);
         circle_step[1].setR(OritaCalc.distance(line_step[1].getA(), line_step[1].getB()));
     }
 
-    //マウス操作(i_mouse_modeA==42 円入力　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==42 円入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_42(Point p0) {
         if (i_drawing_stage == 1) {
             i_drawing_stage = 0;
@@ -7837,7 +7836,7 @@ public class Drawing_Worker {
 
 //47 47 47 47 47 47 47 47 47 47 47 47 47 47 47　ここから
 
-    //マウス操作(i_mouse_modeA==47 円入力(フリー　)　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==47 円入力(フリー　)　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_47(Point p0) {
         i_drawing_stage = 1;
         i_circle_drawing_stage = 1;
@@ -7857,7 +7856,7 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==47 円入力　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==47 円入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_47(Point p0) {
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
@@ -7865,7 +7864,7 @@ public class Drawing_Worker {
         circle_step[1].setR(OritaCalc.distance(line_step[1].getA(), line_step[1].getB()));
     }
 
-    //マウス操作(i_mouse_modeA==47 円入力　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==47 円入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_47(Point p0) {
         if (i_drawing_stage == 1) {
             i_drawing_stage = 0;
@@ -7892,7 +7891,7 @@ public class Drawing_Worker {
 
 //44 44 44 44 44 44 44 44 44 44 44 44 44 44 44　ここから
 
-    //マウス操作(i_mouse_modeA==44 円 分離入力　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==44 円 分離入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_44(Point p0) {
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
@@ -7930,7 +7929,7 @@ public class Drawing_Worker {
 
     }
 
-    //マウス操作(i_mouse_modeA==44 円 分離入力　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==44 円 分離入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_44(Point p0) {
         p.set(camera.TV2object(p0));
         if (i_drawing_stage == 2) {
@@ -7941,7 +7940,7 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==44 円 分離入力　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==44 円 分離入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_44(Point p0) {
         if (i_drawing_stage == 2) {
             i_drawing_stage = 0;
@@ -7965,7 +7964,7 @@ public class Drawing_Worker {
 
 //48 48 48 48 48 48 48 48 48 48 48 48 48 48 48　ここから
 
-    //マウス操作(i_mouse_modeA==48 同心円　線分入力　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==48 同心円　線分入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_48(Point p0) {
         p.set(camera.TV2object(p0));
         closest_circumference.set(getClosestCircleMidpoint(p));
@@ -7998,7 +7997,7 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==48 同心円　線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==48 同心円　線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_48(Point p0) {
         p.set(camera.TV2object(p0));
         if ((i_drawing_stage == 1) && (i_circle_drawing_stage == 2)) {
@@ -8007,7 +8006,7 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==48 同心円　線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==48 同心円　線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_48(Point p0) {
         if ((i_drawing_stage == 1) && (i_circle_drawing_stage == 2)) {
             i_drawing_stage = 0;
@@ -8032,7 +8031,7 @@ public class Drawing_Worker {
 
 //49 49 49 49 49 49 49 49 49 49 49 49 49 49 49　ここから
 
-    //マウス操作(i_mouse_modeA==49 同心円　同心円入力　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==49 同心円　同心円入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_49(Point p0) {
         p.set(camera.TV2object(p0));
         closest_circumference.set(getClosestCircleMidpoint(p));
@@ -8075,12 +8074,12 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==49 同心円　同心円入力　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==49 同心円　同心円入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_49(Point p0) {
 
     }
 
-    //マウス操作(i_mouse_modeA==49 同心円　同心円入力　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==49 同心円　同心円入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_49(Point p0) {
         if ((i_drawing_stage == 0) && (i_circle_drawing_stage == 3)) {
             i_drawing_stage = 0;
@@ -8103,7 +8102,7 @@ public class Drawing_Worker {
 
 //51 51 51 51 51 51 51 51 51 51 51 51 51 51 51　ここから
 
-    //マウス操作(i_mouse_modeA==51 平行線　幅指定入力モード　でボタンを押したとき)時の作業----------------------------------------------------
+    //マウス操作(mouseMode==51 平行線　幅指定入力モード　でボタンを押したとき)時の作業----------------------------------------------------
     public void mPressed_A_51(Point p0) {
         p.set(camera.TV2object(p0));
         closest_point.set(getClosestPoint(p));
@@ -8147,7 +8146,7 @@ public class Drawing_Worker {
 
     }
 
-    //マウス操作(i_mouse_modeA==51 平行線　幅指定入力モード　でドラッグしたとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==51 平行線　幅指定入力モード　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mDragged_A_51(Point p0) {
         p.set(camera.TV2object(p0));
         if ((i_drawing_stage == 4) && (i_circle_drawing_stage == 0)) {
@@ -8159,7 +8158,7 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==51 平行線　幅指定入力モード　でボタンを離したとき)を行う関数----------------------------------------------------
+    //マウス操作(mouseMode==51 平行線　幅指定入力モード　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mReleased_A_51(Point p0) {
         p.set(camera.TV2object(p0));
         closest_point.set(getClosestPoint(p));
@@ -8201,7 +8200,7 @@ public class Drawing_Worker {
 
 //51 51 51 51 51 51 51 51 51 51 51 51 51 51 51  ここまで
 
-//45 45 45 45 45 45 45 45 45   i_mouse_modeA==45　;2円の共通接線入力モード。
+//45 45 45 45 45 45 45 45 45   mouseMode==45　;2円の共通接線入力モード。
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mPressed_A_45(Point p0) {
@@ -8420,7 +8419,7 @@ public class Drawing_Worker {
 //45 45 45 45 45 45 45 45 45  ここまで  ------
 
 
-//50 50 50 50 50 50 50 50 50   i_mouse_modeA==50　;2円に幅同じで接する同心円を加える。
+//50 50 50 50 50 50 50 50 50   mouseMode==50　;2円に幅同じで接する同心円を加える。
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mPressed_A_50(Point p0) {
@@ -8485,7 +8484,7 @@ public class Drawing_Worker {
 //50 50 50 50 50 50 50 50 50  ここまで  ------
 
 
-//46 46 46 46 46 46 46 46 46   i_mouse_modeA==46　;反転入力モード。
+//46 46 46 46 46 46 46 46 46   mouseMode==46　;反転入力モード。
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mPressed_A_46(Point p0) {
@@ -8557,7 +8556,7 @@ public class Drawing_Worker {
 //46 46 46 46 46 46 46 46 46  ここまで  ------
 
 
-//43 43 43 43 43 43 43 43 43   i_mouse_modeA==43　;円3点入力モード。
+//43 43 43 43 43 43 43 43 43   mouseMode==43　;円3点入力モード。
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mPressed_A_43(Point p0) {
@@ -8631,7 +8630,7 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==10001　でボタンを押したとき)時の作業
+    //マウス操作(mouseMode==10001　でボタンを押したとき)時の作業
     public void mPressed_A_10001(Point p0) {
         p.set(camera.TV2object(p0));
         closest_point.set(getClosestPoint(p));
@@ -8642,11 +8641,11 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==10001　でドラッグしたとき)を行う関数
+    //マウス操作(mouseMode==10001　でドラッグしたとき)を行う関数
     public void mDragged_A_10001(Point p0) {
     }
 
-    //マウス操作(i_mouse_modeA==10001　でボタンを離したとき)を行う関数
+    //マウス操作(mouseMode==10001　でボタンを離したとき)を行う関数
     public void mReleased_A_10001(Point p0) {
         if (i_drawing_stage == 3) {
             i_drawing_stage = 0;
@@ -8656,7 +8655,7 @@ public class Drawing_Worker {
 //------
 //10002
 
-    //マウス操作(i_mouse_modeA==10002　でボタンを押したとき)時の作業
+    //マウス操作(mouseMode==10002　でボタンを押したとき)時の作業
     public void mPressed_A_10002(Point p0) {
         //Ten p =new Ten();
         p.set(camera.TV2object(p0));
@@ -8668,11 +8667,11 @@ public class Drawing_Worker {
         }
     }
 
-    //マウス操作(i_mouse_modeA==10002　でドラッグしたとき)を行う関数
+    //マウス操作(mouseMode==10002　でドラッグしたとき)を行う関数
     public void mDragged_A_10002(Point p0) {
     }
 
-    //マウス操作(i_mouse_modeA==10002　でボタンを離したとき)を行う関数
+    //マウス操作(mouseMode==10002　でボタンを離したとき)を行う関数
     public void mReleased_A_10002(Point p0) {
         if (i_drawing_stage == 3) {
             i_drawing_stage = 0;

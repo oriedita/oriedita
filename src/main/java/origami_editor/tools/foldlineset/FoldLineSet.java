@@ -220,20 +220,20 @@ public class FoldLineSet {
         return s.getActive();
     }
 
-    public int getVonoroiA(int i) {
-        return getLineSegment(i).getVonoroiA();
+    public int getVoronoiA(int i) {
+        return getLineSegment(i).getVoronoiA();
     }
 
-    public int getVonoroiB(int i) {
-        return getLineSegment(i).getVonoroiB();
+    public int getVoronoiB(int i) {
+        return getLineSegment(i).getVoronoiB();
     }
 
-    public void setVonoroiA(int i, int a) {
-        getLineSegment(i).setVonoroiA(a);
+    public void setVoronoiA(int i, int a) {
+        getLineSegment(i).setVoronoiA(a);
     }
 
-    public void setVonoroiB(int i, int b) {
-        getLineSegment(i).setVonoroiB(b);
+    public void setVoronoiB(int i, int b) {
+        getLineSegment(i).setVoronoiB(b);
     }
 
     //Output the information of all line segments of the line segment set as Memo.
@@ -520,14 +520,14 @@ public class FoldLineSet {
                 str = tk.nextToken();
                 int iva = Integer.parseInt(str);
                 LineSegment s = getLineSegment(number);
-                s.setVonoroiA(iva);
+                s.setVoronoiA(iva);
             }
 
             if ((reading_flag == 1) && (str.equals("ivb"))) {
                 str = tk.nextToken();
                 int ivb = Integer.parseInt(str);
                 LineSegment s = getLineSegment(number);
-                s.setVonoroiB(ivb);
+                s.setVoronoiB(ivb);
             }
 
             if ((reading_flag == 1) && (str.equals("選択"))) {
@@ -851,8 +851,8 @@ public class FoldLineSet {
                 memo1.addLine("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");
 
                 memo1.addLine("iactive," + s.getActive());//20181110追加
-                memo1.addLine("iva," + s.getVonoroiA());
-                memo1.addLine("ivb," + s.getVonoroiB());
+                memo1.addLine("iva," + s.getVoronoiA());
+                memo1.addLine("ivb," + s.getVoronoiB());
                 memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
             }
         }
@@ -2911,7 +2911,7 @@ public class FoldLineSet {
 
     //線分の追加-------------------------------
     public void addLine(LineSegment s0) {
-        addLine(s0.getA(), s0.getB(), s0.getColor(), s0.getActive(), s0.getVonoroiA(), s0.getVonoroiB());//20181110追加
+        addLine(s0.getA(), s0.getB(), s0.getColor(), s0.getActive(), s0.getVoronoiA(), s0.getVoronoiB());//20181110追加
     }
 
     //線分の削除-----------------------------------------

@@ -33,8 +33,8 @@ public class LineSegment {
         minX = 0;
         maxY = 0;
         minY = 0;
-        vonoroiA = 0;
-        vonoroiB = 0;
+        voronoiA = 0;
+        voronoiB = 0;
     }
 
     public LineSegment(Point t1, Point t2) {
@@ -47,8 +47,8 @@ public class LineSegment {
         minX = 0;
         maxY = 0;
         minY = 0;
-        vonoroiA = 0;
-        vonoroiB = 0;
+        voronoiA = 0;
+        voronoiB = 0;
     }
 
     public LineSegment(Point t1, Point t2, LineColor color) {
@@ -61,8 +61,8 @@ public class LineSegment {
         minX = 0;
         maxY = 0;
         minY = 0;
-        vonoroiA = 0;
-        vonoroiB = 0;
+        voronoiA = 0;
+        voronoiB = 0;
     }
 
     public LineSegment(double i1, double i2, double i3, double i4) {
@@ -75,8 +75,8 @@ public class LineSegment {
         minX = 0;
         maxY = 0;
         minY = 0;
-        vonoroiA = 0;
-        vonoroiB = 0;
+        voronoiA = 0;
+        voronoiB = 0;
     }
 
     public void reset() {
@@ -89,8 +89,8 @@ public class LineSegment {
         minX = 0;
         maxY = 0;
         minY = 0;
-        vonoroiA = 0;
-        vonoroiB = 0;
+        voronoiA = 0;
+        voronoiB = 0;
     }
 
     //d2s Double is changed to a string. Rounded to the second decimal place (""); public void display (String str0) is used only.
@@ -121,8 +121,8 @@ public class LineSegment {
         minX = s.getMinX();
         maxY = s.getMaxY();
         minY = s.getMinY();
-        vonoroiA = s.getVonoroiA();
-        vonoroiB = s.getVonoroiB();
+        voronoiA = s.getVoronoiA();
+        voronoiB = s.getVoronoiB();
         setCustomized(s.getCustomized());
         setCustomizedColor(s.getCustomizedColor());
     }
@@ -181,8 +181,8 @@ public class LineSegment {
 
     public void set(Point p, Point q, LineColor ic, ActiveState ia, int v_a, int v_b) {
         set(p,q,ic,ia);
-        vonoroiA = v_a;
-        vonoroiB = v_b;
+        voronoiA = v_a;
+        voronoiB = v_b;
     }
 
     public void set(Point p, Point q, LineColor ic) {
@@ -335,24 +335,24 @@ public class LineSegment {
         return customizedColor;
     }
 
-    int vonoroiA;
-    int vonoroiB;
+    int voronoiA;
+    int voronoiB;
 
-    public void setVonoroiA(int i) {
-        vonoroiA = i;
+    public void setVoronoiA(int i) {
+        voronoiA = i;
     }
 
 
-    public void setVonoroiB(int i) {
-        vonoroiB = i;
+    public void setVoronoiB(int i) {
+        voronoiB = i;
     }
 
-    public int getVonoroiA() {
-        return vonoroiA;
+    public int getVoronoiA() {
+        return voronoiA;
     }
 
-    public int getVonoroiB() {
-        return vonoroiB;
+    public int getVoronoiB() {
+        return voronoiB;
     }
 
     /**
