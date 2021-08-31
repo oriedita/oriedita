@@ -77,12 +77,10 @@ public class App extends JFrame implements ActionListener {
     public JCheckBoxMenuItem ckbox_cp;//折線
     public JCheckBoxMenuItem ckbox_a0;//補助活線cyan
     public JCheckBoxMenuItem ckbox_a1;//補助画線
-    public JCheckBox ckbox_check1;//check1
-    public JCheckBox ckbox_check2;//check2
     public JCheckBox ckbox_check4;//check4
     public JCheckBoxMenuItem ckbox_mark;//Marking lines such as crosses and reference planes
     public JCheckBoxMenuItem ckbox_cp_ue;//展開図を折り上がり予想図の上に描く
-    public JCheckBox ckbox_folding_keika;//折り上がり予想の途中経過の書き出し
+    public JCheckBox ckbox_folding_keika;//Writing out the progress of the folding forecast
     public JCheckBox ckbox_cp_kaizen_folding;//cpを折畳み前に自動改善する。
     public JCheckBox ckbox_select_nokosi;//select状態を他の操作をしてもなるべく残す
     public JCheckBox ckbox_toukazu_color;//透過図をカラー化する。
@@ -186,12 +184,12 @@ public class App extends JFrame implements ActionListener {
     boolean displayMarkings;
     boolean displayCreasePatternOnTop;
     boolean displayFoldingProgress;
-    JLabel label_length_sokutei_1 = new JLabel("");
-    JLabel label_length_sokutei_2 = new JLabel("");
-    JLabel label_kakudo_sokutei_1 = new JLabel("");
+    JLabel label_length_sokutei_1;
+    JLabel label_length_sokutei_2;
+    JLabel label_kakudo_sokutei_1;
     // バッファー画面用設定はここまでAAAAAAAAAAAAAAAAAAA
-    JLabel label_kakudo_sokutei_2 = new JLabel("");
-    JLabel label_kakudo_sokutei_3 = new JLabel("");
+    JLabel label_kakudo_sokutei_2;
+    JLabel label_kakudo_sokutei_3;
     Image img_background;       //Image for background
     String img_background_fname;
     Image img_explanation;       //Image for explanation
@@ -375,12 +373,6 @@ public class App extends JFrame implements ActionListener {
         setJMenuBar(menuBar);
 
 
-        JPanel pnln = new JPanel();
-//         pnln.setBackground(Color.PINK);//new Color(red,green,blue)
-        pnln.setLayout(new FlowLayout(FlowLayout.LEFT));
-        //上辺（北側）パネルをレイアウトに貼り付け
-
-        contentPane.add("North", pnln); //Frame用
 
         //Buttonを作ってパネルにはりつける。
 ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
@@ -492,44 +484,12 @@ public class App extends JFrame implements ActionListener {
 
         //Button	Button_senbun_nyuryoku	= new Button(	"L_draw"	);Button_senbun_nyuryoku.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
 // -----61;長方形内選択モード。
-        JButton Button_tyouhoukei_select = new JButton("");
-        Button_tyouhoukei_select.addActionListener(e -> {
-            setHelp("qqq/tyouhoukei_select.png");
-            foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
-            es1.setFoldLineAdditional(foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
-            i_mouse_modeA = MouseMode.OPERATION_FRAME_CREATE_61;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_FREE_1;
-            System.out.println("i_mouse_modeA = " + i_mouse_modeA);
 
-            es1.unselect_all();
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        pnln.add(Button_tyouhoukei_select);
-
-
-        Button_tyouhoukei_select.setMargin(new Insets(0, 0, 0, 0));
-        Button_tyouhoukei_select.setIcon(createImageIcon("ppp/tyouhoukei_select.png"));
 
 // ------61;長方形内選択モード。ここまで
 
 
-// *****************************************************************************画像書き出し
-        JButton Button_writeImage = new JButton("Im_s");
-        Button_writeImage.addActionListener(e -> {
-            setHelp("qqq/writeImage.png");
-            if (i_mouse_modeA != MouseMode.OPERATION_FRAME_CREATE_61) {
-                Button_shared_operation();
-                es1.setDrawingStage(0);
-            }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
-            i_mouseDragged_valid = false;
-            i_mouseReleased_valid = false;
 
-            writeImage();
-            canvas.repaint();
-        });
-        Button_writeImage.setMargin(new Insets(0, 0, 0, 0));
-        pnln.add(Button_writeImage);
 
 // ******************************************************************************
 ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
@@ -546,24 +506,8 @@ public class App extends JFrame implements ActionListener {
         menu_view.setMnemonic('V');
 
         menuBar.add(menu_view);
-        //------------------------------------------------
-        JPanel pnln13 = new JPanel();
-        pnln13.setLayout(new GridLayout(1, 7));
 
-        pnln.add(pnln13);
-        //------------------------------------------------
 
-//マウス設定
-        ckbox_mouse_settings = new JCheckBox("");
-        ckbox_mouse_settings.addActionListener(e -> {
-            setHelp("qqq/ckbox_mouse_settei.png");
-            canvas.repaint();
-        });
-        ckbox_mouse_settings.setIcon(createImageIcon("ppp/ckbox_mouse_settei_off.png"));
-        ckbox_mouse_settings.setSelectedIcon(createImageIcon("ppp/ckbox_mouse_settei_on.png"));
-
-        ckbox_mouse_settings.setMargin(new Insets(0, 0, 0, 0));
-        pnln13.add(ckbox_mouse_settings);
 
 
 // -------------------------------------------------------------------
@@ -682,690 +626,24 @@ public class App extends JFrame implements ActionListener {
 
         ckbox_folding_keika.setMargin(new Insets(0, 0, 0, 0));
 
-// ******北************************************************************************
+        NorthPanel northPanel = new NorthPanel(this);
+        contentPane.add("North", northPanel); //Frame用
 
+        ckbox_mouse_settings = northPanel.getMouseSettingsCheckBox();
 
-        //------------------------------------------------
-        JPanel pnln10 = new JPanel();
-        pnln10.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
-        pnln10.setBorder(new LineBorder(Color.black, 1));
+        text3 = northPanel.getRatioATextField();
+        text4 = northPanel.getRatioBTextField();
+        text5 = northPanel.getRatioCTextField();
+        text6 = northPanel.getRatioDTextField();
+        text7 = northPanel.getRatioETextField();
+        text8 = northPanel.getRatioFTextField();
 
-        pnln.add(pnln10);
-        //------------------------------------------------
-// ******北************************************************************************線分入力モード。比率入力
-// -----1;線分入力モード。比率入力
 
-        //------------------------------------------------
-        JPanel pnln11 = new JPanel();
-        pnln11.setBackground(Color.white);
-        pnln11.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
-        pnln11.setBorder(new LineBorder(Color.black, 1));
+        text27 = northPanel.getTenkaizu_syukusyouTextField();
 
-        pnln10.add(pnln11);
-        //------------------------------------------------
-
-        text3 = new JTextField("", 2);
-        text3.setHorizontalAlignment(JTextField.RIGHT);
-        pnln11.add(text3);
-
-        JLabel Lb01;
-        Lb01 = new JLabel();
-        Lb01.setSize(new Dimension(6,20));
-        Lb01.setIcon(createImageIcon("ppp/plus.png"));
-        pnln11.add(Lb01);
-
-        text4 = new JTextField("", 2);
-
-        text4.setHorizontalAlignment(JTextField.RIGHT);
-        pnln11.add(text4);
-
-        JLabel Lb02;
-        Lb02 = new JLabel();
-        Lb01.setSize(new Dimension(9,20));
-        Lb02.setIcon(createImageIcon("ppp/root.png"));
-        pnln11.add(Lb02);
-
-        text5 = new JTextField("", 2);
-        text5.setHorizontalAlignment(JTextField.RIGHT);
-        pnln11.add(text5);
-
-        JLabel Lb03;
-        Lb03 = new JLabel();
-        Lb01.setSize(new Dimension(5,23));
-        Lb03.setIcon(createImageIcon("ppp/tenten.png"));
-        pnln10.add(Lb03);
-
-        //------------------------------------------------
-        JPanel pnln12 = new JPanel();
-        pnln12.setBackground(Color.white);
-        pnln12.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
-        pnln12.setBorder(new LineBorder(Color.black, 1));
-
-        pnln10.add(pnln12);
-        //------------------------------------------------
-
-        text6 = new JTextField("", 2);
-        text6.setHorizontalAlignment(JTextField.RIGHT);
-        pnln12.add(text6);
-
-        JLabel Lb04;
-        Lb04 = new JLabel();
-        Lb04.setSize(new Dimension(6, 20));
-        Lb04.setIcon(createImageIcon("ppp/plus.png"));
-        pnln12.add(Lb04);
-
-        text7 = new JTextField("", 2);
-        text7.setHorizontalAlignment(JTextField.RIGHT);
-        pnln12.add(text7);
-
-        JLabel Lb05;
-        Lb05 = new JLabel();
-        Lb05.setSize(new Dimension(9, 20));
-        Lb05.setIcon(createImageIcon("ppp/root.png"));
-        pnln12.add(Lb05);
-
-        text8 = new JTextField("", 2);
-        text8.setHorizontalAlignment(JTextField.RIGHT);
-        pnln12.add(text8);
-
-// -------------------------------------------------------------------------------線分入力モード。比率set
-
-        //Button	Button_senbun_internalDivisionRatio_set
-// -----1;Line segment ratio set
-        JButton Button_senbun_internalDivisionRatio_set = new JButton("Set");
-        Button_senbun_internalDivisionRatio_set.addActionListener(e -> {
-            setInternalDivisionRatio();
-
-            setHelp("qqq/senbun_naibun_set.png");
-            i_mouse_modeA = MouseMode.LINE_SEGMENT_RATIO_SET_28;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_RATIO_SET_28;
-            System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        Button_senbun_internalDivisionRatio_set.setBounds(197, 2, 25, 23);
-        pnln10.add(Button_senbun_internalDivisionRatio_set);
-
-        Button_senbun_internalDivisionRatio_set.setMargin(new Insets(0, 0, 0, 0));
-
-// ------1;線分比率set。ここまで
-
-
-// -------------------------------------------------------------------------------線分入力モード。比率分割
-
-        //Button	Button_senbun_nyuryoku	= new Button(	"L_draw"	);Button_senbun_nyuryoku.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-// -----28;線分入力モード。
-        JButton Button_senbun_n_nyuryoku = new JButton("");
-        Button_senbun_n_nyuryoku.addActionListener(e -> {
-            setInternalDivisionRatio();
-
-            setHelp("qqq/senbun_n_nyuryoku.png");
-            i_mouse_modeA = MouseMode.LINE_SEGMENT_RATIO_SET_28;
-            iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_RATIO_SET_28;
-            System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-
-            es1.unselect_all();
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        Button_senbun_n_nyuryoku.setBounds(223, 2, 23, 23);
-        pnln10.add(Button_senbun_n_nyuryoku);
-
-        Button_senbun_n_nyuryoku.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_n_nyuryoku.setIcon(createImageIcon(
-                "ppp/senbun_n_nyuryoku.png"));
-
-// ------28;線分入力モード。ここまで
-
-
-//-----------------------------------------------------------------------------------
-        //------------------------------------------------
-        JPanel pnln7 = new JPanel();
-//         pnln7.setBackground(Color.PINK);
-        pnln7.setLayout(new GridLayout(1, 1));
-
-        //pnln.add(pnln7);
-        //------------------------------------------------
-
-// ****北**************************************************************************
-        JButton Button_tenkaizu_idiu = new JButton("");
-        Button_tenkaizu_idiu.addActionListener(e -> {
-            //JButton	Button_tenkaizu_idiu	= new JButton(	"CP_move"	);Button_tenkaizu_idiu.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent e) {
-            setHelp("qqq/tenkaizu_idiu.png");
-
-            i_mouse_modeA = MouseMode.MOVE_CREASE_PATTERN_2;
-            System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-
-            canvas.repaint();
-        });
-        pnln.add(Button_tenkaizu_idiu);
-
-        Button_tenkaizu_idiu.setIcon(createImageIcon(
-                "ppp/tenkaizu_idiu.png"));
-
-// *****北*************************************************************************
-
-
-// ******北************************************************************************
-
-
-        //------------------------------------------------
-        JPanel pnln8 = new JPanel();
-        pnln8.setBackground(Color.white);
-        pnln8.setLayout(new FlowLayout(FlowLayout.LEFT, 1, 1));
-        pnln8.setBorder(new LineBorder(Color.black, 1));
-        pnln.add(pnln8);
-        //------------------------------------------------
-
-
-// *****北*************************************************************************sssssssssssssss
-        JButton Button_tenkaizu_syukusyou = new JButton("");
-        Button_tenkaizu_syukusyou.addActionListener(e -> {
-            setHelp("qqq/tenkaizu_syukusyou.png");
-
-            double d_bairitu = 1.0 / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
-            scaleFactor = scaleFactor / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
-            camera_of_orisen_input_diagram.multiplyCameraZoomX(d_bairitu);
-            camera_of_orisen_input_diagram.multiplyCameraZoomY(d_bairitu);
-
-//20180122追加
-            FoldedFigure OZi;
-            for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                OZi = OAZ.get(i_oz);
-
-                Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.getCameraPosition());
-
-                OZi.d_foldedFigure_scale_factor = OZi.d_foldedFigure_scale_factor * d_bairitu;
-
-                OZi.camera_of_foldedFigure.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_foldedFigure.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_foldedFigure.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_foldedFigure_front.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_foldedFigure_front.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_foldedFigure_front.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_foldedFigure_rear.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_foldedFigure_rear.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_foldedFigure_rear.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_transparent_front.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_transparent_front.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_transparent_front.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_transparent_rear.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_transparent_rear.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_transparent_rear.multiplyCameraZoomY(d_bairitu);
-                foldedFigureSizeTextField.setText(String.valueOf(OZi.d_foldedFigure_scale_factor));
-                foldedFigureSizeTextField.setCaretPosition(0);
-            }
-//20180122追加　ここまで
-
-
-            text27.setText(String.valueOf(scaleFactor));
-            text27.setCaretPosition(0);
-            canvas.repaint();
-        });
-        pnln8.add(Button_tenkaizu_syukusyou);
-        Button_tenkaizu_syukusyou.setIcon(createImageIcon("ppp/tenkaizu_syukusyou.png"));
-
-
-// ****北**************************************************************************
-        text27 = new JTextField("", 2);
-        text27.setHorizontalAlignment(JTextField.RIGHT);
-
-        pnln8.add(text27);
-
-// ****北**************************************************************************
-// -----縮尺係数set
-        JButton Button_syukusyaku_keisuu_set = new JButton("S");
-        Button_syukusyaku_keisuu_set.addActionListener(e -> {
-            double d_syukusyaku_keisuu_old = scaleFactor;
-            scaleFactor = String2double(text27.getText(), d_syukusyaku_keisuu_old);
-            if (scaleFactor <= 0.0) {
-                scaleFactor = d_syukusyaku_keisuu_old;
-            }
-            text27.setText(String.valueOf(scaleFactor));
-            if (scaleFactor != d_syukusyaku_keisuu_old) {
-                camera_of_orisen_input_diagram.setCameraZoomX(scaleFactor);
-                camera_of_orisen_input_diagram.setCameraZoomY(scaleFactor);
-
-//20180225追加
-
-                double d_bairitu = scaleFactor / d_syukusyaku_keisuu_old;
-
-
-                FoldedFigure OZi;
-                for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                    OZi = OAZ.get(i_oz);
-
-                    Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.getCameraPosition());
-
-                    OZi.d_foldedFigure_scale_factor = OZi.d_foldedFigure_scale_factor * d_bairitu;
-
-
-                    OZi.camera_of_foldedFigure.camera_ichi_sitei_from_TV(t_o2tv);
-                    OZi.camera_of_foldedFigure.multiplyCameraZoomX(d_bairitu);
-                    OZi.camera_of_foldedFigure.multiplyCameraZoomY(d_bairitu);
-
-                    OZi.camera_of_foldedFigure_front.camera_ichi_sitei_from_TV(t_o2tv);
-                    OZi.camera_of_foldedFigure_front.multiplyCameraZoomX(d_bairitu);
-                    OZi.camera_of_foldedFigure_front.multiplyCameraZoomY(d_bairitu);
-
-                    OZi.camera_of_foldedFigure_rear.camera_ichi_sitei_from_TV(t_o2tv);
-                    OZi.camera_of_foldedFigure_rear.multiplyCameraZoomX(d_bairitu);
-                    OZi.camera_of_foldedFigure_rear.multiplyCameraZoomY(d_bairitu);
-
-                    OZi.camera_of_transparent_front.camera_ichi_sitei_from_TV(t_o2tv);
-                    OZi.camera_of_transparent_front.multiplyCameraZoomX(d_bairitu);
-                    OZi.camera_of_transparent_front.multiplyCameraZoomY(d_bairitu);
-
-                    OZi.camera_of_transparent_rear.camera_ichi_sitei_from_TV(t_o2tv);
-                    OZi.camera_of_transparent_rear.multiplyCameraZoomX(d_bairitu);
-                    OZi.camera_of_transparent_rear.multiplyCameraZoomY(d_bairitu);
-
-                    foldedFigureSizeTextField.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
-                    foldedFigureSizeTextField.setCaretPosition(0);
-                }
-//20180225追加　ここまで
-
-
-            }
-            text27.setText(String.valueOf(scaleFactor));
-            text27.setCaretPosition(0);
-            canvas.repaint();
-
-            setHelp("qqq/syukusyaku_keisuu_set.png");
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        pnln8.add(Button_syukusyaku_keisuu_set);
-
-// ------縮尺係数set。ここまで
-
-
-// ****北**************************************************************************
-        JButton Button_tenkaizu_kakudai = new JButton("");
-        Button_tenkaizu_kakudai.addActionListener(e -> {
-            setHelp("qqq/tenkaizu_kakudai.png");
-
-            double d_bairitu = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
-            scaleFactor = scaleFactor * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
-            camera_of_orisen_input_diagram.multiplyCameraZoomX(d_bairitu);
-            camera_of_orisen_input_diagram.multiplyCameraZoomY(d_bairitu);
-
-
-//20180122追加
-            FoldedFigure OZi;
-            for (int i_oz = 1; i_oz <= OAZ.size() - 1; i_oz++) {
-                OZi = OAZ.get(i_oz);
-
-                Point t_o2tv = camera_of_orisen_input_diagram.object2TV(camera_of_orisen_input_diagram.getCameraPosition());
-
-                OZi.d_foldedFigure_scale_factor = OZi.d_foldedFigure_scale_factor * d_bairitu;
-
-
-                OZi.camera_of_foldedFigure.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_foldedFigure.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_foldedFigure.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_foldedFigure_front.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_foldedFigure_front.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_foldedFigure_front.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_foldedFigure_rear.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_foldedFigure_rear.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_foldedFigure_rear.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_transparent_front.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_transparent_front.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_transparent_front.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_transparent_rear.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_transparent_rear.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_transparent_rear.multiplyCameraZoomY(d_bairitu);
-
-                foldedFigureSizeTextField.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));
-                foldedFigureSizeTextField.setCaretPosition(0);
-            }
-//20180122追加　ここまで
-
-
-            text27.setText(String.valueOf(scaleFactor));
-            text27.setCaretPosition(0);
-            canvas.repaint();
-        });
-        pnln8.add(Button_tenkaizu_kakudai);
-        Button_tenkaizu_kakudai.setIcon(createImageIcon("ppp/tenkaizu_kakudai.png"));
-
-
-// ******北************************************************************************
-
-        //------------------------------------------------
-        JPanel pnln14 = new JPanel();
-        pnln14.setBackground(Color.white);
-        pnln14.setLayout(new FlowLayout(FlowLayout.LEFT, 1,1));
-        pnln14.setBorder(new LineBorder(Color.black, 1));
-        pnln.add(pnln14);
-        //------------------------------------------------
-
-
-// *****北*************展開の回転************************************************************
-        JButton Button_tenkaizu_p_kaiten = new JButton("");
-        Button_tenkaizu_p_kaiten.addActionListener(e -> {
-            setHelp("qqq/tenkaizu_p_kaiten.png");
-
-            rotationCorrection = OritaCalc.angle_between_m180_180(rotationCorrection + 11.25);
-            camera_of_orisen_input_diagram.setCameraAngle(rotationCorrection);
-            text28.setText(String.valueOf(rotationCorrection));
-            text28.setCaretPosition(0);
-
-            //Button_kyoutuu_sagyou();
-            canvas.repaint();
-        });
-        pnln14.add(Button_tenkaizu_p_kaiten);
-        Button_tenkaizu_p_kaiten.setIcon(createImageIcon("ppp/tenkaizu_p_kaiten.png"));
-
-// ****北**************************************************************************
-//回転角度補正
-        text28 = new JTextField("", 2);
-        text28.setHorizontalAlignment(JTextField.RIGHT);
-        pnln14.add(text28);
-
-// ****北**************************************************************************
-// -----回転角度補正set
-        JButton Button_kaiten_hosei_set = new JButton("S");
-        Button_kaiten_hosei_set.addActionListener(e -> {
-            double d_kaiten_hosei_old = rotationCorrection;
-            rotationCorrection = OritaCalc.angle_between_m180_180(String2double(text28.getText(), d_kaiten_hosei_old));
-
-            text28.setText(String.valueOf(rotationCorrection));
-
-            if (rotationCorrection != d_kaiten_hosei_old) {
-                camera_of_orisen_input_diagram.setCameraAngle(rotationCorrection);
-            }
-
-            text28.setText(String.valueOf(rotationCorrection));
-            text28.setCaretPosition(0);
-            canvas.repaint();
-
-
-            setHelp("qqq/kaiten_hosei_set.png");
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        pnln14.add(Button_kaiten_hosei_set);
-
-// ------回転角度補正set。ここまで
-
-
-// *****北*************************************************************************
-        JButton Button_tenkaizu_m_kaiten = new JButton("");
-        Button_tenkaizu_m_kaiten.addActionListener(e -> {
-            setHelp("qqq/tenkaizu_m_kaiten.png");
-            rotationCorrection = OritaCalc.angle_between_m180_180(rotationCorrection - 11.25);
-            camera_of_orisen_input_diagram.setCameraAngle(rotationCorrection);
-            text28.setText(String.valueOf(rotationCorrection));
-            text28.setCaretPosition(0);
-            canvas.repaint();
-        });
-        pnln14.add(Button_tenkaizu_m_kaiten);
-
-
-        Button_tenkaizu_m_kaiten.setIcon(createImageIcon("ppp/tenkaizu_m_kaiten.png"));
-
-//背景のPC画面を背景画として読み込む
-        JButton Button_toumei = new JButton("T");
-        Button_toumei.addActionListener(e -> {
-
-            setHelp("qqq/toumei.png");
-            Robot robot;
-
-            try {
-                robot = new Robot();
-            } catch (AWTException ex) {
-                ex.printStackTrace();
-                return;
-            }
-
-            // 範囲を指定してキャプチャ
-
-            Rectangle bounds = getBounds();
-            Rectangle canvasBounds = canvas.getBounds();
-            Insets insets = getInsets();
-            System.out.println("-------------------------------------------------------------------------------------");
-            System.out.println("bounds.x=" + bounds.x + "   :bounds.y=" + bounds.y + "    :bounds.width=" + bounds.width + "   :bounds.height=" + bounds.height);
-            System.out.println("insets.top=" + insets.top + "   :insets.left=" + insets.left + "    :insets.right=" + insets.right + "   :insets.bottom=" + insets.bottom);
-
-
-            //左上端から、左上で描画用画面の見える限界位置へのベクトル
-            //int upperLeft_ix=115;
-            //int upperLeft_iy=60;
-
-            //右下端から、右下で描画用画面の見える限界位置へのベクトル
-            //int lowerRight_ix=115;
-            //int lowerRight_iy=40;
-
-            //int i_dx=115;int i_dy=0;
-
-            bounds = new Rectangle(bounds.x + canvasBounds.x,
-                    bounds.y + canvasBounds.y,
-                    canvasBounds.width - upperLeft_ix - lowerRight_ix,
-                    canvasBounds.height - upperLeft_iy - lowerRight_iy);
-
-            setVisible(false);
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException ie) {
-            }//A line to make you wait only 100. Without this line, there is a risk of capturing Orihime itself when executed in a jar file. The ie of InterruptedException ie was initially e. 20181125
-            imageT = robot.createScreenCapture(bounds);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ie) {
-            }//A line to make you wait only 100. Without this line, there is a risk of capturing Orihime itself when executed in a jar file. The ie of InterruptedException ie was initially e. 20181125
-            setVisible(true);
-
-            img_background = imageT;
-            OritaCalc.display("新背景カメラインスタンス化");
-            h_cam = new Background_camera();//20181202
-
-            double dvx = upperLeft_ix;
-            double dvy = upperLeft_iy;
-
-            background_set(new Point(120.0, 120.0),
-                    new Point(120.0 + 10.0, 120.0),
-                    new Point(dvx, dvy),
-                    new Point(dvx + 10.0, dvy));
-
-
-//背景表示の各条件を設定
-            displayBackground = true;
-            Button_background_kirikae.setBackground(Color.ORANGE);
-
-            if (lockBackground) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                h_cam.set_i_Lock_on(lockBackground);
-                h_cam.setCamera(camera_of_orisen_input_diagram);
-                h_cam.h3_obj_and_h4_obj_calculation();
-            }
-
-            canvas.repaint();
-        });
-        Button_toumei.setMargin(new Insets(0, 0, 0, 0));
-        //Button_writeImage.setBackground(Color.ORANGE);
-        pnln.add(Button_toumei);
-
-// *******北***********************************************************************
-
-//drawImage
-//  img - 描画される指定イメージ。img が null の場合には何も行わない
-//  x - x 座標
-//  y - y 座標
-//  width - 矩形の幅
-//  height - 矩形の高さ
-//  observer - イメージがさらに変換されることが通知されるオブジェクト
-
-// *****北*************************************************************************
-        JButton Button_background_trim = new JButton("Tr");
-        Button_background_trim.addActionListener(e -> {
-            setHelp("qqq/haikei_trim.png");
-
-
-            offsc_background = new BufferedImage(2000, 1100, BufferedImage.TYPE_INT_ARGB);
-
-            Graphics2D g2_background = offsc_background.createGraphics();
-            //背景表示
-            if ((img_background != null) && displayBackground) {
-                int iw = img_background.getWidth(null);//イメージの幅を取得
-                int ih = img_background.getHeight(null);//イメージの高さを取得
-
-                h_cam.setBackgroundWidth(iw);
-                h_cam.setBackgroundHeight(ih);
-
-                drawBackground(g2_background, img_background);
-            }
-
-
-//枠設定時の背景を枠内のみ残してトリム 20181204
-            if ((i_mouse_modeA == MouseMode.OPERATION_FRAME_CREATE_61) && (es1.getDrawingStage() == 4)) {//枠線が表示されている状態
-                int xmin = (int) es1.operationFrameBox.getXMin();
-                int xmax = (int) es1.operationFrameBox.getXMax();
-                int ymin = (int) es1.operationFrameBox.getYMin();
-                int ymax = (int) es1.operationFrameBox.getYMax();
-
-                img_background = offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin);
-
-                h_cam = new Background_camera();
-
-                background_set(new Point(120.0, 120.0),
-                        new Point(120.0 + 10.0, 120.0),
-                        new Point(xmin, ymin),
-                        new Point((double) xmin + 10.0, ymin));
-
-                if (lockBackground) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                    h_cam.set_i_Lock_on(lockBackground);
-                    h_cam.setCamera(camera_of_orisen_input_diagram);
-                    h_cam.h3_obj_and_h4_obj_calculation();
-                }
-
-
-            }
-        });
-        Button_background_trim.setMargin(new Insets(0, 0, 0, 0));
-        pnln.add(Button_background_trim);
-
-////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
-
-        //------------------------------------------------
-        JPanel pnln9 = new JPanel();
-        pnln9.setLayout(new GridLayout(1, 5));
-
-        pnln.add(pnln9);
-
-        JButton Button_background = new JButton("BG");
-        Button_background.addActionListener(e -> {
-            setHelp("qqq/haikei.png");
-
-            i_mouseDragged_valid = false;
-            i_mouseReleased_valid = false;
-
-            readImageFromFile();
-
-            displayBackground = true;
-            Button_background_kirikae.setBackground(Color.ORANGE);
-
-
-            h_cam = new Background_camera();//20181202
-            if (lockBackground) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                h_cam.set_i_Lock_on(lockBackground);
-                h_cam.setCamera(camera_of_orisen_input_diagram);
-                h_cam.h3_obj_and_h4_obj_calculation();
-            }
-
-            canvas.repaint();
-        });
-        Button_background.setMargin(new Insets(0, 0, 0, 0));
-        Button_background.setBackground(Color.ORANGE);
-        pnln9.add(Button_background);
-
-        Button_background_kirikae = new JButton("off");
-        Button_background_kirikae.addActionListener(e -> {
-            setHelp("qqq/haikei_kirikae.png");
-
-            displayBackground = !displayBackground;
-
-            if (!displayBackground) {
-                Button_background_kirikae.setBackground(Color.gray);
-            } else {
-                Button_background_kirikae.setBackground(Color.ORANGE);
-            }
-
-            canvas.repaint();
-        });
-        Button_background_kirikae.setMargin(new Insets(0, 0, 0, 0));
-        Button_background_kirikae.setBackground(Color.ORANGE);
-        pnln9.add(Button_background_kirikae);
-
-
-// ******************************************************************************
-        JButton Button_set_BG = new JButton("S");
-        Button_set_BG.addActionListener(e -> {
-            setHelp("qqq/set_BG.png");
-
-            i_mouse_modeA = MouseMode.BACKGROUND_CHANGE_POSITION_26;
-            Button_shared_operation();
-            canvas.repaint();
-            System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-
-        });
-        Button_set_BG.setMargin(new Insets(0, 0, 0, 0));
-        Button_set_BG.setBackground(Color.ORANGE);
-        pnln9.add(Button_set_BG);
-
-// ******北************************************************************************
-        Button_background_Lock_on = new JButton("L");
-        Button_background_Lock_on.addActionListener(e -> {
-            setHelp("qqq/haikei_Lock_on.png");
-
-            lockBackground_ori = !lockBackground_ori;
-            lockBackground = lockBackground_ori;
-
-            if (lockBackground) {
-                Button_background_Lock_on.setBackground(Color.ORANGE);
-
-                h_cam.set_i_Lock_on(lockBackground);
-                h_cam.setCamera(camera_of_orisen_input_diagram);
-                h_cam.h3_obj_and_h4_obj_calculation();
-            } else {
-                Button_background_Lock_on.setBackground(Color.gray);
-
-                h_cam.set_i_Lock_on(lockBackground);
-            }
-
-            canvas.repaint();
-        });
-        Button_background_Lock_on.setMargin(new Insets(0, 0, 0, 0));
-
-        pnln9.add(Button_background_Lock_on);
-
-
-// ******北************************************************************************　線分除けて線種変換
-
-        JButton Button_senbun_yoke_henkan = new JButton("");
-        Button_senbun_yoke_henkan.addActionListener(e -> {
-
-            setHelp("qqq/senbun_yoke_henkan.png");
-            i_mouse_modeA = MouseMode.CREASE_ADVANCE_TYPE_30;
-            System.out.println("i_mouse_modeA = " + i_mouse_modeA);
-
-            es1.unselect_all();
-            Button_shared_operation();
-            canvas.repaint();
-        });
-        pnln9.add(Button_senbun_yoke_henkan);
-
-        Button_senbun_yoke_henkan.setMargin(new Insets(0, 0, 0, 0));
-        Button_senbun_yoke_henkan.setIcon(createImageIcon("ppp/senbun_yoke_henkan.png"));
+        text28 = northPanel.getTenkaizu_kaitenTextField();
+        Button_background_kirikae = northPanel.getBackgroundToggleButton();
+        Button_background_Lock_on = northPanel.getBackgroundLockButton();
 
 
 // ******************************************************************************
@@ -3285,10 +2563,7 @@ public class App extends JFrame implements ActionListener {
 // *****西*************************************************************************
         //------------------------------------------------
         JPanel pnlw14 = new JPanel();
-//         pnlw14.setBackground(Color.PINK);
         pnlw14.setLayout(new GridLayout(1, 4));
-        //pnlw9.setLayout(new FlowLayout(FlowLayout.LEFT));
-        //pnlw9.setLayout(new FlowLayout(FlowLayout.LEFT));
         //------------------------------------------------
 
         pnlw.add(pnlw14);
@@ -3312,29 +2587,22 @@ public class App extends JFrame implements ActionListener {
 
 
         EastPanel eastPanel = new EastPanel(this);
-
         contentPane.add("East", eastPanel);
 
         ckbox_check4 = eastPanel.getcAMVCheckBox();
-
         angleATextField = eastPanel.getAngleATextField();
         angleBTextField = eastPanel.getAngleBTextField();
         angleCTextField = eastPanel.getAngleCTextField();
         andleDTextField = eastPanel.getAngleDTextField();
         angleETextField = eastPanel.getAngleETextField();
         angleFTextField = eastPanel.getAngleFTextField();
-
         polygonSizeTextField = eastPanel.getPolygonSizeTextField();
-
         Button_sen_tokutyuu_color = eastPanel.getC_colButton();
-
         h_undoTotalTextField = eastPanel.getH_undoTotalTextField();
         Button_Col_orange = eastPanel.getColOrangeButton();
-        Button_Col_yellow = eastPanel.getColYellowButton();;
-
+        Button_Col_yellow = eastPanel.getColYellowButton();
         label_length_sokutei_1 = eastPanel.getL1Label();
         label_length_sokutei_2 = eastPanel.getL2Label();
-
         label_kakudo_sokutei_1 = eastPanel.getA1Label();
         label_kakudo_sokutei_2 = eastPanel.getA2Label();
         label_kakudo_sokutei_3 = eastPanel.getA3Label();

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="origami_editor.editor.NorthPanel">
+  <grid id="27dc6" binding="rootPanel" custom-create="true" layout-manager="FlowLayout" hgap="1" vgap="1" flow-align="1">
+    <constraints>
+      <xy x="20" y="20" width="1972" height="42"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="5bdbb" class="javax.swing.JButton" binding="tyouhoukei_selectButton">
+        <constraints/>
+        <properties>
+          <icon value="ppp/tyouhoukei_select.png"/>
+        </properties>
+      </component>
+      <component id="7c585" class="javax.swing.JButton" binding="writeImageButton">
+        <constraints/>
+        <properties>
+          <text value="Im_s"/>
+        </properties>
+      </component>
+      <component id="a554" class="javax.swing.JCheckBox" binding="mouseSettingsCheckBox">
+        <constraints/>
+        <properties>
+          <icon value="ppp/ckbox_mouse_settei_off.png"/>
+          <selected value="false"/>
+          <selectedIcon value="ppp/ckbox_mouse_settei_on.png"/>
+        </properties>
+      </component>
+      <grid id="ff339" layout-manager="FlowLayout" hgap="1" vgap="1" flow-align="1">
+        <constraints/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="d525a" layout-manager="FlowLayout" hgap="1" vgap="1" flow-align="1">
+            <constraints/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="da6fe" class="javax.swing.JTextField" binding="ratioATextField">
+                <constraints/>
+                <properties>
+                  <columns value="2"/>
+                  <text value="1.0"/>
+                </properties>
+              </component>
+              <component id="4349c" class="javax.swing.JLabel">
+                <constraints/>
+                <properties>
+                  <icon value="ppp/plus.png"/>
+                </properties>
+              </component>
+              <component id="cae05" class="javax.swing.JTextField" binding="ratioBTextField">
+                <constraints/>
+                <properties>
+                  <columns value="2"/>
+                  <text value="0.0"/>
+                </properties>
+              </component>
+              <component id="e2e24" class="javax.swing.JLabel">
+                <constraints/>
+                <properties>
+                  <icon value="ppp/root.png"/>
+                </properties>
+              </component>
+              <component id="27a85" class="javax.swing.JTextField" binding="ratioCTextField">
+                <constraints/>
+                <properties>
+                  <columns value="2"/>
+                  <text value="0.0"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <component id="b8f93" class="javax.swing.JLabel">
+            <constraints/>
+            <properties>
+              <icon value="ppp/tenten.png"/>
+            </properties>
+          </component>
+          <grid id="b83d0" layout-manager="FlowLayout" hgap="1" vgap="1" flow-align="1">
+            <constraints/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="10728" class="javax.swing.JTextField" binding="ratioDTextField">
+                <constraints/>
+                <properties>
+                  <columns value="2"/>
+                  <text value="0.0"/>
+                </properties>
+              </component>
+              <component id="d5dca" class="javax.swing.JLabel">
+                <constraints/>
+                <properties>
+                  <icon value="ppp/plus.png"/>
+                </properties>
+              </component>
+              <component id="52376" class="javax.swing.JTextField" binding="ratioETextField">
+                <constraints/>
+                <properties>
+                  <columns value="2"/>
+                  <text value="1.0"/>
+                </properties>
+              </component>
+              <component id="6a1d8" class="javax.swing.JLabel">
+                <constraints/>
+                <properties>
+                  <icon value="ppp/root.png"/>
+                </properties>
+              </component>
+              <component id="19450" class="javax.swing.JTextField" binding="ratioFTextField">
+                <constraints/>
+                <properties>
+                  <columns value="2"/>
+                  <text value="2.0"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <component id="7f944" class="javax.swing.JButton" binding="lineSegmentInternalDivisionRatioSetButton">
+            <constraints/>
+            <properties>
+              <text value="Set"/>
+            </properties>
+          </component>
+          <component id="84fc7" class="javax.swing.JButton" binding="drawLineSegmentInternalDivisionRatioButton">
+            <constraints/>
+            <properties>
+              <icon value="ppp/senbun_n_nyuryoku.png"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <component id="b4bd0" class="javax.swing.JButton" binding="tenkaizu_idiuButton">
+        <constraints/>
+        <properties>
+          <icon value="ppp/tenkaizu_idiu.png"/>
+        </properties>
+      </component>
+      <grid id="e4866" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+        <constraints/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="54bc9" class="javax.swing.JButton" binding="tenkaizu_syukusyouButton">
+            <constraints/>
+            <properties>
+              <icon value="ppp/tenkaizu_syukusyou.png"/>
+            </properties>
+          </component>
+          <component id="81e6a" class="javax.swing.JTextField" binding="tenkaizu_syukusyouTextField">
+            <constraints/>
+            <properties>
+              <text value="1.0"/>
+            </properties>
+          </component>
+          <component id="fde02" class="javax.swing.JButton" binding="tenkaizu_syukusyouSetButton">
+            <constraints/>
+            <properties>
+              <text value="S"/>
+            </properties>
+          </component>
+          <component id="2d619" class="javax.swing.JButton" binding="tenkaizu_kakudaiButton">
+            <constraints/>
+            <properties>
+              <icon value="ppp/tenkaizu_kakudai.png"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="5d872" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+        <constraints/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="7822" class="javax.swing.JButton" binding="tenkaizu_p_kaitenButton">
+            <constraints/>
+            <properties>
+              <icon value="ppp/tenkaizu_p_kaiten.png"/>
+            </properties>
+          </component>
+          <component id="f3a82" class="javax.swing.JTextField" binding="tenkaizu_kaitenTextField">
+            <constraints/>
+            <properties/>
+          </component>
+          <component id="76f8a" class="javax.swing.JButton" binding="tenkaizu_kaitenSetButton">
+            <constraints/>
+            <properties>
+              <text value="S"/>
+            </properties>
+          </component>
+          <component id="21054" class="javax.swing.JButton" binding="tenkaizu_m_kaitenButton">
+            <constraints/>
+            <properties>
+              <icon value="ppp/tenkaizu_m_kaiten.png"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <component id="87968" class="javax.swing.JButton" binding="toumeiButton">
+        <constraints/>
+        <properties>
+          <text value="T"/>
+        </properties>
+      </component>
+      <component id="a387" class="javax.swing.JButton" binding="backgroundTrimButton">
+        <constraints/>
+        <properties>
+          <text value="Tr"/>
+        </properties>
+      </component>
+      <grid id="2e671" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+        <constraints/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="ae37d" class="javax.swing.JButton" binding="readBackgroundButton">
+            <constraints/>
+            <properties>
+              <text value="BG"/>
+            </properties>
+          </component>
+          <component id="59135" class="javax.swing.JButton" binding="backgroundToggleButton">
+            <constraints/>
+            <properties>
+              <text value="off"/>
+            </properties>
+          </component>
+          <component id="2fe28" class="javax.swing.JButton" binding="backgroundSetPositionButton">
+            <constraints/>
+            <properties>
+              <text value="S"/>
+            </properties>
+          </component>
+          <component id="2351b" class="javax.swing.JButton" binding="backgroundLockButton">
+            <constraints/>
+            <properties>
+              <text value="L"/>
+            </properties>
+          </component>
+          <component id="e6eaa" class="javax.swing.JButton" binding="senbun_yoke_henkanButton">
+            <constraints/>
+            <properties>
+              <icon value="ppp/senbun_yoke_henkan.png"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

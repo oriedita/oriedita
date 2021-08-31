@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="origami_editor.editor.Editor">
+  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="2305" height="916"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <nested-form id="ee07" form-file="origami_editor/editor/SouthPanel.form" binding="southPanel1" custom-create="true">
+        <constraints border-constraint="South"/>
+      </nested-form>
+      <nested-form id="4d38c" form-file="origami_editor/editor/EastPanel.form" binding="eastPanel1" custom-create="true">
+        <constraints border-constraint="East"/>
+      </nested-form>
+      <component id="8955f" class="origami_editor.editor.Canvas" binding="canvas1" custom-create="true" default-binding="true">
+        <constraints border-constraint="Center"/>
+        <properties/>
+      </component>
+      <nested-form id="6ca88" form-file="origami_editor/editor/NorthPanel.form" binding="northPanel1" custom-create="true">
+        <constraints border-constraint="North"/>
+      </nested-form>
+    </children>
+  </grid>
+</form>
