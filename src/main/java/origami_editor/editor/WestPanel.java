@@ -103,66 +103,6 @@ public class WestPanel extends JPanel {
     private JButton colCyanButton;
     private JButton lineSegmentDivisionSetButton;
 
-    public UndoRedo getUndoRedo() {
-        return undoRedo;
-    }
-
-    public JCheckBox getColoredXRayButton() {
-        return coloredXRayButton;
-    }
-
-    public JCheckBox getCkbox_cp_kaizen_folding() {
-        return ckbox_cp_kaizen_folding;
-    }
-
-    public JCheckBox getCkbox_select_nokosi() {
-        return ckbox_select_nokosi;
-    }
-
-    public JTextField getGridAngleTextField() {
-        return gridAngleTextField;
-    }
-
-    public JTextField getGridXATextField() {
-        return gridXATextField;
-    }
-
-    public JTextField getGridXBTextField() {
-        return gridXBTextField;
-    }
-
-    public JTextField getGridXCTextField() {
-        return gridXCTextField;
-    }
-
-    public JTextField getGridYATextField() {
-        return gridYATextField;
-    }
-
-    public JTextField getGridYBTextField() {
-        return gridYBTextField;
-    }
-
-    public JTextField getGridYCTextField() {
-        return gridYCTextField;
-    }
-
-    public JTextField getIntervalGridSizeTextField() {
-        return intervalGridSizeTextField;
-    }
-
-    public JTextField getGridSizeTextField() {
-        return gridSizeTextField;
-    }
-
-    public JTextField getLineSegmentDivisionTextField() {
-        return lineSegmentDivisionTextField;
-    }
-
-    public JButton getSenbun_henkan2Button() {
-        return senbun_henkan2Button;
-    }
-
     public WestPanel(App app) {
         $$$setupUI$$$();
         undoRedo.addUndoActionListener(e -> {
@@ -1064,6 +1004,66 @@ public class WestPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
+    }
+
+    public UndoRedo getUndoRedo() {
+        return undoRedo;
+    }
+
+    public JCheckBox getColoredXRayButton() {
+        return coloredXRayButton;
+    }
+
+    public JCheckBox getCkbox_cp_kaizen_folding() {
+        return ckbox_cp_kaizen_folding;
+    }
+
+    public JCheckBox getCkbox_select_nokosi() {
+        return ckbox_select_nokosi;
+    }
+
+    public JTextField getGridAngleTextField() {
+        return gridAngleTextField;
+    }
+
+    public JTextField getGridXATextField() {
+        return gridXATextField;
+    }
+
+    public JTextField getGridXBTextField() {
+        return gridXBTextField;
+    }
+
+    public JTextField getGridXCTextField() {
+        return gridXCTextField;
+    }
+
+    public JTextField getGridYATextField() {
+        return gridYATextField;
+    }
+
+    public JTextField getGridYBTextField() {
+        return gridYBTextField;
+    }
+
+    public JTextField getGridYCTextField() {
+        return gridYCTextField;
+    }
+
+    public JTextField getIntervalGridSizeTextField() {
+        return intervalGridSizeTextField;
+    }
+
+    public JTextField getGridSizeTextField() {
+        return gridSizeTextField;
+    }
+
+    public JTextField getLineSegmentDivisionTextField() {
+        return lineSegmentDivisionTextField;
+    }
+
+    public JButton getSenbun_henkan2Button() {
+        return senbun_henkan2Button;
     }
 
     public JButton getGridSizeDecreaseButton() {

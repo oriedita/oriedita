@@ -7,9 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class AppMenuBar extends JMenuBar {
-    JMenuItem openButton;
-    JMenuItem saveButton;
-
     public JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
     public JCheckBoxMenuItem pointOffsetCheckBox;//点を離すかどうか
     public JCheckBoxMenuItem gridInputAssistCheckBox;//高密度用入力をするかどうか
@@ -17,46 +14,11 @@ public class AppMenuBar extends JMenuBar {
     public JCheckBoxMenuItem displayCpLinesCheckBox;//折線
     public JCheckBoxMenuItem displayAuxLinesCheckBox;//補助活線cyan
     public JCheckBoxMenuItem displayLiveAuxLinesCheckBox;//補助画線
-
     public JCheckBoxMenuItem displayStandardFaceMarksCheckBox;//Marking lines such as crosses and reference planes
     public JCheckBoxMenuItem cpOnTopCheckBox;//展開図を折り上がり予想図の上に描く
+    JMenuItem openButton;
+    JMenuItem saveButton;
     private JMenuItem toggleHelpMenuItem;
-
-    public JCheckBoxMenuItem getShowPointRangeCheckBox() {
-        return showPointRangeCheckBox;
-    }
-
-    public JCheckBoxMenuItem getPointOffsetCheckBox() {
-        return pointOffsetCheckBox;
-    }
-
-    public JCheckBoxMenuItem getGridInputAssistCheckBox() {
-        return gridInputAssistCheckBox;
-    }
-
-    public JCheckBoxMenuItem getDisplayCommentsCheckBox() {
-        return displayCommentsCheckBox;
-    }
-
-    public JCheckBoxMenuItem getDisplayCpLinesCheckBox() {
-        return displayCpLinesCheckBox;
-    }
-
-    public JCheckBoxMenuItem getDisplayAuxLinesCheckBox() {
-        return displayAuxLinesCheckBox;
-    }
-
-    public JCheckBoxMenuItem getDisplayLiveAuxLinesCheckBox() {
-        return displayLiveAuxLinesCheckBox;
-    }
-
-    public JCheckBoxMenuItem getDisplayStandardFaceMarksCheckBox() {
-        return displayStandardFaceMarksCheckBox;
-    }
-
-    public JCheckBoxMenuItem getCpOnTopCheckBox() {
-        return cpOnTopCheckBox;
-    }
 
     public AppMenuBar(App app) {
         createElements();
@@ -139,10 +101,10 @@ public class AppMenuBar extends JMenuBar {
 
             if (gridInputAssistCheckBox.isSelected()) {
                 System.out.println(" kou_mitudo_nyuuryoku on");
-                app.es1.set_i_kou_mitudo_nyuuryoku(true);
+                app.es1.setGridInputAssist(true);
             } else {
                 System.out.println(" kou_mitudo_nyuuryoku off");
-                app.es1.set_i_kou_mitudo_nyuuryoku(false);
+                app.es1.setGridInputAssist(false);
             }
             app.repaintCanvas();
         });
@@ -180,6 +142,42 @@ public class AppMenuBar extends JMenuBar {
 
             app.repaintCanvas();
         });
+    }
+
+    public JCheckBoxMenuItem getShowPointRangeCheckBox() {
+        return showPointRangeCheckBox;
+    }
+
+    public JCheckBoxMenuItem getPointOffsetCheckBox() {
+        return pointOffsetCheckBox;
+    }
+
+    public JCheckBoxMenuItem getGridInputAssistCheckBox() {
+        return gridInputAssistCheckBox;
+    }
+
+    public JCheckBoxMenuItem getDisplayCommentsCheckBox() {
+        return displayCommentsCheckBox;
+    }
+
+    public JCheckBoxMenuItem getDisplayCpLinesCheckBox() {
+        return displayCpLinesCheckBox;
+    }
+
+    public JCheckBoxMenuItem getDisplayAuxLinesCheckBox() {
+        return displayAuxLinesCheckBox;
+    }
+
+    public JCheckBoxMenuItem getDisplayLiveAuxLinesCheckBox() {
+        return displayLiveAuxLinesCheckBox;
+    }
+
+    public JCheckBoxMenuItem getDisplayStandardFaceMarksCheckBox() {
+        return displayStandardFaceMarksCheckBox;
+    }
+
+    public JCheckBoxMenuItem getCpOnTopCheckBox() {
+        return cpOnTopCheckBox;
     }
 
     private void createElements() {

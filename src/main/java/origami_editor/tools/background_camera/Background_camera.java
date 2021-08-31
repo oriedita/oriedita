@@ -60,52 +60,52 @@ public class Background_camera {//Mediation between actual coordinates and displ
         return pt3;
     }
 
-    public void set_h1(Point ht) {
-        h1.set(get_kijyun_jyoutai_position(ht));
-    }
-
-    public void set_h2(Point ht) {
-        h2.set(get_kijyun_jyoutai_position(ht));
-    }
-
-    public void set_h3(Point ht) {
-        h3.set(ht);
-    }
-
-    public void set_h4(Point ht) {
-        h4.set(ht);
-    }
-
-    public void set_h3_obj(Point ht) {
-        h3_obj.set(ht);
-    }
-
-    public void set_h4_obj(Point ht) {
-        h4_obj.set(ht);
-    }
-
     public Point get_h1() {
         return h1;
+    }
+
+    public void set_h1(Point ht) {
+        h1.set(get_kijyun_jyoutai_position(ht));
     }
 
     public Point get_h2() {
         return h2;
     }
 
+    public void set_h2(Point ht) {
+        h2.set(get_kijyun_jyoutai_position(ht));
+    }
+
     public Point get_h3() {
         return h3;
+    }
+
+    public void set_h3(Point ht) {
+        h3.set(ht);
     }
 
     public Point get_h4() {
         return h4;
     }
 
+    public void set_h4(Point ht) {
+        h4.set(ht);
+    }
+
     public Point get_h3_obj() {
         return h3_obj;
     }
 
+    public void set_h3_obj(Point ht) {
+        h3_obj.set(ht);
+    }
+
     public Point get_h4_obj() {
         return h4_obj;
+    }
+
+    public void set_h4_obj(Point ht) {
+        h4_obj.set(ht);
     }
 
     public void parameter_calculation() {

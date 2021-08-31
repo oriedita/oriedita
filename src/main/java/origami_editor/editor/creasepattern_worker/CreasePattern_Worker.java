@@ -1,44 +1,38 @@
 package origami_editor.editor.creasepattern_worker;
 
-import java.awt.*;
-
-import origami_editor.graphic2d.averagecoordinates.AverageCoordinates;
-import origami_editor.tools.linestore.LineSegmentSet;
 import origami_editor.editor.LineColor;
 import origami_editor.editor.folded_figure.FoldedFigure;
-import origami_editor.graphic2d.point.Point;
+import origami_editor.editor.undo_box.Undo_Box;
+import origami_editor.graphic2d.averagecoordinates.AverageCoordinates;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
+import origami_editor.graphic2d.point.Point;
 import origami_editor.record.memo.Memo;
 import origami_editor.tools.camera.Camera;
+import origami_editor.tools.linestore.LineSegmentSet;
 import origami_editor.tools.pointset.PointSet;
-import origami_editor.editor.undo_box.Undo_Box;
+
+import java.awt.*;
 
 public class CreasePattern_Worker {
+    public Point point_of_referencePlane_ob = new Point();
     //This crease pattern craftsman class has only one PointStore c as a crease pattern.
     //PointSet obtained as a result of folding etc. should be returned to the outside and not held by oneself.
     double r;                   //Criteria for determining the radius of the circles at both ends of the straight line of the basic branch structure and the proximity of the branches to various points
-
     PointSet pointSet = new PointSet();    //Development view
-
     Undo_Box Ubox = new Undo_Box();
-
     //Definition of variables used in VVVVVVVVVVVV oritatami and oekaki VVVVVVVVVVVVVVVVVVVVVVVVVVVV
     int[] iFacePosition;//Indicates how far a surface is from the reference surface. Enter a value such as 1, next to the reference plane, 2, next to the reference plane, and 3 next to it.
     int referencePlaneId;
     int[] nextFaceId;//The id of the surface (reference surface side) next to a certain surface
     int[] associatedLineId;//The id of the bar between one side and the next side (reference plane side)
-
     AverageCoordinates[] tnew;//Stores the position of the point when folded
-
     Camera camera = new Camera();
     Camera cam_front = new Camera();
     Camera cam_rear = new Camera();
-
     Camera cam_transparent_front = new Camera();
     Camera cam_transparent_rear = new Camera();
-
-    public Point point_of_referencePlane_ob = new Point();
+    double d_h_k = 10.0;//Judgment distance whether the neighborhood is closer than a certain distance
 
     public CreasePattern_Worker(double r0) {  //コンストラクタ
         r = r0;
@@ -96,7 +90,6 @@ public class CreasePattern_Worker {
         return referencePlaneId;
     }
 
-
     /**
      * This is the correspondence when the mouse is pressed in the reference plane specification mode 201503
      */
@@ -109,7 +102,6 @@ public class CreasePattern_Worker {
         }//If c.inside(p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, and if it is a positive number, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
         return referencePlaneId;
     }
-
 
     /**
      * Determine if Point p0 is inside the fold-up diagram
@@ -272,7 +264,6 @@ public class CreasePattern_Worker {
         }
         return p;
     }
-
 
     //Folding estimation (What you can do here is a wire diagram that does not consider the overlap of surfaces)
     public PointSet surface_position_request() {//Folding estimate
@@ -479,6 +470,8 @@ public class CreasePattern_Worker {
         pointSet.statePointMove(p_u);
     }
 
+    //Numerical conversion function when drawing a figure -----------------------------------------------------------------
+
     public void mReleased_selectedPoint_move_with_camera(Point ugokasu_maeno_sentaku_point, Point p0, Point p1, FoldedFigure.State ip4) {   // Move the selected point
         Point pa = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
@@ -504,18 +497,15 @@ public class CreasePattern_Worker {
         pointSet.statePointMove(p_u);
     }
 
-    //Numerical conversion function when drawing a figure -----------------------------------------------------------------
-
     public int gx(double d) {
-        return (int) d;
-    }
-
-    public int gy(double d) {
         return (int) d;
     }
 
     //Drawing of development view -----------------------------------------------------------------
 
+    public int gy(double d) {
+        return (int) d;
+    }
 
     public void drawing_pointId_with_camera(Graphics g, int i) {    //Draw a dot
         Point tn = new Point();
@@ -628,8 +618,6 @@ public class CreasePattern_Worker {
     public boolean getPointState(int i) {
         return pointSet.getPointState(i);
     }
-
-    double d_h_k = 10.0;//Judgment distance whether the neighborhood is closer than a certain distance
 
     /**
      * Returns the number of the closest point that is closer than a certain distance to the given coordinates. If there is no Point within a certain distance, 0 is returned.

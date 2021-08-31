@@ -209,4 +209,5 @@ public class OpenFrame extends JDialog {
     public JComponent $$$getRootComponent$$$() {
         return panel;
     }
+
 }

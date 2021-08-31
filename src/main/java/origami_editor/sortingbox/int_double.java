@@ -12,20 +12,20 @@ public class int_double {
         d = d0;
     }
 
-    public void setInteger(int i0) {
-        i = i0;
-    }
-
-    public void setDouble(double d0) {
-        d = d0;
-    }
-
     public int getInteger() {
         return i;
     }
 
+    public void setInteger(int i0) {
+        i = i0;
+    }
+
     public double getDouble() {
         return d;
+    }
+
+    public void setDouble(double d0) {
+        d = d0;
     }
 
     public void set(int_double i_d_0) {

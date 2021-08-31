@@ -3,7 +3,7 @@ package origami_editor.tools.face;
 import origami_editor.graphic2d.point.Point;
 import origami_editor.tools.pointset.PointSet;
 
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * Groups a set of points found in a PointSet
@@ -54,7 +54,7 @@ public class Face {
     }
 
     public int getPointId(int i) {
-		return pointIdList.get(i);
+        return pointIdList.get(i);
     }
 
     private void replace() { //Replace the value of pointIdList[n + 1] with the value of pointId[n]. The value of PointId[1] should be the last PointId
@@ -66,12 +66,12 @@ public class Face {
 
     }
 
-    public void setColor(int i) {
-        icol = i;
-    }
-
     public int getColor() {
         return icol;
+    }
+
+    public void setColor(int i) {
+        icol = i;
     }
 
     public int getMinimumPointId() {    //Find the minimum id of the line contained in the surface mptemp.

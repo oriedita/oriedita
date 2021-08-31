@@ -1,6 +1,6 @@
 package origami_editor.sortingbox;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class SortingBox_int_double {//Arrange and store data in ascending order of double
     private final ArrayList<int_double> i_d_List = new ArrayList<>();

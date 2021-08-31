@@ -48,47 +48,12 @@ public class Camera { // Mediation between actual coordinates and display coordi
         display_position_y = 0.0;
     }
 
-    public void setCameraPositionX(double d) {
-        camera_position_x = d;
-    }
-
-    public void setCameraPositionY(double d) {
-        camera_position_y = d;
-    }
-
-    public void setCameraAngle(double d) {
-        camera_angle = d;
-        camera_rad = camera_angle * do2rad;
-        sin_rad = Math.sin(camera_rad);
-        cos_rad = Math.cos(camera_rad);
-    }
-
-    public void setCameraMirror(double d) {
-        camera_mirror = d;
-    }       //鏡
-
-    public void setCameraZoomX(double d) {
-        camera_zoom_x = d;
-    }
-
-    public void setCameraZoomY(double d) {
-        camera_zoom_y = d;
-    }
-
     public void multiplyCameraZoomX(double d) {
         camera_zoom_x = d * camera_zoom_x;
     }
 
     public void multiplyCameraZoomY(double d) {
         camera_zoom_y = d * camera_zoom_y;
-    }
-
-    public void setDisplayPositionX(double d) {
-        display_position_x = d;
-    }
-
-    public void setDisplayPositionY(double d) {
-        display_position_y = d;
     }
 
     public void setCamera(Camera c0) {
@@ -127,21 +92,39 @@ public class Camera { // Mediation between actual coordinates and display coordi
         System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ");
     }
 
-
     public double getCameraPositionX() {
         return camera_position_x;
+    }
+
+    public void setCameraPositionX(double d) {
+        camera_position_x = d;
     }
 
     public double getCameraPositionY() {
         return camera_position_y;
     }
 
+    public void setCameraPositionY(double d) {
+        camera_position_y = d;
+    }
+
     public double getCameraAngle() {
         return camera_angle;
     }
 
+    public void setCameraAngle(double d) {
+        camera_angle = d;
+        camera_rad = camera_angle * do2rad;
+        sin_rad = Math.sin(camera_rad);
+        cos_rad = Math.cos(camera_rad);
+    }
+
     public double getCameraMirror() {
         return camera_mirror;
+    }       //鏡
+
+    public void setCameraMirror(double d) {
+        camera_mirror = d;
     }       //鏡
 
     public boolean isCameraMirrored() {
@@ -152,21 +135,32 @@ public class Camera { // Mediation between actual coordinates and display coordi
         return camera_zoom_x;
     }
 
+    public void setCameraZoomX(double d) {
+        camera_zoom_x = d;
+    }
+
     public double getCameraZoomY() {
         return camera_zoom_y;
+    }
+
+    public void setCameraZoomY(double d) {
+        camera_zoom_y = d;
     }
 
     public double getDisplayPositionX() {
         return display_position_x;
     }
 
+    public void setDisplayPositionX(double d) {
+        display_position_x = d;
+    }
+
     public double getDisplayPositionY() {
         return display_position_y;
     }
 
-    public void setCameraPosition(Point p) {
-        setCameraPositionX(p.getX());
-        setCameraPositionY(p.getY());
+    public void setDisplayPositionY(double d) {
+        display_position_y = d;
     }
 
     public void setDisplayPosition(Point p) {
@@ -179,6 +173,11 @@ public class Camera { // Mediation between actual coordinates and display coordi
         pointPosition.setX(camera_position_x);
         pointPosition.setY(camera_position_y);
         return pointPosition;
+    }
+
+    public void setCameraPosition(Point p) {
+        setCameraPositionX(p.getX());
+        setCameraPositionY(p.getY());
     }
 
     public Point object2TV(Point t_ob) {

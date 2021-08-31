@@ -37,29 +37,29 @@ public class Line {
         iColor = k;
     }
 
-    public void setBegin(int i) {
-        begin = i;
-    }
-
-    public void setEnd(int i) {
-        end = i;
-    }
-
-    public void setColor(LineColor i) {
-        iColor = i;
-    }
-
     //出力
     public int getBegin() {
         return begin;
+    }
+
+    public void setBegin(int i) {
+        begin = i;
     }
 
     public int getEnd() {
         return end;
     }
 
+    public void setEnd(int i) {
+        end = i;
+    }
+
     public LineColor getColor() {
         return iColor;
+    }
+
+    public void setColor(LineColor i) {
+        iColor = i;
     }
 
     public void reset() {

@@ -4,7 +4,8 @@ import origami_editor.graphic2d.point.Point;
 import origami_editor.record.memo.Memo;
 import origami_editor.tools.line.Line;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class FileFormatConverter {
 

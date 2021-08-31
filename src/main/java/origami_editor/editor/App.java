@@ -12,8 +12,8 @@ import origami_editor.graphic2d.point.Point;
 import origami_editor.record.memo.Memo;
 import origami_editor.record.string_op.StringOp;
 import origami_editor.tools.background_camera.Background_camera;
-import origami_editor.tools.camera.Camera;
 import origami_editor.tools.bulletinboard.BulletinBoard;
+import origami_editor.tools.camera.Camera;
 import origami_editor.tools.linestore.LineSegmentSet;
 
 import javax.swing.*;
@@ -71,7 +71,7 @@ public class App extends JFrame implements ActionListener {
     public JCheckBox ckbox_mouse_settings;//マウスの設定。チェックがあると、ホイールマウスとして動作設定
     public JCheckBoxMenuItem ckbox_point_search;//点を探す範囲
     public JCheckBoxMenuItem ckbox_ten_hanasi;//点を離すかどうか
-    public JCheckBoxMenuItem ckbox_kou_mitudo_nyuuryoku;//高密度用入力をするかどうか
+    public JCheckBoxMenuItem gridInputAssistCheckBox;//高密度用入力をするかどうか
     public JCheckBoxMenuItem ckbox_bun;//文章
     public JCheckBoxMenuItem ckbox_cp;//折線
     public JCheckBoxMenuItem ckbox_a0;//補助活線cyan
@@ -89,6 +89,9 @@ public class App extends JFrame implements ActionListener {
     public SelectionOperationMode selectionOperationMode;//Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
     // ------------------------------------------------------------------------
     public Point point_of_referencePlane_old = new Point(); //ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
+    public SubThread sub;
+    // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
+    public Canvas canvas;
     // *******************************************************************************************************
     ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     FileDialog fd;
@@ -96,7 +99,6 @@ public class App extends JFrame implements ActionListener {
     public final Drawing_Worker es1 = new Drawing_Worker(r, this);    // Basic branch craftsman. Accepts input from the mouse.
     public Grid kus = es1.grid;
     Memo memo1 = new Memo();
-    public SubThread sub;
     boolean subThreadRunning = false;//1 if SubThread (folding calculation) is running, 0 if not running
     ArrayList<FoldedFigure> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
     int foldedFigureIndex = 0;//Specify which number of foldedFigures Oriagari_Zu is the target of button operation or transformation operation
@@ -171,7 +173,6 @@ public class App extends JFrame implements ActionListener {
     double rotationCorrection = 0.0;//Correction angle of rotation display angle
     UndoRedo foldedFigureUndoRedo;
     int i_undo_suu_om;//text31はtext10を参考にしている
-
     JLabel length1Label;
     JLabel length2Label;
     JLabel angle1Label;
@@ -180,8 +181,6 @@ public class App extends JFrame implements ActionListener {
     JLabel angle3Label;
     Image img_background;       //Image for background
     Image img_explanation;       //Image for explanation
-    // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
-    public Canvas canvas;
     boolean lockBackground_ori = false;//Lock on background = 1, not = 0
     boolean lockBackground = false;//Lock on background = 1, not = 0
     Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
@@ -227,15 +226,7 @@ public class App extends JFrame implements ActionListener {
     // **************************************************************************************************************************
     boolean i_mouse_right_button_on = false;//1 if the right mouse button is on, 0 if off
     boolean i_mouse_undo_redo_mode = false;//1 for undo and redo mode with mouse
-    public enum MouseWheelTarget {
-        CREASEPATTERN_0,
-        FOLDED_FRONT_1,
-        FOLDED_BACK_2,
-        TRANSPARENT_FRONT_3,
-        TRANSPARENT_BACK_4,
-    }
     MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASEPATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
-    int i_ClickCount = 0;//Don't you need this variable? 21181208
     double d_ap_check4 = 0.0;
     ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     public App() {
@@ -356,7 +347,7 @@ public class App extends JFrame implements ActionListener {
 
         ckbox_point_search = appMenuBar.getShowPointRangeCheckBox();
         ckbox_ten_hanasi = appMenuBar.getPointOffsetCheckBox();
-        ckbox_kou_mitudo_nyuuryoku = appMenuBar.getGridInputAssistCheckBox();
+        gridInputAssistCheckBox = appMenuBar.getGridInputAssistCheckBox();
         ckbox_bun = appMenuBar.getDisplayCommentsCheckBox();
         ckbox_cp = appMenuBar.getDisplayCpLinesCheckBox();
         ckbox_a0 = appMenuBar.getDisplayAuxLinesCheckBox();
@@ -540,15 +531,6 @@ public class App extends JFrame implements ActionListener {
         canvas.repaint();
     }
 
-    //ここまでが変数等の定義
-
-    public enum FoldType {
-        NOTHING_0,
-        FOR_ALL_LINES_1,
-        FOR_SELECTED_LINES_2,
-        CHANGING_FOLDED_3,
-    }
-
     public FoldType getFoldType() {
 
         FoldType foldType;//= 0 Do nothing, = 1 Folding estimation for all fold lines in the normal development view, = 2 for fold estimation for selected fold lines, = 3 for changing the folding state
@@ -582,6 +564,8 @@ public class App extends JFrame implements ActionListener {
 
         return foldType;
     }
+
+    //ここまでが変数等の定義
 
     public void oritatame(FoldType foldType, FoldedFigure.EstimationOrder estimationOrder) {//引数の意味は(foldType , estimationOrder)
         //i_fold_typeはget_i_fold_type()関数で取得する。
@@ -656,8 +640,6 @@ public class App extends JFrame implements ActionListener {
 
     }
 
-// ----------------------------------
-
     // ------------------------------------------------------------------------------
     public void addNewFoldedFigure() {
         foldedFigures.add(new FoldedFigure_01(this));
@@ -666,6 +648,8 @@ public class App extends JFrame implements ActionListener {
     public void displayMeasuredLength1(double d0) {
         length1Label.setText(String.valueOf(d0));
     }
+
+// ----------------------------------
 
     public void displayMeasuredLength2(double d0) {
         length2Label.setText(String.valueOf(d0));
@@ -779,8 +763,8 @@ public class App extends JFrame implements ActionListener {
         ckbox_mouse_settings.setSelected(true);//表示するかどうかの選択
         ckbox_point_search.setSelected(false);//表示するかどうかの選択
         ckbox_ten_hanasi.setSelected(false);//es1.set_i_hanasi(0);          //表示するかどうかの選択
-        ckbox_kou_mitudo_nyuuryoku.setSelected(false);
-        es1.set_i_kou_mitudo_nyuuryoku(false);          //高密度入力するかどうかの選択
+        gridInputAssistCheckBox.setSelected(false);
+        es1.setGridInputAssist(false);          //高密度入力するかどうかの選択
         ckbox_bun.setSelected(true);//文を表示するかどうかの選択
         ckbox_cp.setSelected(true);//折線を表示するかどうかの選択
         ckbox_a0.setSelected(true);//補助活線を表示するかどうかの選択
@@ -916,9 +900,6 @@ public class App extends JFrame implements ActionListener {
         es1.setCheck4(false);
     }
 
-
-// *******************************************************************************************************
-
     public void setGrid() {
         double d_grid_x_a_old = d_grid_x_a;
         double d_grid_x_b_old = d_grid_x_b;
@@ -991,8 +972,6 @@ public class App extends JFrame implements ActionListener {
         es1.setGrid(d_grid_x_length, d_grid_y_length, d_grid_angle);
     }
 
-// ------------------------------------------------------
-
     // *******************************************************************************************************
     public void Frame_tuika() {
         //Frame add_frame
@@ -1015,6 +994,8 @@ public class App extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
     }
+
+// ------------------------------------------------------
 
     public void setInternalDivisionRatio() {
         d_orisen_internalDivisionRatio_a = String2double(ratioATextField.getText(), d_orisen_internalDivisionRatio_a);
@@ -1048,6 +1029,9 @@ public class App extends JFrame implements ActionListener {
 
         es1.set_d_internalDivisionRatio_st(d_internalDivisionRatio_s, d_internalDivisionRatio_t);
     }
+
+
+// *******************************************************************************************************
 
     public void set_restricted_angle_abc() {
         d_restricted_angle_a = String2double(angleATextField.getText(), d_restricted_angle_a);
@@ -1133,8 +1117,7 @@ public class App extends JFrame implements ActionListener {
         colOrangeButton.setBackground(new Color(150, 150, 150));
         colYellowButton.setBackground(new Color(150, 150, 150));
     }
-// ---------------------------------------
-    
+
     public void Button_shared_operation() {
         es1.setDrawingStage(0);
         es1.set_i_circle_drawing_stage(0);
@@ -1247,11 +1230,7 @@ public class App extends JFrame implements ActionListener {
 
         set_i_OAZ(temp_i_OAZ);
     }
-
-
-    //=============================================================================
-    //マウスのホイールが回転した時に呼ばれるメソッド
-    //=============================================================================
+// ---------------------------------------
 
     // *******************************************************************************************cccccccccc
     void set_i_OAZ(int i) {//OZが切り替わるときの処理
@@ -1262,17 +1241,38 @@ public class App extends JFrame implements ActionListener {
         ckbox_toukazu_color.setSelected(OZ.transparencyColor);//透過図はカラー化。
     }
 
-
-    //----------------------------------------------------------------------
-    //マウス操作(移動やボタン操作)を行う関数------------------------------
-    //----------------------------------------------------------------------
-
     public Point e2p(MouseEvent e) {
         double d_width = 0.0;
         if (ckbox_ten_hanasi.isSelected()) {
             d_width = camera_of_orisen_input_diagram.getCameraZoomX() * es1.get_d_decision_width();
         }
         return new Point(e.getX() - (int) d_width, e.getY() - (int) d_width);
+    }
+
+
+    //=============================================================================
+    //マウスのホイールが回転した時に呼ばれるメソッド
+    //=============================================================================
+
+    public void mouse_object_position(Point p) {//この関数はmouseMoved等と違ってマウスイベントが起きても自動では認識されない
+        p_mouse_TV_position.set(p.getX(), p.getY());
+
+        p_mouse_object_position.set(camera_of_orisen_input_diagram.TV2object(p_mouse_TV_position));
+    }
+
+
+    //----------------------------------------------------------------------
+    //マウス操作(移動やボタン操作)を行う関数------------------------------
+    //----------------------------------------------------------------------
+
+    // ------------------------------------------------------
+    public void background_set(Point t1, Point t2, Point t3, Point t4) {
+        h_cam.set_h1(t1);
+        h_cam.set_h2(t2);
+        h_cam.set_h3(t3);
+        h_cam.set_h4(t4);
+
+        h_cam.parameter_calculation();
     }
 
 
@@ -1298,25 +1298,6 @@ public class App extends JFrame implements ActionListener {
 //103;S_face
 
 //10001;test1 入力準備として点を３つ指定する
-
-    public void mouse_object_position(Point p) {//この関数はmouseMoved等と違ってマウスイベントが起きても自動では認識されない
-        p_mouse_TV_position.set(p.getX(), p.getY());
-
-        p_mouse_object_position.set(camera_of_orisen_input_diagram.TV2object(p_mouse_TV_position));
-    }
-
-
-    // --------------------------------------------------
-
-    // ------------------------------------------------------
-    public void background_set(Point t1, Point t2, Point t3, Point t4) {
-        h_cam.set_h1(t1);
-        h_cam.set_h2(t2);
-        h_cam.set_h3(t3);
-        h_cam.set_h4(t4);
-
-        h_cam.parameter_calculation();
-    }
 
     // ------------------------------------------------------
     public void drawBackground(Graphics2D g2h, Image imgh) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
@@ -1346,6 +1327,9 @@ public class App extends JFrame implements ActionListener {
         g2h.setTransform(at);
 
     }
+
+
+    // --------------------------------------------------
 
     void configure_initialize_prediction() {
         OZ.text_result = "";
@@ -1436,8 +1420,6 @@ public class App extends JFrame implements ActionListener {
         return fname;
     }
 
-    //---------------------------------------------------------
-
     public void setHelp(String resource) {
         URL url = getClass().getClassLoader().getResource(resource);
 
@@ -1516,6 +1498,8 @@ public class App extends JFrame implements ActionListener {
         return memo_temp;
     }
 
+    //---------------------------------------------------------
+
     void writeMemo2File() {
         Memo memo1;
         memo1 = es1.getMemo_for_export();
@@ -1564,8 +1548,6 @@ public class App extends JFrame implements ActionListener {
         OZ.folding_estimated(camera_of_orisen_input_diagram, Ss0);
     }
 
-////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される
-
     void folding_settings_two_color() {//２色塗りわけ展開図
         OZ.folding_settings_two_color(camera_of_orisen_input_diagram, Ss0);
     }
@@ -1573,6 +1555,8 @@ public class App extends JFrame implements ActionListener {
     void mks() {
         sub = new SubThread(this);
     }
+
+////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される
 
     public double String2double(String str0, double default_if_error) {
         String new_str0 = str0.trim();
@@ -1610,6 +1594,21 @@ public class App extends JFrame implements ActionListener {
                 sub.start();
             }
         }
+    }
+
+    public enum MouseWheelTarget {
+        CREASEPATTERN_0,
+        FOLDED_FRONT_1,
+        FOLDED_BACK_2,
+        TRANSPARENT_FRONT_3,
+        TRANSPARENT_BACK_4,
+    }
+
+    public enum FoldType {
+        NOTHING_0,
+        FOR_ALL_LINES_1,
+        FOR_SELECTED_LINES_2,
+        CHANGING_FOLDED_3,
     }
 
     public enum AngleSystemInputType {

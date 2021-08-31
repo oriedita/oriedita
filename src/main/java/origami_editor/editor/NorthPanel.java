@@ -40,22 +40,6 @@ public class NorthPanel extends JPanel {
     private JButton backgroundLockButton;
     private JCheckBox mouseSettingsCheckBox;
 
-    public JTextField getRotationTextField() {
-        return rotationTextField;
-    }
-
-    public JButton getBackgroundToggleButton() {
-        return backgroundToggleButton;
-    }
-
-    public JButton getBackgroundLockButton() {
-        return backgroundLockButton;
-    }
-
-    public JCheckBox getMouseSettingsCheckBox() {
-        return mouseSettingsCheckBox;
-    }
-
     public NorthPanel(App app) {
         $$$setupUI$$$();
         tyouhoukei_selectButton.addActionListener(e -> {
@@ -495,6 +479,22 @@ public class NorthPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
+    }
+
+    public JTextField getRotationTextField() {
+        return rotationTextField;
+    }
+
+    public JButton getBackgroundToggleButton() {
+        return backgroundToggleButton;
+    }
+
+    public JButton getBackgroundLockButton() {
+        return backgroundLockButton;
+    }
+
+    public JCheckBox getMouseSettingsCheckBox() {
+        return mouseSettingsCheckBox;
     }
 
     public JTextField getScaleFactorTextField() {

@@ -42,20 +42,20 @@ public class Point {
         y = a * p.getY() + b * q.getY();
     }
 
-    public void setX(double xx) {
-        x = xx;
-    }
-
-    public void setY(double yy) {
-        y = yy;
-    }
-
     public double getX() {
         return x;
     }
 
+    public void setX(double xx) {
+        x = xx;
+    }
+
     public double getY() {
         return y;
+    }
+
+    public void setY(double yy) {
+        y = yy;
     }
 
     public void reset() {

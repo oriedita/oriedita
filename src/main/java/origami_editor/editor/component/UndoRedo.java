@@ -4,9 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class UndoRedo extends JPanel {
     private JButton undoButton;
     private JPanel panel1;
@@ -94,11 +91,11 @@ public class UndoRedo extends JPanel {
         panel1 = this;
     }
 
-    public void setText(String s) {
-        undoCountTextField.setText(s);
-    }
-
     public String getText() {
         return undoCountTextField.getText();
+    }
+
+    public void setText(String s) {
+        undoCountTextField.setText(s);
     }
 }

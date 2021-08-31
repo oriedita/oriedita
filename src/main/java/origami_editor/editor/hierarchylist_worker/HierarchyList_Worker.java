@@ -1,58 +1,67 @@
 package origami_editor.editor.hierarchylist_worker;
 
+import origami_editor.editor.LineColor;
+import origami_editor.editor.creasepattern_worker.CreasePattern_Worker;
 import origami_editor.editor.hierarchylist_worker.hierarchylist.HierarchyList;
 import origami_editor.editor.hierarchylist_worker.hierarchylist.equivalence_condition.EquivalenceCondition;
 import origami_editor.editor.hierarchylist_worker.subface.SubFace;
-import origami_editor.editor.creasepattern_worker.CreasePattern_Worker;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritaoekaki.OritaDrawing;
+import origami_editor.graphic2d.point.Point;
+import origami_editor.graphic2d.polygon.Polygon;
+import origami_editor.record.memo.Memo;
+import origami_editor.record.string_op.StringOp;
+import origami_editor.sortingbox.SortingBox_int_double;
+import origami_editor.sortingbox.int_double;
+import origami_editor.tools.bulletinboard.BulletinBoard;
+import origami_editor.tools.camera.Camera;
+import origami_editor.tools.pointset.PointSet;
 
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import origami_editor.graphic2d.point.Point;
-import origami_editor.record.memo.Memo;
-import origami_editor.record.string_op.StringOp;
-import origami_editor.tools.camera.Camera;
-import origami_editor.tools.pointset.PointSet;
-import origami_editor.editor.App;
-import origami_editor.editor.LineColor;
-import origami_editor.sortingbox.SortingBox_int_double;
-import origami_editor.sortingbox.int_double;
-import origami_editor.graphic2d.polygon.Polygon;
-
 //HierarchyList: Record and utilize what kind of vertical relationship the surface of the developed view before folding will be after folding.
 public class HierarchyList_Worker {
+    public double[] face_rating;
+    public int[] i_face_rating;
+    public SortingBox_int_double nbox = new SortingBox_int_double();//20180227　nboxにはmenのidがmen_ratingと組になって、men_ratingの小さい順に並べ替えられて入っている。
     HierarchyList hierarchyList = new HierarchyList();
     int SubFaceTotal;//SubFaceの数
-    int SubFace_valid_number;//SubFaceは全て調べなくても、Faceの上下関係は網羅できる。Faceの上下関係を網羅するのに必要なSubFaceの数が優先順位の何番目までかをさがす。
-    int FaceIdCount_max;//各SubFaceの持つMenidsuuの最大値。すなわち、最も紙に重なりが多いところの枚数。
-    //paint 用のint格納用VVVVVVVVVVVVVVVVVVVVVV
-    boolean ip1_flipped = false; //0 is the mode to display the front side of the folding diagram. 1 is a mode to display the back side of the folding diagram.
     //  hierarchyList[][]は折る前の展開図のすべての面同士の上下関係を1つの表にまとめたものとして扱う
     //　hierarchyList[i][j]が1なら面iは面jの上側。0なら下側。
     //  hierarchyList[i][j]が-50なら、面iとjは重なが、上下関係は決められていない。
     //hierarchyList[i][j]が-100なら、面iとjは重なるところがない。
-
+    int SubFace_valid_number;//SubFaceは全て調べなくても、Faceの上下関係は網羅できる。Faceの上下関係を網羅するのに必要なSubFaceの数が優先順位の何番目までかをさがす。
+    int FaceIdCount_max;//各SubFaceの持つMenidsuuの最大値。すなわち、最も紙に重なりが多いところの枚数。
+    //paint 用のint格納用VVVVVVVVVVVVVVVVVVVVVV
+    boolean ip1_flipped = false; //0 is the mode to display the front side of the folding diagram. 1 is a mode to display the back side of the folding diagram.
     SubFace[] s0;//SubFace obtained from SubFace_figure
     SubFace[] s;//s is s0 sorted in descending order of priority.
     int[] s0_no_yusenjyun;
     int[] yusenjyun_kara_s0id;
-
     boolean displayShadows = false; //Whether to display shadows. 0 is not displayed, 1 is displayed
-
     Camera camera = new Camera();
+    BulletinBoard bb;
+    Color F_color = new Color(255, 255, 50);//表面の色
+    Color B_color = new Color(233, 233, 233);//裏面の色
+    Color L_color = Color.black;//線の色
+    boolean antiAlias = true;
 
-    App app;
+    //　ここは  class Jyougehyou_Syokunin  の中です。
+    //上下表の初期設定。展開図に1頂点から奇数の折線がでる誤りがある場合0を返す。それが無ければ1000を返す。
+    //展開図に山谷折線の拡張による誤りがある場合2を返す。
+    double lineWidthForAntiAlias = 1.2;
+    int makesuu0no_menno_amount = 0;//Number of faces that can be ranked without any other faces on top
+    int makesuu1ijyouno_menno_amount = 0;//Number of faces that can only be ranked if there is one or more other faces on top
+    private int top_face_id_ga_maketa_kazu_goukei_without_rated_face = 0;
 
-    public double[] face_rating;
-    public int[] i_face_rating;
+    //------------------------------------------
 
-    public SortingBox_int_double nbox = new SortingBox_int_double();//20180227　nboxにはmenのidがmen_ratingと組になって、men_ratingの小さい順に並べ替えられて入っている。
+    //-----------------------------------------------------------------------------------------
 
-    public HierarchyList_Worker(App app0) {
-        app = app0;
+    public HierarchyList_Worker(BulletinBoard bb0) {
+        bb = bb0;
         reset();
     }
 
@@ -69,13 +78,17 @@ public class HierarchyList_Worker {
         camera.setCamera(cam0);
     }
 
+
+    //　ここは  class Jyougehyou_Syokunin  の中です。
+
+
+    //SubFaceの面の重なり状態を次の状態にする。
+    //もし現在の面の重なり状態が、最後のものだったら0をreturnして、面の重なり状態は最初のものに戻る。
+    //zzzzzzzz
+
     public int getSubFace_valid_number() {
         return SubFace_valid_number;
     }
-
-    //　ここは  class Jyougehyou_Syokunin  の中です。
-    //上下表の初期設定。展開図に1頂点から奇数の折線がでる誤りがある場合0を返す。それが無ければ1000を返す。
-    //展開図に山谷折線の拡張による誤りがある場合2を返す。
 
     public void SubFace_configure(PointSet otta_Face_figure, PointSet SubFace_figure) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
         // Make an upper and lower table of faces (the faces in the unfolded view before folding).
@@ -93,7 +106,7 @@ public class HierarchyList_Worker {
         yusenjyun_kara_s0id = new int[SubFaceTotal + 1];
 
         for (int i = 0; i < SubFaceTotal + 1; i++) {
-            s0[i] = new SubFace(app);
+            s0[i] = new SubFace(bb);
             s[i] = s0[i];
             s0_no_yusenjyun[i] = 0;
             yusenjyun_kara_s0id[i] = i;
@@ -141,18 +154,8 @@ public class HierarchyList_Worker {
         }
     }
 
-    public enum HierarchyListStatus {
-        UNKNOWN_N1,
-        UNKNOWN_0,
-        UNKNOWN_1,
-        UNKNOWN_2,
-        UNKNOWN_3,
-        UNKNOWN_4,
-        UNKNOWN_1000,
-    }
-
     public HierarchyListStatus HierarchyList_configure(CreasePattern_Worker orite, PointSet otta_face_figure) {
-        app.bulletinBoard.write("           Jyougehyou_settei   step1   start ");
+        bb.write("           Jyougehyou_settei   step1   start ");
         HierarchyListStatus ireturn = HierarchyListStatus.UNKNOWN_1000;
         hierarchyList.setFacesTotal(otta_face_figure.getNumFaces());
 
@@ -194,7 +197,7 @@ public class HierarchyList_Worker {
         }
 
         //----------------------------------------------
-        app.bulletinBoard.write("           Jyougehyou_settei   step2   start ");
+        bb.write("           Jyougehyou_settei   step2   start ");
         System.out.println("等価条件を設定する   ");
         //等価条件を設定する。棒ibを境界として隣接する2つの面im1,im2が有る場合、折り畳み推定した場合に
         //棒ibの一部と重なる位置に有る面imは面im1と面im2に上下方向で挟まれることはない。このことから
@@ -219,7 +222,7 @@ public class HierarchyList_Worker {
         }
         System.out.print("３面が関与する突き抜け条件の数　＝　");
         System.out.println(hierarchyList.getEquivalenceConditionTotal());
-        app.bulletinBoard.write("           Jyougehyou_settei   step3   start ");
+        bb.write("           Jyougehyou_settei   step3   start ");
         // Add equivalence condition. There are two adjacent faces im1 and im2 as the boundary of the bar ib,
         // Also, there are two adjacent faces im3 and im4 as the boundary of the bar jb, and when ib and jb are parallel and partially overlap, when folding is estimated.
         // The surface of the bar ib and the surface of the surface jb are not aligned with i, j, i, j or j, i, j, i. If this happens,
@@ -248,7 +251,7 @@ public class HierarchyList_Worker {
         System.out.print("４面が関与する突き抜け条件の数　＝　");
         System.out.println(hierarchyList.getUEquivalenceConditionTotal());
 
-        app.bulletinBoard.write("           Jyougehyou_settei   step4   start ");
+        bb.write("           Jyougehyou_settei   step4   start ");
         //Additional estimation
 
         HierarchyListStatus additional = additional_estimation();
@@ -261,7 +264,7 @@ public class HierarchyList_Worker {
         //*************Saving the results of the first deductive reasoning**************************
         hierarchyList.save();//Save the hierarchical relationship determined from the mountain fold and valley fold information.
         //************************************************************************
-        app.bulletinBoard.write("           Jyougehyou_settei   step5   start ");
+        bb.write("           Jyougehyou_settei   step5   start ");
         //Make a guidebook for each SubFace
         System.out.println("Smen毎に案内書を作る");
         for (int i = 1; i <= SubFaceTotal; i++) {
@@ -939,9 +942,13 @@ public class HierarchyList_Worker {
         return HierarchyListStatus.UNKNOWN_1000;
     }
 
-    //------------------------------------------
+// ---------------------------------------------------------------
 
-    //-----------------------------------------------------------------------------------------
+    //　ここは  class Jyougehyou_Syokunin  の中です。
+    //-----------------------------------------------------
+
+
+    //図をかく際の数値変換用関数-----------------------------------------------------------------
 
     private boolean subFace_i_ga_j_ni_included(int s0i, int s0j) { //1 if included, 0 otherwise
         if (s0[s0i].getFaceIdCount() > s0[s0j].getFaceIdCount()) {
@@ -970,6 +977,8 @@ public class HierarchyList_Worker {
         return s0[s0id].sinki_jyouhou_suu(hierarchyList);
     }
 
+    //---------------------------------------------------------
+    //---------------------------------------------------------
 
     //------------------------
     //引数の４つの面を同時に含むSubFaceが1つ以上存在するなら１、しないなら０を返す。
@@ -988,14 +997,6 @@ public class HierarchyList_Worker {
         return false;
 
     }
-
-
-    //　ここは  class Jyougehyou_Syokunin  の中です。
-
-
-    //SubFaceの面の重なり状態を次の状態にする。
-    //もし現在の面の重なり状態が、最後のものだったら0をreturnして、面の重なり状態は最初のものに戻る。
-    //zzzzzzzz
 
     public int next(int ss) {
         int isusumu;//When = 0, SubFace changes (image that digits change).
@@ -1034,10 +1035,10 @@ public class HierarchyList_Worker {
 
     //Start with the current permutation state and look for possible overlapping states. There is room for speeding up here.
     public int possible_overlapping_search() {      //This should not change the hierarchyList.
-        app.bulletinBoard.write("_ _______");
-        app.bulletinBoard.write("__ ______");
-        app.bulletinBoard.write("___ _____");
-        app.bulletinBoard.write("____ ____");
+        bb.write("_ _______");
+        bb.write("__ ______");
+        bb.write("___ _____");
+        bb.write("____ ____");
         int ms, Sid;
 
         Sid = 1;//The initial value of Sid can be anything other than 0.
@@ -1048,7 +1049,7 @@ public class HierarchyList_Worker {
                 return 1000;
             }//There is no contradiction in all SubFaces.
             Sid = next(ms - 1);
-            app.bulletinBoard.rewrite(9, "susumu(" + ms + "-1 = )" + Sid);
+            bb.rewrite(9, "susumu(" + ms + "-1 = )" + Sid);
         }
         return 0;//There is no possible overlapping state
     }
@@ -1061,13 +1062,13 @@ public class HierarchyList_Worker {
 
         for (int ss = 1; ss <= SubFace_valid_number; ss++) {      //<<<<<<<<<<<<<<高速化のため変更。070417
 
-            app.bulletinBoard.rewrite(7, "mujyun_Smen_motome( " + ss + ") , Menidsuu = " + s[ss].getFaceIdCount() + " , Men_pair_suu = " + s[ss].getFaceIdCount() * (s[ss].getFaceIdCount() - 1) / 2);
-            app.bulletinBoard.rewrite(8, " kasanari_bunryi_mitei = " + s[ss].overlapping_classification_pending(hierarchyList));
-            app.bulletinBoard.rewrite(9, " kasanari_bunryi_ketteizumi = " + s[ss].overlapping_classification_determined(hierarchyList));
+            bb.rewrite(7, "mujyun_Smen_motome( " + ss + ") , Menidsuu = " + s[ss].getFaceIdCount() + " , Men_pair_suu = " + s[ss].getFaceIdCount() * (s[ss].getFaceIdCount() - 1) / 2);
+            bb.rewrite(8, " kasanari_bunryi_mitei = " + s[ss].overlapping_classification_pending(hierarchyList));
+            bb.rewrite(9, " kasanari_bunryi_ketteizumi = " + s[ss].overlapping_classification_determined(hierarchyList));
 
 
             kks = s[ss].possible_overlapping_search(hierarchyList);
-            app.bulletinBoard.rewrite(10, Permutation_count(ss));
+            bb.rewrite(10, Permutation_count(ss));
 
 
             if (kks == 0) {//kks == 0 means that there is no permutation that can overlap
@@ -1083,14 +1084,6 @@ public class HierarchyList_Worker {
         return 1000;
     }
 
-// ---------------------------------------------------------------
-
-    //　ここは  class Jyougehyou_Syokunin  の中です。
-    //-----------------------------------------------------
-
-
-    //図をかく際の数値変換用関数-----------------------------------------------------------------
-
     private int gx(double d) {
         return (int) d; //Front side display
     }
@@ -1099,42 +1092,33 @@ public class HierarchyList_Worker {
         return (int) d;
     }
 
-    //---------------------------------------------------------
-    //---------------------------------------------------------
-
-
-    Color F_color = new Color(255, 255, 50);//表面の色
-    Color B_color = new Color(233, 233, 233);//裏面の色
-    Color L_color = Color.black;//線の色
+    public Color get_F_color() {
+        return F_color;
+    }
 
     public void set_F_color(Color color0) {
         F_color = color0;
-    }
-
-    public void set_B_color(Color color0) {
-        B_color = color0;
-    }
-
-    public void set_L_color(Color color0) {
-        L_color = color0;
-    }
-
-    public Color get_F_color() {
-        return F_color;
     }
 
     public Color get_B_color() {
         return B_color;
     }
 
+    public void set_B_color(Color color0) {
+        B_color = color0;
+    }
+
+    //---------------------------------------------------------
+
     public Color get_L_color() {
         return L_color;
     }
 
+    //---------------------------------------------------------
 
-    boolean antiAlias = true;
-    double lineWidthForAntiAlias = 1.2;
-
+    public void set_L_color(Color color0) {
+        L_color = color0;
+    }
     //---------------------------------------------------------
 
     public void toggleAntiAlias() {
@@ -1148,8 +1132,6 @@ public class HierarchyList_Worker {
         }
 
     }
-
-    //---------------------------------------------------------
 
     public Memo getMemo_for_svg_with_camera(CreasePattern_Worker orite, PointSet subFace_figure) {//折り上がり図(hyouji_flg==5)
         boolean front_back = camera.isCameraMirrored();
@@ -1301,6 +1283,8 @@ public class HierarchyList_Worker {
 
         return memo_temp;
     }
+
+
     //---------------------------------------------------------
 
     //
@@ -1393,7 +1377,6 @@ public class HierarchyList_Worker {
 
         return memo_temp;
     }
-
 
     //---------------------------------------------------------
     public void draw_transparency_with_camera(Graphics g, PointSet otta_Face_figure, PointSet subFace_figure, boolean transparencyColor, int transparency_toukado) {
@@ -1509,9 +1492,6 @@ public class HierarchyList_Worker {
             }
         }
     }
-
-
-    //---------------------------------------------------------
 
     public void draw_foldedFigure_with_camera(Graphics g, CreasePattern_Worker orite, PointSet subFace_figure) {
         Graphics2D g2 = (Graphics2D) g;
@@ -1798,7 +1778,6 @@ public class HierarchyList_Worker {
         }
     }
 
-
     //---------------------------------------------------------
     public void draw_cross_with_camera(Graphics g) {
         //Draw the center of the camera with a cross
@@ -1872,9 +1851,6 @@ public class HierarchyList_Worker {
         return i_return;
     }
 
-    int makesuu0no_menno_amount = 0;//Number of faces that can be ranked without any other faces on top
-    int makesuu1ijyouno_menno_amount = 0;//Number of faces that can only be ranked if there is one or more other faces on top
-
     private void rating2() {
         int hierarchyListFacesTotal = hierarchyList.getFacesTotal();//面の総数を求める。
         face_rating = new double[hierarchyListFacesTotal + 1];
@@ -1911,8 +1887,6 @@ public class HierarchyList_Worker {
         }
     }
     //Each of the following functions uses s0 [] as FaceStack 20180305
-
-    private int top_face_id_ga_maketa_kazu_goukei_without_rated_face = 0;
 
     private int get_top_face_id_without_rated_face() {
         int top_men_id = 0;
@@ -1993,6 +1967,16 @@ public class HierarchyList_Worker {
             }
         }
         return 0;
+    }
+
+    public enum HierarchyListStatus {
+        UNKNOWN_N1,
+        UNKNOWN_0,
+        UNKNOWN_1,
+        UNKNOWN_2,
+        UNKNOWN_3,
+        UNKNOWN_4,
+        UNKNOWN_1000,
     }
 }     
 

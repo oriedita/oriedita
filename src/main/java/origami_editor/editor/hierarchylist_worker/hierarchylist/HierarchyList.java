@@ -3,7 +3,7 @@ package origami_editor.editor.hierarchylist_worker.hierarchylist;
 
 import origami_editor.editor.hierarchylist_worker.hierarchylist.equivalence_condition.EquivalenceCondition;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class HierarchyList {//This class is used to record and utilize the hierarchical relationship of faces when folded.
     int facesTotal;             //Number of faces in the unfolded view before folding
@@ -15,29 +15,14 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     HierarchyListCondition[][] hierarchyList;
     HierarchyListCondition[][] hierarchyList_copy;
     int EquivalenceConditionTotal;   //A combination that can cause a situation in which another surface penetrates the boundary between two adjacent surfaces.
-
-    public enum HierarchyListCondition {
-        UNKNOWN_0,
-        UNKNOWN_1,
-        UNKNOWN_N50,
-        EMPTY_N100,
-        ;
-
-        public boolean isEmpty() {
-            return this == UNKNOWN_N50 || this == EMPTY_N100;
-        }
-    }
-
     ArrayList<EquivalenceCondition> tL = new ArrayList<>();
-
     int uEquivalenceConditionTotal;
-
     ArrayList<EquivalenceCondition> uL = new ArrayList<>();
-    //Furthermore, when a, b, c, and d coexist in a certain SubFace, a combination that can cause penetration at the boundary line
 
     public HierarchyList() {
         reset();
     }
+    //Furthermore, when a, b, c, and d coexist in a certain SubFace, a combination that can cause penetration at the boundary line
 
     public void reset() {
         tL.clear();
@@ -72,6 +57,10 @@ public class HierarchyList {//This class is used to record and utilize the hiera
         return hierarchyList[i][j];
     }
 
+    public int getFacesTotal() {
+        return facesTotal;
+    }
+
     public void setFacesTotal(int iM) {
         facesTotal = iM;
 
@@ -86,10 +75,6 @@ public class HierarchyList {//This class is used to record and utilize the hiera
         }
     }
 
-    public int getFacesTotal() {
-        return facesTotal;
-    }
-
     public int getEquivalenceConditionTotal() {
         return EquivalenceConditionTotal;
     }
@@ -97,7 +82,6 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     public EquivalenceCondition getEquivalenceCondition(int i) {
         return tL.get(i);
     }
-
 
     // Add equivalence condition. When there are two adjacent faces im1 and im2 as the boundary of the bar ib, when the folding is estimated
     // The surface im located at the position where it overlaps a part of the bar ib is not sandwiched between the surface im1 and the surface im2 in the vertical direction. From this
@@ -123,5 +107,17 @@ public class HierarchyList {//This class is used to record and utilize the hiera
         uEquivalenceConditionTotal = uEquivalenceConditionTotal + 1;
 
         uL.add(new EquivalenceCondition(ai, bi, ci, di));
+    }
+
+    public enum HierarchyListCondition {
+        UNKNOWN_0,
+        UNKNOWN_1,
+        UNKNOWN_N50,
+        EMPTY_N100,
+        ;
+
+        public boolean isEmpty() {
+            return this == UNKNOWN_N50 || this == EMPTY_N100;
+        }
     }
 }

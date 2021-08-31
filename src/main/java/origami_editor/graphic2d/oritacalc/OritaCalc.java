@@ -1,8 +1,8 @@
 package origami_editor.graphic2d.oritacalc;
 
 import origami_editor.graphic2d.circle.Circle;
-import origami_editor.graphic2d.oritacalc.straightline.StraightLine;
 import origami_editor.graphic2d.linesegment.LineSegment;
+import origami_editor.graphic2d.oritacalc.straightline.StraightLine;
 import origami_editor.graphic2d.point.Point;
 
 /**

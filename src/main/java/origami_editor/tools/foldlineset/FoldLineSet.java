@@ -1,5 +1,6 @@
 package origami_editor.tools.foldlineset;
 
+import origami_editor.editor.LineColor;
 import origami_editor.graphic2d.circle.Circle;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
@@ -7,7 +8,6 @@ import origami_editor.graphic2d.oritacalc.straightline.StraightLine;
 import origami_editor.graphic2d.point.Point;
 import origami_editor.graphic2d.polygon.Polygon;
 import origami_editor.record.memo.Memo;
-import origami_editor.editor.LineColor;
 import origami_editor.sortingbox.SortingBox_int_double;
 import origami_editor.sortingbox.int_double;
 
@@ -4211,12 +4211,10 @@ public class FoldLineSet {
             if (getColor(nbox.getInt(1)) != LineColor.BLACK_0) {//1本目が黒でないならダメ
                 return false;
             }
-            if (getColor(nbox.getInt(2)) != LineColor.BLACK_0) {//2本目が黒でないならダメ
-                return false;
-            }
+            //2本目が黒でないならダメ
+            return getColor(nbox.getInt(2)) == LineColor.BLACK_0;
 
             //2本の線種が黒黒
-            return true;
         }
 
 

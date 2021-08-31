@@ -6,8 +6,6 @@ import origami_editor.graphic2d.oritacalc.OritaCalc;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class FoldedFigureRotate extends JPanel {
     private JButton foldedFigureRotateAntiClockwiseButton;

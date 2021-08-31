@@ -1,6 +1,6 @@
 package origami_editor.record.memo;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class Memo {//Notepad for data storage
     ArrayList<String> lines = new ArrayList<>();

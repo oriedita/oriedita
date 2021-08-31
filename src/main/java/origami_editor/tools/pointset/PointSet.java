@@ -1,14 +1,14 @@
 package origami_editor.tools.pointset;
 
+import origami_editor.editor.LineColor;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
 import origami_editor.graphic2d.point.Point;
 import origami_editor.graphic2d.point.Point_p;
 import origami_editor.graphic2d.polygon.Polygon;
 import origami_editor.record.memo.Memo;
-import origami_editor.tools.line.Line;
 import origami_editor.tools.face.Face;
-import origami_editor.editor.LineColor;
+import origami_editor.tools.line.Line;
 
 import java.util.ArrayList;
 import java.util.List;

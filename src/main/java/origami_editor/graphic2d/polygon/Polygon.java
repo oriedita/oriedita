@@ -66,49 +66,6 @@ public class Polygon {
         return itrue == 1;
     }
 
-    /**
-     * A Point or LineSegment intersecting a Polygon
-     */
-    public enum Intersection {
-        /**
-         * When all of the line segment s0 exists outside the convex polygon (the boundary line is not considered inside)
-         */
-        OUTSIDE,
-        /**
-         * When all of the line segments s0 are on the boundary of the convex polygon
-         */
-        BORDER,
-        /**
-         * When all of the line segment s0 exists inside the convex polygon (the boundary line is not considered to be inside)
-         */
-        INSIDE,
-        /**
-         * When the line segment s0 exists both outside the convex polygon and across the boundary line
-         */
-        OUTSIDE_BORDER,
-        /**
-         * When the line segment s0 exists inside the convex polygon, the boundary line, and the outside
-         */
-        OUTSIDE_BORDER_INSIDE,
-        /**
-         * When the line segment s0 exists both inside the convex polygon and across the boundary line
-         */
-        BORDER_INSIDE,
-        ;
-
-        public static Intersection create(boolean outside, boolean border, boolean inside) {
-            if (outside && border && inside) return OUTSIDE_BORDER_INSIDE;
-            if (outside && border) return OUTSIDE_BORDER;
-            if (border && inside) return BORDER_INSIDE;
-            if (outside) return OUTSIDE;
-            if (inside) return INSIDE;
-            if (border) return BORDER;
-
-            throw new IllegalArgumentException();
-        }
-    }
-
-
     // 0, when all of the line segment s0 exists outside the convex polygon (the boundary line is not considered inside)
     // When the line segment s0 exists both outside the convex polygon and across the boundary line 1,
     // When the line segment s0 exists inside the convex polygon, the boundary line, and the outside 2,
@@ -332,7 +289,6 @@ public class Polygon {
         return iflag == 4;//In reality, there should be no situation where you can reach this point.
     }
 
-
     // Even a part of the line segment s0 is inside the convex polygon (the boundary line is also regarded as the inside)
     // Returns 1 if present, 0 otherwise
     public boolean totu_boundary_inside(LineSegment s0) {// Returns 1 if even part of s0 touches a polygon.
@@ -353,13 +309,8 @@ public class Polygon {
             return true;
         }
 
-        if (inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE) {
-            return true;
-        }
-
-        return false;
+        return inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE;
     }
-
 
     //A function that determines if a point is inside this polygon (true) or not (false)----------------------------------
     public Intersection inside(Point p) {      //0 = outside, 1 = boundary, 2 = inside
@@ -453,7 +404,6 @@ public class Polygon {
         return distance;
     }
 
-
     //Find the points inside the polygon
     public Point insidePoint_find() {
         Point tn = new Point();
@@ -496,7 +446,6 @@ public class Polygon {
         y[0] = (int) vertices[vertexCount].getY();
         g.fillPolygon(x, y, vertexCount);
     }
-
 
     public double getXMin() {
         double r;
@@ -541,4 +490,46 @@ public class Polygon {
         }
         return r;
     }//多角形のy座標の最大値を求める
+
+    /**
+     * A Point or LineSegment intersecting a Polygon
+     */
+    public enum Intersection {
+        /**
+         * When all of the line segment s0 exists outside the convex polygon (the boundary line is not considered inside)
+         */
+        OUTSIDE,
+        /**
+         * When all of the line segments s0 are on the boundary of the convex polygon
+         */
+        BORDER,
+        /**
+         * When all of the line segment s0 exists inside the convex polygon (the boundary line is not considered to be inside)
+         */
+        INSIDE,
+        /**
+         * When the line segment s0 exists both outside the convex polygon and across the boundary line
+         */
+        OUTSIDE_BORDER,
+        /**
+         * When the line segment s0 exists inside the convex polygon, the boundary line, and the outside
+         */
+        OUTSIDE_BORDER_INSIDE,
+        /**
+         * When the line segment s0 exists both inside the convex polygon and across the boundary line
+         */
+        BORDER_INSIDE,
+        ;
+
+        public static Intersection create(boolean outside, boolean border, boolean inside) {
+            if (outside && border && inside) return OUTSIDE_BORDER_INSIDE;
+            if (outside && border) return OUTSIDE_BORDER;
+            if (border && inside) return BORDER_INSIDE;
+            if (outside) return OUTSIDE;
+            if (inside) return INSIDE;
+            if (border) return BORDER;
+
+            throw new IllegalArgumentException();
+        }
+    }
 }

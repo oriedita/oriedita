@@ -10,7 +10,7 @@ public class Editor {
     private SouthPanel southPanel1;
     private NorthPanel northPanel1;
     private WestPanel westPanel1;
-    private App app;
+    private final App app;
 
     public Editor(App app) {
         this.app = app;

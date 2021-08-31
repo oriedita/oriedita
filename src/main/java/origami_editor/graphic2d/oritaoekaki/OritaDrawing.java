@@ -1,9 +1,9 @@
 package origami_editor.graphic2d.oritaoekaki;
 
 import origami_editor.editor.LineColor;
-import origami_editor.graphic2d.point.Point;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
+import origami_editor.graphic2d.point.Point;
 
 import java.awt.*;
 
@@ -17,20 +17,22 @@ public class OritaDrawing {
     }
 
     public static void widthLine(Graphics g, LineSegment s, double r, LineColor iColor) {
-        if (iColor == LineColor.BLACK_0) {
-            g.setColor(Color.black);
-        }
-        if (iColor == LineColor.RED_1) {
-            g.setColor(Color.red);
-        }
-        if (iColor == LineColor.BLUE_2) {
-            g.setColor(Color.blue);
-        }
-        if (iColor == LineColor.CYAN_3) {
-            g.setColor(Color.green);
-        }
-        if (iColor == LineColor.ORANGE_4) {
-            g.setColor(Color.orange);
+        switch (iColor) {
+            case BLACK_0:
+                g.setColor(Color.black);
+                break;
+            case RED_1:
+                g.setColor(Color.red);
+                break;
+            case BLUE_2:
+                g.setColor(Color.blue);
+                break;
+            case CYAN_3:
+                g.setColor(Color.green);
+                break;
+            case ORANGE_4:
+                g.setColor(Color.orange);
+                break;
         }
         LineSegment sp = OritaCalc.moveParallel(s, r);
         LineSegment sm = OritaCalc.moveParallel(s, -r);

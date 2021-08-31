@@ -1,10 +1,10 @@
 package origami_editor.tools.linestore;
 
+import origami_editor.editor.LineColor;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
 import origami_editor.graphic2d.point.Point;
 import origami_editor.record.memo.Memo;
-import origami_editor.editor.LineColor;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;

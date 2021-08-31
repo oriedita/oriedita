@@ -1,11 +1,11 @@
 package origami_editor.graphic2d.circle;
 
-import java.awt.*;
-
+import origami_editor.editor.LineColor;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.straightline.StraightLine;
-import origami_editor.editor.LineColor;
 import origami_editor.graphic2d.point.Point;
+
+import java.awt.*;
 
 public class Circle {//Used to represent point coordinates, direction vectors, etc.
 
@@ -79,14 +79,6 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
         color = m;
     }
 
-    public void setX(double xx) {
-        x = xx;
-    }
-
-    public void setY(double yy) {
-        y = yy;
-    }
-
     public void setR(double rr) {
         r = rr;
     }
@@ -95,8 +87,16 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
         return x;
     }
 
+    public void setX(double xx) {
+        x = xx;
+    }
+
     public double getY() {
         return y;
+    }
+
+    public void setY(double yy) {
+        y = yy;
     }
 
     public double getRadius() {
@@ -110,28 +110,28 @@ public class Circle {//Used to represent point coordinates, direction vectors, e
         color = LineColor.BLACK_0;
     }
 
-    public void setColor(LineColor i) {
-        color = i;
-    }
-
     public LineColor getColor() {
         return color;
     }
 
-    public void setCustomized(int i) {
-        customized = i;
+    public void setColor(LineColor i) {
+        color = i;
     }
 
     public int getCustomized() {
         return customized;
     }
 
-    public void setCustomizedColor(Color c0) {
-        customizedColor = c0;
+    public void setCustomized(int i) {
+        customized = i;
     }
 
     public Color getCustomizedColor() {
         return customizedColor;
+    }
+
+    public void setCustomizedColor(Color c0) {
+        customizedColor = c0;
     }
 
     public Point getCenter() {

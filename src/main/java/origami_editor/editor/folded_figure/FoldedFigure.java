@@ -1,14 +1,14 @@
 package origami_editor.editor.folded_figure;
 
+import origami_editor.editor.App;
 import origami_editor.editor.basicbranch_worker.WireFrame_Worker;
 import origami_editor.editor.creasepattern_worker.CreasePattern_Worker;
+import origami_editor.editor.hierarchylist_worker.HierarchyList_Worker;
 import origami_editor.graphic2d.point.Point;
 import origami_editor.record.memo.Memo;
-import origami_editor.tools.camera.Camera;
 import origami_editor.tools.bulletinboard.BulletinBoard;
+import origami_editor.tools.camera.Camera;
 import origami_editor.tools.linestore.LineSegmentSet;
-import origami_editor.editor.App;
-import origami_editor.editor.hierarchylist_worker.HierarchyList_Worker;
 
 import java.awt.*;
 
@@ -67,16 +67,10 @@ public class FoldedFigure {
     private int i_closestPointId;
     private PointSelection i_point_selection = PointSelection.NONE_0;//Both cp_worker1 and cp_worker2 are not selected (situation i_point_selection = 0), cp_worker1 is selected and cp_worker2 is not selected (situation i_point_selection = 1), and the vertex is cp_worker2 selected (situation i_point_selection = 2).
 
-    public enum PointSelection {
-        NONE_0,
-        WORKER_1,
-        WORKER_2,
-    }
-
     public FoldedFigure(App app0) {
         app = app0;
 
-        ct_worker = new HierarchyList_Worker(app0);
+        ct_worker = new HierarchyList_Worker(app0.bulletinBoard);
         bulletinBoard = new BulletinBoard(app0);
 
         //Camera settings ------------------------------------------------------------------
@@ -346,13 +340,9 @@ public class FoldedFigure {
     }
 
     public void folding_estimated(Camera camera_of_orisen_nyuuryokuzu, LineSegmentSet lineSegmentSet) {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
-        boolean i_camera_estimated = false;
+        boolean i_camera_estimated = (estimationStep == EstimationStep.STEP_0) && (estimationOrder.isBelowOrEqual5());
 
         //Folded view display camera settings
-
-        if ((estimationStep == EstimationStep.STEP_0) && (estimationOrder.isBelowOrEqual5())) {
-            i_camera_estimated = true;
-        }
 
         if (estimationOrder == EstimationOrder.ORDER_51) {
             estimationOrder = EstimationOrder.ORDER_5;
@@ -625,7 +615,6 @@ public class FoldedFigure {
         System.out.println("＜＜＜＜＜oritatami_suitei_04()____終了");
         return 1000;
     }
-    //It froze. This can be done by changing 128 to 127 to eliminate the freeze, but if the transparency is not set to a multiple of 2, the value may shift when it is halved, so the maximum transparency is set to 64. I will leave it.
 
     public int folding_estimated_05() {
         System.out.println("＜＜＜＜＜oritatami_suitei_05()_____上下表職人ct_workerがct_worker.kanou_kasanari_sagasi()実施。");
@@ -646,11 +635,7 @@ public class FoldedFigure {
         app.bulletinBoard.clear();
 
         text_result = "Number of found solutions = " + discovered_fold_cases + "  ";
-
-        findAnotherOverlapValid = false;
-        if ((ip2_possibleOverlap == 1000) && (ip5 > 0)) {
-            findAnotherOverlapValid = true;
-        }
+        findAnotherOverlapValid = (ip2_possibleOverlap == 1000) && (ip5 > 0);
 
         if (!findAnotherOverlapValid) {
             text_result = text_result + " There is no other solution. ";
@@ -658,6 +643,7 @@ public class FoldedFigure {
 
         return 1000;
     }
+    //It froze. This can be done by changing 128 to 127 to eliminate the freeze, but if the transparency is not set to a multiple of 2, the value may shift when it is halved, so the maximum transparency is set to 64. I will leave it.
 
     public void decreaseTransparency() {
         transparent_transparency = transparent_transparency / 2;
@@ -1018,6 +1004,12 @@ public class FoldedFigure {
     public void setAllPointStateFalse() {
         cp_worker1.setAllPointStateFalse();
         cp_worker2.setAllPointStateFalse();
+    }
+
+    public enum PointSelection {
+        NONE_0,
+        WORKER_1,
+        WORKER_2,
     }
 
     public enum EstimationOrder {

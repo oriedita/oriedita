@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SouthPanel extends JPanel {
+    private final App app;
     private JButton foldButton;
     private JPanel panel1;
     private JButton anotherSolutionButton;
@@ -31,7 +32,6 @@ public class SouthPanel extends JPanel {
     private JButton goToFoldedFigureButton;
     private UndoRedo undoRedo;
     private JButton foldedFigureMove;
-    private final App app;
 
     public SouthPanel(App app) {
         this.app = app;

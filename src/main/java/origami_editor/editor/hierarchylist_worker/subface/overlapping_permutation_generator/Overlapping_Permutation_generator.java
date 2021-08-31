@@ -76,10 +76,7 @@ public class Overlapping_Permutation_generator {//Permutations with repeat gener
             if (ignew > numDigits) {
                 break;
             }
-            boolean exit_flg = true;
-            if (map[ignew] == 1) {
-                exit_flg = false;
-            }
+            boolean exit_flg = map[ignew] != 1;
 
             for (int i = 1; i <= guides.get(ignew, 0); i++) {
                 if (map[guides.get(ignew, i)] == 0) {

@@ -1,9 +1,9 @@
 package origami_editor.graphic2d.linesegment;
 
-import java.awt.*;
-
 import origami_editor.editor.LineColor;
 import origami_editor.graphic2d.point.Point;
+
+import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -21,6 +21,8 @@ public class LineSegment {
     int minX;//The smaller one when truncating the x-coordinate of the end point
     int maxY;//Larger when rounding up the y-coordinate of the end point
     int minY;//The smaller one when truncating the y coordinate of the end point
+    int voronoiA;
+    int voronoiB;
 
     //コンストラクタ
     public LineSegment() {
@@ -109,7 +111,6 @@ public class LineSegment {
         System.out.println(str0 + " (" + d2s(a.getX()) + " , " + d2s(a.getY()) + "),(" + d2s(b.getX()) + " , " + d2s(b.getY()) + ") ,ia=" + active + ",ic=" + color + ",is=" + selected);
     }
 
-
     //-------------------------------------------
     public void set(LineSegment s) {
         a.set(s.getA());
@@ -152,15 +153,6 @@ public class LineSegment {
     }
 
     //----------
-    public void setA(Point p) {
-        set(p.getX(), p.getY(), b.getX(), b.getY());
-    }
-
-    public void setB(Point p) {
-        set(a.getX(), a.getY(), p.getX(), p.getY());
-    }
-
-    //----------
     //Set the coordinates of the activated point to p !!!!!!!!!!!! If you make a mistake, this function is dangerous because it is hard to notice, preferably change it to another name 20170507
     public void set(Point p) {
         if (active == ActiveState.ACTIVE_A_1) {
@@ -180,7 +172,7 @@ public class LineSegment {
     }
 
     public void set(Point p, Point q, LineColor ic, ActiveState ia, int v_a, int v_b) {
-        set(p,q,ic,ia);
+        set(p, q, ic, ia);
         voronoiA = v_a;
         voronoiB = v_b;
     }
@@ -211,29 +203,28 @@ public class LineSegment {
         return minY;
     }
 
-
-    public void setColor(LineColor i) {
-        color = i;
-    }
-
     public LineColor getColor() {
         return color;
     }
 
-    public void setActive(ActiveState i) {
-        active = i;
+    public void setColor(LineColor i) {
+        color = i;
     }
 
     public ActiveState getActive() {
         return active;
     }
 
-    public void setSelected(int i) {
-        selected = i;
+    public void setActive(ActiveState i) {
+        active = i;
     }
 
     public int getSelected() {
         return selected;
+    }
+
+    public void setSelected(int i) {
+        selected = i;
     }
 
     //This line segment is activated depending on whether it is close to a certain point.
@@ -264,8 +255,17 @@ public class LineSegment {
         return new Point(a.getX(), a.getY());
     }
 
+    //----------
+    public void setA(Point p) {
+        set(p.getX(), p.getY(), b.getX(), b.getY());
+    }
+
     public Point getB() {
         return new Point(b.getX(), b.getY());
+    }
+
+    public void setB(Point p) {
+        set(a.getX(), a.getY(), p.getX(), p.getY());
     }
 
     public Point getClosestEndpoint(Point p) {//Returns the endpoint closest to point P
@@ -290,69 +290,64 @@ public class LineSegment {
         return a.getX();
     }
 
-    public double getAY() {
-        return a.getY();
-    }
-
-    public double getBX() {
-        return b.getX();
-    }
-
-    public double getBY() {
-        return b.getY();
-    }
-
     public void setAX(double d) {
         a.setX(d);
+    }
+
+    public double getAY() {
+        return a.getY();
     }
 
     public void setAY(double d) {
         a.setY(d);
     }
 
+    public double getBX() {
+        return b.getX();
+    }
+
     public void setBX(double d) {
         b.setX(d);
+    }
+
+    public double getBY() {
+        return b.getY();
     }
 
     public void setBY(double d) {
         b.setY(d);
     }
 
-
-    public void setCustomized(int i) {
-        customized = i;
-    }
-
     public int getCustomized() {
         return customized;
     }
 
-    public void setCustomizedColor(Color c0) {
-        customizedColor = c0;
+    public void setCustomized(int i) {
+        customized = i;
     }
 
     public Color getCustomizedColor() {
         return customizedColor;
     }
 
-    int voronoiA;
-    int voronoiB;
-
-    public void setVoronoiA(int i) {
-        voronoiA = i;
-    }
-
-
-    public void setVoronoiB(int i) {
-        voronoiB = i;
+    public void setCustomizedColor(Color c0) {
+        customizedColor = c0;
     }
 
     public int getVoronoiA() {
         return voronoiA;
     }
 
+    public void setVoronoiA(int i) {
+        voronoiA = i;
+    }
+
     public int getVoronoiB() {
         return voronoiB;
+    }
+
+    public void setVoronoiB(int i) {
+        voronoiB = i;
     }
 
     /**

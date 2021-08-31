@@ -1,9 +1,9 @@
 package origami_editor.editor.hierarchylist_worker.subface;
 
 import origami_editor.editor.hierarchylist_worker.hierarchylist.HierarchyList;
-import origami_editor.editor.App;
 import origami_editor.editor.hierarchylist_worker.hierarchylist.equivalence_condition.EquivalenceCondition;
 import origami_editor.editor.hierarchylist_worker.subface.overlapping_permutation_generator.Overlapping_Permutation_generator;
+import origami_editor.tools.bulletinboard.BulletinBoard;
 
 public class SubFace {//This class folds the development view and estimates the overlap information of the planes of the wire diagram.
     //Used to utilize records. Use only in the ClassTable class
@@ -17,14 +17,14 @@ public class SubFace {//This class folds the development view and estimates the 
     int[] FaceId2fromTop_counted_position;// Represents the position counted from the top of the surface (FaceId).
     int[] fromTop_counted_position2FaceId;// Represents the surface at the position counted from the top.
 
-    App app;
+    BulletinBoard bb;
 
     public SubFace() {
         reset();
     }
 
-    public SubFace(App app0) {
-        app = app0;
+    public SubFace(BulletinBoard bb0) {
+        bb = bb0;
         reset();
     }
 
@@ -107,7 +107,7 @@ public class SubFace {//This class folds the development view and estimates the 
             for (int i = 1; i <= faceIdCount; i++) {
                 s0.append(" : ").append(getPermutation(i));
             }
-            app.bulletinBoard.rewrite(10, "Smen_kanou_kasanari_sagasi(hierarchyList) =  " + s0);
+            bb.rewrite(10, "Smen_kanou_kasanari_sagasi(hierarchyList) =  " + s0);
         }
         return 0;//There is no permutation that can overlap
     }

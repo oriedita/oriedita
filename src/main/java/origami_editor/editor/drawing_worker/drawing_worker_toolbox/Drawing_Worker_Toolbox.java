@@ -8,17 +8,15 @@ import origami_editor.tools.foldlineset.FoldLineSet;
 
 public class Drawing_Worker_Toolbox {
     FoldLineSet ori_s;
-
-    public Drawing_Worker_Toolbox(FoldLineSet o_s) {  //コンストラクタ
-        ori_s = o_s;
-    }
-
     // Extend the vector ab (= s0) from point a to b until it first intersects another polygonal line
     LineSegment lengthenUntilIntersectionLineSegment = new LineSegment();
     Point lengthenUntilIntersectionPoint = new Point();
     StraightLine.Intersection lengthenUntilIntersection_flg = StraightLine.Intersection.NONE_0;//The situation of the first intersection where ab was extended
     int lengthenUntilIntersectionFoldLineIncluded_flg = 0;//If ab is straightened, including existing polygonal lines, 3
     LineSegment lengthenUntilIntersectionFirstLineSegment = new LineSegment();//Straightening ab and the existing polygonal line that hits first
+    public Drawing_Worker_Toolbox(FoldLineSet o_s) {  //コンストラクタ
+        ori_s = o_s;
+    }
 
     //Extend the vector ab (= s0) from point a to b, until it first intersects another fold line (ignoring the line segment contained in the straight line) // If it does not intersect another fold line, set Point a return
     public void lengthenUntilIntersectionDisregardIncludedLineSegment(Point a, Point b) {

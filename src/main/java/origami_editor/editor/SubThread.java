@@ -11,26 +11,6 @@ class SubThread extends Thread {
         app = app0;
     }
 
-    enum Mode {
-        /**
-         * Execution of folding estimate 5. It is not a mode to put out different solutions of folding estimation at once.
-         */
-        FOLDING_ESTIMATE_0,
-        /**
-         * Execution of folding estimate 5. Another solution for folding estimation is put together.
-         *
-         * Saves 100 image files
-         */
-        FOLDING_ESTIMATE_SAVE_100_1,
-        FOLDING_ESTIMATE_SPECIFIC_2,
-        CHECK_CAMV_3,
-
-        /**
-         * Two-color development drawing
-         */
-        TWO_COLORED_4,
-    }
-
     public void run() {
         long start = System.currentTimeMillis();
 
@@ -97,5 +77,25 @@ class SubThread extends Thread {
 
         app.subThreadRunning = false;
         app.repaint();
+    }
+
+    enum Mode {
+        /**
+         * Execution of folding estimate 5. It is not a mode to put out different solutions of folding estimation at once.
+         */
+        FOLDING_ESTIMATE_0,
+        /**
+         * Execution of folding estimate 5. Another solution for folding estimation is put together.
+         * <p>
+         * Saves 100 image files
+         */
+        FOLDING_ESTIMATE_SAVE_100_1,
+        FOLDING_ESTIMATE_SPECIFIC_2,
+        CHECK_CAMV_3,
+
+        /**
+         * Two-color development drawing
+         */
+        TWO_COLORED_4,
     }
 }
