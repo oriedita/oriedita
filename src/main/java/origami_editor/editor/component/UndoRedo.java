@@ -45,21 +45,42 @@ public class UndoRedo extends JPanel {
      */
     private void $$$setupUI$$$() {
         createUIComponents();
-        panel1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        panel1.setLayout(new GridBagLayout());
         panel1.setEnabled(true);
         undoButton = new JButton();
         undoButton.setIcon(new ImageIcon(getClass().getResource("/ppp/undo.png")));
-        panel1.add(undoButton);
+        undoButton.setPreferredSize(new Dimension(30, 30));
+        GridBagConstraints gbc;
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(undoButton, gbc);
         undoCountTextField = new JTextField();
         undoCountTextField.setColumns(2);
         undoCountTextField.setMinimumSize(new Dimension(60, 30));
-        panel1.add(undoCountTextField);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(undoCountTextField, gbc);
         setUndoCountButton = new JButton();
+        setUndoCountButton.setPreferredSize(new Dimension(50, 30));
         setUndoCountButton.setText("S");
-        panel1.add(setUndoCountButton);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(setUndoCountButton, gbc);
         redoButton = new JButton();
         redoButton.setIcon(new ImageIcon(getClass().getResource("/ppp/redo.png")));
-        panel1.add(redoButton);
+        redoButton.setPreferredSize(new Dimension(30, 30));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(redoButton, gbc);
     }
 
     /**

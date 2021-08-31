@@ -95,21 +95,38 @@ public class FoldedFigureRotate extends JPanel {
      */
     private void $$$setupUI$$$() {
         panel1 = new JPanel();
-        panel1.setLayout(new FlowLayout(FlowLayout.CENTER, 1, 1));
+        panel1.setLayout(new GridBagLayout());
         panel1.setBackground(new Color(-1));
         panel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(-16777216)), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         foldedFigureRotateAntiClockwiseButton = new JButton();
         foldedFigureRotateAntiClockwiseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oriagari_p_kaiten.png")));
-        panel1.add(foldedFigureRotateAntiClockwiseButton);
+        GridBagConstraints gbc;
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(foldedFigureRotateAntiClockwiseButton, gbc);
         foldedFigureRotateTextField = new JTextField();
         foldedFigureRotateTextField.setColumns(2);
-        panel1.add(foldedFigureRotateTextField);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(foldedFigureRotateTextField, gbc);
         foldedFigureRotateSetButton = new JButton();
         foldedFigureRotateSetButton.setText("S");
-        panel1.add(foldedFigureRotateSetButton);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(foldedFigureRotateSetButton, gbc);
         foldedFigureRotateClockwiseButton = new JButton();
         foldedFigureRotateClockwiseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oriagari_m_kaiten.png")));
-        panel1.add(foldedFigureRotateClockwiseButton);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(foldedFigureRotateClockwiseButton, gbc);
     }
 
     /**

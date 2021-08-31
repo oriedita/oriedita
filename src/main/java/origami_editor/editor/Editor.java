@@ -9,6 +9,7 @@ public class Editor {
     private EastPanel eastPanel1;
     private SouthPanel southPanel1;
     private NorthPanel northPanel1;
+    private WestPanel westPanel1;
     private App app;
 
     public Editor(App app) {
@@ -20,6 +21,7 @@ public class Editor {
         eastPanel1 = new EastPanel(app);
         southPanel1 = new SouthPanel(app);
         northPanel1 = new NorthPanel(app);
+        westPanel1 = new WestPanel(app);
     }
 
     {
@@ -44,6 +46,7 @@ public class Editor {
         panel1.add(eastPanel1.$$$getRootComponent$$$(), BorderLayout.EAST);
         panel1.add(canvas1, BorderLayout.CENTER);
         panel1.add(northPanel1.$$$getRootComponent$$$(), BorderLayout.NORTH);
+        panel1.add(westPanel1.$$$getRootComponent$$$(), BorderLayout.WEST);
     }
 
     /**

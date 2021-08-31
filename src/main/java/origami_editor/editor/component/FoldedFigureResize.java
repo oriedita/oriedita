@@ -117,22 +117,39 @@ public class FoldedFigureResize extends JPanel {
      */
     private void $$$setupUI$$$() {
         panel1 = new JPanel();
-        panel1.setLayout(new FlowLayout(FlowLayout.CENTER, 1, 1));
+        panel1.setLayout(new GridBagLayout());
         panel1.setBackground(new Color(-1));
         panel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(-16777216)), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         foldedFigureSizeDecreaseButton = new JButton();
         foldedFigureSizeDecreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oriagari_syukusyou.png")));
-        panel1.add(foldedFigureSizeDecreaseButton);
+        GridBagConstraints gbc;
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(foldedFigureSizeDecreaseButton, gbc);
         foldedFigureSizeTextField = new JTextField();
         foldedFigureSizeTextField.setColumns(2);
         foldedFigureSizeTextField.setHorizontalAlignment(4);
-        panel1.add(foldedFigureSizeTextField);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(foldedFigureSizeTextField, gbc);
         foldedFigureSizeSetButton = new JButton();
         foldedFigureSizeSetButton.setText("S");
-        panel1.add(foldedFigureSizeSetButton);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(foldedFigureSizeSetButton, gbc);
         foldedFigureSizeIncreaseButton = new JButton();
         foldedFigureSizeIncreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oriagari_kakudai.png")));
-        panel1.add(foldedFigureSizeIncreaseButton);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(foldedFigureSizeIncreaseButton, gbc);
     }
 
     /**

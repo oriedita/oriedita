@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="origami_editor.editor.component.FoldedFigureRotate">
-  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="FlowLayout" hgap="1" vgap="1" flow-align="1">
+  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="GridBagLayout">
     <constraints>
       <xy x="20" y="20" width="315" height="34"/>
     </constraints>
@@ -12,25 +12,37 @@
     </border>
     <children>
       <component id="5f683" class="javax.swing.JButton" binding="foldedFigureRotateAntiClockwiseButton">
-        <constraints/>
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
         <properties>
           <icon value="ppp/oriagari_p_kaiten.png"/>
         </properties>
       </component>
       <component id="c047c" class="javax.swing.JTextField" binding="foldedFigureRotateTextField">
-        <constraints/>
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
         <properties>
           <columns value="2"/>
         </properties>
       </component>
       <component id="ed1cc" class="javax.swing.JButton" binding="foldedFigureRotateSetButton">
-        <constraints/>
+        <constraints>
+          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
         <properties>
           <text value="S"/>
         </properties>
       </component>
       <component id="8ed37" class="javax.swing.JButton" binding="foldedFigureRotateClockwiseButton">
-        <constraints/>
+        <constraints>
+          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
         <properties>
           <icon value="ppp/oriagari_m_kaiten.png"/>
         </properties>
