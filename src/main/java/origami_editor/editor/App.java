@@ -5,7 +5,6 @@ import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.editor.hierarchylist_worker.HierarchyList_Worker;
-import origami_editor.graphic2d.grid.Grid;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.point.Point;
 import origami_editor.record.memo.Memo;
@@ -31,14 +30,12 @@ public class App extends JFrame implements ActionListener {
     private final EastPanel eastPanel;
     private final SouthPanel southPanel;
     private final WestPanel westPanel;
+    private final AppMenuBar appMenuBar;
     public FoldedFigure temp_OZ = new FoldedFigure(this);    //Folded figure
     public FoldedFigure OZ;    //Current Folded figure
     public LineSegmentSet Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
     public BulletinBoard bulletinBoard = new BulletinBoard(this);
     public Camera camera_of_orisen_input_diagram = new Camera();
-    public boolean antiAlias = false;//展開図のアンチェイリアスをするかしないか。する=1、しない=0
-    public int pointSize = 1;//Specify the shape of the points in the development view
-    public LineStyle lineStyle = LineStyle.COLOR;//折線の表現、1＝色、2=色と形状、3=黒で1点鎖線、4=黒で2点鎖線
     public JButton Button_F_color;                    //折り上がり図の表の色の指定に用いる
     public JButton Button_B_color;                    //折り上がり図の裏の色の指定に用いる
     public JButton Button_L_color;                    //折り上がり図の線の色の指定に用いる
@@ -50,23 +47,10 @@ public class App extends JFrame implements ActionListener {
     //Those that basically change the appearance of the parts are declared here.
     public JTextField foldedFigureSizeTextField;//double d_oriagarizu_syukusyaku_keisuu=1.0;//折り上がり図の縮尺係数
     public JTextField foldedFigureRotateTextField;
-    public JCheckBox ckbox_mouse_settings;//マウスの設定。チェックがあると、ホイールマウスとして動作設定
-    public JCheckBoxMenuItem ckbox_point_search;//点を探す範囲
-    public JCheckBoxMenuItem ckbox_ten_hanasi;//点を離すかどうか
-    public JCheckBoxMenuItem gridInputAssistCheckBox;//高密度用入力をするかどうか
-    public JCheckBoxMenuItem ckbox_bun;//文章
-    public JCheckBoxMenuItem ckbox_cp;//折線
-    public JCheckBoxMenuItem ckbox_a0;//補助活線cyan
-    public JCheckBoxMenuItem ckbox_a1;//補助画線
     public JCheckBox ckbox_check4;//check4
-    public JCheckBoxMenuItem ckbox_mark;//Marking lines such as crosses and reference planes
-    public JCheckBoxMenuItem ckbox_cp_ue;//展開図を折り上がり予想図の上に描く
-    public JCheckBox ckbox_folding_keika;//Writing out the progress of the folding forecast
     public JCheckBox correctCpBeforeFoldingCheckBox;//cpを折畳み前に自動改善する。
     public JCheckBox selectPersistentCheckBox;//select状態を他の操作をしてもなるべく残す
     public JCheckBox ckbox_toukazu_color;//透過図をカラー化する。
-    public int displayLineWidth = 1;//The thickness of the line in the development view.
-    public int displayAuxLineWidth = 3;//Line thickness of non-interference auxiliary line
     public MouseMode mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;//Defines the response to mouse movements. If it is 1, the line segment input mode. If it is 2, adjust the development view (move). If it is 101, operate the folded figure.
     public SelectionOperationMode selectionOperationMode;//Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
     // ------------------------------------------------------------------------
@@ -209,6 +193,7 @@ public class App extends JFrame implements ActionListener {
     double d_ap_check4 = 0.0;
 
     public final GridConfiguration gridConfiguration = new GridConfiguration();
+    public final CanvasConfiguration canvasConfiguration = new CanvasConfiguration();
 
     ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     public App() {
@@ -313,25 +298,16 @@ public class App extends JFrame implements ActionListener {
 
         canvas = editor.getCanvas1();
 
-        AppMenuBar appMenuBar = new AppMenuBar(this);
+        appMenuBar = new AppMenuBar(this);
 
         setJMenuBar(appMenuBar);
 
-        ckbox_point_search = appMenuBar.getShowPointRangeCheckBox();
-        ckbox_ten_hanasi = appMenuBar.getPointOffsetCheckBox();
-        gridInputAssistCheckBox = appMenuBar.getGridInputAssistCheckBox();
-        ckbox_bun = appMenuBar.getDisplayCommentsCheckBox();
-        ckbox_cp = appMenuBar.getDisplayCpLinesCheckBox();
-        ckbox_a0 = appMenuBar.getDisplayAuxLinesCheckBox();
-        ckbox_a1 = appMenuBar.getDisplayLiveAuxLinesCheckBox();
-        ckbox_mark = appMenuBar.getDisplayStandardFaceMarksCheckBox();
-        ckbox_cp_ue = appMenuBar.getCpOnTopCheckBox();
-
-        ckbox_folding_keika = new JCheckBox("");
+        JCheckBox ckbox_folding_keika = new JCheckBox("");
         ckbox_folding_keika.addActionListener(e -> {
             setHelp("ckbox_oritatami_keika");
+            canvasConfiguration.setDisplayFoldingProgress(ckbox_folding_keika.isSelected());
 
-            repaintCanvas();
+            updateCanvas();
         });
         ckbox_folding_keika.setIcon(createImageIcon("ppp/ckbox_oritatami_keika_off.png"));
         ckbox_folding_keika.setSelectedIcon(createImageIcon("ppp/ckbox_oritatami_keika_on.png"));
@@ -340,8 +316,6 @@ public class App extends JFrame implements ActionListener {
         /*
          * Extract fields from northPanel
          */
-        ckbox_mouse_settings = northPanel.getMouseSettingsCheckBox();
-
         ratioATextField = northPanel.getRatioATextField();
         ratioBTextField = northPanel.getRatioBTextField();
         ratioCTextField = northPanel.getRatioCTextField();
@@ -455,7 +429,7 @@ public class App extends JFrame implements ActionListener {
 
         Button_shared_operation();
 
-        repaintCanvas();
+        updateCanvas();
 
         circleCustomizedColorButton.setBackground(circleCustomizedColor);//特注色の指定色表示
 
@@ -709,18 +683,9 @@ public class App extends JFrame implements ActionListener {
         foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;
 //北辺
 
-        ckbox_mouse_settings.setSelected(true);//表示するかどうかの選択
-        ckbox_point_search.setSelected(false);//表示するかどうかの選択
-        ckbox_ten_hanasi.setSelected(false);//mainDrawingWorker.set_i_hanasi(0);          //表示するかどうかの選択
-        gridInputAssistCheckBox.setSelected(false);
-        mainDrawingWorker.setGridInputAssist(false);          //高密度入力するかどうかの選択
-        ckbox_bun.setSelected(true);//文を表示するかどうかの選択
-        ckbox_cp.setSelected(true);//折線を表示するかどうかの選択
-        ckbox_a0.setSelected(true);//補助活線を表示するかどうかの選択
-        ckbox_a1.setSelected(true);//補助画線を表示するかどうかの選択
-        ckbox_mark.setSelected(true);//十字や基準面などの目印画線
-        ckbox_cp_ue.setSelected(false);//展開図を折り上がり予想図の上に描く
-        ckbox_folding_keika.setSelected(false);//折り上がり予想の途中経過の書き出し
+        canvasConfiguration.reset();
+        mainDrawingWorker.setData(canvasConfiguration);
+
         correctCpBeforeFoldingCheckBox.setSelected(false);//cpを折畳み前に自動改善する
         selectPersistentCheckBox.setSelected(false);//select状態を折畳み操作をしてもなるべく残す
         ckbox_toukazu_color.setSelected(false);//透過図をカラー化する。
@@ -761,18 +726,12 @@ public class App extends JFrame implements ActionListener {
 //西辺
 
         //展開図の線の太さ。
-        displayLineWidth = 1;
-
-        //頂点のしるしの幅
-        pointSize = 1;
-
 
         //基本枝構造の直線の両端の円の半径、（以前は枝と各種ポイントの近さの判定基準）
         //double r=3.0;
         //mainDrawingWorker.set_r(r);
 
         //折線表現を色で表す
-        lineStyle = LineStyle.COLOR;
 
         //ペンの色の指定
         currentLineColor = LineColor.RED_1;
@@ -1101,7 +1060,7 @@ public class App extends JFrame implements ActionListener {
 
     public Point e2p(MouseEvent e) {
         double d_width = 0.0;
-        if (ckbox_ten_hanasi.isSelected()) {
+        if (canvasConfiguration.getDisplayPointOffset()) {
             d_width = camera_of_orisen_input_diagram.getCameraZoomX() * mainDrawingWorker.getSelectionDistance();
         }
         return new Point(e.getX() - (int) d_width, e.getY() - (int) d_width);
@@ -1444,6 +1403,13 @@ public class App extends JFrame implements ActionListener {
                 sub.start();
             }
         }
+    }
+
+    public void updateCanvas() {
+        mainDrawingWorker.setData(canvasConfiguration);
+        canvas.setData(canvasConfiguration);
+        appMenuBar.setData(canvasConfiguration);
+        northPanel.setData(canvasConfiguration);
     }
 
     public enum MouseWheelTarget {

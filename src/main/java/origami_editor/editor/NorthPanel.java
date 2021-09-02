@@ -68,7 +68,10 @@ public class NorthPanel extends JPanel {
         });
         mouseSettingsCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_mouse_settei");
-            app.repaintCanvas();
+
+            app.canvasConfiguration.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected());
+
+            app.updateCanvas();
         });
         lineSegmentInternalDivisionRatioSetButton.addActionListener(e -> {
             app.setInternalDivisionRatio();
@@ -481,6 +484,10 @@ public class NorthPanel extends JPanel {
         });
     }
 
+    public void setData(CanvasConfiguration canvasConfiguration) {
+        mouseSettingsCheckBox.setSelected(canvasConfiguration.getMouseWheelMovesCreasePattern());
+    }
+
     public JTextField getRotationTextField() {
         return rotationTextField;
     }
@@ -491,10 +498,6 @@ public class NorthPanel extends JPanel {
 
     public JButton getBackgroundLockButton() {
         return backgroundLockButton;
-    }
-
-    public JCheckBox getMouseSettingsCheckBox() {
-        return mouseSettingsCheckBox;
     }
 
     public JTextField getScaleFactorTextField() {

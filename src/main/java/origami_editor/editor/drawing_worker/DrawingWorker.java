@@ -117,6 +117,7 @@ public class DrawingWorker {
     // ------------
     FoldLineAdditionalInputMode i_foldLine_additional_old = FoldLineAdditionalInputMode.POLY_LINE_0;
     final int check4ColorTransparencyIncrement = 10;
+    private int lineWidth;
 
     public void setGridConfigurationData(GridConfiguration gridConfiguration) {
         grid.setGridConfigurationData(gridConfiguration);
@@ -235,6 +236,9 @@ public class DrawingWorker {
             }
         }
 
+        CanvasConfiguration canvasConfiguration = app.canvasConfiguration;
+
+
         // ----------------------------------------- チェックボックス等の設定の読み込み
         i_reading = false;
         for (int i = 1; i <= memo1.getLineCount(); i++) {
@@ -252,99 +256,97 @@ public class DrawingWorker {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        app.ckbox_mouse_settings.setSelected(selected);
+                        canvasConfiguration.setMouseWheelMovesCreasePattern(selected);
                     }
 
                     if (st[0].equals("<ckbox_ten_sagasi")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        app.ckbox_point_search.setSelected(selected);
+                        canvasConfiguration.setDisplayPointSpotlight(selected);
                     }
 
                     if (st[0].equals("<ckbox_ten_hanasi")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        app.ckbox_ten_hanasi.setSelected(selected);
+                        canvasConfiguration.setDisplayPointOffset(selected);
                     }
 
                     if (st[0].equals("<ckbox_kou_mitudo_nyuuryoku")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        app.gridInputAssistCheckBox.setSelected(selected);
-                        setGridInputAssist(selected);
+                        canvasConfiguration.setDisplayGridInputAssist(selected);
                     }
 
                     if (st[0].equals("<ckbox_bun")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        app.ckbox_bun.setSelected(selected);
+                        canvasConfiguration.setDisplayGridInputAssist(selected);
                     }
 
                     if (st[0].equals("<ckbox_cp")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        app.ckbox_cp.setSelected(selected);
+                        canvasConfiguration.setDisplayCpLines(selected);
                     }
 
                     if (st[0].equals("<ckbox_a0")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        app.ckbox_a0.setSelected(selected);
+                        canvasConfiguration.setDisplayAuxLines(selected);
                     }
 
                     if (st[0].equals("<ckbox_a1")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        app.ckbox_a1.setSelected(selected);
+                        canvasConfiguration.setDisplayLiveAuxLines(selected);
                     }
 
                     if (st[0].equals("<ckbox_mejirusi")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        app.ckbox_mark.setSelected(selected);
+                        canvasConfiguration.setDisplayMarkings(selected);
                     }
 
                     if (st[0].equals("<ckbox_cp_ue")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        app.ckbox_cp_ue.setSelected(selected);
+                        canvasConfiguration.setDisplayCreasePatternOnTop(selected);
                     }
 
                     if (st[0].equals("<ckbox_oritatami_keika")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        app.ckbox_folding_keika.setSelected(selected);
+                        canvasConfiguration.setDisplayFoldingProgress(selected);
                     }
 
                     if (st[0].equals("<iTenkaizuSenhaba")) {
                         s = st[1].split("<", 2);
-                        app.displayLineWidth = Integer.parseInt(s[0]);
+                        canvasConfiguration.setLineWidth(Integer.parseInt(s[0]));
                     }
 
                     if (st[0].equals("<ir_ten")) {
                         s = st[1].split("<", 2);
-                        app.pointSize = Integer.parseInt(s[0]);
-                        setPointSize(app.pointSize);
+                        canvasConfiguration.setPointSize(Integer.parseInt(s[0]));
                     }
 
                     if (st[0].equals("<i_orisen_hyougen")) {
                         s = st[1].split("<", 2);
-                        app.lineStyle = LineStyle.from(s[0].trim());
+                        canvasConfiguration.setLineStyle(LineStyle.from(s[0].trim()));
                     }
 
                     if (st[0].equals("<i_anti_alias")) {
                         s = st[1].split("<", 2);
-                        app.antiAlias = Boolean.parseBoolean(s[0].trim());
+                        canvasConfiguration.setAntiAlias(Boolean.parseBoolean(s[0].trim()));
                     }
                 }
             }
@@ -696,7 +698,7 @@ public class DrawingWorker {
         Point b = new Point();
 
         String str_stroke;
-        String str_strokewidth = Integer.toString(app.displayLineWidth);
+        String str_strokewidth = Integer.toString(lineWidth);
 
         //Drawing of development drawing Polygonal lines other than auxiliary live lines
         if (i_cp_display) {
@@ -844,24 +846,24 @@ public class DrawingWorker {
         memo1.addLine("</camera_of_orisen_nyuuryokuzu>");
 
         memo1.addLine("<settei>");
-        memo1.addLine("<ckbox_mouse_settei>" + app.ckbox_mouse_settings.isSelected() + "</ckbox_mouse_settei>");
-        memo1.addLine("<ckbox_ten_sagasi>" + app.ckbox_point_search.isSelected() + "</ckbox_ten_sagasi>");
-        memo1.addLine("<ckbox_ten_hanasi>" + app.ckbox_ten_hanasi.isSelected() + "</ckbox_ten_hanasi>");
-        memo1.addLine("<ckbox_kou_mitudo_nyuuryoku>" + app.gridInputAssistCheckBox.isSelected() + "</ckbox_kou_mitudo_nyuuryoku>");
-        memo1.addLine("<ckbox_bun>" + app.ckbox_bun.isSelected() + "</ckbox_bun>");
-        memo1.addLine("<ckbox_cp>" + app.ckbox_cp.isSelected() + "</ckbox_cp>");
-        memo1.addLine("<ckbox_a0>" + app.ckbox_a0.isSelected() + "</ckbox_a0>");
-        memo1.addLine("<ckbox_a1>" + app.ckbox_a1.isSelected() + "</ckbox_a1>");
-        memo1.addLine("<ckbox_mejirusi>" + app.ckbox_mark.isSelected() + "</ckbox_mejirusi>");
-        memo1.addLine("<ckbox_cp_ue>" + app.ckbox_cp_ue.isSelected() + "</ckbox_cp_ue>");
-        memo1.addLine("<ckbox_oritatami_keika>" + app.ckbox_folding_keika.isSelected() + "</ckbox_oritatami_keika>");
+        memo1.addLine("<ckbox_mouse_settei>" + app.canvasConfiguration.getMouseWheelMovesCreasePattern() + "</ckbox_mouse_settei>");
+        memo1.addLine("<ckbox_ten_sagasi>" + app.canvasConfiguration.getDisplayPointSpotlight() + "</ckbox_ten_sagasi>");
+        memo1.addLine("<ckbox_ten_hanasi>" + app.canvasConfiguration.getDisplayPointOffset() + "</ckbox_ten_hanasi>");
+        memo1.addLine("<ckbox_kou_mitudo_nyuuryoku>" + app.canvasConfiguration.getDisplayGridInputAssist() + "</ckbox_kou_mitudo_nyuuryoku>");
+        memo1.addLine("<ckbox_bun>" + app.canvasConfiguration.getDisplayComments() + "</ckbox_bun>");
+        memo1.addLine("<ckbox_cp>" + app.canvasConfiguration.getDisplayCpLines() + "</ckbox_cp>");
+        memo1.addLine("<ckbox_a0>" + app.canvasConfiguration.getDisplayAuxLines() + "</ckbox_a0>");
+        memo1.addLine("<ckbox_a1>" + app.canvasConfiguration.getDisplayLiveAuxLines() + "</ckbox_a1>");
+        memo1.addLine("<ckbox_mejirusi>" + app.canvasConfiguration.getDisplayMarkings() + "</ckbox_mejirusi>");
+        memo1.addLine("<ckbox_cp_ue>" + app.canvasConfiguration.getDisplayCreasePatternOnTop() + "</ckbox_cp_ue>");
+        memo1.addLine("<ckbox_oritatami_keika>" + app.canvasConfiguration.getDisplayFoldingProgress() + "</ckbox_oritatami_keika>");
         //The thickness of the line in the development view.
-        memo1.addLine("<iTenkaizuSenhaba>" + app.displayLineWidth + "</iTenkaizuSenhaba>");
+        memo1.addLine("<iTenkaizuSenhaba>" + app.canvasConfiguration.getLineWidth() + "</iTenkaizuSenhaba>");
         //Width of vertex sign
-        memo1.addLine("<ir_ten>" + app.pointSize + "</ir_ten>");
+        memo1.addLine("<ir_ten>" + app.canvasConfiguration.getPointSize() + "</ir_ten>");
         //Express the polygonal line expression with color
-        memo1.addLine("<i_orisen_hyougen>" + app.lineStyle + "</i_orisen_hyougen>");
-        memo1.addLine("<i_anti_alias>" + app.antiAlias + "</i_anti_alias>");
+        memo1.addLine("<i_orisen_hyougen>" + app.canvasConfiguration.getLineStyle() + "</i_orisen_hyougen>");
+        memo1.addLine("<i_anti_alias>" + app.canvasConfiguration.getAntiAlias() + "</i_anti_alias>");
         memo1.addLine("</settei>");
 
         memo1.addLine("<Kousi>");
@@ -8839,6 +8841,12 @@ public class DrawingWorker {
 
     public double getSelectionDistance() {
         return selectionDistance;
+    }
+
+    public void setData(CanvasConfiguration canvasConfiguration) {
+        setGridInputAssist(canvasConfiguration.getDisplayGridInputAssist());
+        setPointSize(canvasConfiguration.getPointSize());
+        lineWidth = canvasConfiguration.getLineWidth();
     }
 
     public enum FoldLineAdditionalInputMode {

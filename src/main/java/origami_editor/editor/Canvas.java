@@ -23,7 +23,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private final App app;
 
     Graphics bufferGraphics;
-    BufferedImage offscreen = null;//20181205new
+    BufferedImage offscreen;//20181205new
 
     boolean flg_wi = false;//writeimage時につかう　1にするとpaintの関数の終了部にwriteimageするようにする。これは、paintの変更が書き出されるイメージに反映されないことを防ぐための工夫。20180528
     int btn = 0;//Stores which button in the center of the left and right is pressed. 1 =
@@ -43,14 +43,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     float auxLineWidth;
     float lineWidth;
 
+    LineStyle lineStyle;
+
     // Applet width and height
     Dimension dim;
+    private boolean antiAlias;
+    private boolean mouseWheelMovesCreasePattern;
 
     public Canvas(App app0) {
         app = app0;
-
-        auxLineWidth = (float) app.displayAuxLineWidth;
-        lineWidth = (float) app.displayLineWidth;
 
         offscreen = new BufferedImage(2000, 1100, BufferedImage.TYPE_INT_BGR);
         bufferGraphics = offscreen.createGraphics();    //20170107_new
@@ -70,19 +71,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //「f」を付けることでfloat型の数値として記述することができる
         Graphics2D g2 = (Graphics2D) bufferGraphics;
 
-        lineWidth = (float) app.displayLineWidth;
-        auxLineWidth = (float) app.displayAuxLineWidth;
-
-        if (app.antiAlias) {
-            lineWidth = lineWidth + 0.2f;
-            auxLineWidth = auxLineWidth + 0.2f;
-        }
-
         BasicStroke BStroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
         g2.setStroke(BStroke);//線の太さや線の末端の形状
 
         //アンチエイリアス　オフ
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, app.antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチエイリアス　オン
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチエイリアス　オン
 
         g2.setBackground(Color.WHITE);    //この行は、画像をファイルに書き出そうとしてBufferedImageクラスを使う場合、デフォルトで背景が黒になるので、それを避けるための意味　20170107
         //画像をファイルに書き出さすことはやめて、、BufferedImageクラスを使わず、Imageクラスだけですむなら不要の行
@@ -111,18 +104,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         // バッファー画面のクリア
         dim = getSize();
         bufferGraphics.clearRect(0, 0, dim.width, dim.height);
-
-        displayPointSpotlight = app.ckbox_point_search.isSelected();
-        displayPointOffset = app.ckbox_ten_hanasi.isSelected();
-        displayGridInputAssist = app.gridInputAssistCheckBox.isSelected();
-        displayComments = app.ckbox_bun.isSelected();
-        displayCpLines = app.ckbox_cp.isSelected();
-        displayAuxLines = app.ckbox_a0.isSelected();
-        displayLiveAuxLines = app.ckbox_a1.isSelected();
-
-        displayMarkings = app.ckbox_mark.isSelected();
-        displayCreasePatternOnTop = app.ckbox_cp_ue.isSelected();
-        displayFoldingProgress = app.ckbox_folding_keika.isSelected();
 
         bufferGraphics.setColor(Color.red);
         //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
@@ -182,7 +163,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         }
 
         //展開図表示
-        es1.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, app.lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+        es1.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
         if (displayComments) {
             //展開図情報の文字表示
@@ -224,12 +205,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
         if (displayCreasePatternOnTop) {
-            es1.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, app.lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+            es1.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
         }
 
         //アンチェイリアス
         //アンチェイリアス　オフ
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, app.antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オン
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オン
 
         //Central indicator
         if (displayPointOffset) {
@@ -1729,7 +1710,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     }
 
     public void mouseWheelMoved(MouseWheelEvent e) {
-        if (app.ckbox_mouse_settings.isSelected()) {
+        if (mouseWheelMovesCreasePattern) {
             //	ホイールでundo,redo
             if ((e.isShiftDown()) || (app.i_mouse_right_button_on)) {
                 app.i_mouse_undo_redo_mode = true;
@@ -1795,7 +1776,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
             if (fname.endsWith("svg")) {
                 Memo memo1;
-                memo1 = app.mainDrawingWorker.getMemo_for_svg_export_with_camera(displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, app.lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+                memo1 = app.mainDrawingWorker.getMemo_for_svg_export_with_camera(displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
                 Memo memo2 = new Memo();
 
@@ -1851,5 +1832,29 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
             System.out.println("終わりました");
         }
+    }
+
+    public void setData(CanvasConfiguration canvasConfiguration) {
+        displayPointSpotlight = canvasConfiguration.getDisplayPointSpotlight();
+        displayPointOffset = canvasConfiguration.getDisplayPointOffset();
+        displayGridInputAssist = canvasConfiguration.getDisplayGridInputAssist();
+        displayComments = canvasConfiguration.getDisplayComments();
+        displayCpLines = canvasConfiguration.getDisplayCpLines();
+        displayAuxLines = canvasConfiguration.getDisplayAuxLines();
+        displayLiveAuxLines = canvasConfiguration.getDisplayLiveAuxLines();
+
+        displayMarkings = canvasConfiguration.getDisplayMarkings();
+        displayCreasePatternOnTop = canvasConfiguration.getDisplayCreasePatternOnTop();
+        displayFoldingProgress = canvasConfiguration.getDisplayFoldingProgress();
+
+        lineStyle = canvasConfiguration.getLineStyle();
+        antiAlias = canvasConfiguration.getAntiAlias();
+
+        mouseWheelMovesCreasePattern = canvasConfiguration.getMouseWheelMovesCreasePattern();
+
+        lineWidth = canvasConfiguration.getCalculatedLineWidth();
+        auxLineWidth = canvasConfiguration.getCalculatedAuxLineWidth();
+
+        repaint();
     }
 }

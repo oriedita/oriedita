@@ -112,51 +112,48 @@ public class WestPanel extends JPanel {
             app.mainDrawingWorker.setUndoTotal(app.i_undo_suu);
         });
         lineWidthDecreaseButton.addActionListener(e -> {
-            app.displayLineWidth = app.displayLineWidth - 2;
-            if (app.displayLineWidth < 1) {
-                app.displayLineWidth = 1;
-            }
             app.setHelp("senhaba_sage");
-            app.repaintCanvas();
+
+            app.canvasConfiguration.decreaseLineWidth();
+
+            app.updateCanvas();
         });
         lineWidthIncreaseButton.addActionListener(e -> {
-            app.displayLineWidth = app.displayLineWidth + 2;
             app.setHelp("senhaba_age");
-            app.repaintCanvas();
+
+            app.canvasConfiguration.increaseLineWidth();
+
+            app.updateCanvas();
         });
         pointSizeDecreaseButton.addActionListener(e -> {
             app.setHelp("tenhaba_sage");
 
-            app.pointSize = app.pointSize - 1;
-            if (app.pointSize < 0) {
-                app.pointSize = 0;
-            }
-            app.mainDrawingWorker.setPointSize(app.pointSize);
+            app.canvasConfiguration.decreasePointSize();
 
-            app.repaintCanvas();
+            app.updateCanvas();
         });
         pointSizeIncreaseButton.addActionListener(e -> {
             app.setHelp("tenhaba_age");
 
-            app.pointSize = app.pointSize + 1;
-            app.mainDrawingWorker.setPointSize(app.pointSize);
+            app.canvasConfiguration.increasePointSize();
 
-            app.repaintCanvas();
+            app.updateCanvas();
         });
         antiAliasToggleButton.addActionListener(e -> {
-            app.antiAlias = !app.antiAlias;
-
             app.setHelp("anti_alias");
 
-            app.repaintCanvas();
+            app.canvasConfiguration.toggleAntiAlias();
+
+            app.updateCanvas();
         });
         lineStyleChangeButton.addActionListener(e -> {
-            app.Button_shared_operation();
-            app.lineStyle = app.lineStyle.advance();
-
             app.setHelp("orisen_hyougen");
 
-            app.repaintCanvas();
+            app.Button_shared_operation();
+
+            app.canvasConfiguration.advanceLineStyle();
+
+            app.updateCanvas();
         });
         colRedButton.addActionListener(e -> {
             app.setHelp("ButtonCol_red");

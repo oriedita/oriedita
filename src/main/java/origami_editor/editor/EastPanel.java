@@ -622,20 +622,20 @@ public class EastPanel extends JPanel {
             app.repaintCanvas();
         });
         h_senhaba_sageButton.addActionListener(e -> {
-            app.displayAuxLineWidth = app.displayAuxLineWidth - 2;
-            if (app.displayAuxLineWidth < 3) {
-                app.displayAuxLineWidth = 3;
-            }
-
             app.setHelp("h_senhaba_sage");
+
+            app.canvasConfiguration.decreaseAuxLineWidth();
+
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateCanvas();
         });
         h_senhaba_ageButton.addActionListener(e -> {
-            app.displayAuxLineWidth = app.displayAuxLineWidth + 2;
             app.setHelp("h_senhaba_age");
+
+            app.canvasConfiguration.increaseAuxLineWidth();
+
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateCanvas();
         });
         colOrangeButton.addActionListener(e -> {
             app.setHelp("Button_Col_orange");
