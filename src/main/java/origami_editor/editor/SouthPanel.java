@@ -43,7 +43,7 @@ public class SouthPanel extends JPanel {
             System.out.println("20180220 get_i_fold_type() = " + app.getFoldType());
             app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
 
-            if (!app.ckbox_select_nokosi.isSelected()) {
+            if (!app.selectPersistentCheckBox.isSelected()) {
                 app.es1.unselect_all();
             }
 

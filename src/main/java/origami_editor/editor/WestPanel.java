@@ -14,10 +14,7 @@ public class WestPanel extends JPanel {
     private JButton lineWidthDecreaseButton;
     private JButton lineWidthIncreaseButton;
     private JTextField lineSegmentDivisionTextField;
-    private JTextField gridSizeTextField;
-    private JTextField gridXATextField;
-    private JTextField gridAngleTextField;
-    private JCheckBox ckbox_cp_kaizen_folding;
+    private JCheckBox correctCpBeforeFoldingCheckBox;
     private UndoRedo undoRedo;
     private JButton pointSizeDecreaseButton;
     private JButton pointSizeIncreaseButton;
@@ -69,26 +66,8 @@ public class WestPanel extends JPanel {
     private JButton v_del_ccButton;
     private JButton v_del_allButton;
     private JButton v_del_all_ccButton;
-    private JButton gridSizeDecreaseButton;
-    private JButton gridSizeIncreaseButton;
-    private JButton gridSizeSetButton;
-    private JButton gridColorButton;
-    private JButton gridLineWidthDecreaseButton;
-    private JButton gridLineWidthIncreaseButton;
-    private JButton i_kitei_jyoutaiButton;
-    private JButton memori_tate_idouButton;
-    private JButton memori_kankaku_syutokuButton;
-    private JTextField intervalGridSizeTextField;
-    private JButton memori_yoko_idouButton;
-    private JButton intervalGridColorButton;
-    private JTextField gridXBTextField;
-    private JTextField gridXCTextField;
-    private JTextField gridYATextField;
-    private JTextField gridYBTextField;
-    private JTextField gridYCTextField;
-    private JButton setGridParametersButton;
     private JButton inputDataButton;
-    private JCheckBox ckbox_select_nokosi;
+    private JCheckBox selectPersistentCheckBox;
     private JButton drawTwoColoredCpButton;
     private JButton suitei_01Button;
     private JButton koteimen_siteiButton;
@@ -102,6 +81,9 @@ public class WestPanel extends JPanel {
     private JButton colBlackButton;
     private JButton colCyanButton;
     private JButton lineSegmentDivisionSetButton;
+    private JButton button1;
+
+    private final GridConfigureDialog gridConfigureDialog;
 
     public WestPanel(App app) {
         $$$setupUI$$$();
@@ -744,149 +726,6 @@ public class WestPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        gridSizeDecreaseButton.addActionListener(e -> {
-            app.setHelp("qqq/kitei2.png");
-
-            app.gridSize = app.gridSize / 2;
-            if (app.gridSize < 1) {
-                app.gridSize = 1;
-            }
-
-            if (app.gridSize < -0) {
-                app.gridSize = -1;
-            }
-
-            //ボタンの色変え
-            if (app.gridSize >= 1) {
-                gridSizeIncreaseButton.setForeground(Color.black);
-                gridSizeIncreaseButton.setBackground(Color.white);
-            }
-            if (app.gridSize == 0) {
-                gridSizeIncreaseButton.setForeground(Color.black);
-                gridSizeIncreaseButton.setBackground(new Color(0, 200, 200));
-            }
-            //ボタンの色変え(ここまで)
-            //ボタンの色変え
-            if (app.gridSize >= 1) {
-                gridSizeDecreaseButton.setForeground(Color.black);
-                gridSizeDecreaseButton.setBackground(Color.white);
-            }
-            if (app.gridSize == 0) {
-                gridSizeDecreaseButton.setForeground(Color.black);
-                gridSizeDecreaseButton.setBackground(new Color(0, 200, 200));
-            }
-            //ボタンの色変え(ここまで)
-
-            gridSizeTextField.setText(String.valueOf(app.gridSize));
-            app.es1.setGridSize(app.gridSize);
-            app.repaintCanvas();
-        });
-        gridSizeSetButton.addActionListener(e -> {
-            app.setHelp("qqq/syutoku.png");
-            app.setGridSize();
-        });
-        gridSizeIncreaseButton.addActionListener(e -> {
-            app.setHelp("qqq/kitei.png");
-
-            app.gridSize = app.gridSize * 2;
-
-            //ボタンの色変え
-            if (app.gridSize >= 1) {
-                gridSizeIncreaseButton.setForeground(Color.black);
-                gridSizeIncreaseButton.setBackground(Color.white);
-            }
-            if (app.gridSize == 0) {
-                gridSizeIncreaseButton.setForeground(Color.black);
-                gridSizeIncreaseButton.setBackground(new Color(0, 200, 200));
-            }
-            //ボタンの色変え(ここまで)
-            //ボタンの色変え
-            if (app.gridSize >= 1) {
-                gridSizeDecreaseButton.setForeground(Color.black);
-                gridSizeDecreaseButton.setBackground(Color.white);
-            }
-            if (app.gridSize == 0) {
-                gridSizeDecreaseButton.setForeground(Color.black);
-                gridSizeDecreaseButton.setBackground(new Color(0, 200, 200));
-            }
-            //ボタンの色変え(ここまで)
-            gridSizeTextField.setText(String.valueOf(app.gridSize));
-            app.es1.setGridSize(app.gridSize);
-            app.repaintCanvas();
-        });
-        gridColorButton.addActionListener(e -> {
-            app.setHelp("qqq/kousi_color.png");
-            //Button_kyoutuu_sagyou();
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
-
-            //以下にやりたいことを書く
-            Color color = JColorChooser.showDialog(null, "Col", new Color(230, 230, 230));
-            if (color != null) {
-                app.kus.setGridColor(color);
-            }
-            //以上でやりたいことは書き終わり
-
-            app.repaintCanvas();
-        });
-        gridLineWidthDecreaseButton.addActionListener(e -> {
-            app.kus.decreaseGridLineWidth();
-            app.setHelp("qqq/kousi_senhaba_sage.png");
-            app.repaintCanvas();
-        });
-        gridLineWidthIncreaseButton.addActionListener(e -> {
-            app.kus.increaseGridLineWidth();
-            app.setHelp("qqq/kousi_senhaba_age.png");
-            app.repaintCanvas();
-        });
-        i_kitei_jyoutaiButton.addActionListener(e -> {
-            app.setHelp("qqq/i_kitei_jyoutai.png");
-
-            app.es1.setBaseState(app.es1.getBaseState().advance());
-            app.repaintCanvas();
-        });
-        memori_tate_idouButton.addActionListener(e -> {
-            app.setHelp("qqq/memori_tate_idou.png");
-            app.es1.a_to_parallel_scale_position_change();
-
-            app.repaintCanvas();
-        });
-        memori_kankaku_syutokuButton.addActionListener(e -> {
-            app.setHelp("qqq/memori_kankaku_syutoku.png");
-            int scale_interval_old = app.scale_interval;
-            app.scale_interval = StringOp.String2int(intervalGridSizeTextField.getText(), scale_interval_old);
-            if (app.scale_interval < 0) {
-                app.scale_interval = 1;
-            }
-            intervalGridSizeTextField.setText(String.valueOf(app.scale_interval));
-            app.es1.set_a_to_parallel_scale_interval(app.scale_interval);
-            app.es1.set_b_to_parallel_scale_interval(app.scale_interval);
-        });
-        memori_yoko_idouButton.addActionListener(e -> {
-            app.setHelp("qqq/memori_yoko_idou.png");
-
-            app.es1.b_to_parallel_scale_position_change();
-        });
-        intervalGridColorButton.addActionListener(e -> {
-            app.setHelp("qqq/kousi_memori_color.png");
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
-
-
-            //以下にやりたいことを書く
-            Color color = JColorChooser.showDialog(null, "Col", new Color(180, 200, 180));
-            if (color != null) {
-                app.kus.setGridScaleColor(color);
-            }
-            //以上でやりたいことは書き終わり
-
-            app.repaintCanvas();
-        });
-        setGridParametersButton.addActionListener(e -> {
-            app.setHelp("qqq/kousi_syutoku.png");
-            app.setGrid();
-            app.repaintCanvas();
-        });
         inputDataButton.addActionListener(e -> {
             app.setHelp("qqq/yomi_tuika.png");
 
@@ -906,12 +745,12 @@ public class WestPanel extends JPanel {
                 app.repaintCanvas();
             }
         });
-        ckbox_cp_kaizen_folding.addActionListener(e -> {
+        correctCpBeforeFoldingCheckBox.addActionListener(e -> {
             app.setHelp("qqq/ckbox_cp_kaizen_oritatami.png");
 
             app.repaintCanvas();
         });
-        ckbox_select_nokosi.addActionListener(e -> {
+        selectPersistentCheckBox.addActionListener(e -> {
             app.setHelp("qqq/ckbox_select_nokosi.png");
 
             app.repaintCanvas();
@@ -944,8 +783,7 @@ public class WestPanel extends JPanel {
             app.setHelp("qqq/suitei_01.png");
 
             app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
-            if (ckbox_select_nokosi.isSelected()) {
-            } else {
+            if (!selectPersistentCheckBox.isSelected()) {
                 app.es1.unselect_all();
             }
 
@@ -963,7 +801,7 @@ public class WestPanel extends JPanel {
             app.setHelp("qqq/suitei_02.png");
 
             app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
-            if (!ckbox_select_nokosi.isSelected()) {
+            if (!selectPersistentCheckBox.isSelected()) {
                 app.es1.unselect_all();
             }
 
@@ -974,8 +812,7 @@ public class WestPanel extends JPanel {
 
             app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
 
-            if (ckbox_select_nokosi.isSelected()) {
-            } else {
+            if (!selectPersistentCheckBox.isSelected()) {
                 app.es1.unselect_all();
             }
             app.Button_shared_operation();
@@ -1004,6 +841,11 @@ public class WestPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
+        gridConfigureDialog = new GridConfigureDialog(app);
+        button1.addActionListener(e -> {
+            gridConfigureDialog.pack();
+            gridConfigureDialog.setVisible(true);
+        });
     }
 
     public UndoRedo getUndoRedo() {
@@ -1014,48 +856,48 @@ public class WestPanel extends JPanel {
         return coloredXRayButton;
     }
 
-    public JCheckBox getCkbox_cp_kaizen_folding() {
-        return ckbox_cp_kaizen_folding;
+    public JCheckBox getCorrectCpBeforeFoldingCheckBox() {
+        return correctCpBeforeFoldingCheckBox;
     }
 
-    public JCheckBox getCkbox_select_nokosi() {
-        return ckbox_select_nokosi;
+    public JCheckBox getSelectPersistentCheckBox() {
+        return selectPersistentCheckBox;
     }
 
     public JTextField getGridAngleTextField() {
-        return gridAngleTextField;
+        return gridConfigureDialog.getGridAngleTextField();
     }
 
     public JTextField getGridXATextField() {
-        return gridXATextField;
+        return gridConfigureDialog.getGridXATextField();
     }
 
     public JTextField getGridXBTextField() {
-        return gridXBTextField;
+        return gridConfigureDialog.getGridXBTextField();
     }
 
     public JTextField getGridXCTextField() {
-        return gridXCTextField;
+        return gridConfigureDialog.getGridXCTextField();
     }
 
     public JTextField getGridYATextField() {
-        return gridYATextField;
+        return gridConfigureDialog.getGridYATextField();
     }
 
     public JTextField getGridYBTextField() {
-        return gridYBTextField;
+        return gridConfigureDialog.getGridYBTextField();
     }
 
     public JTextField getGridYCTextField() {
-        return gridYCTextField;
+        return gridConfigureDialog.getGridYCTextField();
     }
 
     public JTextField getIntervalGridSizeTextField() {
-        return intervalGridSizeTextField;
+        return gridConfigureDialog.getIntervalGridSizeTextField();
     }
 
     public JTextField getGridSizeTextField() {
-        return gridSizeTextField;
+        return gridConfigureDialog.getGridSizeTextField();
     }
 
     public JTextField getLineSegmentDivisionTextField() {
@@ -1064,14 +906,6 @@ public class WestPanel extends JPanel {
 
     public JButton getSenbun_henkan2Button() {
         return senbun_henkan2Button;
-    }
-
-    public JButton getGridSizeDecreaseButton() {
-        return gridSizeDecreaseButton;
-    }
-
-    public JButton getGridSizeIncreaseButton() {
-        return gridSizeIncreaseButton;
     }
 
     public JButton getM_nisuruButton() {
@@ -1439,325 +1273,105 @@ public class WestPanel extends JPanel {
         gbc.gridy = 23;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(spacer1, gbc);
+        final JPanel spacer2 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 25;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        panel1.add(spacer2, gbc);
         final JPanel panel11 = new JPanel();
         panel11.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 24;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel11, gbc);
-        gridSizeDecreaseButton = new JButton();
-        gridSizeDecreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kitei2.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel11.add(gridSizeDecreaseButton, gbc);
-        gridSizeTextField = new JTextField();
-        gridSizeTextField.setColumns(2);
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel11.add(gridSizeTextField, gbc);
-        gridSizeSetButton = new JButton();
-        gridSizeSetButton.setText("S");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel11.add(gridSizeSetButton, gbc);
-        gridSizeIncreaseButton = new JButton();
-        gridSizeIncreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kitei.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 3;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel11.add(gridSizeIncreaseButton, gbc);
-        gridColorButton = new JButton();
-        gridColorButton.setText("C");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 4;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel11.add(gridColorButton, gbc);
-        final JPanel panel12 = new JPanel();
-        panel12.setLayout(new GridBagLayout());
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 25;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel12, gbc);
-        gridLineWidthDecreaseButton = new JButton();
-        gridLineWidthDecreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kousi_senhaba_sage.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel12.add(gridLineWidthDecreaseButton, gbc);
-        gridLineWidthIncreaseButton = new JButton();
-        gridLineWidthIncreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kousi_senhaba_age.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel12.add(gridLineWidthIncreaseButton, gbc);
-        i_kitei_jyoutaiButton = new JButton();
-        i_kitei_jyoutaiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/i_kitei_jyoutai.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel12.add(i_kitei_jyoutaiButton, gbc);
-        final JPanel panel13 = new JPanel();
-        panel13.setLayout(new GridBagLayout());
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
         gbc.gridy = 26;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel13, gbc);
-        memori_tate_idouButton = new JButton();
-        memori_tate_idouButton.setIcon(new ImageIcon(getClass().getResource("/ppp/memori_tate_idou.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panel13.add(memori_tate_idouButton, gbc);
-        intervalGridSizeTextField = new JTextField();
-        intervalGridSizeTextField.setText("8");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        panel13.add(intervalGridSizeTextField, gbc);
-        memori_kankaku_syutokuButton = new JButton();
-        memori_kankaku_syutokuButton.setText("S");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        panel13.add(memori_kankaku_syutokuButton, gbc);
-        memori_yoko_idouButton = new JButton();
-        memori_yoko_idouButton.setIcon(new ImageIcon(getClass().getResource("/ppp/memori_yoko_idou.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 3;
-        gbc.gridy = 0;
-        panel13.add(memori_yoko_idouButton, gbc);
-        intervalGridColorButton = new JButton();
-        intervalGridColorButton.setText("C");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 4;
-        gbc.gridy = 0;
-        panel13.add(intervalGridColorButton, gbc);
-        final JPanel panel14 = new JPanel();
-        panel14.setLayout(new GridBagLayout());
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 27;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel14, gbc);
-        gridXATextField = new JTextField();
-        gridXATextField.setText("0.0");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panel14.add(gridXATextField, gbc);
-        final JLabel label1 = new JLabel();
-        label1.setIcon(new ImageIcon(getClass().getResource("/ppp/plus_min.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        panel14.add(label1, gbc);
-        gridXBTextField = new JTextField();
-        gridXBTextField.setText("1.0");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        panel14.add(gridXBTextField, gbc);
-        final JLabel label2 = new JLabel();
-        label2.setIcon(new ImageIcon(getClass().getResource("/ppp/root_min.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 3;
-        gbc.gridy = 0;
-        panel14.add(label2, gbc);
-        gridXCTextField = new JTextField();
-        gridXCTextField.setText("1.0");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 4;
-        gbc.gridy = 0;
-        panel14.add(gridXCTextField, gbc);
-        final JPanel panel15 = new JPanel();
-        panel15.setLayout(new GridBagLayout());
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 28;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel15, gbc);
-        gridYATextField = new JTextField();
-        gridYATextField.setText("0.0");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panel15.add(gridYATextField, gbc);
-        final JLabel label3 = new JLabel();
-        label3.setIcon(new ImageIcon(getClass().getResource("/ppp/plus_min.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        panel15.add(label3, gbc);
-        gridYBTextField = new JTextField();
-        gridYBTextField.setText("1.0");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        panel15.add(gridYBTextField, gbc);
-        final JLabel label4 = new JLabel();
-        label4.setIcon(new ImageIcon(getClass().getResource("/ppp/root_min.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 3;
-        gbc.gridy = 0;
-        panel15.add(label4, gbc);
-        gridYCTextField = new JTextField();
-        gridYCTextField.setText("1.0");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 4;
-        gbc.gridy = 0;
-        panel15.add(gridYCTextField, gbc);
-        final JPanel panel16 = new JPanel();
-        panel16.setLayout(new GridBagLayout());
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 29;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel16, gbc);
-        gridAngleTextField = new JTextField();
-        gridAngleTextField.setHorizontalAlignment(11);
-        gridAngleTextField.setText("90.0");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel16.add(gridAngleTextField, gbc);
-        setGridParametersButton = new JButton();
-        setGridParametersButton.setText("Set");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel16.add(setGridParametersButton, gbc);
-        final JPanel spacer2 = new JPanel();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 30;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(spacer2, gbc);
-        final JPanel panel17 = new JPanel();
-        panel17.setLayout(new GridBagLayout());
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 31;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel17, gbc);
+        panel1.add(panel11, gbc);
         inputDataButton = new JButton();
         inputDataButton.setText("Op");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        panel17.add(inputDataButton, gbc);
-        ckbox_cp_kaizen_folding = new JCheckBox();
+        panel11.add(inputDataButton, gbc);
+        correctCpBeforeFoldingCheckBox = new JCheckBox();
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
-        panel17.add(ckbox_cp_kaizen_folding, gbc);
-        ckbox_select_nokosi = new JCheckBox();
-        ckbox_select_nokosi.setToolTipText("ckbox_select_nokosi");
+        panel11.add(correctCpBeforeFoldingCheckBox, gbc);
+        selectPersistentCheckBox = new JCheckBox();
+        selectPersistentCheckBox.setToolTipText("ckbox_select_nokosi");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
-        panel17.add(ckbox_select_nokosi, gbc);
+        panel11.add(selectPersistentCheckBox, gbc);
         drawTwoColoredCpButton = new JButton();
         drawTwoColoredCpButton.setIcon(new ImageIcon(getClass().getResource("/ppp/2syoku_tenkaizu.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 0;
-        panel17.add(drawTwoColoredCpButton, gbc);
-        final JPanel panel18 = new JPanel();
-        panel18.setLayout(new GridBagLayout());
+        panel11.add(drawTwoColoredCpButton, gbc);
+        final JPanel panel12 = new JPanel();
+        panel12.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 32;
+        gbc.gridy = 27;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel18, gbc);
+        panel1.add(panel12, gbc);
         suitei_01Button = new JButton();
         suitei_01Button.setText("CP_rcg");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        panel18.add(suitei_01Button, gbc);
+        panel12.add(suitei_01Button, gbc);
         koteimen_siteiButton = new JButton();
         koteimen_siteiButton.setText("S_face");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
-        panel18.add(koteimen_siteiButton, gbc);
-        final JPanel panel19 = new JPanel();
-        panel19.setLayout(new GridBagLayout());
+        panel12.add(koteimen_siteiButton, gbc);
+        final JPanel panel13 = new JPanel();
+        panel13.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 33;
+        gbc.gridy = 28;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel19, gbc);
+        panel1.add(panel13, gbc);
         suitei_02Button = new JButton();
         suitei_02Button.setIcon(new ImageIcon(getClass().getResource("/ppp/suitei_02.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        panel19.add(suitei_02Button, gbc);
+        panel13.add(suitei_02Button, gbc);
         suitei_03Button = new JButton();
         suitei_03Button.setIcon(new ImageIcon(getClass().getResource("/ppp/suitei_03.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
-        panel19.add(suitei_03Button, gbc);
+        panel13.add(suitei_03Button, gbc);
         coloredXRayButton = new JCheckBox();
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
-        panel19.add(coloredXRayButton, gbc);
+        panel13.add(coloredXRayButton, gbc);
         coloredXRayDecreaseButton = new JButton();
         coloredXRayDecreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/ck4_color_sage.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 0;
-        panel19.add(coloredXRayDecreaseButton, gbc);
+        panel13.add(coloredXRayDecreaseButton, gbc);
         coloredXRayIncreaseButton = new JButton();
         coloredXRayIncreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/ck4_color_age.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 4;
         gbc.gridy = 0;
-        panel19.add(coloredXRayIncreaseButton, gbc);
-        final JPanel panel20 = new JPanel();
-        panel20.setLayout(new GridBagLayout());
+        panel13.add(coloredXRayIncreaseButton, gbc);
+        final JPanel panel14 = new JPanel();
+        panel14.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.gridheight = 2;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel20, gbc);
+        panel1.add(panel14, gbc);
         senbun_nyuryokuButton = new JButton();
         senbun_nyuryokuButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku.png")));
         gbc = new GridBagConstraints();
@@ -1766,7 +1380,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel20.add(senbun_nyuryokuButton, gbc);
+        panel14.add(senbun_nyuryokuButton, gbc);
         senbun_nyuryoku11Button = new JButton();
         senbun_nyuryoku11Button.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku11.png")));
         gbc = new GridBagConstraints();
@@ -1775,7 +1389,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel20.add(senbun_nyuryoku11Button, gbc);
+        panel14.add(senbun_nyuryoku11Button, gbc);
         voronoiButton = new JButton();
         voronoiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/Voronoi.png")));
         gbc = new GridBagConstraints();
@@ -1784,7 +1398,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel20.add(voronoiButton, gbc);
+        panel14.add(voronoiButton, gbc);
         oritatami_kanousenButton = new JButton();
         oritatami_kanousenButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oritatami_kanousen.png")));
         gbc = new GridBagConstraints();
@@ -1793,7 +1407,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel20.add(oritatami_kanousenButton, gbc);
+        panel14.add(oritatami_kanousenButton, gbc);
         senbun_entyouButton = new JButton();
         senbun_entyouButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_entyou.png")));
         gbc = new GridBagConstraints();
@@ -1802,7 +1416,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel20.add(senbun_entyouButton, gbc);
+        panel14.add(senbun_entyouButton, gbc);
         senbun_entyou_2Button = new JButton();
         senbun_entyou_2Button.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_entyou_2.png")));
         gbc = new GridBagConstraints();
@@ -1811,7 +1425,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel20.add(senbun_entyou_2Button, gbc);
+        panel14.add(senbun_entyou_2Button, gbc);
         kaku_toubunButton = new JButton();
         kaku_toubunButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kaku_toubun.png")));
         gbc = new GridBagConstraints();
@@ -1820,7 +1434,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel20.add(kaku_toubunButton, gbc);
+        panel14.add(kaku_toubunButton, gbc);
         naishinButton = new JButton();
         naishinButton.setIcon(new ImageIcon(getClass().getResource("/ppp/naishin.png")));
         gbc = new GridBagConstraints();
@@ -1829,15 +1443,15 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel20.add(naishinButton, gbc);
-        final JPanel panel21 = new JPanel();
-        panel21.setLayout(new GridBagLayout());
+        panel14.add(naishinButton, gbc);
+        final JPanel panel15 = new JPanel();
+        panel15.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 7;
         gbc.gridheight = 3;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel21, gbc);
+        panel1.add(panel15, gbc);
         suisenButton = new JButton();
         suisenButton.setIcon(new ImageIcon(getClass().getResource("/ppp/suisen.png")));
         gbc = new GridBagConstraints();
@@ -1846,7 +1460,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel21.add(suisenButton, gbc);
+        panel15.add(suisenButton, gbc);
         orikaesiButton = new JButton();
         orikaesiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/orikaesi.png")));
         gbc = new GridBagConstraints();
@@ -1855,7 +1469,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel21.add(orikaesiButton, gbc);
+        panel15.add(orikaesiButton, gbc);
         heikousenButton = new JButton();
         heikousenButton.setIcon(new ImageIcon(getClass().getResource("/ppp/heikousen.png")));
         gbc = new GridBagConstraints();
@@ -1864,7 +1478,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel21.add(heikousenButton, gbc);
+        panel15.add(heikousenButton, gbc);
         heikousen_haba_siteiButton = new JButton();
         heikousen_haba_siteiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/heikousen_haba_sitei.png")));
         gbc = new GridBagConstraints();
@@ -1873,7 +1487,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel21.add(heikousen_haba_siteiButton, gbc);
+        panel15.add(heikousen_haba_siteiButton, gbc);
         all_s_step_to_orisenButton = new JButton();
         all_s_step_to_orisenButton.setIcon(new ImageIcon(getClass().getResource("/ppp/all_s_step_to_orisen.png")));
         gbc = new GridBagConstraints();
@@ -1882,7 +1496,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel21.add(all_s_step_to_orisenButton, gbc);
+        panel15.add(all_s_step_to_orisenButton, gbc);
         sakananohoneButton = new JButton();
         sakananohoneButton.setIcon(new ImageIcon(getClass().getResource("/ppp/sakananohone.png")));
         gbc = new GridBagConstraints();
@@ -1891,7 +1505,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel21.add(sakananohoneButton, gbc);
+        panel15.add(sakananohoneButton, gbc);
         lineSegmentDivisionTextField = new JTextField();
         lineSegmentDivisionTextField.setColumns(2);
         lineSegmentDivisionTextField.setText("2");
@@ -1900,7 +1514,7 @@ public class WestPanel extends JPanel {
         gbc.gridy = 3;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel21.add(lineSegmentDivisionTextField, gbc);
+        panel15.add(lineSegmentDivisionTextField, gbc);
         lineSegmentDivisionSetButton = new JButton();
         lineSegmentDivisionSetButton.setText("Set");
         gbc = new GridBagConstraints();
@@ -1908,7 +1522,7 @@ public class WestPanel extends JPanel {
         gbc.gridy = 3;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel21.add(lineSegmentDivisionSetButton, gbc);
+        panel15.add(lineSegmentDivisionSetButton, gbc);
         renzoku_orikaesiButton = new JButton();
         renzoku_orikaesiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/renzoku_orikaesi.png")));
         gbc = new GridBagConstraints();
@@ -1917,7 +1531,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel21.add(renzoku_orikaesiButton, gbc);
+        panel15.add(renzoku_orikaesiButton, gbc);
         oritatami_kanousen_and_kousitenkei_simpleButton = new JButton();
         oritatami_kanousen_and_kousitenkei_simpleButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oritatami_kanousen_and_kousitenkei_simple.png")));
         gbc = new GridBagConstraints();
@@ -1926,7 +1540,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel21.add(oritatami_kanousen_and_kousitenkei_simpleButton, gbc);
+        panel15.add(oritatami_kanousen_and_kousitenkei_simpleButton, gbc);
         fuku_orikaesiButton = new JButton();
         fuku_orikaesiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/fuku_orikaesi.png")));
         gbc = new GridBagConstraints();
@@ -1935,7 +1549,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel21.add(fuku_orikaesiButton, gbc);
+        panel15.add(fuku_orikaesiButton, gbc);
         senbun_b_nyuryokuButton = new JButton();
         senbun_b_nyuryokuButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_b_nyuryoku.png")));
         gbc = new GridBagConstraints();
@@ -1943,15 +1557,15 @@ public class WestPanel extends JPanel {
         gbc.gridy = 3;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel21.add(senbun_b_nyuryokuButton, gbc);
-        final JPanel panel22 = new JPanel();
-        panel22.setLayout(new GridBagLayout());
+        panel15.add(senbun_b_nyuryokuButton, gbc);
+        final JPanel panel16 = new JPanel();
+        panel16.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 11;
         gbc.gridheight = 5;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel22, gbc);
+        panel1.add(panel16, gbc);
         selectButton = new JButton();
         selectButton.setBackground(new Color(-16711936));
         selectButton.setText("sel");
@@ -1961,7 +1575,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel22.add(selectButton, gbc);
+        panel16.add(selectButton, gbc);
         selectAllButton = new JButton();
         selectAllButton.setBackground(new Color(-16711936));
         selectAllButton.setText("s_al");
@@ -1971,7 +1585,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel22.add(selectAllButton, gbc);
+        panel16.add(selectAllButton, gbc);
         unselectButton = new JButton();
         unselectButton.setBackground(new Color(-16711936));
         unselectButton.setText("unsel");
@@ -1981,7 +1595,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel22.add(unselectButton, gbc);
+        panel16.add(unselectButton, gbc);
         unselectAllButton = new JButton();
         unselectAllButton.setBackground(new Color(-16711936));
         unselectAllButton.setText("uns_al");
@@ -1991,7 +1605,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel22.add(unselectAllButton, gbc);
+        panel16.add(unselectAllButton, gbc);
         moveButton = new JButton();
         moveButton.setBackground(new Color(-5579606));
         moveButton.setEnabled(true);
@@ -2002,7 +1616,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel22.add(moveButton, gbc);
+        panel16.add(moveButton, gbc);
         move2p2pButton = new JButton();
         move2p2pButton.setBackground(new Color(-5579606));
         move2p2pButton.setEnabled(true);
@@ -2013,7 +1627,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel22.add(move2p2pButton, gbc);
+        panel16.add(move2p2pButton, gbc);
         copyButton = new JButton();
         copyButton.setBackground(new Color(-5579606));
         copyButton.setEnabled(true);
@@ -2024,7 +1638,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel22.add(copyButton, gbc);
+        panel16.add(copyButton, gbc);
         copy2p2pButton = new JButton();
         copy2p2pButton.setBackground(new Color(-5579606));
         copy2p2pButton.setEnabled(true);
@@ -2035,7 +1649,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel22.add(copy2p2pButton, gbc);
+        panel16.add(copy2p2pButton, gbc);
         reflectButton = new JButton();
         reflectButton.setBackground(new Color(-5579606));
         reflectButton.setEnabled(true);
@@ -2046,7 +1660,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel22.add(reflectButton, gbc);
+        panel16.add(reflectButton, gbc);
         deleteSelectedLineSegmentButton = new JButton();
         deleteSelectedLineSegmentButton.setText("d_s_L");
         gbc = new GridBagConstraints();
@@ -2055,7 +1669,7 @@ public class WestPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel22.add(deleteSelectedLineSegmentButton, gbc);
+        panel16.add(deleteSelectedLineSegmentButton, gbc);
         final JPanel spacer3 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -2074,6 +1688,16 @@ public class WestPanel extends JPanel {
         gbc.gridy = 16;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(spacer5, gbc);
+        final JPanel panel17 = new JPanel();
+        panel17.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 24;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(panel17, gbc);
+        button1 = new JButton();
+        button1.setText("Configure Grid");
+        panel17.add(button1);
     }
 
     /**

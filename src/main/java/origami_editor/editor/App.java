@@ -80,8 +80,8 @@ public class App extends JFrame implements ActionListener {
     public JCheckBoxMenuItem ckbox_mark;//Marking lines such as crosses and reference planes
     public JCheckBoxMenuItem ckbox_cp_ue;//展開図を折り上がり予想図の上に描く
     public JCheckBox ckbox_folding_keika;//Writing out the progress of the folding forecast
-    public JCheckBox ckbox_cp_kaizen_folding;//cpを折畳み前に自動改善する。
-    public JCheckBox ckbox_select_nokosi;//select状態を他の操作をしてもなるべく残す
+    public JCheckBox correctCpBeforeFoldingCheckBox;//cpを折畳み前に自動改善する。
+    public JCheckBox selectPersistentCheckBox;//select状態を他の操作をしてもなるべく残す
     public JCheckBox ckbox_toukazu_color;//透過図をカラー化する。
     public int displayLineWidth = 1;//The thickness of the line in the development view.
     public int displayAuxLineWidth = 3;//Line thickness of non-interference auxiliary line
@@ -118,8 +118,6 @@ public class App extends JFrame implements ActionListener {
     JButton Button_another_solution;                    //操作の指定に用いる（追加推定一個だけ）
     JButton Button_AS_matome;                    //操作の指定に用いる（追加推定100個）
     JButton Button_bangou_sitei_estimated_display;
-    JButton gridSizeIncreaseButton;
-    JButton gridSizeDecreaseButton;
     JButton colBlackButton;                    //折線の色の指定に用いる
     JButton colBlueButton;                    //折線の色の指定に用いる
     JButton colRedButton;                    //折線の色の指定に用いる
@@ -174,11 +172,11 @@ public class App extends JFrame implements ActionListener {
     UndoRedo foldedFigureUndoRedo;
     int i_undo_suu_om;//text31はtext10を参考にしている
     JLabel length1Label;
-    JLabel length2Label;
-    JLabel angle1Label;
+    JLabel measuredLength2Label;
+    JLabel measuredAngle1Label;
     // バッファー画面用設定はここまでAAAAAAAAAAAAAAAAAAA
-    JLabel angle2Label;
-    JLabel angle3Label;
+    JLabel measuredAngle2Label;
+    JLabel measuredAngle3Label;
     Image img_background;       //Image for background
     Image img_explanation;       //Image for explanation
     boolean lockBackground_ori = false;//Lock on background = 1, not = 0
@@ -418,9 +416,7 @@ public class App extends JFrame implements ActionListener {
         toEdgeButton = westPanel.getE_nisuruButton();
         toAuxLiveButton = westPanel.getHK_nisuruButton();
         lineSegmentConvert2Button = westPanel.getSenbun_henkan2Button();
-        gridSizeDecreaseButton = westPanel.getGridSizeDecreaseButton();
         gridSizeTextField = westPanel.getGridSizeTextField();
-        gridSizeIncreaseButton = westPanel.getGridSizeIncreaseButton();
 
         text25 = westPanel.getIntervalGridSizeTextField();
 
@@ -449,14 +445,14 @@ public class App extends JFrame implements ActionListener {
         colOrangeButton = eastPanel.getColOrangeButton();
         colYellowButton = eastPanel.getColYellowButton();
         length1Label = eastPanel.getL1Label();
-        length2Label = eastPanel.getL2Label();
-        angle1Label = eastPanel.getA1Label();
-        angle2Label = eastPanel.getA2Label();
-        angle3Label = eastPanel.getA3Label();
+        measuredLength2Label = eastPanel.getL2Label();
+        measuredAngle1Label = eastPanel.getA1Label();
+        measuredAngle2Label = eastPanel.getA2Label();
+        measuredAngle3Label = eastPanel.getA3Label();
 
-        ckbox_cp_kaizen_folding = westPanel.getCkbox_cp_kaizen_folding();
+        correctCpBeforeFoldingCheckBox = westPanel.getCorrectCpBeforeFoldingCheckBox();
 
-        ckbox_select_nokosi = westPanel.getCkbox_select_nokosi();
+        selectPersistentCheckBox = westPanel.getSelectPersistentCheckBox();
 
         ckbox_toukazu_color = westPanel.getColoredXRayButton();
 
@@ -577,7 +573,7 @@ public class App extends JFrame implements ActionListener {
                 es1.select_all();
             }
             //
-            if (ckbox_cp_kaizen_folding.isSelected()) {//展開図のおかしい所（枝状の折り線等）を自動修正する
+            if (correctCpBeforeFoldingCheckBox.isSelected()) {//展開図のおかしい所（枝状の折り線等）を自動修正する
                 Drawing_Worker es2 = new Drawing_Worker(r, this);    //基本枝職人。マウスからの入力を受け付ける。
                 es2.setMemo_for_reading(es1.foldLines.getMemo_for_select_folding());
                 es2.point_removal();
@@ -652,19 +648,19 @@ public class App extends JFrame implements ActionListener {
 // ----------------------------------
 
     public void displayMeasuredLength2(double d0) {
-        length2Label.setText(String.valueOf(d0));
+        measuredLength2Label.setText(String.valueOf(d0));
     }
 
     public void displayMeasuredAngle1(double d0) {
-        angle1Label.setText(String.valueOf(d0));
+        measuredAngle1Label.setText(String.valueOf(d0));
     }
 
     public void displayMeasuredAngle2(double d0) {
-        angle2Label.setText(String.valueOf(d0));
+        measuredAngle2Label.setText(String.valueOf(d0));
     }
 
     public void displayMeasuredAngle3(double d0) {
-        angle3Label.setText(String.valueOf(d0));
+        measuredAngle3Label.setText(String.valueOf(d0));
     }
 
     public void setGridSize() {
@@ -772,8 +768,8 @@ public class App extends JFrame implements ActionListener {
         ckbox_mark.setSelected(true);//十字や基準面などの目印画線
         ckbox_cp_ue.setSelected(false);//展開図を折り上がり予想図の上に描く
         ckbox_folding_keika.setSelected(false);//折り上がり予想の途中経過の書き出し
-        ckbox_cp_kaizen_folding.setSelected(false);//cpを折畳み前に自動改善する
-        ckbox_select_nokosi.setSelected(false);//select状態を折畳み操作をしてもなるべく残す
+        correctCpBeforeFoldingCheckBox.setSelected(false);//cpを折畳み前に自動改善する
+        selectPersistentCheckBox.setSelected(false);//select状態を折畳み操作をしてもなるべく残す
         ckbox_toukazu_color.setSelected(false);//透過図をカラー化する。
 
         //内分された折線の指定
