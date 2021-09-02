@@ -2,25 +2,25 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="origami_editor.editor.Editor">
   <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
-      <xy x="20" y="308" width="2305" height="1026"/>
+      <xy x="20" y="308" width="2305" height="1708"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
-      <nested-form id="ee07" form-file="origami_editor/editor/SouthPanel.form" binding="southPanel1" custom-create="true">
+      <nested-form id="ee07" form-file="origami_editor/editor/BottomPanel.form" binding="bottomPanel" custom-create="true">
         <constraints border-constraint="South"/>
       </nested-form>
-      <nested-form id="4d38c" form-file="origami_editor/editor/EastPanel.form" binding="eastPanel1" custom-create="true">
+      <nested-form id="4d38c" form-file="origami_editor/editor/RightPanel.form" binding="rightPanel" custom-create="true">
         <constraints border-constraint="East"/>
       </nested-form>
-      <component id="8955f" class="origami_editor.editor.Canvas" binding="canvas1" custom-create="true" default-binding="true">
+      <component id="8955f" class="origami_editor.editor.Canvas" binding="canvas" custom-create="true" default-binding="true">
         <constraints border-constraint="Center"/>
         <properties/>
       </component>
-      <nested-form id="6ca88" form-file="origami_editor/editor/NorthPanel.form" binding="northPanel1" custom-create="true">
+      <nested-form id="6ca88" form-file="origami_editor/editor/TopPanel.form" binding="topPanel" custom-create="true">
         <constraints border-constraint="North"/>
       </nested-form>
-      <nested-form id="34be9" form-file="origami_editor/editor/WestPanel.form" binding="westPanel1" custom-create="true">
+      <nested-form id="34be9" form-file="origami_editor/editor/LeftPanel.form" binding="leftPanel" custom-create="true">
         <constraints border-constraint="West"/>
       </nested-form>
     </children>

@@ -133,16 +133,16 @@
       <item class="origami_editor.editor.component.UndoRedo" icon="/com/intellij/uiDesigner/icons/panel.png" removable="true" auto-create-binding="false" can-attach-label="false">
         <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="0" />
       </item>
-      <item class="origami_editor.editor.EastPanel" icon="/com/intellij/uiDesigner/icons/panel.png" removable="true" auto-create-binding="false" can-attach-label="false">
+      <item class="origami_editor.editor.RightPanel" icon="/com/intellij/uiDesigner/icons/panel.png" removable="true" auto-create-binding="false" can-attach-label="false">
         <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="0" />
       </item>
-      <item class="origami_editor.editor.SouthPanel" icon="/com/intellij/uiDesigner/icons/panel.png" removable="true" auto-create-binding="false" can-attach-label="false">
+      <item class="origami_editor.editor.BottomPanel" icon="/com/intellij/uiDesigner/icons/panel.png" removable="true" auto-create-binding="false" can-attach-label="false">
         <default-constraints vsize-policy="7" hsize-policy="7" anchor="0" fill="3" />
       </item>
-      <item class="origami_editor.editor.NorthPanel" icon="/com/intellij/uiDesigner/icons/panel.png" removable="true" auto-create-binding="false" can-attach-label="false">
+      <item class="origami_editor.editor.TopPanel" icon="/com/intellij/uiDesigner/icons/panel.png" removable="true" auto-create-binding="false" can-attach-label="false">
         <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="0" />
       </item>
-      <item class="origami_editor.editor.WestPanel" icon="/com/intellij/uiDesigner/icons/panel.png" removable="true" auto-create-binding="false" can-attach-label="false">
+      <item class="origami_editor.editor.LeftPanel" icon="/com/intellij/uiDesigner/icons/panel.png" removable="true" auto-create-binding="false" can-attach-label="false">
         <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="0" />
       </item>
     </group>

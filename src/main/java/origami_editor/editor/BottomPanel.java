@@ -9,7 +9,7 @@ import origami_editor.record.string_op.StringOp;
 import javax.swing.*;
 import java.awt.*;
 
-public class SouthPanel extends JPanel {
+public class BottomPanel extends JPanel {
     private final App app;
     private JButton foldButton;
     private JPanel panel1;
@@ -33,7 +33,7 @@ public class SouthPanel extends JPanel {
     private UndoRedo undoRedo;
     private JButton foldedFigureMove;
 
-    public SouthPanel(App app) {
+    public BottomPanel(App app) {
         this.app = app;
 
         $$$setupUI$$$();
@@ -443,6 +443,13 @@ public class SouthPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(resetButton, gbc);
+        final JPanel spacer1 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 20;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(spacer1, gbc);
     }
 
     /**

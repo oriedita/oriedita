@@ -8845,6 +8845,13 @@ public class DrawingWorker {
         lineWidth = canvasConfiguration.getLineWidth();
     }
 
+    public void setData(AngleSystemConfiguration angleSystemConfiguration) {
+        id_angle_system = angleSystemConfiguration.getCurrentAngleSystemDivider();
+        set_d_restricted_angle(angleSystemConfiguration.getCurrentAngleA(), angleSystemConfiguration.getCurrentAngleB(), angleSystemConfiguration.getCurrentAngleC());
+
+        unselect_all();
+    }
+
     public enum FoldLineAdditionalInputMode {
         POLY_LINE_0,
         AUX_LINE_1,

@@ -9,7 +9,7 @@ import origami_editor.record.string_op.StringOp;
 import javax.swing.*;
 import java.awt.*;
 
-public class WestPanel extends JPanel {
+public class LeftPanel extends JPanel {
     private JPanel panel1;
     private JButton lineWidthDecreaseButton;
     private JButton lineWidthIncreaseButton;
@@ -85,7 +85,7 @@ public class WestPanel extends JPanel {
 
     private final GridConfigureDialog gridConfigureDialog;
 
-    public WestPanel(App app) {
+    public LeftPanel(App app) {
         $$$setupUI$$$();
         undoRedo.addUndoActionListener(e -> {
             app.setHelp("undo");
@@ -839,9 +839,11 @@ public class WestPanel extends JPanel {
             app.repaintCanvas();
         });
         gridConfigureDialog = new GridConfigureDialog(app);
+        gridConfigureDialog.pack();
+
         button1.addActionListener(e -> {
-            gridConfigureDialog.pack();
             gridConfigureDialog.setVisible(true);
+            gridConfigureDialog.setLocationRelativeTo(button1);
         });
     }
 
@@ -1668,6 +1670,13 @@ public class WestPanel extends JPanel {
         button1 = new JButton();
         button1.setText("Configure Grid");
         panel17.add(button1);
+        final JPanel spacer6 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 29;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        panel1.add(spacer6, gbc);
     }
 
     /**

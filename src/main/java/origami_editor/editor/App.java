@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import static origami_editor.editor.ResourceUtil.createImageIcon;
 
 public class App extends JFrame implements ActionListener {
-    private final NorthPanel northPanel;
-    private final EastPanel eastPanel;
-    private final SouthPanel southPanel;
-    private final WestPanel westPanel;
+    private final TopPanel topPanel;
+    private final RightPanel rightPanel;
+    private final BottomPanel bottomPanel;
+    private final LeftPanel leftPanel;
     private final AppMenuBar appMenuBar;
     public FoldedFigure temp_OZ = new FoldedFigure(this);    //Folded figure
     public FoldedFigure OZ;    //Current Folded figure
@@ -72,9 +72,6 @@ public class App extends JFrame implements ActionListener {
     String frame_title_0;//フレームのタイトルの根本部分
     String frame_title;//フレームのタイトルの全体
     DrawingWorker.FoldLineAdditionalInputMode foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
-    AngleSystemInputType angle_system_input_id = AngleSystemInputType.DEG_1;//Specifying the input method of the angle system angle_system_input_id = AngleSystemInputType.DEG_1 specifies the line segment, 2 specifies 2 points
-    int id_angle_system_a = 12;//角度系の180度を割る数の格納_a
-    int id_angle_system_b = 8;//Storage of numbers that divide the angle system by 180 degrees_b
     JButton Button_another_solution;                    //操作の指定に用いる（追加推定一個だけ）
     JButton Button_AS_matome;                    //操作の指定に用いる（追加推定100個）
     JButton Button_bangou_sitei_estimated_display;
@@ -111,18 +108,6 @@ public class App extends JFrame implements ActionListener {
     int i_undo_suu;//text31はtext10を参考にしている
     JTextField h_undoTotalTextField;
     int i_h_undo_suu;
-    JTextField angleATextField;
-    double d_restricted_angle_a = 40.0;
-    JTextField angleBTextField;
-    double d_restricted_angle_b = 60.0;
-    JTextField angleCTextField;
-    double d_restricted_angle_c = 80.0;
-    JTextField andleDTextField;
-    double d_restricted_angle_d = 30.0;
-    JTextField angleETextField;
-    double d_restricted_angle_e = 50.0;
-    JTextField angleFTextField;
-    double d_restricted_angle_f = 100.0;
     JTextField text26;
     int foldedCases = 1;//Specify the number of folding estimation to be displayed
     JTextField scaleFactorTextField;
@@ -190,6 +175,7 @@ public class App extends JFrame implements ActionListener {
     public final GridConfiguration gridConfiguration = new GridConfiguration();
     public final CanvasConfiguration canvasConfiguration = new CanvasConfiguration();
     public final FoldedFigureConfiguration foldedFigureConfiguration = new FoldedFigureConfiguration();
+    public final AngleSystemConfiguration angleSystemConfiguration = new AngleSystemConfiguration();
 
     ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     public App() {
@@ -287,111 +273,93 @@ public class App extends JFrame implements ActionListener {
 
         setContentPane(editor.$$$getRootComponent$$$());
 
-        northPanel = editor.getNorthPanel1();
-        eastPanel = editor.getEastPanel1();
-        southPanel = editor.getSouthPanel1();
-        westPanel = editor.getWestPanel1();
+        topPanel = editor.getTopPanel();
+        rightPanel = editor.getRightPanel();
+        bottomPanel = editor.getBottomPanel();
+        leftPanel = editor.getLeftPanel();
 
-        canvas = editor.getCanvas1();
+        canvas = editor.getCanvas();
 
         appMenuBar = new AppMenuBar(this);
 
         setJMenuBar(appMenuBar);
 
-        JCheckBox ckbox_folding_keika = new JCheckBox("");
-        ckbox_folding_keika.addActionListener(e -> {
-            setHelp("ckbox_oritatami_keika");
-            canvasConfiguration.setDisplayFoldingProgress(ckbox_folding_keika.isSelected());
-
-            updateCanvas();
-        });
-        ckbox_folding_keika.setIcon(createImageIcon("ppp/ckbox_oritatami_keika_off.png"));
-        ckbox_folding_keika.setSelectedIcon(createImageIcon("ppp/ckbox_oritatami_keika_on.png"));
-
-        ckbox_folding_keika.setMargin(new Insets(0, 0, 0, 0));
         /*
          * Extract fields from northPanel
          */
-        ratioATextField = northPanel.getRatioATextField();
-        ratioBTextField = northPanel.getRatioBTextField();
-        ratioCTextField = northPanel.getRatioCTextField();
-        ratioDTextField = northPanel.getRatioDTextField();
-        ratioETextField = northPanel.getRatioETextField();
-        ratioFTextField = northPanel.getRatioFTextField();
+        ratioATextField = topPanel.getRatioATextField();
+        ratioBTextField = topPanel.getRatioBTextField();
+        ratioCTextField = topPanel.getRatioCTextField();
+        ratioDTextField = topPanel.getRatioDTextField();
+        ratioETextField = topPanel.getRatioETextField();
+        ratioFTextField = topPanel.getRatioFTextField();
 
-        scaleFactorTextField = northPanel.getScaleFactorTextField();
+        scaleFactorTextField = topPanel.getScaleFactorTextField();
 
-        rotationTextField = northPanel.getRotationTextField();
-        backgroundToggleButton = northPanel.getBackgroundToggleButton();
-        backgroundLockButton = northPanel.getBackgroundLockButton();
+        rotationTextField = topPanel.getRotationTextField();
+        backgroundToggleButton = topPanel.getBackgroundToggleButton();
+        backgroundLockButton = topPanel.getBackgroundLockButton();
         /*
          * Extract fields from westPanel
          */
-        undoRedo = westPanel.getUndoRedo();
+        undoRedo = leftPanel.getUndoRedo();
 
-        westPanel.getGridConfigurationData(gridConfiguration);
+        leftPanel.getGridConfigurationData(gridConfiguration);
 
-        colRedButton = westPanel.getColRedButton();
-        colBlueButton = westPanel.getColBlueButton();
-        colBlackButton = westPanel.getColBlackButton();
-        colCyanButton = westPanel.getColCyanButton();
+        colRedButton = leftPanel.getColRedButton();
+        colBlueButton = leftPanel.getColBlueButton();
+        colBlackButton = leftPanel.getColBlackButton();
+        colCyanButton = leftPanel.getColCyanButton();
 
-        lineSegmentDivisionTextField = westPanel.getLineSegmentDivisionTextField();
+        lineSegmentDivisionTextField = leftPanel.getLineSegmentDivisionTextField();
 
-        moveButton = westPanel.getMoveButton();
+        moveButton = leftPanel.getMoveButton();
 
-        move2p2pButton = westPanel.getMove2p2pButton();
+        move2p2pButton = leftPanel.getMove2p2pButton();
 
-        copyButton = westPanel.getCopyButton();
+        copyButton = leftPanel.getCopyButton();
 
-        copy2p2pButton = westPanel.getCopy2p2pButton();
+        copy2p2pButton = leftPanel.getCopy2p2pButton();
 
-        reflectButton = westPanel.getReflectButton();
+        reflectButton = leftPanel.getReflectButton();
 
-        toMountainButton = westPanel.getM_nisuruButton();
+        toMountainButton = leftPanel.getM_nisuruButton();
 
-        toValleyButton = westPanel.getV_nisuruButton();
+        toValleyButton = leftPanel.getV_nisuruButton();
 
-        toEdgeButton = westPanel.getE_nisuruButton();
-        toAuxLiveButton = westPanel.getHK_nisuruButton();
-        lineSegmentConvert2Button = westPanel.getSenbun_henkan2Button();
+        toEdgeButton = leftPanel.getE_nisuruButton();
+        toAuxLiveButton = leftPanel.getHK_nisuruButton();
+        lineSegmentConvert2Button = leftPanel.getSenbun_henkan2Button();
 
         /*
          * Extract fields from eastPanel
          */
-        ckbox_check4 = eastPanel.getcAMVCheckBox();
-        angleATextField = eastPanel.getAngleATextField();
-        angleBTextField = eastPanel.getAngleBTextField();
-        angleCTextField = eastPanel.getAngleCTextField();
-        andleDTextField = eastPanel.getAngleDTextField();
-        angleETextField = eastPanel.getAngleETextField();
-        angleFTextField = eastPanel.getAngleFTextField();
-        polygonSizeTextField = eastPanel.getPolygonSizeTextField();
-        circleCustomizedColorButton = eastPanel.getC_colButton();
-        h_undoTotalTextField = eastPanel.getAuxUndoTotalTextField();
-        colOrangeButton = eastPanel.getColOrangeButton();
-        colYellowButton = eastPanel.getColYellowButton();
-        length1Label = eastPanel.getMeasuredLength1Label();
-        measuredLength2Label = eastPanel.getMeasuredLength2Label();
-        measuredAngle1Label = eastPanel.getMeasuredAngle1Label();
-        measuredAngle2Label = eastPanel.getMeasuredAngle2Label();
-        measuredAngle3Label = eastPanel.getMeasuredAngle3Label();
+        ckbox_check4 = rightPanel.getcAMVCheckBox();
+        polygonSizeTextField = rightPanel.getPolygonSizeTextField();
+        circleCustomizedColorButton = rightPanel.getC_colButton();
+        h_undoTotalTextField = rightPanel.getAuxUndoTotalTextField();
+        colOrangeButton = rightPanel.getColOrangeButton();
+        colYellowButton = rightPanel.getColYellowButton();
+        length1Label = rightPanel.getMeasuredLength1Label();
+        measuredLength2Label = rightPanel.getMeasuredLength2Label();
+        measuredAngle1Label = rightPanel.getMeasuredAngle1Label();
+        measuredAngle2Label = rightPanel.getMeasuredAngle2Label();
+        measuredAngle3Label = rightPanel.getMeasuredAngle3Label();
 
-        correctCpBeforeFoldingCheckBox = westPanel.getCorrectCpBeforeFoldingCheckBox();
+        correctCpBeforeFoldingCheckBox = leftPanel.getCorrectCpBeforeFoldingCheckBox();
 
-        selectPersistentCheckBox = westPanel.getSelectPersistentCheckBox();
+        selectPersistentCheckBox = leftPanel.getSelectPersistentCheckBox();
 
-        ckbox_toukazu_color = westPanel.getColoredXRayButton();
+        ckbox_toukazu_color = leftPanel.getColoredXRayButton();
 
         /*
          * Extract fields from southPanel
          */
-
-        Button_AS_matome = southPanel.getAs100Button();
-        text26 = southPanel.getGoToFoldedFigureTextField();
-        Button_bangou_sitei_estimated_display = southPanel.getGoToFoldedFigureButton();
-        Button_another_solution = southPanel.getAnotherSolutionButton();
-        foldedFigureUndoRedo = southPanel.getUndoRedo();
+        Button_AS_matome = bottomPanel.getAs100Button();
+        text26 = bottomPanel.getGoToFoldedFigureTextField();
+        Button_bangou_sitei_estimated_display = bottomPanel.getGoToFoldedFigureButton();
+        Button_another_solution = bottomPanel.getAnotherSolutionButton();
+        foldedFigureUndoRedo = bottomPanel.getUndoRedo();
 
 // *******南*********ボタンの定義はここまで*******************************************************************************************************************************
 
@@ -547,7 +515,7 @@ public class App extends JFrame implements ActionListener {
 
     public void updateFoldedFigure() {
         OZ.setData(foldedFigureConfiguration);
-        southPanel.setData(foldedFigureConfiguration);
+        bottomPanel.setData(foldedFigureConfiguration);
 
         repaintCanvas();
     }
@@ -579,7 +547,7 @@ public class App extends JFrame implements ActionListener {
 
     public void updateGrid() {
         mainDrawingWorker.setGridConfigurationData(gridConfiguration);
-        westPanel.setGridConfigurationData(gridConfiguration);
+        leftPanel.setGridConfigurationData(gridConfiguration);
     }
 
     public void twoColorNoSelectedPolygonalLineWarning() {
@@ -733,22 +701,8 @@ public class App extends JFrame implements ActionListener {
 //--------------------------------------------
 //東辺
         //角度系入力を22.5度系にする。
-        mainDrawingWorker.set_id_angle_system(8);
-
-        //自由角度
-        d_restricted_angle_a = 40.0;
-        angleATextField.setText(String.valueOf(d_restricted_angle_a));
-        d_restricted_angle_b = 60.0;
-        angleBTextField.setText(String.valueOf(d_restricted_angle_b));
-        d_restricted_angle_c = 80.0;
-        angleCTextField.setText(String.valueOf(d_restricted_angle_c));
-
-        d_restricted_angle_a = 30.0;
-        andleDTextField.setText(String.valueOf(d_restricted_angle_d));
-        d_restricted_angle_b = 50.0;
-        angleETextField.setText(String.valueOf(d_restricted_angle_e));
-        d_restricted_angle_c = 100.0;
-        angleFTextField.setText(String.valueOf(d_restricted_angle_f));
+        angleSystemConfiguration.reset();
+        updateAngleSystem();
 
         //多角形の角数
         numPolygonCorners = 5;
@@ -821,33 +775,6 @@ public class App extends JFrame implements ActionListener {
         ratioFTextField.setText(String.valueOf(d_orisen_internalDivisionRatio_f));
 
         mainDrawingWorker.set_d_internalDivisionRatio_st(d_internalDivisionRatio_s, d_internalDivisionRatio_t);
-    }
-
-
-// *******************************************************************************************************
-
-    public void set_restricted_angle_abc() {
-        d_restricted_angle_a = String2double(angleATextField.getText(), d_restricted_angle_a);
-        d_restricted_angle_b = String2double(angleBTextField.getText(), d_restricted_angle_b);
-        d_restricted_angle_c = String2double(angleCTextField.getText(), d_restricted_angle_c);
-
-        angleATextField.setText(String.valueOf(d_restricted_angle_a));
-        angleBTextField.setText(String.valueOf(d_restricted_angle_b));
-        angleCTextField.setText(String.valueOf(d_restricted_angle_c));
-
-        mainDrawingWorker.set_d_restricted_angle(d_restricted_angle_a, d_restricted_angle_b, d_restricted_angle_c);
-    }
-
-    public void setRestrictedAngleDEF() { //このdefは「定義」と言う意味ではなく、dとeとfを扱うという意味
-        d_restricted_angle_d = String2double(andleDTextField.getText(), d_restricted_angle_d);
-        d_restricted_angle_e = String2double(angleETextField.getText(), d_restricted_angle_e);
-        d_restricted_angle_f = String2double(angleFTextField.getText(), d_restricted_angle_f);
-
-        andleDTextField.setText(String.valueOf(d_restricted_angle_d));
-        angleETextField.setText(String.valueOf(d_restricted_angle_e));
-        angleFTextField.setText(String.valueOf(d_restricted_angle_f));
-
-        mainDrawingWorker.set_d_restricted_angle(d_restricted_angle_d, d_restricted_angle_e, d_restricted_angle_f);
     }
 
     //--------------------------------------------------------
@@ -1389,7 +1316,34 @@ public class App extends JFrame implements ActionListener {
         mainDrawingWorker.setData(canvasConfiguration);
         canvas.setData(canvasConfiguration);
         appMenuBar.setData(canvasConfiguration);
-        northPanel.setData(canvasConfiguration);
+        topPanel.setData(canvasConfiguration);
+    }
+
+    public void updateAngleSystem() {
+        rightPanel.setData(angleSystemConfiguration);
+        mainDrawingWorker.setData(angleSystemConfiguration);
+
+        switch (angleSystemConfiguration.getAngleSystemInputType()) {
+            case DEG_1:
+                mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                break;
+            case DEG_2:
+                mouseMode = MouseMode.ANGLE_SYSTEM_16;
+                break;
+            case DEG_3:
+                mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                break;
+            case DEG_4:
+                mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                break;
+            case DEG_5:
+                mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                break;
+        }
+
+        System.out.println("mouseMode = " + mouseMode);
+
+        repaintCanvas();
     }
 
     public enum MouseWheelTarget {

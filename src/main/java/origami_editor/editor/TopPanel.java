@@ -10,7 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class NorthPanel extends JPanel {
+public class TopPanel extends JPanel {
     private JButton tyouhoukei_selectButton;
     private JPanel rootPanel;
     private JTextField ratioATextField;
@@ -40,7 +40,7 @@ public class NorthPanel extends JPanel {
     private JButton backgroundLockButton;
     private JCheckBox mouseSettingsCheckBox;
 
-    public NorthPanel(App app) {
+    public TopPanel(App app) {
         $$$setupUI$$$();
         tyouhoukei_selectButton.addActionListener(e -> {
             app.setHelp("tyouhoukei_select");
@@ -751,6 +751,13 @@ public class NorthPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         panel6.add(senbun_yoke_henkanButton, gbc);
+        final JPanel spacer1 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 10;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        rootPanel.add(spacer1, gbc);
     }
 
     /**

@@ -6,7 +6,8 @@ import origami_editor.record.string_op.StringOp;
 import javax.swing.*;
 import java.awt.*;
 
-public class EastPanel extends JPanel {
+public class RightPanel extends JPanel {
+    private final App app;
     private JCheckBox cAMVCheckBox;
     private JButton ck4_colorIncreaseButton;
     private JCheckBox ckTCheckBox;
@@ -70,7 +71,8 @@ public class EastPanel extends JPanel {
     private JLabel measuredAngle2Label;
     private JLabel measuredAngle3Label;
 
-    public EastPanel(App app) {
+    public RightPanel(App app) {
+        this.app = app;
 
         $$$setupUI$$$();
         ckOCheckBox.addActionListener(e -> {
@@ -144,307 +146,114 @@ public class EastPanel extends JPanel {
         angleSystemADecreaseButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_a_tiisaku");
 
-            switch (app.angle_system_input_id) {
-                case DEG_1:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                    break;
-                case DEG_2:
-                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
-                    break;
-                case DEG_3:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                    break;
-                case DEG_4:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                    break;
-                case DEG_5:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-                    break;
-            }
+            app.angleSystemConfiguration.decreaseAngleSystemA();
 
-            app.id_angle_system_a = app.id_angle_system_a + 1;//if(id_angle_system_a<2){id_angle_system_a=2;}
-            angleSystemAButton.setText("180/" + app.id_angle_system_a + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_a)) * 1000)) / 1000.0);
-
-            app.mainDrawingWorker.set_id_angle_system(app.id_angle_system_a);
-            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateAngleSystem();
         });
 
-        angleSystemAButton.setText("180/" + app.id_angle_system_a + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_a)) * 1000)) / 1000.0);
         angleSystemAButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_a");
 
-            switch (app.angle_system_input_id) {
-                case DEG_1:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                    break;
-                case DEG_2:
-                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
-                    break;
-                case DEG_3:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                    break;
-                case DEG_4:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                    break;
-                case DEG_5:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-                    break;
-            }
+            app.angleSystemConfiguration.setCurrentAngleSystemDivider(app.angleSystemConfiguration.getAngleSystemADivider());
 
-            System.out.println("mouseMode = " + app.mouseMode);
-
-            angleSystemAButton.setText("180/" + app.id_angle_system_a + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_a)) * 1000)) / 1000.0);
-
-            app.mainDrawingWorker.set_id_angle_system(app.id_angle_system_a);
-            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateAngleSystem();
         });
         angleSystemAIncreaseButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_a_ookiku");
 
-            switch (app.angle_system_input_id) {
-                case DEG_1:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                    break;
-                case DEG_2:
-                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
-                    break;
-                case DEG_3:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                    break;
-                case DEG_4:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                    break;
-                case DEG_5:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-                    break;
-            }
+            app.angleSystemConfiguration.increaseAngleSystemA();
 
-            System.out.println("mouseMode = " + app.mouseMode);
-
-            app.id_angle_system_a = app.id_angle_system_a - 1;
-            if (app.id_angle_system_a < 2) {
-                app.id_angle_system_a = 2;
-            }
-            angleSystemAButton.setText("180/" + app.id_angle_system_a + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_a)) * 1000)) / 1000.0);
-
-            app.mainDrawingWorker.set_id_angle_system(app.id_angle_system_a);
-            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateAngleSystem();
         });
 
         angleSystemBDecreaseButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_b_tiisaku");
 
-            switch (app.angle_system_input_id) {
-                case DEG_1:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                    break;
-                case DEG_2:
-                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
-                    break;
-                case DEG_3:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                    break;
-                case DEG_4:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                    break;
-                case DEG_5:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-                    break;
-            }
+            app.angleSystemConfiguration.decreaseAngleSystemB();
 
-            System.out.println("mouseMode = " + app.mouseMode);
-
-            app.id_angle_system_b = app.id_angle_system_b + 1;//if(id_angle_system_b<2){id_angle_system_b=2;}
-            angleSystemBButton.setText("180/" + app.id_angle_system_b + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_b)) * 1000)) / 1000.0);
-
-            app.mainDrawingWorker.set_id_angle_system(app.id_angle_system_b);
-            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateAngleSystem();
         });
 
-        angleSystemBButton.setText("180/" + app.id_angle_system_b + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_b)) * 1000)) / 1000.0);
         angleSystemBButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_b");
 
-            switch (app.angle_system_input_id) {
-                case DEG_1:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                    break;
-                case DEG_2:
-                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
-                    break;
-                case DEG_3:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                    break;
-                case DEG_4:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                    break;
-                case DEG_5:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-                    break;
-            }
+            app.angleSystemConfiguration.setCurrentAngleSystemDivider(app.angleSystemConfiguration.getAngleSystemBDivider());
 
-            System.out.println("mouseMode = " + app.mouseMode);
-
-            angleSystemBButton.setText("180/" + app.id_angle_system_b + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_b)) * 1000)) / 1000.0);
-
-            app.mainDrawingWorker.set_id_angle_system(app.id_angle_system_b);
-            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateAngleSystem();
         });
         angleSystemBIncreaseButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_b_ookiku");
 
-            switch (app.angle_system_input_id) {
-                case DEG_1:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                    break;
-                case DEG_2:
-                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
-                    break;
-                case DEG_3:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                    break;
-                case DEG_4:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                    break;
-                case DEG_5:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-                    break;
-            }
+            app.angleSystemConfiguration.increaseAngleSystemB();
 
-            app.id_angle_system_b = app.id_angle_system_b - 1;
-            if (app.id_angle_system_b < 2) {
-                app.id_angle_system_b = 2;
-            }
-            angleSystemBButton.setText("180/" + app.id_angle_system_b + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_b)) * 1000)) / 1000.0);
-
-            app.mainDrawingWorker.set_id_angle_system(app.id_angle_system_b);
-            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateAngleSystem();
         });
         restrictedAngleABCSetButton.addActionListener(e -> {
-            app.set_restricted_angle_abc();
             app.setHelp("jiyuu_kaku_set_a");
 
-            switch (app.angle_system_input_id) {
-                case DEG_1:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                    break;
-                case DEG_2:
-                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
-                    break;
-                case DEG_3:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                    break;
-                case DEG_4:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                    break;
-                case DEG_5:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-                    break;
-            }
+            getData(app.angleSystemConfiguration);
 
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.angleSystemConfiguration.setCurrentABC();
 
-            app.mainDrawingWorker.set_id_angle_system(0);
-            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateAngleSystem();
         });
 
         restrictedAngleSetDEFButton.addActionListener(e -> {
-            app.setRestrictedAngleDEF();
             app.setHelp("jiyuu_kaku_set_b");
 
-            switch (app.angle_system_input_id) {
-                case DEG_1:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                    break;
-                case DEG_2:
-                    app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
-                    break;
-                case DEG_3:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                    break;
-                case DEG_4:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                    break;
-                case DEG_5:
-                    app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-                    break;
-            }
+            getData(app.angleSystemConfiguration);
 
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.angleSystemConfiguration.setCurrentDEF();
 
-            app.mainDrawingWorker.set_id_angle_system(0);
-            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateAngleSystem();
         });
         degButton.addActionListener(e -> {
             app.setHelp("deg");
 
-            app.angle_system_input_id = App.AngleSystemInputType.DEG_1;
-            app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.angleSystemConfiguration.setAngleSystemInputType(App.AngleSystemInputType.DEG_1);
 
-
-            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateAngleSystem();
         });
         deg3Button.addActionListener(e -> {
             app.setHelp("deg3");
 
-            app.angle_system_input_id = App.AngleSystemInputType.DEG_3;
-            app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.angleSystemConfiguration.setAngleSystemInputType(App.AngleSystemInputType.DEG_3);
 
-
-            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateAngleSystem();
         });
         angleRestrictedButton.addActionListener(e -> {
             app.setHelp("senbun_nyuryoku37");
-            app.angle_system_input_id = App.AngleSystemInputType.DEG_5;
-            app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-            System.out.println("mouseMode = " + app.mouseMode);
 
-            app.mainDrawingWorker.unselect_all();
+            app.angleSystemConfiguration.setAngleSystemInputType(App.AngleSystemInputType.DEG_5);
+
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateAngleSystem();
         });
         deg2Button.addActionListener(e -> {
-
             app.setHelp("deg2");
-            app.angle_system_input_id = App.AngleSystemInputType.DEG_2;
-            app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
-            System.out.println("mouseMode = " + app.mouseMode);
 
-            app.mainDrawingWorker.unselect_all();
+            app.angleSystemConfiguration.setAngleSystemInputType(App.AngleSystemInputType.DEG_2);
+
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateAngleSystem();
         });
         deg4Button.addActionListener(e -> {
             app.setHelp("deg4");
-            app.angle_system_input_id = App.AngleSystemInputType.DEG_4;
-            app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-            System.out.println("mouseMode = " + app.mouseMode);
 
-            app.mainDrawingWorker.unselect_all();
+            app.angleSystemConfiguration.setAngleSystemInputType(App.AngleSystemInputType.DEG_4);
+
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateAngleSystem();
         });
         polygonSizeSetButton.addActionListener(e -> {
             int numPolygonCornersOld = app.numPolygonCorners;
@@ -771,30 +580,6 @@ public class EastPanel extends JPanel {
 
     public JTextField getPolygonSizeTextField() {
         return polygonSizeTextField;
-    }
-
-    public JTextField getAngleATextField() {
-        return angleATextField;
-    }
-
-    public JTextField getAngleCTextField() {
-        return angleCTextField;
-    }
-
-    public JTextField getAngleBTextField() {
-        return angleBTextField;
-    }
-
-    public JTextField getAngleDTextField() {
-        return angleDTextField;
-    }
-
-    public JTextField getAngleETextField() {
-        return angleETextField;
-    }
-
-    public JTextField getAngleFTextField() {
-        return angleFTextField;
     }
 
     public JCheckBox getcAMVCheckBox() {
@@ -1218,6 +1003,7 @@ public class EastPanel extends JPanel {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 23;
+        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(spacer7, gbc);
         final JPanel spacer8 = new JPanel();
@@ -1497,5 +1283,26 @@ public class EastPanel extends JPanel {
 
     private void createUIComponents() {
         panel1 = this;
+    }
+
+    public void setData(AngleSystemConfiguration data) {
+        angleATextField.setText(String.valueOf(data.getAngleA()));
+        angleCTextField.setText(String.valueOf(data.getAngleC()));
+        angleBTextField.setText(String.valueOf(data.getAngleB()));
+        angleDTextField.setText(String.valueOf(data.getAngleD()));
+        angleETextField.setText(String.valueOf(data.getAngleE()));
+        angleFTextField.setText(String.valueOf(data.getAngleF()));
+
+        angleSystemAButton.setText(data.getAngleSystemADescription());
+        angleSystemBButton.setText(data.getAngleSystemBDescription());
+    }
+
+    public void getData(AngleSystemConfiguration data) {
+        data.setAngleA(app.String2double(angleATextField.getText(), data.getAngleA()));
+        data.setAngleB(app.String2double(angleBTextField.getText(), data.getAngleB()));
+        data.setAngleC(app.String2double(angleCTextField.getText(), data.getAngleC()));
+        data.setAngleD(app.String2double(angleDTextField.getText(), data.getAngleD()));
+        data.setAngleE(app.String2double(angleETextField.getText(), data.getAngleE()));
+        data.setAngleF(app.String2double(angleFTextField.getText(), data.getAngleF()));
     }
 }

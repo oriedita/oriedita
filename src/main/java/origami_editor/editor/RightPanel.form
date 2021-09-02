@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="origami_editor.editor.EastPanel">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="origami_editor.editor.RightPanel">
   <grid id="27dc6" binding="panel1" custom-create="true" layout-manager="GridBagLayout">
     <constraints>
       <xy x="45" y="33" width="312" height="886"/>
@@ -486,7 +486,7 @@
       <vspacer id="9138d">
         <constraints>
           <grid row="23" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
+          <gridbag weightx="0.0" weighty="1.0"/>
         </constraints>
       </vspacer>
       <vspacer id="bcb8c">

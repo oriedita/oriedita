@@ -9,11 +9,11 @@ import java.awt.*;
 public class Editor {
     private final App app;
     private JPanel panel1;
-    private Canvas canvas1;
-    private EastPanel eastPanel1;
-    private SouthPanel southPanel1;
-    private NorthPanel northPanel1;
-    private WestPanel westPanel1;
+    private Canvas canvas;
+    private RightPanel rightPanel;
+    private BottomPanel bottomPanel;
+    private TopPanel topPanel;
+    private LeftPanel leftPanel;
 
     public Editor(App app) {
         this.app = app;
@@ -21,11 +21,11 @@ public class Editor {
     }
 
     private void createUIComponents() {
-        canvas1 = new Canvas(app);
-        eastPanel1 = new EastPanel(app);
-        southPanel1 = new SouthPanel(app);
-        northPanel1 = new NorthPanel(app);
-        westPanel1 = new WestPanel(app);
+        canvas = new Canvas(app);
+        rightPanel = new RightPanel(app);
+        bottomPanel = new BottomPanel(app);
+        topPanel = new TopPanel(app);
+        leftPanel = new LeftPanel(app);
     }
 
     /**
@@ -39,11 +39,11 @@ public class Editor {
         createUIComponents();
         panel1 = new JPanel();
         panel1.setLayout(new BorderLayout(0, 0));
-        panel1.add(southPanel1.$$$getRootComponent$$$(), BorderLayout.SOUTH);
-        panel1.add(eastPanel1.$$$getRootComponent$$$(), BorderLayout.EAST);
-        panel1.add(canvas1, BorderLayout.CENTER);
-        panel1.add(northPanel1.$$$getRootComponent$$$(), BorderLayout.NORTH);
-        panel1.add(westPanel1.$$$getRootComponent$$$(), BorderLayout.WEST);
+        panel1.add(bottomPanel.$$$getRootComponent$$$(), BorderLayout.SOUTH);
+        panel1.add(rightPanel.$$$getRootComponent$$$(), BorderLayout.EAST);
+        panel1.add(canvas, BorderLayout.CENTER);
+        panel1.add(topPanel.$$$getRootComponent$$$(), BorderLayout.NORTH);
+        panel1.add(leftPanel.$$$getRootComponent$$$(), BorderLayout.WEST);
     }
 
     /**
@@ -53,23 +53,23 @@ public class Editor {
         return panel1;
     }
 
-    public Canvas getCanvas1() {
-        return canvas1;
+    public Canvas getCanvas() {
+        return canvas;
     }
 
-    public EastPanel getEastPanel1() {
-        return eastPanel1;
+    public RightPanel getRightPanel() {
+        return rightPanel;
     }
 
-    public SouthPanel getSouthPanel1() {
-        return southPanel1;
+    public BottomPanel getBottomPanel() {
+        return bottomPanel;
     }
 
-    public NorthPanel getNorthPanel1() {
-        return northPanel1;
+    public TopPanel getTopPanel() {
+        return topPanel;
     }
 
-    public WestPanel getWestPanel1() {
-        return westPanel1;
+    public LeftPanel getLeftPanel() {
+        return leftPanel;
     }
 }

@@ -1,5 +1,6 @@
 package origami_editor.editor;
 
+import origami_editor.editor.component.ColorIcon;
 import origami_editor.record.string_op.StringOp;
 
 import javax.swing.*;
@@ -505,6 +506,9 @@ public class GridConfigureDialog extends JDialog {
 
         gridSizeDecreaseButton.setEnabled(data.getGridSize() != 1);
         gridLineWidthDecreaseButton.setEnabled(data.getGridLineWidth() != 1);
+
+        gridColorButton.setIcon(new ColorIcon(data.getGridColor()));
+        intervalGridColorButton.setIcon(new ColorIcon(data.getGridScaleColor()));
     }
 
     public void getData(GridConfiguration data) {
