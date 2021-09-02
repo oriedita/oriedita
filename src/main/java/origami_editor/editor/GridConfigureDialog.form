@@ -60,7 +60,7 @@
               <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties/>
-            <border type="none" title="Interval Grid Position"/>
+            <border type="none" title="Interval Grid"/>
             <children>
               <component id="45903" class="javax.swing.JButton" binding="memori_tate_idouButton">
                 <constraints>

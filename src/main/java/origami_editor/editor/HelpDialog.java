@@ -22,11 +22,29 @@ public class HelpDialog extends JDialog {
 
         setUndecorated(true);
 
+        JPopupMenu  popup = new JPopupMenu();
+        JMenuItem dismissMenuItem = new JMenuItem("Dismiss");
+        dismissMenuItem.addActionListener(e -> setVisible(false));
+
+        popup.add(dismissMenuItem);
+
         // Code to move the dialog by dragging the label.
         helpLabel.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 point.x = e.getX();
                 point.y = e.getY();
+
+                maybeShowPopup(e);
+            }
+            public void mouseReleased(MouseEvent e) {
+                maybeShowPopup(e);
+            }
+
+            private void maybeShowPopup(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    popup.show(e.getComponent(),
+                            e.getX(), e.getY());
+                }
             }
         });
         helpLabel.addMouseMotionListener(new MouseMotionAdapter() {

@@ -251,7 +251,7 @@ public class GridConfigureDialog extends JDialog {
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(panel3, gbc);
-        panel3.setBorder(BorderFactory.createTitledBorder(null, "Interval Grid Position", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        panel3.setBorder(BorderFactory.createTitledBorder(null, "Interval Grid", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         memori_tate_idouButton = new JButton();
         memori_tate_idouButton.setIcon(new ImageIcon(getClass().getResource("/ppp/memori_tate_idou.png")));
         gbc = new GridBagConstraints();
