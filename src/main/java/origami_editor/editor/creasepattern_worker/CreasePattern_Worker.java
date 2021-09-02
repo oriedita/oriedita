@@ -2,7 +2,7 @@ package origami_editor.editor.creasepattern_worker;
 
 import origami_editor.editor.LineColor;
 import origami_editor.editor.folded_figure.FoldedFigure;
-import origami_editor.editor.undo_box.Undo_Box;
+import origami_editor.editor.undo_box.HistoryState;
 import origami_editor.graphic2d.averagecoordinates.AverageCoordinates;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
@@ -20,7 +20,7 @@ public class CreasePattern_Worker {
     //PointSet obtained as a result of folding etc. should be returned to the outside and not held by oneself.
     double r;                   //Criteria for determining the radius of the circles at both ends of the straight line of the basic branch structure and the proximity of the branches to various points
     PointSet pointSet = new PointSet();    //Development view
-    Undo_Box Ubox = new Undo_Box();
+    HistoryState Ubox = new HistoryState();
     //Definition of variables used in VVVVVVVVVVVV oritatami and oekaki VVVVVVVVVVVVVVVVVVVVVVVVVVVV
     int[] iFacePosition;//Indicates how far a surface is from the reference surface. Enter a value such as 1, next to the reference plane, 2, next to the reference plane, and 3 next to it.
     int referencePlaneId;

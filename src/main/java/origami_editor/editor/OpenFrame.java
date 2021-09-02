@@ -44,7 +44,7 @@ public class OpenFrame extends JDialog {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.FOLDABLE_LINE_INPUT_39;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaint();
         });

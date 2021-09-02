@@ -339,7 +339,7 @@ public class FoldedFigure {
         camera_of_transparent_rear.setCameraMirror(d_camera_mirror * -1.0);
     }
 
-    public void folding_estimated(Camera camera_of_orisen_nyuuryokuzu, LineSegmentSet lineSegmentSet) {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public void folding_estimated(Camera camera_of_orisen_nyuuryokuzu, LineSegmentSet lineSegmentSet) {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
         boolean i_camera_estimated = (estimationStep == EstimationStep.STEP_0) && (estimationOrder.isBelowOrEqual5());
 
         //Folded view display camera settings
@@ -539,7 +539,7 @@ public class FoldedFigure {
     public int folding_estimated_01(LineSegmentSet lineSegmentSet) {
         System.out.println("＜＜＜＜＜oritatami_suitei_01;開始");
         bulletinBoard.write("<<<<oritatami_suitei_01;  start");
-        // Pass the line segment set created in es1 to cp_worker1 by mouse input and make it a point set (corresponding to the development view).
+        // Pass the line segment set created in mainDrawingWorker to cp_worker1 by mouse input and make it a point set (corresponding to the development view).
         cp_worker1.lineStore2pointStore(lineSegmentSet);
         ip3 = cp_worker1.setReferencePlaneId(ip3);
         ip3 = cp_worker1.setReferencePlaneId(app.point_of_referencePlane_old);//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加

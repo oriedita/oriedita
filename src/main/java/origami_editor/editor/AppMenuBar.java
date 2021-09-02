@@ -40,12 +40,9 @@ public class AppMenuBar extends JMenuBar {
                 //展開図の初期化　開始
                 app.developmentView_initialization();
                 //展開図パラメータの初期化
-                app.es1.reset();                                                //描き職人の初期化
-
-                app.es1.setBaseState(Grid.State.HIDDEN);
 
                 app.currentLineColor = LineColor.RED_1;
-                app.es1.setColor(app.currentLineColor);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
+                app.mainDrawingWorker.setColor(app.currentLineColor);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
                 app.buttonColorReset();
                 app.colRedButton.setForeground(Color.black);
                 app.colRedButton.setBackground(Color.red);    //折線のボタンの色設定
@@ -64,9 +61,9 @@ public class AppMenuBar extends JMenuBar {
                 app.Button_L_color.setBackground(app.OZ.foldedFigure_L_color);    //ボタンの色設定
                 //折畳予測図のの初期化　終了
 
-                app.es1.setCamera(app.camera_of_orisen_input_diagram);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
-                app.es1.setMemo_for_reading(memo_temp);
-                app.es1.record();
+                app.mainDrawingWorker.setCamera(app.camera_of_orisen_input_diagram);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
+                app.mainDrawingWorker.setMemo_for_reading(memo_temp);
+                app.mainDrawingWorker.record();
 
 // -----------------20180503追加
                 app.scaleFactor = app.camera_of_orisen_input_diagram.getCameraZoomX();
@@ -85,7 +82,7 @@ public class AppMenuBar extends JMenuBar {
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
             app.writeMemo2File();
-            app.es1.record();
+            app.mainDrawingWorker.record();
         });
         showPointRangeCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_ten_sagasi");
@@ -101,10 +98,10 @@ public class AppMenuBar extends JMenuBar {
 
             if (gridInputAssistCheckBox.isSelected()) {
                 System.out.println(" kou_mitudo_nyuuryoku on");
-                app.es1.setGridInputAssist(true);
+                app.mainDrawingWorker.setGridInputAssist(true);
             } else {
                 System.out.println(" kou_mitudo_nyuuryoku off");
-                app.es1.setGridInputAssist(false);
+                app.mainDrawingWorker.setGridInputAssist(false);
             }
             app.repaintCanvas();
         });

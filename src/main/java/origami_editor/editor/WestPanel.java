@@ -1,7 +1,7 @@
 package origami_editor.editor;
 
 import origami_editor.editor.component.UndoRedo;
-import origami_editor.editor.drawing_worker.Drawing_Worker;
+import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.record.memo.Memo;
 import origami_editor.record.string_op.StringOp;
@@ -90,14 +90,14 @@ public class WestPanel extends JPanel {
         undoRedo.addUndoActionListener(e -> {
             app.setHelp("undo");
 
-            app.setTitle(app.es1.undo());
+            app.setTitle(app.mainDrawingWorker.undo());
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         undoRedo.addRedoActionListener(e -> {
             app.setHelp("redo");
 
-            app.setTitle(app.es1.redo());
+            app.setTitle(app.mainDrawingWorker.redo());
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -109,7 +109,7 @@ public class WestPanel extends JPanel {
                 app.i_undo_suu = 0;
             }
             undoRedo.setText(String.valueOf(app.i_undo_suu));
-            app.es1.set_Ubox_undo_suu(app.i_undo_suu);
+            app.mainDrawingWorker.setUndoTotal(app.i_undo_suu);
         });
         lineWidthDecreaseButton.addActionListener(e -> {
             app.displayLineWidth = app.displayLineWidth - 2;
@@ -131,7 +131,7 @@ public class WestPanel extends JPanel {
             if (app.pointSize < 0) {
                 app.pointSize = 0;
             }
-            app.es1.setPointSize(app.pointSize);
+            app.mainDrawingWorker.setPointSize(app.pointSize);
 
             app.repaintCanvas();
         });
@@ -139,7 +139,7 @@ public class WestPanel extends JPanel {
             app.setHelp("tenhaba_age");
 
             app.pointSize = app.pointSize + 1;
-            app.es1.setPointSize(app.pointSize);
+            app.mainDrawingWorker.setPointSize(app.pointSize);
 
             app.repaintCanvas();
         });
@@ -164,7 +164,7 @@ public class WestPanel extends JPanel {
             colRedButton.setForeground(Color.black);
             colRedButton.setBackground(Color.red);
             app.currentLineColor = LineColor.RED_1;
-            app.es1.setColor(app.currentLineColor);
+            app.mainDrawingWorker.setColor(app.currentLineColor);
 
             app.repaintCanvas();
         });
@@ -175,7 +175,7 @@ public class WestPanel extends JPanel {
             colBlueButton.setForeground(Color.black);
             colBlueButton.setBackground(Color.blue);
             app.currentLineColor = LineColor.BLUE_2;
-            app.es1.setColor(app.currentLineColor);
+            app.mainDrawingWorker.setColor(app.currentLineColor);
 
             app.repaintCanvas();
         });
@@ -186,7 +186,7 @@ public class WestPanel extends JPanel {
             colBlackButton.setForeground(Color.white);
             colBlackButton.setBackground(Color.black);
             app.currentLineColor = LineColor.BLACK_0;
-            app.es1.setColor(app.currentLineColor);
+            app.mainDrawingWorker.setColor(app.currentLineColor);
 
             app.repaintCanvas();
         });
@@ -197,19 +197,19 @@ public class WestPanel extends JPanel {
             colCyanButton.setForeground(Color.black);
             colCyanButton.setBackground(Color.cyan);
             app.currentLineColor = LineColor.CYAN_3;
-            app.es1.setColor(app.currentLineColor);
+            app.mainDrawingWorker.setColor(app.currentLineColor);
 
             app.repaintCanvas();
         });
         senbun_nyuryokuButton.addActionListener(e -> {
             app.setHelp("senbun_nyuryoku");
-            app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
-            app.es1.setFoldLineAdditional(app.foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
+            app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
+            app.mainDrawingWorker.setFoldLineAdditional(app.foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
             app.mouseMode = MouseMode.DRAW_CREASE_FREE_1;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_FREE_1;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -219,19 +219,19 @@ public class WestPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_RESTRICTED_11;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         voronoiButton.addActionListener(e -> {
             app.setHelp("Voronoi");
-            app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
-            app.es1.setFoldLineAdditional(app.foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
+            app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
+            app.mainDrawingWorker.setFoldLineAdditional(app.foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
             app.mouseMode = MouseMode.VORONOI_CREATE_62;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.VORONOI_CREATE_62;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -242,7 +242,7 @@ public class WestPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -253,7 +253,7 @@ public class WestPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LENGTHEN_CREASE_5;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -264,7 +264,7 @@ public class WestPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LENGTHEN_CREASE_5;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -275,7 +275,7 @@ public class WestPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.SQUARE_BISECTOR_7;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -286,7 +286,7 @@ public class WestPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.INWARD_8;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -297,7 +297,7 @@ public class WestPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.PERPENDICULAR_DRAW_9;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -308,7 +308,7 @@ public class WestPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.SYMMETRIC_DRAW_10;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -319,7 +319,7 @@ public class WestPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -329,7 +329,7 @@ public class WestPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.PARALLEL_DRAW_40;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -339,7 +339,7 @@ public class WestPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.PARALLEL_DRAW_WIDTH_51;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -350,16 +350,16 @@ public class WestPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.FOLDABLE_LINE_DRAW_71;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         all_s_step_to_orisenButton.addActionListener(e -> {
-            System.out.println("i_egaki_dankai = " + app.es1.i_drawing_stage);
-            System.out.println("i_kouho_dankai = " + app.es1.i_candidate_stage);
+            System.out.println("i_egaki_dankai = " + app.mainDrawingWorker.i_drawing_stage);
+            System.out.println("i_kouho_dankai = " + app.mainDrawingWorker.i_candidate_stage);
 
             app.setHelp("all_s_step_to_orisen");
-            app.es1.all_s_step_to_orisen();
+            app.mainDrawingWorker.all_s_step_to_orisen();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -370,7 +370,7 @@ public class WestPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.FISH_BONE_DRAW_33;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -381,7 +381,7 @@ public class WestPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DOUBLE_SYMMETRIC_DRAW_35;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -393,7 +393,7 @@ public class WestPanel extends JPanel {
                 app.foldLineDividingNumber = 1;
             }
             lineSegmentDivisionTextField.setText(String.valueOf(app.foldLineDividingNumber));
-            app.es1.setFoldLineDividingNumber(app.foldLineDividingNumber);
+            app.mainDrawingWorker.setFoldLineDividingNumber(app.foldLineDividingNumber);
 
             app.setHelp("senbun_bunkatu_set");
             app.mouseMode = MouseMode.LINE_SEGMENT_DIVISION_27;
@@ -411,14 +411,14 @@ public class WestPanel extends JPanel {
                 app.foldLineDividingNumber = 1;
             }
             lineSegmentDivisionTextField.setText(String.valueOf(app.foldLineDividingNumber));
-            app.es1.setFoldLineDividingNumber(app.foldLineDividingNumber);
+            app.mainDrawingWorker.setFoldLineDividingNumber(app.foldLineDividingNumber);
 
             app.setHelp("senbun_b_nyuryoku");
             app.mouseMode = MouseMode.LINE_SEGMENT_DIVISION_27;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_DIVISION_27;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -433,7 +433,7 @@ public class WestPanel extends JPanel {
         selectAllButton.addActionListener(e -> {
 
             app.setHelp("select_all");
-            app.es1.select_all();
+            app.mainDrawingWorker.select_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -448,7 +448,7 @@ public class WestPanel extends JPanel {
         unselectAllButton.addActionListener(e -> {
 
             app.setHelp("unselect_all");
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -507,8 +507,8 @@ public class WestPanel extends JPanel {
         });
         deleteSelectedLineSegmentButton.addActionListener(e -> {
             app.setHelp("del_selected_senbun");
-            app.es1.del_selected_senbun();
-            app.es1.record();
+            app.mainDrawingWorker.del_selected_senbun();
+            app.mainDrawingWorker.record();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -518,10 +518,10 @@ public class WestPanel extends JPanel {
             System.out.println("mouseMode = " + app.mouseMode);
 
 
-            app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
-            app.es1.setFoldLineAdditional(app.foldLineAdditionalInputMode);
+            app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
+            app.mainDrawingWorker.setFoldLineAdditional(app.foldLineAdditionalInputMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -531,10 +531,10 @@ public class WestPanel extends JPanel {
             System.out.println("mouseMode = " + app.mouseMode);
 
 
-            app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.BLACK_LINE_2;//= 2 is the black polygonal line deletion mode
-            app.es1.setFoldLineAdditional(app.foldLineAdditionalInputMode);
+            app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.BLACK_LINE_2;//= 2 is the black polygonal line deletion mode
+            app.mainDrawingWorker.setFoldLineAdditional(app.foldLineAdditionalInputMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -544,21 +544,21 @@ public class WestPanel extends JPanel {
             System.out.println("mouseMode = " + app.mouseMode);
 
 
-            app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.AUX_LIVE_LINE_3;//= 0 is polygonal line input = 1 is auxiliary line input mode = 3 is for auxiliary live line only
-            app.es1.setFoldLineAdditional(app.foldLineAdditionalInputMode);
+            app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.AUX_LIVE_LINE_3;//= 0 is polygonal line input = 1 is auxiliary line input mode = 3 is for auxiliary live line only
+            app.mainDrawingWorker.setFoldLineAdditional(app.foldLineAdditionalInputMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         eda_kesiButton.addActionListener(e -> {
             app.setHelp("eda_kesi");
-            app.es1.point_removal();
-            app.es1.overlapping_line_removal();
-            app.es1.branch_trim(0.000001);
-            app.es1.circle_organize();
-            app.es1.record();
-            app.es1.unselect_all();
+            app.mainDrawingWorker.point_removal();
+            app.mainDrawingWorker.overlapping_line_removal();
+            app.mainDrawingWorker.branch_trim(0.000001);
+            app.mainDrawingWorker.organizeCircles();
+            app.mainDrawingWorker.record();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -567,11 +567,11 @@ public class WestPanel extends JPanel {
             app.buttonReset();
             M_nisuruButton.setForeground(Color.black);
             M_nisuruButton.setBackground(Color.red);
-            //currentLineColor=1;es1.setcolor(currentLineColor);
+            //currentLineColor=1;mainDrawingWorker.setcolor(currentLineColor);
             app.mouseMode = MouseMode.CREASE_MAKE_MOUNTAIN_23;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -580,11 +580,11 @@ public class WestPanel extends JPanel {
             app.buttonReset();
             V_nisuruButton.setForeground(Color.black);
             V_nisuruButton.setBackground(Color.blue);
-            //currentLineColor=1;es1.setcolor(currentLineColor);
+            //currentLineColor=1;mainDrawingWorker.setcolor(currentLineColor);
             app.mouseMode = MouseMode.CREASE_MAKE_VALLEY_24;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -593,11 +593,11 @@ public class WestPanel extends JPanel {
             app.buttonReset();
             E_nisuruButton.setForeground(Color.white);
             E_nisuruButton.setBackground(Color.black);
-            //currentLineColor=1;es1.setcolor(currentLineColor);
+            //currentLineColor=1;mainDrawingWorker.setcolor(currentLineColor);
             app.mouseMode = MouseMode.CREASE_MAKE_EDGE_25;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -606,18 +606,18 @@ public class WestPanel extends JPanel {
             app.buttonReset();
             HK_nisuruButton.setForeground(Color.white);
             HK_nisuruButton.setBackground(new Color(100, 200, 200));
-            //currentLineColor=1;es1.setcolor(currentLineColor);
+            //currentLineColor=1;mainDrawingWorker.setcolor(currentLineColor);
             app.mouseMode = MouseMode.CREASE_MAKE_AUX_60;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         zen_yama_tani_henkanButton.addActionListener(e -> {
             app.setHelp("zen_yama_tani_henkan");
-            app.es1.allMountainValleyChange();
-            app.es1.unselect_all();
+            app.mainDrawingWorker.allMountainValleyChange();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -629,7 +629,7 @@ public class WestPanel extends JPanel {
             app.mouseMode = MouseMode.CREASE_TOGGLE_MV_58;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -640,7 +640,7 @@ public class WestPanel extends JPanel {
             app.mouseMode = MouseMode.CHANGE_CREASE_TYPE_4;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -653,13 +653,13 @@ public class WestPanel extends JPanel {
 
             if (app.currentLineColor == LineColor.BLACK_0) {
                 app.currentLineColor = LineColor.RED_1;
-                app.es1.setColor(app.currentLineColor);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
+                app.mainDrawingWorker.setColor(app.currentLineColor);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
                 app.buttonColorReset();
                 colRedButton.setForeground(Color.black);
                 colRedButton.setBackground(Color.red);    //折線のボタンの色設定
             }
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -672,13 +672,13 @@ public class WestPanel extends JPanel {
 
             if (app.currentLineColor == LineColor.BLACK_0) {
                 app.currentLineColor = LineColor.BLUE_2;
-                app.es1.setColor(app.currentLineColor);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
+                app.mainDrawingWorker.setColor(app.currentLineColor);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
                 app.buttonColorReset();
                 colBlueButton.setForeground(Color.black);
                 colBlueButton.setBackground(Color.blue);    //折線のボタンの色設定
             }
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -687,7 +687,7 @@ public class WestPanel extends JPanel {
             app.mouseMode = MouseMode.DRAW_POINT_14;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -697,7 +697,7 @@ public class WestPanel extends JPanel {
             app.mouseMode = MouseMode.DELETE_POINT_15;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -707,22 +707,22 @@ public class WestPanel extends JPanel {
             app.mouseMode = MouseMode.VERTEX_DELETE_ON_CREASE_41;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         v_del_allButton.addActionListener(e -> {
             app.setHelp("v_del_all");
             //mouseMode=19;
-            app.es1.v_del_all();
-            System.out.println("es1.v_del_all()");
+            app.mainDrawingWorker.v_del_all();
+            System.out.println("mainDrawingWorker.v_del_all()");
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         v_del_all_ccButton.addActionListener(e -> {
             app.setHelp("v_del_all_cc");
-            app.es1.v_del_all_cc();
-            System.out.println("es1.v_del_all_cc()");
+            app.mainDrawingWorker.v_del_all_cc();
+            System.out.println("mainDrawingWorker.v_del_all_cc()");
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -740,8 +740,8 @@ public class WestPanel extends JPanel {
             System.out.println("readFile2Memo() 終了");
 
             if (memo_temp.getLineCount() > 0) {
-                app.es1.setMemo_for_reading_tuika(memo_temp);
-                app.es1.record();
+                app.mainDrawingWorker.setMemo_for_reading_tuika(memo_temp);
+                app.mainDrawingWorker.record();
                 app.repaintCanvas();
             }
         });
@@ -758,13 +758,13 @@ public class WestPanel extends JPanel {
         drawTwoColoredCpButton.addActionListener(e -> {
             app.setHelp("2syoku_tenkaizu");
 
-            app.Ss0 = app.es1.getForSelectFolding();
+            app.Ss0 = app.mainDrawingWorker.getForSelectFolding();
 
-            if (app.es1.getFoldLineTotalForSelectFolding() == 0) {        //折り線選択無し
-                app.noSelectedPolygonalLineWarning();//Warning: There is no selected polygonal line
+            if (app.mainDrawingWorker.getFoldLineTotalForSelectFolding() == 0) {        //折り線選択無し
+                app.twoColorNoSelectedPolygonalLineWarning();//Warning: There is no selected polygonal line
 
 
-            } else if (app.es1.getFoldLineTotalForSelectFolding() > 0) {
+            } else if (app.mainDrawingWorker.getFoldLineTotalForSelectFolding() > 0) {
                 app.folding_prepare();//ここでOZがOAZ(0)からOAZ(i)に切り替わる
                 app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
 
@@ -776,7 +776,7 @@ public class WestPanel extends JPanel {
                 }
             }
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
         });
         suitei_01Button.addActionListener(e -> {
@@ -784,7 +784,7 @@ public class WestPanel extends JPanel {
 
             app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
             if (!selectPersistentCheckBox.isSelected()) {
-                app.es1.unselect_all();
+                app.mainDrawingWorker.unselect_all();
             }
 
             app.Button_shared_operation();
@@ -802,7 +802,7 @@ public class WestPanel extends JPanel {
 
             app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
             if (!selectPersistentCheckBox.isSelected()) {
-                app.es1.unselect_all();
+                app.mainDrawingWorker.unselect_all();
             }
 
             app.Button_shared_operation();
@@ -813,7 +813,7 @@ public class WestPanel extends JPanel {
             app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
 
             if (!selectPersistentCheckBox.isSelected()) {
-                app.es1.unselect_all();
+                app.mainDrawingWorker.unselect_all();
             }
             app.Button_shared_operation();
         });
@@ -848,6 +848,15 @@ public class WestPanel extends JPanel {
         });
     }
 
+
+    public void getGridConfigurationData(GridConfiguration gridConfiguration) {
+        gridConfigureDialog.getData(gridConfiguration);
+    }
+
+    public void setGridConfigurationData(GridConfiguration gridConfiguration) {
+        gridConfigureDialog.setData(gridConfiguration);
+    }
+
     public UndoRedo getUndoRedo() {
         return undoRedo;
     }
@@ -862,42 +871,6 @@ public class WestPanel extends JPanel {
 
     public JCheckBox getSelectPersistentCheckBox() {
         return selectPersistentCheckBox;
-    }
-
-    public JTextField getGridAngleTextField() {
-        return gridConfigureDialog.getGridAngleTextField();
-    }
-
-    public JTextField getGridXATextField() {
-        return gridConfigureDialog.getGridXATextField();
-    }
-
-    public JTextField getGridXBTextField() {
-        return gridConfigureDialog.getGridXBTextField();
-    }
-
-    public JTextField getGridXCTextField() {
-        return gridConfigureDialog.getGridXCTextField();
-    }
-
-    public JTextField getGridYATextField() {
-        return gridConfigureDialog.getGridYATextField();
-    }
-
-    public JTextField getGridYBTextField() {
-        return gridConfigureDialog.getGridYBTextField();
-    }
-
-    public JTextField getGridYCTextField() {
-        return gridConfigureDialog.getGridYCTextField();
-    }
-
-    public JTextField getIntervalGridSizeTextField() {
-        return gridConfigureDialog.getIntervalGridSizeTextField();
-    }
-
-    public JTextField getGridSizeTextField() {
-        return gridConfigureDialog.getGridSizeTextField();
     }
 
     public JTextField getLineSegmentDivisionTextField() {

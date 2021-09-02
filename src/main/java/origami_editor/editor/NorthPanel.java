@@ -1,6 +1,6 @@
 package origami_editor.editor;
 
-import origami_editor.editor.drawing_worker.Drawing_Worker;
+import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
 import origami_editor.graphic2d.point.Point;
@@ -44,13 +44,13 @@ public class NorthPanel extends JPanel {
         $$$setupUI$$$();
         tyouhoukei_selectButton.addActionListener(e -> {
             app.setHelp("tyouhoukei_select");
-            app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
-            app.es1.setFoldLineAdditional(app.foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
+            app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
+            app.mainDrawingWorker.setFoldLineAdditional(app.foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
             app.mouseMode = MouseMode.OPERATION_FRAME_CREATE_61;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_FREE_1;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -58,7 +58,7 @@ public class NorthPanel extends JPanel {
             app.setHelp("writeImage");
             if (app.mouseMode != MouseMode.OPERATION_FRAME_CREATE_61) {
                 app.Button_shared_operation();
-                app.es1.setDrawingStage(0);
+                app.mainDrawingWorker.setDrawingStage(0);
             }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
@@ -88,7 +88,7 @@ public class NorthPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -386,11 +386,11 @@ public class NorthPanel extends JPanel {
 
 
 //枠設定時の背景を枠内のみ残してトリム 20181204
-            if ((app.mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (app.es1.getDrawingStage() == 4)) {//枠線が表示されている状態
-                int xmin = (int) app.es1.operationFrameBox.getXMin();
-                int xmax = (int) app.es1.operationFrameBox.getXMax();
-                int ymin = (int) app.es1.operationFrameBox.getYMin();
-                int ymax = (int) app.es1.operationFrameBox.getYMax();
+            if ((app.mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (app.mainDrawingWorker.getDrawingStage() == 4)) {//枠線が表示されている状態
+                int xmin = (int) app.mainDrawingWorker.operationFrameBox.getXMin();
+                int xmax = (int) app.mainDrawingWorker.operationFrameBox.getXMax();
+                int ymin = (int) app.mainDrawingWorker.operationFrameBox.getYMin();
+                int ymax = (int) app.mainDrawingWorker.operationFrameBox.getYMax();
 
                 app.img_background = app.offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin);
 
@@ -475,7 +475,7 @@ public class NorthPanel extends JPanel {
             app.mouseMode = MouseMode.CREASE_ADVANCE_TYPE_30;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });

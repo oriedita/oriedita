@@ -1,5 +1,6 @@
 package origami_editor.graphic2d.grid;
 
+import origami_editor.editor.GridConfiguration;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
 import origami_editor.graphic2d.point.Point;
@@ -11,17 +12,23 @@ import java.awt.*;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 public class Grid {
-    double d_grid_width = 200.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<格子幅(double)
+    double gridWidth = 200.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<格子幅(double)
 
-    double d_grid_a_length = 1.0;
-    double d_grid_b_length = 1.0;
+    /**
+     * Horizontal = a
+     */
+    double aGridLength = 1.0;
+    /**
+     * Vertical = b
+     */
+    double bGridLength = 1.0;
     double gridAngle = -90.0;
 
-    double d_grid_ax = 1.0;//格子の横方向の単位ベクトルのX成分の比率
-    double d_grid_ay = 0.0;//格子の横方向の単位ベクトルのY成分の比率
+    double d_grid_ax = 1.0;//The ratio of the X component of the horizontal unit vector of the grid
+    double d_grid_ay = 0.0;//Ratio of Y components of the horizontal unit vector of the grid
 
-    double d_grid_bx = 0.0;//格子の縦方向の単位ベクトルのX成分の比率
-    double d_grid_by = 1.0;//格子の縦方向の単位ベクトルのY成分の比率
+    double d_grid_bx = 0.0;//The ratio of the X component of the vertical unit vector of the grid
+    double d_grid_by = 1.0;//Ratio of Y components of the vertical unit vector of the grid
 
     double okx0 = -200.0;//obiject系での格子のx座標の原点
     double oky0 = +200.0;//obiject系での格子のy座標の原点
@@ -36,48 +43,31 @@ public class Grid {
     //用紙の4分割ならgrid_zahyou[0,1,2,3,4]なのでgrid_bunkatu_suuは4、
     int gridSize = 2;
 
-    int a_to_parallel_scale_interval = 5;
-    int a_to_parallel_scale_position = 0;
+    int horizontalScaleInterval = 5;
+    int horizontalScalePosition = 0;
 
+    int verticalScaleInterval = 5;
+    int verticalScalePosition = 0;
 
-    int b_to_parallel_scale_interval = 5;
-    int b_to_parallel_scale_position = 0;
-
-    Color grid_color = new Color(230, 230, 230);//格子線の色
-    Color gridScaleColor = new Color(180, 200, 180);//格子目盛り線の色
+    Color grid_color;//格子線の色
+    Color gridScaleColor;//格子目盛り線の色
 
     int gridLineWidth = 1;//Grid line width
 
     public Grid() {
-
     }
 
-    // ------------------------------------------------------
-    public void set_a_to_parallel_scale_interval(int i) {
-        a_to_parallel_scale_interval = i;
-        if (a_to_parallel_scale_position >= a_to_parallel_scale_interval) {
-            a_to_parallel_scale_position = 0;
+    public void setHorizontalScaleInterval(int i) {
+        horizontalScaleInterval = i;
+        if (horizontalScalePosition >= horizontalScaleInterval) {
+            horizontalScalePosition = 0;
         }
     }
 
-    public void set_b_to_parallel_scale_interval(int i) {
-        b_to_parallel_scale_interval = i;
-        if (b_to_parallel_scale_position >= b_to_parallel_scale_interval) {
-            b_to_parallel_scale_position = 0;
-        }
-    }
-
-    public void a_to_parallel_scale_position_change() {
-        a_to_parallel_scale_position = a_to_parallel_scale_position + 1;
-        if (a_to_parallel_scale_position >= a_to_parallel_scale_interval) {
-            a_to_parallel_scale_position = 0;
-        }
-    }
-
-    public void b_to_parallel_scale_position_change() {
-        b_to_parallel_scale_position = b_to_parallel_scale_position + 1;
-        if (b_to_parallel_scale_position >= b_to_parallel_scale_interval) {
-            b_to_parallel_scale_position = 0;
+    public void setVerticalScaleInterval(int i) {
+        verticalScaleInterval = i;
+        if (verticalScalePosition >= verticalScaleInterval) {
+            verticalScalePosition = 0;
         }
     }
 
@@ -85,48 +75,35 @@ public class Grid {
         gridLineWidth = i0;
     }
 
-    public int get_a_to_parallel_scale_position() {
-        return a_to_parallel_scale_position;
+    public void setHorizontalScalePosition(int i0) {
+        horizontalScalePosition = i0;
     }
 
-    public void set_a_to_parallel_scale_position(int i0) {
-        a_to_parallel_scale_position = i0;
+    public void setVerticalScalePosition(int i0) {
+        verticalScalePosition = i0;
     }
-
-    public int get_b_to_parallel_scale_position() {
-        return b_to_parallel_scale_position;
-    }
-
-    public void set_b_to_parallel_scale_position(int i0) {
-        b_to_parallel_scale_position = i0;
-    }
-
-    public int getGridLIneWidth() {
-        return gridLineWidth;
-    }
-
 
     // ------------------------------------------------------
     public void setGridSize(int i) {
         gridSize = i;
-        d_grid_width = 400.0 / (double) gridSize;
+        gridWidth = 400.0 / (double) gridSize;
 
         calculateGrid();
     }
 
     // ------------------------------------------------------
     public double getGridWidth() {
-        return d_grid_width;
+        return gridWidth;
     }
 
-    public int divisionNumber() {
+    public int getGridSize() {
         return gridSize;
     }
 
     // ----------------------------------------
     public void setGrid(double dkxn, double dkyn, double dkk) {
-        d_grid_a_length = dkxn;
-        d_grid_b_length = dkyn;
+        aGridLength = dkxn;
+        bGridLength = dkyn;
         gridAngle = -dkk;
 
         calculateGrid();
@@ -134,12 +111,12 @@ public class Grid {
 
     // ----------------------------------------
     public void calculateGrid() {
-        d_grid_ax = d_grid_width * d_grid_a_length;
-        d_grid_ay = d_grid_width * 0.0;
+        d_grid_ax = gridWidth * aGridLength;
+        d_grid_ay = gridWidth * 0.0;
 
         double d_rad = (Math.PI / 180) * gridAngle;
-        d_grid_bx = d_grid_width * d_grid_b_length * Math.cos(d_rad);
-        d_grid_by = d_grid_width * d_grid_b_length * Math.sin(d_rad);
+        d_grid_bx = gridWidth * bGridLength * Math.cos(d_rad);
+        d_grid_by = gridWidth * bGridLength * Math.sin(d_rad);
 
         diagonal_max = OritaCalc.distance(new Point(0.0, 0.0), new Point(d_grid_ax + d_grid_bx, d_grid_ay + d_grid_by));
         diagonal_min = OritaCalc.distance(new Point(d_grid_ax, d_grid_ay), new Point(d_grid_bx, d_grid_by));
@@ -153,27 +130,16 @@ public class Grid {
 
     private void resetGrid() {
         if (baseState == State.WITHIN_PAPER) {
-            if (Math.abs(d_grid_a_length - 1.0) > 0.000001) {
+            if (Math.abs(aGridLength - 1.0) > 0.000001) {
                 setBaseState(State.FULL);
             }
-            if (Math.abs(d_grid_b_length - 1.0) > 0.000001) {
+            if (Math.abs(bGridLength - 1.0) > 0.000001) {
                 setBaseState(State.FULL);
             }
             if (Math.abs(gridAngle - (-90.0)) > 0.000001) {
                 setBaseState(State.FULL);
             }
         }
-    }
-
-    public void decreaseGridLineWidth() {
-        gridLineWidth = gridLineWidth - 2;
-        if (gridLineWidth < 1) {
-            gridLineWidth = 1;
-        }
-    }
-
-    public void increaseGridLineWidth() {
-        gridLineWidth = gridLineWidth + 2;
     }
 
     public State getBaseState() {
@@ -186,12 +152,12 @@ public class Grid {
         resetGrid();
     }
 
-    public Point getIndex(Point t0) {//obj系座標のTenから、格子の指数を得る
-        //行列 [d_grid_ax, d_grid_bx]によって[1]は格子ベクトルaに変換され、[1]は格子ベクトルbに変換される。
-        //     [d_grid_ay, d_grid_by]        [0]　　　　　　　 　　　　　　[0]
-        //この逆行列によってobj系座標のTenは格子の指数に変換される。
-        //　　　　　
-        //行列の記号の定義
+    public Point getPosition(Point t0) {//Obtain the grid index from Ten of obj system coordinates
+        // The matrix [d_grid_ax, d_grid_bx] converts [1] to the lattice vector a and [1] to the lattice vector b.
+        // [d_grid_ay, d_grid_by] [0] [0]
+        // By this inverse matrix, Ten of obj system coordinates is converted to the exponent of the lattice.
+        // //
+        // Definition of matrix symbols
         double ax = d_grid_ax;
         double ay = d_grid_ay;
         double bx = d_grid_bx;
@@ -214,11 +180,11 @@ public class Grid {
         return new Point(index_x, index_y);
     }
 
-    public int get_a_index_min(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より小さい整数の指数を得る。
-        Point p_a_index = new Point(getIndex(p_a));
-        Point p_b_index = new Point(getIndex(p_b));
-        Point p_c_index = new Point(getIndex(p_c));
-        Point p_d_index = new Point(getIndex(p_d));
+    private int get_a_index_min(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より小さい整数の指数を得る。
+        Point p_a_index = new Point(getPosition(p_a));
+        Point p_b_index = new Point(getPosition(p_b));
+        Point p_c_index = new Point(getPosition(p_c));
+        Point p_d_index = new Point(getPosition(p_d));
 
         double a_index_min = p_a_index.getX();
         if (p_b_index.getX() < a_index_min) {
@@ -234,11 +200,11 @@ public class Grid {
         return (int) Math.floor(a_index_min);
     }
 
-    public int get_a_index_max(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より大きい整数の指数を得る。
-        Point p_a_index = new Point(getIndex(p_a));
-        Point p_b_index = new Point(getIndex(p_b));
-        Point p_c_index = new Point(getIndex(p_c));
-        Point p_d_index = new Point(getIndex(p_d));
+    private int get_a_index_max(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より大きい整数の指数を得る。
+        Point p_a_index = new Point(getPosition(p_a));
+        Point p_b_index = new Point(getPosition(p_b));
+        Point p_c_index = new Point(getPosition(p_c));
+        Point p_d_index = new Point(getPosition(p_d));
 
         double a_index_max = p_a_index.getX();
         if (p_b_index.getX() > a_index_max) {
@@ -254,11 +220,11 @@ public class Grid {
         return (int) Math.ceil(a_index_max);
     }
 
-    public int get_b_index_min(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のbベクトルの指数より小さい整数の指数を得る。
-        Point p_a_index = new Point(getIndex(p_a));
-        Point p_b_index = new Point(getIndex(p_b));
-        Point p_c_index = new Point(getIndex(p_c));
-        Point p_d_index = new Point(getIndex(p_d));
+    private int get_b_index_min(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のbベクトルの指数より小さい整数の指数を得る。
+        Point p_a_index = new Point(getPosition(p_a));
+        Point p_b_index = new Point(getPosition(p_b));
+        Point p_c_index = new Point(getPosition(p_c));
+        Point p_d_index = new Point(getPosition(p_d));
 
         double b_index_min = p_a_index.getY();
         if (p_b_index.getY() < b_index_min) {
@@ -274,11 +240,11 @@ public class Grid {
         return (int) Math.floor(b_index_min);
     }
 
-    public int get_b_index_max(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のbベクトルの指数より大きい整数の指数を得る。
-        Point p_a_index = new Point(getIndex(p_a));
-        Point p_b_index = new Point(getIndex(p_b));
-        Point p_c_index = new Point(getIndex(p_c));
-        Point p_d_index = new Point(getIndex(p_d));
+    private int get_b_index_max(Point p_a, Point p_b, Point p_c, Point p_d) {//Specify four points in the obj coordinate system and get an integer exponent greater than the exponent of the b vector at each point.
+        Point p_a_index = new Point(getPosition(p_a));
+        Point p_b_index = new Point(getPosition(p_b));
+        Point p_c_index = new Point(getPosition(p_c));
+        Point p_d_index = new Point(getPosition(p_d));
 
         double b_index_max = p_a_index.getY();
         if (p_b_index.getY() > b_index_max) {
@@ -342,9 +308,9 @@ public class Grid {
 
         //-------------------------------------
         if (baseState == State.WITHIN_PAPER) {
-            int grid_yousi_x_max = divisionNumber();
+            int grid_yousi_x_max = getGridSize();
             int grid_yousi_x_min = 0;
-            int grid_yousi_y_max = divisionNumber();
+            int grid_yousi_y_max = getGridSize();
             int grid_yousi_y_min = 0;
 
             if (grid_screen_a_max > grid_yousi_x_max) {
@@ -390,11 +356,11 @@ public class Grid {
             int i_balance;//剰余
 
             for (int i = grid_screen_a_min; i <= grid_screen_a_max; i++) {
-                i_balance = i % b_to_parallel_scale_interval;
+                i_balance = i % verticalScaleInterval;
                 if (i_balance < 0) {
-                    i_balance = i_balance + b_to_parallel_scale_interval;
+                    i_balance = i_balance + verticalScaleInterval;
                 }
-                if (i_balance == b_to_parallel_scale_position) {
+                if (i_balance == verticalScalePosition) {
                     s_ob.set(d_grid_ax * i + d_grid_bx * grid_screen_b_min + okx0,
                             d_grid_ay * i + d_grid_by * grid_screen_b_min + oky0,
                             d_grid_ax * i + d_grid_bx * grid_screen_b_max + okx0,
@@ -405,12 +371,12 @@ public class Grid {
             }
 
             for (int i = grid_screen_b_min; i <= grid_screen_b_max; i++) {
-                i_balance = i % a_to_parallel_scale_interval;
+                i_balance = i % horizontalScaleInterval;
                 if (i_balance < 0) {
-                    i_balance = i_balance + a_to_parallel_scale_interval;
+                    i_balance = i_balance + horizontalScaleInterval;
                 }
 
-                if (i_balance == a_to_parallel_scale_position) {
+                if (i_balance == horizontalScalePosition) {
 
                     s_ob.set(d_grid_ax * grid_screen_a_min + d_grid_bx * i + okx0,
                             d_grid_ay * grid_screen_a_min + d_grid_by * i + oky0,
@@ -466,6 +432,19 @@ public class Grid {
 
     private boolean isWithinPaper(Point t_tmp) {
         return ((-200.000001 <= t_tmp.getX()) && (t_tmp.getX() <= 200.000001)) && ((-200.000001 <= t_tmp.getY()) && (t_tmp.getY() <= 200.000001));
+    }
+
+    public void setGridConfigurationData(GridConfiguration gridConfiguration) {
+        setGridLineWidth(gridConfiguration.getGridLineWidth());
+        setGridSize(gridConfiguration.getGridSize());
+        setGrid(gridConfiguration.getGridXLength(), gridConfiguration.getGridYLength(), gridConfiguration.getGridAngle());
+        setBaseState(gridConfiguration.getBaseState());
+        setGridScaleColor(gridConfiguration.getGridScaleColor());
+        setGridColor(gridConfiguration.getGridColor());
+        setHorizontalScaleInterval(gridConfiguration.getIntervalGridSize());
+        setVerticalScaleInterval(gridConfiguration.getIntervalGridSize());
+        setHorizontalScalePosition(gridConfiguration.getHorizontalScalePosition());
+        setVerticalScalePosition(gridConfiguration.getVerticalScalePosition());
     }
 
     /**

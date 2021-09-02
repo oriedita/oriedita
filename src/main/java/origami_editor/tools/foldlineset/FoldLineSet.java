@@ -370,7 +370,7 @@ public class FoldLineSet {
     }
 
     //Output the line segment set information as Memo for folding estimation. // Do not write out auxiliary lines with icol of 3 (cyan = light blue) or more in the memo
-    public Memo getMemo_for_select_folding() {
+    public Memo getMemoForSelectFolding() {
         Memo memo1 = new Memo();
         memo1.reset();
         memo1.addLine("<線分集合>");
@@ -606,7 +606,7 @@ public class FoldLineSet {
     }
 
     //Arrangement of line segment set when inputting development drawing
-    public void h_setMemo(Memo memo1) {
+    public void setAuxMemo(Memo memo1) {
         int reading_flg = 0;//If it is 0, it will not be read. If it is 1, read it.
         int number = 0;
         LineColor ic;
@@ -1842,7 +1842,7 @@ public class FoldLineSet {
             Point pk = new Point();
             pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(sj), si.getA()));//pkは点pの（線分を含む直線上の）影
             intersect_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
-            //foldLines.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
+            //foldLineSet.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(straightLine0,straightLine1));
 
             if (((si.getColor() != LineColor.CYAN_3) && (sj.getColor() != LineColor.CYAN_3))
@@ -1872,7 +1872,7 @@ public class FoldLineSet {
             Point pk = new Point();
             pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(sj), si.getB()));//pkは点pの（線分を含む直線上の）影
             intersect_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
-            //foldLines.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
+            //foldLineSet.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(straightLine0,straightLine1));
 
             if (((si.getColor() != LineColor.CYAN_3) && (sj.getColor() != LineColor.CYAN_3))
@@ -1902,7 +1902,7 @@ public class FoldLineSet {
             Point pk = new Point();
             pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(si), sj.getA()));//pk is the projection (on a straight line including the line segment) of point p
             intersect_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
-            //foldLines.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
+            //foldLineSet.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //This is the end of the operation 			kousa_ten.set(oc.kouten_motome(straightLine0,straightLine1));
 
             if (((si.getColor() != LineColor.CYAN_3) && (sj.getColor() != LineColor.CYAN_3))
@@ -1932,7 +1932,7 @@ public class FoldLineSet {
             Point pk = new Point();
             pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(si), sj.getB()));//pkは点pの（線分を含む直線上の）影
             intersect_point.set(pk);//The intersection is the shadow of the end point of s0 on the polygonal line i 20161129
-            //foldLines.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
+            //foldLineSet.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(straightLine0,straightLine1));
 
             if (((si.getColor() != LineColor.CYAN_3) && (sj.getColor() != LineColor.CYAN_3))
@@ -2077,7 +2077,7 @@ public class FoldLineSet {
                 return LineSegment.Intersection.PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352;
 
 
-            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S1_INCLUDES_S2_361) {//線分(p1,p2)に線分(p3,p4)が含まれる ori_s_temp.senbun_bunkatu(s1.geta()); ori_s_temp.senbun_bunkatu(s1.getb());   foldLines.setiactive(i,100);//imax=imax-1;
+            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S1_INCLUDES_S2_361) {//線分(p1,p2)に線分(p3,p4)が含まれる ori_s_temp.senbun_bunkatu(s1.geta()); ori_s_temp.senbun_bunkatu(s1.getb());   foldLineSet.setiactive(i,100);//imax=imax-1;
                 if ((si.getColor() == LineColor.CYAN_3) && (sj.getColor() != LineColor.CYAN_3)) {
                     return LineSegment.Intersection.NO_INTERSECTION_0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
@@ -2090,7 +2090,7 @@ public class FoldLineSet {
 
                 si.setB(sj.getA());
                 return LineSegment.Intersection.PARALLEL_S1_INCLUDES_S2_361;
-            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S1_INCLUDES_S2_362) {//線分(p1,p2)に線分(p4,p3)が含まれる; ori_s_temp.senbun_bunkatu(s1.getb());   foldLines.setiactive(i,100);//imax=imax-1;
+            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S1_INCLUDES_S2_362) {//線分(p1,p2)に線分(p4,p3)が含まれる; ori_s_temp.senbun_bunkatu(s1.getb());   foldLineSet.setiactive(i,100);//imax=imax-1;
                 if ((si.getColor() == LineColor.CYAN_3) && (sj.getColor() != LineColor.CYAN_3)) {
                     return LineSegment.Intersection.NO_INTERSECTION_0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
@@ -2103,7 +2103,7 @@ public class FoldLineSet {
 
                 si.setB(sj.getB());
                 return LineSegment.Intersection.PARALLEL_S1_INCLUDES_S2_362;
-            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S2_INCLUDES_S1_363) {//線分(p3,p4)に線分(p1,p2)が含まれる foldLines.addsenbun(s0.getb(),s1.getb(),s1.getcolor());foldLines.setb(i,s0.geta());
+            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S2_INCLUDES_S1_363) {//線分(p3,p4)に線分(p1,p2)が含まれる foldLineSet.addsenbun(s0.getb(),s1.getb(),s1.getcolor());foldLineSet.setb(i,s0.geta());
                 if ((si.getColor() == LineColor.CYAN_3) && (sj.getColor() != LineColor.CYAN_3)) {
                     return LineSegment.Intersection.NO_INTERSECTION_0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
@@ -2115,7 +2115,7 @@ public class FoldLineSet {
 
                 sj.setB(si.getA());
                 return LineSegment.Intersection.PARALLEL_S2_INCLUDES_S1_363;
-            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S2_INCLUDES_S1_364) {//線分(p3,p4)に線分(p2,p1)が含まれるori_s.addsenbun(s0.geta(),s1.getb(),s1.getcolor());foldLines.setb(i,s0.getb());
+            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S2_INCLUDES_S1_364) {//線分(p3,p4)に線分(p2,p1)が含まれるori_s.addsenbun(s0.geta(),s1.getb(),s1.getcolor());foldLineSet.setb(i,s0.getb());
                 if ((si.getColor() == LineColor.CYAN_3) && (sj.getColor() != LineColor.CYAN_3)) {
                     return LineSegment.Intersection.NO_INTERSECTION_0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
@@ -2130,7 +2130,7 @@ public class FoldLineSet {
                 return LineSegment.Intersection.PARALLEL_S2_INCLUDES_S1_364;
 
 
-            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S1_END_OVERLAPS_S2_START_371) {//線分(p1,p2)のP2側と線分(p3,p4)のP3側が部分的に重なる//ori_s_temp.senbun_bunkatu(s1.geta());foldLines.seta(i,s0.getb());
+            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S1_END_OVERLAPS_S2_START_371) {//線分(p1,p2)のP2側と線分(p3,p4)のP3側が部分的に重なる//ori_s_temp.senbun_bunkatu(s1.geta());foldLineSet.seta(i,s0.getb());
                 if ((si.getColor() == LineColor.CYAN_3) && (sj.getColor() != LineColor.CYAN_3)) {
                     return LineSegment.Intersection.NO_INTERSECTION_0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
@@ -2145,7 +2145,7 @@ public class FoldLineSet {
                 sj.setA(p2);
                 return LineSegment.Intersection.PARALLEL_S1_END_OVERLAPS_S2_START_371;
 
-            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S1_END_OVERLAPS_S2_END_372) {//線分(p1,p2)のP2側と線分(p4,p3)のP4側が部分的に重なる//ori_s_temp.senbun_bunkatu(s1.getb());foldLines.setb(i,s0.getb());
+            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S1_END_OVERLAPS_S2_END_372) {//線分(p1,p2)のP2側と線分(p4,p3)のP4側が部分的に重なる//ori_s_temp.senbun_bunkatu(s1.getb());foldLineSet.setb(i,s0.getb());
                 if ((si.getColor() == LineColor.CYAN_3) && (sj.getColor() != LineColor.CYAN_3)) {
                     return LineSegment.Intersection.NO_INTERSECTION_0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
@@ -2159,7 +2159,7 @@ public class FoldLineSet {
                 sj.setB(p2);
                 return LineSegment.Intersection.PARALLEL_S1_END_OVERLAPS_S2_END_372;
 
-            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S1_START_OVERLAPS_S2_END_373) {//線分(p3,p4)のP4側と線分(p1,p2)のP1側が部分的に重なる//ori_s_temp.senbun_bunkatu(s1.getb());foldLines.setb(i,s0.geta());
+            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S1_START_OVERLAPS_S2_END_373) {//線分(p3,p4)のP4側と線分(p1,p2)のP1側が部分的に重なる//ori_s_temp.senbun_bunkatu(s1.getb());foldLineSet.setb(i,s0.geta());
                 if ((si.getColor() == LineColor.CYAN_3) && (sj.getColor() != LineColor.CYAN_3)) {
                     return LineSegment.Intersection.NO_INTERSECTION_0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
@@ -2173,7 +2173,7 @@ public class FoldLineSet {
                 sj.setB(p1);
                 return LineSegment.Intersection.PARALLEL_S1_START_OVERLAPS_S2_END_373;
 
-            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S1_START_OVERLAPS_S2_START_374) {//線分(p4,p3)のP3側と線分(p1,p2)のP1側が部分的に重なる//ori_s_temp.senbun_bunkatu(s1.geta());foldLines.seta(i,s0.geta());
+            } else if (i_intersection_decision == LineSegment.Intersection.PARALLEL_S1_START_OVERLAPS_S2_START_374) {//線分(p4,p3)のP3側と線分(p1,p2)のP1側が部分的に重なる//ori_s_temp.senbun_bunkatu(s1.geta());foldLineSet.seta(i,s0.geta());
                 if ((si.getColor() == LineColor.CYAN_3) && (sj.getColor() != LineColor.CYAN_3)) {
                     return LineSegment.Intersection.NO_INTERSECTION_0;
                 } //加えるほうiが水色線（補助活線）、元からあるほうjが折線
@@ -2735,7 +2735,7 @@ public class FoldLineSet {
     }
 
     //Arrangement of circles -----------------------------------------
-    public boolean circle_organize(int i0) {//Organize the jth circle. Returns 1 if deleted by pruning, 0 if not deleted.
+    public boolean organizeCircles(int i0) {//Organize the jth circle. Returns 1 if deleted by pruning, 0 if not deleted.
         int ies3 = circle_state(i0, 3);
         int ies4 = circle_state(i0, 4);
         int ies5 = circle_state(i0, 5);
@@ -2759,9 +2759,9 @@ public class FoldLineSet {
     }
 
     //円の整理-----------------------------------------
-    public void circle_organize() {//全ての円を対象に整理をする。
+    public void organizeCircles() {//全ての円を対象に整理をする。
         for (int i = numCircles(); i >= 1; i--) {
-            circle_organize(i);
+            organizeCircles(i);
         }
     }
 

@@ -1,6 +1,6 @@
 package origami_editor.editor;
 
-import origami_editor.editor.drawing_worker.Drawing_Worker;
+import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.record.string_op.StringOp;
 
 import javax.swing.*;
@@ -29,7 +29,7 @@ public class EastPanel extends JPanel {
     private JLabel measuredLength1Label;
     private JLabel measuredLength2Label;
     private JButton ad_fncButton;
-    private JTextField h_undoTotalTextField;
+    private JTextField auxUndoTotalTextField;
     private JPanel panel1;
     private JButton degButton;
     private JButton deg3Button;
@@ -75,13 +75,13 @@ public class EastPanel extends JPanel {
         $$$setupUI$$$();
         ckOCheckBox.addActionListener(e -> {
             app.setHelp("check1");
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
 
             if (ckOCheckBox.isSelected()) {
-                app.es1.check1(0.001, 0.5);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-                app.es1.set_i_check1(true);
+                app.mainDrawingWorker.check1(0.001, 0.5);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
+                app.mainDrawingWorker.set_i_check1(true);
             } else {
-                app.es1.set_i_check1(false);
+                app.mainDrawingWorker.set_i_check1(false);
             }
             app.Button_shared_operation();
             app.repaintCanvas();
@@ -89,54 +89,54 @@ public class EastPanel extends JPanel {
         fxOButton.addActionListener(e -> {
 
             app.setHelp("fix1");
-            app.es1.unselect_all();
-            app.es1.fix1(0.001, 0.5);
-            app.es1.check1(0.001, 0.5);
+            app.mainDrawingWorker.unselect_all();
+            app.mainDrawingWorker.fix1(0.001, 0.5);
+            app.mainDrawingWorker.check1(0.001, 0.5);
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         ckTCheckBox.addActionListener(e -> {
             app.setHelp("check2");
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
 
             if (ckTCheckBox.isSelected()) {
-                app.es1.check2(0.01, 0.5);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-                app.es1.setCheck2(true);
+                app.mainDrawingWorker.check2(0.01, 0.5);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
+                app.mainDrawingWorker.setCheck2(true);
             } else {
-                app.es1.setCheck2(false);
+                app.mainDrawingWorker.setCheck2(false);
             }
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         fxTButton.addActionListener(e -> {
             app.setHelp("fix2");
-            app.es1.unselect_all();
-            app.es1.fix2(0.001, 0.5);
-            app.es1.check2(0.001, 0.5);
+            app.mainDrawingWorker.unselect_all();
+            app.mainDrawingWorker.fix2(0.001, 0.5);
+            app.mainDrawingWorker.check2(0.001, 0.5);
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         cAMVCheckBox.addActionListener(e -> {
             app.setHelp("check4");
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
 
             if (cAMVCheckBox.isSelected()) {
-                app.es1.check4(0.0001);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-                app.es1.setCheck4(true);
+                app.mainDrawingWorker.check4(0.0001);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
+                app.mainDrawingWorker.setCheck4(true);
             } else {
-                app.es1.setCheck4(false);
+                app.mainDrawingWorker.setCheck4(false);
             }
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         ck4_colorDecreaseButton.addActionListener(e -> {
-            app.es1.ck4_color_sage();
+            app.mainDrawingWorker.lightenCheck4Color();
             app.setHelp("ck4_color_sage");
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         ck4_colorIncreaseButton.addActionListener(e -> {
-            app.es1.ck4_color_age();
+            app.mainDrawingWorker.darkenCheck4Color();
             app.setHelp("ck4_color_age");
             app.Button_shared_operation();
             app.repaintCanvas();
@@ -165,8 +165,8 @@ public class EastPanel extends JPanel {
             app.id_angle_system_a = app.id_angle_system_a + 1;//if(id_angle_system_a<2){id_angle_system_a=2;}
             angleSystemAButton.setText("180/" + app.id_angle_system_a + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_a)) * 1000)) / 1000.0);
 
-            app.es1.set_id_angle_system(app.id_angle_system_a);
-            app.es1.unselect_all();
+            app.mainDrawingWorker.set_id_angle_system(app.id_angle_system_a);
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -197,8 +197,8 @@ public class EastPanel extends JPanel {
 
             angleSystemAButton.setText("180/" + app.id_angle_system_a + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_a)) * 1000)) / 1000.0);
 
-            app.es1.set_id_angle_system(app.id_angle_system_a);
-            app.es1.unselect_all();
+            app.mainDrawingWorker.set_id_angle_system(app.id_angle_system_a);
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -231,8 +231,8 @@ public class EastPanel extends JPanel {
             }
             angleSystemAButton.setText("180/" + app.id_angle_system_a + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_a)) * 1000)) / 1000.0);
 
-            app.es1.set_id_angle_system(app.id_angle_system_a);
-            app.es1.unselect_all();
+            app.mainDrawingWorker.set_id_angle_system(app.id_angle_system_a);
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -263,8 +263,8 @@ public class EastPanel extends JPanel {
             app.id_angle_system_b = app.id_angle_system_b + 1;//if(id_angle_system_b<2){id_angle_system_b=2;}
             angleSystemBButton.setText("180/" + app.id_angle_system_b + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_b)) * 1000)) / 1000.0);
 
-            app.es1.set_id_angle_system(app.id_angle_system_b);
-            app.es1.unselect_all();
+            app.mainDrawingWorker.set_id_angle_system(app.id_angle_system_b);
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -295,8 +295,8 @@ public class EastPanel extends JPanel {
 
             angleSystemBButton.setText("180/" + app.id_angle_system_b + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_b)) * 1000)) / 1000.0);
 
-            app.es1.set_id_angle_system(app.id_angle_system_b);
-            app.es1.unselect_all();
+            app.mainDrawingWorker.set_id_angle_system(app.id_angle_system_b);
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -327,8 +327,8 @@ public class EastPanel extends JPanel {
             }
             angleSystemBButton.setText("180/" + app.id_angle_system_b + "=" + (double) (Math.round((180.0 / ((double) app.id_angle_system_b)) * 1000)) / 1000.0);
 
-            app.es1.set_id_angle_system(app.id_angle_system_b);
-            app.es1.unselect_all();
+            app.mainDrawingWorker.set_id_angle_system(app.id_angle_system_b);
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -356,8 +356,8 @@ public class EastPanel extends JPanel {
 
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.set_id_angle_system(0);
-            app.es1.unselect_all();
+            app.mainDrawingWorker.set_id_angle_system(0);
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -386,8 +386,8 @@ public class EastPanel extends JPanel {
 
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.set_id_angle_system(0);
-            app.es1.unselect_all();
+            app.mainDrawingWorker.set_id_angle_system(0);
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -399,7 +399,7 @@ public class EastPanel extends JPanel {
             System.out.println("mouseMode = " + app.mouseMode);
 
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -411,7 +411,7 @@ public class EastPanel extends JPanel {
             System.out.println("mouseMode = " + app.mouseMode);
 
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -421,7 +421,7 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -432,7 +432,7 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.ANGLE_SYSTEM_16;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -442,7 +442,7 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -456,7 +456,7 @@ public class EastPanel extends JPanel {
                 app.numPolygonCorners = 100;
             }
             polygonSizeTextField.setText(String.valueOf(app.numPolygonCorners));
-            app.es1.setNumPolygonCorners(app.numPolygonCorners);
+            app.mainDrawingWorker.setNumPolygonCorners(app.numPolygonCorners);
 
             app.setHelp("kakusuu_set");
             app.mouseMode = MouseMode.POLYGON_SET_NO_CORNERS_29;
@@ -472,7 +472,7 @@ public class EastPanel extends JPanel {
                 app.numPolygonCorners = 3;
             }
             polygonSizeTextField.setText(String.valueOf(app.numPolygonCorners));
-            app.es1.setNumPolygonCorners(app.numPolygonCorners);
+            app.mainDrawingWorker.setNumPolygonCorners(app.numPolygonCorners);
 
             app.setHelp("sei_takakukei");
             app.mouseMode = MouseMode.POLYGON_SET_NO_CORNERS_29;
@@ -480,14 +480,14 @@ public class EastPanel extends JPanel {
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.POLYGON_SET_NO_CORNERS_29;
             app.Button_shared_operation();
             app.repaintCanvas();
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
         });
         circleDrawFreeButton.addActionListener(e -> {
             app.setHelp("en_nyuryoku_free");
             app.mouseMode = MouseMode.CIRCLE_DRAW_FREE_47;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -496,7 +496,7 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.CIRCLE_DRAW_42;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -505,7 +505,7 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.CIRCLE_DRAW_SEPARATE_44;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -514,7 +514,7 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.CIRCLE_DRAW_CONCENTRIC_48;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -523,7 +523,7 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -533,7 +533,7 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -543,7 +543,7 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.CIRCLE_DRAW_TANGENT_LINE_45;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -553,7 +553,7 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.CIRCLE_DRAW_THREE_POINT_43;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -563,7 +563,7 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.CIRCLE_DRAW_INVERTED_46;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -584,7 +584,7 @@ public class EastPanel extends JPanel {
 
             app.mouseMode = MouseMode.CIRCLE_CHANGE_COLOR_59;
             System.out.println("mouseMode = " + app.mouseMode);
-            app.es1.set_sen_tokutyuu_color(app.circleCustomizedColor);
+            app.mainDrawingWorker.setCustomCircleColor(app.circleCustomizedColor);
 
             app.repaintCanvas();
         });
@@ -592,32 +592,32 @@ public class EastPanel extends JPanel {
             app.setHelp("sen_tokutyuu_color_henkou");
             app.mouseMode = MouseMode.CIRCLE_CHANGE_COLOR_59;
             System.out.println("mouseMode = " + app.mouseMode);
-            app.es1.set_sen_tokutyuu_color(app.circleCustomizedColor);
-            app.es1.unselect_all();
+            app.mainDrawingWorker.setCustomCircleColor(app.circleCustomizedColor);
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         h_undoButton.addActionListener(e -> {
             app.setHelp("undo");
 
-            app.es1.h_undo();
+            app.mainDrawingWorker.auxUndo();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         h_undoTotalSetButton.addActionListener(e -> {
             app.setHelp("h_undo_syutoku");
             int i_h_undo_suu_old = app.i_undo_suu;
-            app.i_h_undo_suu = StringOp.String2int(h_undoTotalTextField.getText(), i_h_undo_suu_old);
+            app.i_h_undo_suu = StringOp.String2int(auxUndoTotalTextField.getText(), i_h_undo_suu_old);
             if (app.i_h_undo_suu < 0) {
                 app.i_h_undo_suu = 0;
             }
-            h_undoTotalTextField.setText(String.valueOf(app.i_h_undo_suu));
-            app.es1.set_h_Ubox_undo_suu(app.i_h_undo_suu);
+            auxUndoTotalTextField.setText(String.valueOf(app.i_h_undo_suu));
+            app.mainDrawingWorker.setAuxUndoTotal(app.i_h_undo_suu);
         });
         h_redoButton.addActionListener(e -> {
             app.setHelp("h_redo");
 
-            app.es1.h_redo();
+            app.mainDrawingWorker.auxRedo();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -642,7 +642,7 @@ public class EastPanel extends JPanel {
             app.auxColorButtonReset();
             colOrangeButton.setBackground(Color.ORANGE);
             app.currentAuxLineColor = LineColor.ORANGE_4;
-            app.es1.h_setcolor(app.currentAuxLineColor);
+            app.mainDrawingWorker.setAuxLineColor(app.currentAuxLineColor);
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -651,7 +651,7 @@ public class EastPanel extends JPanel {
             app.auxColorButtonReset();
             colYellowButton.setBackground(Color.yellow);
             app.currentAuxLineColor = LineColor.YELLOW_7;
-            app.es1.h_setcolor(app.currentAuxLineColor);
+            app.mainDrawingWorker.setAuxLineColor(app.currentAuxLineColor);
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -660,11 +660,11 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.DRAW_CREASE_FREE_1;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
-            app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.AUX_LINE_1;//=0は折線入力　=1は補助線入力モード
-            app.es1.setFoldLineAdditional(app.foldLineAdditionalInputMode);
+            app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.AUX_LINE_1;//=0は折線入力　=1は補助線入力モード
+            app.mainDrawingWorker.setFoldLineAdditional(app.foldLineAdditionalInputMode);
         });
         h_senbun_sakujyoButton.addActionListener(e -> {
             app.setHelp("h_senbun_sakujyo");
@@ -672,10 +672,10 @@ public class EastPanel extends JPanel {
             System.out.println("mouseMode = " + app.mouseMode);
 
 
-            app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.AUX_LINE_1;//= 0 is polygonal line input = 1 is auxiliary line input mode
-            app.es1.setFoldLineAdditional(app.foldLineAdditionalInputMode);
+            app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.AUX_LINE_1;//= 0 is polygonal line input = 1 is auxiliary line input mode
+            app.mainDrawingWorker.setFoldLineAdditional(app.foldLineAdditionalInputMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -684,7 +684,7 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -693,7 +693,7 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -702,7 +702,7 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -711,7 +711,7 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -720,17 +720,18 @@ public class EastPanel extends JPanel {
             app.mouseMode = MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.unselect_all();
+            app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         ad_fncButton.addActionListener(e -> {
             app.setHelp("tuika_kinou");
 
-            app.Frame_tuika();
-            app.add_frame.toFront();
+            app.showAdditionalFrame();
+            app.additionalFrame.toFront();
         });
     }
+
 
     public JLabel getMeasuredLength1Label() {
         return measuredLength1Label;
@@ -760,8 +761,8 @@ public class EastPanel extends JPanel {
         return colYellowButton;
     }
 
-    public JTextField getH_undoTotalTextField() {
-        return h_undoTotalTextField;
+    public JTextField getAuxUndoTotalTextField() {
+        return auxUndoTotalTextField;
     }
 
     public JButton getC_colButton() {
@@ -1396,15 +1397,15 @@ public class EastPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel15.add(h_undoButton, gbc);
-        h_undoTotalTextField = new JTextField();
-        h_undoTotalTextField.setColumns(2);
-        h_undoTotalTextField.setText("50");
+        auxUndoTotalTextField = new JTextField();
+        auxUndoTotalTextField.setColumns(2);
+        auxUndoTotalTextField.setText("50");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel15.add(h_undoTotalTextField, gbc);
+        panel15.add(auxUndoTotalTextField, gbc);
         h_undoTotalSetButton = new JButton();
         h_undoTotalSetButton.setText("S");
         gbc = new GridBagConstraints();

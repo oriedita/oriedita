@@ -1,13 +1,12 @@
 package origami_editor.editor;
 
 import origami_editor.editor.component.UndoRedo;
-import origami_editor.editor.drawing_worker.Drawing_Worker;
+import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.editor.hierarchylist_worker.HierarchyList_Worker;
 import origami_editor.graphic2d.grid.Grid;
 import origami_editor.graphic2d.linesegment.LineSegment;
-import origami_editor.graphic2d.oritacalc.OritaCalc;
 import origami_editor.graphic2d.point.Point;
 import origami_editor.record.memo.Memo;
 import origami_editor.record.string_op.StringOp;
@@ -23,17 +22,18 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
 import static origami_editor.editor.ResourceUtil.createImageIcon;
 
 public class App extends JFrame implements ActionListener {
+    private final NorthPanel northPanel;
+    private final EastPanel eastPanel;
     private final SouthPanel southPanel;
+    private final WestPanel westPanel;
     public FoldedFigure temp_OZ = new FoldedFigure(this);    //Folded figure
-    public FoldedFigure OZ;    //Folded figure
-    public LineSegmentSet Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、es1.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public FoldedFigure OZ;    //Current Folded figure
+    public LineSegmentSet Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
     public BulletinBoard bulletinBoard = new BulletinBoard(this);
     public Camera camera_of_orisen_input_diagram = new Camera();
     public boolean antiAlias = false;//展開図のアンチェイリアスをするかしないか。する=1、しない=0
@@ -44,29 +44,10 @@ public class App extends JFrame implements ActionListener {
     public JButton Button_L_color;                    //折り上がり図の線の色の指定に用いる
     public Color circleCustomizedColor = new Color(100, 200, 200);//Designated color when customizing the color of auxiliary lines and circles
     public JButton circleCustomizedColorButton;                    //折り上がり図の表の色の指定に用いる
-    public JTextField gridSizeTextField;
-    public int gridSize = 0;    // Number of grid divisions (Specify input rules. 0 means no rules, 1 means bellows input.
-    public JTextField gridXATextField;
-    public double d_grid_x_a = 1.0;
-    public JTextField gridXBTextField;
-    public double d_grid_x_b = 0.0;
-    public JTextField gridXCTextField;
-    public double d_grid_x_c = 0.0;
-    public JTextField gridYATextField;
-    public double d_grid_y_a = 1.0;
-    public JTextField gridYBTextField;
-    public double d_grid_y_b = 0.0;
-    public JTextField gridYCTextField;
-    public double d_grid_y_c = 0.0;
-
 
     //アプレット用public void init()または、アプリケーション用public ap() 以外のクラスでも使用されるパネルの部品の宣言はここでしておく。
     //アプレット用public void init()または、アプリケーション用public ap() の中だけで使用されるパネルの部品の宣言ぅラスの中でする。
     //Those that basically change the appearance of the parts are declared here.
-    public JTextField gridAngleTextField;
-    public double d_grid_angle = 90.0;
-    public JTextField text25;
-    public int scale_interval;
     public JTextField foldedFigureSizeTextField;//double d_oriagarizu_syukusyaku_keisuu=1.0;//折り上がり図の縮尺係数
     public JTextField foldedFigureRotateTextField;
     public JCheckBox ckbox_mouse_settings;//マウスの設定。チェックがあると、ホイールマウスとして動作設定
@@ -97,8 +78,7 @@ public class App extends JFrame implements ActionListener {
     ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     FileDialog fd;
     double r = 3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
-    public final Drawing_Worker es1 = new Drawing_Worker(r, this);    // Basic branch craftsman. Accepts input from the mouse.
-    public Grid kus = es1.grid;
+    public final DrawingWorker mainDrawingWorker = new DrawingWorker(r, this);    // Basic branch craftsman. Accepts input from the mouse.
     Memo memo1 = new Memo();
     boolean subThreadRunning = false;//1 if SubThread (folding calculation) is running, 0 if not running
     ArrayList<FoldedFigure> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
@@ -112,7 +92,7 @@ public class App extends JFrame implements ActionListener {
     //各種変数の定義
     String frame_title_0;//フレームのタイトルの根本部分
     String frame_title;//フレームのタイトルの全体
-    Drawing_Worker.FoldLineAdditionalInputMode foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
+    DrawingWorker.FoldLineAdditionalInputMode foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
     AngleSystemInputType angle_system_input_id = AngleSystemInputType.DEG_1;//Specifying the input method of the angle system angle_system_input_id = AngleSystemInputType.DEG_1 specifies the line segment, 2 specifies 2 points
     int id_angle_system_a = 12;//角度系の180度を割る数の格納_a
     int id_angle_system_b = 8;//Storage of numbers that divide the angle system by 180 degrees_b
@@ -217,7 +197,7 @@ public class App extends JFrame implements ActionListener {
     //Vector from the lower right corner to the limit position where the drawing screen can be seen in the lower right corner
     int lowerRightX = 0;
     int lowerRightY = 0;
-    JDialog add_frame;
+    JDialog additionalFrame;
     boolean showAddFrame = false;//1=add_frameが存在する。,0=存在しない。
     boolean ckbox_add_frame_SelectAnd3click_isSelected = false;//1=折線セレクト状態でトリプルクリックするとmoveやcopy等の動作モードに移行する。 20200930
     // **************************************************************************************************************************
@@ -227,14 +207,15 @@ public class App extends JFrame implements ActionListener {
     boolean i_mouse_undo_redo_mode = false;//1 for undo and redo mode with mouse
     MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASEPATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
     double d_ap_check4 = 0.0;
-    public String explanation_text;
+
+    public final GridConfiguration gridConfiguration = new GridConfiguration();
 
     ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     public App() {
         setTitle("Origami Editor 1.0.0");//Specify the title and execute the constructor
         frame_title_0 = getTitle();
         frame_title = frame_title_0;//Store title in variable
-        es1.setTitle(frame_title);
+        mainDrawingWorker.setTitle(frame_title);
 
         //--------------------------------------------------------------------------------------------------
         addWindowListener(new WindowAdapter() {//ウィンドウの状態が変化したときの処理
@@ -310,7 +291,6 @@ public class App extends JFrame implements ActionListener {
 
         OZ.foldedFigure_camera_initialize();
 
-
         //camera_haikei	;
         //カメラの設定はここまで----------------------------------------------------
         currentLineColor = LineColor.NONE;
@@ -322,25 +302,16 @@ public class App extends JFrame implements ActionListener {
 
         // レイアウトの作成レイアウトの作成の部分は”初体験Java”のP179等を参照
 
-        Container contentPane = getContentPane();//JFrame用
-        contentPane.setLayout(new BorderLayout());
+        Editor editor = new Editor(this);
 
-        canvas = new Canvas(this);
-        contentPane.add("Center", canvas);
+        setContentPane(editor.$$$getRootComponent$$$());
 
-        // *************************************************
-        //上辺（北側）パネルの構築*************************
-        // *************************************************
-        //上辺（北側）パネルの作成
-//pnln10定義済
-//pnln11定義済
-//pnln12定義済
-//pnln13定義済
-//pnln14定義済
-//pnln15未定義
-//pnln20未定義
-//pnln25未定義
-//pnln30未定義
+        northPanel = editor.getNorthPanel1();
+        eastPanel = editor.getEastPanel1();
+        southPanel = editor.getSouthPanel1();
+        westPanel = editor.getWestPanel1();
+
+        canvas = editor.getCanvas1();
 
         AppMenuBar appMenuBar = new AppMenuBar(this);
 
@@ -366,10 +337,9 @@ public class App extends JFrame implements ActionListener {
         ckbox_folding_keika.setSelectedIcon(createImageIcon("ppp/ckbox_oritatami_keika_on.png"));
 
         ckbox_folding_keika.setMargin(new Insets(0, 0, 0, 0));
-
-        NorthPanel northPanel = new NorthPanel(this);
-        contentPane.add("North", northPanel); //Frame用
-
+        /*
+         * Extract fields from northPanel
+         */
         ckbox_mouse_settings = northPanel.getMouseSettingsCheckBox();
 
         ratioATextField = northPanel.getRatioATextField();
@@ -384,16 +354,12 @@ public class App extends JFrame implements ActionListener {
         rotationTextField = northPanel.getRotationTextField();
         backgroundToggleButton = northPanel.getBackgroundToggleButton();
         backgroundLockButton = northPanel.getBackgroundLockButton();
-
-// ******************************************************************************
-////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
-// ******************************************************************************
-
-        WestPanel westPanel = new WestPanel(this);
-
-        contentPane.add("West", westPanel);
-
+        /*
+         * Extract fields from westPanel
+         */
         undoRedo = westPanel.getUndoRedo();
+
+        westPanel.getGridConfigurationData(gridConfiguration);
 
         colRedButton = westPanel.getColRedButton();
         colBlueButton = westPanel.getColBlueButton();
@@ -419,22 +385,10 @@ public class App extends JFrame implements ActionListener {
         toEdgeButton = westPanel.getE_nisuruButton();
         toAuxLiveButton = westPanel.getHK_nisuruButton();
         lineSegmentConvert2Button = westPanel.getSenbun_henkan2Button();
-        gridSizeTextField = westPanel.getGridSizeTextField();
 
-        text25 = westPanel.getIntervalGridSizeTextField();
-
-        gridYATextField = westPanel.getGridYATextField();
-        gridYBTextField = westPanel.getGridYBTextField();
-        gridYCTextField = westPanel.getGridYCTextField();
-        gridXATextField = westPanel.getGridXATextField();
-        gridXBTextField = westPanel.getGridXBTextField();
-        gridXCTextField = westPanel.getGridXCTextField();
-
-        gridAngleTextField = westPanel.getGridAngleTextField();
-
-        EastPanel eastPanel = new EastPanel(this);
-        contentPane.add("East", eastPanel);
-
+        /*
+         * Extract fields from eastPanel
+         */
         ckbox_check4 = eastPanel.getcAMVCheckBox();
         angleATextField = eastPanel.getAngleATextField();
         angleBTextField = eastPanel.getAngleBTextField();
@@ -444,7 +398,7 @@ public class App extends JFrame implements ActionListener {
         angleFTextField = eastPanel.getAngleFTextField();
         polygonSizeTextField = eastPanel.getPolygonSizeTextField();
         circleCustomizedColorButton = eastPanel.getC_colButton();
-        h_undoTotalTextField = eastPanel.getH_undoTotalTextField();
+        h_undoTotalTextField = eastPanel.getAuxUndoTotalTextField();
         colOrangeButton = eastPanel.getColOrangeButton();
         colYellowButton = eastPanel.getColYellowButton();
         length1Label = eastPanel.getMeasuredLength1Label();
@@ -459,10 +413,9 @@ public class App extends JFrame implements ActionListener {
 
         ckbox_toukazu_color = westPanel.getColoredXRayButton();
 
-        // Paste the bottom (south side) panel into the layout
-        southPanel = new SouthPanel(this);
-
-        contentPane.add("South", southPanel); //Frame用
+        /*
+         * Extract fields from southPanel
+         */
 
         Button_AS_matome = southPanel.getAs100Button();
         text26 = southPanel.getGoToFoldedFigureTextField();
@@ -488,10 +441,10 @@ public class App extends JFrame implements ActionListener {
         foldedFigureUndoRedo.setText(String.valueOf(i_undo_suu_om));
         i_h_undo_suu = 20;
         h_undoTotalTextField.setText(String.valueOf(i_h_undo_suu));
-        scale_interval = 5;
-        text25.setText(String.valueOf(scale_interval));
-        es1.set_a_to_parallel_scale_interval(scale_interval);
-        es1.set_b_to_parallel_scale_interval(scale_interval);
+        int scale_interval = 5;
+        gridConfiguration.setIntervalGridSize(scale_interval);
+
+        updateGrid();
 
         selectionOperationMode = SelectionOperationMode.MOVE_1;
         Button_sel_mou_wakukae();//セレクトされた折線がある状態で、セレクトされている折線の頂点をクリックした場合の動作モードの初期設定
@@ -508,11 +461,11 @@ public class App extends JFrame implements ActionListener {
 
         // 測定長さと角度の表示
 
-        es1.measurement_display();
-        es1.setCamera(camera_of_orisen_input_diagram);
+        mainDrawingWorker.measurement_display();
+        mainDrawingWorker.setCamera(camera_of_orisen_input_diagram);
 
-        es1.record();
-        es1.h_record();
+        mainDrawingWorker.record();
+        mainDrawingWorker.auxRecord();
 
         OZ.ct_worker.set_F_color(OZ.foldedFigure_F_color); //折り上がり図の表面の色
         Button_F_color.setBackground(OZ.foldedFigure_F_color);    //ボタンの色設定
@@ -539,8 +492,8 @@ public class App extends JFrame implements ActionListener {
     public FoldType getFoldType() {
 
         FoldType foldType;//= 0 Do nothing, = 1 Folding estimation for all fold lines in the normal development view, = 2 for fold estimation for selected fold lines, = 3 for changing the folding state
-        int foldLineTotalForSelectFolding = es1.getFoldLineTotalForSelectFolding();
-        System.out.println("foldedFigures.size() = " + foldedFigures.size() + "    : foldedFigureIndex = " + foldedFigureIndex + "    : es1.get_orisensuu_for_select_oritatami() = " + foldLineTotalForSelectFolding);
+        int foldLineTotalForSelectFolding = mainDrawingWorker.getFoldLineTotalForSelectFolding();
+        System.out.println("foldedFigures.size() = " + foldedFigures.size() + "    : foldedFigureIndex = " + foldedFigureIndex + "    : mainDrawingWorker.get_orisensuu_for_select_oritatami() = " + foldLineTotalForSelectFolding);
         if (foldedFigures.size() == 1) {                        //折り上がり系図無し
             if (foldedFigureIndex == 0) {                            //展開図指定
                 if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
@@ -579,19 +532,19 @@ public class App extends JFrame implements ActionListener {
             System.out.println(" oritatame 20180108");
         } else if ((foldType == FoldType.FOR_ALL_LINES_1) || (foldType == FoldType.FOR_SELECTED_LINES_2)) {
             if (foldType == FoldType.FOR_ALL_LINES_1) {
-                es1.select_all();
+                mainDrawingWorker.select_all();
             }
             //
-            if (correctCpBeforeFoldingCheckBox.isSelected()) {//展開図のおかしい所（枝状の折り線等）を自動修正する
-                Drawing_Worker es2 = new Drawing_Worker(r, this);    //基本枝職人。マウスからの入力を受け付ける。
-                es2.setMemo_for_reading(es1.foldLines.getMemo_for_select_folding());
-                es2.point_removal();
-                es2.overlapping_line_removal();
-                es2.branch_trim(0.000001);
-                es2.circle_organize();
-                Ss0 = es2.get_for_folding();
+            if (correctCpBeforeFoldingCheckBox.isSelected()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the development drawing
+                DrawingWorker drawingWorker2 = new DrawingWorker(r, this);    // Basic branch craftsman. Accepts input from the mouse.
+                drawingWorker2.setMemo_for_reading(mainDrawingWorker.foldLineSet.getMemoForSelectFolding());
+                drawingWorker2.point_removal();
+                drawingWorker2.overlapping_line_removal();
+                drawingWorker2.branch_trim(0.000001);
+                drawingWorker2.organizeCircles();
+                Ss0 = drawingWorker2.getForFolding();
             } else {
-                Ss0 = es1.getForSelectFolding();
+                Ss0 = mainDrawingWorker.getForSelectFolding();
             }
 
             point_of_referencePlane_old.set(OZ.cp_worker1.get_point_of_referencePlane_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
@@ -669,25 +622,19 @@ public class App extends JFrame implements ActionListener {
         measuredAngle3Label.setText(String.valueOf(d0));
     }
 
-    public void setGridSize() {
-        gridSize = StringOp.String2int(gridSizeTextField.getText(), gridSize);
-
-        if (gridSize < 1) {
-            gridSize = 1;
-        }
-
-        gridSizeTextField.setText(String.valueOf(gridSize));
-        es1.setGridSize(gridSize);
+    public void updateGrid() {
+        mainDrawingWorker.setGridConfigurationData(gridConfiguration);
+        westPanel.setGridConfigurationData(gridConfiguration);
     }
 
-    public void noSelectedPolygonalLineWarning() {
+    public void twoColorNoSelectedPolygonalLineWarning() {
         JLabel label = new JLabel(
                 "<html>２色塗りわけ展開図を描くためには、あらかじめ対象範囲を選択してください（selectボタンを使う）。<br>" +
                         "To get 2-Colored crease pattern, select the target range in advance (use the select button).<html>");
         JOptionPane.showMessageDialog(this, label);
     }
 
-    public void keikoku_sentaku_sareta_orisen_ga_nai_2() {
+    public void foldingNoSelectedPolygonalLineWarning() {
         JLabel label = new JLabel(
                 "<html>新たに折り上がり図を描くためには、あらかじめ対象範囲を選択してください（selectボタンを使う）。<br>" +
                         "To calculate new folded shape, select the target clease lines range in advance (use the select button).<html>");
@@ -701,7 +648,7 @@ public class App extends JFrame implements ActionListener {
             mouseDraggedValid = false;
             mouseReleasedValid = false;
             writeMemo2File();
-            es1.record();
+            mainDrawingWorker.record();
         } else if (option == JOptionPane.NO_OPTION) {
         } else if (option == JOptionPane.CANCEL_OPTION) {
             return;
@@ -739,8 +686,8 @@ public class App extends JFrame implements ActionListener {
 
 //全体
         //描き職人の初期化
-        es1.reset();
-        es1.reset_2();    //描き職人の初期化
+        mainDrawingWorker.reset();
+        mainDrawingWorker.reset_2();    //描き職人の初期化
 
 
         //camera_of_orisen_nyuuryokuzu	の設定;
@@ -755,18 +702,18 @@ public class App extends JFrame implements ActionListener {
 
         //camera_haikei	;
 
-        es1.setCamera(camera_of_orisen_input_diagram);
+        mainDrawingWorker.setCamera(camera_of_orisen_input_diagram);
         OZ.cp_worker1.setCamera(camera_of_orisen_input_diagram);
 
         //折線入力か補助線入力か
-        foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.POLY_LINE_0;
+        foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;
 //北辺
 
         ckbox_mouse_settings.setSelected(true);//表示するかどうかの選択
         ckbox_point_search.setSelected(false);//表示するかどうかの選択
-        ckbox_ten_hanasi.setSelected(false);//es1.set_i_hanasi(0);          //表示するかどうかの選択
+        ckbox_ten_hanasi.setSelected(false);//mainDrawingWorker.set_i_hanasi(0);          //表示するかどうかの選択
         gridInputAssistCheckBox.setSelected(false);
-        es1.setGridInputAssist(false);          //高密度入力するかどうかの選択
+        mainDrawingWorker.setGridInputAssist(false);          //高密度入力するかどうかの選択
         ckbox_bun.setSelected(true);//文を表示するかどうかの選択
         ckbox_cp.setSelected(true);//折線を表示するかどうかの選択
         ckbox_a0.setSelected(true);//補助活線を表示するかどうかの選択
@@ -822,14 +769,14 @@ public class App extends JFrame implements ActionListener {
 
         //基本枝構造の直線の両端の円の半径、（以前は枝と各種ポイントの近さの判定基準）
         //double r=3.0;
-        //es1.set_r(r);
+        //mainDrawingWorker.set_r(r);
 
         //折線表現を色で表す
         lineStyle = LineStyle.COLOR;
 
         //ペンの色の指定
         currentLineColor = LineColor.RED_1;
-        es1.setColor(currentLineColor);    //最初の折線の色を指定する。0は黒、1は赤、2は青。
+        mainDrawingWorker.setColor(currentLineColor);    //最初の折線の色を指定する。0は黒、1は赤、2は青。
         buttonColorReset();
         colRedButton.setForeground(Color.black);
         colRedButton.setBackground(Color.red);    //折線のボタンの色設定
@@ -838,39 +785,20 @@ public class App extends JFrame implements ActionListener {
         //折線分割数
         foldLineDividingNumber = 2;
         lineSegmentDivisionTextField.setText(String.valueOf(foldLineDividingNumber));
-        es1.setFoldLineDividingNumber(foldLineDividingNumber);//フリー折線入力時の分割数
+        mainDrawingWorker.setFoldLineDividingNumber(foldLineDividingNumber);//フリー折線入力時の分割数
 
 
         //格子分割数の指定
-        gridSizeTextField.setText("8");
-        setGridSize();
 
         //格子の適用範囲の指定
-        es1.setBaseState(Grid.State.WITHIN_PAPER);//格子の状態を用紙内適用にする。
 
-        //任意格子
-        d_grid_x_a = 0.0;
-        gridXATextField.setText(String.valueOf(d_grid_x_a));
-        d_grid_x_b = 1.0;
-        gridXBTextField.setText(String.valueOf(d_grid_x_b));
-        d_grid_x_c = 1.0;
-        gridXCTextField.setText(String.valueOf(d_grid_x_c));
+        gridConfiguration.reset();
 
-        d_grid_y_a = 0.0;
-        gridYATextField.setText(String.valueOf(d_grid_y_a));
-        d_grid_y_b = 1.0;
-        gridYBTextField.setText(String.valueOf(d_grid_y_b));
-        d_grid_y_c = 1.0;
-        gridYCTextField.setText(String.valueOf(d_grid_y_c));
-
-        d_grid_angle = 90.0;
-        gridAngleTextField.setText(String.valueOf(d_grid_angle));
-
-        setGrid();
+        updateGrid();
 //--------------------------------------------
 //東辺
         //角度系入力を22.5度系にする。
-        es1.set_id_angle_system(8);
+        mainDrawingWorker.set_id_angle_system(8);
 
         //自由角度
         d_restricted_angle_a = 40.0;
@@ -893,100 +821,28 @@ public class App extends JFrame implements ActionListener {
 
         //補助画線の色
         currentAuxLineColor = LineColor.ORANGE_4;
-        es1.h_setcolor(currentAuxLineColor);                                        //最初の補助線の色を指定する。4はオレンジ、7は黄。
+        mainDrawingWorker.setAuxLineColor(currentAuxLineColor);                                        //最初の補助線の色を指定する。4はオレンジ、7は黄。
         auxColorButtonReset();
         colOrangeButton.setForeground(Color.black);
         colOrangeButton.setBackground(Color.ORANGE);    //補助線のボタンの色設定
 
         ckbox_check4.setSelected(false);//checkするかどうかの選択
-        es1.setCheck4(false);
-    }
-
-    public void setGrid() {
-        double d_grid_x_a_old = d_grid_x_a;
-        double d_grid_x_b_old = d_grid_x_b;
-        double d_grid_x_c_old = d_grid_x_c;
-        double d_grid_y_a_old = d_grid_y_a;
-        double d_grid_y_b_old = d_grid_y_b;
-        double d_grid_y_c_old = d_grid_y_c;
-
-        double d_grid_angle_old = d_grid_angle;
-
-        d_grid_x_a = String2double(gridXATextField.getText(), d_grid_x_a_old);
-        d_grid_x_b = String2double(gridXBTextField.getText(), d_grid_x_b_old);
-        d_grid_x_c = String2double(gridXCTextField.getText(), d_grid_x_c_old);
-        if (d_grid_x_c < 0.0) {
-            d_grid_x_c = 0.0;
-        }
-        d_grid_y_a = String2double(gridYATextField.getText(), d_grid_y_a_old);
-        d_grid_y_b = String2double(gridYBTextField.getText(), d_grid_y_b_old);
-        d_grid_y_c = String2double(gridYCTextField.getText(), d_grid_y_c_old);
-        if (d_grid_y_c < 0.0) {
-            d_grid_y_c = 0.0;
-        }
-
-        d_grid_angle = String2double(gridAngleTextField.getText(), d_grid_angle_old);
-        if (Math.abs(OritaCalc.angle_between_0_360(d_grid_angle)) < 0.1) {
-            d_grid_angle = 90.0;
-        }
-        if (Math.abs(OritaCalc.angle_between_0_360(d_grid_angle - 180.0)) < 0.1) {
-            d_grid_angle = 90.0;
-        }
-        if (Math.abs(OritaCalc.angle_between_0_360(d_grid_angle - 360.0)) < 0.1) {
-            d_grid_angle = 90.0;
-        }
-
-
-        double d_grid_x_length = d_grid_x_a + d_grid_x_b * Math.sqrt(d_grid_x_c);
-        if (d_grid_x_length < 0.0) {
-            d_grid_x_a = 1.0;
-            d_grid_x_b = 0.0;
-            d_grid_x_c = 0.0;
-        }
-        double d_grid_y_length = d_grid_y_a + d_grid_y_b * Math.sqrt(d_grid_y_c);
-        if (d_grid_y_length < 0.0) {
-            d_grid_y_a = 1.0;
-            d_grid_y_b = 0.0;
-            d_grid_y_c = 0.0;
-        }
-        if (Math.abs(d_grid_x_length) < 0.0001) {
-            d_grid_x_a = 1.0;
-            d_grid_x_b = 0.0;
-            d_grid_x_c = 0.0;
-            d_grid_x_length = d_grid_x_a + d_grid_x_b * Math.sqrt(d_grid_x_c);
-        }
-        if (Math.abs(d_grid_y_length) < 0.0001) {
-            d_grid_y_a = 1.0;
-            d_grid_y_b = 0.0;
-            d_grid_y_c = 0.0;
-            d_grid_y_length = d_grid_y_a + d_grid_y_b * Math.sqrt(d_grid_y_c);
-        }
-
-        gridXATextField.setText(String.valueOf(d_grid_x_a));
-        gridXBTextField.setText(String.valueOf(d_grid_x_b));
-        gridXCTextField.setText(String.valueOf(d_grid_x_c));
-        gridYATextField.setText(String.valueOf(d_grid_y_a));
-        gridYBTextField.setText(String.valueOf(d_grid_y_b));
-        gridYCTextField.setText(String.valueOf(d_grid_y_c));
-
-        gridAngleTextField.setText(String.valueOf(d_grid_angle));
-
-        es1.setGrid(d_grid_x_length, d_grid_y_length, d_grid_angle);
+        mainDrawingWorker.setCheck4(false);
     }
 
     // *******************************************************************************************************
-    public void Frame_tuika() {
-        //Frame add_frame
+    public void showAdditionalFrame() {
+        //Frame additionalFrame
         if (showAddFrame) {
             System.out.println("111 showAddFrame=" + showAddFrame);
-            add_frame.dispose();
-            add_frame = new OpenFrame("add_frame", this);
+            additionalFrame.dispose();
+            additionalFrame = new OpenFrame("additionalFrame", this);
         } else {
             System.out.println("000 showAddFrame=" + showAddFrame);
-            add_frame = new OpenFrame("add_frame", this);
+            additionalFrame = new OpenFrame("additionalFrame", this);
         }
         showAddFrame = true;
-        add_frame.toFront();
+        additionalFrame.toFront();
     }
 
 
@@ -1029,7 +885,7 @@ public class App extends JFrame implements ActionListener {
         ratioETextField.setText(String.valueOf(d_orisen_internalDivisionRatio_e));
         ratioFTextField.setText(String.valueOf(d_orisen_internalDivisionRatio_f));
 
-        es1.set_d_internalDivisionRatio_st(d_internalDivisionRatio_s, d_internalDivisionRatio_t);
+        mainDrawingWorker.set_d_internalDivisionRatio_st(d_internalDivisionRatio_s, d_internalDivisionRatio_t);
     }
 
 
@@ -1044,7 +900,7 @@ public class App extends JFrame implements ActionListener {
         angleBTextField.setText(String.valueOf(d_restricted_angle_b));
         angleCTextField.setText(String.valueOf(d_restricted_angle_c));
 
-        es1.set_d_restricted_angle(d_restricted_angle_a, d_restricted_angle_b, d_restricted_angle_c);
+        mainDrawingWorker.set_d_restricted_angle(d_restricted_angle_a, d_restricted_angle_b, d_restricted_angle_c);
     }
 
     public void setRestrictedAngleDEF() { //このdefは「定義」と言う意味ではなく、dとeとfを扱うという意味
@@ -1056,7 +912,7 @@ public class App extends JFrame implements ActionListener {
         angleETextField.setText(String.valueOf(d_restricted_angle_e));
         angleFTextField.setText(String.valueOf(d_restricted_angle_f));
 
-        es1.set_d_restricted_angle(d_restricted_angle_d, d_restricted_angle_e, d_restricted_angle_f);
+        mainDrawingWorker.set_d_restricted_angle(d_restricted_angle_d, d_restricted_angle_e, d_restricted_angle_f);
     }
 
     //--------------------------------------------------------
@@ -1121,10 +977,10 @@ public class App extends JFrame implements ActionListener {
     }
 
     public void Button_shared_operation() {
-        es1.setDrawingStage(0);
-        es1.set_i_circle_drawing_stage(0);
-        es1.set_s_step_iactive(LineSegment.ActiveState.ACTIVE_BOTH_3);//要注意　es1でうっかりs_stepにset.(senbun)やるとアクティヴでないので表示が小さくなる20170507
-        es1.voronoiLines.reset();
+        mainDrawingWorker.setDrawingStage(0);
+        mainDrawingWorker.set_i_circle_drawing_stage(0);
+        mainDrawingWorker.set_s_step_iactive(LineSegment.ActiveState.ACTIVE_BOTH_3);//要注意　es1でうっかりs_stepにset.(senbun)やるとアクティヴでないので表示が小さくなる20170507
+        mainDrawingWorker.voronoiLineSet.reset();
     }
 
     // *******************************************************************************************zzzzzzzzzzzz
@@ -1246,7 +1102,7 @@ public class App extends JFrame implements ActionListener {
     public Point e2p(MouseEvent e) {
         double d_width = 0.0;
         if (ckbox_ten_hanasi.isSelected()) {
-            d_width = camera_of_orisen_input_diagram.getCameraZoomX() * es1.get_d_decision_width();
+            d_width = camera_of_orisen_input_diagram.getCameraZoomX() * mainDrawingWorker.getSelectionDistance();
         }
         return new Point(e.getX() - (int) d_width, e.getY() - (int) d_width);
     }
@@ -1400,9 +1256,9 @@ public class App extends JFrame implements ActionListener {
         // String String fname_wi
         fname_wi = selectFileName("file name for Img save");
         flg61 = false;
-        if ((mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (es1.getDrawingStage() == 4)) {
+        if ((mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (mainDrawingWorker.getDrawingStage() == 4)) {
             flg61 = true;
-            es1.setDrawingStage(0);
+            mainDrawingWorker.setDrawingStage(0);
         }
 
         if (fname_wi != null) {
@@ -1415,11 +1271,11 @@ public class App extends JFrame implements ActionListener {
     String selectFileName(String coment0) {
         fd = new FileDialog(this, coment0, FileDialog.SAVE);
         fd.setVisible(true);
-        String fname = null;
+        String fileName = null;
         if (fd.getFile() != null) {
-            fname = fd.getDirectory() + fd.getFile();
+            fileName = fd.getDirectory() + fd.getFile();
         }
-        return fname;
+        return fileName;
     }
 
     public void setHelp(String resource) {
@@ -1460,7 +1316,7 @@ public class App extends JFrame implements ActionListener {
 
         frame_title = frame_title_0 + "        " + fd.getFile();
         setTitle(frame_title);
-        es1.setTitle(frame_title);
+        mainDrawingWorker.setTitle(frame_title);
 
         try {
             if (fd.getFile() != null) {  //キャンセルではない場合。
@@ -1478,7 +1334,7 @@ public class App extends JFrame implements ActionListener {
             System.out.println(e);
             frame_title = frame_title_0 + "        " + "X";
             setTitle(frame_title);
-            es1.setTitle(frame_title);
+            mainDrawingWorker.setTitle(frame_title);
         }
 
         if (fname.endsWith("obj")) {
@@ -1496,7 +1352,7 @@ public class App extends JFrame implements ActionListener {
 
     void writeMemo2File() {
         Memo memo1;
-        memo1 = es1.getMemo_for_export();
+        memo1 = mainDrawingWorker.getMemo_for_export();
         String fname = selectFileName("書き出しファイルの名前");
 
         if (fname != null) {
@@ -1505,14 +1361,14 @@ public class App extends JFrame implements ActionListener {
 
                 frame_title = frame_title_0 + "        " + fd.getFile();
                 setTitle(frame_title);
-                es1.setTitle(frame_title);
+                mainDrawingWorker.setTitle(frame_title);
 
             } else if (fname.endsWith("orh")) {
                 memoAndName2File(memo1, fname);
 
                 frame_title = frame_title_0 + "        " + fd.getFile();
                 setTitle(frame_title);
-                es1.setTitle(frame_title);
+                mainDrawingWorker.setTitle(frame_title);
 
             } else {
                 fname = fname + ".orh";
@@ -1520,7 +1376,7 @@ public class App extends JFrame implements ActionListener {
 
                 frame_title = frame_title_0 + "        " + fd.getFile() + ".orh";
                 setTitle(frame_title);
-                es1.setTitle(frame_title);
+                mainDrawingWorker.setTitle(frame_title);
             }
         }
     }
@@ -1555,19 +1411,19 @@ public class App extends JFrame implements ActionListener {
     public double String2double(String str0, double default_if_error) {
         String new_str0 = str0.trim();
         if (new_str0.equals("L1")) {
-            str0 = String.valueOf(es1.get_L1());
+            str0 = String.valueOf(mainDrawingWorker.get_L1());
         }
         if (new_str0.equals("L2")) {
-            str0 = String.valueOf(es1.get_L2());
+            str0 = String.valueOf(mainDrawingWorker.get_L2());
         }
         if (new_str0.equals("A1")) {
-            str0 = String.valueOf(es1.get_A1());
+            str0 = String.valueOf(mainDrawingWorker.get_A1());
         }
         if (new_str0.equals("A2")) {
-            str0 = String.valueOf(es1.get_A2());
+            str0 = String.valueOf(mainDrawingWorker.get_A2());
         }
         if (new_str0.equals("A3")) {
-            str0 = String.valueOf(es1.get_A3());
+            str0 = String.valueOf(mainDrawingWorker.get_A3());
         }
 
         return StringOp.String2double(str0, default_if_error);

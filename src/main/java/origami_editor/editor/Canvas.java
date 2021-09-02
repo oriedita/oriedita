@@ -1,6 +1,6 @@
 package origami_editor.editor;
 
-import origami_editor.editor.drawing_worker.Drawing_Worker;
+import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.point.Point;
@@ -19,7 +19,7 @@ import java.io.File;
  * Panel in the center of the main view.
  */
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
-    private final Drawing_Worker es1;
+    private final DrawingWorker es1;
     private final App app;
 
     Graphics bufferGraphics;
@@ -59,7 +59,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         addMouseMotionListener(this);
         addMouseWheelListener(this);
 
-        es1 = app0.es1;
+        es1 = app0.mainDrawingWorker;
 
         dim = getSize();
         System.out.println(" dim 001 :" + dim.width + " , " + dim.height);//多分削除可能
@@ -128,7 +128,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
         //カメラのセット
-        app.es1.setCamera(app.camera_of_orisen_input_diagram);
+        app.mainDrawingWorker.setCamera(app.camera_of_orisen_input_diagram);
 
         FoldedFigure OZi;
         for (int i = 1; i <= app.foldedFigures.size() - 1; i++) {
@@ -166,7 +166,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             }
         }
 
-        double d_width = app.camera_of_orisen_input_diagram.getCameraZoomX() * app.es1.get_d_decision_width();
+        double d_width = app.camera_of_orisen_input_diagram.getCameraZoomX() * app.mainDrawingWorker.getSelectionDistance();
         //Flashlight (dot) search range
         if (displayPointSpotlight) {
             g2.setColor(new Color(255, 240, 0, 30));
@@ -182,7 +182,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         }
 
         //展開図表示
-        es1.draw_with_camera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, app.lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+        es1.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, app.lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
         if (displayComments) {
             //展開図情報の文字表示
@@ -190,16 +190,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
             bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f )", app.p_mouse_object_position.getX(), app.p_mouse_object_position.getY()), 10, 10); //この表示内容はvoid kekka_syoriで決められる。
 
-            bufferGraphics.drawString("L=" + app.es1.getTotal(), 10, 25); //この表示内容はvoid kekka_syoriで決められる。
+            bufferGraphics.drawString("L=" + app.mainDrawingWorker.getTotal(), 10, 25); //この表示内容はvoid kekka_syoriで決められる。
 
             //結果の文字表示
             bufferGraphics.drawString(app.OZ.text_result, 10, 40); //この表示内容はvoid kekka_syoriで決められる。
 
             if (displayGridInputAssist) {
-                Point kus_sisuu = new Point(app.es1.get_moyori_ten_sisuu(app.p_mouse_TV_position));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
+                Point gridIndex = new Point(app.mainDrawingWorker.getGridPosition(app.p_mouse_TV_position));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
 
-                double dx_ind = kus_sisuu.getX();
-                double dy_ind = kus_sisuu.getY();
+                double dx_ind = gridIndex.getX();
+                double dy_ind = gridIndex.getY();
                 int ix_ind = (int) Math.round(dx_ind);
                 int iy_ind = (int) Math.round(dy_ind);
                 bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) app.p_mouse_TV_position.getX() + 25, (int) app.p_mouse_TV_position.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
@@ -224,7 +224,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
         if (displayCreasePatternOnTop) {
-            es1.draw_with_camera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, app.lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+            es1.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, app.lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
         }
 
         //アンチェイリアス
@@ -302,13 +302,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             es1.mMoved_A_01(p);
         }   //1 線分入力モード（フリー）
         //else if(app.mouseMode==2)  {		}						       //2 展開図移動。
-        //else if(app.mouseMode==3)  { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_03(p);}//線分削除モード。
-        //else if(app.mouseMode==4)  { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_04(p);}//senbun_henkan 黒赤青
+        //else if(app.mouseMode==3)  { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_03(p);}//線分削除モード。
+        //else if(app.mouseMode==4)  { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_04(p);}//senbun_henkan 黒赤青
         else if (app.mouseMode == MouseMode.LENGTHEN_CREASE_5) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_05(p);
         }//線分延長モード。
-        //else if(app.mouseMode==6)  { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_06(p);}//2点から等距離線分モード。
+        //else if(app.mouseMode==6)  { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_06(p);}//2点から等距離線分モード。
         else if (app.mouseMode == MouseMode.SQUARE_BISECTOR_7) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_07(p);
@@ -333,9 +333,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_12(p);
         }//鏡映モード。
-        //else if(app.mouseMode==13) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_13(p);}//角度系モード（１番目）。//線分指定、交点まで
-        //else if(app.mouseMode==14) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_14(p);}//点追加モード。
-        //else if(app.mouseMode==15) { es1.setCamera(camera_of_orisen_nyuuryokuzu);es1.mMoved_A_15(p);}//点削除モード。
+        //else if(app.mouseMode==13) { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_13(p);}//角度系モード（１番目）。//線分指定、交点まで
+        //else if(app.mouseMode==14) { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_14(p);}//点追加モード。
+        //else if(app.mouseMode==15) { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_15(p);}//点削除モード。
         else if (app.mouseMode == MouseMode.ANGLE_SYSTEM_16) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_16(p);
@@ -558,7 +558,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     es1.setCamera(app.camera_of_orisen_input_diagram);
                     es1.mPressed_A_03(p);
 
-                    app.foldLineAdditionalInputMode = Drawing_Worker.FoldLineAdditionalInputMode.BOTH_4;//= 0 is polygonal line input = 1 is auxiliary line input mode, 4 is for both
+                    app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.BOTH_4;//= 0 is polygonal line input = 1 is auxiliary line input mode, 4 is for both
                     es1.setFoldLineAdditional(app.foldLineAdditionalInputMode);
 
                 }
@@ -1331,7 +1331,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
                         app.i_mouse_right_button_on = false;
 
-                        //if(i_mouse_undo_redo_mode==1){i_mouse_undo_redo_mode=0;es1.unselect_all();Button_kyoutuu_sagyou();es1.modosi_i_orisen_hojyosen();return;}
+                        //if(i_mouse_undo_redo_mode==1){i_mouse_undo_redo_mode=0;mainDrawingWorker.unselect_all();Button_kyoutuu_sagyou();mainDrawingWorker.modosi_i_orisen_hojyosen();return;}
                         if (app.i_mouse_undo_redo_mode) {
                             app.i_mouse_undo_redo_mode = false;
                             return;
@@ -1795,7 +1795,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
             if (fname.endsWith("svg")) {
                 Memo memo1;
-                memo1 = app.es1.getMemo_for_svg_export_with_camera(displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, app.lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+                memo1 = app.mainDrawingWorker.getMemo_for_svg_export_with_camera(displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, app.lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
                 Memo memo2 = new Memo();
 
@@ -1824,10 +1824,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
             try {
                 if (app.flg61) { //枠設定時の枠内のみ書き出し 20180524
-                    int xmin = (int) app.es1.operationFrameBox.getXMin();
-                    int xmax = (int) app.es1.operationFrameBox.getXMax();
-                    int ymin = (int) app.es1.operationFrameBox.getYMin();
-                    int ymax = (int) app.es1.operationFrameBox.getYMax();
+                    int xmin = (int) app.mainDrawingWorker.operationFrameBox.getXMin();
+                    int xmax = (int) app.mainDrawingWorker.operationFrameBox.getXMax();
+                    int ymin = (int) app.mainDrawingWorker.operationFrameBox.getYMin();
+                    int ymax = (int) app.mainDrawingWorker.operationFrameBox.getYMax();
 
                     if (i == 1) {
                         ImageIO.write(offscreen.getSubimage(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1), "png", new File(fname));

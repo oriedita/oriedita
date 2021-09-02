@@ -44,7 +44,7 @@ public class SouthPanel extends JPanel {
             app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
 
             if (!app.selectPersistentCheckBox.isSelected()) {
-                app.es1.unselect_all();
+                app.mainDrawingWorker.unselect_all();
             }
 
             app.Button_shared_operation();
@@ -282,8 +282,8 @@ public class SouthPanel extends JPanel {
             app.mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;
             System.out.println("mouseMode = " + app.mouseMode);
 
-            app.es1.record();
-            app.es1.h_record();
+            app.mainDrawingWorker.record();
+            app.mainDrawingWorker.auxRecord();
         });
     }
 

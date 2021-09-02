@@ -64,7 +64,7 @@ class SubThread extends Thread {
                 }
                 break;
             case CHECK_CAMV_3:
-                app.es1.ap_check4(app.d_ap_check4);
+                app.mainDrawingWorker.ap_check4(app.d_ap_check4);
                 break;
             case TWO_COLORED_4:
                 app.folding_settings_two_color();

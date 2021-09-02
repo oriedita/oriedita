@@ -4,7 +4,7 @@ import origami_editor.record.memo.Memo;
 
 import java.util.LinkedList;
 
-public class Undo_Box {
+public class HistoryState {
     int undoTotal = 20;//Number of times you can undo up to how many times ago
 
     int recordTotal = -1;//The number of times you have recorded. If you have recorded up to 5 times ago, recordTotal = 5 and this does not include the latest recorded memo [0]
@@ -12,7 +12,7 @@ public class Undo_Box {
 
     LinkedList<Memo> Mem = new LinkedList<>(); //Create a LinkedList object
 
-    public Undo_Box() {
+    public HistoryState() {
         for (int i = 0; i <= undoTotal; i++) {
             Mem.add(new Memo());
         }
