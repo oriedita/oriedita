@@ -24,7 +24,7 @@ public class AppMenuBar extends JMenuBar {
         createElements();
 
         openButton.addActionListener(e -> {
-            app.setHelp("qqq/yomi.png");
+            app.setHelp("yomi");
 
             app.Button_shared_operation();
 
@@ -80,7 +80,7 @@ public class AppMenuBar extends JMenuBar {
             }
         });
         saveButton.addActionListener(e -> {
-            app.setHelp("qqq/kaki.png");
+            app.setHelp("kaki");
             app.Button_shared_operation();
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
@@ -88,16 +88,16 @@ public class AppMenuBar extends JMenuBar {
             app.es1.record();
         });
         showPointRangeCheckBox.addActionListener(e -> {
-            app.setHelp("qqq/ckbox_ten_sagasi.png");
+            app.setHelp("ckbox_ten_sagasi");
             app.repaintCanvas();
         });
         pointOffsetCheckBox.addActionListener(e -> {
-            app.setHelp("qqq/ckbox_ten_hanasi.png");
+            app.setHelp("ckbox_ten_hanasi");
 
             app.repaintCanvas();
         });
         gridInputAssistCheckBox.addActionListener(e -> {
-            app.setHelp("qqq/ckbox_kou_mitudo_nyuuryoku.png");
+            app.setHelp("ckbox_kou_mitudo_nyuuryoku");
 
             if (gridInputAssistCheckBox.isSelected()) {
                 System.out.println(" kou_mitudo_nyuuryoku on");
@@ -109,33 +109,33 @@ public class AppMenuBar extends JMenuBar {
             app.repaintCanvas();
         });
         displayCommentsCheckBox.addActionListener(e -> {
-            app.setHelp("qqq/ckbox_bun.png");
+            app.setHelp("ckbox_bun");
             app.repaintCanvas();
         });
         displayCpLinesCheckBox.addActionListener(e -> {
-            app.setHelp("qqq/ckbox_cp.png");
+            app.setHelp("ckbox_cp");
             app.repaintCanvas();
         });
         displayAuxLinesCheckBox.addActionListener(e -> {
-            app.setHelp("qqq/ckbox_a0.png");
+            app.setHelp("ckbox_a0");
             app.repaintCanvas();
         });
         displayLiveAuxLinesCheckBox.addActionListener(e -> {
-            app.setHelp("qqq/ckbox_a1.png");
+            app.setHelp("ckbox_a1");
             app.repaintCanvas();
         });
         displayStandardFaceMarksCheckBox.addActionListener(e -> {
-            app.setHelp("qqq/ckbox_mejirusi.png");
+            app.setHelp("ckbox_mejirusi");
 
             app.repaintCanvas();
         });
         cpOnTopCheckBox.addActionListener(e -> {
-            app.setHelp("qqq/ckbox_cp_ue.png");
+            app.setHelp("ckbox_cp_ue");
 
             app.repaintCanvas();
         });
         toggleHelpMenuItem.addActionListener(e -> {
-            app.displayExplanation = !app.displayExplanation;
+            app.explanation.setVisible(!app.explanation.isVisible());
 
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;

@@ -53,7 +53,7 @@ public class GridConfigureDialog extends JDialog {
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         gridSizeDecreaseButton.addActionListener(e -> {
-            app.setHelp("qqq/kitei2.png");
+            app.setHelp("kitei2");
 
             app.gridSize = app.gridSize / 2;
             if (app.gridSize < 1) {
@@ -90,11 +90,12 @@ public class GridConfigureDialog extends JDialog {
             app.repaintCanvas();
         });
         gridSizeSetButton.addActionListener(e -> {
-            app.setHelp("qqq/syutoku.png");
+            app.setHelp("syutoku");
             app.setGridSize();
+            app.repaintCanvas();
         });
         gridSizeIncreaseButton.addActionListener(e -> {
-            app.setHelp("qqq/kitei.png");
+            app.setHelp("kitei");
 
             app.gridSize = app.gridSize * 2;
 
@@ -123,7 +124,7 @@ public class GridConfigureDialog extends JDialog {
             app.repaintCanvas();
         });
         gridColorButton.addActionListener(e -> {
-            app.setHelp("qqq/kousi_color.png");
+            app.setHelp("kousi_color");
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
 
@@ -138,28 +139,28 @@ public class GridConfigureDialog extends JDialog {
         });
         gridLineWidthDecreaseButton.addActionListener(e -> {
             app.kus.decreaseGridLineWidth();
-            app.setHelp("qqq/kousi_senhaba_sage.png");
+            app.setHelp("kousi_senhaba_sage");
             app.repaintCanvas();
         });
         gridLineWidthIncreaseButton.addActionListener(e -> {
             app.kus.increaseGridLineWidth();
-            app.setHelp("qqq/kousi_senhaba_age.png");
+            app.setHelp("kousi_senhaba_age");
             app.repaintCanvas();
         });
         i_kitei_jyoutaiButton.addActionListener(e -> {
-            app.setHelp("qqq/i_kitei_jyoutai.png");
+            app.setHelp("i_kitei_jyoutai");
 
             app.es1.setBaseState(app.es1.getBaseState().advance());
             app.repaintCanvas();
         });
         memori_tate_idouButton.addActionListener(e -> {
-            app.setHelp("qqq/memori_tate_idou.png");
+            app.setHelp("memori_tate_idou");
             app.es1.a_to_parallel_scale_position_change();
 
             app.repaintCanvas();
         });
         memori_kankaku_syutokuButton.addActionListener(e -> {
-            app.setHelp("qqq/memori_kankaku_syutoku.png");
+            app.setHelp("memori_kankaku_syutoku");
             int scale_interval_old = app.scale_interval;
             app.scale_interval = StringOp.String2int(intervalGridSizeTextField.getText(), scale_interval_old);
             if (app.scale_interval < 0) {
@@ -170,12 +171,12 @@ public class GridConfigureDialog extends JDialog {
             app.es1.set_b_to_parallel_scale_interval(app.scale_interval);
         });
         memori_yoko_idouButton.addActionListener(e -> {
-            app.setHelp("qqq/memori_yoko_idou.png");
+            app.setHelp("memori_yoko_idou");
 
             app.es1.b_to_parallel_scale_position_change();
         });
         intervalGridColorButton.addActionListener(e -> {
-            app.setHelp("qqq/kousi_memori_color.png");
+            app.setHelp("kousi_memori_color");
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
 
@@ -190,7 +191,7 @@ public class GridConfigureDialog extends JDialog {
             app.repaintCanvas();
         });
         setGridParametersButton.addActionListener(e -> {
-            app.setHelp("qqq/kousi_syutoku.png");
+            app.setHelp("kousi_syutoku");
             app.setGrid();
             app.repaintCanvas();
         });

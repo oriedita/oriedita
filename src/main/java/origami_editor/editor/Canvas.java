@@ -158,12 +158,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         //格子表示
 
-        //解説表示
-        if ((app.img_explanation != null) && app.displayExplanation) {
-            bufferGraphics.drawImage(app.img_explanation, 650, 100, this);//80,80,は描画開始位置
-        }
-
-
         //基準面の表示
         if (displayMarkings) {
             if (app.OZ.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {

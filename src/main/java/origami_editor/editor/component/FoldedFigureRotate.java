@@ -18,7 +18,7 @@ public class FoldedFigureRotate extends JPanel {
         add($$$getRootComponent$$$());
 
         foldedFigureRotateAntiClockwiseButton.addActionListener(e -> {
-            app.setHelp("qqq/oriagari_p_kaiten.png");
+            app.setHelp("oriagari_p_kaiten");
 
             app.OZ.d_foldedFigure_rotation_correction = OritaCalc.angle_between_m180_180(app.OZ.d_foldedFigure_rotation_correction + 11.25);
             app.OZ.camera_of_foldedFigure.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
@@ -52,12 +52,12 @@ public class FoldedFigureRotate extends JPanel {
             app.repaintCanvas();
 
 
-            app.setHelp("qqq/oriagarizu_kaiten_hosei_set.png");
+            app.setHelp("oriagarizu_kaiten_hosei_set");
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         foldedFigureRotateClockwiseButton.addActionListener(e -> {
-            app.setHelp("qqq/oriagari_m_kaiten.png");
+            app.setHelp("oriagari_m_kaiten");
             app.OZ.d_foldedFigure_rotation_correction = OritaCalc.angle_between_m180_180(app.OZ.d_foldedFigure_rotation_correction - 11.25);
             app.OZ.camera_of_foldedFigure.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
             app.OZ.camera_of_foldedFigure_front.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);

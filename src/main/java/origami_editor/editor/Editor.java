@@ -56,4 +56,23 @@ public class Editor {
         return panel1;
     }
 
+    public Canvas getCanvas1() {
+        return canvas1;
+    }
+
+    public EastPanel getEastPanel1() {
+        return eastPanel1;
+    }
+
+    public SouthPanel getSouthPanel1() {
+        return southPanel1;
+    }
+
+    public NorthPanel getNorthPanel1() {
+        return northPanel1;
+    }
+
+    public WestPanel getWestPanel1() {
+        return westPanel1;
+    }
 }

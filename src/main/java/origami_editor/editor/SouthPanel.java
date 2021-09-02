@@ -38,7 +38,7 @@ public class SouthPanel extends JPanel {
 
         $$$setupUI$$$();
         foldButton.addActionListener(e -> {
-            app.setHelp("qqq/suitei_04.png");
+            app.setHelp("suitei_04");
 
             System.out.println("20180220 get_i_fold_type() = " + app.getFoldType());
             app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
@@ -50,7 +50,7 @@ public class SouthPanel extends JPanel {
             app.Button_shared_operation();
         });
         anotherSolutionButton.addActionListener(e -> {
-            app.setHelp("qqq/Button3.png");
+            app.setHelp("Button3");
 
             app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
@@ -62,7 +62,7 @@ public class SouthPanel extends JPanel {
             }
         });
         flipButton.addActionListener(e -> {
-            app.setHelp("qqq/Button0b.png");
+            app.setHelp("Button0b");
             app.OZ.ip4 = app.OZ.ip4.advance();
             if ((app.mouseMode == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (app.OZ.ip4 == FoldedFigure.State.BOTH_2)) {
                 app.OZ.ip4 = FoldedFigure.State.FRONT_0;
@@ -72,7 +72,7 @@ public class SouthPanel extends JPanel {
         });
         As100Button.addActionListener(e -> {
             app.subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_SAVE_100_1;
-            app.setHelp("qqq/AS_matome.png");
+            app.setHelp("AS_matome");
             if (app.OZ.findAnotherOverlapValid) {
                 app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
@@ -107,27 +107,27 @@ public class SouthPanel extends JPanel {
                 app.sub.start();
             }
 
-            app.setHelp("qqq/bangou_sitei_suitei_hyouji.png");
+            app.setHelp("bangou_sitei_suitei_hyouji");
             app.Button_shared_operation();
             app.repaintCanvas();
         });
 
         undoRedo.addUndoActionListener(e -> {
-            app.setHelp("qqq/undo.png");
+            app.setHelp("undo");
 
             app.OZ.undo();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         undoRedo.addRedoActionListener(e -> {
-            app.setHelp("qqq/redo.png");
+            app.setHelp("redo");
 
             app.OZ.redo();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         undoRedo.addSetUndoCountActionListener(e -> {
-            app.setHelp("qqq/undo_syutoku.png");
+            app.setHelp("undo_syutoku");
             int i_undo_suu_om_old = app.i_undo_suu_om;
             app.i_undo_suu_om = StringOp.String2int(app.foldedFigureUndoRedo.getText(), i_undo_suu_om_old);
             if (app.i_undo_suu < 0) {
@@ -137,7 +137,7 @@ public class SouthPanel extends JPanel {
             app.OZ.cp_worker2.setUndoBoxUndoTotal(app.i_undo_suu_om);                  //  <<<------------
         });
         oriagari_sousaButton.addActionListener(e -> {
-            app.setHelp("qqq/oriagari_sousa.png");
+            app.setHelp("oriagari_sousa");
             app.OZ.i_foldedFigure_operation_mode = 1;
             app.OZ.setAllPointStateFalse();
             app.OZ.record();
@@ -147,7 +147,7 @@ public class SouthPanel extends JPanel {
             app.Button_shared_operation();
         });
         oriagari_sousa_2Button.addActionListener(e -> {
-            app.setHelp("qqq/oriagari_sousa_2.png");
+            app.setHelp("oriagari_sousa_2");
             app.OZ.i_foldedFigure_operation_mode = 2;
             app.OZ.setAllPointStateFalse();
             app.OZ.record();
@@ -158,7 +158,7 @@ public class SouthPanel extends JPanel {
             app.Button_shared_operation();
         });
         foldedFigureMove.addActionListener(e -> {
-            app.setHelp("qqq/oriagari_idiu.png");
+            app.setHelp("oriagari_idiu");
 
             app.mouseMode = MouseMode.MOVE_CALCULATED_SHAPE_102;
             System.out.println("mouseMode = " + app.mouseMode);
@@ -166,19 +166,19 @@ public class SouthPanel extends JPanel {
         });
         a_aButton.addActionListener(e -> {
             app.Button_shared_operation();
-            app.setHelp("qqq/a_a.png");
+            app.setHelp("a_a");
 
             app.OZ.ct_worker.toggleAntiAlias();
             app.repaintCanvas();
         });
         shadowButton.addActionListener(e -> {
             app.Button_shared_operation();
-            app.setHelp("qqq/kage.png");
+            app.setHelp("kage");
             app.OZ.ct_worker.toggleDisplayShadows();
             app.repaintCanvas();
         });
         FCButton.addActionListener(e -> {
-            app.setHelp("qqq/F_color.png");
+            app.setHelp("F_color");
             app.Button_shared_operation();
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
@@ -197,7 +197,7 @@ public class SouthPanel extends JPanel {
             app.repaintCanvas();
         });
         BCButton.addActionListener(e -> {
-            app.setHelp("qqq/B_color.png");
+            app.setHelp("B_color");
             app.Button_shared_operation();
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
@@ -214,7 +214,7 @@ public class SouthPanel extends JPanel {
             app.repaintCanvas();
         });
         LCButton.addActionListener(e -> {
-            app.setHelp("qqq/L_color.png");
+            app.setHelp("L_color");
             app.Button_shared_operation();
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
@@ -233,7 +233,7 @@ public class SouthPanel extends JPanel {
             app.repaintCanvas();
         });
         haltButton.addActionListener(e -> {
-            app.setHelp("qqq/keisan_tyuusi.png");
+            app.setHelp("keisan_tyuusi");
 
             if (app.subThreadRunning) {
                 app.halt();
@@ -242,7 +242,7 @@ public class SouthPanel extends JPanel {
             app.Button_shared_operation();
         });
         trashButton.addActionListener(e -> {
-            app.setHelp("qqq/settei_syokika.png");
+            app.setHelp("settei_syokika");
 
             if (app.foldedFigureIndex == 0) {
                 return;
@@ -262,7 +262,7 @@ public class SouthPanel extends JPanel {
         });
         resetButton.addActionListener(e -> {
 
-            app.setHelp("qqq/zen_syokika.png");
+            app.setHelp("zen_syokika");
 
             //展開図の初期化　開始
             //settei_syokika_cp();//展開図パラメータの初期化

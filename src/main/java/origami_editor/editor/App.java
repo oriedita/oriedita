@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 import static origami_editor.editor.ResourceUtil.createImageIcon;
 
@@ -178,14 +179,14 @@ public class App extends JFrame implements ActionListener {
     JLabel measuredAngle2Label;
     JLabel measuredAngle3Label;
     Image img_background;       //Image for background
-    Image img_explanation;       //Image for explanation
     boolean lockBackground_ori = false;//Lock on background = 1, not = 0
     boolean lockBackground = false;//Lock on background = 1, not = 0
     Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
     Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
 
+    HelpDialog explanation;
+
     boolean displayBackground = false;//If it is 0, the background is not displayed. If it is 1, display it. There is no 2.
-    boolean displayExplanation = true;//If it is 0, the explanation is not displayed. If it is 1, display it. There is no 2.
     // subThreadMode Subthread operation rules.
     // 0 = Execution of folding estimate 5. It is not a mode to put out different solutions of folding estimation at once.
     // 1 = Execution of folding estimate 5. Another solution for folding estimation is put together.
@@ -226,6 +227,8 @@ public class App extends JFrame implements ActionListener {
     boolean i_mouse_undo_redo_mode = false;//1 for undo and redo mode with mouse
     MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASEPATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
     double d_ap_check4 = 0.0;
+    public String explanation_text;
+
     ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     public App() {
         setTitle("Origami Editor 1.0.0");//Specify the title and execute the constructor
@@ -355,7 +358,7 @@ public class App extends JFrame implements ActionListener {
 
         ckbox_folding_keika = new JCheckBox("");
         ckbox_folding_keika.addActionListener(e -> {
-            setHelp("qqq/ckbox_oritatami_keika.png");
+            setHelp("ckbox_oritatami_keika");
 
             repaintCanvas();
         });
@@ -444,11 +447,11 @@ public class App extends JFrame implements ActionListener {
         h_undoTotalTextField = eastPanel.getH_undoTotalTextField();
         colOrangeButton = eastPanel.getColOrangeButton();
         colYellowButton = eastPanel.getColYellowButton();
-        length1Label = eastPanel.getL1Label();
-        measuredLength2Label = eastPanel.getL2Label();
-        measuredAngle1Label = eastPanel.getA1Label();
-        measuredAngle2Label = eastPanel.getA2Label();
-        measuredAngle3Label = eastPanel.getA3Label();
+        length1Label = eastPanel.getMeasuredLength1Label();
+        measuredLength2Label = eastPanel.getMeasuredLength2Label();
+        measuredAngle1Label = eastPanel.getMeasuredAngle1Label();
+        measuredAngle2Label = eastPanel.getMeasuredAngle2Label();
+        measuredAngle3Label = eastPanel.getMeasuredAngle3Label();
 
         correctCpBeforeFoldingCheckBox = westPanel.getCorrectCpBeforeFoldingCheckBox();
 
@@ -501,8 +504,6 @@ public class App extends JFrame implements ActionListener {
 
         repaintCanvas();
 
-        setHelp("qqq/a__hajimeni.png");
-
         circleCustomizedColorButton.setBackground(circleCustomizedColor);//特注色の指定色表示
 
         // 測定長さと角度の表示
@@ -521,6 +522,14 @@ public class App extends JFrame implements ActionListener {
 
         OZ.ct_worker.set_L_color(OZ.foldedFigure_L_color);        //折り上がり図の線の色
         Button_L_color.setBackground(OZ.foldedFigure_L_color);        //ボタンの色設定
+
+        //            frame.setSize(1200, 700);
+        pack();
+        setLocationRelativeTo(null);//If you want to put the application window in the center of the screen, use the setLocationRelativeTo () method. If you pass null, it will always be in the center.
+        setVisible(true);
+
+        explanation = new HelpDialog(this);
+        explanation.setVisible(true);
     }//------------------------------------------ボタンの定義等、ここまでがコンストラクタとして起動直後に最初に実行される内容
 
     public void repaintCanvas() {
@@ -633,7 +642,6 @@ public class App extends JFrame implements ActionListener {
         OZ.ct_worker.set_L_color(OZ.foldedFigure_L_color); //折り上がり図の表面の色
         Button_L_color.setBackground(OZ.foldedFigure_L_color);    //ボタンの色設定
         //以上でOAZ(0)の共通パラメータを、OZに渡す作業は終了
-
     }
 
     // ------------------------------------------------------------------------------
@@ -644,8 +652,6 @@ public class App extends JFrame implements ActionListener {
     public void displayMeasuredLength1(double d0) {
         length1Label.setText(String.valueOf(d0));
     }
-
-// ----------------------------------
 
     public void displayMeasuredLength2(double d0) {
         measuredLength2Label.setText(String.valueOf(d0));
@@ -1407,7 +1413,7 @@ public class App extends JFrame implements ActionListener {
 
     //---------------------------------------------------------
     String selectFileName(String coment0) {
-        FileDialog fd = new FileDialog(this, coment0, FileDialog.SAVE);
+        fd = new FileDialog(this, coment0, FileDialog.SAVE);
         fd.setVisible(true);
         String fname = null;
         if (fd.getFile() != null) {
@@ -1417,15 +1423,7 @@ public class App extends JFrame implements ActionListener {
     }
 
     public void setHelp(String resource) {
-        URL url = getClass().getClassLoader().getResource(resource);
-
-        try {
-            Toolkit tk = Toolkit.getDefaultToolkit();
-            img_explanation = tk.getImage(url);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        repaintCanvas();
+        explanation.setExplanation(resource);
     }
 
     //-------------------

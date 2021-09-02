@@ -30,7 +30,7 @@ public class OpenFrame extends JDialog {
         });
 
         o_F_checkButton.addActionListener(e -> {
-            app.setHelp("qqq/af/O_F_check.png");
+            app.setHelp("af_O_F_check");
 
             app.mouseMode = MouseMode.FLAT_FOLDABLE_CHECK_63;
             System.out.println("mouseMode = " + app.mouseMode);
@@ -38,7 +38,7 @@ public class OpenFrame extends JDialog {
             app.repaint();
         });
         foldableLinePlusGridInputButton.addActionListener(e -> {
-            app.setHelp("qqq/oritatami_kanousen_and_kousitenkei.png");
+            app.setHelp("oritatami_kanousen_and_kousitenkei");
 
             app.mouseMode = MouseMode.FOLDABLE_LINE_INPUT_39;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.FOLDABLE_LINE_INPUT_39;
@@ -49,7 +49,7 @@ public class OpenFrame extends JDialog {
             app.repaint();
         });
         select_polygonButton.addActionListener(e -> {
-            app.setHelp("qqq/af/select_polygon.png");
+            app.setHelp("af_select_polygon");
 
             app.mouseMode = MouseMode.SELECT_POLYGON_66;
             System.out.println("mouseMode = " + app.mouseMode);
@@ -57,7 +57,7 @@ public class OpenFrame extends JDialog {
             app.repaint();
         });
         unselect_polygonButton.addActionListener(e -> {
-            app.setHelp("qqq/af/unselect_polygon.png");
+            app.setHelp("af_unselect_polygon");
 
             app.mouseMode = MouseMode.UNSELECT_POLYGON_67;
             System.out.println("mouseMode = " + app.mouseMode);
@@ -65,7 +65,7 @@ public class OpenFrame extends JDialog {
             app.repaint();
         });
         select_lXButton.addActionListener(e -> {
-            app.setHelp("qqq/af/select_lX.png");
+            app.setHelp("af_select_lX");
 
             app.mouseMode = MouseMode.SELECT_LINE_INTERSECTING_68;
             System.out.println("mouseMode = " + app.mouseMode);
@@ -73,7 +73,7 @@ public class OpenFrame extends JDialog {
             app.repaint();
         });
         unselect_lXButton.addActionListener(e -> {
-            app.setHelp("qqq/af/unselect_lX.png");
+            app.setHelp("af_unselect_lX");
 
             app.mouseMode = MouseMode.UNSELECT_LINE_INTERSECTING_69;
             System.out.println("mouseMode = " + app.mouseMode);
@@ -81,7 +81,7 @@ public class OpenFrame extends JDialog {
             app.repaint();
         });
         del_lButton.addActionListener(e -> {
-            app.setHelp("qqq/af/Del_l.png");
+            app.setHelp("af_Del_l");
 
             app.mouseMode = MouseMode.CREASE_DELETE_OVERLAPPING_64;
             System.out.println("mouseMode = " + app.mouseMode);
@@ -89,12 +89,16 @@ public class OpenFrame extends JDialog {
             app.repaint();
         });
         del_l_XButton.addActionListener(e -> {
-            app.setHelp("qqq/af/Del_l_X.png");
+            app.setHelp("af_Del_l_X");
 
             app.mouseMode = MouseMode.CREASE_DELETE_INTERSECTING_65;
             System.out.println("mouseMode = " + app.mouseMode);
             app.Button_shared_operation();
             app.repaint();
+        });
+
+        selectAnd3ClickCheckBox.addActionListener(e -> {
+            app.setHelp("ckbox_add_frame_SelectAnd3click");
         });
 
         selectAnd3ClickCheckBox.setSelected(app.ckbox_add_frame_SelectAnd3click_isSelected);//Select whether to display
