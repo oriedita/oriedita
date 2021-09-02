@@ -55,9 +55,8 @@ public class AppMenuBar extends JMenuBar {
                 app.set_i_OAZ(0);
                 app.configure_initialize_prediction();
 
-                app.Button_F_color.setBackground(app.OZ.foldedFigure_F_color);    //ボタンの色設定
-                app.Button_B_color.setBackground(app.OZ.foldedFigure_B_color);    //ボタンの色設定
-                app.Button_L_color.setBackground(app.OZ.foldedFigure_L_color);    //ボタンの色設定
+                app.updateFoldedFigure();
+
                 //折畳予測図のの初期化　終了
 
                 app.mainDrawingWorker.setCamera(app.camera_of_orisen_input_diagram);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。

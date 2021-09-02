@@ -36,17 +36,12 @@ public class App extends JFrame implements ActionListener {
     public LineSegmentSet Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
     public BulletinBoard bulletinBoard = new BulletinBoard(this);
     public Camera camera_of_orisen_input_diagram = new Camera();
-    public JButton Button_F_color;                    //折り上がり図の表の色の指定に用いる
-    public JButton Button_B_color;                    //折り上がり図の裏の色の指定に用いる
-    public JButton Button_L_color;                    //折り上がり図の線の色の指定に用いる
     public Color circleCustomizedColor = new Color(100, 200, 200);//Designated color when customizing the color of auxiliary lines and circles
     public JButton circleCustomizedColorButton;                    //折り上がり図の表の色の指定に用いる
 
     //アプレット用public void init()または、アプリケーション用public ap() 以外のクラスでも使用されるパネルの部品の宣言はここでしておく。
     //アプレット用public void init()または、アプリケーション用public ap() の中だけで使用されるパネルの部品の宣言ぅラスの中でする。
     //Those that basically change the appearance of the parts are declared here.
-    public JTextField foldedFigureSizeTextField;//double d_oriagarizu_syukusyaku_keisuu=1.0;//折り上がり図の縮尺係数
-    public JTextField foldedFigureRotateTextField;
     public JCheckBox ckbox_check4;//check4
     public JCheckBox correctCpBeforeFoldingCheckBox;//cpを折畳み前に自動改善する。
     public JCheckBox selectPersistentCheckBox;//select状態を他の操作をしてもなるべく残す
@@ -194,6 +189,7 @@ public class App extends JFrame implements ActionListener {
 
     public final GridConfiguration gridConfiguration = new GridConfiguration();
     public final CanvasConfiguration canvasConfiguration = new CanvasConfiguration();
+    public final FoldedFigureConfiguration foldedFigureConfiguration = new FoldedFigureConfiguration();
 
     ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     public App() {
@@ -396,11 +392,6 @@ public class App extends JFrame implements ActionListener {
         Button_bangou_sitei_estimated_display = southPanel.getGoToFoldedFigureButton();
         Button_another_solution = southPanel.getAnotherSolutionButton();
         foldedFigureUndoRedo = southPanel.getUndoRedo();
-        foldedFigureSizeTextField = southPanel.getFoldedFigureResizeTextField();
-        foldedFigureRotateTextField = southPanel.getFoldedFigureRotateTextField();
-        Button_F_color = southPanel.getFCButton();
-        Button_B_color = southPanel.getBCButton();
-        Button_L_color = southPanel.getLCButton();
 
 // *******南*********ボタンの定義はここまで*******************************************************************************************************************************
 
@@ -441,14 +432,7 @@ public class App extends JFrame implements ActionListener {
         mainDrawingWorker.record();
         mainDrawingWorker.auxRecord();
 
-        OZ.ct_worker.set_F_color(OZ.foldedFigure_F_color); //折り上がり図の表面の色
-        Button_F_color.setBackground(OZ.foldedFigure_F_color);    //ボタンの色設定
-
-        OZ.ct_worker.set_B_color(OZ.foldedFigure_B_color);//折り上がり図の裏面の色
-        Button_B_color.setBackground(OZ.foldedFigure_B_color);//ボタンの色設定
-
-        OZ.ct_worker.set_L_color(OZ.foldedFigure_L_color);        //折り上がり図の線の色
-        Button_L_color.setBackground(OZ.foldedFigure_L_color);        //ボタンの色設定
+        updateFoldedFigure();
 
         //            frame.setSize(1200, 700);
         pack();
@@ -554,21 +538,18 @@ public class App extends JFrame implements ActionListener {
 
         set_i_OAZ(foldedFigures.size() - 1);//foldedFigureIndex=i;OZ = (Oriagari_Zu)foldedFigures.get(foldedFigureIndex); OZ(各操作の対象となる折上がり図）に、アレイリストに最新に追加された折上がり図を割り当てる)
 
-        FoldedFigure orz = foldedFigures.get(0);//foldedFigures(0)(共通パラメータを保持する折上がり図）をorzに割り付ける
+        FoldedFigure orz = foldedFigures.get(0);//Assign foldedFigures (0) (folded figures that hold common parameters) to orz
 
-        //以下ではOAZ(0)の共通パラメータを、現在操作対象となっているOZに渡す
-        OZ.foldedFigure_F_color = orz.ct_worker.get_F_color();//20171223折り上がり図の表面の色の変更はOZ.oriagarizu_F_colorとOZ.js.set_F_colorの両方やる必要あり
-        OZ.ct_worker.set_F_color(OZ.foldedFigure_F_color); //折り上がり図の表面の色
-        Button_F_color.setBackground(OZ.foldedFigure_F_color);    //ボタンの色設定
+        orz.getData(foldedFigureConfiguration);
 
-        OZ.foldedFigure_B_color = orz.ct_worker.get_B_color();//20171223折り上がり図の表面の色の変更はOZ.oriagarizu_F_colorとOZ.js.set_F_colorの両方やる必要あり
-        OZ.ct_worker.set_B_color(OZ.foldedFigure_B_color); //折り上がり図の表面の色
-        Button_B_color.setBackground(OZ.foldedFigure_B_color);    //ボタンの色設定
+        updateFoldedFigure();
+    }
 
-        OZ.foldedFigure_L_color = orz.ct_worker.get_L_color();//20171223折り上がり図の表面の色の変更はOZ.oriagarizu_F_colorとOZ.js.set_F_colorの両方やる必要あり
-        OZ.ct_worker.set_L_color(OZ.foldedFigure_L_color); //折り上がり図の表面の色
-        Button_L_color.setBackground(OZ.foldedFigure_L_color);    //ボタンの色設定
-        //以上でOAZ(0)の共通パラメータを、OZに渡す作業は終了
+    public void updateFoldedFigure() {
+        OZ.setData(foldedFigureConfiguration);
+        southPanel.setData(foldedFigureConfiguration);
+
+        repaintCanvas();
     }
 
     // ------------------------------------------------------------------------------
@@ -709,11 +690,6 @@ public class App extends JFrame implements ActionListener {
         scaleFactorTextField.setText(String.valueOf(scaleFactor)); //縮尺係数
         rotationCorrection = 0.0;
         rotationTextField.setText(String.valueOf(rotationCorrection));//回転表示角度の補正係数
-
-        OZ.d_foldedFigure_scale_factor = 1.0;
-        foldedFigureSizeTextField.setText(String.valueOf(OZ.d_foldedFigure_scale_factor));//折り上がり図の縮尺係数
-        OZ.d_foldedFigure_rotation_correction = 0.0;
-        foldedFigureRotateTextField.setText(String.valueOf(OZ.d_foldedFigure_rotation_correction));//折り上がり図の回転表示角度の補正角度
 
         //背景表示
         displayBackground = true;
@@ -1056,6 +1032,10 @@ public class App extends JFrame implements ActionListener {
         OZ = foldedFigures.get(foldedFigureIndex);
         //透過図はカラー化しない。
         ckbox_toukazu_color.setSelected(OZ.transparencyColor);//透過図はカラー化。
+
+        // Load data from this foldedFigure to the ui.
+        OZ.getData(foldedFigureConfiguration);
+        updateFoldedFigure();
     }
 
     public Point e2p(MouseEvent e) {

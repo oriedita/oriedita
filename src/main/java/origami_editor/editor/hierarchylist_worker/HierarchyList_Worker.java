@@ -1,5 +1,6 @@
 package origami_editor.editor.hierarchylist_worker;
 
+import origami_editor.editor.FoldedFigureConfiguration;
 import origami_editor.editor.LineColor;
 import origami_editor.editor.creasepattern_worker.CreasePattern_Worker;
 import origami_editor.editor.hierarchylist_worker.hierarchylist.HierarchyList;
@@ -63,6 +64,20 @@ public class HierarchyList_Worker {
     public HierarchyList_Worker(BulletinBoard bb0) {
         bb = bb0;
         reset();
+    }
+
+    public void setData(FoldedFigureConfiguration foldedFigureConfiguration) {
+        F_color = foldedFigureConfiguration.getFrontColor();
+        B_color = foldedFigureConfiguration.getBackColor();
+        L_color = foldedFigureConfiguration.getLineColor();
+
+        antiAlias = foldedFigureConfiguration.getAntiAlias();
+        displayShadows = foldedFigureConfiguration.getDisplayShadows();
+    }
+
+    public void getData(FoldedFigureConfiguration foldedFigureConfiguration) {
+        foldedFigureConfiguration.setAntiAlias(antiAlias);
+        foldedFigureConfiguration.setDisplayShadows(displayShadows);
     }
 
     public void reset() {
@@ -1092,35 +1107,6 @@ public class HierarchyList_Worker {
         return (int) d;
     }
 
-    public Color get_F_color() {
-        return F_color;
-    }
-
-    public void set_F_color(Color color0) {
-        F_color = color0;
-    }
-
-    public Color get_B_color() {
-        return B_color;
-    }
-
-    public void set_B_color(Color color0) {
-        B_color = color0;
-    }
-
-    //---------------------------------------------------------
-
-    public Color get_L_color() {
-        return L_color;
-    }
-
-    //---------------------------------------------------------
-
-    public void set_L_color(Color color0) {
-        L_color = color0;
-    }
-    //---------------------------------------------------------
-
     public void toggleAntiAlias() {
 
         antiAlias = !antiAlias;
@@ -1968,6 +1954,7 @@ public class HierarchyList_Worker {
         }
         return 0;
     }
+
 
     public enum HierarchyListStatus {
         UNKNOWN_N1,

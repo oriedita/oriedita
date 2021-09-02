@@ -36,6 +36,8 @@ public class GridConfiguration {
         gridSize = 8;
         baseState = Grid.State.WITHIN_PAPER;
 
+        gridAngle = 90.0;
+
         horizontalScalePosition = 0;
         verticalScalePosition = 0;
 

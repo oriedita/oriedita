@@ -63,12 +63,15 @@ public class SouthPanel extends JPanel {
         });
         flipButton.addActionListener(e -> {
             app.setHelp("Button0b");
-            app.OZ.ip4 = app.OZ.ip4.advance();
+
+            app.foldedFigureConfiguration.advanceState();
+
             if ((app.mouseMode == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (app.OZ.ip4 == FoldedFigure.State.BOTH_2)) {
-                app.OZ.ip4 = FoldedFigure.State.FRONT_0;
+                app.foldedFigureConfiguration.setState(FoldedFigure.State.FRONT_0);
             }//Fold-up forecast map Added to avoid the mode that can not be moved when moving
             app.Button_shared_operation();
-            app.repaintCanvas();
+
+            app.updateFoldedFigure();
         });
         As100Button.addActionListener(e -> {
             app.subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_SAVE_100_1;
@@ -168,14 +171,17 @@ public class SouthPanel extends JPanel {
             app.Button_shared_operation();
             app.setHelp("a_a");
 
-            app.OZ.ct_worker.toggleAntiAlias();
-            app.repaintCanvas();
+            app.foldedFigureConfiguration.toggleAntiAlias();
+
+            app.updateFoldedFigure();
         });
         shadowButton.addActionListener(e -> {
             app.Button_shared_operation();
             app.setHelp("kage");
-            app.OZ.ct_worker.toggleDisplayShadows();
-            app.repaintCanvas();
+
+            app.foldedFigureConfiguration.toggleDisplayShadows();
+
+            app.updateFoldedFigure();
         });
         FCButton.addActionListener(e -> {
             app.setHelp("F_color");
@@ -185,16 +191,12 @@ public class SouthPanel extends JPanel {
 
             //以下にやりたいことを書く
 
-            app.OZ.foldedFigure_F_color = JColorChooser.showDialog(null, "F_col", Color.white);
-            if (app.OZ.foldedFigure_F_color != null) {
-                app.OZ.ct_worker.set_F_color(app.OZ.foldedFigure_F_color);
+            Color frontColor = JColorChooser.showDialog(app, "F_col", Color.white);
+
+            if (frontColor != null) {
+                app.foldedFigureConfiguration.setFrontColor(frontColor);
+                app.updateFoldedFigure();
             }
-
-            //以上でやりたいことは書き終わり
-
-            app.Button_F_color.setBackground(app.OZ.foldedFigure_F_color);    //ボタンの色設定
-
-            app.repaintCanvas();
         });
         BCButton.addActionListener(e -> {
             app.setHelp("B_color");
@@ -203,15 +205,12 @@ public class SouthPanel extends JPanel {
             app.mouseReleasedValid = false;
 
             //以下にやりたいことを書く
-            app.OZ.foldedFigure_B_color = JColorChooser.showDialog(null, "B_col", Color.white);
+            Color backColor = JColorChooser.showDialog(null, "B_col", Color.white);
 
-            if (app.OZ.foldedFigure_B_color != null) {
-                app.OZ.ct_worker.set_B_color(app.OZ.foldedFigure_B_color);
+            if (backColor != null) {
+                app.foldedFigureConfiguration.setBackColor(backColor);
+                app.updateFoldedFigure();
             }
-            //以上でやりたいことは書き終わり
-
-            app.Button_B_color.setBackground(app.OZ.foldedFigure_B_color);    //ボタンの色設定
-            app.repaintCanvas();
         });
         LCButton.addActionListener(e -> {
             app.setHelp("L_color");
@@ -221,16 +220,11 @@ public class SouthPanel extends JPanel {
 
             //以下にやりたいことを書く
 
-            app.OZ.foldedFigure_L_color = JColorChooser.showDialog(null, "L_col", Color.white);
-            if (app.OZ.foldedFigure_L_color != null) {
-                app.OZ.ct_worker.set_L_color(app.OZ.foldedFigure_L_color);
+            Color lineColor = JColorChooser.showDialog(null, "L_col", Color.white);
+            if (lineColor != null) {
+                app.foldedFigureConfiguration.setLineColor(lineColor);
+                app.updateFoldedFigure();
             }
-
-
-            //以上でやりたいことは書き終わり
-
-            app.Button_L_color.setBackground(app.OZ.foldedFigure_L_color);    //ボタンの色設定
-            app.repaintCanvas();
         });
         haltButton.addActionListener(e -> {
             app.setHelp("keisan_tyuusi");
@@ -261,7 +255,6 @@ public class SouthPanel extends JPanel {
             app.repaintCanvas();
         });
         resetButton.addActionListener(e -> {
-
             app.setHelp("zen_syokika");
 
             //展開図の初期化　開始
@@ -285,18 +278,6 @@ public class SouthPanel extends JPanel {
             app.mainDrawingWorker.record();
             app.mainDrawingWorker.auxRecord();
         });
-    }
-
-    public JButton getFCButton() {
-        return FCButton;
-    }
-
-    public JButton getBCButton() {
-        return BCButton;
-    }
-
-    public JButton getLCButton() {
-        return LCButton;
     }
 
     public UndoRedo getUndoRedo() {
@@ -481,11 +462,17 @@ public class SouthPanel extends JPanel {
         foldedFigureRotate = new FoldedFigureRotate(app);
     }
 
-    public JTextField getFoldedFigureResizeTextField() {
-        return foldedFigureResize.getSizeTextField();
+    public void setData(FoldedFigureConfiguration foldedFigureConfiguration) {
+        foldedFigureResize.setText(String.valueOf(foldedFigureConfiguration.getScale()));
+        foldedFigureRotate.setText(String.valueOf(foldedFigureConfiguration.getRotation()));
+
+        FCButton.setBackground(foldedFigureConfiguration.getFrontColor());
+        BCButton.setBackground(foldedFigureConfiguration.getBackColor());
+        LCButton.setBackground(foldedFigureConfiguration.getLineColor());
     }
 
-    public JTextField getFoldedFigureRotateTextField() {
-        return foldedFigureRotate.getFoldedFigureRotateTextField();
+    public void getData(FoldedFigureConfiguration foldedFigureConfiguration) {
+        foldedFigureConfiguration.setScale(app.String2double(foldedFigureResize.getText(), foldedFigureConfiguration.getScale()));
+        foldedFigureConfiguration.setRotation(app.String2double(foldedFigureRotate.getText(), foldedFigureConfiguration.getRotation()));
     }
 }

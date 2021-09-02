@@ -1,6 +1,7 @@
 package origami_editor.editor.folded_figure;
 
 import origami_editor.editor.App;
+import origami_editor.editor.FoldedFigureConfiguration;
 import origami_editor.editor.basicbranch_worker.WireFrame_Worker;
 import origami_editor.editor.creasepattern_worker.CreasePattern_Worker;
 import origami_editor.editor.hierarchylist_worker.HierarchyList_Worker;
@@ -25,9 +26,9 @@ public class FoldedFigure {
     public Camera camera_of_foldedFigure_rear = new Camera();
     public Camera camera_of_transparent_front = new Camera();
     public Camera camera_of_transparent_rear = new Camera();
-    public Color foldedFigure_F_color = new Color(255, 255, 50);//Folded surface color
-    public Color foldedFigure_B_color = new Color(233, 233, 233);//The color of the back side of the folded figure
-    public Color foldedFigure_L_color = Color.black;//Folded line color
+    private Color foldedFigure_F_color = new Color(255, 255, 50);//Folded surface color
+    private Color foldedFigure_B_color = new Color(233, 233, 233);//The color of the back side of the folded figure
+    private Color foldedFigure_L_color = Color.black;//Folded line color
     public DisplayStyle display_flg_backup = DisplayStyle.DEVELOPMENT_4;//For temporary backup of display format displayStyle
     public DisplayStyle displayStyle = DisplayStyle.NONE_0;//Designation of the display style of the folded figure. 1 is a development drawing, 2 is a wire drawing. If it is 3, it is a transparent view. If it is 4, it is the same as when you actually fold the origami paper.
     public EstimationOrder estimationOrder = EstimationOrder.ORDER_0;//Instructions on how far to perform folding estimation
@@ -66,6 +67,8 @@ public class FoldedFigure {
     private int i_nanini_near = 0;//Point p is close to the point in the development view = 1, close to the point in the folded view = 2, not close to either = 0
     private int i_closestPointId;
     private PointSelection i_point_selection = PointSelection.NONE_0;//Both cp_worker1 and cp_worker2 are not selected (situation i_point_selection = 0), cp_worker1 is selected and cp_worker2 is not selected (situation i_point_selection = 1), and the vertex is cp_worker2 selected (situation i_point_selection = 2).
+
+    public final FoldedFigureConfiguration foldedFigureConfiguration = new FoldedFigureConfiguration();
 
     public FoldedFigure(App app0) {
         app = app0;
@@ -284,12 +287,12 @@ public class FoldedFigure {
 
     void oritatami_suitei_camera_configure(Camera camera_of_orisen_nyuuryokuzu, LineSegmentSet Ss0) {
         d_foldedFigure_scale_factor = camera_of_orisen_nyuuryokuzu.getCameraZoomX();
-        app.foldedFigureSizeTextField.setText(String.valueOf(d_foldedFigure_scale_factor));
-        app.foldedFigureSizeTextField.setCaretPosition(0);
-
         d_foldedFigure_rotation_correction = camera_of_orisen_nyuuryokuzu.getCameraAngle();
-        app.foldedFigureRotateTextField.setText(String.valueOf(d_foldedFigure_rotation_correction));
-        app.foldedFigureRotateTextField.setCaretPosition(0);
+
+        app.foldedFigureConfiguration.setScale(d_foldedFigure_scale_factor);
+        app.foldedFigureConfiguration.setRotation(d_foldedFigure_rotation_correction);
+
+        app.updateFoldedFigure();
 
         System.out.println("cp_worker1.ten_of_kijyunmen_ob     " + cp_worker1.point_of_referencePlane_ob.getX());
 
@@ -483,12 +486,12 @@ public class FoldedFigure {
         //Folded view display camera settings
 
         d_foldedFigure_scale_factor = camera_of_foldLine_diagram.getCameraZoomX();
-        app.foldedFigureSizeTextField.setText(String.valueOf(d_foldedFigure_scale_factor));
-        app.foldedFigureSizeTextField.setCaretPosition(0);
-
         d_foldedFigure_rotation_correction = camera_of_foldLine_diagram.getCameraAngle();
-        app.foldedFigureRotateTextField.setText(String.valueOf(d_foldedFigure_rotation_correction));
-        app.foldedFigureRotateTextField.setCaretPosition(0);
+
+        app.foldedFigureConfiguration.setScale(d_foldedFigure_scale_factor);
+        app.foldedFigureConfiguration.setRotation(d_foldedFigure_rotation_correction);
+
+        app.updateFoldedFigure();
 
         double d_display_position_x = camera_of_foldLine_diagram.getDisplayPositionX();
         double d_display_position_y = camera_of_foldLine_diagram.getDisplayPositionY();
@@ -1004,6 +1007,76 @@ public class FoldedFigure {
     public void setAllPointStateFalse() {
         cp_worker1.setAllPointStateFalse();
         cp_worker2.setAllPointStateFalse();
+    }
+
+    public void setData(FoldedFigureConfiguration foldedFigureConfiguration) {
+        ct_worker.setData(foldedFigureConfiguration);
+        foldedFigure_F_color = foldedFigureConfiguration.getFrontColor();
+        foldedFigure_B_color = foldedFigureConfiguration.getBackColor();
+        foldedFigure_L_color = foldedFigureConfiguration.getLineColor();
+        d_foldedFigure_scale_factor = foldedFigureConfiguration.getScale();
+        d_foldedFigure_rotation_correction = foldedFigureConfiguration.getRotation();
+        ip4 = foldedFigureConfiguration.getState();
+
+        // Update scale
+        camera_of_foldedFigure.setCameraZoomX(d_foldedFigure_scale_factor);
+        camera_of_foldedFigure.setCameraZoomY(d_foldedFigure_scale_factor);
+        camera_of_foldedFigure_front.setCameraZoomX(d_foldedFigure_scale_factor);
+        camera_of_foldedFigure_front.setCameraZoomY(d_foldedFigure_scale_factor);
+        camera_of_foldedFigure_rear.setCameraZoomX(d_foldedFigure_scale_factor);
+        camera_of_foldedFigure_rear.setCameraZoomY(d_foldedFigure_scale_factor);
+        camera_of_transparent_front.setCameraZoomX(d_foldedFigure_scale_factor);
+        camera_of_transparent_front.setCameraZoomY(d_foldedFigure_scale_factor);
+        camera_of_transparent_rear.setCameraZoomX(d_foldedFigure_scale_factor);
+        camera_of_transparent_rear.setCameraZoomY(d_foldedFigure_scale_factor);
+
+        // Update rotation
+        camera_of_foldedFigure.setCameraAngle(d_foldedFigure_rotation_correction);
+        camera_of_foldedFigure_front.setCameraAngle(d_foldedFigure_rotation_correction);
+        camera_of_foldedFigure_rear.setCameraAngle(d_foldedFigure_rotation_correction);
+        camera_of_transparent_front.setCameraAngle(d_foldedFigure_rotation_correction);
+        camera_of_transparent_rear.setCameraAngle(d_foldedFigure_rotation_correction);
+    }
+
+    public void getData(FoldedFigureConfiguration foldedFigureConfiguration) {
+        ct_worker.getData(foldedFigureConfiguration);
+        foldedFigureConfiguration.setFrontColor(foldedFigure_F_color);
+        foldedFigureConfiguration.setBackColor(foldedFigure_B_color);
+        foldedFigureConfiguration.setLineColor(foldedFigure_L_color);
+        foldedFigureConfiguration.setRotation(d_foldedFigure_rotation_correction);
+        foldedFigureConfiguration.setScale(d_foldedFigure_scale_factor);
+        foldedFigureConfiguration.setState(ip4);
+    }
+
+    public void scale(double d_bairitu) {
+        scale(d_bairitu, null);
+    }
+
+    public void scale(double d_bairitu, Point t_o2tv) {
+        d_foldedFigure_scale_factor = d_foldedFigure_scale_factor * d_bairitu;
+
+        if (t_o2tv != null) {
+            camera_of_foldedFigure.camera_ichi_sitei_from_TV(t_o2tv);
+            camera_of_foldedFigure_front.camera_ichi_sitei_from_TV(t_o2tv);
+            camera_of_foldedFigure_rear.camera_ichi_sitei_from_TV(t_o2tv);
+            camera_of_transparent_front.camera_ichi_sitei_from_TV(t_o2tv);
+            camera_of_transparent_rear.camera_ichi_sitei_from_TV(t_o2tv);
+        }
+
+        camera_of_foldedFigure.multiplyCameraZoomX(d_bairitu);
+        camera_of_foldedFigure.multiplyCameraZoomY(d_bairitu);
+
+        camera_of_foldedFigure_front.multiplyCameraZoomX(d_bairitu);
+        camera_of_foldedFigure_front.multiplyCameraZoomY(d_bairitu);
+
+        camera_of_foldedFigure_rear.multiplyCameraZoomX(d_bairitu);
+        camera_of_foldedFigure_rear.multiplyCameraZoomY(d_bairitu);
+
+        camera_of_transparent_front.multiplyCameraZoomX(d_bairitu);
+        camera_of_transparent_front.multiplyCameraZoomY(d_bairitu);
+
+        camera_of_transparent_rear.multiplyCameraZoomX(d_bairitu);
+        camera_of_transparent_rear.multiplyCameraZoomY(d_bairitu);
     }
 
     public enum PointSelection {

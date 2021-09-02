@@ -1731,11 +1731,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
                 Point p = new Point(app.e2p(e));
                 app.pointInCpOrFoldedFigure(p);
+                double root_root_root_2 = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
                 if (app.i_cp_or_oriagari == App.MouseWheelTarget.CREASEPATTERN_0) {
                     if (e.getWheelRotation() == -1) {
-                        app.scaleFactor = app.scaleFactor * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
+                        app.scaleFactor = app.scaleFactor * root_root_root_2;//  sqrt(sqrt(2))=1.1892
                     } else {
-                        app.scaleFactor = app.scaleFactor / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
+                        app.scaleFactor = app.scaleFactor / root_root_root_2;//  sqrt(sqrt(2))=1.1892
                     }
                     app.camera_of_orisen_input_diagram.setCameraZoomX(app.scaleFactor);
                     app.camera_of_orisen_input_diagram.setCameraZoomY(app.scaleFactor);
@@ -1744,22 +1745,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     // ---------------------------------------------------------------------
                 } else {
                     if (e.getWheelRotation() == -1) {
-                        app.OZ.d_foldedFigure_scale_factor = app.OZ.d_foldedFigure_scale_factor * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
+                        app.foldedFigureConfiguration.setScale(app.foldedFigureConfiguration.getScale() * root_root_root_2);
                     } else {
-                        app.OZ.d_foldedFigure_scale_factor = app.OZ.d_foldedFigure_scale_factor / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
+                        app.foldedFigureConfiguration.setScale(app.foldedFigureConfiguration.getScale() / root_root_root_2);
                     }
-                    app.OZ.camera_of_foldedFigure.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-                    app.OZ.camera_of_foldedFigure.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-                    app.OZ.camera_of_foldedFigure_front.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-                    app.OZ.camera_of_foldedFigure_front.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-                    app.OZ.camera_of_foldedFigure_rear.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-                    app.OZ.camera_of_foldedFigure_rear.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-                    app.OZ.camera_of_transparent_front.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-                    app.OZ.camera_of_transparent_front.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-                    app.OZ.camera_of_transparent_rear.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-                    app.OZ.camera_of_transparent_rear.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-                    app.foldedFigureSizeTextField.setText(String.valueOf(app.OZ.d_foldedFigure_scale_factor));
-                    app.foldedFigureSizeTextField.setCaretPosition(0);
+
+                    app.updateFoldedFigure();
                 }
                 // ---------------------------------------------------------------------
 

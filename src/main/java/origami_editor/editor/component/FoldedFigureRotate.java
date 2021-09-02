@@ -20,61 +20,35 @@ public class FoldedFigureRotate extends JPanel {
         foldedFigureRotateAntiClockwiseButton.addActionListener(e -> {
             app.setHelp("oriagari_p_kaiten");
 
-            app.OZ.d_foldedFigure_rotation_correction = OritaCalc.angle_between_m180_180(app.OZ.d_foldedFigure_rotation_correction + 11.25);
-            app.OZ.camera_of_foldedFigure.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
-            app.OZ.camera_of_foldedFigure_front.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
-            app.OZ.camera_of_foldedFigure_rear.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
-            app.OZ.camera_of_transparent_front.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
-            app.OZ.camera_of_transparent_rear.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
-
-            foldedFigureRotateTextField.setText(String.valueOf(app.OZ.d_foldedFigure_rotation_correction));
-            foldedFigureRotateTextField.setCaretPosition(0);
+            app.foldedFigureConfiguration.setRotation(OritaCalc.angle_between_m180_180(app.foldedFigureConfiguration.getRotation() - 11.25));
 
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateFoldedFigure();
         });
         foldedFigureRotateSetButton.addActionListener(e -> {
-            double d_foldedFigure_rotation_correction_old = app.OZ.d_foldedFigure_rotation_correction;
-            app.OZ.d_foldedFigure_rotation_correction = OritaCalc.angle_between_m180_180(app.String2double(foldedFigureRotateTextField.getText(), d_foldedFigure_rotation_correction_old));
-
-            foldedFigureRotateTextField.setText(String.valueOf(app.OZ.d_foldedFigure_rotation_correction));
-
-            if (app.OZ.d_foldedFigure_rotation_correction != d_foldedFigure_rotation_correction_old) {
-
-                app.OZ.camera_of_foldedFigure.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
-                app.OZ.camera_of_foldedFigure_front.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
-                app.OZ.camera_of_foldedFigure_rear.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
-                app.OZ.camera_of_transparent_front.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
-                app.OZ.camera_of_transparent_rear.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
-            }
-            foldedFigureRotateTextField.setText(String.valueOf(app.OZ.d_foldedFigure_rotation_correction));
-            foldedFigureRotateTextField.setCaretPosition(0);
-            app.repaintCanvas();
-
+            app.foldedFigureConfiguration.setRotation(OritaCalc.angle_between_m180_180(app.String2double(foldedFigureRotateTextField.getText(), app.foldedFigureConfiguration.getRotation())));
 
             app.setHelp("oriagarizu_kaiten_hosei_set");
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateFoldedFigure();
         });
         foldedFigureRotateClockwiseButton.addActionListener(e -> {
             app.setHelp("oriagari_m_kaiten");
-            app.OZ.d_foldedFigure_rotation_correction = OritaCalc.angle_between_m180_180(app.OZ.d_foldedFigure_rotation_correction - 11.25);
-            app.OZ.camera_of_foldedFigure.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
-            app.OZ.camera_of_foldedFigure_front.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
-            app.OZ.camera_of_foldedFigure_rear.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
-            app.OZ.camera_of_transparent_front.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
-            app.OZ.camera_of_transparent_rear.setCameraAngle(app.OZ.d_foldedFigure_rotation_correction);
 
-            foldedFigureRotateTextField.setText(String.valueOf(app.OZ.d_foldedFigure_rotation_correction));
-            foldedFigureRotateTextField.setCaretPosition(0);
+            app.foldedFigureConfiguration.setRotation(OritaCalc.angle_between_m180_180(app.foldedFigureConfiguration.getRotation() + 11.25));
 
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateFoldedFigure();
         });
     }
 
-    public JTextField getFoldedFigureRotateTextField() {
-        return foldedFigureRotateTextField;
+    public void setText(String text) {
+        foldedFigureRotateTextField.setText(text);
+        foldedFigureRotateTextField.setCaretPosition(0);
+    }
+
+    public String getText() {
+        return foldedFigureRotateTextField.getText();
     }
 
     {

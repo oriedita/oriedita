@@ -17,85 +17,28 @@ public class FoldedFigureResize extends JPanel {
         add($$$getRootComponent$$$());
 
         foldedFigureSizeSetButton.addActionListener(e -> {
-            double d_foldedFigure_scale_factor_old = app.OZ.d_foldedFigure_scale_factor;
-            app.OZ.d_foldedFigure_scale_factor = app.String2double(foldedFigureSizeTextField.getText(), d_foldedFigure_scale_factor_old);
-            if (app.OZ.d_foldedFigure_scale_factor <= 0.0) {
-                app.OZ.d_foldedFigure_scale_factor = d_foldedFigure_scale_factor_old;
-            }
-            foldedFigureSizeTextField.setText(String.valueOf(app.OZ.d_foldedFigure_scale_factor));
-            if (app.OZ.d_foldedFigure_scale_factor != d_foldedFigure_scale_factor_old) {
-                app.OZ.camera_of_foldedFigure.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-                app.OZ.camera_of_foldedFigure.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-
-                app.OZ.camera_of_foldedFigure_front.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-                app.OZ.camera_of_foldedFigure_front.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-
-                app.OZ.camera_of_foldedFigure_rear.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-                app.OZ.camera_of_foldedFigure_rear.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-
-                app.OZ.camera_of_transparent_front.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-                app.OZ.camera_of_transparent_front.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-
-                app.OZ.camera_of_transparent_rear.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-                app.OZ.camera_of_transparent_rear.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-            }
-            foldedFigureSizeTextField.setText(String.valueOf(app.OZ.d_foldedFigure_scale_factor));
-            foldedFigureSizeTextField.setCaretPosition(0);
-            app.repaintCanvas();
+            app.foldedFigureConfiguration.setScale(app.String2double(foldedFigureSizeTextField.getText(), app.foldedFigureConfiguration.getScale()));
 
             app.setHelp("oriagarizu_syukusyaku_keisuu_set");
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateFoldedFigure();
         });
+        double root2 = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
         foldedFigureSizeDecreaseButton.addActionListener(e -> {
             app.setHelp("oriagari_syukusyou");
 
-            app.OZ.d_foldedFigure_scale_factor = app.OZ.d_foldedFigure_scale_factor / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
-            app.OZ.camera_of_foldedFigure.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-            app.OZ.camera_of_foldedFigure.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-
-            app.OZ.camera_of_foldedFigure_front.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-            app.OZ.camera_of_foldedFigure_front.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-
-            app.OZ.camera_of_foldedFigure_rear.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-            app.OZ.camera_of_foldedFigure_rear.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-
-            app.OZ.camera_of_transparent_front.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-            app.OZ.camera_of_transparent_front.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-
-            app.OZ.camera_of_transparent_rear.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-            app.OZ.camera_of_transparent_rear.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-
-            foldedFigureSizeTextField.setText(String.valueOf(app.OZ.d_foldedFigure_scale_factor));
-            foldedFigureSizeTextField.setCaretPosition(0);
+            app.foldedFigureConfiguration.setScale(app.foldedFigureConfiguration.getScale() / root2);
 
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateFoldedFigure();
         });
         foldedFigureSizeIncreaseButton.addActionListener(e -> {
             app.setHelp("oriagari_kakudai");
 
-            app.OZ.d_foldedFigure_scale_factor = app.OZ.d_foldedFigure_scale_factor * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
-            app.OZ.camera_of_foldedFigure.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-            app.OZ.camera_of_foldedFigure.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-
-            app.OZ.camera_of_foldedFigure_front.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-            app.OZ.camera_of_foldedFigure_front.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-
-            app.OZ.camera_of_foldedFigure_rear.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-            app.OZ.camera_of_foldedFigure_rear.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-
-            app.OZ.camera_of_transparent_front.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-            app.OZ.camera_of_transparent_front.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-
-            app.OZ.camera_of_transparent_rear.setCameraZoomX(app.OZ.d_foldedFigure_scale_factor);
-            app.OZ.camera_of_transparent_rear.setCameraZoomY(app.OZ.d_foldedFigure_scale_factor);
-
-            foldedFigureSizeTextField.setText(String.valueOf(app.OZ.d_foldedFigure_scale_factor));
-            foldedFigureSizeTextField.setCaretPosition(0);
+            app.foldedFigureConfiguration.setScale(app.foldedFigureConfiguration.getScale() * root2);
 
             app.Button_shared_operation();
-            app.repaintCanvas();
+            app.updateFoldedFigure();
         });
     }
 
@@ -157,7 +100,12 @@ public class FoldedFigureResize extends JPanel {
         return panel1;
     }
 
-    public JTextField getSizeTextField() {
-        return foldedFigureSizeTextField;
+    public String getText() {
+        return foldedFigureSizeTextField.getText();
+    }
+
+    public void setText(String text) {
+        foldedFigureSizeTextField.setText(text);
+        foldedFigureSizeTextField.setCaretPosition(0);
     }
 }

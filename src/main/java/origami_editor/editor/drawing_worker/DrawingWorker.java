@@ -566,14 +566,10 @@ public class DrawingWorker {
         }
 
         if (i_oriagarizu_yomikomi) {
-            app.OZ.ct_worker.set_F_color(new Color(i_oriagarizu_F_color_R, i_oriagarizu_F_color_G, i_oriagarizu_F_color_B)); //表面の色
-            app.Button_F_color.setBackground(new Color(i_oriagarizu_F_color_R, i_oriagarizu_F_color_G, i_oriagarizu_F_color_B));    //ボタンの色設定
-
-            app.OZ.ct_worker.set_B_color(new Color(i_oriagarizu_B_color_R, i_oriagarizu_B_color_G, i_oriagarizu_B_color_B));//裏面の色
-            app.Button_B_color.setBackground(new Color(i_oriagarizu_B_color_R, i_oriagarizu_B_color_G, i_oriagarizu_B_color_B));//ボタンの色設定
-
-            app.OZ.ct_worker.set_L_color(new Color(i_oriagarizu_L_color_R, i_oriagarizu_L_color_G, i_oriagarizu_L_color_B));        //線の色
-            app.Button_L_color.setBackground(new Color(i_oriagarizu_L_color_R, i_oriagarizu_L_color_G, i_oriagarizu_L_color_B));        //ボタンの色設定
+            app.foldedFigureConfiguration.setFrontColor(new Color(i_oriagarizu_F_color_R, i_oriagarizu_F_color_G, i_oriagarizu_F_color_B));
+            app.foldedFigureConfiguration.setBackColor(new Color(i_oriagarizu_B_color_R, i_oriagarizu_B_color_G, i_oriagarizu_B_color_B));
+            app.foldedFigureConfiguration.setLineColor(new Color(i_oriagarizu_L_color_R, i_oriagarizu_L_color_G, i_oriagarizu_L_color_B));
+            app.updateFoldedFigure();
         }
     }
 
@@ -896,17 +892,17 @@ public class DrawingWorker {
 
         memo1.addLine("<oriagarizu>");
 
-        memo1.addLine("<oriagarizu_F_color_R>" + app.OZ.foldedFigure_F_color.getRed() + "</oriagarizu_F_color_R>");
-        memo1.addLine("<oriagarizu_F_color_G>" + app.OZ.foldedFigure_F_color.getGreen() + "</oriagarizu_F_color_G>");
-        memo1.addLine("<oriagarizu_F_color_B>" + app.OZ.foldedFigure_F_color.getBlue() + "</oriagarizu_F_color_B>");
+        memo1.addLine("<oriagarizu_F_color_R>" + app.foldedFigureConfiguration.getFrontColor().getRed() + "</oriagarizu_F_color_R>");
+        memo1.addLine("<oriagarizu_F_color_G>" + app.foldedFigureConfiguration.getFrontColor().getGreen() + "</oriagarizu_F_color_G>");
+        memo1.addLine("<oriagarizu_F_color_B>" + app.foldedFigureConfiguration.getFrontColor().getBlue() + "</oriagarizu_F_color_B>");
 
-        memo1.addLine("<oriagarizu_B_color_R>" + app.OZ.foldedFigure_B_color.getRed() + "</oriagarizu_B_color_R>");
-        memo1.addLine("<oriagarizu_B_color_G>" + app.OZ.foldedFigure_B_color.getGreen() + "</oriagarizu_B_color_G>");
-        memo1.addLine("<oriagarizu_B_color_B>" + app.OZ.foldedFigure_B_color.getBlue() + "</oriagarizu_B_color_B>");
+        memo1.addLine("<oriagarizu_B_color_R>" + app.foldedFigureConfiguration.getBackColor().getRed() + "</oriagarizu_B_color_R>");
+        memo1.addLine("<oriagarizu_B_color_G>" + app.foldedFigureConfiguration.getBackColor().getGreen() + "</oriagarizu_B_color_G>");
+        memo1.addLine("<oriagarizu_B_color_B>" + app.foldedFigureConfiguration.getBackColor().getBlue() + "</oriagarizu_B_color_B>");
 
-        memo1.addLine("<oriagarizu_L_color_R>" + app.OZ.foldedFigure_L_color.getRed() + "</oriagarizu_L_color_R>");
-        memo1.addLine("<oriagarizu_L_color_G>" + app.OZ.foldedFigure_L_color.getGreen() + "</oriagarizu_L_color_G>");
-        memo1.addLine("<oriagarizu_L_color_B>" + app.OZ.foldedFigure_L_color.getBlue() + "</oriagarizu_L_color_B>");
+        memo1.addLine("<oriagarizu_L_color_R>" + app.foldedFigureConfiguration.getLineColor().getRed() + "</oriagarizu_L_color_R>");
+        memo1.addLine("<oriagarizu_L_color_G>" + app.foldedFigureConfiguration.getLineColor().getGreen() + "</oriagarizu_L_color_G>");
+        memo1.addLine("<oriagarizu_L_color_B>" + app.foldedFigureConfiguration.getLineColor().getBlue() + "</oriagarizu_L_color_B>");
 
         memo1.addLine("</oriagarizu>");
     }

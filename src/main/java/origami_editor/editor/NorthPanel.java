@@ -118,30 +118,11 @@ public class NorthPanel extends JPanel {
 
                 Point t_o2tv = app.camera_of_orisen_input_diagram.object2TV(app.camera_of_orisen_input_diagram.getCameraPosition());
 
-                OZi.d_foldedFigure_scale_factor = OZi.d_foldedFigure_scale_factor * d_bairitu;
-
-                OZi.camera_of_foldedFigure.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_foldedFigure.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_foldedFigure.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_foldedFigure_front.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_foldedFigure_front.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_foldedFigure_front.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_foldedFigure_rear.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_foldedFigure_rear.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_foldedFigure_rear.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_transparent_front.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_transparent_front.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_transparent_front.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_transparent_rear.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_transparent_rear.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_transparent_rear.multiplyCameraZoomY(d_bairitu);
-                app.foldedFigureSizeTextField.setText(String.valueOf(OZi.d_foldedFigure_scale_factor));
-                app.foldedFigureSizeTextField.setCaretPosition(0);
+                OZi.scale(d_bairitu, t_o2tv);
             }
+
+            app.foldedFigureConfiguration.setScale(app.foldedFigureConfiguration.getScale() * d_bairitu);
+            app.updateFoldedFigure();
 //20180122追加　ここまで
 
 
@@ -164,42 +145,18 @@ public class NorthPanel extends JPanel {
 
                 double d_bairitu = app.scaleFactor / d_syukusyaku_keisuu_old;
 
-
                 FoldedFigure OZi;
                 for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
                     OZi = app.foldedFigures.get(i_oz);
 
                     Point t_o2tv = app.camera_of_orisen_input_diagram.object2TV(app.camera_of_orisen_input_diagram.getCameraPosition());
 
-                    OZi.d_foldedFigure_scale_factor = OZi.d_foldedFigure_scale_factor * d_bairitu;
-
-
-                    OZi.camera_of_foldedFigure.camera_ichi_sitei_from_TV(t_o2tv);
-                    OZi.camera_of_foldedFigure.multiplyCameraZoomX(d_bairitu);
-                    OZi.camera_of_foldedFigure.multiplyCameraZoomY(d_bairitu);
-
-                    OZi.camera_of_foldedFigure_front.camera_ichi_sitei_from_TV(t_o2tv);
-                    OZi.camera_of_foldedFigure_front.multiplyCameraZoomX(d_bairitu);
-                    OZi.camera_of_foldedFigure_front.multiplyCameraZoomY(d_bairitu);
-
-                    OZi.camera_of_foldedFigure_rear.camera_ichi_sitei_from_TV(t_o2tv);
-                    OZi.camera_of_foldedFigure_rear.multiplyCameraZoomX(d_bairitu);
-                    OZi.camera_of_foldedFigure_rear.multiplyCameraZoomY(d_bairitu);
-
-                    OZi.camera_of_transparent_front.camera_ichi_sitei_from_TV(t_o2tv);
-                    OZi.camera_of_transparent_front.multiplyCameraZoomX(d_bairitu);
-                    OZi.camera_of_transparent_front.multiplyCameraZoomY(d_bairitu);
-
-                    OZi.camera_of_transparent_rear.camera_ichi_sitei_from_TV(t_o2tv);
-                    OZi.camera_of_transparent_rear.multiplyCameraZoomX(d_bairitu);
-                    OZi.camera_of_transparent_rear.multiplyCameraZoomY(d_bairitu);
-
-                    app.foldedFigureSizeTextField.setText(String.valueOf(app.OZ.d_foldedFigure_scale_factor));
-                    app.foldedFigureSizeTextField.setCaretPosition(0);
+                    OZi.scale(d_bairitu, t_o2tv);
                 }
-//20180225追加　ここまで
 
+                app.foldedFigureConfiguration.setScale(app.foldedFigureConfiguration.getScale() * d_bairitu);
 
+                app.updateFoldedFigure();
             }
             scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
             scaleFactorTextField.setCaretPosition(0);
@@ -225,34 +182,12 @@ public class NorthPanel extends JPanel {
 
                 Point t_o2tv = app.camera_of_orisen_input_diagram.object2TV(app.camera_of_orisen_input_diagram.getCameraPosition());
 
-                OZi.d_foldedFigure_scale_factor = OZi.d_foldedFigure_scale_factor * d_bairitu;
-
-
-                OZi.camera_of_foldedFigure.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_foldedFigure.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_foldedFigure.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_foldedFigure_front.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_foldedFigure_front.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_foldedFigure_front.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_foldedFigure_rear.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_foldedFigure_rear.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_foldedFigure_rear.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_transparent_front.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_transparent_front.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_transparent_front.multiplyCameraZoomY(d_bairitu);
-
-                OZi.camera_of_transparent_rear.camera_ichi_sitei_from_TV(t_o2tv);
-                OZi.camera_of_transparent_rear.multiplyCameraZoomX(d_bairitu);
-                OZi.camera_of_transparent_rear.multiplyCameraZoomY(d_bairitu);
-
-                app.foldedFigureSizeTextField.setText(String.valueOf(app.OZ.d_foldedFigure_scale_factor));
-                app.foldedFigureSizeTextField.setCaretPosition(0);
+                OZi.scale(d_bairitu, t_o2tv);
             }
-//20180122追加　ここまで
 
+            app.foldedFigureConfiguration.setScale(app.foldedFigureConfiguration.getScale() * d_bairitu);
+            app.updateFoldedFigure();
+//20180122追加　ここまで
 
             scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
             scaleFactorTextField.setCaretPosition(0);
