@@ -1,6 +1,6 @@
 package origami_editor.graphic2d.grid;
 
-import origami_editor.editor.GridConfiguration;
+import origami_editor.editor.databinding.GridModel;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
 import origami_editor.graphic2d.point.Point;
@@ -434,17 +434,17 @@ public class Grid {
         return ((-200.000001 <= t_tmp.getX()) && (t_tmp.getX() <= 200.000001)) && ((-200.000001 <= t_tmp.getY()) && (t_tmp.getY() <= 200.000001));
     }
 
-    public void setGridConfigurationData(GridConfiguration gridConfiguration) {
-        setGridLineWidth(gridConfiguration.getGridLineWidth());
-        setGridSize(gridConfiguration.getGridSize());
-        setGrid(gridConfiguration.getGridXLength(), gridConfiguration.getGridYLength(), gridConfiguration.getGridAngle());
-        setBaseState(gridConfiguration.getBaseState());
-        setGridScaleColor(gridConfiguration.getGridScaleColor());
-        setGridColor(gridConfiguration.getGridColor());
-        setHorizontalScaleInterval(gridConfiguration.getIntervalGridSize());
-        setVerticalScaleInterval(gridConfiguration.getIntervalGridSize());
-        setHorizontalScalePosition(gridConfiguration.getHorizontalScalePosition());
-        setVerticalScalePosition(gridConfiguration.getVerticalScalePosition());
+    public void setGridConfigurationData(GridModel gridModel) {
+        setGridLineWidth(gridModel.getGridLineWidth());
+        setGridSize(gridModel.getGridSize());
+        setGrid(gridModel.getGridXLength(), gridModel.getGridYLength(), gridModel.getGridAngle());
+        setBaseState(gridModel.getBaseState());
+        setGridScaleColor(gridModel.getGridScaleColor());
+        setGridColor(gridModel.getGridColor());
+        setHorizontalScaleInterval(gridModel.getIntervalGridSize());
+        setVerticalScaleInterval(gridModel.getIntervalGridSize());
+        setHorizontalScalePosition(gridModel.getHorizontalScalePosition());
+        setVerticalScalePosition(gridModel.getVerticalScalePosition());
     }
 
     /**

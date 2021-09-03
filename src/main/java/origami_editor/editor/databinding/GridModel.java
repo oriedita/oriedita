@@ -1,11 +1,11 @@
-package origami_editor.editor;
+package origami_editor.editor.databinding;
 
 import origami_editor.graphic2d.grid.Grid;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
 
 import java.awt.*;
 
-public class GridConfiguration {
+public class GridModel {
     private int intervalGridSize;
     private int gridSize;
     private double gridXA;
@@ -25,7 +25,7 @@ public class GridConfiguration {
     private int verticalScalePosition;
     private int horizontalScalePosition;
 
-    public GridConfiguration() {
+    public GridModel() {
         reset();
     }
 

@@ -1,5 +1,7 @@
 package origami_editor.editor;
 
+import origami_editor.editor.databinding.AngleSystemModel;
+import origami_editor.editor.databinding.MeasuresModel;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.record.string_op.StringOp;
 
@@ -146,7 +148,7 @@ public class RightPanel extends JPanel {
         angleSystemADecreaseButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_a_tiisaku");
 
-            app.angleSystemConfiguration.decreaseAngleSystemA();
+            app.angleSystemModel.decreaseAngleSystemA();
 
             app.Button_shared_operation();
             app.updateAngleSystem();
@@ -155,7 +157,7 @@ public class RightPanel extends JPanel {
         angleSystemAButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_a");
 
-            app.angleSystemConfiguration.setCurrentAngleSystemDivider(app.angleSystemConfiguration.getAngleSystemADivider());
+            app.angleSystemModel.setCurrentAngleSystemDivider(app.angleSystemModel.getAngleSystemADivider());
 
             app.Button_shared_operation();
             app.updateAngleSystem();
@@ -163,7 +165,7 @@ public class RightPanel extends JPanel {
         angleSystemAIncreaseButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_a_ookiku");
 
-            app.angleSystemConfiguration.increaseAngleSystemA();
+            app.angleSystemModel.increaseAngleSystemA();
 
             app.Button_shared_operation();
             app.updateAngleSystem();
@@ -172,7 +174,7 @@ public class RightPanel extends JPanel {
         angleSystemBDecreaseButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_b_tiisaku");
 
-            app.angleSystemConfiguration.decreaseAngleSystemB();
+            app.angleSystemModel.decreaseAngleSystemB();
 
             app.Button_shared_operation();
             app.updateAngleSystem();
@@ -181,7 +183,7 @@ public class RightPanel extends JPanel {
         angleSystemBButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_b");
 
-            app.angleSystemConfiguration.setCurrentAngleSystemDivider(app.angleSystemConfiguration.getAngleSystemBDivider());
+            app.angleSystemModel.setCurrentAngleSystemDivider(app.angleSystemModel.getAngleSystemBDivider());
 
             app.Button_shared_operation();
             app.updateAngleSystem();
@@ -189,7 +191,7 @@ public class RightPanel extends JPanel {
         angleSystemBIncreaseButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_b_ookiku");
 
-            app.angleSystemConfiguration.increaseAngleSystemB();
+            app.angleSystemModel.increaseAngleSystemB();
 
             app.Button_shared_operation();
             app.updateAngleSystem();
@@ -197,9 +199,9 @@ public class RightPanel extends JPanel {
         restrictedAngleABCSetButton.addActionListener(e -> {
             app.setHelp("jiyuu_kaku_set_a");
 
-            getData(app.angleSystemConfiguration);
+            getData(app.angleSystemModel);
 
-            app.angleSystemConfiguration.setCurrentABC();
+            app.angleSystemModel.setCurrentABC();
 
             app.Button_shared_operation();
             app.updateAngleSystem();
@@ -208,9 +210,9 @@ public class RightPanel extends JPanel {
         restrictedAngleSetDEFButton.addActionListener(e -> {
             app.setHelp("jiyuu_kaku_set_b");
 
-            getData(app.angleSystemConfiguration);
+            getData(app.angleSystemModel);
 
-            app.angleSystemConfiguration.setCurrentDEF();
+            app.angleSystemModel.setCurrentDEF();
 
             app.Button_shared_operation();
             app.updateAngleSystem();
@@ -218,7 +220,7 @@ public class RightPanel extends JPanel {
         degButton.addActionListener(e -> {
             app.setHelp("deg");
 
-            app.angleSystemConfiguration.setAngleSystemInputType(App.AngleSystemInputType.DEG_1);
+            app.angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_1);
 
             app.Button_shared_operation();
             app.updateAngleSystem();
@@ -226,7 +228,7 @@ public class RightPanel extends JPanel {
         deg3Button.addActionListener(e -> {
             app.setHelp("deg3");
 
-            app.angleSystemConfiguration.setAngleSystemInputType(App.AngleSystemInputType.DEG_3);
+            app.angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_3);
 
             app.Button_shared_operation();
             app.updateAngleSystem();
@@ -234,7 +236,7 @@ public class RightPanel extends JPanel {
         angleRestrictedButton.addActionListener(e -> {
             app.setHelp("senbun_nyuryoku37");
 
-            app.angleSystemConfiguration.setAngleSystemInputType(App.AngleSystemInputType.DEG_5);
+            app.angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_5);
 
             app.Button_shared_operation();
             app.updateAngleSystem();
@@ -242,7 +244,7 @@ public class RightPanel extends JPanel {
         deg2Button.addActionListener(e -> {
             app.setHelp("deg2");
 
-            app.angleSystemConfiguration.setAngleSystemInputType(App.AngleSystemInputType.DEG_2);
+            app.angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_2);
 
             app.Button_shared_operation();
             app.updateAngleSystem();
@@ -250,7 +252,7 @@ public class RightPanel extends JPanel {
         deg4Button.addActionListener(e -> {
             app.setHelp("deg4");
 
-            app.angleSystemConfiguration.setAngleSystemInputType(App.AngleSystemInputType.DEG_4);
+            app.angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_4);
 
             app.Button_shared_operation();
             app.updateAngleSystem();
@@ -433,7 +435,7 @@ public class RightPanel extends JPanel {
         h_senhaba_sageButton.addActionListener(e -> {
             app.setHelp("h_senhaba_sage");
 
-            app.canvasConfiguration.decreaseAuxLineWidth();
+            app.canvasModel.decreaseAuxLineWidth();
 
             app.Button_shared_operation();
             app.updateCanvas();
@@ -441,7 +443,7 @@ public class RightPanel extends JPanel {
         h_senhaba_ageButton.addActionListener(e -> {
             app.setHelp("h_senhaba_age");
 
-            app.canvasConfiguration.increaseAuxLineWidth();
+            app.canvasModel.increaseAuxLineWidth();
 
             app.Button_shared_operation();
             app.updateCanvas();
@@ -539,27 +541,6 @@ public class RightPanel extends JPanel {
             app.showAdditionalFrame();
             app.additionalFrame.toFront();
         });
-    }
-
-
-    public JLabel getMeasuredLength1Label() {
-        return measuredLength1Label;
-    }
-
-    public JLabel getMeasuredLength2Label() {
-        return measuredLength2Label;
-    }
-
-    public JLabel getMeasuredAngle1Label() {
-        return measuredAngle1Label;
-    }
-
-    public JLabel getMeasuredAngle2Label() {
-        return measuredAngle2Label;
-    }
-
-    public JLabel getMeasuredAngle3Label() {
-        return measuredAngle3Label;
     }
 
     public JButton getColOrangeButton() {
@@ -1285,7 +1266,7 @@ public class RightPanel extends JPanel {
         panel1 = this;
     }
 
-    public void setData(AngleSystemConfiguration data) {
+    public void setData(AngleSystemModel data) {
         angleATextField.setText(String.valueOf(data.getAngleA()));
         angleCTextField.setText(String.valueOf(data.getAngleC()));
         angleBTextField.setText(String.valueOf(data.getAngleB()));
@@ -1297,12 +1278,24 @@ public class RightPanel extends JPanel {
         angleSystemBButton.setText(data.getAngleSystemBDescription());
     }
 
-    public void getData(AngleSystemConfiguration data) {
+    public void getData(AngleSystemModel data) {
         data.setAngleA(app.String2double(angleATextField.getText(), data.getAngleA()));
         data.setAngleB(app.String2double(angleBTextField.getText(), data.getAngleB()));
         data.setAngleC(app.String2double(angleCTextField.getText(), data.getAngleC()));
         data.setAngleD(app.String2double(angleDTextField.getText(), data.getAngleD()));
         data.setAngleE(app.String2double(angleETextField.getText(), data.getAngleE()));
         data.setAngleF(app.String2double(angleFTextField.getText(), data.getAngleF()));
+    }
+
+    public void setData(MeasuresModel data) {
+        measuredLength1Label.setText(String.valueOf(data.getMeasuredLength1()));
+        measuredLength2Label.setText(String.valueOf(data.getMeasuredLength2()));
+        measuredAngle1Label.setText(String.valueOf(data.getMeasuredAngle1()));
+        measuredAngle2Label.setText(String.valueOf(data.getMeasuredAngle2()));
+        measuredAngle3Label.setText(String.valueOf(data.getMeasuredAngle3()));
+    }
+
+    public void getData(MeasuresModel data) {
+        // Nothing here
     }
 }

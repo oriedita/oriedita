@@ -1,6 +1,7 @@
 package origami_editor.editor;
 
 import origami_editor.editor.component.UndoRedo;
+import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
@@ -116,12 +117,6 @@ public class App extends JFrame implements ActionListener {
     double rotationCorrection = 0.0;//Correction angle of rotation display angle
     UndoRedo foldedFigureUndoRedo;
     int i_undo_suu_om;//text31はtext10を参考にしている
-    JLabel length1Label;
-    JLabel measuredLength2Label;
-    JLabel measuredAngle1Label;
-    // バッファー画面用設定はここまでAAAAAAAAAAAAAAAAAAA
-    JLabel measuredAngle2Label;
-    JLabel measuredAngle3Label;
     Image img_background;       //Image for background
     boolean lockBackground_ori = false;//Lock on background = 1, not = 0
     boolean lockBackground = false;//Lock on background = 1, not = 0
@@ -172,10 +167,11 @@ public class App extends JFrame implements ActionListener {
     MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASEPATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
     double d_ap_check4 = 0.0;
 
-    public final GridConfiguration gridConfiguration = new GridConfiguration();
-    public final CanvasConfiguration canvasConfiguration = new CanvasConfiguration();
-    public final FoldedFigureConfiguration foldedFigureConfiguration = new FoldedFigureConfiguration();
-    public final AngleSystemConfiguration angleSystemConfiguration = new AngleSystemConfiguration();
+    public final GridModel gridModel = new GridModel();
+    public final CanvasModel canvasModel = new CanvasModel();
+    public final FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
+    public final AngleSystemModel angleSystemModel = new AngleSystemModel();
+    public final MeasuresModel measuresModel = new MeasuresModel();
 
     ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     public App() {
@@ -304,7 +300,7 @@ public class App extends JFrame implements ActionListener {
          */
         undoRedo = leftPanel.getUndoRedo();
 
-        leftPanel.getGridConfigurationData(gridConfiguration);
+        leftPanel.getGridConfigurationData(gridModel);
 
         colRedButton = leftPanel.getColRedButton();
         colBlueButton = leftPanel.getColBlueButton();
@@ -340,11 +336,6 @@ public class App extends JFrame implements ActionListener {
         h_undoTotalTextField = rightPanel.getAuxUndoTotalTextField();
         colOrangeButton = rightPanel.getColOrangeButton();
         colYellowButton = rightPanel.getColYellowButton();
-        length1Label = rightPanel.getMeasuredLength1Label();
-        measuredLength2Label = rightPanel.getMeasuredLength2Label();
-        measuredAngle1Label = rightPanel.getMeasuredAngle1Label();
-        measuredAngle2Label = rightPanel.getMeasuredAngle2Label();
-        measuredAngle3Label = rightPanel.getMeasuredAngle3Label();
 
         correctCpBeforeFoldingCheckBox = leftPanel.getCorrectCpBeforeFoldingCheckBox();
 
@@ -375,7 +366,7 @@ public class App extends JFrame implements ActionListener {
         i_h_undo_suu = 20;
         h_undoTotalTextField.setText(String.valueOf(i_h_undo_suu));
         int scale_interval = 5;
-        gridConfiguration.setIntervalGridSize(scale_interval);
+        gridModel.setIntervalGridSize(scale_interval);
 
         updateGrid();
 
@@ -508,14 +499,14 @@ public class App extends JFrame implements ActionListener {
 
         FoldedFigure orz = foldedFigures.get(0);//Assign foldedFigures (0) (folded figures that hold common parameters) to orz
 
-        orz.getData(foldedFigureConfiguration);
+        orz.getData(foldedFigureModel);
 
         updateFoldedFigure();
     }
 
     public void updateFoldedFigure() {
-        OZ.setData(foldedFigureConfiguration);
-        bottomPanel.setData(foldedFigureConfiguration);
+        OZ.setData(foldedFigureModel);
+        bottomPanel.setData(foldedFigureModel);
 
         repaintCanvas();
     }
@@ -525,29 +516,9 @@ public class App extends JFrame implements ActionListener {
         foldedFigures.add(new FoldedFigure_01(this));
     }
 
-    public void displayMeasuredLength1(double d0) {
-        length1Label.setText(String.valueOf(d0));
-    }
-
-    public void displayMeasuredLength2(double d0) {
-        measuredLength2Label.setText(String.valueOf(d0));
-    }
-
-    public void displayMeasuredAngle1(double d0) {
-        measuredAngle1Label.setText(String.valueOf(d0));
-    }
-
-    public void displayMeasuredAngle2(double d0) {
-        measuredAngle2Label.setText(String.valueOf(d0));
-    }
-
-    public void displayMeasuredAngle3(double d0) {
-        measuredAngle3Label.setText(String.valueOf(d0));
-    }
-
     public void updateGrid() {
-        mainDrawingWorker.setGridConfigurationData(gridConfiguration);
-        leftPanel.setGridConfigurationData(gridConfiguration);
+        mainDrawingWorker.setGridConfigurationData(gridModel);
+        leftPanel.setGridConfigurationData(gridModel);
     }
 
     public void twoColorNoSelectedPolygonalLineWarning() {
@@ -632,8 +603,8 @@ public class App extends JFrame implements ActionListener {
         foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;
 //北辺
 
-        canvasConfiguration.reset();
-        mainDrawingWorker.setData(canvasConfiguration);
+        canvasModel.reset();
+        mainDrawingWorker.setData(canvasModel);
 
         correctCpBeforeFoldingCheckBox.setSelected(false);//cpを折畳み前に自動改善する
         selectPersistentCheckBox.setSelected(false);//select状態を折畳み操作をしてもなるべく残す
@@ -695,13 +666,13 @@ public class App extends JFrame implements ActionListener {
 
         //格子の適用範囲の指定
 
-        gridConfiguration.reset();
+        gridModel.reset();
 
         updateGrid();
 //--------------------------------------------
 //東辺
         //角度系入力を22.5度系にする。
-        angleSystemConfiguration.reset();
+        angleSystemModel.reset();
         updateAngleSystem();
 
         //多角形の角数
@@ -961,13 +932,13 @@ public class App extends JFrame implements ActionListener {
         ckbox_toukazu_color.setSelected(OZ.transparencyColor);//透過図はカラー化。
 
         // Load data from this foldedFigure to the ui.
-        OZ.getData(foldedFigureConfiguration);
+        OZ.getData(foldedFigureModel);
         updateFoldedFigure();
     }
 
     public Point e2p(MouseEvent e) {
         double d_width = 0.0;
-        if (canvasConfiguration.getDisplayPointOffset()) {
+        if (canvasModel.getDisplayPointOffset()) {
             d_width = camera_of_orisen_input_diagram.getCameraZoomX() * mainDrawingWorker.getSelectionDistance();
         }
         return new Point(e.getX() - (int) d_width, e.getY() - (int) d_width);
@@ -1277,19 +1248,19 @@ public class App extends JFrame implements ActionListener {
     public double String2double(String str0, double default_if_error) {
         String new_str0 = str0.trim();
         if (new_str0.equals("L1")) {
-            str0 = String.valueOf(mainDrawingWorker.get_L1());
+            str0 = String.valueOf(measuresModel.getMeasuredLength1());
         }
         if (new_str0.equals("L2")) {
-            str0 = String.valueOf(mainDrawingWorker.get_L2());
+            str0 = String.valueOf(measuresModel.getMeasuredLength2());
         }
         if (new_str0.equals("A1")) {
-            str0 = String.valueOf(mainDrawingWorker.get_A1());
+            str0 = String.valueOf(measuresModel.getMeasuredAngle1());
         }
         if (new_str0.equals("A2")) {
-            str0 = String.valueOf(mainDrawingWorker.get_A2());
+            str0 = String.valueOf(measuresModel.getMeasuredAngle2());
         }
         if (new_str0.equals("A3")) {
-            str0 = String.valueOf(mainDrawingWorker.get_A3());
+            str0 = String.valueOf(measuresModel.getMeasuredAngle3());
         }
 
         return StringOp.String2double(str0, default_if_error);
@@ -1313,17 +1284,17 @@ public class App extends JFrame implements ActionListener {
     }
 
     public void updateCanvas() {
-        mainDrawingWorker.setData(canvasConfiguration);
-        canvas.setData(canvasConfiguration);
-        appMenuBar.setData(canvasConfiguration);
-        topPanel.setData(canvasConfiguration);
+        mainDrawingWorker.setData(canvasModel);
+        canvas.setData(canvasModel);
+        appMenuBar.setData(canvasModel);
+        topPanel.setData(canvasModel);
     }
 
     public void updateAngleSystem() {
-        rightPanel.setData(angleSystemConfiguration);
-        mainDrawingWorker.setData(angleSystemConfiguration);
+        rightPanel.setData(angleSystemModel);
+        mainDrawingWorker.setData(angleSystemModel);
 
-        switch (angleSystemConfiguration.getAngleSystemInputType()) {
+        switch (angleSystemModel.getAngleSystemInputType()) {
             case DEG_1:
                 mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
                 break;
@@ -1344,6 +1315,10 @@ public class App extends JFrame implements ActionListener {
         System.out.println("mouseMode = " + mouseMode);
 
         repaintCanvas();
+    }
+
+    public void updateMeasures() {
+        rightPanel.setData(measuresModel);
     }
 
     public enum MouseWheelTarget {

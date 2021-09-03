@@ -1,6 +1,7 @@
 package origami_editor.editor;
 
 import origami_editor.editor.component.UndoRedo;
+import origami_editor.editor.databinding.GridModel;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.record.memo.Memo;
@@ -114,35 +115,35 @@ public class LeftPanel extends JPanel {
         lineWidthDecreaseButton.addActionListener(e -> {
             app.setHelp("senhaba_sage");
 
-            app.canvasConfiguration.decreaseLineWidth();
+            app.canvasModel.decreaseLineWidth();
 
             app.updateCanvas();
         });
         lineWidthIncreaseButton.addActionListener(e -> {
             app.setHelp("senhaba_age");
 
-            app.canvasConfiguration.increaseLineWidth();
+            app.canvasModel.increaseLineWidth();
 
             app.updateCanvas();
         });
         pointSizeDecreaseButton.addActionListener(e -> {
             app.setHelp("tenhaba_sage");
 
-            app.canvasConfiguration.decreasePointSize();
+            app.canvasModel.decreasePointSize();
 
             app.updateCanvas();
         });
         pointSizeIncreaseButton.addActionListener(e -> {
             app.setHelp("tenhaba_age");
 
-            app.canvasConfiguration.increasePointSize();
+            app.canvasModel.increasePointSize();
 
             app.updateCanvas();
         });
         antiAliasToggleButton.addActionListener(e -> {
             app.setHelp("anti_alias");
 
-            app.canvasConfiguration.toggleAntiAlias();
+            app.canvasModel.toggleAntiAlias();
 
             app.updateCanvas();
         });
@@ -151,7 +152,7 @@ public class LeftPanel extends JPanel {
 
             app.Button_shared_operation();
 
-            app.canvasConfiguration.advanceLineStyle();
+            app.canvasModel.advanceLineStyle();
 
             app.updateCanvas();
         });
@@ -848,12 +849,12 @@ public class LeftPanel extends JPanel {
     }
 
 
-    public void getGridConfigurationData(GridConfiguration gridConfiguration) {
-        gridConfigureDialog.getData(gridConfiguration);
+    public void getGridConfigurationData(GridModel gridModel) {
+        gridConfigureDialog.getData(gridModel);
     }
 
-    public void setGridConfigurationData(GridConfiguration gridConfiguration) {
-        gridConfigureDialog.setData(gridConfiguration);
+    public void setGridConfigurationData(GridModel gridModel) {
+        gridConfigureDialog.setData(gridModel);
     }
 
     public UndoRedo getUndoRedo() {

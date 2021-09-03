@@ -1,6 +1,6 @@
 package origami_editor.editor.hierarchylist_worker;
 
-import origami_editor.editor.FoldedFigureConfiguration;
+import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.LineColor;
 import origami_editor.editor.creasepattern_worker.CreasePattern_Worker;
 import origami_editor.editor.hierarchylist_worker.hierarchylist.HierarchyList;
@@ -66,18 +66,18 @@ public class HierarchyList_Worker {
         reset();
     }
 
-    public void setData(FoldedFigureConfiguration foldedFigureConfiguration) {
-        F_color = foldedFigureConfiguration.getFrontColor();
-        B_color = foldedFigureConfiguration.getBackColor();
-        L_color = foldedFigureConfiguration.getLineColor();
+    public void setData(FoldedFigureModel foldedFigureModel) {
+        F_color = foldedFigureModel.getFrontColor();
+        B_color = foldedFigureModel.getBackColor();
+        L_color = foldedFigureModel.getLineColor();
 
-        antiAlias = foldedFigureConfiguration.getAntiAlias();
-        displayShadows = foldedFigureConfiguration.getDisplayShadows();
+        antiAlias = foldedFigureModel.getAntiAlias();
+        displayShadows = foldedFigureModel.getDisplayShadows();
     }
 
-    public void getData(FoldedFigureConfiguration foldedFigureConfiguration) {
-        foldedFigureConfiguration.setAntiAlias(antiAlias);
-        foldedFigureConfiguration.setDisplayShadows(displayShadows);
+    public void getData(FoldedFigureModel foldedFigureModel) {
+        foldedFigureModel.setAntiAlias(antiAlias);
+        foldedFigureModel.setDisplayShadows(displayShadows);
     }
 
     public void reset() {

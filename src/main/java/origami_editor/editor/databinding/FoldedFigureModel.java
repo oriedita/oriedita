@@ -1,10 +1,10 @@
-package origami_editor.editor;
+package origami_editor.editor.databinding;
 
 import origami_editor.editor.folded_figure.FoldedFigure;
 
 import java.awt.*;
 
-public class FoldedFigureConfiguration {
+public class FoldedFigureModel {
     private Color frontColor;
     private Color backColor;
     private Color lineColor;
@@ -16,7 +16,7 @@ public class FoldedFigureConfiguration {
     private boolean displayShadows;
     private FoldedFigure.State state;
 
-    public FoldedFigureConfiguration() {
+    public FoldedFigureModel() {
         reset();
     }
 

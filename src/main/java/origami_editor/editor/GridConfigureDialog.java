@@ -1,6 +1,7 @@
 package origami_editor.editor;
 
 import origami_editor.editor.component.ColorIcon;
+import origami_editor.editor.databinding.GridModel;
 import origami_editor.record.string_op.StringOp;
 
 import javax.swing.*;
@@ -54,19 +55,19 @@ public class GridConfigureDialog extends JDialog {
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        GridConfiguration gridConfiguration = app.gridConfiguration;
+        GridModel gridModel = app.gridModel;
 
         gridSizeDecreaseButton.addActionListener(e -> {
             app.setHelp("kitei2");
 
-            int gridSize = gridConfiguration.getGridSize();
+            int gridSize = gridModel.getGridSize();
 
             gridSize = gridSize / 2;
             if (gridSize < 1) {
                 gridSize = 1;
             }
 
-            gridConfiguration.setGridSize(gridSize);
+            gridModel.setGridSize(gridSize);
 
             app.updateGrid();
             app.repaintCanvas();
@@ -74,7 +75,7 @@ public class GridConfigureDialog extends JDialog {
         gridSizeSetButton.addActionListener(e -> {
             app.setHelp("syutoku");
 
-            getData(gridConfiguration);
+            getData(gridModel);
 
             app.updateGrid();
             app.repaintCanvas();
@@ -82,7 +83,7 @@ public class GridConfigureDialog extends JDialog {
         gridSizeIncreaseButton.addActionListener(e -> {
             app.setHelp("kitei");
 
-            gridConfiguration.setGridSize(gridConfiguration.getGridSize() * 2);
+            gridModel.setGridSize(gridModel.getGridSize() * 2);
 
             app.updateGrid();
 
@@ -97,7 +98,7 @@ public class GridConfigureDialog extends JDialog {
             //以下にやりたいことを書く
             Color color = JColorChooser.showDialog(null, "Col", new Color(230, 230, 230));
             if (color != null) {
-                gridConfiguration.setGridColor(color);
+                gridModel.setGridColor(color);
 
                 app.updateGrid();
             }
@@ -106,14 +107,14 @@ public class GridConfigureDialog extends JDialog {
             app.repaintCanvas();
         });
         gridLineWidthDecreaseButton.addActionListener(e -> {
-            gridConfiguration.decreaseGridLineWidth();
+            gridModel.decreaseGridLineWidth();
             app.updateGrid();
 
             app.setHelp("kousi_senhaba_sage");
             app.repaintCanvas();
         });
         gridLineWidthIncreaseButton.addActionListener(e -> {
-            gridConfiguration.increaseGridLineWidth();
+            gridModel.increaseGridLineWidth();
             app.updateGrid();
 
             app.setHelp("kousi_senhaba_age");
@@ -122,7 +123,7 @@ public class GridConfigureDialog extends JDialog {
         i_kitei_jyoutaiButton.addActionListener(e -> {
             app.setHelp("i_kitei_jyoutai");
 
-            gridConfiguration.advanceBaseState();
+            gridModel.advanceBaseState();
             app.updateGrid();
 
             app.repaintCanvas();
@@ -130,7 +131,7 @@ public class GridConfigureDialog extends JDialog {
         memori_tate_idouButton.addActionListener(e -> {
             app.setHelp("memori_tate_idou");
 
-            gridConfiguration.changeHorizontalScalePosition();
+            gridModel.changeHorizontalScalePosition();
             app.updateGrid();
 
             app.repaintCanvas();
@@ -138,14 +139,14 @@ public class GridConfigureDialog extends JDialog {
         memori_kankaku_syutokuButton.addActionListener(e -> {
             app.setHelp("memori_kankaku_syutoku");
 
-            getData(gridConfiguration);
+            getData(gridModel);
 
             app.updateGrid();
         });
         memori_yoko_idouButton.addActionListener(e -> {
             app.setHelp("memori_yoko_idou");
 
-            gridConfiguration.changeVerticalScalePosition();
+            gridModel.changeVerticalScalePosition();
 
             app.updateGrid();
         });
@@ -157,23 +158,20 @@ public class GridConfigureDialog extends JDialog {
             //以下にやりたいことを書く
             Color color = JColorChooser.showDialog(null, "Col", new Color(180, 200, 180));
             if (color != null) {
-                gridConfiguration.setGridScaleColor(color);
+                gridModel.setGridScaleColor(color);
                 app.updateGrid();
             }
-            //以上でやりたいことは書き終わり
-
-            app.repaintCanvas();
         });
         setGridParametersButton.addActionListener(e -> {
             app.setHelp("kousi_syutoku");
 
-            getData(gridConfiguration);
+            getData(gridModel);
             app.updateGrid();
 
             app.repaintCanvas();
         });
         resetButton.addActionListener(e -> {
-            gridConfiguration.reset();
+            gridModel.reset();
             app.updateGrid();
         });
     }
@@ -493,7 +491,7 @@ public class GridConfigureDialog extends JDialog {
         return contentPane;
     }
 
-    public void setData(GridConfiguration data) {
+    public void setData(GridModel data) {
         intervalGridSizeTextField.setText(String.valueOf(data.getIntervalGridSize()));
         gridSizeTextField.setText(String.valueOf(data.getGridSize()));
         gridXATextField.setText(String.valueOf(data.getGridXA()));
@@ -511,7 +509,7 @@ public class GridConfigureDialog extends JDialog {
         intervalGridColorButton.setIcon(new ColorIcon(data.getGridScaleColor()));
     }
 
-    public void getData(GridConfiguration data) {
+    public void getData(GridModel data) {
         data.setIntervalGridSize(StringOp.String2int(intervalGridSizeTextField.getText(), data.getIntervalGridSize()));
         data.setGridSize(StringOp.String2int(gridSizeTextField.getText(), data.getGridSize()));
         data.setGridXA(app.String2double(gridXATextField.getText(), data.getGridXA()));
@@ -522,26 +520,4 @@ public class GridConfigureDialog extends JDialog {
         data.setGridYC(app.String2double(gridYCTextField.getText(), data.getGridYC()));
         data.setGridAngle(app.String2double(gridAngleTextField.getText(), data.getGridAngle()));
     }
-
-//    public boolean isModified(GridConfiguration data) {
-//        if (intervalGridSizeTextField.getText() != null ? !intervalGridSizeTextField.getText().equals(data.getIntervalGridSize()) : data.getIntervalGridSize() != null)
-//            return true;
-//        if (gridSizeTextField.getText() != null ? !gridSizeTextField.getText().equals(data.getGridSize()) : data.getGridSize() != null)
-//            return true;
-//        if (gridXATextField.getText() != null ? !gridXATextField.getText().equals(data.getGridXA()) : data.getGridXA() != null)
-//            return true;
-//        if (gridXBTextField.getText() != null ? !gridXBTextField.getText().equals(data.getGridXB()) : data.getGridXB() != null)
-//            return true;
-//        if (gridXCTextField.getText() != null ? !gridXCTextField.getText().equals(data.getGridXC()) : data.getGridXC() != null)
-//            return true;
-//        if (gridYATextField.getText() != null ? !gridYATextField.getText().equals(data.getGridYA()) : data.getGridYA() != null)
-//            return true;
-//        if (gridYBTextField.getText() != null ? !gridYBTextField.getText().equals(data.getGridYB()) : data.getGridYB() != null)
-//            return true;
-//        if (gridYCTextField.getText() != null ? !gridYCTextField.getText().equals(data.getGridYC()) : data.getGridYC() != null)
-//            return true;
-//        if (gridAngleTextField.getText() != null ? !gridAngleTextField.getText().equals(data.getGridAngle()) : data.getGridAngle() != null)
-//            return true;
-//        return false;
-//    }
 }

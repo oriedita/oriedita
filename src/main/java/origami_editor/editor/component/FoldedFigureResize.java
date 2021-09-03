@@ -17,7 +17,7 @@ public class FoldedFigureResize extends JPanel {
         add($$$getRootComponent$$$());
 
         foldedFigureSizeSetButton.addActionListener(e -> {
-            app.foldedFigureConfiguration.setScale(app.String2double(foldedFigureSizeTextField.getText(), app.foldedFigureConfiguration.getScale()));
+            app.foldedFigureModel.setScale(app.String2double(foldedFigureSizeTextField.getText(), app.foldedFigureModel.getScale()));
 
             app.setHelp("oriagarizu_syukusyaku_keisuu_set");
             app.Button_shared_operation();
@@ -27,7 +27,7 @@ public class FoldedFigureResize extends JPanel {
         foldedFigureSizeDecreaseButton.addActionListener(e -> {
             app.setHelp("oriagari_syukusyou");
 
-            app.foldedFigureConfiguration.setScale(app.foldedFigureConfiguration.getScale() / root2);
+            app.foldedFigureModel.setScale(app.foldedFigureModel.getScale() / root2);
 
             app.Button_shared_operation();
             app.updateFoldedFigure();
@@ -35,7 +35,7 @@ public class FoldedFigureResize extends JPanel {
         foldedFigureSizeIncreaseButton.addActionListener(e -> {
             app.setHelp("oriagari_kakudai");
 
-            app.foldedFigureConfiguration.setScale(app.foldedFigureConfiguration.getScale() * root2);
+            app.foldedFigureModel.setScale(app.foldedFigureModel.getScale() * root2);
 
             app.Button_shared_operation();
             app.updateFoldedFigure();

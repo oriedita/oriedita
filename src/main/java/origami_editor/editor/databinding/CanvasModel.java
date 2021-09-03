@@ -1,6 +1,8 @@
-package origami_editor.editor;
+package origami_editor.editor.databinding;
 
-public class CanvasConfiguration {
+import origami_editor.editor.LineStyle;
+
+public class CanvasModel {
     private boolean displayPointSpotlight;
     private boolean displayPointOffset;
     private boolean displayGridInputAssist;
@@ -14,6 +16,14 @@ public class CanvasConfiguration {
 
     private int lineWidth;
     private int auxLineWidth;
+    private int pointSize;
+    private LineStyle lineStyle;
+    private boolean antiAlias;
+    private boolean mouseWheelMovesCreasePattern;
+
+    public CanvasModel() {
+        reset();
+    }
 
     public int getAuxLineWidth() {
         return auxLineWidth;
@@ -21,15 +31,6 @@ public class CanvasConfiguration {
 
     public void setAuxLineWidth(int auxLineWidth) {
         this.auxLineWidth = auxLineWidth;
-    }
-
-    private int pointSize;
-    private LineStyle lineStyle;
-    private boolean antiAlias;
-    private boolean mouseWheelMovesCreasePattern;
-
-    public CanvasConfiguration() {
-        reset();
     }
 
     public int getLineWidth() {

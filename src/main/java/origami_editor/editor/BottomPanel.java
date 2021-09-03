@@ -3,6 +3,7 @@ package origami_editor.editor;
 import origami_editor.editor.component.FoldedFigureResize;
 import origami_editor.editor.component.FoldedFigureRotate;
 import origami_editor.editor.component.UndoRedo;
+import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.record.string_op.StringOp;
 
@@ -64,10 +65,10 @@ public class BottomPanel extends JPanel {
         flipButton.addActionListener(e -> {
             app.setHelp("Button0b");
 
-            app.foldedFigureConfiguration.advanceState();
+            app.foldedFigureModel.advanceState();
 
             if ((app.mouseMode == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (app.OZ.ip4 == FoldedFigure.State.BOTH_2)) {
-                app.foldedFigureConfiguration.setState(FoldedFigure.State.FRONT_0);
+                app.foldedFigureModel.setState(FoldedFigure.State.FRONT_0);
             }//Fold-up forecast map Added to avoid the mode that can not be moved when moving
             app.Button_shared_operation();
 
@@ -171,7 +172,7 @@ public class BottomPanel extends JPanel {
             app.Button_shared_operation();
             app.setHelp("a_a");
 
-            app.foldedFigureConfiguration.toggleAntiAlias();
+            app.foldedFigureModel.toggleAntiAlias();
 
             app.updateFoldedFigure();
         });
@@ -179,7 +180,7 @@ public class BottomPanel extends JPanel {
             app.Button_shared_operation();
             app.setHelp("kage");
 
-            app.foldedFigureConfiguration.toggleDisplayShadows();
+            app.foldedFigureModel.toggleDisplayShadows();
 
             app.updateFoldedFigure();
         });
@@ -194,7 +195,7 @@ public class BottomPanel extends JPanel {
             Color frontColor = JColorChooser.showDialog(app, "F_col", Color.white);
 
             if (frontColor != null) {
-                app.foldedFigureConfiguration.setFrontColor(frontColor);
+                app.foldedFigureModel.setFrontColor(frontColor);
                 app.updateFoldedFigure();
             }
         });
@@ -208,7 +209,7 @@ public class BottomPanel extends JPanel {
             Color backColor = JColorChooser.showDialog(null, "B_col", Color.white);
 
             if (backColor != null) {
-                app.foldedFigureConfiguration.setBackColor(backColor);
+                app.foldedFigureModel.setBackColor(backColor);
                 app.updateFoldedFigure();
             }
         });
@@ -222,7 +223,7 @@ public class BottomPanel extends JPanel {
 
             Color lineColor = JColorChooser.showDialog(null, "L_col", Color.white);
             if (lineColor != null) {
-                app.foldedFigureConfiguration.setLineColor(lineColor);
+                app.foldedFigureModel.setLineColor(lineColor);
                 app.updateFoldedFigure();
             }
         });
@@ -469,17 +470,17 @@ public class BottomPanel extends JPanel {
         foldedFigureRotate = new FoldedFigureRotate(app);
     }
 
-    public void setData(FoldedFigureConfiguration foldedFigureConfiguration) {
-        foldedFigureResize.setText(String.valueOf(foldedFigureConfiguration.getScale()));
-        foldedFigureRotate.setText(String.valueOf(foldedFigureConfiguration.getRotation()));
+    public void setData(FoldedFigureModel foldedFigureModel) {
+        foldedFigureResize.setText(String.valueOf(foldedFigureModel.getScale()));
+        foldedFigureRotate.setText(String.valueOf(foldedFigureModel.getRotation()));
 
-        FCButton.setBackground(foldedFigureConfiguration.getFrontColor());
-        BCButton.setBackground(foldedFigureConfiguration.getBackColor());
-        LCButton.setBackground(foldedFigureConfiguration.getLineColor());
+        FCButton.setBackground(foldedFigureModel.getFrontColor());
+        BCButton.setBackground(foldedFigureModel.getBackColor());
+        LCButton.setBackground(foldedFigureModel.getLineColor());
     }
 
-    public void getData(FoldedFigureConfiguration foldedFigureConfiguration) {
-        foldedFigureConfiguration.setScale(app.String2double(foldedFigureResize.getText(), foldedFigureConfiguration.getScale()));
-        foldedFigureConfiguration.setRotation(app.String2double(foldedFigureRotate.getText(), foldedFigureConfiguration.getRotation()));
+    public void getData(FoldedFigureModel foldedFigureModel) {
+        foldedFigureModel.setScale(app.String2double(foldedFigureResize.getText(), foldedFigureModel.getScale()));
+        foldedFigureModel.setRotation(app.String2double(foldedFigureRotate.getText(), foldedFigureModel.getRotation()));
     }
 }

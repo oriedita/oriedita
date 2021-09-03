@@ -1,5 +1,6 @@
 package origami_editor.editor;
 
+import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
@@ -69,7 +70,7 @@ public class TopPanel extends JPanel {
         mouseSettingsCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_mouse_settei");
 
-            app.canvasConfiguration.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected());
+            app.canvasModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected());
 
             app.updateCanvas();
         });
@@ -121,7 +122,7 @@ public class TopPanel extends JPanel {
                 OZi.scale(d_bairitu, t_o2tv);
             }
 
-            app.foldedFigureConfiguration.setScale(app.foldedFigureConfiguration.getScale() * d_bairitu);
+            app.foldedFigureModel.setScale(app.foldedFigureModel.getScale() * d_bairitu);
             app.updateFoldedFigure();
 //20180122追加　ここまで
 
@@ -154,7 +155,7 @@ public class TopPanel extends JPanel {
                     OZi.scale(d_bairitu, t_o2tv);
                 }
 
-                app.foldedFigureConfiguration.setScale(app.foldedFigureConfiguration.getScale() * d_bairitu);
+                app.foldedFigureModel.setScale(app.foldedFigureModel.getScale() * d_bairitu);
 
                 app.updateFoldedFigure();
             }
@@ -185,7 +186,7 @@ public class TopPanel extends JPanel {
                 OZi.scale(d_bairitu, t_o2tv);
             }
 
-            app.foldedFigureConfiguration.setScale(app.foldedFigureConfiguration.getScale() * d_bairitu);
+            app.foldedFigureModel.setScale(app.foldedFigureModel.getScale() * d_bairitu);
             app.updateFoldedFigure();
 //20180122追加　ここまで
 
@@ -419,8 +420,8 @@ public class TopPanel extends JPanel {
         });
     }
 
-    public void setData(CanvasConfiguration canvasConfiguration) {
-        mouseSettingsCheckBox.setSelected(canvasConfiguration.getMouseWheelMovesCreasePattern());
+    public void setData(CanvasModel canvasModel) {
+        mouseSettingsCheckBox.setSelected(canvasModel.getMouseWheelMovesCreasePattern());
     }
 
     public JTextField getRotationTextField() {

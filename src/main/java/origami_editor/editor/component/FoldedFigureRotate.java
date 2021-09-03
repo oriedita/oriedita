@@ -20,13 +20,13 @@ public class FoldedFigureRotate extends JPanel {
         foldedFigureRotateAntiClockwiseButton.addActionListener(e -> {
             app.setHelp("oriagari_p_kaiten");
 
-            app.foldedFigureConfiguration.setRotation(OritaCalc.angle_between_m180_180(app.foldedFigureConfiguration.getRotation() - 11.25));
+            app.foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(app.foldedFigureModel.getRotation() - 11.25));
 
             app.Button_shared_operation();
             app.updateFoldedFigure();
         });
         foldedFigureRotateSetButton.addActionListener(e -> {
-            app.foldedFigureConfiguration.setRotation(OritaCalc.angle_between_m180_180(app.String2double(foldedFigureRotateTextField.getText(), app.foldedFigureConfiguration.getRotation())));
+            app.foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(app.String2double(foldedFigureRotateTextField.getText(), app.foldedFigureModel.getRotation())));
 
             app.setHelp("oriagarizu_kaiten_hosei_set");
             app.Button_shared_operation();
@@ -35,7 +35,7 @@ public class FoldedFigureRotate extends JPanel {
         foldedFigureRotateClockwiseButton.addActionListener(e -> {
             app.setHelp("oriagari_m_kaiten");
 
-            app.foldedFigureConfiguration.setRotation(OritaCalc.angle_between_m180_180(app.foldedFigureConfiguration.getRotation() + 11.25));
+            app.foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(app.foldedFigureModel.getRotation() + 11.25));
 
             app.Button_shared_operation();
             app.updateFoldedFigure();

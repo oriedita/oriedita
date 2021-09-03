@@ -1,7 +1,7 @@
 package origami_editor.editor.folded_figure;
 
 import origami_editor.editor.App;
-import origami_editor.editor.FoldedFigureConfiguration;
+import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.basicbranch_worker.WireFrame_Worker;
 import origami_editor.editor.creasepattern_worker.CreasePattern_Worker;
 import origami_editor.editor.hierarchylist_worker.HierarchyList_Worker;
@@ -68,7 +68,7 @@ public class FoldedFigure {
     private int i_closestPointId;
     private PointSelection i_point_selection = PointSelection.NONE_0;//Both cp_worker1 and cp_worker2 are not selected (situation i_point_selection = 0), cp_worker1 is selected and cp_worker2 is not selected (situation i_point_selection = 1), and the vertex is cp_worker2 selected (situation i_point_selection = 2).
 
-    public final FoldedFigureConfiguration foldedFigureConfiguration = new FoldedFigureConfiguration();
+    public final FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
 
     public FoldedFigure(App app0) {
         app = app0;
@@ -289,8 +289,8 @@ public class FoldedFigure {
         d_foldedFigure_scale_factor = camera_of_orisen_nyuuryokuzu.getCameraZoomX();
         d_foldedFigure_rotation_correction = camera_of_orisen_nyuuryokuzu.getCameraAngle();
 
-        app.foldedFigureConfiguration.setScale(d_foldedFigure_scale_factor);
-        app.foldedFigureConfiguration.setRotation(d_foldedFigure_rotation_correction);
+        app.foldedFigureModel.setScale(d_foldedFigure_scale_factor);
+        app.foldedFigureModel.setRotation(d_foldedFigure_rotation_correction);
 
         app.updateFoldedFigure();
 
@@ -488,8 +488,8 @@ public class FoldedFigure {
         d_foldedFigure_scale_factor = camera_of_foldLine_diagram.getCameraZoomX();
         d_foldedFigure_rotation_correction = camera_of_foldLine_diagram.getCameraAngle();
 
-        app.foldedFigureConfiguration.setScale(d_foldedFigure_scale_factor);
-        app.foldedFigureConfiguration.setRotation(d_foldedFigure_rotation_correction);
+        app.foldedFigureModel.setScale(d_foldedFigure_scale_factor);
+        app.foldedFigureModel.setRotation(d_foldedFigure_rotation_correction);
 
         app.updateFoldedFigure();
 
@@ -1009,14 +1009,14 @@ public class FoldedFigure {
         cp_worker2.setAllPointStateFalse();
     }
 
-    public void setData(FoldedFigureConfiguration foldedFigureConfiguration) {
-        ct_worker.setData(foldedFigureConfiguration);
-        foldedFigure_F_color = foldedFigureConfiguration.getFrontColor();
-        foldedFigure_B_color = foldedFigureConfiguration.getBackColor();
-        foldedFigure_L_color = foldedFigureConfiguration.getLineColor();
-        d_foldedFigure_scale_factor = foldedFigureConfiguration.getScale();
-        d_foldedFigure_rotation_correction = foldedFigureConfiguration.getRotation();
-        ip4 = foldedFigureConfiguration.getState();
+    public void setData(FoldedFigureModel foldedFigureModel) {
+        ct_worker.setData(foldedFigureModel);
+        foldedFigure_F_color = foldedFigureModel.getFrontColor();
+        foldedFigure_B_color = foldedFigureModel.getBackColor();
+        foldedFigure_L_color = foldedFigureModel.getLineColor();
+        d_foldedFigure_scale_factor = foldedFigureModel.getScale();
+        d_foldedFigure_rotation_correction = foldedFigureModel.getRotation();
+        ip4 = foldedFigureModel.getState();
 
         // Update scale
         camera_of_foldedFigure.setCameraZoomX(d_foldedFigure_scale_factor);
@@ -1038,14 +1038,14 @@ public class FoldedFigure {
         camera_of_transparent_rear.setCameraAngle(d_foldedFigure_rotation_correction);
     }
 
-    public void getData(FoldedFigureConfiguration foldedFigureConfiguration) {
-        ct_worker.getData(foldedFigureConfiguration);
-        foldedFigureConfiguration.setFrontColor(foldedFigure_F_color);
-        foldedFigureConfiguration.setBackColor(foldedFigure_B_color);
-        foldedFigureConfiguration.setLineColor(foldedFigure_L_color);
-        foldedFigureConfiguration.setRotation(d_foldedFigure_rotation_correction);
-        foldedFigureConfiguration.setScale(d_foldedFigure_scale_factor);
-        foldedFigureConfiguration.setState(ip4);
+    public void getData(FoldedFigureModel foldedFigureModel) {
+        ct_worker.getData(foldedFigureModel);
+        foldedFigureModel.setFrontColor(foldedFigure_F_color);
+        foldedFigureModel.setBackColor(foldedFigure_B_color);
+        foldedFigureModel.setLineColor(foldedFigure_L_color);
+        foldedFigureModel.setRotation(d_foldedFigure_rotation_correction);
+        foldedFigureModel.setScale(d_foldedFigure_scale_factor);
+        foldedFigureModel.setState(ip4);
     }
 
     public void scale(double d_bairitu) {

@@ -1,5 +1,6 @@
 package origami_editor.editor;
 
+import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.graphic2d.linesegment.LineSegment;
@@ -1745,9 +1746,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     // ---------------------------------------------------------------------
                 } else {
                     if (e.getWheelRotation() == -1) {
-                        app.foldedFigureConfiguration.setScale(app.foldedFigureConfiguration.getScale() * root_root_root_2);
+                        app.foldedFigureModel.setScale(app.foldedFigureModel.getScale() * root_root_root_2);
                     } else {
-                        app.foldedFigureConfiguration.setScale(app.foldedFigureConfiguration.getScale() / root_root_root_2);
+                        app.foldedFigureModel.setScale(app.foldedFigureModel.getScale() / root_root_root_2);
                     }
 
                     app.updateFoldedFigure();
@@ -1825,26 +1826,26 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         }
     }
 
-    public void setData(CanvasConfiguration canvasConfiguration) {
-        displayPointSpotlight = canvasConfiguration.getDisplayPointSpotlight();
-        displayPointOffset = canvasConfiguration.getDisplayPointOffset();
-        displayGridInputAssist = canvasConfiguration.getDisplayGridInputAssist();
-        displayComments = canvasConfiguration.getDisplayComments();
-        displayCpLines = canvasConfiguration.getDisplayCpLines();
-        displayAuxLines = canvasConfiguration.getDisplayAuxLines();
-        displayLiveAuxLines = canvasConfiguration.getDisplayLiveAuxLines();
+    public void setData(CanvasModel canvasModel) {
+        displayPointSpotlight = canvasModel.getDisplayPointSpotlight();
+        displayPointOffset = canvasModel.getDisplayPointOffset();
+        displayGridInputAssist = canvasModel.getDisplayGridInputAssist();
+        displayComments = canvasModel.getDisplayComments();
+        displayCpLines = canvasModel.getDisplayCpLines();
+        displayAuxLines = canvasModel.getDisplayAuxLines();
+        displayLiveAuxLines = canvasModel.getDisplayLiveAuxLines();
 
-        displayMarkings = canvasConfiguration.getDisplayMarkings();
-        displayCreasePatternOnTop = canvasConfiguration.getDisplayCreasePatternOnTop();
-        displayFoldingProgress = canvasConfiguration.getDisplayFoldingProgress();
+        displayMarkings = canvasModel.getDisplayMarkings();
+        displayCreasePatternOnTop = canvasModel.getDisplayCreasePatternOnTop();
+        displayFoldingProgress = canvasModel.getDisplayFoldingProgress();
 
-        lineStyle = canvasConfiguration.getLineStyle();
-        antiAlias = canvasConfiguration.getAntiAlias();
+        lineStyle = canvasModel.getLineStyle();
+        antiAlias = canvasModel.getAntiAlias();
 
-        mouseWheelMovesCreasePattern = canvasConfiguration.getMouseWheelMovesCreasePattern();
+        mouseWheelMovesCreasePattern = canvasModel.getMouseWheelMovesCreasePattern();
 
-        lineWidth = canvasConfiguration.getCalculatedLineWidth();
-        auxLineWidth = canvasConfiguration.getCalculatedAuxLineWidth();
+        lineWidth = canvasModel.getCalculatedLineWidth();
+        auxLineWidth = canvasModel.getCalculatedAuxLineWidth();
 
         repaint();
     }

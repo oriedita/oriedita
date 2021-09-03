@@ -1,5 +1,6 @@
 package origami_editor.editor;
 
+import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.record.memo.Memo;
 
 import javax.swing.*;
@@ -85,14 +86,14 @@ public class AppMenuBar extends JMenuBar {
         showPointRangeCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_ten_sagasi");
 
-            getData(app.canvasConfiguration);
+            getData(app.canvasModel);
 
             app.updateCanvas();
         });
         pointOffsetCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_ten_hanasi");
 
-            getData(app.canvasConfiguration);
+            getData(app.canvasModel);
 
             app.updateCanvas();
         });
@@ -104,44 +105,44 @@ public class AppMenuBar extends JMenuBar {
             } else {
                 System.out.println(" kou_mitudo_nyuuryoku off");
             }
-            getData(app.canvasConfiguration);
+            getData(app.canvasModel);
 
             app.updateCanvas();
         });
         displayCommentsCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_bun");
-            getData(app.canvasConfiguration);
+            getData(app.canvasModel);
 
             app.updateCanvas();
         });
         displayCpLinesCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_cp");
-            getData(app.canvasConfiguration);
+            getData(app.canvasModel);
 
             app.updateCanvas();
         });
         displayAuxLinesCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_a0");
-            getData(app.canvasConfiguration);
+            getData(app.canvasModel);
 
             app.updateCanvas();
         });
         displayLiveAuxLinesCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_a1");
-            getData(app.canvasConfiguration);
+            getData(app.canvasModel);
 
             app.updateCanvas();
         });
         displayStandardFaceMarksCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_mejirusi");
-            getData(app.canvasConfiguration);
+            getData(app.canvasModel);
 
             app.updateCanvas();
         });
         cpOnTopCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_cp_ue");
 
-            getData(app.canvasConfiguration);
+            getData(app.canvasModel);
 
             app.updateCanvas();
         });
@@ -230,27 +231,27 @@ public class AppMenuBar extends JMenuBar {
         toggleHelpMenuItem.setMargin(new Insets(0, 0, 0, 0));
     }
 
-    public void getData(CanvasConfiguration canvasConfiguration) {
-        canvasConfiguration.setDisplayPointSpotlight(showPointRangeCheckBox.isSelected());
-        canvasConfiguration.setDisplayPointOffset(pointOffsetCheckBox.isSelected());
-        canvasConfiguration.setDisplayGridInputAssist(gridInputAssistCheckBox.isSelected());
-        canvasConfiguration.setDisplayComments(displayCommentsCheckBox.isSelected());
-        canvasConfiguration.setDisplayCpLines(displayCpLinesCheckBox.isSelected());
-        canvasConfiguration.setDisplayAuxLines(displayAuxLinesCheckBox.isSelected());
-        canvasConfiguration.setDisplayLiveAuxLines(displayLiveAuxLinesCheckBox.isSelected());
-        canvasConfiguration.setDisplayMarkings(displayStandardFaceMarksCheckBox.isSelected());
-        canvasConfiguration.setDisplayCreasePatternOnTop(cpOnTopCheckBox.isSelected());
+    public void getData(CanvasModel canvasModel) {
+        canvasModel.setDisplayPointSpotlight(showPointRangeCheckBox.isSelected());
+        canvasModel.setDisplayPointOffset(pointOffsetCheckBox.isSelected());
+        canvasModel.setDisplayGridInputAssist(gridInputAssistCheckBox.isSelected());
+        canvasModel.setDisplayComments(displayCommentsCheckBox.isSelected());
+        canvasModel.setDisplayCpLines(displayCpLinesCheckBox.isSelected());
+        canvasModel.setDisplayAuxLines(displayAuxLinesCheckBox.isSelected());
+        canvasModel.setDisplayLiveAuxLines(displayLiveAuxLinesCheckBox.isSelected());
+        canvasModel.setDisplayMarkings(displayStandardFaceMarksCheckBox.isSelected());
+        canvasModel.setDisplayCreasePatternOnTop(cpOnTopCheckBox.isSelected());
     }
 
-    public void setData(CanvasConfiguration canvasConfiguration) {
-        showPointRangeCheckBox.setSelected(canvasConfiguration.getDisplayPointSpotlight());
-        pointOffsetCheckBox.setSelected(canvasConfiguration.getDisplayPointOffset());
-        gridInputAssistCheckBox.setSelected(canvasConfiguration.getDisplayGridInputAssist());
-        displayCommentsCheckBox.setSelected(canvasConfiguration.getDisplayComments());
-        displayCpLinesCheckBox.setSelected(canvasConfiguration.getDisplayCpLines());
-        displayAuxLinesCheckBox.setSelected(canvasConfiguration.getDisplayAuxLines());
-        displayLiveAuxLinesCheckBox.setSelected(canvasConfiguration.getDisplayLiveAuxLines());
-        displayStandardFaceMarksCheckBox.setSelected(canvasConfiguration.getDisplayMarkings());
-        cpOnTopCheckBox.setSelected(canvasConfiguration.getDisplayCreasePatternOnTop());
+    public void setData(CanvasModel canvasModel) {
+        showPointRangeCheckBox.setSelected(canvasModel.getDisplayPointSpotlight());
+        pointOffsetCheckBox.setSelected(canvasModel.getDisplayPointOffset());
+        gridInputAssistCheckBox.setSelected(canvasModel.getDisplayGridInputAssist());
+        displayCommentsCheckBox.setSelected(canvasModel.getDisplayComments());
+        displayCpLinesCheckBox.setSelected(canvasModel.getDisplayCpLines());
+        displayAuxLinesCheckBox.setSelected(canvasModel.getDisplayAuxLines());
+        displayLiveAuxLinesCheckBox.setSelected(canvasModel.getDisplayLiveAuxLines());
+        displayStandardFaceMarksCheckBox.setSelected(canvasModel.getDisplayMarkings());
+        cpOnTopCheckBox.setSelected(canvasModel.getDisplayCreasePatternOnTop());
     }
 }

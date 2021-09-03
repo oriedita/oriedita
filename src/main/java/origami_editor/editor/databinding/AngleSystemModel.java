@@ -1,6 +1,8 @@
-package origami_editor.editor;
+package origami_editor.editor.databinding;
 
-public class AngleSystemConfiguration {
+import origami_editor.editor.App;
+
+public class AngleSystemModel {
     private double angleA;
     private double angleB;
     private double angleC;
@@ -20,7 +22,7 @@ public class AngleSystemConfiguration {
     private double currentAngleC;
     private App.AngleSystemInputType angleSystemInputType;
 
-    public AngleSystemConfiguration() {
+    public AngleSystemModel() {
         reset();
     }
 

@@ -1,6 +1,9 @@
 package origami_editor.editor.drawing_worker;
 
 import origami_editor.editor.*;
+import origami_editor.editor.databinding.AngleSystemModel;
+import origami_editor.editor.databinding.CanvasModel;
+import origami_editor.editor.databinding.GridModel;
 import origami_editor.editor.drawing_worker.drawing_worker_toolbox.Drawing_Worker_Toolbox;
 import origami_editor.editor.undo_box.HistoryState;
 import origami_editor.graphic2d.circle.Circle;
@@ -64,11 +67,6 @@ public class DrawingWorker {
     Circle[] circle_step = new Circle[1024];//Used for temporary display when drawing. circle_step [0] is not actually used, but is used from circle_step [1].
     LineSegment[] line_candidate = new LineSegment[16];//Used for displaying selection candidates when drawing. line_candidate [0] is not actually used, it is used from line_candidate [1].
     Circle[] circle_candidate = new Circle[16];//Used for displaying selection candidates when drawing. circle_candidate [0] is not actually used, it is used from circle_candidate [1].
-    double measured_length_1 = 0.0;
-    double measured_length_2 = 0.0;
-    double measured_angle_1 = 0.0;
-    double measured_angle_2 = 0.0;
-    double measured_angle_3 = 0.0;
     String text_cp_setumei;
     String s_title; //Used to hold the title that appears at the top of the frame
     Camera camera = new Camera();
@@ -119,8 +117,8 @@ public class DrawingWorker {
     final int check4ColorTransparencyIncrement = 10;
     private int lineWidth;
 
-    public void setGridConfigurationData(GridConfiguration gridConfiguration) {
-        grid.setGridConfigurationData(gridConfiguration);
+    public void setGridConfigurationData(GridModel gridModel) {
+        grid.setGridConfigurationData(gridModel);
         text_cp_setumei = "1/" + grid.getGridSize();
         calculateDecisionWidth();
 
@@ -172,12 +170,7 @@ public class DrawingWorker {
     }
 
     public void measurement_display() {
-        app.displayMeasuredLength1(measured_length_1);
-        app.displayMeasuredLength2(measured_length_2);
-
-        app.displayMeasuredAngle1(measured_angle_1);
-        app.displayMeasuredAngle2(measured_angle_2);
-        app.displayMeasuredAngle3(measured_angle_3);
+        app.updateMeasures();
     }
 
     public void Memo_jyouhou_toridasi(Memo memo1) {
@@ -236,7 +229,7 @@ public class DrawingWorker {
             }
         }
 
-        CanvasConfiguration canvasConfiguration = app.canvasConfiguration;
+        CanvasModel canvasModel = app.canvasModel;
 
 
         // ----------------------------------------- チェックボックス等の設定の読み込み
@@ -256,97 +249,97 @@ public class DrawingWorker {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        canvasConfiguration.setMouseWheelMovesCreasePattern(selected);
+                        canvasModel.setMouseWheelMovesCreasePattern(selected);
                     }
 
                     if (st[0].equals("<ckbox_ten_sagasi")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        canvasConfiguration.setDisplayPointSpotlight(selected);
+                        canvasModel.setDisplayPointSpotlight(selected);
                     }
 
                     if (st[0].equals("<ckbox_ten_hanasi")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        canvasConfiguration.setDisplayPointOffset(selected);
+                        canvasModel.setDisplayPointOffset(selected);
                     }
 
                     if (st[0].equals("<ckbox_kou_mitudo_nyuuryoku")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        canvasConfiguration.setDisplayGridInputAssist(selected);
+                        canvasModel.setDisplayGridInputAssist(selected);
                     }
 
                     if (st[0].equals("<ckbox_bun")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        canvasConfiguration.setDisplayGridInputAssist(selected);
+                        canvasModel.setDisplayGridInputAssist(selected);
                     }
 
                     if (st[0].equals("<ckbox_cp")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        canvasConfiguration.setDisplayCpLines(selected);
+                        canvasModel.setDisplayCpLines(selected);
                     }
 
                     if (st[0].equals("<ckbox_a0")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        canvasConfiguration.setDisplayAuxLines(selected);
+                        canvasModel.setDisplayAuxLines(selected);
                     }
 
                     if (st[0].equals("<ckbox_a1")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        canvasConfiguration.setDisplayLiveAuxLines(selected);
+                        canvasModel.setDisplayLiveAuxLines(selected);
                     }
 
                     if (st[0].equals("<ckbox_mejirusi")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        canvasConfiguration.setDisplayMarkings(selected);
+                        canvasModel.setDisplayMarkings(selected);
                     }
 
                     if (st[0].equals("<ckbox_cp_ue")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        canvasConfiguration.setDisplayCreasePatternOnTop(selected);
+                        canvasModel.setDisplayCreasePatternOnTop(selected);
                     }
 
                     if (st[0].equals("<ckbox_oritatami_keika")) {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        canvasConfiguration.setDisplayFoldingProgress(selected);
+                        canvasModel.setDisplayFoldingProgress(selected);
                     }
 
                     if (st[0].equals("<iTenkaizuSenhaba")) {
                         s = st[1].split("<", 2);
-                        canvasConfiguration.setLineWidth(Integer.parseInt(s[0]));
+                        canvasModel.setLineWidth(Integer.parseInt(s[0]));
                     }
 
                     if (st[0].equals("<ir_ten")) {
                         s = st[1].split("<", 2);
-                        canvasConfiguration.setPointSize(Integer.parseInt(s[0]));
+                        canvasModel.setPointSize(Integer.parseInt(s[0]));
                     }
 
                     if (st[0].equals("<i_orisen_hyougen")) {
                         s = st[1].split("<", 2);
-                        canvasConfiguration.setLineStyle(LineStyle.from(s[0].trim()));
+                        canvasModel.setLineStyle(LineStyle.from(s[0].trim()));
                     }
 
                     if (st[0].equals("<i_anti_alias")) {
                         s = st[1].split("<", 2);
-                        canvasConfiguration.setAntiAlias(Boolean.parseBoolean(s[0].trim()));
+                        canvasModel.setAntiAlias(Boolean.parseBoolean(s[0].trim()));
                     }
                 }
             }
@@ -355,7 +348,7 @@ public class DrawingWorker {
         // ----------------------------------------- 格子設定の読み込み
 
         i_reading = false;
-        GridConfiguration gridConfiguration = app.gridConfiguration;
+        GridModel gridModel = app.gridModel;
         for (int i = 1; i <= memo1.getLineCount(); i++) {
             String str = memo1.getLine(i);
 
@@ -369,63 +362,63 @@ public class DrawingWorker {
 
                     if (st[0].equals("<i_kitei_jyoutai")) {
                         s = st[1].split("<", 2);
-                        gridConfiguration.setBaseState(Grid.State.from(s[0]));
+                        gridModel.setBaseState(Grid.State.from(s[0]));
                     }
 
                     if (st[0].equals("<nyuuryoku_kitei")) {
                         s = st[1].split("<", 2);
-                        gridConfiguration.setGridSize(StringOp.String2int(s[0], gridConfiguration.getGridSize()));
+                        gridModel.setGridSize(StringOp.String2int(s[0], gridModel.getGridSize()));
                     }
 
                     if (st[0].equals("<memori_kankaku")) {
                         s = st[1].split("<", 2);
                         int scale_interval = Integer.parseInt(s[0]);
 
-                        gridConfiguration.setIntervalGridSize(scale_interval);
+                        gridModel.setIntervalGridSize(scale_interval);
                     }
 
                     if (st[0].equals("<a_to_heikouna_memori_iti")) {
                         s = st[1].split("<", 2);
-                        gridConfiguration.setHorizontalScalePosition(Integer.parseInt(s[0]));
+                        gridModel.setHorizontalScalePosition(Integer.parseInt(s[0]));
                     }
                     if (st[0].equals("<b_to_heikouna_memori_iti")) {
                         s = st[1].split("<", 2);
-                        gridConfiguration.setVerticalScalePosition(Integer.parseInt(s[0]));
+                        gridModel.setVerticalScalePosition(Integer.parseInt(s[0]));
                     }
                     if (st[0].equals("<kousi_senhaba")) {
                         s = st[1].split("<", 2);
-                        gridConfiguration.setGridLineWidth(Integer.parseInt(s[0]));
+                        gridModel.setGridLineWidth(Integer.parseInt(s[0]));
                     }
 
                     if (st[0].equals("<d_kousi_x_a")) {
                         s = st[1].split("<", 2);
-                        gridConfiguration.setGridXA(app.String2double(s[0], gridConfiguration.getGridXA()));
+                        gridModel.setGridXA(app.String2double(s[0], gridModel.getGridXA()));
                     }
                     if (st[0].equals("<d_kousi_x_b")) {
                         s = st[1].split("<", 2);
-                        gridConfiguration.setGridXB(app.String2double(s[0], gridConfiguration.getGridXB()));
+                        gridModel.setGridXB(app.String2double(s[0], gridModel.getGridXB()));
                     }
                     if (st[0].equals("<d_kousi_x_c")) {
                         s = st[1].split("<", 2);
-                        gridConfiguration.setGridXC(app.String2double(s[0], gridConfiguration.getGridXC()));
+                        gridModel.setGridXC(app.String2double(s[0], gridModel.getGridXC()));
                     }
 
                     if (st[0].equals("<d_kousi_y_a")) {
                         s = st[1].split("<", 2);
-                        gridConfiguration.setGridYA(app.String2double(s[0], gridConfiguration.getGridYA()));
+                        gridModel.setGridYA(app.String2double(s[0], gridModel.getGridYA()));
                     }
                     if (st[0].equals("<d_kousi_y_b")) {
                         s = st[1].split("<", 2);
-                        gridConfiguration.setGridYB(app.String2double(s[0], gridConfiguration.getGridYB()));
+                        gridModel.setGridYB(app.String2double(s[0], gridModel.getGridYB()));
                     }
                     if (st[0].equals("<d_kousi_y_c")) {
                         s = st[1].split("<", 2);
-                        gridConfiguration.setGridYC(app.String2double(s[0], gridConfiguration.getGridYC()));
+                        gridModel.setGridYC(app.String2double(s[0], gridModel.getGridYC()));
                     }
 
                     if (st[0].equals("<d_kousi_kakudo")) {
                         s = st[1].split("<", 2);
-                        gridConfiguration.setGridAngle(app.String2double(s[0], gridConfiguration.getGridAngle()));
+                        gridModel.setGridAngle(app.String2double(s[0], gridModel.getGridAngle()));
                     }
 
                 }
@@ -484,12 +477,12 @@ public class DrawingWorker {
         }
 
         if (i_Grid_iro_yomikomi) {//Grid_iroの読み込みがあったら1、なければ0
-            gridConfiguration.setGridColor(new Color(i_grid_color_R, i_grid_color_G, i_grid_color_B));
+            gridModel.setGridColor(new Color(i_grid_color_R, i_grid_color_G, i_grid_color_B));
 
             System.out.println("i_kousi_memori_color_R= " + i_grid_memori_color_R);
             System.out.println("i_kousi_memori_color_G= " + i_grid_memori_color_G);
             System.out.println("i_kousi_memori_color_B= " + i_grid_memori_color_B);
-            gridConfiguration.setGridScaleColor(new Color(i_grid_memori_color_R, i_grid_memori_color_G, i_grid_memori_color_B));
+            gridModel.setGridScaleColor(new Color(i_grid_memori_color_R, i_grid_memori_color_G, i_grid_memori_color_B));
         }
 
         app.updateGrid();
@@ -566,9 +559,9 @@ public class DrawingWorker {
         }
 
         if (i_oriagarizu_yomikomi) {
-            app.foldedFigureConfiguration.setFrontColor(new Color(i_oriagarizu_F_color_R, i_oriagarizu_F_color_G, i_oriagarizu_F_color_B));
-            app.foldedFigureConfiguration.setBackColor(new Color(i_oriagarizu_B_color_R, i_oriagarizu_B_color_G, i_oriagarizu_B_color_B));
-            app.foldedFigureConfiguration.setLineColor(new Color(i_oriagarizu_L_color_R, i_oriagarizu_L_color_G, i_oriagarizu_L_color_B));
+            app.foldedFigureModel.setFrontColor(new Color(i_oriagarizu_F_color_R, i_oriagarizu_F_color_G, i_oriagarizu_F_color_B));
+            app.foldedFigureModel.setBackColor(new Color(i_oriagarizu_B_color_R, i_oriagarizu_B_color_G, i_oriagarizu_B_color_B));
+            app.foldedFigureModel.setLineColor(new Color(i_oriagarizu_L_color_R, i_oriagarizu_L_color_G, i_oriagarizu_L_color_B));
             app.updateFoldedFigure();
         }
     }
@@ -842,67 +835,67 @@ public class DrawingWorker {
         memo1.addLine("</camera_of_orisen_nyuuryokuzu>");
 
         memo1.addLine("<settei>");
-        memo1.addLine("<ckbox_mouse_settei>" + app.canvasConfiguration.getMouseWheelMovesCreasePattern() + "</ckbox_mouse_settei>");
-        memo1.addLine("<ckbox_ten_sagasi>" + app.canvasConfiguration.getDisplayPointSpotlight() + "</ckbox_ten_sagasi>");
-        memo1.addLine("<ckbox_ten_hanasi>" + app.canvasConfiguration.getDisplayPointOffset() + "</ckbox_ten_hanasi>");
-        memo1.addLine("<ckbox_kou_mitudo_nyuuryoku>" + app.canvasConfiguration.getDisplayGridInputAssist() + "</ckbox_kou_mitudo_nyuuryoku>");
-        memo1.addLine("<ckbox_bun>" + app.canvasConfiguration.getDisplayComments() + "</ckbox_bun>");
-        memo1.addLine("<ckbox_cp>" + app.canvasConfiguration.getDisplayCpLines() + "</ckbox_cp>");
-        memo1.addLine("<ckbox_a0>" + app.canvasConfiguration.getDisplayAuxLines() + "</ckbox_a0>");
-        memo1.addLine("<ckbox_a1>" + app.canvasConfiguration.getDisplayLiveAuxLines() + "</ckbox_a1>");
-        memo1.addLine("<ckbox_mejirusi>" + app.canvasConfiguration.getDisplayMarkings() + "</ckbox_mejirusi>");
-        memo1.addLine("<ckbox_cp_ue>" + app.canvasConfiguration.getDisplayCreasePatternOnTop() + "</ckbox_cp_ue>");
-        memo1.addLine("<ckbox_oritatami_keika>" + app.canvasConfiguration.getDisplayFoldingProgress() + "</ckbox_oritatami_keika>");
+        memo1.addLine("<ckbox_mouse_settei>" + app.canvasModel.getMouseWheelMovesCreasePattern() + "</ckbox_mouse_settei>");
+        memo1.addLine("<ckbox_ten_sagasi>" + app.canvasModel.getDisplayPointSpotlight() + "</ckbox_ten_sagasi>");
+        memo1.addLine("<ckbox_ten_hanasi>" + app.canvasModel.getDisplayPointOffset() + "</ckbox_ten_hanasi>");
+        memo1.addLine("<ckbox_kou_mitudo_nyuuryoku>" + app.canvasModel.getDisplayGridInputAssist() + "</ckbox_kou_mitudo_nyuuryoku>");
+        memo1.addLine("<ckbox_bun>" + app.canvasModel.getDisplayComments() + "</ckbox_bun>");
+        memo1.addLine("<ckbox_cp>" + app.canvasModel.getDisplayCpLines() + "</ckbox_cp>");
+        memo1.addLine("<ckbox_a0>" + app.canvasModel.getDisplayAuxLines() + "</ckbox_a0>");
+        memo1.addLine("<ckbox_a1>" + app.canvasModel.getDisplayLiveAuxLines() + "</ckbox_a1>");
+        memo1.addLine("<ckbox_mejirusi>" + app.canvasModel.getDisplayMarkings() + "</ckbox_mejirusi>");
+        memo1.addLine("<ckbox_cp_ue>" + app.canvasModel.getDisplayCreasePatternOnTop() + "</ckbox_cp_ue>");
+        memo1.addLine("<ckbox_oritatami_keika>" + app.canvasModel.getDisplayFoldingProgress() + "</ckbox_oritatami_keika>");
         //The thickness of the line in the development view.
-        memo1.addLine("<iTenkaizuSenhaba>" + app.canvasConfiguration.getLineWidth() + "</iTenkaizuSenhaba>");
+        memo1.addLine("<iTenkaizuSenhaba>" + app.canvasModel.getLineWidth() + "</iTenkaizuSenhaba>");
         //Width of vertex sign
-        memo1.addLine("<ir_ten>" + app.canvasConfiguration.getPointSize() + "</ir_ten>");
+        memo1.addLine("<ir_ten>" + app.canvasModel.getPointSize() + "</ir_ten>");
         //Express the polygonal line expression with color
-        memo1.addLine("<i_orisen_hyougen>" + app.canvasConfiguration.getLineStyle() + "</i_orisen_hyougen>");
-        memo1.addLine("<i_anti_alias>" + app.canvasConfiguration.getAntiAlias() + "</i_anti_alias>");
+        memo1.addLine("<i_orisen_hyougen>" + app.canvasModel.getLineStyle() + "</i_orisen_hyougen>");
+        memo1.addLine("<i_anti_alias>" + app.canvasModel.getAntiAlias() + "</i_anti_alias>");
         memo1.addLine("</settei>");
 
         memo1.addLine("<Kousi>");
-        memo1.addLine("<i_kitei_jyoutai>" + app.gridConfiguration.getBaseState() + "</i_kitei_jyoutai>");
-        memo1.addLine("<nyuuryoku_kitei>" + app.gridConfiguration.getGridSize() + "</nyuuryoku_kitei>");
+        memo1.addLine("<i_kitei_jyoutai>" + app.gridModel.getBaseState() + "</i_kitei_jyoutai>");
+        memo1.addLine("<nyuuryoku_kitei>" + app.gridModel.getGridSize() + "</nyuuryoku_kitei>");
 
-        memo1.addLine("<memori_kankaku>" + app.gridConfiguration.getIntervalGridSize() + "</memori_kankaku>");
-        memo1.addLine("<a_to_heikouna_memori_iti>" + app.gridConfiguration.getHorizontalScalePosition() + "</a_to_heikouna_memori_iti>");
-        memo1.addLine("<b_to_heikouna_memori_iti>" + app.gridConfiguration.getVerticalScalePosition() + "</b_to_heikouna_memori_iti>");
-        memo1.addLine("<kousi_senhaba>" + app.gridConfiguration.getGridLineWidth() + "</kousi_senhaba>");
+        memo1.addLine("<memori_kankaku>" + app.gridModel.getIntervalGridSize() + "</memori_kankaku>");
+        memo1.addLine("<a_to_heikouna_memori_iti>" + app.gridModel.getHorizontalScalePosition() + "</a_to_heikouna_memori_iti>");
+        memo1.addLine("<b_to_heikouna_memori_iti>" + app.gridModel.getVerticalScalePosition() + "</b_to_heikouna_memori_iti>");
+        memo1.addLine("<kousi_senhaba>" + app.gridModel.getGridLineWidth() + "</kousi_senhaba>");
 
-        memo1.addLine("<d_kousi_x_a>" + app.gridConfiguration.getGridXA() + "</d_kousi_x_a>");
-        memo1.addLine("<d_kousi_x_b>" + app.gridConfiguration.getGridXB() + "</d_kousi_x_b>");
-        memo1.addLine("<d_kousi_x_c>" + app.gridConfiguration.getGridXC() + "</d_kousi_x_c>");
-        memo1.addLine("<d_kousi_y_a>" + app.gridConfiguration.getGridYA() + "</d_kousi_y_a>");
-        memo1.addLine("<d_kousi_y_b>" + app.gridConfiguration.getGridYB() + "</d_kousi_y_b>");
-        memo1.addLine("<d_kousi_y_c>" + app.gridConfiguration.getGridYC() + "</d_kousi_y_c>");
-        memo1.addLine("<d_kousi_kakudo>" + app.gridConfiguration.getGridAngle() + "</d_kousi_kakudo>");
+        memo1.addLine("<d_kousi_x_a>" + app.gridModel.getGridXA() + "</d_kousi_x_a>");
+        memo1.addLine("<d_kousi_x_b>" + app.gridModel.getGridXB() + "</d_kousi_x_b>");
+        memo1.addLine("<d_kousi_x_c>" + app.gridModel.getGridXC() + "</d_kousi_x_c>");
+        memo1.addLine("<d_kousi_y_a>" + app.gridModel.getGridYA() + "</d_kousi_y_a>");
+        memo1.addLine("<d_kousi_y_b>" + app.gridModel.getGridYB() + "</d_kousi_y_b>");
+        memo1.addLine("<d_kousi_y_c>" + app.gridModel.getGridYC() + "</d_kousi_y_c>");
+        memo1.addLine("<d_kousi_kakudo>" + app.gridModel.getGridAngle() + "</d_kousi_kakudo>");
         memo1.addLine("</Kousi>");
 
         memo1.addLine("<Kousi_iro>");
-        memo1.addLine("<kousi_color_R>" + app.gridConfiguration.getGridColor().getRed() + "</kousi_color_R>");
-        memo1.addLine("<kousi_color_G>" + app.gridConfiguration.getGridColor().getGreen() + "</kousi_color_G>");
-        memo1.addLine("<kousi_color_B>" + app.gridConfiguration.getGridColor().getBlue() + "</kousi_color_B>");
+        memo1.addLine("<kousi_color_R>" + app.gridModel.getGridColor().getRed() + "</kousi_color_R>");
+        memo1.addLine("<kousi_color_G>" + app.gridModel.getGridColor().getGreen() + "</kousi_color_G>");
+        memo1.addLine("<kousi_color_B>" + app.gridModel.getGridColor().getBlue() + "</kousi_color_B>");
 
-        memo1.addLine("<kousi_memori_color_R>" + app.gridConfiguration.getGridScaleColor().getRed() + "</kousi_memori_color_R>");
-        memo1.addLine("<kousi_memori_color_G>" + app.gridConfiguration.getGridScaleColor().getGreen() + "</kousi_memori_color_G>");
-        memo1.addLine("<kousi_memori_color_B>" + app.gridConfiguration.getGridScaleColor().getBlue() + "</kousi_memori_color_B>");
+        memo1.addLine("<kousi_memori_color_R>" + app.gridModel.getGridScaleColor().getRed() + "</kousi_memori_color_R>");
+        memo1.addLine("<kousi_memori_color_G>" + app.gridModel.getGridScaleColor().getGreen() + "</kousi_memori_color_G>");
+        memo1.addLine("<kousi_memori_color_B>" + app.gridModel.getGridScaleColor().getBlue() + "</kousi_memori_color_B>");
         memo1.addLine("</Kousi_iro>");
 
         memo1.addLine("<oriagarizu>");
 
-        memo1.addLine("<oriagarizu_F_color_R>" + app.foldedFigureConfiguration.getFrontColor().getRed() + "</oriagarizu_F_color_R>");
-        memo1.addLine("<oriagarizu_F_color_G>" + app.foldedFigureConfiguration.getFrontColor().getGreen() + "</oriagarizu_F_color_G>");
-        memo1.addLine("<oriagarizu_F_color_B>" + app.foldedFigureConfiguration.getFrontColor().getBlue() + "</oriagarizu_F_color_B>");
+        memo1.addLine("<oriagarizu_F_color_R>" + app.foldedFigureModel.getFrontColor().getRed() + "</oriagarizu_F_color_R>");
+        memo1.addLine("<oriagarizu_F_color_G>" + app.foldedFigureModel.getFrontColor().getGreen() + "</oriagarizu_F_color_G>");
+        memo1.addLine("<oriagarizu_F_color_B>" + app.foldedFigureModel.getFrontColor().getBlue() + "</oriagarizu_F_color_B>");
 
-        memo1.addLine("<oriagarizu_B_color_R>" + app.foldedFigureConfiguration.getBackColor().getRed() + "</oriagarizu_B_color_R>");
-        memo1.addLine("<oriagarizu_B_color_G>" + app.foldedFigureConfiguration.getBackColor().getGreen() + "</oriagarizu_B_color_G>");
-        memo1.addLine("<oriagarizu_B_color_B>" + app.foldedFigureConfiguration.getBackColor().getBlue() + "</oriagarizu_B_color_B>");
+        memo1.addLine("<oriagarizu_B_color_R>" + app.foldedFigureModel.getBackColor().getRed() + "</oriagarizu_B_color_R>");
+        memo1.addLine("<oriagarizu_B_color_G>" + app.foldedFigureModel.getBackColor().getGreen() + "</oriagarizu_B_color_G>");
+        memo1.addLine("<oriagarizu_B_color_B>" + app.foldedFigureModel.getBackColor().getBlue() + "</oriagarizu_B_color_B>");
 
-        memo1.addLine("<oriagarizu_L_color_R>" + app.foldedFigureConfiguration.getLineColor().getRed() + "</oriagarizu_L_color_R>");
-        memo1.addLine("<oriagarizu_L_color_G>" + app.foldedFigureConfiguration.getLineColor().getGreen() + "</oriagarizu_L_color_G>");
-        memo1.addLine("<oriagarizu_L_color_B>" + app.foldedFigureConfiguration.getLineColor().getBlue() + "</oriagarizu_L_color_B>");
+        memo1.addLine("<oriagarizu_L_color_R>" + app.foldedFigureModel.getLineColor().getRed() + "</oriagarizu_L_color_R>");
+        memo1.addLine("<oriagarizu_L_color_G>" + app.foldedFigureModel.getLineColor().getGreen() + "</oriagarizu_L_color_G>");
+        memo1.addLine("<oriagarizu_L_color_B>" + app.foldedFigureModel.getLineColor().getBlue() + "</oriagarizu_L_color_B>");
 
         memo1.addLine("</oriagarizu>");
     }
@@ -2865,26 +2858,6 @@ public class DrawingWorker {
 
     }
 
-    public double get_L1() {
-        return measured_length_1;
-    }
-
-    public double get_L2() {
-        return measured_length_2;
-    }
-
-    public double get_A1() {
-        return measured_angle_1;
-    }
-
-    public double get_A2() {
-        return measured_angle_2;
-    }
-
-    public double get_A3() {
-        return measured_angle_3;
-    }
-
     //53 53 53 53 53 53 53 53 53    mouseMode==53　;長さ測定１モード。
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mMoved_A_53(Point p0) {
@@ -2910,9 +2883,8 @@ public class DrawingWorker {
     public void mReleased_A_53(Point p0) {
         if (i_drawing_stage == 2) {
             i_drawing_stage = 0;
-            measured_length_1 = OritaCalc.distance(line_step[1].getA(), line_step[2].getA()) * (double) grid.getGridSize() / 400.0;
-
-            app.displayMeasuredLength1(measured_length_1);
+            app.measuresModel.setMeasuredLength1(OritaCalc.distance(line_step[1].getA(), line_step[2].getA()) * (double) grid.getGridSize() / 400.0);
+            app.updateMeasures();
         }
     }
 
@@ -2942,9 +2914,8 @@ public class DrawingWorker {
     public void mReleased_A_54(Point p0) {
         if (i_drawing_stage == 2) {
             i_drawing_stage = 0;
-            measured_length_2 = OritaCalc.distance(line_step[1].getA(), line_step[2].getA()) * (double) grid.getGridSize() / 400.0;
-
-            app.displayMeasuredLength2(measured_length_2);
+            app.measuresModel.setMeasuredLength2(OritaCalc.distance(line_step[1].getA(), line_step[2].getA()) * (double) grid.getGridSize() / 400.0);
+            app.updateMeasures();
         }
     }
 //------
@@ -2978,12 +2949,9 @@ public class DrawingWorker {
     public void mReleased_A_55(Point p0) {
         if (i_drawing_stage == 3) {
             i_drawing_stage = 0;
-            measured_angle_1 = OritaCalc.angle(line_step[2].getA(), line_step[3].getA(), line_step[2].getA(), line_step[1].getA());
-            if (measured_angle_1 > 180.0) {
-                measured_angle_1 = measured_angle_1 - 360.0;
-            }
 
-            app.displayMeasuredAngle1(measured_angle_1);
+            app.measuresModel.setMeasuredAngle1(OritaCalc.angle(line_step[2].getA(), line_step[3].getA(), line_step[2].getA(), line_step[1].getA()));
+            app.updateMeasures();
         }
     }
 //------
@@ -3016,11 +2984,8 @@ public class DrawingWorker {
     public void mReleased_A_56(Point p0) {
         if (i_drawing_stage == 3) {
             i_drawing_stage = 0;
-            measured_angle_2 = OritaCalc.angle(line_step[2].getA(), line_step[3].getA(), line_step[2].getA(), line_step[1].getA());
-            if (measured_angle_2 > 180.0) {
-                measured_angle_2 = measured_angle_2 - 360.0;
-            }
-            app.displayMeasuredAngle2(measured_angle_2);
+            app.measuresModel.setMeasuredAngle2(OritaCalc.angle(line_step[2].getA(), line_step[3].getA(), line_step[2].getA(), line_step[1].getA()));
+            app.updateMeasures();
         }
     }
 
@@ -3053,11 +3018,9 @@ public class DrawingWorker {
     public void mReleased_A_57(Point p0) {
         if (i_drawing_stage == 3) {
             i_drawing_stage = 0;
-            measured_angle_3 = OritaCalc.angle(line_step[2].getA(), line_step[3].getA(), line_step[2].getA(), line_step[1].getA());
-            if (measured_angle_3 > 180.0) {
-                measured_angle_3 = measured_angle_3 - 360.0;
-            }
-            app.displayMeasuredAngle3(measured_angle_3);
+
+            app.measuresModel.setMeasuredAngle3(OritaCalc.angle(line_step[2].getA(), line_step[3].getA(), line_step[2].getA(), line_step[1].getA()));
+            app.updateMeasures();
         }
     }
 
@@ -8839,15 +8802,15 @@ public class DrawingWorker {
         return selectionDistance;
     }
 
-    public void setData(CanvasConfiguration canvasConfiguration) {
-        setGridInputAssist(canvasConfiguration.getDisplayGridInputAssist());
-        setPointSize(canvasConfiguration.getPointSize());
-        lineWidth = canvasConfiguration.getLineWidth();
+    public void setData(CanvasModel canvasModel) {
+        setGridInputAssist(canvasModel.getDisplayGridInputAssist());
+        setPointSize(canvasModel.getPointSize());
+        lineWidth = canvasModel.getLineWidth();
     }
 
-    public void setData(AngleSystemConfiguration angleSystemConfiguration) {
-        id_angle_system = angleSystemConfiguration.getCurrentAngleSystemDivider();
-        set_d_restricted_angle(angleSystemConfiguration.getCurrentAngleA(), angleSystemConfiguration.getCurrentAngleB(), angleSystemConfiguration.getCurrentAngleC());
+    public void setData(AngleSystemModel angleSystemModel) {
+        id_angle_system = angleSystemModel.getCurrentAngleSystemDivider();
+        set_d_restricted_angle(angleSystemModel.getCurrentAngleA(), angleSystemModel.getCurrentAngleB(), angleSystemModel.getCurrentAngleC());
 
         unselect_all();
     }
