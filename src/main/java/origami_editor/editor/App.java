@@ -91,18 +91,6 @@ public class App extends JFrame implements ActionListener {
     JButton lineSegmentConvert2Button;//Convert line segment color from red to blue and blue to red
     JTextField lineSegmentDivisionTextField;
     int foldLineDividingNumber = 1;//free折線入力で、折線の等分割されている数
-    JTextField ratioATextField;
-    double d_orisen_internalDivisionRatio_a = 1.0;
-    JTextField ratioBTextField;
-    double d_orisen_internalDivisionRatio_b = 0.0;
-    JTextField ratioCTextField;
-    double d_orisen_internalDivisionRatio_c = 0.0;
-    JTextField ratioDTextField;
-    double d_orisen_internalDivisionRatio_d = 0.0;
-    JTextField ratioETextField;
-    double d_orisen_internalDivisionRatio_e = 1.0;
-    JTextField ratioFTextField;
-    double d_orisen_internalDivisionRatio_f = 2.0;
     JTextField polygonSizeTextField;
     int numPolygonCorners = 5;
     UndoRedo undoRedo;
@@ -172,6 +160,7 @@ public class App extends JFrame implements ActionListener {
     public final FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
     public final AngleSystemModel angleSystemModel = new AngleSystemModel();
     public final MeasuresModel measuresModel = new MeasuresModel();
+    public final InternalDivisionRatioModel internalDivisionRatioModel = new InternalDivisionRatioModel();
 
     ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     public App() {
@@ -283,13 +272,6 @@ public class App extends JFrame implements ActionListener {
         /*
          * Extract fields from northPanel
          */
-        ratioATextField = topPanel.getRatioATextField();
-        ratioBTextField = topPanel.getRatioBTextField();
-        ratioCTextField = topPanel.getRatioCTextField();
-        ratioDTextField = topPanel.getRatioDTextField();
-        ratioETextField = topPanel.getRatioETextField();
-        ratioFTextField = topPanel.getRatioFTextField();
-
         scaleFactorTextField = topPanel.getScaleFactorTextField();
 
         rotationTextField = topPanel.getRotationTextField();
@@ -611,18 +593,9 @@ public class App extends JFrame implements ActionListener {
         ckbox_toukazu_color.setSelected(false);//透過図をカラー化する。
 
         //内分された折線の指定
-        d_orisen_internalDivisionRatio_a = 1.0;
-        ratioATextField.setText(String.valueOf(d_orisen_internalDivisionRatio_a));
-        d_orisen_internalDivisionRatio_b = 0.0;
-        ratioBTextField.setText(String.valueOf(d_orisen_internalDivisionRatio_b));
-        d_orisen_internalDivisionRatio_c = 0.0;
-        ratioCTextField.setText(String.valueOf(d_orisen_internalDivisionRatio_c));
-        d_orisen_internalDivisionRatio_d = 0.0;
-        ratioDTextField.setText(String.valueOf(d_orisen_internalDivisionRatio_d));
-        d_orisen_internalDivisionRatio_e = 1.0;
-        ratioETextField.setText(String.valueOf(d_orisen_internalDivisionRatio_e));
-        d_orisen_internalDivisionRatio_f = 2.0;
-        ratioFTextField.setText(String.valueOf(d_orisen_internalDivisionRatio_f));
+
+        internalDivisionRatioModel.reset();
+        updateInternalDivisionRatio();
 
         //
         scaleFactor = 1.0;
@@ -711,41 +684,6 @@ public class App extends JFrame implements ActionListener {
     //ボタンを押されたときの処理----------------
     public void actionPerformed(ActionEvent e) {
 
-    }
-
-// ------------------------------------------------------
-
-    public void setInternalDivisionRatio() {
-        d_orisen_internalDivisionRatio_a = String2double(ratioATextField.getText(), d_orisen_internalDivisionRatio_a);
-        d_orisen_internalDivisionRatio_b = String2double(ratioBTextField.getText(), d_orisen_internalDivisionRatio_b);
-        d_orisen_internalDivisionRatio_c = String2double(ratioCTextField.getText(), d_orisen_internalDivisionRatio_c);
-        if (d_orisen_internalDivisionRatio_c < 0.0) {
-            d_orisen_internalDivisionRatio_c = 0.0;
-        }
-        d_orisen_internalDivisionRatio_d = String2double(ratioDTextField.getText(), d_orisen_internalDivisionRatio_d);
-        d_orisen_internalDivisionRatio_e = String2double(ratioETextField.getText(), d_orisen_internalDivisionRatio_e);
-        d_orisen_internalDivisionRatio_f = String2double(ratioFTextField.getText(), d_orisen_internalDivisionRatio_f);
-        if (d_orisen_internalDivisionRatio_f < 0.0) {
-            d_orisen_internalDivisionRatio_f = 0.0;
-        }
-
-        double d_internalDivisionRatio_s = d_orisen_internalDivisionRatio_a + d_orisen_internalDivisionRatio_b * Math.sqrt(d_orisen_internalDivisionRatio_c);
-        if (d_internalDivisionRatio_s < 0.0) {
-            d_orisen_internalDivisionRatio_b = 0.0;
-        }
-        double d_internalDivisionRatio_t = d_orisen_internalDivisionRatio_d + d_orisen_internalDivisionRatio_e * Math.sqrt(d_orisen_internalDivisionRatio_f);
-        if (d_internalDivisionRatio_t < 0.0) {
-            d_orisen_internalDivisionRatio_e = 0.0;
-        }
-
-        ratioATextField.setText(String.valueOf(d_orisen_internalDivisionRatio_a));
-        ratioBTextField.setText(String.valueOf(d_orisen_internalDivisionRatio_b));
-        ratioCTextField.setText(String.valueOf(d_orisen_internalDivisionRatio_c));
-        ratioDTextField.setText(String.valueOf(d_orisen_internalDivisionRatio_d));
-        ratioETextField.setText(String.valueOf(d_orisen_internalDivisionRatio_e));
-        ratioFTextField.setText(String.valueOf(d_orisen_internalDivisionRatio_f));
-
-        mainDrawingWorker.set_d_internalDivisionRatio_st(d_internalDivisionRatio_s, d_internalDivisionRatio_t);
     }
 
     //--------------------------------------------------------
@@ -1319,6 +1257,11 @@ public class App extends JFrame implements ActionListener {
 
     public void updateMeasures() {
         rightPanel.setData(measuresModel);
+    }
+
+    public void updateInternalDivisionRatio() {
+        topPanel.setData(internalDivisionRatioModel);
+        mainDrawingWorker.setData(internalDivisionRatioModel);
     }
 
     public enum MouseWheelTarget {

@@ -125,31 +125,34 @@
           <text value="S"/>
         </properties>
       </component>
-      <component id="1ee29" class="javax.swing.JButton" binding="FCButton" default-binding="true">
+      <component id="1ee29" class="javax.swing.JButton" binding="frontColorButton" default-binding="true">
         <constraints>
           <grid row="0" column="14" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <icon value="ppp/F_color.png"/>
+          <text value="FC"/>
         </properties>
       </component>
-      <component id="55752" class="javax.swing.JButton" binding="BCButton" default-binding="true">
+      <component id="55752" class="javax.swing.JButton" binding="backColorButton" default-binding="true">
         <constraints>
           <grid row="0" column="15" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <icon value="ppp/B_color.png"/>
+          <text value="BC"/>
         </properties>
       </component>
-      <component id="f6ce8" class="javax.swing.JButton" binding="LCButton" default-binding="true">
+      <component id="f6ce8" class="javax.swing.JButton" binding="lineColorButton" default-binding="true">
         <constraints>
           <grid row="0" column="16" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>
           <icon value="ppp/L_color.png"/>
+          <text value="LC"/>
         </properties>
       </component>
       <component id="98e1" class="javax.swing.JButton" binding="haltButton">

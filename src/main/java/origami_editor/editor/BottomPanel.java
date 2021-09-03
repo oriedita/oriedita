@@ -1,5 +1,6 @@
 package origami_editor.editor;
 
+import origami_editor.editor.component.ColorIcon;
 import origami_editor.editor.component.FoldedFigureResize;
 import origami_editor.editor.component.FoldedFigureRotate;
 import origami_editor.editor.component.UndoRedo;
@@ -21,9 +22,9 @@ public class BottomPanel extends JPanel {
     private FoldedFigureResize foldedFigureResize;
     private JButton a_aButton;
     private JButton shadowButton;
-    private JButton FCButton;
-    private JButton BCButton;
-    private JButton LCButton;
+    private JButton frontColorButton;
+    private JButton backColorButton;
+    private JButton lineColorButton;
     private JButton haltButton;
     private JButton trashButton;
     private JButton resetButton;
@@ -184,7 +185,7 @@ public class BottomPanel extends JPanel {
 
             app.updateFoldedFigure();
         });
-        FCButton.addActionListener(e -> {
+        frontColorButton.addActionListener(e -> {
             app.setHelp("F_color");
             app.Button_shared_operation();
             app.mouseDraggedValid = false;
@@ -199,7 +200,7 @@ public class BottomPanel extends JPanel {
                 app.updateFoldedFigure();
             }
         });
-        BCButton.addActionListener(e -> {
+        backColorButton.addActionListener(e -> {
             app.setHelp("B_color");
             app.Button_shared_operation();
             app.mouseDraggedValid = false;
@@ -213,7 +214,7 @@ public class BottomPanel extends JPanel {
                 app.updateFoldedFigure();
             }
         });
-        LCButton.addActionListener(e -> {
+        lineColorButton.addActionListener(e -> {
             app.setHelp("L_color");
             app.Button_shared_operation();
             app.mouseDraggedValid = false;
@@ -402,27 +403,30 @@ public class BottomPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(shadowButton, gbc);
-        FCButton = new JButton();
-        FCButton.setIcon(new ImageIcon(getClass().getResource("/ppp/F_color.png")));
+        frontColorButton = new JButton();
+        frontColorButton.setIcon(new ImageIcon(getClass().getResource("/ppp/F_color.png")));
+        frontColorButton.setText("FC");
         gbc = new GridBagConstraints();
         gbc.gridx = 14;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(FCButton, gbc);
-        BCButton = new JButton();
-        BCButton.setIcon(new ImageIcon(getClass().getResource("/ppp/B_color.png")));
+        panel1.add(frontColorButton, gbc);
+        backColorButton = new JButton();
+        backColorButton.setIcon(new ImageIcon(getClass().getResource("/ppp/B_color.png")));
+        backColorButton.setText("BC");
         gbc = new GridBagConstraints();
         gbc.gridx = 15;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(BCButton, gbc);
-        LCButton = new JButton();
-        LCButton.setIcon(new ImageIcon(getClass().getResource("/ppp/L_color.png")));
+        panel1.add(backColorButton, gbc);
+        lineColorButton = new JButton();
+        lineColorButton.setIcon(new ImageIcon(getClass().getResource("/ppp/L_color.png")));
+        lineColorButton.setText("LC");
         gbc = new GridBagConstraints();
         gbc.gridx = 16;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(LCButton, gbc);
+        panel1.add(lineColorButton, gbc);
         haltButton = new JButton();
         haltButton.setIcon(new ImageIcon(getClass().getResource("/ppp/keisan_tyuusi.png")));
         gbc = new GridBagConstraints();
@@ -474,9 +478,9 @@ public class BottomPanel extends JPanel {
         foldedFigureResize.setText(String.valueOf(foldedFigureModel.getScale()));
         foldedFigureRotate.setText(String.valueOf(foldedFigureModel.getRotation()));
 
-        FCButton.setBackground(foldedFigureModel.getFrontColor());
-        BCButton.setBackground(foldedFigureModel.getBackColor());
-        LCButton.setBackground(foldedFigureModel.getLineColor());
+        frontColorButton.setIcon(new ColorIcon(foldedFigureModel.getFrontColor()));
+        backColorButton.setIcon(new ColorIcon(foldedFigureModel.getBackColor()));
+        lineColorButton.setIcon(new ColorIcon(foldedFigureModel.getLineColor()));
     }
 
     public void getData(FoldedFigureModel foldedFigureModel) {

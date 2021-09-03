@@ -1,6 +1,7 @@
 package origami_editor.editor;
 
 import origami_editor.editor.databinding.CanvasModel;
+import origami_editor.editor.databinding.InternalDivisionRatioModel;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
@@ -12,6 +13,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class TopPanel extends JPanel {
+    private final App app;
     private JButton tyouhoukei_selectButton;
     private JPanel rootPanel;
     private JTextField ratioATextField;
@@ -42,6 +44,7 @@ public class TopPanel extends JPanel {
     private JCheckBox mouseSettingsCheckBox;
 
     public TopPanel(App app) {
+        this.app = app;
         $$$setupUI$$$();
         tyouhoukei_selectButton.addActionListener(e -> {
             app.setHelp("tyouhoukei_select");
@@ -75,9 +78,11 @@ public class TopPanel extends JPanel {
             app.updateCanvas();
         });
         lineSegmentInternalDivisionRatioSetButton.addActionListener(e -> {
-            app.setInternalDivisionRatio();
-
             app.setHelp("senbun_naibun_set");
+
+            getData(app.internalDivisionRatioModel);
+            app.updateInternalDivisionRatio();
+
             app.mouseMode = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             System.out.println("mouseMode = " + app.mouseMode);
@@ -86,8 +91,11 @@ public class TopPanel extends JPanel {
             app.repaintCanvas();
         });
         drawLineSegmentInternalDivisionRatioButton.addActionListener(e -> {
-            app.setInternalDivisionRatio();
             app.setHelp("senbun_n_nyuryoku");
+
+            getData(app.internalDivisionRatioModel);
+            app.updateInternalDivisionRatio();
+
             app.mouseMode = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             System.out.println("mouseMode = " + app.mouseMode);
@@ -422,6 +430,24 @@ public class TopPanel extends JPanel {
 
     public void setData(CanvasModel canvasModel) {
         mouseSettingsCheckBox.setSelected(canvasModel.getMouseWheelMovesCreasePattern());
+    }
+
+    public void setData(InternalDivisionRatioModel data) {
+        ratioATextField.setText(String.valueOf(data.getInternalDivisionRatioA()));
+        ratioBTextField.setText(String.valueOf(data.getInternalDivisionRatioB()));
+        ratioCTextField.setText(String.valueOf(data.getInternalDivisionRatioC()));
+        ratioDTextField.setText(String.valueOf(data.getInternalDivisionRatioD()));
+        ratioETextField.setText(String.valueOf(data.getInternalDivisionRatioE()));
+        ratioFTextField.setText(String.valueOf(data.getInternalDivisionRatioF()));
+    }
+
+    public void getData(InternalDivisionRatioModel data) {
+        data.setInternalDivisionRatioA(app.String2double(ratioATextField.getText(), data.getInternalDivisionRatioA()));
+        data.setInternalDivisionRatioB(app.String2double(ratioBTextField.getText(), data.getInternalDivisionRatioB()));
+        data.setInternalDivisionRatioC(app.String2double(ratioCTextField.getText(), data.getInternalDivisionRatioC()));
+        data.setInternalDivisionRatioD(app.String2double(ratioDTextField.getText(), data.getInternalDivisionRatioD()));
+        data.setInternalDivisionRatioE(app.String2double(ratioETextField.getText(), data.getInternalDivisionRatioE()));
+        data.setInternalDivisionRatioF(app.String2double(ratioFTextField.getText(), data.getInternalDivisionRatioF()));
     }
 
     public JTextField getRotationTextField() {

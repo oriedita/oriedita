@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ColorIcon implements Icon {
-    private Color color;
+    private final Color color;
 
     public ColorIcon(Color color) {
         this.color = color;

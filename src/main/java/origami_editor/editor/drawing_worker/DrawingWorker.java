@@ -4,6 +4,7 @@ import origami_editor.editor.*;
 import origami_editor.editor.databinding.AngleSystemModel;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.GridModel;
+import origami_editor.editor.databinding.InternalDivisionRatioModel;
 import origami_editor.editor.drawing_worker.drawing_worker_toolbox.Drawing_Worker_Toolbox;
 import origami_editor.editor.undo_box.HistoryState;
 import origami_editor.graphic2d.circle.Circle;
@@ -8635,11 +8636,6 @@ public class DrawingWorker {
         }
     }
 
-    public void set_d_internalDivisionRatio_st(double ds, double dt) {
-        internalDivisionRatio_s = ds;
-        internalDivisionRatio_t = dt;
-    }
-
     public void set_d_restricted_angle(double d_1, double d_2, double d_3) {
         d_restricted_angle_1 = d_1;
         d_restricted_angle_2 = d_2;
@@ -8813,6 +8809,11 @@ public class DrawingWorker {
         set_d_restricted_angle(angleSystemModel.getCurrentAngleA(), angleSystemModel.getCurrentAngleB(), angleSystemModel.getCurrentAngleC());
 
         unselect_all();
+    }
+
+    public void setData(InternalDivisionRatioModel data) {
+        internalDivisionRatio_s = data.getInternalDivisionRatioS();
+        internalDivisionRatio_t = data.getInternalDivisionRatioT();
     }
 
     public enum FoldLineAdditionalInputMode {
