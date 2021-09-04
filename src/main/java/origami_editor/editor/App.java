@@ -1,6 +1,5 @@
 package origami_editor.editor;
 
-import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
@@ -16,7 +15,6 @@ import origami_editor.tools.camera.Camera;
 import origami_editor.tools.linestore.LineSegmentSet;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
@@ -33,27 +31,18 @@ public class App extends JFrame implements ActionListener {
     public final AngleSystemModel angleSystemModel = new AngleSystemModel();
     public final MeasuresModel measuresModel = new MeasuresModel();
     public final InternalDivisionRatioModel internalDivisionRatioModel = new InternalDivisionRatioModel();
-    private final TopPanel topPanel;
-    private final RightPanel rightPanel;
-    private final BottomPanel bottomPanel;
-    private final LeftPanel leftPanel;
+    public final HistoryStateModel historyStateModel = new HistoryStateModel();
+    public final BackgroundModel backgroundModel = new BackgroundModel();
     private final AppMenuBar appMenuBar;
     public FoldedFigure temp_OZ = new FoldedFigure(this);    //Folded figure
     public FoldedFigure OZ;    //Current Folded figure
     public LineSegmentSet Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
     public BulletinBoard bulletinBoard = new BulletinBoard(this);
     public Camera camera_of_orisen_input_diagram = new Camera();
-    public Color circleCustomizedColor = new Color(100, 200, 200);//Designated color when customizing the color of auxiliary lines and circles
-    public JButton circleCustomizedColorButton;                    //折り上がり図の表の色の指定に用いる
     //アプレット用public void init()または、アプリケーション用public ap() 以外のクラスでも使用されるパネルの部品の宣言はここでしておく。
     //アプレット用public void init()または、アプリケーション用public ap() の中だけで使用されるパネルの部品の宣言ぅラスの中でする。
     //Those that basically change the appearance of the parts are declared here.
-    public JCheckBox ckbox_check4;//check4
-    public JCheckBox correctCpBeforeFoldingCheckBox;//cpを折畳み前に自動改善する。
-    public JCheckBox selectPersistentCheckBox;//select状態を他の操作をしてもなるべく残す
-    public JCheckBox ckbox_toukazu_color;//透過図をカラー化する。
     public MouseMode mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;//Defines the response to mouse movements. If it is 1, the line segment input mode. If it is 2, adjust the development view (move). If it is 101, operate the folded figure.
-    public SelectionOperationMode selectionOperationMode;//Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
     // ------------------------------------------------------------------------
     public Point point_of_referencePlane_old = new Point(); //ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
     public SubThread sub;
@@ -77,31 +66,16 @@ public class App extends JFrame implements ActionListener {
     JButton Button_another_solution;                    //操作の指定に用いる（追加推定一個だけ）
     JButton Button_AS_matome;                    //操作の指定に用いる（追加推定100個）
     JButton Button_bangou_sitei_estimated_display;
-    JButton backgroundLockButton;//背景のロックオン
-    JButton backgroundToggleButton;//Specify whether to display the background
-    JTextField lineSegmentDivisionTextField;
-    int foldLineDividingNumber = 1;//free折線入力で、折線の等分割されている数
-    JTextField polygonSizeTextField;
-    int numPolygonCorners = 5;
-    UndoRedo undoRedo;
-    int i_undo_suu;//text31はtext10を参考にしている
-    JTextField h_undoTotalTextField;
-    int i_h_undo_suu;
     JTextField text26;
     int foldedCases = 1;//Specify the number of folding estimation to be displayed
     JTextField scaleFactorTextField;
     double scaleFactor = 1.0;//Scale factor
     JTextField rotationTextField;
     double rotationCorrection = 0.0;//Correction angle of rotation display angle
-    UndoRedo foldedFigureUndoRedo;
-    int i_undo_suu_om;//text31はtext10を参考にしている
     Image img_background;       //Image for background
-    boolean lockBackground_ori = false;//Lock on background = 1, not = 0
-    boolean lockBackground = false;//Lock on background = 1, not = 0
     Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
     Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
     HelpDialog explanation;
-    boolean displayBackground = false;//If it is 0, the background is not displayed. If it is 1, display it. There is no 2.
     // subThreadMode Subthread operation rules.
     // 0 = Execution of folding estimate 5. It is not a mode to put out different solutions of folding estimation at once.
     // 1 = Execution of folding estimate 5. Another solution for folding estimation is put together.
@@ -119,11 +93,6 @@ public class App extends JFrame implements ActionListener {
     boolean flg61 = false;//Used when setting the frame 　20180524
     //= 1 is move, = 2 is move4p, = 3 is copy, = 4 is copy4p, = 5 is mirror image
     String fname_wi;
-    JButton moveButton;
-    JButton move2p2pButton;
-    JButton copyButton;
-    JButton copy2p2pButton;
-    JButton reflectButton;
     //ウィンドウ透明化用のパラメータ
     BufferedImage imageT;
     //Vector from the upper left to the limit position where the drawing screen can be seen in the upper left
@@ -238,10 +207,10 @@ public class App extends JFrame implements ActionListener {
 
         setContentPane(editor.$$$getRootComponent$$$());
 
-        topPanel = editor.getTopPanel();
-        rightPanel = editor.getRightPanel();
-        bottomPanel = editor.getBottomPanel();
-        leftPanel = editor.getLeftPanel();
+        TopPanel topPanel = editor.getTopPanel();
+        RightPanel rightPanel = editor.getRightPanel();
+        BottomPanel bottomPanel = editor.getBottomPanel();
+        LeftPanel leftPanel = editor.getLeftPanel();
 
         canvas = editor.getCanvas();
 
@@ -253,39 +222,9 @@ public class App extends JFrame implements ActionListener {
          * Extract fields from northPanel
          */
         scaleFactorTextField = topPanel.getScaleFactorTextField();
-
         rotationTextField = topPanel.getRotationTextField();
-        backgroundToggleButton = topPanel.getBackgroundToggleButton();
-        backgroundLockButton = topPanel.getBackgroundLockButton();
-        /*
-         * Extract fields from westPanel
-         */
-        undoRedo = leftPanel.getUndoRedo();
 
         leftPanel.getGridConfigurationData(gridModel);
-
-        lineSegmentDivisionTextField = leftPanel.getLineSegmentDivisionTextField();
-
-        moveButton = leftPanel.getMoveButton();
-
-        move2p2pButton = leftPanel.getMove2p2pButton();
-        copyButton = leftPanel.getCopyButton();
-        copy2p2pButton = leftPanel.getCopy2p2pButton();
-        reflectButton = leftPanel.getReflectButton();
-
-        /*
-         * Extract fields from eastPanel
-         */
-        ckbox_check4 = rightPanel.getcAMVCheckBox();
-        polygonSizeTextField = rightPanel.getPolygonSizeTextField();
-        circleCustomizedColorButton = rightPanel.getC_colButton();
-        h_undoTotalTextField = rightPanel.getAuxUndoTotalTextField();
-
-        correctCpBeforeFoldingCheckBox = leftPanel.getCorrectCpBeforeFoldingCheckBox();
-
-        selectPersistentCheckBox = leftPanel.getSelectPersistentCheckBox();
-
-        ckbox_toukazu_color = leftPanel.getColoredXRayButton();
 
         /*
          * Extract fields from southPanel
@@ -294,17 +233,8 @@ public class App extends JFrame implements ActionListener {
         text26 = bottomPanel.getGoToFoldedFigureTextField();
         Button_bangou_sitei_estimated_display = bottomPanel.getGoToFoldedFigureButton();
         Button_another_solution = bottomPanel.getAnotherSolutionButton();
-        foldedFigureUndoRedo = bottomPanel.getUndoRedo();
 
 // *******南*********ボタンの定義はここまで*******************************************************************************************************************************
-
-
-        i_undo_suu = 20;
-        undoRedo.setText(String.valueOf(i_undo_suu));
-        i_undo_suu_om = 5;
-        foldedFigureUndoRedo.setText(String.valueOf(i_undo_suu_om));
-        i_h_undo_suu = 20;
-        h_undoTotalTextField.setText(String.valueOf(i_h_undo_suu));
 
         gridModel.addPropertyChangeListener(e -> mainDrawingWorker.setGridConfigurationData(gridModel));
         gridModel.addPropertyChangeListener(e -> leftPanel.setGridConfigurationData(gridModel));
@@ -340,8 +270,9 @@ public class App extends JFrame implements ActionListener {
         foldedFigureModel.addPropertyChangeListener(e -> OZ.setData(foldedFigureModel));
         foldedFigureModel.addPropertyChangeListener(e -> bottomPanel.setData(foldedFigureModel));
         foldedFigureModel.addPropertyChangeListener(e -> repaintCanvas());
+        foldedFigureModel.addPropertyChangeListener(e -> leftPanel.setData(foldedFigureModel));
 
-        canvasModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(canvasModel));
+        canvasModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(e, canvasModel));
         canvasModel.addPropertyChangeListener(e -> canvas.setData(canvasModel));
         canvasModel.addPropertyChangeListener(e -> appMenuBar.setData(canvasModel));
         canvasModel.addPropertyChangeListener(e -> topPanel.setData(canvasModel));
@@ -357,21 +288,31 @@ public class App extends JFrame implements ActionListener {
             }
         });
 
+        historyStateModel.addPropertyChangeListener(e -> leftPanel.setData(historyStateModel));
+        historyStateModel.addPropertyChangeListener(e -> rightPanel.setData(historyStateModel));
+        historyStateModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(historyStateModel));
+
+        backgroundModel.addPropertyChangeListener(e -> topPanel.setData(backgroundModel));
+        backgroundModel.addPropertyChangeListener(e -> {
+            if (backgroundModel.isLockBackground()) {
+                h_cam.set_i_Lock_on(backgroundModel.isLockBackground());
+                h_cam.setCamera(camera_of_orisen_input_diagram);
+                h_cam.h3_obj_and_h4_obj_calculation();
+            } else {
+                h_cam.set_i_Lock_on(backgroundModel.isLockBackground());
+            }
+        });
+
         //展開図の初期化　開始
         //settei_syokika_cp();//展開図パラメータの初期化
         developmentView_initialization();
         //展開図の初期化　終了
-
-        selectionOperationMode = SelectionOperationMode.MOVE_1;
-        Button_sel_mou_wakukae();//セレクトされた折線がある状態で、セレクトされている折線の頂点をクリックした場合の動作モードの初期設定
 
         //Initialization of folding prediction map started
         configure_initialize_prediction();
         //折畳予測図のの初期化　終了
 
         Button_shared_operation();
-
-        circleCustomizedColorButton.setBackground(circleCustomizedColor);//特注色の指定色表示
 
         // 測定長さと角度の表示
 
@@ -394,7 +335,6 @@ public class App extends JFrame implements ActionListener {
     }
 
     public FoldType getFoldType() {
-
         FoldType foldType;//= 0 Do nothing, = 1 Folding estimation for all fold lines in the normal development view, = 2 for fold estimation for selected fold lines, = 3 for changing the folding state
         int foldLineTotalForSelectFolding = mainDrawingWorker.getFoldLineTotalForSelectFolding();
         System.out.println("foldedFigures.size() = " + foldedFigures.size() + "    : foldedFigureIndex = " + foldedFigureIndex + "    : mainDrawingWorker.get_orisensuu_for_select_oritatami() = " + foldLineTotalForSelectFolding);
@@ -439,7 +379,7 @@ public class App extends JFrame implements ActionListener {
                 mainDrawingWorker.select_all();
             }
             //
-            if (correctCpBeforeFoldingCheckBox.isSelected()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the development drawing
+            if (canvasModel.isCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the development drawing
                 DrawingWorker drawingWorker2 = new DrawingWorker(r, this);    // Basic branch craftsman. Accepts input from the mouse.
                 drawingWorker2.setMemo_for_reading(mainDrawingWorker.foldLineSet.getMemoForSelectFolding());
                 drawingWorker2.point_removal();
@@ -576,10 +516,6 @@ public class App extends JFrame implements ActionListener {
 
         canvasModel.reset();
 
-        correctCpBeforeFoldingCheckBox.setSelected(false);//cpを折畳み前に自動改善する
-        selectPersistentCheckBox.setSelected(false);//select状態を折畳み操作をしてもなるべく残す
-        ckbox_toukazu_color.setSelected(false);//透過図をカラー化する。
-
         //内分された折線の指定
 
         internalDivisionRatioModel.reset();
@@ -591,14 +527,6 @@ public class App extends JFrame implements ActionListener {
         rotationCorrection = 0.0;
         rotationTextField.setText(String.valueOf(rotationCorrection));//回転表示角度の補正係数
 
-        //背景表示
-        displayBackground = true;
-        backgroundToggleButton.setBackground(Color.ORANGE);
-
-        //背景ロックオン
-        lockBackground = false;
-        lockBackground_ori = false;
-        backgroundLockButton.setBackground(Color.gray);
 //西辺
 
         //展開図の線の太さ。
@@ -612,10 +540,6 @@ public class App extends JFrame implements ActionListener {
         //ペンの色の指定
 
         //折線分割数
-        foldLineDividingNumber = 2;
-        lineSegmentDivisionTextField.setText(String.valueOf(foldLineDividingNumber));
-        mainDrawingWorker.setFoldLineDividingNumber(foldLineDividingNumber);//フリー折線入力時の分割数
-
 
         //格子分割数の指定
 
@@ -629,11 +553,6 @@ public class App extends JFrame implements ActionListener {
         angleSystemModel.reset();
 
         //多角形の角数
-        numPolygonCorners = 5;
-        polygonSizeTextField.setText(String.valueOf(numPolygonCorners));
-
-        ckbox_check4.setSelected(false);//checkするかどうかの選択
-        mainDrawingWorker.setCheck4(false);
     }
 
     // *******************************************************************************************************
@@ -657,33 +576,6 @@ public class App extends JFrame implements ActionListener {
     //ボタンを押されたときの処理----------------
     public void actionPerformed(ActionEvent e) {
 
-    }
-
-    //--------------------------------------------------------
-    void Button_sel_mou_wakukae() {
-        moveButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
-        move2p2pButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
-        copyButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
-        copy2p2pButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
-        reflectButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
-
-        switch (selectionOperationMode) {
-            case MOVE_1:
-                moveButton.setBorder(new LineBorder(Color.green, 3, false));
-                break;
-            case MOVE4P_2:
-                move2p2pButton.setBorder(new LineBorder(Color.green, 3, false));
-                break;
-            case COPY_3:
-                copyButton.setBorder(new LineBorder(Color.green, 3, false));
-                break;
-            case COPY4P_4:
-                copy2p2pButton.setBorder(new LineBorder(Color.green, 3, false));
-                break;
-            case MIRROR_5:
-                reflectButton.setBorder(new LineBorder(Color.green, 3, false));
-                break;
-        }
     }
 
     public void Button_shared_operation() {
@@ -806,7 +698,6 @@ public class App extends JFrame implements ActionListener {
         foldedFigureIndex = i;
         OZ = foldedFigures.get(foldedFigureIndex);
         //透過図はカラー化しない。
-        ckbox_toukazu_color.setSelected(OZ.transparencyColor);//透過図はカラー化。
 
         // Load data from this foldedFigure to the ui.
         OZ.getData(foldedFigureModel);
@@ -881,7 +772,7 @@ public class App extends JFrame implements ActionListener {
 
         //最初に
 
-        if (lockBackground) {
+        if (backgroundModel.isLockBackground()) {
             h_cam.setCamera(camera_of_orisen_input_diagram);
             h_cam.h3_and_h4_calculation();
             h_cam.parameter_calculation();
@@ -941,27 +832,18 @@ public class App extends JFrame implements ActionListener {
         FileDialog fd = new FileDialog(this, "Select Image File.", FileDialog.LOAD);
         fd.setVisible(true);
         String img_background_fname = fd.getDirectory() + fd.getFile();
-        boolean iDisplayBackground_old;
-        iDisplayBackground_old = displayBackground;
         try {
             if (fd.getFile() != null) {
                 Toolkit tk = Toolkit.getDefaultToolkit();
                 img_background = tk.getImage(img_background_fname);
 
                 if (img_background != null) {
-                    displayBackground = true;
-                    backgroundToggleButton.setBackground(Color.ORANGE);
-                    lockBackground = false;
-                    lockBackground_ori = false;
-                    backgroundLockButton.setBackground(Color.gray);
+                    backgroundModel.setDisplayBackground(true);
+                    backgroundModel.setLockBackground(false);
                 }
             }
 
         } catch (Exception e) {
-            displayBackground = iDisplayBackground_old;
-            if (!displayBackground) {
-                backgroundToggleButton.setBackground(Color.gray);
-            }
         }
     }
 

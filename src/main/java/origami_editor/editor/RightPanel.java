@@ -1,7 +1,9 @@
 package origami_editor.editor;
 
+import origami_editor.editor.component.ColorIcon;
 import origami_editor.editor.databinding.AngleSystemModel;
 import origami_editor.editor.databinding.CanvasModel;
+import origami_editor.editor.databinding.HistoryStateModel;
 import origami_editor.editor.databinding.MeasuresModel;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.record.string_op.StringOp;
@@ -125,12 +127,8 @@ public class RightPanel extends JPanel {
             app.setHelp("check4");
             app.mainDrawingWorker.unselect_all();
 
-            if (cAMVCheckBox.isSelected()) {
-                app.mainDrawingWorker.check4(0.0001);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-                app.mainDrawingWorker.setCheck4(true);
-            } else {
-                app.mainDrawingWorker.setCheck4(false);
-            }
+            app.canvasModel.setCheck4Enabled(cAMVCheckBox.isSelected());
+
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -246,35 +244,18 @@ public class RightPanel extends JPanel {
             app.Button_shared_operation();
         });
         polygonSizeSetButton.addActionListener(e -> {
-            int numPolygonCornersOld = app.numPolygonCorners;
-            app.numPolygonCorners = StringOp.String2int(polygonSizeTextField.getText(), numPolygonCornersOld);
-            if (app.numPolygonCorners < 3) {
-                app.numPolygonCorners = 3;
-            }
-            if (app.numPolygonCorners > 100) {
-                app.numPolygonCorners = 100;
-            }
-            polygonSizeTextField.setText(String.valueOf(app.numPolygonCorners));
-            app.mainDrawingWorker.setNumPolygonCorners(app.numPolygonCorners);
-
             app.setHelp("kakusuu_set");
 
+            app.canvasModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), app.canvasModel.getNumPolygonCorners()));
             app.canvasModel.setMouseMode(MouseMode.POLYGON_SET_NO_CORNERS_29);
 
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         regularPolygonButton.addActionListener(e -> {
-            int numPolygonCorners_old = app.numPolygonCorners;
-            app.numPolygonCorners = StringOp.String2int(polygonSizeTextField.getText(), numPolygonCorners_old);
-            if (app.numPolygonCorners < 3) {
-                app.numPolygonCorners = 3;
-            }
-            polygonSizeTextField.setText(String.valueOf(app.numPolygonCorners));
-            app.mainDrawingWorker.setNumPolygonCorners(app.numPolygonCorners);
-
             app.setHelp("sei_takakukei");
 
+            app.canvasModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), app.canvasModel.getNumPolygonCorners()));
             app.canvasModel.setMouseMode(MouseMode.POLYGON_SET_NO_CORNERS_29);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.POLYGON_SET_NO_CORNERS_29);
 
@@ -372,15 +353,10 @@ public class RightPanel extends JPanel {
 
             Color color = JColorChooser.showDialog(null, "color", new Color(100, 200, 200));
             if (color != null) {
-                app.circleCustomizedColor = color;
+                app.canvasModel.setCircleCustomizedColor(color);
             }
 
-            //以上でやりたいことは書き終わり
-            c_colButton.setBackground(app.circleCustomizedColor);    //ボタンの色設定
-
             app.canvasModel.setMouseMode(MouseMode.CIRCLE_CHANGE_COLOR_59);
-
-            app.mainDrawingWorker.setCustomCircleColor(app.circleCustomizedColor);
 
             app.repaintCanvas();
         });
@@ -389,7 +365,6 @@ public class RightPanel extends JPanel {
 
             app.canvasModel.setMouseMode(MouseMode.CIRCLE_CHANGE_COLOR_59);
 
-            app.mainDrawingWorker.setCustomCircleColor(app.circleCustomizedColor);
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
@@ -403,13 +378,8 @@ public class RightPanel extends JPanel {
         });
         h_undoTotalSetButton.addActionListener(e -> {
             app.setHelp("h_undo_syutoku");
-            int i_h_undo_suu_old = app.i_undo_suu;
-            app.i_h_undo_suu = StringOp.String2int(auxUndoTotalTextField.getText(), i_h_undo_suu_old);
-            if (app.i_h_undo_suu < 0) {
-                app.i_h_undo_suu = 0;
-            }
-            auxUndoTotalTextField.setText(String.valueOf(app.i_h_undo_suu));
-            app.mainDrawingWorker.setAuxUndoTotal(app.i_h_undo_suu);
+
+            app.historyStateModel.setAuxHistoryTotal(StringOp.String2int(auxUndoTotalTextField.getText(), app.historyStateModel.getAuxHistoryTotal()));
         });
         h_redoButton.addActionListener(e -> {
             app.setHelp("h_redo");
@@ -1274,6 +1244,10 @@ public class RightPanel extends JPanel {
         measuredAngle3Label.setText(String.valueOf(data.getMeasuredAngle3()));
     }
 
+    public void getData(CanvasModel data) {
+        data.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), data.getNumPolygonCorners()));
+    }
+
     public void setData(CanvasModel data) {
         switch (data.getAuxLiveLineColor()) {
             case ORANGE_4:
@@ -1284,5 +1258,11 @@ public class RightPanel extends JPanel {
                 colYellowButton.setBackground(Color.YELLOW);
                 colOrangeButton.setBackground(new Color(150, 150, 150));
         }
+
+        c_colButton.setIcon(new ColorIcon(data.getCircleCustomizedColor()));
+    }
+
+    public void setData(HistoryStateModel historyStateModel) {
+        auxUndoTotalTextField.setText(String.valueOf(historyStateModel.getAuxHistoryTotal()));
     }
 }

@@ -5,6 +5,7 @@ import origami_editor.editor.component.FoldedFigureResize;
 import origami_editor.editor.component.FoldedFigureRotate;
 import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.FoldedFigureModel;
+import origami_editor.editor.databinding.HistoryStateModel;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.record.string_op.StringOp;
 
@@ -46,7 +47,7 @@ public class BottomPanel extends JPanel {
             System.out.println("20180220 get_i_fold_type() = " + app.getFoldType());
             app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
 
-            if (!app.selectPersistentCheckBox.isSelected()) {
+            if (!app.canvasModel.isSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
 
@@ -132,13 +133,8 @@ public class BottomPanel extends JPanel {
         });
         undoRedo.addSetUndoCountActionListener(e -> {
             app.setHelp("undo_syutoku");
-            int i_undo_suu_om_old = app.i_undo_suu_om;
-            app.i_undo_suu_om = StringOp.String2int(app.foldedFigureUndoRedo.getText(), i_undo_suu_om_old);
-            if (app.i_undo_suu < 0) {
-                app.i_undo_suu_om = 0;
-            }
-            app.foldedFigureUndoRedo.setText(String.valueOf(app.i_undo_suu_om));
-            app.OZ.cp_worker2.setUndoBoxUndoTotal(app.i_undo_suu_om);                  //  <<<------------
+
+            app.foldedFigureModel.setHistoryTotal(StringOp.String2int(undoRedo.getText(), app.foldedFigureModel.getHistoryTotal()));
         });
         oriagari_sousaButton.addActionListener(e -> {
             app.setHelp("oriagari_sousa");
@@ -472,10 +468,13 @@ public class BottomPanel extends JPanel {
         frontColorButton.setIcon(new ColorIcon(foldedFigureModel.getFrontColor()));
         backColorButton.setIcon(new ColorIcon(foldedFigureModel.getBackColor()));
         lineColorButton.setIcon(new ColorIcon(foldedFigureModel.getLineColor()));
+
+        undoRedo.setText(String.valueOf(foldedFigureModel.getHistoryTotal()));
     }
 
     public void getData(FoldedFigureModel foldedFigureModel) {
         foldedFigureModel.setScale(app.String2double(foldedFigureResize.getText(), foldedFigureModel.getScale()));
         foldedFigureModel.setRotation(app.String2double(foldedFigureRotate.getText(), foldedFigureModel.getRotation()));
+        foldedFigureModel.setHistoryTotal(StringOp.String2int(undoRedo.getText(), foldedFigureModel.getHistoryTotal()));
     }
 }

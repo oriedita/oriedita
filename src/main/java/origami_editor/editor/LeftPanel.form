@@ -146,7 +146,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="e460" class="javax.swing.JButton" binding="senbun_sakujyoButton">
+          <component id="e460" class="javax.swing.JButton" binding="lineSegmentDeleteButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="0.0"/>
@@ -155,7 +155,7 @@
               <icon value="ppp/senbun_sakujyo.png"/>
             </properties>
           </component>
-          <component id="27cf5" class="javax.swing.JButton" binding="kuro_senbun_sakujyoButton">
+          <component id="27cf5" class="javax.swing.JButton" binding="edgeLineSegmentDeleteButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="0.0"/>
@@ -164,7 +164,7 @@
               <icon value="ppp/kuro_senbun_sakujyo.png"/>
             </properties>
           </component>
-          <component id="b584a" class="javax.swing.JButton" binding="senbun3_sakujyoButton">
+          <component id="b584a" class="javax.swing.JButton" binding="auxLiveLineSegmentDeleteButton">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="0.0"/>
@@ -173,7 +173,7 @@
               <icon value="ppp/senbun3_sakujyo.png"/>
             </properties>
           </component>
-          <component id="4d829" class="javax.swing.JButton" binding="eda_kesiButton">
+          <component id="4d829" class="javax.swing.JButton" binding="trimBranchesButton">
             <constraints>
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="0.0"/>
@@ -470,7 +470,7 @@
               <icon value="ppp/suitei_03.png"/>
             </properties>
           </component>
-          <component id="27953" class="javax.swing.JCheckBox" binding="coloredXRayButton">
+          <component id="27953" class="javax.swing.JCheckBox" binding="coloredXRayCheckBox">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
@@ -505,7 +505,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="1413f" class="javax.swing.JButton" binding="senbun_nyuryokuButton">
+          <component id="1413f" class="javax.swing.JButton" binding="drawCreaseFreeButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
@@ -514,7 +514,7 @@
               <icon value="ppp/senbun_nyuryoku.png"/>
             </properties>
           </component>
-          <component id="73246" class="javax.swing.JButton" binding="senbun_nyuryoku11Button">
+          <component id="73246" class="javax.swing.JButton" binding="drawCreaseRestrictedButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
@@ -532,7 +532,7 @@
               <icon value="ppp/Voronoi.png"/>
             </properties>
           </component>
-          <component id="4d17c" class="javax.swing.JButton" binding="oritatami_kanousenButton">
+          <component id="4d17c" class="javax.swing.JButton" binding="makeFlatFoldableButton">
             <constraints>
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
@@ -541,7 +541,7 @@
               <icon value="ppp/oritatami_kanousen.png"/>
             </properties>
           </component>
-          <component id="31ade" class="javax.swing.JButton" binding="senbun_entyouButton">
+          <component id="31ade" class="javax.swing.JButton" binding="lengthenCreaseButton">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
@@ -550,7 +550,7 @@
               <icon value="ppp/senbun_entyou.png"/>
             </properties>
           </component>
-          <component id="5e0e8" class="javax.swing.JButton" binding="senbun_entyou_2Button">
+          <component id="5e0e8" class="javax.swing.JButton" binding="lengthenCrease2Button">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
@@ -559,7 +559,7 @@
               <icon value="ppp/senbun_entyou_2.png"/>
             </properties>
           </component>
-          <component id="3cf89" class="javax.swing.JButton" binding="kaku_toubunButton">
+          <component id="3cf89" class="javax.swing.JButton" binding="angleBisectorButton">
             <constraints>
               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
@@ -568,7 +568,7 @@
               <icon value="ppp/kaku_toubun.png"/>
             </properties>
           </component>
-          <component id="a5283" class="javax.swing.JButton" binding="naishinButton">
+          <component id="a5283" class="javax.swing.JButton" binding="inwardButton">
             <constraints>
               <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
@@ -587,7 +587,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="633be" class="javax.swing.JButton" binding="suisenButton">
+          <component id="633be" class="javax.swing.JButton" binding="perpendicularDrawButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
@@ -596,7 +596,7 @@
               <icon value="ppp/suisen.png"/>
             </properties>
           </component>
-          <component id="a24f2" class="javax.swing.JButton" binding="orikaesiButton">
+          <component id="a24f2" class="javax.swing.JButton" binding="symmetricDrawButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
@@ -605,7 +605,7 @@
               <icon value="ppp/orikaesi.png"/>
             </properties>
           </component>
-          <component id="22f4e" class="javax.swing.JButton" binding="heikousenButton">
+          <component id="22f4e" class="javax.swing.JButton" binding="parallelDrawButton">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
@@ -614,7 +614,7 @@
               <icon value="ppp/heikousen.png"/>
             </properties>
           </component>
-          <component id="b822e" class="javax.swing.JButton" binding="heikousen_haba_siteiButton">
+          <component id="b822e" class="javax.swing.JButton" binding="setParallelDrawWidthButton">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
@@ -632,7 +632,7 @@
               <icon value="ppp/all_s_step_to_orisen.png"/>
             </properties>
           </component>
-          <component id="1d53e" class="javax.swing.JButton" binding="sakananohoneButton">
+          <component id="1d53e" class="javax.swing.JButton" binding="fishBoneDrawButton">
             <constraints>
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
@@ -660,7 +660,7 @@
               <text value="Set"/>
             </properties>
           </component>
-          <component id="3f7e2" class="javax.swing.JButton" binding="renzoku_orikaesiButton">
+          <component id="3f7e2" class="javax.swing.JButton" binding="continuousSymmetricDrawButton">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
@@ -669,7 +669,7 @@
               <icon value="ppp/renzoku_orikaesi.png"/>
             </properties>
           </component>
-          <component id="20788" class="javax.swing.JButton" binding="oritatami_kanousen_and_kousitenkei_simpleButton">
+          <component id="20788" class="javax.swing.JButton" binding="foldableLineDrawButton">
             <constraints>
               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
@@ -678,7 +678,7 @@
               <icon value="ppp/oritatami_kanousen_and_kousitenkei_simple.png"/>
             </properties>
           </component>
-          <component id="654c" class="javax.swing.JButton" binding="fuku_orikaesiButton">
+          <component id="654c" class="javax.swing.JButton" binding="doubleSymmetricDrawButton">
             <constraints>
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>

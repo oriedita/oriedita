@@ -642,21 +642,6 @@ public class FoldedFigure {
 
         return 1000;
     }
-    //It froze. This can be done by changing 128 to 127 to eliminate the freeze, but if the transparency is not set to a multiple of 2, the value may shift when it is halved, so the maximum transparency is set to 64. I will leave it.
-
-    public void decreaseTransparency() {
-        transparent_transparency = transparent_transparency / 2;
-        if (transparent_transparency < 1) {
-            transparent_transparency = 1;
-        }
-    }
-
-    public void increaseTransparency() {
-        transparent_transparency = transparent_transparency * 2;
-        if (transparent_transparency > 64) {
-            transparent_transparency = 64;
-        }
-    }    //20180819 Bug fix: The maximum value of transparency has been 128 so far, and when the line is drawn by the program, it becomes 256, and the upper limit of transparency is over 255, and Orihime itself
 
     public void foldedFigure_operation_mouse_on(Point p) {//Work when the left mouse button is pressed in the fold-up diagram operation
         if (i_foldedFigure_operation_mode == 1) {
@@ -1013,6 +998,11 @@ public class FoldedFigure {
         d_foldedFigure_scale_factor = foldedFigureModel.getScale();
         d_foldedFigure_rotation_correction = foldedFigureModel.getRotation();
         ip4 = foldedFigureModel.getState();
+
+        cp_worker2.setUndoBoxUndoTotal(foldedFigureModel.getHistoryTotal());
+
+        transparencyColor = foldedFigureModel.isTransparencyColor();
+        transparent_transparency = foldedFigureModel.getTransparentTransparency();
 
         // Update scale
         camera_of_foldedFigure.setCameraZoomX(d_foldedFigure_scale_factor);

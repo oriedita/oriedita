@@ -130,7 +130,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         //System.out.println("paint　+++++++++++++++++++++　背景表示");
         //背景表示
-        if ((app.img_background != null) && app.displayBackground) {
+        if ((app.img_background != null) && app.backgroundModel.isDisplayBackground()) {
             int iw = app.img_background.getWidth(this);//イメージの幅を取得
             int ih = app.img_background.getHeight(this);//イメージの高さを取得
 
@@ -253,7 +253,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //
 
         //最初に
-        if (app.lockBackground) {
+        if (app.backgroundModel.isLockBackground()) {
             app.h_cam.setCamera(app.camera_of_orisen_input_diagram);
             app.h_cam.h3_and_h4_calculation();
             app.h_cam.parameter_calculation();
@@ -482,7 +482,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     System.out.println("3_Click");//("トリプルクリック"
                     if (mouseMode == MouseMode.CREASE_SELECT_19) {
                         if (app.ckbox_add_frame_SelectAnd3click_isSelected) {
-                            switch (app.selectionOperationMode) {
+                            switch (app.canvasModel.getSelectionOperationMode()) {
                                 case MOVE_1:
                                     app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
                                     break;
@@ -1469,8 +1469,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                         LineSegment s_4 = new LineSegment();
                         s_4.set(es1.get_s_step(4));
 
-                        app.lockBackground = false;
-                        app.backgroundLockButton.setBackground(Color.gray);
+                        app.backgroundModel.setLockBackground(false);
 
                         app.background_set(app.camera_of_orisen_input_diagram.object2TV(s_1.getA()),
                                 app.camera_of_orisen_input_diagram.object2TV(s_2.getA()),

@@ -2,17 +2,21 @@ package origami_editor.editor;
 
 import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.CanvasModel;
+import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.databinding.GridModel;
+import origami_editor.editor.databinding.HistoryStateModel;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.record.memo.Memo;
 import origami_editor.record.string_op.StringOp;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 
 public class LeftPanel extends JPanel {
+    private final GridConfigureDialog gridConfigureDialog;
     private JPanel panel1;
     private JButton lineWidthDecreaseButton;
     private JButton lineWidthIncreaseButton;
@@ -23,23 +27,23 @@ public class LeftPanel extends JPanel {
     private JButton pointSizeIncreaseButton;
     private JButton antiAliasToggleButton;
     private JButton lineStyleChangeButton;
-    private JButton senbun_nyuryokuButton;
-    private JButton senbun_nyuryoku11Button;
+    private JButton drawCreaseFreeButton;
+    private JButton drawCreaseRestrictedButton;
     private JButton voronoiButton;
-    private JButton oritatami_kanousenButton;
-    private JButton senbun_entyouButton;
-    private JButton senbun_entyou_2Button;
-    private JButton kaku_toubunButton;
-    private JButton naishinButton;
-    private JButton suisenButton;
-    private JButton orikaesiButton;
-    private JButton renzoku_orikaesiButton;
-    private JButton heikousenButton;
-    private JButton heikousen_haba_siteiButton;
-    private JButton oritatami_kanousen_and_kousitenkei_simpleButton;
+    private JButton makeFlatFoldableButton;
+    private JButton lengthenCreaseButton;
+    private JButton lengthenCrease2Button;
+    private JButton angleBisectorButton;
+    private JButton inwardButton;
+    private JButton perpendicularDrawButton;
+    private JButton symmetricDrawButton;
+    private JButton continuousSymmetricDrawButton;
+    private JButton parallelDrawButton;
+    private JButton setParallelDrawWidthButton;
+    private JButton foldableLineDrawButton;
     private JButton all_s_step_to_orisenButton;
-    private JButton sakananohoneButton;
-    private JButton fuku_orikaesiButton;
+    private JButton fishBoneDrawButton;
+    private JButton doubleSymmetricDrawButton;
     private JButton senbun_b_nyuryokuButton;
     private JButton reflectButton;
     private JButton selectButton;
@@ -51,10 +55,10 @@ public class LeftPanel extends JPanel {
     private JButton copyButton;
     private JButton copy2p2pButton;
     private JButton deleteSelectedLineSegmentButton;
-    private JButton senbun_sakujyoButton;
-    private JButton kuro_senbun_sakujyoButton;
-    private JButton senbun3_sakujyoButton;
-    private JButton eda_kesiButton;
+    private JButton lineSegmentDeleteButton;
+    private JButton edgeLineSegmentDeleteButton;
+    private JButton auxLiveLineSegmentDeleteButton;
+    private JButton trimBranchesButton;
     private JButton toMountainButton;
     private JButton toValleyButton;
     private JButton toEdgeButton;
@@ -76,7 +80,7 @@ public class LeftPanel extends JPanel {
     private JButton koteimen_siteiButton;
     private JButton suitei_02Button;
     private JButton suitei_03Button;
-    private JCheckBox coloredXRayButton;
+    private JCheckBox coloredXRayCheckBox;
     private JButton coloredXRayDecreaseButton;
     private JButton coloredXRayIncreaseButton;
     private JButton colRedButton;
@@ -85,8 +89,6 @@ public class LeftPanel extends JPanel {
     private JButton colCyanButton;
     private JButton lineSegmentDivisionSetButton;
     private JButton button1;
-
-    private final GridConfigureDialog gridConfigureDialog;
 
     public LeftPanel(App app) {
         CanvasModel canvasModel = app.canvasModel;
@@ -108,13 +110,8 @@ public class LeftPanel extends JPanel {
         });
         undoRedo.addSetUndoCountActionListener(e -> {
             app.setHelp("undo_syutoku");
-            int i_undo_suu_old = app.i_undo_suu;
-            app.i_undo_suu = StringOp.String2int(undoRedo.getText(), i_undo_suu_old);
-            if (app.i_undo_suu < 0) {
-                app.i_undo_suu = 0;
-            }
-            undoRedo.setText(String.valueOf(app.i_undo_suu));
-            app.mainDrawingWorker.setUndoTotal(app.i_undo_suu);
+
+            app.historyStateModel.setHistoryTotal(StringOp.String2int(undoRedo.getText(), app.historyStateModel.getHistoryTotal()));
         });
         lineWidthDecreaseButton.addActionListener(e -> {
             app.setHelp("senhaba_sage");
@@ -168,7 +165,7 @@ public class LeftPanel extends JPanel {
 
             app.canvasModel.setLineColor(LineColor.CYAN_3);
         });
-        senbun_nyuryokuButton.addActionListener(e -> {
+        drawCreaseFreeButton.addActionListener(e -> {
             app.setHelp("senbun_nyuryoku");
 
             app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0);
@@ -179,7 +176,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        senbun_nyuryoku11Button.addActionListener(e -> {
+        drawCreaseRestrictedButton.addActionListener(e -> {
             app.setHelp("senbun_nyuryoku11");
 
             app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_RESTRICTED_11);
@@ -200,7 +197,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        oritatami_kanousenButton.addActionListener(e -> {
+        makeFlatFoldableButton.addActionListener(e -> {
             app.setHelp("oritatami_kanousen");
 
             app.canvasModel.setMouseMode(MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38);
@@ -210,7 +207,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        senbun_entyouButton.addActionListener(e -> {
+        lengthenCreaseButton.addActionListener(e -> {
             app.setHelp("senbun_entyou");
 
             app.canvasModel.setMouseMode(MouseMode.LENGTHEN_CREASE_5);
@@ -220,7 +217,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        senbun_entyou_2Button.addActionListener(e -> {
+        lengthenCrease2Button.addActionListener(e -> {
             app.setHelp("senbun_entyou_2");
 
             app.canvasModel.setMouseMode(MouseMode.CREASE_LENGTHEN_70);
@@ -230,7 +227,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        kaku_toubunButton.addActionListener(e -> {
+        angleBisectorButton.addActionListener(e -> {
             app.setHelp("kaku_toubun");
 
             app.canvasModel.setMouseMode(MouseMode.SQUARE_BISECTOR_7);
@@ -240,7 +237,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        naishinButton.addActionListener(e -> {
+        inwardButton.addActionListener(e -> {
             app.setHelp("naishin");
 
             app.canvasModel.setMouseMode(MouseMode.INWARD_8);
@@ -250,7 +247,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        suisenButton.addActionListener(e -> {
+        perpendicularDrawButton.addActionListener(e -> {
             app.setHelp("suisen");
 
             app.canvasModel.setMouseMode(MouseMode.PERPENDICULAR_DRAW_9);
@@ -260,7 +257,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        orikaesiButton.addActionListener(e -> {
+        symmetricDrawButton.addActionListener(e -> {
             app.setHelp("orikaesi");
 
             app.canvasModel.setMouseMode(MouseMode.SYMMETRIC_DRAW_10);
@@ -270,7 +267,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        renzoku_orikaesiButton.addActionListener(e -> {
+        continuousSymmetricDrawButton.addActionListener(e -> {
             app.setHelp("renzoku_orikaesi");
 
             app.canvasModel.setMouseMode(MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52);
@@ -280,7 +277,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        heikousenButton.addActionListener(e -> {
+        parallelDrawButton.addActionListener(e -> {
             app.setHelp("heikousen");
 
             app.canvasModel.setMouseMode(MouseMode.PARALLEL_DRAW_40);
@@ -290,7 +287,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        heikousen_haba_siteiButton.addActionListener(e -> {
+        setParallelDrawWidthButton.addActionListener(e -> {
             app.setHelp("heikousen_haba_sitei");
 
             app.canvasModel.setMouseMode(MouseMode.PARALLEL_DRAW_WIDTH_51);
@@ -300,7 +297,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        oritatami_kanousen_and_kousitenkei_simpleButton.addActionListener(e -> {
+        foldableLineDrawButton.addActionListener(e -> {
             app.setHelp("oritatami_kanousen_and_kousitenkei_simple");
 
             app.canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);
@@ -319,7 +316,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        sakananohoneButton.addActionListener(e -> {
+        fishBoneDrawButton.addActionListener(e -> {
             app.setHelp("sakananohone");
 
             app.canvasModel.setMouseMode(MouseMode.FISH_BONE_DRAW_33);
@@ -329,7 +326,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        fuku_orikaesiButton.addActionListener(e -> {
+        doubleSymmetricDrawButton.addActionListener(e -> {
             app.setHelp("fuku_orikaesi");
 
             app.canvasModel.setMouseMode(MouseMode.DOUBLE_SYMMETRIC_DRAW_35);
@@ -340,16 +337,9 @@ public class LeftPanel extends JPanel {
             app.repaintCanvas();
         });
         lineSegmentDivisionSetButton.addActionListener(e -> {
-
-            int i_orisen_bunkatu_suu_old = app.foldLineDividingNumber;
-            app.foldLineDividingNumber = StringOp.String2int(lineSegmentDivisionTextField.getText(), i_orisen_bunkatu_suu_old);
-            if (app.foldLineDividingNumber < 1) {
-                app.foldLineDividingNumber = 1;
-            }
-            lineSegmentDivisionTextField.setText(String.valueOf(app.foldLineDividingNumber));
-            app.mainDrawingWorker.setFoldLineDividingNumber(app.foldLineDividingNumber);
-
             app.setHelp("senbun_bunkatu_set");
+
+            getData(app.canvasModel);
 
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DIVISION_27);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
@@ -358,16 +348,10 @@ public class LeftPanel extends JPanel {
             app.repaintCanvas();
         });
         senbun_b_nyuryokuButton.addActionListener(e -> {
-
-            int i_orisen_bunkatu_suu_old = app.foldLineDividingNumber;
-            app.foldLineDividingNumber = StringOp.String2int(lineSegmentDivisionTextField.getText(), i_orisen_bunkatu_suu_old);
-            if (app.foldLineDividingNumber < 1) {
-                app.foldLineDividingNumber = 1;
-            }
-            lineSegmentDivisionTextField.setText(String.valueOf(app.foldLineDividingNumber));
-            app.mainDrawingWorker.setFoldLineDividingNumber(app.foldLineDividingNumber);
-
             app.setHelp("senbun_b_nyuryoku");
+
+            getData(app.canvasModel);
+
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DIVISION_27);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
 
@@ -408,9 +392,7 @@ public class LeftPanel extends JPanel {
         moveButton.addActionListener(e -> {
             app.setHelp("move");
 
-            app.selectionOperationMode = App.SelectionOperationMode.MOVE_1;
-            app.Button_sel_mou_wakukae();
-
+            app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.MOVE_1);
             app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
 
             app.Button_shared_operation();
@@ -418,9 +400,8 @@ public class LeftPanel extends JPanel {
         });
         move2p2pButton.addActionListener(e -> {
             app.setHelp("move_2p2p");
-            app.selectionOperationMode = App.SelectionOperationMode.MOVE4P_2;
-            app.Button_sel_mou_wakukae();
 
+            app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.MOVE4P_2);
             app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
 
             app.Button_shared_operation();
@@ -428,9 +409,8 @@ public class LeftPanel extends JPanel {
         });
         copyButton.addActionListener(e -> {
             app.setHelp("copy_paste");
-            app.selectionOperationMode = App.SelectionOperationMode.COPY_3;
-            app.Button_sel_mou_wakukae();
 
+            app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.COPY_3);
             app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
 
             app.Button_shared_operation();
@@ -438,9 +418,8 @@ public class LeftPanel extends JPanel {
         });
         copy2p2pButton.addActionListener(e -> {
             app.setHelp("copy_paste_2p2p");
-            app.selectionOperationMode = App.SelectionOperationMode.COPY4P_4;
-            app.Button_sel_mou_wakukae();
 
+            app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.COPY4P_4);
             app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
 
             app.Button_shared_operation();
@@ -448,9 +427,8 @@ public class LeftPanel extends JPanel {
         });
         reflectButton.addActionListener(e -> {
             app.setHelp("kyouei");
-            app.selectionOperationMode = App.SelectionOperationMode.MIRROR_5;
-            app.Button_sel_mou_wakukae();
 
+            app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.MIRROR_5);
             app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
 
             app.Button_shared_operation();
@@ -464,18 +442,17 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        senbun_sakujyoButton.addActionListener(e -> {
+        lineSegmentDeleteButton.addActionListener(e -> {
             app.setHelp("senbun_sakujyo");
 
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
-
             app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        kuro_senbun_sakujyoButton.addActionListener(e -> {
+        edgeLineSegmentDeleteButton.addActionListener(e -> {
             app.setHelp("kuro_senbun_sakujyo");
 
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
@@ -485,7 +462,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        senbun3_sakujyoButton.addActionListener(e -> {
+        auxLiveLineSegmentDeleteButton.addActionListener(e -> {
             app.setHelp("senbun3_sakujyo");
 
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
@@ -495,7 +472,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        eda_kesiButton.addActionListener(e -> {
+        trimBranchesButton.addActionListener(e -> {
             app.setHelp("eda_kesi");
             app.mainDrawingWorker.point_removal();
             app.mainDrawingWorker.overlapping_line_removal();
@@ -659,10 +636,14 @@ public class LeftPanel extends JPanel {
         correctCpBeforeFoldingCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_cp_kaizen_oritatami");
 
+            app.canvasModel.setCorrectCpBeforeFolding(correctCpBeforeFoldingCheckBox.isSelected());
+
             app.repaintCanvas();
         });
         selectPersistentCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_select_nokosi");
+
+            app.canvasModel.setSelectPersistent(selectPersistentCheckBox.isSelected());
 
             app.repaintCanvas();
         });
@@ -694,7 +675,7 @@ public class LeftPanel extends JPanel {
             app.setHelp("suitei_01");
 
             app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
-            if (!selectPersistentCheckBox.isSelected()) {
+            if (!app.canvasModel.isSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
 
@@ -711,7 +692,7 @@ public class LeftPanel extends JPanel {
             app.setHelp("suitei_02");
 
             app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
-            if (!selectPersistentCheckBox.isSelected()) {
+            if (!app.canvasModel.isSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
 
@@ -722,34 +703,29 @@ public class LeftPanel extends JPanel {
 
             app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
 
-            if (!selectPersistentCheckBox.isSelected()) {
+            if (!app.canvasModel.isSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
             app.Button_shared_operation();
         });
-        coloredXRayButton.addActionListener(e -> {
+        coloredXRayCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_toukazu_color");
-            if (coloredXRayButton.isSelected()) {
-                app.OZ.transparencyColor = true;
-                System.out.println("coloredXRayButton.isSelected()");
-            }//カラーの透過図
-            else {
-                app.OZ.transparencyColor = false;
-                System.out.println("coloredXRayButton.is not Selected()");
-            }
-            app.repaintCanvas();
+
+            app.foldedFigureModel.setTransparencyColor(coloredXRayCheckBox.isSelected());
         });
         coloredXRayDecreaseButton.addActionListener(e -> {
-            app.OZ.decreaseTransparency();
             app.setHelp("toukazu_color_sage");
+
+            app.foldedFigureModel.decreaseTransparency();
+
             app.Button_shared_operation();
-            app.repaintCanvas();
         });
         coloredXRayIncreaseButton.addActionListener(e -> {
-            app.OZ.increaseTransparency();
             app.setHelp("toukazu_color_age");
+
+            app.foldedFigureModel.increaseTransparency();
+
             app.Button_shared_operation();
-            app.repaintCanvas();
         });
         gridConfigureDialog = new GridConfigureDialog(app, app.gridModel);
         gridConfigureDialog.pack();
@@ -769,44 +745,8 @@ public class LeftPanel extends JPanel {
         gridConfigureDialog.setData(gridModel);
     }
 
-    public UndoRedo getUndoRedo() {
-        return undoRedo;
-    }
-
     public JCheckBox getColoredXRayButton() {
-        return coloredXRayButton;
-    }
-
-    public JCheckBox getCorrectCpBeforeFoldingCheckBox() {
-        return correctCpBeforeFoldingCheckBox;
-    }
-
-    public JCheckBox getSelectPersistentCheckBox() {
-        return selectPersistentCheckBox;
-    }
-
-    public JTextField getLineSegmentDivisionTextField() {
-        return lineSegmentDivisionTextField;
-    }
-
-    public JButton getReflectButton() {
-        return reflectButton;
-    }
-
-    public JButton getMoveButton() {
-        return moveButton;
-    }
-
-    public JButton getMove2p2pButton() {
-        return move2p2pButton;
-    }
-
-    public JButton getCopyButton() {
-        return copyButton;
-    }
-
-    public JButton getCopy2p2pButton() {
-        return copy2p2pButton;
+        return coloredXRayCheckBox;
     }
 
     /**
@@ -937,38 +877,38 @@ public class LeftPanel extends JPanel {
         gbc.gridy = 17;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(panel5, gbc);
-        senbun_sakujyoButton = new JButton();
-        senbun_sakujyoButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_sakujyo.png")));
+        lineSegmentDeleteButton = new JButton();
+        lineSegmentDeleteButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_sakujyo.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel5.add(senbun_sakujyoButton, gbc);
-        kuro_senbun_sakujyoButton = new JButton();
-        kuro_senbun_sakujyoButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kuro_senbun_sakujyo.png")));
+        panel5.add(lineSegmentDeleteButton, gbc);
+        edgeLineSegmentDeleteButton = new JButton();
+        edgeLineSegmentDeleteButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kuro_senbun_sakujyo.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel5.add(kuro_senbun_sakujyoButton, gbc);
-        senbun3_sakujyoButton = new JButton();
-        senbun3_sakujyoButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun3_sakujyo.png")));
+        panel5.add(edgeLineSegmentDeleteButton, gbc);
+        auxLiveLineSegmentDeleteButton = new JButton();
+        auxLiveLineSegmentDeleteButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun3_sakujyo.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel5.add(senbun3_sakujyoButton, gbc);
-        eda_kesiButton = new JButton();
-        eda_kesiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/eda_kesi.png")));
+        panel5.add(auxLiveLineSegmentDeleteButton, gbc);
+        trimBranchesButton = new JButton();
+        trimBranchesButton.setIcon(new ImageIcon(getClass().getResource("/ppp/eda_kesi.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel5.add(eda_kesiButton, gbc);
+        panel5.add(trimBranchesButton, gbc);
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
@@ -1196,11 +1136,11 @@ public class LeftPanel extends JPanel {
         gbc.gridx = 1;
         gbc.gridy = 0;
         panel13.add(suitei_03Button, gbc);
-        coloredXRayButton = new JCheckBox();
+        coloredXRayCheckBox = new JCheckBox();
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
-        panel13.add(coloredXRayButton, gbc);
+        panel13.add(coloredXRayCheckBox, gbc);
         coloredXRayDecreaseButton = new JButton();
         coloredXRayDecreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/ck4_color_sage.png")));
         gbc = new GridBagConstraints();
@@ -1221,24 +1161,24 @@ public class LeftPanel extends JPanel {
         gbc.gridheight = 2;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(panel14, gbc);
-        senbun_nyuryokuButton = new JButton();
-        senbun_nyuryokuButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku.png")));
+        drawCreaseFreeButton = new JButton();
+        drawCreaseFreeButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel14.add(senbun_nyuryokuButton, gbc);
-        senbun_nyuryoku11Button = new JButton();
-        senbun_nyuryoku11Button.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku11.png")));
+        panel14.add(drawCreaseFreeButton, gbc);
+        drawCreaseRestrictedButton = new JButton();
+        drawCreaseRestrictedButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku11.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel14.add(senbun_nyuryoku11Button, gbc);
+        panel14.add(drawCreaseRestrictedButton, gbc);
         voronoiButton = new JButton();
         voronoiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/Voronoi.png")));
         gbc = new GridBagConstraints();
@@ -1248,51 +1188,51 @@ public class LeftPanel extends JPanel {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel14.add(voronoiButton, gbc);
-        oritatami_kanousenButton = new JButton();
-        oritatami_kanousenButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oritatami_kanousen.png")));
+        makeFlatFoldableButton = new JButton();
+        makeFlatFoldableButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oritatami_kanousen.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel14.add(oritatami_kanousenButton, gbc);
-        senbun_entyouButton = new JButton();
-        senbun_entyouButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_entyou.png")));
+        panel14.add(makeFlatFoldableButton, gbc);
+        lengthenCreaseButton = new JButton();
+        lengthenCreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_entyou.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel14.add(senbun_entyouButton, gbc);
-        senbun_entyou_2Button = new JButton();
-        senbun_entyou_2Button.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_entyou_2.png")));
+        panel14.add(lengthenCreaseButton, gbc);
+        lengthenCrease2Button = new JButton();
+        lengthenCrease2Button.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_entyou_2.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel14.add(senbun_entyou_2Button, gbc);
-        kaku_toubunButton = new JButton();
-        kaku_toubunButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kaku_toubun.png")));
+        panel14.add(lengthenCrease2Button, gbc);
+        angleBisectorButton = new JButton();
+        angleBisectorButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kaku_toubun.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel14.add(kaku_toubunButton, gbc);
-        naishinButton = new JButton();
-        naishinButton.setIcon(new ImageIcon(getClass().getResource("/ppp/naishin.png")));
+        panel14.add(angleBisectorButton, gbc);
+        inwardButton = new JButton();
+        inwardButton.setIcon(new ImageIcon(getClass().getResource("/ppp/naishin.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel14.add(naishinButton, gbc);
+        panel14.add(inwardButton, gbc);
         final JPanel panel15 = new JPanel();
         panel15.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
@@ -1301,42 +1241,42 @@ public class LeftPanel extends JPanel {
         gbc.gridheight = 3;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(panel15, gbc);
-        suisenButton = new JButton();
-        suisenButton.setIcon(new ImageIcon(getClass().getResource("/ppp/suisen.png")));
+        perpendicularDrawButton = new JButton();
+        perpendicularDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/suisen.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel15.add(suisenButton, gbc);
-        orikaesiButton = new JButton();
-        orikaesiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/orikaesi.png")));
+        panel15.add(perpendicularDrawButton, gbc);
+        symmetricDrawButton = new JButton();
+        symmetricDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/orikaesi.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel15.add(orikaesiButton, gbc);
-        heikousenButton = new JButton();
-        heikousenButton.setIcon(new ImageIcon(getClass().getResource("/ppp/heikousen.png")));
+        panel15.add(symmetricDrawButton, gbc);
+        parallelDrawButton = new JButton();
+        parallelDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/heikousen.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel15.add(heikousenButton, gbc);
-        heikousen_haba_siteiButton = new JButton();
-        heikousen_haba_siteiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/heikousen_haba_sitei.png")));
+        panel15.add(parallelDrawButton, gbc);
+        setParallelDrawWidthButton = new JButton();
+        setParallelDrawWidthButton.setIcon(new ImageIcon(getClass().getResource("/ppp/heikousen_haba_sitei.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel15.add(heikousen_haba_siteiButton, gbc);
+        panel15.add(setParallelDrawWidthButton, gbc);
         all_s_step_to_orisenButton = new JButton();
         all_s_step_to_orisenButton.setIcon(new ImageIcon(getClass().getResource("/ppp/all_s_step_to_orisen.png")));
         gbc = new GridBagConstraints();
@@ -1346,15 +1286,15 @@ public class LeftPanel extends JPanel {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel15.add(all_s_step_to_orisenButton, gbc);
-        sakananohoneButton = new JButton();
-        sakananohoneButton.setIcon(new ImageIcon(getClass().getResource("/ppp/sakananohone.png")));
+        fishBoneDrawButton = new JButton();
+        fishBoneDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/sakananohone.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel15.add(sakananohoneButton, gbc);
+        panel15.add(fishBoneDrawButton, gbc);
         lineSegmentDivisionTextField = new JTextField();
         lineSegmentDivisionTextField.setColumns(2);
         lineSegmentDivisionTextField.setText("2");
@@ -1372,33 +1312,33 @@ public class LeftPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel15.add(lineSegmentDivisionSetButton, gbc);
-        renzoku_orikaesiButton = new JButton();
-        renzoku_orikaesiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/renzoku_orikaesi.png")));
+        continuousSymmetricDrawButton = new JButton();
+        continuousSymmetricDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/renzoku_orikaesi.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel15.add(renzoku_orikaesiButton, gbc);
-        oritatami_kanousen_and_kousitenkei_simpleButton = new JButton();
-        oritatami_kanousen_and_kousitenkei_simpleButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oritatami_kanousen_and_kousitenkei_simple.png")));
+        panel15.add(continuousSymmetricDrawButton, gbc);
+        foldableLineDrawButton = new JButton();
+        foldableLineDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oritatami_kanousen_and_kousitenkei_simple.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel15.add(oritatami_kanousen_and_kousitenkei_simpleButton, gbc);
-        fuku_orikaesiButton = new JButton();
-        fuku_orikaesiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/fuku_orikaesi.png")));
+        panel15.add(foldableLineDrawButton, gbc);
+        doubleSymmetricDrawButton = new JButton();
+        doubleSymmetricDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/fuku_orikaesi.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 2;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel15.add(fuku_orikaesiButton, gbc);
+        panel15.add(doubleSymmetricDrawButton, gbc);
         senbun_b_nyuryokuButton = new JButton();
         senbun_b_nyuryokuButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_b_nyuryoku.png")));
         gbc = new GridBagConstraints();
@@ -1567,7 +1507,13 @@ public class LeftPanel extends JPanel {
         panel1 = this;
     }
 
+    public void getData(CanvasModel data) {
+        data.setFoldLineDividingNumber(StringOp.String2int(lineSegmentDivisionTextField.getText(), data.getFoldLineDividingNumber()));
+    }
+
     public void setData(PropertyChangeEvent e, CanvasModel data) {
+        lineSegmentDivisionTextField.setText(String.valueOf(data.getFoldLineDividingNumber()));
+
         if (e.getPropertyName() == null || e.getPropertyName().equals("lineColor")) {
             Color gray = new Color(150, 150, 150);
 
@@ -1600,7 +1546,17 @@ public class LeftPanel extends JPanel {
         }
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
-            buttonReset();
+            toMountainButton.setForeground(Color.black);
+            toValleyButton.setForeground(Color.black);
+            toEdgeButton.setForeground(Color.black);
+            toAuxButton.setForeground(Color.black); //HKとは補助活線のこと
+            senbun_henkan2Button.setForeground(Color.black);
+
+            toMountainButton.setBackground(Color.white);
+            toValleyButton.setBackground(Color.white);
+            toEdgeButton.setBackground(Color.white);
+            toAuxButton.setBackground(Color.white);
+            senbun_henkan2Button.setBackground(Color.white);
 
             switch (data.getMouseMode()) {
                 case CREASE_MAKE_MOUNTAIN_23:
@@ -1625,19 +1581,38 @@ public class LeftPanel extends JPanel {
             }
         }
 
+        if (e.getPropertyName() == null || e.getPropertyName().equals("selectionOperationMode")) {
+            moveButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
+            move2p2pButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
+            copyButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
+            copy2p2pButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
+            reflectButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
+
+            switch (data.getSelectionOperationMode()) {
+                case MOVE_1:
+                    moveButton.setBorder(new LineBorder(Color.green, 3, false));
+                    break;
+                case MOVE4P_2:
+                    move2p2pButton.setBorder(new LineBorder(Color.green, 3, false));
+                    break;
+                case COPY_3:
+                    copyButton.setBorder(new LineBorder(Color.green, 3, false));
+                    break;
+                case COPY4P_4:
+                    copy2p2pButton.setBorder(new LineBorder(Color.green, 3, false));
+                    break;
+                case MIRROR_5:
+                    reflectButton.setBorder(new LineBorder(Color.green, 3, false));
+                    break;
+            }
+        }
     }
 
-    void buttonReset() {
-        toMountainButton.setForeground(Color.black);
-        toValleyButton.setForeground(Color.black);
-        toEdgeButton.setForeground(Color.black);
-        toAuxButton.setForeground(Color.black); //HKとは補助活線のこと
-        senbun_henkan2Button.setForeground(Color.black);
+    public void setData(HistoryStateModel historyStateModel) {
+        undoRedo.setText(String.valueOf(historyStateModel.getHistoryTotal()));
+    }
 
-        toMountainButton.setBackground(Color.white);
-        toValleyButton.setBackground(Color.white);
-        toEdgeButton.setBackground(Color.white);
-        toAuxButton.setBackground(Color.white);
-        senbun_henkan2Button.setBackground(Color.white);
+    public void setData(FoldedFigureModel foldedFigureModel) {
+        coloredXRayCheckBox.setSelected(foldedFigureModel.isTransparencyColor());
     }
 }

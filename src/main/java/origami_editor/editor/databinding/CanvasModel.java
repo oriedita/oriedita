@@ -1,10 +1,12 @@
 package origami_editor.editor.databinding;
 
+import origami_editor.editor.App;
 import origami_editor.editor.LineColor;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 
+import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -34,6 +36,101 @@ public class CanvasModel {
 
     private DrawingWorker.FoldLineAdditionalInputMode foldLineAdditionalInputMode;
     private DrawingWorker.FoldLineAdditionalInputMode foldLineAdditionalInputMode_old;
+
+    private Color circleCustomizedColor;
+
+    private boolean selectPersistent;
+
+    public boolean isCorrectCpBeforeFolding() {
+        return correctCpBeforeFolding;
+    }
+
+    public void setCorrectCpBeforeFolding(boolean correctCpBeforeFolding) {
+        boolean oldCorrectCpBeforeFolding = this.correctCpBeforeFolding;
+        this.correctCpBeforeFolding = correctCpBeforeFolding;
+        this.pcs.firePropertyChange("correctCpBeforeFolding", oldCorrectCpBeforeFolding, correctCpBeforeFolding);
+    }
+
+    private boolean correctCpBeforeFolding;
+
+    public boolean isSelectPersistent() {
+        return selectPersistent;
+    }
+
+    public void setSelectPersistent(boolean selectPersistent) {
+        boolean oldSelectPersistent = this.selectPersistent;
+        this.selectPersistent = selectPersistent;
+        this.pcs.firePropertyChange("selectPersistent", oldSelectPersistent, selectPersistent);
+    }
+
+    public Color getCircleCustomizedColor() {
+        return circleCustomizedColor;
+    }
+
+    public void setCircleCustomizedColor(Color circleCustomizedColor) {
+        Color oldCircleCustomizedColor = this.circleCustomizedColor;
+        this.circleCustomizedColor = circleCustomizedColor;
+        this.pcs.firePropertyChange("circleCustomizedColor", oldCircleCustomizedColor, circleCustomizedColor);
+    }
+
+    public boolean getCheck4Enabled() {
+        return check4Enabled;
+    }
+
+    public void setCheck4Enabled(boolean check4Enabled) {
+        boolean oldCheck4Enabled = this.check4Enabled;
+        this.check4Enabled = check4Enabled;
+        this.pcs.firePropertyChange("check4Enabled", oldCheck4Enabled, check4Enabled);
+    }
+
+    private boolean check4Enabled;
+
+    /**
+     * Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
+     */
+    private App.SelectionOperationMode selectionOperationMode;
+
+    private int foldLineDividingNumber;
+
+    public int getNumPolygonCorners() {
+        return numPolygonCorners;
+    }
+
+    public void setNumPolygonCorners(int numPolygonCorners) {
+        int oldNumPolygonCorners = this.numPolygonCorners;
+
+        if (numPolygonCorners < 3) {
+            numPolygonCorners = 3;
+        }
+        if (numPolygonCorners > 100) {
+            numPolygonCorners = 100;
+        }
+
+        this.numPolygonCorners = numPolygonCorners;
+        this.pcs.firePropertyChange("numPolygonCorners", oldNumPolygonCorners, numPolygonCorners);
+    }
+
+    private int numPolygonCorners;
+
+    public int getFoldLineDividingNumber() {
+        return foldLineDividingNumber;
+    }
+
+    public void setFoldLineDividingNumber(int foldLineDividingNumber) {
+        int oldFoldLineDividingNumber = this.foldLineDividingNumber;
+        this.foldLineDividingNumber = Math.max(foldLineDividingNumber, 1);
+        this.pcs.firePropertyChange("foldLineDividingNumber", oldFoldLineDividingNumber, this.foldLineDividingNumber);
+    }
+
+    public App.SelectionOperationMode getSelectionOperationMode() {
+        return selectionOperationMode;
+    }
+
+    public void setSelectionOperationMode(App.SelectionOperationMode selectionOperationMode) {
+        App.SelectionOperationMode oldSelectionOperationMode = this.selectionOperationMode;
+        this.selectionOperationMode = selectionOperationMode;
+        this.pcs.firePropertyChange("selectionOperationMode", oldSelectionOperationMode, selectionOperationMode);
+    }
 
     public CanvasModel() {
         reset();
@@ -181,6 +278,19 @@ public class CanvasModel {
 
         foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;
         foldLineAdditionalInputMode_old = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;
+
+        selectionOperationMode = App.SelectionOperationMode.NORMAL_0;
+
+        foldLineDividingNumber = 2;
+
+        numPolygonCorners = 5;
+
+        check4Enabled = false;
+
+        circleCustomizedColor = new Color(100, 200, 200);
+
+        selectPersistent = false;
+        correctCpBeforeFolding = false;
 
         this.pcs.firePropertyChange(null, null, null);
     }

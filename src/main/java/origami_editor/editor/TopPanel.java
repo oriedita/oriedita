@@ -1,8 +1,6 @@
 package origami_editor.editor;
 
-import origami_editor.editor.databinding.CanvasModel;
-import origami_editor.editor.databinding.FoldedFigureModel;
-import origami_editor.editor.databinding.InternalDivisionRatioModel;
+import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
@@ -294,11 +292,10 @@ public class TopPanel extends JPanel {
 
 
 //背景表示の各条件を設定
-            app.displayBackground = true;
-            app.backgroundToggleButton.setBackground(Color.ORANGE);
+            app.backgroundModel.setDisplayBackground(true);
 
-            if (app.lockBackground) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                app.h_cam.set_i_Lock_on(app.lockBackground);
+            if (app.backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
+                app.h_cam.set_i_Lock_on(true);
                 app.h_cam.setCamera(app.camera_of_orisen_input_diagram);
                 app.h_cam.h3_obj_and_h4_obj_calculation();
             }
@@ -313,7 +310,7 @@ public class TopPanel extends JPanel {
 
             Graphics2D g2_background = app.offsc_background.createGraphics();
             //背景表示
-            if ((app.img_background != null) && app.displayBackground) {
+            if ((app.img_background != null) && app.backgroundModel.isDisplayBackground()) {
                 int iw = app.img_background.getWidth(null);//イメージの幅を取得
                 int ih = app.img_background.getHeight(null);//イメージの高さを取得
 
@@ -340,12 +337,14 @@ public class TopPanel extends JPanel {
                         new Point(xmin, ymin),
                         new Point((double) xmin + 10.0, ymin));
 
-                if (app.lockBackground) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                    app.h_cam.set_i_Lock_on(app.lockBackground);
+                if (app.backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
+                    app.h_cam.set_i_Lock_on(true);
                     app.h_cam.setCamera(app.camera_of_orisen_input_diagram);
                     app.h_cam.h3_obj_and_h4_obj_calculation();
                 }
             }
+
+            app.repaintCanvas();
         });
         readBackgroundButton.addActionListener(e -> {
             app.setHelp("haikei");
@@ -355,13 +354,9 @@ public class TopPanel extends JPanel {
 
             app.readImageFromFile();
 
-            app.displayBackground = true;
-            backgroundToggleButton.setBackground(Color.ORANGE);
-
-
             app.h_cam = new Background_camera();//20181202
-            if (app.lockBackground) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                app.h_cam.set_i_Lock_on(app.lockBackground);
+            if (app.backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
+                app.h_cam.set_i_Lock_on(app.backgroundModel.isLockBackground());
                 app.h_cam.setCamera(app.camera_of_orisen_input_diagram);
                 app.h_cam.h3_obj_and_h4_obj_calculation();
             }
@@ -371,13 +366,7 @@ public class TopPanel extends JPanel {
         backgroundToggleButton.addActionListener(e -> {
             app.setHelp("haikei_kirikae");
 
-            app.displayBackground = !app.displayBackground;
-
-            if (!app.displayBackground) {
-                backgroundToggleButton.setBackground(Color.gray);
-            } else {
-                backgroundToggleButton.setBackground(Color.ORANGE);
-            }
+            app.backgroundModel.setDisplayBackground(!app.backgroundModel.isDisplayBackground());
 
             app.repaintCanvas();
         });
@@ -392,20 +381,7 @@ public class TopPanel extends JPanel {
         backgroundLockButton.addActionListener(e -> {
             app.setHelp("haikei_Lock_on");
 
-            app.lockBackground_ori = !app.lockBackground_ori;
-            app.lockBackground = app.lockBackground_ori;
-
-            if (app.lockBackground) {
-                backgroundLockButton.setBackground(Color.ORANGE);
-
-                app.h_cam.set_i_Lock_on(app.lockBackground);
-                app.h_cam.setCamera(app.camera_of_orisen_input_diagram);
-                app.h_cam.h3_obj_and_h4_obj_calculation();
-            } else {
-                backgroundLockButton.setBackground(Color.gray);
-
-                app.h_cam.set_i_Lock_on(app.lockBackground);
-            }
+            app.backgroundModel.setLockBackground(!app.backgroundModel.isLockBackground());
 
             app.repaintCanvas();
         });
@@ -762,4 +738,17 @@ public class TopPanel extends JPanel {
         return rootPanel;
     }
 
+    public void setData(BackgroundModel backgroundModel) {
+        if (backgroundModel.isDisplayBackground()) {
+            backgroundToggleButton.setBackground(Color.orange);
+        } else {
+            backgroundToggleButton.setBackground(Color.gray);
+        }
+
+        if (backgroundModel.isLockBackground()) {
+            backgroundLockButton.setBackground(Color.orange);
+        } else {
+            backgroundLockButton.setBackground(Color.gray);
+        }
+    }
 }

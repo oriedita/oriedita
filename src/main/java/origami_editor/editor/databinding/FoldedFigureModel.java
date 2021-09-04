@@ -17,6 +17,42 @@ public class FoldedFigureModel {
     private boolean displayShadows;
     private FoldedFigure.State state;
 
+    public int getTransparentTransparency() {
+        return transparentTransparency;
+    }
+
+    public void setTransparentTransparency(int transparentTransparency) {
+        int oldTransparentTransparency = this.transparentTransparency;
+        this.transparentTransparency = transparentTransparency;
+        this.pcs.firePropertyChange("transparentTransparency", oldTransparentTransparency, transparentTransparency);
+    }
+
+    private int transparentTransparency;
+
+    private boolean transparencyColor;
+
+    public boolean isTransparencyColor() {
+        return transparencyColor;
+    }
+
+    public void setTransparencyColor(boolean transparencyColor) {
+        boolean oldTransparencyColor = this.transparencyColor;
+        this.transparencyColor = transparencyColor;
+        this.pcs.firePropertyChange("transparencyColor", oldTransparencyColor, transparencyColor);
+    }
+
+    public int getHistoryTotal() {
+        return historyTotal;
+    }
+
+    public void setHistoryTotal(int historyTotal) {
+        int oldHistoryTotal = this.historyTotal;
+        this.historyTotal = Math.max(historyTotal, 0);
+        this.pcs.firePropertyChange("historyTotal", oldHistoryTotal, this.historyTotal);
+    }
+
+    private int historyTotal;
+
     public FoldedFigureModel() {
         reset();
     }
@@ -39,6 +75,12 @@ public class FoldedFigureModel {
         frontColor = new Color(255, 255, 50);
         backColor = new Color(233, 233, 233);
         lineColor = Color.black;
+
+        historyTotal = 20;
+
+        transparencyColor = false;
+
+        transparentTransparency = 16;
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -135,5 +177,14 @@ public class FoldedFigureModel {
 
     public void advanceState() {
         setState(state.advance());
+    }
+
+    public void decreaseTransparency() {
+        setTransparentTransparency(Math.max(this.transparentTransparency / 2, 1));
+    }
+
+    public void increaseTransparency() {
+
+        setTransparentTransparency(Math.min(this.transparentTransparency * 2, 64));
     }
 }
