@@ -51,11 +51,10 @@ public class TopPanel extends JPanel {
         app.canvasModel.addPropertyChangeListener(e -> setData((CanvasModel) e.getSource()));
         tyouhoukei_selectButton.addActionListener(e -> {
             app.setHelp("tyouhoukei_select");
-            app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
-            app.mainDrawingWorker.setFoldLineAdditional(app.foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
-            app.mouseMode = MouseMode.OPERATION_FRAME_CREATE_61;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_FREE_1;
-            System.out.println("mouseMode = " + app.mouseMode);
+
+            app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0);
+            app.canvasModel.setMouseMode(MouseMode.OPERATION_FRAME_CREATE_61);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -83,9 +82,8 @@ public class TopPanel extends JPanel {
 
             getData(app.internalDivisionRatioModel);
 
-            app.mouseMode = MouseMode.LINE_SEGMENT_RATIO_SET_28;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_RATIO_SET_28;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_RATIO_SET_28);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_RATIO_SET_28);
 
             app.Button_shared_operation();
             app.repaintCanvas();
@@ -95,9 +93,8 @@ public class TopPanel extends JPanel {
 
             getData(app.internalDivisionRatioModel);
 
-            app.mouseMode = MouseMode.LINE_SEGMENT_RATIO_SET_28;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_RATIO_SET_28;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_RATIO_SET_28);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_RATIO_SET_28);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -106,8 +103,7 @@ public class TopPanel extends JPanel {
         tenkaizu_idiuButton.addActionListener(e -> {
             app.setHelp("tenkaizu_idiu");
 
-            app.mouseMode = MouseMode.MOVE_CREASE_PATTERN_2;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.MOVE_CREASE_PATTERN_2);
 
             app.repaintCanvas();
         });
@@ -388,10 +384,10 @@ public class TopPanel extends JPanel {
         backgroundSetPositionButton.addActionListener(e -> {
             app.setHelp("set_BG");
 
-            app.mouseMode = MouseMode.BACKGROUND_CHANGE_POSITION_26;
+            app.canvasModel.setMouseMode(MouseMode.BACKGROUND_CHANGE_POSITION_26);
+
             app.Button_shared_operation();
             app.repaintCanvas();
-            System.out.println("mouseMode = " + app.mouseMode);
         });
         backgroundLockButton.addActionListener(e -> {
             app.setHelp("haikei_Lock_on");
@@ -415,8 +411,8 @@ public class TopPanel extends JPanel {
         });
         senbun_yoke_henkanButton.addActionListener(e -> {
             app.setHelp("senbun_yoke_henkan");
-            app.mouseMode = MouseMode.CREASE_ADVANCE_TYPE_30;
-            System.out.println("mouseMode = " + app.mouseMode);
+
+            app.canvasModel.setMouseMode(MouseMode.CREASE_ADVANCE_TYPE_30);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();

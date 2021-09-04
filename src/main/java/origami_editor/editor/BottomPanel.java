@@ -145,8 +145,8 @@ public class BottomPanel extends JPanel {
             app.OZ.i_foldedFigure_operation_mode = 1;
             app.OZ.setAllPointStateFalse();
             app.OZ.record();
-            app.mouseMode = MouseMode.MODIFY_CALCULATED_SHAPE_101;
-            System.out.println("mouseMode = " + app.mouseMode);
+
+            app.canvasModel.setMouseMode(MouseMode.MODIFY_CALCULATED_SHAPE_101);
 
             app.Button_shared_operation();
         });
@@ -155,17 +155,16 @@ public class BottomPanel extends JPanel {
             app.OZ.i_foldedFigure_operation_mode = 2;
             app.OZ.setAllPointStateFalse();
             app.OZ.record();
-            app.mouseMode = MouseMode.MODIFY_CALCULATED_SHAPE_101;
-            System.out.println("mouseMode = " + app.mouseMode);
 
+            app.canvasModel.setMouseMode(MouseMode.MODIFY_CALCULATED_SHAPE_101);
 
             app.Button_shared_operation();
         });
         foldedFigureMove.addActionListener(e -> {
             app.setHelp("oriagari_idiu");
 
-            app.mouseMode = MouseMode.MOVE_CALCULATED_SHAPE_102;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.MOVE_CALCULATED_SHAPE_102);
+
             app.Button_shared_operation();
         });
         a_aButton.addActionListener(e -> {
@@ -266,8 +265,8 @@ public class BottomPanel extends JPanel {
 
             app.Button_shared_operation();
             app.repaintCanvas();
-            app.mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;
-            System.out.println("mouseMode = " + app.mouseMode);
+
+            app.canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);
 
             app.mainDrawingWorker.record();
             app.mainDrawingWorker.auxRecord();

@@ -69,31 +69,16 @@ public class App extends JFrame implements ActionListener {
     ArrayList<FoldedFigure> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
     int foldedFigureIndex = 0;//Specify which number of foldedFigures Oriagari_Zu is the target of button operation or transformation operation
     Background_camera h_cam = new Background_camera();
-    LineColor currentLineColor;//基本枝職人の枝の色を指定する。0は黒、1は赤、2は赤。//currentLineColor=0 black	//currentLineColor=1 red	//currentLineColor=2 blue	//currentLineColor=3 cyan	//currentLineColor=4 orange	//currentLineColor=5 mazenta	//currentLineColor=6 green	//currentLineColor=7 yellow	//currentLineColor=8 new Color(210,0,255) //紫
-    LineColor currentAuxLineColor;//補助線の枝の色を指定する。
-    MouseMode iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_FREE_1;//Number of work to be performed after specifying the color of black, red, blue, and water
     boolean w_image_running = false; // Folding together execution. If a single image export is in progress, it will be true.
     String fname_and_number;//まとめ書き出しに使う。
     //各種変数の定義
     String frame_title_0;//フレームのタイトルの根本部分
     String frame_title;//フレームのタイトルの全体
-    DrawingWorker.FoldLineAdditionalInputMode foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
     JButton Button_another_solution;                    //操作の指定に用いる（追加推定一個だけ）
     JButton Button_AS_matome;                    //操作の指定に用いる（追加推定100個）
     JButton Button_bangou_sitei_estimated_display;
-    JButton colBlackButton;                    //折線の色の指定に用いる
-    JButton colBlueButton;                    //折線の色の指定に用いる
-    JButton colRedButton;                    //折線の色の指定に用いる
-    JButton colCyanButton;                    //折線(補助線)の色の指定に用いる
-    JButton colOrangeButton;                    //補助線1の色の指定に用いる
-    JButton colYellowButton;                    //補助線2の色の指定に用いる
     JButton backgroundLockButton;//背景のロックオン
     JButton backgroundToggleButton;//Specify whether to display the background
-    JButton toMountainButton;                    //元がどんな種類の折線でも、山折りにする
-    JButton toValleyButton;                    //元がどんな種類の折線でも、谷折りにする
-    JButton toEdgeButton;                    //元がどんな種類の折線でも、境界線もしくは山谷未設定線にする
-    JButton toAuxLiveButton;                    //元がどんな種類の折線でも、補助活線にする
-    JButton lineSegmentConvert2Button;//Convert line segment color from red to blue and blue to red
     JTextField lineSegmentDivisionTextField;
     int foldLineDividingNumber = 1;//free折線入力で、折線の等分割されている数
     JTextField polygonSizeTextField;
@@ -241,7 +226,6 @@ public class App extends JFrame implements ActionListener {
 
         //camera_haikei	;
         //カメラの設定はここまで----------------------------------------------------
-        currentLineColor = LineColor.NONE;
         //step=1;
         myTh = null;
         // 初期表示
@@ -280,30 +264,14 @@ public class App extends JFrame implements ActionListener {
 
         leftPanel.getGridConfigurationData(gridModel);
 
-        colRedButton = leftPanel.getColRedButton();
-        colBlueButton = leftPanel.getColBlueButton();
-        colBlackButton = leftPanel.getColBlackButton();
-        colCyanButton = leftPanel.getColCyanButton();
-
         lineSegmentDivisionTextField = leftPanel.getLineSegmentDivisionTextField();
 
         moveButton = leftPanel.getMoveButton();
 
         move2p2pButton = leftPanel.getMove2p2pButton();
-
         copyButton = leftPanel.getCopyButton();
-
         copy2p2pButton = leftPanel.getCopy2p2pButton();
-
         reflectButton = leftPanel.getReflectButton();
-
-        toMountainButton = leftPanel.getM_nisuruButton();
-
-        toValleyButton = leftPanel.getV_nisuruButton();
-
-        toEdgeButton = leftPanel.getE_nisuruButton();
-        toAuxLiveButton = leftPanel.getHK_nisuruButton();
-        lineSegmentConvert2Button = leftPanel.getSenbun_henkan2Button();
 
         /*
          * Extract fields from eastPanel
@@ -312,8 +280,6 @@ public class App extends JFrame implements ActionListener {
         polygonSizeTextField = rightPanel.getPolygonSizeTextField();
         circleCustomizedColorButton = rightPanel.getC_colButton();
         h_undoTotalTextField = rightPanel.getAuxUndoTotalTextField();
-        colOrangeButton = rightPanel.getColOrangeButton();
-        colYellowButton = rightPanel.getColYellowButton();
 
         correctCpBeforeFoldingCheckBox = leftPanel.getCorrectCpBeforeFoldingCheckBox();
 
@@ -348,23 +314,21 @@ public class App extends JFrame implements ActionListener {
         angleSystemModel.addPropertyChangeListener(e -> {
             switch (angleSystemModel.getAngleSystemInputType()) {
                 case DEG_1:
-                    mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13);
                     break;
                 case DEG_2:
-                    mouseMode = MouseMode.ANGLE_SYSTEM_16;
+                    canvasModel.setMouseMode(MouseMode.ANGLE_SYSTEM_16);
                     break;
                 case DEG_3:
-                    mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17);
                     break;
                 case DEG_4:
-                    mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18);
                     break;
                 case DEG_5:
-                    mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37);
                     break;
             }
-
-            System.out.println("mouseMode = " + mouseMode);
         });
         angleSystemModel.addPropertyChangeListener(e -> repaintCanvas());
 
@@ -381,6 +345,17 @@ public class App extends JFrame implements ActionListener {
         canvasModel.addPropertyChangeListener(e -> canvas.setData(canvasModel));
         canvasModel.addPropertyChangeListener(e -> appMenuBar.setData(canvasModel));
         canvasModel.addPropertyChangeListener(e -> topPanel.setData(canvasModel));
+        canvasModel.addPropertyChangeListener(e -> rightPanel.setData(canvasModel));
+        canvasModel.addPropertyChangeListener(e -> leftPanel.setData(e, canvasModel));
+
+        canvasModel.addPropertyChangeListener(e -> {
+            if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
+                CanvasModel canvasModel = (CanvasModel) e.getSource();
+                System.out.println("mouseMode = " + canvasModel.getMouseMode());
+
+                mouseMode = canvasModel.getMouseMode();
+            }
+        });
 
         //展開図の初期化　開始
         //settei_syokika_cp();//展開図パラメータの初期化
@@ -598,8 +573,6 @@ public class App extends JFrame implements ActionListener {
         OZ.cp_worker1.setCamera(camera_of_orisen_input_diagram);
 
         //折線入力か補助線入力か
-        foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;
-//北辺
 
         canvasModel.reset();
 
@@ -637,12 +610,6 @@ public class App extends JFrame implements ActionListener {
         //折線表現を色で表す
 
         //ペンの色の指定
-        currentLineColor = LineColor.RED_1;
-        mainDrawingWorker.setColor(currentLineColor);    //最初の折線の色を指定する。0は黒、1は赤、2は青。
-        buttonColorReset();
-        colRedButton.setForeground(Color.black);
-        colRedButton.setBackground(Color.red);    //折線のボタンの色設定
-
 
         //折線分割数
         foldLineDividingNumber = 2;
@@ -664,13 +631,6 @@ public class App extends JFrame implements ActionListener {
         //多角形の角数
         numPolygonCorners = 5;
         polygonSizeTextField.setText(String.valueOf(numPolygonCorners));
-
-        //補助画線の色
-        currentAuxLineColor = LineColor.ORANGE_4;
-        mainDrawingWorker.setAuxLineColor(currentAuxLineColor);                                        //最初の補助線の色を指定する。4はオレンジ、7は黄。
-        auxColorButtonReset();
-        colOrangeButton.setForeground(Color.black);
-        colOrangeButton.setBackground(Color.ORANGE);    //補助線のボタンの色設定
 
         ckbox_check4.setSelected(false);//checkするかどうかの選択
         mainDrawingWorker.setCheck4(false);
@@ -724,40 +684,6 @@ public class App extends JFrame implements ActionListener {
                 reflectButton.setBorder(new LineBorder(Color.green, 3, false));
                 break;
         }
-    }
-
-    //--------------------------------------------------------
-    void buttonReset() {
-        toMountainButton.setForeground(Color.black);
-        toValleyButton.setForeground(Color.black);
-        toEdgeButton.setForeground(Color.black);
-        toAuxLiveButton.setForeground(Color.black); //HKとは補助活線のこと
-        lineSegmentConvert2Button.setForeground(Color.black);
-
-        toMountainButton.setBackground(Color.white);
-        toValleyButton.setBackground(Color.white);
-        toEdgeButton.setBackground(Color.white);
-        toAuxLiveButton.setBackground(Color.white);
-        lineSegmentConvert2Button.setBackground(Color.white);
-    }
-
-    //--------------------------------------------------------
-    void buttonColorReset() {
-        colBlackButton.setForeground(Color.black);
-        colBlueButton.setForeground(Color.black);
-        colRedButton.setForeground(Color.black);
-        colCyanButton.setForeground(Color.black);
-
-        colBlackButton.setBackground(new Color(150, 150, 150));
-        colBlueButton.setBackground(new Color(150, 150, 150));
-        colRedButton.setBackground(new Color(150, 150, 150));
-        colCyanButton.setBackground(new Color(150, 150, 150));
-    }
-
-    //--------------------------------------------------------
-    void auxColorButtonReset() {
-        colOrangeButton.setBackground(new Color(150, 150, 150));
-        colYellowButton.setBackground(new Color(150, 150, 150));
     }
 
     public void Button_shared_operation() {

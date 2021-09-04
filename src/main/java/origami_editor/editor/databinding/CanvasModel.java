@@ -1,6 +1,9 @@
 package origami_editor.editor.databinding;
 
+import origami_editor.editor.LineColor;
 import origami_editor.editor.LineStyle;
+import origami_editor.editor.MouseMode;
+import origami_editor.editor.drawing_worker.DrawingWorker;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -24,8 +27,71 @@ public class CanvasModel {
     private boolean antiAlias;
     private boolean mouseWheelMovesCreasePattern;
 
+    private LineColor lineColor;
+    private LineColor auxLiveLineColor;
+    private MouseMode mouseMode;
+    private MouseMode mouseModeAfterColorSelection;
+
+    private DrawingWorker.FoldLineAdditionalInputMode foldLineAdditionalInputMode;
+    private DrawingWorker.FoldLineAdditionalInputMode foldLineAdditionalInputMode_old;
+
     public CanvasModel() {
         reset();
+    }
+
+    public void restoreFoldLineAdditionalInputMode() {
+        setFoldLineAdditionalInputMode(foldLineAdditionalInputMode_old);
+    }
+
+    public DrawingWorker.FoldLineAdditionalInputMode getFoldLineAdditionalInputMode() {
+        return foldLineAdditionalInputMode;
+    }
+
+    public void setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode foldLineAdditionalInputMode) {
+        DrawingWorker.FoldLineAdditionalInputMode oldFoldLineAdditionalInputMode = this.foldLineAdditionalInputMode;
+        this.foldLineAdditionalInputMode_old = this.foldLineAdditionalInputMode;
+        this.foldLineAdditionalInputMode = foldLineAdditionalInputMode;
+        this.pcs.firePropertyChange("foldLineAdditionalInputMode", oldFoldLineAdditionalInputMode, foldLineAdditionalInputMode);
+    }
+
+    public MouseMode getMouseModeAfterColorSelection() {
+        return mouseModeAfterColorSelection;
+    }
+
+    public void setMouseModeAfterColorSelection(MouseMode mouseModeAfterColorSelection) {
+        MouseMode oldMouseModeAfterColorSelection = this.mouseModeAfterColorSelection;
+        this.mouseModeAfterColorSelection = mouseModeAfterColorSelection;
+        this.pcs.firePropertyChange("mouseModeAfterColorSelection", oldMouseModeAfterColorSelection, mouseModeAfterColorSelection);
+    }
+
+    public MouseMode getMouseMode() {
+        return mouseMode;
+    }
+
+    public void setMouseMode(MouseMode mouseMode) {
+        MouseMode oldMouseMode = this.mouseMode;
+        this.mouseMode = mouseMode;
+        this.pcs.firePropertyChange("mouseMode", oldMouseMode, mouseMode);
+    }
+
+    public LineColor getLineColor() {
+        return lineColor;
+    }
+
+    public void setLineColor(LineColor lineColor) {
+        LineColor oldLineColor = this.lineColor;
+        this.lineColor = lineColor;
+        this.pcs.firePropertyChange("lineColor", oldLineColor, lineColor);
+    }
+
+    public LineColor getAuxLiveLineColor() {
+        return auxLiveLineColor;
+    }
+
+    public void setAuxLiveLineColor(LineColor auxLiveLineColor) {
+        LineColor oldAuxLiveLineColor = this.auxLiveLineColor;
+        this.auxLiveLineColor = auxLiveLineColor;
+        this.pcs.firePropertyChange("auxLiveLineColor", oldAuxLiveLineColor, auxLiveLineColor);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -106,6 +172,15 @@ public class CanvasModel {
         lineStyle = LineStyle.COLOR;
         antiAlias = false;
         auxLineWidth = 3;
+
+        lineColor = LineColor.RED_1;
+        auxLiveLineColor = LineColor.ORANGE_4;
+
+        mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;
+        mouseModeAfterColorSelection = MouseMode.FOLDABLE_LINE_DRAW_71;
+
+        foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;
+        foldLineAdditionalInputMode_old = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;
 
         this.pcs.firePropertyChange(null, null, null);
     }

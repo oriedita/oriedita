@@ -45,6 +45,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     float lineWidth;
 
     LineStyle lineStyle;
+    
+    MouseMode mouseMode;
 
     // Applet width and height
     Dimension dim;
@@ -278,183 +280,183 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         Point p = new Point(app.e2p(e));
         app.mouse_object_position(p);
-        if (app.mouseMode == MouseMode.UNUSED_0) {
-        } else if (app.mouseMode == MouseMode.DRAW_CREASE_FREE_1) {
+        if (mouseMode == MouseMode.UNUSED_0) {
+        } else if (mouseMode == MouseMode.DRAW_CREASE_FREE_1) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_01(p);
         }   //1 線分入力モード（フリー）
-        //else if(app.mouseMode==2)  {		}						       //2 展開図移動。
-        //else if(app.mouseMode==3)  { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_03(p);}//線分削除モード。
-        //else if(app.mouseMode==4)  { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_04(p);}//senbun_henkan 黒赤青
-        else if (app.mouseMode == MouseMode.LENGTHEN_CREASE_5) {
+        //else if(mouseMode==2)  {		}						       //2 展開図移動。
+        //else if(mouseMode==3)  { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_03(p);}//線分削除モード。
+        //else if(mouseMode==4)  { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_04(p);}//senbun_henkan 黒赤青
+        else if (mouseMode == MouseMode.LENGTHEN_CREASE_5) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_05(p);
         }//線分延長モード。
-        //else if(app.mouseMode==6)  { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_06(p);}//2点から等距離線分モード。
-        else if (app.mouseMode == MouseMode.SQUARE_BISECTOR_7) {
+        //else if(mouseMode==6)  { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_06(p);}//2点から等距離線分モード。
+        else if (mouseMode == MouseMode.SQUARE_BISECTOR_7) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_07(p);
         }//角二等分線モード。
-        else if (app.mouseMode == MouseMode.INWARD_8) {
+        else if (mouseMode == MouseMode.INWARD_8) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_08(p);
         }//内心モード。
-        else if (app.mouseMode == MouseMode.PERPENDICULAR_DRAW_9) {
+        else if (mouseMode == MouseMode.PERPENDICULAR_DRAW_9) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_09(p);
         }//垂線おろしモード。
-        else if (app.mouseMode == MouseMode.SYMMETRIC_DRAW_10) {
+        else if (mouseMode == MouseMode.SYMMETRIC_DRAW_10) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_10(p);
         }//折り返しモード。
-        else if (app.mouseMode == MouseMode.DRAW_CREASE_RESTRICTED_11) {
+        else if (mouseMode == MouseMode.DRAW_CREASE_RESTRICTED_11) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_11(p);
         }//線分入力モード。(制限)
-        else if (app.mouseMode == MouseMode.DRAW_CREASE_SYMMETRIC_12) {
+        else if (mouseMode == MouseMode.DRAW_CREASE_SYMMETRIC_12) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_12(p);
         }//鏡映モード。
-        //else if(app.mouseMode==13) { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_13(p);}//角度系モード（１番目）。//線分指定、交点まで
-        //else if(app.mouseMode==14) { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_14(p);}//点追加モード。
-        //else if(app.mouseMode==15) { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_15(p);}//点削除モード。
-        else if (app.mouseMode == MouseMode.ANGLE_SYSTEM_16) {
+        //else if(mouseMode==13) { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_13(p);}//角度系モード（１番目）。//線分指定、交点まで
+        //else if(mouseMode==14) { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_14(p);}//点追加モード。
+        //else if(mouseMode==15) { mainDrawingWorker.setCamera(camera_of_orisen_nyuuryokuzu);mainDrawingWorker.mMoved_A_15(p);}//点削除モード。
+        else if (mouseMode == MouseMode.ANGLE_SYSTEM_16) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_16(p);
         }//角度系モード（４番目）。2点指定し、線分まで
-        else if (app.mouseMode == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17) {
+        else if (mouseMode == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_17(p);
         }//角度系モード（２番目）。//2点指定、交点まで
-        else if (app.mouseMode == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18) {
+        else if (mouseMode == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_18(p);
         }//角度系モード（５番目）。2点指定、自由末端
-        else if (app.mouseMode == MouseMode.CREASE_MOVE_21) {
+        else if (mouseMode == MouseMode.CREASE_MOVE_21) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_21(p);
         }//move　に使う
-        else if (app.mouseMode == MouseMode.CREASE_COPY_22) {
+        else if (mouseMode == MouseMode.CREASE_COPY_22) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_22(p);
         }//copy_paste　に使う
-        else if (app.mouseMode == MouseMode.LINE_SEGMENT_DIVISION_27) {
+        else if (mouseMode == MouseMode.LINE_SEGMENT_DIVISION_27) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_27(p);
         }//線分分割入力　に使う
-        else if (app.mouseMode == MouseMode.LINE_SEGMENT_RATIO_SET_28) {
+        else if (mouseMode == MouseMode.LINE_SEGMENT_RATIO_SET_28) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_28(p);
         }//線分内分入力　に使う
-        else if (app.mouseMode == MouseMode.POLYGON_SET_NO_CORNERS_29) {
+        else if (mouseMode == MouseMode.POLYGON_SET_NO_CORNERS_29) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_29(p);
         }//正多角形入力　に使う
-        else if (app.mouseMode == MouseMode.CREASE_MOVE_4P_31) {
+        else if (mouseMode == MouseMode.CREASE_MOVE_4P_31) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_31(p);
         }//move 2p2p　に使う
-        else if (app.mouseMode == MouseMode.CREASE_COPY_4P_32) {
+        else if (mouseMode == MouseMode.CREASE_COPY_4P_32) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_32(p);
         }//copy 2p2p　　に使う
-        else if (app.mouseMode == MouseMode.FISH_BONE_DRAW_33) {
+        else if (mouseMode == MouseMode.FISH_BONE_DRAW_33) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_33(p);
         }//魚の骨　に使う
-        else if (app.mouseMode == MouseMode.CREASE_MAKE_MV_34) {
+        else if (mouseMode == MouseMode.CREASE_MAKE_MV_34) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_34(p);
         }//準備としてだけ使う線分に重複している折線を順に山谷にするの　に使う
-        else if (app.mouseMode == MouseMode.DOUBLE_SYMMETRIC_DRAW_35) {
+        else if (mouseMode == MouseMode.DOUBLE_SYMMETRIC_DRAW_35) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_35(p);
         }//複折り返し　入力した線分に接触している折線を折り返し　に使う
-        else if (app.mouseMode == MouseMode.CREASES_ALTERNATE_MV_36) {
+        else if (mouseMode == MouseMode.CREASES_ALTERNATE_MV_36) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_36(p);
         }//準備としてだけ使う線分にX交差している折線を順に山谷にするの　に使う
-        else if (app.mouseMode == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37) {
+        else if (mouseMode == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_37(p);
         }//角度系モード（３番目）。角度規格化線分入力モード。角度規格化折線入力　に使う
-        else if (app.mouseMode == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
+        else if (mouseMode == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_38(p);
         }//折り畳み可能線追加
-        else if (app.mouseMode == MouseMode.FOLDABLE_LINE_INPUT_39) {
+        else if (mouseMode == MouseMode.FOLDABLE_LINE_INPUT_39) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_39(p);
         }//折り畳み可能線+格子点系入力
-        else if (app.mouseMode == MouseMode.PARALLEL_DRAW_40) {
+        else if (mouseMode == MouseMode.PARALLEL_DRAW_40) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_40(p);
         }//平行線入力
-        else if (app.mouseMode == MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52) {
+        else if (mouseMode == MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_52(p);
         }//連続折り返しモード　に使う
-        else if (app.mouseMode == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53) {
+        else if (mouseMode == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_53(p);
         }//長さ測定１　に使う
-        else if (app.mouseMode == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54) {
+        else if (mouseMode == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_54(p);
         }//長さ測定２　に使う
-        else if (app.mouseMode == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55) {
+        else if (mouseMode == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_55(p);
         }//角度測定１　に使う
-        else if (app.mouseMode == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56) {
+        else if (mouseMode == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_56(p);
         }//角度測定２　に使う
-        else if (app.mouseMode == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57) {
+        else if (mouseMode == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_57(p);
         }//角度測定３　に使う
-        else if (app.mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) {
+        else if (mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_61(p);
         }//長方形内選択（paintの選択に似せた選択機能）に使う
-        else if (app.mouseMode == MouseMode.VORONOI_CREATE_62) {
+        else if (mouseMode == MouseMode.VORONOI_CREATE_62) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_62(p);
         }//ボロノイ図　に使う
-        else if (app.mouseMode == MouseMode.FLAT_FOLDABLE_CHECK_63) {
+        else if (mouseMode == MouseMode.FLAT_FOLDABLE_CHECK_63) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_63(p);
         }//外周部折り畳みチェックに使う
-        else if (app.mouseMode == MouseMode.CREASE_DELETE_OVERLAPPING_64) {
+        else if (mouseMode == MouseMode.CREASE_DELETE_OVERLAPPING_64) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_64(p);
         }//線内削除　に使う
-        else if (app.mouseMode == MouseMode.CREASE_DELETE_INTERSECTING_65) {
+        else if (mouseMode == MouseMode.CREASE_DELETE_INTERSECTING_65) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_65(p);
         }//lX　直線で折線削除に使う
-        else if (app.mouseMode == MouseMode.SELECT_POLYGON_66) {
+        else if (mouseMode == MouseMode.SELECT_POLYGON_66) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_66(p);
         }//選択＿多角形　に使う
-        else if (app.mouseMode == MouseMode.UNSELECT_POLYGON_67) {
+        else if (mouseMode == MouseMode.UNSELECT_POLYGON_67) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_67(p);
         }//非選択＿多角形　に使う
-        else if (app.mouseMode == MouseMode.SELECT_LINE_INTERSECTING_68) {
+        else if (mouseMode == MouseMode.SELECT_LINE_INTERSECTING_68) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_68(p);
         }//選択＿ｌX　に使う
-        else if (app.mouseMode == MouseMode.UNSELECT_LINE_INTERSECTING_69) {
+        else if (mouseMode == MouseMode.UNSELECT_LINE_INTERSECTING_69) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_69(p);
         }//非選択＿ｌX　　に使う
-        else if (app.mouseMode == MouseMode.CREASE_LENGTHEN_70) {
+        else if (mouseMode == MouseMode.CREASE_LENGTHEN_70) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_70(p);
         }//線分延長モード(延長する元の折線のクリックだけで実行されるタイプ)　に使う
-        else if (app.mouseMode == MouseMode.FOLDABLE_LINE_DRAW_71) {
+        else if (mouseMode == MouseMode.FOLDABLE_LINE_DRAW_71) {
             es1.setCamera(app.camera_of_orisen_input_diagram);
             es1.mMoved_A_71(p);
         }//複数の線分延長モード　に使う
@@ -478,27 +480,25 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             case MouseEvent.BUTTON1:
                 if (e.getClickCount() == 3) {
                     System.out.println("3_Click");//("トリプルクリック"
-                    if (app.mouseMode == MouseMode.CREASE_SELECT_19) {
+                    if (mouseMode == MouseMode.CREASE_SELECT_19) {
                         if (app.ckbox_add_frame_SelectAnd3click_isSelected) {
                             switch (app.selectionOperationMode) {
                                 case MOVE_1:
-                                    app.mouseMode = MouseMode.CREASE_MOVE_21;
+                                    app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
                                     break;
                                 case MOVE4P_2:
-                                    app.mouseMode = MouseMode.CREASE_MOVE_4P_31;
+                                    app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
                                     break;
                                 case COPY_3:
-                                    app.mouseMode = MouseMode.CREASE_COPY_22;
+                                    app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
                                     break;
                                 case COPY4P_4:
-                                    app.mouseMode = MouseMode.CREASE_COPY_4P_32;
+                                    app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
                                     break;
                                 case MIRROR_5:
-                                    app.mouseMode = MouseMode.DRAW_CREASE_SYMMETRIC_12;
+                                    app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
                                     break;
                             }
-
-                            System.out.println("mouseMode=" + app.mouseMode);
                         }
                     }
                 }
@@ -532,7 +532,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 repaint();
                 return;
             case MouseEvent.BUTTON3: //右ボタンクリック
-                if (app.mouseMode == MouseMode.VORONOI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
+                if (mouseMode == MouseMode.VORONOI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
                 } else {
                     app.i_mouse_right_button_on = true;
 
@@ -540,9 +540,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     es1.setCamera(app.camera_of_orisen_input_diagram);
                     es1.mPressed_A_03(p);
 
-                    app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.BOTH_4;//= 0 is polygonal line input = 1 is auxiliary line input mode, 4 is for both
-                    es1.setFoldLineAdditional(app.foldLineAdditionalInputMode);
-
+                    app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.BOTH_4);
                 }
                 repaint();
 
@@ -553,7 +551,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //}  //20201010　コメントアウト
 
 
-        switch (app.mouseMode) {
+        switch (mouseMode) {
             case UNUSED_0:
                 break;
             case DRAW_CREASE_FREE_1:
@@ -908,7 +906,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     return;
 
                 case MouseEvent.BUTTON3:
-                    if (app.mouseMode == MouseMode.VORONOI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
+                    if (mouseMode == MouseMode.VORONOI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
                     } else {
                         if (app.i_mouse_undo_redo_mode) {
                             return;
@@ -922,7 +920,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             //}  //20201010　コメントアウト
 
 
-            switch (app.mouseMode) {
+            switch (mouseMode) {
                 case UNUSED_0:
                     break;
                 case DRAW_CREASE_FREE_1:
@@ -1307,7 +1305,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     return;//
                 case MouseEvent.BUTTON3:
                     //System.out.println("右ボタンクリック");
-                    if (app.mouseMode == MouseMode.VORONOI_CREATE_62) {
+                    if (mouseMode == MouseMode.VORONOI_CREATE_62) {
                         repaint();//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
                     } else {
 
@@ -1321,7 +1319,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                         es1.setCamera(app.camera_of_orisen_input_diagram);
                         es1.mReleased_A_03(p);
                         repaint();//なんでここにrepaintがあるか検討した方がよいかも。20181208
-                        es1.modosi_foldLineAdditional();
+                        app.canvasModel.restoreFoldLineAdditionalInputMode();
                         app.mouseDraggedValid = false;
                         app.mouseReleasedValid = false;
                         //線分削除モード。
@@ -1332,7 +1330,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             //}  //20201010　コメントアウト
 
 
-            switch (app.mouseMode) {
+            switch (mouseMode) {
                 case UNUSED_0:
                     break;
                 case DRAW_CREASE_FREE_1:
@@ -1717,7 +1715,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 app.i_mouse_undo_redo_mode = true;
                 es1.unselect_all();
                 app.Button_shared_operation();
-                es1.modosi_foldLineAdditional();
+                app.canvasModel.restoreFoldLineAdditionalInputMode();
                 if (e.getWheelRotation() == -1) {
                     app.setTitle(es1.redo());
                     repaint();
@@ -1844,6 +1842,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         lineWidth = canvasModel.getCalculatedLineWidth();
         auxLineWidth = canvasModel.getCalculatedAuxLineWidth();
+        
+        mouseMode = canvasModel.getMouseMode();
 
         repaint();
     }

@@ -10,6 +10,7 @@ import origami_editor.record.string_op.StringOp;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
 
 public class LeftPanel extends JPanel {
     private JPanel panel1;
@@ -54,10 +55,10 @@ public class LeftPanel extends JPanel {
     private JButton kuro_senbun_sakujyoButton;
     private JButton senbun3_sakujyoButton;
     private JButton eda_kesiButton;
-    private JButton M_nisuruButton;
-    private JButton V_nisuruButton;
-    private JButton E_nisuruButton;
-    private JButton HK_nisuruButton;
+    private JButton toMountainButton;
+    private JButton toValleyButton;
+    private JButton toEdgeButton;
+    private JButton toAuxButton;
     private JButton zen_yama_tani_henkanButton;
     private JButton senbun_henkan2Button;
     private JButton senbun_henkanButton;
@@ -149,54 +150,30 @@ public class LeftPanel extends JPanel {
         });
         colRedButton.addActionListener(e -> {
             app.setHelp("ButtonCol_red");
-            app.buttonColorReset();
-            colRedButton.setForeground(Color.black);
-            colRedButton.setBackground(Color.red);
-            app.currentLineColor = LineColor.RED_1;
-            app.mainDrawingWorker.setColor(app.currentLineColor);
 
-            app.repaintCanvas();
+            app.canvasModel.setLineColor(LineColor.RED_1);
         });
         colBlueButton.addActionListener(e -> {
-
             app.setHelp("ButtonCol_blue");
-            app.buttonColorReset();
-            colBlueButton.setForeground(Color.black);
-            colBlueButton.setBackground(Color.blue);
-            app.currentLineColor = LineColor.BLUE_2;
-            app.mainDrawingWorker.setColor(app.currentLineColor);
 
-            app.repaintCanvas();
+            app.canvasModel.setLineColor(LineColor.BLUE_2);
         });
         colBlackButton.addActionListener(e -> {
             app.setHelp("ButtonCol_black");
 
-            app.buttonColorReset();
-            colBlackButton.setForeground(Color.white);
-            colBlackButton.setBackground(Color.black);
-            app.currentLineColor = LineColor.BLACK_0;
-            app.mainDrawingWorker.setColor(app.currentLineColor);
-
-            app.repaintCanvas();
+            app.canvasModel.setLineColor(LineColor.BLACK_0);
         });
         colCyanButton.addActionListener(e -> {
             app.setHelp("ButtonCol_cyan");
 
-            app.buttonColorReset();
-            colCyanButton.setForeground(Color.black);
-            colCyanButton.setBackground(Color.cyan);
-            app.currentLineColor = LineColor.CYAN_3;
-            app.mainDrawingWorker.setColor(app.currentLineColor);
-
-            app.repaintCanvas();
+            app.canvasModel.setLineColor(LineColor.CYAN_3);
         });
         senbun_nyuryokuButton.addActionListener(e -> {
             app.setHelp("senbun_nyuryoku");
-            app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
-            app.mainDrawingWorker.setFoldLineAdditional(app.foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
-            app.mouseMode = MouseMode.DRAW_CREASE_FREE_1;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_FREE_1;
-            System.out.println("mouseMode = " + app.mouseMode);
+
+            app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0);
+            app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_FREE_1);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -204,9 +181,9 @@ public class LeftPanel extends JPanel {
         });
         senbun_nyuryoku11Button.addActionListener(e -> {
             app.setHelp("senbun_nyuryoku11");
-            app.mouseMode = MouseMode.DRAW_CREASE_RESTRICTED_11;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DRAW_CREASE_RESTRICTED_11;
-            System.out.println("mouseMode = " + app.mouseMode);
+
+            app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_RESTRICTED_11);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_RESTRICTED_11);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -214,11 +191,10 @@ public class LeftPanel extends JPanel {
         });
         voronoiButton.addActionListener(e -> {
             app.setHelp("Voronoi");
-            app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
-            app.mainDrawingWorker.setFoldLineAdditional(app.foldLineAdditionalInputMode);//このボタンと機能は補助絵線共通に使っているのでi_orisen_hojyosenの指定がいる
-            app.mouseMode = MouseMode.VORONOI_CREATE_62;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.VORONOI_CREATE_62;
-            System.out.println("mouseMode = " + app.mouseMode);
+
+            app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0);
+            app.canvasModel.setMouseMode(MouseMode.VORONOI_CREATE_62);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.VORONOI_CREATE_62);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -227,9 +203,8 @@ public class LeftPanel extends JPanel {
         oritatami_kanousenButton.addActionListener(e -> {
             app.setHelp("oritatami_kanousen");
 
-            app.mouseMode = MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -238,9 +213,8 @@ public class LeftPanel extends JPanel {
         senbun_entyouButton.addActionListener(e -> {
             app.setHelp("senbun_entyou");
 
-            app.mouseMode = MouseMode.LENGTHEN_CREASE_5;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LENGTHEN_CREASE_5;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.LENGTHEN_CREASE_5);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LENGTHEN_CREASE_5);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -249,9 +223,8 @@ public class LeftPanel extends JPanel {
         senbun_entyou_2Button.addActionListener(e -> {
             app.setHelp("senbun_entyou_2");
 
-            app.mouseMode = MouseMode.CREASE_LENGTHEN_70;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LENGTHEN_CREASE_5;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.CREASE_LENGTHEN_70);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.CREASE_LENGTHEN_70);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -260,9 +233,8 @@ public class LeftPanel extends JPanel {
         kaku_toubunButton.addActionListener(e -> {
             app.setHelp("kaku_toubun");
 
-            app.mouseMode = MouseMode.SQUARE_BISECTOR_7;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.SQUARE_BISECTOR_7;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.SQUARE_BISECTOR_7);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.SQUARE_BISECTOR_7);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -271,9 +243,8 @@ public class LeftPanel extends JPanel {
         naishinButton.addActionListener(e -> {
             app.setHelp("naishin");
 
-            app.mouseMode = MouseMode.INWARD_8;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.INWARD_8;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.INWARD_8);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.INWARD_8);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -282,9 +253,8 @@ public class LeftPanel extends JPanel {
         suisenButton.addActionListener(e -> {
             app.setHelp("suisen");
 
-            app.mouseMode = MouseMode.PERPENDICULAR_DRAW_9;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.PERPENDICULAR_DRAW_9;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.PERPENDICULAR_DRAW_9);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.PERPENDICULAR_DRAW_9);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -293,9 +263,8 @@ public class LeftPanel extends JPanel {
         orikaesiButton.addActionListener(e -> {
             app.setHelp("orikaesi");
 
-            app.mouseMode = MouseMode.SYMMETRIC_DRAW_10;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.SYMMETRIC_DRAW_10;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.SYMMETRIC_DRAW_10);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.SYMMETRIC_DRAW_10);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -304,9 +273,8 @@ public class LeftPanel extends JPanel {
         renzoku_orikaesiButton.addActionListener(e -> {
             app.setHelp("renzoku_orikaesi");
 
-            app.mouseMode = MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -314,9 +282,9 @@ public class LeftPanel extends JPanel {
         });
         heikousenButton.addActionListener(e -> {
             app.setHelp("heikousen");
-            app.mouseMode = MouseMode.PARALLEL_DRAW_40;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.PARALLEL_DRAW_40;
-            System.out.println("mouseMode = " + app.mouseMode);
+
+            app.canvasModel.setMouseMode(MouseMode.PARALLEL_DRAW_40);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.PARALLEL_DRAW_40);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -324,9 +292,9 @@ public class LeftPanel extends JPanel {
         });
         heikousen_haba_siteiButton.addActionListener(e -> {
             app.setHelp("heikousen_haba_sitei");
-            app.mouseMode = MouseMode.PARALLEL_DRAW_WIDTH_51;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.PARALLEL_DRAW_WIDTH_51;
-            System.out.println("mouseMode = " + app.mouseMode);
+
+            app.canvasModel.setMouseMode(MouseMode.PARALLEL_DRAW_WIDTH_51);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.PARALLEL_DRAW_WIDTH_51);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -335,9 +303,8 @@ public class LeftPanel extends JPanel {
         oritatami_kanousen_and_kousitenkei_simpleButton.addActionListener(e -> {
             app.setHelp("oritatami_kanousen_and_kousitenkei_simple");
 
-            app.mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.FOLDABLE_LINE_DRAW_71;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.FOLDABLE_LINE_DRAW_71);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -355,9 +322,8 @@ public class LeftPanel extends JPanel {
         sakananohoneButton.addActionListener(e -> {
             app.setHelp("sakananohone");
 
-            app.mouseMode = MouseMode.FISH_BONE_DRAW_33;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.FISH_BONE_DRAW_33;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.FISH_BONE_DRAW_33);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.FISH_BONE_DRAW_33);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -366,9 +332,8 @@ public class LeftPanel extends JPanel {
         fuku_orikaesiButton.addActionListener(e -> {
             app.setHelp("fuku_orikaesi");
 
-            app.mouseMode = MouseMode.DOUBLE_SYMMETRIC_DRAW_35;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.DOUBLE_SYMMETRIC_DRAW_35;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.DOUBLE_SYMMETRIC_DRAW_35);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.DOUBLE_SYMMETRIC_DRAW_35);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -385,9 +350,9 @@ public class LeftPanel extends JPanel {
             app.mainDrawingWorker.setFoldLineDividingNumber(app.foldLineDividingNumber);
 
             app.setHelp("senbun_bunkatu_set");
-            app.mouseMode = MouseMode.LINE_SEGMENT_DIVISION_27;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_DIVISION_27;
-            System.out.println("mouseMode = " + app.mouseMode);
+
+            app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DIVISION_27);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
 
             app.Button_shared_operation();
             app.repaintCanvas();
@@ -403,9 +368,8 @@ public class LeftPanel extends JPanel {
             app.mainDrawingWorker.setFoldLineDividingNumber(app.foldLineDividingNumber);
 
             app.setHelp("senbun_b_nyuryoku");
-            app.mouseMode = MouseMode.LINE_SEGMENT_DIVISION_27;
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_DIVISION_27;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DIVISION_27);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -414,14 +378,14 @@ public class LeftPanel extends JPanel {
         selectButton.addActionListener(e -> {
             app.setHelp("Select");
 
-            app.mouseMode = MouseMode.CREASE_SELECT_19;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
+
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         selectAllButton.addActionListener(e -> {
-
             app.setHelp("select_all");
+
             app.mainDrawingWorker.select_all();
             app.Button_shared_operation();
             app.repaintCanvas();
@@ -429,36 +393,36 @@ public class LeftPanel extends JPanel {
         unselectButton.addActionListener(e -> {
             app.setHelp("unselect");
 
-            app.mouseMode = MouseMode.CREASE_UNSELECT_20;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.CREASE_UNSELECT_20);
+
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         unselectAllButton.addActionListener(e -> {
-
             app.setHelp("unselect_all");
+
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         moveButton.addActionListener(e -> {
             app.setHelp("move");
+
             app.selectionOperationMode = App.SelectionOperationMode.MOVE_1;
             app.Button_sel_mou_wakukae();
 
-            app.mouseMode = MouseMode.CREASE_MOVE_21;
+            app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
+
             app.Button_shared_operation();
             app.repaintCanvas();
-            System.out.println("mouseMode = " + app.mouseMode);
         });
         move2p2pButton.addActionListener(e -> {
             app.setHelp("move_2p2p");
             app.selectionOperationMode = App.SelectionOperationMode.MOVE4P_2;
             app.Button_sel_mou_wakukae();
 
+            app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
 
-            app.mouseMode = MouseMode.CREASE_MOVE_4P_31;
-            System.out.println("mouseMode = " + app.mouseMode);
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -467,9 +431,8 @@ public class LeftPanel extends JPanel {
             app.selectionOperationMode = App.SelectionOperationMode.COPY_3;
             app.Button_sel_mou_wakukae();
 
+            app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
 
-            app.mouseMode = MouseMode.CREASE_COPY_22;
-            System.out.println("mouseMode = " + app.mouseMode);
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -478,9 +441,8 @@ public class LeftPanel extends JPanel {
             app.selectionOperationMode = App.SelectionOperationMode.COPY4P_4;
             app.Button_sel_mou_wakukae();
 
+            app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
 
-            app.mouseMode = MouseMode.CREASE_COPY_4P_32;
-            System.out.println("mouseMode = " + app.mouseMode);
             app.Button_shared_operation();
             app.repaintCanvas();
         });
@@ -489,13 +451,14 @@ public class LeftPanel extends JPanel {
             app.selectionOperationMode = App.SelectionOperationMode.MIRROR_5;
             app.Button_sel_mou_wakukae();
 
-            app.mouseMode = MouseMode.DRAW_CREASE_SYMMETRIC_12;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
+
             app.Button_shared_operation();
             app.repaintCanvas();
         });
         deleteSelectedLineSegmentButton.addActionListener(e -> {
             app.setHelp("del_selected_senbun");
+
             app.mainDrawingWorker.del_selected_senbun();
             app.mainDrawingWorker.record();
             app.Button_shared_operation();
@@ -503,12 +466,10 @@ public class LeftPanel extends JPanel {
         });
         senbun_sakujyoButton.addActionListener(e -> {
             app.setHelp("senbun_sakujyo");
-            app.mouseMode = MouseMode.LINE_SEGMENT_DELETE_3;
-            System.out.println("mouseMode = " + app.mouseMode);
 
+            app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
 
-            app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
-            app.mainDrawingWorker.setFoldLineAdditional(app.foldLineAdditionalInputMode);
+            app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -516,12 +477,9 @@ public class LeftPanel extends JPanel {
         });
         kuro_senbun_sakujyoButton.addActionListener(e -> {
             app.setHelp("kuro_senbun_sakujyo");
-            app.mouseMode = MouseMode.LINE_SEGMENT_DELETE_3;
-            System.out.println("mouseMode = " + app.mouseMode);
 
-
-            app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.BLACK_LINE_2;//= 2 is the black polygonal line deletion mode
-            app.mainDrawingWorker.setFoldLineAdditional(app.foldLineAdditionalInputMode);
+            app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
+            app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.BLACK_LINE_2);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -529,12 +487,9 @@ public class LeftPanel extends JPanel {
         });
         senbun3_sakujyoButton.addActionListener(e -> {
             app.setHelp("senbun3_sakujyo");
-            app.mouseMode = MouseMode.LINE_SEGMENT_DELETE_3;
-            System.out.println("mouseMode = " + app.mouseMode);
 
-
-            app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.AUX_LIVE_LINE_3;//= 0 is polygonal line input = 1 is auxiliary line input mode = 3 is for auxiliary live line only
-            app.mainDrawingWorker.setFoldLineAdditional(app.foldLineAdditionalInputMode);
+            app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
+            app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.AUX_LIVE_LINE_3);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -551,53 +506,37 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        M_nisuruButton.addActionListener(e -> {
+        toMountainButton.addActionListener(e -> {
             app.setHelp("M_nisuru");
-            app.buttonReset();
-            M_nisuruButton.setForeground(Color.black);
-            M_nisuruButton.setBackground(Color.red);
-            //currentLineColor=1;mainDrawingWorker.setcolor(currentLineColor);
-            app.mouseMode = MouseMode.CREASE_MAKE_MOUNTAIN_23;
-            System.out.println("mouseMode = " + app.mouseMode);
+
+            app.canvasModel.setMouseMode(MouseMode.CREASE_MAKE_MOUNTAIN_23);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        V_nisuruButton.addActionListener(e -> {
+        toValleyButton.addActionListener(e -> {
             app.setHelp("V_nisuru");
-            app.buttonReset();
-            V_nisuruButton.setForeground(Color.black);
-            V_nisuruButton.setBackground(Color.blue);
-            //currentLineColor=1;mainDrawingWorker.setcolor(currentLineColor);
-            app.mouseMode = MouseMode.CREASE_MAKE_VALLEY_24;
-            System.out.println("mouseMode = " + app.mouseMode);
+
+            app.canvasModel.setMouseMode(MouseMode.CREASE_MAKE_VALLEY_24);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        E_nisuruButton.addActionListener(e -> {
+        toEdgeButton.addActionListener(e -> {
             app.setHelp("E_nisuru");
-            app.buttonReset();
-            E_nisuruButton.setForeground(Color.white);
-            E_nisuruButton.setBackground(Color.black);
-            //currentLineColor=1;mainDrawingWorker.setcolor(currentLineColor);
-            app.mouseMode = MouseMode.CREASE_MAKE_EDGE_25;
-            System.out.println("mouseMode = " + app.mouseMode);
+
+            app.canvasModel.setMouseMode(MouseMode.CREASE_MAKE_EDGE_25);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        HK_nisuruButton.addActionListener(e -> {
+        toAuxButton.addActionListener(e -> {
             app.setHelp("HK_nisuru");
-            app.buttonReset();
-            HK_nisuruButton.setForeground(Color.white);
-            HK_nisuruButton.setBackground(new Color(100, 200, 200));
-            //currentLineColor=1;mainDrawingWorker.setcolor(currentLineColor);
-            app.mouseMode = MouseMode.CREASE_MAKE_AUX_60;
-            System.out.println("mouseMode = " + app.mouseMode);
+
+            app.canvasModel.setMouseMode(MouseMode.CREASE_MAKE_AUX_60);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -612,11 +551,8 @@ public class LeftPanel extends JPanel {
         });
         senbun_henkan2Button.addActionListener(e -> {
             app.setHelp("senbun_henkan2");
-            app.buttonReset();
-            senbun_henkan2Button.setBackground(new Color(138, 43, 226));
 
-            app.mouseMode = MouseMode.CREASE_TOGGLE_MV_58;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.CREASE_TOGGLE_MV_58);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -624,10 +560,8 @@ public class LeftPanel extends JPanel {
         });
         senbun_henkanButton.addActionListener(e -> {
             app.setHelp("senbun_henkan");
-            app.buttonReset();
 
-            app.mouseMode = MouseMode.CHANGE_CREASE_TYPE_4;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.CHANGE_CREASE_TYPE_4);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -636,16 +570,11 @@ public class LeftPanel extends JPanel {
         in_L_col_changeButton.addActionListener(e -> {
             app.setHelp("in_L_col_change");
 
-            app.mouseMode = MouseMode.CREASE_MAKE_MV_34;
-            System.out.println("mouseMode = " + app.mouseMode);
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.CREASE_MAKE_MV_34;
+            app.canvasModel.setMouseMode(MouseMode.CREASE_MAKE_MV_34);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.CREASE_MAKE_MV_34);
 
-            if (app.currentLineColor == LineColor.BLACK_0) {
-                app.currentLineColor = LineColor.RED_1;
-                app.mainDrawingWorker.setColor(app.currentLineColor);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
-                app.buttonColorReset();
-                colRedButton.setForeground(Color.black);
-                colRedButton.setBackground(Color.red);    //折線のボタンの色設定
+            if (app.canvasModel.getLineColor() == LineColor.BLACK_0) {
+                app.canvasModel.setLineColor(LineColor.RED_1);
             }
 
             app.mainDrawingWorker.unselect_all();
@@ -654,17 +583,12 @@ public class LeftPanel extends JPanel {
         });
         on_L_col_changeButton.addActionListener(e -> {
             app.setHelp("on_L_col_change");
-            app.mouseMode = MouseMode.CREASES_ALTERNATE_MV_36;
-            System.out.println("mouseMode = " + app.mouseMode);
-            app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.CREASES_ALTERNATE_MV_36;
 
+            app.canvasModel.setMouseMode(MouseMode.CREASES_ALTERNATE_MV_36);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.CREASES_ALTERNATE_MV_36);
 
-            if (app.currentLineColor == LineColor.BLACK_0) {
-                app.currentLineColor = LineColor.BLUE_2;
-                app.mainDrawingWorker.setColor(app.currentLineColor);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
-                app.buttonColorReset();
-                colBlueButton.setForeground(Color.black);
-                colBlueButton.setBackground(Color.blue);    //折線のボタンの色設定
+            if (app.canvasModel.getLineColor() == LineColor.BLACK_0) {
+                app.canvasModel.setLineColor(LineColor.BLUE_2);
             }
 
             app.mainDrawingWorker.unselect_all();
@@ -673,8 +597,8 @@ public class LeftPanel extends JPanel {
         });
         v_addButton.addActionListener(e -> {
             app.setHelp("v_add");
-            app.mouseMode = MouseMode.DRAW_POINT_14;
-            System.out.println("mouseMode = " + app.mouseMode);
+
+            app.canvasModel.setMouseMode(MouseMode.DRAW_POINT_14);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -683,8 +607,7 @@ public class LeftPanel extends JPanel {
         v_delButton.addActionListener(e -> {
             app.setHelp("v_del");
 
-            app.mouseMode = MouseMode.DELETE_POINT_15;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.DELETE_POINT_15);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -693,8 +616,7 @@ public class LeftPanel extends JPanel {
         v_del_ccButton.addActionListener(e -> {
             app.setHelp("v_del_cc");
 
-            app.mouseMode = MouseMode.VERTEX_DELETE_ON_CREASE_41;
-            System.out.println("mouseMode = " + app.mouseMode);
+            app.canvasModel.setMouseMode(MouseMode.VERTEX_DELETE_ON_CREASE_41);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -781,8 +703,7 @@ public class LeftPanel extends JPanel {
         koteimen_siteiButton.addActionListener(e -> {
             app.setHelp("koteimen_sitei");
             if (app.OZ.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
-                app.mouseMode = MouseMode.CHANGE_STANDARD_FACE_103;
-                System.out.println("mouseMode = " + app.mouseMode);
+                app.canvasModel.setMouseMode(MouseMode.CHANGE_STANDARD_FACE_103);
             }
             app.Button_shared_operation();
         });
@@ -868,26 +789,6 @@ public class LeftPanel extends JPanel {
         return lineSegmentDivisionTextField;
     }
 
-    public JButton getSenbun_henkan2Button() {
-        return senbun_henkan2Button;
-    }
-
-    public JButton getM_nisuruButton() {
-        return M_nisuruButton;
-    }
-
-    public JButton getV_nisuruButton() {
-        return V_nisuruButton;
-    }
-
-    public JButton getE_nisuruButton() {
-        return E_nisuruButton;
-    }
-
-    public JButton getHK_nisuruButton() {
-        return HK_nisuruButton;
-    }
-
     public JButton getReflectButton() {
         return reflectButton;
     }
@@ -906,22 +807,6 @@ public class LeftPanel extends JPanel {
 
     public JButton getCopy2p2pButton() {
         return copy2p2pButton;
-    }
-
-    public JButton getColRedButton() {
-        return colRedButton;
-    }
-
-    public JButton getColBlueButton() {
-        return colBlueButton;
-    }
-
-    public JButton getColBlackButton() {
-        return colBlackButton;
-    }
-
-    public JButton getColCyanButton() {
-        return colCyanButton;
     }
 
     /**
@@ -1091,38 +976,38 @@ public class LeftPanel extends JPanel {
         gbc.gridy = 18;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(panel6, gbc);
-        M_nisuruButton = new JButton();
-        M_nisuruButton.setIcon(new ImageIcon(getClass().getResource("/ppp/M_nisuru.png")));
+        toMountainButton = new JButton();
+        toMountainButton.setIcon(new ImageIcon(getClass().getResource("/ppp/M_nisuru.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel6.add(M_nisuruButton, gbc);
-        V_nisuruButton = new JButton();
-        V_nisuruButton.setIcon(new ImageIcon(getClass().getResource("/ppp/V_nisuru.png")));
+        panel6.add(toMountainButton, gbc);
+        toValleyButton = new JButton();
+        toValleyButton.setIcon(new ImageIcon(getClass().getResource("/ppp/V_nisuru.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel6.add(V_nisuruButton, gbc);
-        E_nisuruButton = new JButton();
-        E_nisuruButton.setIcon(new ImageIcon(getClass().getResource("/ppp/E_nisuru.png")));
+        panel6.add(toValleyButton, gbc);
+        toEdgeButton = new JButton();
+        toEdgeButton.setIcon(new ImageIcon(getClass().getResource("/ppp/E_nisuru.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel6.add(E_nisuruButton, gbc);
-        HK_nisuruButton = new JButton();
-        HK_nisuruButton.setIcon(new ImageIcon(getClass().getResource("/ppp/HK_nisuru.png")));
+        panel6.add(toEdgeButton, gbc);
+        toAuxButton = new JButton();
+        toAuxButton.setIcon(new ImageIcon(getClass().getResource("/ppp/HK_nisuru.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel6.add(HK_nisuruButton, gbc);
+        panel6.add(toAuxButton, gbc);
         final JPanel panel7 = new JPanel();
         panel7.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
@@ -1680,5 +1565,79 @@ public class LeftPanel extends JPanel {
 
     private void createUIComponents() {
         panel1 = this;
+    }
+
+    public void setData(PropertyChangeEvent e, CanvasModel data) {
+        if (e.getPropertyName() == null || e.getPropertyName().equals("lineColor")) {
+            Color gray = new Color(150, 150, 150);
+
+            colBlackButton.setBackground(gray);
+            colRedButton.setBackground(gray);
+            colBlueButton.setBackground(gray);
+            colCyanButton.setBackground(gray);
+            colBlackButton.setForeground(Color.black);
+            colRedButton.setForeground(Color.black);
+            colBlueButton.setForeground(Color.black);
+            colCyanButton.setForeground(Color.black);
+
+            switch (data.getLineColor()) {
+                case BLACK_0:
+                    colBlackButton.setBackground(Color.black);
+                    colBlackButton.setForeground(Color.white);
+                    break;
+                case RED_1:
+                    colRedButton.setBackground(Color.red);
+                    colRedButton.setForeground(Color.black);
+                    break;
+                case BLUE_2:
+                    colBlueButton.setBackground(Color.blue);
+                    colBlueButton.setForeground(Color.black);
+                    break;
+                case CYAN_3:
+                    colCyanButton.setBackground(Color.cyan);
+                    colCyanButton.setForeground(Color.black);
+            }
+        }
+
+        if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
+            buttonReset();
+
+            switch (data.getMouseMode()) {
+                case CREASE_MAKE_MOUNTAIN_23:
+                    toMountainButton.setForeground(Color.black);
+                    toMountainButton.setBackground(Color.red);
+                    break;
+                case CREASE_MAKE_VALLEY_24:
+                    toValleyButton.setForeground(Color.black);
+                    toValleyButton.setBackground(Color.blue);
+                    break;
+                case CREASE_MAKE_EDGE_25:
+                    toEdgeButton.setForeground(Color.white);
+                    toEdgeButton.setBackground(Color.black);
+                    break;
+                case CREASE_MAKE_AUX_60:
+                    toAuxButton.setForeground(Color.black);
+                    toAuxButton.setBackground(new Color(100, 200, 200));
+                    break;
+                case CREASE_TOGGLE_MV_58:
+                    senbun_henkan2Button.setBackground(new Color(138, 43, 226));
+                    break;
+            }
+        }
+
+    }
+
+    void buttonReset() {
+        toMountainButton.setForeground(Color.black);
+        toValleyButton.setForeground(Color.black);
+        toEdgeButton.setForeground(Color.black);
+        toAuxButton.setForeground(Color.black); //HKとは補助活線のこと
+        senbun_henkan2Button.setForeground(Color.black);
+
+        toMountainButton.setBackground(Color.white);
+        toValleyButton.setBackground(Color.white);
+        toEdgeButton.setBackground(Color.white);
+        toAuxButton.setBackground(Color.white);
+        senbun_henkan2Button.setBackground(Color.white);
     }
 }

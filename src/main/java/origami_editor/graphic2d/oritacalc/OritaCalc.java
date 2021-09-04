@@ -817,8 +817,8 @@ public class OritaCalc {
         return new LineSegment(ax1, ay1, bx1, by1);
     }
 
-    //線分Aの、線分Jを軸とした対照位置にある線分Bを求める関数
-    public static LineSegment sentaisyou_lineSegment_motome(LineSegment s0, LineSegment jiku) {
+    //A function to find the line segment B at the control position of the line segment A with the line segment J as the axis.
+    public static LineSegment findLineSymmetryLineSegment(LineSegment s0, LineSegment jiku) {
         Point p_a = new Point();
         p_a.set(s0.getA());
         Point p_b = new Point();
@@ -829,13 +829,13 @@ public class OritaCalc {
         jiku_b.set(jiku.getB());
 
         LineSegment s1 = new LineSegment();
-        s1.set(lineSymmetry_point_find(jiku_a, jiku_b, p_a), lineSymmetry_point_find(jiku_a, jiku_b, p_b));
+        s1.set(findLineSymmetryPoint(jiku_a, jiku_b, p_a), findLineSymmetryPoint(jiku_a, jiku_b, p_b));
 
         return s1;
     }
 
     //A function that finds a point at the control position of point p with respect to a straight line passing through two points t1 and t2.
-    public static Point lineSymmetry_point_find(Point t1, Point t2, Point p) {
+    public static Point findLineSymmetryPoint(Point t1, Point t2, Point p) {
         Point p1;  // p1.set(s.geta());
         Point p2 = new Point();  // p2.set(s.getb());
 

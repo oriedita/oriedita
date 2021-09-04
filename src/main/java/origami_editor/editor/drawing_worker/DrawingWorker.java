@@ -111,7 +111,6 @@ public class DrawingWorker {
     int i_step_for_copy_4p = 0;//i_step_for_copy_4p=2の場合は、step線が1本だけになっていて、次の操作で入力折線が確定する状態
     boolean i_takakukei_kansei = false;//多角形が完成したら1、未完成なら0
     // ------------
-    FoldLineAdditionalInputMode i_foldLine_additional_old = FoldLineAdditionalInputMode.POLY_LINE_0;
     final int check4ColorTransparencyIncrement = 10;
     private int lineWidth;
 
@@ -2498,7 +2497,7 @@ public class DrawingWorker {
                     int_double i_d = new int_double(foldLineSet.closestLineSegmentSearch(p), 1.0);//entyou_kouho_nboxに1本の情報しか入らないのでdoubleの部分はどうでもよいので適当に1.0にした。
                     entyou_kouho_nbox.container_i_smallest_first(i_d);
 
-                    line_step[1].setB(OritaCalc.lineSymmetry_point_find(closest_lineSegment.getA(), closest_lineSegment.getB(), p));
+                    line_step[1].setB(OritaCalc.findLineSymmetryPoint(closest_lineSegment.getA(), closest_lineSegment.getB(), p));
 
                     line_step[1].set(//line_step[1]を短くして、表示時に目立たない様にする。
                             OritaCalc.point_double(OritaCalc.midPoint(line_step[1].getA(), line_step[1].getB()), line_step[1].getA(), 0.00001 / line_step[1].getLength())
@@ -3210,7 +3209,7 @@ public class DrawingWorker {
 
             //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
             Point t_taisyou = new Point();
-            t_taisyou.set(OritaCalc.lineSymmetry_point_find(line_step[2].getA(), line_step[3].getA(), line_step[1].getA()));
+            t_taisyou.set(OritaCalc.findLineSymmetryPoint(line_step[2].getA(), line_step[3].getA(), line_step[1].getA()));
 
             LineSegment add_sen = new LineSegment(line_step[2].getA(), t_taisyou);
 
@@ -3311,7 +3310,7 @@ public class DrawingWorker {
             Point new_a = new Point();
             new_a.set(e_s_dougubako.getLengthenUntilIntersectionPoint_new());//Ten new_aは最も近い交点
             Point new_b = new Point();
-            new_b.set(OritaCalc.lineSymmetry_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+            new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
             continuous_folding_new(new_a, new_b);//種の散布
             return;
@@ -3348,7 +3347,7 @@ public class DrawingWorker {
                     Point new_a = new Point();
                     new_a.set(e_s_dougubako.getLengthenUntilIntersectionPoint_new());//Ten new_aは最も近い交点
                     Point new_b = new Point();
-                    new_b.set(OritaCalc.lineSymmetry_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                    new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
                     continuous_folding_new(new_a, new_b);//種の散布
                     return;
@@ -3369,7 +3368,7 @@ public class DrawingWorker {
                         Point new_a = new Point();
                         new_a.set(e_s_dougubako.getLengthenUntilIntersectionPoint_new());//Ten new_aは最も近い交点
                         Point new_b = new Point();
-                        new_b.set(OritaCalc.lineSymmetry_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                        new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
                         continuous_folding_new(new_a, new_b);//種の散布
                         return;
@@ -3387,7 +3386,7 @@ public class DrawingWorker {
                         Point new_a = new Point();
                         new_a.set(e_s_dougubako.getLengthenUntilIntersectionPoint_new());//Ten new_aは最も近い交点
                         Point new_b = new Point();
-                        new_b.set(OritaCalc.lineSymmetry_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                        new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
                         continuous_folding_new(new_a, new_b);//種の散布
                         return;
@@ -3405,7 +3404,7 @@ public class DrawingWorker {
                         Point new_a = new Point();
                         new_a.set(e_s_dougubako.getLengthenUntilIntersectionPoint_new());//Ten new_aは最も近い交点
                         Point new_b = new Point();
-                        new_b.set(OritaCalc.lineSymmetry_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                        new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
                         continuous_folding_new(new_a, new_b);//種の散布
                     }
@@ -3438,7 +3437,7 @@ public class DrawingWorker {
             Point new_a = new Point();
             new_a.set(e_s_dougubako.getLengthenUntilIntersectionPoint(a, b));
             Point new_b = new Point();
-            new_b.set(OritaCalc.lineSymmetry_point_find(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+            new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
             continuous_folding(new_a, new_b);
         }
@@ -5360,7 +5359,7 @@ public class DrawingWorker {
 
                             //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
                             Point t_taisyou = new Point();
-                            t_taisyou.set(OritaCalc.lineSymmetry_point_find(line_step[1].getA(), line_step[1].getB(), t_moto));
+                            t_taisyou.set(OritaCalc.findLineSymmetryPoint(line_step[1].getA(), line_step[1].getB(), t_moto));
 
                             LineSegment add_sen = new LineSegment(OritaCalc.findIntersection(foldLineSet.get(i), line_step[1]), t_taisyou);
 
@@ -5559,7 +5558,7 @@ public class DrawingWorker {
             foldLineSet.unselect_all();
             record();
 
-            app.mouseMode = MouseMode.CREASE_SELECT_19;//20200930 add セレクトした折線に作業して、その後またセレクトできる状態に戻すための行
+            app.canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
         }
     }
 
@@ -5616,7 +5615,7 @@ public class DrawingWorker {
             foldLineSet.unselect_all();
             record();
 
-            app.mouseMode = MouseMode.CREASE_SELECT_19;//20200930 add セレクトした折線に作業して、その後またセレクトできる状態に戻すための行
+            app.canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
         }
     }
 
@@ -5737,7 +5736,8 @@ public class DrawingWorker {
 
             foldLineSet.unselect_all();
             record();
-            app.mouseMode = MouseMode.CREASE_SELECT_19;//20200930 add セレクトした折線に作業して、その後またセレクトできる状態に戻すための行
+
+            app.canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
         }
     }
 
@@ -5843,7 +5843,7 @@ public class DrawingWorker {
             foldLineSet.intersect_divide(1, sousuu_old, sousuu_old + 1, sousuu_new);
 
             record();
-            app.mouseMode = MouseMode.CREASE_SELECT_19;//20200930 add セレクトした折線に作業して、その後またセレクトできる状態に戻すための行
+            app.canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
         }
     }
 
@@ -5902,7 +5902,7 @@ public class DrawingWorker {
 
             for (int i = 1; i <= foldLineSet.getTotal(); i++) {
                 if (foldLineSet.get_select(i) == 2) {
-                    adds.set(OritaCalc.sentaisyou_lineSegment_motome(foldLineSet.get(i), line_step[1]));
+                    adds.set(OritaCalc.findLineSymmetryLineSegment(foldLineSet.get(i), line_step[1]));
                     adds.setColor(foldLineSet.getColor(i));
 
                     foldLineSet.addLine(adds.getA(), adds.getB());
@@ -5916,7 +5916,7 @@ public class DrawingWorker {
 
             foldLineSet.unselect_all();
             record();
-            app.mouseMode = MouseMode.CREASE_SELECT_19;//20200930 add セレクトした折線に作業して、その後またセレクトできる状態に戻すための行
+            app.canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
         }
     }
 
@@ -6495,7 +6495,7 @@ public class DrawingWorker {
                     s_idou.set(foldLineSet.get(goukei_nbox.getInt(1)));
 
                     for (int i = 2; i <= goukei_nbox.getTotal(); i++) {
-                        s_idou.set(OritaCalc.sentaisyou_lineSegment_motome(s_idou, foldLineSet.get(goukei_nbox.getInt(i))));
+                        s_idou.set(OritaCalc.findLineSymmetryLineSegment(s_idou, foldLineSet.get(goukei_nbox.getInt(i))));
                     }
                     i_hantai_color = LineColor.MAGENTA_5;
                     if (OritaCalc.equal(foldLineSet.get(goukei_nbox.getInt(1)).getA(), s_idou.getA(), 0.0001)) {
@@ -8637,13 +8637,9 @@ public class DrawingWorker {
     }
 
     public void setFoldLineAdditional(FoldLineAdditionalInputMode i) {
-        i_foldLine_additional_old = i_foldLine_additional;
         i_foldLine_additional = i;
     }
 
-    public void modosi_foldLineAdditional() {
-        i_foldLine_additional = i_foldLine_additional_old;
-    }
 
     public void check1(double r_hitosii, double parallel_decision) {
         foldLineSet.check1(r_hitosii, parallel_decision);
@@ -8785,10 +8781,13 @@ public class DrawingWorker {
         return selectionDistance;
     }
 
-    public void setData(CanvasModel canvasModel) {
-        setGridInputAssist(canvasModel.getDisplayGridInputAssist());
-        setPointSize(canvasModel.getPointSize());
-        lineWidth = canvasModel.getLineWidth();
+    public void setData(CanvasModel data) {
+        setGridInputAssist(data.getDisplayGridInputAssist());
+        setPointSize(data.getPointSize());
+        lineWidth = data.getLineWidth();
+        setColor(data.getLineColor());
+        setAuxLineColor(data.getAuxLiveLineColor());
+        setFoldLineAdditional(data.getFoldLineAdditionalInputMode());
     }
 
     public void setData(AngleSystemModel angleSystemModel) {

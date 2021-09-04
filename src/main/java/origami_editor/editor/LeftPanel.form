@@ -192,7 +192,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="ea3d2" class="javax.swing.JButton" binding="M_nisuruButton">
+          <component id="ea3d2" class="javax.swing.JButton" binding="toMountainButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="0.0"/>
@@ -201,7 +201,7 @@
               <icon value="ppp/M_nisuru.png"/>
             </properties>
           </component>
-          <component id="bce06" class="javax.swing.JButton" binding="V_nisuruButton">
+          <component id="bce06" class="javax.swing.JButton" binding="toValleyButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="0.0"/>
@@ -210,7 +210,7 @@
               <icon value="ppp/V_nisuru.png"/>
             </properties>
           </component>
-          <component id="91ebe" class="javax.swing.JButton" binding="E_nisuruButton">
+          <component id="91ebe" class="javax.swing.JButton" binding="toEdgeButton">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="0.0"/>
@@ -219,7 +219,7 @@
               <icon value="ppp/E_nisuru.png"/>
             </properties>
           </component>
-          <component id="a3503" class="javax.swing.JButton" binding="HK_nisuruButton">
+          <component id="a3503" class="javax.swing.JButton" binding="toAuxButton">
             <constraints>
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="0.0"/>

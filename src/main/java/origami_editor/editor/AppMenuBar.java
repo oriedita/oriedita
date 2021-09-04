@@ -42,14 +42,6 @@ public class AppMenuBar extends JMenuBar {
                 app.developmentView_initialization();
                 //展開図パラメータの初期化
 
-                app.currentLineColor = LineColor.RED_1;
-                app.mainDrawingWorker.setColor(app.currentLineColor);                                        //最初の折線の色を指定する。0は黒、1は赤、2は青。
-                app.buttonColorReset();
-                app.colRedButton.setForeground(Color.black);
-                app.colRedButton.setBackground(Color.red);    //折線のボタンの色設定
-                //展開図の初期化　終了
-
-
                 //折畳予測図のの初期化　開始
                 app.OZ = app.temp_OZ;//20171223この行は不要かもしれないが、一瞬でもOZが示すOriagari_Zuがなくなることがないように念のために入れておく
                 app.foldedFigures.clear();

@@ -313,7 +313,7 @@ public class CreasePattern_Worker {
     }
 
     private Point lineSymmetry_point_determine(int lineId, Point point) {//Given the id of the bar and any point, returns the point that is axisymmetric of the given point with respect to the corresponding bar.
-        return OritaCalc.lineSymmetry_point_find(pointSet.getBeginPointFromLineId(lineId), pointSet.getEndPointFromLineId(lineId), point);
+        return OritaCalc.findLineSymmetryPoint(pointSet.getBeginPointFromLineId(lineId), pointSet.getEndPointFromLineId(lineId), point);
     }
 
     public int getPointsTotal() {
