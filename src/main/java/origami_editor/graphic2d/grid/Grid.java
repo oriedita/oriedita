@@ -441,10 +441,10 @@ public class Grid {
         setBaseState(gridModel.getBaseState());
         setGridScaleColor(gridModel.getGridScaleColor());
         setGridColor(gridModel.getGridColor());
-        setHorizontalScaleInterval(gridModel.getIntervalGridSize());
-        setVerticalScaleInterval(gridModel.getIntervalGridSize());
         setHorizontalScalePosition(gridModel.getHorizontalScalePosition());
         setVerticalScalePosition(gridModel.getVerticalScalePosition());
+        setHorizontalScaleInterval(gridModel.getIntervalGridSize());
+        setVerticalScaleInterval(gridModel.getIntervalGridSize());
     }
 
     /**

@@ -1,6 +1,7 @@
 package origami_editor.editor.component;
 
 import origami_editor.editor.App;
+import origami_editor.editor.databinding.FoldedFigureModel;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -16,29 +17,28 @@ public class FoldedFigureResize extends JPanel {
     public FoldedFigureResize(App app) {
         add($$$getRootComponent$$$());
 
+        FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
         foldedFigureSizeSetButton.addActionListener(e -> {
-            app.foldedFigureModel.setScale(app.String2double(foldedFigureSizeTextField.getText(), app.foldedFigureModel.getScale()));
-
             app.setHelp("oriagarizu_syukusyaku_keisuu_set");
+
+            foldedFigureModel.setScale(app.String2double(foldedFigureSizeTextField.getText(), foldedFigureModel.getScale()));
+
             app.Button_shared_operation();
-            app.updateFoldedFigure();
         });
         double root2 = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
         foldedFigureSizeDecreaseButton.addActionListener(e -> {
             app.setHelp("oriagari_syukusyou");
 
-            app.foldedFigureModel.setScale(app.foldedFigureModel.getScale() / root2);
+            foldedFigureModel.setScale(foldedFigureModel.getScale() / root2);
 
             app.Button_shared_operation();
-            app.updateFoldedFigure();
         });
         foldedFigureSizeIncreaseButton.addActionListener(e -> {
             app.setHelp("oriagari_kakudai");
 
-            app.foldedFigureModel.setScale(app.foldedFigureModel.getScale() * root2);
+            foldedFigureModel.setScale(foldedFigureModel.getScale() * root2);
 
             app.Button_shared_operation();
-            app.updateFoldedFigure();
         });
     }
 

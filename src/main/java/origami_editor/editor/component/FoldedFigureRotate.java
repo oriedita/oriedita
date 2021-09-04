@@ -1,6 +1,7 @@
 package origami_editor.editor.component;
 
 import origami_editor.editor.App;
+import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
 
 import javax.swing.*;
@@ -17,28 +18,27 @@ public class FoldedFigureRotate extends JPanel {
     public FoldedFigureRotate(App app) {
         add($$$getRootComponent$$$());
 
+        FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
         foldedFigureRotateAntiClockwiseButton.addActionListener(e -> {
             app.setHelp("oriagari_p_kaiten");
 
-            app.foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(app.foldedFigureModel.getRotation() - 11.25));
+            foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() - 11.25));
 
             app.Button_shared_operation();
-            app.updateFoldedFigure();
         });
         foldedFigureRotateSetButton.addActionListener(e -> {
-            app.foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(app.String2double(foldedFigureRotateTextField.getText(), app.foldedFigureModel.getRotation())));
-
             app.setHelp("oriagarizu_kaiten_hosei_set");
+
+            foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(app.String2double(foldedFigureRotateTextField.getText(), foldedFigureModel.getRotation())));
+
             app.Button_shared_operation();
-            app.updateFoldedFigure();
         });
         foldedFigureRotateClockwiseButton.addActionListener(e -> {
             app.setHelp("oriagari_m_kaiten");
 
-            app.foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(app.foldedFigureModel.getRotation() + 11.25));
+            foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() + 11.25));
 
             app.Button_shared_operation();
-            app.updateFoldedFigure();
         });
     }
 

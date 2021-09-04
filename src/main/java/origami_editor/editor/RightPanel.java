@@ -73,7 +73,7 @@ public class RightPanel extends JPanel {
     private JLabel measuredAngle2Label;
     private JLabel measuredAngle3Label;
 
-    public RightPanel(App app) {
+    public RightPanel(App app, AngleSystemModel angleSystemModel) {
         this.app = app;
 
         $$$setupUI$$$();
@@ -148,114 +148,101 @@ public class RightPanel extends JPanel {
         angleSystemADecreaseButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_a_tiisaku");
 
-            app.angleSystemModel.decreaseAngleSystemA();
+            angleSystemModel.decreaseAngleSystemA();
 
             app.Button_shared_operation();
-            app.updateAngleSystem();
         });
 
         angleSystemAButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_a");
 
-            app.angleSystemModel.setCurrentAngleSystemDivider(app.angleSystemModel.getAngleSystemADivider());
+            angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemADivider());
 
             app.Button_shared_operation();
-            app.updateAngleSystem();
         });
         angleSystemAIncreaseButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_a_ookiku");
 
-            app.angleSystemModel.increaseAngleSystemA();
+            angleSystemModel.increaseAngleSystemA();
 
             app.Button_shared_operation();
-            app.updateAngleSystem();
         });
 
         angleSystemBDecreaseButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_b_tiisaku");
 
-            app.angleSystemModel.decreaseAngleSystemB();
+            angleSystemModel.decreaseAngleSystemB();
 
             app.Button_shared_operation();
-            app.updateAngleSystem();
         });
 
         angleSystemBButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_b");
 
-            app.angleSystemModel.setCurrentAngleSystemDivider(app.angleSystemModel.getAngleSystemBDivider());
+            angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemBDivider());
 
             app.Button_shared_operation();
-            app.updateAngleSystem();
         });
         angleSystemBIncreaseButton.addActionListener(e -> {
             app.setHelp("kakudo_kei_b_ookiku");
 
-            app.angleSystemModel.increaseAngleSystemB();
+            angleSystemModel.increaseAngleSystemB();
 
             app.Button_shared_operation();
-            app.updateAngleSystem();
         });
         restrictedAngleABCSetButton.addActionListener(e -> {
             app.setHelp("jiyuu_kaku_set_a");
 
-            getData(app.angleSystemModel);
+            getData(angleSystemModel);
 
-            app.angleSystemModel.setCurrentABC();
+            angleSystemModel.setCurrentABC();
 
             app.Button_shared_operation();
-            app.updateAngleSystem();
         });
 
         restrictedAngleSetDEFButton.addActionListener(e -> {
             app.setHelp("jiyuu_kaku_set_b");
 
-            getData(app.angleSystemModel);
+            getData(angleSystemModel);
 
-            app.angleSystemModel.setCurrentDEF();
+            angleSystemModel.setCurrentDEF();
 
             app.Button_shared_operation();
-            app.updateAngleSystem();
         });
         degButton.addActionListener(e -> {
             app.setHelp("deg");
 
-            app.angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_1);
+            angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_1);
 
             app.Button_shared_operation();
-            app.updateAngleSystem();
         });
         deg3Button.addActionListener(e -> {
             app.setHelp("deg3");
 
-            app.angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_3);
+            angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_3);
 
             app.Button_shared_operation();
-            app.updateAngleSystem();
         });
         angleRestrictedButton.addActionListener(e -> {
             app.setHelp("senbun_nyuryoku37");
 
-            app.angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_5);
+            angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_5);
 
             app.Button_shared_operation();
-            app.updateAngleSystem();
         });
         deg2Button.addActionListener(e -> {
             app.setHelp("deg2");
 
-            app.angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_2);
+            angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_2);
 
             app.Button_shared_operation();
-            app.updateAngleSystem();
         });
         deg4Button.addActionListener(e -> {
             app.setHelp("deg4");
 
-            app.angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_4);
+            angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_4);
 
             app.Button_shared_operation();
-            app.updateAngleSystem();
         });
         polygonSizeSetButton.addActionListener(e -> {
             int numPolygonCornersOld = app.numPolygonCorners;
@@ -438,7 +425,6 @@ public class RightPanel extends JPanel {
             app.canvasModel.decreaseAuxLineWidth();
 
             app.Button_shared_operation();
-            app.updateCanvas();
         });
         h_senhaba_ageButton.addActionListener(e -> {
             app.setHelp("h_senhaba_age");
@@ -446,7 +432,6 @@ public class RightPanel extends JPanel {
             app.canvasModel.increaseAuxLineWidth();
 
             app.Button_shared_operation();
-            app.updateCanvas();
         });
         colOrangeButton.addActionListener(e -> {
             app.setHelp("Button_Col_orange");
@@ -1293,9 +1278,5 @@ public class RightPanel extends JPanel {
         measuredAngle1Label.setText(String.valueOf(data.getMeasuredAngle1()));
         measuredAngle2Label.setText(String.valueOf(data.getMeasuredAngle2()));
         measuredAngle3Label.setText(String.valueOf(data.getMeasuredAngle3()));
-    }
-
-    public void getData(MeasuresModel data) {
-        // Nothing here
     }
 }

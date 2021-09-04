@@ -2,7 +2,11 @@ package origami_editor.editor.databinding;
 
 import origami_editor.editor.LineStyle;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 public class CanvasModel {
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean displayPointSpotlight;
     private boolean displayPointOffset;
     private boolean displayGridInputAssist;
@@ -13,7 +17,6 @@ public class CanvasModel {
     private boolean displayMarkings;
     private boolean displayCreasePatternOnTop;
     private boolean displayFoldingProgress;
-
     private int lineWidth;
     private int auxLineWidth;
     private int pointSize;
@@ -25,12 +28,18 @@ public class CanvasModel {
         reset();
     }
 
-    public int getAuxLineWidth() {
-        return auxLineWidth;
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.removePropertyChangeListener(listener);
     }
 
     public void setAuxLineWidth(int auxLineWidth) {
+        int oldAuxLineWidth = this.auxLineWidth;
         this.auxLineWidth = auxLineWidth;
+        this.pcs.firePropertyChange("auxLineWidth", oldAuxLineWidth, auxLineWidth);
     }
 
     public int getLineWidth() {
@@ -38,7 +47,9 @@ public class CanvasModel {
     }
 
     public void setLineWidth(int lineWidth) {
+        int oldLineWidth = this.lineWidth;
         this.lineWidth = lineWidth;
+        this.pcs.firePropertyChange("lineWidth", oldLineWidth, lineWidth);
     }
 
     public int getPointSize() {
@@ -46,7 +57,9 @@ public class CanvasModel {
     }
 
     public void setPointSize(int pointSize) {
+        int oldPointSize = this.pointSize;
         this.pointSize = pointSize;
+        this.pcs.firePropertyChange("pointSize", oldPointSize, pointSize);
     }
 
     public LineStyle getLineStyle() {
@@ -54,7 +67,9 @@ public class CanvasModel {
     }
 
     public void setLineStyle(LineStyle lineStyle) {
+        LineStyle oldLineStyle = this.lineStyle;
         this.lineStyle = lineStyle;
+        this.pcs.firePropertyChange("lineStyle", oldLineStyle, lineStyle);
     }
 
     public boolean getAntiAlias() {
@@ -62,7 +77,9 @@ public class CanvasModel {
     }
 
     public void setAntiAlias(boolean antiAlias) {
+        boolean oldAntiAlias = this.antiAlias;
         this.antiAlias = antiAlias;
+        this.pcs.firePropertyChange("antiAlias", oldAntiAlias, antiAlias);
     }
 
     public boolean getMouseWheelMovesCreasePattern() {
@@ -70,7 +87,9 @@ public class CanvasModel {
     }
 
     public void setMouseWheelMovesCreasePattern(boolean mouseWheelMovesCreasePattern) {
+        boolean oldMouseWheelMovesCreasePattern = this.mouseWheelMovesCreasePattern;
         this.mouseWheelMovesCreasePattern = mouseWheelMovesCreasePattern;
+        this.pcs.firePropertyChange("mouseWheelMovesCreasePattern", oldMouseWheelMovesCreasePattern, mouseWheelMovesCreasePattern);
     }
 
     public void reset() {
@@ -87,6 +106,8 @@ public class CanvasModel {
         lineStyle = LineStyle.COLOR;
         antiAlias = false;
         auxLineWidth = 3;
+
+        this.pcs.firePropertyChange(null, null, null);
     }
 
     public boolean getDisplayPointSpotlight() {
@@ -94,7 +115,9 @@ public class CanvasModel {
     }
 
     public void setDisplayPointSpotlight(boolean displayPointSpotlight) {
+        boolean oldDisplayPointSpotlight = this.displayPointSpotlight;
         this.displayPointSpotlight = displayPointSpotlight;
+        this.pcs.firePropertyChange("displayPointSpotlight", oldDisplayPointSpotlight, displayPointSpotlight);
     }
 
     public boolean getDisplayPointOffset() {
@@ -102,7 +125,9 @@ public class CanvasModel {
     }
 
     public void setDisplayPointOffset(boolean displayPointOffset) {
+        boolean oldDisplayPointOffset = this.displayPointOffset;
         this.displayPointOffset = displayPointOffset;
+        this.pcs.firePropertyChange("displayPointOffset", oldDisplayPointOffset, displayPointOffset);
     }
 
     public boolean getDisplayGridInputAssist() {
@@ -110,7 +135,9 @@ public class CanvasModel {
     }
 
     public void setDisplayGridInputAssist(boolean displayGridInputAssist) {
+        boolean oldDisplayGridInputAssist = this.displayGridInputAssist;
         this.displayGridInputAssist = displayGridInputAssist;
+        this.pcs.firePropertyChange("displayGridInputAssist", oldDisplayGridInputAssist, displayGridInputAssist);
     }
 
     public boolean getDisplayComments() {
@@ -118,7 +145,9 @@ public class CanvasModel {
     }
 
     public void setDisplayComments(boolean displayComments) {
+        boolean oldDisplayComments = this.displayComments;
         this.displayComments = displayComments;
+        this.pcs.firePropertyChange("displayComments", oldDisplayComments, displayComments);
     }
 
     public boolean getDisplayCpLines() {
@@ -126,7 +155,9 @@ public class CanvasModel {
     }
 
     public void setDisplayCpLines(boolean displayCpLines) {
+        boolean oldDisplayCpLines = this.displayCpLines;
         this.displayCpLines = displayCpLines;
+        this.pcs.firePropertyChange("displayCpLines", oldDisplayCpLines, displayCpLines);
     }
 
     public boolean getDisplayAuxLines() {
@@ -134,7 +165,9 @@ public class CanvasModel {
     }
 
     public void setDisplayAuxLines(boolean displayAuxLines) {
+        boolean oldDisplayAuxLines = this.displayAuxLines;
         this.displayAuxLines = displayAuxLines;
+        this.pcs.firePropertyChange("displayAuxLines", oldDisplayAuxLines, displayAuxLines);
     }
 
     public boolean getDisplayLiveAuxLines() {
@@ -142,7 +175,9 @@ public class CanvasModel {
     }
 
     public void setDisplayLiveAuxLines(boolean displayLiveAuxLines) {
+        boolean oldDisplayLiveAuxLines = this.displayLiveAuxLines;
         this.displayLiveAuxLines = displayLiveAuxLines;
+        this.pcs.firePropertyChange("displayLiveAuxLines", oldDisplayLiveAuxLines, displayLiveAuxLines);
     }
 
     public boolean getDisplayMarkings() {
@@ -150,7 +185,9 @@ public class CanvasModel {
     }
 
     public void setDisplayMarkings(boolean displayMarkings) {
+        boolean oldDisplayMarkings = this.displayMarkings;
         this.displayMarkings = displayMarkings;
+        this.pcs.firePropertyChange("displayMarkings", oldDisplayMarkings, displayMarkings);
     }
 
     public boolean getDisplayCreasePatternOnTop() {
@@ -158,7 +195,9 @@ public class CanvasModel {
     }
 
     public void setDisplayCreasePatternOnTop(boolean displayCreasePatternOnTop) {
+        boolean oldDisplayCreasePatternOnTop = this.displayCreasePatternOnTop;
         this.displayCreasePatternOnTop = displayCreasePatternOnTop;
+        this.pcs.firePropertyChange("displayCreasePatternOnTop", oldDisplayCreasePatternOnTop, displayCreasePatternOnTop);
     }
 
     public boolean getDisplayFoldingProgress() {
@@ -166,37 +205,41 @@ public class CanvasModel {
     }
 
     public void setDisplayFoldingProgress(boolean displayFoldingProgress) {
+        boolean oldDisplayFoldingProgress = this.displayFoldingProgress;
         this.displayFoldingProgress = displayFoldingProgress;
+        this.pcs.firePropertyChange("displayFoldingProgress", oldDisplayFoldingProgress, displayFoldingProgress);
     }
 
     public void decreasePointSize() {
-        pointSize = pointSize - 1;
+        int pointSize = this.pointSize - 1;
         if (pointSize < 0) {
             pointSize = 0;
         }
+        setPointSize(pointSize);
     }
 
     public void increasePointSize() {
-        pointSize++;
+        setPointSize(pointSize + 1);
     }
 
     public void advanceLineStyle() {
-        lineStyle = lineStyle.advance();
+        setLineStyle(lineStyle.advance());
     }
 
     public void toggleAntiAlias() {
-        antiAlias = !antiAlias;
+        setAntiAlias(!antiAlias);
     }
 
     public void decreaseLineWidth() {
-        lineWidth = lineWidth - 2;
+        int lineWidth = this.lineWidth - 2;
         if (lineWidth < 1) {
             lineWidth = 1;
         }
+        setLineWidth(lineWidth);
     }
 
     public void increaseLineWidth() {
-        lineWidth = lineWidth + 2;
+        setLineWidth(lineWidth + 2);
     }
 
     public float getCalculatedLineWidth() {
@@ -210,14 +253,15 @@ public class CanvasModel {
     }
 
     public void decreaseAuxLineWidth() {
-        auxLineWidth = auxLineWidth - 2;
+        int auxLineWidth = this.auxLineWidth - 2;
         if (auxLineWidth < 3) {
             auxLineWidth = 3;
         }
+        setAuxLineWidth(auxLineWidth);
     }
 
     public void increaseAuxLineWidth() {
-        auxLineWidth = auxLineWidth + 2;
+        setAuxLineWidth(auxLineWidth + 2);
     }
 
     public float getCalculatedAuxLineWidth() {

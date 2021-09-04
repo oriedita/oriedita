@@ -37,6 +37,7 @@ public class BottomPanel extends JPanel {
 
     public BottomPanel(App app) {
         this.app = app;
+        FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
 
         $$$setupUI$$$();
         foldButton.addActionListener(e -> {
@@ -66,14 +67,12 @@ public class BottomPanel extends JPanel {
         flipButton.addActionListener(e -> {
             app.setHelp("Button0b");
 
-            app.foldedFigureModel.advanceState();
+            foldedFigureModel.advanceState();
 
             if ((app.mouseMode == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (app.OZ.ip4 == FoldedFigure.State.BOTH_2)) {
-                app.foldedFigureModel.setState(FoldedFigure.State.FRONT_0);
+                foldedFigureModel.setState(FoldedFigure.State.FRONT_0);
             }//Fold-up forecast map Added to avoid the mode that can not be moved when moving
             app.Button_shared_operation();
-
-            app.updateFoldedFigure();
         });
         As100Button.addActionListener(e -> {
             app.subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_SAVE_100_1;
@@ -173,17 +172,13 @@ public class BottomPanel extends JPanel {
             app.Button_shared_operation();
             app.setHelp("a_a");
 
-            app.foldedFigureModel.toggleAntiAlias();
-
-            app.updateFoldedFigure();
+            foldedFigureModel.toggleAntiAlias();
         });
         shadowButton.addActionListener(e -> {
             app.Button_shared_operation();
             app.setHelp("kage");
 
-            app.foldedFigureModel.toggleDisplayShadows();
-
-            app.updateFoldedFigure();
+            foldedFigureModel.toggleDisplayShadows();
         });
         frontColorButton.addActionListener(e -> {
             app.setHelp("F_color");
@@ -196,8 +191,7 @@ public class BottomPanel extends JPanel {
             Color frontColor = JColorChooser.showDialog(app, "F_col", Color.white);
 
             if (frontColor != null) {
-                app.foldedFigureModel.setFrontColor(frontColor);
-                app.updateFoldedFigure();
+                foldedFigureModel.setFrontColor(frontColor);
             }
         });
         backColorButton.addActionListener(e -> {
@@ -210,8 +204,7 @@ public class BottomPanel extends JPanel {
             Color backColor = JColorChooser.showDialog(null, "B_col", Color.white);
 
             if (backColor != null) {
-                app.foldedFigureModel.setBackColor(backColor);
-                app.updateFoldedFigure();
+                foldedFigureModel.setBackColor(backColor);
             }
         });
         lineColorButton.addActionListener(e -> {
@@ -224,8 +217,7 @@ public class BottomPanel extends JPanel {
 
             Color lineColor = JColorChooser.showDialog(null, "L_col", Color.white);
             if (lineColor != null) {
-                app.foldedFigureModel.setLineColor(lineColor);
-                app.updateFoldedFigure();
+                foldedFigureModel.setLineColor(lineColor);
             }
         });
         haltButton.addActionListener(e -> {

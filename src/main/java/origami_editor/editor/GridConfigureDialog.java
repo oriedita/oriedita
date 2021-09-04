@@ -36,7 +36,7 @@ public class GridConfigureDialog extends JDialog {
     private JButton setGridParametersButton;
     private JButton resetButton;
 
-    public GridConfigureDialog(App app) {
+    public GridConfigureDialog(App app, GridModel gridModel) {
         super(app, "Configure Grid");
         this.app = app;
         setContentPane(contentPane);
@@ -55,8 +55,6 @@ public class GridConfigureDialog extends JDialog {
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        GridModel gridModel = app.gridModel;
-
         gridSizeDecreaseButton.addActionListener(e -> {
             app.setHelp("kitei2");
 
@@ -68,27 +66,16 @@ public class GridConfigureDialog extends JDialog {
             }
 
             gridModel.setGridSize(gridSize);
-
-            app.updateGrid();
-            app.repaintCanvas();
         });
         gridSizeSetButton.addActionListener(e -> {
             app.setHelp("syutoku");
 
             getData(gridModel);
-
-            app.updateGrid();
-            app.repaintCanvas();
         });
         gridSizeIncreaseButton.addActionListener(e -> {
             app.setHelp("kitei");
 
             gridModel.setGridSize(gridModel.getGridSize() * 2);
-
-            app.updateGrid();
-
-            //ボタンの色変え(ここまで)
-            app.repaintCanvas();
         });
         gridColorButton.addActionListener(e -> {
             app.setHelp("kousi_color");
@@ -99,56 +86,38 @@ public class GridConfigureDialog extends JDialog {
             Color color = JColorChooser.showDialog(null, "Col", new Color(230, 230, 230));
             if (color != null) {
                 gridModel.setGridColor(color);
-
-                app.updateGrid();
             }
             //以上でやりたいことは書き終わり
-
-            app.repaintCanvas();
         });
         gridLineWidthDecreaseButton.addActionListener(e -> {
-            gridModel.decreaseGridLineWidth();
-            app.updateGrid();
-
             app.setHelp("kousi_senhaba_sage");
-            app.repaintCanvas();
+
+            gridModel.decreaseGridLineWidth();
         });
         gridLineWidthIncreaseButton.addActionListener(e -> {
-            gridModel.increaseGridLineWidth();
-            app.updateGrid();
-
             app.setHelp("kousi_senhaba_age");
-            app.repaintCanvas();
+
+            gridModel.increaseGridLineWidth();
         });
         i_kitei_jyoutaiButton.addActionListener(e -> {
             app.setHelp("i_kitei_jyoutai");
 
             gridModel.advanceBaseState();
-            app.updateGrid();
-
-            app.repaintCanvas();
         });
         memori_tate_idouButton.addActionListener(e -> {
             app.setHelp("memori_tate_idou");
 
             gridModel.changeHorizontalScalePosition();
-            app.updateGrid();
-
-            app.repaintCanvas();
         });
         memori_kankaku_syutokuButton.addActionListener(e -> {
             app.setHelp("memori_kankaku_syutoku");
 
             getData(gridModel);
-
-            app.updateGrid();
         });
         memori_yoko_idouButton.addActionListener(e -> {
             app.setHelp("memori_yoko_idou");
 
             gridModel.changeVerticalScalePosition();
-
-            app.updateGrid();
         });
         intervalGridColorButton.addActionListener(e -> {
             app.setHelp("kousi_memori_color");
@@ -159,21 +128,14 @@ public class GridConfigureDialog extends JDialog {
             Color color = JColorChooser.showDialog(null, "Col", new Color(180, 200, 180));
             if (color != null) {
                 gridModel.setGridScaleColor(color);
-                app.updateGrid();
             }
         });
         setGridParametersButton.addActionListener(e -> {
             app.setHelp("kousi_syutoku");
 
             getData(gridModel);
-            app.updateGrid();
-
-            app.repaintCanvas();
         });
-        resetButton.addActionListener(e -> {
-            gridModel.reset();
-            app.updateGrid();
-        });
+        resetButton.addActionListener(e -> gridModel.reset());
     }
 
     private void onOK() {

@@ -1,6 +1,10 @@
 package origami_editor.editor.databinding;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 public class InternalDivisionRatioModel {
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private double internalDivisionRatioA;
     private double internalDivisionRatioB;
     private double internalDivisionRatioC;
@@ -12,6 +16,14 @@ public class InternalDivisionRatioModel {
         reset();
     }
 
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.removePropertyChangeListener(listener);
+    }
+
     public void reset() {
         internalDivisionRatioA = 1.0;
         internalDivisionRatioB = 0.0;
@@ -19,6 +31,8 @@ public class InternalDivisionRatioModel {
         internalDivisionRatioD = 0.0;
         internalDivisionRatioE = 1.0;
         internalDivisionRatioF = 2.0;
+
+        this.pcs.firePropertyChange(null, null, null);
     }
 
     public double getInternalDivisionRatioS() {
@@ -44,7 +58,9 @@ public class InternalDivisionRatioModel {
     }
 
     public void setInternalDivisionRatioA(double internalDivisionRatioA) {
+        double oldInternalDivisionRatioA = this.internalDivisionRatioA;
         this.internalDivisionRatioA = internalDivisionRatioA;
+        this.pcs.firePropertyChange("internalDivisionRatioA", oldInternalDivisionRatioA, internalDivisionRatioA);
     }
 
     public double getInternalDivisionRatioB() {
@@ -52,7 +68,9 @@ public class InternalDivisionRatioModel {
     }
 
     public void setInternalDivisionRatioB(double internalDivisionRatioB) {
+        double oldInternalDivisionRatioB = this.internalDivisionRatioB;
         this.internalDivisionRatioB = internalDivisionRatioB;
+        this.pcs.firePropertyChange("internalDivisionRatioB", oldInternalDivisionRatioB, internalDivisionRatioB);
     }
 
     public double getInternalDivisionRatioC() {
@@ -60,7 +78,9 @@ public class InternalDivisionRatioModel {
     }
 
     public void setInternalDivisionRatioC(double internalDivisionRatioC) {
+        double oldInternalDivisionRatioC = this.internalDivisionRatioC;
         this.internalDivisionRatioC = Math.max(internalDivisionRatioC, 0.0);
+        this.pcs.firePropertyChange("internalDivisionRatioC", oldInternalDivisionRatioC, this.internalDivisionRatioC);
     }
 
     public double getInternalDivisionRatioD() {
@@ -68,7 +88,9 @@ public class InternalDivisionRatioModel {
     }
 
     public void setInternalDivisionRatioD(double internalDivisionRatioD) {
+        double oldInternalDivisionRatioD = this.internalDivisionRatioD;
         this.internalDivisionRatioD = internalDivisionRatioD;
+        this.pcs.firePropertyChange("internalDivisionRatioD", oldInternalDivisionRatioD, internalDivisionRatioD);
     }
 
     public double getInternalDivisionRatioE() {
@@ -76,7 +98,9 @@ public class InternalDivisionRatioModel {
     }
 
     public void setInternalDivisionRatioE(double internalDivisionRatioE) {
+        double oldInternalDivisionRatioE = this.internalDivisionRatioE;
         this.internalDivisionRatioE = internalDivisionRatioE;
+        this.pcs.firePropertyChange("internalDivisionRatioE", oldInternalDivisionRatioE, internalDivisionRatioE);
     }
 
     public double getInternalDivisionRatioF() {
@@ -84,6 +108,8 @@ public class InternalDivisionRatioModel {
     }
 
     public void setInternalDivisionRatioF(double internalDivisionRatioF) {
+        double oldInternalDivisionRatioF = this.internalDivisionRatioF;
         this.internalDivisionRatioF = Math.max(internalDivisionRatioF, 0.0);
+        this.pcs.firePropertyChange("internalDivisionRatioF", oldInternalDivisionRatioF, this.internalDivisionRatioF);
     }
 }

@@ -3,21 +3,30 @@ package origami_editor.editor.databinding;
 import origami_editor.editor.folded_figure.FoldedFigure;
 
 import java.awt.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 public class FoldedFigureModel {
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private Color frontColor;
     private Color backColor;
     private Color lineColor;
-
     private double scale;
     private double rotation;
-
     private boolean antiAlias;
     private boolean displayShadows;
     private FoldedFigure.State state;
 
     public FoldedFigureModel() {
         reset();
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.removePropertyChangeListener(listener);
     }
 
     public void reset() {
@@ -30,6 +39,8 @@ public class FoldedFigureModel {
         frontColor = new Color(255, 255, 50);
         backColor = new Color(233, 233, 233);
         lineColor = Color.black;
+
+        this.pcs.firePropertyChange(null, null, null);
     }
 
     public Color getFrontColor() {
@@ -37,7 +48,9 @@ public class FoldedFigureModel {
     }
 
     public void setFrontColor(Color frontColor) {
+        Color oldFrontColor = this.frontColor;
         this.frontColor = frontColor;
+        this.pcs.firePropertyChange("frontColor", oldFrontColor, frontColor);
     }
 
     public Color getBackColor() {
@@ -45,7 +58,9 @@ public class FoldedFigureModel {
     }
 
     public void setBackColor(Color backColor) {
+        Color oldFrontColor = this.backColor;
         this.backColor = backColor;
+        this.pcs.firePropertyChange("backColor", oldFrontColor, backColor);
     }
 
     public Color getLineColor() {
@@ -53,7 +68,9 @@ public class FoldedFigureModel {
     }
 
     public void setLineColor(Color lineColor) {
+        Color oldFrontColor = this.lineColor;
         this.lineColor = lineColor;
+        this.pcs.firePropertyChange("lineColor", oldFrontColor, lineColor);
     }
 
     public double getScale() {
@@ -62,7 +79,9 @@ public class FoldedFigureModel {
 
     public void setScale(double scale) {
         if (scale > 0.0) {
+            double oldScale = this.scale;
             this.scale = scale;
+            this.pcs.firePropertyChange("scale", oldScale, scale);
         }
     }
 
@@ -71,7 +90,9 @@ public class FoldedFigureModel {
     }
 
     public void setRotation(double rotation) {
+        double oldRotation = this.rotation;
         this.rotation = rotation;
+        this.pcs.firePropertyChange("rotation", oldRotation, rotation);
     }
 
     public boolean getAntiAlias() {
@@ -79,7 +100,9 @@ public class FoldedFigureModel {
     }
 
     public void setAntiAlias(boolean antiAlias) {
+        boolean oldAntiAlias = this.antiAlias;
         this.antiAlias = antiAlias;
+        this.pcs.firePropertyChange("antiAlias", oldAntiAlias, antiAlias);
     }
 
     public boolean getDisplayShadows() {
@@ -87,7 +110,9 @@ public class FoldedFigureModel {
     }
 
     public void setDisplayShadows(boolean displayShadows) {
+        boolean oldDisplayShadows = this.displayShadows;
         this.displayShadows = displayShadows;
+        this.pcs.firePropertyChange("displayShadows", oldDisplayShadows, displayShadows);
     }
 
     public FoldedFigure.State getState() {
@@ -95,18 +120,20 @@ public class FoldedFigureModel {
     }
 
     public void setState(FoldedFigure.State state) {
+        FoldedFigure.State oldState = this.state;
         this.state = state;
+        this.pcs.firePropertyChange("state", oldState, state);
     }
 
     public void toggleAntiAlias() {
-        antiAlias = !antiAlias;
+        setAntiAlias(!antiAlias);
     }
 
     public void toggleDisplayShadows() {
-        displayShadows = !displayShadows;
+        setDisplayShadows(!displayShadows);
     }
 
     public void advanceState() {
-        state = state.advance();
+        setState(state.advance());
     }
 }

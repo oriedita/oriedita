@@ -4,8 +4,11 @@ import origami_editor.graphic2d.grid.Grid;
 import origami_editor.graphic2d.oritacalc.OritaCalc;
 
 import java.awt.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 public class GridModel {
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private int intervalGridSize;
     private int gridSize;
     private double gridXA;
@@ -15,18 +18,23 @@ public class GridModel {
     private double gridYB;
     private double gridYC;
     private double gridAngle;
-
     private Color gridColor;
     private Color gridScaleColor;
-
     private int gridLineWidth;
     private Grid.State baseState;
-
     private int verticalScalePosition;
     private int horizontalScalePosition;
 
     public GridModel() {
         reset();
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.removePropertyChangeListener(listener);
     }
 
     public void reset() {
@@ -45,6 +53,8 @@ public class GridModel {
 
         resetGridX();
         resetGridY();
+
+        this.pcs.firePropertyChange(null, null, null);
     }
 
 
@@ -52,64 +62,79 @@ public class GridModel {
         return gridColor;
     }
 
-    public void setGridColor(Color gridColor) {
-        this.gridColor = gridColor;
+    public void setGridColor(Color newGridColor) {
+        Color oldGridColor = this.gridColor;
+        this.gridColor = newGridColor;
+
+        this.pcs.firePropertyChange("gridColor", oldGridColor, newGridColor);
     }
 
     public Color getGridScaleColor() {
         return gridScaleColor;
     }
 
-    public void setGridScaleColor(Color gridScaleColor) {
-        this.gridScaleColor = gridScaleColor;
+    public void setGridScaleColor(Color newGridScaleColor) {
+        Color oldGridScaleColor = this.gridScaleColor;
+        this.gridScaleColor = newGridScaleColor;
+        this.pcs.firePropertyChange("gridScaleColor", oldGridScaleColor, newGridScaleColor);
     }
 
     public int getGridLineWidth() {
         return gridLineWidth;
     }
 
-    public void setGridLineWidth(int gridLineWidth) {
-        this.gridLineWidth = gridLineWidth;
+    public void setGridLineWidth(int newGridLineWidth) {
+        int oldGridLineWidth = this.gridLineWidth;
+        this.gridLineWidth = newGridLineWidth;
+        this.pcs.firePropertyChange("gridLineWidth", oldGridLineWidth, newGridLineWidth);
     }
 
 
     public void decreaseGridLineWidth() {
-        gridLineWidth = gridLineWidth - 2;
+        int gridLineWidth = this.gridLineWidth - 2;
         if (gridLineWidth < 1) {
             gridLineWidth = 1;
         }
+
+        setGridLineWidth(gridLineWidth);
     }
 
     public void increaseGridLineWidth() {
-        gridLineWidth = gridLineWidth + 2;
+        setGridLineWidth(gridLineWidth + 2);
     }
 
     public Grid.State getBaseState() {
         return baseState;
     }
 
-    public void setBaseState(Grid.State baseState) {
-        this.baseState = baseState;
+    public void setBaseState(Grid.State newBaseState) {
+        Grid.State oldBaseState = this.baseState;
+        this.baseState = newBaseState;
+        this.pcs.firePropertyChange("baseState", oldBaseState, newBaseState);
     }
 
     public void advanceBaseState() {
-        baseState = baseState.advance();
+        setBaseState(baseState.advance());
     }
 
     public int getVerticalScalePosition() {
         return verticalScalePosition;
     }
 
-    public void setVerticalScalePosition(int verticalScalePosition) {
-        this.verticalScalePosition = verticalScalePosition;
+    public void setVerticalScalePosition(int newVerticalScalePosition) {
+        int oldVerticalScalePosition = this.verticalScalePosition;
+        this.verticalScalePosition = newVerticalScalePosition;
+        this.pcs.firePropertyChange("verticalScalePosition", oldVerticalScalePosition, newVerticalScalePosition);
     }
 
     public int getHorizontalScalePosition() {
         return horizontalScalePosition;
     }
 
-    public void setHorizontalScalePosition(int horizontalScalePosition) {
-        this.horizontalScalePosition = horizontalScalePosition;
+    public void setHorizontalScalePosition(int newHorizontalScalePosition) {
+        int oldHorizontalScalePosition = this.horizontalScalePosition;
+        this.horizontalScalePosition = newHorizontalScalePosition;
+        this.pcs.firePropertyChange("horizontalScalePosition", oldHorizontalScalePosition, newHorizontalScalePosition);
     }
 
     public int getGridSize() {
@@ -117,7 +142,9 @@ public class GridModel {
     }
 
     public void setGridSize(final int gridSize) {
+        int oldGridSize = this.gridSize;
         this.gridSize = Math.max(gridSize, 1);
+        this.pcs.firePropertyChange("gridSize", oldGridSize, this.gridSize);
     }
 
     public double getGridXA() {
@@ -125,11 +152,13 @@ public class GridModel {
     }
 
     public void setGridXA(final double gridXA) {
+        double oldGridXA = this.gridXA;
         if (validateGrid(gridXA, gridXB, gridXC)) {
             this.gridXA = gridXA;
         } else {
             resetGridX();
         }
+        this.pcs.firePropertyChange("gridXA", oldGridXA, this.gridXA);
     }
 
     public double getGridXB() {
@@ -137,11 +166,13 @@ public class GridModel {
     }
 
     public void setGridXB(final double gridXB) {
+        double oldGridXB = this.gridXB;
         if (validateGrid(gridXA, gridXB, gridXC)) {
             this.gridXB = gridXB;
         } else {
             resetGridX();
         }
+        this.pcs.firePropertyChange("gridXB", oldGridXB, this.gridXB);
     }
 
     public int getIntervalGridSize() {
@@ -149,7 +180,9 @@ public class GridModel {
     }
 
     public void setIntervalGridSize(final int intervalGridSize) {
+        int oldIntervalGridSize = this.intervalGridSize;
         this.intervalGridSize = Math.max(intervalGridSize, 1);
+        this.pcs.firePropertyChange("intervalGridSize", oldIntervalGridSize, this.intervalGridSize);
     }
 
     public double getGridXC() {
@@ -157,11 +190,13 @@ public class GridModel {
     }
 
     public void setGridXC(final double gridXC) {
+        double oldGridXC = this.gridXC;
         if (validateGrid(gridXA, gridXB, gridXC)) {
             this.gridXC = Math.max(gridXC, 0.0);
         } else {
             resetGridX();
         }
+        this.pcs.firePropertyChange("gridXC", oldGridXC, this.gridXC);
     }
 
     public double getGridYA() {
@@ -169,11 +204,13 @@ public class GridModel {
     }
 
     public void setGridYA(final double gridYA) {
+        double oldGridYA = this.gridYA;
         if (validateGrid(gridYA, gridYB, gridYC)) {
             this.gridYA = gridYA;
         } else {
             resetGridY();
         }
+        this.pcs.firePropertyChange("gridYA", oldGridYA, this.gridYA);
     }
 
     public double getGridYB() {
@@ -181,11 +218,13 @@ public class GridModel {
     }
 
     public void setGridYB(final double gridYB) {
+        double oldGridYB = this.gridYB;
         if (validateGrid(gridYA, gridYB, gridYC)) {
             this.gridYB = gridYB;
         } else {
             resetGridY();
         }
+        this.pcs.firePropertyChange("gridYB", oldGridYB, this.gridYB);
     }
 
     public double getGridYC() {
@@ -193,11 +232,13 @@ public class GridModel {
     }
 
     public void setGridYC(final double gridYC) {
+        double oldGridYC = this.gridYC;
         if (validateGrid(gridYA, gridYB, gridYC)) {
             this.gridYC = Math.max(gridYC, 0.0);
         } else {
             resetGridY();
         }
+        this.pcs.firePropertyChange("gridYC", oldGridYC, this.gridYC);
     }
 
     public double getGridAngle() {
@@ -205,16 +246,20 @@ public class GridModel {
     }
 
     public void setGridAngle(final double gridAngle) {
-        this.gridAngle = gridAngle;
+        double oldAngle = this.gridAngle;
+        double newAngle = gridAngle;
         if (Math.abs(OritaCalc.angle_between_0_360(this.gridAngle)) < 0.1) {
-            this.gridAngle = 90.0;
+            newAngle = 90.0;
         }
         if (Math.abs(OritaCalc.angle_between_0_360(this.gridAngle - 180.0)) < 0.1) {
-            this.gridAngle = 90.0;
+            newAngle = 90.0;
         }
         if (Math.abs(OritaCalc.angle_between_0_360(this.gridAngle - 360.0)) < 0.1) {
-            this.gridAngle = 90.0;
+            newAngle = 90.0;
         }
+
+        this.gridAngle = newAngle;
+        this.pcs.firePropertyChange("gridAngle", oldAngle, newAngle);
     }
 
     private boolean validateGrid(double a, double b, double c) {
@@ -251,16 +296,20 @@ public class GridModel {
     }
 
     public void changeHorizontalScalePosition() {
-        horizontalScalePosition++;
+        int horizontalScalePosition = this.horizontalScalePosition + 1;
         if (horizontalScalePosition >= intervalGridSize) {
             horizontalScalePosition = 0;
         }
+
+        setHorizontalScalePosition(horizontalScalePosition);
     }
 
     public void changeVerticalScalePosition() {
-        verticalScalePosition++;
+        int verticalScalePosition = this.verticalScalePosition + 1;
         if (verticalScalePosition >= intervalGridSize) {
             verticalScalePosition = 0;
         }
+
+        setVerticalScalePosition(verticalScalePosition);
     }
 }

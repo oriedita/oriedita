@@ -1,6 +1,7 @@
 package origami_editor.editor;
 
 import origami_editor.editor.databinding.CanvasModel;
+import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.databinding.InternalDivisionRatioModel;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
@@ -46,6 +47,8 @@ public class TopPanel extends JPanel {
     public TopPanel(App app) {
         this.app = app;
         $$$setupUI$$$();
+
+        app.canvasModel.addPropertyChangeListener(e -> setData((CanvasModel) e.getSource()));
         tyouhoukei_selectButton.addActionListener(e -> {
             app.setHelp("tyouhoukei_select");
             app.foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;//=0は折線入力　=1は補助線入力モード
@@ -74,14 +77,11 @@ public class TopPanel extends JPanel {
             app.setHelp("ckbox_mouse_settei");
 
             app.canvasModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected());
-
-            app.updateCanvas();
         });
         lineSegmentInternalDivisionRatioSetButton.addActionListener(e -> {
             app.setHelp("senbun_naibun_set");
 
             getData(app.internalDivisionRatioModel);
-            app.updateInternalDivisionRatio();
 
             app.mouseMode = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_RATIO_SET_28;
@@ -94,7 +94,6 @@ public class TopPanel extends JPanel {
             app.setHelp("senbun_n_nyuryoku");
 
             getData(app.internalDivisionRatioModel);
-            app.updateInternalDivisionRatio();
 
             app.mouseMode = MouseMode.LINE_SEGMENT_RATIO_SET_28;
             app.iro_sitei_ato_ni_jissisuru_sagyou_bangou = MouseMode.LINE_SEGMENT_RATIO_SET_28;
@@ -112,6 +111,7 @@ public class TopPanel extends JPanel {
 
             app.repaintCanvas();
         });
+        FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
         tenkaizu_syukusyouButton.addActionListener(e -> {
             app.setHelp("tenkaizu_syukusyou");
 
@@ -130,8 +130,7 @@ public class TopPanel extends JPanel {
                 OZi.scale(d_bairitu, t_o2tv);
             }
 
-            app.foldedFigureModel.setScale(app.foldedFigureModel.getScale() * d_bairitu);
-            app.updateFoldedFigure();
+            foldedFigureModel.setScale(foldedFigureModel.getScale() * d_bairitu);
 //20180122追加　ここまで
 
 
@@ -163,9 +162,7 @@ public class TopPanel extends JPanel {
                     OZi.scale(d_bairitu, t_o2tv);
                 }
 
-                app.foldedFigureModel.setScale(app.foldedFigureModel.getScale() * d_bairitu);
-
-                app.updateFoldedFigure();
+                foldedFigureModel.setScale(foldedFigureModel.getScale() * d_bairitu);
             }
             scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
             scaleFactorTextField.setCaretPosition(0);
@@ -194,8 +191,7 @@ public class TopPanel extends JPanel {
                 OZi.scale(d_bairitu, t_o2tv);
             }
 
-            app.foldedFigureModel.setScale(app.foldedFigureModel.getScale() * d_bairitu);
-            app.updateFoldedFigure();
+            foldedFigureModel.setScale(foldedFigureModel.getScale() * d_bairitu);
 //20180122追加　ここまで
 
             scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
@@ -464,30 +460,6 @@ public class TopPanel extends JPanel {
 
     public JTextField getScaleFactorTextField() {
         return scaleFactorTextField;
-    }
-
-    public JTextField getRatioATextField() {
-        return ratioATextField;
-    }
-
-    public JTextField getRatioBTextField() {
-        return ratioBTextField;
-    }
-
-    public JTextField getRatioCTextField() {
-        return ratioCTextField;
-    }
-
-    public JTextField getRatioDTextField() {
-        return ratioDTextField;
-    }
-
-    public JTextField getRatioETextField() {
-        return ratioETextField;
-    }
-
-    public JTextField getRatioFTextField() {
-        return ratioFTextField;
     }
 
     private void createUIComponents() {

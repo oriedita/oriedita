@@ -292,8 +292,6 @@ public class FoldedFigure {
         app.foldedFigureModel.setScale(d_foldedFigure_scale_factor);
         app.foldedFigureModel.setRotation(d_foldedFigure_rotation_correction);
 
-        app.updateFoldedFigure();
-
         System.out.println("cp_worker1.ten_of_kijyunmen_ob     " + cp_worker1.point_of_referencePlane_ob.getX());
 
         Point p0 = new Point();
@@ -490,8 +488,6 @@ public class FoldedFigure {
 
         app.foldedFigureModel.setScale(d_foldedFigure_scale_factor);
         app.foldedFigureModel.setRotation(d_foldedFigure_rotation_correction);
-
-        app.updateFoldedFigure();
 
         double d_display_position_x = camera_of_foldLine_diagram.getDisplayPositionX();
         double d_display_position_y = camera_of_foldLine_diagram.getDisplayPositionY();

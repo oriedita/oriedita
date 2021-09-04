@@ -1,6 +1,7 @@
 package origami_editor.editor;
 
 import origami_editor.editor.component.UndoRedo;
+import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.GridModel;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
@@ -87,6 +88,8 @@ public class LeftPanel extends JPanel {
     private final GridConfigureDialog gridConfigureDialog;
 
     public LeftPanel(App app) {
+        CanvasModel canvasModel = app.canvasModel;
+
         $$$setupUI$$$();
         undoRedo.addUndoActionListener(e -> {
             app.setHelp("undo");
@@ -115,46 +118,34 @@ public class LeftPanel extends JPanel {
         lineWidthDecreaseButton.addActionListener(e -> {
             app.setHelp("senhaba_sage");
 
-            app.canvasModel.decreaseLineWidth();
-
-            app.updateCanvas();
+            canvasModel.decreaseLineWidth();
         });
         lineWidthIncreaseButton.addActionListener(e -> {
             app.setHelp("senhaba_age");
 
-            app.canvasModel.increaseLineWidth();
-
-            app.updateCanvas();
+            canvasModel.increaseLineWidth();
         });
         pointSizeDecreaseButton.addActionListener(e -> {
             app.setHelp("tenhaba_sage");
 
-            app.canvasModel.decreasePointSize();
-
-            app.updateCanvas();
+            canvasModel.decreasePointSize();
         });
         pointSizeIncreaseButton.addActionListener(e -> {
             app.setHelp("tenhaba_age");
 
-            app.canvasModel.increasePointSize();
-
-            app.updateCanvas();
+            canvasModel.increasePointSize();
         });
         antiAliasToggleButton.addActionListener(e -> {
             app.setHelp("anti_alias");
 
-            app.canvasModel.toggleAntiAlias();
-
-            app.updateCanvas();
+            canvasModel.toggleAntiAlias();
         });
         lineStyleChangeButton.addActionListener(e -> {
             app.setHelp("orisen_hyougen");
 
             app.Button_shared_operation();
 
-            app.canvasModel.advanceLineStyle();
-
-            app.updateCanvas();
+            canvasModel.advanceLineStyle();
         });
         colRedButton.addActionListener(e -> {
             app.setHelp("ButtonCol_red");
@@ -839,7 +830,7 @@ public class LeftPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        gridConfigureDialog = new GridConfigureDialog(app);
+        gridConfigureDialog = new GridConfigureDialog(app, app.gridModel);
         gridConfigureDialog.pack();
 
         button1.addActionListener(e -> {

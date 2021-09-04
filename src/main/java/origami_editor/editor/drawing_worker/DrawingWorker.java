@@ -1,10 +1,7 @@
 package origami_editor.editor.drawing_worker;
 
 import origami_editor.editor.*;
-import origami_editor.editor.databinding.AngleSystemModel;
-import origami_editor.editor.databinding.CanvasModel;
-import origami_editor.editor.databinding.GridModel;
-import origami_editor.editor.databinding.InternalDivisionRatioModel;
+import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing_worker.drawing_worker_toolbox.Drawing_Worker_Toolbox;
 import origami_editor.editor.undo_box.HistoryState;
 import origami_editor.graphic2d.circle.Circle;
@@ -168,10 +165,6 @@ public class DrawingWorker {
         foldLineSet.addLine(200.0, 200.0, -200.0, 200.0, LineColor.BLACK_0);
         foldLineSet.addLine(200.0, 200.0, 200.0, -200.0, LineColor.BLACK_0);
         //Enter the paper square (end)
-    }
-
-    public void measurement_display() {
-        app.updateMeasures();
     }
 
     public void Memo_jyouhou_toridasi(Memo memo1) {
@@ -486,8 +479,6 @@ public class DrawingWorker {
             gridModel.setGridScaleColor(new Color(i_grid_memori_color_R, i_grid_memori_color_G, i_grid_memori_color_B));
         }
 
-        app.updateGrid();
-
         // 折り上がり図設定の読み込み -------------------------------------------------------------------------
 
         int i_oriagarizu_F_color_R = 0;
@@ -563,7 +554,6 @@ public class DrawingWorker {
             app.foldedFigureModel.setFrontColor(new Color(i_oriagarizu_F_color_R, i_oriagarizu_F_color_G, i_oriagarizu_F_color_B));
             app.foldedFigureModel.setBackColor(new Color(i_oriagarizu_B_color_R, i_oriagarizu_B_color_G, i_oriagarizu_B_color_B));
             app.foldedFigureModel.setLineColor(new Color(i_oriagarizu_L_color_R, i_oriagarizu_L_color_G, i_oriagarizu_L_color_B));
-            app.updateFoldedFigure();
         }
     }
 
@@ -836,24 +826,25 @@ public class DrawingWorker {
         memo1.addLine("</camera_of_orisen_nyuuryokuzu>");
 
         memo1.addLine("<settei>");
-        memo1.addLine("<ckbox_mouse_settei>" + app.canvasModel.getMouseWheelMovesCreasePattern() + "</ckbox_mouse_settei>");
-        memo1.addLine("<ckbox_ten_sagasi>" + app.canvasModel.getDisplayPointSpotlight() + "</ckbox_ten_sagasi>");
-        memo1.addLine("<ckbox_ten_hanasi>" + app.canvasModel.getDisplayPointOffset() + "</ckbox_ten_hanasi>");
-        memo1.addLine("<ckbox_kou_mitudo_nyuuryoku>" + app.canvasModel.getDisplayGridInputAssist() + "</ckbox_kou_mitudo_nyuuryoku>");
-        memo1.addLine("<ckbox_bun>" + app.canvasModel.getDisplayComments() + "</ckbox_bun>");
-        memo1.addLine("<ckbox_cp>" + app.canvasModel.getDisplayCpLines() + "</ckbox_cp>");
-        memo1.addLine("<ckbox_a0>" + app.canvasModel.getDisplayAuxLines() + "</ckbox_a0>");
-        memo1.addLine("<ckbox_a1>" + app.canvasModel.getDisplayLiveAuxLines() + "</ckbox_a1>");
-        memo1.addLine("<ckbox_mejirusi>" + app.canvasModel.getDisplayMarkings() + "</ckbox_mejirusi>");
-        memo1.addLine("<ckbox_cp_ue>" + app.canvasModel.getDisplayCreasePatternOnTop() + "</ckbox_cp_ue>");
-        memo1.addLine("<ckbox_oritatami_keika>" + app.canvasModel.getDisplayFoldingProgress() + "</ckbox_oritatami_keika>");
+        CanvasModel canvasModel = app.canvasModel;
+        memo1.addLine("<ckbox_mouse_settei>" + canvasModel.getMouseWheelMovesCreasePattern() + "</ckbox_mouse_settei>");
+        memo1.addLine("<ckbox_ten_sagasi>" + canvasModel.getDisplayPointSpotlight() + "</ckbox_ten_sagasi>");
+        memo1.addLine("<ckbox_ten_hanasi>" + canvasModel.getDisplayPointOffset() + "</ckbox_ten_hanasi>");
+        memo1.addLine("<ckbox_kou_mitudo_nyuuryoku>" + canvasModel.getDisplayGridInputAssist() + "</ckbox_kou_mitudo_nyuuryoku>");
+        memo1.addLine("<ckbox_bun>" + canvasModel.getDisplayComments() + "</ckbox_bun>");
+        memo1.addLine("<ckbox_cp>" + canvasModel.getDisplayCpLines() + "</ckbox_cp>");
+        memo1.addLine("<ckbox_a0>" + canvasModel.getDisplayAuxLines() + "</ckbox_a0>");
+        memo1.addLine("<ckbox_a1>" + canvasModel.getDisplayLiveAuxLines() + "</ckbox_a1>");
+        memo1.addLine("<ckbox_mejirusi>" + canvasModel.getDisplayMarkings() + "</ckbox_mejirusi>");
+        memo1.addLine("<ckbox_cp_ue>" + canvasModel.getDisplayCreasePatternOnTop() + "</ckbox_cp_ue>");
+        memo1.addLine("<ckbox_oritatami_keika>" + canvasModel.getDisplayFoldingProgress() + "</ckbox_oritatami_keika>");
         //The thickness of the line in the development view.
-        memo1.addLine("<iTenkaizuSenhaba>" + app.canvasModel.getLineWidth() + "</iTenkaizuSenhaba>");
+        memo1.addLine("<iTenkaizuSenhaba>" + canvasModel.getLineWidth() + "</iTenkaizuSenhaba>");
         //Width of vertex sign
-        memo1.addLine("<ir_ten>" + app.canvasModel.getPointSize() + "</ir_ten>");
+        memo1.addLine("<ir_ten>" + canvasModel.getPointSize() + "</ir_ten>");
         //Express the polygonal line expression with color
-        memo1.addLine("<i_orisen_hyougen>" + app.canvasModel.getLineStyle() + "</i_orisen_hyougen>");
-        memo1.addLine("<i_anti_alias>" + app.canvasModel.getAntiAlias() + "</i_anti_alias>");
+        memo1.addLine("<i_orisen_hyougen>" + canvasModel.getLineStyle() + "</i_orisen_hyougen>");
+        memo1.addLine("<i_anti_alias>" + canvasModel.getAntiAlias() + "</i_anti_alias>");
         memo1.addLine("</settei>");
 
         memo1.addLine("<Kousi>");
@@ -886,17 +877,18 @@ public class DrawingWorker {
 
         memo1.addLine("<oriagarizu>");
 
-        memo1.addLine("<oriagarizu_F_color_R>" + app.foldedFigureModel.getFrontColor().getRed() + "</oriagarizu_F_color_R>");
-        memo1.addLine("<oriagarizu_F_color_G>" + app.foldedFigureModel.getFrontColor().getGreen() + "</oriagarizu_F_color_G>");
-        memo1.addLine("<oriagarizu_F_color_B>" + app.foldedFigureModel.getFrontColor().getBlue() + "</oriagarizu_F_color_B>");
+        FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
+        memo1.addLine("<oriagarizu_F_color_R>" + foldedFigureModel.getFrontColor().getRed() + "</oriagarizu_F_color_R>");
+        memo1.addLine("<oriagarizu_F_color_G>" + foldedFigureModel.getFrontColor().getGreen() + "</oriagarizu_F_color_G>");
+        memo1.addLine("<oriagarizu_F_color_B>" + foldedFigureModel.getFrontColor().getBlue() + "</oriagarizu_F_color_B>");
 
-        memo1.addLine("<oriagarizu_B_color_R>" + app.foldedFigureModel.getBackColor().getRed() + "</oriagarizu_B_color_R>");
-        memo1.addLine("<oriagarizu_B_color_G>" + app.foldedFigureModel.getBackColor().getGreen() + "</oriagarizu_B_color_G>");
-        memo1.addLine("<oriagarizu_B_color_B>" + app.foldedFigureModel.getBackColor().getBlue() + "</oriagarizu_B_color_B>");
+        memo1.addLine("<oriagarizu_B_color_R>" + foldedFigureModel.getBackColor().getRed() + "</oriagarizu_B_color_R>");
+        memo1.addLine("<oriagarizu_B_color_G>" + foldedFigureModel.getBackColor().getGreen() + "</oriagarizu_B_color_G>");
+        memo1.addLine("<oriagarizu_B_color_B>" + foldedFigureModel.getBackColor().getBlue() + "</oriagarizu_B_color_B>");
 
-        memo1.addLine("<oriagarizu_L_color_R>" + app.foldedFigureModel.getLineColor().getRed() + "</oriagarizu_L_color_R>");
-        memo1.addLine("<oriagarizu_L_color_G>" + app.foldedFigureModel.getLineColor().getGreen() + "</oriagarizu_L_color_G>");
-        memo1.addLine("<oriagarizu_L_color_B>" + app.foldedFigureModel.getLineColor().getBlue() + "</oriagarizu_L_color_B>");
+        memo1.addLine("<oriagarizu_L_color_R>" + foldedFigureModel.getLineColor().getRed() + "</oriagarizu_L_color_R>");
+        memo1.addLine("<oriagarizu_L_color_G>" + foldedFigureModel.getLineColor().getGreen() + "</oriagarizu_L_color_G>");
+        memo1.addLine("<oriagarizu_L_color_B>" + foldedFigureModel.getLineColor().getBlue() + "</oriagarizu_L_color_B>");
 
         memo1.addLine("</oriagarizu>");
     }
@@ -2885,7 +2877,6 @@ public class DrawingWorker {
         if (i_drawing_stage == 2) {
             i_drawing_stage = 0;
             app.measuresModel.setMeasuredLength1(OritaCalc.distance(line_step[1].getA(), line_step[2].getA()) * (double) grid.getGridSize() / 400.0);
-            app.updateMeasures();
         }
     }
 
@@ -2916,7 +2907,6 @@ public class DrawingWorker {
         if (i_drawing_stage == 2) {
             i_drawing_stage = 0;
             app.measuresModel.setMeasuredLength2(OritaCalc.distance(line_step[1].getA(), line_step[2].getA()) * (double) grid.getGridSize() / 400.0);
-            app.updateMeasures();
         }
     }
 //------
@@ -2952,7 +2942,6 @@ public class DrawingWorker {
             i_drawing_stage = 0;
 
             app.measuresModel.setMeasuredAngle1(OritaCalc.angle(line_step[2].getA(), line_step[3].getA(), line_step[2].getA(), line_step[1].getA()));
-            app.updateMeasures();
         }
     }
 //------
@@ -2986,7 +2975,6 @@ public class DrawingWorker {
         if (i_drawing_stage == 3) {
             i_drawing_stage = 0;
             app.measuresModel.setMeasuredAngle2(OritaCalc.angle(line_step[2].getA(), line_step[3].getA(), line_step[2].getA(), line_step[1].getA()));
-            app.updateMeasures();
         }
     }
 
@@ -3021,7 +3009,6 @@ public class DrawingWorker {
             i_drawing_stage = 0;
 
             app.measuresModel.setMeasuredAngle3(OritaCalc.angle(line_step[2].getA(), line_step[3].getA(), line_step[2].getA(), line_step[1].getA()));
-            app.updateMeasures();
         }
     }
 

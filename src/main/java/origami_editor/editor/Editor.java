@@ -22,7 +22,7 @@ public class Editor {
 
     private void createUIComponents() {
         canvas = new Canvas(app);
-        rightPanel = new RightPanel(app);
+        rightPanel = new RightPanel(app, app.angleSystemModel);
         bottomPanel = new BottomPanel(app);
         topPanel = new TopPanel(app);
         leftPanel = new LeftPanel(app);

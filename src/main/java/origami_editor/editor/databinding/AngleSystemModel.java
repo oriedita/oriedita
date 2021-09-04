@@ -2,6 +2,9 @@ package origami_editor.editor.databinding;
 
 import origami_editor.editor.App;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 public class AngleSystemModel {
     private double angleA;
     private double angleB;
@@ -22,8 +25,18 @@ public class AngleSystemModel {
     private double currentAngleC;
     private App.AngleSystemInputType angleSystemInputType;
 
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
     public AngleSystemModel() {
         reset();
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.removePropertyChangeListener(listener);
     }
 
     public void setCurrentABC() {
@@ -32,30 +45,20 @@ public class AngleSystemModel {
         currentAngleC = angleC;
 
         currentAngleSystemDivider = 0;
+
+        this.pcs.firePropertyChange(null, null, null);
     }
 
     public double getCurrentAngleA() {
         return currentAngleA;
     }
 
-    public void setCurrentAngleA(double currentAngleA) {
-        this.currentAngleA = currentAngleA;
-    }
-
     public double getCurrentAngleB() {
         return currentAngleB;
     }
 
-    public void setCurrentAngleB(double currentAngleB) {
-        this.currentAngleB = currentAngleB;
-    }
-
     public double getCurrentAngleC() {
         return currentAngleC;
-    }
-
-    public void setCurrentAngleC(double currentAngleC) {
-        this.currentAngleC = currentAngleC;
     }
 
     public int getCurrentAngleSystemDivider() {
@@ -63,7 +66,9 @@ public class AngleSystemModel {
     }
 
     public void setCurrentAngleSystemDivider(int currentAngleSystemDivider) {
+        int oldCurrentAngleSystemDivider = this.currentAngleSystemDivider;
         this.currentAngleSystemDivider = currentAngleSystemDivider;
+        this.pcs.firePropertyChange("currentAngleSystemDivider", oldCurrentAngleSystemDivider, currentAngleSystemDivider);
     }
 
     public void reset() {
@@ -77,9 +82,11 @@ public class AngleSystemModel {
         angleSystemADivider = 12;
         angleSystemBDivider = 8;
 
-        angleSystemInputType = App.AngleSystemInputType.DEG_1;
+        angleSystemInputType = App.AngleSystemInputType.NONE_0;
 
         currentAngleSystemDivider = 8;
+
+        this.pcs.firePropertyChange(null, null, null);
     }
 
     public double getAngleA() {
@@ -87,7 +94,9 @@ public class AngleSystemModel {
     }
 
     public void setAngleA(double angleA) {
+        double oldAngleA = this.angleA;
         this.angleA = angleA;
+        this.pcs.firePropertyChange("angleA", oldAngleA, angleA);
     }
 
     public double getAngleB() {
@@ -95,7 +104,9 @@ public class AngleSystemModel {
     }
 
     public void setAngleB(double angleB) {
+        double oldAngleB = this.angleB;
         this.angleB = angleB;
+        this.pcs.firePropertyChange("angleB", oldAngleB, angleB);
     }
 
     public double getAngleC() {
@@ -103,7 +114,9 @@ public class AngleSystemModel {
     }
 
     public void setAngleC(double angleC) {
+        double oldAngleC = this.angleC;
         this.angleC = angleC;
+        this.pcs.firePropertyChange("angleC", oldAngleC, angleC);
     }
 
     public double getAngleD() {
@@ -111,7 +124,9 @@ public class AngleSystemModel {
     }
 
     public void setAngleD(double angleD) {
+        double oldAngleD = this.angleD;
         this.angleD = angleD;
+        this.pcs.firePropertyChange("angleD", oldAngleD, angleD);
     }
 
     public double getAngleE() {
@@ -119,7 +134,9 @@ public class AngleSystemModel {
     }
 
     public void setAngleE(double angleE) {
+        double oldAngleE = this.angleE;
         this.angleE = angleE;
+        this.pcs.firePropertyChange("angleE", oldAngleE, angleE);
     }
 
     public double getAngleF() {
@@ -127,7 +144,9 @@ public class AngleSystemModel {
     }
 
     public void setAngleF(double angleF) {
+        double oldAngleF = this.angleF;
         this.angleF = angleF;
+        this.pcs.firePropertyChange("angleF", oldAngleF, angleF);
     }
 
     public int getAngleSystemADivider() {
@@ -135,7 +154,9 @@ public class AngleSystemModel {
     }
 
     public void setAngleSystemADivider(int angleSystemADivider) {
+        int oldAngleSystemADivider = this.angleSystemADivider;
         this.angleSystemADivider = angleSystemADivider;
+        this.pcs.firePropertyChange("angleSystemADivider", oldAngleSystemADivider, angleSystemADivider);
     }
 
     public int getAngleSystemBDivider() {
@@ -143,7 +164,9 @@ public class AngleSystemModel {
     }
 
     public void setAngleSystemBDivider(int angleSystemBDivider) {
+        int oldAngleSystemBDivider = this.angleSystemBDivider;
         this.angleSystemBDivider = angleSystemBDivider;
+        this.pcs.firePropertyChange("angleSystemBDivider", oldAngleSystemBDivider, angleSystemBDivider);
     }
 
     public App.AngleSystemInputType getAngleSystemInputType() {
@@ -151,7 +174,9 @@ public class AngleSystemModel {
     }
 
     public void setAngleSystemInputType(App.AngleSystemInputType angleSystemInputType) {
+        App.AngleSystemInputType oldAngleSystemInputType = this.angleSystemInputType;
         this.angleSystemInputType = angleSystemInputType;
+        this.pcs.firePropertyChange("angleSystemInputType", oldAngleSystemInputType, angleSystemInputType);
     }
 
     public String getAngleSystemADescription() {
@@ -167,33 +192,37 @@ public class AngleSystemModel {
     }
 
     public void decreaseAngleSystemA() {
-        angleSystemADivider++;
+        int angleSystemADivider = this.angleSystemADivider + 1;
 
-        currentAngleSystemDivider = angleSystemADivider;
+        setAngleSystemADivider(angleSystemADivider);
+        setCurrentAngleSystemDivider(angleSystemADivider);
     }
 
     public void increaseAngleSystemA() {
-        angleSystemADivider = angleSystemADivider - 1;
+        int angleSystemADivider = this.angleSystemADivider - 1;
         if (angleSystemADivider < 2) {
             angleSystemADivider = 2;
         }
 
-        currentAngleSystemDivider = angleSystemADivider;
+        setAngleSystemADivider(angleSystemADivider);
+        setCurrentAngleSystemDivider(angleSystemADivider);
     }
 
     public void decreaseAngleSystemB() {
-        angleSystemBDivider++;
+        int angleSystemBDivider = this.angleSystemBDivider + 1;
 
-        currentAngleSystemDivider = angleSystemBDivider;
+        setAngleSystemBDivider(angleSystemBDivider);
+        setCurrentAngleSystemDivider(angleSystemBDivider);
     }
 
     public void increaseAngleSystemB() {
-        angleSystemBDivider = angleSystemBDivider - 1;
+        int angleSystemBDivider = this.angleSystemBDivider - 1;
         if (angleSystemBDivider < 2) {
             angleSystemBDivider = 2;
         }
 
-        currentAngleSystemDivider = angleSystemBDivider;
+        setAngleSystemBDivider(angleSystemBDivider);
+        setCurrentAngleSystemDivider(angleSystemBDivider);
     }
 
     public void setCurrentDEF() {
@@ -202,5 +231,7 @@ public class AngleSystemModel {
         currentAngleC = angleF;
 
         currentAngleSystemDivider = 0;
+
+        this.pcs.firePropertyChange(null, null, null);
     }
 }

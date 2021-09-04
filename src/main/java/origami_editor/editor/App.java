@@ -27,6 +27,12 @@ import java.util.ArrayList;
 import static origami_editor.editor.ResourceUtil.createImageIcon;
 
 public class App extends JFrame implements ActionListener {
+    public final GridModel gridModel = new GridModel();
+    public final CanvasModel canvasModel = new CanvasModel();
+    public final FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
+    public final AngleSystemModel angleSystemModel = new AngleSystemModel();
+    public final MeasuresModel measuresModel = new MeasuresModel();
+    public final InternalDivisionRatioModel internalDivisionRatioModel = new InternalDivisionRatioModel();
     private final TopPanel topPanel;
     private final RightPanel rightPanel;
     private final BottomPanel bottomPanel;
@@ -39,7 +45,6 @@ public class App extends JFrame implements ActionListener {
     public Camera camera_of_orisen_input_diagram = new Camera();
     public Color circleCustomizedColor = new Color(100, 200, 200);//Designated color when customizing the color of auxiliary lines and circles
     public JButton circleCustomizedColorButton;                    //折り上がり図の表の色の指定に用いる
-
     //アプレット用public void init()または、アプリケーション用public ap() 以外のクラスでも使用されるパネルの部品の宣言はここでしておく。
     //アプレット用public void init()または、アプリケーション用public ap() の中だけで使用されるパネルの部品の宣言ぅラスの中でする。
     //Those that basically change the appearance of the parts are declared here.
@@ -110,9 +115,7 @@ public class App extends JFrame implements ActionListener {
     boolean lockBackground = false;//Lock on background = 1, not = 0
     Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
     Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
-
     HelpDialog explanation;
-
     boolean displayBackground = false;//If it is 0, the background is not displayed. If it is 1, display it. There is no 2.
     // subThreadMode Subthread operation rules.
     // 0 = Execution of folding estimate 5. It is not a mode to put out different solutions of folding estimation at once.
@@ -154,13 +157,6 @@ public class App extends JFrame implements ActionListener {
     boolean i_mouse_undo_redo_mode = false;//1 for undo and redo mode with mouse
     MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASEPATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
     double d_ap_check4 = 0.0;
-
-    public final GridModel gridModel = new GridModel();
-    public final CanvasModel canvasModel = new CanvasModel();
-    public final FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
-    public final AngleSystemModel angleSystemModel = new AngleSystemModel();
-    public final MeasuresModel measuresModel = new MeasuresModel();
-    public final InternalDivisionRatioModel internalDivisionRatioModel = new InternalDivisionRatioModel();
 
     ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     public App() {
@@ -336,10 +332,6 @@ public class App extends JFrame implements ActionListener {
 
 // *******南*********ボタンの定義はここまで*******************************************************************************************************************************
 
-        //展開図の初期化　開始
-        //settei_syokika_cp();//展開図パラメータの初期化
-        developmentView_initialization();
-        //展開図の初期化　終了
 
         i_undo_suu = 20;
         undoRedo.setText(String.valueOf(i_undo_suu));
@@ -347,10 +339,53 @@ public class App extends JFrame implements ActionListener {
         foldedFigureUndoRedo.setText(String.valueOf(i_undo_suu_om));
         i_h_undo_suu = 20;
         h_undoTotalTextField.setText(String.valueOf(i_h_undo_suu));
-        int scale_interval = 5;
-        gridModel.setIntervalGridSize(scale_interval);
 
-        updateGrid();
+        gridModel.addPropertyChangeListener(e -> mainDrawingWorker.setGridConfigurationData(gridModel));
+        gridModel.addPropertyChangeListener(e -> leftPanel.setGridConfigurationData(gridModel));
+
+        angleSystemModel.addPropertyChangeListener(e -> rightPanel.setData(angleSystemModel));
+        angleSystemModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(angleSystemModel));
+        angleSystemModel.addPropertyChangeListener(e -> {
+            switch (angleSystemModel.getAngleSystemInputType()) {
+                case DEG_1:
+                    mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
+                    break;
+                case DEG_2:
+                    mouseMode = MouseMode.ANGLE_SYSTEM_16;
+                    break;
+                case DEG_3:
+                    mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
+                    break;
+                case DEG_4:
+                    mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
+                    break;
+                case DEG_5:
+                    mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
+                    break;
+            }
+
+            System.out.println("mouseMode = " + mouseMode);
+        });
+        angleSystemModel.addPropertyChangeListener(e -> repaintCanvas());
+
+        measuresModel.addPropertyChangeListener(e -> rightPanel.setData(measuresModel));
+
+        internalDivisionRatioModel.addPropertyChangeListener(e -> topPanel.setData(internalDivisionRatioModel));
+        internalDivisionRatioModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(internalDivisionRatioModel));
+
+        foldedFigureModel.addPropertyChangeListener(e -> OZ.setData(foldedFigureModel));
+        foldedFigureModel.addPropertyChangeListener(e -> bottomPanel.setData(foldedFigureModel));
+        foldedFigureModel.addPropertyChangeListener(e -> repaintCanvas());
+
+        canvasModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(canvasModel));
+        canvasModel.addPropertyChangeListener(e -> canvas.setData(canvasModel));
+        canvasModel.addPropertyChangeListener(e -> appMenuBar.setData(canvasModel));
+        canvasModel.addPropertyChangeListener(e -> topPanel.setData(canvasModel));
+
+        //展開図の初期化　開始
+        //settei_syokika_cp();//展開図パラメータの初期化
+        developmentView_initialization();
+        //展開図の初期化　終了
 
         selectionOperationMode = SelectionOperationMode.MOVE_1;
         Button_sel_mou_wakukae();//セレクトされた折線がある状態で、セレクトされている折線の頂点をクリックした場合の動作モードの初期設定
@@ -361,19 +396,14 @@ public class App extends JFrame implements ActionListener {
 
         Button_shared_operation();
 
-        updateCanvas();
-
         circleCustomizedColorButton.setBackground(circleCustomizedColor);//特注色の指定色表示
 
         // 測定長さと角度の表示
 
-        mainDrawingWorker.measurement_display();
         mainDrawingWorker.setCamera(camera_of_orisen_input_diagram);
 
         mainDrawingWorker.record();
         mainDrawingWorker.auxRecord();
-
-        updateFoldedFigure();
 
         //            frame.setSize(1200, 700);
         pack();
@@ -482,25 +512,11 @@ public class App extends JFrame implements ActionListener {
         FoldedFigure orz = foldedFigures.get(0);//Assign foldedFigures (0) (folded figures that hold common parameters) to orz
 
         orz.getData(foldedFigureModel);
-
-        updateFoldedFigure();
-    }
-
-    public void updateFoldedFigure() {
-        OZ.setData(foldedFigureModel);
-        bottomPanel.setData(foldedFigureModel);
-
-        repaintCanvas();
     }
 
     // ------------------------------------------------------------------------------
     public void addNewFoldedFigure() {
         foldedFigures.add(new FoldedFigure_01(this));
-    }
-
-    public void updateGrid() {
-        mainDrawingWorker.setGridConfigurationData(gridModel);
-        leftPanel.setGridConfigurationData(gridModel);
     }
 
     public void twoColorNoSelectedPolygonalLineWarning() {
@@ -586,7 +602,6 @@ public class App extends JFrame implements ActionListener {
 //北辺
 
         canvasModel.reset();
-        mainDrawingWorker.setData(canvasModel);
 
         correctCpBeforeFoldingCheckBox.setSelected(false);//cpを折畳み前に自動改善する
         selectPersistentCheckBox.setSelected(false);//select状態を折畳み操作をしてもなるべく残す
@@ -595,7 +610,7 @@ public class App extends JFrame implements ActionListener {
         //内分された折線の指定
 
         internalDivisionRatioModel.reset();
-        updateInternalDivisionRatio();
+        foldedFigureModel.reset();
 
         //
         scaleFactor = 1.0;
@@ -641,12 +656,10 @@ public class App extends JFrame implements ActionListener {
 
         gridModel.reset();
 
-        updateGrid();
-//--------------------------------------------
 //東辺
+
         //角度系入力を22.5度系にする。
         angleSystemModel.reset();
-        updateAngleSystem();
 
         //多角形の角数
         numPolygonCorners = 5;
@@ -871,7 +884,6 @@ public class App extends JFrame implements ActionListener {
 
         // Load data from this foldedFigure to the ui.
         OZ.getData(foldedFigureModel);
-        updateFoldedFigure();
     }
 
     public Point e2p(MouseEvent e) {
@@ -1221,49 +1233,6 @@ public class App extends JFrame implements ActionListener {
         }
     }
 
-    public void updateCanvas() {
-        mainDrawingWorker.setData(canvasModel);
-        canvas.setData(canvasModel);
-        appMenuBar.setData(canvasModel);
-        topPanel.setData(canvasModel);
-    }
-
-    public void updateAngleSystem() {
-        rightPanel.setData(angleSystemModel);
-        mainDrawingWorker.setData(angleSystemModel);
-
-        switch (angleSystemModel.getAngleSystemInputType()) {
-            case DEG_1:
-                mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13;
-                break;
-            case DEG_2:
-                mouseMode = MouseMode.ANGLE_SYSTEM_16;
-                break;
-            case DEG_3:
-                mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;
-                break;
-            case DEG_4:
-                mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18;
-                break;
-            case DEG_5:
-                mouseMode = MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37;
-                break;
-        }
-
-        System.out.println("mouseMode = " + mouseMode);
-
-        repaintCanvas();
-    }
-
-    public void updateMeasures() {
-        rightPanel.setData(measuresModel);
-    }
-
-    public void updateInternalDivisionRatio() {
-        topPanel.setData(internalDivisionRatioModel);
-        mainDrawingWorker.setData(internalDivisionRatioModel);
-    }
-
     public enum MouseWheelTarget {
         CREASEPATTERN_0,
         FOLDED_FRONT_1,
@@ -1280,6 +1249,7 @@ public class App extends JFrame implements ActionListener {
     }
 
     public enum AngleSystemInputType {
+        NONE_0,
         DEG_1,
         DEG_2,
         DEG_3,

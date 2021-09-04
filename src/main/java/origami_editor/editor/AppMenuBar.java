@@ -22,6 +22,7 @@ public class AppMenuBar extends JMenuBar {
 
     public AppMenuBar(App app) {
         createElements();
+        CanvasModel canvasModel = app.canvasModel;
 
         openButton.addActionListener(e -> {
             app.setHelp("yomi");
@@ -56,8 +57,6 @@ public class AppMenuBar extends JMenuBar {
                 app.set_i_OAZ(0);
                 app.configure_initialize_prediction();
 
-                app.updateFoldedFigure();
-
                 //折畳予測図のの初期化　終了
 
                 app.mainDrawingWorker.setCamera(app.camera_of_orisen_input_diagram);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
@@ -86,16 +85,12 @@ public class AppMenuBar extends JMenuBar {
         showPointRangeCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_ten_sagasi");
 
-            getData(app.canvasModel);
-
-            app.updateCanvas();
+            getData(canvasModel);
         });
         pointOffsetCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_ten_hanasi");
 
-            getData(app.canvasModel);
-
-            app.updateCanvas();
+            getData(canvasModel);
         });
         gridInputAssistCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_kou_mitudo_nyuuryoku");
@@ -105,46 +100,32 @@ public class AppMenuBar extends JMenuBar {
             } else {
                 System.out.println(" kou_mitudo_nyuuryoku off");
             }
-            getData(app.canvasModel);
-
-            app.updateCanvas();
+            getData(canvasModel);
         });
         displayCommentsCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_bun");
-            getData(app.canvasModel);
-
-            app.updateCanvas();
+            getData(canvasModel);
         });
         displayCpLinesCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_cp");
-            getData(app.canvasModel);
-
-            app.updateCanvas();
+            getData(canvasModel);
         });
         displayAuxLinesCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_a0");
-            getData(app.canvasModel);
-
-            app.updateCanvas();
+            getData(canvasModel);
         });
         displayLiveAuxLinesCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_a1");
-            getData(app.canvasModel);
-
-            app.updateCanvas();
+            getData(canvasModel);
         });
         displayStandardFaceMarksCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_mejirusi");
-            getData(app.canvasModel);
-
-            app.updateCanvas();
+            getData(canvasModel);
         });
         cpOnTopCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_cp_ue");
 
-            getData(app.canvasModel);
-
-            app.updateCanvas();
+            getData(canvasModel);
         });
         toggleHelpMenuItem.addActionListener(e -> {
             app.explanation.setVisible(!app.explanation.isVisible());

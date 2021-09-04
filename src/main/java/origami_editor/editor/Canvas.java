@@ -1750,8 +1750,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     } else {
                         app.foldedFigureModel.setScale(app.foldedFigureModel.getScale() / root_root_root_2);
                     }
-
-                    app.updateFoldedFigure();
                 }
                 // ---------------------------------------------------------------------
 

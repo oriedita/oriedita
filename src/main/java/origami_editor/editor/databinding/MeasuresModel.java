@@ -1,6 +1,10 @@
 package origami_editor.editor.databinding;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 public class MeasuresModel {
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private double measuredLength1;
     private double measuredLength2;
     private double measuredAngle1;
@@ -11,12 +15,22 @@ public class MeasuresModel {
         reset();
     }
 
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.removePropertyChangeListener(listener);
+    }
+
     public void reset() {
         measuredLength1 = 0.0;
         measuredLength2 = 0.0;
         measuredAngle1 = 0.0;
         measuredAngle2 = 0.0;
         measuredAngle3 = 0.0;
+
+        this.pcs.firePropertyChange(null, null, null);
     }
 
     public double getMeasuredLength1() {
@@ -24,7 +38,9 @@ public class MeasuresModel {
     }
 
     public void setMeasuredLength1(double measuredLength1) {
+        double oldMeasuredLength1 = this.measuredLength1;
         this.measuredLength1 = measuredLength1;
+        this.pcs.firePropertyChange("measuredLength1", oldMeasuredLength1, measuredLength1);
     }
 
     public double getMeasuredLength2() {
@@ -32,7 +48,9 @@ public class MeasuresModel {
     }
 
     public void setMeasuredLength2(double measuredLength2) {
+        double oldMeasuredLength2 = this.measuredLength2;
         this.measuredLength2 = measuredLength2;
+        this.pcs.firePropertyChange("measuredLength2", oldMeasuredLength2, measuredLength2);
     }
 
     public double getMeasuredAngle1() {
@@ -40,11 +58,13 @@ public class MeasuresModel {
     }
 
     public void setMeasuredAngle1(double measuredAngle1) {
+        double oldMeasuredAngle1 = this.measuredAngle1;
         if (measuredAngle1 > 180.0) {
             this.measuredAngle1 = measuredAngle1 - 360.0;
         } else {
             this.measuredAngle1 = measuredAngle1;
         }
+        this.pcs.firePropertyChange("measuredAngle1", oldMeasuredAngle1, this.measuredAngle1);
     }
 
     public double getMeasuredAngle2() {
@@ -52,11 +72,13 @@ public class MeasuresModel {
     }
 
     public void setMeasuredAngle2(double measuredAngle2) {
-        if (measuredAngle2 > 180.0) {
+        double oldMeasuredAngle2 = this.measuredAngle2;
+        if (measuredAngle2 > 280.0) {
             this.measuredAngle2 = measuredAngle2 - 360.0;
         } else {
             this.measuredAngle2 = measuredAngle2;
         }
+        this.pcs.firePropertyChange("measuredAngle2", oldMeasuredAngle2, this.measuredAngle2);
     }
 
     public double getMeasuredAngle3() {
@@ -64,10 +86,12 @@ public class MeasuresModel {
     }
 
     public void setMeasuredAngle3(double measuredAngle3) {
-        if (measuredAngle3 > 180.0) {
+        double oldMeasuredAngle3 = this.measuredAngle3;
+        if (measuredAngle3 > 380.0) {
             this.measuredAngle3 = measuredAngle3 - 360.0;
         } else {
             this.measuredAngle3 = measuredAngle3;
         }
+        this.pcs.firePropertyChange("measuredAngle3", oldMeasuredAngle3, this.measuredAngle3);
     }
 }
