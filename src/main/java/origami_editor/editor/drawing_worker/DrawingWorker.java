@@ -26,6 +26,8 @@ import java.beans.PropertyChangeEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DrawingWorker {
     private final LineSegmentSet lineSegmentSet = new LineSegmentSet();    //Instantiation of basic branch structure
@@ -168,57 +170,57 @@ public class DrawingWorker {
     }
 
     public void Memo_jyouhou_toridasi(Memo memo1) {
+        Pattern p = Pattern.compile("<(.+)>(.+)</(.+)>");
 
-        boolean i_reading;
+        boolean reading;
         String[] st;
         String[] s;
 
         // Loading the camera settings for the development view
-        i_reading = false;
+        reading = false;
         for (int i = 1; i <= memo1.getLineCount(); i++) {
             String str = memo1.getLine(i);
 
             if (str.equals("<camera_of_orisen_nyuuryokuzu>")) {
-                i_reading = true;
+                reading = true;
             } else if (str.equals("</camera_of_orisen_nyuuryokuzu>")) {
-                i_reading = false;
+                reading = false;
             } else {
-                if (i_reading) {
-                    st = str.split(">", 2);// <-----------------------------------２つに分割するときは2を指定
-                    if (st[0].equals("<camera_ichi_x")) {
-                        s = st[1].split("<", 2);
-                        app.camera_of_orisen_input_diagram.setCameraPositionX(Double.parseDouble(s[0]));
-                    }
-                    if (st[0].equals("<camera_ichi_y")) {
-                        s = st[1].split("<", 2);
-                        app.camera_of_orisen_input_diagram.setCameraPositionY(Double.parseDouble(s[0]));
-                    }
-                    if (st[0].equals("<camera_kakudo")) {
-                        s = st[1].split("<", 2);
-                        app.camera_of_orisen_input_diagram.setCameraAngle(Double.parseDouble(s[0]));
-                    }
-                    if (st[0].equals("<camera_kagami")) {
-                        s = st[1].split("<", 2);
-                        app.camera_of_orisen_input_diagram.setCameraMirror(Double.parseDouble(s[0]));
-                    }
+                if (!reading) {
+                    continue;
+                }
 
-                    if (st[0].equals("<camera_bairitsu_x")) {
-                        s = st[1].split("<", 2);
-                        app.camera_of_orisen_input_diagram.setCameraZoomX(Double.parseDouble(s[0]));
-                    }
-                    if (st[0].equals("<camera_bairitsu_y")) {
-                        s = st[1].split("<", 2);
-                        app.camera_of_orisen_input_diagram.setCameraZoomY(Double.parseDouble(s[0]));
-                    }
+                Matcher m = p.matcher(str);
 
-                    if (st[0].equals("<hyouji_ichi_x")) {
-                        s = st[1].split("<", 2);
-                        app.camera_of_orisen_input_diagram.setDisplayPositionX(Double.parseDouble(s[0]));
-                    }
-                    if (st[0].equals("<hyouji_ichi_y")) {
-                        s = st[1].split("<", 2);
-                        app.camera_of_orisen_input_diagram.setDisplayPositionY(Double.parseDouble(s[0]));
-                    }
+                if (!m.matches()) {
+                    continue;
+                }
+
+                switch (m.group(1)) {
+                    case "camera_ichi_x":
+                        app.creasePatternCamera.setCameraPositionX(Double.parseDouble(m.group(2)));
+                        break;
+                    case "camera_ichi_y":
+                        app.creasePatternCamera.setCameraPositionY(Double.parseDouble(m.group(2)));
+                        break;
+                    case "camera_kakudo":
+                        app.creasePatternCamera.setCameraAngle(Double.parseDouble(m.group(2)));
+                        break;
+                    case "camera_kagami":
+                        app.creasePatternCamera.setCameraMirror(Double.parseDouble(m.group(2)));
+                        break;
+                    case "camera_bairitsu_x":
+                        app.creasePatternCamera.setCameraZoomX(Double.parseDouble(m.group(2)));
+                        break;
+                    case "camera_bairitsu_y":
+                        app.creasePatternCamera.setCameraZoomY(Double.parseDouble(m.group(2)));
+                        break;
+                    case "hyouji_ichi_x":
+                        app.creasePatternCamera.setDisplayPositionX(Double.parseDouble(m.group(2)));
+                        break;
+                    case "hyouji_ichi_y":
+                        app.creasePatternCamera.setDisplayPositionY(Double.parseDouble(m.group(2)));
+                        break;
                 }
             }
         }
@@ -226,196 +228,162 @@ public class DrawingWorker {
         CanvasModel canvasModel = app.canvasModel;
 
 
+
         // ----------------------------------------- チェックボックス等の設定の読み込み
-        i_reading = false;
+        reading = false;
         for (int i = 1; i <= memo1.getLineCount(); i++) {
             String str = memo1.getLine(i);
 
             if (str.equals("<settei>")) {
-                i_reading = true;
+                reading = true;
             } else if (str.equals("</settei>")) {
-                i_reading = false;
+                reading = false;
             } else {
-                if (i_reading) {
-                    st = str.split(">", 2);// <-----------------------------------２つに分割するときは2を指定
+                if (!reading) {
+                    continue;
+                }
+                Matcher m = p.matcher(str);
+                if (!m.matches()) {
+                    continue;
+                }
 
-                    if (st[0].equals("<ckbox_mouse_settei")) {
-                        s = st[1].split("<", 2);
-
-                        boolean selected = Boolean.parseBoolean(s[0].trim());
+                switch (m.group(1)) {
+                    case "ckbox_mouse_settei": {
+                        boolean selected = Boolean.parseBoolean(m.group(2));
                         canvasModel.setMouseWheelMovesCreasePattern(selected);
+                        break;
                     }
-
-                    if (st[0].equals("<ckbox_ten_sagasi")) {
-                        s = st[1].split("<", 2);
-
-                        boolean selected = Boolean.parseBoolean(s[0].trim());
+                    case "ckbox_ten_sagasi": {
+                        boolean selected = Boolean.parseBoolean(m.group(2));
                         canvasModel.setDisplayPointSpotlight(selected);
+                        break;
                     }
-
-                    if (st[0].equals("<ckbox_ten_hanasi")) {
-                        s = st[1].split("<", 2);
-
-                        boolean selected = Boolean.parseBoolean(s[0].trim());
+                    case "ckbox_ten_hanasi": {
+                        boolean selected = Boolean.parseBoolean(m.group(2));
                         canvasModel.setDisplayPointOffset(selected);
+                        break;
                     }
-
-                    if (st[0].equals("<ckbox_kou_mitudo_nyuuryoku")) {
-                        s = st[1].split("<", 2);
-
-                        boolean selected = Boolean.parseBoolean(s[0].trim());
+                    case "ckbox_kou_mitudo_nyuuryoku": {
+                        boolean selected = Boolean.parseBoolean(m.group(2));
                         canvasModel.setDisplayGridInputAssist(selected);
+                        break;
                     }
-
-                    if (st[0].equals("<ckbox_bun")) {
-                        s = st[1].split("<", 2);
-
-                        boolean selected = Boolean.parseBoolean(s[0].trim());
+                    case "ckbox_bun": {
+                        boolean selected = Boolean.parseBoolean(m.group(2));
                         canvasModel.setDisplayComments(selected);
+                        break;
                     }
-
-                    if (st[0].equals("<ckbox_cp")) {
-                        s = st[1].split("<", 2);
-
-                        boolean selected = Boolean.parseBoolean(s[0].trim());
+                    case "ckbox_cp": {
+                        boolean selected = Boolean.parseBoolean(m.group(2));
                         canvasModel.setDisplayCpLines(selected);
+                        break;
                     }
-
-                    if (st[0].equals("<ckbox_a0")) {
-                        s = st[1].split("<", 2);
-
-                        boolean selected = Boolean.parseBoolean(s[0].trim());
+                    case "ckbox_a0": {
+                        boolean selected = Boolean.parseBoolean(m.group(2));
                         canvasModel.setDisplayAuxLines(selected);
+                        break;
                     }
-
-                    if (st[0].equals("<ckbox_a1")) {
-                        s = st[1].split("<", 2);
-
-                        boolean selected = Boolean.parseBoolean(s[0].trim());
+                    case "ckbox_a1": {
+                        boolean selected = Boolean.parseBoolean(m.group(2));
                         canvasModel.setDisplayLiveAuxLines(selected);
+                        break;
                     }
-
-                    if (st[0].equals("<ckbox_mejirusi")) {
-                        s = st[1].split("<", 2);
-
-                        boolean selected = Boolean.parseBoolean(s[0].trim());
+                    case "ckbox_mejirusi": {
+                        boolean selected = Boolean.parseBoolean(m.group(2));
                         canvasModel.setDisplayMarkings(selected);
+                        break;
                     }
-
-                    if (st[0].equals("<ckbox_cp_ue")) {
-                        s = st[1].split("<", 2);
-
-                        boolean selected = Boolean.parseBoolean(s[0].trim());
+                    case "ckbox_cp_ue": {
+                        boolean selected = Boolean.parseBoolean(m.group(2));
                         canvasModel.setDisplayCreasePatternOnTop(selected);
+                        break;
                     }
-
-                    if (st[0].equals("<ckbox_oritatami_keika")) {
-                        s = st[1].split("<", 2);
-
-                        boolean selected = Boolean.parseBoolean(s[0].trim());
+                    case "ckbox_oritatami_keika": {
+                        boolean selected = Boolean.parseBoolean(m.group(2));
                         canvasModel.setDisplayFoldingProgress(selected);
+                        break;
                     }
-
-                    if (st[0].equals("<iTenkaizuSenhaba")) {
-                        s = st[1].split("<", 2);
-                        canvasModel.setLineWidth(Integer.parseInt(s[0]));
-                    }
-
-                    if (st[0].equals("<ir_ten")) {
-                        s = st[1].split("<", 2);
-                        canvasModel.setPointSize(Integer.parseInt(s[0]));
-                    }
-
-                    if (st[0].equals("<i_orisen_hyougen")) {
-                        s = st[1].split("<", 2);
-                        canvasModel.setLineStyle(LineStyle.from(s[0].trim()));
-                    }
-
-                    if (st[0].equals("<i_anti_alias")) {
-                        s = st[1].split("<", 2);
-                        canvasModel.setAntiAlias(Boolean.parseBoolean(s[0].trim()));
-                    }
+                    case "iTenkaizuSenhaba":
+                        canvasModel.setLineWidth(Integer.parseInt(m.group(2)));
+                        break;
+                    case "ir_ten":
+                        canvasModel.setPointSize(Integer.parseInt(m.group(2)));
+                        break;
+                    case "i_orisen_hyougen":
+                        canvasModel.setLineStyle(LineStyle.from(m.group(2)));
+                        break;
+                    case "i_anti_alias":
+                        canvasModel.setAntiAlias(Boolean.parseBoolean(m.group(2)));
+                        break;
                 }
             }
         }
 
         // ----------------------------------------- 格子設定の読み込み
 
-        i_reading = false;
+        reading = false;
         GridModel gridModel = app.gridModel;
         for (int i = 1; i <= memo1.getLineCount(); i++) {
             String str = memo1.getLine(i);
 
             if (str.equals("<Kousi>")) {
-                i_reading = true;
+                reading = true;
             } else if (str.equals("</Kousi>")) {
-                i_reading = false;
+                reading = false;
             } else {
-                if (i_reading) {
-                    st = str.split(">", 2);// <-----------------------------------２つに分割するときは2を指定
+                if (!reading) {
+                    continue;
+                }
 
-                    if (st[0].equals("<i_kitei_jyoutai")) {
-                        s = st[1].split("<", 2);
-                        gridModel.setBaseState(Grid.State.from(s[0]));
-                    }
+                Matcher m = p.matcher(str);
+                if (!m.matches()) {
+                    continue;
+                }
 
-                    if (st[0].equals("<nyuuryoku_kitei")) {
-                        s = st[1].split("<", 2);
-                        gridModel.setGridSize(StringOp.String2int(s[0], gridModel.getGridSize()));
-                    }
-
-                    if (st[0].equals("<memori_kankaku")) {
-                        s = st[1].split("<", 2);
-                        int scale_interval = Integer.parseInt(s[0]);
+                switch (m.group(1)) {
+                    case "i_kitei_jyoutai":
+                        gridModel.setBaseState(Grid.State.from(m.group(2)));
+                        break;
+                    case "nyuuryoku_kitei":
+                        gridModel.setGridSize(StringOp.String2int(m.group(2), gridModel.getGridSize()));
+                        break;
+                    case "memori_kankaku":
+                        int scale_interval = Integer.parseInt(m.group(2));
 
                         gridModel.setIntervalGridSize(scale_interval);
-                    }
-
-                    if (st[0].equals("<a_to_heikouna_memori_iti")) {
-                        s = st[1].split("<", 2);
-                        gridModel.setHorizontalScalePosition(Integer.parseInt(s[0]));
-                    }
-                    if (st[0].equals("<b_to_heikouna_memori_iti")) {
-                        s = st[1].split("<", 2);
-                        gridModel.setVerticalScalePosition(Integer.parseInt(s[0]));
-                    }
-                    if (st[0].equals("<kousi_senhaba")) {
-                        s = st[1].split("<", 2);
-                        gridModel.setGridLineWidth(Integer.parseInt(s[0]));
-                    }
-
-                    if (st[0].equals("<d_kousi_x_a")) {
-                        s = st[1].split("<", 2);
-                        gridModel.setGridXA(app.string2double(s[0], gridModel.getGridXA()));
-                    }
-                    if (st[0].equals("<d_kousi_x_b")) {
-                        s = st[1].split("<", 2);
-                        gridModel.setGridXB(app.string2double(s[0], gridModel.getGridXB()));
-                    }
-                    if (st[0].equals("<d_kousi_x_c")) {
-                        s = st[1].split("<", 2);
-                        gridModel.setGridXC(app.string2double(s[0], gridModel.getGridXC()));
-                    }
-
-                    if (st[0].equals("<d_kousi_y_a")) {
-                        s = st[1].split("<", 2);
-                        gridModel.setGridYA(app.string2double(s[0], gridModel.getGridYA()));
-                    }
-                    if (st[0].equals("<d_kousi_y_b")) {
-                        s = st[1].split("<", 2);
-                        gridModel.setGridYB(app.string2double(s[0], gridModel.getGridYB()));
-                    }
-                    if (st[0].equals("<d_kousi_y_c")) {
-                        s = st[1].split("<", 2);
-                        gridModel.setGridYC(app.string2double(s[0], gridModel.getGridYC()));
-                    }
-
-                    if (st[0].equals("<d_kousi_kakudo")) {
-                        s = st[1].split("<", 2);
-                        gridModel.setGridAngle(app.string2double(s[0], gridModel.getGridAngle()));
-                    }
-
+                        break;
+                    case "a_to_heikouna_memori_iti":
+                        gridModel.setHorizontalScalePosition(Integer.parseInt(m.group(2)));
+                        break;
+                    case "b_to_heikouna_memori_iti":
+                        gridModel.setVerticalScalePosition(Integer.parseInt(m.group(2)));
+                        break;
+                    case "kousi_senhaba":
+                        gridModel.setGridLineWidth(Integer.parseInt(m.group(2)));
+                        break;
+                    case "d_kousi_x_a":
+                        gridModel.setGridXA(app.string2double(m.group(2), gridModel.getGridXA()));
+                        break;
+                    case "d_kousi_x_b":
+                        gridModel.setGridXB(app.string2double(m.group(2), gridModel.getGridXB()));
+                        break;
+                    case "d_kousi_x_c":
+                        gridModel.setGridXC(app.string2double(m.group(2), gridModel.getGridXC()));
+                        break;
+                    case "d_kousi_y_a":
+                        gridModel.setGridYA(app.string2double(m.group(2), gridModel.getGridYA()));
+                        break;
+                    case "d_kousi_y_b":
+                        gridModel.setGridYB(app.string2double(m.group(2), gridModel.getGridYB()));
+                        break;
+                    case "d_kousi_y_c":
+                        gridModel.setGridYC(app.string2double(m.group(2), gridModel.getGridYC()));
+                        break;
+                    case "d_kousi_kakudo":
+                        gridModel.setGridAngle(app.string2double(m.group(2), gridModel.getGridAngle()));
+                        break;
                 }
+
             }
         }
 
@@ -428,44 +396,44 @@ public class DrawingWorker {
         int i_grid_memori_color_B = 0;
 
         boolean i_Grid_iro_yomikomi = false;//Kousi_iroの読み込みがあったら1、なければ0
-        i_reading = false;
+        reading = false;
         for (int i = 1; i <= memo1.getLineCount(); i++) {
             String str = memo1.getLine(i);
 
             if (str.equals("<Kousi_iro>")) {
-                i_reading = true;
+                reading = true;
                 i_Grid_iro_yomikomi = true;
             } else if (str.equals("</Kousi_iro>")) {
-                i_reading = false;
+                reading = false;
             } else {
-                if (i_reading) {
-                    st = str.split(">", 2);// <-----------------------------------２つに分割するときは2を指定
+                if (!reading) {
+                    continue;
+                }
+                Matcher m = p.matcher(str);
 
-                    if (st[0].equals("<kousi_color_R")) {
-                        s = st[1].split("<", 2);
-                        i_grid_color_R = (Integer.parseInt(s[0]));
-                    }        //  System.out.println(Integer.parseInt(s[0])) ;
-                    if (st[0].equals("<kousi_color_G")) {
-                        s = st[1].split("<", 2);
-                        i_grid_color_G = (Integer.parseInt(s[0]));
-                    }
-                    if (st[0].equals("<kousi_color_B")) {
-                        s = st[1].split("<", 2);
-                        i_grid_color_B = (Integer.parseInt(s[0]));
-                    }
+                if (!m.matches()) {
+                    continue;
+                }
 
-                    if (st[0].equals("<kousi_memori_color_R")) {
-                        s = st[1].split("<", 2);
-                        i_grid_memori_color_R = (Integer.parseInt(s[0]));
-                    }
-                    if (st[0].equals("<kousi_memori_color_G")) {
-                        s = st[1].split("<", 2);
-                        i_grid_memori_color_G = (Integer.parseInt(s[0]));
-                    }
-                    if (st[0].equals("<kousi_memori_color_B")) {
-                        s = st[1].split("<", 2);
-                        i_grid_memori_color_B = (Integer.parseInt(s[0]));
-                    }
+                switch (m.group(1)) {
+                    case "kousi_color_R":
+                        i_grid_color_R = (Integer.parseInt(m.group(2)));
+                        break;
+                    case "kousi_color_G":
+                        i_grid_color_G = (Integer.parseInt(m.group(2)));
+                        break;
+                    case "kousi_color_B":
+                        i_grid_color_B = (Integer.parseInt(m.group(2)));
+                        break;
+                    case "kousi_memori_color_R":
+                        i_grid_memori_color_R = (Integer.parseInt(m.group(2)));
+                        break;
+                    case "kousi_memori_color_G":
+                        i_grid_memori_color_G = (Integer.parseInt(m.group(2)));
+                        break;
+                    case "kousi_memori_color_B":
+                        i_grid_memori_color_B = (Integer.parseInt(m.group(2)));
+                        break;
                 }
             }
         }
@@ -495,57 +463,52 @@ public class DrawingWorker {
 
 
         boolean i_oriagarizu_yomikomi = false;//oriagarizuの読み込みがあったら1、なければ0
-        i_reading = false;
+        reading = false;
         for (int i = 1; i <= memo1.getLineCount(); i++) {
             String str = memo1.getLine(i);
 
             if (str.equals("<oriagarizu>")) {
-                i_reading = true;
+                reading = true;
                 i_oriagarizu_yomikomi = true;
             } else if (str.equals("</oriagarizu>")) {
-                i_reading = false;
+                reading = false;
             } else {
-                if (i_reading) {
-                    st = str.split(">", 2);// <-----------------------------------２つに分割するときは2を指定
+                if (!reading) {
+                    continue;
+                }
+                Matcher m = p.matcher(str);
+                if (!m.matches()) {
+                    continue;
+                }
 
-                    if (st[0].equals("<oriagarizu_F_color_R")) {
-                        s = st[1].split("<", 2);
-                        i_oriagarizu_F_color_R = (Integer.parseInt(s[0]));
-                    }        //  System.out.println(Integer.parseInt(s[0])) ;
-                    if (st[0].equals("<oriagarizu_F_color_G")) {
-                        s = st[1].split("<", 2);
-                        i_oriagarizu_F_color_G = (Integer.parseInt(s[0]));
-                    }
-                    if (st[0].equals("<oriagarizu_F_color_B")) {
-                        s = st[1].split("<", 2);
-                        i_oriagarizu_F_color_B = (Integer.parseInt(s[0]));
-                    }
-
-                    if (st[0].equals("<oriagarizu_B_color_R")) {
-                        s = st[1].split("<", 2);
-                        i_oriagarizu_B_color_R = (Integer.parseInt(s[0]));
-                    }        //  System.out.println(Integer.parseInt(s[0])) ;
-                    if (st[0].equals("<oriagarizu_B_color_G")) {
-                        s = st[1].split("<", 2);
-                        i_oriagarizu_B_color_G = (Integer.parseInt(s[0]));
-                    }
-                    if (st[0].equals("<oriagarizu_B_color_B")) {
-                        s = st[1].split("<", 2);
-                        i_oriagarizu_B_color_B = (Integer.parseInt(s[0]));
-                    }
-
-                    if (st[0].equals("<oriagarizu_L_color_R")) {
-                        s = st[1].split("<", 2);
-                        i_oriagarizu_L_color_R = (Integer.parseInt(s[0]));
-                    }        //  System.out.println(Integer.parseInt(s[0])) ;
-                    if (st[0].equals("<oriagarizu_L_color_G")) {
-                        s = st[1].split("<", 2);
-                        i_oriagarizu_L_color_G = (Integer.parseInt(s[0]));
-                    }
-                    if (st[0].equals("<oriagarizu_L_color_B")) {
-                        s = st[1].split("<", 2);
-                        i_oriagarizu_L_color_B = (Integer.parseInt(s[0]));
-                    }
+                switch (m.group(1)) {
+                    case "oriagarizu_F_color_R":
+                        i_oriagarizu_F_color_R = (Integer.parseInt(m.group(2)));
+                        break;
+                    case "oriagarizu_F_color_G":
+                        i_oriagarizu_F_color_G = (Integer.parseInt(m.group(2)));
+                        break;
+                    case "oriagarizu_F_color_B":
+                        i_oriagarizu_F_color_B = (Integer.parseInt(m.group(2)));
+                        break;
+                    case "oriagarizu_B_color_R":
+                        i_oriagarizu_B_color_R = (Integer.parseInt(m.group(2)));
+                        break;
+                    case "oriagarizu_B_color_G":
+                        i_oriagarizu_B_color_G = (Integer.parseInt(m.group(2)));
+                        break;
+                    case "oriagarizu_B_color_B":
+                        i_oriagarizu_B_color_B = (Integer.parseInt(m.group(2)));
+                        break;
+                    case "oriagarizu_L_color_R":
+                        i_oriagarizu_L_color_R = (Integer.parseInt(m.group(2)));
+                        break;
+                    case "oriagarizu_L_color_G":
+                        i_oriagarizu_L_color_G = (Integer.parseInt(m.group(2)));
+                        break;
+                    case "oriagarizu_L_color_B":
+                        i_oriagarizu_L_color_B = (Integer.parseInt(m.group(2)));
+                        break;
                 }
             }
         }

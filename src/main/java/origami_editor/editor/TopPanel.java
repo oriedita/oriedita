@@ -109,22 +109,22 @@ public class TopPanel extends JPanel {
         tenkaizu_syukusyouButton.addActionListener(e -> {
             app.setHelp("tenkaizu_syukusyou");
 
-            double d_bairitu = 1.0 / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
+            double magnification = 1.0 / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
             app.scaleFactor = app.scaleFactor / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
-            app.camera_of_orisen_input_diagram.multiplyCameraZoomX(d_bairitu);
-            app.camera_of_orisen_input_diagram.multiplyCameraZoomY(d_bairitu);
+            app.creasePatternCamera.multiplyCameraZoomX(magnification);
+            app.creasePatternCamera.multiplyCameraZoomY(magnification);
 
 //20180122追加
             FoldedFigure OZi;
             for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
                 OZi = app.foldedFigures.get(i_oz);
 
-                Point t_o2tv = app.camera_of_orisen_input_diagram.object2TV(app.camera_of_orisen_input_diagram.getCameraPosition());
+                Point t_o2tv = app.creasePatternCamera.object2TV(app.creasePatternCamera.getCameraPosition());
 
-                OZi.scale(d_bairitu, t_o2tv);
+                OZi.scale(magnification, t_o2tv);
             }
 
-            foldedFigureModel.setScale(foldedFigureModel.getScale() * d_bairitu);
+            foldedFigureModel.setScale(foldedFigureModel.getScale() * magnification);
 //20180122追加　ここまで
 
 
@@ -140,23 +140,23 @@ public class TopPanel extends JPanel {
             }
             scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
             if (app.scaleFactor != d_syukusyaku_keisuu_old) {
-                app.camera_of_orisen_input_diagram.setCameraZoomX(app.scaleFactor);
-                app.camera_of_orisen_input_diagram.setCameraZoomY(app.scaleFactor);
+                app.creasePatternCamera.setCameraZoomX(app.scaleFactor);
+                app.creasePatternCamera.setCameraZoomY(app.scaleFactor);
 
 //20180225追加
 
-                double d_bairitu = app.scaleFactor / d_syukusyaku_keisuu_old;
+                double magnification = app.scaleFactor / d_syukusyaku_keisuu_old;
 
                 FoldedFigure OZi;
                 for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
                     OZi = app.foldedFigures.get(i_oz);
 
-                    Point t_o2tv = app.camera_of_orisen_input_diagram.object2TV(app.camera_of_orisen_input_diagram.getCameraPosition());
+                    Point t_o2tv = app.creasePatternCamera.object2TV(app.creasePatternCamera.getCameraPosition());
 
-                    OZi.scale(d_bairitu, t_o2tv);
+                    OZi.scale(magnification, t_o2tv);
                 }
 
-                foldedFigureModel.setScale(foldedFigureModel.getScale() * d_bairitu);
+                foldedFigureModel.setScale(foldedFigureModel.getScale() * magnification);
             }
             scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
             scaleFactorTextField.setCaretPosition(0);
@@ -169,10 +169,10 @@ public class TopPanel extends JPanel {
         tenkaizu_kakudaiButton.addActionListener(e -> {
             app.setHelp("tenkaizu_kakudai");
 
-            double d_bairitu = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
+            double magnification = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
             app.scaleFactor = app.scaleFactor * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
-            app.camera_of_orisen_input_diagram.multiplyCameraZoomX(d_bairitu);
-            app.camera_of_orisen_input_diagram.multiplyCameraZoomY(d_bairitu);
+            app.creasePatternCamera.multiplyCameraZoomX(magnification);
+            app.creasePatternCamera.multiplyCameraZoomY(magnification);
 
 
 //20180122追加
@@ -180,12 +180,12 @@ public class TopPanel extends JPanel {
             for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
                 OZi = app.foldedFigures.get(i_oz);
 
-                Point t_o2tv = app.camera_of_orisen_input_diagram.object2TV(app.camera_of_orisen_input_diagram.getCameraPosition());
+                Point t_o2tv = app.creasePatternCamera.object2TV(app.creasePatternCamera.getCameraPosition());
 
-                OZi.scale(d_bairitu, t_o2tv);
+                OZi.scale(magnification, t_o2tv);
             }
 
-            foldedFigureModel.setScale(foldedFigureModel.getScale() * d_bairitu);
+            foldedFigureModel.setScale(foldedFigureModel.getScale() * magnification);
 //20180122追加　ここまで
 
             scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
@@ -196,7 +196,7 @@ public class TopPanel extends JPanel {
             app.setHelp("tenkaizu_p_kaiten");
 
             app.rotationCorrection = OritaCalc.angle_between_m180_180(app.rotationCorrection + 11.25);
-            app.camera_of_orisen_input_diagram.setCameraAngle(app.rotationCorrection);
+            app.creasePatternCamera.setCameraAngle(app.rotationCorrection);
             rotationTextField.setText(String.valueOf(app.rotationCorrection));
             rotationTextField.setCaretPosition(0);
 
@@ -209,7 +209,7 @@ public class TopPanel extends JPanel {
             rotationTextField.setText(String.valueOf(app.rotationCorrection));
 
             if (app.rotationCorrection != d_kaiten_hosei_old) {
-                app.camera_of_orisen_input_diagram.setCameraAngle(app.rotationCorrection);
+                app.creasePatternCamera.setCameraAngle(app.rotationCorrection);
             }
 
             rotationTextField.setText(String.valueOf(app.rotationCorrection));
@@ -224,7 +224,7 @@ public class TopPanel extends JPanel {
         tenkaizu_m_kaitenButton.addActionListener(e -> {
             app.setHelp("tenkaizu_m_kaiten");
             app.rotationCorrection = OritaCalc.angle_between_m180_180(app.rotationCorrection - 11.25);
-            app.camera_of_orisen_input_diagram.setCameraAngle(app.rotationCorrection);
+            app.creasePatternCamera.setCameraAngle(app.rotationCorrection);
             rotationTextField.setText(String.valueOf(app.rotationCorrection));
             rotationTextField.setCaretPosition(0);
             app.repaintCanvas();
@@ -271,7 +271,7 @@ public class TopPanel extends JPanel {
 
                 if (app.backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
                     app.h_cam.set_i_Lock_on(true);
-                    app.h_cam.setCamera(app.camera_of_orisen_input_diagram);
+                    app.h_cam.setCamera(app.creasePatternCamera);
                     app.h_cam.h3_obj_and_h4_obj_calculation();
                 }
             }
@@ -289,7 +289,7 @@ public class TopPanel extends JPanel {
             app.h_cam = new Background_camera();//20181202
             if (app.backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
                 app.h_cam.set_i_Lock_on(app.backgroundModel.isLockBackground());
-                app.h_cam.setCamera(app.camera_of_orisen_input_diagram);
+                app.h_cam.setCamera(app.creasePatternCamera);
                 app.h_cam.h3_obj_and_h4_obj_calculation();
             }
 

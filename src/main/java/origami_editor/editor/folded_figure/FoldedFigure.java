@@ -21,11 +21,11 @@ public class FoldedFigure {
     public HierarchyList_Worker ct_worker;
     // The point set of cp_worker2 may have overlapping bars, so
     // Pass it to bb_worker once and organize it as a line segment set.
-    public Camera camera_of_foldedFigure = new Camera();
-    public Camera camera_of_foldedFigure_front = new Camera();//折り上がり
-    public Camera camera_of_foldedFigure_rear = new Camera();
-    public Camera camera_of_transparent_front = new Camera();
-    public Camera camera_of_transparent_rear = new Camera();
+    public Camera foldedFigureCamera = new Camera();
+    public Camera foldedFigureFrontCamera = new Camera();//折り上がり
+    public Camera foldedFigureRearCamera = new Camera();
+    public Camera transparentFrontCamera = new Camera();
+    public Camera transparentRearCamera = new Camera();
     private Color foldedFigure_F_color = new Color(255, 255, 50);//Folded surface color
     private Color foldedFigure_B_color = new Color(233, 233, 233);//The color of the back side of the folded figure
     private Color foldedFigure_L_color = Color.black;//Folded line color
@@ -100,16 +100,11 @@ public class FoldedFigure {
     }
 
     public void foldedFigure_camera_initialize() {
-        //camera_of_oriagarizu	;
-        initializeCamera(this.camera_of_foldedFigure, 1.0);
-        //camera_of_oriagari_omote	;
-        initializeCamera(camera_of_foldedFigure_front, 1.0);
-        //camera_of_oriagari_ura	;
-        initializeCamera(camera_of_foldedFigure_rear, -1.0);
-        //camera_of_touka_omote	;
-        initializeCamera(camera_of_transparent_front, 1.0);
-        //camera_of_touka_ura	;
-        initializeCamera(camera_of_transparent_rear, -1.0);
+        initializeCamera(foldedFigureCamera, 1.0);
+        initializeCamera(foldedFigureFrontCamera, 1.0);
+        initializeCamera(foldedFigureRearCamera, -1.0);
+        initializeCamera(transparentFrontCamera, 1.0);
+        initializeCamera(transparentRearCamera, -1.0);
     }
 
     private void initializeCamera(Camera cam, double mirror) {
@@ -140,11 +135,11 @@ public class FoldedFigure {
         //displayStyle==5,ip4==3	front & rear & front2 & rear2
 
         //Since ct_worker displays the folded figure, it is not necessary to set the camera in cp_worker2 for the display itself, but after that, cp_worker2 judges the screen click, so it is necessary to update the camera of cp_worker2 in synchronization with the display. ..
-        cp_worker2.setCamera(camera_of_foldedFigure);
-        cp_worker2.setCam_front(camera_of_foldedFigure_front);
-        cp_worker2.setCam_rear(camera_of_foldedFigure_rear);
-        cp_worker2.setCam_transparent_front(camera_of_transparent_front);
-        cp_worker2.setCam_transparent_rear(camera_of_transparent_rear);
+        cp_worker2.setCamera(foldedFigureCamera);
+        cp_worker2.setCam_front(foldedFigureFrontCamera);
+        cp_worker2.setCam_rear(foldedFigureRearCamera);
+        cp_worker2.setCam_transparent_front(transparentFrontCamera);
+        cp_worker2.setCam_transparent_rear(transparentRearCamera);
 
         //Wire diagram display
         if (displayStyle == DisplayStyle.WIRE_2) {
@@ -153,7 +148,7 @@ public class FoldedFigure {
 
         //Display of folded figure (table)
         if (((ip4 == State.FRONT_0) || (ip4 == State.BOTH_2)) || (ip4 == State.TRANSPARENT_3)) {
-            ct_worker.setCamera(camera_of_foldedFigure_front);
+            ct_worker.setCamera(foldedFigureFrontCamera);
 
             //Display of transparency
             if (displayStyle == DisplayStyle.TRANSPARENT_3) {        // displayStyle; Specify the display style of the folded figure. If it is 1, it is the same as when actually folding origami. If it is 2, it is a transparent view. If it is 3, it is a wire diagram.
@@ -173,8 +168,8 @@ public class FoldedFigure {
 
         //Display of folded figure (back)
         if (((ip4 == State.BACK_1) || (ip4 == State.BOTH_2)) || (ip4 == State.TRANSPARENT_3)) {
-            camera_of_foldedFigure_rear.display();
-            ct_worker.setCamera(camera_of_foldedFigure_rear);
+            foldedFigureRearCamera.display();
+            ct_worker.setCamera(foldedFigureRearCamera);
 
             //Display of transparency
             if (displayStyle == DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
@@ -195,7 +190,7 @@ public class FoldedFigure {
         //Transparency map (added when the folded map is displayed)
         if ((ip4 == State.TRANSPARENT_3) && (displayStyle == DisplayStyle.PAPER_5)) {
             // ---------------------------------------------------------------------------------
-            ct_worker.setCamera(camera_of_transparent_front);
+            ct_worker.setCamera(transparentFrontCamera);
             //Display of transparency
             ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
 
@@ -204,7 +199,7 @@ public class FoldedFigure {
                 ct_worker.draw_cross_with_camera(bufferGraphics);
             }
 
-            ct_worker.setCamera(camera_of_transparent_rear);
+            ct_worker.setCamera(transparentRearCamera);
 
             //Display of transparency
             ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
@@ -241,7 +236,7 @@ public class FoldedFigure {
 
         //Folded figure (table) svg
         if (((ip4 == State.FRONT_0) || (ip4 == State.BOTH_2)) || (ip4 == State.TRANSPARENT_3)) {
-            ct_worker.setCamera(camera_of_foldedFigure_front);
+            ct_worker.setCamera(foldedFigureFrontCamera);
 
             //透過図のsvg
             if (displayStyle == DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
@@ -259,7 +254,7 @@ public class FoldedFigure {
         //折りあがり図（裏）のsvg
         if (((ip4 == State.BACK_1) || (ip4 == State.BOTH_2)) || (ip4 == State.TRANSPARENT_3)) {
 
-            ct_worker.setCamera(camera_of_foldedFigure_rear);
+            ct_worker.setCamera(foldedFigureRearCamera);
 
             //透過図のsvg
             if (displayStyle == DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
@@ -275,9 +270,9 @@ public class FoldedFigure {
         //透過図（折りあがり図表示時に追加する分）
         if ((ip4 == State.TRANSPARENT_3) && (displayStyle == DisplayStyle.PAPER_5)) {
             // ---------------------------------------------------------------------------------
-            ct_worker.setCamera(camera_of_transparent_front);
+            ct_worker.setCamera(transparentFrontCamera);
             //透過図のsvg
-            ct_worker.setCamera(camera_of_transparent_rear);
+            ct_worker.setCamera(transparentRearCamera);
 
             //透過図のsvg
         }
@@ -285,9 +280,9 @@ public class FoldedFigure {
 
     }
 
-    void oritatami_suitei_camera_configure(Camera camera_of_orisen_nyuuryokuzu, LineSegmentSet Ss0) {
-        d_foldedFigure_scale_factor = camera_of_orisen_nyuuryokuzu.getCameraZoomX();
-        d_foldedFigure_rotation_correction = camera_of_orisen_nyuuryokuzu.getCameraAngle();
+    void folding_estimation_camera_configure(Camera creasePatternCamera, LineSegmentSet Ss0) {
+        d_foldedFigure_scale_factor = creasePatternCamera.getCameraZoomX();
+        d_foldedFigure_rotation_correction = creasePatternCamera.getCameraAngle();
 
         app.foldedFigureModel.setScale(d_foldedFigure_scale_factor);
         app.foldedFigureModel.setRotation(d_foldedFigure_rotation_correction);
@@ -298,49 +293,49 @@ public class FoldedFigure {
         Point p = new Point();
 
         p.set(cp_worker1.point_of_referencePlane_ob);
-        p0.set(camera_of_orisen_nyuuryokuzu.object2TV(p));
+        p0.set(creasePatternCamera.object2TV(p));
 
-        double d_camera_position_x = p.getX();
-        double d_camera_position_y = p.getY();
-        double d_display_position_x = p0.getX();
-        double d_display_position_y = p0.getY();
+        double cameraPositionX = p.getX();
+        double cameraPositionY = p.getY();
+        double displayPositionX = p0.getX();
+        double displayPositionY = p0.getY();
 
-        camera_of_foldedFigure.setCamera(camera_of_orisen_nyuuryokuzu);
-        camera_of_foldedFigure.setCameraPositionX(d_camera_position_x);
-        camera_of_foldedFigure.setCameraPositionY(d_camera_position_y);
-        camera_of_foldedFigure.setDisplayPositionX(d_display_position_x + 20.0);
-        camera_of_foldedFigure.setDisplayPositionY(d_display_position_y + 20.0);
+        foldedFigureCamera.setCamera(creasePatternCamera);
+        foldedFigureCamera.setCameraPositionX(cameraPositionX);
+        foldedFigureCamera.setCameraPositionY(cameraPositionY);
+        foldedFigureCamera.setDisplayPositionX(displayPositionX + 20.0);
+        foldedFigureCamera.setDisplayPositionY(displayPositionY + 20.0);
 
-        camera_of_foldedFigure_front.setCamera(camera_of_orisen_nyuuryokuzu);
-        camera_of_foldedFigure_front.setCameraPositionX(d_camera_position_x);
-        camera_of_foldedFigure_front.setCameraPositionY(d_camera_position_y);
-        camera_of_foldedFigure_front.setDisplayPositionX(d_display_position_x + 20.0);
-        camera_of_foldedFigure_front.setDisplayPositionY(d_display_position_y + 20.0);
+        foldedFigureFrontCamera.setCamera(creasePatternCamera);
+        foldedFigureFrontCamera.setCameraPositionX(cameraPositionX);
+        foldedFigureFrontCamera.setCameraPositionY(cameraPositionY);
+        foldedFigureFrontCamera.setDisplayPositionX(displayPositionX + 20.0);
+        foldedFigureFrontCamera.setDisplayPositionY(displayPositionY + 20.0);
 
-        camera_of_foldedFigure_rear.setCamera(camera_of_orisen_nyuuryokuzu);
-        camera_of_foldedFigure_rear.setCameraPositionX(d_camera_position_x);
-        camera_of_foldedFigure_rear.setCameraPositionY(d_camera_position_y);
-        camera_of_foldedFigure_rear.setDisplayPositionX(d_display_position_x + 40.0);
-        camera_of_foldedFigure_rear.setDisplayPositionY(d_display_position_y + 20.0);
+        foldedFigureRearCamera.setCamera(creasePatternCamera);
+        foldedFigureRearCamera.setCameraPositionX(cameraPositionX);
+        foldedFigureRearCamera.setCameraPositionY(cameraPositionY);
+        foldedFigureRearCamera.setDisplayPositionX(displayPositionX + 40.0);
+        foldedFigureRearCamera.setDisplayPositionY(displayPositionY + 20.0);
 
-        camera_of_transparent_front.setCamera(camera_of_orisen_nyuuryokuzu);
-        camera_of_transparent_front.setCameraPositionX(d_camera_position_x);
-        camera_of_transparent_front.setCameraPositionY(d_camera_position_y);
-        camera_of_transparent_front.setDisplayPositionX(d_display_position_x + 20.0);
-        camera_of_transparent_front.setDisplayPositionY(d_display_position_y + 0.0);
+        transparentFrontCamera.setCamera(creasePatternCamera);
+        transparentFrontCamera.setCameraPositionX(cameraPositionX);
+        transparentFrontCamera.setCameraPositionY(cameraPositionY);
+        transparentFrontCamera.setDisplayPositionX(displayPositionX + 20.0);
+        transparentFrontCamera.setDisplayPositionY(displayPositionY + 0.0);
 
-        camera_of_transparent_rear.setCamera(camera_of_orisen_nyuuryokuzu);
-        camera_of_transparent_rear.setCameraPositionX(d_camera_position_x);
-        camera_of_transparent_rear.setCameraPositionY(d_camera_position_y);
-        camera_of_transparent_rear.setDisplayPositionX(d_display_position_x + 40.0);
-        camera_of_transparent_rear.setDisplayPositionY(d_display_position_y + 0.0);
+        transparentRearCamera.setCamera(creasePatternCamera);
+        transparentRearCamera.setCameraPositionX(cameraPositionX);
+        transparentRearCamera.setCameraPositionY(cameraPositionY);
+        transparentRearCamera.setDisplayPositionX(displayPositionX + 40.0);
+        transparentRearCamera.setDisplayPositionY(displayPositionY + 0.0);
 
-        double d_camera_mirror = camera_of_foldedFigure_rear.getCameraMirror();
-        camera_of_foldedFigure_rear.setCameraMirror(d_camera_mirror * -1.0);
-        camera_of_transparent_rear.setCameraMirror(d_camera_mirror * -1.0);
+        double d_camera_mirror = foldedFigureRearCamera.getCameraMirror();
+        foldedFigureRearCamera.setCameraMirror(d_camera_mirror * -1.0);
+        transparentRearCamera.setCameraMirror(d_camera_mirror * -1.0);
     }
 
-    public void folding_estimated(Camera camera_of_orisen_nyuuryokuzu, LineSegmentSet lineSegmentSet) {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public void folding_estimated(Camera creasePatternCamera, LineSegmentSet lineSegmentSet) {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
         boolean i_camera_estimated = (estimationStep == EstimationStep.STEP_0) && (estimationOrder.isBelowOrEqual5());
 
         //Folded view display camera settings
@@ -476,7 +471,7 @@ public class FoldedFigure {
         }
 
         if (i_camera_estimated) {
-            oritatami_suitei_camera_configure(camera_of_orisen_nyuuryokuzu, lineSegmentSet);
+            folding_estimation_camera_configure(creasePatternCamera, lineSegmentSet);
         }
     }
 
@@ -492,29 +487,29 @@ public class FoldedFigure {
         double d_display_position_x = camera_of_foldLine_diagram.getDisplayPositionX();
         double d_display_position_y = camera_of_foldLine_diagram.getDisplayPositionY();
 
-        camera_of_foldedFigure.setCamera(camera_of_foldLine_diagram);
-        camera_of_foldedFigure.setDisplayPositionX(d_display_position_x + 20.0);
-        camera_of_foldedFigure.setDisplayPositionY(d_display_position_y + 20.0);
+        foldedFigureCamera.setCamera(camera_of_foldLine_diagram);
+        foldedFigureCamera.setDisplayPositionX(d_display_position_x + 20.0);
+        foldedFigureCamera.setDisplayPositionY(d_display_position_y + 20.0);
 
-        camera_of_foldedFigure_front.setCamera(camera_of_foldLine_diagram);
-        camera_of_foldedFigure_front.setDisplayPositionX(d_display_position_x + 20.0);
-        camera_of_foldedFigure_front.setDisplayPositionY(d_display_position_y + 20.0);
+        foldedFigureFrontCamera.setCamera(camera_of_foldLine_diagram);
+        foldedFigureFrontCamera.setDisplayPositionX(d_display_position_x + 20.0);
+        foldedFigureFrontCamera.setDisplayPositionY(d_display_position_y + 20.0);
 
-        camera_of_foldedFigure_rear.setCamera(camera_of_foldLine_diagram);
-        camera_of_foldedFigure_rear.setDisplayPositionX(d_display_position_x + 40.0);
-        camera_of_foldedFigure_rear.setDisplayPositionY(d_display_position_y + 20.0);
+        foldedFigureRearCamera.setCamera(camera_of_foldLine_diagram);
+        foldedFigureRearCamera.setDisplayPositionX(d_display_position_x + 40.0);
+        foldedFigureRearCamera.setDisplayPositionY(d_display_position_y + 20.0);
 
-        camera_of_transparent_front.setCamera(camera_of_foldLine_diagram);
-        camera_of_transparent_front.setDisplayPositionX(d_display_position_x + 20.0);
-        camera_of_transparent_front.setDisplayPositionY(d_display_position_y + 0.0);
+        transparentFrontCamera.setCamera(camera_of_foldLine_diagram);
+        transparentFrontCamera.setDisplayPositionX(d_display_position_x + 20.0);
+        transparentFrontCamera.setDisplayPositionY(d_display_position_y + 0.0);
 
-        camera_of_transparent_rear.setCamera(camera_of_foldLine_diagram);
-        camera_of_transparent_rear.setDisplayPositionX(d_display_position_x + 40.0);
-        camera_of_transparent_rear.setDisplayPositionY(d_display_position_y + 0.0);
+        transparentRearCamera.setCamera(camera_of_foldLine_diagram);
+        transparentRearCamera.setDisplayPositionX(d_display_position_x + 40.0);
+        transparentRearCamera.setDisplayPositionY(d_display_position_y + 0.0);
 
-        double d_camera_mirror = camera_of_foldedFigure_rear.getCameraMirror();
-        camera_of_foldedFigure_rear.setCameraMirror(d_camera_mirror * -1.0);
-        camera_of_transparent_rear.setCameraMirror(d_camera_mirror * -1.0);
+        double d_camera_mirror = foldedFigureRearCamera.getCameraMirror();
+        foldedFigureRearCamera.setCameraMirror(d_camera_mirror * -1.0);
+        transparentRearCamera.setCameraMirror(d_camera_mirror * -1.0);
 
         estimated_initialize();
         folding_estimated_01(Ss0);
@@ -673,9 +668,9 @@ public class FoldedFigure {
     public void foldedFigure_operation_mouse_on_1(Point p) {//Work when the left mouse button is pressed in the folding diagram operation Folding function
         p_m_left_on.set(new Point(p.getX(), p.getY()));
 
-        cp_worker2.setCamera(camera_of_foldedFigure);
-        cp_worker2.setCam_front(camera_of_foldedFigure_front);
-        cp_worker2.setCam_rear(camera_of_foldedFigure_rear);
+        cp_worker2.setCamera(foldedFigureCamera);
+        cp_worker2.setCam_front(foldedFigureFrontCamera);
+        cp_worker2.setCam_rear(foldedFigureRearCamera);
 
         //Store the number of the point closest to p in i_closestPointId. I_closestPointId = 0 if there are no close points
         i_nanini_near = 0;//Close to the point in the development view = 1, close to the point in the folded view = 2, not close to either = 0
@@ -765,9 +760,9 @@ public class FoldedFigure {
     }
 
     public void foldedFigure_operation_mouse_drag_1(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
-        cp_worker2.setCamera(camera_of_foldedFigure);
-        cp_worker2.setCam_front(camera_of_foldedFigure_front);
-        cp_worker2.setCam_rear(camera_of_foldedFigure_rear);
+        cp_worker2.setCamera(foldedFigureCamera);
+        cp_worker2.setCam_front(foldedFigureFrontCamera);
+        cp_worker2.setCam_rear(foldedFigureRearCamera);
 
         if (i_nanini_near == 1) {
         }
@@ -783,9 +778,9 @@ public class FoldedFigure {
 
     //-------------
     public void foldedFigure_operation_mouse_off_1(Point p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
-        cp_worker2.setCamera(camera_of_foldedFigure);
-        cp_worker2.setCam_front(camera_of_foldedFigure_front);
-        cp_worker2.setCam_rear(camera_of_foldedFigure_rear);
+        cp_worker2.setCamera(foldedFigureCamera);
+        cp_worker2.setCam_front(foldedFigureFrontCamera);
+        cp_worker2.setCam_rear(foldedFigureRearCamera);
 
         if (i_nanini_near == 1) {
         }
@@ -826,9 +821,9 @@ public class FoldedFigure {
     public void foldedFigure_operation_mouse_on_2(Point p) {//Work when the left mouse button is pressed in the fold-up diagram operation
         p_m_left_on.set(new Point(p.getX(), p.getY()));
 
-        cp_worker2.setCamera(camera_of_foldedFigure);
-        cp_worker2.setCam_front(camera_of_foldedFigure_front);
-        cp_worker2.setCam_rear(camera_of_foldedFigure_rear);
+        cp_worker2.setCamera(foldedFigureCamera);
+        cp_worker2.setCam_front(foldedFigureFrontCamera);
+        cp_worker2.setCam_rear(foldedFigureRearCamera);
 
         //i_closestPointIdにpに最も近い点の番号を格納。近い点がまったくない場合はi_mottomo_tikai_Tenid=0
         i_nanini_near = 0;//展開図の点に近い=1、折り上がり図の点に近い=2、どちらにも近くない=0
@@ -917,11 +912,10 @@ public class FoldedFigure {
         System.out.println("cp_worker2.get_ten_sentakusuu() = " + cp_worker2.getSelectedPointsNum());
     }
 
-    //-------------
     public void foldedFigure_operation_mouse_drag_2(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業
-        cp_worker2.setCamera(camera_of_foldedFigure);
-        cp_worker2.setCam_front(camera_of_foldedFigure_front);
-        cp_worker2.setCam_rear(camera_of_foldedFigure_rear);
+        cp_worker2.setCamera(foldedFigureCamera);
+        cp_worker2.setCam_front(foldedFigureFrontCamera);
+        cp_worker2.setCam_rear(foldedFigureRearCamera);
 
         if (i_nanini_near == 1) {
         }
@@ -935,11 +929,10 @@ public class FoldedFigure {
         }
     }
 
-    //-------------
     public void foldedFigure_operation_mouse_off_2(Point p) {//折り上がり図操作でマウスの左ボタンを離したときの作業
-        cp_worker2.setCamera(camera_of_foldedFigure);
-        cp_worker2.setCam_front(camera_of_foldedFigure_front);
-        cp_worker2.setCam_rear(camera_of_foldedFigure_rear);
+        cp_worker2.setCamera(foldedFigureCamera);
+        cp_worker2.setCam_front(foldedFigureFrontCamera);
+        cp_worker2.setCam_rear(foldedFigureRearCamera);
 
         if (i_nanini_near == 1) {
         }
@@ -1005,23 +998,23 @@ public class FoldedFigure {
         transparent_transparency = foldedFigureModel.getTransparentTransparency();
 
         // Update scale
-        camera_of_foldedFigure.setCameraZoomX(d_foldedFigure_scale_factor);
-        camera_of_foldedFigure.setCameraZoomY(d_foldedFigure_scale_factor);
-        camera_of_foldedFigure_front.setCameraZoomX(d_foldedFigure_scale_factor);
-        camera_of_foldedFigure_front.setCameraZoomY(d_foldedFigure_scale_factor);
-        camera_of_foldedFigure_rear.setCameraZoomX(d_foldedFigure_scale_factor);
-        camera_of_foldedFigure_rear.setCameraZoomY(d_foldedFigure_scale_factor);
-        camera_of_transparent_front.setCameraZoomX(d_foldedFigure_scale_factor);
-        camera_of_transparent_front.setCameraZoomY(d_foldedFigure_scale_factor);
-        camera_of_transparent_rear.setCameraZoomX(d_foldedFigure_scale_factor);
-        camera_of_transparent_rear.setCameraZoomY(d_foldedFigure_scale_factor);
+        foldedFigureCamera.setCameraZoomX(d_foldedFigure_scale_factor);
+        foldedFigureCamera.setCameraZoomY(d_foldedFigure_scale_factor);
+        foldedFigureFrontCamera.setCameraZoomX(d_foldedFigure_scale_factor);
+        foldedFigureFrontCamera.setCameraZoomY(d_foldedFigure_scale_factor);
+        foldedFigureRearCamera.setCameraZoomX(d_foldedFigure_scale_factor);
+        foldedFigureRearCamera.setCameraZoomY(d_foldedFigure_scale_factor);
+        transparentFrontCamera.setCameraZoomX(d_foldedFigure_scale_factor);
+        transparentFrontCamera.setCameraZoomY(d_foldedFigure_scale_factor);
+        transparentRearCamera.setCameraZoomX(d_foldedFigure_scale_factor);
+        transparentRearCamera.setCameraZoomY(d_foldedFigure_scale_factor);
 
         // Update rotation
-        camera_of_foldedFigure.setCameraAngle(d_foldedFigure_rotation_correction);
-        camera_of_foldedFigure_front.setCameraAngle(d_foldedFigure_rotation_correction);
-        camera_of_foldedFigure_rear.setCameraAngle(d_foldedFigure_rotation_correction);
-        camera_of_transparent_front.setCameraAngle(d_foldedFigure_rotation_correction);
-        camera_of_transparent_rear.setCameraAngle(d_foldedFigure_rotation_correction);
+        foldedFigureCamera.setCameraAngle(d_foldedFigure_rotation_correction);
+        foldedFigureFrontCamera.setCameraAngle(d_foldedFigure_rotation_correction);
+        foldedFigureRearCamera.setCameraAngle(d_foldedFigure_rotation_correction);
+        transparentFrontCamera.setCameraAngle(d_foldedFigure_rotation_correction);
+        transparentRearCamera.setCameraAngle(d_foldedFigure_rotation_correction);
     }
 
     public void getData(FoldedFigureModel foldedFigureModel) {
@@ -1034,35 +1027,35 @@ public class FoldedFigure {
         foldedFigureModel.setState(ip4);
     }
 
-    public void scale(double d_bairitu) {
-        scale(d_bairitu, null);
+    public void scale(double magnification) {
+        scale(magnification, null);
     }
 
-    public void scale(double d_bairitu, Point t_o2tv) {
-        d_foldedFigure_scale_factor = d_foldedFigure_scale_factor * d_bairitu;
+    public void scale(double magnification, Point t_o2tv) {
+        d_foldedFigure_scale_factor = d_foldedFigure_scale_factor * magnification;
 
         if (t_o2tv != null) {
-            camera_of_foldedFigure.camera_ichi_sitei_from_TV(t_o2tv);
-            camera_of_foldedFigure_front.camera_ichi_sitei_from_TV(t_o2tv);
-            camera_of_foldedFigure_rear.camera_ichi_sitei_from_TV(t_o2tv);
-            camera_of_transparent_front.camera_ichi_sitei_from_TV(t_o2tv);
-            camera_of_transparent_rear.camera_ichi_sitei_from_TV(t_o2tv);
+            foldedFigureCamera.camera_position_specify_from_TV(t_o2tv);
+            foldedFigureFrontCamera.camera_position_specify_from_TV(t_o2tv);
+            foldedFigureRearCamera.camera_position_specify_from_TV(t_o2tv);
+            transparentFrontCamera.camera_position_specify_from_TV(t_o2tv);
+            transparentRearCamera.camera_position_specify_from_TV(t_o2tv);
         }
 
-        camera_of_foldedFigure.multiplyCameraZoomX(d_bairitu);
-        camera_of_foldedFigure.multiplyCameraZoomY(d_bairitu);
+        foldedFigureCamera.multiplyCameraZoomX(magnification);
+        foldedFigureCamera.multiplyCameraZoomY(magnification);
 
-        camera_of_foldedFigure_front.multiplyCameraZoomX(d_bairitu);
-        camera_of_foldedFigure_front.multiplyCameraZoomY(d_bairitu);
+        foldedFigureFrontCamera.multiplyCameraZoomX(magnification);
+        foldedFigureFrontCamera.multiplyCameraZoomY(magnification);
 
-        camera_of_foldedFigure_rear.multiplyCameraZoomX(d_bairitu);
-        camera_of_foldedFigure_rear.multiplyCameraZoomY(d_bairitu);
+        foldedFigureRearCamera.multiplyCameraZoomX(magnification);
+        foldedFigureRearCamera.multiplyCameraZoomY(magnification);
 
-        camera_of_transparent_front.multiplyCameraZoomX(d_bairitu);
-        camera_of_transparent_front.multiplyCameraZoomY(d_bairitu);
+        transparentFrontCamera.multiplyCameraZoomX(magnification);
+        transparentFrontCamera.multiplyCameraZoomY(magnification);
 
-        camera_of_transparent_rear.multiplyCameraZoomX(d_bairitu);
-        camera_of_transparent_rear.multiplyCameraZoomY(d_bairitu);
+        transparentRearCamera.multiplyCameraZoomX(magnification);
+        transparentRearCamera.multiplyCameraZoomY(magnification);
     }
 
     public enum PointSelection {

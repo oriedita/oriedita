@@ -240,7 +240,7 @@ public class Camera { // Mediation between actual coordinates and display coordi
     }
 
     //Make sure that the display on the TV does not change, and adjust the camera position to the position of the subject corresponding to the coordinates Ten P on the TV.
-    public void camera_ichi_sitei_from_TV(Point p) {
+    public void camera_position_specify_from_TV(Point p) {
         setCameraPosition(TV2object(p));
         setDisplayPosition(p);
     }

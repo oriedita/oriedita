@@ -22,7 +22,7 @@ public class Background_camera {//Mediation between actual coordinates and displ
 
     Camera camera = new Camera();
 
-    double p_bairitu = 1.0;
+    double magnification = 1.0;
     double p_idou_x = 0.0;
     double p_idou_y = 0.0;
     double p_rotation_angle = 0.0;
@@ -55,7 +55,7 @@ public class Background_camera {//Mediation between actual coordinates and displ
 
         pt1.set(OritaCalc.point_rotate(new Point(p_rotation_x, p_rotation_y), pt, -getAngle()));
         pt2.set(pt1.getX() - p_idou_x, pt1.getY() - p_idou_y);
-        pt3.set(pt2.getX() / p_bairitu, pt2.getY() / p_bairitu);
+        pt3.set(pt2.getX() / magnification, pt2.getY() / magnification);
 
         return pt3;
     }
@@ -109,9 +109,9 @@ public class Background_camera {//Mediation between actual coordinates and displ
     }
 
     public void parameter_calculation() {
-        p_bairitu = h3.distance(h4) / h1.distance(h2);
-        p_idou_x = (1.0 - p_bairitu) * h1.getX() + h3.getX() - h1.getX();
-        p_idou_y = (1.0 - p_bairitu) * h1.getY() + h3.getY() - h1.getY();
+        magnification = h3.distance(h4) / h1.distance(h2);
+        p_idou_x = (1.0 - magnification) * h1.getX() + h3.getX() - h1.getX();
+        p_idou_y = (1.0 - magnification) * h1.getY() + h3.getY() - h1.getY();
         p_rotation_angle = OritaCalc.angle(h1, h2, h3, h4);
         p_rotation_x = h3.getX();
         p_rotation_y = h3.getY();
@@ -132,19 +132,19 @@ public class Background_camera {//Mediation between actual coordinates and displ
     }
 
     public int get_x0() {
-        return (int) ((1.0 - p_bairitu) * h1.getX() + h3.getX() - h1.getX());
+        return (int) ((1.0 - magnification) * h1.getX() + h3.getX() - h1.getX());
     }
 
     public int get_y0() {
-        return (int) ((1.0 - p_bairitu) * h1.getY() + h3.getY() - h1.getY());
+        return (int) ((1.0 - magnification) * h1.getY() + h3.getY() - h1.getY());
     }
 
     public int get_x1() {
-        return (int) (background_width * p_bairitu);
+        return (int) (background_width * magnification);
     }
 
     public int get_y1() {
-        return (int) (background_height * p_bairitu);
+        return (int) (background_height * magnification);
     }
 
     public double getAngle() {
