@@ -271,7 +271,7 @@ public class DrawingWorker {
                         s = st[1].split("<", 2);
 
                         boolean selected = Boolean.parseBoolean(s[0].trim());
-                        canvasModel.setDisplayGridInputAssist(selected);
+                        canvasModel.setDisplayComments(selected);
                     }
 
                     if (st[0].equals("<ckbox_cp")) {
