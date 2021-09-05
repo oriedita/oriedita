@@ -48,7 +48,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     
     MouseMode mouseMode;
 
-    // Applet width and height
+    // Canvas width and height
     Dimension dim;
     private boolean antiAlias;
     private boolean mouseWheelMovesCreasePattern;
@@ -506,12 +506,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             case MouseEvent.BUTTON2:
                 System.out.println("中ボタンクリック");
 
-                app.pointInCpOrFoldedFigure(p);
+                app.pointInCreasePatternOrFoldedFigure(p);
 
                 System.out.println("i_cp_or_oriagari = " + app.i_cp_or_oriagari);
 
                 switch (app.i_cp_or_oriagari) {
-                    case CREASEPATTERN_0: // 展開図移動。
+                    case CREASE_PATTERN_0: // 展開図移動。
                         app.camera_of_orisen_input_diagram.camera_ichi_sitei_from_TV(p);
                         break;
                     case FOLDED_FRONT_1:
@@ -883,7 +883,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     break;
                 case MouseEvent.BUTTON2:
                     switch (app.i_cp_or_oriagari) {
-                        case CREASEPATTERN_0: // 展開図移動。
+                        case CREASE_PATTERN_0: // 展開図移動。
                             app.camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
                             es1.setCamera(app.camera_of_orisen_input_diagram);
                             break;
@@ -1280,7 +1280,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     break;
                 case MouseEvent.BUTTON2:
                     switch (app.i_cp_or_oriagari) {
-                        case CREASEPATTERN_0:
+                        case CREASE_PATTERN_0:
                             app.camera_of_orisen_input_diagram.displayPositionMove(mouse_temp0.other_Point_position(p));
                             es1.setCamera(app.camera_of_orisen_input_diagram);
                             break;
@@ -1728,9 +1728,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             if ((!e.isShiftDown()) && (!app.i_mouse_right_button_on)) {
 
                 Point p = new Point(app.e2p(e));
-                app.pointInCpOrFoldedFigure(p);
+                app.pointInCreasePatternOrFoldedFigure(p);
                 double root_root_root_2 = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
-                if (app.i_cp_or_oriagari == App.MouseWheelTarget.CREASEPATTERN_0) {
+                if (app.i_cp_or_oriagari == App.MouseWheelTarget.CREASE_PATTERN_0) {
                     if (e.getWheelRotation() == -1) {
                         app.scaleFactor = app.scaleFactor * root_root_root_2;//  sqrt(sqrt(2))=1.1892
                     } else {
@@ -1804,13 +1804,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                         ImageIO.write(offscreen.getSubimage(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1), "jpg", new File(fname));
                     }
 
-                } else {//枠無しの場合の全体書き出し
+                } else {//Full export without frame
                     System.out.println("2018-529_");
                     if (i == 1) {
-                        ImageIO.write(offscreen.getSubimage(app.upperLeftX, app.upperLeftY, dim.width - app.lowerRightX - app.upperLeftX, dim.height - app.lowerRightY - app.upperLeftY), "png", new File(fname));
+                        ImageIO.write(offscreen.getSubimage(0, 0, dim.width, dim.height), "png", new File(fname));
                     }
                     if (i == 2) {
-                        ImageIO.write(offscreen.getSubimage(app.upperLeftX, app.upperLeftY, dim.width - app.lowerRightX - app.upperLeftX, dim.height - app.lowerRightY - app.upperLeftY), "jpg", new File(fname));
+                        ImageIO.write(offscreen.getSubimage(0, 0, dim.width, dim.height), "jpg", new File(fname));
                     }
                 }
             } catch (Exception e) {

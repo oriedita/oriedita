@@ -6,6 +6,7 @@ import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.editor.hierarchylist_worker.HierarchyList_Worker;
 import origami_editor.graphic2d.linesegment.LineSegment;
+import origami_editor.graphic2d.oritacalc.OritaCalc;
 import origami_editor.graphic2d.point.Point;
 import origami_editor.record.memo.Memo;
 import origami_editor.record.string_op.StringOp;
@@ -21,6 +22,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import static origami_editor.editor.ResourceUtil.createImageIcon;
 
@@ -39,17 +41,12 @@ public class App extends JFrame implements ActionListener {
     public LineSegmentSet Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
     public BulletinBoard bulletinBoard = new BulletinBoard(this);
     public Camera camera_of_orisen_input_diagram = new Camera();
-    //アプレット用public void init()または、アプリケーション用public ap() 以外のクラスでも使用されるパネルの部品の宣言はここでしておく。
-    //アプレット用public void init()または、アプリケーション用public ap() の中だけで使用されるパネルの部品の宣言ぅラスの中でする。
-    //Those that basically change the appearance of the parts are declared here.
     public MouseMode mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;//Defines the response to mouse movements. If it is 1, the line segment input mode. If it is 2, adjust the development view (move). If it is 101, operate the folded figure.
     // ------------------------------------------------------------------------
     public Point point_of_referencePlane_old = new Point(); //ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
     public SubThread sub;
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
     public Canvas canvas;
-    // *******************************************************************************************************
-    ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     FileDialog fd;
     double r = 3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
     public final DrawingWorker mainDrawingWorker = new DrawingWorker(r, this);    // Basic branch craftsman. Accepts input from the mouse.
@@ -76,12 +73,6 @@ public class App extends JFrame implements ActionListener {
     Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
     Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
     HelpDialog explanation;
-    // subThreadMode Subthread operation rules.
-    // 0 = Execution of folding estimate 5. It is not a mode to put out different solutions of folding estimation at once.
-    // 1 = Execution of folding estimate 5. Another solution for folding estimation is put together.
-    // 2 =
-    //Runnableインターフェイスを実装しているので、myThスレッドの実行内容はrunメソッドに書かれる
-    //アプレットでのスレッドの使い方は、”初体験Java”のP231参照
     boolean mouseDraggedValid = false;
     boolean mouseReleasedValid = false;//0 ignores mouse operation. 1 is valid for mouse operation. When an unexpected mouseDragged or mouseReleased occurs due to on-off of the file box, set it to 0 so that it will not be picked up. These are set to 1 valid when the mouse is clicked.
     SubThread.Mode subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_0;
@@ -95,24 +86,12 @@ public class App extends JFrame implements ActionListener {
     String fname_wi;
     //ウィンドウ透明化用のパラメータ
     BufferedImage imageT;
-    //Vector from the upper left to the limit position where the drawing screen can be seen in the upper left
-    int upperLeftX = 0;
-    int upperLeftY = 0;
-    //Vector from the lower right corner to the limit position where the drawing screen can be seen in the lower right corner
-    int lowerRightX = 0;
-    int lowerRightY = 0;
-    JDialog additionalFrame;
-    boolean showAddFrame = false;//1=add_frameが存在する。,0=存在しない。
     boolean ckbox_add_frame_SelectAnd3click_isSelected = false;//1=折線セレクト状態でトリプルクリックするとmoveやcopy等の動作モードに移行する。 20200930
-    // **************************************************************************************************************************
-    // **************************************************************************************************************************
-    // **************************************************************************************************************************
     boolean i_mouse_right_button_on = false;//1 if the right mouse button is on, 0 if off
     boolean i_mouse_undo_redo_mode = false;//1 for undo and redo mode with mouse
-    MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASEPATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
+    MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
     double d_ap_check4 = 0.0;
 
-    ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     public App() {
         setTitle("Origami Editor 1.0.0");//Specify the title and execute the constructor
         frame_title_0 = getTitle();
@@ -166,22 +145,11 @@ public class App extends JFrame implements ActionListener {
                 System.out.println("windowLostFocus_20200929");
             }
         });//オリヒメのメインウィンドウのフォーカスが変化したときの処理 ここまで。
-        //--------------------------------------------------------------------------------------------------
-
-//        setVisible(true);                 //アプレットの時は使わない。アプリケーションの時は使う。かな
-////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
-
-        //バッファー画面の設定 ------------------------------------------------------------------
-        // 幅と高さをたずねる
-
-        //バッファー画面の設定はここまで----------------------------------------------------
 
         foldedFigures.clear();
         addNewFoldedFigure();
         OZ = foldedFigures.get(0);//折りあがり図
 
-        //カメラの設定 ------------------------------------------------------------------
-        //camera_of_orisen_nyuuryokuzu	;
         camera_of_orisen_input_diagram.setCameraPositionX(0.0);
         camera_of_orisen_input_diagram.setCameraPositionY(0.0);
         camera_of_orisen_input_diagram.setCameraAngle(0.0);
@@ -193,15 +161,9 @@ public class App extends JFrame implements ActionListener {
 
         OZ.foldedFigure_camera_initialize();
 
-        //camera_haikei	;
-        //カメラの設定はここまで----------------------------------------------------
-        //step=1;
         myTh = null;
-        // 初期表示
 
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("fishbase.png")));
-
-        // レイアウトの作成レイアウトの作成の部分は”初体験Java”のP179等を参照
 
         Editor editor = new Editor(this);
 
@@ -233,8 +195,6 @@ public class App extends JFrame implements ActionListener {
         text26 = bottomPanel.getGoToFoldedFigureTextField();
         Button_bangou_sitei_estimated_display = bottomPanel.getGoToFoldedFigureButton();
         Button_another_solution = bottomPanel.getAnotherSolutionButton();
-
-// *******南*********ボタンの定義はここまで*******************************************************************************************************************************
 
         gridModel.addPropertyChangeListener(e -> mainDrawingWorker.setGridConfigurationData(gridModel));
         gridModel.addPropertyChangeListener(e -> leftPanel.setGridConfigurationData(gridModel));
@@ -303,32 +263,24 @@ public class App extends JFrame implements ActionListener {
             }
         });
 
-        //展開図の初期化　開始
-        //settei_syokika_cp();//展開図パラメータの初期化
         developmentView_initialization();
-        //展開図の初期化　終了
 
-        //Initialization of folding prediction map started
         configure_initialize_prediction();
-        //折畳予測図のの初期化　終了
 
         Button_shared_operation();
-
-        // 測定長さと角度の表示
 
         mainDrawingWorker.setCamera(camera_of_orisen_input_diagram);
 
         mainDrawingWorker.record();
         mainDrawingWorker.auxRecord();
 
-        //            frame.setSize(1200, 700);
         pack();
         setLocationRelativeTo(null);//If you want to put the application window in the center of the screen, use the setLocationRelativeTo () method. If you pass null, it will always be in the center.
         setVisible(true);
 
         explanation = new HelpDialog(this);
         explanation.setVisible(true);
-    }//------------------------------------------ボタンの定義等、ここまでがコンストラクタとして起動直後に最初に実行される内容
+    }
 
     public void repaintCanvas() {
         canvas.repaint();
@@ -356,10 +308,10 @@ public class App extends JFrame implements ActionListener {
                     foldType = FoldType.FOR_SELECTED_LINES_2;//選択された展開図で折畳み
                 }
             } else {                        //折り上がり系図指定
-                if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
-                    foldType = FoldType.CHANGING_FOLDED_3;//指定された折り上がり系図で折畳み
-                } else {        //折り線選択有り
-                    foldType = FoldType.FOR_SELECTED_LINES_2;//選択された展開図で折畳み
+                if (foldLineTotalForSelectFolding == 0) {        //No fold line selection
+                    foldType = FoldType.CHANGING_FOLDED_3;//Fold with the specified fold-up genealogy
+                } else {        //With fold line selection
+                    foldType = FoldType.FOR_SELECTED_LINES_2;//Fold in selected crease pattern
                 }
             }
         }
@@ -367,11 +319,7 @@ public class App extends JFrame implements ActionListener {
         return foldType;
     }
 
-    //ここまでが変数等の定義
-
-    public void oritatame(FoldType foldType, FoldedFigure.EstimationOrder estimationOrder) {//引数の意味は(foldType , estimationOrder)
-        //i_fold_typeはget_i_fold_type()関数で取得する。
-        //foldType=0なにもしない、=1通常の展開図の全折線を対象とした折り畳み推定、=2はselectされた折線を対象とした折り畳み推定、=3は折畳み状態を変更
+    public void fold(FoldType foldType, FoldedFigure.EstimationOrder estimationOrder) {
         if (foldType == FoldType.NOTHING_0) {
             System.out.println(" oritatame 20180108");
         } else if ((foldType == FoldType.FOR_ALL_LINES_1) || (foldType == FoldType.FOR_SELECTED_LINES_2)) {
@@ -379,7 +327,7 @@ public class App extends JFrame implements ActionListener {
                 mainDrawingWorker.select_all();
             }
             //
-            if (canvasModel.isCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the development drawing
+            if (canvasModel.isCorrectCreasePatternBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
                 DrawingWorker drawingWorker2 = new DrawingWorker(r, this);    // Basic branch craftsman. Accepts input from the mouse.
                 drawingWorker2.setMemo_for_reading(mainDrawingWorker.foldLineSet.getMemoForSelectFolding());
                 drawingWorker2.point_removal();
@@ -401,7 +349,7 @@ public class App extends JFrame implements ActionListener {
             if (!subThreadRunning) {
                 subThreadRunning = true;
                 subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_0;//1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVer3.008から追加
-                mks();//新しいスレッドを作る
+                makeSubThread();//新しいスレッドを作る
                 sub.start();
             }
 
@@ -411,7 +359,7 @@ public class App extends JFrame implements ActionListener {
             if (!subThreadRunning) {
                 subThreadRunning = true;
                 subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_0;//1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVer3.008から追加
-                mks();//新しいスレッドを作る
+                makeSubThread();//新しいスレッドを作る
                 sub.start();
             }
         }
@@ -422,14 +370,13 @@ public class App extends JFrame implements ActionListener {
 
         addNewFoldedFigure(); //OAZのアレイリストに、新しく折り上がり図をひとつ追加する。
 
-        set_i_OAZ(foldedFigures.size() - 1);//foldedFigureIndex=i;OZ = (Oriagari_Zu)foldedFigures.get(foldedFigureIndex); OZ(各操作の対象となる折上がり図）に、アレイリストに最新に追加された折上がり図を割り当てる)
+        setFoldedFigureIndex(foldedFigures.size() - 1);//foldedFigureIndex=i;OZ = (Oriagari_Zu)foldedFigures.get(foldedFigureIndex); OZ(各操作の対象となる折上がり図）に、アレイリストに最新に追加された折上がり図を割り当てる)
 
         FoldedFigure orz = foldedFigures.get(0);//Assign foldedFigures (0) (folded figures that hold common parameters) to orz
 
         orz.getData(foldedFigureModel);
     }
 
-    // ------------------------------------------------------------------------------
     public void addNewFoldedFigure() {
         foldedFigures.add(new FoldedFigure_01(this));
     }
@@ -451,14 +398,17 @@ public class App extends JFrame implements ActionListener {
     public void halt() {
         int option = JOptionPane.showConfirmDialog(this, createImageIcon("ppp/keisan_tyuusi_DLog.png"));
 
-        if (option == JOptionPane.YES_OPTION) {
-            mouseDraggedValid = false;
-            mouseReleasedValid = false;
-            writeMemo2File();
-            mainDrawingWorker.record();
-        } else if (option == JOptionPane.NO_OPTION) {
-        } else if (option == JOptionPane.CANCEL_OPTION) {
-            return;
+        switch (option) {
+            case JOptionPane.YES_OPTION:
+                mouseDraggedValid = false;
+                mouseReleasedValid = false;
+                writeMemo2File();
+                mainDrawingWorker.record();
+                break;
+            case JOptionPane.NO_OPTION:
+                break;
+            case JOptionPane.CANCEL_OPTION:
+                return;
         }
 
         sub.stop();
@@ -470,31 +420,29 @@ public class App extends JFrame implements ActionListener {
     public void closing() {
         int option = JOptionPane.showConfirmDialog(this, createImageIcon("ppp/owari.png"));
 
-        if (option == JOptionPane.YES_OPTION) {
-            mouseDraggedValid = false;
-            mouseReleasedValid = false;
-            writeMemo2File();
-            if (subThreadRunning) {
-                sub.stop();
-            }
-            System.exit(0);
-        } else if (option == JOptionPane.NO_OPTION) {
-            if (subThreadRunning) {
-                sub.stop();
-            }
-            System.exit(0);
-        } else if (option == JOptionPane.CANCEL_OPTION) {
-            return;
+        switch (option) {
+            case JOptionPane.YES_OPTION:
+                mouseDraggedValid = false;
+                mouseReleasedValid = false;
+                writeMemo2File();
+                if (subThreadRunning) {
+                    sub.stop();
+                }
+                System.exit(0);
+            case JOptionPane.NO_OPTION:
+                if (subThreadRunning) {
+                    sub.stop();
+                }
+                System.exit(0);
+            case JOptionPane.CANCEL_OPTION:
+                break;
         }
     }
 
     // --------展開図の初期化-----------------------------
     void developmentView_initialization() {
-
-//全体
-        //描き職人の初期化
         mainDrawingWorker.reset();
-        mainDrawingWorker.reset_2();    //描き職人の初期化
+        mainDrawingWorker.initialize();
 
 
         //camera_of_orisen_nyuuryokuzu	の設定;
@@ -507,73 +455,22 @@ public class App extends JFrame implements ActionListener {
         camera_of_orisen_input_diagram.setDisplayPositionX(350.0);
         camera_of_orisen_input_diagram.setDisplayPositionY(350.0);
 
-        //camera_haikei	;
-
         mainDrawingWorker.setCamera(camera_of_orisen_input_diagram);
         OZ.cp_worker1.setCamera(camera_of_orisen_input_diagram);
 
-        //折線入力か補助線入力か
-
         canvasModel.reset();
-
-        //内分された折線の指定
-
         internalDivisionRatioModel.reset();
         foldedFigureModel.reset();
 
-        //
         scaleFactor = 1.0;
         scaleFactorTextField.setText(String.valueOf(scaleFactor)); //縮尺係数
         rotationCorrection = 0.0;
         rotationTextField.setText(String.valueOf(rotationCorrection));//回転表示角度の補正係数
 
-//西辺
-
-        //展開図の線の太さ。
-
-        //基本枝構造の直線の両端の円の半径、（以前は枝と各種ポイントの近さの判定基準）
-        //double r=3.0;
-        //mainDrawingWorker.set_r(r);
-
-        //折線表現を色で表す
-
-        //ペンの色の指定
-
-        //折線分割数
-
-        //格子分割数の指定
-
-        //格子の適用範囲の指定
-
         gridModel.reset();
-
-//東辺
-
-        //角度系入力を22.5度系にする。
         angleSystemModel.reset();
-
-        //多角形の角数
     }
 
-    // *******************************************************************************************************
-    public void showAdditionalFrame() {
-        //Frame additionalFrame
-        if (showAddFrame) {
-            System.out.println("111 showAddFrame=" + showAddFrame);
-            additionalFrame.dispose();
-            additionalFrame = new OpenFrame("additionalFrame", this);
-        } else {
-            System.out.println("000 showAddFrame=" + showAddFrame);
-            additionalFrame = new OpenFrame("additionalFrame", this);
-        }
-        showAddFrame = true;
-        additionalFrame.toFront();
-    }
-
-
-// *******************************************************************************************************
-
-    //ボタンを押されたときの処理----------------
     public void actionPerformed(ActionEvent e) {
 
     }
@@ -585,8 +482,7 @@ public class App extends JFrame implements ActionListener {
         mainDrawingWorker.voronoiLineSet.reset();
     }
 
-    // *******************************************************************************************zzzzzzzzzzzz
-    public void pointInCpOrFoldedFigure(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
+    public void pointInCreasePatternOrFoldedFigure(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
         //20171216
         //hyouji_flg==2,ip4==0  omote
         //hyouji_flg==2,ip4==1	ura
@@ -609,12 +505,11 @@ public class App extends JFrame implements ActionListener {
         //OZ_hyouji_mode=3;  omote & ura
         //OZ_hyouji_mode=4;  omote & ura & omote2 & ura2
 
-        int temp_i_OAZ = 0;
-        MouseWheelTarget temp_i_cp_or_oriagari = MouseWheelTarget.CREASEPATTERN_0;
+        int tempFoldedFigureIndex = 0;
+        MouseWheelTarget temp_i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;
         FoldedFigure OZi;
         for (int i = 1; i <= foldedFigures.size() - 1; i++) {
             OZi = foldedFigures.get(i);
-
 
             int OZ_display_mode = 0;//No fold-up diagram display
             if ((OZi.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
@@ -656,77 +551,69 @@ public class App extends JFrame implements ActionListener {
                 OZ_display_mode = 4;
             }//	omote & ura & omote2 & ura2
 
-            //temp_i_cp_or_oriagari=0;
-
             if (OZi.cp_worker2.isInsideFront(p) > 0) {
                 if (((OZ_display_mode == 1) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_FRONT_1;
-                    temp_i_OAZ = i;
+                    tempFoldedFigureIndex = i;
                 }
             }
 
             if (OZi.cp_worker2.isInsideRear(p) > 0) {
                 if (((OZ_display_mode == 2) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_BACK_2;
-                    temp_i_OAZ = i;
+                    tempFoldedFigureIndex = i;
                 }
             }
 
             if (OZi.cp_worker2.isInsideTransparentFront(p) > 0) {
                 if (OZ_display_mode == 4) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_FRONT_3;
-                    temp_i_OAZ = i;
+                    tempFoldedFigureIndex = i;
                 }
             }
 
             if (OZi.cp_worker2.isInsideTransparentRear(p) > 0) {
                 if (OZ_display_mode == 4) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_BACK_4;
-                    temp_i_OAZ = i;
+                    tempFoldedFigureIndex = i;
                 }
             }
         }
         i_cp_or_oriagari = temp_i_cp_or_oriagari;
 
-        set_i_OAZ(temp_i_OAZ);
+        setFoldedFigureIndex(tempFoldedFigureIndex);
     }
-// ---------------------------------------
 
-    // *******************************************************************************************cccccccccc
-    void set_i_OAZ(int i) {//OZが切り替わるときの処理
+    void setFoldedFigureIndex(int i) {//Processing when OZ is switched
         System.out.println("foldedFigureIndex = " + foldedFigureIndex);
         foldedFigureIndex = i;
         OZ = foldedFigures.get(foldedFigureIndex);
-        //透過図はカラー化しない。
 
         // Load data from this foldedFigure to the ui.
         OZ.getData(foldedFigureModel);
     }
 
     public Point e2p(MouseEvent e) {
-        double d_width = 0.0;
+        double offset = 0.0;
         if (canvasModel.getDisplayPointOffset()) {
-            d_width = camera_of_orisen_input_diagram.getCameraZoomX() * mainDrawingWorker.getSelectionDistance();
+            offset = camera_of_orisen_input_diagram.getCameraZoomX() * mainDrawingWorker.getSelectionDistance();
         }
-        return new Point(e.getX() - (int) d_width, e.getY() - (int) d_width);
+        return new Point(e.getX() - (int) offset, e.getY() - (int) offset);
     }
 
 
     //=============================================================================
-    //マウスのホイールが回転した時に呼ばれるメソッド
+    //Method called when the mouse wheel rotates
     //=============================================================================
-
     public void mouse_object_position(Point p) {//この関数はmouseMoved等と違ってマウスイベントが起きても自動では認識されない
         p_mouse_TV_position.set(p.getX(), p.getY());
 
         p_mouse_object_position.set(camera_of_orisen_input_diagram.TV2object(p_mouse_TV_position));
     }
 
-
     //----------------------------------------------------------------------
-    //マウス操作(移動やボタン操作)を行う関数------------------------------
+    //Functions that perform mouse operations (move and button operations)------------------------------
     //----------------------------------------------------------------------
-
     // ------------------------------------------------------
     public void background_set(Point t1, Point t2, Point t3, Point t4) {
         h_cam.set_h1(t1);
@@ -737,40 +624,12 @@ public class App extends JFrame implements ActionListener {
         h_cam.parameter_calculation();
     }
 
-
-//mouseMode;マウスの動作に対する反応を規定する。
-// -------------1;線分入力モード。
-//2;展開図調整(移動)。
-//3;線分削除モード
-//4;線分_chan"
-
-// -------------5;線分延長モード。
-// -------------6;2点から等距離線分モード。
-// -------------7;角二等分線モード。
-// -------------8;内心モード。
-// -------------9;垂線おろしモード。
-// -------------10;折り返しモード。
-// -------------11;線分入力モード。
-// -------------12;鏡映モード。
-// -------------13;15度入力モード。
-
-
-//101:折り上がり図の操作。
-//102;F_move
-//103;S_face
-
-//10001;test1 入力準備として点を３つ指定する
-
-    // ------------------------------------------------------
     public void drawBackground(Graphics2D g2h, Image imgh) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
         //背景画を、画像の左上はしを、ウィンドウの(0,0)に合わせて回転や拡大なしで表示した場合を基準状態とする。
         //背景画上の点h1を中心としてa倍拡大する。次に、h1を展開図上の点h3と重なるように背景画を平行移動する。
         //この状態の展開図を、h3を中心にb度回転したよう見えるように座標を回転させて貼り付けて、その後、座標の回転を元に戻すという関数。
         //引数は、Graphics2D g2h,Image imgh,Ten h1,Ten h2,Ten h3,Ten h4
         //h2,とh4も重なるようにする
-        //
-
-        //最初に
 
         if (backgroundModel.isLockBackground()) {
             h_cam.setCamera(camera_of_orisen_input_diagram);
@@ -782,16 +641,12 @@ public class App extends JFrame implements ActionListener {
         at.rotate(h_cam.getAngle() * Math.PI / 180.0, h_cam.get_cx(), h_cam.get_cy());
         g2h.setTransform(at);
 
-
         g2h.drawImage(imgh, h_cam.get_x0(), h_cam.get_y0(), h_cam.get_x1(), h_cam.get_y1(), this);
 
         at.rotate(-h_cam.getAngle() * Math.PI / 180.0, h_cam.get_cx(), h_cam.get_cy());
         g2h.setTransform(at);
 
     }
-
-
-    // --------------------------------------------------
 
     void configure_initialize_prediction() {
         OZ.text_result = "";
@@ -827,7 +682,6 @@ public class App extends JFrame implements ActionListener {
         bulletinBoard.clear();
     }
 
-    ////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される。
     void readImageFromFile() {
         FileDialog fd = new FileDialog(this, "Select Image File.", FileDialog.LOAD);
         fd.setVisible(true);
@@ -848,7 +702,6 @@ public class App extends JFrame implements ActionListener {
     }
 
     void writeImage() {
-        // String String fname_wi
         fname_wi = selectFileName("file name for Img save");
         flg61 = false;
         if ((mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (mainDrawingWorker.getDrawingStage() == 4)) {
@@ -862,7 +715,6 @@ public class App extends JFrame implements ActionListener {
         }
     }
 
-    //---------------------------------------------------------
     String selectFileName(String coment0) {
         fd = new FileDialog(this, coment0, FileDialog.SAVE);
         fd.setVisible(true);
@@ -877,12 +729,11 @@ public class App extends JFrame implements ActionListener {
         explanation.setExplanation(resource);
     }
 
-    //-------------------
     Memo readFile2Memo() {
         String fname;
         Memo memo_temp = new Memo();
 
-        int file_ok = 0;//1 if the extension of the read file name is appropriate (orh, obj, cp), 0 otherwise
+        boolean file_ok = false;//1 if the extension of the read file name is appropriate (orh, obj, cp), 0 otherwise
 
         FileDialog fd = new FileDialog(this, "Open file", FileDialog.LOAD);
         fd.setFile("*.orh;*.obj;*.cp");
@@ -896,16 +747,16 @@ public class App extends JFrame implements ActionListener {
         fname = fd.getDirectory() + fd.getFile();
 
         if (fname.endsWith(".orh")) {
-            file_ok = 1;
+            file_ok = true;
         }
         if (fname.endsWith(".obj")) {
-            file_ok = 1;
+            file_ok = true;
         }
         if (fname.endsWith(".cp")) {
-            file_ok = 1;
+            file_ok = true;
         }
 
-        if (file_ok == 0) {
+        if (!file_ok) {
             return memo_temp;
         }
 
@@ -914,7 +765,7 @@ public class App extends JFrame implements ActionListener {
         mainDrawingWorker.setTitle(frame_title);
 
         try {
-            if (fd.getFile() != null) {  //キャンセルではない場合。
+            if (fd.getFile() != null) {  //If not canceled.
                 BufferedReader br = new BufferedReader(new FileReader(fname));
 
                 String rdata;
@@ -942,8 +793,6 @@ public class App extends JFrame implements ActionListener {
         }
         return memo_temp;
     }
-
-    //---------------------------------------------------------
 
     void writeMemo2File() {
         Memo memo1;
@@ -993,17 +842,15 @@ public class App extends JFrame implements ActionListener {
         OZ.folding_estimated(camera_of_orisen_input_diagram, Ss0);
     }
 
-    void folding_settings_two_color() {//２色塗りわけ展開図
-        OZ.folding_settings_two_color(camera_of_orisen_input_diagram, Ss0);
+    void createTwoColorCreasePattern() {//Two-color crease pattern
+        OZ.createTwoColorCreasePattern(camera_of_orisen_input_diagram, Ss0);
     }
 
-    void mks() {
+    void makeSubThread() {
         sub = new SubThread(this);
     }
 
-////b* アプリケーション用。先頭が／＊／／／で始まる行にはさまれた部分は無視される
-
-    public double String2double(String str0, double default_if_error) {
+    public double string2double(String str0, double default_if_error) {
         String new_str0 = str0.trim();
         if (new_str0.equals("L1")) {
             str0 = String.valueOf(measuresModel.getMeasuredLength1());
@@ -1030,19 +877,110 @@ public class App extends JFrame implements ActionListener {
             subThreadMode = SubThread.Mode.CHECK_CAMV_3;//3=頂点周りの折畳み可能性判定、1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVer3.008から追加
 
             subThreadRunning = true;
-            mks();//Create a new thread
+            makeSubThread();//Create a new thread
             sub.start();
         } else {
             if (subThreadMode == SubThread.Mode.CHECK_CAMV_3) {
                 sub.stop();
-                mks();//Create a new thread
+                makeSubThread();//Create a new thread
                 sub.start();
             }
         }
     }
 
+    public void openFile() {
+        Memo memo_temp;
+
+        System.out.println("readFile2Memo() 開始");
+        memo_temp = readFile2Memo();
+        System.out.println("readFile2Memo() 終了");
+
+        if (memo_temp.getLineCount() > 0) {
+            //Initialization of development drawing started
+            developmentView_initialization();
+            //Deployment parameter initialization
+
+            //Initialization of folding prediction map started
+            OZ = temp_OZ;//20171223この行は不要かもしれないが、一瞬でもOZが示すOriagari_Zuがなくなることがないように念のために入れておく
+            foldedFigures.clear();
+            addNewFoldedFigure();
+            setFoldedFigureIndex(0);
+            configure_initialize_prediction();
+
+            mainDrawingWorker.setCamera(camera_of_orisen_input_diagram);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
+            mainDrawingWorker.setMemo_for_reading(memo_temp);
+            mainDrawingWorker.record();
+
+            scaleFactor = camera_of_orisen_input_diagram.getCameraZoomX();
+            scaleFactorTextField.setText(String.valueOf(scaleFactor)); //縮尺係数
+            scaleFactorTextField.setCaretPosition(0);
+
+            rotationCorrection = camera_of_orisen_input_diagram.getCameraAngle();
+            rotationTextField.setText(String.valueOf(rotationCorrection));//回転表示角度の補正係数
+            rotationTextField.setCaretPosition(0);
+        }
+    }
+
+    public void createTransparentBackground() {
+        Robot robot;
+
+        try {
+            robot = new Robot();
+        } catch (AWTException ex) {
+            ex.printStackTrace();
+            return;
+        }
+
+        // Capture by specifying a range
+        Rectangle canvasBounds = canvas.getBounds();
+
+        java.awt.Point canvasLocation = canvas.getLocationOnScreen();
+        Rectangle bounds = new Rectangle(canvasLocation.x, canvasLocation.y, canvasBounds.width, canvasBounds.height);
+
+        java.awt.Point currentLocation = getLocation();
+        Dimension size = getSize();
+
+        // Move all associated windows outside the bounds.
+        Window[] windows = getOwnedWindows();
+        java.util.Queue<java.awt.Point> locations = new LinkedList<>();
+        setLocation(currentLocation.x, currentLocation.y + size.height);
+        for (Window w : windows) {
+            java.awt.Point loc = w.getLocation();
+            locations.offer(loc);
+            w.setLocation(loc.x, loc.y + size.height);
+        }
+
+        imageT = robot.createScreenCapture(bounds);
+
+        // Move all associated windows back.
+        setLocation(currentLocation);
+        for (Window w : windows) {
+            w.setLocation(locations.poll());
+        }
+
+        img_background = imageT;
+        OritaCalc.display("新背景カメラインスタンス化");
+        h_cam = new Background_camera();//20181202
+
+        background_set(new Point(120.0, 120.0),
+                new Point(120.0 + 10.0, 120.0),
+                new Point(0, 0),
+                new Point(10.0, 0));
+
+        //Set each condition for background display
+        backgroundModel.setDisplayBackground(true);
+
+        if (backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
+            h_cam.set_i_Lock_on(true);
+            h_cam.setCamera(camera_of_orisen_input_diagram);
+            h_cam.h3_obj_and_h4_obj_calculation();
+        }
+
+        repaintCanvas();
+    }
+
     public enum MouseWheelTarget {
-        CREASEPATTERN_0,
+        CREASE_PATTERN_0,
         FOLDED_FRONT_1,
         FOLDED_BACK_2,
         TRANSPARENT_FRONT_3,
@@ -1054,23 +992,5 @@ public class App extends JFrame implements ActionListener {
         FOR_ALL_LINES_1,
         FOR_SELECTED_LINES_2,
         CHANGING_FOLDED_3,
-    }
-
-    public enum AngleSystemInputType {
-        NONE_0,
-        DEG_1,
-        DEG_2,
-        DEG_3,
-        DEG_4,
-        DEG_5,
-    }
-
-    public enum SelectionOperationMode {
-        NORMAL_0,
-        MOVE_1,
-        MOVE4P_2,
-        COPY_3,
-        COPY4P_4,
-        MIRROR_5,
     }
 }

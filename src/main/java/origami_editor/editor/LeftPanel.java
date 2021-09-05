@@ -392,7 +392,7 @@ public class LeftPanel extends JPanel {
         moveButton.addActionListener(e -> {
             app.setHelp("move");
 
-            app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.MOVE_1);
+            app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MOVE_1);
             app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
 
             app.Button_shared_operation();
@@ -401,7 +401,7 @@ public class LeftPanel extends JPanel {
         move2p2pButton.addActionListener(e -> {
             app.setHelp("move_2p2p");
 
-            app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.MOVE4P_2);
+            app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MOVE4P_2);
             app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
 
             app.Button_shared_operation();
@@ -410,7 +410,7 @@ public class LeftPanel extends JPanel {
         copyButton.addActionListener(e -> {
             app.setHelp("copy_paste");
 
-            app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.COPY_3);
+            app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.COPY_3);
             app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
 
             app.Button_shared_operation();
@@ -419,7 +419,7 @@ public class LeftPanel extends JPanel {
         copy2p2pButton.addActionListener(e -> {
             app.setHelp("copy_paste_2p2p");
 
-            app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.COPY4P_4);
+            app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.COPY4P_4);
             app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
 
             app.Button_shared_operation();
@@ -428,7 +428,7 @@ public class LeftPanel extends JPanel {
         reflectButton.addActionListener(e -> {
             app.setHelp("kyouei");
 
-            app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.MIRROR_5);
+            app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MIRROR_5);
             app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
 
             app.Button_shared_operation();
@@ -663,7 +663,7 @@ public class LeftPanel extends JPanel {
                 if (!app.subThreadRunning) {
                     app.subThreadRunning = true;
                     app.subThreadMode = SubThread.Mode.TWO_COLORED_4;
-                    app.mks();//新しいスレッドを作る
+                    app.makeSubThread();//新しいスレッドを作る
                     app.sub.start();
                 }
             }
@@ -674,7 +674,7 @@ public class LeftPanel extends JPanel {
         suitei_01Button.addActionListener(e -> {
             app.setHelp("suitei_01");
 
-            app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
+            app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
             if (!app.canvasModel.isSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
@@ -691,7 +691,7 @@ public class LeftPanel extends JPanel {
         suitei_02Button.addActionListener(e -> {
             app.setHelp("suitei_02");
 
-            app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
+            app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
             if (!app.canvasModel.isSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
@@ -701,7 +701,7 @@ public class LeftPanel extends JPanel {
         suitei_03Button.addActionListener(e -> {
             app.setHelp("suitei_03");
 
-            app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
+            app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
 
             if (!app.canvasModel.isSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();

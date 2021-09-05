@@ -134,7 +134,7 @@ public class TopPanel extends JPanel {
         });
         tenkaizu_syukusyouSetButton.addActionListener(e -> {
             double d_syukusyaku_keisuu_old = app.scaleFactor;
-            app.scaleFactor = app.String2double(scaleFactorTextField.getText(), d_syukusyaku_keisuu_old);
+            app.scaleFactor = app.string2double(scaleFactorTextField.getText(), d_syukusyaku_keisuu_old);
             if (app.scaleFactor <= 0.0) {
                 app.scaleFactor = d_syukusyaku_keisuu_old;
             }
@@ -204,7 +204,7 @@ public class TopPanel extends JPanel {
         });
         tenkaizu_kaitenSetButton.addActionListener(e -> {
             double d_kaiten_hosei_old = app.rotationCorrection;
-            app.rotationCorrection = OritaCalc.angle_between_m180_180(app.String2double(rotationTextField.getText(), d_kaiten_hosei_old));
+            app.rotationCorrection = OritaCalc.angle_between_m180_180(app.string2double(rotationTextField.getText(), d_kaiten_hosei_old));
 
             rotationTextField.setText(String.valueOf(app.rotationCorrection));
 
@@ -230,77 +230,9 @@ public class TopPanel extends JPanel {
             app.repaintCanvas();
         });
         transparentButton.addActionListener(e -> {
-
             app.setHelp("toumei");
-            Robot robot;
 
-            try {
-                robot = new Robot();
-            } catch (AWTException ex) {
-                ex.printStackTrace();
-                return;
-            }
-
-            // 範囲を指定してキャプチャ
-
-            Rectangle bounds = getBounds();
-            Rectangle canvasBounds = app.canvas.getBounds();
-            Insets insets = getInsets();
-            System.out.println("-------------------------------------------------------------------------------------");
-            System.out.println("bounds.x=" + bounds.x + "   :bounds.y=" + bounds.y + "    :bounds.width=" + bounds.width + "   :bounds.height=" + bounds.height);
-            System.out.println("insets.top=" + insets.top + "   :insets.left=" + insets.left + "    :insets.right=" + insets.right + "   :insets.bottom=" + insets.bottom);
-
-
-            //左上端から、左上で描画用画面の見える限界位置へのベクトル
-            //int upperLeftX=115;
-            //int upperLeftY=60;
-
-            //右下端から、右下で描画用画面の見える限界位置へのベクトル
-            //int lowerRightX=115;
-            //int lowerRightY=40;
-
-            //int i_dx=115;int i_dy=0;
-
-            bounds = new Rectangle(bounds.x + canvasBounds.x,
-                    bounds.y + canvasBounds.y,
-                    canvasBounds.width - app.upperLeftX - app.lowerRightX,
-                    canvasBounds.height - app.upperLeftY - app.lowerRightY);
-
-            app.setVisible(false);
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException ie) {
-            }//A line to make you wait only 100. Without this line, there is a risk of capturing Orihime itself when executed in a jar file. The ie of InterruptedException ie was initially e. 20181125
-            app.imageT = robot.createScreenCapture(bounds);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ie) {
-            }//A line to make you wait only 100. Without this line, there is a risk of capturing Orihime itself when executed in a jar file. The ie of InterruptedException ie was initially e. 20181125
-            app.setVisible(true);
-
-            app.img_background = app.imageT;
-            OritaCalc.display("新背景カメラインスタンス化");
-            app.h_cam = new Background_camera();//20181202
-
-            double dvx = app.upperLeftX;
-            double dvy = app.upperLeftY;
-
-            app.background_set(new Point(120.0, 120.0),
-                    new Point(120.0 + 10.0, 120.0),
-                    new Point(dvx, dvy),
-                    new Point(dvx + 10.0, dvy));
-
-
-//背景表示の各条件を設定
-            app.backgroundModel.setDisplayBackground(true);
-
-            if (app.backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                app.h_cam.set_i_Lock_on(true);
-                app.h_cam.setCamera(app.camera_of_orisen_input_diagram);
-                app.h_cam.h3_obj_and_h4_obj_calculation();
-            }
-
-            app.repaintCanvas();
+            app.createTransparentBackground();
         });
         backgroundTrimButton.addActionListener(e -> {
             app.setHelp("haikei_trim");
@@ -410,12 +342,12 @@ public class TopPanel extends JPanel {
     }
 
     public void getData(InternalDivisionRatioModel data) {
-        data.setInternalDivisionRatioA(app.String2double(ratioATextField.getText(), data.getInternalDivisionRatioA()));
-        data.setInternalDivisionRatioB(app.String2double(ratioBTextField.getText(), data.getInternalDivisionRatioB()));
-        data.setInternalDivisionRatioC(app.String2double(ratioCTextField.getText(), data.getInternalDivisionRatioC()));
-        data.setInternalDivisionRatioD(app.String2double(ratioDTextField.getText(), data.getInternalDivisionRatioD()));
-        data.setInternalDivisionRatioE(app.String2double(ratioETextField.getText(), data.getInternalDivisionRatioE()));
-        data.setInternalDivisionRatioF(app.String2double(ratioFTextField.getText(), data.getInternalDivisionRatioF()));
+        data.setInternalDivisionRatioA(app.string2double(ratioATextField.getText(), data.getInternalDivisionRatioA()));
+        data.setInternalDivisionRatioB(app.string2double(ratioBTextField.getText(), data.getInternalDivisionRatioB()));
+        data.setInternalDivisionRatioC(app.string2double(ratioCTextField.getText(), data.getInternalDivisionRatioC()));
+        data.setInternalDivisionRatioD(app.string2double(ratioDTextField.getText(), data.getInternalDivisionRatioD()));
+        data.setInternalDivisionRatioE(app.string2double(ratioETextField.getText(), data.getInternalDivisionRatioE()));
+        data.setInternalDivisionRatioF(app.string2double(ratioFTextField.getText(), data.getInternalDivisionRatioF()));
     }
 
     public JTextField getRotationTextField() {

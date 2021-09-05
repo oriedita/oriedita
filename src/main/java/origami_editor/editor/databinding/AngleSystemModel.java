@@ -1,7 +1,5 @@
 package origami_editor.editor.databinding;
 
-import origami_editor.editor.App;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -23,7 +21,7 @@ public class AngleSystemModel {
     private double currentAngleA;
     private double currentAngleB;
     private double currentAngleC;
-    private App.AngleSystemInputType angleSystemInputType;
+    private AngleSystemInputType angleSystemInputType;
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
@@ -82,7 +80,7 @@ public class AngleSystemModel {
         angleSystemADivider = 12;
         angleSystemBDivider = 8;
 
-        angleSystemInputType = App.AngleSystemInputType.NONE_0;
+        angleSystemInputType = AngleSystemInputType.NONE_0;
 
         currentAngleSystemDivider = 8;
 
@@ -169,12 +167,12 @@ public class AngleSystemModel {
         this.pcs.firePropertyChange("angleSystemBDivider", oldAngleSystemBDivider, angleSystemBDivider);
     }
 
-    public App.AngleSystemInputType getAngleSystemInputType() {
+    public AngleSystemInputType getAngleSystemInputType() {
         return angleSystemInputType;
     }
 
-    public void setAngleSystemInputType(App.AngleSystemInputType angleSystemInputType) {
-        App.AngleSystemInputType oldAngleSystemInputType = this.angleSystemInputType;
+    public void setAngleSystemInputType(AngleSystemInputType angleSystemInputType) {
+        AngleSystemInputType oldAngleSystemInputType = this.angleSystemInputType;
         this.angleSystemInputType = angleSystemInputType;
         this.pcs.firePropertyChange("angleSystemInputType", oldAngleSystemInputType, angleSystemInputType);
     }
@@ -233,5 +231,14 @@ public class AngleSystemModel {
         currentAngleSystemDivider = 0;
 
         this.pcs.firePropertyChange(null, null, null);
+    }
+
+    public enum AngleSystemInputType {
+        NONE_0,
+        DEG_1,
+        DEG_2,
+        DEG_3,
+        DEG_4,
+        DEG_5,
     }
 }

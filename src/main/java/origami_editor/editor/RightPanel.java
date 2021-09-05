@@ -211,35 +211,35 @@ public class RightPanel extends JPanel {
         degButton.addActionListener(e -> {
             app.setHelp("deg");
 
-            angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_1);
+            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_1);
 
             app.Button_shared_operation();
         });
         deg3Button.addActionListener(e -> {
             app.setHelp("deg3");
 
-            angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_3);
+            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_3);
 
             app.Button_shared_operation();
         });
         angleRestrictedButton.addActionListener(e -> {
             app.setHelp("senbun_nyuryoku37");
 
-            angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_5);
+            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_5);
 
             app.Button_shared_operation();
         });
         deg2Button.addActionListener(e -> {
             app.setHelp("deg2");
 
-            angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_2);
+            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_2);
 
             app.Button_shared_operation();
         });
         deg4Button.addActionListener(e -> {
             app.setHelp("deg4");
 
-            angleSystemModel.setAngleSystemInputType(App.AngleSystemInputType.DEG_4);
+            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_4);
 
             app.Button_shared_operation();
         });
@@ -484,36 +484,15 @@ public class RightPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
+
+        OpenFrame frame = new OpenFrame("additionalFrame", app);
+
         ad_fncButton.addActionListener(e -> {
             app.setHelp("tuika_kinou");
 
-            app.showAdditionalFrame();
-            app.additionalFrame.toFront();
+            frame.setLocationRelativeTo(ad_fncButton);
+            frame.setVisible(true);
         });
-    }
-
-    public JButton getColOrangeButton() {
-        return colOrangeButton;
-    }
-
-    public JButton getColYellowButton() {
-        return colYellowButton;
-    }
-
-    public JTextField getAuxUndoTotalTextField() {
-        return auxUndoTotalTextField;
-    }
-
-    public JButton getC_colButton() {
-        return c_colButton;
-    }
-
-    public JTextField getPolygonSizeTextField() {
-        return polygonSizeTextField;
-    }
-
-    public JCheckBox getcAMVCheckBox() {
-        return cAMVCheckBox;
     }
 
     /**
@@ -1228,12 +1207,12 @@ public class RightPanel extends JPanel {
     }
 
     public void getData(AngleSystemModel data) {
-        data.setAngleA(app.String2double(angleATextField.getText(), data.getAngleA()));
-        data.setAngleB(app.String2double(angleBTextField.getText(), data.getAngleB()));
-        data.setAngleC(app.String2double(angleCTextField.getText(), data.getAngleC()));
-        data.setAngleD(app.String2double(angleDTextField.getText(), data.getAngleD()));
-        data.setAngleE(app.String2double(angleETextField.getText(), data.getAngleE()));
-        data.setAngleF(app.String2double(angleFTextField.getText(), data.getAngleF()));
+        data.setAngleA(app.string2double(angleATextField.getText(), data.getAngleA()));
+        data.setAngleB(app.string2double(angleBTextField.getText(), data.getAngleB()));
+        data.setAngleC(app.string2double(angleCTextField.getText(), data.getAngleC()));
+        data.setAngleD(app.string2double(angleDTextField.getText(), data.getAngleD()));
+        data.setAngleE(app.string2double(angleETextField.getText(), data.getAngleE()));
+        data.setAngleF(app.string2double(angleFTextField.getText(), data.getAngleF()));
     }
 
     public void setData(MeasuresModel data) {

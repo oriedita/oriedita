@@ -22,12 +22,7 @@ public class OpenFrame extends JDialog {
 
         setContentPane($$$getRootComponent$$$());
 
-        addWindowListener(new WindowAdapter() {//Toggle between enabling and disabling decorations for this frame.
-            public void windowClosing(WindowEvent evt) {
-                app.showAddFrame = false;
-                dispose();
-            }
-        });
+        setDefaultCloseOperation(HIDE_ON_CLOSE);
 
         o_F_checkButton.addActionListener(e -> {
             app.setHelp("af_O_F_check");
@@ -98,21 +93,14 @@ public class OpenFrame extends JDialog {
 
         selectAnd3ClickCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_add_frame_SelectAnd3click");
+
+            app.ckbox_add_frame_SelectAnd3click_isSelected = selectAnd3ClickCheckBox.isSelected();
         });
 
         selectAnd3ClickCheckBox.setSelected(app.ckbox_add_frame_SelectAnd3click_isSelected);//Select whether to display
 
         pack();
-
-        setLocation(
-                (int) (app.getLocation().getX()) + app.getSize().width - getSize().width - 131
-                ,
-                (int) (app.getLocation().getY()) + app.getSize().height - getSize().height - 44
-        );
-
         setResizable(false);
-
-        setVisible(true);
     }
 
     {

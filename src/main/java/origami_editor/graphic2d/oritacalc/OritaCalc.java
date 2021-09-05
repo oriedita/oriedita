@@ -119,7 +119,7 @@ public class OritaCalc {
 
 
     // A function that returns 2 if the point pa is in a rectangle containing two line segments that is orthogonal to the line segment ending at the two points p1 and p2 at the points p1 and p2. This is considered to be inside the rectangle even if it protrudes a little.
-    // Specifically, when determining whether there is a point inside the line segment, if the point is slightly outside the line segment, it is judged to be sweet if it is inside the line segment. When drawing a development drawing with a drawing craftsman, if you do not use this sweet one, the intersection division of the T-shaped line segment will fail
+    // Specifically, when determining whether there is a point inside the line segment, if the point is slightly outside the line segment, it is judged to be sweet if it is inside the line segment. When drawing a crease pattern with a drawing craftsman, if you do not use this sweet one, the intersection division of the T-shaped line segment will fail
     // But for some reason, using this sweeter one for folding estimation seems to result in an infinite loop, which doesn't work. This exact elucidation is unresolved 20161105
     public static int isInside_sweet(Point p1, Point pa, Point p2) {
         StraightLine u1 = new StraightLine(p1, p2);
@@ -422,7 +422,7 @@ public class OritaCalc {
     // The sweet part of senbun_kousa_hantei_amai is that if ((hakononaka (p1, pk, p2)> = 1) && (hakononaka (p3, pk, p4)> = 1), which is the premise of return 21 to return 28. )) Instead of
     // (hakononaka_amai (p1, pk, p2)> = 1) && (hakononaka_amai (p3, pk, p4) is used. Hakononaka_amai is
     // A function that returns 2 if the point pa is in a rectangle containing two line segments that is orthogonal to the line segment with the two points p1 and p2 as the end points at the points p1 and p2. This is considered to be inside the rectangle even if it protrudes a little.
-    // Specifically, when determining whether there is a point inside the line segment, if the point is slightly outside the line segment, it is judged to be sweet if it is inside the line segment. When drawing a development drawing with a drawing craftsman, if you do not use this sweet one, the intersection division of the T-shaped line segment will fail
+    // Specifically, when determining whether there is a point inside the line segment, if the point is slightly outside the line segment, it is judged to be sweet if it is inside the line segment. When drawing a crease pattern with a drawing craftsman, if you do not use this sweet one, the intersection division of the T-shaped line segment will fail
     // But for some reason, using this sweeter one for folding estimation seems to result in an infinite loop, which doesn't work. This exact elucidation is unresolved 20161105
 
     public static LineSegment.Intersection line_intersect_decide_sweet(LineSegment s1, LineSegment s2, double rhit, double rhei) {    //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度

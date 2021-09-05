@@ -1,6 +1,5 @@
 package origami_editor.editor.databinding;
 
-import origami_editor.editor.App;
 import origami_editor.editor.LineColor;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
@@ -41,7 +40,7 @@ public class CanvasModel {
 
     private boolean selectPersistent;
 
-    public boolean isCorrectCpBeforeFolding() {
+    public boolean isCorrectCreasePatternBeforeFolding() {
         return correctCpBeforeFolding;
     }
 
@@ -88,7 +87,7 @@ public class CanvasModel {
     /**
      * Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
      */
-    private App.SelectionOperationMode selectionOperationMode;
+    private SelectionOperationMode selectionOperationMode;
 
     private int foldLineDividingNumber;
 
@@ -122,12 +121,12 @@ public class CanvasModel {
         this.pcs.firePropertyChange("foldLineDividingNumber", oldFoldLineDividingNumber, this.foldLineDividingNumber);
     }
 
-    public App.SelectionOperationMode getSelectionOperationMode() {
+    public SelectionOperationMode getSelectionOperationMode() {
         return selectionOperationMode;
     }
 
-    public void setSelectionOperationMode(App.SelectionOperationMode selectionOperationMode) {
-        App.SelectionOperationMode oldSelectionOperationMode = this.selectionOperationMode;
+    public void setSelectionOperationMode(SelectionOperationMode selectionOperationMode) {
+        SelectionOperationMode oldSelectionOperationMode = this.selectionOperationMode;
         this.selectionOperationMode = selectionOperationMode;
         this.pcs.firePropertyChange("selectionOperationMode", oldSelectionOperationMode, selectionOperationMode);
     }
@@ -279,7 +278,7 @@ public class CanvasModel {
         foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;
         foldLineAdditionalInputMode_old = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;
 
-        selectionOperationMode = App.SelectionOperationMode.NORMAL_0;
+        selectionOperationMode = SelectionOperationMode.NORMAL_0;
 
         foldLineDividingNumber = 2;
 
@@ -457,5 +456,14 @@ public class CanvasModel {
         }
 
         return fAuxLineWidth;
+    }
+
+    public enum SelectionOperationMode {
+        NORMAL_0,
+        MOVE_1,
+        MOVE4P_2,
+        COPY_3,
+        COPY4P_4,
+        MIRROR_5,
     }
 }

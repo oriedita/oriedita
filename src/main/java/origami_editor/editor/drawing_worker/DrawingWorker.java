@@ -104,7 +104,7 @@ public class DrawingWorker {
     Point p19_c = new Point();
     Point p19_d = new Point();
     //--------------------------------------------
-    App.SelectionOperationMode i_select_mode = App.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
+    CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
     //30 30 30 30 30 30 30 30 30 30 30 30 除け_線_変換
     int minrid_30;
     int i_step_for_move_4p = 0;
@@ -158,7 +158,7 @@ public class DrawingWorker {
         i_circle_drawing_stage = 0;
     }
 
-    public void reset_2() {
+    public void initialize() {
         //Enter the paper square (start)
         foldLineSet.addLine(-200.0, -200.0, -200.0, 200.0, LineColor.BLACK_0);
         foldLineSet.addLine(-200.0, -200.0, 200.0, -200.0, LineColor.BLACK_0);
@@ -386,33 +386,33 @@ public class DrawingWorker {
 
                     if (st[0].equals("<d_kousi_x_a")) {
                         s = st[1].split("<", 2);
-                        gridModel.setGridXA(app.String2double(s[0], gridModel.getGridXA()));
+                        gridModel.setGridXA(app.string2double(s[0], gridModel.getGridXA()));
                     }
                     if (st[0].equals("<d_kousi_x_b")) {
                         s = st[1].split("<", 2);
-                        gridModel.setGridXB(app.String2double(s[0], gridModel.getGridXB()));
+                        gridModel.setGridXB(app.string2double(s[0], gridModel.getGridXB()));
                     }
                     if (st[0].equals("<d_kousi_x_c")) {
                         s = st[1].split("<", 2);
-                        gridModel.setGridXC(app.String2double(s[0], gridModel.getGridXC()));
+                        gridModel.setGridXC(app.string2double(s[0], gridModel.getGridXC()));
                     }
 
                     if (st[0].equals("<d_kousi_y_a")) {
                         s = st[1].split("<", 2);
-                        gridModel.setGridYA(app.String2double(s[0], gridModel.getGridYA()));
+                        gridModel.setGridYA(app.string2double(s[0], gridModel.getGridYA()));
                     }
                     if (st[0].equals("<d_kousi_y_b")) {
                         s = st[1].split("<", 2);
-                        gridModel.setGridYB(app.String2double(s[0], gridModel.getGridYB()));
+                        gridModel.setGridYB(app.string2double(s[0], gridModel.getGridYB()));
                     }
                     if (st[0].equals("<d_kousi_y_c")) {
                         s = st[1].split("<", 2);
-                        gridModel.setGridYC(app.String2double(s[0], gridModel.getGridYC()));
+                        gridModel.setGridYC(app.string2double(s[0], gridModel.getGridYC()));
                     }
 
                     if (st[0].equals("<d_kousi_kakudo")) {
                         s = st[1].split("<", 2);
-                        gridModel.setGridAngle(app.String2double(s[0], gridModel.getGridAngle()));
+                        gridModel.setGridAngle(app.string2double(s[0], gridModel.getGridAngle()));
                     }
 
                 }
@@ -680,7 +680,7 @@ public class DrawingWorker {
         String str_stroke;
         String str_strokewidth = Integer.toString(lineWidth);
 
-        //Drawing of development drawing Polygonal lines other than auxiliary live lines
+        //Drawing of crease pattern Polygonal lines other than auxiliary live lines
         if (i_cp_display) {
             for (int i = 1; i <= foldLineSet.getTotal(); i++) {
                 LineColor color = foldLineSet.getColor(i);
@@ -5530,7 +5530,7 @@ public class DrawingWorker {
     //マウスリリース----------------------------------------------------
     public void mReleased_A_21(Point p0) {
 
-        app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+        app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
         i_drawing_stage = 0;
         p.set(camera.TV2object(p0));
@@ -5588,7 +5588,7 @@ public class DrawingWorker {
 
     //マウスリリース----------------------------------------------------
     public void mReleased_A_22(Point p0) {
-        app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+        app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
         i_drawing_stage = 0;
         p.set(camera.TV2object(p0));
@@ -5643,7 +5643,7 @@ public class DrawingWorker {
             closest_point.set(getClosestPoint(p));
             if (p.distance(closest_point) >= selectionDistance) {
                 i_drawing_stage = 0;
-                app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+                app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 //点の選択が失敗した場合もi_select_mode=0にしないと、セレクトのつもりが動作モードがmove2p2pになったままになる
                 return;
             }
@@ -5656,7 +5656,7 @@ public class DrawingWorker {
             }
             if (OritaCalc.distance(line_step[1].getA(), line_step[2].getA()) < 0.00000001) {
                 i_drawing_stage = 0;
-                app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+                app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             }
             return;
         }
@@ -5666,7 +5666,7 @@ public class DrawingWorker {
             closest_point.set(getClosestPoint(p));
             if (p.distance(closest_point) >= selectionDistance) {
                 i_drawing_stage = 0;
-                app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+                app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
                 return;
 
@@ -5686,7 +5686,7 @@ public class DrawingWorker {
             closest_point.set(getClosestPoint(p));
             if (p.distance(closest_point) >= selectionDistance) {
                 i_drawing_stage = 0;
-                app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+                app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 return;
             }
             if (p.distance(closest_point) < selectionDistance) {
@@ -5698,7 +5698,7 @@ public class DrawingWorker {
             }
             if (OritaCalc.distance(line_step[3].getA(), line_step[4].getA()) < 0.00000001) {
                 i_drawing_stage = 0;
-                app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+                app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
             }
             return;
@@ -5723,7 +5723,7 @@ public class DrawingWorker {
     public void mReleased_A_31(Point p0) {
         if (i_drawing_stage == 4) {
             i_drawing_stage = 0;
-            app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+            app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
             ori_s_temp.setMemo(foldLineSet.getMemoSelectOption(2));//セレクトされた折線だけ取り出してori_s_tempを作る
@@ -5765,7 +5765,7 @@ public class DrawingWorker {
             closest_point.set(getClosestPoint(p));
             if (p.distance(closest_point) >= selectionDistance) {
                 i_drawing_stage = 0;
-                app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+                app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 return;
             }
             if (p.distance(closest_point) < selectionDistance) {
@@ -5777,7 +5777,7 @@ public class DrawingWorker {
             }
             if (OritaCalc.distance(line_step[1].getA(), line_step[2].getA()) < 0.00000001) {
                 i_drawing_stage = 0;
-                app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+                app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             }
             return;
         }
@@ -5787,7 +5787,7 @@ public class DrawingWorker {
             closest_point.set(getClosestPoint(p));
             if (p.distance(closest_point) >= selectionDistance) {
                 i_drawing_stage = 0;
-                app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+                app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 return;
             }
             if (p.distance(closest_point) < selectionDistance) {
@@ -5804,7 +5804,7 @@ public class DrawingWorker {
             closest_point.set(getClosestPoint(p));
             if (p.distance(closest_point) >= selectionDistance) {
                 i_drawing_stage = 0;
-                app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+                app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 return;
             }
             if (p.distance(closest_point) < selectionDistance) {
@@ -5816,7 +5816,7 @@ public class DrawingWorker {
             }
             if (OritaCalc.distance(line_step[3].getA(), line_step[4].getA()) < 0.00000001) {
                 i_drawing_stage = 0;
-                app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+                app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             }
             return;
         }
@@ -5832,7 +5832,7 @@ public class DrawingWorker {
     public void mReleased_A_32(Point p0) {
         if (i_drawing_stage == 4) {
             i_drawing_stage = 0;
-            app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+            app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
             ori_s_temp.setMemo(foldLineSet.getMemoSelectOption(2));//セレクトされた折線だけ取り出してori_s_tempを作る
@@ -5872,7 +5872,7 @@ public class DrawingWorker {
             closest_point.set(getClosestPoint(p));
             if (p.distance(closest_point) >= selectionDistance) {
                 i_drawing_stage = 0;
-                app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+                app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 return;
             }
             if (p.distance(closest_point) < selectionDistance) {
@@ -5884,7 +5884,7 @@ public class DrawingWorker {
             }
             if (line_step[1].getLength() < 0.00000001) {
                 i_drawing_stage = 0;
-                app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+                app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             }
         }
     }
@@ -5898,7 +5898,7 @@ public class DrawingWorker {
         LineSegment adds = new LineSegment();
         if (i_drawing_stage == 2) {
             i_drawing_stage = 0;
-            app.canvasModel.setSelectionOperationMode(App.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+            app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             int old_sousuu = foldLineSet.getTotal();
 
             for (int i = 1; i <= foldLineSet.getTotal(); i++) {

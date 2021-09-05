@@ -29,7 +29,7 @@ public class FoldedFigureRotate extends JPanel {
         foldedFigureRotateSetButton.addActionListener(e -> {
             app.setHelp("oriagarizu_kaiten_hosei_set");
 
-            foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(app.String2double(foldedFigureRotateTextField.getText(), foldedFigureModel.getRotation())));
+            foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(app.string2double(foldedFigureRotateTextField.getText(), foldedFigureModel.getRotation())));
 
             app.Button_shared_operation();
         });

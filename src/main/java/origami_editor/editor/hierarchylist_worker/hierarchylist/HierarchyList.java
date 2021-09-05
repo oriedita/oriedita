@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class HierarchyList {//This class is used to record and utilize the hierarchical relationship of faces when folded.
     int facesTotal;             //Number of faces in the unfolded view before folding
 
-    // hierarchyList[][] treats the hierarchical relationship between all the faces of the development drawing before folding as one table.
+    // hierarchyList[][] treats the hierarchical relationship between all the faces of the crease pattern before folding as one table.
     // If hierarchyList[i][j] is 1, surface i is above surface j. If it is 0, it is the lower side.
     // If hierarchyList[i][j] is -50, faces i and j overlap, but the hierarchical relationship is not determined.
     // If hierarchyList[i][j] is -100, then faces i and j do not overlap.

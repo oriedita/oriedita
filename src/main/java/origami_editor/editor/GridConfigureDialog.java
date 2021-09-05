@@ -474,12 +474,12 @@ public class GridConfigureDialog extends JDialog {
     public void getData(GridModel data) {
         data.setIntervalGridSize(StringOp.String2int(intervalGridSizeTextField.getText(), data.getIntervalGridSize()));
         data.setGridSize(StringOp.String2int(gridSizeTextField.getText(), data.getGridSize()));
-        data.setGridXA(app.String2double(gridXATextField.getText(), data.getGridXA()));
-        data.setGridXB(app.String2double(gridXBTextField.getText(), data.getGridXB()));
-        data.setGridXC(app.String2double(gridXCTextField.getText(), data.getGridXC()));
-        data.setGridYA(app.String2double(gridYATextField.getText(), data.getGridYA()));
-        data.setGridYB(app.String2double(gridYBTextField.getText(), data.getGridYB()));
-        data.setGridYC(app.String2double(gridYCTextField.getText(), data.getGridYC()));
-        data.setGridAngle(app.String2double(gridAngleTextField.getText(), data.getGridAngle()));
+        data.setGridXA(app.string2double(gridXATextField.getText(), data.getGridXA()));
+        data.setGridXB(app.string2double(gridXBTextField.getText(), data.getGridXB()));
+        data.setGridXC(app.string2double(gridXCTextField.getText(), data.getGridXC()));
+        data.setGridYA(app.string2double(gridYATextField.getText(), data.getGridYA()));
+        data.setGridYB(app.string2double(gridYBTextField.getText(), data.getGridYB()));
+        data.setGridYC(app.string2double(gridYCTextField.getText(), data.getGridYC()));
+        data.setGridAngle(app.string2double(gridAngleTextField.getText(), data.getGridAngle()));
     }
 }

@@ -37,8 +37,8 @@ public class FoldLineSet {
     int i_customized_color_B = 0;
     // Specify the point Q, delete the line segments AQ and QC, and add the line segment AC (however, only two line segments have Q as the end point) // When implemented, 1 when nothing is done Returns 0.
     // The procedure is (1) The point p is determined by clicking the mouse.
-    // (2) Point p The end point q included in the nearest development drawing is determined.
-    // (3) If the distance between the end point of the fold line in the development drawing that is closer to q and q is r or less, the fold line is assumed to be connected to the point q.
+    // (2) Point p The end point q included in the nearest crease pattern is determined.
+    // (3) If the distance between the end point of the fold line in the crease pattern that is closer to q and q is r or less, the fold line is assumed to be connected to the point q.
     int[] i_s = new int[2];//この変数はdel_Vとtyouten_syuui_sensuuとで共通に使う。tyouten_syuui_sensuuで、頂点回りの折線数が2のときにその2折線の番号を入れる変数。なお、折線数が3以上のときは意味を成さない。//qを端点とする2本の線分の番号
     double fushimi_decision_angle_goukei = 360.0;
 
@@ -605,7 +605,7 @@ public class FoldLineSet {
         return r_title;
     }
 
-    //Arrangement of line segment set when inputting development drawing
+    //Arrangement of line segment set when inputting crease pattern
     public void setAuxMemo(Memo memo1) {
         int reading_flg = 0;//If it is 0, it will not be read. If it is 1, read it.
         int number = 0;

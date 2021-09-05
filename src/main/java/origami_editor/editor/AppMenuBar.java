@@ -31,40 +31,8 @@ public class AppMenuBar extends JMenuBar {
 
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
-            Memo memo_temp;
 
-            System.out.println("readFile2Memo() 開始");
-            memo_temp = app.readFile2Memo();
-            System.out.println("readFile2Memo() 終了");
-
-            if (memo_temp.getLineCount() > 0) {
-                //展開図の初期化　開始
-                app.developmentView_initialization();
-                //展開図パラメータの初期化
-
-                //折畳予測図のの初期化　開始
-                app.OZ = app.temp_OZ;//20171223この行は不要かもしれないが、一瞬でもOZが示すOriagari_Zuがなくなることがないように念のために入れておく
-                app.foldedFigures.clear();
-                app.addNewFoldedFigure();
-                app.set_i_OAZ(0);
-                app.configure_initialize_prediction();
-
-                //折畳予測図のの初期化　終了
-
-                app.mainDrawingWorker.setCamera(app.camera_of_orisen_input_diagram);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
-                app.mainDrawingWorker.setMemo_for_reading(memo_temp);
-                app.mainDrawingWorker.record();
-
-// -----------------20180503追加
-                app.scaleFactor = app.camera_of_orisen_input_diagram.getCameraZoomX();
-                app.scaleFactorTextField.setText(String.valueOf(app.scaleFactor)); //縮尺係数
-                app.scaleFactorTextField.setCaretPosition(0);
-
-                app.rotationCorrection = app.camera_of_orisen_input_diagram.getCameraAngle();
-                app.rotationTextField.setText(String.valueOf(app.rotationCorrection));//回転表示角度の補正係数
-                app.rotationTextField.setCaretPosition(0);
-// -----------------20180503追加ここまで
-            }
+            app.openFile();
         });
         saveButton.addActionListener(e -> {
             app.setHelp("kaki");

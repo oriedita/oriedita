@@ -5,7 +5,6 @@ import origami_editor.editor.component.FoldedFigureResize;
 import origami_editor.editor.component.FoldedFigureRotate;
 import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.FoldedFigureModel;
-import origami_editor.editor.databinding.HistoryStateModel;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.record.string_op.StringOp;
 
@@ -45,7 +44,7 @@ public class BottomPanel extends JPanel {
             app.setHelp("suitei_04");
 
             System.out.println("20180220 get_i_fold_type() = " + app.getFoldType());
-            app.oritatame(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
+            app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
 
             if (!app.canvasModel.isSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
@@ -61,7 +60,7 @@ public class BottomPanel extends JPanel {
             app.subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_0;//1 = Put together another solution for folding estimation. 0 = It is not a mode to put out different solutions of folding estimation at once. This variable is used to change the behavior of subthreads.
             if (!app.subThreadRunning) {
                 app.subThreadRunning = true;
-                app.mks();//新しいスレッドを作る
+                app.makeSubThread();//新しいスレッドを作る
                 app.sub.start();
             }
         });
@@ -83,7 +82,7 @@ public class BottomPanel extends JPanel {
 
                 if (!app.subThreadRunning) {
                     app.subThreadRunning = true;
-                    app.mks();//新しいスレッドを作る
+                    app.makeSubThread();//新しいスレッドを作る
                     app.sub.start();
                 }
             }
@@ -108,7 +107,7 @@ public class BottomPanel extends JPanel {
             app.subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_SPECIFIC_2;
             if (!app.subThreadRunning) {
                 app.subThreadRunning = true;
-                app.mks();//新しいスレッドを作る
+                app.makeSubThread();//新しいスレッドを作る
                 app.sub.start();
             }
 
@@ -233,11 +232,11 @@ public class BottomPanel extends JPanel {
             app.OZ = app.temp_OZ;//20171223この行は不要かもしれないが、一瞬でもOZが示すOriagari_Zuがなくなることがないように念のために入れておく
             if (app.foldedFigureIndex == app.foldedFigures.size() - 1) {
                 app.foldedFigures.remove(app.foldedFigureIndex);
-                app.set_i_OAZ(app.foldedFigures.size() - 1);
+                app.setFoldedFigureIndex(app.foldedFigures.size() - 1);
             }
             if (app.foldedFigureIndex < app.foldedFigures.size() - 1) {
                 app.foldedFigures.remove(app.foldedFigureIndex);
-                app.set_i_OAZ(app.foldedFigureIndex);
+                app.setFoldedFigureIndex(app.foldedFigureIndex);
             }
 
             app.Button_shared_operation();
@@ -255,7 +254,7 @@ public class BottomPanel extends JPanel {
             app.OZ = app.temp_OZ;//20171223この行は不要かもしれないが、一瞬でもOZが示すOriagari_Zuがなくなることがないように念のために入れておく
             app.foldedFigures.clear();
             app.addNewFoldedFigure();
-            app.set_i_OAZ(0);
+            app.setFoldedFigureIndex(0);
             app.configure_initialize_prediction();
             //折畳予測図のの初期化　終了
 
@@ -473,8 +472,8 @@ public class BottomPanel extends JPanel {
     }
 
     public void getData(FoldedFigureModel foldedFigureModel) {
-        foldedFigureModel.setScale(app.String2double(foldedFigureResize.getText(), foldedFigureModel.getScale()));
-        foldedFigureModel.setRotation(app.String2double(foldedFigureRotate.getText(), foldedFigureModel.getRotation()));
+        foldedFigureModel.setScale(app.string2double(foldedFigureResize.getText(), foldedFigureModel.getScale()));
+        foldedFigureModel.setRotation(app.string2double(foldedFigureRotate.getText(), foldedFigureModel.getRotation()));
         foldedFigureModel.setHistoryTotal(StringOp.String2int(undoRedo.getText(), foldedFigureModel.getHistoryTotal()));
     }
 }

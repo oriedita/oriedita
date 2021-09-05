@@ -14,7 +14,6 @@ class SubThread extends Thread {
     public void run() {
         long start = System.currentTimeMillis();
 
-        //Two-color development drawing
         switch (app.subThreadMode) {
             case FOLDING_ESTIMATE_0:
                 app.folding_estimated();
@@ -66,8 +65,9 @@ class SubThread extends Thread {
             case CHECK_CAMV_3:
                 app.mainDrawingWorker.ap_check4(app.d_ap_check4);
                 break;
+            //Two-color crease pattern
             case TWO_COLORED_4:
-                app.folding_settings_two_color();
+                app.createTwoColorCreasePattern();
                 break;
         }
 
@@ -94,7 +94,7 @@ class SubThread extends Thread {
         CHECK_CAMV_3,
 
         /**
-         * Two-color development drawing
+         * Two-color crease pattern
          */
         TWO_COLORED_4,
     }

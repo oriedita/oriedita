@@ -30,7 +30,7 @@ public class FoldedFigure {
     private Color foldedFigure_B_color = new Color(233, 233, 233);//The color of the back side of the folded figure
     private Color foldedFigure_L_color = Color.black;//Folded line color
     public DisplayStyle display_flg_backup = DisplayStyle.DEVELOPMENT_4;//For temporary backup of display format displayStyle
-    public DisplayStyle displayStyle = DisplayStyle.NONE_0;//Designation of the display style of the folded figure. 1 is a development drawing, 2 is a wire drawing. If it is 3, it is a transparent view. If it is 4, it is the same as when you actually fold the origami paper.
+    public DisplayStyle displayStyle = DisplayStyle.NONE_0;//Designation of the display style of the folded figure. 1 is a crease pattern, 2 is a wire drawing. If it is 3, it is a transparent view. If it is 4, it is the same as when you actually fold the origami paper.
     public EstimationOrder estimationOrder = EstimationOrder.ORDER_0;//Instructions on how far to perform folding estimation
     public EstimationStep estimationStep = EstimationStep.STEP_0;//Display of how far the folding estimation has been completed
     //Variable to store the value for display
@@ -480,7 +480,7 @@ public class FoldedFigure {
         }
     }
 
-    public void folding_settings_two_color(Camera camera_of_foldLine_diagram, LineSegmentSet Ss0) {//Two-color development drawing
+    public void createTwoColorCreasePattern(Camera camera_of_foldLine_diagram, LineSegmentSet Ss0) {//Two-color crease pattern
         //Folded view display camera settings
 
         d_foldedFigure_scale_factor = camera_of_foldLine_diagram.getCameraZoomX();
@@ -584,7 +584,7 @@ public class FoldedFigure {
         bb_worker.set(cp_worker2.getLineStore());
         System.out.println("＜＜＜＜＜oritatami_suitei_03()_____基本枝職人bb_workerがbb_worker.bunkatu_seiri_for_Smen_hassei;実施。");
         bb_worker.split_arrangement_for_SubFace_generation();//Arrangement of wire diagrams obtained by estimating the folding of overlapping line segments and intersecting line segments
-        //The development drawing craftsman cp_worker3 receives a point set (arranged wire diagram of cp_worker2) from bb_worker and divides it into SubFace.
+        //The crease pattern craftsman cp_worker3 receives a point set (arranged wire diagram of cp_worker2) from bb_worker and divides it into SubFace.
         System.out.println("＜＜＜＜＜oritatami_suitei_03()_____展開図職人cp_worker3はbb_workerから整理された線分集合を受け取り、Smenに分割する。");
         System.out.println("　　　oritatami_suitei_03()のcp_worker3.Senbunsyuugou2Tensyuugou(bb_worker.get());実施");
         cp_worker3.lineStore2pointStore(bb_worker.get());

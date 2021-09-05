@@ -21,7 +21,7 @@ public class FoldedFigureResize extends JPanel {
         foldedFigureSizeSetButton.addActionListener(e -> {
             app.setHelp("oriagarizu_syukusyaku_keisuu_set");
 
-            foldedFigureModel.setScale(app.String2double(foldedFigureSizeTextField.getText(), foldedFigureModel.getScale()));
+            foldedFigureModel.setScale(app.string2double(foldedFigureSizeTextField.getText(), foldedFigureModel.getScale()));
 
             app.Button_shared_operation();
         });

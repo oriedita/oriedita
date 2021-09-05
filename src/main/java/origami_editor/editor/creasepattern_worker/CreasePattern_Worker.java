@@ -237,7 +237,7 @@ public class CreasePattern_Worker {
         System.out.println("折ったときの点の位置を求める。");
         // Find the position of the point when folded.
         // If the point it is included in the face im
-        // Find where to move when the development drawing is folded by moving the face im.
+        // Find where to move when the crease pattern is folded by moving the face im.
 
         System.out.println("折ったときの点の位置を求める（開始）");
         for (int it = 1; it <= this.pointSet.getNumPoints(); it++) {
