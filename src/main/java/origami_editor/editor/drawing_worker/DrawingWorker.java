@@ -198,28 +198,27 @@ public class DrawingWorker {
 
                 switch (m.group(1)) {
                     case "camera_ichi_x":
-                        app.creasePatternCamera.setCameraPositionX(Double.parseDouble(m.group(2)));
+                        app.canvas.creasePatternCamera.setCameraPositionX(Double.parseDouble(m.group(2)));
                         break;
                     case "camera_ichi_y":
-                        app.creasePatternCamera.setCameraPositionY(Double.parseDouble(m.group(2)));
+                        app.canvas.creasePatternCamera.setCameraPositionY(Double.parseDouble(m.group(2)));
                         break;
                     case "camera_kakudo":
-                        app.creasePatternCamera.setCameraAngle(Double.parseDouble(m.group(2)));
+                        app.creasePatternCameraModel.setRotation(Double.parseDouble(m.group(2)));
                         break;
                     case "camera_kagami":
-                        app.creasePatternCamera.setCameraMirror(Double.parseDouble(m.group(2)));
+                        app.canvas.creasePatternCamera.setCameraMirror(Double.parseDouble(m.group(2)));
                         break;
                     case "camera_bairitsu_x":
-                        app.creasePatternCamera.setCameraZoomX(Double.parseDouble(m.group(2)));
+                        app.creasePatternCameraModel.setScale(Double.parseDouble(m.group(2)));
                         break;
                     case "camera_bairitsu_y":
-                        app.creasePatternCamera.setCameraZoomY(Double.parseDouble(m.group(2)));
                         break;
                     case "hyouji_ichi_x":
-                        app.creasePatternCamera.setDisplayPositionX(Double.parseDouble(m.group(2)));
+                        app.canvas.creasePatternCamera.setDisplayPositionX(Double.parseDouble(m.group(2)));
                         break;
                     case "hyouji_ichi_y":
-                        app.creasePatternCamera.setDisplayPositionY(Double.parseDouble(m.group(2)));
+                        app.canvas.creasePatternCamera.setDisplayPositionY(Double.parseDouble(m.group(2)));
                         break;
                 }
             }
@@ -8766,7 +8765,7 @@ public class DrawingWorker {
     }
 
     public void setData(AngleSystemModel angleSystemModel) {
-        id_angle_system = angleSystemModel.getCurrentAngleSystemDivider();
+        set_id_angle_system(angleSystemModel.getCurrentAngleSystemDivider());
         set_d_restricted_angle(angleSystemModel.getCurrentAngleA(), angleSystemModel.getCurrentAngleB(), angleSystemModel.getCurrentAngleC());
 
         unselect_all();

@@ -15,7 +15,7 @@ import java.awt.*;
 
 public class FoldedFigure {
     private final Point p_m_left_on = new Point();//Coordinates when the left mouse button is pressed
-    private final Point move_previous_selection_point = new Point();//動かす前の選択した点の座標
+    private final Point move_previous_selection_point = new Point();//Coordinates of the selected point before moving
     public double d_foldedFigure_scale_factor = 1.0;//Scale factor of folded view
     public double d_foldedFigure_rotation_correction = 0.0;//Correction angle of rotation display angle of folded view
     public HierarchyList_Worker ct_worker;

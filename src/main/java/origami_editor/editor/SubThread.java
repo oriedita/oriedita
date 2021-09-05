@@ -22,26 +22,27 @@ class SubThread extends Thread {
             case FOLDING_ESTIMATE_SAVE_100_1:
                 String fname = app.selectFileName("file name for Img save");
                 if (fname != null) {
-                    app.OZ.summary_write_image_during_execution = true;//まとめ書き出し実行中の意味
+                    app.OZ.summary_write_image_during_execution = true;//Meaning during summary writing
 
-                    int objective = 100;
+                    synchronized (app.w_image_running) {
+                        int objective = 100;
 
-                    for (int i = 1; i <= objective; i++) {
-                        app.folding_estimated();
-                        app.fname_and_number = fname + app.OZ.discovered_fold_cases;//まとめ書き出しに使う。
+                        for (int i = 1; i <= objective; i++) {
+                            app.folding_estimated();
+                            app.fname_and_number = fname + app.OZ.discovered_fold_cases;//Used for bulk writing.
 
-                        app.w_image_running = true;
-                        app.repaint();
+                            app.w_image_running.set(true);
+                            app.repaint();
 
-                        while (app.w_image_running) {// If this is not included, the exported image may be omitted.
-                            // Wait 10 milliseconds. In addition, it is unknown whether 10 is appropriate 20170611
                             try {
-                                Thread.sleep(10);
+                                app.w_image_running.wait();
                             } catch (InterruptedException e) {
+                                return;
                             }
-                        }
-                        if (!app.OZ.findAnotherOverlapValid) {
-                            objective = app.OZ.discovered_fold_cases;
+
+                            if (!app.OZ.findAnotherOverlapValid) {
+                                objective = app.OZ.discovered_fold_cases;
+                            }
                         }
                     }
                     app.OZ.summary_write_image_during_execution = false;

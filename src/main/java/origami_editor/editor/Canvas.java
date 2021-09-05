@@ -6,6 +6,7 @@ import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.point.Point;
 import origami_editor.record.memo.Memo;
+import origami_editor.tools.camera.Camera;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -52,6 +53,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     Dimension dim;
     private boolean antiAlias;
     private boolean mouseWheelMovesCreasePattern;
+
+    public Camera creasePatternCamera = new Camera();
 
     public Canvas(App app0) {
         app = app0;
@@ -112,12 +115,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
         //カメラのセット
-        app.mainDrawingWorker.setCamera(app.creasePatternCamera);
+        app.mainDrawingWorker.setCamera(creasePatternCamera);
 
         FoldedFigure OZi;
         for (int i = 1; i <= app.foldedFigures.size() - 1; i++) {
             OZi = app.foldedFigures.get(i);
-            OZi.cp_worker1.setCamera(app.creasePatternCamera);
+            OZi.cp_worker1.setCamera(creasePatternCamera);
         }
 
 //VVVVVVVVVVVVVVV以下のts2へのカメラセットはOriagari_zuのoekakiで実施しているので以下の5行はなくてもいいはず　20180225
@@ -149,7 +152,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             }
         }
 
-        double d_width = app.creasePatternCamera.getCameraZoomX() * app.mainDrawingWorker.getSelectionDistance();
+        double d_width = creasePatternCamera.getCameraZoomX() * app.mainDrawingWorker.getSelectionDistance();
         //Flashlight (dot) search range
         if (displayPointSpotlight) {
             g2.setColor(new Color(255, 240, 0, 30));
@@ -230,7 +233,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         if (app.OZ.summary_write_image_during_execution) {//Meaning during summary writing)
             writeImageFile(app.fname_and_number, app);
 
-            app.w_image_running = false;
+            synchronized (app.w_image_running) {
+                app.w_image_running.set(false);
+                app.w_image_running.notify();
+            }
         }
 
         if (flg_wi) {//For control when exporting with a frame 20180525
@@ -253,7 +259,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         //最初に
         if (app.backgroundModel.isLockBackground()) {
-            app.h_cam.setCamera(app.creasePatternCamera);
+            app.h_cam.setCamera(creasePatternCamera);
             app.h_cam.h3_and_h4_calculation();
             app.h_cam.parameter_calculation();
         }
@@ -283,175 +289,175 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             case UNUSED_0:
                 break;
             case DRAW_CREASE_FREE_1:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_01(p);
                 break;
             case LENGTHEN_CREASE_5:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_05(p);
                 break;
             case SQUARE_BISECTOR_7:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_07(p);
                 break;
             case INWARD_8:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_08(p);
                 break;
             case PERPENDICULAR_DRAW_9:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_09(p);
                 break;
             case SYMMETRIC_DRAW_10:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_10(p);
                 break;
             case DRAW_CREASE_RESTRICTED_11:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_11(p);
                 break;
             case DRAW_CREASE_SYMMETRIC_12:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_12(p);
                 break;
             case ANGLE_SYSTEM_16:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_16(p);
                 break;
             case DRAW_CREASE_ANGLE_RESTRICTED_2_17:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_17(p);
                 break;
             case DRAW_CREASE_ANGLE_RESTRICTED_3_18:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_18(p);
                 break;
             case CREASE_MOVE_21:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_21(p);
                 break;
             case CREASE_COPY_22:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_22(p);
                 break;
             case LINE_SEGMENT_DIVISION_27:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_27(p);
                 break;
             case LINE_SEGMENT_RATIO_SET_28:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_28(p);
                 break;
             case POLYGON_SET_NO_CORNERS_29:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_29(p);
                 break;
             case CREASE_MOVE_4P_31:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_31(p);
                 break;
             case CREASE_COPY_4P_32:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_32(p);
                 break;
             case FISH_BONE_DRAW_33:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_33(p);
                 break;
             case CREASE_MAKE_MV_34:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_34(p);
                 break;
             case DOUBLE_SYMMETRIC_DRAW_35:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_35(p);
                 break;
             case CREASES_ALTERNATE_MV_36:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_36(p);
                 break;
             case DRAW_CREASE_ANGLE_RESTRICTED_3_37:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_37(p);
                 break;
             case VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_38(p);
                 break;
             case FOLDABLE_LINE_INPUT_39:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_39(p);
                 break;
             case PARALLEL_DRAW_40:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_40(p);
                 break;
             case CONTINUOUS_SYMMETRIC_DRAW_52:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_52(p);
                 break;
             case DISPLAY_LENGTH_BETWEEN_POINTS_1_53:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_53(p);
                 break;
             case DISPLAY_LENGTH_BETWEEN_POINTS_2_54:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_54(p);
                 break;
             case DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_55(p);
                 break;
             case DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_56(p);
                 break;
             case DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_57(p);
                 break;
             case OPERATION_FRAME_CREATE_61:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_61(p);
                 break;
             case VORONOI_CREATE_62:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_62(p);
                 break;
             case FLAT_FOLDABLE_CHECK_63:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_63(p);
                 break;
             case CREASE_DELETE_OVERLAPPING_64:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_64(p);
                 break;
             case CREASE_DELETE_INTERSECTING_65:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_65(p);
                 break;
             case SELECT_POLYGON_66:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_66(p);
                 break;
             case UNSELECT_POLYGON_67:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_67(p);
                 break;
             case SELECT_LINE_INTERSECTING_68:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_68(p);
                 break;
             case UNSELECT_LINE_INTERSECTING_69:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_69(p);
                 break;
             case CREASE_LENGTHEN_70:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_70(p);
                 break;
             case FOLDABLE_LINE_DRAW_71:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mMoved_A_71(p);
                 break;
             default:
@@ -501,13 +507,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             case MouseEvent.BUTTON2:
                 System.out.println("中ボタンクリック");
 
-                app.pointInCreasePatternOrFoldedFigure(p);
+                App.MouseWheelTarget target = app.pointInCreasePatternOrFoldedFigure(p);
 
-                System.out.println("i_cp_or_oriagari = " + app.i_cp_or_oriagari);
+                System.out.println("i_cp_or_oriagari = " + target);
 
-                switch (app.i_cp_or_oriagari) {
+                switch (target) {
                     case CREASE_PATTERN_0: // 展開図移動。
-                        app.creasePatternCamera.camera_position_specify_from_TV(p);
+                        creasePatternCamera.camera_position_specify_from_TV(p);
                         break;
                     case FOLDED_FRONT_1:
                         app.OZ.foldedFigureFrontCamera.camera_position_specify_from_TV(p);
@@ -532,7 +538,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     app.i_mouse_right_button_on = true;
 
                     //線分削除モード。
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mPressed_A_03(p);
 
                     app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.BOTH_4);
@@ -550,295 +556,295 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             case UNUSED_0:
                 break;
             case DRAW_CREASE_FREE_1:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_01(p);
                 break;
             case MOVE_CREASE_PATTERN_2:                                        //2 展開図移動。
-                app.creasePatternCamera.camera_position_specify_from_TV(p);
+                creasePatternCamera.camera_position_specify_from_TV(p);
                 mouse_temp0.set(p);
                 break;
             case LINE_SEGMENT_DELETE_3:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_03(p);
                 break;
             case CHANGE_CREASE_TYPE_4:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_04(p);
                 break;
             case LENGTHEN_CREASE_5:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_05(p);
                 break;
             case UNUSED_6:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_06(p);
                 break;
             case SQUARE_BISECTOR_7:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_07(p);
                 break;
             case INWARD_8:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_08(p);
                 break;
             case PERPENDICULAR_DRAW_9:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_09(p);
                 break;
             case SYMMETRIC_DRAW_10:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_10(p);
                 break;
             case DRAW_CREASE_RESTRICTED_11:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_11(p);
                 break;
             case DRAW_CREASE_SYMMETRIC_12:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_12(p);
                 break;
             case DRAW_CREASE_ANGLE_RESTRICTED_13:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_13(p);
                 break;
             case DRAW_POINT_14:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_14(p);
                 break;
             case DELETE_POINT_15:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_15(p);
                 break;
             case ANGLE_SYSTEM_16:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_16(p);
                 break;
             case DRAW_CREASE_ANGLE_RESTRICTED_2_17:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_17(p);
                 break;
             case DRAW_CREASE_ANGLE_RESTRICTED_3_18:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_18(p);
                 break;
             case CREASE_SELECT_19:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_19(p);
                 break;
             case CREASE_UNSELECT_20:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_20(p);
                 break;
             case CREASE_MOVE_21:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_21(p);
                 break;
             case CREASE_COPY_22:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_22(p);
                 break;
             case CREASE_MAKE_MOUNTAIN_23:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_23(p);
                 break;
             case CREASE_MAKE_VALLEY_24:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_24(p);
                 break;
             case CREASE_MAKE_EDGE_25:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_25(p);
                 break;
             case BACKGROUND_CHANGE_POSITION_26:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_26(p);
                 break;
             case LINE_SEGMENT_DIVISION_27:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_27(p);
                 break;
             case LINE_SEGMENT_RATIO_SET_28:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_28(p);
                 break;
             case POLYGON_SET_NO_CORNERS_29:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_29(p);
                 break;
             case CREASE_ADVANCE_TYPE_30:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_30(p);
                 break;
             case CREASE_MOVE_4P_31:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_31(p);
                 break;
             case CREASE_COPY_4P_32:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_32(p);
                 break;
             case FISH_BONE_DRAW_33:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_33(p);
                 break;
             case CREASE_MAKE_MV_34:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_34(p);
                 break;
             case DOUBLE_SYMMETRIC_DRAW_35:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_35(p);
                 break;
             case CREASES_ALTERNATE_MV_36:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_36(p);
                 break;
             case DRAW_CREASE_ANGLE_RESTRICTED_3_37:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_37(p);
                 break;
             case VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_38(p);
                 break;
             case FOLDABLE_LINE_INPUT_39:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_39(p);
                 break;
             case PARALLEL_DRAW_40:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_40(p);
                 break;
             case VERTEX_DELETE_ON_CREASE_41:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_41(p);
                 break;
             case CIRCLE_DRAW_42:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_42(p);
                 break;
             case CIRCLE_DRAW_THREE_POINT_43:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_43(p);
                 break;
             case CIRCLE_DRAW_SEPARATE_44:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_44(p);
                 break;
             case CIRCLE_DRAW_TANGENT_LINE_45:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_45(p);
                 break;
             case CIRCLE_DRAW_INVERTED_46:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_46(p);
                 break;
             case CIRCLE_DRAW_FREE_47:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_47(p);
                 break;
             case CIRCLE_DRAW_CONCENTRIC_48:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_48(p);
                 break;
             case CIRCLE_DRAW_CONCENTRIC_SELECT_49:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_49(p);
                 break;
             case CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_50(p);
                 break;
             case PARALLEL_DRAW_WIDTH_51:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_51(p);
                 break;
             case CONTINUOUS_SYMMETRIC_DRAW_52:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_52(p);
                 break;
             case DISPLAY_LENGTH_BETWEEN_POINTS_1_53:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_53(p);
                 break;
             case DISPLAY_LENGTH_BETWEEN_POINTS_2_54:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_54(p);
                 break;
             case DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_55(p);
                 break;
             case DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_56(p);
                 break;
             case DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_57(p);
                 break;
             case CREASE_TOGGLE_MV_58:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_58(p);
                 break;
             case CIRCLE_CHANGE_COLOR_59:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_59(p);
                 break;
             case CREASE_MAKE_AUX_60:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_60(p);
                 break;
             case OPERATION_FRAME_CREATE_61:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_61(p);
                 break;
             case VORONOI_CREATE_62:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_62(p);
                 break;
             case FLAT_FOLDABLE_CHECK_63:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_63(p);
                 break;
             case CREASE_DELETE_OVERLAPPING_64:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_64(p);
                 break;
             case CREASE_DELETE_INTERSECTING_65:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_65(p);
                 break;
             case SELECT_POLYGON_66:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_66(p);
                 break;
             case UNSELECT_POLYGON_67:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_67(p);
                 break;
             case SELECT_LINE_INTERSECTING_68:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_68(p);
                 break;
             case UNSELECT_LINE_INTERSECTING_69:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_69(p);
                 break;
             case CREASE_LENGTHEN_70:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_70(p);
                 break;
             case FOLDABLE_LINE_DRAW_71:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_71(p);
                 break;
             case UNUSED_10001:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_10001(p);
                 break;
             case UNUSED_10002:
-                es1.setCamera(app.creasePatternCamera);
+                es1.setCamera(creasePatternCamera);
                 es1.mPressed_A_10002(p);
                 break;
             case MODIFY_CALCULATED_SHAPE_101:         //折り上がり図操作
@@ -879,8 +885,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 case MouseEvent.BUTTON2:
                     switch (app.i_cp_or_oriagari) {
                         case CREASE_PATTERN_0: // 展開図移動。
-                            app.creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
-                            es1.setCamera(app.creasePatternCamera);
+                            creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                            es1.setCamera(creasePatternCamera);
                             break;
                         case FOLDED_FRONT_1:
                             app.OZ.foldedFigureFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
@@ -906,7 +912,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                         if (app.i_mouse_undo_redo_mode) {
                             return;
                         }//undo,redoモード。
-                        es1.setCamera(app.creasePatternCamera);
+                        es1.setCamera(creasePatternCamera);
                         es1.mDragged_A_03(p);//線分削除モード。
                     }
                     repaint();
@@ -919,12 +925,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 case UNUSED_0:
                     break;
                 case DRAW_CREASE_FREE_1:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_01(p);
                     break;
                 case MOVE_CREASE_PATTERN_2:
-                    app.creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    es1.setCamera(app.creasePatternCamera);
+                    creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                    es1.setCamera(creasePatternCamera);
 
 //20180225追加
                     FoldedFigure OZi;
@@ -942,287 +948,287 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     mouse_temp0.set(p);
                     break;
                 case LINE_SEGMENT_DELETE_3:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_03(p);
                     break;
                 case CHANGE_CREASE_TYPE_4:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_04(p);
                     break;
                 case LENGTHEN_CREASE_5:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_05(p);
                     break;
                 case UNUSED_6:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_06(p);
                     break;
                 case SQUARE_BISECTOR_7:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_07(p);
                     break;
                 case INWARD_8:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_08(p);
                     break;
                 case PERPENDICULAR_DRAW_9:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_09(p);
                     break;
                 case SYMMETRIC_DRAW_10:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_10(p);
                     break;
                 case DRAW_CREASE_RESTRICTED_11:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_11(p);
                     break;
                 case DRAW_CREASE_SYMMETRIC_12:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_12(p);
                     break;
                 case DRAW_CREASE_ANGLE_RESTRICTED_13:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_13(p);
                     break;
                 case DRAW_POINT_14:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_14(p);
                     break;
                 case DELETE_POINT_15:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_15(p);
                     break;
                 case ANGLE_SYSTEM_16:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_16(p);
                     break;
                 case DRAW_CREASE_ANGLE_RESTRICTED_2_17:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_17(p);
                     break;
                 case DRAW_CREASE_ANGLE_RESTRICTED_3_18:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_18(p);
                     break;
                 case CREASE_SELECT_19:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_19(p);
                     break;
                 case CREASE_UNSELECT_20:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_20(p);
                     break;
                 case CREASE_MOVE_21:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_21(p);
                     break;
                 case CREASE_COPY_22:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_22(p);
                     break;
                 case CREASE_MAKE_MOUNTAIN_23:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_23(p);
                     break;
                 case CREASE_MAKE_VALLEY_24:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_24(p);
                     break;
                 case CREASE_MAKE_EDGE_25:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_25(p);
                     break;
                 case BACKGROUND_CHANGE_POSITION_26:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_26(p);
                     break;
                 case LINE_SEGMENT_DIVISION_27:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_27(p);
                     break;
                 case LINE_SEGMENT_RATIO_SET_28:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_28(p);
                     break;
                 case POLYGON_SET_NO_CORNERS_29:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_29(p);
                     break;
                 case CREASE_ADVANCE_TYPE_30:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_30(p);
                     break;
                 case CREASE_MOVE_4P_31:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_31(p);
                     break;
                 case CREASE_COPY_4P_32:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_32(p);
                     break;
                 case FISH_BONE_DRAW_33:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_33(p);
                     break;
                 case CREASE_MAKE_MV_34:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_34(p);
                     break;
                 case DOUBLE_SYMMETRIC_DRAW_35:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_35(p);
                     break;
                 case CREASES_ALTERNATE_MV_36:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_36(p);
                     break;
                 case DRAW_CREASE_ANGLE_RESTRICTED_3_37:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_37(p);
                     break;
                 case VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_38(p);
                     break;
                 case FOLDABLE_LINE_INPUT_39:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_39(p);
                     break;
                 case PARALLEL_DRAW_40:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_40(p);
                     break;
                 case VERTEX_DELETE_ON_CREASE_41:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_41(p);
                     break;
                 case CIRCLE_DRAW_42:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_42(p);
                     break;
                 case CIRCLE_DRAW_THREE_POINT_43:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_43(p);
                     break;
                 case CIRCLE_DRAW_SEPARATE_44:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_44(p);
                     break;
                 case CIRCLE_DRAW_TANGENT_LINE_45:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_45(p);
                     break;
                 case CIRCLE_DRAW_INVERTED_46:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_46(p);
                     break;
                 case CIRCLE_DRAW_FREE_47:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_47(p);
                     break;
                 case CIRCLE_DRAW_CONCENTRIC_48:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_48(p);
                     break;
                 case CIRCLE_DRAW_CONCENTRIC_SELECT_49:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_49(p);
                     break;
                 case CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_50(p);
                     break;
                 case PARALLEL_DRAW_WIDTH_51:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_51(p);
                     break;
                 case CONTINUOUS_SYMMETRIC_DRAW_52:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_52(p);
                     break;
                 case DISPLAY_LENGTH_BETWEEN_POINTS_1_53:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_53(p);
                     break;
                 case DISPLAY_LENGTH_BETWEEN_POINTS_2_54:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_54(p);
                     break;
                 case DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_55(p);
                     break;
                 case DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_56(p);
                     break;
                 case DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_57(p);
                     break;
                 case CREASE_TOGGLE_MV_58:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_58(p);
                     break;
                 case CIRCLE_CHANGE_COLOR_59:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_59(p);
                     break;
                 case CREASE_MAKE_AUX_60:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_60(p);
                     break;
                 case OPERATION_FRAME_CREATE_61:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_61(p);
                     break;
                 case VORONOI_CREATE_62:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_62(p);
                     break;
                 case FLAT_FOLDABLE_CHECK_63:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_63(p);
                     break;
                 case CREASE_DELETE_OVERLAPPING_64:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_64(p);
                     break;
                 case CREASE_DELETE_INTERSECTING_65:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_65(p);
                     break;
                 case SELECT_POLYGON_66:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_66(p);
                     break;
                 case UNSELECT_POLYGON_67:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_67(p);
                     break;
                 case SELECT_LINE_INTERSECTING_68:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_68(p);
                     break;
                 case UNSELECT_LINE_INTERSECTING_69:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_69(p);
                     break;
                 case CREASE_LENGTHEN_70:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_70(p);
                     break;
                 case FOLDABLE_LINE_DRAW_71:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_71(p);
                     break;
                 case UNUSED_10001:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_10001(p);
                     break;
                 case UNUSED_10002:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mDragged_A_10002(p);
                     break;
                 case MODIFY_CALCULATED_SHAPE_101:
@@ -1276,8 +1282,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 case MouseEvent.BUTTON2:
                     switch (app.i_cp_or_oriagari) {
                         case CREASE_PATTERN_0:
-                            app.creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
-                            es1.setCamera(app.creasePatternCamera);
+                            creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                            es1.setCamera(creasePatternCamera);
                             break;
                         case FOLDED_FRONT_1:
                             app.OZ.foldedFigureFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
@@ -1311,7 +1317,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                             app.i_mouse_undo_redo_mode = false;
                             return;
                         } //undo,redoモード。
-                        es1.setCamera(app.creasePatternCamera);
+                        es1.setCamera(creasePatternCamera);
                         es1.mReleased_A_03(p);
                         repaint();//なんでここにrepaintがあるか検討した方がよいかも。20181208
                         app.canvasModel.restoreFoldLineAdditionalInputMode();
@@ -1329,12 +1335,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 case UNUSED_0:
                     break;
                 case DRAW_CREASE_FREE_1:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_01(p);
                     break;
                 case MOVE_CREASE_PATTERN_2:
-                    app.creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
-                    es1.setCamera(app.creasePatternCamera);
+                    creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                    es1.setCamera(creasePatternCamera);
 
 
 //20180225追加
@@ -1353,99 +1359,99 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     mouse_temp0.set(p);
                     break;
                 case LINE_SEGMENT_DELETE_3:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_03(p);
                     break;
                 case CHANGE_CREASE_TYPE_4:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_04(p);
                     break;
                 case LENGTHEN_CREASE_5:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_05(p);
                     break;
                 case UNUSED_6:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_06(p);
                     break;
                 case SQUARE_BISECTOR_7:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_07(p);
                     break;
                 case INWARD_8:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_08(p);
                     break;
                 case PERPENDICULAR_DRAW_9:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_09(p);
                     break;
                 case SYMMETRIC_DRAW_10:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_10(p);
                     break;
                 case DRAW_CREASE_RESTRICTED_11:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_11(p);
                     break;
                 case DRAW_CREASE_SYMMETRIC_12:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_12(p);
                     break;
                 case DRAW_CREASE_ANGLE_RESTRICTED_13:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_13(p);
                     break;
                 case DRAW_POINT_14:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_14(p);
                     break;
                 case DELETE_POINT_15:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_15(p);
                     break;
                 case ANGLE_SYSTEM_16:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_16(p);
                     break;
                 case DRAW_CREASE_ANGLE_RESTRICTED_2_17:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_17(p);
                     break;
                 case DRAW_CREASE_ANGLE_RESTRICTED_3_18:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_18(p);
                     break;
                 case CREASE_SELECT_19:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_19(p);
                     break;
                 case CREASE_UNSELECT_20:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_20(p);
                     break;
                 case CREASE_MOVE_21:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_21(p);
                     break;
                 case CREASE_COPY_22:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_22(p);
                     break;
                 case CREASE_MAKE_MOUNTAIN_23:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_23(p);
                     break;
                 case CREASE_MAKE_VALLEY_24:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_24(p);
                     break;
                 case CREASE_MAKE_EDGE_25:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_25(p);
                     break;
                 case BACKGROUND_CHANGE_POSITION_26:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
 
                     if (es1.mReleased_A_26(p) == 4) {
                         app.Button_shared_operation();
@@ -1460,198 +1466,198 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
                         app.backgroundModel.setLockBackground(false);
 
-                        app.background_set(app.creasePatternCamera.object2TV(s_1.getA()),
-                                app.creasePatternCamera.object2TV(s_2.getA()),
-                                app.creasePatternCamera.object2TV(s_3.getA()),
-                                app.creasePatternCamera.object2TV(s_4.getA()));
+                        app.background_set(creasePatternCamera.object2TV(s_1.getA()),
+                                creasePatternCamera.object2TV(s_2.getA()),
+                                creasePatternCamera.object2TV(s_3.getA()),
+                                creasePatternCamera.object2TV(s_4.getA()));
                     }
                     break;
                 case LINE_SEGMENT_DIVISION_27:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_27(p);
                     break;
                 case LINE_SEGMENT_RATIO_SET_28:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_28(p);
                     break;
                 case POLYGON_SET_NO_CORNERS_29:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_29(p);
                     break;
                 case CREASE_ADVANCE_TYPE_30:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_30(p);
                     break;
                 case CREASE_MOVE_4P_31:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_31(p);
                     break;
                 case CREASE_COPY_4P_32:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_32(p);
                     break;
                 case FISH_BONE_DRAW_33:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_33(p);
                     break;
                 case CREASE_MAKE_MV_34:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_34(p);
                     break;
                 case DOUBLE_SYMMETRIC_DRAW_35:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_35(p);
                     break;
                 case CREASES_ALTERNATE_MV_36:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_36(p);
                     break;
                 case DRAW_CREASE_ANGLE_RESTRICTED_3_37:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_37(p);
                     break;
                 case VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_38(p);
                     break;
                 case FOLDABLE_LINE_INPUT_39:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_39(p);
                     break;
                 case PARALLEL_DRAW_40:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_40(p);
                     break;
                 case VERTEX_DELETE_ON_CREASE_41:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_41(p);
                     break;
                 case CIRCLE_DRAW_42:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_42(p);
                     break;
                 case CIRCLE_DRAW_THREE_POINT_43:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_43(p);
                     break;
                 case CIRCLE_DRAW_SEPARATE_44:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_44(p);
                     break;
                 case CIRCLE_DRAW_TANGENT_LINE_45:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_45(p);
                     break;
                 case CIRCLE_DRAW_INVERTED_46:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_46(p);
                     break;
                 case CIRCLE_DRAW_FREE_47:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_47(p);
                     break;
                 case CIRCLE_DRAW_CONCENTRIC_48:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_48(p);
                     break;
                 case CIRCLE_DRAW_CONCENTRIC_SELECT_49:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_49(p);
                     break;
                 case CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_50(p);
                     break;
                 case PARALLEL_DRAW_WIDTH_51:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_51(p);
                     break;
                 case CONTINUOUS_SYMMETRIC_DRAW_52:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_52(p);
                     break;
                 case DISPLAY_LENGTH_BETWEEN_POINTS_1_53:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_53(p);
                     break;
                 case DISPLAY_LENGTH_BETWEEN_POINTS_2_54:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_54(p);
                     break;
                 case DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_55(p);
                     break;
                 case DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_56(p);
                     break;
                 case DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_57(p);
                     break;
                 case CREASE_TOGGLE_MV_58:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_58(p);
                     break;
                 case CIRCLE_CHANGE_COLOR_59:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_59(p);
                     break;
                 case CREASE_MAKE_AUX_60:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_60(p);
                     break;
                 case OPERATION_FRAME_CREATE_61:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_61(p);
                     break;
                 case VORONOI_CREATE_62:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_62(p);
                     break;
                 case FLAT_FOLDABLE_CHECK_63:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_63(p);
                     break;
                 case CREASE_DELETE_OVERLAPPING_64:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_64(p);
                     break;
                 case CREASE_DELETE_INTERSECTING_65:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_65(p);
                     break;
                 case SELECT_POLYGON_66:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_66(p);
                     break;
                 case UNSELECT_POLYGON_67:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_67(p);
                     break;
                 case SELECT_LINE_INTERSECTING_68:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_68(p);
                     break;
                 case UNSELECT_LINE_INTERSECTING_69:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_69(p);
                     break;
                 case CREASE_LENGTHEN_70:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_70(p);
                     break;
                 case FOLDABLE_LINE_DRAW_71:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_71(p);
                     break;
                 case UNUSED_10001:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_10001(p);
                     break;
                 case UNUSED_10002:
-                    es1.setCamera(app.creasePatternCamera);
+                    es1.setCamera(creasePatternCamera);
                     es1.mReleased_A_10002(p);
                     break;
                 case MODIFY_CALCULATED_SHAPE_101:         //折り上がり図操作
@@ -1717,27 +1723,20 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             if ((!e.isShiftDown()) && (!app.i_mouse_right_button_on)) {
 
                 Point p = new Point(app.e2p(e));
-                app.pointInCreasePatternOrFoldedFigure(p);
-                double root_root_root_2 = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
-                if (app.i_cp_or_oriagari == App.MouseWheelTarget.CREASE_PATTERN_0) {
+                App.MouseWheelTarget target = app.pointInCreasePatternOrFoldedFigure(p);
+                if (target == App.MouseWheelTarget.CREASE_PATTERN_0) {
                     if (e.getWheelRotation() == -1) {
-                        app.scaleFactor = app.scaleFactor * root_root_root_2;//  sqrt(sqrt(2))=1.1892
+                        app.creasePatternCameraModel.zoomIn();
                     } else {
-                        app.scaleFactor = app.scaleFactor / root_root_root_2;//  sqrt(sqrt(2))=1.1892
+                        app.creasePatternCameraModel.zoomOut();
                     }
-                    app.creasePatternCamera.setCameraZoomX(app.scaleFactor);
-                    app.creasePatternCamera.setCameraZoomY(app.scaleFactor);
-                    app.scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
-                    app.scaleFactorTextField.setCaretPosition(0);
-                    // ---------------------------------------------------------------------
                 } else {
                     if (e.getWheelRotation() == -1) {
-                        app.foldedFigureModel.setScale(app.foldedFigureModel.getScale() * root_root_root_2);
+                        app.foldedFigureModel.zoomIn();
                     } else {
-                        app.foldedFigureModel.setScale(app.foldedFigureModel.getScale() / root_root_root_2);
+                        app.foldedFigureModel.zoomOut();
                     }
                 }
-                // ---------------------------------------------------------------------
 
                 app.mouse_object_position(app.p_mouse_TV_position);
                 repaint();

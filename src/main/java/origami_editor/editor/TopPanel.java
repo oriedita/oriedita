@@ -3,7 +3,6 @@ package origami_editor.editor;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
-import origami_editor.graphic2d.oritacalc.OritaCalc;
 import origami_editor.graphic2d.point.Point;
 import origami_editor.tools.background_camera.Background_camera;
 
@@ -13,15 +12,15 @@ import java.awt.image.BufferedImage;
 
 public class TopPanel extends JPanel {
     private final App app;
-    private JButton tyouhoukei_selectButton;
+    private JButton operationFrameSelectButton;
     private JPanel rootPanel;
     private JTextField ratioATextField;
     private JButton writeImageButton;
-    private JButton tenkaizu_idiuButton;
-    private JButton tenkaizu_syukusyouButton;
-    private JButton tenkaizu_kakudaiButton;
-    private JButton tenkaizu_p_kaitenButton;
-    private JButton tenkaizu_m_kaitenButton;
+    private JButton moveCreasePatternButton;
+    private JButton creasePatternZoomOutButton;
+    private JButton creasePatternZoomInButton;
+    private JButton rotateAnticlockwiseButton;
+    private JButton rotateClockwiseButton;
     private JButton senbun_yoke_henkanButton;
     private JButton lineSegmentInternalDivisionRatioSetButton;
     private JButton drawLineSegmentInternalDivisionRatioButton;
@@ -31,9 +30,9 @@ public class TopPanel extends JPanel {
     private JTextField ratioETextField;
     private JTextField ratioFTextField;
     private JTextField scaleFactorTextField;
-    private JButton tenkaizu_syukusyouSetButton;
+    private JButton scaleFactorSetButton;
     private JTextField rotationTextField;
-    private JButton tenkaizu_kaitenSetButton;
+    private JButton rotationSetButton;
     private JButton transparentButton;
     private JButton backgroundTrimButton;
     private JButton readBackgroundButton;
@@ -47,7 +46,7 @@ public class TopPanel extends JPanel {
         $$$setupUI$$$();
 
         app.canvasModel.addPropertyChangeListener(e -> setData((CanvasModel) e.getSource()));
-        tyouhoukei_selectButton.addActionListener(e -> {
+        operationFrameSelectButton.addActionListener(e -> {
             app.setHelp("tyouhoukei_select");
 
             app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0);
@@ -98,7 +97,7 @@ public class TopPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        tenkaizu_idiuButton.addActionListener(e -> {
+        moveCreasePatternButton.addActionListener(e -> {
             app.setHelp("tenkaizu_idiu");
 
             app.canvasModel.setMouseMode(MouseMode.MOVE_CREASE_PATTERN_2);
@@ -106,128 +105,81 @@ public class TopPanel extends JPanel {
             app.repaintCanvas();
         });
         FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
-        tenkaizu_syukusyouButton.addActionListener(e -> {
+        creasePatternZoomOutButton.addActionListener(e -> {
             app.setHelp("tenkaizu_syukusyou");
 
-            double magnification = 1.0 / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
-            app.scaleFactor = app.scaleFactor / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
-            app.creasePatternCamera.multiplyCameraZoomX(magnification);
-            app.creasePatternCamera.multiplyCameraZoomY(magnification);
+            app.creasePatternCameraModel.zoomOut();
 
-//20180122追加
+            double magnification = 1.0 / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
+
             FoldedFigure OZi;
             for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
                 OZi = app.foldedFigures.get(i_oz);
 
-                Point t_o2tv = app.creasePatternCamera.object2TV(app.creasePatternCamera.getCameraPosition());
+                Point t_o2tv = app.canvas.creasePatternCamera.object2TV(app.canvas.creasePatternCamera.getCameraPosition());
 
                 OZi.scale(magnification, t_o2tv);
             }
 
-            foldedFigureModel.setScale(foldedFigureModel.getScale() * magnification);
-//20180122追加　ここまで
-
-
-            scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
-            scaleFactorTextField.setCaretPosition(0);
-            app.repaintCanvas();
+            foldedFigureModel.zoomOut();
         });
-        tenkaizu_syukusyouSetButton.addActionListener(e -> {
-            double d_syukusyaku_keisuu_old = app.scaleFactor;
-            app.scaleFactor = app.string2double(scaleFactorTextField.getText(), d_syukusyaku_keisuu_old);
-            if (app.scaleFactor <= 0.0) {
-                app.scaleFactor = d_syukusyaku_keisuu_old;
-            }
-            scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
-            if (app.scaleFactor != d_syukusyaku_keisuu_old) {
-                app.creasePatternCamera.setCameraZoomX(app.scaleFactor);
-                app.creasePatternCamera.setCameraZoomY(app.scaleFactor);
+        scaleFactorSetButton.addActionListener(e -> {
+            double d_syukusyaku_keisuu_old = app.creasePatternCameraModel.getScale();
 
-//20180225追加
-
-                double magnification = app.scaleFactor / d_syukusyaku_keisuu_old;
+            app.creasePatternCameraModel.setScale(app.string2double(scaleFactorTextField.getText(), d_syukusyaku_keisuu_old));
+            if (app.creasePatternCameraModel.getScale() != d_syukusyaku_keisuu_old) {
+                double magnification = app.creasePatternCameraModel.getScale() / d_syukusyaku_keisuu_old;
 
                 FoldedFigure OZi;
                 for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
                     OZi = app.foldedFigures.get(i_oz);
 
-                    Point t_o2tv = app.creasePatternCamera.object2TV(app.creasePatternCamera.getCameraPosition());
+                    Point t_o2tv = app.canvas.creasePatternCamera.object2TV(app.canvas.creasePatternCamera.getCameraPosition());
 
                     OZi.scale(magnification, t_o2tv);
                 }
 
                 foldedFigureModel.setScale(foldedFigureModel.getScale() * magnification);
             }
-            scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
-            scaleFactorTextField.setCaretPosition(0);
-            app.repaintCanvas();
 
             app.setHelp("syukusyaku_keisuu_set");
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        tenkaizu_kakudaiButton.addActionListener(e -> {
+        creasePatternZoomInButton.addActionListener(e -> {
             app.setHelp("tenkaizu_kakudai");
 
+            app.creasePatternCameraModel.zoomIn();
+
             double magnification = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
-            app.scaleFactor = app.scaleFactor * Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
-            app.creasePatternCamera.multiplyCameraZoomX(magnification);
-            app.creasePatternCamera.multiplyCameraZoomY(magnification);
 
-
-//20180122追加
             FoldedFigure OZi;
             for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
                 OZi = app.foldedFigures.get(i_oz);
 
-                Point t_o2tv = app.creasePatternCamera.object2TV(app.creasePatternCamera.getCameraPosition());
+                Point t_o2tv = app.canvas.creasePatternCamera.object2TV(app.canvas.creasePatternCamera.getCameraPosition());
 
                 OZi.scale(magnification, t_o2tv);
             }
 
-            foldedFigureModel.setScale(foldedFigureModel.getScale() * magnification);
+            foldedFigureModel.zoomIn();
 //20180122追加　ここまで
-
-            scaleFactorTextField.setText(String.valueOf(app.scaleFactor));
-            scaleFactorTextField.setCaretPosition(0);
-            app.repaintCanvas();
         });
-        tenkaizu_p_kaitenButton.addActionListener(e -> {
+        rotateAnticlockwiseButton.addActionListener(e -> {
             app.setHelp("tenkaizu_p_kaiten");
 
-            app.rotationCorrection = OritaCalc.angle_between_m180_180(app.rotationCorrection + 11.25);
-            app.creasePatternCamera.setCameraAngle(app.rotationCorrection);
-            rotationTextField.setText(String.valueOf(app.rotationCorrection));
-            rotationTextField.setCaretPosition(0);
-
-            app.repaintCanvas();
+            app.creasePatternCameraModel.increaseRotation();
         });
-        tenkaizu_kaitenSetButton.addActionListener(e -> {
-            double d_kaiten_hosei_old = app.rotationCorrection;
-            app.rotationCorrection = OritaCalc.angle_between_m180_180(app.string2double(rotationTextField.getText(), d_kaiten_hosei_old));
-
-            rotationTextField.setText(String.valueOf(app.rotationCorrection));
-
-            if (app.rotationCorrection != d_kaiten_hosei_old) {
-                app.creasePatternCamera.setCameraAngle(app.rotationCorrection);
-            }
-
-            rotationTextField.setText(String.valueOf(app.rotationCorrection));
-            rotationTextField.setCaretPosition(0);
-            app.repaintCanvas();
-
+        rotationSetButton.addActionListener(e -> {
+            app.creasePatternCameraModel.setRotation(app.string2double(rotationTextField.getText(), app.creasePatternCameraModel.getRotation()));
 
             app.setHelp("kaiten_hosei_set");
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        tenkaizu_m_kaitenButton.addActionListener(e -> {
+        rotateClockwiseButton.addActionListener(e -> {
             app.setHelp("tenkaizu_m_kaiten");
-            app.rotationCorrection = OritaCalc.angle_between_m180_180(app.rotationCorrection - 11.25);
-            app.creasePatternCamera.setCameraAngle(app.rotationCorrection);
-            rotationTextField.setText(String.valueOf(app.rotationCorrection));
-            rotationTextField.setCaretPosition(0);
-            app.repaintCanvas();
+            app.creasePatternCameraModel.decreaseRotation();
         });
         transparentButton.addActionListener(e -> {
             app.setHelp("toumei");
@@ -271,7 +223,7 @@ public class TopPanel extends JPanel {
 
                 if (app.backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
                     app.h_cam.set_i_Lock_on(true);
-                    app.h_cam.setCamera(app.creasePatternCamera);
+                    app.h_cam.setCamera(app.canvas.creasePatternCamera);
                     app.h_cam.h3_obj_and_h4_obj_calculation();
                 }
             }
@@ -289,7 +241,7 @@ public class TopPanel extends JPanel {
             app.h_cam = new Background_camera();//20181202
             if (app.backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
                 app.h_cam.set_i_Lock_on(app.backgroundModel.isLockBackground());
-                app.h_cam.setCamera(app.creasePatternCamera);
+                app.h_cam.setCamera(app.canvas.creasePatternCamera);
                 app.h_cam.h3_obj_and_h4_obj_calculation();
             }
 
@@ -350,22 +302,6 @@ public class TopPanel extends JPanel {
         data.setInternalDivisionRatioF(app.string2double(ratioFTextField.getText(), data.getInternalDivisionRatioF()));
     }
 
-    public JTextField getRotationTextField() {
-        return rotationTextField;
-    }
-
-    public JButton getBackgroundToggleButton() {
-        return backgroundToggleButton;
-    }
-
-    public JButton getBackgroundLockButton() {
-        return backgroundLockButton;
-    }
-
-    public JTextField getScaleFactorTextField() {
-        return scaleFactorTextField;
-    }
-
     private void createUIComponents() {
         rootPanel = this;
     }
@@ -380,14 +316,14 @@ public class TopPanel extends JPanel {
     private void $$$setupUI$$$() {
         createUIComponents();
         rootPanel.setLayout(new GridBagLayout());
-        tyouhoukei_selectButton = new JButton();
-        tyouhoukei_selectButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tyouhoukei_select.png")));
+        operationFrameSelectButton = new JButton();
+        operationFrameSelectButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tyouhoukei_select.png")));
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
-        rootPanel.add(tyouhoukei_selectButton, gbc);
+        rootPanel.add(operationFrameSelectButton, gbc);
         writeImageButton = new JButton();
         writeImageButton.setText("Im_s");
         gbc = new GridBagConstraints();
@@ -517,13 +453,13 @@ public class TopPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(drawLineSegmentInternalDivisionRatioButton, gbc);
-        tenkaizu_idiuButton = new JButton();
-        tenkaizu_idiuButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenkaizu_idiu.png")));
+        moveCreasePatternButton = new JButton();
+        moveCreasePatternButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenkaizu_idiu.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 4;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
-        rootPanel.add(tenkaizu_idiuButton, gbc);
+        rootPanel.add(moveCreasePatternButton, gbc);
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
@@ -531,13 +467,13 @@ public class TopPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         rootPanel.add(panel4, gbc);
-        tenkaizu_syukusyouButton = new JButton();
-        tenkaizu_syukusyouButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenkaizu_syukusyou.png")));
+        creasePatternZoomOutButton = new JButton();
+        creasePatternZoomOutButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenkaizu_syukusyou.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel4.add(tenkaizu_syukusyouButton, gbc);
+        panel4.add(creasePatternZoomOutButton, gbc);
         scaleFactorTextField = new JTextField();
         scaleFactorTextField.setColumns(2);
         scaleFactorTextField.setText("1.0");
@@ -546,20 +482,20 @@ public class TopPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         panel4.add(scaleFactorTextField, gbc);
-        tenkaizu_syukusyouSetButton = new JButton();
-        tenkaizu_syukusyouSetButton.setText("S");
+        scaleFactorSetButton = new JButton();
+        scaleFactorSetButton.setText("S");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel4.add(tenkaizu_syukusyouSetButton, gbc);
-        tenkaizu_kakudaiButton = new JButton();
-        tenkaizu_kakudaiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenkaizu_kakudai.png")));
+        panel4.add(scaleFactorSetButton, gbc);
+        creasePatternZoomInButton = new JButton();
+        creasePatternZoomInButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenkaizu_kakudai.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel4.add(tenkaizu_kakudaiButton, gbc);
+        panel4.add(creasePatternZoomInButton, gbc);
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
@@ -567,13 +503,13 @@ public class TopPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         rootPanel.add(panel5, gbc);
-        tenkaizu_p_kaitenButton = new JButton();
-        tenkaizu_p_kaitenButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenkaizu_p_kaiten.png")));
+        rotateAnticlockwiseButton = new JButton();
+        rotateAnticlockwiseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenkaizu_p_kaiten.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel5.add(tenkaizu_p_kaitenButton, gbc);
+        panel5.add(rotateAnticlockwiseButton, gbc);
         rotationTextField = new JTextField();
         rotationTextField.setColumns(2);
         rotationTextField.setEnabled(true);
@@ -582,20 +518,20 @@ public class TopPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         panel5.add(rotationTextField, gbc);
-        tenkaizu_kaitenSetButton = new JButton();
-        tenkaizu_kaitenSetButton.setText("S");
+        rotationSetButton = new JButton();
+        rotationSetButton.setText("S");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel5.add(tenkaizu_kaitenSetButton, gbc);
-        tenkaizu_m_kaitenButton = new JButton();
-        tenkaizu_m_kaitenButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenkaizu_m_kaiten.png")));
+        panel5.add(rotationSetButton, gbc);
+        rotateClockwiseButton = new JButton();
+        rotateClockwiseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenkaizu_m_kaiten.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel5.add(tenkaizu_m_kaitenButton, gbc);
+        panel5.add(rotateClockwiseButton, gbc);
         transparentButton = new JButton();
         transparentButton.setText("T");
         gbc = new GridBagConstraints();
@@ -682,5 +618,12 @@ public class TopPanel extends JPanel {
         } else {
             backgroundLockButton.setBackground(Color.gray);
         }
+    }
+
+    public void setData(CameraModel creasePatternCameraModel) {
+        rotationTextField.setText(String.valueOf(creasePatternCameraModel.getRotation()));
+        rotationTextField.setCaretPosition(0);
+        scaleFactorTextField.setText(String.valueOf(creasePatternCameraModel.getScale()));
+        scaleFactorTextField.setCaretPosition(0);
     }
 }

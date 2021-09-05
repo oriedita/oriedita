@@ -7,7 +7,7 @@
     <properties/>
     <border type="none"/>
     <children>
-      <component id="5bdbb" class="javax.swing.JButton" binding="tyouhoukei_selectButton">
+      <component id="5bdbb" class="javax.swing.JButton" binding="operationFrameSelectButton">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
@@ -189,7 +189,7 @@
           </component>
         </children>
       </grid>
-      <component id="b4bd0" class="javax.swing.JButton" binding="tenkaizu_idiuButton">
+      <component id="b4bd0" class="javax.swing.JButton" binding="moveCreasePatternButton">
         <constraints>
           <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
@@ -206,7 +206,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="54bc9" class="javax.swing.JButton" binding="tenkaizu_syukusyouButton">
+          <component id="54bc9" class="javax.swing.JButton" binding="creasePatternZoomOutButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
@@ -225,7 +225,7 @@
               <text value="1.0"/>
             </properties>
           </component>
-          <component id="fde02" class="javax.swing.JButton" binding="tenkaizu_syukusyouSetButton">
+          <component id="fde02" class="javax.swing.JButton" binding="scaleFactorSetButton">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
@@ -234,7 +234,7 @@
               <text value="S"/>
             </properties>
           </component>
-          <component id="2d619" class="javax.swing.JButton" binding="tenkaizu_kakudaiButton">
+          <component id="2d619" class="javax.swing.JButton" binding="creasePatternZoomInButton">
             <constraints>
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
@@ -253,7 +253,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="7822" class="javax.swing.JButton" binding="tenkaizu_p_kaitenButton">
+          <component id="7822" class="javax.swing.JButton" binding="rotateAnticlockwiseButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
@@ -272,7 +272,7 @@
               <enabled value="true"/>
             </properties>
           </component>
-          <component id="76f8a" class="javax.swing.JButton" binding="tenkaizu_kaitenSetButton">
+          <component id="76f8a" class="javax.swing.JButton" binding="rotationSetButton">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
@@ -281,7 +281,7 @@
               <text value="S"/>
             </properties>
           </component>
-          <component id="21054" class="javax.swing.JButton" binding="tenkaizu_m_kaitenButton">
+          <component id="21054" class="javax.swing.JButton" binding="rotateClockwiseButton">
             <constraints>
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>

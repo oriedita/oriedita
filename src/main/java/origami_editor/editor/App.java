@@ -12,7 +12,6 @@ import origami_editor.record.memo.Memo;
 import origami_editor.record.string_op.StringOp;
 import origami_editor.tools.background_camera.Background_camera;
 import origami_editor.tools.bulletinboard.BulletinBoard;
-import origami_editor.tools.camera.Camera;
 import origami_editor.tools.linestore.LineSegmentSet;
 
 import javax.swing.*;
@@ -23,6 +22,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static origami_editor.editor.ResourceUtil.createImageIcon;
 
@@ -35,12 +35,12 @@ public class App extends JFrame implements ActionListener {
     public final InternalDivisionRatioModel internalDivisionRatioModel = new InternalDivisionRatioModel();
     public final HistoryStateModel historyStateModel = new HistoryStateModel();
     public final BackgroundModel backgroundModel = new BackgroundModel();
+    public final CameraModel creasePatternCameraModel = new CameraModel();
     private final AppMenuBar appMenuBar;
     public FoldedFigure temp_OZ = new FoldedFigure(this);    //Folded figure
     public FoldedFigure OZ;    //Current Folded figure
     public LineSegmentSet Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
     public BulletinBoard bulletinBoard = new BulletinBoard(this);
-    public Camera creasePatternCamera = new Camera();
     public MouseMode mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;//Defines the response to mouse movements. If it is 1, the line segment input mode. If it is 2, adjust the development view (move). If it is 101, operate the folded figure.
     // ------------------------------------------------------------------------
     public Point point_of_referencePlane_old = new Point(); //ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
@@ -55,7 +55,7 @@ public class App extends JFrame implements ActionListener {
     ArrayList<FoldedFigure> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
     int foldedFigureIndex = 0;//Specify which number of foldedFigures Oriagari_Zu is the target of button operation or transformation operation
     Background_camera h_cam = new Background_camera();
-    boolean w_image_running = false; // Folding together execution. If a single image export is in progress, it will be true.
+    final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
     String fname_and_number;//まとめ書き出しに使う。
     //各種変数の定義
     String frame_title_0;//フレームのタイトルの根本部分
@@ -65,10 +65,6 @@ public class App extends JFrame implements ActionListener {
     JButton Button_bangou_sitei_estimated_display;
     JTextField text26;
     int foldedCases = 1;//Specify the number of folding estimation to be displayed
-    JTextField scaleFactorTextField;
-    double scaleFactor = 1.0;//Scale factor
-    JTextField rotationTextField;
-    double rotationCorrection = 0.0;//Correction angle of rotation display angle
     Image img_background;       //Image for background
     Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
     Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
@@ -150,14 +146,18 @@ public class App extends JFrame implements ActionListener {
         addNewFoldedFigure();
         OZ = foldedFigures.get(0);//折りあがり図
 
-        creasePatternCamera.setCameraPositionX(0.0);
-        creasePatternCamera.setCameraPositionY(0.0);
-        creasePatternCamera.setCameraAngle(0.0);
-        creasePatternCamera.setCameraMirror(1.0);
-        creasePatternCamera.setCameraZoomX(1.0);
-        creasePatternCamera.setCameraZoomY(1.0);
-        creasePatternCamera.setDisplayPositionX(350.0);
-        creasePatternCamera.setDisplayPositionY(350.0);
+        Editor editor = new Editor(this);
+
+        canvas = editor.getCanvas();
+
+        canvas.creasePatternCamera.setCameraPositionX(0.0);
+        canvas.creasePatternCamera.setCameraPositionY(0.0);
+        canvas.creasePatternCamera.setCameraAngle(0.0);
+        canvas.creasePatternCamera.setCameraMirror(1.0);
+        canvas.creasePatternCamera.setCameraZoomX(1.0);
+        canvas.creasePatternCamera.setCameraZoomY(1.0);
+        canvas.creasePatternCamera.setDisplayPositionX(350.0);
+        canvas.creasePatternCamera.setDisplayPositionY(350.0);
 
         OZ.foldedFigure_camera_initialize();
 
@@ -165,7 +165,6 @@ public class App extends JFrame implements ActionListener {
 
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("fishbase.png")));
 
-        Editor editor = new Editor(this);
 
         setContentPane(editor.$$$getRootComponent$$$());
 
@@ -174,17 +173,9 @@ public class App extends JFrame implements ActionListener {
         BottomPanel bottomPanel = editor.getBottomPanel();
         LeftPanel leftPanel = editor.getLeftPanel();
 
-        canvas = editor.getCanvas();
-
         appMenuBar = new AppMenuBar(this);
 
         setJMenuBar(appMenuBar);
-
-        /*
-         * Extract fields from northPanel
-         */
-        scaleFactorTextField = topPanel.getScaleFactorTextField();
-        rotationTextField = topPanel.getRotationTextField();
 
         leftPanel.getGridConfigurationData(gridModel);
 
@@ -256,12 +247,16 @@ public class App extends JFrame implements ActionListener {
         backgroundModel.addPropertyChangeListener(e -> {
             if (backgroundModel.isLockBackground()) {
                 h_cam.set_i_Lock_on(backgroundModel.isLockBackground());
-                h_cam.setCamera(creasePatternCamera);
+                h_cam.setCamera(canvas.creasePatternCamera);
                 h_cam.h3_obj_and_h4_obj_calculation();
             } else {
                 h_cam.set_i_Lock_on(backgroundModel.isLockBackground());
             }
         });
+
+        creasePatternCameraModel.addPropertyChangeListener(e -> canvas.creasePatternCamera.setData(creasePatternCameraModel));
+        creasePatternCameraModel.addPropertyChangeListener(e -> topPanel.setData(creasePatternCameraModel));
+        creasePatternCameraModel.addPropertyChangeListener(e -> repaintCanvas());
 
         developmentView_initialization();
 
@@ -269,7 +264,7 @@ public class App extends JFrame implements ActionListener {
 
         Button_shared_operation();
 
-        mainDrawingWorker.setCamera(creasePatternCamera);
+        mainDrawingWorker.setCamera(canvas.creasePatternCamera);
 
         mainDrawingWorker.record();
         mainDrawingWorker.auxRecord();
@@ -355,6 +350,7 @@ public class App extends JFrame implements ActionListener {
 
         } else if (foldType == FoldType.CHANGING_FOLDED_3) {
             OZ.estimationOrder = estimationOrder;
+            OZ.estimationStep = FoldedFigure.EstimationStep.STEP_0;
 
             if (!subThreadRunning) {
                 subThreadRunning = true;
@@ -446,29 +442,25 @@ public class App extends JFrame implements ActionListener {
 
 
         //camera_of_orisen_nyuuryokuzu	の設定;
-        creasePatternCamera.setCameraPositionX(0.0);
-        creasePatternCamera.setCameraPositionY(0.0);
-        creasePatternCamera.setCameraAngle(0.0);
-        creasePatternCamera.setCameraMirror(1.0);
-        creasePatternCamera.setCameraZoomX(1.0);
-        creasePatternCamera.setCameraZoomY(1.0);
-        creasePatternCamera.setDisplayPositionX(350.0);
-        creasePatternCamera.setDisplayPositionY(350.0);
+        canvas.creasePatternCamera.setCameraPositionX(0.0);
+        canvas.creasePatternCamera.setCameraPositionY(0.0);
+        canvas.creasePatternCamera.setCameraAngle(0.0);
+        canvas.creasePatternCamera.setCameraMirror(1.0);
+        canvas.creasePatternCamera.setCameraZoomX(1.0);
+        canvas.creasePatternCamera.setCameraZoomY(1.0);
+        canvas.creasePatternCamera.setDisplayPositionX(350.0);
+        canvas.creasePatternCamera.setDisplayPositionY(350.0);
 
-        mainDrawingWorker.setCamera(creasePatternCamera);
-        OZ.cp_worker1.setCamera(creasePatternCamera);
+        mainDrawingWorker.setCamera(canvas.creasePatternCamera);
+        OZ.cp_worker1.setCamera(canvas.creasePatternCamera);
 
         canvasModel.reset();
         internalDivisionRatioModel.reset();
         foldedFigureModel.reset();
 
-        scaleFactor = 1.0;
-        scaleFactorTextField.setText(String.valueOf(scaleFactor)); //縮尺係数
-        rotationCorrection = 0.0;
-        rotationTextField.setText(String.valueOf(rotationCorrection));//回転表示角度の補正係数
-
         gridModel.reset();
         angleSystemModel.reset();
+        creasePatternCameraModel.reset();
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -482,7 +474,7 @@ public class App extends JFrame implements ActionListener {
         mainDrawingWorker.voronoiLineSet.reset();
     }
 
-    public void pointInCreasePatternOrFoldedFigure(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
+    public MouseWheelTarget pointInCreasePatternOrFoldedFigure(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
         //20171216
         //hyouji_flg==2,ip4==0  omote
         //hyouji_flg==2,ip4==1	ura
@@ -582,6 +574,8 @@ public class App extends JFrame implements ActionListener {
         i_cp_or_oriagari = temp_i_cp_or_oriagari;
 
         setFoldedFigureIndex(tempFoldedFigureIndex);
+
+        return temp_i_cp_or_oriagari;
     }
 
     void setFoldedFigureIndex(int i) {//Processing when OZ is switched
@@ -596,7 +590,7 @@ public class App extends JFrame implements ActionListener {
     public Point e2p(MouseEvent e) {
         double offset = 0.0;
         if (canvasModel.getDisplayPointOffset()) {
-            offset = creasePatternCamera.getCameraZoomX() * mainDrawingWorker.getSelectionDistance();
+            offset = canvas.creasePatternCamera.getCameraZoomX() * mainDrawingWorker.getSelectionDistance();
         }
         return new Point(e.getX() - (int) offset, e.getY() - (int) offset);
     }
@@ -608,7 +602,7 @@ public class App extends JFrame implements ActionListener {
     public void mouse_object_position(Point p) {//この関数はmouseMoved等と違ってマウスイベントが起きても自動では認識されない
         p_mouse_TV_position.set(p.getX(), p.getY());
 
-        p_mouse_object_position.set(creasePatternCamera.TV2object(p_mouse_TV_position));
+        p_mouse_object_position.set(canvas.creasePatternCamera.TV2object(p_mouse_TV_position));
     }
 
     //----------------------------------------------------------------------
@@ -632,7 +626,7 @@ public class App extends JFrame implements ActionListener {
         //h2,とh4も重なるようにする
 
         if (backgroundModel.isLockBackground()) {
-            h_cam.setCamera(creasePatternCamera);
+            h_cam.setCamera(canvas.creasePatternCamera);
             h_cam.h3_and_h4_calculation();
             h_cam.parameter_calculation();
         }
@@ -839,11 +833,11 @@ public class App extends JFrame implements ActionListener {
     }
 
     public void folding_estimated() {
-        OZ.folding_estimated(creasePatternCamera, Ss0);
+        OZ.folding_estimated(canvas.creasePatternCamera, Ss0);
     }
 
     void createTwoColorCreasePattern() {//Two-color crease pattern
-        OZ.createTwoColorCreasePattern(creasePatternCamera, Ss0);
+        OZ.createTwoColorCreasePattern(canvas.creasePatternCamera, Ss0);
     }
 
     void makeSubThread() {
@@ -907,17 +901,9 @@ public class App extends JFrame implements ActionListener {
             setFoldedFigureIndex(0);
             configure_initialize_prediction();
 
-            mainDrawingWorker.setCamera(creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
+            mainDrawingWorker.setCamera(canvas.creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
             mainDrawingWorker.setMemo_for_reading(memo_temp);
             mainDrawingWorker.record();
-
-            scaleFactor = creasePatternCamera.getCameraZoomX();
-            scaleFactorTextField.setText(String.valueOf(scaleFactor)); //縮尺係数
-            scaleFactorTextField.setCaretPosition(0);
-
-            rotationCorrection = creasePatternCamera.getCameraAngle();
-            rotationTextField.setText(String.valueOf(rotationCorrection));//回転表示角度の補正係数
-            rotationTextField.setCaretPosition(0);
         }
     }
 
@@ -972,7 +958,7 @@ public class App extends JFrame implements ActionListener {
 
         if (backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
             h_cam.set_i_Lock_on(true);
-            h_cam.setCamera(creasePatternCamera);
+            h_cam.setCamera(canvas.creasePatternCamera);
             h_cam.h3_obj_and_h4_obj_calculation();
         }
 

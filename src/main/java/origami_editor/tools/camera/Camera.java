@@ -1,5 +1,6 @@
 package origami_editor.tools.camera;
 
+import origami_editor.editor.databinding.CameraModel;
 import origami_editor.graphic2d.linesegment.LineSegment;
 import origami_editor.graphic2d.point.Point;
 
@@ -245,5 +246,9 @@ public class Camera { // Mediation between actual coordinates and display coordi
         setDisplayPosition(p);
     }
 
-
+    public void setData(CameraModel cameraModel) {
+        setCameraAngle(cameraModel.getRotation());
+        setCameraZoomX(cameraModel.getScale());
+        setCameraZoomY(cameraModel.getScale());
+    }
 }

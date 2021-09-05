@@ -40,6 +40,20 @@ public class CanvasModel {
 
     private boolean selectPersistent;
 
+    private boolean correctCpBeforeFolding;
+    private boolean check4Enabled;
+    /**
+     * Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
+     */
+    private SelectionOperationMode selectionOperationMode;
+    private int foldLineDividingNumber;
+    private int numPolygonCorners;
+
+    public CanvasModel() {
+        reset();
+    }
+
+
     public boolean isCorrectCreasePatternBeforeFolding() {
         return correctCpBeforeFolding;
     }
@@ -49,8 +63,6 @@ public class CanvasModel {
         this.correctCpBeforeFolding = correctCpBeforeFolding;
         this.pcs.firePropertyChange("correctCpBeforeFolding", oldCorrectCpBeforeFolding, correctCpBeforeFolding);
     }
-
-    private boolean correctCpBeforeFolding;
 
     public boolean isSelectPersistent() {
         return selectPersistent;
@@ -82,15 +94,6 @@ public class CanvasModel {
         this.pcs.firePropertyChange("check4Enabled", oldCheck4Enabled, check4Enabled);
     }
 
-    private boolean check4Enabled;
-
-    /**
-     * Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
-     */
-    private SelectionOperationMode selectionOperationMode;
-
-    private int foldLineDividingNumber;
-
     public int getNumPolygonCorners() {
         return numPolygonCorners;
     }
@@ -108,8 +111,6 @@ public class CanvasModel {
         this.numPolygonCorners = numPolygonCorners;
         this.pcs.firePropertyChange("numPolygonCorners", oldNumPolygonCorners, numPolygonCorners);
     }
-
-    private int numPolygonCorners;
 
     public int getFoldLineDividingNumber() {
         return foldLineDividingNumber;
@@ -129,10 +130,6 @@ public class CanvasModel {
         SelectionOperationMode oldSelectionOperationMode = this.selectionOperationMode;
         this.selectionOperationMode = selectionOperationMode;
         this.pcs.firePropertyChange("selectionOperationMode", oldSelectionOperationMode, selectionOperationMode);
-    }
-
-    public CanvasModel() {
-        reset();
     }
 
     public void restoreFoldLineAdditionalInputMode() {
@@ -290,6 +287,7 @@ public class CanvasModel {
 
         selectPersistent = false;
         correctCpBeforeFolding = false;
+
 
         this.pcs.firePropertyChange(null, null, null);
     }

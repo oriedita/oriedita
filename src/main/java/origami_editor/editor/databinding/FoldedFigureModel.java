@@ -127,6 +127,14 @@ public class FoldedFigureModel {
         }
     }
 
+    public void zoomIn() {
+        setScale(scale * Math.sqrt(Math.sqrt(Math.sqrt(2))));
+    }
+
+    public void zoomOut() {
+        setScale(scale / Math.sqrt(Math.sqrt(Math.sqrt(2))));
+    }
+
     public double getRotation() {
         return rotation;
     }

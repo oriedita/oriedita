@@ -29,14 +29,14 @@ public class FoldedFigureResize extends JPanel {
         foldedFigureSizeDecreaseButton.addActionListener(e -> {
             app.setHelp("oriagari_syukusyou");
 
-            foldedFigureModel.setScale(foldedFigureModel.getScale() / root2);
+            foldedFigureModel.zoomOut();
 
             app.Button_shared_operation();
         });
         foldedFigureSizeIncreaseButton.addActionListener(e -> {
             app.setHelp("oriagari_kakudai");
 
-            foldedFigureModel.setScale(foldedFigureModel.getScale() * root2);
+            foldedFigureModel.zoomIn();
 
             app.Button_shared_operation();
         });
