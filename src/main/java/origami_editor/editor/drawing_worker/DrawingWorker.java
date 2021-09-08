@@ -4242,7 +4242,7 @@ public class DrawingWorker {
         //四角枠内の削除 //p19_1はselectの最初のTen。この条件は最初のTenと最後の点が遠いので、四角を発生させるということ。
         if (p19_1.distance(p0) > 0.000001) {
             if ((i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) || (i_foldLine_additional == FoldLineAdditionalInputMode.BOTH_4)) { //折線の削除	//D_nisuru(p19_1,p0)で折線だけが削除される。
-                if (deleteInside_foldingLine(p19_1, p0) != 0) {
+                if (deleteInside_foldingLine(p19_1, p0)) {
                     organizeCircles();
                     record();
                 }
@@ -4250,7 +4250,7 @@ public class DrawingWorker {
 
 
             if (i_foldLine_additional == FoldLineAdditionalInputMode.BLACK_LINE_2) {  //Delete only the black polygonal line
-                if (deleteInside_edge(p19_1, p0) != 0) {
+                if (deleteInside_edge(p19_1, p0)) {
                     organizeCircles();
                     record();
                 }
@@ -4258,14 +4258,14 @@ public class DrawingWorker {
 
 
             if ((i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LIVE_LINE_3) || (i_foldLine_additional == FoldLineAdditionalInputMode.BOTH_4)) {  //Auxiliary live line // Currently it is recorded for undo even if it is not deleted 20161218
-                if (deleteInside_aux(p19_1, p0) != 0) {
+                if (deleteInside_aux(p19_1, p0)) {
                     organizeCircles();
                     record();
                 }
             }
 
             if ((i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) || (i_foldLine_additional == FoldLineAdditionalInputMode.BOTH_4)) { //補助絵線	//現状では削除しないときもUNDO用に記録されてしまう20161218
-                if (deleteInside(p19_1, p0) != 0) {
+                if (deleteInside(p19_1, p0)) {
                     record();
                 }
             }
@@ -4289,9 +4289,7 @@ public class DrawingWorker {
 
     }
 
-//--------------------
-
-    public int deleteInside_foldingLine(Point p0a, Point p0b) {
+    public boolean deleteInside_foldingLine(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -4312,7 +4310,7 @@ public class DrawingWorker {
         return foldLineSet.deleteInside_foldingLine(p_a, p_b, p_c, p_d);
     }
 
-    public int deleteInside_edge(Point p0a, Point p0b) {
+    public boolean deleteInside_edge(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -4332,7 +4330,7 @@ public class DrawingWorker {
         return foldLineSet.deleteInside_edge(p_a, p_b, p_c, p_d);
     }
 
-    public int deleteInside_aux(Point p0a, Point p0b) {
+    public boolean deleteInside_aux(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -4352,7 +4350,7 @@ public class DrawingWorker {
         return foldLineSet.deleteInside_aux(p_a, p_b, p_c, p_d);
     }
 
-    public int chenge_property_in_4kakukei(Point p0a, Point p0b) {
+    public boolean change_property_in_4kakukei(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -4369,10 +4367,10 @@ public class DrawingWorker {
         p_b.set(camera.TV2object(p0_b));
         p_c.set(camera.TV2object(p0_c));
         p_d.set(camera.TV2object(p0_d));
-        return foldLineSet.chenge_property_in_4kakukei(p_a, p_b, p_c, p_d, customCircleColor);
+        return foldLineSet.change_property_in_4kakukei(p_a, p_b, p_c, p_d, customCircleColor);
     }
 
-    public int deleteInside(Point p0a, Point p0b) {
+    public boolean deleteInside(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -4408,7 +4406,7 @@ public class DrawingWorker {
         i_drawing_stage = 0;
         if (p19_1.distance(p0) > 0.000001) {//現状では削除しないときもUNDO用に記録されてしまう20161218
 
-            if (chenge_property_in_4kakukei(p19_1, p0) != 0) {
+            if (change_property_in_4kakukei(p19_1, p0)) {
             }
         }
 
@@ -7422,7 +7420,7 @@ public class DrawingWorker {
         i_drawing_stage = 0;
 
         if (p19_1.distance(p0) > 0.000001) {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
-            if (insideToMountain(p19_1, p0) != 0) {
+            if (insideToMountain(p19_1, p0)) {
                 fix2(0.001, 0.5);
                 record();
             }
@@ -7440,7 +7438,7 @@ public class DrawingWorker {
     }
 
     //--------------------
-    public int insideToMountain(Point p0a, Point p0b) {
+    public boolean insideToMountain(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -7477,7 +7475,7 @@ public class DrawingWorker {
         i_drawing_stage = 0;
 
         if (p19_1.distance(p0) > 0.000001) {
-            if (insideToValley(p19_1, p0) != 0) {
+            if (insideToValley(p19_1, p0)) {
                 fix2(0.001, 0.5);
                 record();
             }
@@ -7492,7 +7490,7 @@ public class DrawingWorker {
         }
     }
 
-    public int insideToValley(Point p0a, Point p0b) {
+    public boolean insideToValley(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -7529,7 +7527,7 @@ public class DrawingWorker {
         i_drawing_stage = 0;
 
         if (p19_1.distance(p0) > 0.000001) {
-            if (insideToEdge(p19_1, p0) != 0) {
+            if (insideToEdge(p19_1, p0)) {
                 fix2(0.001, 0.5);
                 record();
             }
@@ -7546,7 +7544,7 @@ public class DrawingWorker {
         }
     }
 
-    public int insideToEdge(Point p0a, Point p0b) {
+    public boolean insideToEdge(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -7582,7 +7580,7 @@ public class DrawingWorker {
         i_drawing_stage = 0;
 
         if (p19_1.distance(p0) > 0.000001) {
-            if (insideToAux(p19_1, p0) != 0) {
+            if (insideToAux(p19_1, p0)) {
                 record();
             }//この関数は不完全なのでまだ未公開20171126
         }
@@ -7607,8 +7605,7 @@ public class DrawingWorker {
 
     }
 
-    //--------------------
-    public int insideToAux(Point p0a, Point p0b) {
+    public boolean insideToAux(Point p0a, Point p0b) {
         Point p0_a = new Point();
         Point p0_b = new Point();
         Point p0_c = new Point();
@@ -8636,7 +8633,7 @@ public class DrawingWorker {
     }
 
     public void fix2(double r_hitosii, double heikou_hantei) {
-        while (foldLineSet.fix2(r_hitosii, heikou_hantei) == 1) {
+        while (foldLineSet.fix2(r_hitosii, heikou_hantei)) {
         }
         //foldLineSet.addsenbun  delsenbunを実施しているところでcheckを実施
         if (check1) {

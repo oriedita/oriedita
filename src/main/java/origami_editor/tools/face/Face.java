@@ -85,8 +85,7 @@ public class Face {
     }
 
     public void align() { //Align so that the value of PointId [1] is the smallest in PointId [].
-        int idmin;
-        idmin = getMinimumPointId();
+        int idmin = getMinimumPointId();
         while (getPointId(1) != idmin) {
             replace();
         }

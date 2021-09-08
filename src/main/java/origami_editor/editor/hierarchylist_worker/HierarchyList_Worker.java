@@ -290,18 +290,18 @@ public class HierarchyList_Worker {
         System.out.println("Smen(s0)に優先順位をつける");
         //まず、他のSubFaceに丸ごと含まれているSubFaceを除外する
 
-        int[] uniquenessOfSubFace = new int[SubFaceTotal + 1];  //<<<<<<<<<<<<<<<SubFaceの独自性
+        boolean[] uniquenessOfSubFace = new boolean[SubFaceTotal + 1];  //<<<<<<<<<<<<<<<SubFaceの独自性
         for (int i = 1; i <= SubFaceTotal; i++) {
-            uniquenessOfSubFace[i] = 1;
+            uniquenessOfSubFace[i] = true;
         }
         for (int i = 1; i <= SubFaceTotal; i++) {
-            uniquenessOfSubFace[i] = 1;
+            uniquenessOfSubFace[i] = true;
             for (int j = 1; j <= SubFaceTotal; j++) {
-                if (uniquenessOfSubFace[j] == 1) {
+                if (uniquenessOfSubFace[j]) {
 
                     if (i != j) {//s0[j]がs0[i]を含むかをみる。
                         if (subFace_i_ga_j_ni_included(i, j)) {
-                            uniquenessOfSubFace[i] = 0;
+                            uniquenessOfSubFace[i] = false;
                             break;
                         }
                     }

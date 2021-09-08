@@ -49,21 +49,21 @@ public class Polygon {
 
     // A function that determines whether a line segment intersects (true) or not (false) with an edge of this polygon ------------------------- ---------
     public boolean intersects(LineSegment s0) {
-        int itrue = 0;
+        boolean itrue = false;
         LineSegment s = new LineSegment();
         for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]); //line segment
             if (OritaCalc.line_intersect_decide(s0, s).isIntersection()) {
-                itrue = 1;
+                itrue = true;
             }
         }
 
         s.set(vertices[vertexCount], vertices[1]); //line segment
         if (OritaCalc.line_intersect_decide(s0, s).isIntersection()) {
-            itrue = 1;
+            itrue = true;
         }
 
-        return itrue == 1;
+        return itrue;
     }
 
     // 0, when all of the line segment s0 exists outside the convex polygon (the boundary line is not considered inside)
@@ -433,7 +433,6 @@ public class Polygon {
         return tr;
     }
 
-    //描画-----------------------------------------------------------------
     public void draw(Graphics g) {
 
         int[] x = new int[100];

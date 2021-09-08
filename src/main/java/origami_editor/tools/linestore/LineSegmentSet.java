@@ -77,8 +77,7 @@ public class LineSegmentSet {
     }
 
     public double getBX(int i) {
-        LineSegment s;
-        s = getLine(i);
+        LineSegment s = getLine(i);
         return s.getBX();
     }
 
@@ -222,8 +221,7 @@ public class LineSegmentSet {
     //Remove dotted line segments
     public void point_removal() {
         for (int i = 1; i <= numLineSegments; i++) {
-            LineSegment s;
-            s = getLine(i);
+            LineSegment s = getLine(i);
             if (OritaCalc.equal(s.getA(), s.getB())) {
                 deleteLineSegment(i);
                 i = i - 1;
@@ -292,10 +290,8 @@ public class LineSegmentSet {
         if (i == j) {
             return false;
         }
-        LineSegment si;
-        si = getLine(i);
-        LineSegment sj;
-        sj = getLine(j);
+        LineSegment si = getLine(i);
+        LineSegment sj = getLine(j);
         if (OritaCalc.line_intersect_decide(si, sj) == LineSegment.Intersection.PARALLEL_EQUAL_31) {  //31 indicates that si and sj overlap exactly the same
             deleteLineSegment(j);
             return true;
@@ -420,8 +416,7 @@ public class LineSegmentSet {
                 si.setA(p2);
                 si.setB(p4);
 
-                LineColor overlapping_col;
-                overlapping_col = si.getColor();
+                LineColor overlapping_col = si.getColor();
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
@@ -432,8 +427,7 @@ public class LineSegmentSet {
             case PARALLEL_START_OF_S2_CONTAINS_START_OF_S1_322: {//The endpoints of two line segments (p1 and p3) overlap at one point. sj contains si
                 sj.setA(p2);
                 sj.setB(p4);
-                LineColor overlapping_col;
-                overlapping_col = si.getColor();
+                LineColor overlapping_col = si.getColor();
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
@@ -457,8 +451,7 @@ public class LineSegmentSet {
             case PARALLEL_END_OF_S2_CONTAINS_START_OF_S1_332: {//The endpoints of two line segments (p1 and p4) overlap at one point. sj contains si
                 sj.setA(p2);
                 sj.setB(p3);
-                LineColor overlapping_col;
-                overlapping_col = si.getColor();
+                LineColor overlapping_col = si.getColor();
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
@@ -468,8 +461,7 @@ public class LineSegmentSet {
             case PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341: {//The endpoints of two line segments (p2 and p3) overlap at one point. si contains sj
                 si.setA(p1);
                 si.setB(p4);
-                LineColor overlapping_col;
-                overlapping_col = si.getColor();
+                LineColor overlapping_col = si.getColor();
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
@@ -480,13 +472,11 @@ public class LineSegmentSet {
             case PARALLEL_START_OF_S2_CONTAINS_END_OF_S1_342: {//The endpoints of two line segments (p2 and p3) overlap at one point. sj contains si
                 sj.setA(p1);
                 sj.setB(p4);
-                LineColor overlapping_col;
-                overlapping_col = si.getColor();
+                LineColor overlapping_col = si.getColor();
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
                 si.setColor(overlapping_col);
-
 
                 return true;
             }
@@ -494,8 +484,7 @@ public class LineSegmentSet {
                 si.setA(p1);
                 si.setB(p3);
 
-                LineColor overlapping_col;
-                overlapping_col = si.getColor();
+                LineColor overlapping_col = si.getColor();
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
@@ -506,8 +495,7 @@ public class LineSegmentSet {
             case PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352: {//The endpoints of two line segments (p2 and p4) overlap at one point. sj contains si
                 sj.setA(p1);
                 sj.setB(p3);
-                LineColor overlapping_col;
-                overlapping_col = si.getColor();
+                LineColor overlapping_col = si.getColor();
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
@@ -520,8 +508,7 @@ public class LineSegmentSet {
                 si.setB(p3);
 
                 addLine(p2, p4, si.getColor());
-                LineColor overlapping_col;
-                overlapping_col = si.getColor();
+                LineColor overlapping_col = si.getColor();
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
@@ -535,8 +522,7 @@ public class LineSegmentSet {
 
                 addLine(p2, p3, si.getColor());
 
-                LineColor overlapping_col;
-                overlapping_col = si.getColor();
+                LineColor overlapping_col = si.getColor();
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
@@ -550,8 +536,7 @@ public class LineSegmentSet {
 
                 addLine(p2, p4, sj.getColor());
 
-                LineColor overlapping_col;
-                overlapping_col = si.getColor();
+                LineColor overlapping_col = si.getColor();
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
@@ -565,8 +550,7 @@ public class LineSegmentSet {
 
                 addLine(p2, p3, sj.getColor());
 
-                LineColor overlapping_col;
-                overlapping_col = si.getColor();
+                LineColor overlapping_col = si.getColor();
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
@@ -581,8 +565,7 @@ public class LineSegmentSet {
                 sj.setA(p2);
                 sj.setB(p4);
 
-                LineColor overlapping_col;
-                overlapping_col = si.getColor();
+                LineColor overlapping_col = si.getColor();
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
@@ -596,8 +579,7 @@ public class LineSegmentSet {
                 sj.setA(p3);
                 sj.setB(p2);
 
-                LineColor overlapping_col;
-                overlapping_col = si.getColor();
+                LineColor overlapping_col = si.getColor();
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
@@ -609,8 +591,7 @@ public class LineSegmentSet {
                 sj.setB(p3);
                 si.setA(p2);
                 si.setB(p4);
-                LineColor overlapping_col;
-                overlapping_col = si.getColor();
+                LineColor overlapping_col = si.getColor();
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
@@ -622,8 +603,7 @@ public class LineSegmentSet {
                 sj.setB(p4);
                 si.setA(p3);
                 si.setB(p2);
-                LineColor overlapping_col;
-                overlapping_col = si.getColor();
+                LineColor overlapping_col = si.getColor();
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
@@ -725,6 +705,5 @@ public class LineSegmentSet {
             LineSegment si = getLine(i);
             si.set(p);
         }
-
     }
 }

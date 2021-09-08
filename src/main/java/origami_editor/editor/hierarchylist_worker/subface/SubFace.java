@@ -332,7 +332,7 @@ public class SubFace {//This class folds the development view and estimates the 
     // If hierarchyList[i][j] is -100, then faces i and j do not overlap.
     public void setGuideMap(HierarchyList hierarchyList) { //I will prepare a guidebook for the permutations with repeat generator in SubFace.
         int[] ueFaceId = new int[faceIdCount + 1];
-        int[] ueFaceIdFlg = new int[faceIdCount + 1];//1 if ueFaceId [] is enabled, 0 if disabled
+        boolean[] ueFaceIdFlg = new boolean[faceIdCount + 1];//1 if ueFaceId [] is enabled, 0 if disabled
 
         for (int faceIndex = 1; faceIndex <= faceIdCount; faceIndex++) {
             int ueFaceIdCount = 0;//Stores how many ueFaceId [] are from 1.
@@ -342,7 +342,7 @@ public class SubFace {//This class folds the development view and estimates the 
                 if (hierarchyList.get(faceIdList[i], faceIdList[faceIndex]) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
                     ueFaceIdCount = ueFaceIdCount + 1;
                     ueFaceId[ueFaceIdCount] = i;
-                    ueFaceIdFlg[ueFaceIdCount] = 1;
+                    ueFaceIdFlg[ueFaceIdCount] = true;
                 }
             }
 
@@ -350,17 +350,17 @@ public class SubFace {//This class folds the development view and estimates the 
             for (int i = 1; i <= ueFaceIdCount - 1; i++) {
                 for (int j = i + 1; j <= ueFaceIdCount; j++) {
                     if (hierarchyList.get(faceIdList[ueFaceId[i]], faceIdList[ueFaceId[j]]) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                        ueFaceIdFlg[i] = 0;
+                        ueFaceIdFlg[i] = false;
                     }
                     if (hierarchyList.get(faceIdList[ueFaceId[j]], faceIdList[ueFaceId[i]]) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                        ueFaceIdFlg[j] = 0;
+                        ueFaceIdFlg[j] = false;
                     }
                 }
             }
 
             //Store in guidebook
             for (int i = 1; i <= ueFaceIdCount; i++) {
-                if (ueFaceIdFlg[i] == 1) {
+                if (ueFaceIdFlg[i]) {
                     permutationGenerator.addGuide(faceIndex, ueFaceId[i]);
                 }
             }

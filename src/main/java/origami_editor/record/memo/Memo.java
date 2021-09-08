@@ -38,13 +38,6 @@ public class Memo {//Notepad for data storage
         }
     }
 
-    public void set_old(Memo m0) {
-        reset();
-        for (int i = 1; i <= m0.getLineCount(); i++) {
-            addLine(m0.getLine(i));
-        }
-    }
-
     public void addMemo(Memo m0) {
         for (int i = 1; i <= m0.getLineCount(); i++) {
             addLine(m0.getLine(i));
