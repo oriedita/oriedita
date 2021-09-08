@@ -156,7 +156,7 @@ public class LineSegmentSet {
     }
 
     public void setMemo(Memo memo1) {
-        int reading_flag = 0;//If it is 0, it will not be read. If it is 1, read it.
+        boolean reading_flag = false;//If it is 0, it will not be read. If it is 1, read it.
         int iNumber = 0;
         LineColor ic;
 
@@ -172,13 +172,15 @@ public class LineSegmentSet {
 
             str = tk.nextToken();
             if (str.equals("<線分集合>")) { // <Line segment set>
-                reading_flag = 1;
+                reading_flag = true;
             }
 
-            if ((reading_flag == 1) && (str.equals("番号"))) { // number
+            if (reading_flag && (str.equals("番号"))) { // number
                 iLine = iLine + 1;
             }
         }
+
+        reading_flag = false;
 
         numLineSegments = iLine;
         //First the total number of line segments was calculated
@@ -188,21 +190,21 @@ public class LineSegmentSet {
             str = tk.nextToken();
 
             if (str.equals("<線分集合>")) { // Line segment set
-                reading_flag = 1;
+                reading_flag = true;
             }
 
-            if ((reading_flag == 1) && (str.equals("番号"))) { // number
+            if ((reading_flag) && (str.equals("番号"))) { // number
                 str = tk.nextToken();
                 iNumber = Integer.parseInt(str);
 
             }
-            if ((reading_flag == 1) && (str.equals("色"))) { // colour
+            if ((reading_flag) && (str.equals("色"))) { // colour
                 str = tk.nextToken();
                 ic = LineColor.from(str);
                 LineSegment s = getLine(iNumber);
                 s.setColor(ic);
             }
-            if ((reading_flag == 1) && (str.equals("座標"))) { // coordinate
+            if ((reading_flag) && (str.equals("座標"))) { // coordinate
                 str = tk.nextToken();
                 ax = Double.parseDouble(str);
                 str = tk.nextToken();

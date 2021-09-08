@@ -265,15 +265,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         }
 
         AffineTransform at = new AffineTransform();
-        at.rotate(app.h_cam.getAngle() * Math.PI / 180.0, app.h_cam.get_cx(), app.h_cam.get_cy());
+        at.rotate(app.h_cam.getAngle() * Math.PI / 180.0, app.h_cam.getRotationX(), app.h_cam.getRotationY());
         g2h.setTransform(at);
 
 
-        g2h.drawImage(imgh, app.h_cam.get_x0(), app.h_cam.get_y0(), app.h_cam.get_x1(), app.h_cam.get_y1(), this);
+        g2h.drawImage(imgh, app.h_cam.getX0(), app.h_cam.getY0(), app.h_cam.getX1(), app.h_cam.getY1(), this);
 
         //g2h.drawImage(imgh,kaisi_x,kaisi_y,this);//hx0,hy0,は描画開始位置
 
-        at.rotate(-app.h_cam.getAngle() * Math.PI / 180.0, app.h_cam.get_cx(), app.h_cam.get_cy());
+        at.rotate(-app.h_cam.getAngle() * Math.PI / 180.0, app.h_cam.getRotationX(), app.h_cam.getRotationY());
         g2h.setTransform(at);
 
     }

@@ -48,7 +48,7 @@ public class Background_camera {//Mediation between actual coordinates and displ
         camera.setCamera(cam0);
     }
 
-    public Point get_kijyun_jyoutai_position(Point pt) {
+    public Point getStandardStatePosition(Point pt) {
         Point pt1 = new Point();
         Point pt2 = new Point();
         Point pt3 = new Point();
@@ -65,7 +65,7 @@ public class Background_camera {//Mediation between actual coordinates and displ
     }
 
     public void set_h1(Point ht) {
-        h1.set(get_kijyun_jyoutai_position(ht));
+        h1.set(getStandardStatePosition(ht));
     }
 
     public Point get_h2() {
@@ -73,7 +73,7 @@ public class Background_camera {//Mediation between actual coordinates and displ
     }
 
     public void set_h2(Point ht) {
-        h2.set(get_kijyun_jyoutai_position(ht));
+        h2.set(getStandardStatePosition(ht));
     }
 
     public Point get_h3() {
@@ -131,19 +131,19 @@ public class Background_camera {//Mediation between actual coordinates and displ
         background_height = d0;
     }
 
-    public int get_x0() {
+    public int getX0() {
         return (int) ((1.0 - magnification) * h1.getX() + h3.getX() - h1.getX());
     }
 
-    public int get_y0() {
+    public int getY0() {
         return (int) ((1.0 - magnification) * h1.getY() + h3.getY() - h1.getY());
     }
 
-    public int get_x1() {
+    public int getX1() {
         return (int) (background_width * magnification);
     }
 
-    public int get_y1() {
+    public int getY1() {
         return (int) (background_height * magnification);
     }
 
@@ -151,11 +151,11 @@ public class Background_camera {//Mediation between actual coordinates and displ
         return p_rotation_angle;
     }
 
-    public int get_cx() {
+    public int getRotationX() {
         return (int) p_rotation_x;
     }
 
-    public int get_cy() {
+    public int getRotationY() {
         return (int) p_rotation_y;
     }
 
