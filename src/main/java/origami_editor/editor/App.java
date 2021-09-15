@@ -1,18 +1,17 @@
 package origami_editor.editor;
 
+import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
-import origami_editor.editor.hierarchylist_worker.HierarchyList_Worker;
-import origami_editor.graphic2d.linesegment.LineSegment;
-import origami_editor.graphic2d.oritacalc.OritaCalc;
-import origami_editor.graphic2d.point.Point;
-import origami_editor.record.memo.Memo;
-import origami_editor.record.string_op.StringOp;
-import origami_editor.tools.background_camera.Background_camera;
-import origami_editor.tools.bulletinboard.BulletinBoard;
-import origami_editor.tools.linestore.LineSegmentSet;
+import origami.crease_pattern.worker.HierarchyList_Worker;
+import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.Point;
+import origami_editor.record.Memo;
+import origami_editor.tools.StringOp;
+import origami.crease_pattern.LineSegmentSet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static origami_editor.editor.ResourceUtil.createImageIcon;
+import static origami_editor.tools.ResourceUtil.createImageIcon;
 
 public class App extends JFrame implements ActionListener {
     public final GridModel gridModel = new GridModel();

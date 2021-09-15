@@ -1,8 +1,9 @@
 package origami_editor.editor;
 
-import origami_editor.graphic2d.point.Point;
-import origami_editor.record.memo.Memo;
-import origami_editor.tools.line.Line;
+import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.Point;
+import origami_editor.record.Memo;
+import origami.crease_pattern.element.Line;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;

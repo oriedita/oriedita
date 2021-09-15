@@ -1,9 +1,9 @@
 package origami_editor.graphic2d.oritaoekaki;
 
-import origami_editor.editor.LineColor;
-import origami_editor.graphic2d.linesegment.LineSegment;
-import origami_editor.graphic2d.oritacalc.OritaCalc;
-import origami_editor.graphic2d.point.Point;
+import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.Point;
 
 import java.awt.*;
 

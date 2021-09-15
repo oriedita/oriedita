@@ -2,14 +2,14 @@ package origami_editor.editor.folded_figure;
 
 import origami_editor.editor.App;
 import origami_editor.editor.databinding.FoldedFigureModel;
-import origami_editor.editor.basicbranch_worker.WireFrame_Worker;
-import origami_editor.editor.creasepattern_worker.CreasePattern_Worker;
-import origami_editor.editor.hierarchylist_worker.HierarchyList_Worker;
-import origami_editor.graphic2d.point.Point;
-import origami_editor.record.memo.Memo;
-import origami_editor.tools.bulletinboard.BulletinBoard;
-import origami_editor.tools.camera.Camera;
-import origami_editor.tools.linestore.LineSegmentSet;
+import origami.crease_pattern.worker.WireFrame_Worker;
+import origami.crease_pattern.worker.CreasePattern_Worker;
+import origami.crease_pattern.worker.HierarchyList_Worker;
+import origami.crease_pattern.element.Point;
+import origami_editor.record.Memo;
+import origami_editor.editor.component.BulletinBoard;
+import origami_editor.tools.Camera;
+import origami.crease_pattern.LineSegmentSet;
 
 import java.awt.*;
 

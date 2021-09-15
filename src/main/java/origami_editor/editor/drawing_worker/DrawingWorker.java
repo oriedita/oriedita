@@ -1,24 +1,25 @@
 package origami_editor.editor.drawing_worker;
 
+import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.*;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing_worker.drawing_worker_toolbox.Drawing_Worker_Toolbox;
 import origami_editor.editor.undo_box.HistoryState;
-import origami_editor.graphic2d.circle.Circle;
+import origami.crease_pattern.element.Circle;
 import origami_editor.graphic2d.grid.Grid;
-import origami_editor.graphic2d.linesegment.LineSegment;
-import origami_editor.graphic2d.oritacalc.OritaCalc;
-import origami_editor.graphic2d.oritacalc.straightline.StraightLine;
+import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.StraightLine;
 import origami_editor.graphic2d.oritaoekaki.OritaDrawing;
-import origami_editor.graphic2d.point.Point;
-import origami_editor.graphic2d.polygon.Polygon;
-import origami_editor.record.memo.Memo;
-import origami_editor.record.string_op.StringOp;
+import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.Polygon;
+import origami_editor.record.Memo;
+import origami_editor.tools.StringOp;
 import origami_editor.sortingbox.SortingBox_int_double;
 import origami_editor.sortingbox.int_double;
-import origami_editor.tools.camera.Camera;
-import origami_editor.tools.foldlineset.FoldLineSet;
-import origami_editor.tools.linestore.LineSegmentSet;
+import origami_editor.tools.Camera;
+import origami.crease_pattern.FoldLineSet;
+import origami.crease_pattern.LineSegmentSet;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -8776,14 +8777,6 @@ public class DrawingWorker {
     public void setData(HistoryStateModel historyStateModel) {
         setUndoTotal(historyStateModel.getHistoryTotal());
         setAuxUndoTotal(historyStateModel.getHistoryTotal());
-    }
-
-    public enum FoldLineAdditionalInputMode {
-        POLY_LINE_0,
-        AUX_LINE_1,
-        BLACK_LINE_2,
-        AUX_LIVE_LINE_3,
-        BOTH_4
     }
 
     public enum OperationFrameMode {

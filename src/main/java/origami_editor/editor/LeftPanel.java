@@ -1,14 +1,15 @@
 package origami_editor.editor;
 
+import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.databinding.GridModel;
 import origami_editor.editor.databinding.HistoryStateModel;
-import origami_editor.editor.drawing_worker.DrawingWorker;
+import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
 import origami_editor.editor.folded_figure.FoldedFigure;
-import origami_editor.record.memo.Memo;
-import origami_editor.record.string_op.StringOp;
+import origami_editor.record.Memo;
+import origami_editor.tools.StringOp;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -168,7 +169,7 @@ public class LeftPanel extends JPanel {
         drawCreaseFreeButton.addActionListener(e -> {
             app.setHelp("senbun_nyuryoku");
 
-            app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0);
+            app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
             app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_FREE_1);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
 
@@ -189,7 +190,7 @@ public class LeftPanel extends JPanel {
         voronoiButton.addActionListener(e -> {
             app.setHelp("Voronoi");
 
-            app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0);
+            app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
             app.canvasModel.setMouseMode(MouseMode.VORONOI_CREATE_62);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.VORONOI_CREATE_62);
 
@@ -446,7 +447,7 @@ public class LeftPanel extends JPanel {
             app.setHelp("senbun_sakujyo");
 
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
-            app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0);
+            app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -456,7 +457,7 @@ public class LeftPanel extends JPanel {
             app.setHelp("kuro_senbun_sakujyo");
 
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
-            app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.BLACK_LINE_2);
+            app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.BLACK_LINE_2);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -466,7 +467,7 @@ public class LeftPanel extends JPanel {
             app.setHelp("senbun3_sakujyo");
 
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
-            app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.AUX_LIVE_LINE_3);
+            app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LIVE_LINE_3);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();

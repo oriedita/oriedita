@@ -1,10 +1,9 @@
 package origami_editor.editor;
 
 import origami_editor.editor.databinding.*;
-import origami_editor.editor.drawing_worker.DrawingWorker;
+import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
 import origami_editor.editor.folded_figure.FoldedFigure;
-import origami_editor.graphic2d.point.Point;
-import origami_editor.tools.background_camera.Background_camera;
+import origami.crease_pattern.element.Point;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,7 +48,7 @@ public class TopPanel extends JPanel {
         operationFrameSelectButton.addActionListener(e -> {
             app.setHelp("tyouhoukei_select");
 
-            app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0);
+            app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
             app.canvasModel.setMouseMode(MouseMode.OPERATION_FRAME_CREATE_61);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
 

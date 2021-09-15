@@ -1,6 +1,6 @@
 package origami_editor.editor.undo_box;
 
-import origami_editor.record.memo.Memo;
+import origami_editor.record.Memo;
 
 import java.util.LinkedList;
 

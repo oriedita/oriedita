@@ -2,7 +2,7 @@ package origami_editor.editor;
 
 import origami_editor.editor.component.ColorIcon;
 import origami_editor.editor.databinding.GridModel;
-import origami_editor.record.string_op.StringOp;
+import origami_editor.tools.StringOp;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

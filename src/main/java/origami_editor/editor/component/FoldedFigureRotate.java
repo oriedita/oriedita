@@ -2,7 +2,7 @@ package origami_editor.editor.component;
 
 import origami_editor.editor.App;
 import origami_editor.editor.databinding.FoldedFigureModel;
-import origami_editor.graphic2d.oritacalc.OritaCalc;
+import origami.crease_pattern.OritaCalc;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

@@ -1,7 +1,7 @@
 package origami_editor.editor.databinding;
 
 import origami_editor.graphic2d.grid.Grid;
-import origami_editor.graphic2d.oritacalc.OritaCalc;
+import origami.crease_pattern.OritaCalc;
 
 import java.awt.*;
 import java.beans.PropertyChangeListener;

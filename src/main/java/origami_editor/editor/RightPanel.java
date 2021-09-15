@@ -1,12 +1,13 @@
 package origami_editor.editor;
 
+import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.component.ColorIcon;
 import origami_editor.editor.databinding.AngleSystemModel;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.HistoryStateModel;
 import origami_editor.editor.databinding.MeasuresModel;
-import origami_editor.editor.drawing_worker.DrawingWorker;
-import origami_editor.record.string_op.StringOp;
+import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
+import origami_editor.tools.StringOp;
 
 import javax.swing.*;
 import java.awt.*;
@@ -427,13 +428,13 @@ public class RightPanel extends JPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
 
-            app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.AUX_LINE_1);
+            app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LINE_1);
         });
         h_senbun_sakujyoButton.addActionListener(e -> {
             app.setHelp("h_senbun_sakujyo");
 
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
-            app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.AUX_LINE_1);
+            app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LINE_1);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();

@@ -1,9 +1,9 @@
 package origami_editor.editor.databinding;
 
-import origami_editor.editor.LineColor;
+import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.drawing_worker.DrawingWorker;
+import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
 
 import java.awt.*;
 import java.beans.PropertyChangeListener;
@@ -33,8 +33,8 @@ public class CanvasModel {
     private MouseMode mouseMode;
     private MouseMode mouseModeAfterColorSelection;
 
-    private DrawingWorker.FoldLineAdditionalInputMode foldLineAdditionalInputMode;
-    private DrawingWorker.FoldLineAdditionalInputMode foldLineAdditionalInputMode_old;
+    private FoldLineAdditionalInputMode foldLineAdditionalInputMode;
+    private FoldLineAdditionalInputMode foldLineAdditionalInputMode_old;
 
     private Color circleCustomizedColor;
 
@@ -136,12 +136,12 @@ public class CanvasModel {
         setFoldLineAdditionalInputMode(foldLineAdditionalInputMode_old);
     }
 
-    public DrawingWorker.FoldLineAdditionalInputMode getFoldLineAdditionalInputMode() {
+    public FoldLineAdditionalInputMode getFoldLineAdditionalInputMode() {
         return foldLineAdditionalInputMode;
     }
 
-    public void setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode foldLineAdditionalInputMode) {
-        DrawingWorker.FoldLineAdditionalInputMode oldFoldLineAdditionalInputMode = this.foldLineAdditionalInputMode;
+    public void setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode foldLineAdditionalInputMode) {
+        FoldLineAdditionalInputMode oldFoldLineAdditionalInputMode = this.foldLineAdditionalInputMode;
         this.foldLineAdditionalInputMode_old = this.foldLineAdditionalInputMode;
         this.foldLineAdditionalInputMode = foldLineAdditionalInputMode;
         this.pcs.firePropertyChange("foldLineAdditionalInputMode", oldFoldLineAdditionalInputMode, foldLineAdditionalInputMode);
@@ -272,8 +272,8 @@ public class CanvasModel {
         mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;
         mouseModeAfterColorSelection = MouseMode.FOLDABLE_LINE_DRAW_71;
 
-        foldLineAdditionalInputMode = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;
-        foldLineAdditionalInputMode_old = DrawingWorker.FoldLineAdditionalInputMode.POLY_LINE_0;
+        foldLineAdditionalInputMode = FoldLineAdditionalInputMode.POLY_LINE_0;
+        foldLineAdditionalInputMode_old = FoldLineAdditionalInputMode.POLY_LINE_0;
 
         selectionOperationMode = SelectionOperationMode.NORMAL_0;
 

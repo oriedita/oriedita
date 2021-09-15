@@ -1,10 +1,10 @@
 package origami_editor.editor.drawing_worker.drawing_worker_toolbox;
 
-import origami_editor.graphic2d.linesegment.LineSegment;
-import origami_editor.graphic2d.oritacalc.OritaCalc;
-import origami_editor.graphic2d.oritacalc.straightline.StraightLine;
-import origami_editor.graphic2d.point.Point;
-import origami_editor.tools.foldlineset.FoldLineSet;
+import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.StraightLine;
+import origami.crease_pattern.element.Point;
+import origami.crease_pattern.FoldLineSet;
 
 public class Drawing_Worker_Toolbox {
     FoldLineSet ori_s;

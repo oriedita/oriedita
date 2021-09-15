@@ -2,11 +2,12 @@ package origami_editor.editor;
 
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.drawing_worker.DrawingWorker;
+import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
 import origami_editor.editor.folded_figure.FoldedFigure;
-import origami_editor.graphic2d.linesegment.LineSegment;
-import origami_editor.graphic2d.point.Point;
-import origami_editor.record.memo.Memo;
-import origami_editor.tools.camera.Camera;
+import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.element.Point;
+import origami_editor.record.Memo;
+import origami_editor.tools.Camera;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -541,7 +542,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     es1.setCamera(creasePatternCamera);
                     es1.mPressed_A_03(p);
 
-                    app.canvasModel.setFoldLineAdditionalInputMode(DrawingWorker.FoldLineAdditionalInputMode.BOTH_4);
+                    app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.BOTH_4);
                 }
                 repaint();
 

@@ -1,6 +1,6 @@
 package origami_editor.graphic2d.averagecoordinates;
 
-import origami_editor.graphic2d.point.Point;
+import origami.crease_pattern.element.Point;
 
 public class AverageCoordinates {
     double x, y;

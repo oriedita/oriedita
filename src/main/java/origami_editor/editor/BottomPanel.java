@@ -6,7 +6,7 @@ import origami_editor.editor.component.FoldedFigureRotate;
 import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.folded_figure.FoldedFigure;
-import origami_editor.record.string_op.StringOp;
+import origami_editor.tools.StringOp;
 
 import javax.swing.*;
 import java.awt.*;

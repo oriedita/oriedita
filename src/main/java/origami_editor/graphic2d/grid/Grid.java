@@ -1,10 +1,10 @@
 package origami_editor.graphic2d.grid;
 
 import origami_editor.editor.databinding.GridModel;
-import origami_editor.graphic2d.linesegment.LineSegment;
-import origami_editor.graphic2d.oritacalc.OritaCalc;
-import origami_editor.graphic2d.point.Point;
-import origami_editor.tools.camera.Camera;
+import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.Point;
+import origami_editor.tools.Camera;
 
 import java.awt.*;
 

@@ -1,7 +1,6 @@
 package origami_editor.editor;
 
 import origami_editor.editor.databinding.CanvasModel;
-import origami_editor.record.memo.Memo;
 
 import javax.swing.*;
 import java.awt.*;
