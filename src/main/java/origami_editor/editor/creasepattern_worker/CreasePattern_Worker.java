@@ -13,6 +13,8 @@ import origami_editor.tools.linestore.LineSegmentSet;
 import origami_editor.tools.pointset.PointSet;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CreasePattern_Worker {
     public Point point_of_referencePlane_ob = new Point();
@@ -331,13 +333,8 @@ public class CreasePattern_Worker {
     }
 
     public LineSegmentSet getLineStore() {
-        LineSegmentSet ss = new LineSegmentSet();    //Instantiation of basic branch structure
-
-        ss.setNumLineSegments(pointSet.getNumLines());
-        for (int i = 1; i <= pointSet.getNumLines(); i++) {
-            ss.set(i, pointSet.getPoint(pointSet.getBegin(i)), pointSet.getPoint(pointSet.getEnd(i)), pointSet.getColor(i), LineSegment.ActiveState.INACTIVE_0);
-        }
-        return ss;
+        //Instantiation of basic branch structure
+        return new LineSegmentSet(pointSet);
     }
 
     public void lineStore2pointStore(LineSegmentSet lineSegmentSet) {
@@ -353,7 +350,7 @@ public class CreasePattern_Worker {
         double[] addPointY = new double[lineSegmentSet.getNumLineSegments() + 1]; // If you do not add +1 you will get an error when the number of faces is 1.
         int addPointNum = 0;
 
-        for (int i = 1; i <= lineSegmentSet.getNumLineSegments(); i++) {
+        for (int i = 0; i < lineSegmentSet.getNumLineSegments(); i++) {
             flag1 = false;
             ti = lineSegmentSet.getA(i);
             x = ti.getX();
@@ -401,25 +398,25 @@ public class CreasePattern_Worker {
         //Next, define a bar in PointSet.
         System.out.println("線分集合->点集合：点集合内で棒の定義");
 
-        int[] ika2ic = new int[lineSegmentSet.getNumLineSegments() + 1];
-        int[] ikb2ic = new int[lineSegmentSet.getNumLineSegments() + 1];
-        for (int n = 1; n <= lineSegmentSet.getNumLineSegments(); n++) {
+        List<Integer> ika2ic = new ArrayList<>();
+        List<Integer> ikb2ic = new ArrayList<>();
+        for (int n = 0; n < lineSegmentSet.getNumLineSegments(); n++) {
             for (int i = 1; i <= pointSet.getNumPoints(); i++) {
                 if (OritaCalc.equal(lineSegmentSet.getA(n), pointSet.getPoint(i))) {
-                    ika2ic[n] = i;
+                    ika2ic.add(i);
                     break;
                 }
             }
             for (int i = 1; i <= pointSet.getNumPoints(); i++) {
                 if (OritaCalc.equal(lineSegmentSet.getB(n), pointSet.getPoint(i))) {
-                    ikb2ic[n] = i;
+                    ikb2ic.add(i);
                     break;
                 }
             }
         }
 
-        for (int n = 1; n <= lineSegmentSet.getNumLineSegments(); n++) {
-            pointSet.addLine(ika2ic[n], ikb2ic[n], lineSegmentSet.getColor(n));
+        for (int n = 0; n < lineSegmentSet.getNumLineSegments(); n++) {
+            pointSet.addLine(ika2ic.get(n), ikb2ic.get(n), lineSegmentSet.getColor(n));
         }
 
         System.out.print("棒の全数　＝　");
