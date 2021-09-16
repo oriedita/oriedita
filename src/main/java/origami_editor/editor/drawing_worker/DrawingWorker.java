@@ -1048,11 +1048,8 @@ public class DrawingWorker {
 
         //円を描く　
         if (displayAuxLines) {
-            for (int i = 1; i <= foldLineSet.numCircles(); i++) {
-
+            for (Circle e_temp : foldLineSet.getCircles()) {
                 double d_width;
-                Circle e_temp = new Circle();
-                e_temp.set(foldLineSet.getCircle(i));
 
                 a.set(camera.object2TV(e_temp.getCenter()));//この場合のaは描画座標系での円の中心の位置
 
@@ -1075,10 +1072,8 @@ public class DrawingWorker {
 
         //円の中心の描画
         if (displayAuxLines) {
-            for (int i = 1; i <= foldLineSet.numCircles(); i++) {
+            for (Circle e_temp : foldLineSet.getCircles()) {
                 double d_width;
-                Circle e_temp = new Circle();
-                e_temp.set(foldLineSet.getCircle(i));
 
                 a.set(camera.object2TV(e_temp.getCenter()));//この場合のaは描画座標系での円の中心の位置
 
@@ -1437,10 +1432,10 @@ public class DrawingWorker {
     public void addCircle(double dx, double dy, double dr, LineColor ic) {
         foldLineSet.addCircle(dx, dy, dr, ic);
 
-        int imin = 1;
-        int imax = foldLineSet.numCircles() - 1;
-        int jmin = foldLineSet.numCircles();
-        int jmax = foldLineSet.numCircles();
+        int imin = 0;
+        int imax = foldLineSet.numCircles() - 2;
+        int jmin = foldLineSet.numCircles() - 1;
+        int jmax = foldLineSet.numCircles() - 1;
 
         foldLineSet.circle_circle_intersection(imin, imax, jmin, jmax);
         foldLineSet.lineSegment_circle_intersection(1, foldLineSet.getTotal(), jmin, jmax);
@@ -1456,7 +1451,7 @@ public class DrawingWorker {
     public void addLineSegment(LineSegment s0) {//0 = No change, 1 = Color change only, 2 = Line segment added
         foldLineSet.addLine(s0);//Just add the information of s0 to the end of senbun of foldLineSet
         int total_old = foldLineSet.getTotal();
-        foldLineSet.lineSegment_circle_intersection(foldLineSet.getTotal(), foldLineSet.getTotal(), 1, foldLineSet.numCircles());
+        foldLineSet.lineSegment_circle_intersection(foldLineSet.getTotal(), foldLineSet.getTotal(), 0, foldLineSet.numCircles() - 1);
 
         foldLineSet.intersect_divide(1, total_old - 1, total_old, total_old);
     }
@@ -2122,7 +2117,7 @@ public class DrawingWorker {
 
         voronoiLineSet.addLine(s0);//ori_vのsenbunの最後にs0の情報をを加えるだけ
         int sousuu_old = voronoiLineSet.getTotal();
-        voronoiLineSet.lineSegment_circle_intersection(voronoiLineSet.getTotal(), voronoiLineSet.getTotal(), 1, voronoiLineSet.numCircles());
+        voronoiLineSet.lineSegment_circle_intersection(voronoiLineSet.getTotal(), voronoiLineSet.getTotal(), 0, voronoiLineSet.numCircles() - 1);
 
         voronoiLineSet.intersect_divide(1, sousuu_old - 1, sousuu_old, sousuu_old);
     }
@@ -2532,7 +2527,7 @@ public class DrawingWorker {
                             }
                         }
                     }
-                    foldLineSet.lineSegment_circle_intersection(sousuu_old, foldLineSet.getTotal(), 1, foldLineSet.numCircles());//(3)
+                    foldLineSet.lineSegment_circle_intersection(sousuu_old, foldLineSet.getTotal(), 0, foldLineSet.numCircles() - 1);//(3)
                     foldLineSet.intersect_divide(1, sousuu_old, sousuu_old + 1, foldLineSet.getTotal());//(4)
 
 
@@ -2566,7 +2561,7 @@ public class DrawingWorker {
                             }
 
                         }
-                        foldLineSet.lineSegment_circle_intersection(sousuu_old, foldLineSet.getTotal(), 1, foldLineSet.numCircles());//(3)
+                        foldLineSet.lineSegment_circle_intersection(sousuu_old, foldLineSet.getTotal(), 0, foldLineSet.numCircles() - 1);//(3)
                         foldLineSet.intersect_divide(1, sousuu_old, sousuu_old + 1, foldLineSet.getTotal());//(4)
 
 

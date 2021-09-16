@@ -58,7 +58,6 @@ public class FoldLineSet {
         Check4LineSegment.clear();
         check4Point.clear();
         circles.clear();
-        circles.add(new Circle());
     }
 
     public void display(String s0) {
@@ -185,12 +184,12 @@ public class FoldLineSet {
     }
 
     public void setCircleCustomized(int i, int customized) {
-        Circle e = getCircle(i);
+        Circle e = circles.get(i);
         e.setCustomized(customized);
     }
 
     public void setCircleCustomizedColor(int i, Color c0) {
-        Circle e = getCircle(i);
+        Circle e = circles.get(i);
         e.setCustomizedColor(c0);
     }
 
@@ -251,10 +250,11 @@ public class FoldLineSet {
         }
 
         memo1.addLine("<円集合>");
-        for (int i = 1; i <= numCircles(); i++) {
-            memo1.addLine("番号," + i);
+        int index = 1;
+        for (Circle circle : circles) {
+            memo1.addLine("番号," + index++);
             Circle e_temp = new Circle();
-            e_temp.set(getCircle(i));
+            e_temp.set(circle);
             memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
 
             memo1.addLine("<tpp>" + e_temp.getCustomized() + "</tpp>");
@@ -292,10 +292,11 @@ public class FoldLineSet {
         }
 
         memo1.addLine("<円集合>");
-        for (int i = 1; i <= numCircles(); i++) {
-            memo1.addLine("番号," + i);
+        int index = 1;
+        for (Circle circle : circles) {
+            memo1.addLine("番号," + index++);
             Circle e_temp = new Circle();
-            e_temp.set(getCircle(i));
+            e_temp.set(circle);
             memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
 
             memo1.addLine("<tpp>" + e_temp.getCustomized() + "</tpp>");
@@ -541,9 +542,9 @@ public class FoldLineSet {
 
             if ((reading_flag == 3) && (str.equals("番号"))) {
                 str = tk.nextToken();
-                number = Integer.parseInt(str);
+                number = Integer.parseInt(str) - 1;
 
-                cir_setCircle(number, e_temp);
+                setCircle(number, e_temp);
             }
 
             if ((reading_flag == 3) && (str.equals("中心と半径と色"))) {
@@ -558,7 +559,7 @@ public class FoldLineSet {
                 ic = LineColor.from(str);
 
 
-                getCircle(number).set(dx, dy, dr, ic);
+                circles.get(number).set(dx, dy, dr, ic);
             }
 
             if (reading_flag == 3) {
@@ -566,24 +567,24 @@ public class FoldLineSet {
                 if (st_new[0].equals("<tpp")) {
                     s_new = st_new[1].split("<", 2);
                     i_customized = (Integer.parseInt(s_new[0]));
-                    getCircle(number).setCustomized(i_customized);
+                    circles.get(number).setCustomized(i_customized);
                 }
 
                 if (st_new[0].equals("<tpp_color_R")) {
                     s_new = st_new[1].split("<", 2);
                     i_customized_color_R = (Integer.parseInt(s_new[0]));
-                    getCircle(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
+                    circles.get(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
                 }
 
                 if (st_new[0].equals("<tpp_color_G")) {
                     s_new = st_new[1].split("<", 2);
                     i_customized_color_G = (Integer.parseInt(s_new[0]));
-                    getCircle(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
+                    circles.get(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
                 }
                 if (st_new[0].equals("<tpp_color_B")) {
                     s_new = st_new[1].split("<", 2);
                     i_customized_color_B = (Integer.parseInt(s_new[0]));
-                    getCircle(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
+                    circles.get(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
                 }
             }
         }
@@ -762,7 +763,7 @@ public class FoldLineSet {
             if ((reading_flag == 3) && (str.equals("番号"))) {
                 str = tk.nextToken();
                 circles.add(new Circle(0.0, 0.0, 1.0, LineColor.RED_1));
-                number = numCircles();
+                number = circles.size() - 1;
             }
 
             if ((reading_flag == 3) && (str.equals("中心と半径と色"))) {
@@ -776,7 +777,7 @@ public class FoldLineSet {
                 str = tk.nextToken();
                 ic = LineColor.from(str);
 
-                getCircle(number).set(dx, dy, dr, ic);
+                circles.get(number).set(dx, dy, dr, ic);
             }
 
             if (reading_flag == 3) {
@@ -784,24 +785,24 @@ public class FoldLineSet {
                 if (st_new[0].equals("<tpp")) {
                     s_new = st_new[1].split("<", 2);
                     i_customized = (Integer.parseInt(s_new[0]));
-                    getCircle(number).setCustomized(i_customized);
+                    circles.get(number).setCustomized(i_customized);
                 }
 
                 if (st_new[0].equals("<tpp_color_R")) {
                     s_new = st_new[1].split("<", 2);
                     i_customized_color_R = (Integer.parseInt(s_new[0]));
-                    getCircle(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
+                    circles.get(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
                 }        //  System.out.println(Integer.parseInt(s[0])) ;
 
                 if (st_new[0].equals("<tpp_color_G")) {
                     s_new = st_new[1].split("<", 2);
                     i_customized_color_G = (Integer.parseInt(s_new[0]));
-                    getCircle(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
+                    circles.get(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
                 }
                 if (st_new[0].equals("<tpp_color_B")) {
                     s_new = st_new[1].split("<", 2);
                     i_customized_color_B = (Integer.parseInt(s_new[0]));
-                    getCircle(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
+                    circles.get(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
                 }
             }
         }
@@ -844,10 +845,11 @@ public class FoldLineSet {
 
 
         memo1.addLine("<円集合>");
-        for (int i = 1; i <= numCircles(); i++) {
-            memo1.addLine("番号," + i);
+        int index = 1;
+        for (Circle circle : circles) {
+            memo1.addLine("番号," + index++);
             Circle e_temp = new Circle();
-            e_temp.set(getCircle(i));
+            e_temp.set(circle);
             memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
 
             memo1.addLine("<tpp>" + e_temp.getCustomized() + "</tpp>");
@@ -1141,10 +1143,10 @@ public class FoldLineSet {
 
         memo1.addLine("<円集合>");
         int ii = 0;
-        for (int i = 1; i <= numCircles(); i++) {
+        for (Circle circle : circles) {
             boolean idel = false;
             Circle e_temp = new Circle();
-            e_temp.set(getCircle(i));
+            e_temp.set(circle);
             ec.set(e_temp.getCenter());
 
             if (idel) {
@@ -1200,10 +1202,10 @@ public class FoldLineSet {
 
         memo1.addLine("<円集合>");
         int ii = 0;
-        for (int i = 1; i <= numCircles(); i++) {
+        for (Circle circle : circles) {
             boolean idel = false;
             Circle e_temp = new Circle();
-            e_temp.set(getCircle(i));
+            e_temp.set(circle);
             ec.set(e_temp.getCenter());
             er = e_temp.getRadius();
 
@@ -1278,9 +1280,9 @@ public class FoldLineSet {
 
         memo1.addLine("<円集合>");
         int ii = 0;
-        for (int i = 1; i <= numCircles(); i++) {
+        for (Circle circle : circles) {
             Circle e_temp = new Circle();
-            e_temp.set(getCircle(i));//ec.set(e_temp.get_tyuusin());er=e_temp.getr();
+            e_temp.set(circle);//ec.set(e_temp.get_tyuusin());er=e_temp.getr();
 
             ii = ii + 1;
             memo1.addLine("番号," + ii);
@@ -1324,9 +1326,9 @@ public class FoldLineSet {
 
         memo1.addLine("<円集合>");
         int ii = 0;
-        for (int i = 1; i <= numCircles(); i++) {
+        for (Circle circle : circles) {
             Circle e_temp = new Circle();
-            e_temp.set(getCircle(i));//ec.set(e_temp.get_tyuusin());er=e_temp.getr();
+            e_temp.set(circle);//ec.set(e_temp.get_tyuusin());er=e_temp.getr();
             ii = ii + 1;
             memo1.addLine("番号," + ii);
             memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
@@ -1374,10 +1376,10 @@ public class FoldLineSet {
 
         memo1.addLine("<円集合>");
         int ii = 0;
-        for (int i = 1; i <= numCircles(); i++) {
+        for (Circle circle : circles) {
             boolean idel = false;
             Circle e_temp = new Circle();
-            e_temp.set(getCircle(i));
+            e_temp.set(circle);
             ec.set(e_temp.getCenter());
             er = e_temp.getRadius();
 
@@ -1451,10 +1453,10 @@ public class FoldLineSet {
         LineSegment s4 = new LineSegment(p4, p1);
 
         //("<円集合>");
-        for (int i = 1; i <= numCircles(); i++) {
+        for (Circle circle : circles) {
             boolean i_change = false;
             Circle e_temp = new Circle();
-            e_temp.set(getCircle(i));
+            e_temp.set(circle);
             ec.set(e_temp.getCenter());
             er = e_temp.getRadius();
 
@@ -1485,8 +1487,8 @@ public class FoldLineSet {
 
             if (i_change) {
                 i_r = true;
-                setCircleCustomized(i, 1);
-                setCircleCustomizedColor(i, sen_tokutyuu_color);
+                circle.setCustomized(1);
+                circle.setCustomizedColor(sen_tokutyuu_color);
             }
         }
 
@@ -2599,12 +2601,12 @@ public class FoldLineSet {
     public void circle_circle_intersection(int imin, int imax, int jmin, int jmax) {
         for (int i = imin; i <= imax; i++) {
             Circle ei = new Circle();
-            ei.set(getCircle(i));
+            ei.set(circles.get(i));
             if (ei.getRadius() > 0.0000001) {//Circles with a radius of 0 are not applicable
                 for (int j = jmin; j <= jmax; j++) {
 
                     Circle ej = new Circle();
-                    ej.set(getCircle(j));
+                    ej.set(circles.get(j));
                     if (ej.getRadius() > 0.0000001) {//Circles with a radius of 0 are not applicable
                         if (OritaCalc.distance(ei.getCenter(), ej.getCenter()) < 0.000001) {//Two circles are concentric and do not intersect
                         } else if (Math.abs(OritaCalc.distance(ei.getCenter(), ej.getCenter()) - ei.getRadius() - ej.getRadius()) < 0.0001) {//Two circles intersect at one point
@@ -2638,7 +2640,7 @@ public class FoldLineSet {
             for (int j = jmin; j <= jmax; j++) {
 
                 Circle ej = new Circle();
-                ej.set(getCircle(j));
+                ej.set(circles.get(j));
                 if (ej.getRadius() > 0.0000001) {//Circles with a radius of 0 are not applicable
                     double tc_kyori = ti.calculateDistance(ej.getCenter()); //Distance between the center of a straight line and a circle
 
@@ -2694,8 +2696,8 @@ public class FoldLineSet {
     }
 
     //円の整理-----------------------------------------
-    public void organizeCircles() {//全ての円を対象に整理をする。
-        for (int i = numCircles(); i >= 1; i--) {
+    public void organizeCircles() {//Organize all circles.
+        for (int i = circles.size() - 1; i >= 0; i--) {
             organizeCircles(i);
         }
     }
@@ -2710,7 +2712,7 @@ public class FoldLineSet {
         // =  1000 4th digit number. The number of i-th circles with a radius of 0 that overlaps with other polygonal lines. When it overlaps with two or more, it is displayed as 2.
         // = 10000 5th digit number. The number of i-th circles with a radius of 0 that overlaps with other auxiliary hot lines. When it overlaps with two or more, it is displayed as 2.
         Circle e_temp = new Circle();
-        e_temp.set(getCircle(i0));
+        e_temp.set(circles.get(i0));
         double er_0 = e_temp.getRadius();
         Point ec_0 = new Point();
         ec_0.set(e_temp.getCenter());
@@ -2725,9 +2727,9 @@ public class FoldLineSet {
         int ir5 = 0;
 
         if (er_0 < 0.0000001) {
-            for (int i = 1; i <= numCircles(); i++) {
+            for (int i = 0; i < circles.size(); i++) {
                 if (i != i0) {
-                    e_temp.set(getCircle(i));
+                    e_temp.set(circles.get(i));
                     er_1 = e_temp.getRadius();
                     ec_1.set(e_temp.getCenter());
                     if (er_1 < 0.0000001) {//The radius of the other circle is 0
@@ -2917,9 +2919,9 @@ public class FoldLineSet {
         int minrid = 0;
         double minr = 100000;
         double rtemp;
-        for (int i = 1; i <= numCircles(); i++) {
+        for (int i = 0; i < circles.size(); i++) {
             Circle e_temp = new Circle();
-            e_temp.set(getCircle(i));
+            e_temp.set(circles.get(i));
 
             rtemp = p.distance(e_temp.getCenter());
             if (minr >= rtemp) {
@@ -2941,9 +2943,9 @@ public class FoldLineSet {
     public double closestCircleDistance(Point p) {
         double minr = 100000;
         double rtemp;
-        for (int i = 1; i <= numCircles(); i++) {
+        for (Circle circle : circles) {
             Circle e_temp = new Circle();
-            e_temp.set(getCircle(i));
+            e_temp.set(circle);
 
 
             rtemp = p.distance(e_temp.getCenter());
@@ -3019,22 +3021,17 @@ public class FoldLineSet {
     }
 
     public Circle closestCircleMidpoint(Point p) {
-        int minrid = 0;
         double minr = 100000.0;
-        Circle e1 = new Circle(100000.0, 100000.0, 1.0, LineColor.BLACK_0);
-        for (int i = 1; i <= numCircles(); i++) {
-            double ek = OritaCalc.distance_circumference(p, getCircle(i));
+        Circle closestCircle = new Circle(100000.0, 100000.0, 1.0, LineColor.BLACK_0);
+        for (Circle circle : circles) {
+            double ek = OritaCalc.distance_circumference(p, circle);
             if (minr > ek) {
                 minr = ek;
-                minrid = i;
+                closestCircle = circle;
             }//Whether it is close to the circumference
         }
 
-        if (minrid == 0) {
-            return e1;
-        }
-
-        return getCircle(minrid);
+        return closestCircle;
     }
 
     public LineSegment closestLineSegment(Point p) {
@@ -3080,9 +3077,9 @@ public class FoldLineSet {
         Point p_return = new Point();
         p_return.set(100000.0, 100000.0);
         Point p_temp = new Point();
-        for (int i = 1; i <= numCircles(); i++) {
+        for (Circle circle : circles) {
             Circle e_temp = new Circle();
-            e_temp.set(getCircle(i));
+            e_temp.set(circle);
             p_temp.set(e_temp.getCenter());
             if (p.distanceSquared(p_temp) < p.distanceSquared(p_return)) {
                 p_return.set(p_temp.getX(), p_temp.getY());
@@ -3617,13 +3614,13 @@ public class FoldLineSet {
             setB(i, temp_b);
         }
 
-        for (int i = 1; i <= numCircles(); i++) {
+        for (Circle circle : circles) {
             Circle e_temp = new Circle();
-            e_temp.set(getCircle(i));
+            e_temp.set(circle);
 
             e_temp.setX(e_temp.getX() + dx);
             e_temp.setY(e_temp.getY() + dy);
-            cir_setCircle(i, e_temp);
+            circle.set(e_temp);
         }
     }
 
@@ -3854,23 +3851,22 @@ public class FoldLineSet {
     }
 
     // ***********************************ppppppppppppqqqqqq
-//Cirには1番目からcir_size()番目までデータが入っている
+    //Cirには1番目からcir_size()番目までデータが入っている
+
     public int numCircles() {
-        return circles.size() - 1;
+        return circles.size();
     }
 
-    public Circle getCircle(int i) {
-        return circles.get(i);
+    public Iterable<Circle> getCircles() {
+        return circles;
     }
 
-    public void cir_setCircle(int i, Circle e0) {
+    public void setCircle(int i, Circle e0) {
         //iの指定があったとき、EnはCirのi-1番目に格納される　
         //i>cir_size()のときは、Cirのi-1番目の円はまだ定義されていないので、とりあえずi-1番目まで円を存在させる必要がある
 
-        if (i > numCircles()) {
-            while (i > numCircles()) {
-                circles.add(new Circle());
-            }
+        while (i > circles.size() - 1) {
+            circles.add(new Circle());
         }
 
         Circle etemp = new Circle();
