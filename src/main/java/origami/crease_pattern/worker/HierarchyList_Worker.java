@@ -367,10 +367,6 @@ public class HierarchyList_Worker {
             }
         }
 
-
-//20191012 				SubFace_yuukou_suu=SubFaceTotal;//遅いが確実//20191012
-
-
         for (int i = 1; i <= SubFaceTotal; i++) {
             s[i] = s0[yusenjyun_kara_s0id[i]];
         }
@@ -399,7 +395,6 @@ public class HierarchyList_Worker {
         return ireturn;
     }
 
-    //------------------------------------------------------------
     public HierarchyListStatus additional_estimation() {
         //We will infer relationships that can be further determined from the information on mountain folds and valley folds. 。
 
@@ -481,13 +476,10 @@ public class HierarchyList_Worker {
 
             //Reset hierarchyList Make sure that it is done properly
 
-            EquivalenceCondition tg;
-
             int flg_a = 1;
             while (flg_a >= 1) {
                 flg_a = 0;
-                for (int i = 1; i <= hierarchyList.getEquivalenceConditionTotal(); i++) {
-                    tg = hierarchyList.getEquivalenceCondition(i);
+                for (EquivalenceCondition tg : hierarchyList.getEquivalenceConditions()) {
                     if (hierarchyList.get(tg.getA(), tg.getB()) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
                         if (hierarchyList.get(tg.getA(), tg.getD()) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
                             return HierarchyListStatus.UNKNOWN_3;
@@ -567,8 +559,7 @@ public class HierarchyList_Worker {
             flg_a = 1;
             while (flg_a >= 1) {
                 flg_a = 0;
-                for (int i = 1; i <= hierarchyList.getUEquivalenceConditionTotal(); i++) {
-                    tg = hierarchyList.getUEquivalenceCondition(i);
+                for (EquivalenceCondition tg : hierarchyList.getUEquivalenceConditions()) {
                     int a, b, c, d;
                     a = tg.getA();
                     b = tg.getB();
@@ -956,14 +947,7 @@ public class HierarchyList_Worker {
         return HierarchyListStatus.UNKNOWN_1000;
     }
 
-// ---------------------------------------------------------------
-
-    //　ここは  class Jyougehyou_Syokunin  の中です。
-    //-----------------------------------------------------
-
-
     //図をかく際の数値変換用関数-----------------------------------------------------------------
-
     private boolean subFace_i_ga_j_ni_included(int s0i, int s0j) { //1 if included, 0 otherwise
         if (s0[s0i].getFaceIdCount() > s0[s0j].getFaceIdCount()) {
             return false;
@@ -991,10 +975,6 @@ public class HierarchyList_Worker {
         return s0[s0id].sinki_jyouhou_suu(hierarchyList);
     }
 
-    //---------------------------------------------------------
-    //---------------------------------------------------------
-
-    //------------------------
     //引数の４つの面を同時に含むSubFaceが1つ以上存在するなら１、しないなら０を返す。
     private boolean onaji_subFace_ni_sonzai(int im1, int im2, int im3, int im4) {
         for (int i = 1; i <= SubFaceTotal; i++) {
@@ -1269,11 +1249,6 @@ public class HierarchyList_Worker {
         return memo_temp;
     }
 
-
-    //---------------------------------------------------------
-
-    //
-    //---------------------------------------------------------
     public Memo getMemo_wirediagram_for_svg_export(CreasePattern_Worker orite, PointSet otta_Men_zu, boolean i_fill) {
         boolean flipped = camera.isCameraMirrored();
 
@@ -1363,7 +1338,6 @@ public class HierarchyList_Worker {
         return memo_temp;
     }
 
-    //---------------------------------------------------------
     public void draw_transparency_with_camera(Graphics g, PointSet otta_Face_figure, PointSet subFace_figure, boolean transparencyColor, int transparency_toukado) {
         Graphics2D g2 = (Graphics2D) g;
 

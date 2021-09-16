@@ -13,6 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+/**
+ * A collection of points.
+ *
+ * Every line can be part of a line and/or a face.
+ */
 public class PointSet {
     int numFaces_temp;
 

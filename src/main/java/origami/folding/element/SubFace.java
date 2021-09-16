@@ -195,8 +195,8 @@ public class SubFace {//This class folds the development view and estimates the 
     private int penetration_inconsistent_digits_request(HierarchyList hierarchyList) {
         int ketaMim = 1000;
         int tmk;
-        for (int i = 1; i <= hierarchyList.getEquivalenceConditionTotal(); i++) {
-            tmk = penetration_inconsistent_digits_request(hierarchyList.getEquivalenceCondition(i));
+        for (EquivalenceCondition ec : hierarchyList.getEquivalenceConditions()) {
+            tmk = penetration_inconsistent_digits_request(ec);
 
             if (tmk <= ketaMim) {
                 ketaMim = tmk;
@@ -243,8 +243,8 @@ public class SubFace {//This class folds the development view and estimates the 
     private int u_penetration_inconsistent_digits_request(HierarchyList hierarchyList) {
         int ketaMim = 1000;
         int tmk = 1000;
-        for (int i = 1; i <= hierarchyList.getUEquivalenceConditionTotal(); i++) {
-            tmk = u_penetration_inconsistent_digits_request(hierarchyList.getUEquivalenceCondition(i));
+        for (EquivalenceCondition ec : hierarchyList.getUEquivalenceConditions()) {
+            tmk = u_penetration_inconsistent_digits_request(ec);
 
             if (tmk <= ketaMim) {
                 ketaMim = tmk;

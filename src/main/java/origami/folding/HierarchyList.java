@@ -14,9 +14,7 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     // If hierarchyList[i][j] is -100, then faces i and j do not overlap.
     HierarchyListCondition[][] hierarchyList;
     HierarchyListCondition[][] hierarchyList_copy;
-    int EquivalenceConditionTotal;   //A combination that can cause a situation in which another surface penetrates the boundary between two adjacent surfaces.
     ArrayList<EquivalenceCondition> tL = new ArrayList<>();
-    int uEquivalenceConditionTotal;
     ArrayList<EquivalenceCondition> uL = new ArrayList<>();
 
     public HierarchyList() {
@@ -26,11 +24,7 @@ public class HierarchyList {//This class is used to record and utilize the hiera
 
     public void reset() {
         tL.clear();
-        tL.add(new EquivalenceCondition());
         uL.clear();
-        uL.add(new EquivalenceCondition());
-        EquivalenceConditionTotal = 0;
-        uEquivalenceConditionTotal = 0;
     }
 
     public void save() {
@@ -76,27 +70,26 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     }
 
     public int getEquivalenceConditionTotal() {
-        return EquivalenceConditionTotal;
+        return tL.size();
     }
 
-    public EquivalenceCondition getEquivalenceCondition(int i) {
-        return tL.get(i);
+    public Iterable<EquivalenceCondition> getEquivalenceConditions() {
+        return tL;
     }
 
     // Add equivalence condition. When there are two adjacent faces im1 and im2 as the boundary of the bar ib, when the folding is estimated
     // The surface im located at the position where it overlaps a part of the bar ib is not sandwiched between the surface im1 and the surface im2 in the vertical direction. From this
     // The equivalent condition of gj [im1] [im] = gj [im2] [im] is satisfied.
     public void addEquivalenceCondition(int ai, int bi, int ci, int di) {
-        EquivalenceConditionTotal = EquivalenceConditionTotal + 1;
         tL.add(new EquivalenceCondition(ai, bi, ci, di));
     }
 
     public int getUEquivalenceConditionTotal() {
-        return uEquivalenceConditionTotal;
+        return uL.size();
     }
 
-    public EquivalenceCondition getUEquivalenceCondition(int i) {
-        return uL.get(i);
+    public Iterable<EquivalenceCondition> getUEquivalenceConditions() {
+        return uL;
     }
 
     // Add equivalence condition. There are two adjacent faces im1 and im2 as the boundary of the bar ib,
@@ -104,8 +97,6 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     // The surface of the bar ib and the surface of the surface jb are not aligned with i, j, i, j or j, i, j, i. If this happens,
     // Since there is a mistake in the 3rd place from the beginning, find out what digit this 3rd place is in SubFace and advance this digit by 1.
     public void addUEquivalenceCondition(int ai, int bi, int ci, int di) {
-        uEquivalenceConditionTotal = uEquivalenceConditionTotal + 1;
-
         uL.add(new EquivalenceCondition(ai, bi, ci, di));
     }
 

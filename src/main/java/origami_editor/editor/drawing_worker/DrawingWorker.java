@@ -1011,17 +1011,13 @@ public class DrawingWorker {
 
         //Check1Senbには0番目からsize()-1番目までデータが入っている
         if (check1) {
-            for (int i = 0; i < foldLineSet.check1_size(); i++) {
-                LineSegment s_temp = new LineSegment();
-                s_temp.set(foldLineSet.check1_getLineSegment(i));
+            for (LineSegment s_temp : foldLineSet.getCheck1LineSegments()) {
                 OritaDrawing.pointingAt1(g, camera.object2TV(s_temp), 7.0, 3.0, 1);
             }
         }
 
         if (check2) {
-            for (int i = 0; i < foldLineSet.check2_size(); i++) {
-                LineSegment s_temp = new LineSegment();
-                s_temp.set(foldLineSet.check2_getLineSegment(i));
+            for (LineSegment s_temp : foldLineSet.getCheck2LineSegments()) {
                 OritaDrawing.pointingAt2(g, camera.object2TV(s_temp), 7.0, 3.0, 1);
             }
         }
@@ -1032,9 +1028,7 @@ public class DrawingWorker {
         //Check4Senbには0番目からsize()-1番目までデータが入っている
         //System.out.println("foldLineSet.check4_size() = "+foldLineSet.check4_size());
         if (check4) {
-            for (int i = 0; i < foldLineSet.check4_size(); i++) {
-                LineSegment s_temp = new LineSegment();
-                s_temp.set(foldLineSet.check4_getLineSegment(i));
+            for (LineSegment s_temp : foldLineSet.getCheck4LineSegments()) {
                 OritaDrawing.pointingAt4(g, camera.object2TV(s_temp), check4ColorTransparency);
             }
         }
@@ -1042,9 +1036,7 @@ public class DrawingWorker {
 
         //Check3Senbには0番目からsize()-1番目までデータが入っている
         if (check3) {
-            for (int i = 0; i < foldLineSet.check3_size(); i++) {
-                LineSegment s_temp = new LineSegment();
-                s_temp.set(foldLineSet.check3_getLineSegment(i));
+            for (LineSegment s_temp : foldLineSet.getCheck3LineSegments()) {
                 OritaDrawing.pointingAt3(g, camera.object2TV(s_temp), 7.0, 3.0, 1);
             }
         }

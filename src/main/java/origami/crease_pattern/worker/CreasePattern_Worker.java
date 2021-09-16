@@ -62,13 +62,6 @@ public class CreasePattern_Worker {
         associatedLineId = new int[numFaces + 1];         //The id of the bar between one surface and the next surface (reference surface side)
     }
 
-    public void addReferencePlaneId() {
-        referencePlaneId = referencePlaneId + 1;
-        if (referencePlaneId > pointSet.getNumFaces()) {
-            referencePlaneId = 1;
-        }
-    }
-
     public int getReferencePlaneId() {
         return referencePlaneId;
     }

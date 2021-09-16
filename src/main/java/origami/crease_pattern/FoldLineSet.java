@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+/**
+ * Representation of the current drawn crease pattern.
+ */
 public class FoldLineSet {
     int total;               //Total number of line segments actually used
     List<LineSegment> lineSegments = new ArrayList<>(); //折線とする線分のインスタンス化
@@ -930,24 +933,6 @@ public class FoldLineSet {
             if (sikaku.totu_boundary_inside(s)) {
 
                 s.setSelected(2);
-
-            }
-        }
-    }
-
-    public void unselect(Point p1, Point p2, Point p3) {
-        Polygon sankaku = new Polygon(3);
-        sankaku.set(1, p1);
-        sankaku.set(2, p2);
-        sankaku.set(3, p3);
-
-
-        for (int i = 1; i <= total; i++) {
-            LineSegment s;
-            s = getLineSegment(i);
-            if (sankaku.totu_boundary_inside(s)) {
-
-                s.setSelected(0);
 
             }
         }
@@ -3894,44 +3879,20 @@ public class FoldLineSet {
         circles.set(i, etemp);
     }
 
-    public int check1_size() {
-        return Check1LineSegment.size();
+    public Iterable<LineSegment> getCheck1LineSegments() {
+        return Check1LineSegment;
     }
 
-    public int check2_size() {
-        return Check2LineSegment.size();
+    public Iterable<LineSegment> getCheck2LineSegments() {
+        return Check2LineSegment;
     }
 
-    public int check3_size() {
-        return Check3LineSegment.size();
-    }//Check3Senbには0番目からsize()-1番目までデータが入っている
-
-    public int check4_size() {
-        return Check4LineSegment.size();
-    }//Check4Senbには0番目からsize()-1番目までデータが入っている
-
-    public int check4_point_size() {
-        return check4Point.size();
-    }//Check4Tenには0番目からsize()-1番目までデータが入っている
-
-    public LineSegment check1_getLineSegment(int i) {
-        return Check1LineSegment.get(i);
+    public Iterable<LineSegment> getCheck3LineSegments() {
+        return Check3LineSegment;
     }
 
-    public LineSegment check2_getLineSegment(int i) {
-        return Check2LineSegment.get(i);
-    }
-
-    public LineSegment check3_getLineSegment(int i) {
-        return Check3LineSegment.get(i);
-    }
-
-    public LineSegment check4_getLineSegment(int i) {
-        return Check4LineSegment.get(i);
-    }
-
-    public Point check4_getPoint(int i) {
-        return check4Point.get(i);
+    public Iterable<LineSegment> getCheck4LineSegments() {
+        return Check4LineSegment;
     }
 
     public void check3(double r) {//Check the number of lines around the vertex
@@ -4012,9 +3973,7 @@ public class FoldLineSet {
     }
 
     public int Check4Point_overlapping_check(Point p0) {
-        for (int i = 0; i < check4_point_size(); i++) {
-            Point p = new Point();
-            p.set(check4_getPoint(i));
+        for (Point p : check4Point) {
             if ((-0.00000001 < p0.getX() - p.getX()) && (p0.getX() - p.getX() < 0.00000001)) {
                 if ((-0.00000001 < p0.getY() - p.getY()) && (p0.getY() - p.getY() < 0.00000001)) {
                     return 1;
@@ -4051,12 +4010,11 @@ public class FoldLineSet {
             }
         }
 
-        System.out.println("check4_T_size() = " + check4_point_size());
+        System.out.println("check4_T_size() = " + check4Point.size());
 
         //Selection of whether the place to be checked can be folded flat
-        for (int i = 0; i < check4_point_size(); i++) {
-            Point p = new Point();
-            p.set(check4_getPoint(i));
+        for (Point point : check4Point) {
+            Point p = new Point(point);
 
             if (!i_flat_ok(p, r)) {
                 Check4LineSegment.add(new LineSegment(p, p));
