@@ -4,12 +4,14 @@ import origami_editor.editor.component.ColorIcon;
 import origami_editor.editor.component.FoldedFigureResize;
 import origami_editor.editor.component.FoldedFigureRotate;
 import origami_editor.editor.component.UndoRedo;
+import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.tools.StringOp;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
 
 public class BottomPanel extends JPanel {
     private final App app;
@@ -458,6 +460,16 @@ public class BottomPanel extends JPanel {
         panel1 = this;
         foldedFigureResize = new FoldedFigureResize(app);
         foldedFigureRotate = new FoldedFigureRotate(app);
+    }
+
+    public void setData(PropertyChangeEvent e, CanvasModel data) {
+        if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
+            MouseMode m = data.getMouseMode();
+
+            foldedFigureMove.setSelected(m == MouseMode.MOVE_CALCULATED_SHAPE_102);
+            oriagari_sousaButton.setSelected(app.OZ.i_foldedFigure_operation_mode == 1 && m == MouseMode.MODIFY_CALCULATED_SHAPE_101);
+            oriagari_sousa_2Button.setSelected(app.OZ.i_foldedFigure_operation_mode == 2 && m == MouseMode.MODIFY_CALCULATED_SHAPE_101);
+        }
     }
 
     public void setData(FoldedFigureModel foldedFigureModel) {

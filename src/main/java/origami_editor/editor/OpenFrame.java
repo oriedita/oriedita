@@ -1,9 +1,10 @@
 package origami_editor.editor;
 
+import origami_editor.editor.databinding.CanvasModel;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
 
 public class OpenFrame extends JDialog {
     private JCheckBox selectAnd3ClickCheckBox;
@@ -101,6 +102,22 @@ public class OpenFrame extends JDialog {
 
         pack();
         setResizable(false);
+    }
+
+    public void setData(PropertyChangeEvent e, CanvasModel data) {
+        if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
+            MouseMode m = data.getMouseMode();
+
+            o_F_checkButton.setSelected(m == MouseMode.FLAT_FOLDABLE_CHECK_63);
+            foldableLinePlusGridInputButton.setSelected(m == MouseMode.FOLDABLE_LINE_INPUT_39);
+            select_polygonButton.setSelected(m == MouseMode.SELECT_POLYGON_66);
+            unselect_polygonButton.setSelected(m == MouseMode.UNSELECT_POLYGON_67);
+            unselect_lXButton.setSelected(m == MouseMode.UNSELECT_LINE_INTERSECTING_69);
+            select_lXButton.setSelected(m == MouseMode.SELECT_LINE_INTERSECTING_68);
+            unselect_lXButton.setSelected(m == MouseMode.UNSELECT_LINE_INTERSECTING_69);
+            del_lButton.setSelected(m == MouseMode.CREASE_DELETE_OVERLAPPING_64);
+            del_l_XButton.setSelected(m == MouseMode.CREASE_DELETE_INTERSECTING_65);
+        }
     }
 
     {

@@ -11,9 +11,11 @@ import origami_editor.tools.StringOp;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
 
 public class RightPanel extends JPanel {
     private final App app;
+    private final OpenFrame frame;
     private JCheckBox cAMVCheckBox;
     private JButton ck4_colorIncreaseButton;
     private JCheckBox ckTCheckBox;
@@ -486,7 +488,7 @@ public class RightPanel extends JPanel {
             app.repaintCanvas();
         });
 
-        OpenFrame frame = new OpenFrame("additionalFrame", app);
+        frame = new OpenFrame("additionalFrame", app);
 
         ad_fncButton.addActionListener(e -> {
             app.setHelp("tuika_kinou");
@@ -1228,7 +1230,8 @@ public class RightPanel extends JPanel {
         data.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), data.getNumPolygonCorners()));
     }
 
-    public void setData(CanvasModel data) {
+    public void setData(PropertyChangeEvent e, CanvasModel data) {
+        frame.setData(e, data);
         switch (data.getAuxLiveLineColor()) {
             case ORANGE_4:
                 colOrangeButton.setBackground(Color.ORANGE);
@@ -1240,6 +1243,30 @@ public class RightPanel extends JPanel {
         }
 
         c_colButton.setIcon(new ColorIcon(data.getCircleCustomizedColor()));
+
+        if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode") || e.getPropertyName().equals("foldLineAdditionalInputMode")) {
+            MouseMode m = data.getMouseMode();
+            FoldLineAdditionalInputMode f = data.getFoldLineAdditionalInputMode();
+
+            regularPolygonButton.setSelected(m == MouseMode.POLYGON_SET_NO_CORNERS_29);
+            circleDrawFreeButton.setSelected(m == MouseMode.CIRCLE_DRAW_FREE_47);
+            circleDrawButton.setSelected(m == MouseMode.CIRCLE_DRAW_42);
+            circleDrawSeparateButton.setSelected(m == MouseMode.CIRCLE_DRAW_SEPARATE_44);
+            circleDrawConcentricButton.setSelected(m == MouseMode.CIRCLE_DRAW_CONCENTRIC_48);
+            circleDrawConcentricSelectButton.setSelected(m == MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49);
+            circleDrawTwoConcentricButton.setSelected(m == MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50);
+            circleDrawTangentLineButton.setSelected(m == MouseMode.CIRCLE_DRAW_TANGENT_LINE_45);
+            circleDrawThreePointButton.setSelected(m == MouseMode.CIRCLE_DRAW_THREE_POINT_43);
+            circleDrawInvertedButton.setSelected(m == MouseMode.CIRCLE_DRAW_INVERTED_46);
+            sen_tokutyuu_color_henkouButton.setSelected(m == MouseMode.CIRCLE_CHANGE_COLOR_59);
+            h_senbun_nyuryokuButton.setSelected(m == MouseMode.DRAW_CREASE_FREE_1 && f == FoldLineAdditionalInputMode.AUX_LINE_1);
+            h_senbun_sakujyoButton.setSelected(m == MouseMode.LINE_SEGMENT_DELETE_3 && f == FoldLineAdditionalInputMode.AUX_LINE_1);
+            l1Button.setSelected(m == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53);
+            l2Button.setSelected(m == MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54);
+            a1Button.setSelected(m == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55);
+            a2Button.setSelected(m == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56);
+            a3Button.setSelected(m == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57);
+        }
     }
 
     public void setData(HistoryStateModel historyStateModel) {

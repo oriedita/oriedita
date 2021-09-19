@@ -8,6 +8,7 @@ import origami.crease_pattern.element.Point;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
 
 public class TopPanel extends JPanel {
     private final App app;
@@ -44,7 +45,6 @@ public class TopPanel extends JPanel {
         this.app = app;
         $$$setupUI$$$();
 
-        app.canvasModel.addPropertyChangeListener(e -> setData((CanvasModel) e.getSource()));
         operationFrameSelectButton.addActionListener(e -> {
             app.setHelp("tyouhoukei_select");
 
@@ -279,8 +279,18 @@ public class TopPanel extends JPanel {
         });
     }
 
-    public void setData(CanvasModel canvasModel) {
+    public void setData(PropertyChangeEvent e, CanvasModel canvasModel) {
         mouseSettingsCheckBox.setSelected(canvasModel.getMouseWheelMovesCreasePattern());
+
+        if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
+            MouseMode m = canvasModel.getMouseMode();
+
+            backgroundSetPositionButton.setSelected(m == MouseMode.BACKGROUND_CHANGE_POSITION_26);
+            senbun_yoke_henkanButton.setSelected(m == MouseMode.CREASE_ADVANCE_TYPE_30);
+            moveCreasePatternButton.setSelected(m == MouseMode.MOVE_CREASE_PATTERN_2);
+            drawLineSegmentInternalDivisionRatioButton.setSelected(m == MouseMode.LINE_SEGMENT_RATIO_SET_28);
+            operationFrameSelectButton.setSelected(m == MouseMode.OPERATION_FRAME_CREATE_61);
+        }
     }
 
     public void setData(InternalDivisionRatioModel data) {

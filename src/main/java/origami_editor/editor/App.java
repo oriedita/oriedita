@@ -225,9 +225,10 @@ public class App extends JFrame implements ActionListener {
         canvasModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(e, canvasModel));
         canvasModel.addPropertyChangeListener(e -> canvas.setData(canvasModel));
         canvasModel.addPropertyChangeListener(e -> appMenuBar.setData(canvasModel));
-        canvasModel.addPropertyChangeListener(e -> topPanel.setData(canvasModel));
-        canvasModel.addPropertyChangeListener(e -> rightPanel.setData(canvasModel));
+        canvasModel.addPropertyChangeListener(e -> topPanel.setData(e, canvasModel));
+        canvasModel.addPropertyChangeListener(e -> rightPanel.setData(e, canvasModel));
         canvasModel.addPropertyChangeListener(e -> leftPanel.setData(e, canvasModel));
+        canvasModel.addPropertyChangeListener(e -> bottomPanel.setData(e, canvasModel));
 
         canvasModel.addPropertyChangeListener(e -> {
             if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
