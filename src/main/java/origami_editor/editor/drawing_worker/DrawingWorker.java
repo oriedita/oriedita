@@ -247,73 +247,74 @@ public class DrawingWorker {
                     continue;
                 }
 
+                String value = m.group(2).trim();
                 switch (m.group(1)) {
                     case "ckbox_mouse_settei": {
-                        boolean selected = Boolean.parseBoolean(m.group(2));
+                        boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setMouseWheelMovesCreasePattern(selected);
                         break;
                     }
                     case "ckbox_ten_sagasi": {
-                        boolean selected = Boolean.parseBoolean(m.group(2));
+                        boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayPointSpotlight(selected);
                         break;
                     }
                     case "ckbox_ten_hanasi": {
-                        boolean selected = Boolean.parseBoolean(m.group(2));
+                        boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayPointOffset(selected);
                         break;
                     }
                     case "ckbox_kou_mitudo_nyuuryoku": {
-                        boolean selected = Boolean.parseBoolean(m.group(2));
+                        boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayGridInputAssist(selected);
                         break;
                     }
                     case "ckbox_bun": {
-                        boolean selected = Boolean.parseBoolean(m.group(2));
+                        boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayComments(selected);
                         break;
                     }
                     case "ckbox_cp": {
-                        boolean selected = Boolean.parseBoolean(m.group(2));
+                        boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayCpLines(selected);
                         break;
                     }
                     case "ckbox_a0": {
-                        boolean selected = Boolean.parseBoolean(m.group(2));
+                        boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayAuxLines(selected);
                         break;
                     }
                     case "ckbox_a1": {
-                        boolean selected = Boolean.parseBoolean(m.group(2));
+                        boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayLiveAuxLines(selected);
                         break;
                     }
                     case "ckbox_mejirusi": {
-                        boolean selected = Boolean.parseBoolean(m.group(2));
+                        boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayMarkings(selected);
                         break;
                     }
                     case "ckbox_cp_ue": {
-                        boolean selected = Boolean.parseBoolean(m.group(2));
+                        boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayCreasePatternOnTop(selected);
                         break;
                     }
                     case "ckbox_oritatami_keika": {
-                        boolean selected = Boolean.parseBoolean(m.group(2));
+                        boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayFoldingProgress(selected);
                         break;
                     }
                     case "iTenkaizuSenhaba":
-                        canvasModel.setLineWidth(Integer.parseInt(m.group(2)));
+                        canvasModel.setLineWidth(Integer.parseInt(value));
                         break;
                     case "ir_ten":
-                        canvasModel.setPointSize(Integer.parseInt(m.group(2)));
+                        canvasModel.setPointSize(Integer.parseInt(value));
                         break;
                     case "i_orisen_hyougen":
-                        canvasModel.setLineStyle(LineStyle.from(m.group(2)));
+                        canvasModel.setLineStyle(LineStyle.from(value));
                         break;
                     case "i_anti_alias":
-                        canvasModel.setAntiAlias(Boolean.parseBoolean(m.group(2)));
+                        canvasModel.setAntiAlias(Boolean.parseBoolean(value));
                         break;
                 }
             }
@@ -323,6 +324,12 @@ public class DrawingWorker {
 
         reading = false;
         GridModel gridModel = app.gridModel;
+        double gridXA = 0.0;
+        double gridXB = 1.0;
+        double gridXC = 1.0;
+        double gridYA = 0.0;
+        double gridYB = 1.0;
+        double gridYC = 1.0;
         for (int i = 1; i <= memo1.getLineCount(); i++) {
             String str = memo1.getLine(i);
 
@@ -362,30 +369,33 @@ public class DrawingWorker {
                         gridModel.setGridLineWidth(Integer.parseInt(m.group(2)));
                         break;
                     case "d_kousi_x_a":
-                        gridModel.setGridXA(app.string2double(m.group(2), gridModel.getGridXA()));
+                        gridXA = app.string2double(m.group(2), gridModel.getGridXA());
                         break;
                     case "d_kousi_x_b":
-                        gridModel.setGridXB(app.string2double(m.group(2), gridModel.getGridXB()));
+                        gridXB = app.string2double(m.group(2), gridModel.getGridXB());
                         break;
                     case "d_kousi_x_c":
-                        gridModel.setGridXC(app.string2double(m.group(2), gridModel.getGridXC()));
+                        gridXC = app.string2double(m.group(2), gridModel.getGridXC());
                         break;
                     case "d_kousi_y_a":
-                        gridModel.setGridYA(app.string2double(m.group(2), gridModel.getGridYA()));
+                        gridYA = app.string2double(m.group(2), gridModel.getGridYA());
                         break;
                     case "d_kousi_y_b":
-                        gridModel.setGridYB(app.string2double(m.group(2), gridModel.getGridYB()));
+                        gridYB = app.string2double(m.group(2), gridModel.getGridYB());
                         break;
                     case "d_kousi_y_c":
-                        gridModel.setGridYC(app.string2double(m.group(2), gridModel.getGridYC()));
+                        gridYB = app.string2double(m.group(2), gridModel.getGridYC());
                         break;
                     case "d_kousi_kakudo":
-                        gridModel.setGridAngle(app.string2double(m.group(2), gridModel.getGridAngle()));
+                        gridYC = app.string2double(m.group(2), gridModel.getGridAngle());
                         break;
                 }
 
             }
         }
+
+        gridModel.setGridX(gridXA, gridXB, gridXC);
+        gridModel.setGridY(gridYA, gridYB, gridYC);
 
         // ----------------------------------------- 格子色設定の読み込み
         int i_grid_color_R = 0;

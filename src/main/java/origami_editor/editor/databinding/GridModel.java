@@ -151,6 +151,16 @@ public class GridModel {
         return gridXA;
     }
 
+    public void setGridX(double gridXA, double gridXB, double gridXC) {
+        if (validateGrid(gridXA, gridXB, gridXC)) {
+            this.gridXA = gridXA;
+            this.gridXB = gridXB;
+            this.gridXC = gridXC;
+        } else {
+            resetGridX();
+        }
+    }
+
     public void setGridXA(final double gridXA) {
         double oldGridXA = this.gridXA;
         if (validateGrid(gridXA, gridXB, gridXC)) {
@@ -201,6 +211,16 @@ public class GridModel {
 
     public double getGridYA() {
         return gridYA;
+    }
+
+    public void setGridY(double gridYA, double gridYB, double gridYC) {
+        if (validateGrid(gridYA, gridYB, gridYC)) {
+            this.gridYA = gridYA;
+            this.gridYB = gridYB;
+            this.gridYC = gridYC;
+        } else {
+            resetGridY();
+        }
     }
 
     public void setGridYA(final double gridYA) {

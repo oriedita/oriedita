@@ -438,13 +438,13 @@ public class Grid {
         setGridLineWidth(gridModel.getGridLineWidth());
         setGridSize(gridModel.getGridSize());
         setGrid(gridModel.getGridXLength(), gridModel.getGridYLength(), gridModel.getGridAngle());
-        setBaseState(gridModel.getBaseState());
         setGridScaleColor(gridModel.getGridScaleColor());
         setGridColor(gridModel.getGridColor());
         setHorizontalScalePosition(gridModel.getHorizontalScalePosition());
         setVerticalScalePosition(gridModel.getVerticalScalePosition());
         setHorizontalScaleInterval(gridModel.getIntervalGridSize());
         setVerticalScaleInterval(gridModel.getIntervalGridSize());
+        setBaseState(gridModel.getBaseState());
     }
 
     /**
