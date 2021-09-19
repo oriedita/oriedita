@@ -2805,11 +2805,7 @@ public class FoldLineSet {
 
     //線分の削除-----------------------------------------
     public void deleteLine(int j) {   //j番目の線分を削除する  このsi= sen(i)は大丈夫なのだろうか????????si= sen(i)　20161106
-        for (int i = j; i <= total - 1; i++) {
-            LineSegment si = lineSegments.get(i);
-            LineSegment si1 = lineSegments.get(i + 1);
-            si.set(si1);
-        }
+        lineSegments.remove(j);
         total--;
     }
 
@@ -3163,8 +3159,8 @@ public class FoldLineSet {
         while (total < total_old) {
             total_old = total;
             for (int i = 1; i <= total - 1; i++) {
-                LineSegment si = lineSegments.get(i);
                 for (int j = i + 1; j <= total; j++) {
+                    LineSegment si = lineSegments.get(i);
                     LineSegment sj = lineSegments.get(j);
                     if (si.getColor() == sj.getColor()) {//If the two are the same color, carry out
                         if (si.getColor() != LineColor.CYAN_3) {//Auxiliary live line is not applicable
