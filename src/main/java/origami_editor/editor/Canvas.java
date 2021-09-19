@@ -1685,7 +1685,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     if (app.OZ.ct_worker.face_rating != null) {//20180227追加
                         System.out.println(
                                 "OZ.js.nbox.get_jyunjyo = " + app.OZ.ct_worker.nbox.getSequence(new_referencePlane_id) + " , rating = " +
-                                        app.OZ.ct_worker.nbox.getDouble(app.OZ.ct_worker.nbox.getSequence(new_referencePlane_id))
+                                        app.OZ.ct_worker.nbox.getWeight(app.OZ.ct_worker.nbox.getSequence(new_referencePlane_id))
 
                         );
 

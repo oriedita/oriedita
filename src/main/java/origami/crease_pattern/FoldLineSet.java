@@ -7,14 +7,12 @@ import origami.crease_pattern.element.StraightLine;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami_editor.record.Memo;
-import origami_editor.sortingbox.SortingBox_int_double;
-import origami_editor.sortingbox.int_double;
+import origami_editor.sortingbox.SortingBox;
+import origami_editor.sortingbox.WeightedValue;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Queue;
+import java.util.*;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -2923,23 +2921,7 @@ public class FoldLineSet {
     }
 
     //Returns the number of the line segment closest to the point p
-    public int closestLineSegmentSearch(Point p) {
-        int minrid = 0;
-        double minr = 100000;
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-            double sk = OritaCalc.distance_lineSegment(p, s);
-            if (minr > sk) {
-                minr = sk;
-                minrid = i;
-            }//Whether it is close to the handle
-
-        }
-        return minrid;
-    }
-
-    //Returns the number of the line segment closest to the point p
-    public LineSegment closestLineSegmentSearchL(Point p) {
+    public LineSegment closestLineSegmentSearch(Point p) {
         double minr = 100000;
         LineSegment sClosest = null;
         for (int i = 1; i <= total; i++) {
@@ -4007,7 +3989,7 @@ public class FoldLineSet {
         int i_tss_black = 0;
         int i_tss_cyan = 0;
 
-        SortingBox_int_double nbox = new SortingBox_int_double();
+        SortingBox<LineSegment>  nbox = new SortingBox<>();
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
@@ -4027,9 +4009,9 @@ public class FoldLineSet {
             //Put a polygonal line with p as the end point in Narabebako
             if (s.getColor().isFoldingLine()) { //Auxiliary live lines are excluded at this stage
                 if (p.distance(s.getA()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new int_double(i, OritaCalc.angle(s.getA(), s.getB())));
+                    nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getA(), s.getB())));
                 } else if (p.distance(s.getB()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new int_double(i, OritaCalc.angle(s.getB(), s.getA())));
+                    nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getB(), s.getA())));
                 }
             }
         }
@@ -4059,14 +4041,14 @@ public class FoldLineSet {
         t1.set(closestPointOfFoldLine(p));//点pに最も近い、「線分の端点」を返すori_s.closestPointは近い点がないと p_return.set(100000.0,100000.0)と返してくる
 
         //t1を端点とする折線をNarabebakoに入れる
-        SortingBox_int_double nbox = new SortingBox_int_double();
+        SortingBox<LineSegment> nbox = new SortingBox<>();
         for (int i = 1; i <= total; i++) {
             LineSegment s= lineSegments.get(i);
             if (s.getColor().isFoldingLine()) { //この段階で補助活線は除く
                 if (t1.distance(s.getA()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new int_double(i, OritaCalc.angle(s.getA(), s.getB())));
+                    nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getA(), s.getB())));
                 } else if (t1.distance(s.getB()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new int_double(i, OritaCalc.angle(s.getB(), s.getA())));
+                    nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getB(), s.getA())));
                 }
             }
         }
@@ -4075,13 +4057,13 @@ public class FoldLineSet {
     }
 
     // ---------------------------------
-    public boolean extended_fushimi_decide_sides(Point p, SortingBox_int_double nbox) {//return　0=満たさない、　1=満たす。　
+    public boolean extended_fushimi_decide_sides(Point p, SortingBox<LineSegment> nbox) {//return　0=満たさない、　1=満たす。　
         if (nbox.getTotal() == 2) {//t1を端点とする折線の数が2のとき
-            if (getColor(nbox.getInt(1)) != LineColor.BLACK_0) {//1本目が黒でないならダメ
+            if (nbox.getValue(1).getColor() != LineColor.BLACK_0) {//1本目が黒でないならダメ
                 return false;
             }
             //2本目が黒でないならダメ
-            return getColor(nbox.getInt(2)) == LineColor.BLACK_0;
+            return nbox.getValue(2).getColor() == LineColor.BLACK_0;
 
             //2本の線種が黒黒
         }
@@ -4096,14 +4078,14 @@ public class FoldLineSet {
 
         int saisyo_ni_suru = -10;
         for (int i = 1; i <= nbox.getTotal() - 1; i++) {
-            if ((getColor(nbox.getInt(i)) == LineColor.BLACK_0) &&
-                    (getColor(nbox.getInt(i + 1)) == LineColor.BLACK_0)) {
+            if ((nbox.getValue(i).getColor() == LineColor.BLACK_0) &&
+                    (nbox.getValue(i + 1).getColor() == LineColor.BLACK_0)) {
                 saisyo_ni_suru = i + 1;
             }
         }
 
-        if ((getColor(nbox.getInt(nbox.getTotal())) == LineColor.BLACK_0) &&
-                (getColor(nbox.getInt(1)) == LineColor.BLACK_0)) {
+        if ((nbox.getValue(nbox.getTotal()).getColor() == LineColor.BLACK_0) &&
+                (nbox.getValue(1).getColor() == LineColor.BLACK_0)) {
             saisyo_ni_suru = 1;
         }
 
@@ -4116,15 +4098,15 @@ public class FoldLineSet {
         }
 
         //ならべばこnbox,の一番目の折線がx軸となす角度が0になるようにする。
-        SortingBox_int_double nbox1 = new SortingBox_int_double();
+        SortingBox<LineSegment> nbox1 = new SortingBox<>();
 
-        double sasihiku_kakudo = nbox.getDouble(1);
+        double sasihiku_kakudo = nbox.getWeight(1);
 
         for (int i = 1; i <= nbox.getTotal(); i++) {
-            int_double i_d_0 = new int_double();
-            i_d_0.set(nbox.get_i_d(i));
+            WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
+            i_d_0.set(nbox.getWeightedValue(i));
 
-            i_d_0.setDouble(OritaCalc.angle_between_0_360(i_d_0.getDouble() - sasihiku_kakudo));
+            i_d_0.setWeight(OritaCalc.angle_between_0_360(i_d_0.getWeight() - sasihiku_kakudo));
             nbox1.add(i_d_0);
         }
 
@@ -4141,9 +4123,9 @@ public class FoldLineSet {
         return true;
     }
 
-    //Obtain SortingBox with a polygonal line starting at b. They are arranged in ascending order of angle with the line segment ba.
-    public SortingBox_int_double get_SortingBox_of_vertex_b_surrounding_foldLine(Point a, Point b) {
-        SortingBox_int_double r_nbox = new SortingBox_int_double();
+    //Obtain SortingBox<Integer> with a polygonal line starting at b. They are arranged in ascending order of angle with the line segment ba.
+    public SortingBox<LineSegment> get_SortingBox_of_vertex_b_surrounding_foldLine(Point a, Point b) {
+        SortingBox<LineSegment> r_nbox = new SortingBox<>();
         double hantei_kyori = 0.00001;
 
         //Put a polygonal line with b as the end point in Narabebako
@@ -4152,9 +4134,9 @@ public class FoldLineSet {
             LineSegment si = lineSegments.get(i);
             if (si.getColor().isFoldingLine()) { //Auxiliary live lines are excluded at this stage
                 if (b.distance(si.getA()) < hantei_kyori) {
-                    r_nbox.container_i_smallest_first(new int_double(i, OritaCalc.angle(b, a, si.getA(), si.getB())));
+                    r_nbox.container_i_smallest_first(new WeightedValue<>(si, OritaCalc.angle(b, a, si.getA(), si.getB())));
                 } else if (b.distance(si.getB()) < hantei_kyori) {
-                    r_nbox.container_i_smallest_first(new int_double(i, OritaCalc.angle(b, a, si.getB(), si.getA())));
+                    r_nbox.container_i_smallest_first(new WeightedValue<>(si, OritaCalc.angle(b, a, si.getB(), si.getA())));
                 }
             }
         }
@@ -4163,57 +4145,57 @@ public class FoldLineSet {
     }
 
     //Operation to make three angles adjacent to each other at the points of the side into one angle or to cut the corner of the side like the extended Fushimi theorem
-    public SortingBox_int_double extended_fushimi_determine_sides_theorem(SortingBox_int_double nbox0) {
-        SortingBox_int_double nbox1 = new SortingBox_int_double();
+    public SortingBox<LineSegment> extended_fushimi_determine_sides_theorem(SortingBox<LineSegment> nbox0) {
+        SortingBox<LineSegment> nbox1 = new SortingBox<>();
 
         double angle_min = 10000.0;
         double temp_angle;
 
         //Find the minimum angle angle_min
         for (int k = 1; k <= nbox0.getTotal() - 1; k++) {//kは角度の順番
-            temp_angle = nbox0.getDouble(k + 1) - nbox0.getDouble(k);
+            temp_angle = nbox0.getWeight(k + 1) - nbox0.getWeight(k);
             if (temp_angle < angle_min) {
                 angle_min = temp_angle;
             }
         }
 
-        temp_angle = nbox0.getDouble(2) - nbox0.getDouble(1);
+        temp_angle = nbox0.getWeight(2) - nbox0.getWeight(1);
         if (Math.abs(temp_angle - angle_min) < 0.00001) {// 折線を1つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
             for (int i = 2; i <= nbox0.getTotal(); i++) {
-                int_double i_d_0 = new int_double();
-                i_d_0.set(nbox0.get_i_d(i));
+                WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
+                i_d_0.set(nbox0.getWeightedValue(i));
                 nbox1.add(i_d_0);
             }
             return nbox1;
         }
 
-        temp_angle = nbox0.getDouble(nbox0.getTotal()) - nbox0.getDouble(nbox0.getTotal() - 1);
+        temp_angle = nbox0.getWeight(nbox0.getTotal()) - nbox0.getWeight(nbox0.getTotal() - 1);
         if (Math.abs(temp_angle - angle_min) < 0.00001) {// 折線を1つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
             for (int i = 1; i <= nbox0.getTotal() - 1; i++) {
-                int_double i_d_0 = new int_double();
-                i_d_0.set(nbox0.get_i_d(i));
+                WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
+                i_d_0.set(nbox0.getWeightedValue(i));
                 nbox1.add(i_d_0);
             }
             return nbox1;
         }
 
         for (int k = 2; k <= nbox0.getTotal() - 2; k++) {//kは角度の順番
-            temp_angle = nbox0.getDouble(k + 1) - nbox0.getDouble(k);
+            temp_angle = nbox0.getWeight(k + 1) - nbox0.getWeight(k);
             if (Math.abs(temp_angle - angle_min) < 0.00001) {
-                if (getColor(nbox0.getInt(k)) != getColor(nbox0.getInt(k + 1))) {//この場合に隣接する３角度を1つの角度にする
+                if (nbox0.getValue(k).getColor() != nbox0.getValue(k + 1).getColor()) {//この場合に隣接する３角度を1つの角度にする
                     // 折線を2つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
 
                     for (int i = 1; i <= k - 1; i++) {
-                        int_double i_d_0 = new int_double();
-                        i_d_0.set(nbox0.get_i_d(i));
+                        WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
+                        i_d_0.set(nbox0.getWeightedValue(i));
                         nbox1.add(i_d_0);
                     }
 
                     for (int i = k + 2; i <= nbox0.getTotal(); i++) {
-                        int_double i_d_0 = new int_double();
-                        i_d_0.set(nbox0.get_i_d(i));
-                        i_d_0.setDouble(
-                                i_d_0.getDouble() - 2.0 * angle_min
+                        WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
+                        i_d_0.set(nbox0.getWeightedValue(i));
+                        i_d_0.setWeight(
+                                i_d_0.getWeight() - 2.0 * angle_min
                         );
                         nbox1.add(i_d_0);
                     }
@@ -4225,7 +4207,7 @@ public class FoldLineSet {
 
         // 折線を減らせる条件に適合した角がなかった場合nbox0とおなじnbox1を作ってリターンする。
         for (int i = 1; i <= nbox0.getTotal(); i++) {
-            nbox1.add(nbox0.get_i_d(i));
+            nbox1.add(nbox0.getWeightedValue(i));
         }
         return nbox1;
     }
@@ -4238,14 +4220,14 @@ public class FoldLineSet {
         t1.set(closestPointOfFoldLine(p));//点pに最も近い、「線分の端点」を返すori_s.mottomo_tikai_Tenは近い点がないと p_return.set(100000.0,100000.0)と返してくる
 
         //t1を端点とする折線をNarabebakoに入れる
-        SortingBox_int_double nbox = new SortingBox_int_double();
+        SortingBox<LineSegment> nbox = new SortingBox<>();
         for (int i = 1; i <= getTotal(); i++) {
             LineSegment si = lineSegments.get(i);
             if (si.getColor().isFoldingLine()) { //この段階で補助活線は除く
                 if (t1.distance(si.getA()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new int_double(i, OritaCalc.angle(si.getA(), si.getB())));
+                    nbox.container_i_smallest_first(new WeightedValue<>(si, OritaCalc.angle(si.getA(), si.getB())));
                 } else if (t1.distance(si.getB()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new int_double(i, OritaCalc.angle(si.getB(), si.getA())));
+                    nbox.container_i_smallest_first(new WeightedValue<>(si, OritaCalc.angle(si.getB(), si.getA())));
                 }
             }
         }
@@ -4253,7 +4235,7 @@ public class FoldLineSet {
         return extended_fushimi_decide_inside(p, nbox);
     }
 
-    public boolean extended_fushimi_decide_inside(Point p, SortingBox_int_double nbox) {//return　0=満たさない、　1=満たす。　
+    public boolean extended_fushimi_decide_inside(Point p, SortingBox<LineSegment> nbox) {//return　0=満たさない、　1=満たす。　
         double hantei_kyori = 0.00001;
 
         if (nbox.getTotal() % 2 == 1) {//t1を端点とする折線の数が奇数のとき
@@ -4261,12 +4243,12 @@ public class FoldLineSet {
         }
 
         if (nbox.getTotal() == 2) {//t1を端点とする折線の数が2のとき
-            if (getColor(nbox.getInt(1)) != getColor(nbox.getInt(2))) {//2本の線種が違うなら角度関係なしにダメ
+            if (nbox.getValue(1).getColor() != nbox.getValue(2).getColor()) {//2本の線種が違うなら角度関係なしにダメ
                 return false;
             }
 
             //The following is when the two line types are blue-blue or red-red
-            LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.line_intersect_decide(get(nbox.getInt(1)), get(nbox.getInt(2)), 0.00001, 0.00001);
+            LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.line_intersect_decide(nbox.getValue(1), nbox.getValue(2), 0.00001, 0.00001);
 
             switch (i_senbun_kousa_hantei) {
                 case PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323:
@@ -4283,7 +4265,7 @@ public class FoldLineSet {
 
         fushimi_decision_angle_goukei = 360.0;
 
-        SortingBox_int_double nbox1 = new SortingBox_int_double();
+        SortingBox<LineSegment> nbox1 = new SortingBox<>();
 
         while (nbox.getTotal() > 2) {//点から出る折線の数が2になるまで実行する
             nbox1.set(extended_fushimi_decision_inside_theorem(nbox));
@@ -4294,18 +4276,18 @@ public class FoldLineSet {
         }
 
         double temp_kakudo = OritaCalc.angle_between_0_kmax(
-                OritaCalc.angle_between_0_kmax(nbox.getDouble(1), fushimi_decision_angle_goukei)
+                OritaCalc.angle_between_0_kmax(nbox.getWeight(1), fushimi_decision_angle_goukei)
                         -
-                        OritaCalc.angle_between_0_kmax(nbox.getDouble(2), fushimi_decision_angle_goukei)
+                        OritaCalc.angle_between_0_kmax(nbox.getWeight(2), fushimi_decision_angle_goukei)
                 , fushimi_decision_angle_goukei
         );
 
         return Math.abs(fushimi_decision_angle_goukei - temp_kakudo * 2.0) < hantei_kyori;//この0だけ、角度がおかしいという意味
     }
 
-    public SortingBox_int_double extended_fushimi_decision_inside_theorem(SortingBox_int_double nbox0) {//拡張伏見定理で隣接する３角度を1つの角度にする操作
-        SortingBox_int_double nboxtemp = new SortingBox_int_double();
-        SortingBox_int_double nbox1 = new SortingBox_int_double();
+    public SortingBox<LineSegment> extended_fushimi_decision_inside_theorem(SortingBox<LineSegment> nbox0) {//拡張伏見定理で隣接する３角度を1つの角度にする操作
+        SortingBox<LineSegment> nboxtemp = new SortingBox<>();
+        SortingBox<LineSegment> nbox1 = new SortingBox<>();
         int tikai_orisen_jyunban;
         int tooi_orisen_jyunban;
 
@@ -4323,9 +4305,9 @@ public class FoldLineSet {
             }
 
             double temp_kakudo = OritaCalc.angle_between_0_kmax(
-                    OritaCalc.angle_between_0_kmax(nbox0.getDouble(tooi_orisen_jyunban), fushimi_decision_angle_goukei)
+                    OritaCalc.angle_between_0_kmax(nbox0.getWeight(tooi_orisen_jyunban), fushimi_decision_angle_goukei)
                             -
-                            OritaCalc.angle_between_0_kmax(nbox0.getDouble(tikai_orisen_jyunban), fushimi_decision_angle_goukei)
+                            OritaCalc.angle_between_0_kmax(nbox0.getWeight(tikai_orisen_jyunban), fushimi_decision_angle_goukei)
 
                     , fushimi_decision_angle_goukei
             );
@@ -4336,28 +4318,28 @@ public class FoldLineSet {
         }
 
         for (int k = 1; k <= nbox0.getTotal(); k++) {//kは角度の順番
-            double temp_kakudo = OritaCalc.angle_between_0_kmax(nbox0.getDouble(2) - nbox0.getDouble(1), fushimi_decision_angle_goukei);
+            double temp_kakudo = OritaCalc.angle_between_0_kmax(nbox0.getWeight(2) - nbox0.getWeight(1), fushimi_decision_angle_goukei);
 
             if (Math.abs(temp_kakudo - kakudo_min) < 0.00001) {
-                if (getColor(nbox0.getInt(1)) != getColor(nbox0.getInt(2))) {//この場合に隣接する３角度を1つの角度にする
+                if (nbox0.getValue(1).getColor() != nbox0.getValue(2).getColor()) {//この場合に隣接する３角度を1つの角度にする
                     // 折線を2つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
 
-                    double kijyun_kakudo = nbox0.getDouble(3);
+                    double kijyun_kakudo = nbox0.getWeight(3);
 
                     for (int i = 1; i <= nbox0.getTotal(); i++) {
-                        int_double i_d_0 = new int_double();
-                        i_d_0.set(nbox0.get_i_d(i));
+                        WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
+                        i_d_0.set(nbox0.getWeightedValue(i));
 
-                        i_d_0.setDouble(
-                                OritaCalc.angle_between_0_kmax(i_d_0.getDouble() - kijyun_kakudo, fushimi_decision_angle_goukei)
+                        i_d_0.setWeight(
+                                OritaCalc.angle_between_0_kmax(i_d_0.getWeight() - kijyun_kakudo, fushimi_decision_angle_goukei)
                         );
 
                         nboxtemp.add(i_d_0);
                     }
 
                     for (int i = 3; i <= nboxtemp.getTotal(); i++) {
-                        int_double i_d_0 = new int_double();
-                        i_d_0.set(nboxtemp.get_i_d(i));
+                        WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
+                        i_d_0.set(nboxtemp.getWeightedValue(i));
 
                         nbox1.add(i_d_0);
                     }
@@ -4372,7 +4354,7 @@ public class FoldLineSet {
 
         // 折線を2つ減らせる条件に適合した角がなかった場合nbox0とおなじnbox1を作ってリターンする。
         for (int i = 1; i <= nbox0.getTotal(); i++) {
-            nbox1.add(nbox0.get_i_d(i));
+            nbox1.add(nbox0.getWeightedValue(i));
         }
         return nbox1;
     }

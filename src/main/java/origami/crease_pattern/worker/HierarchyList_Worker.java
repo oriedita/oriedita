@@ -11,8 +11,8 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami_editor.record.Memo;
 import origami_editor.tools.StringOp;
-import origami_editor.sortingbox.SortingBox_int_double;
-import origami_editor.sortingbox.int_double;
+import origami_editor.sortingbox.SortingBox;
+import origami_editor.sortingbox.WeightedValue;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.tools.Camera;
 import origami.crease_pattern.PointSet;
@@ -25,7 +25,7 @@ import java.math.RoundingMode;
 public class HierarchyList_Worker {
     public double[] face_rating;
     public int[] i_face_rating;
-    public SortingBox_int_double nbox = new SortingBox_int_double();//20180227　nboxにはmenのidがmen_ratingと組になって、men_ratingの小さい順に並べ替えられて入っている。
+    public SortingBox<Integer>  nbox = new SortingBox<>();//20180227 In the nbox, the id of men is paired with men_rating and sorted in ascending order of men_rating.
     HierarchyList hierarchyList = new HierarchyList();
     int SubFaceTotal;//SubFaceの数
     //  hierarchyList[][]は折る前の展開図のすべての面同士の上下関係を1つの表にまとめたものとして扱う
@@ -1275,9 +1275,9 @@ public class HierarchyList_Worker {
         for (int i_nbox = 1; i_nbox <= otta_Men_zu.getNumFaces(); i_nbox++) {
             int im;
             if (camera.getCameraMirror() == -1.0) {//カメラの鏡設定が-1(x軸の符号を反転)なら、折り上がり図は裏表示
-                im = nbox.backwards_get_int(i_nbox);
+                im = nbox.backwardsGetValue(i_nbox);
             } else {
-                im = nbox.getInt(i_nbox);
+                im = nbox.getValue(i_nbox);
             }
 
             StringBuilder text;//文字列処理用のクラスのインスタンス化
@@ -1842,7 +1842,7 @@ public class HierarchyList_Worker {
 
         nbox.reset();
         for (int i = 1; i <= hierarchyList.getFacesTotal(); i++) {
-            nbox.container_i_smallest_first(new int_double(i, face_rating[i]));
+            nbox.container_i_smallest_first(new WeightedValue<>(i, face_rating[i]));
         }
     }
     //Each of the following functions uses s0 [] as FaceStack 20180305

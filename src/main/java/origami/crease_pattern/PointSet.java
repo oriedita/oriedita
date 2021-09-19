@@ -441,7 +441,7 @@ public class PointSet {
         return lineToLineSegment(getLine(i));
     }    //棒のidからSenbunを得る
 
-    private Face getFace(int i) {
+    public Face getFace(int i) {
         return faces[i];
     }   //面を得る
 

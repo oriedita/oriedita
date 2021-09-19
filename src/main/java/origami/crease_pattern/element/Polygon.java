@@ -1,8 +1,8 @@
 package origami.crease_pattern.element;
 
 import origami.crease_pattern.OritaCalc;
-import origami_editor.sortingbox.SortingBox_int_double;
-import origami_editor.sortingbox.int_double;
+import origami_editor.sortingbox.SortingBox;
+import origami_editor.sortingbox.WeightedValue;
 
 public class Polygon {
     int vertexCount;             //How many vertices
@@ -32,8 +32,7 @@ public class Polygon {
     // When all of the line segment s0 exists inside the convex polygon (the boundary line is not considered to be inside) 5,
     //return it
     public Intersection inside_outside_check(LineSegment s0) {
-
-        SortingBox_int_double nbox = new SortingBox_int_double();
+        SortingBox<Point> nbox = new SortingBox<>();
 
         int i_intersection = 0;
 
@@ -123,7 +122,7 @@ public class Polygon {
         }
 
         for (int i = 1; i <= i_intersection; i++) {
-            nbox.container_i_smallest_first(new int_double(i, intersection[i].distance(s0.getA())));
+            nbox.container_i_smallest_first(new WeightedValue<>(intersection[i], intersection[i].distance(s0.getA())));
         }
 
         // 0, when all of the line segment s0 exists outside the convex polygon (the boundary line is not considered inside)
@@ -143,7 +142,7 @@ public class Polygon {
 
         for (int i = 1; i <= nbox.getTotal(); i++) {
 
-            i_nai = inside(intersection[nbox.getInt(i)]);
+            i_nai = inside(nbox.getValue(i));
             if (i_nai == Intersection.OUTSIDE) {
                 outside = true;
             }
@@ -155,7 +154,7 @@ public class Polygon {
             }
 
             if (i != nbox.getTotal()) {
-                i_nai = inside(OritaCalc.midPoint(intersection[nbox.getInt(i)], intersection[nbox.getInt(i + 1)]));
+                i_nai = inside(OritaCalc.midPoint(nbox.getValue(i), nbox.getValue(i + 1)));
                 if (i_nai == Intersection.OUTSIDE) {
                     outside = true;
                 }
