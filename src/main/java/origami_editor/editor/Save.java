@@ -27,6 +27,10 @@ public class Save implements Serializable {
         this.circles = new ArrayList<>();
         this.points = new ArrayList<>();
         this.auxLineSegments = new ArrayList<>();
+        creasePatternCamera = new Camera();
+        canvasModel = new CanvasModel();
+        gridModel = new GridModel();
+        foldedFigureModel = new FoldedFigureModel();
     }
 
     public void addPoint(Point p) {
