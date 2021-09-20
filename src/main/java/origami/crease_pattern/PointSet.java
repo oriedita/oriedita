@@ -5,6 +5,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Point_p;
 import origami.crease_pattern.element.Polygon;
+import origami_editor.editor.Save;
 import origami_editor.record.Memo;
 import origami.folding.element.Face;
 import origami.crease_pattern.element.Line;
@@ -972,69 +973,21 @@ public class PointSet {
         }
     }
 
-    /**
-     * Output the information of all line segments of the line segment set as Memo. // Used for recording undo and redo
-     */
-    public Memo getMemo() {
-        Memo memo1 = new Memo();
-        memo1.reset();
-
-        memo1.addLine("<点>");
+    public Save getSave() {
+        Save save = new Save();
 
         for (int i = 1; i <= numPoints; i++) {
-            memo1.addLine("番号," + i);
-            memo1.addLine("座標," + points[i].getX() + "," + points[i].getY());
+            Point p = new Point();
+            p.set(points[i]);
+            save.addPoint(p);
         }
-        memo1.addLine("</点>");
 
-        return memo1;
+        return save;
     }
 
-    public void setMemo(Memo memo1) {
-        //First find the total number of points
-
-        boolean read_flg = false;// If it is 0, it will not be read. If it is 1, read it.
-        int number = 0;
-
-        int point = 0;
-
-        String str;
-        double ax, ay;
-
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
-
-            str = tk.nextToken();
-            if (str.equals("<点>")) {
-                read_flg = true;
-            } else if (str.equals("</点>")) {
-                read_flg = false;
-            }
-            if (read_flg && str.equals("番号")) {
-                point = point + 1;
-            }
-        }
-        //First the total number of auxiliary line segments was calculated
-
-        read_flg = false;
-
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
-            str = tk.nextToken();
-            if (str.equals("<点>")) {
-                read_flg = true;
-            }
-            if (read_flg && str.equals("番号")) {
-                str = tk.nextToken();
-                number = Integer.parseInt(str);
-            }
-            if (read_flg && str.equals("座標")) {
-                str = tk.nextToken();
-                ax = Double.parseDouble(str);
-                str = tk.nextToken();
-                ay = Double.parseDouble(str);
-                points[number].set(ax, ay);
-            }
+    public void setSave(Save save) {
+        for (int i = 0; i < save.getPoints().size(); i++) {
+            points[i+1].set(save.getPoints().get(i));
         }
     }
 }

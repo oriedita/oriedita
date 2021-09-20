@@ -6,8 +6,9 @@ import origami.crease_pattern.OritaCalc;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
 
-public class GridModel {
+public class GridModel implements Serializable {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private int intervalGridSize;
     private int gridSize;
@@ -331,5 +332,25 @@ public class GridModel {
         }
 
         setVerticalScalePosition(verticalScalePosition);
+    }
+
+    public void set(GridModel gridModel) {
+        intervalGridSize = gridModel.getIntervalGridSize();
+        gridSize = gridModel.getGridSize();
+        gridXA = gridModel.getGridXA();
+        gridXB = gridModel.getGridXB();
+        gridXC = gridModel.getGridXC();
+        gridYA = gridModel.getGridYA();
+        gridYB = gridModel.getGridYB();
+        gridYC = gridModel.getGridYC();
+        gridAngle = gridModel.getGridAngle();
+        gridColor = gridModel.getGridColor();
+        gridScaleColor = gridModel.getGridScaleColor();
+        gridLineWidth = gridModel.getGridLineWidth();
+        baseState = gridModel.getBaseState();
+        verticalScalePosition = gridModel.getVerticalScalePosition();
+        horizontalScalePosition = gridModel.getHorizontalScalePosition();
+
+        this.pcs.firePropertyChange(null, null, null);
     }
 }

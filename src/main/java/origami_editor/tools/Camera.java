@@ -4,7 +4,9 @@ import origami_editor.editor.databinding.CameraModel;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
-public class Camera { // Mediation between actual coordinates and display coordinates
+import java.io.Serializable;
+
+public class Camera implements Serializable { // Mediation between actual coordinates and display coordinates
 
     double camera_position_x, camera_position_y;
     double camera_angle;

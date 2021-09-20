@@ -1,96 +1,103 @@
 package origami_editor.editor.undo_box;
 
-import origami_editor.record.Memo;
+import origami_editor.editor.Save;
 
-import java.util.LinkedList;
+import java.io.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class HistoryState {
-    int undoTotal = 20;//Number of times you can undo up to how many times ago
-
-    int recordTotal = -1;//The number of times you have recorded. If you have recorded up to 5 times ago, recordTotal = 5 and this does not include the latest recorded memo [0]
-    int recordPosition = 0;//If 0, the latest recording position, if n, the previous recording position n
-
-    LinkedList<Memo> Mem = new LinkedList<>(); //Create a LinkedList object
+    int undoTotal = 1000;//Number of times you can undo up to how many times ago
+    Deque<byte[]> history = new ArrayDeque<>();
+    Deque<byte[]> future = new ArrayDeque<>();
+    byte[] current;
 
     public HistoryState() {
-        for (int i = 0; i <= undoTotal; i++) {
-            Mem.add(new Memo());
+    }
+
+    public void record(Save s0) {
+        if (current != null) history.addFirst(current);
+        try {
+            current = convertToBytes(s0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Future becomes irrelevant
+        future.clear();
+
+        while (history.size() > undoTotal) {
+            history.removeLast();
+        }
+
+    }
+
+    private byte[] convertToBytes(Object object) throws IOException {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+             ObjectOutputStream out = new ObjectOutputStream(bos)) {
+            out.writeObject(object);
+            return bos.toByteArray();
         }
     }
 
-    public void record(Memo m0) {
-        // (1) First, shift the current recording position so that memo (recordPosition) is memo (0) and memo (recordPosition + 1) is memo (10) ,,,.
-        for (int i = 1; i <= recordPosition; i++) {
-            Mem.remove(0);
-            Mem.add(new Memo());
-        }
-
-        recordTotal = recordTotal - recordPosition;
-        recordPosition = 0;
-
-        //(2) Addition of new record
-        Mem.remove(undoTotal);
-        Mem.add(0, m0);
-
-        recordTotal = recordTotal + 1;
-        if (recordTotal > undoTotal) {
-            recordTotal = undoTotal;
+    private Object convertFromBytes(byte[] bytes) throws IOException, ClassNotFoundException {
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+             ObjectInputStream in = new ObjectInputStream(bis)) {
+            return in.readObject();
         }
     }
 
-    public Memo undo() {
-        recordPosition = recordPosition + 1;
-        if (recordPosition > recordTotal) {
-            recordPosition = recordTotal;
-        }
-
-        return Mem.get(recordPosition);
+    public boolean canUndo() {
+        return !history.isEmpty();
     }
 
-    public Memo redo() {
-        recordPosition = recordPosition - 1;
-        if (recordPosition < 0) {
-            recordPosition = 0;
+    public boolean canRedo() {
+        return !future.isEmpty();
+    }
+
+    private Save getCurrent() {
+        try {
+            return (Save) convertFromBytes(current);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
 
-        return Mem.get(recordPosition);
+        return new Save();
+    }
+
+    public Save undo() {
+        if (history.isEmpty()) {
+            return getCurrent();
+        }
+
+        future.addFirst(current);
+        current = history.removeFirst();
+
+        return getCurrent();
+    }
+
+    public Save redo() {
+        if (future.isEmpty()) {
+            return getCurrent();
+        }
+
+        history.addFirst(current);
+        current = future.removeFirst();
+
+        return getCurrent();
     }
 
     public void setUndoTotal(int i_new) {
-        if (undoTotal <= i_new) {
-            for (int i = undoTotal + 1; i <= i_new; i++) {
-                Mem.add(new Memo());
-            }
-            undoTotal = i_new;
-        } else {  //When reducing the number of records
-            //First, delete the Memo from Chogo to undoTotal.
-            for (int i = recordTotal + 1; i <= undoTotal; i++) {
-                Mem.removeLast();
-            }
+        undoTotal = i_new;
 
-            //Next, delete the Memo from the beginning to just before the recording position
-            for (int i = 0; i <= recordPosition - 1; i++) {
-                Mem.removeFirst();
-            }
+        while (history.size() > undoTotal) {
+            history.removeLast();
+        }
 
-            //Update recordPosition, recordTotal and undoTotal according to the above operation
-            recordTotal = recordTotal - recordPosition;
-            recordPosition = 0;
-            undoTotal = recordTotal;
-
-            if (recordTotal <= i_new) {
-                for (int i = undoTotal + 1; i <= i_new; i++) {
-                    Mem.add(new Memo());
-                }
-                undoTotal = i_new;
-            } else {  //When reducing the number of records
-                //Delete the latter half of Memo so that the number of records is i_new
-                for (int i = i_new + 1; i <= recordTotal; i++) {
-                    Mem.removeLast();
-                }
-                recordTotal = i_new;
-                undoTotal = i_new;
-            }
+        while (future.size() > undoTotal) {
+            future.removeLast();
         }
     }
 }

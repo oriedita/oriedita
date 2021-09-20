@@ -5,8 +5,9 @@ import origami_editor.editor.folded_figure.FoldedFigure;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
 
-public class FoldedFigureModel {
+public class FoldedFigureModel implements Serializable {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private Color frontColor;
     private Color backColor;

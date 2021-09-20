@@ -1,25 +1,25 @@
 package origami_editor.editor.drawing_worker;
 
-import origami.crease_pattern.element.LineColor;
-import origami_editor.editor.*;
+import origami.crease_pattern.FoldLineSet;
+import origami.crease_pattern.LineSegmentSet;
+import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.Polygon;
+import origami.crease_pattern.element.*;
+import origami_editor.editor.App;
+import origami_editor.editor.LineStyle;
+import origami_editor.editor.MouseMode;
+import origami_editor.editor.Save;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing_worker.drawing_worker_toolbox.Drawing_Worker_Toolbox;
 import origami_editor.editor.undo_box.HistoryState;
-import origami.crease_pattern.element.Circle;
 import origami_editor.graphic2d.grid.Grid;
-import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.OritaCalc;
-import origami.crease_pattern.element.StraightLine;
 import origami_editor.graphic2d.oritaoekaki.OritaDrawing;
-import origami.crease_pattern.element.Point;
-import origami.crease_pattern.element.Polygon;
 import origami_editor.record.Memo;
-import origami_editor.tools.StringOp;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 import origami_editor.tools.Camera;
-import origami.crease_pattern.FoldLineSet;
-import origami.crease_pattern.LineSegmentSet;
+import origami_editor.tools.StringOp;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -31,6 +31,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DrawingWorker {
+    // ------------
+    final int check4ColorTransparencyIncrement = 10;
     private final LineSegmentSet lineSegmentSet = new LineSegmentSet();    //Instantiation of basic branch structure
     public FoldLineSet foldLineSet = new FoldLineSet();    //Store polygonal lines
     public FoldLineSet voronoiLineSet = new FoldLineSet();    //Store Voronoi diagram lines
@@ -114,17 +116,7 @@ public class DrawingWorker {
     //39 39 39 39 39 39 39    mouseMode==39　;折り畳み可能線入力  qqqqqqqqq
     int i_step_for_copy_4p = 0;//i_step_for_copy_4p=2の場合は、step線が1本だけになっていて、次の操作で入力折線が確定する状態
     boolean i_takakukei_kansei = false;//多角形が完成したら1、未完成なら0
-    // ------------
-    final int check4ColorTransparencyIncrement = 10;
     private int lineWidth;
-
-    public void setGridConfigurationData(GridModel gridModel) {
-        grid.setGridConfigurationData(gridModel);
-        text_cp_setumei = "1/" + grid.getGridSize();
-        calculateDecisionWidth();
-
-        app.repaintCanvas();
-    }
 
     public DrawingWorker(double r0, App app0) {  //コンストラクタ
         app = app0;
@@ -151,6 +143,14 @@ public class DrawingWorker {
         reset();
     }
 
+    public void setGridConfigurationData(GridModel gridModel) {
+        grid.setGridConfigurationData(gridModel);
+        text_cp_setumei = "1/" + grid.getGridSize();
+        calculateDecisionWidth();
+
+        app.repaintCanvas();
+    }
+
     public void reset() {
         pointSize = 1;
         foldLineSet.reset();
@@ -170,388 +170,40 @@ public class DrawingWorker {
         //Enter the paper square (end)
     }
 
-    public void Memo_jyouhou_toridasi(Memo memo1) {
-        Pattern p = Pattern.compile("<(.+)>(.+)</(.+)>");
+    public void Memo_jyouhou_toridasi(Save memo1) {
+        app.canvas.creasePatternCamera.setCamera(memo1.getCreasePatternCamera());
 
-        boolean reading;
-        String[] st;
-        String[] s;
+        app.canvasModel.set(memo1.getCanvasModel());
 
-        // Loading the camera settings for the development view
-        reading = false;
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            String str = memo1.getLine(i);
+        app.gridModel.set(memo1.getGridModel());
 
-            if (str.equals("<camera_of_orisen_nyuuryokuzu>")) {
-                reading = true;
-            } else if (str.equals("</camera_of_orisen_nyuuryokuzu>")) {
-                reading = false;
-            } else {
-                if (!reading) {
-                    continue;
-                }
-
-                Matcher m = p.matcher(str);
-
-                if (!m.matches()) {
-                    continue;
-                }
-
-                switch (m.group(1)) {
-                    case "camera_ichi_x":
-                        app.canvas.creasePatternCamera.setCameraPositionX(Double.parseDouble(m.group(2)));
-                        break;
-                    case "camera_ichi_y":
-                        app.canvas.creasePatternCamera.setCameraPositionY(Double.parseDouble(m.group(2)));
-                        break;
-                    case "camera_kakudo":
-                        app.creasePatternCameraModel.setRotation(Double.parseDouble(m.group(2)));
-                        break;
-                    case "camera_kagami":
-                        app.canvas.creasePatternCamera.setCameraMirror(Double.parseDouble(m.group(2)));
-                        break;
-                    case "camera_bairitsu_x":
-                        app.creasePatternCameraModel.setScale(Double.parseDouble(m.group(2)));
-                        break;
-                    case "camera_bairitsu_y":
-                        break;
-                    case "hyouji_ichi_x":
-                        app.canvas.creasePatternCamera.setDisplayPositionX(Double.parseDouble(m.group(2)));
-                        break;
-                    case "hyouji_ichi_y":
-                        app.canvas.creasePatternCamera.setDisplayPositionY(Double.parseDouble(m.group(2)));
-                        break;
-                }
-            }
-        }
-
-        CanvasModel canvasModel = app.canvasModel;
-
-
-
-        // ----------------------------------------- チェックボックス等の設定の読み込み
-        reading = false;
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            String str = memo1.getLine(i);
-
-            if (str.equals("<settei>")) {
-                reading = true;
-            } else if (str.equals("</settei>")) {
-                reading = false;
-            } else {
-                if (!reading) {
-                    continue;
-                }
-                Matcher m = p.matcher(str);
-                if (!m.matches()) {
-                    continue;
-                }
-
-                String value = m.group(2).trim();
-                switch (m.group(1)) {
-                    case "ckbox_mouse_settei": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setMouseWheelMovesCreasePattern(selected);
-                        break;
-                    }
-                    case "ckbox_ten_sagasi": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayPointSpotlight(selected);
-                        break;
-                    }
-                    case "ckbox_ten_hanasi": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayPointOffset(selected);
-                        break;
-                    }
-                    case "ckbox_kou_mitudo_nyuuryoku": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayGridInputAssist(selected);
-                        break;
-                    }
-                    case "ckbox_bun": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayComments(selected);
-                        break;
-                    }
-                    case "ckbox_cp": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayCpLines(selected);
-                        break;
-                    }
-                    case "ckbox_a0": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayAuxLines(selected);
-                        break;
-                    }
-                    case "ckbox_a1": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayLiveAuxLines(selected);
-                        break;
-                    }
-                    case "ckbox_mejirusi": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayMarkings(selected);
-                        break;
-                    }
-                    case "ckbox_cp_ue": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayCreasePatternOnTop(selected);
-                        break;
-                    }
-                    case "ckbox_oritatami_keika": {
-                        boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayFoldingProgress(selected);
-                        break;
-                    }
-                    case "iTenkaizuSenhaba":
-                        canvasModel.setLineWidth(Integer.parseInt(value));
-                        break;
-                    case "ir_ten":
-                        canvasModel.setPointSize(Integer.parseInt(value));
-                        break;
-                    case "i_orisen_hyougen":
-                        canvasModel.setLineStyle(LineStyle.from(value));
-                        break;
-                    case "i_anti_alias":
-                        canvasModel.setAntiAlias(Boolean.parseBoolean(value));
-                        break;
-                }
-            }
-        }
-
-        // ----------------------------------------- 格子設定の読み込み
-
-        reading = false;
-        GridModel gridModel = app.gridModel;
-        double gridXA = 0.0;
-        double gridXB = 1.0;
-        double gridXC = 1.0;
-        double gridYA = 0.0;
-        double gridYB = 1.0;
-        double gridYC = 1.0;
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            String str = memo1.getLine(i);
-
-            if (str.equals("<Kousi>")) {
-                reading = true;
-            } else if (str.equals("</Kousi>")) {
-                reading = false;
-            } else {
-                if (!reading) {
-                    continue;
-                }
-
-                Matcher m = p.matcher(str);
-                if (!m.matches()) {
-                    continue;
-                }
-
-                switch (m.group(1)) {
-                    case "i_kitei_jyoutai":
-                        gridModel.setBaseState(Grid.State.from(m.group(2)));
-                        break;
-                    case "nyuuryoku_kitei":
-                        gridModel.setGridSize(StringOp.String2int(m.group(2), gridModel.getGridSize()));
-                        break;
-                    case "memori_kankaku":
-                        int scale_interval = Integer.parseInt(m.group(2));
-
-                        gridModel.setIntervalGridSize(scale_interval);
-                        break;
-                    case "a_to_heikouna_memori_iti":
-                        gridModel.setHorizontalScalePosition(Integer.parseInt(m.group(2)));
-                        break;
-                    case "b_to_heikouna_memori_iti":
-                        gridModel.setVerticalScalePosition(Integer.parseInt(m.group(2)));
-                        break;
-                    case "kousi_senhaba":
-                        gridModel.setGridLineWidth(Integer.parseInt(m.group(2)));
-                        break;
-                    case "d_kousi_x_a":
-                        gridXA = app.string2double(m.group(2), gridModel.getGridXA());
-                        break;
-                    case "d_kousi_x_b":
-                        gridXB = app.string2double(m.group(2), gridModel.getGridXB());
-                        break;
-                    case "d_kousi_x_c":
-                        gridXC = app.string2double(m.group(2), gridModel.getGridXC());
-                        break;
-                    case "d_kousi_y_a":
-                        gridYA = app.string2double(m.group(2), gridModel.getGridYA());
-                        break;
-                    case "d_kousi_y_b":
-                        gridYB = app.string2double(m.group(2), gridModel.getGridYB());
-                        break;
-                    case "d_kousi_y_c":
-                        gridYB = app.string2double(m.group(2), gridModel.getGridYC());
-                        break;
-                    case "d_kousi_kakudo":
-                        gridYC = app.string2double(m.group(2), gridModel.getGridAngle());
-                        break;
-                }
-
-            }
-        }
-
-        gridModel.setGridX(gridXA, gridXB, gridXC);
-        gridModel.setGridY(gridYA, gridYB, gridYC);
-
-        // ----------------------------------------- 格子色設定の読み込み
-        int i_grid_color_R = 0;
-        int i_grid_color_G = 0;
-        int i_grid_color_B = 0;
-        int i_grid_memori_color_R = 0;
-        int i_grid_memori_color_G = 0;
-        int i_grid_memori_color_B = 0;
-
-        boolean i_Grid_iro_yomikomi = false;//Kousi_iroの読み込みがあったら1、なければ0
-        reading = false;
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            String str = memo1.getLine(i);
-
-            if (str.equals("<Kousi_iro>")) {
-                reading = true;
-                i_Grid_iro_yomikomi = true;
-            } else if (str.equals("</Kousi_iro>")) {
-                reading = false;
-            } else {
-                if (!reading) {
-                    continue;
-                }
-                Matcher m = p.matcher(str);
-
-                if (!m.matches()) {
-                    continue;
-                }
-
-                switch (m.group(1)) {
-                    case "kousi_color_R":
-                        i_grid_color_R = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "kousi_color_G":
-                        i_grid_color_G = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "kousi_color_B":
-                        i_grid_color_B = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "kousi_memori_color_R":
-                        i_grid_memori_color_R = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "kousi_memori_color_G":
-                        i_grid_memori_color_G = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "kousi_memori_color_B":
-                        i_grid_memori_color_B = (Integer.parseInt(m.group(2)));
-                        break;
-                }
-            }
-        }
-
-        if (i_Grid_iro_yomikomi) {//Grid_iroの読み込みがあったら1、なければ0
-            gridModel.setGridColor(new Color(i_grid_color_R, i_grid_color_G, i_grid_color_B));
-
-            System.out.println("i_kousi_memori_color_R= " + i_grid_memori_color_R);
-            System.out.println("i_kousi_memori_color_G= " + i_grid_memori_color_G);
-            System.out.println("i_kousi_memori_color_B= " + i_grid_memori_color_B);
-            gridModel.setGridScaleColor(new Color(i_grid_memori_color_R, i_grid_memori_color_G, i_grid_memori_color_B));
-        }
-
-        // 折り上がり図設定の読み込み -------------------------------------------------------------------------
-
-        int i_oriagarizu_F_color_R = 0;
-        int i_oriagarizu_F_color_G = 0;
-        int i_oriagarizu_F_color_B = 0;
-
-        int i_oriagarizu_B_color_R = 0;
-        int i_oriagarizu_B_color_G = 0;
-        int i_oriagarizu_B_color_B = 0;
-
-        int i_oriagarizu_L_color_R = 0;
-        int i_oriagarizu_L_color_G = 0;
-        int i_oriagarizu_L_color_B = 0;
-
-
-        boolean i_oriagarizu_yomikomi = false;//oriagarizuの読み込みがあったら1、なければ0
-        reading = false;
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            String str = memo1.getLine(i);
-
-            if (str.equals("<oriagarizu>")) {
-                reading = true;
-                i_oriagarizu_yomikomi = true;
-            } else if (str.equals("</oriagarizu>")) {
-                reading = false;
-            } else {
-                if (!reading) {
-                    continue;
-                }
-                Matcher m = p.matcher(str);
-                if (!m.matches()) {
-                    continue;
-                }
-
-                switch (m.group(1)) {
-                    case "oriagarizu_F_color_R":
-                        i_oriagarizu_F_color_R = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_F_color_G":
-                        i_oriagarizu_F_color_G = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_F_color_B":
-                        i_oriagarizu_F_color_B = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_B_color_R":
-                        i_oriagarizu_B_color_R = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_B_color_G":
-                        i_oriagarizu_B_color_G = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_B_color_B":
-                        i_oriagarizu_B_color_B = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_L_color_R":
-                        i_oriagarizu_L_color_R = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_L_color_G":
-                        i_oriagarizu_L_color_G = (Integer.parseInt(m.group(2)));
-                        break;
-                    case "oriagarizu_L_color_B":
-                        i_oriagarizu_L_color_B = (Integer.parseInt(m.group(2)));
-                        break;
-                }
-            }
-        }
-
-        if (i_oriagarizu_yomikomi) {
-            app.foldedFigureModel.setFrontColor(new Color(i_oriagarizu_F_color_R, i_oriagarizu_F_color_G, i_oriagarizu_F_color_B));
-            app.foldedFigureModel.setBackColor(new Color(i_oriagarizu_B_color_R, i_oriagarizu_B_color_G, i_oriagarizu_B_color_B));
-            app.foldedFigureModel.setLineColor(new Color(i_oriagarizu_L_color_R, i_oriagarizu_L_color_G, i_oriagarizu_L_color_B));
-        }
+        app.foldedFigureModel.setFrontColor(memo1.getFoldedFigureModel().getFrontColor());
+        app.foldedFigureModel.setBackColor(memo1.getFoldedFigureModel().getBackColor());
+        app.foldedFigureModel.setLineColor(memo1.getFoldedFigureModel().getLineColor());
     }
 
-    public String setMemo_for_redo_undo(Memo memo1) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用
-        return foldLineSet.setMemo(memo1);
+    public String setMemo_for_redo_undo(Save save) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用
+        return foldLineSet.setSave(save);
     }
 
-    public void setMemo_for_reading(Memo memo1) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<For reading data
+    public void setSave_for_reading(Save memo1) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<For reading data
         Memo_jyouhou_toridasi(memo1);
-        foldLineSet.setMemo(memo1);
-        auxLines.setAuxMemo(memo1);
+        foldLineSet.setSave(memo1);
+        auxLines.setAuxSave(memo1);
     }
 
-    public void setMemo_for_reading_tuika(Memo memo1) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<For reading data
+    public void setSave_for_reading_tuika(Save memo1) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<For reading data
         double addx, addy;
 
         FoldLineSet tempFoldLineSet = new FoldLineSet();    //追加された折線だけ取り出すために使う
-        tempFoldLineSet.setMemo(memo1);//追加された折線だけ取り出してori_s_tempを作る
+        tempFoldLineSet.setSave(memo1);//追加された折線だけ取り出してori_s_tempを作る
         addx = foldLineSet.get_x_max() + 100.0 - tempFoldLineSet.get_x_min();
         addy = foldLineSet.get_y_max() - tempFoldLineSet.get_y_max();
 
         tempFoldLineSet.move(addx, addy);//全体を移動する
 
         int total_old = foldLineSet.getTotal();
-        foldLineSet.addMemo(tempFoldLineSet.getMemo());
+        foldLineSet.addSave(tempFoldLineSet.getSave());
         int total_new = foldLineSet.getTotal();
         foldLineSet.intersect_divide(1, total_old, total_old + 1, total_new);
 
@@ -559,8 +211,8 @@ public class DrawingWorker {
         record();
     }
 
-    public void setAuxMemo(Memo memo1) {
-        auxLines.setAuxMemo(memo1);
+    public void setAuxMemo(Save memo1) {
+        auxLines.setAuxSave(memo1);
     }
 
     public void setCamera(Camera cam0) {
@@ -582,12 +234,12 @@ public class DrawingWorker {
     }
 
     public LineSegmentSet get() {
-        lineSegmentSet.setMemo(foldLineSet.getMemo());
+        lineSegmentSet.setSave(foldLineSet.getSave());
         return lineSegmentSet;
     }
 
     public LineSegmentSet getForFolding() {
-        lineSegmentSet.setMemo(foldLineSet.getMemo_for_folding());
+        lineSegmentSet.setSave(foldLineSet.getMemo_for_folding());
         return lineSegmentSet;
     }
 
@@ -597,7 +249,7 @@ public class DrawingWorker {
     }
 
     public LineSegmentSet getForSelectFolding() {//selectした折線で折り畳み推定をする。
-        lineSegmentSet.setMemo(foldLineSet.getMemoForSelectFolding());
+        lineSegmentSet.setSave(foldLineSet.getSaveForSelectFolding());
         return lineSegmentSet;
     }
 
@@ -617,29 +269,25 @@ public class DrawingWorker {
         return foldLineSet.getTotal();
     }
 
-    public Memo getMemo() {
-        return foldLineSet.getMemo();
+    public Save getSave(String title) {
+        Save save_temp = new Save();
+        save_temp.set(foldLineSet.getSave(title));
+
+        saveAdditionalInformation(save_temp);
+        return save_temp;
     }
 
-    public Memo getMemo(String s_title) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoのkiroku用
-        Memo memo_temp = new Memo();
-        memo_temp.set(foldLineSet.getMemo(s_title));
-
-        saveAdditionalInformation(memo_temp);
-        return memo_temp;
+    public Save h_getSave() {
+        return auxLines.h_getSave();
     }
 
-    public Memo h_getMemo() {
-        return auxLines.h_getMemo();
-    }
+    public Save getSave_for_export() {
+        Save save = new Save();
+        save.set(foldLineSet.getSave());
+        save.add(auxLines.h_getSave());
+        saveAdditionalInformation(save);
 
-    public Memo getMemo_for_export() {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<データ書き出し
-
-        Memo memo_temp = new Memo();
-        memo_temp.set(foldLineSet.getMemo());
-        memo_temp.addMemo(auxLines.h_getMemo());
-        saveAdditionalInformation(memo_temp);
-        return memo_temp;
+        return save;
     }
 
     //------------------------svgデータ書き出し
@@ -786,84 +434,15 @@ public class DrawingWorker {
         return memo_temp;
     }
 
-    public void saveAdditionalInformation(Memo memo1) {
-        memo1.addLine("<camera_of_orisen_nyuuryokuzu>");
-        memo1.addLine("<camera_ichi_x>" + camera.getCameraPositionX() + "</camera_ichi_x>");
-        memo1.addLine("<camera_ichi_y>" + camera.getCameraPositionY() + "</camera_ichi_y>");
-        memo1.addLine("<camera_kakudo>" + camera.getCameraAngle() + "</camera_kakudo>");
-        memo1.addLine("<camera_kagami>" + camera.getCameraMirror() + "</camera_kagami>");
-        memo1.addLine("<camera_bairitsu_x>" + camera.getCameraZoomX() + "</camera_bairitsu_x>");
-        memo1.addLine("<camera_bairitsu_y>" + camera.getCameraZoomY() + "</camera_bairitsu_y>");
-        memo1.addLine("<hyouji_ichi_x>" + camera.getDisplayPositionX() + "</hyouji_ichi_x>");
-        memo1.addLine("<hyouji_ichi_y>" + camera.getDisplayPositionY() + "</hyouji_ichi_y>");
-        memo1.addLine("</camera_of_orisen_nyuuryokuzu>");
+    public void saveAdditionalInformation(Save memo1) {
+        Camera camera = new Camera();
+        camera.setCamera(this.camera);
+        memo1.setCreasePatternCamera(camera);
 
-        memo1.addLine("<settei>");
-        CanvasModel canvasModel = app.canvasModel;
-        memo1.addLine("<ckbox_mouse_settei>" + canvasModel.getMouseWheelMovesCreasePattern() + "</ckbox_mouse_settei>");
-        memo1.addLine("<ckbox_ten_sagasi>" + canvasModel.getDisplayPointSpotlight() + "</ckbox_ten_sagasi>");
-        memo1.addLine("<ckbox_ten_hanasi>" + canvasModel.getDisplayPointOffset() + "</ckbox_ten_hanasi>");
-        memo1.addLine("<ckbox_kou_mitudo_nyuuryoku>" + canvasModel.getDisplayGridInputAssist() + "</ckbox_kou_mitudo_nyuuryoku>");
-        memo1.addLine("<ckbox_bun>" + canvasModel.getDisplayComments() + "</ckbox_bun>");
-        memo1.addLine("<ckbox_cp>" + canvasModel.getDisplayCpLines() + "</ckbox_cp>");
-        memo1.addLine("<ckbox_a0>" + canvasModel.getDisplayAuxLines() + "</ckbox_a0>");
-        memo1.addLine("<ckbox_a1>" + canvasModel.getDisplayLiveAuxLines() + "</ckbox_a1>");
-        memo1.addLine("<ckbox_mejirusi>" + canvasModel.getDisplayMarkings() + "</ckbox_mejirusi>");
-        memo1.addLine("<ckbox_cp_ue>" + canvasModel.getDisplayCreasePatternOnTop() + "</ckbox_cp_ue>");
-        memo1.addLine("<ckbox_oritatami_keika>" + canvasModel.getDisplayFoldingProgress() + "</ckbox_oritatami_keika>");
-        //The thickness of the line in the development view.
-        memo1.addLine("<iTenkaizuSenhaba>" + canvasModel.getLineWidth() + "</iTenkaizuSenhaba>");
-        //Width of vertex sign
-        memo1.addLine("<ir_ten>" + canvasModel.getPointSize() + "</ir_ten>");
-        //Express the polygonal line expression with color
-        memo1.addLine("<i_orisen_hyougen>" + canvasModel.getLineStyle() + "</i_orisen_hyougen>");
-        memo1.addLine("<i_anti_alias>" + canvasModel.getAntiAlias() + "</i_anti_alias>");
-        memo1.addLine("</settei>");
+        memo1.setCanvasModel(app.canvasModel);
+        memo1.setGridModel(app.gridModel);
 
-        memo1.addLine("<Kousi>");
-        memo1.addLine("<i_kitei_jyoutai>" + app.gridModel.getBaseState() + "</i_kitei_jyoutai>");
-        memo1.addLine("<nyuuryoku_kitei>" + app.gridModel.getGridSize() + "</nyuuryoku_kitei>");
-
-        memo1.addLine("<memori_kankaku>" + app.gridModel.getIntervalGridSize() + "</memori_kankaku>");
-        memo1.addLine("<a_to_heikouna_memori_iti>" + app.gridModel.getHorizontalScalePosition() + "</a_to_heikouna_memori_iti>");
-        memo1.addLine("<b_to_heikouna_memori_iti>" + app.gridModel.getVerticalScalePosition() + "</b_to_heikouna_memori_iti>");
-        memo1.addLine("<kousi_senhaba>" + app.gridModel.getGridLineWidth() + "</kousi_senhaba>");
-
-        memo1.addLine("<d_kousi_x_a>" + app.gridModel.getGridXA() + "</d_kousi_x_a>");
-        memo1.addLine("<d_kousi_x_b>" + app.gridModel.getGridXB() + "</d_kousi_x_b>");
-        memo1.addLine("<d_kousi_x_c>" + app.gridModel.getGridXC() + "</d_kousi_x_c>");
-        memo1.addLine("<d_kousi_y_a>" + app.gridModel.getGridYA() + "</d_kousi_y_a>");
-        memo1.addLine("<d_kousi_y_b>" + app.gridModel.getGridYB() + "</d_kousi_y_b>");
-        memo1.addLine("<d_kousi_y_c>" + app.gridModel.getGridYC() + "</d_kousi_y_c>");
-        memo1.addLine("<d_kousi_kakudo>" + app.gridModel.getGridAngle() + "</d_kousi_kakudo>");
-        memo1.addLine("</Kousi>");
-
-        memo1.addLine("<Kousi_iro>");
-        memo1.addLine("<kousi_color_R>" + app.gridModel.getGridColor().getRed() + "</kousi_color_R>");
-        memo1.addLine("<kousi_color_G>" + app.gridModel.getGridColor().getGreen() + "</kousi_color_G>");
-        memo1.addLine("<kousi_color_B>" + app.gridModel.getGridColor().getBlue() + "</kousi_color_B>");
-
-        memo1.addLine("<kousi_memori_color_R>" + app.gridModel.getGridScaleColor().getRed() + "</kousi_memori_color_R>");
-        memo1.addLine("<kousi_memori_color_G>" + app.gridModel.getGridScaleColor().getGreen() + "</kousi_memori_color_G>");
-        memo1.addLine("<kousi_memori_color_B>" + app.gridModel.getGridScaleColor().getBlue() + "</kousi_memori_color_B>");
-        memo1.addLine("</Kousi_iro>");
-
-        memo1.addLine("<oriagarizu>");
-
-        FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
-        memo1.addLine("<oriagarizu_F_color_R>" + foldedFigureModel.getFrontColor().getRed() + "</oriagarizu_F_color_R>");
-        memo1.addLine("<oriagarizu_F_color_G>" + foldedFigureModel.getFrontColor().getGreen() + "</oriagarizu_F_color_G>");
-        memo1.addLine("<oriagarizu_F_color_B>" + foldedFigureModel.getFrontColor().getBlue() + "</oriagarizu_F_color_B>");
-
-        memo1.addLine("<oriagarizu_B_color_R>" + foldedFigureModel.getBackColor().getRed() + "</oriagarizu_B_color_R>");
-        memo1.addLine("<oriagarizu_B_color_G>" + foldedFigureModel.getBackColor().getGreen() + "</oriagarizu_B_color_G>");
-        memo1.addLine("<oriagarizu_B_color_B>" + foldedFigureModel.getBackColor().getBlue() + "</oriagarizu_B_color_B>");
-
-        memo1.addLine("<oriagarizu_L_color_R>" + foldedFigureModel.getLineColor().getRed() + "</oriagarizu_L_color_R>");
-        memo1.addLine("<oriagarizu_L_color_G>" + foldedFigureModel.getLineColor().getGreen() + "</oriagarizu_L_color_G>");
-        memo1.addLine("<oriagarizu_L_color_B>" + foldedFigureModel.getLineColor().getBlue() + "</oriagarizu_L_color_B>");
-
-        memo1.addLine("</oriagarizu>");
+        memo1.setFoldedFigureModel(app.foldedFigureModel);
     }
 
     public void setColor(LineColor i) {
@@ -934,7 +513,7 @@ public class DrawingWorker {
             check4(0.0001);
         }
 
-        historyState.record(getMemo(s_title));
+        historyState.record(getSave(s_title));
     }
 
     public void auxUndo() {
@@ -946,7 +525,7 @@ public class DrawingWorker {
     }
 
     public void auxRecord() {
-        auxHistoryState.record(h_getMemo());
+        auxHistoryState.record(h_getSave());
     }
 
     //--------------------------------------------------------------------------------------
@@ -2629,7 +2208,7 @@ public class DrawingWorker {
             //moyori_tenを端点とする折線をNarabebakoに入れる
             SortingBox<LineSegment> nbox = new SortingBox<>();
             for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-                LineSegment s= foldLineSet.get(i);
+                LineSegment s = foldLineSet.get(i);
                 if (s.getColor().isFoldingLine()) {
                     if (closest_point.distance(s.getA()) < hantei_kyori) {
                         nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getA(), s.getB())));
@@ -5507,12 +5086,12 @@ public class DrawingWorker {
             addy = -line_step[1].getBY() + line_step[1].getAY();
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
-            ori_s_temp.setMemo(foldLineSet.getMemoSelectOption(2));//セレクトされた折線だけ取り出してori_s_tempを作る
+            ori_s_temp.setSave(foldLineSet.getMemoSelectOption(2));//セレクトされた折線だけ取り出してori_s_tempを作る
             foldLineSet.delSelectedLineSegmentFast();//セレクトされた折線を削除する。
             ori_s_temp.move(addx, addy);//全体を移動する
 
             int total_old = foldLineSet.getTotal();
-            foldLineSet.addMemo(ori_s_temp.getMemo());
+            foldLineSet.addSave(ori_s_temp.getSave());
             int total_new = foldLineSet.getTotal();
             foldLineSet.intersect_divide(1, total_old, total_old + 1, total_new);
 
@@ -5565,11 +5144,11 @@ public class DrawingWorker {
             addy = -line_step[1].getBY() + line_step[1].getAY();
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
-            ori_s_temp.setMemo(foldLineSet.getMemoSelectOption(2));//セレクトされた折線だけ取り出してori_s_tempを作る
+            ori_s_temp.setSave(foldLineSet.getMemoSelectOption(2));//セレクトされた折線だけ取り出してori_s_tempを作る
             ori_s_temp.move(addx, addy);//全体を移動する
 
             int sousuu_old = foldLineSet.getTotal();
-            foldLineSet.addMemo(ori_s_temp.getMemo());
+            foldLineSet.addSave(ori_s_temp.getSave());
             int sousuu_new = foldLineSet.getTotal();
             foldLineSet.intersect_divide(1, sousuu_old, sousuu_old + 1, sousuu_new);
 
@@ -5686,12 +5265,12 @@ public class DrawingWorker {
             app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
-            ori_s_temp.setMemo(foldLineSet.getMemoSelectOption(2));//セレクトされた折線だけ取り出してori_s_tempを作る
+            ori_s_temp.setSave(foldLineSet.getMemoSelectOption(2));//セレクトされた折線だけ取り出してori_s_tempを作る
             foldLineSet.delSelectedLineSegmentFast();//セレクトされた折線を削除する。
             ori_s_temp.move(line_step[1].getA(), line_step[2].getA(), line_step[3].getA(), line_step[4].getA());//全体を移動する
 
             int sousuu_old = foldLineSet.getTotal();
-            foldLineSet.addMemo(ori_s_temp.getMemo());
+            foldLineSet.addSave(ori_s_temp.getSave());
             int sousuu_new = foldLineSet.getTotal();
             foldLineSet.intersect_divide(1, sousuu_old, sousuu_old + 1, sousuu_new);
 
@@ -5795,11 +5374,11 @@ public class DrawingWorker {
             app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
-            ori_s_temp.setMemo(foldLineSet.getMemoSelectOption(2));//セレクトされた折線だけ取り出してori_s_tempを作る
+            ori_s_temp.setSave(foldLineSet.getMemoSelectOption(2));//セレクトされた折線だけ取り出してori_s_tempを作る
             ori_s_temp.move(line_step[1].getA(), line_step[2].getA(), line_step[3].getA(), line_step[4].getA());//全体を移動する
 
             int sousuu_old = foldLineSet.getTotal();
-            foldLineSet.addMemo(ori_s_temp.getMemo());
+            foldLineSet.addSave(ori_s_temp.getSave());
             int sousuu_new = foldLineSet.getTotal();
             foldLineSet.intersect_divide(1, sousuu_old, sousuu_old + 1, sousuu_new);
 
@@ -5929,7 +5508,7 @@ public class DrawingWorker {
                     for (int i = 1; i <= foldLineSet.getTotal(); i++) {
                         LineSegment s = foldLineSet.get(i);
                         if (OritaCalc.lineSegmentoverlapping(s, line_step[1])) {
-                            WeightedValue<LineSegment>i_d = new WeightedValue<>(s, OritaCalc.distance_lineSegment(line_step[1].getB(), s));
+                            WeightedValue<LineSegment> i_d = new WeightedValue<>(s, OritaCalc.distance_lineSegment(line_step[1].getB(), s));
                             nbox.container_i_smallest_first(i_d);
                         }
 

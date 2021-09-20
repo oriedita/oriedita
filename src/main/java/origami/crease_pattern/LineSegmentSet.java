@@ -3,14 +3,13 @@ package origami.crease_pattern;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami_editor.record.Memo;
+import origami_editor.editor.Save;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /**
- * Collection of line segments.
+ * Collection of line segments. Used when calculating folded shapes and two-colored cp.
  */
 public class LineSegmentSet {
     List<LineSegment> lineSegments = new ArrayList<>(); //Instantiation of line segments
@@ -71,87 +70,13 @@ public class LineSegmentSet {
         return s.getColor();
     }
 
-    /**
-     * Output the information of all line segments of the line segment set as Memo.
-     */
-    public Memo getMemo() {
-        Memo memo1 = new Memo();
-        memo1.reset();
-        memo1.addLine("<線分集合>"); // <Line segment set>
-
-        for (int i = 0; i < lineSegments.size(); i++) {
-            memo1.addLine("番号," + i); // number,
-            LineSegment s = lineSegments.get(i);
-            memo1.addLine("色," + s.getColor()); // colour,
-            memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," +
-                    s.getBX() + "," + s.getBY()); // Coordinate,
-        }
-
-        return memo1;
-    }
-
-    public void setMemo(Memo memo1) {
-        boolean reading_flag = false;//If it is 0, it will not be read. If it is 1, read it.
-        int index = 0;
-        LineColor ic;
-
-        double ax, ay, bx, by;
-        String str;
-
-        //Read the file .orh for Orihime
-
-        //First find the total number of line segments
-        int count = 0;
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
-
-            str = tk.nextToken();
-            if (str.equals("<線分集合>")) { // <Line segment set>
-                reading_flag = true;
-            }
-
-            if (reading_flag && (str.equals("番号"))) { // number
-                count = count + 1;
-            }
-        }
-
-        reading_flag = false;
-
-        reset(count);
-        //First the total number of line segments was calculated
-
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
-            str = tk.nextToken();
-
-            if (str.equals("<線分集合>")) { // Line segment set
-                reading_flag = true;
-            }
-
-            if ((reading_flag) && (str.equals("番号"))) { // number
-                str = tk.nextToken();
-                index = Integer.parseInt(str);
-
-            }
-            if ((reading_flag) && (str.equals("色"))) { // colour
-                str = tk.nextToken();
-                ic = LineColor.from(str);
-                LineSegment s = lineSegments.get(index-1);
-                s.setColor(ic);
-            }
-            if ((reading_flag) && (str.equals("座標"))) { // coordinate
-                str = tk.nextToken();
-                ax = Double.parseDouble(str);
-                str = tk.nextToken();
-                ay = Double.parseDouble(str);
-                str = tk.nextToken();
-                bx = Double.parseDouble(str);
-                str = tk.nextToken();
-                by = Double.parseDouble(str);
-
-                LineSegment s = lineSegments.get(index-1);
-                s.set(ax, ay, bx, by);
-            }
+    public void setSave(Save memo1) {
+        lineSegments.clear();
+        for (LineSegment s :
+                memo1.getLineSegments()) {
+            LineSegment s0 = new LineSegment();
+            s0.set(s);
+            lineSegments.add(s0);
         }
     }
 
@@ -170,7 +95,7 @@ public class LineSegmentSet {
     public void overlapping_line_removal(double r) {
         List<Boolean> removal_flg = new ArrayList<>();
         List<LineSegment> snew = new ArrayList<>();
-        for (int i = 0; i < lineSegments.size(); i++) {
+        for (int i = 0; i <= lineSegments.size(); i++) {
             removal_flg.add(false);
             snew.add(new LineSegment());
         }

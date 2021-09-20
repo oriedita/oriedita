@@ -1,6 +1,8 @@
 package origami.crease_pattern.element;
 
-public class Point {
+import java.io.Serializable;
+
+public class Point implements Serializable {
     //Used to represent point coordinates, direction vectors, etc.
     double x, y;
 

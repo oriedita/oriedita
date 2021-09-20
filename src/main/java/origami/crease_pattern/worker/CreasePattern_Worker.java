@@ -1,13 +1,13 @@
 package origami.crease_pattern.worker;
 
 import origami.crease_pattern.element.LineColor;
+import origami_editor.editor.Save;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.undo_box.HistoryState;
 import origami_editor.graphic2d.averagecoordinates.AverageCoordinates;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
-import origami_editor.record.Memo;
 import origami_editor.tools.Camera;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.PointSet;
@@ -669,22 +669,22 @@ public class CreasePattern_Worker {
     }
 
     public void record() {
-        Ubox.record(getMemo());
+        Ubox.record(getSave());
     }
 
     public void undo() {
-        setMemo_for_redo_undo(Ubox.undo());
+        setSaveForUndoRedo(Ubox.undo());
     }
 
     public void redo() {
-        setMemo_for_redo_undo(Ubox.redo());
+        setSaveForUndoRedo(Ubox.redo());
     }
 
-    public Memo getMemo() {
-        return pointSet.getMemo();
+    public Save getSave() {
+        return pointSet.getSave();
     }
 
-    public void setMemo_for_redo_undo(Memo memo1) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用
-        pointSet.setMemo(memo1);
+    public void setSaveForUndoRedo(Save memo1) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用
+        pointSet.setSave(memo1);
     }
 }

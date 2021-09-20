@@ -6,7 +6,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.StraightLine;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
-import origami_editor.record.Memo;
+import origami_editor.editor.Save;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 
@@ -177,165 +177,86 @@ public class FoldLineSet {
         lineSegments.get(i).setVoronoiB(b);
     }
 
-    //Output the information of all line segments of the line segment set as Memo.
-    public Memo getMemo() {
-        return getMemo("_");
+    public Save getSave() {
+        return getSave("_");
     }
 
-    //Output the information of all line segments of the line segment set as Memo. // Used for recording undo and redo
-    public Memo getMemo(String s_title) {
-        Memo memo1 = new Memo();
-        memo1.reset();
+    public Save getSave(String title) {
+        Save save = new Save();
 
-        memo1.addLine("<タイトル>");
-        memo1.addLine("タイトル," + s_title);
-
-        memo1.addLine("<線分集合>");
+        save.setTitle(title);
 
         for (int i = 1; i <= total; i++) {
-            memo1.addLine("番号," + i);
             LineSegment s = lineSegments.get(i);
-            memo1.addLine("色," + s.getColor());
+            LineSegment s1 = new LineSegment();
+            s1.set(s);
 
-            memo1.addLine("<tpp>" + s.getCustomized() + "</tpp>");
-            memo1.addLine("<tpp_color_R>" + s.getCustomizedColor().getRed() + "</tpp_color_R>");
-            memo1.addLine("<tpp_color_G>" + s.getCustomizedColor().getGreen() + "</tpp_color_G>");
-            memo1.addLine("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");
-
-            memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
+            save.addLineSegment(s1);
+            // Save linesegment
         }
 
-        memo1.addLine("<円集合>");
-        int index = 1;
         for (Circle circle : circles) {
-            memo1.addLine("番号," + index++);
-            Circle e_temp = new Circle();
-            e_temp.set(circle);
-            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
+            // Save circle
 
-            memo1.addLine("<tpp>" + e_temp.getCustomized() + "</tpp>");
-            memo1.addLine("<tpp_color_R>" + e_temp.getCustomizedColor().getRed() + "</tpp_color_R>");
-            memo1.addLine("<tpp_color_G>" + e_temp.getCustomizedColor().getGreen() + "</tpp_color_G>");
-            memo1.addLine("<tpp_color_B>" + e_temp.getCustomizedColor().getBlue() + "</tpp_color_B>");
+            Circle circle1 = new Circle();
+            circle1.set(circle);
+
+            save.addCircle(circle1);
         }
 
-        return memo1;
+        return save;
     }
 
     //Output the information of all line segments of the line segment set as Memo. // Iactive does not write out the fold line of excluding in the memo
-    public Memo getMemo_active_excluding(LineSegment.ActiveState excluding) {
-        Memo memo1 = new Memo();
-        memo1.reset();
-        memo1.addLine("<線分集合>");
+    public Save getMemo_active_excluding(LineSegment.ActiveState excluding) {
+        Save save = new Save();
 
-        int number = 0;
         for (int i = 1; i <= total; i++) {
             if (getActive(i) != excluding) {
-                number++;
-                memo1.addLine("番号," + number);
-                LineSegment s = lineSegments.get(i);
-                memo1.addLine("色," + s.getColor());
-
-                memo1.addLine("<tpp>" + s.getCustomized() + "</tpp>");
-                memo1.addLine("<tpp_color_R>" + s.getCustomizedColor().getRed() + "</tpp_color_R>");
-                memo1.addLine("<tpp_color_G>" + s.getCustomizedColor().getGreen() + "</tpp_color_G>");
-                memo1.addLine("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");
-
-
-                memo1.addLine("選択," + s.getSelected());
-                memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
+                save.addLineSegment(lineSegments.get(i));
             }
         }
 
-        memo1.addLine("<円集合>");
-        int index = 1;
         for (Circle circle : circles) {
-            memo1.addLine("番号," + index++);
-            Circle e_temp = new Circle();
-            e_temp.set(circle);
-            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
-
-            memo1.addLine("<tpp>" + e_temp.getCustomized() + "</tpp>");
-            memo1.addLine("<tpp_color_R>" + e_temp.getCustomizedColor().getRed() + "</tpp_color_R>");
-            memo1.addLine("<tpp_color_G>" + e_temp.getCustomizedColor().getGreen() + "</tpp_color_G>");
-            memo1.addLine("<tpp_color_B>" + e_temp.getCustomizedColor().getBlue() + "</tpp_color_B>");
+            save.addCircle(circle);
         }
 
-        return memo1;
+        return save;
     }
 
-    //Outputs the information of all line segments of the auxiliary line segment set as Memo.
-    public Memo h_getMemo() {
-        Memo memo1 = new Memo();
-        memo1.reset();
-        memo1.addLine("<補助線分集合>");
-
+    public Save h_getSave() {
+        Save save = new Save();
         for (int i = 1; i <= total; i++) {
-            memo1.addLine("補助番号," + i);
-            LineSegment s = lineSegments.get(i);
-            memo1.addLine("補助色," + s.getColor());
-
-            memo1.addLine("<tpp>" + s.getCustomized() + "</tpp>");
-            memo1.addLine("<tpp_color_R>" + s.getCustomizedColor().getRed() + "</tpp_color_R>");
-            memo1.addLine("<tpp_color_G>" + s.getCustomizedColor().getGreen() + "</tpp_color_G>");
-            memo1.addLine("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");
-
-            memo1.addLine("補助座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
+            save.addAuxLineSegment(lineSegments.get(i));
         }
-        return memo1;
+
+        return save;
     }
 
     //Output the line segment set information as Memo for folding estimation. // Do not write out auxiliary lines with icol of 3 (cyan = light blue) or more in the memo
-    public Memo getMemo_for_folding() {
-        Memo memo1 = new Memo();
-        memo1.reset();
-        memo1.addLine("<線分集合>");
+    public Save getMemo_for_folding() {
+        Save save = new Save();
 
-        int ibangou = 0;
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
             if (s.getColor().isFoldingLine()) {
-                ibangou++;
-                memo1.addLine("番号," + ibangou);
-
-                memo1.addLine("色," + s.getColor());
-
-                memo1.addLine("<tpp>" + s.getCustomized() + "</tpp>");
-                memo1.addLine("<tpp_color_R>" + s.getCustomizedColor().getRed() + "</tpp_color_R>");
-                memo1.addLine("<tpp_color_G>" + s.getCustomizedColor().getGreen() + "</tpp_color_G>");
-                memo1.addLine("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");
-
-                memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
+                save.addLineSegment(s);
             }
         }
-        return memo1;
+        return save;
     }
 
     //Output the line segment set information as Memo for folding estimation. // Do not write out auxiliary lines with icol of 3 (cyan = light blue) or more in the memo
-    public Memo getMemoForSelectFolding() {
-        Memo memo1 = new Memo();
-        memo1.reset();
-        memo1.addLine("<線分集合>");
+    public Save getSaveForSelectFolding() {
+        Save save = new Save();
 
-        int number = 0;
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
             if ((s.getColor().isFoldingLine()) && (s.getSelected() == 2)) {
-                number++;
-                memo1.addLine("番号," + number);
-
-                memo1.addLine("色," + s.getColor());
-
-                memo1.addLine("<tpp>" + s.getCustomized() + "</tpp>");
-                memo1.addLine("<tpp_color_R>" + s.getCustomizedColor().getRed() + "</tpp_color_R>");
-                memo1.addLine("<tpp_color_G>" + s.getCustomizedColor().getGreen() + "</tpp_color_G>");
-                memo1.addLine("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");
-
-
-                memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
+                save.addLineSegment(s);
             }
         }
-        return memo1;
+        return save;
     }
 
     //The number of broken lines of the line segment set selected for folding estimation is output as an int.
@@ -351,416 +272,36 @@ public class FoldLineSet {
         return number;
     }
 
-    public String setMemo(Memo memo1) {//The return value is the title used for recording undo and redo.
+    public String setSave(Save save) {
+        circles.addAll(save.getCircles());
 
-        int reading_flag = 0;//If it is 0, it will not be read. If it is 1, read it.
-        int number = 0;
-        LineColor ic;
-        LineSegment.ActiveState is;
+        lineSegments.clear();
+        lineSegments.add(new LineSegment());
+        lineSegments.addAll(save.getLineSegments());
 
+        total = lineSegments.size() - 1;
 
-        String r_title;
-        r_title = "_";
-
-        double ax, ay, bx, by;
-        double dx, dy, dr;
-
-        String str;
-
-        reset();
-
-        //Read the file .orh for Orihime
-
-        //First find the total number of line segments
-        int numLines = 0;
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
-
-            str = tk.nextToken();
-            if (str.equals("<線分集合>")) {
-                reading_flag = 1;
-            }
-            if (str.equals("<円集合>")) {
-                reading_flag = 3;
-            }
-            if ((reading_flag == 1) && (str.equals("番号"))) {
-                numLines++;
-            }
-        }
-        setTotal(numLines);
-        //First the total number of line segments was calculated
-
-        Circle e_temp = new Circle();
-
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            String str_i = memo1.getLine(i);
-
-            //Old-fashioned reading method
-            StringTokenizer tk = new StringTokenizer(str_i, ",");
-            str = tk.nextToken();
-
-            if (str.equals("<タイトル>")) {
-                reading_flag = 2;
-            }
-            if ((reading_flag == 2) && (str.equals("タイトル"))) {
-                str = tk.nextToken();
-                r_title = str;
-            }
-
-            if (str.equals("<線分集合>")) {
-                reading_flag = 1;
-            }
-            if ((reading_flag == 1) && (str.equals("番号"))) {
-                str = tk.nextToken();
-                number = Integer.parseInt(str);
-            }
-            if ((reading_flag == 1) && (str.equals("色"))) {
-                str = tk.nextToken();
-                ic = LineColor.from(str);
-                LineSegment s = lineSegments.get(number);
-                s.setColor(ic);
-            }
-
-            if (reading_flag == 1) {
-                st_new = str_i.split(">", 2);// <-----------------------------------２つに分割するときは2を指定
-                if (st_new[0].equals("<tpp")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized = (Integer.parseInt(s_new[0]));
-                    LineSegment s = lineSegments.get(number);
-                    s.setCustomized(i_customized);
-                }
-
-                if (st_new[0].equals("<tpp_color_R")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized_color_R = (Integer.parseInt(s_new[0]));
-                    LineSegment s = lineSegments.get(number);
-                    s.setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
-                }
-
-                if (st_new[0].equals("<tpp_color_G")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized_color_G = (Integer.parseInt(s_new[0]));
-                    LineSegment s = lineSegments.get(number);
-                    s.setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
-                }
-                if (st_new[0].equals("<tpp_color_B")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized_color_B = (Integer.parseInt(s_new[0]));
-                    LineSegment s = lineSegments.get(number);
-                    s.setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
-                }
-            }
-
-            if ((reading_flag == 1) && (str.equals("iactive"))) {//20181110追加
-                str = tk.nextToken();
-                is = LineSegment.ActiveState.valueOf(str);
-                LineSegment s = lineSegments.get(number);
-                s.setActive(is);
-            }
-
-            if ((reading_flag == 1) && (str.equals("iva"))) {
-                str = tk.nextToken();
-                int iva = Integer.parseInt(str);
-                LineSegment s = lineSegments.get(number);
-                s.setVoronoiA(iva);
-            }
-
-            if ((reading_flag == 1) && (str.equals("ivb"))) {
-                str = tk.nextToken();
-                int ivb = Integer.parseInt(str);
-                LineSegment s = lineSegments.get(number);
-                s.setVoronoiB(ivb);
-            }
-
-            if ((reading_flag == 1) && (str.equals("選択"))) {
-                str = tk.nextToken();
-                int isel = Integer.parseInt(str);
-                LineSegment s = lineSegments.get(number);
-                s.setSelected(isel);
-            }
-            if ((reading_flag == 1) && (str.equals("座標"))) {
-                str = tk.nextToken();
-                ax = Double.parseDouble(str);
-                str = tk.nextToken();
-                ay = Double.parseDouble(str);
-                str = tk.nextToken();
-                bx = Double.parseDouble(str);
-                str = tk.nextToken();
-                by = Double.parseDouble(str);
-
-                LineSegment s = lineSegments.get(number);
-                s.set(ax, ay, bx, by);
-            }
-
-            if (str.equals("<円集合>")) {
-                reading_flag = 3;
-            }
-
-            if ((reading_flag == 3) && (str.equals("番号"))) {
-                str = tk.nextToken();
-                number = Integer.parseInt(str) - 1;
-
-                setCircle(number, e_temp);
-            }
-
-            if ((reading_flag == 3) && (str.equals("中心と半径と色"))) {
-                str = tk.nextToken();
-                dx = Double.parseDouble(str);
-                str = tk.nextToken();
-                dy = Double.parseDouble(str);
-                str = tk.nextToken();
-                dr = Double.parseDouble(str);
-
-                str = tk.nextToken();
-                ic = LineColor.from(str);
-
-
-                circles.get(number).set(dx, dy, dr, ic);
-            }
-
-            if (reading_flag == 3) {
-                st_new = str_i.split(">", 2);// <-----------------------------------２つに分割するときは2を指定
-                if (st_new[0].equals("<tpp")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized = (Integer.parseInt(s_new[0]));
-                    circles.get(number).setCustomized(i_customized);
-                }
-
-                if (st_new[0].equals("<tpp_color_R")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized_color_R = (Integer.parseInt(s_new[0]));
-                    circles.get(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
-                }
-
-                if (st_new[0].equals("<tpp_color_G")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized_color_G = (Integer.parseInt(s_new[0]));
-                    circles.get(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
-                }
-                if (st_new[0].equals("<tpp_color_B")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized_color_B = (Integer.parseInt(s_new[0]));
-                    circles.get(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
-                }
-            }
-        }
-        return r_title;
+        return save.getTitle();
     }
 
-    //Arrangement of line segment set when inputting crease pattern
-    public void setAuxMemo(Memo memo1) {
-        int reading_flg = 0;//If it is 0, it will not be read. If it is 1, read it.
-        int number = 0;
-        LineColor ic;
-        int is;
-
-        double ax, ay, bx, by;
-        String str;
-
-        //Read the file .orh for Orihime
-
-        //First find the total number of line segments
-        int numLines = 0;
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-
-            StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
-
-            str = tk.nextToken();
-            if (str.equals("<補助線分集合>")) {
-                reading_flg = 1;
-            }
-            if ((reading_flg == 1) && (str.equals("補助番号"))) {
-                numLines++;
-            }
-        }
-        setTotal(numLines);
-        //First the total number of auxiliary line segments was calculated
-
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
-            str = tk.nextToken();
-            if (str.equals("<補助線分集合>")) {
-                reading_flg = 1;
-            }
-            if ((reading_flg == 1) && (str.equals("補助番号"))) {
-                str = tk.nextToken();
-                number = Integer.parseInt(str);
-            }
-            if ((reading_flg == 1) && (str.equals("補助色"))) {
-                str = tk.nextToken();
-                ic = LineColor.from(str);
-                LineSegment s = lineSegments.get(number);
-                s.setColor(ic);
-            }
-            if ((reading_flg == 1) && (str.equals("補助選択"))) {
-                str = tk.nextToken();
-                is = Integer.parseInt(str);
-                LineSegment s = lineSegments.get(number);
-                s.setSelected(is);
-            }
-            if ((reading_flg == 1) && (str.equals("補助座標"))) {
-                str = tk.nextToken();
-                ax = Double.parseDouble(str);
-                str = tk.nextToken();
-                ay = Double.parseDouble(str);
-                str = tk.nextToken();
-                bx = Double.parseDouble(str);
-                str = tk.nextToken();
-                by = Double.parseDouble(str);
-
-                LineSegment s = lineSegments.get(number);
-                s.set(ax, ay, bx, by);
-            }
-        }
+    public void setAuxSave(Save save) {
+        lineSegments.addAll(save.getAuxLineSegments());
     }
 
-    public void addMemo(Memo memo1) {
-        int reading_flag = 0;//If it is 0, it will not be read. If it is 1, read it.
-        int number = 0;
-        LineColor ic;
+    public void addSave(Save memo1) {
+        for (LineSegment s : memo1.getLineSegments()) {
+            //First the total number of line segments was calculated
 
-        double ax, ay, bx, by;
-        double dx, dy, dr;
+            LineSegment s0 = new LineSegment();
+            s0.set(s);
 
-        String str;
-
-        int total_old = total;
-
-        //Read the file .orh for Orihime
-
-        //First find the total number of line segments
-        int numLines = 0;
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-
-            StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
-
-            str = tk.nextToken();
-            if (str.equals("<線分集合>")) {
-                reading_flag = 1;
-            }
-            if ((reading_flag == 1) && (str.equals("番号"))) {
-                numLines++;
-            }
+            lineSegments.add(s0);
         }
-        setTotal(total_old + numLines);
+        for (Circle c : memo1.getCircles()) {
+            Circle c0 = new Circle();
+            c0.set(c);
 
-
-        //First the total number of line segments was calculated
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-
-            String str_i = memo1.getLine(i);
-
-            //Old-fashioned reading method
-            StringTokenizer tk = new StringTokenizer(str_i, ",");
-            str = tk.nextToken();
-
-            if (str.equals("<線分集合>")) {
-                reading_flag = 1;
-            }
-            if ((reading_flag == 1) && (str.equals("番号"))) {
-                str = tk.nextToken();
-                number = total_old + Integer.parseInt(str);
-            }
-            if ((reading_flag == 1) && (str.equals("色"))) {
-                str = tk.nextToken();
-                ic = LineColor.from(str);
-                LineSegment s = lineSegments.get(number);
-                s.setColor(ic);
-            }
-
-            if (reading_flag == 1) {
-                st_new = str_i.split(">", 2);// <-----------------------------------２つに分割するときは2を指定
-                if (st_new[0].equals("<tpp")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized = (Integer.parseInt(s_new[0]));
-                    LineSegment s = lineSegments.get(number);
-                    s.setCustomized(i_customized);
-                }
-
-                if (st_new[0].equals("<tpp_color_R")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized_color_R = (Integer.parseInt(s_new[0]));
-                    LineSegment s = lineSegments.get(number);
-                    s.setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
-                }
-
-                if (st_new[0].equals("<tpp_color_G")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized_color_G = (Integer.parseInt(s_new[0]));
-                    LineSegment s = lineSegments.get(number);
-                    s.setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
-                }
-                if (st_new[0].equals("<tpp_color_B")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized_color_B = (Integer.parseInt(s_new[0]));
-                    LineSegment s = lineSegments.get(number);
-                    s.setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
-                }
-            }
-
-            if ((reading_flag == 1) && (str.equals("座標"))) {
-                str = tk.nextToken();
-                ax = Double.parseDouble(str);
-                str = tk.nextToken();
-                ay = Double.parseDouble(str);
-                str = tk.nextToken();
-                bx = Double.parseDouble(str);
-                str = tk.nextToken();
-                by = Double.parseDouble(str);
-
-                LineSegment s = lineSegments.get(number);
-                s.set(ax, ay, bx, by);
-            }
-
-            if (str.equals("<円集合>")) {
-                reading_flag = 3;
-            }
-
-            if ((reading_flag == 3) && (str.equals("番号"))) {
-                str = tk.nextToken();
-                circles.add(new Circle(0.0, 0.0, 1.0, LineColor.RED_1));
-                number = circles.size() - 1;
-            }
-
-            if ((reading_flag == 3) && (str.equals("中心と半径と色"))) {
-                str = tk.nextToken();
-                dx = Double.parseDouble(str);
-                str = tk.nextToken();
-                dy = Double.parseDouble(str);
-                str = tk.nextToken();
-                dr = Double.parseDouble(str);
-
-                str = tk.nextToken();
-                ic = LineColor.from(str);
-
-                circles.get(number).set(dx, dy, dr, ic);
-            }
-
-            if (reading_flag == 3) {
-                st_new = str_i.split(">", 2);// <-----------------------------------Specify 2 when splitting into two
-                if (st_new[0].equals("<tpp")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized = (Integer.parseInt(s_new[0]));
-                    circles.get(number).setCustomized(i_customized);
-                }
-
-                if (st_new[0].equals("<tpp_color_R")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized_color_R = (Integer.parseInt(s_new[0]));
-                    circles.get(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
-                }        //  System.out.println(Integer.parseInt(s[0])) ;
-
-                if (st_new[0].equals("<tpp_color_G")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized_color_G = (Integer.parseInt(s_new[0]));
-                    circles.get(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
-                }
-                if (st_new[0].equals("<tpp_color_B")) {
-                    s_new = st_new[1].split("<", 2);
-                    i_customized_color_B = (Integer.parseInt(s_new[0]));
-                    circles.get(number).setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
-                }
-            }
+            circles.add(c0);
         }
     }
 
@@ -774,75 +315,38 @@ public class FoldLineSet {
 
     //Output the information of all line segments of the line segment set as Memo.
     // Do not write down the fold line of select except
-    public Memo getMemoExceptSelected(int except) {
-        Memo memo1 = new Memo();
-        memo1.reset();
-        memo1.addLine("<線分集合>");
+    public Save getMemoExceptSelected(int except) {
+        Save save = new Save();
 
-        int number = 0;
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
 
             if (s.getSelected() != except) {
-                number++;
-                memo1.addLine("番号," + number);
-                memo1.addLine("色," + s.getColor());
-
-                memo1.addLine("<tpp>" + s.getCustomized() + "</tpp>");
-                memo1.addLine("<tpp_color_R>" + s.getCustomizedColor().getRed() + "</tpp_color_R>");
-                memo1.addLine("<tpp_color_G>" + s.getCustomizedColor().getGreen() + "</tpp_color_G>");
-                memo1.addLine("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");
-
-                memo1.addLine("iactive," + s.getActive());//20181110追加
-                memo1.addLine("iva," + s.getVoronoiA());
-                memo1.addLine("ivb," + s.getVoronoiB());
-                memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
+                save.addLineSegment(s);
             }
         }
 
-
-        memo1.addLine("<円集合>");
-        int index = 1;
         for (Circle circle : circles) {
-            memo1.addLine("番号," + index++);
-            Circle e_temp = new Circle();
-            e_temp.set(circle);
-            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
-
-            memo1.addLine("<tpp>" + e_temp.getCustomized() + "</tpp>");
-            memo1.addLine("<tpp_color_R>" + e_temp.getCustomizedColor().getRed() + "</tpp_color_R>");
-            memo1.addLine("<tpp_color_G>" + e_temp.getCustomizedColor().getGreen() + "</tpp_color_G>");
-            memo1.addLine("<tpp_color_B>" + e_temp.getCustomizedColor().getBlue() + "</tpp_color_B>");
+            save.addCircle(circle);
         }
 
-        return memo1;
+        return save;
     }
 
     //Output the information of all line segments of the line segment set as Memo.
     // select writes out option polygonal line in a memo
-    public Memo getMemoSelectOption(int option) {
-        Memo memo1 = new Memo();
-        memo1.reset();
-        memo1.addLine("<線分集合>");
+    public Save getMemoSelectOption(int option) {
+        Save save = new Save();
 
         int number = 0;
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
 
             if (s.getSelected() == option) {
-                number++;
-                memo1.addLine("番号," + number);
-                memo1.addLine("色," + s.getColor());
-
-                memo1.addLine("<tpp>" + s.getCustomized() + "</tpp>");
-                memo1.addLine("<tpp_color_R>" + s.getCustomizedColor().getRed() + "</tpp_color_R>");
-                memo1.addLine("<tpp_color_G>" + s.getCustomizedColor().getGreen() + "</tpp_color_G>");
-                memo1.addLine("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");
-
-                memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
+                save.addLineSegment(s);
             }
         }
-        return memo1;
+        return save;
     }
 
     public void select_all() {
@@ -1053,11 +557,7 @@ public class FoldLineSet {
         //"lX" lXは小文字のエルと大文字のエックス。Senbun s_step1と重複する部分のある線分やX交差する線分を削除するモード。
         boolean i_r = false;//たくさんある折線のうち、一本でも削除すれば1、1本も削除しないなら0。
 
-        Memo memo1 = new Memo();
-        memo1.reset();
-        memo1.addLine("<線分集合>");
-        int ibangou = 0;
-
+        Save save = new Save();
         boolean i_kono_orisen_wo_sakujyo;//i_この折線を削除　0削除しない、1削除する
         for (int i = 1; i <= total; i++) {
 
@@ -1086,16 +586,12 @@ public class FoldLineSet {
                 i_r = true;
             }
             if (!i_kono_orisen_wo_sakujyo) {
-                ibangou = ibangou + 1;
-                memo1.addLine("番号," + ibangou);
-                memo1.addLine("色," + s.getColor());
-                memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
+                save.addLineSegment(s);
             }
         }
 
         Point ec = new Point();//円の中心座標を入れる変数
 
-        memo1.addLine("<円集合>");
         int ii = 0;
         for (Circle circle : circles) {
             boolean idel = false;
@@ -1108,13 +604,12 @@ public class FoldLineSet {
             }
             if (!idel) {
                 ii = ii + 1;
-                memo1.addLine("番号," + ii);
-                memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
+                save.addCircle(e_temp);
             }
         }
 
         reset();
-        setMemo(memo1);
+        setSave(save);
 
         return i_r;
     }
@@ -1127,10 +622,7 @@ public class FoldLineSet {
         sikaku.set(3, p3);
         sikaku.set(4, p4);
 
-        Memo memo1 = new Memo();
-        memo1.reset();
-        memo1.addLine("<線分集合>");
-        int number = 0;
+        Save save = new Save();
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
@@ -1139,10 +631,7 @@ public class FoldLineSet {
                 i_r = true;
             }
             if (!sikaku.totu_boundary_inside(s)) {
-                number = number + 1;
-                memo1.addLine("番号," + number);
-                memo1.addLine("色," + s.getColor());
-                memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
+                save.addLineSegment(s);
             }
         }
 
@@ -1154,7 +643,6 @@ public class FoldLineSet {
         LineSegment s3 = new LineSegment(p3, p4);
         LineSegment s4 = new LineSegment(p4, p1);
 
-        memo1.addLine("<円集合>");
         int ii = 0;
         for (Circle circle : circles) {
             boolean idel = false;
@@ -1193,13 +681,12 @@ public class FoldLineSet {
             }
             if (!idel) {
                 ii = ii + 1;
-                memo1.addLine("番号," + ii);
-                memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
+                save.addCircle(e_temp);
             }
         }
 
         reset();
-        setMemo(memo1);
+        setSave(save);
 
         return i_r;
     }
@@ -1212,10 +699,7 @@ public class FoldLineSet {
         sikaku.set(3, p3);
         sikaku.set(4, p4);
 
-        Memo memo1 = new Memo();
-        memo1.reset();
-        memo1.addLine("<線分集合>");
-        int ibangou = 0;
+        Save save = new Save();
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
@@ -1224,27 +708,22 @@ public class FoldLineSet {
                 i_r = true;
             }//黒赤青線はmemo1に書かれない。つまり削除される。
             else if ((!sikaku.totu_boundary_inside(s)) || !s.getColor().isFoldingLine()) {
-                ibangou = ibangou + 1;
-                memo1.addLine("番号," + ibangou);
-                memo1.addLine("色," + s.getColor());
-                memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
+                save.addLineSegment(s);
             }
         }
 
-        memo1.addLine("<円集合>");
         int ii = 0;
         for (Circle circle : circles) {
             Circle e_temp = new Circle();
             e_temp.set(circle);//ec.set(e_temp.get_tyuusin());er=e_temp.getr();
 
             ii = ii + 1;
-            memo1.addLine("番号," + ii);
-            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
+            save.addCircle(e_temp);
         }
 
         reset();
 
-        setMemo(memo1);
+        setSave(save);
 
         return i_r;
     }
@@ -1257,9 +736,7 @@ public class FoldLineSet {
         sikaku.set(3, p3);
         sikaku.set(4, p4);
 
-        Memo memo1 = new Memo();
-        memo1.reset();
-        memo1.addLine("<線分集合>");
+        Save save = new Save();
         int ibangou = 0;
 
         for (int i = 1; i <= total; i++) {
@@ -1271,24 +748,21 @@ public class FoldLineSet {
             }//黒線はmemo1に書かれない。つまり削除される。
             else if ((!sikaku.totu_boundary_inside(s)) || (s.getColor() != LineColor.BLACK_0)) {
                 ibangou = ibangou + 1;
-                memo1.addLine("番号," + ibangou);
-                memo1.addLine("色," + s.getColor());
-                memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
+                save.addLineSegment(s);
             }
         }
 
-        memo1.addLine("<円集合>");
         int ii = 0;
         for (Circle circle : circles) {
             Circle e_temp = new Circle();
             e_temp.set(circle);//ec.set(e_temp.get_tyuusin());er=e_temp.getr();
             ii = ii + 1;
-            memo1.addLine("番号," + ii);
-            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
+            save.addCircle(e_temp);
         }
 
         reset();
-        setMemo(memo1);
+    setSave(save);
+
         return i_r;
     }
 
@@ -1300,10 +774,7 @@ public class FoldLineSet {
         sikaku.set(3, p3);
         sikaku.set(4, p4);
 
-        Memo memo1 = new Memo();
-        memo1.reset();
-        memo1.addLine("<線分集合>");
-        int ibangou = 0;
+        Save save = new Save();
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
@@ -1311,10 +782,7 @@ public class FoldLineSet {
             if ((sikaku.totu_boundary_inside(s)) && (s.getColor() == LineColor.CYAN_3)) {
                 i_r = true;
             } else if ((!sikaku.totu_boundary_inside(s)) || (s.getColor() != LineColor.CYAN_3)) {
-                ibangou = ibangou + 1;
-                memo1.addLine("番号," + ibangou);
-                memo1.addLine("色," + s.getColor());
-                memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
+                save.addLineSegment(s);
             }
         }
 
@@ -1326,7 +794,6 @@ public class FoldLineSet {
         LineSegment s3 = new LineSegment(p3, p4);
         LineSegment s4 = new LineSegment(p4, p1);
 
-        memo1.addLine("<円集合>");
         int ii = 0;
         for (Circle circle : circles) {
             boolean idel = false;
@@ -1365,13 +832,12 @@ public class FoldLineSet {
             }
             if (!idel) {
                 ii = ii + 1;
-                memo1.addLine("番号," + ii);
-                memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
+                save.addCircle(e_temp);
             }
         }
 
         reset();
-        setMemo(memo1);
+        setSave(save);
 
         return i_r;
     }
@@ -1457,10 +923,10 @@ public class FoldLineSet {
     }
 
     public void delSelectedLineSegmentFast() {
-        Memo memo_temp = new Memo();
+        Save memo_temp = new Save();
         memo_temp.set(getMemoExceptSelected(2));
         reset();
-        setMemo(memo_temp);
+        setSave(memo_temp);
     }
 
     public void deleteSelectedLineSegment() {
@@ -1659,10 +1125,10 @@ public class FoldLineSet {
             }
         }
 
-        Memo memo_temp = new Memo();
+        Save memo_temp = new Save();
         memo_temp.set(getMemo_active_excluding(LineSegment.ActiveState.MARK_FOR_DELETION_100));
         reset();
-        setMemo(memo_temp);
+        setSave(memo_temp);
     }
 
     public LineSegment.Intersection intersect_divide_fast(int i, int j) {//i is the one to add (2), j is the original one (1) // = 0 does not intersect
@@ -4484,4 +3950,5 @@ public class FoldLineSet {
             }
         }
     }
+
 }

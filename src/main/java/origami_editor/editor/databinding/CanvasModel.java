@@ -8,8 +8,9 @@ import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
 
-public class CanvasModel {
+public class CanvasModel implements Serializable {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean displayPointSpotlight;
     private boolean displayPointOffset;
@@ -27,19 +28,14 @@ public class CanvasModel {
     private LineStyle lineStyle;
     private boolean antiAlias;
     private boolean mouseWheelMovesCreasePattern;
-
     private LineColor lineColor;
     private LineColor auxLiveLineColor;
     private MouseMode mouseMode;
     private MouseMode mouseModeAfterColorSelection;
-
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode;
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode_old;
-
     private Color circleCustomizedColor;
-
     private boolean selectPersistent;
-
     private boolean correctCpBeforeFolding;
     private boolean check4Enabled;
     /**
@@ -53,8 +49,17 @@ public class CanvasModel {
         reset();
     }
 
+    public int getAuxLineWidth() {
+        return auxLineWidth;
+    }
 
-    public boolean isCorrectCreasePatternBeforeFolding() {
+    public void setAuxLineWidth(int auxLineWidth) {
+        int oldAuxLineWidth = this.auxLineWidth;
+        this.auxLineWidth = auxLineWidth;
+        this.pcs.firePropertyChange("auxLineWidth", oldAuxLineWidth, auxLineWidth);
+    }
+
+    public boolean getCorrectCpBeforeFolding() {
         return correctCpBeforeFolding;
     }
 
@@ -64,7 +69,11 @@ public class CanvasModel {
         this.pcs.firePropertyChange("correctCpBeforeFolding", oldCorrectCpBeforeFolding, correctCpBeforeFolding);
     }
 
-    public boolean isSelectPersistent() {
+    public boolean isCorrectCreasePatternBeforeFolding() {
+        return correctCpBeforeFolding;
+    }
+
+    public boolean getSelectPersistent() {
         return selectPersistent;
     }
 
@@ -193,12 +202,6 @@ public class CanvasModel {
 
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         this.pcs.removePropertyChangeListener(listener);
-    }
-
-    public void setAuxLineWidth(int auxLineWidth) {
-        int oldAuxLineWidth = this.auxLineWidth;
-        this.auxLineWidth = auxLineWidth;
-        this.pcs.firePropertyChange("auxLineWidth", oldAuxLineWidth, auxLineWidth);
     }
 
     public int getLineWidth() {
@@ -454,6 +457,39 @@ public class CanvasModel {
         }
 
         return fAuxLineWidth;
+    }
+
+    public void set(CanvasModel canvasModel) {
+        displayPointSpotlight = canvasModel.getDisplayPointSpotlight();
+        displayPointOffset = canvasModel.getDisplayPointOffset();
+        displayGridInputAssist = canvasModel.getDisplayGridInputAssist();
+        displayComments = canvasModel.getDisplayComments();
+        displayCpLines = canvasModel.getDisplayCpLines();
+        displayAuxLines = canvasModel.getDisplayAuxLines();
+        displayLiveAuxLines = canvasModel.getDisplayLiveAuxLines();
+        displayMarkings = canvasModel.getDisplayMarkings();
+        displayCreasePatternOnTop = canvasModel.getDisplayCreasePatternOnTop();
+        displayFoldingProgress = canvasModel.getDisplayFoldingProgress();
+        lineWidth = canvasModel.getLineWidth();
+        auxLineWidth = canvasModel.getAuxLineWidth();
+        pointSize = canvasModel.getPointSize();
+        lineStyle = canvasModel.getLineStyle();
+        antiAlias = canvasModel.getAntiAlias();
+        mouseWheelMovesCreasePattern = canvasModel.getMouseWheelMovesCreasePattern();
+        lineColor = canvasModel.getLineColor();
+        auxLiveLineColor = canvasModel.getAuxLiveLineColor();
+        mouseMode = canvasModel.getMouseMode();
+        mouseModeAfterColorSelection = canvasModel.getMouseModeAfterColorSelection();
+        foldLineAdditionalInputMode = canvasModel.getFoldLineAdditionalInputMode();
+        circleCustomizedColor = canvasModel.getCircleCustomizedColor();
+        selectPersistent = canvasModel.getSelectPersistent();
+        correctCpBeforeFolding = canvasModel.getCorrectCpBeforeFolding();
+        check4Enabled = canvasModel.getCheck4Enabled();
+        selectionOperationMode = canvasModel.getSelectionOperationMode();
+        foldLineDividingNumber = canvasModel.getFoldLineDividingNumber();
+        numPolygonCorners = canvasModel.getNumPolygonCorners();
+
+        this.pcs.firePropertyChange(null, null, null);
     }
 
     public enum SelectionOperationMode {

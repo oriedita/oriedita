@@ -1,17 +1,20 @@
 package origami_editor.editor;
 
+import origami.crease_pattern.LineSegmentSet;
+import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.element.Point;
+import origami.crease_pattern.worker.HierarchyList_Worker;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing_worker.DrawingWorker;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
-import origami.crease_pattern.worker.HierarchyList_Worker;
-import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.OritaCalc;
-import origami.crease_pattern.element.Point;
+import origami_editor.editor.save.Cp;
+import origami_editor.editor.save.Obj;
+import origami_editor.editor.save.Orh;
 import origami_editor.record.Memo;
 import origami_editor.tools.StringOp;
-import origami.crease_pattern.LineSegmentSet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,6 +38,7 @@ public class App extends JFrame implements ActionListener {
     public final HistoryStateModel historyStateModel = new HistoryStateModel();
     public final BackgroundModel backgroundModel = new BackgroundModel();
     public final CameraModel creasePatternCameraModel = new CameraModel();
+    final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
     private final AppMenuBar appMenuBar;
     public FoldedFigure temp_OZ = new FoldedFigure(this);    //Folded figure
     public FoldedFigure OZ;    //Current Folded figure
@@ -54,7 +58,6 @@ public class App extends JFrame implements ActionListener {
     ArrayList<FoldedFigure> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
     int foldedFigureIndex = 0;//Specify which number of foldedFigures Oriagari_Zu is the target of button operation or transformation operation
     Background_camera h_cam = new Background_camera();
-    final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
     String fname_and_number;//まとめ書き出しに使う。
     //各種変数の定義
     String frame_title_0;//フレームのタイトルの根本部分
@@ -324,7 +327,7 @@ public class App extends JFrame implements ActionListener {
             //
             if (canvasModel.isCorrectCreasePatternBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
                 DrawingWorker drawingWorker2 = new DrawingWorker(r, this);    // Basic branch craftsman. Accepts input from the mouse.
-                drawingWorker2.setMemo_for_reading(mainDrawingWorker.foldLineSet.getMemoForSelectFolding());
+                drawingWorker2.setSave_for_reading(mainDrawingWorker.foldLineSet.getSaveForSelectFolding());
                 drawingWorker2.point_removal();
                 drawingWorker2.overlapping_line_removal();
                 drawingWorker2.branch_trim(0.000001);
@@ -723,19 +726,19 @@ public class App extends JFrame implements ActionListener {
         explanation.setExplanation(resource);
     }
 
-    Memo readFile2Memo() {
+    Save readFile2Save() {
         String fname;
         Memo memo_temp = new Memo();
 
         boolean file_ok = false;//1 if the extension of the read file name is appropriate (orh, obj, cp), 0 otherwise
 
         FileDialog fd = new FileDialog(this, "Open file", FileDialog.LOAD);
-        fd.setFile("*.orh;*.obj;*.cp");
-        fd.setFilenameFilter((dir, name) -> name.endsWith(".orh") || name.endsWith(".obj") || name.endsWith(".cp"));
+        fd.setFile("*.orh;*.obj;*.cp;*.ori");
+        fd.setFilenameFilter((dir, name) -> name.endsWith(".orh") || name.endsWith(".obj") || name.endsWith(".cp") || name.endsWith(".ori"));
         fd.setVisible(true);
 
         if (fd.getFile() == null) {
-            return memo_temp;
+            return null;
         }
 
         fname = fd.getDirectory() + fd.getFile();
@@ -749,9 +752,12 @@ public class App extends JFrame implements ActionListener {
         if (fname.endsWith(".cp")) {
             file_ok = true;
         }
+        if (fname.endsWith(".ori")) {
+            file_ok = true;
+        }
 
         if (!file_ok) {
-            return memo_temp;
+            return null;
         }
 
         frame_title = frame_title_0 + "        " + fd.getFile();
@@ -759,8 +765,14 @@ public class App extends JFrame implements ActionListener {
         mainDrawingWorker.setTitle(frame_title);
 
         try {
-            if (fd.getFile() != null) {  //If not canceled.
-                BufferedReader br = new BufferedReader(new FileReader(fname));
+            if (fname.endsWith(".ori")) {
+                try (FileInputStream fis = new FileInputStream(fname); ObjectInputStream ois = new ObjectInputStream(fis)) {
+                    return (Save) ois.readObject();
+                }
+            }
+
+
+            try (BufferedReader br = new BufferedReader(new FileReader(fname))) {
 
                 String rdata;
 
@@ -768,7 +780,18 @@ public class App extends JFrame implements ActionListener {
                 while ((rdata = br.readLine()) != null) {
                     memo_temp.addLine(rdata);
                 }
-                br.close();
+            }
+
+            if (fname.endsWith(".cp")) {
+                return Cp.importFile(memo_temp);
+            }
+
+            if (fname.endsWith(".obj")) {
+                return Obj.importFile(memo_temp);
+            }
+
+            if (fname.endsWith(".orh")) {
+                return Orh.importFile(memo_temp);
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -777,56 +800,62 @@ public class App extends JFrame implements ActionListener {
             mainDrawingWorker.setTitle(frame_title);
         }
 
-        if (fname.endsWith("obj")) {
-            System.out.println("objファイル読みこみ");
-            return FileFormatConverter.obj2orihime(memo_temp);
-        }
-        if (fname.endsWith("cp")) {
-            System.out.println("cpファイル読みこみ");
-            return FileFormatConverter.cp2orihime(memo_temp);
-        }
-        return memo_temp;
+        return null;
     }
 
     void writeMemo2File() {
-        Memo memo1;
-        memo1 = mainDrawingWorker.getMemo_for_export();
+        Save save = mainDrawingWorker.getSave_for_export();
         String fname = selectFileName("書き出しファイルの名前");
 
         if (fname != null) {
             if (fname.endsWith("cp")) {
-                memoAndName2File(FileFormatConverter.orihime2cp(memo1), fname);
+                memoAndName2File(Cp.exportFile(save), fname);
 
                 frame_title = frame_title_0 + "        " + fd.getFile();
                 setTitle(frame_title);
                 mainDrawingWorker.setTitle(frame_title);
-
             } else if (fname.endsWith("orh")) {
-                memoAndName2File(memo1, fname);
+                memoAndName2File(Orh.exportFile(save), fname);
 
                 frame_title = frame_title_0 + "        " + fd.getFile();
                 setTitle(frame_title);
                 mainDrawingWorker.setTitle(frame_title);
+            } else if (fname.endsWith("ori")) {
+                saveAndName2File(save, fname);
 
+                frame_title = frame_title_0 + "        " + fd.getFile();
+                setTitle(frame_title);
+                mainDrawingWorker.setTitle(frame_title);
             } else {
-                fname = fname + ".orh";
-                memoAndName2File(memo1, fname);
+                fname = fname + ".ori";
+                saveAndName2File(save, fname);
 
-                frame_title = frame_title_0 + "        " + fd.getFile() + ".orh";
+                frame_title = frame_title_0 + "        " + fd.getFile() + ".ori";
                 setTitle(frame_title);
                 mainDrawingWorker.setTitle(frame_title);
             }
+        }
+    }
+
+    void saveAndName2File(Save save, String fname) {
+        try {
+            try (FileOutputStream bos = new FileOutputStream(fname);
+                 ObjectOutputStream out = new ObjectOutputStream(bos)) {
+                out.writeObject(save);
+            }
+        } catch (IOException ex) {
+
         }
     }
 
     void memoAndName2File(Memo memo1, String fname) {
         System.out.println("ファイル書きこみ");
         try {
-            PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fname)));
-            for (int i = 1; i <= memo1.getLineCount(); i++) {
-                pw.println(memo1.getLine(i));
+            try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fname)))) {
+                for (int i = 1; i <= memo1.getLineCount(); i++) {
+                    pw.println(memo1.getLine(i));
+                }
             }
-            pw.close();
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -883,13 +912,11 @@ public class App extends JFrame implements ActionListener {
     }
 
     public void openFile() {
-        Memo memo_temp;
-
         System.out.println("readFile2Memo() 開始");
-        memo_temp = readFile2Memo();
+        Save memo_temp = readFile2Save();
         System.out.println("readFile2Memo() 終了");
 
-        if (memo_temp.getLineCount() > 0) {
+        if (memo_temp != null) {
             //Initialization of development drawing started
             developmentView_initialization();
             //Deployment parameter initialization
@@ -902,7 +929,7 @@ public class App extends JFrame implements ActionListener {
             configure_initialize_prediction();
 
             mainDrawingWorker.setCamera(canvas.creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
-            mainDrawingWorker.setMemo_for_reading(memo_temp);
+            mainDrawingWorker.setSave_for_reading(memo_temp);
             mainDrawingWorker.record();
         }
     }

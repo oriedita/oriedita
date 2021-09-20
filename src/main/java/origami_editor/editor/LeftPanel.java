@@ -8,7 +8,6 @@ import origami_editor.editor.databinding.GridModel;
 import origami_editor.editor.databinding.HistoryStateModel;
 import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
 import origami_editor.editor.folded_figure.FoldedFigure;
-import origami_editor.record.Memo;
 import origami_editor.tools.StringOp;
 
 import javax.swing.*;
@@ -622,14 +621,13 @@ public class LeftPanel extends JPanel {
 
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
-            Memo memo_temp;
 
             System.out.println("readFile2Memo() 開始");
-            memo_temp = app.readFile2Memo();
+            Save save = app.readFile2Save();
             System.out.println("readFile2Memo() 終了");
 
-            if (memo_temp.getLineCount() > 0) {
-                app.mainDrawingWorker.setMemo_for_reading_tuika(memo_temp);
+            if (save != null) {
+                app.mainDrawingWorker.setSave_for_reading_tuika(save);
                 app.mainDrawingWorker.record();
                 app.repaintCanvas();
             }
@@ -676,7 +674,7 @@ public class LeftPanel extends JPanel {
             app.setHelp("suitei_01");
 
             app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
-            if (!app.canvasModel.isSelectPersistent()) {
+            if (!app.canvasModel.getSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
 
@@ -693,7 +691,7 @@ public class LeftPanel extends JPanel {
             app.setHelp("suitei_02");
 
             app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
-            if (!app.canvasModel.isSelectPersistent()) {
+            if (!app.canvasModel.getSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
 
@@ -704,7 +702,7 @@ public class LeftPanel extends JPanel {
 
             app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
 
-            if (!app.canvasModel.isSelectPersistent()) {
+            if (!app.canvasModel.getSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
             app.Button_shared_operation();

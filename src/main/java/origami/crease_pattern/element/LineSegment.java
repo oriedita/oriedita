@@ -1,10 +1,11 @@
 package origami.crease_pattern.element;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class LineSegment {
+public class LineSegment implements Serializable {
     private final Point a = new Point(); //Branch a point
     private final Point b = new Point(); //Branch b point
     ActiveState active;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
