@@ -15,7 +15,7 @@ public class HelpDialog extends JDialog {
     private JPanel contentPane;
     private JLabel helpLabel;
 
-    public HelpDialog(App owner) {
+    public HelpDialog(App owner, Point canvasLocation, Dimension canvasSize) {
         super(owner, "Help");
         $$$setupUI$$$();
         setContentPane(contentPane);
@@ -69,11 +69,7 @@ public class HelpDialog extends JDialog {
 
         pack();
 
-        Point canvasLocation = owner.canvas.getLocationOnScreen();
-        Dimension canvasSize = owner.canvas.getSize();
-        Dimension ownSize = getSize();
-
-        setLocation(canvasLocation.x + canvasSize.width - ownSize.width - 10, canvasLocation.y + 10);
+        setLocation(canvasLocation.x + canvasSize.width - getSize().width - 10, canvasLocation.y + 10);
 
         helpLabel.setText(helpBundle.getString("a__hajimeni"));
     }

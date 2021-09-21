@@ -8,7 +8,7 @@ import java.awt.*;
  */
 public class Editor {
     private final App app;
-    private JPanel panel1;
+    private JPanel root;
     private Canvas canvas;
     private RightPanel rightPanel;
     private BottomPanel bottomPanel;
@@ -37,20 +37,20 @@ public class Editor {
      */
     private void $$$setupUI$$$() {
         createUIComponents();
-        panel1 = new JPanel();
-        panel1.setLayout(new BorderLayout(0, 0));
-        panel1.add(bottomPanel.$$$getRootComponent$$$(), BorderLayout.SOUTH);
-        panel1.add(rightPanel.$$$getRootComponent$$$(), BorderLayout.EAST);
-        panel1.add(canvas, BorderLayout.CENTER);
-        panel1.add(topPanel.$$$getRootComponent$$$(), BorderLayout.NORTH);
-        panel1.add(leftPanel.$$$getRootComponent$$$(), BorderLayout.WEST);
+        root = new JPanel();
+        root.setLayout(new BorderLayout(0, 0));
+        root.add(bottomPanel.$$$getRootComponent$$$(), BorderLayout.SOUTH);
+        root.add(rightPanel.$$$getRootComponent$$$(), BorderLayout.EAST);
+        root.add(canvas, BorderLayout.CENTER);
+        root.add(topPanel.$$$getRootComponent$$$(), BorderLayout.NORTH);
+        root.add(leftPanel.$$$getRootComponent$$$(), BorderLayout.WEST);
     }
 
     /**
      * @noinspection ALL
      */
     public JComponent $$$getRootComponent$$$() {
-        return panel1;
+        return root;
     }
 
     public Canvas getCanvas() {

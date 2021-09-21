@@ -22,11 +22,12 @@ public class Save implements Serializable {
     private CanvasModel canvasModel;
     private GridModel gridModel;
     private FoldedFigureModel foldedFigureModel;
+
     public Save() {
-        this.lineSegments = new ArrayList<>();
-        this.circles = new ArrayList<>();
-        this.points = new ArrayList<>();
-        this.auxLineSegments = new ArrayList<>();
+        lineSegments = new ArrayList<>();
+        circles = new ArrayList<>();
+        points = new ArrayList<>();
+        auxLineSegments = new ArrayList<>();
         creasePatternCamera = new Camera();
         canvasModel = new CanvasModel();
         gridModel = new GridModel();
@@ -146,17 +147,6 @@ public class Save implements Serializable {
             addAuxLineSegment(s);
         }
     }
-
-    public byte[] serialize() {
-        try {
-            return convertToBytes(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-
-            return new byte[]{};
-        }
-    }
-
 
     private byte[] convertToBytes(Object object) throws IOException {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();

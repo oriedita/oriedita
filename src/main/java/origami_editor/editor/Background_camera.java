@@ -4,11 +4,15 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami_editor.tools.Camera;
 
-public class Background_camera {//Mediation between actual coordinates and display coordinates
-    // The background image is based on the case where the upper left corner of the image is displayed according to (0,0) of the window without rotation or enlargement.
-    // Enlarge a times around the point h1 on the background image. Next, the background image is translated so that h1 overlaps the point h3 on the developed view. A function that rotates and pastes the developed view of this state so that it looks like it is rotated b degrees around h3, and then restores the rotation of the coordinates.
-    // The arguments are Graphics2D g2h, Image imgh, Point h1, Point h2, Point h3, Point h4
-    // Make h2 and h4 also overlap
+/**
+ * Mediation between actual coordinates and display coordinates
+ * The background image is based on the case where the upper left corner of the image is displayed according to (0,0) of the window without rotation or enlargement.
+ * Enlarge a times around the point h1 on the background image. Next, the background image is translated so that h1 overlaps the point h3 on the developed view. A function that rotates and pastes the developed view of this state so that it looks like it is rotated b degrees around h3, and then restores the rotation of the coordinates.
+ * The arguments are Graphics2D g2h, Image imgh, Point h1, Point h2, Point h3, Point h4
+ * Make h2 and h4 also overlap
+ */
+public class Background_camera {
+
     Point h1 = new Point();
     Point h2 = new Point();
     Point h3 = new Point();
@@ -29,7 +33,7 @@ public class Background_camera {//Mediation between actual coordinates and displ
     double p_rotation_x = 0.0;
     double p_rotation_y = 0.0;
 
-    boolean i_Lock_on = false;
+    boolean locked = false;
 
     public Background_camera() {//コンストラクタ
         reset();
@@ -159,8 +163,8 @@ public class Background_camera {//Mediation between actual coordinates and displ
         return (int) p_rotation_y;
     }
 
-    public void set_i_Lock_on(boolean i_L) {
-        i_Lock_on = i_L;
+    public void setLocked(boolean i_L) {
+        locked = i_L;
     }
 
     public void h3_obj_and_h4_obj_calculation() {

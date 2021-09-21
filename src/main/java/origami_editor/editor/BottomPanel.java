@@ -270,10 +270,6 @@ public class BottomPanel extends JPanel {
         });
     }
 
-    public UndoRedo getUndoRedo() {
-        return undoRedo;
-    }
-
     public JTextField getGoToFoldedFigureTextField() {
         return goToFoldedFigureTextField;
     }

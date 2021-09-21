@@ -249,11 +249,11 @@ public class App extends JFrame implements ActionListener {
         backgroundModel.addPropertyChangeListener(e -> topPanel.setData(backgroundModel));
         backgroundModel.addPropertyChangeListener(e -> {
             if (backgroundModel.isLockBackground()) {
-                h_cam.set_i_Lock_on(backgroundModel.isLockBackground());
+                h_cam.setLocked(backgroundModel.isLockBackground());
                 h_cam.setCamera(canvas.creasePatternCamera);
                 h_cam.h3_obj_and_h4_obj_calculation();
             } else {
-                h_cam.set_i_Lock_on(backgroundModel.isLockBackground());
+                h_cam.setLocked(backgroundModel.isLockBackground());
             }
         });
 
@@ -276,7 +276,10 @@ public class App extends JFrame implements ActionListener {
         setLocationRelativeTo(null);//If you want to put the application window in the center of the screen, use the setLocationRelativeTo () method. If you pass null, it will always be in the center.
         setVisible(true);
 
-        explanation = new HelpDialog(this);
+        java.awt.Point canvasLocation = canvas.getLocationOnScreen();
+        Dimension canvasSize = canvas.getSize();
+
+        explanation = new HelpDialog(this, canvasLocation, canvasSize);
         explanation.setVisible(true);
     }
 
@@ -984,7 +987,7 @@ public class App extends JFrame implements ActionListener {
         backgroundModel.setDisplayBackground(true);
 
         if (backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-            h_cam.set_i_Lock_on(true);
+            h_cam.setLocked(true);
             h_cam.setCamera(canvas.creasePatternCamera);
             h_cam.h3_obj_and_h4_obj_calculation();
         }

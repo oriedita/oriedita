@@ -13,7 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 
-public class RightPanel extends JPanel {
+public class RightPanel {
     private final App app;
     private final OpenFrame frame;
     private JCheckBox cAMVCheckBox;
@@ -78,6 +78,7 @@ public class RightPanel extends JPanel {
     private JLabel measuredAngle1Label;
     private JLabel measuredAngle2Label;
     private JLabel measuredAngle3Label;
+    private JPanel root;
 
     public RightPanel(App app, AngleSystemModel angleSystemModel) {
         this.app = app;
@@ -506,8 +507,8 @@ public class RightPanel extends JPanel {
      * @noinspection ALL
      */
     private void $$$setupUI$$$() {
-        createUIComponents();
-        panel1.setLayout(new GridBagLayout());
+        root = new JPanel();
+        root.setLayout(new GridBagLayout());
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridBagLayout());
         GridBagConstraints gbc;
@@ -516,7 +517,7 @@ public class RightPanel extends JPanel {
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel2, gbc);
+        root.add(panel2, gbc);
         cAMVCheckBox = new JCheckBox();
         cAMVCheckBox.setText("cAMV");
         gbc = new GridBagConstraints();
@@ -580,14 +581,14 @@ public class RightPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(spacer1, gbc);
+        root.add(spacer1, gbc);
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel3, gbc);
+        root.add(panel3, gbc);
         angleSystemAButton = new JButton();
         angleSystemAButton.setText("180/12=15.0");
         gbc = new GridBagConstraints();
@@ -637,14 +638,14 @@ public class RightPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(spacer2, gbc);
+        root.add(spacer2, gbc);
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel4, gbc);
+        root.add(panel4, gbc);
         angleATextField = new JTextField();
         angleATextField.setText("40.0");
         gbc = new GridBagConstraints();
@@ -720,14 +721,14 @@ public class RightPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(spacer3, gbc);
+        root.add(spacer3, gbc);
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 6;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel5, gbc);
+        root.add(panel5, gbc);
         degButton = new JButton();
         degButton.setIcon(new ImageIcon(getClass().getResource("/ppp/deg.png")));
         gbc = new GridBagConstraints();
@@ -757,7 +758,7 @@ public class RightPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 14;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(spacer4, gbc);
+        root.add(spacer4, gbc);
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
@@ -765,7 +766,7 @@ public class RightPanel extends JPanel {
         gbc.gridy = 15;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel6, gbc);
+        root.add(panel6, gbc);
         c_colButton = new JButton();
         c_colButton.setText("C_col");
         gbc = new GridBagConstraints();
@@ -787,14 +788,14 @@ public class RightPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 19;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(spacer5, gbc);
+        root.add(spacer5, gbc);
         final JPanel panel7 = new JPanel();
         panel7.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 20;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel7, gbc);
+        root.add(panel7, gbc);
         l1Button = new JButton();
         l1Button.setHorizontalAlignment(11);
         l1Button.setText("L1=");
@@ -895,14 +896,14 @@ public class RightPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 21;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(spacer6, gbc);
+        root.add(spacer6, gbc);
         final JPanel panel8 = new JPanel();
         panel8.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 22;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel8, gbc);
+        root.add(panel8, gbc);
         ad_fncButton = new JButton();
         ad_fncButton.setText("ad_fnc");
         gbc = new GridBagConstraints();
@@ -917,13 +918,13 @@ public class RightPanel extends JPanel {
         gbc.gridy = 23;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(spacer7, gbc);
+        root.add(spacer7, gbc);
         final JPanel spacer8 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 9;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(spacer8, gbc);
+        root.add(spacer8, gbc);
         final JPanel panel9 = new JPanel();
         panel9.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
@@ -931,7 +932,7 @@ public class RightPanel extends JPanel {
         gbc.gridy = 10;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel9, gbc);
+        root.add(panel9, gbc);
         circleDrawFreeButton = new JButton();
         circleDrawFreeButton.setIcon(new ImageIcon(getClass().getResource("/ppp/en_nyuryoku_free.png")));
         gbc = new GridBagConstraints();
@@ -962,7 +963,7 @@ public class RightPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 7;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel10, gbc);
+        root.add(panel10, gbc);
         deg2Button = new JButton();
         deg2Button.setIcon(new ImageIcon(getClass().getResource("/ppp/deg2.png")));
         gbc = new GridBagConstraints();
@@ -985,7 +986,7 @@ public class RightPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 8;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel11, gbc);
+        root.add(panel11, gbc);
         polygonSizeTextField = new JTextField();
         polygonSizeTextField.setText("5");
         gbc = new GridBagConstraints();
@@ -1017,7 +1018,7 @@ public class RightPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 11;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel12, gbc);
+        root.add(panel12, gbc);
         circleDrawButton = new JButton();
         circleDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/en_nyuryoku.png")));
         gbc = new GridBagConstraints();
@@ -1040,7 +1041,7 @@ public class RightPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 12;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel13, gbc);
+        root.add(panel13, gbc);
         circleDrawTwoConcentricButton = new JButton();
         circleDrawTwoConcentricButton.setIcon(new ImageIcon(getClass().getResource("/ppp/en_en_dousin_en.png")));
         gbc = new GridBagConstraints();
@@ -1063,7 +1064,7 @@ public class RightPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 13;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel14, gbc);
+        root.add(panel14, gbc);
         circleDrawThreePointButton = new JButton();
         circleDrawThreePointButton.setIcon(new ImageIcon(getClass().getResource("/ppp/en_3ten_nyuryoku.png")));
         gbc = new GridBagConstraints();
@@ -1086,7 +1087,7 @@ public class RightPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 16;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel15, gbc);
+        root.add(panel15, gbc);
         h_undoButton = new JButton();
         h_undoButton.setIcon(new ImageIcon(getClass().getResource("/ppp/h_undo.png")));
         gbc = new GridBagConstraints();
@@ -1126,7 +1127,7 @@ public class RightPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 17;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel16, gbc);
+        root.add(panel16, gbc);
         h_senhaba_sageButton = new JButton();
         h_senhaba_sageButton.setIcon(new ImageIcon(getClass().getResource("/ppp/h_senhaba_sage.png")));
         gbc = new GridBagConstraints();
@@ -1167,7 +1168,7 @@ public class RightPanel extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 18;
         gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(panel17, gbc);
+        root.add(panel17, gbc);
         h_senbun_nyuryokuButton = new JButton();
         h_senbun_nyuryokuButton.setIcon(new ImageIcon(getClass().getResource("/ppp/h_senbun_nyuryoku.png")));
         gbc = new GridBagConstraints();
@@ -1190,11 +1191,7 @@ public class RightPanel extends JPanel {
      * @noinspection ALL
      */
     public JComponent $$$getRootComponent$$$() {
-        return panel1;
-    }
-
-    private void createUIComponents() {
-        panel1 = this;
+        return root;
     }
 
     public void setData(AngleSystemModel data) {
