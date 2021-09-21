@@ -26,8 +26,8 @@ public class HierarchyList_Worker {
     public double[] face_rating;
     public int[] i_face_rating;
     public SortingBox<Integer>  nbox = new SortingBox<>();//20180227 In the nbox, the id of men is paired with men_rating and sorted in ascending order of men_rating.
-    HierarchyList hierarchyList = new HierarchyList();
-    int SubFaceTotal;//SubFaceの数
+    public HierarchyList hierarchyList = new HierarchyList();
+    public int SubFaceTotal;//SubFaceの数
     //  hierarchyList[][]は折る前の展開図のすべての面同士の上下関係を1つの表にまとめたものとして扱う
     //　hierarchyList[i][j]が1なら面iは面jの上側。0なら下側。
     //  hierarchyList[i][j]が-50なら、面iとjは重なが、上下関係は決められていない。
@@ -36,7 +36,7 @@ public class HierarchyList_Worker {
     int FaceIdCount_max;//各SubFaceの持つMenidsuuの最大値。すなわち、最も紙に重なりが多いところの枚数。
     //paint 用のint格納用VVVVVVVVVVVVVVVVVVVVVV
     boolean ip1_flipped = false; //0 is the mode to display the front side of the folding diagram. 1 is a mode to display the back side of the folding diagram.
-    SubFace[] s0;//SubFace obtained from SubFace_figure
+    public SubFace[] s0;//SubFace obtained from SubFace_figure
     SubFace[] s;//s is s0 sorted in descending order of priority.
     int[] s0_no_yusenjyun;
     int[] yusenjyun_kara_s0id;
@@ -1098,246 +1098,6 @@ public class HierarchyList_Worker {
 
     }
 
-    public Memo getMemo_for_svg_with_camera(CreasePattern_Worker orite, PointSet subFace_figure) {//折り上がり図(hyouji_flg==5)
-        boolean front_back = camera.isCameraMirrored();
-
-        Point t0 = new Point();
-        Point t1 = new Point();
-        LineSegment s_ob = new LineSegment();
-        LineSegment s_tv = new LineSegment();
-
-        ip1_flipped = front_back;
-
-        Memo memo_temp = new Memo();
-
-        Point a = new Point();
-        Point b = new Point();
-        StringBuilder str_zahyou;
-        String str_stroke = "black";
-        String str_strokewidth = "1";
-
-
-        //面を描く-----------------------------------------------------------------------------------------------------
-        int[] x = new int[100];
-        int[] y = new int[100];
-
-        //SubFaceの.set_Menid2uekara_kazoeta_itiは現在の上下表をもとに、上から数えてi番めの面のid番号を全ての順番につき格納する。
-        for (int im = 1; im <= SubFaceTotal; im++) { //SubFaceから上からの指定した番目の面のidを求める。
-            s0[im].set_FaceId2fromTop_counted_position(hierarchyList);//s0[]はSubFace_zuから得られるSubFaceそのもの、jgは上下表Jyougehyouのこと
-        }
-        //ここまでで、上下表の情報がSubFaceの各面に入った
-
-        //面を描く
-        int face_order;
-        for (int im = 1; im <= SubFaceTotal; im++) {//imは各SubFaceの番号
-            if (s0[im].getFaceIdCount() > 0) {//MenidsuuはSubFace(折り畳み推定してえられた針金図を細分割した面)で重なっているMen(折りたたむ前の展開図の面)の数。これが0なら、ドーナツ状の穴の面なので描画対象外
-
-                //Determine the color of the imth SubFace when drawing a fold-up diagram
-                face_order = 1;
-                if (front_back) {
-                    face_order = s0[im].getFaceIdCount();
-                }
-
-
-                if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(face_order)) % 2 == 1) {
-                    str_stroke = StringOp.toHtmlColor(F_color);
-                }//g.setColor(F_color)
-                if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(face_order)) % 2 == 0) {
-                    str_stroke = StringOp.toHtmlColor(B_color);
-                }//g.setColor(B_color)
-
-                if (front_back) {
-                    if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(face_order)) % 2 == 0) {
-                        str_stroke = "yellow";
-                    }//g.setColor(F_color)
-                    if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(face_order)) % 2 == 1) {
-                        str_stroke = "gray";
-                    }//g.setColor(B_color)
-                }
-
-                //折り上がり図を描くときのSubFaceの色を決めるのはここまで
-
-                //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求める
-                for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
-                    t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, i)));
-                    t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, i)));
-                    t1.set(camera.object2TV(t0));
-                    x[i] = gx(t1.getX());
-                    y[i] = gy(t1.getY());
-                }
-
-                t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
-                t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
-                t1.set(camera.object2TV(t0));
-                x[0] = gx(t1.getX());
-                y[0] = gy(t1.getY());
-                //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求めるのはここまで
-
-                str_zahyou = new StringBuilder(x[0] + "," + y[0]);
-                for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
-                    str_zahyou.append(" ").append(x[i]).append(",").append(y[i]);
-
-                }
-
-                memo_temp.addLine("<polygon points=\"" + str_zahyou + "\"" +
-                        " style=\"" + "stroke:" + str_stroke + ";fill:" + str_stroke + "\"" +
-                        " stroke-width=\"" + str_strokewidth + "\"" + " />"
-                );
-            }
-        }
-        //面を描く　ここまで-----------------------------------------------------------------------------------------
-
-
-        //棒を描く-----------------------------------------------------------------------------------------
-
-        str_stroke = StringOp.toHtmlColor(L_color);
-
-        for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
-            int faceId_min, faceId_max; //棒の両側のSubFaceの番号の小さいほうがMid_min,　大きいほうがMid_max
-            int faceOrderMin, faceOrderMax;//PC画面に表示したときSubFace(faceId_min) で見える面の番号がMen_jyunban_min、SubFace(faceId_max) で見える面の番号がMen_jyunban_max
-            boolean drawing_flg;
-
-            drawing_flg = false;
-            faceId_min = subFace_figure.lineInFaceBorder_min_lookup(ib);//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
-            faceId_max = subFace_figure.lineInFaceBorder_max_lookup(ib);
-
-            if (s0[faceId_min].getFaceIdCount() == 0) {
-                drawing_flg = true;
-            }//menをもたない、ドーナツの穴状のSubFaceは境界の棒を描く
-            else if (s0[faceId_max].getFaceIdCount() == 0) {
-                drawing_flg = true;
-            } else if (faceId_min == faceId_max) {
-                drawing_flg = true;
-            }//一本の棒の片面だけにSubFace有り
-            else {
-                faceOrderMin = 1;
-                if (front_back) {
-                    faceOrderMin = s0[faceId_min].getFaceIdCount();
-                }
-                faceOrderMax = 1;
-                if (front_back) {
-                    faceOrderMax = s0[faceId_max].getFaceIdCount();
-                }
-                if (s0[faceId_min].fromTop_count_FaceId(faceOrderMin) != s0[faceId_max].fromTop_count_FaceId(faceOrderMax)) {
-                    drawing_flg = true;
-                }//この棒で隣接するSubFaceの1番上の面は異なるので、この棒は描く。
-            }
-
-            if (drawing_flg) {//棒を描く。
-                s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
-                s_tv.set(camera.object2TV(s_ob));
-
-                a.set(s_tv.getA());
-                b.set(s_tv.getB());
-
-                BigDecimal b_ax = new BigDecimal(String.valueOf(a.getX()));
-                BigDecimal b_ay = new BigDecimal(String.valueOf(a.getY()));
-                BigDecimal b_bx = new BigDecimal(String.valueOf(b.getX()));
-                BigDecimal b_by = new BigDecimal(String.valueOf(b.getY()));
-
-                memo_temp.addLine("<line x1=\"" + b_ax.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
-                        " y1=\"" + b_ay.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
-                        " x2=\"" + b_bx.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
-                        " y2=\"" + b_by.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
-                        " style=\"" + "stroke:" + str_stroke + "\"" +
-                        " stroke-width=\"" + str_strokewidth + "\"" + " />"
-                );
-            }
-        }
-
-
-        return memo_temp;
-    }
-
-    public Memo getMemo_wirediagram_for_svg_export(CreasePattern_Worker orite, PointSet otta_Men_zu, boolean i_fill) {
-        boolean flipped = camera.isCameraMirrored();
-
-        Point t_ob = new Point();
-        Point t_tv = new Point();
-
-        ip1_flipped = flipped;
-
-        Memo memo_temp = new Memo();
-
-        String str_stroke;
-        str_stroke = "black";
-        String str_strokewidth;
-        str_strokewidth = "1";
-        String str_fill;
-        str_fill = "";
-
-        rating2();
-
-        //面を描く準備
-
-        //BigDecimalのコンストラクタの引数は浮動小数点数型と文字列型どちらもok。引数が浮動小数点数型は誤差が発生。正確な値を扱うためには、引数は文字列型で指定。
-
-        for (int i_nbox = 1; i_nbox <= otta_Men_zu.getNumFaces(); i_nbox++) {
-            int im;
-            if (camera.getCameraMirror() == -1.0) {//カメラの鏡設定が-1(x軸の符号を反転)なら、折り上がり図は裏表示
-                im = nbox.backwardsGetValue(i_nbox);
-            } else {
-                im = nbox.getValue(i_nbox);
-            }
-
-            StringBuilder text;//文字列処理用のクラスのインスタンス化
-
-            text = new StringBuilder("M ");
-            t_ob.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, 1)));
-            t_ob.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, 1)));
-            t_tv.set(camera.object2TV(t_ob));
-            BigDecimal b_t_tv_x = new BigDecimal(String.valueOf(t_tv.getX()));
-            BigDecimal b_t_tv_y = new BigDecimal(String.valueOf(t_tv.getY()));
-
-            text.append(b_t_tv_x.setScale(2, RoundingMode.HALF_UP).doubleValue()).append(" ").append(b_t_tv_y.setScale(2, RoundingMode.HALF_UP).doubleValue()).append(" ");
-
-
-            for (int i = 2; i <= otta_Men_zu.getPointsCount(im); i++) {
-                text.append("L ");
-                t_ob.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, i)));
-                t_ob.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, i)));
-                t_tv.set(camera.object2TV(t_ob));
-                BigDecimal b_t_tv_x_i = new BigDecimal(String.valueOf(t_tv.getX()));
-                BigDecimal b_t_tv_y_i = new BigDecimal(String.valueOf(t_tv.getY()));
-
-                text.append(b_t_tv_x_i.setScale(2, RoundingMode.HALF_UP).doubleValue()).append(" ").append(b_t_tv_y_i.setScale(2, RoundingMode.HALF_UP).doubleValue()).append(" ");
-            }
-
-            text.append("Z");
-
-            if (!i_fill) {
-                str_fill = "none";
-
-            } else {
-
-                if (orite.getIFacePosition(im) % 2 == 1) {
-                    str_fill = StringOp.toHtmlColor(F_color);
-                }
-                if (orite.getIFacePosition(im) % 2 == 0) {
-                    str_fill = StringOp.toHtmlColor(B_color);
-                }
-
-                if (flipped) {
-                    if (orite.getIFacePosition(im) % 2 == 1) {
-                        str_fill = StringOp.toHtmlColor(B_color);
-                    }
-                    if (orite.getIFacePosition(im) % 2 == 0) {
-                        str_fill = StringOp.toHtmlColor(F_color);
-                    }
-                }
-            }
-
-            memo_temp.addLine("<path d=\"" + text + "\"" +
-                    " style=\"" + "stroke:" + str_stroke + "\"" +
-                    " stroke-width=\"" + str_strokewidth + "\"" +
-                    //" fill=\"none\"" +" />"
-                    " fill=\"" + str_fill + "\"" + " />"
-            );
-        }
-
-        return memo_temp;
-    }
-
     public void draw_transparency_with_camera(Graphics g, PointSet otta_Face_figure, PointSet subFace_figure, boolean transparencyColor, int transparency_toukado) {
         Graphics2D g2 = (Graphics2D) g;
 
@@ -1810,7 +1570,7 @@ public class HierarchyList_Worker {
         return i_return;
     }
 
-    private void rating2() {
+    public SortingBox<Integer> rating2() {
         int hierarchyListFacesTotal = hierarchyList.getFacesTotal();//面の総数を求める。
         face_rating = new double[hierarchyListFacesTotal + 1];
 
@@ -1844,6 +1604,8 @@ public class HierarchyList_Worker {
         for (int i = 1; i <= hierarchyList.getFacesTotal(); i++) {
             nbox.container_i_smallest_first(new WeightedValue<>(i, face_rating[i]));
         }
+
+        return nbox;
     }
     //Each of the following functions uses s0 [] as FaceStack 20180305
 

@@ -6,6 +6,7 @@ import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+import origami_editor.editor.export.Svg;
 import origami_editor.record.Memo;
 import origami_editor.tools.Camera;
 
@@ -56,6 +57,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private boolean mouseWheelMovesCreasePattern;
 
     public Camera creasePatternCamera = new Camera();
+    private int intLineWidth;
+    private int pointSize;
 
     public Canvas(App app0) {
         app = app0;
@@ -1752,19 +1755,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
             if (fname.endsWith("svg")) {
                 Memo memo1;
-                memo1 = app.mainDrawingWorker.getMemo_for_svg_export_with_camera(displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+                memo1 = Svg.getMemo_for_svg_export_with_camera(app.mainDrawingWorker.foldLineSet, creasePatternCamera, displayCpLines, lineWidth, intLineWidth, lineStyle, pointSize);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
                 Memo memo2 = new Memo();
 
                 //各折り上がりのmemo
-                FoldedFigure OZi;
                 for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
-                    OZi = app.foldedFigures.get(i_oz);
-
-                    memo2.addMemo(OZi.getMemo_for_svg_export());
+                    memo2.addMemo(Svg.getMemoForFoldedFigure(app.foldedFigures.get(i_oz)));
                 }
 
-                app.memoAndName2File(FileFormatConverter.orihime2svg(memo1, memo2), fname);
+                app.memoAndName2File(Svg.exportFile(memo1, memo2), fname);
                 return;
             } else if (fname.endsWith("png")) {
                 formatName = "png";
@@ -1818,8 +1818,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         mouseWheelMovesCreasePattern = canvasModel.getMouseWheelMovesCreasePattern();
 
+        intLineWidth = canvasModel.getLineWidth();
         lineWidth = canvasModel.getCalculatedLineWidth();
         auxLineWidth = canvasModel.getCalculatedAuxLineWidth();
+
+        pointSize = canvasModel.getPointSize();
 
         mouseMode = canvasModel.getMouseMode();
 

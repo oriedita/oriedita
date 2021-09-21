@@ -1,4 +1,4 @@
-package origami_editor.editor.save;
+package origami_editor.editor.export;
 
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;

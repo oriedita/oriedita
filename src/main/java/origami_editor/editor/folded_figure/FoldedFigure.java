@@ -226,60 +226,6 @@ public class FoldedFigure {
         }
     }
 
-    public Memo getMemo_for_svg_export() {
-        Memo memo_temp = new Memo();
-
-        //Wire diagram svg
-        if (displayStyle == DisplayStyle.WIRE_2) {
-            memo_temp.addMemo(ct_worker.getMemo_wirediagram_for_svg_export(cp_worker1, cp_worker2.get(), false));//If the fourth integer is 0, only the frame of the face is painted, and if it is 1, the face is painted.
-        }
-
-        //Folded figure (table) svg
-        if (((ip4 == State.FRONT_0) || (ip4 == State.BOTH_2)) || (ip4 == State.TRANSPARENT_3)) {
-            ct_worker.setCamera(foldedFigureFrontCamera);
-
-            //透過図のsvg
-            if (displayStyle == DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                memo_temp.addMemo(ct_worker.getMemo_wirediagram_for_svg_export(cp_worker1, cp_worker2.get(), true));
-            }
-
-            //折り上がり図のsvg*************
-            if (displayStyle == DisplayStyle.PAPER_5) {
-                //ct_worker.oekaki_oriagarizu_with_camera(bufferGraphics,cp_worker1,cp_worker2.get(),cp_worker3.get());// displayStyle; Specify the display style of the folded figure. If it is 5, it is the same as when you actually fold the origami paper. If it is 3, it is a transparent view. If it is 2, it is a wire diagram.
-                memo_temp.addMemo(ct_worker.getMemo_for_svg_with_camera(cp_worker1, cp_worker3.get()));// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
-
-            }
-        }
-
-        //折りあがり図（裏）のsvg
-        if (((ip4 == State.BACK_1) || (ip4 == State.BOTH_2)) || (ip4 == State.TRANSPARENT_3)) {
-
-            ct_worker.setCamera(foldedFigureRearCamera);
-
-            //透過図のsvg
-            if (displayStyle == DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                memo_temp.addMemo(ct_worker.getMemo_wirediagram_for_svg_export(cp_worker1, cp_worker2.get(), true));
-            }
-
-            //折り上がり図のsvg*************
-            if (displayStyle == DisplayStyle.PAPER_5) {
-                memo_temp.addMemo(ct_worker.getMemo_for_svg_with_camera(cp_worker1, cp_worker3.get()));// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
-            }
-        }
-
-        //透過図（折りあがり図表示時に追加する分）
-        if ((ip4 == State.TRANSPARENT_3) && (displayStyle == DisplayStyle.PAPER_5)) {
-            // ---------------------------------------------------------------------------------
-            ct_worker.setCamera(transparentFrontCamera);
-            //透過図のsvg
-            ct_worker.setCamera(transparentRearCamera);
-
-            //透過図のsvg
-        }
-        return memo_temp;
-
-    }
-
     void folding_estimation_camera_configure(Camera creasePatternCamera, LineSegmentSet Ss0) {
         d_foldedFigure_scale_factor = creasePatternCamera.getCameraZoomX();
         d_foldedFigure_rotation_correction = creasePatternCamera.getCameraAngle();
