@@ -7,7 +7,7 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.HierarchyList_Worker;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
-import origami_editor.editor.drawing_worker.DrawingWorker;
+import origami_editor.editor.drawing_worker.*;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.editor.export.Cp;
@@ -55,7 +55,7 @@ public class App extends JFrame implements ActionListener {
     public final DrawingWorker mainDrawingWorker = new DrawingWorker(r, this);    // Basic branch craftsman. Accepts input from the mouse.
     Memo memo1 = new Memo();
     boolean subThreadRunning = false;//1 if SubThread (folding calculation) is running, 0 if not running
-    ArrayList<FoldedFigure> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
+    public ArrayList<FoldedFigure> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
     int foldedFigureIndex = 0;//Specify which number of foldedFigures Oriagari_Zu is the target of button operation or transformation operation
     Background_camera h_cam = new Background_camera();
     String fname_and_number;//まとめ書き出しに使う。
@@ -209,7 +209,7 @@ public class App extends JFrame implements ActionListener {
                     canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18);
                     break;
                 case DEG_5:
-                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_37);
+                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37);
                     break;
             }
         });
@@ -281,6 +281,81 @@ public class App extends JFrame implements ActionListener {
 
         explanation = new HelpDialog(this, canvasLocation, canvasSize);
         explanation.setVisible(true);
+
+        canvas.addMouseModeHandler(MouseHandlerDrawCreaseFree.class);
+        canvas.addMouseModeHandler(MouseHandlerLineSegmentDelete.class);
+        canvas.addMouseModeHandler(MouseHandlerSquareBisector.class);
+        canvas.addMouseModeHandler(MouseHandlerFoldableLineDraw.class);
+        canvas.addMouseModeHandler(MouseHandlerVertexMakeAngularlyFlatFoldable.class);
+        canvas.addMouseModeHandler(MouseHandlerVoronoiCreate.class);
+        canvas.addMouseModeHandler(MouseHandlerLineSegmentRatioSet.class);
+        canvas.addMouseModeHandler(MouseHandlerCircleDrawThreePoint.class);
+        canvas.addMouseModeHandler(MouseHandlerCreasesAlternateMV.class);
+        canvas.addMouseModeHandler(MouseHandlerCircleDrawConcentricTwoCircleSelect.class);
+        canvas.addMouseModeHandler(MouseHandlerInward.class);
+        canvas.addMouseModeHandler(MouseHandlerPolygonSetNoCorners.class);
+        canvas.addMouseModeHandler(MouseHandlerDrawCreaseAngleRestricted5.class);
+        canvas.addMouseModeHandler(MouseHandlerPerpendicularDraw.class);
+        canvas.addMouseModeHandler(MouseHandlerSymmetricDraw.class);
+        canvas.addMouseModeHandler(MouseHandlerParallelDraw.class);
+        canvas.addMouseModeHandler(MouseHandlerContinuousSymmetricDraw.class);
+        canvas.addMouseModeHandler(MouseHandlerDisplayLengthBetweenPoints1.class);
+        canvas.addMouseModeHandler(MouseHandlerDisplayLengthBetweenPoints2.class);
+        canvas.addMouseModeHandler(MouseHandlerDisplayAngleBetweenThreePoints1.class);
+        canvas.addMouseModeHandler(MouseHandlerDisplayAngleBetweenThreePoints2.class);
+        canvas.addMouseModeHandler(MouseHandlerDisplayAngleBetweenThreePoints3.class);
+        canvas.addMouseModeHandler(MouseHandlerFoldableLineInput.class);
+        canvas.addMouseModeHandler(MouseHandlerLineSegmentDivision.class);
+        canvas.addMouseModeHandler(MouseHandlerCircleDraw.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseMakeEdge.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseMakeAux.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseMakeValley.class);
+        canvas.addMouseModeHandler(MouseHandlerOperationFrameCreate.class);
+        canvas.addMouseModeHandler(MouseHandlerChangeCreaseType.class);
+        canvas.addMouseModeHandler(MouseHandlerCircleDrawFree.class);
+        canvas.addMouseModeHandler(MouseHandlerCircleDrawSeparate.class);
+        canvas.addMouseModeHandler(MouseHandlerCircleDrawConcentric.class);
+        canvas.addMouseModeHandler(MouseHandlerCircleDrawConcentricSelect.class);
+        canvas.addMouseModeHandler(MouseHandlerParallelDrawWidth.class);
+        canvas.addMouseModeHandler(MouseHandlerCircleDrawTangentLine.class);
+        canvas.addMouseModeHandler(MouseHandlerCircleDrawInverted.class);
+        canvas.addMouseModeHandler(MouseHandlerDeletePoint.class);
+        canvas.addMouseModeHandler(MouseHandlerVertexDeleteOnCrease.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseMakeMountain.class);
+        canvas.addMouseModeHandler(MouseHandlerDrawPoint.class);
+        canvas.addMouseModeHandler(MouseHandlerDrawCreaseAngleRestricted3_2.class);
+        canvas.addMouseModeHandler(MouseHandlerDrawCreaseRestricted.class);
+        canvas.addMouseModeHandler(MouseHandlerDrawCreaseAngleRestricted2.class);
+        canvas.addMouseModeHandler(MouseHandlerAngleSystem.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseAdvanceType.class);
+        canvas.addMouseModeHandler(MouseHandlerFishBoneDraw.class);
+        canvas.addMouseModeHandler(MouseHandlerDoubleSymmetricDraw.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseMove4p.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseCopy4p.class);
+        canvas.addMouseModeHandler(MouseHandlerDrawCreaseSymmetric.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseMakeMV.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseDeleteOverlapping.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseMove.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseCopy.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseSelect.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseUnselect.class);
+        canvas.addMouseModeHandler(MouseHandlerCircleChangeColor.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseToggleMV.class);
+        canvas.addMouseModeHandler(MouseHandlerUnused_6.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseDeleteIntersecting.class);
+        canvas.addMouseModeHandler(MouseHandlerSelectPolygon.class);
+        canvas.addMouseModeHandler(MouseHandlerUnselectPolygon.class);
+        canvas.addMouseModeHandler(MouseHandlerSelectLineIntersecting.class);
+        canvas.addMouseModeHandler(MouseHandlerUnselectLineIntersecting.class);
+        canvas.addMouseModeHandler(MouseHandlerFlatFoldableCheck.class);
+        canvas.addMouseModeHandler(MouseHandlerDrawCreaseAngleRestricted.class);
+        canvas.addMouseModeHandler(MouseHandlerCreaseLengthen.class);
+        canvas.addMouseModeHandler(MouseHandlerLengthenCrease.class);
+        canvas.addMouseModeHandler(MouseHandlerUnused_10001.class);
+        canvas.addMouseModeHandler(MouseHandlerUnused_10002.class);
+        canvas.addMouseModeHandler(MouseHandlerBackgroundChangePosition.class);
+        canvas.addMouseModeHandler(new MouseHandlerModifyCalculatedShape(this));
+        canvas.addMouseModeHandler(new MouseHandlerMoveCreasePattern(this));
     }
 
     public void repaintCanvas() {
