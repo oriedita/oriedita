@@ -140,7 +140,6 @@ public class Svg {
         int SubFaceTotal = subFace_figure.getNumFaces();
         SubFace[] s0 = foldedFigure.ct_worker.s0;
 
-
         //面を描く-----------------------------------------------------------------------------------------------------
         int[] x = new int[100];
         int[] y = new int[100];
@@ -284,8 +283,6 @@ public class Svg {
 
         //Folded figure (table) svg
         if (((foldedFigure.ip4 == FoldedFigure.State.FRONT_0) || (foldedFigure.ip4 == FoldedFigure.State.BOTH_2)) || (foldedFigure.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
-            foldedFigure.ct_worker.setCamera(foldedFigure.foldedFigureFrontCamera);
-
             //透過図のsvg
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
                 memo_temp.addMemo(getMemo_wirediagram_for_svg_export(foldedFigure.ct_worker, foldedFigure.foldedFigureFrontCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker2.get(), true));
@@ -299,9 +296,6 @@ public class Svg {
 
         //折りあがり図（裏）のsvg
         if (((foldedFigure.ip4 == FoldedFigure.State.BACK_1) || (foldedFigure.ip4 == FoldedFigure.State.BOTH_2)) || (foldedFigure.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
-
-            foldedFigure.ct_worker.setCamera(foldedFigure.foldedFigureRearCamera);
-
             //透過図のsvg
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
                 memo_temp.addMemo(getMemo_wirediagram_for_svg_export(foldedFigure.ct_worker, foldedFigure.foldedFigureRearCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker2.get(), true));
@@ -313,15 +307,6 @@ public class Svg {
             }
         }
 
-        //透過図（折りあがり図表示時に追加する分）
-        if ((foldedFigure.ip4 == FoldedFigure.State.TRANSPARENT_3) && (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5)) {
-            // ---------------------------------------------------------------------------------
-            foldedFigure.ct_worker.setCamera(foldedFigure.transparentFrontCamera);
-            //透過図のsvg
-            foldedFigure.ct_worker.setCamera(foldedFigure.transparentRearCamera);
-
-            //透過図のsvg
-        }
         return memo_temp;
     }
 
@@ -411,7 +396,6 @@ public class Svg {
                     BigDecimal b_by = new BigDecimal(String.valueOf(b.getY()));
                     double y2 = b_by.setScale(2, RoundingMode.HALF_UP).doubleValue();
 
-
                     memo_temp.addLine("<line x1=\"" + x1 + "\"" +
                             " y1=\"" + y1 + "\"" +
                             " x2=\"" + x2 + "\"" +
@@ -423,16 +407,16 @@ public class Svg {
                     if (pointSize != 0) {
                         if (fCreasePatternLineWidth < 2.0f) {//Draw a black square at the vertex
 
-                            memo_temp.addLine("<rect style=\"fill:#000000;stroke:#000000;stroke-width:1\"" +
-                                    " width=\"" + (2.0 * (double) pointSize + 1.0) + "\"" +
-                                    " height=\"" + (2.0 * (double) pointSize + 1.0) + "\"" +
+                            memo_temp.addLine("<rect style=\"fill:#000000;stroke:none\"" +
+                                    " width=\"" + 2.0 * (double) pointSize + "\"" +
+                                    " height=\"" + 2.0 * (double) pointSize + "\"" +
                                     " x=\"" + (x1 - (double) pointSize) + "\"" +
                                     " y=\"" + (y1 - (double) pointSize) + "\"" +
                                     " />");
 
-                            memo_temp.addLine("<rect style=\"fill:#000000;stroke:#000000;stroke-width:1\"" +
-                                    " width=\"" + (2.0 * (double) pointSize + 1.0) + "\"" +
-                                    " height=\"" + (2.0 * (double) pointSize + 1.0) + "\"" +
+                            memo_temp.addLine("<rect style=\"fill:#000000;stroke:none\"" +
+                                    " width=\"" + 2.0 * (double) pointSize + "\"" +
+                                    " height=\"" + 2.0 * (double) pointSize + "\"" +
                                     " x=\"" + (x2 - (double) pointSize) + "\"" +
                                     " y=\"" + (y2 - (double) pointSize) + "\"" +
                                     " />");
