@@ -4,7 +4,7 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.*;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler{
+public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
     Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
     LineSegment closest_step_lineSegment = new LineSegment(100000.0, 100000.0, 100000.0, 100000.1); //マウス最寄のstep線分(線分追加のための準備をするための線分)。なお、ここで宣言する必要はないので、どこで宣言すべきか要検討20161113
 
@@ -28,33 +28,20 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler{
         p.set(d.camera.TV2object(p0));
         closest_circumference.set(d.getClosestCircleMidpoint(p));
 
-        if (d.i_circle_drawing_stage == 0) {
+        if (d.circleStep.size() == 0 || d.circleStep.size() == 1) {
             d.i_drawing_stage = 0;
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
             d.i_drawing_stage = 0;
-            d.i_circle_drawing_stage = 1;
-            d.circle_step[1].set(closest_circumference);
-            d.circle_step[1].setColor(LineColor.GREEN_6);
-            return;
-        }
 
-        if (d.i_circle_drawing_stage == 1) {
-            d.i_drawing_stage = 0;
-            if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
-                return;
-            }
+            Circle stepCircle = new Circle();
+            stepCircle.set(closest_circumference);
+            stepCircle.setColor(LineColor.GREEN_6);
 
-            d.i_drawing_stage = 0;
-            d.i_circle_drawing_stage = 2;
-            d.circle_step[2].set(closest_circumference);
-            d.circle_step[2].setColor(LineColor.GREEN_6);
-            return;
-        }
-
-        if (d.i_drawing_stage > 1) {//			i_egaki_dankai=0;i_circle_drawing_stage=1;
+            d.circleStep.add(stepCircle);
+        } else if (d.i_drawing_stage > 1) {//			i_egaki_dankai=0;i_circle_drawing_stage=1;
             closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.i_drawing_stage));
 
             if (OritaCalc.distance_lineSegment(p, closest_step_lineSegment) > d.selectionDistance) {
@@ -62,7 +49,6 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler{
             }
             d.line_step[1].set(closest_step_lineSegment);
             d.i_drawing_stage = 1;
-            d.i_circle_drawing_stage = 2;
         }
     }
 
@@ -72,31 +58,34 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler{
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if ((d.i_drawing_stage == 0) && (d.i_circle_drawing_stage == 2)) {
-            Point c1 = new Point();
-            c1.set(d.circle_step[1].getCenter());
-            Point c2 = new Point();
-            c2.set(d.circle_step[2].getCenter());
+        if ((d.i_drawing_stage == 0) && (d.circleStep.size() == 2)) {
+            Circle firstCircle = d.circleStep.get(0);
+            Circle secondCircle = d.circleStep.get(1);
 
-            double x1 = d.circle_step[1].getX();
-            double y1 = d.circle_step[1].getY();
-            double r1 = d.circle_step[1].getRadius();
-            double x2 = d.circle_step[2].getX();
-            double y2 = d.circle_step[2].getY();
-            double r2 = d.circle_step[2].getRadius();
+            Point c1 = new Point();
+            c1.set(firstCircle.getCenter());
+            Point c2 = new Point();
+            c2.set(secondCircle.getCenter());
+
+            double x1 = firstCircle.getX();
+            double y1 = firstCircle.getY();
+            double r1 = firstCircle.getRadius();
+            double x2 = secondCircle.getX();
+            double y2 = secondCircle.getY();
+            double r2 = secondCircle.getRadius();
             //0,0,r,        xp,yp,R
             double xp = x2 - x1;
             double yp = y2 - y1;
 
             if (c1.distance(c2) < 0.000001) {
+                d.circleStep.clear();
                 d.i_drawing_stage = 0;
-                d.i_circle_drawing_stage = 0;
                 return;
             }//接線0本の場合
 
             if ((xp * xp + yp * yp) < (r1 - r2) * (r1 - r2)) {
+                d.circleStep.clear();
                 d.i_drawing_stage = 0;
-                d.i_circle_drawing_stage = 0;
                 return;
             }//接線0本の場合
 
@@ -108,7 +97,6 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler{
                 d.line_step[1].set(OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(new Circle(kouten, (r1 + r2) / 2.0, LineColor.BLACK_0), ty));
 
                 d.i_drawing_stage = 1;
-                d.i_circle_drawing_stage = 2;
             }
 
             if (((r1 - r2) * (r1 - r2) < (xp * xp + yp * yp)) && ((xp * xp + yp * yp) < (r1 + r2) * (r1 + r2))) {//外接線2本の場合
@@ -133,7 +121,6 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler{
                 d.line_step[2].setColor(LineColor.PURPLE_8);
 
                 d.i_drawing_stage = 2;
-                d.i_circle_drawing_stage = 2;
             }
 
             if (Math.abs((xp * xp + yp * yp) - (r1 + r2) * (r1 + r2)) < 0.0000001) {//外接線2本と内接線1本の場合
@@ -168,7 +155,6 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler{
                 // -----------------------
 
                 d.i_drawing_stage = 3;
-                d.i_circle_drawing_stage = 2;
             }
 
             if ((r1 + r2) * (r1 + r2) < (xp * xp + yp * yp)) {//外接線2本と内接線2本の場合
@@ -213,14 +199,13 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler{
                 d.line_step[4].setColor(LineColor.PURPLE_8);
 
                 d.i_drawing_stage = 4;
-                d.i_circle_drawing_stage = 2;
             }
         }
 
         if (d.i_drawing_stage == 1) {
 
             d.i_drawing_stage = 0;
-            d.i_circle_drawing_stage = 0;
+            d.circleStep.clear();
 
             d.line_step[1].setColor(d.lineColor);
             d.addLineSegment(d.line_step[1]);

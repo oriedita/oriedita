@@ -1,5 +1,6 @@
 package origami_editor.editor.drawing_worker;
 
+import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
@@ -26,28 +27,26 @@ public class MouseHandlerCircleDrawSeparate extends BaseMouseHandler{
         d.closest_point.set(d.getClosestPoint(p));
 
         if (d.i_drawing_stage == 0) {
-            d.i_circle_drawing_stage = 0;
+            d.circleStep.clear();
             if (p.distance(d.closest_point) > d.selectionDistance) {
                 return;
             }
 
             d.i_drawing_stage = 1;
-            d.i_circle_drawing_stage = 0;
             d.line_step[1].set(d.closest_point, d.closest_point);
             d.line_step[1].setColor(LineColor.CYAN_3);
             return;
         }
 
         if (d.i_drawing_stage == 1) {
-            d.i_circle_drawing_stage = 0;
             if (p.distance(d.closest_point) > d.selectionDistance) {
                 return;
             }
 
-            d.i_circle_drawing_stage = 1;
             d.line_step[2].set(p, d.closest_point);
             d.line_step[2].setColor(LineColor.CYAN_3);
-            d.circle_step[1].set(d.line_step[1].getA(), 0.0, LineColor.CYAN_3);
+            d.circleStep.clear();
+            d.circleStep.add(new Circle(d.line_step[1].getA(), 0.0, LineColor.CYAN_3));
         }
     }
 
@@ -56,9 +55,8 @@ public class MouseHandlerCircleDrawSeparate extends BaseMouseHandler{
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
         if (d.i_drawing_stage == 2) {
-            d.i_circle_drawing_stage = 1;
             d.line_step[2].setA(p);
-            d.circle_step[1].setR(d.line_step[2].getLength());
+            d.circleStep.get(0).setR(d.line_step[2].getLength());
         }
     }
 
@@ -66,7 +64,7 @@ public class MouseHandlerCircleDrawSeparate extends BaseMouseHandler{
     public void mouseReleased(Point p0) {
         if (d.i_drawing_stage == 2) {
             d.i_drawing_stage = 0;
-            d.i_circle_drawing_stage = 0;
+            d.circleStep.clear();
 
             Point p = new Point();
             p.set(d.camera.TV2object(p0));

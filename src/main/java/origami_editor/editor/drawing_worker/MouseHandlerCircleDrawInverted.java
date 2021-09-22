@@ -30,42 +30,35 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler{
 
         closest_circumference.set(d.getClosestCircleMidpoint(p));
 
-        if (d.i_drawing_stage + d.i_circle_drawing_stage == 0) {
+        if (d.i_drawing_stage + d.circleStep.size() == 0) {
             d.closest_lineSegment.set(d.getClosestLineSegment(p));
 
             if (OritaCalc.distance_lineSegment(p, d.closest_lineSegment) < OritaCalc.distance_circumference(p, closest_circumference)) {//線分の方が円周より近い
                 d.i_drawing_stage = 0;
-                d.i_circle_drawing_stage = 0;
                 if (OritaCalc.distance_lineSegment(p, d.closest_lineSegment) > d.selectionDistance) {
                     return;
                 }
                 d.i_drawing_stage = 1;
-                d.i_circle_drawing_stage = 0;
                 d.line_step[1].set(d.closest_lineSegment);
                 d.line_step[1].setColor(LineColor.GREEN_6);
                 return;
             }
 
             d.i_drawing_stage = 0;
-            d.i_circle_drawing_stage = 0;
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
             d.i_drawing_stage = 0;
-            d.i_circle_drawing_stage = 1;
-            d.circle_step[1].set(closest_circumference);
-            d.circle_step[1].setColor(LineColor.GREEN_6);
+            d.circleStep.add(new Circle(closest_circumference.getCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
             return;
         }
 
-        if (d.i_drawing_stage + d.i_circle_drawing_stage == 1) {
+        if (d.i_drawing_stage + d.circleStep.size() == 1) {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
-            d.i_circle_drawing_stage = d.i_circle_drawing_stage + 1;
-            d.circle_step[d.i_circle_drawing_stage].set(closest_circumference);
-            d.circle_step[d.i_circle_drawing_stage].setColor(LineColor.RED_1);
+            d.circleStep.add(new Circle(closest_circumference.getCenter(), closest_circumference.getRadius(), LineColor.RED_1));
         }
     }
 
@@ -75,17 +68,16 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler{
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if ((d.i_drawing_stage == 1) && (d.i_circle_drawing_stage == 1)) {
-
-            d.add_hanten(d.line_step[1], d.circle_step[1]);
+        if ((d.i_drawing_stage == 1) && (d.circleStep.size() == 1)) {
+            d.add_hanten(d.line_step[1], d.circleStep.get(0));
             d.i_drawing_stage = 0;
-            d.i_circle_drawing_stage = 0;
+            d.circleStep.clear();
         }
 
-        if ((d.i_drawing_stage == 0) && (d.i_circle_drawing_stage == 2)) {
-            d.add_hanten(d.circle_step[1], d.circle_step[2]);
+        if ((d.i_drawing_stage == 0) && (d.circleStep.size() == 2)) {
+            d.add_hanten(d.circleStep.get(0), d.circleStep.get(1));
             d.i_drawing_stage = 0;
-            d.i_circle_drawing_stage = 0;
+            d.circleStep.clear();
         }
     }
 }

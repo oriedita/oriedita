@@ -30,29 +30,26 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler{
         closest_circumference.set(d.getClosestCircleMidpoint(p));
         d.closest_point.set(d.getClosestPoint(p));
 
-        if ((d.i_drawing_stage == 0) && (d.i_circle_drawing_stage == 0)) {
+        if ((d.i_drawing_stage == 0) && (d.circleStep.size() == 0)) {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
             d.i_drawing_stage = 0;
-            d.i_circle_drawing_stage = 1;
-            d.circle_step[1].set(closest_circumference);
-            d.circle_step[1].setColor(LineColor.GREEN_6);
+            d.circleStep.clear();
+            d.circleStep.add(new Circle(closest_circumference.getCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
             return;
         }
 
-        if ((d.i_drawing_stage == 0) && (d.i_circle_drawing_stage == 1)) {
+        if ((d.i_drawing_stage == 0) && (d.circleStep.size() == 1)) {
             if (p.distance(d.closest_point) > d.selectionDistance) {
                 return;
             }
 
             d.i_drawing_stage = 1;
-            d.i_circle_drawing_stage = 2;
             d.line_step[1].set(p, d.closest_point);
             d.line_step[1].setColor(LineColor.CYAN_3);
-            d.circle_step[2].set(d.circle_step[1]);
-            d.circle_step[2].setColor(LineColor.CYAN_3);
+            d.circleStep.add(new Circle(d.circleStep.get(0).getCenter(), d.circleStep.get(0).getRadius(), LineColor.GREEN_6));
         }
     }
 
@@ -60,17 +57,21 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler{
     public void mouseDragged(Point p0) {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-        if ((d.i_drawing_stage == 1) && (d.i_circle_drawing_stage == 2)) {
+        if ((d.i_drawing_stage == 1) && (d.circleStep.size() == 2)) {
             d.line_step[1].setA(p);
-            d.circle_step[2].setR(d.circle_step[1].getRadius() + d.line_step[1].getLength());
+            d.circleStep.get(1).setR(d.circleStep.get(0).getRadius() + d.line_step[1].getLength());
         }
     }
 
     //マウス操作(mouseMode==48 同心円　線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        if ((d.i_drawing_stage == 1) && (d.i_circle_drawing_stage == 2)) {
+        if ((d.i_drawing_stage == 1) && (d.circleStep.size() == 2)) {
             d.i_drawing_stage = 0;
-            d.i_circle_drawing_stage = 0;
+
+            Circle circle1 = d.circleStep.get(0);
+            Circle circle2 = d.circleStep.get(1);
+
+            d.circleStep.clear();
 
             Point p = new Point();
             p.set(d.camera.TV2object(p0));
@@ -79,8 +80,8 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler{
             if (p.distance(d.closest_point) <= d.selectionDistance) {
                 if (d.line_step[1].getLength() > 0.00000001) {
                     d.addLineSegment(d.line_step[1]);
-                    d.circle_step[2].setR(d.circle_step[1].getRadius() + d.line_step[1].getLength());
-                    d.addCircle(d.circle_step[2]);
+                    circle2.setR(circle1.getRadius() + d.line_step[1].getLength());
+                    d.addCircle(circle2);
                     d.record();
                 }
             }

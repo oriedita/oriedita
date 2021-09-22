@@ -18,6 +18,15 @@ public class Circle implements Serializable {//Used to represent point coordinat
         color = LineColor.BLACK_0;
     }
 
+    public Circle(Circle c) {
+        x = c.getX();
+        y = c.getY();
+        r = c.getRadius();
+        color = c.getColor();
+        customized = c.getCustomized();
+        customizedColor = c.getCustomizedColor();
+    }
+
     public Circle(double i, double j, double k, LineColor m) {
         x = i;
         y = j;

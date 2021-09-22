@@ -56,9 +56,8 @@ public class DrawingWorker {
     double d_restricted_angle_3;
     int numPolygonCorners = 5;
     double selectionDistance = 50.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Value for determining whether an input point is close to an existing point or line segment
-    int i_circle_drawing_stage;//Stores information about which stage of the circle drawing procedure
     LineSegment[] line_step = new LineSegment[1024];//Used for temporary display when drawing. Do not actually use line_step [0], but use it from line_step [1].
-    Circle[] circle_step = new Circle[1024];//Used for temporary display when drawing. circle_step [0] is not actually used, but is used from circle_step [1].
+    java.util.List<Circle> circleStep = new ArrayList<>();
     LineSegment[] line_candidate = new LineSegment[16];//Used for displaying selection candidates when drawing. line_candidate [0] is not actually used, it is used from line_candidate [1].
     Circle[] circle_candidate = new Circle[16];//Used for displaying selection candidates when drawing. circle_candidate [0] is not actually used, it is used from circle_candidate [1].
     String text_cp_setumei;
@@ -103,9 +102,6 @@ public class DrawingWorker {
         for (int i = 0; i <= 1024 - 1; i++) {
             line_step[i] = new LineSegment();
         }
-        for (int i = 0; i <= 1024 - 1; i++) {
-            circle_step[i] = new Circle();
-        }
 
         for (int i = 0; i <= 16 - 1; i++) {
             line_candidate[i] = new LineSegment();
@@ -135,7 +131,7 @@ public class DrawingWorker {
 
         camera.reset();
         i_drawing_stage = 0;
-        i_circle_drawing_stage = 0;
+        circleStep.clear();
     }
 
     public void initialize() {
@@ -767,13 +763,12 @@ public class DrawingWorker {
 
         g.setColor(Color.black);
 
-        //円入力時の一時的な線分を描く　
-        for (int i = 1; i <= i_circle_drawing_stage; i++) {
-            g_setColor(g, circle_step[i].getColor());
-            a.set(camera.object2TV(circle_step[i].getCenter()));//この場合のs_tvは描画座標系での円の中心の位置
+        for (Circle c : circleStep) {
+            g_setColor(g, c.getColor());
+            a.set(camera.object2TV(c.getCenter()));//この場合のs_tvは描画座標系での円の中心の位置
             a.set(a.getX() + 0.000001, a.getY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
-            double d_width = circle_step[i].getRadius() * camera.getCameraZoomX();//d_habaは描画時の円の半径。なお、camera.get_camera_bairitsu_x()＝camera.get_camera_bairitsu_y()を前提としている。
+            double d_width = c.getRadius() * camera.getCameraZoomX();//d_habaは描画時の円の半径。なお、camera.get_camera_bairitsu_x()＝camera.get_camera_bairitsu_y()を前提としている。
 
             g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
         }
@@ -823,7 +818,7 @@ public class DrawingWorker {
     //マウスクリック（マウスの近くの既成点を選択）、マウスドラッグ（選択した点とマウス間の線が表示される）、マウスリリース（マウスの近くの既成点を選択）してから目的の処理をする雛形セット
 
     public void set_i_circle_drawing_stage(int i) {
-        i_circle_drawing_stage = i;
+        circleStep.clear();
     }
 
     public void set_id_angle_system(int i) {

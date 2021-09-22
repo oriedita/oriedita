@@ -1,6 +1,7 @@
 package origami_editor.editor.drawing_worker;
 
 import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
@@ -23,20 +24,22 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler{
 
     //マウス操作(mouseMode==42 円入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        d.i_drawing_stage = 1;
-        d.i_circle_drawing_stage = 1;
+
 
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
         d.closest_point.set(d.getClosestPoint(p));
-        if (p.distance(d.closest_point) > d.selectionDistance) {
+        d.circleStep.clear();
+        if (p.distance(d.closest_point) <= d.selectionDistance) {
+            d.i_drawing_stage = 1;
+            d.line_step[1].set(p, d.closest_point);
+            d.line_step[1].setColor(LineColor.CYAN_3);
+            d.circleStep.add(new Circle(d.closest_point, 0.0, LineColor.CYAN_3));
+        } else {
             d.i_drawing_stage = 0;
-            d.i_circle_drawing_stage = 0;
+            d.circleStep.clear();
         }
-        d.line_step[1].set(p, d.closest_point);
-        d.line_step[1].setColor(LineColor.CYAN_3);
-        d.circle_step[1].set(d.closest_point.getX(), d.closest_point.getY(), 0.0);
-        d.circle_step[1].setColor(LineColor.CYAN_3);
+
     }
 
     //マウス操作(mouseMode==42 円入力　でドラッグしたとき)を行う関数----------------------------------------------------
@@ -44,14 +47,17 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler{
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
         d.line_step[1].setA(p);
-        d.circle_step[1].setR(OritaCalc.distance(d.line_step[1].getA(), d.line_step[1].getB()));
+        if (d.circleStep.size() > 0) {
+            d.circleStep.get(0).setR(OritaCalc.distance(d.line_step[1].getA(), d.line_step[1].getB()));
+        }
     }
 
     //マウス操作(mouseMode==42 円入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
         if (d.i_drawing_stage == 1) {
             d.i_drawing_stage = 0;
-            d.i_circle_drawing_stage = 0;
+
+            d.circleStep.clear();
 
             Point p = new Point();
             p.set(d.camera.TV2object(p0));

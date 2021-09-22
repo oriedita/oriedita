@@ -6,8 +6,8 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHandler{
-    Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0,LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
+public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHandler {
+    Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
 
 
     public MouseHandlerCircleDrawConcentricTwoCircleSelect(DrawingWorker d) {
@@ -30,27 +30,20 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHa
         closest_circumference.set(d.getClosestCircleMidpoint(p));
         d.closest_point.set(d.getClosestPoint(p));
 
-        if ((d.i_drawing_stage == 0) && (d.i_circle_drawing_stage == 0)) {
+        if ((d.i_drawing_stage == 0) && (d.circleStep.size() == 0)) {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
             d.i_drawing_stage = 0;
-            d.i_circle_drawing_stage = 1;
-            d.circle_step[1].set(closest_circumference);
-            d.circle_step[1].setColor(LineColor.GREEN_6);
-            return;
-        }
-
-        if ((d.i_drawing_stage == 0) && (d.i_circle_drawing_stage == 1)) {
+            d.circleStep.add(new Circle(closest_circumference.getCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
+        } else if ((d.i_drawing_stage == 0) && (d.circleStep.size() == 1)) {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
             d.i_drawing_stage = 0;
-            d.i_circle_drawing_stage = 2;
-            d.circle_step[2].set(closest_circumference);
-            d.circle_step[2].setColor(LineColor.GREEN_6);
+            d.circleStep.add(new Circle(closest_circumference.getCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
         }
     }
 
@@ -60,21 +53,23 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHa
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if ((d.i_drawing_stage == 0) && (d.i_circle_drawing_stage == 2)) {
-            d.i_circle_drawing_stage = 0;
-            double add_r = (OritaCalc.distance(d.circle_step[1].getCenter(), d.circle_step[2].getCenter()) - d.circle_step[1].getRadius() - d.circle_step[2].getRadius()) * 0.5;
+        if ((d.i_drawing_stage == 0) && (d.circleStep.size() == 2)) {
+            Circle circle1 = d.circleStep.get(0);
+            Circle circle2 = d.circleStep.get(1);
+            d.circleStep.clear();
+            double add_r = (OritaCalc.distance(circle1.getCenter(), circle2.getCenter()) - circle1.getRadius() - circle2.getRadius()) * 0.5;
 
             if (Math.abs(add_r) > 0.00000001) {
-                double new_r1 = add_r + d.circle_step[1].getRadius();
-                double new_r2 = add_r + d.circle_step[2].getRadius();
+                double new_r1 = add_r + circle1.getRadius();
+                double new_r2 = add_r + circle2.getRadius();
 
                 if ((new_r1 > 0.00000001) && (new_r2 > 0.00000001)) {
-                    d.circle_step[1].setR(new_r1);
-                    d.circle_step[1].setColor(LineColor.CYAN_3);
-                    d.addCircle(d.circle_step[1]);
-                    d.circle_step[2].setR(new_r2);
-                    d.circle_step[2].setColor(LineColor.CYAN_3);
-                    d.addCircle(d.circle_step[2]);
+                    circle1.setR(new_r1);
+                    circle1.setColor(LineColor.CYAN_3);
+                    d.addCircle(circle1);
+                    circle2.setR(new_r2);
+                    circle2.setColor(LineColor.CYAN_3);
+                    d.addCircle(circle2);
                     d.record();
                 }
             }
