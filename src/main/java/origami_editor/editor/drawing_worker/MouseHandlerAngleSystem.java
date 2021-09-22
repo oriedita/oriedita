@@ -7,6 +7,7 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerAngleSystem extends BaseMouseHandler{
+    double d_angle_system;
     private final MouseHandlerDrawCreaseAngleRestricted2 mouseHandlerDrawCreaseAngleRestricted2;
 
     public MouseHandlerAngleSystem(DrawingWorker d) {
@@ -56,9 +57,9 @@ public class MouseHandlerAngleSystem extends BaseMouseHandler{
 
 
             if (d.id_angle_system != 0) {
-                d.d_angle_system = 180.0 / (double) d.id_angle_system;
+                d_angle_system = 180.0 / (double) d.id_angle_system;
             } else {
-                d.d_angle_system = 180.0 / 4.0;
+                d_angle_system = 180.0 / 4.0;
             }
 
             if (d.id_angle_system != 0) {
@@ -76,7 +77,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandler{
                     }
 
                     d.i_drawing_stage = d.i_drawing_stage + 1;
-                    kakudo = kakudo + d.d_angle_system;
+                    kakudo = kakudo + d_angle_system;
                     d.line_step[d.i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, kakudo, 1.0));
                     if (i_jyun == 0) {
                         d.line_step[d.i_drawing_stage].setColor(LineColor.GREEN_6);

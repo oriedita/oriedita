@@ -27,6 +27,6 @@ public class MouseHandlerSelectPolygon extends BaseMouseHandler{
     }    //マウス操作(ドラッグしたとき)を行う関数----------------------------------------------------
 
     public void mouseReleased(Point p0) {
-        d.mReleased_takakukei_and_sagyou(p0, 66);
+        d.mReleased_takakukei_and_sagyou(p0, MouseMode.SELECT_POLYGON_66);
     }    //マウス操作(ボタンを離したとき)を行う関数----------------------------------------------------
 }

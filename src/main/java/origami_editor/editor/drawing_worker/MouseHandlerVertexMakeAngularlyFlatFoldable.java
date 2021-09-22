@@ -9,6 +9,9 @@ import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 
 public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandler{
+    LineColor icol_temp = LineColor.BLACK_0;
+    DrawingWorker.FourPointStep i_step_for_move_4p = DrawingWorker.FourPointStep.STEP_0;
+
     private final MouseHandlerPolygonSetNoCorners mouseHandlerPolygonSetNoCorners;
 
     public MouseHandlerVertexMakeAngularlyFlatFoldable(DrawingWorker d) {
@@ -25,11 +28,11 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
     public void mouseMoved(Point p0) {
         if (d.gridInputAssist) {
             if (d.i_drawing_stage == 0) {
-                d.i_step_for_move_4p = DrawingWorker.FourPointStep.STEP_0;
+                i_step_for_move_4p = DrawingWorker.FourPointStep.STEP_0;
             }
             Point p = new Point();
 
-            switch (d.i_step_for_move_4p) {
+            switch (i_step_for_move_4p) {
                 case STEP_0:
                     mouseHandlerPolygonSetNoCorners.mouseMoved(p0);
                     break;
@@ -70,10 +73,10 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
         if (d.i_drawing_stage == 0) {
-            d.i_step_for_move_4p = DrawingWorker.FourPointStep.STEP_0;
+            i_step_for_move_4p = DrawingWorker.FourPointStep.STEP_0;
         }
 
-        if (d.i_step_for_move_4p == DrawingWorker.FourPointStep.STEP_0) {
+        if (i_step_for_move_4p == DrawingWorker.FourPointStep.STEP_0) {
             double hantei_kyori = 0.000001;
 
             Point t1 = new Point();
@@ -94,9 +97,9 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                 }
 
                 if (nbox.getTotal() % 2 == 1) {//t1を端点とする折線の数が奇数のときだけif{}内の処理をする
-                    d.icol_temp = d.lineColor;
+                    icol_temp = d.lineColor;
                     if (nbox.getTotal() == 1) {
-                        d.icol_temp = nbox.getValue(1).getColor();
+                        icol_temp = nbox.getValue(1).getColor();
                     }//20180503この行追加。これは、折線が1本だけの頂点から折り畳み可能線追加機能で、その折線の延長を行った場合に、線の色を延長前の折線と合わせるため
 
                     for (int i = 1; i <= nbox.getTotal(); i++) {//iは角加減値を求める最初の折線のid
@@ -164,10 +167,10 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                         }
                     }
                     if (d.i_drawing_stage == 1) {
-                        d.i_step_for_move_4p = DrawingWorker.FourPointStep.STEP_2;
+                        i_step_for_move_4p = DrawingWorker.FourPointStep.STEP_2;
                     }
                     if (d.i_drawing_stage > 1) {
-                        d.i_step_for_move_4p = DrawingWorker.FourPointStep.STEP_1;
+                        i_step_for_move_4p = DrawingWorker.FourPointStep.STEP_1;
                     }
                 }
             }
@@ -175,10 +178,10 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
             return;
         }
 
-        if (d.i_step_for_move_4p == DrawingWorker.FourPointStep.STEP_1) {
+        if (i_step_for_move_4p == DrawingWorker.FourPointStep.STEP_1) {
             d.closest_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.i_drawing_stage));
             if (OritaCalc.distance_lineSegment(p, d.closest_lineSegment) < d.selectionDistance) {
-                d.i_step_for_move_4p = DrawingWorker.FourPointStep.STEP_2;
+                i_step_for_move_4p = DrawingWorker.FourPointStep.STEP_2;
                 d.i_drawing_stage = 1;
                 d.line_step[1].set(d.closest_lineSegment);
 
@@ -192,7 +195,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
             }
         }
 
-        if (d.i_step_for_move_4p == DrawingWorker.FourPointStep.STEP_2) {
+        if (i_step_for_move_4p == DrawingWorker.FourPointStep.STEP_2) {
             d.closest_lineSegment.set(d.getClosestLineSegment(p));
             LineSegment moyori_step_lineSegment = new LineSegment();
             moyori_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.i_drawing_stage));
@@ -215,7 +218,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
 
                 Point kousa_point = new Point();
                 kousa_point.set(OritaCalc.findIntersection(d.line_step[1], d.line_step[2]));
-                LineSegment add_sen = new LineSegment(kousa_point, d.line_step[1].getA(), d.icol_temp);//20180503変更
+                LineSegment add_sen = new LineSegment(kousa_point, d.line_step[1].getA(), icol_temp);//20180503変更
                 if (add_sen.getLength() > 0.00000001) {//最寄の既存折線が有効の場合
                     d.addLineSegment(add_sen);
                     d.record();

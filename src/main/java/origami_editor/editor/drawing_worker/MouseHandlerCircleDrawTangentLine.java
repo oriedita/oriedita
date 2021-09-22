@@ -1,13 +1,13 @@
 package origami_editor.editor.drawing_worker;
 
 import origami.crease_pattern.OritaCalc;
-import origami.crease_pattern.element.Circle;
-import origami.crease_pattern.element.LineColor;
-import origami.crease_pattern.element.Point;
-import origami.crease_pattern.element.StraightLine;
+import origami.crease_pattern.element.*;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler{
+    Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
+    LineSegment closest_step_lineSegment = new LineSegment(100000.0, 100000.0, 100000.0, 100000.1); //マウス最寄のstep線分(線分追加のための準備をするための線分)。なお、ここで宣言する必要はないので、どこで宣言すべきか要検討20161113
+
     public MouseHandlerCircleDrawTangentLine(DrawingWorker d) {
         super(d);
     }
@@ -26,41 +26,41 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler{
     public void mousePressed(Point p0) {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-        d.closest_circumference.set(d.getClosestCircleMidpoint(p));
+        closest_circumference.set(d.getClosestCircleMidpoint(p));
 
         if (d.i_circle_drawing_stage == 0) {
             d.i_drawing_stage = 0;
-            if (OritaCalc.distance_circumference(p, d.closest_circumference) > d.selectionDistance) {
+            if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
             d.i_drawing_stage = 0;
             d.i_circle_drawing_stage = 1;
-            d.circle_step[1].set(d.closest_circumference);
+            d.circle_step[1].set(closest_circumference);
             d.circle_step[1].setColor(LineColor.GREEN_6);
             return;
         }
 
         if (d.i_circle_drawing_stage == 1) {
             d.i_drawing_stage = 0;
-            if (OritaCalc.distance_circumference(p, d.closest_circumference) > d.selectionDistance) {
+            if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
             d.i_drawing_stage = 0;
             d.i_circle_drawing_stage = 2;
-            d.circle_step[2].set(d.closest_circumference);
+            d.circle_step[2].set(closest_circumference);
             d.circle_step[2].setColor(LineColor.GREEN_6);
             return;
         }
 
         if (d.i_drawing_stage > 1) {//			i_egaki_dankai=0;i_circle_drawing_stage=1;
-            d.closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.i_drawing_stage));
+            closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.i_drawing_stage));
 
-            if (OritaCalc.distance_lineSegment(p, d.closest_step_lineSegment) > d.selectionDistance) {
+            if (OritaCalc.distance_lineSegment(p, closest_step_lineSegment) > d.selectionDistance) {
                 return;
             }
-            d.line_step[1].set(d.closest_step_lineSegment);
+            d.line_step[1].set(closest_step_lineSegment);
             d.i_drawing_stage = 1;
             d.i_circle_drawing_stage = 2;
         }

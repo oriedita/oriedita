@@ -2,6 +2,7 @@ package origami_editor.editor.drawing_worker;
 
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
@@ -55,9 +56,9 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler{
 
         if ((d.i_drawing_stage == 4) && (d.i_circle_drawing_stage == 0)) {
             d.i_drawing_stage = 3;
-            d.closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 3, 4));
+            LineSegment closest_step_lineSegment = d.get_moyori_step_lineSegment(p, 3, 4);
 
-            d.line_step[3].set(d.closest_step_lineSegment);
+            d.line_step[3].set(closest_step_lineSegment);
         }
     }
 

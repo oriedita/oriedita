@@ -34,7 +34,6 @@ public class DrawingWorker {
     public int i_drawing_stage;//Stores information about the stage of the procedure for drawing a polygonal line
     public int i_candidate_stage;//Stores information about which candidate for the procedure to draw a polygonal line
     public Polygon operationFrameBox = new Polygon(4);    //Instantiation of selection box (TV coordinates)
-    public boolean i_O_F_C = false;//Input status of a line segment representing the outer circumference when checking the outer circumference. 0 is input not completed, 1 is input completed (line segment is a closed polygon)
     int pointSize = 1;
     LineColor lineColor;//Line segment color
     LineColor auxLineColor = LineColor.ORANGE_4;//Auxiliary line color
@@ -44,13 +43,10 @@ public class DrawingWorker {
     HistoryState auxHistoryState = new HistoryState();
     Point closest_point = new Point(100000.0, 100000.0); //マウス最寄の点。get_moyori_ten(Ten p)で求める。
     LineSegment closest_lineSegment = new LineSegment(100000.0, 100000.0, 100000.0, 100000.1); //マウス最寄の線分
-    LineSegment closest_step_lineSegment = new LineSegment(100000.0, 100000.0, 100000.0, 100000.1); //マウス最寄のstep線分(線分追加のための準備をするための線分)。なお、ここで宣言する必要はないので、どこで宣言すべきか要検討20161113
-    Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
     FoldLineAdditionalInputMode i_foldLine_additional = FoldLineAdditionalInputMode.POLY_LINE_0;//= 0 is polygonal line input = 1 is auxiliary line input mode (when inputting a line segment, these two). When deleting a line segment, the value becomes as follows. = 0 is the deletion of the polygonal line, = 1 is the deletion of the auxiliary picture line, = 2 is the deletion of the black line, = 3 is the deletion of the auxiliary live line, = 4 is the folding line, the auxiliary live line and the auxiliary picture line.
     FoldLineSet auxLines = new FoldLineSet();    //Store auxiliary lines
     Drawing_Worker_Toolbox e_s_dougubako = new Drawing_Worker_Toolbox(foldLineSet);
     int id_angle_system = 8;//180 / id_angle_system represents the angular system. For example, if id_angle_system = 3, 180/3 = 60 degrees, if id_angle_system = 5, 180/5 = 36 degrees
-    double d_angle_system;//d_angle_system=180.0/(double)id_angle_system
     double angle;
     int foldLineDividingNumber = 1;
     double internalDivisionRatio_s;
@@ -75,38 +71,28 @@ public class DrawingWorker {
     //---------------------------------
     int check4ColorTransparency = 100;
     App app;
-    LineColor icol_temp = LineColor.BLACK_0;//Used for temporary memory of color specification
     //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
     Point operationFrame_p1 = new Point();//TV座標
     Point operationFrame_p2 = new Point();//TV座標
     Point operationFrame_p3 = new Point();//TV座標
     Point operationFrame_p4 = new Point();//TV座標
-    OperationFrameMode operationFrameMode = OperationFrameMode.NONE_0;// = 1 Create a new selection box. = 2 Move points. 3 Move the sides. 4 Move the selection box.
     Point p = new Point();
     ArrayList<LineSegment> lineSegment_voronoi_onePoint = new ArrayList<>(); //Line segment around one point in Voronoi diagram
     // ****************************************************************************************************************************************
     // **************　Variable definition so far　****************************************************************************************************
     // ****************************************************************************************************************************************
     // ------------------------------------------------------------------------------------------------------------
-    int i_mouse_modeA_62_point_overlapping;//Newly added p does not overlap with previously added Point = 0, overlaps = 1
     SortingBox<LineSegment> entyou_kouho_nbox = new SortingBox<>();
     // Sub-operation mode for MouseMode.FOLDABLE_LINE_DRAW_71, either DRAW_CREASE_FREE_1, or VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38
-    MouseMode operationModeFor_FOLDABLE_LINE_DRAW_71 = MouseMode.UNUSED_0;
-    boolean operationModeChangeable = false;//Operation mode changeable. 0 is impossible, 1 is possible.
-    Point moyori_point_memo = new Point();
     Point p19_1 = new Point();
     //--------------------------------------------
     CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
     //30 30 30 30 30 30 30 30 30 30 30 30 除け_線_変換
-    LineSegment lineSegment_ADVANCE_CREASE_TYPE_30;
     enum FourPointStep {
         STEP_0,
         STEP_1,
         STEP_2,
     }
-    FourPointStep i_step_for_move_4p = FourPointStep.STEP_0;
-    //39 39 39 39 39 39 39    mouseMode==39　;折り畳み可能線入力  qqqqqqqqq
-    FourPointStep i_step_for_copy_4p = FourPointStep.STEP_0;//i_step_for_copy_4p=2の場合は、step線が1本だけになっていて、次の操作で入力折線が確定する状態
     boolean i_takakukei_kansei = false;//多角形が完成したら1、未完成なら0
 
     public DrawingWorker(double r0, App app0) {  //コンストラクタ
@@ -720,8 +706,7 @@ public class DrawingWorker {
 
         //線分入力時の一時的なs_step線分を描く　
 
-        if ((app.mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (i_drawing_stage != 4)) {
-        } else {
+        if ((app.mouseMode != MouseMode.OPERATION_FRAME_CREATE_61) || (i_drawing_stage == 4)) {
             for (int i = 1; i <= i_drawing_stage; i++) {
                 g_setColor(g, line_step[i].getColor());
                 g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
@@ -1328,7 +1313,6 @@ public class DrawingWorker {
             i_drawing_stage = i_drawing_stage + 1;
             line_step[i_drawing_stage].set(p, p);
             line_step[i_drawing_stage].setColor(LineColor.MAGENTA_5);//マゼンタ
-            return;
         }
 
     }
@@ -2038,7 +2022,7 @@ public class DrawingWorker {
     }
 
     //マウス操作(ボタンを離したとき)を行う関数----------------------------------------------------
-    public void mReleased_takakukei_and_sagyou(Point p0, int i_mode) {
+    public void mReleased_takakukei_and_sagyou(Point p0, MouseMode i_mode) {
         p.set(camera.TV2object(p0));
         closest_point.set(getClosestPoint(p));
         if (p.distance(closest_point) > selectionDistance) {
@@ -2063,10 +2047,10 @@ public class DrawingWorker {
             }
 
             //各動作モードで独自に行う作業は以下に条件分けして記述する
-            if (i_mode == 66) {
+            if (i_mode == MouseMode.SELECT_POLYGON_66) {
                 foldLineSet.select_Takakukei(Taka, "select");
             }//66 66 66 66 66 多角形を入力し、それに全体が含まれる折線をselectする
-            if (i_mode == 67) {
+            if (i_mode == MouseMode.UNSELECT_POLYGON_67) {
                 foldLineSet.select_Takakukei(Taka, "unselect");
             }//67 67 67 67 67 多角形を入力し、それに全体が含まれる折線を折線をunselectする
             //各動作モードで独自に行う作業はここまで
@@ -2223,7 +2207,8 @@ public class DrawingWorker {
     }//In foldLineSet, check and set the funny fold line to the selected state.
 
     public void fix1(double r_hitosii, double heikou_hantei) {
-        while (foldLineSet.fix1(r_hitosii, heikou_hantei)) {
+        while (true) {
+            if (!foldLineSet.fix1(r_hitosii, heikou_hantei)) break;
         }
         //foldLineSet.addsenbun  delsenbunを実施しているところでcheckを実施
         if (check1) {
@@ -2250,7 +2235,8 @@ public class DrawingWorker {
     }
 
     public void fix2(double r_hitosii, double heikou_hantei) {
-        while (foldLineSet.fix2(r_hitosii, heikou_hantei)) {
+        while (true) {
+            if (!foldLineSet.fix2(r_hitosii, heikou_hantei)) break;
         }
         //foldLineSet.addsenbun  delsenbunを実施しているところでcheckを実施
         if (check1) {

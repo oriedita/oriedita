@@ -1,11 +1,14 @@
 package origami_editor.editor.drawing_worker;
 
 import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHandler{
+    Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0,LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
+
 
     public MouseHandlerCircleDrawConcentricTwoCircleSelect(DrawingWorker d) {
         super(d);
@@ -24,29 +27,29 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHa
     public void mousePressed(Point p0) {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-        d.closest_circumference.set(d.getClosestCircleMidpoint(p));
+        closest_circumference.set(d.getClosestCircleMidpoint(p));
         d.closest_point.set(d.getClosestPoint(p));
 
         if ((d.i_drawing_stage == 0) && (d.i_circle_drawing_stage == 0)) {
-            if (OritaCalc.distance_circumference(p, d.closest_circumference) > d.selectionDistance) {
+            if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
             d.i_drawing_stage = 0;
             d.i_circle_drawing_stage = 1;
-            d.circle_step[1].set(d.closest_circumference);
+            d.circle_step[1].set(closest_circumference);
             d.circle_step[1].setColor(LineColor.GREEN_6);
             return;
         }
 
         if ((d.i_drawing_stage == 0) && (d.i_circle_drawing_stage == 1)) {
-            if (OritaCalc.distance_circumference(p, d.closest_circumference) > d.selectionDistance) {
+            if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
             d.i_drawing_stage = 0;
             d.i_circle_drawing_stage = 2;
-            d.circle_step[2].set(d.closest_circumference);
+            d.circle_step[2].set(closest_circumference);
             d.circle_step[2].setColor(LineColor.GREEN_6);
         }
     }

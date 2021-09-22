@@ -1,11 +1,14 @@
 package origami_editor.editor.drawing_worker;
 
 import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCircleDrawInverted extends BaseMouseHandler{
+    Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
+
     public MouseHandlerCircleDrawInverted(DrawingWorker d) {
         super(d);
     }
@@ -25,12 +28,12 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler{
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
 
-        d.closest_circumference.set(d.getClosestCircleMidpoint(p));
+        closest_circumference.set(d.getClosestCircleMidpoint(p));
 
         if (d.i_drawing_stage + d.i_circle_drawing_stage == 0) {
             d.closest_lineSegment.set(d.getClosestLineSegment(p));
 
-            if (OritaCalc.distance_lineSegment(p, d.closest_lineSegment) < OritaCalc.distance_circumference(p, d.closest_circumference)) {//線分の方が円周より近い
+            if (OritaCalc.distance_lineSegment(p, d.closest_lineSegment) < OritaCalc.distance_circumference(p, closest_circumference)) {//線分の方が円周より近い
                 d.i_drawing_stage = 0;
                 d.i_circle_drawing_stage = 0;
                 if (OritaCalc.distance_lineSegment(p, d.closest_lineSegment) > d.selectionDistance) {
@@ -45,23 +48,23 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler{
 
             d.i_drawing_stage = 0;
             d.i_circle_drawing_stage = 0;
-            if (OritaCalc.distance_circumference(p, d.closest_circumference) > d.selectionDistance) {
+            if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
             d.i_drawing_stage = 0;
             d.i_circle_drawing_stage = 1;
-            d.circle_step[1].set(d.closest_circumference);
+            d.circle_step[1].set(closest_circumference);
             d.circle_step[1].setColor(LineColor.GREEN_6);
             return;
         }
 
         if (d.i_drawing_stage + d.i_circle_drawing_stage == 1) {
-            if (OritaCalc.distance_circumference(p, d.closest_circumference) > d.selectionDistance) {
+            if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
             d.i_circle_drawing_stage = d.i_circle_drawing_stage + 1;
-            d.circle_step[d.i_circle_drawing_stage].set(d.closest_circumference);
+            d.circle_step[d.i_circle_drawing_stage].set(closest_circumference);
             d.circle_step[d.i_circle_drawing_stage].setColor(LineColor.RED_1);
         }
     }

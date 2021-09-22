@@ -7,6 +7,7 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandler{
+    double d_angle_system;
     private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted;
 
     public MouseHandlerDrawCreaseAngleRestricted2(DrawingWorker d) {
@@ -74,9 +75,9 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandler{
             //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d) //    double d_angle_system;double angle;
 
             if (d.id_angle_system != 0) {
-                d.d_angle_system = 180.0 / (double) d.id_angle_system;
+                d_angle_system = 180.0 / (double) d.id_angle_system;
             } else {
-                d.d_angle_system = 180.0 / 4.0;
+                d_angle_system = 180.0 / 4.0;
             }
 
             if (d.id_angle_system != 0) {
@@ -90,7 +91,7 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandler{
                         i_jyun = 0;
                     }
                     d.i_drawing_stage = d.i_drawing_stage + 1;
-                    d.angle = d.angle + d.d_angle_system;
+                    d.angle = d.angle + d_angle_system;
                     d.line_step[d.i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, d.angle, 10.0));
                     if (i_jyun == 0) {
                         d.line_step[d.i_drawing_stage].setColor(LineColor.GREEN_6);
@@ -109,7 +110,7 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandler{
                         i_jyun = 0;
                     }
                     d.i_drawing_stage = d.i_drawing_stage + 1;
-                    d.angle = d.angle + d.d_angle_system;
+                    d.angle = d.angle + d_angle_system;
                     d.line_step[d.i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, d.angle, 10.0));
                     if (i_jyun == 0) {
                         d.line_step[d.i_drawing_stage].setColor(LineColor.GREEN_6);

@@ -7,7 +7,9 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandler{
+    double d_angle_system;
     private final MouseHandlerDrawCreaseAngleRestricted2 mouseHandlerDrawCreaseAngleRestricted2;
+    LineSegment closest_step_lineSegment = new LineSegment(100000.0, 100000.0, 100000.0, 100000.1); //マウス最寄のstep線分(線分追加のための準備をするための線分)。なお、ここで宣言する必要はないので、どこで宣言すべきか要検討20161113
 
     public MouseHandlerDrawCreaseAngleRestricted3_2(DrawingWorker d) {
         super(d);
@@ -55,9 +57,9 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandler{
             //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d)
 
             if (d.id_angle_system != 0) {
-                d.d_angle_system = 180.0 / (double) d.id_angle_system;
+                d_angle_system = 180.0 / (double) d.id_angle_system;
             } else {
-                d.d_angle_system = 180.0 / 4.0;
+                d_angle_system = 180.0 / 4.0;
             }
 
             if (d.id_angle_system != 0) {
@@ -72,7 +74,7 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandler{
                         i_jyun = 0;
                     }
                     d.i_drawing_stage = d.i_drawing_stage + 1;
-                    kakudo = kakudo + d.d_angle_system;
+                    kakudo = kakudo + d_angle_system;
                     d.line_step[d.i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, kakudo, 100.0));
                     if (i_jyun == 0) {
                         d.line_step[d.i_drawing_stage].setColor(LineColor.GREEN_6);
@@ -126,20 +128,20 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandler{
 
         if (d.i_drawing_stage == 2 + (honsuu)) {
             d.i_drawing_stage = 0;
-            d.closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 3, 2 + (honsuu)));
-            if (OritaCalc.distance_lineSegment(p, d.closest_step_lineSegment) >= d.selectionDistance) {
+            closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 3, 2 + (honsuu)));
+            if (OritaCalc.distance_lineSegment(p, closest_step_lineSegment) >= d.selectionDistance) {
                 return;
             }
 
-            if (OritaCalc.distance_lineSegment(p, d.closest_step_lineSegment) < d.selectionDistance) {
+            if (OritaCalc.distance_lineSegment(p, closest_step_lineSegment) < d.selectionDistance) {
                 Point mokuhyou_point = new Point();
-                mokuhyou_point.set(OritaCalc.findProjection(d.closest_step_lineSegment, p));
+                mokuhyou_point.set(OritaCalc.findProjection(closest_step_lineSegment, p));
 
                 d.closest_lineSegment.set(d.getClosestLineSegment(p));
                 if (OritaCalc.distance_lineSegment(p, d.closest_lineSegment) < d.selectionDistance) {//最寄折線が近い場合
-                    if (OritaCalc.parallel_judgement(d.closest_step_lineSegment, d.closest_lineSegment, 0.000001) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//最寄折線が最寄step折線と平行の場合は除外
+                    if (OritaCalc.parallel_judgement(closest_step_lineSegment, d.closest_lineSegment, 0.000001) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//最寄折線が最寄step折線と平行の場合は除外
                         Point mokuhyou_point2 = new Point();
-                        mokuhyou_point2.set(OritaCalc.findIntersection(d.closest_step_lineSegment, d.closest_lineSegment));
+                        mokuhyou_point2.set(OritaCalc.findIntersection(closest_step_lineSegment, d.closest_lineSegment));
                         if (p.distance(mokuhyou_point) * 2.0 > p.distance(mokuhyou_point2)) {
                             mokuhyou_point.set(mokuhyou_point2);
                         }

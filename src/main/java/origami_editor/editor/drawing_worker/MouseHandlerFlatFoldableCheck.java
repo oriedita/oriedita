@@ -9,6 +9,7 @@ import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 
 public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler{
+    boolean i_O_F_C = false;
     public MouseHandlerFlatFoldableCheck(DrawingWorker d) {
         super(d);
     }
@@ -32,7 +33,7 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler{
     //マウス操作(mouseMode==63　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
         if (d.i_drawing_stage == 0) {
-            d.i_O_F_C = false;
+            i_O_F_C = false;
             d.i_drawing_stage = d.i_drawing_stage + 1;
 
             Point p = new Point();
@@ -40,7 +41,7 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler{
             d.line_step[d.i_drawing_stage].set(p, p);
             d.line_step[d.i_drawing_stage].setColor(LineColor.YELLOW_7);
         } else {
-            if (!d.i_O_F_C) {
+            if (!i_O_F_C) {
                 d.i_drawing_stage = d.i_drawing_stage + 1;
                 Point p = new Point();
                 p.set(d.camera.TV2object(p0));
@@ -55,7 +56,7 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler{
     //マウス操作(mouseMode==63　でドラッグしたとき)を行う関数----------------------------------------------------
 
     public void mouseDragged(Point p0) {
-        if (!d.i_O_F_C) {
+        if (!i_O_F_C) {
             Point p = new Point();
             p.set(d.camera.TV2object(p0));
             d.line_step[d.i_drawing_stage].setB(p);
@@ -66,7 +67,7 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler{
     public void mouseReleased(Point p0) {
 
 
-        if (!d.i_O_F_C) {
+        if (!i_O_F_C) {
             Point p = new Point();
             p.set(d.camera.TV2object(p0));
             d.line_step[d.i_drawing_stage].setB(p);
@@ -74,11 +75,11 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler{
 
             if (p.distance(d.line_step[1].getA()) <= d.selectionDistance) {
                 d.line_step[d.i_drawing_stage].setB(d.line_step[1].getA());
-                d.i_O_F_C = true;
+                i_O_F_C = true;
             }
 
 
-            if (d.i_O_F_C) {
+            if (i_O_F_C) {
                 if (d.i_drawing_stage == 2) {
                     d.i_drawing_stage = 0;
                 }
@@ -88,7 +89,7 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler{
         }
 
         int i_tekisetu = 1;//外周部の黄色い線と外周部の全折線の交差が適切（全てX型の交差）なら1、1つでも適切でないなら0
-        if (d.i_O_F_C) {
+        if (i_O_F_C) {
             SortingBox<LineSegment> goukei_nbox = new SortingBox<>();
             SortingBox<LineSegment> nbox = new SortingBox<>();
             for (int i_s_step = 1; i_s_step <= d.i_drawing_stage; i_s_step++) {

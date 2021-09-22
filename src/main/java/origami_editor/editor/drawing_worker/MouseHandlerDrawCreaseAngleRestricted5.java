@@ -6,6 +6,7 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandler{
+    double d_angle_system;
     private final MouseHandlerPolygonSetNoCorners mouseHandlerPolygonSetNoCorners;
 
     public MouseHandlerDrawCreaseAngleRestricted5(DrawingWorker d) {
@@ -77,8 +78,8 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandler{
         d.line_step[2].setA(p);
 
         if (d.id_angle_system != 0) {
-            d.d_angle_system = 180.0 / (double) d.id_angle_system;
-            d_rad = (Math.PI / 180) * d.d_angle_system * (int) Math.round(OritaCalc.angle(d.line_step[2]) / d.d_angle_system);
+            d_angle_system = 180.0 / (double) d.id_angle_system;
+            d_rad = (Math.PI / 180) * d_angle_system * (int) Math.round(OritaCalc.angle(d.line_step[2]) / d_angle_system);
         } else {
             double[] jk = new double[7];
             jk[0] = OritaCalc.angle(d.line_step[2]);//マウスで入力した線分がX軸となす角度

@@ -10,6 +10,9 @@ import origami_editor.sortingbox.WeightedValue;
 public class MouseHandlerFoldableLineDraw extends BaseMouseHandler{
     private final MouseHandlerDrawCreaseFree mouseHandlerDrawCreaseFree;
     private final MouseHandlerVertexMakeAngularlyFlatFoldable mouseHandlerVertexMakeAngularlyFlatFoldable;
+    MouseMode operationMode = MouseMode.UNUSED_0;
+    boolean operationModeChangeable = false;
+    Point moyori_point_memo = new Point();
 
     public MouseHandlerFoldableLineDraw(DrawingWorker d) {
         super(d);
@@ -24,34 +27,34 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler{
 
     public void mouseMoved(Point p0) {
         if (d.i_drawing_stage == 0) {
-            d.operationModeFor_FOLDABLE_LINE_DRAW_71 = MouseMode.UNUSED_0;
+            operationMode = MouseMode.UNUSED_0;
             mouseHandlerDrawCreaseFree.mouseMoved(p0);
             return;
         }
 
-        if (d.operationModeFor_FOLDABLE_LINE_DRAW_71 == MouseMode.DRAW_CREASE_FREE_1) {
+        if (operationMode == MouseMode.DRAW_CREASE_FREE_1) {
             mouseHandlerDrawCreaseFree.mouseMoved(p0);
         }
-        if (d.operationModeFor_FOLDABLE_LINE_DRAW_71 == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
+        if (operationMode == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
             mouseHandlerVertexMakeAngularlyFlatFoldable.mouseMoved(p0);
         }
     }
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        d.operationModeChangeable = false;
+        operationModeChangeable = false;
 Point p = new Point();
         p.set(d.camera.TV2object(p0));
         double hantei_kyori = 0.000001;
 
-        if (p.distance(d.moyori_point_memo) <= d.selectionDistance) {
+        if (p.distance(moyori_point_memo) <= d.selectionDistance) {
             d.i_drawing_stage = 0;
         }
 
         if (d.i_drawing_stage == 0) {
             //任意の点が与えられたとき、端点もしくは格子点で最も近い点を得る
             d.closest_point.set(d.getClosestPoint(p));
-            d.moyori_point_memo.set(d.closest_point);
+            moyori_point_memo.set(d.closest_point);
 
             if (p.distance(d.closest_point) > d.selectionDistance) {
                 d.closest_point.set(p);
@@ -70,19 +73,19 @@ Point p = new Point();
                 }
             }
             if (nbox.getTotal() % 2 == 0) {
-                d.operationModeFor_FOLDABLE_LINE_DRAW_71 = MouseMode.DRAW_CREASE_FREE_1;
+                operationMode = MouseMode.DRAW_CREASE_FREE_1;
                 d.i_foldLine_additional = FoldLineAdditionalInputMode.POLY_LINE_0;
             }//When the number of polygonal lines with moyori_ten as the end point is an even number, the processing inside if {} is performed.
             if (nbox.getTotal() % 2 == 1) {
-                d.operationModeFor_FOLDABLE_LINE_DRAW_71 = MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
-                d.operationModeChangeable = true;
+                operationMode = MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
+                operationModeChangeable = true;
             }//moyori_tenを端点とする折線の数が奇数のときif{}内の処理をする
         }
 
-        if (d.operationModeFor_FOLDABLE_LINE_DRAW_71 == MouseMode.DRAW_CREASE_FREE_1) {
+        if (operationMode == MouseMode.DRAW_CREASE_FREE_1) {
             mouseHandlerDrawCreaseFree.mousePressed(p0);
         }
-        if (d.operationModeFor_FOLDABLE_LINE_DRAW_71 == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
+        if (operationMode == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
             mouseHandlerVertexMakeAngularlyFlatFoldable.mousePressed(p0);
             if (!mouseHandlerVertexMakeAngularlyFlatFoldable.workDone) {
                 if (d.i_drawing_stage == 0) {
@@ -96,33 +99,33 @@ Point p = new Point();
 
     //マウス操作(ドラッグしたとき)を行う関数20200
     public void mouseDragged(Point p0) {
-        if ((d.operationModeFor_FOLDABLE_LINE_DRAW_71 == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) && d.operationModeChangeable) {
+        if ((operationMode == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) && operationModeChangeable) {
             d.p.set(d.camera.TV2object(p0));
-            d.moyori_point_memo.set(d.closest_point);
-            if (d.p.distance(d.moyori_point_memo) > d.selectionDistance) {
-                d.operationModeFor_FOLDABLE_LINE_DRAW_71 = MouseMode.DRAW_CREASE_FREE_1;
+            moyori_point_memo.set(d.closest_point);
+            if (d.p.distance(moyori_point_memo) > d.selectionDistance) {
+                operationMode = MouseMode.DRAW_CREASE_FREE_1;
                 d.i_drawing_stage = 1;
                 d.line_step[1].a_b_swap();
                 d.line_step[1].setColor(d.lineColor);
-                d.operationModeChangeable = false;
+                operationModeChangeable = false;
             }
 
         }
 
-        if (d.operationModeFor_FOLDABLE_LINE_DRAW_71 == MouseMode.DRAW_CREASE_FREE_1) {
+        if (operationMode == MouseMode.DRAW_CREASE_FREE_1) {
             mouseHandlerDrawCreaseFree.mouseDragged(p0);
         }
-        if (d.operationModeFor_FOLDABLE_LINE_DRAW_71 == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
+        if (operationMode == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
             mouseHandlerVertexMakeAngularlyFlatFoldable.mouseDragged(p0);
         }
     }
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if (d.operationModeFor_FOLDABLE_LINE_DRAW_71 == MouseMode.DRAW_CREASE_FREE_1) {
+        if (operationMode == MouseMode.DRAW_CREASE_FREE_1) {
             mouseHandlerDrawCreaseFree.mouseReleased(p0);
         }
-        if (d.operationModeFor_FOLDABLE_LINE_DRAW_71 == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
+        if (operationMode == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
             mouseHandlerVertexMakeAngularlyFlatFoldable.mouseReleased(p0);
         }
     }

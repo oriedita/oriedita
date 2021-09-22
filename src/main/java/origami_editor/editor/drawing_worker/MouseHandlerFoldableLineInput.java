@@ -10,6 +10,7 @@ import origami_editor.sortingbox.WeightedValue;
 
 public class MouseHandlerFoldableLineInput extends BaseMouseHandler{
     private final MouseHandlerPolygonSetNoCorners mouseHandlerPolygonSetNoCorners;
+    DrawingWorker.FourPointStep i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_0;
 
     public MouseHandlerFoldableLineInput(DrawingWorker d) {
         super(d);
@@ -24,7 +25,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandler{
     //マウス操作(マウスを動かしたとき)を行う関数    //System.out.println("_");
     public void mouseMoved(Point p0) {
         if (d.i_drawing_stage == 0) {
-            d.i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_0;
+            i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_0;
         }
         if (d.gridInputAssist) {
             d.i_candidate_stage = 0;
@@ -33,11 +34,11 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandler{
             p.set(d.camera.TV2object(p0));
 
             if (d.i_drawing_stage == 0) {
-                d.i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_0;
+                i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_0;
             }
-            System.out.println("i_egaki_dankai= " + d.i_drawing_stage + "  ;   i_step_for_copy_4p= " + d.i_step_for_copy_4p);
+            System.out.println("i_egaki_dankai= " + d.i_drawing_stage + "  ;   i_step_for_copy_4p= " + i_step_for_copy_4p);
 
-            switch (d.i_step_for_copy_4p) {
+            switch (i_step_for_copy_4p) {
                 case STEP_0:
                     mouseHandlerPolygonSetNoCorners.mouseMoved(p0);
                     break;
@@ -121,10 +122,10 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandler{
         p.set(d.camera.TV2object(p0));
 
         if (d.i_drawing_stage == 0) {
-            d.i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_0;
+            i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_0;
         }
 
-        if (d.i_step_for_copy_4p == DrawingWorker.FourPointStep.STEP_0) {
+        if (i_step_for_copy_4p == DrawingWorker.FourPointStep.STEP_0) {
             double decision_distance = 0.000001;
 
             //任意の点が与えられたとき、端点もしくは格子点で最も近い点を得る
@@ -206,16 +207,16 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandler{
                     }
 
                     if (d.i_drawing_stage == 1) {
-                        d.i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_2;
+                        i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_2;
                     }
                     if (d.i_drawing_stage > 1) {
-                        d.i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_1;
+                        i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_1;
                     }
                 }
 
                 if (d.i_drawing_stage == 0) {//折畳み可能化線がない場合//System.out.println("_");
                     d.i_drawing_stage = 1;
-                    d.i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_1;
+                    i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_1;
                     d.line_step[1].set(d.closest_point, d.closest_point);
                     d.line_step[1].setColor(LineColor.PURPLE_8);
                     d.line_step[1].setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
@@ -225,10 +226,10 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandler{
             return;
         }
 
-        if (d.i_step_for_copy_4p == DrawingWorker.FourPointStep.STEP_1) {
+        if (i_step_for_copy_4p == DrawingWorker.FourPointStep.STEP_1) {
             d.closest_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.i_drawing_stage));
             if ((d.i_drawing_stage >= 2) && (OritaCalc.distance_lineSegment(p, d.closest_lineSegment) < d.selectionDistance)) {
-                d.i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_2;
+                i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_2;
                 d.i_drawing_stage = 1;
                 d.line_step[1].set(d.closest_lineSegment);
                 return;
@@ -236,7 +237,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandler{
             d.closest_point.set(d.getClosestPoint(p));
             if (p.distance(d.closest_point) < d.selectionDistance) {
                 d.line_step[1].setB(d.closest_point);
-                d.i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_2;
+                i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_2;
                 d.i_drawing_stage = 1;
                 return;
             }
@@ -246,7 +247,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandler{
         }
 
 
-        if (d.i_step_for_copy_4p == DrawingWorker.FourPointStep.STEP_2) {//i_step_for_copy_4p==2であれば、以下でs_step[1]を入力折線を確定する
+        if (i_step_for_copy_4p == DrawingWorker.FourPointStep.STEP_2) {//i_step_for_copy_4p==2であれば、以下でs_step[1]を入力折線を確定する
             d.closest_point.set(d.getClosestPoint(p));
 
             if (d.closest_point.distance(d.line_step[1].getA()) < 0.00000001) {

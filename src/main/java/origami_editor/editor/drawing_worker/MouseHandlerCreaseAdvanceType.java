@@ -7,6 +7,7 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler{
+    LineSegment lineSegment;
     public MouseHandlerCreaseAdvanceType(DrawingWorker d) {
         super(d);
     }
@@ -24,22 +25,22 @@ public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler{
     public void mousePressed(Point p0) {    //マウス操作(mouseMode==4線_変換　でボタンを押したとき)時の作業
         Point p  =new Point();
         p.set(d.camera.TV2object(p0));
-        d.lineSegment_ADVANCE_CREASE_TYPE_30 = null;
+        lineSegment = null;
         if (d.foldLineSet.closestLineSegmentDistance(p) < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-            d.lineSegment_ADVANCE_CREASE_TYPE_30 = d.foldLineSet.closestLineSegmentSearch(p);
+            lineSegment = d.foldLineSet.closestLineSegmentSearch(p);
             LineSegment s01 = new LineSegment();
-            s01.set(OritaCalc.lineSegment_double(d.lineSegment_ADVANCE_CREASE_TYPE_30, 0.01));
-            d.lineSegment_ADVANCE_CREASE_TYPE_30.setB(s01.getB());
+            s01.set(OritaCalc.lineSegment_double(lineSegment, 0.01));
+            lineSegment.setB(s01.getB());
         }
     }
 
     public void mouseDragged(Point p0) {//マウス操作(mouseMode==4線_変換　でドラッグしたとき)を行う関数
-        if (d.lineSegment_ADVANCE_CREASE_TYPE_30 != null) {
+        if (lineSegment != null) {
 
             LineSegment s01 = new LineSegment();
-            s01.set(OritaCalc.lineSegment_double(d.lineSegment_ADVANCE_CREASE_TYPE_30, 100.0));
-            d.lineSegment_ADVANCE_CREASE_TYPE_30.setB(s01.getB());
-            d.lineSegment_ADVANCE_CREASE_TYPE_30 = null;
+            s01.set(OritaCalc.lineSegment_double(lineSegment, 100.0));
+            lineSegment.setB(s01.getB());
+            lineSegment = null;
         }
 
     }
@@ -49,24 +50,24 @@ public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler{
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
 
-        if (d.lineSegment_ADVANCE_CREASE_TYPE_30 != null) {
+        if (lineSegment != null) {
 
             LineSegment s01 = new LineSegment();
-            s01.set(OritaCalc.lineSegment_double(d.lineSegment_ADVANCE_CREASE_TYPE_30, 100.0));
-            d.lineSegment_ADVANCE_CREASE_TYPE_30.setB(s01.getB());
+            s01.set(OritaCalc.lineSegment_double(lineSegment, 100.0));
+            lineSegment.setB(s01.getB());
 
-            LineColor ic_temp = d.lineSegment_ADVANCE_CREASE_TYPE_30.getColor();
-            int is_temp = d.lineSegment_ADVANCE_CREASE_TYPE_30.getSelected();
+            LineColor ic_temp = lineSegment.getColor();
+            int is_temp = lineSegment.getSelected();
 
             if ((ic_temp == LineColor.BLACK_0) && (is_temp == 0)) {
-                d.lineSegment_ADVANCE_CREASE_TYPE_30.setSelected(2);
+                lineSegment.setSelected(2);
             } else if ((ic_temp == LineColor.BLACK_0) && (is_temp == 2)) {
-                d.lineSegment_ADVANCE_CREASE_TYPE_30.setColor(LineColor.RED_1);
-                d.lineSegment_ADVANCE_CREASE_TYPE_30.setSelected(0);
+                lineSegment.setColor(LineColor.RED_1);
+                lineSegment.setSelected(0);
             } else if ((ic_temp == LineColor.RED_1) && (is_temp == 0)) {
-                d.lineSegment_ADVANCE_CREASE_TYPE_30.setColor(LineColor.BLUE_2);
+                lineSegment.setColor(LineColor.BLUE_2);
             } else if ((ic_temp == LineColor.BLUE_2) && (is_temp == 0)) {
-                d.lineSegment_ADVANCE_CREASE_TYPE_30.setColor(LineColor.BLACK_0);
+                lineSegment.setColor(LineColor.BLACK_0);
             }
 
             d.record();

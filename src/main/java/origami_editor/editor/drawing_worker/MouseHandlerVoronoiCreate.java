@@ -8,6 +8,7 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerVoronoiCreate extends BaseMouseHandler{
+    int i_mouse_modeA_62_point_overlapping;
     public MouseHandlerVoronoiCreate(DrawingWorker d) {
         super(d);
     }
@@ -64,17 +65,17 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler{
 
 
         //Confirm that the newly added p does not overlap with the previously added Ten
-        d.i_mouse_modeA_62_point_overlapping = 0;
+        i_mouse_modeA_62_point_overlapping = 0;
 
         for (int i = 1; i <= d.i_drawing_stage; i++) {
             if (OritaCalc.distance(d.line_step[i].getA(), s_temp.getA()) <= d.selectionDistance) {
-                d.i_mouse_modeA_62_point_overlapping = i;
+                i_mouse_modeA_62_point_overlapping = i;
             }
         }
 
         //Confirm that the newly added p does not overlap with the previously added Point.
 
-        if (d.i_mouse_modeA_62_point_overlapping == 0) {
+        if (i_mouse_modeA_62_point_overlapping == 0) {
 
             //(ここでやっと、点pをs_stepとしてボロノイ母点に加えると決まった)
             d.i_drawing_stage = d.i_drawing_stage + 1;
@@ -89,24 +90,24 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler{
             //順番がi_mouse_modeA_62_ten_kasanariのボロノイ母点と順番が最後(=i_egaki_dankai)のボロノイ母点を入れ替える
             //line_step[i]の入れ替え
             LineSegment S_replace = new LineSegment();
-            S_replace.set(d.line_step[d.i_mouse_modeA_62_point_overlapping]);
-            d.line_step[d.i_mouse_modeA_62_point_overlapping].set(d.line_step[d.i_drawing_stage]);
+            S_replace.set(d.line_step[i_mouse_modeA_62_point_overlapping]);
+            d.line_step[i_mouse_modeA_62_point_overlapping].set(d.line_step[d.i_drawing_stage]);
             d.line_step[d.i_drawing_stage].set(S_replace);
 
 
             for (int j = 1; j <= d.voronoiLineSet.getTotal(); j++) {
                 //Swapping the voronoiA of the line segment in voronoiLineSet
-                if (d.voronoiLineSet.getVoronoiA(j) == d.i_mouse_modeA_62_point_overlapping) {
+                if (d.voronoiLineSet.getVoronoiA(j) == i_mouse_modeA_62_point_overlapping) {
                     d.voronoiLineSet.setVoronoiA(j, d.i_drawing_stage);
                 } else if (d.voronoiLineSet.getVoronoiA(j) == d.i_drawing_stage) {
-                    d.voronoiLineSet.setVoronoiA(j, d.i_mouse_modeA_62_point_overlapping);
+                    d.voronoiLineSet.setVoronoiA(j, i_mouse_modeA_62_point_overlapping);
                 }
 
                 //Replacing the voronoiB of the line segment in voronoiLineSet
-                if (d.voronoiLineSet.getVoronoiB(j) == d.i_mouse_modeA_62_point_overlapping) {
+                if (d.voronoiLineSet.getVoronoiB(j) == i_mouse_modeA_62_point_overlapping) {
                     d.voronoiLineSet.setVoronoiB(j, d.i_drawing_stage);
                 } else if (d.voronoiLineSet.getVoronoiB(j) == d.i_drawing_stage) {
-                    d.voronoiLineSet.setVoronoiB(j, d.i_mouse_modeA_62_point_overlapping);
+                    d.voronoiLineSet.setVoronoiB(j, i_mouse_modeA_62_point_overlapping);
                 }
             }
 
