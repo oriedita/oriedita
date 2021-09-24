@@ -6,8 +6,9 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler{
+public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler {
     LineSegment lineSegment;
+
     public MouseHandlerCreaseAdvanceType(DrawingWorker d) {
         super(d);
     }
@@ -23,7 +24,7 @@ public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler{
     }
 
     public void mousePressed(Point p0) {    //マウス操作(mouseMode==4線_変換　でボタンを押したとき)時の作業
-        Point p  =new Point();
+        Point p = new Point();
         p.set(d.camera.TV2object(p0));
         lineSegment = null;
         if (d.foldLineSet.closestLineSegmentDistance(p) < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
@@ -36,7 +37,6 @@ public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler{
 
     public void mouseDragged(Point p0) {//マウス操作(mouseMode==4線_変換　でドラッグしたとき)を行う関数
         if (lineSegment != null) {
-
             LineSegment s01 = new LineSegment();
             s01.set(OritaCalc.lineSegment_double(lineSegment, 100.0));
             lineSegment.setB(s01.getB());
@@ -51,7 +51,6 @@ public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler{
         p.set(d.camera.TV2object(p0));
 
         if (lineSegment != null) {
-
             LineSegment s01 = new LineSegment();
             s01.set(OritaCalc.lineSegment_double(lineSegment, 100.0));
             lineSegment.setB(s01.getB());

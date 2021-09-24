@@ -3,7 +3,7 @@ package origami_editor.editor.drawing_worker;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerVertexDeleteOnCrease extends BaseMouseHandler{
+public class MouseHandlerVertexDeleteOnCrease extends BaseMouseHandler {
     public MouseHandlerVertexDeleteOnCrease(DrawingWorker d) {
         super(d);
     }

@@ -1,18 +1,16 @@
 package origami.crease_pattern;
 
-import origami.crease_pattern.element.LineColor;
-import origami.crease_pattern.element.Circle;
-import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.StraightLine;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
+import origami.crease_pattern.element.*;
 import origami_editor.editor.Save;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -69,14 +67,6 @@ public class FoldLineSet {
         }
     }
 
-    private void setTotal(int total) {
-        this.total = total;
-
-        while (lineSegments.size() < total + 1) {
-            lineSegments.add(new LineSegment());
-        }
-    }
-
     public void set(FoldLineSet foldLineSet) {
         setTotal(foldLineSet.getTotal());
         for (int i = 0; i <= total; i++) {
@@ -88,6 +78,14 @@ public class FoldLineSet {
     //Get the total number of line segments
     public int getTotal() {
         return total;
+    }
+
+    private void setTotal(int total) {
+        this.total = total;
+
+        while (lineSegments.size() < total + 1) {
+            lineSegments.add(new LineSegment());
+        }
     }
 
     //Get a line segment
@@ -188,10 +186,8 @@ public class FoldLineSet {
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
-            LineSegment s1 = new LineSegment();
-            s1.set(s);
 
-            save.addLineSegment(s1);
+            save.addLineSegment(s.clone());
             // Save linesegment
         }
 
@@ -213,7 +209,7 @@ public class FoldLineSet {
 
         for (int i = 1; i <= total; i++) {
             if (getActive(i) != excluding) {
-                save.addLineSegment(lineSegments.get(i));
+                save.addLineSegment(lineSegments.get(i).clone());
             }
         }
 
@@ -240,7 +236,7 @@ public class FoldLineSet {
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
             if (s.getColor().isFoldingLine()) {
-                save.addLineSegment(s);
+                save.addLineSegment(s.clone());
             }
         }
         return save;
@@ -253,7 +249,7 @@ public class FoldLineSet {
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
             if ((s.getColor().isFoldingLine()) && (s.getSelected() == 2)) {
-                save.addLineSegment(s);
+                save.addLineSegment(s.clone());
             }
         }
         return save;
@@ -296,6 +292,7 @@ public class FoldLineSet {
             s0.set(s);
 
             lineSegments.add(s0);
+            total++;
         }
         for (Circle c : memo1.getCircles()) {
             Circle c0 = new Circle();
@@ -322,7 +319,7 @@ public class FoldLineSet {
             LineSegment s = lineSegments.get(i);
 
             if (s.getSelected() != except) {
-                save.addLineSegment(s);
+                save.addLineSegment(s.clone());
             }
         }
 
@@ -343,7 +340,7 @@ public class FoldLineSet {
             LineSegment s = lineSegments.get(i);
 
             if (s.getSelected() == option) {
-                save.addLineSegment(s);
+                save.addLineSegment(s.clone());
             }
         }
         return save;
@@ -383,17 +380,10 @@ public class FoldLineSet {
         }
     }
 
-    public void select(Point p1, Point p2, Point p3, Point p4) {
-        Polygon sikaku = new Polygon(4);
-        sikaku.set(1, p1);
-        sikaku.set(2, p2);
-        sikaku.set(3, p3);
-        sikaku.set(4, p4);
-
+    public void select(Polygon p) {
         for (int i = 1; i <= total; i++) {
-            LineSegment s;
-            s = lineSegments.get(i);
-            if (sikaku.totu_boundary_inside(s)) {
+            LineSegment s = lineSegments.get(i);
+            if (p.totu_boundary_inside(s)) {
 
                 s.setSelected(2);
 
@@ -401,35 +391,22 @@ public class FoldLineSet {
         }
     }
 
-    public void unselect(Point p1, Point p2, Point p3, Point p4) {
-        Polygon sikaku = new Polygon(4);
-        sikaku.set(1, p1);
-        sikaku.set(2, p2);
-        sikaku.set(3, p3);
-        sikaku.set(4, p4);
-
+    public void unselect(Polygon p) {
         for (int i = 1; i <= total; i++) {
-            LineSegment s;
-            s = lineSegments.get(i);
-            if (sikaku.totu_boundary_inside(s)) {
+            LineSegment s = lineSegments.get(i);
+            if (p.totu_boundary_inside(s)) {
                 s.setSelected(0);
             }
         }
     }
 
     //--------------------------------
-    public int MV_change(Point p1, Point p2, Point p3, Point p4) {
+    public int MV_change(Polygon p) {
         int i_r = 0;
-        //Ten p1 = new Ten();   p1.set(si.geta());
-        Polygon sikaku = new Polygon(4);
-        sikaku.set(1, p1);
-        sikaku.set(2, p2);
-        sikaku.set(3, p3);
-        sikaku.set(4, p4);
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
-            if (sikaku.totu_boundary_inside(s)) {
+            if (p.totu_boundary_inside(s)) {
                 LineColor ic_temp = s.getColor();/**/
                 if (ic_temp == LineColor.RED_1) {
                     s.setColor(LineColor.BLUE_2);
@@ -443,18 +420,13 @@ public class FoldLineSet {
     }
 
     //--------------------------------
-    public boolean insideToMountain(Point p1, Point p2, Point p3, Point p4) {
+    public boolean insideToMountain(Polygon p) {
         boolean i_r = false;
-        Polygon sikaku = new Polygon(4);
-        sikaku.set(1, p1);
-        sikaku.set(2, p2);
-        sikaku.set(3, p3);
-        sikaku.set(4, p4);
 
         for (int i = 1; i <= total; i++) {
             LineSegment s;
             s = lineSegments.get(i);
-            if (sikaku.totu_boundary_inside(s)) {
+            if (p.totu_boundary_inside(s)) {
                 s.setColor(LineColor.RED_1);
                 i_r = true;
             }
@@ -463,19 +435,13 @@ public class FoldLineSet {
     }
 
     //--------------------------------
-    public boolean insideToValley(Point p1, Point p2, Point p3, Point p4) {
+    public boolean insideToValley(Polygon b) {
         boolean i_r = false;
-        //Ten p1 = new Ten();   p1.set(si.geta());
-        Polygon sikaku = new Polygon(4);
-        sikaku.set(1, p1);
-        sikaku.set(2, p2);
-        sikaku.set(3, p3);
-        sikaku.set(4, p4);
 
         for (int i = 1; i <= total; i++) {
             LineSegment s;
             s = lineSegments.get(i);
-            if (sikaku.totu_boundary_inside(s)) {
+            if (b.totu_boundary_inside(s)) {
                 s.setColor(LineColor.BLUE_2);
                 i_r = true;
             }
@@ -484,43 +450,28 @@ public class FoldLineSet {
     }
 
 
-    public boolean insideToEdge(Point p1, Point p2, Point p3, Point p4) {
+    public boolean insideToEdge(Polygon b) {
         boolean i_r = false;
-        //Ten p1 = new Ten();   p1.set(si.geta());
-        Polygon sikaku = new Polygon(4);
-        sikaku.set(1, p1);
-        sikaku.set(2, p2);
-        sikaku.set(3, p3);
-        sikaku.set(4, p4);
 
         for (int i = 1; i <= total; i++) {
             LineSegment s;
             s = lineSegments.get(i);
-            if (sikaku.totu_boundary_inside(s)) {
+            if (b.totu_boundary_inside(s)) {
                 s.setColor(LineColor.BLACK_0);
                 i_r = true;
             }
         }
         return i_r;
-
     }
 
-
-    public boolean insideToAux(Point p1, Point p2, Point p3, Point p4) {
+    public boolean insideToAux(Polygon b) {
         boolean i_r = false;
-        //Ten p1 = new Ten();   p1.set(si.geta());
-        Polygon sikaku = new Polygon(4);
-        sikaku.set(1, p1);
-        sikaku.set(2, p2);
-        sikaku.set(3, p3);
-        sikaku.set(4, p4);
-
 
         int okikae_suu = 0;
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
             if (s.getColor().isFoldingLine()) {
-                if (sikaku.totu_boundary_inside(s)) {
+                if (b.totu_boundary_inside(s)) {
                     okikae_suu = okikae_suu + 1;
 
                     LineSegment add_sen = new LineSegment();
@@ -586,7 +537,7 @@ public class FoldLineSet {
                 i_r = true;
             }
             if (!i_kono_orisen_wo_sakujyo) {
-                save.addLineSegment(s);
+                save.addLineSegment(s.clone());
             }
         }
 
@@ -614,73 +565,28 @@ public class FoldLineSet {
         return i_r;
     }
 
-    public boolean deleteInside(Point p1, Point p2, Point p3, Point p4) {
+    public boolean deleteInside(Polygon p) {
         boolean i_r = false;
-        Polygon sikaku = new Polygon(4);
-        sikaku.set(1, p1);
-        sikaku.set(2, p2);
-        sikaku.set(3, p3);
-        sikaku.set(4, p4);
 
         Save save = new Save();
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
 
-            if (sikaku.totu_boundary_inside(s)) {
+            if (p.totu_boundary_inside(s)) {
                 i_r = true;
-            }
-            if (!sikaku.totu_boundary_inside(s)) {
-                save.addLineSegment(s);
+            } else {
+                save.addLineSegment(s.clone());
             }
         }
 
-        Point ec = new Point();//円の中心座標を入れる変数
-        double er;//円の中心座標を入れる変数
-
-        LineSegment s1 = new LineSegment(p1, p2);
-        LineSegment s2 = new LineSegment(p2, p3);
-        LineSegment s3 = new LineSegment(p3, p4);
-        LineSegment s4 = new LineSegment(p4, p1);
-
-        int ii = 0;
         for (Circle circle : circles) {
-            boolean idel = false;
             Circle e_temp = new Circle();
             e_temp.set(circle);
-            ec.set(e_temp.getCenter());
-            er = e_temp.getRadius();
 
-            if (OritaCalc.distance_lineSegment(ec, s1) <= er) {
-                if ((OritaCalc.distance(s1.getA(), ec) >= er) || (OritaCalc.distance(s1.getA(), ec) >= er)) {
-                    idel = true;
-                }
-            }
-            if (OritaCalc.distance_lineSegment(ec, s2) <= er) {
-                if ((OritaCalc.distance(s2.getA(), ec) >= er) || (OritaCalc.distance(s2.getA(), ec) >= er)) {
-                    idel = true;
-                }
-            }
-            if (OritaCalc.distance_lineSegment(ec, s3) <= er) {
-                if ((OritaCalc.distance(s3.getA(), ec) >= er) || (OritaCalc.distance(s3.getA(), ec) >= er)) {
-                    idel = true;
-                }
-            }
-            if (OritaCalc.distance_lineSegment(ec, s4) <= er) {
-                if ((OritaCalc.distance(s4.getA(), ec) >= er) || (OritaCalc.distance(s4.getA(), ec) >= er)) {
-                    idel = true;
-                }
-            }
-
-            if (sikaku.totu_boundary_inside(new LineSegment(e_temp.getCenter(), e_temp.getCenter()))) {
-                idel = true;
-            }
-
-            if (idel) {
+            if (p.totu_boundary_inside(e_temp)) {
                 i_r = true;
-            }
-            if (!idel) {
-                ii = ii + 1;
+            } else {
                 save.addCircle(e_temp);
             }
         }
@@ -691,24 +597,19 @@ public class FoldLineSet {
         return i_r;
     }
 
-    public boolean deleteInside_foldingLine(Point p1, Point p2, Point p3, Point p4) {//Delete only the polygonal line
+    public boolean deleteInside_foldingLine(Polygon p) {//Delete only the polygonal line
         boolean i_r = false;
-        Polygon sikaku = new Polygon(4);
-        sikaku.set(1, p1);
-        sikaku.set(2, p2);
-        sikaku.set(3, p3);
-        sikaku.set(4, p4);
 
         Save save = new Save();
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
 
-            if ((sikaku.totu_boundary_inside(s)) && s.getColor().isFoldingLine()) {
+            if ((p.totu_boundary_inside(s)) && s.getColor().isFoldingLine()) {
                 i_r = true;
             }//黒赤青線はmemo1に書かれない。つまり削除される。
-            else if ((!sikaku.totu_boundary_inside(s)) || !s.getColor().isFoldingLine()) {
-                save.addLineSegment(s);
+            else if ((!p.totu_boundary_inside(s)) || !s.getColor().isFoldingLine()) {
+                save.addLineSegment(s.clone());
             }
         }
 
@@ -728,13 +629,8 @@ public class FoldLineSet {
         return i_r;
     }
 
-    public boolean deleteInside_edge(Point p1, Point p2, Point p3, Point p4) {//Delete only the polygonal line
+    public boolean deleteInside_edge(Polygon p) {//Delete only the polygonal line
         boolean i_r = false;
-        Polygon sikaku = new Polygon(4);
-        sikaku.set(1, p1);
-        sikaku.set(2, p2);
-        sikaku.set(3, p3);
-        sikaku.set(4, p4);
 
         Save save = new Save();
         int ibangou = 0;
@@ -743,12 +639,12 @@ public class FoldLineSet {
             LineSegment s;
             s = lineSegments.get(i);
 
-            if ((sikaku.totu_boundary_inside(s)) && (s.getColor() == LineColor.BLACK_0)) {
+            if ((p.totu_boundary_inside(s)) && (s.getColor() == LineColor.BLACK_0)) {
                 i_r = true;
             }//黒線はmemo1に書かれない。つまり削除される。
-            else if ((!sikaku.totu_boundary_inside(s)) || (s.getColor() != LineColor.BLACK_0)) {
+            else if ((!p.totu_boundary_inside(s)) || (s.getColor() != LineColor.BLACK_0)) {
                 ibangou = ibangou + 1;
-                save.addLineSegment(s);
+                save.addLineSegment(s.clone());
             }
         }
 
@@ -761,77 +657,33 @@ public class FoldLineSet {
         }
 
         reset();
-    setSave(save);
+        setSave(save);
 
         return i_r;
     }
 
-    public boolean deleteInside_aux(Point p1, Point p2, Point p3, Point p4) {//Delete only auxiliary live line
+    public boolean deleteInside_aux(Polygon p) {//Delete only auxiliary live line
         boolean i_r = false;
-        Polygon sikaku = new Polygon(4);
-        sikaku.set(1, p1);
-        sikaku.set(2, p2);
-        sikaku.set(3, p3);
-        sikaku.set(4, p4);
 
         Save save = new Save();
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
 
-            if ((sikaku.totu_boundary_inside(s)) && (s.getColor() == LineColor.CYAN_3)) {
+            if ((p.totu_boundary_inside(s)) && (s.getColor() == LineColor.CYAN_3)) {
                 i_r = true;
-            } else if ((!sikaku.totu_boundary_inside(s)) || (s.getColor() != LineColor.CYAN_3)) {
-                save.addLineSegment(s);
+            } else if ((!p.totu_boundary_inside(s)) || (s.getColor() != LineColor.CYAN_3)) {
+                save.addLineSegment(s.clone());
             }
         }
 
-        Point ec = new Point();//円の中心座標を入れる変数
-        double er;//円の中心座標を入れる変数
-
-        LineSegment s1 = new LineSegment(p1, p2);
-        LineSegment s2 = new LineSegment(p2, p3);
-        LineSegment s3 = new LineSegment(p3, p4);
-        LineSegment s4 = new LineSegment(p4, p1);
-
-        int ii = 0;
         for (Circle circle : circles) {
-            boolean idel = false;
             Circle e_temp = new Circle();
             e_temp.set(circle);
-            ec.set(e_temp.getCenter());
-            er = e_temp.getRadius();
 
-            if (OritaCalc.distance_lineSegment(ec, s1) <= er) {
-                if ((OritaCalc.distance(s1.getA(), ec) >= er) || (OritaCalc.distance(s1.getA(), ec) >= er)) {
-                    idel = true;
-                }
-            }
-            if (OritaCalc.distance_lineSegment(ec, s2) <= er) {
-                if ((OritaCalc.distance(s2.getA(), ec) >= er) || (OritaCalc.distance(s2.getA(), ec) >= er)) {
-                    idel = true;
-                }
-            }
-            if (OritaCalc.distance_lineSegment(ec, s3) <= er) {
-                if ((OritaCalc.distance(s3.getA(), ec) >= er) || (OritaCalc.distance(s3.getA(), ec) >= er)) {
-                    idel = true;
-                }
-            }
-            if (OritaCalc.distance_lineSegment(ec, s4) <= er) {
-                if ((OritaCalc.distance(s4.getA(), ec) >= er) || (OritaCalc.distance(s4.getA(), ec) >= er)) {
-                    idel = true;
-                }
-            }
-
-            if (sikaku.totu_boundary_inside(new LineSegment(e_temp.getCenter(), e_temp.getCenter()))) {
-                idel = true;
-            }
-
-            if (idel) {
+            if (p.totu_boundary_inside(e_temp)) {
                 i_r = true;
-            }
-            if (!idel) {
-                ii = ii + 1;
+            } else {
                 save.addCircle(e_temp);
             }
         }
@@ -843,66 +695,24 @@ public class FoldLineSet {
     }
 
     //--------------------------------
-    public boolean change_property_in_4kakukei(Point p1, Point p2, Point p3, Point p4, Color sen_tokutyuu_color) {//Change properties such as the color of circles and auxiliary live lines inside a quadrangle
+    public boolean change_property_in_4kakukei(Polygon p, Color sen_tokutyuu_color) {//Change properties such as the color of circles and auxiliary live lines inside a quadrangle
         boolean i_r = false;
-        Polygon sikaku = new Polygon(4);
-        sikaku.set(1, p1);
-        sikaku.set(2, p2);
-        sikaku.set(3, p3);
-        sikaku.set(4, p4);
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
 
-            if (sikaku.totu_boundary_inside(s) && (s.getColor() == LineColor.CYAN_3)) {
+            if (p.totu_boundary_inside(s) && (s.getColor() == LineColor.CYAN_3)) {
                 i_r = true;
                 s.setCustomized(1);
                 s.setCustomizedColor(sen_tokutyuu_color);
             }
         }
 
-        Point ec = new Point();//円の中心座標を入れる変数
-        double er;//円の中心座標を入れる変数
-
-        LineSegment s1 = new LineSegment(p1, p2);
-        LineSegment s2 = new LineSegment(p2, p3);
-        LineSegment s3 = new LineSegment(p3, p4);
-        LineSegment s4 = new LineSegment(p4, p1);
-
-        //("<円集合>");
         for (Circle circle : circles) {
-            boolean i_change = false;
             Circle e_temp = new Circle();
             e_temp.set(circle);
-            ec.set(e_temp.getCenter());
-            er = e_temp.getRadius();
 
-            if (OritaCalc.distance_lineSegment(ec, s1) <= er) {
-                if ((OritaCalc.distance(s1.getA(), ec) >= er) || (OritaCalc.distance(s1.getA(), ec) >= er)) {
-                    i_change = true;
-                }
-            }
-            if (OritaCalc.distance_lineSegment(ec, s2) <= er) {
-                if ((OritaCalc.distance(s2.getA(), ec) >= er) || (OritaCalc.distance(s2.getA(), ec) >= er)) {
-                    i_change = true;
-                }
-            }
-            if (OritaCalc.distance_lineSegment(ec, s3) <= er) {
-                if ((OritaCalc.distance(s3.getA(), ec) >= er) || (OritaCalc.distance(s3.getA(), ec) >= er)) {
-                    i_change = true;
-                }
-            }
-            if (OritaCalc.distance_lineSegment(ec, s4) <= er) {
-                if ((OritaCalc.distance(s4.getA(), ec) >= er) || (OritaCalc.distance(s4.getA(), ec) >= er)) {
-                    i_change = true;
-                }
-            }
-
-            if (sikaku.totu_boundary_inside(new LineSegment(e_temp.getCenter(), e_temp.getCenter()))) {
-                i_change = true;
-            }
-
-            if (i_change) {
+            if (p.totu_boundary_inside(e_temp)) {
                 i_r = true;
                 circle.setCustomized(1);
                 circle.setCustomizedColor(sen_tokutyuu_color);
@@ -910,11 +720,6 @@ public class FoldLineSet {
         }
 
         return i_r;
-    }
-
-    public void unselect(int i) {
-        LineSegment s = lineSegments.get(i);
-        s.setSelected(0);
     }
 
     public int get_select(int i) {
@@ -929,16 +734,9 @@ public class FoldLineSet {
         setSave(memo_temp);
     }
 
-    public void deleteSelectedLineSegment() {
-        boolean i_Flag = true;
-        while (i_Flag) {
-            i_Flag = del_selected_lineSegment_symple_roop();
-        }
-    }
-
     public boolean del_selected_lineSegment_symple_roop() {
         for (int i = 1; i <= total; i++) {
-            LineSegment s= lineSegments.get(i);
+            LineSegment s = lineSegments.get(i);
             if (s.getSelected() == 2) {
                 deleteLineSegment_vertex(i);
                 return true;
@@ -952,16 +750,6 @@ public class FoldLineSet {
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
             if (OritaCalc.equal(s.getA(), s.getB())) {
-                deleteLine(i);
-                i = i - 1;
-            }
-        }
-    }
-
-    public void point_removal(double r) {
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-            if (OritaCalc.equal(s.getA(), s.getB(), r)) {
                 deleteLine(i);
                 i = i - 1;
             }
@@ -2323,7 +2111,7 @@ public class FoldLineSet {
 
     public void deleteLineSegment_vertex(int i) {//When erasing the i-th fold line, if the end point of the fold line can also be erased, erase it.
         LineSegment s = lineSegments.get(i);
-        
+
         Point pa = new Point();
         pa.set(s.getA());
         Point pb = new Point();
@@ -2538,7 +2326,7 @@ public class FoldLineSet {
 
         LineSegment si = lineSegments.get(i);
         LineSegment sj = lineSegments.get(j);
-        
+
         LineSegment addLine = new LineSegment();
         int i_ten = 0;
         if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323) {
@@ -2560,57 +2348,65 @@ public class FoldLineSet {
 
         if (i_ten == 2) {
             LineColor i_c = LineColor.BLACK_0;
-            if ((si.getColor() == LineColor.BLACK_0) && (sj.getColor() == LineColor.BLACK_0)) {
-                i_c = LineColor.BLACK_0;
-            }
-            if ((si.getColor() == LineColor.BLACK_0) && (sj.getColor() == LineColor.RED_1)) {
-                i_c = LineColor.RED_1;
-            }
-            if ((si.getColor() == LineColor.BLACK_0) && (sj.getColor() == LineColor.BLUE_2)) {
-                i_c = LineColor.BLUE_2;
-            }
-            if ((si.getColor() == LineColor.BLACK_0) && (sj.getColor() == LineColor.CYAN_3)) {
-                return;
+            LineColor siColor = si.getColor();
+            LineColor sjColor = sj.getColor();
+            switch (siColor) {
+                case BLACK_0:
+                    switch (sjColor) {
+                        case BLACK_0:
+                            i_c = LineColor.BLACK_0;
+                            break;
+                        case RED_1:
+                            i_c = LineColor.RED_1;
+                            break;
+                        case BLUE_2:
+                            i_c = LineColor.BLUE_2;
+                            break;
+                        case CYAN_3:
+                            return;
+                    }
+                    break;
+                case RED_1:
+                    switch (sjColor) {
+                        case BLACK_0:
+                            i_c = LineColor.RED_1;
+                            break;
+                        case RED_1:
+                            i_c = LineColor.RED_1;
+                            break;
+                        case BLUE_2:
+                            i_c = LineColor.BLACK_0;
+                            break;
+                        case CYAN_3:
+                            return;
+                    }
+                    break;
+                case BLUE_2:
+                    switch (sjColor) {
+                        case BLACK_0:
+                            i_c = LineColor.BLUE_2;
+                            break;
+                        case RED_1:
+                            i_c = LineColor.BLACK_0;
+                            break;
+                        case BLUE_2:
+                            i_c = LineColor.BLUE_2;
+                            break;
+                        case CYAN_3:
+                            return;
+                    }
+                    break;
+                case CYAN_3:
+                    switch (sjColor) {
+                        case BLACK_0:
+                        case CYAN_3:
+                        case BLUE_2:
+                        case RED_1:
+                            return;
+                    }
+                    break;
             }
 
-            if ((si.getColor() == LineColor.RED_1) && (sj.getColor() == LineColor.BLACK_0)) {
-                i_c = LineColor.RED_1;
-            }
-            if ((si.getColor() == LineColor.RED_1) && (sj.getColor() == LineColor.RED_1)) {
-                i_c = LineColor.RED_1;
-            }
-            if ((si.getColor() == LineColor.RED_1) && (sj.getColor() == LineColor.BLUE_2)) {
-                i_c = LineColor.BLACK_0;
-            }
-            if ((si.getColor() == LineColor.RED_1) && (sj.getColor() == LineColor.CYAN_3)) {
-                return;
-            }
-
-            if ((si.getColor() == LineColor.BLUE_2) && (sj.getColor() == LineColor.BLACK_0)) {
-                i_c = LineColor.BLUE_2;
-            }
-            if ((si.getColor() == LineColor.BLUE_2) && (sj.getColor() == LineColor.RED_1)) {
-                i_c = LineColor.BLACK_0;
-            }
-            if ((si.getColor() == LineColor.BLUE_2) && (sj.getColor() == LineColor.BLUE_2)) {
-                i_c = LineColor.BLUE_2;
-            }
-            if ((si.getColor() == LineColor.BLUE_2) && (sj.getColor() == LineColor.CYAN_3)) {
-                return;
-            }
-
-            if ((si.getColor() == LineColor.CYAN_3) && (sj.getColor() == LineColor.BLACK_0)) {
-                return;
-            }
-            if ((si.getColor() == LineColor.CYAN_3) && (sj.getColor() == LineColor.RED_1)) {
-                return;
-            }
-            if ((si.getColor() == LineColor.CYAN_3) && (sj.getColor() == LineColor.BLUE_2)) {
-                return;
-            }
-            if ((si.getColor() == LineColor.CYAN_3) && (sj.getColor() == LineColor.CYAN_3)) {
-                return;
-            }
 
             deleteLine(j);
             deleteLine(i);
@@ -2661,7 +2457,7 @@ public class FoldLineSet {
             int ix, iy;
             ix = i_s[0];
             iy = i_s[1];
-            
+
             LineSegment lix = lineSegments.get(ix);
             LineSegment liy = lineSegments.get(iy);
             int i_decision;
@@ -3005,15 +2801,6 @@ public class FoldLineSet {
         }
 
         return i_return;
-    }
-
-
-    //線分の活性化されたものを点pの座標にする
-    public void set(Point p) {
-        for (int i = 1; i <= total; i++) {
-            LineSegment si = lineSegments.get(i);
-            si.set(p);
-        }
     }
 
     //Divide the polygonal line i by the projection of the point p. However, if the projection of point p is considered to be the same as the end point of any polygonal line, nothing is done.
@@ -3451,7 +3238,7 @@ public class FoldLineSet {
         int i_tss_black = 0;
         int i_tss_cyan = 0;
 
-        SortingBox<LineSegment>  nbox = new SortingBox<>();
+        SortingBox<LineSegment> nbox = new SortingBox<>();
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
@@ -3505,7 +3292,7 @@ public class FoldLineSet {
         //t1を端点とする折線をNarabebakoに入れる
         SortingBox<LineSegment> nbox = new SortingBox<>();
         for (int i = 1; i <= total; i++) {
-            LineSegment s= lineSegments.get(i);
+            LineSegment s = lineSegments.get(i);
             if (s.getColor().isFoldingLine()) { //この段階で補助活線は除く
                 if (t1.distance(s.getA()) < hantei_kyori) {
                     nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getA(), s.getB())));

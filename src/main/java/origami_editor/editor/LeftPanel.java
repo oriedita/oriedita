@@ -220,8 +220,8 @@ public class LeftPanel {
         lengthenCrease2Button.addActionListener(e -> {
             app.setHelp("senbun_entyou_2");
 
-            app.canvasModel.setMouseMode(MouseMode.CREASE_LENGTHEN_70);
-            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.CREASE_LENGTHEN_70);
+            app.canvasModel.setMouseMode(MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
+            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
@@ -308,8 +308,8 @@ public class LeftPanel {
             app.repaintCanvas();
         });
         all_s_step_to_orisenButton.addActionListener(e -> {
-            System.out.println("i_egaki_dankai = " + app.mainDrawingWorker.i_drawing_stage);
-            System.out.println("i_kouho_dankai = " + app.mainDrawingWorker.i_candidate_stage);
+            System.out.println("i_egaki_dankai = " + app.mainDrawingWorker.getDrawingStage());
+            System.out.println("i_kouho_dankai = " + app.mainDrawingWorker.getCandidateSize());
 
             app.setHelp("all_s_step_to_orisen");
             app.mainDrawingWorker.all_s_step_to_orisen();
@@ -1545,7 +1545,7 @@ public class LeftPanel {
             senbun_henkan2Button.setSelected(m == MouseMode.CREASE_TOGGLE_MV_58);
             toAuxButton.setSelected(m == MouseMode.CREASE_MAKE_AUX_60);
             voronoiButton.setSelected(m == MouseMode.VORONOI_CREATE_62);
-            lengthenCrease2Button.setSelected(m == MouseMode.CREASE_LENGTHEN_70);
+            lengthenCrease2Button.setSelected(m == MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
             foldableLineDrawButton.setSelected(m == MouseMode.FOLDABLE_LINE_DRAW_71);
             koteimen_siteiButton.setSelected(m == MouseMode.CHANGE_STANDARD_FACE_103);
         }

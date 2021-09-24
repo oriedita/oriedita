@@ -28,28 +28,25 @@ public class MouseHandlerCircleDrawConcentricSelect extends BaseMouseHandler {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
         closest_circumference.set(d.getClosestCircleMidpoint(p));
-        d.closest_point.set(d.getClosestPoint(p));
+        Point closest_point = d.getClosestPoint(p);
 
-        if ((d.i_drawing_stage == 0) && (d.circleStep.size() == 0)) {
+        if ((d.lineStep.size() == 0) && (d.circleStep.size() == 0)) {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
-            d.i_drawing_stage = 0;
             d.circleStep.add(new Circle(closest_circumference.getCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
-        } else if ((d.i_drawing_stage == 0) && (d.circleStep.size() == 1)) {
+        } else if ((d.lineStep.size() == 0) && (d.circleStep.size() == 1)) {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
-            d.i_drawing_stage = 0;
             d.circleStep.add(new Circle(closest_circumference.getCenter(), closest_circumference.getRadius(), LineColor.PURPLE_8));
-        } else if ((d.i_drawing_stage == 0) && (d.circleStep.size() == 2)) {
+        } else if ((d.lineStep.size() == 0) && (d.circleStep.size() == 2)) {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
-            d.i_drawing_stage = 0;
             d.circleStep.add(new Circle(closest_circumference.getCenter(), closest_circumference.getRadius(), LineColor.PURPLE_8));
         }
     }
@@ -61,7 +58,7 @@ public class MouseHandlerCircleDrawConcentricSelect extends BaseMouseHandler {
 
     //マウス操作(mouseMode==49 同心円　同心円入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        if ((d.i_drawing_stage == 0) && (d.circleStep.size() == 3)) {
+        if ((d.lineStep.size() == 0) && (d.circleStep.size() == 3)) {
             Circle circle1 = d.circleStep.get(0);
             Circle circle2 = d.circleStep.get(1);
             Circle circle3 = d.circleStep.get(2);

@@ -7,8 +7,12 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerVoronoiCreate extends BaseMouseHandler{
+import java.util.ArrayList;
+import java.util.List;
+
+public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
     int i_mouse_modeA_62_point_overlapping;
+
     public MouseHandlerVoronoiCreate(DrawingWorker d) {
         super(d);
     }
@@ -21,25 +25,28 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler{
     //Function to operate the mouse (mouseMode == 62 Voronoi when the mouse is moved)
     public void mouseMoved(Point p0) {
         if (d.gridInputAssist) {
-            d.line_candidate[1].setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
+            LineSegment candidate = new LineSegment();
+            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
 
             Point p = new Point();
             p.set(d.camera.TV2object(p0));
-            d.i_candidate_stage = 1;
-            d.closest_point.set(d.getClosestPoint(p));
 
-            if (p.distance(d.closest_point) < d.selectionDistance) {
-                d.line_candidate[1].set(d.closest_point, d.closest_point);
+            Point closest_point = d.getClosestPoint(p);
+            if (p.distance(closest_point) < d.selectionDistance) {
+                candidate.set(closest_point, closest_point);
             } else {
-                d.line_candidate[1].set(p, p);
+                candidate.set(p, p);
             }
 
             if (d.i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                d.line_candidate[1].setColor(d.lineColor);
+                candidate.setColor(d.lineColor);
             }
             if (d.i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                d.line_candidate[1].setColor(d.auxLineColor);
+                candidate.setColor(d.auxLineColor);
             }
+
+            d.lineCandidate.clear();
+            d.lineCandidate.add(candidate);
 
         }
     }
@@ -49,14 +56,14 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler{
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
 
-        //Arranged i_drawing_stage to be only the conventional Voronoi mother point (yet, we have not decided whether to add the point p as line_step to the Voronoi mother point)
-        d.i_drawing_stage = d.s_step_no_1_top_continue_no_point_no_number();//Tenの数
+        //Arranged i_line_step_size to be only the conventional Voronoi mother point (yet, we have not decided whether to add the point p as line_step to the Voronoi mother point)
+        d.lineStep = s_step_no_1_top_continue_no_point_no_number();//Tenの数
 
         //Find the point-like line segment s_temp consisting of the closest points of p newly added at both ends (if there is no nearest point, both ends of s_temp are p)
         LineSegment s_temp = new LineSegment();
-        d.closest_point.set(d.getClosestPoint(p));
-        if (p.distance(d.closest_point) < d.selectionDistance) {
-            s_temp.set(d.closest_point, d.closest_point);
+        Point closest_point = d.getClosestPoint(p);
+        if (p.distance(closest_point) < d.selectionDistance) {
+            s_temp.set(closest_point, closest_point);
             s_temp.setColor(LineColor.MAGENTA_5);
         } else {
             s_temp.set(p, p);
@@ -65,22 +72,23 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler{
 
 
         //Confirm that the newly added p does not overlap with the previously added Ten
-        i_mouse_modeA_62_point_overlapping = 0;
+        int i_mouse_modeA_62_point_overlapping = -1;
 
-        for (int i = 1; i <= d.i_drawing_stage; i++) {
-            if (OritaCalc.distance(d.line_step[i].getA(), s_temp.getA()) <= d.selectionDistance) {
+        List<LineSegment> lineStep = d.lineStep;
+        for (int i = 0; i < lineStep.size(); i++) {
+            LineSegment s = lineStep.get(i);
+            if (OritaCalc.distance(s.getA(), s_temp.getA()) <= d.selectionDistance) {
                 i_mouse_modeA_62_point_overlapping = i;
             }
         }
 
         //Confirm that the newly added p does not overlap with the previously added Point.
 
-        if (i_mouse_modeA_62_point_overlapping == 0) {
+        if (i_mouse_modeA_62_point_overlapping == -1) {
 
+            d.lineStepAdd(s_temp);
+            s_temp.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
             //(ここでやっと、点pをs_stepとしてボロノイ母点に加えると決まった)
-            d.i_drawing_stage = d.i_drawing_stage + 1;
-            d.line_step[d.i_drawing_stage].set(s_temp);
-            d.line_step[d.i_drawing_stage].setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);//Circles are drawn at both ends of the line with iactive = 3. For the line of iactive = 1, a circle is drawn only at the a end. The line of iactive = 2 has a circle drawn only at the b end
 
             //今までのボロノイ図を元に、１個の新しいボロノイ母点を加えたボロノイ図を作る--------------------------------------
 
@@ -90,31 +98,29 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler{
             //順番がi_mouse_modeA_62_ten_kasanariのボロノイ母点と順番が最後(=i_egaki_dankai)のボロノイ母点を入れ替える
             //line_step[i]の入れ替え
             LineSegment S_replace = new LineSegment();
-            S_replace.set(d.line_step[i_mouse_modeA_62_point_overlapping]);
-            d.line_step[i_mouse_modeA_62_point_overlapping].set(d.line_step[d.i_drawing_stage]);
-            d.line_step[d.i_drawing_stage].set(S_replace);
+            S_replace.set(d.lineStep.get(i_mouse_modeA_62_point_overlapping));
+            d.lineStep.get(i_mouse_modeA_62_point_overlapping).set(d.lineStep.get(d.lineStep.size() - 1));
+            d.lineStep.get(d.lineStep.size() - 1).set(S_replace);
 
 
             for (int j = 1; j <= d.voronoiLineSet.getTotal(); j++) {
                 //Swapping the voronoiA of the line segment in voronoiLineSet
                 if (d.voronoiLineSet.getVoronoiA(j) == i_mouse_modeA_62_point_overlapping) {
-                    d.voronoiLineSet.setVoronoiA(j, d.i_drawing_stage);
-                } else if (d.voronoiLineSet.getVoronoiA(j) == d.i_drawing_stage) {
+                    d.voronoiLineSet.setVoronoiA(j, d.lineStep.size() - 1);
+                } else if (d.voronoiLineSet.getVoronoiA(j) == d.lineStep.size() - 1) {
                     d.voronoiLineSet.setVoronoiA(j, i_mouse_modeA_62_point_overlapping);
                 }
 
                 //Replacing the voronoiB of the line segment in voronoiLineSet
                 if (d.voronoiLineSet.getVoronoiB(j) == i_mouse_modeA_62_point_overlapping) {
-                    d.voronoiLineSet.setVoronoiB(j, d.i_drawing_stage);
-                } else if (d.voronoiLineSet.getVoronoiB(j) == d.i_drawing_stage) {
+                    d.voronoiLineSet.setVoronoiB(j, d.lineStep.size() - 1);
+                } else if (d.voronoiLineSet.getVoronoiB(j) == d.lineStep.size() - 1) {
                     d.voronoiLineSet.setVoronoiB(j, i_mouse_modeA_62_point_overlapping);
                 }
             }
 
-
-            //Deleted the Voronoi mother point of the last order (= i_drawing_stage)
-
-            d.i_drawing_stage = d.i_drawing_stage - 1;
+            //Deleted the Voronoi mother point of the last order (= i_line_step_size)
+            d.lineStep.remove(d.lineStep.size() - 1);
 
             FoldLineSet ori_v_temp = new FoldLineSet();    //修正用のボロノイ図の線を格納する
 
@@ -126,7 +132,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler{
             LineSegment s_tem2 = new LineSegment();
             for (int j = 1; j <= d.voronoiLineSet.getTotal(); j++) {
                 s_tem.set(d.voronoiLineSet.get(j));//s_temとしてボロノイ母点からのボロノイ線分か判定
-                if (s_tem.getVoronoiA() == d.i_drawing_stage + 1) {//The two Voronoi vertices of the Voronoi line segment are recorded in voronoiA and voronoiB.
+                if (s_tem.getVoronoiA() == d.lineStep.size()) {//The two Voronoi vertices of the Voronoi line segment are recorded in voronoiA and voronoiB.
                     d.voronoiLineSet.select(j);
                     for (int h = 1; h <= d.voronoiLineSet.getTotal(); h++) {
                         s_tem2.set(d.voronoiLineSet.get(h));
@@ -165,7 +171,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler{
                             ori_v_temp.addLine(lineSegment);
                         }
                     }
-                } else if (s_tem.getVoronoiB() == d.i_drawing_stage + 1) {//The two Voronoi vertices of the Voronoi line segment are recorded in iactive and color.
+                } else if (s_tem.getVoronoiB() == d.lineStep.size()) {//The two Voronoi vertices of the Voronoi line segment are recorded in iactive and color.
                     d.voronoiLineSet.select(j);
                     for (int h = 1; h <= d.voronoiLineSet.getTotal(); h++) {
                         s_tem2.set(d.voronoiLineSet.get(h));
@@ -228,14 +234,27 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler{
 
 
         for (int i = 1; i <= imax; i++) {
-            d.i_drawing_stage = d.i_drawing_stage + 1;
-            d.line_step[d.i_drawing_stage].set(d.voronoiLineSet.get(i));
-            d.line_step[d.i_drawing_stage].setActive(LineSegment.ActiveState.INACTIVE_0);
-            d.line_step[d.i_drawing_stage].setColor(LineColor.MAGENTA_5);
+            LineSegment s = new LineSegment();
+            s.set(d.voronoiLineSet.get(i));
+            s.setActive(LineSegment.ActiveState.INACTIVE_0);
+            s.setColor(LineColor.MAGENTA_5);
+            d.lineStepAdd(s);
         }
 
 
     }
+
+    List<LineSegment> s_step_no_1_top_continue_no_point_no_number() {//line_step [i] returns the number of Point (length 0) from the beginning. Returns 0 if there are no dots
+        List<LineSegment> lineSegments = new ArrayList<>();
+        for (LineSegment s : d.lineStep) {
+            if (s.getLength() > 0.00000001) {
+                break;
+            }
+            lineSegments.add(s);
+        }
+        return lineSegments;
+    }
+
     // -----------------------------------------------------------------------------
     //マウス操作(mouseMode==62ボロノイ　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {

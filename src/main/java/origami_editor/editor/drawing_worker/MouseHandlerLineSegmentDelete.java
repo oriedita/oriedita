@@ -4,7 +4,7 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerLineSegmentDelete extends BaseMouseHandler{
+public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
 
     public MouseHandlerLineSegmentDelete(DrawingWorker d) {
         super(d);
@@ -20,65 +20,15 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandler{
 
     }
 
-    //3 3 3 3 3 33333333333333333333333333333333333333333333333333333333
-    //マウス操作(mouseMode==3,23 "線分削除" でボタンを押したとき)時の作業----------------------------------------------------
-    @Override
-    public void mousePressed(Point p0) {
-        //System.out.println("(1)zzzzz foldLineSet.check4_size() = "+foldLineSet.check4_size());
-        if (d.i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
-            d.mPressed_A_box_select(p0);
-        }//折線の削除
-        if (d.i_foldLine_additional == FoldLineAdditionalInputMode.BLACK_LINE_2) {
-            d.mPressed_A_box_select(p0);
-        }//黒の折線
-        if (d.i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LIVE_LINE_3) {
-            d.mPressed_A_box_select(p0);
-        }//補助活線
-
-        if (d.i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) {
-            d.mPressed_A_box_select(p0);
-        }//補助絵線
-
-        if (d.i_foldLine_additional == FoldLineAdditionalInputMode.BOTH_4) {
-            d.mPressed_A_box_select(p0);
-        }//折線と補助活線と補助絵線
-    }
-//--------------------
-
-    //マウス操作(mouseMode==3,23でドラッグしたとき)を行う関数----------------------------------------------------
-    @Override
-    public void mouseDragged(Point p0) {
-        //System.out.println("(2)zzzzz foldLineSet.check4_size() = "+foldLineSet.check4_size());
-        if (d.i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
-            d.mDragged_A_box_select(p0);
-        }
-        if (d.i_foldLine_additional == FoldLineAdditionalInputMode.BLACK_LINE_2) {
-            d.mDragged_A_box_select(p0);
-        }
-        if (d.i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LIVE_LINE_3) {
-            d.mDragged_A_box_select(p0);
-        }
-
-        if (d.i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) {
-            d.mDragged_A_box_select(p0);
-        }
-
-        if (d.i_foldLine_additional == FoldLineAdditionalInputMode.BOTH_4) {
-            d.mDragged_A_box_select(p0);
-        }
-    }
-
     //マウス操作(mouseMode==3,23 でボタンを離したとき)を行う関数----------------------------------------------------
     @Override
     public void mouseReleased(Point p0) {//折線と補助活線と円
         Point p = new Point();
-        //System.out.println("(3_1)zzzzz foldLineSet.check4_size() = "+foldLineSet.check4_size());
-        //Ten p =new Ten();
         p.set(d.camera.TV2object(p0));
-        d.i_drawing_stage = 0;
+        d.lineStep.clear();
 
         //最寄の一つを削除
-        if (d.p19_1.distance(p0) <= 0.000001) {//最寄の一つを削除
+        if (selectionStart.distance(p0) <= 0.000001) {//最寄の一つを削除
             int i_removal_mode;//i_removal_mode is defined and declared here
             switch (d.i_foldLine_additional) {
                 case POLY_LINE_0:
@@ -175,9 +125,9 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandler{
 
 
         //四角枠内の削除 //p19_1はselectの最初のTen。この条件は最初のTenと最後の点が遠いので、四角を発生させるということ。
-        if (d.p19_1.distance(p0) > 0.000001) {
-            if ((d.i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) || (d.i_foldLine_additional == FoldLineAdditionalInputMode.BOTH_4)) { //折線の削除	//D_nisuru(p19_1,p0)で折線だけが削除される。
-                if (d.deleteInside_foldingLine(d.p19_1, p0)) {
+        if (selectionStart.distance(p0) > 0.000001) {
+            if ((d.i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) || (d.i_foldLine_additional == FoldLineAdditionalInputMode.BOTH_4)) { //折線の削除	//D_nisuru(selectionStart,p0)で折線だけが削除される。
+                if (d.deleteInside_foldingLine(selectionStart, p0)) {
                     d.organizeCircles();
                     d.record();
                 }
@@ -185,7 +135,7 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandler{
 
 
             if (d.i_foldLine_additional == FoldLineAdditionalInputMode.BLACK_LINE_2) {  //Delete only the black polygonal line
-                if (d.deleteInside_edge(d.p19_1, p0)) {
+                if (d.deleteInside_edge(selectionStart, p0)) {
                     d.organizeCircles();
                     d.record();
                 }
@@ -193,14 +143,14 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandler{
 
 
             if ((d.i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LIVE_LINE_3) || (d.i_foldLine_additional == FoldLineAdditionalInputMode.BOTH_4)) {  //Auxiliary live line // Currently it is recorded for undo even if it is not deleted 20161218
-                if (d.deleteInside_aux(d.p19_1, p0)) {
+                if (d.deleteInside_aux(selectionStart, p0)) {
                     d.organizeCircles();
                     d.record();
                 }
             }
 
             if ((d.i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) || (d.i_foldLine_additional == FoldLineAdditionalInputMode.BOTH_4)) { //補助絵線	//現状では削除しないときもUNDO用に記録されてしまう20161218
-                if (d.deleteInside(d.p19_1, p0)) {
+                if (d.deleteInside(selectionStart, p0)) {
                     d.record();
                 }
             }

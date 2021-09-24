@@ -6,7 +6,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerPolygonSetNoCorners extends BaseMouseHandler{
+public class MouseHandlerPolygonSetNoCorners extends BaseMouseHandler {
 
     public MouseHandlerPolygonSetNoCorners(DrawingWorker d) {
         super(d);
@@ -20,51 +20,45 @@ public class MouseHandlerPolygonSetNoCorners extends BaseMouseHandler{
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mouseMoved(Point p0) {
         if (d.gridInputAssist) {
-            d.line_candidate[1].setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-            d.i_candidate_stage = 0;
+            d.lineCandidate.clear();
+            LineSegment candidate = new LineSegment();
+            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
             Point p = new Point();
             p.set(d.camera.TV2object(p0));
-            d.closest_point.set(d.getClosestPoint(p));
-            if (p.distance(d.closest_point) < d.selectionDistance) {
-                d.i_candidate_stage = 1;
-                d.line_candidate[1].set(d.closest_point, d.closest_point);
-                d.line_candidate[1].setColor(d.lineColor);
+            Point closestPoint = d.getClosestPoint(p);
+            if (p.distance(closestPoint) < d.selectionDistance) {
+                candidate.set(closestPoint, closestPoint);
+                candidate.setColor(d.lineColor);
+
+                d.lineCandidate.add(candidate);
             }
         }
     }
 
     //マウス操作(mouseMode==29正多角形入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        d.line_step[1].setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
 
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
 
-        if (d.i_drawing_stage == 0) {    //第1段階として、点を選択
-            d.closest_point.set(d.getClosestPoint(p));
-            if (p.distance(d.closest_point) < d.selectionDistance) {
-                d.i_drawing_stage = d.i_drawing_stage + 1;
-                d.line_step[d.i_drawing_stage].set(d.closest_point, d.closest_point);
-                d.line_step[d.i_drawing_stage].setColor(LineColor.MAGENTA_5);
-            }
-            return;
-        }
+        Point closestPoint = d.getClosestPoint(p);
 
-        if (d.i_drawing_stage == 1) {    //第2段階として、点を選択
-            d.closest_point.set(d.getClosestPoint(p));
-            if (p.distance(d.closest_point) >= d.selectionDistance) {
-                d.i_drawing_stage = 0;
+        if (d.lineStep.size() == 0) {    //第1段階として、点を選択
+            if (p.distance(closestPoint) < d.selectionDistance) {
+                d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.MAGENTA_5));
+                d.lineStep.get(0).setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
+            }
+        } else if (d.lineStep.size() == 1) {    //第2段階として、点を選択
+            if (p.distance(closestPoint) >= d.selectionDistance) {
+                d.lineStep.clear();
                 return;
-            }
-            if (p.distance(d.closest_point) < d.selectionDistance) {
+            } else if (p.distance(closestPoint) < d.selectionDistance) {
 
-                d.i_drawing_stage = d.i_drawing_stage + 1;
-                d.line_step[d.i_drawing_stage].set(d.closest_point, d.closest_point);
-                d.line_step[d.i_drawing_stage].setColor(LineColor.fromNumber(d.i_drawing_stage));
-                d.line_step[1].setB(d.line_step[2].getB());
+                d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.fromNumber(d.lineStep.size() + 1)));
+                d.lineStep.get(0).setB(d.lineStep.get(1).getB());
             }
-            if (d.line_step[1].getLength() < 0.00000001) {
-                d.i_drawing_stage = 0;
+            if (d.lineStep.get(0).getLength() < 0.00000001) {
+                d.lineStep.clear();
             }
         }
     }
@@ -75,13 +69,12 @@ public class MouseHandlerPolygonSetNoCorners extends BaseMouseHandler{
 
     //マウス操作(mouseMode==29正多角形入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        if (d.i_drawing_stage == 2) {
-            d.i_drawing_stage = 0;
+        if (d.lineStep.size() == 2) {
             LineSegment s_tane = new LineSegment();
             LineSegment s_deki = new LineSegment();
 
 
-            s_tane.set(d.line_step[1]);
+            s_tane.set(d.lineStep.get(0));
             s_tane.setColor(d.lineColor);
             d.addLineSegment(s_tane);
             for (int i = 2; i <= d.numPolygonCorners; i++) {
@@ -93,6 +86,8 @@ public class MouseHandlerPolygonSetNoCorners extends BaseMouseHandler{
             }
             d.foldLineSet.unselect_all();
             d.record();
+
+            d.lineStep.clear();
         }
     }
 }

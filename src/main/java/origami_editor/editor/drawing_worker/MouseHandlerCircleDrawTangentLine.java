@@ -6,7 +6,6 @@ import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
     Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
-    LineSegment closest_step_lineSegment = new LineSegment(100000.0, 100000.0, 100000.0, 100000.1); //マウス最寄のstep線分(線分追加のための準備をするための線分)。なお、ここで宣言する必要はないので、どこで宣言すべきか要検討20161113
 
     public MouseHandlerCircleDrawTangentLine(DrawingWorker d) {
         super(d);
@@ -29,26 +28,27 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
         closest_circumference.set(d.getClosestCircleMidpoint(p));
 
         if (d.circleStep.size() == 0 || d.circleStep.size() == 1) {
-            d.i_drawing_stage = 0;
+            d.lineStep.clear();
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
-
-            d.i_drawing_stage = 0;
 
             Circle stepCircle = new Circle();
             stepCircle.set(closest_circumference);
             stepCircle.setColor(LineColor.GREEN_6);
 
             d.circleStep.add(stepCircle);
-        } else if (d.i_drawing_stage > 1) {//			i_egaki_dankai=0;i_circle_drawing_stage=1;
-            closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.i_drawing_stage));
+        } else if (d.lineStep.size() > 1) {//			i_egaki_dankai=0;i_circle_drawing_stage=1;
+            LineSegment closest_step_lineSegment = new LineSegment();
+            closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.lineStep.size()));
 
             if (OritaCalc.distance_lineSegment(p, closest_step_lineSegment) > d.selectionDistance) {
                 return;
             }
-            d.line_step[1].set(closest_step_lineSegment);
-            d.i_drawing_stage = 1;
+
+            d.lineStep.clear();
+
+            d.lineStepAdd(closest_step_lineSegment);
         }
     }
 
@@ -58,7 +58,7 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if ((d.i_drawing_stage == 0) && (d.circleStep.size() == 2)) {
+        if ((d.lineStep.size() == 0) && (d.circleStep.size() == 2)) {
             Circle firstCircle = d.circleStep.get(0);
             Circle secondCircle = d.circleStep.get(1);
 
@@ -79,13 +79,11 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
 
             if (c1.distance(c2) < 0.000001) {
                 d.circleStep.clear();
-                d.i_drawing_stage = 0;
                 return;
             }//接線0本の場合
 
             if ((xp * xp + yp * yp) < (r1 - r2) * (r1 - r2)) {
                 d.circleStep.clear();
-                d.i_drawing_stage = 0;
                 return;
             }//接線0本の場合
 
@@ -94,12 +92,9 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
                 kouten.set(OritaCalc.internalDivisionRatio(c1, c2, -r1, r2));
                 StraightLine ty = new StraightLine(c1, kouten);
                 ty.orthogonalize(kouten);
-                d.line_step[1].set(OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(new Circle(kouten, (r1 + r2) / 2.0, LineColor.BLACK_0), ty));
 
-                d.i_drawing_stage = 1;
-            }
-
-            if (((r1 - r2) * (r1 - r2) < (xp * xp + yp * yp)) && ((xp * xp + yp * yp) < (r1 + r2) * (r1 + r2))) {//外接線2本の場合
+                d.lineStepAdd(OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(new Circle(kouten, (r1 + r2) / 2.0, LineColor.BLACK_0), ty));
+            } else if (((r1 - r2) * (r1 - r2) < (xp * xp + yp * yp)) && ((xp * xp + yp * yp) < (r1 + r2) * (r1 + r2))) {//外接線2本の場合
                 double xq1 = r1 * (xp * (r1 - r2) + yp * Math.sqrt((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2))) / (xp * xp + yp * yp);//共通外接線
                 double yq1 = r1 * (yp * (r1 - r2) - xp * Math.sqrt((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2))) / (xp * xp + yp * yp);//共通外接線
                 double xq2 = r1 * (xp * (r1 - r2) - yp * Math.sqrt((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2))) / (xp * xp + yp * yp);//共通外接線
@@ -115,15 +110,9 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
                 StraightLine t2 = new StraightLine(x1, y1, xr2, yr2);
                 t2.orthogonalize(new Point(xr2, yr2));
 
-                d.line_step[1].set(new Point(xr1, yr1), OritaCalc.findProjection(t1, new Point(x2, y2)));
-                d.line_step[1].setColor(LineColor.PURPLE_8);
-                d.line_step[2].set(new Point(xr2, yr2), OritaCalc.findProjection(t2, new Point(x2, y2)));
-                d.line_step[2].setColor(LineColor.PURPLE_8);
-
-                d.i_drawing_stage = 2;
-            }
-
-            if (Math.abs((xp * xp + yp * yp) - (r1 + r2) * (r1 + r2)) < 0.0000001) {//外接線2本と内接線1本の場合
+                d.lineStepAdd(new LineSegment(new Point(xr1, yr1), OritaCalc.findProjection(t1, new Point(x2, y2)), LineColor.PURPLE_8));
+                d.lineStepAdd(new LineSegment(new Point(xr2, yr2), OritaCalc.findProjection(t2, new Point(x2, y2)), LineColor.PURPLE_8));
+            } else if (Math.abs((xp * xp + yp * yp) - (r1 + r2) * (r1 + r2)) < 0.0000001) {//外接線2本と内接線1本の場合
                 double xq1 = r1 * (xp * (r1 - r2) + yp * Math.sqrt((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2))) / (xp * xp + yp * yp);//共通外接線
                 double yq1 = r1 * (yp * (r1 - r2) - xp * Math.sqrt((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2))) / (xp * xp + yp * yp);//共通外接線
                 double xq2 = r1 * (xp * (r1 - r2) - yp * Math.sqrt((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2))) / (xp * xp + yp * yp);//共通外接線
@@ -139,25 +128,17 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
                 StraightLine t2 = new StraightLine(x1, y1, xr2, yr2);
                 t2.orthogonalize(new Point(xr2, yr2));
 
-                d.line_step[1].set(new Point(xr1, yr1), OritaCalc.findProjection(t1, new Point(x2, y2)));
-                d.line_step[1].setColor(LineColor.PURPLE_8);
-                d.line_step[2].set(new Point(xr2, yr2), OritaCalc.findProjection(t2, new Point(x2, y2)));
-                d.line_step[2].setColor(LineColor.PURPLE_8);
-
-                // -----------------------
+                d.lineStepAdd(new LineSegment(new Point(xr1, yr1), OritaCalc.findProjection(t1, new Point(x2, y2)), LineColor.PURPLE_8));
+                d.lineStepAdd(new LineSegment(new Point(xr2, yr2), OritaCalc.findProjection(t2, new Point(x2, y2)), LineColor.PURPLE_8));
 
                 Point kouten = new Point();
                 kouten.set(OritaCalc.internalDivisionRatio(c1, c2, r1, r2));
                 StraightLine ty = new StraightLine(c1, kouten);
                 ty.orthogonalize(kouten);
-                d.line_step[3].set(OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(new Circle(kouten, (r1 + r2) / 2.0, LineColor.BLACK_0), ty));
-                d.line_step[3].setColor(LineColor.PURPLE_8);
-                // -----------------------
-
-                d.i_drawing_stage = 3;
-            }
-
-            if ((r1 + r2) * (r1 + r2) < (xp * xp + yp * yp)) {//外接線2本と内接線2本の場合
+                LineSegment s = OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(new Circle(kouten, (r1 + r2) / 2.0, LineColor.BLACK_0), ty);
+                s.setColor(LineColor.PURPLE_8);
+                d.lineStepAdd(s);
+            } else if ((r1 + r2) * (r1 + r2) < (xp * xp + yp * yp)) {//外接線2本と内接線2本の場合
                 //             ---------------------------------------------------------------
                 //                                     -------------------------------------
                 //                 -------               -------------   -------   -------       -------------
@@ -189,26 +170,21 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
                 StraightLine t4 = new StraightLine(x1, y1, xr4, yr4);
                 t4.orthogonalize(new Point(xr4, yr4));
 
-                d.line_step[1].set(new Point(xr1, yr1), OritaCalc.findProjection(t1, new Point(x2, y2)));
-                d.line_step[1].setColor(LineColor.PURPLE_8);
-                d.line_step[2].set(new Point(xr2, yr2), OritaCalc.findProjection(t2, new Point(x2, y2)));
-                d.line_step[2].setColor(LineColor.PURPLE_8);
-                d.line_step[3].set(new Point(xr3, yr3), OritaCalc.findProjection(t3, new Point(x2, y2)));
-                d.line_step[3].setColor(LineColor.PURPLE_8);
-                d.line_step[4].set(new Point(xr4, yr4), OritaCalc.findProjection(t4, new Point(x2, y2)));
-                d.line_step[4].setColor(LineColor.PURPLE_8);
-
-                d.i_drawing_stage = 4;
+                d.lineStepAdd(new LineSegment(new Point(xr1, yr1), OritaCalc.findProjection(t1, new Point(x2, y2)), LineColor.PURPLE_8));
+                d.lineStepAdd(new LineSegment(new Point(xr2, yr2), OritaCalc.findProjection(t2, new Point(x2, y2)), LineColor.PURPLE_8));
+                d.lineStepAdd(new LineSegment(new Point(xr3, yr3), OritaCalc.findProjection(t3, new Point(x2, y2)), LineColor.PURPLE_8));
+                d.lineStepAdd(new LineSegment(new Point(xr4, yr4), OritaCalc.findProjection(t4, new Point(x2, y2)), LineColor.PURPLE_8));
             }
         }
 
-        if (d.i_drawing_stage == 1) {
-
-            d.i_drawing_stage = 0;
+        if (d.lineStep.size() == 1) {
             d.circleStep.clear();
 
-            d.line_step[1].setColor(d.lineColor);
-            d.addLineSegment(d.line_step[1]);
+            LineSegment s = d.lineStep.get(0);
+            s.setColor(d.lineColor);
+            d.addLineSegment(s);
+
+            d.lineStep.clear();
             d.record();
         }
     }

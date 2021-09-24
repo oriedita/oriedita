@@ -17,54 +17,55 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
 
     public void mouseMoved(Point p0) {
         if (d.gridInputAssist) {
-            d.line_candidate[1].setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
+            d.lineCandidate.clear();
 
             Point p = new Point();
             p.set(d.camera.TV2object(p0));
-            d.i_candidate_stage = 1;
-            d.closest_point.set(d.getClosestPoint(p));
+            Point closestPoint = d.getClosestPoint(p);
 
-            if (p.distance(d.closest_point) < d.selectionDistance) {
-                d.line_candidate[1].set(d.closest_point, d.closest_point);
+            LineSegment candidate = new LineSegment();
+            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
+
+            if (p.distance(closestPoint) < d.selectionDistance) {
+                candidate.set(closestPoint, closestPoint);
             } else {
-                d.line_candidate[1].set(p, p);
+                candidate.set(p, p);
             }
 
             if (d.i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                d.line_candidate[1].setColor(d.lineColor);
+                candidate.setColor(d.lineColor);
             }
             if (d.i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                d.line_candidate[1].setColor(d.auxLineColor);
+                candidate.setColor(d.auxLineColor);
             }
 
+            d.lineCandidate.add(candidate);
         }
     }
 
     public void mousePressed(Point p0) {
-        d.i_drawing_stage = 1;
-        d.line_step[1].setActive(LineSegment.ActiveState.ACTIVE_B_2);
+        LineSegment s = new LineSegment();
+        s.setActive(LineSegment.ActiveState.ACTIVE_B_2);
+
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
 
-        d.closest_point.set(d.getClosestPoint(d.p));
-        if (p.distance(d.closest_point) < d.selectionDistance) {
-            d.line_step[1].set(d.p, d.closest_point);
-            if (d.i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                d.line_step[1].setColor(d.lineColor);
-            }
-            if (d.i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                d.line_step[1].setColor(d.auxLineColor);
-            }
-            return;
+        Point closestPoint = d.getClosestPoint(p);
+
+        if (p.distance(closestPoint) < d.selectionDistance) {
+            s.set(p, closestPoint);
+        } else {
+            s.set(p, p);
         }
 
-        d.line_step[1].set(p, p);
         if (d.i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
-            d.line_step[1].setColor(d.lineColor);
+            s.setColor(d.lineColor);
         }
         if (d.i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) {
-            d.line_step[1].setColor(d.auxLineColor);
+            s.setColor(d.auxLineColor);
         }
+
+        d.lineStepAdd(s);
     }
 
     public void mouseDragged(Point p0) {
@@ -72,46 +73,54 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
         p.set(d.camera.TV2object(p0));
 
         if (!d.gridInputAssist) {
-            d.line_step[1].setA(p);
+            d.lineStep.get(0).setA(p);
         }
 
         if (d.gridInputAssist) {
-            d.closest_point.set(d.getClosestPoint(p));
-            d.i_candidate_stage = 1;
-            if (p.distance(d.closest_point) < d.selectionDistance) {
-                d.line_candidate[1].set(d.closest_point, d.closest_point);
+            d.lineCandidate.clear();
+
+            Point closestPoint = d.getClosestPoint(p);
+
+            LineSegment candidate = new LineSegment();
+            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
+
+            if (p.distance(closestPoint) < d.selectionDistance) {
+                candidate.set(closestPoint, closestPoint);
             } else {
-                d.line_candidate[1].set(p, p);
+                candidate.set(p, p);
             }
             if (d.i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                d.line_candidate[1].setColor(d.lineColor);
+                candidate.setColor(d.lineColor);
             }
             if (d.i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                d.line_candidate[1].setColor(d.auxLineColor);
+                candidate.setColor(d.auxLineColor);
             }
-            d.line_step[1].setA(d.line_candidate[1].getA());
+            d.lineCandidate.add(candidate);
+            d.lineStep.get(0).setA(candidate.getA());
         }
     }
 
     public void mouseReleased(Point p0) {
         Point p = new Point();
 
-        d.i_drawing_stage = 0;
         p.set(d.camera.TV2object(p0));
-        d.line_step[1].setA(p);
-        d.closest_point.set(d.getClosestPoint(p));
-        if (p.distance(d.closest_point) <= d.selectionDistance) {
-            d.line_step[1].setA(d.closest_point);
+        d.lineStep.get(0).setA(p);
+        Point closestPoint = d.getClosestPoint(p);
+
+        if (p.distance(closestPoint) <= d.selectionDistance) {
+            d.lineStep.get(0).setA(closestPoint);
         }
-        if (d.line_step[1].getLength() > 0.00000001) {
+        if (d.lineStep.get(0).getLength() > 0.00000001) {
             if (d.i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                d.addLineSegment(d.line_step[1]);
+                d.addLineSegment(d.lineStep.get(0));
                 d.record();
             }
             if (d.i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                d.addLineSegment_auxiliary(d.line_step[1]);
+                d.addLineSegment_auxiliary(d.lineStep.get(0));
                 d.auxRecord();
             }
         }
+
+        d.lineStep.clear();
     }
 }

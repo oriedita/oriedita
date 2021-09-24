@@ -313,8 +313,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         if (mouseModeHandlers.containsKey(mouseMode)) {
             mouseModeHandlers.get(mouseMode).mouseMoved(p);
-            repaint();
-            return;
         }
 
         repaint();
@@ -332,28 +330,25 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //---------ボタンの種類による動作変更-----------------------------------------
         switch (btn) {
             case MouseEvent.BUTTON1:
-                if (e.getClickCount() == 3) {
+                if (e.getClickCount() == 3 && mouseMode == MouseMode.CREASE_SELECT_19 && app.ckbox_add_frame_SelectAnd3click_isSelected) {
                     System.out.println("3_Click");//("トリプルクリック"
-                    if (mouseMode == MouseMode.CREASE_SELECT_19) {
-                        if (app.ckbox_add_frame_SelectAnd3click_isSelected) {
-                            switch (app.canvasModel.getSelectionOperationMode()) {
-                                case MOVE_1:
-                                    app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
-                                    break;
-                                case MOVE4P_2:
-                                    app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
-                                    break;
-                                case COPY_3:
-                                    app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
-                                    break;
-                                case COPY4P_4:
-                                    app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
-                                    break;
-                                case MIRROR_5:
-                                    app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
-                                    break;
-                            }
-                        }
+
+                    switch (app.canvasModel.getSelectionOperationMode()) {
+                        case MOVE_1:
+                            app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
+                            break;
+                        case MOVE4P_2:
+                            app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
+                            break;
+                        case COPY_3:
+                            app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
+                            break;
+                        case COPY4P_4:
+                            app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
+                            break;
+                        case MIRROR_5:
+                            app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
+                            break;
                     }
                 }
                 break;
@@ -400,16 +395,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
                 return;
         }
-        //-----------------------------System.out.println("a");----------------------
-
-        //}  //20201010　コメントアウト
 
         es1.setCamera(creasePatternCamera);
 
         if (mouseModeHandlers.containsKey(mouseMode)) {
             mouseModeHandlers.get(mouseMode).mousePressed(p);
-            repaint();
-            return;
         }
 
         repaint();
@@ -422,8 +412,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             Point p = new Point(app.e2p(e));
             app.mouse_object_position(p);
 
-            //if (ckbox_mouse_settei.isSelected()){  //20201010　コメントアウト
-            //---------ボタンの種類による動作変更-----------------------------------------
             switch (btn) {
                 case MouseEvent.BUTTON1:
                     break;
@@ -463,15 +451,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     repaint();
                     return;
             }
-            //}  //20201010　コメントアウト
 
             es1.setCamera(creasePatternCamera);
 
             if (mouseModeHandlers.containsKey(mouseMode)) {
                 mouseModeHandlers.get(mouseMode).mouseDragged(p);
-
-                repaint();
-                return;
             }
 
             repaint();
@@ -558,7 +542,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             es1.setCamera(creasePatternCamera);
             if (mouseModeHandlers.containsKey(mouseMode)) {
                 mouseModeHandlers.get(mouseMode).mouseReleased(p);
-                return;
             }
 
             repaint();

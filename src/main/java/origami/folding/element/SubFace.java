@@ -289,7 +289,7 @@ public class SubFace {//This class folds the development view and estimates the 
     }
 
 
-    //Enter the information due to the overlap of the SubFace surfaces in the upper and lower tables. This is used to find the valid number of SubFaces during the initial calculation preparation.
+    // Enter the information due to the overlap of the SubFace surfaces in the upper and lower tables. This is used to find the valid number of SubFaces during the initial calculation preparation.
     public void hierarchyList_ni_subFace_no_manager_wo_input(HierarchyList hierarchyList) {
         for (int i = 1; i <= faceIdCount; i++) {
             for (int j = 1; j <= i - 1; j++) {

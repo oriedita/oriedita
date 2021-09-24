@@ -7,7 +7,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHandler {
-    Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
 
 
     public MouseHandlerCircleDrawConcentricTwoCircleSelect(DrawingWorker d) {
@@ -27,22 +26,24 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHa
     public void mousePressed(Point p0) {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
+
+        Circle closest_circumference = new Circle(); //Circle with the circumference closest to the mouse
         closest_circumference.set(d.getClosestCircleMidpoint(p));
-        d.closest_point.set(d.getClosestPoint(p));
+        Point closest_point = d.getClosestPoint(p);
 
-        if ((d.i_drawing_stage == 0) && (d.circleStep.size() == 0)) {
+        if ((d.lineStep.size() == 0) && (d.circleStep.size() == 0)) {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
-            d.i_drawing_stage = 0;
+            d.lineStep.clear();
             d.circleStep.add(new Circle(closest_circumference.getCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
-        } else if ((d.i_drawing_stage == 0) && (d.circleStep.size() == 1)) {
+        } else if ((d.lineStep.size() == 0) && (d.circleStep.size() == 1)) {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
-            d.i_drawing_stage = 0;
+            d.lineStep.clear();
             d.circleStep.add(new Circle(closest_circumference.getCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
         }
     }
@@ -53,7 +54,7 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHa
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if ((d.i_drawing_stage == 0) && (d.circleStep.size() == 2)) {
+        if ((d.lineStep.size() == 0) && (d.circleStep.size() == 2)) {
             Circle circle1 = d.circleStep.get(0);
             Circle circle2 = d.circleStep.get(1);
             d.circleStep.clear();

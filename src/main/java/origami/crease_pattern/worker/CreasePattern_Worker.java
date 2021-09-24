@@ -339,8 +339,8 @@ public class CreasePattern_Worker {
         boolean flag1;
         double x, y;
 
-        double[] addPointX = new double[lineSegmentSet.getNumLineSegments() + 1]; // If you do not add +1 you will get an error when the number of faces is 1.
-        double[] addPointY = new double[lineSegmentSet.getNumLineSegments() + 1]; // If you do not add +1 you will get an error when the number of faces is 1.
+        double[] addPointX = new double[lineSegmentSet.getNumLineSegments() + 1 + 1]; // If you do not add +1 you will get an error when the number of faces is 1.
+        double[] addPointY = new double[lineSegmentSet.getNumLineSegments() + 1 + 1]; // If you do not add +1 you will get an error when the number of faces is 1.
         int addPointNum = 0;
 
         for (int i = 0; i < lineSegmentSet.getNumLineSegments(); i++) {
@@ -520,19 +520,26 @@ public class CreasePattern_Worker {
         int radius = 10;//半径
         g.setColor(new Color(0, 255, 0, 50));//緑色
 
-        if (ip4 == FoldedFigure.State.FRONT_0) {
-            point.set(cam_front.object2TV(pointSet.getPoint(i)));
-            g.fillOval(gx(point.getX()) - radius, gy(point.getY()) - radius, 2 * radius, 2 * radius); //円
-        }
-        if (ip4 == FoldedFigure.State.BACK_1) {
-            point.set(cam_rear.object2TV(pointSet.getPoint(i)));
-            g.fillOval(gx(point.getX()) - radius, gy(point.getY()) - radius, 2 * radius, 2 * radius); //円
-        }
-        if ((ip4 == FoldedFigure.State.BOTH_2) || (ip4 == FoldedFigure.State.TRANSPARENT_3)) {
-            point.set(cam_front.object2TV(pointSet.getPoint(i)));
-            g.fillOval(gx(point.getX()) - radius, gy(point.getY()) - radius, 2 * radius, 2 * radius); //円
-            point.set(cam_rear.object2TV(pointSet.getPoint(i)));
-            g.fillOval(gx(point.getX()) - radius, gy(point.getY()) - radius, 2 * radius, 2 * radius); //円
+        switch (ip4) {
+            case FRONT_0:
+                point.set(cam_front.object2TV(pointSet.getPoint(i)));
+                g.fillOval(gx(point.getX()) - radius, gy(point.getY()) - radius, 2 * radius, 2 * radius); //円
+
+                break;
+            case BACK_1:
+                point.set(cam_rear.object2TV(pointSet.getPoint(i)));
+                g.fillOval(gx(point.getX()) - radius, gy(point.getY()) - radius, 2 * radius, 2 * radius); //円
+
+                break;
+            case BOTH_2:
+            case TRANSPARENT_3:
+                point.set(cam_front.object2TV(pointSet.getPoint(i)));
+                g.fillOval(gx(point.getX()) - radius, gy(point.getY()) - radius, 2 * radius, 2 * radius); //円
+
+                point.set(cam_rear.object2TV(pointSet.getPoint(i)));
+                g.fillOval(gx(point.getX()) - radius, gy(point.getY()) - radius, 2 * radius, 2 * radius); //円
+
+                break;
         }
     }
 
@@ -550,19 +557,26 @@ public class CreasePattern_Worker {
                 g.setColor(Color.blue);
             }
 
-            if (ip4 == FoldedFigure.State.FRONT_0) {
-                s_tv.set(cam_front.object2TV(pointSet.getLineSegmentFromLineId(i)));
-                g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //Straight line
-            }
-            if (ip4 == FoldedFigure.State.BACK_1) {
-                s_tv.set(cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i)));
-                g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //Straight line
-            }
-            if ((ip4 == FoldedFigure.State.BOTH_2) || (ip4 == FoldedFigure.State.TRANSPARENT_3)) {
-                s_tv.set(cam_front.object2TV(pointSet.getLineSegmentFromLineId(i)));
-                g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //Straight line
-                s_tv.set(cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i)));
-                g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //Straight line
+            switch (ip4) {
+                case FRONT_0:
+                    s_tv.set(cam_front.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //Straight line
+
+                    break;
+                case BACK_1:
+                    s_tv.set(cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //Straight line
+
+                    break;
+                case BOTH_2:
+                case TRANSPARENT_3:
+                    s_tv.set(cam_front.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //Straight line
+
+                    s_tv.set(cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //Straight line
+
+                    break;
             }
         }
     }

@@ -1,15 +1,13 @@
 package origami_editor.editor.drawing_worker;
 
 import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerDisplayLengthBetweenPoints1 extends BaseMouseHandler{
-    private final MouseHandlerPolygonSetNoCorners mouseHandlerPolygonSetNoCorners;
-
+public class MouseHandlerDisplayLengthBetweenPoints1 extends BaseMouseHandlerInputRestricted {
     public MouseHandlerDisplayLengthBetweenPoints1(DrawingWorker d) {
         super(d);
-        mouseHandlerPolygonSetNoCorners = new MouseHandlerPolygonSetNoCorners(d);
     }
 
     @Override
@@ -17,20 +15,13 @@ public class MouseHandlerDisplayLengthBetweenPoints1 extends BaseMouseHandler{
         return MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53;
     }
 
-    //マウス操作(マウスを動かしたとき)を行う関数
-    public void mouseMoved(Point p0) {
-        mouseHandlerPolygonSetNoCorners.mouseMoved(p0);
-    }//近い既存点のみ表示
-
     //Work when operating the mouse (when the button is pressed)
     public void mousePressed(Point p0) {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-        d.closest_point.set(d.getClosestPoint(p));
-        if (p.distance(d.closest_point) < d.selectionDistance) {
-            d.i_drawing_stage = d.i_drawing_stage + 1;
-            d.line_step[d.i_drawing_stage].set(d.closest_point, d.closest_point);
-            d.line_step[d.i_drawing_stage].setColor(d.lineColor);
+        Point closest_point = d.getClosestPoint(p);
+        if (p.distance(closest_point) < d.selectionDistance) {
+            d.lineStepAdd(new LineSegment(closest_point, closest_point, d.lineColor));
         }
     }
 
@@ -40,9 +31,9 @@ public class MouseHandlerDisplayLengthBetweenPoints1 extends BaseMouseHandler{
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if (d.i_drawing_stage == 2) {
-            d.i_drawing_stage = 0;
-            d.app.measuresModel.setMeasuredLength1(OritaCalc.distance(d.line_step[1].getA(), d.line_step[2].getA()) * (double) d.grid.getGridSize() / 400.0);
+        if (d.lineStep.size() == 2) {
+            d.app.measuresModel.setMeasuredLength1(OritaCalc.distance(d.lineStep.get(0).getA(), d.lineStep.get(1).getA()) * (double) d.grid.getGridSize() / 400.0);
+            d.lineStep.clear();
         }
     }
 }

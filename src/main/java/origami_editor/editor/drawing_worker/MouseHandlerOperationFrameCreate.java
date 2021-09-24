@@ -7,7 +7,7 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerOperationFrameCreate extends BaseMouseHandler{
+public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
     DrawingWorker.OperationFrameMode operationFrameMode;
 
     public MouseHandlerOperationFrameCreate(DrawingWorker d) {
@@ -22,20 +22,19 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler{
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mouseMoved(Point p0) {
         if (d.gridInputAssist) {
-            d.line_candidate[1].setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
+            d.lineCandidate.clear();
 
             Point p = new Point();
             p.set(d.camera.TV2object(p0));
-            d.i_candidate_stage = 1;
-            d.closest_point.set(d.getClosestPoint(p));
+            Point closest_point = d.getClosestPoint(p);
 
-            if (p.distance(d.closest_point) < d.selectionDistance) {
-                d.line_candidate[1].set(d.closest_point, d.closest_point);
+            if (p.distance(closest_point) < d.selectionDistance) {
+                d.lineCandidate.add(new LineSegment(closest_point, closest_point, LineColor.GREEN_6));
             } else {
-                d.line_candidate[1].set(p, p);
+                d.lineCandidate.add(new LineSegment(p, p, LineColor.GREEN_6));
             }
 
-            d.line_candidate[1].setColor(LineColor.GREEN_6);
+            d.lineCandidate.get(0).setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
         }
     }
 
@@ -56,10 +55,10 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler{
         double distance_min = 100000.0;
 
         operationFrameMode = DrawingWorker.OperationFrameMode.NONE_0;
-        if (d.i_drawing_stage == 0) {
+        if (d.lineStep.size() == 0) {
             operationFrameMode = DrawingWorker.OperationFrameMode.CREATE_1;
         }
-        if (d.i_drawing_stage == 4) {
+        if (d.lineStep.size() == 4) {
             if (d.operationFrameBox.inside(p0) == Polygon.Intersection.OUTSIDE) {
                 operationFrameMode = DrawingWorker.OperationFrameMode.CREATE_1;
             } else {
@@ -121,14 +120,18 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler{
         }
 
         if (operationFrameMode == DrawingWorker.OperationFrameMode.CREATE_1) {
-            d.i_drawing_stage = 4;
+            d.lineStep.clear();
+            d.lineStepAdd(new LineSegment());
+            d.lineStepAdd(new LineSegment());
+            d.lineStepAdd(new LineSegment());
+            d.lineStepAdd(new LineSegment());
 
             p_new.set(p);
 
-            d.closest_point.set(d.getClosestPoint(p));
+            Point closest_point = d.getClosestPoint(p);
 
-            if (p.distance(d.closest_point) < d.selectionDistance) {
-                p_new.set(d.closest_point);
+            if (p.distance(closest_point) < d.selectionDistance) {
+                p_new.set(closest_point);
 
             }
 
@@ -155,16 +158,17 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler{
         }
 
         if (d.gridInputAssist) {
-            d.closest_point.set(d.getClosestPoint(p));
-            d.i_candidate_stage = 1;
-            if (p.distance(d.closest_point) < d.selectionDistance) {
-                d.line_candidate[1].set(d.closest_point, d.closest_point);
-            } else {
-                d.line_candidate[1].set(p, p);
-            }
-            d.line_candidate[1].setColor(LineColor.GREEN_6);
+            d.lineCandidate.clear();
 
-            p_new.set(d.line_candidate[1].getA());
+            Point closest_point = d.getClosestPoint(p);
+            if (p.distance(closest_point) < d.selectionDistance) {
+                d.lineCandidate.add(new LineSegment(closest_point, closest_point, LineColor.GREEN_6));
+            } else {
+                d.lineCandidate.add(new LineSegment(p, p, LineColor.GREEN_6));
+            }
+            d.lineCandidate.get(0).setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
+
+            p_new.set(d.lineCandidate.get(0).getA());
         }
 
 
@@ -208,9 +212,9 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler{
         Point p_new = new Point();
         p_new.set(p);
 
-        d.closest_point.set(d.getClosestPoint(p));
-        if (p.distance(d.closest_point) <= d.selectionDistance) {
-            p_new.set(d.closest_point);/*line_step[1].seta(moyori_ten);*/
+        Point closest_point = d.getClosestPoint(p);
+        if (p.distance(closest_point) <= d.selectionDistance) {
+            p_new.set(closest_point);/*line_step[1].seta(moyori_ten);*/
         }
 
         if (operationFrameMode == DrawingWorker.OperationFrameMode.MOVE_SIDES_3) {
@@ -246,7 +250,7 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler{
         d.operationFrameBox.set(4, d.operationFrame_p4);
 
         if (d.operationFrameBox.calculateArea() * d.operationFrameBox.calculateArea() < 1.0) {
-            d.i_drawing_stage = 0;
+            d.lineStep.clear();
         }
     }
 }

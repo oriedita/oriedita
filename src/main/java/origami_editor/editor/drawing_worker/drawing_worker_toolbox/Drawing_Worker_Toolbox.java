@@ -1,10 +1,10 @@
 package origami_editor.editor.drawing_worker.drawing_worker_toolbox;
 
-import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.OritaCalc;
-import origami.crease_pattern.element.StraightLine;
-import origami.crease_pattern.element.Point;
 import origami.crease_pattern.FoldLineSet;
+import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.StraightLine;
 
 public class Drawing_Worker_Toolbox {
     FoldLineSet ori_s;
@@ -14,6 +14,7 @@ public class Drawing_Worker_Toolbox {
     StraightLine.Intersection lengthenUntilIntersection_flg = StraightLine.Intersection.NONE_0;//The situation of the first intersection where ab was extended
     int lengthenUntilIntersectionFoldLineIncluded_flg = 0;//If ab is straightened, including existing polygonal lines, 3
     LineSegment lengthenUntilIntersectionFirstLineSegment = new LineSegment();//Straightening ab and the existing polygonal line that hits first
+
     public Drawing_Worker_Toolbox(FoldLineSet o_s) {  //コンストラクタ
         ori_s = o_s;
     }

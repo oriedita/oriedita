@@ -1,6 +1,7 @@
 package origami_editor.editor.drawing_worker;
 
 import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
@@ -23,11 +24,9 @@ public class MouseHandlerUnused_10001 extends BaseMouseHandler {
     public void mousePressed(Point p0) {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-        d.closest_point.set(d.getClosestPoint(p));
-        if (p.distance(d.closest_point) < d.selectionDistance) {
-            d.i_drawing_stage = d.i_drawing_stage + 1;
-            d.line_step[d.i_drawing_stage].set(d.closest_point, d.closest_point);
-            d.line_step[d.i_drawing_stage].setColor(LineColor.fromNumber(d.i_drawing_stage));
+        Point closestPoint = d.getClosestPoint(p);
+        if (p.distance(closestPoint) < d.selectionDistance) {
+            d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.fromNumber(d.lineStep.size() + 1)));
         }
     }
 
@@ -37,8 +36,8 @@ public class MouseHandlerUnused_10001 extends BaseMouseHandler {
 
     //マウス操作(mouseMode==10001　でボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if (d.i_drawing_stage == 3) {
-            d.i_drawing_stage = 0;
+        if (d.lineStep.size() == 3) {
+            d.lineStep.clear();
         }
     }
 }

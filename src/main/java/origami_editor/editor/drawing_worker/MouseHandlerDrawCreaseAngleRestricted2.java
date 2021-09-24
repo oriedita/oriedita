@@ -6,13 +6,9 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandler{
-    double d_angle_system;
-    private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted;
-
+public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInputRestricted {
     public MouseHandlerDrawCreaseAngleRestricted2(DrawingWorker d) {
         super(d);
-        mouseHandlerDrawCreaseRestricted = new MouseHandlerDrawCreaseRestricted(d);
     }
 
     @Override
@@ -22,15 +18,15 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandler{
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mouseMoved(Point p0) {
-        if (d.i_drawing_stage <= 1) {
-            mouseHandlerDrawCreaseRestricted.mouseMoved(p0);//近い既存点のみ表示
+        if (d.lineStep.size() <= 1) {
+            super.mouseMoved(p0);//近い既存点のみ表示
         }
     }
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
 
-        int honsuu = 0;//1つの端点周りに描く線の本数
+        int honsuu;//1つの端点周りに描く線の本数
         if (d.id_angle_system != 0) {
             honsuu = d.id_angle_system * 2 - 1;
         } else {
@@ -42,38 +38,24 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandler{
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
 
-        if (d.i_drawing_stage == 0) {    //第1段階として、点を選択
-            d.closest_point.set(d.getClosestPoint(p));
-            if (p.distance(d.closest_point) < d.selectionDistance) {
-                d.i_drawing_stage = d.i_drawing_stage + 1;
-                d.line_step[d.i_drawing_stage].set(d.closest_point, d.closest_point);
-                d.line_step[d.i_drawing_stage].setColor(LineColor.MAGENTA_5);
+        if (d.lineStep.size() == 0) {    //第1段階として、点を選択
+            Point closest_point = d.getClosestPoint(p);
+            if (p.distance(closest_point) < d.selectionDistance) {
+                d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.MAGENTA_5));
             }
-            return;
-        }
-
-        if (d.i_drawing_stage == 1) {    //第2段階として、点を選択
-            d.closest_point.set(d.getClosestPoint(p));
-            if (p.distance(d.closest_point) >= d.selectionDistance) {
-                d.i_drawing_stage = 0;
-                return;
+        } else if (d.lineStep.size() == 1) {    //第2段階として、点を選択
+            Point closest_point = d.getClosestPoint(p);
+            if (p.distance(closest_point) >= d.selectionDistance) {
+                d.lineStep.clear();
+            } else if (p.distance(closest_point) < d.selectionDistance) {
+                d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.fromNumber(d.lineStep.size() + 1)));
+                d.lineStep.get(0).setB(d.lineStep.get(1).getB());
             }
-            if (p.distance(d.closest_point) < d.selectionDistance) {
-
-                d.i_drawing_stage = d.i_drawing_stage + 1;
-                d.line_step[d.i_drawing_stage].set(d.closest_point, d.closest_point);
-                d.line_step[d.i_drawing_stage].setColor(LineColor.fromNumber(d.i_drawing_stage));
-                d.line_step[1].setB(d.line_step[2].getB());
-
-
-            }
-
-        }
-
-        if (d.i_drawing_stage == i_jyunnbi_step_suu) {    //if(i_egaki_dankai==1){        //動作の準備として人間が選択するステップ数が終わった状態で実行
-            int i_jyun;//i_jyunは線を描くとき順番に色を変えたいとき使う
+        } else if (d.lineStep.size() == i_jyunnbi_step_suu) {    //if(i_egaki_dankai==1){        //動作の準備として人間が選択するステップ数が終わった状態で実行
+            boolean i_jyun;//i_jyunは線を描くとき順番に色を変えたいとき使う
             //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d) //    double d_angle_system;double angle;
 
+            double d_angle_system;
             if (d.id_angle_system != 0) {
                 d_angle_system = 180.0 / (double) d.id_angle_system;
             } else {
@@ -81,43 +63,30 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandler{
             }
 
             if (d.id_angle_system != 0) {
-
-                LineSegment s_kiso = new LineSegment(d.line_step[1].getA(), d.line_step[1].getB());
+                LineSegment s_kiso = new LineSegment(d.lineStep.get(0).getA(), d.lineStep.get(0).getB());
                 d.angle = 0.0;
-                i_jyun = 0;
+                i_jyun = false;
                 for (int i = 1; i <= honsuu; i++) {
-                    i_jyun = i_jyun + 1;
-                    if (i_jyun == 2) {
-                        i_jyun = 0;
-                    }
-                    d.i_drawing_stage = d.i_drawing_stage + 1;
+                    i_jyun = !i_jyun;
+
+                    LineSegment s = new LineSegment();
                     d.angle = d.angle + d_angle_system;
-                    d.line_step[d.i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, d.angle, 10.0));
-                    if (i_jyun == 0) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.GREEN_6);
-                    }
-                    if (i_jyun == 1) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.ORANGE_4);
-                    }
+                    s.set(OritaCalc.lineSegment_rotate(s_kiso, d.angle, 10.0));
+                    s.setColor(i_jyun ? LineColor.ORANGE_4 : LineColor.GREEN_6);
+                    d.lineStepAdd(s);
                 }
 
-                s_kiso.set(d.line_step[1].getB(), d.line_step[1].getA());
+                s_kiso.set(d.lineStep.get(0).getB(), d.lineStep.get(0).getA());
                 d.angle = 0.0;
-                i_jyun = 0;
+                i_jyun = false;
                 for (int i = 1; i <= honsuu; i++) {
-                    i_jyun = i_jyun + 1;
-                    if (i_jyun == 2) {
-                        i_jyun = 0;
-                    }
-                    d.i_drawing_stage = d.i_drawing_stage + 1;
+                    i_jyun = !i_jyun;
+
+                    LineSegment s = new LineSegment();
                     d.angle = d.angle + d_angle_system;
-                    d.line_step[d.i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, d.angle, 10.0));
-                    if (i_jyun == 0) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.GREEN_6);
-                    }
-                    if (i_jyun == 1) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.ORANGE_4);
-                    }
+                    s.set(OritaCalc.lineSegment_rotate(s_kiso, d.angle, 10.0));
+                    s.setColor(i_jyun ? LineColor.ORANGE_4 : LineColor.GREEN_6);
+                    d.lineStepAdd(s);
                 }
             }
             if (d.id_angle_system == 0) {
@@ -130,92 +99,80 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandler{
                 jk[5] = 360.0 - d.d_restricted_angle_1;
                 jk[6] = 360.0 - d.d_restricted_angle_3;
 
-                LineSegment s_kiso = new LineSegment(d.line_step[1].getA(), d.line_step[1].getB());
+                LineSegment s_kiso = new LineSegment(d.lineStep.get(0).getA(), d.lineStep.get(0).getB());
                 d.angle = 0.0;
-                i_jyun = 0;
                 for (int i = 1; i <= 6; i++) {
-                    i_jyun = i_jyun + 1;
-                    if (i_jyun == 2) {
-                        i_jyun = 0;
-                    }
-                    d.i_drawing_stage = d.i_drawing_stage + 1;
                     d.angle = jk[i];
-                    d.line_step[d.i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, d.angle, 10.0));
+                    LineSegment s = new LineSegment();
+                    s.set(OritaCalc.lineSegment_rotate(s_kiso, d.angle, 10.0));
                     if (i == 1) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.GREEN_6);
+                        s.setColor(LineColor.GREEN_6);
                     }
                     if (i == 2) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.PURPLE_8);
+                        s.setColor(LineColor.PURPLE_8);
                     }
                     if (i == 3) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.ORANGE_4);
+                        s.setColor(LineColor.ORANGE_4);
                     }
                     if (i == 4) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.ORANGE_4);
+                        s.setColor(LineColor.ORANGE_4);
                     }
                     if (i == 5) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.GREEN_6);
+                        s.setColor(LineColor.GREEN_6);
                     }
                     if (i == 6) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.PURPLE_8);
+                        s.setColor(LineColor.PURPLE_8);
                     }
+                    d.lineStepAdd(s);
                 }
 
-                s_kiso.set(d.line_step[1].getB(), d.line_step[1].getA());
+                s_kiso.set(d.lineStep.get(0).getB(), d.lineStep.get(0).getA());
                 d.angle = 0.0;
-                i_jyun = 0;
                 for (int i = 1; i <= 6; i++) {
-                    i_jyun = i_jyun + 1;
-                    if (i_jyun == 2) {
-                        i_jyun = 0;
-                    }
-                    d.i_drawing_stage = d.i_drawing_stage + 1;
                     d.angle = jk[i];
-                    d.line_step[d.i_drawing_stage].set(OritaCalc.lineSegment_rotate(s_kiso, d.angle, 10.0));
+                    LineSegment s = new LineSegment();
+
+                    s.set(OritaCalc.lineSegment_rotate(s_kiso, d.angle, 10.0));
+
                     if (i == 1) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.GREEN_6);
+                        s.setColor(LineColor.GREEN_6);
                     }
                     if (i == 2) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.PURPLE_8);
+                        s.setColor(LineColor.PURPLE_8);
                     }
                     if (i == 3) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.ORANGE_4);
+                        s.setColor(LineColor.ORANGE_4);
                     }
                     if (i == 4) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.ORANGE_4);
+                        s.setColor(LineColor.ORANGE_4);
                     }
                     if (i == 5) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.GREEN_6);
+                        s.setColor(LineColor.GREEN_6);
                     }
                     if (i == 6) {
-                        d.line_step[d.i_drawing_stage].setColor(LineColor.PURPLE_8);
+                        s.setColor(LineColor.PURPLE_8);
                     }
+
+                    d.lineStepAdd(s);
                 }
             }
-
-
-            return;
-        }
-
-
-        if (d.i_drawing_stage == i_jyunnbi_step_suu + (honsuu) + (honsuu)) {//19     //動作の準備としてソフトが返答するステップ数が終わった状態で実行
+        } else if (d.lineStep.size() == i_jyunnbi_step_suu + (honsuu) + (honsuu)) {//19     //動作の準備としてソフトが返答するステップ数が終わった状態で実行
 
             int i_tikai_s_step_suu = 0;
 
+            LineSegment closestLineSegment = new LineSegment();
             //line_step[2から10]までとs_step[11から19]まで
-            d.closest_lineSegment.set(d.get_moyori_step_lineSegment(p, 3, 2 + (honsuu)));
-            if (OritaCalc.distance_lineSegment(p, d.closest_lineSegment) < d.selectionDistance) {
-                d.i_drawing_stage = d.i_drawing_stage + 1;
+            closestLineSegment.set(d.get_moyori_step_lineSegment(p, 3, 2 + (honsuu)));
+            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
                 i_tikai_s_step_suu = i_tikai_s_step_suu + 1;
-                d.line_step[d.i_drawing_stage].set(d.closest_lineSegment);    //line_step[i_egaki_dankai].setcolor(2);//line_step[20]にinput
+                d.lineStepAdd(closestLineSegment);
             }
 
             //line_step[2から10]までとs_step[11から19]まで
-            d.closest_lineSegment.set(d.get_moyori_step_lineSegment(p, 2 + (honsuu) + 1, 2 + (honsuu) + (honsuu)));
-            if (OritaCalc.distance_lineSegment(p, d.closest_lineSegment) < d.selectionDistance) {
-                d.i_drawing_stage = d.i_drawing_stage + 1;
+            closestLineSegment.set(d.get_moyori_step_lineSegment(p, 2 + (honsuu) + 1, 2 + (honsuu) + (honsuu)));
+            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
                 i_tikai_s_step_suu = i_tikai_s_step_suu + 1;
-                d.line_step[d.i_drawing_stage].set(d.closest_lineSegment);    //line_step[i_egaki_dankai].setcolor(lineColor);
+                d.lineStepAdd(closestLineSegment);
             }
 
             if (i_tikai_s_step_suu == 2) { //この段階でs_stepが[21]までうまってたら、line_step[20]とs_step[21]は共に加える折線なので、ここで処理を終えてしまう。
@@ -224,24 +181,23 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandler{
                 //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
                 //0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
 
-                if (OritaCalc.parallel_judgement(d.line_step[d.i_drawing_stage - 1], d.line_step[d.i_drawing_stage], 0.1) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
-                    d.i_drawing_stage = 0;
+                if (OritaCalc.parallel_judgement(d.lineStep.get(d.lineStep.size() - 1 - 1), d.lineStep.get(d.lineStep.size() - 1), 0.1) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
+                    d.lineStep.clear();
                     return;
                 }
 
-                d.i_drawing_stage = 0;
 
                 //line_step[20]とs_step[21]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
                 Point kousa_point = new Point();
-                kousa_point.set(OritaCalc.findIntersection(d.line_step[2 + (honsuu) + (honsuu) + 1], d.line_step[2 + (honsuu) + (honsuu) + 1 + 1]));
+                kousa_point.set(OritaCalc.findIntersection(d.lineStep.get(2 + (honsuu) + (honsuu)), d.lineStep.get(2 + (honsuu) + (honsuu) + 1)));
 
-                LineSegment add_sen = new LineSegment(kousa_point, d.line_step[2 + (honsuu) + (honsuu) + 1].getA());
+                LineSegment add_sen = new LineSegment(kousa_point, d.lineStep.get(2 + (honsuu) + (honsuu)).getA());
                 add_sen.setColor(d.lineColor);
                 if (add_sen.getLength() > 0.00000001) {
                     d.addLineSegment(add_sen);
                 }
 
-                LineSegment add_sen2 = new LineSegment(kousa_point, d.line_step[2 + (honsuu) + (honsuu) + 2].getA());
+                LineSegment add_sen2 = new LineSegment(kousa_point, d.lineStep.get(2 + (honsuu) + (honsuu) + 1).getA());
                 add_sen2.setColor(d.lineColor);
                 if (add_sen.getLength() > 0.00000001) {
                     d.addLineSegment(add_sen2);
@@ -249,7 +205,7 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandler{
                 d.record();
             }
 
-            d.i_drawing_stage = 0;
+            d.lineStep.clear();
         }
     }
 

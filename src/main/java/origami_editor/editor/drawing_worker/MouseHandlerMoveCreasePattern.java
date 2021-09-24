@@ -5,7 +5,7 @@ import origami_editor.editor.App;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.folded_figure.FoldedFigure;
 
-public class MouseHandlerMoveCreasePattern implements MouseModeHandler{
+public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
     private final App app;
 
     public MouseHandlerMoveCreasePattern(App app) {

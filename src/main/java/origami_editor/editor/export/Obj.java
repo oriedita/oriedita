@@ -132,7 +132,7 @@ public class Obj {
             LineSegment s = new LineSegment();
             s.set(tL.get(line.getBegin()), tL.get(line.getEnd()), line.getColor());
 
-            save.addLineSegment(s);
+            save.addLineSegment(s.clone());
         }
         return save;
     }

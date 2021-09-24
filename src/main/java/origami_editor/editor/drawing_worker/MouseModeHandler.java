@@ -7,7 +7,10 @@ public interface MouseModeHandler {
     MouseMode getMouseMode();
 
     void mouseMoved(Point p0);
+
     void mousePressed(Point p0);
+
     void mouseDragged(Point p0);
+
     void mouseReleased(Point p0);
 }

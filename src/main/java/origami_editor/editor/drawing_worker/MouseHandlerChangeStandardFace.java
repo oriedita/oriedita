@@ -5,8 +5,12 @@ import origami_editor.editor.App;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.folded_figure.FoldedFigure;
 
-public class MouseHandlerChangeStandardFace implements MouseModeHandler{
+public class MouseHandlerChangeStandardFace implements MouseModeHandler {
     private final App app;
+
+    public MouseHandlerChangeStandardFace(App app) {
+        this.app = app;
+    }
 
     @Override
     public MouseMode getMouseMode() {
@@ -26,10 +30,6 @@ public class MouseHandlerChangeStandardFace implements MouseModeHandler{
     @Override
     public void mouseDragged(Point p0) {
 
-    }
-
-    public MouseHandlerChangeStandardFace(App app) {
-        this.app = app;
     }
 
     @Override

@@ -5,7 +5,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerFishBoneDraw extends BaseMouseHandler{
+public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
     private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted;
 
     public MouseHandlerFishBoneDraw(DrawingWorker d) {
@@ -18,23 +18,17 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandler{
         return MouseMode.FISH_BONE_DRAW_33;
     }
 
-    //マウス操作(マウスを動かしたとき)を行う関数
-    public void mouseMoved(Point p0) {
-        mouseHandlerDrawCreaseRestricted.mouseMoved(p0);
-    }//近い既存点のみ表示
-
     //マウス操作(mouseMode==33魚の骨　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        d.i_drawing_stage = 1;
+        d.lineStep.clear();
 
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-        d.closest_point.set(d.getClosestPoint(p));
-        if (p.distance(d.closest_point) > d.selectionDistance) {
-            d.i_drawing_stage = 0;
+        Point closest_point = d.getClosestPoint(p);
+        if (p.distance(closest_point) > d.selectionDistance) {
+            return;
         }
-        d.line_step[1].set(p, d.closest_point);
-        d.line_step[1].setColor(d.lineColor);
+        d.lineStepAdd(new LineSegment(p, closest_point, d.lineColor));
     }
 
     //マウス操作(mouseMode==33魚の骨　でドラッグしたとき)を行う関数----------------------------------------------------
@@ -47,28 +41,26 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandler{
 
     //マウス操作(mouseMode==33魚の骨　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        if (d.i_drawing_stage == 1) {
-            d.i_drawing_stage = 0;
-
+        if (d.lineStep.size() == 1) {
             Point p = new Point();
             p.set(d.camera.TV2object(p0));
-            d.closest_point.set(d.getClosestPoint(p));
-            d.line_step[1].setA(d.closest_point);
+            Point closest_point = d.getClosestPoint(p);
+            d.lineStep.get(0).setA(closest_point);
 
-            if (p.distance(d.closest_point) <= d.selectionDistance) {  //マウスで指定した点が、最寄点と近かったときに実施
-                if (d.line_step[1].getLength() > 0.00000001) {  //line_step[1]が、線の時（=点状ではない時）に実施
-                    double dx = (d.line_step[1].getAX() - d.line_step[1].getBX()) * d.grid.getGridWidth() / d.line_step[1].getLength();
-                    double dy = (d.line_step[1].getAY() - d.line_step[1].getBY()) * d.grid.getGridWidth() / d.line_step[1].getLength();
+            if (p.distance(closest_point) <= d.selectionDistance) {  //マウスで指定した点が、最寄点と近かったときに実施
+                if (d.lineStep.get(0).getLength() > 0.00000001) {  //lineStep.get(0)が、線の時（=点状ではない時）に実施
+                    double dx = (d.lineStep.get(0).getAX() - d.lineStep.get(0).getBX()) * d.grid.getGridWidth() / d.lineStep.get(0).getLength();
+                    double dy = (d.lineStep.get(0).getAY() - d.lineStep.get(0).getBY()) * d.grid.getGridWidth() / d.lineStep.get(0).getLength();
                     LineColor icol_temp = d.lineColor;
 
                     Point pxy = new Point();
-                    for (int i = 0; i <= (int) Math.floor(d.line_step[1].getLength() / d.grid.getGridWidth()); i++) {
-                        double px = d.line_step[1].getBX() + (double) i * dx;
-                        double py = d.line_step[1].getBY() + (double) i * dy;
+                    for (int i = 0; i <= (int) Math.floor(d.lineStep.get(0).getLength() / d.grid.getGridWidth()); i++) {
+                        double px = d.lineStep.get(0).getBX() + (double) i * dx;
+                        double py = d.lineStep.get(0).getBY() + (double) i * dy;
                         pxy.set(px, py);
 
 
-                        if (d.foldLineSet.closestLineSegmentDistanceExcludingParallel(pxy, d.line_step[1]) > 0.001) {
+                        if (d.foldLineSet.closestLineSegmentDistanceExcludingParallel(pxy, d.lineStep.get(0)) > 0.001) {
 
                             int i_sen = 0;
 
@@ -104,8 +96,9 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandler{
                         }
                     }
                     d.record();
-                }  //line_step[1]が、線の時（=点状ではない時）に実施は、ここまで
+                }  //lineStep.get(0)が、線の時（=点状ではない時）に実施は、ここまで
             }  //マウスで指定した点が、最寄点と近かったときに実施は、ここまで
+            d.lineStep.clear();
         }
     }
 }

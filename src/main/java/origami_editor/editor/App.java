@@ -2,7 +2,6 @@ package origami_editor.editor;
 
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
-import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.HierarchyList_Worker;
 import origami_editor.editor.component.BulletinBoard;
@@ -349,13 +348,14 @@ public class App extends JFrame implements ActionListener {
         canvas.addMouseModeHandler(MouseHandlerUnselectLineIntersecting.class);
         canvas.addMouseModeHandler(MouseHandlerFlatFoldableCheck.class);
         canvas.addMouseModeHandler(MouseHandlerDrawCreaseAngleRestricted.class);
-        canvas.addMouseModeHandler(MouseHandlerCreaseLengthen.class);
+        canvas.addMouseModeHandler(MouseHandlerLengthenCreaseSameColor.class);
         canvas.addMouseModeHandler(MouseHandlerLengthenCrease.class);
         canvas.addMouseModeHandler(MouseHandlerUnused_10001.class);
         canvas.addMouseModeHandler(MouseHandlerUnused_10002.class);
         canvas.addMouseModeHandler(MouseHandlerBackgroundChangePosition.class);
         canvas.addMouseModeHandler(new MouseHandlerModifyCalculatedShape(this));
         canvas.addMouseModeHandler(new MouseHandlerMoveCreasePattern(this));
+        canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(this));
     }
 
     public void repaintCanvas() {
@@ -550,8 +550,7 @@ public class App extends JFrame implements ActionListener {
 
     public void Button_shared_operation() {
         mainDrawingWorker.setDrawingStage(0);
-        mainDrawingWorker.set_i_circle_drawing_stage(0);
-        mainDrawingWorker.set_s_step_iactive(LineSegment.ActiveState.ACTIVE_BOTH_3);//要注意　es1でうっかりs_stepにset.(senbun)やるとアクティヴでないので表示が小さくなる20170507
+        mainDrawingWorker.resetCircleStep();
         mainDrawingWorker.voronoiLineSet.reset();
     }
 

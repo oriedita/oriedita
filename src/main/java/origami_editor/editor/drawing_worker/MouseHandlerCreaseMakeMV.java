@@ -8,7 +8,7 @@ import origami_editor.editor.MouseMode;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 
-public class MouseHandlerCreaseMakeMV extends BaseMouseHandler{
+public class MouseHandlerCreaseMakeMV extends BaseMouseHandlerInputRestricted {
     private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted;
 
     public MouseHandlerCreaseMakeMV(DrawingWorker d) {
@@ -21,22 +21,16 @@ public class MouseHandlerCreaseMakeMV extends BaseMouseHandler{
         return MouseMode.CREASE_MAKE_MV_34;
     }
 
-    public void mouseMoved(Point p0) {
-        mouseHandlerDrawCreaseRestricted.mouseMoved(p0);
-    }//近い既存点のみ表示
-
     //マウス操作(mouseMode==34　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        d.i_drawing_stage = 1;
-
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-        d.closest_point.set(d.getClosestPoint(p));
-        if (p.distance(d.closest_point) > d.selectionDistance) {
-            d.i_drawing_stage = 0;
+        Point closest_point = d.getClosestPoint(p);
+        if (p.distance(closest_point) > d.selectionDistance) {
+            d.lineStep.clear();
+            return;
         }
-        d.line_step[1].set(p, d.closest_point);
-        d.line_step[1].setColor(d.lineColor);
+        d.lineStepAdd(new LineSegment(p, closest_point, d.lineColor));
     }
 
     //マウス操作(mouseMode==34　でドラッグしたとき)を行う関数----------------------------------------------------
@@ -49,24 +43,21 @@ public class MouseHandlerCreaseMakeMV extends BaseMouseHandler{
 
     //マウス操作(mouseMode==34　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-
         SortingBox<LineSegment> nbox = new SortingBox<>();
 
-        if (d.i_drawing_stage == 1) {
-            d.i_drawing_stage = 0;
+        if (d.lineStep.size() == 1) {
             Point p = new Point();
             p.set(d.camera.TV2object(p0));
-            d.closest_point.set(d.getClosestPoint(p));
-            d.line_step[1].setA(d.closest_point);
-            if (p.distance(d.closest_point) <= d.selectionDistance) {
-                if (d.line_step[1].getLength() > 0.00000001) {
+            Point closest_point = d.getClosestPoint(p);
+            d.lineStep.get(0).setA(closest_point);
+            if (p.distance(closest_point) <= d.selectionDistance) {
+                if (d.lineStep.get(0).getLength() > 0.00000001) {
                     for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
                         LineSegment s = d.foldLineSet.get(i);
-                        if (OritaCalc.lineSegmentoverlapping(s, d.line_step[1])) {
-                            WeightedValue<LineSegment> i_d = new WeightedValue<>(s, OritaCalc.distance_lineSegment(d.line_step[1].getB(), s));
+                        if (OritaCalc.lineSegmentoverlapping(s, d.lineStep.get(0))) {
+                            WeightedValue<LineSegment> i_d = new WeightedValue<>(s, OritaCalc.distance_lineSegment(d.lineStep.get(0).getB(), s));
                             nbox.container_i_smallest_first(i_d);
                         }
-
                     }
 
                     LineColor icol_temp = d.lineColor;
@@ -83,6 +74,7 @@ public class MouseHandlerCreaseMakeMV extends BaseMouseHandler{
                     d.record();
                 }
             }
+            d.lineStep.clear();
         }
     }
 }

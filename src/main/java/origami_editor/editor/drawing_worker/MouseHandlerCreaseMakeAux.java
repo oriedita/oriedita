@@ -5,7 +5,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerCreaseMakeAux extends BaseMouseHandler{
+public class MouseHandlerCreaseMakeAux extends BaseMouseHandlerBoxSelect {
     public MouseHandlerCreaseMakeAux(DrawingWorker d) {
         super(d);
     }
@@ -20,27 +20,15 @@ public class MouseHandlerCreaseMakeAux extends BaseMouseHandler{
 
     }
 
-    //マウス操作(mouseMode==60 "->HK" でボタンを押したとき)時の作業----------------------------------------------------
-    public void mousePressed(Point p0) {
-        d.mPressed_A_box_select(p0);
-    }
-
-    //マウス操作(mouseMode==60でドラッグしたとき)を行う関数----------------------------------------------------
-    public void mouseDragged(Point p0) {
-        d.mDragged_A_box_select(p0);
-    }
-
     //マウス操作(mouseMode==60 でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        d.i_drawing_stage = 0;
+        d.lineStep.clear();
 
-        if (d.p19_1.distance(p0) > 0.000001) {
-            if (d.insideToAux(d.p19_1, p0)) {
+        if (selectionStart.distance(p0) > 0.000001) {
+            if (d.insideToAux(selectionStart, p0)) {
                 d.record();
             }//この関数は不完全なのでまだ未公開20171126
-        }
-
-        if (d.p19_1.distance(p0) <= 0.000001) {
+        } else {
             Point p = new Point();
             p.set(d.camera.TV2object(p0));
             if (d.foldLineSet.closestLineSegmentDistance(p) < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)

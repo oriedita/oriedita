@@ -2,10 +2,11 @@ package origami_editor.editor.drawing_worker;
 
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerCircleDrawSeparate extends BaseMouseHandler{
+public class MouseHandlerCircleDrawSeparate extends BaseMouseHandler {
     public MouseHandlerCircleDrawSeparate(DrawingWorker d) {
         super(d);
     }
@@ -24,29 +25,24 @@ public class MouseHandlerCircleDrawSeparate extends BaseMouseHandler{
     public void mousePressed(Point p0) {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-        d.closest_point.set(d.getClosestPoint(p));
+        Point closest_point = d.getClosestPoint(p);
 
-        if (d.i_drawing_stage == 0) {
+        if (d.lineStep.size() == 0) {
             d.circleStep.clear();
-            if (p.distance(d.closest_point) > d.selectionDistance) {
+            if (p.distance(closest_point) > d.selectionDistance) {
                 return;
             }
 
-            d.i_drawing_stage = 1;
-            d.line_step[1].set(d.closest_point, d.closest_point);
-            d.line_step[1].setColor(LineColor.CYAN_3);
-            return;
-        }
-
-        if (d.i_drawing_stage == 1) {
-            if (p.distance(d.closest_point) > d.selectionDistance) {
+            d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.CYAN_3));
+        } else if (d.lineStep.size() == 1) {
+            if (p.distance(closest_point) > d.selectionDistance) {
                 return;
             }
 
-            d.line_step[2].set(p, d.closest_point);
-            d.line_step[2].setColor(LineColor.CYAN_3);
+            d.lineStepAdd(new LineSegment(p, closest_point, LineColor.CYAN_3));
+
             d.circleStep.clear();
-            d.circleStep.add(new Circle(d.line_step[1].getA(), 0.0, LineColor.CYAN_3));
+            d.circleStep.add(new Circle(d.lineStep.get(0).getA(), 0.0, LineColor.CYAN_3));
         }
     }
 
@@ -54,29 +50,30 @@ public class MouseHandlerCircleDrawSeparate extends BaseMouseHandler{
     public void mouseDragged(Point p0) {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-        if (d.i_drawing_stage == 2) {
-            d.line_step[2].setA(p);
-            d.circleStep.get(0).setR(d.line_step[2].getLength());
+        if (d.lineStep.size() == 2) {
+            d.lineStep.get(1).setA(p);
+            d.circleStep.get(0).setR(d.lineStep.get(0).getLength());
         }
     }
 
     //マウス操作(mouseMode==44 円 分離入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        if (d.i_drawing_stage == 2) {
-            d.i_drawing_stage = 0;
+        if (d.lineStep.size() == 2) {
             d.circleStep.clear();
 
             Point p = new Point();
             p.set(d.camera.TV2object(p0));
-            d.closest_point.set(d.getClosestPoint(p));
-            d.line_step[2].setA(d.closest_point);
-            if (p.distance(d.closest_point) <= d.selectionDistance) {
-                if (d.line_step[2].getLength() > 0.00000001) {
-                    d.addLineSegment(d.line_step[2]);
-                    d.addCircle(d.line_step[1].getA(), d.line_step[2].getLength(), LineColor.CYAN_3);
+            Point closest_point = d.getClosestPoint(p);
+            d.lineStep.get(1).setA(closest_point);
+            if (p.distance(closest_point) <= d.selectionDistance) {
+                if (d.lineStep.get(1).getLength() > 0.00000001) {
+                    d.addLineSegment(d.lineStep.get(1));
+                    d.addCircle(d.lineStep.get(0).getA(), d.lineStep.get(1).getLength(), LineColor.CYAN_3);
                     d.record();
                 }
             }
+
+            d.lineStep.clear();
         }
     }
 }

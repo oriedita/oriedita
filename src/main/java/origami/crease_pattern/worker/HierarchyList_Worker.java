@@ -9,8 +9,6 @@ import origami.crease_pattern.element.LineSegment;
 import origami_editor.graphic2d.oritaoekaki.OritaDrawing;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
-import origami_editor.record.Memo;
-import origami_editor.tools.StringOp;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 import origami_editor.editor.component.BulletinBoard;
@@ -18,8 +16,6 @@ import origami_editor.tools.Camera;
 import origami.crease_pattern.PointSet;
 
 import java.awt.*;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 //HierarchyList: Record and utilize what kind of vertical relationship the surface of the developed view before folding will be after folding.
 public class HierarchyList_Worker {
@@ -51,14 +47,9 @@ public class HierarchyList_Worker {
     //　ここは  class Jyougehyou_Syokunin  の中です。
     //上下表の初期設定。展開図に1頂点から奇数の折線がでる誤りがある場合0を返す。それが無ければ1000を返す。
     //展開図に山谷折線の拡張による誤りがある場合2を返す。
-    double lineWidthForAntiAlias = 1.2;
     int makesuu0no_menno_amount = 0;//Number of faces that can be ranked without any other faces on top
     int makesuu1ijyouno_menno_amount = 0;//Number of faces that can only be ranked if there is one or more other faces on top
     private int top_face_id_ga_maketa_kazu_goukei_without_rated_face = 0;
-
-    //------------------------------------------
-
-    //-----------------------------------------------------------------------------------------
 
     public HierarchyList_Worker(BulletinBoard bb0) {
         bb = bb0;
@@ -1086,18 +1077,6 @@ public class HierarchyList_Worker {
         return (int) d;
     }
 
-    public void toggleAntiAlias() {
-
-        antiAlias = !antiAlias;
-
-        if (antiAlias) {
-            lineWidthForAntiAlias = 1.2;
-        } else {
-            lineWidthForAntiAlias = 1.0;
-        }
-
-    }
-
     public void draw_transparency_with_camera(Graphics g, PointSet otta_Face_figure, PointSet subFace_figure, boolean transparencyColor, int transparency_toukado) {
         Graphics2D g2 = (Graphics2D) g;
 
@@ -1501,10 +1480,6 @@ public class HierarchyList_Worker {
     public void draw_cross_with_camera(Graphics g) {
         //Draw the center of the camera with a cross
         OritaDrawing.cross(g, camera.object2TV(camera.getCameraPosition()), 5.0, 2.0, LineColor.ORANGE_4);
-    }
-
-    public void toggleDisplayShadows() {
-        displayShadows = !displayShadows;
     }
 
     public int line_no_bangou_kara_kagenoaru_subFace_no_bangou_wo_motomeru(int ib, PointSet subFace_figure, boolean flipped) {//棒の番号から、その棒の影が発生するSubFace の番号を求める。影が発生しない場合は0を返す。

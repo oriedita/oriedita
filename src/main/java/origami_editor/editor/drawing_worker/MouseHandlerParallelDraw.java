@@ -6,12 +6,9 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerParallelDraw extends BaseMouseHandler{
-    private final MouseHandlerPolygonSetNoCorners mouseHandlerPolygonSetNoCorners;
-
+public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
     public MouseHandlerParallelDraw(DrawingWorker d) {
         super(d);
-        mouseHandlerPolygonSetNoCorners = new MouseHandlerPolygonSetNoCorners(d);
     }
 
     @Override
@@ -21,48 +18,38 @@ public class MouseHandlerParallelDraw extends BaseMouseHandler{
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mouseMoved(Point p0) {
-        if (d.i_drawing_stage == 0) {
-            mouseHandlerPolygonSetNoCorners.mouseMoved(p0);
+        if (d.lineStep.size() == 0) {
+            super.mouseMoved(p0);
         }
-
     }
 
 // ------------------------------------------------------------
     //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
-    //Ten t_taisyou =new Ten(); t_taisyou.set(oc.sentaisyou_ten_motome(line_step[2].geta(),line_step[3].geta(),line_step[1].geta()));
+    //Ten t_taisyou =new Ten(); t_taisyou.set(oc.sentaisyou_ten_motome(lineStep.get(1).geta(),line_step[3].geta(),lineStep.get(0).geta()));
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-        if (d.i_drawing_stage == 0) {
-            d.closest_point.set(d.getClosestPoint(p));
-            if (p.distance(d.closest_point) < d.selectionDistance) {
-                d.i_drawing_stage = d.i_drawing_stage + 1;
-                d.line_step[d.i_drawing_stage].set(d.closest_point, d.closest_point);
-                d.line_step[d.i_drawing_stage].setColor(d.lineColor);
-                return;
+        if (d.lineStep.size() == 0) {
+            Point closestPoint = d.getClosestPoint(p);
+
+            if (p.distance(closestPoint) < d.selectionDistance) {
+                d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.lineColor));
             }
-        }
-
-        if (d.i_drawing_stage == 1) {
-            d.closest_lineSegment.set(d.getClosestLineSegment(p));
-            if (OritaCalc.distance_lineSegment(p, d.closest_lineSegment) < d.selectionDistance) {
-                d.i_drawing_stage = d.i_drawing_stage + 1;
-                d.line_step[d.i_drawing_stage].set(d.closest_lineSegment);
-                d.line_step[d.i_drawing_stage].setColor(LineColor.GREEN_6);
-                return;
+        } else if (d.lineStep.size() == 1) {
+            LineSegment closestLineSegment = new LineSegment();
+            closestLineSegment.set(d.getClosestLineSegment(p));
+            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+                closestLineSegment.setColor(LineColor.GREEN_6);
+                d.lineStepAdd(closestLineSegment);
             }
-            return;
-        }
-
-
-        if (d.i_drawing_stage == 2) {
-            d.closest_lineSegment.set(d.getClosestLineSegment(p));
-            if (OritaCalc.distance_lineSegment(p, d.closest_lineSegment) < d.selectionDistance) {
-                d.i_drawing_stage = d.i_drawing_stage + 1;
-                d.line_step[d.i_drawing_stage].set(d.closest_lineSegment);//line_step[i_egaki_dankai].setcolor(i_egaki_dankai);
-                d.line_step[d.i_drawing_stage].setColor(LineColor.GREEN_6);
+        } else if (d.lineStep.size() == 2) {
+            LineSegment closestLineSegment = new LineSegment();
+            closestLineSegment.set(d.getClosestLineSegment(p));
+            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+                closestLineSegment.setColor(LineColor.GREEN_6);
+                d.lineStepAdd(closestLineSegment);
             }
         }
     }
@@ -73,15 +60,15 @@ public class MouseHandlerParallelDraw extends BaseMouseHandler{
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if (d.i_drawing_stage == 3) {
-            d.i_drawing_stage = 0;
-            d.line_step[1].setB(new Point(d.line_step[1].getAX() + d.line_step[2].getBX() - d.line_step[2].getAX(), d.line_step[1].getAY() + d.line_step[2].getBY() - d.line_step[2].getAY()));
+        if (d.lineStep.size() == 3) {
+            d.lineStep.get(0).setB(new Point(d.lineStep.get(0).getAX() + d.lineStep.get(1).getBX() - d.lineStep.get(1).getAX(), d.lineStep.get(0).getAY() + d.lineStep.get(1).getBY() - d.lineStep.get(1).getAY()));
 
-            if (s_step_tuika_koutenmade(3, d.line_step[1], d.line_step[3], d.lineColor) > 0) {
-                d.addLineSegment(d.line_step[4]);
+            if (s_step_tuika_koutenmade(3, d.lineStep.get(0), d.lineStep.get(2), d.lineColor) > 0) {
+                d.addLineSegment(d.lineStep.get(3));
                 d.record();
-                d.i_drawing_stage = 0;
             }
+
+            d.lineStep.clear();
         }
     }
 
@@ -108,7 +95,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandler{
         LineSegment add_sen = new LineSegment(cross_point, s_o.getA(), icolo);
 
         if (add_sen.getLength() > 0.00000001) {
-            d.line_step[i_e_d + 1].set(add_sen);
+            d.lineStep.get(i_e_d).set(add_sen);
             return 1;
         }
         return -500;

@@ -5,7 +5,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerDrawPoint extends BaseMouseHandler{
+public class MouseHandlerDrawPoint extends BaseMouseHandler {
     public MouseHandlerDrawPoint(DrawingWorker d) {
         super(d);
     }
@@ -40,7 +40,6 @@ public class MouseHandlerDrawPoint extends BaseMouseHandler{
                 d.foldLineSet.lineSegment_bunkatu(mtsLineSegment, pk);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
                 d.record();
             }
-
         }
     }
 

@@ -7,7 +7,7 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler{
+public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler {
     public MouseHandlerCircleDrawThreePoint(DrawingWorker d) {
         super(d);
     }
@@ -25,11 +25,9 @@ public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler{
     public void mousePressed(Point p0) {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-        d.closest_point.set(d.getClosestPoint(p));
-        if (p.distance(d.closest_point) < d.selectionDistance) {
-            d.i_drawing_stage = d.i_drawing_stage + 1;
-            d.line_step[d.i_drawing_stage].set(d.closest_point, d.closest_point);
-            d.line_step[d.i_drawing_stage].setColor(LineColor.fromNumber(d.i_drawing_stage));
+        Point closest_point = d.getClosestPoint(p);
+        if (p.distance(closest_point) < d.selectionDistance) {
+            d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.fromNumber(d.lineStep.size() + 1)));
         }
     }
 
@@ -39,18 +37,16 @@ public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler{
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if (d.i_drawing_stage == 3) {
-            d.i_drawing_stage = 0;
-
-            LineSegment sen1 = new LineSegment(d.line_step[1].getA(), d.line_step[2].getA());
+        if (d.lineStep.size() == 3) {
+            LineSegment sen1 = new LineSegment(d.lineStep.get(0).getA(), d.lineStep.get(1).getA());
             if (sen1.getLength() < 0.00000001) {
                 return;
             }
-            LineSegment sen2 = new LineSegment(d.line_step[2].getA(), d.line_step[3].getA());
+            LineSegment sen2 = new LineSegment(d.lineStep.get(1).getA(), d.lineStep.get(2).getA());
             if (sen2.getLength() < 0.00000001) {
                 return;
             }
-            LineSegment sen3 = new LineSegment(d.line_step[3].getA(), d.line_step[1].getA());
+            LineSegment sen3 = new LineSegment(d.lineStep.get(2).getA(), d.lineStep.get(0).getA());
             if (sen3.getLength() < 0.00000001) {
                 return;
             }
@@ -89,8 +85,10 @@ public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler{
             t1.orthogonalize(OritaCalc.internalDivisionRatio(sen1.getA(), sen1.getB(), 1.0, 1.0));
             StraightLine t2 = new StraightLine(sen2);
             t2.orthogonalize(OritaCalc.internalDivisionRatio(sen2.getA(), sen2.getB(), 1.0, 1.0));
-            d.addCircle(OritaCalc.findIntersection(t1, t2), OritaCalc.distance(d.line_step[1].getA(), OritaCalc.findIntersection(t1, t2)), LineColor.CYAN_3);
+            d.addCircle(OritaCalc.findIntersection(t1, t2), OritaCalc.distance(d.lineStep.get(0).getA(), OritaCalc.findIntersection(t1, t2)), LineColor.CYAN_3);
             d.record();
+
+            d.lineStep.clear();
         }
     }
 }

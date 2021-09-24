@@ -19,6 +19,15 @@ public class Polygon {
         vertices = t0;
     }
 
+    public Polygon(Point p1, Point p2, Point p3, Point p4) {
+        this(4);
+
+        set(1, p1);
+        set(2, p2);
+        set(3, p3);
+        set(4, p4);
+    }
+
     //Set the i-th vertex of the polygon
     public void set(int i, Point p) {
         vertices[i].set(p);
@@ -244,6 +253,27 @@ public class Polygon {
             return true;
         }
         return iflag == 4;//In reality, there should be no situation where you can reach this point.
+    }
+
+    public boolean totu_boundary_inside(Circle c) {
+        LineSegment s = new LineSegment();
+        for (int i = 1; i <= vertexCount - 1; i++) {
+            s.set(vertices[i], vertices[i + 1]); //線分
+            if (OritaCalc.distance_lineSegment(c.getCenter(), s) <= c.getRadius()) {
+                if ((OritaCalc.distance(s.getA(), c.getCenter()) >= c.getRadius()) || (OritaCalc.distance(s.getA(), c.getCenter()) >= c.getRadius())) {
+                    return true;
+                }
+            }
+        }
+
+        s.set(vertices[vertexCount], vertices[1]); //線分
+        if (OritaCalc.distance_lineSegment(c.getCenter(), s) <= c.getRadius()) {
+            if ((OritaCalc.distance(s.getA(), c.getCenter()) >= c.getRadius()) || (OritaCalc.distance(s.getA(), c.getCenter()) >= c.getRadius())) {
+                return true;
+            }
+        }
+
+        return totu_boundary_inside(new LineSegment(c.getCenter(), c.getCenter()));
     }
 
     // Even a part of the line segment s0 is inside the convex polygon (the boundary line is also regarded as the inside)

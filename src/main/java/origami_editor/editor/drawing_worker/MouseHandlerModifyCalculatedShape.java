@@ -4,7 +4,7 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.App;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerModifyCalculatedShape implements MouseModeHandler{
+public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
     private final App app;
 
     public MouseHandlerModifyCalculatedShape(App app) {

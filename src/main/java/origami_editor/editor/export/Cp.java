@@ -54,7 +54,7 @@ public class Cp {
                 LineSegment s = new LineSegment();
                 s.set(d1, d2, d3, d4, col);
 
-                save.addLineSegment(s);
+                save.addLineSegment(s.clone());
             }
         }
 

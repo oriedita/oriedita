@@ -6,12 +6,9 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerPerpendicularDraw extends BaseMouseHandler{
-    private final MouseHandlerPolygonSetNoCorners mouseHandlerPolygonSetNoCorners;
-
+public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestricted {
     public MouseHandlerPerpendicularDraw(DrawingWorker d) {
         super(d);
-        this.mouseHandlerPolygonSetNoCorners = new MouseHandlerPolygonSetNoCorners(d);
     }
 
     @Override
@@ -21,8 +18,8 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandler{
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mouseMoved(Point p0) {
-        if (d.i_drawing_stage == 0) {
-            mouseHandlerPolygonSetNoCorners.mouseMoved(p0);
+        if (d.lineStep.size() == 0) {
+            super.mouseMoved(p0);
         }
     }
 
@@ -32,25 +29,24 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandler{
     public void mousePressed(Point p0) {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-        if (d.i_drawing_stage == 0) {
-            d.closest_point.set(d.getClosestPoint(p));
-            if (p.distance(d.closest_point) < d.selectionDistance) {
-                d.i_drawing_stage = d.i_drawing_stage + 1;
-                d.line_step[d.i_drawing_stage].set(d.closest_point, d.closest_point);
-                d.line_step[d.i_drawing_stage].setColor(d.lineColor);
+        if (d.lineStep.size() == 0) {
+            Point closestPoint = d.getClosestPoint(p);
+            if (p.distance(closestPoint) < d.selectionDistance) {
+                d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.lineColor));
                 return;
             }
         }
 
-        if (d.i_drawing_stage == 1) {
-            d.closest_lineSegment.set(d.getClosestLineSegment(p));
-            if (OritaCalc.distance_lineSegment(p, d.closest_lineSegment) < d.selectionDistance) {
-                d.i_drawing_stage = d.i_drawing_stage + 1;
-                d.line_step[d.i_drawing_stage].set(d.closest_lineSegment);
-                d.line_step[d.i_drawing_stage].setColor(LineColor.GREEN_6);
+        if (d.lineStep.size() == 1) {
+            LineSegment closestLineSegment = new LineSegment();
+            closestLineSegment.set(d.getClosestLineSegment(p));
+            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+                closestLineSegment.setColor(LineColor.GREEN_6);
+                d.lineStepAdd(closestLineSegment);
                 return;
             }
-            d.i_drawing_stage = 0;
+
+            d.lineStep.clear();
         }
     }
 
@@ -60,15 +56,16 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandler{
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if (d.i_drawing_stage == 2) {
-            d.i_drawing_stage = 0;
+        if (d.lineStep.size() == 2) {
             //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){
 
-            LineSegment add_sen = new LineSegment(d.line_step[1].getA(), OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(d.line_step[2]), d.line_step[1].getA()), d.lineColor);
+            LineSegment add_sen = new LineSegment(d.lineStep.get(0).getA(), OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(d.lineStep.get(1)), d.lineStep.get(0).getA()), d.lineColor);
             if (add_sen.getLength() > 0.00000001) {
                 d.addLineSegment(add_sen);
                 d.record();
             }
+
+            d.lineStep.clear();
         }
     }
 }

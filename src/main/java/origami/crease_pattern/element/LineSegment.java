@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class LineSegment implements Serializable {
+public class LineSegment implements Serializable, Cloneable {
     private final Point a = new Point(); //Branch a point
     private final Point b = new Point(); //Branch b point
     ActiveState active;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
@@ -149,18 +149,6 @@ public class LineSegment implements Serializable {
         set(ax, ay, bx, by);
         color = ic;
     }
-
-    //----------
-    //Set the coordinates of the activated point to p !!!!!!!!!!!! If you make a mistake, this function is dangerous because it is hard to notice, preferably change it to another name 20170507
-    public void set(Point p) {
-        if (active == ActiveState.ACTIVE_A_1) {
-            setA(p);
-        }
-        if (active == ActiveState.ACTIVE_B_2) {
-            setB(p);
-        }
-    }
-
 
     //---------
     public void set(Point p, Point q, LineColor ic, ActiveState ia) {
@@ -346,6 +334,20 @@ public class LineSegment implements Serializable {
 
     public void setVoronoiB(int i) {
         voronoiB = i;
+    }
+
+    @Override
+    public LineSegment clone() {
+        LineSegment clone = new LineSegment(a, b, color);
+        clone.setActive(active);
+        clone.setSelected(selected);
+        clone.setCustomizedColor(customizedColor);
+        clone.setCustomized(customized);
+        clone.setVoronoiA(voronoiA);
+        clone.setVoronoiB(voronoiB);
+
+        // TODO: copy mutable state here, so the clone can't change the internals of the original
+        return clone;
     }
 
     /**
