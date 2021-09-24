@@ -264,7 +264,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         if (flg_wi) {//For control when exporting with a frame 20180525
             flg_wi = false;
-            writeImageFile(app.fname_wi, app);
+            writeImageFile(app.exportFile, app);
         }
         if (app.flg61) {
             app.flg61 = false;
@@ -594,7 +594,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     }
 
     // -----------------------------------mmmmmmmmmmmmmm-------
-    void writeImageFile(String fname, App app) {//i=1　png, 2=jpg
+    void writeImageFile(File file, App app) {//i=1　png, 2=jpg
+        String fname = file.getName();
         if (fname != null) {
             String formatName;
 
@@ -609,7 +610,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     memo2.addMemo(Svg.getMemoForFoldedFigure(app.foldedFigures.get(i_oz)));
                 }
 
-                app.memoAndName2File(Svg.exportFile(memo1, memo2), fname);
+                app.memoAndName2File(Svg.exportFile(memo1, memo2), file);
                 return;
             } else if (fname.endsWith("png")) {
                 formatName = "png";
@@ -631,11 +632,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     int yMin = (int) app.mainDrawingWorker.operationFrameBox.getYMin();
                     int yMax = (int) app.mainDrawingWorker.operationFrameBox.getYMax();
 
-                    ImageIO.write(offscreen.getSubimage(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1), formatName, new File(fname));
+                    ImageIO.write(offscreen.getSubimage(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1), formatName, file);
 
                 } else {//Full export without frame
                     System.out.println("2018-529_");
-                    ImageIO.write(offscreen.getSubimage(0, 0, dim.width, dim.height), formatName, new File(fname));
+                    ImageIO.write(offscreen.getSubimage(0, 0, dim.width, dim.height), formatName, file);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

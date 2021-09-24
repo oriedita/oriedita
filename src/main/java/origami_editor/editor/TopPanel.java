@@ -15,7 +15,6 @@ public class TopPanel {
     private JButton operationFrameSelectButton;
     private JPanel root;
     private JTextField ratioATextField;
-    private JButton writeImageButton;
     private JButton moveCreasePatternButton;
     private JButton creasePatternZoomOutButton;
     private JButton creasePatternZoomInButton;
@@ -54,18 +53,6 @@ public class TopPanel {
 
             app.mainDrawingWorker.unselect_all();
             app.Button_shared_operation();
-            app.repaintCanvas();
-        });
-        writeImageButton.addActionListener(e -> {
-            app.setHelp("writeImage");
-            if (app.mouseMode != MouseMode.OPERATION_FRAME_CREATE_61) {
-                app.Button_shared_operation();
-                app.mainDrawingWorker.setDrawingStage(0);
-            }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
-
-            app.writeImage();
             app.repaintCanvas();
         });
         mouseSettingsCheckBox.addActionListener(e -> {
@@ -329,26 +316,19 @@ public class TopPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         root.add(operationFrameSelectButton, gbc);
-        writeImageButton = new JButton();
-        writeImageButton.setText("Im_s");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.BOTH;
-        root.add(writeImageButton, gbc);
         mouseSettingsCheckBox = new JCheckBox();
         mouseSettingsCheckBox.setIcon(new ImageIcon(getClass().getResource("/ppp/ckbox_mouse_settei_off.png")));
         mouseSettingsCheckBox.setSelected(false);
         mouseSettingsCheckBox.setSelectedIcon(new ImageIcon(getClass().getResource("/ppp/ckbox_mouse_settei_on.png")));
         gbc = new GridBagConstraints();
-        gbc.gridx = 2;
+        gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         root.add(mouseSettingsCheckBox, gbc);
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
-        gbc.gridx = 3;
+        gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         root.add(panel1, gbc);
@@ -461,14 +441,14 @@ public class TopPanel {
         moveCreasePatternButton = new JButton();
         moveCreasePatternButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenkaizu_idiu.png")));
         gbc = new GridBagConstraints();
-        gbc.gridx = 4;
+        gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         root.add(moveCreasePatternButton, gbc);
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
-        gbc.gridx = 5;
+        gbc.gridx = 4;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         root.add(panel4, gbc);
@@ -504,7 +484,7 @@ public class TopPanel {
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
-        gbc.gridx = 6;
+        gbc.gridx = 5;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         root.add(panel5, gbc);
@@ -540,21 +520,21 @@ public class TopPanel {
         transparentButton = new JButton();
         transparentButton.setText("T");
         gbc = new GridBagConstraints();
-        gbc.gridx = 7;
+        gbc.gridx = 6;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         root.add(transparentButton, gbc);
         backgroundTrimButton = new JButton();
         backgroundTrimButton.setText("Tr");
         gbc = new GridBagConstraints();
-        gbc.gridx = 8;
+        gbc.gridx = 7;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         root.add(backgroundTrimButton, gbc);
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
-        gbc.gridx = 9;
+        gbc.gridx = 8;
         gbc.gridy = 0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
@@ -597,7 +577,7 @@ public class TopPanel {
         panel6.add(senbun_yoke_henkanButton, gbc);
         final JPanel spacer1 = new JPanel();
         gbc = new GridBagConstraints();
-        gbc.gridx = 10;
+        gbc.gridx = 9;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;

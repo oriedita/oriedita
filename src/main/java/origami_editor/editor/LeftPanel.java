@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
+import java.io.File;
 
 public class LeftPanel {
     private final GridConfigureDialog gridConfigureDialog;
@@ -623,7 +624,8 @@ public class LeftPanel {
             app.mouseReleasedValid = false;
 
             System.out.println("readFile2Memo() 開始");
-            Save save = app.readFile2Save();
+            File file = app.selectImportFile();
+            Save save = app.readImportFile(file);
             System.out.println("readFile2Memo() 終了");
 
             if (save != null) {

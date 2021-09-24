@@ -7,15 +7,16 @@ import origami.crease_pattern.worker.HierarchyList_Worker;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing_worker.*;
-import origami_editor.editor.folded_figure.FoldedFigure;
-import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.editor.export.Cp;
 import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
+import origami_editor.editor.folded_figure.FoldedFigure;
+import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.record.Memo;
 import origami_editor.tools.StringOp;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
@@ -37,6 +38,7 @@ public class App extends JFrame implements ActionListener {
     public final HistoryStateModel historyStateModel = new HistoryStateModel();
     public final BackgroundModel backgroundModel = new BackgroundModel();
     public final CameraModel creasePatternCameraModel = new CameraModel();
+    public final FileModel fileModel = new FileModel();
     final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
     private final AppMenuBar appMenuBar;
     public FoldedFigure temp_OZ = new FoldedFigure(this);    //Folded figure
@@ -49,15 +51,14 @@ public class App extends JFrame implements ActionListener {
     public SubThread sub;
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
     public Canvas canvas;
-    FileDialog fd;
+    public ArrayList<FoldedFigure> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
+    public File exportFile;
     double r = 3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
     public final DrawingWorker mainDrawingWorker = new DrawingWorker(r, this);    // Basic branch craftsman. Accepts input from the mouse.
-    Memo memo1 = new Memo();
     boolean subThreadRunning = false;//1 if SubThread (folding calculation) is running, 0 if not running
-    public ArrayList<FoldedFigure> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
     int foldedFigureIndex = 0;//Specify which number of foldedFigures Oriagari_Zu is the target of button operation or transformation operation
     Background_camera h_cam = new Background_camera();
-    String fname_and_number;//まとめ書き出しに使う。
+    File fname_and_number;//まとめ書き出しに使う。
     //各種変数の定義
     String frame_title_0;//フレームのタイトルの根本部分
     String frame_title;//フレームのタイトルの全体
@@ -260,6 +261,11 @@ public class App extends JFrame implements ActionListener {
         creasePatternCameraModel.addPropertyChangeListener(e -> topPanel.setData(creasePatternCameraModel));
         creasePatternCameraModel.addPropertyChangeListener(e -> repaintCanvas());
 
+        fileModel.addPropertyChangeListener(e -> appMenuBar.setData(fileModel));
+        fileModel.addPropertyChangeListener(e -> setData(fileModel));
+
+        fileModel.reset();
+
         developmentView_initialization();
 
         configure_initialize_prediction();
@@ -356,6 +362,21 @@ public class App extends JFrame implements ActionListener {
         canvas.addMouseModeHandler(new MouseHandlerModifyCalculatedShape(this));
         canvas.addMouseModeHandler(new MouseHandlerMoveCreasePattern(this));
         canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(this));
+    }
+
+    private void setData(FileModel fileModel) {
+
+        if (fileModel.getSavedFileName() != null) {
+            File file = new File(fileModel.getSavedFileName());
+
+            frame_title = frame_title_0 + "        " + file.getName();
+            setTitle(frame_title);
+            mainDrawingWorker.setTitle(frame_title);
+        } else {
+            frame_title = frame_title_0 + "        " + "Unsaved";
+            setTitle(frame_title);
+            mainDrawingWorker.setTitle(frame_title);
+        }
     }
 
     public void repaintCanvas() {
@@ -479,7 +500,7 @@ public class App extends JFrame implements ActionListener {
             case JOptionPane.YES_OPTION:
                 mouseDraggedValid = false;
                 mouseReleasedValid = false;
-                writeMemo2File();
+                saveFile();
                 mainDrawingWorker.record();
                 break;
             case JOptionPane.NO_OPTION:
@@ -501,7 +522,7 @@ public class App extends JFrame implements ActionListener {
             case JOptionPane.YES_OPTION:
                 mouseDraggedValid = false;
                 mouseReleasedValid = false;
-                writeMemo2File();
+                saveFile();
                 if (subThreadRunning) {
                     sub.stop();
                 }
@@ -776,7 +797,7 @@ public class App extends JFrame implements ActionListener {
     }
 
     void writeImage() {
-        fname_wi = selectFileName("file name for Img save");
+        exportFile = selectExportFile();
         flg61 = false;
         if ((mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (mainDrawingWorker.getDrawingStage() == 4)) {
             flg61 = true;
@@ -789,132 +810,164 @@ public class App extends JFrame implements ActionListener {
         }
     }
 
-    String selectFileName(String coment0) {
-        fd = new FileDialog(this, coment0, FileDialog.SAVE);
-        fd.setVisible(true);
-        String fileName = null;
-        if (fd.getFile() != null) {
-            fileName = fd.getDirectory() + fd.getFile();
+    File selectOpenFile() {
+        JFileChooser fileChooser = new JFileChooser(fileModel.getDefaultDirectory());
+        fileChooser.setDialogTitle("Open");
+
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
+
+        fileChooser.showOpenDialog(this);
+
+        File selectedFile = fileChooser.getSelectedFile();
+        if (selectedFile != null) {
+            fileModel.setDefaultDirectory(selectedFile.getParent());
+            fileModel.setSavedFileName(selectedFile.getAbsolutePath());
         }
-        return fileName;
+
+        return selectedFile;
+    }
+
+    File selectSaveFile() {
+        JFileChooser fileChooser = new JFileChooser(fileModel.getDefaultDirectory());
+        fileChooser.setDialogTitle("Save As");
+
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
+        fileChooser.setSelectedFile(new File("untitled.ori"));
+
+        File selectedFile;
+        int choice = JOptionPane.NO_OPTION;
+        do {
+            fileChooser.showSaveDialog(this);
+
+            selectedFile = fileChooser.getSelectedFile();
+            if (selectedFile != null && selectedFile.exists()) {
+                choice = JOptionPane.showConfirmDialog(this, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            }
+        } while (selectedFile != null && selectedFile.exists() && choice == JOptionPane.NO_OPTION);
+
+        if (selectedFile != null) {
+            fileModel.setDefaultDirectory(selectedFile.getParent());
+            fileModel.setSavedFileName(selectedFile.getAbsolutePath());
+        }
+
+        return selectedFile;
+    }
+
+    File selectImportFile() {
+        JFileChooser fileChooser = new JFileChooser(fileModel.getDefaultDirectory());
+        fileChooser.setDialogTitle("Import");
+
+        fileChooser.setFileFilter(new FileNameExtensionFilter("All supported files", "cp", "orh", "ori"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Orihime (*.orh)", "orh"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
+
+        fileChooser.showOpenDialog(this);
+
+        File selectedFile = fileChooser.getSelectedFile();
+        if (selectedFile != null) {
+            fileModel.setDefaultDirectory(selectedFile.getParent());
+        }
+
+        return selectedFile;
+    }
+
+    File selectExportFile() {
+        JFileChooser fileChooser = new JFileChooser(fileModel.getDefaultDirectory());
+        fileChooser.setDialogTitle("Export");
+
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image (*.png)", "png"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image (*.jpg)", "jpg", "jpeg"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image (*.svg)", "svg"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Orihime (*.orh)", "orh"));
+        fileChooser.setAccessory(new ImagePreview(fileChooser));
+        fileChooser.setSelectedFile(new File("creasepattern.png"));
+
+        File selectedFile;
+        int choice = JOptionPane.NO_OPTION;
+        do {
+            fileChooser.showSaveDialog(this);
+
+            selectedFile = fileChooser.getSelectedFile();
+            if (selectedFile != null && selectedFile.exists()) {
+                choice = JOptionPane.showConfirmDialog(this, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            }
+        } while (selectedFile != null && selectedFile.exists() && choice == JOptionPane.NO_OPTION);
+
+        if (selectedFile != null) {
+            fileModel.setDefaultDirectory(selectedFile.getParent());
+            fileModel.setSavedFileName(selectedFile.getAbsolutePath());
+        }
+
+        return selectedFile;
     }
 
     public void setHelp(String resource) {
         explanation.setExplanation(resource);
     }
 
-    Save readFile2Save() {
-        String fname;
-        Memo memo_temp = new Memo();
-
-        boolean file_ok = false;//1 if the extension of the read file name is appropriate (orh, obj, cp), 0 otherwise
-
-        FileDialog fd = new FileDialog(this, "Open file", FileDialog.LOAD);
-        fd.setFile("*.orh;*.obj;*.cp;*.ori");
-        fd.setFilenameFilter((dir, name) -> name.endsWith(".orh") || name.endsWith(".obj") || name.endsWith(".cp") || name.endsWith(".ori"));
-        fd.setVisible(true);
-
-        if (fd.getFile() == null) {
+    Save readImportFile(File file) {
+        if (file == null) {
             return null;
         }
 
-        fname = fd.getDirectory() + fd.getFile();
-
-        if (fname.endsWith(".orh")) {
-            file_ok = true;
-        }
-        if (fname.endsWith(".obj")) {
-            file_ok = true;
-        }
-        if (fname.endsWith(".cp")) {
-            file_ok = true;
-        }
-        if (fname.endsWith(".ori")) {
-            file_ok = true;
-        }
-
-        if (!file_ok) {
+        if (!file.exists()) {
             return null;
         }
 
-        frame_title = frame_title_0 + "        " + fd.getFile();
-        setTitle(frame_title);
-        mainDrawingWorker.setTitle(frame_title);
+        Save save = null;
 
         try {
-            if (fname.endsWith(".ori")) {
-                try (FileInputStream fis = new FileInputStream(fname); ObjectInputStream ois = new ObjectInputStream(fis)) {
-                    return (Save) ois.readObject();
+            if (file.getName().endsWith(".ori")) {
+                try (FileInputStream fis = new FileInputStream(file); ObjectInputStream ois = new ObjectInputStream(fis)) {
+                    save = (Save) ois.readObject();
                 }
             }
 
-
-            try (BufferedReader br = new BufferedReader(new FileReader(fname))) {
-
-                String rdata;
-
-                memo1.reset();
-                while ((rdata = br.readLine()) != null) {
-                    memo_temp.addLine(rdata);
-                }
+            if (file.getName().endsWith(".obj")) {
+                save = Obj.importFile(file);
             }
 
-            if (fname.endsWith(".cp")) {
-                return Cp.importFile(memo_temp);
+            if (file.getName().endsWith(".cp")) {
+                save = Cp.importFile(file);
             }
 
-            if (fname.endsWith(".obj")) {
-                return Obj.importFile(memo_temp);
+            if (file.getName().endsWith(".orh")) {
+                save = Orh.importFile(file);
             }
 
-            if (fname.endsWith(".orh")) {
-                return Orh.importFile(memo_temp);
-            }
-        } catch (Exception e) {
+        } catch (IOException | ClassNotFoundException e) {
             System.out.println(e);
-            frame_title = frame_title_0 + "        " + "X";
-            setTitle(frame_title);
-            mainDrawingWorker.setTitle(frame_title);
+
+            fileModel.setSavedFileName(null);
         }
 
-        return null;
+        return save;
     }
 
-    void writeMemo2File() {
+    void saveFile() {
+        if (fileModel.getSavedFileName() == null) {
+            saveAsFile();
+
+            return;
+        }
+
+        File file = new File(fileModel.getSavedFileName());
         Save save = mainDrawingWorker.getSave_for_export();
-        String fname = selectFileName("書き出しファイルの名前");
 
-        if (fname != null) {
-            if (fname.endsWith("cp")) {
-                memoAndName2File(Cp.exportFile(save), fname);
-
-                frame_title = frame_title_0 + "        " + fd.getFile();
-                setTitle(frame_title);
-                mainDrawingWorker.setTitle(frame_title);
-            } else if (fname.endsWith("orh")) {
-                memoAndName2File(Orh.exportFile(save), fname);
-
-                frame_title = frame_title_0 + "        " + fd.getFile();
-                setTitle(frame_title);
-                mainDrawingWorker.setTitle(frame_title);
-            } else if (fname.endsWith("ori")) {
-                saveAndName2File(save, fname);
-
-                frame_title = frame_title_0 + "        " + fd.getFile();
-                setTitle(frame_title);
-                mainDrawingWorker.setTitle(frame_title);
-            } else {
-                fname = fname + ".ori";
-                saveAndName2File(save, fname);
-
-                frame_title = frame_title_0 + "        " + fd.getFile() + ".ori";
-                setTitle(frame_title);
-                mainDrawingWorker.setTitle(frame_title);
-            }
-        }
+        saveAndName2File(save, file);
     }
 
-    void saveAndName2File(Save save, String fname) {
+    void saveAsFile() {
+        File file = selectSaveFile();
+
+        Save save = mainDrawingWorker.getSave_for_export();
+
+        saveAndName2File(save, file);
+    }
+
+    void saveAndName2File(Save save, File fname) {
         try {
             try (FileOutputStream bos = new FileOutputStream(fname);
                  ObjectOutputStream out = new ObjectOutputStream(bos)) {
@@ -925,7 +978,7 @@ public class App extends JFrame implements ActionListener {
         }
     }
 
-    void memoAndName2File(Memo memo1, String fname) {
+    void memoAndName2File(Memo memo1, File fname) {
         System.out.println("ファイル書きこみ");
         try {
             try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fname)))) {
@@ -990,10 +1043,45 @@ public class App extends JFrame implements ActionListener {
 
     public void openFile() {
         System.out.println("readFile2Memo() 開始");
-        Save memo_temp = readFile2Save();
+        File file = selectOpenFile();
+
+        if (file == null) {
+            return;
+        }
+
+        fileModel.setSavedFileName(file.getAbsolutePath());
+        fileModel.setDefaultDirectory(file.getParent());
+
+        Save memo_temp = readImportFile(file);
         System.out.println("readFile2Memo() 終了");
 
         if (memo_temp != null) {
+            //Initialization of development drawing started
+            developmentView_initialization();
+            //Deployment parameter initialization
+
+            //Initialization of folding prediction map started
+            OZ = temp_OZ;//20171223この行は不要かもしれないが、一瞬でもOZが示すOriagari_Zuがなくなることがないように念のために入れておく
+            foldedFigures.clear();
+            addNewFoldedFigure();
+            setFoldedFigureIndex(0);
+            configure_initialize_prediction();
+
+            mainDrawingWorker.setCamera(canvas.creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
+            mainDrawingWorker.setSave_for_reading(memo_temp);
+            mainDrawingWorker.record();
+        }
+    }
+
+    public void importFile() {
+        System.out.println("readFile2Memo() 開始");
+        File importFile = selectImportFile();
+        Save memo_temp = readImportFile(importFile);
+        System.out.println("readFile2Memo() 終了");
+
+        if (memo_temp != null) {
+            fileModel.setSavedFileName(null);
+
             //Initialization of development drawing started
             developmentView_initialization();
             //Deployment parameter initialization

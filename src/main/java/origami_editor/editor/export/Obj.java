@@ -5,13 +5,16 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.Save;
-import origami_editor.record.Memo;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class Obj {
-    public static Save importFile(Memo mem) {
+    public static Save importFile(File file) throws IOException {
         int jtok;
 
         Save save = new Save();
@@ -43,9 +46,11 @@ public class Obj {
 
         String str;
 
-        for (int ig = 1; ig <= mem.getLineCount(); ig++) {
-            if (mem.getLine(ig).length() != 0) {
-                StringTokenizer tk = new StringTokenizer(mem.getLine(ig), " ");
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String fileLine;
+
+            while ((fileLine = reader.readLine()) != null) {
+                StringTokenizer tk = new StringTokenizer(fileLine, " ");
                 jtok = tk.countTokens();
 
                 str = tk.nextToken();
@@ -134,7 +139,7 @@ public class Obj {
 
             save.addLineSegment(s.clone());
         }
+
         return save;
     }
-
 }

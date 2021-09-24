@@ -14,6 +14,11 @@ import origami_editor.tools.Camera;
 import origami_editor.tools.StringOp;
 
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -26,7 +31,7 @@ public class Orh {
      * @param memo1
      * @return
      */
-    public static Save importFile(Memo memo1) {
+    public static Save importFile(File memo1) throws IOException {
 
         Save save = new Save();
         Pattern p = Pattern.compile("<(.+)>(.+)</(.+)>");
@@ -37,9 +42,18 @@ public class Orh {
 
         // Loading the camera settings for the development view
         reading = false;
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            String str = memo1.getLine(i);
 
+        List<String> file = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(memo1))) {
+            String str;
+
+            while ((str = reader.readLine()) != null ) {
+                file.add(str);
+            }
+        }
+
+        for (String str : file) {
             if (str.equals("<camera_of_orisen_nyuuryokuzu>")) {
                 reading = true;
             } else if (str.equals("</camera_of_orisen_nyuuryokuzu>")) {
@@ -92,9 +106,7 @@ public class Orh {
 
         // ----------------------------------------- チェックボックス等の設定の読み込み
         reading = false;
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            String str = memo1.getLine(i);
-
+        for (String str : file) {
             if (str.equals("<settei>")) {
                 reading = true;
             } else if (str.equals("</settei>")) {
@@ -192,9 +204,7 @@ public class Orh {
         double gridYA = 0.0;
         double gridYB = 1.0;
         double gridYC = 1.0;
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            String str = memo1.getLine(i);
-
+        for (String str : file) {
             if (str.equals("<Kousi>")) {
                 reading = true;
             } else if (str.equals("</Kousi>")) {
@@ -269,9 +279,7 @@ public class Orh {
 
         boolean i_Grid_iro_yomikomi = false;//Kousi_iroの読み込みがあったら1、なければ0
         reading = false;
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            String str = memo1.getLine(i);
-
+        for (String str : file) {
             if (str.equals("<Kousi_iro>")) {
                 reading = true;
                 i_Grid_iro_yomikomi = true;
@@ -336,9 +344,7 @@ public class Orh {
 
         boolean i_oriagarizu_yomikomi = false;//oriagarizuの読み込みがあったら1、なければ0
         reading = false;
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            String str = memo1.getLine(i);
-
+        for (String str : file) {
             if (str.equals("<oriagarizu>")) {
                 reading = true;
                 i_oriagarizu_yomikomi = true;
@@ -410,8 +416,8 @@ public class Orh {
 
         //First find the total number of line segments
         int numLines = 0;
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            StringTokenizer tk = new StringTokenizer(memo1.getLine(i), ",");
+        for (String line : file) {
+            StringTokenizer tk = new StringTokenizer(line, ",");
 
             str = tk.nextToken();
             if (str.equals("<線分集合>")) {
@@ -425,7 +431,7 @@ public class Orh {
             }
         }
 
-        while (save.getLineSegments().size() < numLines) {
+        while (save.getLineSegments().size() <= numLines) {
             save.addLineSegment(new LineSegment());
         }
 
@@ -439,9 +445,7 @@ public class Orh {
         int i_customized_color_B = 0;
 
         List<Circle> circles = save.getCircles();
-        for (int i = 1; i <= memo1.getLineCount(); i++) {
-            String str_i = memo1.getLine(i);
-
+        for (String str_i : file) {
             //Old-fashioned reading method
             StringTokenizer tk = new StringTokenizer(str_i, ",");
             str = tk.nextToken();

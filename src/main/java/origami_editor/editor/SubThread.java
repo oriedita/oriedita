@@ -2,6 +2,8 @@ package origami_editor.editor;
 
 import origami_editor.editor.folded_figure.FoldedFigure;
 
+import java.io.File;
+
 class SubThread extends Thread {
     //Variable declaration
     App app;
@@ -20,8 +22,8 @@ class SubThread extends Thread {
                 app.repaint();
                 break;
             case FOLDING_ESTIMATE_SAVE_100_1:
-                String fname = app.selectFileName("file name for Img save");
-                if (fname != null) {
+                File file = app.selectExportFile();
+                if (file != null) {
                     app.OZ.summary_write_image_during_execution = true;//Meaning during summary writing
 
                     synchronized (app.w_image_running) {
@@ -29,7 +31,16 @@ class SubThread extends Thread {
 
                         for (int i = 1; i <= objective; i++) {
                             app.folding_estimated();
-                            app.fname_and_number = fname + app.OZ.discovered_fold_cases;//Used for bulk writing.
+
+                            String filename = file.getName();
+                            if (filename.contains(".")) {
+                                String extension = filename.substring(filename.lastIndexOf("."));
+                                String basename = filename.substring(0, filename.lastIndexOf("."));
+
+                                filename = basename + "_" + app.OZ.discovered_fold_cases + extension;
+                            }
+
+                            app.fname_and_number = new File(filename);//Used for bulk writing.
 
                             app.w_image_running.set(true);
                             app.repaint();

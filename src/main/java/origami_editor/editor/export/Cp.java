@@ -5,6 +5,10 @@ import origami.crease_pattern.element.LineSegment;
 import origami_editor.editor.Save;
 import origami_editor.record.Memo;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.StringTokenizer;
 
 public class Cp {
@@ -20,16 +24,18 @@ public class Cp {
         return mem;
     }
 
-    public static Save importFile(Memo mem) {
+    public static Save importFile(File mem) throws IOException {
         Save save = new Save();
 
         double d1, d2, d3, d4;
 
         //オリヒメ　0.Contour, 1.Mountain, 2.Valley　、ORIPA 1.Contour, 2.Mountain, 3.Valley
 
-        for (int ig = 1; ig <= mem.getLineCount(); ig++) {
-            if (mem.getLine(ig).length() != 0) {
-                StringTokenizer tk = new StringTokenizer(mem.getLine(ig), " ");
+        try (BufferedReader reader = new BufferedReader(new FileReader(mem))) {
+            String fileLine;
+
+            while ((fileLine = reader.readLine()) != null) {
+                StringTokenizer tk = new StringTokenizer(fileLine, " ");
                 String str = tk.nextToken();
                 LineColor col;
                 switch (str) {
@@ -49,7 +55,6 @@ public class Cp {
                 d2 = Double.parseDouble(tk.nextToken());
                 d3 = Double.parseDouble(tk.nextToken());
                 d4 = Double.parseDouble(tk.nextToken());
-
 
                 LineSegment s = new LineSegment();
                 s.set(d1, d2, d3, d4, col);
