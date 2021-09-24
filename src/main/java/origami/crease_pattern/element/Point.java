@@ -15,6 +15,14 @@ public class Point implements Serializable {
         y = 0;
     }
 
+    @Override
+    public String toString() {
+        return "Point{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
+
     public Point(double i, double j) {
         x = i;
         y = j;

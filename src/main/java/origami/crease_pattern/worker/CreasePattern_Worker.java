@@ -22,7 +22,7 @@ public class CreasePattern_Worker {
     //PointSet obtained as a result of folding etc. should be returned to the outside and not held by oneself.
     double r;                   //Criteria for determining the radius of the circles at both ends of the straight line of the basic branch structure and the proximity of the branches to various points
     PointSet pointSet = new PointSet();    //Development view
-    HistoryState Ubox = new HistoryState();
+    HistoryState history = new HistoryState();
     //Definition of variables used in VVVVVVVVVVVV oritatami and oekaki VVVVVVVVVVVVVVVVVVVVVVVVVVVV
     int[] iFacePosition;//Indicates how far a surface is from the reference surface. Enter a value such as 1, next to the reference plane, 2, next to the reference plane, and 3 next to it.
     int referencePlaneId;
@@ -99,15 +99,6 @@ public class CreasePattern_Worker {
     }
 
     /**
-     * Determine if Point p0 is inside the fold-up diagram
-     */
-    public int isInside(Point p0) {//Returns the face id where p0 is actually
-        Point p = new Point();
-        p.set(camera.TV2object(p0));
-        return pointSet.inside(p);//If c.inside(p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, and if it is a positive number, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
-    }
-
-    /**
      * Determine if Point p0 is inside the fold-up diagram (table)
      */
     public int isInsideFront(Point p0) {//Returns the face id where p0 is actually
@@ -139,10 +130,6 @@ public class CreasePattern_Worker {
         Point p = new Point();
         p.set(cam_transparent_rear.TV2object(p0));
         return pointSet.inside(p);//If PointSet c.inside (p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, if it is positive, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
-    }
-
-    public void set_r(double r0) {
-        r = r0;
     }
 
     public void setCamera(Camera cam0) {
@@ -604,10 +591,6 @@ public class CreasePattern_Worker {
         pointSet.setPointStateTrue(i);
     }
 
-    public void setPointStateFalse(int i) {
-        pointSet.setPointStateFalse(i);
-    }
-
     public void setAllPointStateFalse() {
         pointSet.setAllPointStateFalse();
     }
@@ -679,19 +662,19 @@ public class CreasePattern_Worker {
     }
 
     public void setUndoBoxUndoTotal(int i) {
-        Ubox.setUndoTotal(i);
+        history.setUndoTotal(i);
     }
 
     public void record() {
-        Ubox.record(getSave());
+        history.record(getSave());
     }
 
     public void undo() {
-        setSaveForUndoRedo(Ubox.undo());
+        setSaveForUndoRedo(history.undo());
     }
 
     public void redo() {
-        setSaveForUndoRedo(Ubox.redo());
+        setSaveForUndoRedo(history.redo());
     }
 
     public Save getSave() {

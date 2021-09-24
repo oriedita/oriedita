@@ -6,13 +6,11 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Point_p;
 import origami.crease_pattern.element.Polygon;
 import origami_editor.editor.Save;
-import origami_editor.record.Memo;
 import origami.folding.element.Face;
 import origami.crease_pattern.element.Line;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * A collection of points.
@@ -131,40 +129,6 @@ public class PointSet {
         return x / ((double) numPoints);
     }
 
-    private double getAverage_y() {
-        double y = 0.0;
-        for (int i = 1; i <= numPoints; i++) {
-            y = y + points[i].getY();
-        }
-        return y / ((double) numPoints);
-    }
-
-    //
-    public void turnOver() {//Turn it over to the left and right around the position of the center of gravity.
-        double xh;
-        LineColor icol;
-        xh = getAverage_x();
-        for (int i = 1; i <= numPoints; i++) {
-            points[i].setX(2.0 * xh - points[i].getX());
-        }
-        for (int i = 1; i <= numLines; i++) {
-            icol = lines[i].getColor();
-            if (icol == LineColor.RED_1) {
-                lines[i].setColor(LineColor.BLUE_2);
-            }
-            if (icol == LineColor.BLUE_2) {
-                lines[i].setColor(LineColor.RED_1);
-            }
-        }
-
-    }
-
-    public void parallelMove(double x, double y) {
-        for (int i = 0; i <= numPoints; i++) {
-            points[i].parallel_move(x, y);
-        }
-    }
-
     public void set(PointSet ts) {
         numPoints = ts.getNumPoints();
         numLines = ts.getNumLines();
@@ -202,38 +166,6 @@ public class PointSet {
 
     private int get_lineInFaceBorder_max(int i) {
         return lineInFaceBorder_max[i];
-    }
-
-    private double get_line_x_max(int i) {
-        return line_x_max[i];
-    }
-
-    private double get_line_x_min(int i) {
-        return line_x_min[i];
-    }
-
-    private double get_line_y_max(int i) {
-        return line_y_max[i];
-    }
-
-    private double get_line_y_min(int i) {
-        return line_y_min[i];
-    }
-
-    private double get_face_x_max(int i) {
-        return face_x_max[i];
-    }
-
-    private double get_face_x_min(int i) {
-        return face_x_min[i];
-    }
-
-    private double get_face_y_max(int i) {
-        return face_y_max[i];
-    }
-
-    private double get_face_y_min(int i) {
-        return face_y_min[i];
     }
 
     //Determine if the point is inside a face. 0 is not inside, 1 is on the border, 2 is inside
@@ -313,51 +245,10 @@ public class PointSet {
         return tk.convex_inside(s0);
     }
 
-    private boolean convex_inside(int ib, int im) {
-        return convex_inside(new LineSegment(points[lines[ib].getBegin()], points[lines[ib].getEnd()]), faces[im]);
-    }
-
     public boolean convex_inside(double d, int ib, int im) {
         LineSegment sn = new LineSegment(points[lines[ib].getBegin()], points[lines[ib].getEnd()]);
         return convex_inside(OritaCalc.moveParallel(sn, d), faces[im]);
     }
-
-    private boolean simple_convex_inside(double d, int ib, int im) {
-        LineSegment sn = new LineSegment(points[lines[ib].getBegin()], points[lines[ib].getEnd()]);
-        LineSegment snm = OritaCalc.moveParallel(sn, d);
-        double s_x_max = snm.getAX();
-        double s_x_min = snm.getAX();
-        double s_y_max = snm.getAY();
-        double s_y_min = snm.getAY();
-        if (s_x_max < snm.getBX()) {
-            s_x_max = snm.getBX();
-        }
-        if (s_x_min > snm.getBX()) {
-            s_x_min = snm.getBX();
-        }
-        if (s_y_max < snm.getBY()) {
-            s_y_max = snm.getBY();
-        }
-        if (s_y_min > snm.getBY()) {
-            s_y_min = snm.getBY();
-        }
-
-        if (s_x_max + 0.5 < face_x_min[im]) {
-            return false;
-        }
-        if (s_x_min - 0.5 > face_x_max[im]) {
-            return false;
-        }
-        if (s_y_max + 0.5 < face_y_min[im]) {
-            return false;
-        }
-        if (s_y_min - 0.5 > face_y_max[im]) {
-            return false;
-        }
-
-        return convex_inside(snm, faces[im]);
-    }
-
 
     //Make a line a line segment
     private LineSegment lineToLineSegment(Line line) {
@@ -384,12 +275,6 @@ public class PointSet {
         tk = makePolygon(mn);
         return tk.insidePoint_find();
     }
-
-    //面積求める
-    public double calculateArea(int n) {
-        return calculateArea(faces[n]);
-    }
-
 
     private double calculateArea(Face mn) {
         Polygon tk;
@@ -478,10 +363,6 @@ public class PointSet {
         points[i].set(tn);
     }                                                        //   <<<------------
 
-    private void setPoint(int i, double x, double y) {
-        points[i].set(x, y);
-    }
-
     public void addPoint(double x, double y) {
         numPoints = numPoints + 1;
         points[numPoints].set(x, y);
@@ -491,11 +372,6 @@ public class PointSet {
         numLines = numLines + 1;
         lines[numLines].set(i, j, icol);
     }   //棒を加える
-
-    //i番目の棒の色を入出力する
-    private void setColor(int i, LineColor icol) {
-        lines[i].setColor(icol);
-    }
 
     public LineColor getColor(int i) {
         return lines[i].getColor();
@@ -508,20 +384,6 @@ public class PointSet {
             setPointLinking(lines[k].getEnd(), 0, getPointLinking(lines[k].getEnd(), 0) + 1);
             setPointLinking(lines[k].getEnd(), getPointLinking(lines[k].getEnd(), 0), lines[k].getBegin());
         }
-    }
-
-    //点iと点jが棒で連結していれば1、していなければ0を返す。
-    private boolean renketu_decision(int i, int j) {
-        for (int k = 1; k <= numLines; k++) {
-            if (
-                    ((lines[k].getBegin() == i) && (lines[k].getEnd() == j))
-                            ||
-                            ((lines[k].getBegin() == j) && (lines[k].getEnd() == i))
-            ) {
-                return true;
-            }
-        }
-        return false;
     }
 
     //Find the number of the point when going from point i to point j and then going from point j to the right side of point i.
@@ -671,35 +533,6 @@ public class PointSet {
             }
         }
     }
-
-
-    public Point getFaceUpperRightPoint(int im) {
-        //im is the surface number. upperRight Returns the upper right vertex of the smallest rectangle containing the face with the specified number. Used to specify the position of the inside-out view of the folded-up view.
-        //Find the maximum and minimum of Face's coordinates
-
-        double x_max = points[faces[im].getPointId(1)].getX();
-        double x_min = points[faces[im].getPointId(1)].getX();
-        double y_max = points[faces[im].getPointId(1)].getY();
-        double y_min = points[faces[im].getPointId(1)].getY();
-        for (int i = 2; i <= faces[im].getNumPoints(); i++) {
-            if (x_max < points[faces[im].getPointId(i)].getX()) {
-                x_max = points[faces[im].getPointId(i)].getX();
-            }
-            if (x_min > points[faces[im].getPointId(i)].getX()) {
-                x_min = points[faces[im].getPointId(i)].getX();
-            }
-            if (y_max < points[faces[im].getPointId(i)].getY()) {
-                y_max = points[faces[im].getPointId(i)].getY();
-            }
-            if (y_min > points[faces[im].getPointId(i)].getY()) {
-                y_min = points[faces[im].getPointId(i)].getY();
-            }
-        }
-
-        return new Point(x_max, y_min);
-
-    }
-
 
     //--------------
     //Returns the faceId with the smaller faceId of the faces containing the bar lineId as the boundary (there are up to two faces). Returns 0 if there is no face containing the bar as the boundary
@@ -880,34 +713,6 @@ public class PointSet {
         return rmin;
     }
 
-
-    /**
-     * The positions of the Points that are closer than a certain distance are set to the positions with the lower numbers.
-     */
-    public void pointMatch(double r) {
-        for (int i = 1; i <= numPoints - 1; i++) {
-            for (int j = i + 1; j <= numPoints; j++) {
-                if (OritaCalc.distance(points[i], points[j]) < r) {
-                    points[j].set(points[i]);
-                }
-            }
-        }
-    }
-
-    /**
-     * When Point is closer to Line than a certain distance, the position of Point should be on top of Line.
-     */
-    public void pointLineMatch(double r) {
-        for (int ib = 1; ib <= numLines; ib++) {
-            for (int i = 1; i <= numPoints - 1; i++) {
-                if (OritaCalc.distance_lineSegment(points[i], points[lines[ib].getBegin()], points[lines[ib].getEnd()]) < r) {
-                    points[i].set(OritaCalc.findProjection(points[lines[ib].getBegin()], points[lines[ib].getEnd()], points[i]));
-                }
-            }
-        }
-    }
-
-    //--------------------
     public int getSelectedPointsNum() {
         int r_int = 0;
         for (int i = 1; i <= numPoints; i++) {
@@ -920,25 +725,20 @@ public class PointSet {
         return r_int;
     }
 
-    //--------------------
     public void setPointStateTrue(int i) {
         points[i].setPointStateTrue();
     }
 
-    //--------------------
     public void setPointStateFalse(int i) {
         points[i].setPointStateFalse();
     }
 
-    //--------------------
     public void setAllPointStateFalse() {
         for (int i = 1; i <= numPoints; i++) {
             points[i].setPointStateFalse();
         }
     }
 
-
-    //--------------------
     public void changePointState(int i) {
         Point_p point = points[i];
         if (point.getPointState()) {
@@ -957,18 +757,6 @@ public class PointSet {
 
             if (points[i].getPointState()) {
                 set(i, p);
-            }
-        }
-    }
-
-    public void statePointMove(Point ugokasu_maeno_sentaku_point, Point pa, Point pb) {
-        Point p_u = new Point();
-        p_u.set(ugokasu_maeno_sentaku_point.getX(), ugokasu_maeno_sentaku_point.getY());
-        p_u.move(pa.other_Point_position(pb));
-
-        for (int i = 1; i <= numPoints; i++) {
-            if (points[i].getPointState()) {
-                set(i, p_u);
             }
         }
     }

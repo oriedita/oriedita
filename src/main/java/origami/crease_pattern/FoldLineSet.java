@@ -26,15 +26,8 @@ public class FoldLineSet {
     Queue<LineSegment> Check4LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     Queue<Point> check4Point = new ConcurrentLinkedQueue<>(); //Instantiation of points to check
 
-
     List<Circle> circles = new ArrayList<>(); //円のインスタンス化
-    //Setting variables used to load custom properties
-    String[] st_new;
-    String[] s_new;
-    int i_customized = 0;
-    int i_customized_color_R = 0;
-    int i_customized_color_G = 0;
-    int i_customized_color_B = 0;
+
     // Specify the point Q, delete the line segments AQ and QC, and add the line segment AC (however, only two line segments have Q as the end point) // When implemented, 1 when nothing is done Returns 0.
     // The procedure is (1) The point p is determined by clicking the mouse.
     // (2) Point p The end point q included in the nearest crease pattern is determined.
@@ -335,7 +328,6 @@ public class FoldLineSet {
     public Save getMemoSelectOption(int option) {
         Save save = new Save();
 
-        int number = 0;
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
 
@@ -732,17 +724,6 @@ public class FoldLineSet {
         memo_temp.set(getMemoExceptSelected(2));
         reset();
         setSave(memo_temp);
-    }
-
-    public boolean del_selected_lineSegment_symple_roop() {
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-            if (s.getSelected() == 2) {
-                deleteLineSegment_vertex(i);
-                return true;
-            }
-        }
-        return false;
     }
 
     //Remove dotted line segments
@@ -1809,14 +1790,18 @@ public class FoldLineSet {
                     Circle ej = new Circle();
                     ej.set(circles.get(j));
                     if (ej.getRadius() > 0.0000001) {//Circles with a radius of 0 are not applicable
-                        if (OritaCalc.distance(ei.getCenter(), ej.getCenter()) < 0.000001) {//Two circles are concentric and do not intersect
-                        } else if (Math.abs(OritaCalc.distance(ei.getCenter(), ej.getCenter()) - ei.getRadius() - ej.getRadius()) < 0.0001) {//Two circles intersect at one point
+                        if (OritaCalc.distance(ei.getCenter(), ej.getCenter()) < 0.000001) {
+                            //Two circles are concentric and do not intersect
+                        } else if (Math.abs(OritaCalc.distance(ei.getCenter(), ej.getCenter()) - ei.getRadius() - ej.getRadius()) < 0.0001) {
+                            //Two circles intersect at one point
                             addCircle(OritaCalc.internalDivisionRatio(ei.getCenter(), ej.getCenter(), ei.getRadius(), ej.getRadius()), 0.0);
-                        } else if (OritaCalc.distance(ei.getCenter(), ej.getCenter()) > ei.getRadius() + ej.getRadius()) {//Two circles do not intersect
-
-                        } else if (Math.abs(OritaCalc.distance(ei.getCenter(), ej.getCenter()) - Math.abs(ei.getRadius() - ej.getRadius())) < 0.0001) {//Two circles intersect at one point
+                        } else if (OritaCalc.distance(ei.getCenter(), ej.getCenter()) > ei.getRadius() + ej.getRadius()) {
+                            //Two circles do not intersect
+                        } else if (Math.abs(OritaCalc.distance(ei.getCenter(), ej.getCenter()) - Math.abs(ei.getRadius() - ej.getRadius())) < 0.0001) {
+                            //Two circles intersect at one point
                             addCircle(OritaCalc.internalDivisionRatio(ei.getCenter(), ej.getCenter(), -ei.getRadius(), ej.getRadius()), 0.0);
-                        } else if (OritaCalc.distance(ei.getCenter(), ej.getCenter()) < Math.abs(ei.getRadius() - ej.getRadius())) {//Two circles do not intersect
+                        } else if (OritaCalc.distance(ei.getCenter(), ej.getCenter()) < Math.abs(ei.getRadius() - ej.getRadius())) {
+                            //Two circles do not intersect
 
                         } else {//Two circles intersect at two points
                             LineSegment lineSegment = new LineSegment();
@@ -1850,7 +1835,8 @@ public class FoldLineSet {
                         if (Math.abs(OritaCalc.distance_lineSegment(ej.getCenter(), si) - ej.getRadius()) < 0.000001) {
                             addCircle(OritaCalc.findProjection(ti, ej.getCenter()), 0.0);
                         }
-                    } else if (tc_kyori > ej.getRadius()) {//Circles and straight lines do not intersect
+                    } else if (tc_kyori > ej.getRadius()) {
+                        //Circles and straight lines do not intersect
                     } else {//Circle and straight line intersect at two points
                         LineSegment k_senb = new LineSegment();
                         k_senb.set(OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(ej, ti));
@@ -3076,20 +3062,6 @@ public class FoldLineSet {
         return circles;
     }
 
-    public void setCircle(int i, Circle e0) {
-        //iの指定があったとき、EnはCirのi-1番目に格納される　
-        //i>cir_size()のときは、Cirのi-1番目の円はまだ定義されていないので、とりあえずi-1番目まで円を存在させる必要がある
-
-        while (i > circles.size() - 1) {
-            circles.add(new Circle());
-        }
-
-        Circle etemp = new Circle();
-        etemp.set(e0);
-
-        circles.set(i, etemp);
-    }
-
     public Iterable<LineSegment> getCheck1LineSegments() {
         return Check1LineSegment;
     }
@@ -3653,23 +3625,6 @@ public class FoldLineSet {
                 dm = s.getAY();
             }
             if (dm < s.getBY()) {
-                dm = s.getBY();
-            }
-        }
-        return dm;
-    }
-
-    public double get_y_min() {//sousuu=0のときは0.0を返す
-        if (total == 0) {
-            return 0.0;
-        }
-        double dm = lineSegments.get(1).getAY();
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-            if (dm > s.getAY()) {
-                dm = s.getAY();
-            }
-            if (dm > s.getBY()) {
                 dm = s.getBY();
             }
         }

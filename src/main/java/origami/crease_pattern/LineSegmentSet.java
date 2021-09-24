@@ -85,22 +85,18 @@ public class LineSegmentSet {
         lineSegments.removeIf(s -> OritaCalc.equal(s.getA(), s.getB()));
     }
 
-    public void point_removal(double r) {
-        lineSegments.removeIf(s -> OritaCalc.equal(s.getA(), s.getB(), r));
-    }
-
     /**
      * When there are two completely overlapping line segments, the one with the latest number is deleted.
      */
     public void overlapping_line_removal(double r) {
         List<Boolean> removal_flg = new ArrayList<>();
         List<LineSegment> snew = new ArrayList<>();
-        for (int i = 0; i <= lineSegments.size(); i++) {
+        for (int i = 0; i < lineSegments.size(); i++) {
             removal_flg.add(false);
             snew.add(new LineSegment());
         }
 
-        for (int i = 0; i < lineSegments.size() - 1; i++) {
+        for (int i = 0; i < lineSegments.size(); i++) {
             LineSegment si = lineSegments.get(i);
             for (int j = i + 1; j < lineSegments.size(); j++) {
                 LineSegment sj = lineSegments.get(j);
@@ -120,8 +116,8 @@ public class LineSegmentSet {
         for (int i = 0; i < lineSegments.size(); i++) {
             if (!removal_flg.get(i)) {
                 LineSegment si = lineSegments.get(i);
-                smax = smax + 1;
                 snew.get(smax).set(si);
+                smax = smax + 1;
             }
         }
 
