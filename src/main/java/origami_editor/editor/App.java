@@ -886,7 +886,6 @@ public class App extends JFrame implements ActionListener {
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image (*.svg)", "svg"));
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp"));
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Orihime (*.orh)", "orh"));
-        fileChooser.setAccessory(new ImagePreview(fileChooser));
         fileChooser.setSelectedFile(new File("creasepattern.png"));
 
         File selectedFile;
