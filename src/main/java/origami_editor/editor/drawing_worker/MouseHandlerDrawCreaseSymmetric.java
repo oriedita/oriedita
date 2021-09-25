@@ -58,18 +58,18 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
             int old_sousuu = d.foldLineSet.getTotal();
 
             for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
-                if (d.foldLineSet.get_select(i) == 2) {
-                    adds.set(OritaCalc.findLineSymmetryLineSegment(d.foldLineSet.get(i), d.lineStep.get(0)));
-                    adds.setColor(d.foldLineSet.getColor(i));
+                LineSegment s = d.foldLineSet.get(i);
+                if (s.getSelected() == 2) {
+                    adds.set(OritaCalc.findLineSymmetryLineSegment(s, d.lineStep.get(0)));
+                    adds.setColor(s.getColor());
 
-                    d.foldLineSet.addLine(adds.getA(), adds.getB());
-                    d.foldLineSet.setColor(d.foldLineSet.getTotal(), d.foldLineSet.getColor(i));
+                    d.foldLineSet.addLine(adds);
                 }
             }
 
             int new_sousuu = d.foldLineSet.getTotal();
 
-            d.foldLineSet.intersect_divide(1, old_sousuu, old_sousuu + 1, new_sousuu);
+            d.foldLineSet.divideLineSegmentIntersections(1, old_sousuu, old_sousuu + 1, new_sousuu);
 
             d.foldLineSet.unselect_all();
             d.record();

@@ -37,7 +37,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         } else if (d.lineStep.size() == 3) {
             LineSegment closestLineSegment = new LineSegment();
             closestLineSegment.set(d.getClosestLineSegment(p));
-            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
                 closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
             }

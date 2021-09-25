@@ -27,7 +27,7 @@ public class MouseHandlerUnused_10002 extends BaseMouseHandler {
         p.set(d.camera.TV2object(p0));
         LineSegment closestLineSegment = new LineSegment();
         closestLineSegment.set(d.getClosestLineSegment(p));
-        if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+        if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
             closestLineSegment.setColor(LineColor.GREEN_6);
             d.lineStepAdd(closestLineSegment);
         }

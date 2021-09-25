@@ -163,14 +163,14 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInpu
             LineSegment closestLineSegment = new LineSegment();
             //line_step[2から10]までとs_step[11から19]まで
             closestLineSegment.set(d.get_moyori_step_lineSegment(p, 3, 2 + (honsuu)));
-            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
                 i_tikai_s_step_suu = i_tikai_s_step_suu + 1;
                 d.lineStepAdd(closestLineSegment);
             }
 
             //line_step[2から10]までとs_step[11から19]まで
             closestLineSegment.set(d.get_moyori_step_lineSegment(p, 2 + (honsuu) + 1, 2 + (honsuu) + (honsuu)));
-            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
                 i_tikai_s_step_suu = i_tikai_s_step_suu + 1;
                 d.lineStepAdd(closestLineSegment);
             }
@@ -181,7 +181,7 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInpu
                 //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
                 //0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
 
-                if (OritaCalc.parallel_judgement(d.lineStep.get(d.lineStep.size() - 1 - 1), d.lineStep.get(d.lineStep.size() - 1), 0.1) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
+                if (OritaCalc.isLineSegmentParallel(d.lineStep.get(d.lineStep.size() - 1 - 1), d.lineStep.get(d.lineStep.size() - 1), 0.1) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
                     d.lineStep.clear();
                     return;
                 }

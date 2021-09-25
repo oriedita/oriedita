@@ -40,7 +40,7 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
         if (d.lineStep.size() == 1) {
             LineSegment closestLineSegment = new LineSegment();
             closestLineSegment.set(d.getClosestLineSegment(p));
-            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
                 closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
                 return;

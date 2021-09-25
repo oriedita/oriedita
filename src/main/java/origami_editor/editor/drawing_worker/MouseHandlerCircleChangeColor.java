@@ -1,6 +1,7 @@
 package origami_editor.editor.drawing_worker;
 
 import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
@@ -38,9 +39,10 @@ public class MouseHandlerCircleChangeColor extends BaseMouseHandlerBoxSelect {
 
             if (rs_min <= re_min) {
                 if (rs_min < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                    if (d.foldLineSet.getColor(d.foldLineSet.closestLineSegmentSearchReversedOrder(p)) == LineColor.CYAN_3) {
-                        d.foldLineSet.setLineCustomized(d.foldLineSet.closestLineSegmentSearchReversedOrder(p), 1);
-                        d.foldLineSet.setLineCustomizedColor(d.foldLineSet.closestLineSegmentSearchReversedOrder(p), d.customCircleColor);
+                    LineSegment closestLineSegment = d.foldLineSet.closestLineSegmentSearchReversedOrder(p);
+                    if (closestLineSegment.getColor() == LineColor.CYAN_3) {
+                        closestLineSegment.setCustomized(1);
+                        closestLineSegment.setCustomizedColor(d.customCircleColor);
                         //en_seiri();kiroku();
                     }
                 }

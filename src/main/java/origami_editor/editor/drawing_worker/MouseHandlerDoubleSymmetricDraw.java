@@ -51,7 +51,7 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
                     int imax = d.foldLineSet.getTotal();
                     for (int i = 1; i <= imax; i++) {
                         LineSegment s = d.foldLineSet.get(i);
-                        LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.line_intersect_decide_sweet(s, d.lineStep.get(0), 0.01, 0.01);
+                        LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersectionSweet(s, d.lineStep.get(0), 0.01, 0.01);
                         boolean i_jikkou = false;
                         if (i_lineSegment_intersection_decision == LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25) {
                             i_jikkou = true;
@@ -64,7 +64,7 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
                             Point t_moto = new Point();
                             t_moto.set(s.getA());
                             System.out.println("i_senbun_kousa_hantei_" + i_lineSegment_intersection_decision);
-                            if (OritaCalc.distance_lineSegment(t_moto, d.lineStep.get(0)) < OritaCalc.distance_lineSegment(s.getB(), d.lineStep.get(0))) {
+                            if (OritaCalc.determineLineSegmentDistance(t_moto, d.lineStep.get(0)) < OritaCalc.determineLineSegmentDistance(s.getB(), d.lineStep.get(0))) {
                                 t_moto.set(s.getB());
                             }
 

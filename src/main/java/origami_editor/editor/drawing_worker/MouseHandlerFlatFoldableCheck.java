@@ -92,7 +92,7 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
                 for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
                     LineSegment s = d.foldLineSet.get(i);
 
-                    LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.line_intersect_decide(s, s2, 0.0001, 0.0001);
+                    LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(s, s2, 0.0001, 0.0001);
                     int i_jikkou = 0;
 
                     if ((i_senbun_kousa_hantei != LineSegment.Intersection.NO_INTERSECTION_0) && (i_senbun_kousa_hantei != LineSegment.Intersection.INTERSECTS_1)) {

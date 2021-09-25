@@ -35,8 +35,8 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
             LineSegment closestLineSegment = new LineSegment();
             closestLineSegment.set(d.getClosestLineSegment(p));
 
-            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < OritaCalc.distance_circumference(p, closest_circumference)) {//線分の方が円周より近い
-                if (OritaCalc.distance_lineSegment(p, closestLineSegment) > d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < OritaCalc.distance_circumference(p, closest_circumference)) {//線分の方が円周より近い
+                if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) > d.selectionDistance) {
                     return;
                 }
 

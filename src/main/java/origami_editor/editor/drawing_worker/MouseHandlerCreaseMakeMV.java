@@ -54,8 +54,8 @@ public class MouseHandlerCreaseMakeMV extends BaseMouseHandlerInputRestricted {
                 if (d.lineStep.get(0).getLength() > 0.00000001) {
                     for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
                         LineSegment s = d.foldLineSet.get(i);
-                        if (OritaCalc.lineSegmentoverlapping(s, d.lineStep.get(0))) {
-                            WeightedValue<LineSegment> i_d = new WeightedValue<>(s, OritaCalc.distance_lineSegment(d.lineStep.get(0).getB(), s));
+                        if (OritaCalc.isLineSegmentOverlapping(s, d.lineStep.get(0))) {
+                            WeightedValue<LineSegment> i_d = new WeightedValue<>(s, OritaCalc.determineLineSegmentDistance(d.lineStep.get(0).getB(), s));
                             nbox.container_i_smallest_first(i_d);
                         }
                     }

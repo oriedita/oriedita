@@ -103,7 +103,7 @@ public class MouseHandlerCreaseCopy4p extends BaseMouseHandlerInputRestricted {
             int sousuu_old = d.foldLineSet.getTotal();
             d.foldLineSet.addSave(ori_s_temp.getSave());
             int sousuu_new = d.foldLineSet.getTotal();
-            d.foldLineSet.intersect_divide(1, sousuu_old, sousuu_old + 1, sousuu_new);
+            d.foldLineSet.divideLineSegmentIntersections(1, sousuu_old, sousuu_old + 1, sousuu_new);
 
             d.record();
             d.app.canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);

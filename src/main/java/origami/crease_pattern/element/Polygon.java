@@ -67,7 +67,7 @@ public class Polygon {
                 s.set(vertices[i], vertices[i + 1]);
             } //Line segment
 
-            kh = OritaCalc.line_intersect_decide(s0, s);
+            kh = OritaCalc.determineLineSegmentIntersection(s0, s);
 
             if (kh == LineSegment.Intersection.INTERSECTS_1) {
                 i_intersection++;
@@ -189,7 +189,7 @@ public class Polygon {
         LineSegment s = new LineSegment();
         for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]); //線分
-            kh = OritaCalc.line_intersect_decide(s0, s);
+            kh = OritaCalc.determineLineSegmentIntersection(s0, s);
             if (kh == LineSegment.Intersection.INTERSECTS_1) {
                 return true;
             }
@@ -211,7 +211,7 @@ public class Polygon {
         }
 
         s.set(vertices[vertexCount], vertices[1]); //Line segment
-        kh = OritaCalc.line_intersect_decide(s0, s);
+        kh = OritaCalc.determineLineSegmentIntersection(s0, s);
         if (kh == LineSegment.Intersection.INTERSECTS_1) {
             return true;
         }
@@ -259,7 +259,7 @@ public class Polygon {
         LineSegment s = new LineSegment();
         for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]); //線分
-            if (OritaCalc.distance_lineSegment(c.getCenter(), s) <= c.getRadius()) {
+            if (OritaCalc.determineLineSegmentDistance(c.getCenter(), s) <= c.getRadius()) {
                 if ((OritaCalc.distance(s.getA(), c.getCenter()) >= c.getRadius()) || (OritaCalc.distance(s.getA(), c.getCenter()) >= c.getRadius())) {
                     return true;
                 }
@@ -267,7 +267,7 @@ public class Polygon {
         }
 
         s.set(vertices[vertexCount], vertices[1]); //線分
-        if (OritaCalc.distance_lineSegment(c.getCenter(), s) <= c.getRadius()) {
+        if (OritaCalc.determineLineSegmentDistance(c.getCenter(), s) <= c.getRadius()) {
             if ((OritaCalc.distance(s.getA(), c.getCenter()) >= c.getRadius()) || (OritaCalc.distance(s.getA(), c.getCenter()) >= c.getRadius())) {
                 return true;
             }
@@ -284,14 +284,14 @@ public class Polygon {
         LineSegment s = new LineSegment();
         for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]); //線分
-            kh = OritaCalc.line_intersect_decide(s0, s);
+            kh = OritaCalc.determineLineSegmentIntersection(s0, s);
             if (kh != LineSegment.Intersection.NO_INTERSECTION_0) {
                 return true;
             }
         }
 
         s.set(vertices[vertexCount], vertices[1]); //線分
-        kh = OritaCalc.line_intersect_decide(s0, s);
+        kh = OritaCalc.determineLineSegmentIntersection(s0, s);
         if (kh != LineSegment.Intersection.NO_INTERSECTION_0) {
             return true;
         }
@@ -313,12 +313,12 @@ public class Polygon {
         //First, it is determined whether the point p is on the boundary line of the polygon.
         for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]);
-            if (OritaCalc.distance_lineSegment(p, s) < 0.01) {
+            if (OritaCalc.determineLineSegmentDistance(p, s) < 0.01) {
                 return Intersection.BORDER;
             }
         }
         s.set(vertices[vertexCount], vertices[1]);
-        if (OritaCalc.distance_lineSegment(p, s) < 0.01) {
+        if (OritaCalc.determineLineSegmentDistance(p, s) < 0.01) {
             return Intersection.OUTSIDE;
         }
 
@@ -336,19 +336,19 @@ public class Polygon {
 
             for (int i = 1; i <= vertexCount - 1; i++) {
                 s.set(vertices[i], vertices[i + 1]); //線分
-                if (OritaCalc.line_intersect_decide(sq, s, 0.0, 0.0).isIntersection()) {
+                if (OritaCalc.determineLineSegmentIntersection(sq, s, 0.0, 0.0).isIntersection()) {
                     kousakaisuu++;
                 }
-                if (OritaCalc.line_intersect_decide(sq, s, 0.0, 0.0) == LineSegment.Intersection.INTERSECTS_1) {
+                if (OritaCalc.determineLineSegmentIntersection(sq, s, 0.0, 0.0) == LineSegment.Intersection.INTERSECTS_1) {
                     jyuuji_kousakaisuu++;
                 }
             }
 
             s.set(vertices[vertexCount], vertices[1]); //線分
-            if (OritaCalc.line_intersect_decide(sq, s, 0.0, 0.0).isIntersection()) {
+            if (OritaCalc.determineLineSegmentIntersection(sq, s, 0.0, 0.0).isIntersection()) {
                 kousakaisuu++;
             }
-            if (OritaCalc.line_intersect_decide(sq, s, 0.0, 0.0) == LineSegment.Intersection.INTERSECTS_1) {
+            if (OritaCalc.determineLineSegmentIntersection(sq, s, 0.0, 0.0) == LineSegment.Intersection.INTERSECTS_1) {
                 jyuuji_kousakaisuu++;
             }
 
@@ -381,10 +381,10 @@ public class Polygon {
     //Find the distance between a point and a polygon (the minimum value of the distance between a point and a point on the boundary of the polygon)
     public double findDistance(Point tn) {
         double distance;
-        distance = OritaCalc.distance_lineSegment(tn, vertices[vertexCount], vertices[1]);
+        distance = OritaCalc.determineLineSegmentDistance(tn, vertices[vertexCount], vertices[1]);
         for (int i = 1; i <= vertexCount - 1; i++) {
-            if (OritaCalc.distance_lineSegment(tn, vertices[i], vertices[i + 1]) < distance) {
-                distance = OritaCalc.distance_lineSegment(tn, vertices[i], vertices[i + 1]);
+            if (OritaCalc.determineLineSegmentDistance(tn, vertices[i], vertices[i + 1]) < distance) {
+                distance = OritaCalc.determineLineSegmentDistance(tn, vertices[i], vertices[i + 1]);
             }
         }
 

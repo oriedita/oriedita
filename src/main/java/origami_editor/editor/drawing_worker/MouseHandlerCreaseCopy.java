@@ -39,7 +39,7 @@ public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineSelect {
             int sousuu_old = d.foldLineSet.getTotal();
             d.foldLineSet.addSave(ori_s_temp.getSave());
             int sousuu_new = d.foldLineSet.getTotal();
-            d.foldLineSet.intersect_divide(1, sousuu_old, sousuu_old + 1, sousuu_new);
+            d.foldLineSet.divideLineSegmentIntersections(1, sousuu_old, sousuu_old + 1, sousuu_new);
 
             d.foldLineSet.unselect_all();
             d.record();

@@ -42,7 +42,7 @@ public class MouseHandlerCreaseMove extends BaseMouseHandlerLineSelect {
             int total_old = d.foldLineSet.getTotal();
             d.foldLineSet.addSave(ori_s_temp.getSave());
             int total_new = d.foldLineSet.getTotal();
-            d.foldLineSet.intersect_divide(1, total_old, total_old + 1, total_new);
+            d.foldLineSet.divideLineSegmentIntersections(1, total_old, total_old + 1, total_new);
 
             d.foldLineSet.unselect_all();
             d.record();

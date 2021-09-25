@@ -1,6 +1,7 @@
 package origami_editor.editor.drawing_worker;
 
 import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
@@ -49,7 +50,8 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
                     double re_min = d.foldLineSet.closestCircleDistance(p);//点pに最も近い円の番号での、その距離を返す	public double mottomo_tikai_en_kyori(Ten p)
                     double hoj_rs_min = d.auxLines.closestLineSegmentDistance(p);//点pに最も近い補助絵線の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
                     if ((rs_min <= re_min) && (rs_min <= hoj_rs_min)) {
-                        if (d.foldLineSet.getColor(d.foldLineSet.closestLineSegmentSearchReversedOrder(p)).getNumber() < 3) {
+                        LineSegment closestLineSegment = d.foldLineSet.closestLineSegmentSearchReversedOrder(p);
+                        if (closestLineSegment.getColor().getNumber() < 3) {
                             i_removal_mode = 0;
                         } else {
                             i_removal_mode = 3;
@@ -72,8 +74,9 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
                 double rs_min;
                 rs_min = d.foldLineSet.closestLineSegmentDistance(p);//点pに最も近い線分(折線と補助活線)の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
                 if (rs_min < d.selectionDistance) {
-                    if (d.foldLineSet.getColor(d.foldLineSet.closestLineSegmentSearchReversedOrder(p)).getNumber() < 3) {
-                        d.foldLineSet.deleteLineSegment_vertex(d.foldLineSet.closestLineSegmentSearchReversedOrder(p));
+                    LineSegment closestLineSegment = d.foldLineSet.closestLineSegmentSearchReversedOrder(p);
+                    if (closestLineSegment.getColor().getNumber() < 3) {
+                        d.foldLineSet.deleteLineSegment_vertex(closestLineSegment);
                         d.organizeCircles();
                         d.record();
                     }
@@ -83,8 +86,9 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
             if (i_removal_mode == 2) { //黒の折線の削除
                 double rs_min = d.foldLineSet.closestLineSegmentDistance(p);//点pに最も近い線分(折線と補助活線)の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
                 if (rs_min < d.selectionDistance) {
-                    if (d.foldLineSet.getColor(d.foldLineSet.closestLineSegmentSearchReversedOrder(p)) == LineColor.BLACK_0) {
-                        d.foldLineSet.deleteLineSegment_vertex(d.foldLineSet.closestLineSegmentSearchReversedOrder(p));
+                    LineSegment closestLineSegment = d.foldLineSet.closestLineSegmentSearchReversedOrder(p);
+                    if (closestLineSegment.getColor() == LineColor.BLACK_0) {
+                        d.foldLineSet.deleteLineSegment_vertex(closestLineSegment);
                         d.organizeCircles();
                         d.record();
                     }
@@ -97,8 +101,9 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
 
                 if (rs_min <= re_min) {
                     if (rs_min < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                        if (d.foldLineSet.getColor(d.foldLineSet.closestLineSegmentSearchReversedOrder(p)) == LineColor.CYAN_3) {
-                            d.foldLineSet.deleteLineSegment_vertex(d.foldLineSet.closestLineSegmentSearchReversedOrder(p));
+                        LineSegment closestLineSegment = d.foldLineSet.closestLineSegmentSearchReversedOrder(p);
+                        if (closestLineSegment.getColor() == LineColor.CYAN_3) {
+                            d.foldLineSet.deleteLineSegment_vertex(closestLineSegment);
                             d.organizeCircles();
                             d.record();
                         }
@@ -117,7 +122,9 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
                 rs_min = d.auxLines.closestLineSegmentDistance(p);//点pに最も近い補助絵線の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
 
                 if (rs_min < d.selectionDistance) {
-                    d.auxLines.deleteLineSegment_vertex(d.auxLines.closestLineSegmentSearchReversedOrder(p));
+                    LineSegment closestLineSegment = d.foldLineSet.closestLineSegmentSearchReversedOrder(p);
+
+                    d.auxLines.deleteLineSegment_vertex(closestLineSegment);
                     d.record();
                 }
             }

@@ -101,11 +101,11 @@ public class LineSegmentSet {
             for (int j = i + 1; j < lineSegments.size(); j++) {
                 LineSegment sj = lineSegments.get(j);
                 if (r <= -9999.9) {
-                    if (OritaCalc.line_intersect_decide(si, sj) == LineSegment.Intersection.PARALLEL_EQUAL_31) {
+                    if (OritaCalc.determineLineSegmentIntersection(si, sj) == LineSegment.Intersection.PARALLEL_EQUAL_31) {
                         removal_flg.set(j, true);
                     }
                 } else {
-                    if (OritaCalc.line_intersect_decide(si, sj, r, r) == LineSegment.Intersection.PARALLEL_EQUAL_31) {
+                    if (OritaCalc.determineLineSegmentIntersection(si, sj, r, r) == LineSegment.Intersection.PARALLEL_EQUAL_31) {
                         removal_flg.set(j, true);
                     }
                 }
@@ -215,7 +215,7 @@ public class LineSegmentSet {
             return false;
         }
 
-        LineSegment.Intersection intersect_decide = OritaCalc.line_intersect_decide(si, sj);
+        LineSegment.Intersection intersect_decide = OritaCalc.determineLineSegmentIntersection(si, sj);
         switch (intersect_decide) {
             case INTERSECTS_1:
                 pk.set(OritaCalc.findIntersection(si, sj));

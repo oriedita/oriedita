@@ -74,7 +74,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
 
             for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
                 LineSegment s = d.foldLineSet.get(i);
-                LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.line_intersect_decide(s, d.lineStep.get(0), 0.0001, 0.0001);
+                LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(s, d.lineStep.get(0), 0.0001, 0.0001);
                 boolean i_jikkou = i_lineSegment_intersection_decision == LineSegment.Intersection.INTERSECTS_1;
 
                 if (i_jikkou) {
@@ -84,7 +84,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
             }
 
             if ((entyou_kouho_nbox.getTotal() == 0) && (d.lineStep.get(0).getLength() <= 0.000001)) {//延長する候補になる折線を選ぶために描いた線分s_step[1]が点状のときの処理
-                if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+                if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
                     WeightedValue<LineSegment> i_d = new WeightedValue<>(d.foldLineSet.closestLineSegmentSearch(p), 1.0);//entyou_kouho_nboxに1本の情報しか入らないのでdoubleの部分はどうでもよいので適当に1.0にした。
                     entyou_kouho_nbox.container_i_smallest_first(i_d);
 
@@ -122,18 +122,18 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
 
 
         if (d.lineStep.size() >= 3) {
-            if (OritaCalc.distance_lineSegment(p, closestLineSegment) >= d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) >= d.selectionDistance) {
                 d.lineStep.clear();
                 return;
             }
 
-            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
 
 
                 //最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがあるかどうかを判断する。
                 boolean i_senbun_entyou_mode = false;// i_senbun_entyou_mode=0なら最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがない。1ならある。
                 for (int i = 1; i <= entyou_kouho_nbox.getTotal(); i++) {
-                    if (OritaCalc.line_intersect_decide(entyou_kouho_nbox.getValue(i), closestLineSegment, 0.000001, 0.000001) == LineSegment.Intersection.PARALLEL_EQUAL_31) {//線分が同じならoc.senbun_kousa_hantei==31
+                    if (OritaCalc.determineLineSegmentIntersection(entyou_kouho_nbox.getValue(i), closestLineSegment, 0.000001, 0.000001) == LineSegment.Intersection.PARALLEL_EQUAL_31) {//線分が同じならoc.senbun_kousa_hantei==31
                         i_senbun_entyou_mode = true;
                     }
                 }
@@ -145,7 +145,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                     int sousuu_old = d.foldLineSet.getTotal();//(1)
                     for (int i = 1; i <= entyou_kouho_nbox.getTotal(); i++) {
                         //最初に選んだ線分と2番目に選んだ線分が平行でない場合
-                        if (OritaCalc.parallel_judgement(entyou_kouho_nbox.getValue(i), closestLineSegment, 0.000001) == OritaCalc.ParallelJudgement.NOT_PARALLEL) { //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない
+                        if (OritaCalc.isLineSegmentParallel(entyou_kouho_nbox.getValue(i), closestLineSegment, 0.000001) == OritaCalc.ParallelJudgement.NOT_PARALLEL) { //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない
                             //line_step[1]とs_step[2]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
                             Point kousa_point = new Point();
                             kousa_point.set(OritaCalc.findIntersection(entyou_kouho_nbox.getValue(i), closestLineSegment));
@@ -167,8 +167,8 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                             }
                         }
                     }
-                    d.foldLineSet.lineSegment_circle_intersection(sousuu_old, d.foldLineSet.getTotal(), 0, d.foldLineSet.numCircles() - 1);//(3)
-                    d.foldLineSet.intersect_divide(1, sousuu_old, sousuu_old + 1, d.foldLineSet.getTotal());//(4)
+                    d.foldLineSet.applyLineSegmentCircleIntersection(sousuu_old, d.foldLineSet.getTotal(), 0, d.foldLineSet.numCircles() - 1);//(3)
+                    d.foldLineSet.divideLineSegmentIntersections(1, sousuu_old, sousuu_old + 1, d.foldLineSet.getTotal());//(4)
 
 
                 } else {
@@ -199,8 +199,8 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                         }
 
                     }
-                    d.foldLineSet.lineSegment_circle_intersection(sousuu_old, d.foldLineSet.getTotal(), 0, d.foldLineSet.numCircles() - 1);//(3)
-                    d.foldLineSet.intersect_divide(1, sousuu_old, sousuu_old + 1, d.foldLineSet.getTotal());//(4)
+                    d.foldLineSet.applyLineSegmentCircleIntersection(sousuu_old, d.foldLineSet.getTotal(), 0, d.foldLineSet.numCircles() - 1);//(3)
+                    d.foldLineSet.divideLineSegmentIntersections(1, sousuu_old, sousuu_old + 1, d.foldLineSet.getTotal());//(4)
                 }
 
                 d.record();

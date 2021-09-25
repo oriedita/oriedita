@@ -141,16 +141,18 @@ public class OritaCalc {
     }
 
 
-    // A function that determines where the point p is close to the specified line segment (within r) ------------------------ ---------
-    // 0 = not close, 1 = close to point a, 2 = close to point b, 3 = close to handle
-    public static int lineSegment_endpoint_search(Point p, LineSegment s0, double r) {
+    /**
+     * A function that determines where the point p is close to the specified line segment (within r) ------------------------ ---------
+     * 0 = not close, 1 = close to point a, 2 = close to point b, 3 = close to handle
+     */
+    public static int determineClosestLineSegmentEndpoint(Point p, LineSegment s0, double r) {
         if (r > distance(p, s0.getA())) {
             return 1;
         }//Whether it is close to point a
         if (r > distance(p, s0.getB())) {
             return 2;
         }//Whether it is close to point b
-        if (r > distance_lineSegment(p, s0)) {
+        if (r > determineLineSegmentDistance(p, s0)) {
             return 3;
         }//Whether it is close to the handle
         return 0;
@@ -158,7 +160,7 @@ public class OritaCalc {
 
 
     //Function to find the distance between the point p0 and the line segment with the two points p1 and p2 at both ends --------------------------- -------------------------
-    public static double distance_lineSegment(Point p0, Point p1, Point p2) {
+    public static double determineLineSegmentDistance(Point p0, Point p1, Point p2) {
         //When p1 and p2 are the same
         if (distance(p1, p2) == 0.0) {
             return distance(p0, p1);
@@ -176,12 +178,12 @@ public class OritaCalc {
     }
 
     //A function that finds the distance between the point p0 and the line segment s ----------------------------------- -----------------
-    public static double distance_lineSegment(Point p0, LineSegment s) {
+    public static double determineLineSegmentDistance(Point p0, LineSegment s) {
         Point p1 = new Point();
         p1.set(s.getA());
         Point p2 = new Point();
         p2.set(s.getB());
-        return distance_lineSegment(p0, p1, p2);
+        return determineLineSegmentDistance(p0, p1, p2);
     }
 
     // A function that determines whether two line segments intersect ---------------------------------- ------------------ ------------------
@@ -194,15 +196,15 @@ public class OritaCalc {
     // 6 = Line segment s2 intersects at a point
     // Note! If p1 and p2 are the same, or p3 and p4 are the same, the result will be strange,
     // This function itself does not have a check mechanism, so it may be difficult to notice.
-    public static LineSegment.Intersection line_intersect_decide(LineSegment s1, LineSegment s2) {
-        return line_intersect_decide(s1, s2, 0.01, 0.01);
+    public static LineSegment.Intersection determineLineSegmentIntersection(LineSegment s1, LineSegment s2) {
+        return determineLineSegmentIntersection(s1, s2, 0.01, 0.01);
     }
 
-    public static LineSegment.Intersection line_intersect_decide_sweet(LineSegment s1, LineSegment s2) {
-        return line_intersect_decide_sweet(s1, s2, 0.01, 0.01);
+    public static LineSegment.Intersection determineLineSegmentIntersectionSweet(LineSegment s1, LineSegment s2) {
+        return determineLineSegmentIntersectionSweet(s1, s2, 0.01, 0.01);
     }
 
-    public static LineSegment.Intersection line_intersect_decide(LineSegment s1, LineSegment s2, double rhit, double rhei) {    //r_hitosii and r_heikouhantei are the allowable degree of deviation between hitosii and heikou_hantei
+    public static LineSegment.Intersection determineLineSegmentIntersection(LineSegment s1, LineSegment s2, double rhit, double rhei) {    //r_hitosii and r_heikouhantei are the allowable degree of deviation between hitosii and heikou_hantei
         double x1max = s1.getAX();
         double x1min = s1.getAX();
         double y1max = s1.getAY();
@@ -287,7 +289,7 @@ public class OritaCalc {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
 
-        if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.NOT_PARALLEL) {    //Two straight lines are not parallel
+        if (isLineSegmentParallel(t1, t2, rhei) == ParallelJudgement.NOT_PARALLEL) {    //Two straight lines are not parallel
             Point pk = new Point();
             pk.set(findIntersection(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
             if ((isInside(p1, pk, p2) >= 1) && (isInside(p3, pk, p4) >= 1)) {
@@ -320,7 +322,7 @@ public class OritaCalc {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
 
-        if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.PARALLEL_NOT_EQUAL) { //Two straight lines are parallel and y-intercept does not match
+        if (isLineSegmentParallel(t1, t2, rhei) == ParallelJudgement.PARALLEL_NOT_EQUAL) { //Two straight lines are parallel and y-intercept does not match
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
 
@@ -333,7 +335,7 @@ public class OritaCalc {
         }
 
         //The two straight lines are parallel and the y-intercept matches
-        if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.PARALLEL_EQUAL) {
+        if (isLineSegmentParallel(t1, t2, rhei) == ParallelJudgement.PARALLEL_EQUAL) {
             if (equal(p1, p3, rhit)) { //When the endpoints of two line segments overlap at one point
                 if (isInside(p1, p4, p2) == 2) {
                     return LineSegment.Intersection.PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321;
@@ -425,7 +427,7 @@ public class OritaCalc {
     // Specifically, when determining whether there is a point inside the line segment, if the point is slightly outside the line segment, it is judged to be sweet if it is inside the line segment. When drawing a crease pattern with a drawing craftsman, if you do not use this sweet one, the intersection division of the T-shaped line segment will fail
     // But for some reason, using this sweeter one for folding estimation seems to result in an infinite loop, which doesn't work. This exact elucidation is unresolved 20161105
 
-    public static LineSegment.Intersection line_intersect_decide_sweet(LineSegment s1, LineSegment s2, double rhit, double rhei) {    //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
+    public static LineSegment.Intersection determineLineSegmentIntersectionSweet(LineSegment s1, LineSegment s2, double rhit, double rhei) {    //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
         double x1max = s1.getAX();
         double x1min = s1.getAX();
         double y1max = s1.getAY();
@@ -511,7 +513,7 @@ public class OritaCalc {
         }
 
         // System.out.println("AAAAAAAAAAAA");
-        if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.NOT_PARALLEL) {    //２つの直線が平行でない
+        if (isLineSegmentParallel(t1, t2, rhei) == ParallelJudgement.NOT_PARALLEL) {    //２つの直線が平行でない
             Point pk = new Point();
             pk.set(findIntersection(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
             if ((isInside_sweet(p1, pk, p2) >= 1)
@@ -545,7 +547,7 @@ public class OritaCalc {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
 
-        if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.PARALLEL_NOT_EQUAL) { //２つの直線が平行で、y切片は一致しない
+        if (isLineSegmentParallel(t1, t2, rhei) == ParallelJudgement.PARALLEL_NOT_EQUAL) { //２つの直線が平行で、y切片は一致しない
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
 
@@ -558,7 +560,7 @@ public class OritaCalc {
         }
 
         //The two straight lines are parallel and the y-intercept matches
-        if (parallel_judgement(t1, t2, rhei) == ParallelJudgement.PARALLEL_EQUAL) {
+        if (isLineSegmentParallel(t1, t2, rhei) == ParallelJudgement.PARALLEL_EQUAL) {
             if (equal(p1, p3, rhit)) { //2つの線分の端点どうしが1点で重なる場合
                 if (isInside(p1, p4, p2) == 2) {
                     return LineSegment.Intersection.PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321;
@@ -642,16 +644,16 @@ public class OritaCalc {
     }
 
     //A function that determines whether two straight lines are parallel.
-    public static ParallelJudgement parallel_judgement(StraightLine t1, StraightLine t2) {
-        return parallel_judgement(t1, t2, 0.1);
+    public static ParallelJudgement isLineSegmentParallel(StraightLine t1, StraightLine t2) {
+        return isLineSegmentParallel(t1, t2, 0.1);
     }
 
     //A function that determines whether two line segments are parallel.
-    public static ParallelJudgement parallel_judgement(LineSegment s1, LineSegment s2, double r) {
-        return parallel_judgement(lineSegmentToStraightLine(s1), lineSegmentToStraightLine(s2), r);
+    public static ParallelJudgement isLineSegmentParallel(LineSegment s1, LineSegment s2, double r) {
+        return isLineSegmentParallel(lineSegmentToStraightLine(s1), lineSegmentToStraightLine(s2), r);
     }
 
-    public static ParallelJudgement parallel_judgement(StraightLine t1, StraightLine t2, double r) {//rは誤差の許容度。rが負なら厳密判定。
+    public static ParallelJudgement isLineSegmentParallel(StraightLine t1, StraightLine t2, double r) {//rは誤差の許容度。rが負なら厳密判定。
         //0 = not parallel, 1 = parallel and 2 straight lines do not match, 2 = parallel and 2 straight lines match
         double a1 = t1.getA(), b1 = t1.getB(), c1 = t1.getC();//直線t1, a1*x+b1*y+c1=0の各係数を求める。
         double a2 = t2.getA(), b2 = t2.getB(), c2 = t2.getC();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
@@ -1062,15 +1064,15 @@ public class OritaCalc {
     }
 
     //--------------------------------------------------------
-    public static boolean lineSegmentoverlapping(LineSegment s1, LineSegment s2) {//false do not overlap. true overlaps. 20201012 added
-        LineSegment.Intersection i_senbun_kousa_decision = line_intersect_decide(s1, s2, 0.0001, 0.0001);
+    public static boolean isLineSegmentOverlapping(LineSegment s1, LineSegment s2) {//false do not overlap. true overlaps. 20201012 added
+        LineSegment.Intersection intersection = determineLineSegmentIntersection(s1, s2, 0.0001, 0.0001);
 
-        return i_senbun_kousa_decision.isSegmentOverlapping();
+        return intersection.isSegmentOverlapping();
     }
 
     //--------------------------------------------------------
     public static boolean lineSegment_X_kousa_decide(LineSegment s1, LineSegment s2) {//0はX交差しない。1は交差する。20201017追加
-        return line_intersect_decide(s1, s2, 0.0001, 0.0001) == LineSegment.Intersection.INTERSECTS_1;
+        return determineLineSegmentIntersection(s1, s2, 0.0001, 0.0001) == LineSegment.Intersection.INTERSECTS_1;
     }
 
     public enum ParallelJudgement {

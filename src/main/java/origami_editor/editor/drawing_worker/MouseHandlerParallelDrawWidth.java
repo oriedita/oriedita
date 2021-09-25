@@ -31,7 +31,7 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
         if ((d.lineStep.size() == 0) && (d.circleStep.size() == 0)) {
             LineSegment closestLineSegment = new LineSegment();
             closestLineSegment.set(d.getClosestLineSegment(p));
-            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
                 closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
             }

@@ -40,14 +40,14 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
         } else if (d.lineStep.size() == 1) {
             LineSegment closestLineSegment = new LineSegment();
             closestLineSegment.set(d.getClosestLineSegment(p));
-            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
                 closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
             }
         } else if (d.lineStep.size() == 2) {
             LineSegment closestLineSegment = new LineSegment();
             closestLineSegment.set(d.getClosestLineSegment(p));
-            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
                 closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
             }
@@ -77,18 +77,18 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
 
         Point cross_point = new Point();
 
-        if (OritaCalc.parallel_judgement(s_o, s_k, 0.0000001) == OritaCalc.ParallelJudgement.PARALLEL_NOT_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+        if (OritaCalc.isLineSegmentParallel(s_o, s_k, 0.0000001) == OritaCalc.ParallelJudgement.PARALLEL_NOT_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
             return -500;
         }
 
-        if (OritaCalc.parallel_judgement(s_o, s_k, 0.0000001) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+        if (OritaCalc.isLineSegmentParallel(s_o, s_k, 0.0000001) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
             cross_point.set(s_k.getA());
             if (OritaCalc.distance(s_o.getA(), s_k.getA()) > OritaCalc.distance(s_o.getA(), s_k.getB())) {
                 cross_point.set(s_k.getB());
             }
         }
 
-        if (OritaCalc.parallel_judgement(s_o, s_k, 0.0000001) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+        if (OritaCalc.isLineSegmentParallel(s_o, s_k, 0.0000001) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
             cross_point.set(OritaCalc.findIntersection(s_o, s_k));
         }
 

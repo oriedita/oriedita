@@ -258,7 +258,7 @@ public class PointSet {
     //Returns 1 if two lines are parallel and partially or wholly overlap, otherwise 0. If one point overlaps, 0 is returned.
     public boolean parallel_overlap(int ib1, int ib2) {
         LineSegment.Intersection skh;
-        skh = OritaCalc.line_intersect_decide(lineToLineSegment(lines[ib1]), lineToLineSegment(lines[ib2]));
+        skh = OritaCalc.determineLineSegmentIntersection(lineToLineSegment(lines[ib1]), lineToLineSegment(lines[ib2]));
 
         return skh.isSegmentOverlapping();
     }

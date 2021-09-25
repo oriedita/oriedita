@@ -168,7 +168,7 @@ public class DrawingWorker {
         int total_old = foldLineSet.getTotal();
         foldLineSet.addSave(tempFoldLineSet.getSave());
         int total_new = foldLineSet.getTotal();
-        foldLineSet.intersect_divide(1, total_old, total_old + 1, total_new);
+        foldLineSet.divideLineSegmentIntersections(1, total_old, total_old + 1, total_new);
 
         foldLineSet.unselect_all();
         record();
@@ -193,7 +193,7 @@ public class DrawingWorker {
     }
 
     public void branch_trim(double r) {
-        foldLineSet.branch_trim(r);
+        foldLineSet.applyBranchTrim(r);
     }
 
     public LineSegmentSet get() {
@@ -269,11 +269,11 @@ public class DrawingWorker {
     }
 
     public void point_removal() {
-        foldLineSet.point_removal();
+        foldLineSet.removePoints();
     }
 
     public void overlapping_line_removal() {
-        foldLineSet.overlapping_line_removal();
+        foldLineSet.removeOverlappingLines();
     }
 
     public String undo() {
@@ -369,9 +369,10 @@ public class DrawingWorker {
         if (displayAuxLiveLines) {
             g2.setStroke(new BasicStroke(f_h_WireframeLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//Line thickness and shape of the end of the line
             for (int i = 1; i <= auxLines.getTotal(); i++) {
-                g_setColor(g, auxLines.getColor(i));
+                LineSegment as = auxLines.get(i);
+                g_setColor(g, as.getColor());
 
-                s_tv.set(camera.object2TV(auxLines.get(i)));
+                s_tv.set(camera.object2TV(as));
                 a.set(s_tv.getAX() + 0.000001, s_tv.getAY() + 0.000001);
                 b.set(s_tv.getBX() + 0.000001, s_tv.getBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
@@ -510,10 +511,11 @@ public class DrawingWorker {
         //selectの描画
         g2.setStroke(new BasicStroke(lineWidth * 2.0f + 2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
         for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-            if (foldLineSet.get_select(i) == 2) {
+            LineSegment s = foldLineSet.get(i);
+            if (s.getSelected() == 2) {
                 g.setColor(Color.green);
 
-                s_tv.set(camera.object2TV(foldLineSet.get(i)));
+                s_tv.set(camera.object2TV(s));
 
                 a.set(s_tv.getAX() + 0.000001, s_tv.getAY() + 0.000001);
                 b.set(s_tv.getBX() + 0.000001, s_tv.getBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
@@ -525,17 +527,18 @@ public class DrawingWorker {
         //展開図の描画 補助活線のみ
         if (displayAuxLines) {
             for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-                if (foldLineSet.getColor(i) == LineColor.CYAN_3) {
+                LineSegment s = foldLineSet.get(i);
+                if (s.getColor() == LineColor.CYAN_3) {
 
                     g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
 
-                    if (foldLineSet.getLineCustomized(i) == 0) {
-                        g_setColor(g, foldLineSet.getColor(i));
-                    } else if (foldLineSet.getLineCustomized(i) == 1) {
-                        g.setColor(foldLineSet.getLineCustomizedColor(i));
+                    if (s.getCustomized() == 0) {
+                        g_setColor(g, s.getColor());
+                    } else if (s.getCustomized() == 1) {
+                        g.setColor(s.getCustomizedColor());
                     }
 
-                    s_tv.set(camera.object2TV(foldLineSet.get(i)));
+                    s_tv.set(camera.object2TV(s));
                     a.set(s_tv.getAX() + 0.000001, s_tv.getAY() + 0.000001);
                     b.set(s_tv.getBX() + 0.000001, s_tv.getBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
@@ -843,8 +846,8 @@ public class DrawingWorker {
         int jmin = foldLineSet.numCircles() - 1;
         int jmax = foldLineSet.numCircles() - 1;
 
-        foldLineSet.circle_circle_intersection(imin, imax, jmin, jmax);
-        foldLineSet.lineSegment_circle_intersection(1, foldLineSet.getTotal(), jmin, jmax);
+        foldLineSet.applyCircleCircleIntersection(imin, imax, jmin, jmax);
+        foldLineSet.applyLineSegmentCircleIntersection(1, foldLineSet.getTotal(), jmin, jmax);
 
     }
 
@@ -855,9 +858,9 @@ public class DrawingWorker {
     public void addLineSegment(LineSegment s0) {//0 = No change, 1 = Color change only, 2 = Line segment added
         foldLineSet.addLine(s0);//Just add the information of s0 to the end of senbun of foldLineSet
         int total_old = foldLineSet.getTotal();
-        foldLineSet.lineSegment_circle_intersection(foldLineSet.getTotal(), foldLineSet.getTotal(), 0, foldLineSet.numCircles() - 1);
+        foldLineSet.applyLineSegmentCircleIntersection(foldLineSet.getTotal(), foldLineSet.getTotal(), 0, foldLineSet.numCircles() - 1);
 
-        foldLineSet.intersect_divide(1, total_old - 1, total_old, total_old);
+        foldLineSet.divideLineSegmentIntersections(1, total_old - 1, total_old, total_old);
     }
 
     public Point getClosestPoint(Point t0) {
@@ -887,7 +890,7 @@ public class DrawingWorker {
 
     //------------------------------
     public LineSegment getClosestLineSegment(Point t0) {
-        return foldLineSet.closestLineSegment(t0);
+        return foldLineSet.getClosestLineSegment(t0);
     }
 
     //------------------------------------------------------
@@ -895,7 +898,7 @@ public class DrawingWorker {
         int minrid = -100;
         double minr = 100000;//Senbun s1 =new Senbun(100000.0,100000.0,100000.0,100000.1);
         for (int i = imin; i <= imax; i++) {
-            double sk = OritaCalc.distance_lineSegment(t0, lineStep.get(i - 1));
+            double sk = OritaCalc.determineLineSegmentDistance(t0, lineStep.get(i - 1));
             if (minr > sk) {
                 minr = sk;
                 minrid = i;
@@ -941,7 +944,7 @@ public class DrawingWorker {
 
             //Fight the line segment to be added with the existing line segment
 
-            OritaCalc.ParallelJudgement parallel = OritaCalc.parallel_judgement(add_straightLine, existing_straightLine, 0.0001);//0 = not parallel, 1 = parallel and 2 straight lines do not match, 2 = parallel and 2 straight lines match
+            OritaCalc.ParallelJudgement parallel = OritaCalc.isLineSegmentParallel(add_straightLine, existing_straightLine, 0.0001);//0 = not parallel, 1 = parallel and 2 straight lines do not match, 2 = parallel and 2 straight lines match
 
             if (parallel == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//When the line segment to be added and the existing line segment are non-parallel
                 Point intersection = new Point();
@@ -1362,7 +1365,7 @@ public class DrawingWorker {
             i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(foldLineSet.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
 
             //i_lineSegment_intersection_flg=oc.senbun_kousa_hantei_amai( add_sen,foldLineSet.get(i),0.00001,0.00001);//20180408なぜかこの行の様にadd_senを使うと、i_senbun_kousa_flgがおかしくなる
-            i_lineSegment_intersection_flg = OritaCalc.line_intersect_decide_sweet(s0, foldLineSet.get(i), 0.00001, 0.00001);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
+            i_lineSegment_intersection_flg = OritaCalc.determineLineSegmentIntersectionSweet(s0, foldLineSet.get(i), 0.00001, 0.00001);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
             if (i_intersection_flg.isIntersecting()) {
                 if (!i_lineSegment_intersection_flg.isEndpointIntersection()) {
                     //System.out.println("i_intersection_flg = "+i_intersection_flg  +      " ; i_lineSegment_intersection_flg = "+i_lineSegment_intersection_flg);

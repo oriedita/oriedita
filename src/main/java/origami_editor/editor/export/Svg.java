@@ -323,7 +323,8 @@ public class Svg {
         //Drawing of crease pattern Polygonal lines other than auxiliary live lines
         if (i_cp_display) {
             for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-                LineColor color = foldLineSet.getColor(i);
+                LineSegment s = foldLineSet.get(i);
+                LineColor color = s.getColor();
                 if (color.isFoldingLine()) {
                     switch (color) {
                         case BLACK_0:
@@ -383,7 +384,7 @@ public class Svg {
                             throw new IllegalArgumentException();
                     }
 
-                    s_tv.set(camera.object2TV(foldLineSet.get(i)));
+                    s_tv.set(camera.object2TV(s));
                     a.set(s_tv.getA());
                     b.set(s_tv.getB());//a.set(s_tv.getax()+0.000001,s_tv.getay()+0.000001); b.set(s_tv.getbx()+0.000001,s_tv.getby()+0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 

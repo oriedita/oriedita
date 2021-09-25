@@ -66,7 +66,7 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
             }
 
 
-            distance_min = OritaCalc.min(OritaCalc.distance_lineSegment(p, p_ob1, p_ob2), OritaCalc.distance_lineSegment(p, p_ob2, p_ob3), OritaCalc.distance_lineSegment(p, p_ob3, p_ob4), OritaCalc.distance_lineSegment(p, p_ob4, p_ob1));
+            distance_min = OritaCalc.min(OritaCalc.determineLineSegmentDistance(p, p_ob1, p_ob2), OritaCalc.determineLineSegmentDistance(p, p_ob2, p_ob3), OritaCalc.determineLineSegmentDistance(p, p_ob3, p_ob4), OritaCalc.determineLineSegmentDistance(p, p_ob4, p_ob1));
             if (distance_min < d.selectionDistance) {
                 operationFrameMode = DrawingWorker.OperationFrameMode.MOVE_SIDES_3;
             }
@@ -104,7 +104,7 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
         }
 
         if (operationFrameMode == DrawingWorker.OperationFrameMode.MOVE_SIDES_3) {
-            while (OritaCalc.distance_lineSegment(p, p_ob1, p_ob2) != distance_min) {
+            while (OritaCalc.determineLineSegmentDistance(p, p_ob1, p_ob2) != distance_min) {
                 p_new.set(d.operationFrame_p1);
                 d.operationFrame_p1.set(d.operationFrame_p2);
                 d.operationFrame_p2.set(d.operationFrame_p3);

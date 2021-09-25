@@ -53,7 +53,7 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
             if (d.lineStep.get(0).getLength() > 0.00000001) {
                 for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
                     LineSegment s = d.foldLineSet.get(i);
-                    LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.line_intersect_decide(s, d.lineStep.get(0), 0.0001, 0.0001);
+                    LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(s, d.lineStep.get(0), 0.0001, 0.0001);
                     int i_jikkou = 0;
                     if (i_senbun_kousa_hantei == LineSegment.Intersection.INTERSECTS_1) {
                         i_jikkou = 1;

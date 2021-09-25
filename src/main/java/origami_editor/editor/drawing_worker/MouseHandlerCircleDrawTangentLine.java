@@ -42,7 +42,7 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
             LineSegment closest_step_lineSegment = new LineSegment();
             closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.lineStep.size()));
 
-            if (OritaCalc.distance_lineSegment(p, closest_step_lineSegment) > d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closest_step_lineSegment) > d.selectionDistance) {
                 return;
             }
 

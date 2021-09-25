@@ -42,7 +42,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
 
                     LineSegment closestLineSegment = new LineSegment();
                     closestLineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.lineStep.size()));
-                    if ((d.lineStep.size() >= 2) && (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance)) {
+                    if ((d.lineStep.size() >= 2) && (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance)) {
                         candidate.set(closestLineSegment.getA(), closestLineSegment.getB());
                         d.lineCandidate.add(candidate);
                         return;
@@ -55,7 +55,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
 
                     LineSegment closestLineSegment = new LineSegment();
                     closestLineSegment.set(d.getClosestLineSegment(p));
-                    if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {//最寄の既存折線が近い場合
+                    if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {//最寄の既存折線が近い場合
                         d.lineCandidate.add(closestLineSegment);
                         return;
                     }
@@ -178,7 +178,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
             case STEP_1: {
                 LineSegment closestLineSegment = new LineSegment();
                 closestLineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.lineStep.size()));
-                if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+                if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
                     i_step_for_move_4p = DrawingWorker.FourPointStep.STEP_2;
                     d.lineStep.clear();
                     d.lineStepAdd(closestLineSegment);
@@ -186,7 +186,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                     workDone = false;
                     return;
                 }
-                if (OritaCalc.distance_lineSegment(p, closestLineSegment) >= d.selectionDistance) {
+                if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) >= d.selectionDistance) {
                     d.lineStep.clear();
                     workDone = false;
                     return;
@@ -198,8 +198,8 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                 closestLineSegment.set(d.getClosestLineSegment(p));
                 LineSegment moyori_step_lineSegment = new LineSegment();
                 moyori_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.lineStep.size()));
-                if (OritaCalc.distance_lineSegment(p, closestLineSegment) >= d.selectionDistance) {//最寄の既存折線が遠くて選択無効の場合
-                    if (OritaCalc.distance_lineSegment(p, moyori_step_lineSegment) < d.selectionDistance) {//最寄のstep_senbunが近い場合
+                if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) >= d.selectionDistance) {//最寄の既存折線が遠くて選択無効の場合
+                    if (OritaCalc.determineLineSegmentDistance(p, moyori_step_lineSegment) < d.selectionDistance) {//最寄のstep_senbunが近い場合
                         workDone = false;
                         return;
                     }
@@ -210,7 +210,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                     return;
                 }
 
-                if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {//最寄の既存折線が近い場合
+                if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {//最寄の既存折線が近い場合
 
                     closestLineSegment.setColor(LineColor.GREEN_6);
                     d.lineStepAdd(closestLineSegment);
@@ -230,7 +230,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                     //最寄の既存折線が無効の場合
 
                     //最寄のstep_senbunが近い場合
-                    if (OritaCalc.distance_lineSegment(p, moyori_step_lineSegment) < d.selectionDistance) {
+                    if (OritaCalc.determineLineSegmentDistance(p, moyori_step_lineSegment) < d.selectionDistance) {
                         workDone = false;
                         return;
                     }

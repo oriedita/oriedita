@@ -122,14 +122,14 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
 
         if (d.lineStep.size() == 2 + (honsuu)) {
             LineSegment closestLineSegment = d.get_moyori_step_lineSegment(p, 3, 2 + honsuu);
-            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
                 LineSegment s = new LineSegment();
                 s.set(closestLineSegment);
                 s.setColor(LineColor.BLUE_2);
                 d.lineStepAdd(s);
                 return;
             }
-            if (OritaCalc.distance_lineSegment(p, closestLineSegment) >= d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) >= d.selectionDistance) {
                 d.lineStep.clear();
                 return;
             }
@@ -138,12 +138,12 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
 
         if (d.lineStep.size() == 2 + (honsuu) + 1) {
             LineSegment closestLineSegment = d.getClosestLineSegment(p);
-            if (OritaCalc.distance_lineSegment(p, closestLineSegment) >= d.selectionDistance) {//最寄折線が遠かった場合
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) >= d.selectionDistance) {//最寄折線が遠かった場合
                 d.lineStep.clear();
                 return;
             }
 
-            if (OritaCalc.distance_lineSegment(p, closestLineSegment) < d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
                 LineSegment s = new LineSegment();
                 s.set(closestLineSegment);
                 s.setColor(LineColor.GREEN_6);
