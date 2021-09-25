@@ -5,6 +5,7 @@ import origami_editor.editor.databinding.FileModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.InputEvent;
 
 public class AppMenuBar extends JMenuBar {
     public JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
@@ -22,6 +23,7 @@ public class AppMenuBar extends JMenuBar {
     JMenuItem saveAsButton;
     JMenuItem exportButton;
     JMenuItem importButton;
+    JMenuItem exitButton;
     private JMenuItem toggleHelpMenuItem;
 
     public AppMenuBar(App app) {
@@ -99,6 +101,9 @@ public class AppMenuBar extends JMenuBar {
 
             app.importFile();
         });
+        exitButton.addActionListener(e -> {
+            app.closing();
+        });
         showPointRangeCheckBox.addActionListener(e -> {
             app.setHelp("ckbox_ten_sagasi");
 
@@ -162,26 +167,39 @@ public class AppMenuBar extends JMenuBar {
 
         newButton = new JMenuItem("New");
         newButton.setMnemonic('N');
+        newButton.setAccelerator(KeyStroke.getKeyStroke('N', InputEvent.CTRL_DOWN_MASK));
         fileMenu.add(newButton);
 
-        openButton = new JMenuItem("Open");
+        openButton = new JMenuItem("Open...");
         openButton.setMnemonic('O');
+        openButton.setAccelerator(KeyStroke.getKeyStroke('O', InputEvent.CTRL_DOWN_MASK));
         fileMenu.add(openButton);
 
         saveButton = new JMenuItem("Save");
         saveButton.setMnemonic('S');
+        saveButton.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_DOWN_MASK));
         fileMenu.add(saveButton);
 
-        saveAsButton = new JMenuItem("Save as");
+        saveAsButton = new JMenuItem("Save as...");
         saveAsButton.setMnemonic('a');
         fileMenu.add(saveAsButton);
+
+        fileMenu.addSeparator();
 
         exportButton = new JMenuItem("Export");
         exportButton.setMnemonic('E');
         fileMenu.add(exportButton);
+
         importButton = new JMenuItem("Import");
         importButton.setMnemonic('I');
         fileMenu.add(importButton);
+
+        fileMenu.addSeparator();
+
+        exitButton = new JMenuItem("Exit");
+        exitButton.setMnemonic('X');
+        exitButton.setAccelerator(KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK));
+        fileMenu.add(exitButton);
 
         JMenu viewMenu = new JMenu("View");
         viewMenu.setMnemonic('V');

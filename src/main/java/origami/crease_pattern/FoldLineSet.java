@@ -788,7 +788,7 @@ public class FoldLineSet {
 
     //------------------zzzzzzzzz-------------------------------------------------------------------
     //Divide the two line segments at the intersection of the two intersecting line segments. If there were two line segments that completely overlapped, both would remain without any processing.
-    public void intersect_divide(int i1, int i2, int i3, int i4) {//Crossing division when i3 to i4 fold lines are added to the original i1 to i2 fold lines
+    public void intersect_divide(int originalStart, int originalEnd, int addedStart, int addedEnd) {//Crossing division when addedStart to addedEnd fold lines are added to the original originalStart to originalEnd fold lines
         for (int i = 1; i <= total; i++) {
             setActive(i, LineSegment.ActiveState.INACTIVE_0);
         }//削除すべき線は iactive=100とする
@@ -798,10 +798,10 @@ public class FoldLineSet {
         for (int i = 0; i <= total + 100; i++) {
             k_flg.add(0);
         }//0は交差分割の対象外、１は元からあった折線、2は加える折線として交差分割される。3は削除すべきと判定された折線
-        for (int i = i1; i <= i2; i++) {
+        for (int i = originalStart; i <= originalEnd; i++) {
             k_flg.set(i, 1);
-        }//0は交差分割の対象外、１は元からあった折線、2は加える折線として交差分割される
-        for (int i = i3; i <= i4; i++) {
+        }//0 is not subject to cross-division, 1 is the original polygonal line, and 2 is the cross-division to be added.
+        for (int i = addedStart; i <= addedEnd; i++) {
             k_flg.set(i, 2);
         }//0は交差分割の対象外、１は元からあった折線、2は加える折線として交差分割される
         for (int i = 1; i <= total; i++) {

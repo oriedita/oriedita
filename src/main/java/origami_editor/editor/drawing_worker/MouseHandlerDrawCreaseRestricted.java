@@ -34,6 +34,10 @@ public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestr
     public void mouseDragged(Point p0) {
         //近い既存点のみ表示
 
+        if (d.lineStep.size() == 0) {
+            return;
+        }
+
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
         d.lineStep.get(0).setA(p);

@@ -15,10 +15,7 @@ public class LineSegment implements Serializable, Cloneable {
     Color customizedColor = new Color(100, 200, 200);//Color if custom made
 
     int selected;//0 is not selected. 1 or more is set appropriately according to the situation
-    int maxX;//Larger when rounding up the x-coordinate of the end point
-    int minX;//The smaller one when truncating the x-coordinate of the end point
-    int maxY;//Larger when rounding up the y-coordinate of the end point
-    int minY;//The smaller one when truncating the y coordinate of the end point
+
     int voronoiA;
     int voronoiB;
 
@@ -29,10 +26,6 @@ public class LineSegment implements Serializable, Cloneable {
         active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
-        maxX = 0;
-        minX = 0;
-        maxY = 0;
-        minY = 0;
         voronoiA = 0;
         voronoiB = 0;
     }
@@ -43,10 +36,6 @@ public class LineSegment implements Serializable, Cloneable {
         active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
-        maxX = 0;
-        minX = 0;
-        maxY = 0;
-        minY = 0;
         voronoiA = 0;
         voronoiB = 0;
     }
@@ -57,10 +46,6 @@ public class LineSegment implements Serializable, Cloneable {
         active = ActiveState.INACTIVE_0;
         this.color = color;
         selected = 0;
-        maxX = 0;
-        minX = 0;
-        maxY = 0;
-        minY = 0;
         voronoiA = 0;
         voronoiB = 0;
     }
@@ -71,10 +56,6 @@ public class LineSegment implements Serializable, Cloneable {
         active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
-        maxX = 0;
-        minX = 0;
-        maxY = 0;
-        minY = 0;
         voronoiA = 0;
         voronoiB = 0;
     }
@@ -85,10 +66,6 @@ public class LineSegment implements Serializable, Cloneable {
         active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
-        maxX = 0;
-        minX = 0;
-        maxY = 0;
-        minY = 0;
         voronoiA = 0;
         voronoiB = 0;
     }
@@ -116,10 +93,6 @@ public class LineSegment implements Serializable, Cloneable {
         active = s.getActive();
         color = s.getColor();
         selected = s.getSelected();
-        maxX = s.getMaxX();
-        minX = s.getMinX();
-        maxY = s.getMaxY();
-        minY = s.getMinY();
         voronoiA = s.getVoronoiA();
         voronoiB = s.getVoronoiB();
         setCustomized(s.getCustomized());
@@ -130,18 +103,6 @@ public class LineSegment implements Serializable, Cloneable {
     public void set(double ax, double ay, double bx, double by) {
         a.set(ax, ay);
         b.set(bx, by);
-        maxX = (int) Math.ceil(ax);
-        minX = (int) Math.floor(bx);
-        if (ax < bx) {
-            maxX = (int) Math.ceil(bx);
-            minX = (int) Math.floor(ax);
-        }
-        maxY = (int) Math.ceil(ay);
-        minY = (int) Math.floor(by);
-        if (ay < by) {
-            maxY = (int) Math.ceil(by);
-            minY = (int) Math.floor(ay);
-        }
     }
 
     //----------
@@ -172,21 +133,29 @@ public class LineSegment implements Serializable, Cloneable {
         set(p.getX(), p.getY(), q.getX(), q.getY());
     }
 
-    //-------------------------------------------
+    /**
+     * Larger when rounding up the x-coordinate of the end point
+     */
     public int getMaxX() {
-        return maxX;
+        return Math.max((int) Math.ceil(a.x), (int) Math.ceil(b.x));
     }
-
+    /**
+     * The smaller one when truncating the x-coordinate of the end point
+     */
     public int getMinX() {
-        return minX;
+        return Math.min((int) Math.floor(a.x), (int) Math.floor(b.x));
     }
-
+    /**
+     * Larger when rounding up the y-coordinate of the end point
+     */
     public int getMaxY() {
-        return maxY;
+        return Math.max((int) Math.ceil(a.y), (int) Math.ceil(b.y));
     }
-
+    /**
+     * The smaller one when truncating the y coordinate of the end point
+     */
     public int getMinY() {
-        return minY;
+        return Math.min((int) Math.floor(a.y), (int) Math.floor(b.y));
     }
 
     public LineColor getColor() {

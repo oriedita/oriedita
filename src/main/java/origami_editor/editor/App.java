@@ -837,9 +837,14 @@ public class App extends JFrame implements ActionListener {
         File selectedFile;
         int choice = JOptionPane.NO_OPTION;
         do {
-            fileChooser.showSaveDialog(this);
+            int saveChoice = fileChooser.showSaveDialog(this);
+
+            if (saveChoice != JFileChooser.APPROVE_OPTION) {
+                return null;
+            }
 
             selectedFile = fileChooser.getSelectedFile();
+
             if (selectedFile != null && selectedFile.exists()) {
                 choice = JOptionPane.showConfirmDialog(this, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             }
@@ -887,7 +892,11 @@ public class App extends JFrame implements ActionListener {
         File selectedFile;
         int choice = JOptionPane.NO_OPTION;
         do {
-            fileChooser.showSaveDialog(this);
+            int saveChoice = fileChooser.showSaveDialog(this);
+
+            if (saveChoice != JFileChooser.APPROVE_OPTION) {
+                return null;
+            }
 
             selectedFile = fileChooser.getSelectedFile();
             if (selectedFile != null && selectedFile.exists()) {
