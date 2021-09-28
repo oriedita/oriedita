@@ -1228,27 +1228,57 @@ public class App extends JFrame implements ActionListener {
         repaintCanvas();
     }
 
-    public void registerButton(JButton button, String key) {
+    private String getBundleString(String bundle, String key) {
         ResourceBundle userBundle = null;
 
         try {
             AppDirs appDirs = AppDirsFactory.getInstance();
-            userBundle = new PropertyResourceBundle(Files.newInputStream(Paths.get(appDirs.getUserConfigDir("origami-editor", "v0.3", "origami-editor"), "hotkey.properties")));
+            userBundle = new PropertyResourceBundle(Files.newInputStream(Paths.get(appDirs.getUserConfigDir("origami-editor", "v0.3", "origami-editor"), bundle + ".properties")));
         } catch (IOException e) {
         }
 
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("hotkey");
+        ResourceBundle resourceBundle = ResourceBundle.getBundle(bundle);
 
-        String keyStroke = null;
+        String value = null;
         if (userBundle != null && userBundle.containsKey(key)) {
-            keyStroke = userBundle.getString(key);
+            value = userBundle.getString(key);
         } else if (resourceBundle.containsKey(key)) {
-            keyStroke = resourceBundle.getString(key);
+            value = resourceBundle.getString(key);
+        }
+
+        return value;
+    }
+
+    public void registerButton(JButton button, String key) {
+        String name = getBundleString("name", key);
+        String keyStroke = getBundleString("hotkey", key);
+        String tooltip = getBundleString("tooltip", key);
+        String help = getBundleString("help", key);
+
+        String tooltipText = "<html>";
+        if (name != null && !name.isEmpty()) {
+            tooltipText += "<i>" + name + "</i><br/>";
+        }
+        if (tooltip != null && !tooltip.isEmpty()) {
+            tooltipText += tooltip + "<br/>";
+        }
+        if (keyStroke != null && !keyStroke.isEmpty()) {
+            tooltipText += "Hotkey: " + keyStroke + "<br/>";
+        }
+
+        if (!tooltipText.equals("<html>")) {
+            button.setToolTipText(tooltipText);
         }
 
         if (keyStroke != null) {
             getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keyStroke), key);
             getRootPane().getActionMap().put(key, new Click(button));
+        }
+
+        if (help != null && !help.isEmpty()) {
+            button.addActionListener(e -> {
+                setHelp(key);
+            });
         }
     }
 
