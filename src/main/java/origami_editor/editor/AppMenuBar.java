@@ -5,34 +5,49 @@ import origami_editor.editor.databinding.FileModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.InputEvent;
 
 public class AppMenuBar extends JMenuBar {
-    public JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
-    public JCheckBoxMenuItem pointOffsetCheckBox;//点を離すかどうか
-    public JCheckBoxMenuItem gridInputAssistCheckBox;//高密度用入力をするかどうか
-    public JCheckBoxMenuItem displayCommentsCheckBox;//文章
-    public JCheckBoxMenuItem displayCpLinesCheckBox;//折線
-    public JCheckBoxMenuItem displayAuxLinesCheckBox;//補助活線cyan
-    public JCheckBoxMenuItem displayLiveAuxLinesCheckBox;//補助画線
-    public JCheckBoxMenuItem displayStandardFaceMarksCheckBox;//Marking lines such as crosses and reference planes
-    public JCheckBoxMenuItem cpOnTopCheckBox;//展開図を折り上がり予想図の上に描く
-    JMenuItem newButton;
-    JMenuItem openButton;
-    JMenuItem saveButton;
-    JMenuItem saveAsButton;
-    JMenuItem exportButton;
-    JMenuItem importButton;
-    JMenuItem exitButton;
+    private JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
+    private JCheckBoxMenuItem pointOffsetCheckBox;//点を離すかどうか
+    private JCheckBoxMenuItem gridInputAssistCheckBox;//高密度用入力をするかどうか
+    private JCheckBoxMenuItem displayCommentsCheckBox;//文章
+    private JCheckBoxMenuItem displayCpLinesCheckBox;//折線
+    private JCheckBoxMenuItem displayAuxLinesCheckBox;//補助活線cyan
+    private JCheckBoxMenuItem displayLiveAuxLinesCheckBox;//補助画線
+    private JCheckBoxMenuItem displayStandardFaceMarksCheckBox;//Marking lines such as crosses and reference planes
+    private JCheckBoxMenuItem cpOnTopCheckBox;//展開図を折り上がり予想図の上に描く
+    private JMenuItem newButton;
+    private JMenuItem openButton;
+    private JMenuItem saveButton;
+    private JMenuItem saveAsButton;
+    private JMenuItem exportButton;
+    private JMenuItem importButton;
+    private JMenuItem exitButton;
     private JMenuItem toggleHelpMenuItem;
 
     public AppMenuBar(App app) {
         createElements();
         CanvasModel canvasModel = app.canvasModel;
 
-        newButton.addActionListener(e -> {
-            app.setHelp("zen_syokika");
+        app.registerButton(newButton, "newAction");
+        app.registerButton(openButton, "openAction");
+        app.registerButton(saveButton, "saveAction");
+        app.registerButton(saveAsButton, "saveAsAction");
+        app.registerButton(importButton, "importAction");
+        app.registerButton(exportButton, "exportAction"); // TODO NO CALL TO Button_shared_operation
+        app.registerButton(exitButton, "exitAction");
+        app.registerButton(showPointRangeCheckBox, "showPointRangeAction");
+        app.registerButton(pointOffsetCheckBox, "pointOffsetAction");
+        app.registerButton(gridInputAssistCheckBox, "gridInputAssistAction");
+        app.registerButton(displayCommentsCheckBox, "displayCommentsAction");
+        app.registerButton(displayCpLinesCheckBox, "displayCpLinesAction");
+        app.registerButton(displayAuxLinesCheckBox, "displayAuxLinesAction");
+        app.registerButton(displayLiveAuxLinesCheckBox, "displayLiveAuxLinesAction");
+        app.registerButton(displayStandardFaceMarksCheckBox, "displayStandardFaceMarksAction");
+        app.registerButton(cpOnTopCheckBox, "cpOnTopAction");
+        app.registerButton(toggleHelpMenuItem, "toggleHelpAction");
 
+        newButton.addActionListener(e -> {
             app.fileModel.reset();
             //展開図の初期化　開始
             //settei_syokika_cp();//展開図パラメータの初期化
@@ -56,35 +71,25 @@ public class AppMenuBar extends JMenuBar {
             app.mainDrawingWorker.auxRecord();
         });
         openButton.addActionListener(e -> {
-            app.setHelp("yomi");
-
-            app.Button_shared_operation();
-
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
 
             app.openFile();
         });
         saveButton.addActionListener(e -> {
-            app.setHelp("kaki");
-            app.Button_shared_operation();
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
             app.saveFile();
             app.mainDrawingWorker.record();
         });
         saveAsButton.addActionListener(e -> {
-            app.setHelp("kaki");
-            app.Button_shared_operation();
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
             app.saveAsFile();
             app.mainDrawingWorker.record();
         });
         exportButton.addActionListener(e -> {
-            app.setHelp("writeImage");
             if (app.mouseMode != MouseMode.OPERATION_FRAME_CREATE_61) {
-                app.Button_shared_operation();
                 app.mainDrawingWorker.setDrawingStage(0);
             }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
             app.mouseDraggedValid = false;
@@ -94,29 +99,15 @@ public class AppMenuBar extends JMenuBar {
             app.repaintCanvas();
         });
         importButton.addActionListener(e -> {
-            app.setHelp("yomi");
-            app.Button_shared_operation();
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
 
             app.importFile();
         });
-        exitButton.addActionListener(e -> {
-            app.closing();
-        });
-        showPointRangeCheckBox.addActionListener(e -> {
-            app.setHelp("ckbox_ten_sagasi");
-
-            getData(canvasModel);
-        });
-        pointOffsetCheckBox.addActionListener(e -> {
-            app.setHelp("ckbox_ten_hanasi");
-
-            getData(canvasModel);
-        });
+        exitButton.addActionListener(e -> app.closing());
+        showPointRangeCheckBox.addActionListener(e -> getData(canvasModel));
+        pointOffsetCheckBox.addActionListener(e -> getData(canvasModel));
         gridInputAssistCheckBox.addActionListener(e -> {
-            app.setHelp("ckbox_kou_mitudo_nyuuryoku");
-
             if (gridInputAssistCheckBox.isSelected()) {
                 System.out.println(" kou_mitudo_nyuuryoku on");
             } else {
@@ -124,31 +115,12 @@ public class AppMenuBar extends JMenuBar {
             }
             getData(canvasModel);
         });
-        displayCommentsCheckBox.addActionListener(e -> {
-            app.setHelp("ckbox_bun");
-            getData(canvasModel);
-        });
-        displayCpLinesCheckBox.addActionListener(e -> {
-            app.setHelp("ckbox_cp");
-            getData(canvasModel);
-        });
-        displayAuxLinesCheckBox.addActionListener(e -> {
-            app.setHelp("ckbox_a0");
-            getData(canvasModel);
-        });
-        displayLiveAuxLinesCheckBox.addActionListener(e -> {
-            app.setHelp("ckbox_a1");
-            getData(canvasModel);
-        });
-        displayStandardFaceMarksCheckBox.addActionListener(e -> {
-            app.setHelp("ckbox_mejirusi");
-            getData(canvasModel);
-        });
-        cpOnTopCheckBox.addActionListener(e -> {
-            app.setHelp("ckbox_cp_ue");
-
-            getData(canvasModel);
-        });
+        displayCommentsCheckBox.addActionListener(e -> getData(canvasModel));
+        displayCpLinesCheckBox.addActionListener(e -> getData(canvasModel));
+        displayAuxLinesCheckBox.addActionListener(e -> getData(canvasModel));
+        displayLiveAuxLinesCheckBox.addActionListener(e -> getData(canvasModel));
+        displayStandardFaceMarksCheckBox.addActionListener(e -> getData(canvasModel));
+        cpOnTopCheckBox.addActionListener(e -> getData(canvasModel));
         toggleHelpMenuItem.addActionListener(e -> {
             app.explanation.setVisible(!app.explanation.isVisible());
 
@@ -166,39 +138,28 @@ public class AppMenuBar extends JMenuBar {
         add(fileMenu);
 
         newButton = new JMenuItem("New");
-        newButton.setMnemonic('N');
-        newButton.setAccelerator(KeyStroke.getKeyStroke('N', InputEvent.CTRL_DOWN_MASK));
         fileMenu.add(newButton);
 
         openButton = new JMenuItem("Open...");
-        openButton.setMnemonic('O');
-        openButton.setAccelerator(KeyStroke.getKeyStroke('O', InputEvent.CTRL_DOWN_MASK));
         fileMenu.add(openButton);
 
         saveButton = new JMenuItem("Save");
-        saveButton.setMnemonic('S');
-        saveButton.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_DOWN_MASK));
         fileMenu.add(saveButton);
 
         saveAsButton = new JMenuItem("Save as...");
-        saveAsButton.setMnemonic('a');
         fileMenu.add(saveAsButton);
 
         fileMenu.addSeparator();
 
         exportButton = new JMenuItem("Export");
-        exportButton.setMnemonic('E');
         fileMenu.add(exportButton);
 
         importButton = new JMenuItem("Import");
-        importButton.setMnemonic('I');
         fileMenu.add(importButton);
 
         fileMenu.addSeparator();
 
         exitButton = new JMenuItem("Exit");
-        exitButton.setMnemonic('X');
-        exitButton.setAccelerator(KeyStroke.getKeyStroke('Q', InputEvent.CTRL_DOWN_MASK));
         fileMenu.add(exitButton);
 
         JMenu viewMenu = new JMenu("View");

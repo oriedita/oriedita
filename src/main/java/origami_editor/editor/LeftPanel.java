@@ -21,7 +21,6 @@ public class LeftPanel {
     private JPanel root;
 
     private JTextField lineSegmentDivisionTextField;
-    private JCheckBox correctCpBeforeFoldingCheckBox;
     private UndoRedo undoRedo;
     private JButton lineWidthDecreaseButton;
     private JButton lineWidthIncreaseButton;
@@ -89,6 +88,7 @@ public class LeftPanel {
     private JButton colCyanButton;
     private JButton lineSegmentDivisionSetButton;
     private JButton button1;
+    private JCheckBox correctCpBeforeFoldingCheckBox;
     private JCheckBox selectPersistentCheckBox;
     private JCheckBox coloredXRayCheckBox;
 
@@ -166,233 +166,140 @@ public class LeftPanel {
 
         app.registerButton(undoRedo.getRedoButton(), "redoAction");
         app.registerButton(undoRedo.getUndoButton(), "undoAction");
+        app.registerButton(undoRedo.getSetUndoCountButton(), "setUndoCountAction");
+
+        app.registerButton(correctCpBeforeFoldingCheckBox, "correctCpBeforeFoldingAction");
+        app.registerButton(selectPersistentCheckBox, "selectPersistentAction");
+        app.registerButton(coloredXRayCheckBox, "coloredXRayAction");
+
 
         undoRedo.addUndoActionListener(e -> {
-            app.setHelp("undo");
-
             app.setTitle(app.mainDrawingWorker.undo());
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         undoRedo.addRedoActionListener(e -> {
-            app.setHelp("redo");
-
             app.setTitle(app.mainDrawingWorker.redo());
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
-        undoRedo.addSetUndoCountActionListener(e -> {
-            app.setHelp("undo_syutoku");
-
-            app.historyStateModel.setHistoryTotal(StringOp.String2int(undoRedo.getText(), app.historyStateModel.getHistoryTotal()));
-        });
-        app.registerButton(lineWidthDecreaseButton, "lineWidthDecrease");
-        lineWidthDecreaseButton.addActionListener(e -> {
-            app.setHelp("senhaba_sage");
-
-            canvasModel.decreaseLineWidth();
-        });
-        lineWidthIncreaseButton.addActionListener(e -> {
-            app.setHelp("senhaba_age");
-
-            canvasModel.increaseLineWidth();
-        });
-        pointSizeDecreaseButton.addActionListener(e -> {
-            app.setHelp("tenhaba_sage");
-
-            canvasModel.decreasePointSize();
-        });
-        pointSizeIncreaseButton.addActionListener(e -> {
-            app.setHelp("tenhaba_age");
-
-            canvasModel.increasePointSize();
-        });
-        antiAliasToggleButton.addActionListener(e -> {
-            app.setHelp("anti_alias");
-
-            canvasModel.toggleAntiAlias();
-        });
-        lineStyleChangeButton.addActionListener(e -> {
-            app.setHelp("orisen_hyougen");
-
-            app.Button_shared_operation();
-
-            canvasModel.advanceLineStyle();
-        });
-        colRedButton.addActionListener(e -> {
-            app.setHelp("ButtonCol_red");
-
-            app.canvasModel.setLineColor(LineColor.RED_1);
-        });
-        colBlueButton.addActionListener(e -> {
-            app.setHelp("ButtonCol_blue");
-
-            app.canvasModel.setLineColor(LineColor.BLUE_2);
-        });
-        colBlackButton.addActionListener(e -> {
-            app.setHelp("ButtonCol_black");
-
-            app.canvasModel.setLineColor(LineColor.BLACK_0);
-        });
-        colCyanButton.addActionListener(e -> {
-            app.setHelp("ButtonCol_cyan");
-
-            app.canvasModel.setLineColor(LineColor.CYAN_3);
-        });
+        undoRedo.addSetUndoCountActionListener(e -> app.historyStateModel.setHistoryTotal(StringOp.String2int(undoRedo.getText(), app.historyStateModel.getHistoryTotal())));
+        lineWidthDecreaseButton.addActionListener(e -> canvasModel.decreaseLineWidth());
+        lineWidthIncreaseButton.addActionListener(e -> canvasModel.increaseLineWidth());
+        pointSizeDecreaseButton.addActionListener(e -> canvasModel.decreasePointSize());
+        pointSizeIncreaseButton.addActionListener(e -> canvasModel.increasePointSize());
+        antiAliasToggleButton.addActionListener(e -> canvasModel.toggleAntiAlias());
+        lineStyleChangeButton.addActionListener(e -> canvasModel.advanceLineStyle());
+        colRedButton.addActionListener(e -> app.canvasModel.setLineColor(LineColor.RED_1));
+        colBlueButton.addActionListener(e -> app.canvasModel.setLineColor(LineColor.BLUE_2));
+        colBlackButton.addActionListener(e -> app.canvasModel.setLineColor(LineColor.BLACK_0));
+        colCyanButton.addActionListener(e -> app.canvasModel.setLineColor(LineColor.CYAN_3));
         drawCreaseFreeButton.addActionListener(e -> {
-            app.setHelp("senbun_nyuryoku");
-
             app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
             app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_FREE_1);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         drawCreaseRestrictedButton.addActionListener(e -> {
-            app.setHelp("senbun_nyuryoku11");
-
             app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_RESTRICTED_11);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_RESTRICTED_11);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         voronoiButton.addActionListener(e -> {
-            app.setHelp("Voronoi");
-
             app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
             app.canvasModel.setMouseMode(MouseMode.VORONOI_CREATE_62);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.VORONOI_CREATE_62);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         makeFlatFoldableButton.addActionListener(e -> {
-            app.setHelp("oritatami_kanousen");
-
             app.canvasModel.setMouseMode(MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         lengthenCreaseButton.addActionListener(e -> {
-            app.setHelp("senbun_entyou");
-
             app.canvasModel.setMouseMode(MouseMode.LENGTHEN_CREASE_5);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LENGTHEN_CREASE_5);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         lengthenCrease2Button.addActionListener(e -> {
-            app.setHelp("senbun_entyou_2");
-
             app.canvasModel.setMouseMode(MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         angleBisectorButton.addActionListener(e -> {
-            app.setHelp("kaku_toubun");
-
             app.canvasModel.setMouseMode(MouseMode.SQUARE_BISECTOR_7);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.SQUARE_BISECTOR_7);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         rabbitEarButton.addActionListener(e -> {
-            app.setHelp("naishin");
-
             app.canvasModel.setMouseMode(MouseMode.INWARD_8);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.INWARD_8);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         perpendicularDrawButton.addActionListener(e -> {
-            app.setHelp("suisen");
-
             app.canvasModel.setMouseMode(MouseMode.PERPENDICULAR_DRAW_9);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.PERPENDICULAR_DRAW_9);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         symmetricDrawButton.addActionListener(e -> {
-            app.setHelp("orikaesi");
-
             app.canvasModel.setMouseMode(MouseMode.SYMMETRIC_DRAW_10);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.SYMMETRIC_DRAW_10);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         continuousSymmetricDrawButton.addActionListener(e -> {
-            app.setHelp("renzoku_orikaesi");
-
             app.canvasModel.setMouseMode(MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         parallelDrawButton.addActionListener(e -> {
-            app.setHelp("heikousen");
-
             app.canvasModel.setMouseMode(MouseMode.PARALLEL_DRAW_40);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.PARALLEL_DRAW_40);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         setParallelDrawWidthButton.addActionListener(e -> {
-            app.setHelp("heikousen_haba_sitei");
-
             app.canvasModel.setMouseMode(MouseMode.PARALLEL_DRAW_WIDTH_51);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.PARALLEL_DRAW_WIDTH_51);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         foldableLineDrawButton.addActionListener(e -> {
-            app.setHelp("oritatami_kanousen_and_kousitenkei_simple");
-
             app.canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.FOLDABLE_LINE_DRAW_71);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         all_s_step_to_orisenButton.addActionListener(e -> {
             System.out.println("i_egaki_dankai = " + app.mainDrawingWorker.getDrawingStage());
             System.out.println("i_kouho_dankai = " + app.mainDrawingWorker.getCandidateSize());
 
-            app.setHelp("all_s_step_to_orisen");
             app.mainDrawingWorker.all_s_step_to_orisen();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         fishBoneDrawButton.addActionListener(e -> {
-            app.setHelp("sakananohone");
-
             app.canvasModel.setMouseMode(MouseMode.FISH_BONE_DRAW_33);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.FISH_BONE_DRAW_33);
 
@@ -401,8 +308,6 @@ public class LeftPanel {
             app.repaintCanvas();
         });
         doubleSymmetricDrawButton.addActionListener(e -> {
-            app.setHelp("fuku_orikaesi");
-
             app.canvasModel.setMouseMode(MouseMode.DOUBLE_SYMMETRIC_DRAW_35);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.DOUBLE_SYMMETRIC_DRAW_35);
 
@@ -411,216 +316,148 @@ public class LeftPanel {
             app.repaintCanvas();
         });
         lineSegmentDivisionSetButton.addActionListener(e -> {
-            app.setHelp("senbun_bunkatu_set");
-
             getData(app.canvasModel);
 
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DIVISION_27);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
 
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         senbun_b_nyuryokuButton.addActionListener(e -> {
-            app.setHelp("senbun_b_nyuryoku");
-
             getData(app.canvasModel);
 
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DIVISION_27);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         selectButton.addActionListener(e -> {
-            app.setHelp("Select");
-
             app.canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
 
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         selectAllButton.addActionListener(e -> {
-            app.setHelp("select_all");
-
             app.mainDrawingWorker.select_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         unselectButton.addActionListener(e -> {
-            app.setHelp("unselect");
-
             app.canvasModel.setMouseMode(MouseMode.CREASE_UNSELECT_20);
 
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         unselectAllButton.addActionListener(e -> {
-            app.setHelp("unselect_all");
-
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         moveButton.addActionListener(e -> {
-            app.setHelp("move");
-
             app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MOVE_1);
             app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
 
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         move2p2pButton.addActionListener(e -> {
-            app.setHelp("move_2p2p");
-
             app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MOVE4P_2);
             app.canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
 
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         copyButton.addActionListener(e -> {
-            app.setHelp("copy_paste");
-
             app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.COPY_3);
             app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
 
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         copy2p2pButton.addActionListener(e -> {
-            app.setHelp("copy_paste_2p2p");
-
             app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.COPY4P_4);
             app.canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
 
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         reflectButton.addActionListener(e -> {
-            app.setHelp("kyouei");
-
             app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MIRROR_5);
             app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
 
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         deleteSelectedLineSegmentButton.addActionListener(e -> {
-            app.setHelp("del_selected_senbun");
-
             app.mainDrawingWorker.del_selected_senbun();
             app.mainDrawingWorker.record();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         lineSegmentDeleteButton.addActionListener(e -> {
-            app.setHelp("senbun_sakujyo");
-
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
             app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         edgeLineSegmentDeleteButton.addActionListener(e -> {
-            app.setHelp("kuro_senbun_sakujyo");
 
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
             app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.BLACK_LINE_2);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         auxLiveLineSegmentDeleteButton.addActionListener(e -> {
-            app.setHelp("senbun3_sakujyo");
-
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
             app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LIVE_LINE_3);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         trimBranchesButton.addActionListener(e -> {
-            app.setHelp("eda_kesi");
             app.mainDrawingWorker.point_removal();
             app.mainDrawingWorker.overlapping_line_removal();
             app.mainDrawingWorker.branch_trim(0.000001);
             app.mainDrawingWorker.organizeCircles();
             app.mainDrawingWorker.record();
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         toMountainButton.addActionListener(e -> {
-            app.setHelp("M_nisuru");
-
             app.canvasModel.setMouseMode(MouseMode.CREASE_MAKE_MOUNTAIN_23);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         toValleyButton.addActionListener(e -> {
-            app.setHelp("V_nisuru");
-
             app.canvasModel.setMouseMode(MouseMode.CREASE_MAKE_VALLEY_24);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         toEdgeButton.addActionListener(e -> {
-            app.setHelp("E_nisuru");
-
             app.canvasModel.setMouseMode(MouseMode.CREASE_MAKE_EDGE_25);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         toAuxButton.addActionListener(e -> {
-            app.setHelp("HK_nisuru");
-
             app.canvasModel.setMouseMode(MouseMode.CREASE_MAKE_AUX_60);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         zen_yama_tani_henkanButton.addActionListener(e -> {
-            app.setHelp("zen_yama_tani_henkan");
             app.mainDrawingWorker.allMountainValleyChange();
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         senbun_henkan2Button.addActionListener(e -> {
-            app.setHelp("senbun_henkan2");
-
             app.canvasModel.setMouseMode(MouseMode.CREASE_TOGGLE_MV_58);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         senbun_henkanButton.addActionListener(e -> {
-            app.setHelp("senbun_henkan");
-
             app.canvasModel.setMouseMode(MouseMode.CHANGE_CREASE_TYPE_4);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         in_L_col_changeButton.addActionListener(e -> {
-            app.setHelp("in_L_col_change");
-
             app.canvasModel.setMouseMode(MouseMode.CREASE_MAKE_MV_34);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.CREASE_MAKE_MV_34);
 
@@ -629,12 +466,9 @@ public class LeftPanel {
             }
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         on_L_col_changeButton.addActionListener(e -> {
-            app.setHelp("on_L_col_change");
-
             app.canvasModel.setMouseMode(MouseMode.CREASES_ALTERNATE_MV_36);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.CREASES_ALTERNATE_MV_36);
 
@@ -643,56 +477,37 @@ public class LeftPanel {
             }
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         v_addButton.addActionListener(e -> {
-            app.setHelp("v_add");
-
             app.canvasModel.setMouseMode(MouseMode.DRAW_POINT_14);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         v_delButton.addActionListener(e -> {
-            app.setHelp("v_del");
-
             app.canvasModel.setMouseMode(MouseMode.DELETE_POINT_15);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         v_del_ccButton.addActionListener(e -> {
-            app.setHelp("v_del_cc");
-
             app.canvasModel.setMouseMode(MouseMode.VERTEX_DELETE_ON_CREASE_41);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         v_del_allButton.addActionListener(e -> {
-            app.setHelp("v_del_all");
-            //mouseMode=19;
             app.mainDrawingWorker.v_del_all();
             System.out.println("mainDrawingWorker.v_del_all()");
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         v_del_all_ccButton.addActionListener(e -> {
-            app.setHelp("v_del_all_cc");
             app.mainDrawingWorker.v_del_all_cc();
             System.out.println("mainDrawingWorker.v_del_all_cc()");
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         inputDataButton.addActionListener(e -> {
-            app.setHelp("yomi_tuika");
-
-            app.Button_shared_operation();
-
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
 
@@ -708,22 +523,16 @@ public class LeftPanel {
             }
         });
         correctCpBeforeFoldingCheckBox.addActionListener(e -> {
-            app.setHelp("ckbox_cp_kaizen_oritatami");
-
             app.canvasModel.setCorrectCpBeforeFolding(correctCpBeforeFoldingCheckBox.isSelected());
 
             app.repaintCanvas();
         });
         selectPersistentCheckBox.addActionListener(e -> {
-            app.setHelp("ckbox_select_nokosi");
-
             app.canvasModel.setSelectPersistent(selectPersistentCheckBox.isSelected());
 
             app.repaintCanvas();
         });
         drawTwoColoredCpButton.addActionListener(e -> {
-            app.setHelp("2syoku_tenkaizu");
-
             app.Ss0 = app.mainDrawingWorker.getForSelectFolding();
 
             if (app.mainDrawingWorker.getFoldLineTotalForSelectFolding() == 0) {        //折り線選択無し
@@ -743,64 +552,34 @@ public class LeftPanel {
             }
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
         });
         suitei_01Button.addActionListener(e -> {
-            app.setHelp("suitei_01");
-
             app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
             if (!app.canvasModel.getSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
-
-            app.Button_shared_operation();
         });
         koteimen_siteiButton.addActionListener(e -> {
-            app.setHelp("koteimen_sitei");
             if (app.OZ.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
                 app.canvasModel.setMouseMode(MouseMode.CHANGE_STANDARD_FACE_103);
             }
-            app.Button_shared_operation();
         });
         suitei_02Button.addActionListener(e -> {
-            app.setHelp("suitei_02");
-
             app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
             if (!app.canvasModel.getSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
-
-            app.Button_shared_operation();
         });
         suitei_03Button.addActionListener(e -> {
-            app.setHelp("suitei_03");
-
             app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
 
             if (!app.canvasModel.getSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
-            app.Button_shared_operation();
         });
-        coloredXRayCheckBox.addActionListener(e -> {
-            app.setHelp("ckbox_toukazu_color");
-
-            app.foldedFigureModel.setTransparencyColor(coloredXRayCheckBox.isSelected());
-        });
-        coloredXRayDecreaseButton.addActionListener(e -> {
-            app.setHelp("toukazu_color_sage");
-
-            app.foldedFigureModel.decreaseTransparency();
-
-            app.Button_shared_operation();
-        });
-        coloredXRayIncreaseButton.addActionListener(e -> {
-            app.setHelp("toukazu_color_age");
-
-            app.foldedFigureModel.increaseTransparency();
-
-            app.Button_shared_operation();
-        });
+        coloredXRayCheckBox.addActionListener(e -> app.foldedFigureModel.setTransparencyColor(coloredXRayCheckBox.isSelected()));
+        coloredXRayDecreaseButton.addActionListener(e -> app.foldedFigureModel.decreaseTransparency());
+        coloredXRayIncreaseButton.addActionListener(e -> app.foldedFigureModel.increaseTransparency());
         gridConfigureDialog = new GridConfigureDialog(app, app.gridModel);
         gridConfigureDialog.pack();
 
@@ -1157,7 +936,7 @@ public class LeftPanel {
         gbc.gridy = 0;
         panel10.add(correctCpBeforeFoldingCheckBox, gbc);
         selectPersistentCheckBox = new JCheckBox();
-        selectPersistentCheckBox.setToolTipText("ckbox_select_nokosi");
+        selectPersistentCheckBox.setToolTipText("selectPersistentAction");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
@@ -1726,9 +1505,5 @@ public class LeftPanel {
 
     public void setData(FoldedFigureModel foldedFigureModel) {
         coloredXRayCheckBox.setSelected(foldedFigureModel.isTransparencyColor());
-    }
-
-    private void registerButton(JButton button, String key) {
-
     }
 }

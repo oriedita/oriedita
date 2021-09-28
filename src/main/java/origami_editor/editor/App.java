@@ -29,6 +29,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Queue;
 import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static origami_editor.tools.ResourceUtil.createImageIcon;
@@ -45,7 +48,6 @@ public class App extends JFrame implements ActionListener {
     public final CameraModel creasePatternCameraModel = new CameraModel();
     public final FileModel fileModel = new FileModel();
     final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
-    private final AppMenuBar appMenuBar;
     public FoldedFigure temp_OZ = new FoldedFigure(this);    //Folded figure
     public FoldedFigure OZ;    //Current Folded figure
     public LineSegmentSet Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
@@ -94,6 +96,8 @@ public class App extends JFrame implements ActionListener {
     boolean i_mouse_undo_redo_mode = false;//1 for undo and redo mode with mouse
     MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
     double d_ap_check4 = 0.0;
+
+    Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
 
     public App() {
         setTitle("Origami Editor 1.0.0");//Specify the title and execute the constructor
@@ -165,25 +169,22 @@ public class App extends JFrame implements ActionListener {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.isAltDown() && popups.isEmpty()) {
-                    for (KeyStroke keyStroke :
-                            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).keys()) {
-                        String key = (String) getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).get(keyStroke);
-                        Action action = getRootPane().getActionMap().get(key);
-                        if (action instanceof Click) {
-                            Click clickAction = (Click) action;
+                    for (Map.Entry<KeyStroke, AbstractButton> entry : helpInputMap.entrySet()) {
+                        AbstractButton button = entry.getValue();
+                        KeyStroke keyStroke = entry.getKey();
 
-                            java.awt.Point locationOnScreen = clickAction.getButton().getLocationOnScreen();
-                            Dimension size = clickAction.getButton().getSize();
-                            JToolTip tooltip = new JToolTip();
-                            tooltip.setTipText(keyStroke.toString().replaceAll("pressed ", ""));
-                            Dimension tooltipSize = tooltip.getPreferredSize();
-                            Popup myPopup = PopupFactory.getSharedInstance().getPopup(clickAction.getButton(), tooltip, locationOnScreen.x + size.width / 2 - tooltipSize.width / 2, locationOnScreen.y + size.height - 10);
-                            myPopup.show();
+                        if (!button.isShowing()) continue;
 
-                            popups.offer(myPopup);
-                        }
+                        java.awt.Point locationOnScreen = button.getLocationOnScreen();
+                        Dimension size = button.getSize();
+                        JToolTip tooltip = new JToolTip();
+                        tooltip.setTipText(keyStroke.toString().replaceAll("pressed ", ""));
+                        Dimension tooltipSize = tooltip.getPreferredSize();
+                        Popup myPopup = PopupFactory.getSharedInstance().getPopup(button, tooltip, locationOnScreen.x + size.width / 2 - tooltipSize.width / 2, locationOnScreen.y + size.height - 10);
+                        myPopup.show();
+
+                        popups.offer(myPopup);
                     }
-
                 }
             }
         });
@@ -219,7 +220,7 @@ public class App extends JFrame implements ActionListener {
         BottomPanel bottomPanel = editor.getBottomPanel();
         LeftPanel leftPanel = editor.getLeftPanel();
 
-        appMenuBar = new AppMenuBar(this);
+        AppMenuBar appMenuBar = new AppMenuBar(this);
 
         setJMenuBar(appMenuBar);
 
@@ -964,10 +965,6 @@ public class App extends JFrame implements ActionListener {
         return selectedFile;
     }
 
-    public void setHelp(String resource) {
-        explanation.setExplanation(resource);
-    }
-
     Save readImportFile(File file) {
         if (file == null) {
             return null;
@@ -1249,20 +1246,20 @@ public class App extends JFrame implements ActionListener {
         return value;
     }
 
-    public void registerButton(JButton button, String key) {
+    public void registerButton(AbstractButton button, String key) {
         String name = getBundleString("name", key);
         String keyStroke = getBundleString("hotkey", key);
         String tooltip = getBundleString("tooltip", key);
         String help = getBundleString("help", key);
 
         String tooltipText = "<html>";
-        if (name != null && !name.isEmpty()) {
+        if (!StringOp.isEmpty(name)) {
             tooltipText += "<i>" + name + "</i><br/>";
         }
-        if (tooltip != null && !tooltip.isEmpty()) {
+        if (!StringOp.isEmpty(tooltip)) {
             tooltipText += tooltip + "<br/>";
         }
-        if (keyStroke != null && !keyStroke.isEmpty()) {
+        if (!StringOp.isEmpty(keyStroke)) {
             tooltipText += "Hotkey: " + keyStroke + "<br/>";
         }
 
@@ -1270,14 +1267,37 @@ public class App extends JFrame implements ActionListener {
             button.setToolTipText(tooltipText);
         }
 
-        if (keyStroke != null) {
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keyStroke), key);
-            getRootPane().getActionMap().put(key, new Click(button));
+        if (button instanceof JMenuItem) {
+            JMenuItem menuItem = (JMenuItem) button;
+
+            if (!StringOp.isEmpty(name)) {
+                int mnemonicIndex = name.indexOf('_');
+                if (mnemonicIndex > -1) {
+                    String formattedName = name.replaceAll("_", "");
+
+                    menuItem.setText(formattedName);
+                    menuItem.setMnemonic(formattedName.charAt(mnemonicIndex));
+                    menuItem.setDisplayedMnemonicIndex(mnemonicIndex);
+                } else {
+                    menuItem.setText(name);
+                }
+            }
+
+            if (!StringOp.isEmpty(keyStroke)) {
+                // Menu item can handle own accelerator (and shows a nice hint).
+                menuItem.setAccelerator(KeyStroke.getKeyStroke(keyStroke));
+            }
+        } else if (!StringOp.isEmpty(keyStroke)) {
+            helpInputMap.put(KeyStroke.getKeyStroke(keyStroke), button);
+            button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keyStroke), key);
+            button.getActionMap().put(key, new Click(button));
         }
 
-        if (help != null && !help.isEmpty()) {
+        if (!StringOp.isEmpty(help)) {
             button.addActionListener(e -> {
-                setHelp(key);
+                explanation.setExplanation(key);
+
+                Button_shared_operation();
             });
         }
     }

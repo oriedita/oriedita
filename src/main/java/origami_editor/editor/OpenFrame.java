@@ -25,78 +25,60 @@ public class OpenFrame extends JDialog {
 
         setDefaultCloseOperation(HIDE_ON_CLOSE);
 
-        o_F_checkButton.addActionListener(e -> {
-            app.setHelp("af_O_F_check");
+        app.registerButton(o_F_checkButton, "o_F_checkAction");
+        app.registerButton(foldableLinePlusGridInputButton, "foldableLinePlusGridInputAction");
+        app.registerButton(select_polygonButton, "select_polygonAction");
+        app.registerButton(unselect_polygonButton, "unselect_polygonAction");
+        app.registerButton(select_lXButton, "select_lXAction");
+        app.registerButton(unselect_lXButton, "unselect_lXAction");
+        app.registerButton(del_lButton, "del_lAction");
+        app.registerButton(del_l_XButton, "del_l_XAction");
+        app.registerButton(selectAnd3ClickCheckBox, "selectAnd3ClickAction");
 
+        o_F_checkButton.addActionListener(e -> {
             app.canvasModel.setMouseMode(MouseMode.FLAT_FOLDABLE_CHECK_63);
 
-            app.Button_shared_operation();
             app.repaint();
         });
         foldableLinePlusGridInputButton.addActionListener(e -> {
-            app.setHelp("oritatami_kanousen_and_kousitenkei");
-
             app.canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_INPUT_39);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.FOLDABLE_LINE_INPUT_39);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaint();
         });
         select_polygonButton.addActionListener(e -> {
-            app.setHelp("af_select_polygon");
-
             app.canvasModel.setMouseMode(MouseMode.SELECT_POLYGON_66);
 
-            app.Button_shared_operation();
             app.repaint();
         });
         unselect_polygonButton.addActionListener(e -> {
-            app.setHelp("af_unselect_polygon");
-
             app.canvasModel.setMouseMode(MouseMode.UNSELECT_POLYGON_67);
 
-            app.Button_shared_operation();
             app.repaint();
         });
         select_lXButton.addActionListener(e -> {
-            app.setHelp("af_select_lX");
-
             app.canvasModel.setMouseMode(MouseMode.SELECT_LINE_INTERSECTING_68);
 
-            app.Button_shared_operation();
             app.repaint();
         });
         unselect_lXButton.addActionListener(e -> {
-            app.setHelp("af_unselect_lX");
-
             app.canvasModel.setMouseMode(MouseMode.UNSELECT_LINE_INTERSECTING_69);
 
-            app.Button_shared_operation();
             app.repaint();
         });
         del_lButton.addActionListener(e -> {
-            app.setHelp("af_Del_l");
-
             app.canvasModel.setMouseMode(MouseMode.CREASE_DELETE_OVERLAPPING_64);
 
-            app.Button_shared_operation();
             app.repaint();
         });
         del_l_XButton.addActionListener(e -> {
-            app.setHelp("af_Del_l_X");
-
             app.canvasModel.setMouseMode(MouseMode.CREASE_DELETE_INTERSECTING_65);
 
-            app.Button_shared_operation();
             app.repaint();
         });
 
-        selectAnd3ClickCheckBox.addActionListener(e -> {
-            app.setHelp("ckbox_add_frame_SelectAnd3click");
-
-            app.ckbox_add_frame_SelectAnd3click_isSelected = selectAnd3ClickCheckBox.isSelected();
-        });
+        selectAnd3ClickCheckBox.addActionListener(e -> app.ckbox_add_frame_SelectAnd3click_isSelected = selectAnd3ClickCheckBox.isSelected());
 
         selectAnd3ClickCheckBox.setSelected(app.ckbox_add_frame_SelectAnd3click_isSelected);//Select whether to display
 

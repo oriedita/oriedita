@@ -4,9 +4,9 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class Click extends AbstractAction {
-    private final JButton button;
+    private final AbstractButton button;
 
-    public Click(JButton button) {
+    public Click(AbstractButton button) {
         this.button = button;
     }
 
@@ -15,7 +15,7 @@ public class Click extends AbstractAction {
         button.doClick();
     }
 
-    public JButton getButton() {
+    public AbstractButton getButton() {
         return button;
     }
 }

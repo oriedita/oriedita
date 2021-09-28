@@ -17,29 +17,14 @@ public class FoldedFigureResize extends JPanel {
     public FoldedFigureResize(App app) {
         add($$$getRootComponent$$$());
 
+        app.registerButton(foldedFigureSizeSetButton, "foldedFigureSizeSetAction");
+        app.registerButton(foldedFigureSizeDecreaseButton, "foldedFigureSizeDecreaseAction");
+        app.registerButton(foldedFigureSizeIncreaseButton, "foldedFigureSizeIncreaseAction");
+
         FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
-        foldedFigureSizeSetButton.addActionListener(e -> {
-            app.setHelp("oriagarizu_syukusyaku_keisuu_set");
-
-            foldedFigureModel.setScale(app.string2double(foldedFigureSizeTextField.getText(), foldedFigureModel.getScale()));
-
-            app.Button_shared_operation();
-        });
-        double root2 = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));
-        foldedFigureSizeDecreaseButton.addActionListener(e -> {
-            app.setHelp("oriagari_syukusyou");
-
-            foldedFigureModel.zoomOut();
-
-            app.Button_shared_operation();
-        });
-        foldedFigureSizeIncreaseButton.addActionListener(e -> {
-            app.setHelp("oriagari_kakudai");
-
-            foldedFigureModel.zoomIn();
-
-            app.Button_shared_operation();
-        });
+        foldedFigureSizeSetButton.addActionListener(e -> foldedFigureModel.setScale(app.string2double(foldedFigureSizeTextField.getText(), foldedFigureModel.getScale())));
+        foldedFigureSizeDecreaseButton.addActionListener(e -> foldedFigureModel.zoomOut());
+        foldedFigureSizeIncreaseButton.addActionListener(e -> foldedFigureModel.zoomIn());
     }
 
     {

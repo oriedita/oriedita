@@ -129,9 +129,11 @@ public class RightPanel {
         app.registerButton(a1Button, "a1Action");
         app.registerButton(a2Button, "a2Action");
         app.registerButton(a3Button, "a3Action");
+        app.registerButton(ckOCheckBox, "ckOAction");
+        app.registerButton(ckTCheckBox, "ckTAction");
+        app.registerButton(cAMVCheckBox, "cAMVAction");
 
         ckOCheckBox.addActionListener(e -> {
-            app.setHelp("check1");
             app.mainDrawingWorker.unselect_all();
 
             if (ckOCheckBox.isSelected()) {
@@ -140,20 +142,16 @@ public class RightPanel {
             } else {
                 app.mainDrawingWorker.set_i_check1(false);
             }
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         fxOButton.addActionListener(e -> {
 
-            app.setHelp("fix1");
             app.mainDrawingWorker.unselect_all();
             app.mainDrawingWorker.fix1(0.001, 0.5);
             app.mainDrawingWorker.check1(0.001, 0.5);
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         ckTCheckBox.addActionListener(e -> {
-            app.setHelp("check2");
             app.mainDrawingWorker.unselect_all();
 
             if (ckTCheckBox.isSelected()) {
@@ -162,19 +160,15 @@ public class RightPanel {
             } else {
                 app.mainDrawingWorker.setCheck2(false);
             }
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         fxTButton.addActionListener(e -> {
-            app.setHelp("fix2");
             app.mainDrawingWorker.unselect_all();
             app.mainDrawingWorker.fix2(0.001, 0.5);
             app.mainDrawingWorker.check2(0.001, 0.5);
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         cAMVCheckBox.addActionListener(e -> {
-            app.setHelp("check4");
             app.mainDrawingWorker.unselect_all();
 
             app.canvasModel.setCheck4Enabled(cAMVCheckBox.isSelected());
@@ -184,219 +178,106 @@ public class RightPanel {
         });
         ck4_colorDecreaseButton.addActionListener(e -> {
             app.mainDrawingWorker.lightenCheck4Color();
-            app.setHelp("ck4_color_sage");
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         ck4_colorIncreaseButton.addActionListener(e -> {
             app.mainDrawingWorker.darkenCheck4Color();
-            app.setHelp("ck4_color_age");
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
-        angleSystemADecreaseButton.addActionListener(e -> {
-            app.setHelp("kakudo_kei_a_tiisaku");
+        angleSystemADecreaseButton.addActionListener(e -> angleSystemModel.decreaseAngleSystemA());
 
-            angleSystemModel.decreaseAngleSystemA();
+        angleSystemAButton.addActionListener(e -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemADivider()));
+        angleSystemAIncreaseButton.addActionListener(e -> angleSystemModel.increaseAngleSystemA());
 
-            app.Button_shared_operation();
-        });
+        angleSystemBDecreaseButton.addActionListener(e -> angleSystemModel.decreaseAngleSystemB());
 
-        angleSystemAButton.addActionListener(e -> {
-            app.setHelp("kakudo_kei_a");
-
-            angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemADivider());
-
-            app.Button_shared_operation();
-        });
-        angleSystemAIncreaseButton.addActionListener(e -> {
-            app.setHelp("kakudo_kei_a_ookiku");
-
-            angleSystemModel.increaseAngleSystemA();
-
-            app.Button_shared_operation();
-        });
-
-        angleSystemBDecreaseButton.addActionListener(e -> {
-            app.setHelp("kakudo_kei_b_tiisaku");
-
-            angleSystemModel.decreaseAngleSystemB();
-
-            app.Button_shared_operation();
-        });
-
-        angleSystemBButton.addActionListener(e -> {
-            app.setHelp("kakudo_kei_b");
-
-            angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemBDivider());
-
-            app.Button_shared_operation();
-        });
-        angleSystemBIncreaseButton.addActionListener(e -> {
-            app.setHelp("kakudo_kei_b_ookiku");
-
-            angleSystemModel.increaseAngleSystemB();
-
-            app.Button_shared_operation();
-        });
+        angleSystemBButton.addActionListener(e -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemBDivider()));
+        angleSystemBIncreaseButton.addActionListener(e -> angleSystemModel.increaseAngleSystemB());
         restrictedAngleABCSetButton.addActionListener(e -> {
-            app.setHelp("jiyuu_kaku_set_a");
-
             getData(angleSystemModel);
 
             angleSystemModel.setCurrentABC();
-
-            app.Button_shared_operation();
         });
 
         restrictedAngleSetDEFButton.addActionListener(e -> {
-            app.setHelp("jiyuu_kaku_set_b");
-
             getData(angleSystemModel);
 
             angleSystemModel.setCurrentDEF();
-
-            app.Button_shared_operation();
         });
-        degButton.addActionListener(e -> {
-            app.setHelp("deg");
-
-            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_1);
-
-            app.Button_shared_operation();
-        });
-        deg3Button.addActionListener(e -> {
-            app.setHelp("deg3");
-
-            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_3);
-
-            app.Button_shared_operation();
-        });
-        angleRestrictedButton.addActionListener(e -> {
-            app.setHelp("senbun_nyuryoku37");
-
-            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_5);
-
-            app.Button_shared_operation();
-        });
-        deg2Button.addActionListener(e -> {
-            app.setHelp("deg2");
-
-            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_2);
-
-            app.Button_shared_operation();
-        });
-        deg4Button.addActionListener(e -> {
-            app.setHelp("deg4");
-
-            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_4);
-
-            app.Button_shared_operation();
-        });
+        degButton.addActionListener(e -> angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_1));
+        deg3Button.addActionListener(e -> angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_3));
+        angleRestrictedButton.addActionListener(e -> angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_5));
+        deg2Button.addActionListener(e -> angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_2));
+        deg4Button.addActionListener(e -> angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_4));
         polygonSizeSetButton.addActionListener(e -> {
-            app.setHelp("kakusuu_set");
-
             app.canvasModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), app.canvasModel.getNumPolygonCorners()));
             app.canvasModel.setMouseMode(MouseMode.POLYGON_SET_NO_CORNERS_29);
 
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         regularPolygonButton.addActionListener(e -> {
-            app.setHelp("sei_takakukei");
-
             app.canvasModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), app.canvasModel.getNumPolygonCorners()));
             app.canvasModel.setMouseMode(MouseMode.POLYGON_SET_NO_CORNERS_29);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.POLYGON_SET_NO_CORNERS_29);
 
-            app.Button_shared_operation();
             app.repaintCanvas();
             app.mainDrawingWorker.unselect_all();
         });
         circleDrawFreeButton.addActionListener(e -> {
-            app.setHelp("en_nyuryoku_free");
-
             app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_FREE_47);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         circleDrawButton.addActionListener(e -> {
-            app.setHelp("en_nyuryoku");
-
             app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_42);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         circleDrawSeparateButton.addActionListener(e -> {
-            app.setHelp("en_bunri_nyuryoku");
-
             app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_SEPARATE_44);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         circleDrawConcentricButton.addActionListener(e -> {
-            app.setHelp("dousin_en_tuika_s");
-
             app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_48);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         circleDrawConcentricSelectButton.addActionListener(e -> {
-            app.setHelp("dousin_en_tuika_d");
-
             app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         circleDrawTwoConcentricButton.addActionListener(e -> {
-            app.setHelp("en_en_dousin_en");
-
             app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         circleDrawTangentLineButton.addActionListener(e -> {
-            app.setHelp("en_en_sessen");
-
             app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_TANGENT_LINE_45);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         circleDrawThreePointButton.addActionListener(e -> {
-            app.setHelp("en_3ten_nyuryoku");
-
             app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_THREE_POINT_43);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         circleDrawInvertedButton.addActionListener(e -> {
-            app.setHelp("hanten");
-
             app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_INVERTED_46);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         c_colButton.addActionListener(e -> {
-            app.setHelp("sen_tokutyuu_color");
-            app.Button_shared_operation();
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
             //以下にやりたいことを書く
@@ -411,135 +292,81 @@ public class RightPanel {
             app.repaintCanvas();
         });
         sen_tokutyuu_color_henkouButton.addActionListener(e -> {
-            app.setHelp("sen_tokutyuu_color_henkou");
-
             app.canvasModel.setMouseMode(MouseMode.CIRCLE_CHANGE_COLOR_59);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         h_undoButton.addActionListener(e -> {
-            app.setHelp("undo");
-
             app.mainDrawingWorker.auxUndo();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
-        h_undoTotalSetButton.addActionListener(e -> {
-            app.setHelp("h_undo_syutoku");
-
-            app.historyStateModel.setAuxHistoryTotal(StringOp.String2int(auxUndoTotalTextField.getText(), app.historyStateModel.getAuxHistoryTotal()));
-        });
+        h_undoTotalSetButton.addActionListener(e -> app.historyStateModel.setAuxHistoryTotal(StringOp.String2int(auxUndoTotalTextField.getText(), app.historyStateModel.getAuxHistoryTotal())));
         h_redoButton.addActionListener(e -> {
-            app.setHelp("h_redo");
-
             app.mainDrawingWorker.auxRedo();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
-        h_senhaba_sageButton.addActionListener(e -> {
-            app.setHelp("h_senhaba_sage");
-
-            app.canvasModel.decreaseAuxLineWidth();
-
-            app.Button_shared_operation();
-        });
-        h_senhaba_ageButton.addActionListener(e -> {
-            app.setHelp("h_senhaba_age");
-
-            app.canvasModel.increaseAuxLineWidth();
-
-            app.Button_shared_operation();
-        });
+        h_senhaba_sageButton.addActionListener(e -> app.canvasModel.decreaseAuxLineWidth());
+        h_senhaba_ageButton.addActionListener(e -> app.canvasModel.increaseAuxLineWidth());
         colOrangeButton.addActionListener(e -> {
-            app.setHelp("Button_Col_orange");
-
             app.canvasModel.setAuxLiveLineColor(LineColor.ORANGE_4);
 
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         colYellowButton.addActionListener(e -> {
-            app.setHelp("Button_Col_yellow");
-
             app.canvasModel.setAuxLiveLineColor(LineColor.YELLOW_7);
 
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         h_senbun_nyuryokuButton.addActionListener(e -> {
-            app.setHelp("h_senbun_nyuryoku");
-
             app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_FREE_1);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
 
             app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LINE_1);
         });
         h_senbun_sakujyoButton.addActionListener(e -> {
-            app.setHelp("h_senbun_sakujyo");
-
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
             app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LINE_1);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         l1Button.addActionListener(e -> {
-            app.setHelp("nagasa_sokutei_1");
-
             app.canvasModel.setMouseMode(MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         l2Button.addActionListener(e -> {
-            app.setHelp("nagasa_sokutei_2");
-
             app.canvasModel.setMouseMode(MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         a1Button.addActionListener(e -> {
-            app.setHelp("kakudo_sokutei_1");
-
             app.canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         a2Button.addActionListener(e -> {
-            app.setHelp("kakudo_sokutei_2");
-
             app.canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         a3Button.addActionListener(e -> {
-            app.setHelp("kakudo_sokutei_3");
-
             app.canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
 
         frame = new OpenFrame("additionalFrame", app);
 
         ad_fncButton.addActionListener(e -> {
-            app.setHelp("tuika_kinou");
-
             frame.setLocationRelativeTo(ad_fncButton);
             frame.setVisible(true);
         });

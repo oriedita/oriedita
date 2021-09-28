@@ -61,57 +61,41 @@ public class TopPanel {
         app.registerButton(backgroundToggleButton, "backgroundToggleAction");
         app.registerButton(backgroundSetPositionButton, "backgroundSetPositionAction");
         app.registerButton(backgroundLockButton, "backgroundLockAction");
+        app.registerButton(mouseSettingsCheckBox, "mouseSettingsAction");
 
         operationFrameSelectButton.addActionListener(e -> {
-            app.setHelp("tyouhoukei_select");
-
             app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
             app.canvasModel.setMouseMode(MouseMode.OPERATION_FRAME_CREATE_61);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
-        mouseSettingsCheckBox.addActionListener(e -> {
-            app.setHelp("ckbox_mouse_settei");
-
-            app.canvasModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected());
-        });
+        mouseSettingsCheckBox.addActionListener(e -> app.canvasModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected()));
         lineSegmentInternalDivisionRatioSetButton.addActionListener(e -> {
-            app.setHelp("senbun_naibun_set");
-
             getData(app.internalDivisionRatioModel);
 
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_RATIO_SET_28);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_RATIO_SET_28);
 
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         drawLineSegmentInternalDivisionRatioButton.addActionListener(e -> {
-            app.setHelp("senbun_n_nyuryoku");
-
             getData(app.internalDivisionRatioModel);
 
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_RATIO_SET_28);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_RATIO_SET_28);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         moveCreasePatternButton.addActionListener(e -> {
-            app.setHelp("tenkaizu_idiu");
-
             app.canvasModel.setMouseMode(MouseMode.MOVE_CREASE_PATTERN_2);
 
             app.repaintCanvas();
         });
         FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
         creasePatternZoomOutButton.addActionListener(e -> {
-            app.setHelp("tenkaizu_syukusyou");
-
             app.creasePatternCameraModel.zoomOut();
 
             double magnification = 1.0 / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
@@ -146,13 +130,9 @@ public class TopPanel {
                 foldedFigureModel.setScale(foldedFigureModel.getScale() * magnification);
             }
 
-            app.setHelp("syukusyaku_keisuu_set");
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         creasePatternZoomInButton.addActionListener(e -> {
-            app.setHelp("tenkaizu_kakudai");
-
             app.creasePatternCameraModel.zoomIn();
 
             double magnification = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
@@ -169,31 +149,15 @@ public class TopPanel {
             foldedFigureModel.zoomIn();
 //20180122追加　ここまで
         });
-        rotateAnticlockwiseButton.addActionListener(e -> {
-            app.setHelp("tenkaizu_p_kaiten");
-
-            app.creasePatternCameraModel.increaseRotation();
-        });
+        rotateAnticlockwiseButton.addActionListener(e -> app.creasePatternCameraModel.increaseRotation());
         rotationSetButton.addActionListener(e -> {
             app.creasePatternCameraModel.setRotation(app.string2double(rotationTextField.getText(), app.creasePatternCameraModel.getRotation()));
 
-            app.setHelp("kaiten_hosei_set");
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
-        rotateClockwiseButton.addActionListener(e -> {
-            app.setHelp("tenkaizu_m_kaiten");
-            app.creasePatternCameraModel.decreaseRotation();
-        });
-        transparentButton.addActionListener(e -> {
-            app.setHelp("toumei");
-
-            app.createTransparentBackground();
-        });
+        rotateClockwiseButton.addActionListener(e -> app.creasePatternCameraModel.decreaseRotation());
+        transparentButton.addActionListener(e -> app.createTransparentBackground());
         backgroundTrimButton.addActionListener(e -> {
-            app.setHelp("haikei_trim");
-
-
             app.offsc_background = new BufferedImage(2000, 1100, BufferedImage.TYPE_INT_ARGB);
 
             Graphics2D g2_background = app.offsc_background.createGraphics();
@@ -235,8 +199,6 @@ public class TopPanel {
             app.repaintCanvas();
         });
         readBackgroundButton.addActionListener(e -> {
-            app.setHelp("haikei");
-
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
 
@@ -252,34 +214,24 @@ public class TopPanel {
             app.repaintCanvas();
         });
         backgroundToggleButton.addActionListener(e -> {
-            app.setHelp("haikei_kirikae");
-
             app.backgroundModel.setDisplayBackground(!app.backgroundModel.isDisplayBackground());
 
             app.repaintCanvas();
         });
         backgroundSetPositionButton.addActionListener(e -> {
-            app.setHelp("set_BG");
-
             app.canvasModel.setMouseMode(MouseMode.BACKGROUND_CHANGE_POSITION_26);
 
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         backgroundLockButton.addActionListener(e -> {
-            app.setHelp("haikei_Lock_on");
-
             app.backgroundModel.setLockBackground(!app.backgroundModel.isLockBackground());
 
             app.repaintCanvas();
         });
         senbun_yoke_henkanButton.addActionListener(e -> {
-            app.setHelp("senbun_yoke_henkan");
-
             app.canvasModel.setMouseMode(MouseMode.CREASE_ADVANCE_TYPE_30);
 
             app.mainDrawingWorker.unselect_all();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
     }

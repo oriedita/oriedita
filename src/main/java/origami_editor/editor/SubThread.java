@@ -16,72 +16,72 @@ class SubThread extends Thread {
     public void run() {
         long start = System.currentTimeMillis();
 
-        switch (app.subThreadMode) {
-            case FOLDING_ESTIMATE_0:
-                app.folding_estimated();
-                app.repaint();
-                break;
-            case FOLDING_ESTIMATE_SAVE_100_1:
-                File file = app.selectExportFile();
-                if (file != null) {
-                    app.OZ.summary_write_image_during_execution = true;//Meaning during summary writing
-
-                    synchronized (app.w_image_running) {
-                        int objective = 100;
-
-                        for (int i = 1; i <= objective; i++) {
-                            app.folding_estimated();
-
-                            String filename = file.getName();
-                            if (filename.contains(".")) {
-                                String extension = filename.substring(filename.lastIndexOf("."));
-                                String basename = filename.substring(0, filename.lastIndexOf("."));
-
-                                filename = basename + "_" + app.OZ.discovered_fold_cases + extension;
-                            }
-
-                            app.fname_and_number = new File(filename);//Used for bulk writing.
-
-                            app.w_image_running.set(true);
-                            app.repaint();
-
-                            try {
-                                app.w_image_running.wait();
-                            } catch (InterruptedException e) {
-                                return;
-                            }
-
-                            if (!app.OZ.findAnotherOverlapValid) {
-                                objective = app.OZ.discovered_fold_cases;
-                            }
-                        }
-                    }
-                    app.OZ.summary_write_image_during_execution = false;
-                }
-                break;
-            case FOLDING_ESTIMATE_SPECIFIC_2:
-                if (app.foldedCases == app.OZ.discovered_fold_cases) {
-                    app.OZ.text_result = "Number of found solutions = " + app.OZ.discovered_fold_cases + "  ";
-                }
-                int objective = app.foldedCases;
-                while (objective > app.OZ.discovered_fold_cases) {
+            switch (app.subThreadMode) {
+                case FOLDING_ESTIMATE_0:
                     app.folding_estimated();
                     app.repaint();
+                    break;
+                case FOLDING_ESTIMATE_SAVE_100_1:
+                    File file = app.selectExportFile();
+                    if (file != null) {
+                        app.OZ.summary_write_image_during_execution = true;//Meaning during summary writing
 
-                    app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
-                    if (!app.OZ.findAnotherOverlapValid) {
-                        objective = app.OZ.discovered_fold_cases;
+                        synchronized (app.w_image_running) {
+                            int objective = 100;
+
+                            for (int i = 1; i <= objective; i++) {
+                                app.folding_estimated();
+
+                                String filename = file.getName();
+                                if (filename.contains(".")) {
+                                    String extension = filename.substring(filename.lastIndexOf("."));
+                                    String basename = filename.substring(0, filename.lastIndexOf("."));
+
+                                    filename = basename + "_" + app.OZ.discovered_fold_cases + extension;
+                                }
+
+                                app.fname_and_number = new File(filename);//Used for bulk writing.
+
+                                app.w_image_running.set(true);
+                                app.repaint();
+
+                                try {
+                                    app.w_image_running.wait();
+                                } catch (InterruptedException e) {
+                                    return;
+                                }
+
+                                if (!app.OZ.findAnotherOverlapValid) {
+                                    objective = app.OZ.discovered_fold_cases;
+                                }
+                            }
+                        }
+                        app.OZ.summary_write_image_during_execution = false;
                     }
-                }
-                break;
-            case CHECK_CAMV_3:
-                app.mainDrawingWorker.ap_check4(app.d_ap_check4);
-                break;
-            //Two-color crease pattern
-            case TWO_COLORED_4:
-                app.createTwoColorCreasePattern();
-                break;
-        }
+                    break;
+                case FOLDING_ESTIMATE_SPECIFIC_2:
+                    if (app.foldedCases == app.OZ.discovered_fold_cases) {
+                        app.OZ.text_result = "Number of found solutions = " + app.OZ.discovered_fold_cases + "  ";
+                    }
+                    int objective = app.foldedCases;
+                    while (objective > app.OZ.discovered_fold_cases) {
+                        app.folding_estimated();
+                        app.repaint();
+
+                        app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
+                        if (!app.OZ.findAnotherOverlapValid) {
+                            objective = app.OZ.discovered_fold_cases;
+                        }
+                    }
+                    break;
+                case CHECK_CAMV_3:
+                    app.mainDrawingWorker.ap_check4(app.d_ap_check4);
+                    break;
+                //Two-color crease pattern
+                case TWO_COLORED_4:
+                    app.createTwoColorCreasePattern();
+                    break;
+            }
 
         long stop = System.currentTimeMillis();
         long L = stop - start;

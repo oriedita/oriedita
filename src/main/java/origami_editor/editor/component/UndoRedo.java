@@ -30,6 +30,10 @@ public class UndoRedo extends JPanel {
         redoButton.addActionListener(listener);
     }
 
+    public JButton getSetUndoCountButton() {
+        return setUndoCountButton;
+    }
+
     public void addSetUndoCountActionListener(ActionListener listener) {
         setUndoCountButton.addActionListener(listener);
     }

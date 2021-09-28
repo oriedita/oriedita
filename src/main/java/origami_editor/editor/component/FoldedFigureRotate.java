@@ -18,28 +18,14 @@ public class FoldedFigureRotate extends JPanel {
     public FoldedFigureRotate(App app) {
         add($$$getRootComponent$$$());
 
+        app.registerButton(foldedFigureRotateAntiClockwiseButton, "foldedFigureRotateAntiClockwiseAction");
+        app.registerButton(foldedFigureRotateSetButton, "foldedFigureRotateSetAction");
+        app.registerButton(foldedFigureRotateClockwiseButton, "foldedFigureRotateClockwiseAction");
+
         FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
-        foldedFigureRotateAntiClockwiseButton.addActionListener(e -> {
-            app.setHelp("oriagari_p_kaiten");
-
-            foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() - 11.25));
-
-            app.Button_shared_operation();
-        });
-        foldedFigureRotateSetButton.addActionListener(e -> {
-            app.setHelp("oriagarizu_kaiten_hosei_set");
-
-            foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(app.string2double(foldedFigureRotateTextField.getText(), foldedFigureModel.getRotation())));
-
-            app.Button_shared_operation();
-        });
-        foldedFigureRotateClockwiseButton.addActionListener(e -> {
-            app.setHelp("oriagari_m_kaiten");
-
-            foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() + 11.25));
-
-            app.Button_shared_operation();
-        });
+        foldedFigureRotateAntiClockwiseButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() - 11.25)));
+        foldedFigureRotateSetButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(app.string2double(foldedFigureRotateTextField.getText(), foldedFigureModel.getRotation()))));
+        foldedFigureRotateClockwiseButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() + 11.25)));
     }
 
     public void setText(String text) {

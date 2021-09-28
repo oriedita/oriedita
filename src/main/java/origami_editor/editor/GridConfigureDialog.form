@@ -62,7 +62,7 @@
             <properties/>
             <border type="none" title="Interval Grid"/>
             <children>
-              <component id="45903" class="javax.swing.JButton" binding="memori_tate_idouButton">
+              <component id="45903" class="javax.swing.JButton" binding="moveIntervalGridVerticalButton">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="1.0" weighty="1.0"/>
@@ -81,7 +81,7 @@
                   <text value="8"/>
                 </properties>
               </component>
-              <component id="b38bf" class="javax.swing.JButton" binding="memori_kankaku_syutokuButton">
+              <component id="b38bf" class="javax.swing.JButton" binding="setIntervalGridSizeButton">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="1.0" weighty="1.0"/>
@@ -90,7 +90,7 @@
                   <text value="S"/>
                 </properties>
               </component>
-              <component id="fa43f" class="javax.swing.JButton" binding="memori_yoko_idouButton">
+              <component id="fa43f" class="javax.swing.JButton" binding="moveIntervalGridHorizontal">
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="1.0" weighty="1.0"/>
@@ -136,7 +136,7 @@
                   <icon value="ppp/kousi_senhaba_age.png"/>
                 </properties>
               </component>
-              <component id="71807" class="javax.swing.JButton" binding="i_kitei_jyoutaiButton">
+              <component id="71807" class="javax.swing.JButton" binding="changeGridStateButton">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="1.0" weighty="1.0"/>

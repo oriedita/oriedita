@@ -3545,7 +3545,7 @@ public class FoldLineSet {
                 if (Dousa_mode.equals("select")) {
                     s.setSelected(2);
                 }
-                if (Dousa_mode.equals("unselect")) {
+                if (Dousa_mode.equals("unselectAction")) {
                     s.setSelected(0);
                 }
             }

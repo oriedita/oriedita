@@ -58,23 +58,21 @@ public class BottomPanel extends JPanel {
         app.registerButton(goToFoldedFigureButton, "goToFoldedFigureAction");
         app.registerButton(foldedFigureMoveButton, "foldedFigureMoveAction");
 
+        app.registerButton(undoRedo.getUndoButton(), "foldedFigureUndoAction");
+        app.registerButton(undoRedo.getRedoButton(), "foldedFigureRedoAction");
+        app.registerButton(undoRedo.getSetUndoCountButton(), "foldedFigureUndoCountAction");
+
         FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
 
         foldButton.addActionListener(e -> {
-            app.setHelp("suitei_04");
-
             System.out.println("20180220 get_i_fold_type() = " + app.getFoldType());
             app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
 
             if (!app.canvasModel.getSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
-
-            app.Button_shared_operation();
         });
         anotherSolutionButton.addActionListener(e -> {
-            app.setHelp("Button3");
-
             app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
             app.subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_0;//1 = Put together another solution for folding estimation. 0 = It is not a mode to put out different solutions of folding estimation at once. This variable is used to change the behavior of subthreads.
@@ -85,18 +83,14 @@ public class BottomPanel extends JPanel {
             }
         });
         flipButton.addActionListener(e -> {
-            app.setHelp("Button0b");
-
             foldedFigureModel.advanceState();
 
             if ((app.mouseMode == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (app.OZ.ip4 == FoldedFigure.State.BOTH_2)) {
                 foldedFigureModel.setState(FoldedFigure.State.FRONT_0);
             }//Fold-up forecast map Added to avoid the mode that can not be moved when moving
-            app.Button_shared_operation();
         });
         As100Button.addActionListener(e -> {
             app.subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_SAVE_100_1;
-            app.setHelp("AS_matome");
             if (app.OZ.findAnotherOverlapValid) {
                 app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
@@ -131,72 +125,38 @@ public class BottomPanel extends JPanel {
                 app.sub.start();
             }
 
-            app.setHelp("bangou_sitei_suitei_hyouji");
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
 
         undoRedo.addUndoActionListener(e -> {
-            app.setHelp("undo");
-
             app.OZ.undo();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         undoRedo.addRedoActionListener(e -> {
-            app.setHelp("redo");
-
             app.OZ.redo();
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         undoRedo.addSetUndoCountActionListener(e -> {
-            app.setHelp("undo_syutoku");
-
             app.foldedFigureModel.setHistoryTotal(StringOp.String2int(undoRedo.getText(), app.foldedFigureModel.getHistoryTotal()));
         });
         oriagari_sousaButton.addActionListener(e -> {
-            app.setHelp("oriagari_sousa");
             app.OZ.i_foldedFigure_operation_mode = 1;
             app.OZ.setAllPointStateFalse();
             app.OZ.record();
 
             app.canvasModel.setMouseMode(MouseMode.MODIFY_CALCULATED_SHAPE_101);
-
-            app.Button_shared_operation();
         });
         oriagari_sousa_2Button.addActionListener(e -> {
-            app.setHelp("oriagari_sousa_2");
             app.OZ.i_foldedFigure_operation_mode = 2;
             app.OZ.setAllPointStateFalse();
             app.OZ.record();
 
             app.canvasModel.setMouseMode(MouseMode.MODIFY_CALCULATED_SHAPE_101);
-
-            app.Button_shared_operation();
         });
-        foldedFigureMoveButton.addActionListener(e -> {
-            app.setHelp("oriagari_idiu");
-
-            app.canvasModel.setMouseMode(MouseMode.MOVE_CALCULATED_SHAPE_102);
-
-            app.Button_shared_operation();
-        });
-        foldedFigureAntiAliasButton.addActionListener(e -> {
-            app.Button_shared_operation();
-            app.setHelp("foldedFigureToggleAntiAlias");
-
-            foldedFigureModel.toggleAntiAlias();
-        });
-        shadowButton.addActionListener(e -> {
-            app.Button_shared_operation();
-            app.setHelp("kage");
-
-            foldedFigureModel.toggleDisplayShadows();
-        });
+        foldedFigureMoveButton.addActionListener(e -> app.canvasModel.setMouseMode(MouseMode.MOVE_CALCULATED_SHAPE_102));
+        foldedFigureAntiAliasButton.addActionListener(e -> foldedFigureModel.toggleAntiAlias());
+        shadowButton.addActionListener(e -> foldedFigureModel.toggleDisplayShadows());
         frontColorButton.addActionListener(e -> {
-            app.setHelp("F_color");
-            app.Button_shared_operation();
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
 
@@ -209,8 +169,6 @@ public class BottomPanel extends JPanel {
             }
         });
         backColorButton.addActionListener(e -> {
-            app.setHelp("B_color");
-            app.Button_shared_operation();
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
 
@@ -222,8 +180,6 @@ public class BottomPanel extends JPanel {
             }
         });
         lineColorButton.addActionListener(e -> {
-            app.setHelp("L_color");
-            app.Button_shared_operation();
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
 
@@ -235,17 +191,11 @@ public class BottomPanel extends JPanel {
             }
         });
         haltButton.addActionListener(e -> {
-            app.setHelp("keisan_tyuusi");
-
             if (app.subThreadRunning) {
                 app.halt();
             }
-
-            app.Button_shared_operation();
         });
         trashButton.addActionListener(e -> {
-            app.setHelp("settei_syokika");
-
             if (app.foldedFigureIndex == 0) {
                 return;
             }
@@ -259,12 +209,9 @@ public class BottomPanel extends JPanel {
                 app.setFoldedFigureIndex(app.foldedFigureIndex);
             }
 
-            app.Button_shared_operation();
             app.repaintCanvas();
         });
         resetButton.addActionListener(e -> {
-            app.setHelp("zen_syokika");
-
             //展開図の初期化　開始
             //settei_syokika_cp();//展開図パラメータの初期化
             app.developmentView_initialization();

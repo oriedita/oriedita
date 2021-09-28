@@ -20,11 +20,11 @@ public class GridConfigureDialog extends JDialog {
     private JButton gridColorButton;
     private JButton gridLineWidthDecreaseButton;
     private JButton gridLineWidthIncreaseButton;
-    private JButton i_kitei_jyoutaiButton;
-    private JButton memori_tate_idouButton;
+    private JButton changeGridStateButton;
+    private JButton moveIntervalGridVerticalButton;
     private JTextField intervalGridSizeTextField;
-    private JButton memori_kankaku_syutokuButton;
-    private JButton memori_yoko_idouButton;
+    private JButton setIntervalGridSizeButton;
+    private JButton moveIntervalGridHorizontal;
     private JButton intervalGridColorButton;
     private JTextField gridXATextField;
     private JTextField gridXBTextField;
@@ -41,6 +41,21 @@ public class GridConfigureDialog extends JDialog {
         this.app = app;
         setContentPane(contentPane);
         getRootPane().setDefaultButton(buttonOK);
+        
+        app.registerButton(buttonOK, "gridConfigureOkAction");
+        app.registerButton(gridSizeDecreaseButton, "gridSizeDecreaseAction");
+        app.registerButton(gridSizeSetButton, "gridSizeSetAction");
+        app.registerButton(gridSizeIncreaseButton, "gridSizeIncreaseAction");
+        app.registerButton(gridColorButton, "gridColorAction");
+        app.registerButton(gridLineWidthDecreaseButton, "gridLineWidthDecreaseAction");
+        app.registerButton(gridLineWidthIncreaseButton, "gridLineWidthIncreaseAction");
+        app.registerButton(changeGridStateButton, "changeGridStateAction");
+        app.registerButton(moveIntervalGridVerticalButton, "moveIntervalGridVerticalAction");
+        app.registerButton(setIntervalGridSizeButton, "setIntervalGridSizeAction");
+        app.registerButton(moveIntervalGridHorizontal, "moveIntervalGridHorizontalAction");
+        app.registerButton(intervalGridColorButton, "intervalGridColorAction");
+        app.registerButton(setGridParametersButton, "setGridParametersAction");
+        app.registerButton(resetButton, "gridConfigureResetAction");
 
         buttonOK.addActionListener(e -> onOK());
 
@@ -56,8 +71,6 @@ public class GridConfigureDialog extends JDialog {
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         gridSizeDecreaseButton.addActionListener(e -> {
-            app.setHelp("kitei2");
-
             int gridSize = gridModel.getGridSize();
 
             gridSize = gridSize / 2;
@@ -67,18 +80,9 @@ public class GridConfigureDialog extends JDialog {
 
             gridModel.setGridSize(gridSize);
         });
-        gridSizeSetButton.addActionListener(e -> {
-            app.setHelp("syutoku");
-
-            getData(gridModel);
-        });
-        gridSizeIncreaseButton.addActionListener(e -> {
-            app.setHelp("kitei");
-
-            gridModel.setGridSize(gridModel.getGridSize() * 2);
-        });
+        gridSizeSetButton.addActionListener(e -> getData(gridModel));
+        gridSizeIncreaseButton.addActionListener(e -> gridModel.setGridSize(gridModel.getGridSize() * 2));
         gridColorButton.addActionListener(e -> {
-            app.setHelp("kousi_color");
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
 
@@ -89,38 +93,13 @@ public class GridConfigureDialog extends JDialog {
             }
             //以上でやりたいことは書き終わり
         });
-        gridLineWidthDecreaseButton.addActionListener(e -> {
-            app.setHelp("kousi_senhaba_sage");
-
-            gridModel.decreaseGridLineWidth();
-        });
-        gridLineWidthIncreaseButton.addActionListener(e -> {
-            app.setHelp("kousi_senhaba_age");
-
-            gridModel.increaseGridLineWidth();
-        });
-        i_kitei_jyoutaiButton.addActionListener(e -> {
-            app.setHelp("i_kitei_jyoutai");
-
-            gridModel.advanceBaseState();
-        });
-        memori_tate_idouButton.addActionListener(e -> {
-            app.setHelp("memori_tate_idou");
-
-            gridModel.changeHorizontalScalePosition();
-        });
-        memori_kankaku_syutokuButton.addActionListener(e -> {
-            app.setHelp("memori_kankaku_syutoku");
-
-            getData(gridModel);
-        });
-        memori_yoko_idouButton.addActionListener(e -> {
-            app.setHelp("memori_yoko_idou");
-
-            gridModel.changeVerticalScalePosition();
-        });
+        gridLineWidthDecreaseButton.addActionListener(e -> gridModel.decreaseGridLineWidth());
+        gridLineWidthIncreaseButton.addActionListener(e -> gridModel.increaseGridLineWidth());
+        changeGridStateButton.addActionListener(e -> gridModel.advanceBaseState());
+        moveIntervalGridVerticalButton.addActionListener(e -> gridModel.changeHorizontalScalePosition());
+        setIntervalGridSizeButton.addActionListener(e -> getData(gridModel));
+        moveIntervalGridHorizontal.addActionListener(e -> gridModel.changeVerticalScalePosition());
         intervalGridColorButton.addActionListener(e -> {
-            app.setHelp("kousi_memori_color");
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
 
@@ -130,11 +109,7 @@ public class GridConfigureDialog extends JDialog {
                 gridModel.setGridScaleColor(color);
             }
         });
-        setGridParametersButton.addActionListener(e -> {
-            app.setHelp("kousi_syutoku");
-
-            getData(gridModel);
-        });
+        setGridParametersButton.addActionListener(e -> getData(gridModel));
         resetButton.addActionListener(e -> gridModel.reset());
     }
 
@@ -213,15 +188,15 @@ public class GridConfigureDialog extends JDialog {
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(panel3, gbc);
         panel3.setBorder(BorderFactory.createTitledBorder(null, "Interval Grid", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-        memori_tate_idouButton = new JButton();
-        memori_tate_idouButton.setIcon(new ImageIcon(getClass().getResource("/ppp/memori_tate_idou.png")));
+        moveIntervalGridVerticalButton = new JButton();
+        moveIntervalGridVerticalButton.setIcon(new ImageIcon(getClass().getResource("/ppp/memori_tate_idou.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel3.add(memori_tate_idouButton, gbc);
+        panel3.add(moveIntervalGridVerticalButton, gbc);
         intervalGridSizeTextField = new JTextField();
         intervalGridSizeTextField.setColumns(2);
         intervalGridSizeTextField.setText("8");
@@ -232,24 +207,24 @@ public class GridConfigureDialog extends JDialog {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel3.add(intervalGridSizeTextField, gbc);
-        memori_kankaku_syutokuButton = new JButton();
-        memori_kankaku_syutokuButton.setText("S");
+        setIntervalGridSizeButton = new JButton();
+        setIntervalGridSizeButton.setText("S");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel3.add(memori_kankaku_syutokuButton, gbc);
-        memori_yoko_idouButton = new JButton();
-        memori_yoko_idouButton.setIcon(new ImageIcon(getClass().getResource("/ppp/memori_yoko_idou.png")));
+        panel3.add(setIntervalGridSizeButton, gbc);
+        moveIntervalGridHorizontal = new JButton();
+        moveIntervalGridHorizontal.setIcon(new ImageIcon(getClass().getResource("/ppp/memori_yoko_idou.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel3.add(memori_yoko_idouButton, gbc);
+        panel3.add(moveIntervalGridHorizontal, gbc);
         intervalGridColorButton = new JButton();
         intervalGridColorButton.setText("Color");
         gbc = new GridBagConstraints();
@@ -286,15 +261,15 @@ public class GridConfigureDialog extends JDialog {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel4.add(gridLineWidthIncreaseButton, gbc);
-        i_kitei_jyoutaiButton = new JButton();
-        i_kitei_jyoutaiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/i_kitei_jyoutai.png")));
+        changeGridStateButton = new JButton();
+        changeGridStateButton.setIcon(new ImageIcon(getClass().getResource("/ppp/i_kitei_jyoutai.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel4.add(i_kitei_jyoutaiButton, gbc);
+        panel4.add(changeGridStateButton, gbc);
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();

@@ -122,52 +122,52 @@ public class Orh {
 
                 String value = m.group(2).trim();
                 switch (m.group(1)) {
-                    case "ckbox_mouse_settei": {
+                    case "mouseSettingsAction": {
                         boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setMouseWheelMovesCreasePattern(selected);
                         break;
                     }
-                    case "ckbox_ten_sagasi": {
+                    case "showPointRangeAction": {
                         boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayPointSpotlight(selected);
                         break;
                     }
-                    case "ckbox_ten_hanasi": {
+                    case "pointOffsetAction": {
                         boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayPointOffset(selected);
                         break;
                     }
-                    case "ckbox_kou_mitudo_nyuuryoku": {
+                    case "gridInputAssistAction": {
                         boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayGridInputAssist(selected);
                         break;
                     }
-                    case "ckbox_bun": {
+                    case "displayCommentsAction": {
                         boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayComments(selected);
                         break;
                     }
-                    case "ckbox_cp": {
+                    case "displayCpLinesAction": {
                         boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayCpLines(selected);
                         break;
                     }
-                    case "ckbox_a0": {
+                    case "displayAuxLinesAction": {
                         boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayAuxLines(selected);
                         break;
                     }
-                    case "ckbox_a1": {
+                    case "displayLiveAuxLinesAction": {
                         boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayLiveAuxLines(selected);
                         break;
                     }
-                    case "ckbox_mejirusi": {
+                    case "displayStandardFaceMarksAction": {
                         boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayMarkings(selected);
                         break;
                     }
-                    case "ckbox_cp_ue": {
+                    case "cpOnTopAction": {
                         boolean selected = Boolean.parseBoolean(value);
                         canvasModel.setDisplayCreasePatternOnTop(selected);
                         break;
@@ -220,7 +220,7 @@ public class Orh {
                 }
 
                 switch (m.group(1)) {
-                    case "i_kitei_jyoutai":
+                    case "changeGridStateAction":
                         gridModel.setBaseState(Grid.State.from(m.group(2)));
                         break;
                     case "nyuuryoku_kitei":

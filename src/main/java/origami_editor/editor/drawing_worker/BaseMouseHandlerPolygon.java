@@ -131,7 +131,7 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
                 d.foldLineSet.select_Takakukei(polygon, "select");
             }//66 66 66 66 66 多角形を入力し、それに全体が含まれる折線をselectする
             if (getMouseMode() == MouseMode.UNSELECT_POLYGON_67) {
-                d.foldLineSet.select_Takakukei(polygon, "unselect");
+                d.foldLineSet.select_Takakukei(polygon, "unselectAction");
             }//67 67 67 67 67 多角形を入力し、それに全体が含まれる折線を折線をunselectする
             //各動作モードで独自に行う作業はここまで
         }
