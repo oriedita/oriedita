@@ -15,6 +15,10 @@ public class HistoryState {
     public HistoryState() {
     }
 
+    public boolean isEmpty() {
+        return history.isEmpty() && future.isEmpty() && current == null;
+    }
+
     public void record(Save s0) {
         if (current != null) history.addFirst(current);
         try {

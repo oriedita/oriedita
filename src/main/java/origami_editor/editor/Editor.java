@@ -18,6 +18,8 @@ public class Editor {
     public Editor(App app) {
         this.app = app;
         $$$setupUI$$$();
+
+
     }
 
     private void createUIComponents() {

@@ -15,14 +15,14 @@ import java.beans.PropertyChangeEvent;
 
 public class BottomPanel extends JPanel {
     private final App app;
-    private JButton foldButton;
     private JPanel panel1;
-    private JButton anotherSolutionButton;
-    private JButton flipButton;
     private JTextField goToFoldedFigureTextField;
     private FoldedFigureRotate foldedFigureRotate;
     private FoldedFigureResize foldedFigureResize;
-    private JButton a_aButton;
+    private JButton foldButton;
+    private JButton anotherSolutionButton;
+    private JButton flipButton;
+    private JButton foldedFigureAntiAliasButton;
     private JButton shadowButton;
     private JButton frontColorButton;
     private JButton backColorButton;
@@ -34,14 +34,32 @@ public class BottomPanel extends JPanel {
     private JButton oriagari_sousa_2Button;
     private JButton As100Button;
     private JButton goToFoldedFigureButton;
+    private JButton foldedFigureMoveButton;
     private UndoRedo undoRedo;
-    private JButton foldedFigureMove;
 
     public BottomPanel(App app) {
         this.app = app;
+        $$$setupUI$$$();
+
+        app.registerButton(foldButton, "foldAction");
+        app.registerButton(anotherSolutionButton, "anotherSolutionAction");
+        app.registerButton(flipButton, "foldedFigureFlipAction");
+        app.registerButton(foldedFigureAntiAliasButton, "foldedFigureToggleAntiAliasAction");
+        app.registerButton(shadowButton, "foldedFigureToggleShadowAction");
+        app.registerButton(frontColorButton, "foldedFigureFrontColorAction");
+        app.registerButton(backColorButton, "foldedFigureBackColorAction");
+        app.registerButton(lineColorButton, "foldedFigureLineColorAction");
+        app.registerButton(haltButton, "haltAction");
+        app.registerButton(trashButton, "foldedFigureTrashAction");
+        app.registerButton(resetButton, "resetAction");
+        app.registerButton(oriagari_sousaButton, "oriagari_sousaAction");
+        app.registerButton(oriagari_sousa_2Button, "oriagari_sousa_2Action");
+        app.registerButton(As100Button, "As100Action");
+        app.registerButton(goToFoldedFigureButton, "goToFoldedFigureAction");
+        app.registerButton(foldedFigureMoveButton, "foldedFigureMoveAction");
+
         FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
 
-        $$$setupUI$$$();
         foldButton.addActionListener(e -> {
             app.setHelp("suitei_04");
 
@@ -157,16 +175,16 @@ public class BottomPanel extends JPanel {
 
             app.Button_shared_operation();
         });
-        foldedFigureMove.addActionListener(e -> {
+        foldedFigureMoveButton.addActionListener(e -> {
             app.setHelp("oriagari_idiu");
 
             app.canvasModel.setMouseMode(MouseMode.MOVE_CALCULATED_SHAPE_102);
 
             app.Button_shared_operation();
         });
-        a_aButton.addActionListener(e -> {
+        foldedFigureAntiAliasButton.addActionListener(e -> {
             app.Button_shared_operation();
-            app.setHelp("a_a");
+            app.setHelp("foldedFigureToggleAntiAlias");
 
             foldedFigureModel.toggleAntiAlias();
         });
@@ -356,13 +374,13 @@ public class BottomPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(oriagari_sousa_2Button, gbc);
-        foldedFigureMove = new JButton();
-        foldedFigureMove.setIcon(new ImageIcon(getClass().getResource("/ppp/oriagari_idiu.png")));
+        foldedFigureMoveButton = new JButton();
+        foldedFigureMoveButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oriagari_idiu.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 9;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(foldedFigureMove, gbc);
+        panel1.add(foldedFigureMoveButton, gbc);
         gbc = new GridBagConstraints();
         gbc.gridx = 10;
         gbc.gridy = 0;
@@ -373,13 +391,13 @@ public class BottomPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(foldedFigureResize.$$$getRootComponent$$$(), gbc);
-        a_aButton = new JButton();
-        a_aButton.setText("a_a");
+        foldedFigureAntiAliasButton = new JButton();
+        foldedFigureAntiAliasButton.setText("a_a");
         gbc = new GridBagConstraints();
         gbc.gridx = 12;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(a_aButton, gbc);
+        panel1.add(foldedFigureAntiAliasButton, gbc);
         shadowButton = new JButton();
         shadowButton.setText("S");
         gbc = new GridBagConstraints();
@@ -462,7 +480,7 @@ public class BottomPanel extends JPanel {
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
             MouseMode m = data.getMouseMode();
 
-            foldedFigureMove.setSelected(m == MouseMode.MOVE_CALCULATED_SHAPE_102);
+            foldedFigureMoveButton.setSelected(m == MouseMode.MOVE_CALCULATED_SHAPE_102);
             oriagari_sousaButton.setSelected(app.OZ.i_foldedFigure_operation_mode == 1 && m == MouseMode.MODIFY_CALCULATED_SHAPE_101);
             oriagari_sousa_2Button.setSelected(app.OZ.i_foldedFigure_operation_mode == 2 && m == MouseMode.MODIFY_CALCULATED_SHAPE_101);
         }

@@ -19,11 +19,12 @@ import java.io.File;
 public class LeftPanel {
     private final GridConfigureDialog gridConfigureDialog;
     private JPanel root;
-    private JButton lineWidthDecreaseButton;
-    private JButton lineWidthIncreaseButton;
+
     private JTextField lineSegmentDivisionTextField;
     private JCheckBox correctCpBeforeFoldingCheckBox;
     private UndoRedo undoRedo;
+    private JButton lineWidthDecreaseButton;
+    private JButton lineWidthIncreaseButton;
     private JButton pointSizeDecreaseButton;
     private JButton pointSizeIncreaseButton;
     private JButton antiAliasToggleButton;
@@ -35,7 +36,7 @@ public class LeftPanel {
     private JButton lengthenCreaseButton;
     private JButton lengthenCrease2Button;
     private JButton angleBisectorButton;
-    private JButton inwardButton;
+    private JButton rabbitEarButton;
     private JButton perpendicularDrawButton;
     private JButton symmetricDrawButton;
     private JButton continuousSymmetricDrawButton;
@@ -75,13 +76,11 @@ public class LeftPanel {
     private JButton v_del_allButton;
     private JButton v_del_all_ccButton;
     private JButton inputDataButton;
-    private JCheckBox selectPersistentCheckBox;
     private JButton drawTwoColoredCpButton;
     private JButton suitei_01Button;
     private JButton koteimen_siteiButton;
     private JButton suitei_02Button;
     private JButton suitei_03Button;
-    private JCheckBox coloredXRayCheckBox;
     private JButton coloredXRayDecreaseButton;
     private JButton coloredXRayIncreaseButton;
     private JButton colRedButton;
@@ -90,11 +89,84 @@ public class LeftPanel {
     private JButton colCyanButton;
     private JButton lineSegmentDivisionSetButton;
     private JButton button1;
+    private JCheckBox selectPersistentCheckBox;
+    private JCheckBox coloredXRayCheckBox;
 
     public LeftPanel(App app) {
         CanvasModel canvasModel = app.canvasModel;
 
         $$$setupUI$$$();
+
+        app.registerButton(lineWidthDecreaseButton, "lineWidthDecreaseAction");
+        app.registerButton(lineWidthIncreaseButton, "lineWidthIncreaseAction");
+        app.registerButton(pointSizeDecreaseButton, "pointSizeDecreaseAction");
+        app.registerButton(pointSizeIncreaseButton, "pointSizeIncreaseAction");
+        app.registerButton(antiAliasToggleButton, "antiAliasToggleAction");
+        app.registerButton(lineStyleChangeButton, "lineStyleChangeAction");
+        app.registerButton(drawCreaseFreeButton, "drawCreaseFreeAction");
+        app.registerButton(drawCreaseRestrictedButton, "drawCreaseRestrictedAction");
+        app.registerButton(voronoiButton, "voronoiAction");
+        app.registerButton(makeFlatFoldableButton, "makeFlatFoldableAction");
+        app.registerButton(lengthenCreaseButton, "lengthenCreaseAction");
+        app.registerButton(lengthenCrease2Button, "lengthenCrease2Action");
+        app.registerButton(angleBisectorButton, "angleBisectorAction");
+        app.registerButton(rabbitEarButton, "rabbitEarAction");
+        app.registerButton(perpendicularDrawButton, "perpendicularDrawAction");
+        app.registerButton(symmetricDrawButton, "symmetricDrawAction");
+        app.registerButton(continuousSymmetricDrawButton, "continuousSymmetricDrawAction");
+        app.registerButton(parallelDrawButton, "parallelDrawAction");
+        app.registerButton(setParallelDrawWidthButton, "setParallelDrawWidthAction");
+        app.registerButton(foldableLineDrawButton, "foldableLineDrawAction");
+        app.registerButton(all_s_step_to_orisenButton, "all_s_step_to_orisenAction");
+        app.registerButton(fishBoneDrawButton, "fishBoneDrawAction");
+        app.registerButton(doubleSymmetricDrawButton, "doubleSymmetricDrawAction");
+        app.registerButton(senbun_b_nyuryokuButton, "senbun_b_nyuryokuAction");
+        app.registerButton(reflectButton, "reflectAction");
+        app.registerButton(selectButton, "selectAction");
+        app.registerButton(unselectButton, "unselectAction");
+        app.registerButton(selectAllButton, "selectAllAction");
+        app.registerButton(unselectAllButton, "unselectAllAction");
+        app.registerButton(moveButton, "moveAction");
+        app.registerButton(move2p2pButton, "move2p2pAction");
+        app.registerButton(copyButton, "copyAction");
+        app.registerButton(copy2p2pButton, "copy2p2pAction");
+        app.registerButton(deleteSelectedLineSegmentButton, "deleteSelectedLineSegmentAction");
+        app.registerButton(lineSegmentDeleteButton, "lineSegmentDeleteAction");
+        app.registerButton(edgeLineSegmentDeleteButton, "edgeLineSegmentDeleteAction");
+        app.registerButton(auxLiveLineSegmentDeleteButton, "auxLiveLineSegmentDeleteAction");
+        app.registerButton(trimBranchesButton, "trimBranchesAction");
+        app.registerButton(toMountainButton, "toMountainAction");
+        app.registerButton(toValleyButton, "toValleyAction");
+        app.registerButton(toEdgeButton, "toEdgeAction");
+        app.registerButton(toAuxButton, "toAuxAction");
+        app.registerButton(zen_yama_tani_henkanButton, "zen_yama_tani_henkanAction");
+        app.registerButton(senbun_henkan2Button, "senbun_henkan2Action");
+        app.registerButton(senbun_henkanButton, "senbun_henkanAction");
+        app.registerButton(in_L_col_changeButton, "in_L_col_changeAction");
+        app.registerButton(on_L_col_changeButton, "on_L_col_changeAction");
+        app.registerButton(v_addButton, "vertexAddAction");
+        app.registerButton(v_delButton, "vertexDeleteAction");
+        app.registerButton(v_del_ccButton, "v_del_ccAction");
+        app.registerButton(v_del_allButton, "v_del_allAction");
+        app.registerButton(v_del_all_ccButton, "v_del_all_ccAction");
+        app.registerButton(inputDataButton, "inputDataAction");
+        app.registerButton(drawTwoColoredCpButton, "drawTwoColoredCpAction");
+        app.registerButton(suitei_01Button, "suitei_01Action");
+        app.registerButton(koteimen_siteiButton, "koteimen_siteiAction");
+        app.registerButton(suitei_02Button, "suitei_02Action");
+        app.registerButton(suitei_03Button, "suitei_03Action");
+        app.registerButton(coloredXRayDecreaseButton, "coloredXRayDecreaseAction");
+        app.registerButton(coloredXRayIncreaseButton, "coloredXRayIncreaseAction");
+        app.registerButton(colRedButton, "colRedAction");
+        app.registerButton(colBlueButton, "colBlueAction");
+        app.registerButton(colBlackButton, "colBlackAction");
+        app.registerButton(colCyanButton, "colCyanAction");
+        app.registerButton(lineSegmentDivisionSetButton, "lineSegmentDivisionSetAction");
+        app.registerButton(button1, "gridConfigureAction");
+
+        app.registerButton(undoRedo.getRedoButton(), "redoAction");
+        app.registerButton(undoRedo.getUndoButton(), "undoAction");
+
         undoRedo.addUndoActionListener(e -> {
             app.setHelp("undo");
 
@@ -114,6 +186,7 @@ public class LeftPanel {
 
             app.historyStateModel.setHistoryTotal(StringOp.String2int(undoRedo.getText(), app.historyStateModel.getHistoryTotal()));
         });
+        app.registerButton(lineWidthDecreaseButton, "lineWidthDecrease");
         lineWidthDecreaseButton.addActionListener(e -> {
             app.setHelp("senhaba_sage");
 
@@ -238,7 +311,7 @@ public class LeftPanel {
             app.Button_shared_operation();
             app.repaintCanvas();
         });
-        inwardButton.addActionListener(e -> {
+        rabbitEarButton.addActionListener(e -> {
             app.setHelp("naishin");
 
             app.canvasModel.setMouseMode(MouseMode.INWARD_8);
@@ -1214,6 +1287,7 @@ public class LeftPanel {
         panel13.add(lengthenCrease2Button, gbc);
         angleBisectorButton = new JButton();
         angleBisectorButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kaku_toubun.png")));
+        angleBisectorButton.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 1;
@@ -1221,15 +1295,15 @@ public class LeftPanel {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel13.add(angleBisectorButton, gbc);
-        inwardButton = new JButton();
-        inwardButton.setIcon(new ImageIcon(getClass().getResource("/ppp/naishin.png")));
+        rabbitEarButton = new JButton();
+        rabbitEarButton.setIcon(new ImageIcon(getClass().getResource("/ppp/naishin.png")));
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel13.add(inwardButton, gbc);
+        panel13.add(rabbitEarButton, gbc);
         final JPanel panel14 = new JPanel();
         panel14.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
@@ -1518,7 +1592,7 @@ public class LeftPanel {
             senbun_henkanButton.setSelected(m == MouseMode.CHANGE_CREASE_TYPE_4);
             lengthenCreaseButton.setSelected(m == MouseMode.LENGTHEN_CREASE_5);
             angleBisectorButton.setSelected(m == MouseMode.SQUARE_BISECTOR_7);
-            inwardButton.setSelected(m == MouseMode.INWARD_8);
+            rabbitEarButton.setSelected(m == MouseMode.INWARD_8);
             perpendicularDrawButton.setSelected(m == MouseMode.PERPENDICULAR_DRAW_9);
             symmetricDrawButton.setSelected(m == MouseMode.SYMMETRIC_DRAW_10);
             drawCreaseRestrictedButton.setSelected(m == MouseMode.DRAW_CREASE_RESTRICTED_11);
@@ -1652,5 +1726,9 @@ public class LeftPanel {
 
     public void setData(FoldedFigureModel foldedFigureModel) {
         coloredXRayCheckBox.setSelected(foldedFigureModel.isTransparencyColor());
+    }
+
+    private void registerButton(JButton button, String key) {
+
     }
 }

@@ -15,7 +15,7 @@ public class MouseHandlerCreaseMove4p extends BaseMouseHandlerInputRestricted {
 
     @Override
     public MouseMode getMouseMode() {
-        return null;
+        return MouseMode.CREASE_MOVE_4P_31;
     }
 
     //マウス操作(mouseMode==31move2p2p　でボタンを押したとき)時の作業----------------------------------------------------

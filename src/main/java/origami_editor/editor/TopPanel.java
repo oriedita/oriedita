@@ -44,6 +44,24 @@ public class TopPanel {
         this.app = app;
         $$$setupUI$$$();
 
+        app.registerButton(operationFrameSelectButton, "operationFrameSelectAction");
+        app.registerButton(moveCreasePatternButton, "moveCreasePatternAction");
+        app.registerButton(creasePatternZoomOutButton, "creasePatternZoomOutAction");
+        app.registerButton(creasePatternZoomInButton, "creasePatternZoomInAction");
+        app.registerButton(rotateAnticlockwiseButton, "rotateAnticlockwiseAction");
+        app.registerButton(rotateClockwiseButton, "rotateClockwiseAction");
+        app.registerButton(senbun_yoke_henkanButton, "senbun_yoke_henkanAction");
+        app.registerButton(lineSegmentInternalDivisionRatioSetButton, "lineSegmentInternalDivisionRatioSetAction");
+        app.registerButton(drawLineSegmentInternalDivisionRatioButton, "drawLineSegmentInternalDivisionRatioAction");
+        app.registerButton(scaleFactorSetButton, "scaleFactorSetAction");
+        app.registerButton(rotationSetButton, "rotationSetAction");
+        app.registerButton(transparentButton, "transparentAction");
+        app.registerButton(backgroundTrimButton, "backgroundTrimAction");
+        app.registerButton(readBackgroundButton, "readBackgroundAction");
+        app.registerButton(backgroundToggleButton, "backgroundToggleAction");
+        app.registerButton(backgroundSetPositionButton, "backgroundSetPositionAction");
+        app.registerButton(backgroundLockButton, "backgroundLockAction");
+
         operationFrameSelectButton.addActionListener(e -> {
             app.setHelp("tyouhoukei_select");
 

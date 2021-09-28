@@ -15,7 +15,7 @@ public class HelpDialog extends JDialog {
     private JPanel contentPane;
     private JLabel helpLabel;
 
-    public HelpDialog(App owner, Point canvasLocation, Dimension canvasSize) {
+    public HelpDialog(Frame owner, Point canvasLocation, Dimension canvasSize) {
         super(owner, "Help");
         $$$setupUI$$$();
         setContentPane(contentPane);
@@ -35,6 +35,8 @@ public class HelpDialog extends JDialog {
                 point.y = e.getY();
 
                 maybeShowPopup(e);
+
+                owner.requestFocus();
             }
             public void mouseReleased(MouseEvent e) {
                 maybeShowPopup(e);

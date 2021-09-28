@@ -86,7 +86,7 @@
           <icon value="ppp/oriagari_sousa_2.png"/>
         </properties>
       </component>
-      <component id="ca53d" class="javax.swing.JButton" binding="foldedFigureMove">
+      <component id="ca53d" class="javax.swing.JButton" binding="foldedFigureMoveButton">
         <constraints>
           <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
@@ -107,7 +107,7 @@
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
       </nested-form>
-      <component id="c4" class="javax.swing.JButton" binding="a_aButton" default-binding="true">
+      <component id="c4" class="javax.swing.JButton" binding="foldedFigureAntiAliasButton" default-binding="true">
         <constraints>
           <grid row="0" column="12" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>

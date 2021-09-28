@@ -14,6 +14,14 @@ public class UndoRedo extends JPanel {
     public UndoRedo() {
     }
 
+    public JButton getUndoButton() {
+        return undoButton;
+    }
+
+    public JButton getRedoButton() {
+        return redoButton;
+    }
+
     public void addUndoActionListener(ActionListener listener) {
         undoButton.addActionListener(listener);
     }

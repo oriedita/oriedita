@@ -10,6 +10,18 @@ public class FileModel implements Serializable {
     private String defaultDirectory;
     private String savedFileName;
 
+    public boolean isSaved() {
+        return saved;
+    }
+
+    public void setSaved(boolean saved) {
+        boolean oldSaved = this.saved;
+        this.saved = saved;
+        this.pcs.firePropertyChange("saved", oldSaved, saved);
+    }
+
+    private boolean saved;
+
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         this.pcs.addPropertyChangeListener(listener);
     }
@@ -39,6 +51,7 @@ public class FileModel implements Serializable {
     }
 
     public void reset() {
+        this.saved = true;
         this.savedFileName = null;
         this.defaultDirectory = null;
 

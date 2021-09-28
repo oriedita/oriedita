@@ -1,9 +1,12 @@
 package origami_editor.editor;
 
+import net.harawata.appdirs.AppDirs;
+import net.harawata.appdirs.AppDirsFactory;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.HierarchyList_Worker;
+import origami_editor.editor.action.Click;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing_worker.*;
@@ -22,8 +25,10 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static origami_editor.tools.ResourceUtil.createImageIcon;
@@ -143,6 +148,45 @@ public class App extends JFrame implements ActionListener {
                 System.out.println("windowLostFocus_20200929");
             }
         });//オリヒメのメインウィンドウのフォーカスが変化したときの処理 ここまで。
+
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(true);
+        addKeyListener(new KeyAdapter() {
+            final Queue<Popup> popups = new ArrayDeque<>();
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                Popup popup;
+                while ((popup = popups.poll()) != null) {
+                    popup.hide();
+                }
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.isAltDown() && popups.isEmpty()) {
+                    for (KeyStroke keyStroke :
+                            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).keys()) {
+                        String key = (String) getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).get(keyStroke);
+                        Action action = getRootPane().getActionMap().get(key);
+                        if (action instanceof Click) {
+                            Click clickAction = (Click) action;
+
+                            java.awt.Point locationOnScreen = clickAction.getButton().getLocationOnScreen();
+                            Dimension size = clickAction.getButton().getSize();
+                            JToolTip tooltip = new JToolTip();
+                            tooltip.setTipText(keyStroke.toString().replaceAll("pressed ", ""));
+                            Dimension tooltipSize = tooltip.getPreferredSize();
+                            Popup myPopup = PopupFactory.getSharedInstance().getPopup(clickAction.getButton(), tooltip, locationOnScreen.x + size.width / 2 - tooltipSize.width / 2, locationOnScreen.y + size.height - 10);
+                            myPopup.show();
+
+                            popups.offer(myPopup);
+                        }
+                    }
+
+                }
+            }
+        });
 
         foldedFigures.clear();
         addNewFoldedFigure();
@@ -287,6 +331,9 @@ public class App extends JFrame implements ActionListener {
         explanation = new HelpDialog(this, canvasLocation, canvasSize);
         explanation.setVisible(true);
 
+        //focus back to here after creating dialog
+        requestFocus();
+
         canvas.addMouseModeHandler(MouseHandlerDrawCreaseFree.class);
         canvas.addMouseModeHandler(MouseHandlerLineSegmentDelete.class);
         canvas.addMouseModeHandler(MouseHandlerSquareBisector.class);
@@ -362,21 +409,24 @@ public class App extends JFrame implements ActionListener {
         canvas.addMouseModeHandler(new MouseHandlerModifyCalculatedShape(this));
         canvas.addMouseModeHandler(new MouseHandlerMoveCreasePattern(this));
         canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(this));
+
     }
 
     private void setData(FileModel fileModel) {
-
         if (fileModel.getSavedFileName() != null) {
             File file = new File(fileModel.getSavedFileName());
 
             frame_title = frame_title_0 + "        " + file.getName();
-            setTitle(frame_title);
-            mainDrawingWorker.setTitle(frame_title);
         } else {
             frame_title = frame_title_0 + "        " + "Unsaved";
-            setTitle(frame_title);
-            mainDrawingWorker.setTitle(frame_title);
         }
+
+        if (!fileModel.isSaved()) {
+            frame_title += "*";
+        }
+
+        setTitle(frame_title);
+        mainDrawingWorker.setTitle(frame_title);
     }
 
     public void repaintCanvas() {
@@ -822,6 +872,8 @@ public class App extends JFrame implements ActionListener {
         if (selectedFile != null) {
             fileModel.setDefaultDirectory(selectedFile.getParent());
             fileModel.setSavedFileName(selectedFile.getAbsolutePath());
+            fileModel.setSaved(true);
+            historyStateModel.reset();
         }
 
         return selectedFile;
@@ -853,6 +905,7 @@ public class App extends JFrame implements ActionListener {
         if (selectedFile != null) {
             fileModel.setDefaultDirectory(selectedFile.getParent());
             fileModel.setSavedFileName(selectedFile.getAbsolutePath());
+            fileModel.setSaved(true);
         }
 
         return selectedFile;
@@ -962,17 +1015,26 @@ public class App extends JFrame implements ActionListener {
         }
 
         File file = new File(fileModel.getSavedFileName());
+
         Save save = mainDrawingWorker.getSave_for_export();
 
         saveAndName2File(save, file);
+
+        fileModel.setSaved(true);
     }
 
     void saveAsFile() {
         File file = selectSaveFile();
 
+        if (file == null) {
+            return;
+        }
+
         Save save = mainDrawingWorker.getSave_for_export();
 
         saveAndName2File(save, file);
+
+        fileModel.setSaved(true);
     }
 
     void saveAndName2File(Save save, File fname) {
@@ -1057,6 +1119,7 @@ public class App extends JFrame implements ActionListener {
             return;
         }
 
+        fileModel.setSaved(true);
         fileModel.setSavedFileName(file.getAbsolutePath());
         fileModel.setDefaultDirectory(file.getParent());
 
@@ -1163,6 +1226,30 @@ public class App extends JFrame implements ActionListener {
         }
 
         repaintCanvas();
+    }
+
+    public void registerButton(JButton button, String key) {
+        ResourceBundle userBundle = null;
+
+        try {
+            AppDirs appDirs = AppDirsFactory.getInstance();
+            userBundle = new PropertyResourceBundle(Files.newInputStream(Paths.get(appDirs.getUserConfigDir("origami-editor", "v0.3", "origami-editor"), "hotkey.properties")));
+        } catch (IOException e) {
+        }
+
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("hotkey");
+
+        String keyStroke = null;
+        if (userBundle != null && userBundle.containsKey(key)) {
+            keyStroke = userBundle.getString(key);
+        } else if (resourceBundle.containsKey(key)) {
+            keyStroke = resourceBundle.getString(key);
+        }
+
+        if (keyStroke != null) {
+            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keyStroke), key);
+            getRootPane().getActionMap().put(key, new Click(button));
+        }
     }
 
     public enum MouseWheelTarget {
