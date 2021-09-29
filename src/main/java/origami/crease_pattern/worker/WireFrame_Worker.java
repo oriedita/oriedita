@@ -20,7 +20,7 @@ public class WireFrame_Worker {
         return lineSegmentSet;
     }
 
-    public void split_arrangement_for_SubFace_generation() {
+    public void split_arrangement_for_SubFace_generation() throws InterruptedException {
         System.out.println("　　Senbunsyuugouの中で、Smenを発生させるための線分集合の整理");
         System.out.println("分割整理　１、点削除前	getsousuu() = " + lineSegmentSet.getNumLineSegments());
         lineSegmentSet.point_removal();          //Just in case, remove the dotted line segment

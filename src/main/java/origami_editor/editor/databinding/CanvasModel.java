@@ -45,6 +45,18 @@ public class CanvasModel implements Serializable {
     private int foldLineDividingNumber;
     private int numPolygonCorners;
 
+    public boolean isCkbox_add_frame_SelectAnd3click_isSelected() {
+        return ckbox_add_frame_SelectAnd3click_isSelected;
+    }
+
+    public void setCkbox_add_frame_SelectAnd3click_isSelected(boolean ckbox_add_frame_SelectAnd3click_isSelected) {
+        boolean oldCkbox_add_frame_SelectAnd3click_isSelected = this.ckbox_add_frame_SelectAnd3click_isSelected;
+        this.ckbox_add_frame_SelectAnd3click_isSelected = ckbox_add_frame_SelectAnd3click_isSelected;
+        this.pcs.firePropertyChange("ckbox_add_frame_SelectAnd3click_isSelected", oldCkbox_add_frame_SelectAnd3click_isSelected, ckbox_add_frame_SelectAnd3click_isSelected);
+    }
+
+    private boolean ckbox_add_frame_SelectAnd3click_isSelected;
+
     public CanvasModel() {
         reset();
     }
@@ -291,6 +303,7 @@ public class CanvasModel implements Serializable {
         selectPersistent = false;
         correctCpBeforeFolding = false;
 
+        ckbox_add_frame_SelectAnd3click_isSelected = false;
 
         this.pcs.firePropertyChange(null, null, null);
     }

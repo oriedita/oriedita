@@ -173,7 +173,7 @@ public class CreasePattern_Worker {
     /**
      * Folding estimation (What you can do here is a wire diagram that does not consider the overlap of surfaces)
      */
-    public PointSet folding() {//Folding estimate
+    public PointSet folding() throws InterruptedException {//Folding estimate
         PointSet pointSet = new PointSet();    //Development view
         pointSet.configure(this.pointSet.getNumPoints(), this.pointSet.getNumLines(), this.pointSet.getNumFaces());
         pointSet.set(this.pointSet);
@@ -214,6 +214,8 @@ public class CreasePattern_Worker {
             }
 
             System.out.println("remaining_facesTotal = " + remaining_facesTotal);
+
+            if (Thread.interrupted()) throw new InterruptedException();
         }
 
         System.out.println("折ったときの点の位置を求める。");
@@ -248,7 +250,7 @@ public class CreasePattern_Worker {
     }
 
     //Folding estimation (What you can do here is a wire diagram that does not consider the overlap of surfaces)
-    public PointSet surface_position_request() {//Folding estimate
+    public PointSet surface_position_request() throws InterruptedException {//Folding estimate
         PointSet cn = new PointSet();    //展開図
         cn.configure(pointSet.getNumPoints(), pointSet.getNumLines(), pointSet.getNumFaces());
         cn.set(pointSet);
@@ -287,6 +289,8 @@ public class CreasePattern_Worker {
                     remaining_facesTotal = remaining_facesTotal + 1;
                 }
             }
+
+            if (Thread.interrupted()) throw new InterruptedException();
 
             System.out.println("remaining_facesTotal = " + remaining_facesTotal);
         }

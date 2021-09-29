@@ -7,6 +7,9 @@ import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.folded_figure.FoldedFigure;
+import origami_editor.editor.task.FoldingEstimateSave100Task;
+import origami_editor.editor.task.FoldingEstimateSpecificTask;
+import origami_editor.editor.task.FoldingEstimateTask;
 import origami_editor.tools.StringOp;
 
 import javax.swing.*;
@@ -75,12 +78,7 @@ public class BottomPanel extends JPanel {
         anotherSolutionButton.addActionListener(e -> {
             app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
-            app.subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_0;//1 = Put together another solution for folding estimation. 0 = It is not a mode to put out different solutions of folding estimation at once. This variable is used to change the behavior of subthreads.
-            if (!app.subThreadRunning) {
-                app.subThreadRunning = true;
-                app.makeSubThread();//新しいスレッドを作る
-                app.sub.start();
-            }
+            app.executeTask(new FoldingEstimateTask(app));
         });
         flipButton.addActionListener(e -> {
             foldedFigureModel.advanceState();
@@ -90,40 +88,30 @@ public class BottomPanel extends JPanel {
             }//Fold-up forecast map Added to avoid the mode that can not be moved when moving
         });
         As100Button.addActionListener(e -> {
-            app.subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_SAVE_100_1;
             if (app.OZ.findAnotherOverlapValid) {
                 app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
-                if (!app.subThreadRunning) {
-                    app.subThreadRunning = true;
-                    app.makeSubThread();//新しいスレッドを作る
-                    app.sub.start();
-                }
+                app.executeTask(new FoldingEstimateSave100Task(app));
             }
         });
         goToFoldedFigureButton.addActionListener(e -> {
-            int foldedCases_old = app.foldedCases;
-            app.foldedCases = StringOp.String2int(goToFoldedFigureTextField.getText(), foldedCases_old);
-            if (app.foldedCases < 1) {
-                app.foldedCases = 1;
+            int foldedCases_old = app.foldedFigureModel.getFoldedCases();
+            int newFoldedCases = StringOp.String2int(goToFoldedFigureTextField.getText(), foldedCases_old);
+            if (newFoldedCases < 1) {
+                newFoldedCases = 1;
             }
 
-            app.text26.setText(String.valueOf(app.foldedCases));
+            app.foldedFigureModel.setFoldedCases(newFoldedCases);
 
             app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
-            if (app.foldedCases < app.OZ.discovered_fold_cases) {
+            if (app.foldedFigureModel.getFoldedCases() < app.OZ.discovered_fold_cases) {
                 app.configure_initialize_prediction();//折り上がり予想の廃棄
                 app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_51;    //i_suitei_meirei=51はoritatami_suiteiの最初の推定図用カメラの設定は素通りするための設定。推定図用カメラの設定を素通りしたら、i_suitei_meirei=5に変更される。
                 //1例目の折り上がり予想はi_suitei_meirei=5を指定、2例目以降の折り上がり予想はi_suitei_meirei=6で実施される
             }
 
-            app.subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_SPECIFIC_2;
-            if (!app.subThreadRunning) {
-                app.subThreadRunning = true;
-                app.makeSubThread();//新しいスレッドを作る
-                app.sub.start();
-            }
+            app.executeTask(new FoldingEstimateSpecificTask(app));
 
             app.repaintCanvas();
         });
@@ -136,9 +124,7 @@ public class BottomPanel extends JPanel {
             app.OZ.redo();
             app.repaintCanvas();
         });
-        undoRedo.addSetUndoCountActionListener(e -> {
-            app.foldedFigureModel.setHistoryTotal(StringOp.String2int(undoRedo.getText(), app.foldedFigureModel.getHistoryTotal()));
-        });
+        undoRedo.addSetUndoCountActionListener(e -> app.foldedFigureModel.setHistoryTotal(StringOp.String2int(undoRedo.getText(), app.foldedFigureModel.getHistoryTotal())));
         oriagari_sousaButton.addActionListener(e -> {
             app.OZ.i_foldedFigure_operation_mode = 1;
             app.OZ.setAllPointStateFalse();
@@ -190,11 +176,7 @@ public class BottomPanel extends JPanel {
                 foldedFigureModel.setLineColor(lineColor);
             }
         });
-        haltButton.addActionListener(e -> {
-            if (app.subThreadRunning) {
-                app.halt();
-            }
-        });
+        haltButton.addActionListener(e -> app.stopTask());
         trashButton.addActionListener(e -> {
             if (app.foldedFigureIndex == 0) {
                 return;
@@ -233,18 +215,6 @@ public class BottomPanel extends JPanel {
             app.mainDrawingWorker.record();
             app.mainDrawingWorker.auxRecord();
         });
-    }
-
-    public JTextField getGoToFoldedFigureTextField() {
-        return goToFoldedFigureTextField;
-    }
-
-    public JButton getGoToFoldedFigureButton() {
-        return goToFoldedFigureButton;
-    }
-
-    public JButton getAs100Button() {
-        return As100Button;
     }
 
     /**
@@ -413,10 +383,6 @@ public class BottomPanel extends JPanel {
         return panel1;
     }
 
-    public JButton getAnotherSolutionButton() {
-        return anotherSolutionButton;
-    }
-
     private void createUIComponents() {
         panel1 = this;
         foldedFigureResize = new FoldedFigureResize(app);
@@ -442,11 +408,34 @@ public class BottomPanel extends JPanel {
         lineColorButton.setIcon(new ColorIcon(foldedFigureModel.getLineColor()));
 
         undoRedo.setText(String.valueOf(foldedFigureModel.getHistoryTotal()));
+
+        goToFoldedFigureTextField.setText(String.valueOf(foldedFigureModel.getFoldedCases()));
+
+        if (foldedFigureModel.isFindAnotherOverlapValid()) {
+            anotherSolutionButton.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
+            anotherSolutionButton.setForeground(Color.black);
+
+            As100Button.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
+            As100Button.setForeground(Color.black);
+
+            goToFoldedFigureButton.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
+            goToFoldedFigureButton.setForeground(Color.black);
+        } else {
+            anotherSolutionButton.setBackground(new Color(201, 201, 201));
+            anotherSolutionButton.setForeground(Color.gray);
+
+            As100Button.setBackground(new Color(201, 201, 201));
+            As100Button.setForeground(Color.gray);
+
+            goToFoldedFigureButton.setBackground(new Color(201, 201, 201));
+            goToFoldedFigureButton.setForeground(Color.gray);
+        }
     }
 
     public void getData(FoldedFigureModel foldedFigureModel) {
         foldedFigureModel.setScale(app.string2double(foldedFigureResize.getText(), foldedFigureModel.getScale()));
         foldedFigureModel.setRotation(app.string2double(foldedFigureRotate.getText(), foldedFigureModel.getRotation()));
         foldedFigureModel.setHistoryTotal(StringOp.String2int(undoRedo.getText(), foldedFigureModel.getHistoryTotal()));
+        foldedFigureModel.setFoldedCases(StringOp.String2int(goToFoldedFigureTextField.getText(), foldedFigureModel.getFoldedCases()));
     }
 }

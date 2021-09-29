@@ -78,9 +78,7 @@ public class OpenFrame extends JDialog {
             app.repaint();
         });
 
-        selectAnd3ClickCheckBox.addActionListener(e -> app.ckbox_add_frame_SelectAnd3click_isSelected = selectAnd3ClickCheckBox.isSelected());
-
-        selectAnd3ClickCheckBox.setSelected(app.ckbox_add_frame_SelectAnd3click_isSelected);//Select whether to display
+        selectAnd3ClickCheckBox.addActionListener(e -> app.canvasModel.setCkbox_add_frame_SelectAnd3click_isSelected(selectAnd3ClickCheckBox.isSelected()));
 
         pack();
         setResizable(false);
@@ -100,6 +98,8 @@ public class OpenFrame extends JDialog {
             del_lButton.setSelected(m == MouseMode.CREASE_DELETE_OVERLAPPING_64);
             del_l_XButton.setSelected(m == MouseMode.CREASE_DELETE_INTERSECTING_65);
         }
+
+        selectAnd3ClickCheckBox.setSelected(data.isCkbox_add_frame_SelectAnd3click_isSelected());
     }
 
     {

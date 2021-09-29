@@ -139,7 +139,7 @@ public class LineSegmentSet {
     /**
      * Divide the two line segments at the intersection of the two intersecting line segments. If there were two line segments that completely overlapped, both would remain without any processing.
      */
-    public void intersect_divide() {
+    public void intersect_divide() throws InterruptedException {
         int i_divide = 1;//1 if there is a split, 0 if not
 
         ArrayList<Boolean> k_flg = new ArrayList<>();//A flag that indicates that there is an effect of crossing.
@@ -172,6 +172,8 @@ public class LineSegmentSet {
                     }
                 }
             }
+
+            if (Thread.interrupted()) throw new InterruptedException();
         }
     }
 

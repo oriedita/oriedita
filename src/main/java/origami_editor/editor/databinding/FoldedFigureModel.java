@@ -17,6 +17,28 @@ public class FoldedFigureModel implements Serializable {
     private boolean antiAlias;
     private boolean displayShadows;
     private FoldedFigure.State state;
+    private int foldedCases;
+    private boolean findAnotherOverlapValid;
+
+    public boolean isFindAnotherOverlapValid() {
+        return findAnotherOverlapValid;
+    }
+
+    public void setFindAnotherOverlapValid(boolean findAnotherOverlapValid) {
+        boolean oldFindAnotherOverlapValid = this.findAnotherOverlapValid;
+        this.findAnotherOverlapValid = findAnotherOverlapValid;
+        this.pcs.firePropertyChange("findAnotherOverlapValid", oldFindAnotherOverlapValid, findAnotherOverlapValid);
+    }
+
+    public int getFoldedCases() {
+        return foldedCases;
+    }
+
+    public void setFoldedCases(int foldedCases) {
+        int oldFoldedCases = this.foldedCases;
+        this.foldedCases = foldedCases;
+        this.pcs.firePropertyChange("foldedCases", oldFoldedCases, foldedCases);
+    }
 
     public int getTransparentTransparency() {
         return transparentTransparency;
@@ -82,6 +104,8 @@ public class FoldedFigureModel implements Serializable {
         transparencyColor = false;
 
         transparentTransparency = 16;
+
+        foldedCases = 1;
 
         this.pcs.firePropertyChange(null, null, null);
     }

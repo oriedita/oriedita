@@ -158,9 +158,9 @@ public class TopPanel {
         rotateClockwiseButton.addActionListener(e -> app.creasePatternCameraModel.decreaseRotation());
         transparentButton.addActionListener(e -> app.createTransparentBackground());
         backgroundTrimButton.addActionListener(e -> {
-            app.offsc_background = new BufferedImage(2000, 1100, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage offsc_background = new BufferedImage(2000, 1100, BufferedImage.TYPE_INT_ARGB);
 
-            Graphics2D g2_background = app.offsc_background.createGraphics();
+            Graphics2D g2_background = offsc_background.createGraphics();
             //背景表示
             if ((app.img_background != null) && app.backgroundModel.isDisplayBackground()) {
                 int iw = app.img_background.getWidth(null);//イメージの幅を取得
@@ -180,7 +180,7 @@ public class TopPanel {
                 int ymin = (int) app.mainDrawingWorker.operationFrameBox.getYMin();
                 int ymax = (int) app.mainDrawingWorker.operationFrameBox.getYMax();
 
-                app.img_background = app.offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin);
+                app.img_background = offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin);
 
                 app.h_cam = new Background_camera();
 

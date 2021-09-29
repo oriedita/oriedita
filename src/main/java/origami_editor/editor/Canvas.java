@@ -66,6 +66,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     Map<MouseMode, MouseModeHandler> mouseModeHandlers = new HashMap<>();
 
+    boolean i_mouse_right_button_on = false;//1 if the right mouse button is on, 0 if off
+    boolean i_mouse_undo_redo_mode = false;//1 for undo and redo mode with mouse
+
     public Canvas(App app0) {
         app = app0;
 
@@ -110,25 +113,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //画像をファイルに書き出さすことはやめて、、BufferedImageクラスを使わず、Imageクラスだけですむなら不要の行
 
         //別の重なりさがし　のボタンの色の指定。
-        if (app.OZ.findAnotherOverlapValid) {
-            app.Button_another_solution.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
-            app.Button_another_solution.setForeground(Color.black);
 
-            app.Button_AS_matome.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
-            app.Button_AS_matome.setForeground(Color.black);
-
-            app.Button_bangou_sitei_estimated_display.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
-            app.Button_bangou_sitei_estimated_display.setForeground(Color.black);
-        } else {
-            app.Button_another_solution.setBackground(new Color(201, 201, 201));
-            app.Button_another_solution.setForeground(Color.gray);
-
-            app.Button_AS_matome.setBackground(new Color(201, 201, 201));
-            app.Button_AS_matome.setForeground(Color.gray);
-
-            app.Button_bangou_sitei_estimated_display.setBackground(new Color(201, 201, 201));
-            app.Button_bangou_sitei_estimated_display.setForeground(Color.gray);
-        }
 
         // バッファー画面のクリア
         dim = getSize();
@@ -214,7 +199,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) app.p_mouse_TV_position.getX() + 25, (int) app.p_mouse_TV_position.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
             }
 
-            if (app.subThreadRunning) {
+            if (app.isTaskRunning()) {
                 bufferGraphics.setColor(Color.red);
 
                 bufferGraphics.drawString("Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 10, 69); //この表示内容はvoid kekka_syoriで決められる。
@@ -330,7 +315,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //---------ボタンの種類による動作変更-----------------------------------------
         switch (btn) {
             case MouseEvent.BUTTON1:
-                if (e.getClickCount() == 3 && mouseMode == MouseMode.CREASE_SELECT_19 && app.ckbox_add_frame_SelectAnd3click_isSelected) {
+                if (e.getClickCount() == 3 && mouseMode == MouseMode.CREASE_SELECT_19 && app.canvasModel.isCkbox_add_frame_SelectAnd3click_isSelected()) {
                     System.out.println("3_Click");//("トリプルクリック"
 
                     switch (app.canvasModel.getSelectionOperationMode()) {
@@ -383,7 +368,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             case MouseEvent.BUTTON3: //右ボタンクリック
                 if (mouseMode == MouseMode.VORONOI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
                 } else {
-                    app.i_mouse_right_button_on = true;
+                    i_mouse_right_button_on = true;
 
                     //線分削除モード。
                     es1.setCamera(creasePatternCamera);
@@ -442,7 +427,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 case MouseEvent.BUTTON3:
                     if (mouseMode == MouseMode.VORONOI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
                     } else {
-                        if (app.i_mouse_undo_redo_mode) {
+                        if (i_mouse_undo_redo_mode) {
                             return;
                         }//undo,redoモード。
                         es1.setCamera(creasePatternCamera);
@@ -519,11 +504,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                         repaint();//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
                     } else {
 
-                        app.i_mouse_right_button_on = false;
+                        i_mouse_right_button_on = false;
 
                         //if(i_mouse_undo_redo_mode==1){i_mouse_undo_redo_mode=0;mainDrawingWorker.unselect_all();Button_kyoutuu_sagyou();mainDrawingWorker.modosi_i_orisen_hojyosen();return;}
-                        if (app.i_mouse_undo_redo_mode) {
-                            app.i_mouse_undo_redo_mode = false;
+                        if (i_mouse_undo_redo_mode) {
+                            i_mouse_undo_redo_mode = false;
                             return;
                         } //undo,redoモード。
                         es1.setCamera(creasePatternCamera);
@@ -554,8 +539,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     public void mouseWheelMoved(MouseWheelEvent e) {
         if (mouseWheelMovesCreasePattern) {
             //	ホイールでundo,redo
-            if ((e.isShiftDown()) || (app.i_mouse_right_button_on)) {
-                app.i_mouse_undo_redo_mode = true;
+            if ((e.isShiftDown()) || (i_mouse_right_button_on)) {
+                i_mouse_undo_redo_mode = true;
                 es1.unselect_all();
                 app.Button_shared_operation();
                 app.canvasModel.restoreFoldLineAdditionalInputMode();
@@ -569,7 +554,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             }
 
             //	ホイールで拡大縮小
-            if ((!e.isShiftDown()) && (!app.i_mouse_right_button_on)) {
+            if ((!e.isShiftDown()) && (!i_mouse_right_button_on)) {
 
                 Point p = new Point(app.e2p(e));
                 App.MouseWheelTarget target = app.pointInCreasePatternOrFoldedFigure(p);
@@ -595,8 +580,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     // -----------------------------------mmmmmmmmmmmmmm-------
     void writeImageFile(File file, App app) {//i=1　png, 2=jpg
-        String fname = file.getName();
-        if (fname != null) {
+        if (file != null) {
+            String fname = file.getName();
+
             String formatName;
 
             if (fname.endsWith("svg")) {
@@ -617,7 +603,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             } else if (fname.endsWith("jpg")) {
                 formatName = "jpg";
             } else {
-                fname = fname + ".png";
+                file = new File(fname + ".png");
                 formatName = "png";
             }
 

@@ -15,6 +15,8 @@ import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
+import origami_editor.editor.task.CheckCAMVTask;
+import origami_editor.editor.task.FoldingEstimateTask;
 import origami_editor.record.Memo;
 import origami_editor.tools.StringOp;
 
@@ -23,15 +25,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Queue;
 import java.util.*;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static origami_editor.tools.ResourceUtil.createImageIcon;
@@ -47,7 +49,7 @@ public class App extends JFrame implements ActionListener {
     public final BackgroundModel backgroundModel = new BackgroundModel();
     public final CameraModel creasePatternCameraModel = new CameraModel();
     public final FileModel fileModel = new FileModel();
-    final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
+    public final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
     public FoldedFigure temp_OZ = new FoldedFigure(this);    //Folded figure
     public FoldedFigure OZ;    //Current Folded figure
     public LineSegmentSet Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
@@ -55,49 +57,36 @@ public class App extends JFrame implements ActionListener {
     public MouseMode mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;//Defines the response to mouse movements. If it is 1, the line segment input mode. If it is 2, adjust the development view (move). If it is 101, operate the folded figure.
     // ------------------------------------------------------------------------
     public Point point_of_referencePlane_old = new Point(); //ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
-    public SubThread sub;
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
     public Canvas canvas;
     public ArrayList<FoldedFigure> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
     public File exportFile;
-    double r = 3.0;                   //基本枝構造の直線の両端の円の半径、枝と各種ポイントの近さの判定基準
-    public final DrawingWorker mainDrawingWorker = new DrawingWorker(r, this);    // Basic branch craftsman. Accepts input from the mouse.
-    boolean subThreadRunning = false;//1 if SubThread (folding calculation) is running, 0 if not running
+    public final DrawingWorker mainDrawingWorker = new DrawingWorker(this);    // Basic branch craftsman. Accepts input from the mouse.
     int foldedFigureIndex = 0;//Specify which number of foldedFigures Oriagari_Zu is the target of button operation or transformation operation
     Background_camera h_cam = new Background_camera();
-    File fname_and_number;//まとめ書き出しに使う。
+    public File fname_and_number;//まとめ書き出しに使う。
     //各種変数の定義
     String frame_title_0;//フレームのタイトルの根本部分
     String frame_title;//フレームのタイトルの全体
-    JButton Button_another_solution;                    //操作の指定に用いる（追加推定一個だけ）
-    JButton Button_AS_matome;                    //操作の指定に用いる（追加推定100個）
-    JButton Button_bangou_sitei_estimated_display;
-    JTextField text26;
-    int foldedCases = 1;//Specify the number of folding estimation to be displayed
     Image img_background;       //Image for background
     Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
     Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
     HelpDialog explanation;
     boolean mouseDraggedValid = false;
     boolean mouseReleasedValid = false;//0 ignores mouse operation. 1 is valid for mouse operation. When an unexpected mouseDragged or mouseReleased occurs due to on-off of the file box, set it to 0 so that it will not be picked up. These are set to 1 valid when the mouse is clicked.
-    SubThread.Mode subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_0;
-    Thread myTh;                              //スレッドクラスのインスタンス化
     //画像出力するため20170107_oldと書かれた行をコメントアウトし、20170107_newの行を有効にした。
     //画像出力不要で元にもどすなら、20170107_oldと書かれた行を有効にし、20170107_newの行をコメントアウトにすればよい。（この変更はOrihime.javaの中だけに2箇所ある）
     // オフスクリーン
-    BufferedImage offsc_background = null;//20181205add
     boolean flg61 = false;//Used when setting the frame 　20180524
-    //= 1 is move, = 2 is move4p, = 3 is copy, = 4 is copy4p, = 5 is mirror image
-    String fname_wi;
     //ウィンドウ透明化用のパラメータ
-    BufferedImage imageT;
-    boolean ckbox_add_frame_SelectAnd3click_isSelected = false;//1=折線セレクト状態でトリプルクリックするとmoveやcopy等の動作モードに移行する。 20200930
-    boolean i_mouse_right_button_on = false;//1 if the right mouse button is on, 0 if off
-    boolean i_mouse_undo_redo_mode = false;//1 for undo and redo mode with mouse
+
     MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
-    double d_ap_check4 = 0.0;
+    public double d_ap_check4 = 0.0;
 
     Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
+
+    ExecutorService pool;
+    private Future<?> currentTask;
 
     public App() {
         setTitle("Origami Editor 1.0.0");//Specify the title and execute the constructor
@@ -208,7 +197,7 @@ public class App extends JFrame implements ActionListener {
 
         OZ.foldedFigure_camera_initialize();
 
-        myTh = null;
+        pool = Executors.newFixedThreadPool(1);
 
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("fishbase.png")));
 
@@ -225,14 +214,6 @@ public class App extends JFrame implements ActionListener {
         setJMenuBar(appMenuBar);
 
         leftPanel.getGridConfigurationData(gridModel);
-
-        /*
-         * Extract fields from southPanel
-         */
-        Button_AS_matome = bottomPanel.getAs100Button();
-        text26 = bottomPanel.getGoToFoldedFigureTextField();
-        Button_bangou_sitei_estimated_display = bottomPanel.getGoToFoldedFigureButton();
-        Button_another_solution = bottomPanel.getAnotherSolutionButton();
 
         gridModel.addPropertyChangeListener(e -> mainDrawingWorker.setGridConfigurationData(gridModel));
         gridModel.addPropertyChangeListener(e -> leftPanel.setGridConfigurationData(gridModel));
@@ -476,7 +457,7 @@ public class App extends JFrame implements ActionListener {
             }
             //
             if (canvasModel.isCorrectCreasePatternBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
-                DrawingWorker drawingWorker2 = new DrawingWorker(r, this);    // Basic branch craftsman. Accepts input from the mouse.
+                DrawingWorker drawingWorker2 = new DrawingWorker(this);    // Basic branch craftsman. Accepts input from the mouse.
                 drawingWorker2.setSave_for_reading(mainDrawingWorker.foldLineSet.getSaveForSelectFolding());
                 drawingWorker2.point_removal();
                 drawingWorker2.overlapping_line_removal();
@@ -494,23 +475,12 @@ public class App extends JFrame implements ActionListener {
 
             OZ.estimationOrder = estimationOrder;
 
-            if (!subThreadRunning) {
-                subThreadRunning = true;
-                subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_0;//1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVer3.008から追加
-                makeSubThread();//新しいスレッドを作る
-                sub.start();
-            }
-
+            executeTask(new FoldingEstimateTask(this));
         } else if (foldType == FoldType.CHANGING_FOLDED_3) {
             OZ.estimationOrder = estimationOrder;
             OZ.estimationStep = FoldedFigure.EstimationStep.STEP_0;
 
-            if (!subThreadRunning) {
-                subThreadRunning = true;
-                subThreadMode = SubThread.Mode.FOLDING_ESTIMATE_0;//1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVer3.008から追加
-                makeSubThread();//新しいスレッドを作る
-                sub.start();
-            }
+            executeTask(new FoldingEstimateTask(this));
         }
     }
 
@@ -544,28 +514,6 @@ public class App extends JFrame implements ActionListener {
         JOptionPane.showMessageDialog(this, label);
     }
 
-    public void halt() {
-        int option = JOptionPane.showConfirmDialog(this, createImageIcon("ppp/keisan_tyuusi_DLog.png"));
-
-        switch (option) {
-            case JOptionPane.YES_OPTION:
-                mouseDraggedValid = false;
-                mouseReleasedValid = false;
-                saveFile();
-                mainDrawingWorker.record();
-                break;
-            case JOptionPane.NO_OPTION:
-                break;
-            case JOptionPane.CANCEL_OPTION:
-                return;
-        }
-
-        sub.stop();
-        subThreadRunning = false;
-
-        configure_initialize_prediction();
-    }
-
     public void closing() {
         int option = JOptionPane.showConfirmDialog(this, createImageIcon("ppp/owari.png"));
 
@@ -574,14 +522,11 @@ public class App extends JFrame implements ActionListener {
                 mouseDraggedValid = false;
                 mouseReleasedValid = false;
                 saveFile();
-                if (subThreadRunning) {
-                    sub.stop();
-                }
+
+                stopTask();
                 System.exit(0);
             case JOptionPane.NO_OPTION:
-                if (subThreadRunning) {
-                    sub.stop();
-                }
+                stopTask();
                 System.exit(0);
             case JOptionPane.CANCEL_OPTION:
                 break;
@@ -818,7 +763,8 @@ public class App extends JFrame implements ActionListener {
         //0なら可能な重なりかたとなる状態は存在しない。
         //1000なら別の重なり方が見つかった。
 
-        OZ.findAnotherOverlapValid = false;     //これは「別の重なりを探す」ことが有効の場合は１、無効の場合は０をとる。
+        foldedFigureModel.setFindAnotherOverlapValid(false);
+
         OZ.discovered_fold_cases = 0;    //折り重なり方で、何通り発見したかを格納する。
 
         mouseDraggedValid = false;
@@ -855,7 +801,7 @@ public class App extends JFrame implements ActionListener {
             mainDrawingWorker.setDrawingStage(0);
         }
 
-        if (fname_wi != null) {
+        if (exportFile != null) {
             canvas.flg_wi = true;
             repaintCanvas();//Necessary to not export the green border
         }
@@ -931,7 +877,7 @@ public class App extends JFrame implements ActionListener {
         return selectedFile;
     }
 
-    File selectExportFile() {
+    public File selectExportFile() {
         JFileChooser fileChooser = new JFileChooser(fileModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Export");
 
@@ -1058,16 +1004,39 @@ public class App extends JFrame implements ActionListener {
         }
     }
 
-    public void folding_estimated() {
+    public void folding_estimated() throws InterruptedException {
         OZ.folding_estimated(canvas.creasePatternCamera, Ss0);
     }
 
-    void createTwoColorCreasePattern() {//Two-color crease pattern
+    public void createTwoColorCreasePattern() throws InterruptedException {//Two-color crease pattern
         OZ.createTwoColorCreasePattern(canvas.creasePatternCamera, Ss0);
     }
 
-    void makeSubThread() {
-        sub = new SubThread(this);
+    public void stopTask() {
+        if (currentTask != null && !currentTask.isDone()) {
+            pool.shutdown();
+            try {
+                if (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
+                    pool.shutdownNow();
+
+                    if (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
+                        System.err.println("Pool did not terminate!");
+                    }
+                }
+            } catch (InterruptedException e) {
+                pool.shutdownNow();
+                Thread.currentThread().interrupt();
+                e.printStackTrace();
+            }
+
+            pool = Executors.newFixedThreadPool(1);
+        }
+    }
+
+    void executeTask(Runnable runnable) {
+        stopTask();
+
+        currentTask = pool.submit(runnable);
     }
 
     public double string2double(String str0, double default_if_error) {
@@ -1093,19 +1062,8 @@ public class App extends JFrame implements ActionListener {
 
     public void check4(double r) {
         d_ap_check4 = r;
-        if (!subThreadRunning) {
-            subThreadMode = SubThread.Mode.CHECK_CAMV_3;//3=頂点周りの折畳み可能性判定、1=折畳み推定の別解をまとめて出す。0=折畳み推定の別解をまとめて出すモードではない。この変数はサブスレッドの動作変更につかうだけ。20170611にVer3.008から追加
 
-            subThreadRunning = true;
-            makeSubThread();//Create a new thread
-            sub.start();
-        } else {
-            if (subThreadMode == SubThread.Mode.CHECK_CAMV_3) {
-                sub.stop();
-                makeSubThread();//Create a new thread
-                sub.start();
-            }
-        }
+        executeTask(new CheckCAMVTask(this));
     }
 
     public void openFile() {
@@ -1196,7 +1154,7 @@ public class App extends JFrame implements ActionListener {
             w.setLocation(loc.x, loc.y + size.height);
         }
 
-        imageT = robot.createScreenCapture(bounds);
+        img_background = robot.createScreenCapture(bounds);
 
         // Move all associated windows back.
         setLocation(currentLocation);
@@ -1204,7 +1162,6 @@ public class App extends JFrame implements ActionListener {
             w.setLocation(locations.poll());
         }
 
-        img_background = imageT;
         OritaCalc.display("新背景カメラインスタンス化");
         h_cam = new Background_camera();//20181202
 
@@ -1300,6 +1257,10 @@ public class App extends JFrame implements ActionListener {
                 Button_shared_operation();
             });
         }
+    }
+
+    public boolean isTaskRunning() {
+        return currentTask != null && !currentTask.isDone();
     }
 
     public enum MouseWheelTarget {

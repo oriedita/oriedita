@@ -8,6 +8,7 @@ import origami_editor.editor.databinding.GridModel;
 import origami_editor.editor.databinding.HistoryStateModel;
 import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
 import origami_editor.editor.folded_figure.FoldedFigure;
+import origami_editor.editor.task.TwoColoredTask;
 import origami_editor.tools.StringOp;
 
 import javax.swing.*;
@@ -543,12 +544,7 @@ public class LeftPanel {
                 app.folding_prepare();//ここでOZがOAZ(0)からOAZ(i)に切り替わる
                 app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
 
-                if (!app.subThreadRunning) {
-                    app.subThreadRunning = true;
-                    app.subThreadMode = SubThread.Mode.TWO_COLORED_4;
-                    app.makeSubThread();//新しいスレッドを作る
-                    app.sub.start();
-                }
+                app.executeTask(new TwoColoredTask(app));
             }
 
             app.mainDrawingWorker.unselect_all();
@@ -936,7 +932,7 @@ public class LeftPanel {
         gbc.gridy = 0;
         panel10.add(correctCpBeforeFoldingCheckBox, gbc);
         selectPersistentCheckBox = new JCheckBox();
-        selectPersistentCheckBox.setToolTipText("selectPersistentAction");
+        selectPersistentCheckBox.setToolTipText("ckbox_select_nokosi");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;

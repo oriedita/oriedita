@@ -281,7 +281,7 @@ public class FoldedFigure {
         transparentRearCamera.setCameraMirror(d_camera_mirror * -1.0);
     }
 
-    public void folding_estimated(Camera creasePatternCamera, LineSegmentSet lineSegmentSet) {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public void folding_estimated(Camera creasePatternCamera, LineSegmentSet lineSegmentSet) throws InterruptedException {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
         boolean i_camera_estimated = (estimationStep == EstimationStep.STEP_0) && (estimationOrder.isBelowOrEqual5());
 
         //Folded view display camera settings
@@ -421,7 +421,7 @@ public class FoldedFigure {
         }
     }
 
-    public void createTwoColorCreasePattern(Camera camera_of_foldLine_diagram, LineSegmentSet Ss0) {//Two-color crease pattern
+    public void createTwoColorCreasePattern(Camera camera_of_foldLine_diagram, LineSegmentSet Ss0) throws InterruptedException {//Two-color crease pattern
         //Folded view display camera settings
 
         d_foldedFigure_scale_factor = camera_of_foldLine_diagram.getCameraZoomX();
@@ -476,7 +476,7 @@ public class FoldedFigure {
         estimationStep = EstimationStep.STEP_10;
     }
 
-    public int folding_estimated_01(LineSegmentSet lineSegmentSet) {
+    public int folding_estimated_01(LineSegmentSet lineSegmentSet) throws InterruptedException {
         System.out.println("＜＜＜＜＜oritatami_suitei_01;開始");
         bulletinBoard.write("<<<<oritatami_suitei_01;  start");
         // Pass the line segment set created in mainDrawingWorker to cp_worker1 by mouse input and make it a point set (corresponding to the development view).
@@ -484,10 +484,14 @@ public class FoldedFigure {
         ip3 = cp_worker1.setReferencePlaneId(ip3);
         ip3 = cp_worker1.setReferencePlaneId(app.point_of_referencePlane_old);//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
 
+        if (Thread.interrupted()) {
+            throw new InterruptedException();
+        }
+
         return 1000;
     }
 
-    public int folding_estimated_02() {
+    public int folding_estimated_02() throws InterruptedException {
         System.out.println("＜＜＜＜＜oritatami_suitei_02;開始");
         bulletinBoard.write("<<<<oritatami_suitei_02;  start");
         //cp_worker1が折りたたみを行い、できた針金図をcp_worker2に渡す。
@@ -497,6 +501,8 @@ public class FoldedFigure {
         cp_worker2.set(cp_worker1.folding());
         app.bulletinBoard.write("<<<<oritatami_suitei_02; end");
 
+        if (Thread.interrupted()) throw new InterruptedException();
+
         //cp_worker2.Iti_sitei(0.0 , 0.0);点集合の平均位置を全点の重心にする。
         //  if(ip4==1){ cp_worker2.uragaesi();}
         // cp_worker2.set( cp_worker2.oritatami())  ;//折り畳んだ針金図を、折り開きたい場合の操作
@@ -504,15 +510,18 @@ public class FoldedFigure {
         return 1000;
     }
 
-    public int folding_estimated_02col() {//20171225　２色塗りわけをするための特別推定（折り畳み位置を推定しない）
+    public int folding_estimated_02col() throws InterruptedException {//20171225　２色塗りわけをするための特別推定（折り畳み位置を推定しない）
         System.out.println("＜＜＜＜＜oritatami_suitei_02;開始");
         bulletinBoard.write("<<<<oritatami_suitei_02;  start");
         cp_worker2.set(cp_worker1.surface_position_request());
         app.bulletinBoard.write("<<<<oritatami_suitei_02; end");
+
+        if (Thread.interrupted()) throw new InterruptedException();
+
         return 1000;
     }
 
-    public int folding_estimated_03() {
+    public int folding_estimated_03() throws InterruptedException {
         System.out.println("＜＜＜＜＜oritatami_suitei_03;開始");
         bulletinBoard.write("<<<<oritatami_suitei_03;  start");
         // cp_worker2 has a set of points that holds the faces of the unfolded view before folding.
@@ -533,10 +542,13 @@ public class FoldedFigure {
         System.out.println("＜＜＜＜＜oritatami_suitei_03()_____上下表職人ct_workerは、展開図職人cp_worker3から点集合を受け取り、Smenを設定する。");
         ct_worker.SubFace_configure(cp_worker2.get(), cp_worker3.get());
         //If you want to make a transparent map up to this point, you can. The transmission diagram is a SubFace diagram with density added.
+
+        if (Thread.interrupted()) throw new InterruptedException();
+
         return 1000;
     }
 
-    public int folding_estimated_04() {
+    public int folding_estimated_04() throws InterruptedException {
         System.out.println("＜＜＜＜＜oritatami_suitei_04;開始");
         bulletinBoard.write("<<<<oritatami_suitei_04;  start");
         //Make an upper and lower table of faces (faces in the unfolded view before folding).
@@ -553,10 +565,13 @@ public class FoldedFigure {
         }
         discovered_fold_cases = 0;
         System.out.println("＜＜＜＜＜oritatami_suitei_04()____終了");
+
+        if (Thread.interrupted()) throw new InterruptedException();
+
         return 1000;
     }
 
-    public int folding_estimated_05() {
+    public int folding_estimated_05() throws InterruptedException {
         System.out.println("＜＜＜＜＜oritatami_suitei_05()_____上下表職人ct_workerがct_worker.kanou_kasanari_sagasi()実施。");
         app.bulletinBoard.write("<<<<oritatami_suitei_05()  ___ct_worker.kanou_kasanari_sagasi()  start");
 
@@ -580,6 +595,8 @@ public class FoldedFigure {
         if (!findAnotherOverlapValid) {
             text_result = text_result + " There is no other solution. ";
         }
+
+        if (Thread.interrupted()) throw new InterruptedException();
 
         return 1000;
     }
@@ -717,7 +734,11 @@ public class FoldedFigure {
             cp_worker2.mDragged_selectedPoint_move_with_camera(move_previous_selection_point, p_m_left_on, p, ip4);
 
             if (i_foldedFigure_operation_mode == 2) {
-                folding_estimated_03();//20180216
+                try {
+                    folding_estimated_03();//20180216
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
             }
         }
     }
@@ -744,7 +765,11 @@ public class FoldedFigure {
 
                 if (displayStyle == DisplayStyle.PAPER_5) {
                     estimationOrder = EstimationOrder.ORDER_5;
-                    app.folding_estimated();
+                    try {
+                        app.folding_estimated();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }//オリジナル 20180124 これ以外だと、表示いったんもどるようでうざい
             }
 
@@ -870,7 +895,11 @@ public class FoldedFigure {
             cp_worker2.mDragged_selectedPoint_move_with_camera(move_previous_selection_point, p_m_left_on, p, ip4);
 
             if (i_foldedFigure_operation_mode == 2) {
-                folding_estimated_03();//20180216
+                try {
+                    folding_estimated_03();//20180216
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
             }
         }
     }
@@ -895,7 +924,11 @@ public class FoldedFigure {
                 if (displayStyle == DisplayStyle.WIRE_2) {
                 }
 
-                folding_estimated_03();//20180216
+                try {
+                    folding_estimated_03();//20180216
+                } catch (InterruptedException e) {
+                    // Ignore
+                }
             }
 
             cp_worker1.setAllPointStateFalse();
@@ -916,12 +949,20 @@ public class FoldedFigure {
 
     public void redo() {
         cp_worker2.redo();
-        folding_estimated_03();
+        try {
+            folding_estimated_03();
+        } catch (InterruptedException e) {
+            // Ignore
+        }
     }
 
     public void undo() {
         cp_worker2.undo();
-        folding_estimated_03();
+        try {
+            folding_estimated_03();
+        } catch (InterruptedException e) {
+            // Ignore
+        }
     }
 
     public void setAllPointStateFalse() {
@@ -942,6 +983,7 @@ public class FoldedFigure {
 
         transparencyColor = foldedFigureModel.isTransparencyColor();
         transparent_transparency = foldedFigureModel.getTransparentTransparency();
+        findAnotherOverlapValid = foldedFigureModel.isFindAnotherOverlapValid();
 
         // Update scale
         foldedFigureCamera.setCameraZoomX(d_foldedFigure_scale_factor);
@@ -971,6 +1013,7 @@ public class FoldedFigure {
         foldedFigureModel.setRotation(d_foldedFigure_rotation_correction);
         foldedFigureModel.setScale(d_foldedFigure_scale_factor);
         foldedFigureModel.setState(ip4);
+        foldedFigureModel.setFindAnotherOverlapValid(findAnotherOverlapValid);
     }
 
     public void scale(double magnification) {

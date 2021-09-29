@@ -34,7 +34,7 @@ public class AppMenuBar extends JMenuBar {
         app.registerButton(saveButton, "saveAction");
         app.registerButton(saveAsButton, "saveAsAction");
         app.registerButton(importButton, "importAction");
-        app.registerButton(exportButton, "exportAction"); // TODO NO CALL TO Button_shared_operation
+        app.registerButton(exportButton, "exportAction");
         app.registerButton(exitButton, "exitAction");
         app.registerButton(showPointRangeCheckBox, "showPointRangeAction");
         app.registerButton(pointOffsetCheckBox, "pointOffsetAction");

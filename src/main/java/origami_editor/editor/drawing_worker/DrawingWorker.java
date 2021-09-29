@@ -89,7 +89,7 @@ public class DrawingWorker {
     //--------------------------------------------
     CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
 
-    public DrawingWorker(double r0, App app0) {  //コンストラクタ
+    public DrawingWorker(App app0) {  //コンストラクタ
         app = app0;
 
         lineColor = LineColor.BLACK_0;
@@ -1599,7 +1599,7 @@ public class DrawingWorker {
         app.check4(r);
     }
 
-    public void ap_check4(double r) {
+    public void ap_check4(double r) throws InterruptedException {
         foldLineSet.check4(r);
     }
 

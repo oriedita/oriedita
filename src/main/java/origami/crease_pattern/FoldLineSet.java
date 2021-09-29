@@ -2962,7 +2962,7 @@ public class FoldLineSet {
         return Check3LineSegment;
     }
 
-    public Iterable<LineSegment> getCheck4LineSegments() {
+    public Queue<LineSegment> getCheck4LineSegments() {
         return Check4LineSegment;
     }
 
@@ -3053,7 +3053,7 @@ public class FoldLineSet {
         return 0;
     }
 
-    public void check4(double r) {//Check the number of lines around the apex
+    public void check4(double r) throws InterruptedException {//Check the number of lines around the apex
         Check4LineSegment.clear();
         check4Point.clear();
 
@@ -3074,6 +3074,8 @@ public class FoldLineSet {
                 if (Check4Point_overlapping_check(pb) == 0) {
                     check4Point.add(pb);
                 }
+
+                if (Thread.interrupted()) throw new InterruptedException();
             }
         }
 
@@ -3085,6 +3087,8 @@ public class FoldLineSet {
 
             if (!i_flat_ok(p, r)) {
                 Check4LineSegment.add(new LineSegment(p, p));
+
+                if (Thread.interrupted()) throw new InterruptedException();
             }
         }
     }

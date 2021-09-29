@@ -1019,7 +1019,7 @@ public class HierarchyList_Worker {
     }
 
     //Start with the current permutation state and look for possible overlapping states. There is room for speeding up here.
-    public int possible_overlapping_search() {      //This should not change the hierarchyList.
+    public int possible_overlapping_search() throws InterruptedException {      //This should not change the hierarchyList.
         bb.write("_ _______");
         bb.write("__ ______");
         bb.write("___ _____");
@@ -1035,6 +1035,8 @@ public class HierarchyList_Worker {
             }//There is no contradiction in all SubFaces.
             Sid = next(ms - 1);
             bb.rewrite(9, "susumu(" + ms + "-1 = )" + Sid);
+
+            if (Thread.interrupted()) throw new InterruptedException();
         }
         return 0;//There is no possible overlapping state
     }
