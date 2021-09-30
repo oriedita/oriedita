@@ -18,26 +18,28 @@ public class EquivalenceCondition {
         d = id;
     }
 
-    public void reset() {
-        a = 0;
-        b = 0;
-        c = 0;
-        d = 0;
-    }
+	// New algorithm requires that EquivalenceCondition class being immutable, so all the following methods are commented out.
 
-    public void set(int ai, int bi, int ci, int di) {
-        a = ai;
-        b = bi;
-        c = ci;
-        d = di;
-    }
+    // public void reset() {
+    //     a = 0;
+    //     b = 0;
+    //     c = 0;
+    //     d = 0;
+    // }
 
-    public void set(EquivalenceCondition tj) {
-        a = tj.getA();
-        b = tj.getB();
-        c = tj.getC();
-        d = tj.getD();
-    }
+    // public void set(int ai, int bi, int ci, int di) {
+    //     a = ai;
+    //     b = bi;
+    //     c = ci;
+    //     d = di;
+    // }
+
+    // public void set(EquivalenceCondition tj) {
+    //     a = tj.getA();
+    //     b = tj.getB();
+    //     c = tj.getC();
+    //     d = tj.getD();
+    // }
 
     public int getA() {
         return a;
