@@ -17,6 +17,9 @@ public class SubFace {//This class folds the development view and estimates the 
     int[] FaceId2fromTop_counted_position;// Represents the position counted from the top of the surface (FaceId).
     int[] fromTop_counted_position2FaceId;// Represents the surface at the position counted from the top.
 
+    int[] FaceId2PermutationDigitMap;// For fast lookup
+    int[] CleanMap;// For fast reset
+
     BulletinBoard bb;
 
     public SubFace() {
@@ -90,11 +93,25 @@ public class SubFace {//This class folds the development view and estimates the 
     }   //<<<<<<<<<<<<<<<<<<<ここは後で機能を強化して高速化したい。
     // ここは　class SubFace の中だよ。
 
+    public void reset_map(int count) {
+        if (FaceId2PermutationDigitMap == null || FaceId2PermutationDigitMap.length != count + 1) {
+            FaceId2PermutationDigitMap = new int[count + 1];
+            CleanMap = new int[count + 1];
+        } else {
+            // This is the fastest way to cleanup an array
+            System.arraycopy(CleanMap, 0, FaceId2PermutationDigitMap, 0, count + 1);
+        }
+        for (int i = 1; i <= faceIdCount; i++) {
+            FaceId2PermutationDigitMap[faceIdList[getPermutation(i)]] = i;
+        }
+    }
+
     //Start with the current permutation state and look for possible permutations that overlap
     public int possible_overlapping_search(HierarchyList hierarchyList) {//This should not change hierarchyList.
         int mk, ijh;
         ijh = 1;//The initial value of ijh can be anything other than 0.
         while (ijh != 0) { //If ijh == 0, you have reached the end of the digit.
+            reset_map(hierarchyList.getFacesTotal());
             mk = inconsistent_digits_request(hierarchyList);
 
             if (mk == 1000) {
@@ -163,12 +180,7 @@ public class SubFace {//This class folds the development view and estimates the 
 
     //Find the number from the top in the stacking order of the surface im. Returns 0 if this SubFace does not contain Men.
     public int FaceId2PermutationDigit(int im) {
-        for (int i = 1; i <= faceIdCount; i++) {
-            if (faceIdList[getPermutation(i)] == im) {
-                return i;
-            }
-        }
-        return 0;
+        return FaceId2PermutationDigitMap[im];
     }
 
 
@@ -177,40 +189,38 @@ public class SubFace {//This class folds the development view and estimates the 
 
     // Check from the top surface to find out at what number the boundary line penetration condition of the adjacent surface is inconsistent.
     // At this time, hierarchyList does not change. This SubFace returns 1000 if there is no contradiction in the penetration conditions.
-    private int penetration_inconsistent_digits_request(EquivalenceCondition tj) {
-        int mm, M1, M2; //折り畳み推定の際の等価条件の登録は　addEquivalenceCondition(im,Mid_min,im,Mid_max);  による
-        mm = FaceId2PermutationDigit(tj.getA());
+    private int penetration_inconsistent_digits_request(EquivalenceCondition tj, int mm) {
+        int M1, M2; //折り畳み推定の際の等価条件の登録は addEquivalenceCondition(im,Mid_min,im,Mid_max); による
         M1 = FaceId2PermutationDigit(tj.getB());
         M2 = FaceId2PermutationDigit(tj.getD());
-        if (mm * M1 * M2 == 0) {
+        if (M1 * M2 == 0) {
             return 1000;
         }
-
         if ((mm - M1) * (mm - M2) < 0) {
             return mm;
         }
         return 1000;
     }
 
-    private int penetration_inconsistent_digits_request(HierarchyList hierarchyList) {
-        int ketaMim = 1000;
-        int tmk;
-        for (EquivalenceCondition ec : hierarchyList.getEquivalenceConditions()) {
-            tmk = penetration_inconsistent_digits_request(ec);
-
-            if (tmk <= ketaMim) {
-                ketaMim = tmk;
+    private int penetration_inconsistent_digits_request(HierarchyList hierarchyList, int min) {
+        for (int i = 1; i <= faceIdCount && i < min; i++) {
+            Iterable<EquivalenceCondition> list = hierarchyList.getEquivalenceConditions(faceIdList[getPermutation(i)]);
+            // list could be null, be careful.
+            if (list != null) {
+                for (EquivalenceCondition ec : list) {
+                    if (penetration_inconsistent_digits_request(ec, i) < min) {
+                        return i;
+                    }
+                }
             }
         }
-
-        return ketaMim;
-
+        return min;
     }
 
 
     // Check from the top surface to find out at what number the two surfaces that share a part of the boundary line and the penetration conditions of the two surfaces are inconsistent.
     // At this time, hierarchyList does not change. This SubFace returns 1000 if there is no contradiction.
-    private int u_penetration_inconsistent_digits_request(EquivalenceCondition uj) {
+    private int u_penetration_inconsistent_digits_request(EquivalenceCondition uj, int min) {
         int mi1, mi2, mj1, mj2, itemp; //Registration of equivalent conditions for folding estimation is based on u_addTouka_jyouken (im1, im2, im3, im4) ;.
         mi1 = FaceId2PermutationDigit(uj.getA());
         mi2 = FaceId2PermutationDigit(uj.getB());
@@ -229,50 +239,31 @@ public class SubFace {//This class folds the development view and estimates the 
         }
 
         if (mi1 * mi2 * mj1 * mj2 != 0) {
-            if (((mi1 < mj1) && (mj1 < mi2)) && (mi2 < mj2)) {
+            if (mi2 < min && ((mi1 < mj1) && (mj1 < mi2)) && (mi2 < mj2)) {
                 return mi2;
             }
-            if (((mj1 < mi1) && (mi1 < mj2)) && (mj2 < mi2)) {
+            if (mj2 < min && ((mj1 < mi1) && (mi1 < mj2)) && (mj2 < mi2)) {
                 return mj2;
             }
         }
-
-        return 1000;
+        return min;
     }
 
-    private int u_penetration_inconsistent_digits_request(HierarchyList hierarchyList) {
-        int ketaMim = 1000;
-        int tmk = 1000;
+    private int u_penetration_inconsistent_digits_request(HierarchyList hierarchyList, int min) {
         for (EquivalenceCondition ec : hierarchyList.getUEquivalenceConditions()) {
-            tmk = u_penetration_inconsistent_digits_request(ec);
-
-            if (tmk <= ketaMim) {
-                ketaMim = tmk;
-            }
+            min = u_penetration_inconsistent_digits_request(ec, min);
         }
-
-        return ketaMim;
-
-
+        return min;
     }
 
     // Check from the top side to find out at what number the contradiction occurs.
     // At this time, hierarchyList does not change. This SubFace returns 1000 if there is no contradiction.
     private int inconsistent_digits_request(HierarchyList hierarchyList) {
-        int min1, min2, min3;
-        min1 = overlapping_inconsistent_digits_request(hierarchyList);
-        min2 = penetration_inconsistent_digits_request(hierarchyList);
-        min3 = u_penetration_inconsistent_digits_request(hierarchyList);
-
-        // Returns the minimum value among min1, min2, min3.
-        if (min3 < min2) {
-            min2 = min3;
-        }
-        if (min2 < min1) {
-            min1 = min2;
-        }
-
-        return min1;
+        int min;
+        min = overlapping_inconsistent_digits_request(hierarchyList);
+        min = penetration_inconsistent_digits_request(hierarchyList, min);
+        min = u_penetration_inconsistent_digits_request(hierarchyList, min);
+        return min;
     }
 
     // Enter the information due to the overlap of SubFace's faces in the upper and lower tables

@@ -969,6 +969,7 @@ public class HierarchyList_Worker {
     //引数の４つの面を同時に含むSubFaceが1つ以上存在するなら１、しないなら０を返す。
     private boolean onaji_subFace_ni_sonzai(int im1, int im2, int im3, int im4) {
         for (int i = 1; i <= SubFaceTotal; i++) {
+			s[i].reset_map(hierarchyList.getFacesTotal());
             if (s[i].FaceId2PermutationDigit(im1) >= 1) {
                 if (s[i].FaceId2PermutationDigit(im2) >= 1) {
                     if (s[i].FaceId2PermutationDigit(im3) >= 1) {
