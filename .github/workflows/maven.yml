@@ -29,3 +29,4 @@ jobs:
       with:
         name: origami-editor-jar
         path: target/origami-editor-*.jar
+
