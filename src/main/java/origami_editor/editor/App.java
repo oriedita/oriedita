@@ -1,7 +1,5 @@
 package origami_editor.editor;
 
-import net.harawata.appdirs.AppDirs;
-import net.harawata.appdirs.AppDirsFactory;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
@@ -18,6 +16,7 @@ import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.editor.task.CheckCAMVTask;
 import origami_editor.editor.task.FoldingEstimateTask;
 import origami_editor.record.Memo;
+import origami_editor.tools.ResourceUtil;
 import origami_editor.tools.StringOp;
 
 import javax.swing.*;
@@ -27,6 +26,7 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Queue;
 import java.util.*;
@@ -87,6 +87,7 @@ public class App extends JFrame implements ActionListener {
 
     ExecutorService pool;
     private Future<?> currentTask;
+    final Queue<Popup> popups = new ArrayDeque<>();
 
     public App() {
         setTitle("Origami Editor 1.0.0");//Specify the title and execute the constructor
@@ -139,6 +140,10 @@ public class App extends JFrame implements ActionListener {
 
             public void windowLostFocus(WindowEvent evt) {
                 System.out.println("windowLostFocus_20200929");
+                Popup popup;
+                while ((popup = popups.poll()) != null) {
+                    popup.hide();
+                }
             }
         });//オリヒメのメインウィンドウのフォーカスが変化したときの処理 ここまで。
 
@@ -146,7 +151,6 @@ public class App extends JFrame implements ActionListener {
         setFocusable(true);
         setFocusTraversalKeysEnabled(true);
         addKeyListener(new KeyAdapter() {
-            final Queue<Popup> popups = new ArrayDeque<>();
 
             @Override
             public void keyReleased(KeyEvent e) {
@@ -1188,8 +1192,8 @@ public class App extends JFrame implements ActionListener {
         ResourceBundle userBundle = null;
 
         try {
-            AppDirs appDirs = AppDirsFactory.getInstance();
-            userBundle = new PropertyResourceBundle(Files.newInputStream(Paths.get(appDirs.getUserConfigDir("origami-editor", "v0.3", "origami-editor"), bundle + ".properties")));
+            Path appDir = ResourceUtil.getAppDir().resolve(bundle + ".properties");
+            userBundle = new PropertyResourceBundle(Files.newInputStream(appDir));
         } catch (IOException e) {
         }
 
