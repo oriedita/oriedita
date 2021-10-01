@@ -29,3 +29,13 @@ jobs:
       with:
         name: origami-editor-jar
         path: target/origami-editor-*.jar
+
+    - name: Comment artifacts
+      if: github.event_name == 'pull_request'
+      uses: tonyhallett/artifacts-url-comments@v1.1.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        prefix: This is the latest build of this branch
+        format: name
+        addTo: pull
