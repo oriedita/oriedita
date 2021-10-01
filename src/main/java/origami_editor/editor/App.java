@@ -142,6 +142,7 @@ public class App extends JFrame implements ActionListener {
             }
         });//オリヒメのメインウィンドウのフォーカスが変化したときの処理 ここまで。
 
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setFocusable(true);
         setFocusTraversalKeysEnabled(true);
         addKeyListener(new KeyAdapter() {
