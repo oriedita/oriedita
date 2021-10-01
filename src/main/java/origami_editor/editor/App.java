@@ -388,6 +388,7 @@ public class App extends JFrame implements ActionListener {
         canvas.addMouseModeHandler(MouseHandlerUnused_10001.class);
         canvas.addMouseModeHandler(MouseHandlerUnused_10002.class);
         canvas.addMouseModeHandler(MouseHandlerBackgroundChangePosition.class);
+        canvas.addMouseModeHandler(new MouseHandlerMoveCalculatedShape(this));
         canvas.addMouseModeHandler(new MouseHandlerModifyCalculatedShape(this));
         canvas.addMouseModeHandler(new MouseHandlerMoveCreasePattern(this));
         canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(this));
