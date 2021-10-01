@@ -31,8 +31,8 @@ public class Camera implements Serializable { // Mediation between actual coordi
         camera_zoom_x = 1.0;
         camera_zoom_y = 1.0;
 
-        display_position_x = 0.0;
-        display_position_y = 0.0;
+        display_position_x = 350.0;
+        display_position_y = 350.0;
     }
 
     public void reset() {
@@ -46,8 +46,8 @@ public class Camera implements Serializable { // Mediation between actual coordi
         camera_zoom_x = 1.0;
         camera_zoom_y = 1.0;
 
-        display_position_x = 0.0;
-        display_position_y = 0.0;
+        display_position_x = 350.0;
+        display_position_y = 350.0;
     }
 
     public void multiplyCameraZoomX(double d) {
