@@ -651,7 +651,7 @@ public class Orh {
             memo1.addLine("補助座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
         }
 
-        Camera camera = save.getCreasePatternCamera();
+        Camera camera = save.getCreasePatternCamera() != null ? save.getCreasePatternCamera() : new Camera();
         memo1.addLine("<camera_of_orisen_nyuuryokuzu>");
         memo1.addLine("<camera_ichi_x>" + camera.getCameraPositionX() + "</camera_ichi_x>");
         memo1.addLine("<camera_ichi_y>" + camera.getCameraPositionY() + "</camera_ichi_y>");

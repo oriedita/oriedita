@@ -134,7 +134,9 @@ public class DrawingWorker {
     }
 
     public void Memo_jyouhou_toridasi(Save memo1) {
-        app.canvas.creasePatternCamera.setCamera(memo1.getCreasePatternCamera());
+        if (memo1.getCreasePatternCamera() != null) {
+            app.canvas.creasePatternCamera.setCamera(memo1.getCreasePatternCamera());
+        }
 
         app.canvasModel.set(memo1.getCanvasModel());
 
