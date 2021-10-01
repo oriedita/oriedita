@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Representation of the current drawn crease pattern.
@@ -33,7 +37,6 @@ public class FoldLineSet {
     // (2) Point p The end point q included in the nearest crease pattern is determined.
     // (3) If the distance between the end point of the fold line in the crease pattern that is closer to q and q is r or less, the fold line is assumed to be connected to the point q.
     int[] i_s = new int[2];//この変数はdel_Vとtyouten_syuui_sensuuとで共通に使う。tyouten_syuui_sensuuで、頂点回りの折線数が2のときにその2折線の番号を入れる変数。なお、折線数が3以上のときは意味を成さない。//qを端点とする2本の線分の番号
-    double fushimi_decision_angle_goukei = 360.0;
 
     public FoldLineSet() {
         reset();
@@ -3081,19 +3084,38 @@ public class FoldLineSet {
 
         System.out.println("check4_T_size() = " + check4Point.size());
 
+        ExecutorService service = Executors.newCachedThreadPool();
+
         //Selection of whether the place to be checked can be folded flat
         for (Point point : check4Point) {
-            Point p = new Point(point);
+            service.submit(() -> {
+                Point p = new Point(point);
 
-            if (!i_flat_ok(p, r)) {
-                Check4LineSegment.add(new LineSegment(p, p));
+                try {
+                    if (!i_flat_ok(p, r)) {
+                        Check4LineSegment.add(new LineSegment(p, p));
+                    }
+                } catch (InterruptedException e) {
+                    // finish thread.
+                }
+            });
+        }
 
-                if (Thread.interrupted()) throw new InterruptedException();
+        // Done adding tasks, shut down ExecutorService
+        service.shutdown();
+        try {
+            if (!service.awaitTermination(60, TimeUnit.SECONDS)) {
+                throw new RuntimeException("Check cAMV did not finish!");
+            }
+        } catch (InterruptedException e) {
+            service.shutdownNow();
+            if (!service.awaitTermination(60, TimeUnit.SECONDS)) {
+                throw new RuntimeException("Check cAMV did not exit!");
             }
         }
     }
 
-    public boolean i_flat_ok(Point p, double r) {//Foldable flat = 1
+    public boolean i_flat_ok(Point p, double r) throws InterruptedException {//Foldable flat = 1
         double hantei_kyori = 0.00001;
         //If the end point of the line segment closest to the point p and the end point closer to the point p is the apex, how many line segments are present (the number of line segments having an end point within the apex and r).
         int i_customized = 0;    //i_customized% 2 == 0 even, == 1 odd
@@ -3127,6 +3149,8 @@ public class FoldLineSet {
                     nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getB(), s.getA())));
                 }
             }
+
+            if (Thread.interrupted()) throw new InterruptedException();
         }
 
         // Judgment start-------------------------------------------
@@ -3375,13 +3399,86 @@ public class FoldLineSet {
         }
 
         //以下はt1を端点とする折線の数が4以上の偶数のとき
-
-        fushimi_decision_angle_goukei = 360.0;
+        double fushimi_decision_angle_goukei = 360.0;
 
         SortingBox<LineSegment> nbox1 = new SortingBox<>();
 
         while (nbox.getTotal() > 2) {//点から出る折線の数が2になるまで実行する
-            nbox1.set(extended_fushimi_decision_inside_theorem(nbox));
+            SortingBox<LineSegment> result = null;//Operation to make three adjacent angles into one angle by the extended Fushimi theorem
+            SortingBox<LineSegment> nboxtemp = new SortingBox<>();
+            SortingBox<LineSegment> nbox11 = new SortingBox<>();
+            int tikai_orisen_jyunban;
+            int tooi_orisen_jyunban;
+
+            double kakudo_min = 10000.0;
+
+            //角度の最小値kakudo_minを求める
+            for (int k = 1; k <= nbox.getTotal(); k++) {//kは角度の順番
+                tikai_orisen_jyunban = k;
+                if (tikai_orisen_jyunban > nbox.getTotal()) {
+                    tikai_orisen_jyunban = tikai_orisen_jyunban - nbox.getTotal();
+                }
+                tooi_orisen_jyunban = k + 1;
+                if (tooi_orisen_jyunban > nbox.getTotal()) {
+                    tooi_orisen_jyunban = tooi_orisen_jyunban - nbox.getTotal();
+                }
+
+                double temp_kakudo = OritaCalc.angle_between_0_kmax(
+                        OritaCalc.angle_between_0_kmax(nbox.getWeight(tooi_orisen_jyunban), fushimi_decision_angle_goukei)
+                                -
+                                OritaCalc.angle_between_0_kmax(nbox.getWeight(tikai_orisen_jyunban), fushimi_decision_angle_goukei)
+
+                        , fushimi_decision_angle_goukei
+                );
+
+                if (temp_kakudo < kakudo_min) {
+                    kakudo_min = temp_kakudo;
+                }
+            }
+
+            for (int k = 1; k <= nbox.getTotal(); k++) {//kは角度の順番
+                double temp_kakudo = OritaCalc.angle_between_0_kmax(nbox.getWeight(2) - nbox.getWeight(1), fushimi_decision_angle_goukei);
+
+                if (Math.abs(temp_kakudo - kakudo_min) < 0.00001) {
+                    if (nbox.getValue(1).getColor() != nbox.getValue(2).getColor()) {//この場合に隣接する３角度を1つの角度にする
+                        // 折線を2つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
+
+                        double kijyun_kakudo = nbox.getWeight(3);
+
+                        for (int i = 1; i <= nbox.getTotal(); i++) {
+                            WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
+                            i_d_0.set(nbox.getWeightedValue(i));
+
+                            i_d_0.setWeight(
+                                    OritaCalc.angle_between_0_kmax(i_d_0.getWeight() - kijyun_kakudo, fushimi_decision_angle_goukei)
+                            );
+
+                            nboxtemp.add(i_d_0);
+                        }
+
+                        for (int i = 3; i <= nboxtemp.getTotal(); i++) {
+                            WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
+                            i_d_0.set(nboxtemp.getWeightedValue(i));
+
+                            nbox11.add(i_d_0);
+                        }
+
+                        fushimi_decision_angle_goukei = fushimi_decision_angle_goukei - 2.0 * kakudo_min;
+                        result = nbox11;
+                        break;
+                    }
+                }
+                nbox.shift();
+
+            }
+            if (result == null) {// 折線を2つ減らせる条件に適合した角がなかった場合nbox0とおなじnbox1を作ってリターンする。
+                for (int i = 1; i <= nbox.getTotal(); i++) {
+                    nbox11.add(nbox.getWeightedValue(i));
+                }
+                result = nbox11;
+            }
+
+            nbox1.set(result);
             if (nbox1.getTotal() == nbox.getTotal()) {
                 return false;
             }
@@ -3396,80 +3493,6 @@ public class FoldLineSet {
         );
 
         return Math.abs(fushimi_decision_angle_goukei - temp_kakudo * 2.0) < hantei_kyori;//この0だけ、角度がおかしいという意味
-    }
-
-    public SortingBox<LineSegment> extended_fushimi_decision_inside_theorem(SortingBox<LineSegment> nbox0) {//Operation to make three adjacent angles into one angle by the extended Fushimi theorem
-        SortingBox<LineSegment> nboxtemp = new SortingBox<>();
-        SortingBox<LineSegment> nbox1 = new SortingBox<>();
-        int tikai_orisen_jyunban;
-        int tooi_orisen_jyunban;
-
-        double kakudo_min = 10000.0;
-
-        //角度の最小値kakudo_minを求める
-        for (int k = 1; k <= nbox0.getTotal(); k++) {//kは角度の順番
-            tikai_orisen_jyunban = k;
-            if (tikai_orisen_jyunban > nbox0.getTotal()) {
-                tikai_orisen_jyunban = tikai_orisen_jyunban - nbox0.getTotal();
-            }
-            tooi_orisen_jyunban = k + 1;
-            if (tooi_orisen_jyunban > nbox0.getTotal()) {
-                tooi_orisen_jyunban = tooi_orisen_jyunban - nbox0.getTotal();
-            }
-
-            double temp_kakudo = OritaCalc.angle_between_0_kmax(
-                    OritaCalc.angle_between_0_kmax(nbox0.getWeight(tooi_orisen_jyunban), fushimi_decision_angle_goukei)
-                            -
-                            OritaCalc.angle_between_0_kmax(nbox0.getWeight(tikai_orisen_jyunban), fushimi_decision_angle_goukei)
-
-                    , fushimi_decision_angle_goukei
-            );
-
-            if (temp_kakudo < kakudo_min) {
-                kakudo_min = temp_kakudo;
-            }
-        }
-
-        for (int k = 1; k <= nbox0.getTotal(); k++) {//kは角度の順番
-            double temp_kakudo = OritaCalc.angle_between_0_kmax(nbox0.getWeight(2) - nbox0.getWeight(1), fushimi_decision_angle_goukei);
-
-            if (Math.abs(temp_kakudo - kakudo_min) < 0.00001) {
-                if (nbox0.getValue(1).getColor() != nbox0.getValue(2).getColor()) {//この場合に隣接する３角度を1つの角度にする
-                    // 折線を2つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
-
-                    double kijyun_kakudo = nbox0.getWeight(3);
-
-                    for (int i = 1; i <= nbox0.getTotal(); i++) {
-                        WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
-                        i_d_0.set(nbox0.getWeightedValue(i));
-
-                        i_d_0.setWeight(
-                                OritaCalc.angle_between_0_kmax(i_d_0.getWeight() - kijyun_kakudo, fushimi_decision_angle_goukei)
-                        );
-
-                        nboxtemp.add(i_d_0);
-                    }
-
-                    for (int i = 3; i <= nboxtemp.getTotal(); i++) {
-                        WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
-                        i_d_0.set(nboxtemp.getWeightedValue(i));
-
-                        nbox1.add(i_d_0);
-                    }
-
-                    fushimi_decision_angle_goukei = fushimi_decision_angle_goukei - 2.0 * kakudo_min;
-                    return nbox1;
-                }
-            }
-            nbox0.shift();
-
-        }
-
-        // 折線を2つ減らせる条件に適合した角がなかった場合nbox0とおなじnbox1を作ってリターンする。
-        for (int i = 1; i <= nbox0.getTotal(); i++) {
-            nbox1.add(nbox0.getWeightedValue(i));
-        }
-        return nbox1;
     }
 
     public double get_x_max() {//sousuu=0のときは0.0を返す
