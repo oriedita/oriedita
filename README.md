@@ -50,7 +50,7 @@ mvn clean package
 After compiling and packaging the jar is placed in the `target` directory.
 
 ```bash
-java -jar ./target/origami-editor-0.0.5.jar
+java -jar ./target/origami-editor-0.0.5-SNAPSHOT.jar
 ```
 
 ## Creating a  Windows executable
