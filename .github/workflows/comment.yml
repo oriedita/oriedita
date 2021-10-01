@@ -1,0 +1,22 @@
+name: Comment artifacts on pull request
+on:
+  workflow_run:
+    workflows: [Java CI with Maven]
+    types: [completed]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+    - name: Comment artifacts
+
+      uses: tonyhallett/artifacts-url-comments@v1.1.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        prefix: This is the latest build of this branch
+        format: name
+        addTo: pull
