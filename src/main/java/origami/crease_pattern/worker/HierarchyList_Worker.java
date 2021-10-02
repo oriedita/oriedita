@@ -234,6 +234,12 @@ public class HierarchyList_Worker {
         // Since there is a mistake in the 3rd place from the beginning, find the number of digits in this 3rd place with SubFace and advance this digit by 1.
         int mi1, mi2, mj1, mj2;
 
+        // Perform reset on all subfaces once before getting into loops.
+        int total = hierarchyList.getFacesTotal();
+        for (int i = 1; i <= SubFaceTotal; i++) {
+            s[i].reset_map(total);
+        }
+
         for (int ib = 1; ib <= orite.getNumLines() - 1; ib++) {
             for (int jb = ib + 1; jb <= orite.getNumLines(); jb++) {
                 if (otta_face_figure.parallel_overlap(ib, jb)) {
@@ -969,7 +975,6 @@ public class HierarchyList_Worker {
     //引数の４つの面を同時に含むSubFaceが1つ以上存在するなら１、しないなら０を返す。
     private boolean onaji_subFace_ni_sonzai(int im1, int im2, int im3, int im4) {
         for (int i = 1; i <= SubFaceTotal; i++) {
-			s[i].reset_map(hierarchyList.getFacesTotal());
             if (s[i].FaceId2PermutationDigit(im1) >= 1) {
                 if (s[i].FaceId2PermutationDigit(im2) >= 1) {
                     if (s[i].FaceId2PermutationDigit(im3) >= 1) {
