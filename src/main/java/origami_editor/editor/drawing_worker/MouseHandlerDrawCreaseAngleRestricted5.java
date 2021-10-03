@@ -30,9 +30,6 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
         s1.setActive(LineSegment.ActiveState.ACTIVE_B_2);
 
         d.lineStepAdd(s1);
-        LineSegment s2 = new LineSegment();
-        s2.set(s1);
-        d.lineStepAdd(s2);
     }
 
     //マウス操作(mouseMode==37　でドラッグしたとき)を行う関数--------------//System.out.println("A");--------------------------------------
@@ -42,10 +39,12 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
 
         if (d.gridInputAssist) {
             d.lineCandidate.clear();
-            d.lineCandidate.add(new LineSegment(kouho_point_A_37(syuusei_point), kouho_point_A_37(syuusei_point), d.lineColor));
+            LineSegment candidate = new LineSegment(kouho_point_A_37(syuusei_point), kouho_point_A_37(syuusei_point), d.lineColor);
+            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
+
+            d.lineCandidate.add(candidate);
             d.lineStep.get(0).setA(kouho_point_A_37(syuusei_point));
         }
-
     }
 
     //マウス操作(mouseMode==37　でボタンを離したとき)を行う関数----------------------------------------------------
@@ -66,16 +65,15 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
 
-        Point syuusei_point = new Point();
         double d_rad = 0.0;
-        d.lineStep.get(1).setA(p);
+        d.lineStep.get(0).setA(p);
 
         if (d.id_angle_system != 0) {
             d_angle_system = 180.0 / (double) d.id_angle_system;
-            d_rad = (Math.PI / 180) * d_angle_system * (int) Math.round(OritaCalc.angle(d.lineStep.get(1)) / d_angle_system);
+            d_rad = (Math.PI / 180) * d_angle_system * (int) Math.round(OritaCalc.angle(d.lineStep.get(0)) / d_angle_system);
         } else {
             double[] jk = new double[7];
-            jk[0] = OritaCalc.angle(d.lineStep.get(1));//マウスで入力した線分がX軸となす角度
+            double currentAngle = OritaCalc.angle(d.lineStep.get(0));
             jk[1] = d.d_restricted_angle_1 - 180.0;
             jk[2] = d.d_restricted_angle_2 - 180.0;
             jk[3] = d.d_restricted_angle_3 - 180.0;
@@ -85,21 +83,20 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
 
             double d_kakudo_sa_min = 1000.0;
             for (int i = 1; i <= 6; i++) {
-                if (Math.min(OritaCalc.angle_between_0_360(jk[i] - jk[0]), OritaCalc.angle_between_0_360(jk[0] - jk[i])) < d_kakudo_sa_min) {
-                    d_kakudo_sa_min = Math.min(OritaCalc.angle_between_0_360(jk[i] - jk[0]), OritaCalc.angle_between_0_360(jk[0] - jk[i]));
+                if (Math.min(OritaCalc.angle_between_0_360(jk[i] - currentAngle), OritaCalc.angle_between_0_360(currentAngle - jk[i])) < d_kakudo_sa_min) {
+                    d_kakudo_sa_min = Math.min(OritaCalc.angle_between_0_360(jk[i] - currentAngle), OritaCalc.angle_between_0_360(currentAngle - jk[i]));
                     d_rad = (Math.PI / 180) * jk[i];
                 }
             }
         }
 
-        syuusei_point.set(OritaCalc.findProjection(d.lineStep.get(1).getB(), new Point(d.lineStep.get(1).getBX() + Math.cos(d_rad), d.lineStep.get(1).getBY() + Math.sin(d_rad)), p));
-        return syuusei_point;
+        return OritaCalc.findProjection(d.lineStep.get(0).getB(), new Point(d.lineStep.get(0).getBX() + Math.cos(d_rad), d.lineStep.get(0).getBY() + Math.sin(d_rad)), p);
     }
 
     // ---
     public Point kouho_point_A_37(Point syuusei_point) {
         Point closestPoint = d.getClosestPoint(syuusei_point);
-        double zure_kakudo = OritaCalc.angle(d.lineStep.get(1).getB(), syuusei_point, d.lineStep.get(1).getB(), closestPoint);
+        double zure_kakudo = OritaCalc.angle(d.lineStep.get(0).getB(), syuusei_point, d.lineStep.get(0).getB(), closestPoint);
         boolean zure_flg = (0.00001 < zure_kakudo) && (zure_kakudo <= 359.99999);
         if (zure_flg || (syuusei_point.distance(closestPoint) > d.selectionDistance)) {
             return syuusei_point;
