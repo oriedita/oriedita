@@ -265,6 +265,7 @@ public class FoldLineSet {
     }
 
     public String setSave(Save save) {
+        circles.clear();
         circles.addAll(save.getCircles());
 
         lineSegments.clear();
