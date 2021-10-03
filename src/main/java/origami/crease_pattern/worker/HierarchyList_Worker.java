@@ -16,13 +16,16 @@ import origami_editor.tools.Camera;
 import origami.crease_pattern.PointSet;
 
 import java.awt.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 //HierarchyList: Record and utilize what kind of vertical relationship the surface of the developed view before folding will be after folding.
 public class HierarchyList_Worker {
     public double[] face_rating;
     public int[] i_face_rating;
     public SortingBox<Integer>  nbox = new SortingBox<>();//20180227 In the nbox, the id of men is paired with men_rating and sorted in ascending order of men_rating.
-    public HierarchyList hierarchyList = new HierarchyList();
+    public final HierarchyList hierarchyList = new HierarchyList();
     public int SubFaceTotal;//SubFaceの数
     //  hierarchyList[][]は折る前の展開図のすべての面同士の上下関係を1つの表にまとめたものとして扱う
     //　hierarchyList[i][j]が1なら面iは面jの上側。0なら下側。
@@ -159,7 +162,7 @@ public class HierarchyList_Worker {
         }
     }
 
-    public HierarchyListStatus HierarchyList_configure(CreasePattern_Worker orite, PointSet otta_face_figure) {
+    public HierarchyListStatus HierarchyList_configure(CreasePattern_Worker orite, PointSet otta_face_figure) throws InterruptedException {
         bb.write("           Jyougehyou_settei   step1   start ");
         HierarchyListStatus ireturn = HierarchyListStatus.UNKNOWN_1000;
         hierarchyList.setFacesTotal(otta_face_figure.getNumFaces());
@@ -232,7 +235,8 @@ public class HierarchyList_Worker {
         // Also, there are two adjacent faces im3 and im4 as the boundary of the bar jb, and when ib and jb are parallel and partially overlap, when folding is estimated.
         // The surface of the bar ib and the surface of the surface jb are not aligned with i, j, i, j or j, i, j, i. If this happens,
         // Since there is a mistake in the 3rd place from the beginning, find the number of digits in this 3rd place with SubFace and advance this digit by 1.
-        int mi1, mi2, mj1, mj2;
+
+        ExecutorService service = Executors.newCachedThreadPool();
 
         // Perform reset on all subfaces once before getting into loops.
         int total = hierarchyList.getFacesTotal();
@@ -242,23 +246,45 @@ public class HierarchyList_Worker {
 
         for (int ib = 1; ib <= orite.getNumLines() - 1; ib++) {
             for (int jb = ib + 1; jb <= orite.getNumLines(); jb++) {
-                if (otta_face_figure.parallel_overlap(ib, jb)) {
-                    mi1 = orite.lineInFaceBorder_min_request(ib);
-                    mi2 = orite.lineInFaceBorder_max_request(ib);
-                    if (mi1 != mi2) {
-                        mj1 = orite.lineInFaceBorder_min_request(jb);
-                        mj2 = orite.lineInFaceBorder_max_request(jb);
-                        if (mj1 != mj2) {
-                            if (mi1 * mi2 * mj1 * mj2 != 0) {
-                                if (onaji_subFace_ni_sonzai(mi1, mi2, mj1, mj2)) {
-                                    hierarchyList.addUEquivalenceCondition(mi1, mi2, mj1, mj2);
+                final int ibf = ib;
+                final int jbf = jb;
+                service.execute(() -> {
+                    int mi1, mi2, mj1, mj2;
+
+                    if (otta_face_figure.parallel_overlap(ibf, jbf)) {
+                        mi1 = orite.lineInFaceBorder_min_request(ibf);
+                        mi2 = orite.lineInFaceBorder_max_request(ibf);
+                        if (mi1 != mi2) {
+                            mj1 = orite.lineInFaceBorder_min_request(jbf);
+                            mj2 = orite.lineInFaceBorder_max_request(jbf);
+                            if (mj1 != mj2) {
+                                if (mi1 * mi2 * mj1 * mj2 != 0) {
+                                    if (onaji_subFace_ni_sonzai(mi1, mi2, mj1, mj2)) {
+                                        hierarchyList.addUEquivalenceCondition(mi1, mi2, mj1, mj2);
+                                    }
                                 }
                             }
                         }
                     }
-                }
+                });
+
+                if (Thread.interrupted()) throw new InterruptedException();
             }
         }
+
+        // Done adding tasks, shut down ExecutorService
+        service.shutdown();
+        try {
+            if (!service.awaitTermination(60, TimeUnit.SECONDS)) {
+                throw new RuntimeException("HierarchyList_configure did not finish!");
+            }
+        } catch (InterruptedException e) {
+            service.shutdownNow();
+            if (!service.awaitTermination(60, TimeUnit.SECONDS)) {
+                throw new RuntimeException("HierarchyList_configure did not exit!");
+            }
+        }
+
         System.out.print("４面が関与する突き抜け条件の数　＝　");
         System.out.println(hierarchyList.getUEquivalenceConditionTotal());
 
@@ -347,13 +373,7 @@ public class HierarchyList_Worker {
         //System.out.println("------------" );
         System.out.println("上下表職人内　Smensuu = " + SubFaceTotal);
         System.out.println("上下表職人内　s0に優先順位をつける");
-        for (int i = 1; i <= SubFaceTotal; i++) {
-            System.out.println(s0_no_yusenjyun[i]);
-        }
         System.out.println("上下表職人内　優先度からs0のid");
-        for (int i = 1; i <= SubFaceTotal; i++) {
-            System.out.println(yusenjyun_kara_s0id[i]);
-        }
 
 
         for (int i = 1; i <= SubFaceTotal; i++) {

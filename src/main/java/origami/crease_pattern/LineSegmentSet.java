@@ -168,6 +168,8 @@ public class LineSegmentSet {
                                     k_flg.set(i, true);
                                 }
                             }
+
+                            if (Thread.interrupted()) throw new InterruptedException();
                         }
                     }
                 }

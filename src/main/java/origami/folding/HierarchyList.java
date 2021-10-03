@@ -5,6 +5,8 @@ import origami.folding.util.EquivalenceCondition;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class HierarchyList {//This class is used to record and utilize the hierarchical relationship of faces when folded.
     int facesTotal;             //Number of faces in the unfolded view before folding
@@ -16,7 +18,7 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     HierarchyListCondition[][] hierarchyList;
     HierarchyListCondition[][] hierarchyList_copy;
     ArrayList<EquivalenceCondition> tL = new ArrayList<>();
-    ArrayList<EquivalenceCondition> uL = new ArrayList<>();
+    Queue<EquivalenceCondition> uL = new ConcurrentLinkedQueue<>();
 
     // This is tL grouped by `a`, to speed things up.
     Map<Integer, ArrayList<EquivalenceCondition>> tLMap = new HashMap<>();
