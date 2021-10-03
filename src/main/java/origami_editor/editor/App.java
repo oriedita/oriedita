@@ -1,5 +1,9 @@
 package origami_editor.editor;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.PropertyException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
@@ -24,6 +28,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
+import java.awt.print.Book;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -963,8 +968,12 @@ public class App extends JFrame implements ActionListener {
 
         try {
             if (file.getName().endsWith(".ori")) {
-                try (FileInputStream fis = new FileInputStream(file); ObjectInputStream ois = new ObjectInputStream(fis)) {
-                    save = (Save) ois.readObject();
+                try {
+                    JAXBContext context = JAXBContext.newInstance(Save.class);
+                    return (Save) context.createUnmarshaller()
+                            .unmarshal(new FileReader(file));
+                } catch (JAXBException e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -980,7 +989,7 @@ public class App extends JFrame implements ActionListener {
                 save = Orh.importFile(file);
             }
 
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             System.out.println(e);
 
             JOptionPane.showMessageDialog(this, "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
@@ -1027,12 +1036,12 @@ public class App extends JFrame implements ActionListener {
 
     void saveAndName2File(Save save, File fname) {
         try {
-            try (FileOutputStream bos = new FileOutputStream(fname);
-                 ObjectOutputStream out = new ObjectOutputStream(bos)) {
-                out.writeObject(save);
-            }
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
+            JAXBContext context = JAXBContext.newInstance(Save.class);
+            Marshaller mar= context.createMarshaller();
+            mar.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            mar.marshal(save, fname);
+        } catch (JAXBException e) {
+            e.printStackTrace();
         }
     }
 

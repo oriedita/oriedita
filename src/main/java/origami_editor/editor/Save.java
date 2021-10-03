@@ -1,5 +1,7 @@
 package origami_editor.editor;
 
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -12,6 +14,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@XmlRootElement
 public class Save implements Serializable {
     private String version;
     private List<LineSegment> lineSegments;
@@ -50,6 +53,7 @@ public class Save implements Serializable {
         return points;
     }
 
+    @XmlElement
     public void setPoints(List<Point> points) {
         this.points = points;
     }
@@ -58,6 +62,7 @@ public class Save implements Serializable {
         return creasePatternCamera;
     }
 
+    @XmlElement
     public void setCreasePatternCamera(Camera creasePatternCamera) {
         this.creasePatternCamera = creasePatternCamera;
     }
@@ -66,6 +71,7 @@ public class Save implements Serializable {
         return title;
     }
 
+    @XmlElement
     public void setTitle(String title) {
         this.title = title;
     }
@@ -82,6 +88,7 @@ public class Save implements Serializable {
         return lineSegments;
     }
 
+    @XmlElement
     public void setLineSegments(List<LineSegment> lineSegments) {
         this.lineSegments = lineSegments;
     }
@@ -90,6 +97,7 @@ public class Save implements Serializable {
         return circles;
     }
 
+    @XmlElement
     public void setCircles(List<Circle> circles) {
         this.circles = circles;
     }
@@ -112,6 +120,7 @@ public class Save implements Serializable {
         return canvasModel;
     }
 
+    @XmlElement
     public void setCanvasModel(CanvasModel canvasModel) {
         this.canvasModel = canvasModel;
     }
@@ -120,6 +129,7 @@ public class Save implements Serializable {
         return gridModel;
     }
 
+    @XmlElement
     public void setGridModel(GridModel gridModel) {
         this.gridModel = gridModel;
     }
@@ -128,6 +138,7 @@ public class Save implements Serializable {
         return foldedFigureModel;
     }
 
+    @XmlElement
     public void setFoldedFigureModel(FoldedFigureModel foldedFigureModel) {
         this.foldedFigureModel = foldedFigureModel;
     }
@@ -136,6 +147,7 @@ public class Save implements Serializable {
         return auxLineSegments;
     }
 
+    @XmlElement
     public void setAuxLineSegments(List<LineSegment> auxLineSegments) {
         this.auxLineSegments = auxLineSegments;
     }

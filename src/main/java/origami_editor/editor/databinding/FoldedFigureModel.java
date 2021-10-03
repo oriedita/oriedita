@@ -1,5 +1,7 @@
 package origami_editor.editor.databinding;
 
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import origami_editor.editor.adapter.ColorAdapter;
 import origami_editor.editor.folded_figure.FoldedFigure;
 
 import java.awt.*;
@@ -114,6 +116,7 @@ public class FoldedFigureModel implements Serializable {
         return frontColor;
     }
 
+    @XmlJavaTypeAdapter(ColorAdapter.class)
     public void setFrontColor(Color frontColor) {
         Color oldFrontColor = this.frontColor;
         this.frontColor = frontColor;
@@ -124,6 +127,7 @@ public class FoldedFigureModel implements Serializable {
         return backColor;
     }
 
+    @XmlJavaTypeAdapter(ColorAdapter.class)
     public void setBackColor(Color backColor) {
         Color oldFrontColor = this.backColor;
         this.backColor = backColor;
@@ -134,6 +138,7 @@ public class FoldedFigureModel implements Serializable {
         return lineColor;
     }
 
+    @XmlJavaTypeAdapter(ColorAdapter.class)
     public void setLineColor(Color lineColor) {
         Color oldFrontColor = this.lineColor;
         this.lineColor = lineColor;

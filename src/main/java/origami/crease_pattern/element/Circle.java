@@ -1,5 +1,9 @@
 package origami.crease_pattern.element;
 
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import origami_editor.editor.adapter.ColorAdapter;
+
 import java.awt.Color;
 import java.io.Serializable;
 
@@ -131,12 +135,18 @@ public class Circle implements Serializable {//Used to represent point coordinat
         customized = i;
     }
 
+    @XmlElement
+    @XmlJavaTypeAdapter(ColorAdapter.class)
     public Color getCustomizedColor() {
         return customizedColor;
     }
 
     public void setCustomizedColor(Color c0) {
         customizedColor = c0;
+    }
+
+    public double getR() {
+        return r;
     }
 
     public Point getCenter() {

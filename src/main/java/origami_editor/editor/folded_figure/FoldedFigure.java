@@ -1,5 +1,6 @@
 package origami_editor.editor.folded_figure;
 
+import jakarta.xml.bind.annotation.XmlType;
 import origami_editor.editor.App;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami.crease_pattern.worker.WireFrame_Worker;
@@ -1093,6 +1094,7 @@ public class FoldedFigure {
         STEP_10,
     }
 
+    @XmlType(name = "FoldedFigureState")
     public enum State {
         FRONT_0,
         BACK_1,

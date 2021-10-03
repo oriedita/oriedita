@@ -1,5 +1,8 @@
 package origami.crease_pattern.element;
 
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import origami_editor.editor.adapter.ColorAdapter;
+
 import java.awt.Color;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -285,6 +288,7 @@ public class LineSegment implements Serializable, Cloneable {
         return customizedColor;
     }
 
+    @XmlJavaTypeAdapter(ColorAdapter.class)
     public void setCustomizedColor(Color c0) {
         customizedColor = c0;
     }

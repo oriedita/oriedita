@@ -1,8 +1,10 @@
 package origami_editor.editor.databinding;
 
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
+import origami_editor.editor.adapter.ColorAdapter;
 import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
 
 import java.awt.*;
@@ -95,6 +97,7 @@ public class CanvasModel implements Serializable {
         this.pcs.firePropertyChange("selectPersistent", oldSelectPersistent, selectPersistent);
     }
 
+    @XmlJavaTypeAdapter(ColorAdapter.class)
     public Color getCircleCustomizedColor() {
         return circleCustomizedColor;
     }

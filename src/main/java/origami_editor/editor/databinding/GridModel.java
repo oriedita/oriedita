@@ -1,5 +1,7 @@
 package origami_editor.editor.databinding;
 
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import origami_editor.editor.adapter.ColorAdapter;
 import origami_editor.graphic2d.grid.Grid;
 import origami.crease_pattern.OritaCalc;
 
@@ -63,6 +65,7 @@ public class GridModel implements Serializable {
         return gridColor;
     }
 
+    @XmlJavaTypeAdapter(ColorAdapter.class)
     public void setGridColor(Color newGridColor) {
         Color oldGridColor = this.gridColor;
         this.gridColor = newGridColor;
@@ -74,6 +77,7 @@ public class GridModel implements Serializable {
         return gridScaleColor;
     }
 
+    @XmlJavaTypeAdapter(ColorAdapter.class)
     public void setGridScaleColor(Color newGridScaleColor) {
         Color oldGridScaleColor = this.gridScaleColor;
         this.gridScaleColor = newGridScaleColor;
