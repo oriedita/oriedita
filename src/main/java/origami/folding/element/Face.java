@@ -57,6 +57,10 @@ public class Face {
         return pointIdList.get(i);
     }
 
+    public boolean containsPointId(int i) {
+        return pointIdList.contains(i);
+    }
+
     private void replace() { //Replace the value of pointIdList[n + 1] with the value of pointId[n]. The value of PointId[1] should be the last PointId
         for (int i = 1; i <= numPoints; i++) {
             pointIdList.set(i - 1, getPointId(i));

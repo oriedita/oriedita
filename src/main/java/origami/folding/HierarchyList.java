@@ -92,11 +92,7 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     // The surface im located at the position where it overlaps a part of the bar ib is not sandwiched between the surface im1 and the surface im2 in the vertical direction. From this
     // The equivalent condition of gj [im1] [im] = gj [im2] [im] is satisfied.
     public void addEquivalenceCondition(int ai, int bi, int ci, int di) {
-        ArrayList<EquivalenceCondition> tL_ai = tLMap.get(ai);
-        if (tL_ai == null) {
-            tL_ai = new ArrayList<>();
-            tLMap.put(ai, tL_ai);
-        }
+        ArrayList<EquivalenceCondition> tL_ai = tLMap.computeIfAbsent(ai, k -> new ArrayList<>());
         EquivalenceCondition ec = new EquivalenceCondition(ai, bi, ci, di);
         tL_ai.add(ec);
         tL.add(ec);

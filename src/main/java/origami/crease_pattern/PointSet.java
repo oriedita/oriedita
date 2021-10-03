@@ -424,14 +424,14 @@ public class PointSet {
         int nextT;
 
         nextT = getRPoint(tempFace.getPointId(1), tempFace.getPointId(2));
-        while (nextT != tempFace.getPointId(1)) {
+        do {
             if (nextT == 0) {
                 tempFace.reset();
                 return tempFace;
             }//エラー時の対応
             tempFace.addPointId(nextT);
             nextT = getRPoint(tempFace.getPointId(tempFace.getNumPoints() - 1), tempFace.getPointId(tempFace.getNumPoints()));
-        }
+        } while (!tempFace.containsPointId(nextT));
         tempFace.align();
         return tempFace;
     }
