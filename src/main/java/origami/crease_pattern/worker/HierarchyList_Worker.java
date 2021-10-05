@@ -3,6 +3,7 @@ package origami.crease_pattern.worker;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.HierarchyList;
+import origami.folding.util.BounceDetector;
 import origami.folding.util.EquivalenceCondition;
 import origami.folding.element.SubFace;
 import origami.crease_pattern.element.LineSegment;
@@ -53,6 +54,8 @@ public class HierarchyList_Worker {
     int makesuu0no_menno_amount = 0;//Number of faces that can be ranked without any other faces on top
     int makesuu1ijyouno_menno_amount = 0;//Number of faces that can only be ranked if there is one or more other faces on top
     private int top_face_id_ga_maketa_kazu_goukei_without_rated_face = 0;
+
+	BounceDetector bounceDetector = new BounceDetector();
 
     public HierarchyList_Worker(BulletinBoard bb0) {
         bb = bb0;
@@ -1020,17 +1023,15 @@ public class HierarchyList_Worker {
         }
         //The overlapping state of the surfaces is changed in order from the one with the largest id number of the SubFace.
         subfaceId = ss;
-        for (int i = ss; i >= 1; i--) {
-            if (isusumu == 0) {
-                isusumu = s[i].next(s[i].getFaceIdCount());
-                subfaceId = i;
-            }
-
+        for (int i = ss; i >= 1 && isusumu == 0; i--) {
+            isusumu = s[i].next(s[i].getFaceIdCount());
+            subfaceId = i;
         }
         if (isusumu == 0) {
-            subfaceId = 0;
+            return 0;
         }
 
+        bounceDetector.recordLow(subfaceId);
         return subfaceId;
     }
 
@@ -1062,6 +1063,8 @@ public class HierarchyList_Worker {
             Sid = next(ms - 1);
             bb.rewrite(9, "susumu(" + ms + "-1 = )" + Sid);
 
+			bounceDetector.checkAndSwap(s);
+
             if (Thread.interrupted()) throw new InterruptedException();
         }
         return 0;//There is no possible overlapping state
@@ -1085,6 +1088,7 @@ public class HierarchyList_Worker {
 
 
             if (kks == 0) {//kks == 0 means that there is no permutation that can overlap
+				bounceDetector.recordHigh(ss);
                 return ss;
             }
             s[ss].hierarchyList_at_subFace_wo_input(hierarchyList);//Enter the top and bottom information of the ss th SubFace in hierarchyList.
