@@ -2,7 +2,10 @@ package origami_editor.editor.component;
 
 import origami_editor.editor.App;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class BulletinBoard {
 
@@ -20,10 +23,19 @@ public class BulletinBoard {
     String s08 = "";
     String s09 = "";
     String s10 = "";
-    App app;
 
-    public BulletinBoard(App app0) {
-        app = app0;
+    java.util.List<ChangeListener> listener;
+
+    public BulletinBoard() {
+        listener = new ArrayList<>();
+    }
+
+    public void addChangeListener(ChangeListener changeListener) {
+        listener.add(changeListener);
+    }
+
+    public void removeChangeListener(ChangeListener changeListener) {
+        listener.remove(changeListener);
     }
 
     //input
@@ -131,7 +143,9 @@ public class BulletinBoard {
     }
 
     public void repaint() {
-        app.repaint();
+        for (ChangeListener changeListener : listener) {
+            changeListener.stateChanged(new ChangeEvent(this));
+        }
     }
 
     public void draw(Graphics g) {

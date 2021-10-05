@@ -4,6 +4,7 @@ import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
+import origami_editor.editor.drawing_worker.MouseHandlerModifyCalculatedShape;
 
 import java.awt.*;
 import java.beans.PropertyChangeListener;
@@ -44,6 +45,17 @@ public class CanvasModel implements Serializable {
     private SelectionOperationMode selectionOperationMode;
     private int foldLineDividingNumber;
     private int numPolygonCorners;
+    private MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode foldedFigureOperationMode;
+
+    public MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode getFoldedFigureOperationMode() {
+        return foldedFigureOperationMode;
+    }
+
+    public void setFoldedFigureOperationMode(MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode foldedFigureOperationMode) {
+        MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode oldI_foldedFigure_operation_mode = this.foldedFigureOperationMode;
+        this.foldedFigureOperationMode = foldedFigureOperationMode;
+        this.pcs.firePropertyChange("foldedFigureOperationMode", oldI_foldedFigure_operation_mode, foldedFigureOperationMode);
+    }
 
     public boolean isCkbox_add_frame_SelectAnd3click_isSelected() {
         return ckbox_add_frame_SelectAnd3click_isSelected;

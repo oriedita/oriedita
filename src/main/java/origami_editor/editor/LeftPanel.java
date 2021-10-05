@@ -534,7 +534,7 @@ public class LeftPanel {
             app.repaintCanvas();
         });
         drawTwoColoredCpButton.addActionListener(e -> {
-            app.Ss0 = app.mainDrawingWorker.getForSelectFolding();
+            app.lineSegmentsForFolding = app.mainDrawingWorker.getForSelectFolding();
 
             if (app.mainDrawingWorker.getFoldLineTotalForSelectFolding() == 0) {        //折り線選択無し
                 app.twoColorNoSelectedPolygonalLineWarning();//Warning: There is no selected polygonal line

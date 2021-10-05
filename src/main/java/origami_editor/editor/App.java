@@ -56,10 +56,10 @@ public class App extends JFrame implements ActionListener {
     public final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
     public final DrawingWorker mainDrawingWorker = new DrawingWorker(this);    // Basic branch craftsman. Accepts input from the mouse.
     final Queue<Popup> popups = new ArrayDeque<>();
-    public FoldedFigure temp_OZ = new FoldedFigure(this);    //Folded figure
+    public FoldedFigure temp_OZ;    //Folded figure
     public FoldedFigure OZ;    //Current Folded figure
-    public LineSegmentSet Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
-    public BulletinBoard bulletinBoard = new BulletinBoard(this);
+    public LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public BulletinBoard bulletinBoard = new BulletinBoard();
     public MouseMode mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;//Defines the response to mouse movements. If it is 1, the line segment input mode. If it is 2, adjust the development view (move). If it is 101, operate the folded figure.
     // ------------------------------------------------------------------------
     public Point point_of_referencePlane_old = new Point(); //ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
@@ -191,6 +191,9 @@ public class App extends JFrame implements ActionListener {
         Editor editor = new Editor(this);
 
         canvas = editor.getCanvas();
+
+        temp_OZ = new FoldedFigure(bulletinBoard);
+        bulletinBoard.addChangeListener(e -> repaint());
 
         canvas.creasePatternCamera.setCameraPositionX(0.0);
         canvas.creasePatternCamera.setCameraPositionY(0.0);
@@ -489,9 +492,9 @@ public class App extends JFrame implements ActionListener {
                 drawingWorker2.overlapping_line_removal();
                 drawingWorker2.branch_trim(0.000001);
                 drawingWorker2.organizeCircles();
-                Ss0 = drawingWorker2.getForFolding();
+                lineSegmentsForFolding = drawingWorker2.getForFolding();
             } else {
-                Ss0 = mainDrawingWorker.getForSelectFolding();
+                lineSegmentsForFolding = mainDrawingWorker.getForSelectFolding();
             }
 
             point_of_referencePlane_old.set(OZ.cp_worker1.get_point_of_referencePlane_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
@@ -523,7 +526,7 @@ public class App extends JFrame implements ActionListener {
     }
 
     public void addNewFoldedFigure() {
-        foldedFigures.add(new FoldedFigure_01(this));
+        foldedFigures.add(new FoldedFigure_01(bulletinBoard));
     }
 
     public void twoColorNoSelectedPolygonalLineWarning() {
@@ -1054,11 +1057,11 @@ public class App extends JFrame implements ActionListener {
     }
 
     public void folding_estimated() throws InterruptedException {
-        OZ.folding_estimated(canvas.creasePatternCamera, Ss0);
+        OZ.folding_estimated(canvas.creasePatternCamera, lineSegmentsForFolding, point_of_referencePlane_old);
     }
 
     public void createTwoColorCreasePattern() throws InterruptedException {//Two-color crease pattern
-        OZ.createTwoColorCreasePattern(canvas.creasePatternCamera, Ss0);
+        OZ.createTwoColorCreasePattern(canvas.creasePatternCamera, lineSegmentsForFolding);
     }
 
     public void stopTask() {
