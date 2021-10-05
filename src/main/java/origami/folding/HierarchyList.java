@@ -85,8 +85,8 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     }
 
     public Iterable<EquivalenceCondition> getEquivalenceConditions(int a) {
-		return tLMap.get(a);
-	}
+        return tLMap.get(a);
+    }
 
     // Add equivalence condition. When there are two adjacent faces im1 and im2 as the boundary of the bar ib, when the folding is estimated
     // The surface im located at the position where it overlaps a part of the bar ib is not sandwiched between the surface im1 and the surface im2 in the vertical direction. From this
