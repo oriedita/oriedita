@@ -11,6 +11,7 @@ import origami_editor.editor.drawing_worker.*;
 import origami_editor.editor.export.Cp;
 import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
+import origami_editor.editor.export.Svg;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.editor.task.CheckCAMVTask;
@@ -801,15 +802,24 @@ public class App extends JFrame implements ActionListener {
 
     void writeImage() {
         exportFile = selectExportFile();
-        flg61 = false;
-        if ((mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (mainDrawingWorker.getDrawingStage() == 4)) {
-            flg61 = true;
-            mainDrawingWorker.setDrawingStage(0);
+
+        if (exportFile == null) {
+            return;
         }
 
-        if (exportFile != null) {
+        if (exportFile.getName().endsWith(".png") || exportFile.getName().endsWith(".jpg") || exportFile.getName().endsWith(".jpeg") || exportFile.getName().endsWith(".svg")) {
+            flg61 = false;
+            if ((mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (mainDrawingWorker.getDrawingStage() == 4)) {
+                flg61 = true;
+                mainDrawingWorker.setDrawingStage(0);
+            }
+
             canvas.flg_wi = true;
             repaintCanvas();//Necessary to not export the green border
+        } else if (exportFile.getName().endsWith(".cp")) {
+            memoAndName2File(Cp.exportFile(mainDrawingWorker.getSave_for_export()), exportFile);
+        } else if (exportFile.getName().endsWith(".orh")) {
+            memoAndName2File(Orh.exportFile(mainDrawingWorker.getSave_for_export()), exportFile);
         }
     }
 
@@ -911,7 +921,6 @@ public class App extends JFrame implements ActionListener {
 
         if (selectedFile != null) {
             fileModel.setDefaultDirectory(selectedFile.getParent());
-            fileModel.setSavedFileName(selectedFile.getAbsolutePath());
         }
 
         return selectedFile;
