@@ -12,8 +12,8 @@ import origami.folding.element.SubFace;
  * not optimal, leading to a phenomenon I called "bouncing", where the search
  * hits a dead-end at a certain depth (H) and have to return to another certain
  * depth (L) repeatedly. This suggests that SubFace H is more "relevant" to
- * those SubFaces before L, so by swapping H and L typically leads to much
- * faster search.
+ * those SubFaces before L, so swapping H and L typically leads to a much faster
+ * search.
  * 
  * This BounceDetector class detects the bouncing phenomenon based on some
  * sensitivity constants and makes the swap when it detects one. A direct
@@ -22,7 +22,7 @@ import origami.folding.element.SubFace;
  * 
  * Although this technique in general greatly shortens the runtime for any
  * model, in some cases it takes a while to detect some less obvious or deeply
- * buried bouncing, and to improve those will take greater understanding to the
+ * buried bouncing. To improve those will take a greater understanding of the
  * Orihime algorithm.
  */
 public class BounceDetector {
@@ -58,9 +58,9 @@ public class BounceDetector {
 
 	/** Performs the swap if bouncing is detected. */
 	public void checkAndSwap(SubFace[] s) {
-		// We require that the difference is greater than 1;
-		// it won't make sense otherwise.
-		int max = 1;
+		// Previously it was required that the difference is greater than 1,
+		// but it turns out that it is not necessary.
+		int max = 0;
 		int H = 0, L = 0;
 
 		// Find the best matching
