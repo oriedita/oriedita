@@ -9,6 +9,7 @@ import origami_editor.editor.Save;
 import origami.folding.element.Face;
 import origami.crease_pattern.element.Line;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
  *
  * Every line can be part of a line and/or a face.
  */
-public class PointSet {
+public class PointSet implements Serializable {
     int numFaces_temp;
 
     int numPoints;               //Total number of points actually used

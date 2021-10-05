@@ -3,6 +3,7 @@ package origami.folding.element;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.Point;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  * @see Point
  * @see PointSet
  */
-public class Face {
+public class Face implements Serializable {
     // 1-indexed list
     ArrayList<Integer> pointIdList = new ArrayList<>();
 
