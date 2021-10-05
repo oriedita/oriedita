@@ -498,7 +498,7 @@ public class FoldedFigure {
         //cp_worker2が折りあがった形を少しだけ変形したいような場合に働く。
         //It works when you want to slightly deform the folded shape of cp_worker2.
         cp_worker2.set(cp_worker1.folding());
-        app.bulletinBoard.write("<<<<oritatami_suitei_02; end");
+        bulletinBoard.write("<<<<oritatami_suitei_02; end");
 
         if (Thread.interrupted()) throw new InterruptedException();
 
@@ -513,7 +513,7 @@ public class FoldedFigure {
         System.out.println("＜＜＜＜＜oritatami_suitei_02;開始");
         bulletinBoard.write("<<<<oritatami_suitei_02;  start");
         cp_worker2.set(cp_worker1.surface_position_request());
-        app.bulletinBoard.write("<<<<oritatami_suitei_02; end");
+        bulletinBoard.write("<<<<oritatami_suitei_02; end");
 
         if (Thread.interrupted()) throw new InterruptedException();
 
@@ -572,7 +572,7 @@ public class FoldedFigure {
 
     public int folding_estimated_05() throws InterruptedException {
         System.out.println("＜＜＜＜＜oritatami_suitei_05()_____上下表職人ct_workerがct_worker.kanou_kasanari_sagasi()実施。");
-        app.bulletinBoard.write("<<<<oritatami_suitei_05()  ___ct_worker.kanou_kasanari_sagasi()  start");
+        bulletinBoard.write("<<<<oritatami_suitei_05()  ___ct_worker.kanou_kasanari_sagasi()  start");
 
         if ((estimationStep == EstimationStep.STEP_4) || (estimationStep == EstimationStep.STEP_5)) {
             if (findAnotherOverlapValid) {
@@ -586,7 +586,7 @@ public class FoldedFigure {
                 ip5 = ct_worker.next(ct_worker.getSubFace_valid_number());// Preparation for the next overlap // If ip5 = 0, there was no room for new susumu. If non-zero, the smallest number of changed SubFace ids
             }
         }
-        app.bulletinBoard.clear();
+        bulletinBoard.clear();
 
         text_result = "Number of found solutions = " + discovered_fold_cases + "  ";
         findAnotherOverlapValid = (ip2_possibleOverlap == 1000) && (ip5 > 0);
