@@ -1,5 +1,6 @@
 package origami.crease_pattern;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -9,6 +10,7 @@ import origami_editor.editor.Save;
 import origami.folding.element.Face;
 import origami.crease_pattern.element.Line;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +19,7 @@ import java.util.List;
  *
  * Every line can be part of a line and/or a face.
  */
-public class PointSet {
+public class PointSet implements Serializable {
     int numFaces_temp;
 
     int numPoints;               //Total number of points actually used
@@ -26,23 +28,35 @@ public class PointSet {
 
     Point_p[] points;//Instantiation of points
     Line[] lines;//Instantiation of lines
+    @JsonIgnore
     int[] lineInFaceBorder_min;
+    @JsonIgnore
     int[] lineInFaceBorder_max;
 
     Face[] faces; //Face instantiation
 
+    @JsonIgnore
     double[] line_x_max;
+    @JsonIgnore
     double[] line_x_min;
+    @JsonIgnore
     double[] line_y_max;
+    @JsonIgnore
     double[] line_y_min;
 
+    @JsonIgnore
     double[] face_x_max;
+    @JsonIgnore
     double[] face_x_min;
+    @JsonIgnore
     double[] face_y_max;
+    @JsonIgnore
     double[] face_y_min;
 
+    @JsonIgnore
     List<List<Integer>> point_linking;//point_linking [i] [j] is the number of points connected to t [i]. The number of Tem is stored in t [0].
 
+    @JsonIgnore
     int[][] face_adjacent;//face_adjacent [i] [j] is the Line number at the boundary between m [i] and m [j]. Stores 0 when m [i] and m [j] are not adjacent.
 
     public PointSet() {

@@ -34,6 +34,29 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.origin-energy</groupId>
+            <artifactId>java-snapshot-testing-junit5</artifactId>
+            <version>3.2.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.26</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.origin-energy</groupId>
+            <artifactId>java-snapshot-testing-plugin-jackson</artifactId>
+            <version>3.2.5</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <properties>
@@ -85,6 +108,11 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
             </plugin>
         </plugins>
     </build>

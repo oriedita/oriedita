@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: io.github.origin-energy:java-snapshot-testing-plugin-jackson:3.2.5">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/github/origin-energy/java-snapshot-testing-plugin-jackson/3.2.5/java-snapshot-testing-plugin-jackson-3.2.5.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/io/github/origin-energy/java-snapshot-testing-plugin-jackson/3.2.5/java-snapshot-testing-plugin-jackson-3.2.5-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/github/origin-energy/java-snapshot-testing-plugin-jackson/3.2.5/java-snapshot-testing-plugin-jackson-3.2.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,9 +1,11 @@
 package origami.crease_pattern.element;
 
+import java.io.Serializable;
+
 /**
  * A line from a point to a point, begin and end refer to points in a PointSet
  */
-public class Line {
+public class Line implements Serializable {
     int begin;
     int end;
     LineColor color;//If it is 0, there is no mountain valley. If 1, it's a mountain. If it is 2, it is a valley.
