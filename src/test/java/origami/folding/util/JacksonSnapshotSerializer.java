@@ -3,7 +3,7 @@
 // (powered by FernFlower decompiler)
 //
 
-package origami.folding;
+package origami.folding.util;
 
 import au.com.origin.snapshots.exceptions.SnapshotExtensionException;
 import au.com.origin.snapshots.serializers.SerializerType;
@@ -14,7 +14,6 @@ import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.core.util.Separators;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter.Indenter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;

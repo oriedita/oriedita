@@ -1,4 +1,4 @@
-origami.folding.FoldingTest.testSimpleCreasePattern=[
+origami.folding.FoldingTest.testFoldBirdbase=[
   {
     "numFaces_temp": 103,
     "numPoints": 5,
