@@ -3,8 +3,8 @@ package origami.crease_pattern.worker;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.HierarchyList;
+import origami.folding.algorithm.AdditionalEstimationAlgorithm;
 import origami.folding.util.BounceDetector;
-import origami.folding.util.EquivalenceCondition;
 import origami.folding.element.SubFace;
 import origami.crease_pattern.element.LineSegment;
 import origami_editor.graphic2d.oritaoekaki.OritaDrawing;
@@ -167,7 +167,7 @@ public class HierarchyList_Worker {
 
     public HierarchyListStatus HierarchyList_configure(CreasePattern_Worker orite, PointSet otta_face_figure) throws InterruptedException {
         bb.write("           Jyougehyou_settei   step1   start ");
-        HierarchyListStatus ireturn = HierarchyListStatus.UNKNOWN_1000;
+        HierarchyListStatus ireturn = HierarchyListStatus.SUCCESSFUL_1000;
         hierarchyList.setFacesTotal(otta_face_figure.getNumFaces());
 
         //Put the hierarchical relationship determined from the information of mountain folds and valley folds in the table above and below.
@@ -179,22 +179,22 @@ public class HierarchyList_Worker {
             if (faceId_min != faceId_max) {//In the developed view, there are faces on both sides of the rod ib.
                 if (otta_face_figure.getColor(ib) == LineColor.RED_1) {//Red line means mountain fold
                     if (orite.getIFacePosition(faceId_min) % 2 == 1) {//The surface Mid_min has the same orientation as the reference surface (the surface faces up)
-                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                        hierarchyList.set(faceId_max, faceId_min, HierarchyList.HierarchyListCondition.UNKNOWN_0);
+                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.HierarchyListCondition.ABOVE_1);
+                        hierarchyList.set(faceId_max, faceId_min, HierarchyList.HierarchyListCondition.BELOW_0);
                     }
                     if (orite.getIFacePosition(faceId_max) % 2 == 1) {//The surface Mid_max has the same orientation as the reference surface (the surface faces up)
-                        hierarchyList.set(faceId_max, faceId_min, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.HierarchyListCondition.UNKNOWN_0);
+                        hierarchyList.set(faceId_max, faceId_min, HierarchyList.HierarchyListCondition.ABOVE_1);
+                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.HierarchyListCondition.BELOW_0);
                     }
                 }
                 if (otta_face_figure.getColor(ib) == LineColor.BLUE_2) {//The blue line means valley fold
                     if (orite.getIFacePosition(faceId_min) % 2 == 1) {//面Mid_minは基準面と同じ向き(表面が上を向く)
-                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                        hierarchyList.set(faceId_max, faceId_min, HierarchyList.HierarchyListCondition.UNKNOWN_1);
+                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.HierarchyListCondition.BELOW_0);
+                        hierarchyList.set(faceId_max, faceId_min, HierarchyList.HierarchyListCondition.ABOVE_1);
                     }
                     if (orite.getIFacePosition(faceId_max) % 2 == 1) {//面Mid_maxは基準面と同じ向き(表面が上を向く)
-                        hierarchyList.set(faceId_max, faceId_min, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.HierarchyListCondition.UNKNOWN_1);
+                        hierarchyList.set(faceId_max, faceId_min, HierarchyList.HierarchyListCondition.BELOW_0);
+                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.HierarchyListCondition.ABOVE_1);
                     }
                 }
 
@@ -295,7 +295,7 @@ public class HierarchyList_Worker {
         //Additional estimation
 
         HierarchyListStatus additional = additional_estimation();
-        if (additional != HierarchyListStatus.UNKNOWN_1000) {
+        if (additional != HierarchyListStatus.SUCCESSFUL_1000) {
             return additional;
         }
 
@@ -416,555 +416,11 @@ public class HierarchyList_Worker {
     }
 
     public HierarchyListStatus additional_estimation() {
-        //We will infer relationships that can be further determined from the information on mountain folds and valley folds. 。
+        // We will infer relationships that can be further determined from the
+        // information on mountain folds and valley folds.
 
-        int Mid;//The side that comes in the middle when comparing the three sides
-        int flg_c = 1;
-        System.out.println("追加推定開始---------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
-
-        while (flg_c >= 1) {
-            flg_c = 0;
-            System.out.println("追加推定------------------------");
-
-            int flg_b = 1;
-            while (flg_b >= 1) {
-                flg_b = 0;
-
-                for (int iS = 1; iS <= SubFaceTotal; iS++) {
-
-                    int flg_a = 1;
-                    while (flg_a >= 1) {
-                        flg_a = 0;
-                        for (int iM = 1; iM <= s0[iS].getFaceIdCount(); iM++) {//3面の比較で中間にくる面
-                            int[] ueMenid = new int[s0[iS].getFaceIdCount() + 1];//S面に含まれるあるMenの上がわにあるid番号を記録する。これが20ということは、
-                            int[] sitaMenid = new int[s0[iS].getFaceIdCount() + 1];//S面に含まれるあるMenの下がわにあるid番号を記録する。これが20ということは、
-                            int ueMenid_max = 0;
-                            int sitaMenid_max = 0;
-                            Mid = s0[iS].getFaceId(iM);
-
-                            // Thinking: Think about a certain side Mid of a certain SubFace.
-                            // Other than this SubFace, it is assumed that surface A is above the surface Mid and surface B is below the surface Mid.
-                            // Generally, in separate SubFace, surface A cannot be determined to be above surface B just because surface A is above surface Mid and surface B is below surface Mid.
-                            // However, this is the point, but if there is a SubFace that includes surface A, surface Mid, and surface B together, even if you do not know the hierarchical relationship of that SubFace
-                            // Surface A is above surface B. So, the information we get from SubFace in this operation is whether there are three sides together.
-                            // There is no need for a hierarchical relationship within a SubFace.
-                            // //
-                            // The operation here is collecting the hierarchical relationship of a certain SubFace from the upper and lower tables.
-                            for (int i = 1; i <= s0[iS].getFaceIdCount(); i++) {//Menid[iM]より上にある面。
-                                if (iM != i) {
-                                    if (hierarchyList.get(Mid, s0[iS].getFaceId(i)) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
-                                        ueMenid_max = ueMenid_max + 1;
-                                        ueMenid[ueMenid_max] = s0[iS].getFaceId(i);
-                                    }
-                                    if (hierarchyList.get(Mid, s0[iS].getFaceId(i)) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                                        sitaMenid_max = sitaMenid_max + 1;
-                                        sitaMenid[sitaMenid_max] = s0[iS].getFaceId(i);
-                                    }
-                                }
-                            }
-
-                            for (int iuM = 1; iuM <= ueMenid_max; iuM++) {//Menid[iM]より上にある面。
-                                for (int isM = 1; isM <= sitaMenid_max; isM++) {//Menid[iM]より下にある面。
-
-                                    if (hierarchyList.get(ueMenid[iuM], sitaMenid[isM]) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
-                                        return HierarchyListStatus.UNKNOWN_2;
-                                    }//面の上下関係の拡張で矛盾発生。
-                                    if (hierarchyList.get(sitaMenid[isM], ueMenid[iuM]) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                                        return HierarchyListStatus.UNKNOWN_2;
-                                    }//面の上下関係の拡張で矛盾発生。
-
-                                    if (hierarchyList.get(ueMenid[iuM], sitaMenid[isM]).isEmpty()) {
-                                        hierarchyList.set(ueMenid[iuM], sitaMenid[isM], HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                                        flg_a++;
-                                        flg_b++;
-                                        flg_c++;
-                                    }
-                                    if (hierarchyList.get(sitaMenid[isM], ueMenid[iuM]).isEmpty()) {
-                                        hierarchyList.set(sitaMenid[isM], ueMenid[iuM], HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                                        flg_a++;
-                                        flg_b++;
-                                        flg_c++;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-
-                }
-            }
-
-            //Reset hierarchyList Make sure that it is done properly
-
-            int flg_a = 1;
-            while (flg_a >= 1) {
-                flg_a = 0;
-                for (EquivalenceCondition tg : hierarchyList.getEquivalenceConditions()) {
-                    if (hierarchyList.get(tg.getA(), tg.getB()) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                        if (hierarchyList.get(tg.getA(), tg.getD()) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
-                            return HierarchyListStatus.UNKNOWN_3;
-                        }
-                        if (hierarchyList.get(tg.getD(), tg.getA()) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_3;
-                        }
-                        if (hierarchyList.get(tg.getA(), tg.getD()).isEmpty()) {
-                            hierarchyList.set(tg.getA(), tg.getD(), HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(tg.getD(), tg.getA()).isEmpty()) {
-                            hierarchyList.set(tg.getD(), tg.getA(), HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-                    if (hierarchyList.get(tg.getA(), tg.getB()) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
-                        if (hierarchyList.get(tg.getA(), tg.getD()) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_3;
-                        }
-                        if (hierarchyList.get(tg.getD(), tg.getA()) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
-                            return HierarchyListStatus.UNKNOWN_3;
-                        }
-                        if (hierarchyList.get(tg.getA(), tg.getD()).isEmpty()) {
-                            hierarchyList.set(tg.getA(), tg.getD(), HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(tg.getD(), tg.getA()).isEmpty()) {
-                            hierarchyList.set(tg.getD(), tg.getA(), HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-                    //
-                    if (hierarchyList.get(tg.getA(), tg.getD()) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                        if (hierarchyList.get(tg.getA(), tg.getB()) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
-                            return HierarchyListStatus.UNKNOWN_3;
-                        }
-                        if (hierarchyList.get(tg.getB(), tg.getA()) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_3;
-                        }
-                        if (hierarchyList.get(tg.getA(), tg.getB()).isEmpty()) {
-                            hierarchyList.set(tg.getA(), tg.getB(), HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(tg.getB(), tg.getA()).isEmpty()) {
-                            hierarchyList.set(tg.getB(), tg.getA(), HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-                    if (hierarchyList.get(tg.getA(), tg.getD()) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
-                        if (hierarchyList.get(tg.getA(), tg.getB()) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_3;
-                        }
-                        if (hierarchyList.get(tg.getB(), tg.getA()) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
-                            return HierarchyListStatus.UNKNOWN_3;
-                        }
-                        if (hierarchyList.get(tg.getA(), tg.getB()).isEmpty()) {
-                            hierarchyList.set(tg.getA(), tg.getB(), HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(tg.getB(), tg.getA()).isEmpty()) {
-                            hierarchyList.set(tg.getB(), tg.getA(), HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-                }
-            }
-
-            flg_a = 1;
-            while (flg_a >= 1) {
-                flg_a = 0;
-                for (EquivalenceCondition tg : hierarchyList.getUEquivalenceConditions()) {
-                    int a, b, c, d;
-                    a = tg.getA();
-                    b = tg.getB();
-                    c = tg.getC();
-                    d = tg.getD();
-
-
-                    // If only a> b> c, the position of d cannot be determined
-
-
-                    // If a> c && b> d, then a> d && b> c
-                    // If a> d && b> c then a> c && b> d
-                    // If a <c && b <d, then a <d && b <c
-                    // If a <d && b <c then a <c && b <d
-
-
-                    // If a> c> b, then a> d> b
-
-                    // a> c && b> d then a> d && b> c
-                    if ((hierarchyList.get(a, c) == HierarchyList.HierarchyListCondition.UNKNOWN_1) && (hierarchyList.get(b, d) == HierarchyList.HierarchyListCondition.UNKNOWN_1)) {
-                        if (hierarchyList.get(a, d) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(b, c) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(a, d).isEmpty()) {
-                            hierarchyList.set(a, d, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(b, c).isEmpty()) {
-                            hierarchyList.set(b, c, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(d, a).isEmpty()) {
-                            hierarchyList.set(d, a, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(c, b).isEmpty()) {
-                            hierarchyList.set(c, b, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-                    //a>d && b>c なら a>c && b>d
-                    if ((hierarchyList.get(a, d) == HierarchyList.HierarchyListCondition.UNKNOWN_1) && (hierarchyList.get(b, c) == HierarchyList.HierarchyListCondition.UNKNOWN_1)) {
-                        if (hierarchyList.get(a, c) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(b, d) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(a, c).isEmpty()) {
-                            hierarchyList.set(a, c, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(b, d).isEmpty()) {
-                            hierarchyList.set(b, d, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(c, a).isEmpty()) {
-                            hierarchyList.set(c, a, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(d, b).isEmpty()) {
-                            hierarchyList.set(d, b, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-
-                    //a<c && b<d なら a<d && b<c
-                    if ((hierarchyList.get(a, c) == HierarchyList.HierarchyListCondition.UNKNOWN_0) && (hierarchyList.get(b, d) == HierarchyList.HierarchyListCondition.UNKNOWN_0)) {
-                        if (hierarchyList.get(a, d) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(b, c) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(a, d).isEmpty()) {
-                            hierarchyList.set(a, d, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(b, c).isEmpty()) {
-                            hierarchyList.set(b, c, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(d, a).isEmpty()) {
-                            hierarchyList.set(d, a, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(c, b).isEmpty()) {
-                            hierarchyList.set(c, b, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-                    //a<d && b<c なら a<c && b<d
-                    if ((hierarchyList.get(a, d) == HierarchyList.HierarchyListCondition.UNKNOWN_0) && (hierarchyList.get(b, c) == HierarchyList.HierarchyListCondition.UNKNOWN_0)) {
-                        if (hierarchyList.get(a, c) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(b, d) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(a, c).isEmpty()) {
-                            hierarchyList.set(a, c, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(b, d).isEmpty()) {
-                            hierarchyList.set(b, d, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(c, a).isEmpty()) {
-                            hierarchyList.set(c, a, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(d, b).isEmpty()) {
-                            hierarchyList.set(d, b, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-
-
-                    //　a>c>b　なら　a>d>b
-                    if ((hierarchyList.get(a, c) == HierarchyList.HierarchyListCondition.UNKNOWN_1) && (hierarchyList.get(c, b) == HierarchyList.HierarchyListCondition.UNKNOWN_1)) {
-                        if (hierarchyList.get(d, a) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(b, d) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(a, d).isEmpty()) {
-                            hierarchyList.set(a, d, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(d, b).isEmpty()) {
-                            hierarchyList.set(d, b, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(d, a).isEmpty()) {
-                            hierarchyList.set(d, a, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(b, d).isEmpty()) {
-                            hierarchyList.set(b, d, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-                    //　a>d>b　なら　a>c>b
-                    if ((hierarchyList.get(a, d) == HierarchyList.HierarchyListCondition.UNKNOWN_1) && (hierarchyList.get(d, b) == HierarchyList.HierarchyListCondition.UNKNOWN_1)) {
-                        if (hierarchyList.get(c, a) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(b, c) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(a, c).isEmpty()) {
-                            hierarchyList.set(a, c, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(c, b).isEmpty()) {
-                            hierarchyList.set(c, b, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(c, a).isEmpty()) {
-                            hierarchyList.set(c, a, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(b, c).isEmpty()) {
-                            hierarchyList.set(b, c, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-                    //　b>c>a　なら　b>d>a
-                    if ((hierarchyList.get(b, c) == HierarchyList.HierarchyListCondition.UNKNOWN_1) && (hierarchyList.get(c, a) == HierarchyList.HierarchyListCondition.UNKNOWN_1)) {
-                        if (hierarchyList.get(d, b) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(a, d) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(b, d).isEmpty()) {
-                            hierarchyList.set(b, d, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(d, a).isEmpty()) {
-                            hierarchyList.set(d, a, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(d, b).isEmpty()) {
-                            hierarchyList.set(d, b, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(a, d).isEmpty()) {
-                            hierarchyList.set(a, d, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-                    //　b>d>a　なら　b>c>a
-                    if ((hierarchyList.get(b, d) == HierarchyList.HierarchyListCondition.UNKNOWN_1) && (hierarchyList.get(d, a) == HierarchyList.HierarchyListCondition.UNKNOWN_1)) {
-                        if (hierarchyList.get(c, b) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(a, c) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(b, c).isEmpty()) {
-                            hierarchyList.set(b, c, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(c, a).isEmpty()) {
-                            hierarchyList.set(c, a, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(c, b).isEmpty()) {
-                            hierarchyList.set(c, b, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(a, c).isEmpty()) {
-                            hierarchyList.set(a, c, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-
-
-                    //　c>a>d　なら　c>b>d
-                    if ((hierarchyList.get(c, a) == HierarchyList.HierarchyListCondition.UNKNOWN_1) && (hierarchyList.get(a, d) == HierarchyList.HierarchyListCondition.UNKNOWN_1)) {
-                        if (hierarchyList.get(b, c) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(d, b) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(c, b).isEmpty()) {
-                            hierarchyList.set(c, b, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(b, d).isEmpty()) {
-                            hierarchyList.set(b, d, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(b, c).isEmpty()) {
-                            hierarchyList.set(b, c, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(d, b).isEmpty()) {
-                            hierarchyList.set(d, b, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-                    //　c>b>d　なら　c>a>d
-                    if ((hierarchyList.get(c, b) == HierarchyList.HierarchyListCondition.UNKNOWN_1) && (hierarchyList.get(b, d) == HierarchyList.HierarchyListCondition.UNKNOWN_1)) {
-                        if (hierarchyList.get(a, c) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(d, a) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(c, a).isEmpty()) {
-                            hierarchyList.set(c, a, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(a, d).isEmpty()) {
-                            hierarchyList.set(a, d, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(a, c).isEmpty()) {
-                            hierarchyList.set(a, c, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(d, a).isEmpty()) {
-                            hierarchyList.set(d, a, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-                    //　d>a>c　なら　d>b>c
-                    if ((hierarchyList.get(d, a) == HierarchyList.HierarchyListCondition.UNKNOWN_1) && (hierarchyList.get(a, c) == HierarchyList.HierarchyListCondition.UNKNOWN_1)) {
-                        if (hierarchyList.get(b, d) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(c, b) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(d, b).isEmpty()) {
-                            hierarchyList.set(d, b, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(b, c).isEmpty()) {
-                            hierarchyList.set(b, c, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(b, d).isEmpty()) {
-                            hierarchyList.set(b, d, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(c, b).isEmpty()) {
-                            hierarchyList.set(c, b, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-                    //　d>b>c　なら　d>a>c
-                    if ((hierarchyList.get(d, b) == HierarchyList.HierarchyListCondition.UNKNOWN_1) && (hierarchyList.get(b, c) == HierarchyList.HierarchyListCondition.UNKNOWN_1)) {
-                        if (hierarchyList.get(a, d) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(c, a) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
-                            return HierarchyListStatus.UNKNOWN_4;
-                        }
-                        if (hierarchyList.get(d, a).isEmpty()) {
-                            hierarchyList.set(d, a, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(a, c).isEmpty()) {
-                            hierarchyList.set(a, c, HierarchyList.HierarchyListCondition.UNKNOWN_1);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(a, d).isEmpty()) {
-                            hierarchyList.set(a, d, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                        if (hierarchyList.get(c, a).isEmpty()) {
-                            hierarchyList.set(c, a, HierarchyList.HierarchyListCondition.UNKNOWN_0);
-                            flg_a++;
-                            flg_c++;
-                        }
-                    }
-                }
-            }
-
-            //----------------
-
-            System.out.print("推測された関係の数の合計 ＝ ");
-            System.out.println(flg_c);
-
-        }
-
-
-        System.out.println("追加推定 終了------------------------＊＊＊＊ここまで20150310＊＊＊＊＊＊＊＊＊＊＊");
-
-        return HierarchyListStatus.UNKNOWN_1000;
+        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(hierarchyList, s0);
+        return AEA.run();
     }
 
     //図をかく際の数値変換用関数-----------------------------------------------------------------
@@ -1094,7 +550,7 @@ public class HierarchyList_Worker {
             s[ss].hierarchyList_at_subFace_wo_input(hierarchyList);//Enter the top and bottom information of the ss th SubFace in hierarchyList.
         }
 
-        if (additional_estimation() != HierarchyListStatus.UNKNOWN_1000) {
+        if (additional_estimation() != HierarchyListStatus.SUCCESSFUL_1000) {
             return SubFace_valid_number;
         }
 
@@ -1549,11 +1005,6 @@ public class HierarchyList_Worker {
         }//この棒で隣接するFaceStackで見えてる面が同じなので、棒自体が描かれず影もなし。
 
 
-        //Jyougehyou
-        //public int get(int i,int j){return hierarchyList[i][j];}
-        //　hierarchyList[i][j]が1なら面iは面jの上側。0なら下側。
-        //  hierarchyList[i][j]が-50なら、面iとjは重なが、上下関係は決められていない。
-        //hierarchyList[i][j]が-100なら、面iとjは重なるところがない。
         if (hierarchyList.get(Mid_min_mieteru_men_id, Mid_max_mieteru_men_id) == HierarchyList.HierarchyListCondition.UNKNOWN_N50) {
             return 0;
         }//この棒で隣接するFaceStackで見えてる面の上下関係不明なので、影はなし
@@ -1562,7 +1013,7 @@ public class HierarchyList_Worker {
         }//この棒で隣接するFaceStackで見えてる面の上下関係ない（重ならない）ので、影はなし
 
         i_return = faceId_min;
-        if (hierarchyList.get(Mid_min_mieteru_men_id, Mid_max_mieteru_men_id) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
+        if (hierarchyList.get(Mid_min_mieteru_men_id, Mid_max_mieteru_men_id) == HierarchyList.HierarchyListCondition.ABOVE_1) {
             i_return = faceId_max;
         }
 
@@ -1702,10 +1153,10 @@ public class HierarchyList_Worker {
         UNKNOWN_N1,
         UNKNOWN_0,
         UNKNOWN_1,
-        UNKNOWN_2,
-        UNKNOWN_3,
-        UNKNOWN_4,
-        UNKNOWN_1000,
+        CONTRADICTED_2,
+        CONTRADICTED_3,
+        CONTRADICTED_4,
+        SUCCESSFUL_1000,
     }
 }     
 
