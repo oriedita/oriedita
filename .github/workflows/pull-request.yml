@@ -22,7 +22,7 @@ jobs:
           cache: maven
 
       - name: Set version for Jar
-        run: mvn -B versions:set -DnewVersion="${{ github.head_ref }}" --file pom.xml
+        run: mvn -B versions:set -DnewVersion="pr-${{ github.event.pull_request.number }}-${{ github.sha }}" --file pom.xml
 
       - name: Build with Maven
         run: mvn -B package --file pom.xml
