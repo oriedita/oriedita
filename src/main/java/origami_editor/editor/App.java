@@ -522,21 +522,26 @@ public class App extends JFrame implements ActionListener {
     }
 
     public void closing() {
-        int option = JOptionPane.showConfirmDialog(this, createImageIcon("ppp/owari.png"));
+        if (!fileModel.isSaved()) {
+            int option = JOptionPane.showConfirmDialog(this, createImageIcon("ppp/owari.png"));
 
-        switch (option) {
-            case JOptionPane.YES_OPTION:
-                mouseDraggedValid = false;
-                mouseReleasedValid = false;
-                saveFile();
+            switch (option) {
+                case JOptionPane.YES_OPTION:
+                    mouseDraggedValid = false;
+                    mouseReleasedValid = false;
+                    saveFile();
 
-                stopTask();
-                System.exit(0);
-            case JOptionPane.NO_OPTION:
-                stopTask();
-                System.exit(0);
-            case JOptionPane.CANCEL_OPTION:
-                break;
+                    stopTask();
+                    System.exit(0);
+                case JOptionPane.NO_OPTION:
+                    stopTask();
+                    System.exit(0);
+                case JOptionPane.CANCEL_OPTION:
+                    break;
+            }
+        } else {
+            stopTask();
+            System.exit(0);
         }
     }
 

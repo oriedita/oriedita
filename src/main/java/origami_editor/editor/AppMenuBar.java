@@ -48,6 +48,15 @@ public class AppMenuBar extends JMenuBar {
         app.registerButton(toggleHelpMenuItem, "toggleHelpAction");
 
         newButton.addActionListener(e -> {
+            if (!app.fileModel.isSaved()) {
+                int choice = JOptionPane.showConfirmDialog(this, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+
+                if (choice == JOptionPane.YES_OPTION) {
+                    app.saveFile();
+                } else if (choice == JOptionPane.CLOSED_OPTION || choice == JOptionPane.CANCEL_OPTION) {
+                    return;
+                }
+            }
             app.fileModel.reset();
             //展開図の初期化　開始
             //settei_syokika_cp();//展開図パラメータの初期化
