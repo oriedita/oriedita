@@ -545,7 +545,6 @@ public class App extends JFrame implements ActionListener {
         mainDrawingWorker.reset();
         mainDrawingWorker.initialize();
 
-
         //camera_of_orisen_nyuuryokuzu	の設定;
         canvas.creasePatternCamera.setCameraPositionX(0.0);
         canvas.creasePatternCamera.setCameraPositionY(0.0);
@@ -860,10 +859,14 @@ public class App extends JFrame implements ActionListener {
 
             selectedFile = fileChooser.getSelectedFile();
 
+            if (selectedFile != null && !selectedFile.getName().endsWith(".ori")) {
+                selectedFile = new File(selectedFile.getPath() + ".ori");
+            }
+
             if (selectedFile != null && selectedFile.exists()) {
                 choice = JOptionPane.showConfirmDialog(this, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             }
-        } while (selectedFile != null && selectedFile.exists() && choice == JOptionPane.NO_OPTION);
+        } while (selectedFile != null && selectedFile.exists() && choice != JOptionPane.YES_OPTION);
 
         if (selectedFile != null) {
             fileModel.setDefaultDirectory(selectedFile.getParent());
@@ -1083,6 +1086,17 @@ public class App extends JFrame implements ActionListener {
 
     public void openFile() {
         System.out.println("readFile2Memo() 開始");
+
+        if (!fileModel.isSaved()) {
+            int choice = JOptionPane.showConfirmDialog(this, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            if (choice == JOptionPane.YES_OPTION) {
+                saveFile();
+            } else if (choice == JOptionPane.CLOSED_OPTION || choice == JOptionPane.CANCEL_OPTION) {
+                return;
+            }
+        }
+
         File file = selectOpenFile();
 
         if (file == null) {

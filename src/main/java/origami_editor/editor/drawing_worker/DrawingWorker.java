@@ -119,6 +119,8 @@ public class DrawingWorker {
         foldLineSet.reset();
         auxLines.reset();
 
+        historyState.reset();
+
         camera.reset();
         lineStep.clear();
         circleStep.clear();

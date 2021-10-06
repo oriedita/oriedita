@@ -79,14 +79,14 @@ public class AppMenuBar extends JMenuBar {
         saveButton.addActionListener(e -> {
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
-            app.saveFile();
             app.mainDrawingWorker.record();
+            app.saveFile();
         });
         saveAsButton.addActionListener(e -> {
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
-            app.saveAsFile();
             app.mainDrawingWorker.record();
+            app.saveAsFile();
         });
         exportButton.addActionListener(e -> {
             if (app.mouseMode != MouseMode.OPERATION_FRAME_CREATE_61) {
