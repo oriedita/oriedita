@@ -57,7 +57,7 @@ public class MouseHandlerPolygonSetNoCorners extends BaseMouseHandler {
                 d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.fromNumber(d.lineStep.size() + 1)));
                 d.lineStep.get(0).setB(d.lineStep.get(1).getB());
             }
-            if (d.lineStep.get(0).getLength() < 0.00000001) {
+            if (d.lineStep.get(0).determineLength() < 0.00000001) {
                 d.lineStep.clear();
             }
         }

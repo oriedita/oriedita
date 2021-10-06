@@ -47,7 +47,7 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
 
             d.lineStep.get(0).setA(closestPoint);
             if (p.distance(closestPoint) <= d.selectionDistance) {
-                if (d.lineStep.get(0).getLength() > 0.00000001) {
+                if (d.lineStep.get(0).determineLength() > 0.00000001) {
                     int imax = d.foldLineSet.getTotal();
                     for (int i = 1; i <= imax; i++) {
                         LineSegment s = d.foldLineSet.get(i);
@@ -76,7 +76,7 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
 
                             add_sen.set(d.extendToIntersectionPoint(add_sen));
                             add_sen.setColor(s.getColor());
-                            if (add_sen.getLength() > 0.00000001) {
+                            if (add_sen.determineLength() > 0.00000001) {
                                 d.addLineSegment(add_sen);
                             }
                         }

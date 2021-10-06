@@ -266,8 +266,8 @@ public class Orh {
             }
         }
 
-        gridModel.setGridX(gridXA, gridXB, gridXC);
-        gridModel.setGridY(gridYA, gridYB, gridYC);
+        gridModel.applyGridX(gridXA, gridXB, gridXC);
+        gridModel.applyGridY(gridYA, gridYB, gridYC);
 
         // ----------------------------------------- 格子色設定の読み込み
         int i_grid_color_R = 0;
@@ -619,7 +619,7 @@ public class Orh {
             memo1.addLine("<tpp_color_G>" + s.getCustomizedColor().getGreen() + "</tpp_color_G>");
             memo1.addLine("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");
 
-            memo1.addLine("座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
+            memo1.addLine("座標," + s.determineAX() + "," + s.determineAY() + "," + s.determineBX() + "," + s.determineBY());
         }
 
         memo1.addLine("<円集合>");
@@ -648,7 +648,7 @@ public class Orh {
             memo1.addLine("<tpp_color_G>" + s.getCustomizedColor().getGreen() + "</tpp_color_G>");
             memo1.addLine("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");
 
-            memo1.addLine("補助座標," + s.getAX() + "," + s.getAY() + "," + s.getBX() + "," + s.getBY());
+            memo1.addLine("補助座標," + s.determineAX() + "," + s.determineAY() + "," + s.determineBX() + "," + s.determineBY());
         }
 
         Camera camera = save.getCreasePatternCamera() != null ? save.getCreasePatternCamera() : new Camera();

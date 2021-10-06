@@ -205,37 +205,37 @@ public class OritaCalc {
     }
 
     public static LineSegment.Intersection determineLineSegmentIntersection(LineSegment s1, LineSegment s2, double rhit, double rhei) {    //r_hitosii and r_heikouhantei are the allowable degree of deviation between hitosii and heikou_hantei
-        double x1max = s1.getAX();
-        double x1min = s1.getAX();
-        double y1max = s1.getAY();
-        double y1min = s1.getAY();
-        if (x1max < s1.getBX()) {
-            x1max = s1.getBX();
+        double x1max = s1.determineAX();
+        double x1min = s1.determineAX();
+        double y1max = s1.determineAY();
+        double y1min = s1.determineAY();
+        if (x1max < s1.determineBX()) {
+            x1max = s1.determineBX();
         }
-        if (x1min > s1.getBX()) {
-            x1min = s1.getBX();
+        if (x1min > s1.determineBX()) {
+            x1min = s1.determineBX();
         }
-        if (y1max < s1.getBY()) {
-            y1max = s1.getBY();
+        if (y1max < s1.determineBY()) {
+            y1max = s1.determineBY();
         }
-        if (y1min > s1.getBY()) {
-            y1min = s1.getBY();
+        if (y1min > s1.determineBY()) {
+            y1min = s1.determineBY();
         }
-        double x2max = s2.getAX();
-        double x2min = s2.getAX();
-        double y2max = s2.getAY();
-        double y2min = s2.getAY();
-        if (x2max < s2.getBX()) {
-            x2max = s2.getBX();
+        double x2max = s2.determineAX();
+        double x2min = s2.determineAX();
+        double y2max = s2.determineAY();
+        double y2min = s2.determineAY();
+        if (x2max < s2.determineBX()) {
+            x2max = s2.determineBX();
         }
-        if (x2min > s2.getBX()) {
-            x2min = s2.getBX();
+        if (x2min > s2.determineBX()) {
+            x2min = s2.determineBX();
         }
-        if (y2max < s2.getBY()) {
-            y2max = s2.getBY();
+        if (y2max < s2.determineBY()) {
+            y2max = s2.determineBY();
         }
-        if (y2min > s2.getBY()) {
-            y2min = s2.getBY();
+        if (y2min > s2.determineBY()) {
+            y2min = s2.determineBY();
         }
 
         if (x1max + rhit + 0.1 < x2min) {
@@ -428,37 +428,37 @@ public class OritaCalc {
     // But for some reason, using this sweeter one for folding estimation seems to result in an infinite loop, which doesn't work. This exact elucidation is unresolved 20161105
 
     public static LineSegment.Intersection determineLineSegmentIntersectionSweet(LineSegment s1, LineSegment s2, double rhit, double rhei) {    //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-        double x1max = s1.getAX();
-        double x1min = s1.getAX();
-        double y1max = s1.getAY();
-        double y1min = s1.getAY();
-        if (x1max < s1.getBX()) {
-            x1max = s1.getBX();
+        double x1max = s1.determineAX();
+        double x1min = s1.determineAX();
+        double y1max = s1.determineAY();
+        double y1min = s1.determineAY();
+        if (x1max < s1.determineBX()) {
+            x1max = s1.determineBX();
         }
-        if (x1min > s1.getBX()) {
-            x1min = s1.getBX();
+        if (x1min > s1.determineBX()) {
+            x1min = s1.determineBX();
         }
-        if (y1max < s1.getBY()) {
-            y1max = s1.getBY();
+        if (y1max < s1.determineBY()) {
+            y1max = s1.determineBY();
         }
-        if (y1min > s1.getBY()) {
-            y1min = s1.getBY();
+        if (y1min > s1.determineBY()) {
+            y1min = s1.determineBY();
         }
-        double x2max = s2.getAX();
-        double x2min = s2.getAX();
-        double y2max = s2.getAY();
-        double y2min = s2.getAY();
-        if (x2max < s2.getBX()) {
-            x2max = s2.getBX();
+        double x2max = s2.determineAX();
+        double x2min = s2.determineAX();
+        double y2max = s2.determineAY();
+        double y2min = s2.determineAY();
+        if (x2max < s2.determineBX()) {
+            x2max = s2.determineBX();
         }
-        if (x2min > s2.getBX()) {
-            x2min = s2.getBX();
+        if (x2min > s2.determineBX()) {
+            x2min = s2.determineBX();
         }
-        if (y2max < s2.getBY()) {
-            y2max = s2.getBY();
+        if (y2max < s2.determineBY()) {
+            y2max = s2.determineBY();
         }
-        if (y2min > s2.getBY()) {
-            y2min = s2.getBY();
+        if (y2min > s2.determineBY()) {
+            y2min = s2.determineBY();
         }
 
         if (x1max + rhit + 0.1 < x2min) {
@@ -784,11 +784,11 @@ public class OritaCalc {
         double Mcd = Math.cos(d * Math.PI / 180.0);
         double Msd = Math.sin(d * Math.PI / 180.0);
 
-        double bx1 = Mcd * (s0.getBX() - s0.getAX()) - Msd * (s0.getBY() - s0.getAY()) + s0.getAX();
-        double by1 = Msd * (s0.getBX() - s0.getAX()) + Mcd * (s0.getBY() - s0.getAY()) + s0.getAY();
+        double bx1 = Mcd * (s0.determineBX() - s0.determineAX()) - Msd * (s0.determineBY() - s0.determineAY()) + s0.determineAX();
+        double by1 = Msd * (s0.determineBX() - s0.determineAX()) + Mcd * (s0.determineBY() - s0.determineAY()) + s0.determineAY();
 
-        double ax1 = s0.getAX();
-        double ay1 = s0.getAY();
+        double ax1 = s0.determineAX();
+        double ay1 = s0.determineAY();
 
         return new LineSegment(ax1, ay1, bx1, by1);
     }
@@ -798,11 +798,11 @@ public class OritaCalc {
         double Mcd = Math.cos(d * Math.PI / 180.0);
         double Msd = Math.sin(d * Math.PI / 180.0);
 
-        double bx1 = r * (Mcd * (s0.getBX() - s0.getAX()) - Msd * (s0.getBY() - s0.getAY())) + s0.getAX();
-        double by1 = r * (Msd * (s0.getBX() - s0.getAX()) + Mcd * (s0.getBY() - s0.getAY())) + s0.getAY();
+        double bx1 = r * (Mcd * (s0.determineBX() - s0.determineAX()) - Msd * (s0.determineBY() - s0.determineAY())) + s0.determineAX();
+        double by1 = r * (Msd * (s0.determineBX() - s0.determineAX()) + Mcd * (s0.determineBY() - s0.determineAY())) + s0.determineAY();
 
-        double ax1 = s0.getAX();
-        double ay1 = s0.getAY();
+        double ax1 = s0.determineAX();
+        double ay1 = s0.determineAY();
 
         return new LineSegment(ax1, ay1, bx1, by1);
     }
@@ -810,11 +810,11 @@ public class OritaCalc {
     //A function that returns a line segment obtained by multiplying the line segment ab by r with a as the center (returns a new line segment without changing the original line segment)
     public static LineSegment lineSegment_double(LineSegment s0, double r) {
 
-        double bx1 = r * (s0.getBX() - s0.getAX()) + s0.getAX();
-        double by1 = r * (s0.getBY() - s0.getAY()) + s0.getAY();
+        double bx1 = r * (s0.determineBX() - s0.determineAX()) + s0.determineAX();
+        double by1 = r * (s0.determineBY() - s0.determineAY()) + s0.determineAY();
 
-        double ax1 = s0.getAX();
-        double ay1 = s0.getAY();
+        double ax1 = s0.determineAX();
+        double ay1 = s0.determineAY();
 
         return new LineSegment(ax1, ay1, bx1, by1);
     }
@@ -956,8 +956,8 @@ public class OritaCalc {
                 return b;
             } else {
                 LineSegment s_ab = new LineSegment(a, b);
-                double nx = (d_internalDivisionRatio_t * s_ab.getAX() + d_internalDivisionRatio_s * s_ab.getBX()) / (d_internalDivisionRatio_s + d_internalDivisionRatio_t);
-                double ny = (d_internalDivisionRatio_t * s_ab.getAY() + d_internalDivisionRatio_s * s_ab.getBY()) / (d_internalDivisionRatio_s + d_internalDivisionRatio_t);
+                double nx = (d_internalDivisionRatio_t * s_ab.determineAX() + d_internalDivisionRatio_s * s_ab.determineBX()) / (d_internalDivisionRatio_s + d_internalDivisionRatio_t);
+                double ny = (d_internalDivisionRatio_t * s_ab.determineAY() + d_internalDivisionRatio_s * s_ab.determineBY()) / (d_internalDivisionRatio_s + d_internalDivisionRatio_t);
                 r_point.set(nx, ny);
                 return r_point;
             }
@@ -993,10 +993,10 @@ public class OritaCalc {
     public static LineSegment circle_to_circle_no_intersection_wo_musubu_lineSegment(Circle e1, Circle e2) {
         StraightLine t0 = new StraightLine();
         t0.set(circle_to_circle_no_intersection_wo_tooru_straightLine(e1, e2));
-        StraightLine t1 = new StraightLine(e1.getCenter(), e2.getCenter());
+        StraightLine t1 = new StraightLine(e1.determineCenter(), e2.determineCenter());
         Point intersection_t0t1 = new Point();
         intersection_t0t1.set(findIntersection(t0, t1));
-        double length_a = t0.calculateDistance(e1.getCenter());  //t0とt1の交点からe1の中心までの長さ
+        double length_a = t0.calculateDistance(e1.determineCenter());  //t0とt1の交点からe1の中心までの長さ
 
 //double length_a=kyori(intersection_t0t1,e1.get_tyuusin());  //t0とt1の交点からe1の中心までの長さ
         double length_b = Math.sqrt(e1.getRadius() * e1.getRadius() - length_a * length_a); //t0とt1の交点からe1とe2の交点までの長さ
@@ -1015,8 +1015,8 @@ public class OritaCalc {
     public static LineSegment circle_to_straightLine_no_intersect_wo_connect_LineSegment(Circle e1, StraightLine t0) {
 
         Point kouten_t0t1 = new Point();
-        kouten_t0t1.set(findProjection(t0, e1.getCenter()));
-        double length_a = t0.calculateDistance(e1.getCenter());  //t0とt1の交点からe1の中心までの長さ
+        kouten_t0t1.set(findProjection(t0, e1.determineCenter()));
+        double length_a = t0.calculateDistance(e1.determineCenter());  //t0とt1の交点からe1の中心までの長さ
 
         double length_b = Math.sqrt(e1.getRadius() * e1.getRadius() - length_a * length_a); //t0とt1の交点からe1とe2の交点までの長さ
 //t0と平行な方向ベクトルは(t0.getb() , -t0.geta())
@@ -1032,7 +1032,7 @@ public class OritaCalc {
 
     // Function to find the distance between the point p0 and the circumference of the circle e0 ------------------------------- --------------------- ---------------------
     public static double distance_circumference(Point p0, Circle e0) {
-        return Math.abs(distance(p0, e0.getCenter()) - e0.getRadius());
+        return Math.abs(distance(p0, e0.determineCenter()) - e0.getRadius());
     }
 
     //Minを返す関数

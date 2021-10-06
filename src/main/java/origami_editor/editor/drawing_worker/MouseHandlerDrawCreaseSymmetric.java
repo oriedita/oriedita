@@ -39,7 +39,7 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
                 return;
             }
 
-            if (d.lineStep.get(0).getLength() < 0.00000001) {
+            if (d.lineStep.get(0).determineLength() < 0.00000001) {
                 d.lineStep.clear();
                 d.app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             }

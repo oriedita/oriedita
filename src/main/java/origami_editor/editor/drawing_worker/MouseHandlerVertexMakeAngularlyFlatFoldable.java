@@ -158,7 +158,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                                     s_kiso.set(nboxLineSegment.getB(), nboxLineSegment.getA());
                                 }
 
-                                double s_kiso_length = s_kiso.getLength();
+                                double s_kiso_length = s_kiso.determineLength();
 
                                 LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, kakukagenti / 2.0, d.grid.getGridWidth() / s_kiso_length);
                                 s.setColor(LineColor.PURPLE_8);
@@ -218,7 +218,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                     Point kousa_point = new Point();
                     kousa_point.set(OritaCalc.findIntersection(d.lineStep.get(0), d.lineStep.get(1)));
                     LineSegment add_sen = new LineSegment(kousa_point, d.lineStep.get(0).getA(), icol_temp);//20180503変更
-                    if (add_sen.getLength() > 0.00000001) {//最寄の既存折線が有効の場合
+                    if (add_sen.determineLength() > 0.00000001) {//最寄の既存折線が有効の場合
                         d.addLineSegment(add_sen);
                         d.record();
                         d.lineStep.clear();

@@ -109,7 +109,7 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
         if (p.distance(closestPoint) <= d.selectionDistance) {
             d.lineStep.get(0).setA(closestPoint);
         }
-        if (d.lineStep.get(0).getLength() > 0.00000001) {
+        if (d.lineStep.get(0).determineLength() > 0.00000001) {
             if (d.i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) {
                 d.addLineSegment(d.lineStep.get(0));
                 d.record();

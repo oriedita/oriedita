@@ -59,12 +59,12 @@ public class MouseHandlerLineSegmentDivision extends BaseMouseHandlerInputRestri
         if (p.distance(closestPoint) <= d.selectionDistance) {
             d.lineStep.get(0).setA(closestPoint);
         }
-        if (d.lineStep.get(0).getLength() > 0.00000001) {
+        if (d.lineStep.get(0).determineLength() > 0.00000001) {
             for (int i = 0; i <= d.foldLineDividingNumber - 1; i++) {
-                double ax = ((double) (d.foldLineDividingNumber - i) * d.lineStep.get(0).getAX() + (double) i * d.lineStep.get(0).getBX()) / ((double) d.foldLineDividingNumber);
-                double ay = ((double) (d.foldLineDividingNumber - i) * d.lineStep.get(0).getAY() + (double) i * d.lineStep.get(0).getBY()) / ((double) d.foldLineDividingNumber);
-                double bx = ((double) (d.foldLineDividingNumber - i - 1) * d.lineStep.get(0).getAX() + (double) (i + 1) * d.lineStep.get(0).getBX()) / ((double) d.foldLineDividingNumber);
-                double by = ((double) (d.foldLineDividingNumber - i - 1) * d.lineStep.get(0).getAY() + (double) (i + 1) * d.lineStep.get(0).getBY()) / ((double) d.foldLineDividingNumber);
+                double ax = ((double) (d.foldLineDividingNumber - i) * d.lineStep.get(0).determineAX() + (double) i * d.lineStep.get(0).determineBX()) / ((double) d.foldLineDividingNumber);
+                double ay = ((double) (d.foldLineDividingNumber - i) * d.lineStep.get(0).determineAY() + (double) i * d.lineStep.get(0).determineBY()) / ((double) d.foldLineDividingNumber);
+                double bx = ((double) (d.foldLineDividingNumber - i - 1) * d.lineStep.get(0).determineAX() + (double) (i + 1) * d.lineStep.get(0).determineBX()) / ((double) d.foldLineDividingNumber);
+                double by = ((double) (d.foldLineDividingNumber - i - 1) * d.lineStep.get(0).determineAY() + (double) (i + 1) * d.lineStep.get(0).determineBY()) / ((double) d.foldLineDividingNumber);
                 LineSegment s_ad = new LineSegment(ax, ay, bx, by);
                 s_ad.setColor(d.lineColor);
                 d.addLineSegment(s_ad);

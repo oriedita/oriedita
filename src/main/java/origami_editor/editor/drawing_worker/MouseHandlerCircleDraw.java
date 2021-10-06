@@ -57,8 +57,8 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler {
             Point closestPoint = d.getClosestPoint(p);
             d.lineStep.get(0).setA(closestPoint);
             if (p.distance(closestPoint) <= d.selectionDistance) {
-                if (d.lineStep.get(0).getLength() > 0.00000001) {
-                    d.addCircle(d.lineStep.get(0).getBX(), d.lineStep.get(0).getBY(), d.lineStep.get(0).getLength(), LineColor.CYAN_3);
+                if (d.lineStep.get(0).determineLength() > 0.00000001) {
+                    d.addCircle(d.lineStep.get(0).determineBX(), d.lineStep.get(0).determineBY(), d.lineStep.get(0).determineLength(), LineColor.CYAN_3);
                     d.record();
                 }
             }

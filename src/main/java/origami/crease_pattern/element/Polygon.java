@@ -259,21 +259,21 @@ public class Polygon {
         LineSegment s = new LineSegment();
         for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]); //線分
-            if (OritaCalc.determineLineSegmentDistance(c.getCenter(), s) <= c.getRadius()) {
-                if ((OritaCalc.distance(s.getA(), c.getCenter()) >= c.getRadius()) || (OritaCalc.distance(s.getA(), c.getCenter()) >= c.getRadius())) {
+            if (OritaCalc.determineLineSegmentDistance(c.determineCenter(), s) <= c.getRadius()) {
+                if ((OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getRadius()) || (OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getRadius())) {
                     return true;
                 }
             }
         }
 
         s.set(vertices[vertexCount], vertices[1]); //線分
-        if (OritaCalc.determineLineSegmentDistance(c.getCenter(), s) <= c.getRadius()) {
-            if ((OritaCalc.distance(s.getA(), c.getCenter()) >= c.getRadius()) || (OritaCalc.distance(s.getA(), c.getCenter()) >= c.getRadius())) {
+        if (OritaCalc.determineLineSegmentDistance(c.determineCenter(), s) <= c.getRadius()) {
+            if ((OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getRadius()) || (OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getRadius())) {
                 return true;
             }
         }
 
-        return totu_boundary_inside(new LineSegment(c.getCenter(), c.getCenter()));
+        return totu_boundary_inside(new LineSegment(c.determineCenter(), c.determineCenter()));
     }
 
     // Even a part of the line segment s0 is inside the convex polygon (the boundary line is also regarded as the inside)

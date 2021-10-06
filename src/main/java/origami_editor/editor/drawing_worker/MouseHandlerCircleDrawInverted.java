@@ -50,7 +50,7 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
                 return;
             }
 
-            d.circleStep.add(new Circle(closest_circumference.getCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
+            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
             return;
         }
 
@@ -58,7 +58,7 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
-            d.circleStep.add(new Circle(closest_circumference.getCenter(), closest_circumference.getRadius(), LineColor.RED_1));
+            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getRadius(), LineColor.RED_1));
         }
     }
 

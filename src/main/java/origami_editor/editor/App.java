@@ -1,9 +1,6 @@
 package origami_editor.editor;
 
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.PropertyException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
@@ -17,6 +14,7 @@ import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
+import origami_editor.editor.json.DefaultObjectMapper;
 import origami_editor.editor.task.CheckCAMVTask;
 import origami_editor.editor.task.FoldingEstimateTask;
 import origami_editor.record.Memo;
@@ -28,7 +26,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
-import java.awt.print.Book;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -485,7 +482,7 @@ public class App extends JFrame implements ActionListener {
                 mainDrawingWorker.select_all();
             }
             //
-            if (canvasModel.isCorrectCreasePatternBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
+            if (canvasModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
                 DrawingWorker drawingWorker2 = new DrawingWorker(this);    // Basic branch craftsman. Accepts input from the mouse.
                 drawingWorker2.setSave_for_reading(mainDrawingWorker.foldLineSet.getSaveForSelectFolding());
                 drawingWorker2.point_removal();
@@ -969,10 +966,9 @@ public class App extends JFrame implements ActionListener {
         try {
             if (file.getName().endsWith(".ori")) {
                 try {
-                    JAXBContext context = JAXBContext.newInstance(Save.class);
-                    return (Save) context.createUnmarshaller()
-                            .unmarshal(new FileReader(file));
-                } catch (JAXBException e) {
+                    ObjectMapper mapper = new DefaultObjectMapper();
+                    return mapper.readValue(file, Save.class);
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -1036,11 +1032,10 @@ public class App extends JFrame implements ActionListener {
 
     void saveAndName2File(Save save, File fname) {
         try {
-            JAXBContext context = JAXBContext.newInstance(Save.class);
-            Marshaller mar= context.createMarshaller();
-            mar.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            mar.marshal(save, fname);
-        } catch (JAXBException e) {
+            ObjectMapper mapper = new DefaultObjectMapper();
+
+            mapper.writeValue(fname, save);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

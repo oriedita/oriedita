@@ -61,7 +61,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
         if (d.lineStep.size() == 3) {
-            d.lineStep.get(0).setB(new Point(d.lineStep.get(0).getAX() + d.lineStep.get(1).getBX() - d.lineStep.get(1).getAX(), d.lineStep.get(0).getAY() + d.lineStep.get(1).getBY() - d.lineStep.get(1).getAY()));
+            d.lineStep.get(0).setB(new Point(d.lineStep.get(0).determineAX() + d.lineStep.get(1).determineBX() - d.lineStep.get(1).determineAX(), d.lineStep.get(0).determineAY() + d.lineStep.get(1).determineBY() - d.lineStep.get(1).determineAY()));
 
             if (s_step_tuika_koutenmade(3, d.lineStep.get(0), d.lineStep.get(2), d.lineColor) > 0) {
                 d.addLineSegment(d.lineStep.get(3));
@@ -94,7 +94,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
 
         LineSegment add_sen = new LineSegment(cross_point, s_o.getA(), icolo);
 
-        if (add_sen.getLength() > 0.00000001) {
+        if (add_sen.determineLength() > 0.00000001) {
             d.lineStep.get(i_e_d).set(add_sen);
             return 1;
         }

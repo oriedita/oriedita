@@ -129,7 +129,7 @@ public class Camera implements Serializable { // Mediation between actual coordi
         camera_mirror = d;
     }       //鏡
 
-    public boolean isCameraMirrored() {
+    public boolean determineIsCameraMirrored() {
         return camera_mirror == -1.0;
     }
 

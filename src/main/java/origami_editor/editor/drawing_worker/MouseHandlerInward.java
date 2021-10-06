@@ -37,15 +37,15 @@ public class MouseHandlerInward extends BaseMouseHandlerInputRestricted {
             center.set(OritaCalc.center(d.lineStep.get(0).getA(), d.lineStep.get(1).getA(), d.lineStep.get(2).getA()));
 
             LineSegment add_sen1 = new LineSegment(d.lineStep.get(0).getA(), center, d.lineColor);
-            if (add_sen1.getLength() > 0.00000001) {
+            if (add_sen1.determineLength() > 0.00000001) {
                 d.addLineSegment(add_sen1);
             }
             LineSegment add_sen2 = new LineSegment(d.lineStep.get(1).getA(), center, d.lineColor);
-            if (add_sen2.getLength() > 0.00000001) {
+            if (add_sen2.determineLength() > 0.00000001) {
                 d.addLineSegment(add_sen2);
             }
             LineSegment add_sen3 = new LineSegment(d.lineStep.get(2).getA(), center, d.lineColor);
-            if (add_sen3.getLength() > 0.00000001) {
+            if (add_sen3.determineLength() > 0.00000001) {
                 d.addLineSegment(add_sen3);
             }
             d.record();

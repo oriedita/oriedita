@@ -336,7 +336,7 @@ public class Grid {
                     d_grid_ay * i + d_grid_by * grid_screen_b_max + oky0);
 
             s_tv.set(camera.object2TV(s_ob));
-            g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
+            g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
         }
 
         for (int i = grid_screen_b_min; i <= grid_screen_b_max; i++) {
@@ -346,7 +346,7 @@ public class Grid {
                     d_grid_ay * grid_screen_a_max + d_grid_by * i + oky0);
 
             s_tv.set(camera.object2TV(s_ob));
-            g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
+            g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
         }
 
         //Change the color of the grid line for each constant -----------------------------------------------
@@ -366,7 +366,7 @@ public class Grid {
                             d_grid_ax * i + d_grid_bx * grid_screen_b_max + okx0,
                             d_grid_ay * i + d_grid_by * grid_screen_b_max + oky0);
                     s_tv.set(camera.object2TV(s_ob));
-                    g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
+                    g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
                 }
             }
 
@@ -385,7 +385,7 @@ public class Grid {
 
 
                     s_tv.set(camera.object2TV(s_ob));
-                    g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
+                    g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
                 }
             }
             //一定数ごとに格子線の色を変える　ここまで--------------------------------------------
@@ -437,7 +437,7 @@ public class Grid {
     public void setGridConfigurationData(GridModel gridModel) {
         setGridLineWidth(gridModel.getGridLineWidth());
         setGridSize(gridModel.getGridSize());
-        setGrid(gridModel.getGridXLength(), gridModel.getGridYLength(), gridModel.getGridAngle());
+        setGrid(gridModel.determineGridXLength(), gridModel.determineGridYLength(), gridModel.getGridAngle());
         setGridScaleColor(gridModel.getGridScaleColor());
         setGridColor(gridModel.getGridColor());
         setHorizontalScalePosition(gridModel.getHorizontalScalePosition());

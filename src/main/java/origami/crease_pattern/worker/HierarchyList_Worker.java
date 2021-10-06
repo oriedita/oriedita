@@ -624,7 +624,7 @@ public class HierarchyList_Worker {
             for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
                 s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
                 s_tv.set(camera.object2TV(s_ob));
-                g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //直線
+                g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //直線
             }
         } else {//Black and white transparent view (old style)
             int col_kosa;
@@ -674,14 +674,14 @@ public class HierarchyList_Worker {
             for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
                 s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
                 s_tv.set(camera.object2TV(s_ob));
-                g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //Straight line
+                g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
             }
         }
     }
 
     public void draw_foldedFigure_with_camera(Graphics g, CreasePattern_Worker orite, PointSet subFace_figure) {
         Graphics2D g2 = (Graphics2D) g;
-        boolean flipped = camera.isCameraMirrored();
+        boolean flipped = camera.determineIsCameraMirrored();
 
         Point t0 = new Point();
         Point t1 = new Point();
@@ -959,7 +959,7 @@ public class HierarchyList_Worker {
             if (drawing_flag) {//棒を描く。
                 s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
                 s_tv.set(camera.object2TV(s_ob));
-                g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //直線
+                g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //直線
             }
         }
     }

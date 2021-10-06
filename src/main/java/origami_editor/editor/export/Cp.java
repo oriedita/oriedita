@@ -18,7 +18,7 @@ public class Cp {
                 save.getLineSegments()) {
             int color = s.getColor().getNumber() + 1;
 
-            mem.addLine(String.format("%d %s %s %s %s", color, s.getAX(), s.getAY(), s.getBX(), s.getBY()));
+            mem.addLine(String.format("%d %s %s %s %s", color, s.determineAX(), s.determineAY(), s.determineBX(), s.determineBY()));
         }
 
         return mem;

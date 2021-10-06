@@ -63,7 +63,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
             cross_point.set(OritaCalc.findIntersection(add_sen2, d.lineStep.get(3)));
 
             LineSegment add_sen = new LineSegment(cross_point, d.lineStep.get(1).getA(), d.lineColor);
-            if (add_sen.getLength() > 0.00000001) {
+            if (add_sen.determineLength() > 0.00000001) {
                 d.addLineSegment(add_sen);
                 d.record();
             }

@@ -28,7 +28,7 @@ public class MouseHandlerCreaseDeleteIntersecting extends BaseMouseHandlerLineSe
         if (p.distance(closestPoint) <= d.selectionDistance) {
             d.lineStep.get(0).setA(closestPoint);
         }
-        if (d.lineStep.get(0).getLength() > 0.00000001) {
+        if (d.lineStep.get(0).determineLength() > 0.00000001) {
             //やりたい動作はここに書く
             d.foldLineSet.deleteInsideLine(d.lineStep.get(0), "lX");//lXは小文字のエルと大文字のエックス
             d.record();

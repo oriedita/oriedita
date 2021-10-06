@@ -551,21 +551,21 @@ public class CreasePattern_Worker {
             switch (ip4) {
                 case FRONT_0:
                     s_tv.set(cam_front.object2TV(pointSet.getLineSegmentFromLineId(i)));
-                    g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //Straight line
+                    g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
                     break;
                 case BACK_1:
                     s_tv.set(cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i)));
-                    g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //Straight line
+                    g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
                     break;
                 case BOTH_2:
                 case TRANSPARENT_3:
                     s_tv.set(cam_front.object2TV(pointSet.getLineSegmentFromLineId(i)));
-                    g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //Straight line
+                    g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
                     s_tv.set(cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i)));
-                    g.drawLine(gx(s_tv.getAX()), gy(s_tv.getAY()), gx(s_tv.getBX()), gy(s_tv.getBY())); //Straight line
+                    g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
                     break;
             }

@@ -1,10 +1,8 @@
 package origami_editor.editor.databinding;
 
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.adapter.ColorAdapter;
 import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
 
 import java.awt.*;
@@ -83,10 +81,6 @@ public class CanvasModel implements Serializable {
         this.pcs.firePropertyChange("correctCpBeforeFolding", oldCorrectCpBeforeFolding, correctCpBeforeFolding);
     }
 
-    public boolean isCorrectCreasePatternBeforeFolding() {
-        return correctCpBeforeFolding;
-    }
-
     public boolean getSelectPersistent() {
         return selectPersistent;
     }
@@ -97,7 +91,6 @@ public class CanvasModel implements Serializable {
         this.pcs.firePropertyChange("selectPersistent", oldSelectPersistent, selectPersistent);
     }
 
-    @XmlJavaTypeAdapter(ColorAdapter.class)
     public Color getCircleCustomizedColor() {
         return circleCustomizedColor;
     }
@@ -443,7 +436,7 @@ public class CanvasModel implements Serializable {
         setLineWidth(lineWidth + 2);
     }
 
-    public float getCalculatedLineWidth() {
+    public float determineCalculatedLineWidth() {
         float fLineWidth = (float) lineWidth;
 
         if (antiAlias) {
@@ -465,7 +458,7 @@ public class CanvasModel implements Serializable {
         setAuxLineWidth(auxLineWidth + 2);
     }
 
-    public float getCalculatedAuxLineWidth() {
+    public float determineCalculatedAuxLineWidth() {
         float fAuxLineWidth = (float) auxLineWidth;
 
         if (antiAlias) {

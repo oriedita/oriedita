@@ -35,7 +35,7 @@ public class Svg {
     }
 
     public static Memo getMemo_wirediagram_for_svg_export(HierarchyList_Worker ctworker, Camera camera, FoldedFigure foldedFigure, CreasePattern_Worker orite, PointSet otta_Men_zu, boolean i_fill) {
-        boolean flipped = camera.isCameraMirrored();
+        boolean flipped = camera.determineIsCameraMirrored();
 
         Point t_ob = new Point();
         Point t_tv = new Point();
@@ -122,7 +122,7 @@ public class Svg {
 
 
     public static Memo getMemo_for_svg_with_camera(Camera camera, FoldedFigure foldedFigure, CreasePattern_Worker orite, PointSet subFace_figure) {//折り上がり図(hyouji_flg==5)
-        boolean front_back = camera.isCameraMirrored();
+        boolean front_back = camera.determineIsCameraMirrored();
 
         Point t0 = new Point();
         Point t1 = new Point();
