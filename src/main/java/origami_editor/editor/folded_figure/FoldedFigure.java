@@ -6,7 +6,6 @@ import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.crease_pattern.worker.CreasePattern_Worker;
 import origami.crease_pattern.worker.HierarchyList_Worker;
 import origami.crease_pattern.element.Point;
-import origami_editor.record.Memo;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.tools.Camera;
 import origami.crease_pattern.LineSegmentSet;

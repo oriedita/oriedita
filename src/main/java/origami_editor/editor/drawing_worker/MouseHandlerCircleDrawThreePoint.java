@@ -39,15 +39,15 @@ public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler {
     public void mouseReleased(Point p0) {
         if (d.lineStep.size() == 3) {
             LineSegment sen1 = new LineSegment(d.lineStep.get(0).getA(), d.lineStep.get(1).getA());
-            if (sen1.getLength() < 0.00000001) {
+            if (sen1.determineLength() < 0.00000001) {
                 return;
             }
             LineSegment sen2 = new LineSegment(d.lineStep.get(1).getA(), d.lineStep.get(2).getA());
-            if (sen2.getLength() < 0.00000001) {
+            if (sen2.determineLength() < 0.00000001) {
                 return;
             }
             LineSegment sen3 = new LineSegment(d.lineStep.get(2).getA(), d.lineStep.get(0).getA());
-            if (sen3.getLength() < 0.00000001) {
+            if (sen3.determineLength() < 0.00000001) {
                 return;
             }
 

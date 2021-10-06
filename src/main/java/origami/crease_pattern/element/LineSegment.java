@@ -136,25 +136,25 @@ public class LineSegment implements Serializable, Cloneable {
     /**
      * Larger when rounding up the x-coordinate of the end point
      */
-    public int getMaxX() {
+    public int determineMaxX() {
         return Math.max((int) Math.ceil(a.x), (int) Math.ceil(b.x));
     }
     /**
      * The smaller one when truncating the x-coordinate of the end point
      */
-    public int getMinX() {
+    public int determineMinX() {
         return Math.min((int) Math.floor(a.x), (int) Math.floor(b.x));
     }
     /**
      * Larger when rounding up the y-coordinate of the end point
      */
-    public int getMaxY() {
+    public int determineMaxY() {
         return Math.max((int) Math.ceil(a.y), (int) Math.ceil(b.y));
     }
     /**
      * The smaller one when truncating the y coordinate of the end point
      */
-    public int getMinY() {
+    public int determineMinY() {
         return Math.min((int) Math.floor(a.y), (int) Math.floor(b.y));
     }
 
@@ -223,54 +223,38 @@ public class LineSegment implements Serializable, Cloneable {
         set(a.getX(), a.getY(), p.getX(), p.getY());
     }
 
-    public Point getClosestEndpoint(Point p) {//Returns the endpoint closest to point P
+    public Point determineClosestEndpoint(Point p) {//Returns the endpoint closest to point P
         if (p.distanceSquared(a) <= p.distanceSquared(b)) {
             return a;
         }
         return b;
     }
 
-    public Point getFurthestEndpoint(Point p) {//Returns the point P and the farther end point
+    public Point determineFurthestEndpoint(Point p) {//Returns the point P and the farther end point
         if (p.distanceSquared(a) >= p.distanceSquared(b)) {
             return a;
         }
         return b;
     }
 
-    public double getLength() {
+    public double determineLength() {
         return a.distance(b);
     }
 
-    public double getAX() {
+    public double determineAX() {
         return a.getX();
     }
 
-    public void setAX(double d) {
-        a.setX(d);
-    }
-
-    public double getAY() {
+    public double determineAY() {
         return a.getY();
     }
 
-    public void setAY(double d) {
-        a.setY(d);
-    }
-
-    public double getBX() {
+    public double determineBX() {
         return b.getX();
     }
 
-    public void setBX(double d) {
-        b.setX(d);
-    }
-
-    public double getBY() {
+    public double determineBY() {
         return b.getY();
-    }
-
-    public void setBY(double d) {
-        b.setY(d);
     }
 
     public int getCustomized() {

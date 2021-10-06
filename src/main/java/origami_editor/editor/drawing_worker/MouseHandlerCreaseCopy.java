@@ -26,11 +26,11 @@ public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineSelect {
         if (p.distance(closestPoint) <= d.selectionDistance) {
             d.lineStep.get(0).setA(closestPoint);
         }
-        if (d.lineStep.get(0).getLength() > 0.00000001) {
+        if (d.lineStep.get(0).determineLength() > 0.00000001) {
             //やりたい動作はここに書く
 
-            double addx = -d.lineStep.get(0).getBX() + d.lineStep.get(0).getAX();
-            double addy = -d.lineStep.get(0).getBY() + d.lineStep.get(0).getAY();
+            double addx = -d.lineStep.get(0).determineBX() + d.lineStep.get(0).determineAX();
+            double addy = -d.lineStep.get(0).determineBY() + d.lineStep.get(0).determineAY();
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
             ori_s_temp.setSave(d.foldLineSet.getMemoSelectOption(2));//セレクトされた折線だけ取り出してori_s_tempを作る

@@ -196,15 +196,15 @@ public class LineSegmentSet {
         Point p4 = new Point(sj.getB());
         Point pk = new Point();
 
-        double ixmax = Math.max(si.getAX(), si.getBX());
-        double ixmin = Math.min(si.getAX(), si.getBX());
-        double iymax = Math.max(si.getAY(), si.getBY());
-        double iymin = Math.min(si.getAY(), si.getBY());
+        double ixmax = Math.max(si.determineAX(), si.determineBX());
+        double ixmin = Math.min(si.determineAX(), si.determineBX());
+        double iymax = Math.max(si.determineAY(), si.determineBY());
+        double iymin = Math.min(si.determineAY(), si.determineBY());
 
-        double jxmax = Math.max(sj.getAX(), sj.getBX());
-        double jxmin = Math.min(sj.getAX(), sj.getBX());
-        double jymax = Math.max(sj.getAY(), sj.getBY());
-        double jymin = Math.min(sj.getAY(), sj.getBY());
+        double jxmax = Math.max(sj.determineAX(), sj.determineBX());
+        double jxmin = Math.min(sj.determineAX(), sj.determineBX());
+        double jymax = Math.max(sj.determineAY(), sj.determineBY());
+        double jymin = Math.min(sj.determineAY(), sj.determineBY());
 
         if (ixmax + 0.5 < jxmin) {
             return false;

@@ -65,7 +65,7 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
         if (p.distance(closestPoint) <= d.selectionDistance) {
             d.lineStep.get(0).setA(closestPoint);
         }
-        if (d.lineStep.get(0).getLength() > 0.00000001) {
+        if (d.lineStep.get(0).determineLength() > 0.00000001) {
             if ((d.internalDivisionRatio_s == 0.0) && (d.internalDivisionRatio_t == 0.0)) {
             }
             if ((d.internalDivisionRatio_s == 0.0) && (d.internalDivisionRatio_t != 0.0)) {
@@ -77,11 +77,11 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
             if ((d.internalDivisionRatio_s != 0.0) && (d.internalDivisionRatio_t != 0.0)) {
                 LineSegment s_ad = new LineSegment();
                 s_ad.setColor(d.lineColor);
-                double nx = (d.internalDivisionRatio_t * d.lineStep.get(0).getBX() + d.internalDivisionRatio_s * d.lineStep.get(0).getAX()) / (d.internalDivisionRatio_s + d.internalDivisionRatio_t);
-                double ny = (d.internalDivisionRatio_t * d.lineStep.get(0).getBY() + d.internalDivisionRatio_s * d.lineStep.get(0).getAY()) / (d.internalDivisionRatio_s + d.internalDivisionRatio_t);
-                s_ad.set(d.lineStep.get(0).getAX(), d.lineStep.get(0).getAY(), nx, ny);
+                double nx = (d.internalDivisionRatio_t * d.lineStep.get(0).determineBX() + d.internalDivisionRatio_s * d.lineStep.get(0).determineAX()) / (d.internalDivisionRatio_s + d.internalDivisionRatio_t);
+                double ny = (d.internalDivisionRatio_t * d.lineStep.get(0).determineBY() + d.internalDivisionRatio_s * d.lineStep.get(0).determineAY()) / (d.internalDivisionRatio_s + d.internalDivisionRatio_t);
+                s_ad.set(d.lineStep.get(0).determineAX(), d.lineStep.get(0).determineAY(), nx, ny);
                 d.addLineSegment(s_ad);
-                s_ad.set(d.lineStep.get(0).getBX(), d.lineStep.get(0).getBY(), nx, ny);
+                s_ad.set(d.lineStep.get(0).determineBX(), d.lineStep.get(0).determineBY(), nx, ny);
                 d.addLineSegment(s_ad);
             }
             d.record();

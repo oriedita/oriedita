@@ -48,15 +48,15 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
             d.lineStep.get(0).setA(closest_point);
 
             if (p.distance(closest_point) <= d.selectionDistance) {  //マウスで指定した点が、最寄点と近かったときに実施
-                if (d.lineStep.get(0).getLength() > 0.00000001) {  //lineStep.get(0)が、線の時（=点状ではない時）に実施
-                    double dx = (d.lineStep.get(0).getAX() - d.lineStep.get(0).getBX()) * d.grid.getGridWidth() / d.lineStep.get(0).getLength();
-                    double dy = (d.lineStep.get(0).getAY() - d.lineStep.get(0).getBY()) * d.grid.getGridWidth() / d.lineStep.get(0).getLength();
+                if (d.lineStep.get(0).determineLength() > 0.00000001) {  //lineStep.get(0)が、線の時（=点状ではない時）に実施
+                    double dx = (d.lineStep.get(0).determineAX() - d.lineStep.get(0).determineBX()) * d.grid.getGridWidth() / d.lineStep.get(0).determineLength();
+                    double dy = (d.lineStep.get(0).determineAY() - d.lineStep.get(0).determineBY()) * d.grid.getGridWidth() / d.lineStep.get(0).determineLength();
                     LineColor icol_temp = d.lineColor;
 
                     Point pxy = new Point();
-                    for (int i = 0; i <= (int) Math.floor(d.lineStep.get(0).getLength() / d.grid.getGridWidth()); i++) {
-                        double px = d.lineStep.get(0).getBX() + (double) i * dx;
-                        double py = d.lineStep.get(0).getBY() + (double) i * dy;
+                    for (int i = 0; i <= (int) Math.floor(d.lineStep.get(0).determineLength() / d.grid.getGridWidth()); i++) {
+                        double px = d.lineStep.get(0).determineBX() + (double) i * dx;
+                        double py = d.lineStep.get(0).determineBY() + (double) i * dy;
                         pxy.set(px, py);
 
 

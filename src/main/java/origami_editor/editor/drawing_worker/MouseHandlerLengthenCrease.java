@@ -83,7 +83,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                 }
             }
 
-            if ((entyou_kouho_nbox.getTotal() == 0) && (d.lineStep.get(0).getLength() <= 0.000001)) {//延長する候補になる折線を選ぶために描いた線分s_step[1]が点状のときの処理
+            if ((entyou_kouho_nbox.getTotal() == 0) && (d.lineStep.get(0).determineLength() <= 0.000001)) {//延長する候補になる折線を選ぶために描いた線分s_step[1]が点状のときの処理
                 if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
                     WeightedValue<LineSegment> i_d = new WeightedValue<>(d.foldLineSet.closestLineSegmentSearch(p), 1.0);//entyou_kouho_nboxに1本の情報しか入らないのでdoubleの部分はどうでもよいので適当に1.0にした。
                     entyou_kouho_nbox.container_i_smallest_first(i_d);
@@ -91,9 +91,9 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                     d.lineStep.get(0).setB(OritaCalc.findLineSymmetryPoint(closestLineSegment.getA(), closestLineSegment.getB(), p));
 
                     d.lineStep.get(0).set(//lineStep.get(0)を短くして、表示時に目立たない様にする。
-                            OritaCalc.point_double(OritaCalc.midPoint(d.lineStep.get(0).getA(), d.lineStep.get(0).getB()), d.lineStep.get(0).getA(), 0.00001 / d.lineStep.get(0).getLength())
+                            OritaCalc.point_double(OritaCalc.midPoint(d.lineStep.get(0).getA(), d.lineStep.get(0).getB()), d.lineStep.get(0).getA(), 0.00001 / d.lineStep.get(0).determineLength())
                             ,
-                            OritaCalc.point_double(OritaCalc.midPoint(d.lineStep.get(0).getA(), d.lineStep.get(0).getB()), d.lineStep.get(0).getB(), 0.00001 / d.lineStep.get(0).getLength())
+                            OritaCalc.point_double(OritaCalc.midPoint(d.lineStep.get(0).getA(), d.lineStep.get(0).getB()), d.lineStep.get(0).getB(), 0.00001 / d.lineStep.get(0).determineLength())
                     );
 
                 }
@@ -151,10 +151,10 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                             kousa_point.set(OritaCalc.findIntersection(entyou_kouho_nbox.getValue(i), closestLineSegment));
                             //addLineSegment =new Senbun(kousa_ten,foldLineSet.get(entyou_kouho_nbox.get_int(i)).get_tikai_hasi(kousa_ten));
                             addLineSegment.setA(kousa_point);
-                            addLineSegment.setB(entyou_kouho_nbox.getValue(i).getClosestEndpoint(kousa_point));
+                            addLineSegment.setB(entyou_kouho_nbox.getValue(i).determineClosestEndpoint(kousa_point));
 
 
-                            if (addLineSegment.getLength() > 0.00000001) {
+                            if (addLineSegment.determineLength() > 0.00000001) {
                                 if (getMouseMode() == MouseMode.LENGTHEN_CREASE_5) {
                                     addLineSegment.setColor(d.lineColor);
                                 }
@@ -187,7 +187,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                         addLineSegment.set(d.extendToIntersectionPoint_2(moto_no_sen));
 
 
-                        if (addLineSegment.getLength() > 0.00000001) {
+                        if (addLineSegment.determineLength() > 0.00000001) {
                             if (getMouseMode() == MouseMode.LENGTHEN_CREASE_5) {
                                 addLineSegment.setColor(d.lineColor);
                             }

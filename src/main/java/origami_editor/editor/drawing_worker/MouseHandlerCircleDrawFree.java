@@ -67,8 +67,8 @@ public class MouseHandlerCircleDrawFree extends BaseMouseHandler {
                 d.lineStep.get(0).setA(p);
             }
 
-            if (d.lineStep.get(0).getLength() > 0.00000001) {
-                d.addCircle(d.lineStep.get(0).getBX(), d.lineStep.get(0).getBY(), d.lineStep.get(0).getLength(), LineColor.CYAN_3);
+            if (d.lineStep.get(0).determineLength() > 0.00000001) {
+                d.addCircle(d.lineStep.get(0).determineBX(), d.lineStep.get(0).determineBY(), d.lineStep.get(0).determineLength(), LineColor.CYAN_3);
                 d.record();
             }
 

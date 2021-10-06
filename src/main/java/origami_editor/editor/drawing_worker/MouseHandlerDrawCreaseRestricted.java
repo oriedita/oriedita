@@ -61,7 +61,7 @@ public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestr
             Point closestPoint = d.getClosestPoint(p);
             d.lineStep.get(0).setA(closestPoint);
             if (p.distance(closestPoint) <= d.selectionDistance) {
-                if (d.lineStep.get(0).getLength() > 0.00000001) {
+                if (d.lineStep.get(0).determineLength() > 0.00000001) {
                     d.addLineSegment(d.lineStep.get(0));
                     d.record();
                 }

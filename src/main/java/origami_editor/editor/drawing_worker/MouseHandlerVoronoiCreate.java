@@ -247,7 +247,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
     List<LineSegment> s_step_no_1_top_continue_no_point_no_number() {//line_step [i] returns the number of Point (length 0) from the beginning. Returns 0 if there are no dots
         List<LineSegment> lineSegments = new ArrayList<>();
         for (LineSegment s : d.lineStep) {
-            if (s.getLength() > 0.00000001) {
+            if (s.determineLength() > 0.00000001) {
                 break;
             }
             lineSegments.add(s);

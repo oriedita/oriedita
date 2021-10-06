@@ -651,8 +651,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         mouseWheelMovesCreasePattern = canvasModel.getMouseWheelMovesCreasePattern();
 
         intLineWidth = canvasModel.getLineWidth();
-        lineWidth = canvasModel.getCalculatedLineWidth();
-        auxLineWidth = canvasModel.getCalculatedAuxLineWidth();
+        lineWidth = canvasModel.determineCalculatedLineWidth();
+        auxLineWidth = canvasModel.determineCalculatedAuxLineWidth();
 
         pointSize = canvasModel.getPointSize();
 

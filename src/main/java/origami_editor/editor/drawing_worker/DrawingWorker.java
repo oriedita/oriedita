@@ -382,8 +382,8 @@ public class DrawingWorker {
                 g_setColor(g, as.getColor());
 
                 s_tv.set(camera.object2TV(as));
-                a.set(s_tv.getAX() + 0.000001, s_tv.getAY() + 0.000001);
-                b.set(s_tv.getBX() + 0.000001, s_tv.getBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+                a.set(s_tv.determineAX() + 0.000001, s_tv.determineAY() + 0.000001);
+                b.set(s_tv.determineBX() + 0.000001, s_tv.determineBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
                 g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
@@ -465,7 +465,7 @@ public class DrawingWorker {
             for (Circle e_temp : foldLineSet.getCircles()) {
                 double d_width;
 
-                a.set(camera.object2TV(e_temp.getCenter()));//この場合のaは描画座標系での円の中心の位置
+                a.set(camera.object2TV(e_temp.determineCenter()));//この場合のaは描画座標系での円の中心の位置
 
                 g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
 
@@ -489,7 +489,7 @@ public class DrawingWorker {
             for (Circle e_temp : foldLineSet.getCircles()) {
                 double d_width;
 
-                a.set(camera.object2TV(e_temp.getCenter()));//この場合のaは描画座標系での円の中心の位置
+                a.set(camera.object2TV(e_temp.determineCenter()));//この場合のaは描画座標系での円の中心の位置
 
                 g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
                 g.setColor(new Color(0, 255, 255, 255));
@@ -526,8 +526,8 @@ public class DrawingWorker {
 
                 s_tv.set(camera.object2TV(s));
 
-                a.set(s_tv.getAX() + 0.000001, s_tv.getAY() + 0.000001);
-                b.set(s_tv.getBX() + 0.000001, s_tv.getBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+                a.set(s_tv.determineAX() + 0.000001, s_tv.determineAY() + 0.000001);
+                b.set(s_tv.determineBX() + 0.000001, s_tv.determineBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
                 g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
             }
@@ -548,8 +548,8 @@ public class DrawingWorker {
                     }
 
                     s_tv.set(camera.object2TV(s));
-                    a.set(s_tv.getAX() + 0.000001, s_tv.getAY() + 0.000001);
-                    b.set(s_tv.getBX() + 0.000001, s_tv.getBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+                    a.set(s_tv.determineAX() + 0.000001, s_tv.determineAY() + 0.000001);
+                    b.set(s_tv.determineBX() + 0.000001, s_tv.determineBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
                     g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
@@ -639,8 +639,8 @@ public class DrawingWorker {
                     }
 
                     s_tv.set(camera.object2TV(s));
-                    a.set(s_tv.getAX() + 0.000001, s_tv.getAY() + 0.000001);
-                    b.set(s_tv.getBX() + 0.000001, s_tv.getBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+                    a.set(s_tv.determineAX() + 0.000001, s_tv.determineAY() + 0.000001);
+                    b.set(s_tv.determineBX() + 0.000001, s_tv.determineBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
                     g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
@@ -701,8 +701,8 @@ public class DrawingWorker {
                 g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
 
                 s_tv.set(camera.object2TV(s));
-                a.set(s_tv.getAX() + 0.000001, s_tv.getAY() + 0.000001);
-                b.set(s_tv.getBX() + 0.000001, s_tv.getBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+                a.set(s_tv.determineAX() + 0.000001, s_tv.determineAY() + 0.000001);
+                b.set(s_tv.determineBX() + 0.000001, s_tv.determineBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
 
                 g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
@@ -732,8 +732,8 @@ public class DrawingWorker {
             g_setColor(g, s.getColor());
 
             s_tv.set(camera.object2TV(s));
-            a.set(s_tv.getAX() + 0.000001, s_tv.getAY() + 0.000001);
-            b.set(s_tv.getBX() + 0.000001, s_tv.getBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+            a.set(s_tv.determineAX() + 0.000001, s_tv.determineAY() + 0.000001);
+            b.set(s_tv.determineBX() + 0.000001, s_tv.determineBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
             g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
             int i_width = pointSize + 5;
@@ -761,7 +761,7 @@ public class DrawingWorker {
 
         for (Circle c : circleStep) {
             g_setColor(g, c.getColor());
-            a.set(camera.object2TV(c.getCenter()));//この場合のs_tvは描画座標系での円の中心の位置
+            a.set(camera.object2TV(c.determineCenter()));//この場合のs_tvは描画座標系での円の中心の位置
             a.set(a.getX() + 0.000001, a.getY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
             double d_width = c.getRadius() * camera.getCameraZoomX();//d_habaは描画時の円の半径。なお、camera.get_camera_bairitsu_x()＝camera.get_camera_bairitsu_y()を前提としている。
@@ -965,7 +965,7 @@ public class DrawingWorker {
                 } else if ((add_straightLine.sameSide(lineStep.get(center_point_count).getA(), existing_lineSegment.getA()) == 1) &&
                         (add_straightLine.sameSide(lineStep.get(center_point_count).getA(), existing_lineSegment.getB()) == -1)) {
                     existing_lineSegment.set(existing_lineSegment.getA(), intersection);
-                    if (existing_lineSegment.getLength() < 0.0000001) {
+                    if (existing_lineSegment.determineLength() < 0.0000001) {
                         lineSegment_voronoi_onePoint.remove(i);
                     } else {
                         lineSegment_voronoi_onePoint.set(i, existing_lineSegment);
@@ -973,7 +973,7 @@ public class DrawingWorker {
                 } else if ((add_straightLine.sameSide(lineStep.get(center_point_count).getA(), existing_lineSegment.getA()) == -1) &&
                         (add_straightLine.sameSide(lineStep.get(center_point_count).getA(), existing_lineSegment.getB()) == 1)) {
                     existing_lineSegment.set(intersection, existing_lineSegment.getB());
-                    if (existing_lineSegment.getLength() < 0.0000001) {
+                    if (existing_lineSegment.determineLength() < 0.0000001) {
                         lineSegment_voronoi_onePoint.remove(i);
                     } else {
                         lineSegment_voronoi_onePoint.set(i, existing_lineSegment);
@@ -986,13 +986,13 @@ public class DrawingWorker {
                 } else if ((existing_straightLine.sameSide(lineStep.get(center_point_count).getA(), add_lineSegment.getA()) == 1) &&
                         (existing_straightLine.sameSide(lineStep.get(center_point_count).getA(), add_lineSegment.getB()) == -1)) {
                     add_lineSegment.set(add_lineSegment.getA(), intersection);
-                    if (add_lineSegment.getLength() < 0.0000001) {
+                    if (add_lineSegment.determineLength() < 0.0000001) {
                         return;
                     }
                 } else if ((existing_straightLine.sameSide(lineStep.get(center_point_count).getA(), add_lineSegment.getA()) == -1) &&
                         (existing_straightLine.sameSide(lineStep.get(center_point_count).getA(), add_lineSegment.getB()) == 1)) {
                     add_lineSegment.set(intersection, add_lineSegment.getB());
-                    if (add_lineSegment.getLength() < 0.0000001) {
+                    if (add_lineSegment.determineLength() < 0.0000001) {
                         return;
                     }
                 }
@@ -1479,12 +1479,12 @@ public class DrawingWorker {
 
         LineSegment add_sen = new LineSegment();
         for (LineSegment s : lineStep) {
-            if (s.getLength() > 0.00000001) {
+            if (s.determineLength() > 0.00000001) {
                 add_sen.set(s);
                 add_sen.setColor(lineColor);
                 addLineSegment(add_sen);
             } else {
-                addCircle(s.getAX(), s.getAY(), 5.0, LineColor.CYAN_3);
+                addCircle(s.determineAX(), s.determineAY(), 5.0, LineColor.CYAN_3);
             }
         }
         record();
@@ -1647,7 +1647,7 @@ public class DrawingWorker {
 
     public void add_hanten(Circle e0, Circle eh) {
         //e0の円周が(x,y)を通るとき
-        if (Math.abs(OritaCalc.distance(e0.getCenter(), eh.getCenter()) - e0.getRadius()) < 0.0000001) {
+        if (Math.abs(OritaCalc.distance(e0.determineCenter(), eh.determineCenter()) - e0.getRadius()) < 0.0000001) {
             LineSegment s_add = new LineSegment();
             s_add.set(eh.turnAround_CircleToLineSegment(e0));
             //s_add.setcolor(3);
@@ -1666,7 +1666,7 @@ public class DrawingWorker {
     public void add_hanten(LineSegment s0, Circle eh) {
         StraightLine ty = new StraightLine(s0);
         //s0上に(x,y)がくるとき
-        if (ty.calculateDistance(eh.getCenter()) < 0.0000001) {
+        if (ty.calculateDistance(eh.determineCenter()) < 0.0000001) {
             return;
         }
 

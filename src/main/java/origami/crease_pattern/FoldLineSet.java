@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Representation of the current drawn crease pattern.
@@ -544,7 +543,7 @@ public class FoldLineSet {
             boolean idel = false;
             Circle e_temp = new Circle();
             e_temp.set(circle);
-            ec.set(e_temp.getCenter());
+            ec.set(e_temp.determineCenter());
 
             if (idel) {
                 i_r = true;
@@ -870,16 +869,16 @@ public class FoldLineSet {
         LineSegment si = lineSegments.get(i);
         LineSegment sj = lineSegments.get(j);
 
-        if (si.getMaxX() < sj.getMinX()) {
+        if (si.determineMaxX() < sj.determineMinX()) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        if (sj.getMaxX() < si.getMinX()) {
+        if (sj.determineMaxX() < si.determineMinX()) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        if (si.getMaxY() < sj.getMinY()) {
+        if (si.determineMaxY() < sj.determineMinY()) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        if (sj.getMaxY() < si.getMinY()) {
+        if (sj.determineMaxY() < si.determineMinY()) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
         Point intersect_point = new Point();
@@ -1342,16 +1341,16 @@ public class FoldLineSet {
         LineSegment si = lineSegments.get(i);
         LineSegment sj = lineSegments.get(j);
 
-        if (si.getMaxX() < sj.getMinX()) {
+        if (si.determineMaxX() < sj.determineMinX()) {
             return false;
         }//これはSenbunにi_max_xがちゃんと定義されているときでないとうまくいかない
-        if (sj.getMaxX() < si.getMinX()) {
+        if (sj.determineMaxX() < si.determineMinX()) {
             return false;
         }//これはSenbunにi_min_xがちゃんと定義されているときでないとうまくいかない
-        if (si.getMaxY() < sj.getMinY()) {
+        if (si.determineMaxY() < sj.determineMinY()) {
             return false;
         }//これはSenbunにi_max_yがちゃんと定義されているときでないとうまくいかない
-        if (sj.getMaxY() < si.getMinY()) {
+        if (sj.determineMaxY() < si.determineMinY()) {
             return false;
         }//これはSenbunにi_min_yがちゃんと定義されているときでないとうまくいかない
 
@@ -1365,40 +1364,40 @@ public class FoldLineSet {
         p4.set(sj.getB());
         Point pk = new Point();
 
-        double ixmax = si.getAX();
-        double ixmin = si.getAX();
-        double iymax = si.getAY();
-        double iymin = si.getAY();
+        double ixmax = si.determineAX();
+        double ixmin = si.determineAX();
+        double iymax = si.determineAY();
+        double iymin = si.determineAY();
 
-        if (ixmax < si.getBX()) {
-            ixmax = si.getBX();
+        if (ixmax < si.determineBX()) {
+            ixmax = si.determineBX();
         }
-        if (ixmin > si.getBX()) {
-            ixmin = si.getBX();
+        if (ixmin > si.determineBX()) {
+            ixmin = si.determineBX();
         }
-        if (iymax < si.getBY()) {
-            iymax = si.getBY();
+        if (iymax < si.determineBY()) {
+            iymax = si.determineBY();
         }
-        if (iymin > si.getBY()) {
-            iymin = si.getBY();
+        if (iymin > si.determineBY()) {
+            iymin = si.determineBY();
         }
 
-        double jxmax = sj.getAX();
-        double jxmin = sj.getAX();
-        double jymax = sj.getAY();
-        double jymin = sj.getAY();
+        double jxmax = sj.determineAX();
+        double jxmin = sj.determineAX();
+        double jymax = sj.determineAY();
+        double jymin = sj.determineAY();
 
-        if (jxmax < sj.getBX()) {
-            jxmax = sj.getBX();
+        if (jxmax < sj.determineBX()) {
+            jxmax = sj.determineBX();
         }
-        if (jxmin > sj.getBX()) {
-            jxmin = sj.getBX();
+        if (jxmin > sj.determineBX()) {
+            jxmin = sj.determineBX();
         }
-        if (jymax < sj.getBY()) {
-            jymax = sj.getBY();
+        if (jymax < sj.determineBY()) {
+            jymax = sj.determineBY();
         }
-        if (jymin > sj.getBY()) {
-            jymin = sj.getBY();
+        if (jymin > sj.determineBY()) {
+            jymin = sj.determineBY();
         }
 
         if (ixmax + 0.5 < jxmin) {
@@ -1706,17 +1705,17 @@ public class FoldLineSet {
                     Circle ej = new Circle();
                     ej.set(circles.get(j));
                     if (ej.getRadius() > 0.0000001) {//Circles with a radius of 0 are not applicable
-                        if (OritaCalc.distance(ei.getCenter(), ej.getCenter()) < 0.000001) {
+                        if (OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) < 0.000001) {
                             //Two circles are concentric and do not intersect
-                        } else if (Math.abs(OritaCalc.distance(ei.getCenter(), ej.getCenter()) - ei.getRadius() - ej.getRadius()) < 0.0001) {
+                        } else if (Math.abs(OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) - ei.getRadius() - ej.getRadius()) < 0.0001) {
                             //Two circles intersect at one point
-                            addCircle(OritaCalc.internalDivisionRatio(ei.getCenter(), ej.getCenter(), ei.getRadius(), ej.getRadius()), 0.0);
-                        } else if (OritaCalc.distance(ei.getCenter(), ej.getCenter()) > ei.getRadius() + ej.getRadius()) {
+                            addCircle(OritaCalc.internalDivisionRatio(ei.determineCenter(), ej.determineCenter(), ei.getRadius(), ej.getRadius()), 0.0);
+                        } else if (OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) > ei.getRadius() + ej.getRadius()) {
                             //Two circles do not intersect
-                        } else if (Math.abs(OritaCalc.distance(ei.getCenter(), ej.getCenter()) - Math.abs(ei.getRadius() - ej.getRadius())) < 0.0001) {
+                        } else if (Math.abs(OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) - Math.abs(ei.getRadius() - ej.getRadius())) < 0.0001) {
                             //Two circles intersect at one point
-                            addCircle(OritaCalc.internalDivisionRatio(ei.getCenter(), ej.getCenter(), -ei.getRadius(), ej.getRadius()), 0.0);
-                        } else if (OritaCalc.distance(ei.getCenter(), ej.getCenter()) < Math.abs(ei.getRadius() - ej.getRadius())) {
+                            addCircle(OritaCalc.internalDivisionRatio(ei.determineCenter(), ej.determineCenter(), -ei.getRadius(), ej.getRadius()), 0.0);
+                        } else if (OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) < Math.abs(ei.getRadius() - ej.getRadius())) {
                             //Two circles do not intersect
                         } else {//Two circles intersect at two points
                             LineSegment lineSegment = new LineSegment();
@@ -1743,11 +1742,11 @@ public class FoldLineSet {
                 Circle ej = new Circle();
                 ej.set(circles.get(j));
                 if (ej.getRadius() > 0.0000001) {//Circles with a radius of 0 are not applicable
-                    double tc_kyori = ti.calculateDistance(ej.getCenter()); //Distance between the center of a straight line and a circle
+                    double tc_kyori = ti.calculateDistance(ej.determineCenter()); //Distance between the center of a straight line and a circle
 
                     if (Math.abs(tc_kyori - ej.getRadius()) < 0.000001) {//Circle and straight line intersect at one point
-                        if (Math.abs(OritaCalc.determineLineSegmentDistance(ej.getCenter(), si) - ej.getRadius()) < 0.000001) {
-                            addCircle(OritaCalc.findProjection(ti, ej.getCenter()), 0.0);
+                        if (Math.abs(OritaCalc.determineLineSegmentDistance(ej.determineCenter(), si) - ej.getRadius()) < 0.000001) {
+                            addCircle(OritaCalc.findProjection(ti, ej.determineCenter()), 0.0);
                         }
                     } else if (tc_kyori > ej.getRadius()) {
                         //Circles and straight lines do not intersect
@@ -1815,7 +1814,7 @@ public class FoldLineSet {
         e_temp.set(circles.get(i0));
         double er_0 = e_temp.getRadius();
         Point ec_0 = new Point();
-        ec_0.set(e_temp.getCenter());
+        ec_0.set(e_temp.determineCenter());
 
         double er_1;
         Point ec_1 = new Point();
@@ -1831,7 +1830,7 @@ public class FoldLineSet {
                 if (i != i0) {
                     e_temp.set(circles.get(i));
                     er_1 = e_temp.getRadius();
-                    ec_1.set(e_temp.getCenter());
+                    ec_1.set(e_temp.determineCenter());
                     if (er_1 < 0.0000001) {//The radius of the other circle is 0
                         if (ec_0.distance(ec_1) < 0.0000001) {
                             ir1 = ir1 + 1;
@@ -2049,13 +2048,13 @@ public class FoldLineSet {
             Circle e_temp = new Circle();
             e_temp.set(circles.get(i));
 
-            rtemp = p.distance(e_temp.getCenter());
+            rtemp = p.distance(e_temp.determineCenter());
             if (minr >= rtemp) {
                 minr = rtemp;
                 minrid = i;
             }
 
-            rtemp = Math.abs(p.distance(e_temp.getCenter()) - e_temp.getRadius());
+            rtemp = Math.abs(p.distance(e_temp.determineCenter()) - e_temp.getRadius());
             if (minr >= rtemp) {
                 minr = rtemp;
                 minrid = i;
@@ -2074,12 +2073,12 @@ public class FoldLineSet {
             e_temp.set(circle);
 
 
-            rtemp = p.distance(e_temp.getCenter());
+            rtemp = p.distance(e_temp.determineCenter());
             if (minr > rtemp) {
                 minr = rtemp;
             }
 
-            rtemp = Math.abs(p.distance(e_temp.getCenter()) - e_temp.getRadius());
+            rtemp = Math.abs(p.distance(e_temp.determineCenter()) - e_temp.getRadius());
             if (minr > rtemp) {
                 minr = rtemp;
             }
@@ -2209,7 +2208,7 @@ public class FoldLineSet {
         for (Circle circle : circles) {
             Circle e_temp = new Circle();
             e_temp.set(circle);
-            p_temp.set(e_temp.getCenter());
+            p_temp.set(e_temp.determineCenter());
             if (p.distanceSquared(p_temp) < p.distanceSquared(p_return)) {
                 p_return.set(p_temp.getX(), p_temp.getY());
             }
@@ -3500,14 +3499,14 @@ public class FoldLineSet {
         if (total == 0) {
             return 0.0;
         }
-        double dm = lineSegments.get(1).getAX();
+        double dm = lineSegments.get(1).determineAX();
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
-            if (dm < s.getAX()) {
-                dm = s.getAX();
+            if (dm < s.determineAX()) {
+                dm = s.determineAX();
             }
-            if (dm < s.getBX()) {
-                dm = s.getBX();
+            if (dm < s.determineBX()) {
+                dm = s.determineBX();
             }
         }
         return dm;
@@ -3517,14 +3516,14 @@ public class FoldLineSet {
         if (total == 0) {
             return 0.0;
         }
-        double dm = lineSegments.get(1).getAX();
+        double dm = lineSegments.get(1).determineAX();
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
-            if (dm > s.getAX()) {
-                dm = s.getAX();
+            if (dm > s.determineAX()) {
+                dm = s.determineAX();
             }
-            if (dm > s.getBX()) {
-                dm = s.getBX();
+            if (dm > s.determineBX()) {
+                dm = s.determineBX();
             }
         }
         return dm;
@@ -3534,14 +3533,14 @@ public class FoldLineSet {
         if (total == 0) {
             return 0.0;
         }
-        double dm = lineSegments.get(1).getAY();
+        double dm = lineSegments.get(1).determineAY();
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
-            if (dm < s.getAY()) {
-                dm = s.getAY();
+            if (dm < s.determineAY()) {
+                dm = s.determineAY();
             }
-            if (dm < s.getBY()) {
-                dm = s.getBY();
+            if (dm < s.determineBY()) {
+                dm = s.determineBY();
             }
         }
         return dm;

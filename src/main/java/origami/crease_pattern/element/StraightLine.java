@@ -36,8 +36,8 @@ public class StraightLine {
 
     public StraightLine(LineSegment s0) {
         //Specify line segment to find straight line a, b, c
-        double x1 = s0.getAX(), y1 = s0.getAY();
-        double x2 = s0.getBX(), y2 = s0.getBY();
+        double x1 = s0.determineAX(), y1 = s0.determineAY();
+        double x2 = s0.determineBX(), y2 = s0.determineBY();
         a = y2 - y1;
         b = x1 - x2;
         c = y1 * x2 - x1 * y2;

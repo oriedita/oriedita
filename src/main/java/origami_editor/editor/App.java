@@ -1,5 +1,6 @@
 package origami_editor.editor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
@@ -13,6 +14,7 @@ import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
+import origami_editor.editor.json.DefaultObjectMapper;
 import origami_editor.editor.task.CheckCAMVTask;
 import origami_editor.editor.task.FoldingEstimateTask;
 import origami_editor.record.Memo;
@@ -480,7 +482,7 @@ public class App extends JFrame implements ActionListener {
                 mainDrawingWorker.select_all();
             }
             //
-            if (canvasModel.isCorrectCreasePatternBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
+            if (canvasModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
                 DrawingWorker drawingWorker2 = new DrawingWorker(this);    // Basic branch craftsman. Accepts input from the mouse.
                 drawingWorker2.setSave_for_reading(mainDrawingWorker.foldLineSet.getSaveForSelectFolding());
                 drawingWorker2.point_removal();
@@ -963,8 +965,11 @@ public class App extends JFrame implements ActionListener {
 
         try {
             if (file.getName().endsWith(".ori")) {
-                try (FileInputStream fis = new FileInputStream(file); ObjectInputStream ois = new ObjectInputStream(fis)) {
-                    save = (Save) ois.readObject();
+                try {
+                    ObjectMapper mapper = new DefaultObjectMapper();
+                    return mapper.readValue(file, Save.class);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -980,7 +985,7 @@ public class App extends JFrame implements ActionListener {
                 save = Orh.importFile(file);
             }
 
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             System.out.println(e);
 
             JOptionPane.showMessageDialog(this, "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
@@ -1027,12 +1032,11 @@ public class App extends JFrame implements ActionListener {
 
     void saveAndName2File(Save save, File fname) {
         try {
-            try (FileOutputStream bos = new FileOutputStream(fname);
-                 ObjectOutputStream out = new ObjectOutputStream(bos)) {
-                out.writeObject(save);
-            }
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
+            ObjectMapper mapper = new DefaultObjectMapper();
+
+            mapper.writeValue(fname, save);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -157,7 +157,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
             Point kousa_point = new Point();
             kousa_point.set(OritaCalc.findIntersection(d.lineStep.get(2 + (honsuu)), d.lineStep.get(2 + (honsuu) + 1)));
             LineSegment add_sen = new LineSegment(kousa_point, d.lineStep.get(0).getA(), d.lineColor);
-            if (add_sen.getLength() > 0.00000001) {
+            if (add_sen.determineLength() > 0.00000001) {
                 d.addLineSegment(add_sen);
                 d.record();
             }

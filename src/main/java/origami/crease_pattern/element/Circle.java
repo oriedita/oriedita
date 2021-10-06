@@ -42,9 +42,9 @@ public class Circle implements Serializable {//Used to represent point coordinat
     }
 
     public Circle(LineSegment s0, LineColor m) {// A circle whose diameter is the constructor line segment
-        x = (s0.getAX() + s0.getBX()) / 2.0;
-        y = (s0.getAY() + s0.getBY()) / 2.0;
-        r = s0.getLength() / 2.0;
+        x = (s0.determineAX() + s0.determineBX()) / 2.0;
+        y = (s0.determineAY() + s0.determineBY()) / 2.0;
+        r = s0.determineLength() / 2.0;
         color = m;
     }
 
@@ -78,9 +78,9 @@ public class Circle implements Serializable {//Used to represent point coordinat
     }
 
     public void set(LineSegment s0, LineColor m) {
-        x = (s0.getAX() + s0.getBX()) / 2.0;
-        y = (s0.getAY() + s0.getBY()) / 2.0;
-        r = s0.getLength() / 2.0;
+        x = (s0.determineAX() + s0.determineBX()) / 2.0;
+        y = (s0.determineAY() + s0.determineBY()) / 2.0;
+        r = s0.determineLength() / 2.0;
         color = m;
     }
 
@@ -139,7 +139,11 @@ public class Circle implements Serializable {//Used to represent point coordinat
         customizedColor = c0;
     }
 
-    public Point getCenter() {
+    public double getR() {
+        return r;
+    }
+
+    public Point determineCenter() {
         return new Point(getX(), getY());
     }
 
@@ -218,7 +222,7 @@ public class Circle implements Serializable {//Used to represent point coordinat
     public Circle turnAround_LineSegmentToCircle(LineSegment s0) {//Weird results when s0 passes through (x, y).
         StraightLine ty = new StraightLine(s0);
         Point t0 = new Point();
-        t0.set(ty.findProjection(getCenter()));
-        return new Circle(new LineSegment(turnAround(t0), getCenter()), LineColor.MAGENTA_5);
+        t0.set(ty.findProjection(determineCenter()));
+        return new Circle(new LineSegment(turnAround(t0), determineCenter()), LineColor.MAGENTA_5);
     }
 }

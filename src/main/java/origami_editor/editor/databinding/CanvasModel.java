@@ -81,10 +81,6 @@ public class CanvasModel implements Serializable {
         this.pcs.firePropertyChange("correctCpBeforeFolding", oldCorrectCpBeforeFolding, correctCpBeforeFolding);
     }
 
-    public boolean isCorrectCreasePatternBeforeFolding() {
-        return correctCpBeforeFolding;
-    }
-
     public boolean getSelectPersistent() {
         return selectPersistent;
     }
@@ -440,7 +436,7 @@ public class CanvasModel implements Serializable {
         setLineWidth(lineWidth + 2);
     }
 
-    public float getCalculatedLineWidth() {
+    public float determineCalculatedLineWidth() {
         float fLineWidth = (float) lineWidth;
 
         if (antiAlias) {
@@ -462,7 +458,7 @@ public class CanvasModel implements Serializable {
         setAuxLineWidth(auxLineWidth + 2);
     }
 
-    public float getCalculatedAuxLineWidth() {
+    public float determineCalculatedAuxLineWidth() {
         float fAuxLineWidth = (float) auxLineWidth;
 
         if (antiAlias) {

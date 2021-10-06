@@ -40,14 +40,14 @@ public class OritaDrawing {
         int[] x = new int[5];
         int[] y = new int[5];
 
-        x[0] = (int) sp.getAX();
-        y[0] = (int) sp.getAY();
-        x[1] = (int) sp.getBX();
-        y[1] = (int) sp.getBY();
-        x[2] = (int) sm.getBX();
-        y[2] = (int) sm.getBY();
-        x[3] = (int) sm.getAX();
-        y[3] = (int) sm.getAY();
+        x[0] = (int) sp.determineAX();
+        y[0] = (int) sp.determineAY();
+        x[1] = (int) sp.determineBX();
+        y[1] = (int) sp.determineBY();
+        x[2] = (int) sm.determineBX();
+        y[2] = (int) sm.determineBY();
+        x[3] = (int) sm.determineAX();
+        y[3] = (int) sm.determineAY();
 
         g.fillPolygon(x, y, 4);
     }
@@ -73,20 +73,20 @@ public class OritaDrawing {
     //Draw a pointing diagram around the specified Point
     public static void pointingAt1(Graphics g, LineSegment s_tv, double length, double width, int icolor) {
         g.setColor(new Color(255, 165, 0, 100));//g.setColor(Color.ORANGE);
-        g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
+        g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
     }
 
     //Draw a pointing diagram around the specified Point
     public static void pointingAt2(Graphics g, LineSegment s_tv, double length, double width, int icolor) {
         g.setColor(new Color(255, 165, 0, 100));//g.setColor(Color.ORANGE);
-        g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
+        g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
 
     }
 
     //Draw a pointing diagram around the specified Point
     public static void pointingAt3(Graphics g, LineSegment s_tv, double length, double width, int icolor) {
         g.setColor(new Color(255, 200, 0, 50));
-        g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
+        g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
     }
 
 
@@ -94,6 +94,6 @@ public class OritaDrawing {
     public static void pointingAt4(Graphics g, LineSegment s_tv, int color_transparency) {
         g.setColor(new Color(255, 0, 147, color_transparency));
 
-        g.drawLine((int) s_tv.getAX(), (int) s_tv.getAY(), (int) s_tv.getBX(), (int) s_tv.getBY()); //直線
+        g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
     }
 }

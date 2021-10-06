@@ -37,14 +37,14 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHa
             }
 
             d.lineStep.clear();
-            d.circleStep.add(new Circle(closest_circumference.getCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
+            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
         } else if ((d.lineStep.size() == 0) && (d.circleStep.size() == 1)) {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
             d.lineStep.clear();
-            d.circleStep.add(new Circle(closest_circumference.getCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
+            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
         }
     }
 
@@ -58,7 +58,7 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHa
             Circle circle1 = d.circleStep.get(0);
             Circle circle2 = d.circleStep.get(1);
             d.circleStep.clear();
-            double add_r = (OritaCalc.distance(circle1.getCenter(), circle2.getCenter()) - circle1.getRadius() - circle2.getRadius()) * 0.5;
+            double add_r = (OritaCalc.distance(circle1.determineCenter(), circle2.determineCenter()) - circle1.getRadius() - circle2.getRadius()) * 0.5;
 
             if (Math.abs(add_r) > 0.00000001) {
                 double new_r1 = add_r + circle1.getRadius();

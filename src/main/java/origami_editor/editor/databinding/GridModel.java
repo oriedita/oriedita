@@ -152,7 +152,7 @@ public class GridModel implements Serializable {
         return gridXA;
     }
 
-    public void setGridX(double gridXA, double gridXB, double gridXC) {
+    public void applyGridX(double gridXA, double gridXB, double gridXC) {
         if (validateGrid(gridXA, gridXB, gridXC)) {
             this.gridXA = gridXA;
             this.gridXB = gridXB;
@@ -214,7 +214,7 @@ public class GridModel implements Serializable {
         return gridYA;
     }
 
-    public void setGridY(double gridYA, double gridYB, double gridYC) {
+    public void applyGridY(double gridYA, double gridYB, double gridYC) {
         if (validateGrid(gridYA, gridYB, gridYC)) {
             this.gridYA = gridYA;
             this.gridYB = gridYB;
@@ -296,11 +296,11 @@ public class GridModel implements Serializable {
         return true;
     }
 
-    public double getGridXLength() {
+    public double determineGridXLength() {
         return gridXA + gridXB * Math.sqrt(gridXC);
     }
 
-    public double getGridYLength() {
+    public double determineGridYLength() {
         return gridYA + gridYB * Math.sqrt(gridYC);
     }
 

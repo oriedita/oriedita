@@ -52,7 +52,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
         if (d.lineStep.size() == 1) {
             Point syuusei_point = new Point(syuusei_point_A_37(p0));
             d.lineStep.get(0).setA(kouho_point_A_37(syuusei_point));
-            if (d.lineStep.get(0).getLength() > 0.00000001) {
+            if (d.lineStep.get(0).determineLength() > 0.00000001) {
                 d.addLineSegment(d.lineStep.get(0));
                 d.record();
             }
@@ -90,7 +90,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
             }
         }
 
-        return OritaCalc.findProjection(d.lineStep.get(0).getB(), new Point(d.lineStep.get(0).getBX() + Math.cos(d_rad), d.lineStep.get(0).getBY() + Math.sin(d_rad)), p);
+        return OritaCalc.findProjection(d.lineStep.get(0).getB(), new Point(d.lineStep.get(0).determineBX() + Math.cos(d_rad), d.lineStep.get(0).determineBY() + Math.sin(d_rad)), p);
     }
 
     // ---

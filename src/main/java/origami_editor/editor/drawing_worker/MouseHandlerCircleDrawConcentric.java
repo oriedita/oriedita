@@ -38,7 +38,7 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler {
 
             d.lineStep.clear();
             d.circleStep.clear();
-            d.circleStep.add(new Circle(closest_circumference.getCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
+            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
             return;
         }
 
@@ -48,7 +48,7 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler {
             }
 
             d.lineStepAdd(new LineSegment(p, closestPoint, LineColor.CYAN_3));
-            d.circleStep.add(new Circle(d.circleStep.get(0).getCenter(), d.circleStep.get(0).getRadius(), LineColor.GREEN_6));
+            d.circleStep.add(new Circle(d.circleStep.get(0).determineCenter(), d.circleStep.get(0).getRadius(), LineColor.GREEN_6));
         }
     }
 
@@ -58,7 +58,7 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler {
         p.set(d.camera.TV2object(p0));
         if ((d.lineStep.size() == 1) && (d.circleStep.size() == 2)) {
             d.lineStep.get(0).setA(p);
-            d.circleStep.get(1).setR(d.circleStep.get(0).getRadius() + d.lineStep.get(0).getLength());
+            d.circleStep.get(1).setR(d.circleStep.get(0).getRadius() + d.lineStep.get(0).determineLength());
         }
     }
 
@@ -75,9 +75,9 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler {
             Point closestPoint = d.getClosestPoint(p);
             d.lineStep.get(0).setA(closestPoint);
             if (p.distance(closestPoint) <= d.selectionDistance) {
-                if (d.lineStep.get(0).getLength() > 0.00000001) {
+                if (d.lineStep.get(0).determineLength() > 0.00000001) {
                     d.addLineSegment(d.lineStep.get(0));
-                    circle2.setR(circle1.getRadius() + d.lineStep.get(0).getLength());
+                    circle2.setR(circle1.getRadius() + d.lineStep.get(0).determineLength());
                     d.addCircle(circle2);
                     d.record();
                 }

@@ -52,7 +52,7 @@ public class MouseHandlerCircleDrawSeparate extends BaseMouseHandler {
         p.set(d.camera.TV2object(p0));
         if (d.lineStep.size() == 2) {
             d.lineStep.get(1).setA(p);
-            d.circleStep.get(0).setR(d.lineStep.get(0).getLength());
+            d.circleStep.get(0).setR(d.lineStep.get(0).determineLength());
         }
     }
 
@@ -66,9 +66,9 @@ public class MouseHandlerCircleDrawSeparate extends BaseMouseHandler {
             Point closest_point = d.getClosestPoint(p);
             d.lineStep.get(1).setA(closest_point);
             if (p.distance(closest_point) <= d.selectionDistance) {
-                if (d.lineStep.get(1).getLength() > 0.00000001) {
+                if (d.lineStep.get(1).determineLength() > 0.00000001) {
                     d.addLineSegment(d.lineStep.get(1));
-                    d.addCircle(d.lineStep.get(0).getA(), d.lineStep.get(1).getLength(), LineColor.CYAN_3);
+                    d.addCircle(d.lineStep.get(0).getA(), d.lineStep.get(1).determineLength(), LineColor.CYAN_3);
                     d.record();
                 }
             }
