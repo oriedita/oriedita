@@ -114,9 +114,12 @@ public class HierarchyList {//This class is used to record and utilize the hiera
         uL.add(new EquivalenceCondition(ai, bi, ci, di));
     }
 
+    // hierarchyList[i][j] == 1 means face i is above face j; 0 means below.
+    // hierarchyList[i][j] == -50 means face i and face j overlaps, but the stacking is undetermined.
+    // hierarchyList[i][j] == -100 means face i and face j do not overlap.
     public enum HierarchyListCondition {
-        UNKNOWN_0,
-        UNKNOWN_1,
+        BELOW_0,
+        ABOVE_1,
         UNKNOWN_N50,
         EMPTY_N100,
         ;

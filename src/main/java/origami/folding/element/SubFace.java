@@ -134,7 +134,7 @@ public class SubFace {//This class folds the development view and estimates the 
         for (int i = 1; i <= faceIdCount; i++) {
             FaceId2fromTop_counted_position[i] = 0;
             for (int j = 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[i], faceIdList[j]) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
+                if (hierarchyList.get(faceIdList[i], faceIdList[j]) == HierarchyList.HierarchyListCondition.ABOVE_1) {
                     FaceId2fromTop_counted_position[i] = FaceId2fromTop_counted_position[i] + 1;
                 }
             }
@@ -170,7 +170,7 @@ public class SubFace {//This class folds the development view and estimates the 
     private int overlapping_inconsistent_digits_request(HierarchyList hierarchyList) {
         for (int i = 1; i <= faceIdCount - 1; i++) {
             for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
+                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.HierarchyListCondition.BELOW_0) {
                     return i;
                 }
             }
@@ -270,11 +270,11 @@ public class SubFace {//This class folds the development view and estimates the 
     public void hierarchyList_at_subFace_wo_input(HierarchyList hierarchyList) {
         for (int i = 1; i <= faceIdCount; i++) {
             for (int j = 1; j <= i - 1; j++) {
-                hierarchyList.set(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)], HierarchyList.HierarchyListCondition.UNKNOWN_0);
+                hierarchyList.set(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)], HierarchyList.HierarchyListCondition.BELOW_0);
             }
 
             for (int j = i + 1; j <= faceIdCount; j++) {
-                hierarchyList.set(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)], HierarchyList.HierarchyListCondition.UNKNOWN_1);
+                hierarchyList.set(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)], HierarchyList.HierarchyListCondition.ABOVE_1);
             }
         }
     }
@@ -330,7 +330,7 @@ public class SubFace {//This class folds the development view and estimates the 
 
             //First, collect the SubFace id number of the upper surface in ueFaceId []
             for (int i = 1; i <= faceIdCount; i++) {
-                if (hierarchyList.get(faceIdList[i], faceIdList[faceIndex]) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
+                if (hierarchyList.get(faceIdList[i], faceIdList[faceIndex]) == HierarchyList.HierarchyListCondition.ABOVE_1) {
                     ueFaceIdCount = ueFaceIdCount + 1;
                     ueFaceId[ueFaceIdCount] = i;
                     ueFaceIdFlg[ueFaceIdCount] = true;
@@ -340,10 +340,10 @@ public class SubFace {//This class folds the development view and estimates the 
             //Set ueFaceIdFlg [id] of the id number to be invalid to 0.
             for (int i = 1; i <= ueFaceIdCount - 1; i++) {
                 for (int j = i + 1; j <= ueFaceIdCount; j++) {
-                    if (hierarchyList.get(faceIdList[ueFaceId[i]], faceIdList[ueFaceId[j]]) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
+                    if (hierarchyList.get(faceIdList[ueFaceId[i]], faceIdList[ueFaceId[j]]) == HierarchyList.HierarchyListCondition.ABOVE_1) {
                         ueFaceIdFlg[i] = false;
                     }
-                    if (hierarchyList.get(faceIdList[ueFaceId[j]], faceIdList[ueFaceId[i]]) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
+                    if (hierarchyList.get(faceIdList[ueFaceId[j]], faceIdList[ueFaceId[i]]) == HierarchyList.HierarchyListCondition.ABOVE_1) {
                         ueFaceIdFlg[j] = false;
                     }
                 }
@@ -378,10 +378,10 @@ public class SubFace {//This class folds the development view and estimates the 
         int iret = 0;
         for (int i = 1; i <= faceIdCount - 1; i++) {
             for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.HierarchyListCondition.UNKNOWN_0) {
+                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.HierarchyListCondition.BELOW_0) {
                     iret++;
                 }
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.HierarchyListCondition.UNKNOWN_1) {
+                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.HierarchyListCondition.ABOVE_1) {
                     iret++;
                 }
             }

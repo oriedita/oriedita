@@ -560,7 +560,7 @@ public class FoldedFigure {
         ip1_anotherOverlapValid = HierarchyList_Worker.HierarchyListStatus.UNKNOWN_0;
         findAnotherOverlapValid = false;
         ip1_anotherOverlapValid = ct_worker.HierarchyList_configure(cp_worker1, cp_worker2.get());   //ip1_anotherOverlapValid = A variable that stores 0 if there is an error that the front and back sides are adjacent after folding, and 1000 if there is no error.
-        if (ip1_anotherOverlapValid == HierarchyList_Worker.HierarchyListStatus.UNKNOWN_1000) {
+        if (ip1_anotherOverlapValid == HierarchyList_Worker.HierarchyListStatus.SUCCESSFUL_1000) {
             findAnotherOverlapValid = true;
         }
         discovered_fold_cases = 0;
