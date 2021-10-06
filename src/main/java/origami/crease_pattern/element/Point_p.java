@@ -10,6 +10,13 @@ public class Point_p extends Point {
      */
     boolean i_state = false;
 
+    public Point_p() {
+    }
+
+    public Point_p(double i, double j) {
+        super(i, j);
+    }
+
     public void setPointStateTrue() {
         i_state = true;
     }

@@ -1,6 +1,7 @@
 package origami.crease_pattern.worker;
 
 import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.Point_p;
 import origami_editor.editor.Save;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.undo_box.HistoryState;
@@ -223,12 +224,12 @@ public class CreasePattern_Worker {
         // Find where to move when the crease pattern is folded by moving the face im.
 
         System.out.println("折ったときの点の位置を求める（開始）");
-        for (int it = 1; it <= this.pointSet.getNumPoints(); it++) {
-            tnew[it].reset();
+        for (int it = 0; it < this.pointSet.getNumPoints(); it++) {
+            tnew[it+1].reset();
             for (int im = 1; im <= this.pointSet.getNumFaces(); im++) {
                 if (this.pointSet.pointInFaceBorder(im, it)) {//c.Ten_moti_hantei returns 1 if the boundary of Face [im] contains Point [it], 0 if it does not.
-                    tnew[it].addPoint(fold_movement(it, im));
-                    pointSet.setPoint(it, tnew[it].getAveragePoint());
+                    tnew[it+1].addPoint(fold_movement(it, im));
+                    pointSet.setPoint(it, tnew[it+1].getAveragePoint());
                 }
             }
         }
@@ -329,8 +330,7 @@ public class CreasePattern_Worker {
         boolean flag1;
         double x, y;
 
-        double[] addPointX = new double[lineSegmentSet.getNumLineSegments() + 1 + 1]; // If you do not add +1 you will get an error when the number of faces is 1.
-        double[] addPointY = new double[lineSegmentSet.getNumLineSegments() + 1 + 1]; // If you do not add +1 you will get an error when the number of faces is 1.
+        List<Point> addPoint = new ArrayList<>();
         int addPointNum = 0;
 
         for (int i = 0; i < lineSegmentSet.getNumLineSegments(); i++) {
@@ -339,43 +339,39 @@ public class CreasePattern_Worker {
             x = ti.getX();
             y = ti.getY();
 
-            for (int j = 1; j <= addPointNum; j++) {
-                if (OritaCalc.equal(ti, new Point(addPointX[j], addPointY[j]))) {
+            for (Point p : addPoint) {
+                if (OritaCalc.equal(ti, p)) {
                     flag1 = true;
                 }
             }
 
             if (!flag1) {
-                addPointNum = addPointNum + 1;
-                addPointX[addPointNum] = x;
-                addPointY[addPointNum] = y;
+                addPoint.add(new Point(x, y));
             }
             flag1 = false;
             ti = lineSegmentSet.getB(i);
             x = ti.getX();
             y = ti.getY();
 
-            for (int j = 1; j <= addPointNum; j++) {
-                if (OritaCalc.equal(ti, new Point(addPointX[j], addPointY[j]))) {
+            for (Point p : addPoint) {
+                if (OritaCalc.equal(ti, p)) {
                     flag1 = true;
                 }
             }
 
             if (!flag1) {
-                addPointNum = addPointNum + 1;
-                addPointX[addPointNum] = x;
-                addPointY[addPointNum] = y;
+                addPoint.add(new Point(x, y));
             }
         }
 
         System.out.print("点の全数　addPointNum＝　");
         System.out.println(addPointNum);
 
-        configure(addPointNum, lineSegmentSet.getNumLineSegments(), lineSegmentSet.getNumLineSegments() - addPointNum + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
-        pointSet.configure(addPointNum, lineSegmentSet.getNumLineSegments(), lineSegmentSet.getNumLineSegments() - addPointNum + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
+        configure(addPoint.size(), lineSegmentSet.getNumLineSegments(), lineSegmentSet.getNumLineSegments() - addPoint.size() + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
+        pointSet.configure(addPoint.size(), lineSegmentSet.getNumLineSegments(), lineSegmentSet.getNumLineSegments() - addPoint.size() + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
 
-        for (int i = 1; i <= addPointNum; i++) {
-            pointSet.addPoint(addPointX[i], addPointY[i]);
+        for (Point p : addPoint) {
+            pointSet.addPoint(p.getX(), p.getY());
         }
 
         //Next, define a bar in PointSet.
@@ -384,13 +380,13 @@ public class CreasePattern_Worker {
         List<Integer> ika2ic = new ArrayList<>();
         List<Integer> ikb2ic = new ArrayList<>();
         for (int n = 0; n < lineSegmentSet.getNumLineSegments(); n++) {
-            for (int i = 1; i <= pointSet.getNumPoints(); i++) {
+            for (int i = 0; i < pointSet.getNumPoints(); i++) {
                 if (OritaCalc.equal(lineSegmentSet.getA(n), pointSet.getPoint(i))) {
                     ika2ic.add(i);
                     break;
                 }
             }
-            for (int i = 1; i <= pointSet.getNumPoints(); i++) {
+            for (int i = 0; i < pointSet.getNumPoints(); i++) {
                 if (OritaCalc.equal(lineSegmentSet.getB(n), pointSet.getPoint(i))) {
                     ikb2ic.add(i);
                     break;

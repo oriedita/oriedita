@@ -203,13 +203,13 @@ public class FoldedFigure {
 
         //Display of corresponding points on the wire diagram and development diagram when moving the fold-up diagram
 
-        for (int i = 1; i <= cp_worker1.getPointsTotal(); i++) {
+        for (int i = 0; i < cp_worker1.getPointsTotal(); i++) {
             if (cp_worker1.getPointState(i)) {
                 cp_worker1.drawing_pointId_with_camera(bufferGraphics, i);
             }
         }
 
-        for (int i = 1; i <= cp_worker2.getPointsTotal(); i++) {
+        for (int i = 0; i < cp_worker2.getPointsTotal(); i++) {
             if (cp_worker2.getPointState(i)) {
                 cp_worker1.drawing_pointId_with_camera_green(bufferGraphics, i);
                 cp_worker2.drawing_pointId_with_camera(bufferGraphics, i, ip4);

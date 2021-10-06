@@ -22,11 +22,10 @@ import java.util.List;
 public class PointSet implements Serializable {
     int numFaces_temp;
 
-    int numPoints;               //Total number of points actually used
     int numLines;               //Total number of lines actually used
     int numFaces;               //Total number of faces actually used
 
-    Point_p[] points;//Instantiation of points
+    List<Point_p> points = new ArrayList<>();//Instantiation of points
     Line[] lines;//Instantiation of lines
     @JsonIgnore
     int[] lineInFaceBorder_min;
@@ -65,7 +64,7 @@ public class PointSet implements Serializable {
 
     //---------------------------------------
     public void reset() {
-        numPoints = 0;
+        points.clear();
         numLines = 0;
         numFaces = 0;
     }
@@ -74,19 +73,12 @@ public class PointSet implements Serializable {
     public void configure(int numPoints, int numLines, int numFaces) { //Make sure it passes at the beginning and after a reset.
         numFaces_temp = numFaces;
 
-        points = new Point_p[numPoints + 1];
+        points = new ArrayList<>();
         point_linking = new ArrayList<>(numPoints + 1);
 
-        point_linking.add(new ArrayList<>());
-        for (int i = 0; i <= numPoints; i++) {
+        for (int i = 0; i < numPoints; i++) {
             List<Integer> list = new ArrayList<>();
-            list.add(0);
             point_linking.add(list);
-        }
-
-        for (int i = 0; i <= numPoints; i++) {
-            points[i] = new Point_p();
-            setPointLinking(i, 0, 0);
         }
 
         lines = new Line[numLines + 1];
@@ -120,38 +112,22 @@ public class PointSet implements Serializable {
         face_y_min = new double[numFaces + 1];
     }
 
-    //---------------
-    private int getPointLinking(int i, int j) {
-        return point_linking.get(i).get(j);
-    }
-
-    private void setPointLinking(int i, int j, int tid) {
-        if (j + 1 > point_linking.get(i).size()) {
-            while (j + 1 > point_linking.get(i).size()) {
-                point_linking.get(i).add(0);
-            }
-        }//It won't work without this sentence. I don't know exactly why it should be this sentence.
-        point_linking.get(i).set(j, tid);
-    }
-
-    //------------------------------
-    private double getAverage_x() {
-        double x = 0.0;
-        for (int i = 1; i <= numPoints; i++) {
-            x = x + points[i].getX();
-        }
-        return x / ((double) numPoints);
+    private List<Integer> getPointLinking(int i) {
+        return point_linking.get(i);
     }
 
     public void set(PointSet ts) {
-        numPoints = ts.getNumPoints();
         numLines = ts.getNumLines();
         numFaces = ts.getNumFaces();
-        for (int i = 0; i <= numPoints; i++) {
-            points[i].set(ts.getPoint(i));                                                         //  <<<-------
-            for (int j = 1; j <= ts.getPointLinking(i, 0); j++) {
-                setPointLinking(i, j, ts.getPointLinking(i, j));
-            }
+        points.clear();
+        point_linking.clear();
+        for (int i = 0; i < ts.getNumPoints(); i++) {
+            Point_p p = new Point_p();
+            p.set(ts.getPoint(i));
+            points.add(p);
+
+            List<Integer> links = new ArrayList<>(ts.getPointLinking(i));
+            point_linking.add(links);
         }
         for (int i = 0; i <= numLines; i++) {
             lines[i].set(ts.getLine(i));
@@ -165,10 +141,6 @@ public class PointSet implements Serializable {
             }
         }
     }
-
-    public void set(int i, Point tn) {
-        points[i].set(tn);
-    }                                               //  <<<-------
 
     private int getFaceAdjecent(int i, int j) {
         return face_adjacent[i][j];
@@ -227,8 +199,8 @@ public class PointSet implements Serializable {
     //Make Face polygonal
     private Polygon makePolygon(Face face) {
         Polygon polygon = new Polygon(face.getNumPoints());
-        for (int i = 0; i <= face.getNumPoints(); i++) {
-            polygon.set(i, points[face.getPointId(i)]);
+        for (int i = 1; i <= face.getNumPoints(); i++) {
+            polygon.set(i, points.get(face.getPointId(i)));
         }
         return polygon;
     }
@@ -250,7 +222,7 @@ public class PointSet implements Serializable {
             return false;
         }
 
-        return convex_inside(new LineSegment(points[lines[ib].getBegin()], points[lines[ib].getEnd()]), faces[im]);
+        return convex_inside(new LineSegment(points.get(lines[ib].getBegin()), points.get(lines[ib].getEnd())), faces[im]);
     }
 
     private boolean convex_inside(LineSegment s0, Face mn) {
@@ -260,13 +232,13 @@ public class PointSet implements Serializable {
     }
 
     public boolean convex_inside(double d, int ib, int im) {
-        LineSegment sn = new LineSegment(points[lines[ib].getBegin()], points[lines[ib].getEnd()]);
+        LineSegment sn = new LineSegment(points.get(lines[ib].getBegin()), points.get(lines[ib].getEnd()));
         return convex_inside(OritaCalc.moveParallel(sn, d), faces[im]);
     }
 
     //Make a line a line segment
     private LineSegment lineToLineSegment(Line line) {
-        return new LineSegment(points[line.getBegin()], points[line.getEnd()]);
+        return new LineSegment(points.get(line.getBegin()), points.get(line.getEnd()));
     }
 
     //Returns 1 if two lines are parallel and partially or wholly overlap, otherwise 0. If one point overlaps, 0 is returned.
@@ -297,7 +269,7 @@ public class PointSet implements Serializable {
     }
 
     public int getNumPoints() {
-        return numPoints;
+        return points.size();
     }   //Get the total number of points
 
     public int getNumLines() {
@@ -313,15 +285,15 @@ public class PointSet implements Serializable {
     }  // void setTensuu(int i){Tensuu=i;}
 
     public double getPointX(int i) {
-        return points[i].getX();
+        return points.get(i).getX();
     }
 
     public double getPointY(int i) {
-        return points[i].getY();
+        return points.get(i).getY();
     }
 
     public Point getPoint(int i) {
-        return points[i];
+        return points.get(i);
     }   //点を得る       <<<------------tは、スーパークラスのTenのサブクラスTen_Pクラスのオブジェクト。スーパークラスの変数にサブクラスのオブジェクトを代入可能なので、このまま使う。
 
     private Line getLine(int i) {
@@ -329,11 +301,11 @@ public class PointSet implements Serializable {
     }   //棒を得る
 
     public Point getBeginPointFromLineId(int i) {
-        return points[getBegin(i)];
+        return points.get(getBegin(i));
     }    //棒のidから前点を得る              <<<------------　　同上
 
     public Point getEndPointFromLineId(int i) {
-        return points[getEnd(i)];
+        return points.get(getEnd(i));
     }    //棒のidから後点を得る              <<<------------　　同上
 
 
@@ -354,19 +326,19 @@ public class PointSet implements Serializable {
     } //棒のidから後点のidを得る
 
     public double getBeginX(int i) {
-        return points[lines[i].getBegin()].getX();
+        return points.get(lines[i].getBegin()).getX();
     }
 
     public double getBeginY(int i) {
-        return points[lines[i].getBegin()].getY();
+        return points.get(lines[i].getBegin()).getY();
     }
 
     public double getEndX(int i) {
-        return points[lines[i].getEnd()].getX();
+        return points.get(lines[i].getEnd()).getX();
     }
 
     public double getEndY(int i) {
-        return points[lines[i].getEnd()].getY();
+        return points.get(lines[i].getEnd()).getY();
     }
 
     public int getPointsCount(int i) {
@@ -374,12 +346,11 @@ public class PointSet implements Serializable {
     }
 
     public void setPoint(int i, Point tn) {
-        points[i].set(tn);
+        points.get(i).set(tn);
     }                                                        //   <<<------------
 
     public void addPoint(double x, double y) {
-        numPoints = numPoints + 1;
-        points[numPoints].set(x, y);
+        points.add(new Point_p(x, y));
     }   //点を加える
 
     public void addLine(int i, int j, LineColor icol) {
@@ -393,37 +364,33 @@ public class PointSet implements Serializable {
 
     private void t_renketu_sakusei() {
         for (int k = 1; k <= numLines; k++) {
-            setPointLinking(lines[k].getBegin(), 0, getPointLinking(lines[k].getBegin(), 0) + 1);
-            setPointLinking(lines[k].getBegin(), getPointLinking(lines[k].getBegin(), 0), lines[k].getEnd());
-            setPointLinking(lines[k].getEnd(), 0, getPointLinking(lines[k].getEnd(), 0) + 1);
-            setPointLinking(lines[k].getEnd(), getPointLinking(lines[k].getEnd(), 0), lines[k].getBegin());
+            point_linking.get(lines[k].getBegin()).add(lines[k].getEnd());
+            point_linking.get(lines[k].getEnd()).add(lines[k].getBegin());
         }
     }
 
     //Find the number of the point when going from point i to point j and then going from point j to the right side of point i.
     private int getRPoint(int i, int j) {
-        int n = 0;
+        int n = -1;
         double angle = 876.0;   //Keep angle in a large number
 
         boolean iflg = false;
-        for (int k = 1; k <= getPointLinking(i, 0); k++) {
-            if (getPointLinking(i, k) == j) {
+        for (int k : point_linking.get(i)) {
+            if (k == j) {
                 iflg = true;
                 break;
             }
         }
 
         if (!iflg) {
-            return 0;
+            return -1;
         }//点iと点jが連結していない時は0を返す
 
-        for (int ik = 1; ik <= getPointLinking(j, 0); ik++) {
-            int k;
-            k = getPointLinking(j, ik);
+        for (int k : point_linking.get(j)) {
             if (k != i) {
-                if (OritaCalc.angle(points[j], points[i], points[j], points[k]) <= angle) {
+                if (OritaCalc.angle(points.get(j), points.get(i), points.get(j), points.get(k)) <= angle) {
                     n = k;
-                    angle = OritaCalc.angle(points[j], points[i], points[j], points[k]);
+                    angle = OritaCalc.angle(points.get(j), points.get(i), points.get(j), points.get(k));
                 }
             }
         }
@@ -439,7 +406,7 @@ public class PointSet implements Serializable {
 
         nextT = getRPoint(tempFace.getPointId(1), tempFace.getPointId(2));
         do {
-            if (nextT == 0) {
+            if (nextT == -1) {
                 tempFace.reset();
                 return tempFace;
             }//エラー時の対応
@@ -452,37 +419,37 @@ public class PointSet implements Serializable {
 
     //-------------------------------------
     public void FaceOccurrence() {
-        int flag1;
+        boolean flag1;
         Face tempFace;
         numFaces = 0;
         t_renketu_sakusei();
 
         for (int i = 1; i <= numLines; i++) {
             tempFace = Face_request(lines[i].getBegin(), lines[i].getEnd());
-            flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
+            flag1 = false;   //　0なら面を追加する。1なら　面を追加しない。
             for (int j = 1; j <= numFaces; j++) {
                 if (equals(tempFace, faces[j])) {
-                    flag1 = 1;
+                    flag1 = true;
                     break;
                 }
             }
 
-            if (((flag1 == 0) && (tempFace.getNumPoints() != 0)) &&
+            if ((!flag1 && (tempFace.getNumPoints() != 0)) &&
                     (calculateArea(tempFace) > 0.0)) {
                 addFace(tempFace);
             }
             //
 
             tempFace = Face_request(lines[i].getEnd(), lines[i].getBegin());
-            flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
+            flag1 = false;   //　0なら面を追加する。1なら　面を追加しない。
             for (int j = 1; j <= numFaces; j++) {
                 if (equals(tempFace, faces[j])) {
-                    flag1 = 1;
+                    flag1 = true;
                     break;
                 }
             }
 
-            if (((flag1 == 0) && (tempFace.getNumPoints() != 0)) && (calculateArea(tempFace) > 0.0)) {
+            if ((!flag1 && (tempFace.getNumPoints() != 0)) && (calculateArea(tempFace) > 0.0)) {
                 addFace(tempFace);
             }
         }
@@ -503,22 +470,22 @@ public class PointSet implements Serializable {
         //Find the maximum and minimum coordinates of Line (this may be better done immediately after Line is added than done here)
         for (int ib = 1; ib <= numLines; ib++) {
 
-            line_x_max[ib] = points[lines[ib].getBegin()].getX();
-            line_x_min[ib] = points[lines[ib].getBegin()].getX();
-            line_y_max[ib] = points[lines[ib].getBegin()].getY();
-            line_y_min[ib] = points[lines[ib].getBegin()].getY();
+            line_x_max[ib] = points.get(lines[ib].getBegin()).getX();
+            line_x_min[ib] = points.get(lines[ib].getBegin()).getX();
+            line_y_max[ib] = points.get(lines[ib].getBegin()).getY();
+            line_y_min[ib] = points.get(lines[ib].getBegin()).getY();
 
-            if (line_x_max[ib] < points[lines[ib].getEnd()].getX()) {
-                line_x_max[ib] = points[lines[ib].getEnd()].getX();
+            if (line_x_max[ib] < points.get(lines[ib].getEnd()).getX()) {
+                line_x_max[ib] = points.get(lines[ib].getEnd()).getX();
             }
-            if (line_x_min[ib] > points[lines[ib].getEnd()].getX()) {
-                line_x_min[ib] = points[lines[ib].getEnd()].getX();
+            if (line_x_min[ib] > points.get(lines[ib].getEnd()).getX()) {
+                line_x_min[ib] = points.get(lines[ib].getEnd()).getX();
             }
-            if (line_y_max[ib] < points[lines[ib].getEnd()].getY()) {
-                line_y_max[ib] = points[lines[ib].getEnd()].getY();
+            if (line_y_max[ib] < points.get(lines[ib].getEnd()).getY()) {
+                line_y_max[ib] = points.get(lines[ib].getEnd()).getY();
             }
-            if (line_y_min[ib] > points[lines[ib].getEnd()].getY()) {
-                line_y_min[ib] = points[lines[ib].getEnd()].getY();
+            if (line_y_min[ib] > points.get(lines[ib].getEnd()).getY()) {
+                line_y_min[ib] = points.get(lines[ib].getEnd()).getY();
             }
             faceMaxMinCoordinate();
         }
@@ -527,22 +494,22 @@ public class PointSet implements Serializable {
     private void faceMaxMinCoordinate() {
         //Find the maximum and minimum of Face's coordinates
         for (int faceId = 1; faceId <= numFaces; faceId++) {
-            face_x_max[faceId] = points[faces[faceId].getPointId(1)].getX();
-            face_x_min[faceId] = points[faces[faceId].getPointId(1)].getX();
-            face_y_max[faceId] = points[faces[faceId].getPointId(1)].getY();
-            face_y_min[faceId] = points[faces[faceId].getPointId(1)].getY();
+            face_x_max[faceId] = points.get(faces[faceId].getPointId(1)).getX();
+            face_x_min[faceId] = points.get(faces[faceId].getPointId(1)).getX();
+            face_y_max[faceId] = points.get(faces[faceId].getPointId(1)).getY();
+            face_y_min[faceId] = points.get(faces[faceId].getPointId(1)).getY();
             for (int i = 2; i <= faces[faceId].getNumPoints(); i++) {
-                if (face_x_max[faceId] < points[faces[faceId].getPointId(i)].getX()) {
-                    face_x_max[faceId] = points[faces[faceId].getPointId(i)].getX();
+                if (face_x_max[faceId] < points.get(faces[faceId].getPointId(i)).getX()) {
+                    face_x_max[faceId] = points.get(faces[faceId].getPointId(i)).getX();
                 }
-                if (face_x_min[faceId] > points[faces[faceId].getPointId(i)].getX()) {
-                    face_x_min[faceId] = points[faces[faceId].getPointId(i)].getX();
+                if (face_x_min[faceId] > points.get(faces[faceId].getPointId(i)).getX()) {
+                    face_x_min[faceId] = points.get(faces[faceId].getPointId(i)).getX();
                 }
-                if (face_y_max[faceId] < points[faces[faceId].getPointId(i)].getY()) {
-                    face_y_max[faceId] = points[faces[faceId].getPointId(i)].getY();
+                if (face_y_max[faceId] < points.get(faces[faceId].getPointId(i)).getY()) {
+                    face_y_max[faceId] = points.get(faces[faceId].getPointId(i)).getY();
                 }
-                if (face_y_min[faceId] > points[faces[faceId].getPointId(i)].getY()) {
-                    face_y_min[faceId] = points[faces[faceId].getPointId(i)].getY();
+                if (face_y_min[faceId] > points.get(faces[faceId].getPointId(i)).getY()) {
+                    face_y_min[faceId] = points.get(faces[faceId].getPointId(i)).getY();
                 }
             }
         }
@@ -697,8 +664,8 @@ public class PointSet implements Serializable {
         int ireturn = 0;
         double rmin = 1000000.0;
         double rtemp;
-        for (int i = 1; i <= numPoints; i++) {
-            rtemp = OritaCalc.distance(p, points[i]);
+        for (int i = 0; i < points.size(); i++) {
+            rtemp = OritaCalc.distance(p, points.get(i));
             if (rtemp < r) {
                 if (rtemp < rmin) {
                     rmin = rtemp;
@@ -716,8 +683,8 @@ public class PointSet implements Serializable {
     public double closest_Point_distance(Point p, double r) {
         double rmin = 1000000.0;
         double rtemp;
-        for (int i = 1; i <= numPoints; i++) {
-            rtemp = OritaCalc.distance(p, points[i]);
+        for (Point_p point : points) {
+            rtemp = OritaCalc.distance(p, point);
             if (rtemp < r) {
                 if (rtemp < rmin) {
                     rmin = rtemp;
@@ -729,9 +696,9 @@ public class PointSet implements Serializable {
 
     public int getSelectedPointsNum() {
         int r_int = 0;
-        for (int i = 1; i <= numPoints; i++) {
+        for (Point_p point : points) {
 
-            if (points[i].getPointState()) {
+            if (point.getPointState()) {
                 r_int = r_int + 1;
             }
 
@@ -740,21 +707,21 @@ public class PointSet implements Serializable {
     }
 
     public void setPointStateTrue(int i) {
-        points[i].setPointStateTrue();
+        points.get(i).setPointStateTrue();
     }
 
     public void setPointStateFalse(int i) {
-        points[i].setPointStateFalse();
+        points.get(i).setPointStateFalse();
     }
 
     public void setAllPointStateFalse() {
-        for (int i = 1; i <= numPoints; i++) {
-            points[i].setPointStateFalse();
+        for (Point_p point : points) {
+            point.setPointStateFalse();
         }
     }
 
     public void changePointState(int i) {
-        Point_p point = points[i];
+        Point_p point = points.get(i);
         if (point.getPointState()) {
             point.setPointStateFalse();
         } else {
@@ -763,14 +730,13 @@ public class PointSet implements Serializable {
     }
 
     public boolean getPointState(int i) {
-        return points[i].getPointState();
+        return points.get(i).getPointState();
     }
 
     public void statePointMove(Point p) {
-        for (int i = 1; i <= numPoints; i++) {
-
-            if (points[i].getPointState()) {
-                set(i, p);
+        for (Point_p point : points) {
+            if (point.getPointState()) {
+                point.set(p);
             }
         }
     }
@@ -778,9 +744,9 @@ public class PointSet implements Serializable {
     public Save getSave() {
         Save save = new Save();
 
-        for (int i = 1; i <= numPoints; i++) {
+        for (Point_p point : points) {
             Point p = new Point();
-            p.set(points[i]);
+            p.set(point);
             save.addPoint(p);
         }
 
@@ -788,8 +754,11 @@ public class PointSet implements Serializable {
     }
 
     public void setSave(Save save) {
-        for (int i = 0; i < save.getPoints().size(); i++) {
-            points[i+1].set(save.getPoints().get(i));
+        points.clear();
+        for (Point value : save.getPoints()) {
+            Point_p point = new Point_p();
+            point.set(value);
+            this.points.add(point);
         }
     }
 }

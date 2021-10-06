@@ -91,7 +91,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             //折り上がり図でi_closestPointIdと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
             Point ps = new Point();
             ps.set(app.OZ.cp_worker2.getPoint(i_closestPointId));
-            for (int i = 1; i <= app.OZ.cp_worker2.getPointsTotal(); i++) {
+            for (int i = 0; i < app.OZ.cp_worker2.getPointsTotal(); i++) {
                 if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < 0.0000001) {
                     app.OZ.cp_worker1.setPointStateTrue(i);
                 }
@@ -130,7 +130,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
             Point ps = new Point();
             ps.set(app.OZ.cp_worker2.getPoint(i_closestPointId));
-            for (int i = 1; i <= app.OZ.cp_worker2.getPointsTotal(); i++) {
+            for (int i = 0; i < app.OZ.cp_worker2.getPointsTotal(); i++) {
                 if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < 0.0000001) {
                     app.OZ.cp_worker1.setPointStateTrue(i);
                 }
@@ -179,7 +179,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                     app.OZ.setAllPointStateFalse();
                     Point ps = new Point();
                     ps.set(app.OZ.cp_worker2.getPoint(i_closestPointId));
-                    for (int i = 1; i <= app.OZ.cp_worker2.getPointsTotal(); i++) {
+                    for (int i = 0; i < app.OZ.cp_worker2.getPointsTotal(); i++) {
                         if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < 0.0000001) {
                             app.OZ.cp_worker1.setPointStateTrue(i);
                         }
@@ -210,7 +210,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                     app.OZ.setAllPointStateFalse();
                     Point ps = new Point();
                     ps.set(app.OZ.cp_worker2.getPoint(i_closestPointId));
-                    for (int i = 1; i <= app.OZ.cp_worker2.getPointsTotal(); i++) {
+                    for (int i = 0; i < app.OZ.cp_worker2.getPointsTotal(); i++) {
                         if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < 0.0000001) {
                             app.OZ.cp_worker1.setPointStateTrue(i);
                         }
@@ -299,7 +299,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                     app.OZ.setAllPointStateFalse();
                     Point ps = new Point();
                     ps.set(app.OZ.cp_worker2.getPoint(i_closestPointId));
-                    for (int i = 1; i <= app.OZ.cp_worker2.getPointsTotal(); i++) {
+                    for (int i = 0; i < app.OZ.cp_worker2.getPointsTotal(); i++) {
                         if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < 0.0000001) {
                             app.OZ.cp_worker1.setPointStateTrue(i);
                         }
@@ -330,7 +330,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                     app.OZ.setAllPointStateFalse();
                     Point ps = new Point();
                     ps.set(app.OZ.cp_worker2.getPoint(i_closestPointId));
-                    for (int i = 1; i <= app.OZ.cp_worker2.getPointsTotal(); i++) {
+                    for (int i = 0; i < app.OZ.cp_worker2.getPointsTotal(); i++) {
                         if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < 0.0000001) {
                             app.OZ.cp_worker1.setPointStateTrue(i);
                         }

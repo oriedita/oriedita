@@ -22,7 +22,7 @@ public class Face implements Serializable {
     public Face() {
         numPoints = 0;
         icol = 0;
-        pointIdList.add(0);
+        pointIdList.add(-1);
     }
 
     public Face(Face mn) {
@@ -38,7 +38,7 @@ public class Face implements Serializable {
         icol = 0;
 
         pointIdList.clear();
-        pointIdList.add(0);
+        pointIdList.add(-1);
     }
 
     public int getNumPoints() {
@@ -67,7 +67,7 @@ public class Face implements Serializable {
             pointIdList.set(i - 1, getPointId(i));
         }
         pointIdList.set(numPoints, getPointId(0));
-        pointIdList.set(0, 0);
+        pointIdList.set(0, -1);
 
     }
 
