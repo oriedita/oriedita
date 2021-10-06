@@ -967,7 +967,11 @@ public class App extends JFrame implements ActionListener {
         } catch (IOException | ClassNotFoundException e) {
             System.out.println(e);
 
+            JOptionPane.showMessageDialog(this, "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
+
             fileModel.setSavedFileName(null);
+
+            return new Save();
         }
 
         return save;
@@ -1010,7 +1014,7 @@ public class App extends JFrame implements ActionListener {
                 out.writeObject(save);
             }
         } catch (IOException ex) {
-
+            System.err.println(ex.getMessage());
         }
     }
 
@@ -1023,7 +1027,7 @@ public class App extends JFrame implements ActionListener {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println(e.getMessage());
         }
     }
 
