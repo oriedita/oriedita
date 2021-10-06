@@ -10,37 +10,39 @@ import origami.crease_pattern.worker.HierarchyList_Worker;
 import origami.folding.element.SubFace;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.folded_figure.FoldedFigure;
-import origami_editor.record.Memo;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.tools.Camera;
 import origami_editor.tools.StringOp;
 
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 public class Svg {
-    public static Memo exportFile(Memo mem_tenkaizu, Memo mem_oriagarizu) {
-        System.out.println("svg画像出力");
-        Memo MemR = new Memo();
+    public static void exportFile(FoldLineSet foldLineSet, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize, List<FoldedFigure> foldedFigures, File file) {
+        try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw)) {
+            System.out.println("svg画像出力");
 
-        MemR.reset();
+            pw.println("<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">");
 
-        MemR.addLine("<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">");
+            exportSvgWithCamera(pw, foldLineSet, camera, i_cp_display, fCreasePatternLineWidth, lineWidth, lineStyle, pointSize);
 
-        MemR.addMemo(mem_tenkaizu);
-        MemR.addMemo(mem_oriagarizu);
+            for (int i_oz = 1; i_oz <= foldedFigures.size() - 1; i_oz++) {
+                exportSvgFoldedFigure(pw, foldedFigures.get(i_oz));
+            }
 
-        MemR.addLine("</svg>");
-        return MemR;
+            pw.println("</svg>");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static Memo getMemo_wirediagram_for_svg_export(HierarchyList_Worker ctworker, Camera camera, FoldedFigure foldedFigure, CreasePattern_Worker orite, PointSet otta_Men_zu, boolean i_fill) {
+    public static void getMemo_wirediagram_for_svg_export(PrintWriter pw, HierarchyList_Worker ctworker, Camera camera, FoldedFigure foldedFigure, CreasePattern_Worker orite, PointSet otta_Men_zu, boolean i_fill) {
         boolean flipped = camera.determineIsCameraMirrored();
 
         Point t_ob = new Point();
         Point t_tv = new Point();
-
-        Memo memo_temp = new Memo();
 
         String str_stroke;
         str_stroke = "black";
@@ -110,26 +112,22 @@ public class Svg {
                 }
             }
 
-            memo_temp.addLine("<path d=\"" + text + "\"" +
+            pw.println("<path d=\"" + text + "\"" +
                     " style=\"" + "stroke:" + str_stroke + "\"" +
                     " stroke-width=\"" + str_strokewidth + "\"" +
                     " fill=\"" + str_fill + "\"" + " />"
             );
         }
-
-        return memo_temp;
     }
 
 
-    public static Memo getMemo_for_svg_with_camera(Camera camera, FoldedFigure foldedFigure, CreasePattern_Worker orite, PointSet subFace_figure) {//折り上がり図(hyouji_flg==5)
+    public static void getMemo_for_svg_with_camera(PrintWriter pw, Camera camera, FoldedFigure foldedFigure, CreasePattern_Worker orite, PointSet subFace_figure) {//折り上がり図(hyouji_flg==5)
         boolean front_back = camera.determineIsCameraMirrored();
 
         Point t0 = new Point();
         Point t1 = new Point();
         LineSegment s_ob = new LineSegment();
         LineSegment s_tv = new LineSegment();
-
-        Memo memo_temp = new Memo();
 
         Point a = new Point();
         Point b = new Point();
@@ -202,7 +200,7 @@ public class Svg {
 
                 }
 
-                memo_temp.addLine("<polygon points=\"" + str_zahyou + "\"" +
+                pw.println("<polygon points=\"" + str_zahyou + "\"" +
                         " style=\"" + "stroke:" + str_stroke + ";fill:" + str_stroke + "\"" +
                         " stroke-width=\"" + str_strokewidth + "\"" + " />"
                 );
@@ -258,7 +256,7 @@ public class Svg {
                 BigDecimal b_bx = new BigDecimal(String.valueOf(b.getX()));
                 BigDecimal b_by = new BigDecimal(String.valueOf(b.getY()));
 
-                memo_temp.addLine("<line x1=\"" + b_ax.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
+                pw.println("<line x1=\"" + b_ax.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
                         " y1=\"" + b_ay.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
                         " x2=\"" + b_bx.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
                         " y2=\"" + b_by.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
@@ -267,30 +265,25 @@ public class Svg {
                 );
             }
         }
-
-
-        return memo_temp;
     }
 
 
-    public static Memo getMemoForFoldedFigure(FoldedFigure foldedFigure) {
-        Memo memo_temp = new Memo();
-
+    public static void exportSvgFoldedFigure(PrintWriter pw, FoldedFigure foldedFigure) {
         //Wire diagram svg
         if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) {
-            memo_temp.addMemo(getMemo_wirediagram_for_svg_export(foldedFigure.ct_worker, foldedFigure.foldedFigureFrontCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker2.get(), false));//If the fourth integer is 0, only the frame of the face is painted, and if it is 1, the face is painted.
+            getMemo_wirediagram_for_svg_export(pw, foldedFigure.ct_worker, foldedFigure.foldedFigureFrontCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker2.get(), false);//If the fourth integer is 0, only the frame of the face is painted, and if it is 1, the face is painted.
         }
 
         //Folded figure (table) svg
         if (((foldedFigure.ip4 == FoldedFigure.State.FRONT_0) || (foldedFigure.ip4 == FoldedFigure.State.BOTH_2)) || (foldedFigure.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
             //透過図のsvg
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                memo_temp.addMemo(getMemo_wirediagram_for_svg_export(foldedFigure.ct_worker, foldedFigure.foldedFigureFrontCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker2.get(), true));
+                getMemo_wirediagram_for_svg_export(pw, foldedFigure.ct_worker, foldedFigure.foldedFigureFrontCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker2.get(), true);
             }
 
             //折り上がり図のsvg*************
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) {
-                memo_temp.addMemo(getMemo_for_svg_with_camera(foldedFigure.foldedFigureFrontCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get()));// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                getMemo_for_svg_with_camera(pw, foldedFigure.foldedFigureFrontCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
         }
 
@@ -298,21 +291,17 @@ public class Svg {
         if (((foldedFigure.ip4 == FoldedFigure.State.BACK_1) || (foldedFigure.ip4 == FoldedFigure.State.BOTH_2)) || (foldedFigure.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
             //透過図のsvg
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                memo_temp.addMemo(getMemo_wirediagram_for_svg_export(foldedFigure.ct_worker, foldedFigure.foldedFigureRearCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker2.get(), true));
+                getMemo_wirediagram_for_svg_export(pw, foldedFigure.ct_worker, foldedFigure.foldedFigureRearCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker2.get(), true);
             }
 
             //折り上がり図のsvg*************
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) {
-                memo_temp.addMemo(getMemo_for_svg_with_camera(foldedFigure.foldedFigureRearCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get()));// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                getMemo_for_svg_with_camera(pw, foldedFigure.foldedFigureRearCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
         }
-
-        return memo_temp;
     }
 
-    public static Memo getMemo_for_svg_export_with_camera(FoldLineSet foldLineSet, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
-        Memo memo_temp = new Memo();
-
+    public static void exportSvgWithCamera(PrintWriter pw, FoldLineSet foldLineSet, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
         LineSegment s_tv = new LineSegment();
         Point a = new Point();
         Point b = new Point();
@@ -397,7 +386,7 @@ public class Svg {
                     BigDecimal b_by = new BigDecimal(String.valueOf(b.getY()));
                     double y2 = b_by.setScale(2, RoundingMode.HALF_UP).doubleValue();
 
-                    memo_temp.addLine("<line x1=\"" + x1 + "\"" +
+                    pw.println("<line x1=\"" + x1 + "\"" +
                             " y1=\"" + y1 + "\"" +
                             " x2=\"" + x2 + "\"" +
                             " y2=\"" + y2 + "\"" +
@@ -408,14 +397,14 @@ public class Svg {
                     if (pointSize != 0) {
                         if (fCreasePatternLineWidth < 2.0f) {//Draw a black square at the vertex
 
-                            memo_temp.addLine("<rect style=\"fill:#000000;stroke:none\"" +
+                            pw.println("<rect style=\"fill:#000000;stroke:none\"" +
                                     " width=\"" + 2.0 * (double) pointSize + "\"" +
                                     " height=\"" + 2.0 * (double) pointSize + "\"" +
                                     " x=\"" + (x1 - (double) pointSize) + "\"" +
                                     " y=\"" + (y1 - (double) pointSize) + "\"" +
                                     " />");
 
-                            memo_temp.addLine("<rect style=\"fill:#000000;stroke:none\"" +
+                            pw.println("<rect style=\"fill:#000000;stroke:none\"" +
                                     " width=\"" + 2.0 * (double) pointSize + "\"" +
                                     " height=\"" + 2.0 * (double) pointSize + "\"" +
                                     " x=\"" + (x2 - (double) pointSize) + "\"" +
@@ -428,13 +417,13 @@ public class Svg {
                         if (pointSize != 0) {
                             double d_width = (double) fCreasePatternLineWidth / 2.0 + (double) pointSize;
 
-                            memo_temp.addLine("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
+                            pw.println("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
                                     " r=\"" + d_width + "\"" +
                                     " cx=\"" + x1 + "\"" +
                                     " cy=\"" + y1 + "\"" +
                                     " />");
 
-                            memo_temp.addLine("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
+                            pw.println("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
                                     " r=\"" + d_width + "\"" +
                                     " cx=\"" + x2 + "\"" +
                                     " cy=\"" + y2 + "\"" +
@@ -444,7 +433,5 @@ public class Svg {
                 }
             }
         }
-
-        return memo_temp;
     }
 }
