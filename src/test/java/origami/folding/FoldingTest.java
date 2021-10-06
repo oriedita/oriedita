@@ -20,7 +20,7 @@ public class FoldingTest {
     private Expect expect;
 
     @Test
-    public void testSimpleCreasePattern() throws IOException {
+    public void testFoldBirdbase() throws IOException {
         Save save = Cp.importFile(getClass().getClassLoader().getResourceAsStream("birdbase.cp"));
 
         FoldedFigure foldedFigure = new FoldedFigure(new BulletinBoard());
