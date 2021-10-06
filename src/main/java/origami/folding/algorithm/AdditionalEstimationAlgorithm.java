@@ -6,6 +6,8 @@ import origami.folding.HierarchyList.HierarchyListCondition;
 import origami.folding.element.SubFace;
 import origami.folding.util.EquivalenceCondition;
 
+import java.util.*;
+
 /**
  * Author: Mu-Tsun Tsai
  * 
@@ -22,9 +24,15 @@ public class AdditionalEstimationAlgorithm {
     private HierarchyList hierarchyList;
     private SubFace[] subFaces; // indices start from 1
 
+    private ItalianoAlgorithm[] IA;
+    private Relation[][] relations;
+
     public AdditionalEstimationAlgorithm(HierarchyList hierarchyList, SubFace[] s) {
         this.hierarchyList = hierarchyList;
         this.subFaces = s;
+        IA = new ItalianoAlgorithm[subFaces.length];
+        int count = hierarchyList.getFacesTotal();
+        relations = new Relation[count + 1][count + 1];
     }
 
     public HierarchyListStatus run() {
@@ -33,6 +41,8 @@ public class AdditionalEstimationAlgorithm {
 
         System.out.println("additional_estimation start---------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
 
+        initializeItalianoAlgorithm();
+
         do {
             new_relations = 0;
             System.out.println("additional_estimation------------------------");
@@ -40,7 +50,7 @@ public class AdditionalEstimationAlgorithm {
             try {
                 // The outer do-while loop in the original algorithm is redundant.
                 for (int iS = 1; iS < subFaces.length; iS++) {
-                    int changes = checkTransitivity(subFaces[iS]);
+                    int changes = checkTransitivity(subFaces[iS], IA[iS]);
                     new_relations += changes;
                 }
             } catch (InferenceFailureException e) {
@@ -87,56 +97,40 @@ public class AdditionalEstimationAlgorithm {
         return HierarchyListStatus.SUCCESSFUL_1000;
     }
 
+    private void initializeItalianoAlgorithm() {
+        for (int s = 1; s < subFaces.length; s++) {
+            IA[s] = new ItalianoAlgorithm(subFaces[s]);
+            int count = subFaces[s].getFaceIdCount();
+            for (int i = 1; i <= count; i++) {
+                for (int j = 1; j <= count; j++) {
+                    int I = subFaces[s].getFaceId(i);
+                    int J = subFaces[s].getFaceId(j);
+                    HierarchyList.HierarchyListCondition c = hierarchyList.get(I, J);
+                    if (c == ABOVE) {
+                        IA[s].add(i, j);
+                    } else if (c.isEmpty()) {
+                        // Observing potential changes to the relation
+                        Relation r = relations[I][J];
+                        if (r == null) {
+                            relations[I][J] = r = new Relation();
+                        }
+                        r.observers.add(IA[s]);
+                    }
+                }
+            }
+        }
+    }
+
     /**
-     * This part of the algorithm is essentially identical to the Warshall algorithm
-     * of finding the transitive closure of a digraph. Warshall algorithm guarantees
-     * that the closure will be found after processing all vertices once, so there's
-     * no need for the outer while loop, as in Mr.Meguro's original implementation.
-     * 
-     * Warshall algorithm, however, is not a suitable choice for our use case here.
-     * Every time a new relation is established, it still takes O(n^3) steps to
-     * construct the closure.
+     * Originally Mr.Meguro implemented this part using what is essentially the
+     * Warshall algorithm, but it is an offline algorithm that is not suitable for
+     * the dynamic use case here. I re-implemented it using the Italiano algorithm,
+     * which is way faster here.
      */
-    public int checkTransitivity(SubFace sf) throws InferenceFailureException {
+    public int checkTransitivity(SubFace sf, ItalianoAlgorithm ia) throws InferenceFailureException {
         int changes = 0;
-        int faceIdCount = sf.getFaceIdCount();
-        for (int iM = 1; iM <= faceIdCount; iM++) {// 3面の比較で中間にくる面
-            int[] upperFaceId = new int[faceIdCount + 1];// S面に含まれるあるMenの上がわにあるid番号を記録する。これが20ということは、
-            int[] lowerFaceId = new int[faceIdCount + 1];// S面に含まれるあるMenの下がわにあるid番号を記録する。これが20ということは、
-            int Mid = sf.getFaceId(iM); // The side that comes in the middle when comparing the three sides
-
-            // Thinking: Think about a certain side Mid of a certain SubFace.
-            // Other than this SubFace, it is assumed that surface A is above the surface
-            // Mid and surface B is below the surface Mid.
-            // Generally, in separate SubFace, surface A cannot be determined to be above
-            // surface B just because surface A is above surface Mid and surface B is below
-            // surface Mid.
-            // However, this is the point, but if there is a SubFace that includes surface
-            // A, surface Mid, and surface B together, even if you do not know the
-            // hierarchical relationship of that SubFace
-            // Surface A is above surface B. So, the information we get from SubFace in this
-            // operation is whether there are three sides together.
-            // There is no need for a hierarchical relationship within a SubFace.
-            // //
-            // The operation here is collecting the hierarchical relationship of a certain
-            // SubFace from the upper and lower tables.
-            for (int i = 1; i <= faceIdCount; i++) {// faceId[iM]より上にある面。
-                if (iM != i) {
-                    int id = sf.getFaceId(i);
-                    if (hierarchyList.get(Mid, id) == BELOW) {
-                        upperFaceId[++upperFaceId[0]] = id;
-                    }
-                    if (hierarchyList.get(Mid, id) == ABOVE) {
-                        lowerFaceId[++lowerFaceId[0]] = id;
-                    }
-                }
-            }
-
-            for (int u = 1; u <= upperFaceId[0]; u++) {// faceId[iM]より上にある面。
-                for (int l = 1; l <= lowerFaceId[0]; l++) {// faceId[iM]より下にある面。
-                    changes += tryInferAbove(upperFaceId[u], lowerFaceId[l]);
-                }
-            }
+        for (ItalianoAlgorithm.Node n : ia.flush()) {
+            changes += tryInferAbove(sf.getFaceId(n.i), sf.getFaceId(n.j));
         }
         return changes;
     }
@@ -229,6 +223,14 @@ public class AdditionalEstimationAlgorithm {
         if (hierarchyList.get(i, j).isEmpty()) {
             hierarchyList.set(i, j, ABOVE);
             changes++;
+
+            // Notifying the ItalianoAlgorithm to update.
+            Relation r = relations[i][j];
+            if (r != null) {
+                for (ItalianoAlgorithm ia : r.observers) {
+                    ia.addId(i, j);
+                }
+            }
         }
         if (hierarchyList.get(j, i).isEmpty()) {
             hierarchyList.set(j, i, BELOW);
@@ -237,6 +239,10 @@ public class AdditionalEstimationAlgorithm {
         return changes;
     }
 
-    public static class InferenceFailureException extends Exception {
+    private static class InferenceFailureException extends Exception {
+    }
+
+    private class Relation {
+        public List<ItalianoAlgorithm> observers = new ArrayList<ItalianoAlgorithm>();
     }
 }
