@@ -336,10 +336,7 @@ public class DrawingWorker {
             check4(0.0001);
         }
 
-        // Only mark saved false after the first record.
-        if (!historyState.isEmpty()) {
-            app.fileModel.setSaved(false);
-        }
+        app.fileModel.setSaved(false);
 
         historyState.record(getSave(s_title));
     }

@@ -9,15 +9,11 @@ import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.databinding.GridModel;
 import origami_editor.graphic2d.grid.Grid;
-import origami_editor.record.Memo;
 import origami_editor.tools.Camera;
 import origami_editor.tools.StringOp;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -26,34 +22,28 @@ import java.util.regex.Pattern;
 
 public class Orh {
     /**
-     * Read an Orihime memo file
-     *
-     * @param memo1
-     * @return
+     * Read an Orihime file
      */
-    public static Save importFile(File memo1) throws IOException {
-
+    public static Save importFile(File file) throws IOException {
         Save save = new Save();
         Pattern p = Pattern.compile("<(.+)>(.+)</(.+)>");
 
         boolean reading;
-        String[] st;
-        String[] s;
 
         // Loading the camera settings for the development view
         reading = false;
 
-        List<String> file = new ArrayList<>();
+        List<String> fileLines = new ArrayList<>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(memo1))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String str;
 
             while ((str = reader.readLine()) != null ) {
-                file.add(str);
+                fileLines.add(str);
             }
         }
 
-        for (String str : file) {
+        for (String str : fileLines) {
             if (str.equals("<camera_of_orisen_nyuuryokuzu>")) {
                 reading = true;
             } else if (str.equals("</camera_of_orisen_nyuuryokuzu>")) {
@@ -106,7 +96,7 @@ public class Orh {
 
         // ----------------------------------------- チェックボックス等の設定の読み込み
         reading = false;
-        for (String str : file) {
+        for (String str : fileLines) {
             if (str.equals("<settei>")) {
                 reading = true;
             } else if (str.equals("</settei>")) {
@@ -204,7 +194,7 @@ public class Orh {
         double gridYA = 0.0;
         double gridYB = 1.0;
         double gridYC = 1.0;
-        for (String str : file) {
+        for (String str : fileLines) {
             if (str.equals("<Kousi>")) {
                 reading = true;
             } else if (str.equals("</Kousi>")) {
@@ -279,7 +269,7 @@ public class Orh {
 
         boolean i_Grid_iro_yomikomi = false;//Kousi_iroの読み込みがあったら1、なければ0
         reading = false;
-        for (String str : file) {
+        for (String str : fileLines) {
             if (str.equals("<Kousi_iro>")) {
                 reading = true;
                 i_Grid_iro_yomikomi = true;
@@ -344,7 +334,7 @@ public class Orh {
 
         boolean i_oriagarizu_yomikomi = false;//oriagarizuの読み込みがあったら1、なければ0
         reading = false;
-        for (String str : file) {
+        for (String str : fileLines) {
             if (str.equals("<oriagarizu>")) {
                 reading = true;
                 i_oriagarizu_yomikomi = true;
@@ -416,7 +406,7 @@ public class Orh {
 
         //First find the total number of line segments
         int numLines = 0;
-        for (String line : file) {
+        for (String line : fileLines) {
             StringTokenizer tk = new StringTokenizer(line, ",");
 
             str = tk.nextToken();
@@ -445,7 +435,7 @@ public class Orh {
         int i_customized_color_B = 0;
 
         List<Circle> circles = save.getCircles();
-        for (String str_i : file) {
+        for (String str_i : fileLines) {
             //Old-fashioned reading method
             StringTokenizer tk = new StringTokenizer(str_i, ",");
             str = tk.nextToken();
@@ -601,136 +591,136 @@ public class Orh {
         return save;
     }
 
-    public static Memo exportFile(Save save) {
-        Memo memo1 = new Memo();
+    public static void exportFile(Save save, File file) {
+        try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw)) {
+            pw.println("<タイトル>");
+            pw.println("タイトル," + save.getTitle());
 
-        memo1.addLine("<タイトル>");
-        memo1.addLine("タイトル," + save.getTitle());
+            pw.println("<線分集合>");
 
-        memo1.addLine("<線分集合>");
+            int index = 1;
+            for (LineSegment s : save.getLineSegments()) {
+                pw.println("番号," + index++);
+                pw.println("色," + s.getColor());
 
-        int index = 1;
-        for (LineSegment s : save.getLineSegments()) {
-            memo1.addLine("番号," + index++);
-            memo1.addLine("色," + s.getColor());
+                pw.println("<tpp>" + s.getCustomized() + "</tpp>");
+                pw.println("<tpp_color_R>" + s.getCustomizedColor().getRed() + "</tpp_color_R>");
+                pw.println("<tpp_color_G>" + s.getCustomizedColor().getGreen() + "</tpp_color_G>");
+                pw.println("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");
 
-            memo1.addLine("<tpp>" + s.getCustomized() + "</tpp>");
-            memo1.addLine("<tpp_color_R>" + s.getCustomizedColor().getRed() + "</tpp_color_R>");
-            memo1.addLine("<tpp_color_G>" + s.getCustomizedColor().getGreen() + "</tpp_color_G>");
-            memo1.addLine("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");
+                pw.println("座標," + s.determineAX() + "," + s.determineAY() + "," + s.determineBX() + "," + s.determineBY());
+            }
 
-            memo1.addLine("座標," + s.determineAX() + "," + s.determineAY() + "," + s.determineBX() + "," + s.determineBY());
+            pw.println("<円集合>");
+            index = 1;
+            for (Circle circle : save.getCircles()) {
+                pw.println("番号," + index++);
+                Circle e_temp = new Circle();
+                e_temp.set(circle);
+                pw.println("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
+
+                pw.println("<tpp>" + e_temp.getCustomized() + "</tpp>");
+                pw.println("<tpp_color_R>" + e_temp.getCustomizedColor().getRed() + "</tpp_color_R>");
+                pw.println("<tpp_color_G>" + e_temp.getCustomizedColor().getGreen() + "</tpp_color_G>");
+                pw.println("<tpp_color_B>" + e_temp.getCustomizedColor().getBlue() + "</tpp_color_B>");
+            }
+
+            pw.println("<補助線分集合>");
+
+            index = 1;
+            for (LineSegment s : save.getAuxLineSegments()) {
+                pw.println("補助番号," + index++);
+                pw.println("補助色," + s.getColor());
+
+                pw.println("<tpp>" + s.getCustomized() + "</tpp>");
+                pw.println("<tpp_color_R>" + s.getCustomizedColor().getRed() + "</tpp_color_R>");
+                pw.println("<tpp_color_G>" + s.getCustomizedColor().getGreen() + "</tpp_color_G>");
+                pw.println("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");
+
+                pw.println("補助座標," + s.determineAX() + "," + s.determineAY() + "," + s.determineBX() + "," + s.determineBY());
+            }
+
+            Camera camera = save.getCreasePatternCamera() != null ? save.getCreasePatternCamera() : new Camera();
+            pw.println("<camera_of_orisen_nyuuryokuzu>");
+            pw.println("<camera_ichi_x>" + camera.getCameraPositionX() + "</camera_ichi_x>");
+            pw.println("<camera_ichi_y>" + camera.getCameraPositionY() + "</camera_ichi_y>");
+            pw.println("<camera_kakudo>" + camera.getCameraAngle() + "</camera_kakudo>");
+            pw.println("<camera_kagami>" + camera.getCameraMirror() + "</camera_kagami>");
+            pw.println("<camera_bairitsu_x>" + camera.getCameraZoomX() + "</camera_bairitsu_x>");
+            pw.println("<camera_bairitsu_y>" + camera.getCameraZoomY() + "</camera_bairitsu_y>");
+            pw.println("<hyouji_ichi_x>" + camera.getDisplayPositionX() + "</hyouji_ichi_x>");
+            pw.println("<hyouji_ichi_y>" + camera.getDisplayPositionY() + "</hyouji_ichi_y>");
+            pw.println("</camera_of_orisen_nyuuryokuzu>");
+
+            pw.println("<settei>");
+            CanvasModel canvasModel = save.getCanvasModel();
+            pw.println("<ckbox_mouse_settei>" + canvasModel.getMouseWheelMovesCreasePattern() + "</ckbox_mouse_settei>");
+            pw.println("<ckbox_ten_sagasi>" + canvasModel.getDisplayPointSpotlight() + "</ckbox_ten_sagasi>");
+            pw.println("<ckbox_ten_hanasi>" + canvasModel.getDisplayPointOffset() + "</ckbox_ten_hanasi>");
+            pw.println("<ckbox_kou_mitudo_nyuuryoku>" + canvasModel.getDisplayGridInputAssist() + "</ckbox_kou_mitudo_nyuuryoku>");
+            pw.println("<ckbox_bun>" + canvasModel.getDisplayComments() + "</ckbox_bun>");
+            pw.println("<ckbox_cp>" + canvasModel.getDisplayCpLines() + "</ckbox_cp>");
+            pw.println("<ckbox_a0>" + canvasModel.getDisplayAuxLines() + "</ckbox_a0>");
+            pw.println("<ckbox_a1>" + canvasModel.getDisplayLiveAuxLines() + "</ckbox_a1>");
+            pw.println("<ckbox_mejirusi>" + canvasModel.getDisplayMarkings() + "</ckbox_mejirusi>");
+            pw.println("<ckbox_cp_ue>" + canvasModel.getDisplayCreasePatternOnTop() + "</ckbox_cp_ue>");
+            pw.println("<ckbox_oritatami_keika>" + canvasModel.getDisplayFoldingProgress() + "</ckbox_oritatami_keika>");
+            //The thickness of the line in the development view.
+            pw.println("<iTenkaizuSenhaba>" + canvasModel.getLineWidth() + "</iTenkaizuSenhaba>");
+            //Width of vertex sign
+            pw.println("<ir_ten>" + canvasModel.getPointSize() + "</ir_ten>");
+            //Express the polygonal line expression with color
+            pw.println("<i_orisen_hyougen>" + canvasModel.getLineStyle() + "</i_orisen_hyougen>");
+            pw.println("<i_anti_alias>" + canvasModel.getAntiAlias() + "</i_anti_alias>");
+            pw.println("</settei>");
+
+            GridModel gridModel = save.getGridModel();
+            pw.println("<Kousi>");
+            pw.println("<i_kitei_jyoutai>" + gridModel.getBaseState() + "</i_kitei_jyoutai>");
+            pw.println("<nyuuryoku_kitei>" + gridModel.getGridSize() + "</nyuuryoku_kitei>");
+
+            pw.println("<memori_kankaku>" + gridModel.getIntervalGridSize() + "</memori_kankaku>");
+            pw.println("<a_to_heikouna_memori_iti>" + gridModel.getHorizontalScalePosition() + "</a_to_heikouna_memori_iti>");
+            pw.println("<b_to_heikouna_memori_iti>" + gridModel.getVerticalScalePosition() + "</b_to_heikouna_memori_iti>");
+            pw.println("<kousi_senhaba>" + gridModel.getGridLineWidth() + "</kousi_senhaba>");
+
+            pw.println("<d_kousi_x_a>" + gridModel.getGridXA() + "</d_kousi_x_a>");
+            pw.println("<d_kousi_x_b>" + gridModel.getGridXB() + "</d_kousi_x_b>");
+            pw.println("<d_kousi_x_c>" + gridModel.getGridXC() + "</d_kousi_x_c>");
+            pw.println("<d_kousi_y_a>" + gridModel.getGridYA() + "</d_kousi_y_a>");
+            pw.println("<d_kousi_y_b>" + gridModel.getGridYB() + "</d_kousi_y_b>");
+            pw.println("<d_kousi_y_c>" + gridModel.getGridYC() + "</d_kousi_y_c>");
+            pw.println("<d_kousi_kakudo>" + gridModel.getGridAngle() + "</d_kousi_kakudo>");
+            pw.println("</Kousi>");
+
+            pw.println("<Kousi_iro>");
+            pw.println("<kousi_color_R>" + gridModel.getGridColor().getRed() + "</kousi_color_R>");
+            pw.println("<kousi_color_G>" + gridModel.getGridColor().getGreen() + "</kousi_color_G>");
+            pw.println("<kousi_color_B>" + gridModel.getGridColor().getBlue() + "</kousi_color_B>");
+
+            pw.println("<kousi_memori_color_R>" + gridModel.getGridScaleColor().getRed() + "</kousi_memori_color_R>");
+            pw.println("<kousi_memori_color_G>" + gridModel.getGridScaleColor().getGreen() + "</kousi_memori_color_G>");
+            pw.println("<kousi_memori_color_B>" + gridModel.getGridScaleColor().getBlue() + "</kousi_memori_color_B>");
+            pw.println("</Kousi_iro>");
+
+            pw.println("<oriagarizu>");
+
+            FoldedFigureModel foldedFigureModel = save.getFoldedFigureModel();
+            pw.println("<oriagarizu_F_color_R>" + foldedFigureModel.getFrontColor().getRed() + "</oriagarizu_F_color_R>");
+            pw.println("<oriagarizu_F_color_G>" + foldedFigureModel.getFrontColor().getGreen() + "</oriagarizu_F_color_G>");
+            pw.println("<oriagarizu_F_color_B>" + foldedFigureModel.getFrontColor().getBlue() + "</oriagarizu_F_color_B>");
+
+            pw.println("<oriagarizu_B_color_R>" + foldedFigureModel.getBackColor().getRed() + "</oriagarizu_B_color_R>");
+            pw.println("<oriagarizu_B_color_G>" + foldedFigureModel.getBackColor().getGreen() + "</oriagarizu_B_color_G>");
+            pw.println("<oriagarizu_B_color_B>" + foldedFigureModel.getBackColor().getBlue() + "</oriagarizu_B_color_B>");
+
+            pw.println("<oriagarizu_L_color_R>" + foldedFigureModel.getLineColor().getRed() + "</oriagarizu_L_color_R>");
+            pw.println("<oriagarizu_L_color_G>" + foldedFigureModel.getLineColor().getGreen() + "</oriagarizu_L_color_G>");
+            pw.println("<oriagarizu_L_color_B>" + foldedFigureModel.getLineColor().getBlue() + "</oriagarizu_L_color_B>");
+
+            pw.println("</oriagarizu>");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        memo1.addLine("<円集合>");
-        index = 1;
-        for (Circle circle : save.getCircles()) {
-            memo1.addLine("番号," + index++);
-            Circle e_temp = new Circle();
-            e_temp.set(circle);
-            memo1.addLine("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
-
-            memo1.addLine("<tpp>" + e_temp.getCustomized() + "</tpp>");
-            memo1.addLine("<tpp_color_R>" + e_temp.getCustomizedColor().getRed() + "</tpp_color_R>");
-            memo1.addLine("<tpp_color_G>" + e_temp.getCustomizedColor().getGreen() + "</tpp_color_G>");
-            memo1.addLine("<tpp_color_B>" + e_temp.getCustomizedColor().getBlue() + "</tpp_color_B>");
-        }
-
-        memo1.addLine("<補助線分集合>");
-
-        index = 1;
-        for (LineSegment s : save.getAuxLineSegments()) {
-            memo1.addLine("補助番号," + index++);
-            memo1.addLine("補助色," + s.getColor());
-
-            memo1.addLine("<tpp>" + s.getCustomized() + "</tpp>");
-            memo1.addLine("<tpp_color_R>" + s.getCustomizedColor().getRed() + "</tpp_color_R>");
-            memo1.addLine("<tpp_color_G>" + s.getCustomizedColor().getGreen() + "</tpp_color_G>");
-            memo1.addLine("<tpp_color_B>" + s.getCustomizedColor().getBlue() + "</tpp_color_B>");
-
-            memo1.addLine("補助座標," + s.determineAX() + "," + s.determineAY() + "," + s.determineBX() + "," + s.determineBY());
-        }
-
-        Camera camera = save.getCreasePatternCamera() != null ? save.getCreasePatternCamera() : new Camera();
-        memo1.addLine("<camera_of_orisen_nyuuryokuzu>");
-        memo1.addLine("<camera_ichi_x>" + camera.getCameraPositionX() + "</camera_ichi_x>");
-        memo1.addLine("<camera_ichi_y>" + camera.getCameraPositionY() + "</camera_ichi_y>");
-        memo1.addLine("<camera_kakudo>" + camera.getCameraAngle() + "</camera_kakudo>");
-        memo1.addLine("<camera_kagami>" + camera.getCameraMirror() + "</camera_kagami>");
-        memo1.addLine("<camera_bairitsu_x>" + camera.getCameraZoomX() + "</camera_bairitsu_x>");
-        memo1.addLine("<camera_bairitsu_y>" + camera.getCameraZoomY() + "</camera_bairitsu_y>");
-        memo1.addLine("<hyouji_ichi_x>" + camera.getDisplayPositionX() + "</hyouji_ichi_x>");
-        memo1.addLine("<hyouji_ichi_y>" + camera.getDisplayPositionY() + "</hyouji_ichi_y>");
-        memo1.addLine("</camera_of_orisen_nyuuryokuzu>");
-
-        memo1.addLine("<settei>");
-        CanvasModel canvasModel = save.getCanvasModel();
-        memo1.addLine("<ckbox_mouse_settei>" + canvasModel.getMouseWheelMovesCreasePattern() + "</ckbox_mouse_settei>");
-        memo1.addLine("<ckbox_ten_sagasi>" + canvasModel.getDisplayPointSpotlight() + "</ckbox_ten_sagasi>");
-        memo1.addLine("<ckbox_ten_hanasi>" + canvasModel.getDisplayPointOffset() + "</ckbox_ten_hanasi>");
-        memo1.addLine("<ckbox_kou_mitudo_nyuuryoku>" + canvasModel.getDisplayGridInputAssist() + "</ckbox_kou_mitudo_nyuuryoku>");
-        memo1.addLine("<ckbox_bun>" + canvasModel.getDisplayComments() + "</ckbox_bun>");
-        memo1.addLine("<ckbox_cp>" + canvasModel.getDisplayCpLines() + "</ckbox_cp>");
-        memo1.addLine("<ckbox_a0>" + canvasModel.getDisplayAuxLines() + "</ckbox_a0>");
-        memo1.addLine("<ckbox_a1>" + canvasModel.getDisplayLiveAuxLines() + "</ckbox_a1>");
-        memo1.addLine("<ckbox_mejirusi>" + canvasModel.getDisplayMarkings() + "</ckbox_mejirusi>");
-        memo1.addLine("<ckbox_cp_ue>" + canvasModel.getDisplayCreasePatternOnTop() + "</ckbox_cp_ue>");
-        memo1.addLine("<ckbox_oritatami_keika>" + canvasModel.getDisplayFoldingProgress() + "</ckbox_oritatami_keika>");
-        //The thickness of the line in the development view.
-        memo1.addLine("<iTenkaizuSenhaba>" + canvasModel.getLineWidth() + "</iTenkaizuSenhaba>");
-        //Width of vertex sign
-        memo1.addLine("<ir_ten>" + canvasModel.getPointSize() + "</ir_ten>");
-        //Express the polygonal line expression with color
-        memo1.addLine("<i_orisen_hyougen>" + canvasModel.getLineStyle() + "</i_orisen_hyougen>");
-        memo1.addLine("<i_anti_alias>" + canvasModel.getAntiAlias() + "</i_anti_alias>");
-        memo1.addLine("</settei>");
-
-        GridModel gridModel = save.getGridModel();
-        memo1.addLine("<Kousi>");
-        memo1.addLine("<i_kitei_jyoutai>" + gridModel.getBaseState() + "</i_kitei_jyoutai>");
-        memo1.addLine("<nyuuryoku_kitei>" + gridModel.getGridSize() + "</nyuuryoku_kitei>");
-
-        memo1.addLine("<memori_kankaku>" + gridModel.getIntervalGridSize() + "</memori_kankaku>");
-        memo1.addLine("<a_to_heikouna_memori_iti>" + gridModel.getHorizontalScalePosition() + "</a_to_heikouna_memori_iti>");
-        memo1.addLine("<b_to_heikouna_memori_iti>" + gridModel.getVerticalScalePosition() + "</b_to_heikouna_memori_iti>");
-        memo1.addLine("<kousi_senhaba>" + gridModel.getGridLineWidth() + "</kousi_senhaba>");
-
-        memo1.addLine("<d_kousi_x_a>" + gridModel.getGridXA() + "</d_kousi_x_a>");
-        memo1.addLine("<d_kousi_x_b>" + gridModel.getGridXB() + "</d_kousi_x_b>");
-        memo1.addLine("<d_kousi_x_c>" + gridModel.getGridXC() + "</d_kousi_x_c>");
-        memo1.addLine("<d_kousi_y_a>" + gridModel.getGridYA() + "</d_kousi_y_a>");
-        memo1.addLine("<d_kousi_y_b>" + gridModel.getGridYB() + "</d_kousi_y_b>");
-        memo1.addLine("<d_kousi_y_c>" + gridModel.getGridYC() + "</d_kousi_y_c>");
-        memo1.addLine("<d_kousi_kakudo>" + gridModel.getGridAngle() + "</d_kousi_kakudo>");
-        memo1.addLine("</Kousi>");
-
-        memo1.addLine("<Kousi_iro>");
-        memo1.addLine("<kousi_color_R>" + gridModel.getGridColor().getRed() + "</kousi_color_R>");
-        memo1.addLine("<kousi_color_G>" + gridModel.getGridColor().getGreen() + "</kousi_color_G>");
-        memo1.addLine("<kousi_color_B>" + gridModel.getGridColor().getBlue() + "</kousi_color_B>");
-
-        memo1.addLine("<kousi_memori_color_R>" + gridModel.getGridScaleColor().getRed() + "</kousi_memori_color_R>");
-        memo1.addLine("<kousi_memori_color_G>" + gridModel.getGridScaleColor().getGreen() + "</kousi_memori_color_G>");
-        memo1.addLine("<kousi_memori_color_B>" + gridModel.getGridScaleColor().getBlue() + "</kousi_memori_color_B>");
-        memo1.addLine("</Kousi_iro>");
-
-        memo1.addLine("<oriagarizu>");
-
-        FoldedFigureModel foldedFigureModel = save.getFoldedFigureModel();
-        memo1.addLine("<oriagarizu_F_color_R>" + foldedFigureModel.getFrontColor().getRed() + "</oriagarizu_F_color_R>");
-        memo1.addLine("<oriagarizu_F_color_G>" + foldedFigureModel.getFrontColor().getGreen() + "</oriagarizu_F_color_G>");
-        memo1.addLine("<oriagarizu_F_color_B>" + foldedFigureModel.getFrontColor().getBlue() + "</oriagarizu_F_color_B>");
-
-        memo1.addLine("<oriagarizu_B_color_R>" + foldedFigureModel.getBackColor().getRed() + "</oriagarizu_B_color_R>");
-        memo1.addLine("<oriagarizu_B_color_G>" + foldedFigureModel.getBackColor().getGreen() + "</oriagarizu_B_color_G>");
-        memo1.addLine("<oriagarizu_B_color_B>" + foldedFigureModel.getBackColor().getBlue() + "</oriagarizu_B_color_B>");
-
-        memo1.addLine("<oriagarizu_L_color_R>" + foldedFigureModel.getLineColor().getRed() + "</oriagarizu_L_color_R>");
-        memo1.addLine("<oriagarizu_L_color_G>" + foldedFigureModel.getLineColor().getGreen() + "</oriagarizu_L_color_G>");
-        memo1.addLine("<oriagarizu_L_color_B>" + foldedFigureModel.getLineColor().getBlue() + "</oriagarizu_L_color_B>");
-
-        memo1.addLine("</oriagarizu>");
-
-        return memo1;
     }
 }

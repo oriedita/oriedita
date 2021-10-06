@@ -17,7 +17,6 @@ import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.editor.json.DefaultObjectMapper;
 import origami_editor.editor.task.CheckCAMVTask;
 import origami_editor.editor.task.FoldingEstimateTask;
-import origami_editor.record.Memo;
 import origami_editor.tools.ResourceUtil;
 import origami_editor.tools.StringOp;
 
@@ -842,9 +841,9 @@ public class App extends JFrame implements ActionListener {
             canvas.flg_wi = true;
             repaintCanvas();//Necessary to not export the green border
         } else if (exportFile.getName().endsWith(".cp")) {
-            memoAndName2File(Cp.exportFile(mainDrawingWorker.getSave_for_export()), exportFile);
+            Cp.exportFile(mainDrawingWorker.getSave_for_export(), exportFile);
         } else if (exportFile.getName().endsWith(".orh")) {
-            memoAndName2File(Orh.exportFile(mainDrawingWorker.getSave_for_export()), exportFile);
+            Orh.exportFile(mainDrawingWorker.getSave_for_export(), exportFile);
         }
     }
 
@@ -1040,19 +1039,6 @@ public class App extends JFrame implements ActionListener {
             mapper.writeValue(fname, save);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    void memoAndName2File(Memo memo1, File fname) {
-        System.out.println("ファイル書きこみ");
-        try {
-            try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fname)))) {
-                for (int i = 1; i <= memo1.getLineCount(); i++) {
-                    pw.println(memo1.getLine(i));
-                }
-            }
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
         }
     }
 

@@ -3,22 +3,21 @@ package origami_editor.editor.export;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami_editor.editor.Save;
-import origami_editor.record.Memo;
 
 import java.io.*;
 import java.util.StringTokenizer;
 
 public class Cp {
-    public static Memo exportFile(Save save) {
-        Memo mem = new Memo();
-        for (LineSegment s :
-                save.getLineSegments()) {
-            int color = s.getColor().getNumber() + 1;
+    public static void exportFile(Save save, File file) {
+        try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw)) {
+            for (LineSegment s : save.getLineSegments()) {
+                int color = s.getColor().getNumber() + 1;
 
-            mem.addLine(String.format("%d %s %s %s %s", color, s.determineAX(), s.determineAY(), s.determineBX(), s.determineBY()));
+                pw.println(String.format("%d %s %s %s %s", color, s.determineAX(), s.determineAY(), s.determineBX(), s.determineBY()));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        return mem;
     }
 
     public static Save importFile(BufferedReader reader) throws IOException {
