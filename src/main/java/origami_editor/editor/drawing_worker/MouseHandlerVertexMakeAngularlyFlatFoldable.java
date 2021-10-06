@@ -100,21 +100,21 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                     if (nbox.getTotal() % 2 == 1) {//t1を端点とする折線の数が奇数のときだけif{}内の処理をする
                         icol_temp = d.lineColor;
                         if (nbox.getTotal() == 1) {
-                            icol_temp = nbox.getValue(1).getColor();
+                            icol_temp = nbox.getValue(0).getColor();
                         }//20180503この行追加。これは、折線が1本だけの頂点から折り畳み可能線追加機能で、その折線の延長を行った場合に、線の色を延長前の折線と合わせるため
 
-                        for (int i = 1; i <= nbox.getTotal(); i++) {//iは角加減値を求める最初の折線のid
+                        for (int i = 0; i < nbox.getTotal(); i++) {//iは角加減値を求める最初の折線のid
                             //折線が奇数の頂点周りの角加減値を2.0で割ると角加減値の最初折線と、折り畳み可能にするための追加の折線との角度になる。
                             double kakukagenti = 0.0;
                             int tikai_foldLine_jyunban;
                             int tooi_foldLine_jyunban;
                             for (int k = 1; k <= nbox.getTotal(); k++) {//kは角加減値を求める角度の順番
                                 tikai_foldLine_jyunban = i + k - 1;
-                                if (tikai_foldLine_jyunban > nbox.getTotal()) {
+                                if (tikai_foldLine_jyunban >= nbox.getTotal()) {
                                     tikai_foldLine_jyunban = tikai_foldLine_jyunban - nbox.getTotal();
                                 }
                                 tooi_foldLine_jyunban = i + k;
-                                if (tooi_foldLine_jyunban > nbox.getTotal()) {
+                                if (tooi_foldLine_jyunban >= nbox.getTotal()) {
                                     tooi_foldLine_jyunban = tooi_foldLine_jyunban - nbox.getTotal();
                                 }
 
@@ -133,11 +133,11 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                             //System.out.println("kakukagenti="+kakukagenti);
                             //チェック用に角加減値の最初の角度の中にkakukagenti/2.0があるかを確認する
                             tikai_foldLine_jyunban = i;
-                            if (tikai_foldLine_jyunban > nbox.getTotal()) {
+                            if (tikai_foldLine_jyunban >= nbox.getTotal()) {
                                 tikai_foldLine_jyunban = tikai_foldLine_jyunban - nbox.getTotal();
                             }
                             tooi_foldLine_jyunban = i + 1;
-                            if (tooi_foldLine_jyunban > nbox.getTotal()) {
+                            if (tooi_foldLine_jyunban >= nbox.getTotal()) {
                                 tooi_foldLine_jyunban = tooi_foldLine_jyunban - nbox.getTotal();
                             }
 

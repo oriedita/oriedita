@@ -115,7 +115,7 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
                 }
 
 
-                for (int i = 1; i <= nbox.getTotal(); i++) {
+                for (int i = 0; i < nbox.getTotal(); i++) {
                     WeightedValue<LineSegment> i_d = new WeightedValue<>(nbox.getValue(i), goukei_nbox.getTotal());
                     goukei_nbox.container_i_smallest_first(i_d);
                 }
@@ -132,14 +132,14 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
                     i_hantai_color = LineColor.CYAN_3;
                 } else {//外周部として選択した折線の数が偶数
                     LineSegment s_idou = new LineSegment();
-                    s_idou.set(goukei_nbox.getValue(1));
+                    s_idou.set(goukei_nbox.getValue(0));
 
                     for (int i = 2; i <= goukei_nbox.getTotal(); i++) {
                         s_idou.set(OritaCalc.findLineSymmetryLineSegment(s_idou, goukei_nbox.getValue(i)));
                     }
                     i_hantai_color = LineColor.MAGENTA_5;
-                    if (OritaCalc.equal(goukei_nbox.getValue(1).getA(), s_idou.getA(), 0.0001)) {
-                        if (OritaCalc.equal(goukei_nbox.getValue(1).getB(), s_idou.getB(), 0.0001)) {
+                    if (OritaCalc.equal(goukei_nbox.getValue(0).getA(), s_idou.getA(), 0.0001)) {
+                        if (OritaCalc.equal(goukei_nbox.getValue(0).getB(), s_idou.getB(), 0.0001)) {
                             i_hantai_color = LineColor.CYAN_3;
                         }
                     }

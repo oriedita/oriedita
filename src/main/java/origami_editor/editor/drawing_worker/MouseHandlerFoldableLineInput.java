@@ -136,18 +136,18 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                         }
                     }
                     if (nbox.getTotal() % 2 == 1) {//moyori_tenを端点とする折線の数が奇数のときだけif{}内の処理をする
-                        for (int i = 1; i <= nbox.getTotal(); i++) {//iは角加減値を求める最初の折線のid
+                        for (int i = 0; i < nbox.getTotal(); i++) {//iは角加減値を求める最初の折線のid
                             //折線が奇数の頂点周りの角加減値を2.0で割ると角加減値の最初折線と、折り畳み可能にするための追加の折線との角度になる。
                             double kakukagenti = 0.0;
                             int tikai_orisen_jyunban;
                             int tooi_orisen_jyunban;
-                            for (int k = 1; k <= nbox.getTotal(); k++) {//kは角加減値を求める角度の順番
+                            for (int k = 0; k < nbox.getTotal(); k++) {//kは角加減値を求める角度の順番
                                 tikai_orisen_jyunban = i + k - 1;
-                                if (tikai_orisen_jyunban > nbox.getTotal()) {
+                                if (tikai_orisen_jyunban >= nbox.getTotal()) {
                                     tikai_orisen_jyunban = tikai_orisen_jyunban - nbox.getTotal();
                                 }
                                 tooi_orisen_jyunban = i + k;
-                                if (tooi_orisen_jyunban > nbox.getTotal()) {
+                                if (tooi_orisen_jyunban >= nbox.getTotal()) {
                                     tooi_orisen_jyunban = tooi_orisen_jyunban - nbox.getTotal();
                                 }
 
@@ -164,11 +164,11 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                             }
                             //チェック用に角加減値の最初の角度の中にkakukagenti/2.0があるかを確認する
                             tikai_orisen_jyunban = i;
-                            if (tikai_orisen_jyunban > nbox.getTotal()) {
+                            if (tikai_orisen_jyunban >= nbox.getTotal()) {
                                 tikai_orisen_jyunban = tikai_orisen_jyunban - nbox.getTotal();
                             }
                             tooi_orisen_jyunban = i + 1;
-                            if (tooi_orisen_jyunban > nbox.getTotal()) {
+                            if (tooi_orisen_jyunban >= nbox.getTotal()) {
                                 tooi_orisen_jyunban = tooi_orisen_jyunban - nbox.getTotal();
                             }
 

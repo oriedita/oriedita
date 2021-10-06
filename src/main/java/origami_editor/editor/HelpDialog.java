@@ -22,11 +22,11 @@ public class HelpDialog extends JDialog {
 
         setUndecorated(true);
 
-        JPopupMenu  popup = new JPopupMenu();
+        JPopupMenu contextMenu = new JPopupMenu();
         JMenuItem dismissMenuItem = new JMenuItem("Dismiss");
-        dismissMenuItem.addActionListener(e -> setVisible(false));
+        dismissMenuItem.addActionListener(e -> onCancel());
 
-        popup.add(dismissMenuItem);
+        contextMenu.add(dismissMenuItem);
 
         // Code to move the dialog by dragging the label.
         helpLabel.addMouseListener(new MouseAdapter() {
@@ -35,25 +35,28 @@ public class HelpDialog extends JDialog {
                 point.y = e.getY();
 
                 maybeShowPopup(e);
-
-                owner.requestFocus();
             }
+
             public void mouseReleased(MouseEvent e) {
                 maybeShowPopup(e);
+
+                if (!e.isPopupTrigger()) {
+                    owner.requestFocus();
+                }
             }
 
             private void maybeShowPopup(MouseEvent e) {
                 if (e.isPopupTrigger()) {
-                    popup.show(e.getComponent(),
-                            e.getX(), e.getY());
+                    contextMenu.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
         });
         helpLabel.addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
-                Point p = getLocation();
-                setLocation(p.x + e.getX() - point.x,
-                        p.y + e.getY() - point.y);
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    Point p = getLocation();
+                    setLocation(p.x + e.getX() - point.x, p.y + e.getY() - point.y);
+                }
             }
         });
 

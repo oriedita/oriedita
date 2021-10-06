@@ -1,4 +1,4 @@
-package origami_editor.graphic2d.averagecoordinates;
+package origami.crease_pattern.worker;
 
 import origami.crease_pattern.element.Point;
 

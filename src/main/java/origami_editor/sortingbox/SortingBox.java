@@ -6,16 +6,18 @@ public class SortingBox<T> {//Arrange and store data in ascending order of doubl
     private final ArrayList<WeightedValue<T>> i_d_List = new ArrayList<>();
 
     public SortingBox() {
-        i_d_List.add(new WeightedValue<>(null, -1.0));
     }
 
     public void reset() {
         i_d_List.clear();
-        i_d_List.add(new WeightedValue<>());
+    }
+
+    public Iterable<WeightedValue<T>> values() {
+        return i_d_List;
     }
 
     public int getTotal() {
-        return i_d_List.size() - 1;
+        return i_d_List.size();
     }
 
     public WeightedValue<T> getWeightedValue(int i) {//Extract the value-th int_double from the front in the sorting box
@@ -25,8 +27,8 @@ public class SortingBox<T> {//Arrange and store data in ascending order of doubl
     }
 
     public int getSequence(T i_of_i_d) {//As a result of being arranged, the order of int is returned. If int has the same value, the result will be strange
-        for (int i = 1; i <= getTotal(); i++) {
-            if (i_of_i_d == getValue(i)) {
+        for (int i = 0; i < i_d_List.size(); i++) {
+            if (i_of_i_d == i_d_List.get(i)) {
                 return i;
             }
         }
@@ -41,7 +43,7 @@ public class SortingBox<T> {//Arrange and store data in ascending order of doubl
     }
 
     public T backwardsGetValue(int iu) {//Returns the value-th int from the back
-        int i = getTotal() + 1 - iu;
+        int i = i_d_List.size() - 1 - iu;
         WeightedValue<T> i_d_temp = new WeightedValue<>();
         i_d_temp.set(i_d_List.get(i));
         return i_d_temp.getValue();
@@ -57,13 +59,9 @@ public class SortingBox<T> {//Arrange and store data in ascending order of doubl
         i_d_List.add(i_d_0);
     }
 
-    public void add(int i, WeightedValue<T> i_d_0) {//int_doubleを単にi番目にに加える（挿入する）
-        i_d_List.add(i, i_d_0);
-    }
-
     public void container_i_smallest_first(WeightedValue<T> i_d_0) {//The meaning of the name of this function is to put value in ascending order of weight, but it may be confusing.
-        for (int i = 1; i <= getTotal(); i++) {
-            if (i_d_0.getWeight() < getWeight(i)) {
+        for (int i = 0; i < i_d_List.size(); i++) {
+            if (i_d_0.getWeight() < i_d_List.get(i).getWeight()) {
                 i_d_List.add(i, i_d_0);
                 return;
             }
@@ -74,25 +72,25 @@ public class SortingBox<T> {//Arrange and store data in ascending order of doubl
 
     public void set(SortingBox<T> nbox) {
         reset();
-        for (int i = 1; i <= nbox.getTotal(); i++) {
-            i_d_List.add(nbox.getWeightedValue(i));
+        for (WeightedValue<T> wv : nbox.values()) {
+            i_d_List.add(wv);
         }
     }
 
     // Move the second element to the first, third to the second, etc. Move the first element to the end of the list.
     public void shift() {
         SortingBox<T> nbox = new SortingBox<>();
-        for (int i = 2; i <= getTotal(); i++) {
-            nbox.add(getWeightedValue(i));
+        for (int i = 1; i < i_d_List.size(); i++) {
+            nbox.add(i_d_List.get(i));
         }
-        nbox.add(getWeightedValue(1));
+        nbox.add(i_d_List.get(0));
 
         set(nbox);
     }
 
     public void display() {
         System.out.println("--- narabebako.hyouji() ---");
-        for (int k = 1; k <= getTotal(); k++) {
+        for (int k = 0; k < i_d_List.size(); k++) {
             WeightedValue<T> i_d_temp = new WeightedValue<>();
             i_d_temp.set(i_d_List.get(k));
 

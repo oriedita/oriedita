@@ -108,7 +108,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                 return;
             }
             if (entyou_kouho_nbox.getTotal() >= 0) {
-                for (int i = 2; i <= entyou_kouho_nbox.getTotal() + 1; i++) {
+                for (int i = 1; i < entyou_kouho_nbox.getTotal() + 1; i++) {
                     LineSegment s = new LineSegment();
                     s.set(entyou_kouho_nbox.getValue(i - 1));
                     s.setColor(LineColor.GREEN_6);
@@ -132,8 +132,8 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
 
                 //最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがあるかどうかを判断する。
                 boolean i_senbun_entyou_mode = false;// i_senbun_entyou_mode=0なら最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがない。1ならある。
-                for (int i = 1; i <= entyou_kouho_nbox.getTotal(); i++) {
-                    if (OritaCalc.determineLineSegmentIntersection(entyou_kouho_nbox.getValue(i), closestLineSegment, 0.000001, 0.000001) == LineSegment.Intersection.PARALLEL_EQUAL_31) {//線分が同じならoc.senbun_kousa_hantei==31
+                for (WeightedValue<LineSegment> ws : entyou_kouho_nbox.values()) {
+                    if (OritaCalc.determineLineSegmentIntersection(ws.getValue(), closestLineSegment, 0.000001, 0.000001) == LineSegment.Intersection.PARALLEL_EQUAL_31) {//線分が同じならoc.senbun_kousa_hantei==31
                         i_senbun_entyou_mode = true;
                     }
                 }
@@ -143,15 +143,15 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                 //最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがない場合
                 if (!i_senbun_entyou_mode) {
                     int sousuu_old = d.foldLineSet.getTotal();//(1)
-                    for (int i = 1; i <= entyou_kouho_nbox.getTotal(); i++) {
+                    for (WeightedValue<LineSegment> ws : entyou_kouho_nbox.values()) {
                         //最初に選んだ線分と2番目に選んだ線分が平行でない場合
-                        if (OritaCalc.isLineSegmentParallel(entyou_kouho_nbox.getValue(i), closestLineSegment, 0.000001) == OritaCalc.ParallelJudgement.NOT_PARALLEL) { //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない
+                        if (OritaCalc.isLineSegmentParallel(ws.getValue(), closestLineSegment, 0.000001) == OritaCalc.ParallelJudgement.NOT_PARALLEL) { //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない
                             //line_step[1]とs_step[2]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
                             Point kousa_point = new Point();
-                            kousa_point.set(OritaCalc.findIntersection(entyou_kouho_nbox.getValue(i), closestLineSegment));
+                            kousa_point.set(OritaCalc.findIntersection(ws.getValue(), closestLineSegment));
                             //addLineSegment =new Senbun(kousa_ten,foldLineSet.get(entyou_kouho_nbox.get_int(i)).get_tikai_hasi(kousa_ten));
                             addLineSegment.setA(kousa_point);
-                            addLineSegment.setB(entyou_kouho_nbox.getValue(i).determineClosestEndpoint(kousa_point));
+                            addLineSegment.setB(ws.getValue().determineClosestEndpoint(kousa_point));
 
 
                             if (addLineSegment.determineLength() > 0.00000001) {
@@ -159,7 +159,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                                     addLineSegment.setColor(d.lineColor);
                                 }
                                 if (getMouseMode() == MouseMode.LENGTHEN_CREASE_SAME_COLOR_70) {
-                                    addLineSegment.setColor(entyou_kouho_nbox.getValue(i).getColor());
+                                    addLineSegment.setColor(ws.getValue().getColor());
                                 }
 
                                 //addsenbun(addLineSegment);
@@ -175,9 +175,9 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                     //最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがある場合
 
                     int sousuu_old = d.foldLineSet.getTotal();//(1)
-                    for (int i = 1; i <= entyou_kouho_nbox.getTotal(); i++) {
+                    for (WeightedValue<LineSegment> ws : entyou_kouho_nbox.values()) {
                         LineSegment moto_no_sen = new LineSegment();
-                        moto_no_sen.set(entyou_kouho_nbox.getValue(i));
+                        moto_no_sen.set(ws.getValue());
                         Point p_point = new Point();
                         p_point.set(OritaCalc.findIntersection(moto_no_sen, d.lineStep.get(0)));
 
@@ -192,7 +192,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                                 addLineSegment.setColor(d.lineColor);
                             }
                             if (getMouseMode() == MouseMode.LENGTHEN_CREASE_SAME_COLOR_70) {
-                                addLineSegment.setColor(entyou_kouho_nbox.getValue(i).getColor());
+                                addLineSegment.setColor(ws.getValue().getColor());
                             }
 
                             d.foldLineSet.addLine(addLineSegment);//ori_sのsenbunの最後にs0の情報をを加えるだけ//(2)

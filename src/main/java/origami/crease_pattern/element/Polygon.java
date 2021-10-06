@@ -149,7 +149,7 @@ public class Polygon {
 
         Intersection i_nai;
 
-        for (int i = 1; i <= nbox.getTotal(); i++) {
+        for (int i = 0; i < nbox.getTotal(); i++) {
 
             i_nai = inside(nbox.getValue(i));
             if (i_nai == Intersection.OUTSIDE) {
@@ -162,7 +162,7 @@ public class Polygon {
                 inside = true;
             }
 
-            if (i != nbox.getTotal()) {
+            if (i != nbox.getTotal() - 1) {
                 i_nai = inside(OritaCalc.midPoint(nbox.getValue(i), nbox.getValue(i + 1)));
                 if (i_nai == Intersection.OUTSIDE) {
                     outside = true;

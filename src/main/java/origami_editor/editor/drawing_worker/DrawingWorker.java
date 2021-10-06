@@ -1181,18 +1181,18 @@ public class DrawingWorker {
             t_m_s_nbox.set(foldLineSet.get_SortingBox_of_vertex_b_surrounding_foldLine(e_s_dougubako.getLengthenUntilIntersectionLineSegment_new().getA(), e_s_dougubako.getLengthenUntilIntersectionLineSegment_new().getB()));
 
             if (t_m_s_nbox.getTotal() == 2) {
+                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(0));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+                if (intersection == StraightLine.Intersection.INCLUDED_3) {
+                    return;
+                }
+
                 intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(1));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
                 if (intersection == StraightLine.Intersection.INCLUDED_3) {
                     return;
                 }
 
-                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-                if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                    return;
-                }
-
-                StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(1));
-                intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));
+                StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(0));
+                intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(1));
                 if (intersection == StraightLine.Intersection.INCLUDED_3) {
                     LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
                     kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.getLengthenUntilIntersectionFirstLineSegment_new());
@@ -1210,10 +1210,28 @@ public class DrawingWorker {
 
 
             if (t_m_s_nbox.getTotal() == 3) {
+                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(0));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+                if (intersection == StraightLine.Intersection.INCLUDED_3) {
+                    StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(1));
+                    intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));
+                    if (intersection == StraightLine.Intersection.INCLUDED_3) {
+                        LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
+                        kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.getLengthenUntilIntersectionFirstLineSegment_new());
+
+                        Point new_a = new Point();
+                        new_a.set(e_s_dougubako.getLengthenUntilIntersectionPoint_new());//Ten new_aは最も近い交点
+                        Point new_b = new Point();
+                        new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+
+                        continuous_folding_new(new_a, new_b);//種の散布
+                        return;
+                    }
+                }
+                //------------------------------------------------
                 intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(1));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
                 if (intersection == StraightLine.Intersection.INCLUDED_3) {
                     StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(2));
-                    intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(3));
+                    intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(0));
                     if (intersection == StraightLine.Intersection.INCLUDED_3) {
                         LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
                         kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.getLengthenUntilIntersectionFirstLineSegment_new());
@@ -1230,26 +1248,8 @@ public class DrawingWorker {
                 //------------------------------------------------
                 intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
                 if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                    StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(3));
+                    StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(0));
                     intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(1));
-                    if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                        LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
-                        kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.getLengthenUntilIntersectionFirstLineSegment_new());
-
-                        Point new_a = new Point();
-                        new_a.set(e_s_dougubako.getLengthenUntilIntersectionPoint_new());//Ten new_aは最も近い交点
-                        Point new_b = new Point();
-                        new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
-
-                        continuous_folding_new(new_a, new_b);//種の散布
-                        return;
-                    }
-                }
-                //------------------------------------------------
-                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(3));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-                if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                    StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(1));
-                    intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));
                     if (intersection == StraightLine.Intersection.INCLUDED_3) {
                         LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
                         kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.getLengthenUntilIntersectionFirstLineSegment_new());
