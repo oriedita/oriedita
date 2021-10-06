@@ -31,11 +31,3 @@ jobs:
         with:
           name: origami-editor-jar
           path: target/origami-editor-*.jar
-
-      - uses: LouisBrunner/checks-action@v1.1.1
-        if: always()
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: Artifact
-          conclusion: ${{ job.status }}
-          details_url: https://nightly.link/qurben/origami-editor/actions/runs/${{ github.run_id }}/origami-editor-jar.zip
