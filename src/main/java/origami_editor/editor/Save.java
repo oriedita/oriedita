@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Save implements Serializable {
+    private String version;
     private List<LineSegment> lineSegments;
     private List<Circle> circles;
     private String title;
@@ -22,6 +23,14 @@ public class Save implements Serializable {
     private CanvasModel canvasModel;
     private GridModel gridModel;
     private FoldedFigureModel foldedFigureModel;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public Save() {
         lineSegments = new ArrayList<>();
