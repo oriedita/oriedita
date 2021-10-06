@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Save implements Serializable {
+    private String version;
     private List<LineSegment> lineSegments;
     private List<Circle> circles;
     private String title;
@@ -22,6 +23,14 @@ public class Save implements Serializable {
     private CanvasModel canvasModel;
     private GridModel gridModel;
     private FoldedFigureModel foldedFigureModel;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public Save() {
         lineSegments = new ArrayList<>();
@@ -144,21 +153,6 @@ public class Save implements Serializable {
         }
         for (LineSegment s : save.getAuxLineSegments()) {
             addAuxLineSegment(s);
-        }
-    }
-
-    private byte[] convertToBytes(Object object) throws IOException {
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             ObjectOutputStream out = new ObjectOutputStream(bos)) {
-            out.writeObject(object);
-            return bos.toByteArray();
-        }
-    }
-
-    private Object convertFromBytes(byte[] bytes) throws IOException, ClassNotFoundException {
-        try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-             ObjectInputStream in = new ObjectInputStream(bis)) {
-            return in.readObject();
         }
     }
 }

@@ -20,6 +20,10 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           cache: maven
+
+      - name: Set version for Jar
+        run: mvn -B versions:set -DnewVersion="pr-${{ github.event.number }}-${{ github.sha }}" --file pom.xml
+
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
@@ -27,4 +31,3 @@ jobs:
         with:
           name: origami-editor-jar
           path: target/origami-editor-*.jar
-

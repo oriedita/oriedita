@@ -15,6 +15,12 @@ public class HistoryState {
     public HistoryState() {
     }
 
+    public void reset() {
+        history.clear();
+        future.clear();
+        current = null;
+    }
+
     public boolean isEmpty() {
         return history.isEmpty() && future.isEmpty() && current == null;
     }

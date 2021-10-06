@@ -11,7 +11,6 @@ import origami_editor.editor.drawing_worker.*;
 import origami_editor.editor.export.Cp;
 import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
-import origami_editor.editor.export.Svg;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.editor.task.CheckCAMVTask;
@@ -28,7 +27,6 @@ import java.awt.geom.AffineTransform;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Queue;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -36,6 +34,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 import static origami_editor.tools.ResourceUtil.createImageIcon;
 
@@ -51,6 +52,8 @@ public class App extends JFrame implements ActionListener {
     public final CameraModel creasePatternCameraModel = new CameraModel();
     public final FileModel fileModel = new FileModel();
     public final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
+    public final DrawingWorker mainDrawingWorker = new DrawingWorker(this);    // Basic branch craftsman. Accepts input from the mouse.
+    final Queue<Popup> popups = new ArrayDeque<>();
     public FoldedFigure temp_OZ = new FoldedFigure(this);    //Folded figure
     public FoldedFigure OZ;    //Current Folded figure
     public LineSegmentSet Ss0;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(Ss0)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
@@ -62,10 +65,10 @@ public class App extends JFrame implements ActionListener {
     public Canvas canvas;
     public ArrayList<FoldedFigure> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
     public File exportFile;
-    public final DrawingWorker mainDrawingWorker = new DrawingWorker(this);    // Basic branch craftsman. Accepts input from the mouse.
+    public File fname_and_number;//まとめ書き出しに使う。
+    public double d_ap_check4 = 0.0;
     int foldedFigureIndex = 0;//Specify which number of foldedFigures Oriagari_Zu is the target of button operation or transformation operation
     Background_camera h_cam = new Background_camera();
-    public File fname_and_number;//まとめ書き出しに使う。
     //各種変数の定義
     String frame_title_0;//フレームのタイトルの根本部分
     String frame_title;//フレームのタイトルの全体
@@ -74,24 +77,19 @@ public class App extends JFrame implements ActionListener {
     Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
     HelpDialog explanation;
     boolean mouseDraggedValid = false;
+    //ウィンドウ透明化用のパラメータ
     boolean mouseReleasedValid = false;//0 ignores mouse operation. 1 is valid for mouse operation. When an unexpected mouseDragged or mouseReleased occurs due to on-off of the file box, set it to 0 so that it will not be picked up. These are set to 1 valid when the mouse is clicked.
     //画像出力するため20170107_oldと書かれた行をコメントアウトし、20170107_newの行を有効にした。
     //画像出力不要で元にもどすなら、20170107_oldと書かれた行を有効にし、20170107_newの行をコメントアウトにすればよい。（この変更はOrihime.javaの中だけに2箇所ある）
     // オフスクリーン
     boolean flg61 = false;//Used when setting the frame 　20180524
-    //ウィンドウ透明化用のパラメータ
-
     MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
-    public double d_ap_check4 = 0.0;
-
     Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
-
     ExecutorService pool;
     private Future<?> currentTask;
-    final Queue<Popup> popups = new ArrayDeque<>();
 
     public App() {
-        setTitle("Origami Editor 1.0.0");//Specify the title and execute the constructor
+        setTitle("Origami Editor " + getVersionFromManifest());//Specify the title and execute the constructor
         frame_title_0 = getTitle();
         frame_title = frame_title_0;//Store title in variable
         mainDrawingWorker.setTitle(frame_title);
@@ -401,6 +399,25 @@ public class App extends JFrame implements ActionListener {
 
     }
 
+    private static String getVersionFromManifest() {
+        try {
+            File file = new File(App.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            if (file.isFile()) {
+                JarFile jarFile = new JarFile(file);
+                Manifest manifest = jarFile.getManifest();
+                Attributes attributes = manifest.getMainAttributes();
+                final String version = attributes.getValue("Implementation-Version");
+
+                if (version != null) {
+                    return version;
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return "dev";
+    }
+
     private void setData(FileModel fileModel) {
         if (fileModel.getSavedFileName() != null) {
             File file = new File(fileModel.getSavedFileName());
@@ -522,21 +539,26 @@ public class App extends JFrame implements ActionListener {
     }
 
     public void closing() {
-        int option = JOptionPane.showConfirmDialog(this, createImageIcon("ppp/owari.png"));
+        if (!fileModel.isSaved()) {
+            int option = JOptionPane.showConfirmDialog(this, createImageIcon("ppp/owari.png"));
 
-        switch (option) {
-            case JOptionPane.YES_OPTION:
-                mouseDraggedValid = false;
-                mouseReleasedValid = false;
-                saveFile();
+            switch (option) {
+                case JOptionPane.YES_OPTION:
+                    mouseDraggedValid = false;
+                    mouseReleasedValid = false;
+                    saveFile();
 
-                stopTask();
-                System.exit(0);
-            case JOptionPane.NO_OPTION:
-                stopTask();
-                System.exit(0);
-            case JOptionPane.CANCEL_OPTION:
-                break;
+                    stopTask();
+                    System.exit(0);
+                case JOptionPane.NO_OPTION:
+                    stopTask();
+                    System.exit(0);
+                case JOptionPane.CANCEL_OPTION:
+                    break;
+            }
+        } else {
+            stopTask();
+            System.exit(0);
         }
     }
 
@@ -544,7 +566,6 @@ public class App extends JFrame implements ActionListener {
     void developmentView_initialization() {
         mainDrawingWorker.reset();
         mainDrawingWorker.initialize();
-
 
         //camera_of_orisen_nyuuryokuzu	の設定;
         canvas.creasePatternCamera.setCameraPositionX(0.0);
@@ -698,7 +719,6 @@ public class App extends JFrame implements ActionListener {
         }
         return new Point(e.getX() - (int) offset, e.getY() - (int) offset);
     }
-
 
     //=============================================================================
     //Method called when the mouse wheel rotates
@@ -860,10 +880,14 @@ public class App extends JFrame implements ActionListener {
 
             selectedFile = fileChooser.getSelectedFile();
 
+            if (selectedFile != null && !selectedFile.getName().endsWith(".ori")) {
+                selectedFile = new File(selectedFile.getPath() + ".ori");
+            }
+
             if (selectedFile != null && selectedFile.exists()) {
                 choice = JOptionPane.showConfirmDialog(this, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             }
-        } while (selectedFile != null && selectedFile.exists() && choice == JOptionPane.NO_OPTION);
+        } while (selectedFile != null && selectedFile.exists() && choice != JOptionPane.YES_OPTION);
 
         if (selectedFile != null) {
             fileModel.setDefaultDirectory(selectedFile.getParent());
@@ -959,7 +983,11 @@ public class App extends JFrame implements ActionListener {
         } catch (IOException | ClassNotFoundException e) {
             System.out.println(e);
 
+            JOptionPane.showMessageDialog(this, "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
+
             fileModel.setSavedFileName(null);
+
+            return new Save();
         }
 
         return save;
@@ -975,6 +1003,7 @@ public class App extends JFrame implements ActionListener {
         File file = new File(fileModel.getSavedFileName());
 
         Save save = mainDrawingWorker.getSave_for_export();
+        save.setVersion(getVersionFromManifest());
 
         saveAndName2File(save, file);
 
@@ -989,6 +1018,7 @@ public class App extends JFrame implements ActionListener {
         }
 
         Save save = mainDrawingWorker.getSave_for_export();
+        save.setVersion(getVersionFromManifest());
 
         saveAndName2File(save, file);
 
@@ -1002,7 +1032,7 @@ public class App extends JFrame implements ActionListener {
                 out.writeObject(save);
             }
         } catch (IOException ex) {
-
+            System.err.println(ex.getMessage());
         }
     }
 
@@ -1015,7 +1045,7 @@ public class App extends JFrame implements ActionListener {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println(e.getMessage());
         }
     }
 
@@ -1083,6 +1113,17 @@ public class App extends JFrame implements ActionListener {
 
     public void openFile() {
         System.out.println("readFile2Memo() 開始");
+
+        if (!fileModel.isSaved()) {
+            int choice = JOptionPane.showConfirmDialog(this, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            if (choice == JOptionPane.YES_OPTION) {
+                saveFile();
+            } else if (choice == JOptionPane.CLOSED_OPTION || choice == JOptionPane.CANCEL_OPTION) {
+                return;
+            }
+        }
+
         File file = selectOpenFile();
 
         if (file == null) {
