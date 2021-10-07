@@ -7,7 +7,6 @@ import java.io.Serializable;
 public class FileModel implements Serializable {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-    private String defaultDirectory;
     private String savedFileName;
 
     public boolean isSaved() {
@@ -30,16 +29,6 @@ public class FileModel implements Serializable {
         this.pcs.removePropertyChangeListener(listener);
     }
 
-    public String getDefaultDirectory() {
-        return defaultDirectory;
-    }
-
-    public void setDefaultDirectory(String defaultDirectory) {
-        String oldDefaultDirectory = this.defaultDirectory;
-        this.defaultDirectory = defaultDirectory;
-        this.pcs.firePropertyChange("defaultDirectory", oldDefaultDirectory, defaultDirectory);
-    }
-
     public String getSavedFileName() {
         return savedFileName;
     }
@@ -51,9 +40,8 @@ public class FileModel implements Serializable {
     }
 
     public void reset() {
-        this.saved = true;
-        this.savedFileName = null;
-        this.defaultDirectory = null;
+        saved = true;
+        savedFileName = null;
 
         this.pcs.firePropertyChange(null, null, null);
     }

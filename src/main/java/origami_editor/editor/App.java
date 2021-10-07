@@ -1,6 +1,7 @@
 package origami_editor.editor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
@@ -40,8 +41,10 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import static origami_editor.tools.ResourceUtil.createImageIcon;
+import static origami_editor.tools.ResourceUtil.getAppDir;
 
 public class App extends JFrame implements ActionListener {
+    public final ApplicationModel applicationModel = new ApplicationModel();
     public final GridModel gridModel = new GridModel();
     public final CanvasModel canvasModel = new CanvasModel();
     public final FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
@@ -223,6 +226,17 @@ public class App extends JFrame implements ActionListener {
 
         leftPanel.getGridConfigurationData(gridModel);
 
+        applicationModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(e, applicationModel));
+        applicationModel.addPropertyChangeListener(e -> canvas.setData(applicationModel));
+        applicationModel.addPropertyChangeListener(e -> appMenuBar.setData(applicationModel));
+        applicationModel.addPropertyChangeListener(e -> topPanel.setData(applicationModel));
+        applicationModel.addPropertyChangeListener(e -> rightPanel.setData(applicationModel));
+        applicationModel.addPropertyChangeListener(e -> leftPanel.setData(e, applicationModel));
+
+        applicationModel.addPropertyChangeListener(e -> persistApplicationModel());
+
+        restoreApplicationModel();
+
         gridModel.addPropertyChangeListener(e -> mainDrawingWorker.setGridConfigurationData(gridModel));
         gridModel.addPropertyChangeListener(e -> leftPanel.setGridConfigurationData(gridModel));
 
@@ -259,9 +273,8 @@ public class App extends JFrame implements ActionListener {
         foldedFigureModel.addPropertyChangeListener(e -> repaintCanvas());
         foldedFigureModel.addPropertyChangeListener(e -> leftPanel.setData(foldedFigureModel));
 
-        canvasModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(e, canvasModel));
+        canvasModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(canvasModel));
         canvasModel.addPropertyChangeListener(e -> canvas.setData(canvasModel));
-        canvasModel.addPropertyChangeListener(e -> appMenuBar.setData(canvasModel));
         canvasModel.addPropertyChangeListener(e -> topPanel.setData(e, canvasModel));
         canvasModel.addPropertyChangeListener(e -> rightPanel.setData(e, canvasModel));
         canvasModel.addPropertyChangeListener(e -> leftPanel.setData(e, canvasModel));
@@ -319,8 +332,12 @@ public class App extends JFrame implements ActionListener {
         Dimension canvasSize = canvas.getSize();
 
         explanation = new HelpDialog(this, canvasLocation, canvasSize);
-        explanation.setVisible(true);
 
+        applicationModel.addPropertyChangeListener(e -> {
+            explanation.setVisible(applicationModel.getHelpVisible());
+            requestFocus();
+        });
+        explanation.setVisible(applicationModel.getHelpVisible());
         //focus back to here after creating dialog
         requestFocus();
 
@@ -401,6 +418,53 @@ public class App extends JFrame implements ActionListener {
         canvas.addMouseModeHandler(new MouseHandlerMoveCreasePattern(this));
         canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(this));
 
+    }
+
+    private void restoreApplicationModel() {
+        Path storage = getAppDir();
+        if (!storage.toFile().exists()) {
+            applicationModel.reset();
+
+            return;
+        }
+
+        ObjectMapper mapper = new DefaultObjectMapper();
+        File configFile = storage.resolve("config.json").toFile();
+
+        try {
+            ApplicationModel loadedApplicationModel = mapper.readValue(configFile, ApplicationModel.class);
+
+            applicationModel.set(loadedApplicationModel);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "<html>Failed to load state, renaming config.json to config.json.old to prevent future errors.<br/>Loading default application configuration.", "State load failed", JOptionPane.WARNING_MESSAGE);
+
+            if (!configFile.renameTo(storage.resolve("config.json.old").toFile())) {
+                System.err.println("Not allowed to move config.json");
+            }
+
+            applicationModel.reset();
+        }
+    }
+
+    private void persistApplicationModel() {
+        Path storage = getAppDir();
+
+        if (!storage.toFile().exists()) {
+            if (!storage.toFile().mkdirs()) {
+                System.err.println("Failed to create directory for application model");
+
+                return;
+            }
+        }
+
+        ObjectMapper mapper = new DefaultObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        try {
+            mapper.writeValue(storage.resolve("config.json").toFile(), applicationModel);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static String getVersionFromManifest() {
@@ -484,7 +548,7 @@ public class App extends JFrame implements ActionListener {
                 mainDrawingWorker.select_all();
             }
             //
-            if (canvasModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
+            if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
                 DrawingWorker drawingWorker2 = new DrawingWorker(this);    // Basic branch craftsman. Accepts input from the mouse.
                 drawingWorker2.setSave_for_reading(mainDrawingWorker.foldLineSet.getSaveForSelectFolding());
                 drawingWorker2.point_removal();
@@ -718,7 +782,7 @@ public class App extends JFrame implements ActionListener {
 
     public Point e2p(MouseEvent e) {
         double offset = 0.0;
-        if (canvasModel.getDisplayPointOffset()) {
+        if (applicationModel.getDisplayPointOffset()) {
             offset = canvas.creasePatternCamera.getCameraZoomX() * mainDrawingWorker.getSelectionDistance();
         }
         return new Point(e.getX() - (int) offset, e.getY() - (int) offset);
@@ -848,7 +912,7 @@ public class App extends JFrame implements ActionListener {
     }
 
     File selectOpenFile() {
-        JFileChooser fileChooser = new JFileChooser(fileModel.getDefaultDirectory());
+        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Open");
 
         fileChooser.setFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
@@ -857,7 +921,7 @@ public class App extends JFrame implements ActionListener {
 
         File selectedFile = fileChooser.getSelectedFile();
         if (selectedFile != null) {
-            fileModel.setDefaultDirectory(selectedFile.getParent());
+            applicationModel.setDefaultDirectory(selectedFile.getParent());
             fileModel.setSavedFileName(selectedFile.getAbsolutePath());
             fileModel.setSaved(true);
             historyStateModel.reset();
@@ -867,7 +931,7 @@ public class App extends JFrame implements ActionListener {
     }
 
     File selectSaveFile() {
-        JFileChooser fileChooser = new JFileChooser(fileModel.getDefaultDirectory());
+        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Save As");
 
         fileChooser.setFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
@@ -894,7 +958,7 @@ public class App extends JFrame implements ActionListener {
         } while (selectedFile != null && selectedFile.exists() && choice != JOptionPane.YES_OPTION);
 
         if (selectedFile != null) {
-            fileModel.setDefaultDirectory(selectedFile.getParent());
+            applicationModel.setDefaultDirectory(selectedFile.getParent());
             fileModel.setSavedFileName(selectedFile.getAbsolutePath());
             fileModel.setSaved(true);
         }
@@ -903,7 +967,7 @@ public class App extends JFrame implements ActionListener {
     }
 
     File selectImportFile() {
-        JFileChooser fileChooser = new JFileChooser(fileModel.getDefaultDirectory());
+        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Import");
 
         fileChooser.setFileFilter(new FileNameExtensionFilter("All supported files", "cp", "orh", "ori"));
@@ -915,14 +979,14 @@ public class App extends JFrame implements ActionListener {
 
         File selectedFile = fileChooser.getSelectedFile();
         if (selectedFile != null) {
-            fileModel.setDefaultDirectory(selectedFile.getParent());
+            applicationModel.setDefaultDirectory(selectedFile.getParent());
         }
 
         return selectedFile;
     }
 
     public File selectExportFile() {
-        JFileChooser fileChooser = new JFileChooser(fileModel.getDefaultDirectory());
+        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Export");
 
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image (*.png)", "png"));
@@ -948,7 +1012,7 @@ public class App extends JFrame implements ActionListener {
         } while (selectedFile != null && selectedFile.exists() && choice == JOptionPane.NO_OPTION);
 
         if (selectedFile != null) {
-            fileModel.setDefaultDirectory(selectedFile.getParent());
+            applicationModel.setDefaultDirectory(selectedFile.getParent());
         }
 
         return selectedFile;
@@ -1125,7 +1189,7 @@ public class App extends JFrame implements ActionListener {
 
         fileModel.setSaved(true);
         fileModel.setSavedFileName(file.getAbsolutePath());
-        fileModel.setDefaultDirectory(file.getParent());
+        applicationModel.setDefaultDirectory(file.getParent());
 
         Save memo_temp = readImportFile(file);
         System.out.println("readFile2Memo() 終了");

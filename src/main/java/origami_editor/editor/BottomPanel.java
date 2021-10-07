@@ -72,7 +72,7 @@ public class BottomPanel extends JPanel {
             System.out.println("20180220 get_i_fold_type() = " + app.getFoldType());
             app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
 
-            if (!app.canvasModel.getSelectPersistent()) {
+            if (!app.applicationModel.getSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
         });

@@ -71,7 +71,7 @@ public class TopPanel {
             app.mainDrawingWorker.unselect_all();
             app.repaintCanvas();
         });
-        mouseSettingsCheckBox.addActionListener(e -> app.canvasModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected()));
+        mouseSettingsCheckBox.addActionListener(e -> app.applicationModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected()));
         lineSegmentInternalDivisionRatioSetButton.addActionListener(e -> {
             getData(app.internalDivisionRatioModel);
 
@@ -236,9 +236,11 @@ public class TopPanel {
         });
     }
 
-    public void setData(PropertyChangeEvent e, CanvasModel canvasModel) {
-        mouseSettingsCheckBox.setSelected(canvasModel.getMouseWheelMovesCreasePattern());
+    public void setData(ApplicationModel applicationModel) {
+        mouseSettingsCheckBox.setSelected(applicationModel.getMouseWheelMovesCreasePattern());
+    }
 
+    public void setData(PropertyChangeEvent e, CanvasModel canvasModel) {
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
             MouseMode m = canvasModel.getMouseMode();
 

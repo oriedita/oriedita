@@ -1678,13 +1678,10 @@ public class DrawingWorker {
         return selectionDistance;
     }
 
-    public void setData(PropertyChangeEvent e, CanvasModel data) {
+    public void setData(PropertyChangeEvent e, ApplicationModel data) {
         setGridInputAssist(data.getDisplayGridInputAssist());
         setPointSize(data.getPointSize());
-        setColor(data.getLineColor());
-        setAuxLineColor(data.getAuxLiveLineColor());
-        setFoldLineAdditional(data.getFoldLineAdditionalInputMode());
-        i_select_mode = data.getSelectionOperationMode();
+
         setFoldLineDividingNumber(data.getFoldLineDividingNumber());
         setNumPolygonCorners(data.getNumPolygonCorners());
         setCheck4(data.getCheck4Enabled());
@@ -1695,6 +1692,13 @@ public class DrawingWorker {
                 check4(0.0001);
             }
         }
+    }
+
+    public void setData(CanvasModel data) {
+        setColor(data.getLineColor());
+        setAuxLineColor(data.getAuxLiveLineColor());
+        setFoldLineAdditional(data.getFoldLineAdditionalInputMode());
+        i_select_mode = data.getSelectionOperationMode();
     }
 
     public void setData(AngleSystemModel angleSystemModel) {
