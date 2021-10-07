@@ -195,7 +195,7 @@ public class CreasePattern_Worker {
                 if (iFacePosition[i] == current_face_position) {
                     for (int j = 1; j <= this.pointSet.getNumFaces(); j++) {
                         int mth = this.pointSet.Face_adjacent_determine(i, j);
-                        if ((mth > 0) && (iFacePosition[j] == 0)) {
+                        if ((mth >= 0) && (iFacePosition[j] == 0)) {
                             iFacePosition[j] = current_face_position + 1;
                             nextFaceId[j] = i;
                             associatedLineId[j] = mth;
@@ -272,7 +272,7 @@ public class CreasePattern_Worker {
                 if (iFacePosition[i] == current_FacePosition) {
                     for (int j = 1; j <= pointSet.getNumFaces(); j++) {
                         int mth = pointSet.Face_adjacent_determine(i, j);
-                        if ((mth > 0) && (iFacePosition[j] == 0)) {
+                        if ((mth >= 0) && (iFacePosition[j] == 0)) {
                             iFacePosition[j] = current_FacePosition + 1;
                             nextFaceId[j] = i;
                             associatedLineId[j] = mth;

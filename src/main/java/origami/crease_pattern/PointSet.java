@@ -1,18 +1,12 @@
 package origami.crease_pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import origami.crease_pattern.element.LineColor;
-import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.Point;
-import origami.crease_pattern.element.Point_p;
-import origami.crease_pattern.element.Polygon;
-import origami_editor.editor.Save;
+import origami.crease_pattern.element.*;
 import origami.folding.element.Face;
-import origami.crease_pattern.element.Line;
+import origami_editor.editor.Save;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * A collection of points.
@@ -56,8 +50,11 @@ public class PointSet implements Serializable {
     @JsonIgnore
     List<List<Integer>> point_linking;//point_linking [i] [j] is the number of points connected to t [i]. The number of Tem is stored in t [0].
 
+    /**
+     * Contains the value of the line which connects two faces.
+     */
     @JsonIgnore
-    int[][] face_adjacent;//face_adjacent [i] [j] is the Line number at the boundary between m [i] and m [j]. Stores 0 when m [i] and m [j] are not adjacent.
+    Map<AdjacentFaces, Integer> faceAdjacent = new HashMap<>();
 
     public PointSet() {
         reset();
@@ -100,13 +97,8 @@ public class PointSet implements Serializable {
 
         faces = new Face[numFaces + 1];
 
-        face_adjacent = new int[numFaces + 1][numFaces + 1];
-
         for (int i = 0; i <= numFaces; i++) {
             faces[i] = new Face();
-            for (int j = 0; j <= numFaces; j++) {
-                face_adjacent[i][j] = 0;
-            }
         }
 
         line_x_max = new double[numLines + 1];
@@ -160,18 +152,18 @@ public class PointSet implements Serializable {
         }
         for (int i = 0; i <= numFaces; i++) {
             faces[i] = new Face(ts.getFace(i));
-            for (int j = 0; j <= numFaces; j++) {
-                face_adjacent[i][j] = ts.getFaceAdjecent(i, j);
-            }
         }
+
+        faceAdjacent.clear();
+        faceAdjacent.putAll(ts.getFaceAdjacent());
     }
 
     public void set(int i, Point tn) {
         points[i].set(tn);
     }                                               //  <<<-------
 
-    private int getFaceAdjecent(int i, int j) {
-        return face_adjacent[i][j];
+    private Map<AdjacentFaces, Integer> getFaceAdjacent() {
+        return faceAdjacent;
     }
 
     private int get_lineInFaceBorder_min(int i) {
@@ -277,7 +269,6 @@ public class PointSet implements Serializable {
         return skh.isSegmentOverlapping();
     }
 
-
     //面の内部の点を求める
     public Point insidePoint_surface(int n) {
         return insidePoint_surface(faces[n]);
@@ -335,7 +326,6 @@ public class PointSet implements Serializable {
     public Point getEndPointFromLineId(int i) {
         return points[getEnd(i)];
     }    //棒のidから後点を得る              <<<------------　　同上
-
 
     public LineSegment getLineSegmentFromLineId(int i) {
         return lineToLineSegment(getLine(i));
@@ -429,7 +419,6 @@ public class PointSet implements Serializable {
         }
         return n; //点jに連結している点が点iしかない時は0を返す
     }
-    //--------------------------------
 
     private Face Face_request(int i, int j) {//Find the surface by following the bar on the right side for the first time from the i-th point and the j-th point.
         Face tempFace = new Face();
@@ -449,6 +438,7 @@ public class PointSet implements Serializable {
         tempFace.align();
         return tempFace;
     }
+    //--------------------------------
 
     //-------------------------------------
     public void FaceOccurrence() {
@@ -569,8 +559,6 @@ public class PointSet implements Serializable {
         return 0;
     }
 
-    //---------------
-
     //Boundary of lines Boundary surface (two sides in yellow) Here, faceId of the proliferating branch of faceId was made.
     public int lineInFaceBorder_min_lookup(int lineId) {
         return lineInFaceBorder_min[lineId];
@@ -581,7 +569,6 @@ public class PointSet implements Serializable {
         return lineInFaceBorder_max[lineId];
     }
 
-    //---------------
     private boolean equals(Face m, Face n) { //Returns 1 if they are the same, 0 if they are different
         if (m.getNumPoints() != n.getNumPoints()) {
             return false;
@@ -623,13 +610,11 @@ public class PointSet implements Serializable {
         return (lines[lineId].getEnd() == faces[faceId].getPointId(faces[faceId].getNumPoints())) && (lines[lineId].getBegin() == faces[faceId].getPointId(1));
     }
 
-    //------------------------------------------------------
     private void Face_adjacent_create() {
+        faceAdjacent.clear();
         System.out.println("面となり作成　開始");
         for (int im = 1; im <= numFaces - 1; im++) {
             for (int in = im + 1; in <= numFaces; in++) {
-                face_adjacent[im][in] = 0;
-                face_adjacent[in][im] = 0;
                 int ima, imb, ina, inb;
                 for (int iim = 1; iim <= faces[im].getNumPoints(); iim++) {
                     ima = faces[im].getPointId(iim);
@@ -649,10 +634,10 @@ public class PointSet implements Serializable {
                         }
 
                         if (((ima == ina) && (imb == inb)) || ((ima == inb) && (imb == ina))) {
-                            int ib;
-                            ib = line_search(ima, imb);
-                            face_adjacent[im][in] = ib;
-                            face_adjacent[in][im] = ib;
+                            int ib = line_search(ima, imb);
+                            if (ib != -1) {
+                                faceAdjacent.put(new AdjacentFaces(im, in), ib);
+                            }
                         }
                     }
                 }
@@ -672,12 +657,12 @@ public class PointSet implements Serializable {
                 return i;
             }
         }
-        return 0;
+        return -1;
     }
 
-    // If Face [im] and Face [ib] are adjacent, return the id number of the bar at the boundary. Returns 0 if not adjacent
+    // If Face [im] and Face [ib] are adjacent, return the id number of the bar at the boundary. Returns -1 if not adjacent
     public int Face_adjacent_determine(int im, int in) {
-        return face_adjacent[im][in];
+        return faceAdjacent.getOrDefault(new AdjacentFaces(im, in), -1);
     }
 
     private void addFace(Face tempFace) {
@@ -708,7 +693,6 @@ public class PointSet implements Serializable {
         }
         return ireturn;
     }
-
 
     /**
      * Returns the distance of the closest point that is closer than a certain distance to the given coordinates. If there is no Ten within a certain distance, 1000000.0 is returned.
@@ -790,6 +774,40 @@ public class PointSet implements Serializable {
     public void setSave(Save save) {
         for (int i = 0; i < save.getPoints().size(); i++) {
             points[i+1].set(save.getPoints().get(i));
+        }
+    }
+
+    private static class AdjacentFaces {
+        /**
+         * Smaller than largeFace
+         */
+        private final int smallFace;
+        /**
+         * Larger that smallFace
+         */
+        private final int largeFace;
+
+        public AdjacentFaces(int face1, int face2) {
+            if (face1 < face2) {
+                this.smallFace = face1;
+                this.largeFace = face2;
+            } else {
+                this.smallFace = face2;
+                this.largeFace = face1;
+            }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            AdjacentFaces that = (AdjacentFaces) o;
+            return smallFace == that.smallFace && largeFace == that.largeFace;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(smallFace, largeFace);
         }
     }
 }
