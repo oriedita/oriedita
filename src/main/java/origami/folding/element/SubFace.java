@@ -2,7 +2,7 @@ package origami.folding.element;
 
 import origami.folding.HierarchyList;
 import origami.folding.util.EquivalenceCondition;
-import origami.folding.Overlapping_Permutation_generator;
+import origami.folding.permutation.PermutationGenerator;
 import origami_editor.editor.component.BulletinBoard;
 
 public class SubFace {//This class folds the development view and estimates the overlap information of the planes of the wire diagram.
@@ -10,15 +10,12 @@ public class SubFace {//This class folds the development view and estimates the 
     int faceIdCount;//The number of Faces (the faces of the unfolded view before folding) that overlap with SubFace (the faces of the wire diagram obtained by folding and estimating).
     int[] faceIdList;//Record the id number of the Face included in the S plane. That this is 20
     // It means that the maximum overlap of paper after folding is 20-1 = 19 sides. // This limit is currently absent 20150309
-    Overlapping_Permutation_generator permutationGenerator;
-
-    int Permutation_count = 1;
+    PermutationGenerator permutationGenerator;
 
     int[] FaceId2fromTop_counted_position;// Represents the position counted from the top of the surface (FaceId).
     int[] fromTop_counted_position2FaceId;// Represents the surface at the position counted from the top.
 
-    int[] FaceId2PermutationDigitMap;// For fast lookup
-    int[] CleanMap;// For fast reset
+    int[] faceIdMap;// For fast lookup
 
     BulletinBoard bb;
 
@@ -36,10 +33,11 @@ public class SubFace {//This class folds the development view and estimates the 
     }
 
     //Initial settings for Ketasuu and permutation generators. Don't forget.
-    public void setNumDigits(int FIdCount) {
+    public void setNumDigits(int FIdCount, int faceTotal) {
         faceIdCount = FIdCount;
 
         faceIdList = new int[faceIdCount + 1];
+        faceIdMap = new int[faceTotal + 1];
 
         FaceId2fromTop_counted_position = new int[faceIdCount + 1];//Represents the position counted from the top of the surface (faceIdList).
         fromTop_counted_position2FaceId = new int[faceIdCount + 1];//Represents the surface at the position counted from the top.
@@ -51,8 +49,8 @@ public class SubFace {//This class folds the development view and estimates the 
             fromTop_counted_position2FaceId[i] = 0;
         }
         if (FIdCount > 0) {
-            permutationGenerator = new Overlapping_Permutation_generator(faceIdCount);
-            Permutation_first();
+            permutationGenerator = new PermutationGenerator(faceIdCount);
+            // Postpone the reset of the generator until the guides are set
         }
     }
 
@@ -64,18 +62,22 @@ public class SubFace {//This class folds the development view and estimates the 
         return faceIdList[i];
     }
 
-    public void setFaceId(int i, int Mid) {
-        faceIdList[i] = Mid;
+    public void setFaceId(int i, int faceId) {
+        faceIdList[i] = faceId;
+        faceIdMap[faceId] = i;
+    }
+
+    public boolean contains(int im1, int im2, int im3, int im4) {
+        return faceIdMap[im1] > 0 && faceIdMap[im2] > 0 && faceIdMap[im3] > 0 && faceIdMap[im4] > 0;
     }
 
     public int get_Permutation_count() {
-        return Permutation_count;
+        return permutationGenerator.getCount();
     }
 
     public void Permutation_first() {
         if (getFaceIdCount() > 0) {
             permutationGenerator.reset();
-            Permutation_count = 1;
         }
     } //Return to the first permutation.
 
@@ -88,30 +90,15 @@ public class SubFace {//This class folds the development view and estimates the 
     // Return 1 if the current overlapping state of the faces is the last one.
     // In this case, the overlapping state of the faces remains the last one.
     public int next(int k) {
-        Permutation_count = Permutation_count + 1;
         return permutationGenerator.next(k);
     }   //<<<<<<<<<<<<<<<<<<<ここは後で機能を強化して高速化したい。
     // ここは　class SubFace の中だよ。
-
-    public void reset_map(int count) {
-        if (FaceId2PermutationDigitMap == null || FaceId2PermutationDigitMap.length != count + 1) {
-            FaceId2PermutationDigitMap = new int[count + 1];
-            CleanMap = new int[count + 1];
-        } else {
-            // This is the fastest way to cleanup an array
-            System.arraycopy(CleanMap, 0, FaceId2PermutationDigitMap, 0, count + 1);
-        }
-        for (int i = 1; i <= faceIdCount; i++) {
-            FaceId2PermutationDigitMap[faceIdList[getPermutation(i)]] = i;
-        }
-    }
 
     //Start with the current permutation state and look for possible permutations that overlap
     public int possible_overlapping_search(HierarchyList hierarchyList) {//This should not change hierarchyList.
         int mk, ijh;
         ijh = 1;//The initial value of ijh can be anything other than 0.
         while (ijh != 0) { //If ijh == 0, you have reached the end of the digit.
-            reset_map(hierarchyList.getFacesTotal());
             mk = inconsistent_digits_request(hierarchyList);
 
             if (mk == 1000) {
@@ -170,7 +157,13 @@ public class SubFace {//This class folds the development view and estimates the 
     private int overlapping_inconsistent_digits_request(HierarchyList hierarchyList) {
         for (int i = 1; i <= faceIdCount - 1; i++) {
             for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.HierarchyListCondition.BELOW_0) {
+                int I = getPermutation(i);
+                int J = getPermutation(j);
+                if (hierarchyList.get(faceIdList[I], faceIdList[J]) == HierarchyList.HierarchyListCondition.BELOW_0) {
+                    // Add a temporary guide to the generator, so that before the current SubFace
+                    // runs out of permutation, it won't generate another permutation violating the
+                    // same relation over and over. For some CPs this speeds things up like crazy.
+                    permutationGenerator.addGuide(I, J);
                     return i;
                 }
             }
@@ -180,9 +173,15 @@ public class SubFace {//This class folds the development view and estimates the 
 
     //Find the number from the top in the stacking order of the surface im. Returns 0 if this SubFace does not contain Men.
     public int FaceId2PermutationDigit(int im) {
-        return FaceId2PermutationDigitMap[im];
+        // This is now done in two places; permutationGenerator keeps its own map, so
+        // that SubFace only need to keep an immutable faceIdeMap, and no resetting is
+        // required.
+        return permutationGenerator.locate(faceIdMap[im]);
     }
 
+    public int FaceIdIndex(int im) {
+        return faceIdMap[im];
+    }
 
     // ここは　class SubFace の中だよ。
 
@@ -317,11 +316,8 @@ public class SubFace {//This class folds the development view and estimates the 
         return inew;
     }
 
-    // hierarchyList[][] treats the hierarchical relationship between all the faces of the crease pattern before folding as one table.
-    // If hierarchyList[i][j] is 1, surface i is above surface j. If it is 0, it is the lower side.
-    // If hierarchyList[i][j] is -50, faces i and j overlap, but the hierarchical relationship is not determined.
-    // If hierarchyList[i][j] is -100, then faces i and j do not overlap.
-    public void setGuideMap(HierarchyList hierarchyList) { //I will prepare a guidebook for the permutations with repeat generator in SubFace.
+    /** Prepare a guidebook for the permutation generator in SubFace. */
+    public void setGuideMap(HierarchyList hierarchyList) {
         int[] ueFaceId = new int[faceIdCount + 1];
         boolean[] ueFaceIdFlg = new boolean[faceIdCount + 1];//1 if ueFaceId [] is enabled, 0 if disabled
 
@@ -358,6 +354,10 @@ public class SubFace {//This class folds the development view and estimates the 
 
         }
 
+        if (faceIdCount > 0) {
+            // Now we're ready to reset the generator.
+            permutationGenerator.initialize();
+        }
     }
 
     //According to the table above and below, the overlapping classification of pairs of faces included in this SubFace is undecided.

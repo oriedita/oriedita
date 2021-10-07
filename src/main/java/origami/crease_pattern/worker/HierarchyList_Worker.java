@@ -133,21 +133,19 @@ public class HierarchyList_Worker {
         System.out.println("各Smenに含まれる面を記録する");
         otta_Face_figure.LineFaceMaxMinCoordinate();//tttttttttt
 
-        int[] s0addFaceId = new int[otta_Face_figure.getNumFaces() + 1];  //SubFaceに追加する面を一時記録しておく
+        int faceTotal = otta_Face_figure.getNumFaces();
+        int[] s0addFaceId = new int[faceTotal + 1]; // SubFaceに追加する面を一時記録しておく
 
         for (int i = 1; i <= SubFaceTotal; i++) {
             int s0addFaceTotal = 0;
 
-            for (int j = 1; j <= otta_Face_figure.getNumFaces(); j++) {
-
+            for (int j = 1; j <= faceTotal; j++) {
                 if (otta_Face_figure.simple_inside(subFace_insidePoint[i], j) == Polygon.Intersection.INSIDE) {
-                    s0addFaceTotal = s0addFaceTotal + 1;
-                    s0addFaceId[s0addFaceTotal] = j;
+                    s0addFaceId[++s0addFaceTotal] = j;
                 }
-
             }
 
-            s0[i].setNumDigits(s0addFaceTotal);
+            s0[i].setNumDigits(s0addFaceTotal, faceTotal);
 
             for (int j = 1; j <= s0addFaceTotal; j++) {
                 s0[i].setFaceId(j, s0addFaceId[j]);//ここで面番号jは小さい方が先に追加される。
@@ -241,12 +239,6 @@ public class HierarchyList_Worker {
 
         ExecutorService service = Executors.newCachedThreadPool();
 
-        // Perform reset on all subfaces once before getting into loops.
-        int total = hierarchyList.getFacesTotal();
-        for (int i = 1; i <= SubFaceTotal; i++) {
-            s[i].reset_map(total);
-        }
-
         for (int ib = 1; ib <= orite.getNumLines() - 1; ib++) {
             for (int jb = ib + 1; jb <= orite.getNumLines(); jb++) {
                 final int ibf = ib;
@@ -262,7 +254,7 @@ public class HierarchyList_Worker {
                             mj2 = orite.lineInFaceBorder_max_request(jbf);
                             if (mj1 != mj2) {
                                 if (mi1 * mi2 * mj1 * mj2 != 0) {
-                                    if (onaji_subFace_ni_sonzai(mi1, mi2, mj1, mj2)) {
+                                    if (exist_identical_subFace(mi1, mi2, mj1, mj2)) {
                                         hierarchyList.addUEquivalenceCondition(mi1, mi2, mj1, mj2);
                                     }
                                 }
@@ -452,20 +444,13 @@ public class HierarchyList_Worker {
     }
 
     //引数の４つの面を同時に含むSubFaceが1つ以上存在するなら１、しないなら０を返す。
-    private boolean onaji_subFace_ni_sonzai(int im1, int im2, int im3, int im4) {
+    private boolean exist_identical_subFace(int im1, int im2, int im3, int im4) {
         for (int i = 1; i <= SubFaceTotal; i++) {
-            if (s[i].FaceId2PermutationDigit(im1) >= 1) {
-                if (s[i].FaceId2PermutationDigit(im2) >= 1) {
-                    if (s[i].FaceId2PermutationDigit(im3) >= 1) {
-                        if (s[i].FaceId2PermutationDigit(im4) >= 1) {
-                            return true;
-                        }
-                    }
-                }
+            if (s[i].contains(im1, im2, im3, im4)) {
+                return true;
             }
         }
         return false;
-
     }
 
     public int next(int ss) {
