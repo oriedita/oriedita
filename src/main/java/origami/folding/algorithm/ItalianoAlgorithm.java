@@ -19,6 +19,12 @@ public class ItalianoAlgorithm {
      */
     Node[][] matrix;
 
+    /**
+     * Prevents heap memory overflow. Still, for large projects, it is necessary to
+     * allocate larger memory for JVM in the first place.
+     */
+    private Queue<MeldRequest> queue = new LinkedList<>();
+
     public List<Node> changes = new ArrayList<Node>();
 
     public ItalianoAlgorithm(SubFace sf) {
@@ -46,8 +52,12 @@ public class ItalianoAlgorithm {
         if (matrix[i][j] == null) {
             for (int x = 1; x <= size; x++) {
                 if (matrix[x][i] != null && matrix[x][j] == null) {
-                    meld(x, j, i, j);
+                    queue.add(new MeldRequest(x, j, i, j));
                 }
+            }
+            while (queue.size() > 0) {
+                MeldRequest r = queue.poll();
+                meld(r.x, r.j, r.u, r.v);
             }
         }
     }
@@ -65,8 +75,19 @@ public class ItalianoAlgorithm {
         changes.add(node);
         for (Node w : matrix[j][v].children) {
             if (matrix[x][w.j] == null) {
-                meld(x, j, v, w.j);
+                queue.add(new MeldRequest(x, j, v, w.j));
             }
+        }
+    }
+
+    public class MeldRequest {
+        public int x, j, u, v;
+
+        public MeldRequest(int x, int j, int u, int v) {
+            this.x = x;
+            this.j = j;
+            this.u = u;
+            this.v = v;
         }
     }
 
