@@ -8,10 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.MissingResourceException;
-import java.util.Objects;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -90,5 +87,26 @@ public class ResourceUtil {
         System.err.println(bundle + "." + key + " does not exist");
 
         return null;
+    }
+
+    public static void updateBundleKey(String bundleName, String key, String value) {
+        try {
+            Path bundleLocation = getAppDir().resolve(bundleName + ".properties");
+            if (!bundleLocation.toFile().exists() && !bundleLocation.toFile().createNewFile()) {
+                throw new IOException("Could not create file");
+            }
+            Properties properties = new Properties();
+            properties.load(Files.newInputStream(bundleLocation));
+
+            if (value == null) {
+                properties.remove(key);
+            } else {
+                properties.setProperty(key, value);
+            }
+
+            properties.store(Files.newOutputStream(bundleLocation), null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
