@@ -25,6 +25,7 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem importButton;
     private JMenuItem exitButton;
     private JMenuItem toggleHelpMenuItem;
+    private JMenuItem toggleConsoleMenuItem;
 
     public AppMenuBar(App app) {
         createElements();
@@ -47,6 +48,7 @@ public class AppMenuBar extends JMenuBar {
         app.registerButton(displayStandardFaceMarksCheckBox, "displayStandardFaceMarksAction");
         app.registerButton(cpOnTopCheckBox, "cpOnTopAction");
         app.registerButton(toggleHelpMenuItem, "toggleHelpAction");
+        app.registerButton(toggleConsoleMenuItem, "toggleConsoleAction");
 
         newButton.addActionListener(e -> {
             if (!app.fileModel.isSaved()) {
@@ -137,6 +139,12 @@ public class AppMenuBar extends JMenuBar {
 
             app.repaintCanvas();
         });
+        toggleConsoleMenuItem.addActionListener(e -> {
+            app.applicationModel.toggleConsoleVisible();
+
+            app.mouseDraggedValid = false;
+            app.mouseReleasedValid = false;
+        });
     }
 
     private void createElements() {
@@ -199,11 +207,12 @@ public class AppMenuBar extends JMenuBar {
         add(helpMenu);
 
         toggleHelpMenuItem = new JMenuItem("Toggle help");
-
-        toggleHelpMenuItem.setMargin(new Insets(0, 0, 0, 0));
         helpMenu.add(toggleHelpMenuItem);
 
-        toggleHelpMenuItem.setMargin(new Insets(0, 0, 0, 0));
+        toggleConsoleMenuItem = new JMenuItem("Toggle console");
+        if (System.console() == null) {
+            helpMenu.add(toggleConsoleMenuItem);
+        }
     }
 
     public void getData(ApplicationModel applicationModel) {
