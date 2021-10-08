@@ -59,7 +59,12 @@ jobs:
         run: |
           cd build ; ./prepare.ps1
 
-      - name: Create nsis executable
+      - name: Create nsis wrapper executable
+        uses: joncloud/makensis-action@v3.3
+        with:
+          script-file: build/wrapper.nsi
+
+      - name: Create nsis portable executable
         uses: joncloud/makensis-action@v3.3
         with:
           script-file: build/portable.nsi

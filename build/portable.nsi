@@ -12,14 +12,14 @@ SilentInstall silent
 RequestExecutionLevel user
 ShowInstDetails hide
 
-OutFile "..\target\origami-editor-${VERSION}.exe"
+OutFile "..\target\origami-editor-portable-${VERSION}.exe"
 Icon "logo.ico"
 VIProductVersion 0.0.0.0
 VIAddVersionKey ProductName "Origami Editor"
 VIAddVersionKey LegalCopyright "Copyright (c) 2021"
 VIAddVersionKey FileDescription "Origami Editor"
 VIAddVersionKey FileVersion ${VERSION}.0
-VIAddVersionKey ProductVersion "${VERSION} / OpenJRE ${JAVA_VERSION} (x64)"
+VIAddVersionKey ProductVersion "${VERSION} / Java ${JAVA_VERSION} (x64)"
 VIAddVersionKey InternalName "origami-editor"
 VIAddVersionKey OriginalFilename "origami-editor.exe"
 
