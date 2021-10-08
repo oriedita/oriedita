@@ -177,22 +177,18 @@ public class HierarchyList_Worker {
             if (faceId_min != faceId_max) {//In the developed view, there are faces on both sides of the rod ib.
                 if (otta_face_figure.getColor(ib) == LineColor.RED_1) {//Red line means mountain fold
                     if (orite.getIFacePosition(faceId_min) % 2 == 1) {//The surface Mid_min has the same orientation as the reference surface (the surface faces up)
-                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.HierarchyListCondition.ABOVE_1);
-                        hierarchyList.set(faceId_max, faceId_min, HierarchyList.HierarchyListCondition.BELOW_0);
+                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.ABOVE_1);
                     }
                     if (orite.getIFacePosition(faceId_max) % 2 == 1) {//The surface Mid_max has the same orientation as the reference surface (the surface faces up)
-                        hierarchyList.set(faceId_max, faceId_min, HierarchyList.HierarchyListCondition.ABOVE_1);
-                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.HierarchyListCondition.BELOW_0);
+                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.BELOW_0);
                     }
                 }
                 if (otta_face_figure.getColor(ib) == LineColor.BLUE_2) {//The blue line means valley fold
                     if (orite.getIFacePosition(faceId_min) % 2 == 1) {//面Mid_minは基準面と同じ向き(表面が上を向く)
-                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.HierarchyListCondition.BELOW_0);
-                        hierarchyList.set(faceId_max, faceId_min, HierarchyList.HierarchyListCondition.ABOVE_1);
+                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.BELOW_0);
                     }
                     if (orite.getIFacePosition(faceId_max) % 2 == 1) {//面Mid_maxは基準面と同じ向き(表面が上を向く)
-                        hierarchyList.set(faceId_max, faceId_min, HierarchyList.HierarchyListCondition.BELOW_0);
-                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.HierarchyListCondition.ABOVE_1);
+                        hierarchyList.set(faceId_min, faceId_max, HierarchyList.ABOVE_1);
                     }
                 }
 
@@ -396,8 +392,7 @@ public class HierarchyList_Worker {
         for (int k = 1; k <= SubFaceTotal; k++) {
             for (int i = 1; i <= s[k].getFaceIdCount() - 1; i++) {
                 for (int j = i + 1; j <= s[k].getFaceIdCount(); j++) {
-                    hierarchyList.set(i, j, HierarchyList.HierarchyListCondition.UNKNOWN_N50);
-                    hierarchyList.set(j, i, HierarchyList.HierarchyListCondition.UNKNOWN_N50);
+                    hierarchyList.set(i, j, HierarchyList.UNKNOWN_N50);
                 }
             }
         }
@@ -990,15 +985,13 @@ public class HierarchyList_Worker {
         }//この棒で隣接するFaceStackで見えてる面が同じなので、棒自体が描かれず影もなし。
 
 
-        if (hierarchyList.get(Mid_min_mieteru_men_id, Mid_max_mieteru_men_id) == HierarchyList.HierarchyListCondition.UNKNOWN_N50) {
+        if (hierarchyList.isEmpty(Mid_min_mieteru_men_id, Mid_max_mieteru_men_id)) {
             return 0;
         }//この棒で隣接するFaceStackで見えてる面の上下関係不明なので、影はなし
-        if (hierarchyList.get(Mid_min_mieteru_men_id, Mid_max_mieteru_men_id) == HierarchyList.HierarchyListCondition.EMPTY_N100) {
-            return 0;
-        }//この棒で隣接するFaceStackで見えてる面の上下関係ない（重ならない）ので、影はなし
+        //この棒で隣接するFaceStackで見えてる面の上下関係ない（重ならない）ので、影はなし
 
         i_return = faceId_min;
-        if (hierarchyList.get(Mid_min_mieteru_men_id, Mid_max_mieteru_men_id) == HierarchyList.HierarchyListCondition.ABOVE_1) {
+        if (hierarchyList.get(Mid_min_mieteru_men_id, Mid_max_mieteru_men_id) == HierarchyList.ABOVE_1) {
             i_return = faceId_max;
         }
 

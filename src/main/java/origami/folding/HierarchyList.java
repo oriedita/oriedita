@@ -1,5 +1,6 @@
 package origami.folding;
 
+import origami.data.symmetricMatrix.SymmetricMatrix;
 import origami.folding.util.EquivalenceCondition;
 
 import java.util.ArrayList;
@@ -9,14 +10,20 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class HierarchyList {//This class is used to record and utilize the hierarchical relationship of faces when folded.
+
+    public static final int BELOW_0 = 1;
+    public static final int ABOVE_1 = 3;
+    public static final int UNKNOWN_N50 = 2;
+    public static final int EMPTY_N100 = 0;
+
     int facesTotal;             //Number of faces in the unfolded view before folding
 
     // hierarchyList[][] treats the hierarchical relationship between all the faces of the crease pattern before folding as one table.
     // If hierarchyList[i][j] is 1, surface i is above surface j. If it is 0, it is the lower side.
     // If hierarchyList[i][j] is -50, faces i and j overlap, but the hierarchical relationship is not determined.
     // If hierarchyList[i][j] is -100, then faces i and j do not overlap.
-    HierarchyListCondition[][] hierarchyList;
-    HierarchyListCondition[][] hierarchyList_copy;
+    SymmetricMatrix hierarchyList;
+    SymmetricMatrix hierarchyList_copy;
     ArrayList<EquivalenceCondition> tL = new ArrayList<>();
     Queue<EquivalenceCondition> uL = new ConcurrentLinkedQueue<>();
 
@@ -35,27 +42,26 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     }
 
     public void save() {
-        for (int i = 1; i <= facesTotal; i++) {
-            for (int j = 1; j <= facesTotal; j++) {
-                hierarchyList_copy[i][j] = hierarchyList[i][j];
-            }
-        }
+        hierarchyList_copy.replaceData(hierarchyList);
     }
 
     public void restore() {
-        for (int i = 1; i <= facesTotal; i++) {
-            for (int j = 1; j <= facesTotal; j++) {
-                hierarchyList[i][j] = hierarchyList_copy[i][j];
-            }
+        hierarchyList.replaceData(hierarchyList_copy);
+    }
+
+    public void set(int i, int j, int value) {
+        if (j < i) {
+            value = (4 - value) % 4;
         }
+        hierarchyList.set(i, j, value);
     }
 
-    public void set(int i, int j, HierarchyListCondition condition) {
-        hierarchyList[i][j] = condition;
-    }
-
-    public HierarchyListCondition get(int i, int j) {
-        return hierarchyList[i][j];
+    public int get(int i, int j) {
+        int value = hierarchyList.get(i, j);
+        if (j < i) {
+            value = (4 - value) % 4;
+        }
+        return value;
     }
 
     public int getFacesTotal() {
@@ -65,15 +71,8 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     public void setFacesTotal(int iM) {
         facesTotal = iM;
 
-        hierarchyList = new HierarchyListCondition[facesTotal + 1][facesTotal + 1];
-        hierarchyList_copy = new HierarchyListCondition[facesTotal + 1][facesTotal + 1];
-
-        for (int i = 0; i <= facesTotal; i++) {
-            for (int j = 0; j <= facesTotal; j++) {
-                hierarchyList[i][j] = HierarchyListCondition.EMPTY_N100;
-                hierarchyList_copy[i][j] = HierarchyListCondition.EMPTY_N100;
-            }
-        }
+        hierarchyList = SymmetricMatrix.create(facesTotal, 2);
+        hierarchyList_copy = SymmetricMatrix.create(facesTotal, 2);
     }
 
     public int getEquivalenceConditionTotal() {
@@ -114,18 +113,8 @@ public class HierarchyList {//This class is used to record and utilize the hiera
         uL.add(new EquivalenceCondition(ai, bi, ci, di));
     }
 
-    // hierarchyList[i][j] == 1 means face i is above face j; 0 means below.
-    // hierarchyList[i][j] == -50 means face i and face j overlaps, but the stacking is undetermined.
-    // hierarchyList[i][j] == -100 means face i and face j do not overlap.
-    public enum HierarchyListCondition {
-        BELOW_0,
-        ABOVE_1,
-        UNKNOWN_N50,
-        EMPTY_N100,
-        ;
-
-        public boolean isEmpty() {
-            return this == UNKNOWN_N50 || this == EMPTY_N100;
-        }
+    public boolean isEmpty(int i, int j) {
+        int value = hierarchyList.get(i, j);
+        return value == EMPTY_N100 || value == UNKNOWN_N50;
     }
 }
