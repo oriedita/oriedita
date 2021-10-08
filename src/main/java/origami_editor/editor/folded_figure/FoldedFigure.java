@@ -413,8 +413,9 @@ public class FoldedFigure {
         }
     }
 
-    public void createTwoColorCreasePattern(Camera camera_of_foldLine_diagram, LineSegmentSet Ss0) throws InterruptedException {//Two-color crease pattern
+    public void createTwoColorCreasePattern(Camera camera_of_foldLine_diagram, LineSegmentSet Ss0, Point pointOfReferencePlane) throws InterruptedException {//Two-color crease pattern
         //Folded view display camera settings
+        this.pointOfReferencePlane = pointOfReferencePlane;
 
         d_foldedFigure_scale_factor = camera_of_foldLine_diagram.getCameraZoomX();
         d_foldedFigure_rotation_correction = camera_of_foldLine_diagram.getCameraAngle();

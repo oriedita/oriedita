@@ -1047,7 +1047,7 @@ public class App extends JFrame implements ActionListener {
     }
 
     public void createTwoColorCreasePattern() throws InterruptedException {//Two-color crease pattern
-        OZ.createTwoColorCreasePattern(canvas.creasePatternCamera, lineSegmentsForFolding);
+        OZ.createTwoColorCreasePattern(canvas.creasePatternCamera, lineSegmentsForFolding, point_of_referencePlane_old);
     }
 
     public void stopTask() {
