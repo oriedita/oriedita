@@ -210,7 +210,7 @@ public class Orh {
                 }
 
                 switch (m.group(1)) {
-                    case "changeGridStateAction":
+                    case "i_kitei_jyoutai":
                         gridModel.setBaseState(Grid.State.from(m.group(2)));
                         break;
                     case "nyuuryoku_kitei":
@@ -246,10 +246,10 @@ public class Orh {
                         gridYB = StringOp.String2double(m.group(2), gridModel.getGridYB());
                         break;
                     case "d_kousi_y_c":
-                        gridYB = StringOp.String2double(m.group(2), gridModel.getGridYC());
+                        gridYC = StringOp.String2double(m.group(2), gridModel.getGridYC());
                         break;
                     case "d_kousi_kakudo":
-                        gridYC = StringOp.String2double(m.group(2), gridModel.getGridAngle());
+                        gridModel.setGridAngle(StringOp.String2double(m.group(2), gridModel.getGridAngle()));
                         break;
                 }
 
@@ -453,12 +453,12 @@ public class Orh {
             }
             if ((reading_flag == 1) && (str.equals("番号"))) {
                 str = tk.nextToken();
-                number = Integer.parseInt(str);
+                number = Integer.parseInt(str) - 1;
             }
             if ((reading_flag == 1) && (str.equals("色"))) {
                 str = tk.nextToken();
                 ic = LineColor.from(str);
-                LineSegment s0 = save.getLineSegments().get(number - 1);
+                LineSegment s0 = save.getLineSegments().get(number);
                 s0.setColor(ic);
             }
 
