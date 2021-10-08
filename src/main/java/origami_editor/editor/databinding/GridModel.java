@@ -313,7 +313,7 @@ public class GridModel implements Serializable {
     public void resetGridX() {
         gridXA = 1.0;
         gridXB = 0.0;
-        gridXC = 0.0;
+        gridXC = 1.0;
     }
 
     public void changeHorizontalScalePosition() {
