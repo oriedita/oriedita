@@ -44,6 +44,7 @@ import static origami_editor.tools.ResourceUtil.createImageIcon;
 import static origami_editor.tools.ResourceUtil.getAppDir;
 
 public class App extends JFrame implements ActionListener {
+    public static final String CONFIG_JSON = "config.json";
     public final ApplicationModel applicationModel = new ApplicationModel();
     public final GridModel gridModel = new GridModel();
     public final CanvasModel canvasModel = new CanvasModel();
@@ -426,16 +427,17 @@ public class App extends JFrame implements ActionListener {
         }
 
         ObjectMapper mapper = new DefaultObjectMapper();
-        File configFile = storage.resolve("config.json").toFile();
+        File configFile = storage.resolve(CONFIG_JSON).toFile();
 
         try {
             ApplicationModel loadedApplicationModel = mapper.readValue(configFile, ApplicationModel.class);
 
             applicationModel.set(loadedApplicationModel);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "<html>Failed to load state, renaming config.json to config.json.old to prevent future errors.<br/>Loading default application configuration.", "State load failed", JOptionPane.WARNING_MESSAGE);
+            // An application state is found, but it is not valid.
+            JOptionPane.showMessageDialog(this, "<html>Failed to load application state.<br/>Loading default application configuration.", "State load failed", JOptionPane.WARNING_MESSAGE);
 
-            if (!configFile.renameTo(storage.resolve("config.json.old").toFile())) {
+            if (!configFile.renameTo(storage.resolve(CONFIG_JSON + ".old").toFile())) {
                 System.err.println("Not allowed to move config.json");
             }
 
@@ -458,7 +460,7 @@ public class App extends JFrame implements ActionListener {
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
         try {
-            mapper.writeValue(storage.resolve("config.json").toFile(), applicationModel);
+            mapper.writeValue(storage.resolve(CONFIG_JSON).toFile(), applicationModel);
         } catch (IOException e) {
             e.printStackTrace();
         }
