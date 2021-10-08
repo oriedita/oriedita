@@ -2,7 +2,6 @@ package origami.folding.algorithm;
 
 import origami.crease_pattern.worker.HierarchyList_Worker.HierarchyListStatus;
 import origami.folding.HierarchyList;
-import origami.folding.HierarchyList.HierarchyListCondition;
 import origami.folding.element.SubFace;
 import origami.folding.util.EquivalenceCondition;
 
@@ -18,21 +17,33 @@ import java.util.*;
  */
 public class AdditionalEstimationAlgorithm {
 
-    private static final HierarchyListCondition ABOVE = HierarchyListCondition.ABOVE_1;
-    private static final HierarchyListCondition BELOW = HierarchyListCondition.BELOW_0;
+    private static final int ABOVE = HierarchyList.ABOVE_1;
+    private static final int BELOW = HierarchyList.BELOW_0;
 
     private HierarchyList hierarchyList;
     private SubFace[] subFaces; // indices start from 1
 
     private ItalianoAlgorithm[] IA;
-    private Relation[][] relations;
+    private Map<Integer, List<Integer>> relationObservers;
+
+    /**
+     * Decides whether to use linear search to notify ItalianoAlgorithm to update,
+     * or use observer pattern. The latter is faster, but requires more memory and
+     * is not suitable for large CP.
+     */
+    private boolean linearMode = true;
 
     public AdditionalEstimationAlgorithm(HierarchyList hierarchyList, SubFace[] s) {
         this.hierarchyList = hierarchyList;
         this.subFaces = s;
         IA = new ItalianoAlgorithm[subFaces.length];
+
+        // Decide whether to use linear mode or not
         int count = hierarchyList.getFacesTotal();
-        relations = new Relation[count + 1][count + 1];
+        if (count < 5000) {
+            linearMode = false;
+            relationObservers = new HashMap<>(count * count / 20); // more or less a fair guess
+        }
     }
 
     public HierarchyListStatus run() {
@@ -105,16 +116,16 @@ public class AdditionalEstimationAlgorithm {
                 for (int j = 1; j <= count; j++) {
                     int I = subFaces[s].getFaceId(i);
                     int J = subFaces[s].getFaceId(j);
-                    HierarchyList.HierarchyListCondition c = hierarchyList.get(I, J);
-                    if (c == ABOVE) {
-                        IA[s].add(i, j);
-                    } else if (c.isEmpty()) {
+                    if (!linearMode && hierarchyList.isEmpty(I, J)) {
                         // Observing potential changes to the relation
-                        Relation r = relations[I][J];
-                        if (r == null) {
-                            relations[I][J] = r = new Relation();
+                        int pos = (I << 16) | J;
+                        List<Integer> list = relationObservers.get(pos);
+                        if (list == null) {
+                            relationObservers.put(pos, list = new ArrayList<>());
                         }
-                        r.observers.add(IA[s]);
+                        list.add(s);
+                    } else if (hierarchyList.get(I, J) == ABOVE) {
+                        IA[s].add(i, j);
                     }
                 }
             }
@@ -129,8 +140,8 @@ public class AdditionalEstimationAlgorithm {
      */
     public int checkTransitivity(SubFace sf, ItalianoAlgorithm ia) throws InferenceFailureException {
         int changes = 0;
-        for (ItalianoAlgorithm.Node n : ia.flush()) {
-            changes += tryInferAbove(sf.getFaceId(n.i), sf.getFaceId(n.j));
+        for (int n : ia.flush()) {
+            changes += tryInferAbove(sf.getFaceId(n >>> 16), sf.getFaceId(n & ItalianoAlgorithm.mask));
         }
         return changes;
     }
@@ -217,32 +228,40 @@ public class AdditionalEstimationAlgorithm {
     /** Make inference that i > j. */
     public int tryInferAbove(int i, int j) throws InferenceFailureException {
         int changes = 0;
-        if (hierarchyList.get(i, j) == BELOW || hierarchyList.get(j, i) == ABOVE) {
+        if (hierarchyList.get(i, j) == BELOW) {
             throw new InferenceFailureException();
         }
-        if (hierarchyList.get(i, j).isEmpty()) {
+        if (hierarchyList.isEmpty(i, j)) {
             hierarchyList.set(i, j, ABOVE);
             changes++;
 
             // Notifying the ItalianoAlgorithm to update.
-            Relation r = relations[i][j];
-            if (r != null) {
-                for (ItalianoAlgorithm ia : r.observers) {
-                    ia.addId(i, j);
+            if (linearMode) {
+                for (int s = 1; s < subFaces.length; s++) {
+                    int I = subFaces[s].FaceIdIndex(i);
+                    int J = subFaces[s].FaceIdIndex(j);
+                    if (I != 0 && J != 0) {
+                        IA[s].add(I, J);
+                    }
+                }
+            } else {
+                int pos = (i << 16) | j;
+                List<Integer> list = relationObservers.get(pos);
+                if (list != null) {
+                    for (int s : list) {
+                        IA[s].addId(i, j);
+                    }
+
+                    // After that it is safe to remove the list.
+                    list.clear();
+                    relationObservers.remove(pos);
                 }
             }
-        }
-        if (hierarchyList.get(j, i).isEmpty()) {
-            hierarchyList.set(j, i, BELOW);
-            changes++;
+
         }
         return changes;
     }
 
     private static class InferenceFailureException extends Exception {
-    }
-
-    private class Relation {
-        public List<ItalianoAlgorithm> observers = new ArrayList<ItalianoAlgorithm>();
     }
 }

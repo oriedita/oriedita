@@ -2,6 +2,7 @@ package origami.crease_pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import origami.crease_pattern.element.*;
+import origami.data.symmetricMatrix.SymmetricMatrix;
 import origami.folding.element.Face;
 import origami_editor.editor.Save;
 
@@ -54,7 +55,7 @@ public class PointSet implements Serializable {
      * Contains the value of the line which connects two faces.
      */
     @JsonIgnore
-    Map<AdjacentFaces, Integer> faceAdjacent = new HashMap<>();
+    SymmetricMatrix faceAdjacent;
 
     public PointSet() {
         reset();
@@ -96,6 +97,8 @@ public class PointSet implements Serializable {
         }
 
         faces = new Face[numFaces + 1];
+
+        faceAdjacent = SymmetricMatrix.create(numFaces, (int) Math.ceil(Math.log(numLines + 1) / Math.log(2)));
 
         for (int i = 0; i <= numFaces; i++) {
             faces[i] = new Face();
@@ -150,20 +153,20 @@ public class PointSet implements Serializable {
             lineInFaceBorder_min[i] = ts.get_lineInFaceBorder_min(i);
             lineInFaceBorder_max[i] = ts.get_lineInFaceBorder_max(i);
         }
-        for (int i = 0; i <= numFaces; i++) {
+        for (int i = 1; i <= numFaces; i++) {
             faces[i] = new Face(ts.getFace(i));
+            for (int j = 1; j <= numFaces; j++) {
+                faceAdjacent.set(i, j, ts.getFaceAdjecent(i, j));
+            }
         }
-
-        faceAdjacent.clear();
-        faceAdjacent.putAll(ts.getFaceAdjacent());
     }
 
     public void set(int i, Point tn) {
         points[i].set(tn);
     }                                               //  <<<-------
 
-    private Map<AdjacentFaces, Integer> getFaceAdjacent() {
-        return faceAdjacent;
+    private int getFaceAdjecent(int i, int j) {
+        return faceAdjacent.get(i, j);
     }
 
     private int get_lineInFaceBorder_min(int i) {
@@ -611,10 +614,10 @@ public class PointSet implements Serializable {
     }
 
     private void Face_adjacent_create() {
-        faceAdjacent.clear();
         System.out.println("面となり作成　開始");
         for (int im = 1; im <= numFaces - 1; im++) {
             for (int in = im + 1; in <= numFaces; in++) {
+                faceAdjacent.set(im, in, 0);
                 int ima, imb, ina, inb;
                 for (int iim = 1; iim <= faces[im].getNumPoints(); iim++) {
                     ima = faces[im].getPointId(iim);
@@ -635,9 +638,7 @@ public class PointSet implements Serializable {
 
                         if (((ima == ina) && (imb == inb)) || ((ima == inb) && (imb == ina))) {
                             int ib = line_search(ima, imb);
-                            if (ib != -1) {
-                                faceAdjacent.put(new AdjacentFaces(im, in), ib);
-                            }
+                            faceAdjacent.set(im, in, ib);
                         }
                     }
                 }
@@ -657,12 +658,12 @@ public class PointSet implements Serializable {
                 return i;
             }
         }
-        return -1;
+        return 0;
     }
 
-    // If Face [im] and Face [ib] are adjacent, return the id number of the bar at the boundary. Returns -1 if not adjacent
+    // If Face [im] and Face [ib] are adjacent, return the id number of the bar at the boundary. Returns 0 if not adjacent
     public int Face_adjacent_determine(int im, int in) {
-        return faceAdjacent.getOrDefault(new AdjacentFaces(im, in), -1);
+        return faceAdjacent.get(im, in);
     }
 
     private void addFace(Face tempFace) {
@@ -774,40 +775,6 @@ public class PointSet implements Serializable {
     public void setSave(Save save) {
         for (int i = 0; i < save.getPoints().size(); i++) {
             points[i+1].set(save.getPoints().get(i));
-        }
-    }
-
-    private static class AdjacentFaces {
-        /**
-         * Smaller than largeFace
-         */
-        private final int smallFace;
-        /**
-         * Larger that smallFace
-         */
-        private final int largeFace;
-
-        public AdjacentFaces(int face1, int face2) {
-            if (face1 < face2) {
-                this.smallFace = face1;
-                this.largeFace = face2;
-            } else {
-                this.smallFace = face2;
-                this.largeFace = face1;
-            }
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            AdjacentFaces that = (AdjacentFaces) o;
-            return smallFace == that.smallFace && largeFace == that.largeFace;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(smallFace, largeFace);
         }
     }
 }

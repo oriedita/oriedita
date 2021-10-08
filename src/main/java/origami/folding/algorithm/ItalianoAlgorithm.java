@@ -10,22 +10,27 @@ import origami.folding.element.SubFace;
  */
 public class ItalianoAlgorithm {
 
+    public static final int mask = (1 << 16) - 1;
+
     private SubFace sf;
     private int size;
 
     /**
-     * Node[i][j] is the node of j on the spanning tree of i, of which existence
-     * implies that i > j. Node[i][i] is the root of the spanning tree of i.
+     * matrix[i][j] is the node of j on the spanning tree of i, of which existence
+     * implies that i > j. matrix[i][i] is the root of the spanning tree of i.
      */
-    private Node[][] matrix;
+    private Node[][] matrix; // 1-based
 
     /**
      * Prevents heap memory overflow. Still, for large projects, it is necessary to
-     * allocate larger memory for JVM in the first place.
+     * allocate larger memory for JVM in the first place. Accordingly, ArrayDeque is
+     * more efficient than other classes such as ArrayList, LinkedList, etc. We use
+     * int64 to store 4 int16 parameters.
      */
-    private Queue<MeldRequest> queue = new LinkedList<>();
+    private ArrayDeque<Long> stack = new ArrayDeque<>();
 
-    public List<Node> changes = new ArrayList<Node>();
+    /** Each changed entry is represented as int32 using upper and lower bits. */
+    public ArrayDeque<Integer> changes = new ArrayDeque<Integer>();
 
     public ItalianoAlgorithm(SubFace sf) {
         this.sf = sf;
@@ -33,7 +38,7 @@ public class ItalianoAlgorithm {
         this.size = size;
         this.matrix = new Node[size + 1][size + 1];
         for (int i = 1; i <= size; i++) {
-            matrix[i][i] = new Node(i, i);
+            matrix[i][i] = new Node();
         }
     }
 
@@ -45,52 +50,51 @@ public class ItalianoAlgorithm {
         if (matrix[i][j] == null) {
             for (int x = 1; x <= size; x++) {
                 if (matrix[x][i] != null && matrix[x][j] == null) {
-                    queue.add(new MeldRequest(x, j, i, j));
+                    stackMeld(x, j, i, j);
                 }
             }
-            while (queue.size() > 0) {
-                MeldRequest r = queue.poll();
-                meld(r.x, r.j, r.u, r.v);
+            while (stack.size() > 0) {
+                long r = stack.pop();
+                meld((int) (r >>> 48), (int) ((r >>> 32) & mask), (int) ((r >>> 16) & mask), (int) (r & mask));
             }
         }
     }
 
-    public Iterable<Node> flush() {
-        Iterable<Node> result = changes;
-        changes = new ArrayList<Node>();
+    public Iterable<Integer> flush() {
+        Iterable<Integer> result = changes;
+        changes = new ArrayDeque<Integer>();
         return result;
     }
 
     private void meld(int x, int j, int u, int v) {
-        Node node = new Node(x, v);
+        // create new node
+        Node node = new Node();
         matrix[x][v] = node;
-        matrix[x][u].children.add(node);
-        changes.add(node);
-        for (Node w : matrix[j][v].children) {
-            if (matrix[x][w.j] == null) {
-                queue.add(new MeldRequest(x, j, v, w.j));
+
+        // add node as child of matrix[x][u]
+        node.nextSibling = matrix[x][u].firstChild;
+        matrix[x][u].firstChild = v;
+
+        // add to change list
+        changes.add((x << 16) | v);
+
+        // copy subtree
+        int w = matrix[j][v].firstChild;
+        while (w != 0) {
+            if (matrix[x][w] == null) {
+                stackMeld(x, j, v, w);
             }
+            w = matrix[j][w].nextSibling;
         }
     }
 
-    public class MeldRequest {
-        public int x, j, u, v;
-
-        public MeldRequest(int x, int j, int u, int v) {
-            this.x = x;
-            this.j = j;
-            this.u = u;
-            this.v = v;
-        }
+    private void stackMeld(long x, long j, long u, long v) {
+        stack.add(x << 48 | j << 32 | u << 16 | v);
     }
 
     public class Node {
-        public int i, j;
-        public List<Node> children = new ArrayList<Node>();
-
-        public Node(int i, int j) {
-            this.i = i;
-            this.j = j;
-        }
+        // We only need these two to represent arbitrary tree!
+        public int firstChild;
+        public int nextSibling;
     }
 }
