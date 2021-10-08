@@ -44,6 +44,8 @@ public class AdditionalEstimationAlgorithm {
      */
     private boolean linearMode = true;
 
+    public EquivalenceCondition errorPos;
+
     public AdditionalEstimationAlgorithm(HierarchyList hierarchyList, SubFace[] s) {
         this.hierarchyList = hierarchyList;
         this.subFaces = s;
@@ -82,11 +84,14 @@ public class AdditionalEstimationAlgorithm {
                 }
             } catch (InferenceFailureException e) {
                 errorIndex = iS;
+                errorPos = new EquivalenceCondition(e.i, e.j, e.i, e.j);
                 return HierarchyListStatus.CONTRADICTED_2;
             }
 
+            EquivalenceCondition currentEC = null;
             try {
                 for (EquivalenceCondition tg : hierarchyList.getEquivalenceConditions()) {
+                    currentEC = tg;
                     if (new_relations >= MAX_NEW_RELATIONS) {
                         break;
                     }
@@ -94,11 +99,14 @@ public class AdditionalEstimationAlgorithm {
                     new_relations += changes;
                 }
             } catch (InferenceFailureException e) {
+                errorPos = currentEC;
                 return HierarchyListStatus.CONTRADICTED_3;
             }
 
+            currentEC = null;
             try {
                 for (EquivalenceCondition tg : hierarchyList.getUEquivalenceConditions()) {
+                    currentEC = tg;
                     if (new_relations >= MAX_NEW_RELATIONS) {
                         break;
                     }
@@ -106,6 +114,7 @@ public class AdditionalEstimationAlgorithm {
                     new_relations += changes;
                 }
             } catch (InferenceFailureException e) {
+                errorPos = currentEC;
                 return HierarchyListStatus.CONTRADICTED_4;
             }
 
@@ -240,7 +249,7 @@ public class AdditionalEstimationAlgorithm {
     public int tryInferAbove(int i, int j) throws InferenceFailureException {
         int changes = 0;
         if (hierarchyList.get(i, j) == BELOW) {
-            throw new InferenceFailureException();
+            throw new InferenceFailureException(i, j);
         }
         if (hierarchyList.isEmpty(i, j)) {
             hierarchyList.set(i, j, ABOVE);
@@ -274,5 +283,20 @@ public class AdditionalEstimationAlgorithm {
     }
 
     private static class InferenceFailureException extends Exception {
+        private final int i;
+        private final int j;
+
+        public InferenceFailureException(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
+
+        public int getI() {
+            return i;
+        }
+
+        public int getJ() {
+            return j;
+        }
     }
 }

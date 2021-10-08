@@ -3,6 +3,7 @@ package origami_editor.editor.canvas;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
@@ -198,6 +199,11 @@ public class CreasePattern_Worker {
 
     public void branch_trim(double r) {
         foldLineSet.applyBranchTrim(r);
+    }
+
+    public LineSegmentSet get() {
+        lineSegmentSet.setSave(foldLineSet.getSave());
+        return lineSegmentSet;
     }
 
     public LineSegmentSet getForFolding() {
