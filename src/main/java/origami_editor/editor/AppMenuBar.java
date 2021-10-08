@@ -1,5 +1,6 @@
 package origami_editor.editor;
 
+import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FileModel;
 
@@ -27,7 +28,7 @@ public class AppMenuBar extends JMenuBar {
 
     public AppMenuBar(App app) {
         createElements();
-        CanvasModel canvasModel = app.canvasModel;
+        ApplicationModel applicationModel = app.applicationModel;
 
         app.registerButton(newButton, "newAction");
         app.registerButton(openButton, "openAction");
@@ -112,24 +113,24 @@ public class AppMenuBar extends JMenuBar {
             app.importFile();
         });
         exitButton.addActionListener(e -> app.closing());
-        showPointRangeCheckBox.addActionListener(e -> getData(canvasModel));
-        pointOffsetCheckBox.addActionListener(e -> getData(canvasModel));
+        showPointRangeCheckBox.addActionListener(e -> getData(applicationModel));
+        pointOffsetCheckBox.addActionListener(e -> getData(applicationModel));
         gridInputAssistCheckBox.addActionListener(e -> {
             if (gridInputAssistCheckBox.isSelected()) {
                 System.out.println(" kou_mitudo_nyuuryoku on");
             } else {
                 System.out.println(" kou_mitudo_nyuuryoku off");
             }
-            getData(canvasModel);
+            getData(applicationModel);
         });
-        displayCommentsCheckBox.addActionListener(e -> getData(canvasModel));
-        displayCpLinesCheckBox.addActionListener(e -> getData(canvasModel));
-        displayAuxLinesCheckBox.addActionListener(e -> getData(canvasModel));
-        displayLiveAuxLinesCheckBox.addActionListener(e -> getData(canvasModel));
-        displayStandardFaceMarksCheckBox.addActionListener(e -> getData(canvasModel));
-        cpOnTopCheckBox.addActionListener(e -> getData(canvasModel));
+        displayCommentsCheckBox.addActionListener(e -> getData(applicationModel));
+        displayCpLinesCheckBox.addActionListener(e -> getData(applicationModel));
+        displayAuxLinesCheckBox.addActionListener(e -> getData(applicationModel));
+        displayLiveAuxLinesCheckBox.addActionListener(e -> getData(applicationModel));
+        displayStandardFaceMarksCheckBox.addActionListener(e -> getData(applicationModel));
+        cpOnTopCheckBox.addActionListener(e -> getData(applicationModel));
         toggleHelpMenuItem.addActionListener(e -> {
-            app.explanation.setVisible(!app.explanation.isVisible());
+            app.applicationModel.toggleHelpVisible();
 
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
@@ -205,28 +206,28 @@ public class AppMenuBar extends JMenuBar {
         toggleHelpMenuItem.setMargin(new Insets(0, 0, 0, 0));
     }
 
-    public void getData(CanvasModel canvasModel) {
-        canvasModel.setDisplayPointSpotlight(showPointRangeCheckBox.isSelected());
-        canvasModel.setDisplayPointOffset(pointOffsetCheckBox.isSelected());
-        canvasModel.setDisplayGridInputAssist(gridInputAssistCheckBox.isSelected());
-        canvasModel.setDisplayComments(displayCommentsCheckBox.isSelected());
-        canvasModel.setDisplayCpLines(displayCpLinesCheckBox.isSelected());
-        canvasModel.setDisplayAuxLines(displayAuxLinesCheckBox.isSelected());
-        canvasModel.setDisplayLiveAuxLines(displayLiveAuxLinesCheckBox.isSelected());
-        canvasModel.setDisplayMarkings(displayStandardFaceMarksCheckBox.isSelected());
-        canvasModel.setDisplayCreasePatternOnTop(cpOnTopCheckBox.isSelected());
+    public void getData(ApplicationModel applicationModel) {
+        applicationModel.setDisplayPointSpotlight(showPointRangeCheckBox.isSelected());
+        applicationModel.setDisplayPointOffset(pointOffsetCheckBox.isSelected());
+        applicationModel.setDisplayGridInputAssist(gridInputAssistCheckBox.isSelected());
+        applicationModel.setDisplayComments(displayCommentsCheckBox.isSelected());
+        applicationModel.setDisplayCpLines(displayCpLinesCheckBox.isSelected());
+        applicationModel.setDisplayAuxLines(displayAuxLinesCheckBox.isSelected());
+        applicationModel.setDisplayLiveAuxLines(displayLiveAuxLinesCheckBox.isSelected());
+        applicationModel.setDisplayMarkings(displayStandardFaceMarksCheckBox.isSelected());
+        applicationModel.setDisplayCreasePatternOnTop(cpOnTopCheckBox.isSelected());
     }
 
-    public void setData(CanvasModel canvasModel) {
-        showPointRangeCheckBox.setSelected(canvasModel.getDisplayPointSpotlight());
-        pointOffsetCheckBox.setSelected(canvasModel.getDisplayPointOffset());
-        gridInputAssistCheckBox.setSelected(canvasModel.getDisplayGridInputAssist());
-        displayCommentsCheckBox.setSelected(canvasModel.getDisplayComments());
-        displayCpLinesCheckBox.setSelected(canvasModel.getDisplayCpLines());
-        displayAuxLinesCheckBox.setSelected(canvasModel.getDisplayAuxLines());
-        displayLiveAuxLinesCheckBox.setSelected(canvasModel.getDisplayLiveAuxLines());
-        displayStandardFaceMarksCheckBox.setSelected(canvasModel.getDisplayMarkings());
-        cpOnTopCheckBox.setSelected(canvasModel.getDisplayCreasePatternOnTop());
+    public void setData(ApplicationModel applicationModel) {
+        showPointRangeCheckBox.setSelected(applicationModel.getDisplayPointSpotlight());
+        pointOffsetCheckBox.setSelected(applicationModel.getDisplayPointOffset());
+        gridInputAssistCheckBox.setSelected(applicationModel.getDisplayGridInputAssist());
+        displayCommentsCheckBox.setSelected(applicationModel.getDisplayComments());
+        displayCpLinesCheckBox.setSelected(applicationModel.getDisplayCpLines());
+        displayAuxLinesCheckBox.setSelected(applicationModel.getDisplayAuxLines());
+        displayLiveAuxLinesCheckBox.setSelected(applicationModel.getDisplayLiveAuxLines());
+        displayStandardFaceMarksCheckBox.setSelected(applicationModel.getDisplayMarkings());
+        cpOnTopCheckBox.setSelected(applicationModel.getDisplayCreasePatternOnTop());
     }
 
     public void setData(FileModel fileModel) {

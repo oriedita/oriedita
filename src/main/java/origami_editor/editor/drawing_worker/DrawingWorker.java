@@ -140,6 +140,10 @@ public class DrawingWorker {
             app.canvas.creasePatternCamera.setCamera(memo1.getCreasePatternCamera());
         }
 
+        if (memo1.getApplicationModel() != null) {
+            app.applicationModel.set(memo1.getApplicationModel());
+        }
+
         app.canvasModel.set(memo1.getCanvasModel());
 
         app.gridModel.set(memo1.getGridModel());
@@ -253,6 +257,14 @@ public class DrawingWorker {
         save.set(foldLineSet.getSave());
         save.add(auxLines.h_getSave());
         saveAdditionalInformation(save);
+
+        return save;
+    }
+
+    public Save getSave_for_export_with_applicationModel() {
+        Save save = getSave_for_export();
+
+        save.setApplicationModel(app.applicationModel);
 
         return save;
     }
@@ -1678,13 +1690,10 @@ public class DrawingWorker {
         return selectionDistance;
     }
 
-    public void setData(PropertyChangeEvent e, CanvasModel data) {
+    public void setData(PropertyChangeEvent e, ApplicationModel data) {
         setGridInputAssist(data.getDisplayGridInputAssist());
         setPointSize(data.getPointSize());
-        setColor(data.getLineColor());
-        setAuxLineColor(data.getAuxLiveLineColor());
-        setFoldLineAdditional(data.getFoldLineAdditionalInputMode());
-        i_select_mode = data.getSelectionOperationMode();
+
         setFoldLineDividingNumber(data.getFoldLineDividingNumber());
         setNumPolygonCorners(data.getNumPolygonCorners());
         setCheck4(data.getCheck4Enabled());
@@ -1695,6 +1704,13 @@ public class DrawingWorker {
                 check4(0.0001);
             }
         }
+    }
+
+    public void setData(CanvasModel data) {
+        setColor(data.getLineColor());
+        setAuxLineColor(data.getAuxLiveLineColor());
+        setFoldLineAdditional(data.getFoldLineAdditionalInputMode());
+        i_select_mode = data.getSelectionOperationMode();
     }
 
     public void setData(AngleSystemModel angleSystemModel) {

@@ -5,6 +5,7 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.Save;
+import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.databinding.GridModel;
@@ -20,6 +21,9 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Import and Export Orihime files.
+ */
 public class Orh {
     /**
      * Read an Orihime file
@@ -94,6 +98,9 @@ public class Orh {
         CanvasModel canvasModel = new CanvasModel();
         save.setCanvasModel(canvasModel);
 
+        ApplicationModel applicationModel = new ApplicationModel();
+        save.setApplicationModel(applicationModel);
+
         // ----------------------------------------- チェックボックス等の設定の読み込み
         reading = false;
         for (String str : fileLines) {
@@ -114,70 +121,70 @@ public class Orh {
                 switch (m.group(1)) {
                     case "mouseSettingsAction": {
                         boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setMouseWheelMovesCreasePattern(selected);
+                        applicationModel.setMouseWheelMovesCreasePattern(selected);
                         break;
                     }
                     case "showPointRangeAction": {
                         boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayPointSpotlight(selected);
+                        applicationModel.setDisplayPointSpotlight(selected);
                         break;
                     }
                     case "pointOffsetAction": {
                         boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayPointOffset(selected);
+                        applicationModel.setDisplayPointOffset(selected);
                         break;
                     }
                     case "gridInputAssistAction": {
                         boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayGridInputAssist(selected);
+                        applicationModel.setDisplayGridInputAssist(selected);
                         break;
                     }
                     case "displayCommentsAction": {
                         boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayComments(selected);
+                        applicationModel.setDisplayComments(selected);
                         break;
                     }
                     case "displayCpLinesAction": {
                         boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayCpLines(selected);
+                        applicationModel.setDisplayCpLines(selected);
                         break;
                     }
                     case "displayAuxLinesAction": {
                         boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayAuxLines(selected);
+                        applicationModel.setDisplayAuxLines(selected);
                         break;
                     }
                     case "displayLiveAuxLinesAction": {
                         boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayLiveAuxLines(selected);
+                        applicationModel.setDisplayLiveAuxLines(selected);
                         break;
                     }
                     case "displayStandardFaceMarksAction": {
                         boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayMarkings(selected);
+                        applicationModel.setDisplayMarkings(selected);
                         break;
                     }
                     case "cpOnTopAction": {
                         boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayCreasePatternOnTop(selected);
+                        applicationModel.setDisplayCreasePatternOnTop(selected);
                         break;
                     }
                     case "ckbox_oritatami_keika": {
                         boolean selected = Boolean.parseBoolean(value);
-                        canvasModel.setDisplayFoldingProgress(selected);
+                        applicationModel.setDisplayFoldingProgress(selected);
                         break;
                     }
                     case "iTenkaizuSenhaba":
-                        canvasModel.setLineWidth(Integer.parseInt(value));
+                        applicationModel.setLineWidth(Integer.parseInt(value));
                         break;
                     case "ir_ten":
-                        canvasModel.setPointSize(Integer.parseInt(value));
+                        applicationModel.setPointSize(Integer.parseInt(value));
                         break;
                     case "i_orisen_hyougen":
-                        canvasModel.setLineStyle(LineStyle.from(value));
+                        applicationModel.setLineStyle(LineStyle.from(value));
                         break;
                     case "i_anti_alias":
-                        canvasModel.setAntiAlias(Boolean.parseBoolean(value));
+                        applicationModel.setAntiAlias(Boolean.parseBoolean(value));
                         break;
                 }
             }
@@ -653,25 +660,25 @@ public class Orh {
             pw.println("</camera_of_orisen_nyuuryokuzu>");
 
             pw.println("<settei>");
-            CanvasModel canvasModel = save.getCanvasModel();
-            pw.println("<ckbox_mouse_settei>" + canvasModel.getMouseWheelMovesCreasePattern() + "</ckbox_mouse_settei>");
-            pw.println("<ckbox_ten_sagasi>" + canvasModel.getDisplayPointSpotlight() + "</ckbox_ten_sagasi>");
-            pw.println("<ckbox_ten_hanasi>" + canvasModel.getDisplayPointOffset() + "</ckbox_ten_hanasi>");
-            pw.println("<ckbox_kou_mitudo_nyuuryoku>" + canvasModel.getDisplayGridInputAssist() + "</ckbox_kou_mitudo_nyuuryoku>");
-            pw.println("<ckbox_bun>" + canvasModel.getDisplayComments() + "</ckbox_bun>");
-            pw.println("<ckbox_cp>" + canvasModel.getDisplayCpLines() + "</ckbox_cp>");
-            pw.println("<ckbox_a0>" + canvasModel.getDisplayAuxLines() + "</ckbox_a0>");
-            pw.println("<ckbox_a1>" + canvasModel.getDisplayLiveAuxLines() + "</ckbox_a1>");
-            pw.println("<ckbox_mejirusi>" + canvasModel.getDisplayMarkings() + "</ckbox_mejirusi>");
-            pw.println("<ckbox_cp_ue>" + canvasModel.getDisplayCreasePatternOnTop() + "</ckbox_cp_ue>");
-            pw.println("<ckbox_oritatami_keika>" + canvasModel.getDisplayFoldingProgress() + "</ckbox_oritatami_keika>");
+            ApplicationModel applicationModel = save.getApplicationModel() != null ? save.getApplicationModel() : new ApplicationModel();
+            pw.println("<ckbox_mouse_settei>" + applicationModel.getMouseWheelMovesCreasePattern() + "</ckbox_mouse_settei>");
+            pw.println("<ckbox_ten_sagasi>" + applicationModel.getDisplayPointSpotlight() + "</ckbox_ten_sagasi>");
+            pw.println("<ckbox_ten_hanasi>" + applicationModel.getDisplayPointOffset() + "</ckbox_ten_hanasi>");
+            pw.println("<ckbox_kou_mitudo_nyuuryoku>" + applicationModel.getDisplayGridInputAssist() + "</ckbox_kou_mitudo_nyuuryoku>");
+            pw.println("<ckbox_bun>" + applicationModel.getDisplayComments() + "</ckbox_bun>");
+            pw.println("<ckbox_cp>" + applicationModel.getDisplayCpLines() + "</ckbox_cp>");
+            pw.println("<ckbox_a0>" + applicationModel.getDisplayAuxLines() + "</ckbox_a0>");
+            pw.println("<ckbox_a1>" + applicationModel.getDisplayLiveAuxLines() + "</ckbox_a1>");
+            pw.println("<ckbox_mejirusi>" + applicationModel.getDisplayMarkings() + "</ckbox_mejirusi>");
+            pw.println("<ckbox_cp_ue>" + applicationModel.getDisplayCreasePatternOnTop() + "</ckbox_cp_ue>");
+            pw.println("<ckbox_oritatami_keika>" + applicationModel.getDisplayFoldingProgress() + "</ckbox_oritatami_keika>");
             //The thickness of the line in the development view.
-            pw.println("<iTenkaizuSenhaba>" + canvasModel.getLineWidth() + "</iTenkaizuSenhaba>");
+            pw.println("<iTenkaizuSenhaba>" + applicationModel.getLineWidth() + "</iTenkaizuSenhaba>");
             //Width of vertex sign
-            pw.println("<ir_ten>" + canvasModel.getPointSize() + "</ir_ten>");
+            pw.println("<ir_ten>" + applicationModel.getPointSize() + "</ir_ten>");
             //Express the polygonal line expression with color
-            pw.println("<i_orisen_hyougen>" + canvasModel.getLineStyle() + "</i_orisen_hyougen>");
-            pw.println("<i_anti_alias>" + canvasModel.getAntiAlias() + "</i_anti_alias>");
+            pw.println("<i_orisen_hyougen>" + applicationModel.getLineStyle() + "</i_orisen_hyougen>");
+            pw.println("<i_anti_alias>" + applicationModel.getAntiAlias() + "</i_anti_alias>");
             pw.println("</settei>");
 
             GridModel gridModel = save.getGridModel();

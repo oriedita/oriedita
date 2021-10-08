@@ -1,5 +1,6 @@
 package origami_editor.editor;
 
+import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.drawing_worker.BaseMouseHandler;
 import origami_editor.editor.drawing_worker.DrawingWorker;
@@ -621,30 +622,34 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         }
     }
 
+    public void setData(ApplicationModel applicationModel) {
+        displayPointSpotlight = applicationModel.getDisplayPointSpotlight();
+        displayPointOffset = applicationModel.getDisplayPointOffset();
+        displayGridInputAssist = applicationModel.getDisplayGridInputAssist();
+        displayComments = applicationModel.getDisplayComments();
+        displayCpLines = applicationModel.getDisplayCpLines();
+        displayAuxLines = applicationModel.getDisplayAuxLines();
+        displayLiveAuxLines = applicationModel.getDisplayLiveAuxLines();
+
+        displayMarkings = applicationModel.getDisplayMarkings();
+        displayCreasePatternOnTop = applicationModel.getDisplayCreasePatternOnTop();
+        displayFoldingProgress = applicationModel.getDisplayFoldingProgress();
+
+        lineStyle = applicationModel.getLineStyle();
+        antiAlias = applicationModel.getAntiAlias();
+
+        mouseWheelMovesCreasePattern = applicationModel.getMouseWheelMovesCreasePattern();
+
+        intLineWidth = applicationModel.getLineWidth();
+        lineWidth = applicationModel.determineCalculatedLineWidth();
+        auxLineWidth = applicationModel.determineCalculatedAuxLineWidth();
+
+        pointSize = applicationModel.getPointSize();
+
+        repaint();
+    }
+
     public void setData(CanvasModel canvasModel) {
-        displayPointSpotlight = canvasModel.getDisplayPointSpotlight();
-        displayPointOffset = canvasModel.getDisplayPointOffset();
-        displayGridInputAssist = canvasModel.getDisplayGridInputAssist();
-        displayComments = canvasModel.getDisplayComments();
-        displayCpLines = canvasModel.getDisplayCpLines();
-        displayAuxLines = canvasModel.getDisplayAuxLines();
-        displayLiveAuxLines = canvasModel.getDisplayLiveAuxLines();
-
-        displayMarkings = canvasModel.getDisplayMarkings();
-        displayCreasePatternOnTop = canvasModel.getDisplayCreasePatternOnTop();
-        displayFoldingProgress = canvasModel.getDisplayFoldingProgress();
-
-        lineStyle = canvasModel.getLineStyle();
-        antiAlias = canvasModel.getAntiAlias();
-
-        mouseWheelMovesCreasePattern = canvasModel.getMouseWheelMovesCreasePattern();
-
-        intLineWidth = canvasModel.getLineWidth();
-        lineWidth = canvasModel.determineCalculatedLineWidth();
-        auxLineWidth = canvasModel.determineCalculatedAuxLineWidth();
-
-        pointSize = canvasModel.getPointSize();
-
         mouseMode = canvasModel.getMouseMode();
 
         repaint();

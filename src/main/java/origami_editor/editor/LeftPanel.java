@@ -2,10 +2,7 @@ package origami_editor.editor;
 
 import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.component.UndoRedo;
-import origami_editor.editor.databinding.CanvasModel;
-import origami_editor.editor.databinding.FoldedFigureModel;
-import origami_editor.editor.databinding.GridModel;
-import origami_editor.editor.databinding.HistoryStateModel;
+import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.task.TwoColoredTask;
@@ -94,8 +91,6 @@ public class LeftPanel {
     private JCheckBox coloredXRayCheckBox;
 
     public LeftPanel(App app) {
-        CanvasModel canvasModel = app.canvasModel;
-
         $$$setupUI$$$();
 
         app.registerButton(lineWidthDecreaseButton, "lineWidthDecreaseAction");
@@ -183,12 +178,12 @@ public class LeftPanel {
             app.repaintCanvas();
         });
         undoRedo.addSetUndoCountActionListener(e -> app.historyStateModel.setHistoryTotal(StringOp.String2int(undoRedo.getText(), app.historyStateModel.getHistoryTotal())));
-        lineWidthDecreaseButton.addActionListener(e -> canvasModel.decreaseLineWidth());
-        lineWidthIncreaseButton.addActionListener(e -> canvasModel.increaseLineWidth());
-        pointSizeDecreaseButton.addActionListener(e -> canvasModel.decreasePointSize());
-        pointSizeIncreaseButton.addActionListener(e -> canvasModel.increasePointSize());
-        antiAliasToggleButton.addActionListener(e -> canvasModel.toggleAntiAlias());
-        lineStyleChangeButton.addActionListener(e -> canvasModel.advanceLineStyle());
+        lineWidthDecreaseButton.addActionListener(e -> app.applicationModel.decreaseLineWidth());
+        lineWidthIncreaseButton.addActionListener(e -> app.applicationModel.increaseLineWidth());
+        pointSizeDecreaseButton.addActionListener(e -> app.applicationModel.decreasePointSize());
+        pointSizeIncreaseButton.addActionListener(e -> app.applicationModel.increasePointSize());
+        antiAliasToggleButton.addActionListener(e -> app.applicationModel.toggleAntiAlias());
+        lineStyleChangeButton.addActionListener(e -> app.applicationModel.advanceLineStyle());
         colRedButton.addActionListener(e -> app.canvasModel.setLineColor(LineColor.RED_1));
         colBlueButton.addActionListener(e -> app.canvasModel.setLineColor(LineColor.BLUE_2));
         colBlackButton.addActionListener(e -> app.canvasModel.setLineColor(LineColor.BLACK_0));
@@ -317,7 +312,7 @@ public class LeftPanel {
             app.repaintCanvas();
         });
         lineSegmentDivisionSetButton.addActionListener(e -> {
-            getData(app.canvasModel);
+            getData(app.applicationModel);
 
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DIVISION_27);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
@@ -325,7 +320,7 @@ public class LeftPanel {
             app.repaintCanvas();
         });
         senbun_b_nyuryokuButton.addActionListener(e -> {
-            getData(app.canvasModel);
+            getData(app.applicationModel);
 
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DIVISION_27);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
@@ -524,12 +519,12 @@ public class LeftPanel {
             }
         });
         correctCpBeforeFoldingCheckBox.addActionListener(e -> {
-            app.canvasModel.setCorrectCpBeforeFolding(correctCpBeforeFoldingCheckBox.isSelected());
+            app.applicationModel.setCorrectCpBeforeFolding(correctCpBeforeFoldingCheckBox.isSelected());
 
             app.repaintCanvas();
         });
         selectPersistentCheckBox.addActionListener(e -> {
-            app.canvasModel.setSelectPersistent(selectPersistentCheckBox.isSelected());
+            app.applicationModel.setSelectPersistent(selectPersistentCheckBox.isSelected());
 
             app.repaintCanvas();
         });
@@ -551,7 +546,7 @@ public class LeftPanel {
         });
         suitei_01Button.addActionListener(e -> {
             app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
-            if (!app.canvasModel.getSelectPersistent()) {
+            if (!app.applicationModel.getSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
         });
@@ -562,14 +557,14 @@ public class LeftPanel {
         });
         suitei_02Button.addActionListener(e -> {
             app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
-            if (!app.canvasModel.getSelectPersistent()) {
+            if (!app.applicationModel.getSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
         });
         suitei_03Button.addActionListener(e -> {
             app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
 
-            if (!app.canvasModel.getSelectPersistent()) {
+            if (!app.applicationModel.getSelectPersistent()) {
                 app.mainDrawingWorker.unselect_all();
             }
         });
@@ -1349,13 +1344,15 @@ public class LeftPanel {
         return root;
     }
 
-    public void getData(CanvasModel data) {
+    public void getData(ApplicationModel data) {
         data.setFoldLineDividingNumber(StringOp.String2int(lineSegmentDivisionTextField.getText(), data.getFoldLineDividingNumber()));
     }
 
-    public void setData(PropertyChangeEvent e, CanvasModel data) {
+    public void setData(PropertyChangeEvent e, ApplicationModel data) {
         lineSegmentDivisionTextField.setText(String.valueOf(data.getFoldLineDividingNumber()));
+    }
 
+    public void setData(PropertyChangeEvent e, CanvasModel data) {
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode") || e.getPropertyName().equals("foldLineAdditionalInputMode")) {
             MouseMode m = data.getMouseMode();
             FoldLineAdditionalInputMode f = data.getFoldLineAdditionalInputMode();
