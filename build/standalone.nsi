@@ -1,7 +1,5 @@
 ; Create an executable file with embedded jre
-; Requires powershell and JDK
-
-!execute 'pwsh.exe -File "./build.ps1"'
+; Execute build.ps1 first
 
 !define /file VERSION ../target/version
 !define /file JAVA_VERSION ../target/java_version
