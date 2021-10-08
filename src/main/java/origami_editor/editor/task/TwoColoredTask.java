@@ -17,6 +17,7 @@ public class TwoColoredTask implements Runnable{
             app.createTwoColorCreasePattern();
         } catch (InterruptedException e) {
             app.OZ.estimated_initialize();
+            app.bulletinBoard.clear();
             e.printStackTrace();
         }
 
