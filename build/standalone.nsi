@@ -15,8 +15,8 @@ RequestExecutionLevel user
 ShowInstDetails hide
 
 OutFile "..\target\origami-editor-${VERSION}.exe"
-Icon "origami-editor.ico"
-VIProductVersion ${VERSION}.0
+Icon "logo.ico"
+VIProductVersion 0.0.0.0
 VIAddVersionKey ProductName "Origami Editor"
 VIAddVersionKey LegalCopyright "Copyright (c) 2021"
 VIAddVersionKey FileDescription "Origami Editor"
@@ -36,6 +36,6 @@ Section
   File "..\target\origami-editor-${VERSION}.jar"
   SetOutPath $TEMP
   ${GetParameters} $R0
-  nsExec::Exec '"$TEMP\jre\bin\java.exe" -jar $PluginsDir\origami-editor-${VERSION}.jar $R0'
+  nsExec::Exec '"$TEMP\jre\bin\javaw.exe" -Dfile.encoding="UTF-8" -jar $PluginsDir\origami-editor-${VERSION}.jar $R0'
   RMDir /r $PluginsDir
 SectionEnd

@@ -58,7 +58,12 @@ jobs:
       - name: Create nsis executable
         uses: joncloud/makensis-action@v3.3
         with:
-          script-file: build/build.nsi
+          script-file: build/standalone.nsi
+
+      - name: Create nsis installer
+        uses: joncloud/makensis-action@v3.3
+        with:
+          script-file: build/installer.nsi
 
       - name: Release
         uses: softprops/action-gh-release@v1

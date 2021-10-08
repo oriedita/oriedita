@@ -62,7 +62,7 @@ To create a Windows executable [NSIS](https://nsis.sourceforge.io/Download) is u
 Execute `build/build.nsi` using `makensis` or the NSIS application. A file called `origami-editor-<version>.exe` is placed in the `target` directory, this file contains an embedded Java installation and is thus can be ran on a machine without Java.
 
 ```bash
-makensis build/build.nsi
+makensis build/standalone.nsi
 ```
 
 ## Terminology
