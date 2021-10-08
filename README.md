@@ -2,7 +2,7 @@
 
 _This a fork of Orihime オリヒメ and not affiliated with the original version._ Orihime is an awesome tool that is used by origami designers to design new origami models. Orihime is developed by MT777 and can be downloaded from  http://mt777.html.xdomain.jp/. Undertrox developed orihimeMod, which adds some extra features to the Orihime software, this version can be downloaded from https://github.com/undertrox/orihimeMod
 
-[Download the latest Jar or Windows Executable from the Releases page.](https://github.com/qurben/origami-editor/releases)
+## [Download the latest Jar or Windows Executable from the Releases page.](https://github.com/qurben/origami-editor/releases)
 
 This project started as an effort to translate the Orihime source code to English and is based on Orihime version 3.060. After that more changes were made to improve the performance of the application.
 
@@ -46,14 +46,18 @@ The application state is saved to `config.json` in the configuration directory. 
 
 ## Creating a  Windows executable
 
-_A portable Windows executable is created for each release and can be found on the releases page._
+_A wrapper Windows executable, a portable Windows executable and Windows installer are created for each release and can be found on the releases page._
 
 To create a Windows executable [NSIS](https://nsis.sourceforge.io/Download) is used, other required tools are PowerShell (pwsh.exe) and a JDK which is in the path.
 
-Execute `build/build.nsi` using `makensis` or the NSIS application. A file called `origami-editor-<version>.exe` is placed in the `target` directory, this file contains an embedded Java installation and is thus can be ran on a machine without Java.
+Execute the following commands, an installer and a portable executable are placed in the `target` directory. The portable and installer executables contain the Java installation that was used to build the project.
 
 ```bash
-makensis build/build.nsi
+cd build
+./prepare.ps1
+makensis wrapper.nsi # Create an executable wrapper around the jar, without java
+makensis portable.nsi # Create an executable which executes the jar with embedded java
+makensis installer.nsi # Create an installer which install java and the jar
 ```
 
 ## Terminology

@@ -55,10 +55,24 @@ jobs:
         run: sudo chown -R $(whoami) /usr/share/nsis/Plugins/
         if: ${{ matrix.os == 'ubuntu-20.04' }}
 
-      - name: Create nsis executable
+      - name: Build project and prepare JRE
+        run: |
+          cd build ; ./prepare.ps1
+
+      - name: Create nsis wrapper executable
         uses: joncloud/makensis-action@v3.3
         with:
-          script-file: build/build.nsi
+          script-file: build/wrapper.nsi
+
+      - name: Create nsis portable executable
+        uses: joncloud/makensis-action@v3.3
+        with:
+          script-file: build/portable.nsi
+
+      - name: Create nsis installer
+        uses: joncloud/makensis-action@v3.3
+        with:
+          script-file: build/installer.nsi
 
       - name: Release
         uses: softprops/action-gh-release@v1
