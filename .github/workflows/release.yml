@@ -57,12 +57,12 @@ jobs:
 
       - name: Build project and prepare JRE
         run: |
-          cd build ; ./build.ps1
+          cd build ; ./prepare.ps1
 
       - name: Create nsis executable
         uses: joncloud/makensis-action@v3.3
         with:
-          script-file: build/standalone.nsi
+          script-file: build/portable.nsi
 
       - name: Create nsis installer
         uses: joncloud/makensis-action@v3.3

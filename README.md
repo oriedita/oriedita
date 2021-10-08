@@ -63,8 +63,8 @@ Execute `build/build.nsi` using `makensis` or the NSIS application. A file calle
 
 ```bash
 cd build
-./build.ps1
-makensis standalone.nsi
+./prepare.ps1
+makensis portable.nsi
 makensis installer.nsi
 ```
 
