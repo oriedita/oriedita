@@ -1273,9 +1273,15 @@ public class App extends JFrame implements ActionListener {
 
     public void registerButton(AbstractButton button, String key) {
         String name = ResourceUtil.getBundleString("name", key);
-        String keyStroke = ResourceUtil.getBundleString("hotkey", key);
+        String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         String tooltip = ResourceUtil.getBundleString("tooltip", key);
         String help = ResourceUtil.getBundleString("help", key);
+
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
+
+        if (!StringOp.isEmpty(keyStrokeString) && keyStroke == null) {
+            System.err.println("Keystroke for \"" + key + "\": \"" + keyStrokeString + "\" is invalid");
+        }
 
         String tooltipText = "<html>";
         if (!StringOp.isEmpty(name)) {
@@ -1284,8 +1290,8 @@ public class App extends JFrame implements ActionListener {
         if (!StringOp.isEmpty(tooltip)) {
             tooltipText += tooltip + "<br/>";
         }
-        if (!StringOp.isEmpty(keyStroke)) {
-            tooltipText += "Hotkey: " + keyStroke + "<br/>";
+        if (keyStroke != null) {
+            tooltipText += "Hotkey: " + keyStrokeString + "<br/>";
         }
 
         if (!tooltipText.equals("<html>")) {
@@ -1308,13 +1314,13 @@ public class App extends JFrame implements ActionListener {
                 }
             }
 
-            if (!StringOp.isEmpty(keyStroke)) {
+            if (keyStroke != null) {
                 // Menu item can handle own accelerator (and shows a nice hint).
-                menuItem.setAccelerator(KeyStroke.getKeyStroke(keyStroke));
+                menuItem.setAccelerator(keyStroke);
             }
-        } else if (!StringOp.isEmpty(keyStroke)) {
-            helpInputMap.put(KeyStroke.getKeyStroke(keyStroke), button);
-            button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keyStroke), key);
+        } else if (keyStroke != null) {
+            helpInputMap.put(keyStroke, button);
+            button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
             button.getActionMap().put(key, new Click(button));
         }
 
