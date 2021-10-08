@@ -12,8 +12,6 @@ $project_version = mvn -f $root help:evaluate -D"expression=project.version" -q 
 echo $project_version > $target\version
 jdeps -version > $target\java_version
 
-rm -r $target\jre 2> $null
-
 # Read dependencies of jar
 $deps = jdeps --print-module-deps --ignore-missing-deps $target\origami-editor-$project_version.jar
 
