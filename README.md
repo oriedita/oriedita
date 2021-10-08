@@ -10,34 +10,7 @@ One of the goals of this project is to understand the underlying algorithms used
 
 Translating is still a work in progress, some translations can be quite poor or in some cases completely wrong. When in doubt a logical name was used. Comments were translated using online translation services and as such can contain weirdly structured sentences.
 
-# Changes made
-
-## Translations
-See also [TRANSLATIONS.md](TRANSLATIONS.md).
-
-Classnames, variable names and comments are translated to English.
-
-## Code Quality
-
-Integers with only values 1 and 0 are replaced with booleans. Integers with a specific set of values are replaced with enums. Dead code is removed.
-
-Deprecated `Thread.stop` is replaced by `Thread.interrupted` checks.
-
-Saving and history is handled by Java Serialization, giving a performance boost. (This will be replaced by a text-based, more portable format for saving).
-
-Different input modes are handled by multiple classes, making the code more readable.
-
-## Gui Improvements
-
-Left over `java.awt` components are replaced by their `javax.swing` counterparts, this reduces flickering when resizing and interacting. The Look and Feel is changed to a more modern one (FlatLaf). The Gui is build using GUI Designer in IntelliJ, this allows for easier updating and managing of the layout.
-
-The state management of the Gui is handled by Java Beans' PropertyChangeSupport to keep the Gui in sync with the application state.
-
-A menu, hotkeys and tooltips are added.
-
-Help is based on text and is draggable.
-
-## Building
+## Building & Running
 
 This version of the code requires a JDK (at least version 11) and [maven](https://maven.apache.org/) to build.
 
@@ -45,13 +18,31 @@ This version of the code requires a JDK (at least version 11) and [maven](https:
 mvn clean package
 ```
 
-## Running
-
-After compiling and packaging the jar is placed in the `target` directory.
+After compiling and packaging the jar is placed in the `target` directory, double click it or execute it with the java command.
 
 ```bash
-java -jar ./target/origami-editor-0.0.5-SNAPSHOT.jar
+javaw -jar ./target/origami-editor-0.0.5-SNAPSHOT.jar
 ```
+
+## Configuration
+
+Configuration is saved to the following directory, called the _configuration directory_:
+
+- `%APPDATA%\origami-editor` on Windows
+- `~/Library/Application Support/origami-editor` on Mac
+- `~/.origami-editor` on Linux and other systems
+
+It should not be needed to access files in this directory yourself.
+
+### Button configuration (hotkeys, names, help, tooltip)
+
+Button configuration is found in properties files [`hotkey.properties`](./src/main/resources/hotkey.properties), [`name.properties`](./src/main/resources/name.properties), [`help.properties`](./src/main/resources/help.properties), [`tooltip.properties`](./src/main/resources/tooltip.properties). Placing these files in the configuration directory or in the same directory as the jar will override the values, allowing customization of hotkeys or translations.
+
+Read the JavaDoc on [`javax.swing.KeyStroke.getKeyStroke(String)`](https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/javax/swing/KeyStroke.html#getKeyStroke(java.lang.String)) for more information on the format used for hotkeys. Wrong KeyStroke strings are reported to the consoleDialog.
+
+### Application state
+
+The application state is saved to `config.json` in the configuration directory. It contains information about the application and is restored when the application starts.
 
 ## Creating a  Windows executable
 
@@ -100,6 +91,32 @@ makensis installer.nsi # Create an installer which install java and the jar
 | Background_camera | Haikei_camera
 | StringOp | Moji_sousa
 
+## Changes made
+
+### Translations
+See also [TRANSLATIONS.md](TRANSLATIONS.md).
+
+Classnames, variable names and comments are translated to English.
+
+### Code Quality
+
+Integers with only values 1 and 0 are replaced with booleans. Integers with a specific set of values are replaced with enums. Dead code is removed.
+
+Deprecated `Thread.stop` is replaced by `Thread.interrupted` checks.
+
+Saving and history is handled by Java Serialization, giving a performance boost. (This will be replaced by a text-based, more portable format for saving).
+
+Different input modes are handled by multiple classes, making the code more readable.
+
+### Gui Improvements
+
+Left over `java.awt` components are replaced by their `javax.swing` counterparts, this reduces flickering when resizing and interacting. The Look and Feel is changed to a more modern one (FlatLaf). The Gui is build using GUI Designer in IntelliJ, this allows for easier updating and managing of the layout.
+
+The state management of the Gui is handled by Java Beans' PropertyChangeSupport to keep the Gui in sync with the application state.
+
+A menu, hotkeys and tooltips are added.
+
+Help is based on text and is draggable.
 
 ## Notes
 

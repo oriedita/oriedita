@@ -27,7 +27,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Queue;
 import java.util.*;
@@ -36,9 +35,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 import static origami_editor.tools.ResourceUtil.createImageIcon;
 import static origami_editor.tools.ResourceUtil.getAppDir;
@@ -94,7 +90,7 @@ public class App extends JFrame implements ActionListener {
     private Future<?> currentTask;
 
     public App() {
-        setTitle("Origami Editor " + getVersionFromManifest());//Specify the title and execute the constructor
+        setTitle("Origami Editor " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
         frame_title_0 = getTitle();
         frame_title = frame_title_0;//Store title in variable
         mainDrawingWorker.setTitle(frame_title);
@@ -464,25 +460,6 @@ public class App extends JFrame implements ActionListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private static String getVersionFromManifest() {
-        try {
-            File file = new File(App.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            if (file.isFile()) {
-                JarFile jarFile = new JarFile(file);
-                Manifest manifest = jarFile.getManifest();
-                Attributes attributes = manifest.getMainAttributes();
-                final String version = attributes.getValue("Implementation-Version");
-
-                if (version != null) {
-                    return version;
-                }
-            }
-        } catch (Exception e) {
-            // ignore
-        }
-        return "dev";
     }
 
     private void setData(FileModel fileModel) {
@@ -1073,7 +1050,7 @@ public class App extends JFrame implements ActionListener {
         File file = new File(fileModel.getSavedFileName());
 
         Save save = mainDrawingWorker.getSave_for_export();
-        save.setVersion(getVersionFromManifest());
+        save.setVersion(ResourceUtil.getVersionFromManifest());
 
         saveAndName2File(save, file);
 
@@ -1088,7 +1065,7 @@ public class App extends JFrame implements ActionListener {
         }
 
         Save save = mainDrawingWorker.getSave_for_export();
-        save.setVersion(getVersionFromManifest());
+        save.setVersion(ResourceUtil.getVersionFromManifest());
 
         saveAndName2File(save, file);
 
@@ -1294,32 +1271,17 @@ public class App extends JFrame implements ActionListener {
         repaintCanvas();
     }
 
-    private String getBundleString(String bundle, String key) {
-        ResourceBundle userBundle = null;
-
-        try {
-            Path appDir = ResourceUtil.getAppDir().resolve(bundle + ".properties");
-            userBundle = new PropertyResourceBundle(Files.newInputStream(appDir));
-        } catch (IOException e) {
-        }
-
-        ResourceBundle resourceBundle = ResourceBundle.getBundle(bundle);
-
-        String value = null;
-        if (userBundle != null && userBundle.containsKey(key)) {
-            value = userBundle.getString(key);
-        } else if (resourceBundle.containsKey(key)) {
-            value = resourceBundle.getString(key);
-        }
-
-        return value;
-    }
-
     public void registerButton(AbstractButton button, String key) {
-        String name = getBundleString("name", key);
-        String keyStroke = getBundleString("hotkey", key);
-        String tooltip = getBundleString("tooltip", key);
-        String help = getBundleString("help", key);
+        String name = ResourceUtil.getBundleString("name", key);
+        String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
+        String tooltip = ResourceUtil.getBundleString("tooltip", key);
+        String help = ResourceUtil.getBundleString("help", key);
+
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
+
+        if (!StringOp.isEmpty(keyStrokeString) && keyStroke == null) {
+            System.err.println("Keystroke for \"" + key + "\": \"" + keyStrokeString + "\" is invalid");
+        }
 
         String tooltipText = "<html>";
         if (!StringOp.isEmpty(name)) {
@@ -1328,8 +1290,8 @@ public class App extends JFrame implements ActionListener {
         if (!StringOp.isEmpty(tooltip)) {
             tooltipText += tooltip + "<br/>";
         }
-        if (!StringOp.isEmpty(keyStroke)) {
-            tooltipText += "Hotkey: " + keyStroke + "<br/>";
+        if (keyStroke != null) {
+            tooltipText += "Hotkey: " + keyStrokeString + "<br/>";
         }
 
         if (!tooltipText.equals("<html>")) {
@@ -1352,13 +1314,13 @@ public class App extends JFrame implements ActionListener {
                 }
             }
 
-            if (!StringOp.isEmpty(keyStroke)) {
+            if (keyStroke != null) {
                 // Menu item can handle own accelerator (and shows a nice hint).
-                menuItem.setAccelerator(KeyStroke.getKeyStroke(keyStroke));
+                menuItem.setAccelerator(keyStroke);
             }
-        } else if (!StringOp.isEmpty(keyStroke)) {
-            helpInputMap.put(KeyStroke.getKeyStroke(keyStroke), button);
-            button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keyStroke), key);
+        } else if (keyStroke != null) {
+            helpInputMap.put(keyStroke, button);
+            button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
             button.getActionMap().put(key, new Click(button));
         }
 
