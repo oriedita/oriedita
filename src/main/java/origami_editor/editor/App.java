@@ -18,6 +18,7 @@ import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.editor.json.DefaultObjectMapper;
 import origami_editor.editor.task.CheckCAMVTask;
 import origami_editor.editor.task.FoldingEstimateTask;
+import origami_editor.tools.KeyStrokeUtil;
 import origami_editor.tools.ResourceUtil;
 import origami_editor.tools.StringOp;
 
@@ -1271,6 +1272,31 @@ public class App extends JFrame implements ActionListener {
         repaintCanvas();
     }
 
+    public void setTooltip(AbstractButton button, String key) {
+        String name = ResourceUtil.getBundleString("name", key);
+        String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
+        String tooltip = ResourceUtil.getBundleString("tooltip", key);
+        String help = ResourceUtil.getBundleString("help", key);
+
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
+
+
+        String tooltipText = "<html>";
+        if (!StringOp.isEmpty(name)) {
+            tooltipText += "<i>" + name + "</i><br/>";
+        }
+        if (!StringOp.isEmpty(tooltip)) {
+            tooltipText += tooltip + "<br/>";
+        }
+        if (keyStroke != null) {
+            tooltipText += "Hotkey: " + KeyStrokeUtil.toString(keyStroke) + "<br/>";
+        }
+
+        if (!tooltipText.equals("<html>")) {
+            button.setToolTipText(tooltipText);
+        }
+    }
+
     public void registerButton(AbstractButton button, String key) {
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
@@ -1283,20 +1309,7 @@ public class App extends JFrame implements ActionListener {
             System.err.println("Keystroke for \"" + key + "\": \"" + keyStrokeString + "\" is invalid");
         }
 
-        String tooltipText = "<html>";
-        if (!StringOp.isEmpty(name)) {
-            tooltipText += "<i>" + name + "</i><br/>";
-        }
-        if (!StringOp.isEmpty(tooltip)) {
-            tooltipText += tooltip + "<br/>";
-        }
-        if (keyStroke != null) {
-            tooltipText += "Hotkey: " + keyStrokeString + "<br/>";
-        }
-
-        if (!tooltipText.equals("<html>")) {
-            button.setToolTipText(tooltipText);
-        }
+        setTooltip(button, key);
 
         if (button instanceof JMenuItem) {
             JMenuItem menuItem = (JMenuItem) button;
@@ -1318,9 +1331,13 @@ public class App extends JFrame implements ActionListener {
                 // Menu item can handle own accelerator (and shows a nice hint).
                 menuItem.setAccelerator(keyStroke);
             }
-        } else if (keyStroke != null) {
-            helpInputMap.put(keyStroke, button);
-            button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
+        } else {
+            addContextMenu(button, key, keyStroke);
+
+            if (keyStroke != null) {
+                helpInputMap.put(keyStroke, button);
+                button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
+            }
             button.getActionMap().put(key, new Click(button));
         }
 
@@ -1331,6 +1348,70 @@ public class App extends JFrame implements ActionListener {
                 Button_shared_operation();
             });
         }
+    }
+
+    private void addContextMenu(AbstractButton button, String key, KeyStroke keyStroke) {
+        JPopupMenu popup = new JPopupMenu();
+        Action addKeybindAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                KeyStroke currentKeyStroke = button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).keys() != null && button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).keys().length > 0
+                        ? button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).keys()[0]
+                        : null;
+
+                new SelectKeyStrokeDialog(App.this, button, helpInputMap, currentKeyStroke, newKeyStroke -> {
+                    if (newKeyStroke != null && helpInputMap.containsKey(newKeyStroke) && helpInputMap.get(newKeyStroke) != button) {
+                        String conflictingButton = (String)helpInputMap.get(newKeyStroke).getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).get(newKeyStroke);
+                        JOptionPane.showMessageDialog(App.this, "Conflicting KeyStroke! Conflicting with " + conflictingButton);
+                        return false;
+                    }
+
+                    ResourceUtil.updateBundleKey("hotkey", key, newKeyStroke == null ? null : newKeyStroke.toString());
+
+                    helpInputMap.remove(currentKeyStroke);
+                    button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(currentKeyStroke);
+
+                    if (newKeyStroke != null) {
+                        helpInputMap.put(newKeyStroke, button);
+                        button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(newKeyStroke, key);
+                        putValue(Action.NAME, "Change key stroke (Current: " + KeyStrokeUtil.toString(newKeyStroke) + ")");
+                    } else {
+                        putValue(Action.NAME, "Change key stroke");
+                    }
+
+                    setTooltip(button, key);
+
+                    return true;
+                });
+            }
+        };
+        String actionName= "Change key stroke";
+        if (keyStroke != null) {
+            actionName += " (Current: " + KeyStrokeUtil.toString(keyStroke) + ")";
+        }
+        addKeybindAction.putValue(Action.NAME, actionName);
+        popup.add(addKeybindAction);
+
+        java.awt.Point point = new java.awt.Point();
+
+        button.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                point.x = e.getX();
+                point.y = e.getY();
+
+                maybeShowPopup(e);
+            }
+            public void mouseReleased(MouseEvent e) {
+                maybeShowPopup(e);
+            }
+
+            private void maybeShowPopup(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    popup.show(e.getComponent(),
+                            e.getX(), e.getY());
+                }
+            }
+        });
     }
 
     public boolean isTaskRunning() {
