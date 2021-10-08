@@ -21,6 +21,9 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Import and Export Orihime files.
+ */
 public class Orh {
     /**
      * Read an Orihime file
@@ -94,7 +97,9 @@ public class Orh {
 
         CanvasModel canvasModel = new CanvasModel();
         save.setCanvasModel(canvasModel);
+
         ApplicationModel applicationModel = new ApplicationModel();
+        save.setApplicationModel(applicationModel);
 
         // ----------------------------------------- チェックボックス等の設定の読み込み
         reading = false;
@@ -655,7 +660,7 @@ public class Orh {
             pw.println("</camera_of_orisen_nyuuryokuzu>");
 
             pw.println("<settei>");
-            ApplicationModel applicationModel = new ApplicationModel();
+            ApplicationModel applicationModel = save.getApplicationModel() != null ? save.getApplicationModel() : new ApplicationModel();
             pw.println("<ckbox_mouse_settei>" + applicationModel.getMouseWheelMovesCreasePattern() + "</ckbox_mouse_settei>");
             pw.println("<ckbox_ten_sagasi>" + applicationModel.getDisplayPointSpotlight() + "</ckbox_ten_sagasi>");
             pw.println("<ckbox_ten_hanasi>" + applicationModel.getDisplayPointOffset() + "</ckbox_ten_hanasi>");

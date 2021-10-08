@@ -328,10 +328,7 @@ public class App extends JFrame implements ActionListener {
         setLocationRelativeTo(null);//If you want to put the application window in the center of the screen, use the setLocationRelativeTo () method. If you pass null, it will always be in the center.
         setVisible(true);
 
-        java.awt.Point canvasLocation = canvas.getLocationOnScreen();
-        Dimension canvasSize = canvas.getSize();
-
-        explanation = new HelpDialog(this, canvasLocation, canvasSize);
+        explanation = new HelpDialog(this, canvas.getLocationOnScreen(), canvas.getSize());
 
         applicationModel.addPropertyChangeListener(e -> {
             explanation.setVisible(applicationModel.getHelpVisible());
@@ -907,7 +904,7 @@ public class App extends JFrame implements ActionListener {
         } else if (exportFile.getName().endsWith(".cp")) {
             Cp.exportFile(mainDrawingWorker.getSave_for_export(), exportFile);
         } else if (exportFile.getName().endsWith(".orh")) {
-            Orh.exportFile(mainDrawingWorker.getSave_for_export(), exportFile);
+            Orh.exportFile(mainDrawingWorker.getSave_for_export_with_applicationModel(), exportFile);
         }
     }
 

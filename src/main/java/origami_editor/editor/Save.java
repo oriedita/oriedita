@@ -3,6 +3,7 @@ package origami_editor.editor;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.databinding.GridModel;
@@ -23,6 +24,15 @@ public class Save implements Serializable {
     private CanvasModel canvasModel;
     private GridModel gridModel;
     private FoldedFigureModel foldedFigureModel;
+    private ApplicationModel applicationModel;
+
+    public ApplicationModel getApplicationModel() {
+        return applicationModel;
+    }
+
+    public void setApplicationModel(ApplicationModel applicationModel) {
+        this.applicationModel = applicationModel;
+    }
 
     public String getVersion() {
         return version;

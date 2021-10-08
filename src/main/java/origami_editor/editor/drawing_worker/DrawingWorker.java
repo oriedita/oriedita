@@ -140,6 +140,10 @@ public class DrawingWorker {
             app.canvas.creasePatternCamera.setCamera(memo1.getCreasePatternCamera());
         }
 
+        if (memo1.getApplicationModel() != null) {
+            app.applicationModel.set(memo1.getApplicationModel());
+        }
+
         app.canvasModel.set(memo1.getCanvasModel());
 
         app.gridModel.set(memo1.getGridModel());
@@ -253,6 +257,14 @@ public class DrawingWorker {
         save.set(foldLineSet.getSave());
         save.add(auxLines.h_getSave());
         saveAdditionalInformation(save);
+
+        return save;
+    }
+
+    public Save getSave_for_export_with_applicationModel() {
+        Save save = getSave_for_export();
+
+        save.setApplicationModel(app.applicationModel);
 
         return save;
     }
