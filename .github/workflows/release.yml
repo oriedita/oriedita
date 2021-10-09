@@ -67,6 +67,8 @@ jobs:
           mkdir lib
           mkdir ci-build
           cp target/origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar lib/
+          $deps = jdeps --print-module-deps --ignore-missing-deps lib/origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar
+          jlink --add-modules $deps --output ci-build/origami-editor-runtime
 
       - name: Create portable executable
         run: |
@@ -78,6 +80,7 @@ jobs:
             --app-version ${{ steps.get_version.outputs.version-without-v }} `
             --main-jar origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar `
             --icon build/logo.ico `
+            --runtime-image ci-build/origami-editor-runtime `
 
       - name: Create zip for portable executable
         uses: papeloto/action-zip@v1
@@ -99,6 +102,7 @@ jobs:
             --win-dir-chooser `
             --win-menu `
             --win-shortcut `
+            --runtime-image ci-build/origami-editor-runtime `
 
       - name: Release
         uses: softprops/action-gh-release@v1
