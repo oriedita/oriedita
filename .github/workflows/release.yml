@@ -18,7 +18,7 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn -B package --file pom.xml
-        
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -36,45 +36,66 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 16
+
+      - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
-          java-version: '16'
+          java-version: '17'
           distribution: 'adopt'
           cache: maven
 
-      - name: 'Install makensis (apt)'
-        run: sudo apt update && sudo apt install -y nsis nsis-pluginapi
-        if: ${{ matrix.os == 'ubuntu-20.04' }}
-
-      - name: 'Install makensis (homebrew)'
-        run: brew update && brew install makensis
-        if: ${{ matrix.os == 'macos-latest' }}
-
-      - name: 'Set Plugin permissions'
-        run: sudo chown -R $(whoami) /usr/share/nsis/Plugins/
-        if: ${{ matrix.os == 'ubuntu-20.04' }}
+      - name: Get the version
+        id: mvn_version
+        run: |
+          echo "::set-output name=version::$(mvn -B help:evaluate -D"expression=project.version" -q -D"forceStdout" --file pom.xml)"
 
       - name: Build project and prepare JRE
         run: |
-          cd build ; ./prepare.ps1
+          mvn -B clean package --file pom.xml
+          mkdir lib
+          mkdir out
+          cp target/origami-editor-${{ steps.mvn_version.outputs.version }}.jar lib/
 
-      - name: Create nsis wrapper executable
-        uses: joncloud/makensis-action@v3.3
-        with:
-          script-file: build/wrapper.nsi
+      - name: Create portable executable
+        run: |
+          jpackage \
+            --type app-image \
+            --name origami-editor \
+            --input lib \
+            --dest ci-build \
+            --app-version ${{ steps.mvn_version.outputs.version }}
+            --main-jar origami-editor-${{ steps.mvn_version.outputs.version }}.jar \
+            --icon logo.ico \
+            --java-options Xmx8g \
+            --java-options "-Dfile.encoding=\"UTF-8\""
 
-      - name: Create nsis portable executable
-        uses: joncloud/makensis-action@v3.3
+      - name: Create zip for portable executable
+        uses: papeloto/action-zip@v1
         with:
-          script-file: build/portable.nsi
+          files: ci-build/origami-editor
+          dest: ci-build/origami-editor-portable-${{ steps.mvn_version.outputs.version}}.zip
 
-      - name: Create nsis installer
-        uses: joncloud/makensis-action@v3.3
-        with:
-          script-file: build/installer.nsi
+      - name: Create installer
+        run: |
+          jpackage \
+            --name origami-editor \
+            --input lib \
+            --dest ci-build \
+            --app-version ${{ steps.mvn_version.outputs.version }}
+            --main-jar origami-editor-${{ steps.mvn_version.outputs.version }}.jar \
+            --icon logo.ico \
+            --file-associations build/FAori.properties \
+            --license-file LICENSE.md \
+            --win-dir-chooser \
+            --win-menu \
+            --win-shortcut \
+            --java-options Xmx8g \
+            --java-options "-Dfile.encoding=\"UTF-8\""
+
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: target/origami-editor-*.exe
+          files: |
+            ci-build/origami-editor-*.exe
+            ci-build/origami-editor-portable-*.zip
