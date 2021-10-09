@@ -69,7 +69,7 @@ jobs:
             --dest ci-build `
             --app-version ${{ steps.mvn_version.outputs.version }} `
             --main-jar origami-editor-${{ steps.mvn_version.outputs.version }}.jar `
-            --icon logo.ico `
+            --icon build/logo.ico `
             --java-options Xmx8g `
             --java-options '-Dfile.encoding="UTF-8"' `
 
@@ -87,7 +87,7 @@ jobs:
             --dest ci-build `
             --app-version ${{ steps.mvn_version.outputs.version }} `
             --main-jar origami-editor-${{ steps.mvn_version.outputs.version }}.jar `
-            --icon logo.ico `
+            --icon build/logo.ico `
             --file-associations build/FAori.properties `
             --license-file LICENSE.md `
             --win-dir-chooser `
