@@ -71,7 +71,7 @@ jobs:
             --main-jar origami-editor-${{ steps.mvn_version.outputs.version }}.jar `
             --icon logo.ico `
             --java-options Xmx8g `
-            --java-options "-Dfile.encoding=\"UTF-8\"" `
+            --java-options '-Dfile.encoding="UTF-8"' `
 
       - name: Create zip for portable executable
         uses: papeloto/action-zip@v1
@@ -94,7 +94,7 @@ jobs:
             --win-menu `
             --win-shortcut `
             --java-options Xmx8g `
-            --java-options "-Dfile.encoding=\"UTF-8\"" `
+            --java-options '-Dfile.encoding="UTF-8"' `
 
 
       - name: Release
