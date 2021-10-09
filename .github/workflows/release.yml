@@ -57,16 +57,16 @@ jobs:
           cp target/origami-editor-${{ steps.mvn_version.outputs.version }}.jar lib/
 
       - name: Create portable executable
-        run: |
-          jpackage \
-            --type app-image \
-            --name origami-editor \
-            --input lib \
-            --dest ci-build \
+        run: >
+          jpackage
+            --type app-image
+            --name origami-editor
+            --input lib
+            --dest ci-build
             --app-version ${{ steps.mvn_version.outputs.version }}
-            --main-jar origami-editor-${{ steps.mvn_version.outputs.version }}.jar \
-            --icon logo.ico \
-            --java-options Xmx8g \
+            --main-jar origami-editor-${{ steps.mvn_version.outputs.version }}.jar
+            --icon logo.ico
+            --java-options Xmx8g
             --java-options "-Dfile.encoding=\"UTF-8\""
 
       - name: Create zip for portable executable
@@ -76,20 +76,20 @@ jobs:
           dest: ci-build/origami-editor-portable-${{ steps.mvn_version.outputs.version}}.zip
 
       - name: Create installer
-        run: |
-          jpackage \
-            --name origami-editor \
-            --input lib \
-            --dest ci-build \
+        run: >
+          jpackage
+            --name origami-editor
+            --input lib
+            --dest ci-build
             --app-version ${{ steps.mvn_version.outputs.version }}
-            --main-jar origami-editor-${{ steps.mvn_version.outputs.version }}.jar \
-            --icon logo.ico \
-            --file-associations build/FAori.properties \
-            --license-file LICENSE.md \
-            --win-dir-chooser \
-            --win-menu \
-            --win-shortcut \
-            --java-options Xmx8g \
+            --main-jar origami-editor-${{ steps.mvn_version.outputs.version }}.jar
+            --icon logo.ico
+            --file-associations build/FAori.properties
+            --license-file LICENSE.md
+            --win-dir-chooser
+            --win-menu
+            --win-shortcut
+            --java-options Xmx8g
             --java-options "-Dfile.encoding=\"UTF-8\""
 
 
