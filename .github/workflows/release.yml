@@ -27,6 +27,10 @@ jobs:
   create_executable:
     runs-on: ${{ matrix.os }}
 
+    defaults:
+      run:
+        shell: pwsh
+
     strategy:
       matrix:
         os:
@@ -57,17 +61,17 @@ jobs:
           cp target/origami-editor-${{ steps.mvn_version.outputs.version }}.jar lib/
 
       - name: Create portable executable
-        run: >
-          jpackage
-            --type app-image
-            --name origami-editor
-            --input lib
-            --dest ci-build
-            --app-version ${{ steps.mvn_version.outputs.version }}
-            --main-jar origami-editor-${{ steps.mvn_version.outputs.version }}.jar
-            --icon logo.ico
-            --java-options Xmx8g
-            --java-options "-Dfile.encoding=\"UTF-8\""
+        run: |
+          jpackage `
+            --type app-image `
+            --name origami-editor `
+            --input lib `
+            --dest ci-build `
+            --app-version ${{ steps.mvn_version.outputs.version }} `
+            --main-jar origami-editor-${{ steps.mvn_version.outputs.version }}.jar `
+            --icon logo.ico `
+            --java-options Xmx8g `
+            --java-options "-Dfile.encoding=\"UTF-8\"" `
 
       - name: Create zip for portable executable
         uses: papeloto/action-zip@v1
@@ -76,21 +80,21 @@ jobs:
           dest: ci-build/origami-editor-portable-${{ steps.mvn_version.outputs.version}}.zip
 
       - name: Create installer
-        run: >
-          jpackage
-            --name origami-editor
-            --input lib
-            --dest ci-build
-            --app-version ${{ steps.mvn_version.outputs.version }}
-            --main-jar origami-editor-${{ steps.mvn_version.outputs.version }}.jar
-            --icon logo.ico
-            --file-associations build/FAori.properties
-            --license-file LICENSE.md
-            --win-dir-chooser
-            --win-menu
-            --win-shortcut
-            --java-options Xmx8g
-            --java-options "-Dfile.encoding=\"UTF-8\""
+        run: |
+          jpackage `
+            --name origami-editor `
+            --input lib `
+            --dest ci-build `
+            --app-version ${{ steps.mvn_version.outputs.version }} `
+            --main-jar origami-editor-${{ steps.mvn_version.outputs.version }}.jar `
+            --icon logo.ico `
+            --file-associations build/FAori.properties `
+            --license-file LICENSE.md `
+            --win-dir-chooser `
+            --win-menu `
+            --win-shortcut `
+            --java-options Xmx8g `
+            --java-options "-Dfile.encoding=\"UTF-8\"" `
 
 
       - name: Release
