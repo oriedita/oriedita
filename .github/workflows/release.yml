@@ -16,6 +16,13 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           cache: maven
+
+      - id: get_version
+        uses: battila7/get-version-action@v2
+
+      - name: Set the version
+        run: mvn -B versions:set -DnewVersion="${{ steps.get_version.outputs.version-without-v }}" --file pom.xml
+
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
@@ -48,17 +55,18 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Get the version
-        id: mvn_version
-        run: |
-          echo "::set-output name=version::$(mvn -B help:evaluate -D"expression=project.version" -q -D"forceStdout" --file pom.xml)"
+      - id: get_version
+        uses: battila7/get-version-action@v2
+
+      - name: Set the version
+        run: mvn -B versions:set -DnewVersion="${{ steps.get_version.outputs.version-without-v }}" --file pom.xml
 
       - name: Build project and prepare JRE
         run: |
           mvn -B clean package --file pom.xml
           mkdir lib
           mkdir out
-          cp target/origami-editor-${{ steps.mvn_version.outputs.version }}.jar lib/
+          cp target/origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar lib/
 
       - name: Create portable executable
         run: |
@@ -67,8 +75,8 @@ jobs:
             --name origami-editor `
             --input lib `
             --dest ci-build `
-            --app-version ${{ steps.mvn_version.outputs.version }} `
-            --main-jar origami-editor-${{ steps.mvn_version.outputs.version }}.jar `
+            --app-version ${{ steps.get_version.outputs.version-without-v }} `
+            --main-jar origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar `
             --icon build/logo.ico `
             --java-options Xmx8g `
             --java-options '-Dfile.encoding="UTF-8"' `
@@ -77,7 +85,7 @@ jobs:
         uses: papeloto/action-zip@v1
         with:
           files: ci-build/origami-editor
-          dest: ci-build/origami-editor-portable-${{ steps.mvn_version.outputs.version}}.zip
+          dest: ci-build/origami-editor-portable-${{ steps.get_version.outputs.version-without-v }}.zip
 
       - name: Create installer
         run: |
@@ -85,8 +93,8 @@ jobs:
             --name origami-editor `
             --input lib `
             --dest ci-build `
-            --app-version ${{ steps.mvn_version.outputs.version }} `
-            --main-jar origami-editor-${{ steps.mvn_version.outputs.version }}.jar `
+            --app-version ${{ steps.get_version.outputs.version-without-v }} `
+            --main-jar origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar `
             --icon build/logo.ico `
             --file-associations build/FAori.properties `
             --license-file LICENSE.md `
