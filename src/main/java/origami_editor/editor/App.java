@@ -96,6 +96,14 @@ public class App extends JFrame implements ActionListener {
         frame_title = frame_title_0;//Store title in variable
         mainDrawingWorker.setTitle(frame_title);
 
+        final ConsoleDialog consoleDialog;
+
+        if (System.console() == null) {
+            consoleDialog = new ConsoleDialog();
+        } else {
+            consoleDialog = null;
+        }
+
         //--------------------------------------------------------------------------------------------------
         addWindowListener(new WindowAdapter() {//ウィンドウの状態が変化したときの処理
             //終了ボタンを有効化
@@ -327,9 +335,32 @@ public class App extends JFrame implements ActionListener {
         setVisible(true);
 
         explanation = new HelpDialog(this, canvas.getLocationOnScreen(), canvas.getSize());
+        explanation.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                applicationModel.setHelpVisible(false);
+            }
+        });
 
+        if (consoleDialog != null) {
+            consoleDialog.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    applicationModel.setConsoleVisible(false);
+                }
+            });
+            applicationModel.addPropertyChangeListener(e -> {
+                if (e.getPropertyName() == null || e.getPropertyName().equals("consoleVisible")) {
+                    consoleDialog.setVisible(applicationModel.getConsoleVisible());
+                }
+                requestFocus();
+            });
+            consoleDialog.setVisible(applicationModel.getConsoleVisible());
+        }
         applicationModel.addPropertyChangeListener(e -> {
-            explanation.setVisible(applicationModel.getHelpVisible());
+            if (e.getPropertyName() == null || e.getPropertyName().equals("helpVisible")) {
+                explanation.setVisible(applicationModel.getHelpVisible());
+            }
             requestFocus();
         });
         explanation.setVisible(applicationModel.getHelpVisible());
