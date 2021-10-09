@@ -12,19 +12,19 @@ package origami.folding.permutation;
 public class PermutationGenerator {
 
     private int count = 0;
-    private int numDigits;
+    private final int numDigits;
 
     /** digits[i] gives the element at position i. */
-    private int[] digits;
+    private final int[] digits;
 
     /** map[i] gives the position of element i. */
-    private int[] map;
+    private final int[] map;
 
     // swapHistory[i] == j >= i means we swap index i with index j in step i;
     // swapHistory[i] == i - 1 means we're not done yet.
-    private int[] swapHistory;
+    private final int[] swapHistory;
 
-    private PairGuide pairGuide;
+    private final PairGuide pairGuide;
 
     public PermutationGenerator(int numDigits) {
         this.numDigits = numDigits;

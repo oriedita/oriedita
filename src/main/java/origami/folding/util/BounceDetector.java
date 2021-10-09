@@ -30,10 +30,10 @@ public class BounceDetector {
     private static final int threshold = 3;
     private static final int target = 6;
 
-    private Map<Integer, Integer> high = new HashMap<Integer, Integer>();
-    private Map<Integer, Integer> low = new HashMap<Integer, Integer>();
-    private List<Integer> highMatch = new ArrayList<>();
-    private List<Integer> lowMatch = new ArrayList<>();
+    private final Map<Integer, Integer> high = new HashMap<>();
+    private final Map<Integer, Integer> low = new HashMap<>();
+    private final List<Integer> highMatch = new ArrayList<>();
+    private final List<Integer> lowMatch = new ArrayList<>();
 
     // To prevent back-and-forth swapping
     private int lastH = 0, lastL = 0;

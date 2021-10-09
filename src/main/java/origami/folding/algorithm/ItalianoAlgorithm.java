@@ -12,14 +12,14 @@ public class ItalianoAlgorithm {
 
     public static final int mask = (1 << 16) - 1;
 
-    private SubFace sf;
-    private int size;
+    private final SubFace sf;
+    private final int size;
 
     /**
      * matrix[i][j] is the node of j on the spanning tree of i, of which existence
      * implies that i > j. matrix[i][i] is the root of the spanning tree of i.
      */
-    private Node[][] matrix; // 1-based
+    private final Node[][] matrix; // 1-based
 
     /**
      * Prevents heap memory overflow. Still, for large projects, it is necessary to
@@ -27,10 +27,10 @@ public class ItalianoAlgorithm {
      * more efficient than other classes such as ArrayList, LinkedList, etc. We use
      * int64 to store 4 int16 parameters.
      */
-    private ArrayDeque<Long> stack = new ArrayDeque<>();
+    private final ArrayDeque<Long> stack = new ArrayDeque<>();
 
     /** Each changed entry is represented as int32 using upper and lower bits. */
-    public ArrayDeque<Integer> changes = new ArrayDeque<Integer>();
+    public ArrayDeque<Integer> changes = new ArrayDeque<>();
 
     public ItalianoAlgorithm(SubFace sf) {
         this.sf = sf;
@@ -62,7 +62,7 @@ public class ItalianoAlgorithm {
 
     public Iterable<Integer> flush() {
         Iterable<Integer> result = changes;
-        changes = new ArrayDeque<Integer>();
+        changes = new ArrayDeque<>();
         return result;
     }
 
@@ -92,7 +92,7 @@ public class ItalianoAlgorithm {
         stack.add(x << 48 | j << 32 | u << 16 | v);
     }
 
-    public class Node {
+    public static class Node {
         // We only need these two to represent arbitrary tree!
         public int firstChild;
         public int nextSibling;

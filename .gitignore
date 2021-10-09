@@ -1,3 +1,4 @@
 out/
 target/
-.snap.debug
+*.snap.debug
+*.versionsBackup

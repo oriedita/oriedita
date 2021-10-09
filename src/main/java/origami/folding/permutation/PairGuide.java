@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 public class PairGuide {
 
-    private int numDigits;
+    private final int numDigits;
 
     /**
      * guide[i] contains a list of elements that must appear after i.
@@ -26,24 +26,24 @@ public class PairGuide {
      * Orihime use int[50] for each digit, but I'm not sure if that's safe
      * (especially now with temporary guides), so I use ArrayList instead.
      */
-    private ArrayList<Integer>[] guide;
+    private final ArrayList<Integer>[] guide;
 
     /**
      * goal is like the opposite of guide, where goal[i] specify the number of
      * elements that must appear before i.
      */
-    private int[] goal;
+    private final int[] goal;
 
     /**
      * score[i] is the current progress element i made towards goal[i].
      */
-    private int[] score;
+    private final int[] score;
 
     // These are for adding temporary guide
     private boolean locked = false;
     private boolean added = false;
-    private int[] initGoal;
-    private int[] initGuide;
+    private final int[] initGoal;
+    private final int[] initGuide;
 
     @SuppressWarnings("unchecked")
     public PairGuide(int numDigits) {

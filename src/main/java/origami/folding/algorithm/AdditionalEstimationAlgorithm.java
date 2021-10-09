@@ -20,10 +20,10 @@ public class AdditionalEstimationAlgorithm {
     private static final int ABOVE = HierarchyList.ABOVE_1;
     private static final int BELOW = HierarchyList.BELOW_0;
 
-    private HierarchyList hierarchyList;
-    private SubFace[] subFaces; // indices start from 1
+    private final HierarchyList hierarchyList;
+    private final SubFace[] subFaces; // indices start from 1
 
-    private ItalianoAlgorithm[] IA;
+    private final ItalianoAlgorithm[] IA;
     private Map<Integer, List<Integer>> relationObservers;
 
     /**
@@ -119,10 +119,7 @@ public class AdditionalEstimationAlgorithm {
                     if (!linearMode && hierarchyList.isEmpty(I, J)) {
                         // Observing potential changes to the relation
                         int pos = (I << 16) | J;
-                        List<Integer> list = relationObservers.get(pos);
-                        if (list == null) {
-                            relationObservers.put(pos, list = new ArrayList<>());
-                        }
+                        List<Integer> list = relationObservers.computeIfAbsent(pos, k -> new ArrayList<>());
                         list.add(s);
                     } else if (hierarchyList.get(I, J) == ABOVE) {
                         IA[s].add(i, j);

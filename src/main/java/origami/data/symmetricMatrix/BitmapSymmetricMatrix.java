@@ -74,6 +74,6 @@ public class BitmapSymmetricMatrix extends SymmetricMatrix {
 
     private long position(long i, long j) {
         // we use long here to prevent multiplication overflow
-        return ((2 * size + 2 - i) * (i - 1) / 2 + j - i) * bits;
+        return ((2L * size + 2 - i) * (i - 1) / 2 + j - i) * bits;
     }
 }

@@ -31,9 +31,7 @@ public class ArraySymmetricMatrix extends SymmetricMatrix {
         if (other instanceof ArraySymmetricMatrix && other.size == size) {
             ArraySymmetricMatrix that = (ArraySymmetricMatrix) other;
             for (int i = 1; i <= size; i++) {
-                for (int j = 1; j <= size; j++) {
-                    matrix[i][j] = that.matrix[i][j];
-                }
+                System.arraycopy(that.matrix[i], 1, matrix[i], 1, size);
             }
         }
     }
