@@ -65,7 +65,7 @@ jobs:
         run: |
           mvn -B clean package --file pom.xml
           mkdir lib
-          mkdir out
+          mkdir ci-build
           cp target/origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar lib/
 
       - name: Create portable executable
@@ -78,8 +78,6 @@ jobs:
             --app-version ${{ steps.get_version.outputs.version-without-v }} `
             --main-jar origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar `
             --icon build/logo.ico `
-            --java-options Xmx8g `
-            --java-options '-Dfile.encoding="UTF-8"' `
 
       - name: Create zip for portable executable
         uses: papeloto/action-zip@v1
@@ -101,9 +99,6 @@ jobs:
             --win-dir-chooser `
             --win-menu `
             --win-shortcut `
-            --java-options Xmx8g `
-            --java-options '-Dfile.encoding="UTF-8"' `
-
 
       - name: Release
         uses: softprops/action-gh-release@v1
