@@ -73,16 +73,11 @@ jobs:
       - name: Create portable executable
         run: |
           jpackage `
+            @build/jpackage-common-args `
             --type app-image `
             --name "Origami Editor (Portable)" `
-            --input lib `
-            --dest ci-build `
             --app-version ${{ steps.get_version.outputs.version-without-v }} `
             --main-jar origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar `
-            --icon build/logo.ico `
-            --runtime-image ci-build/origami-editor-runtime `
-            --java-options "'-Dfile.encoding=UTF-8'" `
-            --java-options "-Xmx8g" `
 
       - name: Create zip for portable executable
         uses: papeloto/action-zip@v1
@@ -93,23 +88,11 @@ jobs:
       - name: Create installer
         run: |
           jpackage `
+            @build/jpackage-common-args `
+            @build/jpackage-installer-args `
             --name "Origami Editor" `
-            --input lib `
-            --dest ci-build `
             --app-version ${{ steps.get_version.outputs.version-without-v }} `
             --main-jar origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar `
-            --icon build/logo.ico `
-            --file-associations build/FAori.properties `
-            --file-associations build/FAcreasepattern.properties `
-            --file-associations build/FAorh.properties `
-            --license-file LICENSE.md `
-            --win-dir-chooser `
-            --win-menu `
-            --win-shortcut `
-            --win-upgrade-uuid 929a6906-b868-4311-9e94-ae469bc5dbd3 `
-            --runtime-image ci-build/origami-editor-runtime `
-            --java-options "'-Dfile.encoding=UTF-8'" `
-            --java-options "-Xmx8g" `
 
       - name: Release
         uses: softprops/action-gh-release@v1
