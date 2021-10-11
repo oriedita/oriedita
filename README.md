@@ -2,7 +2,9 @@
 
 _This a fork of Orihime オリヒメ and not affiliated with the original version._ Orihime is an awesome tool that is used by origami designers to design new origami models. Orihime is developed by MT777 and can be downloaded from  http://mt777.html.xdomain.jp/. Undertrox developed orihimeMod, which adds some extra features to the Orihime software, this version can be downloaded from https://github.com/undertrox/orihimeMod
 
-## [Download the latest Jar or Windows Executable from the Releases page.](https://github.com/qurben/origami-editor/releases)
+## [Download the latest version from the Releases page.](https://github.com/qurben/origami-editor/releases)
+
+[Download the latest development version.](https://nightly.link/qurben/origami-editor/workflows/maven/master/origami-editor-jar.zip)
 
 This project started as an effort to translate the Orihime source code to English and is based on Orihime version 3.060. After that more changes were made to improve the performance of the application.
 
