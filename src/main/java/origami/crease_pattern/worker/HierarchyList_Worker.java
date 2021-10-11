@@ -330,6 +330,11 @@ public class HierarchyList_Worker {
             int priority_max = -10000;//優先度i番目の優先度の値（大きいほうが優先度が高い）。
             int i_yusen = 0;
 
+            // Print progress for debugging
+            if (i % 1000 == 0) {
+                System.out.println("progress: " + i);
+            }
+
             for (int is0 = 1; is0 <= SubFaceTotal; is0++) { //SubFaceを１からSubFaceTotal番目までサーチ
                 int Sy;//SubFaceId_yusendo(is0)+uniquenessOfSubFace[is0] を格納
                 if (s0_no_yusenjyun[is0] == 0) {//まだ優先順位がついていないSubFaceだけを扱う
@@ -531,10 +536,27 @@ public class HierarchyList_Worker {
             s[ss].hierarchyList_at_subFace_wo_input(hierarchyList);//Enter the top and bottom information of the ss th SubFace in hierarchyList.
         }
 
-        if (additional_estimation() != HierarchyListStatus.SUCCESSFUL_1000) {
+        // Solution found, perform final checking
+        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(hierarchyList, s);
+        if (AEA.run() != HierarchyListStatus.SUCCESSFUL_1000) {
+            // This rarely happens, but typically it means the solution contradicts some of
+            // the SubFace not counted as "valid" previously. In that case, adding it to the
+            // valid set will solve the problem.
+            if (AEA.errorIndex != 0) {
+                // Add additional SubFace to the valid list and continue the search
+                int v=++SubFace_valid_number, e = AEA.errorIndex;
+                System.out.println("Adding SubFace " + e + " to the valid set index " + v);
+                SubFace temp = s[v];
+                s[v] = s[e];
+                s[e] = temp;
+
+                // record dead-end here since this SubFace is having a contradiction already
+                swapper.record(v);
+            }
             return SubFace_valid_number;
         }
 
+        // Solution is confirmed
         return 1000;
     }
 

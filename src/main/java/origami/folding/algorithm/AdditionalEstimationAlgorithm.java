@@ -26,6 +26,8 @@ public class AdditionalEstimationAlgorithm {
     private final ItalianoAlgorithm[] IA;
     private Map<Integer, List<Integer>> relationObservers;
 
+    public int errorIndex;
+
     /**
      * Decides whether to use linear search to notify ItalianoAlgorithm to update,
      * or use observer pattern. The latter is faster, but requires more memory and
@@ -58,13 +60,15 @@ public class AdditionalEstimationAlgorithm {
             new_relations = 0;
             System.out.println("additional_estimation------------------------");
 
+            int iS = 0;
             try {
                 // The outer do-while loop in the original algorithm is redundant.
-                for (int iS = 1; iS < subFaces.length; iS++) {
+                for (iS = 1; iS < subFaces.length; iS++) {
                     int changes = checkTransitivity(subFaces[iS], IA[iS]);
                     new_relations += changes;
                 }
             } catch (InferenceFailureException e) {
+                errorIndex = iS;
                 return HierarchyListStatus.CONTRADICTED_2;
             }
 
@@ -119,7 +123,10 @@ public class AdditionalEstimationAlgorithm {
                     if (!linearMode && hierarchyList.isEmpty(I, J)) {
                         // Observing potential changes to the relation
                         int pos = (I << 16) | J;
-                        List<Integer> list = relationObservers.computeIfAbsent(pos, k -> new ArrayList<>());
+                        List<Integer> list = relationObservers.get(pos);
+                        if (list == null) {
+                            relationObservers.put(pos, list = new ArrayList<>());
+                        }
                         list.add(s);
                     } else if (hierarchyList.get(I, J) == ABOVE) {
                         IA[s].add(i, j);
