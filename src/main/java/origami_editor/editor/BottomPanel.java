@@ -64,7 +64,6 @@ public class BottomPanel extends JPanel {
 
         app.registerButton(undoRedo.getUndoButton(), "foldedFigureUndoAction");
         app.registerButton(undoRedo.getRedoButton(), "foldedFigureRedoAction");
-        app.registerButton(undoRedo.getSetUndoCountButton(), "foldedFigureUndoCountAction");
 
         FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
 
@@ -125,7 +124,6 @@ public class BottomPanel extends JPanel {
             app.OZ.redo();
             app.repaintCanvas();
         });
-        undoRedo.addSetUndoCountActionListener(e -> app.foldedFigureModel.setHistoryTotal(StringOp.String2int(undoRedo.getText(), app.foldedFigureModel.getHistoryTotal())));
         oriagari_sousaButton.addActionListener(e -> {
             app.canvasModel.setFoldedFigureOperationMode(MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode.MODE_1);
             app.OZ.setAllPointStateFalse();
@@ -408,8 +406,6 @@ public class BottomPanel extends JPanel {
         backColorButton.setIcon(new ColorIcon(foldedFigureModel.getBackColor()));
         lineColorButton.setIcon(new ColorIcon(foldedFigureModel.getLineColor()));
 
-        undoRedo.setText(String.valueOf(foldedFigureModel.getHistoryTotal()));
-
         goToFoldedFigureTextField.setText(String.valueOf(foldedFigureModel.getFoldedCases()));
 
         if (foldedFigureModel.isFindAnotherOverlapValid()) {
@@ -436,7 +432,6 @@ public class BottomPanel extends JPanel {
     public void getData(FoldedFigureModel foldedFigureModel) {
         foldedFigureModel.setScale(app.string2double(foldedFigureResize.getText(), foldedFigureModel.getScale()));
         foldedFigureModel.setRotation(app.string2double(foldedFigureRotate.getText(), foldedFigureModel.getRotation()));
-        foldedFigureModel.setHistoryTotal(StringOp.String2int(undoRedo.getText(), foldedFigureModel.getHistoryTotal()));
         foldedFigureModel.setFoldedCases(StringOp.String2int(goToFoldedFigureTextField.getText(), foldedFigureModel.getFoldedCases()));
     }
 }

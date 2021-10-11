@@ -66,6 +66,10 @@ public class HistoryState {
     }
 
     private Save getCurrent() {
+        if (current == null) {
+            return new Save();
+        }
+
         try {
             return (Save) convertFromBytes(current);
         } catch (IOException e) {

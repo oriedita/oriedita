@@ -19,29 +19,9 @@
           <preferredSize width="30" height="30"/>
         </properties>
       </component>
-      <component id="296e8" class="javax.swing.JTextField" binding="undoCountTextField">
-        <constraints>
-          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="0.0"/>
-        </constraints>
-        <properties>
-          <columns value="2"/>
-          <minimumSize width="60" height="30"/>
-        </properties>
-      </component>
-      <component id="4f5b5" class="javax.swing.JButton" binding="setUndoCountButton">
-        <constraints>
-          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
-        </constraints>
-        <properties>
-          <preferredSize width="50" height="30"/>
-          <text value="S"/>
-        </properties>
-      </component>
       <component id="2fe31" class="javax.swing.JButton" binding="redoButton">
         <constraints>
-          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties>

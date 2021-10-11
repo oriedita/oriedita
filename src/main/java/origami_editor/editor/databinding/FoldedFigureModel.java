@@ -99,7 +99,7 @@ public class FoldedFigureModel implements Serializable {
         backColor = new Color(233, 233, 233);
         lineColor = Color.black;
 
-        historyTotal = 20;
+        historyTotal = 200;
 
         transparencyColor = false;
 
