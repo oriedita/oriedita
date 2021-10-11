@@ -95,4 +95,8 @@ public enum MouseMode {
     public String toString() {
         return Integer.toString(mode);
     }
+
+    public String toReadableString() {
+        return super.toString();
+    }
 }

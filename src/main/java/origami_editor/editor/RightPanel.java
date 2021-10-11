@@ -201,11 +201,29 @@ public class RightPanel {
 
             angleSystemModel.setCurrentDEF();
         });
-        degButton.addActionListener(e -> angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_1));
-        deg3Button.addActionListener(e -> angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_3));
-        angleRestrictedButton.addActionListener(e -> angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_5));
-        deg2Button.addActionListener(e -> angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_2));
-        deg4Button.addActionListener(e -> angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_4));
+
+        degButton.addActionListener(e -> {
+            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_1);
+            app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13);
+        });
+        deg3Button.addActionListener(e -> {
+            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_3);
+            app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17);
+
+        });
+        angleRestrictedButton.addActionListener(e -> {
+            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_5);
+            app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37);
+        });
+        deg2Button.addActionListener(e -> {
+            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_2);
+            app.canvasModel.setMouseMode(MouseMode.ANGLE_SYSTEM_16);
+
+        });
+        deg4Button.addActionListener(e -> {
+            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_4);
+            app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18);
+        });
         polygonSizeSetButton.addActionListener(e -> {
             app.applicationModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), app.applicationModel.getNumPolygonCorners()));
             app.canvasModel.setMouseMode(MouseMode.POLYGON_SET_NO_CORNERS_29);
@@ -1126,6 +1144,11 @@ public class RightPanel {
             a1Button.setSelected(m == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55);
             a2Button.setSelected(m == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56);
             a3Button.setSelected(m == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57);
+            degButton.setSelected(m == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13);
+            deg2Button.setSelected(m == MouseMode.ANGLE_SYSTEM_16);
+            deg3Button.setSelected(m == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17);
+            deg4Button.setSelected(m == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18);
+            angleRestrictedButton.setSelected(m == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37);
         }
 
         switch (data.getAuxLiveLineColor()) {

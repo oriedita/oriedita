@@ -945,9 +945,15 @@ public class HierarchyList_Worker {
     }
 
     //---------------------------------------------------------
-    public void draw_cross_with_camera(Graphics g) {
+    public void draw_cross_with_camera(Graphics g, boolean selected) {
         //Draw the center of the camera with a cross
-        OritaDrawing.cross(g, camera.object2TV(camera.getCameraPosition()), 5.0, 2.0, LineColor.ORANGE_4);
+        Point point = camera.object2TV(camera.getCameraPosition());
+        OritaDrawing.cross(g, point, 5.0, 2.0, LineColor.ORANGE_4);
+
+        if (selected) {
+            g.setColor(new Color(200, 50, 255, 90));
+            g.fillOval(gx(point.getX()) - 25, gy(point.getY()) - 25, 50, 50); //円
+        }
     }
 
     public int line_no_bangou_kara_kagenoaru_subFace_no_bangou_wo_motomeru(int ib, PointSet subFace_figure, boolean flipped) {//棒の番号から、その棒の影が発生するSubFace の番号を求める。影が発生しない場合は0を返す。

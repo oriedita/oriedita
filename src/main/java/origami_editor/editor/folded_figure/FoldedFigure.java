@@ -109,7 +109,7 @@ public class FoldedFigure {
         cam.setDisplayPositionY(350.0);
     }
 
-    public void foldUp_draw(Graphics bufferGraphics, boolean displayMark) {
+    public void foldUp_draw(Graphics bufferGraphics, boolean displayMark, boolean selected) {
         //displayStyle==2,ip4==0  front
         //displayStyle==2,ip4==1	rear
         //displayStyle==2,ip4==2	front & rear
@@ -153,7 +153,7 @@ public class FoldedFigure {
 
             //Cross-shaped display at the center of movement of the folded figure
             if (displayMark) {
-                ct_worker.draw_cross_with_camera(bufferGraphics);
+                ct_worker.draw_cross_with_camera(bufferGraphics, selected);
             }
         }
 
@@ -174,7 +174,7 @@ public class FoldedFigure {
 
             //Cross-shaped display at the center of movement of the folded figure
             if (displayMark) {
-                ct_worker.draw_cross_with_camera(bufferGraphics);
+                ct_worker.draw_cross_with_camera(bufferGraphics, selected);
             }
         }
 
@@ -187,7 +187,7 @@ public class FoldedFigure {
 
             //Cross-shaped display at the center of movement of the folded figure
             if (displayMark) {
-                ct_worker.draw_cross_with_camera(bufferGraphics);
+                ct_worker.draw_cross_with_camera(bufferGraphics, selected);
             }
 
             ct_worker.setCamera(transparentRearCamera);
@@ -197,7 +197,7 @@ public class FoldedFigure {
 
             //Cross-shaped display at the center of movement of the folded figure
             if (displayMark) {
-                ct_worker.draw_cross_with_camera(bufferGraphics);
+                ct_worker.draw_cross_with_camera(bufferGraphics, selected);
             }
         }
 

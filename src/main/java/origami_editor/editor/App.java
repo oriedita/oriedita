@@ -248,25 +248,6 @@ public class App extends JFrame implements ActionListener {
 
         angleSystemModel.addPropertyChangeListener(e -> rightPanel.setData(angleSystemModel));
         angleSystemModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(angleSystemModel));
-        angleSystemModel.addPropertyChangeListener(e -> {
-            switch (angleSystemModel.getAngleSystemInputType()) {
-                case DEG_1:
-                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13);
-                    break;
-                case DEG_2:
-                    canvasModel.setMouseMode(MouseMode.ANGLE_SYSTEM_16);
-                    break;
-                case DEG_3:
-                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17);
-                    break;
-                case DEG_4:
-                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18);
-                    break;
-                case DEG_5:
-                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37);
-                    break;
-            }
-        });
         angleSystemModel.addPropertyChangeListener(e -> repaintCanvas());
 
         measuresModel.addPropertyChangeListener(e -> rightPanel.setData(measuresModel));
@@ -289,7 +270,7 @@ public class App extends JFrame implements ActionListener {
         canvasModel.addPropertyChangeListener(e -> {
             if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
                 CanvasModel canvasModel = (CanvasModel) e.getSource();
-                System.out.println("mouseMode = " + canvasModel.getMouseMode());
+                System.out.println("mouseMode = " + canvasModel.getMouseMode().toReadableString());
 
                 mouseMode = canvasModel.getMouseMode();
             }
