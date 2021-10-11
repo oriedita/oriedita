@@ -46,22 +46,6 @@ Read the JavaDoc on [`javax.swing.KeyStroke.getKeyStroke(String)`](https://docs.
 
 The application state is saved to `config.json` in the configuration directory. It contains information about the application and is restored when the application starts.
 
-## Creating a  Windows executable
-
-_A wrapper Windows executable, a portable Windows executable and Windows installer are created for each release and can be found on the releases page._
-
-To create a Windows executable [NSIS](https://nsis.sourceforge.io/Download) is used, other required tools are PowerShell (pwsh.exe) and a JDK which is in the path.
-
-Execute the following commands, an installer and a portable executable are placed in the `target` directory. The portable and installer executables contain the Java installation that was used to build the project.
-
-```bash
-cd build
-./prepare.ps1
-makensis wrapper.nsi # Create an executable wrapper around the jar, without java
-makensis portable.nsi # Create an executable which executes the jar with embedded java
-makensis installer.nsi # Create an installer which install java and the jar
-```
-
 ## Terminology
 
 | Class Name | Original Name | Description |
