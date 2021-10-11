@@ -6,10 +6,6 @@ import origami_editor.editor.MouseMode;
 import origami_editor.editor.databinding.CanvasModel;
 
 public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineSelect {
-    public MouseHandlerCreaseCopy(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CREASE_COPY_22;

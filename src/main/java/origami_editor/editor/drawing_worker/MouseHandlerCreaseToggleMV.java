@@ -6,10 +6,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCreaseToggleMV extends BaseMouseHandlerBoxSelect {
-    public MouseHandlerCreaseToggleMV(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CREASE_TOGGLE_MV_58;

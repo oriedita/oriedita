@@ -6,10 +6,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerDisplayLengthBetweenPoints1 extends BaseMouseHandlerInputRestricted {
-    public MouseHandlerDisplayLengthBetweenPoints1(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53;

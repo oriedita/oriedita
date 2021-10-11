@@ -4,19 +4,20 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
-    private final MouseHandlerCreaseMove4p mouseHandlerCreaseMove4p;
-    private final MouseHandlerCreaseCopy4p mouseHandlerCreaseCopy4p;
-    private final MouseHandlerCreaseCopy mouseHandlerCreaseCopy;
-    private final MouseHandlerCreaseMove mouseHandlerCreaseMove;
-    private final MouseHandlerDrawCreaseSymmetric mouseHandlerDrawCreaseSymmetric;
+    private final MouseHandlerCreaseMove4p mouseHandlerCreaseMove4p = new MouseHandlerCreaseMove4p();
+    private final MouseHandlerCreaseCopy4p mouseHandlerCreaseCopy4p = new MouseHandlerCreaseCopy4p();
+    private final MouseHandlerCreaseCopy mouseHandlerCreaseCopy = new MouseHandlerCreaseCopy();
+    private final MouseHandlerCreaseMove mouseHandlerCreaseMove = new MouseHandlerCreaseMove();
+    private final MouseHandlerDrawCreaseSymmetric mouseHandlerDrawCreaseSymmetric = new MouseHandlerDrawCreaseSymmetric();
 
-    public MouseHandlerCreaseSelect(DrawingWorker d) {
-        super(d);
-        mouseHandlerCreaseMove4p = new MouseHandlerCreaseMove4p(d);
-        mouseHandlerCreaseCopy4p = new MouseHandlerCreaseCopy4p(d);
-        mouseHandlerCreaseCopy = new MouseHandlerCreaseCopy(d);
-        mouseHandlerCreaseMove = new MouseHandlerCreaseMove(d);
-        mouseHandlerDrawCreaseSymmetric = new MouseHandlerDrawCreaseSymmetric(d);
+    @Override
+    public void setDrawingWorker(DrawingWorker d) {
+        super.setDrawingWorker(d);
+        mouseHandlerCreaseMove4p.setDrawingWorker(d);
+        mouseHandlerCreaseCopy4p.setDrawingWorker(d);
+        mouseHandlerCreaseCopy.setDrawingWorker(d);
+        mouseHandlerCreaseMove.setDrawingWorker(d);
+        mouseHandlerDrawCreaseSymmetric.setDrawingWorker(d);
     }
 
     @Override

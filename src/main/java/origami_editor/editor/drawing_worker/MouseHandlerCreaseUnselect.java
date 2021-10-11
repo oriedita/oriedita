@@ -4,10 +4,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCreaseUnselect extends BaseMouseHandlerBoxSelect {
-    public MouseHandlerCreaseUnselect(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CREASE_UNSELECT_20;

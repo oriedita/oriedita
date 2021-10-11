@@ -6,10 +6,6 @@ import origami_editor.editor.MouseMode;
 import origami_editor.editor.databinding.CanvasModel;
 
 public class MouseHandlerCreaseMove extends BaseMouseHandlerLineSelect {
-    public MouseHandlerCreaseMove(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CREASE_MOVE_21;

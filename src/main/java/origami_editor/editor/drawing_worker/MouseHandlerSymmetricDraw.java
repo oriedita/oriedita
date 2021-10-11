@@ -6,10 +6,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerSymmetricDraw extends BaseMouseHandlerInputRestricted {
-    public MouseHandlerSymmetricDraw(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.SYMMETRIC_DRAW_10;

@@ -9,10 +9,6 @@ import origami_editor.editor.MouseMode;
 public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler {
     LineSegment lineSegment;
 
-    public MouseHandlerCreaseAdvanceType(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CREASE_ADVANCE_TYPE_30;

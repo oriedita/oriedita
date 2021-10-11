@@ -9,11 +9,12 @@ import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 
 public class MouseHandlerCreaseMakeMV extends BaseMouseHandlerInputRestricted {
-    private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted;
+    private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted = new MouseHandlerDrawCreaseRestricted();
 
-    public MouseHandlerCreaseMakeMV(DrawingWorker d) {
-        super(d);
-        mouseHandlerDrawCreaseRestricted = new MouseHandlerDrawCreaseRestricted(d);
+    @Override
+    public void setDrawingWorker(DrawingWorker d) {
+        super.setDrawingWorker(d);
+        mouseHandlerDrawCreaseRestricted.setDrawingWorker(d);
     }
 
     @Override

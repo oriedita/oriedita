@@ -7,10 +7,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
-    public MouseHandlerParallelDrawWidth(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.PARALLEL_DRAW_WIDTH_51;

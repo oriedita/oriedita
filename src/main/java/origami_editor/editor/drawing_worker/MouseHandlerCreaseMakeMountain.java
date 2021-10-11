@@ -5,10 +5,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCreaseMakeMountain extends BaseMouseHandlerBoxSelect {
-    public MouseHandlerCreaseMakeMountain(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CREASE_MAKE_MOUNTAIN_23;

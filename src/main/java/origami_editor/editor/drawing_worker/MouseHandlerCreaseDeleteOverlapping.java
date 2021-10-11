@@ -6,11 +6,12 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCreaseDeleteOverlapping extends BaseMouseHandlerInputRestricted {
-    private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted;
+    private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted = new MouseHandlerDrawCreaseRestricted();
 
-    public MouseHandlerCreaseDeleteOverlapping(DrawingWorker d) {
-        super(d);
-        mouseHandlerDrawCreaseRestricted = new MouseHandlerDrawCreaseRestricted(d);
+    @Override
+    public void setDrawingWorker(DrawingWorker d) {
+        super.setDrawingWorker(d);
+        mouseHandlerDrawCreaseRestricted.setDrawingWorker(d);
     }
 
     @Override

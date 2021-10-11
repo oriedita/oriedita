@@ -11,10 +11,6 @@ import origami_editor.sortingbox.WeightedValue;
 public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestricted {
     DrawingWorker.FourPointStep i_step_for_copy_4p = DrawingWorker.FourPointStep.STEP_0;
 
-    public MouseHandlerFoldableLineInput(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.FOLDABLE_LINE_INPUT_39;

@@ -5,10 +5,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRestricted {
-    public MouseHandlerContinuousSymmetricDraw(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52;

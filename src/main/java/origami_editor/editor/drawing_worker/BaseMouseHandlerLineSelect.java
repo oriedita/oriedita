@@ -8,10 +8,6 @@ import origami.crease_pattern.element.Point;
  * Mouse handler for modes which perform some action based on a drawn (magenta) line.
  */
 public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
-    public BaseMouseHandlerLineSelect(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public void mouseMoved(Point p0) {
         //Display candidate points that can be selected with the mouse. If there is an established point nearby, that point is the candidate point, and if not, the mouse position itself is the candidate point.

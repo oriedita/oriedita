@@ -10,10 +10,6 @@ import origami.crease_pattern.element.Point;
 public abstract class BaseMouseHandlerBoxSelect extends BaseMouseHandler {
     Point selectionStart = new Point();
 
-    public BaseMouseHandlerBoxSelect(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public void mouseMoved(Point p0) {
 

@@ -9,10 +9,6 @@ import origami_editor.editor.MouseMode;
 import origami_editor.editor.databinding.CanvasModel;
 
 public class MouseHandlerCreaseMove4p extends BaseMouseHandlerInputRestricted {
-    public MouseHandlerCreaseMove4p(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CREASE_MOVE_4P_31;

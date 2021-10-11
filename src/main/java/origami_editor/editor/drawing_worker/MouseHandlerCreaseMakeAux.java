@@ -6,10 +6,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCreaseMakeAux extends BaseMouseHandlerBoxSelect {
-    public MouseHandlerCreaseMakeAux(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CREASE_MAKE_AUX_60;

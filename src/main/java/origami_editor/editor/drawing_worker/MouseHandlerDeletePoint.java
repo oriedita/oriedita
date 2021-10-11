@@ -4,10 +4,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerDeletePoint extends BaseMouseHandler {
-    public MouseHandlerDeletePoint(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.DELETE_POINT_15;

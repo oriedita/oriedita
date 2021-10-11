@@ -8,17 +8,18 @@ import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 
 public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
-    private final MouseHandlerDrawCreaseFree mouseHandlerDrawCreaseFree;
-    private final MouseHandlerVertexMakeAngularlyFlatFoldable mouseHandlerVertexMakeAngularlyFlatFoldable;
+    private final MouseHandlerDrawCreaseFree mouseHandlerDrawCreaseFree = new MouseHandlerDrawCreaseFree();
+    private final MouseHandlerVertexMakeAngularlyFlatFoldable mouseHandlerVertexMakeAngularlyFlatFoldable = new MouseHandlerVertexMakeAngularlyFlatFoldable();
     MouseMode operationMode = MouseMode.UNUSED_0;
     boolean operationModeChangeable = false;
     Point moyori_point_memo = new Point();
     Point closest_point;
 
-    public MouseHandlerFoldableLineDraw(DrawingWorker d) {
-        super(d);
-        this.mouseHandlerDrawCreaseFree = new MouseHandlerDrawCreaseFree(d);
-        this.mouseHandlerVertexMakeAngularlyFlatFoldable = new MouseHandlerVertexMakeAngularlyFlatFoldable(d);
+    @Override
+    public void setDrawingWorker(DrawingWorker d) {
+        super.setDrawingWorker(d);
+        mouseHandlerDrawCreaseFree.setDrawingWorker(d);
+        mouseHandlerVertexMakeAngularlyFlatFoldable.setDrawingWorker(d);
     }
 
     @Override

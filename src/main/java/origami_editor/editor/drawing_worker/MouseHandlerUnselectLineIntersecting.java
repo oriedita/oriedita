@@ -4,10 +4,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerUnselectLineIntersecting extends BaseMouseHandlerLineSelect {
-    public MouseHandlerUnselectLineIntersecting(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.UNSELECT_LINE_INTERSECTING_69;

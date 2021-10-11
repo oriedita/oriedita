@@ -5,11 +5,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestricted {
-
-    public MouseHandlerLineSegmentRatioSet(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.LINE_SEGMENT_RATIO_SET_28;

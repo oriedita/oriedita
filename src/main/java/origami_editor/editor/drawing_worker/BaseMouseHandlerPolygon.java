@@ -11,10 +11,6 @@ import java.util.List;
 public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
     boolean polygonCompleted = false;
 
-    public BaseMouseHandlerPolygon(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public void mouseMoved(Point p0) {
 //マウス操作(マウスを動かしたとき)を行う関数

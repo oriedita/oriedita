@@ -6,10 +6,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
-    public MouseHandlerBackgroundChangePosition(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.BACKGROUND_CHANGE_POSITION_26;

@@ -9,10 +9,6 @@ import origami_editor.editor.MouseMode;
 public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     double d_angle_system;
 
-    public MouseHandlerAngleSystem(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.ANGLE_SYSTEM_16;

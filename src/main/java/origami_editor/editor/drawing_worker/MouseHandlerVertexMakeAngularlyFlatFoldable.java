@@ -13,10 +13,6 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
     LineColor icol_temp = LineColor.BLACK_0;
     DrawingWorker.FourPointStep i_step_for_move_4p = DrawingWorker.FourPointStep.STEP_0;
 
-    public MouseHandlerVertexMakeAngularlyFlatFoldable(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;

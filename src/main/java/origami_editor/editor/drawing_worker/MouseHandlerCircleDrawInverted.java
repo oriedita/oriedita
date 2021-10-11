@@ -8,11 +8,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
-
-    public MouseHandlerCircleDrawInverted(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CIRCLE_DRAW_INVERTED_46;

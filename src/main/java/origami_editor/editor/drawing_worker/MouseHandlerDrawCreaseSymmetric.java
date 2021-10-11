@@ -8,10 +8,6 @@ import origami_editor.editor.MouseMode;
 import origami_editor.editor.databinding.CanvasModel;
 
 public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestricted {
-    public MouseHandlerDrawCreaseSymmetric(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.DRAW_CREASE_SYMMETRIC_12;

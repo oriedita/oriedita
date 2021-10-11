@@ -8,11 +8,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCircleDraw extends BaseMouseHandler {
-
-    public MouseHandlerCircleDraw(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CIRCLE_DRAW_42;

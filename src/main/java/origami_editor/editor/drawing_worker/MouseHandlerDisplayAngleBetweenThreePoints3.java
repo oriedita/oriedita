@@ -6,10 +6,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerDisplayAngleBetweenThreePoints3 extends BaseMouseHandlerInputRestricted {
-    public MouseHandlerDisplayAngleBetweenThreePoints3(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57;

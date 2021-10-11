@@ -10,10 +10,6 @@ import origami_editor.editor.MouseMode;
 public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
     DrawingWorker.OperationFrameMode operationFrameMode;
 
-    public MouseHandlerOperationFrameCreate(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.OPERATION_FRAME_CREATE_61;

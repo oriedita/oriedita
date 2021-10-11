@@ -9,10 +9,6 @@ import origami_editor.editor.MouseMode;
 public class MouseHandlerCircleDrawConcentricSelect extends BaseMouseHandler {
     Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
 
-    public MouseHandlerCircleDrawConcentricSelect(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49;

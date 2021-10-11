@@ -9,11 +9,12 @@ import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 
 public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestricted {
-    private final MouseHandlerLineSegmentRatioSet mouseHandlerLineSegmentRatioSet;
+    private final MouseHandlerLineSegmentRatioSet mouseHandlerLineSegmentRatioSet = new MouseHandlerLineSegmentRatioSet();
 
-    public MouseHandlerCreasesAlternateMV(DrawingWorker d) {
-        super(d);
-        this.mouseHandlerLineSegmentRatioSet = new MouseHandlerLineSegmentRatioSet(d);
+    @Override
+    public void setDrawingWorker(DrawingWorker d) {
+        super.setDrawingWorker(d);
+        mouseHandlerLineSegmentRatioSet.setDrawingWorker(d);
     }
 
     @Override

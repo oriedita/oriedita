@@ -13,10 +13,6 @@ import java.util.List;
 public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
     int i_mouse_modeA_62_point_overlapping;
 
-    public MouseHandlerVoronoiCreate(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.VORONOI_CREATE_62;

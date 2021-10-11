@@ -11,10 +11,6 @@ import origami_editor.sortingbox.WeightedValue;
 public class MouseHandlerLengthenCrease extends BaseMouseHandler {
     SortingBox<LineSegment> entyou_kouho_nbox = new SortingBox<>();
 
-    public MouseHandlerLengthenCrease(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.LENGTHEN_CREASE_5;

@@ -4,10 +4,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerVertexDeleteOnCrease extends BaseMouseHandler {
-    public MouseHandlerVertexDeleteOnCrease(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.VERTEX_DELETE_ON_CREASE_41;

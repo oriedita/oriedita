@@ -11,10 +11,6 @@ import origami_editor.sortingbox.WeightedValue;
 public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
     boolean i_O_F_C = false;
 
-    public MouseHandlerFlatFoldableCheck(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.FLAT_FOLDABLE_CHECK_63;

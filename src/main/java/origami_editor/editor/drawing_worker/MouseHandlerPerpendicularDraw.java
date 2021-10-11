@@ -7,10 +7,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestricted {
-    public MouseHandlerPerpendicularDraw(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.PERPENDICULAR_DRAW_9;

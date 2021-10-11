@@ -5,11 +5,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerLineSegmentDivision extends BaseMouseHandlerInputRestricted {
-
-    public MouseHandlerLineSegmentDivision(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.LINE_SEGMENT_DIVISION_27;

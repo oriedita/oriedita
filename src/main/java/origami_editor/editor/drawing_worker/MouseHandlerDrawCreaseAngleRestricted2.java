@@ -7,10 +7,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInputRestricted {
-    public MouseHandlerDrawCreaseAngleRestricted2(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;

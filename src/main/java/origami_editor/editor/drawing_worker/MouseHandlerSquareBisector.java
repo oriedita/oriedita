@@ -7,10 +7,6 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted {
-    public MouseHandlerSquareBisector(DrawingWorker d) {
-        super(d);
-    }
-
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.SQUARE_BISECTOR_7;
