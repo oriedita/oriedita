@@ -112,4 +112,5 @@ jobs:
         with:
           files: |
             ci-build/origami-editor-*.exe
+            ci-build/Origami Editor*.exe
             ci-build/origami-editor-portable-*.zip
