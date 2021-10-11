@@ -74,19 +74,21 @@ jobs:
         run: |
           jpackage `
             --type app-image `
-            --name origami-editor `
+            --name "Origami Editor (Portable)" `
             --input lib `
             --dest ci-build `
             --app-version ${{ steps.get_version.outputs.version-without-v }} `
             --main-jar origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar `
             --icon build/logo.ico `
             --runtime-image ci-build/origami-editor-runtime `
+            --java-options "'-Dfile.encoding=UTF-8'" `
+            --java-options "-Xmx8g" `
 
       - name: Create zip for portable executable
         uses: papeloto/action-zip@v1
         with:
-          files: ci-build/origami-editor
-          dest: ci-build/origami-editor-portable-${{ steps.get_version.outputs.version-without-v }}.zip
+          files: ci-build/Origami Editor (Portable)
+          dest: ci-build/Origami Editor (Portable) ${{ steps.get_version.outputs.version-without-v }}.zip
 
       - name: Create installer
         run: |
@@ -106,6 +108,8 @@ jobs:
             --win-shortcut `
             --win-upgrade-uuid 929a6906-b868-4311-9e94-ae469bc5dbd3 `
             --runtime-image ci-build/origami-editor-runtime `
+            --java-options "'-Dfile.encoding=UTF-8'" `
+            --java-options "-Xmx8g" `
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -113,4 +117,4 @@ jobs:
           files: |
             ci-build/origami-editor-*.exe
             ci-build/Origami Editor*.exe
-            ci-build/origami-editor-portable-*.zip
+            ci-build/Origami Editor*.zip
