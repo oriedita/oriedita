@@ -155,7 +155,7 @@ public class SubFace {//This class folds the development view and estimates the 
     // At this time, hierarchyList does not change. Here, the penetration condition of the boundary line of the adjacent surface is not checked.
     // This SubFace returns 1000 if there is no contradiction in the folds.
     private int overlapping_inconsistent_digits_request(HierarchyList hierarchyList) {
-        for (int i = 1; i <= faceIdCount - 1; i++) {
+        for (int i = 1; i < faceIdCount; i++) {
             for (int j = i + 1; j <= faceIdCount; j++) {
                 int I = getPermutation(i);
                 int J = getPermutation(j);
