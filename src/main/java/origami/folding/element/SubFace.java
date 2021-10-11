@@ -308,7 +308,7 @@ public class SubFace {//This class folds the development view and estimates the 
         for (int faceIndex = 1; faceIndex <= faceIdCount; faceIndex++) {
             int ueFaceIdCount = 0;//Stores how many ueFaceId [] are from 1.
 
-            //First, collect the SubFace id number of the upper surface in ueFaceId []
+            //First, collect the SubFace id number of the upper face in ueFaceId []
             for (int i = 1; i <= faceIdCount; i++) {
                 if (hierarchyList.get(faceIdList[i], faceIdList[faceIndex]) == HierarchyList.ABOVE_1) {
                     ueFaceIdCount = ueFaceIdCount + 1;
@@ -317,16 +317,17 @@ public class SubFace {//This class folds the development view and estimates the 
                 }
             }
 
-            //Set ueFaceIdFlg [id] of the id number to be invalid to 0.
+            // Remove guides that are redundant, i.e. finding transitive reduction.
             for (int i = 1; i <= ueFaceIdCount - 1; i++) {
-                for (int j = i + 1; j <= ueFaceIdCount; j++) {
+                for (int j = 1; j <= ueFaceIdCount; j++) {
                     if (hierarchyList.get(faceIdList[ueFaceId[i]], faceIdList[ueFaceId[j]]) == HierarchyList.ABOVE_1) {
                         ueFaceIdFlg[i] = false;
+                        break;
                     }
                 }
             }
 
-            //Store in guidebook
+            // Add guides
             for (int i = 1; i <= ueFaceIdCount; i++) {
                 if (ueFaceIdFlg[i]) {
                     permutationGenerator.addGuide(faceIndex, ueFaceId[i]);

@@ -303,24 +303,26 @@ public class HierarchyList_Worker {
         System.out.println("Smen(s0)に優先順位をつける");
         //まず、他のSubFaceに丸ごと含まれているSubFaceを除外する
 
-        boolean[] uniquenessOfSubFace = new boolean[SubFaceTotal + 1];  //<<<<<<<<<<<<<<<SubFaceの独自性
-        for (int i = 1; i <= SubFaceTotal; i++) {
-            uniquenessOfSubFace[i] = true;
-        }
-        for (int i = 1; i <= SubFaceTotal; i++) {
-            uniquenessOfSubFace[i] = true;
-            for (int j = 1; j <= SubFaceTotal; j++) {
-                if (uniquenessOfSubFace[j]) {
+        // Mu-Tsun Tsai: The following code is not used.
 
-                    if (i != j) {//s0[j]がs0[i]を含むかをみる。
-                        if (subFace_i_ga_j_ni_included(i, j)) {
-                            uniquenessOfSubFace[i] = false;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+        // boolean[] uniquenessOfSubFace = new boolean[SubFaceTotal + 1];  //<<<<<<<<<<<<<<<SubFaceの独自性
+        // for (int i = 1; i <= SubFaceTotal; i++) {
+        //     uniquenessOfSubFace[i] = true;
+        // }
+        // for (int i = 1; i <= SubFaceTotal; i++) {
+        //     uniquenessOfSubFace[i] = true;
+        //     for (int j = 1; j <= SubFaceTotal; j++) {
+        //         if (uniquenessOfSubFace[j]) {
+
+        //             if (i != j) {//s0[j]がs0[i]を含むかをみる。
+        //                 if (subFace_i_ga_j_ni_included(i, j)) {
+        //                     uniquenessOfSubFace[i] = false;
+        //                     break;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
         int[] i_priority_max = new int[SubFaceTotal + 1];     //<<<<<<<<<<<<<<<臨時
 

@@ -26,9 +26,21 @@ public class PermutationGenerator {
 
     private final PairGuide pairGuide;
 
+    // An initial permutation, where the lock sequence return by PairGuide is
+    // located at the end.
+    private final int[] initPermutation;
+
+    // If an element is in the lock sequence.
+    private final boolean[] isLocked;
+
+    private int lockCount;
+    private int lockRemain;
+
     public PermutationGenerator(int numDigits) {
         this.numDigits = numDigits;
         this.digits = new int[numDigits + 1];
+        this.initPermutation = new int[numDigits + 1];
+        this.isLocked = new boolean[numDigits + 1];
         this.map = new int[numDigits + 1];
         this.swapHistory = new int[numDigits + 1];
         this.pairGuide = new PairGuide(numDigits);
@@ -36,8 +48,9 @@ public class PermutationGenerator {
 
     public void reset() {
         count = 0;
+        lockRemain = lockCount;
         for (int i = 1; i <= numDigits; i++) {
-            digits[i] = i;
+            digits[i] = initPermutation[i];
             map[i] = i;
             swapHistory[i] = i - 1;
         }
@@ -65,14 +78,14 @@ public class PermutationGenerator {
             // Find the next available element.
             do {
                 swapIndex++;
-                if (swapIndex > numDigits) {
+                if (swapIndex > numDigits - lockRemain + 1) {
                     break;
                 }
                 curDigit = digits[swapIndex];
             } while (pairGuide.isNotReady(curDigit));
 
             // If the current digit has no available element, retract.
-            if (swapIndex > numDigits) {
+            if (swapIndex > numDigits - lockRemain + 1) {
                 swapHistory[curIndex] = curIndex - 1;
                 if (--curIndex == 0) {
                     return 0;
@@ -91,6 +104,9 @@ public class PermutationGenerator {
             }
             swapHistory[curIndex] = swapIndex;
             map[curDigit] = curIndex;
+            if (isLocked[curDigit]) {
+                lockRemain--;
+            }
             pairGuide.confirm(curDigit);
 
             curIndex++;
@@ -120,7 +136,36 @@ public class PermutationGenerator {
     }
 
     public void initialize() {
-        pairGuide.lock();
+        // Determine locked elements.
+        int[] lock = pairGuide.lock();
+        if (lock != null) {
+            lockCount = lock[0];
+            for (int i = 1; i <= lockCount; i++) {
+                isLocked[lock[i]] = true;
+            }
+    
+            // Prepare initial permutation.
+            int i, j = 1;
+            for (i = 1; i <= numDigits - lockCount; i++) {
+                while (isLocked[j]) {
+                    j++;
+                }
+                initPermutation[i] = j;
+                j++;
+            }
+            for (i = 1; i <= lockCount; i++) {
+                initPermutation[i + numDigits - lockCount] = lock[i];
+            }
+    
+            // When generating permutations, the last locked element behaves the same as
+            // normal elements.
+            isLocked[lock[lockCount]] = false;
+        } else {
+            for (int i = 1; i <= numDigits; i++) {
+                initPermutation[i] = i;
+            }
+        }
+
         reset();
     }
 
@@ -132,6 +177,9 @@ public class PermutationGenerator {
             digits[swapIndex] = curDigit;
         }
         map[curDigit] = 0;
+        if (isLocked[curDigit]) {
+            lockRemain++;
+        }
         pairGuide.retract(curDigit);
     }
 }
