@@ -1,6 +1,3 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-
 name: Create artifact
 
 on:
@@ -31,3 +28,8 @@ jobs:
         with:
           name: origami-editor-jar
           path: target/origami-editor-*.jar
+
+      - uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          message: |
+            [Latest jar for this branch](https://nightly.link/qurben/origami-editor/actions/runs/${{ github.run_id }}/origami-editor-jar.zip)
