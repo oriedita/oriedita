@@ -2,3 +2,5 @@ out/
 target/
 *.snap.debug
 *.versionsBackup
+ci-build/
+lib/

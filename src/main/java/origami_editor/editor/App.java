@@ -1176,22 +1176,8 @@ public class App extends JFrame implements ActionListener {
         executeTask(new CheckCAMVTask(this));
     }
 
-    public void openFile() {
-        System.out.println("readFile2Memo() 開始");
-
-        if (!fileModel.isSaved()) {
-            int choice = JOptionPane.showConfirmDialog(this, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-
-            if (choice == JOptionPane.YES_OPTION) {
-                saveFile();
-            } else if (choice == JOptionPane.CLOSED_OPTION || choice == JOptionPane.CANCEL_OPTION) {
-                return;
-            }
-        }
-
-        File file = selectOpenFile();
-
-        if (file == null) {
+    public void openFile(File file) {
+        if (file == null || !file.exists()) {
             return;
         }
 
@@ -1218,6 +1204,24 @@ public class App extends JFrame implements ActionListener {
             mainDrawingWorker.setSave_for_reading(memo_temp);
             mainDrawingWorker.record();
         }
+    }
+
+    public void openFile() {
+        System.out.println("readFile2Memo() 開始");
+
+        if (!fileModel.isSaved()) {
+            int choice = JOptionPane.showConfirmDialog(this, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            if (choice == JOptionPane.YES_OPTION) {
+                saveFile();
+            } else if (choice == JOptionPane.CLOSED_OPTION || choice == JOptionPane.CANCEL_OPTION) {
+                return;
+            }
+        }
+
+        File file = selectOpenFile();
+
+        openFile(file);
     }
 
     public void importFile() {

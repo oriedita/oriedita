@@ -16,9 +16,16 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           cache: maven
+
+      - id: get_version
+        uses: battila7/get-version-action@v2
+
+      - name: Set the version
+        run: mvn -B versions:set -DnewVersion="${{ steps.get_version.outputs.version-without-v }}" --file pom.xml
+
       - name: Build with Maven
         run: mvn -B package --file pom.xml
-        
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -26,6 +33,10 @@ jobs:
 
   create_executable:
     runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        shell: pwsh
 
     strategy:
       matrix:
@@ -36,45 +47,70 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 16
+
+      - name: Set up JDK 15
         uses: actions/setup-java@v2
         with:
-          java-version: '16'
+          java-version: '15'
           distribution: 'adopt'
           cache: maven
 
-      - name: 'Install makensis (apt)'
-        run: sudo apt update && sudo apt install -y nsis nsis-pluginapi
-        if: ${{ matrix.os == 'ubuntu-20.04' }}
+      - id: get_version
+        uses: battila7/get-version-action@v2
 
-      - name: 'Install makensis (homebrew)'
-        run: brew update && brew install makensis
-        if: ${{ matrix.os == 'macos-latest' }}
-
-      - name: 'Set Plugin permissions'
-        run: sudo chown -R $(whoami) /usr/share/nsis/Plugins/
-        if: ${{ matrix.os == 'ubuntu-20.04' }}
+      - name: Set the version
+        run: mvn -B versions:set -DnewVersion="${{ steps.get_version.outputs.version-without-v }}" --file pom.xml
 
       - name: Build project and prepare JRE
         run: |
-          cd build ; ./prepare.ps1
+          mvn -B clean package --file pom.xml
+          mkdir lib
+          mkdir ci-build
+          cp target/origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar lib/
+          $deps = jdeps --print-module-deps --ignore-missing-deps lib/origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar
+          jlink --add-modules $deps --output ci-build/origami-editor-runtime
 
-      - name: Create nsis wrapper executable
-        uses: joncloud/makensis-action@v3.3
-        with:
-          script-file: build/wrapper.nsi
+      - name: Create portable executable
+        run: |
+          jpackage `
+            --type app-image `
+            --name origami-editor `
+            --input lib `
+            --dest ci-build `
+            --app-version ${{ steps.get_version.outputs.version-without-v }} `
+            --main-jar origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar `
+            --icon build/logo.ico `
+            --runtime-image ci-build/origami-editor-runtime `
 
-      - name: Create nsis portable executable
-        uses: joncloud/makensis-action@v3.3
+      - name: Create zip for portable executable
+        uses: papeloto/action-zip@v1
         with:
-          script-file: build/portable.nsi
+          files: ci-build/origami-editor
+          dest: ci-build/origami-editor-portable-${{ steps.get_version.outputs.version-without-v }}.zip
 
-      - name: Create nsis installer
-        uses: joncloud/makensis-action@v3.3
-        with:
-          script-file: build/installer.nsi
+      - name: Create installer
+        run: |
+          jpackage `
+            --name "Origami Editor" `
+            --input lib `
+            --dest ci-build `
+            --app-version ${{ steps.get_version.outputs.version-without-v }} `
+            --main-jar origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar `
+            --icon build/logo.ico `
+            --file-associations build/FAori.properties `
+            --file-associations build/FAcreasepattern.properties `
+            --file-associations build/FAorh.properties `
+            --license-file LICENSE.md `
+            --win-dir-chooser `
+            --win-menu `
+            --win-shortcut `
+            --win-upgrade-uuid 929a6906-b868-4311-9e94-ae469bc5dbd3 `
+            --runtime-image ci-build/origami-editor-runtime `
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: target/origami-editor-*.exe
+          files: |
+            ci-build/origami-editor-*.exe
+            ci-build/Origami Editor*.exe
+            ci-build/origami-editor-portable-*.zip
