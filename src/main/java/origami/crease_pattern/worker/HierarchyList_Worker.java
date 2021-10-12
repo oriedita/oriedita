@@ -4,6 +4,7 @@ import origami_editor.editor.databinding.FoldedFigureModel;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.HierarchyList;
 import origami.folding.algorithm.AdditionalEstimationAlgorithm;
+import origami.folding.algorithm.SubFacePriority;
 import origami.folding.algorithm.SwappingAlgorithm;
 import origami.folding.element.SubFace;
 import origami.crease_pattern.element.LineSegment;
@@ -38,8 +39,6 @@ public class HierarchyList_Worker {
     boolean ip1_flipped = false; //0 is the mode to display the front side of the folding diagram. 1 is a mode to display the back side of the folding diagram.
     public SubFace[] s0;//SubFace obtained from SubFace_figure
     SubFace[] s;//s is s0 sorted in descending order of priority.
-    int[] s0_no_yusenjyun;
-    int[] yusenjyun_kara_s0id;
     boolean displayShadows = false; //Whether to display shadows. 0 is not displayed, 1 is displayed
     Camera camera = new Camera();
     BulletinBoard bb;
@@ -113,14 +112,10 @@ public class HierarchyList_Worker {
 
         s0 = new SubFace[SubFaceTotal + 1];
         s = new SubFace[SubFaceTotal + 1];
-        s0_no_yusenjyun = new int[SubFaceTotal + 1];
-        yusenjyun_kara_s0id = new int[SubFaceTotal + 1];
 
         for (int i = 0; i < SubFaceTotal + 1; i++) {
             s0[i] = new SubFace(bb);
             s[i] = s0[i];
-            s0_no_yusenjyun[i] = 0;
-            yusenjyun_kara_s0id[i] = i;
         }
 
         //Record the faces contained in each SubFace.
@@ -303,87 +298,34 @@ public class HierarchyList_Worker {
         System.out.println("Smen(s0)に優先順位をつける");
         //まず、他のSubFaceに丸ごと含まれているSubFaceを除外する
 
-        // Mu-Tsun Tsai: The following code is not used.
 
-        // boolean[] uniquenessOfSubFace = new boolean[SubFaceTotal + 1];  //<<<<<<<<<<<<<<<SubFaceの独自性
-        // for (int i = 1; i <= SubFaceTotal; i++) {
-        //     uniquenessOfSubFace[i] = true;
-        // }
-        // for (int i = 1; i <= SubFaceTotal; i++) {
-        //     uniquenessOfSubFace[i] = true;
-        //     for (int j = 1; j <= SubFaceTotal; j++) {
-        //         if (uniquenessOfSubFace[j]) {
-
-        //             if (i != j) {//s0[j]がs0[i]を含むかをみる。
-        //                 if (subFace_i_ga_j_ni_included(i, j)) {
-        //                     uniquenessOfSubFace[i] = false;
-        //                     break;
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-        int[] i_priority_max = new int[SubFaceTotal + 1];     //<<<<<<<<<<<<<<<臨時
-
-        for (int i = 1; i <= SubFaceTotal; i++) {//優先度i番目のSubFaceIdをさがす。
-            int priority_max = -10000;//優先度i番目の優先度の値（大きいほうが優先度が高い）。
-            int i_yusen = 0;
-
-            // Print progress for debugging
-            if (i % 1000 == 0) {
-                System.out.println("progress: " + i);
-            }
-
-            for (int is0 = 1; is0 <= SubFaceTotal; is0++) { //SubFaceを１からSubFaceTotal番目までサーチ
-                int Sy;//SubFaceId_yusendo(is0)+uniquenessOfSubFace[is0] を格納
-                if (s0_no_yusenjyun[is0] == 0) {//まだ優先順位がついていないSubFaceだけを扱う
-                    Sy = subFaceId_priority(is0)/*+uniquenessOfSubFace[is0]*/;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                    if (priority_max < Sy) {
-                        priority_max = Sy;
-                        i_yusen = is0;//The number of the most promising candidates when i_yusen is looking for the i-th priority
-                    }
-                    if (priority_max == Sy) {
-                        if (s0[i_yusen].getFaceIdCount() < s0[is0].getFaceIdCount()) {
-                            i_yusen = is0;
-                        }
-                    }
-                }
-            }
-
-            s0_no_yusenjyun[i_yusen] = i; //優先度i番目のSubFaceIdはi_yusen。
-            i_priority_max[i_yusen] = priority_max;//優先度i番目の優先度の値（大きいほうが優先度が高い）。
-
-            s0[i_yusen].hierarchyList_ni_subFace_no_manager_wo_input(hierarchyList); //hierarchyListの-100のところを変る。<<<<<<<<<<<<<<<<<<<<<<
-        }
-
-        //優先度からs0のidを指定できるようにする
-
+        // Priority initialization
+        int[] priorityMap = new int[SubFaceTotal + 1];     //<<<<<<<<<<<<<<<臨時
+        SubFacePriority SFP = new SubFacePriority(hierarchyList.getFacesTotal(), SubFaceTotal);
         for (int i = 1; i <= SubFaceTotal; i++) {
-            for (int is0 = 1; is0 <= SubFaceTotal; is0++) {
-                if (i == s0_no_yusenjyun[is0]) {
-                    yusenjyun_kara_s0id[i] = is0;
-                }
-            }
+            SFP.addSubFace(s0[i], i, hierarchyList);
         }
 
+        // Priority processing
+        for (int i = 1; i <= SubFaceTotal; i++) {// 優先度i番目のSubFaceIdをさがす。
+            long result = SFP.getMaxSubFace(s0);
+            int i_yusen = (int) (result & SubFacePriority.mask);
+            int max = (int) (result >>> 32);
+            priorityMap[i] = i_yusen; // 優先度からs0のidを指定できるようにする
+            if (max > 0) {
+                SubFace_valid_number++;
+            }
+
+            SFP.processSubFace(s0[i_yusen], i_yusen, hierarchyList);
+        }
 
         //System.out.println("------------" );
         System.out.println("上下表職人内　Smensuu = " + SubFaceTotal);
         System.out.println("上下表職人内　s0に優先順位をつける");
         System.out.println("上下表職人内　優先度からs0のid");
 
-
         for (int i = 1; i <= SubFaceTotal; i++) {
-            if (i_priority_max[yusenjyun_kara_s0id[i]] != 0) {
-                SubFace_valid_number = i;       //早いが変な結果になることあり。
-//20191012 wwwww				SubFace_yuukou_suu=SubFaceTotal;//遅いが確実
-
-            }
-        }
-
-        for (int i = 1; i <= SubFaceTotal; i++) {
-            s[i] = s0[yusenjyun_kara_s0id[i]];
+            s[i] = s0[priorityMap[i]];
         }
 
         //優先順位を逆転させる。これが有効かどうかは不明wwwww
@@ -394,17 +336,6 @@ public class HierarchyList_Worker {
         System.out.print(SubFace_valid_number);
         System.out.print("／");
         System.out.println(SubFaceTotal);
-
-        //Change the value of the position of the combination of overlapping faces of hierarchyList [] [] from -100 to -50.
-        for (int k = 1; k <= SubFaceTotal; k++) {
-            for (int i = 1; i <= s[k].getFaceIdCount() - 1; i++) {
-                for (int j = i + 1; j <= s[k].getFaceIdCount(); j++) {
-                    hierarchyList.set(i, j, HierarchyList.UNKNOWN_N50);
-                }
-            }
-        }
-
-
         System.out.println("上下表初期設定終了");
         return ireturn;
     }
@@ -417,33 +348,6 @@ public class HierarchyList_Worker {
         return AEA.run();
     }
 
-    //図をかく際の数値変換用関数-----------------------------------------------------------------
-    private boolean subFace_i_ga_j_ni_included(int s0i, int s0j) { //1 if included, 0 otherwise
-        if (s0[s0i].getFaceIdCount() > s0[s0j].getFaceIdCount()) {
-            return false;
-        }
-
-
-        for (int i = 1; i <= s0[s0i].getFaceIdCount(); i++) {
-            for (int j = 1; j <= s0[s0j].getFaceIdCount(); j++) {
-                if (s0[s0i].getFaceId(i) == s0[s0j].getFaceId(j)) {
-                    break;
-                }
-                if (j == s0[s0j].getFaceIdCount()) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-
-    }
-
-    //Find the value that indicates the priority of s0 (SubFace). The higher this value, the higher the priority (closer to the beginning of the array).
-    int subFaceId_priority(int s0id) {
-        //Find out how many new hierarchies will be registered if you put SubFace in the current top and bottom table.
-        return s0[s0id].sinki_jyouhou_suu(hierarchyList);
-    }
 
     //引数の４つの面を同時に含むSubFaceが1つ以上存在するなら１、しないなら０を返す。
     private boolean exist_identical_subFace(int im1, int im2, int im3, int im4) {

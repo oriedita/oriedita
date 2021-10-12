@@ -274,32 +274,6 @@ public class SubFace {//This class folds the development view and estimates the 
         }
     }
 
-
-    // Enter the information due to the overlap of the SubFace surfaces in the upper and lower tables. This is used to find the valid number of SubFaces during the initial calculation preparation.
-    public void hierarchyList_ni_subFace_no_manager_wo_input(HierarchyList hierarchyList) {
-        for (int i = 1; i < faceIdCount; i++) {
-            for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.EMPTY_N100) {
-                    hierarchyList.set(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)], HierarchyList.UNKNOWN_N50);
-                }
-            }
-        }
-    }
-
-    //上下表にSubFaceによって何個の新情報が入るかを返す。
-    //Returns how many new information SubFace will put in the top and bottom tables.
-    public int sinki_jyouhou_suu(HierarchyList hierarchyList) {
-        int inew = 0;
-        for (int i = 1; i < faceIdCount; i++) {
-            for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.EMPTY_N100) {
-                    inew++;
-                }
-            }
-        }
-        return inew;
-    }
-
     /** Prepare a guidebook for the permutation generator in SubFace. */
     public void setGuideMap(HierarchyList hierarchyList) {
         int[] ueFaceId = new int[faceIdCount + 1];
