@@ -17,6 +17,12 @@ import java.util.*;
  */
 public class AdditionalEstimationAlgorithm {
 
+    /**
+     * To prevent memory overflow. Right now this number is hard-coded, but in the
+     * future we might want to dynamically determine it based on available memory.
+     */
+    private static final int MAX_NEW_RELATIONS = 100000;
+
     private static final int ABOVE = HierarchyList.ABOVE_1;
     private static final int BELOW = HierarchyList.BELOW_0;
 
@@ -27,6 +33,9 @@ public class AdditionalEstimationAlgorithm {
     private Map<Integer, List<Integer>> relationObservers;
 
     public int errorIndex;
+
+    private int iaStart = 0;
+    private int iaEnd = 0;
 
     /**
      * Decides whether to use linear search to notify ItalianoAlgorithm to update,
@@ -48,13 +57,11 @@ public class AdditionalEstimationAlgorithm {
         }
     }
 
-    public HierarchyListStatus run() {
+    public HierarchyListStatus run(int completedSubFaces) {
         int new_relations;
-        boolean found;
+        iaStart = completedSubFaces + 1;
 
         System.out.println("additional_estimation start---------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
-
-        initializeItalianoAlgorithm();
 
         do {
             new_relations = 0;
@@ -62,8 +69,14 @@ public class AdditionalEstimationAlgorithm {
 
             int iS = 0;
             try {
-                // The outer do-while loop in the original algorithm is redundant.
-                for (iS = 1; iS < subFaces.length; iS++) {
+                for (iS = iaStart; iS < subFaces.length && new_relations < MAX_NEW_RELATIONS; iS++) {
+                    if (IA[iS] == null) {
+                        // We initialize ItalianoAlgorithm one by one instead of all at once,
+                        // so that the changes are flushed immediately after initialization,
+                        // saving memory.
+                        initializeItalianoAlgorithm(iS);
+                        iaEnd = iS;
+                    }
                     int changes = checkTransitivity(subFaces[iS], IA[iS]);
                     new_relations += changes;
                 }
@@ -72,30 +85,26 @@ public class AdditionalEstimationAlgorithm {
                 return HierarchyListStatus.CONTRADICTED_2;
             }
 
-            // Reset hierarchyList Make sure that it is done properly
-
             try {
-                do {
-                    found = false;
-                    for (EquivalenceCondition tg : hierarchyList.getEquivalenceConditions()) {
-                        int changes = checkTripleConstraint(tg);
-                        found = found || changes > 0;
-                        new_relations += changes;
+                for (EquivalenceCondition tg : hierarchyList.getEquivalenceConditions()) {
+                    if (new_relations >= MAX_NEW_RELATIONS) {
+                        break;
                     }
-                } while (found);
+                    int changes = checkTripleConstraint(tg);
+                    new_relations += changes;
+                }
             } catch (InferenceFailureException e) {
                 return HierarchyListStatus.CONTRADICTED_3;
             }
 
             try {
-                do {
-                    found = false;
-                    for (EquivalenceCondition tg : hierarchyList.getUEquivalenceConditions()) {
-                        int changes = checkQuadrupleConstraint(tg);
-                        found = found || changes > 0;
-                        new_relations += changes;
+                for (EquivalenceCondition tg : hierarchyList.getUEquivalenceConditions()) {
+                    if (new_relations >= MAX_NEW_RELATIONS) {
+                        break;
                     }
-                } while (found);
+                    int changes = checkQuadrupleConstraint(tg);
+                    new_relations += changes;
+                }
             } catch (InferenceFailureException e) {
                 return HierarchyListStatus.CONTRADICTED_4;
             }
@@ -112,25 +121,23 @@ public class AdditionalEstimationAlgorithm {
         return HierarchyListStatus.SUCCESSFUL_1000;
     }
 
-    private void initializeItalianoAlgorithm() {
-        for (int s = 1; s < subFaces.length; s++) {
-            IA[s] = new ItalianoAlgorithm(subFaces[s]);
-            int count = subFaces[s].getFaceIdCount();
-            for (int i = 1; i <= count; i++) {
-                for (int j = 1; j <= count; j++) {
-                    int I = subFaces[s].getFaceId(i);
-                    int J = subFaces[s].getFaceId(j);
-                    if (!linearMode && hierarchyList.isEmpty(I, J)) {
-                        // Observing potential changes to the relation
-                        int pos = (I << 16) | J;
-                        List<Integer> list = relationObservers.get(pos);
-                        if (list == null) {
-                            relationObservers.put(pos, list = new ArrayList<>());
-                        }
-                        list.add(s);
-                    } else if (hierarchyList.get(I, J) == ABOVE) {
-                        IA[s].add(i, j);
+    private void initializeItalianoAlgorithm(int s) {
+        IA[s] = new ItalianoAlgorithm(subFaces[s]);
+        int count = subFaces[s].getFaceIdCount();
+        for (int i = 1; i <= count; i++) {
+            for (int j = 1; j <= count; j++) {
+                int I = subFaces[s].getFaceId(i);
+                int J = subFaces[s].getFaceId(j);
+                if (!linearMode && hierarchyList.isEmpty(I, J)) {
+                    // Observing potential changes to the relation
+                    int pos = (I << 16) | J;
+                    List<Integer> list = relationObservers.get(pos);
+                    if (list == null) {
+                        relationObservers.put(pos, list = new ArrayList<>());
                     }
+                    list.add(s);
+                } else if (hierarchyList.get(I, J) == ABOVE) {
+                    IA[s].add(i, j);
                 }
             }
         }
@@ -241,7 +248,7 @@ public class AdditionalEstimationAlgorithm {
 
             // Notifying the ItalianoAlgorithm to update.
             if (linearMode) {
-                for (int s = 1; s < subFaces.length; s++) {
+                for (int s = iaStart; s <= iaEnd; s++) {
                     int I = subFaces[s].FaceIdIndex(i);
                     int J = subFaces[s].FaceIdIndex(j);
                     if (I != 0 && J != 0) {
