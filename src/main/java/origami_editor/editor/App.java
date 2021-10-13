@@ -276,7 +276,6 @@ public class App extends JFrame implements ActionListener {
             }
         });
 
-        historyStateModel.addPropertyChangeListener(e -> leftPanel.setData(historyStateModel));
         historyStateModel.addPropertyChangeListener(e -> rightPanel.setData(historyStateModel));
         historyStateModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(historyStateModel));
 

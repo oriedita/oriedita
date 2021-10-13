@@ -7,8 +7,6 @@ import java.awt.event.ActionListener;
 public class UndoRedo extends JPanel {
     private JButton undoButton;
     private JPanel panel1;
-    private JTextField undoCountTextField;
-    private JButton setUndoCountButton;
     private JButton redoButton;
 
     public UndoRedo() {
@@ -28,14 +26,6 @@ public class UndoRedo extends JPanel {
 
     public void addRedoActionListener(ActionListener listener) {
         redoButton.addActionListener(listener);
-    }
-
-    public JButton getSetUndoCountButton() {
-        return setUndoCountButton;
-    }
-
-    public void addSetUndoCountActionListener(ActionListener listener) {
-        setUndoCountButton.addActionListener(listener);
     }
 
     {
@@ -65,28 +55,11 @@ public class UndoRedo extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(undoButton, gbc);
-        undoCountTextField = new JTextField();
-        undoCountTextField.setColumns(2);
-        undoCountTextField.setMinimumSize(new Dimension(60, 30));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(undoCountTextField, gbc);
-        setUndoCountButton = new JButton();
-        setUndoCountButton.setPreferredSize(new Dimension(50, 30));
-        setUndoCountButton.setText("S");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(setUndoCountButton, gbc);
         redoButton = new JButton();
         redoButton.setIcon(new ImageIcon(getClass().getResource("/ppp/redo.png")));
         redoButton.setPreferredSize(new Dimension(30, 30));
         gbc = new GridBagConstraints();
-        gbc.gridx = 3;
+        gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(redoButton, gbc);
@@ -101,13 +74,5 @@ public class UndoRedo extends JPanel {
 
     private void createUIComponents() {
         panel1 = this;
-    }
-
-    public String getText() {
-        return undoCountTextField.getText();
-    }
-
-    public void setText(String s) {
-        undoCountTextField.setText(s);
     }
 }

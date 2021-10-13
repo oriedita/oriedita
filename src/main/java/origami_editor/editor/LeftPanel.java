@@ -162,7 +162,6 @@ public class LeftPanel {
 
         app.registerButton(undoRedo.getRedoButton(), "redoAction");
         app.registerButton(undoRedo.getUndoButton(), "undoAction");
-        app.registerButton(undoRedo.getSetUndoCountButton(), "setUndoCountAction");
 
         app.registerButton(correctCpBeforeFoldingCheckBox, "correctCpBeforeFoldingAction");
         app.registerButton(selectPersistentCheckBox, "selectPersistentAction");
@@ -177,7 +176,6 @@ public class LeftPanel {
             app.setTitle(app.mainDrawingWorker.redo());
             app.repaintCanvas();
         });
-        undoRedo.addSetUndoCountActionListener(e -> app.historyStateModel.setHistoryTotal(StringOp.String2int(undoRedo.getText(), app.historyStateModel.getHistoryTotal())));
         lineWidthDecreaseButton.addActionListener(e -> app.applicationModel.decreaseLineWidth());
         lineWidthIncreaseButton.addActionListener(e -> app.applicationModel.increaseLineWidth());
         pointSizeDecreaseButton.addActionListener(e -> app.applicationModel.decreasePointSize());
@@ -1490,10 +1488,6 @@ public class LeftPanel {
                     break;
             }
         }
-    }
-
-    public void setData(HistoryStateModel historyStateModel) {
-        undoRedo.setText(String.valueOf(historyStateModel.getHistoryTotal()));
     }
 
     public void setData(FoldedFigureModel foldedFigureModel) {
