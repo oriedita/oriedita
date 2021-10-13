@@ -37,6 +37,40 @@ public class ApplicationModel implements Serializable {
     private int foldLineDividingNumber;
     private int numPolygonCorners;
     private String defaultDirectory;
+    private int windowState;
+    private Point windowPosition;
+
+    public Dimension getWindowSize() {
+        return windowSize;
+    }
+
+    public void setWindowSize(Dimension windowSize) {
+        Dimension oldWindowSize = this.windowSize;
+        this.windowSize = windowSize;
+        this.pcs.firePropertyChange("windowSize", oldWindowSize, windowSize);
+    }
+
+    private Dimension windowSize;
+
+    public int getWindowState() {
+        return windowState;
+    }
+
+    public void setWindowState(int windowState) {
+        int oldWindowState = this.windowState;
+        this.windowState = windowState;
+        this.pcs.firePropertyChange("windowState", oldWindowState, windowState);
+    }
+
+    public Point getWindowPosition() {
+        return windowPosition;
+    }
+
+    public void setWindowPosition(Point windowPosition) {
+        Point oldWindowPosition = this.windowPosition;
+        this.windowPosition = windowPosition;
+        this.pcs.firePropertyChange("windowPosition", oldWindowPosition, windowPosition);
+    }
 
     public ApplicationModel() {
         reset();
@@ -93,6 +127,10 @@ public class ApplicationModel implements Serializable {
         numPolygonCorners = 5;
         foldLineDividingNumber = 2;
         defaultDirectory = null;
+
+        windowPosition = null;
+        windowState = Frame.NORMAL;
+        windowSize = null;
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -437,6 +475,9 @@ public class ApplicationModel implements Serializable {
         numPolygonCorners = applicationModel.getNumPolygonCorners();
         foldLineDividingNumber = applicationModel.getFoldLineDividingNumber();
         defaultDirectory = applicationModel.getDefaultDirectory();
+        windowSize = applicationModel.getWindowSize();
+        windowPosition = applicationModel.getWindowPosition();
+        windowState = applicationModel.getWindowState();
 
         this.pcs.firePropertyChange(null, null, null);
     }
