@@ -563,7 +563,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 es1.unselect_all();
                 app.Button_shared_operation();
                 app.canvasModel.restoreFoldLineAdditionalInputMode();
-                if (e.getWheelRotation() == -1) {
+                if (e.getWheelRotation() < 0) {
                     app.setTitle(es1.redo());
                     repaint();
                 } else {
@@ -578,13 +578,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 Point p = new Point(app.e2p(e));
                 App.MouseWheelTarget target = app.pointInCreasePatternOrFoldedFigure(p);
                 if (target == App.MouseWheelTarget.CREASE_PATTERN_0) {
-                    if (e.getWheelRotation() == -1) {
+                    if (e.getWheelRotation() < 0) {
                         app.creasePatternCameraModel.zoomIn();
                     } else {
                         app.creasePatternCameraModel.zoomOut();
                     }
                 } else {
-                    if (e.getWheelRotation() == -1) {
+                    if (e.getWheelRotation() < 0) {
                         app.foldedFigureModel.zoomIn();
                     } else {
                         app.foldedFigureModel.zoomOut();
