@@ -136,11 +136,31 @@ public class App extends JFrame implements ActionListener {
                 System.out.println("windowDeactivated_20200928");
             }
 
-            public void windowStateChanged(WindowEvent eve) {
-                System.out.println("windowStateChanged_20200928");
-            }
 
         });//Processing when the window state changes Up to here.
+
+        addWindowStateListener(new WindowAdapter() {
+            public void windowStateChanged(WindowEvent eve) {
+                applicationModel.setWindowState(eve.getNewState());
+            }
+        });
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentMoved(ComponentEvent e) {
+                // Only update when not maximized.
+                if ((getExtendedState() & MAXIMIZED_BOTH) == 0) {
+                    applicationModel.setWindowPosition(getLocation());
+                }
+            }
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+                if ((getExtendedState() & MAXIMIZED_BOTH) == 0) {
+                    applicationModel.setWindowSize(getSize());
+                }
+            }
+        });
 
         //--------------------------------------------------------------------------------------------------
         addWindowFocusListener(new WindowAdapter() {//オリヒメのメインウィンドウのフォーカスが変化したときの処理
@@ -312,8 +332,17 @@ public class App extends JFrame implements ActionListener {
         mainDrawingWorker.auxRecord();
 
         pack();
-        setLocationRelativeTo(null);//If you want to put the application window in the center of the screen, use the setLocationRelativeTo () method. If you pass null, it will always be in the center.
         setVisible(true);
+
+        if (applicationModel.getWindowPosition() != null) {
+            setLocation(applicationModel.getWindowPosition());
+        } else {
+            setLocationRelativeTo(null);
+        }
+        if (applicationModel.getWindowSize() != null) {
+            setSize(applicationModel.getWindowSize());
+        }
+        setExtendedState(applicationModel.getWindowState());
 
         explanation = new HelpDialog(this, applicationModel::setHelpVisible, canvas.getLocationOnScreen(), canvas.getSize());
         explanation.addWindowListener(new WindowAdapter() {
@@ -429,14 +458,15 @@ public class App extends JFrame implements ActionListener {
 
     private void restoreApplicationModel() {
         Path storage = getAppDir();
-        if (!storage.toFile().exists()) {
+        File configFile = storage.resolve(CONFIG_JSON).toFile();
+
+        if (!configFile.exists()) {
             applicationModel.reset();
 
             return;
         }
 
         ObjectMapper mapper = new DefaultObjectMapper();
-        File configFile = storage.resolve(CONFIG_JSON).toFile();
 
         try {
             ApplicationModel loadedApplicationModel = mapper.readValue(configFile, ApplicationModel.class);
