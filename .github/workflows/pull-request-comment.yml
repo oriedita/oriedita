@@ -13,7 +13,7 @@ jobs:
       - name: View context attributes
         uses: actions/github-script@v5
         with:
-          script: console.log(github.payload.workflow_run.pull_requests)
+          script: console.log(github)
       - uses: marocchino/sticky-pull-request-comment@v2
         if: github.payload.workflow_run.event == 'pull_request'
         with:
