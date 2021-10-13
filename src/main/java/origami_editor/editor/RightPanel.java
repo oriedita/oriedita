@@ -1117,6 +1117,7 @@ public class RightPanel {
 
     public void setData(ApplicationModel data) {
         c_colButton.setIcon(new ColorIcon(data.getCircleCustomizedColor()));
+        cAMVCheckBox.setSelected(data.getCheck4Enabled());
     }
 
     public void setData(PropertyChangeEvent e, CanvasModel data) {
