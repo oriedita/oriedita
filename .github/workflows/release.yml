@@ -75,14 +75,14 @@ jobs:
           jpackage `
             @build/jpackage-common-args `
             --type app-image `
-            --name "Origami Editor (Portable)" `
+            --name "Origami-Editor-(Portable)" `
             --app-version ${{ steps.get_version.outputs.version-without-v }} `
             --main-jar origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar `
 
       - name: Create zip for portable executable
         uses: papeloto/action-zip@v1
         with:
-          files: 'ci-build/Origami Editor (Portable)'
+          files: 'ci-build/Origami-Editor-(Portable)'
           dest: ci-build/Origami Editor (Portable) ${{ steps.get_version.outputs.version-without-v }}.zip
 
       - name: Create installer
