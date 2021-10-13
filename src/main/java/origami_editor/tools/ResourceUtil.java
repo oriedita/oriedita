@@ -23,7 +23,7 @@ public class ResourceUtil {
         if (osName.contains("windows")) {
             return Paths.get(System.getenv("APPDATA"), "origami-editor");
         } else if (osName.contains("mac")) {
-            return Paths.get(System.getenv("user.home"), "Library", "Application Support", "origami-editor");
+            return Paths.get(System.getProperty("user.home"), "Library", "Application Support", "origami-editor");
         } else {
             return Paths.get(System.getProperty("user.home"), ".origami-editor");
         }
