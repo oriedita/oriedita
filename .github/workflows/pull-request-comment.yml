@@ -11,7 +11,6 @@ jobs:
 
     steps:
       - uses: marocchino/sticky-pull-request-comment@v2
-        if: ${{ github.event.workflow_run.pull_requests != [] }}
         with:
           number: ${{ github.event.workflow_run.pull_requests[0] }}
           message: |
