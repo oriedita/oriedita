@@ -28,8 +28,3 @@ jobs:
         with:
           name: origami-editor-jar
           path: target/origami-editor-*.jar
-
-      - uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          message: |
-            [Latest jar for this branch](https://nightly.link/qurben/origami-editor/actions/runs/${{ github.run_id }}/origami-editor-jar.zip)
