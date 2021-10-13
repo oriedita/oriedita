@@ -72,8 +72,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     public Canvas(App app0) {
         app = app0;
 
-        offscreen = new BufferedImage(2000, 1100, BufferedImage.TYPE_INT_BGR);
-        bufferGraphics = offscreen.createGraphics();    //20170107_new
+        onResize();
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -81,8 +80,26 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         es1 = app0.mainDrawingWorker;
 
-        dim = getSize();
         System.out.println(" dim 001 :" + dim.width + " , " + dim.height);//多分削除可能
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                onResize();
+            }
+        });
+    }
+
+    public void onResize() {
+        dim = getSize();
+        if (dim.width == 0) {
+            // Set a default size if the canvas is not yet loaded.
+            dim = new Dimension(2000, 1000);
+        }
+        offscreen = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_BGR);
+        bufferGraphics = offscreen.createGraphics();
+
+        repaint();
     }
 
     public void addMouseModeHandler(MouseModeHandler handler) {
@@ -117,7 +134,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 
         // バッファー画面のクリア
-        dim = getSize();
         bufferGraphics.clearRect(0, 0, dim.width, dim.height);
 
         bufferGraphics.setColor(Color.red);
@@ -599,8 +615,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 file = new File(fname + ".png");
                 formatName = "png";
             }
-
-            dim = getSize();
 
             //	ファイル保存
 

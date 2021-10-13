@@ -139,6 +139,7 @@ public class App extends JFrame implements ActionListener {
             public void windowStateChanged(WindowEvent eve) {
                 System.out.println("windowStateChanged_20200928");
             }
+
         });//Processing when the window state changes Up to here.
 
         //--------------------------------------------------------------------------------------------------
