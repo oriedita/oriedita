@@ -15,7 +15,7 @@ jobs:
         with:
           script: console.log(github.payload.workflow_run.pull_requests)
       - uses: marocchino/sticky-pull-request-comment@v2
-        if: github.payload.workflow_run.event == "pull_request"
+        if: github.payload.workflow_run.event == 'pull_request'
         with:
           number: github.payload.workflow_run.pull_requests[0].number
           message: |
