@@ -7,6 +7,8 @@ import java.io.File;
 
 public class OrigamiEditor {
     public static void main(String[] argv) {
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+
         SwingUtilities.invokeLater(() -> {
             FlatLightLaf.setup();
 
