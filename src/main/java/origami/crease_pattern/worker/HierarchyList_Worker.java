@@ -345,7 +345,7 @@ public class HierarchyList_Worker {
         // information on mountain folds and valley folds.
 
         AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(hierarchyList, s0);
-        return AEA.run();
+        return AEA.run(0);
     }
 
 
@@ -442,13 +442,13 @@ public class HierarchyList_Worker {
 
         // Solution found, perform final checking
         AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(hierarchyList, s);
-        if (AEA.run() != HierarchyListStatus.SUCCESSFUL_1000) {
+        if (AEA.run(SubFace_valid_number) != HierarchyListStatus.SUCCESSFUL_1000) {
             // This rarely happens, but typically it means the solution contradicts some of
             // the SubFace not counted as "valid" previously. In that case, adding it to the
             // valid set will solve the problem.
             if (AEA.errorIndex != 0) {
                 // Add additional SubFace to the valid list and continue the search
-                int v=++SubFace_valid_number, e = AEA.errorIndex;
+                int v = ++SubFace_valid_number, e = AEA.errorIndex;
                 System.out.println("Adding SubFace " + e + " to the valid set index " + v);
                 SubFace temp = s[v];
                 s[v] = s[e];
