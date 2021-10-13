@@ -1,5 +1,7 @@
 package origami_editor.editor.databinding;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import origami_editor.editor.LineStyle;
 
 import java.awt.*;
@@ -39,6 +41,20 @@ public class ApplicationModel implements Serializable {
     private String defaultDirectory;
     private int windowState;
     private Point windowPosition;
+
+    private String laf;
+
+    public String getLaf() {
+        return laf;
+    }
+
+    public void setLaf(String laf) {
+        String oldLaf = this.laf;
+        if (!this.laf.equals(laf)) {
+            this.laf = laf;
+            this.pcs.firePropertyChange("laf", oldLaf, laf);
+        }
+    }
 
     public Dimension getWindowSize() {
         return windowSize;
@@ -131,6 +147,8 @@ public class ApplicationModel implements Serializable {
         windowPosition = null;
         windowState = Frame.NORMAL;
         windowSize = null;
+
+        laf = FlatLightLaf.class.getName();
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -479,10 +497,28 @@ public class ApplicationModel implements Serializable {
         windowPosition = applicationModel.getWindowPosition();
         windowState = applicationModel.getWindowState();
 
+        laf = applicationModel.getLaf();
+
         this.pcs.firePropertyChange(null, null, null);
     }
 
     public void toggleHelpVisible() {
         setHelpVisible(!helpVisible);
+    }
+
+    public void toggleDarkMode() {
+        if (laf.equals(FlatLightLaf.class.getName())) {
+            setLaf(FlatDarkLaf.class.getName());
+        } else {
+            setLaf(FlatLightLaf.class.getName());
+        }
+    }
+
+    public void setDarkMode(boolean darkMode) {
+        if (darkMode) {
+            setLaf(FlatDarkLaf.class.getName());
+        } else {
+            setLaf(FlatLightLaf.class.getName());
+        }
     }
 }

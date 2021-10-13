@@ -1,11 +1,10 @@
 package origami_editor.editor;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import origami_editor.editor.databinding.ApplicationModel;
-import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FileModel;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class AppMenuBar extends JMenuBar {
     private JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
@@ -17,6 +16,7 @@ public class AppMenuBar extends JMenuBar {
     private JCheckBoxMenuItem displayLiveAuxLinesCheckBox;//補助画線
     private JCheckBoxMenuItem displayStandardFaceMarksCheckBox;//Marking lines such as crosses and reference planes
     private JCheckBoxMenuItem cpOnTopCheckBox;//展開図を折り上がり予想図の上に描く
+    private JCheckBoxMenuItem darkModeCheckBox;
     private JMenuItem newButton;
     private JMenuItem openButton;
     private JMenuItem saveButton;
@@ -49,6 +49,7 @@ public class AppMenuBar extends JMenuBar {
         app.registerButton(cpOnTopCheckBox, "cpOnTopAction");
         app.registerButton(toggleHelpMenuItem, "toggleHelpAction");
         app.registerButton(toggleConsoleMenuItem, "toggleConsoleAction");
+        app.registerButton(darkModeCheckBox, "toggleDarkModeAction");
 
         newButton.addActionListener(e -> {
             if (!app.fileModel.isSaved()) {
@@ -145,6 +146,7 @@ public class AppMenuBar extends JMenuBar {
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
         });
+        darkModeCheckBox.addActionListener(e -> applicationModel.toggleDarkMode());
     }
 
     private void createElements() {
@@ -183,6 +185,8 @@ public class AppMenuBar extends JMenuBar {
 
         add(viewMenu);
 
+        darkModeCheckBox = new JCheckBoxMenuItem("Dark Mode");
+        viewMenu.add(darkModeCheckBox);
         showPointRangeCheckBox = new JCheckBoxMenuItem("Show point range");
         viewMenu.add(showPointRangeCheckBox);
         pointOffsetCheckBox = new JCheckBoxMenuItem("Offset cursor");
@@ -225,6 +229,7 @@ public class AppMenuBar extends JMenuBar {
         applicationModel.setDisplayLiveAuxLines(displayLiveAuxLinesCheckBox.isSelected());
         applicationModel.setDisplayMarkings(displayStandardFaceMarksCheckBox.isSelected());
         applicationModel.setDisplayCreasePatternOnTop(cpOnTopCheckBox.isSelected());
+        applicationModel.setDarkMode(darkModeCheckBox.isSelected());
     }
 
     public void setData(ApplicationModel applicationModel) {
@@ -237,6 +242,7 @@ public class AppMenuBar extends JMenuBar {
         displayLiveAuxLinesCheckBox.setSelected(applicationModel.getDisplayLiveAuxLines());
         displayStandardFaceMarksCheckBox.setSelected(applicationModel.getDisplayMarkings());
         cpOnTopCheckBox.setSelected(applicationModel.getDisplayCreasePatternOnTop());
+        darkModeCheckBox.setSelected(applicationModel.getLaf().equals(FlatDarkLaf.class.getName()));
     }
 
     public void setData(FileModel fileModel) {

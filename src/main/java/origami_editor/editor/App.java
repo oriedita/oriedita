@@ -2,6 +2,8 @@ package origami_editor.editor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.ui.FlatUIUtils;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
@@ -27,7 +29,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Queue;
 import java.util.*;
@@ -262,6 +265,12 @@ public class App extends JFrame implements ActionListener {
 
         applicationModel.addPropertyChangeListener(e -> persistApplicationModel());
 
+        applicationModel.addPropertyChangeListener(e -> {
+            if (e.getPropertyName() == null || e.getPropertyName().equals("laf")) {
+                applyLookAndFeel(applicationModel.getLaf());
+            }
+        });
+
         restoreApplicationModel();
 
         gridModel.addPropertyChangeListener(e -> mainDrawingWorker.setGridConfigurationData(gridModel));
@@ -454,6 +463,25 @@ public class App extends JFrame implements ActionListener {
         canvas.addMouseModeHandler(new MouseHandlerMoveCreasePattern(this));
         canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(this));
 
+    }
+
+    private static void updateUI2() {
+        KeyboardFocusManager keyboardFocusManager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        Component permanentFocusOwner = keyboardFocusManager.getPermanentFocusOwner();
+        JSpinner spinner = (permanentFocusOwner != null)
+                ? (JSpinner) SwingUtilities.getAncestorOfClass(JSpinner.class, permanentFocusOwner)
+                : null;
+
+        FlatLaf.updateUI();
+
+        if (spinner != null && keyboardFocusManager.getPermanentFocusOwner() == null) {
+            JComponent editor = spinner.getEditor();
+            JTextField textField = (editor instanceof JSpinner.DefaultEditor)
+                    ? ((JSpinner.DefaultEditor) editor).getTextField()
+                    : null;
+            if (textField != null)
+                textField.requestFocusInWindow();
+        }
     }
 
     private void restoreApplicationModel() {
@@ -1407,7 +1435,7 @@ public class App extends JFrame implements ActionListener {
 
                 new SelectKeyStrokeDialog(App.this, button, helpInputMap, currentKeyStroke, newKeyStroke -> {
                     if (newKeyStroke != null && helpInputMap.containsKey(newKeyStroke) && helpInputMap.get(newKeyStroke) != button) {
-                        String conflictingButton = (String)helpInputMap.get(newKeyStroke).getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).get(newKeyStroke);
+                        String conflictingButton = (String) helpInputMap.get(newKeyStroke).getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).get(newKeyStroke);
                         JOptionPane.showMessageDialog(App.this, "Conflicting KeyStroke! Conflicting with " + conflictingButton);
                         return false;
                     }
@@ -1431,7 +1459,7 @@ public class App extends JFrame implements ActionListener {
                 });
             }
         };
-        String actionName= "Change key stroke";
+        String actionName = "Change key stroke";
         if (keyStroke != null) {
             actionName += " (Current: " + KeyStrokeUtil.toString(keyStroke) + ")";
         }
@@ -1447,6 +1475,7 @@ public class App extends JFrame implements ActionListener {
 
                 maybeShowPopup(e);
             }
+
             public void mouseReleased(MouseEvent e) {
                 maybeShowPopup(e);
             }
@@ -1462,6 +1491,55 @@ public class App extends JFrame implements ActionListener {
 
     public boolean isTaskRunning() {
         return currentTask != null && !currentTask.isDone();
+    }
+
+    private void applyLookAndFeel(String lafClassName) {
+        EventQueue.invokeLater(() -> {
+            try {
+                // clear custom default font before switching to other LaF
+                Font defaultFont = null;
+                if (UIManager.getLookAndFeel() instanceof FlatLaf) {
+                    Font font = UIManager.getFont("defaultFont");
+                    if (font != UIManager.getLookAndFeelDefaults().getFont("defaultFont"))
+                        defaultFont = font;
+                }
+                UIManager.put("defaultFont", null);
+
+                // change look and feel
+                UIManager.setLookAndFeel(lafClassName);
+
+                // restore custom default font when switched to other FlatLaf LaF
+                if (defaultFont != null && UIManager.getLookAndFeel() instanceof FlatLaf)
+                    UIManager.put("defaultFont", defaultFont);
+
+                // update all components
+                updateUI2();
+
+                // increase size of frame if necessary
+                int width = getWidth();
+                int height = getHeight();
+                Dimension prefSize = getPreferredSize();
+                if (prefSize.width > width || prefSize.height > height)
+                    setSize(Math.max(prefSize.width, width), Math.max(prefSize.height, height));
+
+                // limit frame size to screen size
+                Rectangle screenBounds = getGraphicsConfiguration().getBounds();
+                screenBounds = FlatUIUtils.subtractInsets(screenBounds, getToolkit().getScreenInsets(getGraphicsConfiguration()));
+                Dimension frameSize = getSize();
+                if (frameSize.width > screenBounds.width || frameSize.height > screenBounds.height)
+                    setSize(Math.min(frameSize.width, screenBounds.width), Math.min(frameSize.height, screenBounds.height));
+
+                // move frame to left/top if necessary
+                if (getX() + getWidth() > screenBounds.x + screenBounds.width ||
+                        getY() + getHeight() > screenBounds.y + screenBounds.height) {
+                    setLocation(Math.min(getX(), screenBounds.x + screenBounds.width - getWidth()),
+                            Math.min(getY(), screenBounds.y + screenBounds.height - getHeight()));
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
     }
 
     public enum MouseWheelTarget {
