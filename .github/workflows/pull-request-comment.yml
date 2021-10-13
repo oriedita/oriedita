@@ -19,4 +19,4 @@ jobs:
         with:
           number: ${{ github.event.workflow_run.pull_requests[0].number }}
           message: |
-            Hello #${{ github.event.workflow_run.pull_requests[0].number }} [Latest jar for this branch](https://nightly.link/qurben/origami-editor/actions/runs/${{ github.event.workflow_run.id }}/origami-editor-jar.zip)
+            [Latest jar for this branch](https://nightly.link/qurben/origami-editor/actions/runs/${{ github.event.workflow_run.id }}/origami-editor-jar.zip)
