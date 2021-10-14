@@ -331,6 +331,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         btn = e.getButton();
 
+        if (e.isMetaDown()) {
+            btn = MouseEvent.BUTTON2;
+        }
+
         //---------ボタンの種類による動作変更-----------------------------------------
         switch (btn) {
             case MouseEvent.BUTTON1:
@@ -356,9 +360,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     }
                 }
 
-                if (e.isControlDown()) {
-                    app.pointInCreasePatternOrFoldedFigure(p);
-                }
                 break;
             case MouseEvent.BUTTON2:
                 System.out.println("中ボタンクリック");
