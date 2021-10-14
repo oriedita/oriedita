@@ -355,6 +355,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                             break;
                     }
                 }
+
+                if (e.isControlDown()) {
+                    app.pointInCreasePatternOrFoldedFigure(p);
+                }
                 break;
             case MouseEvent.BUTTON2:
                 System.out.println("中ボタンクリック");
