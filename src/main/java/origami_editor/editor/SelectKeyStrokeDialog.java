@@ -25,16 +25,13 @@ public class SelectKeyStrokeDialog extends JDialog {
         this.select = select;
         setContentPane(contentPane);
         setModal(true);
-        getRootPane().setDefaultButton(buttonOK);
+        //getRootPane().setDefaultButton(buttonOK);
 
         setKeyStroke(keyStroke);
 
-        buttonOK.getInputMap(JComponent.WHEN_FOCUSED).clear();
-        buttonOK.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).clear();
-        buttonCancel.getInputMap(JComponent.WHEN_FOCUSED).clear();
-        buttonCancel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).clear();
-        buttonClear.getInputMap(JComponent.WHEN_FOCUSED).clear();
-        buttonClear.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).clear();
+        KeyStrokeUtil.resetButton(buttonOK);
+        KeyStrokeUtil.resetButton(buttonCancel);
+        KeyStrokeUtil.resetButton(buttonClear);
 
         KeyListener adapter = new KeyAdapter() {
             @Override
@@ -45,7 +42,6 @@ public class SelectKeyStrokeDialog extends JDialog {
                     case KeyEvent.VK_ALT:
                     case KeyEvent.VK_ALT_GRAPH:
                     case KeyEvent.VK_SHIFT:
-                    case KeyEvent.VK_ENTER:
                         setKeyStroke(null);
                         return;
                 }

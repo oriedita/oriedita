@@ -1,6 +1,7 @@
 package origami_editor.tools;
 
 import javax.swing.*;
+import java.awt.event.KeyEvent;
 
 public class KeyStrokeUtil {
     public static String toString(KeyStroke keyStroke) {
@@ -11,5 +12,16 @@ public class KeyStrokeUtil {
         return keyStroke.toString()
                 .replaceAll("pressed ", "")
                 .replaceAll(" ", "+");
+    }
+
+    public static void resetButton(AbstractButton button) {
+        button.getInputMap(JComponent.WHEN_FOCUSED)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "none");
+        button.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE,0), "none");
+        button.getInputMap(JComponent.WHEN_FOCUSED)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "none");
+        button.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "none");
     }
 }
