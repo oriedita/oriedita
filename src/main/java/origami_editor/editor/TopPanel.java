@@ -1,7 +1,7 @@
 package origami_editor.editor;
 
 import origami_editor.editor.databinding.*;
-import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
+import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami.crease_pattern.element.Point;
 
@@ -68,7 +68,7 @@ public class TopPanel {
             app.canvasModel.setMouseMode(MouseMode.OPERATION_FRAME_CREATE_61);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
 
-            app.mainDrawingWorker.unselect_all();
+            app.mainCreasePatternWorker.unselect_all();
             app.repaintCanvas();
         });
         mouseSettingsCheckBox.addActionListener(e -> app.applicationModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected()));
@@ -86,7 +86,7 @@ public class TopPanel {
             app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_RATIO_SET_28);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_RATIO_SET_28);
 
-            app.mainDrawingWorker.unselect_all();
+            app.mainCreasePatternWorker.unselect_all();
             app.repaintCanvas();
         });
         moveCreasePatternButton.addActionListener(e -> {
@@ -174,11 +174,11 @@ public class TopPanel {
 
 
 //枠設定時の背景を枠内のみ残してトリム 20181204
-            if ((app.mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (app.mainDrawingWorker.getDrawingStage() == 4)) {//枠線が表示されている状態
-                int xmin = (int) app.mainDrawingWorker.operationFrameBox.getXMin();
-                int xmax = (int) app.mainDrawingWorker.operationFrameBox.getXMax();
-                int ymin = (int) app.mainDrawingWorker.operationFrameBox.getYMin();
-                int ymax = (int) app.mainDrawingWorker.operationFrameBox.getYMax();
+            if ((app.mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (app.mainCreasePatternWorker.getDrawingStage() == 4)) {//枠線が表示されている状態
+                int xmin = (int) app.mainCreasePatternWorker.operationFrameBox.getXMin();
+                int xmax = (int) app.mainCreasePatternWorker.operationFrameBox.getXMax();
+                int ymin = (int) app.mainCreasePatternWorker.operationFrameBox.getYMin();
+                int ymax = (int) app.mainCreasePatternWorker.operationFrameBox.getYMax();
 
                 app.img_background = offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin);
 
@@ -231,7 +231,7 @@ public class TopPanel {
         senbun_yoke_henkanButton.addActionListener(e -> {
             app.canvasModel.setMouseMode(MouseMode.CREASE_ADVANCE_TYPE_30);
 
-            app.mainDrawingWorker.unselect_all();
+            app.mainCreasePatternWorker.unselect_all();
             app.repaintCanvas();
         });
     }

@@ -5,8 +5,8 @@ import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami.crease_pattern.worker.CreasePattern_Worker;
-import origami.crease_pattern.worker.HierarchyList_Worker;
+import origami.crease_pattern.worker.WireFrame_Worker;
+import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.folding.element.SubFace;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.folded_figure.FoldedFigure;
@@ -38,7 +38,7 @@ public class Svg {
         }
     }
 
-    public static void getMemo_wirediagram_for_svg_export(PrintWriter pw, HierarchyList_Worker ctworker, Camera camera, FoldedFigure foldedFigure, CreasePattern_Worker orite, PointSet otta_Men_zu, boolean i_fill) {
+    public static void getMemo_wirediagram_for_svg_export(PrintWriter pw, FoldedFigure_Worker ctworker, Camera camera, FoldedFigure foldedFigure, WireFrame_Worker orite, PointSet otta_Men_zu, boolean i_fill) {
         boolean flipped = camera.determineIsCameraMirrored();
 
         Point t_ob = new Point();
@@ -121,7 +121,7 @@ public class Svg {
     }
 
 
-    public static void getMemo_for_svg_with_camera(PrintWriter pw, Camera camera, FoldedFigure foldedFigure, CreasePattern_Worker orite, PointSet subFace_figure) {//折り上がり図(hyouji_flg==5)
+    public static void getMemo_for_svg_with_camera(PrintWriter pw, Camera camera, FoldedFigure foldedFigure, WireFrame_Worker orite, PointSet subFace_figure) {//折り上がり図(hyouji_flg==5)
         boolean front_back = camera.determineIsCameraMirrored();
 
         Point t0 = new Point();

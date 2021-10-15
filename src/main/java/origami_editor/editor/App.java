@@ -7,11 +7,11 @@ import com.formdev.flatlaf.ui.FlatUIUtils;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
-import origami.crease_pattern.worker.HierarchyList_Worker;
+import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami_editor.editor.action.Click;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
-import origami_editor.editor.drawing_worker.*;
+import origami_editor.editor.canvas.*;
 import origami_editor.editor.export.Cp;
 import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
@@ -57,8 +57,9 @@ public class App extends JFrame implements ActionListener {
     public final CameraModel creasePatternCameraModel = new CameraModel();
     public final FileModel fileModel = new FileModel();
     public final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
-    public final DrawingWorker mainDrawingWorker = new DrawingWorker(this);    // Basic branch craftsman. Accepts input from the mouse.
+    public final CreasePattern_Worker mainCreasePatternWorker = new CreasePattern_Worker(this);    // Basic branch craftsman. Accepts input from the mouse.
     final Queue<Popup> popups = new ArrayDeque<>();
+    private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate = new MouseHandlerVoronoiCreate();
     public FoldedFigure temp_OZ;    //Folded figure
     public FoldedFigure OZ;    //Current Folded figure
     public LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
@@ -97,12 +98,12 @@ public class App extends JFrame implements ActionListener {
         setTitle("Origami Editor " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
         frame_title_0 = getTitle();
         frame_title = frame_title_0;//Store title in variable
-        mainDrawingWorker.setTitle(frame_title);
+        mainCreasePatternWorker.setTitle(frame_title);
 
         final ConsoleDialog consoleDialog;
 
         if (System.console() == null) {
-            consoleDialog = new ConsoleDialog();
+            consoleDialog = null;//new ConsoleDialog();
         } else {
             consoleDialog = null;
         }
@@ -256,7 +257,7 @@ public class App extends JFrame implements ActionListener {
 
         leftPanel.getData(gridModel);
 
-        applicationModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(e, applicationModel));
+        applicationModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(e, applicationModel));
         applicationModel.addPropertyChangeListener(e -> canvas.setData(applicationModel));
         applicationModel.addPropertyChangeListener(e -> appMenuBar.setData(applicationModel));
         applicationModel.addPropertyChangeListener(e -> topPanel.setData(applicationModel));
@@ -273,24 +274,24 @@ public class App extends JFrame implements ActionListener {
 
         restoreApplicationModel();
 
-        gridModel.addPropertyChangeListener(e -> mainDrawingWorker.setGridConfigurationData(gridModel));
+        gridModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setGridConfigurationData(gridModel));
         gridModel.addPropertyChangeListener(e -> leftPanel.setData(gridModel));
 
         angleSystemModel.addPropertyChangeListener(e -> rightPanel.setData(angleSystemModel));
-        angleSystemModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(angleSystemModel));
+        angleSystemModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(angleSystemModel));
         angleSystemModel.addPropertyChangeListener(e -> repaintCanvas());
 
         measuresModel.addPropertyChangeListener(e -> rightPanel.setData(measuresModel));
 
         internalDivisionRatioModel.addPropertyChangeListener(e -> topPanel.setData(internalDivisionRatioModel));
-        internalDivisionRatioModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(internalDivisionRatioModel));
+        internalDivisionRatioModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(internalDivisionRatioModel));
 
         foldedFigureModel.addPropertyChangeListener(e -> OZ.setData(foldedFigureModel));
         foldedFigureModel.addPropertyChangeListener(e -> bottomPanel.setData(foldedFigureModel));
         foldedFigureModel.addPropertyChangeListener(e -> repaintCanvas());
         foldedFigureModel.addPropertyChangeListener(e -> leftPanel.setData(foldedFigureModel));
 
-        canvasModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(canvasModel));
+        canvasModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(canvasModel));
         canvasModel.addPropertyChangeListener(e -> canvas.setData(canvasModel));
         canvasModel.addPropertyChangeListener(e -> topPanel.setData(e, canvasModel));
         canvasModel.addPropertyChangeListener(e -> rightPanel.setData(e, canvasModel));
@@ -307,7 +308,7 @@ public class App extends JFrame implements ActionListener {
         });
 
         historyStateModel.addPropertyChangeListener(e -> rightPanel.setData(historyStateModel));
-        historyStateModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(historyStateModel));
+        historyStateModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(historyStateModel));
 
         backgroundModel.addPropertyChangeListener(e -> topPanel.setData(backgroundModel));
         backgroundModel.addPropertyChangeListener(e -> {
@@ -335,10 +336,10 @@ public class App extends JFrame implements ActionListener {
 
         Button_shared_operation();
 
-        mainDrawingWorker.setCamera(canvas.creasePatternCamera);
+        mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);
 
-        mainDrawingWorker.record();
-        mainDrawingWorker.auxRecord();
+        mainCreasePatternWorker.record();
+        mainCreasePatternWorker.auxRecord();
 
         pack();
         setVisible(true);
@@ -391,7 +392,8 @@ public class App extends JFrame implements ActionListener {
         canvas.addMouseModeHandler(MouseHandlerSquareBisector.class);
         canvas.addMouseModeHandler(MouseHandlerFoldableLineDraw.class);
         canvas.addMouseModeHandler(MouseHandlerVertexMakeAngularlyFlatFoldable.class);
-        canvas.addMouseModeHandler(MouseHandlerVoronoiCreate.class);
+        mouseHandlerVoronoiCreate.setDrawingWorker(mainCreasePatternWorker);
+        canvas.addMouseModeHandler(mouseHandlerVoronoiCreate);
         canvas.addMouseModeHandler(MouseHandlerLineSegmentRatioSet.class);
         canvas.addMouseModeHandler(MouseHandlerCircleDrawThreePoint.class);
         canvas.addMouseModeHandler(MouseHandlerCreasesAlternateMV.class);
@@ -547,7 +549,7 @@ public class App extends JFrame implements ActionListener {
         }
 
         setTitle(frame_title);
-        mainDrawingWorker.setTitle(frame_title);
+        mainCreasePatternWorker.setTitle(frame_title);
     }
 
     public void repaintCanvas() {
@@ -556,7 +558,7 @@ public class App extends JFrame implements ActionListener {
 
     public FoldType getFoldType() {
         FoldType foldType;//= 0 Do nothing, = 1 Folding estimation for all fold lines in the normal development view, = 2 for fold estimation for selected fold lines, = 3 for changing the folding state
-        int foldLineTotalForSelectFolding = mainDrawingWorker.getFoldLineTotalForSelectFolding();
+        int foldLineTotalForSelectFolding = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
         System.out.println("foldedFigures.size() = " + foldedFigures.size() + "    : foldedFigureIndex = " + foldedFigureIndex + "    : mainDrawingWorker.get_orisensuu_for_select_oritatami() = " + foldLineTotalForSelectFolding);
         if (foldedFigures.size() == 1) {                        //折り上がり系図無し
             if (foldedFigureIndex == 0) {                            //展開図指定
@@ -592,19 +594,19 @@ public class App extends JFrame implements ActionListener {
             System.out.println(" oritatame 20180108");
         } else if ((foldType == FoldType.FOR_ALL_LINES_1) || (foldType == FoldType.FOR_SELECTED_LINES_2)) {
             if (foldType == FoldType.FOR_ALL_LINES_1) {
-                mainDrawingWorker.select_all();
+                mainCreasePatternWorker.select_all();
             }
             //
             if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
-                DrawingWorker drawingWorker2 = new DrawingWorker(this);    // Basic branch craftsman. Accepts input from the mouse.
-                drawingWorker2.setSave_for_reading(mainDrawingWorker.foldLineSet.getSaveForSelectFolding());
-                drawingWorker2.point_removal();
-                drawingWorker2.overlapping_line_removal();
-                drawingWorker2.branch_trim(0.000001);
-                drawingWorker2.organizeCircles();
-                lineSegmentsForFolding = drawingWorker2.getForFolding();
+                CreasePattern_Worker creasePatternWorker2 = new CreasePattern_Worker(this);    // Basic branch craftsman. Accepts input from the mouse.
+                creasePatternWorker2.setSave_for_reading(mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding());
+                creasePatternWorker2.point_removal();
+                creasePatternWorker2.overlapping_line_removal();
+                creasePatternWorker2.branch_trim(0.000001);
+                creasePatternWorker2.organizeCircles();
+                lineSegmentsForFolding = creasePatternWorker2.getForFolding();
             } else {
-                lineSegmentsForFolding = mainDrawingWorker.getForSelectFolding();
+                lineSegmentsForFolding = mainCreasePatternWorker.getForSelectFolding();
             }
 
             point_of_referencePlane_old.set(OZ.cp_worker1.get_point_of_referencePlane_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
@@ -679,8 +681,8 @@ public class App extends JFrame implements ActionListener {
 
     // --------展開図の初期化-----------------------------
     void developmentView_initialization() {
-        mainDrawingWorker.reset();
-        mainDrawingWorker.initialize();
+        mainCreasePatternWorker.reset();
+        mainCreasePatternWorker.initialize();
 
         //camera_of_orisen_nyuuryokuzu	の設定;
         canvas.creasePatternCamera.setCameraPositionX(0.0);
@@ -692,7 +694,7 @@ public class App extends JFrame implements ActionListener {
         canvas.creasePatternCamera.setDisplayPositionX(350.0);
         canvas.creasePatternCamera.setDisplayPositionY(350.0);
 
-        mainDrawingWorker.setCamera(canvas.creasePatternCamera);
+        mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);
         OZ.cp_worker1.setCamera(canvas.creasePatternCamera);
 
         canvasModel.reset();
@@ -709,9 +711,9 @@ public class App extends JFrame implements ActionListener {
     }
 
     public void Button_shared_operation() {
-        mainDrawingWorker.setDrawingStage(0);
-        mainDrawingWorker.resetCircleStep();
-        mainDrawingWorker.voronoiLineSet.reset();
+        mainCreasePatternWorker.setDrawingStage(0);
+        mainCreasePatternWorker.resetCircleStep();
+        mouseHandlerVoronoiCreate.voronoiLineSet.clear();
     }
 
     public MouseWheelTarget pointInCreasePatternOrFoldedFigure(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
@@ -830,7 +832,7 @@ public class App extends JFrame implements ActionListener {
     public Point e2p(MouseEvent e) {
         double offset = 0.0;
         if (applicationModel.getDisplayPointOffset()) {
-            offset = canvas.creasePatternCamera.getCameraZoomX() * mainDrawingWorker.getSelectionDistance();
+            offset = canvas.creasePatternCamera.getCameraZoomX() * mainCreasePatternWorker.getSelectionDistance();
         }
         return new Point(e.getX() - (int) offset, e.getY() - (int) offset);
     }
@@ -887,7 +889,7 @@ public class App extends JFrame implements ActionListener {
         OZ.display_flg_backup = FoldedFigure.DisplayStyle.NONE_0;//表示様式hyouji_flgの一時的バックアップ用
 
         //表示用の値を格納する変数
-        OZ.ip1_anotherOverlapValid = HierarchyList_Worker.HierarchyListStatus.UNKNOWN_N1;//上下表職人の初期設定時に、折った後の表裏が同じ面が
+        OZ.ip1_anotherOverlapValid = FoldedFigure_Worker.HierarchyListStatus.UNKNOWN_N1;//上下表職人の初期設定時に、折った後の表裏が同じ面が
         //隣接するという誤差があれが0を、無ければ1000を格納する変数。
         //ここでの初期値は(0か1000)以外の数ならなんでもいい。
         OZ.ip2_possibleOverlap = -1;//上下表職人が折り畳み可能な重なり方を探した際に、
@@ -944,17 +946,17 @@ public class App extends JFrame implements ActionListener {
 
         if (exportFile.getName().endsWith(".png") || exportFile.getName().endsWith(".jpg") || exportFile.getName().endsWith(".jpeg") || exportFile.getName().endsWith(".svg")) {
             flg61 = false;
-            if ((mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (mainDrawingWorker.getDrawingStage() == 4)) {
+            if ((mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (mainCreasePatternWorker.getDrawingStage() == 4)) {
                 flg61 = true;
-                mainDrawingWorker.setDrawingStage(0);
+                mainCreasePatternWorker.setDrawingStage(0);
             }
 
             canvas.flg_wi = true;
             repaintCanvas();//Necessary to not export the green border
         } else if (exportFile.getName().endsWith(".cp")) {
-            Cp.exportFile(mainDrawingWorker.getSave_for_export(), exportFile);
+            Cp.exportFile(mainCreasePatternWorker.getSave_for_export(), exportFile);
         } else if (exportFile.getName().endsWith(".orh")) {
-            Orh.exportFile(mainDrawingWorker.getSave_for_export_with_applicationModel(), exportFile);
+            Orh.exportFile(mainCreasePatternWorker.getSave_for_export_with_applicationModel(), exportFile);
         }
     }
 
@@ -1129,7 +1131,7 @@ public class App extends JFrame implements ActionListener {
 
         File file = new File(fileModel.getSavedFileName());
 
-        Save save = mainDrawingWorker.getSave_for_export();
+        Save save = mainCreasePatternWorker.getSave_for_export();
         save.setVersion(ResourceUtil.getVersionFromManifest());
 
         saveAndName2File(save, file);
@@ -1144,7 +1146,7 @@ public class App extends JFrame implements ActionListener {
             return;
         }
 
-        Save save = mainDrawingWorker.getSave_for_export();
+        Save save = mainCreasePatternWorker.getSave_for_export();
         save.setVersion(ResourceUtil.getVersionFromManifest());
 
         saveAndName2File(save, file);
@@ -1258,9 +1260,9 @@ public class App extends JFrame implements ActionListener {
             setFoldedFigureIndex(0);
             configure_initialize_prediction();
 
-            mainDrawingWorker.setCamera(canvas.creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
-            mainDrawingWorker.setSave_for_reading(memo_temp);
-            mainDrawingWorker.record();
+            mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
+            mainCreasePatternWorker.setSave_for_reading(memo_temp);
+            mainCreasePatternWorker.record();
         }
     }
 
@@ -1302,9 +1304,9 @@ public class App extends JFrame implements ActionListener {
             setFoldedFigureIndex(0);
             configure_initialize_prediction();
 
-            mainDrawingWorker.setCamera(canvas.creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
-            mainDrawingWorker.setSave_for_reading(memo_temp);
-            mainDrawingWorker.record();
+            mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
+            mainCreasePatternWorker.setSave_for_reading(memo_temp);
+            mainCreasePatternWorker.record();
         }
     }
 

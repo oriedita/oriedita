@@ -44,7 +44,7 @@ public class OpenFrame extends JDialog {
             app.canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_INPUT_39);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.FOLDABLE_LINE_INPUT_39);
 
-            app.mainDrawingWorker.unselect_all();
+            app.mainCreasePatternWorker.unselect_all();
             app.repaint();
         });
         select_polygonButton.addActionListener(e -> {

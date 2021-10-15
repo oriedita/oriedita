@@ -1,12 +1,10 @@
 package origami_editor.editor.databinding;
 
 import origami.crease_pattern.element.LineColor;
-import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
-import origami_editor.editor.drawing_worker.MouseHandlerModifyCalculatedShape;
+import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
+import origami_editor.editor.canvas.MouseHandlerModifyCalculatedShape;
 
-import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;

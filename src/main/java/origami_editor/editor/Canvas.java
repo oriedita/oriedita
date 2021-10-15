@@ -2,10 +2,10 @@ package origami_editor.editor;
 
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.CanvasModel;
-import origami_editor.editor.drawing_worker.BaseMouseHandler;
-import origami_editor.editor.drawing_worker.DrawingWorker;
-import origami_editor.editor.drawing_worker.FoldLineAdditionalInputMode;
-import origami_editor.editor.drawing_worker.MouseModeHandler;
+import origami_editor.editor.canvas.BaseMouseHandler;
+import origami_editor.editor.canvas.CreasePattern_Worker;
+import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
+import origami_editor.editor.canvas.MouseModeHandler;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.export.Svg;
@@ -27,7 +27,7 @@ import java.util.Map;
  * Panel in the center of the main view.
  */
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
-    private final DrawingWorker es1;
+    private final CreasePattern_Worker es1;
     private final App app;
 
     Graphics bufferGraphics;
@@ -77,7 +77,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         addMouseMotionListener(this);
         addMouseWheelListener(this);
 
-        es1 = app0.mainDrawingWorker;
+        es1 = app0.mainCreasePatternWorker;
 
         System.out.println(" dim 001 :" + dim.width + " , " + dim.height);//多分削除可能
 
@@ -108,7 +108,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     public void addMouseModeHandler(Class<? extends BaseMouseHandler> handler) {
         try {
             BaseMouseHandler instance = handler.getDeclaredConstructor().newInstance();
-            instance.setDrawingWorker(app.mainDrawingWorker);
+            instance.setDrawingWorker(app.mainCreasePatternWorker);
             mouseModeHandlers.put(instance.getMouseMode(), instance);
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
@@ -139,7 +139,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
         //カメラのセット
-        app.mainDrawingWorker.setCamera(creasePatternCamera);
+        app.mainCreasePatternWorker.setCamera(creasePatternCamera);
 
         FoldedFigure OZi;
         for (int i = 1; i <= app.foldedFigures.size() - 1; i++) {
@@ -176,7 +176,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             }
         }
 
-        double d_width = creasePatternCamera.getCameraZoomX() * app.mainDrawingWorker.getSelectionDistance();
+        double d_width = creasePatternCamera.getCameraZoomX() * app.mainCreasePatternWorker.getSelectionDistance();
         //Flashlight (dot) search range
         if (displayPointSpotlight) {
             g2.setColor(new Color(255, 240, 0, 30));
@@ -200,13 +200,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
             bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f )", app.p_mouse_object_position.getX(), app.p_mouse_object_position.getY()), 10, 10); //この表示内容はvoid kekka_syoriで決められる。
 
-            bufferGraphics.drawString("L=" + app.mainDrawingWorker.getTotal(), 10, 25); //この表示内容はvoid kekka_syoriで決められる。
+            bufferGraphics.drawString("L=" + app.mainCreasePatternWorker.getTotal(), 10, 25); //この表示内容はvoid kekka_syoriで決められる。
 
             //結果の文字表示
             bufferGraphics.drawString(app.OZ.text_result, 10, 40); //この表示内容はvoid kekka_syoriで決められる。
 
             if (displayGridInputAssist) {
-                Point gridIndex = new Point(app.mainDrawingWorker.getGridPosition(app.p_mouse_TV_position));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
+                Point gridIndex = new Point(app.mainCreasePatternWorker.getGridPosition(app.p_mouse_TV_position));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
 
                 double dx_ind = gridIndex.getX();
                 double dy_ind = gridIndex.getY();
@@ -600,7 +600,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             String formatName;
 
             if (fname.endsWith("svg")) {
-                Svg.exportFile(app.mainDrawingWorker.foldLineSet, creasePatternCamera, displayCpLines, lineWidth, intLineWidth, lineStyle, pointSize, app.foldedFigures, file);
+                Svg.exportFile(app.mainCreasePatternWorker.foldLineSet, creasePatternCamera, displayCpLines, lineWidth, intLineWidth, lineStyle, pointSize, app.foldedFigures, file);
                 return;
             } else if (fname.endsWith("png")) {
                 formatName = "png";
@@ -615,10 +615,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
             try {
                 if (app.flg61) { //枠設定時の枠内のみ書き出し 20180524
-                    int xMin = (int) app.mainDrawingWorker.operationFrameBox.getXMin();
-                    int xMax = (int) app.mainDrawingWorker.operationFrameBox.getXMax();
-                    int yMin = (int) app.mainDrawingWorker.operationFrameBox.getYMin();
-                    int yMax = (int) app.mainDrawingWorker.operationFrameBox.getYMax();
+                    int xMin = (int) app.mainCreasePatternWorker.operationFrameBox.getXMin();
+                    int xMax = (int) app.mainCreasePatternWorker.operationFrameBox.getXMax();
+                    int yMin = (int) app.mainCreasePatternWorker.operationFrameBox.getYMin();
+                    int yMax = (int) app.mainCreasePatternWorker.operationFrameBox.getYMax();
 
                     ImageIO.write(offscreen.getSubimage(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1), formatName, file);
 
