@@ -506,20 +506,6 @@ public class Orh {
                 s0.setActive(is);
             }
 
-            if ((reading_flag == 1) && (str.equals("iva"))) {
-                str = tk.nextToken();
-                int iva = Integer.parseInt(str);
-                LineSegment s0 = lineSegments.get(number);
-                s0.setVoronoiA(iva);
-            }
-
-            if ((reading_flag == 1) && (str.equals("ivb"))) {
-                str = tk.nextToken();
-                int ivb = Integer.parseInt(str);
-                LineSegment s0 = lineSegments.get(number);
-                s0.setVoronoiB(ivb);
-            }
-
             if ((reading_flag == 1) && (str.equals("選択"))) {
                 str = tk.nextToken();
                 int isel = Integer.parseInt(str);

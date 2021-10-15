@@ -154,22 +154,6 @@ public class FoldLineSet {
         return s.getActive();
     }
 
-    public int getVoronoiA(int i) {
-        return lineSegments.get(i).getVoronoiA();
-    }
-
-    public int getVoronoiB(int i) {
-        return lineSegments.get(i).getVoronoiB();
-    }
-
-    public void setVoronoiA(int i, int a) {
-        lineSegments.get(i).setVoronoiA(a);
-    }
-
-    public void setVoronoiB(int i, int b) {
-        lineSegments.get(i).setVoronoiB(b);
-    }
-
     public Save getSave() {
         return getSave("_");
     }
@@ -1919,11 +1903,11 @@ public class FoldLineSet {
     }
 
     //線分の追加-------------------------------
-    public void addLine(Point pi, Point pj, LineColor i_c, LineSegment.ActiveState i_a, int v_a, int v_b) {
+    public void addLine(Point pi, Point pj, LineColor i_c, LineSegment.ActiveState i_a) {
         total++;
 
         LineSegment s = new LineSegment();
-        s.set(pi, pj, i_c, i_a, v_a, v_b);
+        s.set(pi, pj, i_c, i_a);
 
         lineSegments.add(s);
     }
@@ -1952,7 +1936,7 @@ public class FoldLineSet {
 
     //線分の追加-------------------------------
     public void addLine(LineSegment s0) {
-        addLine(s0.getA(), s0.getB(), s0.getColor(), s0.getActive(), s0.getVoronoiA(), s0.getVoronoiB());//20181110追加
+        addLine(s0.getA(), s0.getB(), s0.getColor(), s0.getActive());//20181110追加
     }
 
     //線分の削除-----------------------------------------

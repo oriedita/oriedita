@@ -14,9 +14,9 @@ public class CheckCAMVTask implements Runnable{
         long start = System.currentTimeMillis();
 
         try {
-            app.mainDrawingWorker.ap_check4(app.d_ap_check4);
+            app.mainCreasePatternWorker.ap_check4(app.d_ap_check4);
         } catch (InterruptedException e) {
-            app.mainDrawingWorker.foldLineSet.getCheck4LineSegments().clear();
+            app.mainCreasePatternWorker.foldLineSet.getCheck4LineSegments().clear();
         }
 
         long stop = System.currentTimeMillis();

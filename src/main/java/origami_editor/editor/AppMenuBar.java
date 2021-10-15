@@ -80,8 +80,8 @@ public class AppMenuBar extends JMenuBar {
 
             app.canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);
 
-            app.mainDrawingWorker.record();
-            app.mainDrawingWorker.auxRecord();
+            app.mainCreasePatternWorker.record();
+            app.mainCreasePatternWorker.auxRecord();
         });
         openButton.addActionListener(e -> {
             app.mouseDraggedValid = false;
@@ -101,7 +101,7 @@ public class AppMenuBar extends JMenuBar {
         });
         exportButton.addActionListener(e -> {
             if (app.mouseMode != MouseMode.OPERATION_FRAME_CREATE_61) {
-                app.mainDrawingWorker.setDrawingStage(0);
+                app.mainCreasePatternWorker.setDrawingStage(0);
             }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;

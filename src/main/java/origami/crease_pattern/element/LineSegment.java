@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class LineSegment implements Serializable, Cloneable {
-    private final Point a = new Point(); //Branch a point
-    private final Point b = new Point(); //Branch b point
+    protected final Point a = new Point(); //Branch a point
+    protected final Point b = new Point(); //Branch b point
     ActiveState active;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
     LineColor color;//Color specification 　0=black,1=blue,2=red.
 
@@ -16,8 +16,7 @@ public class LineSegment implements Serializable, Cloneable {
 
     int selected;//0 is not selected. 1 or more is set appropriately according to the situation
 
-    int voronoiA;
-    int voronoiB;
+
 
     //コンストラクタ
     public LineSegment() {
@@ -26,8 +25,6 @@ public class LineSegment implements Serializable, Cloneable {
         active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
-        voronoiA = 0;
-        voronoiB = 0;
     }
 
     public LineSegment(Point t1, Point t2) {
@@ -36,8 +33,6 @@ public class LineSegment implements Serializable, Cloneable {
         active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
-        voronoiA = 0;
-        voronoiB = 0;
     }
 
     public LineSegment(Point t1, Point t2, LineColor color) {
@@ -46,8 +41,6 @@ public class LineSegment implements Serializable, Cloneable {
         active = ActiveState.INACTIVE_0;
         this.color = color;
         selected = 0;
-        voronoiA = 0;
-        voronoiB = 0;
     }
 
     public LineSegment(double i1, double i2, double i3, double i4) {
@@ -56,8 +49,6 @@ public class LineSegment implements Serializable, Cloneable {
         active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
-        voronoiA = 0;
-        voronoiB = 0;
     }
 
     public void reset() {
@@ -66,8 +57,6 @@ public class LineSegment implements Serializable, Cloneable {
         active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
-        voronoiA = 0;
-        voronoiB = 0;
     }
 
     //d2s Double is changed to a string. Rounded to the second decimal place (""); public void display (String str0) is used only.
@@ -93,8 +82,6 @@ public class LineSegment implements Serializable, Cloneable {
         active = s.getActive();
         color = s.getColor();
         selected = s.getSelected();
-        voronoiA = s.getVoronoiA();
-        voronoiB = s.getVoronoiB();
         setCustomized(s.getCustomized());
         setCustomizedColor(s.getCustomizedColor());
     }
@@ -116,12 +103,6 @@ public class LineSegment implements Serializable, Cloneable {
         set(p, q);
         color = ic;
         active = ia;
-    }
-
-    public void set(Point p, Point q, LineColor ic, ActiveState ia, int v_a, int v_b) {
-        set(p, q, ic, ia);
-        voronoiA = v_a;
-        voronoiB = v_b;
     }
 
     public void set(Point p, Point q, LineColor ic) {
@@ -273,21 +254,7 @@ public class LineSegment implements Serializable, Cloneable {
         customizedColor = c0;
     }
 
-    public int getVoronoiA() {
-        return voronoiA;
-    }
 
-    public void setVoronoiA(int i) {
-        voronoiA = i;
-    }
-
-    public int getVoronoiB() {
-        return voronoiB;
-    }
-
-    public void setVoronoiB(int i) {
-        voronoiB = i;
-    }
 
     @Override
     public LineSegment clone() {
@@ -296,8 +263,7 @@ public class LineSegment implements Serializable, Cloneable {
         clone.setSelected(selected);
         clone.setCustomizedColor(customizedColor);
         clone.setCustomized(customized);
-        clone.setVoronoiA(voronoiA);
-        clone.setVoronoiB(voronoiB);
+
 
         // TODO: copy mutable state here, so the clone can't change the internals of the original
         return clone;

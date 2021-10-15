@@ -6,7 +6,7 @@ import origami_editor.editor.component.FoldedFigureRotate;
 import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
-import origami_editor.editor.drawing_worker.MouseHandlerModifyCalculatedShape;
+import origami_editor.editor.canvas.MouseHandlerModifyCalculatedShape;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.task.FoldingEstimateSave100Task;
 import origami_editor.editor.task.FoldingEstimateSpecificTask;
@@ -72,7 +72,7 @@ public class BottomPanel extends JPanel {
             app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
 
             if (!app.applicationModel.getSelectPersistent()) {
-                app.mainDrawingWorker.unselect_all();
+                app.mainCreasePatternWorker.unselect_all();
             }
         });
         anotherSolutionButton.addActionListener(e -> {
@@ -211,8 +211,8 @@ public class BottomPanel extends JPanel {
 
             app.canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);
 
-            app.mainDrawingWorker.record();
-            app.mainDrawingWorker.auxRecord();
+            app.mainCreasePatternWorker.record();
+            app.mainCreasePatternWorker.auxRecord();
         });
     }
 

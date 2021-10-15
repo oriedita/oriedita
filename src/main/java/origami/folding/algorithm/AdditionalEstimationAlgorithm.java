@@ -1,6 +1,6 @@
 package origami.folding.algorithm;
 
-import origami.crease_pattern.worker.HierarchyList_Worker.HierarchyListStatus;
+import origami.crease_pattern.worker.FoldedFigure_Worker.HierarchyListStatus;
 import origami.folding.HierarchyList;
 import origami.folding.element.SubFace;
 import origami.folding.util.EquivalenceCondition;

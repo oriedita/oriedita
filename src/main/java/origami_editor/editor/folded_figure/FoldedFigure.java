@@ -1,9 +1,9 @@
 package origami_editor.editor.folded_figure;
 
 import origami_editor.editor.databinding.FoldedFigureModel;
+import origami.crease_pattern.worker.BasicBranch_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
-import origami.crease_pattern.worker.CreasePattern_Worker;
-import origami.crease_pattern.worker.HierarchyList_Worker;
+import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.tools.Camera;
@@ -14,7 +14,7 @@ import java.awt.*;
 public class FoldedFigure {
     public double d_foldedFigure_scale_factor = 1.0;//Scale factor of folded view
     public double d_foldedFigure_rotation_correction = 0.0;//Correction angle of rotation display angle of folded view
-    public HierarchyList_Worker ct_worker;
+    public FoldedFigure_Worker ct_worker;
     // The point set of cp_worker2 may have overlapping bars, so
     // Pass it to bb_worker once and organize it as a line segment set.
     public Camera foldedFigureCamera = new Camera();
@@ -30,7 +30,7 @@ public class FoldedFigure {
     public EstimationOrder estimationOrder = EstimationOrder.ORDER_0;//Instructions on how far to perform folding estimation
     public EstimationStep estimationStep = EstimationStep.STEP_0;//Display of how far the folding estimation has been completed
     //Variable to store the value for display
-    public HierarchyList_Worker.HierarchyListStatus ip1_anotherOverlapValid = HierarchyList_Worker.HierarchyListStatus.UNKNOWN_N1;// At the time of initial setting of the upper and lower front craftsmen, the front and back sides are the same after folding
+    public FoldedFigure_Worker.HierarchyListStatus ip1_anotherOverlapValid = FoldedFigure_Worker.HierarchyListStatus.UNKNOWN_N1;// At the time of initial setting of the upper and lower front craftsmen, the front and back sides are the same after folding
     // A variable that stores 0 if there is an error of being adjacent, and 1000 if there is no error.
     // The initial value here can be any number other than (0 or 1000).
     public int ip2_possibleOverlap = -1;// When the top and bottom craftsmen look for a foldable stacking method,
@@ -54,17 +54,17 @@ public class FoldedFigure {
     public String text_result;                //Instantiation of result display string class
     public boolean transparencyColor = false;//1 if the transparency is in color, 0 otherwise
     double r = 3.0;                   //Criteria for determining the radius of the circles at both ends of the straight line of the basic branch structure and the proximity of the branches to various points
-    public WireFrame_Worker bb_worker = new WireFrame_Worker(r);    //Basic branch craftsman. Before passing the point set of cp_worker2 to cp_worker3,
-    public CreasePattern_Worker cp_worker1 = new CreasePattern_Worker(r);    //Net craftsman. Fold the input line segment set first to make a fold-up diagram of the wire-shaped point set.
-    public CreasePattern_Worker cp_worker2 = new CreasePattern_Worker(r);    //Net craftsman. It holds the folded-up view of the wire-shaped point set created by cp_worker1 and functions as a line segment set.
-    public CreasePattern_Worker cp_worker3 = new CreasePattern_Worker(r);    //Net craftsman. Organize the wire-shaped point set created by cp_worker1. It has functions such as recognizing a new surface.
+    public BasicBranch_Worker bb_worker = new BasicBranch_Worker();    //Basic branch craftsman. Before passing the point set of cp_worker2 to cp_worker3,
+    public WireFrame_Worker cp_worker1 = new WireFrame_Worker(r);    //Net craftsman. Fold the input line segment set first to make a fold-up diagram of the wire-shaped point set.
+    public WireFrame_Worker cp_worker2 = new WireFrame_Worker(r);    //Net craftsman. It holds the folded-up view of the wire-shaped point set created by cp_worker1 and functions as a line segment set.
+    public WireFrame_Worker cp_worker3 = new WireFrame_Worker(r);    //Net craftsman. Organize the wire-shaped point set created by cp_worker1. It has functions such as recognizing a new surface.
 
     public final FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
     private Point pointOfReferencePlane;
 
     public FoldedFigure(BulletinBoard bb) {
 
-        ct_worker = new HierarchyList_Worker(bb);
+        ct_worker = new FoldedFigure_Worker(bb);
         bulletinBoard = bb;
 
         //Camera settings ------------------------------------------------------------------
@@ -473,7 +473,7 @@ public class FoldedFigure {
         System.out.println("＜＜＜＜＜oritatami_suitei_01;開始");
         bulletinBoard.write("<<<<oritatami_suitei_01;  start");
         // Pass the line segment set created in mainDrawingWorker to cp_worker1 by mouse input and make it a point set (corresponding to the development view).
-        cp_worker1.lineStore2pointStore(lineSegmentSet);
+        cp_worker1.setLineSegmentSet(lineSegmentSet);
         ip3 = cp_worker1.setReferencePlaneId(ip3);
         ip3 = cp_worker1.setReferencePlaneId(pointOfReferencePlane);//20180222 Added to take over the previously specified reference plane when performing folding estimation with the fold line selected.
 
@@ -530,7 +530,7 @@ public class FoldedFigure {
         //The crease pattern craftsman cp_worker3 receives a point set (arranged wire diagram of cp_worker2) from bb_worker and divides it into SubFace.
         System.out.println("＜＜＜＜＜oritatami_suitei_03()_____展開図職人cp_worker3はbb_workerから整理された線分集合を受け取り、Smenに分割する。");
         System.out.println("　　　oritatami_suitei_03()のcp_worker3.Senbunsyuugou2Tensyuugou(bb_worker.get());実施");
-        cp_worker3.lineStore2pointStore(bb_worker.get());
+        cp_worker3.setLineSegmentSet(bb_worker.get());
 
         System.out.println("＜＜＜＜＜oritatami_suitei_03()_____上下表職人ct_workerは、展開図職人cp_worker3から点集合を受け取り、Smenを設定する。");
         ct_worker.SubFace_configure(cp_worker2.get(), cp_worker3.get());
@@ -550,10 +550,10 @@ public class FoldedFigure {
         // Also, use the information on the positional relationship of the surface when folded, which cp_worker1 has.
         System.out.println("＜＜＜＜＜oritatami_suitei_04()_____上下表職人ct_workerが面(折りたたむ前の展開図の面のこと)の上下表を作る。");
 
-        ip1_anotherOverlapValid = HierarchyList_Worker.HierarchyListStatus.UNKNOWN_0;
+        ip1_anotherOverlapValid = FoldedFigure_Worker.HierarchyListStatus.UNKNOWN_0;
         findAnotherOverlapValid = false;
         ip1_anotherOverlapValid = ct_worker.HierarchyList_configure(cp_worker1, cp_worker2.get());   //ip1_anotherOverlapValid = A variable that stores 0 if there is an error that the front and back sides are adjacent after folding, and 1000 if there is no error.
-        if (ip1_anotherOverlapValid == HierarchyList_Worker.HierarchyListStatus.SUCCESSFUL_1000) {
+        if (ip1_anotherOverlapValid == FoldedFigure_Worker.HierarchyListStatus.SUCCESSFUL_1000) {
             findAnotherOverlapValid = true;
         }
         discovered_fold_cases = 0;
