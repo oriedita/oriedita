@@ -254,7 +254,7 @@ public class App extends JFrame implements ActionListener {
 
         setJMenuBar(appMenuBar);
 
-        leftPanel.getGridConfigurationData(gridModel);
+        leftPanel.getData(gridModel);
 
         applicationModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(e, applicationModel));
         applicationModel.addPropertyChangeListener(e -> canvas.setData(applicationModel));
@@ -274,7 +274,7 @@ public class App extends JFrame implements ActionListener {
         restoreApplicationModel();
 
         gridModel.addPropertyChangeListener(e -> mainDrawingWorker.setGridConfigurationData(gridModel));
-        gridModel.addPropertyChangeListener(e -> leftPanel.setGridConfigurationData(gridModel));
+        gridModel.addPropertyChangeListener(e -> leftPanel.setData(gridModel));
 
         angleSystemModel.addPropertyChangeListener(e -> rightPanel.setData(angleSystemModel));
         angleSystemModel.addPropertyChangeListener(e -> mainDrawingWorker.setData(angleSystemModel));
