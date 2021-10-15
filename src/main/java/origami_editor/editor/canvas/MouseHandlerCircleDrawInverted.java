@@ -1,10 +1,7 @@
 package origami_editor.editor.canvas;
 
 import origami.crease_pattern.OritaCalc;
-import origami.crease_pattern.element.Circle;
-import origami.crease_pattern.element.LineColor;
-import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.*;
 import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
@@ -64,15 +61,48 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
         if ((d.lineStep.size() == 1) && (d.circleStep.size() == 1)) {
-            d.add_hanten(d.lineStep.get(0), d.circleStep.get(0));
+            add_hanten(d.lineStep.get(0), d.circleStep.get(0));
             d.lineStep.clear();
             d.circleStep.clear();
         }
 
         if ((d.lineStep.size() == 0) && (d.circleStep.size() == 2)) {
-            d.add_hanten(d.circleStep.get(0), d.circleStep.get(1));
+            add_hanten(d.circleStep.get(0), d.circleStep.get(1));
             d.lineStep.clear();
             d.circleStep.clear();
         }
     }
+
+    public void add_hanten(Circle e0, Circle eh) {
+        //e0の円周が(x,y)を通るとき
+        if (Math.abs(OritaCalc.distance(e0.determineCenter(), eh.determineCenter()) - e0.getRadius()) < 0.0000001) {
+            LineSegment s_add = new LineSegment();
+            s_add.set(eh.turnAround_CircleToLineSegment(e0));
+            //s_add.setcolor(3);
+            d.addLineSegment(s_add);
+            d.record();
+            return;
+        }
+
+        //e0の円周が(x,y)を通らないとき。e0の円周の外部に(x,y)がくるとき//e0の円周の内部に(x,y)がくるとき
+        Circle e_add = new Circle();
+        e_add.set(eh.turnAround(e0));
+        d.addCircle(e_add);
+        d.record();
+    }
+
+    public void add_hanten(LineSegment s0, Circle eh) {
+        StraightLine ty = new StraightLine(s0);
+        //s0上に(x,y)がくるとき
+        if (ty.calculateDistance(eh.determineCenter()) < 0.0000001) {
+            return;
+        }
+
+        //s0が(x,y)を通らないとき。
+        Circle e_add = new Circle();
+        e_add.set(eh.turnAround_LineSegmentToCircle(s0));
+        d.addCircle(e_add);
+        d.record();
+    }
+
 }
