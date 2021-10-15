@@ -1754,33 +1754,23 @@ public class LeftPanel {
         }
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
-            toMountainButton.setForeground(Color.black);
-            toValleyButton.setForeground(Color.black);
-            toEdgeButton.setForeground(Color.black);
-            toAuxButton.setForeground(Color.black); //HKとは補助活線のこと
-            senbun_henkan2Button.setForeground(Color.black);
-
-            toMountainButton.setBackground(Color.white);
-            toValleyButton.setBackground(Color.white);
-            toEdgeButton.setBackground(Color.white);
-            toAuxButton.setBackground(Color.white);
-            senbun_henkan2Button.setBackground(Color.white);
+            toMountainButton.setBackground(null);
+            toValleyButton.setBackground(null);
+            toEdgeButton.setBackground(null);
+            toAuxButton.setBackground(null);
+            senbun_henkan2Button.setBackground(null);
 
             switch (data.getMouseMode()) {
                 case CREASE_MAKE_MOUNTAIN_23:
-                    toMountainButton.setForeground(Color.black);
                     toMountainButton.setBackground(Color.red);
                     break;
                 case CREASE_MAKE_VALLEY_24:
-                    toValleyButton.setForeground(Color.black);
                     toValleyButton.setBackground(Color.blue);
                     break;
                 case CREASE_MAKE_EDGE_25:
-                    toEdgeButton.setForeground(Color.white);
                     toEdgeButton.setBackground(Color.black);
                     break;
                 case CREASE_MAKE_AUX_60:
-                    toAuxButton.setForeground(Color.black);
                     toAuxButton.setBackground(new Color(100, 200, 200));
                     break;
                 case CREASE_TOGGLE_MV_58:

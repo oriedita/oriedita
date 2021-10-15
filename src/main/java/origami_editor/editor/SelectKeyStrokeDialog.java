@@ -206,7 +206,6 @@ public class SelectKeyStrokeDialog extends JDialog {
         contentPane.add(spacer6, gbc);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-        panel2.setBackground(new Color(-1));
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 1;

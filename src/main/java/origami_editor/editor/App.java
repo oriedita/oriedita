@@ -31,6 +31,8 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Queue;
 import java.util.*;
@@ -465,6 +467,41 @@ public class App extends JFrame implements ActionListener {
         canvas.addMouseModeHandler(new MouseHandlerMoveCreasePattern(this));
         canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(this));
 
+    }
+
+    private void updateButtonIcons(Container container) {
+        boolean isDark = FlatLaf.isLafDark();
+        for (Component c : container.getComponents()) {
+            if (c instanceof AbstractButton) {
+                AbstractButton button = (AbstractButton) c;
+
+                if (button.getIcon() instanceof ImageIcon) {
+                    // TODO this works because the description is the filename of the image, this should be based on the name of the action.
+                    ImageIcon icon = (ImageIcon) button.getIcon();
+                    String uri = icon.getDescription();
+
+                    if (isDark) {
+                        uri = uri.replaceAll("ppp", "ppp_dark");
+                    } else {
+                        uri = uri.replaceAll("ppp_dark", "ppp");
+                    }
+
+                    try {
+                        URL resource = new URL(uri);
+
+                        Image image = Toolkit.getDefaultToolkit().getImage(resource);
+                        if (image != null) {
+                            button.setIcon(new ImageIcon(resource));
+                        }
+                    } catch (MalformedURLException ignored) {
+
+                    }
+
+                }
+            } else if (c instanceof Container) {
+                updateButtonIcons((Container) c);
+            }
+        }
     }
 
     private static void updateUI2() {
@@ -1537,6 +1574,8 @@ public class App extends JFrame implements ActionListener {
 
                 // update all components
                 updateUI2();
+
+                updateButtonIcons(this);
 
                 // increase size of frame if necessary
                 int width = getWidth();
