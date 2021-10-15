@@ -1427,6 +1427,8 @@ public class App extends JFrame implements ActionListener {
                 menuItem.setAccelerator(keyStroke);
             }
         } else {
+            KeyStrokeUtil.resetButton(button);
+
             addContextMenu(button, key, keyStroke);
 
             if (keyStroke != null) {
