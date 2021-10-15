@@ -11,10 +11,8 @@ import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.Save;
 import origami_editor.editor.databinding.*;
-import origami_editor.editor.canvas.drawing_worker_toolbox.Drawing_Worker_Toolbox;
 import origami_editor.editor.undo_box.HistoryState;
 import origami_editor.graphic2d.grid.Grid;
-import origami_editor.sortingbox.SortingBox;
 import origami_editor.tools.Camera;
 
 import java.awt.*;
@@ -41,7 +39,6 @@ public class CreasePattern_Worker {
     HistoryState auxHistoryState = new HistoryState();
     FoldLineAdditionalInputMode i_foldLine_additional = FoldLineAdditionalInputMode.POLY_LINE_0;//= 0 is polygonal line input = 1 is auxiliary line input mode (when inputting a line segment, these two). When deleting a line segment, the value becomes as follows. = 0 is the deletion of the polygonal line, = 1 is the deletion of the auxiliary picture line, = 2 is the deletion of the black line, = 3 is the deletion of the auxiliary live line, = 4 is the folding line, the auxiliary live line and the auxiliary picture line.
     FoldLineSet auxLines = new FoldLineSet();    //Store auxiliary lines
-    Drawing_Worker_Toolbox e_s_dougubako = new Drawing_Worker_Toolbox(foldLineSet);
     int id_angle_system = 8;//180 / id_angle_system represents the angular system. For example, if id_angle_system = 3, 180/3 = 60 degrees, if id_angle_system = 5, 180/5 = 36 degrees
     double angle;
     int foldLineDividingNumber = 1;
@@ -640,143 +637,6 @@ public class CreasePattern_Worker {
         return new Point(grid.getPosition(closestPoint));
     }
 
-    public void continuous_folding_new(Point a, Point b) {//An improved version of continuous folding.
-        app.repaint();
-
-        //ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する
-
-        //与えられたベクトルabを延長して、それと重ならない折線との、最も近い交点までs_stepとする。
-        //補助活線は無視する
-        //与えられたベクトルabを延長して、それと重ならない折線との、最も近い交点までs_stepとする
-
-
-        //「再帰関数における、種の発芽」交点がない場合「種」が成長せずリターン。
-
-        e_s_dougubako.lengthenUntilIntersectionCalculateDisregardIncludedLineSegment_new(a, b);//一番近い交差点を見つけて各種情報を記録
-        if (e_s_dougubako.getLengthenUntilIntersectionFlg_new(a, b) == StraightLine.Intersection.NONE_0) {
-            return;
-        }
-
-        LineSegment s = new LineSegment();
-        s.set(e_s_dougubako.getLengthenUntilIntersectionLineSegment_new());
-        lineStepAdd(s);
-        s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-
-        System.out.println("20201129 saiki repaint ");
-
-        //「再帰関数における、種の生成」求めた最も近い交点から次のベクトル（＝次の再帰関数に渡す「種」）を発生する。最も近い交点が折線とＸ字型に交差している点か頂点かで、種のでき方が異なる。
-
-        //最も近い交点が折線とＸ字型の場合無条件に種を生成し、散布。
-        if (e_s_dougubako.getLengthenUntilIntersectionFlg_new(a, b) == StraightLine.Intersection.INTERSECT_X_1) {
-            LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
-            kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.getLengthenUntilIntersectionFirstLineSegment_new());
-
-            Point new_a = new Point();
-            new_a.set(e_s_dougubako.getLengthenUntilIntersectionPoint_new());//Ten new_aは最も近い交点
-            Point new_b = new Point();
-            new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
-
-            continuous_folding_new(new_a, new_b);//種の散布
-            return;
-        }
-
-        //最も近い交点が頂点（折線端末）の場合、頂点に集まる折線の数で条件分けして、種を生成し散布、
-        if ((e_s_dougubako.getLengthenUntilIntersectionFlg_new(a, b) == StraightLine.Intersection.INTERSECT_T_A_21)
-                || (e_s_dougubako.getLengthenUntilIntersectionFlg_new(a, b) == StraightLine.Intersection.INTERSECT_T_B_22)) {//System.out.println("20201129 21 or 22");
-
-            StraightLine tyoku1 = new StraightLine(a, b);
-            StraightLine.Intersection intersection;
-
-            SortingBox<LineSegment> t_m_s_nbox = new SortingBox<>();
-
-            t_m_s_nbox.set(foldLineSet.get_SortingBox_of_vertex_b_surrounding_foldLine(e_s_dougubako.getLengthenUntilIntersectionLineSegment_new().getA(), e_s_dougubako.getLengthenUntilIntersectionLineSegment_new().getB()));
-
-            if (t_m_s_nbox.getTotal() == 2) {
-                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(1));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-                if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                    return;
-                }
-
-                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-                if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                    return;
-                }
-
-                StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(1));
-                intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));
-                if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                    LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
-                    kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.getLengthenUntilIntersectionFirstLineSegment_new());
-
-                    Point new_a = new Point();
-                    new_a.set(e_s_dougubako.getLengthenUntilIntersectionPoint_new());//Ten new_aは最も近い交点
-                    Point new_b = new Point();
-                    new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
-
-                    continuous_folding_new(new_a, new_b);//種の散布
-                    return;
-                }
-                return;
-            }
-
-
-            if (t_m_s_nbox.getTotal() == 3) {
-                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(1));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-                if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                    StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(2));
-                    intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(3));
-                    if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                        LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
-                        kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.getLengthenUntilIntersectionFirstLineSegment_new());
-
-                        Point new_a = new Point();
-                        new_a.set(e_s_dougubako.getLengthenUntilIntersectionPoint_new());//Ten new_aは最も近い交点
-                        Point new_b = new Point();
-                        new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
-
-                        continuous_folding_new(new_a, new_b);//種の散布
-                        return;
-                    }
-                }
-                //------------------------------------------------
-                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-                if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                    StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(3));
-                    intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(1));
-                    if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                        LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
-                        kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.getLengthenUntilIntersectionFirstLineSegment_new());
-
-                        Point new_a = new Point();
-                        new_a.set(e_s_dougubako.getLengthenUntilIntersectionPoint_new());//Ten new_aは最も近い交点
-                        Point new_b = new Point();
-                        new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
-
-                        continuous_folding_new(new_a, new_b);//種の散布
-                        return;
-                    }
-                }
-                //------------------------------------------------
-                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(3));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-                if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                    StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(1));
-                    intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));
-                    if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                        LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
-                        kousaten_made_nobasi_saisyono_lineSegment.set(e_s_dougubako.getLengthenUntilIntersectionFirstLineSegment_new());
-
-                        Point new_a = new Point();
-                        new_a.set(e_s_dougubako.getLengthenUntilIntersectionPoint_new());//Ten new_aは最も近い交点
-                        Point new_b = new Point();
-                        new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
-
-                        continuous_folding_new(new_a, new_b);//種の散布
-                    }
-                }
-            }
-        }
-    }
-
     public int getDrawingStage() {
         return lineStep.size();
     }
@@ -864,100 +724,6 @@ public class CreasePattern_Worker {
             }
         }
         return add_sen;
-    }
-
-    public LineSegment extendToIntersectionPoint_2(LineSegment s0) {//Extend s0 from point b in the opposite direction of a to the point where it intersects another polygonal line. Returns a new line // Returns the same line if it does not intersect another polygonal line
-        LineSegment add_sen = new LineSegment();
-        add_sen.set(s0);
-
-        Point kousa_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
-        double kousa_point_distance = kousa_point.distance(add_sen.getA());
-
-        StraightLine tyoku1 = new StraightLine(add_sen.getA(), add_sen.getB());
-        StraightLine.Intersection i_intersection_flg;//元の線分を直線としたものと、他の線分の交差状態
-        LineSegment.Intersection i_lineSegment_intersection_flg;//元の線分と、他の線分の交差状態
-
-        System.out.println("AAAAA_");
-        for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-            i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(foldLineSet.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-
-            //i_lineSegment_intersection_flg=oc.senbun_kousa_hantei_amai( add_sen,foldLineSet.get(i),0.00001,0.00001);//20180408なぜかこの行の様にadd_senを使うと、i_senbun_kousa_flgがおかしくなる
-            i_lineSegment_intersection_flg = OritaCalc.determineLineSegmentIntersectionSweet(s0, foldLineSet.get(i), 0.00001, 0.00001);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
-            if (i_intersection_flg.isIntersecting()) {
-                if (!i_lineSegment_intersection_flg.isEndpointIntersection()) {
-                    //System.out.println("i_intersection_flg = "+i_intersection_flg  +      " ; i_lineSegment_intersection_flg = "+i_lineSegment_intersection_flg);
-                    kousa_point.set(OritaCalc.findIntersection(tyoku1, foldLineSet.get(i)));
-                    if (kousa_point.distance(add_sen.getA()) > 0.00001) {
-                        if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
-                            double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
-                            if (d_kakudo < 1.0 || d_kakudo > 359.0) {
-                                //i_kouten_ari_nasi=1;
-                                kousa_point_distance = kousa_point.distance(add_sen.getA());
-                                add_sen.set(add_sen.getA(), kousa_point);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (i_intersection_flg == StraightLine.Intersection.INCLUDED_3) {
-                if (i_lineSegment_intersection_flg != LineSegment.Intersection.PARALLEL_EQUAL_31) {
-
-                    System.out.println("i_intersection_flg = " + i_intersection_flg + " ; i_lineSegment_intersection_flg = " + i_lineSegment_intersection_flg);
-
-
-                    kousa_point.set(foldLineSet.get(i).getA());
-                    if (kousa_point.distance(add_sen.getA()) > 0.00001) {
-                        if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
-                            double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
-                            if (d_kakudo < 1.0 || d_kakudo > 359.0) {
-                                kousa_point_distance = kousa_point.distance(add_sen.getA());
-                                add_sen.set(add_sen.getA(), kousa_point);
-                            }
-                        }
-                    }
-
-                    kousa_point.set(foldLineSet.get(i).getB());
-                    if (kousa_point.distance(add_sen.getA()) > 0.00001) {
-                        if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
-                            double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
-                            if (d_kakudo < 1.0 || d_kakudo > 359.0) {
-                                kousa_point_distance = kousa_point.distance(add_sen.getA());
-                                add_sen.set(add_sen.getA(), kousa_point);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        add_sen.set(s0.getB(), add_sen.getB());
-        return add_sen;
-    }
-
-    public int kouten_ari_nasi(LineSegment s0) {//If s0 is extended from the point a to the b direction and intersects with another polygonal line, 0 is returned if it is not 1. The intersecting line segments at the a store have no intersection with this function.
-        LineSegment add_line = new LineSegment();
-        add_line.set(s0);
-        Point intersection_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
-
-        StraightLine tyoku1 = new StraightLine(add_line.getA(), add_line.getB());
-        StraightLine.Intersection i_intersection_flg;
-        for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-            i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(foldLineSet.get(i));//0 = This straight line does not intersect a given line segment, 1 = X type intersects, 2 = T type intersects, 3 = Line segment is included in the straight line.
-
-            if (i_intersection_flg.isIntersecting()) {
-                intersection_point.set(OritaCalc.findIntersection(tyoku1, foldLineSet.get(i)));
-                if (intersection_point.distance(add_line.getA()) > 0.00001) {
-                    double d_kakudo = OritaCalc.angle(add_line.getA(), add_line.getB(), add_line.getA(), intersection_point);
-                    if (d_kakudo < 1.0 || d_kakudo > 359.0) {
-                        return 1;
-
-                    }
-
-                }
-            }
-        }
-        return 0;
     }
 
     //-------------------------
@@ -1151,38 +917,6 @@ public class CreasePattern_Worker {
 
     public void organizeCircles() {//Organize all circles.
         foldLineSet.organizeCircles();
-    }
-
-    public void add_hanten(Circle e0, Circle eh) {
-        //e0の円周が(x,y)を通るとき
-        if (Math.abs(OritaCalc.distance(e0.determineCenter(), eh.determineCenter()) - e0.getRadius()) < 0.0000001) {
-            LineSegment s_add = new LineSegment();
-            s_add.set(eh.turnAround_CircleToLineSegment(e0));
-            //s_add.setcolor(3);
-            addLineSegment(s_add);
-            record();
-            return;
-        }
-
-        //e0の円周が(x,y)を通らないとき。e0の円周の外部に(x,y)がくるとき//e0の円周の内部に(x,y)がくるとき
-        Circle e_add = new Circle();
-        e_add.set(eh.turnAround(e0));
-        addCircle(e_add);
-        record();
-    }
-
-    public void add_hanten(LineSegment s0, Circle eh) {
-        StraightLine ty = new StraightLine(s0);
-        //s0上に(x,y)がくるとき
-        if (ty.calculateDistance(eh.determineCenter()) < 0.0000001) {
-            return;
-        }
-
-        //s0が(x,y)を通らないとき。
-        Circle e_add = new Circle();
-        e_add.set(eh.turnAround_LineSegmentToCircle(s0));
-        addCircle(e_add);
-        record();
     }
 
     public double getSelectionDistance() {
