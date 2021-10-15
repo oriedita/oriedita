@@ -169,11 +169,11 @@ public class LeftPanel {
 
 
         undoRedo.addUndoActionListener(e -> {
-            app.setTitle(app.mainDrawingWorker.undo());
+            app.mainDrawingWorker.undo();
             app.repaintCanvas();
         });
         undoRedo.addRedoActionListener(e -> {
-            app.setTitle(app.mainDrawingWorker.redo());
+            app.mainDrawingWorker.redo();
             app.repaintCanvas();
         });
         lineWidthDecreaseButton.addActionListener(e -> app.applicationModel.decreaseLineWidth());

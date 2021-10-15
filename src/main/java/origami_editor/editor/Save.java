@@ -165,4 +165,12 @@ public class Save implements Serializable {
             addAuxLineSegment(s);
         }
     }
+
+    /**
+     * Returns if this save contains lines which are not savable to a .cp file without losing information.
+     * @return
+     */
+    public boolean canSaveAsCp() {
+        return circles.isEmpty() && auxLineSegments.isEmpty();
+    }
 }
