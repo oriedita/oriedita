@@ -348,7 +348,9 @@ public class DrawingWorker {
             check4(0.0001);
         }
 
-        app.fileModel.setSaved(false);
+        if (!historyState.isEmpty()) {
+            app.fileModel.setSaved(false);
+        }
 
         historyState.record(getSave(s_title));
     }

@@ -564,10 +564,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 app.Button_shared_operation();
                 app.canvasModel.restoreFoldLineAdditionalInputMode();
                 if (e.getWheelRotation() < 0) {
-                    app.setTitle(es1.redo());
+                    es1.redo();
                     repaint();
                 } else {
-                    app.setTitle(es1.undo());
+                    es1.undo();
                     repaint();
                 }
             }
