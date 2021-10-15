@@ -21,6 +21,7 @@ public class HelpDialog extends JDialog {
         $$$setupUI$$$();
         setContentPane(contentPane);
 
+
         setUndecorated(true);
 
         JPopupMenu popup = new JPopupMenu();
@@ -106,7 +107,6 @@ public class HelpDialog extends JDialog {
         gbc.fill = GridBagConstraints.BOTH;
         contentPane.add(scrollPane1, gbc);
         helpLabel = new JTextPane();
-        helpLabel.setBackground(new Color(-1));
         helpLabel.setContentType("text/html");
         helpLabel.setFocusable(false);
         helpLabel.setOpaque(true);

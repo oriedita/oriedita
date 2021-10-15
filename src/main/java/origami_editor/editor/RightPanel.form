@@ -351,7 +351,7 @@
               <text value="L1="/>
             </properties>
           </component>
-          <component id="e4052" class="javax.swing.JLabel" binding="measuredLength1Label">
+          <component id="303d1" class="javax.swing.JTextField" binding="measuredLength1TextField">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -359,7 +359,6 @@
               <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
-              <background color="-1"/>
               <opaque value="true"/>
               <text value="0.0"/>
             </properties>
@@ -374,7 +373,7 @@
               <text value="L2="/>
             </properties>
           </component>
-          <component id="c5aa" class="javax.swing.JLabel" binding="measuredLength2Label">
+          <component id="17b4e" class="javax.swing.JTextField" binding="measuredLength2TextField">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -382,7 +381,6 @@
               <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
-              <background color="-1"/>
               <opaque value="true"/>
               <text value="0.0"/>
             </properties>
@@ -397,7 +395,7 @@
               <text value="A3="/>
             </properties>
           </component>
-          <component id="ed475" class="javax.swing.JLabel" binding="measuredAngle3Label">
+          <component id="10b84" class="javax.swing.JTextField" binding="measuredAngle3TextField">
             <constraints>
               <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -405,12 +403,11 @@
               <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
-              <background color="-1"/>
               <opaque value="true"/>
               <text value="0.0"/>
             </properties>
           </component>
-          <component id="f4d45" class="javax.swing.JLabel" binding="measuredAngle2Label">
+          <component id="92092" class="javax.swing.JTextField" binding="measuredAngle2TextField">
             <constraints>
               <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -418,12 +415,11 @@
               <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
-              <background color="-1"/>
               <opaque value="true"/>
               <text value="0.0"/>
             </properties>
           </component>
-          <component id="c97c0" class="javax.swing.JLabel" binding="measuredAngle1Label">
+          <component id="171ad" class="javax.swing.JTextField" binding="measuredAngle1TextField">
             <constraints>
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -431,7 +427,6 @@
               <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
-              <background color="-1"/>
               <opaque value="true"/>
               <text value="0.0"/>
             </properties>

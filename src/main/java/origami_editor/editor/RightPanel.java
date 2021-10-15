@@ -32,8 +32,8 @@ public class RightPanel {
     private JButton restrictedAngleABCSetButton;
     private JButton c_colButton;
     private JButton l1Button;
-    private JLabel measuredLength1Label;
-    private JLabel measuredLength2Label;
+    private JTextField measuredLength1TextField;
+    private JTextField measuredLength2TextField;
     private JButton ad_fncButton;
     private JTextField auxUndoTotalTextField;
     private JButton degButton;
@@ -71,9 +71,9 @@ public class RightPanel {
     private JButton a1Button;
     private JButton a2Button;
     private JButton a3Button;
-    private JLabel measuredAngle1Label;
-    private JLabel measuredAngle2Label;
-    private JLabel measuredAngle3Label;
+    private JTextField measuredAngle1TextField;
+    private JTextField measuredAngle2TextField;
+    private JTextField measuredAngle3TextField;
     private JPanel root;
 
     public RightPanel(App app, AngleSystemModel angleSystemModel) {
@@ -354,30 +354,36 @@ public class RightPanel {
             app.mainDrawingWorker.unselect_all();
             app.repaintCanvas();
         });
+        MeasuresModel measuresModel = app.measuresModel;
+        measuredLength1TextField.addActionListener(e -> measuresModel.setMeasuredLength1(StringOp.String2double(measuredLength1TextField.getText(), measuresModel.getMeasuredLength1())));
         l2Button.addActionListener(e -> {
             app.canvasModel.setMouseMode(MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54);
 
             app.mainDrawingWorker.unselect_all();
             app.repaintCanvas();
         });
+        measuredLength2TextField.addActionListener(e -> measuresModel.setMeasuredLength2(StringOp.String2double(measuredLength2TextField.getText(), measuresModel.getMeasuredLength2())));
         a1Button.addActionListener(e -> {
             app.canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55);
 
             app.mainDrawingWorker.unselect_all();
             app.repaintCanvas();
         });
+        measuredAngle1TextField.addActionListener(e -> measuresModel.setMeasuredAngle1(StringOp.String2double(measuredAngle1TextField.getText(), measuresModel.getMeasuredAngle1())));
         a2Button.addActionListener(e -> {
             app.canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56);
 
             app.mainDrawingWorker.unselect_all();
             app.repaintCanvas();
         });
+        measuredAngle2TextField.addActionListener(e -> measuresModel.setMeasuredAngle2(StringOp.String2double(measuredAngle2TextField.getText(), measuresModel.getMeasuredAngle2())));
         a3Button.addActionListener(e -> {
             app.canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57);
 
             app.mainDrawingWorker.unselect_all();
             app.repaintCanvas();
         });
+        measuredAngle3TextField.addActionListener(e -> measuresModel.setMeasuredAngle3(StringOp.String2double(measuredAngle3TextField.getText(), measuresModel.getMeasuredAngle3())));
 
         frame = new OpenFrame("additionalFrame", app);
 
@@ -692,17 +698,16 @@ public class RightPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel6.add(l1Button, gbc);
-        measuredLength1Label = new JLabel();
-        measuredLength1Label.setBackground(new Color(-1));
-        measuredLength1Label.setOpaque(true);
-        measuredLength1Label.setText("0.0");
+        measuredLength1TextField = new JTextField();
+        measuredLength1TextField.setOpaque(true);
+        measuredLength1TextField.setText("0.0");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel6.add(measuredLength1Label, gbc);
+        panel6.add(measuredLength1TextField, gbc);
         l2Button = new JButton();
         l2Button.setHorizontalAlignment(11);
         l2Button.setText("L2=");
@@ -711,17 +716,16 @@ public class RightPanel {
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel6.add(l2Button, gbc);
-        measuredLength2Label = new JLabel();
-        measuredLength2Label.setBackground(new Color(-1));
-        measuredLength2Label.setOpaque(true);
-        measuredLength2Label.setText("0.0");
+        measuredLength2TextField = new JTextField();
+        measuredLength2TextField.setOpaque(true);
+        measuredLength2TextField.setText("0.0");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel6.add(measuredLength2Label, gbc);
+        panel6.add(measuredLength2TextField, gbc);
         a3Button = new JButton();
         a3Button.setHorizontalAlignment(11);
         a3Button.setText("A3=");
@@ -730,39 +734,36 @@ public class RightPanel {
         gbc.gridy = 4;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel6.add(a3Button, gbc);
-        measuredAngle3Label = new JLabel();
-        measuredAngle3Label.setBackground(new Color(-1));
-        measuredAngle3Label.setOpaque(true);
-        measuredAngle3Label.setText("0.0");
+        measuredAngle3TextField = new JTextField();
+        measuredAngle3TextField.setOpaque(true);
+        measuredAngle3TextField.setText("0.0");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 4;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel6.add(measuredAngle3Label, gbc);
-        measuredAngle2Label = new JLabel();
-        measuredAngle2Label.setBackground(new Color(-1));
-        measuredAngle2Label.setOpaque(true);
-        measuredAngle2Label.setText("0.0");
+        panel6.add(measuredAngle3TextField, gbc);
+        measuredAngle2TextField = new JTextField();
+        measuredAngle2TextField.setOpaque(true);
+        measuredAngle2TextField.setText("0.0");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 3;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel6.add(measuredAngle2Label, gbc);
-        measuredAngle1Label = new JLabel();
-        measuredAngle1Label.setBackground(new Color(-1));
-        measuredAngle1Label.setOpaque(true);
-        measuredAngle1Label.setText("0.0");
+        panel6.add(measuredAngle2TextField, gbc);
+        measuredAngle1TextField = new JTextField();
+        measuredAngle1TextField.setOpaque(true);
+        measuredAngle1TextField.setText("0.0");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel6.add(measuredAngle1Label, gbc);
+        panel6.add(measuredAngle1TextField, gbc);
         a2Button = new JButton();
         a2Button.setHorizontalAlignment(11);
         a2Button.setText("A2=");
@@ -1104,11 +1105,11 @@ public class RightPanel {
     }
 
     public void setData(MeasuresModel data) {
-        measuredLength1Label.setText(String.valueOf(data.getMeasuredLength1()));
-        measuredLength2Label.setText(String.valueOf(data.getMeasuredLength2()));
-        measuredAngle1Label.setText(String.valueOf(data.getMeasuredAngle1()));
-        measuredAngle2Label.setText(String.valueOf(data.getMeasuredAngle2()));
-        measuredAngle3Label.setText(String.valueOf(data.getMeasuredAngle3()));
+        measuredLength1TextField.setText(String.valueOf(data.getMeasuredLength1()));
+        measuredLength2TextField.setText(String.valueOf(data.getMeasuredLength2()));
+        measuredAngle1TextField.setText(String.valueOf(data.getMeasuredAngle1()));
+        measuredAngle2TextField.setText(String.valueOf(data.getMeasuredAngle2()));
+        measuredAngle3TextField.setText(String.valueOf(data.getMeasuredAngle3()));
     }
 
     public void getData(ApplicationModel data) {
