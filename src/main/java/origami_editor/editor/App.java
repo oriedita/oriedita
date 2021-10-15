@@ -364,7 +364,7 @@ public class App extends JFrame implements ActionListener {
         if (consoleDialog != null) {
             consoleDialog.addWindowListener(new WindowAdapter() {
                 @Override
-                public void windowClosed(WindowEvent e) {
+                public void windowClosing(WindowEvent e) {
                     applicationModel.setConsoleVisible(false);
                 }
             });
@@ -935,7 +935,7 @@ public class App extends JFrame implements ActionListener {
         }
     }
 
-    void writeImage() {
+    void exportFile() {
         exportFile = selectExportFile();
 
         if (exportFile == null) {
@@ -962,7 +962,9 @@ public class App extends JFrame implements ActionListener {
         JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Open");
 
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("All supported files (*.ori, *.cp)", "cp", "ori"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
+        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp"));
 
         fileChooser.showOpenDialog(this);
 
@@ -981,7 +983,10 @@ public class App extends JFrame implements ActionListener {
         JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Save As");
 
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
+        FileNameExtensionFilter oriFilter = new FileNameExtensionFilter("Origami Editor (*.ori)", "ori");
+        fileChooser.setFileFilter(oriFilter);
+        FileNameExtensionFilter cpFilter = new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp");
+        fileChooser.addChoosableFileFilter(cpFilter);
         fileChooser.setSelectedFile(new File("untitled.ori"));
 
         File selectedFile;
@@ -995,8 +1000,12 @@ public class App extends JFrame implements ActionListener {
 
             selectedFile = fileChooser.getSelectedFile();
 
-            if (selectedFile != null && !selectedFile.getName().endsWith(".ori")) {
-                selectedFile = new File(selectedFile.getPath() + ".ori");
+            if (selectedFile != null && !selectedFile.getName().endsWith(".ori") && !selectedFile.getName().endsWith(".cp")) {
+                if (fileChooser.getFileFilter() == oriFilter) {
+                    selectedFile = new File(selectedFile.getPath() + ".ori");
+                } else if (fileChooser.getFileFilter() == cpFilter) {
+                    selectedFile = new File(selectedFile.getPath() + ".cp");
+                }
             }
 
             if (selectedFile != null && selectedFile.exists()) {
@@ -1144,12 +1153,22 @@ public class App extends JFrame implements ActionListener {
     }
 
     void saveAndName2File(Save save, File fname) {
-        try {
-            ObjectMapper mapper = new DefaultObjectMapper();
+        if (fname.getName().endsWith(".ori")) {
+            try {
+                ObjectMapper mapper = new DefaultObjectMapper();
 
-            mapper.writeValue(fname, save);
-        } catch (IOException e) {
-            e.printStackTrace();
+                mapper.writeValue(fname, save);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else if (fname.getName().endsWith(".cp")) {
+            if (!save.canSaveAsCp()) {
+                JOptionPane.showMessageDialog(this, "The saved .cp file does not contain circles and yellow aux lines. Save as a .ori file to also save these lines.", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
+
+            Cp.exportFile(save, fname);
+        } else {
+            JOptionPane.showMessageDialog(this, "Unknown file type, cannot save", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

@@ -106,7 +106,7 @@ public class AppMenuBar extends JMenuBar {
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
 
-            app.writeImage();
+            app.exportFile();
             app.repaintCanvas();
         });
         importButton.addActionListener(e -> {
