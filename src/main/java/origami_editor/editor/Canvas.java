@@ -66,7 +66,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     Map<MouseMode, MouseModeHandler> mouseModeHandlers = new HashMap<>();
 
-    boolean i_mouse_right_button_on = false;//1 if the right mouse button is on, 0 if off
     boolean i_mouse_undo_redo_mode = false;//1 for undo and redo mode with mouse
 
     public Canvas(App app0) {
@@ -392,8 +391,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             case MouseEvent.BUTTON3: //右ボタンクリック
                 if (mouseMode == MouseMode.VORONOI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
                 } else {
-                    i_mouse_right_button_on = true;
-
                     //線分削除モード。
                     es1.setCamera(creasePatternCamera);
                     mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mousePressed(p);
@@ -527,9 +524,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     if (mouseMode == MouseMode.VORONOI_CREATE_62) {
                         repaint();//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
                     } else {
-
-                        i_mouse_right_button_on = false;
-
                         //if(i_mouse_undo_redo_mode==1){i_mouse_undo_redo_mode=0;mainDrawingWorker.unselect_all();Button_kyoutuu_sagyou();mainDrawingWorker.modosi_i_orisen_hojyosen();return;}
                         if (i_mouse_undo_redo_mode) {
                             i_mouse_undo_redo_mode = false;
@@ -563,7 +557,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     public void mouseWheelMoved(MouseWheelEvent e) {
         if (mouseWheelMovesCreasePattern) {
             //	ホイールでundo,redo
-            if ((e.isShiftDown()) || (i_mouse_right_button_on)) {
+            if ((e.isShiftDown())) {
                 i_mouse_undo_redo_mode = true;
                 es1.unselect_all();
                 app.Button_shared_operation();
@@ -575,11 +569,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     app.setTitle(es1.undo());
                     repaint();
                 }
-            }
-
-            //	ホイールで拡大縮小
-            if ((!e.isShiftDown()) && (!i_mouse_right_button_on)) {
-
+            } else {
                 Point p = new Point(app.e2p(e));
                 App.MouseWheelTarget target = app.pointInCreasePatternOrFoldedFigure(p);
                 if (target == App.MouseWheelTarget.CREASE_PATTERN_0) {
