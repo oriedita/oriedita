@@ -21,12 +21,12 @@ public class FoldingEstimateTask implements Runnable {
 
             System.err.println("Folding estimation got interrupted.");
         }
-        app.repaint();
+        app.repaintCanvas();
 
         long stop = System.currentTimeMillis();
         long L = stop - start;
         app.OZ.text_result = app.OZ.text_result + "     Computation time " + L + " msec.";
 
-        app.repaint();
+        app.repaintCanvas();
     }
 }

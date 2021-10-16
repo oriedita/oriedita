@@ -19,7 +19,7 @@ public class OpenFrame extends JDialog {
     private JPanel panel;
 
     public OpenFrame(String name, App app) {
-        super(app, name);
+        super(app.frame, name);
 
         setContentPane($$$getRootComponent$$$());
 
@@ -38,44 +38,44 @@ public class OpenFrame extends JDialog {
         o_F_checkButton.addActionListener(e -> {
             app.canvasModel.setMouseMode(MouseMode.FLAT_FOLDABLE_CHECK_63);
 
-            app.repaint();
+            app.repaintCanvas();
         });
         foldableLinePlusGridInputButton.addActionListener(e -> {
             app.canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_INPUT_39);
             app.canvasModel.setMouseModeAfterColorSelection(MouseMode.FOLDABLE_LINE_INPUT_39);
 
             app.mainCreasePatternWorker.unselect_all();
-            app.repaint();
+            app.repaintCanvas();
         });
         select_polygonButton.addActionListener(e -> {
             app.canvasModel.setMouseMode(MouseMode.SELECT_POLYGON_66);
 
-            app.repaint();
+            app.repaintCanvas();
         });
         unselect_polygonButton.addActionListener(e -> {
             app.canvasModel.setMouseMode(MouseMode.UNSELECT_POLYGON_67);
 
-            app.repaint();
+            app.repaintCanvas();
         });
         select_lXButton.addActionListener(e -> {
             app.canvasModel.setMouseMode(MouseMode.SELECT_LINE_INTERSECTING_68);
 
-            app.repaint();
+            app.repaintCanvas();
         });
         unselect_lXButton.addActionListener(e -> {
             app.canvasModel.setMouseMode(MouseMode.UNSELECT_LINE_INTERSECTING_69);
 
-            app.repaint();
+            app.repaintCanvas();
         });
         del_lButton.addActionListener(e -> {
             app.canvasModel.setMouseMode(MouseMode.CREASE_DELETE_OVERLAPPING_64);
 
-            app.repaint();
+            app.repaintCanvas();
         });
         del_l_XButton.addActionListener(e -> {
             app.canvasModel.setMouseMode(MouseMode.CREASE_DELETE_INTERSECTING_65);
 
-            app.repaint();
+            app.repaintCanvas();
         });
 
         selectAnd3ClickCheckBox.addActionListener(e -> app.canvasModel.setCkbox_add_frame_SelectAnd3click_isSelected(selectAnd3ClickCheckBox.isSelected()));

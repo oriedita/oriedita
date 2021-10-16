@@ -55,7 +55,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
     }
 
     public void continuous_folding_new(Point a, Point b) {//An improved version of continuous folding.
-        d.app.repaint();
+        d.app.repaintCanvas();
 
         //ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する
 

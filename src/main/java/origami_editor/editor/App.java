@@ -9,9 +9,9 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami_editor.editor.action.Click;
+import origami_editor.editor.canvas.*;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
-import origami_editor.editor.canvas.*;
 import origami_editor.editor.export.Cp;
 import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
@@ -36,30 +36,26 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Queue;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static origami_editor.tools.ResourceUtil.createImageIcon;
 import static origami_editor.tools.ResourceUtil.getAppDir;
 
-public class App extends JFrame implements ActionListener {
+public class App {
     public static final String CONFIG_JSON = "config.json";
-    public final ApplicationModel applicationModel = new ApplicationModel();
-    public final GridModel gridModel = new GridModel();
-    public final CanvasModel canvasModel = new CanvasModel();
-    public final FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
-    public final AngleSystemModel angleSystemModel = new AngleSystemModel();
-    public final MeasuresModel measuresModel = new MeasuresModel();
-    public final InternalDivisionRatioModel internalDivisionRatioModel = new InternalDivisionRatioModel();
-    public final HistoryStateModel historyStateModel = new HistoryStateModel();
-    public final BackgroundModel backgroundModel = new BackgroundModel();
-    public final CameraModel creasePatternCameraModel = new CameraModel();
-    public final FileModel fileModel = new FileModel();
+    public final ApplicationModel applicationModel;
+    public final GridModel gridModel;
+    public final CanvasModel canvasModel;
+    public final FoldedFigureModel foldedFigureModel;
+    public final AngleSystemModel angleSystemModel;
+    public final MeasuresModel measuresModel;
+    public final InternalDivisionRatioModel internalDivisionRatioModel;
+    public final HistoryStateModel historyStateModel;
+    public final BackgroundModel backgroundModel;
+    public final CameraModel creasePatternCameraModel;
+    public final FileModel fileModel;
     public final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
-    public final CreasePattern_Worker mainCreasePatternWorker = new CreasePattern_Worker(this);    // Basic branch craftsman. Accepts input from the mouse.
+    public final CreasePattern_Worker mainCreasePatternWorker;    // Basic branch craftsman. Accepts input from the mouse.
     final Queue<Popup> popups = new ArrayDeque<>();
     private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate = new MouseHandlerVoronoiCreate();
     public FoldedFigure temp_OZ;    //Folded figure
@@ -74,7 +70,6 @@ public class App extends JFrame implements ActionListener {
     public ArrayList<FoldedFigure> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
     public File exportFile;
     public File fname_and_number;//まとめ書き出しに使う。
-    public double d_ap_check4 = 0.0;
     int foldedFigureIndex = 0;//Specify which number of foldedFigures Oriagari_Zu is the target of button operation or transformation operation
     Background_camera h_cam = new Background_camera();
     //各種変数の定義
@@ -93,88 +88,72 @@ public class App extends JFrame implements ActionListener {
     boolean flg61 = false;//Used when setting the frame 　20180524
     MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
     Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
-
+    JFrame frame;
 
     public App() {
-        setTitle("Origami Editor " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
-        frame_title_0 = getTitle();
+        applicationModel = new ApplicationModel();
+        gridModel = new GridModel();
+        canvasModel = new CanvasModel();
+        foldedFigureModel = new FoldedFigureModel();
+        angleSystemModel = new AngleSystemModel();
+        measuresModel = new MeasuresModel();
+        internalDivisionRatioModel = new InternalDivisionRatioModel();
+        historyStateModel = new HistoryStateModel();
+        backgroundModel = new BackgroundModel();
+        creasePatternCameraModel = new CameraModel();
+        fileModel = new FileModel();
+        mainCreasePatternWorker = new CreasePattern_Worker(this);
+    }
+
+    public void start() {
+        frame = new JFrame();
+        frame.setTitle("Origami Editor " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
+        frame_title_0 = frame.getTitle();
         frame_title = frame_title_0;//Store title in variable
         mainCreasePatternWorker.setTitle(frame_title);
 
         final ConsoleDialog consoleDialog;
 
         if (System.console() == null) {
-            consoleDialog = null;//new ConsoleDialog();
+            consoleDialog = new ConsoleDialog();
         } else {
             consoleDialog = null;
         }
 
         //--------------------------------------------------------------------------------------------------
-        addWindowListener(new WindowAdapter() {//ウィンドウの状態が変化したときの処理
+        frame.addWindowListener(new WindowAdapter() {//ウィンドウの状態が変化したときの処理
             //終了ボタンを有効化
             public void windowClosing(WindowEvent evt) {
-                System.out.println("windowClosing_20200928");
                 closing();//Work to be done when pressing X at the right end of the upper side of the window
             }//終了ボタンを有効化 ここまで。
-
-            public void windowOpened(WindowEvent eve) {
-                System.out.println("windowOpened_20200928");
-            }
-
-            public void windowClosed(WindowEvent eve) {
-                System.out.println("windowClosed_20200928");
-            }
-
-            public void windowIconified(WindowEvent eve) {
-                System.out.println("windowIconified_20200928");
-            }
-
-            public void windowDeiconified(WindowEvent eve) {
-                System.out.println("windowDeiconified_20200928");
-            }
-
-            public void windowActivated(WindowEvent eve) {
-                System.out.println("windowActivated_20200928");
-            }
-
-            public void windowDeactivated(WindowEvent eve) {
-                System.out.println("windowDeactivated_20200928");
-            }
-
-
         });//Processing when the window state changes Up to here.
 
-        addWindowStateListener(new WindowAdapter() {
+        frame.addWindowStateListener(new WindowAdapter() {
             public void windowStateChanged(WindowEvent eve) {
                 applicationModel.setWindowState(eve.getNewState());
             }
         });
 
-        addComponentListener(new ComponentAdapter() {
+        frame.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentMoved(ComponentEvent e) {
                 // Only update when not maximized.
-                if ((getExtendedState() & MAXIMIZED_BOTH) == 0) {
-                    applicationModel.setWindowPosition(getLocation());
+                if ((frame.getExtendedState() & Frame.MAXIMIZED_BOTH) == 0) {
+                    applicationModel.setWindowPosition(frame.getLocation());
                 }
             }
 
             @Override
             public void componentResized(ComponentEvent e) {
-                if ((getExtendedState() & MAXIMIZED_BOTH) == 0) {
-                    applicationModel.setWindowSize(getSize());
+                if ((frame.getExtendedState() & Frame.MAXIMIZED_BOTH) == 0) {
+                    applicationModel.setWindowSize(frame.getSize());
                 }
             }
         });
 
         //--------------------------------------------------------------------------------------------------
-        addWindowFocusListener(new WindowAdapter() {//オリヒメのメインウィンドウのフォーカスが変化したときの処理
-            public void windowGainedFocus(WindowEvent evt) {
-                System.out.println("windowGainedFocus_20200929");
-            }
-
+        frame.addWindowFocusListener(new WindowAdapter() {//オリヒメのメインウィンドウのフォーカスが変化したときの処理
             public void windowLostFocus(WindowEvent evt) {
-                System.out.println("windowLostFocus_20200929");
                 Popup popup;
                 while ((popup = popups.poll()) != null) {
                     popup.hide();
@@ -182,10 +161,10 @@ public class App extends JFrame implements ActionListener {
             }
         });//オリヒメのメインウィンドウのフォーカスが変化したときの処理 ここまで。
 
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        setFocusable(true);
-        setFocusTraversalKeysEnabled(true);
-        addKeyListener(new KeyAdapter() {
+        frame.setDefaultCloseOperation(frame.DO_NOTHING_ON_CLOSE);
+        frame.setFocusable(true);
+        frame.setFocusTraversalKeysEnabled(true);
+        frame.addKeyListener(new KeyAdapter() {
 
             @Override
             public void keyReleased(KeyEvent e) {
@@ -227,7 +206,7 @@ public class App extends JFrame implements ActionListener {
         canvas = editor.getCanvas();
 
         temp_OZ = new FoldedFigure(bulletinBoard);
-        bulletinBoard.addChangeListener(e -> repaint());
+        bulletinBoard.addChangeListener(e -> frame.repaint());
 
         canvas.creasePatternCamera.setCameraPositionX(0.0);
         canvas.creasePatternCamera.setCameraPositionY(0.0);
@@ -240,10 +219,8 @@ public class App extends JFrame implements ActionListener {
 
         OZ.foldedFigure_camera_initialize();
 
-        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("fishbase.png")));
-
-
-        setContentPane(editor.$$$getRootComponent$$$());
+        frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("fishbase.png")));
+        frame.setContentPane(editor.$$$getRootComponent$$$());
 
         TopPanel topPanel = editor.getTopPanel();
         RightPanel rightPanel = editor.getRightPanel();
@@ -252,7 +229,7 @@ public class App extends JFrame implements ActionListener {
 
         AppMenuBar appMenuBar = new AppMenuBar(this);
 
-        setJMenuBar(appMenuBar);
+        frame.setJMenuBar(appMenuBar);
 
         leftPanel.getData(gridModel);
 
@@ -341,20 +318,20 @@ public class App extends JFrame implements ActionListener {
         mainCreasePatternWorker.record();
         mainCreasePatternWorker.auxRecord();
 
-        pack();
-        setVisible(true);
+        frame.pack();
+        frame.setVisible(true);
 
         if (applicationModel.getWindowPosition() != null) {
-            setLocation(applicationModel.getWindowPosition());
+            frame.setLocation(applicationModel.getWindowPosition());
         } else {
-            setLocationRelativeTo(null);
+            frame.setLocationRelativeTo(null);
         }
         if (applicationModel.getWindowSize() != null) {
-            setSize(applicationModel.getWindowSize());
+            frame.setSize(applicationModel.getWindowSize());
         }
-        setExtendedState(applicationModel.getWindowState());
+        frame.setExtendedState(applicationModel.getWindowState());
 
-        explanation = new HelpDialog(this, applicationModel::setHelpVisible, canvas.getLocationOnScreen(), canvas.getSize());
+        explanation = new HelpDialog(frame, applicationModel::setHelpVisible, canvas.getLocationOnScreen(), canvas.getSize());
         explanation.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -373,7 +350,7 @@ public class App extends JFrame implements ActionListener {
                 if (e.getPropertyName() == null || e.getPropertyName().equals("consoleVisible")) {
                     consoleDialog.setVisible(applicationModel.getConsoleVisible());
                 }
-                requestFocus();
+                frame.requestFocus();
             });
             consoleDialog.setVisible(applicationModel.getConsoleVisible());
         }
@@ -381,11 +358,11 @@ public class App extends JFrame implements ActionListener {
             if (e.getPropertyName() == null || e.getPropertyName().equals("helpVisible")) {
                 explanation.setVisible(applicationModel.getHelpVisible());
             }
-            requestFocus();
+            frame.requestFocus();
         });
         explanation.setVisible(applicationModel.getHelpVisible());
         //focus back to here after creating dialog
-        requestFocus();
+        frame.requestFocus();
 
         canvas.addMouseModeHandler(MouseHandlerDrawCreaseFree.class);
         canvas.addMouseModeHandler(MouseHandlerLineSegmentDelete.class);
@@ -539,7 +516,7 @@ public class App extends JFrame implements ActionListener {
             applicationModel.set(loadedApplicationModel);
         } catch (IOException e) {
             // An application state is found, but it is not valid.
-            JOptionPane.showMessageDialog(this, "<html>Failed to load application state.<br/>Loading default application configuration.", "State load failed", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "<html>Failed to load application state.<br/>Loading default application configuration.", "State load failed", JOptionPane.WARNING_MESSAGE);
 
             if (!configFile.renameTo(storage.resolve(CONFIG_JSON + ".old").toFile())) {
                 System.err.println("Not allowed to move config.json");
@@ -583,7 +560,7 @@ public class App extends JFrame implements ActionListener {
             frame_title += "*";
         }
 
-        setTitle(frame_title);
+        frame.setTitle(frame_title);
         mainCreasePatternWorker.setTitle(frame_title);
     }
 
@@ -680,19 +657,19 @@ public class App extends JFrame implements ActionListener {
         JLabel label = new JLabel(
                 "<html>２色塗りわけ展開図を描くためには、あらかじめ対象範囲を選択してください（selectボタンを使う）。<br>" +
                         "To get 2-Colored crease pattern, select the target range in advance (use the select button).<html>");
-        JOptionPane.showMessageDialog(this, label);
+        JOptionPane.showMessageDialog(frame, label);
     }
 
     public void foldingNoSelectedPolygonalLineWarning() {
         JLabel label = new JLabel(
                 "<html>新たに折り上がり図を描くためには、あらかじめ対象範囲を選択してください（selectボタンを使う）。<br>" +
                         "To calculate new folded shape, select the target clease lines range in advance (use the select button).<html>");
-        JOptionPane.showMessageDialog(this, label);
+        JOptionPane.showMessageDialog(frame, label);
     }
 
     public void closing() {
         if (!fileModel.isSaved()) {
-            int option = JOptionPane.showConfirmDialog(this, createImageIcon("ppp/owari.png"));
+            int option = JOptionPane.showConfirmDialog(frame, createImageIcon("ppp/owari.png"));
 
             switch (option) {
                 case JOptionPane.YES_OPTION:
@@ -739,10 +716,6 @@ public class App extends JFrame implements ActionListener {
         gridModel.reset();
         angleSystemModel.reset();
         creasePatternCameraModel.reset();
-    }
-
-    public void actionPerformed(ActionEvent e) {
-
     }
 
     public void Button_shared_operation() {
@@ -911,7 +884,7 @@ public class App extends JFrame implements ActionListener {
         at.rotate(h_cam.getAngle() * Math.PI / 180.0, h_cam.getRotationX(), h_cam.getRotationY());
         g2h.setTransform(at);
 
-        g2h.drawImage(imgh, h_cam.getX0(), h_cam.getY0(), h_cam.getX1(), h_cam.getY1(), this);
+        g2h.drawImage(imgh, h_cam.getX0(), h_cam.getY0(), h_cam.getX1(), h_cam.getY1(), frame);
 
         at.rotate(-h_cam.getAngle() * Math.PI / 180.0, h_cam.getRotationX(), h_cam.getRotationY());
         g2h.setTransform(at);
@@ -954,7 +927,7 @@ public class App extends JFrame implements ActionListener {
     }
 
     void readImageFromFile() {
-        FileDialog fd = new FileDialog(this, "Select Image File.", FileDialog.LOAD);
+        FileDialog fd = new FileDialog(frame, "Select Image File.", FileDialog.LOAD);
         fd.setVisible(true);
         String img_background_fname = fd.getDirectory() + fd.getFile();
         try {
@@ -1003,7 +976,7 @@ public class App extends JFrame implements ActionListener {
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp"));
 
-        fileChooser.showOpenDialog(this);
+        fileChooser.showOpenDialog(frame);
 
         File selectedFile = fileChooser.getSelectedFile();
         if (selectedFile != null) {
@@ -1029,7 +1002,7 @@ public class App extends JFrame implements ActionListener {
         File selectedFile;
         int choice = JOptionPane.NO_OPTION;
         do {
-            int saveChoice = fileChooser.showSaveDialog(this);
+            int saveChoice = fileChooser.showSaveDialog(frame);
 
             if (saveChoice != JFileChooser.APPROVE_OPTION) {
                 return null;
@@ -1046,7 +1019,7 @@ public class App extends JFrame implements ActionListener {
             }
 
             if (selectedFile != null && selectedFile.exists()) {
-                choice = JOptionPane.showConfirmDialog(this, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                choice = JOptionPane.showConfirmDialog(frame, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             }
         } while (selectedFile != null && selectedFile.exists() && choice != JOptionPane.YES_OPTION);
 
@@ -1068,7 +1041,7 @@ public class App extends JFrame implements ActionListener {
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Orihime (*.orh)", "orh"));
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
 
-        fileChooser.showOpenDialog(this);
+        fileChooser.showOpenDialog(frame);
 
         File selectedFile = fileChooser.getSelectedFile();
         if (selectedFile != null) {
@@ -1092,7 +1065,7 @@ public class App extends JFrame implements ActionListener {
         File selectedFile;
         int choice = JOptionPane.NO_OPTION;
         do {
-            int saveChoice = fileChooser.showSaveDialog(this);
+            int saveChoice = fileChooser.showSaveDialog(frame);
 
             if (saveChoice != JFileChooser.APPROVE_OPTION) {
                 return null;
@@ -1100,7 +1073,7 @@ public class App extends JFrame implements ActionListener {
 
             selectedFile = fileChooser.getSelectedFile();
             if (selectedFile != null && selectedFile.exists()) {
-                choice = JOptionPane.showConfirmDialog(this, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                choice = JOptionPane.showConfirmDialog(frame, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             }
         } while (selectedFile != null && selectedFile.exists() && choice == JOptionPane.NO_OPTION);
 
@@ -1147,7 +1120,7 @@ public class App extends JFrame implements ActionListener {
         } catch (IOException e) {
             System.out.println(e);
 
-            JOptionPane.showMessageDialog(this, "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
 
             fileModel.setSavedFileName(null);
 
@@ -1200,12 +1173,12 @@ public class App extends JFrame implements ActionListener {
             }
         } else if (fname.getName().endsWith(".cp")) {
             if (!save.canSaveAsCp()) {
-                JOptionPane.showMessageDialog(this, "The saved .cp file does not contain circles and yellow aux lines. Save as a .ori file to also save these lines.", "Warning", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "The saved .cp file does not contain circles and yellow aux lines. Save as a .ori file to also save these lines.", "Warning", JOptionPane.WARNING_MESSAGE);
             }
 
             Cp.exportFile(save, fname);
         } else {
-            JOptionPane.showMessageDialog(this, "Unknown file type, cannot save", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Unknown file type, cannot save", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -1236,11 +1209,6 @@ public class App extends JFrame implements ActionListener {
         }
 
         return StringOp.String2double(str0, default_if_error);
-    }
-
-    public void check4(double r) {
-        d_ap_check4 = r;
-
     }
 
     public void openFile(File file) {
@@ -1277,7 +1245,7 @@ public class App extends JFrame implements ActionListener {
         System.out.println("readFile2Memo() 開始");
 
         if (!fileModel.isSaved()) {
-            int choice = JOptionPane.showConfirmDialog(this, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+            int choice = JOptionPane.showConfirmDialog(frame, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
             if (choice == JOptionPane.YES_OPTION) {
                 saveFile();
@@ -1333,13 +1301,13 @@ public class App extends JFrame implements ActionListener {
         java.awt.Point canvasLocation = canvas.getLocationOnScreen();
         Rectangle bounds = new Rectangle(canvasLocation.x, canvasLocation.y, canvasBounds.width, canvasBounds.height);
 
-        java.awt.Point currentLocation = getLocation();
-        Dimension size = getSize();
+        java.awt.Point currentLocation = frame.getLocation();
+        Dimension size = frame.getSize();
 
         // Move all associated windows outside the bounds.
-        Window[] windows = getOwnedWindows();
+        Window[] windows = frame.getOwnedWindows();
         java.util.Queue<java.awt.Point> locations = new LinkedList<>();
-        setLocation(currentLocation.x, currentLocation.y + size.height);
+        frame.setLocation(currentLocation.x, currentLocation.y + size.height);
         for (Window w : windows) {
             java.awt.Point loc = w.getLocation();
             locations.offer(loc);
@@ -1349,7 +1317,7 @@ public class App extends JFrame implements ActionListener {
         img_background = robot.createScreenCapture(bounds);
 
         // Move all associated windows back.
-        setLocation(currentLocation);
+        frame.setLocation(currentLocation);
         for (Window w : windows) {
             w.setLocation(locations.poll());
         }
@@ -1463,10 +1431,10 @@ public class App extends JFrame implements ActionListener {
                         ? button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).keys()[0]
                         : null;
 
-                new SelectKeyStrokeDialog(App.this, button, helpInputMap, currentKeyStroke, newKeyStroke -> {
+                new SelectKeyStrokeDialog(frame, button, helpInputMap, currentKeyStroke, newKeyStroke -> {
                     if (newKeyStroke != null && helpInputMap.containsKey(newKeyStroke) && helpInputMap.get(newKeyStroke) != button) {
                         String conflictingButton = (String) helpInputMap.get(newKeyStroke).getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).get(newKeyStroke);
-                        JOptionPane.showMessageDialog(App.this, "Conflicting KeyStroke! Conflicting with " + conflictingButton);
+                        JOptionPane.showMessageDialog(frame, "Conflicting KeyStroke! Conflicting with " + conflictingButton);
                         return false;
                     }
 
@@ -1542,27 +1510,27 @@ public class App extends JFrame implements ActionListener {
                 // update all components
                 updateUI2();
 
-                updateButtonIcons(this);
+                updateButtonIcons(frame);
 
                 // increase size of frame if necessary
-                int width = getWidth();
-                int height = getHeight();
-                Dimension prefSize = getPreferredSize();
+                int width = frame.getWidth();
+                int height = frame.getHeight();
+                Dimension prefSize = frame.getPreferredSize();
                 if (prefSize.width > width || prefSize.height > height)
-                    setSize(Math.max(prefSize.width, width), Math.max(prefSize.height, height));
+                    frame.setSize(Math.max(prefSize.width, width), Math.max(prefSize.height, height));
 
                 // limit frame size to screen size
-                Rectangle screenBounds = getGraphicsConfiguration().getBounds();
-                screenBounds = FlatUIUtils.subtractInsets(screenBounds, getToolkit().getScreenInsets(getGraphicsConfiguration()));
-                Dimension frameSize = getSize();
+                Rectangle screenBounds = frame.getGraphicsConfiguration().getBounds();
+                screenBounds = FlatUIUtils.subtractInsets(screenBounds, frame.getToolkit().getScreenInsets(frame.getGraphicsConfiguration()));
+                Dimension frameSize = frame.getSize();
                 if (frameSize.width > screenBounds.width || frameSize.height > screenBounds.height)
-                    setSize(Math.min(frameSize.width, screenBounds.width), Math.min(frameSize.height, screenBounds.height));
+                    frame.setSize(Math.min(frameSize.width, screenBounds.width), Math.min(frameSize.height, screenBounds.height));
 
                 // move frame to left/top if necessary
-                if (getX() + getWidth() > screenBounds.x + screenBounds.width ||
-                        getY() + getHeight() > screenBounds.y + screenBounds.height) {
-                    setLocation(Math.min(getX(), screenBounds.x + screenBounds.width - getWidth()),
-                            Math.min(getY(), screenBounds.y + screenBounds.height - getHeight()));
+                if (frame.getX() + frame.getWidth() > screenBounds.x + screenBounds.width ||
+                        frame.getY() + frame.getHeight() > screenBounds.y + screenBounds.height) {
+                    frame.setLocation(Math.min(frame.getX(), screenBounds.x + screenBounds.width - frame.getWidth()),
+                            Math.min(frame.getY(), screenBounds.y + screenBounds.height - frame.getHeight()));
                 }
 
             } catch (Exception ex) {

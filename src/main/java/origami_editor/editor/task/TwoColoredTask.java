@@ -25,6 +25,6 @@ public class TwoColoredTask implements Runnable{
         long L = stop - start;
         app.OZ.text_result = app.OZ.text_result + "     Computation time " + L + " msec.";
 
-        app.repaint();
+        app.repaintCanvas();
     }
 }

@@ -148,7 +148,7 @@ public class BottomPanel extends JPanel {
 
             //以下にやりたいことを書く
 
-            Color frontColor = JColorChooser.showDialog(app, "F_col", Color.white);
+            Color frontColor = JColorChooser.showDialog(null, "F_col", Color.white);
 
             if (frontColor != null) {
                 foldedFigureModel.setFrontColor(frontColor);

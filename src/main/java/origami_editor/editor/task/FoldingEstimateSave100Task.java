@@ -37,7 +37,7 @@ public class FoldingEstimateSave100Task implements Runnable{
                         app.fname_and_number = new File(filename);//Used for bulk writing.
 
                         app.w_image_running.set(true);
-                        app.repaint();
+                        app.repaintCanvas();
 
                         try {
                             app.w_image_running.wait();
@@ -61,6 +61,6 @@ public class FoldingEstimateSave100Task implements Runnable{
         long L = stop - start;
         app.OZ.text_result = app.OZ.text_result + "     Computation time " + L + " msec.";
 
-        app.repaint();
+        app.repaintCanvas();
     }
 }

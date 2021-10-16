@@ -14,6 +14,7 @@ public class OrigamiEditor {
             FlatLightLaf.setup();
 
             App app = new App();//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Rewrite location
+            app.start();
 
             if (argv.length == 1) {
                 // We got a file

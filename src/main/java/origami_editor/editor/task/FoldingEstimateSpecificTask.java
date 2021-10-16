@@ -21,7 +21,7 @@ public class FoldingEstimateSpecificTask implements Runnable{
         try {
             while (objective > app.OZ.discovered_fold_cases) {
                 app.folding_estimated();
-                app.repaint();
+                app.repaintCanvas();
 
                 app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
                 if (!app.OZ.findAnotherOverlapValid) {
@@ -37,6 +37,6 @@ public class FoldingEstimateSpecificTask implements Runnable{
         long L = stop - start;
         app.OZ.text_result = app.OZ.text_result + "     Computation time " + L + " msec.";
 
-        app.repaint();
+        app.repaintCanvas();
     }
 }

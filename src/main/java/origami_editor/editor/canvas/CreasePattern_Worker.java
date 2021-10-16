@@ -200,11 +200,6 @@ public class CreasePattern_Worker {
         foldLineSet.applyBranchTrim(r);
     }
 
-    public LineSegmentSet get() {
-        lineSegmentSet.setSave(foldLineSet.getSave());
-        return lineSegmentSet;
-    }
-
     public LineSegmentSet getForFolding() {
         lineSegmentSet.setSave(foldLineSet.getMemo_for_folding());
         return lineSegmentSet;
@@ -218,11 +213,6 @@ public class CreasePattern_Worker {
     public LineSegmentSet getForSelectFolding() {//selectした折線で折り畳み推定をする。
         lineSegmentSet.setSave(foldLineSet.getSaveForSelectFolding());
         return lineSegmentSet;
-    }
-
-    //--------------------------------------------
-    public void setPointSize(int i0) {
-        pointSize = i0;
     }
 
     public void calculateDecisionWidth() {
@@ -925,7 +915,7 @@ public class CreasePattern_Worker {
 
     public void setData(PropertyChangeEvent e, ApplicationModel data) {
         setGridInputAssist(data.getDisplayGridInputAssist());
-        setPointSize(data.getPointSize());
+        pointSize = data.getPointSize();
 
         setFoldLineDividingNumber(data.getFoldLineDividingNumber());
         setNumPolygonCorners(data.getNumPolygonCorners());
