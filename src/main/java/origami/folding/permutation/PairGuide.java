@@ -169,7 +169,7 @@ public class PairGuide {
         return score[curDigit] < goal[curDigit];
     }
 
-    public void add(int faceIndex, int upperFaceIndex) {
+    public void add(int upperFaceIndex, int faceIndex) {
         int next = guide[upperFaceIndex];
         entries.add(faceIndex | (next << 16));
         guide[upperFaceIndex] = entries.size() - 1;
