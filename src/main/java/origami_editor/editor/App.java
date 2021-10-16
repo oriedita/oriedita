@@ -18,8 +18,8 @@ import origami_editor.editor.export.Orh;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.editor.json.DefaultObjectMapper;
-import origami_editor.editor.task.CheckCAMVTask;
 import origami_editor.editor.task.FoldingEstimateTask;
+import origami_editor.editor.task.TaskExecutor;
 import origami_editor.tools.KeyStrokeUtil;
 import origami_editor.tools.ResourceUtil;
 import origami_editor.tools.StringOp;
@@ -93,8 +93,7 @@ public class App extends JFrame implements ActionListener {
     boolean flg61 = false;//Used when setting the frame 　20180524
     MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
     Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
-    ExecutorService pool;
-    private Future<?> currentTask;
+
 
     public App() {
         setTitle("Origami Editor " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
@@ -241,8 +240,6 @@ public class App extends JFrame implements ActionListener {
 
         OZ.foldedFigure_camera_initialize();
 
-        pool = Executors.newFixedThreadPool(1);
-
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("fishbase.png")));
 
 
@@ -278,6 +275,7 @@ public class App extends JFrame implements ActionListener {
 
         gridModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setGridConfigurationData(gridModel));
         gridModel.addPropertyChangeListener(e -> leftPanel.setData(gridModel));
+        gridModel.addPropertyChangeListener(e -> repaintCanvas());
 
         angleSystemModel.addPropertyChangeListener(e -> rightPanel.setData(angleSystemModel));
         angleSystemModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(angleSystemModel));
@@ -653,12 +651,12 @@ public class App extends JFrame implements ActionListener {
 
             OZ.estimationOrder = estimationOrder;
 
-            executeTask(new FoldingEstimateTask(this));
+            TaskExecutor.executeTask(new FoldingEstimateTask(this));
         } else if (foldType == FoldType.CHANGING_FOLDED_3) {
             OZ.estimationOrder = estimationOrder;
             OZ.estimationStep = FoldedFigure.EstimationStep.STEP_0;
 
-            executeTask(new FoldingEstimateTask(this));
+            TaskExecutor.executeTask(new FoldingEstimateTask(this));
         }
     }
 
@@ -702,16 +700,16 @@ public class App extends JFrame implements ActionListener {
                     mouseReleasedValid = false;
                     saveFile();
 
-                    stopTask();
+                    TaskExecutor.stopTask();
                     System.exit(0);
                 case JOptionPane.NO_OPTION:
-                    stopTask();
+                    TaskExecutor.stopTask();
                     System.exit(0);
                 case JOptionPane.CANCEL_OPTION:
                     break;
             }
         } else {
-            stopTask();
+            TaskExecutor.stopTask();
             System.exit(0);
         }
     }
@@ -1219,33 +1217,6 @@ public class App extends JFrame implements ActionListener {
         OZ.createTwoColorCreasePattern(canvas.creasePatternCamera, lineSegmentsForFolding, point_of_referencePlane_old);
     }
 
-    public void stopTask() {
-        if (currentTask != null && !currentTask.isDone()) {
-            pool.shutdown();
-            try {
-                if (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
-                    pool.shutdownNow();
-
-                    if (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
-                        System.err.println("Pool did not terminate!");
-                    }
-                }
-            } catch (InterruptedException e) {
-                pool.shutdownNow();
-                Thread.currentThread().interrupt();
-                e.printStackTrace();
-            }
-
-            pool = Executors.newFixedThreadPool(1);
-        }
-    }
-
-    void executeTask(Runnable runnable) {
-        stopTask();
-
-        currentTask = pool.submit(runnable);
-    }
-
     public double string2double(String str0, double default_if_error) {
         String new_str0 = str0.trim();
         if (new_str0.equals("L1")) {
@@ -1270,7 +1241,6 @@ public class App extends JFrame implements ActionListener {
     public void check4(double r) {
         d_ap_check4 = r;
 
-        executeTask(new CheckCAMVTask(this));
     }
 
     public void openFile(File file) {
@@ -1549,9 +1519,6 @@ public class App extends JFrame implements ActionListener {
         });
     }
 
-    public boolean isTaskRunning() {
-        return currentTask != null && !currentTask.isDone();
-    }
 
     private void applyLookAndFeel(String lafClassName) {
         EventQueue.invokeLater(() -> {

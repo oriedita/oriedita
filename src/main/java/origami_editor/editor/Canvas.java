@@ -9,6 +9,7 @@ import origami_editor.editor.canvas.MouseModeHandler;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.export.Svg;
+import origami_editor.editor.task.TaskExecutor;
 import origami_editor.tools.Camera;
 
 import javax.imageio.ImageIO;
@@ -215,7 +216,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) app.p_mouse_TV_position.getX() + 25, (int) app.p_mouse_TV_position.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
             }
 
-            if (app.isTaskRunning()) {
+            if (TaskExecutor.isTaskRunning()) {
                 bufferGraphics.setColor(Color.red);
 
                 bufferGraphics.drawString("Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 10, 69); //この表示内容はvoid kekka_syoriで決められる。

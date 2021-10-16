@@ -1,12 +1,17 @@
 package origami_editor.editor.task;
 
-import origami_editor.editor.App;
+import origami_editor.editor.Canvas;
+import origami_editor.editor.canvas.CreasePattern_Worker;
 
 public class CheckCAMVTask implements Runnable{
-    private final App app;
+    private final CreasePattern_Worker creasePattern_worker;
+    private final Canvas canvas;
 
-    public CheckCAMVTask(App app) {
-        this.app = app;
+    private final double CHECK4_R = 0.0001;
+
+    public CheckCAMVTask(CreasePattern_Worker creasePattern_worker, Canvas canvas) {
+        this.creasePattern_worker = creasePattern_worker;
+        this.canvas = canvas;
     }
 
     @Override
@@ -14,15 +19,15 @@ public class CheckCAMVTask implements Runnable{
         long start = System.currentTimeMillis();
 
         try {
-            app.mainCreasePatternWorker.ap_check4(app.d_ap_check4);
+            creasePattern_worker.ap_check4(CHECK4_R);
         } catch (InterruptedException e) {
-            app.mainCreasePatternWorker.foldLineSet.getCheck4LineSegments().clear();
+            creasePattern_worker.foldLineSet.getCheck4LineSegments().clear();
         }
 
         long stop = System.currentTimeMillis();
         long L = stop - start;
-        app.OZ.text_result = app.OZ.text_result + "     Computation time " + L + " msec.";
+        System.out.println("Check4 computation time " + L + " msec.");
 
-        app.repaint();
+        canvas.repaint();
     }
 }

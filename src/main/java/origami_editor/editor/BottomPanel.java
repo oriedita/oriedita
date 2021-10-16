@@ -11,6 +11,7 @@ import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.task.FoldingEstimateSave100Task;
 import origami_editor.editor.task.FoldingEstimateSpecificTask;
 import origami_editor.editor.task.FoldingEstimateTask;
+import origami_editor.editor.task.TaskExecutor;
 import origami_editor.tools.StringOp;
 
 import javax.swing.*;
@@ -78,7 +79,7 @@ public class BottomPanel extends JPanel {
         anotherSolutionButton.addActionListener(e -> {
             app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
-            app.executeTask(new FoldingEstimateTask(app));
+            TaskExecutor.executeTask(new FoldingEstimateTask(app));
         });
         flipButton.addActionListener(e -> {
             foldedFigureModel.advanceState();
@@ -91,7 +92,7 @@ public class BottomPanel extends JPanel {
             if (app.OZ.findAnotherOverlapValid) {
                 app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
-                app.executeTask(new FoldingEstimateSave100Task(app));
+                TaskExecutor.executeTask(new FoldingEstimateSave100Task(app));
             }
         });
         goToFoldedFigureButton.addActionListener(e -> {
@@ -111,7 +112,7 @@ public class BottomPanel extends JPanel {
                 //1例目の折り上がり予想はi_suitei_meirei=5を指定、2例目以降の折り上がり予想はi_suitei_meirei=6で実施される
             }
 
-            app.executeTask(new FoldingEstimateSpecificTask(app));
+            TaskExecutor.executeTask(new FoldingEstimateSpecificTask(app));
 
             app.repaintCanvas();
         });
@@ -175,7 +176,7 @@ public class BottomPanel extends JPanel {
                 foldedFigureModel.setLineColor(lineColor);
             }
         });
-        haltButton.addActionListener(e -> app.stopTask());
+        haltButton.addActionListener(e -> TaskExecutor.stopTask());
         trashButton.addActionListener(e -> {
             if (app.foldedFigureIndex == 0) {
                 return;

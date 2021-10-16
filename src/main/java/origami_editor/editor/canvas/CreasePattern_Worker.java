@@ -11,6 +11,8 @@ import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.Save;
 import origami_editor.editor.databinding.*;
+import origami_editor.editor.task.CheckCAMVTask;
+import origami_editor.editor.task.TaskExecutor;
 import origami_editor.editor.undo_box.HistoryState;
 import origami_editor.graphic2d.grid.Grid;
 import origami_editor.tools.Camera;
@@ -106,8 +108,6 @@ public class CreasePattern_Worker {
         grid.setGridConfigurationData(gridModel);
         text_cp_setumei = "1/" + grid.getGridSize();
         calculateDecisionWidth();
-
-        app.repaintCanvas();
     }
 
     public void reset() {
@@ -874,7 +874,7 @@ public class CreasePattern_Worker {
     }
 
     public void check4(double r) {
-        app.check4(r);
+        TaskExecutor.executeTask(new CheckCAMVTask(this, app.canvas));
     }
 
     public void ap_check4(double r) throws InterruptedException {

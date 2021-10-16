@@ -6,6 +6,7 @@ import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.folded_figure.FoldedFigure;
+import origami_editor.editor.task.TaskExecutor;
 import origami_editor.editor.task.TwoColoredTask;
 import origami_editor.tools.StringOp;
 
@@ -573,7 +574,7 @@ public class LeftPanel {
                 app.folding_prepare();//ここでOZがOAZ(0)からOAZ(i)に切り替わる
                 app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
 
-                app.executeTask(new TwoColoredTask(app));
+                TaskExecutor.executeTask(new TwoColoredTask(app));
             }
 
             app.mainCreasePatternWorker.unselect_all();
