@@ -19,7 +19,6 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
         }
     }
 
-// ------------------------------------------------------------
     //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
     //Ten t_taisyou =new Ten(); t_taisyou.set(oc.sentaisyou_ten_motome(lineStep.get(1).geta(),line_step[3].geta(),lineStep.get(0).geta()));
 
@@ -57,10 +56,14 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
         if (d.lineStep.size() == 3) {
-            d.lineStep.get(0).setB(new Point(d.lineStep.get(0).determineAX() + d.lineStep.get(1).determineBX() - d.lineStep.get(1).determineAX(), d.lineStep.get(0).determineAY() + d.lineStep.get(1).determineBY() - d.lineStep.get(1).determineAY()));
+            LineSegment s0 = d.lineStep.get(0);
+            LineSegment s1 = d.lineStep.get(1);
+            LineSegment s2 = d.lineStep.get(2);
 
-            if (s_step_tuika_koutenmade(3, d.lineStep.get(0), d.lineStep.get(2), d.lineColor) > 0) {
-                d.addLineSegment(d.lineStep.get(3));
+            s0.setB(new Point(s0.determineAX() + s1.determineBX() - s1.determineAX(), s0.determineAY() + s1.determineBY() - s1.determineAY()));
+
+            if (s_step_additional_intersection(2, s0, s2, d.lineColor) > 0) {
+                d.addLineSegment(s2);
                 d.record();
             }
 
@@ -68,8 +71,12 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
         }
     }
 
-    //i_egaki_dankaiがi_e_dのときに、線分s_oをTen aはそのままで、Ten b側をs_kの交点までのばした一時折線s_step[i_e_d+1](色はicolo)を追加。成功した場合は1、なんらかの不都合で追加できなかった場合は-500を返す。
-    public int s_step_tuika_koutenmade(int i_e_d, LineSegment s_o, LineSegment s_k, LineColor icolo) {
+    /**
+     * When i_egaki_dankai is i_e_d, add a temporary fold line s_step [i_e_d + 1] (color is i colo) that
+     * extends the line segment s_o to the intersection of s_k while keeping Point a as it is. Returns 1 on success,
+     * -500 on failure to add due to some inconvenience.
+     */
+    public int s_step_additional_intersection(int i_e_d, LineSegment s_o, LineSegment s_k, LineColor icolo) {
 
         Point cross_point = new Point();
 
@@ -94,6 +101,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
             d.lineStep.get(i_e_d).set(add_sen);
             return 1;
         }
+
         return -500;
     }
 }
