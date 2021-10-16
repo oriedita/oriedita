@@ -582,18 +582,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             } else {
                 Point p = new Point(app.e2p(e));
                 MouseWheelTarget target = pointInCreasePatternOrFoldedFigure(p, app);
+
+                double scrollDistance = app.applicationModel.isPreciseZoom() ? e.getPreciseWheelRotation() : e.getWheelRotation();
+
                 if (target == MouseWheelTarget.CREASE_PATTERN_0) {
-                    if (e.getWheelRotation() < 0) {
-                        app.creasePatternCameraModel.zoomIn();
-                    } else {
-                        app.creasePatternCameraModel.zoomOut();
-                    }
+                    app.creasePatternCameraModel.zoomBy(scrollDistance);
                 } else {
-                    if (e.getWheelRotation() < 0) {
-                        app.foldedFigureModel.zoomIn();
-                    } else {
-                        app.foldedFigureModel.zoomOut();
-                    }
+                    app.foldedFigureModel.zoomBy(scrollDistance);
                 }
 
                 app.canvas.mouse_object_position(p_mouse_TV_position);

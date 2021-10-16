@@ -57,6 +57,14 @@ public class CameraModel {
         setScale(scale * Math.sqrt(Math.sqrt(Math.sqrt(2))));
     }
 
+    public void zoomBy(double value) {
+        if (value > 0) {
+            setScale(scale * Math.pow(1.1, value));
+        } else if (value < 0) {
+            setScale(scale / Math.pow(1.1, Math.abs(value)));
+        }
+    }
+
     public void zoomOut() {
         setScale(scale / Math.sqrt(Math.sqrt(Math.sqrt(2))));
     }

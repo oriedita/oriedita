@@ -17,6 +17,7 @@ public class AppMenuBar extends JMenuBar {
     private JCheckBoxMenuItem displayStandardFaceMarksCheckBox;//Marking lines such as crosses and reference planes
     private JCheckBoxMenuItem cpOnTopCheckBox;//展開図を折り上がり予想図の上に描く
     private JCheckBoxMenuItem darkModeCheckBox;
+    private JCheckBoxMenuItem preciseZoomCheckBox;
     private JMenuItem newButton;
     private JMenuItem openButton;
     private JMenuItem saveButton;
@@ -50,6 +51,7 @@ public class AppMenuBar extends JMenuBar {
         app.registerButton(toggleHelpMenuItem, "toggleHelpAction");
         app.registerButton(toggleConsoleMenuItem, "toggleConsoleAction");
         app.registerButton(darkModeCheckBox, "toggleDarkModeAction");
+        app.registerButton(preciseZoomCheckBox, "preciseZoomAction");
 
         newButton.addActionListener(e -> {
             if (!app.fileModel.isSaved()) {
@@ -147,6 +149,7 @@ public class AppMenuBar extends JMenuBar {
             app.mouseReleasedValid = false;
         });
         darkModeCheckBox.addActionListener(e -> applicationModel.toggleDarkMode());
+        preciseZoomCheckBox.addActionListener(e -> applicationModel.togglePreciseZoom());
     }
 
     private void createElements() {
@@ -187,6 +190,8 @@ public class AppMenuBar extends JMenuBar {
 
         darkModeCheckBox = new JCheckBoxMenuItem("Dark Mode");
         viewMenu.add(darkModeCheckBox);
+        preciseZoomCheckBox = new JCheckBoxMenuItem("Smooth zoom");
+        viewMenu.add(preciseZoomCheckBox);
         showPointRangeCheckBox = new JCheckBoxMenuItem("Show point range");
         viewMenu.add(showPointRangeCheckBox);
         pointOffsetCheckBox = new JCheckBoxMenuItem("Offset cursor");
@@ -230,6 +235,7 @@ public class AppMenuBar extends JMenuBar {
         applicationModel.setDisplayMarkings(displayStandardFaceMarksCheckBox.isSelected());
         applicationModel.setDisplayCreasePatternOnTop(cpOnTopCheckBox.isSelected());
         applicationModel.setDarkMode(darkModeCheckBox.isSelected());
+        applicationModel.setPreciseZoom(preciseZoomCheckBox.isSelected());
     }
 
     public void setData(ApplicationModel applicationModel) {
@@ -243,6 +249,7 @@ public class AppMenuBar extends JMenuBar {
         displayStandardFaceMarksCheckBox.setSelected(applicationModel.getDisplayMarkings());
         cpOnTopCheckBox.setSelected(applicationModel.getDisplayCreasePatternOnTop());
         darkModeCheckBox.setSelected(applicationModel.getLaf().equals(FlatDarkLaf.class.getName()));
+        preciseZoomCheckBox.setSelected(applicationModel.isPreciseZoom());
     }
 
     public void setData(FileModel fileModel) {

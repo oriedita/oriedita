@@ -24,6 +24,7 @@ public class ApplicationModel implements Serializable {
     private boolean displayMarkings;
     private boolean displayCreasePatternOnTop;
     private boolean displayFoldingProgress;
+    private boolean preciseZoom;
     private int lineWidth;
     private int auxLineWidth;
     private int pointSize;
@@ -41,8 +42,22 @@ public class ApplicationModel implements Serializable {
     private String defaultDirectory;
     private int windowState;
     private Point windowPosition;
-
     private String laf;
+    private Dimension windowSize;
+
+    public ApplicationModel() {
+        reset();
+    }
+
+    public boolean isPreciseZoom() {
+        return preciseZoom;
+    }
+
+    public void setPreciseZoom(boolean preciseZoom) {
+        boolean oldPreciseZoom = this.preciseZoom;
+        this.preciseZoom = preciseZoom;
+        this.pcs.firePropertyChange("preciseZoom", oldPreciseZoom, preciseZoom);
+    }
 
     public String getLaf() {
         return laf;
@@ -66,8 +81,6 @@ public class ApplicationModel implements Serializable {
         this.pcs.firePropertyChange("windowSize", oldWindowSize, windowSize);
     }
 
-    private Dimension windowSize;
-
     public int getWindowState() {
         return windowState;
     }
@@ -86,10 +99,6 @@ public class ApplicationModel implements Serializable {
         Point oldWindowPosition = this.windowPosition;
         this.windowPosition = windowPosition;
         this.pcs.firePropertyChange("windowPosition", oldWindowPosition, windowPosition);
-    }
-
-    public ApplicationModel() {
-        reset();
     }
 
     public boolean getConsoleVisible() {
@@ -130,6 +139,8 @@ public class ApplicationModel implements Serializable {
         lineStyle = LineStyle.COLOR;
         antiAlias = false;
         auxLineWidth = 3;
+
+        preciseZoom = true;
 
         helpVisible = true;
         consoleVisible = false;
@@ -485,6 +496,7 @@ public class ApplicationModel implements Serializable {
         mouseWheelMovesCreasePattern = applicationModel.getMouseWheelMovesCreasePattern();
         helpVisible = applicationModel.getHelpVisible();
         consoleVisible = applicationModel.getConsoleVisible();
+        preciseZoom = applicationModel.isPreciseZoom();
 
         circleCustomizedColor = applicationModel.getCircleCustomizedColor();
         selectPersistent = applicationModel.getSelectPersistent();
@@ -520,5 +532,9 @@ public class ApplicationModel implements Serializable {
         } else {
             setLaf(FlatLightLaf.class.getName());
         }
+    }
+
+    public void togglePreciseZoom() {
+        setPreciseZoom(!preciseZoom);
     }
 }
