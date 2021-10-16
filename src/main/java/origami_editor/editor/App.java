@@ -196,7 +196,7 @@ public class App {
 
         canvas = editor.getCanvas();
 
-        temp_OZ = new FoldedFigure(bulletinBoard);
+        temp_OZ = new FoldedFigure(bulletinBoard, applicationModel);
         bulletinBoard.addChangeListener(e -> frame.repaint());
 
         canvas.creasePatternCamera.setCameraPositionX(0.0);
@@ -633,7 +633,7 @@ public class App {
     }
 
     public void addNewFoldedFigure() {
-        foldedFigures.add(new FoldedFigure_01(bulletinBoard));
+        foldedFigures.add(new FoldedFigure_01(bulletinBoard, applicationModel));
     }
 
     public void twoColorNoSelectedPolygonalLineWarning() {

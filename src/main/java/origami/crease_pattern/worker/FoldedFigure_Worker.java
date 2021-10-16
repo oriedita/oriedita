@@ -1,7 +1,7 @@
 package origami.crease_pattern.worker;
 
 import origami.folding.util.EquivalenceCondition;
-import origami_editor.editor.canvas.CreasePattern_Worker;
+import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.HierarchyList;
@@ -44,6 +44,7 @@ public class FoldedFigure_Worker {
     boolean displayShadows = false; //Whether to display shadows. 0 is not displayed, 1 is displayed
     Camera camera = new Camera();
     BulletinBoard bb;
+    private final ApplicationModel applicationModel;
     Color F_color = new Color(255, 255, 50);//表面の色
     Color B_color = new Color(233, 233, 233);//裏面の色
     Color L_color = Color.black;//線の色
@@ -59,10 +60,10 @@ public class FoldedFigure_Worker {
     SwappingAlgorithm swapper = new SwappingAlgorithm();
 
     EquivalenceCondition errorPos = null;
-    public static boolean showIntersection = true;
 
-    public FoldedFigure_Worker(BulletinBoard bb0) {
+    public FoldedFigure_Worker(BulletinBoard bb0, ApplicationModel applicationModel) {
         bb = bb0;
+        this.applicationModel = applicationModel;
         reset();
     }
 
@@ -592,20 +593,18 @@ public class FoldedFigure_Worker {
             }
         }
 
-        if (errorPos != null) {
-            if (showIntersection) {
-                g2.setColor(new Color(255, 0, 0, 75));
-                fillPolygon(g2, errorPos.getA(), subFace_figure, camera);
-                fillPolygon(g2, errorPos.getB(), subFace_figure, camera);
-                fillPolygon(g2, errorPos.getC(), subFace_figure, camera);
-                fillPolygon(g2, errorPos.getD(), subFace_figure, camera);
+        if (errorPos != null && applicationModel.getDisplaySelfIntersection()) {
+            g2.setColor(new Color(255, 0, 0, 75));
+            fillPolygon(g2, errorPos.getA(), subFace_figure, camera);
+            fillPolygon(g2, errorPos.getB(), subFace_figure, camera);
+            fillPolygon(g2, errorPos.getC(), subFace_figure, camera);
+            fillPolygon(g2, errorPos.getD(), subFace_figure, camera);
 
 
-                fillPolygon(g2, errorPos.getA(), orite.get(), orite.camera);
-                fillPolygon(g2, errorPos.getB(), orite.get(), orite.camera);
-                fillPolygon(g2, errorPos.getC(), orite.get(), orite.camera);
-                fillPolygon(g2, errorPos.getD(), orite.get(), orite.camera);
-            }
+            fillPolygon(g2, errorPos.getA(), orite.get(), orite.camera);
+            fillPolygon(g2, errorPos.getB(), orite.get(), orite.camera);
+            fillPolygon(g2, errorPos.getC(), orite.get(), orite.camera);
+            fillPolygon(g2, errorPos.getD(), orite.get(), orite.camera);
         }
     }
     private void fillPolygon(Graphics2D g, int id, PointSet faces, Camera transform) {

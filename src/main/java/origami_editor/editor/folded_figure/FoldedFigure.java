@@ -1,5 +1,6 @@
 package origami_editor.editor.folded_figure;
 
+import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami.crease_pattern.worker.BasicBranch_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
@@ -62,9 +63,9 @@ public class FoldedFigure {
     public final FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
     private Point pointOfReferencePlane;
 
-    public FoldedFigure(BulletinBoard bb) {
+    public FoldedFigure(BulletinBoard bb, ApplicationModel applicationModel) {
 
-        ct_worker = new FoldedFigure_Worker(bb);
+        ct_worker = new FoldedFigure_Worker(bb, applicationModel);
         bulletinBoard = bb;
 
         //Camera settings ------------------------------------------------------------------

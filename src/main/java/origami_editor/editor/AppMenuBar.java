@@ -18,6 +18,7 @@ public class AppMenuBar extends JMenuBar {
     private JCheckBoxMenuItem cpOnTopCheckBox;//展開図を折り上がり予想図の上に描く
     private JCheckBoxMenuItem darkModeCheckBox;
     private JCheckBoxMenuItem preciseZoomCheckBox;
+    private JCheckBoxMenuItem displaySelfIntersectionCheckBox;
     private JMenuItem newButton;
     private JMenuItem openButton;
     private JMenuItem saveButton;
@@ -52,6 +53,7 @@ public class AppMenuBar extends JMenuBar {
         app.registerButton(toggleConsoleMenuItem, "toggleConsoleAction");
         app.registerButton(darkModeCheckBox, "toggleDarkModeAction");
         app.registerButton(preciseZoomCheckBox, "preciseZoomAction");
+        app.registerButton(displaySelfIntersectionCheckBox, "displaySelfIntersectionAction");
 
         newButton.addActionListener(e -> {
             if (!app.fileModel.isSaved()) {
@@ -150,6 +152,7 @@ public class AppMenuBar extends JMenuBar {
         });
         darkModeCheckBox.addActionListener(e -> applicationModel.toggleDarkMode());
         preciseZoomCheckBox.addActionListener(e -> applicationModel.togglePreciseZoom());
+        displaySelfIntersectionCheckBox.addActionListener(e -> applicationModel.toggleDisplaySelfIntersection());
     }
 
     private void createElements() {
@@ -210,6 +213,8 @@ public class AppMenuBar extends JMenuBar {
         viewMenu.add(displayStandardFaceMarksCheckBox);
         cpOnTopCheckBox = new JCheckBoxMenuItem("Crease pattern on top");
         viewMenu.add(cpOnTopCheckBox);
+        displaySelfIntersectionCheckBox = new JCheckBoxMenuItem("Display self intersection");
+        viewMenu.add(displaySelfIntersectionCheckBox);
 
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('H');
@@ -236,6 +241,7 @@ public class AppMenuBar extends JMenuBar {
         applicationModel.setDisplayCreasePatternOnTop(cpOnTopCheckBox.isSelected());
         applicationModel.setDarkMode(darkModeCheckBox.isSelected());
         applicationModel.setPreciseZoom(preciseZoomCheckBox.isSelected());
+        applicationModel.setDisplaySelfIntersection(displaySelfIntersectionCheckBox.isSelected());
     }
 
     public void setData(ApplicationModel applicationModel) {
@@ -250,6 +256,7 @@ public class AppMenuBar extends JMenuBar {
         cpOnTopCheckBox.setSelected(applicationModel.getDisplayCreasePatternOnTop());
         darkModeCheckBox.setSelected(applicationModel.getLaf().equals(FlatDarkLaf.class.getName()));
         preciseZoomCheckBox.setSelected(applicationModel.isPreciseZoom());
+        displaySelfIntersectionCheckBox.setSelected(applicationModel.getDisplaySelfIntersection());
     }
 
     public void setData(FileModel fileModel) {
