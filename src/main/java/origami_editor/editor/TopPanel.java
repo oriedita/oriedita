@@ -417,6 +417,7 @@ public class TopPanel {
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 0;
+        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         root.add(moveCreasePatternButton, gbc);
         final JPanel panel4 = new JPanel();
@@ -496,6 +497,7 @@ public class TopPanel {
         gbc = new GridBagConstraints();
         gbc.gridx = 6;
         gbc.gridy = 0;
+        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         root.add(transparentButton, gbc);
         backgroundTrimButton = new JButton();
