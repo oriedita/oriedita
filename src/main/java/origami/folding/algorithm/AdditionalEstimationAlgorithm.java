@@ -283,20 +283,12 @@ public class AdditionalEstimationAlgorithm {
     }
 
     private static class InferenceFailureException extends Exception {
-        private final int i;
-        private final int j;
+        final int i;
+        final int j;
 
         public InferenceFailureException(int i, int j) {
             this.i = i;
             this.j = j;
-        }
-
-        public int getI() {
-            return i;
-        }
-
-        public int getJ() {
-            return j;
         }
     }
 }
