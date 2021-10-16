@@ -59,9 +59,9 @@ public class CameraModel {
 
     public void zoomBy(double value) {
         if (value > 0) {
-            setScale(scale * Math.pow(1.1, value));
+            setScale(scale / Math.pow(1.1, value));
         } else if (value < 0) {
-            setScale(scale / Math.pow(1.1, Math.abs(value)));
+            setScale(scale * Math.pow(1.1, Math.abs(value)));
         }
     }
 
