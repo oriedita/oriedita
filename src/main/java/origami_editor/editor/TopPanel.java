@@ -156,20 +156,22 @@ public class TopPanel {
             app.repaintCanvas();
         });
         rotateClockwiseButton.addActionListener(e -> app.creasePatternCameraModel.decreaseRotation());
-        transparentButton.addActionListener(e -> app.createTransparentBackground());
+        transparentButton.addActionListener(e -> app.canvas.createTransparentBackground());
         backgroundTrimButton.addActionListener(e -> {
             BufferedImage offsc_background = new BufferedImage(2000, 1100, BufferedImage.TYPE_INT_ARGB);
 
             Graphics2D g2_background = offsc_background.createGraphics();
             //背景表示
-            if ((app.img_background != null) && app.backgroundModel.isDisplayBackground()) {
-                int iw = app.img_background.getWidth(null);//イメージの幅を取得
-                int ih = app.img_background.getHeight(null);//イメージの高さを取得
+            Image backgroundImage = app.backgroundModel.getBackgroundImage();
 
-                app.h_cam.setBackgroundWidth(iw);
-                app.h_cam.setBackgroundHeight(ih);
+            if ((backgroundImage != null) && app.backgroundModel.isDisplayBackground()) {
+                int iw = backgroundImage.getWidth(null);//イメージの幅を取得
+                int ih = backgroundImage.getHeight(null);//イメージの高さを取得
 
-                app.drawBackground(g2_background, app.img_background);
+                app.canvas.h_cam.setBackgroundWidth(iw);
+                app.canvas.h_cam.setBackgroundHeight(ih);
+
+                app.canvas.drawBackground(g2_background, backgroundImage);
             }
 
 
@@ -180,19 +182,19 @@ public class TopPanel {
                 int ymin = (int) app.mainCreasePatternWorker.operationFrameBox.getYMin();
                 int ymax = (int) app.mainCreasePatternWorker.operationFrameBox.getYMax();
 
-                app.img_background = offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin);
+                app.backgroundModel.setBackgroundImage(offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin));
 
-                app.h_cam = new Background_camera();
+                app.canvas.h_cam = new Background_camera();
 
-                app.background_set(new Point(120.0, 120.0),
+                app.canvas.background_set(new Point(120.0, 120.0),
                         new Point(120.0 + 10.0, 120.0),
                         new Point(xmin, ymin),
                         new Point((double) xmin + 10.0, ymin));
 
                 if (app.backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                    app.h_cam.setLocked(true);
-                    app.h_cam.setCamera(app.canvas.creasePatternCamera);
-                    app.h_cam.h3_obj_and_h4_obj_calculation();
+                    app.canvas.h_cam.setLocked(true);
+                    app.canvas.h_cam.setCamera(app.canvas.creasePatternCamera);
+                    app.canvas.h_cam.h3_obj_and_h4_obj_calculation();
                 }
             }
 
@@ -202,13 +204,13 @@ public class TopPanel {
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
 
-            app.readImageFromFile();
+            app.readBackgroundImageFromFile();
 
-            app.h_cam = new Background_camera();//20181202
+            app.canvas.h_cam = new Background_camera();//20181202
             if (app.backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                app.h_cam.setLocked(app.backgroundModel.isLockBackground());
-                app.h_cam.setCamera(app.canvas.creasePatternCamera);
-                app.h_cam.h3_obj_and_h4_obj_calculation();
+                app.canvas.h_cam.setLocked(app.backgroundModel.isLockBackground());
+                app.canvas.h_cam.setCamera(app.canvas.creasePatternCamera);
+                app.canvas.h_cam.h3_obj_and_h4_obj_calculation();
             }
 
             app.repaintCanvas();

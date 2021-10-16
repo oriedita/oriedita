@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.ui.FlatUIUtils;
 import origami.crease_pattern.LineSegmentSet;
-import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami_editor.editor.action.Click;
@@ -28,7 +27,6 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -68,16 +66,10 @@ public class App {
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
     public Canvas canvas;
     public ArrayList<FoldedFigure> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
-    public File exportFile;
-    public File fname_and_number;//まとめ書き出しに使う。
     int foldedFigureIndex = 0;//Specify which number of foldedFigures Oriagari_Zu is the target of button operation or transformation operation
-    Background_camera h_cam = new Background_camera();
     //各種変数の定義
     String frame_title_0;//フレームのタイトルの根本部分
     String frame_title;//フレームのタイトルの全体
-    Image img_background;       //Image for background
-    Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
-    Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
     HelpDialog explanation;
     boolean mouseDraggedValid = false;
     //ウィンドウ透明化用のパラメータ
@@ -86,7 +78,6 @@ public class App {
     //画像出力不要で元にもどすなら、20170107_oldと書かれた行を有効にし、20170107_newの行をコメントアウトにすればよい。（この変更はOrihime.javaの中だけに2箇所ある）
     // オフスクリーン
     boolean flg61 = false;//Used when setting the frame 　20180524
-    MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
     Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
     JFrame frame;
 
@@ -288,15 +279,7 @@ public class App {
         historyStateModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(historyStateModel));
 
         backgroundModel.addPropertyChangeListener(e -> topPanel.setData(backgroundModel));
-        backgroundModel.addPropertyChangeListener(e -> {
-            if (backgroundModel.isLockBackground()) {
-                h_cam.setLocked(backgroundModel.isLockBackground());
-                h_cam.setCamera(canvas.creasePatternCamera);
-                h_cam.h3_obj_and_h4_obj_calculation();
-            } else {
-                h_cam.setLocked(backgroundModel.isLockBackground());
-            }
-        });
+        backgroundModel.addPropertyChangeListener(e -> canvas.setData(backgroundModel));
 
         creasePatternCameraModel.addPropertyChangeListener(e -> canvas.creasePatternCamera.setData(creasePatternCameraModel));
         creasePatternCameraModel.addPropertyChangeListener(e -> topPanel.setData(creasePatternCameraModel));
@@ -724,110 +707,6 @@ public class App {
         mouseHandlerVoronoiCreate.voronoiLineSet.clear();
     }
 
-    public MouseWheelTarget pointInCreasePatternOrFoldedFigure(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
-        //20171216
-        //hyouji_flg==2,ip4==0  omote
-        //hyouji_flg==2,ip4==1	ura
-        //hyouji_flg==2,ip4==2	omote & ura
-        //hyouji_flg==2,ip4==3	omote & ura
-
-        //hyouji_flg==3,ip4==0  omote
-        //hyouji_flg==3,ip4==1	ura
-        //hyouji_flg==3,ip4==2	omote & ura
-        //hyouji_flg==3,ip4==3	omote & ura
-
-        //hyouji_flg==5,ip4==0  omote
-        //hyouji_flg==5,ip4==1	ura
-        //hyouji_flg==5,ip4==2	omote & ura
-        //hyouji_flg==5,ip4==3	omote & ura & omote2 & ura2
-
-        //OZ_hyouji_mode=0;  nun
-        //OZ_hyouji_mode=1;  omote
-        //OZ_hyouji_mode=2;  ura
-        //OZ_hyouji_mode=3;  omote & ura
-        //OZ_hyouji_mode=4;  omote & ura & omote2 & ura2
-
-        int tempFoldedFigureIndex = 0;
-        MouseWheelTarget temp_i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;
-        FoldedFigure OZi;
-        for (int i = 1; i <= foldedFigures.size() - 1; i++) {
-            OZi = foldedFigures.get(i);
-
-            int OZ_display_mode = 0;//No fold-up diagram display
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
-                OZ_display_mode = 1;
-            }//	omote
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.BACK_1)) {
-                OZ_display_mode = 2;
-            }//	ura
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.BOTH_2)) {
-                OZ_display_mode = 3;
-            }//	omote & ura
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
-                OZ_display_mode = 3;
-            }//	omote & ura
-
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
-                OZ_display_mode = 1;
-            }//	omote
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.BACK_1)) {
-                OZ_display_mode = 2;
-            }//	ura
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.BOTH_2)) {
-                OZ_display_mode = 3;
-            }//	omote & ura
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
-                OZ_display_mode = 3;
-            }//	omote & ura
-
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
-                OZ_display_mode = 1;
-            }//	omote
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.BACK_1)) {
-                OZ_display_mode = 2;
-            }//	ura
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.BOTH_2)) {
-                OZ_display_mode = 3;
-            }//	omote & ura
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
-                OZ_display_mode = 4;
-            }//	omote & ura & omote2 & ura2
-
-            if (OZi.cp_worker2.isInsideFront(p) > 0) {
-                if (((OZ_display_mode == 1) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
-                    temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_FRONT_1;
-                    tempFoldedFigureIndex = i;
-                }
-            }
-
-            if (OZi.cp_worker2.isInsideRear(p) > 0) {
-                if (((OZ_display_mode == 2) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
-                    temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_BACK_2;
-                    tempFoldedFigureIndex = i;
-                }
-            }
-
-            if (OZi.cp_worker2.isInsideTransparentFront(p) > 0) {
-                if (OZ_display_mode == 4) {
-                    temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_FRONT_3;
-                    tempFoldedFigureIndex = i;
-                }
-            }
-
-            if (OZi.cp_worker2.isInsideTransparentRear(p) > 0) {
-                if (OZ_display_mode == 4) {
-                    temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_BACK_4;
-                    tempFoldedFigureIndex = i;
-                }
-            }
-        }
-        i_cp_or_oriagari = temp_i_cp_or_oriagari;
-
-        setFoldedFigureIndex(tempFoldedFigureIndex);
-
-        return temp_i_cp_or_oriagari;
-    }
-
     void setFoldedFigureIndex(int i) {//Processing when OZ is switched
         System.out.println("foldedFigureIndex = " + foldedFigureIndex);
         foldedFigureIndex = i;
@@ -843,52 +722,6 @@ public class App {
             offset = canvas.creasePatternCamera.getCameraZoomX() * mainCreasePatternWorker.getSelectionDistance();
         }
         return new Point(e.getX() - (int) offset, e.getY() - (int) offset);
-    }
-
-    //=============================================================================
-    //Method called when the mouse wheel rotates
-    //=============================================================================
-    public void mouse_object_position(Point p) {//この関数はmouseMoved等と違ってマウスイベントが起きても自動では認識されない
-        p_mouse_TV_position.set(p.getX(), p.getY());
-
-        p_mouse_object_position.set(canvas.creasePatternCamera.TV2object(p_mouse_TV_position));
-    }
-
-    //----------------------------------------------------------------------
-    //Functions that perform mouse operations (move and button operations)------------------------------
-    //----------------------------------------------------------------------
-    // ------------------------------------------------------
-    public void background_set(Point t1, Point t2, Point t3, Point t4) {
-        h_cam.set_h1(t1);
-        h_cam.set_h2(t2);
-        h_cam.set_h3(t3);
-        h_cam.set_h4(t4);
-
-        h_cam.parameter_calculation();
-    }
-
-    public void drawBackground(Graphics2D g2h, Image imgh) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
-        //背景画を、画像の左上はしを、ウィンドウの(0,0)に合わせて回転や拡大なしで表示した場合を基準状態とする。
-        //背景画上の点h1を中心としてa倍拡大する。次に、h1を展開図上の点h3と重なるように背景画を平行移動する。
-        //この状態の展開図を、h3を中心にb度回転したよう見えるように座標を回転させて貼り付けて、その後、座標の回転を元に戻すという関数。
-        //引数は、Graphics2D g2h,Image imgh,Ten h1,Ten h2,Ten h3,Ten h4
-        //h2,とh4も重なるようにする
-
-        if (backgroundModel.isLockBackground()) {
-            h_cam.setCamera(canvas.creasePatternCamera);
-            h_cam.h3_and_h4_calculation();
-            h_cam.parameter_calculation();
-        }
-
-        AffineTransform at = new AffineTransform();
-        at.rotate(h_cam.getAngle() * Math.PI / 180.0, h_cam.getRotationX(), h_cam.getRotationY());
-        g2h.setTransform(at);
-
-        g2h.drawImage(imgh, h_cam.getX0(), h_cam.getY0(), h_cam.getX1(), h_cam.getY1(), frame);
-
-        at.rotate(-h_cam.getAngle() * Math.PI / 180.0, h_cam.getRotationX(), h_cam.getRotationY());
-        g2h.setTransform(at);
-
     }
 
     void configure_initialize_prediction() {
@@ -926,16 +759,17 @@ public class App {
         bulletinBoard.clear();
     }
 
-    void readImageFromFile() {
+    void readBackgroundImageFromFile() {
         FileDialog fd = new FileDialog(frame, "Select Image File.", FileDialog.LOAD);
         fd.setVisible(true);
         String img_background_fname = fd.getDirectory() + fd.getFile();
         try {
             if (fd.getFile() != null) {
                 Toolkit tk = Toolkit.getDefaultToolkit();
-                img_background = tk.getImage(img_background_fname);
+                Image img_background = tk.getImage(img_background_fname);
 
                 if (img_background != null) {
+                    backgroundModel.setBackgroundImage(img_background);
                     backgroundModel.setDisplayBackground(true);
                     backgroundModel.setLockBackground(false);
                 }
@@ -946,7 +780,7 @@ public class App {
     }
 
     void exportFile() {
-        exportFile = selectExportFile();
+        File exportFile = selectExportFile();
 
         if (exportFile == null) {
             return;
@@ -959,6 +793,7 @@ public class App {
                 mainCreasePatternWorker.setDrawingStage(0);
             }
 
+            fileModel.setExportImageFileName(exportFile.getAbsolutePath());
             canvas.flg_wi = true;
             repaintCanvas();//Necessary to not export the green border
         } else if (exportFile.getName().endsWith(".cp")) {
@@ -1285,63 +1120,6 @@ public class App {
         }
     }
 
-    public void createTransparentBackground() {
-        Robot robot;
-
-        try {
-            robot = new Robot();
-        } catch (AWTException ex) {
-            ex.printStackTrace();
-            return;
-        }
-
-        // Capture by specifying a range
-        Rectangle canvasBounds = canvas.getBounds();
-
-        java.awt.Point canvasLocation = canvas.getLocationOnScreen();
-        Rectangle bounds = new Rectangle(canvasLocation.x, canvasLocation.y, canvasBounds.width, canvasBounds.height);
-
-        java.awt.Point currentLocation = frame.getLocation();
-        Dimension size = frame.getSize();
-
-        // Move all associated windows outside the bounds.
-        Window[] windows = frame.getOwnedWindows();
-        java.util.Queue<java.awt.Point> locations = new LinkedList<>();
-        frame.setLocation(currentLocation.x, currentLocation.y + size.height);
-        for (Window w : windows) {
-            java.awt.Point loc = w.getLocation();
-            locations.offer(loc);
-            w.setLocation(loc.x, loc.y + size.height);
-        }
-
-        img_background = robot.createScreenCapture(bounds);
-
-        // Move all associated windows back.
-        frame.setLocation(currentLocation);
-        for (Window w : windows) {
-            w.setLocation(locations.poll());
-        }
-
-        OritaCalc.display("新背景カメラインスタンス化");
-        h_cam = new Background_camera();//20181202
-
-        background_set(new Point(120.0, 120.0),
-                new Point(120.0 + 10.0, 120.0),
-                new Point(0, 0),
-                new Point(10.0, 0));
-
-        //Set each condition for background display
-        backgroundModel.setDisplayBackground(true);
-
-        if (backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-            h_cam.setLocked(true);
-            h_cam.setCamera(canvas.creasePatternCamera);
-            h_cam.h3_obj_and_h4_obj_calculation();
-        }
-
-        repaintCanvas();
-    }
-
     public void setTooltip(AbstractButton button, String key) {
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
@@ -1537,14 +1315,6 @@ public class App {
                 ex.printStackTrace();
             }
         });
-    }
-
-    public enum MouseWheelTarget {
-        CREASE_PATTERN_0,
-        FOLDED_FRONT_1,
-        FOLDED_BACK_2,
-        TRANSPARENT_FRONT_3,
-        TRANSPARENT_BACK_4,
     }
 
     public enum FoldType {

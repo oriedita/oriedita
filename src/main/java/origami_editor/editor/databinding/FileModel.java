@@ -8,6 +8,18 @@ public class FileModel implements Serializable {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     private String savedFileName;
+    private boolean saved;
+    private String exportImageFileName;
+
+    public String getExportImageFileName() {
+        return exportImageFileName;
+    }
+
+    public void setExportImageFileName(String exportImageFileName) {
+        String oldExportImageFileName = this.exportImageFileName;
+        this.exportImageFileName = exportImageFileName;
+        this.pcs.firePropertyChange("exportImageFileName", oldExportImageFileName, exportImageFileName);
+    }
 
     public boolean isSaved() {
         return saved;
@@ -18,8 +30,6 @@ public class FileModel implements Serializable {
         this.saved = saved;
         this.pcs.firePropertyChange("saved", oldSaved, saved);
     }
-
-    private boolean saved;
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         this.pcs.addPropertyChangeListener(listener);

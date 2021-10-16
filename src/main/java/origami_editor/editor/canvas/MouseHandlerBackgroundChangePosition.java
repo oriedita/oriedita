@@ -61,7 +61,7 @@ public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
 
             d.app.backgroundModel.setLockBackground(false);
 
-            d.app.background_set(d.camera.object2TV(s_1.getA()),
+            d.app.canvas.background_set(d.camera.object2TV(s_1.getA()),
                     d.camera.object2TV(s_2.getA()),
                     d.camera.object2TV(s_3.getA()),
                     d.camera.object2TV(s_4.getA()));

@@ -34,7 +34,7 @@ public class FoldingEstimateSave100Task implements Runnable{
                             filename = basename + "_" + app.OZ.discovered_fold_cases + extension;
                         }
 
-                        app.fname_and_number = new File(filename);//Used for bulk writing.
+                        app.fileModel.setExportImageFileName(filename);
 
                         app.w_image_running.set(true);
                         app.repaintCanvas();
