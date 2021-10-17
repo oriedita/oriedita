@@ -8,6 +8,7 @@ import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.Save;
 import origami_editor.editor.component.BulletinBoard;
+import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.export.Cp;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.tools.Camera;
@@ -23,7 +24,7 @@ public class FoldingTest {
     public void testFoldBirdbase() throws IOException {
         Save save = Cp.importFile(getClass().getClassLoader().getResourceAsStream("birdbase.cp"));
 
-        FoldedFigure foldedFigure = new FoldedFigure(new BulletinBoard());
+        FoldedFigure foldedFigure = new FoldedFigure(new BulletinBoard(), new ApplicationModel());
 
         Camera creasePatternCamera = new Camera();
 

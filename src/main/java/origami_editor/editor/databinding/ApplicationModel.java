@@ -24,6 +24,7 @@ public class ApplicationModel implements Serializable {
     private boolean displayMarkings;
     private boolean displayCreasePatternOnTop;
     private boolean displayFoldingProgress;
+    private boolean displaySelfIntersection;
     private boolean preciseZoom;
     private int lineWidth;
     private int auxLineWidth;
@@ -44,9 +45,18 @@ public class ApplicationModel implements Serializable {
     private Point windowPosition;
     private String laf;
     private Dimension windowSize;
-
     public ApplicationModel() {
         reset();
+    }
+
+    public boolean getDisplaySelfIntersection() {
+        return displaySelfIntersection;
+    }
+
+    public void setDisplaySelfIntersection(boolean displaySelfIntersection) {
+        boolean oldDisplaySelfIntersection = this.displaySelfIntersection;
+        this.displaySelfIntersection = displaySelfIntersection;
+        this.pcs.firePropertyChange("displaySelfIntersection", oldDisplaySelfIntersection, displaySelfIntersection);
     }
 
     public boolean isPreciseZoom() {
@@ -134,6 +144,7 @@ public class ApplicationModel implements Serializable {
         displayCreasePatternOnTop = false;
         displayFoldingProgress = false;
         mouseWheelMovesCreasePattern = true;
+        displaySelfIntersection = true;
         lineWidth = 1;
         pointSize = 1;
         lineStyle = LineStyle.COLOR;
@@ -488,6 +499,7 @@ public class ApplicationModel implements Serializable {
         displayMarkings = applicationModel.getDisplayMarkings();
         displayCreasePatternOnTop = applicationModel.getDisplayCreasePatternOnTop();
         displayFoldingProgress = applicationModel.getDisplayFoldingProgress();
+        displaySelfIntersection = applicationModel.getDisplaySelfIntersection();
         lineWidth = applicationModel.getLineWidth();
         auxLineWidth = applicationModel.getAuxLineWidth();
         pointSize = applicationModel.getPointSize();
@@ -536,5 +548,9 @@ public class ApplicationModel implements Serializable {
 
     public void togglePreciseZoom() {
         setPreciseZoom(!preciseZoom);
+    }
+
+    public void toggleDisplaySelfIntersection() {
+        setDisplaySelfIntersection(!displaySelfIntersection);
     }
 }

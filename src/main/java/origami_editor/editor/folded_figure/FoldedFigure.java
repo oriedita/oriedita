@@ -1,5 +1,6 @@
 package origami_editor.editor.folded_figure;
 
+import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami.crease_pattern.worker.BasicBranch_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
@@ -62,9 +63,9 @@ public class FoldedFigure {
     public final FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
     private Point pointOfReferencePlane;
 
-    public FoldedFigure(BulletinBoard bb) {
+    public FoldedFigure(BulletinBoard bb, ApplicationModel applicationModel) {
 
-        ct_worker = new FoldedFigure_Worker(bb);
+        ct_worker = new FoldedFigure_Worker(bb, applicationModel);
         bulletinBoard = bb;
 
         //Camera settings ------------------------------------------------------------------
@@ -143,7 +144,7 @@ public class FoldedFigure {
 
             //Display of transparency
             if (displayStyle == DisplayStyle.TRANSPARENT_3) {        // displayStyle; Specify the display style of the folded figure. If it is 1, it is the same as when actually folding origami. If it is 2, it is a transparent view. If it is 3, it is a wire diagram.
-                ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
+                ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
             }
 
             //Display of folded figure *************
@@ -164,7 +165,7 @@ public class FoldedFigure {
 
             //Display of transparency
             if (displayStyle == DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
+                ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
             }
 
             //Display of folded figure ************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
@@ -183,7 +184,7 @@ public class FoldedFigure {
             // ---------------------------------------------------------------------------------
             ct_worker.setCamera(transparentFrontCamera);
             //Display of transparency
-            ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
+            ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
 
             //Cross-shaped display at the center of movement of the folded figure
             if (displayMark) {
@@ -193,7 +194,7 @@ public class FoldedFigure {
             ct_worker.setCamera(transparentRearCamera);
 
             //Display of transparency
-            ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
+            ct_worker.draw_transparency_with_camera(bufferGraphics, cp_worker1, cp_worker2.get(), cp_worker3.get(), transparencyColor, transparent_transparency);
 
             //Cross-shaped display at the center of movement of the folded figure
             if (displayMark) {

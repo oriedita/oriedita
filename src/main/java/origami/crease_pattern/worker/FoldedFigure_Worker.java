@@ -1,5 +1,7 @@
 package origami.crease_pattern.worker;
 
+import origami.folding.util.EquivalenceCondition;
+import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.HierarchyList;
@@ -42,6 +44,7 @@ public class FoldedFigure_Worker {
     boolean displayShadows = false; //Whether to display shadows. 0 is not displayed, 1 is displayed
     Camera camera = new Camera();
     BulletinBoard bb;
+    private final ApplicationModel applicationModel;
     Color F_color = new Color(255, 255, 50);//表面の色
     Color B_color = new Color(233, 233, 233);//裏面の色
     Color L_color = Color.black;//線の色
@@ -56,8 +59,11 @@ public class FoldedFigure_Worker {
 
     SwappingAlgorithm swapper = new SwappingAlgorithm();
 
-    public FoldedFigure_Worker(BulletinBoard bb0) {
+    EquivalenceCondition errorPos = null;
+
+    public FoldedFigure_Worker(BulletinBoard bb0, ApplicationModel applicationModel) {
         bb = bb0;
+        this.applicationModel = applicationModel;
         reset();
     }
 
@@ -345,7 +351,9 @@ public class FoldedFigure_Worker {
         // information on mountain folds and valley folds.
 
         AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(hierarchyList, s0);
-        return AEA.run(0);
+        HierarchyListStatus result = AEA.run(0);
+        errorPos = AEA.errorPos;
+        return result;
     }
 
 
@@ -472,7 +480,7 @@ public class FoldedFigure_Worker {
         return (int) d;
     }
 
-    public void draw_transparency_with_camera(Graphics g, PointSet otta_Face_figure, PointSet subFace_figure, boolean transparencyColor, int transparency_toukado) {
+    public void draw_transparency_with_camera(Graphics g, WireFrame_Worker orite, PointSet otta_Face_figure, PointSet subFace_figure, boolean transparencyColor, int transparency_toukado) {
         Graphics2D g2 = (Graphics2D) g;
 
         Point t0 = new Point();
@@ -584,7 +592,45 @@ public class FoldedFigure_Worker {
                 g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
             }
         }
+
+        if (errorPos != null && applicationModel.getDisplaySelfIntersection()) {
+            g2.setColor(new Color(255, 0, 0, 75));
+            fillPolygon(g2, errorPos.getA(), subFace_figure, camera);
+            fillPolygon(g2, errorPos.getB(), subFace_figure, camera);
+            fillPolygon(g2, errorPos.getC(), subFace_figure, camera);
+            fillPolygon(g2, errorPos.getD(), subFace_figure, camera);
+
+
+            fillPolygon(g2, errorPos.getA(), orite.get(), orite.camera);
+            fillPolygon(g2, errorPos.getB(), orite.get(), orite.camera);
+            fillPolygon(g2, errorPos.getC(), orite.get(), orite.camera);
+            fillPolygon(g2, errorPos.getD(), orite.get(), orite.camera);
+        }
     }
+    private void fillPolygon(Graphics2D g, int id, PointSet faces, Camera transform) {
+        Point t0 = new Point();
+        Point t1 = new Point();
+
+        int[] x = new int[faces.getPointsCount(id)+1];
+        int[] y = new int[faces.getPointsCount(id)+1];
+
+        for (int i = 1; i <= faces.getPointsCount(id) - 1; i++) {
+            t0.setX(faces.getPointX(faces.getPointId(id, i)));
+            t0.setY(faces.getPointY(faces.getPointId(id, i)));
+            t1.set(transform.object2TV(t0));
+            x[i] = (int)(t1.getX());
+            y[i] = (int)(t1.getY());
+        }
+
+        t0.setX(faces.getPointX(faces.getPointId(id, faces.getPointsCount(id))));
+        t0.setY(faces.getPointY(faces.getPointId(id, faces.getPointsCount(id))));
+        t1.set(transform.object2TV(t0));
+        x[0] = (int)(t1.getX());
+        y[0] = (int)(t1.getY());
+
+        g.fill(new java.awt.Polygon(x, y, faces.getPointsCount(id)));
+    }
+
 
     public void draw_foldedFigure_with_camera(Graphics g, WireFrame_Worker orite, PointSet subFace_figure) {
         Graphics2D g2 = (Graphics2D) g;
