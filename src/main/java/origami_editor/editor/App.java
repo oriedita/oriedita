@@ -1298,25 +1298,27 @@ public class App {
 
                 updateButtonIcons(frame);
 
-                // increase size of frame if necessary
-                int width = frame.getWidth();
-                int height = frame.getHeight();
-                Dimension prefSize = frame.getPreferredSize();
-                if (prefSize.width > width || prefSize.height > height)
-                    frame.setSize(Math.max(prefSize.width, width), Math.max(prefSize.height, height));
+                if (frame.getExtendedState() == Frame.NORMAL) {
+                    // increase size of frame if necessary
+                    int width = frame.getWidth();
+                    int height = frame.getHeight();
+                    Dimension prefSize = frame.getPreferredSize();
+                    if (prefSize.width > width || prefSize.height > height)
+                        frame.setSize(Math.max(prefSize.width, width), Math.max(prefSize.height, height));
 
-                // limit frame size to screen size
-                Rectangle screenBounds = frame.getGraphicsConfiguration().getBounds();
-                screenBounds = FlatUIUtils.subtractInsets(screenBounds, frame.getToolkit().getScreenInsets(frame.getGraphicsConfiguration()));
-                Dimension frameSize = frame.getSize();
-                if (frameSize.width > screenBounds.width || frameSize.height > screenBounds.height)
-                    frame.setSize(Math.min(frameSize.width, screenBounds.width), Math.min(frameSize.height, screenBounds.height));
+                    // limit frame size to screen size
+                    Rectangle screenBounds = frame.getGraphicsConfiguration().getBounds();
+                    screenBounds = FlatUIUtils.subtractInsets(screenBounds, frame.getToolkit().getScreenInsets(frame.getGraphicsConfiguration()));
+                    Dimension frameSize = frame.getSize();
+                    if (frameSize.width > screenBounds.width || frameSize.height > screenBounds.height)
+                        frame.setSize(Math.min(frameSize.width, screenBounds.width), Math.min(frameSize.height, screenBounds.height));
 
-                // move frame to left/top if necessary
-                if (frame.getX() + frame.getWidth() > screenBounds.x + screenBounds.width ||
-                        frame.getY() + frame.getHeight() > screenBounds.y + screenBounds.height) {
-                    frame.setLocation(Math.min(frame.getX(), screenBounds.x + screenBounds.width - frame.getWidth()),
-                            Math.min(frame.getY(), screenBounds.y + screenBounds.height - frame.getHeight()));
+                    // move frame to left/top if necessary
+                    if (frame.getX() + frame.getWidth() > screenBounds.x + screenBounds.width ||
+                            frame.getY() + frame.getHeight() > screenBounds.y + screenBounds.height) {
+                        frame.setLocation(Math.min(frame.getX(), screenBounds.x + screenBounds.width - frame.getWidth()),
+                                Math.min(frame.getY(), screenBounds.y + screenBounds.height - frame.getHeight()));
+                    }
                 }
 
             } catch (Exception ex) {
