@@ -432,34 +432,42 @@ public class App {
         for (Component c : container.getComponents()) {
             if (c instanceof AbstractButton) {
                 AbstractButton button = (AbstractButton) c;
-
                 if (button.getIcon() instanceof ImageIcon) {
-                    // TODO this works because the description is the filename of the image, this should be based on the name of the action.
-                    ImageIcon icon = (ImageIcon) button.getIcon();
-                    String uri = icon.getDescription();
-
-                    if (isDark) {
-                        uri = uri.replaceAll("ppp", "ppp_dark");
-                    } else {
-                        uri = uri.replaceAll("ppp_dark", "ppp");
-                    }
-
-                    try {
-                        URL resource = new URL(uri);
-
-                        Image image = Toolkit.getDefaultToolkit().getImage(resource);
-                        if (image != null) {
-                            button.setIcon(new ImageIcon(resource));
-                        }
-                    } catch (MalformedURLException ignored) {
-
-                    }
-
+                    button.setIcon(determineIcon(isDark, (ImageIcon) button.getIcon()));
+                }
+            } else if (c instanceof JLabel) {
+                JLabel label = (JLabel) c;
+                if (label.getIcon() instanceof ImageIcon) {
+                    label.setIcon(determineIcon(isDark, (ImageIcon) label.getIcon()));
                 }
             } else if (c instanceof Container) {
                 updateButtonIcons((Container) c);
             }
         }
+    }
+
+    private ImageIcon determineIcon(boolean isDark, ImageIcon icon) {
+        // TODO this works because the description is the filename of the image, this should be based on the name of the action.
+        String uri = icon.getDescription();
+
+        if (isDark) {
+            uri = uri.replaceAll("ppp", "ppp_dark");
+        } else {
+            uri = uri.replaceAll("ppp_dark", "ppp");
+        }
+
+        try {
+            URL resource = new URL(uri);
+
+            Image image = Toolkit.getDefaultToolkit().getImage(resource);
+            if (image != null) {
+                return new ImageIcon(resource);
+            }
+        } catch (MalformedURLException ignored) {
+
+        }
+
+        return icon;
     }
 
     private static void updateUI2() {
