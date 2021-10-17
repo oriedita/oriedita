@@ -575,7 +575,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 if (e.getWheelRotation() < 0) {
                     es1.redo();
                     repaint();
-                } else {
+                } else if (e.getWheelRotation() > 0) {
                     es1.undo();
                     repaint();
                 }
