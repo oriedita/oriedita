@@ -322,7 +322,7 @@ public class SubFace {//This class folds the development view and estimates the 
         int iret = 0;
         for (int i = 1; i <= faceIdCount - 1; i++) {
             for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.EMPTY_N100) {
+                if (hierarchyList.get(faceIdList[i], faceIdList[j]) == HierarchyList.EMPTY_N100) {
                     iret++;
                 }//20171021本当は-50のつもりだったが現状は-100となっている
             }
@@ -335,7 +335,7 @@ public class SubFace {//This class folds the development view and estimates the 
         int iret = 0;
         for (int i = 1; i <= faceIdCount - 1; i++) {
             for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.BELOW_0) {
+                if (hierarchyList.get(faceIdList[i], faceIdList[j]) == HierarchyList.BELOW_0) {
                     iret++;
                 }
             }

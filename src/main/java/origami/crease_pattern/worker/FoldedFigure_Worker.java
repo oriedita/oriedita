@@ -367,7 +367,7 @@ public class FoldedFigure_Worker {
         isusumu = 0;
         //All SubFaces above ss + 1 are set to the initial values. An error occurs when the number of faces included in SubFace is 0.
 
-        for (int i = ss + 1; i <= SubFaceTotal; i++) {
+        for (int i = ss + 1; i <= SubFace_valid_number; i++) {
             s[i].Permutation_first();
         }
         //The overlapping state of the surfaces is changed in order from the one with the largest id number of the SubFace.
