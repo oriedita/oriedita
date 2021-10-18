@@ -54,7 +54,7 @@ public class FoldedFigure_Worker {
     int makesuu1ijyouno_menno_amount = 0;//Number of faces that can only be ranked if there is one or more other faces on top
     private int top_face_id_ga_maketa_kazu_goukei_without_rated_face = 0;
 
-    SwappingAlgorithm swapper = new SwappingAlgorithm();
+    SwappingAlgorithm swapper;
 
     public FoldedFigure_Worker(BulletinBoard bb0) {
         bb = bb0;
@@ -398,6 +398,8 @@ public class FoldedFigure_Worker {
         bb.write("___ _____");
         bb.write("____ ____");
         int ms, Sid;
+
+        swapper = new SwappingAlgorithm();
 
         Sid = 1;//The initial value of Sid can be anything other than 0.
         while (Sid != 0) { //If Sid == 0, it means that even the smallest number of SubFace has been searched.
