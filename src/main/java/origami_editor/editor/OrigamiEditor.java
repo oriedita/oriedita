@@ -1,5 +1,8 @@
 package origami_editor.editor;
 
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+
 import javax.swing.*;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -12,6 +15,8 @@ public class OrigamiEditor {
 
         SwingUtilities.invokeLater(() -> {
             app.restoreApplicationModel();
+
+            FlatLaf.registerCustomDefaultsSource("origami_editor.editor.themes");
 
             try {
                 UIManager.setLookAndFeel(app.applicationModel.getLaf());

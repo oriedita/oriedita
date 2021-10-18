@@ -44,14 +44,13 @@ public class FoldedFigureResize extends JPanel {
     private void $$$setupUI$$$() {
         panel1 = new JPanel();
         panel1.setLayout(new GridBagLayout());
-        panel1.setBackground(new Color(-1));
-        panel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(-16777216)), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         foldedFigureSizeDecreaseButton = new JButton();
         foldedFigureSizeDecreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oriagari_syukusyou.png")));
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(foldedFigureSizeDecreaseButton, gbc);
         foldedFigureSizeTextField = new JTextField();

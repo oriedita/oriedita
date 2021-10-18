@@ -11,6 +11,8 @@ import origami_editor.tools.Camera;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  * Static utility class for drawing
@@ -75,9 +77,9 @@ public class DrawingUtil {
         widthLine(g, ty0, ty1, width, icolor);
     }
 
-    public static void drawVertex(Graphics g, Point a, int pointSize) {
+    public static void drawVertex(Graphics2D g, Point a, int pointSize) {
         g.setColor(Colors.get(Color.black));
-        g.fillRect((int) a.getX() - pointSize, (int) a.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1);
+        g.fill(new Rectangle2D.Double(a.getX() - pointSize, a.getY() - pointSize, 2 * pointSize + .5, 2 * pointSize + .5));
     }
 
     //Draw a pointing diagram around the specified Point
@@ -259,8 +261,8 @@ public class DrawingUtil {
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
         if (lineWidth < 2.0f) {//頂点の黒い正方形を描く
-            drawVertex(g, a, pointSize);
-            drawVertex(g, b, pointSize);
+            drawVertex(g2, a, pointSize);
+            drawVertex(g2, b, pointSize);
         }
 
         if (lineWidth >= 2.0f) {//  太線
@@ -416,11 +418,11 @@ public class DrawingUtil {
         a.set(s_tv.determineAX() + 0.000001, s_tv.determineAY() + 0.000001);
         b.set(s_tv.determineBX() + 0.000001, s_tv.determineBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
-        g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
+        g2.draw(new Line2D.Double(a.getX(), a.getY(), b.getX(), b.getY()));
 
         if (lineWidth < 2.0f) {//頂点の黒い正方形を描く
-            drawVertex(g, a, pointSize);
-            drawVertex(g, b, pointSize);
+            drawVertex(g2, a, pointSize);
+            drawVertex(g2, b, pointSize);
         }
 
         if (lineWidth >= 2.0f) {//  太線
