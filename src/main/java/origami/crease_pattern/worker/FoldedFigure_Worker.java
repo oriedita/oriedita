@@ -394,7 +394,7 @@ public class FoldedFigure_Worker {
     }
 
     //Start with the current permutation state and look for possible overlapping states. There is room for speeding up here.
-    public int possible_overlapping_search() throws InterruptedException {      //This should not change the hierarchyList.
+    public int possible_overlapping_search(boolean swap) throws InterruptedException {      //This should not change the hierarchyList.
         bb.write("_ _______");
         bb.write("__ ______");
         bb.write("___ _____");
@@ -413,7 +413,9 @@ public class FoldedFigure_Worker {
             Sid = next(ms - 1);
             bb.rewrite(9, "susumu(" + ms + "-1 = )" + Sid);
 
-            swapper.process(s);
+            if(swap) {
+                swapper.process(s);
+            }
 
             if (Thread.interrupted()) throw new InterruptedException();
         }
