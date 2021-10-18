@@ -58,6 +58,11 @@ public class ChainPermutationGenerator extends PermutationGenerator {
         // do anything. Otherwise we need to retract to the requested digit.
         if (swapHistory[1] != 0) {
             curIndex = numDigits;
+
+            // It is possible that temp guides are added, so that the last element is no
+            // longer a leaf node, and we must retract it to makes things consistent.
+            pairGuide.retract(digits[curIndex]);
+
             do {
                 swapHistory[curIndex] = curIndex - 1;
                 retract(--curIndex);
@@ -105,7 +110,8 @@ public class ChainPermutationGenerator extends PermutationGenerator {
             curIndex++;
         }
 
-        // Fill the last element into the map
+        // Fill the last element into the map. There's no need to confirm the last
+        // element, because it is definitely a leaf node.
         map[digits[numDigits]] = numDigits;
 
         count++;
@@ -113,13 +119,13 @@ public class ChainPermutationGenerator extends PermutationGenerator {
     }
 
     @Override
-    public void addGuide(int upperFaceIndex, int faceIndex) {
-        pairGuide.add(upperFaceIndex, faceIndex);
+    public void clearTempGuide() {
+        pairGuide.clearTempGuide(count != 0);
     }
 
     @Override
-    public void addGuide(int a, int b, int d) {
-        // This is not implemented in ChianPermutationGenerator
+    public void addGuide(int upperFaceIndex, int faceIndex) {
+        pairGuide.add(upperFaceIndex, faceIndex);
     }
 
     public void initialize() {

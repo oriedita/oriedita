@@ -152,6 +152,10 @@ public class SubFace {//This class folds the development view and estimates the 
         return permutationGenerator.getPermutation(i);
     }
 
+    public void clearTempGuide() {
+        permutationGenerator.clearTempGuide();
+    }
+
     // Check from the top side to find out at what digit the folds are inconsistent.
     // At this time, hierarchyList does not change. Here, the penetration condition of the boundary line of the adjacent surface is not checked.
     // This SubFace returns 1000 if there is no contradiction in the folds.

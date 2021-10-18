@@ -43,12 +43,12 @@ public abstract class PermutationGenerator {
     /** Reset to the first valid permutation. */
     public abstract void reset();
 
+    /** Clear all temporary guides. */
+    public abstract void clearTempGuide();
+
     /** Returns the lowest digit that was changed in the process. */
     public abstract int next(int digit);
 
     /** Add a constraint saying that "from" must appear before "to". */
     public abstract void addGuide(int from, int to);
-
-    /** Add a constraint saying that a cannot appear between b and d. */
-    public abstract void addGuide(int a, int b, int d);
 }
