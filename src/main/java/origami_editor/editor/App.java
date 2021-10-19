@@ -3,6 +3,7 @@ package origami_editor.editor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.ui.FlatUIUtils;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
@@ -449,6 +450,10 @@ public class App {
     private ImageIcon determineIcon(boolean isDark, ImageIcon icon) {
         // TODO this works because the description is the filename of the image, this should be based on the name of the action.
         String uri = icon.getDescription();
+
+        if (uri == null) {
+            return icon;
+        }
 
         if (isDark) {
             uri = uri.replaceAll("ppp", "ppp_dark");
@@ -1197,6 +1202,14 @@ public class App {
                 button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
             }
             button.getActionMap().put(key, new Click(button));
+
+            String iconName = "ppp/" + button.getText() + ".svg";
+            URL imageResource = ResourceUtil.class.getClassLoader().getResource(iconName);
+            if (imageResource != null) {
+                FlatSVGIcon icon = new FlatSVGIcon(iconName);
+                button.setIcon(icon);
+                button.setText("");
+            }
         }
 
         if (!StringOp.isEmpty(help)) {

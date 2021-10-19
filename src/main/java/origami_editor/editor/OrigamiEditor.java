@@ -1,14 +1,19 @@
 package origami_editor.editor;
 
-import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
+import java.awt.Color;
 import java.io.File;
 
 public class OrigamiEditor {
     public static void main(String[] argv) {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
+
+        // Set global color filter
+        FlatSVGIcon.ColorFilter colorFilter = FlatSVGIcon.ColorFilter.getInstance();
+        colorFilter.add(Color.black, Color.black, Color.lightGray);
 
         SwingUtilities.invokeLater(() -> {
             FlatLightLaf.setup();

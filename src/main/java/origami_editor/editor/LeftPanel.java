@@ -1089,7 +1089,7 @@ public class LeftPanel {
         gbc.fill = GridBagConstraints.BOTH;
         root.add(panel12, gbc);
         drawCreaseFreeButton = new JButton();
-        drawCreaseFreeButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku.png")));
+        drawCreaseFreeButton.setText("senbun_nyuryoku");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -1098,7 +1098,7 @@ public class LeftPanel {
         gbc.fill = GridBagConstraints.BOTH;
         panel12.add(drawCreaseFreeButton, gbc);
         drawCreaseRestrictedButton = new JButton();
-        drawCreaseRestrictedButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku11.png")));
+        drawCreaseRestrictedButton.setText("senbun_nyuryoku11");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -1107,7 +1107,7 @@ public class LeftPanel {
         gbc.fill = GridBagConstraints.BOTH;
         panel12.add(drawCreaseRestrictedButton, gbc);
         voronoiButton = new JButton();
-        voronoiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/Voronoi.png")));
+        voronoiButton.setText("Voronoi");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
