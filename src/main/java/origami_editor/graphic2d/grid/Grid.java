@@ -466,7 +466,7 @@ public class Grid {
         }
 
         public static State from(int state) {
-            for (var val : State.values()) {
+            for (State val : State.values()) {
                 if (val.getState() == state) {
                     return val;
                 }

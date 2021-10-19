@@ -67,7 +67,7 @@ public class ResourceUtil {
         }
 
         try {
-            localBundle = new PropertyResourceBundle(Files.newInputStream(Path.of(bundle + ".properties")));
+            localBundle = new PropertyResourceBundle(Files.newInputStream(Paths.get(bundle + ".properties")));
         } catch (IOException ignored) {
         }
 

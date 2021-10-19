@@ -21,7 +21,7 @@ public enum LineColor {
     }
 
     public static LineColor fromNumber(int type) {
-        for (var val : values()) {
+        for (LineColor val : values()) {
             if (val.getNumber() == type) {
                 return val;
             }
