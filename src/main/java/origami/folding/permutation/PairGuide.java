@@ -76,16 +76,24 @@ public class PairGuide {
     public void reset() {
         for (int i = 1; i <= numDigits; i++) {
             score[i] = 0;
-            if (added) {
+        }
+        clearTempGuide(false);
+    }
+
+    public void clearTempGuide(boolean matchScore) {
+        if (added) {
+            for (int i = 1; i <= numDigits; i++) {
                 guide[i] = initGuide[i];
                 goal[i] = initGoal[i];
+                if (matchScore) {
+                    // If temp guide is cleared in the middle of permutation search,
+                    // then the score must match the initial score.
+                    score[i] = initGoal[i];
+                }
             }
-        }
-        if (added) {
             entries.subList(initEntries, entries.size()).clear();
             added = false;
         }
-
     }
 
     public void confirm(int curDigit) {
@@ -169,7 +177,7 @@ public class PairGuide {
         return score[curDigit] < goal[curDigit];
     }
 
-    public void add(int faceIndex, int upperFaceIndex) {
+    public void add(int upperFaceIndex, int faceIndex) {
         int next = guide[upperFaceIndex];
         entries.add(faceIndex | (next << 16));
         guide[upperFaceIndex] = entries.size() - 1;

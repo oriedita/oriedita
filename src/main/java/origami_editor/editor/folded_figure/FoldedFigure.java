@@ -572,7 +572,7 @@ public class FoldedFigure {
         if ((estimationStep == EstimationStep.STEP_4) || (estimationStep == EstimationStep.STEP_5)) {
             if (findAnotherOverlapValid) {
 
-                ip2_possibleOverlap = ct_worker.possible_overlapping_search();//ip2_possibleOverlap = A variable that stores 0 if there is no possible overlap and 1000 if there is a possible overlap when the upper and lower table craftsmen search for a foldable overlap.
+                ip2_possibleOverlap = ct_worker.possible_overlapping_search(discovered_fold_cases == 0);//ip2_possibleOverlap = A variable that stores 0 if there is no possible overlap and 1000 if there is a possible overlap when the upper and lower table craftsmen search for a foldable overlap.
 
                 if (ip2_possibleOverlap == 1000) {
                     discovered_fold_cases = discovered_fold_cases + 1;
