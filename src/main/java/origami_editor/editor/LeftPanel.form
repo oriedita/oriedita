@@ -501,7 +501,7 @@
               <gridbag weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
-              <text value="senbun_nyuryoku"/>
+              <icon value="ppp/senbun_nyuryoku.png"/>
             </properties>
           </component>
           <component id="73246" class="javax.swing.JButton" binding="drawCreaseRestrictedButton">
@@ -510,7 +510,7 @@
               <gridbag weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
-              <text value="senbun_nyuryoku11"/>
+              <icon value="ppp/senbun_nyuryoku11.png"/>
             </properties>
           </component>
           <component id="7bb20" class="javax.swing.JButton" binding="voronoiButton">
@@ -519,7 +519,7 @@
               <gridbag weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
-              <text value="Voronoi"/>
+              <icon value="ppp/Voronoi.png"/>
             </properties>
           </component>
           <component id="4d17c" class="javax.swing.JButton" binding="makeFlatFoldableButton">

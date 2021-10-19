@@ -1203,12 +1203,20 @@ public class App {
             }
             button.getActionMap().put(key, new Click(button));
 
-            String iconName = "ppp/" + button.getText() + ".svg";
-            URL imageResource = ResourceUtil.class.getClassLoader().getResource(iconName);
-            if (imageResource != null) {
-                FlatSVGIcon icon = new FlatSVGIcon(iconName);
-                button.setIcon(icon);
-                button.setText("");
+            if (button.getIcon() instanceof ImageIcon) {
+                String iconName = ((ImageIcon)button.getIcon()).getDescription();
+                if (iconName != null) {
+                    // Hacky way of checking if there is an svg to load (for compatibility)
+                    // Assumes that all images live in the ppp directory
+                    iconName = iconName.replaceAll(".*ppp", "ppp");
+                    iconName = iconName.replaceAll(".png", ".svg");
+                    URL imageResource = ResourceUtil.class.getClassLoader().getResource(iconName);
+                    if (imageResource != null) {
+                        FlatSVGIcon icon = new FlatSVGIcon(iconName);
+                        button.setIcon(icon);
+                        button.setText("");
+                    }
+                }
             }
         }
 
