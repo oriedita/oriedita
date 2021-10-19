@@ -12,7 +12,7 @@ import java.awt.*;
 // -------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------
 public class Grid {
-    double gridWidth = 200.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<格子幅(double)
+    double gridWidth = 2000.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<格子幅(double)
 
     /**
      * Horizontal = a
@@ -30,8 +30,8 @@ public class Grid {
     double d_grid_bx = 0.0;//The ratio of the X component of the vertical unit vector of the grid
     double d_grid_by = 1.0;//Ratio of Y components of the vertical unit vector of the grid
 
-    double okx0 = -200.0;//obiject系での格子のx座標の原点
-    double oky0 = +200.0;//obiject系での格子のy座標の原点
+    double okx0 = -2000.0;//obiject系での格子のx座標の原点
+    double oky0 = +2000.0;//obiject系での格子のy座標の原点
 
     double diagonal_max = 1.0;//The longer diagonal of the unit cell
     double diagonal_min = 1.0;//The shorter diagonal of the unit cell
@@ -86,7 +86,7 @@ public class Grid {
     // ------------------------------------------------------
     public void setGridSize(int i) {
         gridSize = i;
-        gridWidth = 400.0 / (double) gridSize;
+        gridWidth = 4000.0 / (double) gridSize;
 
         calculateGrid();
     }

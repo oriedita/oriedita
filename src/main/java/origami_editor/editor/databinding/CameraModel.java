@@ -23,7 +23,7 @@ public class CameraModel {
     }
 
     public void reset() {
-        scale = 1.0;
+        scale = .1;
         rotation = 0.0;
 
         this.pcs.firePropertyChange(null, null, null);

@@ -693,8 +693,8 @@ public class App {
         canvas.creasePatternCamera.setCameraPositionY(0.0);
         canvas.creasePatternCamera.setCameraAngle(0.0);
         canvas.creasePatternCamera.setCameraMirror(1.0);
-        canvas.creasePatternCamera.setCameraZoomX(1.0);
-        canvas.creasePatternCamera.setCameraZoomY(1.0);
+        canvas.creasePatternCamera.setCameraZoomX(.1);
+        canvas.creasePatternCamera.setCameraZoomY(.1);
         canvas.creasePatternCamera.setDisplayPositionX(350.0);
         canvas.creasePatternCamera.setDisplayPositionY(350.0);
 

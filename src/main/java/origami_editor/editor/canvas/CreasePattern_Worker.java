@@ -125,10 +125,10 @@ public class CreasePattern_Worker {
 
     public void initialize() {
         //Enter the paper square (start)
-        foldLineSet.addLine(-200.0, -200.0, -200.0, 200.0, LineColor.BLACK_0);
-        foldLineSet.addLine(-200.0, -200.0, 200.0, -200.0, LineColor.BLACK_0);
-        foldLineSet.addLine(200.0, 200.0, -200.0, 200.0, LineColor.BLACK_0);
-        foldLineSet.addLine(200.0, 200.0, 200.0, -200.0, LineColor.BLACK_0);
+        foldLineSet.addLine(-2000.0, -2000.0, -2000.0, 2000.0, LineColor.BLACK_0);
+        foldLineSet.addLine(-2000.0, -2000.0, 2000.0, -2000.0, LineColor.BLACK_0);
+        foldLineSet.addLine(2000.0, 2000.0, -2000.0, 2000.0, LineColor.BLACK_0);
+        foldLineSet.addLine(2000.0, 2000.0, 2000.0, -2000.0, LineColor.BLACK_0);
         //Enter the paper square (end)
     }
 

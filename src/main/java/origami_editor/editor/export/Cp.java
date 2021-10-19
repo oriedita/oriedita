@@ -8,12 +8,14 @@ import java.io.*;
 import java.util.StringTokenizer;
 
 public class Cp {
+    private static int SCALE_FACTOR = 10;
+
     public static void exportFile(Save save, File file) {
         try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw)) {
             for (LineSegment s : save.getLineSegments()) {
                 int color = s.getColor().getNumber() + 1;
 
-                pw.println(String.format("%d %s %s %s %s", color, s.determineAX(), s.determineAY(), s.determineBX(), s.determineBY()));
+                pw.println(String.format("%d %s %s %s %s", color, s.determineAX() / SCALE_FACTOR, s.determineAY() / SCALE_FACTOR, s.determineBX() / SCALE_FACTOR, s.determineBY() / SCALE_FACTOR));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,7 +53,7 @@ public class Cp {
             d4 = Double.parseDouble(tk.nextToken());
 
             LineSegment s = new LineSegment();
-            s.set(d1, d2, d3, d4, col);
+            s.set(d1 * SCALE_FACTOR, d2 * SCALE_FACTOR, d3 * SCALE_FACTOR, d4 * SCALE_FACTOR, col);
 
             save.addLineSegment(s.clone());
         }
