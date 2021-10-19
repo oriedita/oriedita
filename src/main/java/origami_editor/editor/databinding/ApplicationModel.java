@@ -7,7 +7,11 @@ import origami_editor.editor.LineStyle;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This model is saved to disk and restored when the application starts.
@@ -45,8 +49,20 @@ public class ApplicationModel implements Serializable {
     private Point windowPosition;
     private String laf;
     private Dimension windowSize;
+    private List<File> recentFileList;
+
     public ApplicationModel() {
         reset();
+    }
+
+    public List<File> getRecentFileList() {
+        return recentFileList;
+    }
+
+    public void setRecentFileList(List<File> recentFileList) {
+        List<File> oldRecentFileList = this.recentFileList;
+        this.recentFileList = recentFileList;
+        this.pcs.firePropertyChange("recentFileList", oldRecentFileList, recentFileList);
     }
 
     public boolean getDisplaySelfIntersection() {
@@ -165,6 +181,7 @@ public class ApplicationModel implements Serializable {
         numPolygonCorners = 5;
         foldLineDividingNumber = 2;
         defaultDirectory = null;
+        recentFileList = new ArrayList<>();
 
         windowPosition = null;
         windowState = Frame.NORMAL;
@@ -522,6 +539,7 @@ public class ApplicationModel implements Serializable {
         windowState = applicationModel.getWindowState();
 
         laf = applicationModel.getLaf();
+        recentFileList = applicationModel.getRecentFileList().stream().filter(File::exists).collect(Collectors.toList());
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -552,5 +570,13 @@ public class ApplicationModel implements Serializable {
 
     public void toggleDisplaySelfIntersection() {
         setDisplaySelfIntersection(!displaySelfIntersection);
+    }
+
+    public void addRecentFile(File selectedFile) {
+        List<File> oldList = recentFileList;
+        recentFileList = new ArrayList<>(recentFileList.subList(0, Math.min(recentFileList.size(), 20)));
+        recentFileList.remove(selectedFile);
+        recentFileList.add(0, selectedFile);
+        this.pcs.firePropertyChange("recentFileList", oldList, recentFileList);
     }
 }
