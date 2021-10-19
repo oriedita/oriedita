@@ -14,7 +14,7 @@ Translating is still a work in progress, some translations can be quite poor or 
 
 ## Building & Running
 
-This version of the code requires a JDK (at least version 11) and [maven](https://maven.apache.org/) to build.
+This version of the code requires a JDK (at least version 8) and [maven](https://maven.apache.org/) to build.
 
 ```bash
 mvn clean package
