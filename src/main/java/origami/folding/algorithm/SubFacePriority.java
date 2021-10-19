@@ -1,8 +1,9 @@
 package origami.folding.algorithm;
 
-import origami.data.ListPer2DArray;
 import origami.folding.HierarchyList;
 import origami.folding.element.SubFace;
+
+import java.util.*;
 
 /**
  * Author: Mu-Tsun Tsai
@@ -17,12 +18,12 @@ public class SubFacePriority {
     // These are all 1-based
     private final int[] newInfoCount;
     private final boolean[] processed;
-    private final ListPer2DArray<Integer> observers;
+    private final Map<Pair<Integer, Integer>, List<Integer>> observers;
 
     public SubFacePriority(int totalFace, int totalSubFace) {
         newInfoCount = new int[totalSubFace + 1];
         processed = new boolean[totalSubFace + 1];
-        observers = new ListPer2DArray<>(totalFace);
+        observers = new HashMap<>();
     }
 
     public void addSubFace(SubFace s, int index, HierarchyList hierarchyList) {
@@ -31,7 +32,8 @@ public class SubFacePriority {
             for (int j = i + 1; j <= count; j++) {
                 int I = s.getFaceId(i), J = s.getFaceId(j);
                 if (hierarchyList.get(I, J) == HierarchyList.EMPTY_N100) {
-                    observers.add(I, J, index);
+                    observers.computeIfAbsent(new Pair<>(I, J), a -> new LinkedList<>()).add(index);
+
                     newInfoCount[index]++;
                 }
             }
@@ -46,7 +48,7 @@ public class SubFacePriority {
                 int I = s.getFaceId(i), J = s.getFaceId(j);
                 if (hierarchyList.get(I, J) == HierarchyList.EMPTY_N100) {
                     hierarchyList.set(I, J, HierarchyList.UNKNOWN_N50);
-                    for (int subFaceId : observers.get(I, J)) {
+                    for (int subFaceId : observers.get(new Pair<>(I, J))) {
                         newInfoCount[subFaceId]--;
                     }
                 }
@@ -66,5 +68,33 @@ public class SubFacePriority {
             }
         }
         return (max << 32) | found;
+    }
+
+    /**
+     * HashMap Index
+     * @param <T>
+     * @param <U>
+     */
+    public static class Pair<T, U> {
+        private final T i;
+        private final U j;
+
+        public Pair(T i, U j) {
+            this.i = i;
+            this.j = j;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Pair<?, ?> pair = (Pair<?, ?>) o;
+            return Objects.equals(i, pair.i) && Objects.equals(j, pair.j);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(i, j);
+        }
     }
 }
