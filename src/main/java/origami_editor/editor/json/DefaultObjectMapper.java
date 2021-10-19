@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import origami.crease_pattern.element.Point;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 
 public class DefaultObjectMapper extends ObjectMapper {
@@ -16,7 +17,23 @@ public class DefaultObjectMapper extends ObjectMapper {
         module.addDeserializer(Color.class, new ColorDeserializer());
         module.addSerializer(Point.class, new PointSerializer());
         module.addDeserializer(Point.class, new PointDeserializer());
+        module.addSerializer(File.class, new FileSerializer());
+        module.addDeserializer(File.class, new FileDeserializer());
         registerModule(module);
+    }
+
+    private static class FileSerializer extends JsonSerializer<File> {
+        @Override
+        public void serialize(File value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            gen.writeString(value.toString());
+        }
+    }
+
+    private static class FileDeserializer extends JsonDeserializer<File> {
+        @Override
+        public File deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+            return new File(p.getValueAsString());
+        }
     }
 
     private static class ColorSerializer extends JsonSerializer<Color> {
