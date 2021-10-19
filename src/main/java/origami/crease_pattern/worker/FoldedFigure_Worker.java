@@ -57,7 +57,7 @@ public class FoldedFigure_Worker {
     int makesuu1ijyouno_menno_amount = 0;//Number of faces that can only be ranked if there is one or more other faces on top
     private int top_face_id_ga_maketa_kazu_goukei_without_rated_face = 0;
 
-    SwappingAlgorithm swapper = new SwappingAlgorithm();
+    SwappingAlgorithm swapper;
 
     EquivalenceCondition errorPos = null;
 
@@ -294,11 +294,6 @@ public class FoldedFigure_Worker {
         hierarchyList.save();//Save the hierarchical relationship determined from the mountain fold and valley fold information.
         //************************************************************************
         bb.write("           Jyougehyou_settei   step5   start ");
-        //Make a guidebook for each SubFace
-        System.out.println("Smen毎に案内書を作る");
-        for (int i = 1; i <= SubFaceTotal; i++) {
-            s0[i].setGuideMap(hierarchyList);
-        }
 
         //s0に優先順位をつける(このときhierarchyListの-100のところが変るところがある)
         System.out.println("Smen(s0)に優先順位をつける");
@@ -332,6 +327,13 @@ public class FoldedFigure_Worker {
 
         for (int i = 1; i <= SubFaceTotal; i++) {
             s[i] = s0[priorityMap[i]];
+        }
+
+        // Make a guidebook for each valid SubFace.
+        // Previously this is done for all SubFaces, which is unnecessary.
+        System.out.println("Building guides for SubFace");
+        for (int i = 1; i <= SubFace_valid_number; i++) {
+            s[i].setGuideMap(hierarchyList);
         }
 
         //優先順位を逆転させる。これが有効かどうかは不明wwwww
@@ -373,7 +375,7 @@ public class FoldedFigure_Worker {
         isusumu = 0;
         //All SubFaces above ss + 1 are set to the initial values. An error occurs when the number of faces included in SubFace is 0.
 
-        for (int i = ss + 1; i <= SubFaceTotal; i++) {
+        for (int i = ss + 1; i <= SubFace_valid_number; i++) {
             s[i].Permutation_first();
         }
         //The overlapping state of the surfaces is changed in order from the one with the largest id number of the SubFace.
@@ -400,12 +402,14 @@ public class FoldedFigure_Worker {
     }
 
     //Start with the current permutation state and look for possible overlapping states. There is room for speeding up here.
-    public int possible_overlapping_search() throws InterruptedException {      //This should not change the hierarchyList.
+    public int possible_overlapping_search(boolean swap) throws InterruptedException {      //This should not change the hierarchyList.
         bb.write("_ _______");
         bb.write("__ ______");
         bb.write("___ _____");
         bb.write("____ ____");
         int ms, Sid;
+
+        swapper = new SwappingAlgorithm();
 
         Sid = 1;//The initial value of Sid can be anything other than 0.
         while (Sid != 0) { //If Sid == 0, it means that even the smallest number of SubFace has been searched.
@@ -417,7 +421,9 @@ public class FoldedFigure_Worker {
             Sid = next(ms - 1);
             bb.rewrite(9, "susumu(" + ms + "-1 = )" + Sid);
 
-            swapper.process(s);
+            if(swap) {
+                swapper.process(s);
+            }
 
             if (Thread.interrupted()) throw new InterruptedException();
         }
@@ -461,6 +467,10 @@ public class FoldedFigure_Worker {
                 SubFace temp = s[v];
                 s[v] = s[e];
                 s[e] = temp;
+
+                // The new SubFace doesn't have guidebook yet.
+                hierarchyList.restore();
+                s[v].setGuideMap(hierarchyList);
 
                 // record dead-end here since this SubFace is having a contradiction already
                 swapper.record(v);

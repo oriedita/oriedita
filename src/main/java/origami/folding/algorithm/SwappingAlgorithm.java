@@ -47,6 +47,7 @@ public class SwappingAlgorithm {
             SubFace temp = s[high];
             for (int i = high; i > low; i--) {
                 s[i] = s[i - 1];
+                s[i].clearTempGuide();
             }
             s[low] = temp;
 

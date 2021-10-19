@@ -2,6 +2,7 @@ package origami.folding.element;
 
 import origami.folding.HierarchyList;
 import origami.folding.util.EquivalenceCondition;
+import origami.folding.permutation.ChainPermutationGenerator;
 import origami.folding.permutation.PermutationGenerator;
 import origami_editor.editor.component.BulletinBoard;
 
@@ -49,7 +50,7 @@ public class SubFace {//This class folds the development view and estimates the 
             fromTop_counted_position2FaceId[i] = 0;
         }
         if (FIdCount > 0) {
-            permutationGenerator = new PermutationGenerator(faceIdCount);
+            permutationGenerator = new ChainPermutationGenerator(faceIdCount);
             // Postpone the reset of the generator until the guides are set
         }
     }
@@ -151,6 +152,10 @@ public class SubFace {//This class folds the development view and estimates the 
         return permutationGenerator.getPermutation(i);
     }
 
+    public void clearTempGuide() {
+        permutationGenerator.clearTempGuide();
+    }
+
     // Check from the top side to find out at what digit the folds are inconsistent.
     // At this time, hierarchyList does not change. Here, the penetration condition of the boundary line of the adjacent surface is not checked.
     // This SubFace returns 1000 if there is no contradiction in the folds.
@@ -163,7 +168,7 @@ public class SubFace {//This class folds the development view and estimates the 
                     // Add a temporary guide to the generator, so that before the current SubFace
                     // runs out of permutation, it won't generate another permutation violating the
                     // same relation over and over. For some CPs this speeds things up like crazy.
-                    permutationGenerator.addGuide(I, J);
+                    permutationGenerator.addGuide(J, I);
                     return i;
                 }
             }
@@ -304,7 +309,7 @@ public class SubFace {//This class folds the development view and estimates the 
             // Add guides
             for (int i = 1; i <= ueFaceIdCount; i++) {
                 if (ueFaceIdFlg[i]) {
-                    permutationGenerator.addGuide(faceIndex, ueFaceId[i]);
+                    permutationGenerator.addGuide(ueFaceId[i], faceIndex);
                 }
             }
 
@@ -321,7 +326,7 @@ public class SubFace {//This class folds the development view and estimates the 
         int iret = 0;
         for (int i = 1; i <= faceIdCount - 1; i++) {
             for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.EMPTY_N100) {
+                if (hierarchyList.get(faceIdList[i], faceIdList[j]) == HierarchyList.EMPTY_N100) {
                     iret++;
                 }//20171021本当は-50のつもりだったが現状は-100となっている
             }
@@ -334,7 +339,7 @@ public class SubFace {//This class folds the development view and estimates the 
         int iret = 0;
         for (int i = 1; i <= faceIdCount - 1; i++) {
             for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]) == HierarchyList.BELOW_0) {
+                if (hierarchyList.get(faceIdList[i], faceIdList[j]) == HierarchyList.BELOW_0) {
                     iret++;
                 }
             }
