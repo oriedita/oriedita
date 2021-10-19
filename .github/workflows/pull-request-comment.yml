@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: View context attributes
+        uses: actions/github-script@v5
+        with:
+          script: console.log(context)
       - uses: marocchino/sticky-pull-request-comment@v2
         if: github.event.workflow_run.event == 'pull_request'
         with:
