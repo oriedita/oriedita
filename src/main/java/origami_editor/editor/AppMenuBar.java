@@ -1,10 +1,12 @@
 package origami_editor.editor;
 
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLaf;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.FileModel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -161,7 +163,25 @@ public class AppMenuBar extends JMenuBar {
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
         });
-        darkModeCheckBox.addActionListener(e -> applicationModel.toggleDarkMode());
+        darkModeCheckBox.addActionListener(e -> {
+            applicationModel.toggleDarkMode();
+
+            if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(null, "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
+                if (FlatLaf.isLafDark()) {
+                    app.gridModel.setGridColor(new Color(54, 54, 54));
+                    app.gridModel.setGridScaleColor(new Color(17, 75, 10));
+
+                    app.foldedFigureModel.setFrontColor(new Color(129, 15, 94));
+                    app.foldedFigureModel.setBackColor(new Color(89, 89, 89));
+                } else {
+                    app.gridModel.setGridColor(new Color(230, 230, 230));
+                    app.gridModel.setGridScaleColor(new Color(180, 200, 180));
+
+                    app.foldedFigureModel.setFrontColor(new Color(255, 255, 50));
+                    app.foldedFigureModel.setBackColor(new Color(233, 233, 233));
+                }
+            }
+        });
         preciseZoomCheckBox.addActionListener(e -> applicationModel.togglePreciseZoom());
         displaySelfIntersectionCheckBox.addActionListener(e -> applicationModel.toggleDisplaySelfIntersection());
     }

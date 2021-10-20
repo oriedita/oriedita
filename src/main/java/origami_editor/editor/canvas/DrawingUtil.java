@@ -5,6 +5,7 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
+import origami_editor.editor.Colors;
 import origami_editor.editor.LineStyle;
 import origami_editor.tools.Camera;
 
@@ -23,19 +24,19 @@ public class DrawingUtil {
     public static void widthLine(Graphics g, LineSegment s, double r, LineColor iColor) {
         switch (iColor) {
             case BLACK_0:
-                g.setColor(Color.black);
+                g.setColor(Colors.get(Color.black));
                 break;
             case RED_1:
-                g.setColor(Color.red);
+                g.setColor(Colors.get(Color.red));
                 break;
             case BLUE_2:
-                g.setColor(Color.blue);
+                g.setColor(Colors.get(Color.blue));
                 break;
             case CYAN_3:
-                g.setColor(Color.green);
+                g.setColor(Colors.get(Color.green));
                 break;
             case ORANGE_4:
-                g.setColor(Color.orange);
+                g.setColor(Colors.get(Color.orange));
                 break;
         }
         LineSegment sp = OritaCalc.moveParallel(s, r);
@@ -75,32 +76,32 @@ public class DrawingUtil {
     }
 
     public static void drawVertex(Graphics g, Point a, int pointSize) {
-        g.setColor(Color.black);
+        g.setColor(Colors.get(Color.black));
         g.fillRect((int) a.getX() - pointSize, (int) a.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1);
     }
 
     //Draw a pointing diagram around the specified Point
     public static void pointingAt1(Graphics g, LineSegment s_tv) {
-        g.setColor(new Color(255, 165, 0, 100));//g.setColor(Color.ORANGE);
+        g.setColor(Colors.get(new Color(255, 165, 0, 100)));//g.setColor(Colors.get(Color.ORANGE));
         g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
     }
 
     //Draw a pointing diagram around the specified Point
     public static void pointingAt2(Graphics g, LineSegment s_tv) {
-        g.setColor(new Color(255, 165, 0, 100));//g.setColor(Color.ORANGE);
+        g.setColor(Colors.get(new Color(255, 165, 0, 100)));//g.setColor(Colors.get(Color.ORANGE));
         g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
 
     }
 
     //Draw a pointing diagram around the specified Point
     public static void pointingAt3(Graphics g, LineSegment s_tv) {
-        g.setColor(new Color(255, 200, 0, 50));
+        g.setColor(Colors.get(new Color(255, 200, 0, 50)));
         g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
     }
 
     //Draw a pointing diagram around the specified Point
     public static void pointingAt4(Graphics g, LineSegment s_tv, int color_transparency) {
-        g.setColor(new Color(255, 0, 147, color_transparency));
+        g.setColor(Colors.get(new Color(255, 0, 147, color_transparency)));
 
         g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
     }
@@ -108,37 +109,37 @@ public class DrawingUtil {
     public static void setColor(Graphics g, LineColor i) {
         switch (i) {
             case BLACK_0:
-                g.setColor(Color.black);
+                g.setColor(Colors.get(Color.black));
                 break;
             case RED_1:
-                g.setColor(Color.red);
+                g.setColor(Colors.get(Color.red));
                 break;
             case BLUE_2:
-                g.setColor(Color.blue);
+                g.setColor(Colors.get(Color.blue));
                 break;
             case CYAN_3:
-                g.setColor(new Color(100, 200, 200));
+                g.setColor(Colors.get(new Color(100, 200, 200)));
                 break;
             case ORANGE_4:
-                g.setColor(Color.orange);
+                g.setColor(Colors.get(Color.orange));
                 break;
             case MAGENTA_5:
-                g.setColor(Color.magenta);
+                g.setColor(Colors.get(Color.magenta));
                 break;
             case GREEN_6:
-                g.setColor(Color.green);
+                g.setColor(Colors.get(Color.green));
                 break;
             case YELLOW_7:
-                g.setColor(Color.yellow);
+                g.setColor(Colors.get(Color.yellow));
                 break;
             case PURPLE_8:
-                g.setColor(new Color(210, 0, 255));
+                g.setColor(Colors.get(new Color(210, 0, 255)));
                 break;
         }
     }
 
     public static void drawSelectLine(Graphics g, LineSegment s, Camera camera) {
-        g.setColor(Color.green);
+        g.setColor(Colors.get(Color.green));
 
         LineSegment s_tv = new LineSegment();
         s_tv.set(camera.object2TV(s));
@@ -166,7 +167,7 @@ public class DrawingUtil {
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
         if (lineWidth < 2.0f) {//Draw a square at the vertex
-            g.setColor(Color.black);
+            g.setColor(Colors.get(Color.black));
             g.fillRect((int) a.getX() - pointSize, (int) a.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
             g.fillRect((int) b.getX() - pointSize, (int) b.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1); //正方形を描く
         }
@@ -177,16 +178,16 @@ public class DrawingUtil {
             if (pointSize != 0) {
                 double d_width = (double) lineWidth / 2.0 + (double) pointSize;
 
-                g.setColor(Color.white);
+                g.setColor(Colors.get(Color.white));
                 g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Color.black);
+                g.setColor(Colors.get(Color.black));
                 g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Color.white);
+                g.setColor(Colors.get(Color.white));
                 g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Color.black);
+                g.setColor(Colors.get(Color.black));
                 g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
             }
 
@@ -215,11 +216,11 @@ public class DrawingUtil {
         a.set(camera.object2TV(circle.determineCenter()));//この場合のaは描画座標系での円の中心の位置
 
         g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
-        g.setColor(new Color(0, 255, 255, 255));
+        g.setColor(Colors.get(new Color(0, 255, 255, 255)));
 
         //円の中心の描画
         if (lineWidth < 2.0f) {//中心の黒い正方形を描く
-            g.setColor(Color.black);
+            g.setColor(Colors.get(Color.black));
             g.fillRect((int) a.getX() - pointSize, (int) a.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
         }
 
@@ -229,10 +230,10 @@ public class DrawingUtil {
                 d_width = (double) lineWidth / 2.0 + (double) pointSize;
 
 
-                g.setColor(Color.white);
+                g.setColor(Colors.get(Color.white));
                 g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Color.black);
+                g.setColor(Colors.get(Color.black));
                 g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
             }
         }
@@ -267,17 +268,17 @@ public class DrawingUtil {
             if (pointSize != 0) {
                 double d_width = (double) lineWidth / 2.0 + (double) pointSize;
 
-                g.setColor(Color.white);
+                g.setColor(Colors.get(Color.white));
                 g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
 
-                g.setColor(Color.black);
+                g.setColor(Colors.get(Color.black));
                 g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Color.white);
+                g.setColor(Colors.get(Color.white));
                 g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Color.black);
+                g.setColor(Colors.get(Color.black));
                 g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
             }
         }
@@ -427,16 +428,16 @@ public class DrawingUtil {
             if (pointSize != 0) {
                 double d_width = (double) lineWidth / 2.0 + (double) pointSize;
 
-                g.setColor(Color.white);
+                g.setColor(Colors.get(Color.white));
                 g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Color.black);
+                g.setColor(Colors.get(Color.black));
                 g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Color.white);
+                g.setColor(Colors.get(Color.white));
                 g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Color.black);
+                g.setColor(Colors.get(Color.black));
                 g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
             }
         }

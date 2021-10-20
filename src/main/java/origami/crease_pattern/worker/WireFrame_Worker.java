@@ -2,6 +2,7 @@ package origami.crease_pattern.worker;
 
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.element.LineColor;
+import origami_editor.editor.Colors;
 import origami_editor.editor.Save;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.undo_box.HistoryState;
@@ -498,7 +499,7 @@ public class WireFrame_Worker {
         Point tn = new Point();
         tn.set(camera.object2TV(pointSet.getPoint(i)));
         int radius = 7;//radius
-        g.setColor(new Color(0, 255, 255, 100));//light blue
+        g.setColor(Colors.get(new Color(0, 255, 255, 100)));//light blue
         g.fillOval(gx(tn.getX()) - radius, gy(tn.getY()) - radius, 2 * radius, 2 * radius); //円
     }
 
@@ -506,7 +507,7 @@ public class WireFrame_Worker {
         Point tn = new Point();
         tn.set(camera.object2TV(pointSet.getPoint(i)));
         int radius = 15;//半径
-        g.setColor(new Color(0, 255, 0, 100));//green
+        g.setColor(Colors.get(new Color(0, 255, 0, 100)));//green
         g.fillOval(gx(tn.getX()) - radius, gy(tn.getY()) - radius, 2 * radius, 2 * radius); //円
     }
 
@@ -515,7 +516,7 @@ public class WireFrame_Worker {
         Point point = new Point();
         point.set(camera.object2TV(pointSet.getPoint(i)));
         int radius = 10;//半径
-        g.setColor(new Color(0, 255, 0, 50));//緑色
+        g.setColor(Colors.get(new Color(0, 255, 0, 50)));//緑色
 
         switch (ip4) {
             case FRONT_0:
@@ -542,16 +543,16 @@ public class WireFrame_Worker {
 
     public void drawing_with_camera(Graphics g, FoldedFigure.State ip4) {
         LineSegment s_tv = new LineSegment();
-        g.setColor(Color.black);
+        g.setColor(Colors.get(Color.black));
         for (int i = 1; i <= pointSet.getNumLines(); i++) {
             if (pointSet.getColor(i) == LineColor.BLACK_0) {
-                g.setColor(Color.black);
+                g.setColor(Colors.get(Color.black));
             }
             if (pointSet.getColor(i) == LineColor.RED_1) {
-                g.setColor(Color.red);
+                g.setColor(Colors.get(Color.red));
             }
             if (pointSet.getColor(i) == LineColor.BLUE_2) {
-                g.setColor(Color.blue);
+                g.setColor(Colors.get(Color.blue));
             }
 
             switch (ip4) {
@@ -583,14 +584,14 @@ public class WireFrame_Worker {
         Point point = new Point();
         point.set(camera.object2TV(point_of_referencePlane_ob));
 
-        g.setColor(new Color(200, 50, 255, 90));
+        g.setColor(Colors.get(new Color(200, 50, 255, 90)));
         g.fillOval(gx(point.getX()) - 50, gy(point.getY()) - 50, 100, 100); //円
 
-        g.setColor(Color.yellow);
+        g.setColor(Colors.get(Color.yellow));
         g.fillOval(gx(point.getX()) - 5, gy(point.getY()) - 5, 10, 10); //円
-        g.setColor(Color.black);
+        g.setColor(Colors.get(Color.black));
         g.drawOval(gx(point.getX()) - 5, gy(point.getY()) - 5, 10, 10); //円
-        g.setColor(Color.black);
+        g.setColor(Colors.get(Color.black));
     }
 
     public int getSelectedPointsNum() {
