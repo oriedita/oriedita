@@ -7,10 +7,7 @@ import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
-import origami_editor.editor.App;
-import origami_editor.editor.LineStyle;
-import origami_editor.editor.MouseMode;
-import origami_editor.editor.Save;
+import origami_editor.editor.*;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.task.CheckCAMVTask;
 import origami_editor.editor.task.TaskExecutor;
@@ -450,7 +447,7 @@ public class CreasePattern_Worker {
 
         //展開図の描画  補助活線以外の折線
         if (displayCpLines) {
-            g.setColor(Color.black);
+            g.setColor(Colors.get(Color.black));
             for (int i = 1; i <= foldLineSet.getTotal(); i++) {
                 LineSegment s = foldLineSet.get(i);
                 if (s.getColor() != LineColor.CYAN_3) {
@@ -490,13 +487,13 @@ public class CreasePattern_Worker {
             DrawingUtil.drawLineCandidate(g, s, camera, pointSize);
         }
 
-        g.setColor(Color.black);
+        g.setColor(Colors.get(Color.black));
 
         for (Circle c : circleStep) {
             DrawingUtil.drawCircleStep(g, c, camera);
         }
 
-        g.setColor(Color.black);
+        g.setColor(Colors.get(Color.black));
 
         if (displayComments) {
             g.drawString(text_cp_setumei, 10, 55);

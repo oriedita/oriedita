@@ -1,6 +1,7 @@
 package origami_editor.editor.component;
 
 import origami_editor.editor.App;
+import origami_editor.editor.Colors;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -149,7 +150,7 @@ public class BulletinBoard {
     }
 
     public void draw(Graphics g) {
-        g.setColor(Color.blue);
+        g.setColor(Colors.get(Color.blue));
         g.drawString(s01, ix0, iy0 + 1 * i_interval);
         g.drawString(s02, ix0, iy0 + 2 * i_interval);
         g.drawString(s03, ix0, iy0 + 3 * i_interval);

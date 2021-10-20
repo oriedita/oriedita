@@ -137,7 +137,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //アンチエイリアス　オフ
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチエイリアス　オン
 
-        g2.setBackground(Color.WHITE);    //この行は、画像をファイルに書き出そうとしてBufferedImageクラスを使う場合、デフォルトで背景が黒になるので、それを避けるための意味　20170107
+        g2.setBackground(Colors.get(Color.WHITE));    //この行は、画像をファイルに書き出そうとしてBufferedImageクラスを使う場合、デフォルトで背景が黒になるので、それを避けるための意味　20170107
         //画像をファイルに書き出さすことはやめて、、BufferedImageクラスを使わず、Imageクラスだけですむなら不要の行
 
         //別の重なりさがし　のボタンの色の指定。
@@ -146,7 +146,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         // バッファー画面のクリア
         bufferGraphics.clearRect(0, 0, dim.width, dim.height);
 
-        bufferGraphics.setColor(Color.red);
+        bufferGraphics.setColor(Colors.get(Color.red));
         //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
         //カメラのセット
@@ -192,16 +192,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         double d_width = creasePatternCamera.getCameraZoomX() * app.mainCreasePatternWorker.getSelectionDistance();
         //Flashlight (dot) search range
         if (displayPointSpotlight) {
-            g2.setColor(new Color(255, 240, 0, 30));
+            g2.setColor(Colors.get(new Color(255, 240, 0, 30)));
             g2.setStroke(new BasicStroke(2.0f));
-            g2.setColor(new Color(255, 240, 0, 230));
+            g2.setColor(Colors.get(new Color(255, 240, 0, 230)));
             g2.draw(new Ellipse2D.Double(p_mouse_TV_position.getX() - d_width, p_mouse_TV_position.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
         }
 
         //Luminous flux of flashlight, etc.
         if (displayPointSpotlight && displayPointOffset) {
             g2.setStroke(new BasicStroke(2.0f));
-            g2.setColor(new Color(255, 240, 0, 170));
+            g2.setColor(Colors.get(new Color(255, 240, 0, 170)));
         }
 
         //展開図表示
@@ -209,7 +209,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         if (displayComments) {
             //展開図情報の文字表示
-            bufferGraphics.setColor(Color.black);
+            bufferGraphics.setColor(Colors.get(Color.black));
 
             bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f )", p_mouse_object_position.getX(), p_mouse_object_position.getY()), 10, 10); //この表示内容はvoid kekka_syoriで決められる。
 
@@ -229,7 +229,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             }
 
             if (TaskExecutor.isTaskRunning()) {
-                bufferGraphics.setColor(Color.red);
+                bufferGraphics.setColor(Colors.get(Color.red));
 
                 bufferGraphics.drawString("Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 10, 69); //この表示内容はvoid kekka_syoriで決められる。
                 bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 10, 83); //この表示内容はvoid kekka_syoriで決められる。
@@ -259,7 +259,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //Central indicator
         if (displayPointOffset) {
             g2.setStroke(new BasicStroke(1.0f));
-            g2.setColor(Color.black);
+            g2.setColor(Colors.get(Color.black));
             g2.drawLine((int) (p_mouse_TV_position.getX()), (int) (p_mouse_TV_position.getY()),
                     (int) (p_mouse_TV_position.getX() + d_width), (int) (p_mouse_TV_position.getY() + d_width)); //直線
         }
