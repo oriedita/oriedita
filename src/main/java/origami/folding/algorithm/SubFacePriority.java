@@ -17,12 +17,12 @@ public class SubFacePriority {
     // These are all 1-based
     private final int[] newInfoCount;
     private final boolean[] processed;
-    private final ListPer2DArray<Integer> observers;
+    private final ListPer2DArray observers;
 
     public SubFacePriority(int totalFace, int totalSubFace) {
         newInfoCount = new int[totalSubFace + 1];
         processed = new boolean[totalSubFace + 1];
-        observers = new ListPer2DArray<>(totalFace);
+        observers = new ListPer2DArray(totalFace);
     }
 
     public void addSubFace(SubFace s, int index, HierarchyList hierarchyList) {

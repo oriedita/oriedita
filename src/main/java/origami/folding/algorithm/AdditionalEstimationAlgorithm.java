@@ -29,7 +29,7 @@ public class AdditionalEstimationAlgorithm {
     private final SubFace[] subFaces; // indices start from 1
 
     private final ItalianoAlgorithm[] IA;
-    private ListPer2DArray<Integer> relationObservers;
+    private ListPer2DArray relationObservers;
 
     public int errorIndex;
 
@@ -39,7 +39,7 @@ public class AdditionalEstimationAlgorithm {
         this.hierarchyList = hierarchyList;
         this.subFaces = s;
         IA = new ItalianoAlgorithm[subFaces.length];
-        relationObservers = new ListPer2DArray<>(hierarchyList.getFacesTotal());
+        relationObservers = new ListPer2DArray(hierarchyList.getFacesTotal());
     }
 
     public HierarchyListStatus run(int completedSubFaces) {

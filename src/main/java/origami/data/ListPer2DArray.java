@@ -8,26 +8,28 @@ import origami.data.tree.*;
 /**
  * Author: Mu-Tsun Tsai
  * 
- * This is the data structure for "a list per some positions in a very large 2D
- * array". In that case, it would not be feasible to really create a large 2D
- * array (or a HashMap using a pair of keys) and have an ArrayList (or a native
- * LinkedList) for each position. In order to balance space and speed, I use BST
- * and customized linked list to implement such structure. In particular, AVL
- * tree is used, since typically this structure is first filled with data and
- * then perform lots of searches.
+ * This is the data structure for "a list of int per some positions in a very
+ * large 2D array". In that case, it would not be feasible to really create a
+ * large 2D array (or a HashMap using a pair of keys) and have an ArrayList (or
+ * a native LinkedList) for each position. In order to balance space and speed,
+ * I use BST and customized linked list to implement such structure. In
+ * particular, AVL tree is used, since typically this structure is first filled
+ * with data and then perform lots of searches.
  */
-public class ListPer2DArray<T> {
+public class ListPer2DArray {
+
+    private static final long mask = (1L << 32) - 1;
 
     // These are all 1-based
     private final BST<BST<Integer>> heads;
-    private final ArrayList<Node> nodes = new ArrayList<>();
+    private final ArrayList<Long> nodes = new ArrayList<>();
 
     public ListPer2DArray(int count) {
         heads = new AVLTree<>();
-        nodes.add(null);
+        nodes.add(0L);
     }
 
-    public void add(int i, int j, T value) {
+    public void add(int i, int j, int value) {
         BST<Integer> tree = heads.get(i);
         if (tree == null) {
             heads.insert(i, tree = new AVLTree<>());
@@ -37,12 +39,12 @@ public class ListPer2DArray<T> {
             listHead = 0;
         }
         tree.insert(j, nodes.size());
-        nodes.add(new Node(value, listHead));
+        nodes.add(((long) listHead << 32) | (long) value);
     }
 
-    public Iterable<T> get(int i, int j) {
-        return () -> new Iterator<T>() {
-            Node nextNode;
+    public Iterable<Integer> get(int i, int j) {
+        return () -> new Iterator<Integer>() {
+            long nextNode;
             {
                 BST<Integer> tree = heads.get(i);
                 if (tree != null) {
@@ -55,25 +57,15 @@ public class ListPer2DArray<T> {
 
             @Override
             public boolean hasNext() {
-                return nextNode != null;
+                return nextNode != 0;
             }
 
             @Override
-            public T next() {
-                T result = nextNode.value;
-                nextNode = nodes.get(nextNode.next);
+            public Integer next() {
+                int result = (int) (nextNode & mask);
+                nextNode = nodes.get((int) (nextNode >>> 32));
                 return result;
             }
         };
-    }
-
-    class Node {
-        public T value;
-        public int next;
-
-        public Node(T value, int next) {
-            this.value = value;
-            this.next = next;
-        }
     }
 }
