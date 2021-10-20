@@ -3,7 +3,6 @@ package origami_editor.editor.canvas;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
-import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
@@ -957,6 +956,14 @@ public class CreasePattern_Worker {
     public void setData(HistoryStateModel historyStateModel) {
         setUndoTotal(historyStateModel.getHistoryTotal());
         setAuxUndoTotal(historyStateModel.getHistoryTotal());
+    }
+
+    public Point getCameraPosition() {
+        return this.camera.getCameraPosition();
+    }
+
+    public void selectConnected(Point p) {
+        this.foldLineSet.selectProbablyConnected(p);
     }
 
     //30 30 30 30 30 30 30 30 30 30 30 30 除け_線_変換

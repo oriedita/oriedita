@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
 
 public class LineSegment implements Serializable, Cloneable {
     protected final Point a = new Point(); //Branch a point
@@ -14,8 +15,7 @@ public class LineSegment implements Serializable, Cloneable {
     int customized = 0;//Custom property parameters
     Color customizedColor = new Color(100, 200, 200);//Color if custom made
 
-    int selected;//0 is not selected. 1 or more is set appropriately according to the situation
-
+    protected int selected;//0 is not selected. 1 or more is set appropriately according to the situation
 
 
     //コンストラクタ
@@ -255,6 +255,20 @@ public class LineSegment implements Serializable, Cloneable {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LineSegment that = (LineSegment) o;
+        return customized == that.customized && selected == that.selected && Objects.equals(a, that.a)
+                && Objects.equals(b, that.b) && active == that.active && color == that.color
+                && Objects.equals(customizedColor, that.customizedColor);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(a, b, active, color, customized, customizedColor, selected);
+    }
 
     @Override
     public LineSegment clone() {
