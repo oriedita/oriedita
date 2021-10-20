@@ -1,5 +1,6 @@
 package origami.crease_pattern.worker;
 
+import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.Save;
 import origami_editor.editor.folded_figure.FoldedFigure;
@@ -173,7 +174,7 @@ public class WireFrame_Worker {
     /**
      * Folding estimation (What you can do here is a wire diagram that does not consider the overlap of surfaces)
      */
-    public PointSet folding() throws InterruptedException {//Folding estimate
+    public PointSet folding() throws InterruptedException, FoldingException {//Folding estimate
         PointSet pointSet = new PointSet();    //Development view
         pointSet.configure(this.pointSet.getNumPoints(), this.pointSet.getNumLines(), this.pointSet.getNumFaces());
         pointSet.set(this.pointSet);
@@ -191,6 +192,7 @@ public class WireFrame_Worker {
         int remaining_facesTotal = this.pointSet.getNumFaces() - 1;
 
         while (remaining_facesTotal > 0) {
+            int previousRemainingFacesTotal = remaining_facesTotal;
             for (int i = 1; i <= this.pointSet.getNumFaces(); i++) {
                 if (iFacePosition[i] == current_face_position) {
                     for (int j = 1; j <= this.pointSet.getNumFaces(); j++) {
@@ -211,6 +213,10 @@ public class WireFrame_Worker {
                 if (iFacePosition[i] == 0) {
                     remaining_facesTotal = remaining_facesTotal + 1;
                 }
+            }
+
+            if (remaining_facesTotal == previousRemainingFacesTotal) {
+                throw new FoldingException("Not possible to fold. There are faces outside the main sheet.");
             }
 
             System.out.println("remaining_facesTotal = " + remaining_facesTotal);

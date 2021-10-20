@@ -1,5 +1,6 @@
 package origami_editor.editor.folded_figure;
 
+import origami.crease_pattern.FoldingException;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami.crease_pattern.worker.BasicBranch_Worker;
@@ -273,7 +274,7 @@ public class FoldedFigure {
         transparentRearCamera.setCameraMirror(d_camera_mirror * -1.0);
     }
 
-    public void folding_estimated(Camera creasePatternCamera, LineSegmentSet lineSegmentSet, Point pointOfReferencePlane) throws InterruptedException {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public void folding_estimated(Camera creasePatternCamera, LineSegmentSet lineSegmentSet, Point pointOfReferencePlane) throws InterruptedException, FoldingException {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
         boolean i_camera_estimated = (estimationStep == EstimationStep.STEP_0) && (estimationOrder.isBelowOrEqual5());
 
         this.pointOfReferencePlane = pointOfReferencePlane;
@@ -485,7 +486,7 @@ public class FoldedFigure {
         return 1000;
     }
 
-    public int folding_estimated_02() throws InterruptedException {
+    public int folding_estimated_02() throws InterruptedException, FoldingException {
         System.out.println("＜＜＜＜＜oritatami_suitei_02;開始");
         bulletinBoard.write("<<<<oritatami_suitei_02;  start");
         //cp_worker1が折りたたみを行い、できた針金図をcp_worker2に渡す。
