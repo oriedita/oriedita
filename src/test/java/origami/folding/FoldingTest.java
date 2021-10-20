@@ -2,8 +2,10 @@ package origami.folding;
 
 import au.com.origin.snapshots.Expect;
 import au.com.origin.snapshots.junit5.SnapshotExtension;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.Save;
@@ -37,8 +39,9 @@ public class FoldingTest {
             foldedFigure.folding_estimated(creasePatternCamera, lineSegmentSet, new Point());
 
             expect.serializer("json").toMatchSnapshot(foldedFigure.cp_worker3.get());
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | FoldingException e) {
             e.printStackTrace();
+            Assertions.fail();
         }
     }
 }

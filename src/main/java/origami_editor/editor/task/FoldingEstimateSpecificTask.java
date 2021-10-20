@@ -1,5 +1,6 @@
 package origami_editor.editor.task;
 
+import origami.crease_pattern.FoldingException;
 import origami_editor.editor.App;
 import origami_editor.editor.folded_figure.FoldedFigure;
 
@@ -28,7 +29,7 @@ public class FoldingEstimateSpecificTask implements Runnable{
                     objective = app.OZ.discovered_fold_cases;
                 }
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | FoldingException e) {
             app.OZ.estimated_initialize();
             System.out.println(e);
         }

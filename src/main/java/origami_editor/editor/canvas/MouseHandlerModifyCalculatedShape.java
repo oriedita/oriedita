@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.App;
 import origami_editor.editor.MouseMode;
@@ -81,7 +82,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                     app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
                     try {
                         app.folding_estimated();
-                    } catch (InterruptedException e) {
+                    } catch (InterruptedException | FoldingException e) {
                         e.printStackTrace();
                     }
                 }//オリジナル 20180124 これ以外だと、表示いったんもどるようでうざい

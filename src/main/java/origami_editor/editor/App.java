@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.ui.FlatUIUtils;
+import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
@@ -1030,7 +1031,7 @@ public class App {
         }
     }
 
-    public void folding_estimated() throws InterruptedException {
+    public void folding_estimated() throws InterruptedException, FoldingException {
         OZ.folding_estimated(canvas.creasePatternCamera, lineSegmentsForFolding, point_of_referencePlane_old);
     }
 
