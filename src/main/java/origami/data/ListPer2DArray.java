@@ -9,9 +9,10 @@ import origami.data.tree.*;
  * Author: Mu-Tsun Tsai
  * 
  * This is the data structure for "a list per some positions in a very large 2D
- * array". In that case, it would not be feasible to really create a large array
- * and have an ArrayList for each position. In order to balance space and speed,
- * I use BST and linked list to implement such structure. In particular, AVL
+ * array". In that case, it would not be feasible to really create a large 2D
+ * array (or a HashMap using a pair of keys) and have an ArrayList (or a native
+ * LinkedList) for each position. In order to balance space and speed, I use BST
+ * and customized linked list to implement such structure. In particular, AVL
  * tree is used, since typically this structure is first filled with data and
  * then perform lots of searches.
  */
