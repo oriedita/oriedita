@@ -1,11 +1,10 @@
 package origami.folding.algorithm;
 
 import origami.crease_pattern.worker.FoldedFigure_Worker.HierarchyListStatus;
+import origami.data.ListPer2DArray;
 import origami.folding.HierarchyList;
 import origami.folding.element.SubFace;
 import origami.folding.util.EquivalenceCondition;
-
-import java.util.*;
 
 /**
  * Author: Mu-Tsun Tsai
@@ -30,19 +29,9 @@ public class AdditionalEstimationAlgorithm {
     private final SubFace[] subFaces; // indices start from 1
 
     private final ItalianoAlgorithm[] IA;
-    private Map<Integer, List<Integer>> relationObservers;
+    private ListPer2DArray relationObservers;
 
     public int errorIndex;
-
-    private int iaStart = 0;
-    private int iaEnd = 0;
-
-    /**
-     * Decides whether to use linear search to notify ItalianoAlgorithm to update,
-     * or use observer pattern. The latter is faster, but requires more memory and
-     * is not suitable for large CP.
-     */
-    private boolean linearMode = true;
 
     public EquivalenceCondition errorPos;
 
@@ -50,18 +39,11 @@ public class AdditionalEstimationAlgorithm {
         this.hierarchyList = hierarchyList;
         this.subFaces = s;
         IA = new ItalianoAlgorithm[subFaces.length];
-
-        // Decide whether to use linear mode or not
-        int count = hierarchyList.getFacesTotal();
-        if (count < 5000) {
-            linearMode = false;
-            relationObservers = new HashMap<>(count * count / 20); // more or less a fair guess
-        }
+        relationObservers = new ListPer2DArray(hierarchyList.getFacesTotal());
     }
 
     public HierarchyListStatus run(int completedSubFaces) {
         int new_relations;
-        iaStart = completedSubFaces + 1;
 
         System.out.println("additional_estimation start---------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
 
@@ -71,13 +53,12 @@ public class AdditionalEstimationAlgorithm {
 
             int iS = 0;
             try {
-                for (iS = iaStart; iS < subFaces.length && new_relations < MAX_NEW_RELATIONS; iS++) {
+                for (iS = completedSubFaces + 1; iS < subFaces.length && new_relations < MAX_NEW_RELATIONS; iS++) {
                     if (IA[iS] == null) {
                         // We initialize ItalianoAlgorithm one by one instead of all at once,
                         // so that the changes are flushed immediately after initialization,
                         // saving memory.
                         initializeItalianoAlgorithm(iS);
-                        iaEnd = iS;
                     }
                     int changes = checkTransitivity(subFaces[iS], IA[iS]);
                     new_relations += changes;
@@ -137,14 +118,9 @@ public class AdditionalEstimationAlgorithm {
             for (int j = 1; j <= count; j++) {
                 int I = subFaces[s].getFaceId(i);
                 int J = subFaces[s].getFaceId(j);
-                if (!linearMode && hierarchyList.isEmpty(I, J)) {
+                if (I < J && hierarchyList.isEmpty(I, J)) {
                     // Observing potential changes to the relation
-                    int pos = (I << 16) | J;
-                    List<Integer> list = relationObservers.get(pos);
-                    if (list == null) {
-                        relationObservers.put(pos, list = new ArrayList<>());
-                    }
-                    list.add(s);
+                    relationObservers.add(I, J, s);
                 } else if (hierarchyList.get(I, J) == ABOVE) {
                     IA[s].add(i, j);
                 }
@@ -256,28 +232,10 @@ public class AdditionalEstimationAlgorithm {
             changes++;
 
             // Notifying the ItalianoAlgorithm to update.
-            if (linearMode) {
-                for (int s = iaStart; s <= iaEnd; s++) {
-                    int I = subFaces[s].FaceIdIndex(i);
-                    int J = subFaces[s].FaceIdIndex(j);
-                    if (I != 0 && J != 0) {
-                        IA[s].add(I, J);
-                    }
-                }
-            } else {
-                int pos = (i << 16) | j;
-                List<Integer> list = relationObservers.get(pos);
-                if (list != null) {
-                    for (int s : list) {
-                        IA[s].addId(i, j);
-                    }
-
-                    // After that it is safe to remove the list.
-                    list.clear();
-                    relationObservers.remove(pos);
-                }
+            Iterable<Integer> it = i < j ? relationObservers.get(i, j) : relationObservers.get(j, i);
+            for (int s : it) {
+                IA[s].addId(i, j);
             }
-
         }
         return changes;
     }
