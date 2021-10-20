@@ -8,9 +8,8 @@ import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -3590,5 +3589,57 @@ public class FoldLineSet {
                 }
             }
         }
+    }
+
+    /**
+     * selects all Line Segments that are somehow connected to p (even indirectly).
+     * This method does very rough approximation, so it will always select all lines that are connected, but
+     * could sometimes select lines that are not connected, if they are closer than 1 unit to the connected lines.
+     * @param p Point which the lines should be connected to
+     */
+    public void selectProbablyConnected(Point p) {
+        // Build map of connections
+        Map<Point, Set<LineSegment>> connections = new HashMap<>();
+        for (LineSegment lineSegment : lineSegments) {
+            addToConnectionMap(lineSegment.getA().rounded(), lineSegment, connections);
+            addToConnectionMap(lineSegment.getB().rounded(), lineSegment, connections);
+        }
+
+        // Traverse connection map to find all connected points
+        Set<Point> activePoints = new HashSet<>();
+        Set<Point> newActivePoints = new HashSet<>();
+        Set<Point> processedPoints = new HashSet<>();
+        Set<LineSegment> connectedLines = new HashSet<>();
+
+        activePoints.add(p.rounded());
+
+        while (!activePoints.isEmpty()) {
+            for (Point activePoint : activePoints) {
+                Set<LineSegment> activeLines = connections.get(activePoint);
+                connectedLines.addAll(activeLines);
+                processedPoints.add(activePoint);
+                for (LineSegment activeLine : activeLines) {
+                    if (!processedPoints.contains(activeLine.getA().rounded())) {
+                        newActivePoints.add(activeLine.getA().rounded());
+                    }
+                    if (!processedPoints.contains(activeLine.getB().rounded())) {
+                        newActivePoints.add(activeLine.getB().rounded());
+                    }
+                }
+            }
+            activePoints.clear();
+            activePoints.addAll(newActivePoints);
+            newActivePoints.clear();
+        }
+        for (LineSegment connectedLine : connectedLines) {
+            connectedLine.setSelected(2);
+        }
+    }
+
+    private void addToConnectionMap(Point p, LineSegment s, Map<Point, Set<LineSegment>> connections) {
+        if (!connections.containsKey(p)) {
+            connections.put(p, new HashSet<>());
+        }
+        connections.get(p).add(s);
     }
 }

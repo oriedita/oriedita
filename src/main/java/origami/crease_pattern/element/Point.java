@@ -1,6 +1,7 @@
 package origami.crease_pattern.element;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Point implements Serializable {
     //Used to represent point coordinates, direction vectors, etc.
@@ -107,5 +108,25 @@ public class Point implements Serializable {
     public void move(Point addPoint) {
         x = x + addPoint.getX();
         y = y + addPoint.getY();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Point point = (Point) o;
+        return Double.compare(point.x, x) == 0 && Double.compare(point.y, y) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
+
+    /**
+     * @return new Point with the coordinates rounded to full numbers
+     */
+    public Point rounded() {
+        return new Point(Math.round(x), Math.round(y));
     }
 }

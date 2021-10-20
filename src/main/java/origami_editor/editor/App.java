@@ -597,7 +597,9 @@ public class App {
             System.out.println(" oritatame 20180108");
         } else if ((foldType == FoldType.FOR_ALL_LINES_1) || (foldType == FoldType.FOR_SELECTED_LINES_2)) {
             if (foldType == FoldType.FOR_ALL_LINES_1) {
-                mainCreasePatternWorker.select_all();
+                //mainCreasePatternWorker.select_all();
+                Point cpPivot = this.mainCreasePatternWorker.getCameraPosition();
+                mainCreasePatternWorker.selectConnected(this.mainCreasePatternWorker.foldLineSet.closestPoint(cpPivot));
             }
             //
             if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
