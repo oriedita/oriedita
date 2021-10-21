@@ -5,10 +5,10 @@ import java.util.*;
 /**
  * Author: Mu-Tsun Tsai
  * 
- * The idea of PseudoListPer2DArray is to store, for each i, the values appear
- * in List[i][x] and List[x][i] for all x, instead of keeping the precise list
- * of List[i][j] for all i and j. Then when List[i][j] is requested, it returns
- * the intersection set of List[i][x] and List[x][j].
+ * The idea of PseudoListMatrix is to store, for each i, the values appear in
+ * List[i][x] and List[x][i] for all x, instead of keeping the precise list of
+ * List[i][j] for all i and j. Then when List[i][j] is requested, it returns the
+ * intersection set of List[i][x] and List[x][j].
  * 
  * This ensures that if a value s is in List[i][j] then it will be returned by
  * get(i, j), but not necessarily the other way. Although whoever uses it still
