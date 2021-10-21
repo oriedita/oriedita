@@ -30,7 +30,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Queue;
@@ -240,7 +239,7 @@ public class App {
             }
         });
 
-        restoreApplicationModel();
+        applicationModel.reload();
 
         gridModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setGridConfigurationData(gridModel));
         gridModel.addPropertyChangeListener(e -> leftPanel.setData(gridModel));
@@ -301,52 +300,6 @@ public class App {
 
         mainCreasePatternWorker.record();
         mainCreasePatternWorker.auxRecord();
-
-        frame.pack();
-        frame.setVisible(true);
-
-        if (applicationModel.getWindowPosition() != null) {
-            frame.setLocation(applicationModel.getWindowPosition());
-        } else {
-            frame.setLocationRelativeTo(null);
-        }
-        if (applicationModel.getWindowSize() != null) {
-            frame.setSize(applicationModel.getWindowSize());
-        }
-        frame.setExtendedState(applicationModel.getWindowState());
-
-        explanation = new HelpDialog(frame, applicationModel::setHelpVisible, canvas.getLocationOnScreen(), canvas.getSize());
-        explanation.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                applicationModel.setHelpVisible(false);
-            }
-        });
-
-        if (consoleDialog != null) {
-            consoleDialog.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    applicationModel.setConsoleVisible(false);
-                }
-            });
-            applicationModel.addPropertyChangeListener(e -> {
-                if (e.getPropertyName() == null || e.getPropertyName().equals("consoleVisible")) {
-                    consoleDialog.setVisible(applicationModel.getConsoleVisible());
-                }
-                frame.requestFocus();
-            });
-            consoleDialog.setVisible(applicationModel.getConsoleVisible());
-        }
-        applicationModel.addPropertyChangeListener(e -> {
-            if (e.getPropertyName() == null || e.getPropertyName().equals("helpVisible")) {
-                explanation.setVisible(applicationModel.getHelpVisible());
-            }
-            frame.requestFocus();
-        });
-        explanation.setVisible(applicationModel.getHelpVisible());
-        //focus back to here after creating dialog
-        frame.requestFocus();
 
         canvas.addMouseModeHandler(MouseHandlerDrawCreaseFree.class);
         canvas.addMouseModeHandler(MouseHandlerLineSegmentDelete.class);
@@ -426,6 +379,52 @@ public class App {
         canvas.addMouseModeHandler(new MouseHandlerMoveCreasePattern(this));
         canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(this));
 
+        updateButtonIcons(frame);
+        frame.pack();
+        frame.setVisible(true);
+
+        if (applicationModel.getWindowPosition() != null) {
+            frame.setLocation(applicationModel.getWindowPosition());
+        } else {
+            frame.setLocationRelativeTo(null);
+        }
+        if (applicationModel.getWindowSize() != null) {
+            frame.setSize(applicationModel.getWindowSize());
+        }
+        frame.setExtendedState(applicationModel.getWindowState());
+
+        explanation = new HelpDialog(frame, applicationModel::setHelpVisible, canvas.getLocationOnScreen(), canvas.getSize());
+        explanation.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                applicationModel.setHelpVisible(false);
+            }
+        });
+
+        if (consoleDialog != null) {
+            consoleDialog.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    applicationModel.setConsoleVisible(false);
+                }
+            });
+            applicationModel.addPropertyChangeListener(e -> {
+                if (e.getPropertyName() == null || e.getPropertyName().equals("consoleVisible")) {
+                    consoleDialog.setVisible(applicationModel.getConsoleVisible());
+                }
+                frame.requestFocus();
+            });
+            consoleDialog.setVisible(applicationModel.getConsoleVisible());
+        }
+        applicationModel.addPropertyChangeListener(e -> {
+            if (e.getPropertyName() == null || e.getPropertyName().equals("helpVisible")) {
+                explanation.setVisible(applicationModel.getHelpVisible());
+            }
+            frame.requestFocus();
+        });
+        explanation.setVisible(applicationModel.getHelpVisible());
+        //focus back to here after creating dialog
+        frame.requestFocus();
     }
 
     private void updateButtonIcons(Container container) {
@@ -452,20 +451,15 @@ public class App {
         String uri = icon.getDescription();
 
         if (isDark) {
-            uri = uri.replaceAll("ppp", "ppp_dark");
+            uri = uri.replaceAll(".*ppp", "ppp_dark");
         } else {
-            uri = uri.replaceAll("ppp_dark", "ppp");
+            uri = uri.replaceAll(".*ppp_dark", "ppp");
         }
 
-        try {
-            URL resource = new URL(uri);
+        URL resource = App.class.getClassLoader().getResource(uri);
 
-            Image image = Toolkit.getDefaultToolkit().getImage(resource);
-            if (image != null) {
-                return new ImageIcon(resource);
-            }
-        } catch (MalformedURLException ignored) {
-
+        if (resource != null) {
+            return new ImageIcon(resource);
         }
 
         return icon;
@@ -490,7 +484,7 @@ public class App {
         }
     }
 
-    private void restoreApplicationModel() {
+    public void restoreApplicationModel() {
         Path storage = getAppDir();
         File configFile = storage.resolve(CONFIG_JSON).toFile();
 

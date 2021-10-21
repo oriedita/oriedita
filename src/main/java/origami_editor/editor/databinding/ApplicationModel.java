@@ -579,4 +579,8 @@ public class ApplicationModel implements Serializable {
         recentFileList.add(0, selectedFile);
         this.pcs.firePropertyChange("recentFileList", oldList, recentFileList);
     }
+
+    public void reload() {
+        this.pcs.firePropertyChange(null, null, null);
+    }
 }
