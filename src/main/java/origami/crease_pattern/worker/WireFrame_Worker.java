@@ -344,7 +344,7 @@ public class WireFrame_Worker {
         pointSet.configure(addPointNum, lineSegmentSet.getNumLineSegments(), lineSegmentSet.getNumLineSegments() - addPointNum + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
 
         for (int i = 1; i <= addPointNum; i++) {
-            pointSet.addPoint(addPointX[i], addPointY[i]);
+            pointSet.addPoint(i, addPointX[i], addPointY[i]);
         }
 
         //Next, define a bar in PointSet.
@@ -368,7 +368,7 @@ public class WireFrame_Worker {
         }
 
         for (int n = 0; n < lineSegmentSet.getNumLineSegments(); n++) {
-            pointSet.addLine(ika2ic.get(n), ikb2ic.get(n), lineSegmentSet.getColor(n));
+            pointSet.addLine(n + 1, ika2ic.get(n), ikb2ic.get(n), lineSegmentSet.getColor(n));
         }
 
         System.out.print("棒の全数　＝　");
