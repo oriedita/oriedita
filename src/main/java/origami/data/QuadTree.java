@@ -137,6 +137,9 @@ public class QuadTree {
         }
 
         private boolean addLineSegment(int i, Line l) {
+            if (!containsLine(l)) {
+                return false;
+            }
             if (size >= CAPACITY) {
                 if (children[0] == null) {
                     split();
@@ -147,16 +150,8 @@ public class QuadTree {
                     }
                 }
             }
-            return addLineSegmentCore(i, l);
-        }
-
-        private boolean addLineSegmentCore(int i, Line l) {
-            if (containsLine(l)) {
-                addLine(i);
-                return true;
-            } else {
-                return false;
-            }
+            addLine(i);
+            return true;
         }
 
         private void addLine(int i) {
@@ -183,7 +178,8 @@ public class QuadTree {
                 int n = next.get(i), c;
                 Line l = new Line(i);
                 for (c = 0; c < 4; c++) {
-                    if (children[c].addLineSegmentCore(i, l)) {
+                    if (children[c].containsLine(l)) {
+                        children[c].addLine(i);
                         break;
                     }
                 }
