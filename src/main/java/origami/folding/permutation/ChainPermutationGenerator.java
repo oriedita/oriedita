@@ -39,7 +39,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
         this.pairGuide = new PairGuide(numDigits);
     }
 
-    public void reset() {
+    public void reset() throws InterruptedException {
         count = 0;
         lockRemain = lockCount;
         for (int i = 1; i <= numDigits; i++) {
@@ -51,7 +51,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
         next(0);
     }
 
-    public int next(int digit) {
+    public int next(int digit) throws InterruptedException {
         int curIndex = 1;
 
         // swapHistory[1] == 0 means the generator has just reset, and we don't need to
@@ -108,6 +108,8 @@ public class ChainPermutationGenerator extends PermutationGenerator {
             pairGuide.confirm(curDigit);
 
             curIndex++;
+
+            if (Thread.interrupted()) throw new InterruptedException();
         }
 
         // Fill the last element into the map. There's no need to confirm the last
@@ -128,7 +130,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
         pairGuide.add(upperFaceIndex, faceIndex);
     }
 
-    public void initialize() {
+    public void initialize() throws InterruptedException {
         // Determine locked elements.
         int[] lock = pairGuide.lock();
         if (lock != null) {

@@ -109,7 +109,7 @@ public class FoldedFigure_Worker {
         return SubFace_valid_number;
     }
 
-    public void SubFace_configure(PointSet otta_Face_figure, PointSet SubFace_figure) {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
+    public void SubFace_configure(PointSet otta_Face_figure, PointSet SubFace_figure) throws InterruptedException {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
         // Make an upper and lower table of faces (the faces in the unfolded view before folding).
         // This includes the point set of ts2 (which has information on the positional relationship of the faces after folding) and <-------------otta_Face_figure
         // Use the point set of ts3 (which has the information of SubFace whose surface is subdivided in the wire diagram). <-------------SubFace_figure
@@ -154,6 +154,8 @@ public class FoldedFigure_Worker {
             for (int j = 1; j <= s0addFaceTotal; j++) {
                 s0[i].setFaceId(j, s0addFaceId[j]);//ここで面番号jは小さい方が先に追加される。
             }
+
+            if (Thread.interrupted()) throw new InterruptedException();
         }
 
         //ここまでで、SubFaceTotal＝	SubFace_figure.getMensuu()のままかわりなし。
@@ -228,6 +230,7 @@ public class FoldedFigure_Worker {
                     }
                 }
             }
+            if (Thread.interrupted()) throw new InterruptedException();
         }
         System.out.print("３面が関与する突き抜け条件の数　＝　");
         System.out.println(hierarchyList.getEquivalenceConditionTotal());
@@ -265,6 +268,7 @@ public class FoldedFigure_Worker {
                     }
                 }
             });
+            if (Thread.interrupted()) throw new InterruptedException();
         }
 
         // Done adding tasks, shut down ExecutorService
@@ -379,7 +383,7 @@ public class FoldedFigure_Worker {
         return false;
     }
 
-    public int next(int ss) {
+    public int next(int ss) throws InterruptedException {
         int isusumu;//When = 0, SubFace changes (image that digits change).
         int subfaceId;//SubFace id number that has changed
         isusumu = 0;
@@ -442,7 +446,7 @@ public class FoldedFigure_Worker {
 
     //-----------------------------------------------------------------------------------------------------------------
     //Search for SubFaces that fold inconsistently in ascending order of number. There is room for speeding up here as well.
-    private int inconsistent_subFace_request() { //hierarchyList changes.
+    private int inconsistent_subFace_request() throws InterruptedException { //hierarchyList changes.
         int kks;
         hierarchyList.restore();//<<<<<<<<<<<<<<<<<<<<<<<<<<<,,
 

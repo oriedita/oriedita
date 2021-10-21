@@ -441,7 +441,7 @@ public class PointSet implements Serializable {
     //--------------------------------
 
     //-------------------------------------
-    public void FaceOccurrence() {
+    public void FaceOccurrence() throws InterruptedException {
         int flag1;
         Face tempFace;
         numFaces = 0;
@@ -483,7 +483,7 @@ public class PointSet implements Serializable {
         findLineInFaceBorder();
     }
 
-    private void findLineInFaceBorder() {
+    private void findLineInFaceBorder() throws InterruptedException {
         int[] head = new int[numPoints + 1];
 
         // 1-based
@@ -519,6 +519,7 @@ public class PointSet implements Serializable {
                 lineInFaceBorder_min[i] = min;
                 lineInFaceBorder_max[i] = max;
             }
+            if (Thread.interrupted()) throw new InterruptedException();
         }
     }
 
@@ -623,7 +624,7 @@ public class PointSet implements Serializable {
         return (lines[lineId].getEnd() == faces[faceId].getPointId(faces[faceId].getNumPoints())) && (lines[lineId].getBegin() == faces[faceId].getPointId(1));
     }
 
-    private void Face_adjacent_create() {
+    private void Face_adjacent_create() throws InterruptedException {
         System.out.println("面となり作成　開始");
         for (int im = 1; im <= numFaces - 1; im++) {
             for (int in = im + 1; in <= numFaces; in++) {
@@ -652,8 +653,8 @@ public class PointSet implements Serializable {
                         }
                     }
                 }
-
             }
+            if (Thread.interrupted()) throw new InterruptedException();
         }
         System.out.println("面となり作成　終了");
     }

@@ -289,7 +289,7 @@ public class WireFrame_Worker {
         return new LineSegmentSet(pointSet);
     }
 
-    public void setLineSegmentSet(LineSegmentSet lineSegmentSet) {
+    public void setLineSegmentSet(LineSegmentSet lineSegmentSet) throws InterruptedException {
         Point ti;
         reset();
 

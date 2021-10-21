@@ -76,7 +76,7 @@ public class SubFace {//This class folds the development view and estimates the 
         return permutationGenerator.getCount();
     }
 
-    public void Permutation_first() {
+    public void Permutation_first() throws InterruptedException {
         if (getFaceIdCount() > 0) {
             permutationGenerator.reset();
         }
@@ -90,13 +90,13 @@ public class SubFace {//This class folds the development view and estimates the 
     // Advance the k-th digit permutation generator and change the overlapping state of the faces to the next state. Normally returns 0.
     // Return 1 if the current overlapping state of the faces is the last one.
     // In this case, the overlapping state of the faces remains the last one.
-    public int next(int k) {
+    public int next(int k) throws InterruptedException {
         return permutationGenerator.next(k);
     }   //<<<<<<<<<<<<<<<<<<<ここは後で機能を強化して高速化したい。
     // ここは　class SubFace の中だよ。
 
     //Start with the current permutation state and look for possible permutations that overlap
-    public int possible_overlapping_search(HierarchyList hierarchyList) {//This should not change hierarchyList.
+    public int possible_overlapping_search(HierarchyList hierarchyList) throws InterruptedException {//This should not change hierarchyList.
         int mk, ijh;
         ijh = 1;//The initial value of ijh can be anything other than 0.
         while (ijh != 0) { //If ijh == 0, you have reached the end of the digit.
@@ -280,7 +280,7 @@ public class SubFace {//This class folds the development view and estimates the 
     }
 
     /** Prepare a guidebook for the permutation generator in SubFace. */
-    public void setGuideMap(HierarchyList hierarchyList) {
+    public void setGuideMap(HierarchyList hierarchyList) throws InterruptedException {
         int[] ueFaceId = new int[faceIdCount + 1];
         boolean[] ueFaceIdFlg = new boolean[faceIdCount + 1];//1 if ueFaceId [] is enabled, 0 if disabled
 
