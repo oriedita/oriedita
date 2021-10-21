@@ -1,5 +1,7 @@
 package origami_editor.editor.component;
 
+import origami_editor.editor.Colors;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -14,7 +16,7 @@ public class ColorIcon implements Icon {
     public void paintIcon(Component c, Graphics g, int x, int y) {
         g.setColor(color);
         g.fillRect(x, y, getIconWidth(), getIconHeight());
-        g.setColor(Color.black);
+        g.setColor(Colors.get(Color.black));
         g.drawRect(x, y, getIconWidth(), getIconHeight());
     }
 

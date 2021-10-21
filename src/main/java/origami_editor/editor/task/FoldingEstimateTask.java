@@ -1,5 +1,6 @@
 package origami_editor.editor.task;
 
+import origami.crease_pattern.FoldingException;
 import origami_editor.editor.App;
 
 public class FoldingEstimateTask implements Runnable {
@@ -15,11 +16,12 @@ public class FoldingEstimateTask implements Runnable {
 
         try {
             app.folding_estimated();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | FoldingException e) {
             app.OZ.estimated_initialize();
             app.bulletinBoard.clear();
 
             System.err.println("Folding estimation got interrupted.");
+            System.err.println(e.getMessage());
         }
         app.repaintCanvas();
 

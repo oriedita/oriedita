@@ -1,6 +1,7 @@
 package origami.crease_pattern.worker;
 
 import origami.folding.util.EquivalenceCondition;
+import origami_editor.editor.Colors;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami.crease_pattern.element.LineColor;
@@ -571,7 +572,7 @@ public class FoldedFigure_Worker {
                 if (col_kosa < 0) {
                     col_kosa = 0;
                 }
-                g.setColor(new Color(col_kosa, col_kosa, col_kosa));
+                g.setColor(Colors.get(new Color(col_kosa, col_kosa, col_kosa)));
 
                 for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
                     t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, i)));
@@ -590,7 +591,7 @@ public class FoldedFigure_Worker {
             }
 
             //Prepare the line
-            g.setColor(Color.black);
+            g.setColor(Colors.get(Color.black));
 
             if (antiAlias) {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);//Anti-alias on
@@ -611,7 +612,7 @@ public class FoldedFigure_Worker {
         }
 
         if (errorPos != null && applicationModel.getDisplaySelfIntersection()) {
-            g2.setColor(new Color(255, 0, 0, 75));
+            g2.setColor(Colors.get(new Color(255, 0, 0, 75)));
             fillPolygon(g2, errorPos.getA(), subFace_figure, camera);
             fillPolygon(g2, errorPos.getB(), subFace_figure, camera);
             fillPolygon(g2, errorPos.getC(), subFace_figure, camera);
@@ -892,7 +893,7 @@ public class FoldedFigure_Worker {
             g2.setStroke(BStroke);//線の太さや線の末端の形状
         }
 
-        g.setColor(L_color);//g.setColor(Color.black);
+        g.setColor(L_color);//g.setColor(Colors.get(Color.black));
 
         for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
 
@@ -941,7 +942,7 @@ public class FoldedFigure_Worker {
         DrawingUtil.cross(g, point, 5.0, 2.0, LineColor.ORANGE_4);
 
         if (selected) {
-            g.setColor(new Color(200, 50, 255, 90));
+            g.setColor(Colors.get(new Color(200, 50, 255, 90)));
             g.fillOval(gx(point.getX()) - 25, gy(point.getY()) - 25, 50, 50); //円
         }
     }

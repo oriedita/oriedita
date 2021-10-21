@@ -1,12 +1,17 @@
 package origami_editor.editor;
 
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLaf;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.FileModel;
 
 import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
 
 public class AppMenuBar extends JMenuBar {
+    private final App app;
     private JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
     private JCheckBoxMenuItem pointOffsetCheckBox;//点を離すかどうか
     private JCheckBoxMenuItem gridInputAssistCheckBox;//高密度用入力をするかどうか
@@ -28,13 +33,17 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem exitButton;
     private JMenuItem toggleHelpMenuItem;
     private JMenuItem toggleConsoleMenuItem;
+    private JMenu openRecentMenu;
+    private JMenuItem clearRecentFileMenuItem;
 
     public AppMenuBar(App app) {
+        this.app = app;
         createElements();
         ApplicationModel applicationModel = app.applicationModel;
 
         app.registerButton(newButton, "newAction");
         app.registerButton(openButton, "openAction");
+        app.registerButton(openRecentMenu, "openRecentAction");
         app.registerButton(saveButton, "saveAction");
         app.registerButton(saveAsButton, "saveAsAction");
         app.registerButton(importButton, "importAction");
@@ -57,7 +66,7 @@ public class AppMenuBar extends JMenuBar {
 
         newButton.addActionListener(e -> {
             if (!app.fileModel.isSaved()) {
-                int choice = JOptionPane.showConfirmDialog(this, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                int choice = JOptionPane.showConfirmDialog(null, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
                 if (choice == JOptionPane.YES_OPTION) {
                     app.saveFile();
@@ -93,6 +102,10 @@ public class AppMenuBar extends JMenuBar {
 
             app.openFile();
         });
+        clearRecentFileMenuItem.addActionListener(e -> {
+            app.applicationModel.setRecentFileList(new ArrayList<>());
+        });
+
         saveButton.addActionListener(e -> {
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
@@ -150,7 +163,25 @@ public class AppMenuBar extends JMenuBar {
             app.mouseDraggedValid = false;
             app.mouseReleasedValid = false;
         });
-        darkModeCheckBox.addActionListener(e -> applicationModel.toggleDarkMode());
+        darkModeCheckBox.addActionListener(e -> {
+            applicationModel.toggleDarkMode();
+
+            if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(null, "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
+                if (FlatLaf.isLafDark()) {
+                    app.gridModel.setGridColor(new Color(54, 54, 54));
+                    app.gridModel.setGridScaleColor(new Color(17, 75, 10));
+
+                    app.foldedFigureModel.setFrontColor(new Color(129, 15, 94));
+                    app.foldedFigureModel.setBackColor(new Color(89, 89, 89));
+                } else {
+                    app.gridModel.setGridColor(new Color(230, 230, 230));
+                    app.gridModel.setGridScaleColor(new Color(180, 200, 180));
+
+                    app.foldedFigureModel.setFrontColor(new Color(255, 255, 50));
+                    app.foldedFigureModel.setBackColor(new Color(233, 233, 233));
+                }
+            }
+        });
         preciseZoomCheckBox.addActionListener(e -> applicationModel.togglePreciseZoom());
         displaySelfIntersectionCheckBox.addActionListener(e -> applicationModel.toggleDisplaySelfIntersection());
     }
@@ -166,6 +197,12 @@ public class AppMenuBar extends JMenuBar {
 
         openButton = new JMenuItem("Open...");
         fileMenu.add(openButton);
+
+        openRecentMenu = new JMenu("Open Recent");
+        fileMenu.add(openRecentMenu);
+
+        clearRecentFileMenuItem = new JMenuItem("Clear");
+        openRecentMenu.add(clearRecentFileMenuItem);
 
         saveButton = new JMenuItem("Save");
         fileMenu.add(saveButton);
@@ -257,6 +294,20 @@ public class AppMenuBar extends JMenuBar {
         darkModeCheckBox.setSelected(applicationModel.getLaf().equals(FlatDarkLaf.class.getName()));
         preciseZoomCheckBox.setSelected(applicationModel.isPreciseZoom());
         displaySelfIntersectionCheckBox.setSelected(applicationModel.getDisplaySelfIntersection());
+
+        openRecentMenu.removeAll();
+        if (applicationModel.getRecentFileList().isEmpty()) {
+            JMenuItem noItemsMenuItem = new JMenuItem("No items");
+            noItemsMenuItem.setEnabled(false);
+            openRecentMenu.add(noItemsMenuItem);
+        }
+        for (File recentFile : applicationModel.getRecentFileList()) {
+            JMenuItem recentFileMenuItem = new JMenuItem(recentFile.getName());
+            recentFileMenuItem.addActionListener(e -> app.openFile(recentFile));
+            openRecentMenu.add(recentFileMenuItem);
+        }
+        openRecentMenu.addSeparator();
+        openRecentMenu.add(clearRecentFileMenuItem);
     }
 
     public void setData(FileModel fileModel) {

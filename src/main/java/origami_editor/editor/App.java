@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.ui.FlatUIUtils;
+import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami_editor.editor.action.Click;
 import origami_editor.editor.canvas.*;
-import origami_editor.editor.component.AppFileChooser;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.export.Cp;
@@ -598,7 +598,9 @@ public class App {
             System.out.println(" oritatame 20180108");
         } else if ((foldType == FoldType.FOR_ALL_LINES_1) || (foldType == FoldType.FOR_SELECTED_LINES_2)) {
             if (foldType == FoldType.FOR_ALL_LINES_1) {
-                mainCreasePatternWorker.select_all();
+                //mainCreasePatternWorker.select_all();
+                Point cpPivot = this.mainCreasePatternWorker.getCameraPosition();
+                mainCreasePatternWorker.selectConnected(this.mainCreasePatternWorker.foldLineSet.closestPoint(cpPivot));
             }
             //
             if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
@@ -813,7 +815,7 @@ public class App {
     }
 
     File selectOpenFile() {
-        AppFileChooser fileChooser = new AppFileChooser(applicationModel.getDefaultDirectory(), applicationModel.getRecentFileList());
+        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Open");
 
         fileChooser.setFileFilter(new FileNameExtensionFilter("All supported files (*.ori, *.cp)", "cp", "ori"));
@@ -838,7 +840,7 @@ public class App {
     }
 
     File selectSaveFile() {
-        AppFileChooser fileChooser = new AppFileChooser(applicationModel.getDefaultDirectory(), applicationModel.getRecentFileList());
+        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Save As");
 
         FileNameExtensionFilter oriFilter = new FileNameExtensionFilter("Origami Editor (*.ori)", "ori");
@@ -852,7 +854,7 @@ public class App {
         do {
             int saveChoice = fileChooser.showSaveDialog(frame);
 
-            if (saveChoice != AppFileChooser.APPROVE_OPTION) {
+            if (saveChoice != JFileChooser.APPROVE_OPTION) {
                 return null;
             }
 
@@ -882,7 +884,7 @@ public class App {
     }
 
     File selectImportFile() {
-        AppFileChooser fileChooser = new AppFileChooser(applicationModel.getDefaultDirectory(), applicationModel.getRecentFileList());
+        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Import");
 
         fileChooser.setFileFilter(new FileNameExtensionFilter("All supported files", "cp", "orh", "ori"));
@@ -901,7 +903,7 @@ public class App {
     }
 
     public File selectExportFile() {
-        AppFileChooser fileChooser = new AppFileChooser(applicationModel.getDefaultDirectory(), applicationModel.getRecentFileList());
+        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Export");
 
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image (*.png)", "png"));
@@ -916,7 +918,7 @@ public class App {
         do {
             int saveChoice = fileChooser.showSaveDialog(frame);
 
-            if (saveChoice != AppFileChooser.APPROVE_OPTION) {
+            if (saveChoice != JFileChooser.APPROVE_OPTION) {
                 return null;
             }
 
@@ -1031,7 +1033,7 @@ public class App {
         }
     }
 
-    public void folding_estimated() throws InterruptedException {
+    public void folding_estimated() throws InterruptedException, FoldingException {
         OZ.folding_estimated(canvas.creasePatternCamera, lineSegmentsForFolding, point_of_referencePlane_old);
     }
 
