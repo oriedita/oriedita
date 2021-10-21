@@ -1755,11 +1755,11 @@ public class LeftPanel {
         }
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
-            toMountainButton.setBackground(null);
-            toValleyButton.setBackground(null);
-            toEdgeButton.setBackground(null);
-            toAuxButton.setBackground(null);
-            senbun_henkan2Button.setBackground(null);
+            toMountainButton.setBackground(Color.white);
+            toValleyButton.setBackground(Color.white);
+            toEdgeButton.setBackground(Color.white);
+            toAuxButton.setBackground(Color.white);
+            senbun_henkan2Button.setBackground(Color.white);
 
             switch (data.getMouseMode()) {
                 case CREASE_MAKE_MOUNTAIN_23:

@@ -512,7 +512,8 @@ public class FoldedFigure_Worker {
             col_hiku = (colmax - colmin) / FaceIdCount_max;
         }
 
-        if (transparencyColor) {//カラーの透過図
+        if (transparencyColor) {
+            //カラーの透過図
             g.setColor(new Color(F_color.getRed(), F_color.getGreen(), F_color.getBlue(), transparency_toukado));
 
             //Draw a face
