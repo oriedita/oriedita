@@ -1,6 +1,6 @@
 package origami.folding.algorithm;
 
-import origami.data.ListPer2DArray;
+import origami.data.listMatrix.ListMatrix;
 import origami.folding.HierarchyList;
 import origami.folding.element.SubFace;
 
@@ -17,12 +17,12 @@ public class SubFacePriority {
     // These are all 1-based
     private final int[] newInfoCount;
     private final boolean[] processed;
-    private final ListPer2DArray observers;
+    private final ListMatrix observers;
 
     public SubFacePriority(int totalFace, int totalSubFace) {
         newInfoCount = new int[totalSubFace + 1];
         processed = new boolean[totalSubFace + 1];
-        observers = new ListPer2DArray(totalFace);
+        observers = new ListMatrix(totalFace);
     }
 
     public void addSubFace(SubFace s, int index, HierarchyList hierarchyList) {

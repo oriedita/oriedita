@@ -3,6 +3,7 @@ package origami.crease_pattern;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+import origami.data.QuadTree;
 import origami_editor.editor.Save;
 
 import java.util.ArrayList;
@@ -89,6 +90,8 @@ public class LineSegmentSet {
      * When there are two completely overlapping line segments, the one with the latest number is deleted.
      */
     public void overlapping_line_removal(double r) {
+        QuadTree QT = new QuadTree(this);
+
         List<Boolean> removal_flg = new ArrayList<>();
         List<LineSegment> snew = new ArrayList<>();
         for (int i = 0; i < lineSegments.size(); i++) {
@@ -98,7 +101,7 @@ public class LineSegmentSet {
 
         for (int i = 0; i < lineSegments.size(); i++) {
             LineSegment si = lineSegments.get(i);
-            for (int j = i + 1; j < lineSegments.size(); j++) {
+            for (int j : QT.getPotentialCollision(i)) {
                 LineSegment sj = lineSegments.get(j);
                 if (r <= -9999.9) {
                     if (OritaCalc.determineLineSegmentIntersection(si, sj) == LineSegment.Intersection.PARALLEL_EQUAL_31) {
@@ -140,7 +143,7 @@ public class LineSegmentSet {
      * Divide the two line segments at the intersection of the two intersecting line segments. If there were two line segments that completely overlapped, both would remain without any processing.
      */
     public void intersect_divide() throws InterruptedException {
-        int i_divide = 1;//1 if there is a split, 0 if not
+        boolean found = true;
 
         ArrayList<Boolean> k_flg = new ArrayList<>();//A flag that indicates that there is an effect of crossing.
 
@@ -148,29 +151,30 @@ public class LineSegmentSet {
             k_flg.add(true);
         }
 
-        while (i_divide != 0) {
-            i_divide = 0;
+        QuadTree QT = new QuadTree(this);
+
+        while (found) {
+            found = false;
             for (int i = 0; i < lineSegments.size(); i++) {
                 if (k_flg.get(i)) {
                     k_flg.set(i, false);
-                    for (int j = 0; j < lineSegments.size(); j++) {
-                        if (i != j) {
-                            if (k_flg.get(j)) {
-                                int old_sousuu = lineSegments.size();
-                                boolean itemp = intersect_divide(i, j); // Side effect
-                                if (old_sousuu < lineSegments.size()) {
-                                    for (int is = old_sousuu; is < lineSegments.size(); is++) {
-                                        k_flg.add(true);
-                                    }
-                                }
-                                if (itemp) {
-                                    i_divide++;
-                                    k_flg.set(i, true);
-                                }
+                    for (int j : QT.getPotentialCollision(i)) {
+                        if (k_flg.get(j)) {
+                            int added = intersect_divide(i, j); // Side effect
+                            for (int is = 0; is < added; is++) {
+                                k_flg.add(true);
                             }
+                            if (added >= 0) {
+                                found = true;
+                                k_flg.set(i, true);
 
-                            if (Thread.interrupted()) throw new InterruptedException();
+                                // We only need to add new lines to the quad tree here; the old lines (i and j
+                                // here) only gets shorter, and they can safely stay in the same node.
+                                QT.addLines(added);
+                            }
                         }
+
+                        if (Thread.interrupted()) throw new InterruptedException();
                     }
                 }
             }
@@ -180,11 +184,15 @@ public class LineSegmentSet {
     }
 
     /**
-     * Divide the two line segments at the intersection of the two intersecting line segments. After splitting 1. Returns 0 if not done. From Orihime 2.002, the color of the line after splitting is also controlled (if there is an overlap, it will be unified and the color will be the one with the later number).
+     * Divide the two line segments at the intersection of the two intersecting line
+     * segments. Returns the number of added lines (-1 means nothing was done). From
+     * Orihime 2.002, the color of the line after splitting is also controlled (if
+     * there is an overlap, it will be unified and the color will be the one with
+     * the later number).
      */
-    public boolean intersect_divide(int i, int j) {
+    public int intersect_divide(int i, int j) {
         if (i == j) {
-            return false;
+            return -1;
         }
 
         LineSegment si = lineSegments.get(i);
@@ -207,16 +215,16 @@ public class LineSegmentSet {
         double jymin = Math.min(sj.determineAY(), sj.determineBY());
 
         if (ixmax + 0.5 < jxmin) {
-            return false;
+            return -1;
         }
         if (jxmax + 0.5 < ixmin) {
-            return false;
+            return -1;
         }
         if (iymax + 0.5 < jymin) {
-            return false;
+            return -1;
         }
         if (jymax + 0.5 < iymin) {
-            return false;
+            return -1;
         }
 
         LineSegment.Intersection intersect_decide = OritaCalc.determineLineSegmentIntersection(si, sj);
@@ -230,7 +238,7 @@ public class LineSegmentSet {
                 sj.setB(pk);
                 addLine(p2, pk, si.getColor());
                 addLine(p4, pk, sj.getColor());
-                return true;
+                return 2;
             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25:
             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26:
                 pk.set(OritaCalc.findIntersection(si, sj));
@@ -238,7 +246,7 @@ public class LineSegmentSet {
                 sj.setA(p3);
                 sj.setB(pk);
                 addLine(p4, pk, sj.getColor());
-                return true;
+                return 1;
 
             case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27:
             case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28:
@@ -247,10 +255,10 @@ public class LineSegmentSet {
                 si.setA(p1);
                 si.setB(pk);
                 addLine(p2, pk, si.getColor());
-                return true;
+                return 1;
 
             case PARALLEL_EQUAL_31: //If the two line segments are exactly the same, do nothing.
-                return false;
+                return -1;
             case PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321: {//The endpoints of two line segments (p1 and p3) overlap at one point. si contains sj
                 si.setA(p2);
                 si.setB(p4);
@@ -261,7 +269,7 @@ public class LineSegmentSet {
                 }
                 sj.setColor(overlapping_col);
 
-                return true;
+                return 0;
             }
             case PARALLEL_START_OF_S2_CONTAINS_START_OF_S1_322: {//The endpoints of two line segments (p1 and p3) overlap at one point. sj contains si
                 sj.setA(p2);
@@ -272,7 +280,7 @@ public class LineSegmentSet {
                 }
                 si.setColor(overlapping_col);
 
-                return true;
+                return 0;
             }
             case PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331: {//The endpoints of two line segments (p1 and p4) overlap at one point. si contains sj
                 si.setA(p2);
@@ -285,7 +293,7 @@ public class LineSegmentSet {
                 }
                 sj.setColor(overlapping_col);
 
-                return true;
+                return 0;
             }
             case PARALLEL_END_OF_S2_CONTAINS_START_OF_S1_332: {//The endpoints of two line segments (p1 and p4) overlap at one point. sj contains si
                 sj.setA(p2);
@@ -295,7 +303,7 @@ public class LineSegmentSet {
                     overlapping_col = sj.getColor();
                 }
                 si.setColor(overlapping_col);
-                return true;
+                return 0;
             }
             case PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341: {//The endpoints of two line segments (p2 and p3) overlap at one point. si contains sj
                 si.setA(p1);
@@ -306,7 +314,7 @@ public class LineSegmentSet {
                 }
                 sj.setColor(overlapping_col);
 
-                return true;
+                return 0;
             }
             case PARALLEL_START_OF_S2_CONTAINS_END_OF_S1_342: {//The endpoints of two line segments (p2 and p3) overlap at one point. sj contains si
                 sj.setA(p1);
@@ -317,7 +325,7 @@ public class LineSegmentSet {
                 }
                 si.setColor(overlapping_col);
 
-                return true;
+                return 0;
             }
             case PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351: {//The endpoints of two line segments (p2 and p4) overlap at one point. si contains sj
                 si.setA(p1);
@@ -329,7 +337,7 @@ public class LineSegmentSet {
                 }
                 sj.setColor(overlapping_col);
 
-                return true;
+                return 0;
             }
             case PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352: {//The endpoints of two line segments (p2 and p4) overlap at one point. sj contains si
                 sj.setA(p1);
@@ -340,7 +348,7 @@ public class LineSegmentSet {
                 }
                 si.setColor(overlapping_col);
 
-                return true;
+                return 0;
             }
             case PARALLEL_S1_INCLUDES_S2_361: {//In order of p1-p3-p4-p2
                 si.setA(p1);
@@ -353,7 +361,7 @@ public class LineSegmentSet {
                 }
                 sj.setColor(overlapping_col);
 
-                return true;
+                return 1;
             }
             case PARALLEL_S1_INCLUDES_S2_362: {//In order of p1-p4-p3-p2
                 si.setA(p1);
@@ -367,7 +375,7 @@ public class LineSegmentSet {
                 }
                 sj.setColor(overlapping_col);
 
-                return true;
+                return 1;
             }
             case PARALLEL_S2_INCLUDES_S1_363: {//In order of p3-p1-p2-p4
                 sj.setA(p1);
@@ -381,7 +389,7 @@ public class LineSegmentSet {
                 }
                 si.setColor(overlapping_col);
 
-                return true;
+                return 1;
             }
             case PARALLEL_S2_INCLUDES_S1_364: {//In order of p3-p2-p1-p4
                 sj.setA(p1);
@@ -395,7 +403,7 @@ public class LineSegmentSet {
                 }
                 si.setColor(overlapping_col);
 
-                return true;
+                return 1;
             }
             case PARALLEL_S1_END_OVERLAPS_S2_START_371: {//In order of p1-p3-p2-p4
                 si.setA(p1);
@@ -409,7 +417,7 @@ public class LineSegmentSet {
                     overlapping_col = sj.getColor();
                 }
                 addLine(p2, p3, overlapping_col);
-                return true;
+                return 1;
             }
             case PARALLEL_S1_END_OVERLAPS_S2_END_372: {//In order of p1-p4-p2-p3
                 si.setA(p1);
@@ -423,7 +431,7 @@ public class LineSegmentSet {
                     overlapping_col = sj.getColor();
                 }
                 addLine(p2, p4, overlapping_col);
-                return true;
+                return 1;
             }
             case PARALLEL_S1_START_OVERLAPS_S2_END_373: {//In order of p3-p1-p4-p2
                 sj.setA(p1);
@@ -435,7 +443,7 @@ public class LineSegmentSet {
                     overlapping_col = sj.getColor();
                 }
                 addLine(p1, p4, overlapping_col);
-                return true;
+                return 1;
             }
             case PARALLEL_S1_START_OVERLAPS_S2_START_374: {//In order of p4-p1-p3-p2
                 sj.setA(p1);
@@ -447,10 +455,10 @@ public class LineSegmentSet {
                     overlapping_col = sj.getColor();
                 }
                 addLine(p1, p3, overlapping_col);
-                return true;
+                return 1;
             }
             default:
-                return false;
+                return -1;
         }
     }
 

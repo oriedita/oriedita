@@ -66,6 +66,7 @@ public class PointSet implements Serializable {
         numPoints = 0;
         numLines = 0;
         numFaces = 0;
+        faceAdjacent = null;
     }
 
     //---------------------------------------
@@ -164,10 +165,6 @@ public class PointSet implements Serializable {
     public void set(int i, Point tn) {
         points[i].set(tn);
     }                                               //  <<<-------
-
-    private int getFaceAdjecent(int i, int j) {
-        return faceAdjacent.get(i, j);
-    }
 
     private int get_lineInFaceBorder_min(int i) {
         return lineInFaceBorder_min[i];
@@ -662,8 +659,13 @@ public class PointSet implements Serializable {
     }
 
     // If Face [im] and Face [ib] are adjacent, return the id number of the bar at the boundary. Returns 0 if not adjacent
-    public int Face_adjacent_determine(int im, int in) {
+    public int getFaceAdjecent(int im, int in) {
         return faceAdjacent.get(im, in);
+    }
+
+    public void clearFaceAdjacent() {
+        faceAdjacent = null;
+        System.gc();
     }
 
     private void addFace(Face tempFace) {

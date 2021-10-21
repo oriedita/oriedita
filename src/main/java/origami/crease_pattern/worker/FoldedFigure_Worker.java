@@ -14,10 +14,12 @@ import origami.crease_pattern.element.LineSegment;
 import origami_editor.editor.canvas.DrawingUtil;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
+import origami.data.QuadTree;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.tools.Camera;
+import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.PointSet;
 
 import java.awt.*;
@@ -235,13 +237,15 @@ public class FoldedFigure_Worker {
         // The surface of the bar ib and the surface of the surface jb are not aligned with i, j, i, j or j, i, j, i. If this happens,
         // Since there is a mistake in the 3rd place from the beginning, find the number of digits in this 3rd place with SubFace and advance this digit by 1.
 
+        QuadTree qt = new QuadTree(new LineSegmentSet(otta_face_figure));
         ExecutorService service = Executors.newCachedThreadPool();
 
         for (int ib = 1; ib <= orite.getNumLines() - 1; ib++) {
-            for (int jb = ib + 1; jb <= orite.getNumLines(); jb++) {
-                final int ibf = ib;
-                final int jbf = jb;
-                service.execute(() -> {
+            final int ibf = ib;
+            final QuadTree qtf = qt;
+            service.execute(() -> {
+                for (int jb : qtf.getPotentialCollision(ibf - 1)) { // qt is 0-based
+                    int jbf = jb + 1; // qt is 0-based
                     int mi1, mi2, mj1, mj2;
 
                     if (otta_face_figure.parallel_overlap(ibf, jbf)) {
@@ -259,10 +263,8 @@ public class FoldedFigure_Worker {
                             }
                         }
                     }
-                });
-
-                if (Thread.interrupted()) throw new InterruptedException();
-            }
+                }
+            });
         }
 
         // Done adding tasks, shut down ExecutorService
@@ -277,6 +279,9 @@ public class FoldedFigure_Worker {
                 throw new RuntimeException("HierarchyList_configure did not exit!");
             }
         }
+        service = null;
+        qt = null;
+        System.gc();
 
         System.out.print("４面が関与する突き抜け条件の数　＝　");
         System.out.println(hierarchyList.getUEquivalenceConditionTotal());
@@ -288,6 +293,7 @@ public class FoldedFigure_Worker {
         if (additional != HierarchyListStatus.SUCCESSFUL_1000) {
             return additional;
         }
+        System.gc();
 
         System.out.println("追加推定 終了し、上下表を保存------------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
 
@@ -340,6 +346,9 @@ public class FoldedFigure_Worker {
         //優先順位を逆転させる。これが有効かどうかは不明wwwww
 
         //SubFaceは優先順の何番目までやるかを決める
+
+        SFP = null;
+        System.gc();
 
         System.out.print("Smen有効数は　");
         System.out.print(SubFace_valid_number);

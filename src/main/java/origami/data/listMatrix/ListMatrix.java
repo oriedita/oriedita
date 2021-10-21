@@ -1,4 +1,4 @@
-package origami.data;
+package origami.data.listMatrix;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,14 +9,14 @@ import origami.data.tree.*;
  * Author: Mu-Tsun Tsai
  * 
  * This is the data structure for "a list of int per some positions in a very
- * large 2D array". In that case, it would not be feasible to really create a
+ * large matrix". In that case, it would not be feasible to really create a
  * large 2D array (or a HashMap using a pair of keys) and have an ArrayList (or
  * a native LinkedList) for each position. In order to balance space and speed,
  * I use BST and customized linked list to implement such structure. In
  * particular, AVL tree is used, since typically this structure is first filled
  * with data and then perform lots of searches.
  */
-public class ListPer2DArray {
+public class ListMatrix {
 
     private static final long mask = (1L << 32) - 1;
 
@@ -24,7 +24,7 @@ public class ListPer2DArray {
     private final BST<BST<Integer>> heads;
     private final ArrayList<Long> nodes = new ArrayList<>();
 
-    public ListPer2DArray(int count) {
+    public ListMatrix(int count) {
         heads = new AVLTree<>();
         nodes.add(0L);
     }
