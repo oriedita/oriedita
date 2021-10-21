@@ -3,6 +3,7 @@ package origami.crease_pattern;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+import origami.data.QuadTree;
 import origami_editor.editor.Save;
 
 import java.util.ArrayList;
@@ -89,6 +90,8 @@ public class LineSegmentSet {
      * When there are two completely overlapping line segments, the one with the latest number is deleted.
      */
     public void overlapping_line_removal(double r) {
+        QuadTree QT = new QuadTree(this);
+
         List<Boolean> removal_flg = new ArrayList<>();
         List<LineSegment> snew = new ArrayList<>();
         for (int i = 0; i < lineSegments.size(); i++) {
@@ -98,7 +101,7 @@ public class LineSegmentSet {
 
         for (int i = 0; i < lineSegments.size(); i++) {
             LineSegment si = lineSegments.get(i);
-            for (int j = i + 1; j < lineSegments.size(); j++) {
+            for (int j : QT.getPossibleCollision(i)) {
                 LineSegment sj = lineSegments.get(j);
                 if (r <= -9999.9) {
                     if (OritaCalc.determineLineSegmentIntersection(si, sj) == LineSegment.Intersection.PARALLEL_EQUAL_31) {
