@@ -480,11 +480,45 @@ public class PointSet implements Serializable {
         System.out.print("全面数　＝　");
         System.out.println(numFaces);
         Face_adjacent_create();
+        findLineInFaceBorder();
+    }
 
-        //Registration of both sides of line
-        for (int ib = 1; ib <= numLines; ib++) {
-            lineInFaceBorder_min[ib] = lineinFaceBorder_min_search(ib);
-            lineInFaceBorder_max[ib] = lineInFaceBorder_max_search(ib);
+    private void findLineInFaceBorder() {
+        int[] head = new int[numPoints + 1];
+
+        // 1-based
+        List<Integer> list = new ArrayList<>();
+        List<Integer> next = new ArrayList<>();
+        list.add(null);
+        next.add(null);
+
+        // Index all points
+        for (int i = 1; i <= numFaces; i++) {
+            int count = faces[i].getNumPoints();
+            for (int j = 1; j <= count; j++) {
+                int id = faces[i].getPointId(j);
+                next.add(head[id]);
+                head[id] = list.size();
+                list.add(i);
+            }
+        }
+
+        // Registration of both sides of line
+        for (int i = 1; i <= numLines; i++) {
+            int min =  numFaces + 1, max = 0;
+            int cursor = head[lines[i].getBegin()];
+            while(cursor != 0) {
+                int id = list.get(cursor);
+                if (lineInFaceBorder(id, i)) {
+                    if (min > id) min = id;
+                    if (max < id) max = id;
+                }
+                cursor = next.get(cursor);
+            }
+            if (max > 0) {
+                lineInFaceBorder_min[i] = min;
+                lineInFaceBorder_max[i] = max;
+            }
         }
     }
 
@@ -536,27 +570,6 @@ public class PointSet implements Serializable {
                 }
             }
         }
-    }
-
-    //--------------
-    //Returns the faceId with the smaller faceId of the faces containing the bar lineId as the boundary (there are up to two faces). Returns 0 if there is no face containing the bar as the boundary
-    private int lineinFaceBorder_min_search(int lineId) {
-        for (int faceId = 1; faceId <= numFaces; faceId++) {
-            if (lineInFaceBorder(faceId, lineId)) {
-                return faceId;
-            }
-        }
-        return 0;
-    }
-
-    //Returns the faceId with the larger faceId among the faces containing the line lineId as the boundary (there are two faces at the maximum). Returns 0 if there is no face containing the bar as the boundary
-    private int lineInFaceBorder_max_search(int lineId) {
-        for (int faceId = numFaces; faceId >= 1; faceId--) {
-            if (lineInFaceBorder(faceId, lineId)) {
-                return faceId;
-            }
-        }
-        return 0;
     }
 
     //Boundary of lines Boundary surface (two sides in yellow) Here, faceId of the proliferating branch of faceId was made.
