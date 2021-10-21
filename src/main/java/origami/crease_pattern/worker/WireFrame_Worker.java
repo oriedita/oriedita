@@ -174,49 +174,8 @@ public class WireFrame_Worker {
      * Folding estimation (What you can do here is a wire diagram that does not consider the overlap of surfaces)
      */
     public PointSet folding() throws InterruptedException {//Folding estimate
-        PointSet pointSet = new PointSet();    //Development view
-        pointSet.configure(this.pointSet.getNumPoints(), this.pointSet.getNumLines(), this.pointSet.getNumFaces());
-        pointSet.set(this.pointSet);
-
-        for (int i = 0; i <= this.pointSet.getNumFaces(); i++) {
-            nextFaceId[i] = 0;
-            associatedLineId[i] = 0;
-            iFacePosition[i] = 0;
-        }
-        //Grasp the positional relationship between the faces in preparation for folding
-        System.out.println("折りたたみの準備として面同士の位置関係を把握する");
-        iFacePosition[referencePlaneId] = 1;
-
-        int current_face_position = 1;
-        int remaining_facesTotal = this.pointSet.getNumFaces() - 1;
-
-        while (remaining_facesTotal > 0) {
-            for (int i = 1; i <= this.pointSet.getNumFaces(); i++) {
-                if (iFacePosition[i] == current_face_position) {
-                    for (int j = 1; j <= this.pointSet.getNumFaces(); j++) {
-                        int mth = this.pointSet.Face_adjacent_determine(i, j);
-                        if ((mth > 0) && (iFacePosition[j] == 0)) {
-                            iFacePosition[j] = current_face_position + 1;
-                            nextFaceId[j] = i;
-                            associatedLineId[j] = mth;
-                        }
-                    }
-                }
-            }
-
-            current_face_position = current_face_position + 1;
-
-            remaining_facesTotal = 0;
-            for (int i = 1; i <= this.pointSet.getNumFaces(); i++) {
-                if (iFacePosition[i] == 0) {
-                    remaining_facesTotal = remaining_facesTotal + 1;
-                }
-            }
-
-            System.out.println("remaining_facesTotal = " + remaining_facesTotal);
-
-            if (Thread.interrupted()) throw new InterruptedException();
-        }
+        // The code that was previously here is identical to surface_position_request
+        PointSet pointSet = surface_position_request();
 
         System.out.println("折ったときの点の位置を求める。");
         // Find the position of the point when folded.
@@ -271,7 +230,7 @@ public class WireFrame_Worker {
             for (int i = 1; i <= pointSet.getNumFaces(); i++) {
                 if (iFacePosition[i] == current_FacePosition) {
                     for (int j = 1; j <= pointSet.getNumFaces(); j++) {
-                        int mth = pointSet.Face_adjacent_determine(i, j);
+                        int mth = pointSet.getFaceAdjecent(i, j);
                         if ((mth > 0) && (iFacePosition[j] == 0)) {
                             iFacePosition[j] = current_FacePosition + 1;
                             nextFaceId[j] = i;
@@ -295,6 +254,10 @@ public class WireFrame_Worker {
             System.out.println("remaining_facesTotal = " + remaining_facesTotal);
         }
 
+        // It appears that faceAdjacent is never used after this point; more
+        // investigation is needed.
+        pointSet.clearFaceAdjacent();
+
         return cn;
     }
 
@@ -313,6 +276,9 @@ public class WireFrame_Worker {
     }
 
     public PointSet get() {
+        // It appears that faceAdjacent is never used after this point; more
+        // investigation is needed.
+        pointSet.clearFaceAdjacent();
         return pointSet;
     }
 

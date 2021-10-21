@@ -1,7 +1,7 @@
 package origami.folding.algorithm;
 
 import origami.crease_pattern.worker.FoldedFigure_Worker.HierarchyListStatus;
-import origami.data.ListPer2DArray;
+import origami.data.listMatrix.PseudoListMatrix;
 import origami.folding.HierarchyList;
 import origami.folding.element.SubFace;
 import origami.folding.util.EquivalenceCondition;
@@ -29,7 +29,7 @@ public class AdditionalEstimationAlgorithm {
     private final SubFace[] subFaces; // indices start from 1
 
     private final ItalianoAlgorithm[] IA;
-    private ListPer2DArray relationObservers;
+    private PseudoListMatrix relationObservers;
 
     public int errorIndex;
 
@@ -39,7 +39,7 @@ public class AdditionalEstimationAlgorithm {
         this.hierarchyList = hierarchyList;
         this.subFaces = s;
         IA = new ItalianoAlgorithm[subFaces.length];
-        relationObservers = new ListPer2DArray(hierarchyList.getFacesTotal());
+        relationObservers = new PseudoListMatrix(hierarchyList.getFacesTotal());
     }
 
     public HierarchyListStatus run(int completedSubFaces) {
@@ -112,7 +112,7 @@ public class AdditionalEstimationAlgorithm {
     }
 
     private void initializeItalianoAlgorithm(int s) {
-        IA[s] = new ItalianoAlgorithm(subFaces[s]);
+        IA[s] = new ItalianoAlgorithm(subFaces[s].getFaceIdCount());
         int count = subFaces[s].getFaceIdCount();
         for (int i = 1; i <= count; i++) {
             for (int j = 1; j <= count; j++) {
@@ -234,7 +234,13 @@ public class AdditionalEstimationAlgorithm {
             // Notifying the ItalianoAlgorithm to update.
             Iterable<Integer> it = i < j ? relationObservers.get(i, j) : relationObservers.get(j, i);
             for (int s : it) {
-                IA[s].addId(i, j);
+                // By the nature of PseudoListMatrix, we need to check again to make sure
+                // subFaces[s] is what we want.
+                int I = subFaces[s].FaceIdIndex(i);
+                int J = subFaces[s].FaceIdIndex(j);
+                if (I != 0 && J != 0) {
+                    IA[s].add(I, J);
+                }
             }
         }
         return changes;

@@ -277,6 +277,9 @@ public class FoldedFigure_Worker {
             }
         }
 
+        service = null;
+        System.gc();
+
         System.out.print("４面が関与する突き抜け条件の数　＝　");
         System.out.println(hierarchyList.getUEquivalenceConditionTotal());
 
@@ -287,6 +290,7 @@ public class FoldedFigure_Worker {
         if (additional != HierarchyListStatus.SUCCESSFUL_1000) {
             return additional;
         }
+        System.gc();
 
         System.out.println("追加推定 終了し、上下表を保存------------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
 
@@ -339,6 +343,9 @@ public class FoldedFigure_Worker {
         //優先順位を逆転させる。これが有効かどうかは不明wwwww
 
         //SubFaceは優先順の何番目までやるかを決める
+
+        SFP = null;
+        System.gc();
 
         System.out.print("Smen有効数は　");
         System.out.print(SubFace_valid_number);
