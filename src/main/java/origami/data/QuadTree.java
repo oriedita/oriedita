@@ -14,21 +14,24 @@ public class QuadTree {
     private final LineSegmentSet set;
 
     /** The index of next LineSegment in the list. */
-    private final int[] next;
+    private final ArrayList<Integer> next;
 
     /** Which node contains the line. */
-    private final Node[] map;
+    private final ArrayList<Node> map;
+
+    private int count;
 
     public QuadTree(LineSegmentSet set) {
         this.set = set;
-        int count = set.getNumLineSegments();
-        next = new int[count];
-        map = new Node[count];
+        count = set.getNumLineSegments();
+        next = new ArrayList<>();
+        map = new ArrayList<>();
 
         // Determine the root size.
         Double l = null, r = null, t = null, b = null;
         for (int i = 0; i < count; i++) {
-            next[i] = -1;
+            next.add(-1);
+            map.add(null);
             Line L = new Line(i);
             if (l == null || l > L.x) {
                 l = L.x;
@@ -55,18 +58,28 @@ public class QuadTree {
         }
     }
 
+    public void addLines(int num) {
+        int new_count = count + num;
+        for (int i = count; i < new_count; i++) {
+            next.add(-1);
+            map.add(null);
+            root.addLineSegment(i);
+        }
+        count = new_count;
+    }
+
     /** This only returns lines that are of greater index. */
-    public Iterable<Integer> getPossibleCollision(int i) {
+    public Iterable<Integer> getPotentialCollision(int i) {
         SortedSet<Integer> set = new TreeSet<Integer>();
 
         // Collect all the lines upwards.
-        Node node = map[i].parent;
+        Node node = map.get(i).parent;
         while (node != null) {
             collect(node, i, set);
             node = node.parent;
         }
 
-        collectDownwards(map[i], i, set);
+        collectDownwards(map.get(i), i, set);
         return set;
     }
 
@@ -85,7 +98,7 @@ public class QuadTree {
             if (cursor > i) {
                 set.add(cursor);
             }
-            cursor = next[cursor];
+            cursor = next.get(cursor);
         }
     }
 
@@ -147,8 +160,8 @@ public class QuadTree {
         }
 
         private void addLine(int i) {
-            next[i] = head;
-            map[i] = this;
+            next.set(i, head);
+            map.set(i, this);
             head = i;
             size++;
         }
@@ -167,7 +180,7 @@ public class QuadTree {
             head = -1;
             size = 0;
             while (i != -1) {
-                int n = next[i], c;
+                int n = next.get(i), c;
                 Line l = new Line(i);
                 for (c = 0; c < 4; c++) {
                     if (children[c].addLineSegmentCore(i, l)) {

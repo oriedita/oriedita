@@ -244,7 +244,7 @@ public class FoldedFigure_Worker {
             final int ibf = ib;
             final QuadTree qtf = qt;
             service.execute(() -> {
-                for (int jb : qtf.getPossibleCollision(ibf - 1)) { // qt is 0-based
+                for (int jb : qtf.getPotentialCollision(ibf - 1)) { // qt is 0-based
                     int jbf = jb + 1; // qt is 0-based
                     int mi1, mi2, mj1, mj2;
 
