@@ -1,49 +1,57 @@
-package origami.data;
+package origami.data.quadTree;
 
 import java.util.*;
 
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
+import origami.data.quadTree.adapter.*;
 
+/**
+ * Author: Mu-Tsun Tsai
+ * 
+ * QuadTree is a classical data structure for organizing objects in a 2D space.
+ */
 public class QuadTree {
 
     private static final double EPSILON = 0.001;
     private static final int CAPACITY = 8;
 
     private final Node root;
-    private final LineSegmentSet set;
+    private final QuadTreeAdapter adapter;
 
-    /** The index of next LineSegment in the list. */
+    /** The index of next QuadTreeItem in the list. */
     private final ArrayList<Integer> next;
 
-    /** Which node contains the line. */
+    /** Which node contains the QuadTreeItem. */
     private final ArrayList<Node> map;
 
     private int count;
 
     public QuadTree(LineSegmentSet set) {
-        this.set = set;
-        count = set.getNumLineSegments();
+        this(new LineSegmentSetAdapter(set));
+    }
+
+    public QuadTree(QuadTreeAdapter adapter) {
+        this.adapter = adapter;
         next = new ArrayList<>();
         map = new ArrayList<>();
 
         // Determine the root size.
         Double l = null, r = null, t = null, b = null;
-        for (int i = 0; i < count; i++) {
-            next.add(-1);
-            map.add(null);
-            Line L = new Line(i);
-            if (l == null || l > L.x) {
-                l = L.x;
+        for (int i = 0; i < adapter.getPointCount(); i++) {
+            Point p = adapter.getPoint(i);
+            double x = p.getX(), y = p.getY();
+            if (l == null || l > x) {
+                l = x;
             }
-            if (r == null || r < L.X) {
-                r = L.X;
+            if (r == null || r < x) {
+                r = x;
             }
-            if (t == null || t < L.Y) {
-                t = L.Y;
+            if (t == null || t < y) {
+                t = y;
             }
-            if (b == null || b > L.y) {
-                b = L.y;
+            if (b == null || b > y) {
+                b = y;
             }
         }
 
@@ -53,26 +61,37 @@ public class QuadTree {
         // sheet etc.
         root = new Node(l - 2 * EPSILON, r + 3 * EPSILON, b - 2 * EPSILON, t + 3 * EPSILON, null);
 
-        for (int i = 0; i < count; i++) {
-            root.addLineSegment(i);
-        }
+        grow(adapter.getCount());
     }
 
-    public void addLines(int num) {
+    public void grow(int num) {
         int new_count = count + num;
         for (int i = count; i < new_count; i++) {
             next.add(-1);
             map.add(null);
-            root.addLineSegment(i);
+            root.addItem(i);
         }
         count = new_count;
     }
 
-    /** This only returns lines that are of greater index. */
+    public void update(int i) {
+        Node n = map.get(i);
+        int old_next = next.get(i);
+        if (n.children[0] != null) {
+            for (int j = 0; j < 4; j++) {
+                if (n.children[j].addItem(i)) {
+                    n.removeIndex(i, old_next);
+                    return;
+                }
+            }
+        }
+    }
+
+    /** This only returns items that are of greater index. */
     public Iterable<Integer> getPotentialCollision(int i) {
         SortedSet<Integer> set = new TreeSet<Integer>();
 
-        // Collect all the lines upwards.
+        // Collect all the items upwards.
         Node node = map.get(i).parent;
         while (node != null) {
             collect(node, i, set);
@@ -81,6 +100,33 @@ public class QuadTree {
 
         collectDownwards(map.get(i), i, set);
         return set;
+    }
+
+    public Iterable<Integer> getPotentialContainer(Point p) {
+        SortedSet<Integer> set = new TreeSet<Integer>();
+
+        // Collect all the items upwards.
+        Node node = findContainerNode(root, p);
+        while (node != null) {
+            collect(node, -1, set); // -1 means collect all
+            node = node.parent;
+        }
+        return set;
+    }
+
+    private Node findContainerNode(Node node, Point p) {
+        if (!node.contains(p)) {
+            return null;
+        }
+        if (node.children[0] != null) {
+            for (int j = 0; j < 4; j++) {
+                Node n = findContainerNode(node.children[j], p);
+                if (n != null) {
+                    return n;
+                }
+            }
+        }
+        return node;
     }
 
     private void collectDownwards(Node node, int i, Set<Integer> set) {
@@ -102,21 +148,6 @@ public class QuadTree {
         }
     }
 
-    private class Line {
-        double x, X, y, Y;
-
-        Line(int i) {
-            Point A = set.getA(i);
-            Point B = set.getB(i);
-            double ax = A.getX(), ay = A.getY();
-            double bx = B.getX(), by = B.getY();
-            x = Math.min(ax, bx);
-            X = Math.max(ax, bx);
-            y = Math.min(ay, by);
-            Y = Math.max(ay, by);
-        }
-    }
-
     private class Node {
         final double l, r, b, t;
         final Node[] children = new Node[4];
@@ -132,12 +163,17 @@ public class QuadTree {
             this.parent = parent;
         }
 
-        boolean addLineSegment(int i) {
-            return addLineSegment(i, new Line(i));
+        boolean addItem(int i) {
+            return addItem(i, adapter.getItem(i));
         }
 
-        private boolean addLineSegment(int i, Line l) {
-            if (!containsLine(l)) {
+        boolean contains(Point p) {
+            double x = p.getX(), y = p.getY();
+            return x > l + EPSILON && x < r - EPSILON && y > b + EPSILON && y < t - EPSILON;
+        }
+
+        private boolean addItem(int i, QuadTreeItem item) {
+            if (!containsItem(item)) {
                 return false;
             }
             if (size >= CAPACITY) {
@@ -145,24 +181,40 @@ public class QuadTree {
                     split();
                 }
                 for (int c = 0; c < 4; c++) {
-                    if (children[c].addLineSegment(i, l)) {
+                    if (children[c].addItem(i, item)) {
                         return true;
                     }
                 }
             }
-            addLine(i);
+            addIndex(i);
             return true;
         }
 
-        private void addLine(int i) {
+        private void addIndex(int i) {
             next.set(i, head);
             map.set(i, this);
             head = i;
             size++;
         }
 
-        private boolean containsLine(Line L) {
-            return L.x > l + EPSILON && L.X < r - EPSILON && L.y > b + EPSILON && L.Y < t - EPSILON;
+        public void removeIndex(int i, int old_next) {
+            int cursor = head;
+            if (cursor == i) {
+                head = old_next;
+            } else {
+                while(true) {
+                    int n = next.get(cursor);
+                    if (n == i) {
+                        next.set(cursor, old_next);
+                        return;
+                    }
+                    cursor = n;
+                }
+            }
+        }
+
+        private boolean containsItem(QuadTreeItem item) {
+            return item.l > l + EPSILON && item.r < r - EPSILON && item.b > b + EPSILON && item.t < t - EPSILON;
         }
 
         private void split() {
@@ -176,15 +228,15 @@ public class QuadTree {
             size = 0;
             while (i != -1) {
                 int n = next.get(i), c;
-                Line l = new Line(i);
+                QuadTreeItem item = adapter.getItem(i);
                 for (c = 0; c < 4; c++) {
-                    if (children[c].containsLine(l)) {
-                        children[c].addLine(i);
+                    if (children[c].containsItem(item)) {
+                        children[c].addIndex(i);
                         break;
                     }
                 }
                 if (c == 4) {
-                    addLine(i);
+                    addIndex(i);
                 }
                 i = n;
             }

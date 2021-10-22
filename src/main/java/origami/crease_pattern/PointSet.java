@@ -2,6 +2,9 @@ package origami.crease_pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import origami.crease_pattern.element.*;
+import origami.data.ListArray;
+import origami.data.quadTree.QuadTree;
+import origami.data.quadTree.adapter.PointSetFaceAdapter;
 import origami.data.symmetricMatrix.SymmetricMatrix;
 import origami.folding.element.Face;
 import origami_editor.editor.Save;
@@ -381,7 +384,7 @@ public class PointSet implements Serializable {
         return lines[i].getColor();
     }
 
-    private void t_renketu_sakusei() {
+    private void searchPointLinking() {
         for (int k = 1; k <= numLines; k++) {
             setPointLinking(lines[k].getBegin(), 0, getPointLinking(lines[k].getBegin(), 0) + 1);
             setPointLinking(lines[k].getBegin(), getPointLinking(lines[k].getBegin(), 0), lines[k].getEnd());
@@ -442,39 +445,40 @@ public class PointSet implements Serializable {
 
     //-------------------------------------
     public void FaceOccurrence() throws InterruptedException {
-        int flag1;
+        boolean addNewFace;
         Face tempFace;
         numFaces = 0;
-        t_renketu_sakusei();
+        searchPointLinking();
+
+        ListArray<Integer> map = new ListArray<Integer>(numPoints);
 
         for (int i = 1; i <= numLines; i++) {
             tempFace = Face_request(lines[i].getBegin(), lines[i].getEnd());
-            flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
-            for (int j = 1; j <= numFaces; j++) {
+            addNewFace = true;
+            for (int j : map.get(lines[i].getBegin())) {
                 if (equals(tempFace, faces[j])) {
-                    flag1 = 1;
+                    addNewFace = false;
                     break;
                 }
             }
-
-            if (((flag1 == 0) && (tempFace.getNumPoints() != 0)) &&
-                    (calculateArea(tempFace) > 0.0)) {
-                addFace(tempFace);
+            if (addNewFace && tempFace.getNumPoints() != 0 && calculateArea(tempFace) > 0.0) {
+                addFace(tempFace, map);
             }
-            //
 
             tempFace = Face_request(lines[i].getEnd(), lines[i].getBegin());
-            flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
-            for (int j = 1; j <= numFaces; j++) {
+            addNewFace = true;
+            for (int j : map.get(lines[i].getBegin())) {
                 if (equals(tempFace, faces[j])) {
-                    flag1 = 1;
+                    addNewFace = false;
                     break;
                 }
             }
-
-            if (((flag1 == 0) && (tempFace.getNumPoints() != 0)) && (calculateArea(tempFace) > 0.0)) {
-                addFace(tempFace);
+            if (addNewFace && tempFace.getNumPoints() != 0 && calculateArea(tempFace) > 0.0) {
+                addFace(tempFace, map);
             }
+
+            // No need for InterruptedException here since this algorithm is now way too
+            // fast even for Ryujin.
         }
 
         System.out.print("全面数　＝　");
@@ -583,7 +587,8 @@ public class PointSet implements Serializable {
         return lineInFaceBorder_max[lineId];
     }
 
-    private boolean equals(Face m, Face n) { //Returns 1 if they are the same, 0 if they are different
+    /** Determines if two Faces are identical, in the way that their points match index by index. */
+    private boolean equals(Face m, Face n) {
         if (m.getNumPoints() != n.getNumPoints()) {
             return false;
         }
@@ -595,7 +600,6 @@ public class PointSet implements Serializable {
         }
 
         return true;
-
     }
 
     //Returns 1 if the boundary of Face [faceId] contains Point [pointId], 0 if pointId does not.
@@ -626,11 +630,16 @@ public class PointSet implements Serializable {
 
     private void Face_adjacent_create() throws InterruptedException {
         System.out.println("面となり作成　開始");
+        QuadTree qt = new QuadTree(new PointSetFaceAdapter(this));
         for (int im = 1; im <= numFaces - 1; im++) {
             for (int in = im + 1; in <= numFaces; in++) {
                 faceAdjacent.set(im, in, 0);
+            }
+            for (int in : qt.getPotentialCollision(im - 1)) { // qt is 0-based
+                in++; // qt is 0-based
                 int ima, imb, ina, inb;
-                for (int iim = 1; iim <= faces[im].getNumPoints(); iim++) {
+                boolean found = false;
+                for (int iim = 1; iim <= faces[im].getNumPoints() && !found; iim++) {
                     ima = faces[im].getPointId(iim);
                     if (iim == faces[im].getNumPoints()) {
                         imb = faces[im].getPointId(1);
@@ -650,6 +659,8 @@ public class PointSet implements Serializable {
                         if (((ima == ina) && (imb == inb)) || ((ima == inb) && (imb == ina))) {
                             int ib = line_search(ima, imb);
                             faceAdjacent.set(im, in, ib);
+                            found = true;
+                            break;
                         }
                     }
                 }
@@ -682,12 +693,14 @@ public class PointSet implements Serializable {
         System.gc();
     }
 
-    private void addFace(Face tempFace) {
+    private void addFace(Face tempFace, ListArray<Integer> map) {
         numFaces = numFaces + 1;
 
         faces[numFaces].reset();
         for (int i = 1; i <= tempFace.getNumPoints(); i++) {
-            faces[numFaces].addPointId(tempFace.getPointId(i));
+            int id = tempFace.getPointId(i);
+            faces[numFaces].addPointId(id);
+            map.add(id, numFaces);
         }
         faces[numFaces].setColor(tempFace.getColor());
     }
