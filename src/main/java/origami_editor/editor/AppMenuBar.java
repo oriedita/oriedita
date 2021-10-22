@@ -117,7 +117,7 @@ public class AppMenuBar extends JMenuBar {
             app.saveAsFile();
         });
         exportButton.addActionListener(e -> {
-            if (app.mouseMode != MouseMode.OPERATION_FRAME_CREATE_61) {
+            if (app.canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) {
                 app.mainCreasePatternWorker.setDrawingStage(0);
             }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
             app.mouseDraggedValid = false;

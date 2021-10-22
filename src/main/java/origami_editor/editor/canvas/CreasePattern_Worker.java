@@ -466,7 +466,7 @@ public class CreasePattern_Worker {
         }
 
         //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
-        if (app.mouseMode == MouseMode.OPERATION_FRAME_CREATE_61 && lineStep.size() == 4) {
+        if (app.canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && lineStep.size() == 4) {
             Point p1 = new Point();
             p1.set(camera.TV2object(operationFrame_p1));
             Point p2 = new Point();
@@ -484,7 +484,7 @@ public class CreasePattern_Worker {
 
         //線分入力時の一時的なs_step線分を描く　
 
-        if ((app.mouseMode != MouseMode.OPERATION_FRAME_CREATE_61) || (lineStep.size() == 4)) {
+        if ((app.canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) || (lineStep.size() == 4)) {
             for (LineSegment s : lineStep) {
                 DrawingUtil.drawLineStep(g, s, camera, lineWidth, gridInputAssist);
             }

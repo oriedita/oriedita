@@ -84,7 +84,7 @@ public class BottomPanel extends JPanel {
         flipButton.addActionListener(e -> {
             foldedFigureModel.advanceState();
 
-            if ((app.mouseMode == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (app.OZ.ip4 == FoldedFigure.State.BOTH_2)) {
+            if ((app.canvasModel.getMouseMode() == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (app.OZ.ip4 == FoldedFigure.State.BOTH_2)) {
                 foldedFigureModel.setState(FoldedFigure.State.FRONT_0);
             }//Fold-up forecast map Added to avoid the mode that can not be moved when moving
         });

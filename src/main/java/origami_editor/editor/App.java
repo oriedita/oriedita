@@ -60,7 +60,6 @@ public class App {
     public FoldedFigure OZ;    //Current Folded figure
     public LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
     public BulletinBoard bulletinBoard = new BulletinBoard();
-    public MouseMode mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;//Defines the response to mouse movements. If it is 1, the line segment input mode. If it is 2, adjust the development view (move). If it is 101, operate the folded figure.
     // ------------------------------------------------------------------------
     public Point point_of_referencePlane_old = new Point(); //ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
@@ -270,8 +269,6 @@ public class App {
             if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
                 CanvasModel canvasModel = (CanvasModel) e.getSource();
                 System.out.println("mouseMode = " + canvasModel.getMouseMode().toReadableString());
-
-                mouseMode = canvasModel.getMouseMode();
             }
         });
 
@@ -793,7 +790,7 @@ public class App {
 
         if (exportFile.getName().endsWith(".png") || exportFile.getName().endsWith(".jpg") || exportFile.getName().endsWith(".jpeg") || exportFile.getName().endsWith(".svg")) {
             flg61 = false;
-            if ((mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (mainCreasePatternWorker.getDrawingStage() == 4)) {
+            if ((canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61) && (mainCreasePatternWorker.getDrawingStage() == 4)) {
                 flg61 = true;
                 mainCreasePatternWorker.setDrawingStage(0);
             }

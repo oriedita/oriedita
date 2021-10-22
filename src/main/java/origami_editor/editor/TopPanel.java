@@ -176,7 +176,7 @@ public class TopPanel {
 
 
 //枠設定時の背景を枠内のみ残してトリム 20181204
-            if ((app.mouseMode == MouseMode.OPERATION_FRAME_CREATE_61) && (app.mainCreasePatternWorker.getDrawingStage() == 4)) {//枠線が表示されている状態
+            if ((app.canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61) && (app.mainCreasePatternWorker.getDrawingStage() == 4)) {//枠線が表示されている状態
                 int xmin = (int) app.mainCreasePatternWorker.operationFrameBox.getXMin();
                 int xmax = (int) app.mainCreasePatternWorker.operationFrameBox.getXMax();
                 int ymin = (int) app.mainCreasePatternWorker.operationFrameBox.getYMin();
