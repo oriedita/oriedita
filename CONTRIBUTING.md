@@ -14,9 +14,6 @@ After compiling and packaging the jar is placed in the `target` directory, doubl
 javaw -jar ./target/origami-editor-0.0.6-SNAPSHOT.jar
 ```
 
-
-
-
 ## (Technical) Changes made
 
 ### Translations

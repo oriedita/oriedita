@@ -14,13 +14,22 @@ Origami Editor can simulate folding a crease pattern and show if a crease patter
 
 After downloading the latest version you can use the installer to install the software or run the jar using Java (at least version 8).
 
-You should be presented by the main interface of Origami Editor.
+You should be presented with the main interface of Origami Editor.
 
 ![](https://i.imgur.com/EGnaeOx.png)
 
 Use the mouse to draw lines on the crease pattern, using the ![MVEA](https://i.imgur.com/4vm5CND.png) buttons to change the direction of the fold line, and use the ![Fold](https://i.imgur.com/jxswOXM.png) button to try and fold the crease pattern.
 
 Clicking on buttons will update the help box with a help text for that button.
+
+### Saving
+
+<dl>
+<dt>.ori</dt>
+<dd>You can save files using the Origami Editor file format .ori, this saves the creasepattern, customized colors and the camera position. This format is recommended when developing a new crease pattern as loading it brings you back to the same state as you left it.</dd>
+<dt>.cp</dt>
+<dd>You can also use the .cp format to save files, this file format only saves creases (so no circles or state). But this format is more lightweight and portable and should be used to share a crease pattern with someone else. This format can also be opened in other origami crease pattern software.</dd>
+</dl>
 
 ## Advanced usage
 
