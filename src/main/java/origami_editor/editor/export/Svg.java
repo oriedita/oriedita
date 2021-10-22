@@ -2,11 +2,10 @@ package origami_editor.editor.export;
 
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.PointSet;
-import origami.crease_pattern.element.LineColor;
-import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.*;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
+import origami.folding.element.Face;
 import origami.folding.element.SubFace;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.folded_figure.FoldedFigure;
@@ -65,11 +64,13 @@ public class Svg {
                 im = nbox.getValue(i_nbox);
             }
 
+            Face face = otta_Men_zu.getFace(im);
+
             StringBuilder text;//文字列処理用のクラスのインスタンス化
 
             text = new StringBuilder("M ");
-            t_ob.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, 1)));
-            t_ob.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, 1)));
+            Point_p point = otta_Men_zu.getPoint(face.getPointId(1));
+            t_ob.set(point);
             t_tv.set(camera.object2TV(t_ob));
             BigDecimal b_t_tv_x = new BigDecimal(String.valueOf(t_tv.getX()));
             BigDecimal b_t_tv_y = new BigDecimal(String.valueOf(t_tv.getY()));
@@ -77,10 +78,9 @@ public class Svg {
             text.append(b_t_tv_x.setScale(2, RoundingMode.HALF_UP).doubleValue()).append(" ").append(b_t_tv_y.setScale(2, RoundingMode.HALF_UP).doubleValue()).append(" ");
 
 
-            for (int i = 2; i <= otta_Men_zu.getPointsCount(im); i++) {
+            for (int i = 2; i <= face.getNumPoints(); i++) {
                 text.append("L ");
-                t_ob.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, i)));
-                t_ob.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, i)));
+                t_ob.set(otta_Men_zu.getPoint(face.getPointId(i)));
                 t_tv.set(camera.object2TV(t_ob));
                 BigDecimal b_t_tv_x_i = new BigDecimal(String.valueOf(t_tv.getX()));
                 BigDecimal b_t_tv_y_i = new BigDecimal(String.valueOf(t_tv.getY()));
@@ -178,24 +178,24 @@ public class Svg {
 
                 //折り上がり図を描くときのSubFaceの色を決めるのはここまで
 
+                Face face = subFace_figure.getFace(im);
+
                 //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求める
-                for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
-                    t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, i)));
-                    t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, i)));
+                for (int i = 1; i <= face.getNumPoints() - 1; i++) {
+                    t0.set(subFace_figure.getPoint(face.getPointId(i)));
                     t1.set(camera.object2TV(t0));
                     x[i] = (int) t1.getX();
                     y[i] = (int) t1.getY();
                 }
 
-                t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
-                t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
+                t0.set(subFace_figure.getPoint(face.getPointId(face.getNumPoints())));
                 t1.set(camera.object2TV(t0));
                 x[0] = (int) t1.getX();
                 y[0] = (int) t1.getY();
                 //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求めるのはここまで
 
                 str_zahyou = new StringBuilder(x[0] + "," + y[0]);
-                for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
+                for (int i = 1; i <= face.getNumPoints() - 1; i++) {
                     str_zahyou.append(" ").append(x[i]).append(",").append(y[i]);
 
                 }
@@ -213,14 +213,16 @@ public class Svg {
 
         str_stroke = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getLineColor());
 
-        for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
+        for (Line line : subFace_figure.iterLines()) {
+            Point begin = subFace_figure.getPoint(line.getBegin());
+            Point end = subFace_figure.getPoint(line.getEnd());
             int faceId_min, faceId_max; //棒の両側のSubFaceの番号の小さいほうがMid_min,　大きいほうがMid_max
             int faceOrderMin, faceOrderMax;//PC画面に表示したときSubFace(faceId_min) で見える面の番号がMen_jyunban_min、SubFace(faceId_max) で見える面の番号がMen_jyunban_max
             boolean drawing_flg;
 
             drawing_flg = false;
-            faceId_min = subFace_figure.lineInFaceBorder_min_lookup(ib);//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
-            faceId_max = subFace_figure.lineInFaceBorder_max_lookup(ib);
+            faceId_min = line.getLineInFaceBorder_min();//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
+            faceId_max = line.getLineInFaceBorder_max();
 
             if (s0[faceId_min].getFaceIdCount() == 0) {
                 drawing_flg = true;
@@ -245,7 +247,7 @@ public class Svg {
             }
 
             if (drawing_flg) {//棒を描く。
-                s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
+                s_ob.set(begin.getX(), begin.getY(), end.getX(), end.getY());
                 s_tv.set(camera.object2TV(s_ob));
 
                 a.set(s_tv.getA());

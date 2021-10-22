@@ -3,6 +3,7 @@ package origami.crease_pattern.worker;
 import origami.crease_pattern.element.*;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
+import origami.folding.element.Face;
 import origami.folding.util.EquivalenceCondition;
 import origami_editor.editor.Colors;
 import origami_editor.editor.databinding.ApplicationModel;
@@ -130,7 +131,8 @@ public class FoldedFigure_Worker {
         System.out.println("各Smenに含まれる面を記録するため、各Smenの内部点を登録");
         Point[] subFace_insidePoint = new Point[SubFaceTotal + 1];  //<<<<<<<<<<<<<<<<<<<<<<<<<<<オブジェクトの配列を動的に指定
         for (int i = 1; i <= SubFaceTotal; i++) {
-            subFace_insidePoint[i] = SubFace_figure.insidePoint_surface(i);
+            Face face = SubFace_figure.getFace(i);
+            subFace_insidePoint[i] = SubFace_figure.insidePoint_surface(face);
         }
 
         System.out.println("各Smenに含まれる面を記録する");
@@ -143,7 +145,8 @@ public class FoldedFigure_Worker {
             int s0addFaceTotal = 0;
 
             for (int j = 1; j <= faceTotal; j++) {
-                if (otta_Face_figure.simple_inside(subFace_insidePoint[i], j) == Polygon.Intersection.INSIDE) {
+                Face face = otta_Face_figure.getFace(j);
+                if (otta_Face_figure.simple_inside(subFace_insidePoint[i], face) == Polygon.Intersection.INSIDE) {
                     s0addFaceId[++s0addFaceTotal] = j;
                 }
             }
@@ -178,8 +181,9 @@ public class FoldedFigure_Worker {
         int faceId_min, faceId_max;
         for (int ib = 1; ib <= orite.getNumLines(); ib++) {
             Line line = otta_face_figure.getLine(ib);
-            faceId_min = orite.lineInFaceBorder_min_request(ib);
-            faceId_max = orite.lineInFaceBorder_max_request(ib);
+            Line oline = orite.pointSet.getLine(ib);
+            faceId_min = oline.getLineInFaceBorder_min();
+            faceId_max = oline.getLineInFaceBorder_max();
             if (faceId_min != faceId_max) {//In the developed view, there are faces on both sides of the rod ib.
                 if (line.getColor() == LineColor.RED_1) {//Red line means mountain fold
                     if (orite.getIFacePosition(faceId_min) % 2 == 1) {//The surface Mid_min has the same orientation as the reference surface (the surface faces up)
@@ -214,15 +218,18 @@ public class FoldedFigure_Worker {
         //棒ibの一部と重なる位置に有る面imは面im1と面im2に上下方向で挟まれることはない。このことから
         //gj[im1][im]=gj[im2][im]という等価条件が成り立つ。
         for (int ib = 1; ib <= orite.getNumLines(); ib++) {
-            faceId_min = orite.lineInFaceBorder_min_request(ib);
-            faceId_max = orite.lineInFaceBorder_max_request(ib);
+            Line line = otta_face_figure.getLine(ib);
+            Line oline = orite.pointSet.getLine(ib);
+            faceId_min = oline.getLineInFaceBorder_min();
+            faceId_max = oline.getLineInFaceBorder_max();
             if (faceId_min != faceId_max) {//展開図において、棒ibの両脇に面がある
                 for (int im = 1; im <= hierarchyList.getFacesTotal(); im++) {
                     if ((im != faceId_min) && (im != faceId_max)) {
-                        if (otta_face_figure.simple_convex_inside(ib, im)) {
+                        Face face = otta_face_figure.getFace(im);
+                        if (otta_face_figure.simple_convex_inside(line, face)) {
                             //下の２つのifは暫定的な処理。あとで置き換え予定
-                            if (otta_face_figure.convex_inside(0.5, ib, im)) {
-                                if (otta_face_figure.convex_inside(-0.5, ib, im)) {
+                            if (otta_face_figure.convex_inside(0.5, line, face)) {
+                                if (otta_face_figure.convex_inside(-0.5, line, face)) {
                                     hierarchyList.addEquivalenceCondition(im, faceId_min, im, faceId_max);
                                 }
                             }
@@ -244,19 +251,23 @@ public class FoldedFigure_Worker {
         ExecutorService service = Executors.newCachedThreadPool();
 
         for (int ib = 1; ib <= orite.getNumLines() - 1; ib++) {
+            final Line line = orite.pointSet.getLine(ib);
+            final Line off_line = otta_face_figure.getLine(ib);
             final int ibf = ib;
             final QuadTree qtf = qt;
             service.execute(() -> {
                 for (int jb : qtf.getPotentialCollision(ibf - 1)) { // qt is 0-based
                     int jbf = jb + 1; // qt is 0-based
+                    final Line lineJ = orite.pointSet.getLine(jbf);
+                    final Line off_lineJ = otta_face_figure.getLine(jbf);
                     int mi1, mi2, mj1, mj2;
 
-                    if (otta_face_figure.parallel_overlap(ibf, jbf)) {
-                        mi1 = orite.lineInFaceBorder_min_request(ibf);
-                        mi2 = orite.lineInFaceBorder_max_request(ibf);
+                    if (otta_face_figure.parallel_overlap(off_line, off_lineJ)) {
+                        mi1 = line.getLineInFaceBorder_min();
+                        mi2 = line.getLineInFaceBorder_max();
                         if (mi1 != mi2) {
-                            mj1 = orite.lineInFaceBorder_min_request(jbf);
-                            mj2 = orite.lineInFaceBorder_max_request(jbf);
+                            mj1 = lineJ.getLineInFaceBorder_min();
+                            mj2 = lineJ.getLineInFaceBorder_max();
                             if (mj1 != mj2) {
                                 if (mi1 * mi2 * mj1 * mj2 != 0) {
                                     if (exist_identical_subFace(mi1, mi2, mj1, mj2)) {
@@ -530,21 +541,19 @@ public class FoldedFigure_Worker {
             g.setColor(new Color(F_color.getRed(), F_color.getGreen(), F_color.getBlue(), transparency_toukado));
 
             //Draw a face
-            for (int im = 1; im <= otta_Face_figure.getNumFaces(); im++) {
-                for (int i = 1; i <= otta_Face_figure.getPointsCount(im) - 1; i++) {
-                    t0.setX(otta_Face_figure.getPointX(otta_Face_figure.getPointId(im, i)));
-                    t0.setY(otta_Face_figure.getPointY(otta_Face_figure.getPointId(im, i)));
+            for (Face face : otta_Face_figure.iterFaces()) {
+                for (int i = 1; i <= face.getNumPoints() - 1; i++) {
+                    t0.set(otta_Face_figure.getPoint(face.getPointId(i)));
                     t1.set(camera.object2TV(t0));
                     x[i] = gx(t1.getX());
                     y[i] = gy(t1.getY());
                 }
 
-                t0.setX(otta_Face_figure.getPointX(otta_Face_figure.getPointId(im, otta_Face_figure.getPointsCount(im))));
-                t0.setY(otta_Face_figure.getPointY(otta_Face_figure.getPointId(im, otta_Face_figure.getPointsCount(im))));
+                t0.set(otta_Face_figure.getPoint(face.getPointId(face.getNumPoints())));
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getX());
                 y[0] = gy(t1.getY());
-                g.fillPolygon(x, y, otta_Face_figure.getPointsCount(im));
+                g.fillPolygon(x, y, face.getNumPoints());
             }
 
             //Preparing to draw a line
@@ -572,6 +581,7 @@ public class FoldedFigure_Worker {
             int col_kosa;
 
             for (int im = 1; im <= subFace_figure.getNumFaces(); im++) {
+                Face face = subFace_figure.getFace(im);
                 col_kosa = colmax - col_hiku * (s0[im].getFaceIdCount());
 
                 if (col_kosa > 255) {
@@ -583,20 +593,18 @@ public class FoldedFigure_Worker {
                 }
                 g.setColor(Colors.get(new Color(col_kosa, col_kosa, col_kosa)));
 
-                for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
-                    t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, i)));
-                    t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, i)));
+                for (int i = 1; i <= face.getNumPoints() - 1; i++) {
+                    t0.set(subFace_figure.getPoint(face.getPointId(i)));
                     t1.set(camera.object2TV(t0));
                     x[i] = gx(t1.getX());
                     y[i] = gy(t1.getY());
                 }
 
-                t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
-                t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
+                t0.set(subFace_figure.getPoint(face.getPointId(face.getNumPoints())));
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getX());
                 y[0] = gy(t1.getY());
-                g.fillPolygon(x, y, subFace_figure.getPointsCount(im));
+                g.fillPolygon(x, y, face.getNumPoints());
             }
 
             //Prepare the line
@@ -613,8 +621,8 @@ public class FoldedFigure_Worker {
             }
 
             //Draw a line
-            for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
-                s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
+            for (Line line : subFace_figure.iterLines()) {
+                s_ob.set(subFace_figure.getPoint(line.getBegin()), subFace_figure.getPoint(line.getEnd()));
                 s_tv.set(camera.object2TV(s_ob));
                 g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
             }
@@ -638,24 +646,24 @@ public class FoldedFigure_Worker {
         Point t0 = new Point();
         Point t1 = new Point();
 
-        int[] x = new int[faces.getPointsCount(id)+1];
-        int[] y = new int[faces.getPointsCount(id)+1];
+        Face face = faces.getFace(id);
 
-        for (int i = 1; i <= faces.getPointsCount(id) - 1; i++) {
-            t0.setX(faces.getPointX(faces.getPointId(id, i)));
-            t0.setY(faces.getPointY(faces.getPointId(id, i)));
+        int[] x = new int[face.getNumPoints()+1];
+        int[] y = new int[face.getNumPoints()+1];
+
+        for (int i = 1; i <= face.getNumPoints() - 1; i++) {
+            t0.set(faces.getPoint(face.getPointId(i)));
             t1.set(transform.object2TV(t0));
             x[i] = (int)(t1.getX());
             y[i] = (int)(t1.getY());
         }
 
-        t0.setX(faces.getPointX(faces.getPointId(id, faces.getPointsCount(id))));
-        t0.setY(faces.getPointY(faces.getPointId(id, faces.getPointsCount(id))));
+        t0.set(faces.getPoint(face.getPointId(face.getNumPoints())));
         t1.set(transform.object2TV(t0));
         x[0] = (int)(t1.getX());
         y[0] = (int)(t1.getY());
 
-        g.fill(new java.awt.Polygon(x, y, faces.getPointsCount(id)));
+        g.fill(new java.awt.Polygon(x, y, face.getNumPoints()));
     }
 
 
@@ -716,25 +724,24 @@ public class FoldedFigure_Worker {
 
                 //This is the end of deciding the color of SubFace when drawing a folded figure
 
+                Face face = subFace_figure.getFace(im);
                 //Find the coordinates (on the PC display) of the vertices of the im-th SubFace polygon when drawing a fold-up diagram.
 
-                for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
-                    t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, i)));
-                    t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, i)));
+                for (int i = 1; i <= face.getNumPoints() - 1; i++) {
+                    t0.set(subFace_figure.getPoint(face.getPointId(i)));
                     t1.set(camera.object2TV(t0));
                     x[i] = gx(t1.getX());
                     y[i] = gy(t1.getY());
                 }
 
-                t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
-                t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
+                t0.set(subFace_figure.getPoint(face.getPointId(face.getNumPoints())));
                 t1.set(camera.object2TV(t0));
                 x[0] = gx(t1.getX());
                 y[0] = gy(t1.getY());
 
                 //This is the end of finding the coordinates (on the PC display) of the vertices of the im-th SubFace polygon when drawing a fold-up diagram.
 
-                g2.fill(new java.awt.Polygon(x, y, subFace_figure.getPointsCount(im)));
+                g2.fill(new java.awt.Polygon(x, y, face.getNumPoints()));
             }
         }
         // Draw a surface so far
@@ -742,26 +749,31 @@ public class FoldedFigure_Worker {
 
         //Add a shadow  ------------------------------------------------------------------------------------
         if (displayShadows) {
-            for (int lineId = 1; lineId <= subFace_figure.getNumLines(); lineId++) {
-                int im = line_no_bangou_kara_kagenoaru_subFace_no_bangou_wo_motomeru(lineId, subFace_figure, flipped);//影をつけるSubFaceのid
+            for (Line line : subFace_figure.iterLines()) {
+                Point begin = subFace_figure.getPoint(line.getBegin());
+                Point end = subFace_figure.getPoint(line.getEnd());
+                int im = line_no_bangou_kara_kagenoaru_subFace_no_bangou_wo_motomeru(line, flipped);//影をつけるSubFaceのid
                 if (im != 0) {//影を描く。
+                    Face face = subFace_figure.getFace(im);
                     //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求める
 
                     //棒の座標   subFace_figure.getmaex(lineId),subFace_figure.getmaey(lineId)   -    subFace_figure.getatox(lineId) , subFace_figure.getatoy(lineId)
-                    Point b_begin = new Point(subFace_figure.getBeginX(lineId), subFace_figure.getBeginY(lineId));
-                    Point b_end = new Point(subFace_figure.getEndX(lineId), subFace_figure.getEndY(lineId));
+
+                    Point b_begin = new Point(begin.getX(), begin.getY());
+
+                    Point b_end = new Point(end.getX(), end.getY());
                     double b_length = b_begin.distance(b_end);
 
                     //棒と直交するベクトル
-                    double o_btx = -(subFace_figure.getBeginY(lineId) - subFace_figure.getEndY(lineId)) * 10.0 / b_length;//棒と直交するxベクトル
-                    double o_bty = (subFace_figure.getBeginX(lineId) - subFace_figure.getEndX(lineId)) * 10.0 / b_length;//棒と直交するyベクトル
+                    double o_btx = -(begin.getY() - end.getY()) * 10.0 / b_length;//棒と直交するxベクトル
+                    double o_bty = (begin.getX() - end.getX()) * 10.0 / b_length;//棒と直交するyベクトル
 
                     //棒の中点
                     double o_bmx, o_bmy;
                     double t_bmx, t_bmy;
 
-                    o_bmx = (subFace_figure.getBeginX(lineId) + subFace_figure.getEndX(lineId)) / 2.0;
-                    o_bmy = (subFace_figure.getBeginY(lineId) + subFace_figure.getEndY(lineId)) / 2.0;
+                    o_bmx = (begin.getX() + end.getX()) / 2.0;
+                    o_bmy = (begin.getY() + end.getY()) / 2.0;
 
                     t0.setX(o_bmx);
                     t0.setY(o_bmy);
@@ -777,7 +789,7 @@ public class FoldedFigure_Worker {
                     o_bmtx = o_bmx + o_btx;
                     o_bmty = o_bmy + o_bty;
 
-                    if (subFace_figure.inside(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), im) != Polygon.Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
+                    if (subFace_figure.inside(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), face) != Polygon.Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
                         t0.setX(o_bmtx);
                         t0.setY(o_bmty);
                         t1.set(camera.object2TV(t0));
@@ -787,8 +799,8 @@ public class FoldedFigure_Worker {
                         //影の長方形
 
                         // ---------- [0] ----------------
-                        t0.setX(subFace_figure.getBeginX(lineId));
-                        t0.setY(subFace_figure.getBeginY(lineId));
+                        t0.setX(begin.getX());
+                        t0.setY(begin.getY());
                         t1.set(camera.object2TV(t0));
                         xd[0] = t1.getX();
                         yd[0] = t1.getY();
@@ -796,8 +808,8 @@ public class FoldedFigure_Worker {
                         y[0] = (int) yd[0];
 
                         // ---------- [1] ----------------
-                        t0.setX(subFace_figure.getBeginX(lineId) + o_btx);
-                        t0.setY(subFace_figure.getBeginY(lineId) + o_bty);
+                        t0.setX(begin.getX() + o_btx);
+                        t0.setY(begin.getY() + o_bty);
                         t1.set(camera.object2TV(t0));
                         xd[1] = t1.getX();
                         yd[1] = t1.getY();
@@ -805,8 +817,8 @@ public class FoldedFigure_Worker {
                         y[1] = (int) yd[1];
 
                         // ---------- [2] ----------------
-                        t0.setX(subFace_figure.getEndX(lineId) + o_btx);
-                        t0.setY(subFace_figure.getEndY(lineId) + o_bty);
+                        t0.setX(end.getX() + o_btx);
+                        t0.setY(end.getY() + o_bty);
                         t1.set(camera.object2TV(t0));
                         xd[2] = t1.getX();
                         yd[2] = t1.getY();
@@ -814,8 +826,7 @@ public class FoldedFigure_Worker {
                         y[2] = (int) yd[2];
 
                         // ---------- [3] ----------------
-                        t0.setX(subFace_figure.getEndX(lineId));
-                        t0.setY(subFace_figure.getEndY(lineId));
+                        t0.set(end);
                         t1.set(camera.object2TV(t0));
                         xd[3] = t1.getX();
                         yd[3] = t1.getY();
@@ -836,7 +847,7 @@ public class FoldedFigure_Worker {
                     o_bmtx = o_bmx + o_btx;
                     o_bmty = o_bmy + o_bty;
 
-                    if (subFace_figure.inside(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), im) != Polygon.Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
+                    if (subFace_figure.inside(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), face) != Polygon.Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
 
                         t0.setX(o_bmtx);
                         t0.setY(o_bmty);
@@ -845,8 +856,7 @@ public class FoldedFigure_Worker {
                         //影の長方形
 
                         // ---------- [0] ----------------
-                        t0.setX(subFace_figure.getBeginX(lineId));
-                        t0.setY(subFace_figure.getBeginY(lineId));
+                        t0.set(begin);
                         t1.set(camera.object2TV(t0));
                         xd[0] = t1.getX();
                         yd[0] = t1.getY();
@@ -854,8 +864,8 @@ public class FoldedFigure_Worker {
                         y[0] = (int) yd[0];
 
                         // ---------- [1] ----------------
-                        t0.setX(subFace_figure.getBeginX(lineId) + o_btx);
-                        t0.setY(subFace_figure.getBeginY(lineId) + o_bty);
+                        t0.setX(begin.getX() + o_btx);
+                        t0.setY(begin.getY() + o_bty);
                         t1.set(camera.object2TV(t0));
                         xd[1] = t1.getX();
                         yd[1] = t1.getY();
@@ -863,8 +873,8 @@ public class FoldedFigure_Worker {
                         y[1] = (int) yd[1];
 
                         // ---------- [2] ----------------
-                        t0.setX(subFace_figure.getEndX(lineId) + o_btx);
-                        t0.setY(subFace_figure.getEndY(lineId) + o_bty);
+                        t0.setX(end.getX() + o_btx);
+                        t0.setY(end.getY() + o_bty);
                         t1.set(camera.object2TV(t0));
                         xd[2] = t1.getX();
                         yd[2] = t1.getY();
@@ -872,8 +882,8 @@ public class FoldedFigure_Worker {
                         y[2] = (int) yd[2];
 
                         // ---------- [3] ----------------
-                        t0.setX(subFace_figure.getEndX(lineId));
-                        t0.setY(subFace_figure.getEndY(lineId));
+                        t0.setX(end.getX());
+                        t0.setY(end.getY());
                         t1.set(camera.object2TV(t0));
                         xd[3] = t1.getX();
                         yd[3] = t1.getY();
@@ -904,15 +914,14 @@ public class FoldedFigure_Worker {
 
         g.setColor(L_color);//g.setColor(Colors.get(Color.black));
 
-        for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
-
+        for (Line line : subFace_figure.iterLines()) {
             int Mid_min, Mid_max; //棒の両側のSubFaceの番号の小さいほうがMid_min,　大きいほうがMid_max
             int faceOrderMin, faceOrderMax;//PC画面に表示したときSubFace(Mid_min) で見える面の番号がMen_jyunban_min、SubFace(Mid_max) で見える面の番号がMen_jyunban_max
             boolean drawing_flag;
 
             drawing_flag = false;
-            Mid_min = subFace_figure.lineInFaceBorder_min_lookup(ib);//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
-            Mid_max = subFace_figure.lineInFaceBorder_max_lookup(ib);
+            Mid_min = line.getLineInFaceBorder_min();//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
+            Mid_max = line.getLineInFaceBorder_max();
 
             if (s0[Mid_min].getFaceIdCount() == 0) {
                 drawing_flag = true;
@@ -937,7 +946,9 @@ public class FoldedFigure_Worker {
             }
 
             if (drawing_flag) {//棒を描く。
-                s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
+                Point begin = subFace_figure.getPoint(line.getBegin());
+                Point end = subFace_figure.getPoint(line.getEnd());
+                s_ob.set(begin.getX(), begin.getY(), end.getX(), end.getY());
                 s_tv.set(camera.object2TV(s_ob));
                 g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //直線
             }
@@ -956,14 +967,14 @@ public class FoldedFigure_Worker {
         }
     }
 
-    public int line_no_bangou_kara_kagenoaru_subFace_no_bangou_wo_motomeru(int ib, PointSet subFace_figure, boolean flipped) {//棒の番号から、その棒の影が発生するSubFace の番号を求める。影が発生しない場合は0を返す。
+    public int line_no_bangou_kara_kagenoaru_subFace_no_bangou_wo_motomeru(Line line, boolean flipped) {//棒の番号から、その棒の影が発生するSubFace の番号を求める。影が発生しない場合は0を返す。
         int i_return;
 
         int faceId_min, faceId_max; //棒の両側のSubFaceの番号の小さいほうがMid_min,　大きいほうがMid_max
         int faceOrderMin, faceordermax;//PC画面に表示したときSubFace(faceId_min) で見える面の、そのSubFaceでの重なり順がMen_jyunban_min、SubFace(faceId_max) で見える面のそのSubFaceでの重なり順がMen_jyunban_max
 
-        faceId_min = subFace_figure.lineInFaceBorder_min_lookup(ib);//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
-        faceId_max = subFace_figure.lineInFaceBorder_max_lookup(ib);
+        faceId_min = line.getLineInFaceBorder_min();//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
+        faceId_max = line.getLineInFaceBorder_max();
 
         if (s0[faceId_min].getFaceIdCount() == 0) {
             return 0;

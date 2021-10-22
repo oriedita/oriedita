@@ -3,6 +3,7 @@ package origami.crease_pattern.worker;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.element.*;
 import origami.crease_pattern.element.Point;
+import origami.folding.element.Face;
 import origami_editor.editor.Colors;
 import origami_editor.editor.Save;
 import origami_editor.editor.folded_figure.FoldedFigure;
@@ -27,6 +28,7 @@ public class WireFrame_Worker {
     HistoryState history = new HistoryState();
     //Definition of variables used in VVVVVVVVVVVV oritatami and oekaki VVVVVVVVVVVVVVVVVVVVVVVVVVVV
     int[] iFacePosition;//Indicates how far a surface is from the reference surface. Enter a value such as 1, next to the reference plane, 2, next to the reference plane, and 3 next to it.
+    // Index of face in pointSet.
     int referencePlaneId;
     int[] nextFaceId;//The id of the surface (reference surface side) next to a certain surface
     int[] associatedLineId;//The id of the bar between one side and the next side (reference plane side)
@@ -82,7 +84,8 @@ public class WireFrame_Worker {
             referencePlaneId = 1;
         }
 
-        point_of_referencePlane_ob = pointSet.insidePoint_surface(referencePlaneId);
+        Face referenceFace = pointSet.getFace(referencePlaneId);
+        point_of_referencePlane_ob = pointSet.insidePoint_surface(referenceFace);
 
         return referencePlaneId;
     }
@@ -181,7 +184,8 @@ public class WireFrame_Worker {
         for (int it = 1; it <= this.pointSet.getNumPoints(); it++) {
             tnew[it].reset();
             for (int im = 1; im <= this.pointSet.getNumFaces(); im++) {
-                if (this.pointSet.pointInFaceBorder(im, it)) {//c.Ten_moti_hantei returns 1 if the boundary of Face [im] contains Point [it], 0 if it does not.
+                Face face = this.pointSet.getFace(im);
+                if (this.pointSet.pointInFaceBorder(face, it)) {//c.Ten_moti_hantei returns 1 if the boundary of Face [im] contains Point [it], 0 if it does not.
                     tnew[it].addPoint(fold_movement(it, im));
                     pointSet.setPoint(it, tnew[it].getAveragePoint());
                 }
@@ -373,20 +377,6 @@ public class WireFrame_Worker {
         pointSet.FaceOccurrence();
 
         System.out.println("線分集合->点集合：点集合内で面を発生　終了");
-    }
-
-    /**
-     * Returns the faceId with the smaller faceId of the faces containing the line lineId as the boundary (there are up to two faces). Returns 0 if there is no face containing the line as the boundary
-     */
-    public int lineInFaceBorder_min_request(int lineId) {
-        return pointSet.lineInFaceBorder_min_lookup(lineId);
-    }
-
-    /**
-     * Returns the faceId with the larger faceId among the faces containing the line lineId as the boundary (there are two faces at the maximum). Returns 0 if there is no face containing the line as the boundary
-     */
-    public int lineInFaceBorder_max_request(int lineId) {
-        return pointSet.lineInFaceBorder_max_lookup(lineId);
     }
 
     public void mDragged_selectedPoint_move_with_camera(Point ugokasu_maeno_sentaku_point, Point p0, Point p1, FoldedFigure.State ip4) {   //Move the selected point

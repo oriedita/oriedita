@@ -1,13 +1,15 @@
 package origami.folding.element;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.Point;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
- * Groups a set of points found in a PointSet
+ * Groups a set of points found in a PointSet, two faces with the same containing points are considered equal.
  *
  * @see Point
  * @see PointSet
@@ -18,6 +20,47 @@ public class Face implements Serializable {
 
     int numPoints;
     int icol;
+
+    @JsonIgnore
+    double xMax;
+    @JsonIgnore
+    double xMin;
+    @JsonIgnore
+    double yMax;
+    @JsonIgnore
+    double yMin;
+
+    public double getxMax() {
+        return xMax;
+    }
+
+    public void setxMax(double xMax) {
+        this.xMax = xMax;
+    }
+
+    public double getxMin() {
+        return xMin;
+    }
+
+    public void setxMin(double xMin) {
+        this.xMin = xMin;
+    }
+
+    public double getyMax() {
+        return yMax;
+    }
+
+    public void setyMax(double yMax) {
+        this.yMax = yMax;
+    }
+
+    public double getyMin() {
+        return yMin;
+    }
+
+    public void setyMin(double yMin) {
+        this.yMin = yMin;
+    }
 
     public Face() {
         numPoints = 0;
@@ -94,5 +137,18 @@ public class Face implements Serializable {
         while (getPointId(1) != idmin) {
             replace();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Face face = (Face) o;
+        return numPoints == face.numPoints && Objects.equals(pointIdList, face.pointIdList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pointIdList, numPoints);
     }
 }

@@ -18,30 +18,8 @@ import java.util.stream.Collectors;
 public class PointSet implements Serializable {
     Map<Integer, Point_p> points;//Instantiation of points
     List<Line> lines;//Instantiation of lines, 1-indexed
-    @JsonIgnore
-    int[] lineInFaceBorder_min;
-    @JsonIgnore
-    int[] lineInFaceBorder_max;
 
     List<Face> faces; //Face instantiation, 1-indexed
-
-    @JsonIgnore
-    double[] line_x_max;
-    @JsonIgnore
-    double[] line_x_min;
-    @JsonIgnore
-    double[] line_y_max;
-    @JsonIgnore
-    double[] line_y_min;
-
-    @JsonIgnore
-    double[] face_x_max;
-    @JsonIgnore
-    double[] face_x_min;
-    @JsonIgnore
-    double[] face_y_max;
-    @JsonIgnore
-    double[] face_y_min;
 
     @JsonIgnore
     List<List<Integer>> point_linking;//point_linking [i] [j] is the number of points connected to t [i]. The number of Tem is stored in t [0].
@@ -59,6 +37,9 @@ public class PointSet implements Serializable {
     //---------------------------------------
     public void reset() {
         faceAdjacent = null;
+        points = new HashMap<>();
+        faces = new ArrayList<>();
+        lines = new ArrayList<>();
     }
 
     //---------------------------------------
@@ -77,29 +58,13 @@ public class PointSet implements Serializable {
             setPointLinking(i, 0, 0);
         }
 
-        lines = new ArrayList<>(numLines+1);
+        lines = new ArrayList<>(numLines + 1);
         lines.add(new Line());
-        lineInFaceBorder_min = new int[numLines + 1];
-        lineInFaceBorder_max = new int[numLines + 1];
-        for (int i = 0; i <= numLines; i++) {
-            lineInFaceBorder_min[i] = 0;
-            lineInFaceBorder_max[i] = 0;
-        }
 
         faces = new ArrayList<>(numFaces + 1);
         faces.add(new Face());
 
         faceAdjacent = SymmetricMatrix.create(numFaces, (int) Math.ceil(Math.log(numLines + 1) / Math.log(2)));
-
-        line_x_max = new double[numLines + 1];
-        line_x_min = new double[numLines + 1];
-        line_y_max = new double[numLines + 1];
-        line_y_min = new double[numLines + 1];
-
-        face_x_max = new double[numFaces + 1];
-        face_x_min = new double[numFaces + 1];
-        face_y_max = new double[numFaces + 1];
-        face_y_min = new double[numFaces + 1];
     }
 
     public Set<Map.Entry<Integer, Point_p>> iterPoints() {
@@ -120,15 +85,6 @@ public class PointSet implements Serializable {
         point_linking.get(i).set(j, tid);
     }
 
-    //------------------------------
-    private double getAverage_x() {
-        double x = 0.0;
-        for (int i = 1; i <= getNumPoints(); i++) {
-            x = x + getPoint(i).getX();
-        }
-        return x / ((double) getNumPoints());
-    }
-
     public void set(PointSet ts) {
         points.clear();
         for (int i = 0; i <= ts.getNumPoints(); i++) {
@@ -144,8 +100,6 @@ public class PointSet implements Serializable {
             Line line = new Line();
             line.set(ts.getLine(i));
             lines.add(line);
-            lineInFaceBorder_min[i] = ts.get_lineInFaceBorder_min(i);
-            lineInFaceBorder_max[i] = ts.get_lineInFaceBorder_max(i);
         }
         faces.clear();
         faces.add(new Face());
@@ -157,42 +111,25 @@ public class PointSet implements Serializable {
         }
     }
 
-    public void set(int i, Point tn) {
-        getPoint(i).set(tn);
-    }                                               //  <<<-------
-
-    private int get_lineInFaceBorder_min(int i) {
-        return lineInFaceBorder_min[i];
-    }
-
-    private int get_lineInFaceBorder_max(int i) {
-        return lineInFaceBorder_max[i];
+    //Determine if the point is inside a face. 0 is not inside, 1 is on the border, 2 is inside
+    public Polygon.Intersection simple_inside(Point p, Face face) {    // 0 = external, 1 = boundary, 2 = internal
+        if (p.getX() + 0.5 < face.getxMin()) {
+            return Polygon.Intersection.OUTSIDE;
+        }
+        if (p.getX() - 0.5 > face.getxMax()) {
+            return Polygon.Intersection.OUTSIDE;
+        }
+        if (p.getY() + 0.5 < face.getyMin()) {
+            return Polygon.Intersection.OUTSIDE;
+        }
+        if (p.getY() - 0.5 > face.getyMax()) {
+            return Polygon.Intersection.OUTSIDE;
+        }
+        return inside(p, face);
     }
 
     //Determine if the point is inside a face. 0 is not inside, 1 is on the border, 2 is inside
-    public Polygon.Intersection simple_inside(Point p, int n) {    // 0 = external, 1 = boundary, 2 = internal
-        if (p.getX() + 0.5 < face_x_min[n]) {
-            return Polygon.Intersection.OUTSIDE;
-        }
-        if (p.getX() - 0.5 > face_x_max[n]) {
-            return Polygon.Intersection.OUTSIDE;
-        }
-        if (p.getY() + 0.5 < face_y_min[n]) {
-            return Polygon.Intersection.OUTSIDE;
-        }
-        if (p.getY() - 0.5 > face_y_max[n]) {
-            return Polygon.Intersection.OUTSIDE;
-        }
-        return inside(p, getFace(n));
-    }
-
-    //Determine if the point is inside a face.
-    public Polygon.Intersection inside(Point p, int n) {      //0=外部、　1=境界、　2=内部
-        return inside(p, getFace(n));
-    }
-
-    //Determine if the point is inside a face. 0 is not inside, 1 is on the border, 2 is inside
-    private Polygon.Intersection inside(Point point, Face face) {      //0=外部、　1=境界、　2=内部
+    public Polygon.Intersection inside(Point point, Face face) {      //0=外部、　1=境界、　2=内部
         Polygon polygon;
         polygon = makePolygon(face);
         return polygon.inside(point);
@@ -201,10 +138,11 @@ public class PointSet implements Serializable {
     //Determine which surface the point is inside. If it is 0, it is not inside any surface, if it is negative, it is on the boundary line, and if it is a positive number, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
     public int inside(Point p) {
         for (int i = 1; i <= getNumFaces(); i++) {
-            if (inside(p, i) == Polygon.Intersection.INSIDE) {
+            Face face = getFace(i);
+            if (inside(p, face) == Polygon.Intersection.INSIDE) {
                 return i;
             }
-            if (inside(p, i) == Polygon.Intersection.BORDER) {
+            if (inside(p, face) == Polygon.Intersection.BORDER) {
                 return -i;
             }
         }
@@ -222,35 +160,32 @@ public class PointSet implements Serializable {
 
     // Even a part of the line segment s0 is inside the surface of the convex polygon (the boundary line is not regarded as the inside)
     // Returns 1 if it exists, 0 otherwise. If the surface is a concave polygon, the result will be strange, so do not use it.
-    public boolean simple_convex_inside(int ib, int im) {
+    public boolean simple_convex_inside(Line line, Face face) {
         //バグがあるようだったが，多分取り除けた
-        if (line_x_max[ib] + 0.5 < face_x_min[im]) {
+        if (line.getxMax() + 0.5 < face.getxMin()) {
             return false;
         }
-        if (line_x_min[ib] - 0.5 > face_x_max[im]) {
+        if (line.getxMin() - 0.5 > face.getxMax()) {
             return false;
         }
-        if (line_y_max[ib] + 0.5 < face_y_min[im]) {
+        if (line.getyMax() + 0.5 < face.getyMin()) {
             return false;
         }
-        if (line_y_min[ib] - 0.5 > face_y_max[im]) {
+        if (line.getyMin() - 0.5 > face.getyMax()) {
             return false;
         }
 
-        Line line = getLine(ib);
-        return convex_inside(new LineSegment(getPoint(line.getBegin()), getPoint(line.getEnd())), getFace(im));
+        return convex_inside(new LineSegment(getPoint(line.getBegin()), getPoint(line.getEnd())), face);
     }
 
     private boolean convex_inside(LineSegment s0, Face mn) {
-        Polygon tk;//=new Takakukei();
-        tk = makePolygon(mn);
+        Polygon tk = makePolygon(mn);
         return tk.convex_inside(s0);
     }
 
-    public boolean convex_inside(double d, int ib, int im) {
-        Line line = getLine(ib);
+    public boolean convex_inside(double d, Line line, Face face) {
         LineSegment sn = new LineSegment(getPoint(line.getBegin()), getPoint(line.getEnd()));
-        return convex_inside(OritaCalc.moveParallel(sn, d), getFace(im));
+        return convex_inside(OritaCalc.moveParallel(sn, d), face);
     }
 
     //Make a line a line segment
@@ -259,20 +194,15 @@ public class PointSet implements Serializable {
     }
 
     //Returns 1 if two lines are parallel and partially or wholly overlap, otherwise 0. If one point overlaps, 0 is returned.
-    public boolean parallel_overlap(int ib1, int ib2) {
+    public boolean parallel_overlap(Line line1, Line line2) {
         LineSegment.Intersection skh;
-        skh = OritaCalc.determineLineSegmentIntersection(lineToLineSegment(getLine(ib1)), lineToLineSegment(getLine(ib2)));
+        skh = OritaCalc.determineLineSegmentIntersection(lineToLineSegment(line1), lineToLineSegment(line2));
 
         return skh.isSegmentOverlapping();
     }
 
     //面の内部の点を求める
-    public Point insidePoint_surface(int n) {
-        return insidePoint_surface(getFace(n));
-    }
-
-    //面の内部の点を求める
-    private Point insidePoint_surface(Face mn) {
+    public Point insidePoint_surface(Face mn) {
         Polygon tk;
         tk = makePolygon(mn);
         return tk.insidePoint_find();
@@ -304,18 +234,6 @@ public class PointSet implements Serializable {
         return faces.size() - 1;
     }   //面の総数を得る
 
-    public int getPointId(int i, int j) {
-        return getFace(i).getPointId(j);
-    }  // void setTensuu(int i){Tensuu=i;}
-
-    public double getPointX(int i) {
-        return getPoint(i).getX();
-    }
-
-    public double getPointY(int i) {
-        return getPoint(i).getY();
-    }
-
     public Point_p getPoint(int i) {
         return points.computeIfAbsent(i, j -> new Point_p());
     }   //点を得る       <<<------------tは、スーパークラスのTenのサブクラスTen_Pクラスのオブジェクト。スーパークラスの変数にサブクラスのオブジェクトを代入可能なので、このまま使う。
@@ -331,26 +249,6 @@ public class PointSet implements Serializable {
     public Face getFace(int i) {
         return faces.get(i);
     }   //面を得る
-
-    public double getBeginX(int i) {
-        return getPoint(getLine(i).getBegin()).getX();
-    }
-
-    public double getBeginY(int i) {
-        return getPoint(getLine(i).getBegin()).getY();
-    }
-
-    public double getEndX(int i) {
-        return getPoint(getLine(i).getEnd()).getX();
-    }
-
-    public double getEndY(int i) {
-        return getPoint(getLine(i).getEnd()).getY();
-    }
-
-    public int getPointsCount(int i) {
-        return getFace(i).getNumPoints();
-    }
 
     public void setPoint(int i, Point tn) {
         points.computeIfAbsent(i, j -> new Point_p()).set(tn);
@@ -442,7 +340,7 @@ public class PointSet implements Serializable {
             tempFace = Face_request(line.getBegin(), line.getEnd());
             flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
             for (Face face : iterFaces()) {
-                if (equals(tempFace, face)) {
+                if (face.equals(tempFace)) {
                     flag1 = 1;
                     break;
                 }
@@ -452,12 +350,11 @@ public class PointSet implements Serializable {
                     (calculateArea(tempFace) > 0.0)) {
                 addFace(tempFace);
             }
-            //
 
             tempFace = Face_request(line.getEnd(), line.getBegin());
             flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
             for (Face face : iterFaces()) {
-                if (equals(tempFace, face)) {
+                if (face.equals(tempFace)) {
                     flag1 = 1;
                     break;
                 }
@@ -495,20 +392,21 @@ public class PointSet implements Serializable {
         }
 
         // Registration of both sides of line
-        for (int i = 1; i <= getNumLines(); i++) {
-            int min =  getNumFaces() + 1, max = 0;
-            int cursor = head[getLine(i).getBegin()];
-            while(cursor != 0) {
+        for (Line line : iterLines()) {
+            int min = getNumFaces() + 1, max = 0;
+            int cursor = head[line.getBegin()];
+            while (cursor != 0) {
                 int id = list.get(cursor);
-                if (lineInFaceBorder(id, i)) {
+                Face face = getFace(id);
+                if (lineInFaceBorder(face, line)) {
                     if (min > id) min = id;
                     if (max < id) max = id;
                 }
                 cursor = next.get(cursor);
             }
             if (max > 0) {
-                lineInFaceBorder_min[i] = min;
-                lineInFaceBorder_max[i] = max;
+                line.setLineInFaceBorder_min(min);
+                line.setLineInFaceBorder_max(max);
             }
             if (Thread.interrupted()) throw new InterruptedException();
         }
@@ -517,87 +415,69 @@ public class PointSet implements Serializable {
     //BouやMenの座標の最大値、最小値を求める。kantan_totu_naibu関数にのみ用いる。kantan_totu_naibu関数を使うなら折り畳み推定毎にやる必要あり。
     public void LineFaceMaxMinCoordinate() {
         //Find the maximum and minimum coordinates of Line (this may be better done immediately after Line is added than done here)
-        for (int ib = 1; ib <= getNumLines(); ib++) {
-
-            Line line = getLine(ib);
+        for (Line line : iterLines()) {
             Point_p pointBegin = getPoint(line.getBegin());
-            line_x_max[ib] = pointBegin.getX();
-            line_x_min[ib] = pointBegin.getX();
-            line_y_max[ib] = pointBegin.getY();
-            line_y_min[ib] = pointBegin.getY();
+            double line_x_max = pointBegin.getX();
+            double line_x_min = pointBegin.getX();
+            double line_y_max = pointBegin.getY();
+            double line_y_min = pointBegin.getY();
 
             Point_p pointEnd = getPoint(line.getEnd());
-            if (line_x_max[ib] < pointEnd.getX()) {
-                line_x_max[ib] = pointEnd.getX();
+            if (line_x_max < pointEnd.getX()) {
+                line_x_max = pointEnd.getX();
             }
-            if (line_x_min[ib] > pointEnd.getX()) {
-                line_x_min[ib] = pointEnd.getX();
+            if (line_x_min > pointEnd.getX()) {
+                line_x_min = pointEnd.getX();
             }
-            if (line_y_max[ib] < pointEnd.getY()) {
-                line_y_max[ib] = pointEnd.getY();
+            if (line_y_max < pointEnd.getY()) {
+                line_y_max = pointEnd.getY();
             }
-            if (line_y_min[ib] > pointEnd.getY()) {
-                line_y_min[ib] = pointEnd.getY();
+            if (line_y_min > pointEnd.getY()) {
+                line_y_min = pointEnd.getY();
             }
+
+            line.setxMax(line_x_max);
+            line.setxMin(line_x_min);
+            line.setyMax(line_y_max);
+            line.setyMin(line_y_min);
+
             faceMaxMinCoordinate();
         }
     }
 
     private void faceMaxMinCoordinate() {
         //Find the maximum and minimum of Face's coordinates
-        for (int faceId = 1; faceId <= getNumFaces(); faceId++) {
-            Face face = getFace(faceId);
+        for (Face face : iterFaces()) {
             Point_p point1 = getPoint(face.getPointId(1));
-            face_x_max[faceId] = point1.getX();
-            face_x_min[faceId] = point1.getX();
-            face_y_max[faceId] = point1.getY();
-            face_y_min[faceId] = point1.getY();
+            double face_x_max = point1.getX();
+            double face_x_min = point1.getX();
+            double face_y_max = point1.getY();
+            double face_y_min = point1.getY();
             for (int i = 2; i <= face.getNumPoints(); i++) {
                 Point_p pointI = getPoint(face.getPointId(i));
-                if (face_x_max[faceId] < pointI.getX()) {
-                    face_x_max[faceId] = pointI.getX();
+                if (face_x_max < pointI.getX()) {
+                    face_x_max = pointI.getX();
                 }
-                if (face_x_min[faceId] > pointI.getX()) {
-                    face_x_min[faceId] = pointI.getX();
+                if (face_x_min > pointI.getX()) {
+                    face_x_min = pointI.getX();
                 }
-                if (face_y_max[faceId] < pointI.getY()) {
-                    face_y_max[faceId] = pointI.getY();
+                if (face_y_max < pointI.getY()) {
+                    face_y_max = pointI.getY();
                 }
-                if (face_y_min[faceId] > pointI.getY()) {
-                    face_y_min[faceId] = pointI.getY();
+                if (face_y_min > pointI.getY()) {
+                    face_y_min = pointI.getY();
                 }
             }
+
+            face.setxMax(face_x_max);
+            face.setxMin(face_x_min);
+            face.setyMax(face_y_max);
+            face.setyMin(face_y_min);
         }
-    }
-
-    //Boundary of lines Boundary surface (two sides in yellow) Here, faceId of the proliferating branch of faceId was made.
-    public int lineInFaceBorder_min_lookup(int lineId) {
-        return lineInFaceBorder_min[lineId];
-    }
-
-    //Returns the faceId with the larger faceId of the faces containing the bar lineId as the boundary (there are up to two faces). Returns 0 if there is no face containing the line as the boundary
-    public int lineInFaceBorder_max_lookup(int lineId) {
-        return lineInFaceBorder_max[lineId];
-    }
-
-    private boolean equals(Face m, Face n) { //Returns 1 if they are the same, 0 if they are different
-        if (m.getNumPoints() != n.getNumPoints()) {
-            return false;
-        }
-
-        for (int i = 1; i <= m.getNumPoints(); i++) {
-            if (m.getPointId(i) != n.getPointId(i)) {
-                return false;
-            }
-        }
-
-        return true;
-
     }
 
     //Returns 1 if the boundary of Face [faceId] contains Point [pointId], 0 if pointId does not.
-    public boolean pointInFaceBorder(int faceId, int pointId) {
-        Face face = getFace(faceId);
+    public boolean pointInFaceBorder(Face face, int pointId) {
         for (int i = 1; i <= face.getNumPoints(); i++) {
             if (pointId == face.getPointId(i)) {
                 return true;
@@ -607,9 +487,7 @@ public class PointSet implements Serializable {
     }
 
     //Returns true if line [lineId] is included in the boundary of face [faceId], false if it is not included
-    private boolean lineInFaceBorder(int faceId, int lineId) {
-        Line line = getLine(lineId);
-        Face face = getFace(faceId);
+    private boolean lineInFaceBorder(Face face, Line line) {
         for (int i = 1; i <= face.getNumPoints() - 1; i++) {
             if ((line.getBegin() == face.getPointId(i)) && (line.getEnd() == face.getPointId(i + 1))) {
                 return true;
@@ -687,7 +565,7 @@ public class PointSet implements Serializable {
 
     private void addFace(Face tempFace) {
         Face face = new Face(tempFace);
-        
+
         faces.add(face);
     }
 
@@ -732,7 +610,7 @@ public class PointSet implements Serializable {
         int r_int = 0;
         for (Point_p entry : points.values()) {
             if (entry.getPointState()) {
-                r_int ++;
+                r_int++;
             }
         }
         return r_int;

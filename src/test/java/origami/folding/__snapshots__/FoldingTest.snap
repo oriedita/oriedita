@@ -8,55 +8,55 @@ origami.folding.FoldingTest.testFoldBirdbase=[
       "4": "3.326745181744446E-14,-282.84271247461896",
       "5": "-1.3727136093173251E-14,-117.15728752538094"
     },
-    "lines": {
-      "0": {
+    "lines": [
+      {
         "begin": 0,
         "end": 0,
         "color": "BLACK_0"
       },
-      "1": {
+      {
         "begin": 1,
         "end": 2,
         "color": "BLUE_2"
       },
-      "2": {
+      {
         "begin": 2,
         "end": 3,
         "color": "BLUE_2"
       },
-      "3": {
+      {
         "begin": 2,
         "end": 4,
         "color": "BLUE_2"
       },
-      "4": {
+      {
         "begin": 2,
         "end": 5,
         "color": "BLUE_2"
       },
-      "5": {
+      {
         "begin": 1,
         "end": 5,
         "color": "RED_1"
       },
-      "6": {
+      {
         "begin": 3,
         "end": 5,
         "color": "RED_1"
       },
-      "7": {
+      {
         "begin": 1,
         "end": 4,
         "color": "RED_1"
       },
-      "8": {
+      {
         "begin": 3,
         "end": 4,
         "color": "RED_1"
       }
-    },
-    "faces": {
-      "0": {
+    ],
+    "faces": [
+      {
         "pointIdList": [
           0,
           1,
@@ -66,7 +66,7 @@ origami.folding.FoldingTest.testFoldBirdbase=[
         "numPoints": 3,
         "icol": 0
       },
-      "1": {
+      {
         "pointIdList": [
           0,
           1,
@@ -76,7 +76,7 @@ origami.folding.FoldingTest.testFoldBirdbase=[
         "numPoints": 3,
         "icol": 0
       },
-      "2": {
+      {
         "pointIdList": [
           0,
           2,
@@ -86,7 +86,7 @@ origami.folding.FoldingTest.testFoldBirdbase=[
         "numPoints": 3,
         "icol": 0
       },
-      "3": {
+      {
         "pointIdList": [
           0,
           2,
@@ -96,7 +96,7 @@ origami.folding.FoldingTest.testFoldBirdbase=[
         "numPoints": 3,
         "icol": 0
       },
-      "4": {
+      {
         "pointIdList": [
           0,
           1,
@@ -106,6 +106,6 @@ origami.folding.FoldingTest.testFoldBirdbase=[
         "numPoints": 3,
         "icol": 0
       }
-    }
+    ]
   }
 ]
