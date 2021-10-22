@@ -634,11 +634,16 @@ public class PointSet implements Serializable {
 
     private void Face_adjacent_create() throws InterruptedException {
         System.out.println("面となり作成　開始");
+        QuadTree qt = new QuadTree(new PointSetFaceAdapter(this));
         for (int im = 1; im <= numFaces - 1; im++) {
             for (int in = im + 1; in <= numFaces; in++) {
                 faceAdjacent.set(im, in, 0);
+            }
+            for (int in : qt.getPotentialCollision(im - 1)) { // qt is 0-based
+                in++; // qt is 0-based
                 int ima, imb, ina, inb;
-                for (int iim = 1; iim <= faces[im].getNumPoints(); iim++) {
+                boolean found = false;
+                for (int iim = 1; iim <= faces[im].getNumPoints() && !found; iim++) {
                     ima = faces[im].getPointId(iim);
                     if (iim == faces[im].getNumPoints()) {
                         imb = faces[im].getPointId(1);
@@ -658,6 +663,8 @@ public class PointSet implements Serializable {
                         if (((ima == ina) && (imb == inb)) || ((ima == inb) && (imb == ina))) {
                             int ib = line_search(ima, imb);
                             faceAdjacent.set(im, in, ib);
+                            found = true;
+                            break;
                         }
                     }
                 }
