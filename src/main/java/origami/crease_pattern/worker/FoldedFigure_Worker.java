@@ -14,12 +14,12 @@ import origami.crease_pattern.element.LineSegment;
 import origami_editor.editor.canvas.DrawingUtil;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
-import origami.data.QuadTree;
+import origami.data.quadTree.QuadTree;
+import origami.data.quadTree.adapter.PointSetLineAdapter;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.tools.Camera;
-import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.PointSet;
 
 import java.awt.*;
@@ -240,7 +240,7 @@ public class FoldedFigure_Worker {
         // The surface of the bar ib and the surface of the surface jb are not aligned with i, j, i, j or j, i, j, i. If this happens,
         // Since there is a mistake in the 3rd place from the beginning, find the number of digits in this 3rd place with SubFace and advance this digit by 1.
 
-        QuadTree qt = new QuadTree(new LineSegmentSet(otta_face_figure));
+        QuadTree qt = new QuadTree(new PointSetLineAdapter(otta_face_figure));
         ExecutorService service = Executors.newCachedThreadPool();
 
         for (int ib = 1; ib <= orite.getNumLines() - 1; ib++) {

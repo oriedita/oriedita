@@ -3,7 +3,7 @@ package origami.crease_pattern;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami.data.QuadTree;
+import origami.data.quadTree.QuadTree;
 import origami_editor.editor.Save;
 
 import java.util.ArrayList;
@@ -170,7 +170,7 @@ public class LineSegmentSet {
 
                                 // We only need to add new lines to the quad tree here; the old lines (i and j
                                 // here) only gets shorter, and they can safely stay in the same node.
-                                QT.addLines(added);
+                                QT.grow(added);
                             }
                         }
 
