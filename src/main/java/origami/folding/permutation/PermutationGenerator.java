@@ -38,16 +38,16 @@ public abstract class PermutationGenerator {
     }
 
     /** Remember to reset at the end of initialization. */
-    public abstract void initialize();
+    public abstract void initialize() throws InterruptedException;
 
     /** Reset to the first valid permutation. */
-    public abstract void reset();
+    public abstract void reset() throws InterruptedException;
 
     /** Clear all temporary guides. */
     public abstract void clearTempGuide();
 
     /** Returns the lowest digit that was changed in the process. */
-    public abstract int next(int digit);
+    public abstract int next(int digit) throws InterruptedException;
 
     /** Add a constraint saying that "from" must appear before "to". */
     public abstract void addGuide(int from, int to);
