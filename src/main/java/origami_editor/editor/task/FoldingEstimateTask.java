@@ -16,12 +16,12 @@ public class FoldingEstimateTask implements Runnable {
 
         try {
             app.folding_estimated();
-        } catch (InterruptedException | FoldingException e) {
+        } catch (Exception e) {
             app.OZ.estimated_initialize();
             app.bulletinBoard.clear();
 
             System.err.println("Folding estimation got interrupted.");
-            System.err.println(e.getMessage());
+            e.printStackTrace();
         }
         app.repaintCanvas();
 

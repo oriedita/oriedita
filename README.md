@@ -2,29 +2,38 @@
 
 _This a fork of Orihime オリヒメ and not affiliated with the original version._ Orihime is an awesome tool that is used by origami designers to design new origami models. Orihime is developed by MT777 and can be downloaded from  http://mt777.html.xdomain.jp/. Undertrox developed orihimeMod, which adds some extra features to the Orihime software, this version can be downloaded from https://github.com/undertrox/orihimeMod
 
-## [Download the latest version from the Releases page.](https://github.com/qurben/origami-editor/releases)
+Origami Editor is a computer program used for drawing origami crease patterns. It comes with a wide range of tools to help you draw crease patterns.
+
+Origami Editor can simulate folding a crease pattern and show if a crease pattern is flat-foldable, and if it is, show a folded version of the crease pattern.
+
+## Usage
+
+**[Download the latest version from the Releases page.](https://github.com/qurben/origami-editor/releases)**
 
 [Download the latest development version.](https://nightly.link/qurben/origami-editor/workflows/maven/master/origami-editor-jar.zip)
 
-This project started as an effort to translate the Orihime source code to English and is based on Orihime version 3.060. After that more changes were made to improve the performance of the application.
+After downloading the latest version you can use the installer to install the software or run the jar using Java (at least version 8).
 
-One of the goals of this project is to understand the underlying algorithms used in Orihime.
+You should be presented with the main interface of Origami Editor.
 
-Translating is still a work in progress, some translations can be quite poor or in some cases completely wrong. When in doubt a logical name was used. Comments were translated using online translation services and as such can contain weirdly structured sentences.
+![](https://i.imgur.com/EGnaeOx.png)
 
-## Building & Running
+Use the mouse to draw lines on the crease pattern, using the ![MVEA](https://i.imgur.com/4vm5CND.png) buttons to change the direction of the fold line, and use the ![Fold](https://i.imgur.com/jxswOXM.png) button to try and fold the crease pattern.
 
-This version of the code requires a JDK (at least version 8) and [maven](https://maven.apache.org/) to build.
+Clicking on buttons will update the help box with a help text for that button.
 
-```bash
-mvn clean package
-```
+### Saving
 
-After compiling and packaging the jar is placed in the `target` directory, double click it or execute it with the java command.
+<dl>
+<dt>.ori</dt>
+<dd>You can save files using the Origami Editor file format .ori, this saves the creasepattern, customized colors and the camera position. This format is recommended when developing a new crease pattern as loading it brings you back to the same state as you left it.</dd>
+<dt>.cp</dt>
+<dd>You can also use the .cp format to save files, this file format only saves creases (so no circles or state). But this format is more lightweight and portable and should be used to share a crease pattern with someone else. This format can also be opened in other origami crease pattern software.</dd>
+</dl>
 
-```bash
-javaw -jar ./target/origami-editor-0.0.6-SNAPSHOT.jar
-```
+## Advanced usage
+
+This section describes advanced usage, such as custom configuration files. This should not be needed for normal usage.
 
 ## Configuration
 
@@ -45,64 +54,6 @@ Read the JavaDoc on [`javax.swing.KeyStroke.getKeyStroke(String)`](https://docs.
 ### Application state
 
 The application state is saved to `config.json` in the configuration directory. It contains information about the application and is restored when the application starts.
-
-## Terminology
-
-| Class Name | Original Name | Description |
-|---|---|---|
-| Line | Bou | A line between two points in a PointSet
-| Face | Men | A collection of connected points in a PointSet
-| Point | Ten | A point as x and y coordinates
-| LineSegment | Senbun | A line consisting of two points
-| Polygon | Takakukei | A polygon consisting of multiple points
-| Grid | Kousi | The background grid
-| StraightLine | Tyokusen | A line with `a,b,c` such that `a * x + b * y + c = 0`
-| Circle | En | A circle with x and y for position and r for radius.
-| SubFace | Smen | Stack of faces in the folded view
-| Drawing_Worker | Egaki_Syokunin | Responsible for drawing and handling user input on the canvas.
-| HierarchyList_Worker | Jyougehyou_Syokunin | Responsible for calculating the hierarchy of folded models.
-| HierarchyList | Jyougehyou | Keeps track of the height of faces in a crease pattern
-| FoldedFigure | Oriagari_Zu | Contains an estimated folded crease pattern
-| EquivalenceCondition | Touka_Jyouken | 
-| FoldLineSet | Orisensyuugou |
-| PointSet | Tensyuugou 
-| LineSegmentSet | Senbunsyuugou |
-| BulletinBoard | Keijiban | Notice at the top of the canvas
-| Drawing_Worker | Egaki_Syokunin
-| Drawing_Worker_Toolbox | Egaki_Syukunin_Dougubako
-| GuideMap | Annaisyo
-| Overlapping_Permutation_generator | Jyuufuku_Jyunretu_hasseiki
-| CreasePattern_Worker | Tenkaizu_Syokunin
-| SortingBox_int_double | Narabebako_int_double
-| Background_camera | Haikei_camera
-| StringOp | Moji_sousa
-
-## Changes made
-
-### Translations
-See also [TRANSLATIONS.md](TRANSLATIONS.md).
-
-Classnames, variable names and comments are translated to English.
-
-### Code Quality
-
-Integers with only values 1 and 0 are replaced with booleans. Integers with a specific set of values are replaced with enums. Dead code is removed.
-
-Deprecated `Thread.stop` is replaced by `Thread.interrupted` checks.
-
-Saving and history is handled by Java Serialization, giving a performance boost. (This will be replaced by a text-based, more portable format for saving).
-
-Different input modes are handled by multiple classes, making the code more readable.
-
-### Gui Improvements
-
-Left over `java.awt` components are replaced by their `javax.swing` counterparts, this reduces flickering when resizing and interacting. The Look and Feel is changed to a more modern one (FlatLaf). The Gui is build using GUI Designer in IntelliJ, this allows for easier updating and managing of the layout.
-
-The state management of the Gui is handled by Java Beans' PropertyChangeSupport to keep the Gui in sync with the application state.
-
-A menu, hotkeys and tooltips are added.
-
-Help is based on text and is draggable.
 
 ## Notes
 

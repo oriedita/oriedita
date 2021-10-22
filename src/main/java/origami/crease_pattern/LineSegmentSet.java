@@ -4,7 +4,7 @@ import origami.crease_pattern.element.Line;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami.data.QuadTree;
+import origami.data.quadTree.QuadTree;
 import origami_editor.editor.Save;
 
 import java.util.ArrayList;
@@ -94,51 +94,37 @@ public class LineSegmentSet {
     public void overlapping_line_removal(double r) {
         QuadTree QT = new QuadTree(this);
 
-        List<Boolean> removal_flg = new ArrayList<>();
+        boolean[] removal_flg = new boolean[lineSegments.size()];
         List<LineSegment> snew = new ArrayList<>();
-        for (int i = 0; i < lineSegments.size(); i++) {
-            removal_flg.add(false);
-            snew.add(new LineSegment());
-        }
 
         for (int i = 0; i < lineSegments.size(); i++) {
             LineSegment si = lineSegments.get(i);
+            Point p1 = si.getA();
+            Point p2 = si.getB();
             for (int j : QT.getPotentialCollision(i)) {
                 LineSegment sj = lineSegments.get(j);
-                if (r <= -9999.9) {
-                    if (OritaCalc.determineLineSegmentIntersection(si, sj) == LineSegment.Intersection.PARALLEL_EQUAL_31) {
-                        removal_flg.set(j, true);
-                    }
-                } else {
-                    if (OritaCalc.determineLineSegmentIntersection(si, sj, r, r) == LineSegment.Intersection.PARALLEL_EQUAL_31) {
-                        removal_flg.set(j, true);
-                    }
+                Point p3 = sj.getA();
+                Point p4 = sj.getB();
+                // previously OritaCalc.determineLineSegmentIntersection is called here,
+                // but it has too much overhead.
+                if (OritaCalc.equal(p1, p3, r) && OritaCalc.equal(p2, p4, r)
+                        || OritaCalc.equal(p1, p4, r) && OritaCalc.equal(p2, p3, r)) {
+                    removal_flg[j] = true;
                 }
             }
         }
 
-        int smax = 0;
         for (int i = 0; i < lineSegments.size(); i++) {
-            if (!removal_flg.get(i)) {
-                LineSegment si = lineSegments.get(i);
-                snew.get(smax).set(si);
-                smax = smax + 1;
+            if (!removal_flg[i]) {
+                snew.add(lineSegments.get(i));
             }
         }
-
-        if (smax > lineSegments.size()) {
-            while (smax > lineSegments.size()) {
-                lineSegments.add(new LineSegment());
-            }
-        }
-        for (int i = 0; i < lineSegments.size(); i++) {
-            LineSegment si = lineSegments.get(i);
-            si.set(snew.get(i));
-        }
+        lineSegments = snew;
     }
 
     public void overlapping_line_removal() {
-        overlapping_line_removal(-10000.0);
+        // The same epsilon value as in OritaCalc.determineLineSegmentIntersection
+        overlapping_line_removal(0.01);
     }
 
     /**
@@ -153,14 +139,14 @@ public class LineSegmentSet {
             k_flg.add(true);
         }
 
-        QuadTree QT = new QuadTree(this);
+        QuadTree qt = new QuadTree(this);
 
         while (found) {
             found = false;
             for (int i = 0; i < lineSegments.size(); i++) {
                 if (k_flg.get(i)) {
                     k_flg.set(i, false);
-                    for (int j : QT.getPotentialCollision(i)) {
+                    for (int j : qt.getPotentialCollision(i)) {
                         if (k_flg.get(j)) {
                             int added = intersect_divide(i, j); // Side effect
                             for (int is = 0; is < added; is++) {
@@ -170,13 +156,15 @@ public class LineSegmentSet {
                                 found = true;
                                 k_flg.set(i, true);
 
-                                // We only need to add new lines to the quad tree here; the old lines (i and j
-                                // here) only gets shorter, and they can safely stay in the same node.
-                                QT.addLines(added);
+                                qt.grow(added);
+                                qt.update(j);
                             }
                         }
 
                         if (Thread.interrupted()) throw new InterruptedException();
+                    }
+                    if(k_flg.get(i)) {
+                        qt.update(i);
                     }
                 }
             }
@@ -216,16 +204,16 @@ public class LineSegmentSet {
         double jymax = Math.max(sj.determineAY(), sj.determineBY());
         double jymin = Math.min(sj.determineAY(), sj.determineBY());
 
-        if (ixmax + 0.5 < jxmin) {
+        if (ixmax + 0.05 < jxmin) {
             return -1;
         }
-        if (jxmax + 0.5 < ixmin) {
+        if (jxmax + 0.05 < ixmin) {
             return -1;
         }
-        if (iymax + 0.5 < jymin) {
+        if (iymax + 0.05 < jymin) {
             return -1;
         }
-        if (jymax + 0.5 < iymin) {
+        if (jymax + 0.05 < iymin) {
             return -1;
         }
 

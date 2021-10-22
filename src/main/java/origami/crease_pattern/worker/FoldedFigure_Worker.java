@@ -14,12 +14,13 @@ import origami.folding.algorithm.SubFacePriority;
 import origami.folding.algorithm.SwappingAlgorithm;
 import origami.folding.element.SubFace;
 import origami_editor.editor.canvas.DrawingUtil;
-import origami.data.QuadTree;
+import origami.data.quadTree.QuadTree;
+import origami.data.quadTree.adapter.PointSetFaceAdapter;
+import origami.data.quadTree.adapter.PointSetLineAdapter;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.tools.Camera;
-import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.PointSet;
 
 import java.awt.*;
@@ -135,6 +136,8 @@ public class FoldedFigure_Worker {
             subFace_insidePoint[i] = SubFace_figure.insidePoint_surface(face);
         }
 
+        QuadTree qt = new QuadTree(new PointSetFaceAdapter(otta_Face_figure));
+
         System.out.println("各Smenに含まれる面を記録する");
         otta_Face_figure.LineFaceMaxMinCoordinate();//tttttttttt
 
@@ -144,7 +147,8 @@ public class FoldedFigure_Worker {
         for (int i = 1; i <= SubFaceTotal; i++) {
             int s0addFaceTotal = 0;
 
-            for (int j = 1; j <= faceTotal; j++) {
+            for (int j : qt.getPotentialContainer(subFace_insidePoint[i])) {
+                j++; // qt is 0-based
                 Face face = otta_Face_figure.getFace(j);
                 if (otta_Face_figure.simple_inside(subFace_insidePoint[i], face) == Polygon.Intersection.INSIDE) {
                     s0addFaceId[++s0addFaceTotal] = j;
@@ -247,7 +251,7 @@ public class FoldedFigure_Worker {
         // The surface of the bar ib and the surface of the surface jb are not aligned with i, j, i, j or j, i, j, i. If this happens,
         // Since there is a mistake in the 3rd place from the beginning, find the number of digits in this 3rd place with SubFace and advance this digit by 1.
 
-        QuadTree qt = new QuadTree(new LineSegmentSet(otta_face_figure));
+        QuadTree qt = new QuadTree(new PointSetLineAdapter(otta_face_figure));
         ExecutorService service = Executors.newCachedThreadPool();
 
         for (int ib = 1; ib <= orite.getNumLines() - 1; ib++) {
