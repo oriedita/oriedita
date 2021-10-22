@@ -33,27 +33,25 @@ public class QuadTree {
 
     public QuadTree(QuadTreeAdapter adapter) {
         this.adapter = adapter;
-        count = adapter.getCount();
         next = new ArrayList<>();
         map = new ArrayList<>();
 
         // Determine the root size.
         Double l = null, r = null, t = null, b = null;
-        for (int i = 0; i < count; i++) {
-            next.add(-1);
-            map.add(null);
-            QuadTreeItem item = adapter.getItem(i);
-            if (l == null || l > item.l) {
-                l = item.l;
+        for (int i = 0; i < adapter.getPointCount(); i++) {
+            Point p = adapter.getPoint(i);
+            double x = p.getX(), y = p.getY();
+            if (l == null || l > x) {
+                l = x;
             }
-            if (r == null || r < item.r) {
-                r = item.r;
+            if (r == null || r < x) {
+                r = x;
             }
-            if (t == null || t < item.t) {
-                t = item.t;
+            if (t == null || t < y) {
+                t = y;
             }
-            if (b == null || b > item.b) {
-                b = item.b;
+            if (b == null || b > y) {
+                b = y;
             }
         }
 
@@ -63,9 +61,7 @@ public class QuadTree {
         // sheet etc.
         root = new Node(l - 2 * EPSILON, r + 3 * EPSILON, b - 2 * EPSILON, t + 3 * EPSILON, null);
 
-        for (int i = 0; i < count; i++) {
-            root.addItem(i);
-        }
+        grow(adapter.getCount());
     }
 
     public void grow(int num) {

@@ -25,4 +25,14 @@ public class LineSegmentSetAdapter implements QuadTreeAdapter {
         double bx = B.getX(), by = B.getY();
         return new QuadTreeItem(Math.min(ax, bx), Math.max(ax, bx), Math.min(ay, by), Math.max(ay, by));
     }
+
+    @Override
+    public int getPointCount() {
+        return set.getNumLineSegments() * 2;
+    }
+
+    @Override
+    public Point getPoint(int index) {
+        return index % 2 == 0 ? set.getA(index / 2) : set.getB(index / 2);
+    }
 }

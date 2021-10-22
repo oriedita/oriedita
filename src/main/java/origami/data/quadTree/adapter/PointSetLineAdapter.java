@@ -4,12 +4,10 @@ import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.Point;
 import origami.data.quadTree.QuadTreeItem;
 
-public class PointSetLineAdapter implements QuadTreeAdapter {
-
-    private final PointSet set;
+public class PointSetLineAdapter extends PointSetAdapter {
 
     public PointSetLineAdapter(PointSet set) {
-        this.set = set;
+        super(set);
     }
 
     @Override
