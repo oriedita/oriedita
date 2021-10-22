@@ -74,6 +74,19 @@ public class QuadTree {
         count = new_count;
     }
 
+    public void update(int i) {
+        Node n = map.get(i);
+        int old_next = next.get(i);
+        if (n.children[0] != null) {
+            for (int j = 0; j < 4; j++) {
+                if (n.children[j].addItem(i)) {
+                    n.removeIndex(i, old_next);
+                    return;
+                }
+            }
+        }
+    }
+
     /** This only returns items that are of greater index. */
     public Iterable<Integer> getPotentialCollision(int i) {
         SortedSet<Integer> set = new TreeSet<Integer>();
@@ -182,6 +195,22 @@ public class QuadTree {
             map.set(i, this);
             head = i;
             size++;
+        }
+
+        public void removeIndex(int i, int old_next) {
+            int cursor = head;
+            if (cursor == i) {
+                head = old_next;
+            } else {
+                while(true) {
+                    int n = next.get(cursor);
+                    if (n == i) {
+                        next.set(cursor, old_next);
+                        return;
+                    }
+                    cursor = n;
+                }
+            }
         }
 
         private boolean containsItem(QuadTreeItem item) {

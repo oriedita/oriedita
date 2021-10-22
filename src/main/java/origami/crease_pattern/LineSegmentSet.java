@@ -151,14 +151,14 @@ public class LineSegmentSet {
             k_flg.add(true);
         }
 
-        QuadTree QT = new QuadTree(this);
+        QuadTree qt = new QuadTree(this);
 
         while (found) {
             found = false;
             for (int i = 0; i < lineSegments.size(); i++) {
                 if (k_flg.get(i)) {
                     k_flg.set(i, false);
-                    for (int j : QT.getPotentialCollision(i)) {
+                    for (int j : qt.getPotentialCollision(i)) {
                         if (k_flg.get(j)) {
                             int added = intersect_divide(i, j); // Side effect
                             for (int is = 0; is < added; is++) {
@@ -168,13 +168,15 @@ public class LineSegmentSet {
                                 found = true;
                                 k_flg.set(i, true);
 
-                                // We only need to add new lines to the quad tree here; the old lines (i and j
-                                // here) only gets shorter, and they can safely stay in the same node.
-                                QT.grow(added);
+                                qt.grow(added);
+                                qt.update(j);
                             }
                         }
 
                         if (Thread.interrupted()) throw new InterruptedException();
+                    }
+                    if(k_flg.get(i)) {
+                        qt.update(i);
                     }
                 }
             }
