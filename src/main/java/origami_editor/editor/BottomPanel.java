@@ -194,11 +194,10 @@ public class BottomPanel extends JPanel {
             app.repaintCanvas();
         });
         resetButton.addActionListener(e -> {
-            //展開図の初期化　開始
-            //settei_syokika_cp();//展開図パラメータの初期化
-            app.developmentView_initialization();
-            //展開図の初期化　終了
-            //
+
+            app.mainCreasePatternWorker.clearCreasePattern();
+            app.creasePatternCameraModel.reset();
+
             //折畳予測図のの初期化　開始
             app.OZ = app.temp_OZ;//20171223この行は不要かもしれないが、一瞬でもOZが示すOriagari_Zuがなくなることがないように念のために入れておく
             app.foldedFigures.clear();
