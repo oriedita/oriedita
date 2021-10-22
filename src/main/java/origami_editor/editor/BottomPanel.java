@@ -194,6 +194,8 @@ public class BottomPanel extends JPanel {
             app.repaintCanvas();
         });
         resetButton.addActionListener(e -> {
+
+            app.clearCreasePattern();
             //展開図の初期化　開始
             //settei_syokika_cp();//展開図パラメータの初期化
             app.developmentView_initialization();

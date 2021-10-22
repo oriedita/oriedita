@@ -107,6 +107,14 @@ public class CreasePattern_Worker {
         calculateDecisionWidth();
     }
 
+    public void clear() {
+        foldLineSet.reset();
+        auxLines.reset();
+        camera.reset();
+
+        record();
+    }
+
     public void reset() {
         pointSize = 1;
         foldLineSet.reset();

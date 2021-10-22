@@ -11,14 +11,16 @@ import origami_editor.tools.Camera;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Save implements Serializable {
     private String version;
     private List<LineSegment> lineSegments;
     private List<Circle> circles;
     private String title;
-    private List<Point> points;
+    private Map<Integer, Point> points;
     private List<LineSegment> auxLineSegments;
     private Camera creasePatternCamera;
     private CanvasModel canvasModel;
@@ -45,22 +47,22 @@ public class Save implements Serializable {
     public Save() {
         lineSegments = new ArrayList<>();
         circles = new ArrayList<>();
-        points = new ArrayList<>();
+        points = new HashMap<>();
         auxLineSegments = new ArrayList<>();
         canvasModel = new CanvasModel();
         gridModel = new GridModel();
         foldedFigureModel = new FoldedFigureModel();
     }
 
-    public void addPoint(Point p) {
-        points.add(p);
+    public void addPoint(int index, Point p) {
+        points.put(index, p);
     }
 
-    public List<Point> getPoints() {
+    public Map<Integer, Point> getPoints() {
         return points;
     }
 
-    public void setPoints(List<Point> points) {
+    public void setPoints(Map<Integer, Point> points) {
         this.points = points;
     }
 

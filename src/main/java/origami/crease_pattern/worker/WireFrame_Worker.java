@@ -1,15 +1,14 @@
 package origami.crease_pattern.worker;
 
 import origami.crease_pattern.FoldingException;
-import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.*;
+import origami.crease_pattern.element.Point;
 import origami_editor.editor.Colors;
 import origami_editor.editor.Save;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.undo_box.HistoryState;
 import origami_editor.graphic2d.averagecoordinates.AverageCoordinates;
-import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.OritaCalc;
-import origami.crease_pattern.element.Point;
 import origami_editor.tools.Camera;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.PointSet;
@@ -17,6 +16,7 @@ import origami.crease_pattern.PointSet;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class WireFrame_Worker {
     public Point point_of_referencePlane_ob = new Point();
@@ -161,13 +161,6 @@ public class WireFrame_Worker {
         return pointSet.getNumLines();
     }
 
-    /**
-     * Obtain the color of the line of the point set (when the point set is treated as a development view, this color represents a mountain valley).
-     */
-    public LineColor getColor(int i) {
-        return pointSet.getColor(i);
-    }
-
     public int getIFacePosition(int i) {
         return iFacePosition[i];
     }
@@ -264,7 +257,8 @@ public class WireFrame_Worker {
     }
 
     private Point lineSymmetry_point_determine(int lineId, Point point) {//Given the id of the bar and any point, returns the point that is axisymmetric of the given point with respect to the corresponding bar.
-        return OritaCalc.findLineSymmetryPoint(pointSet.getBeginPointFromLineId(lineId), pointSet.getEndPointFromLineId(lineId), point);
+        Line line = pointSet.getLine(lineId);
+        return OritaCalc.findLineSymmetryPoint(pointSet.getPoint(line.getBegin()), pointSet.getPoint(line.getEnd()), point);
     }
 
     public int getPointsTotal() {
@@ -353,22 +347,22 @@ public class WireFrame_Worker {
         List<Integer> ika2ic = new ArrayList<>();
         List<Integer> ikb2ic = new ArrayList<>();
         for (int n = 0; n < lineSegmentSet.getNumLineSegments(); n++) {
-            for (int i = 1; i <= pointSet.getNumPoints(); i++) {
-                if (OritaCalc.equal(lineSegmentSet.getA(n), pointSet.getPoint(i))) {
-                    ika2ic.add(i);
+            for (Map.Entry<Integer, Point_p> entry : pointSet.iterPoints()) {
+                if (OritaCalc.equal(lineSegmentSet.getA(n), entry.getValue())) {
+                    ika2ic.add(entry.getKey());
                     break;
                 }
             }
-            for (int i = 1; i <= pointSet.getNumPoints(); i++) {
-                if (OritaCalc.equal(lineSegmentSet.getB(n), pointSet.getPoint(i))) {
-                    ikb2ic.add(i);
+            for (Map.Entry<Integer, Point_p> entry : pointSet.iterPoints()) {
+                if (OritaCalc.equal(lineSegmentSet.getB(n), entry.getValue())) {
+                    ikb2ic.add(entry.getKey());
                     break;
                 }
             }
         }
 
         for (int n = 0; n < lineSegmentSet.getNumLineSegments(); n++) {
-            pointSet.addLine(n + 1, ika2ic.get(n), ikb2ic.get(n), lineSegmentSet.getColor(n));
+            pointSet.addLine(ika2ic.get(n), ikb2ic.get(n), lineSegmentSet.getColor(n));
         }
 
         System.out.print("棒の全数　＝　");
@@ -506,33 +500,35 @@ public class WireFrame_Worker {
         LineSegment s_tv = new LineSegment();
         g.setColor(Colors.get(Color.black));
         for (int i = 1; i <= pointSet.getNumLines(); i++) {
-            if (pointSet.getColor(i) == LineColor.BLACK_0) {
+            Line line = pointSet.getLine(i);
+            LineSegment ls = pointSet.getLineSegmentFromLineId(i);
+            if (line.getColor() == LineColor.BLACK_0) {
                 g.setColor(Colors.get(Color.black));
             }
-            if (pointSet.getColor(i) == LineColor.RED_1) {
+            if (line.getColor() == LineColor.RED_1) {
                 g.setColor(Colors.get(Color.red));
             }
-            if (pointSet.getColor(i) == LineColor.BLUE_2) {
+            if (line.getColor() == LineColor.BLUE_2) {
                 g.setColor(Colors.get(Color.blue));
             }
 
             switch (ip4) {
                 case FRONT_0:
-                    s_tv.set(cam_front.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    s_tv.set(cam_front.object2TV(ls));
                     g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
                     break;
                 case BACK_1:
-                    s_tv.set(cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    s_tv.set(cam_rear.object2TV(ls));
                     g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
                     break;
                 case BOTH_2:
                 case TRANSPARENT_3:
-                    s_tv.set(cam_front.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    s_tv.set(cam_front.object2TV(ls));
                     g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
-                    s_tv.set(cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    s_tv.set(cam_rear.object2TV(ls));
                     g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
                     break;

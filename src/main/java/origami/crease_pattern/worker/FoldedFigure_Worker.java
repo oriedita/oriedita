@@ -1,19 +1,18 @@
 package origami.crease_pattern.worker;
 
+import origami.crease_pattern.element.*;
+import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.Polygon;
 import origami.folding.util.EquivalenceCondition;
 import origami_editor.editor.Colors;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
-import origami.crease_pattern.element.LineColor;
 import origami.folding.HierarchyList;
 import origami.folding.algorithm.AdditionalEstimationAlgorithm;
 import origami.folding.algorithm.SubFacePriority;
 import origami.folding.algorithm.SwappingAlgorithm;
 import origami.folding.element.SubFace;
-import origami.crease_pattern.element.LineSegment;
 import origami_editor.editor.canvas.DrawingUtil;
-import origami.crease_pattern.element.Point;
-import origami.crease_pattern.element.Polygon;
 import origami.data.QuadTree;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
@@ -178,10 +177,11 @@ public class FoldedFigure_Worker {
         System.out.println("山折り谷折りの情報から決定される上下関係を上下表に入れる");
         int faceId_min, faceId_max;
         for (int ib = 1; ib <= orite.getNumLines(); ib++) {
+            Line line = otta_face_figure.getLine(ib);
             faceId_min = orite.lineInFaceBorder_min_request(ib);
             faceId_max = orite.lineInFaceBorder_max_request(ib);
             if (faceId_min != faceId_max) {//In the developed view, there are faces on both sides of the rod ib.
-                if (otta_face_figure.getColor(ib) == LineColor.RED_1) {//Red line means mountain fold
+                if (line.getColor() == LineColor.RED_1) {//Red line means mountain fold
                     if (orite.getIFacePosition(faceId_min) % 2 == 1) {//The surface Mid_min has the same orientation as the reference surface (the surface faces up)
                         hierarchyList.set(faceId_min, faceId_max, HierarchyList.ABOVE_1);
                     }
@@ -189,7 +189,7 @@ public class FoldedFigure_Worker {
                         hierarchyList.set(faceId_min, faceId_max, HierarchyList.BELOW_0);
                     }
                 }
-                if (otta_face_figure.getColor(ib) == LineColor.BLUE_2) {//The blue line means valley fold
+                if (line.getColor() == LineColor.BLUE_2) {//The blue line means valley fold
                     if (orite.getIFacePosition(faceId_min) % 2 == 1) {//面Mid_minは基準面と同じ向き(表面が上を向く)
                         hierarchyList.set(faceId_min, faceId_max, HierarchyList.BELOW_0);
                     }
@@ -560,9 +560,11 @@ public class FoldedFigure_Worker {
             }
 
             g.setColor(new Color(F_color.getRed(), F_color.getGreen(), F_color.getBlue(), 2 * transparency_toukado));
-            //Draw a line
-            for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
-                s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
+            //Draw a
+            for (Line line : subFace_figure.iterLines()) {
+                Point begin = subFace_figure.getPoint(line.getBegin());
+                Point end = subFace_figure.getPoint(line.getEnd());
+                s_ob.set(begin.getX(), begin.getY(), end.getX(), end.getY());
                 s_tv.set(camera.object2TV(s_ob));
                 g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //直線
             }

@@ -1329,6 +1329,10 @@ public class App {
         });
     }
 
+    public void clearCreasePattern() {
+
+    }
+
     public enum FoldType {
         NOTHING_0,
         FOR_ALL_LINES_1,

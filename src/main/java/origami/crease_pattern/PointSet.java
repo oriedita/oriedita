@@ -8,6 +8,7 @@ import origami_editor.editor.Save;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A collection of points.
@@ -15,14 +16,14 @@ import java.util.*;
  * Every line can be part of a line and/or a face.
  */
 public class PointSet implements Serializable {
-    Map<Integer, Point_p> points;//Instantiation of points, 1-indexed
-    Map<Integer, Line> lines;//Instantiation of lines, 1-indexed
+    Map<Integer, Point_p> points;//Instantiation of points
+    List<Line> lines;//Instantiation of lines, 1-indexed
     @JsonIgnore
     int[] lineInFaceBorder_min;
     @JsonIgnore
     int[] lineInFaceBorder_max;
 
-    Map<Integer, Face> faces; //Face instantiation, 1-indexed
+    List<Face> faces; //Face instantiation, 1-indexed
 
     @JsonIgnore
     double[] line_x_max;
@@ -62,8 +63,7 @@ public class PointSet implements Serializable {
 
     //---------------------------------------
     public void configure(int numPoints, int numLines, int numFaces) { //Make sure it passes at the beginning and after a reset.
-        points = new TreeMap<>();
-        points.put(0, new Point_p());
+        points = new HashMap<>(numPoints);
         point_linking = new ArrayList<>(numPoints + 1);
 
         point_linking.add(new ArrayList<>());
@@ -77,8 +77,8 @@ public class PointSet implements Serializable {
             setPointLinking(i, 0, 0);
         }
 
-        lines = new HashMap<>(numLines+1);
-        lines.put(0, new Line());
+        lines = new ArrayList<>(numLines+1);
+        lines.add(new Line());
         lineInFaceBorder_min = new int[numLines + 1];
         lineInFaceBorder_max = new int[numLines + 1];
         for (int i = 0; i <= numLines; i++) {
@@ -86,8 +86,8 @@ public class PointSet implements Serializable {
             lineInFaceBorder_max[i] = 0;
         }
 
-        faces = new HashMap<>(numFaces + 1);
-        faces.put(0, new Face());
+        faces = new ArrayList<>(numFaces + 1);
+        faces.add(new Face());
 
         faceAdjacent = SymmetricMatrix.create(numFaces, (int) Math.ceil(Math.log(numLines + 1) / Math.log(2)));
 
@@ -100,6 +100,10 @@ public class PointSet implements Serializable {
         face_x_min = new double[numFaces + 1];
         face_y_max = new double[numFaces + 1];
         face_y_min = new double[numFaces + 1];
+    }
+
+    public Set<Map.Entry<Integer, Point_p>> iterPoints() {
+        return points.entrySet();
     }
 
     //---------------
@@ -139,14 +143,14 @@ public class PointSet implements Serializable {
         for (int i = 0; i <= ts.getNumLines(); i++) {
             Line line = new Line();
             line.set(ts.getLine(i));
-            lines.put(i, line);
+            lines.add(line);
             lineInFaceBorder_min[i] = ts.get_lineInFaceBorder_min(i);
             lineInFaceBorder_max[i] = ts.get_lineInFaceBorder_max(i);
         }
         faces.clear();
-        faces.put(0, new Face());
+        faces.add(new Face());
         for (int i = 1; i <= ts.getNumFaces(); i++) {
-            faces.put(i, new Face(ts.getFace(i)));
+            faces.add(new Face(ts.getFace(i)));
             for (int j = 1; j <= ts.getNumFaces(); j++) {
                 faceAdjacent.set(i, j, ts.getFaceAdjecent(i, j));
             }
@@ -284,6 +288,14 @@ public class PointSet implements Serializable {
         return points.size() - 1;
     }   //Get the total number of points
 
+    public Iterable<Line> iterLines() {
+        return lines.stream().skip(1).collect(Collectors.toList());
+    }
+
+    public Iterable<Face> iterFaces() {
+        return faces.stream().skip(1).collect(Collectors.toList());
+    }
+
     public int getNumLines() {
         return lines.size() - 1;
     }   //棒の総数を得る
@@ -308,33 +320,17 @@ public class PointSet implements Serializable {
         return points.computeIfAbsent(i, j -> new Point_p());
     }   //点を得る       <<<------------tは、スーパークラスのTenのサブクラスTen_Pクラスのオブジェクト。スーパークラスの変数にサブクラスのオブジェクトを代入可能なので、このまま使う。
 
-    private Line getLine(int i) {
-        return lines.computeIfAbsent(i, j -> new Line());
+    public Line getLine(int i) {
+        return lines.get(i);
     }   //棒を得る
-
-    public Point getBeginPointFromLineId(int i) {
-        return getPoint(getBegin(i));
-    }    //棒のidから前点を得る              <<<------------　　同上
-
-    public Point getEndPointFromLineId(int i) {
-        return getPoint(getEnd(i));
-    }    //棒のidから後点を得る              <<<------------　　同上
 
     public LineSegment getLineSegmentFromLineId(int i) {
         return lineToLineSegment(getLine(i));
     }    //棒のidからSenbunを得る
 
     public Face getFace(int i) {
-        return faces.computeIfAbsent(i, j -> new Face());
+        return faces.get(i);
     }   //面を得る
-
-    public int getBegin(int i) {
-        return getLine(i).getBegin();
-    } //棒のidから前点のidを得る
-
-    public int getEnd(int i) {
-        return getLine(i).getEnd();
-    } //棒のidから後点のidを得る
 
     public double getBeginX(int i) {
         return getPoint(getLine(i).getBegin()).getX();
@@ -366,20 +362,15 @@ public class PointSet implements Serializable {
         points.put(index, p);
     }   //点を加える
 
-    public void addLine(int index, int i, int j, LineColor icol) {
+    public void addLine(int i, int j, LineColor icol) {
         Line newLine = new Line();
         newLine.set(i, j, icol);
 
-        lines.put(index, newLine);
+        lines.add(newLine);
     }   //棒を加える
 
-    public LineColor getColor(int i) {
-        return getLine(i).getColor();
-    }
-
     private void t_renketu_sakusei() {
-        for (int k = 1; k <= getNumLines(); k++) {
-            Line line = getLine(k);
+        for (Line line : iterLines()) {
             setPointLinking(line.getBegin(), 0, getPointLinking(line.getBegin(), 0) + 1);
             setPointLinking(line.getBegin(), getPointLinking(line.getBegin(), 0), line.getEnd());
             setPointLinking(line.getEnd(), 0, getPointLinking(line.getEnd(), 0) + 1);
@@ -447,12 +438,11 @@ public class PointSet implements Serializable {
         faces.clear();
         t_renketu_sakusei();
 
-        for (int i = 1; i <= getNumLines(); i++) {
-            Line line = getLine(i);
+        for (Line line : iterLines()) {
             tempFace = Face_request(line.getBegin(), line.getEnd());
             flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
-            for (int j = 1; j <= getNumFaces(); j++) {
-                if (equals(tempFace, getFace(j))) {
+            for (Face face : iterFaces()) {
+                if (equals(tempFace, face)) {
                     flag1 = 1;
                     break;
                 }
@@ -466,8 +456,8 @@ public class PointSet implements Serializable {
 
             tempFace = Face_request(line.getEnd(), line.getBegin());
             flag1 = 0;   //　0なら面を追加する。1なら　面を追加しない。
-            for (int j = 1; j <= getNumFaces(); j++) {
-                if (equals(tempFace, getFace(j))) {
+            for (Face face : iterFaces()) {
+                if (equals(tempFace, face)) {
                     flag1 = 1;
                     break;
                 }
@@ -697,8 +687,8 @@ public class PointSet implements Serializable {
 
     private void addFace(Face tempFace) {
         Face face = new Face(tempFace);
-
-        faces.put(faces.size(), face);
+        
+        faces.add(face);
     }
 
     /**
@@ -708,12 +698,13 @@ public class PointSet implements Serializable {
         int ireturn = 0;
         double rmin = 1000000.0;
         double rtemp;
-        for (int i = 1; i <= getNumPoints(); i++) {
-            rtemp = OritaCalc.distance(p, getPoint(i));
+        for (Map.Entry<Integer, Point_p> entry : points.entrySet()) {
+            Point_p p2 = entry.getValue();
+            rtemp = OritaCalc.distance(p, p2);
             if (rtemp < r) {
                 if (rtemp < rmin) {
                     rmin = rtemp;
-                    ireturn = i;
+                    ireturn = entry.getKey();
                 }
             }
         }
@@ -726,8 +717,8 @@ public class PointSet implements Serializable {
     public double closest_Point_distance(Point p, double r) {
         double rmin = 1000000.0;
         double rtemp;
-        for (int i = 1; i <= getNumPoints(); i++) {
-            rtemp = OritaCalc.distance(p, getPoint(i));
+        for (Point_p p2 : points.values()) {
+            rtemp = OritaCalc.distance(p, p2);
             if (rtemp < r) {
                 if (rtemp < rmin) {
                     rmin = rtemp;
@@ -739,12 +730,10 @@ public class PointSet implements Serializable {
 
     public int getSelectedPointsNum() {
         int r_int = 0;
-        for (int i = 1; i <= getNumPoints(); i++) {
-
-            if (getPoint(i).getPointState()) {
-                r_int = r_int + 1;
+        for (Point_p entry : points.values()) {
+            if (entry.getPointState()) {
+                r_int ++;
             }
-
         }
         return r_int;
     }
@@ -758,8 +747,8 @@ public class PointSet implements Serializable {
     }
 
     public void setAllPointStateFalse() {
-        for (int i = 1; i <= getNumPoints(); i++) {
-            getPoint(i).setPointStateFalse();
+        for (Point_p p : points.values()) {
+            p.setPointStateFalse();
         }
     }
 
@@ -777,10 +766,9 @@ public class PointSet implements Serializable {
     }
 
     public void statePointMove(Point p) {
-        for (int i = 1; i <= getNumPoints(); i++) {
-
-            if (getPoint(i).getPointState()) {
-                set(i, p);
+        for (Point_p p2 : points.values()) {
+            if (p2.getPointState()) {
+                p2.set(p);
             }
         }
     }
@@ -788,18 +776,16 @@ public class PointSet implements Serializable {
     public Save getSave() {
         Save save = new Save();
 
-        for (int i = 1; i <= getNumPoints(); i++) {
-            Point p = new Point();
-            p.set(getPoint(i));
-            save.addPoint(p);
+        for (Map.Entry<Integer, Point_p> entry : points.entrySet()) {
+            save.addPoint(entry.getKey(), new Point(entry.getValue()));
         }
 
         return save;
     }
 
     public void setSave(Save save) {
-        for (int i = 0; i < save.getPoints().size(); i++) {
-            getPoint(i+1).set(save.getPoints().get(i));
+        for (Map.Entry<Integer, Point> entry : save.getPoints().entrySet()) {
+            getPoint(entry.getKey()).set(entry.getValue());
         }
     }
 }
