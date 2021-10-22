@@ -15,13 +15,14 @@ import origami.folding.util.SortingBox;
 import origami_editor.tools.Camera;
 import origami_editor.tools.StringOp;
 
+import javax.swing.*;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
 public class Svg {
-    public static void exportFile(FoldLineSet foldLineSet, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize, List<FoldedFigure_Drawer> foldedFigures, File file) {
+    public static void exportFile(FoldLineSet foldLineSet, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize, DefaultComboBoxModel<FoldedFigure_Drawer> foldedFigures, File file) {
         try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw)) {
             System.out.println("svg画像出力");
 
@@ -29,8 +30,8 @@ public class Svg {
 
             exportSvgWithCamera(pw, foldLineSet, camera, i_cp_display, fCreasePatternLineWidth, lineWidth, lineStyle, pointSize);
 
-            for (int i_oz = 1; i_oz <= foldedFigures.size() - 1; i_oz++) {
-                exportSvgFoldedFigure(pw, foldedFigures.get(i_oz));
+            for (int i_oz = 0; i_oz < foldedFigures.getSize(); i_oz++) {
+                exportSvgFoldedFigure(pw, foldedFigures.getElementAt(i_oz));
             }
 
             pw.println("</svg>");

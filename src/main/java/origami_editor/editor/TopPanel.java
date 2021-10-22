@@ -101,8 +101,8 @@ public class TopPanel {
             double magnification = 1.0 / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
 
             FoldedFigure_Drawer OZi;
-            for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
-                OZi = app.foldedFigures.get(i_oz);
+            for (int i_oz = 0; i_oz < app.foldedFiguresList.getSize(); i_oz++) {
+                OZi = app.foldedFiguresList.getElementAt(i_oz);
 
                 Point t_o2tv = app.canvas.creasePatternCamera.object2TV(app.canvas.creasePatternCamera.getCameraPosition());
 
@@ -119,8 +119,8 @@ public class TopPanel {
                 double magnification = app.creasePatternCameraModel.getScale() / d_syukusyaku_keisuu_old;
 
                 FoldedFigure_Drawer OZi;
-                for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
-                    OZi = app.foldedFigures.get(i_oz);
+                for (int i_oz = 0; i_oz < app.foldedFiguresList.getSize(); i_oz++) {
+                    OZi = app.foldedFiguresList.getElementAt(i_oz);
 
                     Point t_o2tv = app.canvas.creasePatternCamera.object2TV(app.canvas.creasePatternCamera.getCameraPosition());
 
@@ -138,8 +138,8 @@ public class TopPanel {
             double magnification = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
 
             FoldedFigure_Drawer OZi;
-            for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
-                OZi = app.foldedFigures.get(i_oz);
+            for (int i_oz = 0; i_oz < app.foldedFiguresList.getSize(); i_oz++) {
+                OZi = app.foldedFiguresList.getElementAt(i_oz);
 
                 Point t_o2tv = app.canvas.creasePatternCamera.object2TV(app.canvas.creasePatternCamera.getCameraPosition());
 

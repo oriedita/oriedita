@@ -34,9 +34,8 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
         app.mainCreasePatternWorker.setCamera(app.canvas.creasePatternCamera);
 
 //20180225追加
-        FoldedFigure_Drawer OZi;
-        for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
-            OZi = app.foldedFigures.get(i_oz);
+        for (int i_oz = 0; i_oz < app.foldedFiguresList.getSize(); i_oz++) {
+            FoldedFigure_Drawer OZi = app.foldedFiguresList.getElementAt(i_oz);
 
             OZi.foldedFigureCamera.displayPositionMove(app.canvas.mouse_temp0.other_Point_position(p0));
             OZi.foldedFigureFrontCamera.displayPositionMove(app.canvas.mouse_temp0.other_Point_position(p0));
@@ -56,9 +55,8 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
 
 
 //20180225追加
-        FoldedFigure_Drawer OZi;
-        for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
-            OZi = app.foldedFigures.get(i_oz);
+        for (int i_oz = 0; i_oz < app.foldedFiguresList.getSize(); i_oz++) {
+            FoldedFigure_Drawer OZi = app.foldedFiguresList.getElementAt(i_oz);
 
             OZi.foldedFigureCamera.displayPositionMove(app.canvas.mouse_temp0.other_Point_position(p0));
             OZi.foldedFigureFrontCamera.displayPositionMove(app.canvas.mouse_temp0.other_Point_position(p0));

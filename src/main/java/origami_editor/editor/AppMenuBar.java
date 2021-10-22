@@ -96,11 +96,7 @@ public class AppMenuBar extends JMenuBar {
             //展開図の初期化　終了
             //
             //折畳予測図のの初期化　開始
-            app.OZ = app.temp_OZ;//20171223この行は不要かもしれないが、一瞬でもOZが示すOriagari_Zuがなくなることがないように念のために入れておく
-            app.foldedFigures.clear();
-            app.addNewFoldedFigure();
-            app.setFoldedFigureIndex(0);
-            app.configure_initialize_prediction();
+            app.foldedFiguresList.removeAllElements();
             //折畳予測図のの初期化　終了
 
             app.Button_shared_operation();

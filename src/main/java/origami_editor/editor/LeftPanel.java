@@ -7,6 +7,7 @@ import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami.folding.FoldedFigure;
+import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.task.TaskExecutor;
 import origami_editor.editor.task.TwoColoredTask;
 import origami_editor.tools.StringOp;
@@ -574,9 +575,13 @@ public class LeftPanel {
 
             } else if (app.mainCreasePatternWorker.getFoldLineTotalForSelectFolding() > 0) {
                 app.folding_prepare();//ここでOZがOAZ(0)からOAZ(i)に切り替わる
-                app.OZ.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
+                FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
 
-                TaskExecutor.executeTask("Two Colored CP", new TwoColoredTask(app));
+                if (selectedFigure != null) {
+                    selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
+
+                    TaskExecutor.executeTask("Two Colored CP", new TwoColoredTask(app));
+                }
             }
 
             app.mainCreasePatternWorker.unselect_all();
@@ -588,7 +593,9 @@ public class LeftPanel {
             }
         });
         koteimen_siteiButton.addActionListener(e -> {
-            if (app.OZ.foldedFigure.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
+            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+
+            if (selectedFigure != null && selectedFigure.foldedFigure.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
                 app.canvasModel.setMouseMode(MouseMode.CHANGE_STANDARD_FACE_103);
             }
         });

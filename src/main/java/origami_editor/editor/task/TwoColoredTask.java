@@ -1,6 +1,8 @@
 package origami_editor.editor.task;
 
+import origami.crease_pattern.FoldingException;
 import origami_editor.editor.App;
+import origami_editor.editor.drawing.FoldedFigure_Drawer;
 
 public class TwoColoredTask implements Runnable{
     private final App app;
@@ -13,17 +15,23 @@ public class TwoColoredTask implements Runnable{
     public void run() {
         long start = System.currentTimeMillis();
 
+        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+
+        if (selectedFigure == null) {
+            return;
+        }
+
         try {
             app.createTwoColorCreasePattern();
-        } catch (InterruptedException e) {
-            app.OZ.foldedFigure.estimated_initialize();
+        } catch (InterruptedException | FoldingException e) {
+            selectedFigure.foldedFigure.estimated_initialize();
             app.bulletinBoard.clear();
             e.printStackTrace();
         }
 
         long stop = System.currentTimeMillis();
         long L = stop - start;
-        app.OZ.foldedFigure.text_result = app.OZ.foldedFigure.text_result + "     Computation time " + L + " msec.";
+        selectedFigure.foldedFigure.text_result = selectedFigure.foldedFigure.text_result + "     Computation time " + L + " msec.";
 
         app.repaintCanvas();
     }

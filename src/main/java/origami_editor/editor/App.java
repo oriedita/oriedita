@@ -7,7 +7,6 @@ import com.formdev.flatlaf.ui.FlatUIUtils;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
-import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami_editor.editor.action.Click;
 import origami_editor.editor.canvas.*;
 import origami_editor.editor.component.BulletinBoard;
@@ -26,6 +25,8 @@ import origami_editor.tools.ResourceUtil;
 import origami_editor.tools.StringOp;
 
 import javax.swing.*;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.*;
@@ -52,20 +53,17 @@ public class App {
     public final BackgroundModel backgroundModel;
     public final CameraModel creasePatternCameraModel;
     public final FileModel fileModel;
+    public final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
     public final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
     public final CreasePattern_Worker mainCreasePatternWorker;    // Basic branch craftsman. Accepts input from the mouse.
     final Queue<Popup> popups = new ArrayDeque<>();
     private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate = new MouseHandlerVoronoiCreate();
-    public FoldedFigure_Drawer temp_OZ;    //Folded figure
-    public FoldedFigure_Drawer OZ;    //Current Folded figure
     public LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
     public BulletinBoard bulletinBoard = new BulletinBoard();
     // ------------------------------------------------------------------------
     public Point point_of_referencePlane_old = new Point(); //ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
     public Canvas canvas;
-    public ArrayList<FoldedFigure_Drawer> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
-    int foldedFigureIndex = 0;//Specify which number of foldedFigures Oriagari_Zu is the target of button operation or transformation operation
     //各種変数の定義
     String frame_title_0;//フレームのタイトルの根本部分
     String frame_title;//フレームのタイトルの全体
@@ -93,6 +91,7 @@ public class App {
         creasePatternCameraModel = new CameraModel();
         fileModel = new FileModel();
         mainCreasePatternWorker = new CreasePattern_Worker(this);
+        foldedFiguresList = new DefaultComboBoxModel<>();
     }
 
     public void start() {
@@ -187,15 +186,12 @@ public class App {
             }
         });
 
-        foldedFigures.clear();
-        addNewFoldedFigure();
-        OZ = foldedFigures.get(0);//折りあがり図
+        foldedFiguresList.removeAllElements();
 
         Editor editor = new Editor(this);
 
         canvas = editor.getCanvas();
 
-        temp_OZ = new FoldedFigure_Drawer(new FoldedFigure_01(bulletinBoard));
         bulletinBoard.addChangeListener(e -> frame.repaint());
 
         canvas.creasePatternCamera.setCameraPositionX(0.0);
@@ -206,8 +202,6 @@ public class App {
         canvas.creasePatternCamera.setCameraZoomY(1.0);
         canvas.creasePatternCamera.setDisplayPositionX(350.0);
         canvas.creasePatternCamera.setDisplayPositionY(350.0);
-
-        OZ.foldedFigure_camera_initialize();
 
         frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("fishbase.png")));
         frame.setContentPane(editor.$$$getRootComponent$$$());
@@ -243,7 +237,7 @@ public class App {
         });
 
         applicationModel.addPropertyChangeListener(e -> {
-            OZ.setData(applicationModel);
+            ((FoldedFigure_Drawer)foldedFiguresList.getSelectedItem()).setData(applicationModel);
         });
 
         applicationModel.reload();
@@ -261,7 +255,30 @@ public class App {
         internalDivisionRatioModel.addPropertyChangeListener(e -> topPanel.setData(internalDivisionRatioModel));
         internalDivisionRatioModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(internalDivisionRatioModel));
 
-        foldedFigureModel.addPropertyChangeListener(e -> OZ.setData(foldedFigureModel));
+        foldedFiguresList.addListDataListener(new ListDataListener() {
+            @Override
+            public void intervalAdded(ListDataEvent e) {
+
+            }
+
+            @Override
+            public void intervalRemoved(ListDataEvent e) {
+
+            }
+
+            @Override
+            public void contentsChanged(ListDataEvent e) {
+                canvas.repaint();
+            }
+        });
+
+        foldedFigureModel.addPropertyChangeListener(e -> {
+            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+
+            if (selectedFigure != null) {
+                selectedFigure.setData(foldedFigureModel);
+            }
+        });
         foldedFigureModel.addPropertyChangeListener(e -> bottomPanel.setData(foldedFigureModel));
         foldedFigureModel.addPropertyChangeListener(e -> repaintCanvas());
         foldedFigureModel.addPropertyChangeListener(e -> leftPanel.setData(foldedFigureModel));
@@ -296,8 +313,6 @@ public class App {
         fileModel.reset();
 
         developmentView_initialization();
-
-        configure_initialize_prediction();
 
         Button_shared_operation();
 
@@ -562,19 +577,15 @@ public class App {
     public FoldType getFoldType() {
         FoldType foldType;//= 0 Do nothing, = 1 Folding estimation for all fold lines in the normal development view, = 2 for fold estimation for selected fold lines, = 3 for changing the folding state
         int foldLineTotalForSelectFolding = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
-        System.out.println("foldedFigures.size() = " + foldedFigures.size() + "    : foldedFigureIndex = " + foldedFigureIndex + "    : mainDrawingWorker.get_orisensuu_for_select_oritatami() = " + foldLineTotalForSelectFolding);
-        if (foldedFigures.size() == 1) {                        //折り上がり系図無し
-            if (foldedFigureIndex == 0) {                            //展開図指定
+        System.out.println("foldedFigures.size() = " + foldedFiguresList.getSize() + "    : foldedFigureIndex = " + foldedFiguresList.getIndexOf(foldedFiguresList.getSelectedItem()) + "    : mainDrawingWorker.get_orisensuu_for_select_oritatami() = " + foldLineTotalForSelectFolding);
+        if (foldedFiguresList.getSize() == 0) {                        //折り上がり系図無し
                 if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
                     foldType = FoldType.FOR_ALL_LINES_1;//全展開図で折畳み
                 } else {        //折り線選択有り
                     foldType = FoldType.FOR_SELECTED_LINES_2;//選択された展開図で折畳み
                 }
-            } else {                        //折り上がり系図指定
-                foldType = FoldType.NOTHING_0;//有り得ない
-            }
         } else {                        //折り上がり系図有り
-            if (foldedFigureIndex == 0) {                            //展開図指定
+            if (foldedFiguresList.getSelectedItem() == null) {                            //展開図指定
                 if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
                     foldType = FoldType.NOTHING_0;//何もしない
                 } else {        //折り線選択有り
@@ -616,39 +627,44 @@ public class App {
                 lineSegmentsForFolding = mainCreasePatternWorker.getForSelectFolding();
             }
 
-            point_of_referencePlane_old.set(OZ.wireFrame_worker_drawer1.get_point_of_referencePlane_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
+            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+
+            if (selectedFigure != null) {
+                point_of_referencePlane_old.set(selectedFigure.wireFrame_worker_drawer1.get_point_of_referencePlane_tv());
+            }
             //これより前のOZは古いOZ
             folding_prepare();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
             //これより後のOZは新しいOZに変わる
 
-            OZ.foldedFigure.estimationOrder = estimationOrder;
+            selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+
+            selectedFigure.foldedFigure.estimationOrder = estimationOrder;
 
             TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(this));
         } else if (foldType == FoldType.CHANGING_FOLDED_3) {
+            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
-            point_of_referencePlane_old.set(OZ.wireFrame_worker_drawer1.get_point_of_referencePlane_tv());
+            if (selectedFigure != null) {
+                selectedFigure.foldedFigure.estimationOrder = estimationOrder;
+                selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_0;
 
-            OZ.foldedFigure.estimationOrder = estimationOrder;
-            OZ.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_0;
+                selectedFigure.foldedFigure.estimationOrder = estimationOrder;
+                selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_0;
 
-            TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(this));
+                TaskExecutor.executeTask("Folding Estimate",new FoldingEstimateTask(this));
+            }
         }
     }
 
     void folding_prepare() {//Add one new folding diagram to the foldedFigures array list, specify it as the operation target, and inherit the foldedFigures (0) common parameters.
         System.out.println(" oritatami_jyunbi 20180107");
 
-        addNewFoldedFigure(); //OAZのアレイリストに、新しく折り上がり図をひとつ追加する。
+        FoldedFigure_Drawer newFoldedFigure = new FoldedFigure_Drawer(new FoldedFigure_01(bulletinBoard));
 
-        setFoldedFigureIndex(foldedFigures.size() - 1);//foldedFigureIndex=i;OZ = (Oriagari_Zu)foldedFigures.get(foldedFigureIndex); OZ(各操作の対象となる折上がり図）に、アレイリストに最新に追加された折上がり図を割り当てる)
+        foldedFiguresList.addElement(newFoldedFigure);
+        foldedFiguresList.setSelectedItem(newFoldedFigure);
 
-        FoldedFigure_Drawer orz = foldedFigures.get(0);//Assign foldedFigures (0) (folded figures that hold common parameters) to orz
-
-        orz.getData(foldedFigureModel);
-    }
-
-    public void addNewFoldedFigure() {
-        foldedFigures.add(new FoldedFigure_Drawer(new FoldedFigure_01(bulletinBoard)));
+        newFoldedFigure.getData(foldedFigureModel);
     }
 
     public void twoColorNoSelectedPolygonalLineWarning() {
@@ -705,7 +721,6 @@ public class App {
         canvas.creasePatternCamera.setDisplayPositionY(350.0);
 
         mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);
-        OZ.wireFrame_worker_drawer1.setCamera(canvas.creasePatternCamera);
 
         canvasModel.reset();
         internalDivisionRatioModel.reset();
@@ -723,12 +738,13 @@ public class App {
     }
 
     void setFoldedFigureIndex(int i) {//Processing when OZ is switched
-        System.out.println("foldedFigureIndex = " + foldedFigureIndex);
-        foldedFigureIndex = i;
-        OZ = foldedFigures.get(foldedFigureIndex);
+        System.out.println("foldedFigureIndex = " + i);
+
+        FoldedFigure_Drawer newSelectedItem = foldedFiguresList.getElementAt(i);
+        foldedFiguresList.setSelectedItem(newSelectedItem);
 
         // Load data from this foldedFigure to the ui.
-        OZ.getData(foldedFigureModel);
+        newSelectedItem.getData(foldedFigureModel);
     }
 
     public Point e2p(MouseEvent e) {
@@ -737,41 +753,6 @@ public class App {
             offset = canvas.creasePatternCamera.getCameraZoomX() * mainCreasePatternWorker.getSelectionDistance();
         }
         return new Point(e.getX() - (int) offset, e.getY() - (int) offset);
-    }
-
-    void configure_initialize_prediction() {
-        OZ.foldedFigure.text_result = "";
-        OZ.foldedFigure.displayStyle = FoldedFigure.DisplayStyle.NONE_0;//折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図
-        OZ.foldedFigure.display_flg_backup = FoldedFigure.DisplayStyle.NONE_0;//表示様式hyouji_flgの一時的バックアップ用
-
-        //表示用の値を格納する変数
-        OZ.foldedFigure.ip1_anotherOverlapValid = FoldedFigure_Worker.HierarchyListStatus.UNKNOWN_N1;//上下表職人の初期設定時に、折った後の表裏が同じ面が
-        //隣接するという誤差があれが0を、無ければ1000を格納する変数。
-        //ここでの初期値は(0か1000)以外の数ならなんでもいい。
-        OZ.foldedFigure.ip2_possibleOverlap = -1;//上下表職人が折り畳み可能な重なり方を探した際に、
-        //可能な重なり方がなければ0を、可能な重なり方があれば1000を格納する変数。
-        //ここでの初期値は(0か1000)以外の数ならなんでもいい。
-        OZ.foldedFigure.ip3 = 1;//ts1が折り畳みを行う際の基準面を指定するのに使う。
-
-        //ip4=0;//これは、ts1の最初に裏返しをするかどうかを指定する。0ならしない。1なら裏返す。//20170615 実行しないようにした（折りあがり図の表示状況を変えないようにするため）
-
-        OZ.foldedFigure.ip5 = -1;    //上下表職人が一旦折り畳み可能な紙の重なりを示したあとで、
-        //さらに別の紙の重なりをさがす時の最初のjs.susumu(SubFaceTotal)の結果。
-        //0なら新たにsusumu余地がなかった。0以外なら変化したSubFaceのidの最も小さい番号
-        OZ.foldedFigure.ip6 = -1;    //上下表職人が一旦折り畳み可能な紙の重なりを示したあとで、
-        //さらに別の紙の重なりをさがす時の js.kanou_kasanari_sagasi()の結果。
-        //0なら可能な重なりかたとなる状態は存在しない。
-        //1000なら別の重なり方が見つかった。
-
-        foldedFigureModel.setFindAnotherOverlapValid(false);
-
-        OZ.foldedFigure.discovered_fold_cases = 0;    //折り重なり方で、何通り発見したかを格納する。
-
-        mouseDraggedValid = false;
-        mouseReleasedValid = false;//0は、マウス操作を無視。1はマウス操作有効。ファイルボックスのon-offなどで、予期せぬmouseDraggedやmouseReleasedが発生したとき、それを拾わないように0に設定する。これらは、マウスがクリックされたときに、1有効指定にする。
-
-        OZ.foldedFigure.estimated_initialize();
-        bulletinBoard.clear();
     }
 
     void readBackgroundImageFromFile() {
@@ -1038,11 +1019,23 @@ public class App {
     }
 
     public void folding_estimated() throws InterruptedException, FoldingException {
-        OZ.folding_estimated(canvas.creasePatternCamera, lineSegmentsForFolding, point_of_referencePlane_old);
+        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+
+        if (selectedFigure == null) {
+            throw new FoldingException("No folded figure created");
+        }
+
+        selectedFigure.folding_estimated(canvas.creasePatternCamera, lineSegmentsForFolding, point_of_referencePlane_old);
     }
 
-    public void createTwoColorCreasePattern() throws InterruptedException {//Two-color crease pattern
-        OZ.createTwoColorCreasePattern(canvas.creasePatternCamera, lineSegmentsForFolding, point_of_referencePlane_old);
+    public void createTwoColorCreasePattern() throws InterruptedException, FoldingException {//Two-color crease pattern
+        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+
+        if (selectedFigure == null) {
+            throw new FoldingException("No folded figure created");
+        }
+
+        selectedFigure.createTwoColorCreasePattern(canvas.creasePatternCamera, lineSegmentsForFolding, point_of_referencePlane_old);
     }
 
     public double string2double(String str0, double default_if_error) {
@@ -1083,12 +1076,7 @@ public class App {
             developmentView_initialization();
             //Deployment parameter initialization
 
-            //Initialization of folding prediction map started
-            OZ = temp_OZ;//20171223この行は不要かもしれないが、一瞬でもOZが示すOriagari_Zuがなくなることがないように念のために入れておく
-            foldedFigures.clear();
-            addNewFoldedFigure();
-            setFoldedFigureIndex(0);
-            configure_initialize_prediction();
+            foldedFiguresList.removeAllElements();
 
             mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
             mainCreasePatternWorker.setSave_for_reading(memo_temp);
@@ -1137,12 +1125,9 @@ public class App {
             developmentView_initialization();
             //Deployment parameter initialization
 
+            foldedFiguresList.removeAllElements();
+
             //Initialization of folding prediction map started
-            OZ = temp_OZ;//20171223この行は不要かもしれないが、一瞬でもOZが示すOriagari_Zuがなくなることがないように念のために入れておく
-            foldedFigures.clear();
-            addNewFoldedFigure();
-            setFoldedFigureIndex(0);
-            configure_initialize_prediction();
 
             mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
             mainCreasePatternWorker.setSave_for_reading(memo_temp);

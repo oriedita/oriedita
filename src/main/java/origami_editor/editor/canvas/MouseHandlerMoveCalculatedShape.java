@@ -3,6 +3,7 @@ package origami_editor.editor.canvas;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.App;
 import origami_editor.editor.MouseMode;
+import origami_editor.editor.drawing.FoldedFigure_Drawer;
 
 public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
     private final App app;
@@ -25,21 +26,23 @@ public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
     public void mousePressed(Point p0) {
         app.canvas.pointInCreasePatternOrFoldedFigure(p0);
 
+        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+
         switch (app.canvas.i_cp_or_oriagari) {
             case CREASE_PATTERN_0:
                 app.canvas.creasePatternCamera.camera_position_specify_from_TV(p0);
                 break;
             case FOLDED_FRONT_1:
-                app.OZ.foldedFigureFrontCamera.camera_position_specify_from_TV(p0);
+                selectedFigure.foldedFigureFrontCamera.camera_position_specify_from_TV(p0);
                 break;
             case FOLDED_BACK_2:
-                app.OZ.foldedFigureRearCamera.camera_position_specify_from_TV(p0);
+                selectedFigure.foldedFigureRearCamera.camera_position_specify_from_TV(p0);
                 break;
             case TRANSPARENT_FRONT_3:
-                app.OZ.transparentFrontCamera.camera_position_specify_from_TV(p0);
+                selectedFigure.transparentFrontCamera.camera_position_specify_from_TV(p0);
                 break;
             case TRANSPARENT_BACK_4:
-                app.OZ.transparentRearCamera.camera_position_specify_from_TV(p0);
+                selectedFigure.transparentRearCamera.camera_position_specify_from_TV(p0);
                 break;
         }
 
@@ -48,21 +51,23 @@ public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
 
     @Override
     public void mouseDragged(Point p0) {
+        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+
         switch (app.canvas.i_cp_or_oriagari) {
             case CREASE_PATTERN_0:
                 app.canvas.creasePatternCamera.displayPositionMove(app.canvas.mouse_temp0.other_Point_position(p0));
                 break;
             case FOLDED_FRONT_1:
-                app.OZ.foldedFigureFrontCamera.displayPositionMove(app.canvas.mouse_temp0.other_Point_position(p0));
+                selectedFigure.foldedFigureFrontCamera.displayPositionMove(app.canvas.mouse_temp0.other_Point_position(p0));
                 break;
             case FOLDED_BACK_2:
-                app.OZ.foldedFigureRearCamera.displayPositionMove(app.canvas.mouse_temp0.other_Point_position(p0));
+                selectedFigure.foldedFigureRearCamera.displayPositionMove(app.canvas.mouse_temp0.other_Point_position(p0));
                 break;
             case TRANSPARENT_FRONT_3:
-                app.OZ.transparentFrontCamera.displayPositionMove(app.canvas.mouse_temp0.other_Point_position(p0));
+                selectedFigure.transparentFrontCamera.displayPositionMove(app.canvas.mouse_temp0.other_Point_position(p0));
                 break;
             case TRANSPARENT_BACK_4:
-                app.OZ.transparentRearCamera.displayPositionMove(app.canvas.mouse_temp0.other_Point_position(p0));
+                selectedFigure.transparentRearCamera.displayPositionMove(app.canvas.mouse_temp0.other_Point_position(p0));
                 break;
         }
 
