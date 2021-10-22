@@ -6,7 +6,7 @@
 
     <groupId>origami</groupId>
     <artifactId>origami-editor</artifactId>
-    <version>0.0.7-SNAPSHOT</version>
+    <version>0.0.8-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
