@@ -2,6 +2,7 @@ package origami.crease_pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import origami.crease_pattern.element.*;
+import origami.data.ListArray;
 import origami.data.quadTree.QuadTree;
 import origami.data.quadTree.adapter.PointSetFaceAdapter;
 import origami.data.symmetricMatrix.SymmetricMatrix;
@@ -449,40 +450,35 @@ public class PointSet implements Serializable {
         numFaces = 0;
         searchPointLinking();
 
-        QuadTree qt = new QuadTree(new PointSetFaceAdapter(this));
+        ListArray<Integer> map = new ListArray<Integer>(numPoints);
 
         for (int i = 1; i <= numLines; i++) {
-            int added = 0;
-
             tempFace = Face_request(lines[i].getBegin(), lines[i].getEnd());
             addNewFace = true;
-            for (int j : qt.getPotentialContainer(points[lines[i].getBegin()])) {
-                if (equals(tempFace, faces[j + 1])) { // qt is 0-based
+            for (int j : map.get(lines[i].getBegin())) {
+                if (equals(tempFace, faces[j])) {
                     addNewFace = false;
                     break;
                 }
             }
-            if ((addNewFace && (tempFace.getNumPoints() != 0)) &&
-                    (calculateArea(tempFace) > 0.0)) {
-                addFace(tempFace);
-                added++;
+            if (addNewFace && tempFace.getNumPoints() != 0 && calculateArea(tempFace) > 0.0) {
+                addFace(tempFace, map);
             }
 
             tempFace = Face_request(lines[i].getEnd(), lines[i].getBegin());
             addNewFace = true;
-            for (int j : qt.getPotentialContainer(points[lines[i].getBegin()])) {
-                if (equals(tempFace, faces[j + 1])) { // qt is 0-based
+            for (int j : map.get(lines[i].getBegin())) {
+                if (equals(tempFace, faces[j])) {
                     addNewFace = false;
                     break;
                 }
             }
-            if ((addNewFace && (tempFace.getNumPoints() != 0)) && (calculateArea(tempFace) > 0.0)) {
-                addFace(tempFace);
-                added++;
+            if (addNewFace && tempFace.getNumPoints() != 0 && calculateArea(tempFace) > 0.0) {
+                addFace(tempFace, map);
             }
 
-            qt.grow(added);
-            if (Thread.interrupted()) throw new InterruptedException();
+            // No need for InterruptedException here since this algorithm is now way too
+            // fast even for Ryujin.
         }
 
         System.out.print("全面数　＝　");
@@ -697,12 +693,14 @@ public class PointSet implements Serializable {
         System.gc();
     }
 
-    private void addFace(Face tempFace) {
+    private void addFace(Face tempFace, ListArray<Integer> map) {
         numFaces = numFaces + 1;
 
         faces[numFaces].reset();
         for (int i = 1; i <= tempFace.getNumPoints(); i++) {
-            faces[numFaces].addPointId(tempFace.getPointId(i));
+            int id = tempFace.getPointId(i);
+            faces[numFaces].addPointId(id);
+            map.add(id, numFaces);
         }
         faces[numFaces].setColor(tempFace.getColor());
     }
