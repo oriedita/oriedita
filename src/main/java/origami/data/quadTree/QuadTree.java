@@ -3,6 +3,7 @@ package origami.data.quadTree;
 import java.util.*;
 
 import origami.crease_pattern.LineSegmentSet;
+import origami.crease_pattern.element.Point;
 import origami.data.quadTree.adapter.*;
 
 /**
@@ -92,6 +93,33 @@ public class QuadTree {
         return set;
     }
 
+    public Iterable<Integer> getPotentialContainer(Point p) {
+        SortedSet<Integer> set = new TreeSet<Integer>();
+
+        // Collect all the items upwards.
+        Node node = findContainerNode(root, p);
+        while (node != null) {
+            collect(node, -1, set); // -1 means collect all
+            node = node.parent;
+        }
+        return set;
+    }
+
+    private Node findContainerNode(Node node, Point p) {
+        if (!node.contains(p)) {
+            return null;
+        }
+        if (node.children[0] != null) {
+            for (int j = 0; j < 4; j++) {
+                Node n = findContainerNode(node.children[j], p);
+                if (n != null) {
+                    return n;
+                }
+            }
+        }
+        return node;
+    }
+
     private void collectDownwards(Node node, int i, Set<Integer> set) {
         collect(node, i, set);
         if (node.children[0] != null) {
@@ -128,6 +156,11 @@ public class QuadTree {
 
         boolean addItem(int i) {
             return addItem(i, adapter.getItem(i));
+        }
+
+        boolean contains(Point p) {
+            double x = p.getX(), y = p.getY();
+            return x > l + EPSILON && x < r - EPSILON && y > b + EPSILON && y < t - EPSILON;
         }
 
         private boolean addItem(int i, QuadTreeItem item) {

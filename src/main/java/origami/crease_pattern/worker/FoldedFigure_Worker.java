@@ -15,6 +15,7 @@ import origami_editor.editor.canvas.DrawingUtil;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.data.quadTree.QuadTree;
+import origami.data.quadTree.adapter.PointSetFaceAdapter;
 import origami.data.quadTree.adapter.PointSetLineAdapter;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
@@ -134,6 +135,8 @@ public class FoldedFigure_Worker {
             subFace_insidePoint[i] = SubFace_figure.insidePoint_surface(i);
         }
 
+        QuadTree qt = new QuadTree(new PointSetFaceAdapter(otta_Face_figure));
+
         System.out.println("各Smenに含まれる面を記録する");
         otta_Face_figure.LineFaceMaxMinCoordinate();//tttttttttt
 
@@ -143,7 +146,8 @@ public class FoldedFigure_Worker {
         for (int i = 1; i <= SubFaceTotal; i++) {
             int s0addFaceTotal = 0;
 
-            for (int j = 1; j <= faceTotal; j++) {
+            for (int j : qt.getPotentialContainer(subFace_insidePoint[i])) {
+                j++; // qt is 0-based
                 if (otta_Face_figure.simple_inside(subFace_insidePoint[i], j) == Polygon.Intersection.INSIDE) {
                     s0addFaceId[++s0addFaceTotal] = j;
                 }
