@@ -1,10 +1,18 @@
 # Origami Editor
 
-_This a fork of Orihime オリヒメ and not affiliated with the original version._ Orihime is an awesome tool that is used by origami designers to design new origami models. Orihime is developed by MT777 and can be downloaded from  http://mt777.html.xdomain.jp/. Undertrox developed orihimeMod, which adds some extra features to the Orihime software, this version can be downloaded from https://github.com/undertrox/orihimeMod
+_This a fork of Orihime オリヒメ and not affiliated with the original version._
 
 Origami Editor is a computer program used for drawing origami crease patterns. It comes with a wide range of tools to help you draw crease patterns.
 
 Origami Editor can simulate folding a crease pattern and show if a crease pattern is flat-foldable, and if it is, show a folded version of the crease pattern.
+
+The software is based on Orihime, it adds performance, stability and usage improvements. Notable improvements are: 
+
+- [Making it possible to fold very complex crease patterns](https://origami.abstreamace.com/2021/10/13/fold-a-full-ryujin-3-5-with-orihime-algorithm/) that would be impossible to fold in Orihime.
+- Dark mode and improved Look and Feel (#75, #51, #45)
+- Improved file save handling and better .cp support (#50)
+- Persisting application state (#19)
+- Easier installation on Windows (#30)
 
 ## Usage
 
@@ -56,5 +64,11 @@ Read the JavaDoc on [`javax.swing.KeyStroke.getKeyStroke(String)`](https://docs.
 The application state is saved to `config.json` in the configuration directory. It contains information about the application and is restored when the application starts.
 
 ## Notes
+
+### Orihime
+
+Orihime is an awesome tool that is used by origami designers to design new origami models. Orihime is developed by MT777 and can be downloaded from  http://mt777.html.xdomain.jp/. Undertrox developed orihimeMod, which adds some extra features to the Orihime software, this version can be downloaded from https://github.com/undertrox/orihimeMod
+
+### Theory
 
 Extended Fushimi (Husimi) Theorem (used in FoldLineSet) is a version of [Kawasaki's Theorem](https://en.wikipedia.org/wiki/Kawasaki%27s_theorem) for flatfoldability of vertices in a crease pattern, specifically for 4-crease vertices.
