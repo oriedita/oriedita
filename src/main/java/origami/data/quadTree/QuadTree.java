@@ -89,29 +89,29 @@ public class QuadTree {
 
     /** This only returns items that are of greater index. */
     public Iterable<Integer> getPotentialCollision(int i) {
-        SortedSet<Integer> set = new TreeSet<Integer>();
+        StaticMinHeap heap = new StaticMinHeap(count);
 
         // Collect all the items upwards.
         Node node = map.get(i).parent;
         while (node != null) {
-            collect(node, i, set);
+            collect(node, i, heap);
             node = node.parent;
         }
 
-        collectDownwards(map.get(i), i, set);
-        return set;
+        collectDownwards(map.get(i), i, heap);
+        return heap;
     }
 
     public Iterable<Integer> getPotentialContainer(Point p) {
-        SortedSet<Integer> set = new TreeSet<Integer>();
+        StaticMinHeap heap = new StaticMinHeap(count);
 
         // Collect all the items upwards.
         Node node = findContainerNode(root, p);
         while (node != null) {
-            collect(node, -1, set); // -1 means collect all
+            collect(node, -1, heap); // -1 means collect all
             node = node.parent;
         }
-        return set;
+        return heap;
     }
 
     private Node findContainerNode(Node node, Point p) {
@@ -129,20 +129,20 @@ public class QuadTree {
         return node;
     }
 
-    private void collectDownwards(Node node, int i, Set<Integer> set) {
-        collect(node, i, set);
+    private void collectDownwards(Node node, int i, StaticMinHeap heap) {
+        collect(node, i, heap);
         if (node.children[0] != null) {
             for (int j = 0; j < 4; j++) {
-                collectDownwards(node.children[j], i, set);
+                collectDownwards(node.children[j], i, heap);
             }
         }
     }
 
-    private void collect(Node node, int i, Set<Integer> set) {
+    private void collect(Node node, int i, StaticMinHeap heap) {
         int cursor = node.head;
         while (cursor != -1) {
             if (cursor > i) {
-                set.add(cursor);
+                heap.add(cursor);
             }
             cursor = next.get(cursor);
         }
