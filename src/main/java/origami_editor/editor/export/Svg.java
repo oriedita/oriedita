@@ -314,121 +314,122 @@ public class Svg {
             for (int i = 1; i <= foldLineSet.getTotal(); i++) {
                 LineSegment s = foldLineSet.get(i);
                 LineColor color = s.getColor();
-                if (color.isFoldingLine()) {
-                    switch (color) {
-                        case BLACK_0:
-                            str_stroke = "black";
-                            break;
-                        case RED_1:
-                            str_stroke = "red";
-                            break;
-                        case BLUE_2:
-                            str_stroke = "blue";
-                            break;
-                        default:
-                            throw new IllegalStateException("Not a folding line: " + color);
-                    }
-
-                    if (lineStyle == LineStyle.BLACK_TWO_DOT || lineStyle == LineStyle.BLACK_ONE_DOT) {
+                switch (color) {
+                    case BLACK_0:
                         str_stroke = "black";
+                        break;
+                    case RED_1:
+                        str_stroke = "red";
+                        break;
+                    case BLUE_2:
+                        str_stroke = "blue";
+                        break;
+                    case CYAN_3:
+                        str_stroke = "#64c8c8";
+                        break;
+                    default:
+                        continue;
+                }
+
+                if (lineStyle == LineStyle.BLACK_TWO_DOT || lineStyle == LineStyle.BLACK_ONE_DOT) {
+                    str_stroke = "black";
+                }
+
+                String str_stroke_dasharray;
+                switch (lineStyle) {
+                    case COLOR:
+                        str_stroke_dasharray = "";
+                        break;
+                    case COLOR_AND_SHAPE:
+                    case BLACK_ONE_DOT:
+                        //基本指定A　　線の太さや線の末端の形状
+                        //dash_M1,一点鎖線
+                        switch (color) {
+                            case RED_1:
+                                str_stroke_dasharray = "stroke-dasharray=\"10 3 3 3\"";
+                                break;
+                            case BLUE_2:
+                                str_stroke_dasharray = "stroke-dasharray=\"8 8\"";
+                                break;
+                            default:
+                                str_stroke_dasharray = "";
+                                break;
+                        }
+                        break;
+                    case BLACK_TWO_DOT:
+                        //基本指定A　　線の太さや線の末端の形状
+                        //dash_M2,二点鎖線
+                        switch (color) {
+                            case RED_1:
+                                str_stroke_dasharray = "stroke-dasharray=\"10 3 3 3 3 3\"";
+                                break;
+                            case BLUE_2:
+                                str_stroke_dasharray = "stroke-dasharray=\"8 8\"";
+                                break;
+                            default:
+                                str_stroke_dasharray = "";
+                                break;
+                        }
+                        break;
+                    default:
+                        throw new IllegalArgumentException();
+                }
+
+                s_tv.set(camera.object2TV(s));
+                a.set(s_tv.getA());
+                b.set(s_tv.getB());//a.set(s_tv.getax()+0.000001,s_tv.getay()+0.000001); b.set(s_tv.getbx()+0.000001,s_tv.getby()+0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+
+                BigDecimal b_ax = new BigDecimal(String.valueOf(a.getX()));
+                double x1 = b_ax.setScale(2, RoundingMode.HALF_UP).doubleValue();
+                BigDecimal b_ay = new BigDecimal(String.valueOf(a.getY()));
+                double y1 = b_ay.setScale(2, RoundingMode.HALF_UP).doubleValue();
+                BigDecimal b_bx = new BigDecimal(String.valueOf(b.getX()));
+                double x2 = b_bx.setScale(2, RoundingMode.HALF_UP).doubleValue();
+                BigDecimal b_by = new BigDecimal(String.valueOf(b.getY()));
+                double y2 = b_by.setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+                pw.println("<line x1=\"" + x1 + "\"" +
+                        " y1=\"" + y1 + "\"" +
+                        " x2=\"" + x2 + "\"" +
+                        " y2=\"" + y2 + "\"" +
+                        " " + str_stroke_dasharray + " " +
+                        " stroke=\"" + str_stroke + "\"" +
+                        " stroke-width=\"" + str_strokewidth + "\"" + " />");
+
+                if (pointSize != 0) {
+                    if (fCreasePatternLineWidth < 2.0f) {//Draw a black square at the vertex
+
+                        pw.println("<rect style=\"fill:#000000;stroke:none\"" +
+                                " width=\"" + 2.0 * (double) pointSize + "\"" +
+                                " height=\"" + 2.0 * (double) pointSize + "\"" +
+                                " x=\"" + (x1 - (double) pointSize) + "\"" +
+                                " y=\"" + (y1 - (double) pointSize) + "\"" +
+                                " />");
+
+                        pw.println("<rect style=\"fill:#000000;stroke:none\"" +
+                                " width=\"" + 2.0 * (double) pointSize + "\"" +
+                                " height=\"" + 2.0 * (double) pointSize + "\"" +
+                                " x=\"" + (x2 - (double) pointSize) + "\"" +
+                                " y=\"" + (y2 - (double) pointSize) + "\"" +
+                                " />");
                     }
+                }
 
-                    String str_stroke_dasharray;
-                    switch (lineStyle) {
-                        case COLOR:
-                            str_stroke_dasharray = "";
-                            break;
-                        case COLOR_AND_SHAPE:
-                        case BLACK_ONE_DOT:
-                            //基本指定A　　線の太さや線の末端の形状
-                            //dash_M1,一点鎖線
-                            switch (color) {
-                                case RED_1:
-                                    str_stroke_dasharray = "stroke-dasharray=\"10 3 3 3\"";
-                                    break;
-                                case BLUE_2:
-                                    str_stroke_dasharray = "stroke-dasharray=\"8 8\"";
-                                    break;
-                                default:
-                                    str_stroke_dasharray = "";
-                                    break;
-                            }
-                            break;
-                        case BLACK_TWO_DOT:
-                            //基本指定A　　線の太さや線の末端の形状
-                            //dash_M2,二点鎖線
-                            switch (color) {
-                                case RED_1:
-                                    str_stroke_dasharray = "stroke-dasharray=\"10 3 3 3 3 3\"";
-                                    break;
-                                case BLUE_2:
-                                    str_stroke_dasharray = "stroke-dasharray=\"8 8\"";
-                                    break;
-                                default:
-                                    str_stroke_dasharray = "";
-                                    break;
-                            }
-                            break;
-                        default:
-                            throw new IllegalArgumentException();
-                    }
-
-                    s_tv.set(camera.object2TV(s));
-                    a.set(s_tv.getA());
-                    b.set(s_tv.getB());//a.set(s_tv.getax()+0.000001,s_tv.getay()+0.000001); b.set(s_tv.getbx()+0.000001,s_tv.getby()+0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
-
-                    BigDecimal b_ax = new BigDecimal(String.valueOf(a.getX()));
-                    double x1 = b_ax.setScale(2, RoundingMode.HALF_UP).doubleValue();
-                    BigDecimal b_ay = new BigDecimal(String.valueOf(a.getY()));
-                    double y1 = b_ay.setScale(2, RoundingMode.HALF_UP).doubleValue();
-                    BigDecimal b_bx = new BigDecimal(String.valueOf(b.getX()));
-                    double x2 = b_bx.setScale(2, RoundingMode.HALF_UP).doubleValue();
-                    BigDecimal b_by = new BigDecimal(String.valueOf(b.getY()));
-                    double y2 = b_by.setScale(2, RoundingMode.HALF_UP).doubleValue();
-
-                    pw.println("<line x1=\"" + x1 + "\"" +
-                            " y1=\"" + y1 + "\"" +
-                            " x2=\"" + x2 + "\"" +
-                            " y2=\"" + y2 + "\"" +
-                            " " + str_stroke_dasharray + " " +
-                            " stroke=\"" + str_stroke + "\"" +
-                            " stroke-width=\"" + str_strokewidth + "\"" + " />");
-
+                if (fCreasePatternLineWidth >= 2.0f) {//  Thick line
                     if (pointSize != 0) {
-                        if (fCreasePatternLineWidth < 2.0f) {//Draw a black square at the vertex
+                        double d_width = (double) fCreasePatternLineWidth / 2.0 + (double) pointSize;
 
-                            pw.println("<rect style=\"fill:#000000;stroke:none\"" +
-                                    " width=\"" + 2.0 * (double) pointSize + "\"" +
-                                    " height=\"" + 2.0 * (double) pointSize + "\"" +
-                                    " x=\"" + (x1 - (double) pointSize) + "\"" +
-                                    " y=\"" + (y1 - (double) pointSize) + "\"" +
-                                    " />");
+                        pw.println("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
+                                " r=\"" + d_width + "\"" +
+                                " cx=\"" + x1 + "\"" +
+                                " cy=\"" + y1 + "\"" +
+                                " />");
 
-                            pw.println("<rect style=\"fill:#000000;stroke:none\"" +
-                                    " width=\"" + 2.0 * (double) pointSize + "\"" +
-                                    " height=\"" + 2.0 * (double) pointSize + "\"" +
-                                    " x=\"" + (x2 - (double) pointSize) + "\"" +
-                                    " y=\"" + (y2 - (double) pointSize) + "\"" +
-                                    " />");
-                        }
-                    }
-
-                    if (fCreasePatternLineWidth >= 2.0f) {//  Thick line
-                        if (pointSize != 0) {
-                            double d_width = (double) fCreasePatternLineWidth / 2.0 + (double) pointSize;
-
-                            pw.println("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
-                                    " r=\"" + d_width + "\"" +
-                                    " cx=\"" + x1 + "\"" +
-                                    " cy=\"" + y1 + "\"" +
-                                    " />");
-
-                            pw.println("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
-                                    " r=\"" + d_width + "\"" +
-                                    " cx=\"" + x2 + "\"" +
-                                    " cy=\"" + y2 + "\"" +
-                                    " />");
-                        }
+                        pw.println("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
+                                " r=\"" + d_width + "\"" +
+                                " cx=\"" + x2 + "\"" +
+                                " cy=\"" + y2 + "\"" +
+                                " />");
                     }
                 }
             }
