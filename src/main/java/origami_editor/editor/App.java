@@ -11,7 +11,6 @@ import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami_editor.editor.action.Click;
 import origami_editor.editor.canvas.*;
 import origami_editor.editor.component.BulletinBoard;
-import origami_editor.editor.component.NativeFileChooser;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.export.Cp;
 import origami_editor.editor.export.Obj;
@@ -807,28 +806,14 @@ public class App {
     }
 
     File selectOpenFile() {
-        JFileChooser fileChooser = new NativeFileChooser(applicationModel.getDefaultDirectory());
+        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Open");
 
         fileChooser.setFileFilter(new FileNameExtensionFilter("All supported files (*.ori, *.cp)", "cp", "ori"));
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp"));
 
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
-
-        SwingUtilities.updateComponentTreeUI(fileChooser);
         fileChooser.showOpenDialog(frame);
-
-        try {
-            UIManager.setLookAndFeel(applicationModel.getLaf());
-        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
 
         File selectedFile = fileChooser.getSelectedFile();
         if (selectedFile != null && selectedFile.exists()) {
@@ -846,7 +831,7 @@ public class App {
     }
 
     File selectSaveFile() {
-        JFileChooser fileChooser = new NativeFileChooser(applicationModel.getDefaultDirectory());
+        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Save As");
 
         FileNameExtensionFilter oriFilter = new FileNameExtensionFilter("Origami Editor (*.ori)", "ori");
@@ -890,7 +875,7 @@ public class App {
     }
 
     File selectImportFile() {
-        JFileChooser fileChooser = new NativeFileChooser(applicationModel.getDefaultDirectory());
+        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Import");
 
         fileChooser.setFileFilter(new FileNameExtensionFilter("All supported files", "cp", "orh", "ori"));
@@ -909,7 +894,7 @@ public class App {
     }
 
     public File selectExportFile() {
-        JFileChooser fileChooser = new NativeFileChooser(applicationModel.getDefaultDirectory());
+        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Export");
 
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image (*.png)", "png"));
