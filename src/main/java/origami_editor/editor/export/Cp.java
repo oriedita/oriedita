@@ -42,6 +42,9 @@ public class Cp {
                 case "3":
                     col = LineColor.BLUE_2;
                     break;
+                case "4":
+                    col = LineColor.CYAN_3;
+                    break;
                 default:
                     continue;
             }
