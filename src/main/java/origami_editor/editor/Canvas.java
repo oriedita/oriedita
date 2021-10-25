@@ -691,7 +691,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //OZ_hyouji_mode=3;  omote & ura
         //OZ_hyouji_mode=4;  omote & ura & omote2 & ura2
 
-        int tempFoldedFigureIndex = 0;
+        int tempFoldedFigureIndex = -1;
         MouseWheelTarget temp_i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;
         FoldedFigure_Drawer drawer;
         FoldedFigure OZi;
@@ -769,7 +769,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         }
         i_cp_or_oriagari = temp_i_cp_or_oriagari;
 
-        app.setFoldedFigureIndex(tempFoldedFigureIndex);
+        if (tempFoldedFigureIndex > -1) {
+            app.setFoldedFigureIndex(tempFoldedFigureIndex);
+        }
 
         return temp_i_cp_or_oriagari;
     }

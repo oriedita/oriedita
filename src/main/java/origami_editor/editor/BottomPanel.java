@@ -389,8 +389,9 @@ public class BottomPanel extends JPanel {
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
+        gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
         panel1.add(foldedFigureBox, gbc);
         final JPanel spacer2 = new JPanel();
         gbc = new GridBagConstraints();
