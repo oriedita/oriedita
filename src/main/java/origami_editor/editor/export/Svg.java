@@ -9,6 +9,7 @@ import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.folding.element.SubFace;
 import origami_editor.editor.LineStyle;
+import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.tools.Camera;
@@ -169,10 +170,10 @@ public class Svg {
 
                 if (front_back) {
                     if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(face_order)) % 2 == 0) {
-                        str_stroke = "yellow";
+                        str_stroke = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getFrontColor());
                     }//g.setColor(F_color)
                     if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(face_order)) % 2 == 1) {
-                        str_stroke = "gray";
+                        str_stroke = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getBackColor());
                     }//g.setColor(B_color)
                 }
 
