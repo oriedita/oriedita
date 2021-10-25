@@ -315,6 +315,7 @@ public class TopPanel {
         panel1.add(panel2, gbc);
         ratioATextField = new JTextField();
         ratioATextField.setColumns(2);
+        ratioATextField.setMinimumSize(new Dimension(60, 30));
         ratioATextField.setText("1.0");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -329,6 +330,7 @@ public class TopPanel {
         panel2.add(label1, gbc);
         ratioBTextField = new JTextField();
         ratioBTextField.setColumns(2);
+        ratioBTextField.setMinimumSize(new Dimension(60, 30));
         ratioBTextField.setText("0.0");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
@@ -343,6 +345,7 @@ public class TopPanel {
         panel2.add(label2, gbc);
         ratioCTextField = new JTextField();
         ratioCTextField.setColumns(2);
+        ratioCTextField.setMinimumSize(new Dimension(60, 30));
         ratioCTextField.setText("0.0");
         gbc = new GridBagConstraints();
         gbc.gridx = 4;
@@ -364,6 +367,7 @@ public class TopPanel {
         panel1.add(panel3, gbc);
         ratioDTextField = new JTextField();
         ratioDTextField.setColumns(2);
+        ratioDTextField.setMinimumSize(new Dimension(60, 30));
         ratioDTextField.setText("0.0");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -378,6 +382,7 @@ public class TopPanel {
         panel3.add(label4, gbc);
         ratioETextField = new JTextField();
         ratioETextField.setColumns(2);
+        ratioETextField.setMinimumSize(new Dimension(60, 30));
         ratioETextField.setText("1.0");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
@@ -392,6 +397,7 @@ public class TopPanel {
         panel3.add(label5, gbc);
         ratioFTextField = new JTextField();
         ratioFTextField.setColumns(2);
+        ratioFTextField.setMinimumSize(new Dimension(60, 30));
         ratioFTextField.setText("2.0");
         gbc = new GridBagConstraints();
         gbc.gridx = 4;
