@@ -34,7 +34,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private final CreasePattern_Worker es1;
     private final App app;
 
-    MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
+    public MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
 
     Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
     Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
@@ -373,7 +373,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             case MouseEvent.BUTTON2:
                 System.out.println("中ボタンクリック");
 
-                MouseWheelTarget target = pointInCreasePatternOrFoldedFigure(p, app);
+                MouseWheelTarget target = pointInCreasePatternOrFoldedFigure(p);
 
                 System.out.println("i_cp_or_oriagari = " + target);
 
@@ -581,7 +581,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 }
             } else {
                 Point p = new Point(app.e2p(e));
-                MouseWheelTarget target = pointInCreasePatternOrFoldedFigure(p, app);
+                MouseWheelTarget target = pointInCreasePatternOrFoldedFigure(p);
 
                 double scrollDistance = app.applicationModel.isPreciseZoom() ? e.getPreciseWheelRotation() : e.getWheelRotation();
 
@@ -672,7 +672,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         repaint();
     }
 
-    public MouseWheelTarget pointInCreasePatternOrFoldedFigure(Point p, App app) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
+    public MouseWheelTarget pointInCreasePatternOrFoldedFigure(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
         //20171216
         //hyouji_flg==2,ip4==0  omote
         //hyouji_flg==2,ip4==1	ura
