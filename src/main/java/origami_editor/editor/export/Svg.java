@@ -5,11 +5,10 @@ import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
+import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.element.SubFace;
 import origami_editor.editor.LineStyle;
-import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.tools.Camera;
@@ -378,7 +377,7 @@ public class Svg {
 
                 s_tv.set(camera.object2TV(s));
                 a.set(s_tv.getA());
-                b.set(s_tv.getB());//a.set(s_tv.getax()+0.000001,s_tv.getay()+0.000001); b.set(s_tv.getbx()+0.000001,s_tv.getby()+0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+                b.set(s_tv.getB());
 
                 BigDecimal b_ax = new BigDecimal(String.valueOf(a.getX()));
                 double x1 = b_ax.setScale(2, RoundingMode.HALF_UP).doubleValue();
@@ -398,7 +397,8 @@ public class Svg {
                         " stroke-width=\"" + str_strokewidth + "\"" + " />");
 
                 if (pointSize != 0) {
-                    if (fCreasePatternLineWidth < 2.0f) {//Draw a black square at the vertex
+                    if (fCreasePatternLineWidth < 2.0f) {
+                        //Draw a black square at the vertex
 
                         pw.println("<rect style=\"fill:#000000;stroke:none\"" +
                                 " width=\"" + 2.0 * (double) pointSize + "\"" +
@@ -413,11 +413,8 @@ public class Svg {
                                 " x=\"" + (x2 - (double) pointSize) + "\"" +
                                 " y=\"" + (y2 - (double) pointSize) + "\"" +
                                 " />");
-                    }
-                }
-
-                if (fCreasePatternLineWidth >= 2.0f) {//  Thick line
-                    if (pointSize != 0) {
+                    } else {
+                        //  Thick line
                         double d_width = (double) fCreasePatternLineWidth / 2.0 + (double) pointSize;
 
                         pw.println("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
