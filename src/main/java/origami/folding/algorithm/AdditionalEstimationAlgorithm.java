@@ -1,6 +1,7 @@
 package origami.folding.algorithm;
 
 import origami.crease_pattern.worker.FoldedFigure_Worker.HierarchyListStatus;
+import origami.data.StackArray;
 import origami.data.listMatrix.PseudoListMatrix;
 import origami.folding.HierarchyList;
 import origami.folding.element.SubFace;
@@ -29,16 +30,19 @@ public class AdditionalEstimationAlgorithm {
     private final SubFace[] subFaces; // indices start from 1
 
     private final ItalianoAlgorithm[] IA;
-    private PseudoListMatrix relationObservers;
+    private final PseudoListMatrix relationObservers;
+    private final StackArray changeList;
 
     public int errorIndex;
 
     public EquivalenceCondition errorPos;
 
-    public AdditionalEstimationAlgorithm(HierarchyList hierarchyList, SubFace[] s) {
+    public AdditionalEstimationAlgorithm(HierarchyList hierarchyList, SubFace[] s, int capacity) {
         this.hierarchyList = hierarchyList;
         this.subFaces = s;
-        IA = new ItalianoAlgorithm[subFaces.length];
+        int count = subFaces.length;
+        changeList = new StackArray(count, capacity);
+        IA = new ItalianoAlgorithm[count];
         relationObservers = new PseudoListMatrix(hierarchyList.getFacesTotal());
     }
 
@@ -60,7 +64,7 @@ public class AdditionalEstimationAlgorithm {
                         // saving memory.
                         initializeItalianoAlgorithm(iS);
                     }
-                    int changes = checkTransitivity(subFaces[iS], IA[iS]);
+                    int changes = checkTransitivity(iS);
                     new_relations += changes;
                 }
             } catch (InferenceFailureException e) {
@@ -112,7 +116,7 @@ public class AdditionalEstimationAlgorithm {
     }
 
     private void initializeItalianoAlgorithm(int s) {
-        IA[s] = new ItalianoAlgorithm(subFaces[s].getFaceIdCount());
+        IA[s] = new ItalianoAlgorithm(s, subFaces[s].getFaceIdCount(), changeList);
         int count = subFaces[s].getFaceIdCount();
         for (int i = 1; i <= count; i++) {
             for (int j = 1; j <= count; j++) {
@@ -134,10 +138,11 @@ public class AdditionalEstimationAlgorithm {
      * the dynamic use case here. I re-implemented it using the Italiano algorithm,
      * which is way faster here.
      */
-    public int checkTransitivity(SubFace sf, ItalianoAlgorithm ia) throws InferenceFailureException {
+    public int checkTransitivity(int s) throws InferenceFailureException {
         int changes = 0;
-        for (int n : ia.flush()) {
-            changes += tryInferAbove(sf.getFaceId(n >>> 16), sf.getFaceId(n & ItalianoAlgorithm.mask));
+        for (int n : changeList.flush(s)) {
+            changes += tryInferAbove(subFaces[s].getFaceId(n >>> 16),
+                    subFaces[s].getFaceId(n & ItalianoAlgorithm.mask));
         }
         return changes;
     }

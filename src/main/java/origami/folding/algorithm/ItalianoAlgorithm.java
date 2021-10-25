@@ -1,6 +1,7 @@
 package origami.folding.algorithm;
 
 import java.util.*;
+import origami.data.StackArray;
 
 /**
  * This is the transitive closure algorithm described by G. F. Italiano. See
@@ -12,6 +13,7 @@ public class ItalianoAlgorithm {
     public static final int emptyNode = 1 << 16; // so that 0 is reserved as null
     public static final int nodeMask = (1 << 17) - 1;
 
+    private final int id;
     private final int size;
 
     /**
@@ -31,14 +33,21 @@ public class ItalianoAlgorithm {
      * allocate larger memory for JVM in the first place. Accordingly, ArrayDeque is
      * more efficient than other classes such as ArrayList, LinkedList, etc. We use
      * int64 to store 4 int16 parameters.
+     * 
+     * We do not use a centralized StackArray to implement this part like what we
+     * did for changes, since the way stack operates here is that it pops and stack
+     * at the same time, such operations are in fact slower to use StackArray than
+     * individual ArrayDeque.
      */
     private final ArrayDeque<Long> stack = new ArrayDeque<>();
 
     /** Each changed entry is represented as int32 using upper and lower bits. */
-    public ArrayDeque<Integer> changes = new ArrayDeque<>();
+    public final StackArray changes;
 
-    public ItalianoAlgorithm(int size) {
+    public ItalianoAlgorithm(int id, int size, StackArray changes) {
+        this.id = id;
         this.size = size;
+        this.changes = changes;
         this.matrix = new int[size + 1][size + 1];
         for (int i = 1; i <= size; i++) {
             matrix[i][i] = emptyNode;
@@ -59,12 +68,6 @@ public class ItalianoAlgorithm {
         }
     }
 
-    public Iterable<Integer> flush() {
-        Iterable<Integer> result = changes;
-        changes = new ArrayDeque<>();
-        return result;
-    }
-
     private void meld(int x, int j, int u, int v) {
         // create new node
         matrix[x][v] = emptyNode | (matrix[x][u] >>> 17);
@@ -73,7 +76,7 @@ public class ItalianoAlgorithm {
         matrix[x][u] = matrix[x][u] & nodeMask | (v << 17);
 
         // add to change list
-        changes.add((x << 16) | v);
+        changes.add(id, (x << 16) | v);
 
         // copy subtree
         int w = matrix[j][v] >>> 17;

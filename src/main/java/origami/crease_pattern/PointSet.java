@@ -450,7 +450,7 @@ public class PointSet implements Serializable {
         numFaces = 0;
         searchPointLinking();
 
-        ListArray<Integer> map = new ListArray<Integer>(numPoints);
+        ListArray map = new ListArray(numPoints, numPoints * 5);
 
         for (int i = 1; i <= numLines; i++) {
             tempFace = Face_request(lines[i].getBegin(), lines[i].getEnd());
@@ -693,7 +693,7 @@ public class PointSet implements Serializable {
         System.gc();
     }
 
-    private void addFace(Face tempFace, ListArray<Integer> map) {
+    private void addFace(Face tempFace, ListArray map) {
         numFaces = numFaces + 1;
 
         faces[numFaces].reset();

@@ -370,7 +370,8 @@ public class FoldedFigure_Worker {
         // We will infer relationships that can be further determined from the
         // information on mountain folds and valley folds.
 
-        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(hierarchyList, s0);
+        int capacity = FaceIdCount_max * FaceIdCount_max;
+        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(hierarchyList, s0, capacity);
         HierarchyListStatus result = AEA.run(0);
         errorPos = AEA.errorPos;
         return result;
@@ -473,7 +474,7 @@ public class FoldedFigure_Worker {
         }
 
         // Solution found, perform final checking
-        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(hierarchyList, s);
+        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(hierarchyList, s, 1000); // we don't need much for this
         if (AEA.run(SubFace_valid_number) != HierarchyListStatus.SUCCESSFUL_1000) {
             // This rarely happens, but typically it means the solution contradicts some of
             // the SubFace not counted as "valid" previously. In that case, adding it to the
