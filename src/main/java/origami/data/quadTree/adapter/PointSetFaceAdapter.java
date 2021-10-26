@@ -6,8 +6,11 @@ import origami.data.quadTree.QuadTreeItem;
 
 public class PointSetFaceAdapter extends PointSetAdapter {
 
+    private final QuadTreeItem[] cache;
+
     public PointSetFaceAdapter(PointSet set) {
         super(set);
+        cache = new QuadTreeItem[getCount() + 1];
     }
 
     @Override
@@ -17,6 +20,8 @@ public class PointSetFaceAdapter extends PointSetAdapter {
 
     @Override
     public QuadTreeItem getItem(int index) {
+        if (cache[index] != null) return cache[index];
+
         // Faces in PointSet are 1-based
         int count = set.getPointsCount(index + 1);
         Double l = null, r = null, t = null, b = null;
@@ -36,6 +41,8 @@ public class PointSetFaceAdapter extends PointSetAdapter {
                 b = y;
             }
         }
-        return new QuadTreeItem(l, r, b, t);
+        QuadTreeItem item = new QuadTreeItem(l, r, b, t);
+        cache[index] = item;
+        return item;
     }
 }

@@ -5,6 +5,7 @@ import java.util.*;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
 import origami.data.quadTree.adapter.*;
+import origami.data.quadTree.collector.*;
 
 /**
  * Author: Mu-Tsun Tsai
@@ -93,68 +94,56 @@ public class QuadTree {
     }
 
     public Iterable<Integer> getPotentialCollision(int i, int min) {
-        StaticMinHeap heap = new StaticMinHeap(count);
-
-        // Collect all the items upwards.
-        Node node = map.get(i).parent;
-        while (node != null) {
-            collect(node, min, heap);
-            node = node.parent;
-        }
-
-        collectDownwards(map.get(i), min, heap);
-        return heap;
+        return collect(new CollisionCollector(i, min, map));
     }
 
     public Iterable<Integer> getPotentialContainer(Point p) {
-        StaticMinHeap heap = new StaticMinHeap(count);
+        return collect(new PointCollector(p, adapter));
+    }
 
-        // Collect all the items upwards.
-        Node node = findContainerNode(root, p);
+    /** Get all items that might partially contains the given line. */
+    public Iterable<Integer> getPotentialContainer(Point p, Point q) {
+        return collect(new LineSegmentCollector(p, q, adapter));
+    }
+    
+    private Iterable<Integer> collect(QuadTreeCollector collector) {
+        StaticMinHeap heap = new StaticMinHeap(count);
+        Node node = collector.findInitial(root);
+        if (collector.shouldGoDown()) {
+            collectDownwards(node, collector, heap);
+        } else {
+            collectNode(node, collector, heap);
+        }
+        node = node.parent;
         while (node != null) {
-            collect(node, -1, heap); // -1 means collect all
+            collectNode(node, collector, heap);
             node = node.parent;
         }
         return heap;
     }
 
-    private Node findContainerNode(Node node, Point p) {
-        if (!node.contains(p)) {
-            return null;
-        }
+    private void collectDownwards(Node node, QuadTreeCollector collector, StaticMinHeap heap) {
+        collectNode(node, collector, heap);
         if (node.children[0] != null) {
             for (int j = 0; j < 4; j++) {
-                Node n = findContainerNode(node.children[j], p);
-                if (n != null) {
-                    return n;
-                }
-            }
-        }
-        return node;
-    }
-
-    private void collectDownwards(Node node, int min, StaticMinHeap heap) {
-        collect(node, min, heap);
-        if (node.children[0] != null) {
-            for (int j = 0; j < 4; j++) {
-                collectDownwards(node.children[j], min, heap);
+                collectDownwards(node.children[j], collector, heap);
             }
         }
     }
 
-    private void collect(Node node, int min, StaticMinHeap heap) {
+    private void collectNode(Node node, QuadTreeCollector collector, StaticMinHeap heap) {
         int cursor = node.head;
         while (cursor != -1) {
-            if (cursor > min) {
+            if (collector.shouldCollect(cursor)) {
                 heap.add(cursor);
             }
             cursor = next.get(cursor);
         }
     }
 
-    private class Node {
+    public class Node {
         final double l, r, b, t;
-        final Node[] children = new Node[4];
+        public final Node[] children = new Node[4];
         final Node parent;
         int size;
         int head = -1;
@@ -171,13 +160,17 @@ public class QuadTree {
             return addItem(i, adapter.getItem(i));
         }
 
-        boolean contains(Point p) {
+        public boolean contains(Point p) {
             double x = p.getX(), y = p.getY();
             return x > l + EPSILON && x < r - EPSILON && y > b + EPSILON && y < t - EPSILON;
         }
 
+        public boolean contains(QuadTreeItem item) {
+            return item.l > l + EPSILON && item.r < r - EPSILON && item.b > b + EPSILON && item.t < t - EPSILON;
+        }
+
         private boolean addItem(int i, QuadTreeItem item) {
-            if (!containsItem(item)) {
+            if (!contains(item)) {
                 return false;
             }
             if (size >= CAPACITY) {
@@ -206,7 +199,7 @@ public class QuadTree {
             if (cursor == i) {
                 head = old_next;
             } else {
-                while(true) {
+                while (true) {
                     int n = next.get(cursor);
                     if (n == i) {
                         next.set(cursor, old_next);
@@ -215,10 +208,6 @@ public class QuadTree {
                     cursor = n;
                 }
             }
-        }
-
-        private boolean containsItem(QuadTreeItem item) {
-            return item.l > l + EPSILON && item.r < r - EPSILON && item.b > b + EPSILON && item.t < t - EPSILON;
         }
 
         private void split() {
@@ -234,7 +223,7 @@ public class QuadTree {
                 int n = next.get(i), c;
                 QuadTreeItem item = adapter.getItem(i);
                 for (c = 0; c < 4; c++) {
-                    if (children[c].containsItem(item)) {
+                    if (children[c].contains(item)) {
                         children[c].addIndex(i);
                         break;
                     }

@@ -3,9 +3,6 @@ package origami.crease_pattern;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import origami.crease_pattern.element.*;
 import origami.data.ListArray;
-import origami.data.quadTree.QuadTree;
-import origami.data.quadTree.adapter.PointSetFaceAdapter;
-import origami.data.symmetricMatrix.SymmetricMatrix;
 import origami.folding.element.Face;
 import origami_editor.editor.Save;
 
@@ -32,24 +29,6 @@ public class PointSet implements Serializable {
     int[] lineInFaceBorder_max;
 
     Face[] faces; //Face instantiation
-
-    @JsonIgnore
-    double[] line_x_max;
-    @JsonIgnore
-    double[] line_x_min;
-    @JsonIgnore
-    double[] line_y_max;
-    @JsonIgnore
-    double[] line_y_min;
-
-    @JsonIgnore
-    double[] face_x_max;
-    @JsonIgnore
-    double[] face_x_min;
-    @JsonIgnore
-    double[] face_y_max;
-    @JsonIgnore
-    double[] face_y_min;
 
     @JsonIgnore
     List<List<Integer>> point_linking;//point_linking [i] [j] is the number of points connected to t [i]. The number of Tem is stored in t [0].
@@ -98,16 +77,6 @@ public class PointSet implements Serializable {
         for (int i = 0; i <= numFaces; i++) {
             faces[i] = new Face();
         }
-
-        line_x_max = new double[numLines + 1];
-        line_x_min = new double[numLines + 1];
-        line_y_max = new double[numLines + 1];
-        line_y_min = new double[numLines + 1];
-
-        face_x_max = new double[numFaces + 1];
-        face_x_min = new double[numFaces + 1];
-        face_y_max = new double[numFaces + 1];
-        face_y_min = new double[numFaces + 1];
     }
 
     //---------------
@@ -165,23 +134,6 @@ public class PointSet implements Serializable {
         return lineInFaceBorder_max[i];
     }
 
-    //Determine if the point is inside a face. 0 is not inside, 1 is on the border, 2 is inside
-    public Polygon.Intersection simple_inside(Point p, int n) {    // 0 = external, 1 = boundary, 2 = internal
-        if (p.getX() + 0.5 < face_x_min[n]) {
-            return Polygon.Intersection.OUTSIDE;
-        }
-        if (p.getX() - 0.5 > face_x_max[n]) {
-            return Polygon.Intersection.OUTSIDE;
-        }
-        if (p.getY() + 0.5 < face_y_min[n]) {
-            return Polygon.Intersection.OUTSIDE;
-        }
-        if (p.getY() - 0.5 > face_y_max[n]) {
-            return Polygon.Intersection.OUTSIDE;
-        }
-        return inside(p, faces[n]);
-    }
-
     //Determine if the point is inside a face.
     public Polygon.Intersection inside(Point p, int n) {      //0=外部、　1=境界、　2=内部
         return inside(p, faces[n]);
@@ -218,21 +170,7 @@ public class PointSet implements Serializable {
 
     // Even a part of the line segment s0 is inside the surface of the convex polygon (the boundary line is not regarded as the inside)
     // Returns 1 if it exists, 0 otherwise. If the surface is a concave polygon, the result will be strange, so do not use it.
-    public boolean simple_convex_inside(int ib, int im) {
-        //バグがあるようだったが，多分取り除けた
-        if (line_x_max[ib] + 0.5 < face_x_min[im]) {
-            return false;
-        }
-        if (line_x_min[ib] - 0.5 > face_x_max[im]) {
-            return false;
-        }
-        if (line_y_max[ib] + 0.5 < face_y_min[im]) {
-            return false;
-        }
-        if (line_y_min[ib] - 0.5 > face_y_max[im]) {
-            return false;
-        }
-
+    public boolean convex_inside(int ib, int im) {
         return convex_inside(new LineSegment(points[lines[ib].getBegin()], points[lines[ib].getEnd()]), faces[im]);
     }
 
@@ -511,56 +449,6 @@ public class PointSet implements Serializable {
                 lineInFaceBorder_max[i] = max;
             }
             if (Thread.interrupted()) throw new InterruptedException();
-        }
-    }
-
-    //BouやMenの座標の最大値、最小値を求める。kantan_totu_naibu関数にのみ用いる。kantan_totu_naibu関数を使うなら折り畳み推定毎にやる必要あり。
-    public void LineFaceMaxMinCoordinate() {
-        //Find the maximum and minimum coordinates of Line (this may be better done immediately after Line is added than done here)
-        for (int ib = 1; ib <= numLines; ib++) {
-
-            line_x_max[ib] = points[lines[ib].getBegin()].getX();
-            line_x_min[ib] = points[lines[ib].getBegin()].getX();
-            line_y_max[ib] = points[lines[ib].getBegin()].getY();
-            line_y_min[ib] = points[lines[ib].getBegin()].getY();
-
-            if (line_x_max[ib] < points[lines[ib].getEnd()].getX()) {
-                line_x_max[ib] = points[lines[ib].getEnd()].getX();
-            }
-            if (line_x_min[ib] > points[lines[ib].getEnd()].getX()) {
-                line_x_min[ib] = points[lines[ib].getEnd()].getX();
-            }
-            if (line_y_max[ib] < points[lines[ib].getEnd()].getY()) {
-                line_y_max[ib] = points[lines[ib].getEnd()].getY();
-            }
-            if (line_y_min[ib] > points[lines[ib].getEnd()].getY()) {
-                line_y_min[ib] = points[lines[ib].getEnd()].getY();
-            }
-            faceMaxMinCoordinate();
-        }
-    }
-
-    private void faceMaxMinCoordinate() {
-        //Find the maximum and minimum of Face's coordinates
-        for (int faceId = 1; faceId <= numFaces; faceId++) {
-            face_x_max[faceId] = points[faces[faceId].getPointId(1)].getX();
-            face_x_min[faceId] = points[faces[faceId].getPointId(1)].getX();
-            face_y_max[faceId] = points[faces[faceId].getPointId(1)].getY();
-            face_y_min[faceId] = points[faces[faceId].getPointId(1)].getY();
-            for (int i = 2; i <= faces[faceId].getNumPoints(); i++) {
-                if (face_x_max[faceId] < points[faces[faceId].getPointId(i)].getX()) {
-                    face_x_max[faceId] = points[faces[faceId].getPointId(i)].getX();
-                }
-                if (face_x_min[faceId] > points[faces[faceId].getPointId(i)].getX()) {
-                    face_x_min[faceId] = points[faces[faceId].getPointId(i)].getX();
-                }
-                if (face_y_max[faceId] < points[faces[faceId].getPointId(i)].getY()) {
-                    face_y_max[faceId] = points[faces[faceId].getPointId(i)].getY();
-                }
-                if (face_y_min[faceId] > points[faces[faceId].getPointId(i)].getY()) {
-                    face_y_min[faceId] = points[faces[faceId].getPointId(i)].getY();
-                }
-            }
         }
     }
 

@@ -14,6 +14,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami_editor.editor.canvas.DrawingUtil;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
+import origami.data.ListArray;
 import origami.data.quadTree.QuadTree;
 import origami.data.quadTree.adapter.PointSetFaceAdapter;
 import origami.data.quadTree.adapter.PointSetLineAdapter;
@@ -62,6 +63,8 @@ public class FoldedFigure_Worker {
     private int top_face_id_ga_maketa_kazu_goukei_without_rated_face = 0;
 
     SwappingAlgorithm swapper;
+    ListArray faceToSubFaceMap;
+    QuadTree qt;
 
     EquivalenceCondition errorPos = null;
 
@@ -135,12 +138,13 @@ public class FoldedFigure_Worker {
             subFace_insidePoint[i] = SubFace_figure.insidePoint_surface(i);
         }
 
-        QuadTree qt = new QuadTree(new PointSetFaceAdapter(otta_Face_figure));
+        // Also used later in HierarchyList_configure
+        qt = new QuadTree(new PointSetFaceAdapter(otta_Face_figure));
 
         System.out.println("各Smenに含まれる面を記録する");
-        otta_Face_figure.LineFaceMaxMinCoordinate();//tttttttttt
 
         int faceTotal = otta_Face_figure.getNumFaces();
+        faceToSubFaceMap = new ListArray(faceTotal, faceTotal * 5);
         int[] s0addFaceId = new int[faceTotal + 1]; // SubFaceに追加する面を一時記録しておく
 
         for (int i = 1; i <= SubFaceTotal; i++) {
@@ -148,7 +152,7 @@ public class FoldedFigure_Worker {
 
             for (int j : qt.getPotentialContainer(subFace_insidePoint[i])) {
                 j++; // qt is 0-based
-                if (otta_Face_figure.simple_inside(subFace_insidePoint[i], j) == Polygon.Intersection.INSIDE) {
+                if (otta_Face_figure.inside(subFace_insidePoint[i], j) == Polygon.Intersection.INSIDE) {
                     s0addFaceId[++s0addFaceTotal] = j;
                 }
             }
@@ -157,6 +161,7 @@ public class FoldedFigure_Worker {
 
             for (int j = 1; j <= s0addFaceTotal; j++) {
                 s0[i].setFaceId(j, s0addFaceId[j]);//ここで面番号jは小さい方が先に追加される。
+                faceToSubFaceMap.add(s0addFaceId[j], i);
             }
 
             if (Thread.interrupted()) throw new InterruptedException();
@@ -175,7 +180,6 @@ public class FoldedFigure_Worker {
 
     public HierarchyListStatus HierarchyList_configure(WireFrame_Worker orite, PointSet otta_face_figure) throws InterruptedException {
         bb.write("           HierarchyList_configure   step1   start ");
-        HierarchyListStatus ireturn = HierarchyListStatus.SUCCESSFUL_1000;
         hierarchyList.setFacesTotal(otta_face_figure.getNumFaces());
 
         //Put the hierarchical relationship determined from the information of mountain folds and valley folds in the table above and below.
@@ -184,29 +188,24 @@ public class FoldedFigure_Worker {
         for (int ib = 1; ib <= orite.getNumLines(); ib++) {
             faceId_min = orite.lineInFaceBorder_min_request(ib);
             faceId_max = orite.lineInFaceBorder_max_request(ib);
-            if (faceId_min != faceId_max) {//In the developed view, there are faces on both sides of the rod ib.
-                if (otta_face_figure.getColor(ib) == LineColor.RED_1) {//Red line means mountain fold
-                    if (orite.getIFacePosition(faceId_min) % 2 == 1) {//The surface Mid_min has the same orientation as the reference surface (the surface faces up)
+            if (faceId_min != faceId_max) {// In the developed view, there are faces on both sides of the rod ib.
+                int minPos = orite.getIFacePosition(faceId_min);
+                int maxPos = orite.getIFacePosition(faceId_max);
+                if (minPos % 2 == maxPos % 2) {
+                    return HierarchyListStatus.UNKNOWN_0;
+                }
+                if (otta_face_figure.getColor(ib) == LineColor.RED_1) {// Red line means mountain fold
+                    if (minPos % 2 == 1) {// The surface Mid_min has the same orientation as the reference surface (the surface faces up)
                         hierarchyList.set(faceId_min, faceId_max, HierarchyList.ABOVE_1);
-                    }
-                    if (orite.getIFacePosition(faceId_max) % 2 == 1) {//The surface Mid_max has the same orientation as the reference surface (the surface faces up)
+                    } else {//The surface Mid_max has the same orientation as the reference surface (the surface faces up)
                         hierarchyList.set(faceId_min, faceId_max, HierarchyList.BELOW_0);
                     }
-                }
-                if (otta_face_figure.getColor(ib) == LineColor.BLUE_2) {//The blue line means valley fold
-                    if (orite.getIFacePosition(faceId_min) % 2 == 1) {//面Mid_minは基準面と同じ向き(表面が上を向く)
+                } else {//The blue line means valley fold
+                    if (minPos % 2 == 1) {//面Mid_minは基準面と同じ向き(表面が上を向く)
                         hierarchyList.set(faceId_min, faceId_max, HierarchyList.BELOW_0);
-                    }
-                    if (orite.getIFacePosition(faceId_max) % 2 == 1) {//面Mid_maxは基準面と同じ向き(表面が上を向く)
+                    } else {//面Mid_maxは基準面と同じ向き(表面が上を向く)
                         hierarchyList.set(faceId_min, faceId_max, HierarchyList.ABOVE_1);
                     }
-                }
-
-                if ((orite.getIFacePosition(faceId_min) % 2 == 0) && (orite.getIFacePosition(faceId_max) % 2 == 0)) {
-                    ireturn = HierarchyListStatus.UNKNOWN_0;
-                }
-                if ((orite.getIFacePosition(faceId_min) % 2 == 1) && (orite.getIFacePosition(faceId_max) % 2 == 1)) {
-                    ireturn = HierarchyListStatus.UNKNOWN_0;
                 }
             }
         }
@@ -217,13 +216,17 @@ public class FoldedFigure_Worker {
         //等価条件を設定する。棒ibを境界として隣接する2つの面im1,im2が有る場合、折り畳み推定した場合に
         //棒ibの一部と重なる位置に有る面imは面im1と面im2に上下方向で挟まれることはない。このことから
         //gj[im1][im]=gj[im2][im]という等価条件が成り立つ。
+        
         for (int ib = 1; ib <= orite.getNumLines(); ib++) {
             faceId_min = orite.lineInFaceBorder_min_request(ib);
             faceId_max = orite.lineInFaceBorder_max_request(ib);
             if (faceId_min != faceId_max) {//展開図において、棒ibの両脇に面がある
-                for (int im = 1; im <= hierarchyList.getFacesTotal(); im++) {
+                Point p = otta_face_figure.getBeginPointFromLineId(ib);
+                Point q = otta_face_figure.getEndPointFromLineId(ib);
+                for (int im : qt.getPotentialContainer(p, q)) {
+                    im++; // qt is 0-based
                     if ((im != faceId_min) && (im != faceId_max)) {
-                        if (otta_face_figure.simple_convex_inside(ib, im)) {
+                        if (otta_face_figure.convex_inside(ib, im)) {
                             //下の２つのifは暫定的な処理。あとで置き換え予定
                             if (otta_face_figure.convex_inside(0.5, ib, im)) {
                                 if (otta_face_figure.convex_inside(-0.5, ib, im)) {
@@ -238,40 +241,38 @@ public class FoldedFigure_Worker {
         }
         System.out.print("３面が関与する突き抜け条件の数　＝　");
         System.out.println(hierarchyList.getEquivalenceConditionTotal());
+
+        //----------------------------------------------
         bb.write("           HierarchyList_configure   step3   start ");
         // Add equivalence condition. There are two adjacent faces im1 and im2 as the boundary of the bar ib,
         // Also, there are two adjacent faces im3 and im4 as the boundary of the bar jb, and when ib and jb are parallel and partially overlap, when folding is estimated.
         // The surface of the bar ib and the surface of the surface jb are not aligned with i, j, i, j or j, i, j, i. If this happens,
         // Since there is a mistake in the 3rd place from the beginning, find the number of digits in this 3rd place with SubFace and advance this digit by 1.
 
-        QuadTree qt = new QuadTree(new PointSetLineAdapter(otta_face_figure));
+        qt = new QuadTree(new PointSetLineAdapter(otta_face_figure));
         ExecutorService service = Executors.newCachedThreadPool();
 
         for (int ib = 1; ib <= orite.getNumLines() - 1; ib++) {
             final int ibf = ib;
             final QuadTree qtf = qt;
-            service.execute(() -> {
-                for (int jb : qtf.getPotentialCollision(ibf - 1)) { // qt is 0-based
-                    int jbf = jb + 1; // qt is 0-based
-                    int mi1, mi2, mj1, mj2;
-
-                    if (otta_face_figure.parallel_overlap(ibf, jbf)) {
-                        mi1 = orite.lineInFaceBorder_min_request(ibf);
-                        mi2 = orite.lineInFaceBorder_max_request(ibf);
-                        if (mi1 != mi2) {
-                            mj1 = orite.lineInFaceBorder_min_request(jbf);
-                            mj2 = orite.lineInFaceBorder_max_request(jbf);
-                            if (mj1 != mj2) {
-                                if (mi1 * mi2 * mj1 * mj2 != 0) {
-                                    if (exist_identical_subFace(mi1, mi2, mj1, mj2)) {
-                                        hierarchyList.addUEquivalenceCondition(mi1, mi2, mj1, mj2);
-                                    }
+            final int mi1 = orite.lineInFaceBorder_min_request(ibf);
+            final int mi2 = orite.lineInFaceBorder_max_request(ibf);
+            if (mi1 != mi2 && mi1 != 0) {
+                service.execute(() -> {
+                    for (int jb : qtf.getPotentialCollision(ibf - 1)) { // qt is 0-based
+                        final int jbf = jb + 1; // qt is 0-based
+                        int mj1 = orite.lineInFaceBorder_min_request(jbf);
+                        int mj2 = orite.lineInFaceBorder_max_request(jbf);
+                        if (mj1 != mj2 && mj1 != 0) {
+                            if (otta_face_figure.parallel_overlap(ibf, jbf)) {
+                                if (exist_identical_subFace(mi1, mi2, mj1, mj2)) {
+                                    hierarchyList.addUEquivalenceCondition(mi1, mi2, mj1, mj2);
                                 }
                             }
                         }
                     }
-                }
-            });
+                });
+            }
             if (Thread.interrupted()) throw new InterruptedException();
         }
 
@@ -287,6 +288,7 @@ public class FoldedFigure_Worker {
                 throw new RuntimeException("HierarchyList_configure did not exit!");
             }
         }
+        faceToSubFaceMap = null;
         service = null;
         qt = null;
         System.gc();
@@ -363,7 +365,7 @@ public class FoldedFigure_Worker {
         System.out.print("／");
         System.out.println(SubFaceTotal);
         System.out.println("上下表初期設定終了");
-        return ireturn;
+        return HierarchyListStatus.SUCCESSFUL_1000;
     }
 
     public HierarchyListStatus additional_estimation() throws InterruptedException {
@@ -380,7 +382,7 @@ public class FoldedFigure_Worker {
 
     //引数の４つの面を同時に含むSubFaceが1つ以上存在するなら１、しないなら０を返す。
     private boolean exist_identical_subFace(int im1, int im2, int im3, int im4) {
-        for (int i = 1; i <= SubFaceTotal; i++) {
+        for (int i : faceToSubFaceMap.get(im1)) {
             if (s[i].contains(im1, im2, im3, im4)) {
                 return true;
             }
