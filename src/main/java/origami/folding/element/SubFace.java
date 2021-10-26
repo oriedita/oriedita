@@ -43,12 +43,6 @@ public class SubFace {//This class folds the development view and estimates the 
         FaceId2fromTop_counted_position = new int[faceIdCount + 1];//Represents the position counted from the top of the surface (faceIdList).
         fromTop_counted_position2FaceId = new int[faceIdCount + 1];//Represents the surface at the position counted from the top.
 
-        for (int i = 0; i <= faceIdCount; i++) {
-            faceIdList[i] = 0;
-
-            FaceId2fromTop_counted_position[i] = 0;
-            fromTop_counted_position2FaceId[i] = 0;
-        }
         if (FIdCount > 0) {
             permutationGenerator = new ChainPermutationGenerator(faceIdCount);
             // Postpone the reset of the generator until the guides are set
@@ -112,7 +106,8 @@ public class SubFace {//This class folds the development view and estimates the 
             for (int i = 1; i <= faceIdCount; i++) {
                 s0.append(" : ").append(getPermutation(i));
             }
-            bb.rewrite(10, "Smen_kanou_kasanari_sagasi(hierarchyList) =  " + s0);
+            bb.rewrite(9, "Tested permutation count : " + permutationGenerator.getCount());
+            bb.rewrite(10, "Testing permutation " + s0);
         }
         return 0;//There is no permutation that can overlap
     }
@@ -319,31 +314,5 @@ public class SubFace {//This class folds the development view and estimates the 
             // Now we're ready to reset the generator.
             permutationGenerator.initialize();
         }
-    }
-
-    //According to the table above and below, the overlapping classification of pairs of faces included in this SubFace is undecided.
-    public int overlapping_classification_pending(HierarchyList hierarchyList) {
-        int iret = 0;
-        for (int i = 1; i <= faceIdCount - 1; i++) {
-            for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[i], faceIdList[j]) == HierarchyList.EMPTY_N100) {
-                    iret++;
-                }//20171021本当は-50のつもりだったが現状は-100となっている
-            }
-        }
-        return iret;
-    }
-
-    // According to the upper and lower tables, the overlapping classification of the pairs of faces included in this SubFace is determined.
-    public int overlapping_classification_determined(HierarchyList hierarchyList) {
-        int iret = 0;
-        for (int i = 1; i <= faceIdCount - 1; i++) {
-            for (int j = i + 1; j <= faceIdCount; j++) {
-                if (hierarchyList.get(faceIdList[i], faceIdList[j]) == HierarchyList.BELOW_0) {
-                    iret++;
-                }
-            }
-        }
-        return iret;
     }
 }

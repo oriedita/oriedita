@@ -3,9 +3,6 @@ package origami.crease_pattern;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import origami.crease_pattern.element.*;
 import origami.data.ListArray;
-import origami.data.quadTree.QuadTree;
-import origami.data.quadTree.adapter.PointSetFaceAdapter;
-import origami.data.symmetricMatrix.SymmetricMatrix;
 import origami.folding.element.Face;
 import origami_editor.editor.Save;
 
@@ -34,31 +31,7 @@ public class PointSet implements Serializable {
     Face[] faces; //Face instantiation
 
     @JsonIgnore
-    double[] line_x_max;
-    @JsonIgnore
-    double[] line_x_min;
-    @JsonIgnore
-    double[] line_y_max;
-    @JsonIgnore
-    double[] line_y_min;
-
-    @JsonIgnore
-    double[] face_x_max;
-    @JsonIgnore
-    double[] face_x_min;
-    @JsonIgnore
-    double[] face_y_max;
-    @JsonIgnore
-    double[] face_y_min;
-
-    @JsonIgnore
     List<List<Integer>> point_linking;//point_linking [i] [j] is the number of points connected to t [i]. The number of Tem is stored in t [0].
-
-    /**
-     * Contains the value of the line which connects two faces.
-     */
-    @JsonIgnore
-    SymmetricMatrix faceAdjacent;
 
     public PointSet() {
         reset();
@@ -69,7 +42,6 @@ public class PointSet implements Serializable {
         numPoints = 0;
         numLines = 0;
         numFaces = 0;
-        faceAdjacent = null;
     }
 
     //---------------------------------------
@@ -102,21 +74,9 @@ public class PointSet implements Serializable {
 
         faces = new Face[numFaces + 1];
 
-        faceAdjacent = SymmetricMatrix.create(numFaces, (int) Math.ceil(Math.log(numLines + 1) / Math.log(2)));
-
         for (int i = 0; i <= numFaces; i++) {
             faces[i] = new Face();
         }
-
-        line_x_max = new double[numLines + 1];
-        line_x_min = new double[numLines + 1];
-        line_y_max = new double[numLines + 1];
-        line_y_min = new double[numLines + 1];
-
-        face_x_max = new double[numFaces + 1];
-        face_x_min = new double[numFaces + 1];
-        face_y_max = new double[numFaces + 1];
-        face_y_min = new double[numFaces + 1];
     }
 
     //---------------
@@ -159,9 +119,6 @@ public class PointSet implements Serializable {
         }
         for (int i = 1; i <= numFaces; i++) {
             faces[i] = new Face(ts.getFace(i));
-            for (int j = 1; j <= numFaces; j++) {
-                faceAdjacent.set(i, j, ts.getFaceAdjecent(i, j));
-            }
         }
     }
 
@@ -175,23 +132,6 @@ public class PointSet implements Serializable {
 
     private int get_lineInFaceBorder_max(int i) {
         return lineInFaceBorder_max[i];
-    }
-
-    //Determine if the point is inside a face. 0 is not inside, 1 is on the border, 2 is inside
-    public Polygon.Intersection simple_inside(Point p, int n) {    // 0 = external, 1 = boundary, 2 = internal
-        if (p.getX() + 0.5 < face_x_min[n]) {
-            return Polygon.Intersection.OUTSIDE;
-        }
-        if (p.getX() - 0.5 > face_x_max[n]) {
-            return Polygon.Intersection.OUTSIDE;
-        }
-        if (p.getY() + 0.5 < face_y_min[n]) {
-            return Polygon.Intersection.OUTSIDE;
-        }
-        if (p.getY() - 0.5 > face_y_max[n]) {
-            return Polygon.Intersection.OUTSIDE;
-        }
-        return inside(p, faces[n]);
     }
 
     //Determine if the point is inside a face.
@@ -230,21 +170,7 @@ public class PointSet implements Serializable {
 
     // Even a part of the line segment s0 is inside the surface of the convex polygon (the boundary line is not regarded as the inside)
     // Returns 1 if it exists, 0 otherwise. If the surface is a concave polygon, the result will be strange, so do not use it.
-    public boolean simple_convex_inside(int ib, int im) {
-        //バグがあるようだったが，多分取り除けた
-        if (line_x_max[ib] + 0.5 < face_x_min[im]) {
-            return false;
-        }
-        if (line_x_min[ib] - 0.5 > face_x_max[im]) {
-            return false;
-        }
-        if (line_y_max[ib] + 0.5 < face_y_min[im]) {
-            return false;
-        }
-        if (line_y_min[ib] - 0.5 > face_y_max[im]) {
-            return false;
-        }
-
+    public boolean convex_inside(int ib, int im) {
         return convex_inside(new LineSegment(points[lines[ib].getBegin()], points[lines[ib].getEnd()]), faces[im]);
     }
 
@@ -450,7 +376,7 @@ public class PointSet implements Serializable {
         numFaces = 0;
         searchPointLinking();
 
-        ListArray<Integer> map = new ListArray<Integer>(numPoints);
+        ListArray map = new ListArray(numPoints, numPoints * 5);
 
         for (int i = 1; i <= numLines; i++) {
             tempFace = Face_request(lines[i].getBegin(), lines[i].getEnd());
@@ -483,7 +409,6 @@ public class PointSet implements Serializable {
 
         System.out.print("全面数　＝　");
         System.out.println(numFaces);
-        Face_adjacent_create();
         findLineInFaceBorder();
     }
 
@@ -524,56 +449,6 @@ public class PointSet implements Serializable {
                 lineInFaceBorder_max[i] = max;
             }
             if (Thread.interrupted()) throw new InterruptedException();
-        }
-    }
-
-    //BouやMenの座標の最大値、最小値を求める。kantan_totu_naibu関数にのみ用いる。kantan_totu_naibu関数を使うなら折り畳み推定毎にやる必要あり。
-    public void LineFaceMaxMinCoordinate() {
-        //Find the maximum and minimum coordinates of Line (this may be better done immediately after Line is added than done here)
-        for (int ib = 1; ib <= numLines; ib++) {
-
-            line_x_max[ib] = points[lines[ib].getBegin()].getX();
-            line_x_min[ib] = points[lines[ib].getBegin()].getX();
-            line_y_max[ib] = points[lines[ib].getBegin()].getY();
-            line_y_min[ib] = points[lines[ib].getBegin()].getY();
-
-            if (line_x_max[ib] < points[lines[ib].getEnd()].getX()) {
-                line_x_max[ib] = points[lines[ib].getEnd()].getX();
-            }
-            if (line_x_min[ib] > points[lines[ib].getEnd()].getX()) {
-                line_x_min[ib] = points[lines[ib].getEnd()].getX();
-            }
-            if (line_y_max[ib] < points[lines[ib].getEnd()].getY()) {
-                line_y_max[ib] = points[lines[ib].getEnd()].getY();
-            }
-            if (line_y_min[ib] > points[lines[ib].getEnd()].getY()) {
-                line_y_min[ib] = points[lines[ib].getEnd()].getY();
-            }
-            faceMaxMinCoordinate();
-        }
-    }
-
-    private void faceMaxMinCoordinate() {
-        //Find the maximum and minimum of Face's coordinates
-        for (int faceId = 1; faceId <= numFaces; faceId++) {
-            face_x_max[faceId] = points[faces[faceId].getPointId(1)].getX();
-            face_x_min[faceId] = points[faces[faceId].getPointId(1)].getX();
-            face_y_max[faceId] = points[faces[faceId].getPointId(1)].getY();
-            face_y_min[faceId] = points[faces[faceId].getPointId(1)].getY();
-            for (int i = 2; i <= faces[faceId].getNumPoints(); i++) {
-                if (face_x_max[faceId] < points[faces[faceId].getPointId(i)].getX()) {
-                    face_x_max[faceId] = points[faces[faceId].getPointId(i)].getX();
-                }
-                if (face_x_min[faceId] > points[faces[faceId].getPointId(i)].getX()) {
-                    face_x_min[faceId] = points[faces[faceId].getPointId(i)].getX();
-                }
-                if (face_y_max[faceId] < points[faces[faceId].getPointId(i)].getY()) {
-                    face_y_max[faceId] = points[faces[faceId].getPointId(i)].getY();
-                }
-                if (face_y_min[faceId] > points[faces[faceId].getPointId(i)].getY()) {
-                    face_y_min[faceId] = points[faces[faceId].getPointId(i)].getY();
-                }
-            }
         }
     }
 
@@ -628,72 +503,46 @@ public class PointSet implements Serializable {
         return (lines[lineId].getEnd() == faces[faceId].getPointId(faces[faceId].getNumPoints())) && (lines[lineId].getBegin() == faces[faceId].getPointId(1));
     }
 
-    private void Face_adjacent_create() throws InterruptedException {
-        System.out.println("面となり作成　開始");
-        QuadTree qt = new QuadTree(new PointSetFaceAdapter(this));
-        for (int im = 1; im <= numFaces - 1; im++) {
-            for (int in = im + 1; in <= numFaces; in++) {
-                faceAdjacent.set(im, in, 0);
-            }
-            for (int in : qt.getPotentialCollision(im - 1)) { // qt is 0-based
-                in++; // qt is 0-based
-                int ima, imb, ina, inb;
-                boolean found = false;
-                for (int iim = 1; iim <= faces[im].getNumPoints() && !found; iim++) {
-                    ima = faces[im].getPointId(iim);
-                    if (iim == faces[im].getNumPoints()) {
-                        imb = faces[im].getPointId(1);
-                    } else {
-                        imb = faces[im].getPointId(iim + 1);
-                    }
+    public ListArray getPointToLineMap() {
+        ListArray map = new ListArray(numPoints, numLines * 5);
+        for(int i = 1; i <= numLines; i++) {
+            map.add(lines[i].getBegin(), i);
+            map.add(lines[i].getEnd(), i);
+        }
+        return map;
+    }
 
-                    for (int iin = 1; iin <= faces[in].getNumPoints(); iin++) {
-                        ina = faces[in].getPointId(iin);
+    public int findAdjacentLine(int m, int n, ListArray map) {
+        int ma, mb, na, nb;
+        int pm = faces[m].getNumPoints(), pn = faces[n].getNumPoints();
+        for (int i = 1; i <= pm; i++) {
+            ma = faces[m].getPointId(i);
+            mb = faces[m].getPointId(i % pm + 1);
+            
+            for (int j = 1; j <= pn; j++) {
+                na = faces[n].getPointId(j);
+                nb = faces[n].getPointId(j % pn + 1);
 
-                        if (iin == faces[in].getNumPoints()) {
-                            inb = faces[in].getPointId(1);
-                        } else {
-                            inb = faces[in].getPointId(iin + 1);
-                        }
-
-                        if (((ima == ina) && (imb == inb)) || ((ima == inb) && (imb == ina))) {
-                            int ib = line_search(ima, imb);
-                            faceAdjacent.set(im, in, ib);
-                            found = true;
-                            break;
-                        }
-                    }
+                if (((ma == na) && (mb == nb)) || ((ma == nb) && (mb == na))) {
+                    return line_search(ma, mb, map);
                 }
             }
-            if (Thread.interrupted()) throw new InterruptedException();
         }
-        System.out.println("面となり作成　終了");
+        return 0;
     }
 
     //Returns the line number containing points t1 and t2
-    private int line_search(int t1, int t2) {
-        for (int i = 1; i <= numLines; i++) {
-            if ((lines[i].getBegin() == t1) && (lines[i].getEnd() == t2)) {
-                return i;
-            }
-            if ((lines[i].getBegin() == t2) && (lines[i].getEnd() == t1)) {
+    private int line_search(int t1, int t2, ListArray map) {
+        for (int i : map.get(t1)) {
+            if (lines[i].getBegin() == t1 && lines[i].getEnd() == t2
+                    || lines[i].getBegin() == t2 && lines[i].getEnd() == t1) {
                 return i;
             }
         }
         return 0;
     }
 
-    // If Face [im] and Face [ib] are adjacent, return the id number of the bar at the boundary. Returns 0 if not adjacent
-    public int getFaceAdjecent(int im, int in) {
-        return faceAdjacent.get(im, in);
-    }
-
-    public void clearFaceAdjacent() {
-        faceAdjacent = null;
-        System.gc();
-    }
-
-    private void addFace(Face tempFace, ListArray<Integer> map) {
+    private void addFace(Face tempFace, ListArray map) {
         numFaces = numFaces + 1;
 
         faces[numFaces].reset();

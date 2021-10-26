@@ -19,8 +19,10 @@ public class LineSegmentSetAdapter implements QuadTreeAdapter {
 
     @Override
     public QuadTreeItem getItem(int index) {
-        Point A = set.getA(index);
-        Point B = set.getB(index);
+        return createItem(set.getA(index),  set.getB(index));
+    }
+
+    public static QuadTreeItem createItem(Point A, Point B) {
         double ax = A.getX(), ay = A.getY();
         double bx = B.getX(), by = B.getY();
         return new QuadTreeItem(Math.min(ax, bx), Math.max(ax, bx), Math.min(ay, by), Math.max(ay, by));

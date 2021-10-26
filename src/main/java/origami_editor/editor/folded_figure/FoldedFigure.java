@@ -472,8 +472,8 @@ public class FoldedFigure {
     }
 
     public int folding_estimated_01(LineSegmentSet lineSegmentSet) throws InterruptedException {
-        System.out.println("＜＜＜＜＜oritatami_suitei_01;開始");
-        bulletinBoard.write("<<<<oritatami_suitei_01;  start");
+        System.out.println("＜＜＜＜＜folding_estimated_01;開始");
+        bulletinBoard.write("<<<<folding_estimated_01;  start");
         // Pass the line segment set created in mainDrawingWorker to cp_worker1 by mouse input and make it a point set (corresponding to the development view).
         cp_worker1.setLineSegmentSet(lineSegmentSet);
         ip3 = cp_worker1.setReferencePlaneId(ip3);
@@ -487,14 +487,13 @@ public class FoldedFigure {
     }
 
     public int folding_estimated_02() throws InterruptedException, FoldingException {
-        System.out.println("＜＜＜＜＜oritatami_suitei_02;開始");
-        bulletinBoard.write("<<<<oritatami_suitei_02;  start");
+        System.out.println("＜＜＜＜＜folding_estimated_02;開始");
+        bulletinBoard.write("<<<<folding_estimated_02;  start");
         //cp_worker1が折りたたみを行い、できた針金図をcp_worker2に渡す。
         //cp_worker1 folds and passes the resulting wire diagram to cp_worker2.
         //cp_worker2が折りあがった形を少しだけ変形したいような場合に働く。
         //It works when you want to slightly deform the folded shape of cp_worker2.
         cp_worker2.set(cp_worker1.folding());
-        bulletinBoard.write("<<<<oritatami_suitei_02; end");
 
         if (Thread.interrupted()) throw new InterruptedException();
 
@@ -506,10 +505,10 @@ public class FoldedFigure {
     }
 
     public int folding_estimated_02col() throws InterruptedException {//20171225　２色塗りわけをするための特別推定（折り畳み位置を推定しない）
-        System.out.println("＜＜＜＜＜oritatami_suitei_02;開始");
-        bulletinBoard.write("<<<<oritatami_suitei_02;  start");
-        cp_worker2.set(cp_worker1.surface_position_request());
-        bulletinBoard.write("<<<<oritatami_suitei_02; end");
+        System.out.println("＜＜＜＜＜folding_estimated_02;開始");
+        bulletinBoard.write("<<<<folding_estimated_02;  start");
+        cp_worker2.set(cp_worker1.getFacePositions());
+        bulletinBoard.write("<<<<folding_estimated_02; end");
 
         if (Thread.interrupted()) throw new InterruptedException();
 
@@ -517,24 +516,24 @@ public class FoldedFigure {
     }
 
     public int folding_estimated_03() throws InterruptedException {
-        System.out.println("＜＜＜＜＜oritatami_suitei_03;開始");
-        bulletinBoard.write("<<<<oritatami_suitei_03;  start");
+        System.out.println("＜＜＜＜＜folding_estimated_03;開始");
+        bulletinBoard.write("<<<<folding_estimated_03;  start");
         // cp_worker2 has a set of points that holds the faces of the unfolded view before folding.
         // To estimate the vertical relationship of the surface when folded, set the surface according to the wire diagram of cp_worker2.
         // Use a set of subdivided points (let's call the subdivided surface SubFace).
         // Let cp_worker3 have the set of points divided into this SubFace plane.
         // Before passing the point set of cp_worker2 to cp_worker3, the point set of cp_worker2 may have overlapping bars, so
         // Pass it to bb_worker and organize it as a set of line segments.
-        System.out.println("＜＜＜＜＜oritatami_suitei_03()_____基本枝職人bb_workerはcp_worker2から線分集合（針金図からできたもの）を受け取り、整理する。");
+        System.out.println("＜＜＜＜＜folding_estimated_03()_____基本枝職人bb_workerはcp_worker2から線分集合（針金図からできたもの）を受け取り、整理する。");
         bb_worker.set(cp_worker2.getLineStore());
-        System.out.println("＜＜＜＜＜oritatami_suitei_03()_____基本枝職人bb_workerがbb_worker.bunkatu_seiri_for_Smen_hassei;実施。");
+        System.out.println("＜＜＜＜＜folding_estimated_03()_____基本枝職人bb_workerがbb_worker.bunkatu_seiri_for_Smen_hassei;実施。");
         bb_worker.split_arrangement_for_SubFace_generation();//Arrangement of wire diagrams obtained by estimating the folding of overlapping line segments and intersecting line segments
         //The crease pattern craftsman cp_worker3 receives a point set (arranged wire diagram of cp_worker2) from bb_worker and divides it into SubFace.
-        System.out.println("＜＜＜＜＜oritatami_suitei_03()_____展開図職人cp_worker3はbb_workerから整理された線分集合を受け取り、Smenに分割する。");
-        System.out.println("　　　oritatami_suitei_03()のcp_worker3.Senbunsyuugou2Tensyuugou(bb_worker.get());実施");
+        System.out.println("＜＜＜＜＜folding_estimated_03()_____展開図職人cp_worker3はbb_workerから整理された線分集合を受け取り、Smenに分割する。");
+        System.out.println("　　　folding_estimated_03()のcp_worker3.Senbunsyuugou2Tensyuugou(bb_worker.get());実施");
         cp_worker3.setLineSegmentSet(bb_worker.get());
 
-        System.out.println("＜＜＜＜＜oritatami_suitei_03()_____上下表職人ct_workerは、展開図職人cp_worker3から点集合を受け取り、Smenを設定する。");
+        System.out.println("＜＜＜＜＜folding_estimated_03()_____上下表職人ct_workerは、展開図職人cp_worker3から点集合を受け取り、Smenを設定する。");
         ct_worker.SubFace_configure(cp_worker2.get(), cp_worker3.get());
         //If you want to make a transparent map up to this point, you can. The transmission diagram is a SubFace diagram with density added.
 
@@ -544,13 +543,13 @@ public class FoldedFigure {
     }
 
     public int folding_estimated_04() throws InterruptedException {
-        System.out.println("＜＜＜＜＜oritatami_suitei_04;開始");
-        bulletinBoard.write("<<<<oritatami_suitei_04;  start");
+        System.out.println("＜＜＜＜＜folding_estimated_04;開始");
+        bulletinBoard.write("<<<<folding_estimated_04;  start");
         //Make an upper and lower table of faces (faces in the unfolded view before folding).
         // This includes the point set of cp_worker2 (which has information on the positional relationship of the faces after folding).
         // Use the point set of cp_worker3 (which has the information of SubFace whose surface is subdivided in the wire diagram).
         // Also, use the information on the positional relationship of the surface when folded, which cp_worker1 has.
-        System.out.println("＜＜＜＜＜oritatami_suitei_04()_____上下表職人ct_workerが面(折りたたむ前の展開図の面のこと)の上下表を作る。");
+        System.out.println("＜＜＜＜＜folding_estimated_04()_____上下表職人ct_workerが面(折りたたむ前の展開図の面のこと)の上下表を作る。");
 
         ip1_anotherOverlapValid = FoldedFigure_Worker.HierarchyListStatus.UNKNOWN_0;
         findAnotherOverlapValid = false;
@@ -567,8 +566,8 @@ public class FoldedFigure {
     }
 
     public int folding_estimated_05() throws InterruptedException {
-        System.out.println("＜＜＜＜＜oritatami_suitei_05()_____上下表職人ct_workerがct_worker.kanou_kasanari_sagasi()実施。");
-        bulletinBoard.write("<<<<oritatami_suitei_05()  ___ct_worker.kanou_kasanari_sagasi()  start");
+        System.out.println("＜＜＜＜＜folding_estimated_05()_____上下表職人ct_workerがct_worker.possible_overlapping_search()実施。");
+        bulletinBoard.write("<<<<folding_estimated_05()  ___ct_worker.possible_overlapping_search()  start");
 
         if ((estimationStep == EstimationStep.STEP_4) || (estimationStep == EstimationStep.STEP_5)) {
             if (findAnotherOverlapValid) {

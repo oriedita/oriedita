@@ -43,17 +43,21 @@ public class SwappingAlgorithm {
             }
 
             // Perform swap
-            System.out.println("Swap " + high + " with " + low);
-            SubFace temp = s[high];
-            for (int i = high; i > low; i--) {
-                s[i] = s[i - 1];
-                s[i].clearTempGuide();
-            }
-            s[low] = temp;
+            System.out.println("swapper.swap(s, " + high + ", " + low + ");");
+            swap(s, high, low);
 
             last = high;
 
             high = 0;
         }
+    }
+
+    public void swap(SubFace[] s, int high, int low) {
+        SubFace temp = s[high];
+        for (int i = high; i > low; i--) {
+            s[i] = s[i - 1];
+            s[i].clearTempGuide();
+        }
+        s[low] = temp;
     }
 }

@@ -23,6 +23,11 @@ public class BitmapSymmetricMatrix extends SymmetricMatrix {
         if (bits > 32) {
             throw new IllegalArgumentException("bits must be <= 32");
         }
+
+        // Our use case now no longer needs arbitrary bits size, so that entries are
+        // never stored across two ints, but we add this line just to be safe.
+        while (32 % bits != 0) bits++;
+
         this.bits = bits;
         this.mask = (1 << bits) - 1;
         double s = size;
@@ -39,11 +44,6 @@ public class BitmapSymmetricMatrix extends SymmetricMatrix {
         int index = (int) (pos / 32);
         int offset = (int) (pos % 32);
         int value = (data[index] >>> offset) & mask;
-        if (offset + bits > 32) { // entry is saved across two ints
-            offset = 32 - offset;
-            int m = mask >>> offset;
-            value |= (data[index + 1] & m) << offset;
-        }
         return value;
     }
 
@@ -57,10 +57,6 @@ public class BitmapSymmetricMatrix extends SymmetricMatrix {
             int index = (int) (pos / 32);
             int offset = (int) (pos % 32);
             data[index] = data[index] & ~(mask << offset) | value << offset;
-            if (offset + bits > 32) { // entry is saved across two ints
-                offset = 32 - offset;
-                data[index + 1] = data[index + 1] & ~(mask >>> offset) | value >>> offset;
-            }
         }
     }
 
