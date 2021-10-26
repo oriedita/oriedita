@@ -508,7 +508,7 @@ public class FoldedFigure {
     public int folding_estimated_02col() throws InterruptedException {//20171225　２色塗りわけをするための特別推定（折り畳み位置を推定しない）
         System.out.println("＜＜＜＜＜oritatami_suitei_02;開始");
         bulletinBoard.write("<<<<oritatami_suitei_02;  start");
-        cp_worker2.set(cp_worker1.surface_position_request());
+        cp_worker2.set(cp_worker1.getFacePositions());
         bulletinBoard.write("<<<<oritatami_suitei_02; end");
 
         if (Thread.interrupted()) throw new InterruptedException();

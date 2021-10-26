@@ -10,12 +10,15 @@ import origami_editor.graphic2d.averagecoordinates.AverageCoordinates;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
+import origami.data.ListArray;
+import origami.data.quadTree.QuadTree;
+import origami.data.quadTree.adapter.PointSetFaceAdapter;
 import origami_editor.tools.Camera;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.PointSet;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 public class WireFrame_Worker {
@@ -176,8 +179,8 @@ public class WireFrame_Worker {
      * Folding estimation (What you can do here is a wire diagram that does not consider the overlap of surfaces)
      */
     public PointSet folding() throws InterruptedException, FoldingException {//Folding estimate
-        // The code that was previously here is identical to surface_position_request
-        PointSet pointSet = surface_position_request();
+        // The code that was previously here is identical to getFacePositions
+        PointSet pointSet = getFacePositions();
   
         System.out.println("折ったときの点の位置を求める。");
         // Find the position of the point when folded.
@@ -211,10 +214,13 @@ public class WireFrame_Worker {
     }
 
     //Folding estimation (What you can do here is a wire diagram that does not consider the overlap of surfaces)
-    public PointSet surface_position_request() throws InterruptedException {//Folding estimate
+    public PointSet getFacePositions() throws InterruptedException {//Folding estimate
         PointSet cn = new PointSet();    //展開図
         cn.configure(pointSet.getNumPoints(), pointSet.getNumLines(), pointSet.getNumFaces());
         cn.set(pointSet);
+
+        ListArray map = pointSet.getPointToLineMap();
+        QuadTree qt = new QuadTree(new PointSetFaceAdapter(pointSet));
 
         for (int i = 0; i <= pointSet.getNumFaces(); i++) {
             nextFaceId[i] = 0;
@@ -225,40 +231,33 @@ public class WireFrame_Worker {
         System.out.println("折りたたみの準備として面同士の位置関係を把握する");
         iFacePosition[referencePlaneId] = 1;
 
-        int current_FacePosition = 1;
+        int depth = 1;
         int remaining_facesTotal = pointSet.getNumFaces() - 1;
 
+        // Tsai: I'm not sure if ordering matters, so I just play safe here.
+        SortedSet<Integer> currentRound = new TreeSet<>();
+        currentRound.add(referencePlaneId);
+
         while (remaining_facesTotal > 0) {
-            for (int i = 1; i <= pointSet.getNumFaces(); i++) {
-                if (iFacePosition[i] == current_FacePosition) {
-                    for (int j = 1; j <= pointSet.getNumFaces(); j++) {
-                        int mth = pointSet.getFaceAdjecent(i, j);
-                        if ((mth > 0) && (iFacePosition[j] == 0)) {
-                            iFacePosition[j] = current_FacePosition + 1;
-                            nextFaceId[j] = i;
-                            associatedLineId[j] = mth;
-                        }
+            SortedSet<Integer> nextRound = new TreeSet<>();
+            for (int i : currentRound) {
+                for (int j : qt.getPotentialCollision(i - 1, -1)) {
+                    if (iFacePosition[++j] != 0) continue;
+                    int mth = pointSet.findAdjacentLine(i, j, map);
+                    if (mth > 0) {
+                        nextRound.add(j);
+                        iFacePosition[j] = depth + 1;
+                        nextFaceId[j] = i;
+                        associatedLineId[j] = mth;
+                        remaining_facesTotal--;
                     }
                 }
             }
-
-            current_FacePosition = current_FacePosition + 1;
-
-            remaining_facesTotal = 0;
-            for (int i = 1; i <= pointSet.getNumFaces(); i++) {
-                if (iFacePosition[i] == 0) {
-                    remaining_facesTotal = remaining_facesTotal + 1;
-                }
-            }
+            currentRound = nextRound;
+            depth++;
 
             if (Thread.interrupted()) throw new InterruptedException();
-
-            System.out.println("remaining_facesTotal = " + remaining_facesTotal);
         }
-
-        // It appears that faceAdjacent is never used after this point; more
-        // investigation is needed.
-        pointSet.clearFaceAdjacent();
 
         return cn;
     }
@@ -278,9 +277,6 @@ public class WireFrame_Worker {
     }
 
     public PointSet get() {
-        // It appears that faceAdjacent is never used after this point; more
-        // investigation is needed.
-        pointSet.clearFaceAdjacent();
         return pointSet;
     }
 

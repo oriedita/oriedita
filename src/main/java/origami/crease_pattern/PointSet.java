@@ -54,12 +54,6 @@ public class PointSet implements Serializable {
     @JsonIgnore
     List<List<Integer>> point_linking;//point_linking [i] [j] is the number of points connected to t [i]. The number of Tem is stored in t [0].
 
-    /**
-     * Contains the value of the line which connects two faces.
-     */
-    @JsonIgnore
-    SymmetricMatrix faceAdjacent;
-
     public PointSet() {
         reset();
     }
@@ -69,7 +63,6 @@ public class PointSet implements Serializable {
         numPoints = 0;
         numLines = 0;
         numFaces = 0;
-        faceAdjacent = null;
     }
 
     //---------------------------------------
@@ -101,8 +94,6 @@ public class PointSet implements Serializable {
         }
 
         faces = new Face[numFaces + 1];
-
-        faceAdjacent = SymmetricMatrix.create(numFaces, (int) Math.ceil(Math.log(numLines + 1) / Math.log(2)));
 
         for (int i = 0; i <= numFaces; i++) {
             faces[i] = new Face();
@@ -159,9 +150,6 @@ public class PointSet implements Serializable {
         }
         for (int i = 1; i <= numFaces; i++) {
             faces[i] = new Face(ts.getFace(i));
-            for (int j = 1; j <= numFaces; j++) {
-                faceAdjacent.set(i, j, ts.getFaceAdjecent(i, j));
-            }
         }
     }
 
@@ -483,7 +471,6 @@ public class PointSet implements Serializable {
 
         System.out.print("全面数　＝　");
         System.out.println(numFaces);
-        Face_adjacent_create();
         findLineInFaceBorder();
     }
 
@@ -628,69 +615,43 @@ public class PointSet implements Serializable {
         return (lines[lineId].getEnd() == faces[faceId].getPointId(faces[faceId].getNumPoints())) && (lines[lineId].getBegin() == faces[faceId].getPointId(1));
     }
 
-    private void Face_adjacent_create() throws InterruptedException {
-        System.out.println("面となり作成　開始");
-        QuadTree qt = new QuadTree(new PointSetFaceAdapter(this));
-        for (int im = 1; im <= numFaces - 1; im++) {
-            for (int in = im + 1; in <= numFaces; in++) {
-                faceAdjacent.set(im, in, 0);
-            }
-            for (int in : qt.getPotentialCollision(im - 1)) { // qt is 0-based
-                in++; // qt is 0-based
-                int ima, imb, ina, inb;
-                boolean found = false;
-                for (int iim = 1; iim <= faces[im].getNumPoints() && !found; iim++) {
-                    ima = faces[im].getPointId(iim);
-                    if (iim == faces[im].getNumPoints()) {
-                        imb = faces[im].getPointId(1);
-                    } else {
-                        imb = faces[im].getPointId(iim + 1);
-                    }
-
-                    for (int iin = 1; iin <= faces[in].getNumPoints(); iin++) {
-                        ina = faces[in].getPointId(iin);
-
-                        if (iin == faces[in].getNumPoints()) {
-                            inb = faces[in].getPointId(1);
-                        } else {
-                            inb = faces[in].getPointId(iin + 1);
-                        }
-
-                        if (((ima == ina) && (imb == inb)) || ((ima == inb) && (imb == ina))) {
-                            int ib = line_search(ima, imb);
-                            faceAdjacent.set(im, in, ib);
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            if (Thread.interrupted()) throw new InterruptedException();
+    public ListArray getPointToLineMap() {
+        ListArray map = new ListArray(numPoints, numLines * 5);
+        for(int i = 1; i <= numLines; i++) {
+            map.add(lines[i].getBegin(), i);
+            map.add(lines[i].getEnd(), i);
         }
-        System.out.println("面となり作成　終了");
+        return map;
     }
 
-    //Returns the line number containing points t1 and t2
-    private int line_search(int t1, int t2) {
-        for (int i = 1; i <= numLines; i++) {
-            if ((lines[i].getBegin() == t1) && (lines[i].getEnd() == t2)) {
-                return i;
-            }
-            if ((lines[i].getBegin() == t2) && (lines[i].getEnd() == t1)) {
-                return i;
+    public int findAdjacentLine(int m, int n, ListArray map) {
+        int ma, mb, na, nb;
+        int pm = faces[m].getNumPoints(), pn = faces[n].getNumPoints();
+        for (int i = 1; i <= pm; i++) {
+            ma = faces[m].getPointId(i);
+            mb = faces[m].getPointId(i % pm + 1);
+            
+            for (int j = 1; j <= pn; j++) {
+                na = faces[n].getPointId(j);
+                nb = faces[n].getPointId(j % pn + 1);
+
+                if (((ma == na) && (mb == nb)) || ((ma == nb) && (mb == na))) {
+                    return line_search(ma, mb, map);
+                }
             }
         }
         return 0;
     }
 
-    // If Face [im] and Face [ib] are adjacent, return the id number of the bar at the boundary. Returns 0 if not adjacent
-    public int getFaceAdjecent(int im, int in) {
-        return faceAdjacent.get(im, in);
-    }
-
-    public void clearFaceAdjacent() {
-        faceAdjacent = null;
-        System.gc();
+    //Returns the line number containing points t1 and t2
+    private int line_search(int t1, int t2, ListArray map) {
+        for (int i : map.get(t1)) {
+            if (lines[i].getBegin() == t1 && lines[i].getEnd() == t2
+                    || lines[i].getBegin() == t2 && lines[i].getEnd() == t1) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     private void addFace(Face tempFace, ListArray map) {

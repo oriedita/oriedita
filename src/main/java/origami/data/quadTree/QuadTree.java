@@ -89,16 +89,20 @@ public class QuadTree {
 
     /** This only returns items that are of greater index. */
     public Iterable<Integer> getPotentialCollision(int i) {
+        return getPotentialCollision(i, i);
+    }
+
+    public Iterable<Integer> getPotentialCollision(int i, int min) {
         StaticMinHeap heap = new StaticMinHeap(count);
 
         // Collect all the items upwards.
         Node node = map.get(i).parent;
         while (node != null) {
-            collect(node, i, heap);
+            collect(node, min, heap);
             node = node.parent;
         }
 
-        collectDownwards(map.get(i), i, heap);
+        collectDownwards(map.get(i), min, heap);
         return heap;
     }
 
@@ -129,19 +133,19 @@ public class QuadTree {
         return node;
     }
 
-    private void collectDownwards(Node node, int i, StaticMinHeap heap) {
-        collect(node, i, heap);
+    private void collectDownwards(Node node, int min, StaticMinHeap heap) {
+        collect(node, min, heap);
         if (node.children[0] != null) {
             for (int j = 0; j < 4; j++) {
-                collectDownwards(node.children[j], i, heap);
+                collectDownwards(node.children[j], min, heap);
             }
         }
     }
 
-    private void collect(Node node, int i, StaticMinHeap heap) {
+    private void collect(Node node, int min, StaticMinHeap heap) {
         int cursor = node.head;
         while (cursor != -1) {
-            if (cursor > i) {
+            if (cursor > min) {
                 heap.add(cursor);
             }
             cursor = next.get(cursor);
