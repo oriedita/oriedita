@@ -1,22 +1,25 @@
 package origami_editor.editor;
 
+import origami_editor.editor.canvas.MouseHandlerModifyCalculatedShape;
 import origami_editor.editor.component.ColorIcon;
 import origami_editor.editor.component.FoldedFigureResize;
 import origami_editor.editor.component.FoldedFigureRotate;
 import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
-import origami_editor.editor.canvas.MouseHandlerModifyCalculatedShape;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.task.FoldingEstimateSave100Task;
 import origami_editor.editor.task.FoldingEstimateSpecificTask;
 import origami_editor.editor.task.FoldingEstimateTask;
 import origami_editor.editor.task.TaskExecutor;
+import origami_editor.tools.ResourceUtil;
 import origami_editor.tools.StringOp;
 
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
+import java.net.URL;
+import java.util.Objects;
 
 public class BottomPanel extends JPanel {
     private final App app;
@@ -242,37 +245,30 @@ public class BottomPanel extends JPanel {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(anotherSolutionButton, gbc);
-        flipButton = new JButton();
-        flipButton.setIcon(new ImageIcon(getClass().getResource("/ppp/Button0b.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(flipButton, gbc);
         As100Button = new JButton();
         As100Button.setText("AS100");
         gbc = new GridBagConstraints();
-        gbc.gridx = 3;
+        gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(As100Button, gbc);
         goToFoldedFigureTextField = new JTextField();
         goToFoldedFigureTextField.setColumns(2);
         gbc = new GridBagConstraints();
-        gbc.gridx = 4;
+        gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(goToFoldedFigureTextField, gbc);
         goToFoldedFigureButton = new JButton();
         goToFoldedFigureButton.setText("Go");
         gbc = new GridBagConstraints();
-        gbc.gridx = 5;
+        gbc.gridx = 4;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(goToFoldedFigureButton, gbc);
         undoRedo = new UndoRedo();
         gbc = new GridBagConstraints();
-        gbc.gridx = 6;
+        gbc.gridx = 5;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(undoRedo.$$$getRootComponent$$$(), gbc);
@@ -293,31 +289,31 @@ public class BottomPanel extends JPanel {
         foldedFigureMoveButton = new JButton();
         foldedFigureMoveButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oriagari_idiu.png")));
         gbc = new GridBagConstraints();
-        gbc.gridx = 9;
+        gbc.gridx = 10;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(foldedFigureMoveButton, gbc);
         gbc = new GridBagConstraints();
-        gbc.gridx = 10;
+        gbc.gridx = 12;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(foldedFigureRotate.$$$getRootComponent$$$(), gbc);
         gbc = new GridBagConstraints();
-        gbc.gridx = 11;
+        gbc.gridx = 14;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(foldedFigureResize.$$$getRootComponent$$$(), gbc);
         foldedFigureAntiAliasButton = new JButton();
         foldedFigureAntiAliasButton.setText("a_a");
         gbc = new GridBagConstraints();
-        gbc.gridx = 12;
+        gbc.gridx = 16;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(foldedFigureAntiAliasButton, gbc);
         shadowButton = new JButton();
         shadowButton.setText("S");
         gbc = new GridBagConstraints();
-        gbc.gridx = 13;
+        gbc.gridx = 17;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(shadowButton, gbc);
@@ -325,7 +321,7 @@ public class BottomPanel extends JPanel {
         frontColorButton.setIcon(new ImageIcon(getClass().getResource("/ppp/F_color.png")));
         frontColorButton.setText("FC");
         gbc = new GridBagConstraints();
-        gbc.gridx = 14;
+        gbc.gridx = 19;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(frontColorButton, gbc);
@@ -333,7 +329,7 @@ public class BottomPanel extends JPanel {
         backColorButton.setIcon(new ImageIcon(getClass().getResource("/ppp/B_color.png")));
         backColorButton.setText("BC");
         gbc = new GridBagConstraints();
-        gbc.gridx = 15;
+        gbc.gridx = 20;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(backColorButton, gbc);
@@ -341,38 +337,75 @@ public class BottomPanel extends JPanel {
         lineColorButton.setIcon(new ImageIcon(getClass().getResource("/ppp/L_color.png")));
         lineColorButton.setText("LC");
         gbc = new GridBagConstraints();
-        gbc.gridx = 16;
+        gbc.gridx = 21;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(lineColorButton, gbc);
         haltButton = new JButton();
         haltButton.setIcon(new ImageIcon(getClass().getResource("/ppp/keisan_tyuusi.png")));
         gbc = new GridBagConstraints();
-        gbc.gridx = 17;
+        gbc.gridx = 22;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(haltButton, gbc);
         trashButton = new JButton();
         trashButton.setIcon(new ImageIcon(getClass().getResource("/ppp/settei_syokika.png")));
         gbc = new GridBagConstraints();
-        gbc.gridx = 18;
+        gbc.gridx = 23;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(trashButton, gbc);
         resetButton = new JButton();
         resetButton.setIcon(new ImageIcon(getClass().getResource("/ppp/zen_syokika.png")));
         gbc = new GridBagConstraints();
-        gbc.gridx = 19;
+        gbc.gridx = 24;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel1.add(resetButton, gbc);
         final JPanel spacer1 = new JPanel();
         gbc = new GridBagConstraints();
-        gbc.gridx = 20;
+        gbc.gridx = 25;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(spacer1, gbc);
+        final JPanel spacer2 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 13;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(spacer2, gbc);
+        final JPanel spacer3 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 11;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(spacer3, gbc);
+        final JPanel spacer4 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 6;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(spacer4, gbc);
+        final JPanel spacer5 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 15;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(spacer5, gbc);
+        final JPanel spacer6 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 18;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(spacer6, gbc);
+        flipButton = new JButton();
+        flipButton.setIcon(new ImageIcon(getClass().getResource("/ppp/Button0b.png")));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 9;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        panel1.add(flipButton, gbc);
     }
 
     /**
@@ -408,25 +441,10 @@ public class BottomPanel extends JPanel {
 
         goToFoldedFigureTextField.setText(String.valueOf(foldedFigureModel.getFoldedCases()));
 
-        if (foldedFigureModel.isFindAnotherOverlapValid()) {
-            anotherSolutionButton.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
-            anotherSolutionButton.setForeground(Color.black);
-
-            As100Button.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
-            As100Button.setForeground(Color.black);
-
-            goToFoldedFigureButton.setBackground(new Color(200, 200, 200));//これがないとForegroundが直ぐに反映されない。仕様なのか？
-            goToFoldedFigureButton.setForeground(Color.black);
-        } else {
-            anotherSolutionButton.setBackground(new Color(201, 201, 201));
-            anotherSolutionButton.setForeground(Color.gray);
-
-            As100Button.setBackground(new Color(201, 201, 201));
-            As100Button.setForeground(Color.gray);
-
-            goToFoldedFigureButton.setBackground(new Color(201, 201, 201));
-            goToFoldedFigureButton.setForeground(Color.gray);
-        }
+        boolean findAnotherOverlapValid = foldedFigureModel.isFindAnotherOverlapValid();
+        anotherSolutionButton.setEnabled(findAnotherOverlapValid);
+        As100Button.setEnabled(findAnotherOverlapValid);
+        goToFoldedFigureButton.setEnabled(findAnotherOverlapValid);
     }
 
     public void getData(FoldedFigureModel foldedFigureModel) {

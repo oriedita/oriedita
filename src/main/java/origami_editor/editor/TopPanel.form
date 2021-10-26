@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="origami_editor.editor.TopPanel">
   <grid id="27dc6" binding="root" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="20" y="20" width="1800" height="30"/>
+      <xy x="20" y="20" width="1866" height="30"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -50,6 +50,7 @@
                 </constraints>
                 <properties>
                   <columns value="2"/>
+                  <minimumSize width="60" height="30"/>
                   <text value="1.0"/>
                 </properties>
               </component>
@@ -69,6 +70,7 @@
                 </constraints>
                 <properties>
                   <columns value="2"/>
+                  <minimumSize width="60" height="30"/>
                   <text value="0.0"/>
                 </properties>
               </component>
@@ -88,6 +90,7 @@
                 </constraints>
                 <properties>
                   <columns value="2"/>
+                  <minimumSize width="60" height="30"/>
                   <text value="0.0"/>
                 </properties>
               </component>
@@ -117,6 +120,7 @@
                 </constraints>
                 <properties>
                   <columns value="2"/>
+                  <minimumSize width="60" height="30"/>
                   <text value="0.0"/>
                 </properties>
               </component>
@@ -136,6 +140,7 @@
                 </constraints>
                 <properties>
                   <columns value="2"/>
+                  <minimumSize width="60" height="30"/>
                   <text value="1.0"/>
                 </properties>
               </component>
@@ -155,6 +160,7 @@
                 </constraints>
                 <properties>
                   <columns value="2"/>
+                  <minimumSize width="60" height="30"/>
                   <text value="2.0"/>
                 </properties>
               </component>

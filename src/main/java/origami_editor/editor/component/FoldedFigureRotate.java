@@ -54,14 +54,13 @@ public class FoldedFigureRotate extends JPanel {
     private void $$$setupUI$$$() {
         panel1 = new JPanel();
         panel1.setLayout(new GridBagLayout());
-        panel1.setBackground(new Color(-1));
-        panel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(-16777216)), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         foldedFigureRotateAntiClockwiseButton = new JButton();
         foldedFigureRotateAntiClockwiseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oriagari_p_kaiten.png")));
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(foldedFigureRotateAntiClockwiseButton, gbc);
         foldedFigureRotateTextField = new JTextField();

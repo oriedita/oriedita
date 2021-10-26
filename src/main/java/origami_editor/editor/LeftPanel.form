@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="origami_editor.editor.LeftPanel">
   <grid id="27dc6" binding="root" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="20" y="20" width="450" height="1410"/>
+      <xy x="20" y="20" width="450" height="1424"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -130,7 +130,7 @@
       </grid>
       <grid id="79e6f" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
@@ -176,7 +176,7 @@
       </grid>
       <grid id="7161c" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
@@ -222,7 +222,7 @@
       </grid>
       <grid id="94876" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
@@ -259,7 +259,7 @@
       </grid>
       <grid id="c4e26" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
@@ -287,7 +287,7 @@
       </grid>
       <grid id="19cc9" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="20" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
@@ -324,7 +324,7 @@
       </grid>
       <grid id="9b687" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="21" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
@@ -352,19 +352,19 @@
       </grid>
       <vspacer id="15d5c">
         <constraints>
-          <grid row="22" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="20" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
       </vspacer>
       <vspacer id="22cd6">
         <constraints>
-          <grid row="24" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="22" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
       </vspacer>
       <grid id="d6f82" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="25" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="23" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
@@ -408,7 +408,7 @@
       </grid>
       <grid id="92167" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="26" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="24" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
@@ -436,7 +436,7 @@
       </grid>
       <grid id="acbac" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="27" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="25" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
@@ -487,92 +487,9 @@
           </component>
         </children>
       </grid>
-      <grid id="e2b11" layout-manager="GridBagLayout">
-        <constraints>
-          <grid row="4" column="0" row-span="2" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="1413f" class="javax.swing.JButton" binding="drawCreaseFreeButton">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/senbun_nyuryoku.png"/>
-            </properties>
-          </component>
-          <component id="73246" class="javax.swing.JButton" binding="drawCreaseRestrictedButton">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/senbun_nyuryoku11.png"/>
-            </properties>
-          </component>
-          <component id="7bb20" class="javax.swing.JButton" binding="voronoiButton">
-            <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/Voronoi.png"/>
-            </properties>
-          </component>
-          <component id="4d17c" class="javax.swing.JButton" binding="makeFlatFoldableButton">
-            <constraints>
-              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/oritatami_kanousen.png"/>
-            </properties>
-          </component>
-          <component id="31ade" class="javax.swing.JButton" binding="lengthenCreaseButton">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/senbun_entyou.png"/>
-            </properties>
-          </component>
-          <component id="5e0e8" class="javax.swing.JButton" binding="lengthenCrease2Button">
-            <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/senbun_entyou_2.png"/>
-            </properties>
-          </component>
-          <component id="3cf89" class="javax.swing.JButton" binding="angleBisectorButton">
-            <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/kaku_toubun.png"/>
-              <text value=""/>
-            </properties>
-          </component>
-          <component id="a5283" class="javax.swing.JButton" binding="rabbitEarButton">
-            <constraints>
-              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/naishin.png"/>
-            </properties>
-          </component>
-        </children>
-      </grid>
       <grid id="9a3c7" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="6" column="0" row-span="3" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="3" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
@@ -580,47 +497,79 @@
         <children>
           <component id="633be" class="javax.swing.JButton" binding="perpendicularDrawButton">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/suisen.png"/>
-            </properties>
-          </component>
-          <component id="a24f2" class="javax.swing.JButton" binding="symmetricDrawButton">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/orikaesi.png"/>
-            </properties>
-          </component>
-          <component id="22f4e" class="javax.swing.JButton" binding="parallelDrawButton">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/heikousen.png"/>
-            </properties>
-          </component>
-          <component id="b822e" class="javax.swing.JButton" binding="setParallelDrawWidthButton">
-            <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
-              <icon value="ppp/heikousen_haba_sitei.png"/>
+              <icon value="ppp/suisen.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
+            </properties>
+          </component>
+          <component id="2a15d" class="javax.swing.JTextField" binding="lineSegmentDivisionTextField">
+            <constraints>
+              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
+              <text value="2"/>
+            </properties>
+          </component>
+          <component id="3e3df" class="javax.swing.JButton" binding="lineSegmentDivisionSetButton">
+            <constraints>
+              <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
+              <text value="Set"/>
+            </properties>
+          </component>
+          <component id="36c4c" class="javax.swing.JButton" binding="senbun_b_nyuryokuButton">
+            <constraints>
+              <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/senbun_b_nyuryoku.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
             </properties>
           </component>
           <component id="eb3c8" class="javax.swing.JButton" binding="all_s_step_to_orisenButton">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
               <icon value="ppp/all_s_step_to_orisen.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
+            </properties>
+          </component>
+          <component id="7bb20" class="javax.swing.JButton" binding="voronoiButton">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/Voronoi.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
+            </properties>
+          </component>
+          <component id="22f4e" class="javax.swing.JButton" binding="parallelDrawButton">
+            <constraints>
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/heikousen.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
             </properties>
           </component>
           <component id="1d53e" class="javax.swing.JButton" binding="fishBoneDrawButton">
@@ -630,43 +579,19 @@
             </constraints>
             <properties>
               <icon value="ppp/sakananohone.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
             </properties>
           </component>
-          <component id="2a15d" class="javax.swing.JTextField" binding="lineSegmentDivisionTextField">
+          <component id="b822e" class="javax.swing.JButton" binding="setParallelDrawWidthButton">
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <columns value="2"/>
-              <text value="2"/>
-            </properties>
-          </component>
-          <component id="3e3df" class="javax.swing.JButton" binding="lineSegmentDivisionSetButton">
-            <constraints>
-              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <text value="Set"/>
-            </properties>
-          </component>
-          <component id="3f7e2" class="javax.swing.JButton" binding="continuousSymmetricDrawButton">
-            <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
-              <icon value="ppp/renzoku_orikaesi.png"/>
-            </properties>
-          </component>
-          <component id="20788" class="javax.swing.JButton" binding="foldableLineDrawButton">
-            <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/oritatami_kanousen_and_kousitenkei_simple.png"/>
+              <icon value="ppp/heikousen_haba_sitei.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
             </properties>
           </component>
           <component id="654c" class="javax.swing.JButton" binding="doubleSymmetricDrawButton">
@@ -676,22 +601,125 @@
             </constraints>
             <properties>
               <icon value="ppp/fuku_orikaesi.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
             </properties>
           </component>
-          <component id="36c4c" class="javax.swing.JButton" binding="senbun_b_nyuryokuButton">
+          <component id="4d17c" class="javax.swing.JButton" binding="makeFlatFoldableButton">
             <constraints>
-              <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
+              <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
-              <icon value="ppp/senbun_b_nyuryoku.png"/>
+              <icon value="ppp/oritatami_kanousen.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
+            </properties>
+          </component>
+          <component id="3f7e2" class="javax.swing.JButton" binding="continuousSymmetricDrawButton">
+            <constraints>
+              <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/renzoku_orikaesi.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
+            </properties>
+          </component>
+          <component id="a24f2" class="javax.swing.JButton" binding="symmetricDrawButton">
+            <constraints>
+              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/orikaesi.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
+            </properties>
+          </component>
+          <component id="3cf89" class="javax.swing.JButton" binding="angleBisectorButton">
+            <constraints>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/kaku_toubun.png"/>
+              <preferredSize width="30" height="30"/>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="5e0e8" class="javax.swing.JButton" binding="lengthenCrease2Button">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/senbun_entyou_2.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
+            </properties>
+          </component>
+          <component id="31ade" class="javax.swing.JButton" binding="lengthenCreaseButton">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/senbun_entyou.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
+            </properties>
+          </component>
+          <component id="1413f" class="javax.swing.JButton" binding="drawCreaseFreeButton">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/senbun_nyuryoku.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
+            </properties>
+          </component>
+          <component id="73246" class="javax.swing.JButton" binding="drawCreaseRestrictedButton">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/senbun_nyuryoku11.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
+            </properties>
+          </component>
+          <component id="a5283" class="javax.swing.JButton" binding="rabbitEarButton">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/naishin.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
+            </properties>
+          </component>
+          <component id="20788" class="javax.swing.JButton" binding="foldableLineDrawButton">
+            <constraints>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/oritatami_kanousen_and_kousitenkei_simple.png"/>
+              <minimumSize width="0" height="30"/>
+              <preferredSize width="30" height="30"/>
             </properties>
           </component>
         </children>
       </grid>
       <grid id="eb3e0" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="10" column="0" row-span="5" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="8" column="0" row-span="5" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
@@ -805,7 +833,7 @@
       </grid>
       <vspacer id="80ed">
         <constraints>
-          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
       </vspacer>
@@ -817,19 +845,19 @@
       </vspacer>
       <vspacer id="94edd">
         <constraints>
-          <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
       </vspacer>
       <vspacer id="c8b92">
         <constraints>
-          <grid row="28" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="26" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="1.0"/>
         </constraints>
       </vspacer>
       <grid id="97077" layout-manager="GridBagLayout">
         <constraints>
-          <grid row="23" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="21" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
           <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
