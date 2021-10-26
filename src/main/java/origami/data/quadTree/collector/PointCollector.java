@@ -8,8 +8,7 @@ public class PointCollector extends RecursiveCollector {
 
     private Point p;
 
-    public PointCollector(Point p, QuadTreeAdapter adapter) {
-        super(adapter);
+    public PointCollector(Point p) {
         this.p = p;
     }
 
@@ -19,7 +18,7 @@ public class PointCollector extends RecursiveCollector {
     }
 
     @Override
-    public boolean shouldCollect(int cursor) {
+    public boolean shouldCollect(int cursor, QuadTreeAdapter adapter) {
         return adapter.getItem(cursor).mightContain(p);
     }
 

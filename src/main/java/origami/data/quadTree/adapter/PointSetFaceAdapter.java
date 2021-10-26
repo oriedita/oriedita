@@ -24,22 +24,15 @@ public class PointSetFaceAdapter extends PointSetAdapter {
 
         // Faces in PointSet are 1-based
         int count = set.getPointsCount(index + 1);
-        Double l = null, r = null, t = null, b = null;
-        for (int i = 1; i <= count; i++) {
-            Point p = set.getPoint(set.getPointId(index + 1, i));
+        Point p = set.getPoint(set.getPointId(index + 1, 1));
+        double l = p.getX(), r = l, t = p.getY(), b = t;
+        for (int i = 2; i <= count; i++) {
+            p = set.getPoint(set.getPointId(index + 1, i));
             double x = p.getX(), y = p.getY();
-            if (l == null || l > x) {
-                l = x;
-            }
-            if (r == null || r < x) {
-                r = x;
-            }
-            if (t == null || t < y) {
-                t = y;
-            }
-            if (b == null || b > y) {
-                b = y;
-            }
+            if (l > x) l = x;
+            if (r < x) r = x;
+            if (t < y) t = y;
+            if (b > y) b = y;
         }
         QuadTreeItem item = new QuadTreeItem(l, r, b, t);
         cache[index] = item;

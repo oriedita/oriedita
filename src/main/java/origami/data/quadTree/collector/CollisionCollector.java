@@ -3,6 +3,7 @@ package origami.data.quadTree.collector;
 import java.util.ArrayList;
 
 import origami.data.quadTree.QuadTree.Node;
+import origami.data.quadTree.adapter.QuadTreeAdapter;
 
 public class CollisionCollector implements QuadTreeCollector {
 
@@ -22,7 +23,7 @@ public class CollisionCollector implements QuadTreeCollector {
     }
 
     @Override
-    public boolean shouldCollect(int cursor) {
+    public boolean shouldCollect(int cursor, QuadTreeAdapter adapter) {
         return cursor > min;
     }
 

@@ -18,6 +18,8 @@ import origami.data.ListArray;
 import origami.data.quadTree.QuadTree;
 import origami.data.quadTree.adapter.PointSetFaceAdapter;
 import origami.data.quadTree.adapter.PointSetLineAdapter;
+import origami.data.quadTree.collector.LineSegmentCollector;
+import origami.data.quadTree.collector.PointCollector;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 import origami_editor.editor.component.BulletinBoard;
@@ -150,7 +152,7 @@ public class FoldedFigure_Worker {
         for (int i = 1; i <= SubFaceTotal; i++) {
             int s0addFaceTotal = 0;
 
-            for (int j : qt.getPotentialContainer(subFace_insidePoint[i])) {
+            for (int j : qt.collect(new PointCollector(subFace_insidePoint[i]))) {
                 j++; // qt is 0-based
                 if (otta_Face_figure.inside(subFace_insidePoint[i], j) == Polygon.Intersection.INSIDE) {
                     s0addFaceId[++s0addFaceTotal] = j;
@@ -223,7 +225,7 @@ public class FoldedFigure_Worker {
             if (faceId_min != faceId_max) {//展開図において、棒ibの両脇に面がある
                 Point p = otta_face_figure.getBeginPointFromLineId(ib);
                 Point q = otta_face_figure.getEndPointFromLineId(ib);
-                for (int im : qt.getPotentialContainer(p, q)) {
+                for (int im : qt.collect(new LineSegmentCollector(p, q))) {
                     im++; // qt is 0-based
                     if ((im != faceId_min) && (im != faceId_max)) {
                         if (otta_face_figure.convex_inside(ib, im)) {

@@ -1,15 +1,8 @@
 package origami.data.quadTree.collector;
 
 import origami.data.quadTree.QuadTree.Node;
-import origami.data.quadTree.adapter.QuadTreeAdapter;
 
 public abstract class RecursiveCollector implements QuadTreeCollector {
-
-    protected final QuadTreeAdapter adapter;
-
-    public RecursiveCollector(QuadTreeAdapter adapter) {
-        this.adapter = adapter;
-    }
 
     public abstract boolean contains(Node node);
 
