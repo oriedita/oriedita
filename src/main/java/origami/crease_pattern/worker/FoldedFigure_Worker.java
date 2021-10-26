@@ -110,7 +110,7 @@ public class FoldedFigure_Worker {
         return SubFace_valid_number;
     }
 
-    public void SubFace_configure(PointSet otta_Face_figure, PointSet SubFace_figure) throws InterruptedException {//js.Jyougehyou_settei(ts1,ts2.get(),ts3.get());
+    public void SubFace_configure(PointSet otta_Face_figure, PointSet SubFace_figure) throws InterruptedException {
         // Make an upper and lower table of faces (the faces in the unfolded view before folding).
         // This includes the point set of ts2 (which has information on the positional relationship of the faces after folding) and <-------------otta_Face_figure
         // Use the point set of ts3 (which has the information of SubFace whose surface is subdivided in the wire diagram). <-------------SubFace_figure
@@ -174,7 +174,7 @@ public class FoldedFigure_Worker {
     }
 
     public HierarchyListStatus HierarchyList_configure(WireFrame_Worker orite, PointSet otta_face_figure) throws InterruptedException {
-        bb.write("           Jyougehyou_settei   step1   start ");
+        bb.write("           HierarchyList_configure   step1   start ");
         HierarchyListStatus ireturn = HierarchyListStatus.SUCCESSFUL_1000;
         hierarchyList.setFacesTotal(otta_face_figure.getNumFaces());
 
@@ -212,7 +212,7 @@ public class FoldedFigure_Worker {
         }
 
         //----------------------------------------------
-        bb.write("           Jyougehyou_settei   step2   start ");
+        bb.write("           HierarchyList_configure   step2   start ");
         System.out.println("等価条件を設定する   ");
         //等価条件を設定する。棒ibを境界として隣接する2つの面im1,im2が有る場合、折り畳み推定した場合に
         //棒ibの一部と重なる位置に有る面imは面im1と面im2に上下方向で挟まれることはない。このことから
@@ -238,7 +238,7 @@ public class FoldedFigure_Worker {
         }
         System.out.print("３面が関与する突き抜け条件の数　＝　");
         System.out.println(hierarchyList.getEquivalenceConditionTotal());
-        bb.write("           Jyougehyou_settei   step3   start ");
+        bb.write("           HierarchyList_configure   step3   start ");
         // Add equivalence condition. There are two adjacent faces im1 and im2 as the boundary of the bar ib,
         // Also, there are two adjacent faces im3 and im4 as the boundary of the bar jb, and when ib and jb are parallel and partially overlap, when folding is estimated.
         // The surface of the bar ib and the surface of the surface jb are not aligned with i, j, i, j or j, i, j, i. If this happens,
@@ -294,7 +294,7 @@ public class FoldedFigure_Worker {
         System.out.print("４面が関与する突き抜け条件の数　＝　");
         System.out.println(hierarchyList.getUEquivalenceConditionTotal());
 
-        bb.write("           Jyougehyou_settei   step4   start ");
+        bb.write("           HierarchyList_configure   step4   start ");
         //Additional estimation
 
         HierarchyListStatus additional = additional_estimation();
@@ -308,7 +308,7 @@ public class FoldedFigure_Worker {
         //*************Saving the results of the first deductive reasoning**************************
         hierarchyList.save();//Save the hierarchical relationship determined from the mountain fold and valley fold information.
         //************************************************************************
-        bb.write("           Jyougehyou_settei   step5   start ");
+        bb.rewrite(10, "           HierarchyList_configure   step5   start ");
 
         //s0に優先順位をつける(このときhierarchyListの-100のところが変るところがある)
         System.out.println("Smen(s0)に優先順位をつける");
@@ -371,7 +371,7 @@ public class FoldedFigure_Worker {
         // information on mountain folds and valley folds.
 
         int capacity = FaceIdCount_max * FaceIdCount_max;
-        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(hierarchyList, s0, capacity);
+        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(bb, hierarchyList, s0, capacity);
         HierarchyListStatus result = AEA.run(0);
         errorPos = AEA.errorPos;
         return result;
@@ -422,10 +422,10 @@ public class FoldedFigure_Worker {
 
     //Start with the current permutation state and look for possible overlapping states. There is room for speeding up here.
     public int possible_overlapping_search(boolean swap) throws InterruptedException {      //This should not change the hierarchyList.
-        bb.write("_ _______");
-        bb.write("__ ______");
-        bb.write("___ _____");
-        bb.write("____ ____");
+        bb.write(" ");
+        bb.write(" ");
+        bb.write(" ");
+        bb.write(" ");
         int ms, Sid;
 
         swapper = new SwappingAlgorithm();
@@ -438,11 +438,8 @@ public class FoldedFigure_Worker {
                 return 1000;
             }//There is no contradiction in all SubFaces.
             Sid = next(ms - 1);
-            bb.rewrite(9, "susumu(" + ms + "-1 = )" + Sid);
 
-            if(swap) {
-                swapper.process(s);
-            }
+            if (swap) swapper.process(s);
 
             if (Thread.interrupted()) throw new InterruptedException();
         }
@@ -457,25 +454,24 @@ public class FoldedFigure_Worker {
 
         for (int ss = 1; ss <= SubFace_valid_number; ss++) {      //<<<<<<<<<<<<<<高速化のため変更。070417
 
-            bb.rewrite(7, "mujyun_Smen_motome( " + ss + ") , Menidsuu = " + s[ss].getFaceIdCount() + " , Men_pair_suu = " + s[ss].getFaceIdCount() * (s[ss].getFaceIdCount() - 1) / 2);
-            bb.rewrite(8, " kasanari_bunryi_mitei = " + s[ss].overlapping_classification_pending(hierarchyList));
-            bb.rewrite(9, " kasanari_bunryi_ketteizumi = " + s[ss].overlapping_classification_determined(hierarchyList));
-
+            int count = s[ss].getFaceIdCount(), pair = count * (count - 1) / 2;
+            bb.rewrite(7, "Current SubFace( " + ss + ") , face count = " + count + " , face pair = " + pair);
+            bb.rewrite(8, "Search progress " + Permutation_count(ss));
 
             kks = s[ss].possible_overlapping_search(hierarchyList);
-            bb.rewrite(10, Permutation_count(ss));
-
-
-            if (kks == 0) {//kks == 0 means that there is no permutation that can overlap
+            if (kks == 0) {// kks == 0 means that there is no permutation that can overlap
                 swapper.record(ss);
                 return ss;
             }
             s[ss].hierarchyList_at_subFace_wo_input(hierarchyList);//Enter the top and bottom information of the ss th SubFace in hierarchyList.
         }
-
+      
         // Solution found, perform final checking
-        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(hierarchyList, s, 1000); // we don't need much for this
+        bb.rewrite(10, " ");
+        bb.rewrite(9, "Possible solution found...");
+        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(null, hierarchyList, s, 1000); // we don't need much for this
         if (AEA.run(SubFace_valid_number) != HierarchyListStatus.SUCCESSFUL_1000) {
+            bb.rewrite(9, " ");
             // This rarely happens, but typically it means the solution contradicts some of
             // the SubFace not counted as "valid" previously. In that case, adding it to the
             // valid set will solve the problem.

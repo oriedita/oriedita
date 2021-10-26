@@ -6,6 +6,7 @@ import origami.data.listMatrix.PseudoListMatrix;
 import origami.folding.HierarchyList;
 import origami.folding.element.SubFace;
 import origami.folding.util.EquivalenceCondition;
+import origami_editor.editor.component.BulletinBoard;
 
 /**
  * Author: Mu-Tsun Tsai
@@ -26,6 +27,7 @@ public class AdditionalEstimationAlgorithm {
     private static final int ABOVE = HierarchyList.ABOVE_1;
     private static final int BELOW = HierarchyList.BELOW_0;
 
+    private final BulletinBoard bb;
     private final HierarchyList hierarchyList;
     private final SubFace[] subFaces; // indices start from 1
 
@@ -37,17 +39,19 @@ public class AdditionalEstimationAlgorithm {
 
     public EquivalenceCondition errorPos;
 
-    public AdditionalEstimationAlgorithm(HierarchyList hierarchyList, SubFace[] s, int capacity) {
+    public AdditionalEstimationAlgorithm(BulletinBoard bb, HierarchyList hierarchyList, SubFace[] s, int capacity) {
+        this.bb = bb;
         this.hierarchyList = hierarchyList;
         this.subFaces = s;
         int count = subFaces.length;
         changeList = new StackArray(count, capacity);
         IA = new ItalianoAlgorithm[count];
         relationObservers = new PseudoListMatrix(hierarchyList.getFacesTotal());
+        if (bb != null) bb.write(" ");
     }
 
     public HierarchyListStatus run(int completedSubFaces) {
-        int new_relations;
+        int new_relations, total = 0;
 
         System.out.println("additional_estimation start---------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
 
@@ -105,8 +109,10 @@ public class AdditionalEstimationAlgorithm {
 
             // ----------------
 
-            System.out.print("Total number of inferred relations ＝ ");
-            System.out.println(new_relations);
+            System.out.println("Total number of inferred relations ＝ " + new_relations);
+            if (bb != null) {
+                bb.rewrite(10, "           Total number of inferred relations ＝ " + (total += new_relations));
+            }
 
         } while (new_relations > 0);
 
