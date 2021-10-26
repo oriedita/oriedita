@@ -20,6 +20,7 @@ import origami.data.quadTree.adapter.PointSetFaceAdapter;
 import origami.data.quadTree.adapter.PointSetLineAdapter;
 import origami.data.quadTree.collector.LineSegmentCollector;
 import origami.data.quadTree.collector.PointCollector;
+import origami.data.quadTree.comparator.ExpandComparator;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 import origami_editor.editor.component.BulletinBoard;
@@ -141,7 +142,7 @@ public class FoldedFigure_Worker {
         }
 
         // Also used later in HierarchyList_configure
-        qt = new QuadTree(new PointSetFaceAdapter(otta_Face_figure));
+        qt = new QuadTree(new PointSetFaceAdapter(otta_Face_figure), ExpandComparator.instance);
 
         System.out.println("各Smenに含まれる面を記録する");
 

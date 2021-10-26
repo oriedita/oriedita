@@ -5,6 +5,8 @@ import java.util.*;
 import origami.crease_pattern.element.Point;
 import origami.data.quadTree.adapter.QuadTreeAdapter;
 import origami.data.quadTree.collector.*;
+import origami.data.quadTree.comparator.QuadTreeComparator;
+import origami.data.quadTree.comparator.ShrinkComparator;
 
 /**
  * Author: Mu-Tsun Tsai
@@ -13,11 +15,11 @@ import origami.data.quadTree.collector.*;
  */
 public class QuadTree {
 
-    private static final double EPSILON = 0.001;
     private static final int CAPACITY = 8;
 
     private final Node root;
     private final QuadTreeAdapter adapter;
+    private final QuadTreeComparator comparator;
 
     /** The index of next QuadTreeItem in the list. */
     private final ArrayList<Integer> next;
@@ -28,7 +30,12 @@ public class QuadTree {
     private int count;
 
     public QuadTree(QuadTreeAdapter adapter) {
+        this(adapter, ShrinkComparator.instance);
+    }
+
+    public QuadTree(QuadTreeAdapter adapter, QuadTreeComparator comparator) {
         this.adapter = adapter;
+        this.comparator = comparator;
         next = new ArrayList<>();
         map = new ArrayList<>();
 
@@ -44,12 +51,7 @@ public class QuadTree {
             if (b > y) b = y;
         }
 
-        // We enlarge the root by at least 2 * EPSILON to avoid rounding errors.
-        // Also, we strategically offset the center of the root, since it is very common
-        // for origami to have creases that are on exactly half of the sheet, 1/4 of the
-        // sheet etc.
-        root = new Node(l - 2 * EPSILON, r + 3 * EPSILON, b - 2 * EPSILON, t + 3 * EPSILON, null);
-
+        root = new Node(comparator.createRoot(l, r, b, t));
         grow(adapter.getCount());
     }
 
@@ -119,11 +121,15 @@ public class QuadTree {
     }
 
     public class Node {
-        final double l, r, b, t;
+        public final double l, r, b, t;
         public final Node[] children = new Node[4];
         final Node parent;
         int size;
         int head = -1;
+
+        Node(QuadTreeItem item) {
+            this(item.l, item.r, item.b, item.t, null);
+        }
 
         Node(double l, double r, double b, double t, Node parent) {
             this.l = l;
@@ -139,11 +145,11 @@ public class QuadTree {
 
         public boolean contains(Point p) {
             double x = p.getX(), y = p.getY();
-            return x > l + EPSILON && x < r - EPSILON && y > b + EPSILON && y < t - EPSILON;
+            return comparator.contains(this, x, x, y, y);
         }
 
         public boolean contains(QuadTreeItem item) {
-            return item.l > l + EPSILON && item.r < r - EPSILON && item.b > b + EPSILON && item.t < t - EPSILON;
+            return comparator.contains(this, item.l, item.r, item.b, item.t);
         }
 
         private boolean addItem(int i, QuadTreeItem item) {

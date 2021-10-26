@@ -12,12 +12,12 @@ public abstract class PointSetAdapter implements QuadTreeAdapter {
     }
 
     @Override
-    public int getPointCount() {
+    public final int getPointCount() {
         return set.getNumPoints();
     }
 
     @Override
-    public Point getPoint(int index) {
+    public final Point getPoint(int index) {
         // Points in PointSet are 1-based
         return set.getPoint(index + 1);
     }
