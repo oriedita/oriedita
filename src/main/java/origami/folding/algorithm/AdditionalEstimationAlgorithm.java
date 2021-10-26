@@ -50,7 +50,7 @@ public class AdditionalEstimationAlgorithm {
         if (bb != null) bb.write(" ");
     }
 
-    public HierarchyListStatus run(int completedSubFaces) {
+    public HierarchyListStatus run(int completedSubFaces) throws InterruptedException {
         int new_relations, total = 0;
 
         System.out.println("additional_estimation start---------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
@@ -70,6 +70,8 @@ public class AdditionalEstimationAlgorithm {
                     }
                     int changes = checkTransitivity(iS);
                     new_relations += changes;
+
+                    if (Thread.interrupted()) throw new InterruptedException();
                 }
             } catch (InferenceFailureException e) {
                 errorIndex = iS;
@@ -86,6 +88,8 @@ public class AdditionalEstimationAlgorithm {
                     }
                     int changes = checkTripleConstraint(tg);
                     new_relations += changes;
+
+                    if (Thread.interrupted()) throw new InterruptedException();
                 }
             } catch (InferenceFailureException e) {
                 errorPos = currentEC;
@@ -101,6 +105,8 @@ public class AdditionalEstimationAlgorithm {
                     }
                     int changes = checkQuadrupleConstraint(tg);
                     new_relations += changes;
+
+                    if (Thread.interrupted()) throw new InterruptedException();
                 }
             } catch (InferenceFailureException e) {
                 errorPos = currentEC;

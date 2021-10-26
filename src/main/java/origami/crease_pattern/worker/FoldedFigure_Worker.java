@@ -366,7 +366,7 @@ public class FoldedFigure_Worker {
         return ireturn;
     }
 
-    public HierarchyListStatus additional_estimation() {
+    public HierarchyListStatus additional_estimation() throws InterruptedException {
         // We will infer relationships that can be further determined from the
         // information on mountain folds and valley folds.
 
