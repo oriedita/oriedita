@@ -2,10 +2,11 @@ package origami.data.quadTree;
 
 import java.util.*;
 
-import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
-import origami.data.quadTree.adapter.*;
+import origami.data.quadTree.adapter.QuadTreeAdapter;
 import origami.data.quadTree.collector.*;
+import origami.data.quadTree.comparator.QuadTreeComparator;
+import origami.data.quadTree.comparator.ShrinkComparator;
 
 /**
  * Author: Mu-Tsun Tsai
@@ -14,11 +15,11 @@ import origami.data.quadTree.collector.*;
  */
 public class QuadTree {
 
-    private static final double EPSILON = 0.001;
     private static final int CAPACITY = 8;
 
     private final Node root;
     private final QuadTreeAdapter adapter;
+    private final QuadTreeComparator comparator;
 
     /** The index of next QuadTreeItem in the list. */
     private final ArrayList<Integer> next;
@@ -28,40 +29,29 @@ public class QuadTree {
 
     private int count;
 
-    public QuadTree(LineSegmentSet set) {
-        this(new LineSegmentSetAdapter(set));
+    public QuadTree(QuadTreeAdapter adapter) {
+        this(adapter, ShrinkComparator.instance);
     }
 
-    public QuadTree(QuadTreeAdapter adapter) {
+    public QuadTree(QuadTreeAdapter adapter, QuadTreeComparator comparator) {
         this.adapter = adapter;
+        this.comparator = comparator;
         next = new ArrayList<>();
         map = new ArrayList<>();
 
         // Determine the root size.
-        Double l = null, r = null, t = null, b = null;
-        for (int i = 0; i < adapter.getPointCount(); i++) {
-            Point p = adapter.getPoint(i);
+        Point p = adapter.getPoint(0);
+        double l = p.getX(), r = l, t = p.getY(), b = t;
+        for (int i = 1; i < adapter.getPointCount(); i++) {
+            p = adapter.getPoint(i);
             double x = p.getX(), y = p.getY();
-            if (l == null || l > x) {
-                l = x;
-            }
-            if (r == null || r < x) {
-                r = x;
-            }
-            if (t == null || t < y) {
-                t = y;
-            }
-            if (b == null || b > y) {
-                b = y;
-            }
+            if (l > x) l = x;
+            if (r < x) r = x;
+            if (t < y) t = y;
+            if (b > y) b = y;
         }
 
-        // We enlarge the root by at least 2 * EPSILON to avoid rounding errors.
-        // Also, we strategically offset the center of the root, since it is very common
-        // for origami to have creases that are on exactly half of the sheet, 1/4 of the
-        // sheet etc.
-        root = new Node(l - 2 * EPSILON, r + 3 * EPSILON, b - 2 * EPSILON, t + 3 * EPSILON, null);
-
+        root = new Node(comparator.createRoot(l, r, b, t));
         grow(adapter.getCount());
     }
 
@@ -97,24 +87,13 @@ public class QuadTree {
         return collect(new CollisionCollector(i, min, map));
     }
 
-    public Iterable<Integer> getPotentialContainer(Point p) {
-        return collect(new PointCollector(p, adapter));
-    }
-
-    /** Get all items that might partially contains the given line. */
-    public Iterable<Integer> getPotentialContainer(Point p, Point q) {
-        return collect(new LineSegmentCollector(p, q, adapter));
-    }
-    
-    private Iterable<Integer> collect(QuadTreeCollector collector) {
+    public Iterable<Integer> collect(QuadTreeCollector collector) {
         StaticMinHeap heap = new StaticMinHeap(count);
         Node node = collector.findInitial(root);
         if (collector.shouldGoDown()) {
             collectDownwards(node, collector, heap);
-        } else {
-            collectNode(node, collector, heap);
+            node = node.parent;
         }
-        node = node.parent;
         while (node != null) {
             collectNode(node, collector, heap);
             node = node.parent;
@@ -134,7 +113,7 @@ public class QuadTree {
     private void collectNode(Node node, QuadTreeCollector collector, StaticMinHeap heap) {
         int cursor = node.head;
         while (cursor != -1) {
-            if (collector.shouldCollect(cursor)) {
+            if (collector.shouldCollect(cursor, adapter)) {
                 heap.add(cursor);
             }
             cursor = next.get(cursor);
@@ -142,11 +121,15 @@ public class QuadTree {
     }
 
     public class Node {
-        final double l, r, b, t;
+        public final double l, r, b, t;
         public final Node[] children = new Node[4];
         final Node parent;
         int size;
         int head = -1;
+
+        Node(QuadTreeItem item) {
+            this(item.l, item.r, item.b, item.t, null);
+        }
 
         Node(double l, double r, double b, double t, Node parent) {
             this.l = l;
@@ -162,11 +145,11 @@ public class QuadTree {
 
         public boolean contains(Point p) {
             double x = p.getX(), y = p.getY();
-            return x > l + EPSILON && x < r - EPSILON && y > b + EPSILON && y < t - EPSILON;
+            return comparator.contains(this, x, x, y, y);
         }
 
         public boolean contains(QuadTreeItem item) {
-            return item.l > l + EPSILON && item.r < r - EPSILON && item.b > b + EPSILON && item.t < t - EPSILON;
+            return comparator.contains(this, item.l, item.r, item.b, item.t);
         }
 
         private boolean addItem(int i, QuadTreeItem item) {
@@ -194,7 +177,8 @@ public class QuadTree {
             size++;
         }
 
-        public void removeIndex(int i, int old_next) {
+        void removeIndex(int i, int old_next) {
+            size--;
             int cursor = head;
             if (cursor == i) {
                 head = old_next;

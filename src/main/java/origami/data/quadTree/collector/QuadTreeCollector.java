@@ -1,6 +1,7 @@
 package origami.data.quadTree.collector;
 
 import origami.data.quadTree.QuadTree.Node;
+import origami.data.quadTree.adapter.QuadTreeAdapter;
 
 /**
  * Author: Mu-Tsun Tsai
@@ -17,5 +18,5 @@ public interface QuadTreeCollector {
     public boolean shouldGoDown();
 
     /** Whether the given cursor position should be collected. */
-    public boolean shouldCollect(int cursor);
+    public boolean shouldCollect(int cursor, QuadTreeAdapter adapter);
 }

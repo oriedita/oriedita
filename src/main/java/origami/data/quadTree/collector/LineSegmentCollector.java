@@ -6,12 +6,12 @@ import origami.data.quadTree.QuadTree.Node;
 import origami.data.quadTree.adapter.LineSegmentSetAdapter;
 import origami.data.quadTree.adapter.QuadTreeAdapter;
 
+ /** Get all items that might partially contains the given line. */
 public class LineSegmentCollector extends RecursiveCollector {
 
     private QuadTreeItem item;
 
-    public LineSegmentCollector(Point p, Point q, QuadTreeAdapter adapter) {
-        super(adapter);
+    public LineSegmentCollector(Point p, Point q) {
         this.item = LineSegmentSetAdapter.createItem(p, q);
     }
 
@@ -21,8 +21,8 @@ public class LineSegmentCollector extends RecursiveCollector {
     }
 
     @Override
-    public boolean shouldCollect(int cursor) {
-        return adapter.getItem(cursor).mightContain(item);
+    public boolean shouldCollect(int cursor, QuadTreeAdapter adapter) {
+        return adapter.getItem(cursor).mightOverlap(item);
     }
 
     @Override

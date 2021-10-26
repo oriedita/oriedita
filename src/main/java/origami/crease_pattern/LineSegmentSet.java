@@ -4,6 +4,10 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.data.quadTree.QuadTree;
+import origami.data.quadTree.adapter.LineSegmentEndPointAdapter;
+import origami.data.quadTree.adapter.LineSegmentSetAdapter;
+import origami.data.quadTree.collector.EndPointCollector;
+import origami.data.quadTree.collector.QuadTreeCollector;
 import origami_editor.editor.Save;
 
 import java.util.ArrayList;
@@ -90,7 +94,8 @@ public class LineSegmentSet {
      * When there are two completely overlapping line segments, the one with the latest number is deleted.
      */
     public void overlapping_line_removal(double r) {
-        QuadTree QT = new QuadTree(this);
+        QuadTree qtA = new QuadTree(new LineSegmentEndPointAdapter(this, (set, i)->set.getA(i)));
+        QuadTree qtB = new QuadTree(new LineSegmentEndPointAdapter(this, (set, i)->set.getB(i)));
 
         boolean[] removal_flg = new boolean[lineSegments.size()];
         List<LineSegment> snew = new ArrayList<>();
@@ -99,14 +104,20 @@ public class LineSegmentSet {
             LineSegment si = lineSegments.get(i);
             Point p1 = si.getA();
             Point p2 = si.getB();
-            for (int j : QT.getPotentialCollision(i)) {
+            QuadTreeCollector c = new EndPointCollector(p1, i);
+            for (int j : qtA.collect(c)) {
                 LineSegment sj = lineSegments.get(j);
                 Point p3 = sj.getA();
                 Point p4 = sj.getB();
-                // previously OritaCalc.determineLineSegmentIntersection is called here,
-                // but it has too much overhead.
-                if (OritaCalc.equal(p1, p3, r) && OritaCalc.equal(p2, p4, r)
-                        || OritaCalc.equal(p1, p4, r) && OritaCalc.equal(p2, p3, r)) {
+                if (OritaCalc.equal(p1, p3, r) && OritaCalc.equal(p2, p4, r)) {
+                    removal_flg[j] = true;
+                }
+            }
+            for (int j : qtB.collect(c)) {
+                LineSegment sj = lineSegments.get(j);
+                Point p3 = sj.getA();
+                Point p4 = sj.getB();
+                if (OritaCalc.equal(p1, p4, r) && OritaCalc.equal(p2, p3, r)) {
                     removal_flg[j] = true;
                 }
             }
@@ -137,7 +148,7 @@ public class LineSegmentSet {
             k_flg.add(true);
         }
 
-        QuadTree qt = new QuadTree(this);
+        QuadTree qt = new QuadTree(new LineSegmentSetAdapter(this));
 
         while (found) {
             found = false;
