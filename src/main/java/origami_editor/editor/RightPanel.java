@@ -134,7 +134,7 @@ public class RightPanel {
             app.mainCreasePatternWorker.unselect_all();
 
             if (ckOCheckBox.isSelected()) {
-                app.mainCreasePatternWorker.check1(0.001, 0.5);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
+                app.mainCreasePatternWorker.check1();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                 app.mainCreasePatternWorker.set_i_check1(true);
             } else {
                 app.mainCreasePatternWorker.set_i_check1(false);
@@ -144,15 +144,15 @@ public class RightPanel {
         fxOButton.addActionListener(e -> {
 
             app.mainCreasePatternWorker.unselect_all();
-            app.mainCreasePatternWorker.fix1(0.001, 0.5);
-            app.mainCreasePatternWorker.check1(0.001, 0.5);
+            app.mainCreasePatternWorker.fix1();
+            app.mainCreasePatternWorker.check1();
             app.repaintCanvas();
         });
         ckTCheckBox.addActionListener(e -> {
             app.mainCreasePatternWorker.unselect_all();
 
             if (ckTCheckBox.isSelected()) {
-                app.mainCreasePatternWorker.check2(0.01, 0.5);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
+                app.mainCreasePatternWorker.check2();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                 app.mainCreasePatternWorker.setCheck2(true);
             } else {
                 app.mainCreasePatternWorker.setCheck2(false);
@@ -161,8 +161,8 @@ public class RightPanel {
         });
         fxTButton.addActionListener(e -> {
             app.mainCreasePatternWorker.unselect_all();
-            app.mainCreasePatternWorker.fix2(0.001, 0.5);
-            app.mainCreasePatternWorker.check2(0.001, 0.5);
+            app.mainCreasePatternWorker.fix2();
+            app.mainCreasePatternWorker.check2();
             app.repaintCanvas();
         });
         cAMVCheckBox.addActionListener(e -> {

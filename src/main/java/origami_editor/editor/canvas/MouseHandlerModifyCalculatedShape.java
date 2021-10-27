@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.App;
@@ -71,7 +72,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             app.OZ.displayStyle = app.OZ.display_flg_backup;//20180216
 
             app.OZ.cp_worker2.mReleased_selectedPoint_move_with_camera(move_previous_selection_point, p_m_left_on, p, app.OZ.ip4);
-            if (p_m_left_on.distance(p) > 0.0000001) {
+            if (p_m_left_on.distance(p) > Epsilon.UNKNOWN_1EN7) {
                 app.OZ.record();
                 app.OZ.estimationStep = FoldedFigure.EstimationStep.STEP_2;
 
@@ -93,7 +94,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             Point ps = new Point();
             ps.set(app.OZ.cp_worker2.getPoint(i_closestPointId));
             for (int i = 1; i <= app.OZ.cp_worker2.getPointsTotal(); i++) {
-                if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < 0.0000001) {
+                if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
                     app.OZ.cp_worker1.setPointStateTrue(i);
                 }
             }
@@ -110,7 +111,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
 
         if (i_nanini_near == 2) {
             app.OZ.cp_worker2.mReleased_selectedPoint_move_with_camera(move_previous_selection_point, p_m_left_on, p, app.OZ.ip4);
-            if (p_m_left_on.distance(p) > 0.0000001) {
+            if (p_m_left_on.distance(p) > Epsilon.UNKNOWN_1EN7) {
                 app.OZ.record();
                 app.OZ.estimationStep = FoldedFigure.EstimationStep.STEP_2;
 
@@ -132,7 +133,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             Point ps = new Point();
             ps.set(app.OZ.cp_worker2.getPoint(i_closestPointId));
             for (int i = 1; i <= app.OZ.cp_worker2.getPointsTotal(); i++) {
-                if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < 0.0000001) {
+                if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
                     app.OZ.cp_worker1.setPointStateTrue(i);
                 }
             }
@@ -181,7 +182,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                     Point ps = new Point();
                     ps.set(app.OZ.cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= app.OZ.cp_worker2.getPointsTotal(); i++) {
-                        if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < 0.0000001) {
+                        if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
                             app.OZ.cp_worker1.setPointStateTrue(i);
                         }
                     }
@@ -212,7 +213,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                     Point ps = new Point();
                     ps.set(app.OZ.cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= app.OZ.cp_worker2.getPointsTotal(); i++) {
-                        if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < 0.0000001) {
+                        if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
                             app.OZ.cp_worker1.setPointStateTrue(i);
                         }
                     }
@@ -301,7 +302,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                     Point ps = new Point();
                     ps.set(app.OZ.cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= app.OZ.cp_worker2.getPointsTotal(); i++) {
-                        if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < 0.0000001) {
+                        if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
                             app.OZ.cp_worker1.setPointStateTrue(i);
                         }
                     }
@@ -332,7 +333,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                     Point ps = new Point();
                     ps.set(app.OZ.cp_worker2.getPoint(i_closestPointId));
                     for (int i = 1; i <= app.OZ.cp_worker2.getPointsTotal(); i++) {
-                        if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < 0.0000001) {
+                        if (ps.distance(app.OZ.cp_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
                             app.OZ.cp_worker1.setPointStateTrue(i);
                         }
                     }

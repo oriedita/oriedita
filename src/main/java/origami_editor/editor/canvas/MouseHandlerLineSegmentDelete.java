@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -24,7 +25,7 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
         d.lineStep.clear();
 
         //最寄の一つを削除
-        if (selectionStart.distance(p0) <= 0.000001) {//最寄の一つを削除
+        if (selectionStart.distance(p0) <= Epsilon.UNKNOWN_1EN6) {//最寄の一つを削除
             int i_removal_mode;//i_removal_mode is defined and declared here
             switch (d.i_foldLine_additional) {
                 case POLY_LINE_0:
@@ -127,7 +128,7 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
 
 
         //四角枠内の削除 //p19_1はselectの最初のTen。この条件は最初のTenと最後の点が遠いので、四角を発生させるということ。
-        if (selectionStart.distance(p0) > 0.000001) {
+        if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {
             if ((d.i_foldLine_additional == FoldLineAdditionalInputMode.POLY_LINE_0) || (d.i_foldLine_additional == FoldLineAdditionalInputMode.BOTH_4)) { //折線の削除	//D_nisuru(selectionStart,p0)で折線だけが削除される。
                 if (d.deleteInside_foldingLine(selectionStart, p0)) {
                     d.organizeCircles();
@@ -160,18 +161,18 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
         }
 
 //qqqqqqqqqqqqqqqqqqqqqqqqqqqqq//System.out.println("= ");qqqqq
-//check4(0.0001);//D_nisuru0をすると、foldLineSet.D_nisuru0内でresetが実行されるため、check4のやり直しが必要。
+//check4(Epsilon.UNKNOWN_00001);//D_nisuru0をすると、foldLineSet.D_nisuru0内でresetが実行されるため、check4のやり直しが必要。
         if (d.check1) {
-            d.check1(0.001, 0.5);
+            d.check1();
         }
         if (d.check2) {
-            d.check2(0.01, 0.5);
+            d.check2();
         }
         if (d.check3) {
-            d.check3(0.0001);
+            d.check3();
         }
         if (d.check4) {
-            d.check4(0.0001);
+            d.check4();
         }
 
     }

@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -20,7 +21,7 @@ public class MouseHandlerCreaseMakeAux extends BaseMouseHandlerBoxSelect {
     public void mouseReleased(Point p0) {
         d.lineStep.clear();
 
-        if (selectionStart.distance(p0) > 0.000001) {
+        if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {
             if (d.insideToAux(selectionStart, p0)) {
                 d.record();
             }//この関数は不完全なのでまだ未公開20171126

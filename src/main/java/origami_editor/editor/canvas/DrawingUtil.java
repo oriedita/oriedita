@@ -3,6 +3,7 @@ package origami_editor.editor.canvas;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.Colors;
@@ -148,8 +149,8 @@ public class DrawingUtil {
 
         Point a = new Point();
         Point b = new Point();
-        a.set(s_tv.determineAX() + 0.000001, s_tv.determineAY() + 0.000001);
-        b.set(s_tv.determineBX() + 0.000001, s_tv.determineBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+        a.set(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
+        b.set(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
     }
@@ -163,8 +164,8 @@ public class DrawingUtil {
         s_tv.set(camera.object2TV(as));
         Point a = new Point();
         Point b = new Point();
-        a.set(s_tv.determineAX() + 0.000001, s_tv.determineAY() + 0.000001);
-        b.set(s_tv.determineBX() + 0.000001, s_tv.determineBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+        a.set(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
+        b.set(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
@@ -255,8 +256,8 @@ public class DrawingUtil {
         s_tv.set(camera.object2TV(s));
         Point a= new Point();
         Point b = new Point();
-        a.set(s_tv.determineAX() + 0.000001, s_tv.determineAY() + 0.000001);
-        b.set(s_tv.determineBX() + 0.000001, s_tv.determineBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+        a.set(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
+        b.set(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
@@ -295,8 +296,8 @@ public class DrawingUtil {
         s_tv.set(camera.object2TV(s));
         Point a = new Point();
         Point b = new Point();
-        a.set(s_tv.determineAX() + 0.000001, s_tv.determineAY() + 0.000001);
-        b.set(s_tv.determineBX() + 0.000001, s_tv.determineBY() + 0.000001);//The reason for adding 0.000001 is to prevent the original fold line from being affected by the new fold line when drawing on the display.
+        a.set(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
+        b.set(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//The reason for adding Epsilon.UNKNOWN_0000001 is to prevent the original fold line from being affected by the new fold line when drawing on the display.
 
 
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
@@ -326,8 +327,8 @@ public class DrawingUtil {
         s_tv.set(camera.object2TV(s));
         Point a = new Point();
         Point b = new Point();
-        a.set(s_tv.determineAX() + 0.000001, s_tv.determineAY() + 0.000001);
-        b.set(s_tv.determineBX() + 0.000001, s_tv.determineBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+        a.set(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
+        b.set(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
         int i_width = pointSize + 5;
@@ -357,7 +358,7 @@ public class DrawingUtil {
         Point a = new Point();
 
         a.set(camera.object2TV(c.determineCenter()));//この場合のs_tvは描画座標系での円の中心の位置
-        a.set(a.getX() + 0.000001, a.getY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+        a.set(a.getX() + Epsilon.UNKNOWN_1EN6, a.getY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
         double d_width = c.getRadius() * camera.getCameraZoomX();//d_habaは描画時の円の半径。なお、camera.get_camera_bairitsu_x()＝camera.get_camera_bairitsu_y()を前提としている。
 
@@ -415,8 +416,8 @@ public class DrawingUtil {
         s_tv.set(camera.object2TV(s));
         Point a = new Point();
         Point b = new Point();
-        a.set(s_tv.determineAX() + 0.000001, s_tv.determineAY() + 0.000001);
-        b.set(s_tv.determineBX() + 0.000001, s_tv.determineBY() + 0.000001);//なぜ0.000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+        a.set(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
+        b.set(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
         g2.draw(new Line2D.Double(a.getX(), a.getY(), b.getX(), b.getY()));
 

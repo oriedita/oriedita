@@ -2,6 +2,7 @@ package origami.crease_pattern;
 
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
+import origami.Epsilon;
 import origami.crease_pattern.element.*;
 import origami_editor.editor.Save;
 import origami_editor.sortingbox.SortingBox;
@@ -1056,7 +1057,7 @@ public class FoldLineSet {
 
             //setiactive(j,100)とされた折線は、kousabunkatu(int i1,int i2,int i3,int i4)の操作が戻った後で削除される。
 
-            LineSegment.Intersection i_intersection_decision = OritaCalc.determineLineSegmentIntersection(si, sj, 0.000001, 0.000001);//iは加える方(2)、jは元からある方(1)
+            LineSegment.Intersection i_intersection_decision = OritaCalc.determineLineSegmentIntersection(si, sj, Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);//iは加える方(2)、jは元からある方(1)
 
 
             switch (i_intersection_decision) {
@@ -1383,16 +1384,16 @@ public class FoldLineSet {
             jymin = sj.determineBY();
         }
 
-        if (ixmax + 0.5 < jxmin) {
+        if (ixmax + Epsilon.UNKNOWN_05 < jxmin) {
             return false;
         }
-        if (jxmax + 0.5 < ixmin) {
+        if (jxmax + Epsilon.UNKNOWN_05 < ixmin) {
             return false;
         }
-        if (iymax + 0.5 < jymin) {
+        if (iymax + Epsilon.UNKNOWN_05 < jymin) {
             return false;
         }
-        if (jymax + 0.5 < iymin) {
+        if (jymax + Epsilon.UNKNOWN_05 < iymin) {
             return false;
         }
 
@@ -1422,8 +1423,8 @@ public class FoldLineSet {
                 addLine(p2, pk, si.getColor());
                 return true;
             case NO_INTERSECTION_0: //このifないと本来この後で処理されるべき条件がここで処理されてしまうことある
-                if (OritaCalc.determineLineSegmentDistance(si.getA(), sj) < 0.01) {
-                    if (OritaCalc.determineClosestLineSegmentEndpoint(si.getA(), sj, 0.01) == 3) { //20161107 わずかに届かない場合
+                if (OritaCalc.determineLineSegmentDistance(si.getA(), sj) < Epsilon.UNKNOWN_001) {
+                    if (OritaCalc.determineClosestLineSegmentEndpoint(si.getA(), sj, Epsilon.UNKNOWN_001) == 3) { //20161107 わずかに届かない場合
                         pk.set(OritaCalc.findIntersection(si, sj));
                         sj.setA(p3);
                         sj.setB(pk);
@@ -1432,8 +1433,8 @@ public class FoldLineSet {
                     }
                 }
 
-                if (OritaCalc.determineLineSegmentDistance(si.getB(), sj) < 0.01) {
-                    if (OritaCalc.determineClosestLineSegmentEndpoint(si.getB(), sj, 0.01) == 3) { //20161107 わずかに届かない場合
+                if (OritaCalc.determineLineSegmentDistance(si.getB(), sj) < Epsilon.UNKNOWN_001) {
+                    if (OritaCalc.determineClosestLineSegmentEndpoint(si.getB(), sj, Epsilon.UNKNOWN_001) == 3) { //20161107 わずかに届かない場合
                         pk.set(OritaCalc.findIntersection(si, sj));
                         sj.setA(p3);
                         sj.setB(pk);
@@ -1442,8 +1443,8 @@ public class FoldLineSet {
                     }
                 }
 
-                if (OritaCalc.determineLineSegmentDistance(sj.getA(), si) < 0.01) {
-                    if (OritaCalc.determineClosestLineSegmentEndpoint(sj.getA(), si, 0.01) == 3) { //20161107 わずかに届かない場合
+                if (OritaCalc.determineLineSegmentDistance(sj.getA(), si) < Epsilon.UNKNOWN_001) {
+                    if (OritaCalc.determineClosestLineSegmentEndpoint(sj.getA(), si, Epsilon.UNKNOWN_001) == 3) { //20161107 わずかに届かない場合
                         pk.set(OritaCalc.findIntersection(si, sj));
                         si.setA(p1);
                         si.setB(pk);
@@ -1452,8 +1453,8 @@ public class FoldLineSet {
                     }
                 }
 
-                if (OritaCalc.determineLineSegmentDistance(sj.getB(), si) < 0.01) {
-                    if (OritaCalc.determineClosestLineSegmentEndpoint(sj.getB(), si, 0.01) == 3) { //20161107 わずかに届かない場合
+                if (OritaCalc.determineLineSegmentDistance(sj.getB(), si) < Epsilon.UNKNOWN_001) {
+                    if (OritaCalc.determineClosestLineSegmentEndpoint(sj.getB(), si, Epsilon.UNKNOWN_001) == 3) { //20161107 わずかに届かない場合
                         pk.set(OritaCalc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
                         si.setA(p1);
                         si.setB(pk);
@@ -1682,20 +1683,20 @@ public class FoldLineSet {
         for (int i = imin; i <= imax; i++) {
             Circle ei = new Circle();
             ei.set(circles.get(i));
-            if (ei.getRadius() > 0.0000001) {//Circles with a radius of 0 are not applicable
+            if (ei.getRadius() > Epsilon.UNKNOWN_1EN7) {//Circles with a radius of 0 are not applicable
                 for (int j = jmin; j <= jmax; j++) {
 
                     Circle ej = new Circle();
                     ej.set(circles.get(j));
-                    if (ej.getRadius() > 0.0000001) {//Circles with a radius of 0 are not applicable
-                        if (OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) < 0.000001) {
+                    if (ej.getRadius() > Epsilon.UNKNOWN_1EN7) {//Circles with a radius of 0 are not applicable
+                        if (OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) < Epsilon.UNKNOWN_1EN6) {
                             //Two circles are concentric and do not intersect
-                        } else if (Math.abs(OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) - ei.getRadius() - ej.getRadius()) < 0.0001) {
+                        } else if (Math.abs(OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) - ei.getRadius() - ej.getRadius()) < Epsilon.UNKNOWN_1EN4) {
                             //Two circles intersect at one point
                             addCircle(OritaCalc.internalDivisionRatio(ei.determineCenter(), ej.determineCenter(), ei.getRadius(), ej.getRadius()), 0.0);
                         } else if (OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) > ei.getRadius() + ej.getRadius()) {
                             //Two circles do not intersect
-                        } else if (Math.abs(OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) - Math.abs(ei.getRadius() - ej.getRadius())) < 0.0001) {
+                        } else if (Math.abs(OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) - Math.abs(ei.getRadius() - ej.getRadius())) < Epsilon.UNKNOWN_1EN4) {
                             //Two circles intersect at one point
                             addCircle(OritaCalc.internalDivisionRatio(ei.determineCenter(), ej.determineCenter(), -ei.getRadius(), ej.getRadius()), 0.0);
                         } else if (OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) < Math.abs(ei.getRadius() - ej.getRadius())) {
@@ -1724,11 +1725,11 @@ public class FoldLineSet {
 
                 Circle ej = new Circle();
                 ej.set(circles.get(j));
-                if (ej.getRadius() > 0.0000001) {//Circles with a radius of 0 are not applicable
+                if (ej.getRadius() > Epsilon.UNKNOWN_1EN7) {//Circles with a radius of 0 are not applicable
                     double tc_kyori = ti.calculateDistance(ej.determineCenter()); //Distance between the center of a straight line and a circle
 
-                    if (Math.abs(tc_kyori - ej.getRadius()) < 0.000001) {//Circle and straight line intersect at one point
-                        if (Math.abs(OritaCalc.determineLineSegmentDistance(ej.determineCenter(), si) - ej.getRadius()) < 0.000001) {
+                    if (Math.abs(tc_kyori - ej.getRadius()) < Epsilon.UNKNOWN_1EN6) {//Circle and straight line intersect at one point
+                        if (Math.abs(OritaCalc.determineLineSegmentDistance(ej.determineCenter(), si) - ej.getRadius()) < Epsilon.UNKNOWN_1EN6) {
                             addCircle(OritaCalc.findProjection(ti, ej.determineCenter()), 0.0);
                         }
                     } else if (tc_kyori > ej.getRadius()) {
@@ -1737,10 +1738,10 @@ public class FoldLineSet {
                         LineSegment k_senb = new LineSegment();
                         k_senb.set(OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(ej, ti));
 
-                        if (OritaCalc.determineLineSegmentDistance(k_senb.getA(), si) < 0.00001) {
+                        if (OritaCalc.determineLineSegmentDistance(k_senb.getA(), si) < Epsilon.UNKNOWN_1EN5) {
                             addCircle(k_senb.getA(), 0.0);
                         }
-                        if (OritaCalc.determineLineSegmentDistance(k_senb.getB(), si) < 0.00001) {
+                        if (OritaCalc.determineLineSegmentDistance(k_senb.getB(), si) < Epsilon.UNKNOWN_1EN5) {
                             addCircle(k_senb.getB(), 0.0);
                         }
                     }
@@ -1808,20 +1809,20 @@ public class FoldLineSet {
         int ir4 = 0;
         int ir5 = 0;
 
-        if (er_0 < 0.0000001) {
+        if (er_0 < Epsilon.UNKNOWN_1EN7) {
             for (int i = 0; i < circles.size(); i++) {
                 if (i != i0) {
                     e_temp.set(circles.get(i));
                     er_1 = e_temp.getRadius();
                     ec_1.set(e_temp.determineCenter());
-                    if (er_1 < 0.0000001) {//The radius of the other circle is 0
-                        if (ec_0.distance(ec_1) < 0.0000001) {
+                    if (er_1 < Epsilon.UNKNOWN_1EN7) {//The radius of the other circle is 0
+                        if (ec_0.distance(ec_1) < Epsilon.UNKNOWN_1EN7) {
                             ir1 = ir1 + 1;
                         }
                     } else {//The radius of the other circle is not 0
-                        if (ec_0.distance(ec_1) < 0.0000001) {
+                        if (ec_0.distance(ec_1) < Epsilon.UNKNOWN_1EN7) {
                             ir2 = ir2 + 1;
-                        } else if (Math.abs(ec_0.distance(ec_1) - er_1) < 0.0000001) {
+                        } else if (Math.abs(ec_0.distance(ec_1) - er_1) < Epsilon.UNKNOWN_1EN7) {
                             ir3 = ir3 + 1;
                         }
                     }
@@ -1831,7 +1832,7 @@ public class FoldLineSet {
             for (int i = 1; i <= total; i++) {
                 LineSegment si;
                 si = lineSegments.get(i);
-                if (OritaCalc.determineLineSegmentDistance(ec_0, si) < 0.000001) {
+                if (OritaCalc.determineLineSegmentDistance(ec_0, si) < Epsilon.UNKNOWN_1EN6) {
 
                     if (si.getColor().getNumber() <= 2) {
                         ir4 = ir4 + 1;
@@ -1964,7 +1965,8 @@ public class FoldLineSet {
     }
 
     //Remove the branching line segments without forming a closed polygon.
-    public void applyBranchTrim(double r) {
+    public void applyBranchTrim() {
+        double r = Epsilon.UNKNOWN_1EN6;
         boolean iflga;
         boolean iflgb;
         for (int i = 1; i <= total; i++) {
@@ -2007,8 +2009,8 @@ public class FoldLineSet {
         pb.set(s.getB());
         deleteLine(i);
 
-        del_V(pa, 0.000001, 0.000001);
-        del_V(pb, 0.000001, 0.000001);
+        del_V(pa, Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);
+        del_V(pb, Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);
     }
 
     public void deleteLineSegment_vertex(LineSegment s) {//When erasing the i-th fold line, if the end point of the fold line can also be erased, erase it.
@@ -2018,8 +2020,8 @@ public class FoldLineSet {
         pb.set(s.getB());
         deleteLine(s);
 
-        del_V(pa, 0.000001, 0.000001);
-        del_V(pb, 0.000001, 0.000001);
+        del_V(pa, Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);
+        del_V(pb, Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);
     }
 
     //Find and return the number of the circle closest to the point p in reverse order (the higher the number means priority)
@@ -2119,7 +2121,7 @@ public class FoldLineSet {
     public double closestLineSegmentDistanceExcludingParallel(Point p, LineSegment s0) {
         double minr = 100000.0;
         for (int i = 1; i <= total; i++) {
-            if (OritaCalc.isLineSegmentParallel(get(i), s0, 0.0001) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+            if (OritaCalc.isLineSegmentParallel(get(i), s0, Epsilon.UNKNOWN_1EN4) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
 
                 double sk = OritaCalc.determineLineSegmentDistance(p, get(i));
                 if (minr > sk) {
@@ -2147,7 +2149,7 @@ public class FoldLineSet {
     public LineSegment getClosestLineSegment(Point p) {
         int minrid = 0;
         double minr = 100000.0;
-        LineSegment s1 = new LineSegment(100000.0, 100000.0, 100000.0, 100000.1);
+        LineSegment s1 = new LineSegment(100000.0, 100000.0, 100000.0, 100000.0 + Epsilon.UNKNOWN_01);
         for (int i = 1; i <= total; i++) {
             double sk = OritaCalc.determineLineSegmentDistance(p, get(i));
             if (minr > sk) {
@@ -2222,7 +2224,7 @@ public class FoldLineSet {
     }
 
     public void del_V(int i, int j) {//Erasing when two fold lines are the same color and there are no end points for other fold lines
-        LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(get(i), get(j), 0.00001, 0.00001);
+        LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(get(i), get(j), Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);
 
         LineSegment si = lineSegments.get(i);
         LineSegment sj = lineSegments.get(j);
@@ -2231,19 +2233,19 @@ public class FoldLineSet {
         int i_ten = 0;
         if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323) {
             addLine.set(si.getB(), sj.getB());
-            i_ten = vertex_surrounding_lineCount(si.getA(), 0.00001);
+            i_ten = vertex_surrounding_lineCount(si.getA(), Epsilon.UNKNOWN_1EN5);
         }
         if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_START_OF_S1_INTERSECTS_END_OF_S2_333) {
             addLine.set(si.getB(), sj.getA());
-            i_ten = vertex_surrounding_lineCount(si.getA(), 0.00001);
+            i_ten = vertex_surrounding_lineCount(si.getA(), Epsilon.UNKNOWN_1EN5);
         }
         if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_END_OF_S1_INTERSECTS_START_OF_S2_343) {
             addLine.set(si.getA(), sj.getB());
-            i_ten = vertex_surrounding_lineCount(si.getB(), 0.00001);
+            i_ten = vertex_surrounding_lineCount(si.getB(), Epsilon.UNKNOWN_1EN5);
         }
         if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_END_OF_S1_INTERSECTS_END_OF_S2_353) {
             addLine.set(si.getA(), sj.getA());
-            i_ten = vertex_surrounding_lineCount(si.getB(), 0.00001);
+            i_ten = vertex_surrounding_lineCount(si.getB(), Epsilon.UNKNOWN_1EN5);
         }
 
         if (i_ten == 2) {
@@ -2363,7 +2365,7 @@ public class FoldLineSet {
             boolean i_decision;
             i_decision = false;//If i_hantei is 1, the two line segments do not overlap and are connected in a straight line.
             LineSegment.Intersection i_lineSegment_intersection_decision;
-            i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(lix, liy, 0.000001, 0.000001);
+            i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(lix, liy, Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);
 
             if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323) {
                 i_decision = true;
@@ -2437,7 +2439,7 @@ public class FoldLineSet {
             LineSegment liy = lineSegments.get(iy);
             boolean i_decision = false;//i_hanteiは１なら2線分は重ならず、直線状に繋がっている
             LineSegment.Intersection lineSegment_intersection_decision;
-            lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(lix, liy, 0.000001, 0.000001);
+            lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(lix, liy, Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);
 
             if (lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323) {
                 i_decision = true;
@@ -2768,7 +2770,7 @@ public class FoldLineSet {
         }
     }
 
-    public void check1(double r_hitosii, double parallel_decision) {
+    public void check1() {
         Check1LineSegment.clear();
         unselect_all();
         for (int i = 1; i <= total - 1; i++) {
@@ -2785,7 +2787,7 @@ public class FoldLineSet {
                         LineSegment sj1 = new LineSegment();
                         sj1.set(sj);
 
-                        LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersection(si, sj, r_hitosii, parallel_decision);
+                        LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersection(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL);
                         switch (intersection) {
                             case PARALLEL_EQUAL_31:
                             case PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321:
@@ -2811,7 +2813,7 @@ public class FoldLineSet {
         }
     }
 
-    public boolean fix1(double r_hitosii, double parallel_decision) {//Returns 0 if nothing is done, 1 if something is modified.
+    public boolean fix1() {//Returns 0 if nothing is done, 1 if something is modified.
         unselect_all();
         for (int i = 1; i <= total - 1; i++) {
             LineSegment si = lineSegments.get(i);
@@ -2820,7 +2822,7 @@ public class FoldLineSet {
                     LineSegment sj = lineSegments.get(j);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                     if (sj.getColor() != LineColor.CYAN_3) {
                         //T字型交差
-                        LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersection(si, sj, r_hitosii, parallel_decision);
+                        LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersection(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL);
                         switch (intersection) {
                             case PARALLEL_EQUAL_31:
                                 si.setColor(sj.getColor());
@@ -2849,7 +2851,7 @@ public class FoldLineSet {
         return false;
     }
 
-    public void check2(double r_hitosii, double parallel_decision) {
+    public void check2() {
         Check2LineSegment.clear();
 
         unselect_all();
@@ -2867,7 +2869,7 @@ public class FoldLineSet {
                         sj1.set(sj);
 
                         //T-shaped intersection
-                        LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(si, sj, r_hitosii, parallel_decision);
+                        LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL);
                         switch (intersection) {
                             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25:
                             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26:
@@ -2883,7 +2885,7 @@ public class FoldLineSet {
         }
     }
 
-    public boolean fix2(double r_hitosii, double heikou_hantei) {//何もしなかったら0、何か修正したら1を返す。
+    public boolean fix2() {//何もしなかったら0、何か修正したら1を返す。
         unselect_all();
         for (int i = 1; i <= total - 1; i++) {
             LineSegment si = lineSegments.get(i);
@@ -2895,7 +2897,7 @@ public class FoldLineSet {
                         //T字型交差
                         //折線iをその点pの影で分割する。ただし、点pの影がどれか折線の端点と同じとみなされる場合は何もしない。
                         //	public void senbun_bunkatu(Ten p,int i){
-                        LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(si, sj, r_hitosii, heikou_hantei);
+                        LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL);
                         switch (intersection) {
                             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25:
                                 if (applyLineSegmentDivide(si.getA(), j)) {
@@ -2952,7 +2954,8 @@ public class FoldLineSet {
         return Check4LineSegment;
     }
 
-    public void check3(double r) {//Check the number of lines around the vertex
+    public void check3() {//Check the number of lines around the vertex
+        double r = Epsilon.UNKNOWN_1EN4;
         Check3LineSegment.clear();
         unselect_all();
         for (int i = 1; i <= total; i++) {
@@ -3030,16 +3033,14 @@ public class FoldLineSet {
 
     public int Check4Point_overlapping_check(Point p0) {
         for (Point p : check4Point) {
-            if ((-0.00000001 < p0.getX() - p.getX()) && (p0.getX() - p.getX() < 0.00000001)) {
-                if ((-0.00000001 < p0.getY() - p.getY()) && (p0.getY() - p.getY() < 0.00000001)) {
-                    return 1;
-                }
+            if (Epsilon.high.eq0(p0.getX() - p.getX()) && Epsilon.high.eq0(p0.getY() - p.getY())) {
+                return 1;
             }
         }
         return 0;
     }
 
-    public void check4(double r) throws InterruptedException {//Check the number of lines around the apex
+    public void check4() throws InterruptedException {//Check the number of lines around the apex
         Check4LineSegment.clear();
         check4Point.clear();
 
@@ -3075,7 +3076,7 @@ public class FoldLineSet {
                 Point p = new Point(point);
 
                 try {
-                    if (!i_flat_ok(p, r)) {
+                    if (!i_flat_ok(p, Epsilon.UNKNOWN_1EN4)) {
                         Check4LineSegment.add(new LineSegment(p, p));
                     }
                 } catch (InterruptedException e) {
@@ -3099,7 +3100,7 @@ public class FoldLineSet {
     }
 
     public boolean i_flat_ok(Point p, double r) throws InterruptedException {//Foldable flat = 1
-        double hantei_kyori = 0.00001;
+        double hantei_kyori = Epsilon.UNKNOWN_1EN5;
         //If the end point of the line segment closest to the point p and the end point closer to the point p is the apex, how many line segments are present (the number of line segments having an end point within the apex and r).
         int i_customized = 0;    //i_customized% 2 == 0 even, == 1 odd
         int i_tss_red = 0;
@@ -3155,7 +3156,7 @@ public class FoldLineSet {
 
     //Point p に最も近い用紙辺部の端点が拡張伏見定理を満たすか判定
     public boolean extended_fushimi_decide_sides(Point p) {//return　0=満たさない、　1=満たす。　
-        double hantei_kyori = 0.00001;
+        double hantei_kyori = Epsilon.UNKNOWN_1EN5;
 
         Point t1 = new Point();
         t1.set(closestPointOfFoldLine(p));//点pに最も近い、「線分の端点」を返すori_s.closestPointは近い点がないと p_return.set(100000.0,100000.0)と返してくる
@@ -3246,7 +3247,7 @@ public class FoldLineSet {
     //Obtain SortingBox<Integer> with a polygonal line starting at b. They are arranged in ascending order of angle with the line segment ba.
     public SortingBox<LineSegment> get_SortingBox_of_vertex_b_surrounding_foldLine(Point a, Point b) {
         SortingBox<LineSegment> r_nbox = new SortingBox<>();
-        double hantei_kyori = 0.00001;
+        double hantei_kyori = Epsilon.UNKNOWN_1EN5;
 
         //Put a polygonal line with b as the end point in Narabebako
 
@@ -3280,7 +3281,7 @@ public class FoldLineSet {
         }
 
         temp_angle = nbox0.getWeight(2) - nbox0.getWeight(1);
-        if (Math.abs(temp_angle - angle_min) < 0.00001) {// 折線を1つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
+        if (Math.abs(temp_angle - angle_min) < Epsilon.UNKNOWN_1EN5) {// 折線を1つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
             for (int i = 2; i <= nbox0.getTotal(); i++) {
                 WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
                 i_d_0.set(nbox0.getWeightedValue(i));
@@ -3290,7 +3291,7 @@ public class FoldLineSet {
         }
 
         temp_angle = nbox0.getWeight(nbox0.getTotal()) - nbox0.getWeight(nbox0.getTotal() - 1);
-        if (Math.abs(temp_angle - angle_min) < 0.00001) {// 折線を1つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
+        if (Math.abs(temp_angle - angle_min) < Epsilon.UNKNOWN_1EN5) {// 折線を1つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
             for (int i = 1; i <= nbox0.getTotal() - 1; i++) {
                 WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
                 i_d_0.set(nbox0.getWeightedValue(i));
@@ -3301,7 +3302,7 @@ public class FoldLineSet {
 
         for (int k = 2; k <= nbox0.getTotal() - 2; k++) {//kは角度の順番
             temp_angle = nbox0.getWeight(k + 1) - nbox0.getWeight(k);
-            if (Math.abs(temp_angle - angle_min) < 0.00001) {
+            if (Math.abs(temp_angle - angle_min) < Epsilon.UNKNOWN_1EN5) {
                 if (nbox0.getValue(k).getColor() != nbox0.getValue(k + 1).getColor()) {//この場合に隣接する３角度を1つの角度にする
                     // 折線を2つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
 
@@ -3334,7 +3335,7 @@ public class FoldLineSet {
 
     //Determine if the endpoint inside the paper closest to Point p satisfies the extended Fushimi theorem
     public boolean extended_fushimi_decide_inside(Point p) {//return　0=満たさない、　1=満たす。　
-        double hantei_kyori = 0.00001;
+        double hantei_kyori = Epsilon.UNKNOWN_1EN5;
 
         Point t1 = new Point();
         t1.set(closestPointOfFoldLine(p));//点pに最も近い、「線分の端点」を返すori_s.mottomo_tikai_Tenは近い点がないと p_return.set(100000.0,100000.0)と返してくる
@@ -3356,7 +3357,7 @@ public class FoldLineSet {
     }
 
     public boolean extended_fushimi_decide_inside(Point p, SortingBox<LineSegment> nbox) {//return　0=満たさない、　1=満たす。　
-        double hantei_kyori = 0.00001;
+        double hantei_kyori = Epsilon.UNKNOWN_1EN5;
 
         if (nbox.getTotal() % 2 == 1) {//t1を端点とする折線の数が奇数のとき
             return false;
@@ -3368,7 +3369,7 @@ public class FoldLineSet {
             }
 
             //The following is when the two line types are blue-blue or red-red
-            LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(nbox.getValue(1), nbox.getValue(2), 0.00001, 0.00001);
+            LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(nbox.getValue(1), nbox.getValue(2), Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);
 
             switch (i_senbun_kousa_hantei) {
                 case PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323:
@@ -3422,7 +3423,7 @@ public class FoldLineSet {
             for (int k = 1; k <= nbox.getTotal(); k++) {//kは角度の順番
                 double temp_kakudo = OritaCalc.angle_between_0_kmax(nbox.getWeight(2) - nbox.getWeight(1), fushimi_decision_angle_goukei);
 
-                if (Math.abs(temp_kakudo - kakudo_min) < 0.00001) {
+                if (Math.abs(temp_kakudo - kakudo_min) < Epsilon.UNKNOWN_1EN5) {
                     if (nbox.getValue(1).getColor() != nbox.getValue(2).getColor()) {//この場合に隣接する３角度を1つの角度にする
                         // 折線を2つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
 

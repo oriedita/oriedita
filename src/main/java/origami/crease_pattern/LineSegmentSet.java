@@ -1,5 +1,6 @@
 package origami.crease_pattern;
 
+import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -133,7 +134,7 @@ public class LineSegmentSet {
 
     public void overlapping_line_removal() {
         // The same epsilon value as in OritaCalc.determineLineSegmentIntersection
-        overlapping_line_removal(0.01);
+        overlapping_line_removal(Epsilon.UNKNOWN_001);
     }
 
     /**

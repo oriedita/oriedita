@@ -7,8 +7,6 @@ public class CheckCAMVTask implements Runnable{
     private final CreasePattern_Worker creasePattern_worker;
     private final Canvas canvas;
 
-    private final double CHECK4_R = 0.0001;
-
     public CheckCAMVTask(CreasePattern_Worker creasePattern_worker, Canvas canvas) {
         this.creasePattern_worker = creasePattern_worker;
         this.canvas = canvas;
@@ -19,7 +17,7 @@ public class CheckCAMVTask implements Runnable{
         long start = System.currentTimeMillis();
 
         try {
-            creasePattern_worker.ap_check4(CHECK4_R);
+            creasePattern_worker.ap_check4();
         } catch (InterruptedException e) {
             creasePattern_worker.foldLineSet.getCheck4LineSegments().clear();
         }

@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
@@ -54,7 +55,7 @@ public class MouseHandlerLineSegmentDivision extends BaseMouseHandlerInputRestri
         if (p.distance(closestPoint) <= d.selectionDistance) {
             d.lineStep.get(0).setA(closestPoint);
         }
-        if (d.lineStep.get(0).determineLength() > 0.00000001) {
+        if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
             for (int i = 0; i <= d.foldLineDividingNumber - 1; i++) {
                 double ax = ((double) (d.foldLineDividingNumber - i) * d.lineStep.get(0).determineAX() + (double) i * d.lineStep.get(0).determineBX()) / ((double) d.foldLineDividingNumber);
                 double ay = ((double) (d.foldLineDividingNumber - i) * d.lineStep.get(0).determineAY() + (double) i * d.lineStep.get(0).determineBY()) / ((double) d.foldLineDividingNumber);

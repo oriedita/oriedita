@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -42,7 +43,7 @@ public class MouseHandlerSymmetricDraw extends BaseMouseHandlerInputRestricted {
 
             add_sen.set(d.extendToIntersectionPoint(add_sen));
             add_sen.setColor(d.lineColor);
-            if (add_sen.determineLength() > 0.00000001) {
+            if (Epsilon.high.gt0(add_sen.determineLength())) {
                 d.addLineSegment(add_sen);
                 d.record();
             }

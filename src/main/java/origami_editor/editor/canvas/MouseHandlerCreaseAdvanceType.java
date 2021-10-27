@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -26,7 +27,7 @@ public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler {
         if (d.foldLineSet.closestLineSegmentDistance(p) < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
             lineSegment = d.foldLineSet.closestLineSegmentSearch(p);
             LineSegment s01 = new LineSegment();
-            s01.set(OritaCalc.lineSegment_double(lineSegment, 0.01));
+            s01.set(OritaCalc.lineSegment_double(lineSegment, Epsilon.UNKNOWN_001));
             lineSegment.setB(s01.getB());
         }
     }

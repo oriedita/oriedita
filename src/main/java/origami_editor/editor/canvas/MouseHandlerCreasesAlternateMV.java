@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -51,10 +52,10 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
                 closestPoint.set(p);
             }
             d.lineStep.get(0).setA(closestPoint);
-            if (d.lineStep.get(0).determineLength() > 0.00000001) {
+            if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
                 for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
                     LineSegment s = d.foldLineSet.get(i);
-                    LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(s, d.lineStep.get(0), 0.0001, 0.0001);
+                    LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(s, d.lineStep.get(0), Epsilon.UNKNOWN_1EN4, Epsilon.UNKNOWN_1EN4);
                     int i_jikkou = 0;
                     if (i_senbun_kousa_hantei == LineSegment.Intersection.INTERSECTS_1) {
                         i_jikkou = 1;

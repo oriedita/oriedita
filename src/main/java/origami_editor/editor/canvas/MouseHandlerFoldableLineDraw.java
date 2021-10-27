@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -47,7 +48,7 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
         operationModeChangeable = false;
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-        double hantei_kyori = 0.000001;
+        double decision_distance = Epsilon.UNKNOWN_1EN6;
 
         if (p.distance(moyori_point_memo) <= d.selectionDistance) {
             d.lineStep.clear();
@@ -67,9 +68,9 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
             for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
                 LineSegment s = d.foldLineSet.get(i);
                 if (s.getColor().isFoldingLine()) {
-                    if (closest_point.distance(s.getA()) < hantei_kyori) {
+                    if (closest_point.distance(s.getA()) < decision_distance) {
                         nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getA(), s.getB())));
-                    } else if (closest_point.distance(s.getB()) < hantei_kyori) {
+                    } else if (closest_point.distance(s.getB()) < decision_distance) {
                         nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getB(), s.getA())));
                     }
                 }

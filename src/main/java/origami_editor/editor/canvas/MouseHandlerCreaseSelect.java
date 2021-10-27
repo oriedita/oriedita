@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
@@ -118,7 +119,7 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
         d.lineStep.clear();
 
         d.select(selectionStart, p0);
-        if (selectionStart.distance(p0) <= 0.000001) {
+        if (selectionStart.distance(p0) <= Epsilon.UNKNOWN_1EN6) {
             Point p = new Point();
             p.set(d.camera.TV2object(p0));
             if (d.foldLineSet.closestLineSegmentDistance(p) < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)

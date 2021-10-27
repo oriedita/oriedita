@@ -1,9 +1,10 @@
 package origami.data.quadTree;
 
+import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 
 public class QuadTreeItem {
-    public static final double EPSILON = 0.5;
+    public static final double EPSILON = Epsilon.QUAD_TREE_ITEM;
     public final double l, r, b, t;
 
     public QuadTreeItem(double l, double r, double b, double t) {

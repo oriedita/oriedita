@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
@@ -57,7 +58,7 @@ public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestr
             Point closestPoint = d.getClosestPoint(p);
             d.lineStep.get(0).setA(closestPoint);
             if (p.distance(closestPoint) <= d.selectionDistance) {
-                if (d.lineStep.get(0).determineLength() > 0.00000001) {
+                if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
                     d.addLineSegment(d.lineStep.get(0));
                     d.record();
                 }

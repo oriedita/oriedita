@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -35,45 +36,45 @@ public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler {
     public void mouseReleased(Point p0) {
         if (d.lineStep.size() == 3) {
             LineSegment sen1 = new LineSegment(d.lineStep.get(0).getA(), d.lineStep.get(1).getA());
-            if (sen1.determineLength() < 0.00000001) {
+            if (Epsilon.high.le0(sen1.determineLength())) {
                 return;
             }
             LineSegment sen2 = new LineSegment(d.lineStep.get(1).getA(), d.lineStep.get(2).getA());
-            if (sen2.determineLength() < 0.00000001) {
+            if (Epsilon.high.le0(sen2.determineLength())) {
                 return;
             }
             LineSegment sen3 = new LineSegment(d.lineStep.get(2).getA(), d.lineStep.get(0).getA());
-            if (sen3.determineLength() < 0.00000001) {
+            if (Epsilon.high.le0(sen3.determineLength())) {
                 return;
             }
 
-            if (Math.abs(OritaCalc.angle(sen1, sen2) - 0.0) < 0.000001) {
+            if (Math.abs(OritaCalc.angle(sen1, sen2) - 0.0) < Epsilon.UNKNOWN_1EN6) {
                 return;
             }
-            if (Math.abs(OritaCalc.angle(sen1, sen2) - 180.0) < 0.000001) {
+            if (Math.abs(OritaCalc.angle(sen1, sen2) - 180.0) < Epsilon.UNKNOWN_1EN6) {
                 return;
             }
-            if (Math.abs(OritaCalc.angle(sen1, sen2) - 360.0) < 0.000001) {
-                return;
-            }
-
-            if (Math.abs(OritaCalc.angle(sen2, sen3) - 0.0) < 0.000001) {
-                return;
-            }
-            if (Math.abs(OritaCalc.angle(sen2, sen3) - 180.0) < 0.000001) {
-                return;
-            }
-            if (Math.abs(OritaCalc.angle(sen2, sen3) - 360.0) < 0.000001) {
+            if (Math.abs(OritaCalc.angle(sen1, sen2) - 360.0) < Epsilon.UNKNOWN_1EN6) {
                 return;
             }
 
-            if (Math.abs(OritaCalc.angle(sen3, sen1) - 0.0) < 0.000001) {
+            if (Math.abs(OritaCalc.angle(sen2, sen3) - 0.0) < Epsilon.UNKNOWN_1EN6) {
                 return;
             }
-            if (Math.abs(OritaCalc.angle(sen3, sen1) - 180.0) < 0.000001) {
+            if (Math.abs(OritaCalc.angle(sen2, sen3) - 180.0) < Epsilon.UNKNOWN_1EN6) {
                 return;
             }
-            if (Math.abs(OritaCalc.angle(sen3, sen1) - 360.0) < 0.000001) {
+            if (Math.abs(OritaCalc.angle(sen2, sen3) - 360.0) < Epsilon.UNKNOWN_1EN6) {
+                return;
+            }
+
+            if (Math.abs(OritaCalc.angle(sen3, sen1) - 0.0) < Epsilon.UNKNOWN_1EN6) {
+                return;
+            }
+            if (Math.abs(OritaCalc.angle(sen3, sen1) - 180.0) < Epsilon.UNKNOWN_1EN6) {
+                return;
+            }
+            if (Math.abs(OritaCalc.angle(sen3, sen1) - 360.0) < Epsilon.UNKNOWN_1EN6) {
                 return;
             }
 

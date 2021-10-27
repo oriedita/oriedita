@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas.drawing_worker_toolbox;
 
+import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
@@ -38,7 +39,7 @@ public class Drawing_Worker_Toolbox {
 
                 cross_point.set(OritaCalc.findIntersection(straightLine, ori_s.get(i)));//A function that considers a line segment as a straight line and finds the intersection with another straight line. Even if it does not intersect as a line segment, it returns the intersection when it intersects as a straight line
 
-                if (cross_point.distance(addLine.getA()) > 0.00001) {
+                if (cross_point.distance(addLine.getA()) > Epsilon.UNKNOWN_1EN5) {
 
                     if (cross_point.distance(addLine.getA()) < crossPointDistance) {
                         double d_kakudo = OritaCalc.angle(addLine.getA(), addLine.getB(), addLine.getA(), cross_point);
@@ -86,7 +87,7 @@ public class Drawing_Worker_Toolbox {
 
                     kousa_point.set(OritaCalc.findIntersection(straightLine, ori_s.get(i)));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
 
-                    if (kousa_point.distance(addLine.getA()) > 0.00001) {
+                    if (kousa_point.distance(addLine.getA()) > Epsilon.UNKNOWN_1EN5) {
 
                         if (kousa_point.distance(addLine.getA()) < kousa_point_distance) {
                             double d_kakudo = OritaCalc.angle(addLine.getA(), addLine.getB(), addLine.getA(), kousa_point);

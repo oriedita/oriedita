@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -51,7 +52,7 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
             d.lineStep.get(0).setA(closest_point);
 
             if (p.distance(closest_point) <= d.selectionDistance) {  //マウスで指定した点が、最寄点と近かったときに実施
-                if (d.lineStep.get(0).determineLength() > 0.00000001) {  //lineStep.get(0)が、線の時（=点状ではない時）に実施
+                if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {  //lineStep.get(0)が、線の時（=点状ではない時）に実施
                     double dx = (d.lineStep.get(0).determineAX() - d.lineStep.get(0).determineBX()) * d.grid.getGridWidth() / d.lineStep.get(0).determineLength();
                     double dy = (d.lineStep.get(0).determineAY() - d.lineStep.get(0).determineBY()) * d.grid.getGridWidth() / d.lineStep.get(0).determineLength();
                     LineColor icol_temp = d.lineColor;
@@ -63,7 +64,7 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
                         pxy.set(px, py);
 
 
-                        if (d.foldLineSet.closestLineSegmentDistanceExcludingParallel(pxy, d.lineStep.get(0)) > 0.001) {
+                        if (d.foldLineSet.closestLineSegmentDistanceExcludingParallel(pxy, d.lineStep.get(0)) > Epsilon.UNKNOWN_0001) {
 
                             int i_sen = 0;
 
@@ -87,7 +88,7 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
                             }
 
                             if (i_sen == 2) {
-                                d.foldLineSet.del_V(pxy, d.selectionDistance, 0.000001);
+                                d.foldLineSet.del_V(pxy, d.selectionDistance, Epsilon.UNKNOWN_1EN6);
                             }
 
                         }
@@ -117,7 +118,7 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
 
             if (i_intersection_flg.isIntersecting()) {
                 intersection_point.set(OritaCalc.findIntersection(tyoku1, d.foldLineSet.get(i)));
-                if (intersection_point.distance(add_line.getA()) > 0.00001) {
+                if (intersection_point.distance(add_line.getA()) > Epsilon.UNKNOWN_1EN5) {
                     double d_kakudo = OritaCalc.angle(add_line.getA(), add_line.getB(), add_line.getA(), intersection_point);
                     if (d_kakudo < 1.0 || d_kakudo > 359.0) {
                         return 1;

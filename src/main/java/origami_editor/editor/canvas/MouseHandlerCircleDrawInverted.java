@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.*;
 import origami_editor.editor.MouseMode;
@@ -75,7 +76,7 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
 
     public void add_hanten(Circle e0, Circle eh) {
         //e0の円周が(x,y)を通るとき
-        if (Math.abs(OritaCalc.distance(e0.determineCenter(), eh.determineCenter()) - e0.getRadius()) < 0.0000001) {
+        if (Math.abs(OritaCalc.distance(e0.determineCenter(), eh.determineCenter()) - e0.getRadius()) < Epsilon.UNKNOWN_1EN7) {
             LineSegment s_add = new LineSegment();
             s_add.set(eh.turnAround_CircleToLineSegment(e0));
             //s_add.setcolor(3);
@@ -94,7 +95,7 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
     public void add_hanten(LineSegment s0, Circle eh) {
         StraightLine ty = new StraightLine(s0);
         //s0上に(x,y)がくるとき
-        if (ty.calculateDistance(eh.determineCenter()) < 0.0000001) {
+        if (ty.calculateDistance(eh.determineCenter()) < Epsilon.UNKNOWN_1EN7) {
             return;
         }
 

@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -88,7 +89,7 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
                 for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
                     LineSegment s = d.foldLineSet.get(i);
 
-                    LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(s, s2, 0.0001, 0.0001);
+                    LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(s, s2, Epsilon.UNKNOWN_1EN4, Epsilon.UNKNOWN_1EN4);
                     int i_jikkou = 0;
 
                     if ((i_senbun_kousa_hantei != LineSegment.Intersection.NO_INTERSECTION_0) && (i_senbun_kousa_hantei != LineSegment.Intersection.INTERSECTS_1)) {
@@ -134,8 +135,8 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
                         s_idou.set(OritaCalc.findLineSymmetryLineSegment(s_idou, goukei_nbox.getValue(i)));
                     }
                     i_hantai_color = LineColor.MAGENTA_5;
-                    if (OritaCalc.equal(goukei_nbox.getValue(1).getA(), s_idou.getA(), 0.0001)) {
-                        if (OritaCalc.equal(goukei_nbox.getValue(1).getB(), s_idou.getB(), 0.0001)) {
+                    if (OritaCalc.equal(goukei_nbox.getValue(1).getA(), s_idou.getA(), Epsilon.UNKNOWN_1EN4)) {
+                        if (OritaCalc.equal(goukei_nbox.getValue(1).getB(), s_idou.getB(), Epsilon.UNKNOWN_1EN4)) {
                             i_hantai_color = LineColor.CYAN_3;
                         }
                     }

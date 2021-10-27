@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
@@ -60,10 +61,10 @@ public class MouseHandlerCircleDrawConcentricSelect extends BaseMouseHandler {
             Circle circle3 = d.circleStep.get(2);
             d.circleStep.clear();
             double add_r = circle3.getRadius() - circle2.getRadius();
-            if (Math.abs(add_r) > 0.00000001) {
+            if (!Epsilon.high.eq0(add_r)) {
                 double new_r = add_r + circle1.getRadius();
 
-                if (new_r > 0.00000001) {
+                if (Epsilon.high.gt0(new_r)) {
                     circle1.setR(new_r);
                     circle1.setColor(LineColor.CYAN_3);
                     d.addCircle(circle1);

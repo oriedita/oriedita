@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -52,7 +53,7 @@ public class MouseHandlerCreaseMakeMV extends BaseMouseHandlerInputRestricted {
             Point closest_point = d.getClosestPoint(p);
             d.lineStep.get(0).setA(closest_point);
             if (p.distance(closest_point) <= d.selectionDistance) {
-                if (d.lineStep.get(0).determineLength() > 0.00000001) {
+                if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
                     for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
                         LineSegment s = d.foldLineSet.get(i);
                         if (OritaCalc.isLineSegmentOverlapping(s, d.lineStep.get(0))) {

@@ -441,7 +441,7 @@ public class LeftPanel {
         trimBranchesButton.addActionListener(e -> {
             app.mainCreasePatternWorker.point_removal();
             app.mainCreasePatternWorker.overlapping_line_removal();
-            app.mainCreasePatternWorker.branch_trim(0.000001);
+            app.mainCreasePatternWorker.branch_trim();
             app.mainCreasePatternWorker.organizeCircles();
             app.mainCreasePatternWorker.record();
             app.mainCreasePatternWorker.unselect_all();

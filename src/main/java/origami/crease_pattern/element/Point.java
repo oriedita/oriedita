@@ -29,6 +29,10 @@ public class Point implements Serializable {
         y = j;
     }
 
+    public static Point mid(Point p, Point q) {
+        return new Point((p.x + q.x) / 2, (p.y + q.y) / 2);
+    }
+
     public Point(double a, Point p, double b, Point q) {
         x = a * p.getX() + b * q.getX();
         y = a * p.getY() + b * q.getY();

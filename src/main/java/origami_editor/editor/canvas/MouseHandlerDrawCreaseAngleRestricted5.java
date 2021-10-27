@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -51,7 +52,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
         if (d.lineStep.size() == 1) {
             Point syuusei_point = new Point(syuusei_point_A_37(p0));
             d.lineStep.get(0).setA(kouho_point_A_37(syuusei_point));
-            if (d.lineStep.get(0).determineLength() > 0.00000001) {
+            if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
                 d.addLineSegment(d.lineStep.get(0));
                 d.record();
             }
@@ -96,7 +97,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
     public Point kouho_point_A_37(Point syuusei_point) {
         Point closestPoint = d.getClosestPoint(syuusei_point);
         double zure_kakudo = OritaCalc.angle(d.lineStep.get(0).getB(), syuusei_point, d.lineStep.get(0).getB(), closestPoint);
-        boolean zure_flg = (0.00001 < zure_kakudo) && (zure_kakudo <= 359.99999);
+        boolean zure_flg = (Epsilon.UNKNOWN_1EN5 < zure_kakudo) && (zure_kakudo <= 360.0 - Epsilon.UNKNOWN_1EN5);
         if (zure_flg || (syuusei_point.distance(closestPoint) > d.selectionDistance)) {
             return syuusei_point;
         } else {//最寄点が角度系にのっていて、修正点とも近い場合

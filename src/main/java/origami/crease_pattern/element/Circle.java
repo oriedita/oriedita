@@ -3,6 +3,8 @@ package origami.crease_pattern.element;
 import java.awt.Color;
 import java.io.Serializable;
 
+import origami.Epsilon;
+
 public class Circle implements Serializable {//Used to represent point coordinates, direction vectors, etc.
 
     double x, y, r;//Center coordinates and radius
@@ -154,7 +156,7 @@ public class Circle implements Serializable {//Used to represent point coordinat
         double d1 = Math.sqrt(x1 * x1 + y1 * y1);
         double d2, x2, y2, x3, y3;
 
-        if (Math.abs(d1 - r) < 0.0000001) {
+        if (Math.abs(d1 - r) < Epsilon.UNKNOWN_1EN7) {
             return t0;
         }
         d2 = r * r / d1;
@@ -178,7 +180,7 @@ public class Circle implements Serializable {//Used to represent point coordinat
         double xb1, yb1;
         double xb0, yb0;
 
-        if (d1 < 0.000001) {
+        if (d1 < Epsilon.UNKNOWN_1EN6) {
             xa1 = da1;
             ya1 = 0.0;
             xa0 = xa1 + x;

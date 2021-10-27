@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -56,7 +57,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                 case STEP_2: {//i_step_for_copy_4p==2であれば、以下でs_step[1]を入力折線を確定する
                     Point closest_point = d.getClosestPoint(p);
 
-                    if (closest_point.distance(d.lineStep.get(0).getA()) < 0.00000001) {
+                    if (Epsilon.high.le0(closest_point.distance(d.lineStep.get(0).getA()))) {
                         d.lineCandidate.clear();
                         d.lineCandidate.add(new LineSegment(closest_point, closest_point, d.lineColor));
                         System.out.println("i_step_for39_2_   1");
@@ -113,7 +114,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
 
         switch (i_step_for_copy_4p) {
             case STEP_0: {
-                double decision_distance = 0.000001;
+                double decision_distance = Epsilon.UNKNOWN_1EN6;
 
                 //任意の点が与えられたとき、端点もしくは格子点で最も近い点を得る
                 Point closest_point = d.getClosestPoint(p);
@@ -173,7 +174,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                                 add_kakudo_1 = 360.0;
                             }
 
-                            if ((kakukagenti / 2.0 > 0.0 + 0.000001) && (kakukagenti / 2.0 < add_kakudo_1 - 0.000001)) {
+                            if ((kakukagenti / 2.0 > 0.0 + Epsilon.UNKNOWN_1EN6) && (kakukagenti / 2.0 < add_kakudo_1 - Epsilon.UNKNOWN_1EN6)) {
                                 //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d)
                                 LineSegment s_kiso = new LineSegment();
                                 LineSegment nboxLineSegment = nbox.getValue(i);
@@ -234,7 +235,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
             case STEP_2: {//i_step_for_copy_4p==2であれば、以下でs_step[1]を入力折線を確定する
                 Point closest_point = d.getClosestPoint(p);
 
-                if (closest_point.distance(d.lineStep.get(0).getA()) < 0.00000001) {
+                if (Epsilon.high.le0(closest_point.distance(d.lineStep.get(0).getA()))) {
                     d.lineStep.clear();
                     d.lineCandidate.clear();
                     return;
@@ -243,7 +244,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                 if ((p.distance(d.lineStep.get(0).getB()) < d.selectionDistance) &&
                         (
                                 p.distance(d.lineStep.get(0).getB()) <= p.distance(closest_point)
-                                //moyori_ten.kyori(line_step[1].getb())<0.00000001
+                                //moyori_ten.kyori(line_step[1].getb())<Epsilon.UNKNOWN_1en8
                         )) {
                     LineSegment add_sen = new LineSegment(d.lineStep.get(0).getA(), d.lineStep.get(0).getB(), d.lineColor);
                     d.addLineSegment(add_sen);
@@ -282,7 +283,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                     Point kousa_point = new Point();
                     kousa_point.set(OritaCalc.findIntersection(d.lineStep.get(0), d.lineStep.get(1)));
                     LineSegment add_sen = new LineSegment(kousa_point, d.lineStep.get(0).getA(), d.lineColor);
-                    if (add_sen.determineLength() > 0.00000001) {//最寄の既存折線が有効の場合
+                    if (Epsilon.high.gt0(add_sen.determineLength())) {//最寄の既存折線が有効の場合
                         d.addLineSegment(add_sen);
                         d.record();
                         d.lineStep.clear();

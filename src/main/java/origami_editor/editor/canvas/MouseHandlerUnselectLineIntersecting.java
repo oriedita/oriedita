@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
@@ -19,7 +20,7 @@ public class MouseHandlerUnselectLineIntersecting extends BaseMouseHandlerLineSe
         if (p.distance(closestPoint) <= d.selectionDistance) {
             d.lineStep.get(0).setA(closestPoint);
         }
-        if (d.lineStep.get(0).determineLength() > 0.00000001) {
+        if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
             //やりたい動作はここに書く
             d.foldLineSet.select_lX(d.lineStep.get(0), "unselect_lX");//lXは小文字のエルと大文字のエックス
         }

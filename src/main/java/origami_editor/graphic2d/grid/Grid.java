@@ -2,6 +2,7 @@ package origami_editor.graphic2d.grid;
 
 import origami_editor.editor.databinding.GridModel;
 import origami.crease_pattern.element.LineSegment;
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami_editor.tools.Camera;
@@ -130,13 +131,13 @@ public class Grid {
 
     private void resetGrid() {
         if (baseState == State.WITHIN_PAPER) {
-            if (Math.abs(aGridLength - 1.0) > 0.000001) {
+            if (Math.abs(aGridLength - 1.0) > Epsilon.UNKNOWN_1EN6) {
                 setBaseState(State.FULL);
             }
-            if (Math.abs(bGridLength - 1.0) > 0.000001) {
+            if (Math.abs(bGridLength - 1.0) > Epsilon.UNKNOWN_1EN6) {
                 setBaseState(State.FULL);
             }
-            if (Math.abs(gridAngle - (-90.0)) > 0.000001) {
+            if (Math.abs(gridAngle - (-90.0)) > Epsilon.UNKNOWN_1EN6) {
                 setBaseState(State.FULL);
             }
         }
@@ -431,7 +432,7 @@ public class Grid {
     }
 
     private boolean isWithinPaper(Point t_tmp) {
-        return ((-200.000001 <= t_tmp.getX()) && (t_tmp.getX() <= 200.000001)) && ((-200.000001 <= t_tmp.getY()) && (t_tmp.getY() <= 200.000001));
+        return ((-200 - Epsilon.UNKNOWN_1EN6 <= t_tmp.getX()) && (t_tmp.getX() <= 200 + Epsilon.UNKNOWN_1EN6)) && ((-200 - Epsilon.UNKNOWN_1EN6 <= t_tmp.getY()) && (t_tmp.getY() <= 200 + Epsilon.UNKNOWN_1EN6));
     }
 
     public void setGridConfigurationData(GridModel gridModel) {

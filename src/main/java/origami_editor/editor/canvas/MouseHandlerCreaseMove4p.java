@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -32,7 +33,7 @@ public class MouseHandlerCreaseMove4p extends BaseMouseHandlerInputRestricted {
                 if (p.distance(closestPoint) < d.selectionDistance) {
                     d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.BLUE_2));
 
-                    if (OritaCalc.distance(d.lineStep.get(0).getA(), d.lineStep.get(1).getA()) < 0.00000001) {
+                    if (Epsilon.high.le0(OritaCalc.distance(d.lineStep.get(0).getA(), d.lineStep.get(1).getA()))) {
                         d.lineStep.clear();
                         d.app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                     }
@@ -56,7 +57,7 @@ public class MouseHandlerCreaseMove4p extends BaseMouseHandlerInputRestricted {
                 if (p.distance(closestPoint) < d.selectionDistance) {
                     d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.ORANGE_4));
 
-                    if (OritaCalc.distance(d.lineStep.get(2).getA(), d.lineStep.get(3).getA()) < 0.00000001) {
+                    if (Epsilon.high.le0(OritaCalc.distance(d.lineStep.get(2).getA(), d.lineStep.get(3).getA()))) {
                         d.lineStep.clear();
                         d.app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                     }

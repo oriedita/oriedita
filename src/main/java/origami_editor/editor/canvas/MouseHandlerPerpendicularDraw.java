@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -56,7 +57,7 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
             //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){
 
             LineSegment add_sen = new LineSegment(d.lineStep.get(0).getA(), OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(d.lineStep.get(1)), d.lineStep.get(0).getA()), d.lineColor);
-            if (add_sen.determineLength() > 0.00000001) {
+            if (Epsilon.high.gt0(add_sen.determineLength())) {
                 d.addLineSegment(add_sen);
                 d.record();
             }

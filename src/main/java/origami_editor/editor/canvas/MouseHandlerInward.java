@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -33,15 +34,15 @@ public class MouseHandlerInward extends BaseMouseHandlerInputRestricted {
             center.set(OritaCalc.center(d.lineStep.get(0).getA(), d.lineStep.get(1).getA(), d.lineStep.get(2).getA()));
 
             LineSegment add_sen1 = new LineSegment(d.lineStep.get(0).getA(), center, d.lineColor);
-            if (add_sen1.determineLength() > 0.00000001) {
+            if (Epsilon.high.gt0(add_sen1.determineLength())) {
                 d.addLineSegment(add_sen1);
             }
             LineSegment add_sen2 = new LineSegment(d.lineStep.get(1).getA(), center, d.lineColor);
-            if (add_sen2.determineLength() > 0.00000001) {
+            if (Epsilon.high.gt0(add_sen2.determineLength())) {
                 d.addLineSegment(add_sen2);
             }
             LineSegment add_sen3 = new LineSegment(d.lineStep.get(2).getA(), center, d.lineColor);
-            if (add_sen3.determineLength() > 0.00000001) {
+            if (Epsilon.high.gt0(add_sen3.determineLength())) {
                 d.addLineSegment(add_sen3);
             }
             d.record();

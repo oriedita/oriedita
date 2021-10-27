@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -80,24 +81,24 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
 
         Point cross_point = new Point();
 
-        if (OritaCalc.isLineSegmentParallel(s_o, s_k, 0.0000001) == OritaCalc.ParallelJudgement.PARALLEL_NOT_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+        if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.PARALLEL_NOT_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
             return -500;
         }
 
-        if (OritaCalc.isLineSegmentParallel(s_o, s_k, 0.0000001) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+        if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
             cross_point.set(s_k.getA());
             if (OritaCalc.distance(s_o.getA(), s_k.getA()) > OritaCalc.distance(s_o.getA(), s_k.getB())) {
                 cross_point.set(s_k.getB());
             }
         }
 
-        if (OritaCalc.isLineSegmentParallel(s_o, s_k, 0.0000001) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+        if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
             cross_point.set(OritaCalc.findIntersection(s_o, s_k));
         }
 
         LineSegment add_sen = new LineSegment(cross_point, s_o.getA(), icolo);
 
-        if (add_sen.determineLength() > 0.00000001) {
+        if (Epsilon.high.gt0(add_sen.determineLength())) {
             d.lineStep.get(i_e_d).set(add_sen);
             return 1;
         }
