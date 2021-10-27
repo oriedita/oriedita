@@ -1,5 +1,6 @@
 package origami.crease_pattern.element;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
@@ -232,15 +233,15 @@ public class Polygon {
         }
 
         if (iflag == 0) {
-            return inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE;
+            return inside(Point.mid(s0.getA(), s0.getB())) == Intersection.INSIDE;
         }
 
         if (iflag == 1) {
-            return inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE;
+            return inside(Point.mid(s0.getA(), s0.getB())) == Intersection.INSIDE;
         }
 
         if (iflag == 2) {
-            if (inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE) {
+            if (inside(Point.mid(s0.getA(), s0.getB())) == Intersection.INSIDE) {
                 return true;
             }
             if (inside(s0.getA()) == Intersection.INSIDE) {
@@ -296,7 +297,7 @@ public class Polygon {
             return true;
         }
 
-        return inside(new Point(0.5, s0.getA(), 0.5, s0.getB())) == Intersection.INSIDE;
+        return inside(Point.mid(s0.getA(), s0.getB())) == Intersection.INSIDE;
     }
 
     //A function that determines if a point is inside this polygon (true) or not (false)----------------------------------
@@ -313,12 +314,12 @@ public class Polygon {
         //First, it is determined whether the point p is on the boundary line of the polygon.
         for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]);
-            if (OritaCalc.determineLineSegmentDistance(p, s) < 0.01) {
+            if (OritaCalc.determineLineSegmentDistance(p, s) < Epsilon.UNKNOWN_001) {
                 return Intersection.BORDER;
             }
         }
         s.set(vertices[vertexCount], vertices[1]);
-        if (OritaCalc.determineLineSegmentDistance(p, s) < 0.01) {
+        if (OritaCalc.determineLineSegmentDistance(p, s) < Epsilon.UNKNOWN_001) {
             return Intersection.OUTSIDE;
         }
 
@@ -373,7 +374,7 @@ public class Polygon {
             area = area + (vertices[i - 1].getX() - vertices[i + 1].getX()) * vertices[i].getY();
         }
         area = area + (vertices[vertexCount - 1].getX() - vertices[1].getX()) * vertices[vertexCount].getY();
-        area = -0.5 * area;
+        area = -area / 2;
 
         return area;
     }

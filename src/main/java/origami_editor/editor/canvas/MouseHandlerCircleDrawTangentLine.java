@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.*;
 import origami_editor.editor.MouseMode;
@@ -73,7 +74,7 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
             double xp = x2 - x1;
             double yp = y2 - y1;
 
-            if (c1.distance(c2) < 0.000001) {
+            if (c1.distance(c2) < Epsilon.UNKNOWN_1EN6) {
                 d.circleStep.clear();
                 return;
             }//接線0本の場合
@@ -83,7 +84,7 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
                 return;
             }//接線0本の場合
 
-            if (Math.abs((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2)) < 0.0000001) {//外接線1本の場合
+            if (Math.abs((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2)) < Epsilon.UNKNOWN_1EN7) {//外接線1本の場合
                 Point kouten = new Point();
                 kouten.set(OritaCalc.internalDivisionRatio(c1, c2, -r1, r2));
                 StraightLine ty = new StraightLine(c1, kouten);
@@ -108,7 +109,7 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
 
                 d.lineStepAdd(new LineSegment(new Point(xr1, yr1), OritaCalc.findProjection(t1, new Point(x2, y2)), LineColor.PURPLE_8));
                 d.lineStepAdd(new LineSegment(new Point(xr2, yr2), OritaCalc.findProjection(t2, new Point(x2, y2)), LineColor.PURPLE_8));
-            } else if (Math.abs((xp * xp + yp * yp) - (r1 + r2) * (r1 + r2)) < 0.0000001) {//外接線2本と内接線1本の場合
+            } else if (Math.abs((xp * xp + yp * yp) - (r1 + r2) * (r1 + r2)) < Epsilon.UNKNOWN_1EN7) {//外接線2本と内接線1本の場合
                 double xq1 = r1 * (xp * (r1 - r2) + yp * Math.sqrt((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2))) / (xp * xp + yp * yp);//共通外接線
                 double yq1 = r1 * (yp * (r1 - r2) - xp * Math.sqrt((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2))) / (xp * xp + yp * yp);//共通外接線
                 double xq2 = r1 * (xp * (r1 - r2) - yp * Math.sqrt((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2))) / (xp * xp + yp * yp);//共通外接線

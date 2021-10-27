@@ -599,7 +599,7 @@ public class App {
                 creasePatternWorker2.setSave_for_reading(mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding());
                 creasePatternWorker2.point_removal();
                 creasePatternWorker2.overlapping_line_removal();
-                creasePatternWorker2.branch_trim(0.000001);
+                creasePatternWorker2.branch_trim();
                 creasePatternWorker2.organizeCircles();
                 lineSegmentsForFolding = creasePatternWorker2.getForFolding();
             } else {

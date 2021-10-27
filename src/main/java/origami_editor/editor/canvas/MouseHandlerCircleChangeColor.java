@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -19,13 +20,13 @@ public class MouseHandlerCircleChangeColor extends BaseMouseHandlerBoxSelect {
     //マウス操作(mouseMode==59 "特注プロパティ指定" でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {//補助活線と円
         d.lineStep.clear();
-        if (selectionStart.distance(p0) > 0.000001) {//現状では削除しないときもUNDO用に記録されてしまう20161218
+        if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {//現状では削除しないときもUNDO用に記録されてしまう20161218
 
             if (d.change_property_in_4kakukei(selectionStart, p0)) {
             }
         }
 
-        if (selectionStart.distance(p0) <= 0.000001) {
+        if (selectionStart.distance(p0) <= Epsilon.UNKNOWN_1EN6) {
             Point p = new Point();
             p.set(d.camera.TV2object(p0));
             double rs_min;

@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -90,7 +91,7 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
 
             d.lineStep.get(1).setA(closest_point);
 
-            if (d.lineStep.get(1).determineLength() < 0.00000001) {
+            if (Epsilon.high.le0(d.lineStep.get(1).determineLength())) {
                 d.lineStep.remove(3);
                 d.lineStep.remove(2);
                 d.lineStep.remove(1);

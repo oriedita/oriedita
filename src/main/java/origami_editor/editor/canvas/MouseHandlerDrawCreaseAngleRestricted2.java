@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -177,7 +178,7 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInpu
                 //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
                 //0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
 
-                if (OritaCalc.isLineSegmentParallel(d.lineStep.get(d.lineStep.size() - 1 - 1), d.lineStep.get(d.lineStep.size() - 1), 0.1) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
+                if (OritaCalc.isLineSegmentParallel(d.lineStep.get(d.lineStep.size() - 1 - 1), d.lineStep.get(d.lineStep.size() - 1), Epsilon.UNKNOWN_01) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
                     d.lineStep.clear();
                     return;
                 }
@@ -189,13 +190,13 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInpu
 
                 LineSegment add_sen = new LineSegment(kousa_point, d.lineStep.get(2 + (honsuu) + (honsuu)).getA());
                 add_sen.setColor(d.lineColor);
-                if (add_sen.determineLength() > 0.00000001) {
+                if (Epsilon.high.gt0(add_sen.determineLength())) {
                     d.addLineSegment(add_sen);
                 }
 
                 LineSegment add_sen2 = new LineSegment(kousa_point, d.lineStep.get(2 + (honsuu) + (honsuu) + 1).getA());
                 add_sen2.setColor(d.lineColor);
-                if (add_sen.determineLength() > 0.00000001) {
+                if (Epsilon.high.gt0(add_sen.determineLength())) {
                     d.addLineSegment(add_sen2);
                 }
                 d.record();

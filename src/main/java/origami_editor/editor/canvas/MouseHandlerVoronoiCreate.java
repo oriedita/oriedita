@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.*;
 import origami_editor.editor.MouseMode;
@@ -216,7 +217,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
     List<LineSegment> s_step_no_1_top_continue_no_point_no_number() {//line_step [i] returns the number of Point (length 0) from the beginning. Returns 0 if there are no dots
         List<LineSegment> lineSegments = new ArrayList<>();
         for (LineSegment s : d.lineStep) {
-            if (s.determineLength() > 0.00000001) {
+            if (Epsilon.high.gt0(s.determineLength())) {
                 break;
             }
             lineSegments.add(s);
@@ -351,7 +352,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
 
             //Fight the line segment to be added with the existing line segment
 
-            OritaCalc.ParallelJudgement parallel = OritaCalc.isLineSegmentParallel(add_straightLine, existing_straightLine, 0.0001);//0 = not parallel, 1 = parallel and 2 straight lines do not match, 2 = parallel and 2 straight lines match
+            OritaCalc.ParallelJudgement parallel = OritaCalc.isLineSegmentParallel(add_straightLine, existing_straightLine, Epsilon.UNKNOWN_1EN4);//0 = not parallel, 1 = parallel and 2 straight lines do not match, 2 = parallel and 2 straight lines match
 
             Point a = d.lineStep.get(center_point_count).getA();
             if (parallel == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//When the line segment to be added and the existing line segment are non-parallel
@@ -364,7 +365,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                 } else if ((add_straightLine.sameSide(a, existing_lineSegment.getA()) == 1) &&
                         (add_straightLine.sameSide(a, existing_lineSegment.getB()) == -1)) {
                     existing_lineSegment.set(existing_lineSegment.getA(), intersection);
-                    if (existing_lineSegment.determineLength() < 0.0000001) {
+                    if (existing_lineSegment.determineLength() < Epsilon.UNKNOWN_1EN7) {
                         lineSegment_voronoi_onePoint.remove(i);
                     } else {
                         lineSegment_voronoi_onePoint.set(i, existing_lineSegment);
@@ -372,7 +373,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                 } else if ((add_straightLine.sameSide(a, existing_lineSegment.getA()) == -1) &&
                         (add_straightLine.sameSide(a, existing_lineSegment.getB()) == 1)) {
                     existing_lineSegment.set(intersection, existing_lineSegment.getB());
-                    if (existing_lineSegment.determineLength() < 0.0000001) {
+                    if (existing_lineSegment.determineLength() < Epsilon.UNKNOWN_1EN7) {
                         lineSegment_voronoi_onePoint.remove(i);
                     } else {
                         lineSegment_voronoi_onePoint.set(i, existing_lineSegment);
@@ -385,13 +386,13 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                 } else if ((existing_straightLine.sameSide(a, add_lineSegment.getA()) == 1) &&
                         (existing_straightLine.sameSide(a, add_lineSegment.getB()) == -1)) {
                     add_lineSegment.set(add_lineSegment.getA(), intersection);
-                    if (add_lineSegment.determineLength() < 0.0000001) {
+                    if (add_lineSegment.determineLength() < Epsilon.UNKNOWN_1EN7) {
                         return;
                     }
                 } else if ((existing_straightLine.sameSide(a, add_lineSegment.getA()) == -1) &&
                         (existing_straightLine.sameSide(a, add_lineSegment.getB()) == 1)) {
                     add_lineSegment.set(intersection, add_lineSegment.getB());
-                    if (add_lineSegment.determineLength() < 0.0000001) {
+                    if (add_lineSegment.determineLength() < Epsilon.UNKNOWN_1EN7) {
                         return;
                     }
                 }

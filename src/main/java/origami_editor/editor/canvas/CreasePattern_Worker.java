@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
@@ -203,8 +204,8 @@ public class CreasePattern_Worker {
         foldLineSet.allMountainValleyChange();
     }
 
-    public void branch_trim(double r) {
-        foldLineSet.applyBranchTrim(r);
+    public void branch_trim() {
+        foldLineSet.applyBranchTrim();
     }
 
     public LineSegmentSet get() {
@@ -294,16 +295,16 @@ public class CreasePattern_Worker {
         s_title = setMemo_for_redo_undo(historyState.undo());
 
         if (check1) {
-            check1(0.001, 0.5);
+            check1();
         }
         if (check2) {
-            check2(0.01, 0.5);
+            check2();
         }
         if (check3) {
-            check3(0.0001);
+            check3();
         }
         if (check4) {
-            check4(0.0001);
+            check4();
         }
 
         return s_title;
@@ -313,16 +314,16 @@ public class CreasePattern_Worker {
         s_title = setMemo_for_redo_undo(historyState.redo());
 
         if (check1) {
-            check1(0.001, 0.5);
+            check1();
         }
         if (check2) {
-            check2(0.01, 0.5);
+            check2();
         }
         if (check3) {
-            check3(0.0001);
+            check3();
         }
         if (check4) {
-            check4(0.0001);
+            check4();
         }
 
         return s_title;
@@ -334,16 +335,16 @@ public class CreasePattern_Worker {
 
     public void record() {
         if (check1) {
-            check1(0.001, 0.5);
+            check1();
         }
         if (check2) {
-            check2(0.01, 0.5);
+            check2();
         }
         if (check3) {
-            check3(0.0001);
+            check3();
         }
         if (check4) {
-            check4(0.0001);
+            check4();
         }
 
         if (!historyState.isEmpty()) {
@@ -606,7 +607,7 @@ public class CreasePattern_Worker {
     //------------------------------------------------------
     public LineSegment get_moyori_step_lineSegment(Point t0, int imin, int imax) {
         int minrid = -100;
-        double minr = 100000;//Senbun s1 =new Senbun(100000.0,100000.0,100000.0,100000.1);
+        double minr = 100000;
         for (int i = imin; i <= imax; i++) {
             double sk = OritaCalc.determineLineSegmentDistance(t0, lineStep.get(i - 1));
             if (minr > sk) {
@@ -714,7 +715,7 @@ public class CreasePattern_Worker {
 
             if (i_kousa_flg.isIntersecting()) {
                 kousa_point.set(OritaCalc.findIntersection(tyoku1, foldLineSet.get(i)));
-                if (kousa_point.distance(add_sen.getA()) > 0.00001) {
+                if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
                     if (kousa_point.distance(add_sen.getA()) < kousa_ten_kyori) {
                         double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
                         if (d_kakudo < 1.0 || d_kakudo > 359.0) {
@@ -755,7 +756,7 @@ public class CreasePattern_Worker {
 
         LineSegment add_sen = new LineSegment();
         for (LineSegment s : lineStep) {
-            if (s.determineLength() > 0.00000001) {
+            if (Epsilon.high.gt0(s.determineLength())) {
                 add_sen.set(s);
                 add_sen.setColor(lineColor);
                 addLineSegment(add_sen);
@@ -815,26 +816,26 @@ public class CreasePattern_Worker {
         i_foldLine_additional = i;
     }
 
-    public void check1(double r_hitosii, double parallel_decision) {
-        foldLineSet.check1(r_hitosii, parallel_decision);
+    public void check1() {
+        foldLineSet.check1();
     }//In foldLineSet, check and set the funny fold line to the selected state.
 
-    public void fix1(double r_hitosii, double heikou_hantei) {
+    public void fix1() {
         while (true) {
-            if (!foldLineSet.fix1(r_hitosii, heikou_hantei)) break;
+            if (!foldLineSet.fix1()) break;
         }
         //foldLineSet.addsenbun  delsenbunを実施しているところでcheckを実施
         if (check1) {
-            check1(0.001, 0.5);
+            check1();
         }
         if (check2) {
-            check2(0.01, 0.5);
+            check2();
         }
         if (check3) {
-            check3(0.0001);
+            check3();
         }
         if (check4) {
-            check4(0.0001);
+            check4();
         }
 
     }
@@ -843,26 +844,26 @@ public class CreasePattern_Worker {
         check1 = i;
     }
 
-    public void check2(double r_hitosii, double heikou_hantei) {
-        foldLineSet.check2(r_hitosii, heikou_hantei);
+    public void check2() {
+        foldLineSet.check2();
     }
 
-    public void fix2(double r_hitosii, double heikou_hantei) {
+    public void fix2() {
         while (true) {
-            if (!foldLineSet.fix2(r_hitosii, heikou_hantei)) break;
+            if (!foldLineSet.fix2()) break;
         }
         //foldLineSet.addsenbun  delsenbunを実施しているところでcheckを実施
         if (check1) {
-            check1(0.001, 0.5);
+            check1();
         }
         if (check2) {
-            check2(0.01, 0.5);
+            check2();
         }
         if (check3) {
-            check3(0.0001);
+            check3();
         }
         if (check4) {
-            check4(0.0001);
+            check4();
         }
 
     }
@@ -871,16 +872,16 @@ public class CreasePattern_Worker {
         check2 = i;
     }
 
-    public void check3(double r) {
-        foldLineSet.check3(r);
+    public void check3() {
+        foldLineSet.check3();
     }
 
-    public void check4(double r) {
+    public void check4() {
         TaskExecutor.executeTask(new CheckCAMVTask(this, app.canvas));
     }
 
-    public void ap_check4(double r) throws InterruptedException {
-        foldLineSet.check4(r);
+    public void ap_check4() throws InterruptedException {
+        foldLineSet.check4();
     }
 
     public void setCheck3(boolean i) {
@@ -936,7 +937,7 @@ public class CreasePattern_Worker {
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("check4Enabled")) {
             if (data.getCheck4Enabled()) {
-                check4(0.0001);
+                check4();
             }
         }
     }

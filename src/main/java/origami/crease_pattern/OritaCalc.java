@@ -2,6 +2,7 @@ package origami.crease_pattern;
 
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+import origami.Epsilon;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.StraightLine;
 
@@ -34,7 +35,7 @@ public class OritaCalc {
 
     //A function that determines whether two points are in the same position (true) or different (false) -------------------------------- -
     public static boolean equal(Point p1, Point p2) {
-        return equal(p1, p2, 0.1);//The error is defined here.
+        return equal(p1, p2, Epsilon.UNKNOWN_01);//The error is defined here.
     }
 
     public static boolean equal(Point p1, Point p2, double r) {//r is the error tolerance. Strict judgment if r is negative.
@@ -127,10 +128,10 @@ public class OritaCalc {
         StraightLine u2 = new StraightLine(p1, p2);
         u2.orthogonalize(p2);//Find the straight line u2 that passes through the point p2 and is orthogonal to t.
 
-        if (u1.calculateDistance(pa) < 0.00001) {
+        if (u1.calculateDistance(pa) < Epsilon.UNKNOWN_1EN5) {
             return 1;
         }
-        if (u2.calculateDistance(pa) < 0.00001) {
+        if (u2.calculateDistance(pa) < Epsilon.UNKNOWN_1EN5) {
             return 1;
         }
 
@@ -197,11 +198,11 @@ public class OritaCalc {
     // Note! If p1 and p2 are the same, or p3 and p4 are the same, the result will be strange,
     // This function itself does not have a check mechanism, so it may be difficult to notice.
     public static LineSegment.Intersection determineLineSegmentIntersection(LineSegment s1, LineSegment s2) {
-        return determineLineSegmentIntersection(s1, s2, 0.01, 0.01);
+        return determineLineSegmentIntersection(s1, s2, Epsilon.UNKNOWN_001, Epsilon.UNKNOWN_001);
     }
 
     public static LineSegment.Intersection determineLineSegmentIntersectionSweet(LineSegment s1, LineSegment s2) {
-        return determineLineSegmentIntersectionSweet(s1, s2, 0.01, 0.01);
+        return determineLineSegmentIntersectionSweet(s1, s2, Epsilon.UNKNOWN_001, Epsilon.UNKNOWN_001);
     }
 
     public static LineSegment.Intersection determineLineSegmentIntersection(LineSegment s1, LineSegment s2, double rhit, double rhei) {    //r_hitosii and r_heikouhantei are the allowable degree of deviation between hitosii and heikou_hantei
@@ -238,16 +239,16 @@ public class OritaCalc {
             y2min = s2.determineBY();
         }
 
-        if (x1max + rhit + 0.1 < x2min) {
+        if (x1max + rhit + Epsilon.UNKNOWN_01 < x2min) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        if (x1min - rhit - 0.1 > x2max) {
+        if (x1min - rhit - Epsilon.UNKNOWN_01 > x2max) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        if (y1max + rhit + 0.1 < y2min) {
+        if (y1max + rhit + Epsilon.UNKNOWN_01 < y2min) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        if (y1min - rhit - 0.1 > y2max) {
+        if (y1min - rhit - Epsilon.UNKNOWN_01 > y2max) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
 
@@ -461,16 +462,16 @@ public class OritaCalc {
             y2min = s2.determineBY();
         }
 
-        if (x1max + rhit + 0.1 < x2min) {
+        if (x1max + rhit + Epsilon.UNKNOWN_01 < x2min) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        if (x1min - rhit - 0.1 > x2max) {
+        if (x1min - rhit - Epsilon.UNKNOWN_01 > x2max) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        if (y1max + rhit + 0.1 < y2min) {
+        if (y1max + rhit + Epsilon.UNKNOWN_01 < y2min) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        if (y1min - rhit - 0.1 > y2max) {
+        if (y1min - rhit - Epsilon.UNKNOWN_01 > y2max) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
 
@@ -645,7 +646,7 @@ public class OritaCalc {
 
     //A function that determines whether two straight lines are parallel.
     public static ParallelJudgement isLineSegmentParallel(StraightLine t1, StraightLine t2) {
-        return isLineSegmentParallel(t1, t2, 0.1);
+        return isLineSegmentParallel(t1, t2, Epsilon.UNKNOWN_01);
     }
 
     //A function that determines whether two line segments are parallel.
@@ -941,7 +942,7 @@ public class OritaCalc {
     //Find the internal division point.
     public static Point internalDivisionRatio(Point a, Point b, double d_internalDivisionRatio_s, double d_internalDivisionRatio_t) {
         Point r_point = new Point(-10000.0, -10000.0);
-        if (distance(a, b) < 0.000001) {
+        if (distance(a, b) < Epsilon.UNKNOWN_1EN6) {
             return r_point;
         }
 
@@ -1065,14 +1066,14 @@ public class OritaCalc {
 
     //--------------------------------------------------------
     public static boolean isLineSegmentOverlapping(LineSegment s1, LineSegment s2) {//false do not overlap. true overlaps. 20201012 added
-        LineSegment.Intersection intersection = determineLineSegmentIntersection(s1, s2, 0.0001, 0.0001);
+        LineSegment.Intersection intersection = determineLineSegmentIntersection(s1, s2, Epsilon.UNKNOWN_1EN4, Epsilon.UNKNOWN_1EN4);
 
         return intersection.isSegmentOverlapping();
     }
 
     //--------------------------------------------------------
     public static boolean lineSegment_X_kousa_decide(LineSegment s1, LineSegment s2) {//0はX交差しない。1は交差する。20201017追加
-        return determineLineSegmentIntersection(s1, s2, 0.0001, 0.0001) == LineSegment.Intersection.INTERSECTS_1;
+        return determineLineSegmentIntersection(s1, s2, Epsilon.UNKNOWN_1EN4, Epsilon.UNKNOWN_1EN4) == LineSegment.Intersection.INTERSECTS_1;
     }
 
     public enum ParallelJudgement {

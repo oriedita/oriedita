@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
@@ -52,7 +53,7 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler {
             Point closestPoint = d.getClosestPoint(p);
             d.lineStep.get(0).setA(closestPoint);
             if (p.distance(closestPoint) <= d.selectionDistance) {
-                if (d.lineStep.get(0).determineLength() > 0.00000001) {
+                if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
                     d.addCircle(d.lineStep.get(0).determineBX(), d.lineStep.get(0).determineBY(), d.lineStep.get(0).determineLength(), LineColor.CYAN_3);
                     d.record();
                 }

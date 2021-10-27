@@ -25,6 +25,7 @@ import origami_editor.sortingbox.SortingBox;
 import origami_editor.sortingbox.WeightedValue;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.tools.Camera;
+import origami.Epsilon;
 import origami.crease_pattern.PointSet;
 
 import java.awt.*;
@@ -231,8 +232,8 @@ public class FoldedFigure_Worker {
                     if ((im != faceId_min) && (im != faceId_max)) {
                         if (otta_face_figure.convex_inside(ib, im)) {
                             //下の２つのifは暫定的な処理。あとで置き換え予定
-                            if (otta_face_figure.convex_inside(0.5, ib, im)) {
-                                if (otta_face_figure.convex_inside(-0.5, ib, im)) {
+                            if (otta_face_figure.convex_inside(Epsilon.UNKNOWN_05, ib, im)) {
+                                if (otta_face_figure.convex_inside(-Epsilon.UNKNOWN_05, ib, im)) {
                                     hierarchyList.addEquivalenceCondition(im, faceId_min, im, faceId_max);
                                 }
                             }
@@ -781,7 +782,7 @@ public class FoldedFigure_Worker {
                     o_bmtx = o_bmx + o_btx;
                     o_bmty = o_bmy + o_bty;
 
-                    if (subFace_figure.inside(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), im) != Polygon.Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
+                    if (subFace_figure.inside(new Point(o_bmx + Epsilon.UNKNOWN_001 * o_btx, o_bmy + Epsilon.UNKNOWN_001 * o_bty), im) != Polygon.Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
                         t0.setX(o_bmtx);
                         t0.setY(o_bmty);
                         t1.set(camera.object2TV(t0));
@@ -840,7 +841,7 @@ public class FoldedFigure_Worker {
                     o_bmtx = o_bmx + o_btx;
                     o_bmty = o_bmy + o_bty;
 
-                    if (subFace_figure.inside(new Point(o_bmx + 0.01 * o_btx, o_bmy + 0.01 * o_bty), im) != Polygon.Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
+                    if (subFace_figure.inside(new Point(o_bmx + Epsilon.UNKNOWN_001 * o_btx, o_bmy + Epsilon.UNKNOWN_001 * o_bty), im) != Polygon.Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
 
                         t0.setX(o_bmtx);
                         t0.setY(o_bmty);

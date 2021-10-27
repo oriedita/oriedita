@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
@@ -20,7 +21,7 @@ public class MouseHandlerDeletePoint extends BaseMouseHandler {
 
         //点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の線分が出ているか（頂点とr以内に端点がある線分の数）	public int tyouten_syuui_sennsuu(Ten p) {
 
-        d.foldLineSet.del_V(p, d.selectionDistance, 0.000001);
+        d.foldLineSet.del_V(p, d.selectionDistance, Epsilon.UNKNOWN_1EN6);
         d.record();
     }
 

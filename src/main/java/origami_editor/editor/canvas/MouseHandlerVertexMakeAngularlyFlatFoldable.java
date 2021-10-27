@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -73,7 +74,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
 
         switch (i_step_for_move_4p) {
             case STEP_0:
-                double hantei_kyori = 0.000001;
+                double decision_distance = Epsilon.UNKNOWN_1EN6;
 
                 Point t1 = new Point();
                 t1.set(d.foldLineSet.closestPointOfFoldLine(p));//点pに最も近い、「線分の端点」を返すori_s.mottomo_tikai_Tenは近い点がないと p_return.set(100000.0,100000.0)と返してくる
@@ -85,9 +86,9 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                     for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
                         LineSegment s = d.foldLineSet.get(i);
                         if (s.getColor().isFoldingLine()) {
-                            if (t1.distance(s.getA()) < hantei_kyori) {
+                            if (t1.distance(s.getA()) < decision_distance) {
                                 nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getA(), s.getB())));
-                            } else if (t1.distance(s.getB()) < hantei_kyori) {
+                            } else if (t1.distance(s.getB()) < decision_distance) {
                                 nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getB(), s.getA())));
                             }
                         }
@@ -142,15 +143,15 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                                 add_kakudo_1 = 360.0;
                             }
 
-                            if ((kakukagenti / 2.0 > 0.0 + 0.000001) && (kakukagenti / 2.0 < add_kakudo_1 - 0.000001)) {
-                                //if((kakukagenti/2.0>0.0-0.000001)&&(kakukagenti/2.0<add_kakudo_1+0.000001)){
+                            if ((kakukagenti / 2.0 > 0.0 + Epsilon.UNKNOWN_1EN6) && (kakukagenti / 2.0 < add_kakudo_1 - Epsilon.UNKNOWN_1EN6)) {
+                                //if((kakukagenti/2.0>0.0-Epsilon.UNKNOWN_0000001)&&(kakukagenti/2.0<add_kakudo_1+Epsilon.UNKNOWN_0000001)){
 
                                 //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d)
                                 LineSegment s_kiso = new LineSegment();
                                 LineSegment nboxLineSegment = nbox.getValue(i);
-                                if (t1.distance(nboxLineSegment.getA()) < hantei_kyori) {
+                                if (t1.distance(nboxLineSegment.getA()) < decision_distance) {
                                     s_kiso.set(nboxLineSegment.getA(), nboxLineSegment.getB());
-                                } else if (t1.distance(nboxLineSegment.getB()) < hantei_kyori) {
+                                } else if (t1.distance(nboxLineSegment.getB()) < decision_distance) {
                                     s_kiso.set(nboxLineSegment.getB(), nboxLineSegment.getA());
                                 }
 
@@ -214,7 +215,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                     Point kousa_point = new Point();
                     kousa_point.set(OritaCalc.findIntersection(d.lineStep.get(0), d.lineStep.get(1)));
                     LineSegment add_sen = new LineSegment(kousa_point, d.lineStep.get(0).getA(), icol_temp);//20180503変更
-                    if (add_sen.determineLength() > 0.00000001) {//最寄の既存折線が有効の場合
+                    if (Epsilon.high.gt0(add_sen.determineLength())) {//最寄の既存折線が有効の場合
                         d.addLineSegment(add_sen);
                         d.record();
                         d.lineStep.clear();

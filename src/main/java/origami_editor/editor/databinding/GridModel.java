@@ -1,6 +1,7 @@
 package origami_editor.editor.databinding;
 
 import origami_editor.graphic2d.grid.Grid;
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 
 import java.awt.*;
@@ -269,13 +270,13 @@ public class GridModel implements Serializable {
     public void setGridAngle(final double gridAngle) {
         double oldAngle = this.gridAngle;
         double newAngle = gridAngle;
-        if (Math.abs(OritaCalc.angle_between_0_360(this.gridAngle)) < 0.1) {
+        if (Math.abs(OritaCalc.angle_between_0_360(this.gridAngle)) < Epsilon.UNKNOWN_01) {
             newAngle = 90.0;
         }
-        if (Math.abs(OritaCalc.angle_between_0_360(this.gridAngle - 180.0)) < 0.1) {
+        if (Math.abs(OritaCalc.angle_between_0_360(this.gridAngle - 180.0)) < Epsilon.UNKNOWN_01) {
             newAngle = 90.0;
         }
-        if (Math.abs(OritaCalc.angle_between_0_360(this.gridAngle - 360.0)) < 0.1) {
+        if (Math.abs(OritaCalc.angle_between_0_360(this.gridAngle - 360.0)) < Epsilon.UNKNOWN_01) {
             newAngle = 90.0;
         }
 
@@ -289,7 +290,7 @@ public class GridModel implements Serializable {
             return false;
         }
 
-        if (Math.abs(gridLength) < 0.0001) {
+        if (Math.abs(gridLength) < Epsilon.UNKNOWN_1EN4) {
             return false;
         }
 

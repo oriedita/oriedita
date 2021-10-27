@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -59,7 +60,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
             cross_point.set(OritaCalc.findIntersection(add_sen2, d.lineStep.get(3)));
 
             LineSegment add_sen = new LineSegment(cross_point, d.lineStep.get(1).getA(), d.lineColor);
-            if (add_sen.determineLength() > 0.00000001) {
+            if (Epsilon.high.gt0(add_sen.determineLength())) {
                 d.addLineSegment(add_sen);
                 d.record();
             }

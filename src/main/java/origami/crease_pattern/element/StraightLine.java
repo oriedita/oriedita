@@ -1,5 +1,7 @@
 package origami.crease_pattern.element;
 
+import origami.Epsilon;
+
 public class StraightLine {
     //Note! If p1 = p2, the result will be strange, but it may be hard to notice because this function does not have a check mechanism.
     // a is 0 or more. If a = 0, make sure b is greater than or equal to 0. Otherwise, the sign of the distance to the straight line will be incorrect.
@@ -59,7 +61,7 @@ public class StraightLine {
             b = -b;
             c = -c;
         }
-        if ((-0.1 < a) && (a < 0.1)) {
+        if ((-Epsilon.UNKNOWN_01 < a) && (a < Epsilon.UNKNOWN_01)) {
             if (b < 0.0) {
                 a = -a;
                 b = -b;
@@ -146,14 +148,14 @@ public class StraightLine {
         double d_a2 = calculateDistanceSquared(s0.getA());
         double d_b2 = calculateDistanceSquared(s0.getB());
 
-        if (d_a2 < 0.00000001 && d_b2 < 0.00000001) {
+        if (Epsilon.high.le0(d_a2) && Epsilon.high.le0(d_b2)) {
             return Intersection.INCLUDED_3;
         }
 
-        if (d_a2 < 0.00000001 && d_b2 >= 0.00000001) {
+        if (Epsilon.high.le0(d_a2) && Epsilon.high.gt0(d_b2)) {
             return Intersection.INTERSECT_T_A_21;
         }
-        if (d_a2 >= 0.00000001 && d_b2 < 0.00000001) {
+        if (Epsilon.high.gt0(d_a2) && Epsilon.high.le0(d_b2)) {
             return Intersection.INTERSECT_T_B_22;
         }
 

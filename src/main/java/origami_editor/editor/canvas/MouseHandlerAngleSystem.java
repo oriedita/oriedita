@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -153,7 +154,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
             Point kousa_point = new Point();
             kousa_point.set(OritaCalc.findIntersection(d.lineStep.get(2 + (honsuu)), d.lineStep.get(2 + (honsuu) + 1)));
             LineSegment add_sen = new LineSegment(kousa_point, d.lineStep.get(0).getA(), d.lineColor);
-            if (add_sen.determineLength() > 0.00000001) {
+            if (Epsilon.high.gt0(add_sen.determineLength())) {
                 d.addLineSegment(add_sen);
                 d.record();
             }

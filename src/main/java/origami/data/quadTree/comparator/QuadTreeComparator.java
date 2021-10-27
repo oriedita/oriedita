@@ -1,5 +1,6 @@
 package origami.data.quadTree.comparator;
 
+import origami.Epsilon;
 import origami.data.quadTree.QuadTreeItem;
 import origami.data.quadTree.QuadTree.Node;
 
@@ -11,7 +12,7 @@ import origami.data.quadTree.QuadTree.Node;
  */
 public abstract class QuadTreeComparator {
 
-    protected static final double EPSILON = 0.001;
+    protected static final double EPSILON = Epsilon.UNKNOWN_0001;
 
     public abstract boolean contains(Node node, double l, double r, double b, double t);
 

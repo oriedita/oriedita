@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
@@ -60,7 +61,7 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
         if (p.distance(closestPoint) <= d.selectionDistance) {
             d.lineStep.get(0).setA(closestPoint);
         }
-        if (d.lineStep.get(0).determineLength() > 0.00000001) {
+        if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
             if ((d.internalDivisionRatio_s == 0.0) && (d.internalDivisionRatio_t == 0.0)) {
             }
             if ((d.internalDivisionRatio_s == 0.0) && (d.internalDivisionRatio_t != 0.0)) {

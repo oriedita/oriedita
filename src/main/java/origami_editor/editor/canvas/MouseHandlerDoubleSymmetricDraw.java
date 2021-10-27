@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -48,11 +49,11 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
 
             d.lineStep.get(0).setA(closestPoint);
             if (p.distance(closestPoint) <= d.selectionDistance) {
-                if (d.lineStep.get(0).determineLength() > 0.00000001) {
+                if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
                     int imax = d.foldLineSet.getTotal();
                     for (int i = 1; i <= imax; i++) {
                         LineSegment s = d.foldLineSet.get(i);
-                        LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersectionSweet(s, d.lineStep.get(0), 0.01, 0.01);
+                        LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersectionSweet(s, d.lineStep.get(0), Epsilon.UNKNOWN_001, Epsilon.UNKNOWN_001);
                         boolean i_jikkou = false;
                         if (i_lineSegment_intersection_decision == LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25) {
                             i_jikkou = true;
@@ -77,7 +78,7 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
 
                             add_sen.set(d.extendToIntersectionPoint(add_sen));
                             add_sen.setColor(s.getColor());
-                            if (add_sen.determineLength() > 0.00000001) {
+                            if (Epsilon.high.gt0(add_sen.determineLength())) {
                                 d.addLineSegment(add_sen);
                             }
                         }
