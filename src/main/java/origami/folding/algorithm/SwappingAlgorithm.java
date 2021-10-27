@@ -30,26 +30,19 @@ public class SwappingAlgorithm {
 
     /** Performs the swap. */
     public void process(SubFace[] s) {
-        if (high != 0) {
-            int low = high / 2;
-            if (high == last) {
-                repetition++;
-                low -= repetition / low;
-                if (low < 1) {
-                    return; // Swapping algorithm has reached its limit.
-                }
-            } else {
-                repetition = 0;
-            }
+        if (high == 0) return;
 
-            // Perform swap
-            System.out.println("swapper.swap(s, " + high + ", " + low + ");");
-            swap(s, high, low);
+        int low = high / 2;
+        if (high == last) low -= ++repetition;
+        else repetition = 0;
 
-            last = high;
+        if (low < 1) return; // Swapping algorithm has reached its limit.
 
-            high = 0;
-        }
+        // Perform swap
+        System.out.println("swapper.swap(s, " + high + ", " + low + ");");
+        swap(s, high, low);
+        last = high;
+        high = 0;
     }
 
     public void swap(SubFace[] s, int high, int low) {

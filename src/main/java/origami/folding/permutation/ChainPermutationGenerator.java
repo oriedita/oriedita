@@ -25,15 +25,30 @@ public class ChainPermutationGenerator extends PermutationGenerator {
     // located at the end.
     private final int[] initPermutation;
 
+    // One problem with swapping algorithm is that it may reset a generator that is
+    // not yet finished, and such generator completely loses its progress. To
+    // overcome that, we use another array to store the progress so after reset, it
+    // can continue the searching from a recent saving point. We have three copies
+    // here:
+    // 0: the nearest progress (might be to close, so we don't use this one)
+    // 1: the second nearest progress (we will use this to restore)
+    // 2: the point where we restore (to check if we complete the loop)
+    private final int[][] saveHistory;
+
     // If an element is in the lock sequence.
     private final boolean[] isLocked;
 
     private int lockCount;
     private int lockRemain;
 
+    private boolean saved = false;
+    private boolean restored = false;
+    private boolean looped = false;
+
     public ChainPermutationGenerator(int numDigits) {
         super(numDigits);
         this.initPermutation = new int[numDigits + 1];
+        this.saveHistory = new int[3][numDigits + 1];
         this.isLocked = new boolean[numDigits + 1];
         this.swapHistory = new int[numDigits + 1];
         this.pairGuide = new PairGuide(numDigits);
@@ -45,18 +60,48 @@ public class ChainPermutationGenerator extends PermutationGenerator {
         for (int i = 1; i <= numDigits; i++) {
             digits[i] = initPermutation[i];
             map[i] = i;
-            swapHistory[i] = i - 1;
+            if (saved) {
+                swapHistory[i] = (saveHistory[2][i] = saveHistory[1][i]) - 1;
+            } else {
+                swapHistory[i] = i - 1;
+            }
         }
+        if (saved) restored = true;
         pairGuide.reset();
-        next(0);
+        nextCore(0);
     }
 
     public int next(int digit) throws InterruptedException {
+        int result = nextCore(digit);
+        if (result == 0 && restored) {
+            looped = true;
+            saved = false;
+            restored = false;
+            reset();
+            return 1;
+        } else if (looped) {
+            int i = 1; // Check if we have returned to the save point.
+            while (swapHistory[i] == saveHistory[2][i]) i++;
+            if (swapHistory[i] > saveHistory[2][i]) {
+                looped = false;
+                return 0;
+            }
+        } else if(count >= 600 && count % 200 == 0) {
+            if (count == 800) saved = true;
+            for (int i = 1; i <= numDigits; i++) {
+                if (count >= 800) saveHistory[1][i] = saveHistory[0][i];
+                saveHistory[0][i] = swapHistory[i];
+            }
+        }
+        return result;
+    }
+
+    public int nextCore(int digit) throws InterruptedException {
         int curIndex = 1;
 
-        // swapHistory[1] == 0 means the generator has just reset, and we don't need to
+        // count == 0 means the generator has just reset, and we don't need to
         // do anything. Otherwise we need to retract to the requested digit.
-        if (swapHistory[1] != 0) {
+        if (count > 0) {
             curIndex = numDigits;
 
             // It is possible that temp guides are added, so that the last element is no
