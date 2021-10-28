@@ -10,6 +10,7 @@ import origami.folding.algorithm.AdditionalEstimationAlgorithm;
 import origami.folding.algorithm.SubFacePriority;
 import origami.folding.algorithm.SwappingAlgorithm;
 import origami.folding.element.SubFace;
+import origami.folding.permutation.TimeoutException;
 import origami.crease_pattern.element.LineSegment;
 import origami_editor.editor.canvas.DrawingUtil;
 import origami.crease_pattern.element.Point;
@@ -428,7 +429,7 @@ public class FoldedFigure_Worker {
 
     //Start with the current permutation state and look for possible overlapping states. There is room for speeding up here.
     public int possible_overlapping_search(boolean swap) throws InterruptedException {      //This should not change the hierarchyList.
-        bb.write(" ");
+        bb.write("Initializing search...");
         bb.write(" ");
         bb.write(" ");
         bb.write(" ");
@@ -436,10 +437,18 @@ public class FoldedFigure_Worker {
 
         swapper = new SwappingAlgorithm();
 
+        // Create a smaller "realtime AEA" to assist the search. Since AEA is now a very
+        // fast algorithm, we have the luxury of using it every step of the search to
+        // infer more stacking relations from our current set of permutation choices,
+        // and this will greatly speed up the permutation generating (because of the
+        // temporary guide mechanism) of later SubFaces.
+        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(null, hierarchyList, s, SubFace_valid_number, 1000);
+        AEA.initialize();
+
         Sid = 1;//The initial value of Sid can be anything other than 0.
         while (Sid != 0) { //If Sid == 0, it means that even the smallest number of SubFace has been searched.
 
-            ms = inconsistent_subFace_request();
+            ms = inconsistent_subFace_request(AEA);
             if (ms == 1000) {
                 return 1000;
             }//There is no contradiction in all SubFaces.
@@ -454,28 +463,62 @@ public class FoldedFigure_Worker {
 
     //-----------------------------------------------------------------------------------------------------------------
     //Search for SubFaces that fold inconsistently in ascending order of number. There is room for speeding up here as well.
-    private int inconsistent_subFace_request() throws InterruptedException { //hierarchyList changes.
+    private int inconsistent_subFace_request(AdditionalEstimationAlgorithm AEA) throws InterruptedException { //hierarchyList changes.
         int kks;
         hierarchyList.restore();//<<<<<<<<<<<<<<<<<<<<<<<<<<<,,
+        AEA.restore();
+
+        int leap = 10;
+        boolean reversePending = false;
 
         for (int ss = 1; ss <= SubFace_valid_number; ss++) {      //<<<<<<<<<<<<<<高速化のため変更。070417
 
+            if (s[ss].reverseSwapFlag) reversePending = false;
+
             int count = s[ss].getFaceIdCount(), pair = count * (count - 1) / 2;
-            bb.rewrite(7, "Current SubFace( " + ss + ") , face count = " + count + " , face pair = " + pair);
+            bb.rewrite(7, "Current SubFace( " + ss + " / " + SubFace_valid_number + " ) , face count = " + count
+                    + " , face pair = " + pair);
             bb.rewrite(8, "Search progress " + Permutation_count(ss));
 
-            kks = s[ss].possible_overlapping_search(hierarchyList);
-            if (kks == 0) {// kks == 0 means that there is no permutation that can overlap
-                swapper.record(ss);
-                return ss;
+            try {
+                kks = s[ss].possible_overlapping_search(hierarchyList, SubFace_valid_number - ss >= leap);
+                if (kks == 0) {// kks == 0 means that there is no permutation that can overlap
+                    swapper.record(ss);
+                    return ss;
+                }
+
+                // Enter the stacking information of the ss th SubFace in hierarchyList.
+                s[ss].enterStackingOfSubFace(AEA);
+
+                boolean se = swapper.shouldEstimate(ss); // side effect
+                if (reversePending || se && ss <= Math.sqrt(SubFace_valid_number)) {
+                    // It is possible in theory that the following line returns a result other than
+                    // success (even as we ran AEA in each step and the current permutation doesn't
+                    // have any immediate contradiction, since something might still go wrong in the
+                    // inference process), but we shall ignore that result here and keep going. The
+                    // reason for this is that stopping at this point is costly in performance, and
+                    // basically the contradiction will make a later SubFace unsolvable anyway. We
+                    // will then count on that SubFace and the swapping algorithm to fix everything.
+                    AEA.run(0);
+                } else if (ss % (3 + ss * ss / 6400) == 0) {
+                    // There's no need to execute run() even fastRun() in every step (that will be
+                    // too slow), so we use the formula above to decide when to run it.
+                    AEA.fastRun();
+                }
+
+            } catch (TimeoutException e) {
+                swapper.reverseSwap(s, ss + (++leap), ss);
+                reversePending = true;
+                ss--; // retry the current depth
+                // We didn't write anything into the hierarchyList in this round, so we can just continue.
             }
-            s[ss].hierarchyList_at_subFace_wo_input(hierarchyList);//Enter the top and bottom information of the ss th SubFace in hierarchyList.
+
         }
       
         // Solution found, perform final checking
         bb.rewrite(10, " ");
         bb.rewrite(9, "Possible solution found...");
-        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(null, hierarchyList, s, 1000); // we don't need much for this
+        AEA = new AdditionalEstimationAlgorithm(null, hierarchyList, s, 1000); // we don't need much for this
         if (AEA.run(SubFace_valid_number) != HierarchyListStatus.SUCCESSFUL_1000) {
             bb.rewrite(9, " ");
             // This rarely happens, but typically it means the solution contradicts some of

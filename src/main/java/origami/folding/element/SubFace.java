@@ -1,9 +1,11 @@
 package origami.folding.element;
 
 import origami.folding.HierarchyList;
+import origami.folding.algorithm.AdditionalEstimationAlgorithm;
 import origami.folding.util.EquivalenceCondition;
 import origami.folding.permutation.ChainPermutationGenerator;
 import origami.folding.permutation.PermutationGenerator;
+import origami.folding.permutation.TimeoutException;
 import origami_editor.editor.component.BulletinBoard;
 
 public class SubFace {//This class folds the development view and estimates the overlap information of the planes of the wire diagram.
@@ -19,6 +21,10 @@ public class SubFace {//This class folds the development view and estimates the 
     int[] faceIdMap;// For fast lookup
 
     BulletinBoard bb;
+
+    // For reverse swapping
+    private int reverseSwapCounter = 1;
+    public boolean reverseSwapFlag = false;
 
     public SubFace() {
         reset();
@@ -72,6 +78,7 @@ public class SubFace {//This class folds the development view and estimates the 
 
     public void Permutation_first() throws InterruptedException {
         if (getFaceIdCount() > 0) {
+            reverseSwapCounter = 1;
             permutationGenerator.reset();
         }
     } //Return to the first permutation.
@@ -90,11 +97,22 @@ public class SubFace {//This class folds the development view and estimates the 
     // ここは　class SubFace の中だよ。
 
     //Start with the current permutation state and look for possible permutations that overlap
-    public int possible_overlapping_search(HierarchyList hierarchyList) throws InterruptedException {//This should not change hierarchyList.
+    public int possible_overlapping_search(HierarchyList hierarchyList, boolean allowTimeout)
+            throws InterruptedException, TimeoutException {// This should not change hierarchyList.
         int mk, ijh;
         ijh = 1;//The initial value of ijh can be anything other than 0.
         while (ijh != 0) { //If ijh == 0, you have reached the end of the digit.
             mk = inconsistent_digits_request(hierarchyList);
+
+            // When it takes too long for a SubFace to find a working permutation, we
+            // strategically postpone it and try again after more stacking information is
+            // determined. We do so by throwing TimeoutException notifying ct_worker to swap
+            // this SubFace in reverse direction.
+            if (allowTimeout && permutationGenerator.getCount() > 3000 * reverseSwapCounter) {
+                reverseSwapCounter++;
+                reverseSwapFlag = true;
+                throw new TimeoutException();
+            }
 
             if (mk == 1000) {
                 return 1000;
@@ -266,10 +284,10 @@ public class SubFace {//This class folds the development view and estimates the 
     }
 
     // Enter the information due to the overlap of SubFace's faces in the upper and lower tables
-    public void hierarchyList_at_subFace_wo_input(HierarchyList hierarchyList) {
+    public void enterStackingOfSubFace(AdditionalEstimationAlgorithm AEA) {
         for (int i = 1; i < faceIdCount; i++) {
             for (int j = i + 1; j <= faceIdCount; j++) {
-                hierarchyList.set(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)], HierarchyList.ABOVE_1);
+                AEA.inferAbove(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]);
             }
         }
     }

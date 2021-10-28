@@ -21,7 +21,8 @@ public class SwappingAlgorithm {
 
     // These two are for preventing cycling swapping over and over.
     private int repetition = 0;
-    private int last;
+    private int lastHigh;
+    private int lastLow;
 
     /** Records a dead-end. */
     public void record(int value) {
@@ -33,7 +34,7 @@ public class SwappingAlgorithm {
         if (high == 0) return;
 
         int low = high / 2;
-        if (high == last) low -= ++repetition;
+        if (high == lastHigh) low -= ++repetition;
         else repetition = 0;
 
         if (low < 1) return; // Swapping algorithm has reached its limit.
@@ -41,8 +42,18 @@ public class SwappingAlgorithm {
         // Perform swap
         System.out.println("swapper.swap(s, " + high + ", " + low + ");");
         swap(s, high, low);
-        last = high;
+        lastHigh = high;
+        lastLow = low;
         high = 0;
+    }
+
+    public boolean shouldEstimate(int s) {
+        if (lastLow == 0) return true;
+        if (s == lastLow) {
+            lastLow = 0;
+            return true;
+        }
+        return false;
     }
 
     public void swap(SubFace[] s, int high, int low) {
@@ -52,5 +63,13 @@ public class SwappingAlgorithm {
             s[i].clearTempGuide();
         }
         s[low] = temp;
+    }
+
+    public void reverseSwap(SubFace[] s, int high, int low) {
+        SubFace temp = s[low];
+        for (int i = low; i < high; i++) {
+            s[i] = s[i + 1];
+        }
+        s[high] = temp;
     }
 }

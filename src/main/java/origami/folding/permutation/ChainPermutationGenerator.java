@@ -81,7 +81,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
             return 1;
         } else if (looped) {
             int i = 1; // Check if we have returned to the save point.
-            while (swapHistory[i] == saveHistory[2][i]) i++;
+            while (swapHistory[i] == saveHistory[2][i] && i<= numDigits) i++;
             if (swapHistory[i] > saveHistory[2][i]) {
                 looped = false;
                 return 0;
