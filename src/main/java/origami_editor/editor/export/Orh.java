@@ -667,7 +667,7 @@ public class Orh {
             pw.println("<i_anti_alias>" + applicationModel.getAntiAlias() + "</i_anti_alias>");
             pw.println("</settei>");
 
-            GridModel gridModel = save.getGridModel();
+            GridModel gridModel = save.getGridModel() != null ? save.getGridModel() : new GridModel();
             pw.println("<Kousi>");
             pw.println("<i_kitei_jyoutai>" + gridModel.getBaseState() + "</i_kitei_jyoutai>");
             pw.println("<nyuuryoku_kitei>" + gridModel.getGridSize() + "</nyuuryoku_kitei>");
@@ -698,7 +698,7 @@ public class Orh {
 
             pw.println("<oriagarizu>");
 
-            FoldedFigureModel foldedFigureModel = save.getFoldedFigureModel();
+            FoldedFigureModel foldedFigureModel = save.getFoldedFigureModel() != null ? save.getFoldedFigureModel() : new FoldedFigureModel();
             pw.println("<oriagarizu_F_color_R>" + foldedFigureModel.getFrontColor().getRed() + "</oriagarizu_F_color_R>");
             pw.println("<oriagarizu_F_color_G>" + foldedFigureModel.getFrontColor().getGreen() + "</oriagarizu_F_color_G>");
             pw.println("<oriagarizu_F_color_B>" + foldedFigureModel.getFrontColor().getBlue() + "</oriagarizu_F_color_B>");

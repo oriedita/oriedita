@@ -47,9 +47,6 @@ public class Save implements Serializable {
         circles = new ArrayList<>();
         points = new ArrayList<>();
         auxLineSegments = new ArrayList<>();
-        canvasModel = new CanvasModel();
-        gridModel = new GridModel();
-        foldedFigureModel = new FoldedFigureModel();
     }
 
     public void addPoint(Point p) {
