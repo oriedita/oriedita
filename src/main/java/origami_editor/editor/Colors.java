@@ -7,6 +7,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Colors {
+    public static final Color GRID_LINE_DARK = new Color(54, 54, 54);
+    public static final Color GRID_SCALE_DARK = new Color(17, 75, 10);
+
+    public static final Color GRID_LINE = new Color(230, 230, 230);
+    public static final Color GRID_SCALE = new Color(180, 200, 180);
+
+    public static final Color FIGURE_FRONT_DARK = new Color(129, 15, 94);
+    public static final Color FIGURE_BACK_DARK = new Color(89, 89, 89);
+
+    public static final Color FIGURE_FRONT = new Color(255, 255, 50);
+    public static final Color FIGURE_BACK = new Color(233, 233, 233);
+
     private static final Map<Color, Color> colorMap;
     private static final Map<Color, Color> darkColorMap;
 

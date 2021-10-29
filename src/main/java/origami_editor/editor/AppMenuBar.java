@@ -168,17 +168,17 @@ public class AppMenuBar extends JMenuBar {
 
             if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(null, "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
                 if (FlatLaf.isLafDark()) {
-                    app.gridModel.setGridColor(new Color(54, 54, 54));
-                    app.gridModel.setGridScaleColor(new Color(17, 75, 10));
+                    app.applicationModel.setGridColor(Colors.GRID_LINE_DARK);
+                    app.applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
 
-                    app.foldedFigureModel.setFrontColor(new Color(129, 15, 94));
-                    app.foldedFigureModel.setBackColor(new Color(89, 89, 89));
+                    app.foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT_DARK);
+                    app.foldedFigureModel.setBackColor(Colors.FIGURE_BACK_DARK);
                 } else {
-                    app.gridModel.setGridColor(new Color(230, 230, 230));
-                    app.gridModel.setGridScaleColor(new Color(180, 200, 180));
+                    app.applicationModel.setGridColor(Colors.GRID_LINE);
+                    app.applicationModel.setGridScaleColor(Colors.GRID_SCALE);
 
-                    app.foldedFigureModel.setFrontColor(new Color(255, 255, 50));
-                    app.foldedFigureModel.setBackColor(new Color(233, 233, 233));
+                    app.foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT);
+                    app.foldedFigureModel.setBackColor(Colors.FIGURE_BACK);
                 }
             }
         });

@@ -1,5 +1,6 @@
 package origami_editor.graphic2d.grid;
 
+import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.GridModel;
 import origami.crease_pattern.element.LineSegment;
 import origami.Epsilon;
@@ -435,12 +436,15 @@ public class Grid {
         return ((-200 - Epsilon.UNKNOWN_1EN6 <= t_tmp.getX()) && (t_tmp.getX() <= 200 + Epsilon.UNKNOWN_1EN6)) && ((-200 - Epsilon.UNKNOWN_1EN6 <= t_tmp.getY()) && (t_tmp.getY() <= 200 + Epsilon.UNKNOWN_1EN6));
     }
 
+    public void setData(ApplicationModel applicationModel) {
+        setGridLineWidth(applicationModel.getGridLineWidth());
+        setGridScaleColor(applicationModel.getGridScaleColor());
+        setGridColor(applicationModel.getGridColor());
+    }
+
     public void setGridConfigurationData(GridModel gridModel) {
-        setGridLineWidth(gridModel.getGridLineWidth());
         setGridSize(gridModel.getGridSize());
         setGrid(gridModel.determineGridXLength(), gridModel.determineGridYLength(), gridModel.getGridAngle());
-        setGridScaleColor(gridModel.getGridScaleColor());
-        setGridColor(gridModel.getGridColor());
         setHorizontalScalePosition(gridModel.getHorizontalScalePosition());
         setVerticalScalePosition(gridModel.getVerticalScalePosition());
         setHorizontalScaleInterval(gridModel.getIntervalGridSize());

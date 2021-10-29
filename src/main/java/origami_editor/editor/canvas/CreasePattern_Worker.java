@@ -148,13 +148,19 @@ public class CreasePattern_Worker {
             app.applicationModel.set(memo1.getApplicationModel());
         }
 
-        app.canvasModel.set(memo1.getCanvasModel());
+        if (memo1.getCanvasModel() != null) {
+            app.canvasModel.set(memo1.getCanvasModel());
+        }
 
-        app.gridModel.set(memo1.getGridModel());
+        if (memo1.getGridModel() != null) {
+            app.gridModel.set(memo1.getGridModel());
+        }
 
-        app.foldedFigureModel.setFrontColor(memo1.getFoldedFigureModel().getFrontColor());
-        app.foldedFigureModel.setBackColor(memo1.getFoldedFigureModel().getBackColor());
-        app.foldedFigureModel.setLineColor(memo1.getFoldedFigureModel().getLineColor());
+        if (memo1.getFoldedFigureModel() != null) {
+            app.foldedFigureModel.setFrontColor(memo1.getFoldedFigureModel().getFrontColor());
+            app.foldedFigureModel.setBackColor(memo1.getFoldedFigureModel().getBackColor());
+            app.foldedFigureModel.setLineColor(memo1.getFoldedFigureModel().getLineColor());
+        }
     }
 
     public String setMemo_for_redo_undo(Save save) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用
@@ -972,6 +978,10 @@ public class CreasePattern_Worker {
 
     public void selectConnected(Point p) {
         this.foldLineSet.selectProbablyConnected(p);
+    }
+
+    public void setData(ApplicationModel applicationModel) {
+        grid.setData(applicationModel);
     }
 
     //30 30 30 30 30 30 30 30 30 30 30 30 除け_線_変換
