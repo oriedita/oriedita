@@ -30,6 +30,7 @@ public class AdditionalEstimationAlgorithm {
     private final BulletinBoard bb;
     private final HierarchyList hierarchyList;
     private final SubFace[] subFaces; // indices start from 1
+    private final int count;
 
     private final ItalianoAlgorithm[] IA;
     private final PseudoListMatrix relationObservers;
@@ -40,10 +41,16 @@ public class AdditionalEstimationAlgorithm {
     public EquivalenceCondition errorPos;
 
     public AdditionalEstimationAlgorithm(BulletinBoard bb, HierarchyList hierarchyList, SubFace[] s, int capacity) {
+        this(bb, hierarchyList, s, s.length - 1, capacity);
+    }
+
+    public AdditionalEstimationAlgorithm(BulletinBoard bb, HierarchyList hierarchyList, SubFace[] s, int count,
+            int capacity) {
         this.bb = bb;
         this.hierarchyList = hierarchyList;
-        this.subFaces = s;
-        int count = subFaces.length;
+        this.count = ++count;
+        this.subFaces = new SubFace[count];
+        System.arraycopy(s, 0, this.subFaces, 0, count); // We keep a copy, since s might get swapped.
         changeList = new StackArray(count, capacity);
         IA = new ItalianoAlgorithm[count];
         relationObservers = new PseudoListMatrix(hierarchyList.getFacesTotal());
@@ -53,15 +60,19 @@ public class AdditionalEstimationAlgorithm {
     public HierarchyListStatus run(int completedSubFaces) throws InterruptedException {
         int new_relations, total = 0;
 
-        System.out.println("additional_estimation start---------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
+        if (bb != null) {
+            System.out.println("additional_estimation start---------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
+        }
 
         do {
             new_relations = 0;
-            System.out.println("additional_estimation------------------------");
+            if (bb != null) {
+                System.out.println("additional_estimation------------------------");
+            }
 
             int iS = 0;
             try {
-                for (iS = completedSubFaces + 1; iS < subFaces.length && new_relations < MAX_NEW_RELATIONS; iS++) {
+                for (iS = completedSubFaces + 1; iS < count && new_relations < MAX_NEW_RELATIONS; iS++) {
                     if (IA[iS] == null) {
                         // We initialize ItalianoAlgorithm one by one instead of all at once,
                         // so that the changes are flushed immediately after initialization,
@@ -115,16 +126,35 @@ public class AdditionalEstimationAlgorithm {
 
             // ----------------
 
-            System.out.println("Total number of inferred relations ＝ " + new_relations);
             if (bb != null) {
+                System.out.println("Total number of inferred relations ＝ " + new_relations);
                 bb.rewrite(10, "           Total number of inferred relations ＝ " + (total += new_relations));
             }
 
         } while (new_relations > 0);
 
-        System.out.println("additional_estimation finished------------------------＊＊＊＊ここまで20150310＊＊＊＊＊＊＊＊＊＊＊");
+        if (bb != null) {
+            System.out.println("additional_estimation finished------------------------＊＊＊＊ここまで20150310＊＊＊＊＊＊＊＊＊＊＊");
+        }
 
         return HierarchyListStatus.SUCCESSFUL_1000;
+    }
+
+    /** This is a faster version of run(). */
+    public void fastRun() {
+        try {
+            for (int iS = 1; iS < count; iS++) {
+                checkTransitivity(iS);
+            }
+            for (EquivalenceCondition tg : hierarchyList.getEquivalenceConditions()) {
+                checkTripleConstraint(tg);
+            }
+            for (EquivalenceCondition tg : hierarchyList.getUEquivalenceConditions()) {
+                checkQuadrupleConstraint(tg);
+            }
+        } catch (InferenceFailureException e) {
+            // We shall ignore any exception (see the comments in FoldedFigure_Worker).
+        }
     }
 
     private void initializeItalianoAlgorithm(int s) {
@@ -150,7 +180,7 @@ public class AdditionalEstimationAlgorithm {
      * the dynamic use case here. I re-implemented it using the Italiano algorithm,
      * which is way faster here.
      */
-    public int checkTransitivity(int s) throws InferenceFailureException {
+    private int checkTransitivity(int s) throws InferenceFailureException {
         int changes = 0;
         for (int n : changeList.flush(s)) {
             changes += tryInferAbove(subFaces[s].getFaceId(n >>> 16),
@@ -159,7 +189,7 @@ public class AdditionalEstimationAlgorithm {
         return changes;
     }
 
-    public int checkTripleConstraint(EquivalenceCondition ec) throws InferenceFailureException {
+    private int checkTripleConstraint(EquivalenceCondition ec) throws InferenceFailureException {
         int changes = 0;
         int a = ec.getA(), b = ec.getB(), d = ec.getD();
         if (hierarchyList.get(a, b) == ABOVE) {
@@ -175,7 +205,7 @@ public class AdditionalEstimationAlgorithm {
         return changes;
     }
 
-    public int checkQuadrupleConstraint(EquivalenceCondition ec) throws InferenceFailureException {
+    private int checkQuadrupleConstraint(EquivalenceCondition ec) throws InferenceFailureException {
         int changes = 0;
         int a = ec.getA(), b = ec.getB(), c = ec.getC(), d = ec.getD();
 
@@ -239,14 +269,17 @@ public class AdditionalEstimationAlgorithm {
     }
 
     /** Make inference that i > j. */
-    public int tryInferAbove(int i, int j) throws InferenceFailureException {
-        int changes = 0;
+    private int tryInferAbove(int i, int j) throws InferenceFailureException {
         if (hierarchyList.get(i, j) == BELOW) {
             throw new InferenceFailureException(i, j);
         }
+        return inferAbove(i, j) ? 1 : 0;
+    }
+
+    /** Caller of this method must be certain that no error will occur. */
+    public boolean inferAbove(int i, int j) {
         if (hierarchyList.isEmpty(i, j)) {
             hierarchyList.set(i, j, ABOVE);
-            changes++;
 
             // Notifying the ItalianoAlgorithm to update.
             Iterable<Integer> it = i < j ? relationObservers.get(i, j) : relationObservers.get(j, i);
@@ -259,8 +292,21 @@ public class AdditionalEstimationAlgorithm {
                     IA[s].add(I, J);
                 }
             }
+            return true;
         }
-        return changes;
+        return false;
+    }
+
+    public void initialize() {
+        for (int i = 1; i < count; i++) {
+            initializeItalianoAlgorithm(i);
+            changeList.flush(i); // There shouldn't be anything, but just in case.
+            IA[i].save();
+        }
+    }
+
+    public void restore() {
+        for (int i = 1; i < count; i++) IA[i].restore();
     }
 
     private static class InferenceFailureException extends Exception {

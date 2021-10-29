@@ -28,6 +28,9 @@ public class ItalianoAlgorithm {
      */
     private final int[][] matrix; // 1-based
 
+    /** This is used only in the realtime AEA. */
+    private int[][] backup;
+
     /**
      * Prevents heap memory overflow. Still, for large projects, it is necessary to
      * allocate larger memory for JVM in the first place. Accordingly, ArrayDeque is
@@ -51,6 +54,21 @@ public class ItalianoAlgorithm {
         this.matrix = new int[size + 1][size + 1];
         for (int i = 1; i <= size; i++) {
             matrix[i][i] = emptyNode;
+        }
+    }
+
+    public void save() {
+        backup = new int[size + 1][size + 1];
+        copy(matrix, backup);
+    }
+
+    public void restore() {
+        copy(backup, matrix);
+    }
+
+    private void copy(int[][] src, int[][] target) {
+        for (int i = 1; i <= size; i++) {
+            System.arraycopy(src[i], 1, target[i], 1, size);
         }
     }
 
