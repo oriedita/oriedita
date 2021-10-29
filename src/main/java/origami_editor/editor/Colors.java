@@ -33,6 +33,7 @@ public class Colors {
         add(Color.cyan, Color.cyan, new Color(0, 100, 100));
         add(Color.magenta, Color.magenta, new Color(100, 0, 100));
         add(Color.green, Color.green, new Color(0, 100, 0));
+        add(new Color(150, 150, 150), new Color(150, 150, 150), new Color(50, 50, 50));
         add(new Color(255, 0, 0, 75), new Color(255, 0, 0, 75), new Color(255, 0, 0, 75));
         add(new Color(230, 230, 230), new Color(230, 230, 230), new Color(54, 54, 54));
     }
@@ -44,5 +45,23 @@ public class Colors {
 
     public static Color get(Color color) {
         return FlatLaf.isLafDark() ? darkColorMap.getOrDefault(color, color) : colorMap.getOrDefault(color, color);
+    }
+
+    /**
+     * Reverse lookup of colors. Find key in darkColorMap when going from light to dark, find value in darkColormap when going from dark to light.
+     * @param color Current color
+     * @param isDark The desired mode for this color to be in.
+     * @return Restored color
+     */
+    public static Color restore(Color color, boolean isDark) {
+        if (color == null) {
+            return null;
+        }
+
+        if (isDark) {
+            return darkColorMap.getOrDefault(color, color);
+        }
+
+        return darkColorMap.entrySet().stream().filter(entry -> color.equals(entry.getValue())).map(Map.Entry::getKey).findFirst().orElse(color);
     }
 }

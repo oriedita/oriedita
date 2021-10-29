@@ -16,6 +16,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
+import java.util.Arrays;
 
 public class LeftPanel {
     private final App app;
@@ -1710,6 +1711,16 @@ public class LeftPanel {
 
         gridColorButton.setIcon(new ColorIcon(data.getGridColor()));
         intervalGridColorButton.setIcon(new ColorIcon(data.getGridScaleColor()));
+
+        if (e.getPropertyName() == null || e.getPropertyName().equals("laf")) {
+            // The look and feel is not set yet, so it must be read from the applicationModel
+            boolean isDark = data.determineLafDark();
+
+            for (JButton button : Arrays.asList(colBlackButton, colRedButton, colBlueButton, colCyanButton, toMountainButton, toValleyButton, toAuxButton, toEdgeButton, senbun_henkan2Button)) {
+                button.setForeground(Colors.restore(button.getForeground(), isDark));
+                button.setBackground(Colors.restore(button.getBackground(), isDark));
+            }
+        }
     }
 
     public void setData(PropertyChangeEvent e, CanvasModel data) {
@@ -1759,33 +1770,33 @@ public class LeftPanel {
         }
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("lineColor")) {
-            Color gray = new Color(150, 150, 150);
+            Color gray = Colors.get(new Color(150, 150, 150));
 
             colBlackButton.setBackground(gray);
             colRedButton.setBackground(gray);
             colBlueButton.setBackground(gray);
             colCyanButton.setBackground(gray);
-            colBlackButton.setForeground(Color.black);
-            colRedButton.setForeground(Color.black);
-            colBlueButton.setForeground(Color.black);
-            colCyanButton.setForeground(Color.black);
+            colBlackButton.setForeground(Colors.get(Color.black));
+            colRedButton.setForeground(Colors.get(Color.black));
+            colBlueButton.setForeground(Colors.get(Color.black));
+            colCyanButton.setForeground(Colors.get(Color.black));
 
             switch (data.getLineColor()) {
                 case BLACK_0:
-                    colBlackButton.setBackground(Color.black);
-                    colBlackButton.setForeground(Color.white);
+                    colBlackButton.setBackground(Colors.get(Color.black));
+                    colBlackButton.setForeground(Colors.get(Color.white));
                     break;
                 case RED_1:
-                    colRedButton.setBackground(Color.red);
-                    colRedButton.setForeground(Color.black);
+                    colRedButton.setBackground(Colors.get(Color.red));
+                    colRedButton.setForeground(Colors.get(Color.black));
                     break;
                 case BLUE_2:
-                    colBlueButton.setBackground(Color.blue);
-                    colBlueButton.setForeground(Color.black);
+                    colBlueButton.setBackground(Colors.get(Color.blue));
+                    colBlueButton.setForeground(Colors.get(Color.black));
                     break;
                 case CYAN_3:
-                    colCyanButton.setBackground(Color.cyan);
-                    colCyanButton.setForeground(Color.black);
+                    colCyanButton.setBackground(Colors.get(Color.cyan));
+                    colCyanButton.setForeground(Colors.get(Color.black));
             }
         }
 
@@ -1798,19 +1809,19 @@ public class LeftPanel {
 
             switch (data.getMouseMode()) {
                 case CREASE_MAKE_MOUNTAIN_23:
-                    toMountainButton.setBackground(Color.red);
+                    toMountainButton.setBackground(Colors.get(Color.red));
                     break;
                 case CREASE_MAKE_VALLEY_24:
-                    toValleyButton.setBackground(Color.blue);
+                    toValleyButton.setBackground(Colors.get(Color.blue));
                     break;
                 case CREASE_MAKE_EDGE_25:
-                    toEdgeButton.setBackground(Color.black);
+                    toEdgeButton.setBackground(Colors.get(Color.black));
                     break;
                 case CREASE_MAKE_AUX_60:
-                    toAuxButton.setBackground(new Color(100, 200, 200));
+                    toAuxButton.setBackground(Colors.get(new Color(100, 200, 200)));
                     break;
                 case CREASE_TOGGLE_MV_58:
-                    senbun_henkan2Button.setBackground(new Color(138, 43, 226));
+                    senbun_henkan2Button.setBackground(Colors.get(new Color(138, 43, 226)));
                     break;
             }
         }
