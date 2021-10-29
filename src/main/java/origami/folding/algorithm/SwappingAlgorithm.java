@@ -1,5 +1,7 @@
 package origami.folding.algorithm;
 
+import java.util.*;
+
 import origami.folding.element.SubFace;
 
 /**
@@ -8,21 +10,26 @@ import origami.folding.element.SubFace;
  * The original Orihime algorithm chooses an initial SubFace ordering to perform
  * the exhaustive search, but it is very commonly the case that the ordering is
  * not optimal, leading to a phenomenon where the search reaches the same
- * dead-end at a certain depth over and over.
+ * dead-end at a certain depth over and over. The idea of swapping algorithm is
+ * to swap the order of the SubFace reaching a dead-end to a earlier position,
+ * and doing so generally improves ths searching performance.
  * 
- * Previously, I defined the notion of "bouncing" and performed swapping by
- * detecting the bouncing. However, for very large CPs, this strategy is still
- * too slow. In this class, I choose a much more eager strategy, and it proved
- * to be a lot more efficient especially for giant CPs.
+ * One problem that may arises with the swapping algorithm is looping, where two
+ * or more SubFaces swap in a loop (and possibly reset each other during the
+ * process). In order to prevent this, the swapping algorithm now implements a
+ * hash table recording the visited SubFace sequence. If the same sequence
+ * reappears and swapping is again requested, it will introduce an unvisited
+ * SubFace to the game to spice things up. This has proven to be quite effective
+ * in breaking the loop.
  */
 public class SwappingAlgorithm {
 
     private int high;
-
-    // These two are for preventing cycling swapping over and over.
-    private int repetition = 0;
-    private int lastHigh;
     private int lastLow;
+
+    // For preventing cycling swapping over and over.
+    private final Set<Long> history = new HashSet<>();
+    private final Set<Integer> visited = new HashSet<>();
 
     /** Records a dead-end. */
     public void record(int value) {
@@ -33,18 +40,34 @@ public class SwappingAlgorithm {
     public void process(SubFace[] s) {
         if (high == 0) return;
 
-        int low = high / 2;
-        if (high == lastHigh) low -= ++repetition;
-        else repetition = 0;
-
-        if (low < 1) return; // Swapping algorithm has reached its limit.
+        long hash = getHash(s, high);
+        if (history.contains(hash)) {
+            // Introduce an unvisited SubFace to the game.
+            boolean found = false;
+            for (int i = 1; i < s.length && !found; i++) {
+                if (!visited.contains(s[i].id)) {
+                    swap(s, i, 1);
+                    hash = getHash(s, ++high);
+                    found = true;
+                }
+            }
+            if (!found) return; // Let's hope that this never happen, or we're out of tricks.
+        }
+        history.add(hash);
 
         // Perform swap
-        System.out.println("swapper.swap(s, " + high + ", " + low + ");");
+        int low = high / 2;
         swap(s, high, low);
-        lastHigh = high;
         lastLow = low;
         high = 0;
+    }
+
+    private long getHash(SubFace[] s, int high) {
+        int[] ids = new int[high];
+        for (int i = 0; i < high; i++) {
+            ids[i] = s[i + 1].id;
+        }
+        return Arrays.hashCode(ids);
     }
 
     public boolean shouldEstimate(int s) {
@@ -57,6 +80,7 @@ public class SwappingAlgorithm {
     }
 
     public void swap(SubFace[] s, int high, int low) {
+        System.out.println("swapper.swap(s, " + high + ", " + low + ");");
         SubFace temp = s[high];
         for (int i = high; i > low; i--) {
             s[i] = s[i - 1];
@@ -71,5 +95,9 @@ public class SwappingAlgorithm {
             s[i] = s[i + 1];
         }
         s[high] = temp;
+    }
+
+    public void visit(SubFace s) {
+        visited.add(s.id);
     }
 }

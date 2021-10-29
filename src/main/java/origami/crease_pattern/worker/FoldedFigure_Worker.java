@@ -349,6 +349,7 @@ public class FoldedFigure_Worker {
 
         for (int i = 1; i <= SubFaceTotal; i++) {
             s[i] = s0[priorityMap[i]];
+            s[i].id = i; // assign id
         }
 
         // Make a guidebook for each valid SubFace.
@@ -473,6 +474,7 @@ public class FoldedFigure_Worker {
 
         for (int ss = 1; ss <= SubFace_valid_number; ss++) {      //<<<<<<<<<<<<<<高速化のため変更。070417
 
+            swapper.visit(s[ss]);
             if (s[ss].reverseSwapFlag) reversePending = false;
 
             int count = s[ss].getFaceIdCount(), pair = count * (count - 1) / 2;

@@ -9,6 +9,9 @@ import origami.folding.permutation.TimeoutException;
 import origami_editor.editor.component.BulletinBoard;
 
 public class SubFace {//This class folds the development view and estimates the overlap information of the planes of the wire diagram.
+
+    public int id; // For identifying the SubFace during swapping.
+
     //Used to utilize records. Use only in the ClassTable class
     int faceIdCount;//The number of Faces (the faces of the unfolded view before folding) that overlap with SubFace (the faces of the wire diagram obtained by folding and estimating).
     int[] faceIdList;//Record the id number of the Face included in the S plane. That this is 20
