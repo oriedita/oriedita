@@ -28,7 +28,7 @@ public class SwappingAlgorithm {
     private int lastLow;
 
     // For preventing cycling swapping over and over.
-    private final Set<Long> history = new HashSet<>();
+    private final Set<Integer> history = new HashSet<>();
     private final Set<Integer> visited = new HashSet<>();
 
     /** Records a dead-end. */
@@ -40,7 +40,7 @@ public class SwappingAlgorithm {
     public void process(SubFace[] s) {
         if (high == 0) return;
 
-        long hash = getHash(s, high);
+        int hash = getHash(s, high);
         if (history.contains(hash)) {
             // Introduce an unvisited SubFace to the game.
             boolean found = false;
@@ -62,7 +62,7 @@ public class SwappingAlgorithm {
         high = 0;
     }
 
-    private long getHash(SubFace[] s, int high) {
+    private int getHash(SubFace[] s, int high) {
         int[] ids = new int[high];
         for (int i = 0; i < high; i++) {
             ids[i] = s[i + 1].id;

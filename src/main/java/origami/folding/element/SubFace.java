@@ -295,6 +295,15 @@ public class SubFace {//This class folds the development view and estimates the 
         }
     }
 
+    // Enter the information due to the overlap of SubFace's faces in the upper and lower tables
+    public void enterStackingOfSubFace(HierarchyList hierarchyList) {
+        for (int i = 1; i < faceIdCount; i++) {
+            for (int j = i + 1; j <= faceIdCount; j++) {
+                hierarchyList.set(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)], HierarchyList.ABOVE_1);
+            }
+        }
+    }
+
     /** Prepare a guidebook for the permutation generator in SubFace. */
     public void setGuideMap(HierarchyList hierarchyList) throws InterruptedException {
         int[] ueFaceId = new int[faceIdCount + 1];

@@ -436,16 +436,19 @@ public class FoldedFigure_Worker {
         bb.write(" ");
         int ms, Sid;
 
-        swapper = new SwappingAlgorithm();
+        AdditionalEstimationAlgorithm AEA = null;
+        if (swap) {
+            swapper = new SwappingAlgorithm();
 
-        // Create a smaller "realtime AEA" to assist the search. Since AEA is now a very
-        // fast algorithm, we have the luxury of using it every step of the search to
-        // infer more stacking relations from our current set of permutation choices,
-        // and this will greatly speed up the permutation generating (because of the
-        // temporary guide mechanism) of later SubFaces.
-        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(null, hierarchyList, s, SubFace_valid_number, 1000);
-        AEA.initialize();
-
+            // Create a smaller "realtime AEA" to assist the search. Since AEA is now a very
+            // fast algorithm, we have the luxury of using it every step of the search to
+            // infer more stacking relations from our current set of permutation choices,
+            // and this will greatly speed up the permutation generating (because of the
+            // temporary guide mechanism) of later SubFaces.
+            AEA = new AdditionalEstimationAlgorithm(null, hierarchyList, s, SubFace_valid_number, 1000);
+            AEA.initialize();
+        }
+        
         Sid = 1;//The initial value of Sid can be anything other than 0.
         while (Sid != 0) { //If Sid == 0, it means that even the smallest number of SubFace has been searched.
 
@@ -466,18 +469,21 @@ public class FoldedFigure_Worker {
     //Search for SubFaces that fold inconsistently in ascending order of number. There is room for speeding up here as well.
     private int inconsistent_subFace_request(AdditionalEstimationAlgorithm AEA) throws InterruptedException { //hierarchyList changes.
         int kks;
-        hierarchyList.restore();//<<<<<<<<<<<<<<<<<<<<<<<<<<<,,
-        AEA.restore();
+        boolean swap = AEA != null;
+        hierarchyList.restore();// <<<<<<<<<<<<<<<<<<<<<<<<<<<,,
+        if (swap) AEA.restore();
 
         int leap = 10;
         int reversePending = 0;
 
-        for (int ss = 1; ss <= SubFace_valid_number; ss++) {      //<<<<<<<<<<<<<<高速化のため変更。070417
+        for (int ss = 1; ss <= SubFace_valid_number; ss++) { // <<<<<<<<<<<<<<高速化のため変更。070417
 
-            swapper.visit(s[ss]);
-            if (s[ss].reverseSwapFlag) {
-                reversePending--;
-                s[ss].reverseSwapFlag = false;
+            if (swap) {
+                swapper.visit(s[ss]);
+                if (s[ss].reverseSwapFlag) {
+                    reversePending--;
+                    s[ss].reverseSwapFlag = false;
+                }
             }
 
             int count = s[ss].getFaceIdCount(), pair = count * (count - 1) / 2;
@@ -486,29 +492,33 @@ public class FoldedFigure_Worker {
             bb.rewrite(8, "Search progress " + Permutation_count(ss));
 
             try {
-                kks = s[ss].possible_overlapping_search(hierarchyList, SubFace_valid_number - ss >= leap);
+                kks = s[ss].possible_overlapping_search(hierarchyList, swap && SubFace_valid_number - ss >= leap);
                 if (kks == 0) {// kks == 0 means that there is no permutation that can overlap
                     swapper.record(ss);
                     return ss;
                 }
 
-                // Enter the stacking information of the ss th SubFace in hierarchyList.
-                s[ss].enterStackingOfSubFace(AEA);
+                if(swap) {
+                    // Enter the stacking information of the ss th SubFace in hierarchyList.
+                    s[ss].enterStackingOfSubFace(AEA);
 
-                boolean se = swapper.shouldEstimate(ss); // side effect
-                if (reversePending > 0 || se && ss <= Math.sqrt(SubFace_valid_number)) {
-                    // It is possible in theory that the following line returns a result other than
-                    // success (even as we ran AEA in each step and the current permutation doesn't
-                    // have any immediate contradiction, since something might still go wrong in the
-                    // inference process), but we shall ignore that result here and keep going. The
-                    // reason for this is that stopping at this point is costly in performance, and
-                    // basically the contradiction will make a later SubFace unsolvable anyway. We
-                    // will then count on that SubFace and the swapping algorithm to fix everything.
-                    AEA.run(0);
-                } else if (ss % (3 + ss * ss / 6400) == 0) {
-                    // There's no need to execute run() even fastRun() in every step (that will be
-                    // too slow), so we use the formula above to decide when to run it.
-                    AEA.fastRun();
+                    boolean se = swapper.shouldEstimate(ss); // side effect
+                    if (reversePending > 0 || se && ss <= Math.sqrt(SubFace_valid_number)) {
+                        // It is possible in theory that the following line returns a result other than
+                        // success (even as we ran AEA in each step and the current permutation doesn't
+                        // have any immediate contradiction, since something might still go wrong in the
+                        // inference process), but we shall ignore that result here and keep going. The
+                        // reason for this is that stopping at this point is costly in performance, and
+                        // basically the contradiction will make a later SubFace unsolvable anyway. We
+                        // will then count on that SubFace and the swapping algorithm to fix everything.
+                        AEA.run(0);
+                    } else if (ss % (3 + ss * ss / 6400) == 0) {
+                        // There's no need to execute run() even fastRun() in every step (that will be
+                        // too slow), so we use the formula above to decide when to run it.
+                        AEA.fastRun();
+                    }
+                } else {
+                    s[ss].enterStackingOfSubFace(hierarchyList);
                 }
 
             } catch (TimeoutException e) {
