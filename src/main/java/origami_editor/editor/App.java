@@ -238,6 +238,10 @@ public class App {
             }
         });
 
+        applicationModel.addPropertyChangeListener(e -> {
+            mainCreasePatternWorker.setData(applicationModel);
+        });
+
         applicationModel.reload();
 
         gridModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setGridConfigurationData(gridModel));

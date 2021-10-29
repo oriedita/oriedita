@@ -2,6 +2,7 @@ package origami_editor.editor.databinding;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import origami_editor.editor.Colors;
 import origami_editor.editor.LineStyle;
 
 import java.awt.*;
@@ -50,6 +51,10 @@ public class ApplicationModel implements Serializable {
     private String laf;
     private Dimension windowSize;
     private List<File> recentFileList;
+
+    private Color gridColor;
+    private Color gridScaleColor;
+    private int gridLineWidth;
 
     public ApplicationModel() {
         reset();
@@ -186,6 +191,10 @@ public class ApplicationModel implements Serializable {
         windowPosition = null;
         windowState = Frame.NORMAL;
         windowSize = null;
+
+        gridColor = Colors.GRID_LINE;
+        gridScaleColor = Colors.GRID_SCALE;
+        gridLineWidth = 1;
 
         laf = FlatLightLaf.class.getName();
 
@@ -538,6 +547,10 @@ public class ApplicationModel implements Serializable {
         windowPosition = applicationModel.getWindowPosition();
         windowState = applicationModel.getWindowState();
 
+        gridColor = applicationModel.getGridColor();
+        gridScaleColor = applicationModel.getGridScaleColor();
+        gridLineWidth = applicationModel.getGridLineWidth();
+
         laf = applicationModel.getLaf();
         recentFileList = applicationModel.getRecentFileList().stream().filter(File::exists).collect(Collectors.toList());
 
@@ -583,4 +596,51 @@ public class ApplicationModel implements Serializable {
     public void reload() {
         this.pcs.firePropertyChange(null, null, null);
     }
+
+
+    public Color getGridColor() {
+        return gridColor;
+    }
+
+    public void setGridColor(Color newGridColor) {
+        Color oldGridColor = this.gridColor;
+        this.gridColor = newGridColor;
+
+        this.pcs.firePropertyChange("gridColor", oldGridColor, newGridColor);
+    }
+
+    public Color getGridScaleColor() {
+        return gridScaleColor;
+    }
+
+    public void setGridScaleColor(Color newGridScaleColor) {
+        Color oldGridScaleColor = this.gridScaleColor;
+        this.gridScaleColor = newGridScaleColor;
+        this.pcs.firePropertyChange("gridScaleColor", oldGridScaleColor, newGridScaleColor);
+    }
+
+    public int getGridLineWidth() {
+        return gridLineWidth;
+    }
+
+    public void setGridLineWidth(int newGridLineWidth) {
+        int oldGridLineWidth = this.gridLineWidth;
+        this.gridLineWidth = newGridLineWidth;
+        this.pcs.firePropertyChange("gridLineWidth", oldGridLineWidth, newGridLineWidth);
+    }
+
+
+    public void decreaseGridLineWidth() {
+        int gridLineWidth = this.gridLineWidth - 2;
+        if (gridLineWidth < 1) {
+            gridLineWidth = 1;
+        }
+
+        setGridLineWidth(gridLineWidth);
+    }
+
+    public void increaseGridLineWidth() {
+        setGridLineWidth(gridLineWidth + 2);
+    }
+
 }

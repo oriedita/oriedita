@@ -20,9 +20,6 @@ public class GridModel implements Serializable {
     private double gridYB;
     private double gridYC;
     private double gridAngle;
-    private Color gridColor;
-    private Color gridScaleColor;
-    private int gridLineWidth;
     private Grid.State baseState;
     private int verticalScalePosition;
     private int horizontalScalePosition;
@@ -40,9 +37,6 @@ public class GridModel implements Serializable {
     }
 
     public void reset() {
-        gridColor = new Color(230, 230, 230);
-        gridScaleColor = new Color(180, 200, 180);
-        gridLineWidth = 1;
         gridSize = 8;
         baseState = Grid.State.WITHIN_PAPER;
 
@@ -57,52 +51,6 @@ public class GridModel implements Serializable {
         resetGridY();
 
         this.pcs.firePropertyChange(null, null, null);
-    }
-
-
-    public Color getGridColor() {
-        return gridColor;
-    }
-
-    public void setGridColor(Color newGridColor) {
-        Color oldGridColor = this.gridColor;
-        this.gridColor = newGridColor;
-
-        this.pcs.firePropertyChange("gridColor", oldGridColor, newGridColor);
-    }
-
-    public Color getGridScaleColor() {
-        return gridScaleColor;
-    }
-
-    public void setGridScaleColor(Color newGridScaleColor) {
-        Color oldGridScaleColor = this.gridScaleColor;
-        this.gridScaleColor = newGridScaleColor;
-        this.pcs.firePropertyChange("gridScaleColor", oldGridScaleColor, newGridScaleColor);
-    }
-
-    public int getGridLineWidth() {
-        return gridLineWidth;
-    }
-
-    public void setGridLineWidth(int newGridLineWidth) {
-        int oldGridLineWidth = this.gridLineWidth;
-        this.gridLineWidth = newGridLineWidth;
-        this.pcs.firePropertyChange("gridLineWidth", oldGridLineWidth, newGridLineWidth);
-    }
-
-
-    public void decreaseGridLineWidth() {
-        int gridLineWidth = this.gridLineWidth - 2;
-        if (gridLineWidth < 1) {
-            gridLineWidth = 1;
-        }
-
-        setGridLineWidth(gridLineWidth);
-    }
-
-    public void increaseGridLineWidth() {
-        setGridLineWidth(gridLineWidth + 2);
     }
 
     public Grid.State getBaseState() {
@@ -345,9 +293,6 @@ public class GridModel implements Serializable {
         gridYB = gridModel.getGridYB();
         gridYC = gridModel.getGridYC();
         gridAngle = gridModel.getGridAngle();
-        gridColor = gridModel.getGridColor();
-        gridScaleColor = gridModel.getGridScaleColor();
-        gridLineWidth = gridModel.getGridLineWidth();
         baseState = gridModel.getBaseState();
         verticalScalePosition = gridModel.getVerticalScalePosition();
         horizontalScalePosition = gridModel.getHorizontalScalePosition();

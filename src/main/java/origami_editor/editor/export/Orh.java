@@ -235,7 +235,7 @@ public class Orh {
                         gridModel.setVerticalScalePosition(Integer.parseInt(m.group(2)));
                         break;
                     case "kousi_senhaba":
-                        gridModel.setGridLineWidth(Integer.parseInt(m.group(2)));
+                        applicationModel.setGridLineWidth(Integer.parseInt(m.group(2)));
                         break;
                     case "d_kousi_x_a":
                         gridXA = StringOp.String2double(m.group(2), gridModel.getGridXA());
@@ -316,12 +316,12 @@ public class Orh {
         }
 
         if (i_Grid_iro_yomikomi) {//Grid_iroの読み込みがあったら1、なければ0
-            gridModel.setGridColor(new Color(i_grid_color_R, i_grid_color_G, i_grid_color_B));
+            applicationModel.setGridColor(new Color(i_grid_color_R, i_grid_color_G, i_grid_color_B));
 
             System.out.println("i_kousi_memori_color_R= " + i_grid_memori_color_R);
             System.out.println("i_kousi_memori_color_G= " + i_grid_memori_color_G);
             System.out.println("i_kousi_memori_color_B= " + i_grid_memori_color_B);
-            gridModel.setGridScaleColor(new Color(i_grid_memori_color_R, i_grid_memori_color_G, i_grid_memori_color_B));
+            applicationModel.setGridScaleColor(new Color(i_grid_memori_color_R, i_grid_memori_color_G, i_grid_memori_color_B));
         }
 
         // 折り上がり図設定の読み込み -------------------------------------------------------------------------
@@ -675,7 +675,7 @@ public class Orh {
             pw.println("<memori_kankaku>" + gridModel.getIntervalGridSize() + "</memori_kankaku>");
             pw.println("<a_to_heikouna_memori_iti>" + gridModel.getHorizontalScalePosition() + "</a_to_heikouna_memori_iti>");
             pw.println("<b_to_heikouna_memori_iti>" + gridModel.getVerticalScalePosition() + "</b_to_heikouna_memori_iti>");
-            pw.println("<kousi_senhaba>" + gridModel.getGridLineWidth() + "</kousi_senhaba>");
+            pw.println("<kousi_senhaba>" + applicationModel.getGridLineWidth() + "</kousi_senhaba>");
 
             pw.println("<d_kousi_x_a>" + gridModel.getGridXA() + "</d_kousi_x_a>");
             pw.println("<d_kousi_x_b>" + gridModel.getGridXB() + "</d_kousi_x_b>");
@@ -687,13 +687,13 @@ public class Orh {
             pw.println("</Kousi>");
 
             pw.println("<Kousi_iro>");
-            pw.println("<kousi_color_R>" + gridModel.getGridColor().getRed() + "</kousi_color_R>");
-            pw.println("<kousi_color_G>" + gridModel.getGridColor().getGreen() + "</kousi_color_G>");
-            pw.println("<kousi_color_B>" + gridModel.getGridColor().getBlue() + "</kousi_color_B>");
+            pw.println("<kousi_color_R>" + applicationModel.getGridColor().getRed() + "</kousi_color_R>");
+            pw.println("<kousi_color_G>" + applicationModel.getGridColor().getGreen() + "</kousi_color_G>");
+            pw.println("<kousi_color_B>" + applicationModel.getGridColor().getBlue() + "</kousi_color_B>");
 
-            pw.println("<kousi_memori_color_R>" + gridModel.getGridScaleColor().getRed() + "</kousi_memori_color_R>");
-            pw.println("<kousi_memori_color_G>" + gridModel.getGridScaleColor().getGreen() + "</kousi_memori_color_G>");
-            pw.println("<kousi_memori_color_B>" + gridModel.getGridScaleColor().getBlue() + "</kousi_memori_color_B>");
+            pw.println("<kousi_memori_color_R>" + applicationModel.getGridScaleColor().getRed() + "</kousi_memori_color_R>");
+            pw.println("<kousi_memori_color_G>" + applicationModel.getGridScaleColor().getGreen() + "</kousi_memori_color_G>");
+            pw.println("<kousi_memori_color_B>" + applicationModel.getGridScaleColor().getBlue() + "</kousi_memori_color_B>");
             pw.println("</Kousi_iro>");
 
             pw.println("<oriagarizu>");

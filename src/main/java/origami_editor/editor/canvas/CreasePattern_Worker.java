@@ -980,6 +980,10 @@ public class CreasePattern_Worker {
         this.foldLineSet.selectProbablyConnected(p);
     }
 
+    public void setData(ApplicationModel applicationModel) {
+        grid.setData(applicationModel);
+    }
+
     //30 30 30 30 30 30 30 30 30 30 30 30 除け_線_変換
     enum FourPointStep {
         STEP_0,

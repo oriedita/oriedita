@@ -1,5 +1,6 @@
 package origami_editor.editor;
 
+import com.formdev.flatlaf.FlatLaf;
 import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.component.ColorIcon;
 import origami_editor.editor.component.UndoRedo;
@@ -625,14 +626,14 @@ public class LeftPanel {
             app.mouseReleasedValid = false;
 
             //以下にやりたいことを書く
-            Color color = JColorChooser.showDialog(null, "Col", new Color(230, 230, 230));
+            Color color = JColorChooser.showDialog(null, "Col", FlatLaf.isLafDark() ? Colors.GRID_LINE_DARK : Colors.GRID_LINE);
             if (color != null) {
-                gridModel.setGridColor(color);
+                app.applicationModel.setGridColor(color);
             }
             //以上でやりたいことは書き終わり
         });
-        gridLineWidthDecreaseButton.addActionListener(e -> gridModel.decreaseGridLineWidth());
-        gridLineWidthIncreaseButton.addActionListener(e -> gridModel.increaseGridLineWidth());
+        gridLineWidthDecreaseButton.addActionListener(e -> app.applicationModel.decreaseGridLineWidth());
+        gridLineWidthIncreaseButton.addActionListener(e -> app.applicationModel.increaseGridLineWidth());
         changeGridStateButton.addActionListener(e -> gridModel.advanceBaseState());
         moveIntervalGridVerticalButton.addActionListener(e -> gridModel.changeHorizontalScalePosition());
         setIntervalGridSizeButton.addActionListener(e -> getData(gridModel));
@@ -642,9 +643,9 @@ public class LeftPanel {
             app.mouseReleasedValid = false;
 
             //以下にやりたいことを書く
-            Color color = JColorChooser.showDialog(null, "Col", new Color(180, 200, 180));
+            Color color = JColorChooser.showDialog(null, "Col", FlatLaf.isLafDark() ? Colors.GRID_SCALE_DARK : Colors.GRID_SCALE);
             if (color != null) {
-                gridModel.setGridScaleColor(color);
+                app.applicationModel.setGridScaleColor(color);
             }
         });
         setGridParametersButton.addActionListener(e -> getData(gridModel));
@@ -676,10 +677,6 @@ public class LeftPanel {
         gridAngleTextField.setText(String.valueOf(data.getGridAngle()));
 
         gridSizeDecreaseButton.setEnabled(data.getGridSize() != 1);
-        gridLineWidthDecreaseButton.setEnabled(data.getGridLineWidth() != 1);
-
-        gridColorButton.setIcon(new ColorIcon(data.getGridColor()));
-        intervalGridColorButton.setIcon(new ColorIcon(data.getGridScaleColor()));
     }
 
     /**
@@ -1708,6 +1705,11 @@ public class LeftPanel {
 
     public void setData(PropertyChangeEvent e, ApplicationModel data) {
         lineSegmentDivisionTextField.setText(String.valueOf(data.getFoldLineDividingNumber()));
+
+        gridLineWidthDecreaseButton.setEnabled(data.getGridLineWidth() != 1);
+
+        gridColorButton.setIcon(new ColorIcon(data.getGridColor()));
+        intervalGridColorButton.setIcon(new ColorIcon(data.getGridScaleColor()));
     }
 
     public void setData(PropertyChangeEvent e, CanvasModel data) {
