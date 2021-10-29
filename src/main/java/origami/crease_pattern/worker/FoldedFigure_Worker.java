@@ -470,12 +470,15 @@ public class FoldedFigure_Worker {
         AEA.restore();
 
         int leap = 10;
-        boolean reversePending = false;
+        int reversePending = 0;
 
         for (int ss = 1; ss <= SubFace_valid_number; ss++) {      //<<<<<<<<<<<<<<高速化のため変更。070417
 
             swapper.visit(s[ss]);
-            if (s[ss].reverseSwapFlag) reversePending = false;
+            if (s[ss].reverseSwapFlag) {
+                reversePending--;
+                s[ss].reverseSwapFlag = false;
+            }
 
             int count = s[ss].getFaceIdCount(), pair = count * (count - 1) / 2;
             bb.rewrite(7, "Current SubFace( " + ss + " / " + SubFace_valid_number + " ) , face count = " + count
@@ -493,7 +496,7 @@ public class FoldedFigure_Worker {
                 s[ss].enterStackingOfSubFace(AEA);
 
                 boolean se = swapper.shouldEstimate(ss); // side effect
-                if (reversePending || se && ss <= Math.sqrt(SubFace_valid_number)) {
+                if (reversePending > 0 || se && ss <= Math.sqrt(SubFace_valid_number)) {
                     // It is possible in theory that the following line returns a result other than
                     // success (even as we ran AEA in each step and the current permutation doesn't
                     // have any immediate contradiction, since something might still go wrong in the
@@ -510,7 +513,7 @@ public class FoldedFigure_Worker {
 
             } catch (TimeoutException e) {
                 swapper.reverseSwap(s, ss + (++leap), ss);
-                reversePending = true;
+                reversePending++;
                 ss--; // retry the current depth
                 // We didn't write anything into the hierarchyList in this round, so we can just continue.
             }
