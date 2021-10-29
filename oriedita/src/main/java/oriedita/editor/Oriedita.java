@@ -7,12 +7,22 @@ import oriedita.editor.factory.AppFactory;
 import oriedita.editor.factory.DaggerAppFactory;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
 
 public class Oriedita {
 
     public static void main(String[] argv) {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
+
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        try {
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(Oriedita.class.getClassLoader().getResourceAsStream("Icons2.ttf"))));
+        } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+        }
 
         AppFactory build = DaggerAppFactory.create();
 
