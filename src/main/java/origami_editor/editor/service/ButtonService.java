@@ -71,6 +71,7 @@ public class ButtonService {
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         String tooltip = ResourceUtil.getBundleString("tooltip", key);
         String help = ResourceUtil.getBundleString("help", key);
+        String icon = ResourceUtil.getBundleString("icons", key);
 
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
 
@@ -110,6 +111,12 @@ public class ButtonService {
                 button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
             }
             button.getActionMap().put(key, new Click(button));
+
+            if (!StringOp.isEmpty(icon)) {
+                button.setFont(new Font("Icons", Font.PLAIN, 20));
+                button.setText(icon);
+                button.setIcon(null);
+            }
         }
 
         if (!StringOp.isEmpty(help)) {
