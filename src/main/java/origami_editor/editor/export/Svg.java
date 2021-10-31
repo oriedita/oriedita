@@ -7,6 +7,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
+import origami.folding.element.Face;
 import origami.folding.element.SubFace;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.folded_figure.FoldedFigure;
@@ -17,6 +18,7 @@ import origami_editor.tools.StringOp;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Svg {
@@ -120,27 +122,66 @@ public class Svg {
         }
     }
 
+    private static boolean isBottomMostDrawnFace(SubFace[] s0, int SubFaceTotal, int fis, List<Integer> doneFaceId) {
+        for (int im2 = 1; im2 <= SubFaceTotal; im2++) {
+            if (s0[im2].getFaceIdCount() <= 0) continue;
+
+            SubFace otherSubFace = s0[im2];
+
+            // Other face contains this face id
+            if (otherSubFace.FaceIdIndex(fis) > 0) {
+                // Find the lowest face in this subface.
+                int index = otherSubFace.getFaceIdCount();
+                int otherFis;
+                do {
+                    otherFis = otherSubFace.fromTop_count_FaceId(index--);
+                } while (doneFaceId.contains(otherFis) && index > 0);
+
+                // There exists a face which is lower than this one.
+                if (otherFis > 0 && fis != otherFis) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean isFaceVisible(SubFace[] s0, int SubFaceTotal, int fis) {
+        for (int im2 = 1; im2 <= SubFaceTotal; im2++) {
+            if (s0[im2].getFaceIdCount() <= 0) continue;
+
+            SubFace otherSubFace = s0[im2];
+
+            // Other face contains this face id
+            if (otherSubFace.FaceIdIndex(fis) > 0) {
+                int otherFace = otherSubFace.fromTop_count_FaceId(1);
+                if (otherFace == fis) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
     public static void getMemo_for_svg_with_camera(PrintWriter pw, Camera camera, FoldedFigure foldedFigure, WireFrame_Worker orite, PointSet subFace_figure) {//折り上がり図(hyouji_flg==5)
         boolean front_back = camera.determineIsCameraMirrored();
 
         Point t0 = new Point();
         Point t1 = new Point();
-        LineSegment s_ob = new LineSegment();
-        LineSegment s_tv = new LineSegment();
 
-        Point a = new Point();
-        Point b = new Point();
+        pw.println("<style type=\"text/css\">.f{stroke:" + StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getLineColor()) + ";stroke-linejoin:bevel;}</style>");
+
         StringBuilder str_zahyou;
         String str_stroke = "black";
-        String str_strokewidth = "1";
 
         int SubFaceTotal = subFace_figure.getNumFaces();
         SubFace[] s0 = foldedFigure.ct_worker.s0;
 
         //面を描く-----------------------------------------------------------------------------------------------------
-        int[] x = new int[100];
-        int[] y = new int[100];
+        String[] x = new String[100];
+        String[] y = new String[100];
 
         //SubFaceの.set_Menid2uekara_kazoeta_itiは現在の上下表をもとに、上から数えてi番めの面のid番号を全ての順番につき格納する。
         for (int im = 1; im <= SubFaceTotal; im++) { //SubFaceから上からの指定した番目の面のidを求める。
@@ -148,122 +189,75 @@ public class Svg {
         }
         //ここまでで、上下表の情報がSubFaceの各面に入った
 
-        //面を描く
-        int face_order;
-        for (int im = 1; im <= SubFaceTotal; im++) {//imは各SubFaceの番号
-            if (s0[im].getFaceIdCount() > 0) {//MenidsuuはSubFace(折り畳み推定してえられた針金図を細分割した面)で重なっているMen(折りたたむ前の展開図の面)の数。これが0なら、ドーナツ状の穴の面なので描画対象外
+        PointSet faceFigure = foldedFigure.cp_worker2.get();
 
-                //Determine the color of the imth SubFace when drawing a fold-up diagram
-                face_order = 1;
-                if (front_back) {
-                    face_order = s0[im].getFaceIdCount();
-                }
+        List<Integer> doneFaceId = new ArrayList<>();
 
+        int fis = 0;
+        while (doneFaceId.size() < faceFigure.getNumFaces()) {
+            fis++;
+            if (fis == faceFigure.getNumFaces() + 1) {
+                fis = 1;
+            }
+            if (doneFaceId.contains(fis)) continue;
 
-                if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(face_order)) % 2 == 1) {
+            // Find if this face is the lowest
+            if (!isBottomMostDrawnFace(s0, SubFaceTotal, fis, doneFaceId)) continue;
+
+            // Do not export invisible faces
+            if (!isFaceVisible(s0, SubFaceTotal, fis)) {
+                doneFaceId.add(fis);
+                continue;
+            }
+
+            doneFaceId.add(fis);
+
+            Face face = faceFigure.getFace(fis);
+
+            int iFacePosition = orite.getIFacePosition(fis);
+            if (iFacePosition % 2 == 1) {
+                str_stroke = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getFrontColor());
+            }//g.setColor(F_color)
+            if (iFacePosition % 2 == 0) {
+                str_stroke = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getBackColor());
+            }//g.setColor(B_color)
+
+            if (front_back) {
+                if (iFacePosition % 2 == 0) {
                     str_stroke = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getFrontColor());
                 }//g.setColor(F_color)
-                if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(face_order)) % 2 == 0) {
+                if (iFacePosition % 2 == 1) {
                     str_stroke = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getBackColor());
                 }//g.setColor(B_color)
+            }
 
-                if (front_back) {
-                    if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(face_order)) % 2 == 0) {
-                        str_stroke = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getFrontColor());
-                    }//g.setColor(F_color)
-                    if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(face_order)) % 2 == 1) {
-                        str_stroke = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getBackColor());
-                    }//g.setColor(B_color)
-                }
+            //折り上がり図を描くときのSubFaceの色を決めるのはここまで
 
-                //折り上がり図を描くときのSubFaceの色を決めるのはここまで
-
-                //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求める
-                for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
-                    t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, i)));
-                    t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, i)));
-                    t1.set(camera.object2TV(t0));
-                    x[i] = (int) t1.getX();
-                    y[i] = (int) t1.getY();
-                }
-
-                t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
-                t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
+            //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求める
+            for (int i = 1; i <= face.getNumPoints() - 1; i++) {
+                t0.setX(faceFigure.getPointX(faceFigure.getPointId(fis, i)));
+                t0.setY(faceFigure.getPointY(faceFigure.getPointId(fis, i)));
                 t1.set(camera.object2TV(t0));
-                x[0] = (int) t1.getX();
-                y[0] = (int) t1.getY();
-                //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求めるのはここまで
-
-                str_zahyou = new StringBuilder(x[0] + "," + y[0]);
-                for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
-                    str_zahyou.append(" ").append(x[i]).append(",").append(y[i]);
-
-                }
-
-                pw.println("<polygon points=\"" + str_zahyou + "\"" +
-                        " style=\"" + "stroke:" + str_stroke + ";fill:" + str_stroke + "\"" +
-                        " stroke-width=\"" + str_strokewidth + "\"" + " />"
-                );
-            }
-        }
-        //面を描く　ここまで-----------------------------------------------------------------------------------------
-
-
-        //棒を描く-----------------------------------------------------------------------------------------
-
-        str_stroke = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getLineColor());
-
-        for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
-            int faceId_min, faceId_max; //棒の両側のSubFaceの番号の小さいほうがMid_min,　大きいほうがMid_max
-            int faceOrderMin, faceOrderMax;//PC画面に表示したときSubFace(faceId_min) で見える面の番号がMen_jyunban_min、SubFace(faceId_max) で見える面の番号がMen_jyunban_max
-            boolean drawing_flg;
-
-            drawing_flg = false;
-            faceId_min = subFace_figure.lineInFaceBorder_min_lookup(ib);//棒ibを境界として含む面(最大で2面ある)のうちでMenidの小さいほうのMenidを返す。棒を境界として含む面が無い場合は0を返す
-            faceId_max = subFace_figure.lineInFaceBorder_max_lookup(ib);
-
-            if (s0[faceId_min].getFaceIdCount() == 0) {
-                drawing_flg = true;
-            }//menをもたない、ドーナツの穴状のSubFaceは境界の棒を描く
-            else if (s0[faceId_max].getFaceIdCount() == 0) {
-                drawing_flg = true;
-            } else if (faceId_min == faceId_max) {
-                drawing_flg = true;
-            }//一本の棒の片面だけにSubFace有り
-            else {
-                faceOrderMin = 1;
-                if (front_back) {
-                    faceOrderMin = s0[faceId_min].getFaceIdCount();
-                }
-                faceOrderMax = 1;
-                if (front_back) {
-                    faceOrderMax = s0[faceId_max].getFaceIdCount();
-                }
-                if (s0[faceId_min].fromTop_count_FaceId(faceOrderMin) != s0[faceId_max].fromTop_count_FaceId(faceOrderMax)) {
-                    drawing_flg = true;
-                }//この棒で隣接するSubFaceの1番上の面は異なるので、この棒は描く。
+                x[i] = String.format("%.4f", t1.getX());
+                y[i] = String.format("%.4f", t1.getY());
             }
 
-            if (drawing_flg) {//棒を描く。
-                s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
-                s_tv.set(camera.object2TV(s_ob));
+            t0.setX(faceFigure.getPointX(faceFigure.getPointId(fis, face.getNumPoints())));
+            t0.setY(faceFigure.getPointY(faceFigure.getPointId(fis, face.getNumPoints())));
+            t1.set(camera.object2TV(t0));
+            x[0] = String.format("%.4f", t1.getX());
+            y[0] = String.format("%.4f", t1.getY());
+            //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求めるのはここまで
 
-                a.set(s_tv.getA());
-                b.set(s_tv.getB());
-
-                BigDecimal b_ax = new BigDecimal(String.valueOf(a.getX()));
-                BigDecimal b_ay = new BigDecimal(String.valueOf(a.getY()));
-                BigDecimal b_bx = new BigDecimal(String.valueOf(b.getX()));
-                BigDecimal b_by = new BigDecimal(String.valueOf(b.getY()));
-
-                pw.println("<line x1=\"" + b_ax.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
-                        " y1=\"" + b_ay.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
-                        " x2=\"" + b_bx.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
-                        " y2=\"" + b_by.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
-                        " style=\"" + "stroke:" + str_stroke + "\"" +
-                        " stroke-width=\"" + str_strokewidth + "\"" + " />"
-                );
+            str_zahyou = new StringBuilder("M" + x[0] + " " + y[0]);
+            for (int i = 1; i <= faceFigure.getPointsCount(fis) - 1; i++) {
+                str_zahyou.append("L").append(x[i]).append(" ").append(y[i]).append(" ");
             }
+
+            pw.println("<path class=\"f\" d=\"" + str_zahyou.append("Z") + "\"" +
+                    " style=\"fill:" + str_stroke + "\"" +
+                    " stroke-width=\"1\" />"
+            );
         }
     }
 
