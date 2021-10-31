@@ -16,14 +16,14 @@ public class TwoColoredTask implements Runnable{
         try {
             app.createTwoColorCreasePattern();
         } catch (InterruptedException e) {
-            app.OZ.estimated_initialize();
+            app.OZ.foldedFigure.estimated_initialize();
             app.bulletinBoard.clear();
             e.printStackTrace();
         }
 
         long stop = System.currentTimeMillis();
         long L = stop - start;
-        app.OZ.text_result = app.OZ.text_result + "     Computation time " + L + " msec.";
+        app.OZ.foldedFigure.text_result = app.OZ.foldedFigure.text_result + "     Computation time " + L + " msec.";
 
         app.repaintCanvas();
     }

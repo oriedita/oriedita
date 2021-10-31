@@ -2,11 +2,12 @@ package origami_editor.editor;
 
 import com.formdev.flatlaf.FlatLaf;
 import origami.crease_pattern.element.LineColor;
+import origami_editor.Save;
 import origami_editor.editor.component.ColorIcon;
 import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
-import origami_editor.editor.folded_figure.FoldedFigure;
+import origami.folding.FoldedFigure;
 import origami_editor.editor.task.TaskExecutor;
 import origami_editor.editor.task.TwoColoredTask;
 import origami_editor.tools.StringOp;
@@ -574,7 +575,7 @@ public class LeftPanel {
 
             } else if (app.mainCreasePatternWorker.getFoldLineTotalForSelectFolding() > 0) {
                 app.folding_prepare();//ここでOZがOAZ(0)からOAZ(i)に切り替わる
-                app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
+                app.OZ.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
 
                 TaskExecutor.executeTask("Two Colored CP", new TwoColoredTask(app));
             }
@@ -588,7 +589,7 @@ public class LeftPanel {
             }
         });
         koteimen_siteiButton.addActionListener(e -> {
-            if (app.OZ.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
+            if (app.OZ.foldedFigure.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
                 app.canvasModel.setMouseMode(MouseMode.CHANGE_STANDARD_FACE_103);
             }
         });

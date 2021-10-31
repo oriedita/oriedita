@@ -18,7 +18,7 @@ public class FoldingEstimateSave100Task implements Runnable{
 
         File file = app.selectExportFile();
         if (file != null) {
-            app.OZ.summary_write_image_during_execution = true;//Meaning during summary writing
+            app.OZ.foldedFigure.summary_write_image_during_execution = true;//Meaning during summary writing
 
             synchronized (app.w_image_running) {
                 int objective = 100;
@@ -32,7 +32,7 @@ public class FoldingEstimateSave100Task implements Runnable{
                             String extension = filename.substring(filename.lastIndexOf("."));
                             String basename = filename.substring(0, filename.lastIndexOf("."));
 
-                            filename = basename + "_" + app.OZ.discovered_fold_cases + extension;
+                            filename = basename + "_" + app.OZ.foldedFigure.discovered_fold_cases + extension;
                         }
 
                         app.fileModel.setExportImageFileName(filename);
@@ -46,21 +46,21 @@ public class FoldingEstimateSave100Task implements Runnable{
                             return;
                         }
 
-                        if (!app.OZ.findAnotherOverlapValid) {
-                            objective = app.OZ.discovered_fold_cases;
+                        if (!app.OZ.foldedFigure.findAnotherOverlapValid) {
+                            objective = app.OZ.foldedFigure.discovered_fold_cases;
                         }
                     }
                 } catch (InterruptedException | FoldingException e) {
-                    app.OZ.estimated_initialize();
+                    app.OZ.foldedFigure.estimated_initialize();
                     System.out.println(e);
                 }
             }
-            app.OZ.summary_write_image_during_execution = false;
+            app.OZ.foldedFigure.summary_write_image_during_execution = false;
         }
 
         long stop = System.currentTimeMillis();
         long L = stop - start;
-        app.OZ.text_result = app.OZ.text_result + "     Computation time " + L + " msec.";
+        app.OZ.foldedFigure.text_result = app.OZ.foldedFigure.text_result + "     Computation time " + L + " msec.";
 
         app.repaintCanvas();
     }

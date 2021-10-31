@@ -2,7 +2,7 @@ package origami_editor.editor;
 
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
-import origami_editor.editor.folded_figure.FoldedFigure;
+import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami.crease_pattern.element.Point;
 
 import javax.swing.*;
@@ -100,7 +100,7 @@ public class TopPanel {
 
             double magnification = 1.0 / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
 
-            FoldedFigure OZi;
+            FoldedFigure_Drawer OZi;
             for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
                 OZi = app.foldedFigures.get(i_oz);
 
@@ -118,7 +118,7 @@ public class TopPanel {
             if (app.creasePatternCameraModel.getScale() != d_syukusyaku_keisuu_old) {
                 double magnification = app.creasePatternCameraModel.getScale() / d_syukusyaku_keisuu_old;
 
-                FoldedFigure OZi;
+                FoldedFigure_Drawer OZi;
                 for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
                     OZi = app.foldedFigures.get(i_oz);
 
@@ -137,7 +137,7 @@ public class TopPanel {
 
             double magnification = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
 
-            FoldedFigure OZi;
+            FoldedFigure_Drawer OZi;
             for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
                 OZi = app.foldedFigures.get(i_oz);
 

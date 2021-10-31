@@ -7,6 +7,7 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
+import origami_editor.Save;
 import origami_editor.editor.*;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.task.CheckCAMVTask;
@@ -263,6 +264,7 @@ public class CreasePattern_Worker {
     public Save h_getSave() {
         Save save = new Save();
         auxLines.h_getSave(save);
+
         return save;
     }
 
@@ -283,15 +285,15 @@ public class CreasePattern_Worker {
         return save;
     }
 
-    public void saveAdditionalInformation(Save memo1) {
+    public void saveAdditionalInformation(Save save) {
         Camera camera = new Camera();
         camera.setCamera(this.camera);
-        memo1.setCreasePatternCamera(camera);
+        save.setCreasePatternCamera(camera);
 
-        memo1.setCanvasModel(app.canvasModel);
-        memo1.setGridModel(app.gridModel);
+        save.setCanvasModel(app.canvasModel);
+        save.setGridModel(app.gridModel);
 
-        memo1.setFoldedFigureModel(app.foldedFigureModel);
+        save.setFoldedFigureModel(app.foldedFigureModel);
     }
 
     public void setColor(LineColor i) {

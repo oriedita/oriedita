@@ -8,7 +8,8 @@ import origami_editor.editor.canvas.BaseMouseHandler;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.canvas.MouseModeHandler;
-import origami_editor.editor.folded_figure.FoldedFigure;
+import origami_editor.editor.drawing.FoldedFigure_Drawer;
+import origami.folding.FoldedFigure;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.export.Svg;
 import origami_editor.editor.task.TaskExecutor;
@@ -152,18 +153,20 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //カメラのセット
         app.mainCreasePatternWorker.setCamera(creasePatternCamera);
 
-        FoldedFigure OZi;
+
+
+        FoldedFigure_Drawer OZi;
         for (int i = 1; i <= app.foldedFigures.size() - 1; i++) {
             OZi = app.foldedFigures.get(i);
-            OZi.cp_worker1.setCamera(creasePatternCamera);
+            OZi.wireFrame_worker_drawer1.setCamera(creasePatternCamera);
         }
 
 //VVVVVVVVVVVVVVV以下のts2へのカメラセットはOriagari_zuのoekakiで実施しているので以下の5行はなくてもいいはず　20180225
-        app.OZ.cp_worker2.setCamera(app.OZ.foldedFigureCamera);
-        app.OZ.cp_worker2.setCam_front(app.OZ.foldedFigureFrontCamera);
-        app.OZ.cp_worker2.setCam_rear(app.OZ.foldedFigureRearCamera);
-        app.OZ.cp_worker2.setCam_transparent_front(app.OZ.transparentFrontCamera);
-        app.OZ.cp_worker2.setCam_transparent_rear(app.OZ.transparentRearCamera);
+        app.OZ.wireFrame_worker_drawer2.setCamera(app.OZ.foldedFigureCamera);
+        app.OZ.wireFrame_worker_drawer2.setCam_front(app.OZ.foldedFigureFrontCamera);
+        app.OZ.wireFrame_worker_drawer2.setCam_rear(app.OZ.foldedFigureRearCamera);
+        app.OZ.wireFrame_worker_drawer2.setCam_transparent_front(app.OZ.transparentFrontCamera);
+        app.OZ.wireFrame_worker_drawer2.setCam_transparent_rear(app.OZ.transparentRearCamera);
 //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
         //System.out.println("paint　+++++++++++++++++++++　背景表示");
@@ -184,8 +187,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         //基準面の表示
         if (displayMarkings) {
-            if (app.OZ.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
-                app.OZ.cp_worker1.drawing_referencePlane_with_camera(bufferGraphics);//ts1が折り畳みを行う際の基準面を表示するのに使う。
+            if (app.OZ.foldedFigure.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
+                app.OZ.wireFrame_worker_drawer1.drawing_referencePlane_with_camera(bufferGraphics);//ts1が折り畳みを行う際の基準面を表示するのに使う。
             }
         }
 
@@ -216,7 +219,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             bufferGraphics.drawString("L=" + app.mainCreasePatternWorker.getTotal(), 10, 25); //この表示内容はvoid kekka_syoriで決められる。
 
             //結果の文字表示
-            bufferGraphics.drawString(app.OZ.text_result, 10, 40); //この表示内容はvoid kekka_syoriで決められる。
+            bufferGraphics.drawString(app.OZ.foldedFigure.text_result, 10, 40); //この表示内容はvoid kekka_syoriで決められる。
 
             if (displayGridInputAssist) {
                 Point gridIndex = new Point(app.mainCreasePatternWorker.getGridPosition(p_mouse_TV_position));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
@@ -269,7 +272,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         // オフスクリーンイメージを実際に描画する。オフスクリーンの幅は最初は 0,0。
         g.drawImage(offscreen, 0, 0, this);
 
-        if (app.OZ.summary_write_image_during_execution) {//Meaning during summary writing)
+        if (app.OZ.foldedFigure.summary_write_image_during_execution) {//Meaning during summary writing)
             writeImageFile(new File(app.fileModel.getExportImageFileName()), app);
 
             synchronized (app.w_image_running) {
@@ -682,9 +685,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         int tempFoldedFigureIndex = 0;
         MouseWheelTarget temp_i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;
+        FoldedFigure_Drawer drawer;
         FoldedFigure OZi;
         for (int i = 1; i <= app.foldedFigures.size() - 1; i++) {
-            OZi = app.foldedFigures.get(i);
+            drawer = app.foldedFigures.get(i);
+            OZi = drawer.foldedFigure;
 
             int OZ_display_mode = 0;//No fold-up diagram display
             if ((OZi.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
@@ -726,28 +731,28 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 OZ_display_mode = 4;
             }//	omote & ura & omote2 & ura2
 
-            if (OZi.cp_worker2.isInsideFront(p) > 0) {
+            if (drawer.wireFrame_worker_drawer2.isInsideFront(p) > 0) {
                 if (((OZ_display_mode == 1) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_FRONT_1;
                     tempFoldedFigureIndex = i;
                 }
             }
 
-            if (OZi.cp_worker2.isInsideRear(p) > 0) {
+            if (drawer.wireFrame_worker_drawer2.isInsideRear(p) > 0) {
                 if (((OZ_display_mode == 2) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_BACK_2;
                     tempFoldedFigureIndex = i;
                 }
             }
 
-            if (OZi.cp_worker2.isInsideTransparentFront(p) > 0) {
+            if (drawer.wireFrame_worker_drawer2.isInsideTransparentFront(p) > 0) {
                 if (OZ_display_mode == 4) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_FRONT_3;
                     tempFoldedFigureIndex = i;
                 }
             }
 
-            if (OZi.cp_worker2.isInsideTransparentRear(p) > 0) {
+            if (drawer.wireFrame_worker_drawer2.isInsideTransparentRear(p) > 0) {
                 if (OZ_display_mode == 4) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_BACK_4;
                     tempFoldedFigureIndex = i;

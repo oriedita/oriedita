@@ -16,7 +16,7 @@ public class FoldingEstimateTask implements Runnable {
         try {
             app.folding_estimated();
         } catch (Exception e) {
-            app.OZ.estimated_initialize();
+            app.OZ.foldedFigure.estimated_initialize();
             app.bulletinBoard.clear();
 
             System.err.println("Folding estimation got interrupted.");
@@ -27,7 +27,7 @@ public class FoldingEstimateTask implements Runnable {
 
         long stop = System.currentTimeMillis();
         long L = stop - start;
-        app.OZ.text_result = app.OZ.text_result + "     Computation time " + L + " msec.";
+        app.OZ.foldedFigure.text_result = app.OZ.foldedFigure.text_result + "     Computation time " + L + " msec.";
 
         app.repaintCanvas();
     }

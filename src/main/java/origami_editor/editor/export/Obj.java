@@ -4,7 +4,7 @@ import origami.crease_pattern.element.Line;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami_editor.editor.Save;
+import origami_editor.Save;
 
 import java.io.BufferedReader;
 import java.io.File;

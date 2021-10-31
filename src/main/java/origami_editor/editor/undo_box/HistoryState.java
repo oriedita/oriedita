@@ -1,6 +1,6 @@
 package origami_editor.editor.undo_box;
 
-import origami_editor.editor.Save;
+import origami_editor.Save;
 
 import java.io.*;
 import java.util.ArrayDeque;
@@ -72,9 +72,7 @@ public class HistoryState {
 
         try {
             return (Save) convertFromBytes(current);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 

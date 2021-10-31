@@ -9,7 +9,8 @@ import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.element.SubFace;
 import origami_editor.editor.LineStyle;
-import origami_editor.editor.folded_figure.FoldedFigure;
+import origami_editor.editor.drawing.FoldedFigure_Drawer;
+import origami.folding.FoldedFigure;
 import origami.folding.util.SortingBox;
 import origami_editor.tools.Camera;
 import origami_editor.tools.StringOp;
@@ -20,7 +21,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 public class Svg {
-    public static void exportFile(FoldLineSet foldLineSet, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize, List<FoldedFigure> foldedFigures, File file) {
+    public static void exportFile(FoldLineSet foldLineSet, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize, List<FoldedFigure_Drawer> foldedFigures, File file) {
         try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw)) {
             System.out.println("svg画像出力");
 
@@ -38,7 +39,11 @@ public class Svg {
         }
     }
 
-    public static void getMemo_wirediagram_for_svg_export(PrintWriter pw, FoldedFigure_Worker ctworker, Camera camera, FoldedFigure foldedFigure, WireFrame_Worker orite, PointSet otta_Men_zu, boolean i_fill) {
+    public static void getMemo_wirediagram_for_svg_export(PrintWriter pw, Camera camera, FoldedFigure_Drawer foldedFigure, boolean i_fill) {
+        FoldedFigure_Worker ctworker = foldedFigure.foldedFigure.ct_worker;
+        WireFrame_Worker orite = foldedFigure.foldedFigure.cp_worker1;
+        PointSet otta_Men_zu = foldedFigure.foldedFigure.cp_worker2.get();
+
         boolean flipped = camera.determineIsCameraMirrored();
 
         Point t_ob = new Point();
@@ -121,7 +126,9 @@ public class Svg {
     }
 
 
-    public static void getMemo_for_svg_with_camera(PrintWriter pw, Camera camera, FoldedFigure foldedFigure, WireFrame_Worker orite, PointSet subFace_figure) {//折り上がり図(hyouji_flg==5)
+    public static void getMemo_for_svg_with_camera(PrintWriter pw, Camera camera, FoldedFigure_Drawer foldedFigure) {//折り上がり図(hyouji_flg==5)
+        WireFrame_Worker orite = foldedFigure.foldedFigure.cp_worker1;
+        PointSet subFace_figure = foldedFigure.foldedFigure.cp_worker3.get();
         boolean front_back = camera.determineIsCameraMirrored();
 
         Point t0 = new Point();
@@ -136,7 +143,7 @@ public class Svg {
         String str_strokewidth = "1";
 
         int SubFaceTotal = subFace_figure.getNumFaces();
-        SubFace[] s0 = foldedFigure.ct_worker.s0;
+        SubFace[] s0 = foldedFigure.foldedFigure.ct_worker.s0;
 
         //面を描く-----------------------------------------------------------------------------------------------------
         String[] x = new String[100];
@@ -144,7 +151,7 @@ public class Svg {
 
         //SubFaceの.set_Menid2uekara_kazoeta_itiは現在の上下表をもとに、上から数えてi番めの面のid番号を全ての順番につき格納する。
         for (int im = 1; im <= SubFaceTotal; im++) { //SubFaceから上からの指定した番目の面のidを求める。
-            s0[im].set_FaceId2fromTop_counted_position(foldedFigure.ct_worker.hierarchyList);//s0[]はSubFace_zuから得られるSubFaceそのもの、jgは上下表Jyougehyouのこと
+            s0[im].set_FaceId2fromTop_counted_position(foldedFigure.foldedFigure.ct_worker.hierarchyList);//s0[]はSubFace_zuから得られるSubFaceそのもの、jgは上下表Jyougehyouのこと
         }
         //ここまでで、上下表の情報がSubFaceの各面に入った
 
@@ -268,35 +275,35 @@ public class Svg {
     }
 
 
-    public static void exportSvgFoldedFigure(PrintWriter pw, FoldedFigure foldedFigure) {
+    public static void exportSvgFoldedFigure(PrintWriter pw, FoldedFigure_Drawer foldedFigure) {
         //Wire diagram svg
-        if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) {
-            getMemo_wirediagram_for_svg_export(pw, foldedFigure.ct_worker, foldedFigure.foldedFigureFrontCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker2.get(), false);//If the fourth integer is 0, only the frame of the face is painted, and if it is 1, the face is painted.
+        if (foldedFigure.foldedFigure.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) {
+            getMemo_wirediagram_for_svg_export(pw, foldedFigure.foldedFigureFrontCamera, foldedFigure, false);//If the fourth integer is 0, only the frame of the face is painted, and if it is 1, the face is painted.
         }
 
         //Folded figure (table) svg
-        if (((foldedFigure.ip4 == FoldedFigure.State.FRONT_0) || (foldedFigure.ip4 == FoldedFigure.State.BOTH_2)) || (foldedFigure.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
+        if (((foldedFigure.foldedFigure.ip4 == FoldedFigure.State.FRONT_0) || (foldedFigure.foldedFigure.ip4 == FoldedFigure.State.BOTH_2)) || (foldedFigure.foldedFigure.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
             //透過図のsvg
-            if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                getMemo_wirediagram_for_svg_export(pw, foldedFigure.ct_worker, foldedFigure.foldedFigureFrontCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker2.get(), true);
+            if (foldedFigure.foldedFigure.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
+                getMemo_wirediagram_for_svg_export(pw, foldedFigure.foldedFigureFrontCamera, foldedFigure, true);
             }
 
             //折り上がり図のsvg*************
-            if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) {
-                getMemo_for_svg_with_camera(pw, foldedFigure.foldedFigureFrontCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+            if (foldedFigure.foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) {
+                getMemo_for_svg_with_camera(pw, foldedFigure.foldedFigureFrontCamera, foldedFigure);// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
         }
 
         //折りあがり図（裏）のsvg
-        if (((foldedFigure.ip4 == FoldedFigure.State.BACK_1) || (foldedFigure.ip4 == FoldedFigure.State.BOTH_2)) || (foldedFigure.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
+        if (((foldedFigure.foldedFigure.ip4 == FoldedFigure.State.BACK_1) || (foldedFigure.foldedFigure.ip4 == FoldedFigure.State.BOTH_2)) || (foldedFigure.foldedFigure.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
             //透過図のsvg
-            if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                getMemo_wirediagram_for_svg_export(pw, foldedFigure.ct_worker, foldedFigure.foldedFigureRearCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker2.get(), true);
+            if (foldedFigure.foldedFigure.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
+                getMemo_wirediagram_for_svg_export(pw, foldedFigure.foldedFigureRearCamera, foldedFigure, true);
             }
 
             //折り上がり図のsvg*************
-            if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) {
-                getMemo_for_svg_with_camera(pw, foldedFigure.foldedFigureRearCamera, foldedFigure, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+            if (foldedFigure.foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) {
+                getMemo_for_svg_with_camera(pw, foldedFigure.foldedFigureRearCamera, foldedFigure);// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
         }
     }
