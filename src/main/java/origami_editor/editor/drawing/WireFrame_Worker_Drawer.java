@@ -5,9 +5,9 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.WireFrame_Worker;
-import origami_editor.editor.Colors;
-import origami_editor.Save;
 import origami.folding.FoldedFigure;
+import origami_editor.Save;
+import origami_editor.editor.Colors;
 import origami_editor.editor.undo_box.HistoryState;
 import origami_editor.tools.Camera;
 
@@ -20,13 +20,11 @@ public class WireFrame_Worker_Drawer {
     private final double d_h_k = 10.0;//Judgment distance whether the neighborhood is closer than a certain distance
 
     public Camera camera = new Camera();
+    public Point point_of_referencePlane_ob = new Point();
     Camera cam_front = new Camera();
     Camera cam_rear = new Camera();
     Camera cam_transparent_front = new Camera();
     Camera cam_transparent_rear = new Camera();
-
-    public Point point_of_referencePlane_ob = new Point();
-
     HistoryState history = new HistoryState();
 
     public WireFrame_Worker_Drawer(WireFrame_Worker wireFrame_worker) {
