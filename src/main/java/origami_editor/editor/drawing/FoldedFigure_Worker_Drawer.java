@@ -31,8 +31,6 @@ public class FoldedFigure_Worker_Drawer {
     boolean displayShadows = false; //Whether to display shadows. 0 is not displayed, 1 is displayed
     boolean displaySsi = false;
 
-    boolean ip1_flipped = false; //0 is the mode to display the front side of the folding diagram. 1 is a mode to display the back side of the folding diagram.
-
     public FoldedFigure_Worker_Drawer(FoldedFigure_Worker worker) {
         this.worker = worker;
     }
@@ -45,8 +43,6 @@ public class FoldedFigure_Worker_Drawer {
     public void reset() {
         camera.reset();
         worker.reset();
-        ip1_flipped = false;
-
     }
 
     private int gx(double d) {
@@ -234,7 +230,6 @@ public class FoldedFigure_Worker_Drawer {
         origami.crease_pattern.element.Point t1 = new origami.crease_pattern.element.Point();
         LineSegment s_ob = new LineSegment();
         LineSegment s_tv = new LineSegment();
-        ip1_flipped = flipped;
 
         //Draw a face
         int[] x = new int[100];

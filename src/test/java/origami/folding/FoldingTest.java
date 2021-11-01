@@ -8,7 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
-import origami_editor.Save;
+import origami_editor.editor.Save;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.export.Cp;
 

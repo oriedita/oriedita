@@ -1,7 +1,6 @@
 package origami_editor.editor.component;
 
 import origami.folding.util.IBulletinBoard;
-import origami.folding.util.IBulletinBoard;
 import origami_editor.editor.Colors;
 
 import javax.swing.event.ChangeEvent;

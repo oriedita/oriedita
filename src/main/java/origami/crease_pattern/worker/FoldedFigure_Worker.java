@@ -1,13 +1,8 @@
 package origami.crease_pattern.worker;
 
-import origami.folding.util.EquivalenceCondition;
+import origami.Epsilon;
+import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
-import origami.folding.HierarchyList;
-import origami.folding.algorithm.AdditionalEstimationAlgorithm;
-import origami.folding.algorithm.SubFacePriority;
-import origami.folding.algorithm.SwappingAlgorithm;
-import origami.folding.element.SubFace;
-import origami.folding.permutation.TimeoutException;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.data.ListArray;
@@ -17,11 +12,16 @@ import origami.data.quadTree.adapter.PointSetLineAdapter;
 import origami.data.quadTree.collector.LineSegmentCollector;
 import origami.data.quadTree.collector.PointCollector;
 import origami.data.quadTree.comparator.ExpandComparator;
+import origami.folding.HierarchyList;
+import origami.folding.algorithm.AdditionalEstimationAlgorithm;
+import origami.folding.algorithm.SubFacePriority;
+import origami.folding.algorithm.SwappingAlgorithm;
+import origami.folding.element.SubFace;
+import origami.folding.permutation.TimeoutException;
+import origami.folding.util.EquivalenceCondition;
 import origami.folding.util.IBulletinBoard;
 import origami.folding.util.SortingBox;
 import origami.folding.util.WeightedValue;
-import origami.Epsilon;
-import origami.crease_pattern.PointSet;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,11 +34,13 @@ import java.util.concurrent.TimeUnit;
  * Responsible for calculating the correct order of subfaces in a folded figure.
  */
 public class FoldedFigure_Worker {
-    public double[] face_rating;
-    public int[] i_face_rating;
-    public SortingBox<Integer>  nbox = new SortingBox<>();//20180227 In the nbox, the id of men is paired with men_rating and sorted in ascending order of men_rating.
     public final HierarchyList hierarchyList = new HierarchyList();
+    public double[] face_rating;
+    public SortingBox<Integer> nbox = new SortingBox<>();//20180227 In the nbox, the id of men is paired with men_rating and sorted in ascending order of men_rating.
     public int SubFaceTotal;//SubFaceの数
+    //paint 用のint格納用VVVVVVVVVVVVVVVVVVVVVV
+    public EquivalenceCondition errorPos = null;
+    int[] i_face_rating;
     //  hierarchyList[][]は折る前の展開図のすべての面同士の上下関係を1つの表にまとめたものとして扱う
     //　hierarchyList[i][j]が1なら面iは面jの上側。0なら下側。
     //  hierarchyList[i][j]が-50なら、面iとjは重なが、上下関係は決められていない。
@@ -49,19 +51,15 @@ public class FoldedFigure_Worker {
     public SubFace[] s0;//SubFace obtained from SubFace_figure
     public SubFace[] s;//s is s0 sorted in descending order of priority.
     IBulletinBoard bb;
-
     //　ここは  class Jyougehyou_Syokunin  の中です。
     //上下表の初期設定。展開図に1頂点から奇数の折線がでる誤りがある場合0を返す。それが無ければ1000を返す。
     //展開図に山谷折線の拡張による誤りがある場合2を返す。
     int makesuu0no_menno_amount = 0;//Number of faces that can be ranked without any other faces on top
     int makesuu1ijyouno_menno_amount = 0;//Number of faces that can only be ranked if there is one or more other faces on top
-    private int top_face_id_ga_maketa_kazu_goukei_without_rated_face = 0;
-
     SwappingAlgorithm swapper;
     ListArray faceToSubFaceMap;
     QuadTree qt;
-
-    public EquivalenceCondition errorPos = null;
+    private int top_face_id_ga_maketa_kazu_goukei_without_rated_face = 0;
 
     public FoldedFigure_Worker(IBulletinBoard bb0) {
         bb = bb0;
@@ -190,7 +188,7 @@ public class FoldedFigure_Worker {
         //等価条件を設定する。棒ibを境界として隣接する2つの面im1,im2が有る場合、折り畳み推定した場合に
         //棒ibの一部と重なる位置に有る面imは面im1と面im2に上下方向で挟まれることはない。このことから
         //gj[im1][im]=gj[im2][im]という等価条件が成り立つ。
-        
+
         for (int ib = 1; ib <= orite.getNumLines(); ib++) {
             faceId_min = orite.lineInFaceBorder_min_request(ib);
             faceId_max = orite.lineInFaceBorder_max_request(ib);
@@ -417,7 +415,7 @@ public class FoldedFigure_Worker {
             AEA = new AdditionalEstimationAlgorithm(null, hierarchyList, s, SubFace_valid_number, 1000);
             AEA.initialize();
         }
-        
+
         Sid = 1;//The initial value of Sid can be anything other than 0.
         while (Sid != 0) { //If Sid == 0, it means that even the smallest number of SubFace has been searched.
 
@@ -469,7 +467,7 @@ public class FoldedFigure_Worker {
 
                 s[ss].swapCounter = 0;
                 s[ss].reverseSwapCounter = 0;
-                if(swap) {
+                if (swap) {
                     // Enter the stacking information of the ss th SubFace in hierarchyList.
                     s[ss].enterStackingOfSubFace(AEA);
 
@@ -500,7 +498,7 @@ public class FoldedFigure_Worker {
             }
 
         }
-      
+
         // Solution found, perform final checking
         bb.rewrite(10, " ");
         bb.rewrite(9, "Possible solution found...");

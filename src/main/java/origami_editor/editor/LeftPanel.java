@@ -2,7 +2,6 @@ package origami_editor.editor;
 
 import com.formdev.flatlaf.FlatLaf;
 import origami.crease_pattern.element.LineColor;
-import origami_editor.Save;
 import origami_editor.editor.component.ColorIcon;
 import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.*;

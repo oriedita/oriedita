@@ -3,8 +3,8 @@ package origami_editor.editor.canvas;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.element.Point;
-import origami_editor.Save;
 import origami_editor.editor.MouseMode;
+import origami_editor.editor.Save;
 import origami_editor.editor.databinding.CanvasModel;
 
 public class MouseHandlerCreaseMove extends BaseMouseHandlerLineSelect {

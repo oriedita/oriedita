@@ -8,7 +8,6 @@ import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
-import origami_editor.Save;
 import origami_editor.editor.action.Click;
 import origami_editor.editor.canvas.*;
 import origami_editor.editor.component.BulletinBoard;

@@ -1,4 +1,4 @@
-package origami_editor;
+package origami_editor.editor;
 
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineSegment;

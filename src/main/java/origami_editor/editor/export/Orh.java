@@ -4,7 +4,7 @@ import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami_editor.editor.LineStyle;
-import origami_editor.Save;
+import origami_editor.editor.Save;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;

@@ -2,7 +2,7 @@ package origami_editor.editor.export;
 
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
-import origami_editor.Save;
+import origami_editor.editor.Save;
 
 import java.io.*;
 import java.util.StringTokenizer;

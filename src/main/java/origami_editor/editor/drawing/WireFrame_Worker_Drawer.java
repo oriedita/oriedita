@@ -6,7 +6,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.FoldedFigure;
-import origami_editor.Save;
+import origami_editor.editor.Save;
 import origami_editor.editor.Colors;
 import origami_editor.editor.undo_box.HistoryState;
 import origami_editor.tools.Camera;
