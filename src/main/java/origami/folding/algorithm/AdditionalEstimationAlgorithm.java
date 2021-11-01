@@ -284,13 +284,11 @@ public class AdditionalEstimationAlgorithm {
             // Notifying the ItalianoAlgorithm to update.
             Iterable<Integer> it = i < j ? relationObservers.get(i, j) : relationObservers.get(j, i);
             for (int s : it) {
-                // By the nature of PseudoListMatrix, we need to check again to make sure
-                // subFaces[s] is what we want.
-                int I = subFaces[s].FaceIdIndex(i);
-                int J = subFaces[s].FaceIdIndex(j);
-                if (I != 0 && J != 0) {
-                    IA[s].add(I, J);
-                }
+                // Although PseudoListMatrix might return a larger list in general, here the
+                // returned list is actually exactly what we need, since a SubFace s is added to
+                // List[i][x] only if it contains Face i, and similarly it is added to List[x][j]
+                // only if it contains Face j.
+                IA[s].add(subFaces[s].FaceIdIndex(i), subFaces[s].FaceIdIndex(j));
             }
             return true;
         }
