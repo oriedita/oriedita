@@ -566,34 +566,19 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     public void mouseWheelMoved(MouseWheelEvent e) {
         if (mouseWheelMovesCreasePattern) {
-            //	ホイールでundo,redo
-            if ((e.isShiftDown())) {
-                i_mouse_undo_redo_mode = true;
-                es1.unselect_all();
-                app.Button_shared_operation();
-                app.canvasModel.restoreFoldLineAdditionalInputMode();
-                if (e.getWheelRotation() < 0) {
-                    es1.redo();
-                    repaint();
-                } else if (e.getWheelRotation() > 0) {
-                    es1.undo();
-                    repaint();
-                }
+            Point p = new Point(app.e2p(e));
+            MouseWheelTarget target = pointInCreasePatternOrFoldedFigure(p);
+
+            double scrollDistance = app.applicationModel.isPreciseZoom() ? e.getPreciseWheelRotation() : e.getWheelRotation();
+
+            if (target == MouseWheelTarget.CREASE_PATTERN_0) {
+                app.creasePatternCameraModel.zoomBy(scrollDistance);
             } else {
-                Point p = new Point(app.e2p(e));
-                MouseWheelTarget target = pointInCreasePatternOrFoldedFigure(p);
-
-                double scrollDistance = app.applicationModel.isPreciseZoom() ? e.getPreciseWheelRotation() : e.getWheelRotation();
-
-                if (target == MouseWheelTarget.CREASE_PATTERN_0) {
-                    app.creasePatternCameraModel.zoomBy(scrollDistance);
-                } else {
-                    app.foldedFigureModel.zoomBy(scrollDistance);
-                }
-
-                app.canvas.mouse_object_position(p_mouse_TV_position);
-                repaint();
+                app.foldedFigureModel.zoomBy(scrollDistance);
             }
+
+            app.canvas.mouse_object_position(p_mouse_TV_position);
+            repaint();
         }
     }
 
