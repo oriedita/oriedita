@@ -26,8 +26,10 @@ public class SubFace {//This class folds the development view and estimates the 
     BulletinBoard bb;
 
     // For reverse swapping
-    private int reverseSwapCounter = 1;
-    public boolean reverseSwapFlag = false;
+    public int reverseSwapCounter = 0;
+    public int reverseSwapThreshold = 1;
+
+    public int swapCounter = 0;
 
     public SubFace() {
         reset();
@@ -111,9 +113,9 @@ public class SubFace {//This class folds the development view and estimates the 
             // strategically postpone it and try again after more stacking information is
             // determined. We do so by throwing TimeoutException notifying ct_worker to swap
             // this SubFace in reverse direction.
-            if (allowTimeout && permutationGenerator.getCount() > 3000 * reverseSwapCounter) {
+            if (allowTimeout && permutationGenerator.getCount() > 3000 * reverseSwapThreshold) {
+                reverseSwapThreshold++;
                 reverseSwapCounter++;
-                reverseSwapFlag = true;
                 throw new TimeoutException();
             }
 

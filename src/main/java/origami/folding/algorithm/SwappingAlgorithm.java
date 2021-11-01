@@ -18,14 +18,16 @@ import origami.folding.element.SubFace;
  * or more SubFaces swap in a loop (and possibly reset each other during the
  * process). In order to prevent this, the swapping algorithm now implements a
  * hash table recording the visited SubFace sequence. If the same sequence
- * reappears and swapping is again requested, it will introduce an unvisited
- * SubFace to the game to spice things up. This has proven to be quite effective
- * in breaking the loop.
+ * reappears and swapping is again requested, it will introduce unvisited
+ * SubFaces to the game to spice things up. This has proven to be quite
+ * effective in breaking the loop.
  */
 public class SwappingAlgorithm {
 
     private int high;
     private int lastLow;
+    private int repetition;
+    private int hash;
 
     // For preventing cycling swapping over and over.
     private final Set<Integer> history = new HashSet<>();
@@ -37,21 +39,15 @@ public class SwappingAlgorithm {
     }
 
     /** Performs the swap. */
-    public void process(SubFace[] s) {
+    public void process(SubFace[] s, int max) {
         if (high == 0) return;
 
-        int hash = getHash(s, high);
+        hash = getHash(s, high);
         if (history.contains(hash)) {
-            // Introduce an unvisited SubFace to the game.
-            boolean found = false;
-            for (int i = 1; i < s.length && !found; i++) {
-                if (!visited.contains(s[i].id)) {
-                    swap(s, i, 1);
-                    hash = getHash(s, ++high);
-                    found = true;
-                }
-            }
-            if (!found) return; // Let's hope that this never happen, or we're out of tricks.
+            // Introduce unvisited SubFaces to the game.
+            int reverseResult = reverseSwap(s, 1, max); // side effect on hash
+            if (reverseResult == high) return; // Let's hope that this never happen, or we're out of tricks.
+            else high = reverseResult;
         }
         history.add(hash);
 
@@ -60,7 +56,10 @@ public class SwappingAlgorithm {
         swap(s, high, low);
         lastLow = low;
         high = 0;
-    }
+
+		// To further improve performance
+		reverseSwapCore(s, low, max, s[low].swapCounter - 1);
+	}
 
     private int getHash(SubFace[] s, int high) {
         int[] ids = new int[high];
@@ -89,15 +88,28 @@ public class SwappingAlgorithm {
         s[low] = temp;
     }
 
-    public void reverseSwap(SubFace[] s, int high, int low) {
-        SubFace temp = s[low];
-        for (int i = low; i < high; i++) {
-            s[i] = s[i + 1];
+    public int reverseSwap(SubFace[] s, int index, int max) {
+        return reverseSwapCore(s, index, max, ++repetition);
+    }
+
+    private int reverseSwapCore(SubFace[] s, int index, int max, int r) {
+        int result = index;
+        for (int i = index + 1; i <= max && r > 0; i++) {
+            if (!visited.contains(s[i].id)) {
+                visited.add(s[i].id);
+                swap(s, i, index);
+                hash = getHash(s, ++result);
+                r--;
+            }
         }
-        s[high] = temp;
+        return result;
     }
 
     public void visit(SubFace s) {
         visited.add(s.id);
+    }
+
+    public int getVisitedCount() {
+        return visited.size();
     }
 }
