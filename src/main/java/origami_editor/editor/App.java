@@ -1106,6 +1106,16 @@ public class App {
     }
 
     public void importFile() {
+        if (!fileModel.isSaved()) {
+            int choice = JOptionPane.showConfirmDialog(frame, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            if (choice == JOptionPane.YES_OPTION) {
+                saveFile();
+            } else if (choice == JOptionPane.CLOSED_OPTION || choice == JOptionPane.CANCEL_OPTION) {
+                return;
+            }
+        }
+
         System.out.println("readFile2Memo() 開始");
         File importFile = selectImportFile();
         Save memo_temp = readImportFile(importFile);
