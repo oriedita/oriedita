@@ -139,8 +139,8 @@ public class Svg {
         SubFace[] s0 = foldedFigure.ct_worker.s0;
 
         //面を描く-----------------------------------------------------------------------------------------------------
-        int[] x = new int[100];
-        int[] y = new int[100];
+        String[] x = new String[100];
+        String[] y = new String[100];
 
         //SubFaceの.set_Menid2uekara_kazoeta_itiは現在の上下表をもとに、上から数えてi番めの面のid番号を全ての順番につき格納する。
         for (int im = 1; im <= SubFaceTotal; im++) { //SubFaceから上からの指定した番目の面のidを求める。
@@ -183,15 +183,15 @@ public class Svg {
                     t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, i)));
                     t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, i)));
                     t1.set(camera.object2TV(t0));
-                    x[i] = (int) t1.getX();
-                    y[i] = (int) t1.getY();
+                    x[i] = String.format("%.2f", t1.getX());
+                    y[i] = String.format("%.2f", t1.getY());
                 }
 
                 t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
                 t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
                 t1.set(camera.object2TV(t0));
-                x[0] = (int) t1.getX();
-                y[0] = (int) t1.getY();
+                x[0] = String.format("%.2f", t1.getX());
+                y[0] = String.format("%.2f", t1.getY());
                 //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求めるのはここまで
 
                 str_zahyou = new StringBuilder(x[0] + "," + y[0]);
@@ -251,15 +251,15 @@ public class Svg {
                 a.set(s_tv.getA());
                 b.set(s_tv.getB());
 
-                BigDecimal b_ax = new BigDecimal(String.valueOf(a.getX()));
-                BigDecimal b_ay = new BigDecimal(String.valueOf(a.getY()));
-                BigDecimal b_bx = new BigDecimal(String.valueOf(b.getX()));
-                BigDecimal b_by = new BigDecimal(String.valueOf(b.getY()));
+                String b_ax = String.format("%.2f", a.getX());
+                String b_ay = String.format("%.2f", a.getY());
+                String b_bx = String.format("%.2f", b.getX());
+                String b_by = String.format("%.2f", b.getY());
 
-                pw.println("<line x1=\"" + b_ax.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
-                        " y1=\"" + b_ay.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
-                        " x2=\"" + b_bx.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
-                        " y2=\"" + b_by.setScale(2, RoundingMode.HALF_UP).doubleValue() + "\"" +
+                pw.println("<line x1=\"" + b_ax + "\"" +
+                        " y1=\"" + b_ay + "\"" +
+                        " x2=\"" + b_bx + "\"" +
+                        " y2=\"" + b_by + "\"" +
                         " style=\"" + "stroke:" + str_stroke + "\"" +
                         " stroke-width=\"" + str_strokewidth + "\"" + " />"
                 );
