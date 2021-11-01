@@ -4,12 +4,12 @@ import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+import origami.data.save.LineSegmentSave;
 import origami.data.quadTree.QuadTree;
 import origami.data.quadTree.adapter.LineSegmentEndPointAdapter;
 import origami.data.quadTree.adapter.LineSegmentSetAdapter;
 import origami.data.quadTree.collector.EndPointCollector;
 import origami.data.quadTree.collector.QuadTreeCollector;
-import origami_editor.editor.Save;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +76,7 @@ public class LineSegmentSet {
         return s.getColor();
     }
 
-    public void setSave(Save memo1) {
+    public void setSave(LineSegmentSave memo1) {
         lineSegments.clear();
         for (LineSegment s :
                 memo1.getLineSegments()) {

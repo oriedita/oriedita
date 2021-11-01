@@ -184,7 +184,9 @@ public class CreasePattern_Worker {
         tempFoldLineSet.move(addx, addy);//全体を移動する
 
         int total_old = foldLineSet.getTotal();
-        foldLineSet.addSave(tempFoldLineSet.getSave());
+        Save save = new Save();
+        tempFoldLineSet.getSave(save);
+        foldLineSet.addSave(save);
         int total_new = foldLineSet.getTotal();
         foldLineSet.divideLineSegmentIntersections(1, total_old, total_old + 1, total_new);
 
@@ -215,12 +217,16 @@ public class CreasePattern_Worker {
     }
 
     public LineSegmentSet get() {
-        lineSegmentSet.setSave(foldLineSet.getSave());
+        Save save = new Save();
+        foldLineSet.getSave(save);
+        lineSegmentSet.setSave(save);
         return lineSegmentSet;
     }
 
     public LineSegmentSet getForFolding() {
-        lineSegmentSet.setSave(foldLineSet.getMemo_for_folding());
+        Save save = new Save();
+        foldLineSet.getMemo_for_folding(save);
+        lineSegmentSet.setSave(save);
         return lineSegmentSet;
     }
 
@@ -230,7 +236,9 @@ public class CreasePattern_Worker {
     }
 
     public LineSegmentSet getForSelectFolding() {//selectした折線で折り畳み推定をする。
-        lineSegmentSet.setSave(foldLineSet.getSaveForSelectFolding());
+        Save save = new Save();
+        foldLineSet.getSaveForSelectFolding(save);
+        lineSegmentSet.setSave(save);
         return lineSegmentSet;
     }
 
@@ -247,20 +255,22 @@ public class CreasePattern_Worker {
 
     public Save getSave(String title) {
         Save save_temp = new Save();
-        save_temp.set(foldLineSet.getSave(title));
+        foldLineSet.getSave(save_temp, title);
 
         saveAdditionalInformation(save_temp);
         return save_temp;
     }
 
     public Save h_getSave() {
-        return auxLines.h_getSave();
+        Save save = new Save();
+        auxLines.h_getSave(save);
+        return save;
     }
 
     public Save getSave_for_export() {
         Save save = new Save();
-        save.set(foldLineSet.getSave());
-        save.add(auxLines.h_getSave());
+        foldLineSet.getSave(save);
+        auxLines.h_getSave(save);
         saveAdditionalInformation(save);
 
         return save;

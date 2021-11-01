@@ -7,6 +7,7 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
+import origami_editor.editor.Save;
 import origami_editor.editor.databinding.CanvasModel;
 
 public class MouseHandlerCreaseMove4p extends BaseMouseHandlerInputRestricted {
@@ -91,12 +92,16 @@ public class MouseHandlerCreaseMove4p extends BaseMouseHandlerInputRestricted {
             d.app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
-            ori_s_temp.setSave(d.foldLineSet.getMemoSelectOption(2));//セレクトされた折線だけ取り出してori_s_tempを作る
+            Save save = new Save();
+            d.foldLineSet.getMemoSelectOption(save, 2);
+            ori_s_temp.setSave(save);//セレクトされた折線だけ取り出してori_s_tempを作る
             d.foldLineSet.delSelectedLineSegmentFast();//セレクトされた折線を削除する。
             ori_s_temp.move(d.lineStep.get(0).getA(), d.lineStep.get(1).getA(), d.lineStep.get(2).getA(), d.lineStep.get(3).getA());//全体を移動する
 
             int sousuu_old = d.foldLineSet.getTotal();
-            d.foldLineSet.addSave(ori_s_temp.getSave());
+            Save save1 = new Save();
+            ori_s_temp.getSave(save1);
+            d.foldLineSet.addSave(save1);
             int sousuu_new = d.foldLineSet.getTotal();
             d.foldLineSet.divideLineSegmentIntersections(1, sousuu_old, sousuu_old + 1, sousuu_new);
 
