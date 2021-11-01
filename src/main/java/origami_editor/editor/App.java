@@ -658,7 +658,7 @@ public class App {
 
     public void closing() {
         if (!fileModel.isSaved()) {
-            int option = JOptionPane.showConfirmDialog(frame, createImageIcon("ppp/owari.png"));
+            int option = JOptionPane.showConfirmDialog(frame, "Save crease pattern before exiting?", "Save", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
             switch (option) {
                 case JOptionPane.YES_OPTION:
