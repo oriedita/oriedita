@@ -10,7 +10,7 @@ import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.element.SubFace;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.folded_figure.FoldedFigure;
-import origami_editor.sortingbox.SortingBox;
+import origami.folding.util.SortingBox;
 import origami_editor.tools.Camera;
 import origami_editor.tools.StringOp;
 

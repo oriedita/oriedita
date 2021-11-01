@@ -5,8 +5,8 @@ import origami.crease_pattern.element.Polygon;
 import origami.Epsilon;
 import origami.crease_pattern.element.*;
 import origami_editor.editor.Save;
-import origami_editor.sortingbox.SortingBox;
-import origami_editor.sortingbox.WeightedValue;
+import origami.folding.util.SortingBox;
+import origami.folding.util.WeightedValue;
 
 import java.awt.*;
 import java.util.*;

@@ -7,8 +7,8 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 import origami_editor.editor.MouseMode;
-import origami_editor.sortingbox.SortingBox;
-import origami_editor.sortingbox.WeightedValue;
+import origami.folding.util.SortingBox;
+import origami.folding.util.WeightedValue;
 
 public class MouseHandlerLengthenCrease extends BaseMouseHandler {
     SortingBox<LineSegment> entyou_kouho_nbox = new SortingBox<>();

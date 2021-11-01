@@ -1,4 +1,4 @@
-package origami_editor.graphic2d.averagecoordinates;
+package origami.folding.util;
 
 import origami.crease_pattern.element.Point;
 

@@ -6,8 +6,8 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
-import origami_editor.sortingbox.SortingBox;
-import origami_editor.sortingbox.WeightedValue;
+import origami.folding.util.SortingBox;
+import origami.folding.util.WeightedValue;
 
 public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandlerInputRestricted {
     public boolean workDone = false;

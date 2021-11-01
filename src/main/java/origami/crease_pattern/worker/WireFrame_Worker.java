@@ -6,7 +6,7 @@ import origami_editor.editor.Colors;
 import origami_editor.editor.Save;
 import origami_editor.editor.folded_figure.FoldedFigure;
 import origami_editor.editor.undo_box.HistoryState;
-import origami_editor.graphic2d.averagecoordinates.AverageCoordinates;
+import origami.folding.util.AverageCoordinates;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;

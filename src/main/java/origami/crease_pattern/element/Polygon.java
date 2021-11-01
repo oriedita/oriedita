@@ -2,8 +2,8 @@ package origami.crease_pattern.element;
 
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
-import origami_editor.sortingbox.SortingBox;
-import origami_editor.sortingbox.WeightedValue;
+import origami.folding.util.SortingBox;
+import origami.folding.util.WeightedValue;
 
 public class Polygon {
     int vertexCount;             //How many vertices

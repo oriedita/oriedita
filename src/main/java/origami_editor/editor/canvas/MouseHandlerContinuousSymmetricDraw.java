@@ -6,7 +6,7 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.canvas.drawing_worker_toolbox.Drawing_Worker_Toolbox;
-import origami_editor.sortingbox.SortingBox;
+import origami.folding.util.SortingBox;
 
 public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRestricted {
     Drawing_Worker_Toolbox e_s_dougubako;

@@ -1,4 +1,4 @@
-package origami_editor.sortingbox;
+package origami.folding.util;
 
 import java.util.ArrayList;
 
