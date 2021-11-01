@@ -6,7 +6,7 @@ import origami.folding.util.EquivalenceCondition;
 import origami.folding.permutation.ChainPermutationGenerator;
 import origami.folding.permutation.PermutationGenerator;
 import origami.folding.permutation.TimeoutException;
-import origami_editor.editor.component.BulletinBoard;
+import origami.folding.util.IBulletinBoard;
 
 public class SubFace {//This class folds the development view and estimates the overlap information of the planes of the wire diagram.
 
@@ -23,7 +23,7 @@ public class SubFace {//This class folds the development view and estimates the 
 
     int[] faceIdMap;// For fast lookup
 
-    BulletinBoard bb;
+    IBulletinBoard bb;
 
     // For reverse swapping
     public int reverseSwapCounter = 0;
@@ -35,7 +35,7 @@ public class SubFace {//This class folds the development view and estimates the 
         reset();
     }
 
-    public SubFace(BulletinBoard bb0) {
+    public SubFace(IBulletinBoard bb0) {
         bb = bb0;
         reset();
     }

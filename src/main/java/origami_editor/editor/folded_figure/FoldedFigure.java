@@ -1,13 +1,13 @@
 package origami_editor.editor.folded_figure;
 
 import origami.crease_pattern.FoldingException;
+import origami.folding.util.IBulletinBoard;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami.crease_pattern.worker.BasicBranch_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.crease_pattern.element.Point;
-import origami_editor.editor.component.BulletinBoard;
 import origami_editor.tools.Camera;
 import origami.crease_pattern.LineSegmentSet;
 
@@ -46,7 +46,7 @@ public class FoldedFigure {
     public boolean findAnotherOverlapValid = false;     //This takes 1 if "find another overlap" is valid, and 0 if it is invalid.
     public int discovered_fold_cases = 0;    //折り重なり方で、何通り発見したかを格納する。
     public int transparent_transparency = 16;//Transparency when drawing a transparent diagram in color
-    public BulletinBoard bulletinBoard;
+    public IBulletinBoard bulletinBoard;
     // The result of the first ct_worker.susumu (SubFaceTotal) when looking for yet another paper overlap. If it was
     // 0, there was no room for new susumu. If non-zero, the smallest number of changed SubFace ids
     public boolean summary_write_image_during_execution = false;//matome_write_imageが実行中ならtureになる。これは、複数の折りあがり形の予測の書き出しがかすれないように使う。20170613
@@ -64,7 +64,7 @@ public class FoldedFigure {
     public final FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
     private Point pointOfReferencePlane;
 
-    public FoldedFigure(BulletinBoard bb, ApplicationModel applicationModel) {
+    public FoldedFigure(IBulletinBoard bb, ApplicationModel applicationModel) {
 
         ct_worker = new FoldedFigure_Worker(bb, applicationModel);
         bulletinBoard = bb;

@@ -1,6 +1,6 @@
 package origami_editor.editor.component;
 
-import origami_editor.editor.App;
+import origami.folding.util.IBulletinBoard;
 import origami_editor.editor.Colors;
 
 import javax.swing.event.ChangeEvent;
@@ -8,7 +8,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class BulletinBoard {
+public class BulletinBoard implements IBulletinBoard {
 
     int ix0 = 10;//X coordinate of the upper left corner of the bulletin board
     int iy0 = 135;//Y coordinate at the upper left corner of the bulletin board

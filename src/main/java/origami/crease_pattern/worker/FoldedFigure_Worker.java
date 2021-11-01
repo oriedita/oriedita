@@ -1,6 +1,7 @@
 package origami.crease_pattern.worker;
 
 import origami.folding.util.EquivalenceCondition;
+import origami.folding.util.IBulletinBoard;
 import origami_editor.editor.Colors;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
@@ -24,7 +25,6 @@ import origami.data.quadTree.collector.PointCollector;
 import origami.data.quadTree.comparator.ExpandComparator;
 import origami.folding.util.SortingBox;
 import origami.folding.util.WeightedValue;
-import origami_editor.editor.component.BulletinBoard;
 import origami_editor.tools.Camera;
 import origami.Epsilon;
 import origami.crease_pattern.PointSet;
@@ -53,7 +53,7 @@ public class FoldedFigure_Worker {
     SubFace[] s;//s is s0 sorted in descending order of priority.
     boolean displayShadows = false; //Whether to display shadows. 0 is not displayed, 1 is displayed
     Camera camera = new Camera();
-    BulletinBoard bb;
+    IBulletinBoard bb;
     private final ApplicationModel applicationModel;
     Color F_color = new Color(255, 255, 50);//表面の色
     Color B_color = new Color(233, 233, 233);//裏面の色
@@ -73,7 +73,7 @@ public class FoldedFigure_Worker {
 
     EquivalenceCondition errorPos = null;
 
-    public FoldedFigure_Worker(BulletinBoard bb0, ApplicationModel applicationModel) {
+    public FoldedFigure_Worker(IBulletinBoard bb0, ApplicationModel applicationModel) {
         bb = bb0;
         this.applicationModel = applicationModel;
         reset();

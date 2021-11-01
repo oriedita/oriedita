@@ -6,7 +6,7 @@ import origami.data.listMatrix.PseudoListMatrix;
 import origami.folding.HierarchyList;
 import origami.folding.element.SubFace;
 import origami.folding.util.EquivalenceCondition;
-import origami_editor.editor.component.BulletinBoard;
+import origami.folding.util.IBulletinBoard;
 
 /**
  * Author: Mu-Tsun Tsai
@@ -27,7 +27,7 @@ public class AdditionalEstimationAlgorithm {
     private static final int ABOVE = HierarchyList.ABOVE_1;
     private static final int BELOW = HierarchyList.BELOW_0;
 
-    private final BulletinBoard bb;
+    private final IBulletinBoard bb;
     private final HierarchyList hierarchyList;
     private final SubFace[] subFaces; // indices start from 1
     private final int count;
@@ -40,12 +40,12 @@ public class AdditionalEstimationAlgorithm {
 
     public EquivalenceCondition errorPos;
 
-    public AdditionalEstimationAlgorithm(BulletinBoard bb, HierarchyList hierarchyList, SubFace[] s, int capacity) {
+    public AdditionalEstimationAlgorithm(IBulletinBoard bb, HierarchyList hierarchyList, SubFace[] s, int capacity) {
         this(bb, hierarchyList, s, s.length - 1, capacity);
     }
 
-    public AdditionalEstimationAlgorithm(BulletinBoard bb, HierarchyList hierarchyList, SubFace[] s, int count,
-            int capacity) {
+    public AdditionalEstimationAlgorithm(IBulletinBoard bb, HierarchyList hierarchyList, SubFace[] s, int count,
+                                         int capacity) {
         this.bb = bb;
         this.hierarchyList = hierarchyList;
         this.count = ++count;
