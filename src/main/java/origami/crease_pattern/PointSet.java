@@ -3,8 +3,8 @@ package origami.crease_pattern;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import origami.crease_pattern.element.*;
 import origami.data.ListArray;
+import origami.data.save.PointSave;
 import origami.folding.element.Face;
-import origami_editor.editor.Save;
 
 import java.io.Serializable;
 import java.util.*;
@@ -638,19 +638,15 @@ public class PointSet implements Serializable {
         }
     }
 
-    public Save getSave() {
-        Save save = new Save();
-
+    public void getSave(PointSave save) {
         for (int i = 1; i <= numPoints; i++) {
             Point p = new Point();
             p.set(points[i]);
             save.addPoint(p);
         }
-
-        return save;
     }
 
-    public void setSave(Save save) {
+    public void setSave(PointSave save) {
         for (int i = 0; i < save.getPoints().size(); i++) {
             points[i+1].set(save.getPoints().get(i));
         }

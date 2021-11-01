@@ -600,7 +600,9 @@ public class App {
             //
             if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
                 CreasePattern_Worker creasePatternWorker2 = new CreasePattern_Worker(this);    // Basic branch craftsman. Accepts input from the mouse.
-                creasePatternWorker2.setSave_for_reading(mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding());
+                Save save = new Save();
+                mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
+                creasePatternWorker2.setSave_for_reading(save);
                 creasePatternWorker2.point_removal();
                 creasePatternWorker2.overlapping_line_removal();
                 creasePatternWorker2.branch_trim();

@@ -646,7 +646,9 @@ public class WireFrame_Worker {
     }
 
     public Save getSave() {
-        return pointSet.getSave();
+        Save save = new Save();
+        pointSet.getSave(save);
+        return save;
     }
 
     public void setSaveForUndoRedo(Save memo1) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用

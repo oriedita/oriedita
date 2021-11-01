@@ -3,6 +3,8 @@ package origami_editor.editor;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+import origami.data.save.LineSegmentSave;
+import origami.data.save.PointSave;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
@@ -13,7 +15,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Save implements Serializable {
+public class Save implements LineSegmentSave, PointSave, Serializable {
     private String version;
     private List<LineSegment> lineSegments;
     private List<Circle> circles;

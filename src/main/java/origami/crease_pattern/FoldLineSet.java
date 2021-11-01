@@ -1,16 +1,17 @@
 package origami.crease_pattern;
 
+import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
-import origami.Epsilon;
 import origami.crease_pattern.element.*;
-import origami_editor.editor.Save;
+import origami.data.save.LineSegmentSave;
 import origami.folding.util.SortingBox;
 import origami.folding.util.WeightedValue;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -113,25 +114,6 @@ public class FoldLineSet {
         return s.getColor();
     }
 
-    public void setLineCustomized(int i, int customized) {
-        LineSegment s = lineSegments.get(i);
-        s.setCustomized(customized);
-    }
-
-    public int getLineCustomized(int i) {
-        return lineSegments.get(i).getCustomized();
-    }
-
-    public void setLineCustomizedColor(int i, Color c0) {
-        LineSegment s = lineSegments.get(i);
-        s.setCustomizedColor(c0);
-    }
-
-    public Color getLineCustomizedColor(int i) {
-        LineSegment s = lineSegments.get(i);
-        return s.getCustomizedColor();
-    }
-
     public void setCircleCustomized(int i, int customized) {
         Circle e = circles.get(i);
         e.setCustomized(customized);
@@ -154,13 +136,11 @@ public class FoldLineSet {
         return s.getActive();
     }
 
-    public Save getSave() {
-        return getSave("_");
+    public void getSave(LineSegmentSave save) {
+        getSave(save, "_");
     }
 
-    public Save getSave(String title) {
-        Save save = new Save();
-
+    public void getSave(LineSegmentSave save, String title) {
         save.setTitle(title);
 
         for (int i = 1; i <= total; i++) {
@@ -178,14 +158,10 @@ public class FoldLineSet {
 
             save.addCircle(circle1);
         }
-
-        return save;
     }
 
     //Output the information of all line segments of the line segment set as Memo. // Iactive does not write out the fold line of excluding in the memo
-    public Save getMemo_active_excluding(LineSegment.ActiveState excluding) {
-        Save save = new Save();
-
+    public void getMemo_active_excluding(LineSegmentSave save, LineSegment.ActiveState excluding) {
         for (int i = 1; i <= total; i++) {
             if (getActive(i) != excluding) {
                 save.addLineSegment(lineSegments.get(i).clone());
@@ -195,43 +171,32 @@ public class FoldLineSet {
         for (Circle circle : circles) {
             save.addCircle(circle);
         }
-
-        return save;
     }
 
-    public Save h_getSave() {
-        Save save = new Save();
+    public void h_getSave(LineSegmentSave save) {
         for (int i = 1; i <= total; i++) {
             save.addAuxLineSegment(lineSegments.get(i));
         }
-
-        return save;
     }
 
     //Output the line segment set information as Memo for folding estimation. // Do not write out auxiliary lines with icol of 3 (cyan = light blue) or more in the memo
-    public Save getMemo_for_folding() {
-        Save save = new Save();
-
+    public void getMemo_for_folding(LineSegmentSave save) {
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
             if (s.getColor().isFoldingLine()) {
                 save.addLineSegment(s.clone());
             }
         }
-        return save;
     }
 
     //Output the line segment set information as Memo for folding estimation. // Do not write out auxiliary lines with icol of 3 (cyan = light blue) or more in the memo
-    public Save getSaveForSelectFolding() {
-        Save save = new Save();
-
+    public void getSaveForSelectFolding(LineSegmentSave save) {
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
             if ((s.getColor().isFoldingLine()) && (s.getSelected() == 2)) {
                 save.addLineSegment(s.clone());
             }
         }
-        return save;
     }
 
     //The number of broken lines of the line segment set selected for folding estimation is output as an int.
@@ -247,7 +212,7 @@ public class FoldLineSet {
         return number;
     }
 
-    public String setSave(Save save) {
+    public String setSave(LineSegmentSave save) {
         circles.clear();
         circles.addAll(save.getCircles());
 
@@ -260,11 +225,11 @@ public class FoldLineSet {
         return save.getTitle();
     }
 
-    public void setAuxSave(Save save) {
+    public void setAuxSave(LineSegmentSave save) {
         lineSegments.addAll(save.getAuxLineSegments());
     }
 
-    public void addSave(Save memo1) {
+    public void addSave(LineSegmentSave memo1) {
         for (LineSegment s : memo1.getLineSegments()) {
             //First the total number of line segments was calculated
 
@@ -292,9 +257,7 @@ public class FoldLineSet {
 
     //Output the information of all line segments of the line segment set as Memo.
     // Do not write down the fold line of select except
-    public Save getMemoExceptSelected(int except) {
-        Save save = new Save();
-
+    public <T extends LineSegmentSave> T getMemoExceptSelected(T save, int except) {
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
 
@@ -312,9 +275,7 @@ public class FoldLineSet {
 
     //Output the information of all line segments of the line segment set as Memo.
     // select writes out option polygonal line in a memo
-    public Save getMemoSelectOption(int option) {
-        Save save = new Save();
-
+    public <T extends LineSegmentSave> T getMemoSelectOption(T save, int option) {
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
 
@@ -487,7 +448,7 @@ public class FoldLineSet {
         //"lX" lXは小文字のエルと大文字のエックス。Senbun s_step1と重複する部分のある線分やX交差する線分を削除するモード。
         boolean i_r = false;//たくさんある折線のうち、一本でも削除すれば1、1本も削除しないなら0。
 
-        Save save = new Save();
+        FoldLineSave save = new FoldLineSave();
         boolean i_kono_orisen_wo_sakujyo;//i_この折線を削除　0削除しない、1削除する
         for (int i = 1; i <= total; i++) {
 
@@ -547,7 +508,7 @@ public class FoldLineSet {
     public boolean deleteInside(Polygon p) {
         boolean i_r = false;
 
-        Save save = new Save();
+        FoldLineSave save = new FoldLineSave();
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
@@ -579,7 +540,7 @@ public class FoldLineSet {
     public boolean deleteInside_foldingLine(Polygon p) {//Delete only the polygonal line
         boolean i_r = false;
 
-        Save save = new Save();
+        FoldLineSave save = new FoldLineSave();
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
@@ -611,7 +572,7 @@ public class FoldLineSet {
     public boolean deleteInside_edge(Polygon p) {//Delete only the polygonal line
         boolean i_r = false;
 
-        Save save = new Save();
+        FoldLineSave save = new FoldLineSave();
         int ibangou = 0;
 
         for (int i = 1; i <= total; i++) {
@@ -644,7 +605,7 @@ public class FoldLineSet {
     public boolean deleteInside_aux(Polygon p) {//Delete only auxiliary live line
         boolean i_r = false;
 
-        Save save = new Save();
+        FoldLineSave save = new FoldLineSave();
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
@@ -707,8 +668,8 @@ public class FoldLineSet {
     }
 
     public void delSelectedLineSegmentFast() {
-        Save memo_temp = new Save();
-        memo_temp.set(getMemoExceptSelected(2));
+        FoldLineSave memo_temp = new FoldLineSave();
+        getMemoExceptSelected(memo_temp, 2);
         reset();
         setSave(memo_temp);
     }
@@ -843,8 +804,8 @@ public class FoldLineSet {
             }
         }
 
-        Save memo_temp = new Save();
-        memo_temp.set(getMemo_active_excluding(LineSegment.ActiveState.MARK_FOR_DELETION_100));
+        FoldLineSave memo_temp = new FoldLineSave();
+        getMemo_active_excluding(memo_temp, LineSegment.ActiveState.MARK_FOR_DELETION_100);
         reset();
         setSave(memo_temp);
     }
@@ -3596,6 +3557,7 @@ public class FoldLineSet {
      * selects all Line Segments that are somehow connected to p (even indirectly).
      * This method does very rough approximation, so it will always select all lines that are connected, but
      * could sometimes select lines that are not connected, if they are closer than 1 unit to the connected lines.
+     *
      * @param p Point which the lines should be connected to
      */
     public void selectProbablyConnected(Point p) {
@@ -3642,5 +3604,76 @@ public class FoldLineSet {
             connections.put(p, new HashSet<>());
         }
         connections.get(p).add(s);
+    }
+
+    /**
+     * Internal class used for quickly copying the contents of a foldlineset.
+     */
+    private static class FoldLineSave implements LineSegmentSave {
+        private String title;
+        private List<LineSegment> lineSegments;
+        private List<Circle> circles;
+        private List<LineSegment> auxLineSegments;
+
+        public FoldLineSave() {
+            lineSegments = new ArrayList<>();
+            circles = new ArrayList<>();
+            auxLineSegments = new ArrayList<>();
+        }
+
+        @Override
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        @Override
+        public List<LineSegment> getLineSegments() {
+            return lineSegments;
+        }
+
+        @Override
+        public void setLineSegments(List<LineSegment> lineSegments) {
+            this.lineSegments = lineSegments;
+        }
+
+        @Override
+        public void addLineSegment(LineSegment lineSegment) {
+            lineSegments.add(lineSegment);
+        }
+
+        @Override
+        public void addCircle(Circle circle) {
+            circles.add(circle);
+        }
+
+        @Override
+        public List<Circle> getCircles() {
+            return circles;
+        }
+
+        @Override
+        public void setCircles(List<Circle> circles) {
+            this.circles = circles;
+        }
+
+        @Override
+        public List<LineSegment> getAuxLineSegments() {
+            return auxLineSegments;
+        }
+
+        @Override
+        public void setAuxLineSegments(List<LineSegment> auxLineSegments) {
+            this.auxLineSegments = auxLineSegments;
+        }
+
+        @Override
+        public void addAuxLineSegment(LineSegment lineSegment) {
+            auxLineSegments.add(lineSegment);
+        }
+
+        @Override
+        public String getTitle() {
+            return title;
+        }
     }
 }
