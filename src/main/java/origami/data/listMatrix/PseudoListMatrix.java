@@ -15,6 +15,9 @@ import java.util.*;
  * need to check that the returned values are really in List[i][j], this class
  * is excellent in memory efficiency (it uses space O(n) instead of O(n^2))
  * while remains fast in iterating over the list.
+ * 
+ * Even better, in fact in our use case the returned list is exactly the actual
+ * list (see the comments in AEA).
  */
 public class PseudoListMatrix {
 

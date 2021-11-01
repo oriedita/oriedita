@@ -81,12 +81,12 @@ public class ChainPermutationGenerator extends PermutationGenerator {
             return 1;
         } else if (looped) {
             int i = 1; // Check if we have returned to the save point.
-            while (swapHistory[i] == saveHistory[2][i] && i<= numDigits) i++;
+            while (swapHistory[i] == saveHistory[2][i] && i < numDigits) i++;
             if (swapHistory[i] > saveHistory[2][i]) {
                 looped = false;
                 return 0;
             }
-        } else if(count >= 600 && count % 200 == 0) {
+        } else if (count >= 600 && count % 200 == 0) {
             if (count == 800) saved = true;
             for (int i = 1; i <= numDigits; i++) {
                 if (count >= 800) saveHistory[1][i] = saveHistory[0][i];
@@ -129,6 +129,12 @@ public class ChainPermutationGenerator extends PermutationGenerator {
 
             // If the current digit has no available element, retract.
             if (swapIndex > numDigits - lockRemain + 1) {
+                // The nature of ChainPermutationGenerator is that it never hits a dead-end
+                // mid-way unless there's internal contradiction in the given constraints.
+                if (swapHistory[curIndex] == curIndex - 1) {
+                    return 0;
+                }
+
                 swapHistory[curIndex] = curIndex - 1;
                 if (--curIndex == 0) {
                     return 0;

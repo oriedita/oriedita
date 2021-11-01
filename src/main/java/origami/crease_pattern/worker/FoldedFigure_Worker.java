@@ -458,7 +458,7 @@ public class FoldedFigure_Worker {
             }//There is no contradiction in all SubFaces.
             Sid = next(ms - 1);
 
-            if (swap) swapper.process(s);
+            if (swap) swapper.process(s, SubFace_valid_number);
 
             if (Thread.interrupted()) throw new InterruptedException();
         }
@@ -473,31 +473,33 @@ public class FoldedFigure_Worker {
         hierarchyList.restore();// <<<<<<<<<<<<<<<<<<<<<<<<<<<,,
         if (swap) AEA.restore();
 
-        int leap = 10;
         int reversePending = 0;
 
         for (int ss = 1; ss <= SubFace_valid_number; ss++) { // <<<<<<<<<<<<<<高速化のため変更。070417
 
             if (swap) {
                 swapper.visit(s[ss]);
-                if (s[ss].reverseSwapFlag) {
+                if (s[ss].reverseSwapCounter > 0) {
                     reversePending--;
-                    s[ss].reverseSwapFlag = false;
                 }
             }
 
             int count = s[ss].getFaceIdCount(), pair = count * (count - 1) / 2;
-            bb.rewrite(7, "Current SubFace( " + ss + " / " + SubFace_valid_number + " ) , face count = " + count
-                    + " , face pair = " + pair);
+            String msg = "Current SubFace( " + ss + " / ";
+            if (swap) msg += swapper.getVisitedCount() + " / ";
+            bb.rewrite(7, msg + SubFace_valid_number + " ) , face count = " + count + " , face pair = " + pair);
             bb.rewrite(8, "Search progress " + Permutation_count(ss));
 
             try {
-                kks = s[ss].possible_overlapping_search(hierarchyList, swap && SubFace_valid_number - ss >= leap);
+                kks = s[ss].possible_overlapping_search(hierarchyList, swap && ss < SubFace_valid_number);
                 if (kks == 0) {// kks == 0 means that there is no permutation that can overlap
                     swapper.record(ss);
+                    s[ss].swapCounter++;
                     return ss;
                 }
 
+                s[ss].swapCounter = 0;
+                s[ss].reverseSwapCounter = 0;
                 if(swap) {
                     // Enter the stacking information of the ss th SubFace in hierarchyList.
                     s[ss].enterStackingOfSubFace(AEA);
@@ -522,7 +524,7 @@ public class FoldedFigure_Worker {
                 }
 
             } catch (TimeoutException e) {
-                swapper.reverseSwap(s, ss + (++leap), ss);
+                swapper.reverseSwap(s, ss, SubFace_valid_number);
                 reversePending++;
                 ss--; // retry the current depth
                 // We didn't write anything into the hierarchyList in this round, so we can just continue.
