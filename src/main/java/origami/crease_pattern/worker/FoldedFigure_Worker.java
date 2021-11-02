@@ -162,7 +162,7 @@ public class FoldedFigure_Worker {
                 }
             }
 
-            s0[i].setNumDigits(s0addFaceTotal, faceTotal);
+            s0[i].setNumDigits(s0addFaceTotal);
 
             for (int j = 1; j <= s0addFaceTotal; j++) {
                 s0[i].setFaceId(j, s0addFaceId[j]);//ここで面番号jは小さい方が先に追加される。
