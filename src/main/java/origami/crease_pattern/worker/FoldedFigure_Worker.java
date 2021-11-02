@@ -687,11 +687,10 @@ public class FoldedFigure_Worker {
 
         if (errorPos != null && applicationModel.getDisplaySelfIntersection()) {
             g2.setColor(Colors.get(new Color(255, 0, 0, 75)));
-            fillPolygon(g2, errorPos.getA(), subFace_figure, camera);
-            fillPolygon(g2, errorPos.getB(), subFace_figure, camera);
-            fillPolygon(g2, errorPos.getC(), subFace_figure, camera);
-            fillPolygon(g2, errorPos.getD(), subFace_figure, camera);
-
+            fillSubFace(g2, errorPos.getA(), subFace_figure, camera);
+            fillSubFace(g2, errorPos.getB(), subFace_figure, camera);
+            fillSubFace(g2, errorPos.getC(), subFace_figure, camera);
+            fillSubFace(g2, errorPos.getD(), subFace_figure, camera);
 
             fillPolygon(g2, errorPos.getA(), orite.get(), orite.camera);
             fillPolygon(g2, errorPos.getB(), orite.get(), orite.camera);
@@ -699,6 +698,15 @@ public class FoldedFigure_Worker {
             fillPolygon(g2, errorPos.getD(), orite.get(), orite.camera);
         }
     }
+
+    private void fillSubFace(Graphics2D g, int id, PointSet faces, Camera transform) {
+        for (int i = 1; i <= SubFaceTotal; i++) {
+            if (s[i].contains(id)) {
+                fillPolygon(g, i, faces, transform);
+            }
+        }
+    }
+
     private void fillPolygon(Graphics2D g, int id, PointSet faces, Camera transform) {
         Point t0 = new Point();
         Point t1 = new Point();

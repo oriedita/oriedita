@@ -76,8 +76,12 @@ public class SubFace {//This class folds the development view and estimates the 
         faceIdMap.put(faceId, i);
     }
 
+    public boolean contains(int im) {
+        return faceIdMap.containsKey(im);
+    }
+
     public boolean contains(int im1, int im2, int im3, int im4) {
-        return faceIdMap.containsKey(im1) && faceIdMap.containsKey(im2) && faceIdMap.containsKey(im3) && faceIdMap.containsKey(im4);
+        return contains(im1) && contains(im2) && contains(im3) && contains(im4);
     }
 
     public int get_Permutation_count() {
