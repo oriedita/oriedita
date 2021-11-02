@@ -1,5 +1,7 @@
 package origami.folding.element;
 
+import java.util.*;
+
 import origami.folding.HierarchyList;
 import origami.folding.algorithm.AdditionalEstimationAlgorithm;
 import origami.folding.util.EquivalenceCondition;
@@ -21,7 +23,8 @@ public class SubFace {//This class folds the development view and estimates the 
     int[] FaceId2fromTop_counted_position;// Represents the position counted from the top of the surface (FaceId).
     int[] fromTop_counted_position2FaceId;// Represents the surface at the position counted from the top.
 
-    int[] faceIdMap;// For fast lookup
+    private Map<Integer, Integer> faceIdMap; // slower, but uses much less memory
+    private int[] faceIdMapArray; // faster, but uses more memory
 
     IBulletinBoard bb;
 
@@ -45,11 +48,11 @@ public class SubFace {//This class folds the development view and estimates the 
     }
 
     //Initial settings for Ketasuu and permutation generators. Don't forget.
-    public void setNumDigits(int FIdCount, int faceTotal) {
+    public void setNumDigits(int FIdCount) {
         faceIdCount = FIdCount;
 
         faceIdList = new int[faceIdCount + 1];
-        faceIdMap = new int[faceTotal + 1];
+        faceIdMap = new HashMap<>(faceIdCount);
 
         FaceId2fromTop_counted_position = new int[faceIdCount + 1];//Represents the position counted from the top of the surface (faceIdList).
         fromTop_counted_position2FaceId = new int[faceIdCount + 1];//Represents the surface at the position counted from the top.
@@ -70,11 +73,11 @@ public class SubFace {//This class folds the development view and estimates the 
 
     public void setFaceId(int i, int faceId) {
         faceIdList[i] = faceId;
-        faceIdMap[faceId] = i;
+        faceIdMap.put(faceId, i);
     }
 
     public boolean contains(int im1, int im2, int im3, int im4) {
-        return faceIdMap[im1] > 0 && faceIdMap[im2] > 0 && faceIdMap[im3] > 0 && faceIdMap[im4] > 0;
+        return faceIdMap.containsKey(im1) && faceIdMap.containsKey(im2) && faceIdMap.containsKey(im3) && faceIdMap.containsKey(im4);
     }
 
     public int get_Permutation_count() {
@@ -194,16 +197,16 @@ public class SubFace {//This class folds the development view and estimates the 
         return 1000;
     }
 
-    //Find the number from the top in the stacking order of the surface im. Returns 0 if this SubFace does not contain Men.
     public int FaceId2PermutationDigit(int im) {
-        // This is now done in two places; permutationGenerator keeps its own map, so
-        // that SubFace only need to keep an immutable faceIdeMap, and no resetting is
-        // required.
-        return permutationGenerator.locate(faceIdMap[im]);
+        // This function is called very frequently in the search process, and the
+        // performance between arrays and hash maps is quite obvious. The problem is
+        // that arrays use a lot more memory, but fortunately, only the valid subfaces
+        // need to call this method. So the array map is used only here.
+        return permutationGenerator.locate(faceIdMapArray[im]);
     }
 
     public int FaceIdIndex(int im) {
-        return faceIdMap[im];
+        return faceIdMap.get(im); // Here we assume that im exists.
     }
 
     // ここは　class SubFace の中だよ。
@@ -308,6 +311,12 @@ public class SubFace {//This class folds the development view and estimates the 
 
     /** Prepare a guidebook for the permutation generator in SubFace. */
     public void setGuideMap(HierarchyList hierarchyList) throws InterruptedException {
+        // We setup faceIdMapArray only for valid subfaces to save memory.
+        faceIdMapArray = new int[hierarchyList.getFacesTotal() + 1];
+        for (int k : faceIdMap.keySet()) {
+            faceIdMapArray[k] = faceIdMap.get(k);
+        }
+
         int[] ueFaceId = new int[faceIdCount + 1];
         boolean[] ueFaceIdFlg = new boolean[faceIdCount + 1];//1 if ueFaceId [] is enabled, 0 if disabled
 
