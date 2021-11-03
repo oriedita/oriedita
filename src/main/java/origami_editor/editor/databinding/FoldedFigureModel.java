@@ -1,6 +1,6 @@
 package origami_editor.editor.databinding;
 
-import origami_editor.editor.folded_figure.FoldedFigure;
+import origami.folding.FoldedFigure;
 
 import java.awt.*;
 import java.beans.PropertyChangeListener;

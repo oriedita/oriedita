@@ -7,7 +7,7 @@ import origami_editor.editor.component.FoldedFigureRotate;
 import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
-import origami_editor.editor.folded_figure.FoldedFigure;
+import origami.folding.FoldedFigure;
 import origami_editor.editor.task.FoldingEstimateSave100Task;
 import origami_editor.editor.task.FoldingEstimateSpecificTask;
 import origami_editor.editor.task.FoldingEstimateTask;
@@ -77,20 +77,20 @@ public class BottomPanel extends JPanel {
             }
         });
         anotherSolutionButton.addActionListener(e -> {
-            app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
+            app.OZ.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
             TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(app));
         });
         flipButton.addActionListener(e -> {
             foldedFigureModel.advanceState();
 
-            if ((app.canvasModel.getMouseMode() == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (app.OZ.ip4 == FoldedFigure.State.BOTH_2)) {
+            if ((app.canvasModel.getMouseMode() == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (app.OZ.foldedFigure.ip4 == FoldedFigure.State.BOTH_2)) {
                 foldedFigureModel.setState(FoldedFigure.State.FRONT_0);
             }//Fold-up forecast map Added to avoid the mode that can not be moved when moving
         });
         As100Button.addActionListener(e -> {
-            if (app.OZ.findAnotherOverlapValid) {
-                app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
+            if (app.OZ.foldedFigure.findAnotherOverlapValid) {
+                app.OZ.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
                 TaskExecutor.executeTask("Folding Estimate Save 100", new FoldingEstimateSave100Task(app));
             }
@@ -104,11 +104,11 @@ public class BottomPanel extends JPanel {
 
             app.foldedFigureModel.setFoldedCases(newFoldedCases);
 
-            app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
+            app.OZ.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
-            if (app.foldedFigureModel.getFoldedCases() < app.OZ.discovered_fold_cases) {
+            if (app.foldedFigureModel.getFoldedCases() < app.OZ.foldedFigure.discovered_fold_cases) {
                 app.configure_initialize_prediction();//折り上がり予想の廃棄
-                app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_51;    //i_suitei_meirei=51はoritatami_suiteiの最初の推定図用カメラの設定は素通りするための設定。推定図用カメラの設定を素通りしたら、i_suitei_meirei=5に変更される。
+                app.OZ.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_51;    //i_suitei_meirei=51はoritatami_suiteiの最初の推定図用カメラの設定は素通りするための設定。推定図用カメラの設定を素通りしたら、i_suitei_meirei=5に変更される。
                 //1例目の折り上がり予想はi_suitei_meirei=5を指定、2例目以降の折り上がり予想はi_suitei_meirei=6で実施される
             }
 
@@ -127,14 +127,14 @@ public class BottomPanel extends JPanel {
         });
         oriagari_sousaButton.addActionListener(e -> {
             app.canvasModel.setFoldedFigureOperationMode(MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode.MODE_1);
-            app.OZ.setAllPointStateFalse();
+            app.OZ.foldedFigure.setAllPointStateFalse();
             app.OZ.record();
 
             app.canvasModel.setMouseMode(MouseMode.MODIFY_CALCULATED_SHAPE_101);
         });
         oriagari_sousa_2Button.addActionListener(e -> {
             app.canvasModel.setFoldedFigureOperationMode(MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode.MODE_2);
-            app.OZ.setAllPointStateFalse();
+            app.OZ.foldedFigure.setAllPointStateFalse();
             app.OZ.record();
 
             app.canvasModel.setMouseMode(MouseMode.MODIFY_CALCULATED_SHAPE_101);

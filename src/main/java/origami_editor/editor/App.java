@@ -12,10 +12,11 @@ import origami_editor.editor.action.Click;
 import origami_editor.editor.canvas.*;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
+import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.export.Cp;
 import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
-import origami_editor.editor.folded_figure.FoldedFigure;
+import origami.folding.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.editor.json.DefaultObjectMapper;
 import origami_editor.editor.task.FoldingEstimateTask;
@@ -55,15 +56,15 @@ public class App {
     public final CreasePattern_Worker mainCreasePatternWorker;    // Basic branch craftsman. Accepts input from the mouse.
     final Queue<Popup> popups = new ArrayDeque<>();
     private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate = new MouseHandlerVoronoiCreate();
-    public FoldedFigure temp_OZ;    //Folded figure
-    public FoldedFigure OZ;    //Current Folded figure
+    public FoldedFigure_Drawer temp_OZ;    //Folded figure
+    public FoldedFigure_Drawer OZ;    //Current Folded figure
     public LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
     public BulletinBoard bulletinBoard = new BulletinBoard();
     // ------------------------------------------------------------------------
     public Point point_of_referencePlane_old = new Point(); //ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
     public Canvas canvas;
-    public ArrayList<FoldedFigure> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
+    public ArrayList<FoldedFigure_Drawer> foldedFigures = new ArrayList<>(); //Instantiation of fold-up diagram
     int foldedFigureIndex = 0;//Specify which number of foldedFigures Oriagari_Zu is the target of button operation or transformation operation
     //各種変数の定義
     String frame_title_0;//フレームのタイトルの根本部分
@@ -194,7 +195,7 @@ public class App {
 
         canvas = editor.getCanvas();
 
-        temp_OZ = new FoldedFigure(bulletinBoard, applicationModel);
+        temp_OZ = new FoldedFigure_Drawer(new FoldedFigure_01(bulletinBoard));
         bulletinBoard.addChangeListener(e -> frame.repaint());
 
         canvas.creasePatternCamera.setCameraPositionX(0.0);
@@ -239,6 +240,10 @@ public class App {
 
         applicationModel.addPropertyChangeListener(e -> {
             mainCreasePatternWorker.setData(applicationModel);
+        });
+
+        applicationModel.addPropertyChangeListener(e -> {
+            OZ.setData(applicationModel);
         });
 
         applicationModel.reload();
@@ -611,20 +616,20 @@ public class App {
                 lineSegmentsForFolding = mainCreasePatternWorker.getForSelectFolding();
             }
 
-            point_of_referencePlane_old.set(OZ.cp_worker1.get_point_of_referencePlane_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
+            point_of_referencePlane_old.set(OZ.wireFrame_worker_drawer1.get_point_of_referencePlane_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
             //これより前のOZは古いOZ
             folding_prepare();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
             //これより後のOZは新しいOZに変わる
 
-            OZ.estimationOrder = estimationOrder;
+            OZ.foldedFigure.estimationOrder = estimationOrder;
 
             TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(this));
         } else if (foldType == FoldType.CHANGING_FOLDED_3) {
 
-            point_of_referencePlane_old.set(OZ.cp_worker1.get_point_of_referencePlane_tv());
+            point_of_referencePlane_old.set(OZ.wireFrame_worker_drawer1.get_point_of_referencePlane_tv());
 
-            OZ.estimationOrder = estimationOrder;
-            OZ.estimationStep = FoldedFigure.EstimationStep.STEP_0;
+            OZ.foldedFigure.estimationOrder = estimationOrder;
+            OZ.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_0;
 
             TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(this));
         }
@@ -637,13 +642,13 @@ public class App {
 
         setFoldedFigureIndex(foldedFigures.size() - 1);//foldedFigureIndex=i;OZ = (Oriagari_Zu)foldedFigures.get(foldedFigureIndex); OZ(各操作の対象となる折上がり図）に、アレイリストに最新に追加された折上がり図を割り当てる)
 
-        FoldedFigure orz = foldedFigures.get(0);//Assign foldedFigures (0) (folded figures that hold common parameters) to orz
+        FoldedFigure_Drawer orz = foldedFigures.get(0);//Assign foldedFigures (0) (folded figures that hold common parameters) to orz
 
         orz.getData(foldedFigureModel);
     }
 
     public void addNewFoldedFigure() {
-        foldedFigures.add(new FoldedFigure_01(bulletinBoard, applicationModel));
+        foldedFigures.add(new FoldedFigure_Drawer(new FoldedFigure_01(bulletinBoard)));
     }
 
     public void twoColorNoSelectedPolygonalLineWarning() {
@@ -700,7 +705,7 @@ public class App {
         canvas.creasePatternCamera.setDisplayPositionY(350.0);
 
         mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);
-        OZ.cp_worker1.setCamera(canvas.creasePatternCamera);
+        OZ.wireFrame_worker_drawer1.setCamera(canvas.creasePatternCamera);
 
         canvasModel.reset();
         internalDivisionRatioModel.reset();
@@ -735,37 +740,37 @@ public class App {
     }
 
     void configure_initialize_prediction() {
-        OZ.text_result = "";
-        OZ.displayStyle = FoldedFigure.DisplayStyle.NONE_0;//折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図
-        OZ.display_flg_backup = FoldedFigure.DisplayStyle.NONE_0;//表示様式hyouji_flgの一時的バックアップ用
+        OZ.foldedFigure.text_result = "";
+        OZ.foldedFigure.displayStyle = FoldedFigure.DisplayStyle.NONE_0;//折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図
+        OZ.foldedFigure.display_flg_backup = FoldedFigure.DisplayStyle.NONE_0;//表示様式hyouji_flgの一時的バックアップ用
 
         //表示用の値を格納する変数
-        OZ.ip1_anotherOverlapValid = FoldedFigure_Worker.HierarchyListStatus.UNKNOWN_N1;//上下表職人の初期設定時に、折った後の表裏が同じ面が
+        OZ.foldedFigure.ip1_anotherOverlapValid = FoldedFigure_Worker.HierarchyListStatus.UNKNOWN_N1;//上下表職人の初期設定時に、折った後の表裏が同じ面が
         //隣接するという誤差があれが0を、無ければ1000を格納する変数。
         //ここでの初期値は(0か1000)以外の数ならなんでもいい。
-        OZ.ip2_possibleOverlap = -1;//上下表職人が折り畳み可能な重なり方を探した際に、
+        OZ.foldedFigure.ip2_possibleOverlap = -1;//上下表職人が折り畳み可能な重なり方を探した際に、
         //可能な重なり方がなければ0を、可能な重なり方があれば1000を格納する変数。
         //ここでの初期値は(0か1000)以外の数ならなんでもいい。
-        OZ.ip3 = 1;//ts1が折り畳みを行う際の基準面を指定するのに使う。
+        OZ.foldedFigure.ip3 = 1;//ts1が折り畳みを行う際の基準面を指定するのに使う。
 
         //ip4=0;//これは、ts1の最初に裏返しをするかどうかを指定する。0ならしない。1なら裏返す。//20170615 実行しないようにした（折りあがり図の表示状況を変えないようにするため）
 
-        OZ.ip5 = -1;    //上下表職人が一旦折り畳み可能な紙の重なりを示したあとで、
+        OZ.foldedFigure.ip5 = -1;    //上下表職人が一旦折り畳み可能な紙の重なりを示したあとで、
         //さらに別の紙の重なりをさがす時の最初のjs.susumu(SubFaceTotal)の結果。
         //0なら新たにsusumu余地がなかった。0以外なら変化したSubFaceのidの最も小さい番号
-        OZ.ip6 = -1;    //上下表職人が一旦折り畳み可能な紙の重なりを示したあとで、
+        OZ.foldedFigure.ip6 = -1;    //上下表職人が一旦折り畳み可能な紙の重なりを示したあとで、
         //さらに別の紙の重なりをさがす時の js.kanou_kasanari_sagasi()の結果。
         //0なら可能な重なりかたとなる状態は存在しない。
         //1000なら別の重なり方が見つかった。
 
         foldedFigureModel.setFindAnotherOverlapValid(false);
 
-        OZ.discovered_fold_cases = 0;    //折り重なり方で、何通り発見したかを格納する。
+        OZ.foldedFigure.discovered_fold_cases = 0;    //折り重なり方で、何通り発見したかを格納する。
 
         mouseDraggedValid = false;
         mouseReleasedValid = false;//0は、マウス操作を無視。1はマウス操作有効。ファイルボックスのon-offなどで、予期せぬmouseDraggedやmouseReleasedが発生したとき、それを拾わないように0に設定する。これらは、マウスがクリックされたときに、1有効指定にする。
 
-        OZ.estimated_initialize();
+        OZ.foldedFigure.estimated_initialize();
         bulletinBoard.clear();
     }
 

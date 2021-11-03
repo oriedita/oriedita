@@ -3,7 +3,7 @@ package origami_editor.editor.canvas;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.App;
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.folded_figure.FoldedFigure;
+import origami_editor.editor.drawing.FoldedFigure_Drawer;
 
 public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
     private final App app;
@@ -34,7 +34,7 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
         app.mainCreasePatternWorker.setCamera(app.canvas.creasePatternCamera);
 
 //20180225追加
-        FoldedFigure OZi;
+        FoldedFigure_Drawer OZi;
         for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
             OZi = app.foldedFigures.get(i_oz);
 
@@ -56,7 +56,7 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
 
 
 //20180225追加
-        FoldedFigure OZi;
+        FoldedFigure_Drawer OZi;
         for (int i_oz = 1; i_oz <= app.foldedFigures.size() - 1; i_oz++) {
             OZi = app.foldedFigures.get(i_oz);
 
