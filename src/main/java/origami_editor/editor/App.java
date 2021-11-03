@@ -621,6 +621,9 @@ public class App {
 
             TaskExecutor.executeTask(new FoldingEstimateTask(this));
         } else if (foldType == FoldType.CHANGING_FOLDED_3) {
+
+            point_of_referencePlane_old.set(OZ.cp_worker1.get_point_of_referencePlane_tv());
+
             OZ.estimationOrder = estimationOrder;
             OZ.estimationStep = FoldedFigure.EstimationStep.STEP_0;
 

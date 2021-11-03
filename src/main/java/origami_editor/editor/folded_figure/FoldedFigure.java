@@ -275,105 +275,38 @@ public class FoldedFigure {
     }
 
     public void folding_estimated(Camera creasePatternCamera, LineSegmentSet lineSegmentSet, Point pointOfReferencePlane) throws InterruptedException, FoldingException {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
-        boolean i_camera_estimated = (estimationStep == EstimationStep.STEP_0) && (estimationOrder.isBelowOrEqual5());
+        boolean i_camera_estimated = estimationStep == EstimationStep.STEP_0 && estimationOrder.isAtMost(EstimationOrder.ORDER_5);
 
         this.pointOfReferencePlane = pointOfReferencePlane;
         //Folded view display camera settings
 
-        if (estimationOrder == EstimationOrder.ORDER_51) {
-            estimationOrder = EstimationOrder.ORDER_5;
+        EstimationOrder order = estimationOrder; // The latter will be reset during initialization.
+        if (order == EstimationOrder.ORDER_51) {
+            order = EstimationOrder.ORDER_5;
         }
-        //-------------------------------
-        // suitei = estimated
-        // dankai = step
-        // meirei = order
-        if ((estimationStep == EstimationStep.STEP_0) && (estimationOrder == EstimationOrder.ORDER_1)) {
+
+        if (estimationStep == EstimationStep.STEP_0 && order.isAtLeast(EstimationOrder.ORDER_1)) {
             estimated_initialize(); // estimated_initialize
             folding_estimated_01(lineSegmentSet);
             estimationStep = EstimationStep.STEP_1;
             displayStyle = DisplayStyle.DEVELOPMENT_1;
-        } else if ((estimationStep == EstimationStep.STEP_0) && (estimationOrder == EstimationOrder.ORDER_2)) {
-            estimated_initialize();
-            folding_estimated_01(lineSegmentSet);
-            estimationStep = EstimationStep.STEP_1;
-            displayStyle = DisplayStyle.DEVELOPMENT_1;
+        }
+        if (estimationStep == EstimationStep.STEP_1 && order.isAtLeast(EstimationOrder.ORDER_2)) {
             folding_estimated_02();
             estimationStep = EstimationStep.STEP_2;
             displayStyle = DisplayStyle.WIRE_2;
-        } else if ((estimationStep == EstimationStep.STEP_0) && (estimationOrder == EstimationOrder.ORDER_3)) {
-            estimated_initialize();
-            folding_estimated_01(lineSegmentSet);
-            estimationStep = EstimationStep.STEP_1;
-            displayStyle = DisplayStyle.DEVELOPMENT_1;
-            folding_estimated_02();
-            estimationStep = EstimationStep.STEP_2;
-            displayStyle = DisplayStyle.WIRE_2;
+        }
+        if (estimationStep == EstimationStep.STEP_2 && order.isAtLeast(EstimationOrder.ORDER_3)) {
             folding_estimated_03();
             estimationStep = EstimationStep.STEP_3;
             displayStyle = DisplayStyle.TRANSPARENT_3;
-        } else if ((estimationStep == EstimationStep.STEP_0) && (estimationOrder == EstimationOrder.ORDER_5)) {
-            estimated_initialize();
-            folding_estimated_01(lineSegmentSet);
-            estimationStep = EstimationStep.STEP_1;
-            displayStyle = DisplayStyle.DEVELOPMENT_1;
-            folding_estimated_02();
-            estimationStep = EstimationStep.STEP_2;
-            displayStyle = DisplayStyle.WIRE_2;
-            folding_estimated_03();
-            estimationStep = EstimationStep.STEP_3;
-            displayStyle = DisplayStyle.TRANSPARENT_3;
+        }
+        if (estimationStep == EstimationStep.STEP_3 && order.isAtLeast(EstimationOrder.ORDER_4)) {
             folding_estimated_04();
             estimationStep = EstimationStep.STEP_4;
             displayStyle = DisplayStyle.DEVELOPMENT_4;
-            folding_estimated_05();
-            estimationStep = EstimationStep.STEP_5;
-            displayStyle = DisplayStyle.PAPER_5;
-            if ((discovered_fold_cases == 0) && (!findAnotherOverlapValid)) {
-                estimationStep = EstimationStep.STEP_3;
-                displayStyle = DisplayStyle.TRANSPARENT_3;
-            }
-        } else if ((estimationStep == EstimationStep.STEP_1) && (estimationOrder == EstimationOrder.ORDER_1)) {
-        } else if ((estimationStep == EstimationStep.STEP_1) && (estimationOrder == EstimationOrder.ORDER_2)) {
-            folding_estimated_02();
-            estimationStep = EstimationStep.STEP_2;
-            displayStyle = DisplayStyle.WIRE_2;
-        } else if ((estimationStep == EstimationStep.STEP_1) && (estimationOrder == EstimationOrder.ORDER_3)) {
-            folding_estimated_02();
-            estimationStep = EstimationStep.STEP_2;
-            displayStyle = DisplayStyle.WIRE_2;
-            folding_estimated_03();
-            estimationStep = EstimationStep.STEP_3;
-            displayStyle = DisplayStyle.TRANSPARENT_3;
-        } else if ((estimationStep == EstimationStep.STEP_1) && (estimationOrder == EstimationOrder.ORDER_5)) {
-            folding_estimated_02();
-            estimationStep = EstimationStep.STEP_2;
-            displayStyle = DisplayStyle.WIRE_2;
-            folding_estimated_03();
-            estimationStep = EstimationStep.STEP_3;
-            displayStyle = DisplayStyle.TRANSPARENT_3;
-            folding_estimated_04();
-            estimationStep = EstimationStep.STEP_4;
-            displayStyle = DisplayStyle.DEVELOPMENT_4;
-            folding_estimated_05();
-            estimationStep = EstimationStep.STEP_5;
-            displayStyle = DisplayStyle.PAPER_5;
-            if ((discovered_fold_cases == 0) && (!findAnotherOverlapValid)) {
-                estimationStep = EstimationStep.STEP_3;
-                displayStyle = DisplayStyle.TRANSPARENT_3;
-            }
-        } else if ((estimationStep == EstimationStep.STEP_2) && (estimationOrder == EstimationOrder.ORDER_1)) {
-        } else if ((estimationStep == EstimationStep.STEP_2) && (estimationOrder == EstimationOrder.ORDER_2)) {
-        } else if ((estimationStep == EstimationStep.STEP_2) && (estimationOrder == EstimationOrder.ORDER_3)) {
-            folding_estimated_03();
-            estimationStep = EstimationStep.STEP_3;
-            displayStyle = DisplayStyle.TRANSPARENT_3;
-        } else if ((estimationStep == EstimationStep.STEP_2) && (estimationOrder == EstimationOrder.ORDER_5)) {
-            folding_estimated_03();
-            estimationStep = EstimationStep.STEP_3;
-            displayStyle = DisplayStyle.TRANSPARENT_3;
-            folding_estimated_04();
-            estimationStep = EstimationStep.STEP_4;
-            displayStyle = DisplayStyle.DEVELOPMENT_4;
+        }
+        if (estimationStep == EstimationStep.STEP_4 && order.isAtLeast(EstimationOrder.ORDER_5)) {
             folding_estimated_05();
             estimationStep = EstimationStep.STEP_5;
             displayStyle = DisplayStyle.PAPER_5;
@@ -381,32 +314,9 @@ public class FoldedFigure {
                 estimationStep = EstimationStep.STEP_3;
                 displayStyle = DisplayStyle.TRANSPARENT_3;
             }
-        } else if ((estimationStep == EstimationStep.STEP_3) && (estimationOrder == EstimationOrder.ORDER_1)) {
-        } else if ((estimationStep == EstimationStep.STEP_3) && (estimationOrder == EstimationOrder.ORDER_2)) {
-            displayStyle = DisplayStyle.WIRE_2;
-        } else if ((estimationStep == EstimationStep.STEP_3) && (estimationOrder == EstimationOrder.ORDER_3)) {
-            displayStyle = DisplayStyle.TRANSPARENT_3;
-        } else if ((estimationStep == EstimationStep.STEP_3) && (estimationOrder == EstimationOrder.ORDER_5)) {
-            folding_estimated_04();
-            estimationStep = EstimationStep.STEP_4;
-            displayStyle = DisplayStyle.DEVELOPMENT_4;
+        }
+        if (estimationStep == EstimationStep.STEP_5 && order == EstimationOrder.ORDER_6) {
             folding_estimated_05();
-            estimationStep = EstimationStep.STEP_5;
-            displayStyle = DisplayStyle.PAPER_5;
-            if ((discovered_fold_cases == 0) && !findAnotherOverlapValid) {
-                estimationStep = EstimationStep.STEP_3;
-                displayStyle = DisplayStyle.TRANSPARENT_3;
-            }
-        } else if ((estimationStep == EstimationStep.STEP_5) && (estimationOrder == EstimationOrder.ORDER_1)) {
-        } else if ((estimationStep == EstimationStep.STEP_5) && (estimationOrder == EstimationOrder.ORDER_2)) {
-            displayStyle = DisplayStyle.WIRE_2;
-        } else if ((estimationStep == EstimationStep.STEP_5) && (estimationOrder == EstimationOrder.ORDER_3)) {
-            displayStyle = DisplayStyle.TRANSPARENT_3;
-        } else if ((estimationStep == EstimationStep.STEP_5) && (estimationOrder == EstimationOrder.ORDER_5)) {
-            displayStyle = DisplayStyle.PAPER_5;
-        } else if ((estimationStep == EstimationStep.STEP_5) && (estimationOrder == EstimationOrder.ORDER_6)) {
-            folding_estimated_05();
-            estimationStep = EstimationStep.STEP_5;
             displayStyle = DisplayStyle.PAPER_5;
         }
 
@@ -702,28 +612,28 @@ public class FoldedFigure {
     }
 
     public enum EstimationOrder {
-        ORDER_0,
-        ORDER_1,
-        ORDER_2,
-        ORDER_3,
-        ORDER_4,
-        ORDER_5,
-        ORDER_6,
-        ORDER_51,
+        ORDER_0(0),
+        ORDER_1(1),
+        ORDER_2(2),
+        ORDER_3(3),
+        ORDER_4(4),
+        ORDER_5(5),
+        ORDER_6(6),
+        ORDER_51(51),
         ;
 
-        public boolean isBelowOrEqual5() {
-            switch (this) {
-                case ORDER_0:
-                case ORDER_1:
-                case ORDER_2:
-                case ORDER_3:
-                case ORDER_4:
-                case ORDER_5:
-                    return true;
-                default:
-                    return false;
-            }
+        private final int value;
+
+        private EstimationOrder(int value) {
+            this.value = value;
+        }
+
+        public boolean isAtMost(EstimationOrder that) {
+            return this.value <= that.value;
+        }
+
+        public boolean isAtLeast(EstimationOrder that) {
+            return this.value >= that.value;
         }
     }
 
