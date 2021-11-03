@@ -421,10 +421,14 @@ public class DrawingUtil {
 
         g2.draw(new Line2D.Double(a.getX(), a.getY(), b.getX(), b.getY()));
 
+        if (Epsilon.high.eq0(lineWidth)) {
+
+        } else
+
         if (lineWidth < 2.0f) {//頂点の黒い正方形を描く
             drawVertex(g2, a, pointSize);
             drawVertex(g2, b, pointSize);
-        }
+        } else
 
         if (lineWidth >= 2.0f) {//  太線
             g2.setStroke(new BasicStroke(1.0f + lineWidth % 1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
