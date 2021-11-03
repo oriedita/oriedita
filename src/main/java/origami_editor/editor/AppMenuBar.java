@@ -44,6 +44,7 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem copyButton;
     private JMenuItem cutButton;
     private JMenuItem pasteButton;
+    private JMenuItem pasteOffsetButton;
 
     public AppMenuBar(App app) {
         this.app = app;
@@ -76,6 +77,7 @@ public class AppMenuBar extends JMenuBar {
         app.registerButton(copyButton, "copyClipboardAction");
         app.registerButton(cutButton, "cutClipboardAction");
         app.registerButton(pasteButton, "pasteClipboardAction");
+        app.registerButton(pasteOffsetButton, "pasteOffsetClipboardAction");
 
         newButton.addActionListener(e -> {
             if (!app.fileModel.isSaved()) {
@@ -231,8 +233,23 @@ public class AppMenuBar extends JMenuBar {
                     app.mainCreasePatternWorker.setSaveForPaste(save);
                     app.repaintCanvas();
                 }
-            } catch (IOException | UnsupportedFlavorException ioException) {
-                ioException.printStackTrace();
+            } catch (IOException | UnsupportedFlavorException ignored) {
+                // We don't know how to paste this
+            }
+        });
+        pasteOffsetButton.addActionListener(e -> {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            Transferable clipboardContents = clipboard.getContents(null);
+
+            try {
+                if (clipboardContents.isDataFlavorSupported(SaveTransferable.saveFlavor)) {
+                    Save save = (Save) clipboardContents.getTransferData(SaveTransferable.saveFlavor);
+
+                    app.mainCreasePatternWorker.setSave_for_reading_tuika(save);
+                    app.repaintCanvas();
+                }
+            } catch (IOException | UnsupportedFlavorException ignored) {
+                // We don't know how to paste this
             }
         });
     }
@@ -284,8 +301,14 @@ public class AppMenuBar extends JMenuBar {
         cutButton = new JMenuItem("Cut");
         editMenu.add(cutButton);
 
+        JMenu pasteMenu = new JMenu("Paste");
+        editMenu.add(pasteMenu);
+
         pasteButton = new JMenuItem("Paste");
-        editMenu.add(pasteButton);
+        pasteMenu.add(pasteButton);
+
+        pasteOffsetButton = new JMenuItem("Paste (offset)");
+        pasteMenu.add(pasteOffsetButton);
 
         JMenu viewMenu = new JMenu("View");
         viewMenu.setMnemonic('V');
