@@ -127,6 +127,8 @@ public class FoldedFigure_Drawer {
 
         foldedFigure.folding_estimated(lineSegmentSet, newPointOfReferencePlane);
 
+        foldedFigure_worker_drawer.calculateFromTopCountedPosition();
+
         if (i_camera_estimated) {
             folding_estimation_camera_configure(creasePatternCamera);
         }
@@ -172,6 +174,8 @@ public class FoldedFigure_Drawer {
         newPointOfReferencePlane.set(wireFrame_worker_drawer1.camera.object2TV(pointOfReferencePlane));
 
         foldedFigure.createTwoColorCreasePattern(Ss0, newPointOfReferencePlane);
+
+        foldedFigure_worker_drawer.calculateFromTopCountedPosition();
     }
 
     public void foldUp_draw(Graphics bufferGraphics, boolean displayMark, boolean selected) {
