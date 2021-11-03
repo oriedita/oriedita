@@ -429,6 +429,23 @@ public class CreasePattern_Worker {
             for (LineSegment s_temp : foldLineSet.getCheck4LineSegments()) {
                 DrawingUtil.pointingAt4(g, camera.object2TV(s_temp), check4ColorTransparency);
             }
+
+            if (displayComments) {
+
+                if (TaskExecutor.isTaskRunning() && TaskExecutor.getTaskName().equals("cAMV")) {
+                    g.setColor(Colors.get(Color.orange));
+                    g.drawString("... cAMV Errors", p0x_max - 100, 10);
+                } else {
+                    int numErrors = foldLineSet.getCheck4LineSegments().size();
+                    if (numErrors == 0) {
+                        g.setColor(Colors.get(Color.green));
+                    } else {
+                        g.setColor(Colors.get(Color.red));
+                    }
+
+                    g.drawString(numErrors + " cAMV Errors", p0x_max - 100, 10);
+                }
+            }
         }
 
 
@@ -893,7 +910,7 @@ public class CreasePattern_Worker {
     }
 
     public void check4() {
-        TaskExecutor.executeTask(new CheckCAMVTask(this, app.canvas));
+        TaskExecutor.executeTask("cAMV", new CheckCAMVTask(this, app.canvas));
     }
 
     public void ap_check4() throws InterruptedException {
@@ -954,6 +971,8 @@ public class CreasePattern_Worker {
         if (e.getPropertyName() == null || e.getPropertyName().equals("check4Enabled")) {
             if (data.getCheck4Enabled()) {
                 check4();
+            } else if (TaskExecutor.isTaskRunning() && TaskExecutor.getTaskName().equals("cAMV")) {
+                TaskExecutor.stopTask();
             }
         }
     }

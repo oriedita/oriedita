@@ -36,7 +36,6 @@ import java.util.Queue;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static origami_editor.tools.ResourceUtil.createImageIcon;
 import static origami_editor.tools.ResourceUtil.getAppDir;
 
 public class App {
@@ -619,7 +618,7 @@ public class App {
 
             OZ.estimationOrder = estimationOrder;
 
-            TaskExecutor.executeTask(new FoldingEstimateTask(this));
+            TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(this));
         } else if (foldType == FoldType.CHANGING_FOLDED_3) {
 
             point_of_referencePlane_old.set(OZ.cp_worker1.get_point_of_referencePlane_tv());
@@ -627,7 +626,7 @@ public class App {
             OZ.estimationOrder = estimationOrder;
             OZ.estimationStep = FoldedFigure.EstimationStep.STEP_0;
 
-            TaskExecutor.executeTask(new FoldingEstimateTask(this));
+            TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(this));
         }
     }
 

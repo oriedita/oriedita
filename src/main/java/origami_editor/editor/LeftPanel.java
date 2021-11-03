@@ -576,7 +576,7 @@ public class LeftPanel {
                 app.folding_prepare();//ここでOZがOAZ(0)からOAZ(i)に切り替わる
                 app.OZ.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
 
-                TaskExecutor.executeTask(new TwoColoredTask(app));
+                TaskExecutor.executeTask("Two Colored CP", new TwoColoredTask(app));
             }
 
             app.mainCreasePatternWorker.unselect_all();
