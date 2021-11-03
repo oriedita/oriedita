@@ -3029,7 +3029,7 @@ public class FoldLineSet {
 
         System.out.println("check4_T_size() = " + check4Point.size());
 
-        ExecutorService service = Executors.newCachedThreadPool();
+        ExecutorService service = Executors.newWorkStealingPool();
 
         //Selection of whether the place to be checked can be folded flat
         for (Point point : check4Point) {
