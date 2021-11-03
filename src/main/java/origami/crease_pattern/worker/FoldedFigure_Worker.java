@@ -731,6 +731,14 @@ public class FoldedFigure_Worker {
         g.fill(new java.awt.Polygon(x, y, faces.getPointsCount(id)));
     }
 
+    public void calculateFromTopCountedPosition() {
+        //if(hyouji_flg==5){//折紙表示---------------------------------------------------------------------------
+        //SubFaces.set_FaceId2fromTop_counted_position stores the id number of the i-th surface counting from the top in all orders based on the current table above and below.
+        for (int im = 1; im <= SubFaceTotal; im++) { //Find the id of the specified face from the top from SubFace.
+            s0[im].set_FaceId2fromTop_counted_position(hierarchyList);//s0[] is the SubFace itself obtained from SubFace_zu, and the hierarchyList is the upper and lower table hierarchyList.
+        }
+        //ここまでで、上下表の情報がSubFaceの各面に入った
+    }
 
     public void draw_foldedFigure_with_camera(Graphics g, WireFrame_Worker orite, PointSet subFace_figure) {
         Graphics2D g2 = (Graphics2D) g;
@@ -749,16 +757,6 @@ public class FoldedFigure_Worker {
         double[] xd = new double[100];
         double[] yd = new double[100];
 
-
-        //if(hyouji_flg==5){//折紙表示---------------------------------------------------------------------------
-
-        //SubFaceの.set_Menid2uekara_kazoeta_itiは現在の上下表をもとに、上から数えてi番めの面のid番号を全ての順番につき格納する。
-        for (int im = 1; im <= SubFaceTotal; im++) { //SubFaceから上からの指定した番目の面のidを求める。
-            s0[im].set_FaceId2fromTop_counted_position(hierarchyList);//s0[]はSubFace_zuから得られるSubFaceそのもの、hierarchyListは上下表Jyougehyouのこと
-        }
-        //ここまでで、上下表の情報がSubFaceの各面に入った
-
-
         //面を描く-----------------------------------------------------------------------------------------------------
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オフ
 
@@ -766,23 +764,22 @@ public class FoldedFigure_Worker {
         for (int im = 1; im <= SubFaceTotal; im++) {//imは各SubFaceの番号
             if (s0[im].getFaceIdCount() > 0) {//MenidsuuはSubFace(折り畳み推定してえられた針金図を細分割した面)で重なっているMen(折りたたむ前の展開図の面)の数。これが0なら、ドーナツ状の穴の面なので描画対象外
                 //Determine the color of the im-th SubFace when drawing a fold-up diagram
-                faceOrder = 1;
-                if (flipped) {
-                    faceOrder = s0[im].getFaceIdCount();
-                }
+                faceOrder = flipped ? s0[im].getFaceIdCount() : 1;
 
-                if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(faceOrder)) % 2 == 1) {
+                int i1 = s0[im].fromTop_count_FaceId(faceOrder);
+                int iFacePosition = orite.getIFacePosition(i1);
+                if (iFacePosition % 2 == 1) {
                     g.setColor(F_color);
                 }
-                if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(faceOrder)) % 2 == 0) {
+                if (iFacePosition % 2 == 0) {
                     g.setColor(B_color);
                 }
 
                 if (flipped) {
-                    if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(faceOrder)) % 2 == 0) {
+                    if (iFacePosition % 2 == 0) {
                         g.setColor(F_color);
                     }
-                    if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(faceOrder)) % 2 == 1) {
+                    if (iFacePosition % 2 == 1) {
                         g.setColor(B_color);
                     }
                 }
@@ -846,7 +843,7 @@ public class FoldedFigure_Worker {
                     double o_bmtx, o_bmty;
                     double t_bmtx, t_bmty;
 
-                    //棒の中点を通る直交線上の点
+                    //A point on the orthogonal line that passes through the midpoint of the bar
                     o_bmtx = o_bmx + o_btx;
                     o_bmty = o_bmy + o_bty;
 
@@ -1029,7 +1026,7 @@ public class FoldedFigure_Worker {
         }
     }
 
-    public int line_no_bangou_kara_kagenoaru_subFace_no_bangou_wo_motomeru(int ib, PointSet subFace_figure, boolean flipped) {//棒の番号から、その棒の影が発生するSubFace の番号を求める。影が発生しない場合は0を返す。
+    public int line_no_bangou_kara_kagenoaru_subFace_no_bangou_wo_motomeru(int ib, PointSet subFace_figure, boolean flipped) {//From the number of the bar, find the number of the SubFace where the shadow of the bar is generated. Returns 0 if no shadows occur.
         int i_return;
 
         int faceId_min, faceId_max; //棒の両側のSubFaceの番号の小さいほうがMid_min,　大きいほうがMid_max
