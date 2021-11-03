@@ -13,12 +13,20 @@ public class TaskExecutor {
     static ExecutorService pool;
     private static Future<?> currentTask;
 
+    private static String taskName = "";
+
     static {
         pool = Executors.newFixedThreadPool(1);
     }
 
-    public static void executeTask(Runnable runnable) {
+    public static String getTaskName() {
+        return taskName;
+    }
+
+    public static void executeTask(String name, Runnable runnable) {
         stopTask();
+
+        taskName = name;
 
         currentTask = pool.submit(runnable);
     }

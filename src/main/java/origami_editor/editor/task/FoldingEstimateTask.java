@@ -1,6 +1,5 @@
 package origami_editor.editor.task;
 
-import origami.crease_pattern.FoldingException;
 import origami_editor.editor.App;
 
 public class FoldingEstimateTask implements Runnable {
