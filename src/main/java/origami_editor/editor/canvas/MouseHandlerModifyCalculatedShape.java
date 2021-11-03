@@ -123,6 +123,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
 
                 try {
                     app.OZ.folding_estimated_03();//20180216
+                    app.OZ.ct_worker.calculateFromTopCountedPosition();
                 } catch (InterruptedException e) {
                     // Ignore
                 }
@@ -248,6 +249,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             if (app.canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_2) {
                 try {
                     app.OZ.folding_estimated_03();//20180216
+                    app.OZ.ct_worker.calculateFromTopCountedPosition();
                 } catch (InterruptedException e) {
                     // Ignore
                 }
@@ -368,6 +370,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             if (app.canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_2) {
                 try {
                     app.OZ.folding_estimated_03();//20180216
+                    app.OZ.ct_worker.calculateFromTopCountedPosition();
                 } catch (InterruptedException e) {
                     // Ignore
                 }
