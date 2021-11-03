@@ -255,7 +255,7 @@ public class FoldedFigure_Worker {
         // Since there is a mistake in the 3rd place from the beginning, find the number of digits in this 3rd place with SubFace and advance this digit by 1.
 
         qt = new QuadTree(new PointSetLineAdapter(otta_face_figure));
-        ExecutorService service = Executors.newCachedThreadPool();
+        ExecutorService service = Executors.newWorkStealingPool();
 
         for (int ib = 1; ib <= orite.getNumLines() - 1; ib++) {
             final int ibf = ib;
