@@ -193,6 +193,16 @@ public class CreasePattern_Worker {
         record();
     }
 
+    public void setSaveForPaste(Save save1) {
+        int total_old = foldLineSet.getTotal();
+        foldLineSet.addSave(save1);
+        int total_new = foldLineSet.getTotal();
+        foldLineSet.divideLineSegmentIntersections(1, total_old, total_old + 1, total_new);
+
+        foldLineSet.unselect_all();
+        record();
+    }
+
     public void setAuxMemo(Save memo1) {
         auxLines.setAuxSave(memo1);
     }

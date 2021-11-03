@@ -4,10 +4,15 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.FileModel;
+import origami_editor.editor.transfer.SaveTransferable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class AppMenuBar extends JMenuBar {
@@ -36,6 +41,11 @@ public class AppMenuBar extends JMenuBar {
     private JMenu openRecentMenu;
     private JMenuItem clearRecentFileMenuItem;
 
+    private JMenuItem copyButton;
+    private JMenuItem cutButton;
+    private JMenuItem pasteButton;
+    private JMenuItem pasteOffsetButton;
+
     public AppMenuBar(App app) {
         this.app = app;
         createElements();
@@ -63,6 +73,11 @@ public class AppMenuBar extends JMenuBar {
         app.registerButton(darkModeCheckBox, "toggleDarkModeAction");
         app.registerButton(preciseZoomCheckBox, "preciseZoomAction");
         app.registerButton(displaySelfIntersectionCheckBox, "displaySelfIntersectionAction");
+
+        app.registerButton(copyButton, "copyClipboardAction");
+        app.registerButton(cutButton, "cutClipboardAction");
+        app.registerButton(pasteButton, "pasteClipboardAction");
+        app.registerButton(pasteOffsetButton, "pasteOffsetClipboardAction");
 
         newButton.addActionListener(e -> {
             if (!app.fileModel.isSaved()) {
@@ -184,6 +199,59 @@ public class AppMenuBar extends JMenuBar {
         });
         preciseZoomCheckBox.addActionListener(e -> applicationModel.togglePreciseZoom());
         displaySelfIntersectionCheckBox.addActionListener(e -> applicationModel.toggleDisplaySelfIntersection());
+
+        copyButton.addActionListener(e -> {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+
+            Save save = new Save();
+            app.mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
+
+
+            clipboard.setContents(new SaveTransferable(save), (clipboard1, contents) -> {});
+        });
+        cutButton.addActionListener(e -> {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+
+            Save save = new Save();
+            app.mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
+
+
+            clipboard.setContents(new SaveTransferable(save), (clipboard1, contents) -> {});
+
+            app.mainCreasePatternWorker.foldLineSet.delSelectedLineSegmentFast();
+
+            app.mainCreasePatternWorker.record();
+        });
+        pasteButton.addActionListener(e -> {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            Transferable clipboardContents = clipboard.getContents(null);
+
+            try {
+                if (clipboardContents.isDataFlavorSupported(SaveTransferable.saveFlavor)) {
+                    Save save = (Save) clipboardContents.getTransferData(SaveTransferable.saveFlavor);
+
+                    app.mainCreasePatternWorker.setSaveForPaste(save);
+                    app.repaintCanvas();
+                }
+            } catch (IOException | UnsupportedFlavorException ignored) {
+                // We don't know how to paste this
+            }
+        });
+        pasteOffsetButton.addActionListener(e -> {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            Transferable clipboardContents = clipboard.getContents(null);
+
+            try {
+                if (clipboardContents.isDataFlavorSupported(SaveTransferable.saveFlavor)) {
+                    Save save = (Save) clipboardContents.getTransferData(SaveTransferable.saveFlavor);
+
+                    app.mainCreasePatternWorker.setSave_for_reading_tuika(save);
+                    app.repaintCanvas();
+                }
+            } catch (IOException | UnsupportedFlavorException ignored) {
+                // We don't know how to paste this
+            }
+        });
     }
 
     private void createElements() {
@@ -222,6 +290,25 @@ public class AppMenuBar extends JMenuBar {
 
         exitButton = new JMenuItem("Exit");
         fileMenu.add(exitButton);
+
+        JMenu editMenu = new JMenu("Edit");
+        editMenu.setMnemonic('E');
+        add(editMenu);
+
+        copyButton = new JMenuItem("Copy");
+        editMenu.add(copyButton);
+
+        cutButton = new JMenuItem("Cut");
+        editMenu.add(cutButton);
+
+        JMenu pasteMenu = new JMenu("Paste");
+        editMenu.add(pasteMenu);
+
+        pasteButton = new JMenuItem("Paste");
+        pasteMenu.add(pasteButton);
+
+        pasteOffsetButton = new JMenuItem("Paste (offset)");
+        pasteMenu.add(pasteOffsetButton);
 
         JMenu viewMenu = new JMenu("View");
         viewMenu.setMnemonic('V');
