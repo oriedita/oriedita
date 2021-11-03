@@ -119,7 +119,6 @@ public class CreasePattern_Worker {
     }
 
     public void reset() {
-        pointSize = 1;
         foldLineSet.reset();
         auxLines.reset();
 
