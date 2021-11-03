@@ -490,6 +490,8 @@ public class FoldedFigure {
 
                 ip5 = ct_worker.next(ct_worker.getSubFace_valid_number());// Preparation for the next overlap // If ip5 = 0, there was no room for new susumu. If non-zero, the smallest number of changed SubFace ids
             }
+
+            ct_worker.calculateFromTopCountedPosition();
         }
         bulletinBoard.clear();
 
