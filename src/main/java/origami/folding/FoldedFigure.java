@@ -1,5 +1,7 @@
 package origami.folding;
 
+import java.util.function.Consumer;
+
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.worker.BasicBranch_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
@@ -70,7 +72,8 @@ public class FoldedFigure {
         summary_write_image_during_execution = false; //If the export of multiple folded forecasts is in progress, it will be ture. 20170615
     }
 
-    public void folding_estimated(LineSegmentSet lineSegmentSet, Point pointOfReferencePlane) throws InterruptedException, FoldingException {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public void folding_estimated(LineSegmentSet lineSegmentSet, Point pointOfReferencePlane, Consumer<Point> callback)
+        throws InterruptedException, FoldingException {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
         this.pointOfReferencePlane = pointOfReferencePlane;
         //Folded view display camera settings
 
@@ -81,7 +84,7 @@ public class FoldedFigure {
 
         if (estimationStep == EstimationStep.STEP_0 && order.isAtLeast(EstimationOrder.ORDER_1)) {
             estimated_initialize(); // estimated_initialize
-            folding_estimated_01(lineSegmentSet);
+            folding_estimated_01(lineSegmentSet, callback);
             estimationStep = EstimationStep.STEP_1;
             displayStyle = DisplayStyle.DEVELOPMENT_1;
         }
@@ -116,12 +119,12 @@ public class FoldedFigure {
 
     }
 
-    public void createTwoColorCreasePattern(LineSegmentSet Ss0, Point pointOfReferencePlane) throws InterruptedException {//Two-color crease pattern
+    public void createTwoColorCreasePattern(LineSegmentSet Ss0, Point pointOfReferencePlane, Consumer<Point> callback) throws InterruptedException {//Two-color crease pattern
         //Folded view display camera settings
         this.pointOfReferencePlane = pointOfReferencePlane;
 
         estimated_initialize();
-        folding_estimated_01(Ss0);
+        folding_estimated_01(Ss0, callback);
         estimationStep = EstimationStep.STEP_1;
         displayStyle = DisplayStyle.DEVELOPMENT_1;
         folding_estimated_02col();
@@ -139,13 +142,13 @@ public class FoldedFigure {
         estimationStep = EstimationStep.STEP_10;
     }
 
-    public int folding_estimated_01(LineSegmentSet lineSegmentSet) throws InterruptedException {
+    public int folding_estimated_01(LineSegmentSet lineSegmentSet, Consumer<Point> callback) throws InterruptedException {
         System.out.println("＜＜＜＜＜folding_estimated_01;開始");
         bulletinBoard.write("<<<<folding_estimated_01;  start");
         // Pass the line segment set created in mainDrawingWorker to cp_worker1 by mouse input and make it a point set (corresponding to the development view).
         cp_worker1.setLineSegmentSet(lineSegmentSet);
-        ip3 = cp_worker1.setReferencePlaneId(ip3);
-        ip3 = cp_worker1.setReferencePlaneId(pointOfReferencePlane);//20180222 Added to take over the previously specified reference plane when performing folding estimation with the fold line selected.
+        ip3 = cp_worker1.setReferencePlaneId(ip3, callback);
+        ip3 = cp_worker1.setReferencePlaneId(pointOfReferencePlane, callback);//20180222 Added to take over the previously specified reference plane when performing folding estimation with the fold line selected.
 
         if (Thread.interrupted()) {
             throw new InterruptedException();

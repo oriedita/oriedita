@@ -125,7 +125,9 @@ public class FoldedFigure_Drawer {
         Point newPointOfReferencePlane = new Point();
         newPointOfReferencePlane.set(wireFrame_worker_drawer1.camera.TV2object(pointOfReferencePlane));
 
-        foldedFigure.folding_estimated(lineSegmentSet, newPointOfReferencePlane);
+        foldedFigure.folding_estimated(lineSegmentSet, newPointOfReferencePlane, p -> {
+            wireFrame_worker_drawer1.point_of_referencePlane_ob.set(p);
+        });
 
         foldedFigure_worker_drawer.calculateFromTopCountedPosition();
 
@@ -173,7 +175,9 @@ public class FoldedFigure_Drawer {
         Point newPointOfReferencePlane = new Point();
         newPointOfReferencePlane.set(wireFrame_worker_drawer1.camera.object2TV(pointOfReferencePlane));
 
-        foldedFigure.createTwoColorCreasePattern(Ss0, newPointOfReferencePlane);
+        foldedFigure.createTwoColorCreasePattern(Ss0, newPointOfReferencePlane, p -> {
+            wireFrame_worker_drawer1.point_of_referencePlane_ob.set(p);
+        });
 
         foldedFigure_worker_drawer.calculateFromTopCountedPosition();
     }
