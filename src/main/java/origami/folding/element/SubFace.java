@@ -27,7 +27,7 @@ public class SubFace {//This class folds the development view and estimates the 
     private int[] faceIdMapArray; // faster, but uses more memory
 
     private List<EquivalenceCondition> uEquivalenceConditions;
-    private SortedMap<Integer, List<EquivalenceCondition>> equivalenceConditions;
+    private Map<Integer, List<EquivalenceCondition>> equivalenceConditions;
 
     IBulletinBoard bb;
 
@@ -350,37 +350,35 @@ public class SubFace {//This class folds the development view and estimates the 
                     permutationGenerator.addGuide(ueFaceId[i], faceIndex);
                 }
             }
-
         }
 
         if (faceIdCount > 0) {
-            equivalenceConditions = new TreeMap<>();
-            for(EquivalenceCondition ec : hierarchyList.getEquivalenceConditions()) {
-                int a = faceIdMapArray[ec.getA()];
-                int b = faceIdMapArray[ec.getB()];
-                int d = faceIdMapArray[ec.getD()];
-                if(a != 0 && b != 0 && d != 0) {
+            equivalenceConditions = new HashMap<>();
+            for (EquivalenceCondition ec : hierarchyList.getEquivalenceConditions()) {
+                if (fastContains(ec)) {
                     equivalenceConditions.computeIfAbsent(ec.getA(), k -> new ArrayList<>()).add(ec);
                 }
             }
 
             uEquivalenceConditions = new ArrayList<>();
-            for(EquivalenceCondition ec : hierarchyList.getUEquivalenceConditions()) {
-                int a = faceIdMapArray[ec.getA()];
-                int b = faceIdMapArray[ec.getB()];
-                int c = faceIdMapArray[ec.getC()];
-                int d = faceIdMapArray[ec.getD()];
-                if (a != 0 && b != 0 && c != 0 && d != 0) {
-                    uEquivalenceConditions.add(ec);
-                }
+            for (EquivalenceCondition ec : hierarchyList.getUEquivalenceConditions()) {
+                if (fastContains(ec)) uEquivalenceConditions.add(ec);
             }
 
-            // Now we're ready to reset the generator.
             try {
+                // Now we're ready to reset the generator.
                 permutationGenerator.initialize();
             } catch (InterruptedException e) {
                 // Ignore
             }
         }
+    }
+
+    private boolean fastContains(EquivalenceCondition ec) {
+        int a = faceIdMapArray[ec.getA()];
+        int b = faceIdMapArray[ec.getB()];
+        int c = faceIdMapArray[ec.getC()];
+        int d = faceIdMapArray[ec.getD()];
+        return a != 0 && b != 0 && c != 0 && d != 0;
     }
 }

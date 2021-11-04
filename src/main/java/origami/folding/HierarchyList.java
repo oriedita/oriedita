@@ -3,10 +3,7 @@ package origami.folding;
 import origami.data.symmetricMatrix.SymmetricMatrix;
 import origami.folding.util.EquivalenceCondition;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class HierarchyList {//This class is used to record and utilize the hierarchical relationship of faces when folded.
