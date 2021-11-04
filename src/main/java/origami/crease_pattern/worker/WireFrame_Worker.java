@@ -66,7 +66,6 @@ public class WireFrame_Worker {
      * This is the correspondence when the mouse is pressed in the reference plane specification mode 201503
      */
     public int setReferencePlaneId(Point p0) {//Returns the datum id that is actually valid
-        Point p = new Point();
         if (pointSet.inside(p0) > 0) {
             referencePlaneId = pointSet.inside(p0);
         }//If c.inside(p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, and if it is a positive number, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.

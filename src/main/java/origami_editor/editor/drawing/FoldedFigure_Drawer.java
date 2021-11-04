@@ -123,7 +123,7 @@ public class FoldedFigure_Drawer {
         boolean i_camera_estimated = foldedFigure.estimationStep == FoldedFigure.EstimationStep.STEP_0 && foldedFigure.estimationOrder.isAtMost(FoldedFigure.EstimationOrder.ORDER_5);
 
         Point newPointOfReferencePlane = new Point();
-        newPointOfReferencePlane.set(wireFrame_worker_drawer1.camera.object2TV(pointOfReferencePlane));
+        newPointOfReferencePlane.set(wireFrame_worker_drawer1.camera.TV2object(pointOfReferencePlane));
 
         foldedFigure.folding_estimated(lineSegmentSet, newPointOfReferencePlane);
 
