@@ -30,7 +30,7 @@ public class FoldingTest {
 
         try {
             foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
-            foldedFigure.folding_estimated(lineSegmentSet, new Point(), null);
+            foldedFigure.folding_estimated(lineSegmentSet, new Point());
 
             expect.serializer("json").toMatchSnapshot(foldedFigure.cp_worker3.get());
         } catch (InterruptedException | FoldingException e) {
