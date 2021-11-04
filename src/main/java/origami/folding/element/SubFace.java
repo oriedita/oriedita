@@ -354,7 +354,7 @@ public class SubFace {//This class folds the development view and estimates the 
         }
 
         if (faceIdCount > 0) {
-            uEquivalenceConditions = new ArrayList<>();
+            equivalenceConditions = new TreeMap<>();
             for(EquivalenceCondition ec : hierarchyList.getEquivalenceConditions()) {
                 int a = faceIdMapArray[ec.getA()];
                 int b = faceIdMapArray[ec.getB()];
@@ -364,7 +364,7 @@ public class SubFace {//This class folds the development view and estimates the 
                 }
             }
 
-            equivalenceConditions = new TreeMap<>();
+            uEquivalenceConditions = new ArrayList<>();
             for(EquivalenceCondition ec : hierarchyList.getUEquivalenceConditions()) {
                 int a = faceIdMapArray[ec.getA()];
                 int b = faceIdMapArray[ec.getB()];
