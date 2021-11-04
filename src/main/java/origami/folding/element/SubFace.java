@@ -26,6 +26,9 @@ public class SubFace {//This class folds the development view and estimates the 
     private Map<Integer, Integer> faceIdMap; // slower, but uses much less memory
     private int[] faceIdMapArray; // faster, but uses more memory
 
+    private List<EquivalenceCondition> uEquivalenceConditions;
+    private SortedMap<Integer, List<EquivalenceCondition>> equivalenceConditions;
+
     IBulletinBoard bb;
 
     // For reverse swapping
@@ -222,9 +225,6 @@ public class SubFace {//This class folds the development view and estimates the 
         int M1, M2; //折り畳み推定の際の等価条件の登録は addEquivalenceCondition(im,Mid_min,im,Mid_max); による
         M1 = FaceId2PermutationDigit(tj.getB());
         M2 = FaceId2PermutationDigit(tj.getD());
-        if (M1 * M2 == 0) {
-            return 1000;
-        }
         if ((mm - M1) * (mm - M2) < 0) {
             return mm;
         }
@@ -233,7 +233,7 @@ public class SubFace {//This class folds the development view and estimates the 
 
     private int penetration_inconsistent_digits_request(HierarchyList hierarchyList, int min) {
         for (int i = 1; i <= faceIdCount && i < min; i++) {
-            Iterable<EquivalenceCondition> list = hierarchyList.getEquivalenceConditions(faceIdList[getPermutation(i)]);
+            Iterable<EquivalenceCondition> list = equivalenceConditions.getOrDefault(faceIdList[getPermutation(i)], null);
             // list could be null, be careful.
             if (list != null) {
                 for (EquivalenceCondition ec : list) {
@@ -267,19 +267,17 @@ public class SubFace {//This class folds the development view and estimates the 
             mj2 = itemp;
         }
 
-        if (mi1 * mi2 * mj1 * mj2 != 0) {
-            if (mi2 < min && ((mi1 < mj1) && (mj1 < mi2)) && (mi2 < mj2)) {
-                return mi2;
-            }
-            if (mj2 < min && ((mj1 < mi1) && (mi1 < mj2)) && (mj2 < mi2)) {
-                return mj2;
-            }
+        if (mi2 < min && ((mi1 < mj1) && (mj1 < mi2)) && (mi2 < mj2)) {
+            return mi2;
+        }
+        if (mj2 < min && ((mj1 < mi1) && (mi1 < mj2)) && (mj2 < mi2)) {
+            return mj2;
         }
         return min;
     }
 
     private int u_penetration_inconsistent_digits_request(HierarchyList hierarchyList, int min) {
-        for (EquivalenceCondition ec : hierarchyList.getUEquivalenceConditions()) {
+        for (EquivalenceCondition ec : uEquivalenceConditions) {
             min = u_penetration_inconsistent_digits_request(ec, min);
         }
         return min;
@@ -314,7 +312,7 @@ public class SubFace {//This class folds the development view and estimates the 
     }
 
     /** Prepare a guidebook for the permutation generator in SubFace. */
-    public void setGuideMap(HierarchyList hierarchyList) throws InterruptedException {
+    public void setGuideMap(HierarchyList hierarchyList) {
         // We setup faceIdMapArray only for valid subfaces to save memory.
         faceIdMapArray = new int[hierarchyList.getFacesTotal() + 1];
         for (int k : faceIdMap.keySet()) {
@@ -356,8 +354,33 @@ public class SubFace {//This class folds the development view and estimates the 
         }
 
         if (faceIdCount > 0) {
+            uEquivalenceConditions = new ArrayList<>();
+            for(EquivalenceCondition ec : hierarchyList.getEquivalenceConditions()) {
+                int a = faceIdMapArray[ec.getA()];
+                int b = faceIdMapArray[ec.getB()];
+                int d = faceIdMapArray[ec.getD()];
+                if(a != 0 && b != 0 && d != 0) {
+                    equivalenceConditions.computeIfAbsent(ec.getA(), k -> new ArrayList<>()).add(ec);
+                }
+            }
+
+            equivalenceConditions = new TreeMap<>();
+            for(EquivalenceCondition ec : hierarchyList.getUEquivalenceConditions()) {
+                int a = faceIdMapArray[ec.getA()];
+                int b = faceIdMapArray[ec.getB()];
+                int c = faceIdMapArray[ec.getC()];
+                int d = faceIdMapArray[ec.getD()];
+                if (a != 0 && b != 0 && c != 0 && d != 0) {
+                    uEquivalenceConditions.add(ec);
+                }
+            }
+
             // Now we're ready to reset the generator.
-            permutationGenerator.initialize();
+            try {
+                permutationGenerator.initialize();
+            } catch (InterruptedException e) {
+                // Ignore
+            }
         }
     }
 }

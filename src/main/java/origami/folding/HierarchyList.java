@@ -27,9 +27,6 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     ArrayList<EquivalenceCondition> tL = new ArrayList<>();
     Queue<EquivalenceCondition> uL = new ConcurrentLinkedQueue<>();
 
-    // This is tL grouped by `a`, to speed things up.
-    Map<Integer, ArrayList<EquivalenceCondition>> tLMap = new HashMap<>();
-
     public HierarchyList() {
         reset();
     }
@@ -37,7 +34,6 @@ public class HierarchyList {//This class is used to record and utilize the hiera
 
     public void reset() {
         tL.clear();
-        tLMap.clear();
         uL.clear();
     }
 
@@ -83,18 +79,11 @@ public class HierarchyList {//This class is used to record and utilize the hiera
         return tL;
     }
 
-    public Iterable<EquivalenceCondition> getEquivalenceConditions(int a) {
-        return tLMap.get(a);
-    }
-
     // Add equivalence condition. When there are two adjacent faces im1 and im2 as the boundary of the bar ib, when the folding is estimated
     // The surface im located at the position where it overlaps a part of the bar ib is not sandwiched between the surface im1 and the surface im2 in the vertical direction. From this
     // The equivalent condition of gj [im1] [im] = gj [im2] [im] is satisfied.
     public void addEquivalenceCondition(int ai, int bi, int ci, int di) {
-        ArrayList<EquivalenceCondition> tL_ai = tLMap.computeIfAbsent(ai, k -> new ArrayList<>());
-        EquivalenceCondition ec = new EquivalenceCondition(ai, bi, ci, di);
-        tL_ai.add(ec);
-        tL.add(ec);
+        tL.add(new EquivalenceCondition(ai, bi, ci, di));
     }
 
     public int getUEquivalenceConditionTotal() {

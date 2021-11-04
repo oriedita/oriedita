@@ -322,14 +322,29 @@ public class FoldedFigure_Worker {
         // Make a guidebook for each valid SubFace.
         // Previously this is done for all SubFaces, which is unnecessary.
         System.out.println("Building guides for SubFace");
+        service = Executors.newWorkStealingPool();
         for (int i = 1; i <= SubFace_valid_number; i++) {
-            s[i].setGuideMap(hierarchyList);
+            final SubFace sf = s[i];
+            service.execute(() -> sf.setGuideMap(hierarchyList));
+        }
+
+        // Done adding tasks, shut down ExecutorService
+        service.shutdown();
+        try {
+            if (!service.awaitTermination(60, TimeUnit.SECONDS)) {
+                throw new RuntimeException("HierarchyList_configure did not finish!");
+            }
+        } catch (InterruptedException e) {
+            service.shutdownNow();
+            if (!service.awaitTermination(60, TimeUnit.SECONDS)) {
+                throw new RuntimeException("HierarchyList_configure did not exit!");
+            }
         }
 
         //優先順位を逆転させる。これが有効かどうかは不明wwwww
 
         //SubFaceは優先順の何番目までやるかを決める
-
+        service = null;
         SFP = null;
         System.gc();
 
