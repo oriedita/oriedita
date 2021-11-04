@@ -1,5 +1,7 @@
 package origami.folding;
 
+import java.util.function.Consumer;
+
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.worker.BasicBranch_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
@@ -46,6 +48,8 @@ public class FoldedFigure {
     public WireFrame_Worker cp_worker3 = new WireFrame_Worker(r);    //Net craftsman. Organize the wire-shaped point set created by cp_worker1. It has functions such as recognizing a new surface.
 
     private Point pointOfReferencePlane;
+
+    public Consumer<Point> pointOfReferenceCallback;
 
     public FoldedFigure(IBulletinBoard bb) {
         ct_worker = new FoldedFigure_Worker(bb);
@@ -144,8 +148,8 @@ public class FoldedFigure {
         bulletinBoard.write("<<<<folding_estimated_01;  start");
         // Pass the line segment set created in mainDrawingWorker to cp_worker1 by mouse input and make it a point set (corresponding to the development view).
         cp_worker1.setLineSegmentSet(lineSegmentSet);
-        ip3 = cp_worker1.setReferencePlaneId(ip3);
-        ip3 = cp_worker1.setReferencePlaneId(pointOfReferencePlane);//20180222 Added to take over the previously specified reference plane when performing folding estimation with the fold line selected.
+        ip3 = cp_worker1.setReferencePlaneId(ip3, pointOfReferenceCallback);
+        ip3 = cp_worker1.setReferencePlaneId(pointOfReferencePlane, pointOfReferenceCallback);//20180222 Added to take over the previously specified reference plane when performing folding estimation with the fold line selected.
 
         if (Thread.interrupted()) {
             throw new InterruptedException();

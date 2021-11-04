@@ -13,6 +13,7 @@ import origami.crease_pattern.PointSet;
 
 import java.util.*;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class WireFrame_Worker {
     //This crease pattern craftsman class has only one PointStore c as a crease pattern.
@@ -49,7 +50,7 @@ public class WireFrame_Worker {
         return referencePlaneId;
     }
 
-    public int setReferencePlaneId(int i) {
+    public int setReferencePlaneId(int i, Consumer<Point> callback) {
         referencePlaneId = i;
 
         if (referencePlaneId > pointSet.getNumFaces()) {
@@ -59,16 +60,18 @@ public class WireFrame_Worker {
             referencePlaneId = 1;
         }
 
+        if (callback != null) callback.accept(pointSet.insidePoint_surface(referencePlaneId));
+
         return referencePlaneId;
     }
 
     /**
      * This is the correspondence when the mouse is pressed in the reference plane specification mode 201503
      */
-    public int setReferencePlaneId(Point p0) {//Returns the datum id that is actually valid
-        Point p = new Point();
+    public int setReferencePlaneId(Point p0, Consumer<Point> callback) {//Returns the datum id that is actually valid
         if (pointSet.inside(p0) > 0) {
             referencePlaneId = pointSet.inside(p0);
+            if (callback != null) callback.accept(p0);
         }//If c.inside(p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, and if it is a positive number, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
         return referencePlaneId;
     }

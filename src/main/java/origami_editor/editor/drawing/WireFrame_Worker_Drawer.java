@@ -327,8 +327,7 @@ public class WireFrame_Worker_Drawer {
         p.set(camera.TV2object(p0));
         if (pointSet.inside(p) > 0) {
             int referencePlaneId = pointSet.inside(p);
-            wireFrame_worker.setReferencePlaneId(referencePlaneId);
-            point_of_referencePlane_ob.set(p);
+            wireFrame_worker.setReferencePlaneId(referencePlaneId, pt -> point_of_referencePlane_ob.set(pt));
         }//If c.inside(p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, and if it is a positive number, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
         return wireFrame_worker.getReferencePlaneId();
     }

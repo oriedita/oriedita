@@ -40,6 +40,10 @@ public class FoldedFigure_Drawer {
         wireFrame_worker_drawer1 = new WireFrame_Worker_Drawer(foldedFigure.cp_worker1);
         wireFrame_worker_drawer2 = new WireFrame_Worker_Drawer(foldedFigure.cp_worker2);
 
+        foldedFigure.pointOfReferenceCallback =  p -> {
+            wireFrame_worker_drawer1.point_of_referencePlane_ob.set(p);
+        };
+
         //Camera settings ------------------------------------------------------------------
         foldedFigure_camera_initialize();
         //This is the end of the camera settings ----------------------------------------------------
@@ -123,7 +127,7 @@ public class FoldedFigure_Drawer {
         boolean i_camera_estimated = foldedFigure.estimationStep == FoldedFigure.EstimationStep.STEP_0 && foldedFigure.estimationOrder.isAtMost(FoldedFigure.EstimationOrder.ORDER_5);
 
         Point newPointOfReferencePlane = new Point();
-        newPointOfReferencePlane.set(wireFrame_worker_drawer1.camera.object2TV(pointOfReferencePlane));
+        newPointOfReferencePlane.set(wireFrame_worker_drawer1.camera.TV2object(pointOfReferencePlane));
 
         foldedFigure.folding_estimated(lineSegmentSet, newPointOfReferencePlane);
 
