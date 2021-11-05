@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class TaskExecutor {
     static ExecutorService pool;
-    private static Future<?> currentTask;
+    private static Future<?> currentTask = new FinishedFuture<>(null);
 
     private static String taskName = "";
 
@@ -32,27 +32,12 @@ public class TaskExecutor {
     }
 
     public static boolean isTaskRunning() {
-        return currentTask != null && !currentTask.isDone();
+        return !currentTask.isDone();
     }
 
     public static void stopTask() {
-        if (currentTask != null && !currentTask.isDone()) {
-            pool.shutdown();
-            try {
-                if (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
-                    pool.shutdownNow();
-
-                    if (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
-                        System.err.println("Pool did not terminate!");
-                    }
-                }
-            } catch (InterruptedException e) {
-                pool.shutdownNow();
-                Thread.currentThread().interrupt();
-                e.printStackTrace();
-            }
-
-            pool = Executors.newFixedThreadPool(1);
+        if (isTaskRunning()) {
+            currentTask.cancel(true);
         }
     }
 }

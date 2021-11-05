@@ -5,7 +5,7 @@ import origami_editor.editor.App;
 
 import java.io.File;
 
-public class FoldingEstimateSave100Task implements Runnable{
+public class FoldingEstimateSave100Task implements Runnable {
     private final App app;
 
     public FoldingEstimateSave100Task(App app) {
