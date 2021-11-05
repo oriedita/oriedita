@@ -1,5 +1,7 @@
 package origami.folding.algorithm;
 
+import java.util.Iterator;
+
 import origami.crease_pattern.worker.FoldedFigure_Worker.HierarchyListStatus;
 import origami.data.StackArray;
 import origami.data.listMatrix.PseudoListMatrix;
@@ -27,7 +29,7 @@ public class AdditionalEstimationAlgorithm {
     private static final int ABOVE = HierarchyList.ABOVE_1;
     private static final int BELOW = HierarchyList.BELOW_0;
 
-    private final IBulletinBoard bb;
+    private IBulletinBoard bb = null;
     private final HierarchyList hierarchyList;
     private final SubFace[] subFaces; // indices start from 1
     private final int count;
@@ -36,17 +38,29 @@ public class AdditionalEstimationAlgorithm {
     private final PseudoListMatrix relationObservers;
     private final StackArray changeList;
 
+    /**
+     * During the first time AEA runs, we can actually remove those
+     * EquivalenceConditions that are used for inference. Doing so will remove vast
+     * majority of the ECs, and thus speed up the search stage like crazy since we
+     * will have way less ECs to check. This flag controls that behavior.
+     */
+    public boolean removeMode = false;
+
     public int errorIndex;
 
     public EquivalenceCondition errorPos;
 
     public AdditionalEstimationAlgorithm(IBulletinBoard bb, HierarchyList hierarchyList, SubFace[] s, int capacity) {
-        this(bb, hierarchyList, s, s.length - 1, capacity);
+        this(hierarchyList, s, capacity);
+        this.bb = bb;
+        if (bb != null) bb.write(" ");
     }
 
-    public AdditionalEstimationAlgorithm(IBulletinBoard bb, HierarchyList hierarchyList, SubFace[] s, int count,
-                                         int capacity) {
-        this.bb = bb;
+    public AdditionalEstimationAlgorithm(HierarchyList hierarchyList, SubFace[] s, int capacity) {
+        this(hierarchyList, s, s.length - 1, capacity);
+    }
+
+    public AdditionalEstimationAlgorithm(HierarchyList hierarchyList, SubFace[] s, int count, int capacity) {
         this.hierarchyList = hierarchyList;
         this.count = ++count;
         this.subFaces = new SubFace[count];
@@ -54,7 +68,6 @@ public class AdditionalEstimationAlgorithm {
         changeList = new StackArray(count, capacity);
         IA = new ItalianoAlgorithm[count];
         relationObservers = new PseudoListMatrix(hierarchyList.getFacesTotal());
-        if (bb != null) bb.write(" ");
     }
 
     public HierarchyListStatus run(int completedSubFaces) throws InterruptedException {
@@ -92,13 +105,11 @@ public class AdditionalEstimationAlgorithm {
 
             EquivalenceCondition currentEC = null;
             try {
-                for (EquivalenceCondition tg : hierarchyList.getEquivalenceConditions()) {
-                    currentEC = tg;
-                    if (new_relations >= MAX_NEW_RELATIONS) {
-                        break;
-                    }
-                    int changes = checkTripleConstraint(tg);
-                    new_relations += changes;
+                Iterator<EquivalenceCondition> it = hierarchyList.getEquivalenceConditions().iterator();
+                while (it.hasNext() && new_relations < MAX_NEW_RELATIONS) {
+                    int changes = checkTripleConstraint(currentEC = it.next());
+                    if (removeMode && (changes & 1) == 1) it.remove();
+                    new_relations += changes >>> 1;
 
                     if (Thread.interrupted()) throw new InterruptedException();
                 }
@@ -109,13 +120,11 @@ public class AdditionalEstimationAlgorithm {
 
             currentEC = null;
             try {
-                for (EquivalenceCondition tg : hierarchyList.getUEquivalenceConditions()) {
-                    currentEC = tg;
-                    if (new_relations >= MAX_NEW_RELATIONS) {
-                        break;
-                    }
-                    int changes = checkQuadrupleConstraint(tg);
-                    new_relations += changes;
+                Iterator<EquivalenceCondition> it = hierarchyList.getUEquivalenceConditions().iterator();
+                while (it.hasNext() && new_relations < MAX_NEW_RELATIONS) {
+                    int changes = checkQuadrupleConstraint(currentEC = it.next());
+                    if (removeMode && (changes & 1) == 1) it.remove();
+                    new_relations += changes >>> 1;
 
                     if (Thread.interrupted()) throw new InterruptedException();
                 }
@@ -191,40 +200,49 @@ public class AdditionalEstimationAlgorithm {
 
     private int checkTripleConstraint(EquivalenceCondition ec) throws InferenceFailureException {
         int changes = 0;
+        int removeFlag = 0; // To mark if this EquivalenceCondition is no longer needed afterwards.
         int a = ec.getA(), b = ec.getB(), d = ec.getD();
         if (hierarchyList.get(a, b) == ABOVE) {
+            removeFlag = 1;
             changes += tryInferAbove(a, d);
         } else if (hierarchyList.get(a, b) == BELOW) {
+            removeFlag = 1;
             changes += tryInferAbove(d, a);
-        }
-        if (hierarchyList.get(a, d) == ABOVE) {
+        } else if (hierarchyList.get(a, d) == ABOVE) {
+            removeFlag = 1;
             changes += tryInferAbove(a, b);
         } else if (hierarchyList.get(a, d) == BELOW) {
+            removeFlag = 1;
             changes += tryInferAbove(b, a);
         }
-        return changes;
+        return (changes << 1) | removeFlag;
     }
 
     private int checkQuadrupleConstraint(EquivalenceCondition ec) throws InferenceFailureException {
         int changes = 0;
+        int removeFlag = 0; // To mark if this EquivalenceCondition is no longer needed afterwards.
         int a = ec.getA(), b = ec.getB(), c = ec.getC(), d = ec.getD();
 
         // If only a> b> c, the position of d cannot be determined
 
         // a> c && b> d then a> d && b> c
         if (hierarchyList.get(a, c) == ABOVE && hierarchyList.get(b, d) == ABOVE) {
+            removeFlag = 1;
             changes += tryInferAbove(a, d) + tryInferAbove(b, c);
         }
         // If a> d && b> c then a> c && b> d
         if (hierarchyList.get(a, d) == ABOVE && hierarchyList.get(b, c) == ABOVE) {
+            removeFlag = 1;
             changes += tryInferAbove(a, c) + tryInferAbove(b, d);
         }
         // If a <c && b <d, then a <d && b <c
         if (hierarchyList.get(a, c) == BELOW && hierarchyList.get(b, d) == BELOW) {
+            removeFlag = 1;
             changes += tryInferAbove(d, a) + tryInferAbove(c, b);
         }
         // If a <d && b <c then a <c && b <d
         if (hierarchyList.get(a, d) == BELOW && hierarchyList.get(b, c) == BELOW) {
+            removeFlag = 1;
             changes += tryInferAbove(c, a) + tryInferAbove(d, b);
         }
 
@@ -234,38 +252,46 @@ public class AdditionalEstimationAlgorithm {
         if (hierarchyList.get(a, c) == ABOVE && hierarchyList.get(c, b) == ABOVE) {
             // Noticed that we don't need to infer a > b here, since that part will be done
             // in the transitivity check anyway. The same is true for the rest.
+            removeFlag = 1;
             changes += tryInferAbove(a, d) + tryInferAbove(d, b);
         }
         // a>d>b なら a>c>b
         if (hierarchyList.get(a, d) == ABOVE && hierarchyList.get(d, b) == ABOVE) {
+            removeFlag = 1;
             changes += tryInferAbove(a, c) + tryInferAbove(c, b);
         }
         // b>c>a なら b>d>a
         if (hierarchyList.get(b, c) == ABOVE && hierarchyList.get(c, a) == ABOVE) {
+            removeFlag = 1;
             changes += tryInferAbove(b, d) + tryInferAbove(d, a);
         }
         // b>d>a なら b>c>a
         if (hierarchyList.get(b, d) == ABOVE && hierarchyList.get(d, a) == ABOVE) {
+            removeFlag = 1;
             changes += tryInferAbove(b, c) + tryInferAbove(c, a);
         }
         // c>a>d なら c>b>d
         if (hierarchyList.get(c, a) == ABOVE && hierarchyList.get(a, d) == ABOVE) {
+            removeFlag = 1;
             changes += tryInferAbove(c, b) + tryInferAbove(b, d);
         }
         // c>b>d なら c>a>d
         if (hierarchyList.get(c, b) == ABOVE && hierarchyList.get(b, d) == ABOVE) {
+            removeFlag = 1;
             changes += tryInferAbove(c, a) + tryInferAbove(a, d);
         }
         // d>a>c なら d>b>c
         if (hierarchyList.get(d, a) == ABOVE && hierarchyList.get(a, c) == ABOVE) {
+            removeFlag = 1;
             changes += tryInferAbove(d, b) + tryInferAbove(b, c);
         }
         // d>b>c なら d>a>c
         if (hierarchyList.get(d, b) == ABOVE && hierarchyList.get(b, c) == ABOVE) {
+            removeFlag = 1;
             changes += tryInferAbove(d, a) + tryInferAbove(a, c);
         }
 
-        return changes;
+        return (changes << 1) | removeFlag;
     }
 
     /** Make inference that i > j. */
@@ -286,8 +312,8 @@ public class AdditionalEstimationAlgorithm {
             for (int s : it) {
                 // Although PseudoListMatrix might return a larger list in general, here the
                 // returned list is actually exactly what we need, since a SubFace s is added to
-                // List[i][x] only if it contains Face i, and similarly it is added to List[x][j]
-                // only if it contains Face j.
+                // List[i][x] only if it contains Face i, and similarly it is added to
+                // List[x][j] only if it contains Face j.
                 IA[s].add(subFaces[s].FaceIdIndex(i), subFaces[s].FaceIdIndex(j));
             }
             return true;
