@@ -276,6 +276,12 @@ public class FoldedFigure_Worker {
             return additional;
         }
         System.gc();
+        
+        // Here we can compare and see the huge difference before and after AEA
+        System.out.print("３面が関与する突き抜け条件の数　＝　");
+        System.out.println(hierarchyList.getEquivalenceConditionTotal());
+        System.out.print("４面が関与する突き抜け条件の数　＝　");
+        System.out.println(hierarchyList.getUEquivalenceConditionTotal());
 
         System.out.println("追加推定 終了し、上下表を保存------------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
 
@@ -362,6 +368,7 @@ public class FoldedFigure_Worker {
 
         int capacity = FaceIdCount_max * FaceIdCount_max;
         AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(bb, hierarchyList, s0, capacity);
+        AEA.removeMode = true;
         HierarchyListStatus result = AEA.run(0);
         errorPos = AEA.errorPos;
         return result;
@@ -427,7 +434,7 @@ public class FoldedFigure_Worker {
             // infer more stacking relations from our current set of permutation choices,
             // and this will greatly speed up the permutation generating (because of the
             // temporary guide mechanism) of later SubFaces.
-            AEA = new AdditionalEstimationAlgorithm(null, hierarchyList, s, SubFace_valid_number, 1000);
+            AEA = new AdditionalEstimationAlgorithm(hierarchyList, s, SubFace_valid_number, 1000);
             AEA.initialize();
         }
 
@@ -517,7 +524,7 @@ public class FoldedFigure_Worker {
         // Solution found, perform final checking
         bb.rewrite(10, " ");
         bb.rewrite(9, "Possible solution found...");
-        AEA = new AdditionalEstimationAlgorithm(null, hierarchyList, s, 1000); // we don't need much for this
+        AEA = new AdditionalEstimationAlgorithm(hierarchyList, s, 1000); // we don't need much for this
         if (AEA.run(SubFace_valid_number) != HierarchyListStatus.SUCCESSFUL_1000) {
             bb.rewrite(9, " ");
             // This rarely happens, but typically it means the solution contradicts some of

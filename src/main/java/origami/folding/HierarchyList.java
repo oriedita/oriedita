@@ -21,7 +21,7 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     // If hierarchyList[i][j] is -100, then faces i and j do not overlap.
     SymmetricMatrix hierarchyList;
     SymmetricMatrix hierarchyList_copy;
-    ArrayList<EquivalenceCondition> tL = new ArrayList<>();
+    List<EquivalenceCondition> tL = new LinkedList<>(); // We need LinkedList here for fast removal
     Queue<EquivalenceCondition> uL = new ConcurrentLinkedQueue<>();
 
     public HierarchyList() {

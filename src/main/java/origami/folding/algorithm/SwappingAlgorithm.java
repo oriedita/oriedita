@@ -45,7 +45,7 @@ public class SwappingAlgorithm {
         hash = getHash(s, high);
         if (history.contains(hash)) {
             // Introduce unvisited SubFaces to the game.
-            int reverseResult = reverseSwap(s, 1, max); // side effect on hash
+            int reverseResult = reverseSwap(s, 1, high, max, 1); // side effect on hash
             if (reverseResult == high) return; // Let's hope that this never happen, or we're out of tricks.
             else high = reverseResult;
         }
@@ -58,7 +58,7 @@ public class SwappingAlgorithm {
         high = 0;
 
 		// To further improve performance
-		reverseSwapCore(s, low, max, s[low].swapCounter - 1);
+		reverseSwap(s, low, low, max, s[low].swapCounter - 1);
 	}
 
     private int getHash(SubFace[] s, int high) {
@@ -88,21 +88,20 @@ public class SwappingAlgorithm {
         s[low] = temp;
     }
 
-    public int reverseSwap(SubFace[] s, int index, int max) {
-        return reverseSwapCore(s, index, max, ++repetition);
+    public void reverseSwap(SubFace[] s, int index, int max) {
+        reverseSwap(s, index, index, max, ++repetition);
     }
 
-    private int reverseSwapCore(SubFace[] s, int index, int max, int r) {
-        int result = index;
+    private int reverseSwap(SubFace[] s, int index, int high, int max, int r) {
         for (int i = index + 1; i <= max && r > 0; i++) {
             if (!visited.contains(s[i].id)) {
                 visited.add(s[i].id);
                 swap(s, i, index);
-                hash = getHash(s, ++result);
+                hash = getHash(s, ++high);
                 r--;
             }
         }
-        return result;
+        return high;
     }
 
     public void visit(SubFace s) {
