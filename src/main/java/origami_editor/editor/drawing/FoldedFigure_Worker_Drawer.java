@@ -30,6 +30,7 @@ public class FoldedFigure_Worker_Drawer {
     boolean antiAlias = true;
     boolean displayShadows = false; //Whether to display shadows. 0 is not displayed, 1 is displayed
     boolean displaySsi = false;
+    private boolean displayNumbers = false;
 
     public FoldedFigure_Worker_Drawer(FoldedFigure_Worker worker) {
         this.worker = worker;
@@ -53,7 +54,7 @@ public class FoldedFigure_Worker_Drawer {
         return (int) d;
     }
 
-    public void draw_transparency_with_camera(Graphics g, WireFrame_Worker_Drawer orite, PointSet otta_Face_figure, PointSet subFace_figure, boolean transparencyColor, int transparency_toukado) {
+    public void draw_transparency_with_camera(Graphics g, WireFrame_Worker_Drawer orite, PointSet otta_Face_figure, PointSet subFace_figure, boolean transparencyColor, int transparency_toukado, int index) {
         Graphics2D g2 = (Graphics2D) g;
 
         origami.crease_pattern.element.Point t0 = new origami.crease_pattern.element.Point();
@@ -222,7 +223,7 @@ public class FoldedFigure_Worker_Drawer {
         //ここまでで、上下表の情報がSubFaceの各面に入った
     }
 
-    public void draw_foldedFigure_with_camera(Graphics g, WireFrame_Worker orite, PointSet subFace_figure) {
+    public void draw_foldedFigure_with_camera(Graphics g, WireFrame_Worker orite, PointSet subFace_figure, int index) {
         Graphics2D g2 = (Graphics2D) g;
         boolean flipped = camera.determineIsCameraMirrored();
 
@@ -496,7 +497,7 @@ public class FoldedFigure_Worker_Drawer {
     }
 
     //---------------------------------------------------------
-    public void draw_cross_with_camera(Graphics g, boolean selected) {
+    public void draw_cross_with_camera(Graphics g, boolean selected, int index) {
         //Draw the center of the camera with a cross
         origami.crease_pattern.element.Point point = camera.object2TV(camera.getCameraPosition());
         DrawingUtil.cross(g, point, 5.0, 2.0, LineColor.ORANGE_4);
@@ -504,6 +505,14 @@ public class FoldedFigure_Worker_Drawer {
         if (selected) {
             g.setColor(Colors.get(new Color(200, 50, 255, 90)));
             g.fillOval(gx(point.getX()) - 25, gy(point.getY()) - 25, 50, 50); //円
+        }
+
+        if (displayNumbers) {
+            Font f = g.getFont();
+            g.setFont(new Font(f.getName(), f.getStyle(), 50));
+            g.setColor(Color.orange);
+            g.drawString(String.valueOf(index), gx(point.getX()) + 25, gy(point.getY()) + 25);
+            g.setFont(f);
         }
     }
 
@@ -574,6 +583,7 @@ public class FoldedFigure_Worker_Drawer {
 
     public void setData(ApplicationModel applicationModel) {
         displaySsi = applicationModel.getDisplaySelfIntersection();
+        displayNumbers = applicationModel.getDisplayNumbers();
     }
 
     public void getData(FoldedFigureModel foldedFigureModel) {
