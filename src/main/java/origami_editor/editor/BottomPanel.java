@@ -1,5 +1,6 @@
 package origami_editor.editor;
 
+import origami.folding.FoldedFigure;
 import origami_editor.editor.canvas.MouseHandlerModifyCalculatedShape;
 import origami_editor.editor.component.ColorIcon;
 import origami_editor.editor.component.FoldedFigureResize;
@@ -7,7 +8,6 @@ import origami_editor.editor.component.FoldedFigureRotate;
 import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
-import origami.folding.FoldedFigure;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.task.FoldingEstimateSave100Task;
 import origami_editor.editor.task.FoldingEstimateSpecificTask;
@@ -16,7 +16,11 @@ import origami_editor.editor.task.TaskExecutor;
 import origami_editor.tools.StringOp;
 
 import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 
 public class BottomPanel extends JPanel {
@@ -241,6 +245,34 @@ public class BottomPanel extends JPanel {
         });
         foldedFigureBox.setModel(app.foldedFiguresList);
         foldedFigureBox.setRenderer(new IndexCellRenderer());
+        foldedFigureBox.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (!app.applicationModel.getDisplayNumbers()) {
+                    app.applicationModel.setDisplayNumbers(true);
+                    app.repaintCanvas();
+                }
+            }
+        });
+        foldedFigureBox.addPopupMenuListener(new PopupMenuListener() {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                if (app.applicationModel.getDisplayNumbers()) {
+                    app.applicationModel.setDisplayNumbers(false);
+                    app.repaintCanvas();
+                }
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+
+            }
+        });
     }
 
     /**

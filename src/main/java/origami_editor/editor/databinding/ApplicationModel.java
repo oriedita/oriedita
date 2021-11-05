@@ -58,9 +58,20 @@ public class ApplicationModel implements Serializable {
     private Color gridColor;
     private Color gridScaleColor;
     private int gridLineWidth;
+    private boolean displayNumbers;
 
     public ApplicationModel() {
         reset();
+    }
+
+    public boolean getDisplayNumbers() {
+        return displayNumbers;
+    }
+
+    public void setDisplayNumbers(boolean displayNumbers) {
+        boolean oldDisplayNumbers = this.displayNumbers;
+        this.displayNumbers = displayNumbers;
+        this.pcs.firePropertyChange("displayNumbers", oldDisplayNumbers, displayNumbers);
     }
 
     public List<File> getRecentFileList() {
@@ -585,7 +596,7 @@ public class ApplicationModel implements Serializable {
             Class<?> lnfClass = Class.forName(laf);
 
             LookAndFeel lookAndFeel = (LookAndFeel) lnfClass.getDeclaredConstructor().newInstance();
-            return lookAndFeel instanceof FlatLaf && ((FlatLaf)lookAndFeel).isDark();
+            return lookAndFeel instanceof FlatLaf && ((FlatLaf) lookAndFeel).isDark();
         } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             return false;
         }

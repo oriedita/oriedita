@@ -30,6 +30,7 @@ public class FoldedFigure_Worker_Drawer {
     boolean antiAlias = true;
     boolean displayShadows = false; //Whether to display shadows. 0 is not displayed, 1 is displayed
     boolean displaySsi = false;
+    private boolean displayNumbers = false;
 
     public FoldedFigure_Worker_Drawer(FoldedFigure_Worker worker) {
         this.worker = worker;
@@ -53,7 +54,7 @@ public class FoldedFigure_Worker_Drawer {
         return (int) d;
     }
 
-    public void draw_transparency_with_camera(Graphics g, WireFrame_Worker_Drawer orite, PointSet otta_Face_figure, PointSet subFace_figure, boolean transparencyColor, int transparency_toukado) {
+    public void draw_transparency_with_camera(Graphics g, WireFrame_Worker_Drawer orite, PointSet otta_Face_figure, PointSet subFace_figure, boolean transparencyColor, int transparency_toukado, int index) {
         Graphics2D g2 = (Graphics2D) g;
 
         origami.crease_pattern.element.Point t0 = new origami.crease_pattern.element.Point();
@@ -179,6 +180,8 @@ public class FoldedFigure_Worker_Drawer {
             fillPolygon(g2, worker.errorPos.getC(), orite.get(), orite.camera);
             fillPolygon(g2, worker.errorPos.getD(), orite.get(), orite.camera);
         }
+
+        drawIndex(g, index);
     }
 
     private void fillSubFace(Graphics2D g, int id, PointSet faces, Camera transform) {
@@ -222,7 +225,7 @@ public class FoldedFigure_Worker_Drawer {
         //ここまでで、上下表の情報がSubFaceの各面に入った
     }
 
-    public void draw_foldedFigure_with_camera(Graphics g, WireFrame_Worker orite, PointSet subFace_figure) {
+    public void draw_foldedFigure_with_camera(Graphics g, WireFrame_Worker orite, PointSet subFace_figure, int index) {
         Graphics2D g2 = (Graphics2D) g;
         boolean flipped = camera.determineIsCameraMirrored();
 
@@ -493,6 +496,8 @@ public class FoldedFigure_Worker_Drawer {
                 g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //直線
             }
         }
+
+        drawIndex(g, index);
     }
 
     //---------------------------------------------------------
@@ -574,10 +579,22 @@ public class FoldedFigure_Worker_Drawer {
 
     public void setData(ApplicationModel applicationModel) {
         displaySsi = applicationModel.getDisplaySelfIntersection();
+        displayNumbers = applicationModel.getDisplayNumbers();
     }
 
     public void getData(FoldedFigureModel foldedFigureModel) {
         foldedFigureModel.setAntiAlias(antiAlias);
         foldedFigureModel.setDisplayShadows(displayShadows);
+    }
+
+    public void drawIndex(Graphics bufferGraphics, int index) {
+        if (displayNumbers) {
+            origami.crease_pattern.element.Point p = camera.object2TV(new origami.crease_pattern.element.Point(0, 0));
+            Font f = bufferGraphics.getFont();
+            bufferGraphics.setFont(new Font(f.getName(), f.getStyle(), 50));
+            bufferGraphics.setColor(Color.orange);
+            bufferGraphics.drawString(String.valueOf(index), (int) p.getX(), (int) p.getY());
+            bufferGraphics.setFont(f);
+        }
     }
 }

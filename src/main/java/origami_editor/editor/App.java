@@ -237,9 +237,9 @@ public class App {
         });
 
         applicationModel.addPropertyChangeListener(e -> {
-            FoldedFigure_Drawer selectedItem = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
-            if (selectedItem != null) {
-                selectedItem.setData(applicationModel);
+            for (int i = 0; i < foldedFiguresList.getSize(); i++) {
+                FoldedFigure_Drawer item = foldedFiguresList.getElementAt(i);
+                item.setData(applicationModel);
             }
         });
 

@@ -250,7 +250,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //折り上がりの各種お絵かき
         for (int i_oz = 0; i_oz < app.foldedFiguresList.getSize(); i_oz++) {
             OZi = app.foldedFiguresList.getElementAt(i_oz);
-            OZi.foldUp_draw(bufferGraphics, displayMarkings, OZi == app.foldedFiguresList.getSelectedItem());
+            OZi.foldUp_draw(bufferGraphics, displayMarkings, i_oz + 1, OZi == app.foldedFiguresList.getSelectedItem());
         }
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
