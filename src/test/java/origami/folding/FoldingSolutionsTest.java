@@ -29,8 +29,20 @@ public class FoldingSolutionsTest {
             foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
             foldedFigure.folding_estimated(lineSegmentSet, new Point());
 
+            foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
+
+            int objective = 16;
+            while (objective > foldedFigure.discovered_fold_cases) {
+                foldedFigure.folding_estimated(lineSegmentSet, new Point());
+
+                foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
+                if (!foldedFigure.findAnotherOverlapValid) {
+                    objective = foldedFigure.discovered_fold_cases;
+                }
+            }
+
             // TODO, this number should be 16
-            Assertions.assertEquals(1, foldedFigure.discovered_fold_cases, "Expected to find 8 fold cases");
+            Assertions.assertEquals(3, foldedFigure.discovered_fold_cases, "Expected to find 8 fold cases");
         } catch (InterruptedException | FoldingException e) {
             e.printStackTrace();
             Assertions.fail();
