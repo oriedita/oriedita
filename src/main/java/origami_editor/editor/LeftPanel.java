@@ -574,14 +574,7 @@ public class LeftPanel {
 
 
             } else if (app.mainCreasePatternWorker.getFoldLineTotalForSelectFolding() > 0) {
-                app.folding_prepare();//ここでOZがOAZ(0)からOAZ(i)に切り替わる
-                FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
-
-                if (selectedFigure != null) {
-                    selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
-
-                    TaskExecutor.executeTask("Two Colored CP", new TwoColoredTask(app));
-                }
+                TaskExecutor.executeTask("Two Colored CP", new TwoColoredTask(app));
             }
 
             app.mainCreasePatternWorker.unselect_all();

@@ -636,14 +636,10 @@ public class App {
                 point_of_referencePlane_old.set(selectedFigure.wireFrame_worker_drawer1.get_point_of_referencePlane_tv());
             }
             //これより前のOZは古いOZ
-            folding_prepare();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
+            selectedFigure = folding_prepare();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
             //これより後のOZは新しいOZに変わる
 
-            selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
-
-            selectedFigure.foldedFigure.estimationOrder = estimationOrder;
-
-            TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(this));
+            TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(this, selectedFigure, estimationOrder));
         } else if (foldType == FoldType.CHANGING_FOLDED_3) {
             FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
@@ -651,15 +647,12 @@ public class App {
                 selectedFigure.foldedFigure.estimationOrder = estimationOrder;
                 selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_0;
 
-                selectedFigure.foldedFigure.estimationOrder = estimationOrder;
-                selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_0;
-
-                TaskExecutor.executeTask("Folding Estimate",new FoldingEstimateTask(this));
+                TaskExecutor.executeTask("Folding Estimate",new FoldingEstimateTask(this, selectedFigure, estimationOrder));
             }
         }
     }
 
-    void folding_prepare() {//Add one new folding diagram to the foldedFigures array list, specify it as the operation target, and inherit the foldedFigures (0) common parameters.
+    public FoldedFigure_Drawer folding_prepare() {//Add one new folding diagram to the foldedFigures array list, specify it as the operation target, and inherit the foldedFigures (0) common parameters.
         System.out.println(" oritatami_jyunbi 20180107");
 
         FoldedFigure_Drawer newFoldedFigure = new FoldedFigure_Drawer(new FoldedFigure_01(bulletinBoard));
@@ -668,6 +661,8 @@ public class App {
         foldedFiguresList.setSelectedItem(newFoldedFigure);
 
         newFoldedFigure.getData(foldedFigureModel);
+
+        return newFoldedFigure;
     }
 
     public void twoColorNoSelectedPolygonalLineWarning() {
@@ -1029,16 +1024,6 @@ public class App {
         }
 
         selectedFigure.folding_estimated(canvas.creasePatternCamera, lineSegmentsForFolding, point_of_referencePlane_old);
-    }
-
-    public void createTwoColorCreasePattern() throws InterruptedException, FoldingException {//Two-color crease pattern
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
-
-        if (selectedFigure == null) {
-            throw new FoldingException("No folded figure created");
-        }
-
-        selectedFigure.createTwoColorCreasePattern(canvas.creasePatternCamera, lineSegmentsForFolding, point_of_referencePlane_old);
     }
 
     public double string2double(String str0, double default_if_error) {

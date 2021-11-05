@@ -226,7 +226,7 @@ public class FoldedFigure_Drawer {
 
             //Cross-shaped display at the center of movement of the folded figure
             if (displayMark) {
-                foldedFigure_worker_drawer.draw_cross_with_camera(bufferGraphics, selected);
+                foldedFigure_worker_drawer.draw_cross_with_camera(bufferGraphics, selected, index);
             }
         }
 
@@ -247,7 +247,7 @@ public class FoldedFigure_Drawer {
 
             //Cross-shaped display at the center of movement of the folded figure
             if (displayMark) {
-                foldedFigure_worker_drawer.draw_cross_with_camera(bufferGraphics, selected);
+                foldedFigure_worker_drawer.draw_cross_with_camera(bufferGraphics, selected, index);
             }
         }
 
@@ -260,7 +260,7 @@ public class FoldedFigure_Drawer {
 
             //Cross-shaped display at the center of movement of the folded figure
             if (displayMark) {
-                foldedFigure_worker_drawer.draw_cross_with_camera(bufferGraphics, selected);
+                foldedFigure_worker_drawer.draw_cross_with_camera(bufferGraphics, selected, index);
             }
 
             foldedFigure_worker_drawer.setCamera(transparentRearCamera);
@@ -270,7 +270,7 @@ public class FoldedFigure_Drawer {
 
             //Cross-shaped display at the center of movement of the folded figure
             if (displayMark) {
-                foldedFigure_worker_drawer.draw_cross_with_camera(bufferGraphics, selected);
+                foldedFigure_worker_drawer.draw_cross_with_camera(bufferGraphics, selected, index);
             }
         }
 

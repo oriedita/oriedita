@@ -85,9 +85,7 @@ public class BottomPanel extends JPanel {
         anotherSolutionButton.addActionListener(e -> {
             FoldedFigure_Drawer selectedItem = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
             if (selectedItem != null) {
-                selectedItem.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
-
-                TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(app));
+                TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(app, selectedItem, FoldedFigure.EstimationOrder.ORDER_6));
             }
         });
         flipButton.addActionListener(e -> {

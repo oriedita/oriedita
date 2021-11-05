@@ -1,26 +1,30 @@
 package origami_editor.editor.task;
 
+import origami.folding.FoldedFigure;
 import origami_editor.editor.App;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 
 public class FoldingEstimateTask implements Runnable {
     private final App app;
+    private final FoldedFigure_Drawer selectedFigure;
+    private final FoldedFigure.EstimationOrder estimationOrder;
 
-    public FoldingEstimateTask(App app) {
+    public FoldingEstimateTask(App app, FoldedFigure_Drawer selectedFigure, FoldedFigure.EstimationOrder estimationOrder) {
         this.app = app;
+        this.selectedFigure = selectedFigure;
+        this.estimationOrder = estimationOrder;
     }
 
     @Override
     public void run() {
         long start = System.currentTimeMillis();
 
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
-
         if (selectedFigure == null) {
             return;
         }
 
         try {
+            selectedFigure.foldedFigure.estimationOrder = estimationOrder;
             app.folding_estimated();
         } catch (Exception e) {
             selectedFigure.foldedFigure.estimated_initialize();

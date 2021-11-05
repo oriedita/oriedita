@@ -180,8 +180,6 @@ public class FoldedFigure_Worker_Drawer {
             fillPolygon(g2, worker.errorPos.getC(), orite.get(), orite.camera);
             fillPolygon(g2, worker.errorPos.getD(), orite.get(), orite.camera);
         }
-
-        drawIndex(g, index);
     }
 
     private void fillSubFace(Graphics2D g, int id, PointSet faces, Camera transform) {
@@ -496,12 +494,10 @@ public class FoldedFigure_Worker_Drawer {
                 g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //直線
             }
         }
-
-        drawIndex(g, index);
     }
 
     //---------------------------------------------------------
-    public void draw_cross_with_camera(Graphics g, boolean selected) {
+    public void draw_cross_with_camera(Graphics g, boolean selected, int index) {
         //Draw the center of the camera with a cross
         origami.crease_pattern.element.Point point = camera.object2TV(camera.getCameraPosition());
         DrawingUtil.cross(g, point, 5.0, 2.0, LineColor.ORANGE_4);
@@ -509,6 +505,14 @@ public class FoldedFigure_Worker_Drawer {
         if (selected) {
             g.setColor(Colors.get(new Color(200, 50, 255, 90)));
             g.fillOval(gx(point.getX()) - 25, gy(point.getY()) - 25, 50, 50); //円
+        }
+
+        if (displayNumbers) {
+            Font f = g.getFont();
+            g.setFont(new Font(f.getName(), f.getStyle(), 50));
+            g.setColor(Color.orange);
+            g.drawString(String.valueOf(index), gx(point.getX()) + 25, gy(point.getY()) + 25);
+            g.setFont(f);
         }
     }
 
@@ -585,16 +589,5 @@ public class FoldedFigure_Worker_Drawer {
     public void getData(FoldedFigureModel foldedFigureModel) {
         foldedFigureModel.setAntiAlias(antiAlias);
         foldedFigureModel.setDisplayShadows(displayShadows);
-    }
-
-    public void drawIndex(Graphics bufferGraphics, int index) {
-        if (displayNumbers) {
-            origami.crease_pattern.element.Point p = camera.object2TV(new origami.crease_pattern.element.Point(0, 0));
-            Font f = bufferGraphics.getFont();
-            bufferGraphics.setFont(new Font(f.getName(), f.getStyle(), 50));
-            bufferGraphics.setColor(Color.orange);
-            bufferGraphics.drawString(String.valueOf(index), (int) p.getX(), (int) p.getY());
-            bufferGraphics.setFont(f);
-        }
     }
 }
