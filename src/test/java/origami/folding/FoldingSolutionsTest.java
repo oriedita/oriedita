@@ -1,6 +1,5 @@
 package origami.folding;
 
-import au.com.origin.snapshots.Expect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import origami.crease_pattern.FoldingException;
@@ -13,8 +12,6 @@ import origami_editor.editor.export.Cp;
 import java.io.IOException;
 
 public class FoldingSolutionsTest {
-    private Expect expect;
-
     @Test
     public void testFoldBirdbase() throws IOException {
         Save save = Cp.importFile(getClass().getClassLoader().getResourceAsStream("solution_sample_1.cp"));
