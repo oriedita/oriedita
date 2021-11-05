@@ -26,8 +26,60 @@ public class ConsoleDialog extends JDialog {
         Style redForegroundStyle = context.addStyle("fg_red", context.getStyle(StyleContext.DEFAULT_STYLE));
         StyleConstants.setForeground(redForegroundStyle, Color.red);
 
-        System.setOut(new PrintStream(new BufferedOutputStream(new TextPaneOutputStream(console, blackForegroundStyle)), true));
-        System.setErr(new PrintStream(new BufferedOutputStream(new TextPaneOutputStream(console, redForegroundStyle)), true));
+        PrintStream out = new PrintStream(new BufferedOutputStream(new TeeOutputStream(System.out, new TextPaneOutputStream(console, blackForegroundStyle))), true);
+        PrintStream err = new PrintStream(new BufferedOutputStream(new TeeOutputStream(System.err, new TextPaneOutputStream(console, redForegroundStyle))), true);
+
+        System.setOut(out);
+        System.setErr(err);
+    }
+
+    private static class TeeOutputStream extends OutputStream {
+
+        private final OutputStream out;
+        private final OutputStream tee;
+
+        public TeeOutputStream(OutputStream out, OutputStream tee) {
+            if (out == null)
+                throw new NullPointerException();
+            else if (tee == null)
+                throw new NullPointerException();
+
+            this.out = out;
+            this.tee = tee;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            out.write(b);
+            tee.write(b);
+        }
+
+        @Override
+        public void write(byte[] b) throws IOException {
+            out.write(b);
+            tee.write(b);
+        }
+
+        @Override
+        public void write(byte[] b, int off, int len) throws IOException {
+            out.write(b, off, len);
+            tee.write(b, off, len);
+        }
+
+        @Override
+        public void flush() throws IOException {
+            out.flush();
+            tee.flush();
+        }
+
+        @Override
+        public void close() throws IOException {
+            try {
+                out.close();
+            } finally {
+                tee.close();
+            }
+        }
     }
 
     {
