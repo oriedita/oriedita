@@ -27,7 +27,7 @@ public class FoldingEstimateSave100Task implements Runnable {
                     for (int i = 1; i <= objective; i++) {
                         app.folding_estimated();
 
-                        String filename = file.getName();
+                        String filename = file.getPath();
                         if (filename.contains(".")) {
                             String extension = filename.substring(filename.lastIndexOf("."));
                             String basename = filename.substring(0, filename.lastIndexOf("."));
