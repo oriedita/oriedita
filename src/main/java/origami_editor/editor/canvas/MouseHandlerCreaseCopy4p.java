@@ -41,7 +41,7 @@ public class MouseHandlerCreaseCopy4p extends BaseMouseHandlerInputRestricted {
             if (p.distance(closestPoint) < d.selectionDistance) {
                 d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.BLUE_2));
             }
-            if (Epsilon.high.le0(OritaCalc.distance(d.lineStep.get(0).getA(), d.lineStep.get(0).getA()))) {
+            if (Epsilon.high.le0(OritaCalc.distance(d.lineStep.get(0).getA(), d.lineStep.get(1).getA()))) {
                 d.lineStep.clear();
                 d.app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             }
