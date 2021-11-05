@@ -237,7 +237,10 @@ public class App {
         });
 
         applicationModel.addPropertyChangeListener(e -> {
-            ((FoldedFigure_Drawer)foldedFiguresList.getSelectedItem()).setData(applicationModel);
+            FoldedFigure_Drawer selectedItem = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            if (selectedItem != null) {
+                selectedItem.setData(applicationModel);
+            }
         });
 
         applicationModel.reload();
