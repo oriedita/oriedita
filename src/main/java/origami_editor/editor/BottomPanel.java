@@ -176,7 +176,10 @@ public class BottomPanel extends JPanel {
                 foldedFigureModel.setLineColor(lineColor);
             }
         });
-        haltButton.addActionListener(e -> TaskExecutor.stopTask());
+        haltButton.addActionListener(e -> {
+            TaskExecutor.stopTask();
+            app.mainCreasePatternWorker.camvTask.cancel(true);
+        });
         trashButton.addActionListener(e -> {
             if (app.foldedFigureIndex == 0) {
                 return;

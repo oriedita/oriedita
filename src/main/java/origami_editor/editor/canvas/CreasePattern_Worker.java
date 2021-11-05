@@ -10,6 +10,7 @@ import origami.crease_pattern.element.*;
 import origami_editor.editor.*;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.task.CheckCAMVTask;
+import origami_editor.editor.task.FinishedFuture;
 import origami_editor.editor.task.TaskExecutor;
 import origami_editor.editor.undo_box.HistoryState;
 import origami_editor.graphic2d.grid.Grid;
@@ -19,6 +20,7 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 /**
  * Responsible for holding the current creasepattern and drawing it.
@@ -84,6 +86,8 @@ public class CreasePattern_Worker {
     // Sub-operation mode for MouseMode.FOLDABLE_LINE_DRAW_71, either DRAW_CREASE_FREE_1, or VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38
     //--------------------------------------------
     CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
+
+    public Future<?> camvTask = new FinishedFuture<>(null);
 
     public CreasePattern_Worker(App app0) {  //コンストラクタ
         app = app0;
@@ -441,10 +445,10 @@ public class CreasePattern_Worker {
 
             if (displayComments) {
 
-                if (TaskExecutor.isTaskRunning() && TaskExecutor.getTaskName().equals("cAMV")) {
+                if (!camvTask.isDone() && !camvTask.isCancelled()) {
                     g.setColor(Colors.get(Color.orange));
                     g.drawString("... cAMV Errors", p0x_max - 100, 10);
-                } else {
+                } else if (camvTask.isDone()) {
                     int numErrors = foldLineSet.getCheck4LineSegments().size();
                     if (numErrors == 0) {
                         g.setColor(Colors.get(Color.green));
@@ -919,7 +923,8 @@ public class CreasePattern_Worker {
     }
 
     public void check4() {
-        TaskExecutor.executeTask("cAMV", new CheckCAMVTask(this, app.canvas));
+        camvTask.cancel(true);
+        camvTask = CheckCAMVTask.execute(this, app.canvas);
     }
 
     public void ap_check4() throws InterruptedException {
@@ -980,8 +985,8 @@ public class CreasePattern_Worker {
         if (e.getPropertyName() == null || e.getPropertyName().equals("check4Enabled")) {
             if (data.getCheck4Enabled()) {
                 check4();
-            } else if (TaskExecutor.isTaskRunning() && TaskExecutor.getTaskName().equals("cAMV")) {
-                TaskExecutor.stopTask();
+            } else if (!camvTask.isDone()) {
+                camvTask.cancel(true);
             }
         }
     }

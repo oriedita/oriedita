@@ -3,9 +3,21 @@ package origami_editor.editor.task;
 import origami_editor.editor.Canvas;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 
-public class CheckCAMVTask implements Runnable{
+import java.util.concurrent.*;
+
+public class CheckCAMVTask implements Callable<Void> {
     private final CreasePattern_Worker creasePattern_worker;
     private final Canvas canvas;
+
+    private static final ExecutorService executor;
+
+    static {
+        executor = Executors.newFixedThreadPool(1);
+    }
+
+    public static Future<?> execute(CreasePattern_Worker creasePattern_worker, Canvas canvas) {
+        return executor.submit(new CheckCAMVTask(creasePattern_worker, canvas));
+    }
 
     public CheckCAMVTask(CreasePattern_Worker creasePattern_worker, Canvas canvas) {
         this.creasePattern_worker = creasePattern_worker;
@@ -13,7 +25,7 @@ public class CheckCAMVTask implements Runnable{
     }
 
     @Override
-    public void run() {
+    public Void call() {
         long start = System.currentTimeMillis();
 
         try {
@@ -27,5 +39,7 @@ public class CheckCAMVTask implements Runnable{
         System.out.println("Check4 computation time " + L + " msec.");
 
         canvas.repaint();
+
+        return null;
     }
 }
