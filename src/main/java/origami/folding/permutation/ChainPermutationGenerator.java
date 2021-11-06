@@ -73,12 +73,15 @@ public class ChainPermutationGenerator extends PermutationGenerator {
 
     public int next(int digit) throws InterruptedException {
         int result = nextCore(digit);
-        if (result == 0 && restored) {
-            looped = true;
-            saved = false;
-            restored = false;
+        if (result == 0) {
             reset();
-            return 1;
+            if(restored) {
+                looped = true;
+                saved = false;
+                restored = false;
+                return 1;
+            }
+            return 0;
         } else if (looped) {
             int i = 1; // Check if we have returned to the save point.
             while (swapHistory[i] == saveHistory[2][i] && i < numDigits) i++;
@@ -131,14 +134,12 @@ public class ChainPermutationGenerator extends PermutationGenerator {
             if (swapIndex > numDigits - lockRemain + 1) {
                 // The nature of ChainPermutationGenerator is that it never hits a dead-end
                 // mid-way unless there's internal contradiction in the given constraints.
-                if (swapHistory[curIndex] == curIndex - 1) {
-                    return 0;
-                }
+                if (swapHistory[curIndex] == curIndex - 1) return 0;
 
+                // If we have retracted to the beginning, then there's no more permutation.
                 swapHistory[curIndex] = curIndex - 1;
-                if (--curIndex == 0) {
-                    return 0;
-                }
+                if (--curIndex == 0) return 0;
+
                 retract(curIndex);
                 if (curIndex < digit) {
                     digit = curIndex;
