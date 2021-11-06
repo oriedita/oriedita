@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public class FoldingSolutionsTest {
     @Test
-    public void testFoldBirdbase() throws IOException {
+    public void testFoldSolutionNumber() throws IOException {
         Save save = Cp.importFile(getClass().getClassLoader().getResourceAsStream("solution_sample_1.cp"));
 
         FoldedFigure foldedFigure = new FoldedFigure(new BulletinBoard());
@@ -38,8 +38,7 @@ public class FoldingSolutionsTest {
                 }
             }
 
-            // TODO, this number should be 16
-            Assertions.assertEquals(3, foldedFigure.discovered_fold_cases, "Expected to find 8 fold cases");
+            Assertions.assertEquals(16, foldedFigure.discovered_fold_cases, "Expected to find 16 solutions");
         } catch (InterruptedException | FoldingException e) {
             e.printStackTrace();
             Assertions.fail();
