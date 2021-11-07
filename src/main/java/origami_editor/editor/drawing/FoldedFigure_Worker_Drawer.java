@@ -29,7 +29,7 @@ public class FoldedFigure_Worker_Drawer {
 
     boolean antiAlias = true;
     boolean displayShadows = false; //Whether to display shadows. 0 is not displayed, 1 is displayed
-    boolean displaySsi = false;
+    static boolean displaySsi = false;
     private boolean displayNumbers = false;
 
     public FoldedFigure_Worker_Drawer(FoldedFigure_Worker worker) {
@@ -582,8 +582,11 @@ public class FoldedFigure_Worker_Drawer {
     }
 
     public void setData(ApplicationModel applicationModel) {
-        displaySsi = applicationModel.getDisplaySelfIntersection();
         displayNumbers = applicationModel.getDisplayNumbers();
+    }
+
+    public static void setStaticData(ApplicationModel applicationModel) {
+        displaySsi = applicationModel.getDisplaySelfIntersection(); 
     }
 
     public void getData(FoldedFigureModel foldedFigureModel) {
