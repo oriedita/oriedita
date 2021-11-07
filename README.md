@@ -63,6 +63,28 @@ Read the JavaDoc on [`javax.swing.KeyStroke.getKeyStroke(String)`](https://docs.
 
 The application state is saved to `config.json` in the configuration directory. It contains information about the application and is restored when the application starts.
 
+## FAQ
+
+### How do I reset Origami Editor?
+
+To reset all options in Origami Editor to the default state remove all files in the _configuration directory_, see the [Configuration](#Configuration) section to find this directory on your operating system.
+
+### Origami Editor does not fit on my screen
+
+Some installations of windows use scaling to make everything larger and easier to use. This can cause Origami Editor to become larger than the screen. Disable ui scaling to prevent this.
+
+When running Origami Editor from the jar, execute the jar as follwos:
+
+```bash
+java -jar -D"sun.java2d.uiScale=1" origami-editor-vX.X.X.jar
+```
+
+When using the installer or portable installation navigate to the directory of the installation (C:\Program Files\Origami Editor) and edit the `Origami Editor.cfg` file in the `app` directory, add the following line at the end of the file.
+
+```
+java-options=-Dsun.java2d.uiScale=1
+```
+
 ## Notes
 
 ### Orihime
