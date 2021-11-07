@@ -12,6 +12,7 @@ import origami_editor.editor.canvas.*;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
+import origami_editor.editor.drawing.FoldedFigure_Worker_Drawer;
 import origami_editor.editor.export.Cp;
 import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
@@ -241,6 +242,7 @@ public class App {
                 FoldedFigure_Drawer item = foldedFiguresList.getElementAt(i);
                 item.setData(applicationModel);
             }
+            FoldedFigure_Worker_Drawer.setStaticData(applicationModel);
         });
 
         applicationModel.reload();
