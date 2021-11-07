@@ -28,7 +28,7 @@ public class FoldingSolutionsTest {
 
             foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
-            int objective = 16;
+            int objective = 17;
             while (objective > foldedFigure.discovered_fold_cases) {
                 foldedFigure.folding_estimated(lineSegmentSet, new Point());
 
