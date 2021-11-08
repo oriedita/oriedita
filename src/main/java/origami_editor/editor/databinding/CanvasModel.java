@@ -18,6 +18,18 @@ public class CanvasModel implements Serializable {
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode;
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode_old;
 
+    public boolean getToggleLineColor() {
+        return toggleLineColor;
+    }
+
+    public void setToggleLineColor(boolean toggleLineColor) {
+        boolean oldToggleLineColor = this.toggleLineColor;
+        this.toggleLineColor = toggleLineColor;
+        this.pcs.firePropertyChange("toggleLineColor", oldToggleLineColor, toggleLineColor);
+    }
+
+    private boolean toggleLineColor;
+
 
 
     /**
@@ -106,6 +118,9 @@ public class CanvasModel implements Serializable {
         this.pcs.removePropertyChangeListener(listener);
     }
 
+    public LineColor calculateLineColor() {
+        return toggleLineColor ? lineColor.changeMV() : lineColor;
+    }
 
     public LineColor getLineColor() {
         return lineColor;
@@ -142,11 +157,14 @@ public class CanvasModel implements Serializable {
 
         ckbox_add_frame_SelectAnd3click_isSelected = false;
 
+        toggleLineColor = false;
+
         this.pcs.firePropertyChange(null, null, null);
     }
 
 
     public void set(CanvasModel canvasModel) {
+        toggleLineColor = canvasModel.getToggleLineColor();
         lineColor = canvasModel.getLineColor();
         auxLiveLineColor = canvasModel.getAuxLiveLineColor();
         mouseMode = canvasModel.getMouseMode();

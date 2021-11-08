@@ -1769,7 +1769,7 @@ public class LeftPanel {
             koteimen_siteiButton.setSelected(m == MouseMode.CHANGE_STANDARD_FACE_103);
         }
 
-        if (e.getPropertyName() == null || e.getPropertyName().equals("lineColor")) {
+        if (e.getPropertyName() == null || e.getPropertyName().equals("lineColor") || e.getPropertyName().equals("toggleLineColor")) {
             Color gray = Colors.get(new Color(150, 150, 150));
 
             colBlackButton.setBackground(gray);
@@ -1781,7 +1781,7 @@ public class LeftPanel {
             colBlueButton.setForeground(Colors.get(Color.black));
             colCyanButton.setForeground(Colors.get(Color.black));
 
-            switch (data.getLineColor()) {
+            switch (data.calculateLineColor()) {
                 case BLACK_0:
                     colBlackButton.setBackground(Colors.get(Color.black));
                     colBlackButton.setForeground(Colors.get(Color.white));

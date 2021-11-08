@@ -163,10 +163,16 @@ public class App {
                 while ((popup = popups.poll()) != null) {
                     popup.hide();
                 }
+
+                canvasModel.setToggleLineColor(false);
             }
 
             @Override
             public void keyPressed(KeyEvent e) {
+                if (e.isControlDown() && !canvasModel.getToggleLineColor()) {
+                    canvasModel.setToggleLineColor(true);
+                }
+
                 if (e.isAltDown() && popups.isEmpty()) {
                     for (Map.Entry<KeyStroke, AbstractButton> entry : helpInputMap.entrySet()) {
                         AbstractButton button = entry.getValue();
