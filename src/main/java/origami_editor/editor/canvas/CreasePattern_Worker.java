@@ -992,7 +992,7 @@ public class CreasePattern_Worker {
     }
 
     public void setData(CanvasModel data) {
-        setColor(data.getLineColor());
+        setColor(data.calculateLineColor());
         setAuxLineColor(data.getAuxLiveLineColor());
         setFoldLineAdditional(data.getFoldLineAdditionalInputMode());
         i_select_mode = data.getSelectionOperationMode();
