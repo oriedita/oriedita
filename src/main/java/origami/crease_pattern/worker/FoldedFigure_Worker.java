@@ -15,7 +15,7 @@ import origami.data.quadTree.comparator.ExpandComparator;
 import origami.folding.HierarchyList;
 import origami.folding.algorithm.AdditionalEstimationAlgorithm;
 import origami.folding.algorithm.SubFacePriority;
-import origami.folding.algorithm.SwappingAlgorithm;
+import origami.folding.algorithm.swapping.SubFaceSwappingAlgorithm;
 import origami.folding.element.SubFace;
 import origami.folding.permutation.TimeoutException;
 import origami.folding.util.EquivalenceCondition;
@@ -56,7 +56,7 @@ public class FoldedFigure_Worker {
     //展開図に山谷折線の拡張による誤りがある場合2を返す。
     int makesuu0no_menno_amount = 0;//Number of faces that can be ranked without any other faces on top
     int makesuu1ijyouno_menno_amount = 0;//Number of faces that can only be ranked if there is one or more other faces on top
-    SwappingAlgorithm swapper;
+    SubFaceSwappingAlgorithm swapper;
     ListArray faceToSubFaceMap;
     QuadTree qt;
     private int top_face_id_ga_maketa_kazu_goukei_without_rated_face = 0;
@@ -322,7 +322,6 @@ public class FoldedFigure_Worker {
 
         for (int i = 1; i <= SubFaceTotal; i++) {
             s[i] = s0[priorityMap[i]];
-            s[i].id = i; // assign id
         }
 
         // Make a guidebook for each valid SubFace.
@@ -427,7 +426,7 @@ public class FoldedFigure_Worker {
 
         AdditionalEstimationAlgorithm AEA = null;
         if (swap) {
-            swapper = new SwappingAlgorithm();
+            swapper = new SubFaceSwappingAlgorithm();
 
             // Create a smaller "realtime AEA" to assist the search. Since AEA is now a very
             // fast algorithm, we have the luxury of using it every step of the search to
