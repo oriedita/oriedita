@@ -29,6 +29,7 @@ import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicFileChooserUI;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -799,6 +800,24 @@ public class App {
         }
     }
 
+    /**
+     * Change the extension of the selected file in a fileChooser when changing the filefilter.
+     */
+    void applyFileChooserSwitchUpdate(JFileChooser fileChooser) {
+        fileChooser.addPropertyChangeListener(JFileChooser.FILE_FILTER_CHANGED_PROPERTY, e -> {
+            // Can also be AcceptAllFileFilter, then nothing should happen.
+            if (e.getNewValue() instanceof FileNameExtensionFilter) {
+                FileNameExtensionFilter filter = (FileNameExtensionFilter) e.getNewValue();
+
+                String newExtension = filter.getExtensions()[0];
+                String fileName = ((BasicFileChooserUI) fileChooser.getUI()).getFileName();
+                String fileBaseName = fileName.substring(0, fileName.lastIndexOf("."));
+
+                fileChooser.setSelectedFile(new File(fileBaseName + "." + newExtension));
+            }
+        });
+    }
+
     File selectOpenFile() {
         JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
         fileChooser.setDialogTitle("Open");
@@ -833,6 +852,8 @@ public class App {
         FileNameExtensionFilter cpFilter = new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp");
         fileChooser.addChoosableFileFilter(cpFilter);
         fileChooser.setSelectedFile(new File("untitled.ori"));
+
+        applyFileChooserSwitchUpdate(fileChooser);
 
         File selectedFile;
         int choice = JOptionPane.NO_OPTION;
@@ -897,6 +918,8 @@ public class App {
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp"));
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Orihime (*.orh)", "orh"));
         fileChooser.setSelectedFile(new File("creasepattern.png"));
+
+        applyFileChooserSwitchUpdate(fileChooser);
 
         File selectedFile;
         int choice = JOptionPane.NO_OPTION;
