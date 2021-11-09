@@ -20,7 +20,6 @@ public class WireFrame_Worker_Drawer {
     private final double d_h_k = 10.0;//Judgment distance whether the neighborhood is closer than a certain distance
 
     public Camera camera = new Camera();
-    public Point point_of_referencePlane_ob = new Point();
     Camera cam_front = new Camera();
     Camera cam_rear = new Camera();
     Camera cam_transparent_front = new Camera();
@@ -32,8 +31,16 @@ public class WireFrame_Worker_Drawer {
         this.pointSet = wireFrame_worker.get();
     }
 
-    public Point get_point_of_referencePlane_tv() {
-        return camera.object2TV(point_of_referencePlane_ob);
+    public Point getStartingFacePointTV(int faceId) {
+        if (faceId < 1) {
+            if (pointSet.inside(new Point(0,0)) > 0) {
+                return camera.object2TV(pointSet.insidePoint_surface(pointSet.inside(new Point(0, 0))));
+            } else {
+                return camera.object2TV(pointSet.insidePoint_surface(1));
+            }
+        }
+
+        return camera.object2TV(pointSet.insidePoint_surface(faceId));
     }
 
     public PointSet get() {
@@ -135,10 +142,9 @@ public class WireFrame_Worker_Drawer {
         }
     }
 
-    public void drawing_referencePlane_with_camera(Graphics g) {
+    public void drawStartingFaceWithCamera(Graphics g, int startingFaceId) {
         //Draw a point inside the surface
-        origami.crease_pattern.element.Point point = new Point();
-        point.set(camera.object2TV(point_of_referencePlane_ob));
+        Point point = getStartingFacePointTV(startingFaceId);
 
         g.setColor(Colors.get(new Color(200, 50, 255, 90)));
         g.fillOval(gx(point.getX()) - 50, gy(point.getY()) - 50, 100, 100); //円
@@ -317,19 +323,6 @@ public class WireFrame_Worker_Drawer {
         Point p = new Point();
         p.set(cam_transparent_rear.TV2object(p0));
         return pointSet.inside(p);//If PointSet c.inside (p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, if it is positive, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
-    }
-
-    /**
-     * This is the correspondence when the mouse is pressed in the reference plane specification mode 201503
-     */
-    public int setReferencePlaneId(Point p0) {//Returns the datum id that is actually valid
-        Point p = new Point();
-        p.set(camera.TV2object(p0));
-        if (pointSet.inside(p) > 0) {
-            int referencePlaneId = pointSet.inside(p);
-            wireFrame_worker.setReferencePlaneId(referencePlaneId, pt -> point_of_referencePlane_ob.set(pt));
-        }//If c.inside(p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, and if it is a positive number, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
-        return wireFrame_worker.getReferencePlaneId();
     }
 
     public void setUndoBoxUndoTotal(int i) {

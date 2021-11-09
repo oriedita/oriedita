@@ -6,11 +6,13 @@ import origami_editor.editor.MouseMode;
 import origami.folding.FoldedFigure;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 
-public class MouseHandlerChangeStandardFace implements MouseModeHandler {
+public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
     private final App app;
+    private final CreasePattern_Worker d;
 
-    public MouseHandlerChangeStandardFace(App app) {
+    public MouseHandlerChangeStandardFace(App app, CreasePattern_Worker d) {
         this.app = app;
+        this.d = d;
     }
 
     @Override
@@ -39,21 +41,26 @@ public class MouseHandlerChangeStandardFace implements MouseModeHandler {
         FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
 
         if (selectedFigure != null) {
-            int new_referencePlane_id;
-            int old_referencePlane_id;
-            old_referencePlane_id = selectedFigure.foldedFigure.cp_worker1.getReferencePlaneId();
+            Point p = new Point();
+            p.set(d.camera.TV2object(p0));
+            int oldStartingFaceId = selectedFigure.getStartingFaceId();
 
-            new_referencePlane_id = selectedFigure.wireFrame_worker_drawer1.setReferencePlaneId(p0);
-            System.out.println("kijyunmen_id = " + new_referencePlane_id);
+            int newStartingFaceId = selectedFigure.foldedFigure.cp_worker1.get().inside(p);
+
+            if (newStartingFaceId < 1) return;
+
+            selectedFigure.setStartingFaceId(newStartingFaceId);
+
+            System.out.println("kijyunmen_id = " + newStartingFaceId);
             if (selectedFigure.foldedFigure.ct_worker.face_rating != null) {//20180227追加
                 System.out.println(
-                        "OZ.js.nbox.get_jyunjyo = " + selectedFigure.foldedFigure.ct_worker.nbox.getSequence(new_referencePlane_id) + " , rating = " +
-                                selectedFigure.foldedFigure.ct_worker.nbox.getWeight(selectedFigure.foldedFigure.ct_worker.nbox.getSequence(new_referencePlane_id))
+                        "OZ.js.nbox.get_jyunjyo = " + selectedFigure.foldedFigure.ct_worker.nbox.getSequence(newStartingFaceId) + " , rating = " +
+                                selectedFigure.foldedFigure.ct_worker.nbox.getWeight(selectedFigure.foldedFigure.ct_worker.nbox.getSequence(newStartingFaceId))
 
                 );
 
             }
-            if ((new_referencePlane_id != old_referencePlane_id) && (selectedFigure.foldedFigure.estimationStep != FoldedFigure.EstimationStep.STEP_0)) {
+            if ((newStartingFaceId != oldStartingFaceId) && (selectedFigure.foldedFigure.estimationStep != FoldedFigure.EstimationStep.STEP_0)) {
                 selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_1;
             }
         }

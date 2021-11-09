@@ -25,7 +25,7 @@ public class FoldingEstimateTask implements Runnable {
 
         try {
             selectedFigure.foldedFigure.estimationOrder = estimationOrder;
-            app.folding_estimated();
+            app.folding_estimated(selectedFigure);
         } catch (Exception e) {
             selectedFigure.foldedFigure.estimated_initialize();
             app.bulletinBoard.clear();

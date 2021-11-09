@@ -191,7 +191,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //基準面の表示
         if (displayMarkings && selectedFigure != null) {
             if (selectedFigure.foldedFigure.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
-                selectedFigure.wireFrame_worker_drawer1.drawing_referencePlane_with_camera(bufferGraphics);//ts1が折り畳みを行う際の基準面を表示するのに使う。
+                selectedFigure.wireFrame_worker_drawer1.drawStartingFaceWithCamera(bufferGraphics, selectedFigure.getStartingFaceId());//ts1が折り畳みを行う際の基準面を表示するのに使う。
             }
         }
 

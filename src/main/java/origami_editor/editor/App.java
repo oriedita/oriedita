@@ -63,7 +63,8 @@ public class App {
     public LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
     public BulletinBoard bulletinBoard = new BulletinBoard();
     // ------------------------------------------------------------------------
-    public Point point_of_referencePlane_old = new Point(); //ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
+    // Placeholder for holding the current starting face.
+    public int startingFaceId;
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
     public Canvas canvas;
     //各種変数の定義
@@ -409,7 +410,7 @@ public class App {
         canvas.addMouseModeHandler(new MouseHandlerMoveCalculatedShape(this));
         canvas.addMouseModeHandler(new MouseHandlerModifyCalculatedShape(this));
         canvas.addMouseModeHandler(new MouseHandlerMoveCreasePattern(this));
-        canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(this));
+        canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(this, mainCreasePatternWorker));
 
         updateButtonIcons(frame);
         frame.pack();
@@ -639,13 +640,8 @@ public class App {
                 lineSegmentsForFolding = mainCreasePatternWorker.getForSelectFolding();
             }
 
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
-
-            if (selectedFigure != null) {
-                point_of_referencePlane_old.set(selectedFigure.wireFrame_worker_drawer1.get_point_of_referencePlane_tv());
-            }
             //これより前のOZは古いOZ
-            selectedFigure = folding_prepare();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
+            FoldedFigure_Drawer selectedFigure = folding_prepare();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
             //これより後のOZは新しいOZに変わる
 
             TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(this, selectedFigure, estimationOrder));
@@ -1047,14 +1043,8 @@ public class App {
         }
     }
 
-    public void folding_estimated() throws InterruptedException, FoldingException {
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
-
-        if (selectedFigure == null) {
-            throw new FoldingException("No folded figure created");
-        }
-
-        selectedFigure.folding_estimated(canvas.creasePatternCamera, lineSegmentsForFolding, point_of_referencePlane_old);
+    public void folding_estimated(FoldedFigure_Drawer selectedFigure) throws InterruptedException, FoldingException {
+        selectedFigure.folding_estimated(canvas.creasePatternCamera, lineSegmentsForFolding);
     }
 
     public double string2double(String str0, double default_if_error) {
