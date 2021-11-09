@@ -219,12 +219,12 @@ public class FoldedFigure_Drawer {
 
             //Display of transparency
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) {        // displayStyle; Specify the display style of the folded figure. If it is 1, it is the same as when actually folding origami. If it is 2, it is a transparent view. If it is 3, it is a wire diagram.
-                foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.cp_worker2.get(), foldedFigure.cp_worker3.get(), transparencyColor, transparent_transparency, index);
+                foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.cp_worker2.get(), foldedFigure.cp_worker3.get(), transparencyColor, transparent_transparency);
             }
 
             //Display of folded figure *************
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) {
-                foldedFigure_worker_drawer.draw_foldedFigure_with_camera(bufferGraphics, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get(), index);// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                foldedFigure_worker_drawer.draw_foldedFigure_with_camera(bufferGraphics, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
             //Cross-shaped display at the center of movement of the folded figure
@@ -240,12 +240,12 @@ public class FoldedFigure_Drawer {
 
             //Display of transparency
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.cp_worker2.get(), foldedFigure.cp_worker3.get(), transparencyColor, transparent_transparency, index);
+                foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.cp_worker2.get(), foldedFigure.cp_worker3.get(), transparencyColor, transparent_transparency);
             }
 
             //Display of folded figure ************* //System.out.println("paint　+++++++++++++++++++++　折り上がり図の表示");
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) {
-                foldedFigure_worker_drawer.draw_foldedFigure_with_camera(bufferGraphics, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get(), index);// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                foldedFigure_worker_drawer.draw_foldedFigure_with_camera(bufferGraphics, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
             //Cross-shaped display at the center of movement of the folded figure
@@ -259,7 +259,7 @@ public class FoldedFigure_Drawer {
             // ---------------------------------------------------------------------------------
             foldedFigure_worker_drawer.setCamera(transparentFrontCamera);
             //Display of transparency
-            foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.cp_worker2.get(), foldedFigure.cp_worker3.get(), transparencyColor, transparent_transparency, index);
+            foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.cp_worker2.get(), foldedFigure.cp_worker3.get(), transparencyColor, transparent_transparency);
 
             //Cross-shaped display at the center of movement of the folded figure
             if (displayMark) {
@@ -269,7 +269,7 @@ public class FoldedFigure_Drawer {
             foldedFigure_worker_drawer.setCamera(transparentRearCamera);
 
             //Display of transparency
-            foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.cp_worker2.get(), foldedFigure.cp_worker3.get(), transparencyColor, transparent_transparency, index);
+            foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.cp_worker2.get(), foldedFigure.cp_worker3.get(), transparencyColor, transparent_transparency);
 
             //Cross-shaped display at the center of movement of the folded figure
             if (displayMark) {

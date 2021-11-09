@@ -7,11 +7,11 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
+import origami.folding.FoldedFigure;
 import origami.folding.element.SubFace;
+import origami.folding.util.SortingBox;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
-import origami.folding.FoldedFigure;
-import origami.folding.util.SortingBox;
 import origami_editor.tools.Camera;
 import origami_editor.tools.StringOp;
 
@@ -19,7 +19,6 @@ import javax.swing.*;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
 
 public class Svg {
     public static void exportFile(FoldLineSet foldLineSet, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize, DefaultComboBoxModel<FoldedFigure_Drawer> foldedFigures, File file) {
@@ -28,10 +27,16 @@ public class Svg {
 
             pw.println("<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">");
 
-            exportSvgWithCamera(pw, foldLineSet, camera, i_cp_display, fCreasePatternLineWidth, lineWidth, lineStyle, pointSize);
+            if (i_cp_display) {
+                pw.println("<g id=\"crease-pattern\">");
+                exportSvgWithCamera(pw, foldLineSet, camera, fCreasePatternLineWidth, lineWidth, lineStyle, pointSize);
+                pw.println("</g>");
+            }
 
             for (int i_oz = 0; i_oz < foldedFigures.getSize(); i_oz++) {
+                pw.println("<g id=\"folded-figure-" + i_oz + "\">");
                 exportSvgFoldedFigure(pw, foldedFigures.getElementAt(i_oz));
+                pw.println("</g>");
             }
 
             pw.println("</svg>");
@@ -71,55 +76,55 @@ public class Svg {
                 im = nbox.getValue(i_nbox);
             }
 
-            StringBuilder text;//文字列処理用のクラスのインスタンス化
+            pw.print("<path d=\"");
 
-            text = new StringBuilder("M ");
+            pw.print("M ");
             t_ob.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, 1)));
             t_ob.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, 1)));
             t_tv.set(camera.object2TV(t_ob));
-            BigDecimal b_t_tv_x = new BigDecimal(String.valueOf(t_tv.getX()));
-            BigDecimal b_t_tv_y = new BigDecimal(String.valueOf(t_tv.getY()));
+            String b_t_tv_x = String.format("%.2f", t_tv.getX());
+            String b_t_tv_y = String.format("%.2f", t_tv.getY());
 
-            text.append(b_t_tv_x.setScale(2, RoundingMode.HALF_UP).doubleValue()).append(" ").append(b_t_tv_y.setScale(2, RoundingMode.HALF_UP).doubleValue()).append(" ");
-
+            pw.print(b_t_tv_x);
+            pw.print(" ");
+            pw.print(b_t_tv_y);
+            pw.print(" ");
 
             for (int i = 2; i <= otta_Men_zu.getPointsCount(im); i++) {
-                text.append("L ");
+                pw.print("L ");
                 t_ob.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, i)));
                 t_ob.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, i)));
                 t_tv.set(camera.object2TV(t_ob));
-                BigDecimal b_t_tv_x_i = new BigDecimal(String.valueOf(t_tv.getX()));
-                BigDecimal b_t_tv_y_i = new BigDecimal(String.valueOf(t_tv.getY()));
+                String b_t_tv_x_i = String.format("%.2f", t_tv.getX());
+                String b_t_tv_y_i = String.format("%.2f", t_tv.getY());
 
-                text.append(b_t_tv_x_i.setScale(2, RoundingMode.HALF_UP).doubleValue()).append(" ").append(b_t_tv_y_i.setScale(2, RoundingMode.HALF_UP).doubleValue()).append(" ");
+                pw.print(b_t_tv_x_i);
+                pw.print(" ");
+                pw.print(b_t_tv_y_i);
+                pw.print(" ");
             }
 
-            text.append("Z");
+            pw.print("Z\" ");
 
             if (!i_fill) {
                 str_fill = "none";
-
             } else {
-
-                if (orite.getIFacePosition(im) % 2 == 1) {
-                    str_fill = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getFrontColor());
-                }
-                if (orite.getIFacePosition(im) % 2 == 0) {
-                    str_fill = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getBackColor());
-                }
-
                 if (flipped) {
                     if (orite.getIFacePosition(im) % 2 == 1) {
                         str_fill = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getBackColor());
-                    }
-                    if (orite.getIFacePosition(im) % 2 == 0) {
+                    } else {
                         str_fill = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getFrontColor());
+                    }
+                } else {
+                    if (orite.getIFacePosition(im) % 2 == 1) {
+                        str_fill = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getFrontColor());
+                    } else {
+                        str_fill = StringOp.toHtmlColor(foldedFigure.foldedFigureModel.getBackColor());
                     }
                 }
             }
 
-            pw.println("<path d=\"" + text + "\"" +
-                    " style=\"" + "stroke:" + str_stroke + "\"" +
+            pw.println("style=\"" + "stroke:" + str_stroke + "\"" +
                     " stroke-width=\"" + str_strokewidth + "\"" +
                     " fill=\"" + str_fill + "\"" + " />"
             );
@@ -205,7 +210,6 @@ public class Svg {
                 str_zahyou = new StringBuilder(x[0] + "," + y[0]);
                 for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
                     str_zahyou.append(" ").append(x[i]).append(",").append(y[i]);
-
                 }
 
                 pw.println("<polygon points=\"" + str_zahyou + "\"" +
@@ -309,7 +313,7 @@ public class Svg {
         }
     }
 
-    public static void exportSvgWithCamera(PrintWriter pw, FoldLineSet foldLineSet, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
+    public static void exportSvgWithCamera(PrintWriter pw, FoldLineSet foldLineSet, Camera camera, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
         LineSegment s_tv = new LineSegment();
         Point a = new Point();
         Point b = new Point();
@@ -318,125 +322,123 @@ public class Svg {
         String str_strokewidth = Integer.toString(lineWidth);
 
         //Drawing of crease pattern Polygonal lines other than auxiliary live lines
-        if (i_cp_display) {
-            for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-                LineSegment s = foldLineSet.get(i);
-                LineColor color = s.getColor();
-                switch (color) {
-                    case BLACK_0:
-                        str_stroke = "black";
-                        break;
-                    case RED_1:
-                        str_stroke = "red";
-                        break;
-                    case BLUE_2:
-                        str_stroke = "blue";
-                        break;
-                    case CYAN_3:
-                        str_stroke = "#64c8c8";
-                        break;
-                    default:
-                        continue;
-                }
-
-                if (lineStyle == LineStyle.BLACK_TWO_DOT || lineStyle == LineStyle.BLACK_ONE_DOT) {
+        for (int i = 1; i <= foldLineSet.getTotal(); i++) {
+            LineSegment s = foldLineSet.get(i);
+            LineColor color = s.getColor();
+            switch (color) {
+                case BLACK_0:
                     str_stroke = "black";
-                }
+                    break;
+                case RED_1:
+                    str_stroke = "red";
+                    break;
+                case BLUE_2:
+                    str_stroke = "blue";
+                    break;
+                case CYAN_3:
+                    str_stroke = "#64c8c8";
+                    break;
+                default:
+                    continue;
+            }
 
-                String str_stroke_dasharray;
-                switch (lineStyle) {
-                    case COLOR:
-                        str_stroke_dasharray = "";
-                        break;
-                    case COLOR_AND_SHAPE:
-                    case BLACK_ONE_DOT:
-                        //基本指定A　　線の太さや線の末端の形状
-                        //dash_M1,一点鎖線
-                        switch (color) {
-                            case RED_1:
-                                str_stroke_dasharray = "stroke-dasharray=\"10 3 3 3\"";
-                                break;
-                            case BLUE_2:
-                                str_stroke_dasharray = "stroke-dasharray=\"8 8\"";
-                                break;
-                            default:
-                                str_stroke_dasharray = "";
-                                break;
-                        }
-                        break;
-                    case BLACK_TWO_DOT:
-                        //基本指定A　　線の太さや線の末端の形状
-                        //dash_M2,二点鎖線
-                        switch (color) {
-                            case RED_1:
-                                str_stroke_dasharray = "stroke-dasharray=\"10 3 3 3 3 3\"";
-                                break;
-                            case BLUE_2:
-                                str_stroke_dasharray = "stroke-dasharray=\"8 8\"";
-                                break;
-                            default:
-                                str_stroke_dasharray = "";
-                                break;
-                        }
-                        break;
-                    default:
-                        throw new IllegalArgumentException();
-                }
+            if (lineStyle == LineStyle.BLACK_TWO_DOT || lineStyle == LineStyle.BLACK_ONE_DOT) {
+                str_stroke = "black";
+            }
 
-                s_tv.set(camera.object2TV(s));
-                a.set(s_tv.getA());
-                b.set(s_tv.getB());
-
-                BigDecimal b_ax = new BigDecimal(String.valueOf(a.getX()));
-                double x1 = b_ax.setScale(2, RoundingMode.HALF_UP).doubleValue();
-                BigDecimal b_ay = new BigDecimal(String.valueOf(a.getY()));
-                double y1 = b_ay.setScale(2, RoundingMode.HALF_UP).doubleValue();
-                BigDecimal b_bx = new BigDecimal(String.valueOf(b.getX()));
-                double x2 = b_bx.setScale(2, RoundingMode.HALF_UP).doubleValue();
-                BigDecimal b_by = new BigDecimal(String.valueOf(b.getY()));
-                double y2 = b_by.setScale(2, RoundingMode.HALF_UP).doubleValue();
-
-                pw.println("<line x1=\"" + x1 + "\"" +
-                        " y1=\"" + y1 + "\"" +
-                        " x2=\"" + x2 + "\"" +
-                        " y2=\"" + y2 + "\"" +
-                        " " + str_stroke_dasharray + " " +
-                        " stroke=\"" + str_stroke + "\"" +
-                        " stroke-width=\"" + str_strokewidth + "\"" + " />");
-
-                if (pointSize != 0) {
-                    if (fCreasePatternLineWidth < 2.0f) {
-                        //Draw a black square at the vertex
-
-                        pw.println("<rect style=\"fill:#000000;stroke:none\"" +
-                                " width=\"" + 2.0 * (double) pointSize + "\"" +
-                                " height=\"" + 2.0 * (double) pointSize + "\"" +
-                                " x=\"" + (x1 - (double) pointSize) + "\"" +
-                                " y=\"" + (y1 - (double) pointSize) + "\"" +
-                                " />");
-
-                        pw.println("<rect style=\"fill:#000000;stroke:none\"" +
-                                " width=\"" + 2.0 * (double) pointSize + "\"" +
-                                " height=\"" + 2.0 * (double) pointSize + "\"" +
-                                " x=\"" + (x2 - (double) pointSize) + "\"" +
-                                " y=\"" + (y2 - (double) pointSize) + "\"" +
-                                " />");
-                    } else {
-                        //  Thick line
-                        double d_width = (double) fCreasePatternLineWidth / 2.0 + (double) pointSize;
-
-                        pw.println("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
-                                " r=\"" + d_width + "\"" +
-                                " cx=\"" + x1 + "\"" +
-                                " cy=\"" + y1 + "\"" +
-                                " />");
-
-                        pw.println("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
-                                " r=\"" + d_width + "\"" +
-                                " cx=\"" + x2 + "\"" +
-                                " cy=\"" + y2 + "\"" +
-                                " />");
+            String str_stroke_dasharray;
+            switch (lineStyle) {
+                case COLOR:
+                    str_stroke_dasharray = "";
+                    break;
+                case COLOR_AND_SHAPE:
+                case BLACK_ONE_DOT:
+                    //基本指定A　　線の太さや線の末端の形状
+                    //dash_M1,一点鎖線
+                    switch (color) {
+                        case RED_1:
+                            str_stroke_dasharray = "stroke-dasharray=\"10 3 3 3\"";
+                            break;
+                        case BLUE_2:
+                            str_stroke_dasharray = "stroke-dasharray=\"8 8\"";
+                            break;
+                        default:
+                            str_stroke_dasharray = "";
+                            break;
                     }
+                    break;
+                case BLACK_TWO_DOT:
+                    //基本指定A　　線の太さや線の末端の形状
+                    //dash_M2,二点鎖線
+                    switch (color) {
+                        case RED_1:
+                            str_stroke_dasharray = "stroke-dasharray=\"10 3 3 3 3 3\"";
+                            break;
+                        case BLUE_2:
+                            str_stroke_dasharray = "stroke-dasharray=\"8 8\"";
+                            break;
+                        default:
+                            str_stroke_dasharray = "";
+                            break;
+                    }
+                    break;
+                default:
+                    throw new IllegalArgumentException();
+            }
+
+            s_tv.set(camera.object2TV(s));
+            a.set(s_tv.getA());
+            b.set(s_tv.getB());
+
+            BigDecimal b_ax = new BigDecimal(String.valueOf(a.getX()));
+            double x1 = b_ax.setScale(2, RoundingMode.HALF_UP).doubleValue();
+            BigDecimal b_ay = new BigDecimal(String.valueOf(a.getY()));
+            double y1 = b_ay.setScale(2, RoundingMode.HALF_UP).doubleValue();
+            BigDecimal b_bx = new BigDecimal(String.valueOf(b.getX()));
+            double x2 = b_bx.setScale(2, RoundingMode.HALF_UP).doubleValue();
+            BigDecimal b_by = new BigDecimal(String.valueOf(b.getY()));
+            double y2 = b_by.setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+            pw.println("<line x1=\"" + x1 + "\"" +
+                    " y1=\"" + y1 + "\"" +
+                    " x2=\"" + x2 + "\"" +
+                    " y2=\"" + y2 + "\"" +
+                    " " + str_stroke_dasharray + " " +
+                    " stroke=\"" + str_stroke + "\"" +
+                    " stroke-width=\"" + str_strokewidth + "\"" + " />");
+
+            if (pointSize != 0) {
+                if (fCreasePatternLineWidth < 2.0f) {
+                    //Draw a black square at the vertex
+
+                    pw.println("<rect style=\"fill:#000000;stroke:none\"" +
+                            " width=\"" + 2.0 * (double) pointSize + "\"" +
+                            " height=\"" + 2.0 * (double) pointSize + "\"" +
+                            " x=\"" + (x1 - (double) pointSize) + "\"" +
+                            " y=\"" + (y1 - (double) pointSize) + "\"" +
+                            " />");
+
+                    pw.println("<rect style=\"fill:#000000;stroke:none\"" +
+                            " width=\"" + 2.0 * (double) pointSize + "\"" +
+                            " height=\"" + 2.0 * (double) pointSize + "\"" +
+                            " x=\"" + (x2 - (double) pointSize) + "\"" +
+                            " y=\"" + (y2 - (double) pointSize) + "\"" +
+                            " />");
+                } else {
+                    //  Thick line
+                    double d_width = (double) fCreasePatternLineWidth / 2.0 + (double) pointSize;
+
+                    pw.println("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
+                            " r=\"" + d_width + "\"" +
+                            " cx=\"" + x1 + "\"" +
+                            " cy=\"" + y1 + "\"" +
+                            " />");
+
+                    pw.println("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
+                            " r=\"" + d_width + "\"" +
+                            " cx=\"" + x2 + "\"" +
+                            " cy=\"" + y2 + "\"" +
+                            " />");
                 }
             }
         }

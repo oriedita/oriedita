@@ -808,7 +808,11 @@ public class App {
 
                 String newExtension = filter.getExtensions()[0];
                 String fileName = ((BasicFileChooserUI) fileChooser.getUI()).getFileName();
-                String fileBaseName = fileName.substring(0, fileName.lastIndexOf("."));
+
+                String fileBaseName = fileName;
+                if (fileName.lastIndexOf(".") > -1) {
+                    fileBaseName = fileName.substring(0, fileName.lastIndexOf("."));
+                }
 
                 fileChooser.setSelectedFile(new File(fileBaseName + "." + newExtension));
             }

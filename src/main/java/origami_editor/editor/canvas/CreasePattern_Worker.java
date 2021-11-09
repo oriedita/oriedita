@@ -11,7 +11,6 @@ import origami_editor.editor.*;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.task.CheckCAMVTask;
 import origami_editor.editor.task.FinishedFuture;
-import origami_editor.editor.task.TaskExecutor;
 import origami_editor.editor.undo_box.HistoryState;
 import origami_editor.graphic2d.grid.Grid;
 import origami_editor.tools.Camera;
