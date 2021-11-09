@@ -1,0 +1,1005 @@
+origami.folding.TwoColoredCpTest.testCreateTwoColoredCp=[
+  {
+    "numFaces_temp": 113,
+    "numPoints": 13,
+    "numLines": 26,
+    "numFaces": 14,
+    "points": [
+      "0.0,0.0",
+      "-200.0,-200.0",
+      "-200.0,0.0",
+      "2.4492935982947067E-14,-200.0",
+      "200.0,200.0",
+      "-0.0,200.0",
+      "200.0,0.0",
+      "200.00000000000003,-200.0",
+      "9.094947017729283E-15,9.094947017729283E-15",
+      "-200.0,200.0",
+      "5.072653133236332E-15,117.15728752538101",
+      "117.15728752538101,-0.0",
+      "-117.157287525381,-1.130175121142461E-14",
+      "3.767250403808203E-15,-117.15728752538097"
+    ],
+    "lines": [
+      {
+        "begin": 0,
+        "end": 0,
+        "color": "BLACK_0"
+      },
+      {
+        "begin": 1,
+        "end": 2,
+        "color": "BLACK_0"
+      },
+      {
+        "begin": 1,
+        "end": 3,
+        "color": "BLACK_0"
+      },
+      {
+        "begin": 4,
+        "end": 5,
+        "color": "BLACK_0"
+      },
+      {
+        "begin": 4,
+        "end": 6,
+        "color": "BLACK_0"
+      },
+      {
+        "begin": 7,
+        "end": 8,
+        "color": "BLUE_2"
+      },
+      {
+        "begin": 8,
+        "end": 9,
+        "color": "BLUE_2"
+      },
+      {
+        "begin": 5,
+        "end": 10,
+        "color": "BLUE_2"
+      },
+      {
+        "begin": 3,
+        "end": 7,
+        "color": "BLACK_0"
+      },
+      {
+        "begin": 5,
+        "end": 9,
+        "color": "BLACK_0"
+      },
+      {
+        "begin": 6,
+        "end": 11,
+        "color": "BLUE_2"
+      },
+      {
+        "begin": 2,
+        "end": 9,
+        "color": "BLACK_0"
+      },
+      {
+        "begin": 6,
+        "end": 7,
+        "color": "BLACK_0"
+      },
+      {
+        "begin": 12,
+        "end": 2,
+        "color": "BLUE_2"
+      },
+      {
+        "begin": 7,
+        "end": 11,
+        "color": "RED_1"
+      },
+      {
+        "begin": 8,
+        "end": 11,
+        "color": "RED_1"
+      },
+      {
+        "begin": 4,
+        "end": 11,
+        "color": "RED_1"
+      },
+      {
+        "begin": 4,
+        "end": 10,
+        "color": "RED_1"
+      },
+      {
+        "begin": 9,
+        "end": 10,
+        "color": "RED_1"
+      },
+      {
+        "begin": 8,
+        "end": 10,
+        "color": "RED_1"
+      },
+      {
+        "begin": 8,
+        "end": 12,
+        "color": "RED_1"
+      },
+      {
+        "begin": 1,
+        "end": 12,
+        "color": "RED_1"
+      },
+      {
+        "begin": 9,
+        "end": 12,
+        "color": "RED_1"
+      },
+      {
+        "begin": 1,
+        "end": 13,
+        "color": "RED_1"
+      },
+      {
+        "begin": 13,
+        "end": 3,
+        "color": "BLUE_2"
+      },
+      {
+        "begin": 8,
+        "end": 13,
+        "color": "RED_1"
+      },
+      {
+        "begin": 7,
+        "end": 13,
+        "color": "RED_1"
+      }
+    ],
+    "faces": [
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0,
+          1,
+          2,
+          12
+        ],
+        "numPoints": 3,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0,
+          1,
+          13,
+          3
+        ],
+        "numPoints": 3,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0,
+          4,
+          10,
+          5
+        ],
+        "numPoints": 3,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0,
+          4,
+          6,
+          11
+        ],
+        "numPoints": 3,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0,
+          7,
+          8,
+          11
+        ],
+        "numPoints": 3,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0,
+          7,
+          13,
+          8
+        ],
+        "numPoints": 3,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0,
+          8,
+          9,
+          10
+        ],
+        "numPoints": 3,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0,
+          8,
+          12,
+          9
+        ],
+        "numPoints": 3,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0,
+          5,
+          10,
+          9
+        ],
+        "numPoints": 3,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0,
+          3,
+          13,
+          7
+        ],
+        "numPoints": 3,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0,
+          6,
+          7,
+          11
+        ],
+        "numPoints": 3,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0,
+          2,
+          9,
+          12
+        ],
+        "numPoints": 3,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0,
+          4,
+          11,
+          8,
+          10
+        ],
+        "numPoints": 4,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0,
+          1,
+          12,
+          8,
+          13
+        ],
+        "numPoints": 4,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      },
+      {
+        "pointIdList": [
+          0
+        ],
+        "numPoints": 0,
+        "icol": 0
+      }
+    ]
+  }
+]
