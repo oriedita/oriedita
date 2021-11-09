@@ -12,6 +12,7 @@ import origami_editor.editor.canvas.DrawingUtil;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.tools.Camera;
+import origami.crease_pattern.element.Point;
 
 import java.awt.*;
 
@@ -499,7 +500,7 @@ public class FoldedFigure_Worker_Drawer {
     //---------------------------------------------------------
     public void draw_cross_with_camera(Graphics g, boolean selected, int index) {
         //Draw the center of the camera with a cross
-        origami.crease_pattern.element.Point point = camera.object2TV(camera.getCameraPosition());
+        Point point = camera.object2TV(camera.getCameraPosition());
         DrawingUtil.cross(g, point, 5.0, 2.0, LineColor.ORANGE_4);
 
         if (selected) {

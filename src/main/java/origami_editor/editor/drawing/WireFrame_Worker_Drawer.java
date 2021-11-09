@@ -31,16 +31,20 @@ public class WireFrame_Worker_Drawer {
         this.pointSet = wireFrame_worker.get();
     }
 
-    public Point getStartingFacePointTV(int faceId) {
+    public Point getStartingFacePoint(int faceId) {
         if (faceId < 1) {
             if (pointSet.inside(new Point(0,0)) > 0) {
-                return camera.object2TV(pointSet.insidePoint_surface(pointSet.inside(new Point(0, 0))));
+                return pointSet.insidePoint_surface(pointSet.inside(new Point(0, 0)));
             } else {
-                return camera.object2TV(pointSet.insidePoint_surface(1));
+                return pointSet.insidePoint_surface(1);
             }
         }
 
-        return camera.object2TV(pointSet.insidePoint_surface(faceId));
+        return pointSet.insidePoint_surface(faceId);
+    }
+
+    public Point getStartingFacePointTV(int faceId) {
+        return camera.object2TV(getStartingFacePoint(faceId));
     }
 
     public PointSet get() {

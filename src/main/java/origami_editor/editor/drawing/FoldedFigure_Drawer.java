@@ -89,7 +89,7 @@ public class FoldedFigure_Drawer {
         Point p0 = new Point();
         Point p = new Point();
 
-        p.set(wireFrame_worker_drawer1.getStartingFacePointTV(startingFaceId));
+        p.set(wireFrame_worker_drawer1.getStartingFacePoint(startingFaceId));
         p0.set(creasePatternCamera.object2TV(p));
 
         double cameraPositionX = p.getX();
