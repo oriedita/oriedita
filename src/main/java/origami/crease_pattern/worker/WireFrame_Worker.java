@@ -21,7 +21,7 @@ public class WireFrame_Worker {
     PointSet pointSet = new PointSet();    //Development view
     //Definition of variables used in VVVVVVVVVVVV oritatami and oekaki VVVVVVVVVVVVVVVVVVVVVVVVVVVV
     int[] iFacePosition;//Indicates how far a surface is from the reference surface. Enter a value such as 1, next to the reference plane, 2, next to the reference plane, and 3 next to it.
-    int startingFaceId;
+    int startingFaceId = -1;
     int[] nextFaceId;//The id of the surface (reference surface side) next to a certain surface
     int[] associatedLineId;//The id of the bar between one side and the next side (reference plane side)
     AverageCoordinates[] tnew;//Stores the position of the point when folded
@@ -56,7 +56,10 @@ public class WireFrame_Worker {
             startingFaceId = pointSet.getNumFaces();
         }
         if (startingFaceId < 1) {
-            startingFaceId = 1;
+            startingFaceId = pointSet.inside(new Point(0, 0));
+            if (startingFaceId < 1) {
+                startingFaceId = 1;
+            }
         }
 
         return startingFaceId;

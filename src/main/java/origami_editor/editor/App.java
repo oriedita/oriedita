@@ -640,15 +640,8 @@ public class App {
                 lineSegmentsForFolding = mainCreasePatternWorker.getForSelectFolding();
             }
 
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
-
-            if (selectedFigure != null) {
-                startingFaceId = selectedFigure.foldedFigure.cp_worker1.getStartingFaceId();
-            } else {
-                startingFaceId = 1;
-            }
             //これより前のOZは古いOZ
-            selectedFigure = folding_prepare();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
+            FoldedFigure_Drawer selectedFigure = folding_prepare();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
             //これより後のOZは新しいOZに変わる
 
             TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(this, selectedFigure, estimationOrder));
@@ -656,8 +649,6 @@ public class App {
             FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
             if (selectedFigure != null) {
-                startingFaceId = selectedFigure.foldedFigure.cp_worker1.getStartingFaceId();
-
                 selectedFigure.foldedFigure.estimationOrder = estimationOrder;
                 selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_0;
 
@@ -1052,14 +1043,8 @@ public class App {
         }
     }
 
-    public void folding_estimated() throws InterruptedException, FoldingException {
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
-
-        if (selectedFigure == null) {
-            throw new FoldingException("No folded figure created");
-        }
-
-        selectedFigure.folding_estimated(canvas.creasePatternCamera, lineSegmentsForFolding, startingFaceId);
+    public void folding_estimated(FoldedFigure_Drawer selectedFigure) throws InterruptedException, FoldingException {
+        selectedFigure.folding_estimated(canvas.creasePatternCamera, lineSegmentsForFolding);
     }
 
     public double string2double(String str0, double default_if_error) {

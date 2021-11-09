@@ -43,13 +43,13 @@ public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
         if (selectedFigure != null) {
             Point p = new Point();
             p.set(d.camera.TV2object(p0));
-            int oldStartingFaceId = selectedFigure.foldedFigure.cp_worker1.getStartingFaceId();
+            int oldStartingFaceId = selectedFigure.getStartingFaceId();
 
             int newStartingFaceId = selectedFigure.foldedFigure.cp_worker1.get().inside(p);
 
-            if (newStartingFaceId <= 0) return;
+            if (newStartingFaceId < 1) return;
 
-            selectedFigure.foldedFigure.cp_worker1.setStartingFaceId(newStartingFaceId);
+            selectedFigure.setStartingFaceId(newStartingFaceId);
 
             System.out.println("kijyunmen_id = " + newStartingFaceId);
             if (selectedFigure.foldedFigure.ct_worker.face_rating != null) {//20180227追加

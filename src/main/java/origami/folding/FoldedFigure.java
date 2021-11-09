@@ -45,8 +45,6 @@ public class FoldedFigure {
     public WireFrame_Worker cp_worker2 = new WireFrame_Worker(r);    //Net craftsman. It holds the folded-up view of the wire-shaped point set created by cp_worker1 and functions as a line segment set.
     public WireFrame_Worker cp_worker3 = new WireFrame_Worker(r);    //Net craftsman. Organize the wire-shaped point set created by cp_worker1. It has functions such as recognizing a new surface.
 
-    private int startingFaceId;
-
     public FoldedFigure(IBulletinBoard bb) {
         ct_worker = new FoldedFigure_Worker(bb);
         bulletinBoard = bb;
@@ -71,7 +69,6 @@ public class FoldedFigure {
     }
 
     public void folding_estimated(LineSegmentSet lineSegmentSet, int startingFaceId) throws InterruptedException, FoldingException {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
-        this.startingFaceId = startingFaceId;
         //Folded view display camera settings
 
         EstimationOrder order = estimationOrder; // The latter will be reset during initialization.
@@ -81,7 +78,7 @@ public class FoldedFigure {
 
         if (estimationStep == EstimationStep.STEP_0 && order.isAtLeast(EstimationOrder.ORDER_1)) {
             estimated_initialize(); // estimated_initialize
-            folding_estimated_01(lineSegmentSet);
+            folding_estimated_01(lineSegmentSet, startingFaceId);
             estimationStep = EstimationStep.STEP_1;
             displayStyle = DisplayStyle.DEVELOPMENT_1;
         }
@@ -118,10 +115,8 @@ public class FoldedFigure {
 
     public void createTwoColorCreasePattern(LineSegmentSet Ss0, int startingFaceId) throws InterruptedException {//Two-color crease pattern
         //Folded view display camera settings
-        this.startingFaceId = startingFaceId;
-
         estimated_initialize();
-        folding_estimated_01(Ss0);
+        folding_estimated_01(Ss0, startingFaceId);
         estimationStep = EstimationStep.STEP_1;
         displayStyle = DisplayStyle.DEVELOPMENT_1;
         folding_estimated_02col();
@@ -139,12 +134,11 @@ public class FoldedFigure {
         estimationStep = EstimationStep.STEP_10;
     }
 
-    public int folding_estimated_01(LineSegmentSet lineSegmentSet) throws InterruptedException {
+    public int folding_estimated_01(LineSegmentSet lineSegmentSet, int startingFaceId) throws InterruptedException {
         System.out.println("＜＜＜＜＜folding_estimated_01;開始");
         bulletinBoard.write("<<<<folding_estimated_01;  start");
         // Pass the line segment set created in mainDrawingWorker to cp_worker1 by mouse input and make it a point set (corresponding to the development view).
         cp_worker1.setLineSegmentSet(lineSegmentSet);
-//        ip3 = cp_worker1.setStartingFaceId(ip3);
         ip3 = cp_worker1.setStartingFaceId(startingFaceId);//20180222 Added to take over the previously specified reference plane when performing folding estimation with the fold line selected.
 
         if (Thread.interrupted()) {

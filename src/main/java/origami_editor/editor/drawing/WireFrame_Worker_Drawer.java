@@ -31,8 +31,16 @@ public class WireFrame_Worker_Drawer {
         this.pointSet = wireFrame_worker.get();
     }
 
-    public Point getStartingFacePointTV() {
-        return camera.object2TV(pointSet.insidePoint_surface(wireFrame_worker.getStartingFaceId()));
+    public Point getStartingFacePointTV(int faceId) {
+        if (faceId < 1) {
+            if (pointSet.inside(new Point(0,0)) > 0) {
+                return camera.object2TV(pointSet.insidePoint_surface(pointSet.inside(new Point(0, 0))));
+            } else {
+                return camera.object2TV(pointSet.insidePoint_surface(1));
+            }
+        }
+
+        return camera.object2TV(pointSet.insidePoint_surface(faceId));
     }
 
     public PointSet get() {
@@ -134,9 +142,9 @@ public class WireFrame_Worker_Drawer {
         }
     }
 
-    public void drawing_referencePlane_with_camera(Graphics g) {
+    public void drawStartingFaceWithCamera(Graphics g, int startingFaceId) {
         //Draw a point inside the surface
-        Point point = getStartingFacePointTV();
+        Point point = getStartingFacePointTV(startingFaceId);
 
         g.setColor(Colors.get(new Color(200, 50, 255, 90)));
         g.fillOval(gx(point.getX()) - 50, gy(point.getY()) - 50, 100, 100); //円
