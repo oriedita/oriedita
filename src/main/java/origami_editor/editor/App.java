@@ -63,21 +63,15 @@ public class App {
     public LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
     public BulletinBoard bulletinBoard = new BulletinBoard();
     // ------------------------------------------------------------------------
-    // Placeholder for holding the current starting face.
-    public int startingFaceId;
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
     public Canvas canvas;
     //各種変数の定義
     String frame_title_0;//フレームのタイトルの根本部分
     String frame_title;//フレームのタイトルの全体
     HelpDialog explanation;
-    boolean mouseDraggedValid = false;
-    //ウィンドウ透明化用のパラメータ
-    boolean mouseReleasedValid = false;//0 ignores mouse operation. 1 is valid for mouse operation. When an unexpected mouseDragged or mouseReleased occurs due to on-off of the file box, set it to 0 so that it will not be picked up. These are set to 1 valid when the mouse is clicked.
     //画像出力するため20170107_oldと書かれた行をコメントアウトし、20170107_newの行を有効にした。
     //画像出力不要で元にもどすなら、20170107_oldと書かれた行を有効にし、20170107_newの行をコメントアウトにすればよい。（この変更はOrihime.javaの中だけに2箇所ある）
     // オフスクリーン
-    boolean flg61 = false;//Used when setting the frame 　20180524
     Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
     JFrame frame;
 
@@ -320,7 +314,6 @@ public class App {
         creasePatternCameraModel.addPropertyChangeListener(e -> topPanel.setData(creasePatternCameraModel));
         creasePatternCameraModel.addPropertyChangeListener(e -> repaintCanvas());
 
-        fileModel.addPropertyChangeListener(e -> appMenuBar.setData(fileModel));
         fileModel.addPropertyChangeListener(e -> setData(fileModel));
 
         fileModel.reset();
@@ -690,8 +683,8 @@ public class App {
 
             switch (option) {
                 case JOptionPane.YES_OPTION:
-                    mouseDraggedValid = false;
-                    mouseReleasedValid = false;
+                    canvas.mouseDraggedValid = false;
+                    canvas.mouseReleasedValid = false;
                     saveFile();
 
                     TaskExecutor.stopTask();
@@ -738,6 +731,8 @@ public class App {
         mainCreasePatternWorker.setDrawingStage(0);
         mainCreasePatternWorker.resetCircleStep();
         mouseHandlerVoronoiCreate.voronoiLineSet.clear();
+        canvas.mouseReleasedValid = false;
+        canvas.mouseDraggedValid = false;
     }
 
     void setFoldedFigureIndex(int i) {//Processing when OZ is switched
@@ -786,9 +781,9 @@ public class App {
         }
 
         if (exportFile.getName().endsWith(".png") || exportFile.getName().endsWith(".jpg") || exportFile.getName().endsWith(".jpeg") || exportFile.getName().endsWith(".svg")) {
-            flg61 = false;
+            canvas.flg61 = false;
             if ((canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61) && (mainCreasePatternWorker.getDrawingStage() == 4)) {
-                flg61 = true;
+                canvas.flg61 = true;
                 mainCreasePatternWorker.setDrawingStage(0);
             }
 

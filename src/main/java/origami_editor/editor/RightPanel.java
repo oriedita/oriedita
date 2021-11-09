@@ -293,8 +293,6 @@ public class RightPanel {
             app.repaintCanvas();
         });
         c_colButton.addActionListener(e -> {
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
             //以下にやりたいことを書く
 
             Color color = JColorChooser.showDialog(null, "color", new Color(100, 200, 200));

@@ -175,9 +175,6 @@ public class BottomPanel extends JPanel {
         foldedFigureAntiAliasButton.addActionListener(e -> foldedFigureModel.toggleAntiAlias());
         shadowButton.addActionListener(e -> foldedFigureModel.toggleDisplayShadows());
         frontColorButton.addActionListener(e -> {
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
-
             //以下にやりたいことを書く
 
             Color frontColor = JColorChooser.showDialog(null, "F_col", Color.white);
@@ -187,9 +184,6 @@ public class BottomPanel extends JPanel {
             }
         });
         backColorButton.addActionListener(e -> {
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
-
             //以下にやりたいことを書く
             Color backColor = JColorChooser.showDialog(null, "B_col", Color.white);
 
@@ -198,9 +192,6 @@ public class BottomPanel extends JPanel {
             }
         });
         lineColorButton.addActionListener(e -> {
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
-
             //以下にやりたいことを書く
 
             Color lineColor = JColorChooser.showDialog(null, "L_col", Color.white);
