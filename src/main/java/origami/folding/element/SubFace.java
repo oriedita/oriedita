@@ -7,7 +7,7 @@ import origami.folding.algorithm.AdditionalEstimationAlgorithm;
 import origami.folding.util.EquivalenceCondition;
 import origami.folding.permutation.ChainPermutationGenerator;
 import origami.folding.permutation.PermutationGenerator;
-import origami.folding.permutation.TimeoutException;
+import origami.folding.permutation.combination.CombinationGenerator;
 import origami.folding.util.IBulletinBoard;
 
 /**
@@ -33,11 +33,10 @@ public class SubFace {
 
     IBulletinBoard bb;
 
-    // For reverse swapping
-    public int reverseSwapCounter = 0;
-    public int reverseSwapThreshold = 1;
-
     public int swapCounter = 0;
+
+    CombinationGenerator cg;
+    int cgTotal = 0;
 
     public SubFace() {
         reset();
@@ -90,12 +89,13 @@ public class SubFace {
     }
 
     public int get_Permutation_count() {
-        return permutationGenerator.getCount();
+        return cgTotal + permutationGenerator.getCount();
     }
 
     public void Permutation_first() throws InterruptedException {
         if (getFaceIdCount() > 0) {
-            reverseSwapCounter = 1;
+            cg = null;
+            cgTotal = 0;
             permutationGenerator.reset();
         }
     } //Return to the first permutation.
@@ -114,21 +114,16 @@ public class SubFace {
     // ここは　class SubFace の中だよ。
 
     //Start with the current permutation state and look for possible permutations that overlap
-    public int possible_overlapping_search(HierarchyList hierarchyList, boolean allowTimeout)
-            throws InterruptedException, TimeoutException {// This should not change hierarchyList.
+    public int possible_overlapping_search(HierarchyList hierarchyList) throws InterruptedException {// This should not change hierarchyList.
         int mk, ijh;
         ijh = 1;//The initial value of ijh can be anything other than 0.
         while (ijh != 0) { //If ijh == 0, you have reached the end of the digit.
             mk = inconsistent_digits_request(hierarchyList);
 
-            // When it takes too long for a SubFace to find a working permutation, we
-            // strategically postpone it and try again after more stacking information is
-            // determined. We do so by throwing TimeoutException notifying ct_worker to swap
-            // this SubFace in reverse direction.
-            if (allowTimeout && permutationGenerator.getCount() > 3000 * reverseSwapThreshold) {
-                reverseSwapThreshold++;
-                reverseSwapCounter++;
-                throw new TimeoutException();
+            if (permutationGenerator.getCount() > 2000 && cg == null) {
+                cg = new CombinationGenerator(this, faceIdMapArray, hierarchyList);
+                if (!cg.process()) return 0;
+                cg.addGuide(permutationGenerator);
             }
 
             if (mk == 1000) {
@@ -137,11 +132,19 @@ public class SubFace {
 
             ijh = next(mk);
 
+            if (ijh == 0 && cg != null) {
+                cgTotal += permutationGenerator.getCount();
+                permutationGenerator.reset();
+                if (!cg.process()) return 0;
+                cg.addGuide(permutationGenerator);
+                ijh = 1;
+            }
+
             StringBuilder s0 = new StringBuilder();
             for (int i = 1; i <= faceIdCount; i++) {
                 s0.append(" : ").append(getPermutation(i));
             }
-            bb.rewrite(9, "Tested permutation count : " + permutationGenerator.getCount());
+            bb.rewrite(9, "Tested permutation count : " + get_Permutation_count());
             bb.rewrite(10, "Testing permutation " + s0);
         }
         return 0;//There is no permutation that can overlap
@@ -382,5 +385,28 @@ public class SubFace {
         int c = faceIdMapArray[ec.getC()];
         int d = faceIdMapArray[ec.getD()];
         return a != 0 && b != 0 && c != 0 && d != 0;
+    }
+
+    public Iterable<EquivalenceCondition> getEquivalenceConditions() {
+        List<EquivalenceCondition> result = new ArrayList<>();
+        for (int i = 1; i <= faceIdCount; i++) {
+            List<EquivalenceCondition> list = equivalenceConditions.getOrDefault(faceIdList[i], null);
+            if (list != null) {
+                for (EquivalenceCondition ec : list) result.add(ec);
+            }
+        }
+        return result;
+    }
+
+    private boolean uecSorted = false;
+
+    public Iterable<EquivalenceCondition> getUEquivalenceConditions() {
+        if(!uecSorted) {
+            uEquivalenceConditions.sort(
+                    Comparator.comparingInt(EquivalenceCondition::getA).thenComparingInt(EquivalenceCondition::getB)
+                            .thenComparingInt(EquivalenceCondition::getC).thenComparingInt(EquivalenceCondition::getD));
+            uecSorted = true;
+        }
+        return uEquivalenceConditions;
     }
 }

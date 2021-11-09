@@ -18,7 +18,6 @@ import java.util.*;
 public class SwappingAlgorithm<T> {
 
     private int high;
-    private int repetition;
     private int hash;
 
     // For preventing cycling swapping over and over.
@@ -31,8 +30,8 @@ public class SwappingAlgorithm<T> {
     }
 
     /** Performs the swap. */
-    public void process(T[] s, int max) {
-        if (high == 0) return;
+    public final void process(T[] s, int max) {
+        if (high < 2) return;
 
         hash = getHash(s, high);
         if (history.contains(hash)) {
@@ -67,10 +66,6 @@ public class SwappingAlgorithm<T> {
             onSwapOver(s[i]);
         }
         s[low] = temp;
-    }
-
-    public void reverseSwap(T[] s, int index, int max) {
-        reverseSwap(s, index, index, max, ++repetition);
     }
 
     protected int reverseSwap(T[] s, int index, int high, int max, int r) {

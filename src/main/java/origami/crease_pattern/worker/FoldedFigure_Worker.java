@@ -17,7 +17,6 @@ import origami.folding.algorithm.AdditionalEstimationAlgorithm;
 import origami.folding.algorithm.SubFacePriority;
 import origami.folding.algorithm.swapping.SubFaceSwappingAlgorithm;
 import origami.folding.element.SubFace;
-import origami.folding.permutation.TimeoutException;
 import origami.folding.util.EquivalenceCondition;
 import origami.folding.util.IBulletinBoard;
 import origami.folding.util.SortingBox;
@@ -461,16 +460,8 @@ public class FoldedFigure_Worker {
         hierarchyList.restore();// <<<<<<<<<<<<<<<<<<<<<<<<<<<,,
         if (swap) AEA.restore();
 
-        int reversePending = 0;
-
         for (int ss = 1; ss <= SubFace_valid_number; ss++) { // <<<<<<<<<<<<<<高速化のため変更。070417
-
-            if (swap) {
-                swapper.visit(s[ss]);
-                if (s[ss].reverseSwapCounter > 0) {
-                    reversePending--;
-                }
-            }
+            if (swap) swapper.visit(s[ss]);
 
             int count = s[ss].getFaceIdCount(), pair = count * (count - 1) / 2;
             String msg = "Current SubFace( " + ss + " / ";
@@ -478,46 +469,36 @@ public class FoldedFigure_Worker {
             bb.rewrite(7, msg + SubFace_valid_number + " ) , face count = " + count + " , face pair = " + pair);
             bb.rewrite(8, "Search progress " + Permutation_count(ss));
 
-            try {
-                kks = s[ss].possible_overlapping_search(hierarchyList, swap && ss < SubFace_valid_number);
-                if (kks == 0) {// kks == 0 means that there is no permutation that can overlap
-                    swapper.record(ss);
-                    s[ss].swapCounter++;
-                    return ss;
-                }
-
-                s[ss].swapCounter = 0;
-                s[ss].reverseSwapCounter = 0;
-                if (swap) {
-                    // Enter the stacking information of the ss th SubFace in hierarchyList.
-                    s[ss].enterStackingOfSubFace(AEA);
-
-                    boolean se = swapper.shouldEstimate(ss); // side effect
-                    if (reversePending > 0 || se && ss <= Math.sqrt(SubFace_valid_number)) {
-                        // It is possible in theory that the following line returns a result other than
-                        // success (even as we ran AEA in each step and the current permutation doesn't
-                        // have any immediate contradiction, since something might still go wrong in the
-                        // inference process), but we shall ignore that result here and keep going. The
-                        // reason for this is that stopping at this point is costly in performance, and
-                        // basically the contradiction will make a later SubFace unsolvable anyway. We
-                        // will then count on that SubFace and the swapping algorithm to fix everything.
-                        AEA.run(0);
-                    } else if (ss % (3 + ss * ss / 6400) == 0) {
-                        // There's no need to execute run() even fastRun() in every step (that will be
-                        // too slow), so we use the formula above to decide when to run it.
-                        AEA.fastRun();
-                    }
-                } else {
-                    s[ss].enterStackingOfSubFace(hierarchyList);
-                }
-
-            } catch (TimeoutException e) {
-                swapper.reverseSwap(s, ss, SubFace_valid_number);
-                reversePending++;
-                ss--; // retry the current depth
-                // We didn't write anything into the hierarchyList in this round, so we can just continue.
+            kks = s[ss].possible_overlapping_search(hierarchyList);
+            if (kks == 0) {// kks == 0 means that there is no permutation that can overlap
+                swapper.record(ss);
+                if (ss > SubFace_valid_number / 2 || s[ss].swapCounter > 0) s[ss].swapCounter++;
+                return ss;
             }
 
+            s[ss].swapCounter = 0;
+            if (swap) {
+                // Enter the stacking information of the ss th SubFace in hierarchyList.
+                s[ss].enterStackingOfSubFace(AEA);
+
+                boolean se = swapper.shouldEstimate(ss); // side effect
+                if (se && ss <= Math.sqrt(SubFace_valid_number)) {
+                    // It is possible in theory that the following line returns a result other than
+                    // success (even as we ran AEA in each step and the current permutation doesn't
+                    // have any immediate contradiction, since something might still go wrong in the
+                    // inference process), but we shall ignore that result here and keep going. The
+                    // reason for this is that stopping at this point is costly in performance, and
+                    // basically the contradiction will make a later SubFace unsolvable anyway. We
+                    // will then count on that SubFace and the swapping algorithm to fix everything.
+                    AEA.run(0);
+                } else if (ss % (3 + ss * ss / 6400) == 0) {
+                    // There's no need to execute run() even fastRun() in every step (that will be
+                    // too slow), so we use the formula above to decide when to run it.
+                    AEA.fastRun();
+                }
+            } else {
+                s[ss].enterStackingOfSubFace(hierarchyList);
+            }
         }
 
         // Solution found, perform final checking
