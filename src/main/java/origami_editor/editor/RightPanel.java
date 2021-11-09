@@ -686,12 +686,12 @@ public class RightPanel {
     }
 
     public void getData(AngleSystemModel data) {
-        data.setAngleA(app.string2double(angleATextField.getText(), data.getAngleA()));
-        data.setAngleB(app.string2double(angleBTextField.getText(), data.getAngleB()));
-        data.setAngleC(app.string2double(angleCTextField.getText(), data.getAngleC()));
-        data.setAngleD(app.string2double(angleDTextField.getText(), data.getAngleD()));
-        data.setAngleE(app.string2double(angleETextField.getText(), data.getAngleE()));
-        data.setAngleF(app.string2double(angleFTextField.getText(), data.getAngleF()));
+        data.setAngleA(app.measuresModel.string2double(angleATextField.getText(), data.getAngleA()));
+        data.setAngleB(app.measuresModel.string2double(angleBTextField.getText(), data.getAngleB()));
+        data.setAngleC(app.measuresModel.string2double(angleCTextField.getText(), data.getAngleC()));
+        data.setAngleD(app.measuresModel.string2double(angleDTextField.getText(), data.getAngleD()));
+        data.setAngleE(app.measuresModel.string2double(angleETextField.getText(), data.getAngleE()));
+        data.setAngleF(app.measuresModel.string2double(angleFTextField.getText(), data.getAngleF()));
     }
 
     public void setData(MeasuresModel data) {

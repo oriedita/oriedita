@@ -117,7 +117,7 @@ public class TopPanel {
         scaleFactorSetButton.addActionListener(e -> {
             double d_syukusyaku_keisuu_old = app.creasePatternCameraModel.getScale();
 
-            app.creasePatternCameraModel.setScale(app.string2double(scaleFactorTextField.getText(), d_syukusyaku_keisuu_old));
+            app.creasePatternCameraModel.setScale(app.measuresModel.string2double(scaleFactorTextField.getText(), d_syukusyaku_keisuu_old));
             if (app.creasePatternCameraModel.getScale() != d_syukusyaku_keisuu_old) {
                 double magnification = app.creasePatternCameraModel.getScale() / d_syukusyaku_keisuu_old;
 
@@ -154,7 +154,7 @@ public class TopPanel {
         });
         rotateAnticlockwiseButton.addActionListener(e -> app.creasePatternCameraModel.increaseRotation());
         rotationSetButton.addActionListener(e -> {
-            app.creasePatternCameraModel.setRotation(app.string2double(rotationTextField.getText(), app.creasePatternCameraModel.getRotation()));
+            app.creasePatternCameraModel.setRotation(app.measuresModel.string2double(rotationTextField.getText(), app.creasePatternCameraModel.getRotation()));
 
             app.repaintCanvas();
         });
@@ -264,12 +264,12 @@ public class TopPanel {
     }
 
     public void getData(InternalDivisionRatioModel data) {
-        data.setInternalDivisionRatioA(app.string2double(ratioATextField.getText(), data.getInternalDivisionRatioA()));
-        data.setInternalDivisionRatioB(app.string2double(ratioBTextField.getText(), data.getInternalDivisionRatioB()));
-        data.setInternalDivisionRatioC(app.string2double(ratioCTextField.getText(), data.getInternalDivisionRatioC()));
-        data.setInternalDivisionRatioD(app.string2double(ratioDTextField.getText(), data.getInternalDivisionRatioD()));
-        data.setInternalDivisionRatioE(app.string2double(ratioETextField.getText(), data.getInternalDivisionRatioE()));
-        data.setInternalDivisionRatioF(app.string2double(ratioFTextField.getText(), data.getInternalDivisionRatioF()));
+        data.setInternalDivisionRatioA(app.measuresModel.string2double(ratioATextField.getText(), data.getInternalDivisionRatioA()));
+        data.setInternalDivisionRatioB(app.measuresModel.string2double(ratioBTextField.getText(), data.getInternalDivisionRatioB()));
+        data.setInternalDivisionRatioC(app.measuresModel.string2double(ratioCTextField.getText(), data.getInternalDivisionRatioC()));
+        data.setInternalDivisionRatioD(app.measuresModel.string2double(ratioDTextField.getText(), data.getInternalDivisionRatioD()));
+        data.setInternalDivisionRatioE(app.measuresModel.string2double(ratioETextField.getText(), data.getInternalDivisionRatioE()));
+        data.setInternalDivisionRatioF(app.measuresModel.string2double(ratioFTextField.getText(), data.getInternalDivisionRatioF()));
     }
 
     /**

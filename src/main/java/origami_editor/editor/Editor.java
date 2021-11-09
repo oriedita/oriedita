@@ -15,15 +15,13 @@ public class Editor {
     private TopPanel topPanel;
     private LeftPanel leftPanel;
 
-    public Editor(App app) {
+    public Editor(App app, Canvas canvas) {
         this.app = app;
+        this.canvas = canvas;
         $$$setupUI$$$();
-
-
     }
 
     private void createUIComponents() {
-        canvas = new Canvas(app);
         rightPanel = new RightPanel(app, app.angleSystemModel);
         bottomPanel = new BottomPanel(app);
         topPanel = new TopPanel(app);

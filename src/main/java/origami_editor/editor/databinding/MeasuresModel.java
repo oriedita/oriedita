@@ -1,5 +1,7 @@
 package origami_editor.editor.databinding;
 
+import origami_editor.tools.StringOp;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -93,5 +95,26 @@ public class MeasuresModel {
             this.measuredAngle3 = measuredAngle3;
         }
         this.pcs.firePropertyChange("measuredAngle3", oldMeasuredAngle3, this.measuredAngle3);
+    }
+
+    public double string2double(String str0, double default_if_error) {
+        String new_str0 = str0.trim();
+        if (new_str0.equals("L1")) {
+            str0 = String.valueOf(getMeasuredLength1());
+        }
+        if (new_str0.equals("L2")) {
+            str0 = String.valueOf(getMeasuredLength2());
+        }
+        if (new_str0.equals("A1")) {
+            str0 = String.valueOf(getMeasuredAngle1());
+        }
+        if (new_str0.equals("A2")) {
+            str0 = String.valueOf(getMeasuredAngle2());
+        }
+        if (new_str0.equals("A3")) {
+            str0 = String.valueOf(getMeasuredAngle3());
+        }
+
+        return StringOp.String2double(str0, default_if_error);
     }
 }

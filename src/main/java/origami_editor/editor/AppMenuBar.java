@@ -3,6 +3,7 @@ package origami_editor.editor;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import origami_editor.editor.databinding.ApplicationModel;
+import origami_editor.editor.service.FileSaveService;
 import origami_editor.editor.transfer.SaveTransferable;
 
 import javax.swing.*;
@@ -15,7 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class AppMenuBar extends JMenuBar {
-    private final App app;
+    private final FileSaveService fileSaveService;
     private JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
     private JCheckBoxMenuItem pointOffsetCheckBox;//点を離すかどうか
     private JCheckBoxMenuItem gridInputAssistCheckBox;//高密度用入力をするかどうか
@@ -46,11 +47,9 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem pasteButton;
     private JMenuItem pasteOffsetButton;
 
-    public AppMenuBar(App app) {
-        this.app = app;
+    public AppMenuBar(App app, ApplicationModel applicationModel, FileSaveService fileSaveService) {
+        this.fileSaveService = fileSaveService;
         createElements();
-        ApplicationModel applicationModel = app.applicationModel;
-
         app.registerButton(newButton, "newAction");
         app.registerButton(openButton, "openAction");
         app.registerButton(openRecentMenu, "openRecentAction");
@@ -85,7 +84,7 @@ public class AppMenuBar extends JMenuBar {
                 int choice = JOptionPane.showConfirmDialog(null, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
                 if (choice == JOptionPane.YES_OPTION) {
-                    app.saveFile();
+                    app.fileSaveService.saveFile();
                 } else if (choice == JOptionPane.CLOSED_OPTION || choice == JOptionPane.CANCEL_OPTION) {
                     return;
                 }
@@ -93,7 +92,7 @@ public class AppMenuBar extends JMenuBar {
             app.fileModel.reset();
             //展開図の初期化　開始
             //settei_syokika_cp();//展開図パラメータの初期化
-            app.developmentView_initialization();
+            app.fileSaveService.developmentView_initialization();
             //展開図の初期化　終了
             //
             //折畳予測図のの初期化　開始
@@ -108,24 +107,24 @@ public class AppMenuBar extends JMenuBar {
             app.mainCreasePatternWorker.record();
             app.mainCreasePatternWorker.auxRecord();
         });
-        openButton.addActionListener(e -> app.openFile());
+        openButton.addActionListener(e -> app.fileSaveService.openFile());
         clearRecentFileMenuItem.addActionListener(e -> app.applicationModel.setRecentFileList(new ArrayList<>()));
 
-        saveButton.addActionListener(e -> app.saveFile());
-        saveAsButton.addActionListener(e -> app.saveAsFile());
+        saveButton.addActionListener(e -> app.fileSaveService.saveFile());
+        saveAsButton.addActionListener(e -> app.fileSaveService.saveAsFile());
         exportButton.addActionListener(e -> {
             if (app.canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) {
                 app.mainCreasePatternWorker.setDrawingStage(0);
             }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
 
-            app.exportFile();
+            app.fileSaveService.exportFile();
             app.repaintCanvas();
         });
-        importButton.addActionListener(e -> app.importFile());
+        importButton.addActionListener(e -> app.fileSaveService.importFile());
         importAddButton.addActionListener(e -> {
             System.out.println("readFile2Memo() 開始");
-            File file = app.selectImportFile();
-            Save save = app.readImportFile(file);
+            File file = app.fileSaveService.selectImportFile();
+            Save save = app.fileSaveService.readImportFile(file);
             System.out.println("readFile2Memo() 終了");
 
             if (save != null) {
@@ -372,7 +371,7 @@ public class AppMenuBar extends JMenuBar {
         }
         for (File recentFile : applicationModel.getRecentFileList()) {
             JMenuItem recentFileMenuItem = new JMenuItem(recentFile.getName());
-            recentFileMenuItem.addActionListener(e -> app.openFile(recentFile));
+            recentFileMenuItem.addActionListener(e -> fileSaveService.openFile(recentFile));
             openRecentMenu.add(recentFileMenuItem);
         }
         openRecentMenu.addSeparator();

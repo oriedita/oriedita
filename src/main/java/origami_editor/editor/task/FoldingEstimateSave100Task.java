@@ -17,7 +17,7 @@ public class FoldingEstimateSave100Task implements Runnable {
     public void run() {
         long start = System.currentTimeMillis();
 
-        File file = app.selectExportFile();
+        File file = app.fileSaveService.selectExportFile();
         FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
 
         if (selectedFigure == null) {

@@ -28,7 +28,7 @@ public class OrigamiEditor {
 
             if (argv.length == 1) {
                 // We got a file
-                app.openFile(new File(argv[0]));
+                app.fileSaveService.openFile(new File(argv[0]));
             }
         });
     }

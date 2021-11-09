@@ -394,8 +394,8 @@ public class BottomPanel extends JPanel {
     }
 
     public void getData(FoldedFigureModel foldedFigureModel) {
-        foldedFigureModel.setScale(app.string2double(foldedFigureResize.getText(), foldedFigureModel.getScale()));
-        foldedFigureModel.setRotation(app.string2double(foldedFigureRotate.getText(), foldedFigureModel.getRotation()));
+        foldedFigureModel.setScale(app.measuresModel.string2double(foldedFigureResize.getText(), foldedFigureModel.getScale()));
+        foldedFigureModel.setRotation(app.measuresModel.string2double(foldedFigureRotate.getText(), foldedFigureModel.getRotation()));
         foldedFigureModel.setFoldedCases(StringOp.String2int(goToFoldedFigureTextField.getText(), foldedFigureModel.getFoldedCases()));
     }
 

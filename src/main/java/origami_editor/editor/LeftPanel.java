@@ -638,13 +638,13 @@ public class LeftPanel {
     public void getData(GridModel data) {
         data.setIntervalGridSize(StringOp.String2int(intervalGridSizeTextField.getText(), data.getIntervalGridSize()));
         data.setGridSize(StringOp.String2int(gridSizeTextField.getText(), data.getGridSize()));
-        data.setGridXA(app.string2double(gridXATextField.getText(), data.getGridXA()));
-        data.setGridXB(app.string2double(gridXBTextField.getText(), data.getGridXB()));
-        data.setGridXC(app.string2double(gridXCTextField.getText(), data.getGridXC()));
-        data.setGridYA(app.string2double(gridYATextField.getText(), data.getGridYA()));
-        data.setGridYB(app.string2double(gridYBTextField.getText(), data.getGridYB()));
-        data.setGridYC(app.string2double(gridYCTextField.getText(), data.getGridYC()));
-        data.setGridAngle(app.string2double(gridAngleTextField.getText(), data.getGridAngle()));
+        data.setGridXA(app.measuresModel.string2double(gridXATextField.getText(), data.getGridXA()));
+        data.setGridXB(app.measuresModel.string2double(gridXBTextField.getText(), data.getGridXB()));
+        data.setGridXC(app.measuresModel.string2double(gridXCTextField.getText(), data.getGridXC()));
+        data.setGridYA(app.measuresModel.string2double(gridYATextField.getText(), data.getGridYA()));
+        data.setGridYB(app.measuresModel.string2double(gridYBTextField.getText(), data.getGridYB()));
+        data.setGridYC(app.measuresModel.string2double(gridYCTextField.getText(), data.getGridYC()));
+        data.setGridAngle(app.measuresModel.string2double(gridAngleTextField.getText(), data.getGridAngle()));
     }
 
     public void setData(GridModel data) {

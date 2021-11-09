@@ -45,7 +45,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     Background_camera h_cam = new Background_camera();
 
-    boolean flg_wi = false;//writeimage時につかう　1にするとpaintの関数の終了部にwriteimageするようにする。これは、paintの変更が書き出されるイメージに反映されないことを防ぐための工夫。20180528
+    public boolean flg_wi = false;//writeimage時につかう　1にするとpaintの関数の終了部にwriteimageするようにする。これは、paintの変更が書き出されるイメージに反映されないことを防ぐための工夫。20180528
     int btn = 0;//Stores which button in the center of the left and right is pressed. 1 =
     public Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
@@ -77,7 +77,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     Map<MouseMode, MouseModeHandler> mouseModeHandlers = new HashMap<>();
 
-    boolean flg61 = false;//Used when setting the frame 　20180524
+    public boolean flg61 = false;//Used when setting the frame 　20180524
 
     boolean mouseDraggedValid = false;
     //ウィンドウ透明化用のパラメータ

@@ -24,7 +24,7 @@ public class FoldedFigureRotate extends JPanel {
 
         FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
         foldedFigureRotateAntiClockwiseButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() + 11.25)));
-        foldedFigureRotateSetButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(app.string2double(foldedFigureRotateTextField.getText(), foldedFigureModel.getRotation()))));
+        foldedFigureRotateSetButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(app.measuresModel.string2double(foldedFigureRotateTextField.getText(), foldedFigureModel.getRotation()))));
         foldedFigureRotateClockwiseButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() - 11.25)));
     }
 
