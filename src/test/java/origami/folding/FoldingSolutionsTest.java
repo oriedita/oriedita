@@ -24,13 +24,13 @@ public class FoldingSolutionsTest {
 
         try {
             foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
-            foldedFigure.folding_estimated(lineSegmentSet, new Point());
+            foldedFigure.folding_estimated(lineSegmentSet, 1);
 
             foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
             int objective = 17;
             while (objective > foldedFigure.discovered_fold_cases) {
-                foldedFigure.folding_estimated(lineSegmentSet, new Point());
+                foldedFigure.folding_estimated(lineSegmentSet, 1);
 
                 foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
                 if (!foldedFigure.findAnotherOverlapValid) {

@@ -40,10 +40,6 @@ public class FoldedFigure_Drawer {
         wireFrame_worker_drawer1 = new WireFrame_Worker_Drawer(foldedFigure.cp_worker1);
         wireFrame_worker_drawer2 = new WireFrame_Worker_Drawer(foldedFigure.cp_worker2);
 
-        foldedFigure.pointOfReferenceCallback =  p -> {
-            wireFrame_worker_drawer1.point_of_referencePlane_ob.set(p);
-        };
-
         //Camera settings ------------------------------------------------------------------
         foldedFigure_camera_initialize();
         //This is the end of the camera settings ----------------------------------------------------
@@ -75,12 +71,12 @@ public class FoldedFigure_Drawer {
         foldedFigureModel.setScale(d_foldedFigure_scale_factor);
         foldedFigureModel.setRotation(d_foldedFigure_rotation_correction);
 
-        System.out.println("cp_worker1.ten_of_kijyunmen_ob     " + wireFrame_worker_drawer1.point_of_referencePlane_ob.getX());
+        System.out.println("cp_worker1.ten_of_kijyunmen_ob     " + wireFrame_worker_drawer1.getStartingFacePointTV().getX());
 
         Point p0 = new Point();
         Point p = new Point();
 
-        p.set(wireFrame_worker_drawer1.point_of_referencePlane_ob);
+        p.set(wireFrame_worker_drawer1.getStartingFacePointTV());
         p0.set(creasePatternCamera.object2TV(p));
 
         double cameraPositionX = p.getX();
@@ -123,13 +119,10 @@ public class FoldedFigure_Drawer {
         transparentRearCamera.setCameraMirror(d_camera_mirror * -1.0);
     }
 
-    public void folding_estimated(Camera creasePatternCamera, LineSegmentSet lineSegmentSet, Point pointOfReferencePlane) throws InterruptedException, FoldingException {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public void folding_estimated(Camera creasePatternCamera, LineSegmentSet lineSegmentSet, int startingFaceId) throws InterruptedException, FoldingException {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
         boolean i_camera_estimated = foldedFigure.estimationStep == FoldedFigure.EstimationStep.STEP_0 && foldedFigure.estimationOrder.isAtMost(FoldedFigure.EstimationOrder.ORDER_5);
 
-        Point newPointOfReferencePlane = new Point();
-        newPointOfReferencePlane.set(wireFrame_worker_drawer1.camera.TV2object(pointOfReferencePlane));
-
-        foldedFigure.folding_estimated(lineSegmentSet, newPointOfReferencePlane);
+        foldedFigure.folding_estimated(lineSegmentSet, startingFaceId);
 
         foldedFigure_worker_drawer.calculateFromTopCountedPosition();
 
@@ -138,7 +131,7 @@ public class FoldedFigure_Drawer {
         }
     }
 
-    public void createTwoColorCreasePattern(Camera camera_of_foldLine_diagram, LineSegmentSet Ss0, Point pointOfReferencePlane) throws InterruptedException {//Two-color crease pattern
+    public void createTwoColorCreasePattern(Camera camera_of_foldLine_diagram, LineSegmentSet Ss0, int startingFaceId) throws InterruptedException {//Two-color crease pattern
         //Folded view display camera settings
 
         d_foldedFigure_scale_factor = camera_of_foldLine_diagram.getCameraZoomX();
@@ -174,10 +167,7 @@ public class FoldedFigure_Drawer {
         foldedFigureRearCamera.setCameraMirror(d_camera_mirror * -1.0);
         transparentRearCamera.setCameraMirror(d_camera_mirror * -1.0);
 
-        Point newPointOfReferencePlane = new Point();
-        newPointOfReferencePlane.set(wireFrame_worker_drawer1.camera.object2TV(pointOfReferencePlane));
-
-        foldedFigure.createTwoColorCreasePattern(Ss0, newPointOfReferencePlane);
+        foldedFigure.createTwoColorCreasePattern(Ss0, startingFaceId);
 
         foldedFigure_worker_drawer.calculateFromTopCountedPosition();
     }

@@ -1,7 +1,5 @@
 package origami.folding;
 
-import java.util.function.Consumer;
-
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.worker.BasicBranch_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
@@ -47,9 +45,7 @@ public class FoldedFigure {
     public WireFrame_Worker cp_worker2 = new WireFrame_Worker(r);    //Net craftsman. It holds the folded-up view of the wire-shaped point set created by cp_worker1 and functions as a line segment set.
     public WireFrame_Worker cp_worker3 = new WireFrame_Worker(r);    //Net craftsman. Organize the wire-shaped point set created by cp_worker1. It has functions such as recognizing a new surface.
 
-    private Point pointOfReferencePlane;
-
-    public Consumer<Point> pointOfReferenceCallback;
+    private int startingFaceId;
 
     public FoldedFigure(IBulletinBoard bb) {
         ct_worker = new FoldedFigure_Worker(bb);
@@ -74,8 +70,8 @@ public class FoldedFigure {
         summary_write_image_during_execution = false; //If the export of multiple folded forecasts is in progress, it will be ture. 20170615
     }
 
-    public void folding_estimated(LineSegmentSet lineSegmentSet, Point pointOfReferencePlane) throws InterruptedException, FoldingException {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
-        this.pointOfReferencePlane = pointOfReferencePlane;
+    public void folding_estimated(LineSegmentSet lineSegmentSet, int startingFaceId) throws InterruptedException, FoldingException {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+        this.startingFaceId = startingFaceId;
         //Folded view display camera settings
 
         EstimationOrder order = estimationOrder; // The latter will be reset during initialization.
@@ -120,9 +116,9 @@ public class FoldedFigure {
 
     }
 
-    public void createTwoColorCreasePattern(LineSegmentSet Ss0, Point pointOfReferencePlane) throws InterruptedException {//Two-color crease pattern
+    public void createTwoColorCreasePattern(LineSegmentSet Ss0, int startingFaceId) throws InterruptedException {//Two-color crease pattern
         //Folded view display camera settings
-        this.pointOfReferencePlane = pointOfReferencePlane;
+        this.startingFaceId = startingFaceId;
 
         estimated_initialize();
         folding_estimated_01(Ss0);
@@ -148,8 +144,8 @@ public class FoldedFigure {
         bulletinBoard.write("<<<<folding_estimated_01;  start");
         // Pass the line segment set created in mainDrawingWorker to cp_worker1 by mouse input and make it a point set (corresponding to the development view).
         cp_worker1.setLineSegmentSet(lineSegmentSet);
-        ip3 = cp_worker1.setReferencePlaneId(ip3, pointOfReferenceCallback);
-        ip3 = cp_worker1.setReferencePlaneId(pointOfReferencePlane, pointOfReferenceCallback);//20180222 Added to take over the previously specified reference plane when performing folding estimation with the fold line selected.
+//        ip3 = cp_worker1.setStartingFaceId(ip3);
+        ip3 = cp_worker1.setStartingFaceId(startingFaceId);//20180222 Added to take over the previously specified reference plane when performing folding estimation with the fold line selected.
 
         if (Thread.interrupted()) {
             throw new InterruptedException();

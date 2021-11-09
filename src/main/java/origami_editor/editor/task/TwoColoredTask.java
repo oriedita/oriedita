@@ -20,7 +20,7 @@ public class TwoColoredTask implements Runnable{
 
         try {
             selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
-            selectedFigure.createTwoColorCreasePattern(app.canvas.creasePatternCamera, app.lineSegmentsForFolding, app.point_of_referencePlane_old);
+            selectedFigure.createTwoColorCreasePattern(app.canvas.creasePatternCamera, app.lineSegmentsForFolding, app.startingFaceId);
         } catch (InterruptedException e) {
             selectedFigure.foldedFigure.estimated_initialize();
             app.bulletinBoard.clear();
