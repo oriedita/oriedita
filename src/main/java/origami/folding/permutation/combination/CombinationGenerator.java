@@ -6,9 +6,21 @@ import origami.folding.HierarchyList;
 import origami.folding.algorithm.italiano.ReductionItalianoAlgorithm;
 import origami.folding.algorithm.swapping.SwappingAlgorithm;
 import origami.folding.element.SubFace;
-import origami.folding.permutation.PermutationGenerator;
+import origami.folding.permutation.*;
 import origami.folding.util.EquivalenceCondition;
 
+/**
+ * CombinationGenerator is the latest boost to the search performance. It solves
+ * the problem known as "excess permutation", where the
+ * {@link ChainPermutationGenerator} has way too many possible permutations left
+ * even after applying the transitivity guides, but almost all of them would not
+ * pass the {@link EquivalenceCondition} checks. The idea of this class is to
+ * focus on the {@link EquivalenceCondition}s first, converting them into
+ * {@link Constraint}s, and search for a valid combination for them using also
+ * the {@link SwappingAlgorithm}.
+ * 
+ * @author Mu-Tsun Tsai
+ */
 public class CombinationGenerator {
 
     private final Constraint[] constraints;
@@ -69,8 +81,9 @@ public class CombinationGenerator {
     }
 
     public boolean process() throws InterruptedException {
-        // Perform swapping only for finding the first solution; after that the sequence
-        // needs to be fixed, or we will get the same solution again and again.
+        // Perform swapping only for finding the first combination; after that the
+        // sequence needs to be fixed, or we will get the same combination again and
+        // again.
         boolean swap = firstRound;
 
         if (!firstRound && !backtrack(constraints.length)) return false;
@@ -99,10 +112,14 @@ public class CombinationGenerator {
             if (swap) {
                 swapper.process(constraints, constraints.length - 1);
             } else if (deadEnd) {
+                // In case of dead-end, we can speed up the backtracking by going to the last
+                // constraint that created conflict with the current constraint.
                 int c = findConflict(depth);
                 if (!backtrack(c + 1)) return false;
             }
 
+            // After the first combination, sometimes it may take a while to find the next
+            // one since we're no longer swapping.
             if (Thread.interrupted()) throw new InterruptedException();
         }
     }

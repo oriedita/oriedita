@@ -1,10 +1,10 @@
 package origami;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * This class organizes all epsilon constants used throughout the source code.
  * Hopefully it will eventually replace all related comparisons.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class Epsilon {
 

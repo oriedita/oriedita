@@ -1,15 +1,16 @@
 package origami.data.quadTree.adapter;
 
 import origami.crease_pattern.element.Point;
-import origami.data.quadTree.QuadTreeItem;
+import origami.data.quadTree.*;
 
 /**
- * Author: Mu-Tsun Tsai
+ * QuadTreeAdapter interface adapts different types of collection to
+ * {@link QuadTree}.
  * 
- * QuadTreeAdapter interface adapts different types of collection to QuadTree.
+ * @author Mu-Tsun Tsai
  */
 public interface QuadTreeAdapter {
-    
+
     /** Get the item count in the collection. */
     public int getCount();
 

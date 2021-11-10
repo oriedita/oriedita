@@ -3,10 +3,10 @@ package origami.data;
 import java.util.Iterator;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * This data structure is for "an array of lists". It supports adding elements
  * and iterating over the list of a given index.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class ListArray {
 

@@ -1,10 +1,9 @@
 package origami.data.listMatrix;
 
 import java.util.*;
+import origami.folding.algorithm.AdditionalEstimationAlgorithm;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * The idea of PseudoListMatrix is to store, for each i, the values appear in
  * List[i][x] and List[x][i] for all x, instead of keeping the precise list of
  * List[i][j] for all i and j. Then when List[i][j] is requested, it returns the
@@ -17,7 +16,9 @@ import java.util.*;
  * while remains fast in iterating over the list.
  * 
  * Even better, in fact in our use case the returned list is exactly the actual
- * list (see the comments in AEA).
+ * list (see the comments in {@link AdditionalEstimationAlgorithm}).
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class PseudoListMatrix {
 

@@ -3,13 +3,13 @@ package origami.folding.algorithm.italiano;
 import java.util.*;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * One interesting thing about Italiano algorithm is that it can also be used to
- * find transitive reduction, since it keeps a spanning tree for each source
- * node. These trees together form a structure that is pretty close to
- * transitive reduction, and only a bit more work is enough to retrieve the
- * result.
+ * efficiently find transitive reduction, since it keeps a spanning tree for
+ * each source node. These trees together form a structure that is pretty close
+ * to transitive reduction, and with just a bit more work we can obtain the
+ * actual reduction.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class ReductionItalianoAlgorithm extends TraceableItalianoAlgorithm {
 

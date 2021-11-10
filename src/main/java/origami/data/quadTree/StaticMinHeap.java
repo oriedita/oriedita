@@ -3,17 +3,17 @@ package origami.data.quadTree;
 import java.util.Iterator;
 
 /**
- * Author: Mu-Tsun Tsai
+ * The main goal of {@link QuadTree} is to return a list of items of potential
+ * interest, and in order to keep the algorithm consistent, it returns the list
+ * in order. Previously, this was done by using TreeSet, but that means each
+ * query will create a new TreeSet object, and the memory relocation overhead
+ * for each query operation is costly. This StaticMinHeap class allocates a
+ * static memory space for each thread and reuse it for each query. It also uses
+ * minimal heap instead of BST to achieve the ordering functionality, since in
+ * our use case we'll only iterate over the item list once and heap can do that
+ * in fewer operations than BST.
  * 
- * The main goal of QuadTree is to return a list of items of potential interest,
- * and in order to keep the algorithm consistent, it returns the list in order.
- * Previously, this was done by using TreeSet, but that means each query will
- * create a new TreeSet object, and the memory relocation overhead for each
- * query operation is costly. This StaticMinHeap class allocates a static memory
- * space for each thread and reuse it for each query. It also uses minimal heap
- * instead of BST to achieve the ordering functionality, since in our use case
- * we'll only iterate over the item list once and heap can do that in fewer
- * operations than BST.
+ * @author Mu-Tsun Tsai
  */
 public class StaticMinHeap implements Iterable<Integer> {
 

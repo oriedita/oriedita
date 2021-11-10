@@ -3,14 +3,14 @@ package origami.folding.algorithm.swapping;
 import origami.folding.element.SubFace;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * The original Orihime algorithm chooses an initial SubFace ordering to perform
  * the exhaustive search, but it is very commonly the case that the ordering is
  * not optimal, leading to a phenomenon where the search reaches the same
  * dead-end at a certain depth over and over. The idea of swapping algorithm is
  * to swap the order of the SubFace reaching a dead-end to a earlier position,
  * and doing so generally improves ths searching performance.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class SubFaceSwappingAlgorithm extends SwappingAlgorithm<SubFace> {
 

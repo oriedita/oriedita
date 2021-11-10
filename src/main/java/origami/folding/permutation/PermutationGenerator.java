@@ -1,9 +1,9 @@
 package origami.folding.permutation;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * This is the base class for different permutation generator implementations.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public abstract class PermutationGenerator {
 

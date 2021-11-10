@@ -13,12 +13,12 @@ import origami.folding.util.EquivalenceCondition;
 import origami.folding.util.IBulletinBoard;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * This class is the result of refactoring the original additional_estimation().
  * It does basically the same thing, but greatly improves readability. It also
  * improves the performance by removing outer loops that are theoretically
  * redundant.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class AdditionalEstimationAlgorithm {
 

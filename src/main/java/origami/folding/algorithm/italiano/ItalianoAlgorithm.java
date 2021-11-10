@@ -3,10 +3,12 @@ package origami.folding.algorithm.italiano;
 import java.util.ArrayDeque;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * This is the transitive closure algorithm described by G. F. Italiano. See
- * http://dx.doi.org/10.1016/0304-3975%2886%2990098-8.
+ * http://dx.doi.org/10.1016/0304-3975%2886%2990098-8. The base class only
+ * contains the basic functionality, while additional features are added in the
+ * derived classes.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class ItalianoAlgorithm {
 
@@ -49,7 +51,7 @@ public class ItalianoAlgorithm {
         }
     }
 
-    public void add(int i, int j) {
+    public final void add(int i, int j) {
         if (matrix[i][j] == 0) {
             for (int x = 1; x <= size; x++) {
                 if (matrix[x][i] != 0 && matrix[x][j] == 0) {

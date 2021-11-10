@@ -3,14 +3,14 @@ package origami.data;
 import java.util.Iterator;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * This data structure is for "an array of stacks". In addition to the methods
- * of ListArray, it also supports flushing the stack of a given index, and it
- * will reuse the memory after flushing.
+ * of {@link ListArray}, it also supports flushing the stack of a given index,
+ * and it will reuse the memory after flushing.
  * 
  * The idea is that chain index zero stands for "empty slots" that can be reused
  * when new entires are added.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public final class StackArray extends ListArray {
 

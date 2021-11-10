@@ -9,9 +9,9 @@ import origami.data.quadTree.comparator.QuadTreeComparator;
 import origami.data.quadTree.comparator.ShrinkComparator;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * QuadTree is a classical data structure for organizing objects in a 2D space.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class QuadTree {
 

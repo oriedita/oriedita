@@ -1,12 +1,13 @@
 package origami.folding.algorithm.italiano;
 
 import origami.data.StackArray;
+import origami.folding.algorithm.AdditionalEstimationAlgorithm;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * ReactiveItalianoAlgorithm writes changes to a centralized StackArray, so that
- * changes can be react upon.
+ * changes can be react upon. This one is used in {@link AdditionalEstimationAlgorithm}.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class ReactiveItalianoAlgorithm extends RestorableItalianoAlgorithm {
 
@@ -21,6 +22,7 @@ public class ReactiveItalianoAlgorithm extends RestorableItalianoAlgorithm {
         this.changes = changes;
     }
 
+    @Override
     protected void meld(int x, int j, int u, int v) {
         // add to change list
         changes.add(id, (x << 16) | v);

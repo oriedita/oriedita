@@ -1,14 +1,17 @@
 package origami.folding.algorithm.italiano;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * RestorableItalianoAlgorithm allows the entire state of the algorithm to be
  * saved and restored.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class RestorableItalianoAlgorithm extends ItalianoAlgorithm {
 
-    /** This is used only in the realtime AEA. */
+    /**
+     * We do not declare this as final, since it's not always the case that we would
+     * need the save and restore feature. We initialize it only when we need it.
+     */
     private int[][] backup;
 
     public RestorableItalianoAlgorithm(int size) {

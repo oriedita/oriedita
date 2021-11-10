@@ -5,10 +5,10 @@ import java.util.*;
 import origami.folding.HierarchyList;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * TraceableItalianoAlgorithm keeps a record of the depths where each change is
  * made.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class TraceableItalianoAlgorithm extends RestorableItalianoAlgorithm {
 
@@ -26,7 +26,7 @@ public class TraceableItalianoAlgorithm extends RestorableItalianoAlgorithm {
     public int getDepth(int a, int b) {
         return history.getOrDefault((a << 16) | b, 0);
     }
-    
+
     public int get(int i, int j) {
         if (matrix[i][j] != 0) return HierarchyList.ABOVE_1;
         else if (matrix[j][i] != 0) return HierarchyList.BELOW_0;

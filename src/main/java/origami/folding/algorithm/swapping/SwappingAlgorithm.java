@@ -3,26 +3,28 @@ package origami.folding.algorithm.swapping;
 import java.util.*;
 
 /**
- * Author: Mu-Tsun Tsai
+ * This is the base class for swapping algorithms. Swapping algorithms now is
+ * used both on SubFaces and on Constraints, so we create a generic algorithm
+ * for both of them.
  * 
- * This is the base class for swapping algorithms.
- * 
- * One problem that may arises with the swapping algorithm is looping, where two
- * or more elements swap in a loop (and possibly reset each other during the
- * process). In order to prevent this, the swapping algorithm now implements a
- * hash table recording the visited element sequence. If the same sequence
- * reappears and swapping is again requested, it will introduce unvisited
- * elements to the game to spice things up. This has proven to be quite
- * effective in breaking the loop.
+ * @author Mu-Tsun Tsai
  */
 public class SwappingAlgorithm<T> {
 
     private int high;
-    private int hash;
 
-    // For preventing cycling swapping over and over.
+    /**
+     * One problem that may arises with the swapping algorithm is looping, where two
+     * or more elements swap in a loop (and possibly reset each other during the
+     * process). In order to prevent this, the swapping algorithm now implements a
+     * hash table recording the visited element sequence. If the same sequence
+     * reappears and swapping is again requested, it will introduce unvisited
+     * elements to the game to spice things up. This has proven to be quite
+     * effective in breaking the loop.
+     */
     private final Set<Integer> history = new HashSet<>();
     private final Set<T> visited = new HashSet<>();
+    private int hash;
 
     /** Records a dead-end. */
     public void record(int index) {
