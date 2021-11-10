@@ -29,6 +29,7 @@ import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.basic.BasicFileChooserUI;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -62,20 +63,15 @@ public class App {
     public LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
     public BulletinBoard bulletinBoard = new BulletinBoard();
     // ------------------------------------------------------------------------
-    public Point point_of_referencePlane_old = new Point(); //ten_of_kijyunmen_old.set(OZ.ts1.get_ten_of_kijyunmen_tv());//20180222折り線選択状態で折り畳み推定をする際、以前に指定されていた基準面を引き継ぐために追加
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
     public Canvas canvas;
     //各種変数の定義
     String frame_title_0;//フレームのタイトルの根本部分
     String frame_title;//フレームのタイトルの全体
     HelpDialog explanation;
-    boolean mouseDraggedValid = false;
-    //ウィンドウ透明化用のパラメータ
-    boolean mouseReleasedValid = false;//0 ignores mouse operation. 1 is valid for mouse operation. When an unexpected mouseDragged or mouseReleased occurs due to on-off of the file box, set it to 0 so that it will not be picked up. These are set to 1 valid when the mouse is clicked.
     //画像出力するため20170107_oldと書かれた行をコメントアウトし、20170107_newの行を有効にした。
     //画像出力不要で元にもどすなら、20170107_oldと書かれた行を有効にし、20170107_newの行をコメントアウトにすればよい。（この変更はOrihime.javaの中だけに2箇所ある）
     // オフスクリーン
-    boolean flg61 = false;//Used when setting the frame 　20180524
     Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
     JFrame frame;
 
@@ -162,10 +158,16 @@ public class App {
                 while ((popup = popups.poll()) != null) {
                     popup.hide();
                 }
+
+                canvasModel.setToggleLineColor(false);
             }
 
             @Override
             public void keyPressed(KeyEvent e) {
+                if (e.isControlDown() && !canvasModel.getToggleLineColor()) {
+                    canvasModel.setToggleLineColor(true);
+                }
+
                 if (e.isAltDown() && popups.isEmpty()) {
                     for (Map.Entry<KeyStroke, AbstractButton> entry : helpInputMap.entrySet()) {
                         AbstractButton button = entry.getValue();
@@ -312,7 +314,6 @@ public class App {
         creasePatternCameraModel.addPropertyChangeListener(e -> topPanel.setData(creasePatternCameraModel));
         creasePatternCameraModel.addPropertyChangeListener(e -> repaintCanvas());
 
-        fileModel.addPropertyChangeListener(e -> appMenuBar.setData(fileModel));
         fileModel.addPropertyChangeListener(e -> setData(fileModel));
 
         fileModel.reset();
@@ -402,7 +403,7 @@ public class App {
         canvas.addMouseModeHandler(new MouseHandlerMoveCalculatedShape(this));
         canvas.addMouseModeHandler(new MouseHandlerModifyCalculatedShape(this));
         canvas.addMouseModeHandler(new MouseHandlerMoveCreasePattern(this));
-        canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(this));
+        canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(this, mainCreasePatternWorker));
 
         updateButtonIcons(frame);
         frame.pack();
@@ -632,13 +633,8 @@ public class App {
                 lineSegmentsForFolding = mainCreasePatternWorker.getForSelectFolding();
             }
 
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
-
-            if (selectedFigure != null) {
-                point_of_referencePlane_old.set(selectedFigure.wireFrame_worker_drawer1.get_point_of_referencePlane_tv());
-            }
             //これより前のOZは古いOZ
-            selectedFigure = folding_prepare();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
+            FoldedFigure_Drawer selectedFigure = folding_prepare();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
             //これより後のOZは新しいOZに変わる
 
             TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(this, selectedFigure, estimationOrder));
@@ -687,8 +683,8 @@ public class App {
 
             switch (option) {
                 case JOptionPane.YES_OPTION:
-                    mouseDraggedValid = false;
-                    mouseReleasedValid = false;
+                    canvas.mouseDraggedValid = false;
+                    canvas.mouseReleasedValid = false;
                     saveFile();
 
                     TaskExecutor.stopTask();
@@ -735,6 +731,8 @@ public class App {
         mainCreasePatternWorker.setDrawingStage(0);
         mainCreasePatternWorker.resetCircleStep();
         mouseHandlerVoronoiCreate.voronoiLineSet.clear();
+        canvas.mouseReleasedValid = false;
+        canvas.mouseDraggedValid = false;
     }
 
     void setFoldedFigureIndex(int i) {//Processing when OZ is switched
@@ -783,9 +781,9 @@ public class App {
         }
 
         if (exportFile.getName().endsWith(".png") || exportFile.getName().endsWith(".jpg") || exportFile.getName().endsWith(".jpeg") || exportFile.getName().endsWith(".svg")) {
-            flg61 = false;
+            canvas.flg61 = false;
             if ((canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61) && (mainCreasePatternWorker.getDrawingStage() == 4)) {
-                flg61 = true;
+                canvas.flg61 = true;
                 mainCreasePatternWorker.setDrawingStage(0);
             }
 
@@ -797,6 +795,28 @@ public class App {
         } else if (exportFile.getName().endsWith(".orh")) {
             Orh.exportFile(mainCreasePatternWorker.getSave_for_export_with_applicationModel(), exportFile);
         }
+    }
+
+    /**
+     * Change the extension of the selected file in a fileChooser when changing the filefilter.
+     */
+    void applyFileChooserSwitchUpdate(JFileChooser fileChooser) {
+        fileChooser.addPropertyChangeListener(JFileChooser.FILE_FILTER_CHANGED_PROPERTY, e -> {
+            // Can also be AcceptAllFileFilter, then nothing should happen.
+            if (e.getNewValue() instanceof FileNameExtensionFilter) {
+                FileNameExtensionFilter filter = (FileNameExtensionFilter) e.getNewValue();
+
+                String newExtension = filter.getExtensions()[0];
+                String fileName = ((BasicFileChooserUI) fileChooser.getUI()).getFileName();
+
+                String fileBaseName = fileName;
+                if (fileName.lastIndexOf(".") > -1) {
+                    fileBaseName = fileName.substring(0, fileName.lastIndexOf("."));
+                }
+
+                fileChooser.setSelectedFile(new File(fileBaseName + "." + newExtension));
+            }
+        });
     }
 
     File selectOpenFile() {
@@ -833,6 +853,8 @@ public class App {
         FileNameExtensionFilter cpFilter = new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp");
         fileChooser.addChoosableFileFilter(cpFilter);
         fileChooser.setSelectedFile(new File("untitled.ori"));
+
+        applyFileChooserSwitchUpdate(fileChooser);
 
         File selectedFile;
         int choice = JOptionPane.NO_OPTION;
@@ -897,6 +919,8 @@ public class App {
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp"));
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Orihime (*.orh)", "orh"));
         fileChooser.setSelectedFile(new File("creasepattern.png"));
+
+        applyFileChooserSwitchUpdate(fileChooser);
 
         File selectedFile;
         int choice = JOptionPane.NO_OPTION;
@@ -1018,14 +1042,8 @@ public class App {
         }
     }
 
-    public void folding_estimated() throws InterruptedException, FoldingException {
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
-
-        if (selectedFigure == null) {
-            throw new FoldingException("No folded figure created");
-        }
-
-        selectedFigure.folding_estimated(canvas.creasePatternCamera, lineSegmentsForFolding, point_of_referencePlane_old);
+    public void folding_estimated(FoldedFigure_Drawer selectedFigure) throws InterruptedException, FoldingException {
+        selectedFigure.folding_estimated(canvas.creasePatternCamera, lineSegmentsForFolding);
     }
 
     public double string2double(String str0, double default_if_error) {

@@ -11,7 +11,6 @@ import origami_editor.editor.*;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.task.CheckCAMVTask;
 import origami_editor.editor.task.FinishedFuture;
-import origami_editor.editor.task.TaskExecutor;
 import origami_editor.editor.undo_box.HistoryState;
 import origami_editor.graphic2d.grid.Grid;
 import origami_editor.tools.Camera;
@@ -992,7 +991,7 @@ public class CreasePattern_Worker {
     }
 
     public void setData(CanvasModel data) {
-        setColor(data.getLineColor());
+        setColor(data.calculateLineColor());
         setAuxLineColor(data.getAuxLiveLineColor());
         setFoldLineAdditional(data.getFoldLineAdditionalInputMode());
         i_select_mode = data.getSelectionOperationMode();

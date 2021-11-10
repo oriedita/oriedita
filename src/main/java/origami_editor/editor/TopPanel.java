@@ -201,9 +201,6 @@ public class TopPanel {
             app.repaintCanvas();
         });
         readBackgroundButton.addActionListener(e -> {
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
-
             app.readBackgroundImageFromFile();
 
             app.canvas.h_cam = new Background_camera();//20181202

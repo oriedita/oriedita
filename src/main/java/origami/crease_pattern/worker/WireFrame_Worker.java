@@ -13,7 +13,6 @@ import origami.crease_pattern.PointSet;
 
 import java.util.*;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class WireFrame_Worker {
     //This crease pattern craftsman class has only one PointStore c as a crease pattern.
@@ -22,7 +21,7 @@ public class WireFrame_Worker {
     PointSet pointSet = new PointSet();    //Development view
     //Definition of variables used in VVVVVVVVVVVV oritatami and oekaki VVVVVVVVVVVVVVVVVVVVVVVVVVVV
     int[] iFacePosition;//Indicates how far a surface is from the reference surface. Enter a value such as 1, next to the reference plane, 2, next to the reference plane, and 3 next to it.
-    int referencePlaneId;
+    int startingFaceId = -1;
     int[] nextFaceId;//The id of the surface (reference surface side) next to a certain surface
     int[] associatedLineId;//The id of the bar between one side and the next side (reference plane side)
     AverageCoordinates[] tnew;//Stores the position of the point when folded
@@ -46,34 +45,34 @@ public class WireFrame_Worker {
         associatedLineId = new int[numFaces + 1];         //The id of the bar between one surface and the next surface (reference surface side)
     }
 
-    public int getReferencePlaneId() {
-        return referencePlaneId;
+    public int getStartingFaceId() {
+        return startingFaceId;
     }
 
-    public int setReferencePlaneId(int i, Consumer<Point> callback) {
-        referencePlaneId = i;
+    public int setStartingFaceId(int i) {
+        startingFaceId = i;
 
-        if (referencePlaneId > pointSet.getNumFaces()) {
-            referencePlaneId = pointSet.getNumFaces();
+        if (startingFaceId > pointSet.getNumFaces()) {
+            startingFaceId = pointSet.getNumFaces();
         }
-        if (referencePlaneId < 1) {
-            referencePlaneId = 1;
+        if (startingFaceId < 1) {
+            startingFaceId = pointSet.inside(new Point(0, 0));
+            if (startingFaceId < 1) {
+                startingFaceId = 1;
+            }
         }
 
-        if (callback != null) callback.accept(pointSet.insidePoint_surface(referencePlaneId));
-
-        return referencePlaneId;
+        return startingFaceId;
     }
 
     /**
      * This is the correspondence when the mouse is pressed in the reference plane specification mode 201503
      */
-    public int setReferencePlaneId(Point p0, Consumer<Point> callback) {//Returns the datum id that is actually valid
+    public int setStartingFaceId(Point p0) {//Returns the datum id that is actually valid
         if (pointSet.inside(p0) > 0) {
-            referencePlaneId = pointSet.inside(p0);
-            if (callback != null) callback.accept(p0);
+            startingFaceId = pointSet.inside(p0);
         }//If c.inside(p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, and if it is a positive number, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
-        return referencePlaneId;
+        return startingFaceId;
     }
 
 
@@ -126,7 +125,7 @@ public class WireFrame_Worker {
         Point p = new Point();
         p.set(pointSet.getPoint(it));
         int idestination_faceId = im;//The id number of the first face. From now on, we will follow the planes adjacent to the reference plane.
-        while (idestination_faceId != referencePlaneId) {
+        while (idestination_faceId != startingFaceId) {
             p.set(lineSymmetry_point_determine(associatedLineId[idestination_faceId], p));
             idestination_faceId = nextFaceId[idestination_faceId];
         }
@@ -149,14 +148,14 @@ public class WireFrame_Worker {
         }
         //Grasp the positional relationship between the faces in preparation for folding
         System.out.println("折りたたみの準備として面同士の位置関係を把握する");
-        iFacePosition[referencePlaneId] = 1;
+        iFacePosition[startingFaceId] = 1;
 
         int depth = 1;
         int remaining_facesTotal = pointSet.getNumFaces() - 1;
 
         // Tsai: I'm not sure if ordering matters, so I just play safe here.
         SortedSet<Integer> currentRound = new TreeSet<>();
-        currentRound.add(referencePlaneId);
+        currentRound.add(startingFaceId);
 
         while (remaining_facesTotal > 0) {
             SortedSet<Integer> nextRound = new TreeSet<>();

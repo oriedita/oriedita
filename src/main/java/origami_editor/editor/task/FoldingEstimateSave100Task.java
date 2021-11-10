@@ -32,7 +32,7 @@ public class FoldingEstimateSave100Task implements Runnable {
                 try {
 
                     for (int i = 1; i <= objective; i++) {
-                        app.folding_estimated();
+                        app.folding_estimated(selectedFigure);
 
                         String filename = file.getPath();
                         if (filename.contains(".")) {

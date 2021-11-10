@@ -58,7 +58,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     boolean displayLiveAuxLines;
     boolean displayMarkings;
     boolean displayCreasePatternOnTop;
-    boolean displayFoldingProgress;
 
     float auxLineWidth;
     float lineWidth;
@@ -78,7 +77,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     Map<MouseMode, MouseModeHandler> mouseModeHandlers = new HashMap<>();
 
-    boolean i_mouse_undo_redo_mode = false;//1 for undo and redo mode with mouse
+    boolean flg61 = false;//Used when setting the frame 　20180524
+
+    boolean mouseDraggedValid = false;
+    //ウィンドウ透明化用のパラメータ
+    boolean mouseReleasedValid = false;//0 ignores mouse operation. 1 is valid for mouse operation. When an unexpected mouseDragged or mouseReleased occurs due to on-off of the file box, set it to 0 so that it will not be picked up. These are set to 1 valid when the mouse is clicked.
 
     public Canvas(App app0) {
         app = app0;
@@ -191,7 +194,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //基準面の表示
         if (displayMarkings && selectedFigure != null) {
             if (selectedFigure.foldedFigure.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
-                selectedFigure.wireFrame_worker_drawer1.drawing_referencePlane_with_camera(bufferGraphics);//ts1が折り畳みを行う際の基準面を表示するのに使う。
+                selectedFigure.wireFrame_worker_drawer1.drawStartingFaceWithCamera(bufferGraphics, selectedFigure.getStartingFaceId());//ts1が折り畳みを行う際の基準面を表示するのに使う。
             }
         }
 
@@ -288,8 +291,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             flg_wi = false;
             writeImageFile(new File(app.fileModel.getExportImageFileName()), app);
         }
-        if (app.flg61) {
-            app.flg61 = false;
+        if (flg61) {
+            flg61 = false;
             es1.setDrawingStage(4);
         }
     }
@@ -341,8 +344,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     public void mousePressed(MouseEvent e) {
         Point p = new Point(app.e2p(e));
 
-        app.mouseDraggedValid = true;
-        app.mouseReleasedValid = true;
+        mouseDraggedValid = true;
+        mouseReleasedValid = true;
 
         btn = e.getButton();
 
@@ -432,7 +435,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     //マウス操作(ドラッグしたとき)を行う関数---------- System.out.println("A");------------------------------------------
     public void mouseDragged(MouseEvent e) {
 
-        if (app.mouseDraggedValid) {
+        if (mouseDraggedValid) {
             Point p = new Point(app.e2p(e));
             app.canvas.mouse_object_position(p);
 
@@ -468,9 +471,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 case MouseEvent.BUTTON3:
                     if (mouseMode == MouseMode.VORONOI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
                     } else {
-                        if (i_mouse_undo_redo_mode) {
-                            return;
-                        }//undo,redoモード。
                         es1.setCamera(creasePatternCamera);
                         mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseDragged(p);
                     }
@@ -505,7 +505,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     //マウス操作(ボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(MouseEvent e) {
-        if (app.mouseReleasedValid) {
+        if (mouseReleasedValid) {
             Point p = new Point(app.e2p(e));
 
 
@@ -537,8 +537,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
                     mouse_temp0.set(p);
                     repaint();
-                    app.mouseDraggedValid = false;
-                    app.mouseReleasedValid = false;
+                    mouseDraggedValid = false;
+                    mouseReleasedValid = false;
                     return;//
                 case MouseEvent.BUTTON3:
                     //System.out.println("右ボタンクリック");
@@ -546,16 +546,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                         repaint();//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
                     } else {
                         //if(i_mouse_undo_redo_mode==1){i_mouse_undo_redo_mode=0;mainDrawingWorker.unselect_all();Button_kyoutuu_sagyou();mainDrawingWorker.modosi_i_orisen_hojyosen();return;}
-                        if (i_mouse_undo_redo_mode) {
-                            i_mouse_undo_redo_mode = false;
-                            return;
-                        } //undo,redoモード。
                         es1.setCamera(creasePatternCamera);
                         mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseReleased(p);
                         repaint();//なんでここにrepaintがあるか検討した方がよいかも。20181208
                         app.canvasModel.restoreFoldLineAdditionalInputMode();
-                        app.mouseDraggedValid = false;
-                        app.mouseReleasedValid = false;
+                        mouseDraggedValid = false;
+                        mouseReleasedValid = false;
                         //線分削除モード。
                     }
                     return;
@@ -571,8 +567,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             repaint();
         }
 
-        app.mouseDraggedValid = false;
-        app.mouseReleasedValid = false;
+        mouseDraggedValid = false;
+        mouseReleasedValid = false;
     }
 
     public void mouseWheelMoved(MouseWheelEvent e) {
@@ -615,7 +611,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             //	ファイル保存
 
             try {
-                if (app.flg61) { //枠設定時の枠内のみ書き出し 20180524
+                if (flg61) { //枠設定時の枠内のみ書き出し 20180524
                     int xMin = (int) app.mainCreasePatternWorker.operationFrameBox.getXMin();
                     int xMax = (int) app.mainCreasePatternWorker.operationFrameBox.getXMax();
                     int yMin = (int) app.mainCreasePatternWorker.operationFrameBox.getYMin();
@@ -646,7 +642,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         displayMarkings = applicationModel.getDisplayMarkings();
         displayCreasePatternOnTop = applicationModel.getDisplayCreasePatternOnTop();
-        displayFoldingProgress = applicationModel.getDisplayFoldingProgress();
 
         lineStyle = applicationModel.getLineStyle();
         antiAlias = applicationModel.getAntiAlias();

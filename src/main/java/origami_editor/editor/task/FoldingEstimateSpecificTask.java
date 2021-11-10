@@ -28,7 +28,7 @@ public class FoldingEstimateSpecificTask implements Runnable{
         int objective = app.foldedFigureModel.getFoldedCases();
         try {
             while (objective > selectedFigure.foldedFigure.discovered_fold_cases) {
-                app.folding_estimated();
+                app.folding_estimated(selectedFigure);
                 app.repaintCanvas();
 
                 selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;

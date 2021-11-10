@@ -3,7 +3,6 @@ package origami_editor.editor;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import origami_editor.editor.databinding.ApplicationModel;
-import origami_editor.editor.databinding.FileModel;
 import origami_editor.editor.transfer.SaveTransferable;
 
 import javax.swing.*;
@@ -107,42 +106,20 @@ public class AppMenuBar extends JMenuBar {
             app.mainCreasePatternWorker.record();
             app.mainCreasePatternWorker.auxRecord();
         });
-        openButton.addActionListener(e -> {
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
+        openButton.addActionListener(e -> app.openFile());
+        clearRecentFileMenuItem.addActionListener(e -> app.applicationModel.setRecentFileList(new ArrayList<>()));
 
-            app.openFile();
-        });
-        clearRecentFileMenuItem.addActionListener(e -> {
-            app.applicationModel.setRecentFileList(new ArrayList<>());
-        });
-
-        saveButton.addActionListener(e -> {
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
-            app.saveFile();
-        });
-        saveAsButton.addActionListener(e -> {
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
-            app.saveAsFile();
-        });
+        saveButton.addActionListener(e -> app.saveFile());
+        saveAsButton.addActionListener(e -> app.saveAsFile());
         exportButton.addActionListener(e -> {
             if (app.canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) {
                 app.mainCreasePatternWorker.setDrawingStage(0);
             }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
 
             app.exportFile();
             app.repaintCanvas();
         });
-        importButton.addActionListener(e -> {
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
-
-            app.importFile();
-        });
+        importButton.addActionListener(e -> app.importFile());
         exitButton.addActionListener(e -> app.closing());
         showPointRangeCheckBox.addActionListener(e -> getData(applicationModel));
         pointOffsetCheckBox.addActionListener(e -> getData(applicationModel));
@@ -163,17 +140,9 @@ public class AppMenuBar extends JMenuBar {
         toggleHelpMenuItem.addActionListener(e -> {
             app.applicationModel.toggleHelpVisible();
 
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
-
             app.repaintCanvas();
         });
-        toggleConsoleMenuItem.addActionListener(e -> {
-            app.applicationModel.toggleConsoleVisible();
-
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
-        });
+        toggleConsoleMenuItem.addActionListener(e -> app.applicationModel.toggleConsoleVisible());
         darkModeCheckBox.addActionListener(e -> {
             applicationModel.toggleDarkMode();
 
@@ -391,8 +360,5 @@ public class AppMenuBar extends JMenuBar {
         }
         openRecentMenu.addSeparator();
         openRecentMenu.add(clearRecentFileMenuItem);
-    }
-
-    public void setData(FileModel fileModel) {
     }
 }

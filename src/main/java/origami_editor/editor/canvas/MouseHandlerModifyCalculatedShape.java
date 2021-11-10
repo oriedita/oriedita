@@ -96,7 +96,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                 if (selectedFigure.foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) {
                     selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
                     try {
-                        app.folding_estimated();
+                        app.folding_estimated(selectedFigure);
                     } catch (InterruptedException | FoldingException e) {
                         e.printStackTrace();
                     }

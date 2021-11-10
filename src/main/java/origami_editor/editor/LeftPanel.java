@@ -542,9 +542,6 @@ public class LeftPanel {
             app.repaintCanvas();
         });
         inputDataButton.addActionListener(e -> {
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
-
             System.out.println("readFile2Memo() 開始");
             File file = app.selectImportFile();
             Save save = app.readImportFile(file);
@@ -623,9 +620,6 @@ public class LeftPanel {
         gridSizeSetButton.addActionListener(e -> getData(gridModel));
         gridSizeIncreaseButton.addActionListener(e -> gridModel.setGridSize(gridModel.getGridSize() * 2));
         gridColorButton.addActionListener(e -> {
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
-
             //以下にやりたいことを書く
             Color color = JColorChooser.showDialog(null, "Col", FlatLaf.isLafDark() ? Colors.GRID_LINE_DARK : Colors.GRID_LINE);
             if (color != null) {
@@ -640,9 +634,6 @@ public class LeftPanel {
         setIntervalGridSizeButton.addActionListener(e -> getData(gridModel));
         moveIntervalGridHorizontal.addActionListener(e -> gridModel.changeVerticalScalePosition());
         intervalGridColorButton.addActionListener(e -> {
-            app.mouseDraggedValid = false;
-            app.mouseReleasedValid = false;
-
             //以下にやりたいことを書く
             Color color = JColorChooser.showDialog(null, "Col", FlatLaf.isLafDark() ? Colors.GRID_SCALE_DARK : Colors.GRID_SCALE);
             if (color != null) {
@@ -1769,7 +1760,7 @@ public class LeftPanel {
             koteimen_siteiButton.setSelected(m == MouseMode.CHANGE_STANDARD_FACE_103);
         }
 
-        if (e.getPropertyName() == null || e.getPropertyName().equals("lineColor")) {
+        if (e.getPropertyName() == null || e.getPropertyName().equals("lineColor") || e.getPropertyName().equals("toggleLineColor")) {
             Color gray = Colors.get(new Color(150, 150, 150));
 
             colBlackButton.setBackground(gray);
@@ -1781,7 +1772,7 @@ public class LeftPanel {
             colBlueButton.setForeground(Colors.get(Color.black));
             colCyanButton.setForeground(Colors.get(Color.black));
 
-            switch (data.getLineColor()) {
+            switch (data.calculateLineColor()) {
                 case BLACK_0:
                     colBlackButton.setBackground(Colors.get(Color.black));
                     colBlackButton.setForeground(Colors.get(Color.white));

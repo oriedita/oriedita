@@ -4,6 +4,7 @@ import origami.Epsilon;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.HierarchyList;
@@ -14,28 +15,44 @@ import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.tools.Camera;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Path2D;
 
 /**
  * Responsible for drawing a folded figure.
  */
 public class FoldedFigure_Worker_Drawer {
+    static boolean displaySsi = false;
     private final FoldedFigure_Worker worker;
-
     Camera camera = new Camera();
-
     Color F_color = new Color(255, 255, 50);//表面の色
     Color B_color = new Color(233, 233, 233);//裏面の色
     Color L_color = Color.black;//線の色
-
     boolean antiAlias = true;
     boolean displayShadows = false; //Whether to display shadows. 0 is not displayed, 1 is displayed
-    static boolean displaySsi = false;
     private boolean displayNumbers = false;
 
     public FoldedFigure_Worker_Drawer(FoldedFigure_Worker worker) {
         this.worker = worker;
     }
 
+    private static void drawLine(Graphics2D g2, Camera camera, PointSet subFace_figure, int ib) {
+        LineSegment s_ob = new LineSegment();
+        LineSegment s_tv = new LineSegment();
+
+        s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
+        s_tv.set(camera.object2TV(s_ob));
+
+        Path2D.Double line = new Path2D.Double();
+        line.moveTo(s_tv.determineAX(), s_tv.determineAY());
+        line.lineTo(s_tv.determineBX(), s_tv.determineBY());
+
+        g2.draw(line);
+    }
+
+    public static void setStaticData(ApplicationModel applicationModel) {
+        displaySsi = applicationModel.getDisplaySelfIntersection();
+    }
 
     public void setCamera(Camera cam0) {
         camera.setCamera(cam0);
@@ -46,34 +63,8 @@ public class FoldedFigure_Worker_Drawer {
         worker.reset();
     }
 
-    private int gx(double d) {
-        return (int) d; //Front side display
-    }
-
-    private int gy(double d) {
-        return (int) d;
-    }
-
-    public void draw_transparency_with_camera(Graphics g, WireFrame_Worker_Drawer orite, PointSet otta_Face_figure, PointSet subFace_figure, boolean transparencyColor, int transparency_toukado, int index) {
+    public void draw_transparency_with_camera(Graphics g, WireFrame_Worker_Drawer orite, PointSet otta_Face_figure, PointSet subFace_figure, boolean transparencyColor, int transparency_toukado) {
         Graphics2D g2 = (Graphics2D) g;
-
-        origami.crease_pattern.element.Point t0 = new origami.crease_pattern.element.Point();
-        origami.crease_pattern.element.Point t1 = new origami.crease_pattern.element.Point();
-        LineSegment s_ob = new LineSegment();
-        LineSegment s_tv = new LineSegment();
-
-        //Preparing to draw a face
-        int[] x = new int[100];
-        int[] y = new int[100];
-
-        //Find the proper darkness of the surface
-        int col_hiku = 0;
-        int colmax = 255;
-        int colmin = 30;//colmax=255(真っ白)以下、colmin=0(真っ黒)以上
-        //Menidsuu_max must be 1 or greater
-        if (worker.FaceIdCount_max > 0) {
-            col_hiku = (colmax - colmin) / worker.FaceIdCount_max;
-        }
 
         if (transparencyColor) {
             //カラーの透過図
@@ -81,44 +72,24 @@ public class FoldedFigure_Worker_Drawer {
 
             //Draw a face
             for (int im = 1; im <= otta_Face_figure.getNumFaces(); im++) {
-                for (int i = 1; i <= otta_Face_figure.getPointsCount(im) - 1; i++) {
-                    t0.setX(otta_Face_figure.getPointX(otta_Face_figure.getPointId(im, i)));
-                    t0.setY(otta_Face_figure.getPointY(otta_Face_figure.getPointId(im, i)));
-                    t1.set(camera.object2TV(t0));
-                    x[i] = gx(t1.getX());
-                    y[i] = gy(t1.getY());
-                }
-
-                t0.setX(otta_Face_figure.getPointX(otta_Face_figure.getPointId(im, otta_Face_figure.getPointsCount(im))));
-                t0.setY(otta_Face_figure.getPointY(otta_Face_figure.getPointId(im, otta_Face_figure.getPointsCount(im))));
-                t1.set(camera.object2TV(t0));
-                x[0] = gx(t1.getX());
-                y[0] = gy(t1.getY());
-                g.fillPolygon(x, y, otta_Face_figure.getPointsCount(im));
+                fillFace(g2, camera, otta_Face_figure, im);
             }
 
             //Preparing to draw a line
-
-            if (antiAlias) {
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);//Anti-alias on
-                BasicStroke BStroke = new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-                g2.setStroke(BStroke);//Line thickness and shape of the end of the line
-            } else {
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//Anti-alias off
-                BasicStroke BStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-                g2.setStroke(BStroke);//Line thickness and shape of the end of the line
-            }
+            setAntiAlias(g2);
 
             g.setColor(new Color(F_color.getRed(), F_color.getGreen(), F_color.getBlue(), 2 * transparency_toukado));
-            //Draw a line
-            for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
-                s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
-                s_tv.set(camera.object2TV(s_ob));
-                g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //直線
-            }
         } else {//Black and white transparent view (old style)
-            int col_kosa;
+            //Find the proper darkness of the surface
+            int col_hiku = 0;
+            int colmax = 255;
+            int colmin = 30;//colmax=255(真っ白)以下、colmin=0(真っ黒)以上
+            //Menidsuu_max must be 1 or greater
+            if (worker.FaceIdCount_max > 0) {
+                col_hiku = (colmax - colmin) / worker.FaceIdCount_max;
+            }
 
+            int col_kosa;
             for (int im = 1; im <= subFace_figure.getNumFaces(); im++) {
                 col_kosa = colmax - col_hiku * (worker.s0[im].getFaceIdCount());
 
@@ -131,87 +102,62 @@ public class FoldedFigure_Worker_Drawer {
                 }
                 g.setColor(Colors.get(new Color(col_kosa, col_kosa, col_kosa)));
 
-                for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
-                    t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, i)));
-                    t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, i)));
-                    t1.set(camera.object2TV(t0));
-                    x[i] = gx(t1.getX());
-                    y[i] = gy(t1.getY());
-                }
-
-                t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
-                t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
-                t1.set(camera.object2TV(t0));
-                x[0] = gx(t1.getX());
-                y[0] = gy(t1.getY());
-                g.fillPolygon(x, y, subFace_figure.getPointsCount(im));
+                fillFace(g2, camera, subFace_figure, im);
             }
 
             //Prepare the line
             g.setColor(Colors.get(Color.black));
 
-            if (antiAlias) {
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);//Anti-alias on
-                BasicStroke BStroke = new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-                g2.setStroke(BStroke);//Line thickness and shape of the end of the line
-            } else {
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//Anti-alias off
-                BasicStroke BStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-                g2.setStroke(BStroke);//Line thickness and shape of the end of the line
-            }
-
-            //Draw a line
-            for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
-                s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
-                s_tv.set(camera.object2TV(s_ob));
-                g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
-            }
+            setAntiAlias(g2);
         }
+
+        //Draw a line
+        drawLines(g2, camera, subFace_figure);
 
         if (worker.errorPos != null && displaySsi) {
             g2.setColor(Colors.get(new Color(255, 0, 0, 75)));
-            fillSubFace(g2, worker.errorPos.getA(), subFace_figure, camera);
-            fillSubFace(g2, worker.errorPos.getB(), subFace_figure, camera);
-            fillSubFace(g2, worker.errorPos.getC(), subFace_figure, camera);
-            fillSubFace(g2, worker.errorPos.getD(), subFace_figure, camera);
+            fillSubFace(g2, camera, subFace_figure, worker.errorPos.getA());
+            fillSubFace(g2, camera, subFace_figure, worker.errorPos.getB());
+            fillSubFace(g2, camera, subFace_figure, worker.errorPos.getC());
+            fillSubFace(g2, camera, subFace_figure, worker.errorPos.getD());
 
-            fillPolygon(g2, worker.errorPos.getA(), orite.get(), orite.camera);
-            fillPolygon(g2, worker.errorPos.getB(), orite.get(), orite.camera);
-            fillPolygon(g2, worker.errorPos.getC(), orite.get(), orite.camera);
-            fillPolygon(g2, worker.errorPos.getD(), orite.get(), orite.camera);
+            fillFace(g2, orite.camera, orite.get(), worker.errorPos.getA());
+            fillFace(g2, orite.camera, orite.get(), worker.errorPos.getB());
+            fillFace(g2, orite.camera, orite.get(), worker.errorPos.getC());
+            fillFace(g2, orite.camera, orite.get(), worker.errorPos.getD());
         }
     }
 
-    private void fillSubFace(Graphics2D g, int id, PointSet faces, Camera transform) {
+    private static void drawLines(Graphics2D g2, Camera camera, PointSet subFace_figure) {
+        for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
+            drawLine(g2, camera, subFace_figure, ib);
+        }
+    }
+
+    private void fillSubFace(Graphics2D g, Camera transform, PointSet faces, int id) {
         for (int i = 1; i <= worker.SubFaceTotal; i++) {
             if (worker.s[i].contains(id)) {
-                fillPolygon(g, i, faces, transform);
+                fillFace(g, transform, faces, i);
             }
         }
     }
 
-    private void fillPolygon(Graphics2D g, int id, PointSet faces, Camera transform) {
-        origami.crease_pattern.element.Point t0 = new origami.crease_pattern.element.Point();
-        origami.crease_pattern.element.Point t1 = new origami.crease_pattern.element.Point();
+    private void fillFace(Graphics2D g, Camera transform, PointSet faces, int id) {
+        Point t1 = new Point();
 
-        int[] x = new int[faces.getPointsCount(id)+1];
-        int[] y = new int[faces.getPointsCount(id)+1];
+        Path2D.Double path = new Path2D.Double();
 
-        for (int i = 1; i <= faces.getPointsCount(id) - 1; i++) {
-            t0.setX(faces.getPointX(faces.getPointId(id, i)));
-            t0.setY(faces.getPointY(faces.getPointId(id, i)));
-            t1.set(transform.object2TV(t0));
-            x[i] = (int)(t1.getX());
-            y[i] = (int)(t1.getY());
+        t1.set(transform.object2TV(faces.getPoint(faces.getPointId(id, 1))));
+        path.moveTo(t1.getX(), t1.getY());
+
+        for (int i = 2; i <= faces.getPointsCount(id); i++) {
+            t1.set(transform.object2TV(faces.getPoint(faces.getPointId(id, i))));
+            path.lineTo(t1.getX(), t1.getY());
         }
 
-        t0.setX(faces.getPointX(faces.getPointId(id, faces.getPointsCount(id))));
-        t0.setY(faces.getPointY(faces.getPointId(id, faces.getPointsCount(id))));
-        t1.set(transform.object2TV(t0));
-        x[0] = (int)(t1.getX());
-        y[0] = (int)(t1.getY());
+        path.closePath();
 
-        g.fill(new java.awt.Polygon(x, y, faces.getPointsCount(id)));
+        g.fill(path);
     }
 
     public void calculateFromTopCountedPosition() {
@@ -223,21 +169,12 @@ public class FoldedFigure_Worker_Drawer {
         //ここまでで、上下表の情報がSubFaceの各面に入った
     }
 
-    public void draw_foldedFigure_with_camera(Graphics g, WireFrame_Worker orite, PointSet subFace_figure, int index) {
+    public void draw_foldedFigure_with_camera(Graphics g, WireFrame_Worker orite, PointSet subFace_figure) {
         Graphics2D g2 = (Graphics2D) g;
         boolean flipped = camera.determineIsCameraMirrored();
 
-        origami.crease_pattern.element.Point t0 = new origami.crease_pattern.element.Point();
-        origami.crease_pattern.element.Point t1 = new origami.crease_pattern.element.Point();
-        LineSegment s_ob = new LineSegment();
-        LineSegment s_tv = new LineSegment();
-
-        //Draw a face
-        int[] x = new int[100];
-        int[] y = new int[100];
-
-        double[] xd = new double[100];
-        double[] yd = new double[100];
+        Point t0 = new Point();
+        Point t1 = new Point();
 
         //面を描く-----------------------------------------------------------------------------------------------------
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オフ
@@ -250,43 +187,22 @@ public class FoldedFigure_Worker_Drawer {
 
                 int i1 = worker.s0[im].fromTop_count_FaceId(faceOrder);
                 int iFacePosition = orite.getIFacePosition(i1);
-                if (iFacePosition % 2 == 1) {
-                    g.setColor(F_color);
-                }
-                if (iFacePosition % 2 == 0) {
-                    g.setColor(B_color);
-                }
 
                 if (flipped) {
                     if (iFacePosition % 2 == 0) {
                         g.setColor(F_color);
+                    } else {
+                        g.setColor(B_color);
                     }
+                } else {
                     if (iFacePosition % 2 == 1) {
+                        g.setColor(F_color);
+                    } else {
                         g.setColor(B_color);
                     }
                 }
 
-                //This is the end of deciding the color of SubFace when drawing a folded figure
-
-                //Find the coordinates (on the PC display) of the vertices of the im-th SubFace polygon when drawing a fold-up diagram.
-
-                for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
-                    t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, i)));
-                    t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, i)));
-                    t1.set(camera.object2TV(t0));
-                    x[i] = gx(t1.getX());
-                    y[i] = gy(t1.getY());
-                }
-
-                t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
-                t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
-                t1.set(camera.object2TV(t0));
-                x[0] = gx(t1.getX());
-                y[0] = gy(t1.getY());
-
-                //This is the end of finding the coordinates (on the PC display) of the vertices of the im-th SubFace polygon when drawing a fold-up diagram.
-
-                g2.fill(new java.awt.Polygon(x, y, subFace_figure.getPointsCount(im)));
+                fillFace(g2, camera, subFace_figure, im);
             }
         }
         // Draw a surface so far
@@ -300,8 +216,8 @@ public class FoldedFigure_Worker_Drawer {
                     //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求める
 
                     //棒の座標   subFace_figure.getmaex(lineId),subFace_figure.getmaey(lineId)   -    subFace_figure.getatox(lineId) , subFace_figure.getatoy(lineId)
-                    origami.crease_pattern.element.Point b_begin = new origami.crease_pattern.element.Point(subFace_figure.getBeginX(lineId), subFace_figure.getBeginY(lineId));
-                    origami.crease_pattern.element.Point b_end = new origami.crease_pattern.element.Point(subFace_figure.getEndX(lineId), subFace_figure.getEndY(lineId));
+                    Point b_begin = new Point(subFace_figure.getBegin(lineId), subFace_figure.getBeginY(lineId));
+                    Point b_end = new Point(subFace_figure.getEndX(lineId), subFace_figure.getEndY(lineId));
                     double b_length = b_begin.distance(b_end);
 
                     //棒と直交するベクトル
@@ -336,48 +252,40 @@ public class FoldedFigure_Worker_Drawer {
                         t_bmtx = t1.getX();
                         t_bmty = t1.getY();
 
+                        Path2D.Double path = new Path2D.Double();
                         //影の長方形
 
                         // ---------- [0] ----------------
                         t0.setX(subFace_figure.getBeginX(lineId));
                         t0.setY(subFace_figure.getBeginY(lineId));
                         t1.set(camera.object2TV(t0));
-                        xd[0] = t1.getX();
-                        yd[0] = t1.getY();
-                        x[0] = (int) xd[0];
-                        y[0] = (int) yd[0];
+
+                        path.moveTo(t1.getX(), t1.getY());
 
                         // ---------- [1] ----------------
                         t0.setX(subFace_figure.getBeginX(lineId) + o_btx);
                         t0.setY(subFace_figure.getBeginY(lineId) + o_bty);
                         t1.set(camera.object2TV(t0));
-                        xd[1] = t1.getX();
-                        yd[1] = t1.getY();
-                        x[1] = (int) xd[1];
-                        y[1] = (int) yd[1];
+
+                        path.lineTo(t1.getX(), t1.getY());
 
                         // ---------- [2] ----------------
                         t0.setX(subFace_figure.getEndX(lineId) + o_btx);
                         t0.setY(subFace_figure.getEndY(lineId) + o_bty);
                         t1.set(camera.object2TV(t0));
-                        xd[2] = t1.getX();
-                        yd[2] = t1.getY();
-                        x[2] = (int) xd[2];
-                        y[2] = (int) yd[2];
+
+                        path.lineTo(t1.getX(), t1.getY());
 
                         // ---------- [3] ----------------
                         t0.setX(subFace_figure.getEndX(lineId));
                         t0.setY(subFace_figure.getEndY(lineId));
                         t1.set(camera.object2TV(t0));
-                        xd[3] = t1.getX();
-                        yd[3] = t1.getY();
-                        x[3] = (int) xd[3];
-                        y[3] = (int) yd[3];
+
+                        path.lineTo(t1.getX(), t1.getY());
+                        path.closePath();
 
                         g2.setPaint(new GradientPaint((float) t_bmx, (float) t_bmy, new Color(0, 0, 0, 50), (float) t_bmtx, (float) t_bmty, new Color(0, 0, 0, 0)));
-
-                        g2.fill(new java.awt.Polygon(x, y, 4));
-
+                        g2.fill(path);
                     }
                     //----------------------------------棒と直交するxベクトルの向きを変えて影を描画
                     o_btx = -o_btx;//棒と直交するxベクトル
@@ -389,53 +297,45 @@ public class FoldedFigure_Worker_Drawer {
                     o_bmty = o_bmy + o_bty;
 
                     if (subFace_figure.inside(new origami.crease_pattern.element.Point(o_bmx + Epsilon.UNKNOWN_001 * o_btx, o_bmy + Epsilon.UNKNOWN_001 * o_bty), im) != origami.crease_pattern.element.Polygon.Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
-
+                        Path2D.Double path = new Path2D.Double();
                         t0.setX(o_bmtx);
                         t0.setY(o_bmty);
                         t1.set(camera.object2TV(t0));
-
                         //影の長方形
 
                         // ---------- [0] ----------------
                         t0.setX(subFace_figure.getBeginX(lineId));
                         t0.setY(subFace_figure.getBeginY(lineId));
                         t1.set(camera.object2TV(t0));
-                        xd[0] = t1.getX();
-                        yd[0] = t1.getY();
-                        x[0] = (int) xd[0];
-                        y[0] = (int) yd[0];
+
+                        double xd0 = t1.getX();
+                        double yd0 = t1.getY();
+                        path.moveTo(t1.getX(), t1.getY());
 
                         // ---------- [1] ----------------
                         t0.setX(subFace_figure.getBeginX(lineId) + o_btx);
                         t0.setY(subFace_figure.getBeginY(lineId) + o_bty);
                         t1.set(camera.object2TV(t0));
-                        xd[1] = t1.getX();
-                        yd[1] = t1.getY();
-                        x[1] = (int) xd[1];
-                        y[1] = (int) yd[1];
+                        double xd1 = t1.getX();
+                        double yd1 = t1.getY();
+                        path.lineTo(t1.getX(), t1.getY());
+
 
                         // ---------- [2] ----------------
                         t0.setX(subFace_figure.getEndX(lineId) + o_btx);
                         t0.setY(subFace_figure.getEndY(lineId) + o_bty);
                         t1.set(camera.object2TV(t0));
-                        xd[2] = t1.getX();
-                        yd[2] = t1.getY();
-                        x[2] = (int) xd[2];
-                        y[2] = (int) yd[2];
+                        path.lineTo(t1.getX(), t1.getY());
 
                         // ---------- [3] ----------------
                         t0.setX(subFace_figure.getEndX(lineId));
                         t0.setY(subFace_figure.getEndY(lineId));
                         t1.set(camera.object2TV(t0));
-                        xd[3] = t1.getX();
-                        yd[3] = t1.getY();
-                        x[3] = (int) xd[3];
-                        y[3] = (int) yd[3];
+                        path.lineTo(t1.getX(), t1.getY());
+                        path.closePath();
 
-
-                        //g2.setPaint( new GradientPaint( (float)t_bmx, (float)t_bmy, new Color(0,0,0,50),     (float)t_bmtx, (float)t_bmty,  new Color(0,0,0,0)  ));
-                        g2.setPaint(new GradientPaint((float) xd[0], (float) yd[0], new Color(0, 0, 0, 50), (float) xd[1], (float) yd[1], new Color(0, 0, 0, 0)));
-                        g2.fill(new java.awt.Polygon(x, y, 4));
+                        g2.setPaint(new GradientPaint((float) xd0, (float) yd0, new Color(0, 0, 0, 50), (float) xd1, (float) yd1, new Color(0, 0, 0, 0)));
+                        g2.fill(path);
                     }
                 }
             }
@@ -443,17 +343,7 @@ public class FoldedFigure_Worker_Drawer {
 
         //棒を描く-----------------------------------------------------------------------------------------
 
-
-        if (antiAlias) {
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);//アンチェイリアス　オン
-            BasicStroke BStroke = new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-            g2.setStroke(BStroke);//線の太さや線の末端の形状
-        } else {
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オフ
-            BasicStroke BStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-            g2.setStroke(BStroke);//線の太さや線の末端の形状
-        }
-
+        setAntiAlias(g2);
         g.setColor(L_color);//g.setColor(Colors.get(Color.black));
 
         for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
@@ -489,29 +379,43 @@ public class FoldedFigure_Worker_Drawer {
             }
 
             if (drawing_flag) {//棒を描く。
-                s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
-                s_tv.set(camera.object2TV(s_ob));
-                g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //直線
+                drawLine(g2, camera, subFace_figure, ib);
             }
+        }
+    }
+
+    private void setAntiAlias(Graphics2D g2) {
+        if (antiAlias) {
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);//アンチェイリアス　オン
+            BasicStroke BStroke = new BasicStroke(1.2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
+            g2.setStroke(BStroke);//線の太さや線の末端の形状
+        } else {
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オフ
+            BasicStroke BStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
+            g2.setStroke(BStroke);//線の太さや線の末端の形状
         }
     }
 
     //---------------------------------------------------------
     public void draw_cross_with_camera(Graphics g, boolean selected, int index) {
+        Graphics2D g2 = (Graphics2D) g;
         //Draw the center of the camera with a cross
-        origami.crease_pattern.element.Point point = camera.object2TV(camera.getCameraPosition());
+        Point point = camera.object2TV(camera.getCameraPosition());
         DrawingUtil.cross(g, point, 5.0, 2.0, LineColor.ORANGE_4);
 
         if (selected) {
             g.setColor(Colors.get(new Color(200, 50, 255, 90)));
-            g.fillOval(gx(point.getX()) - 25, gy(point.getY()) - 25, 50, 50); //円
+            Ellipse2D.Double ellipse = new Ellipse2D.Double(point.getX() - 25, point.getY() - 25, 50, 50);
+
+            g2.fill(ellipse);
         }
 
         if (displayNumbers) {
             Font f = g.getFont();
             g.setFont(new Font(f.getName(), f.getStyle(), 50));
             g.setColor(Color.orange);
-            g.drawString(String.valueOf(index), gx(point.getX()) + 25, gy(point.getY()) + 25);
+
+            g2.drawString(String.valueOf(index), (float) point.getX() + 25, (float) point.getY() + 25);
             g.setFont(f);
         }
     }
@@ -583,10 +487,6 @@ public class FoldedFigure_Worker_Drawer {
 
     public void setData(ApplicationModel applicationModel) {
         displayNumbers = applicationModel.getDisplayNumbers();
-    }
-
-    public static void setStaticData(ApplicationModel applicationModel) {
-        displaySsi = applicationModel.getDisplaySelfIntersection(); 
     }
 
     public void getData(FoldedFigureModel foldedFigureModel) {
