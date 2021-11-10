@@ -5,10 +5,10 @@ import origami.folding.HierarchyList;
 import origami.folding.element.SubFace;
 
 /**
- * Author: Mu-Tsun Tsai
+ * This class improves the implementation of the original {@link SubFace}
+ * priority algorithm.
  * 
- * This class improves the implementation of the original SubFace priority
- * algorithm.
+ * @author Mu-Tsun Tsai
  */
 public class SubFacePriority {
 

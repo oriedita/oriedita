@@ -1,8 +1,6 @@
 package origami.folding.permutation;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * This is a much more efficient permutation generator than the original
  * implementation by Mr.Meguro. It uses the classical digit swapping idea to
  * reduce half of the work searching for next available element. It is also
@@ -10,8 +8,10 @@ package origami.folding.permutation;
  * permutations that won't work.
  * 
  * The idea behind ChainPermutationGenerator is that it locks the ordering of
- * the longest chain found in the given PairGuide. This reduces as much as l!
- * iterations, where l is the length of the chain.
+ * the longest chain found in the given {@link PairGuide}. This reduces as much
+ * as l! iterations, where l is the length of the chain.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class ChainPermutationGenerator extends PermutationGenerator {
 
@@ -75,7 +75,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
         int result = nextCore(digit);
         if (result == 0) {
             reset();
-            if(restored) {
+            if (restored) {
                 looped = true;
                 saved = false;
                 restored = false;

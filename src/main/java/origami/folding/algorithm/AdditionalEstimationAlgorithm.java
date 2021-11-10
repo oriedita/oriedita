@@ -6,17 +6,19 @@ import origami.crease_pattern.worker.FoldedFigure_Worker.HierarchyListStatus;
 import origami.data.StackArray;
 import origami.data.listMatrix.PseudoListMatrix;
 import origami.folding.HierarchyList;
+import origami.folding.algorithm.italiano.ItalianoAlgorithm;
+import origami.folding.algorithm.italiano.ReactiveItalianoAlgorithm;
 import origami.folding.element.SubFace;
 import origami.folding.util.EquivalenceCondition;
 import origami.folding.util.IBulletinBoard;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * This class is the result of refactoring the original additional_estimation().
  * It does basically the same thing, but greatly improves readability. It also
  * improves the performance by removing outer loops that are theoretically
  * redundant.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class AdditionalEstimationAlgorithm {
 
@@ -34,7 +36,7 @@ public class AdditionalEstimationAlgorithm {
     private final SubFace[] subFaces; // indices start from 1
     private final int count;
 
-    private final ItalianoAlgorithm[] IA;
+    private final ReactiveItalianoAlgorithm[] IA;
     private final PseudoListMatrix relationObservers;
     private final StackArray changeList;
 
@@ -66,7 +68,7 @@ public class AdditionalEstimationAlgorithm {
         this.subFaces = new SubFace[count];
         System.arraycopy(s, 0, this.subFaces, 0, count); // We keep a copy, since s might get swapped.
         changeList = new StackArray(count, capacity);
-        IA = new ItalianoAlgorithm[count];
+        IA = new ReactiveItalianoAlgorithm[count];
         relationObservers = new PseudoListMatrix(hierarchyList.getFacesTotal());
     }
 
@@ -167,7 +169,7 @@ public class AdditionalEstimationAlgorithm {
     }
 
     private void initializeItalianoAlgorithm(int s) {
-        IA[s] = new ItalianoAlgorithm(s, subFaces[s].getFaceIdCount(), changeList);
+        IA[s] = new ReactiveItalianoAlgorithm(subFaces[s].getFaceIdCount(), s, changeList);
         int count = subFaces[s].getFaceIdCount();
         for (int i = 1; i <= count; i++) {
             for (int j = 1; j <= count; j++) {

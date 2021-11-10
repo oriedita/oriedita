@@ -4,10 +4,10 @@ import origami.data.quadTree.QuadTree.Node;
 import origami.data.quadTree.adapter.QuadTreeAdapter;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * QuadTreeCollector interface describes the behavior of a particular type of
  * collection process.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public interface QuadTreeCollector {
 

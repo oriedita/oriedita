@@ -1,12 +1,12 @@
 package origami.data.tree;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * AVL tree (Adelson-Velsky and Landis Tree) is a classical data structure that
  * is a self-balancing binary search tree. It uses O(n) space and O(log n) time
  * for searching, inserting and deleting. AVL tree maintains its balance at all
  * times, making its searching faster than other BST.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class AVLTree<T> implements BST<T> {
 

@@ -1,11 +1,14 @@
-package origami.folding.algorithm;
+package origami.folding.algorithm.italiano;
 
-import java.util.*;
-import origami.data.StackArray;
+import java.util.ArrayDeque;
 
 /**
  * This is the transitive closure algorithm described by G. F. Italiano. See
- * http://dx.doi.org/10.1016/0304-3975%2886%2990098-8.
+ * http://dx.doi.org/10.1016/0304-3975%2886%2990098-8. The base class only
+ * contains the basic functionality, while additional features are added in the
+ * derived classes.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class ItalianoAlgorithm {
 
@@ -13,8 +16,7 @@ public class ItalianoAlgorithm {
     public static final int emptyNode = 1 << 16; // so that 0 is reserved as null
     public static final int nodeMask = (1 << 17) - 1;
 
-    private final int id;
-    private final int size;
+    protected final int size;
 
     /**
      * matrix[i][j] is the node of j on the spanning tree of i, of which existence
@@ -26,10 +28,7 @@ public class ItalianoAlgorithm {
      * subFace will have no more than 32767 faces, which is very reasonable. (No way
      * any one will design a model THAT thick!)
      */
-    private final int[][] matrix; // 1-based
-
-    /** This is used only in the realtime AEA. */
-    private int[][] backup;
+    protected final int[][] matrix; // 1-based
 
     /**
      * Prevents heap memory overflow. Still, for large projects, it is necessary to
@@ -44,35 +43,15 @@ public class ItalianoAlgorithm {
      */
     private final ArrayDeque<Long> stack = new ArrayDeque<>();
 
-    /** Each changed entry is represented as int32 using upper and lower bits. */
-    public final StackArray changes;
-
-    public ItalianoAlgorithm(int id, int size, StackArray changes) {
-        this.id = id;
+    public ItalianoAlgorithm(int size) {
         this.size = size;
-        this.changes = changes;
         this.matrix = new int[size + 1][size + 1];
         for (int i = 1; i <= size; i++) {
             matrix[i][i] = emptyNode;
         }
     }
 
-    public void save() {
-        backup = new int[size + 1][size + 1];
-        copy(matrix, backup);
-    }
-
-    public void restore() {
-        copy(backup, matrix);
-    }
-
-    private void copy(int[][] src, int[][] target) {
-        for (int i = 1; i <= size; i++) {
-            System.arraycopy(src[i], 1, target[i], 1, size);
-        }
-    }
-
-    public void add(int i, int j) {
+    public final void add(int i, int j) {
         if (matrix[i][j] == 0) {
             for (int x = 1; x <= size; x++) {
                 if (matrix[x][i] != 0 && matrix[x][j] == 0) {
@@ -86,15 +65,12 @@ public class ItalianoAlgorithm {
         }
     }
 
-    private void meld(int x, int j, int u, int v) {
+    protected void meld(int x, int j, int u, int v) {
         // create new node
         matrix[x][v] = emptyNode | (matrix[x][u] >>> 17);
 
         // add node as child of matrix[x][u]
         matrix[x][u] = matrix[x][u] & nodeMask | (v << 17);
-
-        // add to change list
-        changes.add(id, (x << 16) | v);
 
         // copy subtree
         int w = matrix[j][v] >>> 17;

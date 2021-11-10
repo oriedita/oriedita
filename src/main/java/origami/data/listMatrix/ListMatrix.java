@@ -6,15 +6,15 @@ import java.util.Iterator;
 import origami.data.tree.*;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * This is the data structure for "a list of int per some positions in a very
  * large matrix". In that case, it would not be feasible to really create a
  * large 2D array (or a HashMap using a pair of keys) and have an ArrayList (or
  * a native LinkedList) for each position. In order to balance space and speed,
  * I use BST and customized linked list to implement such structure. In
- * particular, AVL tree is used, since typically this structure is first filled
- * with data and then perform lots of searches.
+ * particular, {@link AVLTree} is used, since typically this structure is first
+ * filled with data and then perform lots of searches.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class ListMatrix {
 

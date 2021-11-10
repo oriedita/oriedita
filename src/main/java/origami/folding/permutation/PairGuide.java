@@ -3,8 +3,6 @@ package origami.folding.permutation;
 import java.util.ArrayList;
 
 /**
- * Author: Mu-Tsun Tsai
- * 
  * This class improves the efficiency of the original GuideMap class. There are
  * two differences:
  * 
@@ -15,6 +13,8 @@ import java.util.ArrayList;
  * the functionality of penetration_inconsistent_digits_request(), but it turned
  * out that the cost of confirming and retracting in TripleGuide is too high, in
  * some cases even brings down the performance.
+ * 
+ * @author Mu-Tsun Tsai
  */
 public class PairGuide {
 
