@@ -8,6 +8,13 @@ import origami_editor.editor.Save;
 import origami_editor.editor.databinding.CanvasModel;
 
 public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineSelect {
+    private final CreasePattern_Worker d;
+    private final CanvasModel canvasModel;
+
+    public MouseHandlerCreaseCopy(CreasePattern_Worker d, CanvasModel canvasModel) {
+        this.d = d;
+        this.canvasModel = canvasModel;
+    }
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CREASE_COPY_22;
@@ -15,7 +22,7 @@ public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineSelect {
 
     //マウスリリース----------------------------------------------------
     public void mouseReleased(Point p0) {
-        d.app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+        canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
@@ -46,7 +53,7 @@ public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineSelect {
             d.foldLineSet.unselect_all();
             d.record();
 
-            d.app.canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
+            canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
         }
         d.lineStep.clear();
     }

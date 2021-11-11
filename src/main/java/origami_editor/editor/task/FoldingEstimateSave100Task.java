@@ -2,23 +2,35 @@ package origami_editor.editor.task;
 
 import origami.crease_pattern.FoldingException;
 import origami_editor.editor.App;
+import origami_editor.editor.databinding.FileModel;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
+import origami_editor.editor.service.FileSaveService;
+import origami_editor.editor.service.FoldingService;
 
+import javax.swing.*;
 import java.io.File;
 
 public class FoldingEstimateSave100Task implements Runnable {
     private final App app;
+    private final FoldingService foldingService;
+    private final FileSaveService fileSaveService;
+    private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
+    private final FileModel fileModel;
 
-    public FoldingEstimateSave100Task(App app) {
+    public FoldingEstimateSave100Task(App app, FoldingService foldingService, FileSaveService fileSaveService, DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList, FileModel fileModel) {
         this.app = app;
+        this.foldingService = foldingService;
+        this.fileSaveService = fileSaveService;
+        this.foldedFiguresList = foldedFiguresList;
+        this.fileModel = fileModel;
     }
 
     @Override
     public void run() {
         long start = System.currentTimeMillis();
 
-        File file = app.fileSaveService.selectExportFile();
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+        File file = fileSaveService.selectExportFile();
+        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
         if (selectedFigure == null) {
             return;
@@ -32,7 +44,7 @@ public class FoldingEstimateSave100Task implements Runnable {
                 try {
 
                     for (int i = 1; i <= objective; i++) {
-                        app.folding_estimated(selectedFigure);
+                        foldingService.folding_estimated(selectedFigure);
 
                         String filename = file.getPath();
                         if (filename.contains(".")) {
@@ -42,7 +54,7 @@ public class FoldingEstimateSave100Task implements Runnable {
                             filename = basename + "_" + selectedFigure.foldedFigure.discovered_fold_cases + extension;
                         }
 
-                        app.fileModel.setExportImageFileName(filename);
+                        fileModel.setExportImageFileName(filename);
 
                         app.w_image_running.set(true);
                         app.repaintCanvas();

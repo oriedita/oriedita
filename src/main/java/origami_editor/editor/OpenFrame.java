@@ -1,6 +1,7 @@
 package origami_editor.editor;
 
 import origami_editor.editor.databinding.CanvasModel;
+import origami_editor.editor.service.ButtonService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,22 +19,22 @@ public class OpenFrame extends JDialog {
     private JButton del_l_XButton;
     private JPanel panel;
 
-    public OpenFrame(String name, App app) {
+    public OpenFrame(String name, App app, ButtonService buttonService) {
         super(app.frame, name);
 
         setContentPane($$$getRootComponent$$$());
 
         setDefaultCloseOperation(HIDE_ON_CLOSE);
 
-        app.registerButton(o_F_checkButton, "o_F_checkAction");
-        app.registerButton(foldableLinePlusGridInputButton, "foldableLinePlusGridInputAction");
-        app.registerButton(select_polygonButton, "select_polygonAction");
-        app.registerButton(unselect_polygonButton, "unselect_polygonAction");
-        app.registerButton(select_lXButton, "select_lXAction");
-        app.registerButton(unselect_lXButton, "unselect_lXAction");
-        app.registerButton(del_lButton, "del_lAction");
-        app.registerButton(del_l_XButton, "del_l_XAction");
-        app.registerButton(selectAnd3ClickCheckBox, "selectAnd3ClickAction");
+        buttonService.registerButton(o_F_checkButton, "o_F_checkAction");
+        buttonService.registerButton(foldableLinePlusGridInputButton, "foldableLinePlusGridInputAction");
+        buttonService.registerButton(select_polygonButton, "select_polygonAction");
+        buttonService.registerButton(unselect_polygonButton, "unselect_polygonAction");
+        buttonService.registerButton(select_lXButton, "select_lXAction");
+        buttonService.registerButton(unselect_lXButton, "unselect_lXAction");
+        buttonService.registerButton(del_lButton, "del_lAction");
+        buttonService.registerButton(del_l_XButton, "del_l_XAction");
+        buttonService.registerButton(selectAnd3ClickCheckBox, "selectAnd3ClickAction");
 
         o_F_checkButton.addActionListener(e -> {
             app.canvasModel.setMouseMode(MouseMode.FLAT_FOLDABLE_CHECK_63);

@@ -4,24 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.ui.FlatUIUtils;
-import origami.crease_pattern.FoldingException;
-import origami.crease_pattern.LineSegmentSet;
-import origami.crease_pattern.element.Point;
-import origami_editor.editor.action.Click;
 import origami_editor.editor.canvas.*;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.drawing.FoldedFigure_Worker_Drawer;
-import origami.folding.FoldedFigure;
-import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.editor.json.DefaultObjectMapper;
+import origami_editor.editor.service.ButtonService;
 import origami_editor.editor.service.FileSaveService;
-import origami_editor.editor.task.FoldingEstimateTask;
+import origami_editor.editor.service.FoldingService;
 import origami_editor.editor.task.TaskExecutor;
-import origami_editor.tools.KeyStrokeUtil;
 import origami_editor.tools.ResourceUtil;
-import origami_editor.tools.StringOp;
 
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
@@ -57,7 +50,8 @@ public class App {
     final Queue<Popup> popups = new ArrayDeque<>();
     private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate = new MouseHandlerVoronoiCreate();
     public  final FileSaveService fileSaveService;
-    public LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public final ButtonService buttonService;
+    public final FoldingService foldingService;
     public BulletinBoard bulletinBoard = new BulletinBoard();
     // ------------------------------------------------------------------------
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
@@ -69,7 +63,6 @@ public class App {
     //画像出力するため20170107_oldと書かれた行をコメントアウトし、20170107_newの行を有効にした。
     //画像出力不要で元にもどすなら、20170107_oldと書かれた行を有効にし、20170107_newの行をコメントアウトにすればよい。（この変更はOrihime.javaの中だけに2箇所ある）
     // オフスクリーン
-    Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
     JFrame frame;
 
     public App() {
@@ -84,12 +77,16 @@ public class App {
         backgroundModel = new BackgroundModel();
         creasePatternCameraModel = new CameraModel();
         fileModel = new FileModel();
-        mainCreasePatternWorker = new CreasePattern_Worker(this);
         foldedFiguresList = new DefaultComboBoxModel<>();
 
         canvas = new Canvas(this);
+        explanation = new HelpDialog(applicationModel::setHelpVisible);
 
-        fileSaveService = new FileSaveService(canvas, mainCreasePatternWorker, fileModel, applicationModel, historyStateModel, canvasModel, internalDivisionRatioModel, foldedFigureModel, gridModel, angleSystemModel, creasePatternCameraModel, foldedFiguresList);
+        mainCreasePatternWorker = new CreasePattern_Worker(canvas, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel);
+
+        fileSaveService = new FileSaveService(canvas, mainCreasePatternWorker, fileModel, applicationModel, historyStateModel, canvasModel, internalDivisionRatioModel, foldedFigureModel, gridModel, angleSystemModel, creasePatternCameraModel, foldedFiguresList, mouseHandlerVoronoiCreate);
+        buttonService = new ButtonService(explanation, mainCreasePatternWorker, canvas);
+        foldingService = new FoldingService(bulletinBoard, canvas, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, mainCreasePatternWorker, foldedFiguresList);
     }
 
     public void start() {
@@ -172,7 +169,7 @@ public class App {
                 }
 
                 if (e.isAltDown() && popups.isEmpty()) {
-                    for (Map.Entry<KeyStroke, AbstractButton> entry : helpInputMap.entrySet()) {
+                    for (Map.Entry<KeyStroke, AbstractButton> entry : buttonService.helpInputMap.entrySet()) {
                         AbstractButton button = entry.getValue();
                         KeyStroke keyStroke = entry.getKey();
 
@@ -215,7 +212,7 @@ public class App {
         BottomPanel bottomPanel = editor.getBottomPanel();
         LeftPanel leftPanel = editor.getLeftPanel();
 
-        AppMenuBar appMenuBar = new AppMenuBar(this, applicationModel, fileSaveService);
+        AppMenuBar appMenuBar = new AppMenuBar(this, applicationModel, fileSaveService, buttonService);
 
         frame.setJMenuBar(appMenuBar);
 
@@ -319,7 +316,7 @@ public class App {
 
         fileSaveService.developmentView_initialization();
 
-        Button_shared_operation();
+        buttonService.Button_shared_operation();
 
         mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);
 
@@ -343,12 +340,12 @@ public class App {
         canvas.addMouseModeHandler(MouseHandlerPerpendicularDraw.class);
         canvas.addMouseModeHandler(MouseHandlerSymmetricDraw.class);
         canvas.addMouseModeHandler(MouseHandlerParallelDraw.class);
-        canvas.addMouseModeHandler(MouseHandlerContinuousSymmetricDraw.class);
-        canvas.addMouseModeHandler(MouseHandlerDisplayLengthBetweenPoints1.class);
-        canvas.addMouseModeHandler(MouseHandlerDisplayLengthBetweenPoints2.class);
-        canvas.addMouseModeHandler(MouseHandlerDisplayAngleBetweenThreePoints1.class);
-        canvas.addMouseModeHandler(MouseHandlerDisplayAngleBetweenThreePoints2.class);
-        canvas.addMouseModeHandler(MouseHandlerDisplayAngleBetweenThreePoints3.class);
+        canvas.addMouseModeHandler(new MouseHandlerContinuousSymmetricDraw(mainCreasePatternWorker, canvas));
+        canvas.addMouseModeHandler(new MouseHandlerDisplayLengthBetweenPoints1(mainCreasePatternWorker, measuresModel));
+        canvas.addMouseModeHandler(new MouseHandlerDisplayLengthBetweenPoints2(mainCreasePatternWorker, measuresModel));
+        canvas.addMouseModeHandler(new MouseHandlerDisplayAngleBetweenThreePoints1(mainCreasePatternWorker, measuresModel));
+        canvas.addMouseModeHandler(new MouseHandlerDisplayAngleBetweenThreePoints2(mainCreasePatternWorker, measuresModel));
+        canvas.addMouseModeHandler(new MouseHandlerDisplayAngleBetweenThreePoints3(mainCreasePatternWorker, measuresModel));
         canvas.addMouseModeHandler(MouseHandlerFoldableLineInput.class);
         canvas.addMouseModeHandler(MouseHandlerLineSegmentDivision.class);
         canvas.addMouseModeHandler(MouseHandlerCircleDraw.class);
@@ -375,14 +372,14 @@ public class App {
         canvas.addMouseModeHandler(MouseHandlerCreaseAdvanceType.class);
         canvas.addMouseModeHandler(MouseHandlerFishBoneDraw.class);
         canvas.addMouseModeHandler(MouseHandlerDoubleSymmetricDraw.class);
-        canvas.addMouseModeHandler(MouseHandlerCreaseMove4p.class);
-        canvas.addMouseModeHandler(MouseHandlerCreaseCopy4p.class);
-        canvas.addMouseModeHandler(MouseHandlerDrawCreaseSymmetric.class);
+        canvas.addMouseModeHandler(new MouseHandlerCreaseMove4p(mainCreasePatternWorker, canvasModel));
+        canvas.addMouseModeHandler(new MouseHandlerCreaseCopy4p(mainCreasePatternWorker, canvasModel));
+        canvas.addMouseModeHandler(new MouseHandlerDrawCreaseSymmetric(mainCreasePatternWorker, canvasModel));
         canvas.addMouseModeHandler(MouseHandlerCreaseMakeMV.class);
         canvas.addMouseModeHandler(MouseHandlerCreaseDeleteOverlapping.class);
-        canvas.addMouseModeHandler(MouseHandlerCreaseMove.class);
-        canvas.addMouseModeHandler(MouseHandlerCreaseCopy.class);
-        canvas.addMouseModeHandler(MouseHandlerCreaseSelect.class);
+        canvas.addMouseModeHandler(new MouseHandlerCreaseMove(mainCreasePatternWorker, canvasModel));
+        canvas.addMouseModeHandler(new MouseHandlerCreaseCopy(mainCreasePatternWorker, canvasModel));
+        canvas.addMouseModeHandler(new MouseHandlerCreaseSelect(mainCreasePatternWorker, canvasModel));
         canvas.addMouseModeHandler(MouseHandlerCreaseUnselect.class);
         canvas.addMouseModeHandler(MouseHandlerCircleChangeColor.class);
         canvas.addMouseModeHandler(MouseHandlerCreaseToggleMV.class);
@@ -398,11 +395,11 @@ public class App {
         canvas.addMouseModeHandler(MouseHandlerLengthenCrease.class);
         canvas.addMouseModeHandler(MouseHandlerUnused_10001.class);
         canvas.addMouseModeHandler(MouseHandlerUnused_10002.class);
-        canvas.addMouseModeHandler(MouseHandlerBackgroundChangePosition.class);
-        canvas.addMouseModeHandler(new MouseHandlerMoveCalculatedShape(this));
-        canvas.addMouseModeHandler(new MouseHandlerModifyCalculatedShape(this));
-        canvas.addMouseModeHandler(new MouseHandlerMoveCreasePattern(this));
-        canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(this, mainCreasePatternWorker));
+        canvas.addMouseModeHandler(new MouseHandlerBackgroundChangePosition(buttonService, backgroundModel, canvas));
+        canvas.addMouseModeHandler(new MouseHandlerMoveCalculatedShape(foldedFiguresList, canvas));
+        canvas.addMouseModeHandler(new MouseHandlerModifyCalculatedShape(foldingService, canvasModel, foldedFiguresList));
+        canvas.addMouseModeHandler(new MouseHandlerMoveCreasePattern(canvas, foldedFiguresList, mainCreasePatternWorker));
+        canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(foldedFiguresList, mainCreasePatternWorker));
 
         updateButtonIcons(frame);
         frame.pack();
@@ -423,7 +420,8 @@ public class App {
         frame.setVisible(true);
 
 
-        explanation = new HelpDialog(frame, applicationModel::setHelpVisible, canvas.getLocationOnScreen(), canvas.getSize());
+        explanation.setOwner(frame);
+        explanation.start(canvas.getLocationOnScreen(), canvas.getSize());
         explanation.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -584,96 +582,6 @@ public class App {
         canvas.repaint();
     }
 
-    public FoldType getFoldType() {
-        FoldType foldType;//= 0 Do nothing, = 1 Folding estimation for all fold lines in the normal development view, = 2 for fold estimation for selected fold lines, = 3 for changing the folding state
-        int foldLineTotalForSelectFolding = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
-        System.out.println("foldedFigures.size() = " + foldedFiguresList.getSize() + "    : foldedFigureIndex = " + foldedFiguresList.getIndexOf(foldedFiguresList.getSelectedItem()) + "    : mainDrawingWorker.get_orisensuu_for_select_oritatami() = " + foldLineTotalForSelectFolding);
-        if (foldedFiguresList.getSize() == 0) {                        //折り上がり系図無し
-                if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
-                    foldType = FoldType.FOR_ALL_LINES_1;//全展開図で折畳み
-                } else {        //折り線選択有り
-                    foldType = FoldType.FOR_SELECTED_LINES_2;//選択された展開図で折畳み
-                }
-        } else {                        //折り上がり系図有り
-            if (foldedFiguresList.getSelectedItem() == null) {                            //展開図指定
-                if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
-                    foldType = FoldType.NOTHING_0;//何もしない
-                } else {        //折り線選択有り
-                    foldType = FoldType.FOR_SELECTED_LINES_2;//選択された展開図で折畳み
-                }
-            } else {                        //折り上がり系図指定
-                if (foldLineTotalForSelectFolding == 0) {        //No fold line selection
-                    foldType = FoldType.CHANGING_FOLDED_3;//Fold with the specified fold-up genealogy
-                } else {        //With fold line selection
-                    foldType = FoldType.FOR_SELECTED_LINES_2;//Fold in selected crease pattern
-                }
-            }
-        }
-
-        return foldType;
-    }
-
-    public void fold(FoldType foldType, FoldedFigure.EstimationOrder estimationOrder) {
-        if (foldType == FoldType.NOTHING_0) {
-            System.out.println(" oritatame 20180108");
-        } else if ((foldType == FoldType.FOR_ALL_LINES_1) || (foldType == FoldType.FOR_SELECTED_LINES_2)) {
-            if (foldType == FoldType.FOR_ALL_LINES_1) {
-                //mainCreasePatternWorker.select_all();
-                Point cpPivot = this.mainCreasePatternWorker.getCameraPosition();
-                mainCreasePatternWorker.selectConnected(this.mainCreasePatternWorker.foldLineSet.closestPoint(cpPivot));
-            }
-            //
-            if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
-                CreasePattern_Worker creasePatternWorker2 = new CreasePattern_Worker(this);    // Basic branch craftsman. Accepts input from the mouse.
-                Save save = new Save();
-                mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
-                creasePatternWorker2.setSave_for_reading(save);
-                creasePatternWorker2.point_removal();
-                creasePatternWorker2.overlapping_line_removal();
-                creasePatternWorker2.branch_trim();
-                creasePatternWorker2.organizeCircles();
-                lineSegmentsForFolding = creasePatternWorker2.getForFolding();
-            } else {
-                lineSegmentsForFolding = mainCreasePatternWorker.getForSelectFolding();
-            }
-
-            //これより前のOZは古いOZ
-            FoldedFigure_Drawer selectedFigure = folding_prepare();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
-            //これより後のOZは新しいOZに変わる
-
-            TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(this, selectedFigure, estimationOrder));
-        } else if (foldType == FoldType.CHANGING_FOLDED_3) {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
-
-            if (selectedFigure != null) {
-                selectedFigure.foldedFigure.estimationOrder = estimationOrder;
-                selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_0;
-
-                TaskExecutor.executeTask("Folding Estimate",new FoldingEstimateTask(this, selectedFigure, estimationOrder));
-            }
-        }
-    }
-
-    public FoldedFigure_Drawer folding_prepare() {//Add one new folding diagram to the foldedFigures array list, specify it as the operation target, and inherit the foldedFigures (0) common parameters.
-        System.out.println(" oritatami_jyunbi 20180107");
-
-        FoldedFigure_Drawer newFoldedFigure = new FoldedFigure_Drawer(new FoldedFigure_01(bulletinBoard));
-
-        foldedFiguresList.addElement(newFoldedFigure);
-        foldedFiguresList.setSelectedItem(newFoldedFigure);
-
-        newFoldedFigure.getData(foldedFigureModel);
-
-        return newFoldedFigure;
-    }
-
-    public void twoColorNoSelectedPolygonalLineWarning() {
-        JLabel label = new JLabel(
-                "<html>２色塗りわけ展開図を描くためには、あらかじめ対象範囲を選択してください（selectボタンを使う）。<br>" +
-                        "To get 2-Colored crease pattern, select the target range in advance (use the select button).<html>");
-        JOptionPane.showMessageDialog(frame, label);
-    }
-
     public void foldingNoSelectedPolygonalLineWarning() {
         JLabel label = new JLabel(
                 "<html>新たに折り上がり図を描くためには、あらかじめ対象範囲を選択してください（selectボタンを使う）。<br>" +
@@ -705,14 +613,6 @@ public class App {
         }
     }
 
-    public void Button_shared_operation() {
-        mainCreasePatternWorker.setDrawingStage(0);
-        mainCreasePatternWorker.resetCircleStep();
-        mouseHandlerVoronoiCreate.voronoiLineSet.clear();
-        canvas.mouseReleasedValid = false;
-        canvas.mouseDraggedValid = false;
-    }
-
     void setFoldedFigureIndex(int i) {//Processing when OZ is switched
         System.out.println("foldedFigureIndex = " + i);
 
@@ -721,14 +621,6 @@ public class App {
 
         // Load data from this foldedFigure to the ui.
         newSelectedItem.getData(foldedFigureModel);
-    }
-
-    public Point e2p(MouseEvent e) {
-        double offset = 0.0;
-        if (applicationModel.getDisplayPointOffset()) {
-            offset = canvas.creasePatternCamera.getCameraZoomX() * mainCreasePatternWorker.getSelectionDistance();
-        }
-        return new Point(e.getX() - (int) offset, e.getY() - (int) offset);
     }
 
     void readBackgroundImageFromFile() {
@@ -750,156 +642,6 @@ public class App {
         } catch (Exception e) {
         }
     }
-
-    public void folding_estimated(FoldedFigure_Drawer selectedFigure) throws InterruptedException, FoldingException {
-        selectedFigure.folding_estimated(canvas.creasePatternCamera, lineSegmentsForFolding);
-    }
-
-    public void setTooltip(AbstractButton button, String key) {
-        String name = ResourceUtil.getBundleString("name", key);
-        String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
-        String tooltip = ResourceUtil.getBundleString("tooltip", key);
-        String help = ResourceUtil.getBundleString("help", key);
-
-        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
-
-
-        String tooltipText = "<html>";
-        if (!StringOp.isEmpty(name)) {
-            tooltipText += "<i>" + name + "</i><br/>";
-        }
-        if (!StringOp.isEmpty(tooltip)) {
-            tooltipText += tooltip + "<br/>";
-        }
-        if (keyStroke != null) {
-            tooltipText += "Hotkey: " + KeyStrokeUtil.toString(keyStroke) + "<br/>";
-        }
-
-        if (!tooltipText.equals("<html>")) {
-            button.setToolTipText(tooltipText);
-        }
-    }
-
-    public void registerButton(AbstractButton button, String key) {
-        String name = ResourceUtil.getBundleString("name", key);
-        String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
-        String tooltip = ResourceUtil.getBundleString("tooltip", key);
-        String help = ResourceUtil.getBundleString("help", key);
-
-        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
-
-        if (!StringOp.isEmpty(keyStrokeString) && keyStroke == null) {
-            System.err.println("Keystroke for \"" + key + "\": \"" + keyStrokeString + "\" is invalid");
-        }
-
-        setTooltip(button, key);
-
-        if (button instanceof JMenuItem) {
-            JMenuItem menuItem = (JMenuItem) button;
-
-            if (!StringOp.isEmpty(name)) {
-                int mnemonicIndex = name.indexOf('_');
-                if (mnemonicIndex > -1) {
-                    String formattedName = name.replaceAll("_", "");
-
-                    menuItem.setText(formattedName);
-                    menuItem.setMnemonic(formattedName.charAt(mnemonicIndex));
-                    menuItem.setDisplayedMnemonicIndex(mnemonicIndex);
-                } else {
-                    menuItem.setText(name);
-                }
-            }
-
-            if (keyStroke != null) {
-                // Menu item can handle own accelerator (and shows a nice hint).
-                menuItem.setAccelerator(keyStroke);
-            }
-        } else {
-            KeyStrokeUtil.resetButton(button);
-
-            addContextMenu(button, key, keyStroke);
-
-            if (keyStroke != null) {
-                helpInputMap.put(keyStroke, button);
-                button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
-            }
-            button.getActionMap().put(key, new Click(button));
-        }
-
-        if (!StringOp.isEmpty(help)) {
-            button.addActionListener(e -> {
-                explanation.setExplanation(key);
-
-                Button_shared_operation();
-            });
-        }
-    }
-
-    private void addContextMenu(AbstractButton button, String key, KeyStroke keyStroke) {
-        JPopupMenu popup = new JPopupMenu();
-        Action addKeybindAction = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                KeyStroke currentKeyStroke = button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).keys() != null && button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).keys().length > 0
-                        ? button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).keys()[0]
-                        : null;
-
-                new SelectKeyStrokeDialog(frame, button, helpInputMap, currentKeyStroke, newKeyStroke -> {
-                    if (newKeyStroke != null && helpInputMap.containsKey(newKeyStroke) && helpInputMap.get(newKeyStroke) != button) {
-                        String conflictingButton = (String) helpInputMap.get(newKeyStroke).getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).get(newKeyStroke);
-                        JOptionPane.showMessageDialog(frame, "Conflicting KeyStroke! Conflicting with " + conflictingButton);
-                        return false;
-                    }
-
-                    ResourceUtil.updateBundleKey("hotkey", key, newKeyStroke == null ? null : newKeyStroke.toString());
-
-                    helpInputMap.remove(currentKeyStroke);
-                    button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(currentKeyStroke);
-
-                    if (newKeyStroke != null) {
-                        helpInputMap.put(newKeyStroke, button);
-                        button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(newKeyStroke, key);
-                        putValue(Action.NAME, "Change key stroke (Current: " + KeyStrokeUtil.toString(newKeyStroke) + ")");
-                    } else {
-                        putValue(Action.NAME, "Change key stroke");
-                    }
-
-                    setTooltip(button, key);
-
-                    return true;
-                });
-            }
-        };
-        String actionName = "Change key stroke";
-        if (keyStroke != null) {
-            actionName += " (Current: " + KeyStrokeUtil.toString(keyStroke) + ")";
-        }
-        addKeybindAction.putValue(Action.NAME, actionName);
-        popup.add(addKeybindAction);
-
-        java.awt.Point point = new java.awt.Point();
-
-        button.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                point.x = e.getX();
-                point.y = e.getY();
-
-                maybeShowPopup(e);
-            }
-
-            public void mouseReleased(MouseEvent e) {
-                maybeShowPopup(e);
-            }
-
-            private void maybeShowPopup(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    popup.show(e.getComponent(),
-                            e.getX(), e.getY());
-                }
-            }
-        });
-    }
-
 
     private void applyLookAndFeel(String lafClassName) {
         EventQueue.invokeLater(() -> {
@@ -954,10 +696,4 @@ public class App {
         });
     }
 
-    public enum FoldType {
-        NOTHING_0,
-        FOR_ALL_LINES_1,
-        FOR_SELECTED_LINES_2,
-        CHANGING_FOLDED_3,
-    }
 }

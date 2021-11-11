@@ -3,6 +3,7 @@ package origami_editor.editor;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import origami_editor.editor.databinding.ApplicationModel;
+import origami_editor.editor.service.ButtonService;
 import origami_editor.editor.service.FileSaveService;
 import origami_editor.editor.transfer.SaveTransferable;
 
@@ -47,37 +48,37 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem pasteButton;
     private JMenuItem pasteOffsetButton;
 
-    public AppMenuBar(App app, ApplicationModel applicationModel, FileSaveService fileSaveService) {
+    public AppMenuBar(App app, ApplicationModel applicationModel, FileSaveService fileSaveService, ButtonService buttonService) {
         this.fileSaveService = fileSaveService;
         createElements();
-        app.registerButton(newButton, "newAction");
-        app.registerButton(openButton, "openAction");
-        app.registerButton(openRecentMenu, "openRecentAction");
-        app.registerButton(saveButton, "saveAction");
-        app.registerButton(saveAsButton, "saveAsAction");
-        app.registerButton(importButton, "importAction");
-        app.registerButton(importAddButton, "importAddAction");
-        app.registerButton(exportButton, "exportAction");
-        app.registerButton(exitButton, "exitAction");
-        app.registerButton(showPointRangeCheckBox, "showPointRangeAction");
-        app.registerButton(pointOffsetCheckBox, "pointOffsetAction");
-        app.registerButton(gridInputAssistCheckBox, "gridInputAssistAction");
-        app.registerButton(displayCommentsCheckBox, "displayCommentsAction");
-        app.registerButton(displayCpLinesCheckBox, "displayCpLinesAction");
-        app.registerButton(displayAuxLinesCheckBox, "displayAuxLinesAction");
-        app.registerButton(displayLiveAuxLinesCheckBox, "displayLiveAuxLinesAction");
-        app.registerButton(displayStandardFaceMarksCheckBox, "displayStandardFaceMarksAction");
-        app.registerButton(cpOnTopCheckBox, "cpOnTopAction");
-        app.registerButton(toggleHelpMenuItem, "toggleHelpAction");
-        app.registerButton(toggleConsoleMenuItem, "toggleConsoleAction");
-        app.registerButton(darkModeCheckBox, "toggleDarkModeAction");
-        app.registerButton(preciseZoomCheckBox, "preciseZoomAction");
-        app.registerButton(displaySelfIntersectionCheckBox, "displaySelfIntersectionAction");
+        buttonService.registerButton(newButton, "newAction");
+        buttonService.registerButton(openButton, "openAction");
+        buttonService.registerButton(openRecentMenu, "openRecentAction");
+        buttonService.registerButton(saveButton, "saveAction");
+        buttonService.registerButton(saveAsButton, "saveAsAction");
+        buttonService.registerButton(importButton, "importAction");
+        buttonService.registerButton(importAddButton, "importAddAction");
+        buttonService.registerButton(exportButton, "exportAction");
+        buttonService.registerButton(exitButton, "exitAction");
+        buttonService.registerButton(showPointRangeCheckBox, "showPointRangeAction");
+        buttonService.registerButton(pointOffsetCheckBox, "pointOffsetAction");
+        buttonService.registerButton(gridInputAssistCheckBox, "gridInputAssistAction");
+        buttonService.registerButton(displayCommentsCheckBox, "displayCommentsAction");
+        buttonService.registerButton(displayCpLinesCheckBox, "displayCpLinesAction");
+        buttonService.registerButton(displayAuxLinesCheckBox, "displayAuxLinesAction");
+        buttonService.registerButton(displayLiveAuxLinesCheckBox, "displayLiveAuxLinesAction");
+        buttonService.registerButton(displayStandardFaceMarksCheckBox, "displayStandardFaceMarksAction");
+        buttonService.registerButton(cpOnTopCheckBox, "cpOnTopAction");
+        buttonService.registerButton(toggleHelpMenuItem, "toggleHelpAction");
+        buttonService.registerButton(toggleConsoleMenuItem, "toggleConsoleAction");
+        buttonService.registerButton(darkModeCheckBox, "toggleDarkModeAction");
+        buttonService.registerButton(preciseZoomCheckBox, "preciseZoomAction");
+        buttonService.registerButton(displaySelfIntersectionCheckBox, "displaySelfIntersectionAction");
 
-        app.registerButton(copyButton, "copyClipboardAction");
-        app.registerButton(cutButton, "cutClipboardAction");
-        app.registerButton(pasteButton, "pasteClipboardAction");
-        app.registerButton(pasteOffsetButton, "pasteOffsetClipboardAction");
+        buttonService.registerButton(copyButton, "copyClipboardAction");
+        buttonService.registerButton(cutButton, "cutClipboardAction");
+        buttonService.registerButton(pasteButton, "pasteClipboardAction");
+        buttonService.registerButton(pasteOffsetButton, "pasteOffsetClipboardAction");
 
         newButton.addActionListener(e -> {
             if (!app.fileModel.isSaved()) {
@@ -99,7 +100,6 @@ public class AppMenuBar extends JMenuBar {
             app.foldedFiguresList.removeAllElements();
             //折畳予測図のの初期化　終了
 
-            app.Button_shared_operation();
             app.repaintCanvas();
 
             app.canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);

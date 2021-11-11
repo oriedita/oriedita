@@ -16,8 +16,15 @@ public class HelpDialog extends JDialog {
     private JPanel contentPane;
     private JTextPane helpLabel;
 
-    public HelpDialog(Frame owner, Consumer<Boolean> onClose, Point canvasLocation, Dimension canvasSize) {
-        super(owner, "Help");
+    private Frame owner;
+
+    public void setOwner(Frame owner) {
+        this.owner = owner;
+    }
+
+    public HelpDialog(Consumer<Boolean> onClose) {
+        super();
+        setTitle("Help");
         $$$setupUI$$$();
         setContentPane(contentPane);
 
@@ -71,12 +78,6 @@ public class HelpDialog extends JDialog {
         helpBundle = ResourceBundle.getBundle("help");
 
         helpLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
-
-        pack();
-
-        setLocation(canvasLocation.x + canvasSize.width - getSize().width - 10, canvasLocation.y + 10);
-
-        helpLabel.setText(helpBundle.getString("a__hajimeni"));
     }
 
     public void setExplanation(String key) {
@@ -120,4 +121,11 @@ public class HelpDialog extends JDialog {
         return contentPane;
     }
 
+    public void start(Point canvasLocation, Dimension canvasSize) {
+        pack();
+
+        setLocation(canvasLocation.x + canvasSize.width - getSize().width - 10, canvasLocation.y + 10);
+
+        helpLabel.setText(helpBundle.getString("a__hajimeni"));
+    }
 }

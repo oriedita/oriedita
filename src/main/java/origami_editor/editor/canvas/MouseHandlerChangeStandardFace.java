@@ -1,17 +1,18 @@
 package origami_editor.editor.canvas;
 
 import origami.crease_pattern.element.Point;
-import origami_editor.editor.App;
 import origami_editor.editor.MouseMode;
 import origami.folding.FoldedFigure;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 
-public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
-    private final App app;
-    private final CreasePattern_Worker d;
+import javax.swing.*;
 
-    public MouseHandlerChangeStandardFace(App app, CreasePattern_Worker d) {
-        this.app = app;
+public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
+    private final CreasePattern_Worker d;
+    private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
+
+    public MouseHandlerChangeStandardFace(DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList, CreasePattern_Worker d) {
+        this.foldedFiguresList = foldedFiguresList;
         this.d = d;
     }
 
@@ -38,7 +39,7 @@ public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
     @Override
     public void mouseReleased(Point p0) {
 
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
         if (selectedFigure != null) {
             Point p = new Point();

@@ -22,10 +22,10 @@ public class Editor {
     }
 
     private void createUIComponents() {
-        rightPanel = new RightPanel(app, app.angleSystemModel);
-        bottomPanel = new BottomPanel(app);
-        topPanel = new TopPanel(app);
-        leftPanel = new LeftPanel(app);
+        rightPanel = new RightPanel(app, app.angleSystemModel, app.buttonService, app.measuresModel, app.mainCreasePatternWorker, app.canvasModel, app.applicationModel);
+        bottomPanel = new BottomPanel(app, app.buttonService, app.measuresModel, app.canvasModel, app.foldedFigureModel);
+        topPanel = new TopPanel(app, app.measuresModel, app.buttonService, app.canvasModel, app.internalDivisionRatioModel, app.backgroundModel, app.mainCreasePatternWorker, app.foldedFigureModel);
+        leftPanel = new LeftPanel(app, app.measuresModel, app.buttonService, app.mainCreasePatternWorker, app.applicationModel, app.foldedFigureModel, app.gridModel, app.canvasModel);
     }
 
     /**

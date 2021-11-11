@@ -3,13 +3,18 @@ package origami_editor.editor.canvas;
 import origami.Epsilon;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.element.Point;
-import origami_editor.editor.App;
 import origami_editor.editor.MouseMode;
 import origami.folding.FoldedFigure;
+import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
+import origami_editor.editor.service.FoldingService;
+
+import javax.swing.*;
 
 public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
-    private final App app;
+    private final FoldingService foldingService;
+    private final CanvasModel canvasModel;
+    private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
     private final Point p_m_left_on = new Point();//Coordinates when the left mouse button is pressed
     private final Point move_previous_selection_point = new Point();//Coordinates of the selected point before moving
     private int i_nanini_near = 0;//Point p is close to the point in the development view = 1, close to the point in the folded view = 2, not close to either = 0
@@ -17,8 +22,10 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
     private PointSelection i_point_selection = PointSelection.NONE_0;//Both cp_worker1 and cp_worker2 are not selected (situation i_point_selection = 0), cp_worker1 is selected and cp_worker2 is not selected (situation i_point_selection = 1), and the vertex is cp_worker2 selected (situation i_point_selection = 2).
     private FoldedFigure_Drawer selectedFigure;
 
-    public MouseHandlerModifyCalculatedShape(App app) {
-        this.app = app;
+    public MouseHandlerModifyCalculatedShape(FoldingService foldingService, CanvasModel canvasModel, DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList) {
+        this.foldingService = foldingService;
+        this.canvasModel = canvasModel;
+        this.foldedFiguresList = foldedFiguresList;
     }
 
     @Override
@@ -33,42 +40,42 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
 
     @Override
     public void mousePressed(Point p0) {
-        selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+        selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
         if (selectedFigure == null) {
             return;
         }
 
-        if (app.canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1) {
+        if (canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1) {
             foldedFigure_operation_mouse_on_1(p0);
         }
-        if (app.canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_2) {
+        if (canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_2) {
             foldedFigure_operation_mouse_on_2(p0);
         }
     }
 
     @Override
     public void mouseDragged(Point p0) {
-        selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+        selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
         if (selectedFigure == null) {
             return;
         }
 
-        if (app.canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1) {
+        if (canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1) {
             foldedFigure_operation_mouse_drag_1(p0);
         }
-        if (app.canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_2) {
+        if (canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_2) {
             foldedFigure_operation_mouse_drag_2(p0);
         }
     }
 
     @Override
     public void mouseReleased(Point p0) {
-        if (app.canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1) {
+        if (canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1) {
             foldedFigure_operation_mouse_off_1(p0);
         }
-        if (app.canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_2) {
+        if (canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_2) {
             foldedFigure_operation_mouse_off_2(p0);
         }
 
@@ -96,7 +103,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                 if (selectedFigure.foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) {
                     selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
                     try {
-                        app.folding_estimated(selectedFigure);
+                        foldingService.folding_estimated(selectedFigure);
                     } catch (InterruptedException | FoldingException e) {
                         e.printStackTrace();
                     }
@@ -129,7 +136,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                 selectedFigure.record();
                 selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_2;
 
-                if (app.canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1) {
+                if (canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1) {
                     selectedFigure.foldedFigure.displayStyle = selectedFigure.foldedFigure.display_flg_backup;//20180216
                 }
                 if (selectedFigure.foldedFigure.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) {
@@ -239,7 +246,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                     break;
             }
 
-            if (app.canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1) {
+            if (canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1) {
                 selectedFigure.foldedFigure.display_flg_backup = selectedFigure.foldedFigure.displayStyle;   //20180216  //display_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
                 selectedFigure.foldedFigure.displayStyle = FoldedFigure.DisplayStyle.WIRE_2;            //20180216
             }
@@ -260,7 +267,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
         if (i_nanini_near == 2) {
             selectedFigure.wireFrame_worker_drawer2.mDragged_selectedPoint_move_with_camera(move_previous_selection_point, p_m_left_on, p, selectedFigure.foldedFigure.ip4);
 
-            if (app.canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_2) {
+            if (canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_2) {
                 try {
                     selectedFigure.foldedFigure.folding_estimated_03();//20180216
                     selectedFigure.foldedFigure_worker_drawer.calculateFromTopCountedPosition();
@@ -360,7 +367,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                     break;
             }
 
-            if (app.canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1) {
+            if (canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1) {
                 selectedFigure.foldedFigure.display_flg_backup = selectedFigure.foldedFigure.displayStyle;   //20180216  //display_flgは、折り上がり図の表示様式の指定。4なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
                 selectedFigure.foldedFigure.displayStyle = FoldedFigure.DisplayStyle.WIRE_2;            //20180216
             }
@@ -381,7 +388,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
         if (i_nanini_near == 2) {
             selectedFigure.wireFrame_worker_drawer2.mDragged_selectedPoint_move_with_camera(move_previous_selection_point, p_m_left_on, p, selectedFigure.foldedFigure.ip4);
 
-            if (app.canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_2) {
+            if (canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_2) {
                 try {
                     selectedFigure.foldedFigure.folding_estimated_03();//20180216
                     selectedFigure.foldedFigure_worker_drawer.calculateFromTopCountedPosition();

@@ -5,6 +5,7 @@ import origami_editor.editor.Canvas;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.Save;
 import origami_editor.editor.canvas.CreasePattern_Worker;
+import origami_editor.editor.canvas.MouseHandlerVoronoiCreate;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.export.Cp;
@@ -34,6 +35,7 @@ public class FileSaveService {
     private final AngleSystemModel angleSystemModel;
     private final CameraModel creasePatternCameraModel;
     private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
+    private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate;
 
     public FileSaveService(
             Canvas canvas,
@@ -47,8 +49,8 @@ public class FileSaveService {
             GridModel gridModel,
             AngleSystemModel angleSystemModel,
             CameraModel creasePatternCameraModel,
-            DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList
-    ) {
+            DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList,
+            MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate) {
         this.canvas = canvas;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.fileModel = fileModel;
@@ -61,6 +63,7 @@ public class FileSaveService {
         this.angleSystemModel = angleSystemModel;
         this.creasePatternCameraModel = creasePatternCameraModel;
         this.foldedFiguresList = foldedFiguresList;
+        this.mouseHandlerVoronoiCreate = mouseHandlerVoronoiCreate;
     }
 
     public void setOwner(Frame owner) {

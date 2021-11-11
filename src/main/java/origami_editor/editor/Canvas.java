@@ -79,9 +79,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     public boolean flg61 = false;//Used when setting the frame 　20180524
 
-    boolean mouseDraggedValid = false;
+    public boolean mouseDraggedValid = false;
     //ウィンドウ透明化用のパラメータ
-    boolean mouseReleasedValid = false;//0 ignores mouse operation. 1 is valid for mouse operation. When an unexpected mouseDragged or mouseReleased occurs due to on-off of the file box, set it to 0 so that it will not be picked up. These are set to 1 valid when the mouse is clicked.
+    public boolean mouseReleasedValid = false;//0 ignores mouse operation. 1 is valid for mouse operation. When an unexpected mouseDragged or mouseReleased occurs due to on-off of the file box, set it to 0 so that it will not be picked up. These are set to 1 valid when the mouse is clicked.
 
     public Canvas(App app0) {
         app = app0;
@@ -333,7 +333,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         //何もしない
         //  final Point mouseLocation = MouseInfo.getPointerInfo().getLocation();//これは多分J2SE 5.0「Tiger」以降で作動するコード
 
-        Point p = new Point(app.e2p(e));
+        Point p = e2p(e);
         app.canvas.mouse_object_position(p);
 
         es1.setCamera(creasePatternCamera);
@@ -347,7 +347,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     //マウス操作(ボタンを押したとき)を行う関数----------------------------------------------------
     public void mousePressed(MouseEvent e) {
-        Point p = new Point(app.e2p(e));
+        Point p = e2p(e);
 
         mouseDraggedValid = true;
         mouseReleasedValid = true;
@@ -441,7 +441,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     public void mouseDragged(MouseEvent e) {
 
         if (mouseDraggedValid) {
-            Point p = new Point(app.e2p(e));
+            Point p = e2p(e);
             app.canvas.mouse_object_position(p);
 
             switch (btn) {
@@ -511,7 +511,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     //マウス操作(ボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(MouseEvent e) {
         if (mouseReleasedValid) {
-            Point p = new Point(app.e2p(e));
+            Point p = e2p(e);
 
 
             //---------ボタンの種類による動作変更-----------------------------------------
@@ -578,7 +578,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     public void mouseWheelMoved(MouseWheelEvent e) {
         if (mouseWheelMovesCreasePattern) {
-            Point p = new Point(app.e2p(e));
+            Point p = e2p(e);
             MouseWheelTarget target = pointInCreasePatternOrFoldedFigure(p);
 
             double scrollDistance = app.applicationModel.isPreciseZoom() ? e.getPreciseWheelRotation() : e.getWheelRotation();
@@ -863,6 +863,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         }
 
         app.repaintCanvas();
+    }
+
+    public Point e2p(MouseEvent e) {
+        double offset = 0.0;
+        if (app.applicationModel.getDisplayPointOffset()) {
+            offset = creasePatternCamera.getCameraZoomX() * app.mainCreasePatternWorker.getSelectionDistance();
+        }
+        return new Point(e.getX() - (int) offset, e.getY() - (int) offset);
     }
 
     public enum MouseWheelTarget {
