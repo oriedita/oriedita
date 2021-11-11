@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="origami_editor.editor.RightPanel">
-  <grid id="27dc6" binding="root" layout-manager="GridBagLayout">
+  <grid id="27dc6" binding="root" layout-manager="GridLayoutManager" row-count="24" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="2" vgap="2">
+    <margin top="2" left="2" bottom="2" right="2"/>
     <constraints>
-      <xy x="45" y="33" width="312" height="886"/>
+      <xy x="45" y="33" width="337" height="1018"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
-      <grid id="63dca" layout-manager="GridBagLayout">
+      <grid id="63dca" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -18,7 +19,6 @@
           <component id="fa107" class="javax.swing.JCheckBox" binding="cAMVCheckBox" default-binding="true">
             <constraints>
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="cAMV"/>
@@ -27,7 +27,6 @@
           <component id="43c70" class="javax.swing.JButton" binding="ck4_colorIncreaseButton">
             <constraints>
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/ck4_color_age.png"/>
@@ -36,7 +35,6 @@
           <component id="5b957" class="javax.swing.JButton" binding="fxTButton" default-binding="true">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="fxT"/>
@@ -45,7 +43,6 @@
           <component id="a385f" class="javax.swing.JCheckBox" binding="ckOCheckBox" default-binding="true">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="ckO"/>
@@ -54,7 +51,6 @@
           <component id="d3ab4" class="javax.swing.JCheckBox" binding="ckTCheckBox" default-binding="true">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="ckT"/>
@@ -63,7 +59,6 @@
           <component id="aabd2" class="javax.swing.JButton" binding="ck4_colorDecreaseButton">
             <constraints>
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/ck4_color_sage.png"/>
@@ -72,7 +67,6 @@
           <component id="ad324" class="javax.swing.JButton" binding="fxOButton" default-binding="true">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="fxO"/>
@@ -80,24 +74,17 @@
           </component>
         </children>
       </grid>
-      <vspacer id="45209">
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
-        </constraints>
-      </vspacer>
-      <grid id="85058" layout-manager="GridBagLayout">
+      <grid id="85058" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
           <component id="40593" class="javax.swing.JButton" binding="angleSystemAButton">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="180/12=15.0"/>
@@ -106,7 +93,6 @@
           <component id="20a6f" class="javax.swing.JButton" binding="angleSystemADecreaseButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/tiisaku.png"/>
@@ -115,7 +101,6 @@
           <component id="fc41" class="javax.swing.JButton" binding="angleSystemAIncreaseButton">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/ookiku.png"/>
@@ -124,7 +109,6 @@
           <component id="7ce55" class="javax.swing.JButton" binding="angleSystemBDecreaseButton">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/tiisaku.png"/>
@@ -132,8 +116,7 @@
           </component>
           <component id="4f680" class="javax.swing.JButton" binding="angleSystemBButton">
             <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="180/8=22.5"/>
@@ -142,7 +125,6 @@
           <component id="afde4" class="javax.swing.JButton" binding="angleSystemBIncreaseButton">
             <constraints>
               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/ookiku.png"/>
@@ -150,26 +132,20 @@
           </component>
         </children>
       </grid>
-      <vspacer id="3c600">
-        <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
-        </constraints>
-      </vspacer>
-      <grid id="12e4b" layout-manager="GridBagLayout">
+      <grid id="12e4b" layout-manager="GridLayoutManager" row-count="2" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
           <component id="26102" class="javax.swing.JTextField" binding="angleATextField">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="30" height="-1"/>
+                <preferred-size width="30" height="-1"/>
               </grid>
-              <gridbag weightx="0.3" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="40.0"/>
@@ -177,10 +153,10 @@
           </component>
           <component id="84372" class="javax.swing.JTextField" binding="angleCTextField">
             <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="30" height="-1"/>
+                <preferred-size width="30" height="-1"/>
               </grid>
-              <gridbag weightx="0.3" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="80.0"/>
@@ -188,10 +164,10 @@
           </component>
           <component id="72d08" class="javax.swing.JTextField" binding="angleBTextField">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="30" height="-1"/>
+                <preferred-size width="30" height="-1"/>
               </grid>
-              <gridbag weightx="0.3" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="60.0"/>
@@ -199,8 +175,9 @@
           </component>
           <component id="ca9db" class="javax.swing.JButton" binding="restrictedAngleABCSetButton">
             <constraints>
-              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.1" weighty="0.0"/>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="10" height="-1"/>
+              </grid>
             </constraints>
             <properties>
               <text value="S"/>
@@ -208,10 +185,10 @@
           </component>
           <component id="db126" class="javax.swing.JTextField" binding="angleDTextField">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="30" height="-1"/>
+                <preferred-size width="30" height="-1"/>
               </grid>
-              <gridbag weightx="0.3" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="30.0"/>
@@ -219,10 +196,10 @@
           </component>
           <component id="d9c4e" class="javax.swing.JTextField" binding="angleETextField">
             <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="30" height="-1"/>
+                <preferred-size width="30" height="-1"/>
               </grid>
-              <gridbag weightx="0.3" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="50.0"/>
@@ -230,10 +207,10 @@
           </component>
           <component id="57b66" class="javax.swing.JTextField" binding="angleFTextField">
             <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="30" height="-1"/>
+                <preferred-size width="30" height="-1"/>
               </grid>
-              <gridbag weightx="0.3" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="100.0"/>
@@ -241,8 +218,9 @@
           </component>
           <component id="30174" class="javax.swing.JButton" binding="restrictedAngleSetDEFButton">
             <constraints>
-              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.1" weighty="0.0"/>
+              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="10" height="-1"/>
+              </grid>
             </constraints>
             <properties>
               <text value="S"/>
@@ -250,16 +228,10 @@
           </component>
         </children>
       </grid>
-      <vspacer id="b6aff">
-        <constraints>
-          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
-        </constraints>
-      </vspacer>
-      <grid id="8eba3" layout-manager="GridBagLayout">
+      <grid id="8eba3" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -267,7 +239,6 @@
           <component id="d5d68" class="javax.swing.JButton" binding="degButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/deg.png"/>
@@ -276,7 +247,6 @@
           <component id="e5231" class="javax.swing.JButton" binding="deg3Button">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/deg3.png"/>
@@ -285,7 +255,6 @@
           <component id="d7902" class="javax.swing.JButton" binding="angleRestrictedButton">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/senbun_nyuryoku37.png"/>
@@ -293,16 +262,10 @@
           </component>
         </children>
       </grid>
-      <vspacer id="b6938">
-        <constraints>
-          <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
-        </constraints>
-      </vspacer>
-      <grid id="ee554" layout-manager="GridBagLayout">
+      <grid id="ee554" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -310,7 +273,6 @@
           <component id="de4f1" class="javax.swing.JButton" binding="c_colButton" default-binding="true">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="C_col"/>
@@ -319,7 +281,6 @@
           <component id="1ad43" class="javax.swing.JButton" binding="sen_tokutyuu_color_henkouButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/sen_tokutyuu_color_henkou.png"/>
@@ -327,24 +288,20 @@
           </component>
         </children>
       </grid>
-      <vspacer id="3ec42">
-        <constraints>
-          <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
-        </constraints>
-      </vspacer>
-      <grid id="88c65" layout-manager="GridBagLayout">
+      <grid id="88c65" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="20" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
           <component id="b89b4" class="javax.swing.JButton" binding="l1Button" default-binding="true">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <minimum-size width="30" height="-1"/>
+                <preferred-size width="30" height="-1"/>
+              </grid>
             </constraints>
             <properties>
               <horizontalAlignment value="11"/>
@@ -353,10 +310,9 @@
           </component>
           <component id="303d1" class="javax.swing.JTextField" binding="measuredLength1TextField">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
+                <preferred-size width="30" height="-1"/>
               </grid>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <opaque value="true"/>
@@ -365,8 +321,10 @@
           </component>
           <component id="2b13" class="javax.swing.JButton" binding="l2Button">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <minimum-size width="30" height="-1"/>
+                <preferred-size width="30" height="-1"/>
+              </grid>
             </constraints>
             <properties>
               <horizontalAlignment value="11"/>
@@ -375,10 +333,9 @@
           </component>
           <component id="17b4e" class="javax.swing.JTextField" binding="measuredLength2TextField">
             <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
+                <preferred-size width="30" height="-1"/>
               </grid>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <opaque value="true"/>
@@ -387,8 +344,10 @@
           </component>
           <component id="a1d56" class="javax.swing.JButton" binding="a3Button">
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <minimum-size width="30" height="-1"/>
+                <preferred-size width="30" height="-1"/>
+              </grid>
             </constraints>
             <properties>
               <horizontalAlignment value="11"/>
@@ -397,10 +356,9 @@
           </component>
           <component id="10b84" class="javax.swing.JTextField" binding="measuredAngle3TextField">
             <constraints>
-              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
+              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
+                <preferred-size width="30" height="-1"/>
               </grid>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <opaque value="true"/>
@@ -409,10 +367,9 @@
           </component>
           <component id="92092" class="javax.swing.JTextField" binding="measuredAngle2TextField">
             <constraints>
-              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
+                <preferred-size width="30" height="-1"/>
               </grid>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <opaque value="true"/>
@@ -421,10 +378,9 @@
           </component>
           <component id="171ad" class="javax.swing.JTextField" binding="measuredAngle1TextField">
             <constraints>
-              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
+                <preferred-size width="30" height="-1"/>
               </grid>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <opaque value="true"/>
@@ -433,8 +389,10 @@
           </component>
           <component id="bb1f8" class="javax.swing.JButton" binding="a2Button">
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <minimum-size width="30" height="-1"/>
+                <preferred-size width="30" height="-1"/>
+              </grid>
             </constraints>
             <properties>
               <horizontalAlignment value="11"/>
@@ -443,8 +401,10 @@
           </component>
           <component id="49ccb" class="javax.swing.JButton" binding="a1Button">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <minimum-size width="30" height="-1"/>
+                <preferred-size width="30" height="-1"/>
+              </grid>
             </constraints>
             <properties>
               <horizontalAlignment value="11"/>
@@ -453,16 +413,10 @@
           </component>
         </children>
       </grid>
-      <vspacer id="25a20">
-        <constraints>
-          <grid row="21" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
-        </constraints>
-      </vspacer>
-      <grid id="3754" layout-manager="GridBagLayout">
+      <grid id="3754" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="22" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -470,7 +424,6 @@
           <component id="a95fb" class="javax.swing.JButton" binding="ad_fncButton" default-binding="true">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="ad_fnc"/>
@@ -478,22 +431,10 @@
           </component>
         </children>
       </grid>
-      <vspacer id="9138d">
-        <constraints>
-          <grid row="23" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="1.0"/>
-        </constraints>
-      </vspacer>
-      <vspacer id="bcb8c">
-        <constraints>
-          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
-        </constraints>
-      </vspacer>
-      <grid id="701f9" layout-manager="GridBagLayout">
+      <grid id="701f9" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="1.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -501,7 +442,6 @@
           <component id="97ef7" class="javax.swing.JButton" binding="circleDrawFreeButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/en_nyuryoku_free.png"/>
@@ -510,7 +450,6 @@
           <component id="15c28" class="javax.swing.JButton" binding="circleDrawConcentricButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/dousin_en_tuika_s.png"/>
@@ -519,7 +458,6 @@
           <component id="9bfb8" class="javax.swing.JButton" binding="circleDrawSeparateButton">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/en_bunri_nyuryoku.png"/>
@@ -527,10 +465,10 @@
           </component>
         </children>
       </grid>
-      <grid id="2d406" layout-manager="GridBagLayout">
+      <grid id="2d406" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -538,7 +476,6 @@
           <component id="f98b4" class="javax.swing.JButton" binding="deg2Button">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/deg2.png"/>
@@ -547,7 +484,6 @@
           <component id="1b891" class="javax.swing.JButton" binding="deg4Button">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/deg4.png"/>
@@ -555,10 +491,10 @@
           </component>
         </children>
       </grid>
-      <grid id="f3b93" layout-manager="GridBagLayout">
+      <grid id="f3b93" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -566,9 +502,9 @@
           <component id="e2a4e" class="javax.swing.JTextField" binding="polygonSizeTextField">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
+                <minimum-size width="30" height="-1"/>
+                <preferred-size width="30" height="-1"/>
               </grid>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="5"/>
@@ -576,8 +512,10 @@
           </component>
           <component id="aa408" class="javax.swing.JButton" binding="polygonSizeSetButton">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <minimum-size width="30" height="-1"/>
+                <preferred-size width="30" height="-1"/>
+              </grid>
             </constraints>
             <properties>
               <text value="Set"/>
@@ -586,7 +524,6 @@
           <component id="e6645" class="javax.swing.JButton" binding="regularPolygonButton">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/sei_takakukei.png"/>
@@ -594,10 +531,10 @@
           </component>
         </children>
       </grid>
-      <grid id="df8f5" layout-manager="GridBagLayout">
+      <grid id="df8f5" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -605,7 +542,6 @@
           <component id="e884a" class="javax.swing.JButton" binding="circleDrawButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/en_nyuryoku.png"/>
@@ -614,7 +550,6 @@
           <component id="fa387" class="javax.swing.JButton" binding="circleDrawConcentricSelectButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/dousin_en_tuika_d.png"/>
@@ -622,10 +557,10 @@
           </component>
         </children>
       </grid>
-      <grid id="b0d0f" layout-manager="GridBagLayout">
+      <grid id="b0d0f" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -633,7 +568,6 @@
           <component id="412ce" class="javax.swing.JButton" binding="circleDrawTwoConcentricButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/en_en_dousin_en.png"/>
@@ -642,7 +576,6 @@
           <component id="6f5f8" class="javax.swing.JButton" binding="circleDrawTangentLineButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/en_en_sessen.png"/>
@@ -650,10 +583,10 @@
           </component>
         </children>
       </grid>
-      <grid id="f9d0a" layout-manager="GridBagLayout">
+      <grid id="f9d0a" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -661,7 +594,6 @@
           <component id="78ed2" class="javax.swing.JButton" binding="circleDrawThreePointButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/en_3ten_nyuryoku.png"/>
@@ -670,7 +602,6 @@
           <component id="43dd2" class="javax.swing.JButton" binding="circleDrawInvertedButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/hanten.png"/>
@@ -678,10 +609,10 @@
           </component>
         </children>
       </grid>
-      <grid id="27b03" layout-manager="GridBagLayout">
+      <grid id="27b03" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -689,7 +620,6 @@
           <component id="e1cfc" class="javax.swing.JButton" binding="h_undoButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/h_undo.png"/>
@@ -698,7 +628,6 @@
           <component id="4c2b7" class="javax.swing.JTextField" binding="auxUndoTotalTextField">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <columns value="2"/>
@@ -708,7 +637,6 @@
           <component id="66bf6" class="javax.swing.JButton" binding="h_undoTotalSetButton">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <text value="S"/>
@@ -717,7 +645,6 @@
           <component id="6d3fa" class="javax.swing.JButton" binding="h_redoButton">
             <constraints>
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/h_redo.png"/>
@@ -725,10 +652,10 @@
           </component>
         </children>
       </grid>
-      <grid id="74576" layout-manager="GridBagLayout">
+      <grid id="74576" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -736,7 +663,6 @@
           <component id="5f73f" class="javax.swing.JButton" binding="h_senhaba_sageButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/h_senhaba_sage.png"/>
@@ -745,7 +671,6 @@
           <component id="7841d" class="javax.swing.JButton" binding="h_senhaba_ageButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/h_senhaba_age.png"/>
@@ -753,8 +678,10 @@
           </component>
           <component id="8285e" class="javax.swing.JButton" binding="colOrangeButton">
             <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <minimum-size width="30" height="-1"/>
+                <preferred-size width="30" height="-1"/>
+              </grid>
             </constraints>
             <properties>
               <background color="-6908266"/>
@@ -763,8 +690,10 @@
           </component>
           <component id="1855d" class="javax.swing.JButton" binding="colYellowButton">
             <constraints>
-              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <minimum-size width="30" height="-1"/>
+                <preferred-size width="30" height="-1"/>
+              </grid>
             </constraints>
             <properties>
               <background color="-6908266"/>
@@ -773,10 +702,10 @@
           </component>
         </children>
       </grid>
-      <grid id="75604" layout-manager="GridBagLayout">
+      <grid id="75604" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+        <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-          <gridbag weightx="0.0" weighty="0.0"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -784,7 +713,6 @@
           <component id="8f5c8" class="javax.swing.JButton" binding="h_senbun_nyuryokuButton">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/h_senbun_nyuryoku.png"/>
@@ -793,7 +721,6 @@
           <component id="9f4f4" class="javax.swing.JButton" binding="h_senbun_sakujyoButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <icon value="ppp/h_senbun_sakujyo.png"/>
@@ -801,6 +728,67 @@
           </component>
         </children>
       </grid>
+      <vspacer id="97ab1">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="5"/>
+            <preferred-size width="-1" height="5"/>
+          </grid>
+        </constraints>
+      </vspacer>
+      <vspacer id="d4d9f">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="5"/>
+            <preferred-size width="-1" height="5"/>
+          </grid>
+        </constraints>
+      </vspacer>
+      <vspacer id="6e486">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="5"/>
+            <preferred-size width="-1" height="5"/>
+          </grid>
+        </constraints>
+      </vspacer>
+      <vspacer id="a550a">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="5"/>
+            <preferred-size width="-1" height="5"/>
+          </grid>
+        </constraints>
+      </vspacer>
+      <vspacer id="31b46">
+        <constraints>
+          <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="5"/>
+            <preferred-size width="-1" height="5"/>
+          </grid>
+        </constraints>
+      </vspacer>
+      <vspacer id="81437">
+        <constraints>
+          <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="5"/>
+            <preferred-size width="-1" height="5"/>
+          </grid>
+        </constraints>
+      </vspacer>
+      <vspacer id="7c0d4">
+        <constraints>
+          <grid row="21" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="5"/>
+            <preferred-size width="-1" height="5"/>
+          </grid>
+        </constraints>
+      </vspacer>
+      <vspacer id="51d63">
+        <constraints>
+          <grid row="23" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
     </children>
   </grid>
 </form>
