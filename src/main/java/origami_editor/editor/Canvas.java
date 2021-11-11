@@ -110,6 +110,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             // Set a default size if the canvas is not yet loaded.
             dim = new Dimension(2000, 1000);
         }
+
+        if (dim.width <= 0 || dim.height <= 0) {
+            // Resized the screen to very small.
+            return;
+        }
         offscreen = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_BGR);
         bufferGraphics = offscreen.createGraphics();
 
