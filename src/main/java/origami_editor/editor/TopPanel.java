@@ -1,5 +1,6 @@
 package origami_editor.editor;
 
+import origami_editor.editor.canvas.CreasePattern_Worker;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -7,6 +8,8 @@ import origami_editor.editor.databinding.*;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami.crease_pattern.element.Point;
+import origami_editor.editor.service.ButtonService;
+import origami_editor.editor.service.FileSaveService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +17,7 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 
 public class TopPanel {
-    private final App app;
+    private final MeasuresModel measuresModel;
     private JButton operationFrameSelectButton;
     private JPanel root;
     private JTextField ratioATextField;
@@ -43,71 +46,73 @@ public class TopPanel {
     private JButton backgroundLockButton;
     private JCheckBox mouseSettingsCheckBox;
 
-    public TopPanel(App app) {
-        this.app = app;
+    public TopPanel(MeasuresModel measuresModel,
+                    ButtonService buttonService,
+                    CanvasModel canvasModel,
+                    InternalDivisionRatioModel internalDivisionRatioModel,
+                    BackgroundModel backgroundModel,
+                    CreasePattern_Worker mainCreasePatternWorker,
+                    FoldedFigureModel foldedFigureModel,
+                    FileSaveService fileSaveService,
+                    CameraModel creasePatternCameraModel,
+                    DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList,
+                    Canvas canvas,
+                    ApplicationModel applicationModel) {
+        this.measuresModel = measuresModel;
         $$$setupUI$$$();
 
-        app.registerButton(operationFrameSelectButton, "operationFrameSelectAction");
-        app.registerButton(moveCreasePatternButton, "moveCreasePatternAction");
-        app.registerButton(creasePatternZoomOutButton, "creasePatternZoomOutAction");
-        app.registerButton(creasePatternZoomInButton, "creasePatternZoomInAction");
-        app.registerButton(rotateAnticlockwiseButton, "rotateAnticlockwiseAction");
-        app.registerButton(rotateClockwiseButton, "rotateClockwiseAction");
-        app.registerButton(senbun_yoke_henkanButton, "senbun_yoke_henkanAction");
-        app.registerButton(lineSegmentInternalDivisionRatioSetButton, "lineSegmentInternalDivisionRatioSetAction");
-        app.registerButton(drawLineSegmentInternalDivisionRatioButton, "drawLineSegmentInternalDivisionRatioAction");
-        app.registerButton(scaleFactorSetButton, "scaleFactorSetAction");
-        app.registerButton(rotationSetButton, "rotationSetAction");
-        app.registerButton(transparentButton, "transparentAction");
-        app.registerButton(backgroundTrimButton, "backgroundTrimAction");
-        app.registerButton(readBackgroundButton, "readBackgroundAction");
-        app.registerButton(backgroundToggleButton, "backgroundToggleAction");
-        app.registerButton(backgroundSetPositionButton, "backgroundSetPositionAction");
-        app.registerButton(backgroundLockButton, "backgroundLockAction");
-        app.registerButton(mouseSettingsCheckBox, "mouseSettingsAction");
+        buttonService.registerButton(operationFrameSelectButton, "operationFrameSelectAction");
+        buttonService.registerButton(moveCreasePatternButton, "moveCreasePatternAction");
+        buttonService.registerButton(creasePatternZoomOutButton, "creasePatternZoomOutAction");
+        buttonService.registerButton(creasePatternZoomInButton, "creasePatternZoomInAction");
+        buttonService.registerButton(rotateAnticlockwiseButton, "rotateAnticlockwiseAction");
+        buttonService.registerButton(rotateClockwiseButton, "rotateClockwiseAction");
+        buttonService.registerButton(senbun_yoke_henkanButton, "senbun_yoke_henkanAction");
+        buttonService.registerButton(lineSegmentInternalDivisionRatioSetButton, "lineSegmentInternalDivisionRatioSetAction");
+        buttonService.registerButton(drawLineSegmentInternalDivisionRatioButton, "drawLineSegmentInternalDivisionRatioAction");
+        buttonService.registerButton(scaleFactorSetButton, "scaleFactorSetAction");
+        buttonService.registerButton(rotationSetButton, "rotationSetAction");
+        buttonService.registerButton(transparentButton, "transparentAction");
+        buttonService.registerButton(backgroundTrimButton, "backgroundTrimAction");
+        buttonService.registerButton(readBackgroundButton, "readBackgroundAction");
+        buttonService.registerButton(backgroundToggleButton, "backgroundToggleAction");
+        buttonService.registerButton(backgroundSetPositionButton, "backgroundSetPositionAction");
+        buttonService.registerButton(backgroundLockButton, "backgroundLockAction");
+        buttonService.registerButton(mouseSettingsCheckBox, "mouseSettingsAction");
 
         operationFrameSelectButton.addActionListener(e -> {
-            app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
-            app.canvasModel.setMouseMode(MouseMode.OPERATION_FRAME_CREATE_61);
-            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
+            canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
+            canvasModel.setMouseMode(MouseMode.OPERATION_FRAME_CREATE_61);
+            canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
-        mouseSettingsCheckBox.addActionListener(e -> app.applicationModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected()));
+        mouseSettingsCheckBox.addActionListener(e -> applicationModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected()));
         lineSegmentInternalDivisionRatioSetButton.addActionListener(e -> {
-            getData(app.internalDivisionRatioModel);
+            getData(internalDivisionRatioModel);
 
-            app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_RATIO_SET_28);
-            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_RATIO_SET_28);
-
-            app.repaintCanvas();
+            canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_RATIO_SET_28);
+            canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_RATIO_SET_28);
         });
         drawLineSegmentInternalDivisionRatioButton.addActionListener(e -> {
-            getData(app.internalDivisionRatioModel);
+            getData(internalDivisionRatioModel);
 
-            app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_RATIO_SET_28);
-            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_RATIO_SET_28);
+            canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_RATIO_SET_28);
+            canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_RATIO_SET_28);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
-        moveCreasePatternButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.MOVE_CREASE_PATTERN_2);
-
-            app.repaintCanvas();
-        });
-        FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
+        moveCreasePatternButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.MOVE_CREASE_PATTERN_2));
         creasePatternZoomOutButton.addActionListener(e -> {
-            app.creasePatternCameraModel.zoomOut();
+            creasePatternCameraModel.zoomOut();
 
             double magnification = 1.0 / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
 
             FoldedFigure_Drawer OZi;
-            for (int i_oz = 0; i_oz < app.foldedFiguresList.getSize(); i_oz++) {
-                OZi = app.foldedFiguresList.getElementAt(i_oz);
+            for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
+                OZi = foldedFiguresList.getElementAt(i_oz);
 
-                Point t_o2tv = app.canvas.creasePatternCamera.object2TV(app.canvas.creasePatternCamera.getCameraPosition());
+                Point t_o2tv = canvas.creasePatternCamera.object2TV(canvas.creasePatternCamera.getCameraPosition());
 
                 OZi.scale(magnification, t_o2tv);
             }
@@ -115,36 +120,34 @@ public class TopPanel {
             foldedFigureModel.zoomOut();
         });
         scaleFactorSetButton.addActionListener(e -> {
-            double d_syukusyaku_keisuu_old = app.creasePatternCameraModel.getScale();
+            double d_syukusyaku_keisuu_old = creasePatternCameraModel.getScale();
 
-            app.creasePatternCameraModel.setScale(app.string2double(scaleFactorTextField.getText(), d_syukusyaku_keisuu_old));
-            if (app.creasePatternCameraModel.getScale() != d_syukusyaku_keisuu_old) {
-                double magnification = app.creasePatternCameraModel.getScale() / d_syukusyaku_keisuu_old;
+            creasePatternCameraModel.setScale(measuresModel.string2double(scaleFactorTextField.getText(), d_syukusyaku_keisuu_old));
+            if (creasePatternCameraModel.getScale() != d_syukusyaku_keisuu_old) {
+                double magnification = creasePatternCameraModel.getScale() / d_syukusyaku_keisuu_old;
 
                 FoldedFigure_Drawer OZi;
-                for (int i_oz = 0; i_oz < app.foldedFiguresList.getSize(); i_oz++) {
-                    OZi = app.foldedFiguresList.getElementAt(i_oz);
+                for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
+                    OZi = foldedFiguresList.getElementAt(i_oz);
 
-                    Point t_o2tv = app.canvas.creasePatternCamera.object2TV(app.canvas.creasePatternCamera.getCameraPosition());
+                    Point t_o2tv = canvas.creasePatternCamera.object2TV(canvas.creasePatternCamera.getCameraPosition());
 
                     OZi.scale(magnification, t_o2tv);
                 }
 
                 foldedFigureModel.setScale(foldedFigureModel.getScale() * magnification);
             }
-
-            app.repaintCanvas();
         });
         creasePatternZoomInButton.addActionListener(e -> {
-            app.creasePatternCameraModel.zoomIn();
+            creasePatternCameraModel.zoomIn();
 
             double magnification = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
 
             FoldedFigure_Drawer OZi;
-            for (int i_oz = 0; i_oz < app.foldedFiguresList.getSize(); i_oz++) {
-                OZi = app.foldedFiguresList.getElementAt(i_oz);
+            for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
+                OZi = foldedFiguresList.getElementAt(i_oz);
 
-                Point t_o2tv = app.canvas.creasePatternCamera.object2TV(app.canvas.creasePatternCamera.getCameraPosition());
+                Point t_o2tv = canvas.creasePatternCamera.object2TV(canvas.creasePatternCamera.getCameraPosition());
 
                 OZi.scale(magnification, t_o2tv);
             }
@@ -152,89 +155,73 @@ public class TopPanel {
             foldedFigureModel.zoomIn();
 //20180122追加　ここまで
         });
-        rotateAnticlockwiseButton.addActionListener(e -> app.creasePatternCameraModel.increaseRotation());
-        rotationSetButton.addActionListener(e -> {
-            app.creasePatternCameraModel.setRotation(app.string2double(rotationTextField.getText(), app.creasePatternCameraModel.getRotation()));
-
-            app.repaintCanvas();
-        });
-        rotateClockwiseButton.addActionListener(e -> app.creasePatternCameraModel.decreaseRotation());
-        transparentButton.addActionListener(e -> app.canvas.createTransparentBackground());
+        rotateAnticlockwiseButton.addActionListener(e -> creasePatternCameraModel.increaseRotation());
+        rotationSetButton.addActionListener(e -> creasePatternCameraModel.setRotation(measuresModel.string2double(rotationTextField.getText(), creasePatternCameraModel.getRotation())));
+        rotateClockwiseButton.addActionListener(e -> creasePatternCameraModel.decreaseRotation());
+        transparentButton.addActionListener(e -> canvas.createTransparentBackground());
         backgroundTrimButton.addActionListener(e -> {
             BufferedImage offsc_background = new BufferedImage(2000, 1100, BufferedImage.TYPE_INT_ARGB);
 
             Graphics2D g2_background = offsc_background.createGraphics();
             //背景表示
-            Image backgroundImage = app.backgroundModel.getBackgroundImage();
+            Image backgroundImage = backgroundModel.getBackgroundImage();
 
-            if ((backgroundImage != null) && app.backgroundModel.isDisplayBackground()) {
+            if ((backgroundImage != null) && backgroundModel.isDisplayBackground()) {
                 int iw = backgroundImage.getWidth(null);//イメージの幅を取得
                 int ih = backgroundImage.getHeight(null);//イメージの高さを取得
 
-                app.canvas.h_cam.setBackgroundWidth(iw);
-                app.canvas.h_cam.setBackgroundHeight(ih);
+                canvas.h_cam.setBackgroundWidth(iw);
+                canvas.h_cam.setBackgroundHeight(ih);
 
-                app.canvas.drawBackground(g2_background, backgroundImage);
+                canvas.drawBackground(g2_background, backgroundImage);
             }
 
-
 //枠設定時の背景を枠内のみ残してトリム 20181204
-            if ((app.canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61) && (app.mainCreasePatternWorker.getDrawingStage() == 4)) {//枠線が表示されている状態
-                int xmin = (int) app.mainCreasePatternWorker.operationFrameBox.getXMin();
-                int xmax = (int) app.mainCreasePatternWorker.operationFrameBox.getXMax();
-                int ymin = (int) app.mainCreasePatternWorker.operationFrameBox.getYMin();
-                int ymax = (int) app.mainCreasePatternWorker.operationFrameBox.getYMax();
+            if ((canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61) && (mainCreasePatternWorker.getDrawingStage() == 4)) {//枠線が表示されている状態
+                int xmin = (int) mainCreasePatternWorker.operationFrameBox.getXMin();
+                int xmax = (int) mainCreasePatternWorker.operationFrameBox.getXMax();
+                int ymin = (int) mainCreasePatternWorker.operationFrameBox.getYMin();
+                int ymax = (int) mainCreasePatternWorker.operationFrameBox.getYMax();
 
-                app.backgroundModel.setBackgroundImage(offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin));
+                backgroundModel.setBackgroundImage(offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin));
 
-                app.canvas.h_cam = new Background_camera();
+                canvas.h_cam = new Background_camera();
 
-                app.canvas.background_set(new Point(120.0, 120.0),
+                canvas.background_set(new Point(120.0, 120.0),
                         new Point(120.0 + 10.0, 120.0),
                         new Point(xmin, ymin),
                         new Point((double) xmin + 10.0, ymin));
 
-                if (app.backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                    app.canvas.h_cam.setLocked(true);
-                    app.canvas.h_cam.setCamera(app.canvas.creasePatternCamera);
-                    app.canvas.h_cam.h3_obj_and_h4_obj_calculation();
+                if (backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
+                    canvas.h_cam.setLocked(true);
+                    canvas.h_cam.setCamera(canvas.creasePatternCamera);
+                    canvas.h_cam.h3_obj_and_h4_obj_calculation();
                 }
             }
-
-            app.repaintCanvas();
         });
         readBackgroundButton.addActionListener(e -> {
-            app.readBackgroundImageFromFile();
+            fileSaveService.readBackgroundImageFromFile();
 
-            app.canvas.h_cam = new Background_camera();//20181202
-            if (app.backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                app.canvas.h_cam.setLocked(app.backgroundModel.isLockBackground());
-                app.canvas.h_cam.setCamera(app.canvas.creasePatternCamera);
-                app.canvas.h_cam.h3_obj_and_h4_obj_calculation();
+            canvas.h_cam = new Background_camera();//20181202
+            if (backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
+                canvas.h_cam.setLocked(backgroundModel.isLockBackground());
+                canvas.h_cam.setCamera(canvas.creasePatternCamera);
+                canvas.h_cam.h3_obj_and_h4_obj_calculation();
             }
-
-            app.repaintCanvas();
         });
         backgroundToggleButton.addActionListener(e -> {
-            app.backgroundModel.setDisplayBackground(!app.backgroundModel.isDisplayBackground());
-
-            app.repaintCanvas();
+            backgroundModel.setDisplayBackground(!backgroundModel.isDisplayBackground());
         });
         backgroundSetPositionButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.BACKGROUND_CHANGE_POSITION_26);
-
-            app.repaintCanvas();
+            canvasModel.setMouseMode(MouseMode.BACKGROUND_CHANGE_POSITION_26);
         });
         backgroundLockButton.addActionListener(e -> {
-            app.backgroundModel.setLockBackground(!app.backgroundModel.isLockBackground());
-
-            app.repaintCanvas();
+            backgroundModel.setLockBackground(!backgroundModel.isLockBackground());
         });
         senbun_yoke_henkanButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.CREASE_ADVANCE_TYPE_30);
+            canvasModel.setMouseMode(MouseMode.CREASE_ADVANCE_TYPE_30);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
     }
 
@@ -264,12 +251,12 @@ public class TopPanel {
     }
 
     public void getData(InternalDivisionRatioModel data) {
-        data.setInternalDivisionRatioA(app.string2double(ratioATextField.getText(), data.getInternalDivisionRatioA()));
-        data.setInternalDivisionRatioB(app.string2double(ratioBTextField.getText(), data.getInternalDivisionRatioB()));
-        data.setInternalDivisionRatioC(app.string2double(ratioCTextField.getText(), data.getInternalDivisionRatioC()));
-        data.setInternalDivisionRatioD(app.string2double(ratioDTextField.getText(), data.getInternalDivisionRatioD()));
-        data.setInternalDivisionRatioE(app.string2double(ratioETextField.getText(), data.getInternalDivisionRatioE()));
-        data.setInternalDivisionRatioF(app.string2double(ratioFTextField.getText(), data.getInternalDivisionRatioF()));
+        data.setInternalDivisionRatioA(measuresModel.string2double(ratioATextField.getText(), data.getInternalDivisionRatioA()));
+        data.setInternalDivisionRatioB(measuresModel.string2double(ratioBTextField.getText(), data.getInternalDivisionRatioB()));
+        data.setInternalDivisionRatioC(measuresModel.string2double(ratioCTextField.getText(), data.getInternalDivisionRatioC()));
+        data.setInternalDivisionRatioD(measuresModel.string2double(ratioDTextField.getText(), data.getInternalDivisionRatioD()));
+        data.setInternalDivisionRatioE(measuresModel.string2double(ratioETextField.getText(), data.getInternalDivisionRatioE()));
+        data.setInternalDivisionRatioF(measuresModel.string2double(ratioFTextField.getText(), data.getInternalDivisionRatioF()));
     }
 
     /**

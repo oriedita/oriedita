@@ -4,9 +4,11 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import origami.crease_pattern.element.LineColor;
+import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.component.ColorIcon;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
+import origami_editor.editor.service.ButtonService;
 import origami_editor.tools.StringOp;
 
 import javax.swing.*;
@@ -14,8 +16,8 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 
 public class RightPanel {
-    private final App app;
-    private final OpenFrame frame;
+    private final MeasuresModel measuresModel;
+    private OpenFrame frame;
     private JCheckBox cAMVCheckBox;
     private JButton ck4_colorIncreaseButton;
     private JCheckBox ckTCheckBox;
@@ -78,112 +80,106 @@ public class RightPanel {
     private JTextField measuredAngle2TextField;
     private JTextField measuredAngle3TextField;
     private JPanel root;
+    private Frame owner;
 
-    public RightPanel(App app, AngleSystemModel angleSystemModel) {
-        this.app = app;
+    public RightPanel(AngleSystemModel angleSystemModel,
+                      ButtonService buttonService,
+                      MeasuresModel measuresModel,
+                      CreasePattern_Worker mainCreasePatternWorker, CanvasModel canvasModel, ApplicationModel applicationModel,
+                      HistoryStateModel historyStateModel) {
+        this.measuresModel = measuresModel;
 
         $$$setupUI$$$();
 
-        app.registerButton(ck4_colorIncreaseButton, "ck4_colorIncreaseAction");
-        app.registerButton(fxOButton, "fxOAction");
-        app.registerButton(fxTButton, "fxTAction");
-        app.registerButton(angleSystemAButton, "angleSystemAAction");
-        app.registerButton(ck4_colorDecreaseButton, "ck4_colorDecreaseAction");
-        app.registerButton(angleSystemADecreaseButton, "angleSystemADecreaseAction");
-        app.registerButton(angleSystemAIncreaseButton, "angleSystemAIncreaseAction");
-        app.registerButton(angleSystemBDecreaseButton, "angleSystemBDecreaseAction");
-        app.registerButton(angleSystemBButton, "angleSystemBAction");
-        app.registerButton(angleSystemBIncreaseButton, "angleSystemBIncreaseAction");
-        app.registerButton(restrictedAngleABCSetButton, "restrictedAngleABCSetAction");
-        app.registerButton(c_colButton, "c_colAction");
-        app.registerButton(l1Button, "l1Action");
-        app.registerButton(ad_fncButton, "ad_fncAction");
-        app.registerButton(degButton, "degAction");
-        app.registerButton(deg3Button, "deg3Action");
-        app.registerButton(angleRestrictedButton, "angleRestrictedAction");
-        app.registerButton(deg2Button, "deg2Action");
-        app.registerButton(deg4Button, "deg4Action");
-        app.registerButton(polygonSizeSetButton, "polygonSizeSetAction");
-        app.registerButton(regularPolygonButton, "regularPolygonAction");
-        app.registerButton(circleDrawFreeButton, "circleDrawFreeAction");
-        app.registerButton(circleDrawButton, "circleDrawAction");
-        app.registerButton(circleDrawSeparateButton, "circleDrawSeparateAction");
-        app.registerButton(circleDrawConcentricButton, "circleDrawConcentricAction");
-        app.registerButton(circleDrawConcentricSelectButton, "circleDrawConcentricSelectAction");
-        app.registerButton(circleDrawTwoConcentricButton, "circleDrawTwoConcentricAction");
-        app.registerButton(circleDrawTangentLineButton, "circleDrawTangentLineAction");
-        app.registerButton(circleDrawThreePointButton, "circleDrawThreePointAction");
-        app.registerButton(circleDrawInvertedButton, "circleDrawInvertedAction");
-        app.registerButton(sen_tokutyuu_color_henkouButton, "sen_tokutyuu_color_henkouAction");
-        app.registerButton(h_undoButton, "h_undoAction");
-        app.registerButton(h_redoButton, "h_redoAction");
-        app.registerButton(h_senhaba_sageButton, "h_senhaba_sageAction");
-        app.registerButton(h_senhaba_ageButton, "h_senhaba_ageAction");
-        app.registerButton(h_senbun_nyuryokuButton, "h_senbun_nyuryokuAction");
-        app.registerButton(h_senbun_sakujyoButton, "h_senbun_sakujyoAction");
-        app.registerButton(restrictedAngleSetDEFButton, "restrictedAngleSetDEFAction");
-        app.registerButton(h_undoTotalSetButton, "h_undoTotalSetAction");
-        app.registerButton(colOrangeButton, "colOrangeAction");
-        app.registerButton(colYellowButton, "colYellowAction");
-        app.registerButton(l2Button, "l2Action");
-        app.registerButton(a1Button, "a1Action");
-        app.registerButton(a2Button, "a2Action");
-        app.registerButton(a3Button, "a3Action");
-        app.registerButton(ckOCheckBox, "ckOAction");
-        app.registerButton(ckTCheckBox, "ckTAction");
-        app.registerButton(cAMVCheckBox, "cAMVAction");
+        buttonService.registerButton(ck4_colorIncreaseButton, "ck4_colorIncreaseAction");
+        buttonService.registerButton(fxOButton, "fxOAction");
+        buttonService.registerButton(fxTButton, "fxTAction");
+        buttonService.registerButton(angleSystemAButton, "angleSystemAAction");
+        buttonService.registerButton(ck4_colorDecreaseButton, "ck4_colorDecreaseAction");
+        buttonService.registerButton(angleSystemADecreaseButton, "angleSystemADecreaseAction");
+        buttonService.registerButton(angleSystemAIncreaseButton, "angleSystemAIncreaseAction");
+        buttonService.registerButton(angleSystemBDecreaseButton, "angleSystemBDecreaseAction");
+        buttonService.registerButton(angleSystemBButton, "angleSystemBAction");
+        buttonService.registerButton(angleSystemBIncreaseButton, "angleSystemBIncreaseAction");
+        buttonService.registerButton(restrictedAngleABCSetButton, "restrictedAngleABCSetAction");
+        buttonService.registerButton(c_colButton, "c_colAction");
+        buttonService.registerButton(l1Button, "l1Action");
+        buttonService.registerButton(ad_fncButton, "ad_fncAction");
+        buttonService.registerButton(degButton, "degAction");
+        buttonService.registerButton(deg3Button, "deg3Action");
+        buttonService.registerButton(angleRestrictedButton, "angleRestrictedAction");
+        buttonService.registerButton(deg2Button, "deg2Action");
+        buttonService.registerButton(deg4Button, "deg4Action");
+        buttonService.registerButton(polygonSizeSetButton, "polygonSizeSetAction");
+        buttonService.registerButton(regularPolygonButton, "regularPolygonAction");
+        buttonService.registerButton(circleDrawFreeButton, "circleDrawFreeAction");
+        buttonService.registerButton(circleDrawButton, "circleDrawAction");
+        buttonService.registerButton(circleDrawSeparateButton, "circleDrawSeparateAction");
+        buttonService.registerButton(circleDrawConcentricButton, "circleDrawConcentricAction");
+        buttonService.registerButton(circleDrawConcentricSelectButton, "circleDrawConcentricSelectAction");
+        buttonService.registerButton(circleDrawTwoConcentricButton, "circleDrawTwoConcentricAction");
+        buttonService.registerButton(circleDrawTangentLineButton, "circleDrawTangentLineAction");
+        buttonService.registerButton(circleDrawThreePointButton, "circleDrawThreePointAction");
+        buttonService.registerButton(circleDrawInvertedButton, "circleDrawInvertedAction");
+        buttonService.registerButton(sen_tokutyuu_color_henkouButton, "sen_tokutyuu_color_henkouAction");
+        buttonService.registerButton(h_undoButton, "h_undoAction");
+        buttonService.registerButton(h_redoButton, "h_redoAction");
+        buttonService.registerButton(h_senhaba_sageButton, "h_senhaba_sageAction");
+        buttonService.registerButton(h_senhaba_ageButton, "h_senhaba_ageAction");
+        buttonService.registerButton(h_senbun_nyuryokuButton, "h_senbun_nyuryokuAction");
+        buttonService.registerButton(h_senbun_sakujyoButton, "h_senbun_sakujyoAction");
+        buttonService.registerButton(restrictedAngleSetDEFButton, "restrictedAngleSetDEFAction");
+        buttonService.registerButton(h_undoTotalSetButton, "h_undoTotalSetAction");
+        buttonService.registerButton(colOrangeButton, "colOrangeAction");
+        buttonService.registerButton(colYellowButton, "colYellowAction");
+        buttonService.registerButton(l2Button, "l2Action");
+        buttonService.registerButton(a1Button, "a1Action");
+        buttonService.registerButton(a2Button, "a2Action");
+        buttonService.registerButton(a3Button, "a3Action");
+        buttonService.registerButton(ckOCheckBox, "ckOAction");
+        buttonService.registerButton(ckTCheckBox, "ckTAction");
+        buttonService.registerButton(cAMVCheckBox, "cAMVAction");
 
         ckOCheckBox.addActionListener(e -> {
-            app.mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all();
 
             if (ckOCheckBox.isSelected()) {
-                app.mainCreasePatternWorker.check1();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-                app.mainCreasePatternWorker.set_i_check1(true);
+                mainCreasePatternWorker.check1();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
+                mainCreasePatternWorker.set_i_check1(true);
             } else {
-                app.mainCreasePatternWorker.set_i_check1(false);
+                mainCreasePatternWorker.set_i_check1(false);
             }
-            app.repaintCanvas();
         });
         fxOButton.addActionListener(e -> {
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.mainCreasePatternWorker.fix1();
-            app.mainCreasePatternWorker.check1();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.fix1();
+            mainCreasePatternWorker.check1();
         });
         ckTCheckBox.addActionListener(e -> {
-            app.mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all();
 
             if (ckTCheckBox.isSelected()) {
-                app.mainCreasePatternWorker.check2();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-                app.mainCreasePatternWorker.setCheck2(true);
+                mainCreasePatternWorker.check2();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
+                mainCreasePatternWorker.setCheck2(true);
             } else {
-                app.mainCreasePatternWorker.setCheck2(false);
+                mainCreasePatternWorker.setCheck2(false);
             }
-            app.repaintCanvas();
         });
         fxTButton.addActionListener(e -> {
-            app.mainCreasePatternWorker.unselect_all();
-            app.mainCreasePatternWorker.fix2();
-            app.mainCreasePatternWorker.check2();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.fix2();
+            mainCreasePatternWorker.check2();
         });
         cAMVCheckBox.addActionListener(e -> {
-            app.mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all();
 
-            app.applicationModel.setCheck4Enabled(cAMVCheckBox.isSelected());
+            applicationModel.setCheck4Enabled(cAMVCheckBox.isSelected());
 
-            app.Button_shared_operation();
-            app.repaintCanvas();
+            buttonService.Button_shared_operation();
         });
-        ck4_colorDecreaseButton.addActionListener(e -> {
-            app.mainCreasePatternWorker.lightenCheck4Color();
-            app.repaintCanvas();
-        });
-        ck4_colorIncreaseButton.addActionListener(e -> {
-            app.mainCreasePatternWorker.darkenCheck4Color();
-            app.repaintCanvas();
-        });
+        ck4_colorDecreaseButton.addActionListener(e -> mainCreasePatternWorker.lightenCheck4Color());
+        ck4_colorIncreaseButton.addActionListener(e -> mainCreasePatternWorker.darkenCheck4Color());
         angleSystemADecreaseButton.addActionListener(e -> angleSystemModel.decreaseAngleSystemA());
 
         angleSystemAButton.addActionListener(e -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemADivider()));
@@ -207,191 +203,160 @@ public class RightPanel {
 
         degButton.addActionListener(e -> {
             angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_1);
-            app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13);
+            canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13);
         });
         deg3Button.addActionListener(e -> {
             angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_3);
-            app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17);
+            canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17);
 
         });
         angleRestrictedButton.addActionListener(e -> {
             angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_5);
-            app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37);
+            canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37);
         });
         deg2Button.addActionListener(e -> {
             angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_2);
-            app.canvasModel.setMouseMode(MouseMode.ANGLE_SYSTEM_16);
+            canvasModel.setMouseMode(MouseMode.ANGLE_SYSTEM_16);
 
         });
         deg4Button.addActionListener(e -> {
             angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_4);
-            app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18);
+            canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18);
         });
         polygonSizeSetButton.addActionListener(e -> {
-            app.applicationModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), app.applicationModel.getNumPolygonCorners()));
-            app.canvasModel.setMouseMode(MouseMode.POLYGON_SET_NO_CORNERS_29);
-
-            app.repaintCanvas();
+            applicationModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), applicationModel.getNumPolygonCorners()));
+            canvasModel.setMouseMode(MouseMode.POLYGON_SET_NO_CORNERS_29);
         });
         regularPolygonButton.addActionListener(e -> {
-            app.applicationModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), app.applicationModel.getNumPolygonCorners()));
-            app.canvasModel.setMouseMode(MouseMode.POLYGON_SET_NO_CORNERS_29);
-            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.POLYGON_SET_NO_CORNERS_29);
+            applicationModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), applicationModel.getNumPolygonCorners()));
+            canvasModel.setMouseMode(MouseMode.POLYGON_SET_NO_CORNERS_29);
+            canvasModel.setMouseModeAfterColorSelection(MouseMode.POLYGON_SET_NO_CORNERS_29);
 
-            app.repaintCanvas();
-            app.mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all();
         });
         circleDrawFreeButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_FREE_47);
+            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_FREE_47);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
         circleDrawButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_42);
+            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_42);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
         circleDrawSeparateButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_SEPARATE_44);
+            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_SEPARATE_44);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
         circleDrawConcentricButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_48);
+            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_48);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
         circleDrawConcentricSelectButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49);
+            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
         circleDrawTwoConcentricButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50);
+            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
         circleDrawTangentLineButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_TANGENT_LINE_45);
+            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_TANGENT_LINE_45);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
         circleDrawThreePointButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_THREE_POINT_43);
+            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_THREE_POINT_43);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
         circleDrawInvertedButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_INVERTED_46);
+            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_INVERTED_46);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
         c_colButton.addActionListener(e -> {
             //以下にやりたいことを書く
 
             Color color = JColorChooser.showDialog(null, "color", new Color(100, 200, 200));
             if (color != null) {
-                app.applicationModel.setCircleCustomizedColor(color);
+                applicationModel.setCircleCustomizedColor(color);
             }
 
-            app.canvasModel.setMouseMode(MouseMode.CIRCLE_CHANGE_COLOR_59);
-
-            app.repaintCanvas();
+            canvasModel.setMouseMode(MouseMode.CIRCLE_CHANGE_COLOR_59);
         });
         sen_tokutyuu_color_henkouButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.CIRCLE_CHANGE_COLOR_59);
+            canvasModel.setMouseMode(MouseMode.CIRCLE_CHANGE_COLOR_59);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
-        h_undoButton.addActionListener(e -> {
-            app.mainCreasePatternWorker.auxUndo();
-            app.repaintCanvas();
-        });
-        h_undoTotalSetButton.addActionListener(e -> app.historyStateModel.setAuxHistoryTotal(StringOp.String2int(auxUndoTotalTextField.getText(), app.historyStateModel.getAuxHistoryTotal())));
-        h_redoButton.addActionListener(e -> {
-            app.mainCreasePatternWorker.auxRedo();
-            app.repaintCanvas();
-        });
-        h_senhaba_sageButton.addActionListener(e -> app.applicationModel.decreaseAuxLineWidth());
-        h_senhaba_ageButton.addActionListener(e -> app.applicationModel.increaseAuxLineWidth());
-        colOrangeButton.addActionListener(e -> {
-            app.canvasModel.setAuxLiveLineColor(LineColor.ORANGE_4);
-
-            app.repaintCanvas();
-        });
-        colYellowButton.addActionListener(e -> {
-            app.canvasModel.setAuxLiveLineColor(LineColor.YELLOW_7);
-
-            app.repaintCanvas();
-        });
+        h_undoButton.addActionListener(e -> mainCreasePatternWorker.auxUndo());
+        h_undoTotalSetButton.addActionListener(e -> historyStateModel.setAuxHistoryTotal(StringOp.String2int(auxUndoTotalTextField.getText(), historyStateModel.getAuxHistoryTotal())));
+        h_redoButton.addActionListener(e -> mainCreasePatternWorker.auxRedo());
+        h_senhaba_sageButton.addActionListener(e -> applicationModel.decreaseAuxLineWidth());
+        h_senhaba_ageButton.addActionListener(e -> applicationModel.increaseAuxLineWidth());
+        colOrangeButton.addActionListener(e -> canvasModel.setAuxLiveLineColor(LineColor.ORANGE_4));
+        colYellowButton.addActionListener(e -> canvasModel.setAuxLiveLineColor(LineColor.YELLOW_7));
         h_senbun_nyuryokuButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.DRAW_CREASE_FREE_1);
+            canvasModel.setMouseMode(MouseMode.DRAW_CREASE_FREE_1);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
 
-            app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LINE_1);
+            canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LINE_1);
         });
         h_senbun_sakujyoButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
-            app.canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LINE_1);
+            canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
+            canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LINE_1);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
         l1Button.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53);
+            canvasModel.setMouseMode(MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
-        MeasuresModel measuresModel = app.measuresModel;
         measuredLength1TextField.addActionListener(e -> measuresModel.setMeasuredLength1(StringOp.String2double(measuredLength1TextField.getText(), measuresModel.getMeasuredLength1())));
         l2Button.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54);
+            canvasModel.setMouseMode(MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
         measuredLength2TextField.addActionListener(e -> measuresModel.setMeasuredLength2(StringOp.String2double(measuredLength2TextField.getText(), measuresModel.getMeasuredLength2())));
         a1Button.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55);
+            canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
         measuredAngle1TextField.addActionListener(e -> measuresModel.setMeasuredAngle1(StringOp.String2double(measuredAngle1TextField.getText(), measuresModel.getMeasuredAngle1())));
         a2Button.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56);
+            canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
         measuredAngle2TextField.addActionListener(e -> measuresModel.setMeasuredAngle2(StringOp.String2double(measuredAngle2TextField.getText(), measuresModel.getMeasuredAngle2())));
         a3Button.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57);
+            canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
         measuredAngle3TextField.addActionListener(e -> measuresModel.setMeasuredAngle3(StringOp.String2double(measuredAngle3TextField.getText(), measuresModel.getMeasuredAngle3())));
 
-        frame = new OpenFrame("additionalFrame", app);
-
         ad_fncButton.addActionListener(e -> {
+            frame = new OpenFrame("additionalFrame", owner, canvasModel, mainCreasePatternWorker, buttonService);
+
+            frame.setData(null, canvasModel);
+
             frame.setLocationRelativeTo(ad_fncButton);
             frame.setVisible(true);
         });
+    }
+
+    public void setFrame(Frame frame) {
+        this.owner = frame;
     }
 
     /**
@@ -686,12 +651,12 @@ public class RightPanel {
     }
 
     public void getData(AngleSystemModel data) {
-        data.setAngleA(app.string2double(angleATextField.getText(), data.getAngleA()));
-        data.setAngleB(app.string2double(angleBTextField.getText(), data.getAngleB()));
-        data.setAngleC(app.string2double(angleCTextField.getText(), data.getAngleC()));
-        data.setAngleD(app.string2double(angleDTextField.getText(), data.getAngleD()));
-        data.setAngleE(app.string2double(angleETextField.getText(), data.getAngleE()));
-        data.setAngleF(app.string2double(angleFTextField.getText(), data.getAngleF()));
+        data.setAngleA(measuresModel.string2double(angleATextField.getText(), data.getAngleA()));
+        data.setAngleB(measuresModel.string2double(angleBTextField.getText(), data.getAngleB()));
+        data.setAngleC(measuresModel.string2double(angleCTextField.getText(), data.getAngleC()));
+        data.setAngleD(measuresModel.string2double(angleDTextField.getText(), data.getAngleD()));
+        data.setAngleE(measuresModel.string2double(angleETextField.getText(), data.getAngleE()));
+        data.setAngleF(measuresModel.string2double(angleFTextField.getText(), data.getAngleF()));
     }
 
     public void setData(MeasuresModel data) {
@@ -712,7 +677,7 @@ public class RightPanel {
     }
 
     public void setData(PropertyChangeEvent e, CanvasModel data) {
-        frame.setData(e, data);
+        if (frame != null) frame.setData(e, data);
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode") || e.getPropertyName().equals("foldLineAdditionalInputMode")) {
             MouseMode m = data.getMouseMode();

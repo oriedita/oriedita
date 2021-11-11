@@ -3,13 +3,22 @@ package origami_editor.editor.canvas;
 import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
+import origami_editor.editor.databinding.CanvasModel;
 
 public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
-    private final MouseHandlerCreaseMove4p mouseHandlerCreaseMove4p = new MouseHandlerCreaseMove4p();
-    private final MouseHandlerCreaseCopy4p mouseHandlerCreaseCopy4p = new MouseHandlerCreaseCopy4p();
-    private final MouseHandlerCreaseCopy mouseHandlerCreaseCopy = new MouseHandlerCreaseCopy();
-    private final MouseHandlerCreaseMove mouseHandlerCreaseMove = new MouseHandlerCreaseMove();
-    private final MouseHandlerDrawCreaseSymmetric mouseHandlerDrawCreaseSymmetric = new MouseHandlerDrawCreaseSymmetric();
+    private final MouseHandlerCreaseMove4p mouseHandlerCreaseMove4p;
+    private final MouseHandlerCreaseCopy4p mouseHandlerCreaseCopy4p;
+    private final MouseHandlerCreaseCopy mouseHandlerCreaseCopy;
+    private final MouseHandlerCreaseMove mouseHandlerCreaseMove;
+    private final MouseHandlerDrawCreaseSymmetric mouseHandlerDrawCreaseSymmetric;
+
+    public MouseHandlerCreaseSelect(CreasePattern_Worker d, CanvasModel canvasModel) {
+        mouseHandlerCreaseMove4p = new MouseHandlerCreaseMove4p(d, canvasModel);
+        mouseHandlerCreaseCopy = new MouseHandlerCreaseCopy(d, canvasModel);
+        mouseHandlerCreaseCopy4p = new MouseHandlerCreaseCopy4p(d, canvasModel);
+        mouseHandlerCreaseMove = new MouseHandlerCreaseMove(d, canvasModel);
+        mouseHandlerDrawCreaseSymmetric = new MouseHandlerDrawCreaseSymmetric(d, canvasModel);
+    }
 
     @Override
     public void setDrawingWorker(CreasePattern_Worker d) {

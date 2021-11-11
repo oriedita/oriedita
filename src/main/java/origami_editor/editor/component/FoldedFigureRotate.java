@@ -1,11 +1,11 @@
 package origami_editor.editor.component;
 
-import origami_editor.editor.App;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami.crease_pattern.OritaCalc;
+import origami_editor.editor.databinding.MeasuresModel;
+import origami_editor.editor.service.ButtonService;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class FoldedFigureRotate extends JPanel {
@@ -15,16 +15,15 @@ public class FoldedFigureRotate extends JPanel {
     private JButton foldedFigureRotateClockwiseButton;
     private JButton foldedFigureRotateSetButton;
 
-    public FoldedFigureRotate(App app) {
+    public FoldedFigureRotate(ButtonService buttonService, FoldedFigureModel foldedFigureModel, MeasuresModel measuresModel) {
         add($$$getRootComponent$$$());
 
-        app.registerButton(foldedFigureRotateAntiClockwiseButton, "foldedFigureRotateAntiClockwiseAction");
-        app.registerButton(foldedFigureRotateSetButton, "foldedFigureRotateSetAction");
-        app.registerButton(foldedFigureRotateClockwiseButton, "foldedFigureRotateClockwiseAction");
+        buttonService.registerButton(foldedFigureRotateAntiClockwiseButton, "foldedFigureRotateAntiClockwiseAction");
+        buttonService.registerButton(foldedFigureRotateSetButton, "foldedFigureRotateSetAction");
+        buttonService.registerButton(foldedFigureRotateClockwiseButton, "foldedFigureRotateClockwiseAction");
 
-        FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
         foldedFigureRotateAntiClockwiseButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() + 11.25)));
-        foldedFigureRotateSetButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(app.string2double(foldedFigureRotateTextField.getText(), foldedFigureModel.getRotation()))));
+        foldedFigureRotateSetButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(measuresModel.string2double(foldedFigureRotateTextField.getText(), foldedFigureModel.getRotation()))));
         foldedFigureRotateClockwiseButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() - 11.25)));
     }
 

@@ -1,6 +1,8 @@
 package origami_editor.editor;
 
+import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.CanvasModel;
+import origami_editor.editor.service.ButtonService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,74 +20,45 @@ public class OpenFrame extends JDialog {
     private JButton del_l_XButton;
     private JPanel panel;
 
-    public OpenFrame(String name, App app) {
-        super(app.frame, name);
+    public OpenFrame(String name, Frame owner, CanvasModel canvasModel, CreasePattern_Worker mainCreasePatternWorker, ButtonService buttonService) {
+        super(owner, name);
 
         setContentPane($$$getRootComponent$$$());
 
         setDefaultCloseOperation(HIDE_ON_CLOSE);
 
-        app.registerButton(o_F_checkButton, "o_F_checkAction");
-        app.registerButton(foldableLinePlusGridInputButton, "foldableLinePlusGridInputAction");
-        app.registerButton(select_polygonButton, "select_polygonAction");
-        app.registerButton(unselect_polygonButton, "unselect_polygonAction");
-        app.registerButton(select_lXButton, "select_lXAction");
-        app.registerButton(unselect_lXButton, "unselect_lXAction");
-        app.registerButton(del_lButton, "del_lAction");
-        app.registerButton(del_l_XButton, "del_l_XAction");
-        app.registerButton(selectAnd3ClickCheckBox, "selectAnd3ClickAction");
+        buttonService.registerButton(o_F_checkButton, "o_F_checkAction");
+        buttonService.registerButton(foldableLinePlusGridInputButton, "foldableLinePlusGridInputAction");
+        buttonService.registerButton(select_polygonButton, "select_polygonAction");
+        buttonService.registerButton(unselect_polygonButton, "unselect_polygonAction");
+        buttonService.registerButton(select_lXButton, "select_lXAction");
+        buttonService.registerButton(unselect_lXButton, "unselect_lXAction");
+        buttonService.registerButton(del_lButton, "del_lAction");
+        buttonService.registerButton(del_l_XButton, "del_l_XAction");
+        buttonService.registerButton(selectAnd3ClickCheckBox, "selectAnd3ClickAction");
 
-        o_F_checkButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.FLAT_FOLDABLE_CHECK_63);
-
-            app.repaintCanvas();
-        });
+        o_F_checkButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.FLAT_FOLDABLE_CHECK_63));
         foldableLinePlusGridInputButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_INPUT_39);
-            app.canvasModel.setMouseModeAfterColorSelection(MouseMode.FOLDABLE_LINE_INPUT_39);
+            canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_INPUT_39);
+            canvasModel.setMouseModeAfterColorSelection(MouseMode.FOLDABLE_LINE_INPUT_39);
 
-            app.mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
+            mainCreasePatternWorker.unselect_all();
         });
-        select_polygonButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.SELECT_POLYGON_66);
+        select_polygonButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.SELECT_POLYGON_66));
+        unselect_polygonButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.UNSELECT_POLYGON_67));
+        select_lXButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.SELECT_LINE_INTERSECTING_68));
+        unselect_lXButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.UNSELECT_LINE_INTERSECTING_69));
+        del_lButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.CREASE_DELETE_OVERLAPPING_64));
+        del_l_XButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.CREASE_DELETE_INTERSECTING_65));
 
-            app.repaintCanvas();
-        });
-        unselect_polygonButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.UNSELECT_POLYGON_67);
-
-            app.repaintCanvas();
-        });
-        select_lXButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.SELECT_LINE_INTERSECTING_68);
-
-            app.repaintCanvas();
-        });
-        unselect_lXButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.UNSELECT_LINE_INTERSECTING_69);
-
-            app.repaintCanvas();
-        });
-        del_lButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.CREASE_DELETE_OVERLAPPING_64);
-
-            app.repaintCanvas();
-        });
-        del_l_XButton.addActionListener(e -> {
-            app.canvasModel.setMouseMode(MouseMode.CREASE_DELETE_INTERSECTING_65);
-
-            app.repaintCanvas();
-        });
-
-        selectAnd3ClickCheckBox.addActionListener(e -> app.canvasModel.setCkbox_add_frame_SelectAnd3click_isSelected(selectAnd3ClickCheckBox.isSelected()));
+        selectAnd3ClickCheckBox.addActionListener(e -> canvasModel.setCkbox_add_frame_SelectAnd3click_isSelected(selectAnd3ClickCheckBox.isSelected()));
 
         pack();
         setResizable(false);
     }
 
     public void setData(PropertyChangeEvent e, CanvasModel data) {
-        if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
+        if (e == null || e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
             MouseMode m = data.getMouseMode();
 
             o_F_checkButton.setSelected(m == MouseMode.FLAT_FOLDABLE_CHECK_63);

@@ -4,8 +4,17 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
+import origami_editor.editor.databinding.MeasuresModel;
 
 public class MouseHandlerDisplayLengthBetweenPoints2 extends BaseMouseHandlerInputRestricted {
+    private final CreasePattern_Worker d;
+    private final MeasuresModel measuresModel;
+
+    public MouseHandlerDisplayLengthBetweenPoints2(CreasePattern_Worker d, MeasuresModel measuresModel) {
+        this.d = d;
+        this.measuresModel = measuresModel;
+    }
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54;
@@ -28,7 +37,7 @@ public class MouseHandlerDisplayLengthBetweenPoints2 extends BaseMouseHandlerInp
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
         if (d.lineStep.size() == 2) {
-            d.app.measuresModel.setMeasuredLength2(OritaCalc.distance(d.lineStep.get(0).getA(), d.lineStep.get(1).getA()) * (double) d.grid.getGridSize() / 400.0);
+            measuresModel.setMeasuredLength2(OritaCalc.distance(d.lineStep.get(0).getA(), d.lineStep.get(1).getA()) * (double) d.grid.getGridSize() / 400.0);
             d.lineStep.clear();
         }
     }

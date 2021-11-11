@@ -3,9 +3,16 @@ package origami_editor.editor.canvas;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+import origami_editor.editor.Canvas;
 import origami_editor.editor.MouseMode;
+import origami_editor.editor.databinding.BackgroundModel;
+import origami_editor.editor.service.ButtonService;
 
 public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
+    private final ButtonService buttonService;
+    private final BackgroundModel backgroundModel;
+    private final Canvas canvas;
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.BACKGROUND_CHANGE_POSITION_26;
@@ -46,6 +53,12 @@ public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
     public void mouseDragged(Point p0) {
     }
 
+    public MouseHandlerBackgroundChangePosition(ButtonService buttonService, BackgroundModel backgroundModel, Canvas canvas) {
+        this.buttonService = buttonService;
+        this.backgroundModel = backgroundModel;
+        this.canvas = canvas;
+    }
+
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
         if (d.lineStep.size() == 4) {
@@ -57,11 +70,11 @@ public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
             s_3.set(d.lineStep.get(2));
             LineSegment s_4 = new LineSegment();
             s_4.set(d.lineStep.get(3));
-            d.app.Button_shared_operation();
+            buttonService.Button_shared_operation();
 
-            d.app.backgroundModel.setLockBackground(false);
+            backgroundModel.setLockBackground(false);
 
-            d.app.canvas.background_set(d.camera.object2TV(s_1.getA()),
+            canvas.background_set(d.camera.object2TV(s_1.getA()),
                     d.camera.object2TV(s_2.getA()),
                     d.camera.object2TV(s_3.getA()),
                     d.camera.object2TV(s_4.getA()));
