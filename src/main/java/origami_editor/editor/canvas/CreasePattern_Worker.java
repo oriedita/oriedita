@@ -72,7 +72,7 @@ public class CreasePattern_Worker {
     boolean check4 = false;//=0 check4を実施しない、1=実施する　
     //---------------------------------
     int check4ColorTransparency = 100;
-    private final Canvas canvas;
+    private final Camera creasePatternCamera;
     private final CanvasModel canvasModel;
     private final ApplicationModel applicationModel;
     private final GridModel gridModel;
@@ -94,8 +94,8 @@ public class CreasePattern_Worker {
 
     public Future<?> camvTask = new FinishedFuture<>(null);
 
-    public CreasePattern_Worker(Canvas canvas, CanvasModel canvasModel, ApplicationModel applicationModel, GridModel gridModel, FoldedFigureModel foldedFigureModel, FileModel fileModel) {  //コンストラクタ
-        this.canvas = canvas;
+    public CreasePattern_Worker(Camera creasePatternCamera, CanvasModel canvasModel, ApplicationModel applicationModel, GridModel gridModel, FoldedFigureModel foldedFigureModel, FileModel fileModel) {
+        this.creasePatternCamera = creasePatternCamera;  //コンストラクタ
         this.canvasModel = canvasModel;
         this.applicationModel = applicationModel;
         this.gridModel = gridModel;
@@ -154,7 +154,7 @@ public class CreasePattern_Worker {
 
     public void Memo_jyouhou_toridasi(Save memo1) {
         if (memo1.getCreasePatternCamera() != null) {
-            canvas.creasePatternCamera.setCamera(memo1.getCreasePatternCamera());
+            creasePatternCamera.setCamera(memo1.getCreasePatternCamera());
         }
 
         if (memo1.getApplicationModel() != null) {
@@ -934,7 +934,7 @@ public class CreasePattern_Worker {
 
     public void check4() {
         camvTask.cancel(true);
-        camvTask = CheckCAMVTask.execute(this, canvas);
+        camvTask = CheckCAMVTask.execute(this, canvasModel);
     }
 
     public void ap_check4() throws InterruptedException {

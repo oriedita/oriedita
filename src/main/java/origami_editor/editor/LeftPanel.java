@@ -13,15 +13,13 @@ import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.service.ButtonService;
-import origami_editor.editor.task.TaskExecutor;
-import origami_editor.editor.task.TwoColoredTask;
+import origami_editor.editor.service.FoldingService;
 import origami_editor.tools.StringOp;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
-import java.io.File;
 import java.util.Arrays;
 
 public class LeftPanel {
@@ -121,7 +119,7 @@ public class LeftPanel {
     private JTextField gridAngleTextField;
     private JButton setGridParametersButton;
 
-    public LeftPanel(App app, MeasuresModel measuresModel, ButtonService buttonService, CreasePattern_Worker mainCreasePatternWorker, ApplicationModel applicationModel, FoldedFigureModel foldedFigureModel, GridModel gridModel, CanvasModel canvasModel) {
+    public LeftPanel(MeasuresModel measuresModel, ButtonService buttonService, CreasePattern_Worker mainCreasePatternWorker, ApplicationModel applicationModel, FoldedFigureModel foldedFigureModel, GridModel gridModel, CanvasModel canvasModel, FoldingService foldingService, DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList) {
         this.measuresModel = measuresModel;
         $$$setupUI$$$();
 
@@ -214,11 +212,9 @@ public class LeftPanel {
 
         undoRedo.addUndoActionListener(e -> {
             mainCreasePatternWorker.undo();
-            app.repaintCanvas();
         });
         undoRedo.addRedoActionListener(e -> {
             mainCreasePatternWorker.redo();
-            app.repaintCanvas();
         });
         lineWidthDecreaseButton.addActionListener(e -> applicationModel.decreaseLineWidth());
         lineWidthIncreaseButton.addActionListener(e -> applicationModel.increaseLineWidth());
@@ -236,14 +232,12 @@ public class LeftPanel {
             canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         drawCreaseRestrictedButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.DRAW_CREASE_RESTRICTED_11);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_RESTRICTED_11);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         voronoiButton.addActionListener(e -> {
             canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
@@ -251,91 +245,78 @@ public class LeftPanel {
             canvasModel.setMouseModeAfterColorSelection(MouseMode.VORONOI_CREATE_62);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         makeFlatFoldableButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         lengthenCreaseButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.LENGTHEN_CREASE_5);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LENGTHEN_CREASE_5);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         lengthenCrease2Button.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         angleBisectorButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.SQUARE_BISECTOR_7);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.SQUARE_BISECTOR_7);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         rabbitEarButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.INWARD_8);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.INWARD_8);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         perpendicularDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.PERPENDICULAR_DRAW_9);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.PERPENDICULAR_DRAW_9);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         symmetricDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.SYMMETRIC_DRAW_10);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.SYMMETRIC_DRAW_10);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         continuousSymmetricDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         parallelDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.PARALLEL_DRAW_40);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.PARALLEL_DRAW_40);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         setParallelDrawWidthButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.PARALLEL_DRAW_WIDTH_51);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.PARALLEL_DRAW_WIDTH_51);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         foldableLineDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.FOLDABLE_LINE_DRAW_71);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         all_s_step_to_orisenButton.addActionListener(e -> {
             System.out.println("i_egaki_dankai = " + mainCreasePatternWorker.getDrawingStage());
             System.out.println("i_kouho_dankai = " + mainCreasePatternWorker.getCandidateSize());
 
             mainCreasePatternWorker.all_s_step_to_orisen();
-            app.repaintCanvas();
         });
         fishBoneDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.FISH_BONE_DRAW_33);
@@ -343,7 +324,6 @@ public class LeftPanel {
 
             mainCreasePatternWorker.unselect_all();
             buttonService.Button_shared_operation();
-            app.repaintCanvas();
         });
         doubleSymmetricDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.DOUBLE_SYMMETRIC_DRAW_35);
@@ -351,15 +331,12 @@ public class LeftPanel {
 
             mainCreasePatternWorker.unselect_all();
             buttonService.Button_shared_operation();
-            app.repaintCanvas();
         });
         lineSegmentDivisionSetButton.addActionListener(e -> {
             getData(applicationModel);
 
             canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DIVISION_27);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
-
-            app.repaintCanvas();
         });
         senbun_b_nyuryokuButton.addActionListener(e -> {
             getData(applicationModel);
@@ -368,67 +345,48 @@ public class LeftPanel {
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         selectButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
-
-            app.repaintCanvas();
         });
         selectAllButton.addActionListener(e -> {
             mainCreasePatternWorker.select_all();
-            app.repaintCanvas();
         });
         unselectButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_UNSELECT_20);
-
-            app.repaintCanvas();
         });
         unselectAllButton.addActionListener(e -> {
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         moveButton.addActionListener(e -> {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MOVE_1);
             canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
-
-            app.repaintCanvas();
         });
         move2p2pButton.addActionListener(e -> {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MOVE4P_2);
             canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
-
-            app.repaintCanvas();
         });
         copyButton.addActionListener(e -> {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.COPY_3);
             canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
-
-            app.repaintCanvas();
         });
         copy2p2pButton.addActionListener(e -> {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.COPY4P_4);
             canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
-
-            app.repaintCanvas();
         });
         reflectButton.addActionListener(e -> {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MIRROR_5);
             canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
-
-            app.repaintCanvas();
         });
         deleteSelectedLineSegmentButton.addActionListener(e -> {
             mainCreasePatternWorker.del_selected_senbun();
             mainCreasePatternWorker.record();
-            app.repaintCanvas();
         });
         lineSegmentDeleteButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
             canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         edgeLineSegmentDeleteButton.addActionListener(e -> {
 
@@ -436,14 +394,12 @@ public class LeftPanel {
             canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.BLACK_LINE_2);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         auxLiveLineSegmentDeleteButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
             canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LIVE_LINE_3);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         trimBranchesButton.addActionListener(e -> {
             mainCreasePatternWorker.point_removal();
@@ -452,48 +408,40 @@ public class LeftPanel {
             mainCreasePatternWorker.organizeCircles();
             mainCreasePatternWorker.record();
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         toMountainButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_MAKE_MOUNTAIN_23);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         toValleyButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_MAKE_VALLEY_24);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         toEdgeButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_MAKE_EDGE_25);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         toAuxButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_MAKE_AUX_60);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         zen_yama_tani_henkanButton.addActionListener(e -> {
             mainCreasePatternWorker.allMountainValleyChange();
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         senbun_henkan2Button.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_TOGGLE_MV_58);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         senbun_henkanButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CHANGE_CREASE_TYPE_4);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         in_L_col_changeButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_MAKE_MV_34);
@@ -504,7 +452,6 @@ public class LeftPanel {
             }
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         on_L_col_changeButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASES_ALTERNATE_MV_36);
@@ -515,70 +462,60 @@ public class LeftPanel {
             }
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         v_addButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.DRAW_POINT_14);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         v_delButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.DELETE_POINT_15);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         v_del_ccButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.VERTEX_DELETE_ON_CREASE_41);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
         v_del_allButton.addActionListener(e -> {
             mainCreasePatternWorker.v_del_all();
             System.out.println("mainDrawingWorker.v_del_all()");
-            app.repaintCanvas();
         });
         v_del_all_ccButton.addActionListener(e -> {
             mainCreasePatternWorker.v_del_all_cc();
             System.out.println("mainDrawingWorker.v_del_all_cc()");
-            app.repaintCanvas();
         });
         correctCpBeforeFoldingCheckBox.addActionListener(e -> {
             applicationModel.setCorrectCpBeforeFolding(correctCpBeforeFoldingCheckBox.isSelected());
-
-            app.repaintCanvas();
         });
         selectPersistentCheckBox.addActionListener(e -> {
             applicationModel.setSelectPersistent(selectPersistentCheckBox.isSelected());
-
-            app.repaintCanvas();
         });
         drawTwoColoredCpButton.addActionListener(e -> {
-            app.foldingService.createTwoColoredCp();
+            foldingService.createTwoColoredCp();
         });
         suitei_01Button.addActionListener(e -> {
-            app.foldingService.fold(app.foldingService.getFoldType(), FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
+            foldingService.fold(foldingService.getFoldType(), FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
             if (!applicationModel.getSelectPersistent()) {
                 mainCreasePatternWorker.unselect_all();
             }
         });
         koteimen_siteiButton.addActionListener(e -> {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
             if (selectedFigure != null && selectedFigure.foldedFigure.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
                 canvasModel.setMouseMode(MouseMode.CHANGE_STANDARD_FACE_103);
             }
         });
         suitei_02Button.addActionListener(e -> {
-            app.foldingService.fold(app.foldingService.getFoldType(), FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
+            foldingService.fold(foldingService.getFoldType(), FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
             if (!applicationModel.getSelectPersistent()) {
                 mainCreasePatternWorker.unselect_all();
             }
         });
         suitei_03Button.addActionListener(e -> {
-            app.foldingService.fold(app.foldingService.getFoldType(), FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
+            foldingService.fold(foldingService.getFoldType(), FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
 
             if (!applicationModel.getSelectPersistent()) {
                 mainCreasePatternWorker.unselect_all();

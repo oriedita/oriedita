@@ -1,7 +1,7 @@
 package origami_editor.editor.task;
 
 import origami.crease_pattern.FoldingException;
-import origami_editor.editor.App;
+import origami_editor.editor.Canvas;
 import origami_editor.editor.databinding.FileModel;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.service.FileSaveService;
@@ -11,14 +11,14 @@ import javax.swing.*;
 import java.io.File;
 
 public class FoldingEstimateSave100Task implements Runnable {
-    private final App app;
+    private final Canvas canvas;
     private final FoldingService foldingService;
     private final FileSaveService fileSaveService;
     private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
     private final FileModel fileModel;
 
-    public FoldingEstimateSave100Task(App app, FoldingService foldingService, FileSaveService fileSaveService, DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList, FileModel fileModel) {
-        this.app = app;
+    public FoldingEstimateSave100Task(Canvas canvas, FoldingService foldingService, FileSaveService fileSaveService, DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList, FileModel fileModel) {
+        this.canvas = canvas;
         this.foldingService = foldingService;
         this.fileSaveService = fileSaveService;
         this.foldedFiguresList = foldedFiguresList;
@@ -39,7 +39,7 @@ public class FoldingEstimateSave100Task implements Runnable {
         if (file != null) {
             selectedFigure.foldedFigure.summary_write_image_during_execution = true;//Meaning during summary writing
 
-            synchronized (app.w_image_running) {
+            synchronized (canvas.w_image_running) {
                 int objective = 100;
                 try {
 
@@ -56,11 +56,11 @@ public class FoldingEstimateSave100Task implements Runnable {
 
                         fileModel.setExportImageFileName(filename);
 
-                        app.w_image_running.set(true);
-                        app.repaintCanvas();
+                        canvas.w_image_running.set(true);
+                        canvas.repaint();
 
                         try {
-                            app.w_image_running.wait();
+                            canvas.w_image_running.wait();
                         } catch (InterruptedException e) {
                             return;
                         }
@@ -81,6 +81,6 @@ public class FoldingEstimateSave100Task implements Runnable {
         long L = stop - start;
         selectedFigure.foldedFigure.text_result = selectedFigure.foldedFigure.text_result + "     Computation time " + L + " msec.";
 
-        app.repaintCanvas();
+        canvas.repaint();
     }
 }

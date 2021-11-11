@@ -36,6 +36,7 @@ public class FileSaveService {
     private final CameraModel creasePatternCameraModel;
     private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
     private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate;
+    private final BackgroundModel backgroundModel;
 
     public FileSaveService(
             Canvas canvas,
@@ -50,7 +51,8 @@ public class FileSaveService {
             AngleSystemModel angleSystemModel,
             CameraModel creasePatternCameraModel,
             DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList,
-            MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate) {
+            MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate,
+            BackgroundModel backgroundModel) {
         this.canvas = canvas;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.fileModel = fileModel;
@@ -64,6 +66,7 @@ public class FileSaveService {
         this.creasePatternCameraModel = creasePatternCameraModel;
         this.foldedFiguresList = foldedFiguresList;
         this.mouseHandlerVoronoiCreate = mouseHandlerVoronoiCreate;
+        this.backgroundModel = backgroundModel;
     }
 
     public void setOwner(Frame owner) {
@@ -438,6 +441,27 @@ public class FileSaveService {
             Cp.exportFile(save, fname);
         } else {
             JOptionPane.showMessageDialog(owner, "Unknown file type, cannot save", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+    public void readBackgroundImageFromFile() {
+        FileDialog fd = new FileDialog(owner, "Select Image File.", FileDialog.LOAD);
+        fd.setVisible(true);
+        String img_background_fname = fd.getDirectory() + fd.getFile();
+        try {
+            if (fd.getFile() != null) {
+                Toolkit tk = Toolkit.getDefaultToolkit();
+                Image img_background = tk.getImage(img_background_fname);
+
+                if (img_background != null) {
+                    backgroundModel.setBackgroundImage(img_background);
+                    backgroundModel.setDisplayBackground(true);
+                    backgroundModel.setLockBackground(false);
+                }
+            }
+
+        } catch (Exception e) {
         }
     }
 }

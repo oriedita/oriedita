@@ -13,7 +13,7 @@ import origami_editor.editor.json.DefaultObjectMapper;
 import origami_editor.editor.service.ButtonService;
 import origami_editor.editor.service.FileSaveService;
 import origami_editor.editor.service.FoldingService;
-import origami_editor.editor.task.TaskExecutor;
+import origami_editor.tools.Camera;
 import origami_editor.tools.ResourceUtil;
 
 import javax.swing.*;
@@ -27,7 +27,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.Queue;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static origami_editor.tools.ResourceUtil.getAppDir;
 
@@ -45,13 +44,13 @@ public class App {
     public final CameraModel creasePatternCameraModel;
     public final FileModel fileModel;
     public final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
-    public final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
     public final CreasePattern_Worker mainCreasePatternWorker;    // Basic branch craftsman. Accepts input from the mouse.
     final Queue<Popup> popups = new ArrayDeque<>();
     private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate = new MouseHandlerVoronoiCreate();
     public  final FileSaveService fileSaveService;
     public final ButtonService buttonService;
     public final FoldingService foldingService;
+    private AppMenuBar appMenuBar;
     public BulletinBoard bulletinBoard = new BulletinBoard();
     // ------------------------------------------------------------------------
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
@@ -79,19 +78,23 @@ public class App {
         fileModel = new FileModel();
         foldedFiguresList = new DefaultComboBoxModel<>();
 
-        canvas = new Canvas(this);
+        Camera creasePatternCamera = new Camera();
+
+        mainCreasePatternWorker = new CreasePattern_Worker(creasePatternCamera, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel);
+
+        canvas = new Canvas(creasePatternCamera, mainCreasePatternWorker, foldedFiguresList, backgroundModel, bulletinBoard, fileModel, applicationModel, creasePatternCameraModel, foldedFigureModel, canvasModel);
         explanation = new HelpDialog(applicationModel::setHelpVisible);
 
-        mainCreasePatternWorker = new CreasePattern_Worker(canvas, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel);
-
-        fileSaveService = new FileSaveService(canvas, mainCreasePatternWorker, fileModel, applicationModel, historyStateModel, canvasModel, internalDivisionRatioModel, foldedFigureModel, gridModel, angleSystemModel, creasePatternCameraModel, foldedFiguresList, mouseHandlerVoronoiCreate);
+        fileSaveService = new FileSaveService(canvas, mainCreasePatternWorker, fileModel, applicationModel, historyStateModel, canvasModel, internalDivisionRatioModel, foldedFigureModel, gridModel, angleSystemModel, creasePatternCameraModel, foldedFiguresList, mouseHandlerVoronoiCreate, backgroundModel);
         buttonService = new ButtonService(explanation, mainCreasePatternWorker, canvas);
         foldingService = new FoldingService(bulletinBoard, canvas, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, mainCreasePatternWorker, foldedFiguresList);
+        buttonService.setMouseHandlerVoronoiCreate(mouseHandlerVoronoiCreate);
     }
 
     public void start() {
         frame = new JFrame();
         fileSaveService.setOwner(frame);
+        canvas.setFrame(frame);
 
         frame.setTitle("Origami Editor " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
         frame_title_0 = frame.getTitle();
@@ -110,7 +113,7 @@ public class App {
         frame.addWindowListener(new WindowAdapter() {//ウィンドウの状態が変化したときの処理
             //終了ボタンを有効化
             public void windowClosing(WindowEvent evt) {
-                closing();//Work to be done when pressing X at the right end of the upper side of the window
+                appMenuBar.closing();//Work to be done when pressing X at the right end of the upper side of the window
             }//終了ボタンを有効化 ここまで。
         });//Processing when the window state changes Up to here.
 
@@ -191,7 +194,14 @@ public class App {
 
         foldedFiguresList.removeAllElements();
 
-        Editor editor = new Editor(this, canvas);
+        RightPanel rightPanel = new RightPanel(angleSystemModel, buttonService, measuresModel, mainCreasePatternWorker, canvasModel, applicationModel, historyStateModel);
+        BottomPanel bottomPanel = new BottomPanel(buttonService, measuresModel, canvasModel, foldedFigureModel, creasePatternCameraModel, mainCreasePatternWorker, foldingService, applicationModel, foldedFiguresList, fileModel, fileSaveService, canvas, bulletinBoard);
+        TopPanel topPanel = new TopPanel(measuresModel, buttonService, canvasModel, internalDivisionRatioModel, backgroundModel, mainCreasePatternWorker, foldedFigureModel, fileSaveService, creasePatternCameraModel, foldedFiguresList, canvas, applicationModel);
+        LeftPanel leftPanel = new LeftPanel(measuresModel, buttonService, mainCreasePatternWorker, applicationModel, foldedFigureModel, gridModel, canvasModel, foldingService, foldedFiguresList);
+
+
+        Editor editor = new Editor(canvas, rightPanel, bottomPanel, topPanel, leftPanel);
+        editor.setOwner(frame);
 
         bulletinBoard.addChangeListener(e -> frame.repaint());
 
@@ -207,12 +217,7 @@ public class App {
         frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("fishbase.png")));
         frame.setContentPane(editor.$$$getRootComponent$$$());
 
-        TopPanel topPanel = editor.getTopPanel();
-        RightPanel rightPanel = editor.getRightPanel();
-        BottomPanel bottomPanel = editor.getBottomPanel();
-        LeftPanel leftPanel = editor.getLeftPanel();
-
-        AppMenuBar appMenuBar = new AppMenuBar(this, applicationModel, fileSaveService, buttonService);
+        appMenuBar = new AppMenuBar(applicationModel, fileSaveService, buttonService, canvasModel, fileModel, mainCreasePatternWorker, foldedFigureModel, foldedFiguresList);
 
         frame.setJMenuBar(appMenuBar);
 
@@ -587,60 +592,6 @@ public class App {
                 "<html>新たに折り上がり図を描くためには、あらかじめ対象範囲を選択してください（selectボタンを使う）。<br>" +
                         "To calculate new folded shape, select the target clease lines range in advance (use the select button).<html>");
         JOptionPane.showMessageDialog(frame, label);
-    }
-
-    public void closing() {
-        if (!fileModel.isSaved()) {
-            int option = JOptionPane.showConfirmDialog(frame, "Save crease pattern before exiting?", "Save", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-
-            switch (option) {
-                case JOptionPane.YES_OPTION:
-                    canvas.mouseDraggedValid = false;
-                    canvas.mouseReleasedValid = false;
-                    fileSaveService.saveFile();
-
-                    TaskExecutor.stopTask();
-                    System.exit(0);
-                case JOptionPane.NO_OPTION:
-                    TaskExecutor.stopTask();
-                    System.exit(0);
-                case JOptionPane.CANCEL_OPTION:
-                    break;
-            }
-        } else {
-            TaskExecutor.stopTask();
-            System.exit(0);
-        }
-    }
-
-    void setFoldedFigureIndex(int i) {//Processing when OZ is switched
-        System.out.println("foldedFigureIndex = " + i);
-
-        FoldedFigure_Drawer newSelectedItem = foldedFiguresList.getElementAt(i);
-        foldedFiguresList.setSelectedItem(newSelectedItem);
-
-        // Load data from this foldedFigure to the ui.
-        newSelectedItem.getData(foldedFigureModel);
-    }
-
-    void readBackgroundImageFromFile() {
-        FileDialog fd = new FileDialog(frame, "Select Image File.", FileDialog.LOAD);
-        fd.setVisible(true);
-        String img_background_fname = fd.getDirectory() + fd.getFile();
-        try {
-            if (fd.getFile() != null) {
-                Toolkit tk = Toolkit.getDefaultToolkit();
-                Image img_background = tk.getImage(img_background_fname);
-
-                if (img_background != null) {
-                    backgroundModel.setBackgroundImage(img_background);
-                    backgroundModel.setDisplayBackground(true);
-                    backgroundModel.setLockBackground(false);
-                }
-            }
-
-        } catch (Exception e) {
-        }
     }
 
     private void applyLookAndFeel(String lafClassName) {

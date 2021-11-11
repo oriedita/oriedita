@@ -65,7 +65,7 @@ public class FoldingService {
             }
             //
             if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
-                CreasePattern_Worker creasePatternWorker2 = new CreasePattern_Worker(canvas, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel);    // Basic branch craftsman. Accepts input from the mouse.
+                CreasePattern_Worker creasePatternWorker2 = new CreasePattern_Worker(canvas.creasePatternCamera, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel);    // Basic branch craftsman. Accepts input from the mouse.
                 Save save = new Save();
                 mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
                 creasePatternWorker2.setSave_for_reading(save);

@@ -9,6 +9,7 @@ import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.service.ButtonService;
+import origami_editor.editor.service.FileSaveService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,7 +46,18 @@ public class TopPanel {
     private JButton backgroundLockButton;
     private JCheckBox mouseSettingsCheckBox;
 
-    public TopPanel(App app, MeasuresModel measuresModel, ButtonService buttonService, CanvasModel canvasModel, InternalDivisionRatioModel internalDivisionRatioModel, BackgroundModel backgroundModel, CreasePattern_Worker mainCreasePatternWorker, FoldedFigureModel foldedFigureModel) {
+    public TopPanel(MeasuresModel measuresModel,
+                    ButtonService buttonService,
+                    CanvasModel canvasModel,
+                    InternalDivisionRatioModel internalDivisionRatioModel,
+                    BackgroundModel backgroundModel,
+                    CreasePattern_Worker mainCreasePatternWorker,
+                    FoldedFigureModel foldedFigureModel,
+                    FileSaveService fileSaveService,
+                    CameraModel creasePatternCameraModel,
+                    DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList,
+                    Canvas canvas,
+                    ApplicationModel applicationModel) {
         this.measuresModel = measuresModel;
         $$$setupUI$$$();
 
@@ -74,16 +86,13 @@ public class TopPanel {
             canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
-        mouseSettingsCheckBox.addActionListener(e -> app.applicationModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected()));
+        mouseSettingsCheckBox.addActionListener(e -> applicationModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected()));
         lineSegmentInternalDivisionRatioSetButton.addActionListener(e -> {
             getData(internalDivisionRatioModel);
 
             canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_RATIO_SET_28);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_RATIO_SET_28);
-
-            app.repaintCanvas();
         });
         drawLineSegmentInternalDivisionRatioButton.addActionListener(e -> {
             getData(internalDivisionRatioModel);
@@ -92,23 +101,18 @@ public class TopPanel {
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_RATIO_SET_28);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
-        moveCreasePatternButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.MOVE_CREASE_PATTERN_2);
-
-            app.repaintCanvas();
-        });
+        moveCreasePatternButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.MOVE_CREASE_PATTERN_2));
         creasePatternZoomOutButton.addActionListener(e -> {
-            app.creasePatternCameraModel.zoomOut();
+            creasePatternCameraModel.zoomOut();
 
             double magnification = 1.0 / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
 
             FoldedFigure_Drawer OZi;
-            for (int i_oz = 0; i_oz < app.foldedFiguresList.getSize(); i_oz++) {
-                OZi = app.foldedFiguresList.getElementAt(i_oz);
+            for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
+                OZi = foldedFiguresList.getElementAt(i_oz);
 
-                Point t_o2tv = app.canvas.creasePatternCamera.object2TV(app.canvas.creasePatternCamera.getCameraPosition());
+                Point t_o2tv = canvas.creasePatternCamera.object2TV(canvas.creasePatternCamera.getCameraPosition());
 
                 OZi.scale(magnification, t_o2tv);
             }
@@ -116,36 +120,34 @@ public class TopPanel {
             foldedFigureModel.zoomOut();
         });
         scaleFactorSetButton.addActionListener(e -> {
-            double d_syukusyaku_keisuu_old = app.creasePatternCameraModel.getScale();
+            double d_syukusyaku_keisuu_old = creasePatternCameraModel.getScale();
 
-            app.creasePatternCameraModel.setScale(app.measuresModel.string2double(scaleFactorTextField.getText(), d_syukusyaku_keisuu_old));
-            if (app.creasePatternCameraModel.getScale() != d_syukusyaku_keisuu_old) {
-                double magnification = app.creasePatternCameraModel.getScale() / d_syukusyaku_keisuu_old;
+            creasePatternCameraModel.setScale(measuresModel.string2double(scaleFactorTextField.getText(), d_syukusyaku_keisuu_old));
+            if (creasePatternCameraModel.getScale() != d_syukusyaku_keisuu_old) {
+                double magnification = creasePatternCameraModel.getScale() / d_syukusyaku_keisuu_old;
 
                 FoldedFigure_Drawer OZi;
-                for (int i_oz = 0; i_oz < app.foldedFiguresList.getSize(); i_oz++) {
-                    OZi = app.foldedFiguresList.getElementAt(i_oz);
+                for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
+                    OZi = foldedFiguresList.getElementAt(i_oz);
 
-                    Point t_o2tv = app.canvas.creasePatternCamera.object2TV(app.canvas.creasePatternCamera.getCameraPosition());
+                    Point t_o2tv = canvas.creasePatternCamera.object2TV(canvas.creasePatternCamera.getCameraPosition());
 
                     OZi.scale(magnification, t_o2tv);
                 }
 
                 foldedFigureModel.setScale(foldedFigureModel.getScale() * magnification);
             }
-
-            app.repaintCanvas();
         });
         creasePatternZoomInButton.addActionListener(e -> {
-            app.creasePatternCameraModel.zoomIn();
+            creasePatternCameraModel.zoomIn();
 
             double magnification = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
 
             FoldedFigure_Drawer OZi;
-            for (int i_oz = 0; i_oz < app.foldedFiguresList.getSize(); i_oz++) {
-                OZi = app.foldedFiguresList.getElementAt(i_oz);
+            for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
+                OZi = foldedFiguresList.getElementAt(i_oz);
 
-                Point t_o2tv = app.canvas.creasePatternCamera.object2TV(app.canvas.creasePatternCamera.getCameraPosition());
+                Point t_o2tv = canvas.creasePatternCamera.object2TV(canvas.creasePatternCamera.getCameraPosition());
 
                 OZi.scale(magnification, t_o2tv);
             }
@@ -153,14 +155,10 @@ public class TopPanel {
             foldedFigureModel.zoomIn();
 //20180122追加　ここまで
         });
-        rotateAnticlockwiseButton.addActionListener(e -> app.creasePatternCameraModel.increaseRotation());
-        rotationSetButton.addActionListener(e -> {
-            app.creasePatternCameraModel.setRotation(app.measuresModel.string2double(rotationTextField.getText(), app.creasePatternCameraModel.getRotation()));
-
-            app.repaintCanvas();
-        });
-        rotateClockwiseButton.addActionListener(e -> app.creasePatternCameraModel.decreaseRotation());
-        transparentButton.addActionListener(e -> app.canvas.createTransparentBackground());
+        rotateAnticlockwiseButton.addActionListener(e -> creasePatternCameraModel.increaseRotation());
+        rotationSetButton.addActionListener(e -> creasePatternCameraModel.setRotation(measuresModel.string2double(rotationTextField.getText(), creasePatternCameraModel.getRotation())));
+        rotateClockwiseButton.addActionListener(e -> creasePatternCameraModel.decreaseRotation());
+        transparentButton.addActionListener(e -> canvas.createTransparentBackground());
         backgroundTrimButton.addActionListener(e -> {
             BufferedImage offsc_background = new BufferedImage(2000, 1100, BufferedImage.TYPE_INT_ARGB);
 
@@ -172,12 +170,11 @@ public class TopPanel {
                 int iw = backgroundImage.getWidth(null);//イメージの幅を取得
                 int ih = backgroundImage.getHeight(null);//イメージの高さを取得
 
-                app.canvas.h_cam.setBackgroundWidth(iw);
-                app.canvas.h_cam.setBackgroundHeight(ih);
+                canvas.h_cam.setBackgroundWidth(iw);
+                canvas.h_cam.setBackgroundHeight(ih);
 
-                app.canvas.drawBackground(g2_background, backgroundImage);
+                canvas.drawBackground(g2_background, backgroundImage);
             }
-
 
 //枠設定時の背景を枠内のみ残してトリム 20181204
             if ((canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61) && (mainCreasePatternWorker.getDrawingStage() == 4)) {//枠線が表示されている状態
@@ -188,54 +185,43 @@ public class TopPanel {
 
                 backgroundModel.setBackgroundImage(offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin));
 
-                app.canvas.h_cam = new Background_camera();
+                canvas.h_cam = new Background_camera();
 
-                app.canvas.background_set(new Point(120.0, 120.0),
+                canvas.background_set(new Point(120.0, 120.0),
                         new Point(120.0 + 10.0, 120.0),
                         new Point(xmin, ymin),
                         new Point((double) xmin + 10.0, ymin));
 
                 if (backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                    app.canvas.h_cam.setLocked(true);
-                    app.canvas.h_cam.setCamera(app.canvas.creasePatternCamera);
-                    app.canvas.h_cam.h3_obj_and_h4_obj_calculation();
+                    canvas.h_cam.setLocked(true);
+                    canvas.h_cam.setCamera(canvas.creasePatternCamera);
+                    canvas.h_cam.h3_obj_and_h4_obj_calculation();
                 }
             }
-
-            app.repaintCanvas();
         });
         readBackgroundButton.addActionListener(e -> {
-            app.readBackgroundImageFromFile();
+            fileSaveService.readBackgroundImageFromFile();
 
-            app.canvas.h_cam = new Background_camera();//20181202
+            canvas.h_cam = new Background_camera();//20181202
             if (backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                app.canvas.h_cam.setLocked(backgroundModel.isLockBackground());
-                app.canvas.h_cam.setCamera(app.canvas.creasePatternCamera);
-                app.canvas.h_cam.h3_obj_and_h4_obj_calculation();
+                canvas.h_cam.setLocked(backgroundModel.isLockBackground());
+                canvas.h_cam.setCamera(canvas.creasePatternCamera);
+                canvas.h_cam.h3_obj_and_h4_obj_calculation();
             }
-
-            app.repaintCanvas();
         });
         backgroundToggleButton.addActionListener(e -> {
             backgroundModel.setDisplayBackground(!backgroundModel.isDisplayBackground());
-
-            app.repaintCanvas();
         });
         backgroundSetPositionButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.BACKGROUND_CHANGE_POSITION_26);
-
-            app.repaintCanvas();
         });
         backgroundLockButton.addActionListener(e -> {
             backgroundModel.setLockBackground(!backgroundModel.isLockBackground());
-
-            app.repaintCanvas();
         });
         senbun_yoke_henkanButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_ADVANCE_TYPE_30);
 
             mainCreasePatternWorker.unselect_all();
-            app.repaintCanvas();
         });
     }
 
