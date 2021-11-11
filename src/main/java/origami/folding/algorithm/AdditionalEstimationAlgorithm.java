@@ -250,6 +250,7 @@ public class AdditionalEstimationAlgorithm {
 
         /////////////////////////
 
+        // We already make sure that a > b and c > d when we added the condition.
         // If a> c> b, then a> d> b
         if (hierarchyList.get(a, c) == ABOVE && hierarchyList.get(c, b) == ABOVE) {
             // Noticed that we don't need to infer a > b here, since that part will be done
@@ -262,16 +263,6 @@ public class AdditionalEstimationAlgorithm {
             removeFlag = 1;
             changes += tryInferAbove(a, c) + tryInferAbove(c, b);
         }
-        // b>c>a なら b>d>a
-        if (hierarchyList.get(b, c) == ABOVE && hierarchyList.get(c, a) == ABOVE) {
-            removeFlag = 1;
-            changes += tryInferAbove(b, d) + tryInferAbove(d, a);
-        }
-        // b>d>a なら b>c>a
-        if (hierarchyList.get(b, d) == ABOVE && hierarchyList.get(d, a) == ABOVE) {
-            removeFlag = 1;
-            changes += tryInferAbove(b, c) + tryInferAbove(c, a);
-        }
         // c>a>d なら c>b>d
         if (hierarchyList.get(c, a) == ABOVE && hierarchyList.get(a, d) == ABOVE) {
             removeFlag = 1;
@@ -281,16 +272,6 @@ public class AdditionalEstimationAlgorithm {
         if (hierarchyList.get(c, b) == ABOVE && hierarchyList.get(b, d) == ABOVE) {
             removeFlag = 1;
             changes += tryInferAbove(c, a) + tryInferAbove(a, d);
-        }
-        // d>a>c なら d>b>c
-        if (hierarchyList.get(d, a) == ABOVE && hierarchyList.get(a, c) == ABOVE) {
-            removeFlag = 1;
-            changes += tryInferAbove(d, b) + tryInferAbove(b, c);
-        }
-        // d>b>c なら d>a>c
-        if (hierarchyList.get(d, b) == ABOVE && hierarchyList.get(b, c) == ABOVE) {
-            removeFlag = 1;
-            changes += tryInferAbove(d, a) + tryInferAbove(a, c);
         }
 
         return (changes << 1) | removeFlag;

@@ -201,7 +201,7 @@ public class FoldedFigure_Worker {
                             //下の２つのifは暫定的な処理。あとで置き換え予定
                             if (otta_face_figure.convex_inside(Epsilon.UNKNOWN_05, ib, im)) {
                                 if (otta_face_figure.convex_inside(-Epsilon.UNKNOWN_05, ib, im)) {
-                                    hierarchyList.addEquivalenceCondition(im, faceId_min, im, faceId_max);
+                                    hierarchyList.addEquivalenceCondition(im, faceId_min, faceId_max);
                                 }
                             }
                         }

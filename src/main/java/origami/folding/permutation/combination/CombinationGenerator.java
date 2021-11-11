@@ -47,11 +47,6 @@ public class CombinationGenerator {
             int a = faceIdMapArray[ec.getA()];
             int b = faceIdMapArray[ec.getB()];
             int d = faceIdMapArray[ec.getD()];
-            if (ia.get(b, d) == HierarchyList.BELOW_0) {
-                int temp = b;
-                b = d;
-                d = temp;
-            }
             constraints.add(new TernaryConstraint(a, b, d, ia));
         }
 
@@ -61,16 +56,6 @@ public class CombinationGenerator {
             int b = faceIdMapArray[ec.getB()];
             int c = faceIdMapArray[ec.getC()];
             int d = faceIdMapArray[ec.getD()];
-            if (ia.get(a, b) == HierarchyList.BELOW_0) {
-                int temp = a;
-                a = b;
-                b = temp;
-            }
-            if (ia.get(c, d) == HierarchyList.BELOW_0) {
-                int temp = c;
-                c = d;
-                d = temp;
-            }
             constraints.add(new QuaternaryConstraint(a, b, c, d, ia));
         }
 
