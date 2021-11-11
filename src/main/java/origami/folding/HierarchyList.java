@@ -79,13 +79,8 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     // Add equivalence condition. When there are two adjacent faces im1 and im2 as the boundary of the bar ib, when the folding is estimated
     // The surface im located at the position where it overlaps a part of the bar ib is not sandwiched between the surface im1 and the surface im2 in the vertical direction. From this
     // The equivalent condition of gj [im1] [im] = gj [im2] [im] is satisfied.
-    public void addEquivalenceCondition(int a, int b, int d) {
-        if (get(b, d) == HierarchyList.BELOW_0) {
-            int temp = b;
-            b = d;
-            d = temp;
-        }
-        tL.add(new EquivalenceCondition(a, b, a, d));
+    public void addEquivalenceCondition(EquivalenceCondition ec) {
+        tL.add(ec);
     }
 
     public int getUEquivalenceConditionTotal() {

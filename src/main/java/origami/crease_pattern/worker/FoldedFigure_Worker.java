@@ -181,8 +181,16 @@ public class FoldedFigure_Worker {
             }
         }
 
+        // First round of AEA; this will save both time and space later on
+        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(bb, hierarchyList, s0, FaceIdCount_max * FaceIdCount_max);
+        HierarchyListStatus AEAresult = AEA.run(0);
+        if (AEAresult != HierarchyListStatus.SUCCESSFUL_1000) {
+            errorPos = AEA.errorPos;
+            return AEAresult;
+        }
+
         //----------------------------------------------
-        bb.write("           HierarchyList_configure   step2   start ");
+        bb.rewrite(10, "           HierarchyList_configure   step2   start ");
         System.out.println("等価条件を設定する   ");
         //等価条件を設定する。棒ibを境界として隣接する2つの面im1,im2が有る場合、折り畳み推定した場合に
         //棒ibの一部と重なる位置に有る面imは面im1と面im2に上下方向で挟まれることはない。このことから
@@ -201,7 +209,13 @@ public class FoldedFigure_Worker {
                             //下の２つのifは暫定的な処理。あとで置き換え予定
                             if (otta_face_figure.convex_inside(Epsilon.UNKNOWN_05, ib, im)) {
                                 if (otta_face_figure.convex_inside(-Epsilon.UNKNOWN_05, ib, im)) {
-                                    hierarchyList.addEquivalenceCondition(im, faceId_min, faceId_max);
+                                    // We add the 3EC through AEA, so if it is consumed immediately, it will not be
+                                    // actually added. This helps saves memory.
+                                    if(!AEA.addEquivalenceCondition(im, faceId_min, faceId_max)) {
+                                        // Error handling is also needed here
+                                        errorPos = AEA.errorPos;
+                                        return HierarchyListStatus.CONTRADICTED_3;
+                                    }
                                 }
                             }
                         }
@@ -238,6 +252,9 @@ public class FoldedFigure_Worker {
                         if (mj1 != mj2 && mj1 != 0) {
                             if (otta_face_figure.parallel_overlap(ibf, jbf)) {
                                 if (exist_identical_subFace(mi1, mi2, mj1, mj2)) {
+                                    // For the moment AEA doesn't support parallel processing, so we cannot add 4EC
+                                    // through it the same way we did with 3EC. Fortunately the total number of 4EC
+                                    // is in general a lot less than 3EC, so this is not a problem.
                                     hierarchyList.addUEquivalenceCondition(mi1, mi2, mj1, mj2);
                                 }
                             }
@@ -269,12 +286,14 @@ public class FoldedFigure_Worker {
         System.out.println(hierarchyList.getUEquivalenceConditionTotal());
 
         bb.write("           HierarchyList_configure   step4   start ");
-        //Additional estimation
-
-        HierarchyListStatus additional = additional_estimation();
-        if (additional != HierarchyListStatus.SUCCESSFUL_1000) {
-            return additional;
+        // Second round of AEA
+        AEA.removeMode = true; // This time we turn on the remove mode.
+        AEAresult = AEA.run(0);
+        if (AEAresult != HierarchyListStatus.SUCCESSFUL_1000) {
+            errorPos = AEA.errorPos;
+            return AEAresult;
         }
+        AEA = null; // Now we can release the memory
         System.gc();
         
         // Here we can compare and see the huge difference before and after AEA
@@ -360,19 +379,6 @@ public class FoldedFigure_Worker {
         System.out.println("上下表初期設定終了");
         return HierarchyListStatus.SUCCESSFUL_1000;
     }
-
-    public HierarchyListStatus additional_estimation() throws InterruptedException {
-        // We will infer relationships that can be further determined from the
-        // information on mountain folds and valley folds.
-
-        int capacity = FaceIdCount_max * FaceIdCount_max;
-        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(bb, hierarchyList, s0, capacity);
-        AEA.removeMode = true;
-        HierarchyListStatus result = AEA.run(0);
-        errorPos = AEA.errorPos;
-        return result;
-    }
-
 
     //引数の４つの面を同時に含むSubFaceが1つ以上存在するなら１、しないなら０を返す。
     private boolean exist_identical_subFace(int im1, int im2, int im3, int im4) {

@@ -35,6 +35,7 @@ public class AdditionalEstimationAlgorithm {
     private final HierarchyList hierarchyList;
     private final SubFace[] subFaces; // indices start from 1
     private final int count;
+    private int new_relations;
 
     private final ReactiveItalianoAlgorithm[] IA;
     private final PseudoListMatrix relationObservers;
@@ -55,7 +56,6 @@ public class AdditionalEstimationAlgorithm {
     public AdditionalEstimationAlgorithm(IBulletinBoard bb, HierarchyList hierarchyList, SubFace[] s, int capacity) {
         this(hierarchyList, s, capacity);
         this.bb = bb;
-        if (bb != null) bb.write(" ");
     }
 
     public AdditionalEstimationAlgorithm(HierarchyList hierarchyList, SubFace[] s, int capacity) {
@@ -73,10 +73,11 @@ public class AdditionalEstimationAlgorithm {
     }
 
     public HierarchyListStatus run(int completedSubFaces) throws InterruptedException {
-        int new_relations, total = 0;
+        int total = 0;
 
         if (bb != null) {
             System.out.println("additional_estimation start---------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
+            bb.write(" ");
         }
 
         do {
@@ -154,9 +155,7 @@ public class AdditionalEstimationAlgorithm {
     /** This is a faster version of run(). */
     public void fastRun() {
         try {
-            for (int iS = 1; iS < count; iS++) {
-                checkTransitivity(iS);
-            }
+            flush();
             for (EquivalenceCondition tg : hierarchyList.getEquivalenceConditions()) {
                 checkTripleConstraint(tg);
             }
@@ -314,6 +313,37 @@ public class AdditionalEstimationAlgorithm {
 
     public void restore() {
         for (int i = 1; i < count; i++) IA[i].restore();
+    }
+
+    /**
+     * Create a new 3EC and perform an initial check at the same time.
+     */
+    public boolean addEquivalenceCondition(int a, int b, int d) {
+        if (hierarchyList.get(b, d) == BELOW) {
+            int temp = b;
+            b = d;
+            d = temp;
+        }
+        EquivalenceCondition ec = new EquivalenceCondition(a, b, a, d);
+        try {
+            int result = checkTripleConstraint(ec);
+            if ((result & 1) == 0) hierarchyList.addEquivalenceCondition(ec);
+            else {
+                new_relations += result >>> 1;
+                if (new_relations > MAX_NEW_RELATIONS) flush();
+            }
+            return true;
+        } catch (InferenceFailureException e) {
+            errorPos = ec;
+            return false;
+        }
+    }
+
+    private void flush() throws InferenceFailureException {
+        new_relations = 0;
+        for (int iS = 1; iS < count; iS++) {
+            new_relations += checkTransitivity(iS);
+        }
     }
 
     private static class InferenceFailureException extends Exception {
