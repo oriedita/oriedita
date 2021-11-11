@@ -407,7 +407,9 @@ public class App {
 
         updateButtonIcons(frame);
         frame.pack();
-        frame.setVisible(true);
+
+        frame.setMinimumSize(frame.getSize());
+
 
         if (applicationModel.getWindowPosition() != null) {
             frame.setLocation(applicationModel.getWindowPosition());
@@ -417,7 +419,10 @@ public class App {
         if (applicationModel.getWindowSize() != null) {
             frame.setSize(applicationModel.getWindowSize());
         }
+
         frame.setExtendedState(applicationModel.getWindowState());
+        frame.setVisible(true);
+
 
         explanation = new HelpDialog(frame, applicationModel::setHelpVisible, canvas.getLocationOnScreen(), canvas.getSize());
         explanation.addWindowListener(new WindowAdapter() {

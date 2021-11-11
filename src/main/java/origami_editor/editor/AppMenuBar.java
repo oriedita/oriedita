@@ -34,6 +34,7 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem saveAsButton;
     private JMenuItem exportButton;
     private JMenuItem importButton;
+    private JMenuItem importAddButton;
     private JMenuItem exitButton;
     private JMenuItem toggleHelpMenuItem;
     private JMenuItem toggleConsoleMenuItem;
@@ -56,6 +57,7 @@ public class AppMenuBar extends JMenuBar {
         app.registerButton(saveButton, "saveAction");
         app.registerButton(saveAsButton, "saveAsAction");
         app.registerButton(importButton, "importAction");
+        app.registerButton(importAddButton, "importAddAction");
         app.registerButton(exportButton, "exportAction");
         app.registerButton(exitButton, "exitAction");
         app.registerButton(showPointRangeCheckBox, "showPointRangeAction");
@@ -120,6 +122,18 @@ public class AppMenuBar extends JMenuBar {
             app.repaintCanvas();
         });
         importButton.addActionListener(e -> app.importFile());
+        importAddButton.addActionListener(e -> {
+            System.out.println("readFile2Memo() 開始");
+            File file = app.selectImportFile();
+            Save save = app.readImportFile(file);
+            System.out.println("readFile2Memo() 終了");
+
+            if (save != null) {
+                app.mainCreasePatternWorker.setSave_for_reading_tuika(save);
+                app.mainCreasePatternWorker.record();
+                app.repaintCanvas();
+            }
+        });
         exitButton.addActionListener(e -> app.closing());
         showPointRangeCheckBox.addActionListener(e -> getData(applicationModel));
         pointOffsetCheckBox.addActionListener(e -> getData(applicationModel));
@@ -250,6 +264,9 @@ public class AppMenuBar extends JMenuBar {
 
         importButton = new JMenuItem("Import");
         fileMenu.add(importButton);
+
+        importAddButton = new JMenuItem("Import (Add)");
+        fileMenu.add(importAddButton);
 
         fileMenu.addSeparator();
 
