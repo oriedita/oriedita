@@ -1,9 +1,11 @@
 package origami_editor.editor.canvas;
 
+import org.springframework.stereotype.Component;
 import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
+@Component
 public class MouseHandlerVertexDeleteOnCrease extends BaseMouseHandler {
     @Override
     public MouseMode getMouseMode() {

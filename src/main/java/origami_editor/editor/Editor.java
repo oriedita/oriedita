@@ -1,11 +1,15 @@
 package origami_editor.editor;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * BorderLayout for each different part.
  */
+@Component
 public class Editor {
     private JPanel root;
     private Canvas canvas;
@@ -53,25 +57,5 @@ public class Editor {
 
     public Canvas getCanvas() {
         return canvas;
-    }
-
-    public RightPanel getRightPanel() {
-        return rightPanel;
-    }
-
-    public BottomPanel getBottomPanel() {
-        return bottomPanel;
-    }
-
-    public TopPanel getTopPanel() {
-        return topPanel;
-    }
-
-    public LeftPanel getLeftPanel() {
-        return leftPanel;
-    }
-
-    public void setOwner(Frame owner) {
-        rightPanel.setFrame(owner);
     }
 }

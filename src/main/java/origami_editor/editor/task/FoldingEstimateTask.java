@@ -1,24 +1,24 @@
 package origami_editor.editor.task;
 
 import origami.folding.FoldedFigure;
-import origami_editor.editor.Canvas;
 import origami_editor.editor.component.BulletinBoard;
+import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.service.FoldingService;
 
 public class FoldingEstimateTask implements Runnable {
     private final FoldingService foldingService;
     private final BulletinBoard bulletinBoard;
-    private final Canvas canvas;
     private final FoldedFigure_Drawer selectedFigure;
     private final FoldedFigure.EstimationOrder estimationOrder;
+    private final CanvasModel canvasModel;
 
-    public FoldingEstimateTask(FoldingService foldingService, BulletinBoard bulletinBoard, Canvas canvas, FoldedFigure_Drawer selectedFigure, FoldedFigure.EstimationOrder estimationOrder) {
+    public FoldingEstimateTask(FoldingService foldingService, BulletinBoard bulletinBoard, FoldedFigure_Drawer selectedFigure, FoldedFigure.EstimationOrder estimationOrder, CanvasModel canvasModel) {
         this.foldingService = foldingService;
         this.bulletinBoard = bulletinBoard;
-        this.canvas = canvas;
         this.selectedFigure = selectedFigure;
         this.estimationOrder = estimationOrder;
+        this.canvasModel = canvasModel;
     }
 
     @Override
@@ -41,12 +41,12 @@ public class FoldingEstimateTask implements Runnable {
             e.printStackTrace();
         }
 
-        canvas.repaint();
+        canvasModel.markDirty();
 
         long stop = System.currentTimeMillis();
         long L = stop - start;
         selectedFigure.foldedFigure.text_result = selectedFigure.foldedFigure.text_result + "     Computation time " + L + " msec.";
 
-        canvas.repaint();
+        canvasModel.markDirty();
     }
 }

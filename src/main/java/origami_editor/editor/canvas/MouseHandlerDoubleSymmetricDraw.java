@@ -1,18 +1,18 @@
 package origami_editor.editor.canvas;
 
+import org.springframework.stereotype.Component;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
+@Component
 public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestricted {
-    private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted = new MouseHandlerDrawCreaseRestricted();
+    private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted;
 
-    @Override
-    public void setDrawingWorker(CreasePattern_Worker d) {
-        super.setDrawingWorker(d);
-        mouseHandlerDrawCreaseRestricted.setDrawingWorker(d);
+    public MouseHandlerDoubleSymmetricDraw(MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted) {
+        this.mouseHandlerDrawCreaseRestricted = mouseHandlerDrawCreaseRestricted;
     }
 
     @Override

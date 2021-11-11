@@ -1,7 +1,9 @@
 package origami_editor.editor;
 
 import com.formdev.flatlaf.FlatLaf;
-import com.formdev.flatlaf.FlatLightLaf;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import origami_editor.editor.service.ApplicationModelPersistenceService;
 
 import javax.swing.*;
 import java.io.File;
@@ -11,11 +13,11 @@ public class OrigamiEditor {
     public static void main(String[] argv) throws InterruptedException, InvocationTargetException {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
-        App app = new App();//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Rewrite location
+
+        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext("origami_editor.editor");
+        App app = context.getBean(App.class);
 
         SwingUtilities.invokeLater(() -> {
-            app.restoreApplicationModel();
-
             FlatLaf.registerCustomDefaultsSource("origami_editor.editor.themes");
 
             try {

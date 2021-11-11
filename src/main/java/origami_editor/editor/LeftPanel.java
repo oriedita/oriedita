@@ -4,6 +4,8 @@ import com.formdev.flatlaf.FlatLaf;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
 import origami_editor.editor.canvas.CreasePattern_Worker;
@@ -22,6 +24,7 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.Arrays;
 
+@Component
 public class LeftPanel {
     private final MeasuresModel measuresModel;
     private JPanel root;
@@ -119,9 +122,17 @@ public class LeftPanel {
     private JTextField gridAngleTextField;
     private JButton setGridParametersButton;
 
-    public LeftPanel(MeasuresModel measuresModel, ButtonService buttonService, CreasePattern_Worker mainCreasePatternWorker, ApplicationModel applicationModel, FoldedFigureModel foldedFigureModel, GridModel gridModel, CanvasModel canvasModel, FoldingService foldingService, DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList) {
+    public LeftPanel(@Qualifier("mainFrame") JFrame frame, MeasuresModel measuresModel, ButtonService buttonService, CreasePattern_Worker mainCreasePatternWorker, ApplicationModel applicationModel, FoldedFigureModel foldedFigureModel, GridModel gridModel, CanvasModel canvasModel, FoldingService foldingService, FoldedFiguresList foldedFiguresList) {
         this.measuresModel = measuresModel;
+
+        applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));
+        gridModel.addPropertyChangeListener(e -> setData(gridModel));
+        foldedFigureModel.addPropertyChangeListener(e -> setData(foldedFigureModel));
+        canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
+
         $$$setupUI$$$();
+
+        getData(gridModel);
 
         buttonService.registerButton(lineWidthDecreaseButton, "lineWidthDecreaseAction");
         buttonService.registerButton(lineWidthIncreaseButton, "lineWidthIncreaseAction");
@@ -539,7 +550,7 @@ public class LeftPanel {
         gridSizeIncreaseButton.addActionListener(e -> gridModel.setGridSize(gridModel.getGridSize() * 2));
         gridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
-            Color color = JColorChooser.showDialog(null, "Col", FlatLaf.isLafDark() ? Colors.GRID_LINE_DARK : Colors.GRID_LINE);
+            Color color = JColorChooser.showDialog(frame, "Col", FlatLaf.isLafDark() ? Colors.GRID_LINE_DARK : Colors.GRID_LINE);
             if (color != null) {
                 applicationModel.setGridColor(color);
             }
@@ -553,7 +564,7 @@ public class LeftPanel {
         moveIntervalGridHorizontal.addActionListener(e -> gridModel.changeVerticalScalePosition());
         intervalGridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
-            Color color = JColorChooser.showDialog(null, "Col", FlatLaf.isLafDark() ? Colors.GRID_SCALE_DARK : Colors.GRID_SCALE);
+            Color color = JColorChooser.showDialog(frame, "Col", FlatLaf.isLafDark() ? Colors.GRID_SCALE_DARK : Colors.GRID_SCALE);
             if (color != null) {
                 applicationModel.setGridScaleColor(color);
             }

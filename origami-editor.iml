@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="Spring" name="Spring">
+      <configuration />
+    </facet>
+  </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
@@ -9,6 +14,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/flamingo" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/annotations" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
@@ -36,5 +42,11 @@
     <orderEntry type="library" name="Maven: asm:asm:3.0" level="project" />
     <orderEntry type="library" name="Maven: com.jgoodies:forms:1.1-preview" level="project" />
     <orderEntry type="library" name="Maven: jdom:jdom:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-context:5.3.12" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-aop:5.3.12" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-beans:5.3.12" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-core:5.3.12" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-jcl:5.3.12" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-expression:5.3.12" level="project" />
   </component>
 </module>

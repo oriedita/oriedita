@@ -1,10 +1,12 @@
 package origami_editor.editor.databinding;
 
+import org.springframework.stereotype.Component;
 import origami_editor.tools.StringOp;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+@Component
 public class MeasuresModel {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private double measuredLength1;

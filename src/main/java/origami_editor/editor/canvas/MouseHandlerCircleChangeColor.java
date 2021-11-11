@@ -1,12 +1,14 @@
 package origami_editor.editor.canvas;
 
+import org.springframework.stereotype.Component;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-public class MouseHandlerCircleChangeColor extends BaseMouseHandlerBoxSelect {
+@Component
+class MouseHandlerCircleChangeColor extends BaseMouseHandlerBoxSelect {
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CIRCLE_CHANGE_COLOR_59;

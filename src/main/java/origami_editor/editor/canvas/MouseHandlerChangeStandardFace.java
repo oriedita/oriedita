@@ -1,17 +1,20 @@
 package origami_editor.editor.canvas;
 
+import org.springframework.stereotype.Component;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 import origami.folding.FoldedFigure;
+import origami_editor.editor.databinding.FoldedFiguresList;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 
 import javax.swing.*;
 
-public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
+@Component
+class MouseHandlerChangeStandardFace extends BaseMouseHandler {
     private final CreasePattern_Worker d;
-    private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
+    private final FoldedFiguresList foldedFiguresList;
 
-    public MouseHandlerChangeStandardFace(DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList, CreasePattern_Worker d) {
+    public MouseHandlerChangeStandardFace(FoldedFiguresList foldedFiguresList, CreasePattern_Worker d) {
         this.foldedFiguresList = foldedFiguresList;
         this.d = d;
     }

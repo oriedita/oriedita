@@ -11,6 +11,7 @@ import origami_editor.editor.service.FoldingService;
 
 import javax.swing.*;
 
+@org.springframework.stereotype.Component
 public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
     private final FoldingService foldingService;
     private final CanvasModel canvasModel;

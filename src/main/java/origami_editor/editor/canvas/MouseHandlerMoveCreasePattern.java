@@ -1,19 +1,23 @@
 package origami_editor.editor.canvas;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import origami.crease_pattern.element.Point;
-import origami_editor.editor.Canvas;
 import origami_editor.editor.MouseMode;
+import origami_editor.editor.databinding.FoldedFiguresList;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
+import origami_editor.tools.Camera;
 
-import javax.swing.*;
-
+@Component
 public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
-    private final Canvas canvas;
-    private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
+    public Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
+
+    private final Camera creasePatternCamera;
+    private final FoldedFiguresList foldedFiguresList;
     private final CreasePattern_Worker mainCreasePatternWorker;
 
-    public MouseHandlerMoveCreasePattern(Canvas canvas, DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList, CreasePattern_Worker mainCreasePatternWorker) {
-        this.canvas = canvas;
+    public MouseHandlerMoveCreasePattern(@Qualifier("creasePatternCamera") Camera creasePatternCamera, FoldedFiguresList foldedFiguresList, CreasePattern_Worker mainCreasePatternWorker) {
+        this.creasePatternCamera = creasePatternCamera;
         this.foldedFiguresList = foldedFiguresList;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
     }
@@ -30,48 +34,48 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
 
     @Override
     public void mousePressed(Point p0) {
-        canvas.creasePatternCamera.camera_position_specify_from_TV(p0);
-        canvas.mouse_temp0.set(p0);
+        creasePatternCamera.camera_position_specify_from_TV(p0);
+        mouse_temp0.set(p0);
     }
 
     @Override
     public void mouseDragged(Point p0) {
-        canvas.creasePatternCamera.displayPositionMove(canvas.mouse_temp0.other_Point_position(p0));
-        mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);
+        creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+        mainCreasePatternWorker.setCamera(creasePatternCamera);
 
 //20180225追加
         for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
             FoldedFigure_Drawer OZi = foldedFiguresList.getElementAt(i_oz);
 
-            OZi.foldedFigureCamera.displayPositionMove(canvas.mouse_temp0.other_Point_position(p0));
-            OZi.foldedFigureFrontCamera.displayPositionMove(canvas.mouse_temp0.other_Point_position(p0));
-            OZi.foldedFigureRearCamera.displayPositionMove(canvas.mouse_temp0.other_Point_position(p0));
-            OZi.transparentFrontCamera.displayPositionMove(canvas.mouse_temp0.other_Point_position(p0));
-            OZi.transparentRearCamera.displayPositionMove(canvas.mouse_temp0.other_Point_position(p0));
+            OZi.foldedFigureCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.foldedFigureFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.foldedFigureRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.transparentFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.transparentRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
         }
 //20180225追加　ここまで
 
-        canvas.mouse_temp0.set(p0);
+        mouse_temp0.set(p0);
     }
 
     @Override
     public void mouseReleased(Point p0) {
-        canvas.creasePatternCamera.displayPositionMove(canvas.mouse_temp0.other_Point_position(p0));
-        mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);
+        creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+        mainCreasePatternWorker.setCamera(creasePatternCamera);
 
 
 //20180225追加
         for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
             FoldedFigure_Drawer OZi = foldedFiguresList.getElementAt(i_oz);
 
-            OZi.foldedFigureCamera.displayPositionMove(canvas.mouse_temp0.other_Point_position(p0));
-            OZi.foldedFigureFrontCamera.displayPositionMove(canvas.mouse_temp0.other_Point_position(p0));
-            OZi.foldedFigureRearCamera.displayPositionMove(canvas.mouse_temp0.other_Point_position(p0));
-            OZi.transparentFrontCamera.displayPositionMove(canvas.mouse_temp0.other_Point_position(p0));
-            OZi.transparentRearCamera.displayPositionMove(canvas.mouse_temp0.other_Point_position(p0));
+            OZi.foldedFigureCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.foldedFigureFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.foldedFigureRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.transparentFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.transparentRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
         }
 //20180225追加　ここまで
 
-        canvas.mouse_temp0.set(p0);
+        mouse_temp0.set(p0);
     }
 }

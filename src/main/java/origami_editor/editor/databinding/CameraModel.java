@@ -1,10 +1,12 @@
 package origami_editor.editor.databinding;
 
+import org.springframework.stereotype.Component;
 import origami.crease_pattern.OritaCalc;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+@Component
 public class CameraModel {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private double rotation;

@@ -1,11 +1,15 @@
 package origami_editor.tools;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import origami_editor.editor.databinding.CameraModel;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 import java.io.Serializable;
 
+@Component
 public class Camera implements Serializable { // Mediation between actual coordinates and display coordinates
 
     double camera_position_x, camera_position_y;

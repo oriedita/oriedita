@@ -1,8 +1,11 @@
 package origami_editor.editor.databinding;
 
+import org.springframework.stereotype.Component;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+@Component
 public class HistoryStateModel {
     private int historyTotal;
     private int auxHistoryTotal;

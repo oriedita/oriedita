@@ -3,6 +3,7 @@ package origami_editor.editor.databinding;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import org.springframework.stereotype.Component;
 import origami_editor.editor.Colors;
 import origami_editor.editor.LineStyle;
 
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 /**
  * This model is saved to disk and restored when the application starts.
  */
+@Component
 public class ApplicationModel implements Serializable {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean displayPointSpotlight;

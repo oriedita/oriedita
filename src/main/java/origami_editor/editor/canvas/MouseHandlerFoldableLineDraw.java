@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import org.springframework.stereotype.Component;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
@@ -8,19 +9,18 @@ import origami_editor.editor.MouseMode;
 import origami.folding.util.SortingBox;
 import origami.folding.util.WeightedValue;
 
+@Component
 public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
-    private final MouseHandlerDrawCreaseFree mouseHandlerDrawCreaseFree = new MouseHandlerDrawCreaseFree();
-    private final MouseHandlerVertexMakeAngularlyFlatFoldable mouseHandlerVertexMakeAngularlyFlatFoldable = new MouseHandlerVertexMakeAngularlyFlatFoldable();
+    private final MouseHandlerDrawCreaseFree mouseHandlerDrawCreaseFree;
+    private final MouseHandlerVertexMakeAngularlyFlatFoldable mouseHandlerVertexMakeAngularlyFlatFoldable;
     MouseMode operationMode = MouseMode.UNUSED_0;
     boolean operationModeChangeable = false;
     Point moyori_point_memo = new Point();
     Point closest_point;
 
-    @Override
-    public void setDrawingWorker(CreasePattern_Worker d) {
-        super.setDrawingWorker(d);
-        mouseHandlerDrawCreaseFree.setDrawingWorker(d);
-        mouseHandlerVertexMakeAngularlyFlatFoldable.setDrawingWorker(d);
+    public MouseHandlerFoldableLineDraw(MouseHandlerDrawCreaseFree mouseHandlerDrawCreaseFree, MouseHandlerVertexMakeAngularlyFlatFoldable mouseHandlerVertexMakeAngularlyFlatFoldable) {
+        this.mouseHandlerDrawCreaseFree = mouseHandlerDrawCreaseFree;
+        this.mouseHandlerVertexMakeAngularlyFlatFoldable = mouseHandlerVertexMakeAngularlyFlatFoldable;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package origami_editor.editor.canvas;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
@@ -7,8 +9,10 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
-import origami_editor.editor.*;
-import origami_editor.editor.Canvas;
+import origami_editor.editor.Colors;
+import origami_editor.editor.LineStyle;
+import origami_editor.editor.MouseMode;
+import origami_editor.editor.Save;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.task.CheckCAMVTask;
 import origami_editor.editor.task.FinishedFuture;
@@ -25,13 +29,21 @@ import java.util.concurrent.Future;
 /**
  * Responsible for holding the current creasepattern and drawing it.
  */
+@Component
 public class CreasePattern_Worker {
     // ------------
     final int check4ColorTransparencyIncrement = 10;
     private final LineSegmentSet lineSegmentSet = new LineSegmentSet();    //Instantiation of basic branch structure
+    private final Camera creasePatternCamera;
+    private final CanvasModel canvasModel;
+    private final ApplicationModel applicationModel;
+    private final GridModel gridModel;
+    private final FoldedFigureModel foldedFigureModel;
+    private final FileModel fileModel;
     public FoldLineSet foldLineSet = new FoldLineSet();    //Store polygonal lines
     public Grid grid = new Grid();
     public Polygon operationFrameBox = new Polygon(4);    //Instantiation of selection box (TV coordinates)
+    public Future<?> camvTask = new FinishedFuture<>(null);
     int pointSize = 1;
     LineColor lineColor;//Line segment color
     LineColor auxLineColor = LineColor.ORANGE_4;//Auxiliary line color
@@ -72,12 +84,6 @@ public class CreasePattern_Worker {
     boolean check4 = false;//=0 check4を実施しない、1=実施する　
     //---------------------------------
     int check4ColorTransparency = 100;
-    private final Camera creasePatternCamera;
-    private final CanvasModel canvasModel;
-    private final ApplicationModel applicationModel;
-    private final GridModel gridModel;
-    private final FoldedFigureModel foldedFigureModel;
-    private final FileModel fileModel;
     //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
     Point operationFrame_p1 = new Point();//TV座標
     Point operationFrame_p2 = new Point();//TV座標
@@ -92,15 +98,28 @@ public class CreasePattern_Worker {
     //--------------------------------------------
     CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
 
-    public Future<?> camvTask = new FinishedFuture<>(null);
-
-    public CreasePattern_Worker(Camera creasePatternCamera, CanvasModel canvasModel, ApplicationModel applicationModel, GridModel gridModel, FoldedFigureModel foldedFigureModel, FileModel fileModel) {
+    public CreasePattern_Worker(@Qualifier("creasePatternCamera") Camera creasePatternCamera,
+                                CanvasModel canvasModel,
+                                ApplicationModel applicationModel,
+                                GridModel gridModel,
+                                FoldedFigureModel foldedFigureModel,
+                                FileModel fileModel,
+                                AngleSystemModel angleSystemModel,
+                                InternalDivisionRatioModel internalDivisionRatioModel,
+                                HistoryStateModel historyStateModel) {
         this.creasePatternCamera = creasePatternCamera;  //コンストラクタ
         this.canvasModel = canvasModel;
         this.applicationModel = applicationModel;
         this.gridModel = gridModel;
         this.foldedFigureModel = foldedFigureModel;
         this.fileModel = fileModel;
+
+        applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));
+        gridModel.addPropertyChangeListener(e -> setGridConfigurationData(gridModel));
+        angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
+        internalDivisionRatioModel.addPropertyChangeListener(e -> setData(internalDivisionRatioModel));
+        canvasModel.addPropertyChangeListener(e -> setData(canvasModel));
+        historyStateModel.addPropertyChangeListener(e -> setData(historyStateModel));
 
         lineColor = LineColor.BLACK_0;
 
@@ -999,6 +1018,8 @@ public class CreasePattern_Worker {
                 camvTask.cancel(true);
             }
         }
+
+        grid.setData(applicationModel);
     }
 
     public void setData(CanvasModel data) {
@@ -1031,10 +1052,6 @@ public class CreasePattern_Worker {
 
     public void selectConnected(Point p) {
         this.foldLineSet.selectProbablyConnected(p);
-    }
-
-    public void setData(ApplicationModel applicationModel) {
-        grid.setData(applicationModel);
     }
 
     //30 30 30 30 30 30 30 30 30 30 30 30 除け_線_変換

@@ -11,6 +11,7 @@ import origami.folding.FoldedFigure;
 import origami.folding.element.SubFace;
 import origami.folding.util.SortingBox;
 import origami_editor.editor.LineStyle;
+import origami_editor.editor.databinding.FoldedFiguresList;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.tools.Camera;
 import origami_editor.tools.StringOp;
@@ -21,7 +22,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class Svg {
-    public static void exportFile(FoldLineSet foldLineSet, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize, DefaultComboBoxModel<FoldedFigure_Drawer> foldedFigures, File file) {
+    public static void exportFile(FoldLineSet foldLineSet, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize, FoldedFiguresList foldedFigures, File file) {
         try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw)) {
             System.out.println("svg画像出力");
 
