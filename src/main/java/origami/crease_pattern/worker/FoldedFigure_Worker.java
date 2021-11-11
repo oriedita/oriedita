@@ -22,6 +22,7 @@ import origami.folding.util.IBulletinBoard;
 import origami.folding.util.SortingBox;
 import origami.folding.util.WeightedValue;
 
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +49,8 @@ public class FoldedFigure_Worker {
     public int FaceIdCount_max;//各SubFaceの持つMenidsuuの最大値。すなわち、最も紙に重なりが多いところの枚数。
     //paint 用のint格納用VVVVVVVVVVVVVVVVVVVVVV
     public SubFace[] s0;//SubFace obtained from SubFace_figure
-    public SubFace[] s;//s is s0 sorted in descending order of priority.
+    public SubFace[] s1;//Reduced SubFace list, for AEA processing
+    public SubFace[] s;//s is s1 sorted in descending order of priority.
     IBulletinBoard bb;
     //　ここは  class Jyougehyou_Syokunin  の中です。
     //上下表の初期設定。展開図に1頂点から奇数の折線がでる誤りがある場合0を返す。それが無ければ1000を返す。
@@ -138,6 +140,8 @@ public class FoldedFigure_Worker {
             if (Thread.interrupted()) throw new InterruptedException();
         }
 
+        s1 = reduceSubFaceSet(s0);
+
         //ここまでで、SubFaceTotal＝	SubFace_figure.getMensuu()のままかわりなし。
         System.out.println("各Smenに含まれる面の数の内で最大のものを求める");
         // Find the largest number of faces in each SubFace.
@@ -147,6 +151,49 @@ public class FoldedFigure_Worker {
                 FaceIdCount_max = s0[i].getFaceIdCount();
             }
         }
+    }
+
+    /**
+     * If the faces of a SubFace A is a subset of the faces of a SubFace B, then A
+     * cannot possibly contribute any new relations that B would not contribute, so
+     * we don't need to process A at all. This method removes all SubFaces that are
+     * subsets of other SubFaces. In some CPs, this even removes more than half of
+     * the SubFaces.
+     */
+    private SubFace[] reduceSubFaceSet(SubFace[] s) throws InterruptedException {
+        Map<Integer, List<Integer>> faceToSubFaceMap = new HashMap<>();
+        s = s.clone();
+        Arrays.sort(s, 1, s.length, Comparator.comparingInt(SubFace::getFaceIdCount).reversed());
+        List<SubFace> reduced = new ArrayList<>();
+        reduced.add(s[0]);
+        for (int i = 1; i < s.length; i++) {
+            if (s[i].getFaceIdCount() == 0) continue;
+            boolean isNotSubset = false;
+            int faceId = s[i].getFaceId(1);
+            if (!faceToSubFaceMap.containsKey(faceId)) isNotSubset = true;
+            else {
+                Set<Integer> superSets = new HashSet<>(faceToSubFaceMap.get(faceId));
+                for (int f = 2; f <= s[i].getFaceIdCount() && superSets.size() > 0; f++) {
+                    Iterator<Integer> it = superSets.iterator();
+                    faceId = s[i].getFaceId(f);
+                    while (it.hasNext()) {
+                        SubFace sf = reduced.get(it.next());
+                        if (!sf.contains(faceId)) it.remove();
+                    }
+                }
+                isNotSubset = superSets.size() == 0;
+            }
+            if (isNotSubset) {
+                int id = reduced.size();
+                reduced.add(s[i]);
+                for (int f = 1; f <= s[i].getFaceIdCount(); f++) {
+                    faceId = s[i].getFaceId(f);
+                    faceToSubFaceMap.computeIfAbsent(faceId, k -> new ArrayList<>()).add(id);
+                }
+            }
+            if (Thread.interrupted()) throw new InterruptedException();
+        }
+        return reduced.toArray(new SubFace[0]);
     }
 
     public HierarchyListStatus HierarchyList_configure(WireFrame_Worker orite, PointSet otta_face_figure) throws InterruptedException {
@@ -181,8 +228,16 @@ public class FoldedFigure_Worker {
             }
         }
 
+        // First round of AEA; this will save both time and space later on
+        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(bb, hierarchyList, s1, FaceIdCount_max * FaceIdCount_max);
+        HierarchyListStatus AEAresult = AEA.run(0);
+        if (AEAresult != HierarchyListStatus.SUCCESSFUL_1000) {
+            errorPos = AEA.errorPos;
+            return AEAresult;
+        }
+
         //----------------------------------------------
-        bb.write("           HierarchyList_configure   step2   start ");
+        bb.rewrite(10, "           HierarchyList_configure   step2   start ");
         System.out.println("等価条件を設定する   ");
         //等価条件を設定する。棒ibを境界として隣接する2つの面im1,im2が有る場合、折り畳み推定した場合に
         //棒ibの一部と重なる位置に有る面imは面im1と面im2に上下方向で挟まれることはない。このことから
@@ -201,7 +256,13 @@ public class FoldedFigure_Worker {
                             //下の２つのifは暫定的な処理。あとで置き換え予定
                             if (otta_face_figure.convex_inside(Epsilon.UNKNOWN_05, ib, im)) {
                                 if (otta_face_figure.convex_inside(-Epsilon.UNKNOWN_05, ib, im)) {
-                                    hierarchyList.addEquivalenceCondition(im, faceId_min, im, faceId_max);
+                                    // We add the 3EC through AEA, so if it is consumed immediately, it will not be
+                                    // actually added. This helps saves memory.
+                                    if(!AEA.addEquivalenceCondition(im, faceId_min, faceId_max)) {
+                                        // Error handling is also needed here
+                                        errorPos = AEA.errorPos;
+                                        return HierarchyListStatus.CONTRADICTED_3;
+                                    }
                                 }
                             }
                         }
@@ -231,12 +292,16 @@ public class FoldedFigure_Worker {
             if (mi1 != mi2 && mi1 != 0) {
                 service.execute(() -> {
                     for (int jb : qtf.getPotentialCollision(ibf - 1)) { // qt is 0-based
+                        if (Thread.interrupted()) break;
                         final int jbf = jb + 1; // qt is 0-based
                         int mj1 = orite.lineInFaceBorder_min_request(jbf);
                         int mj2 = orite.lineInFaceBorder_max_request(jbf);
                         if (mj1 != mj2 && mj1 != 0) {
                             if (otta_face_figure.parallel_overlap(ibf, jbf)) {
                                 if (exist_identical_subFace(mi1, mi2, mj1, mj2)) {
+                                    // For the moment AEA doesn't support parallel processing, so we cannot add 4EC
+                                    // through it the same way we did with 3EC. Fortunately the total number of 4EC
+                                    // is in general a lot less than 3EC, so this is not a problem.
                                     hierarchyList.addUEquivalenceCondition(mi1, mi2, mj1, mj2);
                                 }
                             }
@@ -250,8 +315,8 @@ public class FoldedFigure_Worker {
         // Done adding tasks, shut down ExecutorService
         service.shutdown();
         try {
-            if (!service.awaitTermination(60, TimeUnit.SECONDS)) {
-                throw new RuntimeException("HierarchyList_configure did not finish!");
+            while (!service.awaitTermination(60, TimeUnit.SECONDS)) {
+                // For really large CP, it could take longer time to finish. Just wait.
             }
         } catch (InterruptedException e) {
             service.shutdownNow();
@@ -268,12 +333,14 @@ public class FoldedFigure_Worker {
         System.out.println(hierarchyList.getUEquivalenceConditionTotal());
 
         bb.write("           HierarchyList_configure   step4   start ");
-        //Additional estimation
-
-        HierarchyListStatus additional = additional_estimation();
-        if (additional != HierarchyListStatus.SUCCESSFUL_1000) {
-            return additional;
+        // Second round of AEA
+        AEA.removeMode = true; // This time we turn on the remove mode.
+        AEAresult = AEA.run(0);
+        if (AEAresult != HierarchyListStatus.SUCCESSFUL_1000) {
+            errorPos = AEA.errorPos;
+            return AEAresult;
         }
+        AEA = null; // Now we can release the memory
         System.gc();
         
         // Here we can compare and see the huge difference before and after AEA
@@ -335,8 +402,8 @@ public class FoldedFigure_Worker {
         // Done adding tasks, shut down ExecutorService
         service.shutdown();
         try {
-            if (!service.awaitTermination(60, TimeUnit.SECONDS)) {
-                throw new RuntimeException("HierarchyList_configure did not finish!");
+            while (!service.awaitTermination(60, TimeUnit.SECONDS)) {
+                // For really large CP, it could take longer time to finish. Just wait.
             }
         } catch (InterruptedException e) {
             service.shutdownNow();
@@ -359,19 +426,6 @@ public class FoldedFigure_Worker {
         System.out.println("上下表初期設定終了");
         return HierarchyListStatus.SUCCESSFUL_1000;
     }
-
-    public HierarchyListStatus additional_estimation() throws InterruptedException {
-        // We will infer relationships that can be further determined from the
-        // information on mountain folds and valley folds.
-
-        int capacity = FaceIdCount_max * FaceIdCount_max;
-        AdditionalEstimationAlgorithm AEA = new AdditionalEstimationAlgorithm(bb, hierarchyList, s0, capacity);
-        AEA.removeMode = true;
-        HierarchyListStatus result = AEA.run(0);
-        errorPos = AEA.errorPos;
-        return result;
-    }
-
 
     //引数の４つの面を同時に含むSubFaceが1つ以上存在するなら１、しないなら０を返す。
     private boolean exist_identical_subFace(int im1, int im2, int im3, int im4) {
@@ -504,7 +558,7 @@ public class FoldedFigure_Worker {
         // Solution found, perform final checking
         bb.rewrite(10, " ");
         bb.rewrite(9, "Possible solution found...");
-        AEA = new AdditionalEstimationAlgorithm(hierarchyList, s, 1000); // we don't need much for this
+        AEA = new AdditionalEstimationAlgorithm(hierarchyList, s1, 1000); // we don't need much for this
         if (AEA.run(SubFace_valid_number) != HierarchyListStatus.SUCCESSFUL_1000) {
             bb.rewrite(9, " ");
             // This rarely happens, but typically it means the solution contradicts some of

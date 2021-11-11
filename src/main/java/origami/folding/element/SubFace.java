@@ -230,7 +230,7 @@ public class SubFace {
         int M1, M2; //折り畳み推定の際の等価条件の登録は addEquivalenceCondition(im,Mid_min,im,Mid_max); による
         M1 = FaceId2PermutationDigit(tj.getB());
         M2 = FaceId2PermutationDigit(tj.getD());
-        if ((mm - M1) * (mm - M2) < 0) {
+        if (M1 < mm && mm < M2) {
             return mm;
         }
         return 1000;
@@ -255,28 +255,17 @@ public class SubFace {
     // Check from the top surface to find out at what number the two surfaces that share a part of the boundary line and the penetration conditions of the two surfaces are inconsistent.
     // At this time, hierarchyList does not change. This SubFace returns 1000 if there is no contradiction.
     private int u_penetration_inconsistent_digits_request(EquivalenceCondition uj, int min) {
-        int mi1, mi2, mj1, mj2, itemp; //Registration of equivalent conditions for folding estimation is based on u_addTouka_jyouken (im1, im2, im3, im4) ;.
-        mi1 = FaceId2PermutationDigit(uj.getA());
-        mi2 = FaceId2PermutationDigit(uj.getB());
-        if (mi2 < mi1) {
-            itemp = mi1;
-            mi1 = mi2;
-            mi2 = itemp;
-        }
+        int a, b, c, d; //Registration of equivalent conditions for folding estimation is based on u_addTouka_jyouken (im1, im2, im3, im4) ;.
+        a = FaceId2PermutationDigit(uj.getA());
+        b = FaceId2PermutationDigit(uj.getB());
+        c = FaceId2PermutationDigit(uj.getC());
+        d = FaceId2PermutationDigit(uj.getD());
 
-        mj1 = FaceId2PermutationDigit(uj.getC());
-        mj2 = FaceId2PermutationDigit(uj.getD());
-        if (mj2 < mj1) {
-            itemp = mj1;
-            mj1 = mj2;
-            mj2 = itemp;
+        if (b < min && a < c && c < b && b < d) { // acbd is not allowed
+            return b;
         }
-
-        if (mi2 < min && ((mi1 < mj1) && (mj1 < mi2)) && (mi2 < mj2)) {
-            return mi2;
-        }
-        if (mj2 < min && ((mj1 < mi1) && (mi1 < mj2)) && (mj2 < mi2)) {
-            return mj2;
+        if (d < min && c < a && a < d && d < b) { // cadb is not allowed
+            return d;
         }
         return min;
     }
@@ -355,6 +344,7 @@ public class SubFace {
                     permutationGenerator.addGuide(ueFaceId[i], faceIndex);
                 }
             }
+            if (Thread.interrupted()) return;
         }
 
         if (faceIdCount > 0) {
@@ -363,11 +353,13 @@ public class SubFace {
                 if (fastContains(ec)) {
                     equivalenceConditions.computeIfAbsent(ec.getA(), k -> new ArrayList<>()).add(ec);
                 }
+                if (Thread.interrupted()) return;
             }
 
             uEquivalenceConditions = new ArrayList<>();
             for (EquivalenceCondition ec : hierarchyList.getUEquivalenceConditions()) {
                 if (fastContains(ec)) uEquivalenceConditions.add(ec);
+                if (Thread.interrupted()) return;
             }
 
             try {
