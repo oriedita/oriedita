@@ -355,6 +355,7 @@ public class SubFace {
                     permutationGenerator.addGuide(ueFaceId[i], faceIndex);
                 }
             }
+            if (Thread.interrupted()) return;
         }
 
         if (faceIdCount > 0) {
@@ -363,11 +364,13 @@ public class SubFace {
                 if (fastContains(ec)) {
                     equivalenceConditions.computeIfAbsent(ec.getA(), k -> new ArrayList<>()).add(ec);
                 }
+                if (Thread.interrupted()) return;
             }
 
             uEquivalenceConditions = new ArrayList<>();
             for (EquivalenceCondition ec : hierarchyList.getUEquivalenceConditions()) {
                 if (fastContains(ec)) uEquivalenceConditions.add(ec);
+                if (Thread.interrupted()) return;
             }
 
             try {

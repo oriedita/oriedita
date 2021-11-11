@@ -231,6 +231,7 @@ public class FoldedFigure_Worker {
             if (mi1 != mi2 && mi1 != 0) {
                 service.execute(() -> {
                     for (int jb : qtf.getPotentialCollision(ibf - 1)) { // qt is 0-based
+                        if (Thread.interrupted()) break;
                         final int jbf = jb + 1; // qt is 0-based
                         int mj1 = orite.lineInFaceBorder_min_request(jbf);
                         int mj2 = orite.lineInFaceBorder_max_request(jbf);
@@ -250,8 +251,8 @@ public class FoldedFigure_Worker {
         // Done adding tasks, shut down ExecutorService
         service.shutdown();
         try {
-            if (!service.awaitTermination(60, TimeUnit.SECONDS)) {
-                throw new RuntimeException("HierarchyList_configure did not finish!");
+            while (!service.awaitTermination(60, TimeUnit.SECONDS)) {
+                // For really large CP, it could take longer time to finish. Just wait.
             }
         } catch (InterruptedException e) {
             service.shutdownNow();
@@ -335,8 +336,8 @@ public class FoldedFigure_Worker {
         // Done adding tasks, shut down ExecutorService
         service.shutdown();
         try {
-            if (!service.awaitTermination(60, TimeUnit.SECONDS)) {
-                throw new RuntimeException("HierarchyList_configure did not finish!");
+            while (!service.awaitTermination(60, TimeUnit.SECONDS)) {
+                // For really large CP, it could take longer time to finish. Just wait.
             }
         } catch (InterruptedException e) {
             service.shutdownNow();
