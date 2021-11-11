@@ -8,6 +8,7 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
 import origami_editor.editor.*;
+import origami_editor.editor.Canvas;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.task.CheckCAMVTask;
 import origami_editor.editor.task.FinishedFuture;
@@ -71,7 +72,12 @@ public class CreasePattern_Worker {
     boolean check4 = false;//=0 check4を実施しない、1=実施する　
     //---------------------------------
     int check4ColorTransparency = 100;
-    App app;
+    private final Camera creasePatternCamera;
+    private final CanvasModel canvasModel;
+    private final ApplicationModel applicationModel;
+    private final GridModel gridModel;
+    private final FoldedFigureModel foldedFigureModel;
+    private final FileModel fileModel;
     //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
     Point operationFrame_p1 = new Point();//TV座標
     Point operationFrame_p2 = new Point();//TV座標
@@ -88,8 +94,13 @@ public class CreasePattern_Worker {
 
     public Future<?> camvTask = new FinishedFuture<>(null);
 
-    public CreasePattern_Worker(App app0) {  //コンストラクタ
-        app = app0;
+    public CreasePattern_Worker(Camera creasePatternCamera, CanvasModel canvasModel, ApplicationModel applicationModel, GridModel gridModel, FoldedFigureModel foldedFigureModel, FileModel fileModel) {
+        this.creasePatternCamera = creasePatternCamera;  //コンストラクタ
+        this.canvasModel = canvasModel;
+        this.applicationModel = applicationModel;
+        this.gridModel = gridModel;
+        this.foldedFigureModel = foldedFigureModel;
+        this.fileModel = fileModel;
 
         lineColor = LineColor.BLACK_0;
 
@@ -143,25 +154,25 @@ public class CreasePattern_Worker {
 
     public void Memo_jyouhou_toridasi(Save memo1) {
         if (memo1.getCreasePatternCamera() != null) {
-            app.canvas.creasePatternCamera.setCamera(memo1.getCreasePatternCamera());
+            creasePatternCamera.setCamera(memo1.getCreasePatternCamera());
         }
 
         if (memo1.getApplicationModel() != null) {
-            app.applicationModel.set(memo1.getApplicationModel());
+            applicationModel.set(memo1.getApplicationModel());
         }
 
         if (memo1.getCanvasModel() != null) {
-            app.canvasModel.set(memo1.getCanvasModel());
+            canvasModel.set(memo1.getCanvasModel());
         }
 
         if (memo1.getGridModel() != null) {
-            app.gridModel.set(memo1.getGridModel());
+            gridModel.set(memo1.getGridModel());
         }
 
         if (memo1.getFoldedFigureModel() != null) {
-            app.foldedFigureModel.setFrontColor(memo1.getFoldedFigureModel().getFrontColor());
-            app.foldedFigureModel.setBackColor(memo1.getFoldedFigureModel().getBackColor());
-            app.foldedFigureModel.setLineColor(memo1.getFoldedFigureModel().getLineColor());
+            foldedFigureModel.setFrontColor(memo1.getFoldedFigureModel().getFrontColor());
+            foldedFigureModel.setBackColor(memo1.getFoldedFigureModel().getBackColor());
+            foldedFigureModel.setLineColor(memo1.getFoldedFigureModel().getLineColor());
         }
     }
 
@@ -291,7 +302,7 @@ public class CreasePattern_Worker {
     public Save getSave_for_export_with_applicationModel() {
         Save save = getSave_for_export();
 
-        save.setApplicationModel(app.applicationModel);
+        save.setApplicationModel(applicationModel);
 
         return save;
     }
@@ -301,10 +312,10 @@ public class CreasePattern_Worker {
         camera.setCamera(this.camera);
         memo1.setCreasePatternCamera(camera);
 
-        memo1.setCanvasModel(app.canvasModel);
-        memo1.setGridModel(app.gridModel);
+        memo1.setCanvasModel(canvasModel);
+        memo1.setGridModel(gridModel);
 
-        memo1.setFoldedFigureModel(app.foldedFigureModel);
+        memo1.setFoldedFigureModel(foldedFigureModel);
     }
 
     public void setColor(LineColor i) {
@@ -376,7 +387,7 @@ public class CreasePattern_Worker {
         }
 
         if (!historyState.isEmpty()) {
-            app.fileModel.setSaved(false);
+            fileModel.setSaved(false);
         }
 
         historyState.record(getSave(s_title));
@@ -512,7 +523,7 @@ public class CreasePattern_Worker {
         }
 
         //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
-        if (app.canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && lineStep.size() == 4) {
+        if (canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && lineStep.size() == 4) {
             Point p1 = new Point();
             p1.set(camera.TV2object(operationFrame_p1));
             Point p2 = new Point();
@@ -530,7 +541,7 @@ public class CreasePattern_Worker {
 
         //線分入力時の一時的なs_step線分を描く　
 
-        if ((app.canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) || (lineStep.size() == 4)) {
+        if ((canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) || (lineStep.size() == 4)) {
             for (LineSegment s : lineStep) {
                 DrawingUtil.drawLineStep(g, s, camera, lineWidth, gridInputAssist);
             }
@@ -923,7 +934,7 @@ public class CreasePattern_Worker {
 
     public void check4() {
         camvTask.cancel(true);
-        camvTask = CheckCAMVTask.execute(this, app.canvas);
+        camvTask = CheckCAMVTask.execute(this, canvasModel);
     }
 
     public void ap_check4() throws InterruptedException {

@@ -18,6 +18,9 @@ public class CanvasModel implements Serializable {
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode;
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode_old;
 
+    public void dirty() {
+        this.pcs.firePropertyChange("dirty", false, true);
+    }
     public boolean getToggleLineColor() {
         return toggleLineColor;
     }
@@ -29,8 +32,6 @@ public class CanvasModel implements Serializable {
     }
 
     private boolean toggleLineColor;
-
-
 
     /**
      * Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.

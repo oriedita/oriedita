@@ -2,7 +2,15 @@ package origami_editor.editor;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
+import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.ApplicationModel;
+import origami_editor.editor.databinding.CanvasModel;
+import origami_editor.editor.databinding.FileModel;
+import origami_editor.editor.databinding.FoldedFigureModel;
+import origami_editor.editor.drawing.FoldedFigure_Drawer;
+import origami_editor.editor.service.ButtonService;
+import origami_editor.editor.service.FileSaveService;
+import origami_editor.editor.task.TaskExecutor;
 import origami_editor.editor.transfer.SaveTransferable;
 
 import javax.swing.*;
@@ -15,7 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class AppMenuBar extends JMenuBar {
-    private final App app;
+    private final FileSaveService fileSaveService;
+    private final FileModel fileModel;
     private JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
     private JCheckBoxMenuItem pointOffsetCheckBox;//点を離すかどうか
     private JCheckBoxMenuItem gridInputAssistCheckBox;//高密度用入力をするかどうか
@@ -34,6 +43,7 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem saveAsButton;
     private JMenuItem exportButton;
     private JMenuItem importButton;
+    private JMenuItem importAddButton;
     private JMenuItem exitButton;
     private JMenuItem toggleHelpMenuItem;
     private JMenuItem toggleConsoleMenuItem;
@@ -44,83 +54,93 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem cutButton;
     private JMenuItem pasteButton;
     private JMenuItem pasteOffsetButton;
+    private Frame owner;
 
-    public AppMenuBar(App app) {
-        this.app = app;
+    public AppMenuBar(ApplicationModel applicationModel, FileSaveService fileSaveService, ButtonService buttonService, CanvasModel canvasModel, FileModel fileModel, CreasePattern_Worker mainCreasePatternWorker, FoldedFigureModel foldedFigureModel,
+                      DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList) {
+        this.fileSaveService = fileSaveService;
+        this.fileModel = fileModel;
+
         createElements();
-        ApplicationModel applicationModel = app.applicationModel;
+        buttonService.registerButton(newButton, "newAction");
+        buttonService.registerButton(openButton, "openAction");
+        buttonService.registerButton(openRecentMenu, "openRecentAction");
+        buttonService.registerButton(saveButton, "saveAction");
+        buttonService.registerButton(saveAsButton, "saveAsAction");
+        buttonService.registerButton(importButton, "importAction");
+        buttonService.registerButton(importAddButton, "importAddAction");
+        buttonService.registerButton(exportButton, "exportAction");
+        buttonService.registerButton(exitButton, "exitAction");
+        buttonService.registerButton(showPointRangeCheckBox, "showPointRangeAction");
+        buttonService.registerButton(pointOffsetCheckBox, "pointOffsetAction");
+        buttonService.registerButton(gridInputAssistCheckBox, "gridInputAssistAction");
+        buttonService.registerButton(displayCommentsCheckBox, "displayCommentsAction");
+        buttonService.registerButton(displayCpLinesCheckBox, "displayCpLinesAction");
+        buttonService.registerButton(displayAuxLinesCheckBox, "displayAuxLinesAction");
+        buttonService.registerButton(displayLiveAuxLinesCheckBox, "displayLiveAuxLinesAction");
+        buttonService.registerButton(displayStandardFaceMarksCheckBox, "displayStandardFaceMarksAction");
+        buttonService.registerButton(cpOnTopCheckBox, "cpOnTopAction");
+        buttonService.registerButton(toggleHelpMenuItem, "toggleHelpAction");
+        buttonService.registerButton(toggleConsoleMenuItem, "toggleConsoleAction");
+        buttonService.registerButton(darkModeCheckBox, "toggleDarkModeAction");
+        buttonService.registerButton(preciseZoomCheckBox, "preciseZoomAction");
+        buttonService.registerButton(displaySelfIntersectionCheckBox, "displaySelfIntersectionAction");
 
-        app.registerButton(newButton, "newAction");
-        app.registerButton(openButton, "openAction");
-        app.registerButton(openRecentMenu, "openRecentAction");
-        app.registerButton(saveButton, "saveAction");
-        app.registerButton(saveAsButton, "saveAsAction");
-        app.registerButton(importButton, "importAction");
-        app.registerButton(exportButton, "exportAction");
-        app.registerButton(exitButton, "exitAction");
-        app.registerButton(showPointRangeCheckBox, "showPointRangeAction");
-        app.registerButton(pointOffsetCheckBox, "pointOffsetAction");
-        app.registerButton(gridInputAssistCheckBox, "gridInputAssistAction");
-        app.registerButton(displayCommentsCheckBox, "displayCommentsAction");
-        app.registerButton(displayCpLinesCheckBox, "displayCpLinesAction");
-        app.registerButton(displayAuxLinesCheckBox, "displayAuxLinesAction");
-        app.registerButton(displayLiveAuxLinesCheckBox, "displayLiveAuxLinesAction");
-        app.registerButton(displayStandardFaceMarksCheckBox, "displayStandardFaceMarksAction");
-        app.registerButton(cpOnTopCheckBox, "cpOnTopAction");
-        app.registerButton(toggleHelpMenuItem, "toggleHelpAction");
-        app.registerButton(toggleConsoleMenuItem, "toggleConsoleAction");
-        app.registerButton(darkModeCheckBox, "toggleDarkModeAction");
-        app.registerButton(preciseZoomCheckBox, "preciseZoomAction");
-        app.registerButton(displaySelfIntersectionCheckBox, "displaySelfIntersectionAction");
-
-        app.registerButton(copyButton, "copyClipboardAction");
-        app.registerButton(cutButton, "cutClipboardAction");
-        app.registerButton(pasteButton, "pasteClipboardAction");
-        app.registerButton(pasteOffsetButton, "pasteOffsetClipboardAction");
+        buttonService.registerButton(copyButton, "copyClipboardAction");
+        buttonService.registerButton(cutButton, "cutClipboardAction");
+        buttonService.registerButton(pasteButton, "pasteClipboardAction");
+        buttonService.registerButton(pasteOffsetButton, "pasteOffsetClipboardAction");
 
         newButton.addActionListener(e -> {
-            if (!app.fileModel.isSaved()) {
+            if (!fileModel.isSaved()) {
                 int choice = JOptionPane.showConfirmDialog(null, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
                 if (choice == JOptionPane.YES_OPTION) {
-                    app.saveFile();
+                    fileSaveService.saveFile();
                 } else if (choice == JOptionPane.CLOSED_OPTION || choice == JOptionPane.CANCEL_OPTION) {
                     return;
                 }
             }
-            app.fileModel.reset();
+            fileModel.reset();
             //展開図の初期化　開始
             //settei_syokika_cp();//展開図パラメータの初期化
-            app.developmentView_initialization();
+            fileSaveService.developmentView_initialization();
             //展開図の初期化　終了
             //
             //折畳予測図のの初期化　開始
-            app.foldedFiguresList.removeAllElements();
+            foldedFiguresList.removeAllElements();
             //折畳予測図のの初期化　終了
 
-            app.Button_shared_operation();
-            app.repaintCanvas();
+            canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);
 
-            app.canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);
-
-            app.mainCreasePatternWorker.record();
-            app.mainCreasePatternWorker.auxRecord();
+            mainCreasePatternWorker.record();
+            mainCreasePatternWorker.auxRecord();
         });
-        openButton.addActionListener(e -> app.openFile());
-        clearRecentFileMenuItem.addActionListener(e -> app.applicationModel.setRecentFileList(new ArrayList<>()));
+        openButton.addActionListener(e -> fileSaveService.openFile());
+        clearRecentFileMenuItem.addActionListener(e -> applicationModel.setRecentFileList(new ArrayList<>()));
 
-        saveButton.addActionListener(e -> app.saveFile());
-        saveAsButton.addActionListener(e -> app.saveAsFile());
+        saveButton.addActionListener(e -> fileSaveService.saveFile());
+        saveAsButton.addActionListener(e -> fileSaveService.saveAsFile());
         exportButton.addActionListener(e -> {
-            if (app.canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) {
-                app.mainCreasePatternWorker.setDrawingStage(0);
+            if (canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) {
+                mainCreasePatternWorker.setDrawingStage(0);
             }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
 
-            app.exportFile();
-            app.repaintCanvas();
+            fileSaveService.exportFile();
         });
-        importButton.addActionListener(e -> app.importFile());
-        exitButton.addActionListener(e -> app.closing());
+        importButton.addActionListener(e -> fileSaveService.importFile());
+        importAddButton.addActionListener(e -> {
+            System.out.println("readFile2Memo() 開始");
+            File file = fileSaveService.selectImportFile();
+            Save save = fileSaveService.readImportFile(file);
+            System.out.println("readFile2Memo() 終了");
+
+            if (save != null) {
+                mainCreasePatternWorker.setSave_for_reading_tuika(save);
+                mainCreasePatternWorker.record();
+            }
+        });
+        exitButton.addActionListener(e -> closing());
         showPointRangeCheckBox.addActionListener(e -> getData(applicationModel));
         pointOffsetCheckBox.addActionListener(e -> getData(applicationModel));
         gridInputAssistCheckBox.addActionListener(e -> {
@@ -137,28 +157,24 @@ public class AppMenuBar extends JMenuBar {
         displayLiveAuxLinesCheckBox.addActionListener(e -> getData(applicationModel));
         displayStandardFaceMarksCheckBox.addActionListener(e -> getData(applicationModel));
         cpOnTopCheckBox.addActionListener(e -> getData(applicationModel));
-        toggleHelpMenuItem.addActionListener(e -> {
-            app.applicationModel.toggleHelpVisible();
-
-            app.repaintCanvas();
-        });
-        toggleConsoleMenuItem.addActionListener(e -> app.applicationModel.toggleConsoleVisible());
+        toggleHelpMenuItem.addActionListener(e -> applicationModel.toggleHelpVisible());
+        toggleConsoleMenuItem.addActionListener(e -> applicationModel.toggleConsoleVisible());
         darkModeCheckBox.addActionListener(e -> {
             applicationModel.toggleDarkMode();
 
             if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(null, "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
                 if (FlatLaf.isLafDark()) {
-                    app.applicationModel.setGridColor(Colors.GRID_LINE_DARK);
-                    app.applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
+                    applicationModel.setGridColor(Colors.GRID_LINE_DARK);
+                    applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
 
-                    app.foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT_DARK);
-                    app.foldedFigureModel.setBackColor(Colors.FIGURE_BACK_DARK);
+                    foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT_DARK);
+                    foldedFigureModel.setBackColor(Colors.FIGURE_BACK_DARK);
                 } else {
-                    app.applicationModel.setGridColor(Colors.GRID_LINE);
-                    app.applicationModel.setGridScaleColor(Colors.GRID_SCALE);
+                    applicationModel.setGridColor(Colors.GRID_LINE);
+                    applicationModel.setGridScaleColor(Colors.GRID_SCALE);
 
-                    app.foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT);
-                    app.foldedFigureModel.setBackColor(Colors.FIGURE_BACK);
+                    foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT);
+                    foldedFigureModel.setBackColor(Colors.FIGURE_BACK);
                 }
             }
         });
@@ -169,8 +185,7 @@ public class AppMenuBar extends JMenuBar {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
             Save save = new Save();
-            app.mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
-
+            mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
 
             clipboard.setContents(new SaveTransferable(save), (clipboard1, contents) -> {});
         });
@@ -178,14 +193,14 @@ public class AppMenuBar extends JMenuBar {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
             Save save = new Save();
-            app.mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
+            mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
 
 
             clipboard.setContents(new SaveTransferable(save), (clipboard1, contents) -> {});
 
-            app.mainCreasePatternWorker.foldLineSet.delSelectedLineSegmentFast();
+            mainCreasePatternWorker.foldLineSet.delSelectedLineSegmentFast();
 
-            app.mainCreasePatternWorker.record();
+            mainCreasePatternWorker.record();
         });
         pasteButton.addActionListener(e -> {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -195,8 +210,7 @@ public class AppMenuBar extends JMenuBar {
                 if (clipboardContents.isDataFlavorSupported(SaveTransferable.saveFlavor)) {
                     Save save = (Save) clipboardContents.getTransferData(SaveTransferable.saveFlavor);
 
-                    app.mainCreasePatternWorker.setSaveForPaste(save);
-                    app.repaintCanvas();
+                    mainCreasePatternWorker.setSaveForPaste(save);
                 }
             } catch (IOException | UnsupportedFlavorException ignored) {
                 // We don't know how to paste this
@@ -210,13 +224,16 @@ public class AppMenuBar extends JMenuBar {
                 if (clipboardContents.isDataFlavorSupported(SaveTransferable.saveFlavor)) {
                     Save save = (Save) clipboardContents.getTransferData(SaveTransferable.saveFlavor);
 
-                    app.mainCreasePatternWorker.setSave_for_reading_tuika(save);
-                    app.repaintCanvas();
+                    mainCreasePatternWorker.setSave_for_reading_tuika(save);
                 }
             } catch (IOException | UnsupportedFlavorException ignored) {
                 // We don't know how to paste this
             }
         });
+    }
+
+    public void setOwner(Frame owner) {
+        this.owner = owner;
     }
 
     private void createElements() {
@@ -250,6 +267,9 @@ public class AppMenuBar extends JMenuBar {
 
         importButton = new JMenuItem("Import");
         fileMenu.add(importButton);
+
+        importAddButton = new JMenuItem("Import (Add)");
+        fileMenu.add(importAddButton);
 
         fileMenu.addSeparator();
 
@@ -355,10 +375,32 @@ public class AppMenuBar extends JMenuBar {
         }
         for (File recentFile : applicationModel.getRecentFileList()) {
             JMenuItem recentFileMenuItem = new JMenuItem(recentFile.getName());
-            recentFileMenuItem.addActionListener(e -> app.openFile(recentFile));
+            recentFileMenuItem.addActionListener(e -> fileSaveService.openFile(recentFile));
             openRecentMenu.add(recentFileMenuItem);
         }
         openRecentMenu.addSeparator();
         openRecentMenu.add(clearRecentFileMenuItem);
+    }
+
+    public void closing() {
+        if (!fileModel.isSaved()) {
+            int option = JOptionPane.showConfirmDialog(owner, "Save crease pattern before exiting?", "Save", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            switch (option) {
+                case JOptionPane.YES_OPTION:
+                    fileSaveService.saveFile();
+
+                    TaskExecutor.stopTask();
+                    System.exit(0);
+                case JOptionPane.NO_OPTION:
+                    TaskExecutor.stopTask();
+                    System.exit(0);
+                case JOptionPane.CANCEL_OPTION:
+                    break;
+            }
+        } else {
+            TaskExecutor.stopTask();
+            System.exit(0);
+        }
     }
 }

@@ -1,5 +1,9 @@
 package origami_editor.editor.component;
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -44,25 +48,19 @@ public class UndoRedo extends JPanel {
      */
     private void $$$setupUI$$$() {
         createUIComponents();
-        panel1.setLayout(new GridBagLayout());
-        panel1.setEnabled(true);
+        panel1.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), 1, 1));
         undoButton = new JButton();
         undoButton.setIcon(new ImageIcon(getClass().getResource("/ppp/undo.png")));
         undoButton.setPreferredSize(new Dimension(30, 30));
-        GridBagConstraints gbc;
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(undoButton, gbc);
+        panel1.add(undoButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, 1, 1, null, null, null, 0, false));
         redoButton = new JButton();
         redoButton.setIcon(new ImageIcon(getClass().getResource("/ppp/redo.png")));
         redoButton.setPreferredSize(new Dimension(30, 30));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(redoButton, gbc);
+        panel1.add(redoButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, 1, 1, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        panel1.add(spacer1, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        panel1.add(spacer2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
 
     /**

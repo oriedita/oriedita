@@ -1,10 +1,10 @@
 package origami_editor.editor.component;
 
-import origami_editor.editor.App;
 import origami_editor.editor.databinding.FoldedFigureModel;
+import origami_editor.editor.databinding.MeasuresModel;
+import origami_editor.editor.service.ButtonService;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 public class FoldedFigureResize extends JPanel {
@@ -14,15 +14,14 @@ public class FoldedFigureResize extends JPanel {
     private JButton foldedFigureSizeSetButton;
     private JButton foldedFigureSizeIncreaseButton;
 
-    public FoldedFigureResize(App app) {
+    public FoldedFigureResize(ButtonService buttonService, FoldedFigureModel foldedFigureModel, MeasuresModel measuresModel) {
         add($$$getRootComponent$$$());
 
-        app.registerButton(foldedFigureSizeSetButton, "foldedFigureSizeSetAction");
-        app.registerButton(foldedFigureSizeDecreaseButton, "foldedFigureSizeDecreaseAction");
-        app.registerButton(foldedFigureSizeIncreaseButton, "foldedFigureSizeIncreaseAction");
+        buttonService.registerButton(foldedFigureSizeSetButton, "foldedFigureSizeSetAction");
+        buttonService.registerButton(foldedFigureSizeDecreaseButton, "foldedFigureSizeDecreaseAction");
+        buttonService.registerButton(foldedFigureSizeIncreaseButton, "foldedFigureSizeIncreaseAction");
 
-        FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
-        foldedFigureSizeSetButton.addActionListener(e -> foldedFigureModel.setScale(app.string2double(foldedFigureSizeTextField.getText(), foldedFigureModel.getScale())));
+        foldedFigureSizeSetButton.addActionListener(e -> foldedFigureModel.setScale(measuresModel.string2double(foldedFigureSizeTextField.getText(), foldedFigureModel.getScale())));
         foldedFigureSizeDecreaseButton.addActionListener(e -> foldedFigureModel.zoomOut());
         foldedFigureSizeIncreaseButton.addActionListener(e -> foldedFigureModel.zoomIn());
     }

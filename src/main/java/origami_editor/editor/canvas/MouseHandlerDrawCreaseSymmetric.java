@@ -9,9 +9,17 @@ import origami_editor.editor.MouseMode;
 import origami_editor.editor.databinding.CanvasModel;
 
 public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestricted {
+    private final CreasePattern_Worker d;
+    private final CanvasModel canvasModel;
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.DRAW_CREASE_SYMMETRIC_12;
+    }
+
+    public MouseHandlerDrawCreaseSymmetric(CreasePattern_Worker d, CanvasModel canvasModel) {
+        this.d = d;
+        this.canvasModel = canvasModel;
     }
 
     //マウス操作(mouseMode==12鏡映モード　でボタンを押したとき)時の作業----------------------------------------------------
@@ -32,13 +40,13 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
                 d.lineStep.get(0).setB(d.lineStep.get(1).getB());
             } else {
                 d.lineStep.clear();
-                d.app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+                canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 return;
             }
 
             if (Epsilon.high.le0(d.lineStep.get(0).determineLength())) {
                 d.lineStep.clear();
-                d.app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+                canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             }
         }
     }
@@ -51,7 +59,7 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
     public void mouseReleased(Point p0) {
         LineSegment adds = new LineSegment();
         if (d.lineStep.size() == 2) {
-            d.app.canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+            canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             int old_sousuu = d.foldLineSet.getTotal();
 
             for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
@@ -70,7 +78,7 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
 
             d.foldLineSet.unselect_all();
             d.record();
-            d.app.canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
+            canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
 
             d.lineStep.clear();
         }

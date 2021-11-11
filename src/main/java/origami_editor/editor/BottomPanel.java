@@ -1,14 +1,17 @@
 package origami_editor.editor;
 
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 import origami.folding.FoldedFigure;
+import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.MouseHandlerModifyCalculatedShape;
-import origami_editor.editor.component.ColorIcon;
-import origami_editor.editor.component.FoldedFigureResize;
-import origami_editor.editor.component.FoldedFigureRotate;
-import origami_editor.editor.component.UndoRedo;
-import origami_editor.editor.databinding.CanvasModel;
-import origami_editor.editor.databinding.FoldedFigureModel;
+import origami_editor.editor.component.*;
+import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
+import origami_editor.editor.service.ButtonService;
+import origami_editor.editor.service.FileSaveService;
+import origami_editor.editor.service.FoldingService;
 import origami_editor.editor.task.FoldingEstimateSave100Task;
 import origami_editor.editor.task.FoldingEstimateSpecificTask;
 import origami_editor.editor.task.FoldingEstimateTask;
@@ -24,7 +27,9 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 
 public class BottomPanel extends JPanel {
-    private final App app;
+    private final ButtonService buttonService;
+    private final MeasuresModel measuresModel;
+    private final FoldedFigureModel foldedFigureModel;
     private JPanel panel1;
     private JTextField goToFoldedFigureTextField;
     private FoldedFigureRotate foldedFigureRotate;
@@ -48,74 +53,88 @@ public class BottomPanel extends JPanel {
     private UndoRedo undoRedo;
     private JComboBox<FoldedFigure_Drawer> foldedFigureBox;
 
-    public BottomPanel(App app) {
-        this.app = app;
+    public BottomPanel(ButtonService buttonService,
+                       MeasuresModel measuresModel,
+                       CanvasModel canvasModel,
+                       FoldedFigureModel foldedFigureModel,
+                       CameraModel creasePatternCameraModel,
+                       CreasePattern_Worker mainCreasePatternWorker,
+                       FoldingService foldingService,
+                       ApplicationModel applicationModel,
+                       DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList,
+                       FileModel fileModel,
+                       FileSaveService fileSaveService,
+                       Canvas canvas,
+                       BulletinBoard bulletinBoard) {
+        this.buttonService = buttonService;
+        this.measuresModel = measuresModel;
+        this.foldedFigureModel = foldedFigureModel;
+
         $$$setupUI$$$();
 
-        app.registerButton(foldButton, "foldAction");
-        app.registerButton(anotherSolutionButton, "anotherSolutionAction");
-        app.registerButton(flipButton, "foldedFigureFlipAction");
-        app.registerButton(foldedFigureAntiAliasButton, "foldedFigureToggleAntiAliasAction");
-        app.registerButton(shadowButton, "foldedFigureToggleShadowAction");
-        app.registerButton(frontColorButton, "foldedFigureFrontColorAction");
-        app.registerButton(backColorButton, "foldedFigureBackColorAction");
-        app.registerButton(lineColorButton, "foldedFigureLineColorAction");
-        app.registerButton(haltButton, "haltAction");
-        app.registerButton(trashButton, "foldedFigureTrashAction");
-        app.registerButton(resetButton, "resetAction");
-        app.registerButton(oriagari_sousaButton, "oriagari_sousaAction");
-        app.registerButton(oriagari_sousa_2Button, "oriagari_sousa_2Action");
-        app.registerButton(As100Button, "As100Action");
-        app.registerButton(goToFoldedFigureButton, "goToFoldedFigureAction");
-        app.registerButton(foldedFigureMoveButton, "foldedFigureMoveAction");
+        buttonService.registerButton(foldButton, "foldAction");
+        buttonService.registerButton(anotherSolutionButton, "anotherSolutionAction");
+        buttonService.registerButton(flipButton, "foldedFigureFlipAction");
+        buttonService.registerButton(foldedFigureAntiAliasButton, "foldedFigureToggleAntiAliasAction");
+        buttonService.registerButton(shadowButton, "foldedFigureToggleShadowAction");
+        buttonService.registerButton(frontColorButton, "foldedFigureFrontColorAction");
+        buttonService.registerButton(backColorButton, "foldedFigureBackColorAction");
+        buttonService.registerButton(lineColorButton, "foldedFigureLineColorAction");
+        buttonService.registerButton(haltButton, "haltAction");
+        buttonService.registerButton(trashButton, "foldedFigureTrashAction");
+        buttonService.registerButton(resetButton, "resetAction");
+        buttonService.registerButton(oriagari_sousaButton, "oriagari_sousaAction");
+        buttonService.registerButton(oriagari_sousa_2Button, "oriagari_sousa_2Action");
+        buttonService.registerButton(As100Button, "As100Action");
+        buttonService.registerButton(goToFoldedFigureButton, "goToFoldedFigureAction");
+        buttonService.registerButton(foldedFigureMoveButton, "foldedFigureMoveAction");
 
-        app.registerButton(undoRedo.getUndoButton(), "foldedFigureUndoAction");
-        app.registerButton(undoRedo.getRedoButton(), "foldedFigureRedoAction");
+        buttonService.registerButton(undoRedo.getUndoButton(), "foldedFigureUndoAction");
+        buttonService.registerButton(undoRedo.getRedoButton(), "foldedFigureRedoAction");
 
-        FoldedFigureModel foldedFigureModel = app.foldedFigureModel;
 
         foldButton.addActionListener(e -> {
-            System.out.println("20180220 get_i_fold_type() = " + app.getFoldType());
-            app.fold(app.getFoldType(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
+            System.out.println("20180220 get_i_fold_type() = " + foldingService.getFoldType());
+            foldingService.fold(foldingService.getFoldType(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
 
-            if (!app.applicationModel.getSelectPersistent()) {
-                app.mainCreasePatternWorker.unselect_all();
+            if (!applicationModel.getSelectPersistent()) {
+                mainCreasePatternWorker.unselect_all();
             }
         });
         anotherSolutionButton.addActionListener(e -> {
-            FoldedFigure_Drawer selectedItem = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedItem = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
             if (selectedItem != null) {
-                TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(app, selectedItem, FoldedFigure.EstimationOrder.ORDER_6));
+                TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(foldingService, bulletinBoard, canvas, selectedItem, FoldedFigure.EstimationOrder.ORDER_6));
             }
         });
         flipButton.addActionListener(e -> {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
             if (selectedFigure != null) {
                 foldedFigureModel.advanceState();
 
-                if ((app.canvasModel.getMouseMode() == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (selectedFigure.foldedFigure.ip4 == FoldedFigure.State.BOTH_2)) {
+                if ((canvasModel.getMouseMode() == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (selectedFigure.foldedFigure.ip4 == FoldedFigure.State.BOTH_2)) {
                     foldedFigureModel.setState(FoldedFigure.State.FRONT_0);
                 }//Fold-up forecast map Added to avoid the mode that can not be moved when moving
             }
         });
         As100Button.addActionListener(e -> {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
             if (selectedFigure != null && selectedFigure.foldedFigure.findAnotherOverlapValid) {
                 selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
-                TaskExecutor.executeTask("Folding Estimate Save 100", new FoldingEstimateSave100Task(app));
+                TaskExecutor.executeTask("Folding Estimate Save 100", new FoldingEstimateSave100Task(canvas, foldingService, fileSaveService, foldedFiguresList, fileModel));
             }
         });
         goToFoldedFigureButton.addActionListener(e -> {
-            int foldedCases_old = app.foldedFigureModel.getFoldedCases();
+            int foldedCases_old = foldedFigureModel.getFoldedCases();
             int newFoldedCases = StringOp.String2int(goToFoldedFigureTextField.getText(), foldedCases_old);
             if (newFoldedCases < 1) {
                 newFoldedCases = 1;
             }
 
-            app.foldedFigureModel.setFoldedCases(newFoldedCases);
+            foldedFigureModel.setFoldedCases(newFoldedCases);
 
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
             if (selectedFigure == null) {
                 return;
@@ -123,55 +142,51 @@ public class BottomPanel extends JPanel {
 
             selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
-            if (app.foldedFigureModel.getFoldedCases() < selectedFigure.foldedFigure.discovered_fold_cases) {
+            if (foldedFigureModel.getFoldedCases() < selectedFigure.foldedFigure.discovered_fold_cases) {
                 selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_51;    //i_suitei_meirei=51はoritatami_suiteiの最初の推定図用カメラの設定は素通りするための設定。推定図用カメラの設定を素通りしたら、i_suitei_meirei=5に変更される。
                 //1例目の折り上がり予想はi_suitei_meirei=5を指定、2例目以降の折り上がり予想はi_suitei_meirei=6で実施される
             }
 
-            TaskExecutor.executeTask("Folding Estimate Specific", new FoldingEstimateSpecificTask(app));
-
-            app.repaintCanvas();
+            TaskExecutor.executeTask("Folding Estimate Specific", new FoldingEstimateSpecificTask(foldedFigureModel, foldingService, canvasModel, foldedFiguresList));
         });
 
         undoRedo.addUndoActionListener(e -> {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
             if (selectedFigure != null) {
                 selectedFigure.undo();
-                app.repaintCanvas();
             }
         });
         undoRedo.addRedoActionListener(e -> {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
             if (selectedFigure != null) {
                 selectedFigure.redo();
-                app.repaintCanvas();
             }
         });
         oriagari_sousaButton.addActionListener(e -> {
-            app.canvasModel.setFoldedFigureOperationMode(MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode.MODE_1);
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+            canvasModel.setFoldedFigureOperationMode(MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode.MODE_1);
+            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
             if (selectedFigure != null) {
                 selectedFigure.foldedFigure.setAllPointStateFalse();
                 selectedFigure.record();
             }
 
-            app.canvasModel.setMouseMode(MouseMode.MODIFY_CALCULATED_SHAPE_101);
+            canvasModel.setMouseMode(MouseMode.MODIFY_CALCULATED_SHAPE_101);
         });
         oriagari_sousa_2Button.addActionListener(e -> {
-            app.canvasModel.setFoldedFigureOperationMode(MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode.MODE_2);
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) app.foldedFiguresList.getSelectedItem();
+            canvasModel.setFoldedFigureOperationMode(MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode.MODE_2);
+            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
             if (selectedFigure != null) {
                 selectedFigure.foldedFigure.setAllPointStateFalse();
                 selectedFigure.record();
             }
 
-            app.canvasModel.setMouseMode(MouseMode.MODIFY_CALCULATED_SHAPE_101);
+            canvasModel.setMouseMode(MouseMode.MODIFY_CALCULATED_SHAPE_101);
         });
-        foldedFigureMoveButton.addActionListener(e -> app.canvasModel.setMouseMode(MouseMode.MOVE_CALCULATED_SHAPE_102));
+        foldedFigureMoveButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.MOVE_CALCULATED_SHAPE_102));
         foldedFigureAntiAliasButton.addActionListener(e -> foldedFigureModel.toggleAntiAlias());
         shadowButton.addActionListener(e -> foldedFigureModel.toggleDisplayShadows());
         frontColorButton.addActionListener(e -> {
@@ -201,45 +216,39 @@ public class BottomPanel extends JPanel {
         });
         haltButton.addActionListener(e -> {
             TaskExecutor.stopTask();
-            app.mainCreasePatternWorker.camvTask.cancel(true);
+            mainCreasePatternWorker.camvTask.cancel(true);
         });
         trashButton.addActionListener(e -> {
-            if (app.foldedFiguresList.getSize() == 0) {
+            if (foldedFiguresList.getSize() == 0) {
                 return;
             }
 
-            Object selectedItem = app.foldedFiguresList.getSelectedItem();
+            Object selectedItem = foldedFiguresList.getSelectedItem();
 
             if (selectedItem == null) {
-                selectedItem = app.foldedFiguresList.getElementAt(0);
+                selectedItem = foldedFiguresList.getElementAt(0);
             }
 
-            app.foldedFiguresList.removeElement(selectedItem);
-
-            app.repaintCanvas();
+            foldedFiguresList.removeElement(selectedItem);
         });
         resetButton.addActionListener(e -> {
 
-            app.mainCreasePatternWorker.clearCreasePattern();
-            app.creasePatternCameraModel.reset();
-            app.foldedFiguresList.removeAllElements();
+            mainCreasePatternWorker.clearCreasePattern();
+            creasePatternCameraModel.reset();
+            foldedFiguresList.removeAllElements();
 
-            app.Button_shared_operation();
-            app.repaintCanvas();
+            canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);
 
-            app.canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);
-
-            app.mainCreasePatternWorker.record();
-            app.mainCreasePatternWorker.auxRecord();
+            mainCreasePatternWorker.record();
+            mainCreasePatternWorker.auxRecord();
         });
-        foldedFigureBox.setModel(app.foldedFiguresList);
+        foldedFigureBox.setModel(foldedFiguresList);
         foldedFigureBox.setRenderer(new IndexCellRenderer());
         foldedFigureBox.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                if (!app.applicationModel.getDisplayNumbers()) {
-                    app.applicationModel.setDisplayNumbers(true);
-                    app.repaintCanvas();
+                if (!applicationModel.getDisplayNumbers()) {
+                    applicationModel.setDisplayNumbers(true);
                 }
             }
         });
@@ -251,9 +260,8 @@ public class BottomPanel extends JPanel {
 
             @Override
             public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                if (app.applicationModel.getDisplayNumbers()) {
-                    app.applicationModel.setDisplayNumbers(false);
-                    app.repaintCanvas();
+                if (applicationModel.getDisplayNumbers()) {
+                    applicationModel.setDisplayNumbers(false);
                 }
             }
 
@@ -273,191 +281,81 @@ public class BottomPanel extends JPanel {
      */
     private void $$$setupUI$$$() {
         createUIComponents();
-        panel1.setLayout(new GridBagLayout());
+        panel1.setLayout(new GridLayoutManager(1, 28, new Insets(1, 1, 1, 1), 1, 1));
         foldButton = new JButton();
         foldButton.setIcon(new ImageIcon(getClass().getResource("/ppp/suitei_04.png")));
         foldButton.setText("Fold");
-        GridBagConstraints gbc;
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(foldButton, gbc);
+        panel1.add(foldButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         undoRedo = new UndoRedo();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 7;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(undoRedo.$$$getRootComponent$$$(), gbc);
+        panel1.add(undoRedo.$$$getRootComponent$$$(), new GridConstraints(0, 8, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         oriagari_sousaButton = new JButton();
         oriagari_sousaButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oriagari_sousa.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 10;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(oriagari_sousaButton, gbc);
+        panel1.add(oriagari_sousaButton, new GridConstraints(0, 10, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         foldedFigureMoveButton = new JButton();
         foldedFigureMoveButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oriagari_idiu.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 12;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(foldedFigureMoveButton, gbc);
-        gbc = new GridBagConstraints();
-        gbc.gridx = 14;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(foldedFigureRotate.$$$getRootComponent$$$(), gbc);
-        gbc = new GridBagConstraints();
-        gbc.gridx = 16;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(foldedFigureResize.$$$getRootComponent$$$(), gbc);
+        panel1.add(foldedFigureMoveButton, new GridConstraints(0, 12, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel1.add(foldedFigureRotate.$$$getRootComponent$$$(), new GridConstraints(0, 14, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel1.add(foldedFigureResize.$$$getRootComponent$$$(), new GridConstraints(0, 16, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         foldedFigureAntiAliasButton = new JButton();
         foldedFigureAntiAliasButton.setText("a_a");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 18;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(foldedFigureAntiAliasButton, gbc);
+        panel1.add(foldedFigureAntiAliasButton, new GridConstraints(0, 18, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), new Dimension(30, -1), null, 0, false));
         shadowButton = new JButton();
         shadowButton.setText("S");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 19;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(shadowButton, gbc);
+        panel1.add(shadowButton, new GridConstraints(0, 19, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(15, -1), new Dimension(15, -1), null, 0, false));
         frontColorButton = new JButton();
         frontColorButton.setIcon(new ImageIcon(getClass().getResource("/ppp/F_color.png")));
         frontColorButton.setText("FC");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 21;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(frontColorButton, gbc);
+        panel1.add(frontColorButton, new GridConstraints(0, 20, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         backColorButton = new JButton();
         backColorButton.setIcon(new ImageIcon(getClass().getResource("/ppp/B_color.png")));
         backColorButton.setText("BC");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 22;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(backColorButton, gbc);
+        panel1.add(backColorButton, new GridConstraints(0, 21, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         lineColorButton = new JButton();
         lineColorButton.setIcon(new ImageIcon(getClass().getResource("/ppp/L_color.png")));
         lineColorButton.setText("LC");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 23;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(lineColorButton, gbc);
+        panel1.add(lineColorButton, new GridConstraints(0, 22, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         haltButton = new JButton();
         haltButton.setIcon(new ImageIcon(getClass().getResource("/ppp/keisan_tyuusi.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 24;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(haltButton, gbc);
+        panel1.add(haltButton, new GridConstraints(0, 24, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         trashButton = new JButton();
         trashButton.setIcon(new ImageIcon(getClass().getResource("/ppp/settei_syokika.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 25;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(trashButton, gbc);
+        panel1.add(trashButton, new GridConstraints(0, 25, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         resetButton = new JButton();
         resetButton.setIcon(new ImageIcon(getClass().getResource("/ppp/zen_syokika.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 26;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(resetButton, gbc);
-        final JPanel spacer1 = new JPanel();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 27;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(spacer1, gbc);
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weighty = 1.0;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(foldedFigureBox, gbc);
-        final JPanel spacer2 = new JPanel();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 15;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(spacer2, gbc);
-        final JPanel spacer3 = new JPanel();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 13;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(spacer3, gbc);
-        final JPanel spacer4 = new JPanel();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 8;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(spacer4, gbc);
-        final JPanel spacer5 = new JPanel();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 17;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(spacer5, gbc);
-        final JPanel spacer6 = new JPanel();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 20;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(spacer6, gbc);
+        panel1.add(resetButton, new GridConstraints(0, 26, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel1.add(foldedFigureBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         oriagari_sousa_2Button = new JButton();
         oriagari_sousa_2Button.setIcon(new ImageIcon(getClass().getResource("/ppp/oriagari_sousa_2.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 11;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(oriagari_sousa_2Button, gbc);
+        panel1.add(oriagari_sousa_2Button, new GridConstraints(0, 11, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         anotherSolutionButton = new JButton();
         anotherSolutionButton.setText("a_s");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(anotherSolutionButton, gbc);
+        panel1.add(anotherSolutionButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), new Dimension(30, -1), null, 0, false));
         As100Button = new JButton();
         As100Button.setText("AS100");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 4;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(As100Button, gbc);
+        panel1.add(As100Button, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(50, -1), new Dimension(50, -1), null, 0, false));
         goToFoldedFigureTextField = new JTextField();
         goToFoldedFigureTextField.setColumns(2);
-        gbc = new GridBagConstraints();
-        gbc.gridx = 5;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(goToFoldedFigureTextField, gbc);
+        panel1.add(goToFoldedFigureTextField, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         goToFoldedFigureButton = new JButton();
         goToFoldedFigureButton.setText("Go");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 6;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(goToFoldedFigureButton, gbc);
+        panel1.add(goToFoldedFigureButton, new GridConstraints(0, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), new Dimension(30, -1), null, 0, false));
         flipButton = new JButton();
         flipButton.setIcon(new ImageIcon(getClass().getResource("/ppp/Button0b.png")));
-        gbc = new GridBagConstraints();
-        gbc.gridx = 3;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.VERTICAL;
-        panel1.add(flipButton, gbc);
+        panel1.add(flipButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        panel1.add(spacer1, new GridConstraints(0, 27, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        panel1.add(spacer2, new GridConstraints(0, 15, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(5, -1), null, null, 0, false));
+        final Spacer spacer3 = new Spacer();
+        panel1.add(spacer3, new GridConstraints(0, 13, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(5, -1), null, null, 0, false));
+        final Spacer spacer4 = new Spacer();
+        panel1.add(spacer4, new GridConstraints(0, 9, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(5, -1), null, null, 0, false));
+        final Spacer spacer5 = new Spacer();
+        panel1.add(spacer5, new GridConstraints(0, 7, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(5, -1), null, null, 0, false));
+        final Spacer spacer6 = new Spacer();
+        panel1.add(spacer6, new GridConstraints(0, 17, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(5, -1), null, null, 0, false));
+        final Spacer spacer7 = new Spacer();
+        panel1.add(spacer7, new GridConstraints(0, 23, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(5, -1), null, null, 0, false));
     }
 
     /**
@@ -469,8 +367,8 @@ public class BottomPanel extends JPanel {
 
     private void createUIComponents() {
         panel1 = this;
-        foldedFigureResize = new FoldedFigureResize(app);
-        foldedFigureRotate = new FoldedFigureRotate(app);
+        foldedFigureResize = new FoldedFigureResize(buttonService, foldedFigureModel, measuresModel);
+        foldedFigureRotate = new FoldedFigureRotate(buttonService, foldedFigureModel, measuresModel);
         foldedFigureBox = new JComboBox<>();
     }
 
@@ -501,8 +399,8 @@ public class BottomPanel extends JPanel {
     }
 
     public void getData(FoldedFigureModel foldedFigureModel) {
-        foldedFigureModel.setScale(app.string2double(foldedFigureResize.getText(), foldedFigureModel.getScale()));
-        foldedFigureModel.setRotation(app.string2double(foldedFigureRotate.getText(), foldedFigureModel.getRotation()));
+        foldedFigureModel.setScale(measuresModel.string2double(foldedFigureResize.getText(), foldedFigureModel.getScale()));
+        foldedFigureModel.setRotation(measuresModel.string2double(foldedFigureRotate.getText(), foldedFigureModel.getRotation()));
         foldedFigureModel.setFoldedCases(StringOp.String2int(goToFoldedFigureTextField.getText(), foldedFigureModel.getFoldedCases()));
     }
 
