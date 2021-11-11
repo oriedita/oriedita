@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="origami_editor.editor.LeftPanel">
   <grid id="27dc6" binding="root" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="20" y="20" width="450" height="1424"/>
+      <xy x="20" y="20" width="450" height="965"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -502,8 +502,8 @@
             </constraints>
             <properties>
               <icon value="ppp/suisen.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="2a15d" class="javax.swing.JTextField" binding="lineSegmentDivisionTextField">
@@ -512,8 +512,8 @@
               <gridbag weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
               <text value="2"/>
             </properties>
           </component>
@@ -523,8 +523,8 @@
               <gridbag weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
               <text value="Set"/>
             </properties>
           </component>
@@ -535,8 +535,8 @@
             </constraints>
             <properties>
               <icon value="ppp/senbun_b_nyuryoku.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="eb3c8" class="javax.swing.JButton" binding="all_s_step_to_orisenButton">
@@ -546,8 +546,8 @@
             </constraints>
             <properties>
               <icon value="ppp/all_s_step_to_orisen.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="7bb20" class="javax.swing.JButton" binding="voronoiButton">
@@ -557,8 +557,8 @@
             </constraints>
             <properties>
               <icon value="ppp/Voronoi.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="22f4e" class="javax.swing.JButton" binding="parallelDrawButton">
@@ -568,8 +568,8 @@
             </constraints>
             <properties>
               <icon value="ppp/heikousen.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="1d53e" class="javax.swing.JButton" binding="fishBoneDrawButton">
@@ -579,8 +579,8 @@
             </constraints>
             <properties>
               <icon value="ppp/sakananohone.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="b822e" class="javax.swing.JButton" binding="setParallelDrawWidthButton">
@@ -590,8 +590,8 @@
             </constraints>
             <properties>
               <icon value="ppp/heikousen_haba_sitei.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="654c" class="javax.swing.JButton" binding="doubleSymmetricDrawButton">
@@ -601,8 +601,8 @@
             </constraints>
             <properties>
               <icon value="ppp/fuku_orikaesi.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="4d17c" class="javax.swing.JButton" binding="makeFlatFoldableButton">
@@ -612,8 +612,8 @@
             </constraints>
             <properties>
               <icon value="ppp/oritatami_kanousen.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="3f7e2" class="javax.swing.JButton" binding="continuousSymmetricDrawButton">
@@ -623,8 +623,8 @@
             </constraints>
             <properties>
               <icon value="ppp/renzoku_orikaesi.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="a24f2" class="javax.swing.JButton" binding="symmetricDrawButton">
@@ -634,8 +634,8 @@
             </constraints>
             <properties>
               <icon value="ppp/orikaesi.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="3cf89" class="javax.swing.JButton" binding="angleBisectorButton">
@@ -645,7 +645,8 @@
             </constraints>
             <properties>
               <icon value="ppp/kaku_toubun.png"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
               <text value=""/>
             </properties>
           </component>
@@ -656,8 +657,8 @@
             </constraints>
             <properties>
               <icon value="ppp/senbun_entyou_2.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="31ade" class="javax.swing.JButton" binding="lengthenCreaseButton">
@@ -667,8 +668,8 @@
             </constraints>
             <properties>
               <icon value="ppp/senbun_entyou.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="1413f" class="javax.swing.JButton" binding="drawCreaseFreeButton">
@@ -678,8 +679,8 @@
             </constraints>
             <properties>
               <icon value="ppp/senbun_nyuryoku.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="73246" class="javax.swing.JButton" binding="drawCreaseRestrictedButton">
@@ -689,8 +690,8 @@
             </constraints>
             <properties>
               <icon value="ppp/senbun_nyuryoku11.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="a5283" class="javax.swing.JButton" binding="rabbitEarButton">
@@ -700,8 +701,8 @@
             </constraints>
             <properties>
               <icon value="ppp/naishin.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
           <component id="20788" class="javax.swing.JButton" binding="foldableLineDrawButton">
@@ -711,8 +712,8 @@
             </constraints>
             <properties>
               <icon value="ppp/oritatami_kanousen_and_kousitenkei_simple.png"/>
-              <minimumSize width="0" height="30"/>
-              <preferredSize width="30" height="30"/>
+              <minimumSize width="0" height="20"/>
+              <preferredSize width="10" height="20"/>
             </properties>
           </component>
         </children>
@@ -1022,9 +1023,10 @@
               <component id="36809" class="javax.swing.JTextField" binding="gridXATextField">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="0.0" weighty="0.0"/>
+                  <gridbag weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties>
+                  <columns value="3"/>
                   <text value="0.0"/>
                 </properties>
               </component>
@@ -1040,9 +1042,10 @@
               <component id="b1b38" class="javax.swing.JTextField" binding="gridXBTextField">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="0.0" weighty="0.0"/>
+                  <gridbag weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties>
+                  <columns value="3"/>
                   <text value="1.0"/>
                 </properties>
               </component>
@@ -1058,36 +1061,40 @@
               <component id="6cc00" class="javax.swing.JTextField" binding="gridXCTextField">
                 <constraints>
                   <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="0.0" weighty="0.0"/>
+                  <gridbag weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties>
+                  <columns value="3"/>
                   <text value="1.0"/>
                 </properties>
               </component>
               <component id="ab8cd" class="javax.swing.JTextField" binding="gridYATextField">
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="0.0" weighty="0.0"/>
+                  <gridbag weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties>
+                  <columns value="3"/>
                   <text value="0.0"/>
                 </properties>
               </component>
               <component id="3893c" class="javax.swing.JTextField" binding="gridYBTextField">
                 <constraints>
                   <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="0.0" weighty="0.0"/>
+                  <gridbag weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties>
+                  <columns value="3"/>
                   <text value="1.0"/>
                 </properties>
               </component>
               <component id="926ad" class="javax.swing.JTextField" binding="gridYCTextField">
                 <constraints>
                   <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="0.0" weighty="0.0"/>
+                  <gridbag weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties>
+                  <columns value="3"/>
                   <text value="1.0"/>
                 </properties>
               </component>
