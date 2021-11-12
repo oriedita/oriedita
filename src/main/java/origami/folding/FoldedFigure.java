@@ -4,7 +4,6 @@ import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.worker.BasicBranch_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
-import origami.crease_pattern.element.Point;
 import origami.folding.util.IBulletinBoard;
 import origami.crease_pattern.LineSegmentSet;
 
@@ -215,7 +214,7 @@ public class FoldedFigure {
 
         ip1_anotherOverlapValid = FoldedFigure_Worker.HierarchyListStatus.UNKNOWN_0;
         findAnotherOverlapValid = false;
-        ip1_anotherOverlapValid = ct_worker.HierarchyList_configure(cp_worker1, cp_worker2.get());   //ip1_anotherOverlapValid = A variable that stores 0 if there is an error that the front and back sides are adjacent after folding, and 1000 if there is no error.
+        ip1_anotherOverlapValid = ct_worker.HierarchyList_configure(cp_worker1);   //ip1_anotherOverlapValid = A variable that stores 0 if there is an error that the front and back sides are adjacent after folding, and 1000 if there is no error.
         if (ip1_anotherOverlapValid == FoldedFigure_Worker.HierarchyListStatus.SUCCESSFUL_1000) {
             findAnotherOverlapValid = true;
         }

@@ -307,6 +307,8 @@ public class SubFace {
 
     /** Prepare a guidebook for the permutation generator in SubFace. */
     public void setGuideMap(HierarchyList hierarchyList) {
+        if (Thread.interrupted()) return;
+        
         // We setup faceIdMapArray only for valid subfaces to save memory.
         faceIdMapArray = new int[hierarchyList.getFacesTotal() + 1];
         for (int k : faceIdMap.keySet()) {
