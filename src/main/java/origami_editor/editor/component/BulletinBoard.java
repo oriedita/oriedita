@@ -1,15 +1,15 @@
 package origami_editor.editor.component;
 
-import org.springframework.stereotype.Component;
 import origami.folding.util.IBulletinBoard;
 import origami_editor.editor.Colors;
 
+import javax.inject.Singleton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.ArrayList;
 
-@Component
+@Singleton
 public class BulletinBoard implements IBulletinBoard {
 
     int ix0 = 10;//X coordinate of the upper left corner of the bulletin board

@@ -1,6 +1,6 @@
 package origami_editor.editor.service;
 
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
 import origami_editor.editor.HelpDialog;
 import origami_editor.editor.SelectKeyStrokeDialog;
 import origami_editor.editor.action.Click;
@@ -11,6 +11,7 @@ import origami_editor.tools.KeyStrokeUtil;
 import origami_editor.tools.ResourceUtil;
 import origami_editor.tools.StringOp;
 
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,7 +20,7 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+@Singleton
 public class ButtonService {
     private final HelpDialog explanation;
     private final CreasePattern_Worker mainCreasePatternWorker;
@@ -28,6 +29,7 @@ public class ButtonService {
     private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate;
     private final CanvasModel canvasModel;
 
+    @Inject
     public ButtonService(HelpDialog explanation, CreasePattern_Worker mainCreasePatternWorker, MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate, CanvasModel canvasModel) {
         this.explanation = explanation;
         this.mainCreasePatternWorker = mainCreasePatternWorker;

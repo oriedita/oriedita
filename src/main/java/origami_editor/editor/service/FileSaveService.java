@@ -1,8 +1,8 @@
 package origami_editor.editor.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Named;
 import origami_editor.editor.Canvas;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.Save;
@@ -14,6 +14,7 @@ import origami_editor.editor.export.Orh;
 import origami_editor.editor.json.DefaultObjectMapper;
 import origami_editor.tools.ResourceUtil;
 
+import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicFileChooserUI;
@@ -21,7 +22,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-@Component
+@Singleton
 public class FileSaveService {
     private final JFrame frame;
     private final Canvas canvas;
@@ -38,8 +39,9 @@ public class FileSaveService {
     private final FoldedFiguresList foldedFiguresList;
     private final BackgroundModel backgroundModel;
 
+    @Inject
     public FileSaveService(
-            @Qualifier("mainFrame") JFrame frame,
+            @Named("mainFrame") JFrame frame,
             Canvas canvas,
             CreasePattern_Worker mainCreasePatternWorker,
             FileModel fileModel,

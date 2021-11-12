@@ -1,6 +1,6 @@
 package origami_editor.editor.canvas;
 
-import org.springframework.stereotype.Component;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -10,7 +10,7 @@ import origami_editor.editor.MouseMode;
 import origami.folding.util.SortingBox;
 import origami.folding.util.WeightedValue;
 
-@Component
+@Singleton
 public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestricted {
     CreasePattern_Worker.FourPointStep i_step_for_copy_4p = CreasePattern_Worker.FourPointStep.STEP_0;
 

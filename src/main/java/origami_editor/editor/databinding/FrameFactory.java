@@ -1,15 +1,17 @@
 package origami_editor.editor.databinding;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+
+import javax.enterprise.inject.Produces;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import javax.swing.*;
 
-@Component
+@Singleton
 public class FrameFactory {
-    @Bean
-    @Qualifier("mainFrame")
+    @Produces
+    @Singleton
+    @Named("mainFrame")
     public JFrame mainFrame() {
         return new JFrame();
     }

@@ -3,7 +3,7 @@ package origami_editor.editor;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami_editor.editor.canvas.CreasePattern_Worker;
@@ -13,12 +13,13 @@ import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.service.ButtonService;
 import origami_editor.editor.service.FileSaveService;
 
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 
-@Component
+@Singleton
 public class TopPanel {
     private final MeasuresModel measuresModel;
     private JButton operationFrameSelectButton;
@@ -49,6 +50,7 @@ public class TopPanel {
     private JButton backgroundLockButton;
     private JCheckBox mouseSettingsCheckBox;
 
+    @Inject
     public TopPanel(MeasuresModel measuresModel,
                     ButtonService buttonService,
                     CanvasModel canvasModel,

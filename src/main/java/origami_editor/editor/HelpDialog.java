@@ -1,9 +1,10 @@
 package origami_editor.editor;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Named;
 import origami_editor.editor.databinding.ApplicationModel;
 
+import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -13,14 +14,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ResourceBundle;
 
-@Component
+@Singleton
 public class HelpDialog extends JDialog {
     private final ResourceBundle helpBundle;
     private final Point point = new Point();
     private JPanel contentPane;
     private JTextPane helpLabel;
 
-    public HelpDialog(@Qualifier("mainFrame") JFrame frame, ApplicationModel applicationModel) {
+    @Inject
+    public HelpDialog(@Named("mainFrame") JFrame frame, ApplicationModel applicationModel) {
         super(frame);
         setTitle("Help");
         $$$setupUI$$$();

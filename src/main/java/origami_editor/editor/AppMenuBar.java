@@ -2,8 +2,8 @@ package origami_editor.editor;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Named;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.service.ButtonService;
@@ -11,6 +11,7 @@ import origami_editor.editor.service.FileSaveService;
 import origami_editor.editor.task.TaskExecutor;
 import origami_editor.editor.transfer.SaveTransferable;
 
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -20,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@Component
+@Singleton
 public class AppMenuBar extends JMenuBar {
     private final JFrame frame;
     private final FileSaveService fileSaveService;
@@ -55,7 +56,8 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem pasteButton;
     private JMenuItem pasteOffsetButton;
 
-    public AppMenuBar(@Qualifier("mainFrame") JFrame frame, ApplicationModel applicationModel, FileSaveService fileSaveService, ButtonService buttonService, CanvasModel canvasModel, FileModel fileModel, CreasePattern_Worker mainCreasePatternWorker, FoldedFigureModel foldedFigureModel,
+    @Inject
+    public AppMenuBar(@Named("mainFrame") JFrame frame, ApplicationModel applicationModel, FileSaveService fileSaveService, ButtonService buttonService, CanvasModel canvasModel, FileModel fileModel, CreasePattern_Worker mainCreasePatternWorker, FoldedFigureModel foldedFigureModel,
                       FoldedFiguresList foldedFiguresList) {
         this.frame = frame;
         this.fileSaveService = fileSaveService;

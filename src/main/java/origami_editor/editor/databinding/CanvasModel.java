@@ -1,6 +1,6 @@
 package origami_editor.editor.databinding;
 
-import org.springframework.stereotype.Component;
+import javax.inject.Singleton;
 import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.Canvas;
 import origami_editor.editor.MouseMode;
@@ -11,7 +11,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 
-@Component
+@Singleton
 public class CanvasModel implements Serializable {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private LineColor lineColor;

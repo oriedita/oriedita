@@ -1,8 +1,8 @@
 package origami_editor.editor;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import origami_editor.editor.canvas.*;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
@@ -18,29 +18,32 @@ import java.io.File;
 import java.util.Queue;
 import java.util.*;
 
-@Service
+@Singleton
 public class App {
-    public final ApplicationModel applicationModel;
-    public final GridModel gridModel;
-    public final CanvasModel canvasModel;
-    public final FoldedFigureModel foldedFigureModel;
-    public final AngleSystemModel angleSystemModel;
-    public final MeasuresModel measuresModel;
-    public final InternalDivisionRatioModel internalDivisionRatioModel;
-    public final HistoryStateModel historyStateModel;
-    public final BackgroundModel backgroundModel;
-    public final CameraModel creasePatternCameraModel;
-    public final FileModel fileModel;
-    public final FoldedFiguresList foldedFiguresList;
-    public final CreasePattern_Worker mainCreasePatternWorker;    // Basic branch craftsman. Accepts input from the mouse.
+    private final LookAndFeelService lookAndFeelService;
+    final ApplicationModel applicationModel;
+    final GridModel gridModel;
+    final CanvasModel canvasModel;
+    final FoldedFigureModel foldedFigureModel;
+    final AngleSystemModel angleSystemModel;
+    final MeasuresModel measuresModel;
+    final InternalDivisionRatioModel internalDivisionRatioModel;
+    final HistoryStateModel historyStateModel;
+    final BackgroundModel backgroundModel;
+    final CameraModel creasePatternCameraModel;
+    final FileModel fileModel;
+    final FoldedFiguresList foldedFiguresList;
+    final CreasePattern_Worker mainCreasePatternWorker;    // Basic branch craftsman. Accepts input from the mouse.
     final Queue<Popup> popups = new ArrayDeque<>();
-    public  final FileSaveService fileSaveService;
-    public final ButtonService buttonService;
-    public final FoldingService foldingService;
-    public BulletinBoard bulletinBoard = new BulletinBoard();
+    final FileSaveService fileSaveService;
+    final ButtonService buttonService;
+    final FoldingService foldingService;
+    private final Editor editor;
+    private final AppMenuBar appMenuBar;
+    BulletinBoard bulletinBoard = new BulletinBoard();
     // ------------------------------------------------------------------------
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
-    public Canvas canvas;
+    Canvas canvas;
     //各種変数の定義
     String frame_title_0;//フレームのタイトルの根本部分
     String frame_title;//フレームのタイトルの全体
@@ -51,9 +54,9 @@ public class App {
     JFrame frame;
     private final ConsoleDialog consoleDialog;
 
-    @Autowired
+    @Inject
     public App(
-            @Qualifier("mainFrame") JFrame frame,
+            @Named("mainFrame") JFrame frame,
             LookAndFeelService lookAndFeelService,
             ApplicationModel applicationModel,
             GridModel gridModel,
@@ -78,6 +81,7 @@ public class App {
             AppMenuBar appMenuBar
     ) {
         this.frame = frame;
+        this.lookAndFeelService = lookAndFeelService;
         this.applicationModel = applicationModel;
         this.gridModel = gridModel;
         this.canvasModel = canvasModel;
@@ -96,6 +100,8 @@ public class App {
         this.fileSaveService = fileSaveService;
         this.buttonService = buttonService;
         this.foldingService = foldingService;
+        this.editor = editor;
+        this.appMenuBar = appMenuBar;
 
         frame.setTitle("Origami Editor " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
         frame_title_0 = frame.getTitle();
@@ -103,9 +109,10 @@ public class App {
         mainCreasePatternWorker.setTitle(frame_title);
 
         consoleDialog = new ConsoleDialog();
+//        applicationModelPersistenceService.restoreApplicationModel();
+    }
 
-        applicationModelPersistenceService.restoreApplicationModel();
-
+    public void start() {
         //--------------------------------------------------------------------------------------------------
         frame.addWindowListener(new WindowAdapter() {//ウィンドウの状態が変化したときの処理
             //終了ボタンを有効化
@@ -258,9 +265,6 @@ public class App {
         }
 
         frame.setExtendedState(applicationModel.getWindowState());
-    }
-
-    public void start() {
 
         frame.setVisible(true);
 

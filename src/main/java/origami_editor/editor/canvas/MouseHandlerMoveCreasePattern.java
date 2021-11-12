@@ -1,14 +1,15 @@
 package origami_editor.editor.canvas;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.databinding.FoldedFiguresList;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.tools.Camera;
 
-@Component
+@Singleton
 public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
     public Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
@@ -16,7 +17,8 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
     private final FoldedFiguresList foldedFiguresList;
     private final CreasePattern_Worker mainCreasePatternWorker;
 
-    public MouseHandlerMoveCreasePattern(@Qualifier("creasePatternCamera") Camera creasePatternCamera, FoldedFiguresList foldedFiguresList, CreasePattern_Worker mainCreasePatternWorker) {
+    @Inject
+    public MouseHandlerMoveCreasePattern(@Named("creasePatternCamera") Camera creasePatternCamera, FoldedFiguresList foldedFiguresList, CreasePattern_Worker mainCreasePatternWorker) {
         this.creasePatternCamera = creasePatternCamera;
         this.foldedFiguresList = foldedFiguresList;
         this.mainCreasePatternWorker = mainCreasePatternWorker;

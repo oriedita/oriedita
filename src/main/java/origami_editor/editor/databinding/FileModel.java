@@ -1,12 +1,13 @@
 package origami_editor.editor.databinding;
 
-import org.springframework.stereotype.Component;
+
+import javax.inject.Singleton;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 
-@Component
+@Singleton
 public class FileModel implements Serializable {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 

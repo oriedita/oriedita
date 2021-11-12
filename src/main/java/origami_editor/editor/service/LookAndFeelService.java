@@ -2,8 +2,9 @@ package origami_editor.editor.service;
 
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.ui.FlatUIUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import origami_editor.editor.App;
 import origami_editor.editor.databinding.ApplicationModel;
 
@@ -25,11 +26,12 @@ import java.awt.KeyboardFocusManager;
 import java.awt.Rectangle;
 import java.net.URL;
 
-@Component
+@Singleton
 public class LookAndFeelService {
     private final JFrame frame;
 
-    public LookAndFeelService(@Qualifier("mainFrame") JFrame frame, ApplicationModel applicationModel) {
+    @Inject
+    public LookAndFeelService(@Named("mainFrame") JFrame frame, ApplicationModel applicationModel) {
         this.frame = frame;
 
         applicationModel.addPropertyChangeListener(e -> {

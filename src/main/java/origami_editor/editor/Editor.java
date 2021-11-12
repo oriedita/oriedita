@@ -1,7 +1,8 @@
 package origami_editor.editor;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +10,7 @@ import java.awt.*;
 /**
  * BorderLayout for each different part.
  */
-@Component
+@Singleton
 public class Editor {
     private JPanel root;
     private Canvas canvas;
@@ -18,6 +19,7 @@ public class Editor {
     private TopPanel topPanel;
     private LeftPanel leftPanel;
 
+    @Inject
     public Editor(Canvas canvas, RightPanel rightPanel, BottomPanel bottomPanel, TopPanel topPanel, LeftPanel leftPanel) {
         this.canvas = canvas;
         this.rightPanel = rightPanel;

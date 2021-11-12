@@ -1,8 +1,10 @@
 package origami_editor.editor;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import origami.crease_pattern.OritaCalc;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
@@ -30,14 +32,13 @@ import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Panel in the center of the main view.
  */
-@Component
+@Singleton
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FoldedFiguresList foldedFiguresList;
@@ -99,9 +100,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     public final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
     private final Frame frame;
 
-    @Autowired
-    public Canvas(@Qualifier("creasePatternCamera") Camera creasePatternCamera,
-                  @Qualifier("mainFrame") JFrame frame,
+    @Inject
+    public Canvas(@Named("creasePatternCamera") Camera creasePatternCamera,
+                  @Named("mainFrame") JFrame frame,
                   CreasePattern_Worker mainCreasePatternWorker,
                   FoldedFiguresList foldedFiguresList,
                   BackgroundModel backgroundModel,
@@ -111,7 +112,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                   CameraModel creasePatternCameraModel,
                   FoldedFigureModel foldedFigureModel,
                   GridModel gridModel,
-                  List<MouseModeHandler> handlerList,
+                  @Any Instance<MouseModeHandler> handlerList,
                   AngleSystemModel angleSystemModel,
                   FoldedFigureCanvasSelectService foldedFigureCanvasSelectService,
                   CanvasModel canvasModel) {

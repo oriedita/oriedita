@@ -1,15 +1,16 @@
 package origami_editor.editor.canvas;
 
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami_editor.editor.MouseMode;
 import origami.folding.util.SortingBox;
 import origami.folding.util.WeightedValue;
+import origami_editor.editor.MouseMode;
 
-@Component
+@Singleton
 public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
     private final MouseHandlerDrawCreaseFree mouseHandlerDrawCreaseFree;
     private final MouseHandlerVertexMakeAngularlyFlatFoldable mouseHandlerVertexMakeAngularlyFlatFoldable;
@@ -18,6 +19,7 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
     Point moyori_point_memo = new Point();
     Point closest_point;
 
+    @Inject
     public MouseHandlerFoldableLineDraw(MouseHandlerDrawCreaseFree mouseHandlerDrawCreaseFree, MouseHandlerVertexMakeAngularlyFlatFoldable mouseHandlerVertexMakeAngularlyFlatFoldable) {
         this.mouseHandlerDrawCreaseFree = mouseHandlerDrawCreaseFree;
         this.mouseHandlerVertexMakeAngularlyFlatFoldable = mouseHandlerVertexMakeAngularlyFlatFoldable;

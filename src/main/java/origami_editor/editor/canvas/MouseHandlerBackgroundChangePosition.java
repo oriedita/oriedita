@@ -1,18 +1,17 @@
 package origami_editor.editor.canvas;
 
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
-import origami_editor.editor.Canvas;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.databinding.BackgroundModel;
 import origami_editor.editor.service.ButtonService;
 
-import java.awt.*;
 
-@Component
+@Singleton
 public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
     private final ButtonService buttonService;
     private final BackgroundModel backgroundModel;
@@ -57,6 +56,7 @@ public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
     public void mouseDragged(Point p0) {
     }
 
+    @Inject
     public MouseHandlerBackgroundChangePosition(ButtonService buttonService, BackgroundModel backgroundModel) {
         this.buttonService = buttonService;
         this.backgroundModel = backgroundModel;

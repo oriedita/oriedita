@@ -4,8 +4,9 @@ import com.formdev.flatlaf.FlatLaf;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
 import origami_editor.editor.canvas.CreasePattern_Worker;
@@ -24,7 +25,7 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.Arrays;
 
-@Component
+@Singleton
 public class LeftPanel {
     private final MeasuresModel measuresModel;
     private JPanel root;
@@ -122,7 +123,8 @@ public class LeftPanel {
     private JTextField gridAngleTextField;
     private JButton setGridParametersButton;
 
-    public LeftPanel(@Qualifier("mainFrame") JFrame frame, MeasuresModel measuresModel, ButtonService buttonService, CreasePattern_Worker mainCreasePatternWorker, ApplicationModel applicationModel, FoldedFigureModel foldedFigureModel, GridModel gridModel, CanvasModel canvasModel, FoldingService foldingService, FoldedFiguresList foldedFiguresList) {
+    @Inject
+    public LeftPanel(@Named("mainFrame") JFrame frame, MeasuresModel measuresModel, ButtonService buttonService, CreasePattern_Worker mainCreasePatternWorker, ApplicationModel applicationModel, FoldedFigureModel foldedFigureModel, GridModel gridModel, CanvasModel canvasModel, FoldingService foldingService, FoldedFiguresList foldedFiguresList) {
         this.measuresModel = measuresModel;
 
         applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));

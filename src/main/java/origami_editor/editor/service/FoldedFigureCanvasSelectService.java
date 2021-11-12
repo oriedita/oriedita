@@ -1,6 +1,8 @@
 package origami_editor.editor.service;
 
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import origami.crease_pattern.element.Point;
 import origami.folding.FoldedFigure;
 import origami_editor.editor.Canvas;
@@ -9,12 +11,13 @@ import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.databinding.FoldedFiguresList;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 
-@Component
+@Singleton
 public class FoldedFigureCanvasSelectService {
     private final FoldedFiguresList foldedFiguresList;
     private final FoldedFigureModel foldedFigureModel;
     private final CanvasModel canvasModel;
 
+    @Inject
     public FoldedFigureCanvasSelectService(FoldedFiguresList foldedFiguresList, FoldedFigureModel foldedFigureModel, CanvasModel canvasModel) {
         this.foldedFiguresList = foldedFiguresList;
         this.foldedFigureModel = foldedFigureModel;

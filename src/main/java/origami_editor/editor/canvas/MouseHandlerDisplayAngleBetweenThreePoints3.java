@@ -1,17 +1,19 @@
 package origami_editor.editor.canvas;
 
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.databinding.MeasuresModel;
 
-@Component
+@Singleton
 public class MouseHandlerDisplayAngleBetweenThreePoints3 extends BaseMouseHandlerInputRestricted {
     private final CreasePattern_Worker d;
     private final MeasuresModel measuresModel;
 
+    @Inject
     public MouseHandlerDisplayAngleBetweenThreePoints3(CreasePattern_Worker d, MeasuresModel measuresModel) {
         this.d = d;
         this.measuresModel = measuresModel;

@@ -2,8 +2,11 @@ package origami_editor.editor.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
+
+import javax.ejb.Startup;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.json.DefaultObjectMapper;
 
@@ -14,16 +17,20 @@ import java.nio.file.Path;
 
 import static origami_editor.tools.ResourceUtil.getAppDir;
 
-@Service
+@Singleton
+@Startup
 public class ApplicationModelPersistenceService {
     public static final String CONFIG_JSON = "config.json";
 
     private final JFrame frame;
     private final ApplicationModel applicationModel;
 
-    public ApplicationModelPersistenceService(@Qualifier("mainFrame") JFrame frame, ApplicationModel applicationModel) {
+    @Inject
+    public ApplicationModelPersistenceService(@Named("mainFrame") JFrame frame, ApplicationModel applicationModel) {
         this.frame = frame;
         this.applicationModel = applicationModel;
+
+        restoreApplicationModel();
 
         applicationModel.addPropertyChangeListener(e -> persistApplicationModel());
     }

@@ -1,6 +1,7 @@
 package origami_editor.editor.task;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import javax.inject.Inject;
+import javax.inject.Named;
 import origami.folding.FoldedFigure;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.CanvasModel;
@@ -14,7 +15,8 @@ public class TwoColoredTask implements Runnable{
     private final FoldingService foldingService;
     private final CanvasModel canvasModel;
 
-    public TwoColoredTask(BulletinBoard bulletinBoard, @Qualifier("creasePatternCamera") Camera creasePatternCamera, FoldingService foldingService, CanvasModel canvasModel) {
+    @Inject
+    public TwoColoredTask(BulletinBoard bulletinBoard, @Named("creasePatternCamera") Camera creasePatternCamera, FoldingService foldingService, CanvasModel canvasModel) {
         this.bulletinBoard = bulletinBoard;
         this.creasePatternCamera = creasePatternCamera;
         this.foldingService = foldingService;

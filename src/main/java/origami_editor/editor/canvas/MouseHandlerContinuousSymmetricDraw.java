@@ -1,6 +1,7 @@
 package origami_editor.editor.canvas;
 
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -10,7 +11,7 @@ import origami_editor.editor.canvas.drawing_worker_toolbox.Drawing_Worker_Toolbo
 import origami.folding.util.SortingBox;
 import origami_editor.editor.databinding.CanvasModel;
 
-@Component
+@Singleton
 public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRestricted {
     private final CreasePattern_Worker d;
     private final CanvasModel canvasModel;
@@ -53,6 +54,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
         }
     }
 
+    @Inject
     public MouseHandlerContinuousSymmetricDraw(CreasePattern_Worker d, CanvasModel canvasModel) {
         this.d = d;
         this.canvasModel = canvasModel;

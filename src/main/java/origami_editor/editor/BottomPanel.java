@@ -3,8 +3,9 @@ package origami_editor.editor;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import origami.folding.FoldedFigure;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.MouseHandlerModifyCalculatedShape;
@@ -23,15 +24,13 @@ import origami_editor.tools.StringOp;
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 
-@Component
-public class BottomPanel extends JPanel {
+@Singleton
+public class BottomPanel {
     private final ButtonService buttonService;
     private final MeasuresModel measuresModel;
     private final FoldedFigureModel foldedFigureModel;
@@ -58,7 +57,8 @@ public class BottomPanel extends JPanel {
     private UndoRedo undoRedo;
     private JComboBox<FoldedFigure_Drawer> foldedFigureBox;
 
-    public BottomPanel(@Qualifier("mainFrame") JFrame frame,
+    @Inject
+    public BottomPanel(@Named("mainFrame") JFrame frame,
                        ButtonService buttonService,
                        MeasuresModel measuresModel,
                        CanvasModel canvasModel,
@@ -375,7 +375,7 @@ public class BottomPanel extends JPanel {
     }
 
     private void createUIComponents() {
-        panel1 = this;
+        panel1 = new JPanel();
         foldedFigureResize = new FoldedFigureResize(buttonService, foldedFigureModel, measuresModel);
         foldedFigureRotate = new FoldedFigureRotate(buttonService, foldedFigureModel, measuresModel);
         foldedFigureBox = new JComboBox<>();
@@ -414,7 +414,7 @@ public class BottomPanel extends JPanel {
     }
 
     private static class IndexCellRenderer extends DefaultListCellRenderer {
-        public java.awt.Component getListCellRendererComponent(JList list, Object value, int index,
+        public Component getListCellRendererComponent(JList list, Object value, int index,
                                                       boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 

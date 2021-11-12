@@ -1,12 +1,12 @@
 package origami_editor.editor.canvas;
 
-import org.springframework.stereotype.Component;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.*;
 import origami_editor.editor.MouseMode;
 
-@Component
+@Singleton
 public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
     Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
 

@@ -1,13 +1,12 @@
 package origami_editor.editor.databinding;
 
-import org.springframework.stereotype.Component;
-import origami.crease_pattern.element.Point;
+import javax.inject.Singleton;
 import origami.crease_pattern.element.Polygon;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-@Component
+@Singleton
 public class BackgroundModel {
     private boolean displayBackground;
     private boolean lockBackground;

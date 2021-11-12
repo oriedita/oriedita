@@ -1,6 +1,6 @@
 package origami_editor.editor.canvas;
 
-import org.springframework.stereotype.Component;
+import javax.inject.Singleton;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -8,7 +8,7 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami_editor.editor.MouseMode;
 
-@Component
+@Singleton
 public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
     CreasePattern_Worker.OperationFrameMode operationFrameMode;
 

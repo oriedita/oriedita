@@ -1,9 +1,9 @@
 package origami_editor.editor.canvas;
 
-import org.springframework.stereotype.Component;
+import javax.inject.Singleton;
 import origami_editor.editor.MouseMode;
 
-@Component
+@Singleton
 public class MouseHandlerSelectPolygon extends BaseMouseHandlerPolygon {
     @Override
     public MouseMode getMouseMode() {

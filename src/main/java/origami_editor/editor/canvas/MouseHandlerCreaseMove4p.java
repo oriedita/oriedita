@@ -1,6 +1,7 @@
 package origami_editor.editor.canvas;
 
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.OritaCalc;
@@ -11,7 +12,7 @@ import origami_editor.editor.MouseMode;
 import origami_editor.editor.Save;
 import origami_editor.editor.databinding.CanvasModel;
 
-@Component
+@Singleton
 public class MouseHandlerCreaseMove4p extends BaseMouseHandlerInputRestricted {
     private final CanvasModel canvasModel;
 
@@ -20,6 +21,7 @@ public class MouseHandlerCreaseMove4p extends BaseMouseHandlerInputRestricted {
         return MouseMode.CREASE_MOVE_4P_31;
     }
 
+    @Inject
     public MouseHandlerCreaseMove4p(CreasePattern_Worker d, CanvasModel canvasModel) {
         this.d = d;
         this.canvasModel = canvasModel;

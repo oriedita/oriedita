@@ -3,8 +3,8 @@ package origami_editor.editor;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Named;
 import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.component.ColorIcon;
@@ -13,11 +13,12 @@ import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.service.ButtonService;
 import origami_editor.tools.StringOp;
 
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 
-@Component
+@Singleton
 public class RightPanel {
     private final MeasuresModel measuresModel;
     private OpenFrame openFrame;
@@ -84,7 +85,8 @@ public class RightPanel {
     private JTextField measuredAngle3TextField;
     private JPanel root;
 
-    public RightPanel(@Qualifier("mainFrame") JFrame frame, AngleSystemModel angleSystemModel,
+    @Inject
+    public RightPanel(@Named("mainFrame") JFrame frame, AngleSystemModel angleSystemModel,
                       ButtonService buttonService,
                       MeasuresModel measuresModel,
                       CreasePattern_Worker mainCreasePatternWorker, CanvasModel canvasModel, ApplicationModel applicationModel,

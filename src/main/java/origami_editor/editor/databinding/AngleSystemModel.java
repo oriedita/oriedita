@@ -1,11 +1,13 @@
 package origami_editor.editor.databinding;
 
-import org.springframework.stereotype.Component;
+
+
+import javax.inject.Singleton;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-@Component
+@Singleton
 public class AngleSystemModel {
     private double angleA;
     private double angleB;

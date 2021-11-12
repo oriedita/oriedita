@@ -1,12 +1,12 @@
 package origami_editor.editor.canvas;
 
-import org.springframework.stereotype.Component;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.*;
 import origami_editor.editor.MouseMode;
 
-@Component
+@Singleton
 public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
     @Override
     public MouseMode getMouseMode() {

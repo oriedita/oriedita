@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.apache.openwebbeans:openwebbeans-impl:2.0.23">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/openwebbeans/openwebbeans-impl/2.0.23/openwebbeans-impl-2.0.23.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/openwebbeans/openwebbeans-impl/2.0.23/openwebbeans-impl-2.0.23-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/apache/openwebbeans/openwebbeans-impl/2.0.23/openwebbeans-impl-2.0.23-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

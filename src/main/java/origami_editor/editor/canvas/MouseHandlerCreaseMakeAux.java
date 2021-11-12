@@ -1,13 +1,13 @@
 package origami_editor.editor.canvas;
 
-import org.springframework.stereotype.Component;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
-@Component
+@Singleton
 public class MouseHandlerCreaseMakeAux extends BaseMouseHandlerBoxSelect {
     @Override
     public MouseMode getMouseMode() {

@@ -1,9 +1,10 @@
 package origami_editor.editor.canvas;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.inject.Inject;
 
 public abstract class BaseMouseHandler implements MouseModeHandler {
-    @Autowired
+    @Inject
     protected CreasePattern_Worker d;
 
     public BaseMouseHandler() { }

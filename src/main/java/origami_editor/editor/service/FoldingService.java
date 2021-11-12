@@ -1,7 +1,7 @@
 package origami_editor.editor.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Named;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
@@ -17,9 +17,10 @@ import origami_editor.editor.task.TaskExecutor;
 import origami_editor.editor.task.TwoColoredTask;
 import origami_editor.tools.Camera;
 
+import javax.inject.Singleton;
 import javax.swing.*;
 
-@Component
+@Singleton
 public class FoldingService {
     private final BulletinBoard bulletinBoard;
     private final CanvasModel canvasModel;
@@ -36,10 +37,11 @@ public class FoldingService {
     private final HistoryStateModel historyStateModel;
     public LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
 
+    @Inject
     public FoldingService(BulletinBoard bulletinBoard,
                           CanvasModel canvasModel,
-                          @Qualifier("mainFrame") JFrame frame,
-                          @Qualifier("creasePatternCamera") Camera creasePatternCamera,
+                          @Named("mainFrame") JFrame frame,
+                          @Named("creasePatternCamera") Camera creasePatternCamera,
                           ApplicationModel applicationModel,
                           GridModel gridModel,
                           FoldedFigureModel foldedFigureModel,

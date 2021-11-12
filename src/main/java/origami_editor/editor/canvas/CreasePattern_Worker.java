@@ -1,7 +1,8 @@
 package origami_editor.editor.canvas;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
@@ -29,7 +30,7 @@ import java.util.concurrent.Future;
 /**
  * Responsible for holding the current creasepattern and drawing it.
  */
-@Component
+@Singleton
 public class CreasePattern_Worker {
     // ------------
     final int check4ColorTransparencyIncrement = 10;
@@ -98,7 +99,8 @@ public class CreasePattern_Worker {
     //--------------------------------------------
     CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
 
-    public CreasePattern_Worker(@Qualifier("creasePatternCamera") Camera creasePatternCamera,
+    @Inject
+    public CreasePattern_Worker(@Named("creasePatternCamera") Camera creasePatternCamera,
                                 CanvasModel canvasModel,
                                 ApplicationModel applicationModel,
                                 GridModel gridModel,
