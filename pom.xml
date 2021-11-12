@@ -97,6 +97,14 @@
                             <mainClass>origami_editor.editor.OrigamiEditor</mainClass>
                         </transformer>
                     </transformers>
+                    <artifactSet>
+                        <excludes>
+                            <!-- Dependencies of com.intellij:forms_rt which aren't used -->
+                            <exclude>com.jgoodies:forms</exclude>
+                            <exclude>jdom:jdom</exclude>
+                            <exclude>asm:asm*</exclude>
+                        </excludes>
+                    </artifactSet>
                     <filters>
                         <filter>
                             <artifact>*:*</artifact>
@@ -105,6 +113,16 @@
                                 <exclude>META-INF/*</exclude>
                                 <exclude>META-INF/services/*</exclude>
                             </excludes>
+                        </filter>
+                        <filter>
+                            <!-- Large part of com.inte..ij:forms_rt that isn't used -->
+                            <artifact>com.intellij:forms_rt</artifact>
+                            <includes>
+                                <include>com/intellij/uiDesigner/core</include>
+                            </includes>
+                        </filter>
+                        <filter>
+                            <artifact></artifact>
                         </filter>
                     </filters>
                 </configuration>
