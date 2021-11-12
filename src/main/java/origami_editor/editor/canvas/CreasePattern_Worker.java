@@ -1019,7 +1019,7 @@ public class CreasePattern_Worker {
             }
         }
 
-        grid.setData(applicationModel);
+        grid.setData(data);
     }
 
     public void setData(CanvasModel data) {
