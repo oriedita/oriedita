@@ -17,6 +17,8 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,6 +66,14 @@ public class AppMenuBar extends JMenuBar {
         this.fileModel = fileModel;
 
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
+
+        //--------------------------------------------------------------------------------------------------
+        frame.addWindowListener(new WindowAdapter() {//ウィンドウの状態が変化したときの処理
+            //終了ボタンを有効化
+            public void windowClosing(WindowEvent evt) {
+                closing();//Work to be done when pressing X at the right end of the upper side of the window
+            }//終了ボタンを有効化 ここまで。
+        });//Processing when the window state changes Up to here.
 
         createElements();
         buttonService.registerButton(newButton, "newAction");

@@ -3,7 +3,6 @@ package origami_editor.editor.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import javax.ejb.Startup;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -18,7 +17,6 @@ import java.nio.file.Path;
 import static origami_editor.tools.ResourceUtil.getAppDir;
 
 @Singleton
-@Startup
 public class ApplicationModelPersistenceService {
     public static final String CONFIG_JSON = "config.json";
 
@@ -29,8 +27,6 @@ public class ApplicationModelPersistenceService {
     public ApplicationModelPersistenceService(@Named("mainFrame") JFrame frame, ApplicationModel applicationModel) {
         this.frame = frame;
         this.applicationModel = applicationModel;
-
-        restoreApplicationModel();
 
         applicationModel.addPropertyChangeListener(e -> persistApplicationModel());
     }

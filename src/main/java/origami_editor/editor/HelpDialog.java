@@ -8,10 +8,7 @@ import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 import java.util.ResourceBundle;
 
 @Singleton
@@ -23,11 +20,23 @@ public class HelpDialog extends JDialog {
 
     @Inject
     public HelpDialog(@Named("mainFrame") JFrame frame, ApplicationModel applicationModel) {
-        super(frame);
-        setTitle("Help");
+        super(frame, "Help");
         $$$setupUI$$$();
         setContentPane(contentPane);
 
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                applicationModel.setHelpVisible(false);
+            }
+        });
+
+        applicationModel.addPropertyChangeListener(e -> {
+            if (e.getPropertyName() == null || e.getPropertyName().equals("helpVisible")) {
+                setVisible(applicationModel.getHelpVisible());
+            }
+            frame.requestFocus();
+        });
 
         setUndecorated(true);
 

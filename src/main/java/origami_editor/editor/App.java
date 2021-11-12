@@ -1,26 +1,28 @@
 package origami_editor.editor;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import origami_editor.editor.canvas.*;
-import origami_editor.editor.component.BulletinBoard;
+import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.drawing.FoldedFigure_Worker_Drawer;
-import origami_editor.editor.service.*;
+import origami_editor.editor.service.ButtonService;
+import origami_editor.editor.service.FileSaveService;
+import origami_editor.editor.service.FoldingService;
+import origami_editor.editor.service.LookAndFeelService;
 import origami_editor.tools.ResourceUtil;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.util.ArrayDeque;
+import java.util.Map;
 import java.util.Queue;
-import java.util.*;
 
 @Singleton
 public class App {
-    private final LookAndFeelService lookAndFeelService;
     final ApplicationModel applicationModel;
     final GridModel gridModel;
     final CanvasModel canvasModel;
@@ -38,9 +40,10 @@ public class App {
     final FileSaveService fileSaveService;
     final ButtonService buttonService;
     final FoldingService foldingService;
+    private final LookAndFeelService lookAndFeelService;
     private final Editor editor;
     private final AppMenuBar appMenuBar;
-    BulletinBoard bulletinBoard = new BulletinBoard();
+    private final ConsoleDialog consoleDialog;
     // ------------------------------------------------------------------------
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
     Canvas canvas;
@@ -52,7 +55,6 @@ public class App {
     //画像出力不要で元にもどすなら、20170107_oldと書かれた行を有効にし、20170107_newの行をコメントアウトにすればよい。（この変更はOrihime.javaの中だけに2箇所ある）
     // オフスクリーン
     JFrame frame;
-    private final ConsoleDialog consoleDialog;
 
     @Inject
     public App(
@@ -65,7 +67,6 @@ public class App {
             AngleSystemModel angleSystemModel,
             MeasuresModel measuresModel,
             InternalDivisionRatioModel internalDivisionRatioModel,
-            ApplicationModelPersistenceService applicationModelPersistenceService,
             HistoryStateModel historyStateModel,
             BackgroundModel backgroundModel,
             CameraModel creasePatternCameraModel,
@@ -86,7 +87,7 @@ public class App {
         this.gridModel = gridModel;
         this.canvasModel = canvasModel;
         this.foldedFigureModel = foldedFigureModel;
-        this.angleSystemModel =angleSystemModel;
+        this.angleSystemModel = angleSystemModel;
         this.measuresModel = measuresModel;
         this.internalDivisionRatioModel = internalDivisionRatioModel;
         this.historyStateModel = historyStateModel;
@@ -109,17 +110,9 @@ public class App {
         mainCreasePatternWorker.setTitle(frame_title);
 
         consoleDialog = new ConsoleDialog();
-//        applicationModelPersistenceService.restoreApplicationModel();
     }
 
     public void start() {
-        //--------------------------------------------------------------------------------------------------
-        frame.addWindowListener(new WindowAdapter() {//ウィンドウの状態が変化したときの処理
-            //終了ボタンを有効化
-            public void windowClosing(WindowEvent evt) {
-                appMenuBar.closing();//Work to be done when pressing X at the right end of the upper side of the window
-            }//終了ボタンを有効化 ここまで。
-        });//Processing when the window state changes Up to here.
 
         frame.addWindowStateListener(new WindowAdapter() {
             public void windowStateChanged(WindowEvent eve) {
@@ -198,8 +191,6 @@ public class App {
 
         foldedFiguresList.removeAllElements();
 
-        bulletinBoard.addChangeListener(e -> canvas.repaint());
-
         canvas.creasePatternCamera.setCameraPositionX(0.0);
         canvas.creasePatternCamera.setCameraPositionY(0.0);
         canvas.creasePatternCamera.setCameraAngle(0.0);
@@ -269,32 +260,21 @@ public class App {
         frame.setVisible(true);
 
         explanation.start(canvas.getLocationOnScreen(), canvas.getSize());
-        explanation.addWindowListener(new WindowAdapter() {
+
+        consoleDialog.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosed(WindowEvent e) {
-                applicationModel.setHelpVisible(false);
+            public void windowClosing(WindowEvent e) {
+                applicationModel.setConsoleVisible(false);
             }
         });
-
-            consoleDialog.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    applicationModel.setConsoleVisible(false);
-                }
-            });
-            applicationModel.addPropertyChangeListener(e -> {
-                if (e.getPropertyName() == null || e.getPropertyName().equals("consoleVisible")) {
-                    consoleDialog.setVisible(applicationModel.getConsoleVisible());
-                }
-                frame.requestFocus();
-            });
-            consoleDialog.setVisible(applicationModel.getConsoleVisible());
         applicationModel.addPropertyChangeListener(e -> {
-            if (e.getPropertyName() == null || e.getPropertyName().equals("helpVisible")) {
-                explanation.setVisible(applicationModel.getHelpVisible());
+            if (e.getPropertyName() == null || e.getPropertyName().equals("consoleVisible")) {
+                consoleDialog.setVisible(applicationModel.getConsoleVisible());
             }
             frame.requestFocus();
         });
+        consoleDialog.setVisible(applicationModel.getConsoleVisible());
+
         explanation.setVisible(applicationModel.getHelpVisible());
         //focus back to here after creating dialog
         frame.requestFocus();

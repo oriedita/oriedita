@@ -29,7 +29,7 @@ public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler {
         if (d.foldLineSet.closestLineSegmentDistance(p) < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
             lineSegment = d.foldLineSet.closestLineSegmentSearch(p);
             LineSegment s01 = new LineSegment();
-            s01.set(OritaCalc.lineSegment_double(lineSegment, Epsilon.UNKNOWN_001));
+            s01.set(OritaCalc.lineSegment_double(lineSegment, 0.01));
             lineSegment.setB(s01.getB());
         }
     }

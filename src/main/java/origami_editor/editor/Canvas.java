@@ -137,6 +137,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         foldedFigureModel.addPropertyChangeListener(e -> repaint());
         gridModel.addPropertyChangeListener(e -> repaint());
         angleSystemModel.addPropertyChangeListener(e -> repaint());
+        bulletinBoard.addChangeListener(e -> repaint());
 
         foldedFiguresList.addListDataListener(new ListDataListener() {
             @Override
