@@ -134,6 +134,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <foreground color="-65536"/>
               <icon value="ppp/M_nisuru.png"/>
             </properties>
           </component>
@@ -142,6 +143,7 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <foreground color="-16776961"/>
               <icon value="ppp/V_nisuru.png"/>
             </properties>
           </component>
@@ -158,6 +160,7 @@
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <foreground color="-10172216"/>
               <icon value="ppp/HK_nisuru.png"/>
             </properties>
           </component>
