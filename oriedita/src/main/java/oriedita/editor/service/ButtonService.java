@@ -3,6 +3,7 @@ package oriedita.editor.service;
 import javax.inject.Inject;
 
 import org.tinylog.Logger;
+import oriedita.editor.swing.component.GlyphIcon;
 import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.swing.dialog.SelectKeyStrokeDialog;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -114,9 +115,9 @@ public class ButtonService {
             button.getActionMap().put(key, new Click(button));
 
             if (!StringOp.isEmpty(icon)) {
-                button.setFont(new Font("Icons", Font.PLAIN, 20));
-                button.setText(icon);
-                button.setIcon(null);
+                GlyphIcon glyphIcon = new GlyphIcon(icon, button.getForeground());
+                button.addPropertyChangeListener("foreground", glyphIcon);
+                button.setIcon(glyphIcon);
             }
         }
 
