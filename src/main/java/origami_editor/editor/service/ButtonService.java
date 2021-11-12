@@ -6,6 +6,7 @@ import origami_editor.editor.SelectKeyStrokeDialog;
 import origami_editor.editor.action.Click;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.MouseHandlerVoronoiCreate;
+import origami_editor.editor.component.GlyphIcon;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.tools.KeyStrokeUtil;
 import origami_editor.tools.ResourceUtil;
@@ -15,6 +16,7 @@ import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -113,9 +115,9 @@ public class ButtonService {
             button.getActionMap().put(key, new Click(button));
 
             if (!StringOp.isEmpty(icon)) {
-                button.setFont(new Font("Icons", Font.PLAIN, 20));
-                button.setText(icon);
-                button.setIcon(null);
+                GlyphIcon glyphIcon = new GlyphIcon(icon, button.getForeground());
+                button.addPropertyChangeListener("foreground", glyphIcon);
+                button.setIcon(glyphIcon);
             }
         }
 

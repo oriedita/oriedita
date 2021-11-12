@@ -12,6 +12,7 @@ import origami.folding.FoldedFigure;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.component.ColorIcon;
+import origami_editor.editor.component.GlyphIcon;
 import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
@@ -1112,27 +1113,39 @@ public class LeftPanel {
         }
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
-            toMountainButton.setBackground(null);
-            toValleyButton.setBackground(null);
-            toEdgeButton.setBackground(null);
-            toAuxButton.setBackground(null);
-            senbun_henkan2Button.setBackground(null);
+            Color buttonBg = UIManager.getColor("Button.background");
+            Color buttonFg = UIManager.getColor("Button.foreground");
+            toMountainButton.setBackground(buttonBg);
+            toMountainButton.setForeground(Colors.get(Color.red));
+            toValleyButton.setBackground(buttonBg);
+            toValleyButton.setForeground(Colors.get(Color.blue));
+            toEdgeButton.setBackground(buttonBg);
+            toEdgeButton.setForeground(Colors.get(Color.black));
+            toAuxButton.setBackground(buttonBg);
+            toAuxButton.setForeground(Colors.get(new Color(100, 200, 200)));
+            senbun_henkan2Button.setBackground(buttonBg);
+            senbun_henkan2Button.setForeground(buttonFg);
 
             switch (data.getMouseMode()) {
                 case CREASE_MAKE_MOUNTAIN_23:
                     toMountainButton.setBackground(Colors.get(Color.red));
+                    toMountainButton.setForeground(Colors.get(Color.white));
                     break;
                 case CREASE_MAKE_VALLEY_24:
                     toValleyButton.setBackground(Colors.get(Color.blue));
+                    toValleyButton.setForeground(Colors.get(Color.white));
                     break;
                 case CREASE_MAKE_EDGE_25:
                     toEdgeButton.setBackground(Colors.get(Color.black));
+                    toEdgeButton.setForeground(Colors.get(Color.white));
                     break;
                 case CREASE_MAKE_AUX_60:
                     toAuxButton.setBackground(Colors.get(new Color(100, 200, 200)));
+                    toAuxButton.setForeground(Colors.get(Color.white));
                     break;
                 case CREASE_TOGGLE_MV_58:
                     senbun_henkan2Button.setBackground(Colors.get(new Color(138, 43, 226)));
+                    senbun_henkan2Button.setForeground(Colors.get(Color.white));
                     break;
             }
         }
