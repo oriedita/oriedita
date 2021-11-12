@@ -8,7 +8,6 @@ import origami_editor.editor.Save;
 import origami_editor.editor.databinding.CanvasModel;
 
 public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineSelect {
-    private final CreasePattern_Worker d;
     private final CanvasModel canvasModel;
 
     public MouseHandlerCreaseCopy(CreasePattern_Worker d, CanvasModel canvasModel) {

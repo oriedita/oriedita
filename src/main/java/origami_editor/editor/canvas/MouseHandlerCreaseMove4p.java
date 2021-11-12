@@ -11,7 +11,6 @@ import origami_editor.editor.Save;
 import origami_editor.editor.databinding.CanvasModel;
 
 public class MouseHandlerCreaseMove4p extends BaseMouseHandlerInputRestricted {
-    private final CreasePattern_Worker d;
     private final CanvasModel canvasModel;
 
     @Override
