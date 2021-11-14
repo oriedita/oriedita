@@ -4,6 +4,7 @@ import com.formdev.flatlaf.FlatLaf;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import origami_editor.editor.service.ApplicationModelPersistenceService;
+import origami_editor.editor.service.FileSaveService;
 
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -39,7 +40,9 @@ public class OrigamiEditor {
 
             if (argv.length == 1) {
                 // We got a file
-                app.fileSaveService.openFile(new File(argv[0]));
+
+                FileSaveService fileSaveService = (FileSaveService) getBean(lifecycle, FileSaveService.class);
+                fileSaveService.openFile(new File(argv[0]));
             }
         });
     }

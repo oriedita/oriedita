@@ -113,7 +113,7 @@ public class BottomPanel {
         anotherSolutionButton.addActionListener(e -> {
             FoldedFigure_Drawer selectedItem = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
             if (selectedItem != null) {
-                TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(foldingService, bulletinBoard, selectedItem, FoldedFigure.EstimationOrder.ORDER_6, canvasModel));
+                foldingService.foldAnother(selectedItem);
             }
         });
         flipButton.addActionListener(e -> {

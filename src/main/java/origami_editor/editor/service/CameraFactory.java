@@ -1,8 +1,10 @@
-package origami_editor.editor.databinding;
+package origami_editor.editor.service;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
+import origami_editor.editor.databinding.CameraModel;
 import origami_editor.tools.Camera;
 
 @Singleton

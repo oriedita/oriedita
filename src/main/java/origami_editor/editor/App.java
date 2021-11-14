@@ -23,23 +23,15 @@ import java.util.Queue;
 
 @Singleton
 public class App {
-    final ApplicationModel applicationModel;
-    final GridModel gridModel;
-    final CanvasModel canvasModel;
-    final FoldedFigureModel foldedFigureModel;
-    final AngleSystemModel angleSystemModel;
-    final MeasuresModel measuresModel;
-    final InternalDivisionRatioModel internalDivisionRatioModel;
-    final HistoryStateModel historyStateModel;
-    final BackgroundModel backgroundModel;
-    final CameraModel creasePatternCameraModel;
-    final FileModel fileModel;
-    final FoldedFiguresList foldedFiguresList;
-    final CreasePattern_Worker mainCreasePatternWorker;    // Basic branch craftsman. Accepts input from the mouse.
-    final Queue<Popup> popups = new ArrayDeque<>();
-    final FileSaveService fileSaveService;
-    final ButtonService buttonService;
-    final FoldingService foldingService;
+    private final ApplicationModel applicationModel;
+    private final CanvasModel canvasModel;
+    private final FoldedFigureModel foldedFigureModel;
+    private final FileModel fileModel;
+    private final FoldedFiguresList foldedFiguresList;
+    private final CreasePattern_Worker mainCreasePatternWorker;    // Basic branch craftsman. Accepts input from the mouse.
+    private final Queue<Popup> popups = new ArrayDeque<>();
+    private final FileSaveService fileSaveService;
+    private final ButtonService buttonService;
     private final LookAndFeelService lookAndFeelService;
     private final Editor editor;
     private final AppMenuBar appMenuBar;
@@ -61,15 +53,8 @@ public class App {
             @Named("mainFrame") JFrame frame,
             LookAndFeelService lookAndFeelService,
             ApplicationModel applicationModel,
-            GridModel gridModel,
             CanvasModel canvasModel,
             FoldedFigureModel foldedFigureModel,
-            AngleSystemModel angleSystemModel,
-            MeasuresModel measuresModel,
-            InternalDivisionRatioModel internalDivisionRatioModel,
-            HistoryStateModel historyStateModel,
-            BackgroundModel backgroundModel,
-            CameraModel creasePatternCameraModel,
             FileModel fileModel,
             FoldedFiguresList foldedFiguresList,
             CreasePattern_Worker mainCreasePatternWorker,
@@ -77,22 +62,14 @@ public class App {
             HelpDialog explanation,
             FileSaveService fileSaveService,
             ButtonService buttonService,
-            FoldingService foldingService,
             Editor editor,
             AppMenuBar appMenuBar
     ) {
         this.frame = frame;
         this.lookAndFeelService = lookAndFeelService;
         this.applicationModel = applicationModel;
-        this.gridModel = gridModel;
         this.canvasModel = canvasModel;
         this.foldedFigureModel = foldedFigureModel;
-        this.angleSystemModel = angleSystemModel;
-        this.measuresModel = measuresModel;
-        this.internalDivisionRatioModel = internalDivisionRatioModel;
-        this.historyStateModel = historyStateModel;
-        this.backgroundModel = backgroundModel;
-        this.creasePatternCameraModel = creasePatternCameraModel;
         this.fileModel = fileModel;
         this.foldedFiguresList = foldedFiguresList;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
@@ -100,7 +77,6 @@ public class App {
         this.explanation = explanation;
         this.fileSaveService = fileSaveService;
         this.buttonService = buttonService;
-        this.foldingService = foldingService;
         this.editor = editor;
         this.appMenuBar = appMenuBar;
 

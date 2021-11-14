@@ -26,15 +26,11 @@ public class FoldingService {
     private final CanvasModel canvasModel;
     private final JFrame frame;
     private final Camera creasePatternCamera;
+    private final CreasePattern_Worker backupCreasePatternWorker;
     private final ApplicationModel applicationModel;
-    private final GridModel gridModel;
     private final FoldedFigureModel foldedFigureModel;
-    private final FileModel fileModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FoldedFiguresList foldedFiguresList;
-    private final InternalDivisionRatioModel internalDivisionRatioModel;
-    private final AngleSystemModel angleSystemModel;
-    private final HistoryStateModel historyStateModel;
     public LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
 
     @Inject
@@ -42,29 +38,21 @@ public class FoldingService {
                           CanvasModel canvasModel,
                           @Named("mainFrame") JFrame frame,
                           @Named("creasePatternCamera") Camera creasePatternCamera,
+                          @Named("backupCreasePattern_Worker") CreasePattern_Worker backupCreasePatternWorker,
                           ApplicationModel applicationModel,
-                          GridModel gridModel,
                           FoldedFigureModel foldedFigureModel,
-                          FileModel fileModel,
                           CreasePattern_Worker mainCreasePatternWorker,
-                          FoldedFiguresList foldedFiguresList,
-                          InternalDivisionRatioModel internalDivisionRatioModel,
-                          AngleSystemModel angleSystemModel,
-                          HistoryStateModel historyStateModel) {
+                          FoldedFiguresList foldedFiguresList) {
         this.bulletinBoard = bulletinBoard;
         this.canvasModel = canvasModel;
         this.frame = frame;
         this.creasePatternCamera = creasePatternCamera;
+        this.backupCreasePatternWorker = backupCreasePatternWorker;
         this.applicationModel = applicationModel;
-        this.gridModel = gridModel;
         this.foldedFigureModel = foldedFigureModel;
-        this.fileModel = fileModel;
 
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.foldedFiguresList = foldedFiguresList;
-        this.internalDivisionRatioModel = internalDivisionRatioModel;
-        this.angleSystemModel = angleSystemModel;
-        this.historyStateModel = historyStateModel;
     }
 
     public void folding_estimated(FoldedFigure_Drawer selectedFigure) throws InterruptedException, FoldingException {
@@ -83,15 +71,7 @@ public class FoldingService {
             }
             //
             if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
-                CreasePattern_Worker creasePatternWorker2 = new CreasePattern_Worker(creasePatternCamera,
-                        canvasModel,
-                        applicationModel,
-                        gridModel,
-                        foldedFigureModel,
-                        fileModel,
-                        angleSystemModel,
-                        internalDivisionRatioModel,
-                        historyStateModel);    // Basic branch craftsman. Accepts input from the mouse.
+                CreasePattern_Worker creasePatternWorker2 = backupCreasePatternWorker;
                 Save save = new Save();
                 mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
                 creasePatternWorker2.setSave_for_reading(save);
@@ -108,7 +88,9 @@ public class FoldingService {
             FoldedFigure_Drawer selectedFigure = folding_prepare();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
             //これより後のOZは新しいOZに変わる
 
-            TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(this, bulletinBoard, selectedFigure, estimationOrder, canvasModel));
+
+            FoldingEstimateTask foldingEstimateTask = new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel);
+            foldingEstimateTask.execute(lineSegmentsForFolding, selectedFigure, estimationOrder);
         } else if (foldType == FoldType.CHANGING_FOLDED_3) {
             FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
@@ -116,7 +98,8 @@ public class FoldingService {
                 selectedFigure.foldedFigure.estimationOrder = estimationOrder;
                 selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_0;
 
-                TaskExecutor.executeTask("Folding Estimate",new FoldingEstimateTask(this, bulletinBoard, selectedFigure, estimationOrder, canvasModel));
+                FoldingEstimateTask foldingEstimateTask = new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel);
+                foldingEstimateTask.execute(lineSegmentsForFolding, selectedFigure, estimationOrder);
             }
         }
     }
@@ -182,6 +165,11 @@ public class FoldingService {
                         "To get 2-Colored crease pattern, select the target range in advance (use the select button).<html>");
         // TODO fix owner
         JOptionPane.showMessageDialog(frame, label);
+    }
+
+    public void foldAnother(FoldedFigure_Drawer selectedItem) {
+        FoldingEstimateTask foldingEstimateTask = new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel);
+        foldingEstimateTask.execute(lineSegmentsForFolding, selectedItem, FoldedFigure.EstimationOrder.ORDER_6);
     }
 
     public enum FoldType {

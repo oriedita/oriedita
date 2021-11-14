@@ -63,15 +63,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     int btn = 0;//Stores which button in the center of the left and right is pressed. 1 =
     public Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
-    boolean displayPointSpotlight;
-    boolean displayPointOffset;
-    boolean displayGridInputAssist;
-    boolean displayComments;
-    boolean displayCpLines;
-    boolean displayAuxLines;
-    boolean displayLiveAuxLines;
-    boolean displayMarkings;
-    boolean displayCreasePatternOnTop;
+    private boolean displayPointSpotlight;
+    private boolean displayPointOffset;
+    private boolean displayGridInputAssist;
+    private boolean displayComments;
+    private boolean displayCpLines;
+    private boolean displayAuxLines;
+    private boolean displayLiveAuxLines;
+    private boolean displayMarkings;
+    private boolean displayCreasePatternOnTop;
 
     float auxLineWidth;
     float lineWidth;

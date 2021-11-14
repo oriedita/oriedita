@@ -1,5 +1,7 @@
 package origami_editor.editor.canvas;
 
+import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -31,6 +33,8 @@ import java.util.concurrent.Future;
  * Responsible for holding the current creasepattern and drawing it.
  */
 @Singleton
+@Default
+@Named("backupCreasePattern_Worker")
 public class CreasePattern_Worker {
     // ------------
     final int check4ColorTransparencyIncrement = 10;

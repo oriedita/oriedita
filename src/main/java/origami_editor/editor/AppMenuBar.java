@@ -59,7 +59,14 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem pasteOffsetButton;
 
     @Inject
-    public AppMenuBar(@Named("mainFrame") JFrame frame, ApplicationModel applicationModel, FileSaveService fileSaveService, ButtonService buttonService, CanvasModel canvasModel, FileModel fileModel, CreasePattern_Worker mainCreasePatternWorker, FoldedFigureModel foldedFigureModel,
+    public AppMenuBar(@Named("mainFrame") JFrame frame,
+                      ApplicationModel applicationModel,
+                      FileSaveService fileSaveService,
+                      ButtonService buttonService,
+                      CanvasModel canvasModel,
+                      FileModel fileModel,
+                      CreasePattern_Worker mainCreasePatternWorker,
+                      FoldedFigureModel foldedFigureModel,
                       FoldedFiguresList foldedFiguresList) {
         this.frame = frame;
         this.fileSaveService = fileSaveService;

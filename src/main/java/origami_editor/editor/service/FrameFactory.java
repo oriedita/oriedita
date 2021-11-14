@@ -1,4 +1,4 @@
-package origami_editor.editor.databinding;
+package origami_editor.editor.service;
 
 
 import javax.enterprise.inject.Produces;
