@@ -118,6 +118,7 @@
                             <!-- Large part of com.inte..ij:forms_rt that isn't used -->
                             <artifact>com.intellij:forms_rt</artifact>
                             <includes>
+                                <include>com/intellij/uiDesigner/core/*</include>
                                 <include>com/intellij/uiDesigner/core</include>
                             </includes>
                         </filter>
