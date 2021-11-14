@@ -122,9 +122,6 @@
                                 <include>com/intellij/uiDesigner/core</include>
                             </includes>
                         </filter>
-                        <filter>
-                            <artifact></artifact>
-                        </filter>
                     </filters>
                 </configuration>
                 <executions>
