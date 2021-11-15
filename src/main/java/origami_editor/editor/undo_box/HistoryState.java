@@ -1,6 +1,7 @@
 package origami_editor.editor.undo_box;
 
-import origami_editor.editor.Save;
+import origami_editor.editor.save.Save;
+import origami_editor.editor.save.SaveV1;
 
 import java.io.*;
 import java.util.ArrayDeque;
@@ -67,7 +68,7 @@ public class HistoryState {
 
     private Save getCurrent() {
         if (current == null) {
-            return new Save();
+            return new SaveV1();
         }
 
         try {
@@ -78,7 +79,7 @@ public class HistoryState {
             e.printStackTrace();
         }
 
-        return new Save();
+        return new SaveV1();
     }
 
     public Save undo() {

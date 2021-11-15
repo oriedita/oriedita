@@ -4,7 +4,8 @@ import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami_editor.editor.LineStyle;
-import origami_editor.editor.Save;
+import origami_editor.editor.save.Save;
+import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
@@ -28,7 +29,7 @@ public class Orh {
      * Read an Orihime file
      */
     public static Save importFile(File file) throws IOException {
-        Save save = new Save();
+        Save save = new SaveV1();
         Pattern p = Pattern.compile("<(.+)>(.+)</(.+)>");
 
         boolean reading;
@@ -609,7 +610,7 @@ public class Orh {
                 pw.println("番号," + index++);
                 Circle e_temp = new Circle();
                 e_temp.set(circle);
-                pw.println("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
+                pw.println("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getR() + "," + e_temp.getColor());
 
                 pw.println("<tpp>" + e_temp.getCustomized() + "</tpp>");
                 pw.println("<tpp_color_R>" + e_temp.getCustomizedColor().getRed() + "</tpp_color_R>");

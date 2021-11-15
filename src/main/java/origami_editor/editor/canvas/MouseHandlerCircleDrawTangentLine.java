@@ -73,10 +73,10 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
 
             double x1 = firstCircle.getX();
             double y1 = firstCircle.getY();
-            double r1 = firstCircle.getRadius();
+            double r1 = firstCircle.getR();
             double x2 = secondCircle.getX();
             double y2 = secondCircle.getY();
-            double r2 = secondCircle.getRadius();
+            double r2 = secondCircle.getR();
             //0,0,r,        xp,yp,R
             double xp = x2 - x1;
             double yp = y2 - y1;

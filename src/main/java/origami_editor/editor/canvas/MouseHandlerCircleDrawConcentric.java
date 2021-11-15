@@ -41,7 +41,7 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler {
 
             d.lineStep.clear();
             d.circleStep.clear();
-            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
+            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.GREEN_6));
             return;
         }
 
@@ -51,7 +51,7 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler {
             }
 
             d.lineStepAdd(new LineSegment(p, closestPoint, LineColor.CYAN_3));
-            d.circleStep.add(new Circle(d.circleStep.get(0).determineCenter(), d.circleStep.get(0).getRadius(), LineColor.GREEN_6));
+            d.circleStep.add(new Circle(d.circleStep.get(0).determineCenter(), d.circleStep.get(0).getR(), LineColor.GREEN_6));
         }
     }
 
@@ -61,7 +61,7 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler {
         p.set(d.camera.TV2object(p0));
         if ((d.lineStep.size() == 1) && (d.circleStep.size() == 2)) {
             d.lineStep.get(0).setA(p);
-            d.circleStep.get(1).setR(d.circleStep.get(0).getRadius() + d.lineStep.get(0).determineLength());
+            d.circleStep.get(1).setR(d.circleStep.get(0).getR() + d.lineStep.get(0).determineLength());
         }
     }
 
@@ -80,7 +80,7 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler {
             if (p.distance(closestPoint) <= d.selectionDistance) {
                 if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
                     d.addLineSegment(d.lineStep.get(0));
-                    circle2.setR(circle1.getRadius() + d.lineStep.get(0).determineLength());
+                    circle2.setR(circle1.getR() + d.lineStep.get(0).determineLength());
                     d.addCircle(circle2);
                     d.record();
                 }

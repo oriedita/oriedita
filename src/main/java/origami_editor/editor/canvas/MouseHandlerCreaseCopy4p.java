@@ -9,7 +9,8 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.Save;
+import origami_editor.editor.save.Save;
+import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.databinding.CanvasModel;
 
 @Singleton
@@ -105,13 +106,13 @@ public class MouseHandlerCreaseCopy4p extends BaseMouseHandlerInputRestricted {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
-            Save save = new Save();
+            Save save = new SaveV1();
             d.foldLineSet.getMemoSelectOption(save, 2);
             ori_s_temp.setSave(save);//セレクトされた折線だけ取り出してori_s_tempを作る
             ori_s_temp.move(d.lineStep.get(0).getA(), d.lineStep.get(1).getA(), d.lineStep.get(2).getA(), d.lineStep.get(3).getA());//全体を移動する
 
             int sousuu_old = d.foldLineSet.getTotal();
-            Save save1 = new Save();
+            Save save1 = new SaveV1();
             ori_s_temp.getSave(save1);
             d.foldLineSet.addSave(save1);
             int sousuu_new = d.foldLineSet.getTotal();

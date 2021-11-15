@@ -1,8 +1,11 @@
 package origami_editor.editor.factory;
 
 
+import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
+import origami_editor.editor.service.ResetService;
+import origami_editor.editor.service.ResetServiceImpl;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -17,4 +20,7 @@ public abstract class FrameFactory {
     public static JFrame mainFrame() {
         return new JFrame();
     }
+
+    @Binds
+    abstract ResetService resetService(ResetServiceImpl resetService);
 }

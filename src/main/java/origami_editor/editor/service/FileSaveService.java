@@ -3,12 +3,14 @@ package origami_editor.editor.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.inject.Inject;
 import javax.inject.Named;
-import origami_editor.editor.Canvas;
+
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.Save;
+import origami_editor.editor.save.Save;
+import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.tools.Camera;
+import origami_editor.editor.exception.FileReadingException;
 import origami_editor.editor.export.Cp;
 import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
@@ -54,7 +56,7 @@ public class FileSaveService {
         this.backgroundModel = backgroundModel;
     }
 
-    public void openFile(File file) {
+    public void openFile(File file) throws FileReadingException {
         if (file == null || !file.exists()) {
             return;
         }
@@ -84,7 +86,11 @@ public class FileSaveService {
 
         File file = selectOpenFile();
 
-        openFile(file);
+        try {
+            openFile(file);
+        } catch (FileReadingException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean saveUnsavedFile() {
@@ -105,7 +111,12 @@ public class FileSaveService {
 
         System.out.println("readFile2Memo() 開始");
         File importFile = selectImportFile();
-        Save memo_temp = readImportFile(importFile);
+        Save memo_temp = null;
+        try {
+            memo_temp = readImportFile(importFile);
+        } catch (FileReadingException e) {
+            e.printStackTrace();
+        }
         System.out.println("readFile2Memo() 終了");
 
         if (memo_temp != null) {
@@ -297,7 +308,7 @@ public class FileSaveService {
         return selectedFile;
     }
 
-    public Save readImportFile(File file) {
+    public Save readImportFile(File file) throws FileReadingException {
         if (file == null) {
             return null;
         }
@@ -314,7 +325,7 @@ public class FileSaveService {
                     ObjectMapper mapper = new DefaultObjectMapper();
                     return mapper.readValue(file, Save.class);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new FileReadingException(e);
                 }
             }
 
@@ -337,7 +348,7 @@ public class FileSaveService {
 
             fileModel.setSavedFileName(null);
 
-            return new Save();
+            return new SaveV1();
         }
 
         return save;
@@ -353,7 +364,6 @@ public class FileSaveService {
         File file = new File(fileModel.getSavedFileName());
 
         Save save = mainCreasePatternWorker.getSave_for_export();
-        save.setVersion(ResourceUtil.getVersionFromManifest());
 
         saveAndName2File(save, file);
 
@@ -368,7 +378,6 @@ public class FileSaveService {
         }
 
         Save save = mainCreasePatternWorker.getSave_for_export();
-        save.setVersion(ResourceUtil.getVersionFromManifest());
 
         saveAndName2File(save, file);
 

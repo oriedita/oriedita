@@ -978,10 +978,10 @@ public class OritaCalc {
     public static StraightLine circle_to_circle_no_intersection_wo_tooru_straightLine(Circle e1, Circle e2) {
         double x1 = e1.getX();
         double y1 = e1.getY();
-        double r1 = e1.getRadius();
+        double r1 = e1.getR();
         double x2 = e2.getX();
         double y2 = e2.getY();
-        double r2 = e2.getRadius();
+        double r2 = e2.getR();
 
         double a = 2.0 * x1 - 2.0 * x2;
         double b = 2.0 * y1 - 2.0 * y2;
@@ -1000,7 +1000,7 @@ public class OritaCalc {
         double length_a = t0.calculateDistance(e1.determineCenter());  //t0とt1の交点からe1の中心までの長さ
 
 //double length_a=kyori(intersection_t0t1,e1.get_tyuusin());  //t0とt1の交点からe1の中心までの長さ
-        double length_b = Math.sqrt(e1.getRadius() * e1.getRadius() - length_a * length_a); //t0とt1の交点からe1とe2の交点までの長さ
+        double length_b = Math.sqrt(e1.getR() * e1.getR() - length_a * length_a); //t0とt1の交点からe1とe2の交点までの長さ
 //t0と平行な方向ベクトルは(t0.getb() , -t0.geta())
 //t0と平行な方向ベクトルで長さがlength_bのものは(t0.getb()*length_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ) , -t0.geta()*length_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ))
 
@@ -1019,7 +1019,7 @@ public class OritaCalc {
         kouten_t0t1.set(findProjection(t0, e1.determineCenter()));
         double length_a = t0.calculateDistance(e1.determineCenter());  //t0とt1の交点からe1の中心までの長さ
 
-        double length_b = Math.sqrt(e1.getRadius() * e1.getRadius() - length_a * length_a); //t0とt1の交点からe1とe2の交点までの長さ
+        double length_b = Math.sqrt(e1.getR() * e1.getR() - length_a * length_a); //t0とt1の交点からe1とe2の交点までの長さ
 //t0と平行な方向ベクトルは(t0.getb() , -t0.geta())
 //t0と平行な方向ベクトルで長さがnagasa_bのものは(t0.getb()*length_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ) , -t0.geta()*length_b/Math.sqrt(t0.getb()*t0.getb()+ t0.geta()*t0.geta() ))
 
@@ -1033,7 +1033,7 @@ public class OritaCalc {
 
     // Function to find the distance between the point p0 and the circumference of the circle e0 ------------------------------- --------------------- ---------------------
     public static double distance_circumference(Point p0, Circle e0) {
-        return Math.abs(distance(p0, e0.determineCenter()) - e0.getRadius());
+        return Math.abs(distance(p0, e0.determineCenter()) - e0.getR());
     }
 
     //Minを返す関数

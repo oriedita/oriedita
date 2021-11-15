@@ -20,6 +20,8 @@ public class DefaultObjectMapper extends ObjectMapper {
         module.addSerializer(File.class, new FileSerializer());
         module.addDeserializer(File.class, new FileDeserializer());
         registerModule(module);
+
+        configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     private static class FileSerializer extends JsonSerializer<File> {
