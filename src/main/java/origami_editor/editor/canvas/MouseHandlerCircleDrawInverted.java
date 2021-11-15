@@ -1,11 +1,18 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.*;
 import origami_editor.editor.MouseMode;
 
+@Singleton
 public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
+    @Inject
+    public MouseHandlerCircleDrawInverted() {
+    }
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CIRCLE_DRAW_INVERTED_46;

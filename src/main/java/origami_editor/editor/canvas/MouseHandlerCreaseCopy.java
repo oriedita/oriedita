@@ -1,5 +1,7 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.element.Point;
@@ -7,9 +9,11 @@ import origami_editor.editor.MouseMode;
 import origami_editor.editor.Save;
 import origami_editor.editor.databinding.CanvasModel;
 
+@Singleton
 public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineSelect {
     private final CanvasModel canvasModel;
 
+    @Inject
     public MouseHandlerCreaseCopy(CreasePattern_Worker d, CanvasModel canvasModel) {
         this.d = d;
         this.canvasModel = canvasModel;

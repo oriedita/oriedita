@@ -1,5 +1,8 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -7,8 +10,13 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
+@Singleton
 public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     double d_angle_system;
+
+    @Inject
+    public MouseHandlerAngleSystem() {
+    }
 
     @Override
     public MouseMode getMouseMode() {

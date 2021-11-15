@@ -1,39 +1,48 @@
 package origami_editor.editor;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import origami_editor.editor.databinding.ApplicationModel;
+
+import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
+@Singleton
 public class HelpDialog extends JDialog {
     private final ResourceBundle helpBundle;
     private final Point point = new Point();
     private JPanel contentPane;
     private JTextPane helpLabel;
 
-    private Frame owner;
-
-    public void setOwner(Frame owner) {
-        this.owner = owner;
-    }
-
-    public HelpDialog(Consumer<Boolean> onClose) {
-        super();
-        setTitle("Help");
+    @Inject
+    public HelpDialog(@Named("mainFrame") JFrame frame, ApplicationModel applicationModel) {
+        super(frame, "Help");
         $$$setupUI$$$();
         setContentPane(contentPane);
 
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                applicationModel.setHelpVisible(false);
+            }
+        });
+
+        applicationModel.addPropertyChangeListener(e -> {
+            if (e.getPropertyName() == null || e.getPropertyName().equals("helpVisible")) {
+                setVisible(applicationModel.getHelpVisible());
+            }
+            frame.requestFocus();
+        });
 
         setUndecorated(true);
 
         JPopupMenu popup = new JPopupMenu();
         JMenuItem dismissMenuItem = new JMenuItem("Dismiss");
-        dismissMenuItem.addActionListener(e -> onClose.accept(false));
+        dismissMenuItem.addActionListener(e -> applicationModel.setHelpVisible(false));
 
         popup.add(dismissMenuItem);
 
@@ -45,7 +54,7 @@ public class HelpDialog extends JDialog {
 
                 maybeShowPopup(e);
 
-                owner.requestFocus();
+                frame.requestFocus();
             }
 
             public void mouseReleased(MouseEvent e) {
@@ -73,7 +82,7 @@ public class HelpDialog extends JDialog {
         setDefaultCloseOperation(HIDE_ON_CLOSE);
 
         // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(e -> onClose.accept(false), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentPane.registerKeyboardAction(e -> applicationModel.setHelpVisible(false), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         helpBundle = ResourceBundle.getBundle("help");
 

@@ -1,6 +1,9 @@
 package origami_editor.editor.databinding;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.crease_pattern.element.LineColor;
+import origami_editor.editor.Canvas;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.canvas.MouseHandlerModifyCalculatedShape;
@@ -9,6 +12,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 
+@Singleton
 public class CanvasModel implements Serializable {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private LineColor lineColor;
@@ -18,7 +22,9 @@ public class CanvasModel implements Serializable {
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode;
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode_old;
 
-    public void dirty() {
+    private Canvas.MouseWheelTarget mouseInCpOrFoldedFigure;
+
+    public void markDirty() {
         this.pcs.firePropertyChange("dirty", false, true);
     }
     public boolean getToggleLineColor() {
@@ -62,6 +68,7 @@ public class CanvasModel implements Serializable {
 
     private boolean ckbox_add_frame_SelectAnd3click_isSelected;
 
+    @Inject
     public CanvasModel() {
         reset();
     }
@@ -160,6 +167,8 @@ public class CanvasModel implements Serializable {
 
         toggleLineColor = false;
 
+        mouseInCpOrFoldedFigure = Canvas.MouseWheelTarget.CREASE_PATTERN_0;
+
         this.pcs.firePropertyChange(null, null, null);
     }
 
@@ -174,8 +183,17 @@ public class CanvasModel implements Serializable {
 
         selectionOperationMode = canvasModel.getSelectionOperationMode();
 
-
         this.pcs.firePropertyChange(null, null, null);
+    }
+
+    public Canvas.MouseWheelTarget getMouseInCpOrFoldedFigure() {
+        return mouseInCpOrFoldedFigure;
+    }
+
+    public void setMouseInCpOrFoldedFigure(Canvas.MouseWheelTarget mouseInCpOrFoldedFigure) {
+        Canvas.MouseWheelTarget oldMouseInCpOrFoldedFigure = this.mouseInCpOrFoldedFigure;
+        this.mouseInCpOrFoldedFigure = mouseInCpOrFoldedFigure;
+        this.pcs.firePropertyChange("mouseInCpOrFoldedFigure", oldMouseInCpOrFoldedFigure, mouseInCpOrFoldedFigure);
     }
 
     public enum SelectionOperationMode {

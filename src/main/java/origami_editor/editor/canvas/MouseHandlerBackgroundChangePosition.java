@@ -1,17 +1,21 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami_editor.editor.Canvas;
+import origami.crease_pattern.element.Polygon;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.databinding.BackgroundModel;
 import origami_editor.editor.service.ButtonService;
 
+
+@Singleton
 public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
     private final ButtonService buttonService;
     private final BackgroundModel backgroundModel;
-    private final Canvas canvas;
 
     @Override
     public MouseMode getMouseMode() {
@@ -53,10 +57,10 @@ public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
     public void mouseDragged(Point p0) {
     }
 
-    public MouseHandlerBackgroundChangePosition(ButtonService buttonService, BackgroundModel backgroundModel, Canvas canvas) {
+    @Inject
+    public MouseHandlerBackgroundChangePosition(ButtonService buttonService, BackgroundModel backgroundModel) {
         this.buttonService = buttonService;
         this.backgroundModel = backgroundModel;
-        this.canvas = canvas;
     }
 
     //マウス操作(ボタンを離したとき)を行う関数
@@ -74,10 +78,12 @@ public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
 
             backgroundModel.setLockBackground(false);
 
-            canvas.background_set(d.camera.object2TV(s_1.getA()),
+            Polygon polygon = new Polygon(d.camera.object2TV(s_1.getA()),
                     d.camera.object2TV(s_2.getA()),
                     d.camera.object2TV(s_3.getA()),
                     d.camera.object2TV(s_4.getA()));
+
+            backgroundModel.setBackgroundPosition(polygon);
         }
     }
 }

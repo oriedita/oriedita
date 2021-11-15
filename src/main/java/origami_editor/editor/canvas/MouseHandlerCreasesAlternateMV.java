@@ -1,5 +1,7 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -9,13 +11,13 @@ import origami_editor.editor.MouseMode;
 import origami.folding.util.SortingBox;
 import origami.folding.util.WeightedValue;
 
+@Singleton
 public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestricted {
-    private final MouseHandlerLineSegmentRatioSet mouseHandlerLineSegmentRatioSet = new MouseHandlerLineSegmentRatioSet();
+    private final MouseHandlerLineSegmentRatioSet mouseHandlerLineSegmentRatioSet;
 
-    @Override
-    public void setDrawingWorker(CreasePattern_Worker d) {
-        super.setDrawingWorker(d);
-        mouseHandlerLineSegmentRatioSet.setDrawingWorker(d);
+    @Inject
+    public MouseHandlerCreasesAlternateMV(MouseHandlerLineSegmentRatioSet mouseHandlerLineSegmentRatioSet) {
+        this.mouseHandlerLineSegmentRatioSet = mouseHandlerLineSegmentRatioSet;
     }
 
     @Override

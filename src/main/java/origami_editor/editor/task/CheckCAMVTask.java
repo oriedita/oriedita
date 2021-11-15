@@ -38,7 +38,7 @@ public class CheckCAMVTask implements Callable<Void> {
         long L = stop - start;
         System.out.println("Check4 computation time " + L + " msec.");
 
-        canvasModel.dirty();
+        canvasModel.markDirty();
 
         return null;
     }

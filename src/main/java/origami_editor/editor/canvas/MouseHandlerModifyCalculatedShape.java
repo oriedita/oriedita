@@ -1,16 +1,20 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 import origami.folding.FoldedFigure;
 import origami_editor.editor.databinding.CanvasModel;
+import origami_editor.editor.databinding.FoldedFiguresList;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.service.FoldingService;
 
 import javax.swing.*;
 
+@Singleton
 public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
     private final FoldingService foldingService;
     private final CanvasModel canvasModel;
@@ -22,7 +26,8 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
     private PointSelection i_point_selection = PointSelection.NONE_0;//Both cp_worker1 and cp_worker2 are not selected (situation i_point_selection = 0), cp_worker1 is selected and cp_worker2 is not selected (situation i_point_selection = 1), and the vertex is cp_worker2 selected (situation i_point_selection = 2).
     private FoldedFigure_Drawer selectedFigure;
 
-    public MouseHandlerModifyCalculatedShape(FoldingService foldingService, CanvasModel canvasModel, DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList) {
+    @Inject
+    public MouseHandlerModifyCalculatedShape(FoldingService foldingService, CanvasModel canvasModel, FoldedFiguresList foldedFiguresList) {
         this.foldingService = foldingService;
         this.canvasModel = canvasModel;
         this.foldedFiguresList = foldedFiguresList;

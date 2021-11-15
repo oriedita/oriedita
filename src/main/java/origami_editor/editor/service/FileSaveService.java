@@ -1,19 +1,20 @@
 package origami_editor.editor.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.inject.Inject;
+import javax.inject.Named;
 import origami_editor.editor.Canvas;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.Save;
 import origami_editor.editor.canvas.CreasePattern_Worker;
-import origami_editor.editor.canvas.MouseHandlerVoronoiCreate;
 import origami_editor.editor.databinding.*;
-import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.export.Cp;
 import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
 import origami_editor.editor.json.DefaultObjectMapper;
 import origami_editor.tools.ResourceUtil;
 
+import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicFileChooserUI;
@@ -21,8 +22,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+@Singleton
 public class FileSaveService {
-    private Frame owner;
+    private final JFrame frame;
     private final Canvas canvas;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FileModel fileModel;
@@ -34,11 +36,12 @@ public class FileSaveService {
     private final GridModel gridModel;
     private final AngleSystemModel angleSystemModel;
     private final CameraModel creasePatternCameraModel;
-    private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
-    private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate;
+    private final FoldedFiguresList foldedFiguresList;
     private final BackgroundModel backgroundModel;
 
+    @Inject
     public FileSaveService(
+            @Named("mainFrame") JFrame frame,
             Canvas canvas,
             CreasePattern_Worker mainCreasePatternWorker,
             FileModel fileModel,
@@ -50,9 +53,9 @@ public class FileSaveService {
             GridModel gridModel,
             AngleSystemModel angleSystemModel,
             CameraModel creasePatternCameraModel,
-            DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList,
-            MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate,
+            FoldedFiguresList foldedFiguresList,
             BackgroundModel backgroundModel) {
+        this.frame = frame;
         this.canvas = canvas;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.fileModel = fileModel;
@@ -65,12 +68,7 @@ public class FileSaveService {
         this.angleSystemModel = angleSystemModel;
         this.creasePatternCameraModel = creasePatternCameraModel;
         this.foldedFiguresList = foldedFiguresList;
-        this.mouseHandlerVoronoiCreate = mouseHandlerVoronoiCreate;
         this.backgroundModel = backgroundModel;
-    }
-
-    public void setOwner(Frame owner) {
-        this.owner = owner;
     }
 
     public void developmentView_initialization() {
@@ -135,7 +133,7 @@ public class FileSaveService {
 
     private boolean saveUnsavedFile() {
         if (!fileModel.isSaved()) {
-            int choice = JOptionPane.showConfirmDialog(owner, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+            int choice = JOptionPane.showConfirmDialog(frame, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
             if (choice == JOptionPane.YES_OPTION) {
                 saveFile();
@@ -225,7 +223,7 @@ public class FileSaveService {
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp"));
 
-        fileChooser.showOpenDialog(owner);
+        fileChooser.showOpenDialog(frame);
 
         File selectedFile = fileChooser.getSelectedFile();
         if (selectedFile != null && selectedFile.exists()) {
@@ -259,7 +257,7 @@ public class FileSaveService {
         File selectedFile;
         int choice = JOptionPane.NO_OPTION;
         do {
-            int saveChoice = fileChooser.showSaveDialog(owner);
+            int saveChoice = fileChooser.showSaveDialog(frame);
 
             if (saveChoice != JFileChooser.APPROVE_OPTION) {
                 return null;
@@ -276,7 +274,7 @@ public class FileSaveService {
             }
 
             if (selectedFile != null && selectedFile.exists()) {
-                choice = JOptionPane.showConfirmDialog(owner, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                choice = JOptionPane.showConfirmDialog(frame, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             }
         } while (selectedFile != null && selectedFile.exists() && choice != JOptionPane.YES_OPTION);
 
@@ -299,7 +297,7 @@ public class FileSaveService {
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Orihime (*.orh)", "orh"));
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
 
-        fileChooser.showOpenDialog(owner);
+        fileChooser.showOpenDialog(frame);
 
         File selectedFile = fileChooser.getSelectedFile();
         if (selectedFile != null) {
@@ -327,7 +325,7 @@ public class FileSaveService {
         File selectedFile;
         int choice = JOptionPane.NO_OPTION;
         do {
-            int saveChoice = fileChooser.showSaveDialog(owner);
+            int saveChoice = fileChooser.showSaveDialog(frame);
 
             if (saveChoice != JFileChooser.APPROVE_OPTION) {
                 return null;
@@ -335,7 +333,7 @@ public class FileSaveService {
 
             selectedFile = fileChooser.getSelectedFile();
             if (selectedFile != null && selectedFile.exists()) {
-                choice = JOptionPane.showConfirmDialog(owner, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                choice = JOptionPane.showConfirmDialog(frame, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             }
         } while (selectedFile != null && selectedFile.exists() && choice == JOptionPane.NO_OPTION);
 
@@ -382,7 +380,7 @@ public class FileSaveService {
         } catch (IOException e) {
             e.printStackTrace();
 
-            JOptionPane.showMessageDialog(owner, "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
 
             fileModel.setSavedFileName(null);
 
@@ -435,18 +433,18 @@ public class FileSaveService {
             }
         } else if (fname.getName().endsWith(".cp")) {
             if (!save.canSaveAsCp()) {
-                JOptionPane.showMessageDialog(owner, "The saved .cp file does not contain circles and yellow aux lines. Save as a .ori file to also save these lines.", "Warning", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "The saved .cp file does not contain circles and yellow aux lines. Save as a .ori file to also save these lines.", "Warning", JOptionPane.WARNING_MESSAGE);
             }
 
             Cp.exportFile(save, fname);
         } else {
-            JOptionPane.showMessageDialog(owner, "Unknown file type, cannot save", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Unknown file type, cannot save", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
 
     public void readBackgroundImageFromFile() {
-        FileDialog fd = new FileDialog(owner, "Select Image File.", FileDialog.LOAD);
+        FileDialog fd = new FileDialog(frame, "Select Image File.", FileDialog.LOAD);
         fd.setVisible(true);
         String img_background_fname = fd.getDirectory() + fd.getFile();
         try {
@@ -462,6 +460,7 @@ public class FileSaveService {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

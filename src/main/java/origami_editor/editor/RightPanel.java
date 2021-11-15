@@ -3,6 +3,8 @@ package origami_editor.editor;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import javax.inject.Inject;
+import javax.inject.Named;
 import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.component.ColorIcon;
@@ -11,13 +13,15 @@ import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.service.ButtonService;
 import origami_editor.tools.StringOp;
 
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 
+@Singleton
 public class RightPanel {
     private final MeasuresModel measuresModel;
-    private OpenFrame frame;
+    private OpenFrame openFrame;
     private JCheckBox cAMVCheckBox;
     private JButton ck4_colorIncreaseButton;
     private JCheckBox ckTCheckBox;
@@ -80,14 +84,20 @@ public class RightPanel {
     private JTextField measuredAngle2TextField;
     private JTextField measuredAngle3TextField;
     private JPanel root;
-    private Frame owner;
 
-    public RightPanel(AngleSystemModel angleSystemModel,
+    @Inject
+    public RightPanel(@Named("mainFrame") JFrame frame, AngleSystemModel angleSystemModel,
                       ButtonService buttonService,
                       MeasuresModel measuresModel,
                       CreasePattern_Worker mainCreasePatternWorker, CanvasModel canvasModel, ApplicationModel applicationModel,
                       HistoryStateModel historyStateModel) {
         this.measuresModel = measuresModel;
+
+        applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
+        angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
+        measuresModel.addPropertyChangeListener(e -> setData(measuresModel));
+        canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
+        historyStateModel.addPropertyChangeListener(e -> setData(historyStateModel));
 
         $$$setupUI$$$();
 
@@ -282,7 +292,7 @@ public class RightPanel {
         c_colButton.addActionListener(e -> {
             //以下にやりたいことを書く
 
-            Color color = JColorChooser.showDialog(null, "color", new Color(100, 200, 200));
+            Color color = JColorChooser.showDialog(openFrame, "color", new Color(100, 200, 200));
             if (color != null) {
                 applicationModel.setCircleCustomizedColor(color);
             }
@@ -346,17 +356,13 @@ public class RightPanel {
         measuredAngle3TextField.addActionListener(e -> measuresModel.setMeasuredAngle3(StringOp.String2double(measuredAngle3TextField.getText(), measuresModel.getMeasuredAngle3())));
 
         ad_fncButton.addActionListener(e -> {
-            frame = new OpenFrame("additionalFrame", owner, canvasModel, mainCreasePatternWorker, buttonService);
+            openFrame = new OpenFrame("additionalFrame", frame, canvasModel, mainCreasePatternWorker, buttonService);
 
-            frame.setData(null, canvasModel);
+            openFrame.setData(null, canvasModel);
 
-            frame.setLocationRelativeTo(ad_fncButton);
-            frame.setVisible(true);
+            openFrame.setLocationRelativeTo(ad_fncButton);
+            openFrame.setVisible(true);
         });
-    }
-
-    public void setFrame(Frame frame) {
-        this.owner = frame;
     }
 
     /**
@@ -677,7 +683,7 @@ public class RightPanel {
     }
 
     public void setData(PropertyChangeEvent e, CanvasModel data) {
-        if (frame != null) frame.setData(e, data);
+        if (openFrame != null) openFrame.setData(e, data);
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode") || e.getPropertyName().equals("foldLineAdditionalInputMode")) {
             MouseMode m = data.getMouseMode();

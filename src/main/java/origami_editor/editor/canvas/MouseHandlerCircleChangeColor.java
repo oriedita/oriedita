@@ -6,7 +6,15 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class MouseHandlerCircleChangeColor extends BaseMouseHandlerBoxSelect {
+    @Inject
+    public MouseHandlerCircleChangeColor() {
+    }
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CIRCLE_CHANGE_COLOR_59;

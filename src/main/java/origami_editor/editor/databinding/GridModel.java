@@ -1,5 +1,7 @@
 package origami_editor.editor.databinding;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami_editor.graphic2d.grid.Grid;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
@@ -9,6 +11,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 
+@Singleton
 public class GridModel implements Serializable {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private int intervalGridSize;
@@ -24,6 +27,7 @@ public class GridModel implements Serializable {
     private int verticalScalePosition;
     private int horizontalScalePosition;
 
+    @Inject
     public GridModel() {
         reset();
     }

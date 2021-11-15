@@ -1,9 +1,13 @@
 package origami_editor.editor.databinding;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import origami.crease_pattern.element.Polygon;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+@Singleton
 public class BackgroundModel {
     private boolean displayBackground;
     private boolean lockBackground;
@@ -30,6 +34,7 @@ public class BackgroundModel {
         this.pcs.removePropertyChangeListener(listener);
     }
 
+    @Inject
     public BackgroundModel() {
         reset();
     }
@@ -37,6 +42,8 @@ public class BackgroundModel {
     public void reset() {
         displayBackground = true;
         lockBackground = false;
+
+        backgroundPosition = null;
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -59,5 +66,17 @@ public class BackgroundModel {
         boolean oldLockBackground = this.lockBackground;
         this.lockBackground = lockBackground;
         this.pcs.firePropertyChange("lockBackground", oldLockBackground, lockBackground);
+    }
+
+    private Polygon backgroundPosition;
+
+    public Polygon getBackgroundPosition() {
+        return backgroundPosition;
+    }
+
+    public void setBackgroundPosition(Polygon backgroundPosition) {
+        Polygon oldBackgroundPosition = this.backgroundPosition;
+        this.backgroundPosition = backgroundPosition;
+        this.pcs.firePropertyChange("backgroundPosition", oldBackgroundPosition, backgroundPosition);
     }
 }

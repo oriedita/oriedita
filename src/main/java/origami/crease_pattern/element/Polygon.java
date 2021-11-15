@@ -34,6 +34,12 @@ public class Polygon {
         vertices[i].set(p);
     }
 
+    public int size() {return vertexCount;}
+
+    public Point get(int i) {
+        return vertices[i];
+    }
+
     // 0, when all of the line segment s0 exists outside the convex polygon (the boundary line is not considered inside)
     // When the line segment s0 exists both outside the convex polygon and across the boundary line 1,
     // When the line segment s0 exists inside the convex polygon, the boundary line, and the outside 2,

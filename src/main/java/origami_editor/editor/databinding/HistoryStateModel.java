@@ -1,14 +1,20 @@
 package origami_editor.editor.databinding;
 
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+@Singleton
 public class HistoryStateModel {
     private int historyTotal;
     private int auxHistoryTotal;
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
+    @Inject
     public HistoryStateModel() {
         reset();
     }

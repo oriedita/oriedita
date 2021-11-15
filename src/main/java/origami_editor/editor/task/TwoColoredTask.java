@@ -1,20 +1,26 @@
 package origami_editor.editor.task;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import origami.folding.FoldedFigure;
-import origami_editor.editor.Canvas;
 import origami_editor.editor.component.BulletinBoard;
+import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.service.FoldingService;
+import origami_editor.tools.Camera;
 
 public class TwoColoredTask implements Runnable{
     private final BulletinBoard bulletinBoard;
-    private final Canvas canvas;
+    private final Camera creasePatternCamera;
     private final FoldingService foldingService;
+    private final CanvasModel canvasModel;
 
-    public TwoColoredTask(BulletinBoard bulletinBoard, Canvas canvas, FoldingService foldingService) {
+    @Inject
+    public TwoColoredTask(BulletinBoard bulletinBoard, @Named("creasePatternCamera") Camera creasePatternCamera, FoldingService foldingService, CanvasModel canvasModel) {
         this.bulletinBoard = bulletinBoard;
-        this.canvas = canvas;
+        this.creasePatternCamera = creasePatternCamera;
         this.foldingService = foldingService;
+        this.canvasModel = canvasModel;
     }
 
     @Override
@@ -25,7 +31,7 @@ public class TwoColoredTask implements Runnable{
 
         try {
             selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
-            selectedFigure.createTwoColorCreasePattern(canvas.creasePatternCamera, foldingService.lineSegmentsForFolding);
+            selectedFigure.createTwoColorCreasePattern(creasePatternCamera, foldingService.lineSegmentsForFolding);
         } catch (InterruptedException e) {
             selectedFigure.foldedFigure.estimated_initialize();
             bulletinBoard.clear();
@@ -36,6 +42,6 @@ public class TwoColoredTask implements Runnable{
         long L = stop - start;
         selectedFigure.foldedFigure.text_result = selectedFigure.foldedFigure.text_result + "     Computation time " + L + " msec.";
 
-        canvas.repaint();
+        canvasModel.markDirty();
     }
 }

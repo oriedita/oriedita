@@ -2,27 +2,30 @@ package origami_editor.editor;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
+import javax.inject.Inject;
+import javax.inject.Named;
 import origami_editor.editor.canvas.CreasePattern_Worker;
-import origami_editor.editor.databinding.ApplicationModel;
-import origami_editor.editor.databinding.CanvasModel;
-import origami_editor.editor.databinding.FileModel;
-import origami_editor.editor.databinding.FoldedFigureModel;
-import origami_editor.editor.drawing.FoldedFigure_Drawer;
+import origami_editor.editor.databinding.*;
 import origami_editor.editor.service.ButtonService;
 import origami_editor.editor.service.FileSaveService;
 import origami_editor.editor.task.TaskExecutor;
 import origami_editor.editor.transfer.SaveTransferable;
 
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+@Singleton
 public class AppMenuBar extends JMenuBar {
+    private final JFrame frame;
     private final FileSaveService fileSaveService;
     private final FileModel fileModel;
     private JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
@@ -54,12 +57,30 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem cutButton;
     private JMenuItem pasteButton;
     private JMenuItem pasteOffsetButton;
-    private Frame owner;
 
-    public AppMenuBar(ApplicationModel applicationModel, FileSaveService fileSaveService, ButtonService buttonService, CanvasModel canvasModel, FileModel fileModel, CreasePattern_Worker mainCreasePatternWorker, FoldedFigureModel foldedFigureModel,
-                      DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList) {
+    @Inject
+    public AppMenuBar(@Named("mainFrame") JFrame frame,
+                      ApplicationModel applicationModel,
+                      FileSaveService fileSaveService,
+                      ButtonService buttonService,
+                      CanvasModel canvasModel,
+                      FileModel fileModel,
+                      CreasePattern_Worker mainCreasePatternWorker,
+                      FoldedFigureModel foldedFigureModel,
+                      FoldedFiguresList foldedFiguresList) {
+        this.frame = frame;
         this.fileSaveService = fileSaveService;
         this.fileModel = fileModel;
+
+        applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
+
+        //--------------------------------------------------------------------------------------------------
+        frame.addWindowListener(new WindowAdapter() {//ウィンドウの状態が変化したときの処理
+            //終了ボタンを有効化
+            public void windowClosing(WindowEvent evt) {
+                closing();//Work to be done when pressing X at the right end of the upper side of the window
+            }//終了ボタンを有効化 ここまで。
+        });//Processing when the window state changes Up to here.
 
         createElements();
         buttonService.registerButton(newButton, "newAction");
@@ -93,7 +114,7 @@ public class AppMenuBar extends JMenuBar {
 
         newButton.addActionListener(e -> {
             if (!fileModel.isSaved()) {
-                int choice = JOptionPane.showConfirmDialog(null, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                int choice = JOptionPane.showConfirmDialog(frame, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
                 if (choice == JOptionPane.YES_OPTION) {
                     fileSaveService.saveFile();
@@ -162,7 +183,7 @@ public class AppMenuBar extends JMenuBar {
         darkModeCheckBox.addActionListener(e -> {
             applicationModel.toggleDarkMode();
 
-            if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(null, "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
+            if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(frame, "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
                 if (FlatLaf.isLafDark()) {
                     applicationModel.setGridColor(Colors.GRID_LINE_DARK);
                     applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
@@ -230,10 +251,6 @@ public class AppMenuBar extends JMenuBar {
                 // We don't know how to paste this
             }
         });
-    }
-
-    public void setOwner(Frame owner) {
-        this.owner = owner;
     }
 
     private void createElements() {
@@ -384,7 +401,7 @@ public class AppMenuBar extends JMenuBar {
 
     public void closing() {
         if (!fileModel.isSaved()) {
-            int option = JOptionPane.showConfirmDialog(owner, "Save crease pattern before exiting?", "Save", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+            int option = JOptionPane.showConfirmDialog(frame, "Save crease pattern before exiting?", "Save", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
             switch (option) {
                 case JOptionPane.YES_OPTION:

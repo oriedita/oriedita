@@ -1,5 +1,7 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -10,8 +12,13 @@ import origami_editor.editor.MouseMode;
 import origami.folding.util.SortingBox;
 import origami.folding.util.WeightedValue;
 
+@Singleton
 public class MouseHandlerLengthenCrease extends BaseMouseHandler {
     SortingBox<LineSegment> entyou_kouho_nbox = new SortingBox<>();
+
+    @Inject
+    public MouseHandlerLengthenCrease() {
+    }
 
     @Override
     public MouseMode getMouseMode() {

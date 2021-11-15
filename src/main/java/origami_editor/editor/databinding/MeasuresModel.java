@@ -2,9 +2,12 @@ package origami_editor.editor.databinding;
 
 import origami_editor.tools.StringOp;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+@Singleton
 public class MeasuresModel {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private double measuredLength1;
@@ -13,6 +16,7 @@ public class MeasuresModel {
     private double measuredAngle2;
     private double measuredAngle3;
 
+    @Inject
     public MeasuresModel() {
         reset();
     }

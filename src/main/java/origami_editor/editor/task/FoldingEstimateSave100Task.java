@@ -3,6 +3,7 @@ package origami_editor.editor.task;
 import origami.crease_pattern.FoldingException;
 import origami_editor.editor.Canvas;
 import origami_editor.editor.databinding.FileModel;
+import origami_editor.editor.databinding.FoldedFiguresList;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.service.FileSaveService;
 import origami_editor.editor.service.FoldingService;
@@ -14,10 +15,10 @@ public class FoldingEstimateSave100Task implements Runnable {
     private final Canvas canvas;
     private final FoldingService foldingService;
     private final FileSaveService fileSaveService;
-    private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
+    private final FoldedFiguresList foldedFiguresList;
     private final FileModel fileModel;
 
-    public FoldingEstimateSave100Task(Canvas canvas, FoldingService foldingService, FileSaveService fileSaveService, DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList, FileModel fileModel) {
+    public FoldingEstimateSave100Task(Canvas canvas, FoldingService foldingService, FileSaveService fileSaveService, FoldedFiguresList foldedFiguresList, FileModel fileModel) {
         this.canvas = canvas;
         this.foldingService = foldingService;
         this.fileSaveService = fileSaveService;
