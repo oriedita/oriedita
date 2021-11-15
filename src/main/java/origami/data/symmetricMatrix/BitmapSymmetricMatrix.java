@@ -40,9 +40,9 @@ public class BitmapSymmetricMatrix extends SymmetricMatrix {
         if (j < i) {
             return get(j, i);
         }
-        long pos = position(i, j);
-        int index = (int) (pos / 32);
-        int offset = (int) (pos % 32);
+        long pos = triangularPosition(i, j, size) * bits;
+        int index = (int) (pos >>> 5);
+        int offset = (int) (pos & OFFSET_MASK);
         int value = (data[index] >>> offset) & mask;
         return value;
     }
@@ -53,9 +53,9 @@ public class BitmapSymmetricMatrix extends SymmetricMatrix {
             set(j, i, value);
         } else {
             value = value & mask;
-            long pos = position(i, j);
-            int index = (int) (pos / 32);
-            int offset = (int) (pos % 32);
+            long pos = triangularPosition(i, j, size) * bits;
+            int index = (int) (pos >>> 5);
+            int offset = (int) (pos & OFFSET_MASK);
             data[index] = data[index] & ~(mask << offset) | value << offset;
         }
     }
@@ -66,10 +66,5 @@ public class BitmapSymmetricMatrix extends SymmetricMatrix {
             BitmapSymmetricMatrix that = (BitmapSymmetricMatrix) other;
             System.arraycopy(that.data, 0, data, 0, length);
         }
-    }
-
-    private long position(long i, long j) {
-        // we use long here to prevent multiplication overflow
-        return ((2L * size + 2 - i) * (i - 1) / 2 + j - i) * bits;
     }
 }
