@@ -21,8 +21,7 @@ public class BackupCreasePattern_WorkerFactory {
                                                                   FoldedFigureModel foldedFigureModel,
                                                                   FileModel fileModel,
                                                                   AngleSystemModel angleSystemModel,
-                                                                  InternalDivisionRatioModel internalDivisionRatioModel,
-                                                                  HistoryStateModel historyStateModel) {
-        return new CreasePattern_Worker(creasePatternCamera, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, angleSystemModel, internalDivisionRatioModel, historyStateModel);
+                                                                  InternalDivisionRatioModel internalDivisionRatioModel) {
+        return new CreasePattern_Worker(creasePatternCamera, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, angleSystemModel, internalDivisionRatioModel);
     }
 }

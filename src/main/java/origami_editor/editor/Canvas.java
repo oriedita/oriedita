@@ -91,7 +91,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     Map<MouseMode, MouseModeHandler> mouseModeHandlers = new HashMap<>();
 
-    public boolean flg61 = false;//Used when setting the frame 　20180524
+    private boolean flg61 = false;//Used when setting the frame 　20180524
 
     public boolean mouseDraggedValid = false;
     //ウィンドウ透明化用のパラメータ
@@ -726,6 +726,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     public void setData(PropertyChangeEvent e, CanvasModel canvasModel) {
         mouseMode = canvasModel.getMouseMode();
+        flg61 = canvasModel.getFlg61();
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("dirty")) {
             mouseReleasedValid = false;

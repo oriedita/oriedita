@@ -331,7 +331,7 @@ public class GridModel implements Serializable {
         }
 
         public State advance() {
-            return .values()[(ordinal() + 1) % values().length];
+            return values()[(ordinal() + 1) % values().length];
         }
 
         public int getState() {

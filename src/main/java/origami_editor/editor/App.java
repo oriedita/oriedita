@@ -4,10 +4,7 @@ import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.drawing.FoldedFigure_Worker_Drawer;
-import origami_editor.editor.service.ButtonService;
-import origami_editor.editor.service.FileSaveService;
-import origami_editor.editor.service.FoldingService;
-import origami_editor.editor.service.LookAndFeelService;
+import origami_editor.editor.service.*;
 import origami_editor.tools.ResourceUtil;
 
 import javax.inject.Inject;
@@ -35,6 +32,7 @@ public class App {
     private final LookAndFeelService lookAndFeelService;
     private final Editor editor;
     private final AppMenuBar appMenuBar;
+    private final ResetService resetService;
     private final ConsoleDialog consoleDialog;
     // ------------------------------------------------------------------------
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
@@ -63,7 +61,8 @@ public class App {
             FileSaveService fileSaveService,
             ButtonService buttonService,
             Editor editor,
-            AppMenuBar appMenuBar
+            AppMenuBar appMenuBar,
+            ResetService resetService
     ) {
         this.frame = frame;
         this.lookAndFeelService = lookAndFeelService;
@@ -79,6 +78,7 @@ public class App {
         this.buttonService = buttonService;
         this.editor = editor;
         this.appMenuBar = appMenuBar;
+        this.resetService = resetService;
 
         frame.setTitle("Origami Editor " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
         frame_title_0 = frame.getTitle();
@@ -208,7 +208,7 @@ public class App {
         fileModel.addPropertyChangeListener(e -> setData(fileModel));
 
         fileModel.reset();
-        fileSaveService.developmentView_initialization();
+        resetService.developmentView_initialization();
 
         buttonService.Button_shared_operation();
 

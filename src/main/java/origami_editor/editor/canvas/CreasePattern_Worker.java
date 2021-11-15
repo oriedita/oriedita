@@ -108,8 +108,7 @@ public class CreasePattern_Worker {
                                 FoldedFigureModel foldedFigureModel,
                                 FileModel fileModel,
                                 AngleSystemModel angleSystemModel,
-                                InternalDivisionRatioModel internalDivisionRatioModel,
-                                HistoryStateModel historyStateModel) {
+                                InternalDivisionRatioModel internalDivisionRatioModel) {
         this.creasePatternCamera = creasePatternCamera;  //コンストラクタ
         this.canvasModel = canvasModel;
         this.applicationModel = applicationModel;
@@ -122,7 +121,6 @@ public class CreasePattern_Worker {
         angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
         internalDivisionRatioModel.addPropertyChangeListener(e -> setData(internalDivisionRatioModel));
         canvasModel.addPropertyChangeListener(e -> setData(canvasModel));
-        historyStateModel.addPropertyChangeListener(e -> setData(historyStateModel));
 
         lineColor = LineColor.BLACK_0;
 
@@ -989,14 +987,6 @@ public class CreasePattern_Worker {
         auxLineColor = i;
     }
 
-    public void setUndoTotal(int i) {
-        historyState.setUndoTotal(i);
-    }
-
-    public void setAuxUndoTotal(int i) {
-        auxHistoryState.setUndoTotal(i);
-    }
-
     public void organizeCircles() {//Organize all circles.
         foldLineSet.organizeCircles();
     }
@@ -1042,11 +1032,6 @@ public class CreasePattern_Worker {
     public void setData(InternalDivisionRatioModel data) {
         internalDivisionRatio_s = data.getInternalDivisionRatioS();
         internalDivisionRatio_t = data.getInternalDivisionRatioT();
-    }
-
-    public void setData(HistoryStateModel historyStateModel) {
-        setUndoTotal(historyStateModel.getHistoryTotal());
-        setAuxUndoTotal(historyStateModel.getHistoryTotal());
     }
 
     public Point getCameraPosition() {

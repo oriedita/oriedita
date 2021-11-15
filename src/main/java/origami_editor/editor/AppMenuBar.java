@@ -8,6 +8,7 @@ import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.service.ButtonService;
 import origami_editor.editor.service.FileSaveService;
+import origami_editor.editor.service.ResetService;
 import origami_editor.editor.task.TaskExecutor;
 import origami_editor.editor.transfer.SaveTransferable;
 
@@ -67,6 +68,7 @@ public class AppMenuBar extends JMenuBar {
                       FileModel fileModel,
                       CreasePattern_Worker mainCreasePatternWorker,
                       FoldedFigureModel foldedFigureModel,
+                      ResetService resetService,
                       FoldedFiguresList foldedFiguresList) {
         this.frame = frame;
         this.fileSaveService = fileSaveService;
@@ -125,7 +127,7 @@ public class AppMenuBar extends JMenuBar {
             fileModel.reset();
             //展開図の初期化　開始
             //settei_syokika_cp();//展開図パラメータの初期化
-            fileSaveService.developmentView_initialization();
+            resetService.developmentView_initialization();
             //展開図の初期化　終了
             //
             //折畳予測図のの初期化　開始

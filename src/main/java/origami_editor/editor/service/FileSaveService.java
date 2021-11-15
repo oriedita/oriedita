@@ -8,6 +8,7 @@ import origami_editor.editor.MouseMode;
 import origami_editor.editor.Save;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.*;
+import origami_editor.editor.drawing.tools.Camera;
 import origami_editor.editor.export.Cp;
 import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
@@ -25,75 +26,32 @@ import java.io.IOException;
 @Singleton
 public class FileSaveService {
     private final JFrame frame;
-    private final Canvas canvas;
+    private final Camera creasePatternCamera;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FileModel fileModel;
     private final ApplicationModel applicationModel;
-    private final HistoryStateModel historyStateModel;
     private final CanvasModel canvasModel;
-    private final InternalDivisionRatioModel internalDivisionRatioModel;
-    private final FoldedFigureModel foldedFigureModel;
-    private final GridModel gridModel;
-    private final AngleSystemModel angleSystemModel;
-    private final CameraModel creasePatternCameraModel;
-    private final FoldedFiguresList foldedFiguresList;
+    private final ResetService resetService;
     private final BackgroundModel backgroundModel;
 
     @Inject
     public FileSaveService(
             @Named("mainFrame") JFrame frame,
-            Canvas canvas,
+            @Named("creasePatternCamera") Camera creasePatternCamera,
             CreasePattern_Worker mainCreasePatternWorker,
             FileModel fileModel,
             ApplicationModel applicationModel,
-            HistoryStateModel historyStateModel,
             CanvasModel canvasModel,
-            InternalDivisionRatioModel internalDivisionRatioModel,
-            FoldedFigureModel foldedFigureModel,
-            GridModel gridModel,
-            AngleSystemModel angleSystemModel,
-            CameraModel creasePatternCameraModel,
-            FoldedFiguresList foldedFiguresList,
+            ResetService resetService,
             BackgroundModel backgroundModel) {
         this.frame = frame;
-        this.canvas = canvas;
+        this.creasePatternCamera = creasePatternCamera;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.fileModel = fileModel;
         this.applicationModel = applicationModel;
-        this.historyStateModel = historyStateModel;
         this.canvasModel = canvasModel;
-        this.internalDivisionRatioModel = internalDivisionRatioModel;
-        this.foldedFigureModel = foldedFigureModel;
-        this.gridModel = gridModel;
-        this.angleSystemModel = angleSystemModel;
-        this.creasePatternCameraModel = creasePatternCameraModel;
-        this.foldedFiguresList = foldedFiguresList;
+        this.resetService = resetService;
         this.backgroundModel = backgroundModel;
-    }
-
-    public void developmentView_initialization() {
-        mainCreasePatternWorker.reset();
-        mainCreasePatternWorker.initialize();
-
-        //camera_of_orisen_nyuuryokuzu	の設定;
-        canvas.creasePatternCamera.setCameraPositionX(0.0);
-        canvas.creasePatternCamera.setCameraPositionY(0.0);
-        canvas.creasePatternCamera.setCameraAngle(0.0);
-        canvas.creasePatternCamera.setCameraMirror(1.0);
-        canvas.creasePatternCamera.setCameraZoomX(1.0);
-        canvas.creasePatternCamera.setCameraZoomY(1.0);
-        canvas.creasePatternCamera.setDisplayPositionX(350.0);
-        canvas.creasePatternCamera.setDisplayPositionY(350.0);
-
-        mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);
-
-        canvasModel.reset();
-        internalDivisionRatioModel.reset();
-        foldedFigureModel.reset();
-
-        gridModel.reset();
-        angleSystemModel.reset();
-        creasePatternCameraModel.reset();
     }
 
     public void openFile(File file) {
@@ -110,12 +68,10 @@ public class FileSaveService {
 
         if (memo_temp != null) {
             //Initialization of development drawing started
-            developmentView_initialization();
+            resetService.developmentView_initialization();
             //Deployment parameter initialization
 
-            foldedFiguresList.removeAllElements();
-
-            mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
+            mainCreasePatternWorker.setCamera(creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
             mainCreasePatternWorker.setSave_for_reading(memo_temp);
             mainCreasePatternWorker.record();
         }
@@ -156,14 +112,12 @@ public class FileSaveService {
             fileModel.setSavedFileName(null);
 
             //Initialization of development drawing started
-            developmentView_initialization();
+            resetService.developmentView_initialization();
             //Deployment parameter initialization
-
-            foldedFiguresList.removeAllElements();
 
             //Initialization of folding prediction map started
 
-            mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
+            mainCreasePatternWorker.setCamera(creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
             mainCreasePatternWorker.setSave_for_reading(memo_temp);
             mainCreasePatternWorker.record();
         }
@@ -177,15 +131,15 @@ public class FileSaveService {
         }
 
         if (exportFile.getName().endsWith(".png") || exportFile.getName().endsWith(".jpg") || exportFile.getName().endsWith(".jpeg") || exportFile.getName().endsWith(".svg")) {
-            canvas.flg61 = false;
+            canvasModel.setFlg61(false);
             if ((canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61) && (mainCreasePatternWorker.getDrawingStage() == 4)) {
-                canvas.flg61 = true;
+                canvasModel.setFlg61(true);
                 mainCreasePatternWorker.setDrawingStage(0);
             }
 
             fileModel.setExportImageFileName(exportFile.getAbsolutePath());
-            canvas.flg_wi = true;
-            canvas.repaint();//Necessary to not export the green border
+            canvasModel.setFlg61(true);
+            canvasModel.markDirty();
         } else if (exportFile.getName().endsWith(".cp")) {
             Cp.exportFile(mainCreasePatternWorker.getSave_for_export(), exportFile);
         } else if (exportFile.getName().endsWith(".orh")) {
@@ -230,7 +184,6 @@ public class FileSaveService {
             applicationModel.setDefaultDirectory(selectedFile.getParent());
             fileModel.setSavedFileName(selectedFile.getAbsolutePath());
             fileModel.setSaved(true);
-            historyStateModel.reset();
 
             applicationModel.addRecentFile(selectedFile);
 

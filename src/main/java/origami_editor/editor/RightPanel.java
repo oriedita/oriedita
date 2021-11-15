@@ -44,7 +44,6 @@ public class RightPanel {
     private JTextField measuredLength1TextField;
     private JTextField measuredLength2TextField;
     private JButton ad_fncButton;
-    private JTextField auxUndoTotalTextField;
     private JButton degButton;
     private JButton deg3Button;
     private JButton angleRestrictedButton;
@@ -73,7 +72,6 @@ public class RightPanel {
     private JTextField angleDTextField;
     private JTextField angleETextField;
     private JTextField angleFTextField;
-    private JButton h_undoTotalSetButton;
     private JButton colOrangeButton;
     private JButton colYellowButton;
     private JButton l2Button;
@@ -89,15 +87,13 @@ public class RightPanel {
     public RightPanel(@Named("mainFrame") JFrame frame, AngleSystemModel angleSystemModel,
                       ButtonService buttonService,
                       MeasuresModel measuresModel,
-                      CreasePattern_Worker mainCreasePatternWorker, CanvasModel canvasModel, ApplicationModel applicationModel,
-                      HistoryStateModel historyStateModel) {
+                      CreasePattern_Worker mainCreasePatternWorker, CanvasModel canvasModel, ApplicationModel applicationModel) {
         this.measuresModel = measuresModel;
 
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
         angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
         measuresModel.addPropertyChangeListener(e -> setData(measuresModel));
         canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
-        historyStateModel.addPropertyChangeListener(e -> setData(historyStateModel));
 
         $$$setupUI$$$();
 
@@ -139,7 +135,6 @@ public class RightPanel {
         buttonService.registerButton(h_senbun_nyuryokuButton, "h_senbun_nyuryokuAction");
         buttonService.registerButton(h_senbun_sakujyoButton, "h_senbun_sakujyoAction");
         buttonService.registerButton(restrictedAngleSetDEFButton, "restrictedAngleSetDEFAction");
-        buttonService.registerButton(h_undoTotalSetButton, "h_undoTotalSetAction");
         buttonService.registerButton(colOrangeButton, "colOrangeAction");
         buttonService.registerButton(colYellowButton, "colYellowAction");
         buttonService.registerButton(l2Button, "l2Action");
@@ -305,7 +300,6 @@ public class RightPanel {
             mainCreasePatternWorker.unselect_all();
         });
         h_undoButton.addActionListener(e -> mainCreasePatternWorker.auxUndo());
-        h_undoTotalSetButton.addActionListener(e -> historyStateModel.setAuxHistoryTotal(StringOp.String2int(auxUndoTotalTextField.getText(), historyStateModel.getAuxHistoryTotal())));
         h_redoButton.addActionListener(e -> mainCreasePatternWorker.auxRedo());
         h_senhaba_sageButton.addActionListener(e -> applicationModel.decreaseAuxLineWidth());
         h_senhaba_ageButton.addActionListener(e -> applicationModel.increaseAuxLineWidth());
@@ -578,21 +572,14 @@ public class RightPanel {
         circleDrawInvertedButton.setIcon(new ImageIcon(getClass().getResource("/ppp/hanten.png")));
         panel13.add(circleDrawInvertedButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel14 = new JPanel();
-        panel14.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), 1, 1));
+        panel14.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), 1, 1));
         root.add(panel14, new GridConstraints(16, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         h_undoButton = new JButton();
         h_undoButton.setIcon(new ImageIcon(getClass().getResource("/ppp/h_undo.png")));
         panel14.add(h_undoButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        auxUndoTotalTextField = new JTextField();
-        auxUndoTotalTextField.setColumns(2);
-        auxUndoTotalTextField.setText("50");
-        panel14.add(auxUndoTotalTextField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        h_undoTotalSetButton = new JButton();
-        h_undoTotalSetButton.setText("S");
-        panel14.add(h_undoTotalSetButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         h_redoButton = new JButton();
         h_redoButton.setIcon(new ImageIcon(getClass().getResource("/ppp/h_redo.png")));
-        panel14.add(h_redoButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel14.add(h_redoButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel15 = new JPanel();
         panel15.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), 1, 1));
         root.add(panel15, new GridConstraints(17, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -723,9 +710,5 @@ public class RightPanel {
                 colYellowButton.setBackground(Color.YELLOW);
                 colOrangeButton.setBackground(new Color(150, 150, 150));
         }
-    }
-
-    public void setData(HistoryStateModel historyStateModel) {
-        auxUndoTotalTextField.setText(String.valueOf(historyStateModel.getAuxHistoryTotal()));
     }
 }
