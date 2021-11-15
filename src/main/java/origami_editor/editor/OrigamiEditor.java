@@ -1,37 +1,24 @@
 package origami_editor.editor;
 
 import com.formdev.flatlaf.FlatLaf;
-import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.spi.ContainerLifecycle;
-import origami_editor.editor.service.ApplicationModelPersistenceService;
-import origami_editor.editor.service.FileSaveService;
+import origami_editor.editor.factory.AppFactory;
+import origami_editor.editor.factory.DaggerAppFactory;
 
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.swing.*;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
 public class OrigamiEditor {
-    private static Object getBean(ContainerLifecycle lifecycle, Class<?> clazz) {
-        BeanManager beanManager = lifecycle.getBeanManager();
-        Bean<?> bean = beanManager.getBeans(clazz).iterator().next();
-
-        return beanManager.getReference(bean, clazz, beanManager.createCreationalContext(bean));
-    }
-
     public static void main(String[] argv) throws InterruptedException, InvocationTargetException {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
-        ContainerLifecycle lifecycle = WebBeansContext.currentInstance().getService(ContainerLifecycle.class);
-        lifecycle.startApplication(null);
+        AppFactory build = DaggerAppFactory.create();
 
-        // First restore the applicationModel from disk.
-        ApplicationModelPersistenceService applicationModelPersistenceService = (ApplicationModelPersistenceService) getBean(lifecycle, ApplicationModelPersistenceService.class);
-        applicationModelPersistenceService.restoreApplicationModel();
+        build.applicationModelPersistenceService().restoreApplicationModel();
 
-        // Start the app.
-        App app = (App) getBean(lifecycle, App.class);
+        // Create app before starting ui thread.
+        // This also initializes the ui.
+        App app = build.app();
 
         SwingUtilities.invokeLater(() -> {
             FlatLaf.registerCustomDefaultsSource("origami_editor.editor.themes");
@@ -40,9 +27,7 @@ public class OrigamiEditor {
 
             if (argv.length == 1) {
                 // We got a file
-
-                FileSaveService fileSaveService = (FileSaveService) getBean(lifecycle, FileSaveService.class);
-                fileSaveService.openFile(new File(argv[0]));
+                build.fileSaveService().openFile(new File(argv[0]));
             }
         });
     }

@@ -1,7 +1,5 @@
 package origami_editor.editor;
 
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -33,6 +31,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -112,7 +111,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                   CameraModel creasePatternCameraModel,
                   FoldedFigureModel foldedFigureModel,
                   GridModel gridModel,
-                  @Any Instance<MouseModeHandler> handlerList,
+                  Set<MouseModeHandler> handlerList,
                   AngleSystemModel angleSystemModel,
                   FoldedFigureCanvasSelectService foldedFigureCanvasSelectService,
                   CanvasModel canvasModel) {

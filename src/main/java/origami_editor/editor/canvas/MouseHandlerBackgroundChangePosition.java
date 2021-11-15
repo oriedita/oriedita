@@ -2,6 +2,7 @@ package origami_editor.editor.canvas;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;

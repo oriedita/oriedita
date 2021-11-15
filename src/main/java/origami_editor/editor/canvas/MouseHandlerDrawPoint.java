@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
@@ -8,6 +9,10 @@ import origami_editor.editor.MouseMode;
 
 @Singleton
 public class MouseHandlerDrawPoint extends BaseMouseHandler {
+    @Inject
+    public MouseHandlerDrawPoint() {
+    }
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.DRAW_POINT_14;

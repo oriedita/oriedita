@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
@@ -10,6 +11,10 @@ import origami_editor.editor.MouseMode;
 
 @Singleton
 public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHandler {
+    @Inject
+    public MouseHandlerCircleDrawConcentricTwoCircleSelect() {
+    }
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50;

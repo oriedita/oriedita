@@ -1,5 +1,6 @@
 package origami_editor.editor.databinding;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.Canvas;
@@ -67,6 +68,7 @@ public class CanvasModel implements Serializable {
 
     private boolean ckbox_add_frame_SelectAnd3click_isSelected;
 
+    @Inject
     public CanvasModel() {
         reset();
     }

@@ -2,6 +2,7 @@ package origami_editor.editor.databinding;
 
 
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import java.beans.PropertyChangeListener;
@@ -30,6 +31,7 @@ public class AngleSystemModel {
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
+    @Inject
     public AngleSystemModel() {
         reset();
     }

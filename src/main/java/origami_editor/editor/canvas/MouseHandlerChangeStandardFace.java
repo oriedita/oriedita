@@ -9,7 +9,7 @@ import origami_editor.editor.databinding.FoldedFiguresList;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 
 @Singleton
-class MouseHandlerChangeStandardFace extends BaseMouseHandler {
+public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
     private final CreasePattern_Worker d;
     private final FoldedFiguresList foldedFiguresList;
 

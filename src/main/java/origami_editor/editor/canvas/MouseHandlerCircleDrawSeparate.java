@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.element.Circle;
@@ -10,6 +11,10 @@ import origami_editor.editor.MouseMode;
 
 @Singleton
 public class MouseHandlerCircleDrawSeparate extends BaseMouseHandler {
+    @Inject
+    public MouseHandlerCircleDrawSeparate() {
+    }
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CIRCLE_DRAW_SEPARATE_44;

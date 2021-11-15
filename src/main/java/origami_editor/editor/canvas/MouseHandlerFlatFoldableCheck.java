@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
@@ -13,6 +14,10 @@ import origami.folding.util.WeightedValue;
 @Singleton
 public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
     boolean i_O_F_C = false;
+
+    @Inject
+    public MouseHandlerFlatFoldableCheck() {
+    }
 
     @Override
     public MouseMode getMouseMode() {

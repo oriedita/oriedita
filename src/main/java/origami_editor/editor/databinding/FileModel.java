@@ -1,8 +1,8 @@
 package origami_editor.editor.databinding;
 
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
@@ -14,6 +14,11 @@ public class FileModel implements Serializable {
     private String savedFileName;
     private boolean saved;
     private String exportImageFileName;
+
+    @Inject
+    public FileModel() {
+        reset();
+    }
 
     public String getExportImageFileName() {
         return exportImageFileName;

@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -11,6 +12,10 @@ import origami_editor.editor.MouseMode;
 @Singleton
 public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
     CreasePattern_Worker.OperationFrameMode operationFrameMode;
+
+    @Inject
+    public MouseHandlerOperationFrameCreate() {
+    }
 
     @Override
     public MouseMode getMouseMode() {

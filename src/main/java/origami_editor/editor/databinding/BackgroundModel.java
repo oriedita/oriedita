@@ -1,5 +1,6 @@
 package origami_editor.editor.databinding;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami.crease_pattern.element.Polygon;
 import java.awt.*;
@@ -33,6 +34,7 @@ public class BackgroundModel {
         this.pcs.removePropertyChangeListener(listener);
     }
 
+    @Inject
     public BackgroundModel() {
         reset();
     }

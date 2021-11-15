@@ -3,6 +3,8 @@ package origami_editor.editor.databinding;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami_editor.editor.Colors;
 import origami_editor.editor.LineStyle;
@@ -62,6 +64,7 @@ public class ApplicationModel implements Serializable {
     private int gridLineWidth;
     private boolean displayNumbers;
 
+    @Inject
     public ApplicationModel() {
         reset();
     }

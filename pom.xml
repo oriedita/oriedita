@@ -43,7 +43,7 @@
         <dependency>
             <groupId>io.github.origin-energy</groupId>
             <artifactId>java-snapshot-testing-junit5</artifactId>
-            <version>3.2.5</version>
+            <version>${snapshot-test.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>io.github.origin-energy</groupId>
             <artifactId>java-snapshot-testing-plugin-jackson</artifactId>
-            <version>3.2.5</version>
+            <version>${snapshot-test.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -62,15 +62,11 @@
             <artifactId>forms_rt</artifactId>
             <version>7.0.3</version>
         </dependency>
+
         <dependency>
-            <groupId>jakarta.enterprise</groupId>
-            <artifactId>jakarta.enterprise.cdi-api</artifactId>
-            <version>2.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>openwebbeans-impl</artifactId>
-            <version>2.0.23</version>
+            <groupId>com.google.dagger</groupId>
+            <artifactId>dagger</artifactId>
+            <version>${dagger.version}</version>
         </dependency>
     </dependencies>
 
@@ -79,10 +75,26 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jackson.version>2.12.5</jackson.version>
+        <dagger.version>2.40</dagger.version>
+        <snapshot-test.version>3.2.5</snapshot-test.version>
     </properties>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.google.dagger</groupId>
+                            <artifactId>dagger-compiler</artifactId>
+                            <version>${dagger.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

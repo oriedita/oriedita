@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
@@ -8,6 +9,10 @@ import origami_editor.editor.MouseMode;
 
 @Singleton
 public class MouseHandlerCreaseMakeValley extends BaseMouseHandlerBoxSelect {
+    @Inject
+    public MouseHandlerCreaseMakeValley() {
+    }
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CREASE_MAKE_VALLEY_24;

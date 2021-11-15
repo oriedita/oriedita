@@ -1,6 +1,8 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -8,6 +10,10 @@ import origami_editor.editor.MouseMode;
 
 @Singleton
 public class MouseHandlerChangeCreaseType extends BaseMouseHandler {
+    @Inject
+    public MouseHandlerChangeCreaseType() {
+    }
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CHANGE_CREASE_TYPE_4;

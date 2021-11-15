@@ -1,5 +1,6 @@
 package origami_editor.editor.databinding;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami.folding.FoldedFigure;
 
@@ -78,6 +79,7 @@ public class FoldedFigureModel implements Serializable {
 
     private int historyTotal;
 
+    @Inject
     public FoldedFigureModel() {
         reset();
     }

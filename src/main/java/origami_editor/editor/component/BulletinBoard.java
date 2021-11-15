@@ -3,6 +3,7 @@ package origami_editor.editor.component;
 import origami.folding.util.IBulletinBoard;
 import origami_editor.editor.Colors;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -29,6 +30,7 @@ public class BulletinBoard implements IBulletinBoard {
 
     java.util.List<ChangeListener> listener;
 
+    @Inject
     public BulletinBoard() {
         listener = new ArrayList<>();
     }

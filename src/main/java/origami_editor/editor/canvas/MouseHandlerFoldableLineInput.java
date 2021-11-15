@@ -1,5 +1,6 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
@@ -13,6 +14,10 @@ import origami.folding.util.WeightedValue;
 @Singleton
 public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestricted {
     CreasePattern_Worker.FourPointStep i_step_for_copy_4p = CreasePattern_Worker.FourPointStep.STEP_0;
+
+    @Inject
+    public MouseHandlerFoldableLineInput() {
+    }
 
     @Override
     public MouseMode getMouseMode() {

@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
+import dagger.Component;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.json.DefaultObjectMapper;
 

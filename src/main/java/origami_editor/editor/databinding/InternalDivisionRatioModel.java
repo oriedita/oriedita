@@ -1,6 +1,7 @@
 package origami_editor.editor.databinding;
 
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import java.beans.PropertyChangeListener;
@@ -16,6 +17,7 @@ public class InternalDivisionRatioModel {
     private double internalDivisionRatioE;
     private double internalDivisionRatioF;
 
+    @Inject
     public InternalDivisionRatioModel() {
         reset();
     }

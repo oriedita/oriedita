@@ -1,5 +1,6 @@
 package origami_editor.editor.databinding;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami.crease_pattern.OritaCalc;
 
@@ -12,6 +13,7 @@ public class CameraModel {
     private double rotation;
     private double scale;
 
+    @Inject
     public CameraModel() {
         reset();
     }
