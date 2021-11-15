@@ -18,16 +18,7 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
         mouseHandlerCreaseCopy4p = new MouseHandlerCreaseCopy4p(d, canvasModel);
         mouseHandlerCreaseMove = new MouseHandlerCreaseMove(d, canvasModel);
         mouseHandlerDrawCreaseSymmetric = new MouseHandlerDrawCreaseSymmetric(d, canvasModel);
-    }
-
-    @Override
-    public void setDrawingWorker(CreasePattern_Worker d) {
-        super.setDrawingWorker(d);
-        mouseHandlerCreaseMove4p.setDrawingWorker(d);
-        mouseHandlerCreaseCopy4p.setDrawingWorker(d);
-        mouseHandlerCreaseCopy.setDrawingWorker(d);
-        mouseHandlerCreaseMove.setDrawingWorker(d);
-        mouseHandlerDrawCreaseSymmetric.setDrawingWorker(d);
+        this.d = d;
     }
 
     @Override
