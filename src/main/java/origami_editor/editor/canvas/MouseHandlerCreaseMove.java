@@ -6,7 +6,8 @@ import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.Save;
+import origami_editor.editor.save.Save;
+import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.databinding.CanvasModel;
 
 @Singleton
@@ -44,14 +45,14 @@ public class MouseHandlerCreaseMove extends BaseMouseHandlerLineSelect {
             addy = -d.lineStep.get(0).determineBY() + d.lineStep.get(0).determineAY();
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
-            Save save = new Save();
+            Save save = new SaveV1();
             d.foldLineSet.getMemoSelectOption(save, 2);
             ori_s_temp.setSave(save);//セレクトされた折線だけ取り出してori_s_tempを作る
             d.foldLineSet.delSelectedLineSegmentFast();//セレクトされた折線を削除する。
             ori_s_temp.move(addx, addy);//全体を移動する
 
             int total_old = d.foldLineSet.getTotal();
-            Save save1 = new Save();
+            Save save1 = new SaveV1();
             ori_s_temp.getSave(save1);
             d.foldLineSet.addSave(save1);
             int total_new = d.foldLineSet.getTotal();

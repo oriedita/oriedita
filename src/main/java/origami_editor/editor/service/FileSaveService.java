@@ -3,9 +3,10 @@ package origami_editor.editor.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.inject.Inject;
 import javax.inject.Named;
-import origami_editor.editor.Canvas;
+
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.Save;
+import origami_editor.editor.save.Save;
+import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.tools.Camera;
@@ -347,7 +348,7 @@ public class FileSaveService {
 
             fileModel.setSavedFileName(null);
 
-            return new Save();
+            return new SaveV1();
         }
 
         return save;
@@ -363,7 +364,6 @@ public class FileSaveService {
         File file = new File(fileModel.getSavedFileName());
 
         Save save = mainCreasePatternWorker.getSave_for_export();
-        save.setVersion(ResourceUtil.getVersionFromManifest());
 
         saveAndName2File(save, file);
 
@@ -378,7 +378,6 @@ public class FileSaveService {
         }
 
         Save save = mainCreasePatternWorker.getSave_for_export();
-        save.setVersion(ResourceUtil.getVersionFromManifest());
 
         saveAndName2File(save, file);
 

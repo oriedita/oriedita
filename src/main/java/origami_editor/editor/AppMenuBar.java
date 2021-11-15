@@ -7,6 +7,8 @@ import javax.inject.Named;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.exception.FileReadingException;
+import origami_editor.editor.save.Save;
+import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.service.ButtonService;
 import origami_editor.editor.service.FileSaveService;
 import origami_editor.editor.service.ResetService;
@@ -213,7 +215,7 @@ public class AppMenuBar extends JMenuBar {
         copyButton.addActionListener(e -> {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-            Save save = new Save();
+            Save save = new SaveV1();
             mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
 
             clipboard.setContents(new SaveTransferable(save), (clipboard1, contents) -> {});
@@ -221,7 +223,7 @@ public class AppMenuBar extends JMenuBar {
         cutButton.addActionListener(e -> {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-            Save save = new Save();
+            Save save = new SaveV1();
             mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
 
 

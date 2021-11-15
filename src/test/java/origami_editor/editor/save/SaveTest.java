@@ -1,7 +1,9 @@
 package origami_editor.editor.save;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.element.Circle;
@@ -13,6 +15,7 @@ import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.tools.Camera;
 import origami_editor.editor.exception.FileReadingException;
 import origami_editor.editor.service.FileSaveService;
+import origami_editor.editor.service.ResetService;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -23,38 +26,33 @@ import java.util.Objects;
  * Test if the current version of the save is compatible with the previous version.
  */
 public class SaveTest {
-    @Test
-    public void testSave0011() throws URISyntaxException {
+
+    private FileSaveService fileSaveService;
+    private CreasePattern_Worker mainCreasePatternWorker;
+
+    @BeforeEach
+    public void setupBeforeEach() {
         Camera creasePatternCamera = new Camera();
         FileModel fileModel = new FileModel();
         ApplicationModel applicationModel = new ApplicationModel();
         CanvasModel canvasModel = new CanvasModel();
         GridModel gridModel = new GridModel();
         FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
-        CreasePattern_Worker mainCreasePatternWorker = new CreasePattern_Worker(creasePatternCamera,
-                canvasModel,
-                applicationModel,
-                gridModel,
-                foldedFigureModel,
-                fileModel,
-                null,
-                null);
-        FileSaveService fileSaveService = new FileSaveService(null,
-                creasePatternCamera,
-                mainCreasePatternWorker,
-                fileModel,
-                applicationModel,
-                canvasModel,
-                () -> {
+        mainCreasePatternWorker = new CreasePattern_Worker(creasePatternCamera, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, null, null);
+        ResetService resetService = () -> {};
+        fileSaveService = new FileSaveService(null, creasePatternCamera, mainCreasePatternWorker, fileModel, applicationModel, canvasModel, resetService, null);
+    }
 
-                },
-                null);
-        File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("save0011.ori")).toURI());
+    @ParameterizedTest
+    @ValueSource(strings = {"save/save-0.0.11.ori", "save/save-0.0.12.ori"})
+    public void testSave(String filename) throws URISyntaxException {
+        File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource(filename)).toURI());
 
         try {
             fileSaveService.openFile(saveFile);
 
-            List<Circle> list = (List<Circle>) mainCreasePatternWorker.foldLineSet.getCircles();
+            FoldLineSet foldLineSet = mainCreasePatternWorker.foldLineSet;
+            List<Circle> list = (List<Circle>) foldLineSet.getCircles();
 
             Assertions.assertEquals(1, list.size(), "Excpected one circle");
 
@@ -76,18 +74,18 @@ public class SaveTest {
             Assertions.assertEquals(new Point(150.0, 100.0), lineSegment2.getA());
             Assertions.assertEquals(new Point(-150.0, 100.0), lineSegment2.getB());
 
-            Assertions.assertEquals(8, mainCreasePatternWorker.foldLineSet.getTotal());
+            Assertions.assertEquals(8, foldLineSet.getTotal());
 
-            LineSegment mountainLineSegment = mainCreasePatternWorker.foldLineSet.get(5);
+            LineSegment mountainLineSegment = foldLineSet.get(5);
             Assertions.assertEquals(LineColor.RED_1, mountainLineSegment.getColor());
 
-            LineSegment valleyLineSegment = mainCreasePatternWorker.foldLineSet.get(6);
+            LineSegment valleyLineSegment = foldLineSet.get(6);
             Assertions.assertEquals(LineColor.BLUE_2, valleyLineSegment.getColor());
 
-            LineSegment edgeLineSegment = mainCreasePatternWorker.foldLineSet.get(7);
+            LineSegment edgeLineSegment = foldLineSet.get(7);
             Assertions.assertEquals(LineColor.BLACK_0, edgeLineSegment.getColor());
 
-            LineSegment auxLineSegment = mainCreasePatternWorker.foldLineSet.get(8);
+            LineSegment auxLineSegment = foldLineSet.get(8);
             Assertions.assertEquals(LineColor.CYAN_3, auxLineSegment.getColor());
         } catch (FileReadingException e) {
             Assertions.fail(e);

@@ -37,13 +37,19 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.8.1</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.github.origin-energy</groupId>
             <artifactId>java-snapshot-testing-junit5</artifactId>
             <version>${snapshot-test.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -77,6 +83,7 @@
         <jackson.version>2.12.5</jackson.version>
         <dagger.version>2.40</dagger.version>
         <snapshot-test.version>3.2.5</snapshot-test.version>
+        <junit.version>5.8.1</junit.version>
     </properties>
 
     <build>

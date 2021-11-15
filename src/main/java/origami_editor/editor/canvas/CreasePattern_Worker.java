@@ -13,7 +13,8 @@ import origami.crease_pattern.element.*;
 import origami_editor.editor.Colors;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.Save;
+import origami_editor.editor.save.Save;
+import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.tools.DrawingUtil;
 import origami_editor.editor.task.CheckCAMVTask;
@@ -217,7 +218,7 @@ public class CreasePattern_Worker {
         tempFoldLineSet.move(addx, addy);//全体を移動する
 
         int total_old = foldLineSet.getTotal();
-        Save save = new Save();
+        Save save = new SaveV1();
         tempFoldLineSet.getSave(save);
         foldLineSet.addSave(save);
         int total_new = foldLineSet.getTotal();
@@ -260,14 +261,14 @@ public class CreasePattern_Worker {
     }
 
     public LineSegmentSet get() {
-        Save save = new Save();
+        Save save = new SaveV1();
         foldLineSet.getSave(save);
         lineSegmentSet.setSave(save);
         return lineSegmentSet;
     }
 
     public LineSegmentSet getForFolding() {
-        Save save = new Save();
+        Save save = new SaveV1();
         foldLineSet.getMemo_for_folding(save);
         lineSegmentSet.setSave(save);
         return lineSegmentSet;
@@ -279,7 +280,7 @@ public class CreasePattern_Worker {
     }
 
     public LineSegmentSet getForSelectFolding() {//selectした折線で折り畳み推定をする。
-        Save save = new Save();
+        Save save = new SaveV1();
         foldLineSet.getSaveForSelectFolding(save);
         lineSegmentSet.setSave(save);
         return lineSegmentSet;
@@ -297,21 +298,21 @@ public class CreasePattern_Worker {
     }
 
     public Save getSave(String title) {
-        Save save_temp = new Save();
+        Save save_temp = new SaveV1();
         foldLineSet.getSave(save_temp, title);
 
         saveAdditionalInformation(save_temp);
         return save_temp;
     }
 
-    public Save h_getSave() {
-        Save save = new Save();
+    public SaveV1 h_getSave() {
+        SaveV1 save = new SaveV1();
         auxLines.h_getSave(save);
         return save;
     }
 
-    public Save getSave_for_export() {
-        Save save = new Save();
+    public SaveV1 getSave_for_export() {
+        SaveV1 save = new SaveV1();
         foldLineSet.getSave(save);
         auxLines.h_getSave(save);
         saveAdditionalInformation(save);
@@ -319,8 +320,8 @@ public class CreasePattern_Worker {
         return save;
     }
 
-    public Save getSave_for_export_with_applicationModel() {
-        Save save = getSave_for_export();
+    public SaveV1 getSave_for_export_with_applicationModel() {
+        SaveV1 save = getSave_for_export();
 
         save.setApplicationModel(applicationModel);
 

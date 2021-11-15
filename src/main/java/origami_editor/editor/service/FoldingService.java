@@ -6,7 +6,8 @@ import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
 import origami.folding.FoldedFigure;
-import origami_editor.editor.Save;
+import origami_editor.editor.save.Save;
+import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
@@ -72,7 +73,7 @@ public class FoldingService {
             //
             if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
                 CreasePattern_Worker creasePatternWorker2 = backupCreasePatternWorker;
-                Save save = new Save();
+                Save save = new SaveV1();
                 mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
                 creasePatternWorker2.setSave_for_reading(save);
                 creasePatternWorker2.point_removal();
