@@ -2,11 +2,9 @@ package origami_editor.editor.databinding;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import origami_editor.graphic2d.grid.Grid;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 
-import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
@@ -23,7 +21,7 @@ public class GridModel implements Serializable {
     private double gridYB;
     private double gridYC;
     private double gridAngle;
-    private Grid.State baseState;
+    private State baseState;
     private int verticalScalePosition;
     private int horizontalScalePosition;
 
@@ -42,7 +40,7 @@ public class GridModel implements Serializable {
 
     public void reset() {
         gridSize = 8;
-        baseState = Grid.State.WITHIN_PAPER;
+        baseState = State.WITHIN_PAPER;
 
         gridAngle = 90.0;
 
@@ -57,12 +55,12 @@ public class GridModel implements Serializable {
         this.pcs.firePropertyChange(null, null, null);
     }
 
-    public Grid.State getBaseState() {
+    public State getBaseState() {
         return baseState;
     }
 
-    public void setBaseState(Grid.State newBaseState) {
-        Grid.State oldBaseState = this.baseState;
+    public void setBaseState(State newBaseState) {
+        State oldBaseState = this.baseState;
         this.baseState = newBaseState;
         this.pcs.firePropertyChange("baseState", oldBaseState, newBaseState);
     }
@@ -302,5 +300,47 @@ public class GridModel implements Serializable {
         horizontalScalePosition = gridModel.getHorizontalScalePosition();
 
         this.pcs.firePropertyChange(null, null, null);
+    }
+
+    /**
+     * The state of the grid, either within the paper, spanning the whole screen or hidden.
+     */
+    public enum State {
+        HIDDEN(0),
+        WITHIN_PAPER(1),
+        FULL(2);
+
+        int state;
+
+        State(int state) {
+            this.state = state;
+        }
+
+        public static State from(String state) {
+            return from(Integer.parseInt(state));
+        }
+
+        public static State from(int state) {
+            for (State val : State.values()) {
+                if (val.getState() == state) {
+                    return val;
+                }
+            }
+
+            throw new IllegalArgumentException();
+        }
+
+        public State advance() {
+            return .values()[(ordinal() + 1) % values().length];
+        }
+
+        public int getState() {
+            return state;
+        }
+
+        @Override
+        public String toString() {
+            return Integer.toString(state);
+        }
     }
 }

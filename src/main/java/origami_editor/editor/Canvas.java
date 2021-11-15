@@ -12,10 +12,11 @@ import origami_editor.editor.canvas.MouseModeHandler;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami.folding.FoldedFigure;
 import origami.crease_pattern.element.Point;
+import origami_editor.editor.drawing.tools.Background_camera;
 import origami_editor.editor.export.Svg;
 import origami_editor.editor.service.FoldedFigureCanvasSelectService;
 import origami_editor.editor.task.TaskExecutor;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

@@ -9,7 +9,7 @@ import origami.folding.FoldedFigure;
 import origami_editor.editor.Save;
 import origami_editor.editor.Colors;
 import origami_editor.editor.undo_box.HistoryState;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 
 import java.awt.*;
 

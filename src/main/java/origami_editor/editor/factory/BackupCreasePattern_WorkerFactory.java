@@ -4,7 +4,7 @@ import dagger.Module;
 import dagger.Provides;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.*;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

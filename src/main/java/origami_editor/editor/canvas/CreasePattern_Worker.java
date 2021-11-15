@@ -15,11 +15,12 @@ import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.Save;
 import origami_editor.editor.databinding.*;
+import origami_editor.editor.drawing.tools.DrawingUtil;
 import origami_editor.editor.task.CheckCAMVTask;
 import origami_editor.editor.task.FinishedFuture;
 import origami_editor.editor.undo_box.HistoryState;
-import origami_editor.graphic2d.grid.Grid;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.Grid;
+import origami_editor.editor.drawing.tools.Camera;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -665,7 +666,7 @@ public class CreasePattern_Worker {
             t1.set(t3);
         }
 
-        if (grid.getBaseState() == Grid.State.HIDDEN) {
+        if (grid.getBaseState() == GridModel.State.HIDDEN) {
             return t1;
         }
 

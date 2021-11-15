@@ -1,4 +1,4 @@
-package origami_editor.graphic2d.grid;
+package origami_editor.editor.drawing;
 
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.GridModel;
@@ -6,7 +6,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 
 import java.awt.*;
 
@@ -38,7 +38,7 @@ public class Grid {
     double diagonal_max = 1.0;//The longer diagonal of the unit cell
     double diagonal_min = 1.0;//The shorter diagonal of the unit cell
 
-    State baseState = State.WITHIN_PAPER;//Base (grid) status = 0 is invalid for the whole area, but only the grid width is valid since it is used to set the radius of attraction to the existing endpoint, status = 1 is valid only within the paper, and status = 2 is valid for the whole area.
+    GridModel.State baseState = GridModel.State.WITHIN_PAPER;//Base (grid) status = 0 is invalid for the whole area, but only the grid width is valid since it is used to set the radius of attraction to the existing endpoint, status = 1 is valid only within the paper, and status = 2 is valid for the whole area.
 
     //用紙の分割なしならgrid_zahyou[0から1]なのでgrid_bunkatu_suuは１、gridSize
     //用紙の2分割ならgrid_zahyou[0,1,2]なのでgrid_bunkatu_suuは2、
@@ -131,24 +131,24 @@ public class Grid {
     }
 
     private void resetGrid() {
-        if (baseState == State.WITHIN_PAPER) {
+        if (baseState == GridModel.State.WITHIN_PAPER) {
             if (Math.abs(aGridLength - 1.0) > Epsilon.UNKNOWN_1EN6) {
-                setBaseState(State.FULL);
+                setBaseState(GridModel.State.FULL);
             }
             if (Math.abs(bGridLength - 1.0) > Epsilon.UNKNOWN_1EN6) {
-                setBaseState(State.FULL);
+                setBaseState(GridModel.State.FULL);
             }
             if (Math.abs(gridAngle - (-90.0)) > Epsilon.UNKNOWN_1EN6) {
-                setBaseState(State.FULL);
+                setBaseState(GridModel.State.FULL);
             }
         }
     }
 
-    public State getBaseState() {
+    public GridModel.State getBaseState() {
         return baseState;
     }
 
-    public void setBaseState(State i) {
+    public void setBaseState(GridModel.State i) {
         baseState = i;
 
         resetGrid();
@@ -289,7 +289,7 @@ public class Grid {
         //格子線の描画
         g2.setStroke(new BasicStroke((float) gridLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状
 
-        if (baseState == State.HIDDEN) {
+        if (baseState == GridModel.State.HIDDEN) {
             return;
         }
 
@@ -309,7 +309,7 @@ public class Grid {
         int grid_screen_b_min = get_b_index_min(p_a, p_b, p_c, p_d);
 
         //-------------------------------------
-        if (baseState == State.WITHIN_PAPER) {
+        if (baseState == GridModel.State.WITHIN_PAPER) {
             int grid_yousi_x_max = getGridSize();
             int grid_yousi_x_min = 0;
             int grid_yousi_y_max = getGridSize();
@@ -401,7 +401,7 @@ public class Grid {
             return t2;
         }
 
-        if (baseState == State.HIDDEN) {
+        if (baseState == GridModel.State.HIDDEN) {
             return t2;
         }
 
@@ -420,7 +420,7 @@ public class Grid {
             for (int j = grid_b_min; j <= grid_b_max; j++) {
                 Point t_tmp = new Point(okx0 + d_grid_ax * i + d_grid_bx * j, oky0 + d_grid_ay * i + d_grid_by * j);
 
-                if (baseState == State.FULL || (baseState == State.WITHIN_PAPER && isWithinPaper(t_tmp))) {
+                if (baseState == GridModel.State.FULL || (baseState == GridModel.State.WITHIN_PAPER && isWithinPaper(t_tmp))) {
                     if (t0.distance(t_tmp) <= distance_min) {
                         distance_min = t0.distance(t_tmp);
                         t2.set(t_tmp);
@@ -450,47 +450,5 @@ public class Grid {
         setHorizontalScaleInterval(gridModel.getIntervalGridSize());
         setVerticalScaleInterval(gridModel.getIntervalGridSize());
         setBaseState(gridModel.getBaseState());
-    }
-
-    /**
-     * The state of the grid, either within the paper, spanning the whole screen or hidden.
-     */
-    public enum State {
-        HIDDEN(0),
-        WITHIN_PAPER(1),
-        FULL(2);
-
-        int state;
-
-        State(int state) {
-            this.state = state;
-        }
-
-        public static State from(String state) {
-            return from(Integer.parseInt(state));
-        }
-
-        public static State from(int state) {
-            for (State val : State.values()) {
-                if (val.getState() == state) {
-                    return val;
-                }
-            }
-
-            throw new IllegalArgumentException();
-        }
-
-        public State advance() {
-            return values()[(ordinal() + 1) % values().length];
-        }
-
-        public int getState() {
-            return state;
-        }
-
-        @Override
-        public String toString() {
-            return Integer.toString(state);
-        }
     }
 }

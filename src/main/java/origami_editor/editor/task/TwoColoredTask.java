@@ -7,7 +7,7 @@ import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.service.FoldingService;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 
 public class TwoColoredTask implements Runnable{
     private final BulletinBoard bulletinBoard;

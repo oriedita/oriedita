@@ -9,7 +9,7 @@ import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFiguresList;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.service.FoldedFigureCanvasSelectService;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 
 @Singleton
 public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {

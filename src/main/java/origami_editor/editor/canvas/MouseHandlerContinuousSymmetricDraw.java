@@ -7,7 +7,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.canvas.drawing_worker_toolbox.Drawing_Worker_Toolbox;
+import origami_editor.editor.canvas.drawing_worker_toolbox.CreasePattern_Worker_Toolbox;
 import origami.folding.util.SortingBox;
 import origami_editor.editor.databinding.CanvasModel;
 
@@ -15,7 +15,7 @@ import origami_editor.editor.databinding.CanvasModel;
 public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRestricted {
     private final CreasePattern_Worker d;
     private final CanvasModel canvasModel;
-    Drawing_Worker_Toolbox e_s_dougubako;
+    CreasePattern_Worker_Toolbox e_s_dougubako;
 
     @Override
     public MouseMode getMouseMode() {
@@ -58,7 +58,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
     public MouseHandlerContinuousSymmetricDraw(CreasePattern_Worker d, CanvasModel canvasModel) {
         this.d = d;
         this.canvasModel = canvasModel;
-        this.e_s_dougubako = new Drawing_Worker_Toolbox(d.foldLineSet);
+        this.e_s_dougubako = new CreasePattern_Worker_Toolbox(d.foldLineSet);
     }
 
     public void continuous_folding_new(Point a, Point b) {//An improved version of continuous folding.

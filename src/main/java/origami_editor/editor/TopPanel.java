@@ -10,6 +10,7 @@ import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
+import origami_editor.editor.drawing.tools.Background_camera;
 import origami_editor.editor.service.ButtonService;
 import origami_editor.editor.service.FileSaveService;
 

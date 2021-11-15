@@ -7,7 +7,7 @@ import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami.folding.FoldedFigure;
 import origami_editor.editor.folded_figure.FoldedFigure_01;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 
 import java.awt.*;
 

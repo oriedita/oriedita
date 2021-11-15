@@ -13,10 +13,9 @@ import origami.folding.util.SortingBox;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.databinding.FoldedFiguresList;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 import origami_editor.tools.StringOp;
 
-import javax.swing.*;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;

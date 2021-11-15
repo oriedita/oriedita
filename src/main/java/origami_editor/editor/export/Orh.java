@@ -9,8 +9,7 @@ import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.databinding.GridModel;
-import origami_editor.graphic2d.grid.Grid;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 import origami_editor.tools.StringOp;
 
 import java.awt.*;
@@ -218,7 +217,7 @@ public class Orh {
 
                 switch (m.group(1)) {
                     case "i_kitei_jyoutai":
-                        gridModel.setBaseState(Grid.State.from(m.group(2)));
+                        gridModel.setBaseState(GridModel.State.from(m.group(2)));
                         break;
                     case "nyuuryoku_kitei":
                         gridModel.setGridSize(StringOp.String2int(m.group(2), gridModel.getGridSize()));

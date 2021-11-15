@@ -15,7 +15,7 @@ import origami_editor.editor.folded_figure.FoldedFigure_01;
 import origami_editor.editor.task.FoldingEstimateTask;
 import origami_editor.editor.task.TaskExecutor;
 import origami_editor.editor.task.TwoColoredTask;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 
 import javax.inject.Singleton;
 import javax.swing.*;

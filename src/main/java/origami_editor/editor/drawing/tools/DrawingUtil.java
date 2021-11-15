@@ -1,4 +1,4 @@
-package origami_editor.editor.canvas;
+package origami_editor.editor.drawing.tools;
 
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
@@ -8,7 +8,7 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.Colors;
 import origami_editor.editor.LineStyle;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;

@@ -7,7 +7,7 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.databinding.FoldedFiguresList;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 
 @Singleton
 public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
