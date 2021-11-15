@@ -75,7 +75,7 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jackson.version>2.12.5</jackson.version>
-        <dagger.version>2.40</dagger.version>
+        <dagger.version>2.40.1</dagger.version>
         <snapshot-test.version>3.2.5</snapshot-test.version>
     </properties>
 
