@@ -116,11 +116,11 @@ public class CreasePattern_Worker {
         this.foldedFigureModel = foldedFigureModel;
         this.fileModel = fileModel;
 
-        applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));
-        gridModel.addPropertyChangeListener(e -> setGridConfigurationData(gridModel));
-        angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
-        internalDivisionRatioModel.addPropertyChangeListener(e -> setData(internalDivisionRatioModel));
-        canvasModel.addPropertyChangeListener(e -> setData(canvasModel));
+        if (applicationModel != null) applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));
+        if (gridModel != null) gridModel.addPropertyChangeListener(e -> setGridConfigurationData(gridModel));
+        if (angleSystemModel != null) angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
+        if (internalDivisionRatioModel != null) internalDivisionRatioModel.addPropertyChangeListener(e -> setData(internalDivisionRatioModel));
+        if (canvasModel != null) canvasModel.addPropertyChangeListener(e -> setData(canvasModel));
 
         lineColor = LineColor.BLACK_0;
 
@@ -614,7 +614,7 @@ public class CreasePattern_Worker {
     }
 
     public void addCircle(Circle e0) {
-        addCircle(e0.getX(), e0.getY(), e0.getRadius(), e0.getColor());
+        addCircle(e0.getX(), e0.getY(), e0.getR(), e0.getColor());
     }
 
     public void addCircle(Point t0, double dr, LineColor ic) {
@@ -636,6 +636,10 @@ public class CreasePattern_Worker {
         foldLineSet.applyCircleCircleIntersection(imin, imax, jmin, jmax);
         foldLineSet.applyLineSegmentCircleIntersection(1, foldLineSet.getTotal(), jmin, jmax);
 
+    }
+
+    public FoldLineSet getAuxFoldLineSet() {
+        return auxLines;
     }
 
     public void addLineSegment_auxiliary(LineSegment s0) {

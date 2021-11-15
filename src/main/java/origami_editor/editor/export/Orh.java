@@ -609,7 +609,7 @@ public class Orh {
                 pw.println("番号," + index++);
                 Circle e_temp = new Circle();
                 e_temp.set(circle);
-                pw.println("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
+                pw.println("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getR() + "," + e_temp.getColor());
 
                 pw.println("<tpp>" + e_temp.getCustomized() + "</tpp>");
                 pw.println("<tpp_color_R>" + e_temp.getCustomizedColor().getRed() + "</tpp_color_R>");

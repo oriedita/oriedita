@@ -1,6 +1,7 @@
 package origami_editor.editor;
 
 import com.formdev.flatlaf.FlatLaf;
+import origami_editor.editor.exception.FileReadingException;
 import origami_editor.editor.factory.AppFactory;
 import origami_editor.editor.factory.DaggerAppFactory;
 
@@ -27,7 +28,11 @@ public class OrigamiEditor {
 
             if (argv.length == 1) {
                 // We got a file
-                build.fileSaveService().openFile(new File(argv[0]));
+                try {
+                    build.fileSaveService().openFile(new File(argv[0]));
+                } catch (FileReadingException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

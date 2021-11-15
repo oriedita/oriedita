@@ -227,6 +227,7 @@ public class FoldLineSet {
 
     public void setAuxSave(LineSegmentSave save) {
         lineSegments.addAll(save.getAuxLineSegments());
+        total = lineSegments.size() - 1;
     }
 
     public void addSave(LineSegmentSave memo1) {
@@ -1644,23 +1645,23 @@ public class FoldLineSet {
         for (int i = imin; i <= imax; i++) {
             Circle ei = new Circle();
             ei.set(circles.get(i));
-            if (ei.getRadius() > Epsilon.UNKNOWN_1EN7) {//Circles with a radius of 0 are not applicable
+            if (ei.getR() > Epsilon.UNKNOWN_1EN7) {//Circles with a radius of 0 are not applicable
                 for (int j = jmin; j <= jmax; j++) {
 
                     Circle ej = new Circle();
                     ej.set(circles.get(j));
-                    if (ej.getRadius() > Epsilon.UNKNOWN_1EN7) {//Circles with a radius of 0 are not applicable
+                    if (ej.getR() > Epsilon.UNKNOWN_1EN7) {//Circles with a radius of 0 are not applicable
                         if (OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) < Epsilon.UNKNOWN_1EN6) {
                             //Two circles are concentric and do not intersect
-                        } else if (Math.abs(OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) - ei.getRadius() - ej.getRadius()) < Epsilon.UNKNOWN_1EN4) {
+                        } else if (Math.abs(OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) - ei.getR() - ej.getR()) < Epsilon.UNKNOWN_1EN4) {
                             //Two circles intersect at one point
-                            addCircle(OritaCalc.internalDivisionRatio(ei.determineCenter(), ej.determineCenter(), ei.getRadius(), ej.getRadius()), 0.0);
-                        } else if (OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) > ei.getRadius() + ej.getRadius()) {
+                            addCircle(OritaCalc.internalDivisionRatio(ei.determineCenter(), ej.determineCenter(), ei.getR(), ej.getR()), 0.0);
+                        } else if (OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) > ei.getR() + ej.getR()) {
                             //Two circles do not intersect
-                        } else if (Math.abs(OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) - Math.abs(ei.getRadius() - ej.getRadius())) < Epsilon.UNKNOWN_1EN4) {
+                        } else if (Math.abs(OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) - Math.abs(ei.getR() - ej.getR())) < Epsilon.UNKNOWN_1EN4) {
                             //Two circles intersect at one point
-                            addCircle(OritaCalc.internalDivisionRatio(ei.determineCenter(), ej.determineCenter(), -ei.getRadius(), ej.getRadius()), 0.0);
-                        } else if (OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) < Math.abs(ei.getRadius() - ej.getRadius())) {
+                            addCircle(OritaCalc.internalDivisionRatio(ei.determineCenter(), ej.determineCenter(), -ei.getR(), ej.getR()), 0.0);
+                        } else if (OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) < Math.abs(ei.getR() - ej.getR())) {
                             //Two circles do not intersect
                         } else {//Two circles intersect at two points
                             LineSegment lineSegment = new LineSegment();
@@ -1686,14 +1687,14 @@ public class FoldLineSet {
 
                 Circle ej = new Circle();
                 ej.set(circles.get(j));
-                if (ej.getRadius() > Epsilon.UNKNOWN_1EN7) {//Circles with a radius of 0 are not applicable
+                if (ej.getR() > Epsilon.UNKNOWN_1EN7) {//Circles with a radius of 0 are not applicable
                     double tc_kyori = ti.calculateDistance(ej.determineCenter()); //Distance between the center of a straight line and a circle
 
-                    if (Math.abs(tc_kyori - ej.getRadius()) < Epsilon.UNKNOWN_1EN6) {//Circle and straight line intersect at one point
-                        if (Math.abs(OritaCalc.determineLineSegmentDistance(ej.determineCenter(), si) - ej.getRadius()) < Epsilon.UNKNOWN_1EN6) {
+                    if (Math.abs(tc_kyori - ej.getR()) < Epsilon.UNKNOWN_1EN6) {//Circle and straight line intersect at one point
+                        if (Math.abs(OritaCalc.determineLineSegmentDistance(ej.determineCenter(), si) - ej.getR()) < Epsilon.UNKNOWN_1EN6) {
                             addCircle(OritaCalc.findProjection(ti, ej.determineCenter()), 0.0);
                         }
-                    } else if (tc_kyori > ej.getRadius()) {
+                    } else if (tc_kyori > ej.getR()) {
                         //Circles and straight lines do not intersect
                     } else {//Circle and straight line intersect at two points
                         LineSegment k_senb = new LineSegment();
@@ -1757,7 +1758,7 @@ public class FoldLineSet {
         // = 10000 5th digit number. The number of i-th circles with a radius of 0 that overlaps with other auxiliary hot lines. When it overlaps with two or more, it is displayed as 2.
         Circle e_temp = new Circle();
         e_temp.set(circles.get(i0));
-        double er_0 = e_temp.getRadius();
+        double er_0 = e_temp.getR();
         Point ec_0 = new Point();
         ec_0.set(e_temp.determineCenter());
 
@@ -1774,7 +1775,7 @@ public class FoldLineSet {
             for (int i = 0; i < circles.size(); i++) {
                 if (i != i0) {
                     e_temp.set(circles.get(i));
-                    er_1 = e_temp.getRadius();
+                    er_1 = e_temp.getR();
                     ec_1.set(e_temp.determineCenter());
                     if (er_1 < Epsilon.UNKNOWN_1EN7) {//The radius of the other circle is 0
                         if (ec_0.distance(ec_1) < Epsilon.UNKNOWN_1EN7) {
@@ -2000,7 +2001,7 @@ public class FoldLineSet {
                 minrid = i;
             }
 
-            rtemp = Math.abs(p.distance(e_temp.determineCenter()) - e_temp.getRadius());
+            rtemp = Math.abs(p.distance(e_temp.determineCenter()) - e_temp.getR());
             if (minr >= rtemp) {
                 minr = rtemp;
                 minrid = i;
@@ -2024,7 +2025,7 @@ public class FoldLineSet {
                 minr = rtemp;
             }
 
-            rtemp = Math.abs(p.distance(e_temp.determineCenter()) - e_temp.getRadius());
+            rtemp = Math.abs(p.distance(e_temp.determineCenter()) - e_temp.getR());
             if (minr > rtemp) {
                 minr = rtemp;
             }

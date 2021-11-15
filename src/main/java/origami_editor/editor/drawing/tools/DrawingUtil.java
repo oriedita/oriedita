@@ -8,7 +8,6 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.Colors;
 import origami_editor.editor.LineStyle;
-import origami_editor.editor.drawing.tools.Camera;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -213,7 +212,7 @@ public class DrawingUtil {
         }
 
         //円周の描画
-        double d_width = circle.getRadius() * camera.getCameraZoomX();//d_habaは描画時の円の半径。なお、camera.get_camera_bairitsu_x()＝camera.get_camera_bairitsu_y()を前提としている。
+        double d_width = circle.getR() * camera.getCameraZoomX();//d_habaは描画時の円の半径。なお、camera.get_camera_bairitsu_x()＝camera.get_camera_bairitsu_y()を前提としている。
         g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
         a.set(camera.object2TV(circle.determineCenter()));//この場合のaは描画座標系での円の中心の位置
@@ -360,7 +359,7 @@ public class DrawingUtil {
         a.set(camera.object2TV(c.determineCenter()));//この場合のs_tvは描画座標系での円の中心の位置
         a.set(a.getX() + Epsilon.UNKNOWN_1EN6, a.getY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
-        double d_width = c.getRadius() * camera.getCameraZoomX();//d_habaは描画時の円の半径。なお、camera.get_camera_bairitsu_x()＝camera.get_camera_bairitsu_y()を前提としている。
+        double d_width = c.getR() * camera.getCameraZoomX();//d_habaは描画時の円の半径。なお、camera.get_camera_bairitsu_x()＝camera.get_camera_bairitsu_y()を前提としている。
 
         g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
     }

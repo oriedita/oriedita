@@ -266,16 +266,16 @@ public class Polygon {
         LineSegment s = new LineSegment();
         for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]); //線分
-            if (OritaCalc.determineLineSegmentDistance(c.determineCenter(), s) <= c.getRadius()) {
-                if ((OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getRadius()) || (OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getRadius())) {
+            if (OritaCalc.determineLineSegmentDistance(c.determineCenter(), s) <= c.getR()) {
+                if ((OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getR()) || (OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getR())) {
                     return true;
                 }
             }
         }
 
         s.set(vertices[vertexCount], vertices[1]); //線分
-        if (OritaCalc.determineLineSegmentDistance(c.determineCenter(), s) <= c.getRadius()) {
-            if ((OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getRadius()) || (OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getRadius())) {
+        if (OritaCalc.determineLineSegmentDistance(c.determineCenter(), s) <= c.getR()) {
+            if ((OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getR()) || (OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getR())) {
                 return true;
             }
         }

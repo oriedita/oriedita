@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.*;
+import origami_editor.editor.exception.FileReadingException;
 import origami_editor.editor.service.ButtonService;
 import origami_editor.editor.service.FileSaveService;
 import origami_editor.editor.service.ResetService;
@@ -155,7 +156,12 @@ public class AppMenuBar extends JMenuBar {
         importAddButton.addActionListener(e -> {
             System.out.println("readFile2Memo() 開始");
             File file = fileSaveService.selectImportFile();
-            Save save = fileSaveService.readImportFile(file);
+            Save save = null;
+            try {
+                save = fileSaveService.readImportFile(file);
+            } catch (FileReadingException ex) {
+                ex.printStackTrace();
+            }
             System.out.println("readFile2Memo() 終了");
 
             if (save != null) {
@@ -394,7 +400,13 @@ public class AppMenuBar extends JMenuBar {
         }
         for (File recentFile : applicationModel.getRecentFileList()) {
             JMenuItem recentFileMenuItem = new JMenuItem(recentFile.getName());
-            recentFileMenuItem.addActionListener(e -> fileSaveService.openFile(recentFile));
+            recentFileMenuItem.addActionListener(e -> {
+                try {
+                    fileSaveService.openFile(recentFile);
+                } catch (FileReadingException ex) {
+                    ex.printStackTrace();
+                }
+            });
             openRecentMenu.add(recentFileMenuItem);
         }
         openRecentMenu.addSeparator();
