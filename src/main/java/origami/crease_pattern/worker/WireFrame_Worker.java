@@ -7,12 +7,14 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami.data.ListArray;
 import origami.data.quadTree.QuadTree;
+import origami.data.quadTree.adapter.InitialAdapter;
 import origami.data.quadTree.adapter.PointSetFaceAdapter;
+import origami.data.quadTree.adapter.PointSetPointAdapter;
+import origami.data.quadTree.collector.PointCollector;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.PointSet;
 
 import java.util.*;
-import java.util.List;
 
 public class WireFrame_Worker {
     //This crease pattern craftsman class has only one PointStore c as a crease pattern.
@@ -106,11 +108,13 @@ public class WireFrame_Worker {
         // If the point it is included in the face im
         // Find where to move when the crease pattern is folded by moving the face im.
 
+        QuadTree qt = new QuadTree(new PointSetFaceAdapter(pointSet));
         System.out.println("折ったときの点の位置を求める（開始）");
         for (int it = 1; it <= this.pointSet.getNumPoints(); it++) {
             tnew[it].reset();
-            for (int im = 1; im <= this.pointSet.getNumFaces(); im++) {
-                if (this.pointSet.pointInFaceBorder(im, it)) {//c.Ten_moti_hantei returns 1 if the boundary of Face [im] contains Point [it], 0 if it does not.
+            for (int im : qt.collect(new PointCollector(pointSet.getPoint(it)))) {
+                im++; // qt is 0-based
+                if (pointSet.pointInFaceBorder(im, it)) {//c.Ten_moti_hantei returns 1 if the boundary of Face [im] contains Point [it], 0 if it does not.
                     tnew[it].addPoint(fold_movement(it, im));
                     pointSet.setPoint(it, tnew[it].getAveragePoint());
                 }
@@ -205,95 +209,89 @@ public class WireFrame_Worker {
     }
 
     public void setLineSegmentSet(LineSegmentSet lineSegmentSet) throws InterruptedException {
-        Point ti;
         reset();
 
-        //First, define a point in PointSet.
-        System.out.println("線分集合->点集合：点集合内で点の定義");
-        boolean flag1;
-        double x, y;
+        //First, define the points in PointSet.
+        definePointSet(lineSegmentSet);
 
-        double[] addPointX = new double[lineSegmentSet.getNumLineSegments() + 1 + 1]; // If you do not add +1 you will get an error when the number of faces is 1.
-        double[] addPointY = new double[lineSegmentSet.getNumLineSegments() + 1 + 1]; // If you do not add +1 you will get an error when the number of faces is 1.
-        int addPointNum = 0;
+        //Next, define the lines in PointSet.
+        defineLines(lineSegmentSet);
+        
+        //Then generate a surface within PointSet.
+        pointSet.FaceOccurrence();
+    }
+
+    private void definePointSet(LineSegmentSet lineSegmentSet) throws InterruptedException {
+        System.out.println("線分集合->点集合：点集合内で点の定義");
+        boolean found;
+        Point ti;
+
+        InitialAdapter adapter = new InitialAdapter(lineSegmentSet);
+        QuadTree qt = new QuadTree(adapter);
 
         for (int i = 0; i < lineSegmentSet.getNumLineSegments(); i++) {
-            flag1 = false;
+            found = false;
             ti = lineSegmentSet.getA(i);
-            x = ti.getX();
-            y = ti.getY();
-
-            for (int j = 1; j <= addPointNum; j++) {
-                if (OritaCalc.equal(ti, new Point(addPointX[j], addPointY[j]))) {
-                    flag1 = true;
-                }
+            for (int j : qt.collect(new PointCollector(ti))) {
+                if (OritaCalc.equal(ti, adapter.get(j))) found = true;
+            }
+            if (!found) {
+                adapter.add(ti);
+                qt.grow(1);
             }
 
-            if (!flag1) {
-                addPointNum = addPointNum + 1;
-                addPointX[addPointNum] = x;
-                addPointY[addPointNum] = y;
-            }
-            flag1 = false;
+            found = false;
             ti = lineSegmentSet.getB(i);
-            x = ti.getX();
-            y = ti.getY();
-
-            for (int j = 1; j <= addPointNum; j++) {
-                if (OritaCalc.equal(ti, new Point(addPointX[j], addPointY[j]))) {
-                    flag1 = true;
-                }
+            for (int j : qt.collect(new PointCollector(ti))) {
+                if (OritaCalc.equal(ti, adapter.get(j))) found = true;
+            }
+            if (!found) {
+                adapter.add(ti);
+                qt.grow(1);
             }
 
-            if (!flag1) {
-                addPointNum = addPointNum + 1;
-                addPointX[addPointNum] = x;
-                addPointY[addPointNum] = y;
-            }
+            if (Thread.interrupted()) throw new InterruptedException();
         }
 
+        int addPointNum = adapter.getCount();
         System.out.print("点の全数　addPointNum＝　");
         System.out.println(addPointNum);
 
         configure(addPointNum, lineSegmentSet.getNumLineSegments(), lineSegmentSet.getNumLineSegments() - addPointNum + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
         pointSet.configure(addPointNum, lineSegmentSet.getNumLineSegments(), lineSegmentSet.getNumLineSegments() - addPointNum + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
 
-        for (int i = 1; i <= addPointNum; i++) {
-            pointSet.addPoint(addPointX[i], addPointY[i]);
+        for (int i = 0; i < addPointNum; i++) {
+            pointSet.addPoint(adapter.get(i));
         }
+    }
 
-        //Next, define a bar in PointSet.
+    private void defineLines(LineSegmentSet lineSegmentSet) throws InterruptedException {
         System.out.println("線分集合->点集合：点集合内で棒の定義");
 
-        List<Integer> ika2ic = new ArrayList<>();
-        List<Integer> ikb2ic = new ArrayList<>();
+        QuadTree qt = new QuadTree(new PointSetPointAdapter(pointSet));
         for (int n = 0; n < lineSegmentSet.getNumLineSegments(); n++) {
-            for (int i = 1; i <= pointSet.getNumPoints(); i++) {
+            int start = 0, end = 0;
+            for (int i : qt.collect(new PointCollector(lineSegmentSet.getA(n)))) {
+                i++; // qt is 0-based
                 if (OritaCalc.equal(lineSegmentSet.getA(n), pointSet.getPoint(i))) {
-                    ika2ic.add(i);
+                    start = i;
                     break;
                 }
             }
-            for (int i = 1; i <= pointSet.getNumPoints(); i++) {
+            for (int i : qt.collect(new PointCollector(lineSegmentSet.getB(n)))) {
+                i++; // qt is 0-based
                 if (OritaCalc.equal(lineSegmentSet.getB(n), pointSet.getPoint(i))) {
-                    ikb2ic.add(i);
+                    end = i;
                     break;
                 }
             }
-        }
+            pointSet.addLine(start, end, lineSegmentSet.getColor(n));
 
-        for (int n = 0; n < lineSegmentSet.getNumLineSegments(); n++) {
-            pointSet.addLine(ika2ic.get(n), ikb2ic.get(n), lineSegmentSet.getColor(n));
+            if (Thread.interrupted()) throw new InterruptedException();
         }
 
         System.out.print("棒の全数　＝　");
         System.out.println(pointSet.getNumLines());
-        //
-        System.out.println("線分集合->点集合：点集合内で面を発生　開始");
-        //Then generate a surface within PointSet.
-        pointSet.FaceOccurrence();
-
-        System.out.println("線分集合->点集合：点集合内で面を発生　終了");
     }
 
     /**

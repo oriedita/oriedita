@@ -3,7 +3,7 @@ package origami.data.quadTree.collector;
 import origami.crease_pattern.element.Point;
 import origami.data.quadTree.QuadTreeItem;
 import origami.data.quadTree.QuadTree.Node;
-import origami.data.quadTree.adapter.LineSegmentSetAdapter;
+import origami.data.quadTree.adapter.LineSegmentSetLineAdapter;
 import origami.data.quadTree.adapter.QuadTreeAdapter;
 
  /** Get all items that might partially contains the given line. */
@@ -12,7 +12,7 @@ public class LineSegmentCollector extends RecursiveCollector {
     private QuadTreeItem item;
 
     public LineSegmentCollector(Point p, Point q) {
-        this.item = LineSegmentSetAdapter.createItem(p, q);
+        this.item = LineSegmentSetLineAdapter.createItem(p, q);
     }
 
     @Override
