@@ -164,6 +164,7 @@ public class CreasePattern_Worker {
         auxLines.reset();
 
         historyState.reset();
+        auxHistoryState.reset();
 
         camera.reset();
         lineStep.clear();
