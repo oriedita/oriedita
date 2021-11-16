@@ -7,16 +7,15 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+/**
+ * Icon displaying a single Glyph, defined by the glyph field.
+ */
 public class GlyphIcon implements Icon, PropertyChangeListener {
     private final String glyph;
     private Color color;
 
     public GlyphIcon(String glyph, Color color) {
         this.glyph = glyph;
-        this.color = color;
-    }
-
-    public void setColor(Color color) {
         this.color = color;
     }
 
