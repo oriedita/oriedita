@@ -1,10 +1,18 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
+@Singleton
 public class MouseHandlerVertexDeleteOnCrease extends BaseMouseHandler {
+
+    @Inject
+    public MouseHandlerVertexDeleteOnCrease() {
+    }
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.VERTEX_DELETE_ON_CREASE_41;

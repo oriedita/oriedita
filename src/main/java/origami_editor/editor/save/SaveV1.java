@@ -1,22 +1,20 @@
-package origami_editor.editor;
+package origami_editor.editor.save;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami.data.save.LineSegmentSave;
-import origami.data.save.PointSave;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.databinding.GridModel;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Save implements LineSegmentSave, PointSave, Serializable {
-    private String version;
+@JsonTypeName("v1")
+public class SaveV1 implements Save{
     private List<LineSegment> lineSegments;
     private List<Circle> circles;
     private String title;
@@ -36,15 +34,7 @@ public class Save implements LineSegmentSave, PointSave, Serializable {
         this.applicationModel = applicationModel;
     }
 
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public Save() {
+    public SaveV1() {
         lineSegments = new ArrayList<>();
         circles = new ArrayList<>();
         points = new ArrayList<>();
@@ -167,7 +157,6 @@ public class Save implements LineSegmentSave, PointSave, Serializable {
 
     /**
      * Returns if this save contains lines which are not savable to a .cp file without losing information.
-     * @return
      */
     public boolean canSaveAsCp() {
         return circles.isEmpty() && auxLineSegments.isEmpty();

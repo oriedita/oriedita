@@ -23,7 +23,7 @@ public class Circle implements Serializable {//Used to represent point coordinat
     public Circle(Circle c) {
         x = c.getX();
         y = c.getY();
-        r = c.getRadius();
+        r = c.getR();
         color = c.getColor();
         customized = c.getCustomized();
         customizedColor = c.getCustomizedColor();
@@ -53,7 +53,7 @@ public class Circle implements Serializable {//Used to represent point coordinat
     public void set(Circle e) {
         x = e.getX();
         y = e.getY();
-        r = e.getRadius();
+        r = e.getR();
         color = e.getColor();
         customized = e.getCustomized();
         customizedColor = e.getCustomizedColor();
@@ -106,7 +106,7 @@ public class Circle implements Serializable {//Used to represent point coordinat
         y = yy;
     }
 
-    public double getRadius() {
+    public double getR() {
         return r;
     }
 
@@ -141,10 +141,6 @@ public class Circle implements Serializable {//Used to represent point coordinat
         customizedColor = c0;
     }
 
-    public double getR() {
-        return r;
-    }
-
     public Point determineCenter() {
         return new Point(getX(), getY());
     }
@@ -172,8 +168,8 @@ public class Circle implements Serializable {//Used to represent point coordinat
         double x1 = e0.getX() - x;
         double y1 = e0.getY() - y;
         double d1 = Math.sqrt(x1 * x1 + y1 * y1);
-        double da1 = d1 - e0.getRadius();
-        double db1 = d1 + e0.getRadius();
+        double da1 = d1 - e0.getR();
+        double db1 = d1 + e0.getR();
 
         double xa1, ya1;
         double xa0, ya0;

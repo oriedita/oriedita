@@ -1,33 +1,34 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.databinding.CanvasModel;
 
+@Singleton
 public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     private final MouseHandlerCreaseMove4p mouseHandlerCreaseMove4p;
     private final MouseHandlerCreaseCopy4p mouseHandlerCreaseCopy4p;
     private final MouseHandlerCreaseCopy mouseHandlerCreaseCopy;
     private final MouseHandlerCreaseMove mouseHandlerCreaseMove;
     private final MouseHandlerDrawCreaseSymmetric mouseHandlerDrawCreaseSymmetric;
+    private final CreasePattern_Worker d;
 
-    public MouseHandlerCreaseSelect(CreasePattern_Worker d, CanvasModel canvasModel) {
-        mouseHandlerCreaseMove4p = new MouseHandlerCreaseMove4p(d, canvasModel);
-        mouseHandlerCreaseCopy = new MouseHandlerCreaseCopy(d, canvasModel);
-        mouseHandlerCreaseCopy4p = new MouseHandlerCreaseCopy4p(d, canvasModel);
-        mouseHandlerCreaseMove = new MouseHandlerCreaseMove(d, canvasModel);
-        mouseHandlerDrawCreaseSymmetric = new MouseHandlerDrawCreaseSymmetric(d, canvasModel);
-    }
-
-    @Override
-    public void setDrawingWorker(CreasePattern_Worker d) {
-        super.setDrawingWorker(d);
-        mouseHandlerCreaseMove4p.setDrawingWorker(d);
-        mouseHandlerCreaseCopy4p.setDrawingWorker(d);
-        mouseHandlerCreaseCopy.setDrawingWorker(d);
-        mouseHandlerCreaseMove.setDrawingWorker(d);
-        mouseHandlerDrawCreaseSymmetric.setDrawingWorker(d);
+    @Inject
+    public MouseHandlerCreaseSelect(
+            CreasePattern_Worker d,
+            MouseHandlerCreaseMove4p mouseHandlerCreaseMove4p,
+            MouseHandlerCreaseCopy4p mouseHandlerCreaseCopy4p,
+            MouseHandlerCreaseMove mouseHandlerCreaseMove,
+            MouseHandlerCreaseCopy mouseHandlerCreaseCopy,
+            MouseHandlerDrawCreaseSymmetric mouseHandlerDrawCreaseSymmetric) {
+        this.d = d;
+        this.mouseHandlerCreaseMove4p = mouseHandlerCreaseMove4p;
+        this.mouseHandlerCreaseCopy4p = mouseHandlerCreaseCopy4p;
+        this.mouseHandlerCreaseMove = mouseHandlerCreaseMove;
+        this.mouseHandlerCreaseCopy = mouseHandlerCreaseCopy;
+        this.mouseHandlerDrawCreaseSymmetric = mouseHandlerDrawCreaseSymmetric;
     }
 
     @Override

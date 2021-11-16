@@ -4,18 +4,17 @@ import origami.crease_pattern.FoldingException;
 import origami.folding.FoldedFigure;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
+import origami_editor.editor.databinding.FoldedFiguresList;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.service.FoldingService;
-
-import javax.swing.*;
 
 public class FoldingEstimateSpecificTask implements Runnable{
     private final FoldedFigureModel foldedFigureModel;
     private final FoldingService foldingService;
     private final CanvasModel canvasModel;
-    private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
+    private final FoldedFiguresList foldedFiguresList;
 
-    public FoldingEstimateSpecificTask(FoldedFigureModel foldedFigureModel, FoldingService foldingService, CanvasModel canvasModel, DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList) {
+    public FoldingEstimateSpecificTask(FoldedFigureModel foldedFigureModel, FoldingService foldingService, CanvasModel canvasModel, FoldedFiguresList foldedFiguresList) {
         this.foldedFigureModel = foldedFigureModel;
         this.foldingService = foldingService;
         this.canvasModel = canvasModel;
@@ -39,7 +38,7 @@ public class FoldingEstimateSpecificTask implements Runnable{
         try {
             while (objective > selectedFigure.foldedFigure.discovered_fold_cases) {
                 foldingService.folding_estimated(selectedFigure);
-                canvasModel.dirty();
+                canvasModel.markDirty();
 
                 selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
                 if (!selectedFigure.foldedFigure.findAnotherOverlapValid) {
@@ -55,6 +54,6 @@ public class FoldingEstimateSpecificTask implements Runnable{
         long L = stop - start;
         selectedFigure.foldedFigure.text_result = selectedFigure.foldedFigure.text_result + "     Computation time " + L + " msec.";
 
-        canvasModel.dirty();
+        canvasModel.markDirty();
     }
 }

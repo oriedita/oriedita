@@ -1,5 +1,7 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -8,6 +10,7 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.databinding.CanvasModel;
 
+@Singleton
 public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestricted {
     private final CreasePattern_Worker d;
     private final CanvasModel canvasModel;
@@ -17,6 +20,7 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
         return MouseMode.DRAW_CREASE_SYMMETRIC_12;
     }
 
+    @Inject
     public MouseHandlerDrawCreaseSymmetric(CreasePattern_Worker d, CanvasModel canvasModel) {
         this.d = d;
         this.canvasModel = canvasModel;

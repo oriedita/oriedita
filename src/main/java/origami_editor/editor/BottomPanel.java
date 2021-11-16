@@ -3,6 +3,9 @@ package origami_editor.editor;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import origami.folding.FoldedFigure;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.MouseHandlerModifyCalculatedShape;
@@ -26,7 +29,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 
-public class BottomPanel extends JPanel {
+@Singleton
+public class BottomPanel {
     private final ButtonService buttonService;
     private final MeasuresModel measuresModel;
     private final FoldedFigureModel foldedFigureModel;
@@ -53,7 +57,9 @@ public class BottomPanel extends JPanel {
     private UndoRedo undoRedo;
     private JComboBox<FoldedFigure_Drawer> foldedFigureBox;
 
-    public BottomPanel(ButtonService buttonService,
+    @Inject
+    public BottomPanel(@Named("mainFrame") JFrame frame,
+                       ButtonService buttonService,
                        MeasuresModel measuresModel,
                        CanvasModel canvasModel,
                        FoldedFigureModel foldedFigureModel,
@@ -61,7 +67,7 @@ public class BottomPanel extends JPanel {
                        CreasePattern_Worker mainCreasePatternWorker,
                        FoldingService foldingService,
                        ApplicationModel applicationModel,
-                       DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList,
+                       FoldedFiguresList foldedFiguresList,
                        FileModel fileModel,
                        FileSaveService fileSaveService,
                        Canvas canvas,
@@ -69,6 +75,9 @@ public class BottomPanel extends JPanel {
         this.buttonService = buttonService;
         this.measuresModel = measuresModel;
         this.foldedFigureModel = foldedFigureModel;
+
+        foldedFigureModel.addPropertyChangeListener(e -> setData(foldedFigureModel));
+        canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
 
         $$$setupUI$$$();
 
@@ -104,7 +113,7 @@ public class BottomPanel extends JPanel {
         anotherSolutionButton.addActionListener(e -> {
             FoldedFigure_Drawer selectedItem = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
             if (selectedItem != null) {
-                TaskExecutor.executeTask("Folding Estimate", new FoldingEstimateTask(foldingService, bulletinBoard, canvas, selectedItem, FoldedFigure.EstimationOrder.ORDER_6));
+                foldingService.foldAnother(selectedItem);
             }
         });
         flipButton.addActionListener(e -> {
@@ -192,7 +201,7 @@ public class BottomPanel extends JPanel {
         frontColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
 
-            Color frontColor = JColorChooser.showDialog(null, "F_col", Color.white);
+            Color frontColor = JColorChooser.showDialog(frame, "F_col", Color.white);
 
             if (frontColor != null) {
                 foldedFigureModel.setFrontColor(frontColor);
@@ -200,7 +209,7 @@ public class BottomPanel extends JPanel {
         });
         backColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
-            Color backColor = JColorChooser.showDialog(null, "B_col", Color.white);
+            Color backColor = JColorChooser.showDialog(frame, "B_col", Color.white);
 
             if (backColor != null) {
                 foldedFigureModel.setBackColor(backColor);
@@ -209,7 +218,7 @@ public class BottomPanel extends JPanel {
         lineColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
 
-            Color lineColor = JColorChooser.showDialog(null, "L_col", Color.white);
+            Color lineColor = JColorChooser.showDialog(frame, "L_col", Color.white);
             if (lineColor != null) {
                 foldedFigureModel.setLineColor(lineColor);
             }
@@ -366,7 +375,7 @@ public class BottomPanel extends JPanel {
     }
 
     private void createUIComponents() {
-        panel1 = this;
+        panel1 = new JPanel();
         foldedFigureResize = new FoldedFigureResize(buttonService, foldedFigureModel, measuresModel);
         foldedFigureRotate = new FoldedFigureRotate(buttonService, foldedFigureModel, measuresModel);
         foldedFigureBox = new JComboBox<>();

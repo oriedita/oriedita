@@ -6,10 +6,11 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.FoldedFigure;
-import origami_editor.editor.Save;
+import origami_editor.editor.save.Save;
+import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.Colors;
 import origami_editor.editor.undo_box.HistoryState;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 
 import java.awt.*;
 
@@ -346,7 +347,7 @@ public class WireFrame_Worker_Drawer {
     }
 
     public Save getSave() {
-        Save save = new Save();
+        Save save = new SaveV1();
         pointSet.getSave(save);
         return save;
     }

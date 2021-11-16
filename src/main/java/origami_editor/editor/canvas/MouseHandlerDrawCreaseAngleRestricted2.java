@@ -1,5 +1,7 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -7,7 +9,12 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
+@Singleton
 public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInputRestricted {
+    @Inject
+    public MouseHandlerDrawCreaseAngleRestricted2() {
+    }
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17;

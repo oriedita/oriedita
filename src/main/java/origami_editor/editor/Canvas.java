@@ -1,48 +1,55 @@
 package origami_editor.editor;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import origami.crease_pattern.OritaCalc;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
-import origami_editor.editor.canvas.BaseMouseHandler;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.canvas.MouseModeHandler;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami.folding.FoldedFigure;
 import origami.crease_pattern.element.Point;
+import origami_editor.editor.drawing.tools.Background_camera;
 import origami_editor.editor.export.Svg;
+import origami_editor.editor.service.FoldedFigureCanvasSelectService;
 import origami_editor.editor.task.TaskExecutor;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Panel in the center of the main view.
  */
+@Singleton
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
     private final CreasePattern_Worker mainCreasePatternWorker;
-    private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
+    private final FoldedFiguresList foldedFiguresList;
     private final BackgroundModel backgroundModel;
     private final BulletinBoard bulletinBoard;
     private final FileModel fileModel;
     private final ApplicationModel applicationModel;
     private final CameraModel creasePatternCameraModel;
     private final FoldedFigureModel foldedFigureModel;
+    private final FoldedFigureCanvasSelectService foldedFigureCanvasSelectService;
     private final CanvasModel canvasModel;
-
-    public MouseWheelTarget i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;//0 if the target of the mouse wheel is a cp development view, 1 if it is a folded view (front), 2 if it is a folded view (back), 3 if it is a transparent view (front), 4 if it is a transparent view (back)
 
     Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
     Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
@@ -56,15 +63,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     int btn = 0;//Stores which button in the center of the left and right is pressed. 1 =
     public Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
-    boolean displayPointSpotlight;
-    boolean displayPointOffset;
-    boolean displayGridInputAssist;
-    boolean displayComments;
-    boolean displayCpLines;
-    boolean displayAuxLines;
-    boolean displayLiveAuxLines;
-    boolean displayMarkings;
-    boolean displayCreasePatternOnTop;
+    private boolean displayPointSpotlight;
+    private boolean displayPointOffset;
+    private boolean displayGridInputAssist;
+    private boolean displayComments;
+    private boolean displayCpLines;
+    private boolean displayAuxLines;
+    private boolean displayLiveAuxLines;
+    private boolean displayMarkings;
+    private boolean displayCreasePatternOnTop;
 
     float auxLineWidth;
     float lineWidth;
@@ -84,19 +91,33 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     Map<MouseMode, MouseModeHandler> mouseModeHandlers = new HashMap<>();
 
-    public boolean flg61 = false;//Used when setting the frame 　20180524
+    private boolean flg61 = false;//Used when setting the frame 　20180524
 
     public boolean mouseDraggedValid = false;
     //ウィンドウ透明化用のパラメータ
     public boolean mouseReleasedValid = false;//0 ignores mouse operation. 1 is valid for mouse operation. When an unexpected mouseDragged or mouseReleased occurs due to on-off of the file box, set it to 0 so that it will not be picked up. These are set to 1 valid when the mouse is clicked.
 
     public final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
-    private Frame frame;
+    private final Frame frame;
 
-    public Canvas(Camera creasePatternCamera, CreasePattern_Worker mainCreasePatternWorker, DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList, BackgroundModel backgroundModel,
-                  BulletinBoard bulletinBoard, FileModel fileModel, ApplicationModel applicationModel, CameraModel creasePatternCameraModel, FoldedFigureModel foldedFigureModel,
+    @Inject
+    public Canvas(@Named("creasePatternCamera") Camera creasePatternCamera,
+                  @Named("mainFrame") JFrame frame,
+                  CreasePattern_Worker mainCreasePatternWorker,
+                  FoldedFiguresList foldedFiguresList,
+                  BackgroundModel backgroundModel,
+                  BulletinBoard bulletinBoard,
+                  FileModel fileModel,
+                  ApplicationModel applicationModel,
+                  CameraModel creasePatternCameraModel,
+                  FoldedFigureModel foldedFigureModel,
+                  GridModel gridModel,
+                  Set<MouseModeHandler> handlerList,
+                  AngleSystemModel angleSystemModel,
+                  FoldedFigureCanvasSelectService foldedFigureCanvasSelectService,
                   CanvasModel canvasModel) {
         this.creasePatternCamera = creasePatternCamera;
+        this.frame = frame;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.foldedFiguresList = foldedFiguresList;
         this.backgroundModel = backgroundModel;
@@ -105,7 +126,35 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         this.applicationModel = applicationModel;
         this.creasePatternCameraModel = creasePatternCameraModel;
         this.foldedFigureModel = foldedFigureModel;
+        this.foldedFigureCanvasSelectService = foldedFigureCanvasSelectService;
         this.canvasModel = canvasModel;
+
+        applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
+        canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
+        backgroundModel.addPropertyChangeListener(e -> setData(backgroundModel));
+
+        creasePatternCameraModel.addPropertyChangeListener(e -> repaint());
+        foldedFigureModel.addPropertyChangeListener(e -> repaint());
+        gridModel.addPropertyChangeListener(e -> repaint());
+        angleSystemModel.addPropertyChangeListener(e -> repaint());
+        bulletinBoard.addChangeListener(e -> repaint());
+
+        foldedFiguresList.addListDataListener(new ListDataListener() {
+            @Override
+            public void intervalAdded(ListDataEvent e) {
+
+            }
+
+            @Override
+            public void intervalRemoved(ListDataEvent e) {
+
+            }
+
+            @Override
+            public void contentsChanged(ListDataEvent e) {
+                repaint();
+            }
+        });
 
         onResize();
 
@@ -121,6 +170,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 onResize();
             }
         });
+
+        for (MouseModeHandler handler : handlerList) {
+            addMouseModeHandler(handler);
+        }
     }
 
     public void onResize() {
@@ -142,16 +195,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     public void addMouseModeHandler(MouseModeHandler handler) {
         mouseModeHandlers.put(handler.getMouseMode(), handler);
-    }
-
-    public void addMouseModeHandler(Class<? extends BaseMouseHandler> handler) {
-        try {
-            BaseMouseHandler instance = handler.getDeclaredConstructor().newInstance();
-            instance.setDrawingWorker(mainCreasePatternWorker);
-            mouseModeHandlers.put(instance.getMouseMode(), instance);
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -406,7 +449,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             case MouseEvent.BUTTON2:
                 System.out.println("中ボタンクリック");
 
-                MouseWheelTarget target = pointInCreasePatternOrFoldedFigure(p);
+                MouseWheelTarget target = foldedFigureCanvasSelectService.pointInCreasePatternOrFoldedFigure(p);
 
                 System.out.println("i_cp_or_oriagari = " + target);
 
@@ -469,7 +512,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 case MouseEvent.BUTTON2:
                     FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
-                    switch (i_cp_or_oriagari) {
+                    switch (canvasModel.getMouseInCpOrFoldedFigure()) {
                         case CREASE_PATTERN_0: // 展開図移動。
                             creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
                             mainCreasePatternWorker.setCamera(creasePatternCamera);
@@ -540,7 +583,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     break;
                 case MouseEvent.BUTTON2:
                     FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
-                    switch (i_cp_or_oriagari) {
+                    switch (canvasModel.getMouseInCpOrFoldedFigure()) {
                         case CREASE_PATTERN_0:
                             creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
                             mainCreasePatternWorker.setCamera(creasePatternCamera);
@@ -598,7 +641,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     public void mouseWheelMoved(MouseWheelEvent e) {
         if (mouseWheelMovesCreasePattern) {
             Point p = e2p(e);
-            MouseWheelTarget target = pointInCreasePatternOrFoldedFigure(p);
+            MouseWheelTarget target = foldedFigureCanvasSelectService.pointInCreasePatternOrFoldedFigure(p);
 
             double scrollDistance = applicationModel.isPreciseZoom() ? e.getPreciseWheelRotation() : e.getWheelRotation();
 
@@ -681,128 +724,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         repaint();
     }
 
-    public void setData(CanvasModel canvasModel) {
+    public void setData(PropertyChangeEvent e, CanvasModel canvasModel) {
         mouseMode = canvasModel.getMouseMode();
+        flg61 = canvasModel.getFlg61();
+
+        if (e.getPropertyName() == null || e.getPropertyName().equals("dirty")) {
+            mouseReleasedValid = false;
+            mouseDraggedValid = false;
+        }
 
         repaint();
-    }
-
-    public MouseWheelTarget pointInCreasePatternOrFoldedFigure(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
-        //20171216
-        //hyouji_flg==2,ip4==0  omote
-        //hyouji_flg==2,ip4==1	ura
-        //hyouji_flg==2,ip4==2	omote & ura
-        //hyouji_flg==2,ip4==3	omote & ura
-
-        //hyouji_flg==3,ip4==0  omote
-        //hyouji_flg==3,ip4==1	ura
-        //hyouji_flg==3,ip4==2	omote & ura
-        //hyouji_flg==3,ip4==3	omote & ura
-
-        //hyouji_flg==5,ip4==0  omote
-        //hyouji_flg==5,ip4==1	ura
-        //hyouji_flg==5,ip4==2	omote & ura
-        //hyouji_flg==5,ip4==3	omote & ura & omote2 & ura2
-
-        //OZ_hyouji_mode=0;  nun
-        //OZ_hyouji_mode=1;  omote
-        //OZ_hyouji_mode=2;  ura
-        //OZ_hyouji_mode=3;  omote & ura
-        //OZ_hyouji_mode=4;  omote & ura & omote2 & ura2
-
-        int tempFoldedFigureIndex = -1;
-        MouseWheelTarget temp_i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;
-        FoldedFigure_Drawer drawer;
-        FoldedFigure OZi;
-        for (int i = 0; i < foldedFiguresList.getSize(); i++) {
-            drawer = foldedFiguresList.getElementAt(i);
-            OZi = drawer.foldedFigure;
-
-            int OZ_display_mode = 0;//No fold-up diagram display
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
-                OZ_display_mode = 1;
-            }//	omote
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.BACK_1)) {
-                OZ_display_mode = 2;
-            }//	ura
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.BOTH_2)) {
-                OZ_display_mode = 3;
-            }//	omote & ura
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
-                OZ_display_mode = 3;
-            }//	omote & ura
-
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
-                OZ_display_mode = 1;
-            }//	omote
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.BACK_1)) {
-                OZ_display_mode = 2;
-            }//	ura
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.BOTH_2)) {
-                OZ_display_mode = 3;
-            }//	omote & ura
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) && (OZi.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
-                OZ_display_mode = 3;
-            }//	omote & ura
-
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
-                OZ_display_mode = 1;
-            }//	omote
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.BACK_1)) {
-                OZ_display_mode = 2;
-            }//	ura
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.BOTH_2)) {
-                OZ_display_mode = 3;
-            }//	omote & ura
-            if ((OZi.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) && (OZi.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
-                OZ_display_mode = 4;
-            }//	omote & ura & omote2 & ura2
-
-            if (drawer.wireFrame_worker_drawer2.isInsideFront(p) > 0) {
-                if (((OZ_display_mode == 1) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
-                    temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_FRONT_1;
-                    tempFoldedFigureIndex = i;
-                }
-            }
-
-            if (drawer.wireFrame_worker_drawer2.isInsideRear(p) > 0) {
-                if (((OZ_display_mode == 2) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
-                    temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_BACK_2;
-                    tempFoldedFigureIndex = i;
-                }
-            }
-
-            if (drawer.wireFrame_worker_drawer2.isInsideTransparentFront(p) > 0) {
-                if (OZ_display_mode == 4) {
-                    temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_FRONT_3;
-                    tempFoldedFigureIndex = i;
-                }
-            }
-
-            if (drawer.wireFrame_worker_drawer2.isInsideTransparentRear(p) > 0) {
-                if (OZ_display_mode == 4) {
-                    temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_BACK_4;
-                    tempFoldedFigureIndex = i;
-                }
-            }
-        }
-        i_cp_or_oriagari = temp_i_cp_or_oriagari;
-
-        if (tempFoldedFigureIndex > -1) {
-            setFoldedFigureIndex(tempFoldedFigureIndex);
-        }
-
-        return temp_i_cp_or_oriagari;
-    }
-
-    void setFoldedFigureIndex(int i) {//Processing when OZ is switched
-        System.out.println("foldedFigureIndex = " + i);
-
-        FoldedFigure_Drawer newSelectedItem = foldedFiguresList.getElementAt(i);
-        foldedFiguresList.setSelectedItem(newSelectedItem);
-
-        // Load data from this foldedFigure to the ui.
-        newSelectedItem.getData(foldedFigureModel);
     }
 
     //=============================================================================
@@ -815,6 +746,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     }
 
     public void setData(BackgroundModel backgroundModel) {
+        background_set(backgroundModel.getBackgroundPosition());
+
         if (backgroundModel.isLockBackground()) {
             h_cam.setLocked(backgroundModel.isLockBackground());
             h_cam.setCamera(creasePatternCamera);
@@ -828,17 +761,17 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     //Functions that perform mouse operations (move and button operations)------------------------------
     //----------------------------------------------------------------------
     // ------------------------------------------------------
-    public void background_set(Point t1, Point t2, Point t3, Point t4) {
-        h_cam.set_h1(t1);
-        h_cam.set_h2(t2);
-        h_cam.set_h3(t3);
-        h_cam.set_h4(t4);
+    public void background_set(origami.crease_pattern.element.Polygon position) {
+        if (position.size() != 4) {
+            throw new RuntimeException("Background position must be a square");
+        }
+
+        h_cam.set_h1(position.get(1));
+        h_cam.set_h2(position.get(2));
+        h_cam.set_h3(position.get(3));
+        h_cam.set_h4(position.get(4));
 
         h_cam.parameter_calculation();
-    }
-
-    public void setFrame(Frame frame) {
-        this.frame = frame;
     }
 
     public void createTransparentBackground() {
@@ -881,10 +814,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         OritaCalc.display("新背景カメラインスタンス化");
         h_cam = new Background_camera();//20181202
 
-        background_set(new Point(120.0, 120.0),
+        backgroundModel.setBackgroundPosition(new origami.crease_pattern.element.Polygon(new Point(120.0, 120.0),
                 new Point(120.0 + 10.0, 120.0),
                 new Point(0, 0),
-                new Point(10.0, 0));
+                new Point(10.0, 0)));
 
         //Set each condition for background display
         backgroundModel.setDisplayBackground(true);

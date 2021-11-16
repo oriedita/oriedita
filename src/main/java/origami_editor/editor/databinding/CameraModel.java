@@ -1,15 +1,19 @@
 package origami_editor.editor.databinding;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.crease_pattern.OritaCalc;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
+@Singleton
 public class CameraModel {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private double rotation;
     private double scale;
 
+    @Inject
     public CameraModel() {
         reset();
     }

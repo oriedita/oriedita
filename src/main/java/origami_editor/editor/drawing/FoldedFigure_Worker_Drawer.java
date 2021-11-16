@@ -9,10 +9,10 @@ import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.HierarchyList;
 import origami_editor.editor.Colors;
-import origami_editor.editor.canvas.DrawingUtil;
+import origami_editor.editor.drawing.tools.DrawingUtil;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;

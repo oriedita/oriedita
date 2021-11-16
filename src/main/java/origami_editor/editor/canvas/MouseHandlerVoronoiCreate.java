@@ -1,5 +1,7 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.*;
@@ -9,9 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Singleton
 public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
     public List<LineSegmentVoronoi> voronoiLineSet = new ArrayList<>();
     List<LineSegmentVoronoi> lineSegment_voronoi_onePoint = new ArrayList<>(); //Line segment around one point in Voronoi diagram
+
+    @Inject
+    public MouseHandlerVoronoiCreate() {
+    }
 
     @Override
     public MouseMode getMouseMode() {

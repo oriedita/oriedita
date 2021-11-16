@@ -1,18 +1,21 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
-import origami_editor.editor.Canvas;
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.canvas.drawing_worker_toolbox.Drawing_Worker_Toolbox;
+import origami_editor.editor.canvas.drawing_worker_toolbox.CreasePattern_Worker_Toolbox;
 import origami.folding.util.SortingBox;
+import origami_editor.editor.databinding.CanvasModel;
 
+@Singleton
 public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRestricted {
     private final CreasePattern_Worker d;
-    private final Canvas canvas;
-    Drawing_Worker_Toolbox e_s_dougubako;
+    private final CanvasModel canvasModel;
+    CreasePattern_Worker_Toolbox e_s_dougubako;
 
     @Override
     public MouseMode getMouseMode() {
@@ -51,14 +54,15 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
         }
     }
 
-    public MouseHandlerContinuousSymmetricDraw(CreasePattern_Worker d, Canvas canvas) {
+    @Inject
+    public MouseHandlerContinuousSymmetricDraw(CreasePattern_Worker d, CanvasModel canvasModel) {
         this.d = d;
-        this.canvas = canvas;
-        this.e_s_dougubako = new Drawing_Worker_Toolbox(d.foldLineSet);
+        this.canvasModel = canvasModel;
+        this.e_s_dougubako = new CreasePattern_Worker_Toolbox(d.foldLineSet);
     }
 
     public void continuous_folding_new(Point a, Point b) {//An improved version of continuous folding.
-        canvas.repaint();
+        canvasModel.markDirty();
 
         //ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する
 

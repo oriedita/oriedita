@@ -1,8 +1,8 @@
-package origami_editor.editor;
+package origami_editor.editor.drawing.tools;
 
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 
 /**
  * Mediation between actual coordinates and display coordinates

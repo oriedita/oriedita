@@ -1,15 +1,17 @@
 package origami_editor.editor.service;
 
-import origami_editor.editor.Canvas;
+import javax.inject.Inject;
 import origami_editor.editor.HelpDialog;
 import origami_editor.editor.SelectKeyStrokeDialog;
 import origami_editor.editor.action.Click;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.MouseHandlerVoronoiCreate;
+import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.tools.KeyStrokeUtil;
 import origami_editor.tools.ResourceUtil;
 import origami_editor.tools.StringOp;
 
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -18,26 +20,25 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+@Singleton
 public class ButtonService {
     private final HelpDialog explanation;
     private final CreasePattern_Worker mainCreasePatternWorker;
-    private final Canvas canvas;
     public Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
     private Frame owner;
-    private MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate;
+    private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate;
+    private final CanvasModel canvasModel;
 
-    public ButtonService(HelpDialog explanation, CreasePattern_Worker mainCreasePatternWorker, Canvas canvas) {
+    @Inject
+    public ButtonService(HelpDialog explanation, CreasePattern_Worker mainCreasePatternWorker, MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate, CanvasModel canvasModel) {
         this.explanation = explanation;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
-        this.canvas = canvas;
+        this.mouseHandlerVoronoiCreate = mouseHandlerVoronoiCreate;
+        this.canvasModel = canvasModel;
     }
 
     public void setOwner(Frame owner) {
         this.owner = owner;
-    }
-
-    public void setMouseHandlerVoronoiCreate(MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate) {
-        this.mouseHandlerVoronoiCreate = mouseHandlerVoronoiCreate;
     }
 
     public void setTooltip(AbstractButton button, String key) {
@@ -124,10 +125,8 @@ public class ButtonService {
         mainCreasePatternWorker.setDrawingStage(0);
         mainCreasePatternWorker.resetCircleStep();
         mouseHandlerVoronoiCreate.voronoiLineSet.clear();
-        canvas.mouseReleasedValid = false;
-        canvas.mouseDraggedValid = false;
 
-        canvas.repaint();
+        canvasModel.markDirty();
     }
 
     private void addContextMenu(AbstractButton button, String key, KeyStroke keyStroke) {

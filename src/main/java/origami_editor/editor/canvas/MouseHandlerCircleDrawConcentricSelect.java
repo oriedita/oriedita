@@ -1,5 +1,7 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
@@ -7,8 +9,13 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
+@Singleton
 public class MouseHandlerCircleDrawConcentricSelect extends BaseMouseHandler {
     Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
+
+    @Inject
+    public MouseHandlerCircleDrawConcentricSelect() {
+    }
 
     @Override
     public MouseMode getMouseMode() {
@@ -32,19 +39,19 @@ public class MouseHandlerCircleDrawConcentricSelect extends BaseMouseHandler {
                 return;
             }
 
-            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
+            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.GREEN_6));
         } else if ((d.lineStep.size() == 0) && (d.circleStep.size() == 1)) {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
-            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getRadius(), LineColor.PURPLE_8));
+            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.PURPLE_8));
         } else if ((d.lineStep.size() == 0) && (d.circleStep.size() == 2)) {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
 
-            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getRadius(), LineColor.PURPLE_8));
+            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.PURPLE_8));
         }
     }
 
@@ -60,9 +67,9 @@ public class MouseHandlerCircleDrawConcentricSelect extends BaseMouseHandler {
             Circle circle2 = d.circleStep.get(1);
             Circle circle3 = d.circleStep.get(2);
             d.circleStep.clear();
-            double add_r = circle3.getRadius() - circle2.getRadius();
+            double add_r = circle3.getR() - circle2.getR();
             if (!Epsilon.high.eq0(add_r)) {
-                double new_r = add_r + circle1.getRadius();
+                double new_r = add_r + circle1.getR();
 
                 if (Epsilon.high.gt0(new_r)) {
                     circle1.setR(new_r);

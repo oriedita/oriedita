@@ -1,4 +1,4 @@
-package origami_editor.tools;
+package origami_editor.editor.drawing.tools;
 
 import origami_editor.editor.databinding.CameraModel;
 import origami.crease_pattern.element.LineSegment;

@@ -7,7 +7,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 
-public class Drawing_Worker_Toolbox {
+public class CreasePattern_Worker_Toolbox {
     FoldLineSet ori_s;
     // Extend the vector ab (= s0) from point a to b until it first intersects another polygonal line
     LineSegment lengthenUntilIntersectionLineSegment = new LineSegment();
@@ -16,7 +16,7 @@ public class Drawing_Worker_Toolbox {
     int lengthenUntilIntersectionFoldLineIncluded_flg = 0;//If ab is straightened, including existing polygonal lines, 3
     LineSegment lengthenUntilIntersectionFirstLineSegment = new LineSegment();//Straightening ab and the existing polygonal line that hits first
 
-    public Drawing_Worker_Toolbox(FoldLineSet o_s) {  //コンストラクタ
+    public CreasePattern_Worker_Toolbox(FoldLineSet o_s) {  //コンストラクタ
         ori_s = o_s;
     }
 

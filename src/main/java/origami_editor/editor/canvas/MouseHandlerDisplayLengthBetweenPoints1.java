@@ -1,14 +1,22 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.databinding.MeasuresModel;
 
+@Singleton
 public class MouseHandlerDisplayLengthBetweenPoints1 extends BaseMouseHandlerInputRestricted {
-    private final CreasePattern_Worker d;
     private final MeasuresModel measuresModel;
+
+    @Inject
+    public MouseHandlerDisplayLengthBetweenPoints1(CreasePattern_Worker d, MeasuresModel measuresModel) {
+        this.d = d;
+        this.measuresModel = measuresModel;
+    }
 
     @Override
     public MouseMode getMouseMode() {
@@ -27,11 +35,6 @@ public class MouseHandlerDisplayLengthBetweenPoints1 extends BaseMouseHandlerInp
 
     //マウス操作(ドラッグしたとき)を行う関数
     public void mouseDragged(Point p0) {
-    }
-
-    public MouseHandlerDisplayLengthBetweenPoints1(CreasePattern_Worker d, MeasuresModel measuresModel) {
-        this.d = d;
-        this.measuresModel = measuresModel;
     }
 
     //マウス操作(ボタンを離したとき)を行う関数

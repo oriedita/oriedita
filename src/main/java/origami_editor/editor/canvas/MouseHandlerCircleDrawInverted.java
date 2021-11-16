@@ -1,11 +1,18 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.*;
 import origami_editor.editor.MouseMode;
 
+@Singleton
 public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
+    @Inject
+    public MouseHandlerCircleDrawInverted() {
+    }
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CIRCLE_DRAW_INVERTED_46;
@@ -43,7 +50,7 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
                 return;
             }
 
-            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getRadius(), LineColor.GREEN_6));
+            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.GREEN_6));
             return;
         }
 
@@ -51,7 +58,7 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
                 return;
             }
-            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getRadius(), LineColor.RED_1));
+            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.RED_1));
         }
     }
 
@@ -76,7 +83,7 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
 
     public void add_hanten(Circle e0, Circle eh) {
         //e0の円周が(x,y)を通るとき
-        if (Math.abs(OritaCalc.distance(e0.determineCenter(), eh.determineCenter()) - e0.getRadius()) < Epsilon.UNKNOWN_1EN7) {
+        if (Math.abs(OritaCalc.distance(e0.determineCenter(), eh.determineCenter()) - e0.getR()) < Epsilon.UNKNOWN_1EN7) {
             LineSegment s_add = new LineSegment();
             s_add.set(eh.turnAround_CircleToLineSegment(e0));
             //s_add.setcolor(3);

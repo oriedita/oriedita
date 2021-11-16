@@ -34,6 +34,12 @@ public class Polygon {
         vertices[i].set(p);
     }
 
+    public int size() {return vertexCount;}
+
+    public Point get(int i) {
+        return vertices[i];
+    }
+
     // 0, when all of the line segment s0 exists outside the convex polygon (the boundary line is not considered inside)
     // When the line segment s0 exists both outside the convex polygon and across the boundary line 1,
     // When the line segment s0 exists inside the convex polygon, the boundary line, and the outside 2,
@@ -260,16 +266,16 @@ public class Polygon {
         LineSegment s = new LineSegment();
         for (int i = 1; i <= vertexCount - 1; i++) {
             s.set(vertices[i], vertices[i + 1]); //線分
-            if (OritaCalc.determineLineSegmentDistance(c.determineCenter(), s) <= c.getRadius()) {
-                if ((OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getRadius()) || (OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getRadius())) {
+            if (OritaCalc.determineLineSegmentDistance(c.determineCenter(), s) <= c.getR()) {
+                if ((OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getR()) || (OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getR())) {
                     return true;
                 }
             }
         }
 
         s.set(vertices[vertexCount], vertices[1]); //線分
-        if (OritaCalc.determineLineSegmentDistance(c.determineCenter(), s) <= c.getRadius()) {
-            if ((OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getRadius()) || (OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getRadius())) {
+        if (OritaCalc.determineLineSegmentDistance(c.determineCenter(), s) <= c.getR()) {
+            if ((OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getR()) || (OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getR())) {
                 return true;
             }
         }

@@ -1,11 +1,18 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
+@Singleton
 public class MouseHandlerUnused_6 extends BaseMouseHandler {
+    @Inject
+    public MouseHandlerUnused_6() {
+    }
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.UNUSED_6;

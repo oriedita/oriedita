@@ -1,10 +1,17 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 
+@Singleton
 public class MouseHandlerSelectLineIntersecting extends BaseMouseHandlerLineSelect {
+    @Inject
+    public MouseHandlerSelectLineIntersecting() {
+    }
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.SELECT_LINE_INTERSECTING_68;

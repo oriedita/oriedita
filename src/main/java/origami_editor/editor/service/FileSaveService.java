@@ -1,19 +1,23 @@
 package origami_editor.editor.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import origami_editor.editor.Canvas;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.Save;
+import origami_editor.editor.save.Save;
+import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.canvas.CreasePattern_Worker;
-import origami_editor.editor.canvas.MouseHandlerVoronoiCreate;
 import origami_editor.editor.databinding.*;
-import origami_editor.editor.drawing.FoldedFigure_Drawer;
+import origami_editor.editor.drawing.tools.Camera;
+import origami_editor.editor.exception.FileReadingException;
 import origami_editor.editor.export.Cp;
 import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
 import origami_editor.editor.json.DefaultObjectMapper;
 import origami_editor.tools.ResourceUtil;
 
+import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicFileChooserUI;
@@ -21,84 +25,38 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+@Singleton
 public class FileSaveService {
-    private Frame owner;
-    private final Canvas canvas;
+    private final JFrame frame;
+    private final Camera creasePatternCamera;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FileModel fileModel;
     private final ApplicationModel applicationModel;
-    private final HistoryStateModel historyStateModel;
     private final CanvasModel canvasModel;
-    private final InternalDivisionRatioModel internalDivisionRatioModel;
-    private final FoldedFigureModel foldedFigureModel;
-    private final GridModel gridModel;
-    private final AngleSystemModel angleSystemModel;
-    private final CameraModel creasePatternCameraModel;
-    private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
-    private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate;
+    private final ResetService resetService;
     private final BackgroundModel backgroundModel;
 
+    @Inject
     public FileSaveService(
-            Canvas canvas,
+            @Named("mainFrame") JFrame frame,
+            @Named("creasePatternCamera") Camera creasePatternCamera,
             CreasePattern_Worker mainCreasePatternWorker,
             FileModel fileModel,
             ApplicationModel applicationModel,
-            HistoryStateModel historyStateModel,
             CanvasModel canvasModel,
-            InternalDivisionRatioModel internalDivisionRatioModel,
-            FoldedFigureModel foldedFigureModel,
-            GridModel gridModel,
-            AngleSystemModel angleSystemModel,
-            CameraModel creasePatternCameraModel,
-            DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList,
-            MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate,
+            ResetService resetService,
             BackgroundModel backgroundModel) {
-        this.canvas = canvas;
+        this.frame = frame;
+        this.creasePatternCamera = creasePatternCamera;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.fileModel = fileModel;
         this.applicationModel = applicationModel;
-        this.historyStateModel = historyStateModel;
         this.canvasModel = canvasModel;
-        this.internalDivisionRatioModel = internalDivisionRatioModel;
-        this.foldedFigureModel = foldedFigureModel;
-        this.gridModel = gridModel;
-        this.angleSystemModel = angleSystemModel;
-        this.creasePatternCameraModel = creasePatternCameraModel;
-        this.foldedFiguresList = foldedFiguresList;
-        this.mouseHandlerVoronoiCreate = mouseHandlerVoronoiCreate;
+        this.resetService = resetService;
         this.backgroundModel = backgroundModel;
     }
 
-    public void setOwner(Frame owner) {
-        this.owner = owner;
-    }
-
-    public void developmentView_initialization() {
-        mainCreasePatternWorker.reset();
-        mainCreasePatternWorker.initialize();
-
-        //camera_of_orisen_nyuuryokuzu	の設定;
-        canvas.creasePatternCamera.setCameraPositionX(0.0);
-        canvas.creasePatternCamera.setCameraPositionY(0.0);
-        canvas.creasePatternCamera.setCameraAngle(0.0);
-        canvas.creasePatternCamera.setCameraMirror(1.0);
-        canvas.creasePatternCamera.setCameraZoomX(1.0);
-        canvas.creasePatternCamera.setCameraZoomY(1.0);
-        canvas.creasePatternCamera.setDisplayPositionX(350.0);
-        canvas.creasePatternCamera.setDisplayPositionY(350.0);
-
-        mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);
-
-        canvasModel.reset();
-        internalDivisionRatioModel.reset();
-        foldedFigureModel.reset();
-
-        gridModel.reset();
-        angleSystemModel.reset();
-        creasePatternCameraModel.reset();
-    }
-
-    public void openFile(File file) {
+    public void openFile(File file) throws FileReadingException {
         if (file == null || !file.exists()) {
             return;
         }
@@ -112,12 +70,10 @@ public class FileSaveService {
 
         if (memo_temp != null) {
             //Initialization of development drawing started
-            developmentView_initialization();
+            resetService.developmentView_initialization();
             //Deployment parameter initialization
 
-            foldedFiguresList.removeAllElements();
-
-            mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
+            mainCreasePatternWorker.setCamera(creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
             mainCreasePatternWorker.setSave_for_reading(memo_temp);
             mainCreasePatternWorker.record();
         }
@@ -130,12 +86,16 @@ public class FileSaveService {
 
         File file = selectOpenFile();
 
-        openFile(file);
+        try {
+            openFile(file);
+        } catch (FileReadingException e) {
+            e.printStackTrace();
+        }
     }
 
     private boolean saveUnsavedFile() {
         if (!fileModel.isSaved()) {
-            int choice = JOptionPane.showConfirmDialog(owner, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+            int choice = JOptionPane.showConfirmDialog(frame, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
             if (choice == JOptionPane.YES_OPTION) {
                 saveFile();
@@ -151,21 +111,24 @@ public class FileSaveService {
 
         System.out.println("readFile2Memo() 開始");
         File importFile = selectImportFile();
-        Save memo_temp = readImportFile(importFile);
+        Save memo_temp = null;
+        try {
+            memo_temp = readImportFile(importFile);
+        } catch (FileReadingException e) {
+            e.printStackTrace();
+        }
         System.out.println("readFile2Memo() 終了");
 
         if (memo_temp != null) {
             fileModel.setSavedFileName(null);
 
             //Initialization of development drawing started
-            developmentView_initialization();
+            resetService.developmentView_initialization();
             //Deployment parameter initialization
-
-            foldedFiguresList.removeAllElements();
 
             //Initialization of folding prediction map started
 
-            mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
+            mainCreasePatternWorker.setCamera(creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
             mainCreasePatternWorker.setSave_for_reading(memo_temp);
             mainCreasePatternWorker.record();
         }
@@ -179,15 +142,15 @@ public class FileSaveService {
         }
 
         if (exportFile.getName().endsWith(".png") || exportFile.getName().endsWith(".jpg") || exportFile.getName().endsWith(".jpeg") || exportFile.getName().endsWith(".svg")) {
-            canvas.flg61 = false;
+            canvasModel.setFlg61(false);
             if ((canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61) && (mainCreasePatternWorker.getDrawingStage() == 4)) {
-                canvas.flg61 = true;
+                canvasModel.setFlg61(true);
                 mainCreasePatternWorker.setDrawingStage(0);
             }
 
             fileModel.setExportImageFileName(exportFile.getAbsolutePath());
-            canvas.flg_wi = true;
-            canvas.repaint();//Necessary to not export the green border
+            canvasModel.setFlg61(true);
+            canvasModel.markDirty();
         } else if (exportFile.getName().endsWith(".cp")) {
             Cp.exportFile(mainCreasePatternWorker.getSave_for_export(), exportFile);
         } else if (exportFile.getName().endsWith(".orh")) {
@@ -225,14 +188,13 @@ public class FileSaveService {
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp"));
 
-        fileChooser.showOpenDialog(owner);
+        fileChooser.showOpenDialog(frame);
 
         File selectedFile = fileChooser.getSelectedFile();
         if (selectedFile != null && selectedFile.exists()) {
             applicationModel.setDefaultDirectory(selectedFile.getParent());
             fileModel.setSavedFileName(selectedFile.getAbsolutePath());
             fileModel.setSaved(true);
-            historyStateModel.reset();
 
             applicationModel.addRecentFile(selectedFile);
 
@@ -259,7 +221,7 @@ public class FileSaveService {
         File selectedFile;
         int choice = JOptionPane.NO_OPTION;
         do {
-            int saveChoice = fileChooser.showSaveDialog(owner);
+            int saveChoice = fileChooser.showSaveDialog(frame);
 
             if (saveChoice != JFileChooser.APPROVE_OPTION) {
                 return null;
@@ -276,7 +238,7 @@ public class FileSaveService {
             }
 
             if (selectedFile != null && selectedFile.exists()) {
-                choice = JOptionPane.showConfirmDialog(owner, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                choice = JOptionPane.showConfirmDialog(frame, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             }
         } while (selectedFile != null && selectedFile.exists() && choice != JOptionPane.YES_OPTION);
 
@@ -299,7 +261,7 @@ public class FileSaveService {
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Orihime (*.orh)", "orh"));
         fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
 
-        fileChooser.showOpenDialog(owner);
+        fileChooser.showOpenDialog(frame);
 
         File selectedFile = fileChooser.getSelectedFile();
         if (selectedFile != null) {
@@ -327,7 +289,7 @@ public class FileSaveService {
         File selectedFile;
         int choice = JOptionPane.NO_OPTION;
         do {
-            int saveChoice = fileChooser.showSaveDialog(owner);
+            int saveChoice = fileChooser.showSaveDialog(frame);
 
             if (saveChoice != JFileChooser.APPROVE_OPTION) {
                 return null;
@@ -335,7 +297,7 @@ public class FileSaveService {
 
             selectedFile = fileChooser.getSelectedFile();
             if (selectedFile != null && selectedFile.exists()) {
-                choice = JOptionPane.showConfirmDialog(owner, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                choice = JOptionPane.showConfirmDialog(frame, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             }
         } while (selectedFile != null && selectedFile.exists() && choice == JOptionPane.NO_OPTION);
 
@@ -346,7 +308,7 @@ public class FileSaveService {
         return selectedFile;
     }
 
-    public Save readImportFile(File file) {
+    public Save readImportFile(File file) throws FileReadingException {
         if (file == null) {
             return null;
         }
@@ -363,7 +325,7 @@ public class FileSaveService {
                     ObjectMapper mapper = new DefaultObjectMapper();
                     return mapper.readValue(file, Save.class);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new FileReadingException(e);
                 }
             }
 
@@ -382,11 +344,11 @@ public class FileSaveService {
         } catch (IOException e) {
             e.printStackTrace();
 
-            JOptionPane.showMessageDialog(owner, "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
 
             fileModel.setSavedFileName(null);
 
-            return new Save();
+            return new SaveV1();
         }
 
         return save;
@@ -402,7 +364,6 @@ public class FileSaveService {
         File file = new File(fileModel.getSavedFileName());
 
         Save save = mainCreasePatternWorker.getSave_for_export();
-        save.setVersion(ResourceUtil.getVersionFromManifest());
 
         saveAndName2File(save, file);
 
@@ -417,7 +378,6 @@ public class FileSaveService {
         }
 
         Save save = mainCreasePatternWorker.getSave_for_export();
-        save.setVersion(ResourceUtil.getVersionFromManifest());
 
         saveAndName2File(save, file);
 
@@ -435,18 +395,18 @@ public class FileSaveService {
             }
         } else if (fname.getName().endsWith(".cp")) {
             if (!save.canSaveAsCp()) {
-                JOptionPane.showMessageDialog(owner, "The saved .cp file does not contain circles and yellow aux lines. Save as a .ori file to also save these lines.", "Warning", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "The saved .cp file does not contain circles and yellow aux lines. Save as a .ori file to also save these lines.", "Warning", JOptionPane.WARNING_MESSAGE);
             }
 
             Cp.exportFile(save, fname);
         } else {
-            JOptionPane.showMessageDialog(owner, "Unknown file type, cannot save", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, "Unknown file type, cannot save", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
 
     public void readBackgroundImageFromFile() {
-        FileDialog fd = new FileDialog(owner, "Select Image File.", FileDialog.LOAD);
+        FileDialog fd = new FileDialog(frame, "Select Image File.", FileDialog.LOAD);
         fd.setVisible(true);
         String img_background_fname = fd.getDirectory() + fd.getFile();
         try {
@@ -462,6 +422,7 @@ public class FileSaveService {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

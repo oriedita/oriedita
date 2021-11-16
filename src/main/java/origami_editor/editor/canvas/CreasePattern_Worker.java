@@ -1,5 +1,8 @@
 package origami_editor.editor.canvas;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
@@ -7,14 +10,18 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
-import origami_editor.editor.*;
-import origami_editor.editor.Canvas;
+import origami_editor.editor.Colors;
+import origami_editor.editor.LineStyle;
+import origami_editor.editor.MouseMode;
+import origami_editor.editor.save.Save;
+import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.databinding.*;
+import origami_editor.editor.drawing.tools.DrawingUtil;
 import origami_editor.editor.task.CheckCAMVTask;
 import origami_editor.editor.task.FinishedFuture;
 import origami_editor.editor.undo_box.HistoryState;
-import origami_editor.graphic2d.grid.Grid;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.Grid;
+import origami_editor.editor.drawing.tools.Camera;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -25,13 +32,21 @@ import java.util.concurrent.Future;
 /**
  * Responsible for holding the current creasepattern and drawing it.
  */
+@Singleton
 public class CreasePattern_Worker {
     // ------------
     final int check4ColorTransparencyIncrement = 10;
     private final LineSegmentSet lineSegmentSet = new LineSegmentSet();    //Instantiation of basic branch structure
+    private final Camera creasePatternCamera;
+    private final CanvasModel canvasModel;
+    private final ApplicationModel applicationModel;
+    private final GridModel gridModel;
+    private final FoldedFigureModel foldedFigureModel;
+    private final FileModel fileModel;
     public FoldLineSet foldLineSet = new FoldLineSet();    //Store polygonal lines
     public Grid grid = new Grid();
     public Polygon operationFrameBox = new Polygon(4);    //Instantiation of selection box (TV coordinates)
+    public Future<?> camvTask = new FinishedFuture<>(null);
     int pointSize = 1;
     LineColor lineColor;//Line segment color
     LineColor auxLineColor = LineColor.ORANGE_4;//Auxiliary line color
@@ -72,12 +87,6 @@ public class CreasePattern_Worker {
     boolean check4 = false;//=0 check4を実施しない、1=実施する　
     //---------------------------------
     int check4ColorTransparency = 100;
-    private final Camera creasePatternCamera;
-    private final CanvasModel canvasModel;
-    private final ApplicationModel applicationModel;
-    private final GridModel gridModel;
-    private final FoldedFigureModel foldedFigureModel;
-    private final FileModel fileModel;
     //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
     Point operationFrame_p1 = new Point();//TV座標
     Point operationFrame_p2 = new Point();//TV座標
@@ -92,15 +101,27 @@ public class CreasePattern_Worker {
     //--------------------------------------------
     CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
 
-    public Future<?> camvTask = new FinishedFuture<>(null);
-
-    public CreasePattern_Worker(Camera creasePatternCamera, CanvasModel canvasModel, ApplicationModel applicationModel, GridModel gridModel, FoldedFigureModel foldedFigureModel, FileModel fileModel) {
+    @Inject
+    public CreasePattern_Worker(@Named("creasePatternCamera") Camera creasePatternCamera,
+                                CanvasModel canvasModel,
+                                ApplicationModel applicationModel,
+                                GridModel gridModel,
+                                FoldedFigureModel foldedFigureModel,
+                                FileModel fileModel,
+                                AngleSystemModel angleSystemModel,
+                                InternalDivisionRatioModel internalDivisionRatioModel) {
         this.creasePatternCamera = creasePatternCamera;  //コンストラクタ
         this.canvasModel = canvasModel;
         this.applicationModel = applicationModel;
         this.gridModel = gridModel;
         this.foldedFigureModel = foldedFigureModel;
         this.fileModel = fileModel;
+
+        if (applicationModel != null) applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));
+        if (gridModel != null) gridModel.addPropertyChangeListener(e -> setGridConfigurationData(gridModel));
+        if (angleSystemModel != null) angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
+        if (internalDivisionRatioModel != null) internalDivisionRatioModel.addPropertyChangeListener(e -> setData(internalDivisionRatioModel));
+        if (canvasModel != null) canvasModel.addPropertyChangeListener(e -> setData(canvasModel));
 
         lineColor = LineColor.BLACK_0;
 
@@ -197,7 +218,7 @@ public class CreasePattern_Worker {
         tempFoldLineSet.move(addx, addy);//全体を移動する
 
         int total_old = foldLineSet.getTotal();
-        Save save = new Save();
+        Save save = new SaveV1();
         tempFoldLineSet.getSave(save);
         foldLineSet.addSave(save);
         int total_new = foldLineSet.getTotal();
@@ -240,14 +261,14 @@ public class CreasePattern_Worker {
     }
 
     public LineSegmentSet get() {
-        Save save = new Save();
+        Save save = new SaveV1();
         foldLineSet.getSave(save);
         lineSegmentSet.setSave(save);
         return lineSegmentSet;
     }
 
     public LineSegmentSet getForFolding() {
-        Save save = new Save();
+        Save save = new SaveV1();
         foldLineSet.getMemo_for_folding(save);
         lineSegmentSet.setSave(save);
         return lineSegmentSet;
@@ -259,7 +280,7 @@ public class CreasePattern_Worker {
     }
 
     public LineSegmentSet getForSelectFolding() {//selectした折線で折り畳み推定をする。
-        Save save = new Save();
+        Save save = new SaveV1();
         foldLineSet.getSaveForSelectFolding(save);
         lineSegmentSet.setSave(save);
         return lineSegmentSet;
@@ -277,21 +298,21 @@ public class CreasePattern_Worker {
     }
 
     public Save getSave(String title) {
-        Save save_temp = new Save();
+        Save save_temp = new SaveV1();
         foldLineSet.getSave(save_temp, title);
 
         saveAdditionalInformation(save_temp);
         return save_temp;
     }
 
-    public Save h_getSave() {
-        Save save = new Save();
+    public SaveV1 h_getSave() {
+        SaveV1 save = new SaveV1();
         auxLines.h_getSave(save);
         return save;
     }
 
-    public Save getSave_for_export() {
-        Save save = new Save();
+    public SaveV1 getSave_for_export() {
+        SaveV1 save = new SaveV1();
         foldLineSet.getSave(save);
         auxLines.h_getSave(save);
         saveAdditionalInformation(save);
@@ -299,8 +320,8 @@ public class CreasePattern_Worker {
         return save;
     }
 
-    public Save getSave_for_export_with_applicationModel() {
-        Save save = getSave_for_export();
+    public SaveV1 getSave_for_export_with_applicationModel() {
+        SaveV1 save = getSave_for_export();
 
         save.setApplicationModel(applicationModel);
 
@@ -594,7 +615,7 @@ public class CreasePattern_Worker {
     }
 
     public void addCircle(Circle e0) {
-        addCircle(e0.getX(), e0.getY(), e0.getRadius(), e0.getColor());
+        addCircle(e0.getX(), e0.getY(), e0.getR(), e0.getColor());
     }
 
     public void addCircle(Point t0, double dr, LineColor ic) {
@@ -616,6 +637,10 @@ public class CreasePattern_Worker {
         foldLineSet.applyCircleCircleIntersection(imin, imax, jmin, jmax);
         foldLineSet.applyLineSegmentCircleIntersection(1, foldLineSet.getTotal(), jmin, jmax);
 
+    }
+
+    public FoldLineSet getAuxFoldLineSet() {
+        return auxLines;
     }
 
     public void addLineSegment_auxiliary(LineSegment s0) {
@@ -644,7 +669,7 @@ public class CreasePattern_Worker {
             t1.set(t3);
         }
 
-        if (grid.getBaseState() == Grid.State.HIDDEN) {
+        if (grid.getBaseState() == GridModel.State.HIDDEN) {
             return t1;
         }
 
@@ -967,14 +992,6 @@ public class CreasePattern_Worker {
         auxLineColor = i;
     }
 
-    public void setUndoTotal(int i) {
-        historyState.setUndoTotal(i);
-    }
-
-    public void setAuxUndoTotal(int i) {
-        auxHistoryState.setUndoTotal(i);
-    }
-
     public void organizeCircles() {//Organize all circles.
         foldLineSet.organizeCircles();
     }
@@ -999,6 +1016,8 @@ public class CreasePattern_Worker {
                 camvTask.cancel(true);
             }
         }
+
+        grid.setData(data);
     }
 
     public void setData(CanvasModel data) {
@@ -1020,21 +1039,12 @@ public class CreasePattern_Worker {
         internalDivisionRatio_t = data.getInternalDivisionRatioT();
     }
 
-    public void setData(HistoryStateModel historyStateModel) {
-        setUndoTotal(historyStateModel.getHistoryTotal());
-        setAuxUndoTotal(historyStateModel.getHistoryTotal());
-    }
-
     public Point getCameraPosition() {
         return this.camera.getCameraPosition();
     }
 
     public void selectConnected(Point p) {
         this.foldLineSet.selectProbablyConnected(p);
-    }
-
-    public void setData(ApplicationModel applicationModel) {
-        grid.setData(applicationModel);
     }
 
     //30 30 30 30 30 30 30 30 30 30 30 30 除け_線_変換

@@ -1,21 +1,26 @@
 package origami_editor.editor;
 
-import origami_editor.editor.canvas.CreasePattern_Worker;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import origami_editor.editor.databinding.*;
-import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
-import origami_editor.editor.drawing.FoldedFigure_Drawer;
+import javax.inject.Inject;
 import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.Polygon;
+import origami_editor.editor.canvas.CreasePattern_Worker;
+import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
+import origami_editor.editor.databinding.*;
+import origami_editor.editor.drawing.FoldedFigure_Drawer;
+import origami_editor.editor.drawing.tools.Background_camera;
 import origami_editor.editor.service.ButtonService;
 import origami_editor.editor.service.FileSaveService;
 
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 
+@Singleton
 public class TopPanel {
     private final MeasuresModel measuresModel;
     private JButton operationFrameSelectButton;
@@ -46,6 +51,7 @@ public class TopPanel {
     private JButton backgroundLockButton;
     private JCheckBox mouseSettingsCheckBox;
 
+    @Inject
     public TopPanel(MeasuresModel measuresModel,
                     ButtonService buttonService,
                     CanvasModel canvasModel,
@@ -55,10 +61,17 @@ public class TopPanel {
                     FoldedFigureModel foldedFigureModel,
                     FileSaveService fileSaveService,
                     CameraModel creasePatternCameraModel,
-                    DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList,
+                    FoldedFiguresList foldedFiguresList,
                     Canvas canvas,
                     ApplicationModel applicationModel) {
         this.measuresModel = measuresModel;
+
+        applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
+        internalDivisionRatioModel.addPropertyChangeListener(e -> setData(internalDivisionRatioModel));
+        canvas.addPropertyChangeListener(e -> setData(e, canvasModel));
+        backgroundModel.addPropertyChangeListener(e -> setData(backgroundModel));
+        creasePatternCameraModel.addPropertyChangeListener(e -> setData(creasePatternCameraModel));
+
         $$$setupUI$$$();
 
         buttonService.registerButton(operationFrameSelectButton, "operationFrameSelectAction");
@@ -187,10 +200,10 @@ public class TopPanel {
 
                 canvas.h_cam = new Background_camera();
 
-                canvas.background_set(new Point(120.0, 120.0),
+                backgroundModel.setBackgroundPosition(new Polygon(new Point(120.0, 120.0),
                         new Point(120.0 + 10.0, 120.0),
                         new Point(xmin, ymin),
-                        new Point((double) xmin + 10.0, ymin));
+                        new Point((double) xmin + 10.0, ymin)));
 
                 if (backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
                     canvas.h_cam.setLocked(true);

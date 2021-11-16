@@ -1,6 +1,6 @@
 package origami_editor.editor.transfer;
 
-import origami_editor.editor.Save;
+import origami_editor.editor.save.Save;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -11,7 +11,7 @@ public class SaveTransferable implements Transferable {
 
     static {
         try {
-            saveFlavor = new DataFlavor("data/ori;class=origami_editor.editor.Save");
+            saveFlavor = new DataFlavor("data/ori;class=origami_editor.editor.save.Save");
         } catch (ClassNotFoundException cle) {
             System.err.println("error initializing origami_editor.editor.transfer.SaveTransferable");
         }
@@ -38,7 +38,7 @@ public class SaveTransferable implements Transferable {
 
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
         if (flavor.equals(saveFlavor)) {
-            if (Save.class.equals(flavor.getRepresentationClass())) {
+            if (Save.class.isAssignableFrom(flavor.getRepresentationClass())) {
                 return save;
             }
         }

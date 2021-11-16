@@ -4,13 +4,13 @@ import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami_editor.editor.LineStyle;
-import origami_editor.editor.Save;
+import origami_editor.editor.save.Save;
+import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.databinding.ApplicationModel;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFigureModel;
 import origami_editor.editor.databinding.GridModel;
-import origami_editor.graphic2d.grid.Grid;
-import origami_editor.tools.Camera;
+import origami_editor.editor.drawing.tools.Camera;
 import origami_editor.tools.StringOp;
 
 import java.awt.*;
@@ -29,7 +29,7 @@ public class Orh {
      * Read an Orihime file
      */
     public static Save importFile(File file) throws IOException {
-        Save save = new Save();
+        Save save = new SaveV1();
         Pattern p = Pattern.compile("<(.+)>(.+)</(.+)>");
 
         boolean reading;
@@ -218,7 +218,7 @@ public class Orh {
 
                 switch (m.group(1)) {
                     case "i_kitei_jyoutai":
-                        gridModel.setBaseState(Grid.State.from(m.group(2)));
+                        gridModel.setBaseState(GridModel.State.from(m.group(2)));
                         break;
                     case "nyuuryoku_kitei":
                         gridModel.setGridSize(StringOp.String2int(m.group(2), gridModel.getGridSize()));
@@ -610,7 +610,7 @@ public class Orh {
                 pw.println("番号," + index++);
                 Circle e_temp = new Circle();
                 e_temp.set(circle);
-                pw.println("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getRadius() + "," + e_temp.getColor());
+                pw.println("中心と半径と色," + e_temp.getX() + "," + e_temp.getY() + "," + e_temp.getR() + "," + e_temp.getColor());
 
                 pw.println("<tpp>" + e_temp.getCustomized() + "</tpp>");
                 pw.println("<tpp_color_R>" + e_temp.getCustomizedColor().getRed() + "</tpp_color_R>");
