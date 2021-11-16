@@ -122,6 +122,7 @@ public class CreasePattern_Worker {
         if (angleSystemModel != null) angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
         if (internalDivisionRatioModel != null) internalDivisionRatioModel.addPropertyChangeListener(e -> setData(internalDivisionRatioModel));
         if (canvasModel != null) canvasModel.addPropertyChangeListener(e -> setData(canvasModel));
+        if (fileModel != null) fileModel.addPropertyChangeListener(e -> setTitle(fileModel.determineFrameTitle()));
 
         lineColor = LineColor.BLACK_0;
 

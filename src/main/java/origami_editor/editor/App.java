@@ -13,7 +13,6 @@ import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.Queue;
@@ -27,7 +26,6 @@ public class App {
     private final FoldedFiguresList foldedFiguresList;
     private final CreasePattern_Worker mainCreasePatternWorker;    // Basic branch craftsman. Accepts input from the mouse.
     private final Queue<Popup> popups = new ArrayDeque<>();
-    private final FileSaveService fileSaveService;
     private final ButtonService buttonService;
     private final LookAndFeelService lookAndFeelService;
     private final Editor editor;
@@ -38,8 +36,6 @@ public class App {
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
     Canvas canvas;
     //各種変数の定義
-    String frame_title_0;//フレームのタイトルの根本部分
-    String frame_title;//フレームのタイトルの全体
     HelpDialog explanation;
     //画像出力するため20170107_oldと書かれた行をコメントアウトし、20170107_newの行を有効にした。
     //画像出力不要で元にもどすなら、20170107_oldと書かれた行を有効にし、20170107_newの行をコメントアウトにすればよい。（この変更はOrihime.javaの中だけに2箇所ある）
@@ -58,7 +54,6 @@ public class App {
             CreasePattern_Worker mainCreasePatternWorker,
             Canvas canvas,
             HelpDialog explanation,
-            FileSaveService fileSaveService,
             ButtonService buttonService,
             Editor editor,
             AppMenuBar appMenuBar,
@@ -74,21 +69,15 @@ public class App {
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.canvas = canvas;
         this.explanation = explanation;
-        this.fileSaveService = fileSaveService;
         this.buttonService = buttonService;
         this.editor = editor;
         this.appMenuBar = appMenuBar;
         this.resetService = resetService;
-
-        frame.setTitle("Origami Editor " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
-        frame_title_0 = frame.getTitle();
-        frame_title = frame_title_0;//Store title in variable
-        mainCreasePatternWorker.setTitle(frame_title);
-
-        consoleDialog = new ConsoleDialog();
+        this.consoleDialog = new ConsoleDialog();
     }
 
     public void start() {
+        frame.setTitle("Origami Editor " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
 
         frame.addWindowStateListener(new WindowAdapter() {
             public void windowStateChanged(WindowEvent eve) {
@@ -205,7 +194,7 @@ public class App {
             }
         });
 
-        fileModel.addPropertyChangeListener(e -> setData(fileModel));
+        fileModel.addPropertyChangeListener(e -> frame.setTitle(fileModel.determineFrameTitle()));
 
         fileModel.reset();
         resetService.developmentView_initialization();
@@ -254,23 +243,5 @@ public class App {
         explanation.setVisible(applicationModel.getHelpVisible());
         //focus back to here after creating dialog
         frame.requestFocus();
-    }
-
-
-    private void setData(FileModel fileModel) {
-        if (fileModel.getSavedFileName() != null) {
-            File file = new File(fileModel.getSavedFileName());
-
-            frame_title = frame_title_0 + "        " + file.getName();
-        } else {
-            frame_title = frame_title_0 + "        " + "Unsaved";
-        }
-
-        if (!fileModel.isSaved()) {
-            frame_title += "*";
-        }
-
-        frame.setTitle(frame_title);
-        mainCreasePatternWorker.setTitle(frame_title);
     }
 }

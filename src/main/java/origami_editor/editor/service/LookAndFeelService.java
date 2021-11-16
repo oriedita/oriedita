@@ -29,11 +29,15 @@ import java.net.URL;
 @Singleton
 public class LookAndFeelService {
     private final JFrame frame;
+    private final ApplicationModel applicationModel;
 
     @Inject
     public LookAndFeelService(@Named("mainFrame") JFrame frame, ApplicationModel applicationModel) {
         this.frame = frame;
+        this.applicationModel = applicationModel;
+    }
 
+    public void init() {
         applicationModel.addPropertyChangeListener(e -> {
             if (e.getPropertyName() == null || e.getPropertyName().equals("laf")) {
                 applyLookAndFeel(applicationModel.getLaf());
