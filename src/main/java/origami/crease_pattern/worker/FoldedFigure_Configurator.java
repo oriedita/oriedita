@@ -39,6 +39,8 @@ public class FoldedFigure_Configurator {
     private WireFrame_Worker orite;
     private AdditionalEstimationAlgorithm AEA;
 
+    private boolean[] isReducedSubFace;
+
     public FoldedFigure_Configurator(FoldedFigure_Worker worker) {
         this.worker = worker;
     }
@@ -131,6 +133,13 @@ public class FoldedFigure_Configurator {
      */
     private SubFace[] reduceSubFaceSet(SubFace[] s) throws InterruptedException {
         Map<Integer, List<Integer>> faceToSubFaceMap = new HashMap<>();
+
+        isReducedSubFace = new boolean[s.length];
+        Map<SubFace, Integer> subFaceToId = new HashMap<>();
+        for (int i = 1; i < s.length; i++) {
+            subFaceToId.put(s[i], i);
+        }
+
         s = s.clone();
         Arrays.sort(s, 1, s.length, Comparator.comparingInt(SubFace::getFaceIdCount).reversed());
         List<SubFace> reduced = new ArrayList<>();
@@ -155,6 +164,7 @@ public class FoldedFigure_Configurator {
             if (isNotSubset) {
                 int id = reduced.size();
                 reduced.add(s[i]);
+                isReducedSubFace[subFaceToId.get(s[i])] = true;
                 for (int f = 1; f <= s[i].getFaceIdCount(); f++) {
                     faceId = s[i].getFaceId(f);
                     faceToSubFaceMap.computeIfAbsent(faceId, k -> new ArrayList<>()).add(id);
@@ -355,16 +365,17 @@ public class FoldedFigure_Configurator {
     }
 
     private void setupSubFacePriority() throws InterruptedException {
-        // Priority initialization
+        // Priority initialization; it suffices to do just the reduced SubFaces
         int[] priorityMap = new int[worker.SubFaceTotal + 1];
-        SubFacePriority SFP = new SubFacePriority(worker.hierarchyList.getFacesTotal(), worker.SubFaceTotal);
-        for (int i = 1; i <= worker.SubFaceTotal; i++) {
-            SFP.addSubFace(worker.s0[i], i, worker.hierarchyList);
+        int reducedSubFaceTotal = worker.s1.length - 1;
+        SubFacePriority SFP = new SubFacePriority(worker.hierarchyList.getFacesTotal(), reducedSubFaceTotal);
+        for (int i = 1; i <= reducedSubFaceTotal; i++) {
+            SFP.addSubFace(worker.s1[i], i, worker.hierarchyList);
         }
-
+        
         // Priority processing
-        for (int i = 1; i <= worker.SubFaceTotal; i++) {// 優先度i番目のSubFaceIdをさがす。
-            long result = SFP.getMaxSubFace(worker.s0);
+        for (int i = 1; i <= reducedSubFaceTotal; i++) {// 優先度i番目のSubFaceIdをさがす。
+            long result = SFP.getMaxSubFace(worker.s1);
             int i_yusen = (int) (result & SubFacePriority.mask);
             int max = (int) (result >>> 32);
             priorityMap[i] = i_yusen; // 優先度からs0のidを指定できるようにする
@@ -372,7 +383,7 @@ public class FoldedFigure_Configurator {
                 worker.SubFace_valid_number++;
             }
 
-            SFP.processSubFace(worker.s0[i_yusen], i_yusen, worker.hierarchyList);
+            SFP.processSubFace(worker.s1[i_yusen], i_yusen, worker.hierarchyList);
             if (Thread.interrupted()) throw new InterruptedException();
         }
 
@@ -381,9 +392,18 @@ public class FoldedFigure_Configurator {
         System.out.println("上下表職人内　s0に優先順位をつける");
         System.out.println("上下表職人内　優先度からs0のid");
 
-        for (int i = 1; i <= worker.SubFaceTotal; i++) {
-            worker.s[i] = worker.s0[priorityMap[i]];
+        for (int i = 1; i <= reducedSubFaceTotal; i++) {
+            worker.s[i] = worker.s1[priorityMap[i]];
         }
+
+        // Fill the rest with non-reduced ones
+        int j = 1;
+        for (int i = reducedSubFaceTotal + 1; i <= worker.SubFaceTotal; i++) {
+            while (isReducedSubFace[j]) j++;
+            worker.s[i] = worker.s0[j];
+            j++;
+        }
+        isReducedSubFace = null; // no longer needed
     }
 
     private void setupGuideMap() throws InterruptedException {

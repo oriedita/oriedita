@@ -253,14 +253,23 @@ public class WireFrame_Worker {
             if (Thread.interrupted()) throw new InterruptedException();
         }
 
-        int addPointNum = adapter.getCount();
+        int numPoints = adapter.getCount();
         System.out.print("点の全数　addPointNum＝　");
-        System.out.println(addPointNum);
+        System.out.println(numPoints);
 
-        configure(addPointNum, lineSegmentSet.getNumLineSegments(), lineSegmentSet.getNumLineSegments() - addPointNum + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
-        pointSet.configure(addPointNum, lineSegmentSet.getNumLineSegments(), lineSegmentSet.getNumLineSegments() - addPointNum + 100);//<< It may be better to have more room here to ensure redundancy. Consideration required 20150315
+        int numLines = lineSegmentSet.getNumLineSegments();
+        
+        // Euler's formula says F - E + V = 1 (bounded faces)
+        int supposedNumFaces = numLines - numPoints + 1;
+        // However the numbers could be off due to rounding errors, so we add a bit
+        // more. The "max" thing here is partly for compatibility with the old tests,
+        // but also for ensuring that the extra room is enough.
+        int estimatedNumFaces = supposedNumFaces + Math.max(supposedNumFaces / 10, 99);
 
-        for (int i = 0; i < addPointNum; i++) {
+        configure(numPoints, numLines, estimatedNumFaces);
+        pointSet.configure(numPoints, numLines, estimatedNumFaces);
+
+        for (int i = 0; i < numPoints; i++) {
             pointSet.addPoint(adapter.get(i));
         }
     }
