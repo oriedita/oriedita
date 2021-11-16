@@ -17,7 +17,6 @@ import origami_editor.editor.service.FileSaveService;
 import origami_editor.editor.service.FoldingService;
 import origami_editor.editor.task.FoldingEstimateSave100Task;
 import origami_editor.editor.task.FoldingEstimateSpecificTask;
-import origami_editor.editor.task.FoldingEstimateTask;
 import origami_editor.editor.task.TaskExecutor;
 import origami_editor.tools.StringOp;
 
@@ -131,7 +130,7 @@ public class BottomPanel {
             if (selectedFigure != null && selectedFigure.foldedFigure.findAnotherOverlapValid) {
                 selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
-                TaskExecutor.executeTask("Folding Estimate Save 100", new FoldingEstimateSave100Task(canvas, foldingService, fileSaveService, foldedFiguresList, fileModel));
+                TaskExecutor.executeTask("Folding Estimate Save 100", new FoldingEstimateSave100Task(canvas, foldingService, fileSaveService, foldedFiguresList));
             }
         });
         goToFoldedFigureButton.addActionListener(e -> {

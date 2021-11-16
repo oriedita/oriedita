@@ -41,7 +41,7 @@ public class SaveTest {
         FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
         mainCreasePatternWorker = new CreasePattern_Worker(creasePatternCamera, new HistoryState(), new HistoryState(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, null, null);
         ResetService resetService = () -> {};
-        fileSaveService = new FileSaveService(null, creasePatternCamera, mainCreasePatternWorker, fileModel, applicationModel, canvasModel, resetService, null);
+        fileSaveService = new FileSaveService(null, creasePatternCamera, mainCreasePatternWorker, null, fileModel, applicationModel, canvasModel, new FoldedFiguresList(), resetService, null);
     }
 
     @ParameterizedTest

@@ -1,10 +1,15 @@
 package origami_editor.editor.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import origami_editor.editor.Canvas;
+import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
+import origami_editor.editor.export.Svg;
 import origami_editor.editor.save.Save;
 import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.canvas.CreasePattern_Worker;
@@ -15,13 +20,13 @@ import origami_editor.editor.export.Cp;
 import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
 import origami_editor.editor.json.DefaultObjectMapper;
-import origami_editor.tools.ResourceUtil;
 
 import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicFileChooserUI;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -30,9 +35,11 @@ public class FileSaveService {
     private final JFrame frame;
     private final Camera creasePatternCamera;
     private final CreasePattern_Worker mainCreasePatternWorker;
+    private final Canvas canvas;
     private final FileModel fileModel;
     private final ApplicationModel applicationModel;
     private final CanvasModel canvasModel;
+    private final FoldedFiguresList foldedFiguresList;
     private final ResetService resetService;
     private final BackgroundModel backgroundModel;
 
@@ -41,17 +48,21 @@ public class FileSaveService {
             @Named("mainFrame") JFrame frame,
             @Named("creasePatternCamera") Camera creasePatternCamera,
             CreasePattern_Worker mainCreasePatternWorker,
+            Canvas canvas,
             FileModel fileModel,
             ApplicationModel applicationModel,
             CanvasModel canvasModel,
+            FoldedFiguresList foldedFiguresList,
             ResetService resetService,
             BackgroundModel backgroundModel) {
         this.frame = frame;
         this.creasePatternCamera = creasePatternCamera;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
+        this.canvas = canvas;
         this.fileModel = fileModel;
         this.applicationModel = applicationModel;
         this.canvasModel = canvasModel;
+        this.foldedFiguresList = foldedFiguresList;
         this.resetService = resetService;
         this.backgroundModel = backgroundModel;
     }
@@ -141,20 +152,66 @@ public class FileSaveService {
             return;
         }
 
-        if (exportFile.getName().endsWith(".png") || exportFile.getName().endsWith(".jpg") || exportFile.getName().endsWith(".jpeg") || exportFile.getName().endsWith(".svg")) {
-            canvasModel.setFlg61(false);
-            if ((canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61) && (mainCreasePatternWorker.getDrawingStage() == 4)) {
-                canvasModel.setFlg61(true);
-                mainCreasePatternWorker.setDrawingStage(0);
-            }
+        if (exportFile.getName().endsWith(".svg")) {
+            boolean displayCpLines = applicationModel.getDisplayCpLines();
+            float lineWidth = applicationModel.determineCalculatedLineWidth();
+            int intLineWidth = applicationModel.getLineWidth();
+            LineStyle lineStyle = applicationModel.getLineStyle();
+            int pointSize = applicationModel.getPointSize();
 
-            fileModel.setExportImageFileName(exportFile.getAbsolutePath());
-            canvasModel.setFlg61(true);
-            canvasModel.markDirty();
+            Svg.exportFile(mainCreasePatternWorker.foldLineSet, creasePatternCamera, displayCpLines, lineWidth, intLineWidth, lineStyle, pointSize, foldedFiguresList, exportFile);
+        } else if (exportFile.getName().endsWith(".png") || exportFile.getName().endsWith(".jpg") || exportFile.getName().endsWith(".jpeg")) {
+            writeImageFile(exportFile);
         } else if (exportFile.getName().endsWith(".cp")) {
             Cp.exportFile(mainCreasePatternWorker.getSave_for_export(), exportFile);
         } else if (exportFile.getName().endsWith(".orh")) {
             Orh.exportFile(mainCreasePatternWorker.getSave_for_export_with_applicationModel(), exportFile);
+        }
+    }
+
+    public void writeImageFile(File file) {//i=1　png, 2=jpg
+        if (file != null) {
+            String fname = file.getName();
+
+            String formatName;
+
+            if (fname.endsWith("png")) {
+                formatName = "png";
+            } else if (fname.endsWith("jpg")) {
+                formatName = "jpg";
+            } else {
+                file = new File(fname + ".png");
+                formatName = "png";
+            }
+
+            //	ファイル保存
+
+            try {
+                BufferedImage myImage = canvas.getGraphicsConfiguration().createCompatibleImage(canvas.getSize().width, canvas.getSize().height);
+                Graphics g = myImage.getGraphics();
+
+                canvas.hideOperationFrame = true;
+                canvas.paintComponent(g);
+                canvas.hideOperationFrame = false;
+
+                if (canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && mainCreasePatternWorker.getDrawingStage() == 4) { //枠設定時の枠内のみ書き出し 20180524
+                    int xMin = (int) mainCreasePatternWorker.operationFrameBox.getXMin();
+                    int xMax = (int) mainCreasePatternWorker.operationFrameBox.getXMax();
+                    int yMin = (int) mainCreasePatternWorker.operationFrameBox.getYMin();
+                    int yMax = (int) mainCreasePatternWorker.operationFrameBox.getYMax();
+
+                    ImageIO.write(myImage.getSubimage(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1), formatName, file);
+
+                } else {//Full export without frame
+                    System.out.println("2018-529_");
+
+                    ImageIO.write(myImage, formatName, file);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("終わりました");
         }
     }
 
