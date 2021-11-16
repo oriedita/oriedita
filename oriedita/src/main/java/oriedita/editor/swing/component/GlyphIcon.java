@@ -23,21 +23,21 @@ public class GlyphIcon implements Icon, PropertyChangeListener {
     public void paintIcon(Component c, Graphics g, int x, int y) {
         Graphics2D g2 = (Graphics2D) g;
         Font font = g2.getFont();
-        g2.setFont(new Font("Icons", Font.PLAIN, 20));
+        g2.setFont(new Font("Icons", Font.PLAIN, 21));
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
         g2.setColor(Colors.get(color));
-        g2.drawString(glyph, x, y + 20);
+        g2.drawString(glyph, x, y + getIconHeight());
         g2.setFont(font);
     }
 
     @Override
     public int getIconWidth() {
-        return 20;
+        return 21;
     }
 
     @Override
     public int getIconHeight() {
-        return 20;
+        return 21;
     }
 
     @Override
