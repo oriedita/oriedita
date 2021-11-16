@@ -16,21 +16,10 @@ public class FileModel implements Serializable {
 
     private String savedFileName;
     private boolean saved;
-    private String exportImageFileName;
 
     @Inject
     public FileModel() {
         reset();
-    }
-
-    public String getExportImageFileName() {
-        return exportImageFileName;
-    }
-
-    public void setExportImageFileName(String exportImageFileName) {
-        String oldExportImageFileName = this.exportImageFileName;
-        this.exportImageFileName = exportImageFileName;
-        this.pcs.firePropertyChange("exportImageFileName", oldExportImageFileName, exportImageFileName);
     }
 
     public boolean isSaved() {

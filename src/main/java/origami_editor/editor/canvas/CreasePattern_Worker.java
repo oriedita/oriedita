@@ -13,7 +13,6 @@ import origami.crease_pattern.element.*;
 import origami_editor.editor.Colors;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.factory.HistoryStateFactory;
 import origami_editor.editor.save.Save;
 import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.databinding.*;
@@ -436,7 +435,7 @@ public class CreasePattern_Worker {
     //------------------------------------------------------------------------------
     //Drawing the basic branch
     //------------------------------------------------------------------------------
-    public void drawWithCamera(Graphics g, boolean displayComments, boolean displayCpLines, boolean displayAuxLines, boolean displayAuxLiveLines, float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth, int p0x_max, int p0y_max, boolean i_mejirusi_display) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
+    public void drawWithCamera(Graphics g, boolean displayComments, boolean displayCpLines, boolean displayAuxLines, boolean displayAuxLiveLines, float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth, int p0x_max, int p0y_max, boolean i_mejirusi_display, boolean hideOperationFrame) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
         Graphics2D g2 = (Graphics2D) g;
 
         //Drawing grid lines
@@ -551,7 +550,7 @@ public class CreasePattern_Worker {
         }
 
         //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
-        if (canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && lineStep.size() == 4) {
+        if (!hideOperationFrame && canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && lineStep.size() == 4) {
             Point p1 = new Point();
             p1.set(camera.TV2object(operationFrame_p1));
             Point p2 = new Point();
@@ -569,7 +568,7 @@ public class CreasePattern_Worker {
 
         //線分入力時の一時的なs_step線分を描く　
 
-        if ((canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) || (lineStep.size() == 4)) {
+        if (!hideOperationFrame && ((canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) || (lineStep.size() == 4))) {
             for (LineSegment s : lineStep) {
                 DrawingUtil.drawLineStep(g, s, camera, lineWidth, gridInputAssist);
             }
