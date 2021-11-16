@@ -17,6 +17,7 @@ import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.service.ButtonService;
 import origami_editor.editor.service.FoldingService;
+import origami_editor.editor.undo_box.HistoryState;
 import origami_editor.tools.StringOp;
 
 import javax.swing.*;
@@ -124,15 +125,28 @@ public class LeftPanel {
     private JButton setGridParametersButton;
 
     @Inject
-    public LeftPanel(@Named("mainFrame") JFrame frame, MeasuresModel measuresModel, ButtonService buttonService, CreasePattern_Worker mainCreasePatternWorker, ApplicationModel applicationModel, FoldedFigureModel foldedFigureModel, GridModel gridModel, CanvasModel canvasModel, FoldingService foldingService, FoldedFiguresList foldedFiguresList) {
+    public LeftPanel(@Named("mainFrame") JFrame frame,
+                     @Named("normal") HistoryState historyState,
+                     MeasuresModel measuresModel,
+                     ButtonService buttonService,
+                     CreasePattern_Worker mainCreasePatternWorker,
+                     ApplicationModel applicationModel,
+                     FoldedFigureModel foldedFigureModel,
+                     GridModel gridModel,
+                     CanvasModel canvasModel,
+                     FoldingService foldingService,
+                     FoldedFiguresList foldedFiguresList) {
         this.measuresModel = measuresModel;
 
         applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));
         gridModel.addPropertyChangeListener(e -> setData(gridModel));
         foldedFigureModel.addPropertyChangeListener(e -> setData(foldedFigureModel));
         canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
+        historyState.addPropertyChangeListener(e -> setData(historyState));
 
         $$$setupUI$$$();
+
+        setData(historyState);
 
         getData(gridModel);
 
@@ -573,6 +587,11 @@ public class LeftPanel {
         });
         setGridParametersButton.addActionListener(e -> getData(gridModel));
         resetButton.addActionListener(e -> gridModel.reset());
+    }
+
+    private void setData(HistoryState historyState) {
+        undoRedo.getUndoButton().setEnabled(historyState.canUndo());
+        undoRedo.getRedoButton().setEnabled(historyState.canRedo());
     }
 
 

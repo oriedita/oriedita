@@ -3,16 +3,28 @@ package origami_editor.editor.undo_box;
 import origami_editor.editor.save.Save;
 import origami_editor.editor.save.SaveV1;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+@Singleton
 public class HistoryState {
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
     int undoTotal = 1000;//Number of times you can undo up to how many times ago
     Deque<byte[]> history = new ArrayDeque<>();
     Deque<byte[]> future = new ArrayDeque<>();
     byte[] current;
 
+    public void addPropertyChangeListener(PropertyChangeListener propertyChangeListener) {
+        this.pcs.addPropertyChangeListener(propertyChangeListener);
+    }
+
+    @Inject
     public HistoryState() {
     }
 
@@ -20,6 +32,8 @@ public class HistoryState {
         history.clear();
         future.clear();
         current = null;
+
+        this.pcs.firePropertyChange(null, null, null);
     }
 
     public boolean isEmpty() {
@@ -41,6 +55,7 @@ public class HistoryState {
             history.removeLast();
         }
 
+        this.pcs.firePropertyChange(null, null, null);
     }
 
     private byte[] convertToBytes(Object object) throws IOException {
@@ -73,9 +88,7 @@ public class HistoryState {
 
         try {
             return (Save) convertFromBytes(current);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -90,6 +103,8 @@ public class HistoryState {
         future.addFirst(current);
         current = history.removeFirst();
 
+        this.pcs.firePropertyChange(null, null, null);
+
         return getCurrent();
     }
 
@@ -101,18 +116,8 @@ public class HistoryState {
         history.addFirst(current);
         current = future.removeFirst();
 
+        this.pcs.firePropertyChange(null, null, null);
+
         return getCurrent();
-    }
-
-    public void setUndoTotal(int i_new) {
-        undoTotal = i_new;
-
-        while (history.size() > undoTotal) {
-            history.removeLast();
-        }
-
-        while (future.size() > undoTotal) {
-            future.removeLast();
-        }
     }
 }

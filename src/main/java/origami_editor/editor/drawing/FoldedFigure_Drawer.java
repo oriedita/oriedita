@@ -376,8 +376,6 @@ public class FoldedFigure_Drawer {
         foldedFigureRearCamera.setCameraAngle(d_foldedFigure_rotation_correction);
         transparentFrontCamera.setCameraAngle(d_foldedFigure_rotation_correction);
         transparentRearCamera.setCameraAngle(d_foldedFigure_rotation_correction);
-
-        wireFrame_worker_drawer2.setUndoBoxUndoTotal(foldedFigureModel.getHistoryTotal());
     }
 
 

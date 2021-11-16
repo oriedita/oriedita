@@ -330,10 +330,6 @@ public class WireFrame_Worker_Drawer {
         return pointSet.inside(p);//If PointSet c.inside (p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, if it is positive, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
     }
 
-    public void setUndoBoxUndoTotal(int i) {
-        history.setUndoTotal(i);
-    }
-
     public void record() {
         history.record(getSave());
     }

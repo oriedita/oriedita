@@ -13,6 +13,7 @@ import origami.crease_pattern.element.*;
 import origami_editor.editor.Colors;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
+import origami_editor.editor.factory.HistoryStateFactory;
 import origami_editor.editor.save.Save;
 import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.databinding.*;
@@ -52,8 +53,8 @@ public class CreasePattern_Worker {
     LineColor auxLineColor = LineColor.ORANGE_4;//Auxiliary line color
     boolean gridInputAssist = false;//1 if you use the input assist function for fine grid display, 0 if you do not use it
     Color customCircleColor;//Stores custom colors for circles and auxiliary hot lines
-    HistoryState historyState = new HistoryState();
-    HistoryState auxHistoryState = new HistoryState();
+    HistoryState historyState;
+    HistoryState auxHistoryState;
     FoldLineAdditionalInputMode i_foldLine_additional = FoldLineAdditionalInputMode.POLY_LINE_0;//= 0 is polygonal line input = 1 is auxiliary line input mode (when inputting a line segment, these two). When deleting a line segment, the value becomes as follows. = 0 is the deletion of the polygonal line, = 1 is the deletion of the auxiliary picture line, = 2 is the deletion of the black line, = 3 is the deletion of the auxiliary live line, = 4 is the folding line, the auxiliary live line and the auxiliary picture line.
     FoldLineSet auxLines = new FoldLineSet();    //Store auxiliary lines
     int id_angle_system = 8;//180 / id_angle_system represents the angular system. For example, if id_angle_system = 3, 180/3 = 60 degrees, if id_angle_system = 5, 180/5 = 36 degrees
@@ -103,6 +104,8 @@ public class CreasePattern_Worker {
 
     @Inject
     public CreasePattern_Worker(@Named("creasePatternCamera") Camera creasePatternCamera,
+                                @Named("normal") HistoryState normalHistoryState,
+                                @Named("aux") HistoryState auxHistoryState,
                                 CanvasModel canvasModel,
                                 ApplicationModel applicationModel,
                                 GridModel gridModel,
@@ -111,6 +114,8 @@ public class CreasePattern_Worker {
                                 AngleSystemModel angleSystemModel,
                                 InternalDivisionRatioModel internalDivisionRatioModel) {
         this.creasePatternCamera = creasePatternCamera;  //コンストラクタ
+        this.historyState = normalHistoryState;
+        this.auxHistoryState = auxHistoryState;
         this.canvasModel = canvasModel;
         this.applicationModel = applicationModel;
         this.gridModel = gridModel;

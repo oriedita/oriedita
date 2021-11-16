@@ -16,6 +16,7 @@ import origami_editor.editor.drawing.tools.Camera;
 import origami_editor.editor.exception.FileReadingException;
 import origami_editor.editor.service.FileSaveService;
 import origami_editor.editor.service.ResetService;
+import origami_editor.editor.undo_box.HistoryState;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -38,7 +39,7 @@ public class SaveTest {
         CanvasModel canvasModel = new CanvasModel();
         GridModel gridModel = new GridModel();
         FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
-        mainCreasePatternWorker = new CreasePattern_Worker(creasePatternCamera, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, null, null);
+        mainCreasePatternWorker = new CreasePattern_Worker(creasePatternCamera, new HistoryState(), new HistoryState(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, null, null);
         ResetService resetService = () -> {};
         fileSaveService = new FileSaveService(null, creasePatternCamera, mainCreasePatternWorker, fileModel, applicationModel, canvasModel, resetService, null);
     }

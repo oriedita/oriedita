@@ -226,6 +226,8 @@ public class FoldLineSet {
     }
 
     public void setAuxSave(LineSegmentSave save) {
+        lineSegments.clear();
+        lineSegments.add(new LineSegment());
         lineSegments.addAll(save.getAuxLineSegments());
         total = lineSegments.size() - 1;
     }
