@@ -118,6 +118,12 @@ public class ButtonService {
                 GlyphIcon glyphIcon = new GlyphIcon(icon, button.getForeground());
                 button.addPropertyChangeListener("foreground", glyphIcon);
                 button.setIcon(glyphIcon);
+
+                if (button instanceof JCheckBox) {
+                    GlyphIcon selectedGlyphIcon = new GlyphIcon(String.valueOf((char)(icon.toCharArray()[0] + 1)), button.getForeground());
+                    button.addPropertyChangeListener("foreground", selectedGlyphIcon);
+                    button.setSelectedIcon(selectedGlyphIcon);
+                }
             }
         }
 

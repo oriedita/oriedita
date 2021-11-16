@@ -12,7 +12,6 @@ import origami.folding.FoldedFigure;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.component.ColorIcon;
-import origami_editor.editor.component.GlyphIcon;
 import origami_editor.editor.component.UndoRedo;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;

@@ -151,6 +151,13 @@
                                 <include>com/intellij/uiDesigner/core</include>
                             </includes>
                         </filter>
+<!--                        <filter>-->
+<!--                            <artifact>*:*</artifact>-->
+<!--                            <excludes>-->
+<!--                                <exclude>ppp/</exclude>-->
+<!--                                <exclude>ppp_dark/</exclude>-->
+<!--                            </excludes>-->
+<!--                        </filter>-->
                     </filters>
                 </configuration>
                 <executions>
