@@ -39,5 +39,9 @@
     <orderEntry type="library" name="Maven: jdom:jdom:1.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.dagger:dagger:2.40.1" level="project" />
     <orderEntry type="library" name="Maven: javax.inject:javax.inject:1" level="project" />
+    <orderEntry type="library" name="Maven: org.lwjgl:lwjgl:3.3.0" level="project" />
+    <orderEntry type="library" name="Maven: org.lwjgl:lwjgl-nfd:3.3.0" level="project" />
+    <orderEntry type="library" name="Maven: org.lwjgl:lwjgl:natives-windows:3.3.0" level="project" />
+    <orderEntry type="library" name="Maven: org.lwjgl:lwjgl-nfd:natives-windows:3.3.0" level="project" />
   </component>
 </module>

@@ -1,17 +1,10 @@
 package origami_editor.editor.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import javax.imageio.ImageIO;
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import org.lwjgl.PointerBuffer;
 import origami_editor.editor.Canvas;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.export.Svg;
-import origami_editor.editor.save.Save;
-import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.tools.Camera;
@@ -19,8 +12,14 @@ import origami_editor.editor.exception.FileReadingException;
 import origami_editor.editor.export.Cp;
 import origami_editor.editor.export.Obj;
 import origami_editor.editor.export.Orh;
+import origami_editor.editor.export.Svg;
 import origami_editor.editor.json.DefaultObjectMapper;
+import origami_editor.editor.save.Save;
+import origami_editor.editor.save.SaveV1;
 
+import javax.imageio.ImageIO;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -29,6 +28,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
+import static org.lwjgl.system.MemoryUtil.memAllocPointer;
+import static org.lwjgl.system.MemoryUtil.memFree;
+import static org.lwjgl.util.nfd.NativeFileDialog.*;
 
 @Singleton
 public class FileSaveService {
@@ -215,39 +218,21 @@ public class FileSaveService {
         }
     }
 
-    /**
-     * Change the extension of the selected file in a fileChooser when changing the filefilter.
-     */
-    void applyFileChooserSwitchUpdate(JFileChooser fileChooser) {
-        fileChooser.addPropertyChangeListener(JFileChooser.FILE_FILTER_CHANGED_PROPERTY, e -> {
-            // Can also be AcceptAllFileFilter, then nothing should happen.
-            if (e.getNewValue() instanceof FileNameExtensionFilter) {
-                FileNameExtensionFilter filter = (FileNameExtensionFilter) e.getNewValue();
-
-                String newExtension = filter.getExtensions()[0];
-                String fileName = ((BasicFileChooserUI) fileChooser.getUI()).getFileName();
-
-                String fileBaseName = fileName;
-                if (fileName.lastIndexOf(".") > -1) {
-                    fileBaseName = fileName.substring(0, fileName.lastIndexOf("."));
-                }
-
-                fileChooser.setSelectedFile(new File(fileBaseName + "." + newExtension));
-            }
-        });
-    }
-
     public File selectOpenFile() {
-        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
-        fileChooser.setDialogTitle("Open");
+        PointerBuffer outPath = memAllocPointer(1);
 
-        fileChooser.setFileFilter(new FileNameExtensionFilter("All supported files (*.ori, *.cp)", "cp", "ori"));
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp"));
+        File selectedFile = null;
+        try {
+            int result = NFD_OpenDialog("ori,cp;ori;cp", applicationModel.getDefaultDirectory(), outPath);
 
-        fileChooser.showOpenDialog(frame);
+            if (result == NFD_OKAY) {
+                selectedFile = new File(outPath.getStringUTF8(0));
+                nNFD_Free(outPath.get(0));
+            }
+        } finally {
+            memFree(outPath);
+        }
 
-        File selectedFile = fileChooser.getSelectedFile();
         if (selectedFile != null && selectedFile.exists()) {
             applicationModel.setDefaultDirectory(selectedFile.getParent());
             fileModel.setSavedFileName(selectedFile.getAbsolutePath());
@@ -262,105 +247,75 @@ public class FileSaveService {
     }
 
     File selectSaveFile() {
-        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
-        fileChooser.setDialogTitle("Save As");
-
-        fileChooser.setAcceptAllFileFilterUsed(false);
-
-        FileNameExtensionFilter oriFilter = new FileNameExtensionFilter("Origami Editor (*.ori)", "ori");
-        fileChooser.setFileFilter(oriFilter);
-        FileNameExtensionFilter cpFilter = new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp");
-        fileChooser.addChoosableFileFilter(cpFilter);
-        fileChooser.setSelectedFile(new File("untitled.ori"));
-
-        applyFileChooserSwitchUpdate(fileChooser);
+        PointerBuffer outPath = memAllocPointer(1);
 
         File selectedFile;
-        int choice = JOptionPane.NO_OPTION;
-        do {
-            int saveChoice = fileChooser.showSaveDialog(frame);
+        try {
+            int result = NFD_SaveDialog("ori;cp", applicationModel.getDefaultDirectory(), outPath);
 
-            if (saveChoice != JFileChooser.APPROVE_OPTION) {
+            if (result != NFD_OKAY) {
                 return null;
             }
 
-            selectedFile = fileChooser.getSelectedFile();
+            selectedFile = new File(outPath.getStringUTF8(0));
 
-            if (selectedFile != null && !selectedFile.getName().endsWith(".ori") && !selectedFile.getName().endsWith(".cp")) {
-                if (fileChooser.getFileFilter() == oriFilter) {
-                    selectedFile = new File(selectedFile.getPath() + ".ori");
-                } else if (fileChooser.getFileFilter() == cpFilter) {
-                    selectedFile = new File(selectedFile.getPath() + ".cp");
-                }
-            }
-
-            if (selectedFile != null && selectedFile.exists()) {
-                choice = JOptionPane.showConfirmDialog(frame, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            }
-        } while (selectedFile != null && selectedFile.exists() && choice != JOptionPane.YES_OPTION);
-
-        if (selectedFile != null) {
-            applicationModel.setDefaultDirectory(selectedFile.getParent());
-            fileModel.setSavedFileName(selectedFile.getAbsolutePath());
-            fileModel.setSaved(true);
-            applicationModel.addRecentFile(selectedFile);
+            nNFD_Free(outPath.get(0));
+        } finally {
+            memFree(outPath);
         }
+
+        applicationModel.setDefaultDirectory(selectedFile.getParent());
+        fileModel.setSavedFileName(selectedFile.getAbsolutePath());
+        fileModel.setSaved(true);
+        applicationModel.addRecentFile(selectedFile);
 
         return selectedFile;
     }
 
     public File selectImportFile() {
-        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
-        fileChooser.setDialogTitle("Import");
+        PointerBuffer outPath = memAllocPointer(1);
 
-        fileChooser.setFileFilter(new FileNameExtensionFilter("All supported files", "cp", "orh", "ori"));
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp"));
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Orihime (*.orh)", "orh"));
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Origami Editor (*.ori)", "ori"));
+        File selectedFile = null;
+        try {
+            frame.setEnabled(false);
+            int result = NFD_OpenDialog("cp,orh,ori;cp;orh;ori", applicationModel.getDefaultDirectory(), outPath);
+            frame.setEnabled(true);
 
-        fileChooser.showOpenDialog(frame);
-
-        File selectedFile = fileChooser.getSelectedFile();
-        if (selectedFile != null) {
-            applicationModel.setDefaultDirectory(selectedFile.getParent());
+            if (result == NFD_OKAY) {
+                selectedFile = new File(outPath.getStringUTF8(0));
+                nNFD_Free(outPath.get(0));
+            }
+        } finally {
+            memFree(outPath);
         }
 
-        return selectedFile;
+        if (selectedFile != null && selectedFile.exists()) {
+            applicationModel.setDefaultDirectory(selectedFile.getParent());
+
+            return selectedFile;
+        }
+
+        return null;
     }
 
     public File selectExportFile() {
-        JFileChooser fileChooser = new JFileChooser(applicationModel.getDefaultDirectory());
-        fileChooser.setDialogTitle("Export");
-
-        fileChooser.setAcceptAllFileFilterUsed(false);
-
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image (*.png)", "png"));
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image (*.jpg)", "jpg", "jpeg"));
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image (*.svg)", "svg"));
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CP / ORIPA (*.cp)", "cp"));
-        fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Orihime (*.orh)", "orh"));
-        fileChooser.setSelectedFile(new File("creasepattern.png"));
-
-        applyFileChooserSwitchUpdate(fileChooser);
+        PointerBuffer outPath = memAllocPointer(1);
 
         File selectedFile;
-        int choice = JOptionPane.NO_OPTION;
-        do {
-            int saveChoice = fileChooser.showSaveDialog(frame);
+        try {
+            int result = NFD_SaveDialog("png;jpg;svg;cp;orh", applicationModel.getDefaultDirectory(), outPath);
 
-            if (saveChoice != JFileChooser.APPROVE_OPTION) {
+            if (result != NFD_OKAY) {
                 return null;
             }
 
-            selectedFile = fileChooser.getSelectedFile();
-            if (selectedFile != null && selectedFile.exists()) {
-                choice = JOptionPane.showConfirmDialog(frame, "<html>File already exists.<br/>Do you want to replace it?", "Confirm Save As", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            }
-        } while (selectedFile != null && selectedFile.exists() && choice == JOptionPane.NO_OPTION);
-
-        if (selectedFile != null) {
-            applicationModel.setDefaultDirectory(selectedFile.getParent());
+            selectedFile = new File(outPath.getStringUTF8(0));
+            nNFD_Free(outPath.get(0));
+        } finally {
+            memFree(outPath);
         }
+
+        applicationModel.setDefaultDirectory(selectedFile.getParent());
 
         return selectedFile;
     }
