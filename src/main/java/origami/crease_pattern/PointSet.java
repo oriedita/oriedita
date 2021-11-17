@@ -296,9 +296,9 @@ public class PointSet implements Serializable {
         points[i].set(tn);
     }                                                        //   <<<------------
 
-    public void addPoint(double x, double y) {
+    public void addPoint(Point p) {
         numPoints = numPoints + 1;
-        points[numPoints].set(x, y);
+        points[numPoints].set(p);
     }   //点を加える
 
     public void addLine(int i, int j, LineColor icol) {
@@ -371,6 +371,7 @@ public class PointSet implements Serializable {
 
     //-------------------------------------
     public void FaceOccurrence() throws InterruptedException {
+        System.out.println("線分集合->点集合：点集合内で面を発生　開始");
         boolean addNewFace;
         Face tempFace;
         numFaces = 0;
@@ -410,6 +411,8 @@ public class PointSet implements Serializable {
         System.out.print("全面数　＝　");
         System.out.println(numFaces);
         findLineInFaceBorder();
+
+        System.out.println("線分集合->点集合：点集合内で面を発生　終了");
     }
 
     private void findLineInFaceBorder() throws InterruptedException {

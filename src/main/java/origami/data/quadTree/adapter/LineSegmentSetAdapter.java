@@ -2,30 +2,19 @@ package origami.data.quadTree.adapter;
 
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
-import origami.data.quadTree.QuadTreeItem;
 
-public class LineSegmentSetAdapter implements QuadTreeAdapter {
+/**
+ * LineSegmentSetAdapter is a {@link QuadTreeAdapter} that uses all points in a
+ * {@link LineSegmentSet} as initial range.
+ * 
+ * @author Mu-Tsun Tsai
+ */
+public abstract class LineSegmentSetAdapter implements QuadTreeAdapter {
 
-    private final LineSegmentSet set;
+    protected final LineSegmentSet set;
 
     public LineSegmentSetAdapter(LineSegmentSet set) {
         this.set = set;
-    }
-
-    @Override
-    public int getCount() {
-        return set.getNumLineSegments();
-    }
-
-    @Override
-    public QuadTreeItem getItem(int index) {
-        return createItem(set.getA(index),  set.getB(index));
-    }
-
-    public static QuadTreeItem createItem(Point A, Point B) {
-        double ax = A.getX(), ay = A.getY();
-        double bx = B.getX(), by = B.getY();
-        return new QuadTreeItem(Math.min(ax, bx), Math.max(ax, bx), Math.min(ay, by), Math.max(ay, by));
     }
 
     @Override

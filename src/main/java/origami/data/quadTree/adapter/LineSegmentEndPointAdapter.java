@@ -6,10 +6,16 @@ import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
 import origami.data.quadTree.QuadTreeItem;
 
+/**
+ * LineSegmentEndPointAdapter adapts of of the end points of the lines in a
+ * {@link LineSegmentSet}.
+ * 
+ * @author Mu-Tsun Tsai
+ */
 public class LineSegmentEndPointAdapter implements QuadTreeAdapter {
 
     private final LineSegmentSet set;
-    private final  BiFunction<LineSegmentSet, Integer, Point> factory;
+    private final BiFunction<LineSegmentSet, Integer, Point> factory;
 
     public LineSegmentEndPointAdapter(LineSegmentSet set, BiFunction<LineSegmentSet, Integer, Point> factory) {
         this.set = set;
@@ -26,7 +32,6 @@ public class LineSegmentEndPointAdapter implements QuadTreeAdapter {
         Point p = factory.apply(set, index);
         double x = p.getX(), y = p.getY();
         return new QuadTreeItem(x, x, y, y);
-
     }
 
     @Override

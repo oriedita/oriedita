@@ -3,6 +3,12 @@ package origami.data.quadTree.adapter;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.Point;
 
+/**
+ * PointSetAdapter is a {@link QuadTreeAdapter} that uses all points in a
+ * {@link PointSet} as initial range.
+ * 
+ * @author Mu-Tsun Tsai
+ */
 public abstract class PointSetAdapter implements QuadTreeAdapter {
 
     protected final PointSet set;

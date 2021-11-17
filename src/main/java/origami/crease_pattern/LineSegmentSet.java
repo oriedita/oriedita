@@ -7,7 +7,7 @@ import origami.crease_pattern.element.Point;
 import origami.data.save.LineSegmentSave;
 import origami.data.quadTree.QuadTree;
 import origami.data.quadTree.adapter.LineSegmentEndPointAdapter;
-import origami.data.quadTree.adapter.LineSegmentSetAdapter;
+import origami.data.quadTree.adapter.LineSegmentSetLineAdapter;
 import origami.data.quadTree.collector.EndPointCollector;
 import origami.data.quadTree.collector.QuadTreeCollector;
 
@@ -149,7 +149,7 @@ public class LineSegmentSet {
             k_flg.add(true);
         }
 
-        QuadTree qt = new QuadTree(new LineSegmentSetAdapter(this));
+        QuadTree qt = new QuadTree(new LineSegmentSetLineAdapter(this));
 
         while (found) {
             found = false;
