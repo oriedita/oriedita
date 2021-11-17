@@ -1,8 +1,5 @@
 package origami_editor.editor.canvas;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
@@ -13,21 +10,26 @@ import origami.crease_pattern.element.*;
 import origami_editor.editor.Colors;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
+import origami_editor.editor.databinding.*;
+import origami_editor.editor.drawing.Grid;
+import origami_editor.editor.drawing.tools.Camera;
+import origami_editor.editor.drawing.tools.DrawingUtil;
 import origami_editor.editor.save.Save;
 import origami_editor.editor.save.SaveV1;
-import origami_editor.editor.databinding.*;
-import origami_editor.editor.drawing.tools.DrawingUtil;
 import origami_editor.editor.task.CheckCAMVTask;
 import origami_editor.editor.task.FinishedFuture;
 import origami_editor.editor.undo_box.HistoryState;
-import origami_editor.editor.drawing.Grid;
-import origami_editor.editor.drawing.tools.Camera;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
+
+import static org.lwjgl.opengl.GL11.*;
 
 /**
  * Responsible for holding the current creasepattern and drawing it.
@@ -124,7 +126,8 @@ public class CreasePattern_Worker {
         if (applicationModel != null) applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));
         if (gridModel != null) gridModel.addPropertyChangeListener(e -> setGridConfigurationData(gridModel));
         if (angleSystemModel != null) angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
-        if (internalDivisionRatioModel != null) internalDivisionRatioModel.addPropertyChangeListener(e -> setData(internalDivisionRatioModel));
+        if (internalDivisionRatioModel != null)
+            internalDivisionRatioModel.addPropertyChangeListener(e -> setData(internalDivisionRatioModel));
         if (canvasModel != null) canvasModel.addPropertyChangeListener(e -> setData(canvasModel));
         if (fileModel != null) fileModel.addPropertyChangeListener(e -> setTitle(fileModel.determineFrameTitle()));
 
@@ -1051,6 +1054,43 @@ public class CreasePattern_Worker {
 
     public void selectConnected(Point p) {
         this.foldLineSet.selectProbablyConnected(p);
+    }
+
+    public void paintGL(int w, int h) {
+        //展開図の描画  補助活線以外の折線
+        glColor3f(0.0f, 0.0f, 0.0f);
+
+        glBegin(GL_LINES);
+
+        for (int i = 1; i <= foldLineSet.getTotal(); i++) {
+            LineSegment s = foldLineSet.get(i);
+            if (s.getColor() != LineColor.CYAN_3) {
+                switch (s.getColor()) {
+                    case BLACK_0:
+                        glColor3f(0.0f, 0.0f, 0.0f);
+                        break;
+                    case BLUE_2:
+                        glColor3f(0.0f, 0.0f, 1.0f);
+                        break;
+                    case RED_1:
+                        glColor3f(1.0f, 0.0f, 0.0f);
+                        break;
+                }
+
+                LineSegment s_tv = new LineSegment();
+                s_tv.set(camera.object2TV(s));
+                Point a = new Point();
+                Point b = new Point();
+                a.set(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
+                b.set(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+
+
+                glVertex2f((float) a.getX() / w, (float) a.getY() / -h);
+                glVertex2f((float) b.getX() / w, (float) b.getY() / -h);
+            }
+        }
+
+        glEnd();
     }
 
     //30 30 30 30 30 30 30 30 30 30 30 30 除け_線_変換

@@ -194,7 +194,7 @@ public class FileSaveService {
                 Graphics g = myImage.getGraphics();
 
                 canvas.hideOperationFrame = true;
-                canvas.paintComponent(g);
+                canvas.paintComponent2(g);
                 canvas.hideOperationFrame = false;
 
                 if (canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && mainCreasePatternWorker.getDrawingStage() == 4) { //枠設定時の枠内のみ書き出し 20180524

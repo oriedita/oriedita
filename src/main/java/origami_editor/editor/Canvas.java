@@ -3,6 +3,9 @@ package origami_editor.editor;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
+import org.lwjgl.opengl.awt.AWTGLCanvas;
+import org.lwjgl.opengl.awt.GLData;
 import origami.crease_pattern.OritaCalc;
 import origami_editor.editor.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
@@ -31,11 +34,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static org.lwjgl.glfw.GLFW.GLFW_SAMPLES;
+import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.opengl.GL.createCapabilities;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
+
 /**
  * Panel in the center of the main view.
  */
 @Singleton
-public class Canvas extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
+public class Canvas extends AWTGLCanvas implements MouseListener, MouseMotionListener, MouseWheelListener {
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FoldedFiguresList foldedFiguresList;
     private final BackgroundModel backgroundModel;
@@ -103,6 +112,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                   AngleSystemModel angleSystemModel,
                   FoldedFigureCanvasSelectService foldedFigureCanvasSelectService,
                   CanvasModel canvasModel) {
+        super(new GLData());
+
         this.creasePatternCamera = creasePatternCamera;
         this.frame = frame;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
@@ -182,7 +193,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     }
 
     @Override
-    public void paintComponent(Graphics bufferGraphics) {
+    public void paint(Graphics g) {
+        mainCreasePatternWorker.setCamera(creasePatternCamera);
+
+        if (!isValid())
+            return;
+        render();
+    }
+
+    //    @Override
+    public void paintComponent2(Graphics bufferGraphics) {
         //「f」を付けることでfloat型の数値として記述することができる
         Graphics2D g2 = (Graphics2D) bufferGraphics;
 
@@ -755,6 +775,25 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             offset = creasePatternCamera.getCameraZoomX() * mainCreasePatternWorker.getSelectionDistance();
         }
         return new Point(e.getX() - (int) offset, e.getY() - (int) offset);
+    }
+
+    @Override
+    public void initGL() {
+        System.out.println("OpenGL version: " + effective.majorVersion + "." + effective.minorVersion + " (Profile: " + effective.profile + ")");
+        createCapabilities();
+        glClearColor(1.0f, 1.0f, 1.0f, 1);
+        glfwWindowHint(GLFW_SAMPLES, 4);
+        glEnable(GL_MULTISAMPLE);
+    }
+
+    @Override
+    public void paintGL() {
+        int w = getWidth();
+        int h = getHeight();
+        glClear(GL_COLOR_BUFFER_BIT);
+        glViewport(0, 0, w, h);
+        mainCreasePatternWorker.paintGL(w, h);
+        swapBuffers();
     }
 
     public enum MouseWheelTarget {
