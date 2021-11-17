@@ -12,7 +12,7 @@
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf</artifactId>
-            <version>1.5</version>
+            <version>1.6.1</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -55,7 +55,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.26</version>
+            <version>1.7.32</version>
         </dependency>
         <dependency>
             <groupId>io.github.origin-energy</groupId>
@@ -80,9 +80,9 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jackson.version>2.12.5</jackson.version>
+        <jackson.version>2.13.0</jackson.version>
         <dagger.version>2.40.1</dagger.version>
-        <snapshot-test.version>3.2.5</snapshot-test.version>
+        <snapshot-test.version>3.2.6</snapshot-test.version>
         <junit.version>5.8.1</junit.version>
     </properties>
 

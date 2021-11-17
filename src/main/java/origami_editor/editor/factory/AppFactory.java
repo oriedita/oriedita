@@ -1,19 +1,15 @@
 package origami_editor.editor.factory;
 
 import dagger.Component;
-import dagger.Provides;
 import origami_editor.editor.App;
-import origami_editor.editor.service.ApplicationModelPersistenceService;
-import origami_editor.editor.service.FileSaveService;
-import origami_editor.editor.service.ResetService;
-import origami_editor.editor.service.ResetServiceImpl;
+import origami_editor.editor.service.*;
 
 import javax.inject.Singleton;
 
 /**
  * Main factory for the application.
  */
-@Component(modules = {CameraFactory.class, FrameFactory.class, MouseHandlerFactory.class, BackupCreasePattern_WorkerFactory.class})
+@Component(modules = {CameraFactory.class, FrameFactory.class, MouseHandlerFactory.class, BackupCreasePattern_WorkerFactory.class, HistoryStateFactory.class})
 @Singleton
 public interface AppFactory {
     App app();
@@ -21,4 +17,6 @@ public interface AppFactory {
     ApplicationModelPersistenceService applicationModelPersistenceService();
 
     FileSaveService fileSaveService();
+
+    LookAndFeelService lookAndFeelService();
 }

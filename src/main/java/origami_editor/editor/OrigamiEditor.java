@@ -15,16 +15,15 @@ public class OrigamiEditor {
 
         AppFactory build = DaggerAppFactory.create();
 
-        build.applicationModelPersistenceService().restoreApplicationModel();
-
-        // Create app before starting ui thread.
-        // This also initializes the ui.
-        App app = build.app();
+        // Initialize look and feel service, this will bind to the applicationModel update the look and feel (must be done early).
+        build.lookAndFeelService().init();
+        // Restore the applicationModel, this should be done as early as possible.
+        build.applicationModelPersistenceService().init();
 
         SwingUtilities.invokeLater(() -> {
             FlatLaf.registerCustomDefaultsSource("origami_editor.editor.themes");
 
-            app.start();
+            build.app().start();
 
             if (argv.length == 1) {
                 // We got a file

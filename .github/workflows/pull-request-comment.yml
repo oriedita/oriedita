@@ -1,22 +1,51 @@
-name: Create Pull Request Comment
-
+name: Comment on pull request
 on:
   workflow_run:
     workflows: [Create artifact]
     types: [completed]
-
 jobs:
-  build:
+  pr_comment:
+    if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-
     steps:
-      - name: View context attributes
-        uses: actions/github-script@v5
+      - uses: actions/github-script@v3
         with:
-          script: console.log(context)
-      - uses: marocchino/sticky-pull-request-comment@v2
-        if: github.event.workflow_run.event == 'pull_request'
-        with:
-          number: ${{ github.event.workflow_run.pull_requests[0].number }}
-          message: |
-            [Latest jar for this branch](https://nightly.link/qurben/origami-editor/actions/runs/${{ github.event.workflow_run.id }}/origami-editor-jar.zip)
+          # This snippet is public-domain, taken from
+          # https://github.com/oprypin/nightly.link/blob/master/.github/workflows/pr-comment.yml
+          script: |
+            const {owner, repo} = context.repo;
+            const run_id = ${{github.event.workflow_run.id}};
+            const pull_head_sha = '${{github.event.workflow_run.head_sha}}';
+            const pull_user_id = ${{github.event.sender.id}};
+            const issue_number = await (async () => {
+              const pulls = await github.pulls.list({owner, repo});
+              for await (const {data} of github.paginate.iterator(pulls)) {
+                for (const pull of data) {
+                  if (pull.head.sha === pull_head_sha && pull.user.id === pull_user_id) {
+                    return pull.number;
+                  }
+                }
+              }
+            })();
+            if (issue_number) {
+              core.info(`Using pull request ${issue_number}`);
+            } else {
+              return core.error(`No matching pull request found`);
+            }
+            const {data: {artifacts}} = await github.actions.listWorkflowRunArtifacts({owner, repo, run_id});
+            if (!artifacts.length) {
+              return core.error(`No artifacts found`);
+            }
+            let body = `Download the artifacts for this pull request:\n`;
+            for (const art of artifacts) {
+              body += `\n* [${art.name}.zip](https://nightly.link/${owner}/${repo}/actions/artifacts/${art.id}.zip)`;
+            }
+            const {data: comments} = await github.issues.listComments({repo, owner, issue_number});
+            const existing_comment = comments.find((c) => c.user.login === 'github-actions[bot]');
+            if (existing_comment) {
+              core.info(`Updating comment ${existing_comment.id}`);
+              await github.issues.updateComment({repo, owner, comment_id: existing_comment.id, body});
+            } else {
+              core.info(`Creating a comment`);
+              await github.issues.createComment({repo, owner, issue_number, body});
+            }

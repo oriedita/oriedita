@@ -22,8 +22,6 @@ public class CanvasModel implements Serializable {
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode;
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode_old;
 
-    private boolean flg61;
-
     private Canvas.MouseWheelTarget mouseInCpOrFoldedFigure;
 
     public void markDirty() {
@@ -152,17 +150,6 @@ public class CanvasModel implements Serializable {
         this.pcs.firePropertyChange("auxLiveLineColor", oldAuxLiveLineColor, auxLiveLineColor);
     }
 
-
-    public boolean getFlg61() {
-        return flg61;
-    }
-
-    public void setFlg61(boolean flg61) {
-        boolean oldFlg61 = this.flg61;
-        this.flg61 = flg61;
-        this.pcs.firePropertyChange("flg61", oldFlg61, flg61);
-    }
-
     public void reset() {
         lineColor = LineColor.RED_1;
         auxLiveLineColor = LineColor.ORANGE_4;
@@ -180,8 +167,6 @@ public class CanvasModel implements Serializable {
         toggleLineColor = false;
 
         mouseInCpOrFoldedFigure = Canvas.MouseWheelTarget.CREASE_PATTERN_0;
-
-        flg61 = false;
 
         this.pcs.firePropertyChange(null, null, null);
     }

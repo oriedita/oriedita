@@ -13,12 +13,10 @@ import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami.folding.FoldedFigure;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.drawing.tools.Background_camera;
-import origami_editor.editor.export.Svg;
 import origami_editor.editor.service.FoldedFigureCanvasSelectService;
 import origami_editor.editor.task.TaskExecutor;
 import origami_editor.editor.drawing.tools.Camera;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -26,9 +24,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
-import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
-import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -44,22 +40,18 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private final FoldedFiguresList foldedFiguresList;
     private final BackgroundModel backgroundModel;
     private final BulletinBoard bulletinBoard;
-    private final FileModel fileModel;
     private final ApplicationModel applicationModel;
     private final CameraModel creasePatternCameraModel;
     private final FoldedFigureModel foldedFigureModel;
     private final FoldedFigureCanvasSelectService foldedFigureCanvasSelectService;
     private final CanvasModel canvasModel;
+    public boolean hideOperationFrame = false;
 
     Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
     Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
 
-    Graphics bufferGraphics;
-    BufferedImage offscreen;//20181205new
-
     Background_camera h_cam = new Background_camera();
 
-    public boolean flg_wi = false;//writeimage時につかう　1にするとpaintの関数の終了部にwriteimageするようにする。これは、paintの変更が書き出されるイメージに反映されないことを防ぐための工夫。20180528
     int btn = 0;//Stores which button in the center of the left and right is pressed. 1 =
     public Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
@@ -86,12 +78,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private boolean mouseWheelMovesCreasePattern;
 
     public Camera creasePatternCamera;
-    private int intLineWidth;
-    private int pointSize;
 
     Map<MouseMode, MouseModeHandler> mouseModeHandlers = new HashMap<>();
-
-    private boolean flg61 = false;//Used when setting the frame 　20180524
 
     public boolean mouseDraggedValid = false;
     //ウィンドウ透明化用のパラメータ
@@ -107,7 +95,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                   FoldedFiguresList foldedFiguresList,
                   BackgroundModel backgroundModel,
                   BulletinBoard bulletinBoard,
-                  FileModel fileModel,
                   ApplicationModel applicationModel,
                   CameraModel creasePatternCameraModel,
                   FoldedFigureModel foldedFigureModel,
@@ -122,7 +109,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         this.foldedFiguresList = foldedFiguresList;
         this.backgroundModel = backgroundModel;
         this.bulletinBoard = bulletinBoard;
-        this.fileModel = fileModel;
         this.applicationModel = applicationModel;
         this.creasePatternCameraModel = creasePatternCameraModel;
         this.foldedFigureModel = foldedFigureModel;
@@ -187,8 +173,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             // Resized the screen to very small.
             return;
         }
-        offscreen = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_BGR);
-        bufferGraphics = offscreen.createGraphics();
 
         repaint();
     }
@@ -198,7 +182,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     }
 
     @Override
-    public void paintComponent(Graphics g) {
+    public void paintComponent(Graphics bufferGraphics) {
         //「f」を付けることでfloat型の数値として記述することができる
         Graphics2D g2 = (Graphics2D) bufferGraphics;
 
@@ -281,7 +265,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         }
 
         //展開図表示
-        mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+        mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
 
         if (displayComments) {
             //展開図情報の文字表示
@@ -325,7 +309,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
         if (displayCreasePatternOnTop) {
-            mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+            mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
         }
 
         //アンチェイリアス
@@ -338,29 +322,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             g2.setColor(Colors.get(Color.black));
             g2.drawLine((int) (p_mouse_TV_position.getX()), (int) (p_mouse_TV_position.getY()),
                     (int) (p_mouse_TV_position.getX() + d_width), (int) (p_mouse_TV_position.getY() + d_width)); //直線
-        }
-
-        //描画したい内容はここまでAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-
-        // オフスクリーンイメージを実際に描画する。オフスクリーンの幅は最初は 0,0。
-        g.drawImage(offscreen, 0, 0, this);
-
-        if (selectedFigure != null && selectedFigure.foldedFigure.summary_write_image_during_execution) {//Meaning during summary writing)
-            writeImageFile(new File(fileModel.getExportImageFileName()));
-
-            synchronized (w_image_running) {
-                w_image_running.set(false);
-                w_image_running.notify();
-            }
-        }
-
-        if (flg_wi) {//For control when exporting with a frame 20180525
-            flg_wi = false;
-            writeImageFile(new File(fileModel.getExportImageFileName()));
-        }
-        if (flg61) {
-            flg61 = false;
-            mainCreasePatternWorker.setDrawingStage(4);
         }
     }
 
@@ -657,46 +618,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     }
 
     // -----------------------------------mmmmmmmmmmmmmm-------
-    void writeImageFile(File file) {//i=1　png, 2=jpg
-        if (file != null) {
-            String fname = file.getName();
 
-            String formatName;
-
-            if (fname.endsWith("svg")) {
-                Svg.exportFile(mainCreasePatternWorker.foldLineSet, creasePatternCamera, displayCpLines, lineWidth, intLineWidth, lineStyle, pointSize, foldedFiguresList, file);
-                return;
-            } else if (fname.endsWith("png")) {
-                formatName = "png";
-            } else if (fname.endsWith("jpg")) {
-                formatName = "jpg";
-            } else {
-                file = new File(fname + ".png");
-                formatName = "png";
-            }
-
-            //	ファイル保存
-
-            try {
-                if (flg61) { //枠設定時の枠内のみ書き出し 20180524
-                    int xMin = (int) mainCreasePatternWorker.operationFrameBox.getXMin();
-                    int xMax = (int) mainCreasePatternWorker.operationFrameBox.getXMax();
-                    int yMin = (int) mainCreasePatternWorker.operationFrameBox.getYMin();
-                    int yMax = (int) mainCreasePatternWorker.operationFrameBox.getYMax();
-
-                    ImageIO.write(offscreen.getSubimage(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1), formatName, file);
-
-                } else {//Full export without frame
-                    System.out.println("2018-529_");
-                    ImageIO.write(offscreen.getSubimage(0, 0, dim.width, dim.height), formatName, file);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            System.out.println("終わりました");
-        }
-    }
 
     public void setData(ApplicationModel applicationModel) {
         displayPointSpotlight = applicationModel.getDisplayPointSpotlight();
@@ -715,18 +637,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         mouseWheelMovesCreasePattern = applicationModel.getMouseWheelMovesCreasePattern();
 
-        intLineWidth = applicationModel.getLineWidth();
         lineWidth = applicationModel.determineCalculatedLineWidth();
         auxLineWidth = applicationModel.determineCalculatedAuxLineWidth();
-
-        pointSize = applicationModel.getPointSize();
 
         repaint();
     }
 
     public void setData(PropertyChangeEvent e, CanvasModel canvasModel) {
         mouseMode = canvasModel.getMouseMode();
-        flg61 = canvasModel.getFlg61();
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("dirty")) {
             mouseReleasedValid = false;

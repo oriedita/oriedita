@@ -1,10 +1,13 @@
 package origami_editor.editor.databinding;
 
 
+import origami_editor.tools.ResourceUtil;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.File;
 import java.io.Serializable;
 
 @Singleton
@@ -13,21 +16,10 @@ public class FileModel implements Serializable {
 
     private String savedFileName;
     private boolean saved;
-    private String exportImageFileName;
 
     @Inject
     public FileModel() {
         reset();
-    }
-
-    public String getExportImageFileName() {
-        return exportImageFileName;
-    }
-
-    public void setExportImageFileName(String exportImageFileName) {
-        String oldExportImageFileName = this.exportImageFileName;
-        this.exportImageFileName = exportImageFileName;
-        this.pcs.firePropertyChange("exportImageFileName", oldExportImageFileName, exportImageFileName);
     }
 
     public boolean isSaved() {
@@ -63,5 +55,24 @@ public class FileModel implements Serializable {
         savedFileName = null;
 
         this.pcs.firePropertyChange(null, null, null);
+    }
+
+    private static final String frame_title_0 = "Origami Editor " + ResourceUtil.getVersionFromManifest();
+
+    public String determineFrameTitle() {
+        String frame_title;
+        if (getSavedFileName() != null) {
+            File file = new File(getSavedFileName());
+
+            frame_title = frame_title_0 + "        " + file.getName();
+        } else {
+            frame_title = frame_title_0 + "        " + "Unsaved";
+        }
+
+        if (!isSaved()) {
+            frame_title += "*";
+        }
+
+        return frame_title;
     }
 }

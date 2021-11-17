@@ -29,7 +29,10 @@ public class ApplicationModelPersistenceService {
     public ApplicationModelPersistenceService(@Named("mainFrame") JFrame frame, ApplicationModel applicationModel) {
         this.frame = frame;
         this.applicationModel = applicationModel;
+    }
 
+    public void init() {
+        restoreApplicationModel();
         applicationModel.addPropertyChangeListener(e -> persistApplicationModel());
     }
 

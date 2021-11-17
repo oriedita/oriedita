@@ -67,18 +67,6 @@ public class FoldedFigureModel implements Serializable {
         this.pcs.firePropertyChange("transparencyColor", oldTransparencyColor, transparencyColor);
     }
 
-    public int getHistoryTotal() {
-        return historyTotal;
-    }
-
-    public void setHistoryTotal(int historyTotal) {
-        int oldHistoryTotal = this.historyTotal;
-        this.historyTotal = Math.max(historyTotal, 0);
-        this.pcs.firePropertyChange("historyTotal", oldHistoryTotal, this.historyTotal);
-    }
-
-    private int historyTotal;
-
     @Inject
     public FoldedFigureModel() {
         reset();
@@ -102,8 +90,6 @@ public class FoldedFigureModel implements Serializable {
         frontColor = new Color(255, 255, 50);
         backColor = new Color(233, 233, 233);
         lineColor = Color.black;
-
-        historyTotal = 200;
 
         transparencyColor = false;
 

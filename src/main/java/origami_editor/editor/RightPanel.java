@@ -11,6 +11,7 @@ import origami_editor.editor.component.ColorIcon;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.service.ButtonService;
+import origami_editor.editor.undo_box.HistoryState;
 import origami_editor.tools.StringOp;
 
 import javax.inject.Singleton;
@@ -84,7 +85,9 @@ public class RightPanel {
     private JPanel root;
 
     @Inject
-    public RightPanel(@Named("mainFrame") JFrame frame, AngleSystemModel angleSystemModel,
+    public RightPanel(@Named("mainFrame") JFrame frame,
+                      @Named("aux") HistoryState auxHistoryState,
+                      AngleSystemModel angleSystemModel,
                       ButtonService buttonService,
                       MeasuresModel measuresModel,
                       CreasePattern_Worker mainCreasePatternWorker, CanvasModel canvasModel, ApplicationModel applicationModel) {
@@ -94,6 +97,8 @@ public class RightPanel {
         angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
         measuresModel.addPropertyChangeListener(e -> setData(measuresModel));
         canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
+
+        auxHistoryState.addPropertyChangeListener(e -> setData(auxHistoryState));
 
         $$$setupUI$$$();
 
@@ -357,6 +362,11 @@ public class RightPanel {
             openFrame.setLocationRelativeTo(ad_fncButton);
             openFrame.setVisible(true);
         });
+    }
+
+    private void setData(HistoryState auxHistoryState) {
+        h_undoButton.setEnabled(auxHistoryState.canUndo());
+        h_redoButton.setEnabled(auxHistoryState.canRedo());
     }
 
     /**

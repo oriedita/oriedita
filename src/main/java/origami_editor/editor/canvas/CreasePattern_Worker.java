@@ -52,8 +52,8 @@ public class CreasePattern_Worker {
     LineColor auxLineColor = LineColor.ORANGE_4;//Auxiliary line color
     boolean gridInputAssist = false;//1 if you use the input assist function for fine grid display, 0 if you do not use it
     Color customCircleColor;//Stores custom colors for circles and auxiliary hot lines
-    HistoryState historyState = new HistoryState();
-    HistoryState auxHistoryState = new HistoryState();
+    HistoryState historyState;
+    HistoryState auxHistoryState;
     FoldLineAdditionalInputMode i_foldLine_additional = FoldLineAdditionalInputMode.POLY_LINE_0;//= 0 is polygonal line input = 1 is auxiliary line input mode (when inputting a line segment, these two). When deleting a line segment, the value becomes as follows. = 0 is the deletion of the polygonal line, = 1 is the deletion of the auxiliary picture line, = 2 is the deletion of the black line, = 3 is the deletion of the auxiliary live line, = 4 is the folding line, the auxiliary live line and the auxiliary picture line.
     FoldLineSet auxLines = new FoldLineSet();    //Store auxiliary lines
     int id_angle_system = 8;//180 / id_angle_system represents the angular system. For example, if id_angle_system = 3, 180/3 = 60 degrees, if id_angle_system = 5, 180/5 = 36 degrees
@@ -103,6 +103,8 @@ public class CreasePattern_Worker {
 
     @Inject
     public CreasePattern_Worker(@Named("creasePatternCamera") Camera creasePatternCamera,
+                                @Named("normal") HistoryState normalHistoryState,
+                                @Named("aux") HistoryState auxHistoryState,
                                 CanvasModel canvasModel,
                                 ApplicationModel applicationModel,
                                 GridModel gridModel,
@@ -111,6 +113,8 @@ public class CreasePattern_Worker {
                                 AngleSystemModel angleSystemModel,
                                 InternalDivisionRatioModel internalDivisionRatioModel) {
         this.creasePatternCamera = creasePatternCamera;  //コンストラクタ
+        this.historyState = normalHistoryState;
+        this.auxHistoryState = auxHistoryState;
         this.canvasModel = canvasModel;
         this.applicationModel = applicationModel;
         this.gridModel = gridModel;
@@ -122,6 +126,7 @@ public class CreasePattern_Worker {
         if (angleSystemModel != null) angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
         if (internalDivisionRatioModel != null) internalDivisionRatioModel.addPropertyChangeListener(e -> setData(internalDivisionRatioModel));
         if (canvasModel != null) canvasModel.addPropertyChangeListener(e -> setData(canvasModel));
+        if (fileModel != null) fileModel.addPropertyChangeListener(e -> setTitle(fileModel.determineFrameTitle()));
 
         lineColor = LineColor.BLACK_0;
 
@@ -158,6 +163,7 @@ public class CreasePattern_Worker {
         auxLines.reset();
 
         historyState.reset();
+        auxHistoryState.reset();
 
         camera.reset();
         lineStep.clear();
@@ -429,7 +435,7 @@ public class CreasePattern_Worker {
     //------------------------------------------------------------------------------
     //Drawing the basic branch
     //------------------------------------------------------------------------------
-    public void drawWithCamera(Graphics g, boolean displayComments, boolean displayCpLines, boolean displayAuxLines, boolean displayAuxLiveLines, float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth, int p0x_max, int p0y_max, boolean i_mejirusi_display) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
+    public void drawWithCamera(Graphics g, boolean displayComments, boolean displayCpLines, boolean displayAuxLines, boolean displayAuxLiveLines, float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth, int p0x_max, int p0y_max, boolean i_mejirusi_display, boolean hideOperationFrame) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
         Graphics2D g2 = (Graphics2D) g;
 
         //Drawing grid lines
@@ -544,7 +550,7 @@ public class CreasePattern_Worker {
         }
 
         //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
-        if (canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && lineStep.size() == 4) {
+        if (!hideOperationFrame && canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && lineStep.size() == 4) {
             Point p1 = new Point();
             p1.set(camera.TV2object(operationFrame_p1));
             Point p2 = new Point();
@@ -562,7 +568,7 @@ public class CreasePattern_Worker {
 
         //線分入力時の一時的なs_step線分を描く　
 
-        if ((canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) || (lineStep.size() == 4)) {
+        if (!hideOperationFrame && ((canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) || (lineStep.size() == 4))) {
             for (LineSegment s : lineStep) {
                 DrawingUtil.drawLineStep(g, s, camera, lineWidth, gridInputAssist);
             }

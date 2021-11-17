@@ -2,13 +2,11 @@ package origami_editor.editor.task;
 
 import origami.crease_pattern.FoldingException;
 import origami_editor.editor.Canvas;
-import origami_editor.editor.databinding.FileModel;
 import origami_editor.editor.databinding.FoldedFiguresList;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.service.FileSaveService;
 import origami_editor.editor.service.FoldingService;
 
-import javax.swing.*;
 import java.io.File;
 
 public class FoldingEstimateSave100Task implements Runnable {
@@ -16,14 +14,12 @@ public class FoldingEstimateSave100Task implements Runnable {
     private final FoldingService foldingService;
     private final FileSaveService fileSaveService;
     private final FoldedFiguresList foldedFiguresList;
-    private final FileModel fileModel;
 
-    public FoldingEstimateSave100Task(Canvas canvas, FoldingService foldingService, FileSaveService fileSaveService, FoldedFiguresList foldedFiguresList, FileModel fileModel) {
+    public FoldingEstimateSave100Task(Canvas canvas, FoldingService foldingService, FileSaveService fileSaveService, FoldedFiguresList foldedFiguresList) {
         this.canvas = canvas;
         this.foldingService = foldingService;
         this.fileSaveService = fileSaveService;
         this.foldedFiguresList = foldedFiguresList;
-        this.fileModel = fileModel;
     }
 
     @Override
@@ -55,16 +51,7 @@ public class FoldingEstimateSave100Task implements Runnable {
                             filename = basename + "_" + selectedFigure.foldedFigure.discovered_fold_cases + extension;
                         }
 
-                        fileModel.setExportImageFileName(filename);
-
-                        canvas.w_image_running.set(true);
-                        canvas.repaint();
-
-                        try {
-                            canvas.w_image_running.wait();
-                        } catch (InterruptedException e) {
-                            return;
-                        }
+                        fileSaveService.writeImageFile(new File(filename));
 
                         if (!selectedFigure.foldedFigure.findAnotherOverlapValid) {
                             objective = selectedFigure.foldedFigure.discovered_fold_cases;
@@ -72,7 +59,7 @@ public class FoldingEstimateSave100Task implements Runnable {
                     }
                 } catch (InterruptedException | FoldingException e) {
                     selectedFigure.foldedFigure.estimated_initialize();
-                    System.out.println(e);
+                    e.printStackTrace();
                 }
             }
             selectedFigure.foldedFigure.summary_write_image_during_execution = false;
