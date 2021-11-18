@@ -17,6 +17,8 @@ import origami_editor.tools.StringOp;
 import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 
 @Singleton
@@ -362,6 +364,15 @@ public class RightPanel {
             openFrame.setLocationRelativeTo(ad_fncButton);
             openFrame.setVisible(true);
         });
+        ActionListener listener = e -> restrictedAngleSetDEFButton.doClick();
+        angleDTextField.addActionListener(listener);
+        angleETextField.addActionListener(listener);
+        angleFTextField.addActionListener(listener);
+        ActionListener listener1 = e -> restrictedAngleABCSetButton.doClick();
+        angleATextField.addActionListener(listener1);
+        angleCTextField.addActionListener(listener1);
+        angleBTextField.addActionListener(listener1);
+        polygonSizeTextField.addActionListener(e -> polygonSizeSetButton.doClick());
     }
 
     private void setData(HistoryState auxHistoryState) {

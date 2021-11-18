@@ -17,6 +17,8 @@ import origami_editor.editor.service.FileSaveService;
 import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 
@@ -151,6 +153,7 @@ public class TopPanel {
                 foldedFigureModel.setScale(foldedFigureModel.getScale() * magnification);
             }
         });
+        scaleFactorTextField.addActionListener(e -> scaleFactorSetButton.doClick());
         creasePatternZoomInButton.addActionListener(e -> {
             creasePatternCameraModel.zoomIn();
 
@@ -170,6 +173,7 @@ public class TopPanel {
         });
         rotateAnticlockwiseButton.addActionListener(e -> creasePatternCameraModel.increaseRotation());
         rotationSetButton.addActionListener(e -> creasePatternCameraModel.setRotation(measuresModel.string2double(rotationTextField.getText(), creasePatternCameraModel.getRotation())));
+        rotationTextField.addActionListener(e -> rotationSetButton.doClick());
         rotateClockwiseButton.addActionListener(e -> creasePatternCameraModel.decreaseRotation());
         transparentButton.addActionListener(e -> canvas.createTransparentBackground());
         backgroundTrimButton.addActionListener(e -> {

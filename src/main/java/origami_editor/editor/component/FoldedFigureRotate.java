@@ -7,6 +7,8 @@ import origami_editor.editor.service.ButtonService;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class FoldedFigureRotate extends JPanel {
     private JButton foldedFigureRotateAntiClockwiseButton;
@@ -25,6 +27,7 @@ public class FoldedFigureRotate extends JPanel {
         foldedFigureRotateAntiClockwiseButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() + 11.25)));
         foldedFigureRotateSetButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(measuresModel.string2double(foldedFigureRotateTextField.getText(), foldedFigureModel.getRotation()))));
         foldedFigureRotateClockwiseButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() - 11.25)));
+        foldedFigureRotateTextField.addActionListener(e -> foldedFigureRotateSetButton.doClick());
     }
 
     public void setText(String text) {

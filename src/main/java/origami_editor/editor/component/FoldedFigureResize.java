@@ -6,6 +6,8 @@ import origami_editor.editor.service.ButtonService;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class FoldedFigureResize extends JPanel {
     private JButton foldedFigureSizeDecreaseButton;
@@ -24,6 +26,7 @@ public class FoldedFigureResize extends JPanel {
         foldedFigureSizeSetButton.addActionListener(e -> foldedFigureModel.setScale(measuresModel.string2double(foldedFigureSizeTextField.getText(), foldedFigureModel.getScale())));
         foldedFigureSizeDecreaseButton.addActionListener(e -> foldedFigureModel.zoomOut());
         foldedFigureSizeIncreaseButton.addActionListener(e -> foldedFigureModel.zoomIn());
+        foldedFigureSizeTextField.addActionListener(e -> foldedFigureSizeSetButton.doClick());
     }
 
     {

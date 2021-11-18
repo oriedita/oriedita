@@ -23,6 +23,8 @@ import origami_editor.tools.StringOp;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.util.Arrays;
 
@@ -365,6 +367,7 @@ public class LeftPanel {
             canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DIVISION_27);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
         });
+        lineSegmentDivisionTextField.addActionListener(e -> lineSegmentDivisionSetButton.doClick());
         senbun_b_nyuryokuButton.addActionListener(e -> {
             getData(applicationModel);
 
@@ -563,6 +566,7 @@ public class LeftPanel {
             gridModel.setGridSize(gridSize);
         });
         gridSizeSetButton.addActionListener(e -> getData(gridModel));
+        gridSizeTextField.addActionListener(e -> gridSizeSetButton.doClick());
         gridSizeIncreaseButton.addActionListener(e -> gridModel.setGridSize(gridModel.getGridSize() * 2));
         gridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -577,6 +581,7 @@ public class LeftPanel {
         changeGridStateButton.addActionListener(e -> gridModel.advanceBaseState());
         moveIntervalGridVerticalButton.addActionListener(e -> gridModel.changeHorizontalScalePosition());
         setIntervalGridSizeButton.addActionListener(e -> getData(gridModel));
+        intervalGridSizeTextField.addActionListener(e -> setIntervalGridSizeButton.doClick());
         moveIntervalGridHorizontal.addActionListener(e -> gridModel.changeVerticalScalePosition());
         intervalGridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -586,6 +591,7 @@ public class LeftPanel {
             }
         });
         setGridParametersButton.addActionListener(e -> getData(gridModel));
+        gridAngleTextField.addActionListener(e -> setGridParametersButton.doClick());
         resetButton.addActionListener(e -> gridModel.reset());
     }
 
