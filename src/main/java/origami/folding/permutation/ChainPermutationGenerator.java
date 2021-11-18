@@ -68,13 +68,15 @@ public class ChainPermutationGenerator extends PermutationGenerator {
         }
         if (saved) restored = true;
         pairGuide.reset();
-        nextCore(0);
+        nextCore(1);
     }
 
     public int next(int digit) throws InterruptedException {
         int result = nextCore(digit);
         if (result == 0) {
+            int oldCount = count;
             reset();
+            count = oldCount;
             if (restored) {
                 looped = true;
                 saved = false;
@@ -124,9 +126,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
             // Find the next available element.
             do {
                 swapIndex++;
-                if (swapIndex > numDigits - lockRemain + 1) {
-                    break;
-                }
+                if (swapIndex > numDigits - lockRemain + 1) break;
                 curDigit = digits[swapIndex];
             } while (pairGuide.isNotReady(curDigit));
 
@@ -141,9 +141,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
                 if (--curIndex == 0) return 0;
 
                 retract(curIndex);
-                if (curIndex < digit) {
-                    digit = curIndex;
-                }
+                if (curIndex < digit) digit = curIndex;
                 continue;
             }
 
@@ -154,9 +152,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
             }
             swapHistory[curIndex] = swapIndex;
             map[curDigit] = curIndex;
-            if (isLocked[curDigit]) {
-                lockRemain--;
-            }
+            if (isLocked[curDigit]) lockRemain--;
             pairGuide.confirm(curDigit);
 
             curIndex++;
@@ -194,9 +190,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
             // Prepare initial permutation.
             int i, j = 1;
             for (i = 1; i <= numDigits - lockCount; i++) {
-                while (isLocked[j]) {
-                    j++;
-                }
+                while (isLocked[j]) j++;
                 initPermutation[i] = j;
                 j++;
             }
@@ -224,9 +218,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
             digits[swapIndex] = curDigit;
         }
         map[curDigit] = 0;
-        if (isLocked[curDigit]) {
-            lockRemain++;
-        }
+        if (isLocked[curDigit]) lockRemain++;
         pairGuide.retract(curDigit);
     }
 }
