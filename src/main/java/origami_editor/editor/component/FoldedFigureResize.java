@@ -24,6 +24,7 @@ public class FoldedFigureResize extends JPanel {
         foldedFigureSizeSetButton.addActionListener(e -> foldedFigureModel.setScale(measuresModel.string2double(foldedFigureSizeTextField.getText(), foldedFigureModel.getScale())));
         foldedFigureSizeDecreaseButton.addActionListener(e -> foldedFigureModel.zoomOut());
         foldedFigureSizeIncreaseButton.addActionListener(e -> foldedFigureModel.zoomIn());
+        foldedFigureSizeTextField.addActionListener(e -> foldedFigureSizeSetButton.doClick());
     }
 
     {
