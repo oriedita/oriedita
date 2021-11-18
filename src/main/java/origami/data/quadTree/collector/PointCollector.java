@@ -4,7 +4,7 @@ import origami.crease_pattern.element.Point;
 import origami.data.quadTree.QuadTree.Node;
 import origami.data.quadTree.adapter.QuadTreeAdapter;
 
-/** Get all items that might contains the given line. */
+/** Get all items that might contains the given point. */
 public class PointCollector extends RecursiveCollector {
 
     private final Point p;

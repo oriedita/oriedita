@@ -4,6 +4,9 @@ import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
+import origami.data.quadTree.QuadTree;
+import origami.data.quadTree.adapter.LineSegmentListAdapter;
+import origami.data.quadTree.collector.PointCollector;
 import origami.data.save.LineSegmentSave;
 import origami.folding.util.SortingBox;
 import origami.folding.util.WeightedValue;
@@ -3565,11 +3568,8 @@ public class FoldLineSet {
      */
     public void selectProbablyConnected(Point p) {
         // Build map of connections
-        Map<Point, Set<LineSegment>> connections = new HashMap<>();
-        for (LineSegment lineSegment : lineSegments) {
-            addToConnectionMap(lineSegment.getA().rounded(), lineSegment, connections);
-            addToConnectionMap(lineSegment.getB().rounded(), lineSegment, connections);
-        }
+        QuadTree qtA = new QuadTree(new LineSegmentListAdapter(lineSegments, l -> l.getA()));
+        QuadTree qtB = new QuadTree(new LineSegmentListAdapter(lineSegments, l -> l.getB()));
 
         // Traverse connection map to find all connected points
         Set<Point> activePoints = new HashSet<>();
@@ -3577,19 +3577,27 @@ public class FoldLineSet {
         Set<Point> processedPoints = new HashSet<>();
         Set<LineSegment> connectedLines = new HashSet<>();
 
-        activePoints.add(p.rounded());
+        activePoints.add(p);
 
         while (!activePoints.isEmpty()) {
             for (Point activePoint : activePoints) {
-                Set<LineSegment> activeLines = connections.get(activePoint);
-                connectedLines.addAll(activeLines);
                 processedPoints.add(activePoint);
-                for (LineSegment activeLine : activeLines) {
-                    if (!processedPoints.contains(activeLine.getA().rounded())) {
-                        newActivePoints.add(activeLine.getA().rounded());
+                for(int i : qtA.collect(new PointCollector(activePoint))) {
+                    LineSegment activeLine = lineSegments.get(i);
+                    if(OritaCalc.equal(activeLine.getA(), activePoint)) {
+                        connectedLines.add(activeLine);
+                        if (!processedPoints.contains(activeLine.getB())) {
+                            newActivePoints.add(activeLine.getB());
+                        }
                     }
-                    if (!processedPoints.contains(activeLine.getB().rounded())) {
-                        newActivePoints.add(activeLine.getB().rounded());
+                }
+                for(int i : qtB.collect(new PointCollector(activePoint))) {
+                    LineSegment activeLine = lineSegments.get(i);
+                    if(OritaCalc.equal(activeLine.getB(), activePoint)) {
+                        connectedLines.add(activeLine);
+                        if (!processedPoints.contains(activeLine.getA())) {
+                            newActivePoints.add(activeLine.getA());
+                        }
                     }
                 }
             }
@@ -3600,13 +3608,6 @@ public class FoldLineSet {
         for (LineSegment connectedLine : connectedLines) {
             connectedLine.setSelected(2);
         }
-    }
-
-    private void addToConnectionMap(Point p, LineSegment s, Map<Point, Set<LineSegment>> connections) {
-        if (!connections.containsKey(p)) {
-            connections.put(p, new HashSet<>());
-        }
-        connections.get(p).add(s);
     }
 
     /**
