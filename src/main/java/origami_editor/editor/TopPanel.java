@@ -151,6 +151,7 @@ public class TopPanel {
                 foldedFigureModel.setScale(foldedFigureModel.getScale() * magnification);
             }
         });
+        scaleFactorTextField.addActionListener(e -> scaleFactorSetButton.doClick());
         creasePatternZoomInButton.addActionListener(e -> {
             creasePatternCameraModel.zoomIn();
 
@@ -170,6 +171,7 @@ public class TopPanel {
         });
         rotateAnticlockwiseButton.addActionListener(e -> creasePatternCameraModel.increaseRotation());
         rotationSetButton.addActionListener(e -> creasePatternCameraModel.setRotation(measuresModel.string2double(rotationTextField.getText(), creasePatternCameraModel.getRotation())));
+        rotationTextField.addActionListener(e -> rotationSetButton.doClick());
         rotateClockwiseButton.addActionListener(e -> creasePatternCameraModel.decreaseRotation());
         transparentButton.addActionListener(e -> canvas.createTransparentBackground());
         backgroundTrimButton.addActionListener(e -> {

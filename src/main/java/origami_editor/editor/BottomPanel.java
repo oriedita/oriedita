@@ -157,6 +157,7 @@ public class BottomPanel {
 
             TaskExecutor.executeTask("Folding Estimate Specific", new FoldingEstimateSpecificTask(foldedFigureModel, foldingService, canvasModel, foldedFiguresList));
         });
+        goToFoldedFigureTextField.addActionListener(e -> goToFoldedFigureButton.doClick());
 
         undoRedo.addUndoActionListener(e -> {
             FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
