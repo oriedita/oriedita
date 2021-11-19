@@ -245,7 +245,7 @@ public class FileSaveService {
             return null;
         }
 
-        String fileName = saveFileDialog(frame, "Save As...", applicationModel.getDefaultDirectory(), new String[]{"*" + saveType}, "Supported files (.ori, .cp)");
+        String fileName = saveFileDialog(frame, "Save As...", applicationModel.getDefaultDirectory(), new String[]{"*" + saveType}, null);
 
         if (fileName == null) {
             return null;

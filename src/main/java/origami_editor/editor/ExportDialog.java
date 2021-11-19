@@ -165,7 +165,7 @@ public class ExportDialog extends JDialog {
         panel3.add(optionsCard, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         pngPanel = new JPanel();
         pngPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        optionsCard.add(pngPanel, "png");
+        optionsCard.add(pngPanel, ".png");
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridLayoutManager(2, 3, new Insets(0, 0, 0, 0), -1, -1));
         pngPanel.add(panel4);
@@ -184,7 +184,7 @@ public class ExportDialog extends JDialog {
         panel4.add(label2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         svgPanel = new JPanel();
         svgPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        optionsCard.add(svgPanel, "svg");
+        optionsCard.add(svgPanel, ".svg");
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridLayoutManager(6, 3, new Insets(0, 0, 0, 0), -1, -1));
         svgPanel.add(panel5);
@@ -228,7 +228,7 @@ public class ExportDialog extends JDialog {
         panel5.add(textField6, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(40, -1), null, 0, false));
         jpgPanel = new JPanel();
         jpgPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        optionsCard.add(jpgPanel, "jpg");
+        optionsCard.add(jpgPanel, ".jpg");
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridLayoutManager(3, 3, new Insets(0, 0, 0, 0), -1, -1));
         jpgPanel.add(panel6);
@@ -256,7 +256,7 @@ public class ExportDialog extends JDialog {
         panel6.add(qualityLabel, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         orhPanel = new JPanel();
         orhPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        optionsCard.add(orhPanel, "orh");
+        optionsCard.add(orhPanel, ".orh");
         final JPanel panel7 = new JPanel();
         panel7.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         orhPanel.add(panel7);
@@ -267,7 +267,7 @@ public class ExportDialog extends JDialog {
         panel7.add(label10, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         cpPanel = new JPanel();
         cpPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        optionsCard.add(cpPanel, "cp");
+        optionsCard.add(cpPanel, ".cp");
         final JPanel panel8 = new JPanel();
         panel8.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         cpPanel.add(panel8);
