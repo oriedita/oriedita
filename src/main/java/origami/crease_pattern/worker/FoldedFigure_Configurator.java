@@ -32,6 +32,7 @@ public class FoldedFigure_Configurator {
     
     private final FoldedFigure_Worker worker;
     private ListArray faceToSubFaceMap;
+    private int[] frequency;
     private QuadTree qt;
 
     private PointSet otta_face_figure;
@@ -87,39 +88,56 @@ public class FoldedFigure_Configurator {
 
         System.out.println("各Smenに含まれる面を記録する");
 
+        ExecutorService service = Executors.newWorkStealingPool();
         int faceTotal = otta_face_figure.getNumFaces();
-        faceToSubFaceMap = new ListArray(faceTotal, faceTotal * 5);
-        int[] s0addFaceId = new int[faceTotal + 1]; // SubFaceに追加する面を一時記録しておく
+        frequency = new int[faceTotal + 1];
 
         for (int i = 1; i <= worker.SubFaceTotal; i++) {
-            int s0addFaceTotal = 0;
-
-            for (int j : qt.collect(new PointCollector(subFace_insidePoint[i]))) {
-                j++; // qt is 0-based
-                if (otta_face_figure.inside(subFace_insidePoint[i], j) == Polygon.Intersection.INSIDE) {
-                    s0addFaceId[++s0addFaceTotal] = j;
+            final int iff = i;
+            service.execute(() -> {
+                int[] s0addFaceId = new int[faceTotal + 1]; // SubFaceに追加する面を一時記録しておく
+                int s0addFaceTotal = 0;
+    
+                for (int j : qt.collect(new PointCollector(subFace_insidePoint[iff]))) {
+                    j++; // qt is 0-based
+                    if (otta_face_figure.inside(subFace_insidePoint[iff], j) == Polygon.Intersection.INSIDE) {
+                        s0addFaceId[++s0addFaceTotal] = j;
+                    }
+                    if (Thread.interrupted()) return;
                 }
-            }
-
-            worker.s0[i].setNumDigits(s0addFaceTotal);
-
-            for (int j = 1; j <= s0addFaceTotal; j++) {
-                worker.s0[i].setFaceId(j, s0addFaceId[j]);//ここで面番号jは小さい方が先に追加される。
-                faceToSubFaceMap.add(s0addFaceId[j], i);
-            }
-
+                worker.s0[iff].setNumDigits(s0addFaceTotal);
+    
+                for (int j = 1; j <= s0addFaceTotal; j++) {
+                    worker.s0[iff].setFaceId(j, s0addFaceId[j]);//ここで面番号jは小さい方が先に追加される。
+                }
+                synchronized (frequency) {
+                    for (int j = 1; j <= s0addFaceTotal; j++) frequency[s0addFaceId[j]]++;
+                }
+            });
             if (Thread.interrupted()) throw new InterruptedException();
         }
+        shutdownAndWait(service);
 
+        System.out.println("Calculating reduced SubFace set");
         worker.s1 = reduceSubFaceSet(worker.s0);
+        frequency = null;
 
         //ここまでで、SubFaceTotal＝	SubFace_figure.getMensuu()のままかわりなし。
         System.out.println("各Smenに含まれる面の数の内で最大のものを求める");
         // Find the largest number of faces in each SubFace.
         worker.FaceIdCount_max = 0;
         for (int i = 1; i <= worker.SubFaceTotal; i++) {
-            if (worker.s0[i].getFaceIdCount() > worker.FaceIdCount_max) {
-                worker.FaceIdCount_max = worker.s0[i].getFaceIdCount();
+            int count = worker.s0[i].getFaceIdCount();
+            if (count > worker.FaceIdCount_max) {
+                worker.FaceIdCount_max = count;
+            }
+        }
+
+        System.out.println("Creating reduced SubFace faceId map");
+        faceToSubFaceMap = new ListArray(faceTotal, faceTotal * 5);
+        for (int i = 1; i < worker.s1.length; i++) {
+            for (int j = 1; j <= worker.s1[i].getFaceIdCount(); j++) {
+                faceToSubFaceMap.add(worker.s1[i].getFaceId(j), i);
             }
         }
     }
@@ -132,7 +150,7 @@ public class FoldedFigure_Configurator {
      * the SubFaces.
      */
     private SubFace[] reduceSubFaceSet(SubFace[] s) throws InterruptedException {
-        Map<Integer, List<Integer>> faceToSubFaceMap = new HashMap<>();
+        Map<Integer, List<Integer>> map = new HashMap<>();
 
         isReducedSubFace = new boolean[s.length];
         Map<SubFace, Integer> subFaceToId = new HashMap<>();
@@ -145,18 +163,23 @@ public class FoldedFigure_Configurator {
         List<SubFace> reduced = new ArrayList<>();
         reduced.add(s[0]);
         for (int i = 1; i < s.length; i++) {
-            if (s[i].getFaceIdCount() == 0) continue;
+            int count = s[i].getFaceIdCount();
+            if (count == 0) continue;
+
+            // First we sort face id by frequency
+            Integer[] ids = new Integer[count + 1];
+            for (int j = 1; j <= count; j++) ids[j] = s[i].getFaceId(j);
+            Arrays.sort(ids, 1, count + 1, Comparator.comparingInt(id -> frequency[id]));
+
             boolean isNotSubset = false;
-            int faceId = s[i].getFaceId(1);
-            if (!faceToSubFaceMap.containsKey(faceId)) isNotSubset = true;
+            if (!map.containsKey(ids[1])) isNotSubset = true;
             else {
-                Set<Integer> superSets = new HashSet<>(faceToSubFaceMap.get(faceId));
-                for (int f = 2; f <= s[i].getFaceIdCount() && superSets.size() > 0; f++) {
+                List<Integer> superSets = new LinkedList<>(map.get(ids[1]));
+                for (int f = 2; f <= count && superSets.size() > 0; f++) {
                     Iterator<Integer> it = superSets.iterator();
-                    faceId = s[i].getFaceId(f);
                     while (it.hasNext()) {
                         SubFace sf = reduced.get(it.next());
-                        if (!sf.contains(faceId)) it.remove();
+                        if (!sf.contains(ids[f])) it.remove();
                     }
                 }
                 isNotSubset = superSets.size() == 0;
@@ -165,9 +188,8 @@ public class FoldedFigure_Configurator {
                 int id = reduced.size();
                 reduced.add(s[i]);
                 isReducedSubFace[subFaceToId.get(s[i])] = true;
-                for (int f = 1; f <= s[i].getFaceIdCount(); f++) {
-                    faceId = s[i].getFaceId(f);
-                    faceToSubFaceMap.computeIfAbsent(faceId, k -> new ArrayList<>()).add(id);
+                for (int f = 1; f <= count; f++) {
+                    map.computeIfAbsent(ids[f], k -> new ArrayList<>()).add(id);
                 }
             }
             if (Thread.interrupted()) throw new InterruptedException();
@@ -194,13 +216,12 @@ public class FoldedFigure_Configurator {
         //----------------------------------------------
         worker.bb.rewrite(10, "           HierarchyList_configure   step2   start ");
         result = setupEquivalenceConditions();
-        if (result != HierarchyListStatus.SUCCESSFUL_1000) {
-            return result;
-        }
+        if (result != HierarchyListStatus.SUCCESSFUL_1000) return result;
 
         //----------------------------------------------
         worker.bb.write("           HierarchyList_configure   step3   start ");
-        setupUEquivalenceConditions();
+        result = setupUEquivalenceConditions();
+        if (result != HierarchyListStatus.SUCCESSFUL_1000) return result;
 
         faceToSubFaceMap = null;
         System.gc();
@@ -282,39 +303,50 @@ public class FoldedFigure_Configurator {
 
     private HierarchyListStatus setupEquivalenceConditions() throws InterruptedException {
         System.out.println("等価条件を設定する   ");
+        ExecutorService service = Executors.newWorkStealingPool();
+        worker.errorPos = null;
+
         //等価条件を設定する。棒ibを境界として隣接する2つの面im1,im2が有る場合、折り畳み推定した場合に
         //棒ibの一部と重なる位置に有る面imは面im1と面im2に上下方向で挟まれることはない。このことから
         //gj[im1][im]=gj[im2][im]という等価条件が成り立つ。
-        int faceId_min, faceId_max;
         for (int ib = 1; ib <= orite.getNumLines(); ib++) {
-            faceId_min = orite.lineInFaceBorder_min_request(ib);
-            faceId_max = orite.lineInFaceBorder_max_request(ib);
-            if (faceId_min != faceId_max) {//展開図において、棒ibの両脇に面がある
-                Point p = otta_face_figure.getBeginPointFromLineId(ib);
-                Point q = otta_face_figure.getEndPointFromLineId(ib);
-                // This qt here is the same instance as in SubFace_configure()
-                for (int im : qt.collect(new LineSegmentCollector(p, q))) {
-                    im++; // qt is 0-based
-                    if ((im != faceId_min) && (im != faceId_max)) {
-                        if (otta_face_figure.convex_inside(ib, im)) {
-                            //下の２つのifは暫定的な処理。あとで置き換え予定
-                            if (otta_face_figure.convex_inside(Epsilon.UNKNOWN_05, ib, im)) {
-                                if (otta_face_figure.convex_inside(-Epsilon.UNKNOWN_05, ib, im)) {
-                                    // We add the 3EC through AEA, so if it is consumed immediately, it will not be
-                                    // actually added. This helps saves memory.
-                                    if(!AEA.addEquivalenceCondition(im, faceId_min, faceId_max)) {
-                                        // Error handling is also needed here
-                                        worker.errorPos = AEA.errorPos;
-                                        return HierarchyListStatus.CONTRADICTED_3;
+            final int ibf = ib;
+            service.execute(() -> {
+                int faceId_min = orite.lineInFaceBorder_min_request(ibf);
+                int faceId_max = orite.lineInFaceBorder_max_request(ibf);
+                if (faceId_min != faceId_max) {//展開図において、棒ibの両脇に面がある
+                    Point p = otta_face_figure.getBeginPointFromLineId(ibf);
+                    Point q = otta_face_figure.getEndPointFromLineId(ibf);
+                    // This qt here is the same instance as in SubFace_configure()
+                    for (int im : qt.collect(new LineSegmentCollector(p, q))) {
+                        im++; // qt is 0-based
+                        if ((im != faceId_min) && (im != faceId_max)) {
+                            if (otta_face_figure.convex_inside(ibf, im)) {
+                                //下の２つのifは暫定的な処理。あとで置き換え予定
+                                if (otta_face_figure.convex_inside(Epsilon.UNKNOWN_05, ibf, im)) {
+                                    if (otta_face_figure.convex_inside(-Epsilon.UNKNOWN_05, ibf, im)) {
+                                        // AEA cannot run in parallel
+                                        synchronized (AEA) {
+                                            if (Thread.interrupted()) return;
+                                            // We add the 3EC through AEA, so if it is consumed immediately, it will not be
+                                            // actually added. This helps saves memory.
+                                            if(!AEA.addEquivalenceCondition(im, faceId_min, faceId_max)) {
+                                                // Error handling is also needed here
+                                                worker.errorPos = AEA.errorPos;
+                                                service.shutdownNow();
+                                            }
+                                        }            
                                     }
                                 }
                             }
                         }
                     }
                 }
-            }
+            });
             if (Thread.interrupted()) throw new InterruptedException();
         }
+        shutdownAndWait(service);
+        if (worker.errorPos != null) return HierarchyListStatus.CONTRADICTED_3;
 
         System.out.print("３面が関与する突き抜け条件の数　＝　");
         System.out.println(worker.hierarchyList.getEquivalenceConditionTotal());
@@ -323,7 +355,7 @@ public class FoldedFigure_Configurator {
         return HierarchyListStatus.SUCCESSFUL_1000;
     }
 
-    private void setupUEquivalenceConditions() throws InterruptedException {
+    private HierarchyListStatus setupUEquivalenceConditions() throws InterruptedException {
          // Add equivalence condition. There are two adjacent faces im1 and im2 as the boundary of the bar ib,
         // Also, there are two adjacent faces im3 and im4 as the boundary of the bar jb, and when ib and jb are parallel and partially overlap, when folding is estimated.
         // The surface of the bar ib and the surface of the surface jb are not aligned with i, j, i, j or j, i, j, i. If this happens,
@@ -331,6 +363,7 @@ public class FoldedFigure_Configurator {
 
         QuadTree qt = new QuadTree(new PointSetLineAdapter(otta_face_figure));
         ExecutorService service = Executors.newWorkStealingPool();
+        worker.errorPos = null;
 
         for (int ib = 1; ib <= orite.getNumLines() - 1; ib++) {
             final int ibf = ib;
@@ -346,10 +379,17 @@ public class FoldedFigure_Configurator {
                         if (mj1 != mj2 && mj1 != 0) {
                             if (otta_face_figure.parallel_overlap(ibf, jbf)) {
                                 if (exist_identical_subFace(mi1, mi2, mj1, mj2)) {
-                                    // For the moment AEA doesn't support parallel processing, so we cannot add 4EC
-                                    // through it the same way we did with 3EC. Fortunately the total number of 4EC
-                                    // is in general a lot less than 3EC, so this is not a problem.
-                                    worker.hierarchyList.addUEquivalenceCondition(mi1, mi2, mj1, mj2);
+                                    // AEA cannot run in parallel
+                                    synchronized (AEA) {
+                                        if (Thread.interrupted()) return;
+                                        // We add the 4EC through AEA, so if it is consumed immediately, it will not be
+                                        // actually added. This helps saves memory.
+                                        if (!AEA.addUEquivalenceCondition(mi1, mi2, mj1, mj2)) {
+                                            // Error handling is also needed here
+                                            worker.errorPos = AEA.errorPos;
+                                            service.shutdownNow();
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -359,9 +399,11 @@ public class FoldedFigure_Configurator {
             if (Thread.interrupted()) throw new InterruptedException();
         }
         shutdownAndWait(service);
+        if (worker.errorPos != null) return HierarchyListStatus.CONTRADICTED_4;
 
         System.out.print("４面が関与する突き抜け条件の数　＝　");
         System.out.println(worker.hierarchyList.getUEquivalenceConditionTotal());
+        return HierarchyListStatus.SUCCESSFUL_1000;
     }
 
     private void setupSubFacePriority() throws InterruptedException {
@@ -439,10 +481,11 @@ public class FoldedFigure_Configurator {
 
     //引数の４つの面を同時に含むSubFaceが1つ以上存在するなら１、しないなら０を返す。
     private boolean exist_identical_subFace(int im1, int im2, int im3, int im4) {
+        // We could choose the im with the least frequency, but experiments showed that
+        // it makes little difference.
         for (int i : faceToSubFaceMap.get(im1)) {
-            if (worker.s[i].contains(im1, im2, im3, im4)) {
-                return true;
-            }
+            // faceToSubFaceMap is now generated for s1
+            if (worker.s1[i].contains(im1, im2, im3, im4)) return true;
         }
         return false;
     }

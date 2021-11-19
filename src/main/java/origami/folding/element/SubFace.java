@@ -109,36 +109,49 @@ public class SubFace {
     // Return 1 if the current overlapping state of the faces is the last one.
     // In this case, the overlapping state of the faces remains the last one.
     public int next(int k) throws InterruptedException {
-        return permutationGenerator.next(k);
+        int ijh = permutationGenerator.next(k);
+        if (ijh == 0 && cg != null) {
+            cgTotal += permutationGenerator.getCount();
+            permutationGenerator.reset();
+            ijh = runCombinationGenerator();
+        }
+        return ijh;
     }   //<<<<<<<<<<<<<<<<<<<ここは後で機能を強化して高速化したい。
     // ここは　class SubFace の中だよ。
+
+    /**
+     * Keep running {@link CombinationGenerator} until finding the next valid
+     * permutation, or until there's no more permutation and return 0.
+     */
+    private int runCombinationGenerator() throws InterruptedException {
+        int ijh = 0;
+        while (ijh == 0) {
+            if (!cg.process()) return 0;
+            int mk = cg.addGuideAndCheck(permutationGenerator);
+            if (mk == 0) return 1;
+            ijh = permutationGenerator.next(mk);
+            if (ijh == 0) permutationGenerator.reset();
+        }
+        return ijh;
+    }
 
     //Start with the current permutation state and look for possible permutations that overlap
     public int possible_overlapping_search(HierarchyList hierarchyList) throws InterruptedException {// This should not change hierarchyList.
         int mk, ijh;
         ijh = 1;//The initial value of ijh can be anything other than 0.
         while (ijh != 0) { //If ijh == 0, you have reached the end of the digit.
-            mk = inconsistent_digits_request(hierarchyList);
-
             if (permutationGenerator.getCount() > 2000 && cg == null) {
                 cg = new CombinationGenerator(this, faceIdMapArray, hierarchyList);
-                if (!cg.process()) return 0;
-                cg.addGuide(permutationGenerator);
+                if (runCombinationGenerator() == 0) return 0;
             }
+            
+            mk = inconsistent_digits_request(hierarchyList);
 
             if (mk == 1000) {
                 return 1000;
             }//This SubFace is in a consistent state.
 
             ijh = next(mk);
-
-            if (ijh == 0 && cg != null) {
-                cgTotal += permutationGenerator.getCount();
-                permutationGenerator.reset();
-                if (!cg.process()) return 0;
-                cg.addGuide(permutationGenerator);
-                ijh = 1;
-            }
 
             StringBuilder s0 = new StringBuilder();
             for (int i = 1; i <= faceIdCount; i++) {
@@ -187,6 +200,7 @@ public class SubFace {
 
     public void clearTempGuide() {
         permutationGenerator.clearTempGuide();
+        cg = null; // Retire the combination generator as well, very important
     }
 
     // Check from the top side to find out at what digit the folds are inconsistent.
@@ -282,8 +296,12 @@ public class SubFace {
     private int inconsistent_digits_request(HierarchyList hierarchyList) {
         int min;
         min = overlapping_inconsistent_digits_request(hierarchyList);
-        min = penetration_inconsistent_digits_request(hierarchyList, min);
-        min = u_penetration_inconsistent_digits_request(hierarchyList, min);
+        // The following if-statement will speed things up, however we need to be very
+        // careful on the rest of the code to make this correct.
+        if (cg == null) {
+            min = penetration_inconsistent_digits_request(hierarchyList, min);
+            min = u_penetration_inconsistent_digits_request(hierarchyList, min);
+        }
         return min;
     }
 
@@ -389,6 +407,9 @@ public class SubFace {
                 for (EquivalenceCondition ec : list) result.add(ec);
             }
         }
+        result.sort(
+                Comparator.comparingInt(EquivalenceCondition::getA).thenComparingInt(EquivalenceCondition::getB)
+                        .thenComparingInt(EquivalenceCondition::getD));
         return result;
     }
 

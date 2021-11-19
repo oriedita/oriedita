@@ -339,6 +339,35 @@ public class AdditionalEstimationAlgorithm {
         }
     }
 
+    /**
+     * Create a new 4EC and perform an initial check at the same time.
+     */
+    public boolean addUEquivalenceCondition(int a, int b, int c, int d) {
+        if (hierarchyList.get(a, b) == HierarchyList.BELOW_0) {
+            int temp = a;
+            a = b;
+            b = temp;
+        }
+        if (hierarchyList.get(c, d) == HierarchyList.BELOW_0) {
+            int temp = c;
+            c = d;
+            d = temp;
+        }
+        EquivalenceCondition ec = new EquivalenceCondition(a, b, c, d);
+        try {
+            int result = checkQuadrupleConstraint(ec);
+            if ((result & 1) == 0) hierarchyList.addUEquivalenceCondition(ec);
+            else {
+                new_relations += result >>> 1;
+                if (new_relations > MAX_NEW_RELATIONS) flush();
+            }
+            return true;
+        } catch (InferenceFailureException e) {
+            errorPos = ec;
+            return false;
+        }
+    }
+
     private void flush() throws InferenceFailureException {
         new_relations = 0;
         for (int iS = 1; iS < count; iS++) {

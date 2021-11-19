@@ -95,18 +95,8 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     // Also, there are two adjacent faces im3 and im4 as the boundary of the bar jb, and when ib and jb are parallel and partially overlap, when folding is estimated.
     // The surface of the bar ib and the surface of the surface jb are not aligned with i, j, i, j or j, i, j, i. If this happens,
     // Since there is a mistake in the 3rd place from the beginning, find out what digit this 3rd place is in SubFace and advance this digit by 1.
-    public void addUEquivalenceCondition(int a, int b, int c, int d) {
-        if (get(a, b) == HierarchyList.BELOW_0) {
-            int temp = a;
-            a = b;
-            b = temp;
-        }
-        if (get(c, d) == HierarchyList.BELOW_0) {
-            int temp = c;
-            c = d;
-            d = temp;
-        }
-       uL.add(new EquivalenceCondition(a, b, c, d));
+    public void addUEquivalenceCondition(EquivalenceCondition ec) {
+        uL.add(ec);
     }
 
     public boolean isEmpty(int i, int j) {

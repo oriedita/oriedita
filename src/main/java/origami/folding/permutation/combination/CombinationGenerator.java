@@ -26,11 +26,14 @@ public class CombinationGenerator {
     private final Constraint[] constraints;
     private final ReductionItalianoAlgorithm ia;
     private final SwappingAlgorithm<Constraint> swapper = new SwappingAlgorithm<>();
+    private final int faceIdCount;
 
-    private boolean firstRound = true;
+    // This variable can be replaced by boolean flag, but using int will also help
+    // debugging.
+    private int count = 0;
 
     public CombinationGenerator(SubFace s, int[] faceIdMapArray, HierarchyList hierarchyList) {
-        int faceIdCount = s.getFaceIdCount();
+        faceIdCount = s.getFaceIdCount();
         ia = new ReductionItalianoAlgorithm(faceIdCount);
         for (int i = 1; i <= faceIdCount; i++) {
             for (int j = i + 1; j <= faceIdCount; j++) {
@@ -69,15 +72,17 @@ public class CombinationGenerator {
         // Perform swapping only for finding the first combination; after that the
         // sequence needs to be fixed, or we will get the same combination again and
         // again.
-        boolean swap = firstRound;
+        boolean swap = count == 0;
+        int deepest = 0;
 
-        if (!firstRound && !backtrack(constraints.length)) return false;
-        firstRound = false;
+        if (count != 0 && !backtrack(constraints.length)) return false;
+        count++;
         while (true) {
             int depth = 0;
             boolean deadEnd = false;
             ia.restore();
             for (int i = 1; i < constraints.length; i++) {
+                if (i > deepest) deepest = i;
                 ia.setDepth(i);
                 if (!constraints[i].nextIfReset()) {
                     depth = i;
@@ -87,13 +92,14 @@ public class CombinationGenerator {
                 }
                 constraints[i].write();
             }
-            if (depth == 0) {
-                return true;
-            }
-            constraints[depth].reset();
-            if (!deadEnd && !backtrack(depth)) {
-                return false;
-            }
+            if (depth == 0) return true;
+
+            // Make sure to reset to the deepest depth.
+            for (int i = depth; i <= deepest; i++) constraints[i].reset();
+            deepest = depth;
+
+            if (!deadEnd && !backtrack(depth)) return false;
+
             if (swap) {
                 swapper.process(constraints, constraints.length - 1);
             } else if (deadEnd) {
@@ -123,9 +129,20 @@ public class CombinationGenerator {
         return false;
     }
 
-    public void addGuide(PermutationGenerator pg) {
+    /**
+     * Add the transitivity reduction to {@link PermutationGenerator}, and also
+     * check and returns the first violation of its current solution.
+     */
+    public int addGuideAndCheck(PermutationGenerator pg) {
+        int min = faceIdCount + 1;
         for (int entry : ia.getReduction()) {
-            pg.addGuide(entry >>> 16, entry & 0xFFFF);
+            int upper = entry >>> 16;
+            int lower = entry & 0xFFFF;
+            if (pg.locate(upper) > pg.locate(lower)) {
+                min = Math.min(min, pg.locate(lower));
+            }
+            pg.addGuide(upper, lower);
         }
+        return min > faceIdCount ? 0 : min;
     }
 }

@@ -141,45 +141,19 @@ public class LineSegmentSet {
      * Divide the two line segments at the intersection of the two intersecting line segments. If there were two line segments that completely overlapped, both would remain without any processing.
      */
     public void intersect_divide() throws InterruptedException {
-        boolean found = true;
-
-        ArrayList<Boolean> k_flg = new ArrayList<>();//A flag that indicates that there is an effect of crossing.
-
-        for (int i = 0; i < lineSegments.size(); i++) {
-            k_flg.add(true);
-        }
-
         QuadTree qt = new QuadTree(new LineSegmentSetLineAdapter(this));
-
-        while (found) {
-            found = false;
-            for (int i = 0; i < lineSegments.size(); i++) {
-                if (k_flg.get(i)) {
-                    k_flg.set(i, false);
-                    for (int j : qt.getPotentialCollision(i)) {
-                        if (k_flg.get(j)) {
-                            int added = intersect_divide(i, j); // Side effect
-                            for (int is = 0; is < added; is++) {
-                                k_flg.add(true);
-                            }
-                            if (added >= 0) {
-                                found = true;
-                                k_flg.set(i, true);
-
-                                qt.grow(added);
-                                qt.update(j);
-                            }
-                        }
-
-                        if (Thread.interrupted()) throw new InterruptedException();
-                    }
-                    if(k_flg.get(i)) {
-                        qt.update(i);
-                    }
+        for (int i = 0; i < lineSegments.size(); i++) {
+            boolean found = false;
+            for (int j : qt.getPotentialCollision(i)) {
+                int added = intersect_divide(i, j); // Side effect
+                if (added >= 0) {
+                    found = true;
+                    qt.grow(added);
+                    qt.update(j);
                 }
+                if (Thread.interrupted()) throw new InterruptedException();
             }
-
-            if (Thread.interrupted()) throw new InterruptedException();
+            if (found) qt.update(i);
         }
     }
 
@@ -190,7 +164,7 @@ public class LineSegmentSet {
      * there is an overlap, it will be unified and the color will be the one with
      * the later number).
      */
-    public int intersect_divide(int i, int j) {
+    private int intersect_divide(int i, int j) {
         if (i == j) {
             return -1;
         }

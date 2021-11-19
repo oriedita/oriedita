@@ -12,7 +12,8 @@ import origami.data.quadTree.QuadTree.Node;
  */
 public abstract class QuadTreeComparator {
 
-    protected static final double EPSILON = Epsilon.UNKNOWN_0001;
+    // This needs to be the same value as used in overlapping_line_removal etc.
+    protected static final double EPSILON = Epsilon.UNKNOWN_001;
 
     public abstract boolean contains(Node node, double l, double r, double b, double t);
 
@@ -21,6 +22,6 @@ public abstract class QuadTreeComparator {
         // Also, we strategically offset the center of the root, since it is very common
         // for origami to have creases that are on exactly half of the sheet, 1/4 of the
         // sheet etc.
-        return new QuadTreeItem(l - 2 * EPSILON, r + 3 * EPSILON, b - 2 * EPSILON, t + 3 * EPSILON);
+        return new QuadTreeItem(l - 2 * EPSILON, r + 5 * EPSILON, b - 2 * EPSILON, t + 5 * EPSILON);
     }
 }
