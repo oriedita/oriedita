@@ -1,11 +1,12 @@
 package origami_editor.editor.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.lwjgl.PointerBuffer;
 import origami_editor.editor.Canvas;
+import origami_editor.editor.ExportDialog;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.canvas.CreasePattern_Worker;
+import origami_editor.editor.component.SaveTypeDialog;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.tools.Camera;
 import origami_editor.editor.exception.FileReadingException;
@@ -22,16 +23,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.basic.BasicFileChooserUI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import static org.lwjgl.system.MemoryUtil.memAllocPointer;
-import static org.lwjgl.system.MemoryUtil.memFree;
-import static org.lwjgl.util.nfd.NativeFileDialog.*;
+import static origami_editor.editor.component.FileDialog.openFileDialog;
+import static origami_editor.editor.component.FileDialog.saveFileDialog;
 
 @Singleton
 public class FileSaveService {
@@ -219,50 +217,45 @@ public class FileSaveService {
     }
 
     public File selectOpenFile() {
-        PointerBuffer outPath = memAllocPointer(1);
+        String fileName = openFileDialog(frame, "Open File", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp"}, "Supported files (.ori, .cp)", false);
 
-        File selectedFile = null;
-        try {
-            int result = NFD_OpenDialog("ori,cp;ori;cp", applicationModel.getDefaultDirectory(), outPath);
-
-            if (result == NFD_OKAY) {
-                selectedFile = new File(outPath.getStringUTF8(0));
-                nNFD_Free(outPath.get(0));
-            }
-        } finally {
-            memFree(outPath);
+        if (fileName == null) {
+            return null;
         }
 
-        if (selectedFile != null && selectedFile.exists()) {
-            applicationModel.setDefaultDirectory(selectedFile.getParent());
-            fileModel.setSavedFileName(selectedFile.getAbsolutePath());
-            fileModel.setSaved(true);
+        File selectedFile = new File(fileName);
 
-            applicationModel.addRecentFile(selectedFile);
-
-            return selectedFile;
+        if (!selectedFile.exists()) {
+            return null;
         }
 
-        return null;
+        applicationModel.setDefaultDirectory(selectedFile.getParent());
+        fileModel.setSavedFileName(selectedFile.getAbsolutePath());
+        fileModel.setSaved(true);
+
+        applicationModel.addRecentFile(selectedFile);
+
+        return selectedFile;
     }
 
     File selectSaveFile() {
-        PointerBuffer outPath = memAllocPointer(1);
+        String saveType = SaveTypeDialog.showSaveTypeDialog(frame);
 
-        File selectedFile;
-        try {
-            int result = NFD_SaveDialog("ori;cp", applicationModel.getDefaultDirectory(), outPath);
-
-            if (result != NFD_OKAY) {
-                return null;
-            }
-
-            selectedFile = new File(outPath.getStringUTF8(0));
-
-            nNFD_Free(outPath.get(0));
-        } finally {
-            memFree(outPath);
+        if (saveType == null) {
+            return null;
         }
+
+        String fileName = saveFileDialog(frame, "Save As...", applicationModel.getDefaultDirectory(), new String[]{"*" + saveType}, "Supported files (.ori, .cp)");
+
+        if (fileName == null) {
+            return null;
+        }
+
+        if (!fileName.endsWith(saveType)) {
+            fileName += saveType;
+        }
+
+        File selectedFile = new File(fileName);
 
         applicationModel.setDefaultDirectory(selectedFile.getParent());
         fileModel.setSavedFileName(selectedFile.getAbsolutePath());
@@ -273,47 +266,41 @@ public class FileSaveService {
     }
 
     public File selectImportFile() {
-        PointerBuffer outPath = memAllocPointer(1);
+        String fileName = openFileDialog(frame, "Import...", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp", "*.orh"}, "Supported files (.ori, .cp, .orh)", false);
 
-        File selectedFile = null;
-        try {
-            frame.setEnabled(false);
-            int result = NFD_OpenDialog("cp,orh,ori;cp;orh;ori", applicationModel.getDefaultDirectory(), outPath);
-            frame.setEnabled(true);
-
-            if (result == NFD_OKAY) {
-                selectedFile = new File(outPath.getStringUTF8(0));
-                nNFD_Free(outPath.get(0));
-            }
-        } finally {
-            memFree(outPath);
+        if (fileName == null) {
+            return null;
         }
 
-        if (selectedFile != null && selectedFile.exists()) {
-            applicationModel.setDefaultDirectory(selectedFile.getParent());
+        File selectedFile = new File(fileName);
 
-            return selectedFile;
+        if (!selectedFile.exists()) {
+            return null;
         }
 
-        return null;
+        applicationModel.setDefaultDirectory(selectedFile.getParent());
+
+        return selectedFile;
     }
 
     public File selectExportFile() {
-        PointerBuffer outPath = memAllocPointer(1);
+        String exportType = ExportDialog.showExportDialog(frame);
 
-        File selectedFile;
-        try {
-            int result = NFD_SaveDialog("png;jpg;svg;cp;orh", applicationModel.getDefaultDirectory(), outPath);
-
-            if (result != NFD_OKAY) {
-                return null;
-            }
-
-            selectedFile = new File(outPath.getStringUTF8(0));
-            nNFD_Free(outPath.get(0));
-        } finally {
-            memFree(outPath);
+        if (exportType == null) {
+            return null;
         }
+
+        String fileName = saveFileDialog(frame, "Export...", applicationModel.getDefaultDirectory(), new String[]{"*." + exportType}, null);
+
+        if (fileName == null) {
+            return null;
+        }
+
+        if (!fileName.endsWith(exportType)) {
+            fileName += exportType;
+        }
+
+        File selectedFile = new File(fileName);
 
         applicationModel.setDefaultDirectory(selectedFile.getParent());
 

@@ -92,7 +92,7 @@
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-nfd</artifactId>
+            <artifactId>lwjgl-tinyfd</artifactId>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
@@ -111,17 +111,17 @@
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-nfd</artifactId>
+            <artifactId>lwjgl-tinyfd</artifactId>
             <classifier>natives-windows</classifier>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-nfd</artifactId>
+            <artifactId>lwjgl-tinyfd</artifactId>
             <classifier>natives-macos</classifier>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-nfd</artifactId>
+            <artifactId>lwjgl-tinyfd</artifactId>
             <classifier>natives-linux</classifier>
         </dependency>
     </dependencies>
