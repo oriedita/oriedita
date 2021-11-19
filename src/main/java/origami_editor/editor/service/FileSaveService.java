@@ -290,7 +290,7 @@ public class FileSaveService {
             return null;
         }
 
-        String fileName = saveFileDialog(frame, "Export...", applicationModel.getDefaultDirectory(), new String[]{"*." + exportType}, null);
+        String fileName = saveFileDialog(frame, "Export...", applicationModel.getDefaultDirectory(), new String[]{"*" + exportType}, null);
 
         if (fileName == null) {
             return null;
