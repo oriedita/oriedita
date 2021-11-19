@@ -32,6 +32,7 @@ public class FoldedFigure_Configurator {
     
     private final FoldedFigure_Worker worker;
     private ListArray faceToSubFaceMap;
+    private int[] frequency;
     private QuadTree qt;
 
     private PointSet otta_face_figure;
@@ -89,7 +90,7 @@ public class FoldedFigure_Configurator {
 
         ExecutorService service = Executors.newWorkStealingPool();
         int faceTotal = otta_face_figure.getNumFaces();
-        faceToSubFaceMap = new ListArray(faceTotal, faceTotal * 5);
+        frequency = new int[faceTotal + 1];
 
         for (int i = 1; i <= worker.SubFaceTotal; i++) {
             final int iff = i;
@@ -109,6 +110,9 @@ public class FoldedFigure_Configurator {
                 for (int j = 1; j <= s0addFaceTotal; j++) {
                     worker.s0[iff].setFaceId(j, s0addFaceId[j]);//ここで面番号jは小さい方が先に追加される。
                 }
+                synchronized (frequency) {
+                    for (int j = 1; j <= s0addFaceTotal; j++) frequency[s0addFaceId[j]]++;
+                }
             });
             if (Thread.interrupted()) throw new InterruptedException();
         }
@@ -116,6 +120,7 @@ public class FoldedFigure_Configurator {
 
         System.out.println("Calculating reduced SubFace set");
         worker.s1 = reduceSubFaceSet(worker.s0);
+        frequency = null;
 
         //ここまでで、SubFaceTotal＝	SubFace_figure.getMensuu()のままかわりなし。
         System.out.println("各Smenに含まれる面の数の内で最大のものを求める");
@@ -126,8 +131,13 @@ public class FoldedFigure_Configurator {
             if (count > worker.FaceIdCount_max) {
                 worker.FaceIdCount_max = count;
             }
-            for (int j = 1; j <= count; j++) {
-                faceToSubFaceMap.add(worker.s0[i].getFaceId(j), i);
+        }
+
+        System.out.println("Creating reduced SubFace faceId map");
+        faceToSubFaceMap = new ListArray(faceTotal, faceTotal * 5);
+        for (int i = 1; i < worker.s1.length; i++) {
+            for (int j = 1; j <= worker.s1[i].getFaceIdCount(); j++) {
+                faceToSubFaceMap.add(worker.s1[i].getFaceId(j), i);
             }
         }
     }
@@ -140,7 +150,7 @@ public class FoldedFigure_Configurator {
      * the SubFaces.
      */
     private SubFace[] reduceSubFaceSet(SubFace[] s) throws InterruptedException {
-        Map<Integer, List<Integer>> faceToSubFaceMap = new HashMap<>();
+        Map<Integer, List<Integer>> map = new HashMap<>();
 
         isReducedSubFace = new boolean[s.length];
         Map<SubFace, Integer> subFaceToId = new HashMap<>();
@@ -153,18 +163,23 @@ public class FoldedFigure_Configurator {
         List<SubFace> reduced = new ArrayList<>();
         reduced.add(s[0]);
         for (int i = 1; i < s.length; i++) {
-            if (s[i].getFaceIdCount() == 0) continue;
+            int count = s[i].getFaceIdCount();
+            if (count == 0) continue;
+
+            // First we sort face id by frequency
+            Integer[] ids = new Integer[count + 1];
+            for (int j = 1; j <= count; j++) ids[j] = s[i].getFaceId(j);
+            Arrays.sort(ids, 1, count + 1, Comparator.comparingInt(id -> frequency[id]));
+
             boolean isNotSubset = false;
-            int faceId = s[i].getFaceId(1);
-            if (!faceToSubFaceMap.containsKey(faceId)) isNotSubset = true;
+            if (!map.containsKey(ids[1])) isNotSubset = true;
             else {
-                Set<Integer> superSets = new HashSet<>(faceToSubFaceMap.get(faceId));
-                for (int f = 2; f <= s[i].getFaceIdCount() && superSets.size() > 0; f++) {
+                List<Integer> superSets = new LinkedList<>(map.get(ids[1]));
+                for (int f = 2; f <= count && superSets.size() > 0; f++) {
                     Iterator<Integer> it = superSets.iterator();
-                    faceId = s[i].getFaceId(f);
                     while (it.hasNext()) {
                         SubFace sf = reduced.get(it.next());
-                        if (!sf.contains(faceId)) it.remove();
+                        if (!sf.contains(ids[f])) it.remove();
                     }
                 }
                 isNotSubset = superSets.size() == 0;
@@ -173,9 +188,8 @@ public class FoldedFigure_Configurator {
                 int id = reduced.size();
                 reduced.add(s[i]);
                 isReducedSubFace[subFaceToId.get(s[i])] = true;
-                for (int f = 1; f <= s[i].getFaceIdCount(); f++) {
-                    faceId = s[i].getFaceId(f);
-                    faceToSubFaceMap.computeIfAbsent(faceId, k -> new ArrayList<>()).add(id);
+                for (int f = 1; f <= count; f++) {
+                    map.computeIfAbsent(ids[f], k -> new ArrayList<>()).add(id);
                 }
             }
             if (Thread.interrupted()) throw new InterruptedException();
@@ -467,10 +481,11 @@ public class FoldedFigure_Configurator {
 
     //引数の４つの面を同時に含むSubFaceが1つ以上存在するなら１、しないなら０を返す。
     private boolean exist_identical_subFace(int im1, int im2, int im3, int im4) {
+        // We could choose the im with the least frequency, but experiments showed that
+        // it makes little difference.
         for (int i : faceToSubFaceMap.get(im1)) {
-            if (worker.s[i].contains(im1, im2, im3, im4)) {
-                return true;
-            }
+            // faceToSubFaceMap is now generated for s1
+            if (worker.s1[i].contains(im1, im2, im3, im4)) return true;
         }
         return false;
     }
