@@ -18,7 +18,6 @@ public class SaveTypeDialog extends JDialog {
     public SaveTypeDialog(Frame owner) {
         super(owner, "Save type", ModalityType.APPLICATION_MODAL);
         setContentPane(contentPane);
-        getRootPane().setDefaultButton(completeOriAlsoSavesButton);
 
         setLocationRelativeTo(owner);
 
@@ -39,6 +38,7 @@ public class SaveTypeDialog extends JDialog {
         );
 
         pack();
+
     }
 
     public static String showSaveTypeDialog(Frame owner) {
@@ -70,13 +70,15 @@ public class SaveTypeDialog extends JDialog {
         contentPane = new JPanel();
         contentPane.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 10, 10), -1, -1));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1, true, false));
         contentPane.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         creasePatternCpSavesButton = new JButton();
-        creasePatternCpSavesButton.setText("<html><b>Crease Pattern (.cp)</b><br/>\nSaves only crease pattern lines.<br/><br/>\n\n<i>Use this format to share crease patterns with other people</i>");
+        creasePatternCpSavesButton.setHorizontalAlignment(2);
+        creasePatternCpSavesButton.setText("<html><b>Crease Pattern (.cp)</b><br/>\nSaves only crease pattern <br/>lines.<br/><br/>\n\n<i>Use this format to share <br/>crease patterns with other <br/>people</i>");
         panel1.add(creasePatternCpSavesButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         completeOriAlsoSavesButton = new JButton();
-        completeOriAlsoSavesButton.setText("<html><b>Complete (.ori)</b><br/>\nAlso saves circles, yellow aux lines and the grid.<br/>\n<br/>\n<i>Use this format when saving to your local computer.</i>");
+        completeOriAlsoSavesButton.setHorizontalAlignment(2);
+        completeOriAlsoSavesButton.setText("<html><b>Complete (.ori)</b><br/>\nAlso saves circles, yellow <br/>aux lines and the grid.<br/>\n<br/>\n<i>Use this format when <br/>saving to your local <br/>computer.</i>");
         panel1.add(completeOriAlsoSavesButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         rememberCheckBox = new JCheckBox();
         rememberCheckBox.setText("Remember");
@@ -89,4 +91,5 @@ public class SaveTypeDialog extends JDialog {
     public JComponent $$$getRootComponent$$$() {
         return contentPane;
     }
+
 }

@@ -25,7 +25,7 @@ public class FileDialog {
         }
         aFilterPatterns.flip();
 
-        String file = TinyFileDialogs.tinyfd_openFileDialog(aTitle, aDefaultPathAndFile, aFilterPatterns, aSingleFilterDescription, aAllowMultipleSelects);
+        String file = TinyFileDialogs.tinyfd_openFileDialog(aTitle, aDefaultPathAndFile + "/", aFilterPatterns, aSingleFilterDescription, aAllowMultipleSelects);
 
         stack.pop();
         owner.setEnabled(true);
@@ -50,7 +50,7 @@ public class FileDialog {
         }
         aFilterPatterns.flip();
 
-        String file = TinyFileDialogs.tinyfd_saveFileDialog(aTitle, aDefaultPathAndFile, aFilterPatterns, aSingleFilterDescription);
+        String file = TinyFileDialogs.tinyfd_saveFileDialog(aTitle, aDefaultPathAndFile + "/", aFilterPatterns, aSingleFilterDescription);
 
         stack.pop();
         owner.setEnabled(true);
