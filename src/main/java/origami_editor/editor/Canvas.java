@@ -4,6 +4,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import origami.crease_pattern.OritaCalc;
+import origami_editor.editor.canvas.LineStyle;
+import origami_editor.editor.canvas.MouseMode;
 import origami_editor.editor.swing.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.canvas.CreasePattern_Worker;

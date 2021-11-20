@@ -3,7 +3,7 @@ package origami_editor.editor.action;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami.crease_pattern.element.Point;
-import origami_editor.editor.MouseMode;
+import origami_editor.editor.canvas.MouseMode;
 import origami.folding.FoldedFigure;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.FoldedFiguresList;

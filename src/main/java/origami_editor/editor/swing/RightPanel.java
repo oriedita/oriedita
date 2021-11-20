@@ -6,7 +6,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.inject.Inject;
 import javax.inject.Named;
 import origami.crease_pattern.element.LineColor;
-import origami_editor.editor.MouseMode;
+import origami_editor.editor.canvas.MouseMode;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.swing.component.ColorIcon;
 import origami_editor.editor.swing.dialog.OpenFrame;

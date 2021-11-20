@@ -1,4 +1,4 @@
-package origami_editor.editor;
+package origami_editor.editor.canvas;
 
 public enum MouseMode {
     UNUSED_0(0),

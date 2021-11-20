@@ -10,7 +10,7 @@ import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.FoldedFigure;
 import origami.folding.element.SubFace;
 import origami.folding.util.SortingBox;
-import origami_editor.editor.LineStyle;
+import origami_editor.editor.canvas.LineStyle;
 import origami_editor.editor.databinding.FoldedFiguresList;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.drawing.tools.Camera;
@@ -60,7 +60,6 @@ public class Svg {
         String str_strokewidth;
         str_strokewidth = "1";
         String str_fill;
-        str_fill = "";
 
         SortingBox<Integer> nbox = ctworker.rating2();
 

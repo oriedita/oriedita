@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.element.Point;
-import origami_editor.editor.MouseMode;
+import origami_editor.editor.canvas.MouseMode;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 
 @Singleton

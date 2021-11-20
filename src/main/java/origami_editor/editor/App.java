@@ -1,6 +1,7 @@
 package origami_editor.editor;
 
 import origami_editor.editor.canvas.CreasePattern_Worker;
+import origami_editor.editor.swing.AppMenuBar;
 import origami_editor.editor.swing.dialog.ConsoleDialog;
 import origami_editor.editor.swing.Editor;
 import origami_editor.editor.swing.dialog.HelpDialog;

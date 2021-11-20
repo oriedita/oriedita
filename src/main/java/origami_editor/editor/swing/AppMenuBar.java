@@ -1,9 +1,12 @@
-package origami_editor.editor;
+package origami_editor.editor.swing;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import origami_editor.editor.Colors;
+import origami_editor.editor.canvas.MouseMode;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.exception.FileReadingException;
@@ -163,6 +166,7 @@ public class AppMenuBar extends JMenuBar {
                 save = fileSaveService.readImportFile(file);
             } catch (FileReadingException ex) {
                 ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
             }
             System.out.println("readFile2Memo() 終了");
 
@@ -405,8 +409,12 @@ public class AppMenuBar extends JMenuBar {
             recentFileMenuItem.addActionListener(e -> {
                 try {
                     fileSaveService.openFile(recentFile);
+                    // Move this file to the top of the recent file list.
+                    applicationModel.addRecentFile(recentFile);
                 } catch (FileReadingException ex) {
                     ex.printStackTrace();
+                    JOptionPane.showMessageDialog(frame, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
+                    applicationModel.removeRecentFile(recentFile);
                 }
             });
             openRecentMenu.add(recentFileMenuItem);

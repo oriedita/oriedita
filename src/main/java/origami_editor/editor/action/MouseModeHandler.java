@@ -1,7 +1,7 @@
 package origami_editor.editor.action;
 
 import origami.crease_pattern.element.Point;
-import origami_editor.editor.MouseMode;
+import origami_editor.editor.canvas.MouseMode;
 
 public interface MouseModeHandler {
     MouseMode getMouseMode();

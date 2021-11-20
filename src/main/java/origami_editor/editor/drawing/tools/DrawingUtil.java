@@ -7,7 +7,7 @@ import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.Colors;
-import origami_editor.editor.LineStyle;
+import origami_editor.editor.canvas.LineStyle;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;

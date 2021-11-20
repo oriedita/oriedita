@@ -1,6 +1,6 @@
 package origami_editor.editor.swing.dialog;
 
-import origami_editor.editor.MouseMode;
+import origami_editor.editor.canvas.MouseMode;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.service.ButtonService;

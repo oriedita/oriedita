@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami_editor.editor.Canvas;
-import origami_editor.editor.MouseMode;
+import origami_editor.editor.canvas.MouseMode;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.databinding.*;

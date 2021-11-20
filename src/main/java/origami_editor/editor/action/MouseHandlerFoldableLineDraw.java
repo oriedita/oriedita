@@ -8,7 +8,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.folding.util.SortingBox;
 import origami.folding.util.WeightedValue;
-import origami_editor.editor.MouseMode;
+import origami_editor.editor.canvas.MouseMode;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 
 @Singleton

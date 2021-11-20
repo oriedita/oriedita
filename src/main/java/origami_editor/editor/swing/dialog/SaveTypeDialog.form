@@ -22,7 +22,7 @@
             </constraints>
             <properties>
               <horizontalAlignment value="2"/>
-              <text value="&lt;html&gt;&lt;b&gt;Crease Pattern (.cp)&lt;/b&gt;&lt;br/&gt;&#10;Saves only crease pattern &lt;br/&gt;lines.&lt;br/&gt;&lt;br/&gt;&#10;&#10;&lt;i&gt;Use this format to share &lt;br/&gt;crease patterns with other &lt;br/&gt;people&lt;/i&gt;"/>
+              <text value="&lt;html&gt;&lt;b&gt;Crease Pattern (.cp)&lt;/b&gt;&lt;br/&gt;&#10;Saves only crease pattern &lt;br/&gt;lines.&lt;br/&gt;&lt;br/&gt;&#10;&#10;&lt;i&gt;Use this format to share &lt;br/&gt;crease patterns with other &lt;br/&gt;people.&lt;/i&gt;"/>
             </properties>
           </component>
           <component id="d0911" class="javax.swing.JButton" binding="completeOriAlsoSavesButton" default-binding="true">

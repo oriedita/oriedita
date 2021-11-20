@@ -3,8 +3,8 @@ package origami_editor.editor.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import origami_editor.editor.Canvas;
 import origami_editor.editor.swing.dialog.ExportDialog;
-import origami_editor.editor.LineStyle;
-import origami_editor.editor.MouseMode;
+import origami_editor.editor.canvas.LineStyle;
+import origami_editor.editor.canvas.MouseMode;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.swing.dialog.SaveTypeDialog;
 import origami_editor.editor.databinding.*;
@@ -102,6 +102,7 @@ public class FileSaveService {
             openFile(file);
         } catch (FileReadingException e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(frame, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -128,6 +129,7 @@ public class FileSaveService {
             memo_temp = readImportFile(importFile);
         } catch (FileReadingException e) {
             e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
         }
         System.out.println("readFile2Memo() 終了");
 

@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
 import origami_editor.editor.Colors;
-import origami_editor.editor.MouseMode;
+import origami_editor.editor.canvas.MouseMode;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.databinding.*;

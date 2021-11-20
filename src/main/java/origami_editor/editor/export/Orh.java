@@ -3,7 +3,7 @@ package origami_editor.editor.export;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
-import origami_editor.editor.LineStyle;
+import origami_editor.editor.canvas.LineStyle;
 import origami_editor.editor.save.Save;
 import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.databinding.ApplicationModel;

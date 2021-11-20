@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.element.Point;
-import origami_editor.editor.MouseMode;
+import origami_editor.editor.canvas.MouseMode;
 import origami.folding.FoldedFigure;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.databinding.FoldedFiguresList;

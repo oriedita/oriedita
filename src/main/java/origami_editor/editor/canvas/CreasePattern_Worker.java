@@ -11,8 +11,6 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
 import origami_editor.editor.Colors;
-import origami_editor.editor.LineStyle;
-import origami_editor.editor.MouseMode;
 import origami_editor.editor.save.Save;
 import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.databinding.*;

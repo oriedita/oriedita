@@ -31,6 +31,7 @@ public class OrigamiEditor {
                     build.fileSaveService().openFile(new File(argv[0]));
                 } catch (FileReadingException e) {
                     e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

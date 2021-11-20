@@ -7,7 +7,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami_editor.editor.Colors;
-import origami_editor.editor.LineStyle;
+import origami_editor.editor.canvas.LineStyle;
 
 import javax.swing.*;
 import java.awt.*;
@@ -87,6 +87,21 @@ public class ApplicationModel implements Serializable {
         List<File> oldRecentFileList = this.recentFileList;
         this.recentFileList = recentFileList;
         this.pcs.firePropertyChange("recentFileList", oldRecentFileList, recentFileList);
+    }
+
+    public void removeRecentFile(File recentFile) {
+        List<File> oldList = recentFileList;
+        recentFileList = new ArrayList<>(recentFileList.subList(0, Math.min(recentFileList.size(), 20)));
+        recentFileList.remove(recentFile);
+        this.pcs.firePropertyChange("recentFileList", oldList, recentFileList);
+    }
+
+    public void addRecentFile(File selectedFile) {
+        List<File> oldList = recentFileList;
+        recentFileList = new ArrayList<>(recentFileList.subList(0, Math.min(recentFileList.size(), 20)));
+        recentFileList.remove(selectedFile);
+        recentFileList.add(0, selectedFile);
+        this.pcs.firePropertyChange("recentFileList", oldList, recentFileList);
     }
 
     public boolean getDisplaySelfIntersection() {
@@ -613,14 +628,6 @@ public class ApplicationModel implements Serializable {
 
     public void toggleDisplaySelfIntersection() {
         setDisplaySelfIntersection(!displaySelfIntersection);
-    }
-
-    public void addRecentFile(File selectedFile) {
-        List<File> oldList = recentFileList;
-        recentFileList = new ArrayList<>(recentFileList.subList(0, Math.min(recentFileList.size(), 20)));
-        recentFileList.remove(selectedFile);
-        recentFileList.add(0, selectedFile);
-        this.pcs.firePropertyChange("recentFileList", oldList, recentFileList);
     }
 
     public void reload() {

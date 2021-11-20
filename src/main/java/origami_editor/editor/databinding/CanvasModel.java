@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.Canvas;
-import origami_editor.editor.MouseMode;
+import origami_editor.editor.canvas.MouseMode;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.action.MouseHandlerModifyCalculatedShape;
 

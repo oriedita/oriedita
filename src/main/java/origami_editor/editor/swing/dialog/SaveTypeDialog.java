@@ -72,7 +72,7 @@ public class SaveTypeDialog extends JDialog {
         contentPane.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         creasePatternCpSavesButton = new JButton();
         creasePatternCpSavesButton.setHorizontalAlignment(2);
-        creasePatternCpSavesButton.setText("<html><b>Crease Pattern (.cp)</b><br/>\nSaves only crease pattern <br/>lines.<br/><br/>\n\n<i>Use this format to share <br/>crease patterns with other <br/>people</i>");
+        creasePatternCpSavesButton.setText("<html><b>Crease Pattern (.cp)</b><br/>\nSaves only crease pattern <br/>lines.<br/><br/>\n\n<i>Use this format to share <br/>crease patterns with other <br/>people.</i>");
         panel1.add(creasePatternCpSavesButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         completeOriAlsoSavesButton = new JButton();
         completeOriAlsoSavesButton.setHorizontalAlignment(2);

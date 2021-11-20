@@ -8,7 +8,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import origami.folding.FoldedFigure;
 import origami_editor.editor.Canvas;
-import origami_editor.editor.MouseMode;
+import origami_editor.editor.canvas.MouseMode;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.action.MouseHandlerModifyCalculatedShape;
 import origami_editor.editor.databinding.*;

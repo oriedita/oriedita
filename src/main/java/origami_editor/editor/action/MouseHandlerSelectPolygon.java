@@ -2,7 +2,7 @@ package origami_editor.editor.action;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import origami_editor.editor.MouseMode;
+import origami_editor.editor.canvas.MouseMode;
 
 @Singleton
 public class MouseHandlerSelectPolygon extends BaseMouseHandlerPolygon {
