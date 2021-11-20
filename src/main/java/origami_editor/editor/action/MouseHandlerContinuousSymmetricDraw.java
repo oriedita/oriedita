@@ -3,6 +3,7 @@ package origami_editor.editor.action;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
@@ -48,6 +49,14 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
     public void mouseReleased(Point p0) {
         if (d.lineStep.size() == 2) {
             continuous_folding_new(d.lineStep.get(0).getA(), d.lineStep.get(1).getA());
+
+            LineColor lineType = LineColor.RED_1;
+            for (int i = 2; i < d.lineStep.size(); i++) {
+                LineSegment lineSegment = d.lineStep.get(i).clone();
+                lineSegment.setColor(lineType);
+                lineType = lineType.changeMV();
+                d.addLineSegment(lineSegment);
+            }
 
             d.record();
 
