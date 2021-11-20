@@ -1,6 +1,9 @@
 package origami_editor.editor;
 
 import origami_editor.editor.canvas.CreasePattern_Worker;
+import origami_editor.editor.component.ConsoleDialog;
+import origami_editor.editor.component.Editor;
+import origami_editor.editor.component.HelpDialog;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.drawing.FoldedFigure_Worker_Drawer;

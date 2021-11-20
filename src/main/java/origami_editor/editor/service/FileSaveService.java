@@ -2,7 +2,7 @@ package origami_editor.editor.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import origami_editor.editor.Canvas;
-import origami_editor.editor.ExportDialog;
+import origami_editor.editor.component.ExportDialog;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.canvas.CreasePattern_Worker;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="origami_editor.editor.BottomPanel">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="origami_editor.editor.component.BottomPanel">
   <grid id="27dc6" binding="panel1" custom-create="true" default-binding="true" layout-manager="GridLayoutManager" row-count="1" column-count="28" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
     <margin top="1" left="1" bottom="1" right="1"/>
     <constraints>

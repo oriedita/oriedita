@@ -1,4 +1,4 @@
-package origami_editor.editor;
+package origami_editor.editor.component;
 
 import origami_editor.tools.KeyStrokeUtil;
 

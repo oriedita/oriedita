@@ -1,5 +1,7 @@
-package origami_editor.editor;
+package origami_editor.editor.component;
 
+
+import origami_editor.editor.Canvas;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

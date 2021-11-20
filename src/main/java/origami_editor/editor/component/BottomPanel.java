@@ -1,4 +1,4 @@
-package origami_editor.editor;
+package origami_editor.editor.component;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -7,6 +7,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import origami.folding.FoldedFigure;
+import origami_editor.editor.Canvas;
+import origami_editor.editor.MouseMode;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.MouseHandlerModifyCalculatedShape;
 import origami_editor.editor.component.*;

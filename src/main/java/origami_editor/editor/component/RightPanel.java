@@ -1,4 +1,4 @@
-package origami_editor.editor;
+package origami_editor.editor.component;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -6,8 +6,8 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.inject.Inject;
 import javax.inject.Named;
 import origami.crease_pattern.element.LineColor;
+import origami_editor.editor.MouseMode;
 import origami_editor.editor.canvas.CreasePattern_Worker;
-import origami_editor.editor.component.ColorIcon;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.service.ButtonService;
@@ -17,7 +17,6 @@ import origami_editor.tools.StringOp;
 import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 

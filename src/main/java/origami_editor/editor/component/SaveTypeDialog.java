@@ -11,15 +11,12 @@ public class SaveTypeDialog extends JDialog {
     private JPanel contentPane;
     private JButton creasePatternCpSavesButton;
     private JButton completeOriAlsoSavesButton;
-    private JCheckBox rememberCheckBox;
 
     private String saveType = null;
 
     public SaveTypeDialog(Frame owner) {
         super(owner, "Save type", ModalityType.APPLICATION_MODAL);
         setContentPane(contentPane);
-
-        setLocationRelativeTo(owner);
 
         creasePatternCpSavesButton.addActionListener(e -> {
             saveType = ".cp";
@@ -39,6 +36,7 @@ public class SaveTypeDialog extends JDialog {
 
         pack();
 
+        setLocationRelativeTo(owner);
     }
 
     public static String showSaveTypeDialog(Frame owner) {
@@ -70,7 +68,7 @@ public class SaveTypeDialog extends JDialog {
         contentPane = new JPanel();
         contentPane.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 10, 10), -1, -1));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1, true, false));
+        panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         contentPane.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         creasePatternCpSavesButton = new JButton();
         creasePatternCpSavesButton.setHorizontalAlignment(2);
@@ -80,9 +78,6 @@ public class SaveTypeDialog extends JDialog {
         completeOriAlsoSavesButton.setHorizontalAlignment(2);
         completeOriAlsoSavesButton.setText("<html><b>Complete (.ori)</b><br/>\nAlso saves circles, yellow <br/>aux lines and the grid.<br/>\n<br/>\n<i>Use this format when <br/>saving to your local <br/>computer.</i>");
         panel1.add(completeOriAlsoSavesButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        rememberCheckBox = new JCheckBox();
-        rememberCheckBox.setText("Remember");
-        panel1.add(rememberCheckBox, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

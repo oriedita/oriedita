@@ -1,8 +1,8 @@
 package origami_editor.editor.service;
 
 import javax.inject.Inject;
-import origami_editor.editor.HelpDialog;
-import origami_editor.editor.SelectKeyStrokeDialog;
+import origami_editor.editor.component.HelpDialog;
+import origami_editor.editor.component.SelectKeyStrokeDialog;
 import origami_editor.editor.action.Click;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.MouseHandlerVoronoiCreate;

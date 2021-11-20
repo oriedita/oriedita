@@ -1,4 +1,4 @@
-package origami_editor.editor;
+package origami_editor.editor.component;
 
 import javax.inject.Inject;
 import javax.inject.Named;

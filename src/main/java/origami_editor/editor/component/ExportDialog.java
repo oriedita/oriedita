@@ -1,4 +1,4 @@
-package origami_editor.editor;
+package origami_editor.editor.component;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -91,6 +91,8 @@ public class ExportDialog extends JDialog {
         setModal(true);
 
         pack();
+
+        setLocationRelativeTo(owner);
     }
 
     public static String showExportDialog(Frame owner) {
@@ -104,14 +106,15 @@ public class ExportDialog extends JDialog {
             exportType = null;
         }
 
-        exportDialog.setVisible(false);
+        exportDialog.dispose();
 
         return exportType;
     }
 
     private void onOk() {
         cancelled = false;
-        hide();
+
+        setVisible(false);
     }
 
     public String getExportType() {
@@ -119,7 +122,7 @@ public class ExportDialog extends JDialog {
     }
 
     private void onClose() {
-        hide();
+        setVisible(false);
     }
 
     {
@@ -160,7 +163,6 @@ public class ExportDialog extends JDialog {
         panel3.add(list1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
         optionsCard = new JPanel();
         optionsCard.setLayout(new CardLayout(0, 0));
-        optionsCard.setEnabled(false);
         optionsCard.setVisible(false);
         panel3.add(optionsCard, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         pngPanel = new JPanel();
