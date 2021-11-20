@@ -3,7 +3,7 @@ package origami_editor.editor.task;
 import javax.inject.Inject;
 import javax.inject.Named;
 import origami.folding.FoldedFigure;
-import origami_editor.editor.component.BulletinBoard;
+import origami_editor.editor.swing.component.BulletinBoard;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.service.FoldingService;

@@ -13,7 +13,7 @@ import origami_editor.editor.service.ButtonService;
 import origami_editor.editor.service.FileSaveService;
 import origami_editor.editor.service.ResetService;
 import origami_editor.editor.task.TaskExecutor;
-import origami_editor.editor.transfer.SaveTransferable;
+import origami_editor.editor.datatransfer.SaveTransferable;
 
 import javax.inject.Singleton;
 import javax.swing.*;

@@ -1,11 +1,10 @@
 package origami_editor.editor.service;
 
 import javax.inject.Inject;
-import origami_editor.editor.component.HelpDialog;
-import origami_editor.editor.component.SelectKeyStrokeDialog;
-import origami_editor.editor.action.Click;
+import origami_editor.editor.swing.dialog.HelpDialog;
+import origami_editor.editor.swing.dialog.SelectKeyStrokeDialog;
 import origami_editor.editor.canvas.CreasePattern_Worker;
-import origami_editor.editor.canvas.MouseHandlerVoronoiCreate;
+import origami_editor.editor.action.MouseHandlerVoronoiCreate;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.tools.KeyStrokeUtil;
 import origami_editor.tools.ResourceUtil;
@@ -192,5 +191,22 @@ public class ButtonService {
                 }
             }
         });
+    }
+
+    private static class Click extends AbstractAction {
+        private final AbstractButton button;
+
+        public Click(AbstractButton button) {
+            this.button = button;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            button.doClick();
+        }
+
+        public AbstractButton getButton() {
+            return button;
+        }
     }
 }

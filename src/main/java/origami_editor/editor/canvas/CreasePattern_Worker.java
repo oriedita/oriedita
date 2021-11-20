@@ -19,7 +19,7 @@ import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.tools.DrawingUtil;
 import origami_editor.editor.task.CheckCAMVTask;
 import origami_editor.editor.task.FinishedFuture;
-import origami_editor.editor.undo_box.HistoryState;
+import origami_editor.editor.service.HistoryState;
 import origami_editor.editor.drawing.Grid;
 import origami_editor.editor.drawing.tools.Camera;
 
@@ -48,50 +48,50 @@ public class CreasePattern_Worker {
     public Polygon operationFrameBox = new Polygon(4);    //Instantiation of selection box (TV coordinates)
     public Future<?> camvTask = new FinishedFuture<>(null);
     int pointSize = 1;
-    LineColor lineColor;//Line segment color
-    LineColor auxLineColor = LineColor.ORANGE_4;//Auxiliary line color
-    boolean gridInputAssist = false;//1 if you use the input assist function for fine grid display, 0 if you do not use it
-    Color customCircleColor;//Stores custom colors for circles and auxiliary hot lines
+    public LineColor lineColor;//Line segment color
+    public LineColor auxLineColor = LineColor.ORANGE_4;//Auxiliary line color
+    public boolean gridInputAssist = false;//1 if you use the input assist function for fine grid display, 0 if you do not use it
+    public Color customCircleColor;//Stores custom colors for circles and auxiliary hot lines
     HistoryState historyState;
     HistoryState auxHistoryState;
-    FoldLineAdditionalInputMode i_foldLine_additional = FoldLineAdditionalInputMode.POLY_LINE_0;//= 0 is polygonal line input = 1 is auxiliary line input mode (when inputting a line segment, these two). When deleting a line segment, the value becomes as follows. = 0 is the deletion of the polygonal line, = 1 is the deletion of the auxiliary picture line, = 2 is the deletion of the black line, = 3 is the deletion of the auxiliary live line, = 4 is the folding line, the auxiliary live line and the auxiliary picture line.
-    FoldLineSet auxLines = new FoldLineSet();    //Store auxiliary lines
-    int id_angle_system = 8;//180 / id_angle_system represents the angular system. For example, if id_angle_system = 3, 180/3 = 60 degrees, if id_angle_system = 5, 180/5 = 36 degrees
-    double angle;
-    int foldLineDividingNumber = 1;
-    double internalDivisionRatio_s;
-    double internalDivisionRatio_t;
-    double d_restricted_angle_1;
-    double d_restricted_angle_2;
-    double d_restricted_angle_3;
-    int numPolygonCorners = 5;
-    double selectionDistance = 50.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Value for determining whether an input point is close to an existing point or line segment
+    public FoldLineAdditionalInputMode i_foldLine_additional = FoldLineAdditionalInputMode.POLY_LINE_0;//= 0 is polygonal line input = 1 is auxiliary line input mode (when inputting a line segment, these two). When deleting a line segment, the value becomes as follows. = 0 is the deletion of the polygonal line, = 1 is the deletion of the auxiliary picture line, = 2 is the deletion of the black line, = 3 is the deletion of the auxiliary live line, = 4 is the folding line, the auxiliary live line and the auxiliary picture line.
+    public FoldLineSet auxLines = new FoldLineSet();    //Store auxiliary lines
+    public int id_angle_system = 8;//180 / id_angle_system represents the angular system. For example, if id_angle_system = 3, 180/3 = 60 degrees, if id_angle_system = 5, 180/5 = 36 degrees
+    public double angle;
+    public int foldLineDividingNumber = 1;
+    public double internalDivisionRatio_s;
+    public double internalDivisionRatio_t;
+    public double d_restricted_angle_1;
+    public double d_restricted_angle_2;
+    public double d_restricted_angle_3;
+    public int numPolygonCorners = 5;
+    public double selectionDistance = 50.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Value for determining whether an input point is close to an existing point or line segment
     /**
      * Temporary line segments when drawing.
      */
-    List<LineSegment> lineStep = new ArrayList<>();
+    public List<LineSegment> lineStep = new ArrayList<>();
     /**
      * Temporary circles when drawing.
      */
-    List<Circle> circleStep = new ArrayList<>();
+    public List<Circle> circleStep = new ArrayList<>();
     /**
      * Candidate line segments.
      */
-    List<LineSegment> lineCandidate = new ArrayList<>();
+    public List<LineSegment> lineCandidate = new ArrayList<>();
     String text_cp_setumei;
     String s_title; //Used to hold the title that appears at the top of the frame
-    Camera camera = new Camera();
-    boolean check1 = false;//=0 check1を実施しない、1=実施する　　
-    boolean check2 = false;//=0 check2を実施しない、1=実施する　
-    boolean check3 = false;//=0 check3を実施しない、1=実施する　
-    boolean check4 = false;//=0 check4を実施しない、1=実施する　
+    public Camera camera = new Camera();
+    public boolean check1 = false;//=0 check1を実施しない、1=実施する　　
+    public boolean check2 = false;//=0 check2を実施しない、1=実施する　
+    public boolean check3 = false;//=0 check3を実施しない、1=実施する　
+    public boolean check4 = false;//=0 check4を実施しない、1=実施する　
     //---------------------------------
     int check4ColorTransparency = 100;
     //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
-    Point operationFrame_p1 = new Point();//TV座標
-    Point operationFrame_p2 = new Point();//TV座標
-    Point operationFrame_p3 = new Point();//TV座標
-    Point operationFrame_p4 = new Point();//TV座標
+    public Point operationFrame_p1 = new Point();//TV座標
+    public Point operationFrame_p2 = new Point();//TV座標
+    public Point operationFrame_p3 = new Point();//TV座標
+    public Point operationFrame_p4 = new Point();//TV座標
     Point p = new Point();
     // ****************************************************************************************************************************************
     // **************　Variable definition so far　****************************************************************************************************
@@ -99,7 +99,7 @@ public class CreasePattern_Worker {
     // ------------------------------------------------------------------------------------------------------------
     // Sub-operation mode for MouseMode.FOLDABLE_LINE_DRAW_71, either DRAW_CREASE_FREE_1, or VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38
     //--------------------------------------------
-    CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
+    public CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
 
     @Inject
     public CreasePattern_Worker(@Named("creasePatternCamera") Camera creasePatternCamera,
@@ -1054,7 +1054,7 @@ public class CreasePattern_Worker {
     }
 
     //30 30 30 30 30 30 30 30 30 30 30 30 除け_線_変換
-    enum FourPointStep {
+    public enum FourPointStep {
         STEP_0,
         STEP_1,
         STEP_2,

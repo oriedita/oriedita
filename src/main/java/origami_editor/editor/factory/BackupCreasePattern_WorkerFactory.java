@@ -5,7 +5,7 @@ import dagger.Provides;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.tools.Camera;
-import origami_editor.editor.undo_box.HistoryState;
+import origami_editor.editor.service.HistoryState;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

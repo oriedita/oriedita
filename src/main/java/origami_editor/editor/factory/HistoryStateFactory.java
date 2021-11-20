@@ -2,7 +2,7 @@ package origami_editor.editor.factory;
 
 import dagger.Module;
 import dagger.Provides;
-import origami_editor.editor.undo_box.HistoryState;
+import origami_editor.editor.service.HistoryState;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

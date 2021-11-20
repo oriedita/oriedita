@@ -2,11 +2,11 @@ package origami_editor.editor.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import origami_editor.editor.Canvas;
-import origami_editor.editor.component.ExportDialog;
+import origami_editor.editor.swing.dialog.ExportDialog;
 import origami_editor.editor.LineStyle;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.canvas.CreasePattern_Worker;
-import origami_editor.editor.component.SaveTypeDialog;
+import origami_editor.editor.swing.dialog.SaveTypeDialog;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.tools.Camera;
 import origami_editor.editor.exception.FileReadingException;
@@ -28,8 +28,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import static origami_editor.editor.component.FileDialog.openFileDialog;
-import static origami_editor.editor.component.FileDialog.saveFileDialog;
+import static origami_editor.editor.swing.dialog.FileDialog.openFileDialog;
+import static origami_editor.editor.swing.dialog.FileDialog.saveFileDialog;
 
 @Singleton
 public class FileSaveService {

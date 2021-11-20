@@ -2,7 +2,7 @@ package origami_editor.editor.task;
 
 import origami.crease_pattern.LineSegmentSet;
 import origami.folding.FoldedFigure;
-import origami_editor.editor.component.BulletinBoard;
+import origami_editor.editor.swing.component.BulletinBoard;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.drawing.tools.Camera;

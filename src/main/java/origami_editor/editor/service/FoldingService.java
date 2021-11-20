@@ -9,7 +9,7 @@ import origami.folding.FoldedFigure;
 import origami_editor.editor.save.Save;
 import origami_editor.editor.save.SaveV1;
 import origami_editor.editor.canvas.CreasePattern_Worker;
-import origami_editor.editor.component.BulletinBoard;
+import origami_editor.editor.swing.component.BulletinBoard;
 import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.folded_figure.FoldedFigure_01;

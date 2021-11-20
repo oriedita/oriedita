@@ -4,7 +4,7 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoSet;
 import dagger.multibindings.Multibinds;
-import origami_editor.editor.canvas.*;
+import origami_editor.editor.action.*;
 
 import java.util.Set;
 
@@ -37,7 +37,8 @@ public interface MouseHandlerFactory {
     @Binds @IntoSet MouseModeHandler mouseHandlerCreaseMakeEdge(MouseHandlerCreaseMakeEdge mouseHandlerCreaseMakeEdge);
     @Binds @IntoSet MouseModeHandler mouseHandlerCreaseMakeMountain(MouseHandlerCreaseMakeMountain mouseHandlerCreaseMakeMountain);
     @Binds @IntoSet MouseModeHandler mouseHandlerCreaseMakeMV(MouseHandlerCreaseMakeMV mouseHandlerCreaseMakeMV);
-    @Binds @IntoSet MouseModeHandler mouseHandlerCreaseMakeValley(MouseHandlerCreaseMakeValley mouseHandlerCreaseMakeValley);
+    @Binds @IntoSet
+    MouseModeHandler mouseHandlerCreaseMakeValley(MouseHandlerCreaseMakeValley mouseHandlerCreaseMakeValley);
     @Binds @IntoSet MouseModeHandler mouseHandlerCreaseMove(MouseHandlerCreaseMove mouseHandlerCreaseMove);
     @Binds @IntoSet MouseModeHandler mouseHandlerCreaseMove4p(MouseHandlerCreaseMove4p mouseHandlerCreaseMove4p);
     @Binds @IntoSet MouseModeHandler mouseHandlerCreasesAlternateMV(MouseHandlerCreasesAlternateMV mouseHandlerCreasesAlternateMV);

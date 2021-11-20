@@ -6,7 +6,7 @@ import origami.crease_pattern.element.LineColor;
 import origami_editor.editor.Canvas;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
-import origami_editor.editor.canvas.MouseHandlerModifyCalculatedShape;
+import origami_editor.editor.action.MouseHandlerModifyCalculatedShape;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

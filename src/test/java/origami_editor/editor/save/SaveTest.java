@@ -16,7 +16,7 @@ import origami_editor.editor.drawing.tools.Camera;
 import origami_editor.editor.exception.FileReadingException;
 import origami_editor.editor.service.FileSaveService;
 import origami_editor.editor.service.ResetService;
-import origami_editor.editor.undo_box.HistoryState;
+import origami_editor.editor.service.HistoryState;
 
 import java.io.File;
 import java.net.URISyntaxException;
