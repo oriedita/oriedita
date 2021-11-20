@@ -34,6 +34,8 @@ public class OrigamiEditor {
                     JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
+
+            build.fileSaveService().initAutoSave();
         });
     }
 }

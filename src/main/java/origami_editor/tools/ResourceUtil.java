@@ -29,6 +29,10 @@ public class ResourceUtil {
         }
     }
 
+    public static Path getTempDir() {
+        return Paths.get(System.getProperty("java.io.tmpdir"), "origami-editor");
+    }
+
     public static String getVersionFromManifest() {
         try {
             File file = new File(App.class.getProtectionDomain().getCodeSource().getLocation().toURI());

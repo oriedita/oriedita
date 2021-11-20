@@ -17,6 +17,7 @@ import origami_editor.editor.export.Svg;
 import origami_editor.editor.json.DefaultObjectMapper;
 import origami_editor.editor.save.Save;
 import origami_editor.editor.save.SaveV1;
+import origami_editor.tools.ResourceUtil;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -27,6 +28,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static origami_editor.editor.swing.dialog.FileDialog.openFileDialog;
 import static origami_editor.editor.swing.dialog.FileDialog.saveFileDialog;
@@ -425,5 +432,38 @@ public class FileSaveService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void initAutoSave() {
+        ScheduledThreadPoolExecutor pool = new ScheduledThreadPoolExecutor(1);
+
+        pool.scheduleAtFixedRate(this::autoSaveFile, 5, 5, TimeUnit.MINUTES);
+    }
+
+    private void autoSaveFile() {
+        Path autoSavePath = ResourceUtil.getTempDir().resolve("autosave");
+
+        String savedFileName = fileModel.getSavedFileName();
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+        String fileName;
+        if (savedFileName == null) {
+            fileName = df.format(new Date()) + "_unsaved.ori";
+        } else {
+            String namePart = new File(savedFileName).getName();
+            namePart = namePart.substring(0, namePart.lastIndexOf("."));
+
+            fileName = df.format(new Date()) + "_" + namePart + ".ori";
+        }
+
+        Save save = mainCreasePatternWorker.getSave_for_export();
+
+        File file = autoSavePath.resolve(fileName).toFile();
+
+        if (!autoSavePath.toFile().exists()) {
+            autoSavePath.toFile().mkdirs();
+        }
+
+        saveAndName2File(save, file);
     }
 }
