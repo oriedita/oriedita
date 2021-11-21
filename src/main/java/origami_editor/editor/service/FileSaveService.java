@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Date;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -50,6 +49,8 @@ public class FileSaveService {
     private final FoldedFiguresList foldedFiguresList;
     private final ResetService resetService;
     private final BackgroundModel backgroundModel;
+    private Path autoSavePath;
+    private final SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
 
     @Inject
     public FileSaveService(
@@ -437,32 +438,31 @@ public class FileSaveService {
     public void initAutoSave() {
         ScheduledThreadPoolExecutor pool = new ScheduledThreadPoolExecutor(1);
 
+        autoSavePath = ResourceUtil.getTempDir().resolve("origami-editor-autosave-" + df.format(new Date()));
+        autoSavePath.toFile().mkdirs();
+
         pool.scheduleAtFixedRate(this::autoSaveFile, 5, 5, TimeUnit.MINUTES);
     }
 
     private void autoSaveFile() {
-        Path autoSavePath = ResourceUtil.getTempDir().resolve("autosave");
-
         String savedFileName = fileModel.getSavedFileName();
 
-        SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
         String fileName;
+        String namePart;
         if (savedFileName == null) {
-            fileName = df.format(new Date()) + "_unsaved.ori";
+            namePart = "unsaved";
         } else {
-            String namePart = new File(savedFileName).getName();
+
+            namePart = new File(savedFileName).getName();
             namePart = namePart.substring(0, namePart.lastIndexOf("."));
 
-            fileName = df.format(new Date()) + "_" + namePart + ".ori";
         }
+
+        fileName = df.format(new Date()) + "_" + namePart + ".ori";
 
         Save save = mainCreasePatternWorker.getSave_for_export();
 
         File file = autoSavePath.resolve(fileName).toFile();
-
-        if (!autoSavePath.toFile().exists()) {
-            autoSavePath.toFile().mkdirs();
-        }
 
         saveAndName2File(save, file);
     }

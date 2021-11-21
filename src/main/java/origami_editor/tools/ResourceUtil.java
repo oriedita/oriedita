@@ -30,7 +30,7 @@ public class ResourceUtil {
     }
 
     public static Path getTempDir() {
-        return Paths.get(System.getProperty("java.io.tmpdir"), "origami-editor");
+        return Paths.get(System.getProperty("java.io.tmpdir"));
     }
 
     public static String getVersionFromManifest() {

@@ -48,7 +48,10 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
             Point closestPoint = d.getClosestPoint(p);
 
             if (p.distance(closestPoint) < d.selectionDistance) {
-                d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.fromNumber(d.lineStep.size() + 1)));
+                LineSegment s = new LineSegment(closestPoint, closestPoint, LineColor.fromNumber(d.lineStep.size() + 1));
+                s.setColor(LineColor.MAGENTA_5);
+                s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
+                d.lineStepAdd(s);
             }
         }
 
@@ -72,12 +75,12 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
 
                     kakudo = kakudo + d_angle_system;
                     LineSegment e = OritaCalc.lineSegment_rotate(s_kiso, kakudo, 1.0);
-                    d.lineStepAdd(e);
                     if (i_jyun) {
                         e.setColor(LineColor.ORANGE_4);
                     } else {
                         e.setColor(LineColor.GREEN_6);
                     }
+                    d.lineStepAdd(e);
                 }
             }
 
@@ -157,8 +160,6 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
         }
 
         if (d.lineStep.size() == 2 + (honsuu) + 1 + 1) {
-            d.lineStep.clear();
-
             Point kousa_point = new Point();
             kousa_point.set(OritaCalc.findIntersection(d.lineStep.get(2 + (honsuu)), d.lineStep.get(2 + (honsuu) + 1)));
             LineSegment add_sen = new LineSegment(kousa_point, d.lineStep.get(0).getA(), d.lineColor);
@@ -166,6 +167,8 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
                 d.addLineSegment(add_sen);
                 d.record();
             }
+
+            d.lineStep.clear();
         }
     }
 
