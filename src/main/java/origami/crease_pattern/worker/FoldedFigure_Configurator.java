@@ -99,7 +99,6 @@ public class FoldedFigure_Configurator {
                 int s0addFaceTotal = 0;
     
                 for (int j : qt.collect(new PointCollector(subFace_insidePoint[iff]))) {
-                    j++; // qt is 0-based
                     if (otta_face_figure.inside(subFace_insidePoint[iff], j) == Polygon.Intersection.INSIDE) {
                         s0addFaceId[++s0addFaceTotal] = j;
                     }
@@ -320,7 +319,6 @@ public class FoldedFigure_Configurator {
                     Point q = otta_face_figure.getEndPointFromLineId(ibf);
                     // This qt here is the same instance as in SubFace_configure()
                     for (int im : qt.collect(new LineSegmentCollector(p, q))) {
-                        im++; // qt is 0-based
                         if ((im != faceId_min) && (im != faceId_max)) {
                             if (otta_face_figure.convex_inside(ibf, im)) {
                                 //下の２つのifは暫定的な処理。あとで置き換え予定
@@ -372,13 +370,12 @@ public class FoldedFigure_Configurator {
             final int mi2 = orite.lineInFaceBorder_max_request(ibf);
             if (mi1 != mi2 && mi1 != 0) {
                 service.execute(() -> {
-                    for (int jb : qt.getPotentialCollision(ibf - 1)) { // qt is 0-based
+                    for (int jb : qt.getPotentialCollision(ibf)) {
                         if (Thread.interrupted()) break;
-                        final int jbf = jb + 1; // qt is 0-based
-                        int mj1 = orite.lineInFaceBorder_min_request(jbf);
-                        int mj2 = orite.lineInFaceBorder_max_request(jbf);
+                        int mj1 = orite.lineInFaceBorder_min_request(jb);
+                        int mj2 = orite.lineInFaceBorder_max_request(jb);
                         if (mj1 != mj2 && mj1 != 0) {
-                            if (otta_face_figure.parallel_overlap(ibf, jbf)) {
+                            if (otta_face_figure.parallel_overlap(ibf, jb)) {
                                 if (exist_identical_subFace(mi1, mi2, mj1, mj2)) {
                                     // AEA cannot run in parallel
                                     synchronized (AEA) {

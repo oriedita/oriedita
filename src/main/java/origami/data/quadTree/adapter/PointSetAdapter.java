@@ -27,4 +27,9 @@ public abstract class PointSetAdapter implements QuadTreeAdapter {
         // Points in PointSet are 1-based
         return set.getPoint(index + 1);
     }
+    
+    @Override
+    public int getOffset() {
+        return 1;
+    }
 }

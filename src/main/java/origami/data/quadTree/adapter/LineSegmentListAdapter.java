@@ -38,4 +38,9 @@ public class LineSegmentListAdapter implements  QuadTreeAdapter {
     public Point getPoint(int index) {
         return factory.apply(list.get(index));
     }
+
+    @Override
+    public int getOffset() {
+        return 0;
+    }
 }

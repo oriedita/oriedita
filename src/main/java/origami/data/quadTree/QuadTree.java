@@ -27,6 +27,7 @@ public class QuadTree {
     /** Which node contains the QuadTreeItem. */
     private final ArrayList<Node> map;
 
+    private final int offset;
     private int count;
 
     public QuadTree(QuadTreeAdapter adapter) {
@@ -35,6 +36,7 @@ public class QuadTree {
 
     public QuadTree(QuadTreeAdapter adapter, QuadTreeComparator comparator) {
         this.adapter = adapter;
+        this.offset = adapter.getOffset();
         this.comparator = comparator;
         next = new ArrayList<>();
         map = new ArrayList<>();
@@ -84,7 +86,7 @@ public class QuadTree {
     }
 
     public Iterable<Integer> getPotentialCollision(int i, int min) {
-        return collect(new CollisionCollector(i, min, map));
+        return collect(new CollisionCollector(i - offset, min - offset, map));
     }
 
     public Iterable<Integer> collect(QuadTreeCollector collector) {
@@ -114,7 +116,7 @@ public class QuadTree {
         int cursor = node.head;
         while (cursor != -1) {
             if (collector.shouldCollect(cursor, adapter)) {
-                heap.add(cursor);
+                heap.add(cursor + offset);
             }
             cursor = next.get(cursor);
         }
