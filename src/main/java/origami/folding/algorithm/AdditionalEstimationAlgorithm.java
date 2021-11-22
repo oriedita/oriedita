@@ -150,7 +150,7 @@ public class AdditionalEstimationAlgorithm {
     }
 
     /** This is a faster version of run(). */
-    public void fastRun() {
+    public boolean fastRun() {
         try {
             flush();
             for (EquivalenceCondition tg : hierarchyList.getEquivalenceConditions()) {
@@ -159,9 +159,9 @@ public class AdditionalEstimationAlgorithm {
             for (EquivalenceCondition tg : hierarchyList.getUEquivalenceConditions()) {
                 checkQuadrupleConstraint(tg);
             }
+            return true;
         } catch (InferenceFailureException e) {
-            errorPos = null;
-            // We shall ignore any exception (see the comments in FoldedFigure_Worker).
+            return false;
         }
     }
 

@@ -42,6 +42,7 @@ public class FoldedFigure_Worker {
 
     private SubFaceSwappingAlgorithm swapper;
     private final FoldedFigure_Configurator configurator;
+    private boolean aeaMode;
 
     public FoldedFigure_Worker(IBulletinBoard bb0) {
         bb = bb0;
@@ -120,6 +121,7 @@ public class FoldedFigure_Worker {
         int ms, Sid;
 
         AdditionalEstimationAlgorithm AEA = null;
+        aeaMode = swap;
         if (swap) {
             swapper = new SubFaceSwappingAlgorithm();
 
@@ -154,7 +156,7 @@ public class FoldedFigure_Worker {
         int kks;
         boolean swap = AEA != null;
         hierarchyList.restore();// <<<<<<<<<<<<<<<<<<<<<<<<<<<,,
-        if (swap) AEA.restore();
+        if (aeaMode) AEA.restore();
 
         for (int ss = 1; ss <= SubFace_valid_number; ss++) { // <<<<<<<<<<<<<<高速化のため変更。070417
             if (swap) swapper.visit(s[ss]);
@@ -173,24 +175,33 @@ public class FoldedFigure_Worker {
             }
 
             s[ss].swapCounter = 0;
-            if (swap) {
+            if (aeaMode) {
                 // Enter the stacking information of the ss th SubFace in hierarchyList.
                 s[ss].enterStackingOfSubFace(AEA);
 
+                boolean success = true;
                 boolean se = swapper.shouldEstimate(ss); // side effect
-                if (se && ss <= Math.sqrt(SubFace_valid_number)) {
-                    // It is possible in theory that the following line returns a result other than
-                    // success (even as we ran AEA in each step and the current permutation doesn't
-                    // have any immediate contradiction, since something might still go wrong in the
-                    // inference process), but we shall ignore that result here and keep going. The
-                    // reason for this is that stopping at this point is costly in performance, and
-                    // basically the contradiction will make a later SubFace unsolvable anyway. We
-                    // will then count on that SubFace and the swapping algorithm to fix everything.
-                    AEA.run(0);
+                if (se && ss <= Math.sqrt(SubFace_valid_number)) {                   
+                    success = AEA.run(0) == HierarchyListStatus.SUCCESSFUL_1000;
                 } else if (ss % (3 + ss * ss / 6400) == 0) {
                     // There's no need to execute run() even fastRun() in every step (that will be
                     // too slow), so we use the formula above to decide when to run it.
-                    AEA.fastRun();
+                    success = AEA.fastRun();
+                }
+                if (!success) {
+                    /**
+                     * For some CPs, realtime AEA could return a result other than success (even as
+                     * we ran AEA in each step and the current permutation doesn't have any
+                     * immediate contradiction, since something might still go wrong in the
+                     * inference process), and in this case it is very difficult to make sense out
+                     * of the inference error, and the error could even stay all the way until the
+                     * final solution (which would then make the solution invalid). The best we can
+                     * do is to disable realtime AEA if this happens.
+                     */
+                    System.out.println("Disable realtime AEA");
+                    aeaMode = false;
+                    hierarchyList.restore();
+                    ss = 0; // restart the search
                 }
             } else {
                 s[ss].enterStackingOfSubFace(hierarchyList);
