@@ -82,9 +82,6 @@ public class AdditionalEstimationAlgorithm {
 
         do {
             new_relations = 0;
-            if (bb != null) {
-                System.out.println("additional_estimation------------------------");
-            }
 
             int iS = 0;
             try {
@@ -153,7 +150,7 @@ public class AdditionalEstimationAlgorithm {
     }
 
     /** This is a faster version of run(). */
-    public void fastRun() {
+    public boolean fastRun() {
         try {
             flush();
             for (EquivalenceCondition tg : hierarchyList.getEquivalenceConditions()) {
@@ -162,8 +159,9 @@ public class AdditionalEstimationAlgorithm {
             for (EquivalenceCondition tg : hierarchyList.getUEquivalenceConditions()) {
                 checkQuadrupleConstraint(tg);
             }
+            return true;
         } catch (InferenceFailureException e) {
-            // We shall ignore any exception (see the comments in FoldedFigure_Worker).
+            return false;
         }
     }
 
