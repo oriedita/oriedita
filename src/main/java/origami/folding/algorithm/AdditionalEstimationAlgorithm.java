@@ -82,9 +82,6 @@ public class AdditionalEstimationAlgorithm {
 
         do {
             new_relations = 0;
-            if (bb != null) {
-                System.out.println("additional_estimation------------------------");
-            }
 
             int iS = 0;
             try {
@@ -163,6 +160,7 @@ public class AdditionalEstimationAlgorithm {
                 checkQuadrupleConstraint(tg);
             }
         } catch (InferenceFailureException e) {
+            errorPos = null;
             // We shall ignore any exception (see the comments in FoldedFigure_Worker).
         }
     }

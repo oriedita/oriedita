@@ -407,9 +407,6 @@ public class SubFace {
                 for (EquivalenceCondition ec : list) result.add(ec);
             }
         }
-        result.sort(
-                Comparator.comparingInt(EquivalenceCondition::getA).thenComparingInt(EquivalenceCondition::getB)
-                        .thenComparingInt(EquivalenceCondition::getD));
         return result;
     }
 

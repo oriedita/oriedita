@@ -237,6 +237,7 @@ public class FoldedFigure_Configurator {
         AEA = null; // Now we can release the memory
         System.gc();
         
+        worker.hierarchyList.sortEquivalenceConditions();
         // Here we can compare and see the huge difference before and after AEA
         System.out.print("３面が関与する突き抜け条件の数　＝　");
         System.out.println(worker.hierarchyList.getEquivalenceConditionTotal());

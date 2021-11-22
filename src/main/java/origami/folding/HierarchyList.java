@@ -83,6 +83,13 @@ public class HierarchyList {//This class is used to record and utilize the hiera
         tL.add(ec);
     }
 
+    /** Sort 3EC found by parallel processing, in order to get consistent running result. */
+    public void sortEquivalenceConditions() {
+        Collections.sort(tL, Comparator.comparingInt(EquivalenceCondition::getA)
+                .thenComparingInt(EquivalenceCondition::getB)
+                .thenComparingInt(EquivalenceCondition::getD));
+    }
+
     public int getUEquivalenceConditionTotal() {
         return uL.size();
     }
