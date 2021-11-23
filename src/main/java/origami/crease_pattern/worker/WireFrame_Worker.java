@@ -113,7 +113,6 @@ public class WireFrame_Worker {
         for (int it = 1; it <= this.pointSet.getNumPoints(); it++) {
             tnew[it].reset();
             for (int im : qt.collect(new PointCollector(pointSet.getPoint(it)))) {
-                im++; // qt is 0-based
                 if (pointSet.pointInFaceBorder(im, it)) {//c.Ten_moti_hantei returns 1 if the boundary of Face [im] contains Point [it], 0 if it does not.
                     tnew[it].addPoint(fold_movement(it, im));
                     pointSet.setPoint(it, tnew[it].getAveragePoint());
@@ -164,8 +163,8 @@ public class WireFrame_Worker {
         while (remaining_facesTotal > 0) {
             SortedSet<Integer> nextRound = new TreeSet<>();
             for (int i : currentRound) {
-                for (int j : qt.getPotentialCollision(i - 1, -1)) {
-                    if (iFacePosition[++j] != 0) continue;
+                for (int j : qt.getPotentialCollision(i, 0)) {
+                    if (iFacePosition[j] != 0) continue;
                     int mth = pointSet.findAdjacentLine(i, j, map);
                     if (mth > 0) {
                         nextRound.add(j);
@@ -281,14 +280,12 @@ public class WireFrame_Worker {
         for (int n = 0; n < lineSegmentSet.getNumLineSegments(); n++) {
             int start = 0, end = 0;
             for (int i : qt.collect(new PointCollector(lineSegmentSet.getA(n)))) {
-                i++; // qt is 0-based
                 if (OritaCalc.equal(lineSegmentSet.getA(n), pointSet.getPoint(i))) {
                     start = i;
                     break;
                 }
             }
             for (int i : qt.collect(new PointCollector(lineSegmentSet.getB(n)))) {
-                i++; // qt is 0-based
                 if (OritaCalc.equal(lineSegmentSet.getB(n), pointSet.getPoint(i))) {
                     end = i;
                     break;

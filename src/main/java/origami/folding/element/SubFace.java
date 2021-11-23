@@ -4,6 +4,7 @@ import java.util.*;
 
 import origami.folding.HierarchyList;
 import origami.folding.algorithm.AdditionalEstimationAlgorithm;
+import origami.folding.algorithm.InferenceFailureException;
 import origami.folding.util.EquivalenceCondition;
 import origami.folding.permutation.ChainPermutationGenerator;
 import origami.folding.permutation.PermutationGenerator;
@@ -141,8 +142,12 @@ public class SubFace {
         ijh = 1;//The initial value of ijh can be anything other than 0.
         while (ijh != 0) { //If ijh == 0, you have reached the end of the digit.
             if (permutationGenerator.getCount() > 2000 && cg == null) {
-                cg = new CombinationGenerator(this, faceIdMapArray, hierarchyList);
-                if (runCombinationGenerator() == 0) return 0;
+                try {
+                    cg = new CombinationGenerator(this, faceIdMapArray, hierarchyList);
+                    if (runCombinationGenerator() == 0) return 0;
+                } catch (InferenceFailureException e) {
+                    return 0;
+                }
             }
             
             mk = inconsistent_digits_request(hierarchyList);
@@ -208,7 +213,7 @@ public class SubFace {
     // This SubFace returns 1000 if there is no contradiction in the folds.
     private int overlapping_inconsistent_digits_request(HierarchyList hierarchyList) {
         for (int i = 1; i < faceIdCount; i++) {
-            for (int j = i + 1; j <= faceIdCount; j++) {
+            for (int j = faceIdCount; j > i; j--) { // Reverse order here is more efficient
                 int I = getPermutation(i);
                 int J = getPermutation(j);
                 if (hierarchyList.get(faceIdList[I], faceIdList[J]) == HierarchyList.BELOW_0) {
@@ -307,10 +312,14 @@ public class SubFace {
 
     // Enter the information due to the overlap of SubFace's faces in the upper and lower tables
     public void enterStackingOfSubFace(AdditionalEstimationAlgorithm AEA) {
-        for (int i = 1; i < faceIdCount; i++) {
-            for (int j = i + 1; j <= faceIdCount; j++) {
-                AEA.inferAbove(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]);
+        try {
+            for (int i = 1; i < faceIdCount; i++) {
+                for (int j = i + 1; j <= faceIdCount; j++) {
+                    AEA.inferAbove(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]);
+                }
             }
+        } catch(InferenceFailureException e) {
+            // Not supposed to happen
         }
     }
 

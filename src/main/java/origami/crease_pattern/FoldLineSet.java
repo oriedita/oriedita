@@ -5,7 +5,9 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
 import origami.data.quadTree.QuadTree;
+import origami.data.quadTree.adapter.CamvAdapter;
 import origami.data.quadTree.adapter.LineSegmentListAdapter;
+import origami.data.quadTree.adapter.LineSegmentListEndPointAdapter;
 import origami.data.quadTree.collector.PointCollector;
 import origami.data.save.LineSegmentSave;
 import origami.folding.util.SortingBox;
@@ -31,7 +33,7 @@ public class FoldLineSet {
     Queue<LineSegment> Check2LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     Queue<LineSegment> Check3LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     Queue<LineSegment> Check4LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
-    Queue<Point> check4Point = new ConcurrentLinkedQueue<>(); //Instantiation of points to check
+    List<Point> check4Point = new ArrayList<>(); //Instantiation of points to check
 
     List<Circle> circles = new ArrayList<>(); //円のインスタンス化
 
@@ -2676,7 +2678,7 @@ public class FoldLineSet {
     }
 
     //Divide the polygonal line i by the projection of the point p. However, if the projection of point p is considered to be the same as the end point of any polygonal line, nothing is done.
-    public boolean applyLineSegmentDivide(Point p, int i) {//何もしない=0,分割した=1
+    public void applyLineSegmentDivide(Point p, int i) {//何もしない=0,分割した=1
         LineSegment s = lineSegments.get(i);
 
         LineSegment mts = new LineSegment(s.getA(), s.getB());//mtsは点pに最も近い線分
@@ -2687,7 +2689,6 @@ public class FoldLineSet {
         pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(mts), p));//pkは点pの（線分を含む直線上の）影
         //線分の分割-----------------------------------------
         applyLineSegmentDivide(s, pk);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
-        return true;
     }
 
     public void move(double dx, double dy) {//折線集合全体の位置を移動する。
@@ -2852,46 +2853,42 @@ public class FoldLineSet {
         }
     }
 
-    public boolean fix2() {//何もしなかったら0、何か修正したら1を返す。
+    public void fix2() {
         unselect_all();
+        QuadTree qt = new QuadTree(new LineSegmentListAdapter(lineSegments, 1));
         for (int i = 1; i <= total - 1; i++) {
             LineSegment si = lineSegments.get(i);
             if (si.getColor() != LineColor.CYAN_3) {
 
-                for (int j = i + 1; j <= total; j++) {
-                    LineSegment sj = lineSegments.get(j);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
+                for (int j : qt.getPotentialCollision(i)) {
+                    LineSegment sj = lineSegments.get(j);
                     if (sj.getColor() != LineColor.CYAN_3) {
-                        //T字型交差
+                        //T-intersection
                         //折線iをその点pの影で分割する。ただし、点pの影がどれか折線の端点と同じとみなされる場合は何もしない。
-                        //	public void senbun_bunkatu(Ten p,int i){
+                        //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                         LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL);
                         switch (intersection) {
                             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25:
-                                if (applyLineSegmentDivide(si.getA(), j)) {
-                                    return true;
-                                }
+                                applyLineSegmentDivide(si.getA(), j);
+                                qt.grow(1);
                                 break;
                             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26:
-                                if (applyLineSegmentDivide(si.getB(), j)) {
-                                    return true;
-                                }
+                                applyLineSegmentDivide(si.getB(), j);
+                                qt.grow(1);
                                 break;
                             case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27:
-                                if (applyLineSegmentDivide(sj.getA(), i)) {
-                                    return true;
-                                }
+                                applyLineSegmentDivide(sj.getA(), i);
+                                qt.grow(1);
                                 break;
                             case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28:
-                                if (applyLineSegmentDivide(sj.getB(), i)) {
-                                    return true;
-                                }
+                                applyLineSegmentDivide(sj.getB(), i);
+                                qt.grow(1);
                                 break;
                         }
                     }
                 }
             }
         }
-        return false;
     }
 
     // ***********************************ppppppppppppqqqqqq
@@ -2998,13 +2995,15 @@ public class FoldLineSet {
         }
     }
 
-    public int Check4Point_overlapping_check(Point p0) {
-        for (Point p : check4Point) {
-            if (Epsilon.high.eq0(p0.getX() - p.getX()) && Epsilon.high.eq0(p0.getY() - p.getY())) {
-                return 1;
-            }
+    public Point Check4Point_overlapping_check(Point p0, QuadTree qt) {
+        double r = Epsilon.UNKNOWN_1EN4 * Epsilon.UNKNOWN_1EN4;
+        for (int i : qt.collect(new PointCollector(p0))) {
+            Point p = check4Point.get(i);
+            if (p.distanceSquared(p0) < r) return p;
         }
-        return 0;
+        check4Point.add(p0);
+        qt.grow(1);
+        return p0;
     }
 
     public void check4() throws InterruptedException {//Check the number of lines around the apex
@@ -3013,21 +3012,22 @@ public class FoldLineSet {
 
         unselect_all();
 
+        Map<Point, List<LineSegment>> map = new HashMap<>();
+        QuadTree qt = new QuadTree(new CamvAdapter(lineSegments, check4Point));
+
         //Counting places to check
         for (int i = 1; i <= total; i++) {
             LineSegment si = lineSegments.get(i);
             if (si.getColor() != LineColor.CYAN_3) {
                 Point pa = new Point();
                 pa.set(si.getA());
-                if (Check4Point_overlapping_check(pa) == 0) {
-                    check4Point.add(pa);
-                }
+                pa = Check4Point_overlapping_check(pa, qt);
+                map.computeIfAbsent(pa, k->new ArrayList<>()).add(si);
 
                 Point pb = new Point();
                 pb.set(si.getB());
-                if (Check4Point_overlapping_check(pb) == 0) {
-                    check4Point.add(pb);
-                }
+                pb = Check4Point_overlapping_check(pb, qt);
+                map.computeIfAbsent(pb, k->new ArrayList<>()).add(si);
 
                 if (Thread.interrupted()) throw new InterruptedException();
             }
@@ -3043,7 +3043,7 @@ public class FoldLineSet {
                 Point p = new Point(point);
 
                 try {
-                    if (!i_flat_ok(p, Epsilon.UNKNOWN_1EN4)) {
+                    if (!i_flat_ok(p, map.get(point))) {
                         Check4LineSegment.add(new LineSegment(p, p));
                     }
                 } catch (InterruptedException e) {
@@ -3066,42 +3066,32 @@ public class FoldLineSet {
         }
     }
 
-    public boolean i_flat_ok(Point p, double r) throws InterruptedException {//Foldable flat = 1
+    private boolean i_flat_ok(Point p, List<LineSegment> list) throws InterruptedException {//Foldable flat = 1
         double hantei_kyori = Epsilon.UNKNOWN_1EN5;
         //If the end point of the line segment closest to the point p and the end point closer to the point p is the apex, how many line segments are present (the number of line segments having an end point within the apex and r).
-        int i_customized = 0;    //i_customized% 2 == 0 even, == 1 odd
         int i_tss_red = 0;
         int i_tss_blue = 0;
         int i_tss_black = 0;
-        int i_tss_cyan = 0;
 
         SortingBox<LineSegment> nbox = new SortingBox<>();
 
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-            if ((p.distanceSquared(s.getA()) < r * r) || (p.distanceSquared(s.getB()) < r * r)) {
-                i_customized = i_customized + 1;
-                if (s.getColor() == LineColor.RED_1) {
-                    i_tss_red++;
-                } else if (s.getColor() == LineColor.BLUE_2) {
-                    i_tss_blue++;
-                } else if (s.getColor() == LineColor.BLACK_0) {
-                    i_tss_black++;
-                } else if (s.getColor().getNumber() >= 3) {
-                    i_tss_cyan++;
-                }
+        for (LineSegment s : list) {
+            if (s.getColor() == LineColor.RED_1) {
+                i_tss_red++;
+            } else if (s.getColor() == LineColor.BLUE_2) {
+                i_tss_blue++;
+            } else if (s.getColor() == LineColor.BLACK_0) {
+                i_tss_black++;
             }
 
             //Put a polygonal line with p as the end point in Narabebako
             if (s.getColor().isFoldingLine()) { //Auxiliary live lines are excluded at this stage
                 if (p.distance(s.getA()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getA(), s.getB())));
+                    nbox.addByWeight(s, OritaCalc.angle(s.getA(), s.getB()));
                 } else if (p.distance(s.getB()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getB(), s.getA())));
+                    nbox.addByWeight(s, OritaCalc.angle(s.getB(), s.getA()));
                 }
             }
-
-            if (Thread.interrupted()) throw new InterruptedException();
         }
 
         // Judgment start-------------------------------------------
@@ -3134,9 +3124,9 @@ public class FoldLineSet {
             LineSegment s = lineSegments.get(i);
             if (s.getColor().isFoldingLine()) { //この段階で補助活線は除く
                 if (t1.distance(s.getA()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getA(), s.getB())));
+                    nbox.addByWeight(s, OritaCalc.angle(s.getA(), s.getB()));
                 } else if (t1.distance(s.getB()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getB(), s.getA())));
+                    nbox.addByWeight(s, OritaCalc.angle(s.getB(), s.getA()));
                 }
             }
         }
@@ -3222,9 +3212,9 @@ public class FoldLineSet {
             LineSegment si = lineSegments.get(i);
             if (si.getColor().isFoldingLine()) { //Auxiliary live lines are excluded at this stage
                 if (b.distance(si.getA()) < hantei_kyori) {
-                    r_nbox.container_i_smallest_first(new WeightedValue<>(si, OritaCalc.angle(b, a, si.getA(), si.getB())));
+                    r_nbox.addByWeight(si, OritaCalc.angle(b, a, si.getA(), si.getB()));
                 } else if (b.distance(si.getB()) < hantei_kyori) {
-                    r_nbox.container_i_smallest_first(new WeightedValue<>(si, OritaCalc.angle(b, a, si.getB(), si.getA())));
+                    r_nbox.addByWeight(si, OritaCalc.angle(b, a, si.getB(), si.getA()));
                 }
             }
         }
@@ -3313,9 +3303,9 @@ public class FoldLineSet {
             LineSegment si = lineSegments.get(i);
             if (si.getColor().isFoldingLine()) { //この段階で補助活線は除く
                 if (t1.distance(si.getA()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new WeightedValue<>(si, OritaCalc.angle(si.getA(), si.getB())));
+                    nbox.addByWeight(si, OritaCalc.angle(si.getA(), si.getB()));
                 } else if (t1.distance(si.getB()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new WeightedValue<>(si, OritaCalc.angle(si.getB(), si.getA())));
+                    nbox.addByWeight(si, OritaCalc.angle(si.getB(), si.getA()));
                 }
             }
         }
@@ -3568,8 +3558,8 @@ public class FoldLineSet {
      */
     public void selectProbablyConnected(Point p) {
         // Build map of connections
-        QuadTree qtA = new QuadTree(new LineSegmentListAdapter(lineSegments, l -> l.getA()));
-        QuadTree qtB = new QuadTree(new LineSegmentListAdapter(lineSegments, l -> l.getB()));
+        QuadTree qtA = new QuadTree(new LineSegmentListEndPointAdapter(lineSegments, l -> l.getA()));
+        QuadTree qtB = new QuadTree(new LineSegmentListEndPointAdapter(lineSegments, l -> l.getB()));
 
         // Traverse connection map to find all connected points
         Set<Point> activePoints = new HashSet<>();

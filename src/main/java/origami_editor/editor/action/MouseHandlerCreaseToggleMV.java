@@ -6,6 +6,7 @@ import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.MouseMode;
 
 @Singleton
@@ -24,13 +25,16 @@ public class MouseHandlerCreaseToggleMV extends BaseMouseHandlerBoxSelect {
 
     }
 
-    //マウス操作(mouseMode==58線_変換　でボタンを離したとき)を行う関数
-    public void mouseReleased(Point p0) {//ここの処理の終わりに fix2();　をするのは、元から折線だったものと、補助線から変換した折線との組合せで頻発するT字型不接続を修正するため
+    /**
+     * マウス操作(mouseMode==58線_変換 でボタンを離したとき)を行う関数
+     * 
+     * Toggling M/V creases cannot possibly create new T-intersections, so we dont' need {@link CreasePattern_Worker#fix2()} here.
+     */
+    public void mouseReleased(Point p0) {
         d.lineStep.clear();
 
         if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {//
             if (d.MV_change(selectionStart, p0) != 0) {
-                d.fix2();
                 d.record();
             }
         }
@@ -47,7 +51,6 @@ public class MouseHandlerCreaseToggleMV extends BaseMouseHandlerBoxSelect {
                     s.setColor(LineColor.RED_1);
                 }
 
-                d.fix2();
                 d.record();
             }
 

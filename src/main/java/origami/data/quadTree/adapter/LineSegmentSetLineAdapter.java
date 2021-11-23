@@ -1,7 +1,6 @@
 package origami.data.quadTree.adapter;
 
 import origami.crease_pattern.LineSegmentSet;
-import origami.crease_pattern.element.Point;
 import origami.data.quadTree.QuadTreeItem;
 
 /**
@@ -23,12 +22,6 @@ public class LineSegmentSetLineAdapter extends LineSegmentSetAdapter {
 
     @Override
     public QuadTreeItem getItem(int index) {
-        return createItem(set.getA(index), set.getB(index));
-    }
-
-    public static QuadTreeItem createItem(Point A, Point B) {
-        double ax = A.getX(), ay = A.getY();
-        double bx = B.getX(), by = B.getY();
-        return new QuadTreeItem(Math.min(ax, bx), Math.max(ax, bx), Math.min(ay, by), Math.max(ay, by));
+        return new QuadTreeItem(set.getA(index), set.getB(index));
     }
 }

@@ -51,6 +51,12 @@ public class ItalianoAlgorithm {
         }
     }
 
+    public final boolean tryAdd(int i, int j) {
+        if (matrix[j][i] != 0) return false;
+        add(i, j);
+        return true;
+    }
+
     public final void add(int i, int j) {
         if (matrix[i][j] == 0) {
             for (int x = 1; x <= size; x++) {

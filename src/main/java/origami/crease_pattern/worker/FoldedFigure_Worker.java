@@ -8,7 +8,6 @@ import origami.folding.element.SubFace;
 import origami.folding.util.EquivalenceCondition;
 import origami.folding.util.IBulletinBoard;
 import origami.folding.util.SortingBox;
-import origami.folding.util.WeightedValue;
 
 
 /**
@@ -181,7 +180,7 @@ public class FoldedFigure_Worker {
 
                 boolean success = true;
                 boolean se = swapper.shouldEstimate(ss); // side effect
-                if (se && ss <= Math.sqrt(SubFace_valid_number)) {                   
+                if (se && ss <= Math.sqrt(SubFace_valid_number)) {
                     success = AEA.run(0) == HierarchyListStatus.SUCCESSFUL_1000;
                 } else if (ss % (3 + ss * ss / 6400) == 0) {
                     // There's no need to execute run() even fastRun() in every step (that will be
@@ -271,7 +270,7 @@ public class FoldedFigure_Worker {
 
         nbox.reset();
         for (int i = 1; i <= hierarchyList.getFacesTotal(); i++) {
-            nbox.container_i_smallest_first(new WeightedValue<>(i, face_rating[i]));
+            nbox.addByWeight(i, face_rating[i]);
         }
 
         return nbox;

@@ -357,39 +357,13 @@ public class CreasePattern_Worker {
 
     public String undo() {
         s_title = setMemo_for_redo_undo(historyState.undo());
-
-        if (check1) {
-            check1();
-        }
-        if (check2) {
-            check2();
-        }
-        if (check3) {
-            check3();
-        }
-        if (check4) {
-            check4();
-        }
-
+        checkIfNecessary();
         return s_title;
     }
 
     public String redo() {
         s_title = setMemo_for_redo_undo(historyState.redo());
-
-        if (check1) {
-            check1();
-        }
-        if (check2) {
-            check2();
-        }
-        if (check3) {
-            check3();
-        }
-        if (check4) {
-            check4();
-        }
-
+        checkIfNecessary();
         return s_title;
     }
 
@@ -398,18 +372,7 @@ public class CreasePattern_Worker {
     }
 
     public void record() {
-        if (check1) {
-            check1();
-        }
-        if (check2) {
-            check2();
-        }
-        if (check3) {
-            check3();
-        }
-        if (check4) {
-            check4();
-        }
+        checkIfNecessary();
 
         if (!historyState.isEmpty()) {
             fileModel.setSaved(false);
@@ -910,19 +873,7 @@ public class CreasePattern_Worker {
             if (!foldLineSet.fix1()) break;
         }
         //foldLineSet.addsenbun  delsenbunを実施しているところでcheckを実施
-        if (check1) {
-            check1();
-        }
-        if (check2) {
-            check2();
-        }
-        if (check3) {
-            check3();
-        }
-        if (check4) {
-            check4();
-        }
-
+        checkIfNecessary();
     }
 
     public void set_i_check1(boolean i) {
@@ -934,23 +885,16 @@ public class CreasePattern_Worker {
     }
 
     public void fix2() {
-        while (true) {
-            if (!foldLineSet.fix2()) break;
-        }
+        foldLineSet.fix2();
         //foldLineSet.addsenbun  delsenbunを実施しているところでcheckを実施
-        if (check1) {
-            check1();
-        }
-        if (check2) {
-            check2();
-        }
-        if (check3) {
-            check3();
-        }
-        if (check4) {
-            check4();
-        }
+        checkIfNecessary();
+    }
 
+    private void checkIfNecessary() {
+        if (check1) check1();
+        if (check2) check2();
+        if (check3) check3();
+        if (check4) check4();
     }
 
     public void setCheck2(boolean i) {

@@ -26,4 +26,9 @@ public abstract class LineSegmentSetAdapter implements QuadTreeAdapter {
     public Point getPoint(int index) {
         return index % 2 == 0 ? set.getA(index / 2) : set.getB(index / 2);
     }
+
+    @Override
+    public int getOffset() {
+        return 0;
+    }
 }

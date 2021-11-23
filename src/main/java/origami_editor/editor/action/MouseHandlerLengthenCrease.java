@@ -10,7 +10,6 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 import origami_editor.editor.canvas.MouseMode;
 import origami.folding.util.SortingBox;
-import origami.folding.util.WeightedValue;
 
 @Singleton
 public class MouseHandlerLengthenCrease extends BaseMouseHandler {
@@ -83,15 +82,14 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                 boolean i_jikkou = i_lineSegment_intersection_decision == LineSegment.Intersection.INTERSECTS_1;
 
                 if (i_jikkou) {
-                    WeightedValue<LineSegment> i_d = new WeightedValue<>(s, OritaCalc.distance(d.lineStep.get(0).getA(), OritaCalc.findIntersection(s, d.lineStep.get(0))));
-                    entyou_kouho_nbox.container_i_smallest_first(i_d);
+                    entyou_kouho_nbox.addByWeight(s, OritaCalc.distance(d.lineStep.get(0).getA(), OritaCalc.findIntersection(s, d.lineStep.get(0))));
                 }
             }
 
             if ((entyou_kouho_nbox.getTotal() == 0) && (d.lineStep.get(0).determineLength() <= Epsilon.UNKNOWN_1EN6)) {//延長する候補になる折線を選ぶために描いた線分s_step[1]が点状のときの処理
                 if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
-                    WeightedValue<LineSegment> i_d = new WeightedValue<>(d.foldLineSet.closestLineSegmentSearch(p), 1.0);//entyou_kouho_nboxに1本の情報しか入らないのでdoubleの部分はどうでもよいので適当に1.0にした。
-                    entyou_kouho_nbox.container_i_smallest_first(i_d);
+                    //entyou_kouho_nboxに1本の情報しか入らないのでdoubleの部分はどうでもよいので適当に1.0にした。
+                    entyou_kouho_nbox.addByWeight(d.foldLineSet.closestLineSegmentSearch(p), 1.0);
 
                     d.lineStep.get(0).setB(OritaCalc.findLineSymmetryPoint(closestLineSegment.getA(), closestLineSegment.getB(), p));
 

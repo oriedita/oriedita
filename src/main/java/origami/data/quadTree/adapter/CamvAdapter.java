@@ -6,40 +6,39 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.data.quadTree.QuadTreeItem;
 
-public class LineSegmentListAdapter implements QuadTreeAdapter {
+public class CamvAdapter implements QuadTreeAdapter {
 
     private final List<LineSegment> list;
-    private final int offset;
+    private final List<Point> points;
 
-    public LineSegmentListAdapter(List<LineSegment> list, int offset) {
+    public CamvAdapter(List<LineSegment> list, List<Point> points) {
         this.list = list;
-        this.offset = offset;
+        this.points = points;
     }
 
     @Override
     public int getCount() {
-        return list.size() - offset;
+        return points.size();
     }
 
     @Override
     public QuadTreeItem getItem(int index) {
-        LineSegment l = list.get(index + offset);
-        return new QuadTreeItem(l.getA(), l.getB());
+        return new QuadTreeItem(points.get(index));
     }
 
     @Override
     public int getPointCount() {
-        return (list.size() - offset) * 2;
+        return (list.size() - 1) * 2;
     }
 
     @Override
     public Point getPoint(int index) {
-        LineSegment l = list.get(index / 2 + offset);
+        LineSegment l = list.get(index / 2 + 1);
         return index % 2 == 0 ? l.getA() : l.getB();
     }
 
     @Override
     public int getOffset() {
-        return offset;
+        return 0;
     }
 }

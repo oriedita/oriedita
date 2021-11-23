@@ -22,4 +22,7 @@ public interface QuadTreeAdapter {
 
     /** Get a point for initialization. */
     public Point getPoint(int index);
+
+    /** Get index offset. */
+    public int getOffset();
 }
