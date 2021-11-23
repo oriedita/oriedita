@@ -80,20 +80,6 @@ public class Camera implements Serializable { // Mediation between actual coordi
         setDisplayPositionY(d_display_position_y);
     }
 
-    public void display() {//Display various parameters
-        System.out.println("camera.hyouji() VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV ");
-        System.out.println("camera_ichi_x = " + camera_position_x);
-        System.out.println("camera_ichi_y = " + camera_position_y);
-        System.out.println("camera_kakudo = " + camera_angle);
-        System.out.println("camera_kagami = " + camera_mirror);
-        System.out.println("camera_bairitsu_x = " + camera_zoom_x);
-        System.out.println("camera_bairitsu_y = " + camera_zoom_y);
-
-        System.out.println("hyouji_ichi_x = " + display_position_x);
-        System.out.println("hyouji_ichi_y = " + display_position_y);
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA ");
-    }
-
     public double getCameraPositionX() {
         return camera_position_x;
     }

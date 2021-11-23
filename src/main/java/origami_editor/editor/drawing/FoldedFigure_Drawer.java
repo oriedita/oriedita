@@ -238,7 +238,6 @@ public class FoldedFigure_Drawer {
 
         //Display of folded figure (back)
         if (((foldedFigure.ip4 == FoldedFigure.State.BACK_1) || (foldedFigure.ip4 == FoldedFigure.State.BOTH_2)) || (foldedFigure.ip4 == FoldedFigure.State.TRANSPARENT_3)) {
-            foldedFigureRearCamera.display();
             foldedFigure_worker_drawer.setCamera(foldedFigureRearCamera);
 
             //Display of transparency
