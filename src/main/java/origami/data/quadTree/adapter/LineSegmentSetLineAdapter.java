@@ -22,6 +22,6 @@ public class LineSegmentSetLineAdapter extends LineSegmentSetAdapter {
 
     @Override
     public QuadTreeItem getItem(int index) {
-        return QuadTreeAdapter.createItem(set.getA(index), set.getB(index));
+        return new QuadTreeItem(set.getA(index), set.getB(index));
     }
 }

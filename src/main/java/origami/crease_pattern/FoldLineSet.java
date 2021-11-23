@@ -5,6 +5,7 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
 import origami.data.quadTree.QuadTree;
+import origami.data.quadTree.adapter.CamvAdapter;
 import origami.data.quadTree.adapter.LineSegmentListAdapter;
 import origami.data.quadTree.adapter.LineSegmentListEndPointAdapter;
 import origami.data.quadTree.collector.PointCollector;
@@ -32,7 +33,7 @@ public class FoldLineSet {
     Queue<LineSegment> Check2LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     Queue<LineSegment> Check3LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     Queue<LineSegment> Check4LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
-    Queue<Point> check4Point = new ConcurrentLinkedQueue<>(); //Instantiation of points to check
+    List<Point> check4Point = new ArrayList<>(); //Instantiation of points to check
 
     List<Circle> circles = new ArrayList<>(); //円のインスタンス化
 
@@ -2994,13 +2995,15 @@ public class FoldLineSet {
         }
     }
 
-    public int Check4Point_overlapping_check(Point p0) {
-        for (Point p : check4Point) {
-            if (Epsilon.high.eq0(p0.getX() - p.getX()) && Epsilon.high.eq0(p0.getY() - p.getY())) {
-                return 1;
-            }
+    public Point Check4Point_overlapping_check(Point p0, QuadTree qt) {
+        double r = Epsilon.UNKNOWN_1EN4 * Epsilon.UNKNOWN_1EN4;
+        for (int i : qt.collect(new PointCollector(p0))) {
+            Point p = check4Point.get(i);
+            if (p.distanceSquared(p0) < r) return p;
         }
-        return 0;
+        check4Point.add(p0);
+        qt.grow(1);
+        return p0;
     }
 
     public void check4() throws InterruptedException {//Check the number of lines around the apex
@@ -3009,21 +3012,22 @@ public class FoldLineSet {
 
         unselect_all();
 
+        Map<Point, List<LineSegment>> map = new HashMap<>();
+        QuadTree qt = new QuadTree(new CamvAdapter(lineSegments, check4Point));
+
         //Counting places to check
         for (int i = 1; i <= total; i++) {
             LineSegment si = lineSegments.get(i);
             if (si.getColor() != LineColor.CYAN_3) {
                 Point pa = new Point();
                 pa.set(si.getA());
-                if (Check4Point_overlapping_check(pa) == 0) {
-                    check4Point.add(pa);
-                }
+                pa = Check4Point_overlapping_check(pa, qt);
+                map.computeIfAbsent(pa, k->new ArrayList<>()).add(si);
 
                 Point pb = new Point();
                 pb.set(si.getB());
-                if (Check4Point_overlapping_check(pb) == 0) {
-                    check4Point.add(pb);
-                }
+                pb = Check4Point_overlapping_check(pb, qt);
+                map.computeIfAbsent(pb, k->new ArrayList<>()).add(si);
 
                 if (Thread.interrupted()) throw new InterruptedException();
             }
@@ -3039,7 +3043,7 @@ public class FoldLineSet {
                 Point p = new Point(point);
 
                 try {
-                    if (!i_flat_ok(p, Epsilon.UNKNOWN_1EN4)) {
+                    if (!i_flat_ok(p, map.get(point))) {
                         Check4LineSegment.add(new LineSegment(p, p));
                     }
                 } catch (InterruptedException e) {
@@ -3062,30 +3066,22 @@ public class FoldLineSet {
         }
     }
 
-    public boolean i_flat_ok(Point p, double r) throws InterruptedException {//Foldable flat = 1
+    private boolean i_flat_ok(Point p, List<LineSegment> list) throws InterruptedException {//Foldable flat = 1
         double hantei_kyori = Epsilon.UNKNOWN_1EN5;
         //If the end point of the line segment closest to the point p and the end point closer to the point p is the apex, how many line segments are present (the number of line segments having an end point within the apex and r).
-        int i_customized = 0;    //i_customized% 2 == 0 even, == 1 odd
         int i_tss_red = 0;
         int i_tss_blue = 0;
         int i_tss_black = 0;
-        int i_tss_cyan = 0;
 
         SortingBox<LineSegment> nbox = new SortingBox<>();
 
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-            if ((p.distanceSquared(s.getA()) < r * r) || (p.distanceSquared(s.getB()) < r * r)) {
-                i_customized = i_customized + 1;
-                if (s.getColor() == LineColor.RED_1) {
-                    i_tss_red++;
-                } else if (s.getColor() == LineColor.BLUE_2) {
-                    i_tss_blue++;
-                } else if (s.getColor() == LineColor.BLACK_0) {
-                    i_tss_black++;
-                } else if (s.getColor().getNumber() >= 3) {
-                    i_tss_cyan++;
-                }
+        for (LineSegment s : list) {
+            if (s.getColor() == LineColor.RED_1) {
+                i_tss_red++;
+            } else if (s.getColor() == LineColor.BLUE_2) {
+                i_tss_blue++;
+            } else if (s.getColor() == LineColor.BLACK_0) {
+                i_tss_black++;
             }
 
             //Put a polygonal line with p as the end point in Narabebako
@@ -3096,8 +3092,6 @@ public class FoldLineSet {
                     nbox.addByWeight(s, OritaCalc.angle(s.getB(), s.getA()));
                 }
             }
-
-            if (Thread.interrupted()) throw new InterruptedException();
         }
 
         // Judgment start-------------------------------------------
