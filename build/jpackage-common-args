@@ -3,5 +3,5 @@
 --dest ci-build
 --java-options "'-Dfile.encoding=UTF-8'"
 --java-options "-Xmx8g"
---runtime-image ci-build/origami-editor-runtime
+--runtime-image ci-build/oriedita-runtime
 
