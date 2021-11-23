@@ -6,6 +6,7 @@ import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
 import origami.data.quadTree.QuadTree;
 import origami.data.quadTree.adapter.LineSegmentListAdapter;
+import origami.data.quadTree.adapter.LineSegmentListEndPointAdapter;
 import origami.data.quadTree.collector.PointCollector;
 import origami.data.save.LineSegmentSave;
 import origami.folding.util.SortingBox;
@@ -3568,8 +3569,8 @@ public class FoldLineSet {
      */
     public void selectProbablyConnected(Point p) {
         // Build map of connections
-        QuadTree qtA = new QuadTree(new LineSegmentListAdapter(lineSegments, l -> l.getA()));
-        QuadTree qtB = new QuadTree(new LineSegmentListAdapter(lineSegments, l -> l.getB()));
+        QuadTree qtA = new QuadTree(new LineSegmentListEndPointAdapter(lineSegments, l -> l.getA()));
+        QuadTree qtB = new QuadTree(new LineSegmentListEndPointAdapter(lineSegments, l -> l.getB()));
 
         // Traverse connection map to find all connected points
         Set<Point> activePoints = new HashSet<>();

@@ -25,4 +25,10 @@ public interface QuadTreeAdapter {
 
     /** Get index offset. */
     public int getOffset();
+
+    public static QuadTreeItem createItem(Point A, Point B) {
+        double ax = A.getX(), ay = A.getY();
+        double bx = B.getX(), by = B.getY();
+        return new QuadTreeItem(Math.min(ax, bx), Math.max(ax, bx), Math.min(ay, by), Math.max(ay, by));
+    }
 }

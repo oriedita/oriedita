@@ -7,12 +7,12 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.data.quadTree.QuadTreeItem;
 
-public class LineSegmentListAdapter implements  QuadTreeAdapter {
+public class LineSegmentListEndPointAdapter implements  QuadTreeAdapter {
 
     private final List<LineSegment> list;
     private final Function<LineSegment, Point> factory;
 
-    public LineSegmentListAdapter(List<LineSegment> list, Function<LineSegment, Point> factory) {
+    public LineSegmentListEndPointAdapter(List<LineSegment> list, Function<LineSegment, Point> factory) {
         this.list = list;
         this.factory= factory;
     }
