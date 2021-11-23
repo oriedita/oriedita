@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="oriedita.editor.swing.component.FoldedFigureResize">
+  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="GridBagLayout">
+    <constraints>
+      <xy x="20" y="20" width="290" height="34"/>
+    </constraints>
+    <properties/>
+    <border type="none">
+      <color color="-16777216"/>
+    </border>
+    <children>
+      <component id="129e1" class="javax.swing.JButton" binding="foldedFigureSizeDecreaseButton">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <icon value="ppp/oriagari_syukusyou.png"/>
+        </properties>
+      </component>
+      <component id="5b5dd" class="javax.swing.JTextField" binding="foldedFigureSizeTextField">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <columns value="2"/>
+          <horizontalAlignment value="4"/>
+        </properties>
+      </component>
+      <component id="7be4" class="javax.swing.JButton" binding="foldedFigureSizeSetButton">
+        <constraints>
+          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <text value="S"/>
+        </properties>
+      </component>
+      <component id="241be" class="javax.swing.JButton" binding="foldedFigureSizeIncreaseButton">
+        <constraints>
+          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="0.0" weighty="0.0"/>
+        </constraints>
+        <properties>
+          <icon value="ppp/oriagari_kakudai.png"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>

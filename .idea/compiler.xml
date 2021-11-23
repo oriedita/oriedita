@@ -33,11 +33,11 @@
           <entry name="$MAVEN_REPOSITORY$/net/ltgt/gradle/incap/incap/0.2/incap-0.2.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/kotlinx/kotlinx-metadata-jvm/0.3.0/kotlinx-metadata-jvm-0.3.0.jar" />
         </processorPath>
-        <module name="origami-editor" />
+        <module name="oriedita" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="origami-editor" target="8" />
+      <module name="oriedita" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>

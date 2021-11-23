@@ -25,6 +25,6 @@ jobs:
       
     - uses: actions/upload-artifact@v2
       with:
-        name: origami-editor-jar
-        path: target/origami-editor-*.jar
+        name: oriedita-jar
+        path: target/oriedita-*.jar
 

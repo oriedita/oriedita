@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="oriedita.editor.swing.Editor">
+  <grid id="27dc6" binding="root" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="308" width="2305" height="1708"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <nested-form id="ee07" form-file="oriedita/editor/swing/BottomPanel.form" binding="bottomPanel" custom-create="true">
+        <constraints border-constraint="South"/>
+      </nested-form>
+      <nested-form id="4d38c" form-file="oriedita/editor/swing/RightPanel.form" binding="rightPanel" custom-create="true">
+        <constraints border-constraint="East"/>
+      </nested-form>
+      <component id="8955f" class="oriedita.editor.Canvas" binding="canvas" custom-create="true" default-binding="true">
+        <constraints border-constraint="Center"/>
+        <properties/>
+      </component>
+      <nested-form id="6ca88" form-file="oriedita/editor/swing/TopPanel.form" binding="topPanel" custom-create="true">
+        <constraints border-constraint="North"/>
+      </nested-form>
+      <nested-form id="34be9" form-file="oriedita/editor/swing/LeftPanel.form" binding="leftPanel" custom-create="true">
+        <constraints border-constraint="West"/>
+      </nested-form>
+    </children>
+  </grid>
+</form>
