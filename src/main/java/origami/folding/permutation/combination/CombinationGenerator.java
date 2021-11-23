@@ -3,6 +3,7 @@ package origami.folding.permutation.combination;
 import java.util.*;
 
 import origami.folding.HierarchyList;
+import origami.folding.algorithm.InferenceFailureException;
 import origami.folding.algorithm.italiano.ReductionItalianoAlgorithm;
 import origami.folding.algorithm.swapping.SwappingAlgorithm;
 import origami.folding.element.SubFace;
@@ -32,14 +33,17 @@ public class CombinationGenerator {
     // debugging.
     private int count = 0;
 
-    public CombinationGenerator(SubFace s, int[] faceIdMapArray, HierarchyList hierarchyList) {
+    public CombinationGenerator(SubFace s, int[] faceIdMapArray, HierarchyList hierarchyList) throws InferenceFailureException {
         faceIdCount = s.getFaceIdCount();
         ia = new ReductionItalianoAlgorithm(faceIdCount);
         for (int i = 1; i <= faceIdCount; i++) {
             for (int j = i + 1; j <= faceIdCount; j++) {
                 int state = hierarchyList.get(s.getFaceId(i), s.getFaceId(j));
-                if (state == HierarchyList.ABOVE_1) ia.add(i, j);
-                else if (state == HierarchyList.BELOW_0) ia.add(j, i);
+                if (state == HierarchyList.ABOVE_1) {
+                    if(!ia.tryAdd(i, j)) throw new InferenceFailureException(i, j);
+                } else if (state == HierarchyList.BELOW_0) {
+                    if(!ia.tryAdd(j, i)) throw new InferenceFailureException(i, j);
+                }
             }
         }
         ia.save();

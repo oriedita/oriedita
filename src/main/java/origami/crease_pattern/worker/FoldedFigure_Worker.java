@@ -180,7 +180,7 @@ public class FoldedFigure_Worker {
 
                 boolean success = true;
                 boolean se = swapper.shouldEstimate(ss); // side effect
-                if (se && ss <= Math.sqrt(SubFace_valid_number)) {                   
+                if (se && ss <= Math.sqrt(SubFace_valid_number)) {
                     success = AEA.run(0) == HierarchyListStatus.SUCCESSFUL_1000;
                 } else if (ss % (3 + ss * ss / 6400) == 0) {
                     // There's no need to execute run() even fastRun() in every step (that will be

@@ -283,7 +283,7 @@ public class AdditionalEstimationAlgorithm {
     }
 
     /** Caller of this method must be certain that no error will occur. */
-    public boolean inferAbove(int i, int j) {
+    public boolean inferAbove(int i, int j) throws InferenceFailureException {
         if (hierarchyList.isEmpty(i, j)) {
             hierarchyList.set(i, j, ABOVE);
 
@@ -294,7 +294,9 @@ public class AdditionalEstimationAlgorithm {
                 // returned list is actually exactly what we need, since a SubFace s is added to
                 // List[i][x] only if it contains Face i, and similarly it is added to
                 // List[x][j] only if it contains Face j.
-                IA[s].add(subFaces[s].FaceIdIndex(i), subFaces[s].FaceIdIndex(j));
+                if(!IA[s].tryAdd(subFaces[s].FaceIdIndex(i), subFaces[s].FaceIdIndex(j))) {
+                    throw new InferenceFailureException(i, j);
+                }
             }
             return true;
         }
@@ -370,16 +372,6 @@ public class AdditionalEstimationAlgorithm {
         new_relations = 0;
         for (int iS = 1; iS < count; iS++) {
             new_relations += checkTransitivity(iS);
-        }
-    }
-
-    private static class InferenceFailureException extends Exception {
-        final int i;
-        final int j;
-
-        public InferenceFailureException(int i, int j) {
-            this.i = i;
-            this.j = j;
         }
     }
 }
