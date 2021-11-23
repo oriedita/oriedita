@@ -2677,7 +2677,7 @@ public class FoldLineSet {
     }
 
     //Divide the polygonal line i by the projection of the point p. However, if the projection of point p is considered to be the same as the end point of any polygonal line, nothing is done.
-    public boolean applyLineSegmentDivide(Point p, int i) {//何もしない=0,分割した=1
+    public void applyLineSegmentDivide(Point p, int i) {//何もしない=0,分割した=1
         LineSegment s = lineSegments.get(i);
 
         LineSegment mts = new LineSegment(s.getA(), s.getB());//mtsは点pに最も近い線分
@@ -2688,7 +2688,6 @@ public class FoldLineSet {
         pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(mts), p));//pkは点pの（線分を含む直線上の）影
         //線分の分割-----------------------------------------
         applyLineSegmentDivide(s, pk);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
-        return true;
     }
 
     public void move(double dx, double dy) {//折線集合全体の位置を移動する。
@@ -2853,46 +2852,42 @@ public class FoldLineSet {
         }
     }
 
-    public boolean fix2() {//何もしなかったら0、何か修正したら1を返す。
+    public void fix2() {
         unselect_all();
+        QuadTree qt = new QuadTree(new LineSegmentListAdapter(lineSegments, 1));
         for (int i = 1; i <= total - 1; i++) {
             LineSegment si = lineSegments.get(i);
             if (si.getColor() != LineColor.CYAN_3) {
 
-                for (int j = i + 1; j <= total; j++) {
-                    LineSegment sj = lineSegments.get(j);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
+                for (int j : qt.getPotentialCollision(i)) {
+                    LineSegment sj = lineSegments.get(j);
                     if (sj.getColor() != LineColor.CYAN_3) {
-                        //T字型交差
+                        //T-intersection
                         //折線iをその点pの影で分割する。ただし、点pの影がどれか折線の端点と同じとみなされる場合は何もしない。
-                        //	public void senbun_bunkatu(Ten p,int i){
+                        //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                         LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL);
                         switch (intersection) {
                             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25:
-                                if (applyLineSegmentDivide(si.getA(), j)) {
-                                    return true;
-                                }
+                                applyLineSegmentDivide(si.getA(), j);
+                                qt.grow(1);
                                 break;
                             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26:
-                                if (applyLineSegmentDivide(si.getB(), j)) {
-                                    return true;
-                                }
+                                applyLineSegmentDivide(si.getB(), j);
+                                qt.grow(1);
                                 break;
                             case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27:
-                                if (applyLineSegmentDivide(sj.getA(), i)) {
-                                    return true;
-                                }
+                                applyLineSegmentDivide(sj.getA(), i);
+                                qt.grow(1);
                                 break;
                             case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28:
-                                if (applyLineSegmentDivide(sj.getB(), i)) {
-                                    return true;
-                                }
+                                applyLineSegmentDivide(sj.getB(), i);
+                                qt.grow(1);
                                 break;
                         }
                     }
                 }
             }
         }
-        return false;
     }
 
     // ***********************************ppppppppppppqqqqqq

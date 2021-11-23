@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
+import origami_editor.editor.canvas.CreasePattern_Worker;
 import origami_editor.editor.canvas.MouseMode;
 
 @Singleton
@@ -23,8 +24,15 @@ public class MouseHandlerCreaseMakeValley extends BaseMouseHandlerBoxSelect {
 
     }
 
-    //マウス操作(mouseMode==24 でボタンを離したとき)を行う関数----------------------------------------------------
-    public void mouseReleased(Point p0) {//ここの処理の終わりに fix2();　をするのは、元から折線だったものと、補助線から変換した折線との組合せで頻発するT字型不接続を修正するため
+    /**
+     * マウス操作(mouseMode==24 でボタンを離したとき)を行う関数
+     * 
+     * The reason for doing {@link CreasePattern_Worker#fix2()} at the end of this
+     * process is to correct the T-shaped disconnection that frequently occurs in
+     * the combination of the original polygonal line and the polygonal line
+     * converted from the auxiliary line.
+     */
+    public void mouseReleased(Point p0) {
         d.lineStep.clear();
 
         if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {
