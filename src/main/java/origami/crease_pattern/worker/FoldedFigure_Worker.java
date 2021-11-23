@@ -8,7 +8,6 @@ import origami.folding.element.SubFace;
 import origami.folding.util.EquivalenceCondition;
 import origami.folding.util.IBulletinBoard;
 import origami.folding.util.SortingBox;
-import origami.folding.util.WeightedValue;
 
 
 /**
@@ -271,7 +270,7 @@ public class FoldedFigure_Worker {
 
         nbox.reset();
         for (int i = 1; i <= hierarchyList.getFacesTotal(); i++) {
-            nbox.container_i_smallest_first(new WeightedValue<>(i, face_rating[i]));
+            nbox.addByWeight(i, face_rating[i]);
         }
 
         return nbox;

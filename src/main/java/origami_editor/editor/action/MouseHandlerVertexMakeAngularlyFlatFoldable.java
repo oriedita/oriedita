@@ -6,7 +6,6 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.folding.util.SortingBox;
-import origami.folding.util.WeightedValue;
 import origami_editor.editor.canvas.MouseMode;
 import origami_editor.editor.canvas.CreasePattern_Worker;
 
@@ -96,9 +95,9 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                         LineSegment s = d.foldLineSet.get(i);
                         if (s.getColor().isFoldingLine()) {
                             if (t1.distance(s.getA()) < decision_distance) {
-                                nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getA(), s.getB())));
+                                nbox.addByWeight(s, OritaCalc.angle(s.getA(), s.getB()));
                             } else if (t1.distance(s.getB()) < decision_distance) {
-                                nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getB(), s.getA())));
+                                nbox.addByWeight(s, OritaCalc.angle(s.getB(), s.getA()));
                             }
                         }
                     }

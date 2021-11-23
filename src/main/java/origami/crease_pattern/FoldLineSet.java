@@ -3095,9 +3095,9 @@ public class FoldLineSet {
             //Put a polygonal line with p as the end point in Narabebako
             if (s.getColor().isFoldingLine()) { //Auxiliary live lines are excluded at this stage
                 if (p.distance(s.getA()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getA(), s.getB())));
+                    nbox.addByWeight(s, OritaCalc.angle(s.getA(), s.getB()));
                 } else if (p.distance(s.getB()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getB(), s.getA())));
+                    nbox.addByWeight(s, OritaCalc.angle(s.getB(), s.getA()));
                 }
             }
 
@@ -3134,9 +3134,9 @@ public class FoldLineSet {
             LineSegment s = lineSegments.get(i);
             if (s.getColor().isFoldingLine()) { //この段階で補助活線は除く
                 if (t1.distance(s.getA()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getA(), s.getB())));
+                    nbox.addByWeight(s, OritaCalc.angle(s.getA(), s.getB()));
                 } else if (t1.distance(s.getB()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new WeightedValue<>(s, OritaCalc.angle(s.getB(), s.getA())));
+                    nbox.addByWeight(s, OritaCalc.angle(s.getB(), s.getA()));
                 }
             }
         }
@@ -3222,9 +3222,9 @@ public class FoldLineSet {
             LineSegment si = lineSegments.get(i);
             if (si.getColor().isFoldingLine()) { //Auxiliary live lines are excluded at this stage
                 if (b.distance(si.getA()) < hantei_kyori) {
-                    r_nbox.container_i_smallest_first(new WeightedValue<>(si, OritaCalc.angle(b, a, si.getA(), si.getB())));
+                    r_nbox.addByWeight(si, OritaCalc.angle(b, a, si.getA(), si.getB()));
                 } else if (b.distance(si.getB()) < hantei_kyori) {
-                    r_nbox.container_i_smallest_first(new WeightedValue<>(si, OritaCalc.angle(b, a, si.getB(), si.getA())));
+                    r_nbox.addByWeight(si, OritaCalc.angle(b, a, si.getB(), si.getA()));
                 }
             }
         }
@@ -3313,9 +3313,9 @@ public class FoldLineSet {
             LineSegment si = lineSegments.get(i);
             if (si.getColor().isFoldingLine()) { //この段階で補助活線は除く
                 if (t1.distance(si.getA()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new WeightedValue<>(si, OritaCalc.angle(si.getA(), si.getB())));
+                    nbox.addByWeight(si, OritaCalc.angle(si.getA(), si.getB()));
                 } else if (t1.distance(si.getB()) < hantei_kyori) {
-                    nbox.container_i_smallest_first(new WeightedValue<>(si, OritaCalc.angle(si.getB(), si.getA())));
+                    nbox.addByWeight(si, OritaCalc.angle(si.getB(), si.getA()));
                 }
             }
         }

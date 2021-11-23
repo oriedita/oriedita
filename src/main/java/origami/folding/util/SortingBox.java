@@ -35,33 +35,24 @@ public class SortingBox<T> {//Arrange and store data in ascending order of doubl
     }
 
     public T getValue(int i) {//Returns an int that is the value-th order as a result of being arranged
-        WeightedValue<T> i_d_temp = new WeightedValue<>();
-        i_d_temp.set(i_d_List.get(i));
-        return i_d_temp.getValue();
+        return i_d_List.get(i).getValue();
     }
 
     public T backwardsGetValue(int iu) {//Returns the value-th int from the back
         int i = getTotal() + 1 - iu;
-        WeightedValue<T> i_d_temp = new WeightedValue<>();
-        i_d_temp.set(i_d_List.get(i));
-        return i_d_temp.getValue();
+        return i_d_List.get(i).getValue();
     }
 
     public double getWeight(int i) {//As a result of arranging, returns a double paired with an int that is in the value-th order.
-        WeightedValue<T> i_d_temp = new WeightedValue<>();
-        i_d_temp.set(i_d_List.get(i));
-        return i_d_temp.getWeight();
+        return i_d_List.get(i).getWeight();
     }
 
     public void add(WeightedValue<T> i_d_0) {//Simply add int_double to the end
         i_d_List.add(i_d_0);
     }
 
-    public void add(int i, WeightedValue<T> i_d_0) {//int_doubleを単にi番目にに加える（挿入する）
-        i_d_List.add(i, i_d_0);
-    }
-
-    public void container_i_smallest_first(WeightedValue<T> i_d_0) {//The meaning of the name of this function is to put value in ascending order of weight, but it may be confusing.
+    public void addByWeight(T value, double weight) {
+        WeightedValue<T> i_d_0 = new WeightedValue<>(value, weight);
         for (int i = 1; i <= getTotal(); i++) {
             if (i_d_0.getWeight() < getWeight(i)) {
                 i_d_List.add(i, i_d_0);

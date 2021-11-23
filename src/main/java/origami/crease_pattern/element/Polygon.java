@@ -3,7 +3,6 @@ package origami.crease_pattern.element;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.folding.util.SortingBox;
-import origami.folding.util.WeightedValue;
 
 public class Polygon {
     int vertexCount;             //How many vertices
@@ -138,7 +137,7 @@ public class Polygon {
         }
 
         for (int i = 1; i <= i_intersection; i++) {
-            nbox.container_i_smallest_first(new WeightedValue<>(intersection[i], intersection[i].distance(s0.getA())));
+            nbox.addByWeight(intersection[i], intersection[i].distance(s0.getA()));
         }
 
         // 0, when all of the line segment s0 exists outside the convex polygon (the boundary line is not considered inside)

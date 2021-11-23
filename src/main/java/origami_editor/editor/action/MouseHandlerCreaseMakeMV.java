@@ -9,7 +9,6 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.canvas.MouseMode;
 import origami.folding.util.SortingBox;
-import origami.folding.util.WeightedValue;
 
 @Singleton
 public class MouseHandlerCreaseMakeMV extends BaseMouseHandlerInputRestricted {
@@ -59,8 +58,7 @@ public class MouseHandlerCreaseMakeMV extends BaseMouseHandlerInputRestricted {
                     for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
                         LineSegment s = d.foldLineSet.get(i);
                         if (OritaCalc.isLineSegmentOverlapping(s, d.lineStep.get(0))) {
-                            WeightedValue<LineSegment> i_d = new WeightedValue<>(s, OritaCalc.determineLineSegmentDistance(d.lineStep.get(0).getB(), s));
-                            nbox.container_i_smallest_first(i_d);
+                            nbox.addByWeight(s, OritaCalc.determineLineSegmentDistance(d.lineStep.get(0).getB(), s));
                         }
                     }
 

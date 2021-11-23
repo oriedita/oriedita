@@ -9,7 +9,6 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.canvas.MouseMode;
 import origami.folding.util.SortingBox;
-import origami.folding.util.WeightedValue;
 
 @Singleton
 public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
@@ -113,15 +112,13 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
 
 
                     if (i_jikkou == 1) {
-                        WeightedValue<LineSegment> i_d = new WeightedValue<>(s, OritaCalc.distance(s2.getA(), OritaCalc.findIntersection(s, s2)));
-                        nbox.container_i_smallest_first(i_d);
+                        nbox.addByWeight(s, OritaCalc.distance(s2.getA(), OritaCalc.findIntersection(s, s2)));
                     }
                 }
 
 
                 for (int i = 1; i <= nbox.getTotal(); i++) {
-                    WeightedValue<LineSegment> i_d = new WeightedValue<>(nbox.getValue(i), goukei_nbox.getTotal());
-                    goukei_nbox.container_i_smallest_first(i_d);
+                    goukei_nbox.addByWeight(nbox.getValue(i), goukei_nbox.getTotal());
                 }
             }
             System.out.println(" --------------------------------");

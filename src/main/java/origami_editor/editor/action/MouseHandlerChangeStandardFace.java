@@ -58,10 +58,9 @@ public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
 
             System.out.println("kijyunmen_id = " + newStartingFaceId);
             if (selectedFigure.foldedFigure.ct_worker.face_rating != null) {//20180227追加
+                int index = selectedFigure.foldedFigure.ct_worker.nbox.getSequence(newStartingFaceId);
                 System.out.println(
-                        "OZ.js.nbox.get_jyunjyo = " + selectedFigure.foldedFigure.ct_worker.nbox.getSequence(newStartingFaceId) + " , rating = " +
-                                selectedFigure.foldedFigure.ct_worker.nbox.getWeight(selectedFigure.foldedFigure.ct_worker.nbox.getSequence(newStartingFaceId))
-
+                        "OZ.js.nbox.get_jyunjyo = " + index + " , rating = " + selectedFigure.foldedFigure.ct_worker.nbox.getWeight(index)
                 );
 
             }

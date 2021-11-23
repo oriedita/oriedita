@@ -9,7 +9,6 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.canvas.MouseMode;
 import origami.folding.util.SortingBox;
-import origami.folding.util.WeightedValue;
 
 @Singleton
 public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestricted {
@@ -70,8 +69,7 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
                     }
 
                     if (i_jikkou == 1) {
-                        WeightedValue<LineSegment> i_d = new WeightedValue<>(s, OritaCalc.distance(d.lineStep.get(0).getB(), OritaCalc.findIntersection(s, d.lineStep.get(0))));
-                        nbox.container_i_smallest_first(i_d);
+                        nbox.addByWeight(s, OritaCalc.distance(d.lineStep.get(0).getB(), OritaCalc.findIntersection(s, d.lineStep.get(0))));
                     }
                 }
 
