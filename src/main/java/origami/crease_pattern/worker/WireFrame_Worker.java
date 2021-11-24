@@ -258,12 +258,15 @@ public class WireFrame_Worker {
 
         int numLines = lineSegmentSet.getNumLineSegments();
         
-        // Euler's formula says F - E + V = 1 (bounded faces)
+        // Euler's formula says F - E + V = 1 (for bounded faces)
         int supposedNumFaces = numLines - numPoints + 1;
-        // However the numbers could be off due to rounding errors, so we add a bit
-        // more. The "max" thing here is partly for compatibility with the old tests,
-        // but also for ensuring that the extra room is enough.
-        int estimatedNumFaces = supposedNumFaces + Math.max(supposedNumFaces / 10, 99);
+        /**
+         * However the numbers could be off due to rounding errors (see comments in
+         * PointSet), so we add a bit more just in case that happens. The "max" thing
+         * here is partly for compatibility with the old tests, but also for ensuring
+         * that the extra room is enough.
+         */
+        int estimatedNumFaces = supposedNumFaces + Math.max(supposedNumFaces / 100, 99);
 
         configure(numPoints, numLines, estimatedNumFaces);
         pointSet.configure(numPoints, numLines, estimatedNumFaces);

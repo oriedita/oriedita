@@ -201,7 +201,9 @@ public class LineSegmentSet {
             return -1;
         }
 
-        LineSegment.Intersection intersect_decide = OritaCalc.determineLineSegmentIntersection(si, sj);
+        // It is important to use the sweet version here, or glitches may occur
+        LineSegment.Intersection intersect_decide = OritaCalc.determineLineSegmentIntersectionSweet(si, sj);
+
         switch (intersect_decide) {
             case INTERSECTS_1:
                 pk.set(OritaCalc.findIntersection(si, sj));
