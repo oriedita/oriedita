@@ -3113,8 +3113,6 @@ public class FoldLineSet {
 
     //Point p に最も近い用紙辺部の端点が拡張伏見定理を満たすか判定
     public boolean extended_fushimi_decide_sides(Point p) {//return　0=満たさない、　1=満たす。　
-        double hantei_kyori = Epsilon.UNKNOWN_1EN5;
-
         Point t1 = new Point();
         t1.set(closestPointOfFoldLine(p));//点pに最も近い、「線分の端点」を返すori_s.closestPointは近い点がないと p_return.set(100000.0,100000.0)と返してくる
 
@@ -3123,9 +3121,9 @@ public class FoldLineSet {
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
             if (s.getColor().isFoldingLine()) { //この段階で補助活線は除く
-                if (t1.distance(s.getA()) < hantei_kyori) {
+                if (t1.distance(s.getA()) < Epsilon.FUSHIMI) {
                     nbox.addByWeight(s, OritaCalc.angle(s.getA(), s.getB()));
-                } else if (t1.distance(s.getB()) < hantei_kyori) {
+                } else if (t1.distance(s.getB()) < Epsilon.FUSHIMI) {
                     nbox.addByWeight(s, OritaCalc.angle(s.getB(), s.getA()));
                 }
             }
@@ -3204,16 +3202,15 @@ public class FoldLineSet {
     //Obtain SortingBox<Integer> with a polygonal line starting at b. They are arranged in ascending order of angle with the line segment ba.
     public SortingBox<LineSegment> get_SortingBox_of_vertex_b_surrounding_foldLine(Point a, Point b) {
         SortingBox<LineSegment> r_nbox = new SortingBox<>();
-        double hantei_kyori = Epsilon.UNKNOWN_1EN5;
 
         //Put a polygonal line with b as the end point in Narabebako
 
         for (int i = 1; i <= getTotal(); i++) {
             LineSegment si = lineSegments.get(i);
             if (si.getColor().isFoldingLine()) { //Auxiliary live lines are excluded at this stage
-                if (b.distance(si.getA()) < hantei_kyori) {
+                if (b.distance(si.getA()) < Epsilon.FUSHIMI) {
                     r_nbox.addByWeight(si, OritaCalc.angle(b, a, si.getA(), si.getB()));
-                } else if (b.distance(si.getB()) < hantei_kyori) {
+                } else if (b.distance(si.getB()) < Epsilon.FUSHIMI) {
                     r_nbox.addByWeight(si, OritaCalc.angle(b, a, si.getB(), si.getA()));
                 }
             }
@@ -3238,7 +3235,7 @@ public class FoldLineSet {
         }
 
         temp_angle = nbox0.getWeight(2) - nbox0.getWeight(1);
-        if (Math.abs(temp_angle - angle_min) < Epsilon.UNKNOWN_1EN5) {// 折線を1つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
+        if (Math.abs(temp_angle - angle_min) < Epsilon.FUSHIMI) {// 折線を1つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
             for (int i = 2; i <= nbox0.getTotal(); i++) {
                 WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
                 i_d_0.set(nbox0.getWeightedValue(i));
@@ -3248,7 +3245,7 @@ public class FoldLineSet {
         }
 
         temp_angle = nbox0.getWeight(nbox0.getTotal()) - nbox0.getWeight(nbox0.getTotal() - 1);
-        if (Math.abs(temp_angle - angle_min) < Epsilon.UNKNOWN_1EN5) {// 折線を1つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
+        if (Math.abs(temp_angle - angle_min) < Epsilon.FUSHIMI) {// 折線を1つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
             for (int i = 1; i <= nbox0.getTotal() - 1; i++) {
                 WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
                 i_d_0.set(nbox0.getWeightedValue(i));
@@ -3259,7 +3256,7 @@ public class FoldLineSet {
 
         for (int k = 2; k <= nbox0.getTotal() - 2; k++) {//kは角度の順番
             temp_angle = nbox0.getWeight(k + 1) - nbox0.getWeight(k);
-            if (Math.abs(temp_angle - angle_min) < Epsilon.UNKNOWN_1EN5) {
+            if (Math.abs(temp_angle - angle_min) < Epsilon.FUSHIMI) {
                 if (nbox0.getValue(k).getColor() != nbox0.getValue(k + 1).getColor()) {//この場合に隣接する３角度を1つの角度にする
                     // 折線を2つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
 
@@ -3292,8 +3289,6 @@ public class FoldLineSet {
 
     //Determine if the endpoint inside the paper closest to Point p satisfies the extended Fushimi theorem
     public boolean extended_fushimi_decide_inside(Point p) {//return　0=満たさない、　1=満たす。　
-        double hantei_kyori = Epsilon.UNKNOWN_1EN5;
-
         Point t1 = new Point();
         t1.set(closestPointOfFoldLine(p));//点pに最も近い、「線分の端点」を返すori_s.mottomo_tikai_Tenは近い点がないと p_return.set(100000.0,100000.0)と返してくる
 
@@ -3302,9 +3297,9 @@ public class FoldLineSet {
         for (int i = 1; i <= getTotal(); i++) {
             LineSegment si = lineSegments.get(i);
             if (si.getColor().isFoldingLine()) { //この段階で補助活線は除く
-                if (t1.distance(si.getA()) < hantei_kyori) {
+                if (t1.distance(si.getA()) < Epsilon.FUSHIMI) {
                     nbox.addByWeight(si, OritaCalc.angle(si.getA(), si.getB()));
-                } else if (t1.distance(si.getB()) < hantei_kyori) {
+                } else if (t1.distance(si.getB()) < Epsilon.FUSHIMI) {
                     nbox.addByWeight(si, OritaCalc.angle(si.getB(), si.getA()));
                 }
             }
@@ -3314,8 +3309,6 @@ public class FoldLineSet {
     }
 
     public boolean extended_fushimi_decide_inside(Point p, SortingBox<LineSegment> nbox) {//return　0=満たさない、　1=満たす。　
-        double hantei_kyori = Epsilon.UNKNOWN_1EN5;
-
         if (nbox.getTotal() % 2 == 1) {//t1を端点とする折線の数が奇数のとき
             return false;
         }
@@ -3326,7 +3319,7 @@ public class FoldLineSet {
             }
 
             //The following is when the two line types are blue-blue or red-red
-            LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(nbox.getValue(1), nbox.getValue(2), Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);
+            LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(nbox.getValue(1), nbox.getValue(2), Epsilon.FUSHIMI, Epsilon.FUSHIMI);
 
             switch (i_senbun_kousa_hantei) {
                 case PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323:
@@ -3380,7 +3373,7 @@ public class FoldLineSet {
             for (int k = 1; k <= nbox.getTotal(); k++) {//kは角度の順番
                 double temp_kakudo = OritaCalc.angle_between_0_kmax(nbox.getWeight(2) - nbox.getWeight(1), fushimi_decision_angle_goukei);
 
-                if (Math.abs(temp_kakudo - kakudo_min) < Epsilon.UNKNOWN_1EN5) {
+                if (Math.abs(temp_kakudo - kakudo_min) < Epsilon.FUSHIMI) {
                     if (nbox.getValue(1).getColor() != nbox.getValue(2).getColor()) {//この場合に隣接する３角度を1つの角度にする
                         // 折線を2つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
 
@@ -3433,7 +3426,7 @@ public class FoldLineSet {
                 , fushimi_decision_angle_goukei
         );
 
-        return Math.abs(fushimi_decision_angle_goukei - temp_kakudo * 2.0) < hantei_kyori;//この0だけ、角度がおかしいという意味
+        return Math.abs(fushimi_decision_angle_goukei - temp_kakudo * 2.0) < Epsilon.FUSHIMI;//この0だけ、角度がおかしいという意味
     }
 
     public double get_x_max() {//sousuu=0のときは0.0を返す

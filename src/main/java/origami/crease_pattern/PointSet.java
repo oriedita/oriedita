@@ -408,6 +408,18 @@ public class PointSet implements Serializable {
             // fast even for Ryujin.
         }
 
+        int euler = numFaces - numLines + numPoints;
+        if (euler != 1) {
+            /**
+             * Technically speaking, if this happens, then there's something wrong caused by
+             * the rounding error and we cannot possibly expect a valid folding result even
+             * if the rest of the algorithm reports a solution. So let's hope that this
+             * never happens, and this message is kept here in case we need to detect the
+             * error and fix things again.
+             */
+            System.out.println("\u001B[31m*** Warning: Euler characteristic error ***\u001B[0m");
+        }
+
         System.out.print("全面数　＝　");
         System.out.println(numFaces);
         findLineInFaceBorder();

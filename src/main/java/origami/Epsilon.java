@@ -14,9 +14,9 @@ public class Epsilon {
      * super-complex models such as full Ryujin with shaped scales. Before we have a
      * better understanding of the purpose of these different epsilons, let's just
      * multiply all of them by a factor to fix this problem. By using a factor of
-     * 0.1, that essentially means all CPs are now 10x larger than the origin.
+     * 0.01, that essentially means all CPs are now 100x larger than the origin.
      */
-    private static final double factor = 0.1;
+    private static final double factor = 0.01;
 
     // These are the constants of which purpose is uncertain.
  
@@ -32,6 +32,7 @@ public class Epsilon {
     // These are the constants with a known purpose.
 
     public static final double PARALLEL = factor * 0.5;
+    public static final double FUSHIMI = factor * 1E-4;
     public static final double QUAD_TREE_ITEM = factor * 0.5;
 
     /**
