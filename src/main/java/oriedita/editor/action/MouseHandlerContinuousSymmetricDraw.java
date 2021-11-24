@@ -50,7 +50,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
         if (d.lineStep.size() == 2) {
             continuous_folding_new(d.lineStep.get(0).getA(), d.lineStep.get(1).getA());
 
-            LineColor lineType = LineColor.RED_1;
+            LineColor lineType = d.lineColor;
             for (int i = 2; i < d.lineStep.size(); i++) {
                 LineSegment lineSegment = d.lineStep.get(i).clone();
                 lineSegment.setColor(lineType);
