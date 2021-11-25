@@ -66,7 +66,6 @@ public class FoldingService {
             System.out.println(" oritatame 20180108");
         } else if ((foldType == FoldType.FOR_ALL_LINES_1) || (foldType == FoldType.FOR_SELECTED_LINES_2)) {
             if (foldType == FoldType.FOR_ALL_LINES_1) {
-                //d.select_all();
                 Point cpPivot = this.mainCreasePatternWorker.getCameraPosition();
                 mainCreasePatternWorker.selectConnected(this.mainCreasePatternWorker.foldLineSet.closestPoint(cpPivot));
             }
@@ -124,7 +123,7 @@ public class FoldingService {
                 }
             } else {                        //折り上がり系図指定
                 if (foldLineTotalForSelectFolding == 0) {        //No fold line selection
-                    foldType = FoldType.CHANGING_FOLDED_3;//Fold with the specified fold-up genealogy
+                    foldType = FoldType.FOR_ALL_LINES_1;//Fold with the specified fold-up genealogy
                 } else {        //With fold line selection
                     foldType = FoldType.FOR_SELECTED_LINES_2;//Fold in selected crease pattern
                 }
