@@ -27,6 +27,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -34,8 +35,7 @@ import java.util.Date;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static oriedita.editor.swing.dialog.FileDialog.openFileDialog;
-import static oriedita.editor.swing.dialog.FileDialog.saveFileDialog;
+import static oriedita.editor.swing.dialog.FileDialogUtil.*;
 
 @Singleton
 public class FileSaveService {
@@ -227,7 +227,7 @@ public class FileSaveService {
     }
 
     public File selectOpenFile() {
-        String fileName = openFileDialog(frame, "Open File", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp"}, "Supported files (.ori, .cp)", false);
+        String fileName = openFileDialog(frame, "Open File", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp"}, "Supported files (.ori, .cp)");
 
         if (fileName == null) {
             return null;
@@ -276,7 +276,7 @@ public class FileSaveService {
     }
 
     public File selectImportFile() {
-        String fileName = openFileDialog(frame, "Import...", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp", "*.orh"}, "Supported files (.ori, .cp, .orh)", false);
+        String fileName = openFileDialog(frame, "Import...", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp", "*.orh"}, "Supported files (.ori, .cp, .orh)");
 
         if (fileName == null) {
             return null;
@@ -416,6 +416,12 @@ public class FileSaveService {
 
     public void readBackgroundImageFromFile() {
         FileDialog fd = new FileDialog(frame, "Select Image File.", FileDialog.LOAD);
+        fd.setFilenameFilter(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return false;
+            }
+        });
         fd.setVisible(true);
         String img_background_fname = fd.getDirectory() + fd.getFile();
         try {
