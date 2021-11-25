@@ -105,7 +105,7 @@ public class BottomPanel {
 
         foldButton.addActionListener(e -> {
             System.out.println("20180220 get_i_fold_type() = " + foldingService.getFoldType());
-            foldingService.fold(foldingService.getFoldType(), FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
+            foldingService.fold(FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
 
             if (!applicationModel.getSelectPersistent()) {
                 mainCreasePatternWorker.unselect_all();
