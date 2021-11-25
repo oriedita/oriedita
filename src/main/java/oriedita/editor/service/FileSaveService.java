@@ -2,11 +2,9 @@ package oriedita.editor.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import oriedita.editor.Canvas;
-import oriedita.editor.swing.dialog.ExportDialog;
+import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
@@ -17,6 +15,8 @@ import oriedita.editor.export.Svg;
 import oriedita.editor.json.DefaultObjectMapper;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveV1;
+import oriedita.editor.swing.dialog.ExportDialog;
+import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.tools.ResourceUtil;
 
 import javax.imageio.ImageIO;
@@ -27,7 +27,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -35,7 +34,8 @@ import java.util.Date;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static oriedita.editor.swing.dialog.FileDialogUtil.*;
+import static oriedita.editor.swing.dialog.FileDialogUtil.openFileDialog;
+import static oriedita.editor.swing.dialog.FileDialogUtil.saveFileDialog;
 
 @Singleton
 public class FileSaveService {
@@ -49,8 +49,8 @@ public class FileSaveService {
     private final FoldedFiguresList foldedFiguresList;
     private final ResetService resetService;
     private final BackgroundModel backgroundModel;
-    private Path autoSavePath;
     private final SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+    private Path autoSavePath;
 
     @Inject
     public FileSaveService(
@@ -414,31 +414,21 @@ public class FileSaveService {
     }
 
 
-    public void readBackgroundImageFromFile() {
-        FileDialog fd = new FileDialog(frame, "Select Image File.", FileDialog.LOAD);
-        fd.setFilenameFilter(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return false;
-            }
-        });
-        fd.setVisible(true);
-        String img_background_fname = fd.getDirectory() + fd.getFile();
-        try {
-            if (fd.getFile() != null) {
-                Toolkit tk = Toolkit.getDefaultToolkit();
-                Image img_background = tk.getImage(img_background_fname);
+    public boolean readBackgroundImageFromFile() {
+        String filename = openFileDialog(frame, "Select Image File.", applicationModel.getDefaultDirectory(), new String[]{"*.png", "*.jpg"}, "Supported image formats (.png, .jpg)");
 
-                if (img_background != null) {
-                    backgroundModel.setBackgroundImage(img_background);
-                    backgroundModel.setDisplayBackground(true);
-                    backgroundModel.setLockBackground(false);
-                }
-            }
+        if (filename != null) {
+            Toolkit tk = Toolkit.getDefaultToolkit();
+            Image img_background = tk.getImage(filename);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (img_background != null) {
+                backgroundModel.setBackgroundImage(img_background);
+                backgroundModel.setDisplayBackground(true);
+                backgroundModel.setLockBackground(false);
+            }
         }
+
+        return filename != null;
     }
 
     public void initAutoSave() {

@@ -1,16 +1,26 @@
 package oriedita.editor.databinding;
 
+import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.Polygon;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import origami.crease_pattern.element.Polygon;
-import java.awt.*;
+import java.awt.Image;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 @Singleton
 public class BackgroundModel {
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean displayBackground;
     private boolean lockBackground;
+    private Image backgroundImage;
+    private Polygon backgroundPosition;
+
+    @Inject
+    public BackgroundModel() {
+        reset();
+    }
 
     public Image getBackgroundImage() {
         return backgroundImage;
@@ -22,10 +32,6 @@ public class BackgroundModel {
         this.pcs.firePropertyChange("backgroundImage", oldBackgroundImage, backgroundImage);
     }
 
-    private Image backgroundImage;
-
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         this.pcs.addPropertyChangeListener(listener);
     }
@@ -34,16 +40,15 @@ public class BackgroundModel {
         this.pcs.removePropertyChangeListener(listener);
     }
 
-    @Inject
-    public BackgroundModel() {
-        reset();
-    }
-
     public void reset() {
-        displayBackground = true;
+        backgroundImage = null;
+        displayBackground = false;
         lockBackground = false;
 
-        backgroundPosition = null;
+        backgroundPosition = new Polygon(new Point(0.0, 0.0),
+                new Point(1.0, 1.0),
+                new Point(120.0, 120.0),
+                new Point(121.0, 121.0));
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -67,8 +72,6 @@ public class BackgroundModel {
         this.lockBackground = lockBackground;
         this.pcs.firePropertyChange("lockBackground", oldLockBackground, lockBackground);
     }
-
-    private Polygon backgroundPosition;
 
     public Polygon getBackgroundPosition() {
         return backgroundPosition;

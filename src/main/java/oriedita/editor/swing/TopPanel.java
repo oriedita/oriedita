@@ -48,9 +48,9 @@ public class TopPanel {
     private JButton transparentButton;
     private JButton backgroundTrimButton;
     private JButton readBackgroundButton;
-    private JButton backgroundToggleButton;
+    private JCheckBox backgroundToggleButton;
     private JButton backgroundSetPositionButton;
-    private JButton backgroundLockButton;
+    private JCheckBox backgroundLockButton;
     private JCheckBox mouseSettingsCheckBox;
 
     @Inject
@@ -217,11 +217,20 @@ public class TopPanel {
             }
         });
         readBackgroundButton.addActionListener(e -> {
-            fileSaveService.readBackgroundImageFromFile();
+            boolean saved = fileSaveService.readBackgroundImageFromFile();
+
+            if (!saved) return;
 
             canvas.h_cam = new Background_camera();//20181202
+            canvas.h_cam.setLocked(backgroundModel.isLockBackground());
+
+            int iw = backgroundModel.getBackgroundImage().getWidth(null);//イメージの幅を取得
+            int ih = backgroundModel.getBackgroundImage().getHeight(null);//イメージの高さを取得
+
+            canvas.h_cam.setBackgroundWidth(iw);
+            canvas.h_cam.setBackgroundHeight(ih);
+
             if (backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                canvas.h_cam.setLocked(backgroundModel.isLockBackground());
                 canvas.h_cam.setCamera(canvas.creasePatternCamera);
                 canvas.h_cam.h3_obj_and_h4_obj_calculation();
             }
@@ -285,7 +294,7 @@ public class TopPanel {
      */
     private void $$$setupUI$$$() {
         root = new JPanel();
-        root.setLayout(new GridLayoutManager(1, 13, new Insets(1, 1, 1, 1), 1, 1));
+        root.setLayout(new GridLayoutManager(1, 11, new Insets(1, 1, 1, 1), 1, 1));
         operationFrameSelectButton = new JButton();
         operationFrameSelectButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tyouhoukei_select.png")));
         root.add(operationFrameSelectButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -389,32 +398,35 @@ public class TopPanel {
         rotateClockwiseButton = new JButton();
         rotateClockwiseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenkaizu_m_kaiten.png")));
         panel5.add(rotateClockwiseButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        transparentButton = new JButton();
-        transparentButton.setText("T");
-        root.add(transparentButton, new GridConstraints(0, 9, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        backgroundTrimButton = new JButton();
-        backgroundTrimButton.setText("Tr");
-        root.add(backgroundTrimButton, new GridConstraints(0, 10, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel6 = new JPanel();
-        panel6.setLayout(new GridLayoutManager(1, 5, new Insets(0, 0, 0, 0), 1, 1));
-        root.add(panel6, new GridConstraints(0, 11, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 1, false));
+        panel6.setLayout(new GridLayoutManager(1, 7, new Insets(0, 0, 0, 0), 1, 1));
+        root.add(panel6, new GridConstraints(0, 9, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         readBackgroundButton = new JButton();
-        readBackgroundButton.setText("BG");
-        panel6.add(readBackgroundButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        backgroundToggleButton = new JButton();
-        backgroundToggleButton.setText("off");
-        panel6.add(backgroundToggleButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        backgroundSetPositionButton = new JButton();
-        backgroundSetPositionButton.setText("S");
-        panel6.add(backgroundSetPositionButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        backgroundLockButton = new JButton();
-        backgroundLockButton.setText("L");
-        panel6.add(backgroundLockButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        readBackgroundButton.setText("Select");
+        panel6.add(readBackgroundButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        backgroundToggleButton = new JCheckBox();
+        backgroundToggleButton.setEnabled(false);
+        backgroundToggleButton.setText("Show");
+        panel6.add(backgroundToggleButton, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        backgroundLockButton = new JCheckBox();
+        backgroundLockButton.setEnabled(false);
+        backgroundLockButton.setText("Lock");
+        panel6.add(backgroundLockButton, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(46, 21), null, 0, false));
         senbun_yoke_henkanButton = new JButton();
         senbun_yoke_henkanButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_yoke_henkan.png")));
-        panel6.add(senbun_yoke_henkanButton, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel6.add(senbun_yoke_henkanButton, new GridConstraints(0, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        backgroundTrimButton = new JButton();
+        backgroundTrimButton.setEnabled(false);
+        backgroundTrimButton.setText("Trim");
+        panel6.add(backgroundTrimButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        transparentButton = new JButton();
+        transparentButton.setText("Transparent");
+        panel6.add(transparentButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        backgroundSetPositionButton = new JButton();
+        backgroundSetPositionButton.setText("S");
+        panel6.add(backgroundSetPositionButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        root.add(spacer1, new GridConstraints(0, 12, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        root.add(spacer1, new GridConstraints(0, 10, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
         root.add(spacer2, new GridConstraints(0, 8, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(5, -1), null, null, 0, false));
         final Spacer spacer3 = new Spacer();
@@ -431,17 +443,13 @@ public class TopPanel {
     }
 
     public void setData(BackgroundModel backgroundModel) {
-        if (backgroundModel.isDisplayBackground()) {
-            backgroundToggleButton.setBackground(Color.orange);
-        } else {
-            backgroundToggleButton.setBackground(Color.gray);
-        }
+        backgroundToggleButton.setEnabled(backgroundModel.getBackgroundImage() != null);
+        backgroundLockButton.setEnabled(backgroundModel.getBackgroundImage() != null);
 
-        if (backgroundModel.isLockBackground()) {
-            backgroundLockButton.setBackground(Color.orange);
-        } else {
-            backgroundLockButton.setBackground(Color.gray);
-        }
+        backgroundTrimButton.setEnabled(backgroundModel.getBackgroundImage() != null);
+
+        backgroundToggleButton.setSelected(backgroundModel.isDisplayBackground());
+        backgroundLockButton.setSelected(backgroundModel.isLockBackground());
     }
 
     public void setData(CameraModel creasePatternCameraModel) {
