@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.*;
 
 public class ExportDialog extends JDialog {
@@ -80,6 +82,14 @@ public class ExportDialog extends JDialog {
             ExportOption value = list1.getModel().getElementAt(list1.getSelectedIndex());
 
             cardLayout.show(optionsCard, value.getKey());
+        });
+        list1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() > 1) {
+                    onOk();
+                }
+            }
         });
         list1.setSelectedIndex(0);
 

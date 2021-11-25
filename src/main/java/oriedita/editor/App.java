@@ -211,9 +211,7 @@ public class App {
         mainCreasePatternWorker.auxRecord();
 
         lookAndFeelService.updateButtonIcons();
-        frame.pack();
 
-        frame.setMinimumSize(frame.getSize());
 
         if (applicationModel.getWindowPosition() != null) {
             frame.setLocation(applicationModel.getWindowPosition());
@@ -225,8 +223,10 @@ public class App {
         }
 
         frame.setExtendedState(applicationModel.getWindowState());
+        frame.pack();
 
         frame.setVisible(true);
+
 
         explanation.start(canvas.getLocationOnScreen(), canvas.getSize());
 
