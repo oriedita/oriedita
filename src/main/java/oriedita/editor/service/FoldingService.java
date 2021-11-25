@@ -60,81 +60,52 @@ public class FoldingService {
         selectedFigure.folding_estimated(creasePatternCamera, lineSegmentsForFolding);
     }
 
+    public void fold(FoldedFigure.EstimationOrder estimationOrder) {
+        fold(getFoldType(), estimationOrder);
+    }
 
     public void fold(FoldType foldType, FoldedFigure.EstimationOrder estimationOrder) {
-        if (foldType == FoldType.NOTHING_0) {
-            System.out.println("fold_nothing oritatame 20180108");
-        } else if ((foldType == FoldType.FOR_ALL_CONNECTED_LINES_1) || (foldType == FoldType.FOR_SELECTED_LINES_2)) {
-            if (foldType == FoldType.FOR_ALL_CONNECTED_LINES_1) {
-                Point cpPivot = this.mainCreasePatternWorker.getCameraPosition();
-                mainCreasePatternWorker.selectConnected(this.mainCreasePatternWorker.foldLineSet.closestPoint(cpPivot));
-                // replace currently selected model if not using selection to fold
-                foldedFiguresList.removeElement(foldedFiguresList.getSelectedItem());
-            }
-            //
-            if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
-                CreasePattern_Worker creasePatternWorker2 = backupCreasePatternWorker;
-                Save save = new SaveV1();
-                mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
-                creasePatternWorker2.setSave_for_reading(save);
-                creasePatternWorker2.point_removal();
-                creasePatternWorker2.overlapping_line_removal();
-                creasePatternWorker2.branch_trim();
-                creasePatternWorker2.organizeCircles();
-                lineSegmentsForFolding = creasePatternWorker2.getForFolding();
-            } else {
-                lineSegmentsForFolding = mainCreasePatternWorker.getForSelectFolding();
-            }
-
-            //これより前のOZは古いOZ
-            FoldedFigure_Drawer selectedFigure = folding_prepare();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
-            //これより後のOZは新しいOZに変わる
-
-
-            FoldingEstimateTask foldingEstimateTask = new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel);
-            foldingEstimateTask.execute(lineSegmentsForFolding, selectedFigure, estimationOrder);
-        } else if (foldType == FoldType.CHANGING_FOLDED_3) {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
-
-            if (selectedFigure != null) {
-                selectedFigure.foldedFigure.estimationOrder = estimationOrder;
-                selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_0;
-
-                FoldingEstimateTask foldingEstimateTask = new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel);
-                foldingEstimateTask.execute(lineSegmentsForFolding, selectedFigure, estimationOrder);
-            }
+        if (foldType == FoldType.FOR_ALL_CONNECTED_LINES_1) {
+            Point cameraPos = this.mainCreasePatternWorker.getCameraPosition();
+            mainCreasePatternWorker.selectConnected(this.mainCreasePatternWorker.foldLineSet.closestPoint(cameraPos));
+            // replace currently selected model if not using selection to fold
+            foldedFiguresList.removeElement(foldedFiguresList.getSelectedItem());
         }
+
+        if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
+            CreasePattern_Worker creasePatternWorker2 = backupCreasePatternWorker;
+            Save save = new SaveV1();
+            mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
+            creasePatternWorker2.setSave_for_reading(save);
+            creasePatternWorker2.point_removal();
+            creasePatternWorker2.overlapping_line_removal();
+            creasePatternWorker2.branch_trim();
+            creasePatternWorker2.organizeCircles();
+            lineSegmentsForFolding = creasePatternWorker2.getForFolding();
+        } else {
+            lineSegmentsForFolding = mainCreasePatternWorker.getForSelectFolding();
+        }
+
+        //これより前のOZは古いOZ
+        FoldedFigure_Drawer selectedFigure = initFoldedFigure();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
+        //これより後のOZは新しいOZに変わる
+
+        FoldingEstimateTask foldingEstimateTask = new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel);
+        foldingEstimateTask.execute(lineSegmentsForFolding, selectedFigure, estimationOrder);
     }
 
     public FoldType getFoldType() {
-        FoldType foldType;//= 0 Do nothing, = 1 Folding estimation for all fold lines in the normal development view, = 2 for fold estimation for selected fold lines, = 3 for changing the folding state
+        //= 0 Do nothing, = 1 Folding estimation for all fold lines in the normal development view, = 2 for fold estimation for selected fold lines, = 3 for changing the folding state
         int foldLineTotalForSelectFolding = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
         System.out.println("foldedFigures.size() = " + foldedFiguresList.getSize() + "    : foldedFigureIndex = " + foldedFiguresList.getIndexOf(foldedFiguresList.getSelectedItem()) + "    : mainDrawingWorker.get_orisensuu_for_select_oritatami() = " + foldLineTotalForSelectFolding);
-        if (foldedFiguresList.getSize() == 0) {                        //折り上がり系図無し
-            if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
-                foldType = FoldType.FOR_ALL_CONNECTED_LINES_1;//全展開図で折畳み
-            } else {        //折り線選択有り
-                foldType = FoldType.FOR_SELECTED_LINES_2;//選択された展開図で折畳み
-            }
-        } else {                        //折り上がり系図有り
-            if (foldedFiguresList.getSelectedItem() == null) {                            //展開図指定
-                if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
-                    foldType = FoldType.NOTHING_0;//何もしない
-                } else {        //折り線選択有り
-                    foldType = FoldType.FOR_SELECTED_LINES_2;//選択された展開図で折畳み
-                }
-            } else {                        //折り上がり系図指定
-                if (foldLineTotalForSelectFolding == 0) {        //No fold line selection
-                    foldType = FoldType.FOR_ALL_CONNECTED_LINES_1;//Fold with the specified fold-up genealogy
-                } else {        //With fold line selection
-                    foldType = FoldType.FOR_SELECTED_LINES_2;//Fold in selected crease pattern
-                }
-            }
+        if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
+            return FoldType.FOR_ALL_CONNECTED_LINES_1;//全展開図で折畳み
+        } else {        //折り線選択有り
+            return FoldType.FOR_SELECTED_LINES_2;//選択された展開図で折畳み
         }
-
-        return foldType;
     }
-    public FoldedFigure_Drawer folding_prepare() {//Add one new folding diagram to the foldedFigures array list, specify it as the operation target, and inherit the foldedFigures (0) common parameters.
+
+    public FoldedFigure_Drawer initFoldedFigure() {//Add one new folding diagram to the foldedFigures array list, specify it as the operation target, and inherit the foldedFigures (0) common parameters.
         System.out.println(" oritatami_jyunbi 20180107");
 
         FoldedFigure_Drawer newFoldedFigure = new FoldedFigure_Drawer(new FoldedFigure_01(bulletinBoard));
@@ -175,9 +146,7 @@ public class FoldingService {
     }
 
     public enum FoldType {
-        NOTHING_0,
         FOR_ALL_CONNECTED_LINES_1,
-        FOR_SELECTED_LINES_2,
-        CHANGING_FOLDED_3,
+        FOR_SELECTED_LINES_2
     }
 }
