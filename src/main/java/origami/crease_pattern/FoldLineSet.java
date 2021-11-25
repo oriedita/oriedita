@@ -5,7 +5,6 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
 import origami.data.quadTree.QuadTree;
-import origami.data.quadTree.adapter.CamvAdapter;
 import origami.data.quadTree.adapter.LineSegmentListAdapter;
 import origami.data.quadTree.adapter.LineSegmentListEndPointAdapter;
 import origami.data.quadTree.collector.PointCollector;
@@ -33,7 +32,6 @@ public class FoldLineSet {
     Queue<LineSegment> Check2LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     Queue<LineSegment> Check3LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     Queue<LineSegment> Check4LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
-    List<Point> check4Point = new ArrayList<>(); //Instantiation of points to check
 
     List<Circle> circles = new ArrayList<>(); //円のインスタンス化
 
@@ -55,7 +53,6 @@ public class FoldLineSet {
         Check2LineSegment.clear();
         Check3LineSegment.clear();
         Check4LineSegment.clear();
-        check4Point.clear();
         circles.clear();
     }
 
@@ -2995,55 +2992,21 @@ public class FoldLineSet {
         }
     }
 
-    public Point Check4Point_overlapping_check(Point p0, QuadTree qt) {
-        double r = Epsilon.UNKNOWN_1EN4 * Epsilon.UNKNOWN_1EN4;
-        for (int i : qt.collect(new PointCollector(p0))) {
-            Point p = check4Point.get(i);
-            if (p.distanceSquared(p0) < r) return p;
-        }
-        check4Point.add(p0);
-        qt.grow(1);
-        return p0;
-    }
-
     public void check4() throws InterruptedException {//Check the number of lines around the apex
         Check4LineSegment.clear();
-        check4Point.clear();
-
         unselect_all();
 
-        Map<Point, List<LineSegment>> map = new HashMap<>();
-        QuadTree qt = new QuadTree(new CamvAdapter(lineSegments, check4Point));
-
-        //Counting places to check
-        for (int i = 1; i <= total; i++) {
-            LineSegment si = lineSegments.get(i);
-            if (si.getColor() != LineColor.CYAN_3) {
-                Point pa = new Point();
-                pa.set(si.getA());
-                pa = Check4Point_overlapping_check(pa, qt);
-                map.computeIfAbsent(pa, k->new ArrayList<>()).add(si);
-
-                Point pb = new Point();
-                pb.set(si.getB());
-                pb = Check4Point_overlapping_check(pb, qt);
-                map.computeIfAbsent(pb, k->new ArrayList<>()).add(si);
-
-                if (Thread.interrupted()) throw new InterruptedException();
-            }
-        }
-
-        System.out.println("check4_T_size() = " + check4Point.size());
+        PointLineMap map = new PointLineMap(lineSegments);
+        System.out.println("check4_T_size() = " + map.getPoints().size());
 
         ExecutorService service = Executors.newWorkStealingPool();
 
         //Selection of whether the place to be checked can be folded flat
-        for (Point point : check4Point) {
+        for (Point point : map.getPoints()) {
             service.submit(() -> {
                 Point p = new Point(point);
-
                 try {
-                    if (!i_flat_ok(p, map.get(point))) {
+                    if (!i_flat_ok(p, map.getLines(point))) {
                         Check4LineSegment.add(new LineSegment(p, p));
                     }
                 } catch (InterruptedException e) {
