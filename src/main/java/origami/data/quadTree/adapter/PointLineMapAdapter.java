@@ -6,12 +6,12 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.data.quadTree.QuadTreeItem;
 
-public class CamvAdapter implements QuadTreeAdapter {
+public class PointLineMapAdapter implements QuadTreeAdapter {
 
     private final List<LineSegment> list;
     private final List<Point> points;
 
-    public CamvAdapter(List<LineSegment> list, List<Point> points) {
+    public PointLineMapAdapter(List<LineSegment> list, List<Point> points) {
         this.list = list;
         this.points = points;
     }

@@ -171,7 +171,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                         }
                     }
                     d.foldLineSet.applyLineSegmentCircleIntersection(sousuu_old, d.foldLineSet.getTotal(), 0, d.foldLineSet.numCircles() - 1);//(3)
-                    d.foldLineSet.divideLineSegmentIntersections(1, sousuu_old, sousuu_old + 1, d.foldLineSet.getTotal());//(4)
+                    d.foldLineSet.divideLineSegmentWithNewLines(sousuu_old, d.foldLineSet.getTotal());//(4)
 
 
                 } else {
@@ -203,7 +203,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
 
                     }
                     d.foldLineSet.applyLineSegmentCircleIntersection(sousuu_old, d.foldLineSet.getTotal(), 0, d.foldLineSet.numCircles() - 1);//(3)
-                    d.foldLineSet.divideLineSegmentIntersections(1, sousuu_old, sousuu_old + 1, d.foldLineSet.getTotal());//(4)
+                    d.foldLineSet.divideLineSegmentWithNewLines(sousuu_old, d.foldLineSet.getTotal());//(4)
                 }
 
                 d.record();

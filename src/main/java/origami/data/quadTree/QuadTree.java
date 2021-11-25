@@ -57,6 +57,7 @@ public class QuadTree {
         grow(adapter.getCount());
     }
 
+    /** Read items of then given amount from the collection. */
     public void grow(int num) {
         int new_count = count + num;
         for (int i = count; i < new_count; i++) {
@@ -65,6 +66,17 @@ public class QuadTree {
             root.addItem(i);
         }
         count = new_count;
+    }
+
+    /** Directly add an item at a new index, skipping the items in between. */
+    public void addIndex(int index) {
+        index -= offset;
+        for (int i = count; i <= index; i++) {
+            next.add(-1);
+            map.add(null);
+        }
+        count = index + 1;
+        root.addItem(index);
     }
 
     public void update(int i) {

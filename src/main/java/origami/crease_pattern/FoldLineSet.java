@@ -5,9 +5,10 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
 import origami.data.quadTree.QuadTree;
-import origami.data.quadTree.adapter.CamvAdapter;
+import origami.data.quadTree.adapter.DivideAdapter;
 import origami.data.quadTree.adapter.LineSegmentListAdapter;
 import origami.data.quadTree.adapter.LineSegmentListEndPointAdapter;
+import origami.data.quadTree.collector.LineSegmentCollector;
 import origami.data.quadTree.collector.PointCollector;
 import origami.data.save.LineSegmentSave;
 import origami.folding.util.SortingBox;
@@ -33,7 +34,6 @@ public class FoldLineSet {
     Queue<LineSegment> Check2LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     Queue<LineSegment> Check3LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     Queue<LineSegment> Check4LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
-    List<Point> check4Point = new ArrayList<>(); //Instantiation of points to check
 
     List<Circle> circles = new ArrayList<>(); //円のインスタンス化
 
@@ -55,7 +55,6 @@ public class FoldLineSet {
         Check2LineSegment.clear();
         Check3LineSegment.clear();
         Check4LineSegment.clear();
-        check4Point.clear();
         circles.clear();
     }
 
@@ -441,7 +440,7 @@ public class FoldLineSet {
         }
         if (kawatteinai_kazu >= 1) {
             if (okikae_suu >= 1) {
-                divideLineSegmentIntersections(1, total - okikae_suu, total - okikae_suu + 1, total);
+                divideLineSegmentWithNewLines(total - okikae_suu, total);
             }
         }
 //上２行の場合わけが必要な理由は、kousabunkatu()をやってしまうと折線と補助活線との交点で折線が分割されるから。kousabunkatu(1,sousuu-okikae_suu,sousuu-okikae_suu+1,sousuu)だと折線は分割されない。
@@ -743,8 +742,15 @@ public class FoldLineSet {
     }
 
     //------------------zzzzzzzzz-------------------------------------------------------------------
-    //Divide the two line segments at the intersection of the two intersecting line segments. If there were two line segments that completely overlapped, both would remain without any processing.
-    public void divideLineSegmentIntersections(int originalStart, int originalEnd, int addedStart, int addedEnd) {//Crossing division when addedStart to addedEnd fold lines are added to the original originalStart to originalEnd fold lines
+    /**
+     * Divide the two line segments at the intersection of the two intersecting line
+     * segments. If there were two line segments that completely overlapped, both
+     * would remain without any processing.
+     * 
+     * Crossing division when originalEnd + 1 to addedEnd fold lines are added to
+     * the original 1 to originalEnd fold lines.
+     */
+    public void divideLineSegmentWithNewLines(int originalEnd, int addedEnd) {
         for (int i = 1; i <= total; i++) {
             setActive(i, LineSegment.ActiveState.INACTIVE_0);
         }//削除すべき線は iactive=100とする
@@ -754,59 +760,56 @@ public class FoldLineSet {
         for (int i = 0; i <= total + 100; i++) {
             k_flg.add(0);
         }//0は交差分割の対象外、１は元からあった折線、2は加える折線として交差分割される。3は削除すべきと判定された折線
-        for (int i = originalStart; i <= originalEnd; i++) {
+        for (int i = 1; i <= originalEnd; i++) {
             k_flg.set(i, 1);
         }//0 is not subject to cross-division, 1 is the original polygonal line, and 2 is the cross-division to be added.
-        for (int i = addedStart; i <= addedEnd; i++) {
+        for (int i = originalEnd + 1; i <= addedEnd; i++) {
             k_flg.set(i, 2);
         }//0は交差分割の対象外、１は元からあった折線、2は加える折線として交差分割される
-        for (int i = 1; i <= total; i++) {
+
+        // This QuadTree only stores the original lines for better performance.
+        QuadTree qt = new QuadTree(new DivideAdapter(lineSegments, originalEnd));
+
+        for (int i = originalEnd + 1; i <= total; i++) {
             if (k_flg.get(i) == 2) {//k_flg.set(i,new Integer(0));
-                for (int j = 1; j <= total; j++) {
-                    if (i != j) {
-                        if (k_flg.get(j) == 1) {
-                            LineSegment.Intersection itemp = divideIntersectionsFast(i, j);//i is the one to add (2), j is the original one (1)
-                            switch (itemp) {
-                                case INTERSECTS_1:
-                                    k_flg.add(2);//For some reason this is added as 0 instead of 2. 20161130
-
-                                    k_flg.add(1);
-                                    k_flg.set(total - 1, 2);//
-
-                                    k_flg.set(total, 1);
-                                    break;
-                                case INTERSECTS_AUX_2:
-                                case INTERSECT_T_A_211:
-                                case INTERSECT_T_B_221:
-                                    k_flg.add(2);//For some reason this is added as 0 instead of 2. 20161130
-
-                                    k_flg.set(total, 2);
-                                    break;
-                                case INTERSECTS_AUX_3:
-                                case INTERSECT_T_A_121:
-                                case INTERSECT_T_B_122:
-                                case PARALLEL_S2_INCLUDES_S1_363:
-                                case PARALLEL_S2_INCLUDES_S1_364:
-                                    k_flg.add(1);//For some reason this is added as 0 instead of 2. 20161130
-
-                                    k_flg.set(total, 1);
-                                    break;
-                                case PARALLEL_S1_INCLUDES_S2_361:
-                                case PARALLEL_S1_INCLUDES_S2_362:
-                                    k_flg.set(j, 0);//何もしなくてもいいかも//ori_s_temp.senbun_bunkatu(s1.getb());//p1とp3が一致、siにsjが含まれる。加える折線をkousa_tenで分割すること
-
-                                    k_flg.add(2);
-                                    k_flg.set(total, 2);
-                                    break;
-                                case PARALLEL_S1_END_OVERLAPS_S2_START_371:
-                                case PARALLEL_S1_START_OVERLAPS_S2_END_373:
-                                case PARALLEL_S1_END_OVERLAPS_S2_END_372:
-                                case PARALLEL_S1_START_OVERLAPS_S2_START_374:
-                                    k_flg.add(0);
-                                    k_flg.set(total, 0);
-                                    break;
-                            }
-                        }
+                for (int j : qt.collect(new LineSegmentCollector(lineSegments.get(i)))) {
+                    LineSegment.Intersection itemp = divideIntersectionsFast(i, j);//i is the one to add (2), j is the original one (1)
+                    switch (itemp) {
+                        case INTERSECTS_1:
+                            k_flg.add(2);
+                            k_flg.add(1);
+                            k_flg.set(total - 1, 2);
+                            k_flg.set(total, 1);
+                            qt.addIndex(total);
+                            break;
+                        case INTERSECTS_AUX_2:
+                        case INTERSECT_T_A_211:
+                        case INTERSECT_T_B_221:
+                            k_flg.add(2);
+                            k_flg.set(total, 2);
+                            break;
+                        case INTERSECTS_AUX_3:
+                        case INTERSECT_T_A_121:
+                        case INTERSECT_T_B_122:
+                        case PARALLEL_S2_INCLUDES_S1_363:
+                        case PARALLEL_S2_INCLUDES_S1_364:
+                            k_flg.add(1);
+                            k_flg.set(total, 1);
+                            qt.addIndex(total);
+                            break;
+                        case PARALLEL_S1_INCLUDES_S2_361:
+                        case PARALLEL_S1_INCLUDES_S2_362:
+                            k_flg.set(j, 0);
+                            k_flg.add(2);
+                            k_flg.set(total, 2);
+                            break;
+                        case PARALLEL_S1_END_OVERLAPS_S2_START_371:
+                        case PARALLEL_S1_START_OVERLAPS_S2_END_373:
+                        case PARALLEL_S1_END_OVERLAPS_S2_END_372:
+                        case PARALLEL_S1_START_OVERLAPS_S2_START_374:
+                            k_flg.add(0);
+                            k_flg.set(total, 0);
+                            break;
                     }
                 }
             }
@@ -2192,126 +2195,119 @@ public class FoldLineSet {
         return p_return;
     }
 
-    public void del_V(int i, int j) {//Erasing when two fold lines are the same color and there are no end points for other fold lines
-        LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(get(i), get(j), Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);
+    public LineSegment del_V(LineSegment si, LineSegment sj) {//Erasing when two fold lines are the same color and there are no end points for other fold lines
+        LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(si, sj, Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);
 
-        LineSegment si = lineSegments.get(i);
-        LineSegment sj = lineSegments.get(j);
-
-        LineSegment addLine = new LineSegment();
-        int i_ten = 0;
+        LineSegment addLine = null;
         if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323) {
-            addLine.set(si.getB(), sj.getB());
-            i_ten = vertex_surrounding_lineCount(si.getA(), Epsilon.UNKNOWN_1EN5);
+            addLine = new LineSegment(si.getB(), sj.getB());
         }
         if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_START_OF_S1_INTERSECTS_END_OF_S2_333) {
-            addLine.set(si.getB(), sj.getA());
-            i_ten = vertex_surrounding_lineCount(si.getA(), Epsilon.UNKNOWN_1EN5);
+            addLine = new LineSegment(si.getB(), sj.getA());
         }
         if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_END_OF_S1_INTERSECTS_START_OF_S2_343) {
-            addLine.set(si.getA(), sj.getB());
-            i_ten = vertex_surrounding_lineCount(si.getB(), Epsilon.UNKNOWN_1EN5);
+            addLine = new LineSegment(si.getA(), sj.getB());
         }
         if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_END_OF_S1_INTERSECTS_END_OF_S2_353) {
-            addLine.set(si.getA(), sj.getA());
-            i_ten = vertex_surrounding_lineCount(si.getB(), Epsilon.UNKNOWN_1EN5);
+            addLine = new LineSegment(si.getA(), sj.getA());
+        }
+        if (addLine == null) return null;
+
+        LineColor i_c = LineColor.BLACK_0;
+        LineColor siColor = si.getColor();
+        LineColor sjColor = sj.getColor();
+        switch (siColor) {
+            case BLACK_0:
+                switch (sjColor) {
+                    case BLACK_0:
+                    case RED_1:
+                    case BLUE_2:
+                        i_c = sjColor;
+                        break;
+                    case CYAN_3:
+                        return null;
+                }
+                break;
+            case RED_1:
+                switch (sjColor) {
+                    case BLACK_0:
+                        i_c = LineColor.RED_1;
+                        break;
+                    case RED_1:
+                        i_c = LineColor.RED_1;
+                        break;
+                    case BLUE_2:
+                        i_c = LineColor.BLACK_0;
+                        break;
+                    case CYAN_3:
+                        return null;
+                }
+                break;
+            case BLUE_2:
+                switch (sjColor) {
+                    case BLACK_0:
+                        i_c = LineColor.BLUE_2;
+                        break;
+                    case RED_1:
+                        i_c = LineColor.BLACK_0;
+                        break;
+                    case BLUE_2:
+                        i_c = LineColor.BLUE_2;
+                        break;
+                    case CYAN_3:
+                        return null;
+                }
+                break;
+            case CYAN_3:
+                switch (sjColor) {
+                    case BLACK_0:
+                    case BLUE_2:
+                    case RED_1:
+                        return null;
+                    case CYAN_3:
+                        i_c = LineColor.CYAN_3;
+                        break;
+                }
+                break;
         }
 
-        if (i_ten == 2) {
-            LineColor i_c = LineColor.BLACK_0;
-            LineColor siColor = si.getColor();
-            LineColor sjColor = sj.getColor();
-            switch (siColor) {
-                case BLACK_0:
-                    switch (sjColor) {
-                        case BLACK_0:
-                            i_c = LineColor.BLACK_0;
-                            break;
-                        case RED_1:
-                            i_c = LineColor.RED_1;
-                            break;
-                        case BLUE_2:
-                            i_c = LineColor.BLUE_2;
-                            break;
-                        case CYAN_3:
-                            return;
-                    }
-                    break;
-                case RED_1:
-                    switch (sjColor) {
-                        case BLACK_0:
-                            i_c = LineColor.RED_1;
-                            break;
-                        case RED_1:
-                            i_c = LineColor.RED_1;
-                            break;
-                        case BLUE_2:
-                            i_c = LineColor.BLACK_0;
-                            break;
-                        case CYAN_3:
-                            return;
-                    }
-                    break;
-                case BLUE_2:
-                    switch (sjColor) {
-                        case BLACK_0:
-                            i_c = LineColor.BLUE_2;
-                            break;
-                        case RED_1:
-                            i_c = LineColor.BLACK_0;
-                            break;
-                        case BLUE_2:
-                            i_c = LineColor.BLUE_2;
-                            break;
-                        case CYAN_3:
-                            return;
-                    }
-                    break;
-                case CYAN_3:
-                    switch (sjColor) {
-                        case BLACK_0:
-                        case CYAN_3:
-                        case BLUE_2:
-                        case RED_1:
-                            return;
-                    }
-                    break;
-            }
-
-
-            deleteLine(j);
-            deleteLine(i);
-            addLine.setColor(i_c);
-            addLine(addLine);
-        }//p2,p1,p4 ixb_ixa,iya_iyb
-
+        deleteLine(si);
+        deleteLine(sj);
+        addLine.setColor(i_c);
+        addLine(addLine);
+        //p2,p1,p4 ixb_ixa,iya_iyb
+        return addLine;
     }
 
-    public void del_V_all() {
-        int total_old = total + 1;
-        while (total < total_old) {
-            total_old = total;
-            for (int i = 1; i <= total - 1; i++) {
-                for (int j = i + 1; j <= total; j++) {
-                    LineSegment si = lineSegments.get(i);
-                    LineSegment sj = lineSegments.get(j);
-                    if (si.getColor() == sj.getColor()) {//If the two are the same color, carry out
-                        if (si.getColor() != LineColor.CYAN_3) {//Auxiliary live line is not applicable
-                            del_V(i, j);
-                        }
+    public void del_V_all() throws InterruptedException {
+        PointLineMap map = new PointLineMap(lineSegments);
+        for(Point p : map.getPoints()) {
+            List<LineSegment> lines = map.getLines(p);
+            if(lines.size() == 2) {
+                LineSegment si = lines.get(0);
+                LineSegment sj = lines.get(1);
+                if (si.getColor() == sj.getColor() && si.getColor() != LineColor.CYAN_3) {
+                    LineSegment new_line = del_V(si, sj);
+                    if(new_line != null) {
+                        map.replaceLine(si, new_line);
+                        map.replaceLine(sj, new_line);
                     }
                 }
             }
         }
     }
 
-    public void del_V_all_cc() {
-        int sousuu_old = total + 1;
-        while (total < sousuu_old) {
-            sousuu_old = total;
-            for (int i = 1; i <= total - 1; i++) {
-                for (int j = i + 1; j <= total; j++) {
-                    del_V(i, j);
+    public void del_V_all_cc() throws InterruptedException {
+        PointLineMap map = new PointLineMap(lineSegments);
+        for(Point p : map.getPoints()) {
+            List<LineSegment> lines = map.getLines(p);
+            if(lines.size() == 2) {
+                LineSegment si = lines.get(0);
+                LineSegment sj = lines.get(1);
+                LineSegment new_line = del_V(si, sj);
+                if(new_line != null) {
+                    map.replaceLine(si, new_line);
+                    map.replaceLine(sj, new_line);
                 }
             }
         }
@@ -2855,7 +2851,7 @@ public class FoldLineSet {
 
     public void fix2() {
         unselect_all();
-        QuadTree qt = new QuadTree(new LineSegmentListAdapter(lineSegments, 1));
+        QuadTree qt = new QuadTree(new LineSegmentListAdapter(lineSegments));
         for (int i = 1; i <= total - 1; i++) {
             LineSegment si = lineSegments.get(i);
             if (si.getColor() != LineColor.CYAN_3) {
@@ -2995,55 +2991,21 @@ public class FoldLineSet {
         }
     }
 
-    public Point Check4Point_overlapping_check(Point p0, QuadTree qt) {
-        double r = Epsilon.UNKNOWN_1EN4 * Epsilon.UNKNOWN_1EN4;
-        for (int i : qt.collect(new PointCollector(p0))) {
-            Point p = check4Point.get(i);
-            if (p.distanceSquared(p0) < r) return p;
-        }
-        check4Point.add(p0);
-        qt.grow(1);
-        return p0;
-    }
-
     public void check4() throws InterruptedException {//Check the number of lines around the apex
         Check4LineSegment.clear();
-        check4Point.clear();
-
         unselect_all();
 
-        Map<Point, List<LineSegment>> map = new HashMap<>();
-        QuadTree qt = new QuadTree(new CamvAdapter(lineSegments, check4Point));
-
-        //Counting places to check
-        for (int i = 1; i <= total; i++) {
-            LineSegment si = lineSegments.get(i);
-            if (si.getColor() != LineColor.CYAN_3) {
-                Point pa = new Point();
-                pa.set(si.getA());
-                pa = Check4Point_overlapping_check(pa, qt);
-                map.computeIfAbsent(pa, k->new ArrayList<>()).add(si);
-
-                Point pb = new Point();
-                pb.set(si.getB());
-                pb = Check4Point_overlapping_check(pb, qt);
-                map.computeIfAbsent(pb, k->new ArrayList<>()).add(si);
-
-                if (Thread.interrupted()) throw new InterruptedException();
-            }
-        }
-
-        System.out.println("check4_T_size() = " + check4Point.size());
+        PointLineMap map = new PointLineMap(lineSegments);
+        System.out.println("check4_T_size() = " + map.getPoints().size());
 
         ExecutorService service = Executors.newWorkStealingPool();
 
         //Selection of whether the place to be checked can be folded flat
-        for (Point point : check4Point) {
+        for (Point point : map.getPoints()) {
             service.submit(() -> {
                 Point p = new Point(point);
-
                 try {
-                    if (!i_flat_ok(p, map.get(point))) {
+                    if (!i_flat_ok(p, map.getLines(point))) {
                         Check4LineSegment.add(new LineSegment(p, p));
                     }
                 } catch (InterruptedException e) {
