@@ -12,6 +12,7 @@ import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.action.MouseModeHandler;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
+import origami.crease_pattern.element.Polygon;
 import origami.folding.FoldedFigure;
 import origami.crease_pattern.element.Point;
 import oriedita.editor.drawing.tools.Background_camera;
@@ -119,7 +120,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
         canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
-        backgroundModel.addPropertyChangeListener(e -> setData(backgroundModel));
+        backgroundModel.addPropertyChangeListener(e -> setData(e, backgroundModel));
 
         creasePatternCameraModel.addPropertyChangeListener(e -> repaint());
         foldedFigureModel.addPropertyChangeListener(e -> repaint());
@@ -665,15 +666,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         p_mouse_object_position.set(creasePatternCamera.TV2object(p_mouse_TV_position));
     }
 
-    public void setData(BackgroundModel backgroundModel) {
-        background_set(backgroundModel.getBackgroundPosition());
+    public void setData(PropertyChangeEvent e, BackgroundModel backgroundModel) {
+        if (e.getPropertyName() == null || e.getPropertyName().equals("backgroundPosition")) {
+            background_set(backgroundModel.getBackgroundPosition());
+        }
+
+        h_cam.setLocked(backgroundModel.isLockBackground());
 
         if (backgroundModel.isLockBackground()) {
-            h_cam.setLocked(backgroundModel.isLockBackground());
             h_cam.setCamera(creasePatternCamera);
             h_cam.h3_obj_and_h4_obj_calculation();
-        } else {
-            h_cam.setLocked(backgroundModel.isLockBackground());
         }
     }
 
@@ -681,7 +683,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     //Functions that perform mouse operations (move and button operations)------------------------------
     //----------------------------------------------------------------------
     // ------------------------------------------------------
-    public void background_set(origami.crease_pattern.element.Polygon position) {
+    public void background_set(Polygon position) {
         if (position.size() != 4) {
             throw new RuntimeException("Background position must be a square");
         }
@@ -734,7 +736,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         OritaCalc.display("新背景カメラインスタンス化");
         h_cam = new Background_camera();//20181202
 
-        backgroundModel.setBackgroundPosition(new origami.crease_pattern.element.Polygon(new Point(120.0, 120.0),
+        backgroundModel.setBackgroundPosition(new Polygon(new Point(120.0, 120.0),
                 new Point(120.0 + 10.0, 120.0),
                 new Point(0, 0),
                 new Point(10.0, 0)));

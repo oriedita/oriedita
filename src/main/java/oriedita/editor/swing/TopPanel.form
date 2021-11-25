@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="oriedita.editor.swing.TopPanel">
-  <grid id="27dc6" binding="root" layout-manager="GridLayoutManager" row-count="1" column-count="13" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+  <grid id="27dc6" binding="root" layout-manager="GridLayoutManager" row-count="1" column-count="11" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
     <margin top="1" left="1" bottom="1" right="1"/>
     <constraints>
-      <xy x="20" y="20" width="2107" height="64"/>
+      <xy x="20" y="20" width="2107" height="104"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -284,75 +284,80 @@
           </component>
         </children>
       </grid>
-      <component id="87968" class="javax.swing.JButton" binding="transparentButton">
-        <constraints>
-          <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="T"/>
-        </properties>
-      </component>
-      <component id="a387" class="javax.swing.JButton" binding="backgroundTrimButton">
-        <constraints>
-          <grid row="0" column="10" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Tr"/>
-        </properties>
-      </component>
-      <grid id="2e671" layout-manager="GridLayoutManager" row-count="1" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+      <grid id="2e671" layout-manager="GridLayoutManager" row-count="1" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="0" column="11" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="1" use-parent-layout="false"/>
+          <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
           <component id="ae37d" class="javax.swing.JButton" binding="readBackgroundButton">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="BG"/>
-            </properties>
-          </component>
-          <component id="59135" class="javax.swing.JButton" binding="backgroundToggleButton">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="off"/>
-            </properties>
-          </component>
-          <component id="2fe28" class="javax.swing.JButton" binding="backgroundSetPositionButton">
-            <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="S"/>
+              <text value="Select"/>
             </properties>
           </component>
-          <component id="2351b" class="javax.swing.JButton" binding="backgroundLockButton">
+          <component id="9695a" class="javax.swing.JCheckBox" binding="backgroundToggleButton">
             <constraints>
-              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="L"/>
+              <enabled value="false"/>
+              <text value="Show"/>
+            </properties>
+          </component>
+          <component id="4eaa1" class="javax.swing.JCheckBox" binding="backgroundLockButton">
+            <constraints>
+              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false">
+                <preferred-size width="46" height="21"/>
+              </grid>
+            </constraints>
+            <properties>
+              <enabled value="false"/>
+              <text value="Lock"/>
             </properties>
           </component>
           <component id="e6eaa" class="javax.swing.JButton" binding="senbun_yoke_henkanButton">
             <constraints>
-              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <icon value="ppp/senbun_yoke_henkan.png"/>
+            </properties>
+          </component>
+          <component id="a387" class="javax.swing.JButton" binding="backgroundTrimButton">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <enabled value="false"/>
+              <text value="Trim"/>
+            </properties>
+          </component>
+          <component id="87968" class="javax.swing.JButton" binding="transparentButton">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Transparent"/>
+            </properties>
+          </component>
+          <component id="2fe28" class="javax.swing.JButton" binding="backgroundSetPositionButton">
+            <constraints>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="S"/>
             </properties>
           </component>
         </children>
       </grid>
       <hspacer id="7449a">
         <constraints>
-          <grid row="0" column="12" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="10" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
       <hspacer id="8e1bf">
