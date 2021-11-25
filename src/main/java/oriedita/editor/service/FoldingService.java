@@ -63,11 +63,13 @@ public class FoldingService {
 
     public void fold(FoldType foldType, FoldedFigure.EstimationOrder estimationOrder) {
         if (foldType == FoldType.NOTHING_0) {
-            System.out.println(" oritatame 20180108");
-        } else if ((foldType == FoldType.FOR_ALL_LINES_1) || (foldType == FoldType.FOR_SELECTED_LINES_2)) {
-            if (foldType == FoldType.FOR_ALL_LINES_1) {
+            System.out.println("fold_nothing oritatame 20180108");
+        } else if ((foldType == FoldType.FOR_ALL_CONNECTED_LINES_1) || (foldType == FoldType.FOR_SELECTED_LINES_2)) {
+            if (foldType == FoldType.FOR_ALL_CONNECTED_LINES_1) {
                 Point cpPivot = this.mainCreasePatternWorker.getCameraPosition();
                 mainCreasePatternWorker.selectConnected(this.mainCreasePatternWorker.foldLineSet.closestPoint(cpPivot));
+                // replace currently selected model if not using selection to fold
+                foldedFiguresList.removeElement(foldedFiguresList.getSelectedItem());
             }
             //
             if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
@@ -110,7 +112,7 @@ public class FoldingService {
         System.out.println("foldedFigures.size() = " + foldedFiguresList.getSize() + "    : foldedFigureIndex = " + foldedFiguresList.getIndexOf(foldedFiguresList.getSelectedItem()) + "    : mainDrawingWorker.get_orisensuu_for_select_oritatami() = " + foldLineTotalForSelectFolding);
         if (foldedFiguresList.getSize() == 0) {                        //折り上がり系図無し
             if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
-                foldType = FoldType.FOR_ALL_LINES_1;//全展開図で折畳み
+                foldType = FoldType.FOR_ALL_CONNECTED_LINES_1;//全展開図で折畳み
             } else {        //折り線選択有り
                 foldType = FoldType.FOR_SELECTED_LINES_2;//選択された展開図で折畳み
             }
@@ -123,7 +125,7 @@ public class FoldingService {
                 }
             } else {                        //折り上がり系図指定
                 if (foldLineTotalForSelectFolding == 0) {        //No fold line selection
-                    foldType = FoldType.FOR_ALL_LINES_1;//Fold with the specified fold-up genealogy
+                    foldType = FoldType.FOR_ALL_CONNECTED_LINES_1;//Fold with the specified fold-up genealogy
                 } else {        //With fold line selection
                     foldType = FoldType.FOR_SELECTED_LINES_2;//Fold in selected crease pattern
                 }
@@ -174,7 +176,7 @@ public class FoldingService {
 
     public enum FoldType {
         NOTHING_0,
-        FOR_ALL_LINES_1,
+        FOR_ALL_CONNECTED_LINES_1,
         FOR_SELECTED_LINES_2,
         CHANGING_FOLDED_3,
     }
