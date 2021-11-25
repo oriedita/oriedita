@@ -27,7 +27,7 @@ public class TwoColoredTask implements Runnable{
     public void run() {
         long start = System.currentTimeMillis();
 
-        FoldedFigure_Drawer selectedFigure = foldingService.folding_prepare();
+        FoldedFigure_Drawer selectedFigure = foldingService.initFoldedFigure();
 
         try {
             selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;

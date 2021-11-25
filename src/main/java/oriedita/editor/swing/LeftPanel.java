@@ -526,7 +526,7 @@ public class LeftPanel {
             foldingService.createTwoColoredCp();
         });
         suitei_01Button.addActionListener(e -> {
-            foldingService.fold(foldingService.getFoldType(), FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
+            foldingService.fold(FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
             if (!applicationModel.getSelectPersistent()) {
                 mainCreasePatternWorker.unselect_all();
             }
@@ -539,13 +539,13 @@ public class LeftPanel {
             }
         });
         suitei_02Button.addActionListener(e -> {
-            foldingService.fold(foldingService.getFoldType(), FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
+            foldingService.fold(FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
             if (!applicationModel.getSelectPersistent()) {
                 mainCreasePatternWorker.unselect_all();
             }
         });
         suitei_03Button.addActionListener(e -> {
-            foldingService.fold(foldingService.getFoldType(), FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
+            foldingService.fold(FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
 
             if (!applicationModel.getSelectPersistent()) {
                 mainCreasePatternWorker.unselect_all();
