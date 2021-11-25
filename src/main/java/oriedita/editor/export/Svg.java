@@ -1,7 +1,14 @@
 package oriedita.editor.export;
 
+import oriedita.editor.canvas.LineStyle;
+import oriedita.editor.databinding.FoldedFiguresList;
+import oriedita.editor.drawing.FoldedFigure_Drawer;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.tools.StringOp;
+import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.PointSet;
+import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -10,11 +17,6 @@ import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.FoldedFigure;
 import origami.folding.element.SubFace;
 import origami.folding.util.SortingBox;
-import oriedita.editor.canvas.LineStyle;
-import oriedita.editor.databinding.FoldedFiguresList;
-import oriedita.editor.drawing.FoldedFigure_Drawer;
-import oriedita.editor.drawing.tools.Camera;
-import oriedita.tools.StringOp;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -324,22 +326,8 @@ public class Svg {
         for (int i = 1; i <= foldLineSet.getTotal(); i++) {
             LineSegment s = foldLineSet.get(i);
             LineColor color = s.getColor();
-            switch (color) {
-                case BLACK_0:
-                    str_stroke = "black";
-                    break;
-                case RED_1:
-                    str_stroke = "red";
-                    break;
-                case BLUE_2:
-                    str_stroke = "blue";
-                    break;
-                case CYAN_3:
-                    str_stroke = "#64c8c8";
-                    break;
-                default:
-                    continue;
-            }
+            str_stroke = getStrokeColor(color);
+            if (str_stroke == null) continue;
 
             if (lineStyle == LineStyle.BLACK_TWO_DOT || lineStyle == LineStyle.BLACK_ONE_DOT) {
                 str_stroke = "black";
@@ -406,39 +394,76 @@ public class Svg {
                     " stroke=\"" + str_stroke + "\"" +
                     " stroke-width=\"" + str_strokewidth + "\"" + " />");
 
-            if (pointSize != 0) {
-                if (fCreasePatternLineWidth < 2.0f) {
-                    //Draw a black square at the vertex
 
-                    pw.println("<rect style=\"fill:#000000;stroke:none\"" +
-                            " width=\"" + 2.0 * (double) pointSize + "\"" +
-                            " height=\"" + 2.0 * (double) pointSize + "\"" +
-                            " x=\"" + (x1 - (double) pointSize) + "\"" +
-                            " y=\"" + (y1 - (double) pointSize) + "\"" +
-                            " />");
+            drawVertex(pw, fCreasePatternLineWidth, pointSize, x1, y1);
+            drawVertex(pw, fCreasePatternLineWidth, pointSize, x2, y2);
+        }
 
-                    pw.println("<rect style=\"fill:#000000;stroke:none\"" +
-                            " width=\"" + 2.0 * (double) pointSize + "\"" +
-                            " height=\"" + 2.0 * (double) pointSize + "\"" +
-                            " x=\"" + (x2 - (double) pointSize) + "\"" +
-                            " y=\"" + (y2 - (double) pointSize) + "\"" +
-                            " />");
-                } else {
-                    //  Thick line
-                    double d_width = (double) fCreasePatternLineWidth / 2.0 + (double) pointSize;
+        for (Circle c : foldLineSet.getCircles()) {
+            LineColor color = c.getColor();
+            str_stroke = getStrokeColor(color);
+            if (c.getCustomized() == 1) {
+                str_stroke = StringOp.toHtmlColor(c.getCustomizedColor());
+            }
+            if (str_stroke == null) continue;
+            Circle c_tv = camera.object2TV(c);
+            double x1 = c_tv.getX();
+            double y1 = c_tv.getY();
 
-                    pw.println("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
-                            " r=\"" + d_width + "\"" +
-                            " cx=\"" + x1 + "\"" +
-                            " cy=\"" + y1 + "\"" +
-                            " />");
+            if (Epsilon.high.eq0(c.getR())) {
+                // Draw a vertex
+                drawVertex(pw, fCreasePatternLineWidth, pointSize, x1, y1);
+            } else {
+                // Draw a circle
+                drawVertex(pw, fCreasePatternLineWidth, pointSize, x1, y1);
+                pw.println("<circle style=\"fill:none;stroke:" + str_stroke + ";stroke-width:1\"" +
+                        " r=\"" + c_tv.getR() + "\"" +
+                        " cx=\"" + x1 + "\"" +
+                        " cy=\"" + y1 + "\"" +
+                        " />");
+            }
+        }
+    }
 
-                    pw.println("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
-                            " r=\"" + d_width + "\"" +
-                            " cx=\"" + x2 + "\"" +
-                            " cy=\"" + y2 + "\"" +
-                            " />");
-                }
+    private static String getStrokeColor(LineColor color) {
+        switch (color) {
+            case BLACK_0:
+                return "black";
+            case RED_1:
+                return "red";
+            case BLUE_2:
+                return "blue";
+            case CYAN_3:
+                return "#64c8c8";
+            case YELLOW_7:
+                return "yellow";
+            case ORANGE_4:
+                return "orange";
+            default:
+                return null;
+        }
+    }
+
+    private static void drawVertex(PrintWriter pw, float fCreasePatternLineWidth, int pointSize, double x1, double y1) {
+        if (pointSize != 0) {
+            if (fCreasePatternLineWidth < 2.0f) {
+                //Draw a black square at the vertex
+
+                pw.println("<rect style=\"fill:#000000;stroke:none\"" +
+                        " width=\"" + 2.0 * (double) pointSize + "\"" +
+                        " height=\"" + 2.0 * (double) pointSize + "\"" +
+                        " x=\"" + (x1 - (double) pointSize) + "\"" +
+                        " y=\"" + (y1 - (double) pointSize) + "\"" +
+                        " />");
+            } else {
+                //  Thick line
+                double d_width = (double) fCreasePatternLineWidth / 2.0 + (double) pointSize;
+
+                pw.println("<circle style=\"fill:#ffffff;stroke:#000000;stroke-width:1\"" +
+                        " r=\"" + d_width + "\"" +
+                        " cx=\"" + x1 + "\"" +
+                        " cy=\"" + y1 + "\"" +
+                        " />");
             }
         }
     }
