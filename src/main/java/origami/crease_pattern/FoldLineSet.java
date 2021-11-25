@@ -2189,126 +2189,119 @@ public class FoldLineSet {
         return p_return;
     }
 
-    public void del_V(int i, int j) {//Erasing when two fold lines are the same color and there are no end points for other fold lines
-        LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(get(i), get(j), Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);
+    public LineSegment del_V(LineSegment si, LineSegment sj) {//Erasing when two fold lines are the same color and there are no end points for other fold lines
+        LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(si, sj, Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);
 
-        LineSegment si = lineSegments.get(i);
-        LineSegment sj = lineSegments.get(j);
-
-        LineSegment addLine = new LineSegment();
-        int i_ten = 0;
+        LineSegment addLine = null;
         if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323) {
-            addLine.set(si.getB(), sj.getB());
-            i_ten = vertex_surrounding_lineCount(si.getA(), Epsilon.UNKNOWN_1EN5);
+            addLine = new LineSegment(si.getB(), sj.getB());
         }
         if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_START_OF_S1_INTERSECTS_END_OF_S2_333) {
-            addLine.set(si.getB(), sj.getA());
-            i_ten = vertex_surrounding_lineCount(si.getA(), Epsilon.UNKNOWN_1EN5);
+            addLine = new LineSegment(si.getB(), sj.getA());
         }
         if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_END_OF_S1_INTERSECTS_START_OF_S2_343) {
-            addLine.set(si.getA(), sj.getB());
-            i_ten = vertex_surrounding_lineCount(si.getB(), Epsilon.UNKNOWN_1EN5);
+            addLine = new LineSegment(si.getA(), sj.getB());
         }
         if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_END_OF_S1_INTERSECTS_END_OF_S2_353) {
-            addLine.set(si.getA(), sj.getA());
-            i_ten = vertex_surrounding_lineCount(si.getB(), Epsilon.UNKNOWN_1EN5);
+            addLine = new LineSegment(si.getA(), sj.getA());
+        }
+        if (addLine == null) return null;
+
+        LineColor i_c = LineColor.BLACK_0;
+        LineColor siColor = si.getColor();
+        LineColor sjColor = sj.getColor();
+        switch (siColor) {
+            case BLACK_0:
+                switch (sjColor) {
+                    case BLACK_0:
+                    case RED_1:
+                    case BLUE_2:
+                        i_c = sjColor;
+                        break;
+                    case CYAN_3:
+                        return null;
+                }
+                break;
+            case RED_1:
+                switch (sjColor) {
+                    case BLACK_0:
+                        i_c = LineColor.RED_1;
+                        break;
+                    case RED_1:
+                        i_c = LineColor.RED_1;
+                        break;
+                    case BLUE_2:
+                        i_c = LineColor.BLACK_0;
+                        break;
+                    case CYAN_3:
+                        return null;
+                }
+                break;
+            case BLUE_2:
+                switch (sjColor) {
+                    case BLACK_0:
+                        i_c = LineColor.BLUE_2;
+                        break;
+                    case RED_1:
+                        i_c = LineColor.BLACK_0;
+                        break;
+                    case BLUE_2:
+                        i_c = LineColor.BLUE_2;
+                        break;
+                    case CYAN_3:
+                        return null;
+                }
+                break;
+            case CYAN_3:
+                switch (sjColor) {
+                    case BLACK_0:
+                    case BLUE_2:
+                    case RED_1:
+                        return null;
+                    case CYAN_3:
+                        i_c = LineColor.CYAN_3;
+                        break;
+                }
+                break;
         }
 
-        if (i_ten == 2) {
-            LineColor i_c = LineColor.BLACK_0;
-            LineColor siColor = si.getColor();
-            LineColor sjColor = sj.getColor();
-            switch (siColor) {
-                case BLACK_0:
-                    switch (sjColor) {
-                        case BLACK_0:
-                            i_c = LineColor.BLACK_0;
-                            break;
-                        case RED_1:
-                            i_c = LineColor.RED_1;
-                            break;
-                        case BLUE_2:
-                            i_c = LineColor.BLUE_2;
-                            break;
-                        case CYAN_3:
-                            return;
-                    }
-                    break;
-                case RED_1:
-                    switch (sjColor) {
-                        case BLACK_0:
-                            i_c = LineColor.RED_1;
-                            break;
-                        case RED_1:
-                            i_c = LineColor.RED_1;
-                            break;
-                        case BLUE_2:
-                            i_c = LineColor.BLACK_0;
-                            break;
-                        case CYAN_3:
-                            return;
-                    }
-                    break;
-                case BLUE_2:
-                    switch (sjColor) {
-                        case BLACK_0:
-                            i_c = LineColor.BLUE_2;
-                            break;
-                        case RED_1:
-                            i_c = LineColor.BLACK_0;
-                            break;
-                        case BLUE_2:
-                            i_c = LineColor.BLUE_2;
-                            break;
-                        case CYAN_3:
-                            return;
-                    }
-                    break;
-                case CYAN_3:
-                    switch (sjColor) {
-                        case BLACK_0:
-                        case CYAN_3:
-                        case BLUE_2:
-                        case RED_1:
-                            return;
-                    }
-                    break;
-            }
-
-
-            deleteLine(j);
-            deleteLine(i);
-            addLine.setColor(i_c);
-            addLine(addLine);
-        }//p2,p1,p4 ixb_ixa,iya_iyb
-
+        deleteLine(si);
+        deleteLine(sj);
+        addLine.setColor(i_c);
+        addLine(addLine);
+        //p2,p1,p4 ixb_ixa,iya_iyb
+        return addLine;
     }
 
-    public void del_V_all() {
-        int total_old = total + 1;
-        while (total < total_old) {
-            total_old = total;
-            for (int i = 1; i <= total - 1; i++) {
-                for (int j = i + 1; j <= total; j++) {
-                    LineSegment si = lineSegments.get(i);
-                    LineSegment sj = lineSegments.get(j);
-                    if (si.getColor() == sj.getColor()) {//If the two are the same color, carry out
-                        if (si.getColor() != LineColor.CYAN_3) {//Auxiliary live line is not applicable
-                            del_V(i, j);
-                        }
+    public void del_V_all() throws InterruptedException {
+        PointLineMap map = new PointLineMap(lineSegments);
+        for(Point p : map.getPoints()) {
+            List<LineSegment> lines = map.getLines(p);
+            if(lines.size() == 2) {
+                LineSegment si = lines.get(0);
+                LineSegment sj = lines.get(1);
+                if (si.getColor() == sj.getColor() && si.getColor() != LineColor.CYAN_3) {
+                    LineSegment new_line = del_V(si, sj);
+                    if(new_line != null) {
+                        map.replaceLine(si, new_line);
+                        map.replaceLine(sj, new_line);
                     }
                 }
             }
         }
     }
 
-    public void del_V_all_cc() {
-        int sousuu_old = total + 1;
-        while (total < sousuu_old) {
-            sousuu_old = total;
-            for (int i = 1; i <= total - 1; i++) {
-                for (int j = i + 1; j <= total; j++) {
-                    del_V(i, j);
+    public void del_V_all_cc() throws InterruptedException {
+        PointLineMap map = new PointLineMap(lineSegments);
+        for(Point p : map.getPoints()) {
+            List<LineSegment> lines = map.getLines(p);
+            if(lines.size() == 2) {
+                LineSegment si = lines.get(0);
+                LineSegment sj = lines.get(1);
+                LineSegment new_line = del_V(si, sj);
+                if(new_line != null) {
+                    map.replaceLine(si, new_line);
+                    map.replaceLine(sj, new_line);
                 }
             }
         }

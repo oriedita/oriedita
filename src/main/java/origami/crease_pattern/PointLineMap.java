@@ -12,7 +12,9 @@ import origami.data.quadTree.collector.PointCollector;
 
 /**
  * PointLineMap maps all {@link Point}s in a CP to the adjacent
- * {@link LineSegment}s.
+ * {@link LineSegment}s. Right now this object is constructed as needed, but in
+ * the future it would be much more efficient for {@link FoldLineSet} to
+ * maintain an instance of this map at all times.
  * 
  * @author Mu-Tsun Tsai
  */
@@ -57,5 +59,15 @@ public class PointLineMap {
 
     public List<LineSegment> getLines(Point p) {
         return Collections.unmodifiableList(map.get(p));
+    }
+
+    public void replaceLine(LineSegment oldLine, LineSegment newLine) {
+        replaceLine(oldLine.getA(), oldLine, newLine);
+        replaceLine(oldLine.getB(), oldLine, newLine);
+    }
+
+    private void replaceLine(Point p, LineSegment oldLine, LineSegment newLine) {
+        List<LineSegment> lines = map.get(p);
+        if (lines != null && lines.remove(oldLine)) lines.add(newLine);
     }
 }

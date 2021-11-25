@@ -783,20 +783,28 @@ public class CreasePattern_Worker {
     }
 
     public void v_del_all() {
-        int sousuu_old = foldLineSet.getTotal();
-        foldLineSet.del_V_all();
-        if (sousuu_old != foldLineSet.getTotal()) {
-            record();
+        try {
+            int sousuu_old = foldLineSet.getTotal();
+            foldLineSet.del_V_all();
+            if (sousuu_old != foldLineSet.getTotal()) {
+                record();
+            }
+        } catch (InterruptedException e) {
+            System.out.println("v_del_all aborted");
         }
     }
 
 //20201024高密度入力がオンならばapのrepaint（画面更新）のたびにTen kus_sisuu=new Ten(mainDrawingWorker.get_moyori_ten_sisuu(p_mouse_TV_iti));で最寄り点を求めているので、この描き職人内で別途最寄り点を求めていることは二度手間になっている。
 
     public void v_del_all_cc() {
-        int sousuu_old = foldLineSet.getTotal();
-        foldLineSet.del_V_all_cc();
-        if (sousuu_old != foldLineSet.getTotal()) {
-            record();
+        try {
+            int sousuu_old = foldLineSet.getTotal();
+            foldLineSet.del_V_all_cc();
+            if (sousuu_old != foldLineSet.getTotal()) {
+                record();
+            }
+        } catch (InterruptedException e) {
+            System.out.println("v_del_all_cc aborted");
         }
     }
 
