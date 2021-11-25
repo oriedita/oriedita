@@ -79,7 +79,7 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
 
             int new_sousuu = d.foldLineSet.getTotal();
 
-            d.foldLineSet.divideLineSegmentIntersections(1, old_sousuu, old_sousuu + 1, new_sousuu);
+            d.foldLineSet.divideLineSegmentWithNewLines(old_sousuu, new_sousuu);
 
             d.foldLineSet.unselect_all();
             d.record();

@@ -5,8 +5,10 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
 import origami.data.quadTree.QuadTree;
+import origami.data.quadTree.adapter.DivideAdapter;
 import origami.data.quadTree.adapter.LineSegmentListAdapter;
 import origami.data.quadTree.adapter.LineSegmentListEndPointAdapter;
+import origami.data.quadTree.collector.LineSegmentCollector;
 import origami.data.quadTree.collector.PointCollector;
 import origami.data.save.LineSegmentSave;
 import origami.folding.util.SortingBox;
@@ -438,7 +440,7 @@ public class FoldLineSet {
         }
         if (kawatteinai_kazu >= 1) {
             if (okikae_suu >= 1) {
-                divideLineSegmentIntersections(1, total - okikae_suu, total - okikae_suu + 1, total);
+                divideLineSegmentWithNewLines(total - okikae_suu, total);
             }
         }
 //上２行の場合わけが必要な理由は、kousabunkatu()をやってしまうと折線と補助活線との交点で折線が分割されるから。kousabunkatu(1,sousuu-okikae_suu,sousuu-okikae_suu+1,sousuu)だと折線は分割されない。
@@ -740,8 +742,15 @@ public class FoldLineSet {
     }
 
     //------------------zzzzzzzzz-------------------------------------------------------------------
-    //Divide the two line segments at the intersection of the two intersecting line segments. If there were two line segments that completely overlapped, both would remain without any processing.
-    public void divideLineSegmentIntersections(int originalStart, int originalEnd, int addedStart, int addedEnd) {//Crossing division when addedStart to addedEnd fold lines are added to the original originalStart to originalEnd fold lines
+    /**
+     * Divide the two line segments at the intersection of the two intersecting line
+     * segments. If there were two line segments that completely overlapped, both
+     * would remain without any processing.
+     * 
+     * Crossing division when originalEnd + 1 to addedEnd fold lines are added to
+     * the original 1 to originalEnd fold lines.
+     */
+    public void divideLineSegmentWithNewLines(int originalEnd, int addedEnd) {
         for (int i = 1; i <= total; i++) {
             setActive(i, LineSegment.ActiveState.INACTIVE_0);
         }//削除すべき線は iactive=100とする
@@ -751,59 +760,56 @@ public class FoldLineSet {
         for (int i = 0; i <= total + 100; i++) {
             k_flg.add(0);
         }//0は交差分割の対象外、１は元からあった折線、2は加える折線として交差分割される。3は削除すべきと判定された折線
-        for (int i = originalStart; i <= originalEnd; i++) {
+        for (int i = 1; i <= originalEnd; i++) {
             k_flg.set(i, 1);
         }//0 is not subject to cross-division, 1 is the original polygonal line, and 2 is the cross-division to be added.
-        for (int i = addedStart; i <= addedEnd; i++) {
+        for (int i = originalEnd + 1; i <= addedEnd; i++) {
             k_flg.set(i, 2);
         }//0は交差分割の対象外、１は元からあった折線、2は加える折線として交差分割される
-        for (int i = 1; i <= total; i++) {
+
+        // This QuadTree only stores the original lines for better performance.
+        QuadTree qt = new QuadTree(new DivideAdapter(lineSegments, originalEnd));
+
+        for (int i = originalEnd + 1; i <= total; i++) {
             if (k_flg.get(i) == 2) {//k_flg.set(i,new Integer(0));
-                for (int j = 1; j <= total; j++) {
-                    if (i != j) {
-                        if (k_flg.get(j) == 1) {
-                            LineSegment.Intersection itemp = divideIntersectionsFast(i, j);//i is the one to add (2), j is the original one (1)
-                            switch (itemp) {
-                                case INTERSECTS_1:
-                                    k_flg.add(2);//For some reason this is added as 0 instead of 2. 20161130
-
-                                    k_flg.add(1);
-                                    k_flg.set(total - 1, 2);//
-
-                                    k_flg.set(total, 1);
-                                    break;
-                                case INTERSECTS_AUX_2:
-                                case INTERSECT_T_A_211:
-                                case INTERSECT_T_B_221:
-                                    k_flg.add(2);//For some reason this is added as 0 instead of 2. 20161130
-
-                                    k_flg.set(total, 2);
-                                    break;
-                                case INTERSECTS_AUX_3:
-                                case INTERSECT_T_A_121:
-                                case INTERSECT_T_B_122:
-                                case PARALLEL_S2_INCLUDES_S1_363:
-                                case PARALLEL_S2_INCLUDES_S1_364:
-                                    k_flg.add(1);//For some reason this is added as 0 instead of 2. 20161130
-
-                                    k_flg.set(total, 1);
-                                    break;
-                                case PARALLEL_S1_INCLUDES_S2_361:
-                                case PARALLEL_S1_INCLUDES_S2_362:
-                                    k_flg.set(j, 0);//何もしなくてもいいかも//ori_s_temp.senbun_bunkatu(s1.getb());//p1とp3が一致、siにsjが含まれる。加える折線をkousa_tenで分割すること
-
-                                    k_flg.add(2);
-                                    k_flg.set(total, 2);
-                                    break;
-                                case PARALLEL_S1_END_OVERLAPS_S2_START_371:
-                                case PARALLEL_S1_START_OVERLAPS_S2_END_373:
-                                case PARALLEL_S1_END_OVERLAPS_S2_END_372:
-                                case PARALLEL_S1_START_OVERLAPS_S2_START_374:
-                                    k_flg.add(0);
-                                    k_flg.set(total, 0);
-                                    break;
-                            }
-                        }
+                for (int j : qt.collect(new LineSegmentCollector(lineSegments.get(i)))) {
+                    LineSegment.Intersection itemp = divideIntersectionsFast(i, j);//i is the one to add (2), j is the original one (1)
+                    switch (itemp) {
+                        case INTERSECTS_1:
+                            k_flg.add(2);
+                            k_flg.add(1);
+                            k_flg.set(total - 1, 2);
+                            k_flg.set(total, 1);
+                            qt.addIndex(total);
+                            break;
+                        case INTERSECTS_AUX_2:
+                        case INTERSECT_T_A_211:
+                        case INTERSECT_T_B_221:
+                            k_flg.add(2);
+                            k_flg.set(total, 2);
+                            break;
+                        case INTERSECTS_AUX_3:
+                        case INTERSECT_T_A_121:
+                        case INTERSECT_T_B_122:
+                        case PARALLEL_S2_INCLUDES_S1_363:
+                        case PARALLEL_S2_INCLUDES_S1_364:
+                            k_flg.add(1);
+                            k_flg.set(total, 1);
+                            qt.addIndex(total);
+                            break;
+                        case PARALLEL_S1_INCLUDES_S2_361:
+                        case PARALLEL_S1_INCLUDES_S2_362:
+                            k_flg.set(j, 0);
+                            k_flg.add(2);
+                            k_flg.set(total, 2);
+                            break;
+                        case PARALLEL_S1_END_OVERLAPS_S2_START_371:
+                        case PARALLEL_S1_START_OVERLAPS_S2_END_373:
+                        case PARALLEL_S1_END_OVERLAPS_S2_END_372:
+                        case PARALLEL_S1_START_OVERLAPS_S2_START_374:
+                            k_flg.add(0);
+                            k_flg.set(total, 0);
+                            break;
                     }
                 }
             }
@@ -2845,7 +2851,7 @@ public class FoldLineSet {
 
     public void fix2() {
         unselect_all();
-        QuadTree qt = new QuadTree(new LineSegmentListAdapter(lineSegments, 1));
+        QuadTree qt = new QuadTree(new LineSegmentListAdapter(lineSegments));
         for (int i = 1; i <= total - 1; i++) {
             LineSegment si = lineSegments.get(i);
             if (si.getColor() != LineColor.CYAN_3) {

@@ -226,7 +226,7 @@ public class CreasePattern_Worker {
         tempFoldLineSet.getSave(save);
         foldLineSet.addSave(save);
         int total_new = foldLineSet.getTotal();
-        foldLineSet.divideLineSegmentIntersections(1, total_old, total_old + 1, total_new);
+        foldLineSet.divideLineSegmentWithNewLines(total_old, total_new);
 
         foldLineSet.unselect_all();
         record();
@@ -236,7 +236,7 @@ public class CreasePattern_Worker {
         int total_old = foldLineSet.getTotal();
         foldLineSet.addSave(save1);
         int total_new = foldLineSet.getTotal();
-        foldLineSet.divideLineSegmentIntersections(1, total_old, total_old + 1, total_new);
+        foldLineSet.divideLineSegmentWithNewLines(total_old, total_new);
 
         foldLineSet.unselect_all();
         record();
@@ -619,7 +619,7 @@ public class CreasePattern_Worker {
         int total_old = foldLineSet.getTotal();
         foldLineSet.applyLineSegmentCircleIntersection(foldLineSet.getTotal(), foldLineSet.getTotal(), 0, foldLineSet.numCircles() - 1);
 
-        foldLineSet.divideLineSegmentIntersections(1, total_old - 1, total_old, total_old);
+        foldLineSet.divideLineSegmentWithNewLines(total_old - 1, total_old);
     }
 
     public Point getClosestPoint(Point t0) {

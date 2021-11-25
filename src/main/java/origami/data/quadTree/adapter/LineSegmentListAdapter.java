@@ -11,6 +11,10 @@ public class LineSegmentListAdapter implements QuadTreeAdapter {
     private final List<LineSegment> list;
     private final int offset;
 
+    public LineSegmentListAdapter(List<LineSegment> list) {
+        this(list, 1);
+    }
+
     public LineSegmentListAdapter(List<LineSegment> list, int offset) {
         this.list = list;
         this.offset = offset;
