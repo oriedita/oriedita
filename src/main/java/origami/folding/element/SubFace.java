@@ -263,12 +263,12 @@ public class SubFace {
         int a = FaceId2PermutationDigit(lc.getFaceId());
         for (Integer faceID : lc.getOverlapping()) {
             int b = FaceId2PermutationDigit(faceID);
-            if (lc.getType() == LayerOrderConstraint.Type.TOP) {
+            if (lc.getType() == LayerOrderConstraint.Type.BOTTOM) {
                 if (b < min && a < b) {
                     return b;
                 }
             }
-            if (lc.getType() == LayerOrderConstraint.Type.BOTTOM) {
+            if (lc.getType() == LayerOrderConstraint.Type.TOP) {
                 if (a < min && b < a) {
                     return a;
                 }
