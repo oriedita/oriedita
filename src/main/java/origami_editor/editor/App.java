@@ -25,8 +25,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
+import java.util.Map;
 import java.util.Queue;
-import java.util.*;
 
 import static origami_editor.tools.ResourceUtil.getAppDir;
 
@@ -403,6 +404,7 @@ public class App {
         canvas.addMouseModeHandler(new MouseHandlerBackgroundChangePosition(buttonService, backgroundModel, canvas));
         canvas.addMouseModeHandler(new MouseHandlerMoveCalculatedShape(foldedFiguresList, canvas));
         canvas.addMouseModeHandler(new MouseHandlerModifyCalculatedShape(foldingService, canvasModel, foldedFiguresList));
+        canvas.addMouseModeHandler(new MouseHandlerAddFoldingConstraints());
         canvas.addMouseModeHandler(new MouseHandlerMoveCreasePattern(canvas, foldedFiguresList, mainCreasePatternWorker));
         canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(foldedFiguresList, mainCreasePatternWorker));
 
