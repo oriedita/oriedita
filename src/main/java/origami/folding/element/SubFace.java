@@ -1,14 +1,15 @@
 package origami.folding.element;
 
-import java.util.*;
-
 import origami.folding.HierarchyList;
 import origami.folding.algorithm.AdditionalEstimationAlgorithm;
-import origami.folding.util.EquivalenceCondition;
+import origami.folding.constraint.LayerOrderConstraint;
 import origami.folding.permutation.ChainPermutationGenerator;
 import origami.folding.permutation.PermutationGenerator;
 import origami.folding.permutation.combination.CombinationGenerator;
+import origami.folding.util.EquivalenceCondition;
 import origami.folding.util.IBulletinBoard;
+
+import java.util.*;
 
 /**
  * This class folds the development view and estimates the overlap information
@@ -251,6 +252,30 @@ public class SubFace {
         return min;
     }
 
+    private int customConstraintsInconsistentDigitRequest(HierarchyList hierarchyList, int min) {
+        for (LayerOrderConstraint lc: hierarchyList.getCustomConstraints()) {
+            min = customConstraintInconsistentDigitRequest(lc, min);
+        }
+        return min;
+    }
+
+    private int customConstraintInconsistentDigitRequest(LayerOrderConstraint lc, int min) {
+        int a = FaceId2PermutationDigit(lc.getFaceId());
+        for (Integer faceID : lc.getOverlapping()) {
+            int b = FaceId2PermutationDigit(faceID);
+            if (lc.getType() == LayerOrderConstraint.Type.TOP) {
+                if (b < min && a < b) {
+                    return b;
+                }
+            }
+            if (lc.getType() == LayerOrderConstraint.Type.BOTTOM) {
+                if (a < min && b < a) {
+                    return a;
+                }
+            }
+        }
+        return min;
+    }
 
     // Check from the top surface to find out at what number the two surfaces that share a part of the boundary line and the penetration conditions of the two surfaces are inconsistent.
     // At this time, hierarchyList does not change. This SubFace returns 1000 if there is no contradiction.
@@ -270,6 +295,7 @@ public class SubFace {
         return min;
     }
 
+
     private int u_penetration_inconsistent_digits_request(HierarchyList hierarchyList, int min) {
         for (EquivalenceCondition ec : uEquivalenceConditions) {
             min = u_penetration_inconsistent_digits_request(ec, min);
@@ -284,8 +310,11 @@ public class SubFace {
         min = overlapping_inconsistent_digits_request(hierarchyList);
         min = penetration_inconsistent_digits_request(hierarchyList, min);
         min = u_penetration_inconsistent_digits_request(hierarchyList, min);
+        min = customConstraintsInconsistentDigitRequest(hierarchyList, min);
         return min;
     }
+
+
 
     // Enter the information due to the overlap of SubFace's faces in the upper and lower tables
     public void enterStackingOfSubFace(AdditionalEstimationAlgorithm AEA) {

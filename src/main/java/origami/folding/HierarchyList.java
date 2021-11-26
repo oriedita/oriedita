@@ -1,9 +1,12 @@
 package origami.folding;
 
 import origami.data.symmetricMatrix.SymmetricMatrix;
+import origami.folding.constraint.LayerOrderConstraint;
 import origami.folding.util.EquivalenceCondition;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class HierarchyList {//This class is used to record and utilize the hierarchical relationship of faces when folded.
@@ -23,6 +26,7 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     SymmetricMatrix hierarchyList_copy;
     List<EquivalenceCondition> tL = new LinkedList<>(); // We need LinkedList here for fast removal
     Queue<EquivalenceCondition> uL = new ConcurrentLinkedQueue<>();
+    Queue<LayerOrderConstraint> customConstraints = new ConcurrentLinkedQueue<>();
 
     public HierarchyList() {
         reset();
@@ -89,6 +93,18 @@ public class HierarchyList {//This class is used to record and utilize the hiera
 
     public Iterable<EquivalenceCondition> getUEquivalenceConditions() {
         return uL;
+    }
+
+    public int getCustomConstraintsTotal() {
+        return customConstraints.size();
+    }
+
+    public Iterable<LayerOrderConstraint> getCustomConstraints() {
+        return customConstraints;
+    }
+
+    public void addCustomConstraint(LayerOrderConstraint constraint) {
+        customConstraints.add(constraint);
     }
 
     // Add equivalence condition. There are two adjacent faces im1 and im2 as the boundary of the bar ib,
