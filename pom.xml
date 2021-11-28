@@ -120,6 +120,12 @@
             <artifactId>lwjgl-tinyfd</artifactId>
             <classifier>natives-windows</classifier>
         </dependency>
+        <dependency>
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
+            <version>1.5.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <properties>
@@ -147,6 +153,8 @@
                             <version>${dagger.version}</version>
                         </path>
                     </annotationProcessorPaths>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             <plugin>

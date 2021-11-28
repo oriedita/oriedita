@@ -10,10 +10,7 @@ import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
-import oriedita.editor.export.Cp;
-import oriedita.editor.export.Obj;
-import oriedita.editor.export.Orh;
-import oriedita.editor.export.Svg;
+import oriedita.editor.export.*;
 import oriedita.editor.json.DefaultObjectMapper;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveV1;
@@ -180,6 +177,12 @@ public class FileSaveService {
             Cp.exportFile(mainCreasePatternWorker.getSave_for_export(), exportFile);
         } else if (exportFile.getName().endsWith(".orh")) {
             Orh.exportFile(mainCreasePatternWorker.getSave_for_export_with_applicationModel(), exportFile);
+        } else if (exportFile.getName().endsWith(".fold")) {
+            try {
+                Fold.exportFile(mainCreasePatternWorker.getForFolding(), exportFile);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -279,7 +282,7 @@ public class FileSaveService {
     }
 
     public File selectImportFile() {
-        String fileName = openFileDialog(frame, "Import...", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp", "*.orh"}, "Supported files (.ori, .cp, .orh)");
+        String fileName = openFileDialog(frame, "Import...", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp", "*.orh", "*.fold"}, "Supported files (.ori, .cp, .orh, .fold)");
 
         if (fileName == null) {
             return null;
@@ -343,6 +346,10 @@ public class FileSaveService {
 
             if (file.getName().endsWith(".obj")) {
                 save = Obj.importFile(file);
+            }
+
+            if (file.getName().endsWith(".fold")) {
+                save = Fold.importFile(file);
             }
 
             if (file.getName().endsWith(".cp")) {
