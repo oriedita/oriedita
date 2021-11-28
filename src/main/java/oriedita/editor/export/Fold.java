@@ -122,7 +122,6 @@ public class Fold {
         FoldEdgeAssignment[] edgeAssignments = new FoldEdgeAssignment[pointSet.getNumLines()];
         int[][] edgeVertices = new int[pointSet.getNumLines()][];
         double[][] verticesCoords = new double[pointSet.getNumPoints()][];
-        int[][] faceEdges = new int[pointSet.getNumFaces()][];
         int[][] faceVertices = new int[pointSet.getNumFaces()][];
 
         double[] edgesFoldAngles = new double[pointSet.getNumLines()];
