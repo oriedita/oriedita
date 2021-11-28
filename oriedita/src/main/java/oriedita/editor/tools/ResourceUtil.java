@@ -96,6 +96,10 @@ public class ResourceUtil {
         return null;
     }
 
+    public static ResourceBundle getDefaultBundle(String bundle) {
+        return ResourceBundle.getBundle(bundle);
+    }
+
     public static void updateBundleKey(String bundleName, String key, String value) {
         try {
             Path bundleLocation = getAppDir().resolve(bundleName + ".properties");
