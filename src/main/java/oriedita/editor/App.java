@@ -18,10 +18,9 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.List;
 import java.awt.event.*;
-import java.util.ArrayDeque;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 @Singleton
 public class App {
@@ -170,7 +169,12 @@ public class App {
         canvas.creasePatternCamera.setDisplayPositionX(350.0);
         canvas.creasePatternCamera.setDisplayPositionY(350.0);
 
-        frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("fishbase.png")));
+        java.util.List<Image> icons = new ArrayList<>();
+        icons.add(getImage("icon/oriedita-16x16.png"));
+        icons.add(getImage("icon/oriedita-24x24.png"));
+        icons.add(getImage("icon/oriedita-32x32.png"));
+        icons.add(getImage("icon/oriedita-256x256.png"));
+        frame.setIconImages(icons);
         frame.setContentPane(editor.$$$getRootComponent$$$());
 
         frame.setJMenuBar(appMenuBar);
@@ -234,5 +238,9 @@ public class App {
         explanation.setVisible(applicationModel.getHelpVisible());
         //focus back to here after creating dialog
         frame.requestFocus();
+    }
+
+    private Image getImage(String loc) {
+        return new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource(loc))).getImage();
     }
 }
