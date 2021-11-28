@@ -42,10 +42,6 @@
     <orderEntry type="library" name="Maven: org.lwjgl:lwjgl:3.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl:lwjgl-tinyfd:3.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl:lwjgl:natives-windows:3.3.0" level="project" />
-    <orderEntry type="library" name="Maven: org.lwjgl:lwjgl:natives-macos:3.3.0" level="project" />
-    <orderEntry type="library" name="Maven: org.lwjgl:lwjgl:natives-linux:3.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.lwjgl:lwjgl-tinyfd:natives-windows:3.3.0" level="project" />
-    <orderEntry type="library" name="Maven: org.lwjgl:lwjgl-tinyfd:natives-macos:3.3.0" level="project" />
-    <orderEntry type="library" name="Maven: org.lwjgl:lwjgl-tinyfd:natives-linux:3.3.0" level="project" />
   </component>
 </module>
