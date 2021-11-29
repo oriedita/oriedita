@@ -8,6 +8,7 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.HierarchyList;
+import origami.folding.constraint.CustomConstraint;
 import origami_editor.editor.Colors;
 import origami_editor.editor.canvas.DrawingUtil;
 import origami_editor.editor.databinding.ApplicationModel;
@@ -381,6 +382,19 @@ public class FoldedFigure_Worker_Drawer {
             if (drawing_flag) {//棒を描く。
                 drawLine(g2, camera, subFace_figure, ib);
             }
+        }
+
+        for (CustomConstraint cc : worker.hierarchyList.getCustomConstraints()) {
+            Point pos = camera.object2TV(cc.getPos());
+            g2.setColor(L_color);
+            g2.setStroke(new BasicStroke(1));
+            g2.drawOval((int) pos.getX()-3, (int) pos.getY()-3, 6, 6);
+            if (cc.isInverted()) {
+                g2.setPaint(B_color);
+            } else {
+                g2.setPaint(F_color);
+            }
+            g2.fillOval((int) pos.getX()-2, (int) pos.getY()-2, 4, 4);
         }
     }
 

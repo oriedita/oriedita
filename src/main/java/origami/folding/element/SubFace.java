@@ -2,7 +2,7 @@ package origami.folding.element;
 
 import origami.folding.HierarchyList;
 import origami.folding.algorithm.AdditionalEstimationAlgorithm;
-import origami.folding.constraint.LayerOrderConstraint;
+import origami.folding.constraint.CustomConstraint;
 import origami.folding.permutation.ChainPermutationGenerator;
 import origami.folding.permutation.PermutationGenerator;
 import origami.folding.permutation.combination.CombinationGenerator;
@@ -253,28 +253,45 @@ public class SubFace {
     }
 
     private int customConstraintsInconsistentDigitRequest(HierarchyList hierarchyList, int min) {
-        for (LayerOrderConstraint lc: hierarchyList.getCustomConstraints()) {
+        for (CustomConstraint lc: hierarchyList.getCustomConstraints()) {
             min = customConstraintInconsistentDigitRequest(lc, min);
         }
         return min;
     }
 
-    private int customConstraintInconsistentDigitRequest(LayerOrderConstraint lc, int min) {
-        int a = FaceId2PermutationDigit(lc.getFaceId());
-        for (Integer faceID : lc.getOverlapping()) {
-            int b = FaceId2PermutationDigit(faceID);
-            if (lc.getType() == LayerOrderConstraint.Type.BOTTOM) {
-                if (b < min && a < b) {
-                    return b;
+    private int customConstraintInconsistentDigitRequest(CustomConstraint lc, int min) {
+        List<Integer> mins = new ArrayList<>();
+        for (Integer x : lc.getBottom()) {
+            int a = FaceId2PermutationDigit(x);
+            int min2 = min;
+            for (Integer faceID : lc.getTop()) {
+                int b = FaceId2PermutationDigit(faceID);
+                if (lc.getFaceOrder() == CustomConstraint.FaceOrder.FLIPPED) {
+                    if (b < min2 && a < b) {
+                        min2 = b;
+                        break;
+                    }
+                }
+                if (lc.getFaceOrder() == CustomConstraint.FaceOrder.NORMAL) {
+                    if (a < min2 && b < a) {
+                        min2 = a;
+                        break;
+                    }
                 }
             }
-            if (lc.getType() == LayerOrderConstraint.Type.TOP) {
-                if (a < min && b < a) {
-                    return a;
-                }
+            mins.add(min2);
+        }
+        int maxMin = 0;
+        int minMin = min;
+        for (Integer m : mins) {
+            if (m > maxMin) {
+                maxMin = m;
+            }
+            if (m < minMin) {
+                minMin = min;
             }
         }
-        return min;
+        return Math.min(maxMin, min);
     }
 
     // Check from the top surface to find out at what number the two surfaces that share a part of the boundary line and the penetration conditions of the two surfaces are inconsistent.

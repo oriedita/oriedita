@@ -503,7 +503,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
                 case MouseEvent.BUTTON3:
                     mainCreasePatternWorker.setCamera(creasePatternCamera);
-                    System.out.println("delet");
                     mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseDragged(p, e);
             }
 

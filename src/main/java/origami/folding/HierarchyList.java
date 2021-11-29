@@ -1,7 +1,7 @@
 package origami.folding;
 
 import origami.data.symmetricMatrix.SymmetricMatrix;
-import origami.folding.constraint.LayerOrderConstraint;
+import origami.folding.constraint.CustomConstraint;
 import origami.folding.util.EquivalenceCondition;
 
 import java.util.LinkedList;
@@ -26,7 +26,7 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     SymmetricMatrix hierarchyList_copy;
     List<EquivalenceCondition> tL = new LinkedList<>(); // We need LinkedList here for fast removal
     Queue<EquivalenceCondition> uL = new ConcurrentLinkedQueue<>();
-    Queue<LayerOrderConstraint> customConstraints = new ConcurrentLinkedQueue<>();
+    Queue<CustomConstraint> customConstraints = new ConcurrentLinkedQueue<>();
 
     public HierarchyList() {
         reset();
@@ -99,11 +99,11 @@ public class HierarchyList {//This class is used to record and utilize the hiera
         return customConstraints.size();
     }
 
-    public Iterable<LayerOrderConstraint> getCustomConstraints() {
+    public Iterable<CustomConstraint> getCustomConstraints() {
         return customConstraints;
     }
 
-    public void addCustomConstraint(LayerOrderConstraint constraint) {
+    public void addCustomConstraint(CustomConstraint constraint) {
         customConstraints.add(constraint);
     }
 
@@ -128,5 +128,9 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     public boolean isEmpty(int i, int j) {
         int value = hierarchyList.get(i, j);
         return value == EMPTY_N100 || value == UNKNOWN_N50;
+    }
+
+    public void removeCustomConstraint(CustomConstraint cons) {
+        customConstraints.remove(cons);
     }
 }
