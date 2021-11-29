@@ -6,6 +6,7 @@ import origami.crease_pattern.element.*;
 import origami_editor.editor.MouseMode;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,11 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.VORONOI_CREATE_62;
+    }
+
+    @Override
+    public EnumSet<Feature> getSubscribedFeatures() {
+        return EnumSet.of(Feature.BUTTON_1, Feature.BUTTON_3);
     }
 
     //Function to operate the mouse (mouseMode == 62 Voronoi when the mouse is moved)

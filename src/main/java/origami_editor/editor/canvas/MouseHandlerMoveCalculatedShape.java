@@ -6,6 +6,7 @@ import origami_editor.editor.MouseMode;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 
 import javax.swing.*;
+import java.util.EnumSet;
 
 public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
     private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
@@ -14,6 +15,11 @@ public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
     public MouseHandlerMoveCalculatedShape(DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList, Canvas canvas) {
         this.foldedFiguresList = foldedFiguresList;
         this.canvas = canvas;
+    }
+
+    @Override
+    public EnumSet<Feature> getSubscribedFeatures() {
+        return EnumSet.of(Feature.BUTTON_1);
     }
 
     @Override

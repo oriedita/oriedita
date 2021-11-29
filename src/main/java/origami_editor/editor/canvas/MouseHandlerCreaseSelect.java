@@ -5,6 +5,9 @@ import origami.crease_pattern.element.Point;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.databinding.CanvasModel;
 
+import java.awt.event.MouseEvent;
+import java.util.EnumSet;
+
 public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     private final MouseHandlerCreaseMove4p mouseHandlerCreaseMove4p;
     private final MouseHandlerCreaseCopy4p mouseHandlerCreaseCopy4p;
@@ -33,6 +36,16 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CREASE_SELECT_19;
+    }
+
+    @Override
+    public EnumSet<Feature> getSubscribedFeatures() {
+        return EnumSet.of(Feature.BUTTON_1);
+    }
+
+    @Override
+    public boolean accepts(MouseEvent e, int mouseButton) {
+        return super.accepts(e, mouseButton) && e.getClickCount() != 3;
     }
 
     @Override

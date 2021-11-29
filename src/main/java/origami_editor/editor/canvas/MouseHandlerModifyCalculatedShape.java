@@ -3,13 +3,14 @@ package origami_editor.editor.canvas;
 import origami.Epsilon;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.element.Point;
-import origami_editor.editor.MouseMode;
 import origami.folding.FoldedFigure;
+import origami_editor.editor.MouseMode;
 import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 import origami_editor.editor.service.FoldingService;
 
 import javax.swing.*;
+import java.util.EnumSet;
 
 public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
     private final FoldingService foldingService;
@@ -26,6 +27,11 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
         this.foldingService = foldingService;
         this.canvasModel = canvasModel;
         this.foldedFiguresList = foldedFiguresList;
+    }
+
+    @Override
+    public EnumSet<Feature> getSubscribedFeatures() {
+        return EnumSet.of(Feature.BUTTON_1);
     }
 
     @Override

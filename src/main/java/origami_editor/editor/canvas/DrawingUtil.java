@@ -1,10 +1,10 @@
 package origami_editor.editor.canvas;
 
+import origami.Epsilon;
+import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
-import origami.Epsilon;
-import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami_editor.editor.Colors;
 import origami_editor.editor.LineStyle;

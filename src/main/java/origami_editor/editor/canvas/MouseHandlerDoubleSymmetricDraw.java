@@ -54,10 +54,8 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
                     for (int i = 1; i <= imax; i++) {
                         LineSegment s = d.foldLineSet.get(i);
                         LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersectionSweet(s, d.lineStep.get(0), Epsilon.UNKNOWN_001, Epsilon.UNKNOWN_001);
-                        boolean i_jikkou = false;
-                        if (i_lineSegment_intersection_decision == LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25) {
-                            i_jikkou = true;
-                        }//T字型 s1が縦棒
+                        boolean i_jikkou = i_lineSegment_intersection_decision == LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25;
+                        //T字型 s1が縦棒
                         if (i_lineSegment_intersection_decision == LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26) {
                             i_jikkou = true;
                         }//T字型 s1が縦棒

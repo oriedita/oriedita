@@ -5,9 +5,9 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami_editor.editor.MouseMode;
 import origami.folding.util.SortingBox;
 import origami.folding.util.WeightedValue;
+import origami_editor.editor.MouseMode;
 
 public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestricted {
     CreasePattern_Worker.FourPointStep i_step_for_copy_4p = CreasePattern_Worker.FourPointStep.STEP_0;

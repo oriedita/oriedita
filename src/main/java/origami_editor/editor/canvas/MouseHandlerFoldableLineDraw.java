@@ -4,9 +4,9 @@ import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami_editor.editor.MouseMode;
 import origami.folding.util.SortingBox;
 import origami.folding.util.WeightedValue;
+import origami_editor.editor.MouseMode;
 
 public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
     private final MouseHandlerDrawCreaseFree mouseHandlerDrawCreaseFree = new MouseHandlerDrawCreaseFree();

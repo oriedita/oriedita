@@ -1,15 +1,14 @@
 package origami_editor.editor;
 
 import origami.crease_pattern.OritaCalc;
-import origami_editor.editor.component.BulletinBoard;
-import origami_editor.editor.databinding.*;
+import origami.crease_pattern.element.Point;
+import origami.folding.FoldedFigure;
 import origami_editor.editor.canvas.BaseMouseHandler;
 import origami_editor.editor.canvas.CreasePattern_Worker;
-import origami_editor.editor.canvas.FoldLineAdditionalInputMode;
 import origami_editor.editor.canvas.MouseModeHandler;
+import origami_editor.editor.component.BulletinBoard;
+import origami_editor.editor.databinding.*;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
-import origami.folding.FoldedFigure;
-import origami.crease_pattern.element.Point;
 import origami_editor.editor.export.Svg;
 import origami_editor.editor.task.TaskExecutor;
 import origami_editor.tools.Camera;
@@ -23,9 +22,8 @@ import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -83,6 +81,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private int pointSize;
 
     Map<MouseMode, MouseModeHandler> mouseModeHandlers = new HashMap<>();
+    List<MouseModeHandler> alwaysActiveMouseModeHandlers = new ArrayList<>();
 
     public boolean flg61 = false;//Used when setting the frame 　20180524
 
@@ -358,7 +357,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         mainCreasePatternWorker.setCamera(creasePatternCamera);
 
         if (mouseModeHandlers.containsKey(mouseMode)) {
-            mouseModeHandlers.get(mouseMode).mouseMoved(p);
+            mouseModeHandlers.get(mouseMode).mouseMoved(p, e);
         }
 
         repaint();
@@ -375,6 +374,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         if (e.isMetaDown()) {
             btn = MouseEvent.BUTTON2;
+        }
+
+        if (mouseModeHandlers.containsKey(mouseMode)) {
+            MouseModeHandler handler = mouseModeHandlers.get(mouseMode);
+            if (handler.accepts(e, btn)) {
+                handler.mousePressed(p, e);
+                mainCreasePatternWorker.setCamera(creasePatternCamera);
+                repaint();
+                return;
+            }
         }
 
         //---------ボタンの種類による動作変更-----------------------------------------
@@ -433,35 +442,35 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 mouse_temp0.set(p);
                 repaint();
                 return;
-            case MouseEvent.BUTTON3: //右ボタンクリック
-                if (mouseMode == MouseMode.VORONOI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
-                } else {
-                    //線分削除モード。
-                    mainCreasePatternWorker.setCamera(creasePatternCamera);
-                    mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mousePressed(p);
-
-                    canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.BOTH_4);
-                }
+            case MouseEvent.BUTTON3:
+                mainCreasePatternWorker.setCamera(creasePatternCamera);
+                mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mousePressed(p, e);
                 repaint();
-
                 return;
         }
 
-        mainCreasePatternWorker.setCamera(creasePatternCamera);
 
-        if (mouseModeHandlers.containsKey(mouseMode)) {
-            mouseModeHandlers.get(mouseMode).mousePressed(p);
-        }
+
+        mainCreasePatternWorker.setCamera(creasePatternCamera);
 
         repaint();
     }
 
     //マウス操作(ドラッグしたとき)を行う関数---------- System.out.println("A");------------------------------------------
     public void mouseDragged(MouseEvent e) {
-
         if (mouseDraggedValid) {
             Point p = e2p(e);
             mouse_object_position(p);
+
+
+            if (mouseModeHandlers.containsKey(mouseMode)) {
+                MouseModeHandler handler = mouseModeHandlers.get(mouseMode);
+                if (handler.accepts(e, btn)) {
+                    mouseModeHandlers.get(mouseMode).mouseDragged(p, e);
+                    repaint();
+                    return;
+                }
+            }
 
             switch (btn) {
                 case MouseEvent.BUTTON1:
@@ -493,20 +502,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     return;
 
                 case MouseEvent.BUTTON3:
-                    if (mouseMode == MouseMode.VORONOI_CREATE_62) {//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
-                    } else {
-                        mainCreasePatternWorker.setCamera(creasePatternCamera);
-                        mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseDragged(p);
-                    }
-                    repaint();
-                    return;
+                    mainCreasePatternWorker.setCamera(creasePatternCamera);
+                    System.out.println("delet");
+                    mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseDragged(p, e);
             }
 
             mainCreasePatternWorker.setCamera(creasePatternCamera);
-
-            if (mouseModeHandlers.containsKey(mouseMode)) {
-                mouseModeHandlers.get(mouseMode).mouseDragged(p);
-            }
 
             repaint();
         }
@@ -531,6 +532,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     public void mouseReleased(MouseEvent e) {
         if (mouseReleasedValid) {
             Point p = e2p(e);
+
+            mainCreasePatternWorker.setCamera(creasePatternCamera);
+            if (mouseModeHandlers.containsKey(mouseMode)) {
+                MouseModeHandler handler = mouseModeHandlers.get(mouseMode);
+                if (handler.accepts(e, btn)) {
+                    mouseModeHandlers.get(mouseMode).mouseReleased(p, e);
+                    repaint();
+                    return;
+                }
+            }
 
 
             //---------ボタンの種類による動作変更-----------------------------------------
@@ -565,30 +576,22 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     mouseReleasedValid = false;
                     return;//
                 case MouseEvent.BUTTON3:
-                    //System.out.println("右ボタンクリック");
-                    if (mouseMode == MouseMode.VORONOI_CREATE_62) {
-                        repaint();//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
-                    } else {
-                        //if(i_mouse_undo_redo_mode==1){i_mouse_undo_redo_mode=0;mainDrawingWorker.unselect_all();Button_kyoutuu_sagyou();mainDrawingWorker.modosi_i_orisen_hojyosen();return;}
-                        mainCreasePatternWorker.setCamera(creasePatternCamera);
-                        mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseReleased(p);
-                        repaint();//なんでここにrepaintがあるか検討した方がよいかも。20181208
-                        canvasModel.restoreFoldLineAdditionalInputMode();
-                        mouseDraggedValid = false;
-                        mouseReleasedValid = false;
-                        //線分削除モード。
-                    }
+                    //if(i_mouse_undo_redo_mode==1){i_mouse_undo_redo_mode=0;mainDrawingWorker.unselect_all();Button_kyoutuu_sagyou();mainDrawingWorker.modosi_i_orisen_hojyosen();return;}
+                    mainCreasePatternWorker.setCamera(creasePatternCamera);
+                    mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseReleased(p, e);
+                    repaint();//なんでここにrepaintがあるか検討した方がよいかも。20181208
+                    canvasModel.restoreFoldLineAdditionalInputMode();
+                    mouseDraggedValid = false;
+                    mouseReleasedValid = false;
+                    //線分削除モード。
+
                     return;
             }
             //----------------------------System.out.println("a");-----------------------
             //}  //20201010　コメントアウト
 
-            mainCreasePatternWorker.setCamera(creasePatternCamera);
-            if (mouseModeHandlers.containsKey(mouseMode)) {
-                mouseModeHandlers.get(mouseMode).mouseReleased(p);
-            }
-
             repaint();
+
         }
 
         mouseDraggedValid = false;

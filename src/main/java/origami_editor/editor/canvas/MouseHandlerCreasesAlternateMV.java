@@ -5,9 +5,9 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami_editor.editor.MouseMode;
 import origami.folding.util.SortingBox;
 import origami.folding.util.WeightedValue;
+import origami_editor.editor.MouseMode;
 
 public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestricted {
     private final MouseHandlerLineSegmentRatioSet mouseHandlerLineSegmentRatioSet = new MouseHandlerLineSegmentRatioSet();
@@ -22,6 +22,7 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
     public MouseMode getMouseMode() {
         return MouseMode.CREASES_ALTERNATE_MV_36;
     }
+
 
     //マウス操作(mouseMode==36　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {

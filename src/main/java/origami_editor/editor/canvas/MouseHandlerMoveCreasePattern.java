@@ -6,6 +6,7 @@ import origami_editor.editor.MouseMode;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
 
 import javax.swing.*;
+import java.util.EnumSet;
 
 public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
     private final Canvas canvas;
@@ -21,6 +22,11 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.MOVE_CREASE_PATTERN_2;
+    }
+
+    @Override
+    public EnumSet<Feature> getSubscribedFeatures() {
+        return EnumSet.of(Feature.BUTTON_1);
     }
 
     @Override
