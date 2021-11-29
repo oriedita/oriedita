@@ -6,7 +6,9 @@ import fold.model.FoldEdgeAssignment;
 import fold.model.FoldFile;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveV1;
+import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
+import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -22,18 +24,44 @@ public class Fold {
         double[][] verticeCoords = foldFile.getVertices().getCoords();
         FoldEdgeAssignment[] edgeAssignments = foldFile.getEdges().getAssignment();
 
+        double minX = Double.MAX_VALUE;
+        double maxX = Double.MIN_VALUE;
+        double minY = Double.MAX_VALUE;
+        double maxY = Double.MIN_VALUE;
+
         for (int i = 0; i < foldFile.getEdges().getVertices().length; i++) {
             int[] edgeVertices = foldFile.getEdges().getVertices()[i];
 
             LineSegment ls = new LineSegment();
-            ls.setA(new Point(verticeCoords[edgeVertices[0]][0] * 400 - 200, verticeCoords[edgeVertices[0]][1] * 400 - 200));
-            ls.setB(new Point(verticeCoords[edgeVertices[1]][0] * 400 - 200, verticeCoords[edgeVertices[1]][1] * 400 - 200));
+            double ax = verticeCoords[edgeVertices[0]][0];
+            double ay = verticeCoords[edgeVertices[0]][1];
+            ls.setA(new Point(ax, ay));
+            double bx = verticeCoords[edgeVertices[1]][0];
+            double by = verticeCoords[edgeVertices[1]][1];
+            ls.setB(new Point(bx, by));
             ls.setColor(getColor(edgeAssignments[i]));
+
+            minX = Math.min(Math.min(minX, ax), bx);
+            minY = Math.min(Math.min(minY, ay), by);
+            maxX = Math.max(Math.max(maxX, ax), bx);
+            maxY = Math.max(Math.max(maxY, ay), by);
 
             save.addLineSegment(ls);
         }
 
-        return save;
+        FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
+        ori_s_temp.setSave(save);//セレクトされた折線だけ取り出してori_s_tempを作る
+        ori_s_temp.move(
+                new Point(minX, minY),
+                new Point(minX, maxY),
+                new Point(-200, -200),
+                new Point(-200, 200)
+        );
+
+        Save save1 = new SaveV1();
+        ori_s_temp.getSave(save1);
+
+        return save1;
     }
 
     private static LineColor getColor(FoldEdgeAssignment edgeAssignment) {
@@ -141,6 +169,6 @@ public class Fold {
     }
 
     private static double[] toFoldPoint(Point p) {
-        return new double[]{(p.getX() + 200), (p.getY() + 200)};
+        return new double[]{p.getX(), p.getY()};
     }
 }
