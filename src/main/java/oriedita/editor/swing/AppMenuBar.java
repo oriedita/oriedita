@@ -111,7 +111,6 @@ public class AppMenuBar extends JMenuBar {
         buttonService.registerButton(displayStandardFaceMarksCheckBox, "displayStandardFaceMarksAction");
         buttonService.registerButton(cpOnTopCheckBox, "cpOnTopAction");
         buttonService.registerButton(toggleHelpMenuItem, "toggleHelpAction");
-        buttonService.registerButton(toggleConsoleMenuItem, "toggleConsoleAction");
         buttonService.registerButton(darkModeCheckBox, "toggleDarkModeAction");
         buttonService.registerButton(preciseZoomCheckBox, "preciseZoomAction");
         buttonService.registerButton(displaySelfIntersectionCheckBox, "displaySelfIntersectionAction");
@@ -362,11 +361,6 @@ public class AppMenuBar extends JMenuBar {
 
         toggleHelpMenuItem = new JMenuItem("Toggle help");
         helpMenu.add(toggleHelpMenuItem);
-
-        toggleConsoleMenuItem = new JMenuItem("Toggle console");
-        if (System.console() == null) {
-            helpMenu.add(toggleConsoleMenuItem);
-        }
     }
 
     public void getData(ApplicationModel applicationModel) {

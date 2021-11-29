@@ -194,7 +194,6 @@ public class ApplicationModel implements Serializable {
         preciseZoom = true;
 
         helpVisible = true;
-        consoleVisible = false;
 
         check4Enabled = false;
 
