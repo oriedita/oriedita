@@ -1,6 +1,7 @@
 package oriedita.editor.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fold.FoldFileFormatException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oriedita.editor.Canvas;
@@ -180,7 +181,7 @@ public class FileSaveService {
         } else if (exportFile.getName().endsWith(".fold")) {
             try {
                 Fold.exportFile(mainCreasePatternWorker.getForFolding(), exportFile);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | FoldFileFormatException e) {
                 e.printStackTrace();
             }
         }
@@ -360,7 +361,7 @@ public class FileSaveService {
                 save = Orh.importFile(file);
             }
 
-        } catch (IOException e) {
+        } catch (IOException | FoldFileFormatException e) {
             logger.error("Opening file failed", e);
 
             JOptionPane.showMessageDialog(frame, "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);

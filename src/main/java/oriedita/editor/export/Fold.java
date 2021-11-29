@@ -1,10 +1,9 @@
 package oriedita.editor.export;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import oriedita.editor.exception.FileReadingException;
-import oriedita.editor.export.fold.FoldEdgeAssignment;
-import oriedita.editor.export.fold.FoldObjectMapper;
-import oriedita.editor.export.fold.FoldSave;
+import fold.FoldFactory;
+import fold.FoldFileFormatException;
+import fold.model.FoldEdgeAssignment;
+import fold.model.FoldFile;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveV1;
 import origami.crease_pattern.LineSegmentSet;
@@ -15,17 +14,16 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.WireFrame_Worker;
 
 import java.io.File;
-import java.io.IOException;
 
 public class Fold {
-    public static Save toSave(FoldSave foldSave) {
+    public static Save toSave(FoldFile foldFile) {
         Save save = new SaveV1();
 
-        double[][] verticeCoords = foldSave.getVerticesCoords();
-        FoldEdgeAssignment[] edgeAssignments = foldSave.getEdgesAssignment();
+        double[][] verticeCoords = foldFile.getVertices().getCoords();
+        FoldEdgeAssignment[] edgeAssignments = foldFile.getEdges().getAssignment();
 
-        for (int i = 0; i < foldSave.getEdgesVertices().length; i++) {
-            int[] edgeVertices = foldSave.getEdgesVertices()[i];
+        for (int i = 0; i < foldFile.getEdges().getVertices().length; i++) {
+            int[] edgeVertices = foldFile.getEdges().getVertices()[i];
 
             LineSegment ls = new LineSegment();
             ls.setA(new Point(verticeCoords[edgeVertices[0]][0] * 400 - 200, verticeCoords[edgeVertices[0]][1] * 400 - 200));
@@ -57,9 +55,8 @@ public class Fold {
     private static FoldEdgeAssignment getAssignment(LineColor lineColor) {
         switch (lineColor) {
             case ANGLE:
-            default:
-                return FoldEdgeAssignment.U;
             case NONE:
+            default:
                 return FoldEdgeAssignment.U;
             case BLACK_0:
                 return FoldEdgeAssignment.B;
@@ -68,56 +65,32 @@ public class Fold {
             case BLUE_2:
                 return FoldEdgeAssignment.V;
             case CYAN_3:
-                return FoldEdgeAssignment.F;
             case ORANGE_4:
-                return FoldEdgeAssignment.F;
             case MAGENTA_5:
-                return FoldEdgeAssignment.F;
             case GREEN_6:
-                return FoldEdgeAssignment.F;
             case YELLOW_7:
-                return FoldEdgeAssignment.F;
             case PURPLE_8:
-                return FoldEdgeAssignment.F;
             case OTHER_9:
                 return FoldEdgeAssignment.F;
         }
     }
 
-    public static Save importFile(File file) throws FileReadingException {
-        return toSave(importFoldFile(file));
+    public static Save importFile(File file) throws FoldFileFormatException {
+        return toSave(FoldFactory.foldImport().importFoldFile(file));
     }
 
-    public static FoldSave importFoldFile(File file) throws FileReadingException {
-        try {
-            ObjectMapper mapper = new FoldObjectMapper();
-            return mapper.readValue(file, FoldSave.class);
-        } catch (IOException e) {
-            throw new FileReadingException(e);
-        }
+
+    public static void exportFile(LineSegmentSet lineSegmentSet, File file) throws InterruptedException, FoldFileFormatException {
+        FoldFactory.foldExport().exportFoldFile(file, toFoldSave(lineSegmentSet));
     }
 
-    public static void exportFoldFile(File file, FoldSave save) {
-        try {
-            ObjectMapper mapper = new FoldObjectMapper();
-
-            mapper.writeValue(file, save);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void exportFile(LineSegmentSet lineSegmentSet, File file) throws InterruptedException {
-        exportFoldFile(file, toFoldSave(lineSegmentSet));
-    }
-
-    public static FoldSave toFoldSave(LineSegmentSet save) throws InterruptedException {
+    public static FoldFile toFoldSave(LineSegmentSet save) throws InterruptedException {
         WireFrame_Worker wireFrame_worker = new WireFrame_Worker(3.0);
         wireFrame_worker.setLineSegmentSet(save);
 
         PointSet pointSet = wireFrame_worker.get();
 
-        FoldSave foldSave = new FoldSave();
+        FoldFile foldFile = new FoldFile();
 
         FoldEdgeAssignment[] edgeAssignments = new FoldEdgeAssignment[pointSet.getNumLines()];
         int[][] edgeVertices = new int[pointSet.getNumLines()][];
@@ -147,13 +120,13 @@ public class Fold {
             faceVertices[i - 1] = faceVertex;
         }
 
-        foldSave.setEdgesAssignment(edgeAssignments);
-        foldSave.setVerticesCoords(verticesCoords);
-        foldSave.setEdgesVertices(edgeVertices);
-        foldSave.setFacesVertices(faceVertices);
-        foldSave.setEdgesFoldAngle(edgesFoldAngles);
+        foldFile.getEdges().setAssignment(edgeAssignments);
+        foldFile.getEdges().setVertices(edgeVertices);
+        foldFile.getEdges().setFoldAngle(edgesFoldAngles);
+        foldFile.getFaces().setVertices(faceVertices);
+        foldFile.getVertices().setCoords(verticesCoords);
 
-        return foldSave;
+        return foldFile;
     }
 
     private static double getFoldAngle(LineColor color) {
@@ -168,6 +141,6 @@ public class Fold {
     }
 
     private static double[] toFoldPoint(Point p) {
-        return new double[]{(p.getX() + 200) / 400, (p.getY() + 200) / 400};
+        return new double[]{(p.getX() + 200), (p.getY() + 200)};
     }
 }
