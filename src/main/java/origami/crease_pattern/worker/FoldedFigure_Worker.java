@@ -1,5 +1,7 @@
 package origami.crease_pattern.worker;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.crease_pattern.PointSet;
 import origami.folding.HierarchyList;
 import origami.folding.algorithm.AdditionalEstimationAlgorithm;
@@ -14,6 +16,7 @@ import origami.folding.util.SortingBox;
  * Responsible for calculating the correct order of subfaces in a folded figure.
  */
 public class FoldedFigure_Worker {
+    private static final Logger logger = LogManager.getLogger(FoldedFigure_Worker.class);
     public final HierarchyList hierarchyList = new HierarchyList();
     public double[] face_rating;
     public SortingBox<Integer> nbox = new SortingBox<>();//20180227 In the nbox, the id of men is paired with men_rating and sorted in ascending order of men_rating.
@@ -197,7 +200,7 @@ public class FoldedFigure_Worker {
                      * final solution (which would then make the solution invalid). The best we can
                      * do is to disable realtime AEA if this happens.
                      */
-                    System.out.println("Disable realtime AEA");
+                    logger.info("Disable realtime AEA");
                     aeaMode = false;
                     hierarchyList.restore();
                     ss = 0; // restart the search
@@ -219,7 +222,7 @@ public class FoldedFigure_Worker {
             if (AEA.errorIndex != 0) {
                 // Add additional SubFace to the valid list and continue the search
                 int v = ++SubFace_valid_number, e = AEA.errorIndex;
-                System.out.println("Adding SubFace " + e + " to the valid set index " + v);
+                logger.info("Adding SubFace " + e + " to the valid set index " + v);
                 SubFace temp = s[v];
                 s[v] = s[e];
                 s[e] = temp;
@@ -265,8 +268,8 @@ public class FoldedFigure_Worker {
             face_rating[top_men_id] = i_rate;
         }
 
-        System.out.println("上に他の面がない状態で順位付けできた面の数 = " + makesuu0no_menno_amount);
-        System.out.println("上に他の面が1以上ある状態で順位付けした面の数 = " + makesuu1ijyouno_menno_amount);
+        logger.info("上に他の面がない状態で順位付けできた面の数 = " + makesuu0no_menno_amount);
+        logger.info("上に他の面が1以上ある状態で順位付けした面の数 = " + makesuu1ijyouno_menno_amount);
 
         nbox.reset();
         for (int i = 1; i <= hierarchyList.getFacesTotal(); i++) {

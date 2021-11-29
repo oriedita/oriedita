@@ -70,10 +70,6 @@ public class StraightLine {
         }
     }
 
-    public void display(String str0) {
-        System.out.println(str0 + "   " + a + " x + " + b + " y + " + c + " = 0.0 ");
-    }
-
     //translation
     public void translate(double d) {
         c = c + d * Math.sqrt(a * a + b * b);

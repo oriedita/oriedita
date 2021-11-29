@@ -5,6 +5,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.Epsilon;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
@@ -29,6 +31,7 @@ import origami.folding.element.SubFace;
  * @author Mu-Tsun Tsai
  */
 public class FoldedFigure_Configurator {
+    private static final Logger logger = LogManager.getLogger(FoldedFigure_Configurator.class);
     
     private final FoldedFigure_Worker worker;
     private ListArray faceToSubFaceMap;
@@ -64,7 +67,7 @@ public class FoldedFigure_Configurator {
         // Use the point set of ts3 (which has the information of SubFace whose surface is subdivided in the wire diagram). <-------------SubFace_figure
         // Also, use the information on the positional relationship of the surface when folded, which ts1 has.
 
-        System.out.println("Smenの初期設定");
+        logger.info("Smenの初期設定");
         worker.reset();
         worker.SubFaceTotal = SubFace_figure.getNumFaces();
 
@@ -77,7 +80,7 @@ public class FoldedFigure_Configurator {
         }
 
         //Record the faces contained in each SubFace.
-        System.out.println("各Smenに含まれる面を記録するため、各Smenの内部点を登録");
+        logger.info("各Smenに含まれる面を記録するため、各Smenの内部点を登録");
         Point[] subFace_insidePoint = new Point[worker.SubFaceTotal + 1];  //<<<<<<<<<<<<<<<<<<<<<<<<<<<オブジェクトの配列を動的に指定
         for (int i = 1; i <= worker.SubFaceTotal; i++) {
             subFace_insidePoint[i] = SubFace_figure.insidePoint_surface(i);
@@ -86,7 +89,7 @@ public class FoldedFigure_Configurator {
         // Also used later in setupEquivalenceConditions
         qt = new QuadTree(new PointSetFaceAdapter(otta_face_figure), ExpandComparator.instance);
 
-        System.out.println("各Smenに含まれる面を記録する");
+        logger.info("各Smenに含まれる面を記録する");
 
         ExecutorService service = Executors.newWorkStealingPool();
         int faceTotal = otta_face_figure.getNumFaces();
@@ -117,12 +120,12 @@ public class FoldedFigure_Configurator {
         }
         shutdownAndWait(service);
 
-        System.out.println("Calculating reduced SubFace set");
+        logger.info("Calculating reduced SubFace set");
         worker.s1 = reduceSubFaceSet(worker.s0);
         frequency = null;
 
         //ここまでで、SubFaceTotal＝	SubFace_figure.getMensuu()のままかわりなし。
-        System.out.println("各Smenに含まれる面の数の内で最大のものを求める");
+        logger.info("各Smenに含まれる面の数の内で最大のものを求める");
         // Find the largest number of faces in each SubFace.
         worker.FaceIdCount_max = 0;
         for (int i = 1; i <= worker.SubFaceTotal; i++) {
@@ -132,7 +135,7 @@ public class FoldedFigure_Configurator {
             }
         }
 
-        System.out.println("Creating reduced SubFace faceId map");
+        logger.info("Creating reduced SubFace faceId map");
         faceToSubFaceMap = new ListArray(faceTotal, faceTotal * 5);
         for (int i = 1; i < worker.s1.length; i++) {
             for (int j = 1; j <= worker.s1[i].getFaceIdCount(); j++) {
@@ -238,12 +241,10 @@ public class FoldedFigure_Configurator {
         
         worker.hierarchyList.sortEquivalenceConditions();
         // Here we can compare and see the huge difference before and after AEA
-        System.out.print("３面が関与する突き抜け条件の数　＝　");
-        System.out.println(worker.hierarchyList.getEquivalenceConditionTotal());
-        System.out.print("４面が関与する突き抜け条件の数　＝　");
-        System.out.println(worker.hierarchyList.getUEquivalenceConditionTotal());
+        logger.info("３面が関与する突き抜け条件の数　＝　{}", worker.hierarchyList.getEquivalenceConditionTotal());
+        logger.info("４面が関与する突き抜け条件の数　＝　{}", worker.hierarchyList.getUEquivalenceConditionTotal());
 
-        System.out.println("追加推定 終了し、上下表を保存------------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
+        logger.info("追加推定 終了し、上下表を保存------------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
 
         //*************Saving the results of the first deductive reasoning**************************
         worker.hierarchyList.save();//Save the hierarchical relationship determined from the mountain fold and valley fold information.
@@ -251,18 +252,15 @@ public class FoldedFigure_Configurator {
         worker.bb.rewrite(10, "           HierarchyList_configure   step5   start ");
 
         //s0に優先順位をつける(このときhierarchyListの-100のところが変るところがある)
-        System.out.println("Smen(s0)に優先順位をつける");
+        logger.info("Smen(s0)に優先順位をつける");
 
         setupSubFacePriority();
         setupGuideMap();
 
         //SubFaceは優先順の何番目までやるかを決める
 
-        System.out.print("Smen有効数は　");
-        System.out.print(worker.SubFace_valid_number);
-        System.out.print("／");
-        System.out.println(worker.SubFaceTotal);
-        System.out.println("上下表初期設定終了");
+        logger.info("Smen有効数は　{} ／ {}", worker.SubFace_valid_number, worker.SubFaceTotal);
+        logger.info("上下表初期設定終了");
         return HierarchyListStatus.SUCCESSFUL_1000;
     }
 
@@ -270,7 +268,7 @@ public class FoldedFigure_Configurator {
         worker.hierarchyList.setFacesTotal(otta_face_figure.getNumFaces());
 
         //Put the hierarchical relationship determined from the information of mountain folds and valley folds in the table above and below.
-        System.out.println("山折り谷折りの情報から決定される上下関係を上下表に入れる");
+        logger.info("山折り谷折りの情報から決定される上下関係を上下表に入れる");
         int faceId_min, faceId_max;
         for (int ib = 1; ib <= orite.getNumLines(); ib++) {
             faceId_min = orite.lineInFaceBorder_min_request(ib);
@@ -302,7 +300,7 @@ public class FoldedFigure_Configurator {
     }
 
     private HierarchyListStatus setupEquivalenceConditions() throws InterruptedException {
-        System.out.println("等価条件を設定する   ");
+        logger.info("等価条件を設定する   ");
         ExecutorService service = Executors.newWorkStealingPool();
         worker.errorPos = null;
 
@@ -347,8 +345,7 @@ public class FoldedFigure_Configurator {
         shutdownAndWait(service);
         if (worker.errorPos != null) return HierarchyListStatus.CONTRADICTED_3;
 
-        System.out.print("３面が関与する突き抜け条件の数　＝　");
-        System.out.println(worker.hierarchyList.getEquivalenceConditionTotal());
+        logger.info("３面が関与する突き抜け条件の数　＝　{}", worker.hierarchyList.getEquivalenceConditionTotal());
 
         qt = null; // no longer needed
         return HierarchyListStatus.SUCCESSFUL_1000;
@@ -399,8 +396,7 @@ public class FoldedFigure_Configurator {
         shutdownAndWait(service);
         if (worker.errorPos != null) return HierarchyListStatus.CONTRADICTED_4;
 
-        System.out.print("４面が関与する突き抜け条件の数　＝　");
-        System.out.println(worker.hierarchyList.getUEquivalenceConditionTotal());
+        logger.info("４面が関与する突き抜け条件の数　＝　{}", worker.hierarchyList.getUEquivalenceConditionTotal());
         return HierarchyListStatus.SUCCESSFUL_1000;
     }
 
@@ -427,10 +423,10 @@ public class FoldedFigure_Configurator {
             if (Thread.interrupted()) throw new InterruptedException();
         }
 
-        // System.out.println("------------" );
-        System.out.println("上下表職人内　Smensuu = " + worker.SubFaceTotal);
-        System.out.println("上下表職人内　s0に優先順位をつける");
-        System.out.println("上下表職人内　優先度からs0のid");
+        // logger.info("------------" );
+        logger.info("上下表職人内　Smensuu = " + worker.SubFaceTotal);
+        logger.info("上下表職人内　s0に優先順位をつける");
+        logger.info("上下表職人内　優先度からs0のid");
 
         for (int i = 1; i <= reducedSubFaceTotal; i++) {
             worker.s[i] = worker.s1[priorityMap[i]];
@@ -449,7 +445,7 @@ public class FoldedFigure_Configurator {
     private void setupGuideMap() throws InterruptedException {
         // Make a guidebook for each valid SubFace.
         // Previously this is done for all SubFaces, which is unnecessary.
-        System.out.println("Building guides for SubFace");
+        logger.info("Building guides for SubFace");
         ExecutorService service = Executors.newWorkStealingPool();
         for (int i = 1; i <= worker.SubFace_valid_number; i++) {
             final SubFace sf = worker.s[i];

@@ -1,5 +1,7 @@
 package origami.folding;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.worker.BasicBranch_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
@@ -8,6 +10,7 @@ import origami.folding.util.IBulletinBoard;
 import origami.crease_pattern.LineSegmentSet;
 
 public class FoldedFigure {
+    private static final Logger logger = LogManager.getLogger(FoldedFigure.class);
     public FoldedFigure_Worker ct_worker;
     // The point set of cp_worker2 may have overlapping bars, so
     // Pass it to bb_worker once and organize it as a line segment set.
@@ -134,7 +137,7 @@ public class FoldedFigure {
     }
 
     public int folding_estimated_01(LineSegmentSet lineSegmentSet, int startingFaceId) throws InterruptedException {
-        System.out.println("＜＜＜＜＜folding_estimated_01;開始");
+        logger.info("＜＜＜＜＜folding_estimated_01;開始");
         bulletinBoard.write("<<<<folding_estimated_01;  start");
         // Pass the line segment set created in mainDrawingWorker to cp_worker1 by mouse input and make it a point set (corresponding to the development view).
         cp_worker1.setLineSegmentSet(lineSegmentSet);
@@ -148,7 +151,7 @@ public class FoldedFigure {
     }
 
     public int folding_estimated_02() throws InterruptedException, FoldingException {
-        System.out.println("＜＜＜＜＜folding_estimated_02;開始");
+        logger.info("＜＜＜＜＜folding_estimated_02;開始");
         bulletinBoard.write("<<<<folding_estimated_02;  start");
         //cp_worker1が折りたたみを行い、できた針金図をcp_worker2に渡す。
         //cp_worker1 folds and passes the resulting wire diagram to cp_worker2.
@@ -166,7 +169,7 @@ public class FoldedFigure {
     }
 
     public int folding_estimated_02col() throws InterruptedException {//20171225　２色塗りわけをするための特別推定（折り畳み位置を推定しない）
-        System.out.println("＜＜＜＜＜folding_estimated_02;開始");
+        logger.info("＜＜＜＜＜folding_estimated_02;開始");
         bulletinBoard.write("<<<<folding_estimated_02;  start");
         cp_worker2.set(cp_worker1.getFacePositions());
         bulletinBoard.write("<<<<folding_estimated_02; end");
@@ -177,7 +180,7 @@ public class FoldedFigure {
     }
 
     public int folding_estimated_03() throws InterruptedException {
-        System.out.println("＜＜＜＜＜folding_estimated_03;開始");
+        logger.info("＜＜＜＜＜folding_estimated_03;開始");
         bulletinBoard.write("<<<<folding_estimated_03;  start");
         // cp_worker2 has a set of points that holds the faces of the unfolded view before folding.
         // To estimate the vertical relationship of the surface when folded, set the surface according to the wire diagram of cp_worker2.
@@ -185,16 +188,16 @@ public class FoldedFigure {
         // Let cp_worker3 have the set of points divided into this SubFace plane.
         // Before passing the point set of cp_worker2 to cp_worker3, the point set of cp_worker2 may have overlapping bars, so
         // Pass it to bb_worker and organize it as a set of line segments.
-        System.out.println("＜＜＜＜＜folding_estimated_03()_____基本枝職人bb_workerはcp_worker2から線分集合（針金図からできたもの）を受け取り、整理する。");
+        logger.info("＜＜＜＜＜folding_estimated_03()_____基本枝職人bb_workerはcp_worker2から線分集合（針金図からできたもの）を受け取り、整理する。");
         bb_worker.set(cp_worker2.getLineStore());
-        System.out.println("＜＜＜＜＜folding_estimated_03()_____基本枝職人bb_workerがbb_worker.bunkatu_seiri_for_Smen_hassei;実施。");
+        logger.info("＜＜＜＜＜folding_estimated_03()_____基本枝職人bb_workerがbb_worker.bunkatu_seiri_for_Smen_hassei;実施。");
         bb_worker.split_arrangement_for_SubFace_generation();//Arrangement of wire diagrams obtained by estimating the folding of overlapping line segments and intersecting line segments
         //The crease pattern craftsman cp_worker3 receives a point set (arranged wire diagram of cp_worker2) from bb_worker and divides it into SubFace.
-        System.out.println("＜＜＜＜＜folding_estimated_03()_____展開図職人cp_worker3はbb_workerから整理された線分集合を受け取り、Smenに分割する。");
-        System.out.println("　　　folding_estimated_03()のcp_worker3.Senbunsyuugou2Tensyuugou(bb_worker.get());実施");
+        logger.info("＜＜＜＜＜folding_estimated_03()_____展開図職人cp_worker3はbb_workerから整理された線分集合を受け取り、Smenに分割する。");
+        logger.info("　　　folding_estimated_03()のcp_worker3.Senbunsyuugou2Tensyuugou(bb_worker.get());実施");
         cp_worker3.setLineSegmentSet(bb_worker.get());
 
-        System.out.println("＜＜＜＜＜folding_estimated_03()_____上下表職人ct_workerは、展開図職人cp_worker3から点集合を受け取り、Smenを設定する。");
+        logger.info("＜＜＜＜＜folding_estimated_03()_____上下表職人ct_workerは、展開図職人cp_worker3から点集合を受け取り、Smenを設定する。");
         ct_worker.SubFace_configure(cp_worker2.get(), cp_worker3.get());
         //If you want to make a transparent map up to this point, you can. The transmission diagram is a SubFace diagram with density added.
 
@@ -204,13 +207,13 @@ public class FoldedFigure {
     }
 
     public int folding_estimated_04() throws InterruptedException {
-        System.out.println("＜＜＜＜＜folding_estimated_04;開始");
+        logger.info("＜＜＜＜＜folding_estimated_04;開始");
         bulletinBoard.write("<<<<folding_estimated_04;  start");
         //Make an upper and lower table of faces (faces in the unfolded view before folding).
         // This includes the point set of cp_worker2 (which has information on the positional relationship of the faces after folding).
         // Use the point set of cp_worker3 (which has the information of SubFace whose surface is subdivided in the wire diagram).
         // Also, use the information on the positional relationship of the surface when folded, which cp_worker1 has.
-        System.out.println("＜＜＜＜＜folding_estimated_04()_____上下表職人ct_workerが面(折りたたむ前の展開図の面のこと)の上下表を作る。");
+        logger.info("＜＜＜＜＜folding_estimated_04()_____上下表職人ct_workerが面(折りたたむ前の展開図の面のこと)の上下表を作る。");
 
         ip1_anotherOverlapValid = FoldedFigure_Worker.HierarchyListStatus.UNKNOWN_0;
         findAnotherOverlapValid = false;
@@ -219,7 +222,7 @@ public class FoldedFigure {
             findAnotherOverlapValid = true;
         }
         discovered_fold_cases = 0;
-        System.out.println("＜＜＜＜＜oritatami_suitei_04()____終了");
+        logger.info("＜＜＜＜＜oritatami_suitei_04()____終了");
 
         if (Thread.interrupted()) throw new InterruptedException();
 
@@ -227,7 +230,7 @@ public class FoldedFigure {
     }
 
     public int folding_estimated_05() throws InterruptedException {
-        System.out.println("＜＜＜＜＜folding_estimated_05()_____上下表職人ct_workerがct_worker.possible_overlapping_search()実施。");
+        logger.info("＜＜＜＜＜folding_estimated_05()_____上下表職人ct_workerがct_worker.possible_overlapping_search()実施。");
         bulletinBoard.write("<<<<folding_estimated_05()  ___ct_worker.possible_overlapping_search()  start");
 
         if ((estimationStep == EstimationStep.STEP_4) || (estimationStep == EstimationStep.STEP_5)) {

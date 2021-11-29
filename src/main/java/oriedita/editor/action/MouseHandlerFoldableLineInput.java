@@ -2,6 +2,9 @@ package oriedita.editor.action;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -13,6 +16,8 @@ import oriedita.editor.canvas.CreasePattern_Worker;
 
 @Singleton
 public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestricted {
+    private static final Logger logger = LogManager.getLogger(MouseHandlerFoldableLineInput.class);
+
     CreasePattern_Worker.FourPointStep i_step_for_copy_4p = CreasePattern_Worker.FourPointStep.STEP_0;
 
     @Inject
@@ -24,7 +29,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
         return MouseMode.FOLDABLE_LINE_INPUT_39;
     }
 
-    //マウス操作(マウスを動かしたとき)を行う関数    //System.out.println("_");
+    //マウス操作(マウスを動かしたとき)を行う関数    //logger.info("_");
     public void mouseMoved(Point p0) {
         if (d.lineStep.size() == 0) {
             i_step_for_copy_4p = CreasePattern_Worker.FourPointStep.STEP_0;
@@ -38,7 +43,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
             if (d.lineStep.size() == 0) {
                 i_step_for_copy_4p = CreasePattern_Worker.FourPointStep.STEP_0;
             }
-            System.out.println("i_egaki_dankai= " + d.lineStep.size() + "  ;   i_step_for_copy_4p= " + i_step_for_copy_4p);
+            logger.info("i_egaki_dankai= " + d.lineStep.size() + "  ;   i_step_for_copy_4p= " + i_step_for_copy_4p);
 
             switch (i_step_for_copy_4p) {
                 case STEP_0:
@@ -67,7 +72,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                     if (Epsilon.high.le0(closest_point.distance(d.lineStep.get(0).getA()))) {
                         d.lineCandidate.clear();
                         d.lineCandidate.add(new LineSegment(closest_point, closest_point, d.lineColor));
-                        System.out.println("i_step_for39_2_   1");
+                        logger.info("i_step_for39_2_   1");
 
                         return;
                     }
@@ -75,7 +80,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                     if ((p.distance(d.lineStep.get(0).getB()) < d.selectionDistance) && (p.distance(d.lineStep.get(0).getB()) <= p.distance(closest_point))) {
                         d.lineCandidate.clear();
                         d.lineCandidate.add(new LineSegment(d.lineStep.get(0).getB(), d.lineStep.get(0).getB(), d.lineColor));
-                        System.out.println("i_step_for39_2_   2");
+                        logger.info("i_step_for39_2_   2");
 
                         return;
                     }
@@ -83,7 +88,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                     if (p.distance(closest_point) < d.selectionDistance) {
                         d.lineCandidate.clear();
                         d.lineCandidate.add(new LineSegment(closest_point, closest_point, d.lineColor));
-                        System.out.println("i_step_for39_2_   3");
+                        logger.info("i_step_for39_2_   3");
 
                         return;
                     }
@@ -97,13 +102,13 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                             return;
                         }
                         //最寄のstep_senbunが遠い場合
-                        System.out.println("i_step_for39_2_   4");
+                        logger.info("i_step_for39_2_   4");
                     } else if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {//最寄の既存折線が近い場合
                         d.lineCandidate.clear();
                         closestLineSegment.setColor(d.lineColor);
                         d.lineCandidate.add(closestLineSegment);
 
-                        System.out.println("i_step_for39_2_   5");
+                        logger.info("i_step_for39_2_   5");
                     }
                 }
             }
@@ -208,7 +213,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                         }
                     }
 
-                    if (d.lineStep.size() == 0) {//折畳み可能化線がない場合//System.out.println("_");
+                    if (d.lineStep.size() == 0) {//折畳み可能化線がない場合//logger.info("_");
                         i_step_for_copy_4p = CreasePattern_Worker.FourPointStep.STEP_1;
                         LineSegment s = new LineSegment(closest_point, closest_point, LineColor.PURPLE_8);
                         s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);

@@ -2,6 +2,9 @@ package oriedita.editor.action;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
@@ -10,6 +13,7 @@ import oriedita.editor.canvas.MouseMode;
 
 @Singleton
 public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestricted {
+    private static final Logger logger = LogManager.getLogger(MouseHandlerDoubleSymmetricDraw.class);
     private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted;
 
     @Inject
@@ -67,7 +71,7 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
                         if (i_jikkou) {
                             Point t_moto = new Point();
                             t_moto.set(s.getA());
-                            System.out.println("i_senbun_kousa_hantei_" + i_lineSegment_intersection_decision);
+                            logger.info("i_senbun_kousa_hantei_" + i_lineSegment_intersection_decision);
                             if (OritaCalc.determineLineSegmentDistance(t_moto, d.lineStep.get(0)) < OritaCalc.determineLineSegmentDistance(s.getB(), d.lineStep.get(0))) {
                                 t_moto.set(s.getB());
                             }

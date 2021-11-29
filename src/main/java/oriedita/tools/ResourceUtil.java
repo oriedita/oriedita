@@ -1,5 +1,7 @@
 package oriedita.tools;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import oriedita.editor.App;
 
 import javax.swing.*;
@@ -14,6 +16,8 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 public class ResourceUtil {
+    private static final Logger logger = LogManager.getLogger(ResourceUtil.class);
+
     public static ImageIcon createImageIcon(String url) {
         return new ImageIcon(Objects.requireNonNull(ResourceUtil.class.getClassLoader().getResource(url)));
     }
@@ -88,7 +92,7 @@ public class ResourceUtil {
             return jarBundle.getString(key);
         }
 
-        System.err.println(bundle + "." + key + " does not exist");
+        logger.warn(bundle + "." + key + " does not exist");
 
         return null;
     }
@@ -110,7 +114,7 @@ public class ResourceUtil {
 
             properties.store(Files.newOutputStream(bundleLocation), null);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Writing bundle key failed", e);
         }
     }
 }

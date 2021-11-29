@@ -1,5 +1,7 @@
 package oriedita.editor.export;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -25,6 +27,7 @@ import java.util.regex.Pattern;
  * Import and Export Orihime files.
  */
 public class Orh {
+    private static final Logger logger = LogManager.getLogger(Orh.class);
     /**
      * Read an Orihime file
      */
@@ -318,9 +321,9 @@ public class Orh {
         if (i_Grid_iro_yomikomi) {//Grid_iroの読み込みがあったら1、なければ0
             applicationModel.setGridColor(new Color(i_grid_color_R, i_grid_color_G, i_grid_color_B));
 
-            System.out.println("i_kousi_memori_color_R= " + i_grid_memori_color_R);
-            System.out.println("i_kousi_memori_color_G= " + i_grid_memori_color_G);
-            System.out.println("i_kousi_memori_color_B= " + i_grid_memori_color_B);
+            logger.info("i_kousi_memori_color_R= " + i_grid_memori_color_R);
+            logger.info("i_kousi_memori_color_G= " + i_grid_memori_color_G);
+            logger.info("i_kousi_memori_color_B= " + i_grid_memori_color_B);
             applicationModel.setGridScaleColor(new Color(i_grid_memori_color_R, i_grid_memori_color_G, i_grid_memori_color_B));
         }
 
@@ -714,7 +717,7 @@ public class Orh {
 
             pw.println("</oriagarizu>");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error during Orh export", e);
         }
     }
 }

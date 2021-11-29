@@ -38,10 +38,6 @@ public class Point implements Serializable {
         y = a * p.getY() + b * q.getY();
     }
 
-    public void display(String str0) {
-        System.out.println(str0 + " (" + x + " , " + y + ")");
-    }
-
     public void set(Point p) {
         x = p.getX();
         y = p.getY();

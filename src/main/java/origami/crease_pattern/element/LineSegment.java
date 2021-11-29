@@ -73,10 +73,6 @@ public class LineSegment implements Serializable, Cloneable {
         return sr;
     }
 
-    public void display(String str0) {
-        System.out.println(str0 + " (" + d2s(a.getX()) + " , " + d2s(a.getY()) + "),(" + d2s(b.getX()) + " , " + d2s(b.getY()) + ") ,ia=" + active + ",ic=" + color + ",is=" + selected);
-    }
-
     //-------------------------------------------
     public void set(LineSegment s) {
         a.set(s.getA());

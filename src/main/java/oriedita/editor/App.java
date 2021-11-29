@@ -1,5 +1,7 @@
 package oriedita.editor;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.swing.AppMenuBar;
 import oriedita.editor.swing.dialog.ConsoleDialog;
@@ -23,6 +25,7 @@ import java.util.Queue;
 
 @Singleton
 public class App {
+    private static final Logger logger = LogManager.getLogger(App.class);
     private final ApplicationModel applicationModel;
     private final CanvasModel canvasModel;
     private final FoldedFigureModel foldedFigureModel;
@@ -35,7 +38,6 @@ public class App {
     private final Editor editor;
     private final AppMenuBar appMenuBar;
     private final ResetService resetService;
-    private final ConsoleDialog consoleDialog;
     // ------------------------------------------------------------------------
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
     Canvas canvas;
@@ -77,7 +79,6 @@ public class App {
         this.editor = editor;
         this.appMenuBar = appMenuBar;
         this.resetService = resetService;
-        this.consoleDialog = new ConsoleDialog();
     }
 
     public void start() {
@@ -194,7 +195,7 @@ public class App {
 
         canvasModel.addPropertyChangeListener(e -> {
             if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
-                System.out.println("mouseMode = " + canvasModel.getMouseMode().toReadableString());
+                logger.info("mouseMode = " + canvasModel.getMouseMode().toReadableString());
             }
         });
 
@@ -229,20 +230,6 @@ public class App {
 
 
         explanation.start(canvas.getLocationOnScreen(), canvas.getSize());
-
-        consoleDialog.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                applicationModel.setConsoleVisible(false);
-            }
-        });
-        applicationModel.addPropertyChangeListener(e -> {
-            if (e.getPropertyName() == null || e.getPropertyName().equals("consoleVisible")) {
-                consoleDialog.setVisible(applicationModel.getConsoleVisible());
-            }
-            frame.requestFocus();
-        });
-        consoleDialog.setVisible(applicationModel.getConsoleVisible());
 
         explanation.setVisible(applicationModel.getHelpVisible());
         //focus back to here after creating dialog

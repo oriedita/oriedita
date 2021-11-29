@@ -168,7 +168,6 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
 
         }
 
-//qqqqqqqqqqqqqqqqqqqqqqqqqqqqq//System.out.println("= ");qqqqq
 //check4(Epsilon.UNKNOWN_00001);//D_nisuru0をすると、foldLineSet.D_nisuru0内でresetが実行されるため、check4のやり直しが必要。
         if (d.check1) {
             d.check1();

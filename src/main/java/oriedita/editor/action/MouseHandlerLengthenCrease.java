@@ -2,6 +2,9 @@ package oriedita.editor.action;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -13,6 +16,7 @@ import origami.folding.util.SortingBox;
 
 @Singleton
 public class MouseHandlerLengthenCrease extends BaseMouseHandler {
+    private static final Logger logger = LogManager.getLogger(MouseHandlerLengthenCrease.class);
     SortingBox<LineSegment> entyou_kouho_nbox = new SortingBox<>();
 
     @Inject
@@ -25,7 +29,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
     }
 
     //5 5 5 5 5 55555555555555555    mouseMode==5　;線分延長モード
-    //マウス操作(マウスを動かしたとき)を行う関数    //System.out.println("_");
+    //マウス操作(マウスを動かしたとき)を行う関数    //logger.info("_");
     public void mouseMoved(Point p0) {
         //マウスで選択できる候補点を表示する。常にマウスの位置自身が候補点となる。
         if (d.gridInputAssist) {
@@ -103,7 +107,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
 
             }
 
-            System.out.println(" entyou_kouho_nbox.getsousuu() = " + entyou_kouho_nbox.getTotal());
+            logger.info(" entyou_kouho_nbox.getsousuu() = " + entyou_kouho_nbox.getTotal());
 
 
             if (entyou_kouho_nbox.getTotal() == 0) {
@@ -226,7 +230,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
         StraightLine.Intersection i_intersection_flg;//元の線分を直線としたものと、他の線分の交差状態
         LineSegment.Intersection i_lineSegment_intersection_flg;//元の線分と、他の線分の交差状態
 
-        System.out.println("AAAAA_");
+        logger.info("AAAAA_");
         for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
             i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(d.foldLineSet.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
 
@@ -234,7 +238,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
             i_lineSegment_intersection_flg = OritaCalc.determineLineSegmentIntersectionSweet(s0, d.foldLineSet.get(i), Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
             if (i_intersection_flg.isIntersecting()) {
                 if (!i_lineSegment_intersection_flg.isEndpointIntersection()) {
-                    //System.out.println("i_intersection_flg = "+i_intersection_flg  +      " ; i_lineSegment_intersection_flg = "+i_lineSegment_intersection_flg);
+                    //logger.info("i_intersection_flg = "+i_intersection_flg  +      " ; i_lineSegment_intersection_flg = "+i_lineSegment_intersection_flg);
                     kousa_point.set(OritaCalc.findIntersection(tyoku1, d.foldLineSet.get(i)));
                     if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
                         if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
@@ -252,7 +256,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
             if (i_intersection_flg == StraightLine.Intersection.INCLUDED_3) {
                 if (i_lineSegment_intersection_flg != LineSegment.Intersection.PARALLEL_EQUAL_31) {
 
-                    System.out.println("i_intersection_flg = " + i_intersection_flg + " ; i_lineSegment_intersection_flg = " + i_lineSegment_intersection_flg);
+                    logger.info("i_intersection_flg = " + i_intersection_flg + " ; i_lineSegment_intersection_flg = " + i_lineSegment_intersection_flg);
 
 
                     kousa_point.set(d.foldLineSet.get(i).getA());

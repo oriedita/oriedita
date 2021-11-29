@@ -2,6 +2,9 @@ package oriedita.editor.task;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.folding.FoldedFigure;
 import oriedita.editor.swing.component.BulletinBoard;
 import oriedita.editor.databinding.CanvasModel;
@@ -10,6 +13,8 @@ import oriedita.editor.service.FoldingService;
 import oriedita.editor.drawing.tools.Camera;
 
 public class TwoColoredTask implements Runnable{
+    private static final Logger logger = LogManager.getLogger(TwoColoredTask.class);
+
     private final BulletinBoard bulletinBoard;
     private final Camera creasePatternCamera;
     private final FoldingService foldingService;
@@ -35,7 +40,7 @@ public class TwoColoredTask implements Runnable{
         } catch (InterruptedException e) {
             selectedFigure.foldedFigure.estimated_initialize();
             bulletinBoard.clear();
-            e.printStackTrace();
+            logger.warn("Two colored cp creation got cancelled", e);
         }
 
         long stop = System.currentTimeMillis();

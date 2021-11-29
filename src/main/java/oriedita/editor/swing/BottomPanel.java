@@ -6,6 +6,9 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.folding.FoldedFigure;
 import oriedita.editor.Canvas;
 import oriedita.editor.canvas.MouseMode;
@@ -32,6 +35,7 @@ import java.beans.PropertyChangeEvent;
 
 @Singleton
 public class BottomPanel {
+    private static final Logger logger = LogManager.getLogger(BottomPanel.class);
     private final ButtonService buttonService;
     private final MeasuresModel measuresModel;
     private final FoldedFigureModel foldedFigureModel;
@@ -104,7 +108,7 @@ public class BottomPanel {
 
 
         foldButton.addActionListener(e -> {
-            System.out.println("20180220 get_i_fold_type() = " + foldingService.getFoldType());
+            logger.info("20180220 get_i_fold_type() = " + foldingService.getFoldType());
             foldingService.fold(FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
 
             if (!applicationModel.getSelectPersistent()) {

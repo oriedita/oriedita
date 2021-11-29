@@ -1,6 +1,8 @@
 package oriedita.editor.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import oriedita.editor.Canvas;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.LineStyle;
@@ -39,6 +41,7 @@ import static oriedita.editor.swing.dialog.FileDialogUtil.saveFileDialog;
 
 @Singleton
 public class FileSaveService {
+    private static final Logger logger = LogManager.getLogger(FileSaveService.class);
     private final JFrame frame;
     private final Camera creasePatternCamera;
     private final CreasePattern_Worker mainCreasePatternWorker;
@@ -86,7 +89,7 @@ public class FileSaveService {
         applicationModel.setDefaultDirectory(file.getParent());
 
         Save memo_temp = readImportFile(file);
-        System.out.println("readFile2Memo() 終了");
+        logger.info("readFile2Memo() 終了");
 
         if (memo_temp != null) {
             //Initialization of development drawing started
@@ -100,7 +103,7 @@ public class FileSaveService {
     }
 
     public void openFile() {
-        System.out.println("readFile2Memo() 開始");
+        logger.info("readFile2Memo() 開始");
 
         if (saveUnsavedFile()) return;
 
@@ -109,7 +112,7 @@ public class FileSaveService {
         try {
             openFile(file);
         } catch (FileReadingException e) {
-            e.printStackTrace();
+            logger.error("Error during file read", e);
             JOptionPane.showMessageDialog(frame, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -130,16 +133,16 @@ public class FileSaveService {
     public void importFile() {
         if (saveUnsavedFile()) return;
 
-        System.out.println("readFile2Memo() 開始");
+        logger.info("readFile2Memo() 開始");
         File importFile = selectImportFile();
         Save memo_temp = null;
         try {
             memo_temp = readImportFile(importFile);
         } catch (FileReadingException e) {
-            e.printStackTrace();
+            logger.error("Error during file import", e);
             JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
         }
-        System.out.println("readFile2Memo() 終了");
+        logger.info("readFile2Memo() 終了");
 
         if (memo_temp != null) {
             fileModel.setSavedFileName(null);
@@ -214,15 +217,15 @@ public class FileSaveService {
                     ImageIO.write(myImage.getSubimage(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1), formatName, file);
 
                 } else {//Full export without frame
-                    System.out.println("2018-529_");
+                    logger.info("2018-529_");
 
                     ImageIO.write(myImage, formatName, file);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                logger.error("Writing image file failed", e);
             }
 
-            System.out.println("終わりました");
+            logger.info("終わりました");
         }
     }
 
@@ -351,7 +354,7 @@ public class FileSaveService {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Opening file failed", e);
 
             JOptionPane.showMessageDialog(frame, "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
 
@@ -400,7 +403,7 @@ public class FileSaveService {
 
                 mapper.writeValue(fname, save);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Writing .ori failed", e);
             }
         } else if (fname.getName().endsWith(".cp")) {
             if (!save.canSaveAsCp()) {

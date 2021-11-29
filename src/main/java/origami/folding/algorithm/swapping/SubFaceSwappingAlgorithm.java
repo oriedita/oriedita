@@ -1,5 +1,7 @@
 package origami.folding.algorithm.swapping;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.folding.element.SubFace;
 
 /**
@@ -13,6 +15,7 @@ import origami.folding.element.SubFace;
  * @author Mu-Tsun Tsai
  */
 public class SubFaceSwappingAlgorithm extends SwappingAlgorithm<SubFace> {
+    private static final Logger logger = LogManager.getLogger(SubFaceSwappingAlgorithm.class);
 
     private int lastLow;
 
@@ -26,7 +29,7 @@ public class SubFaceSwappingAlgorithm extends SwappingAlgorithm<SubFace> {
 
     @Override
     protected void onBeforeSwap(int high, int low) {
-        System.out.println("swapper.swap(s, " + high + ", " + low + ");");
+        logger.info("swapper.swap(s, " + high + ", " + low + ");");
     }
 
     @Override

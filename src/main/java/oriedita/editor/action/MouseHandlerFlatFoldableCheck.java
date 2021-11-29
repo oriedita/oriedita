@@ -121,7 +121,6 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
                     goukei_nbox.addByWeight(nbox.getValue(i), goukei_nbox.getTotal());
                 }
             }
-            System.out.println(" --------------------------------");
 
             if (i_tekisetu == 1) {
 
@@ -150,8 +149,6 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
                 for (LineSegment s : d.lineStep) {
                     s.setColor(i_hantai_color);
                 }
-
-                System.out.println(" --------------------------------");
             }
         }
     }

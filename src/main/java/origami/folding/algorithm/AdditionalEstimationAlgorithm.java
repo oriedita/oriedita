@@ -2,6 +2,8 @@ package origami.folding.algorithm;
 
 import java.util.Iterator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.crease_pattern.worker.FoldedFigure_Worker.HierarchyListStatus;
 import origami.data.StackArray;
 import origami.data.listMatrix.PseudoListMatrix;
@@ -21,6 +23,7 @@ import origami.folding.util.IBulletinBoard;
  * @author Mu-Tsun Tsai
  */
 public class AdditionalEstimationAlgorithm {
+    private static final Logger logger = LogManager.getLogger(AdditionalEstimationAlgorithm.class);
 
     /**
      * To prevent memory overflow. Right now this number is hard-coded, but in the
@@ -76,7 +79,7 @@ public class AdditionalEstimationAlgorithm {
         int total = 0;
 
         if (bb != null) {
-            System.out.println("additional_estimation start---------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
+            logger.info("additional_estimation start---------------------＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊＊");
             bb.write(" ");
         }
 
@@ -136,14 +139,14 @@ public class AdditionalEstimationAlgorithm {
             // ----------------
 
             if (bb != null) {
-                System.out.println("Total number of inferred relations ＝ " + new_relations);
+                logger.info("Total number of inferred relations ＝ " + new_relations);
                 bb.rewrite(10, "           Total number of inferred relations ＝ " + (total += new_relations));
             }
 
         } while (new_relations > 0);
 
         if (bb != null) {
-            System.out.println("additional_estimation finished------------------------＊＊＊＊ここまで20150310＊＊＊＊＊＊＊＊＊＊＊");
+            logger.info("additional_estimation finished------------------------＊＊＊＊ここまで20150310＊＊＊＊＊＊＊＊＊＊＊");
         }
 
         return HierarchyListStatus.SUCCESSFUL_1000;
