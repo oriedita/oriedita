@@ -37,7 +37,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="oriedita" target="8" />
+      <module name="oriedita" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
