@@ -1,5 +1,7 @@
 package oriedita.editor;
 
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.Imaging;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -20,6 +22,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.List;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 @Singleton
@@ -169,12 +173,11 @@ public class App {
         canvas.creasePatternCamera.setDisplayPositionX(350.0);
         canvas.creasePatternCamera.setDisplayPositionY(350.0);
 
-        java.util.List<Image> icons = new ArrayList<>();
-        icons.add(getImage("icon/oriedita-16x16.png"));
-        icons.add(getImage("icon/oriedita-24x24.png"));
-        icons.add(getImage("icon/oriedita-32x32.png"));
-        icons.add(getImage("icon/oriedita-256x256.png"));
-        frame.setIconImages(icons);
+        try {
+            frame.setIconImages(Imaging.getAllBufferedImages(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("oriedita.ico")).getFile())));
+        } catch (IOException | ImageReadException | NullPointerException e) {
+            e.printStackTrace();
+        }
         frame.setContentPane(editor.$$$getRootComponent$$$());
 
         frame.setJMenuBar(appMenuBar);
