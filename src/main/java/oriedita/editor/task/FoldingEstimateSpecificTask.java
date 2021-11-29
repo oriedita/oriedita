@@ -1,5 +1,7 @@
 package oriedita.editor.task;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.crease_pattern.FoldingException;
 import origami.folding.FoldedFigure;
 import oriedita.editor.databinding.CanvasModel;
@@ -9,6 +11,7 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.FoldingService;
 
 public class FoldingEstimateSpecificTask implements Runnable{
+    private static final Logger logger = LogManager.getLogger(FoldingEstimateSpecificTask.class);
     private final FoldedFigureModel foldedFigureModel;
     private final FoldingService foldingService;
     private final CanvasModel canvasModel;
@@ -47,7 +50,7 @@ public class FoldingEstimateSpecificTask implements Runnable{
             }
         } catch (InterruptedException | FoldingException e) {
             selectedFigure.foldedFigure.estimated_initialize();
-            System.out.println(e);
+            logger.error("Folding got cancelled", e);
         }
 
         long stop = System.currentTimeMillis();

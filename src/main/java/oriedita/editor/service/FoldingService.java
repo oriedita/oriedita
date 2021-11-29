@@ -2,6 +2,9 @@ package oriedita.editor.service;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
@@ -23,6 +26,7 @@ import javax.swing.*;
 
 @Singleton
 public class FoldingService {
+    private static final Logger logger = LogManager.getLogger(FoldingService.class);
     private final BulletinBoard bulletinBoard;
     private final CanvasModel canvasModel;
     private final JFrame frame;
@@ -97,7 +101,7 @@ public class FoldingService {
     public FoldType getFoldType() {
         //= 0 Do nothing, = 1 Folding estimation for all fold lines in the normal development view, = 2 for fold estimation for selected fold lines, = 3 for changing the folding state
         int foldLineTotalForSelectFolding = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
-        System.out.println("foldedFigures.size() = " + foldedFiguresList.getSize() + "    : foldedFigureIndex = " + foldedFiguresList.getIndexOf(foldedFiguresList.getSelectedItem()) + "    : mainDrawingWorker.get_orisensuu_for_select_oritatami() = " + foldLineTotalForSelectFolding);
+        logger.info("foldedFigures.size() = " + foldedFiguresList.getSize() + "    : foldedFigureIndex = " + foldedFiguresList.getIndexOf(foldedFiguresList.getSelectedItem()) + "    : mainDrawingWorker.get_orisensuu_for_select_oritatami() = " + foldLineTotalForSelectFolding);
         if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
             return FoldType.FOR_ALL_CONNECTED_LINES_1;//全展開図で折畳み
         } else {        //折り線選択有り
@@ -106,7 +110,7 @@ public class FoldingService {
     }
 
     public FoldedFigure_Drawer initFoldedFigure() {//Add one new folding diagram to the foldedFigures array list, specify it as the operation target, and inherit the foldedFigures (0) common parameters.
-        System.out.println(" oritatami_jyunbi 20180107");
+        logger.info(" oritatami_jyunbi 20180107");
 
         FoldedFigure_Drawer newFoldedFigure = new FoldedFigure_Drawer(new FoldedFigure_01(bulletinBoard));
 

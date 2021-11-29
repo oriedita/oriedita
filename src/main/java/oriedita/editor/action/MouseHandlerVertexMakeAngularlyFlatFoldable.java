@@ -27,7 +27,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
         return MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
     }
 
-    //マウス操作(マウスを動かしたとき)を行う関数    //System.out.println("_");
+    //マウス操作(マウスを動かしたとき)を行う関数
     public void mouseMoved(Point p0) {
         if (d.gridInputAssist) {
             if (d.lineStep.size() == 0) {
@@ -135,7 +135,6 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                                 kakukagenti = 360.0;
                             }
 
-                            //System.out.println("kakukagenti="+kakukagenti);
                             //チェック用に角加減値の最初の角度の中にkakukagenti/2.0があるかを確認する
                             tikai_foldLine_jyunban = i;
                             if (tikai_foldLine_jyunban > nbox.getTotal()) {

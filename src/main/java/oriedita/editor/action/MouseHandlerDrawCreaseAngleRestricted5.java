@@ -21,7 +21,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
         return MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37;
     }
 
-    //マウス操作(mouseMode==37　でボタンを押したとき)時の作業-------//System.out.println("A");---------------------------------------------
+    //マウス操作(mouseMode==37　でボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
@@ -36,7 +36,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
         d.lineStepAdd(s1);
     }
 
-    //マウス操作(mouseMode==37　でドラッグしたとき)を行う関数--------------//System.out.println("A");--------------------------------------
+    //マウス操作(mouseMode==37　でドラッグしたとき)を行う関数
     public void mouseDragged(Point p0) {
         if (d.lineStep.size() == 1) {
             Point syuusei_point = new Point(syuusei_point_A_37(p0));

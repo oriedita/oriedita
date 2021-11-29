@@ -1,5 +1,7 @@
 package origami.crease_pattern.worker;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.util.AverageCoordinates;
@@ -17,6 +19,7 @@ import origami.crease_pattern.PointSet;
 import java.util.*;
 
 public class WireFrame_Worker {
+    private static final Logger logger = LogManager.getLogger(WireFrame_Worker.class);
     //This crease pattern craftsman class has only one PointStore c as a crease pattern.
     //PointSet obtained as a result of folding etc. should be returned to the outside and not held by oneself.
     double r;                   //Criteria for determining the radius of the circles at both ends of the straight line of the basic branch structure and the proximity of the branches to various points
@@ -103,13 +106,13 @@ public class WireFrame_Worker {
         // The code that was previously here is identical to getFacePositions
         PointSet pointSet = getFacePositions();
   
-        System.out.println("折ったときの点の位置を求める。");
+        logger.info("折ったときの点の位置を求める。");
         // Find the position of the point when folded.
         // If the point it is included in the face im
         // Find where to move when the crease pattern is folded by moving the face im.
 
         QuadTree qt = new QuadTree(new PointSetFaceAdapter(pointSet));
-        System.out.println("折ったときの点の位置を求める（開始）");
+        logger.info("折ったときの点の位置を求める（開始）");
         for (int it = 1; it <= this.pointSet.getNumPoints(); it++) {
             tnew[it].reset();
             for (int im : qt.collect(new PointCollector(pointSet.getPoint(it)))) {
@@ -119,7 +122,7 @@ public class WireFrame_Worker {
                 }
             }
         }
-        System.out.println("折ったときの点の位置を求めた（終了）");
+        logger.info("折ったときの点の位置を求めた（終了）");
 
         return pointSet;
     }
@@ -150,7 +153,7 @@ public class WireFrame_Worker {
             iFacePosition[i] = 0;
         }
         //Grasp the positional relationship between the faces in preparation for folding
-        System.out.println("折りたたみの準備として面同士の位置関係を把握する");
+        logger.info("折りたたみの準備として面同士の位置関係を把握する");
         iFacePosition[startingFaceId] = 1;
 
         int depth = 1;
@@ -221,7 +224,7 @@ public class WireFrame_Worker {
     }
 
     private void definePointSet(LineSegmentSet lineSegmentSet) throws InterruptedException {
-        System.out.println("線分集合->点集合：点集合内で点の定義");
+        logger.info("線分集合->点集合：点集合内で点の定義");
         boolean found;
         Point ti;
 
@@ -253,8 +256,8 @@ public class WireFrame_Worker {
         }
 
         int numPoints = adapter.getCount();
-        System.out.print("点の全数　addPointNum＝　");
-        System.out.println(numPoints);
+        logger.info("点の全数　addPointNum＝　");
+        logger.info(numPoints);
 
         int numLines = lineSegmentSet.getNumLineSegments();
         
@@ -277,7 +280,7 @@ public class WireFrame_Worker {
     }
 
     private void defineLines(LineSegmentSet lineSegmentSet) throws InterruptedException {
-        System.out.println("線分集合->点集合：点集合内で棒の定義");
+        logger.info("線分集合->点集合：点集合内で棒の定義");
 
         QuadTree qt = new QuadTree(new PointSetPointAdapter(pointSet));
         for (int n = 0; n < lineSegmentSet.getNumLineSegments(); n++) {
@@ -299,8 +302,7 @@ public class WireFrame_Worker {
             if (Thread.interrupted()) throw new InterruptedException();
         }
 
-        System.out.print("棒の全数　＝　");
-        System.out.println(pointSet.getNumLines());
+        logger.info("棒の全数　＝ {}", pointSet.getNumLines());
     }
 
     /**

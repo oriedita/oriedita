@@ -17,6 +17,13 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>2.14.1</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -68,6 +75,15 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.32</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.origin-energy</groupId>
@@ -166,14 +182,14 @@
                         </excludes>
                     </artifactSet>
                     <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>module-info.class</exclude>
-                                <exclude>META-INF/*</exclude>
-                                <exclude>META-INF/services/*</exclude>
-                            </excludes>
-                        </filter>
+<!--                        <filter>-->
+<!--                            <artifact>*:*</artifact>-->
+<!--                            <excludes>-->
+<!--                                <exclude>module-info.class</exclude>-->
+<!--                                <exclude>META-INF/*</exclude>-->
+<!--                                <exclude>META-INF/services/*</exclude>-->
+<!--                            </excludes>-->
+<!--                        </filter>-->
                         <filter>
                             <!-- Large part of com.inte..ij:forms_rt that isn't used -->
                             <artifact>com.intellij:forms_rt</artifact>

@@ -10,10 +10,6 @@ import origami.crease_pattern.element.StraightLine;
  * Static utilities for calculations.
  */
 public class OritaCalc {
-    public static void display(String s0) {
-        System.out.println(s0);
-    }
-
     //Find the position of the projection of the point p on the straight line t (the position on the straight line t closest to the point p).
     public static Point findProjection(StraightLine t, Point p) {
         StraightLine t1 = new StraightLine();
@@ -513,7 +509,6 @@ public class OritaCalc {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
 
-        // System.out.println("AAAAAAAAAAAA");
         if (isLineSegmentParallel(t1, t2, rhei) == ParallelJudgement.NOT_PARALLEL) {    //２つの直線が平行でない
             Point pk = new Point();
             pk.set(findIntersection(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
@@ -659,7 +654,6 @@ public class OritaCalc {
         double a1 = t1.getA(), b1 = t1.getB(), c1 = t1.getC();//直線t1, a1*x+b1*y+c1=0の各係数を求める。
         double a2 = t2.getA(), b2 = t2.getB(), c2 = t2.getC();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
 
-        //System.out.print("平行判定のr　＝　");System.out.println(r);
         //厳密に判定----------------------------------------
         if (r <= 0.0) {
             //２直線が平行の場合

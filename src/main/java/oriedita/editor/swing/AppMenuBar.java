@@ -29,9 +29,11 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 @Singleton
 public class AppMenuBar extends JMenuBar {
+    private static final Logger logger = Logger.getLogger(AppMenuBar.class.getName());
     private final JFrame frame;
     private final FileSaveService fileSaveService;
     private final FileModel fileModel;
@@ -56,7 +58,6 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem importAddButton;
     private JMenuItem exitButton;
     private JMenuItem toggleHelpMenuItem;
-    private JMenuItem toggleConsoleMenuItem;
     private JMenu openRecentMenu;
     private JMenuItem clearRecentFileMenuItem;
 
@@ -159,7 +160,7 @@ public class AppMenuBar extends JMenuBar {
         });
         importButton.addActionListener(e -> fileSaveService.importFile());
         importAddButton.addActionListener(e -> {
-            System.out.println("readFile2Memo() 開始");
+            logger.info("readFile2Memo() 開始");
             File file = fileSaveService.selectImportFile();
             Save save = null;
             try {
@@ -168,7 +169,7 @@ public class AppMenuBar extends JMenuBar {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
             }
-            System.out.println("readFile2Memo() 終了");
+            logger.info("readFile2Memo() 終了");
 
             if (save != null) {
                 mainCreasePatternWorker.setSave_for_reading_tuika(save);
@@ -180,9 +181,9 @@ public class AppMenuBar extends JMenuBar {
         pointOffsetCheckBox.addActionListener(e -> getData(applicationModel));
         gridInputAssistCheckBox.addActionListener(e -> {
             if (gridInputAssistCheckBox.isSelected()) {
-                System.out.println(" kou_mitudo_nyuuryoku on");
+                logger.info(" kou_mitudo_nyuuryoku on");
             } else {
-                System.out.println(" kou_mitudo_nyuuryoku off");
+                logger.info(" kou_mitudo_nyuuryoku off");
             }
             getData(applicationModel);
         });
@@ -193,7 +194,6 @@ public class AppMenuBar extends JMenuBar {
         displayStandardFaceMarksCheckBox.addActionListener(e -> getData(applicationModel));
         cpOnTopCheckBox.addActionListener(e -> getData(applicationModel));
         toggleHelpMenuItem.addActionListener(e -> applicationModel.toggleHelpVisible());
-        toggleConsoleMenuItem.addActionListener(e -> applicationModel.toggleConsoleVisible());
         darkModeCheckBox.addActionListener(e -> {
             applicationModel.toggleDarkMode();
 

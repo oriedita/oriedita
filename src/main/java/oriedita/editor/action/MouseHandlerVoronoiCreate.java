@@ -2,6 +2,9 @@ package oriedita.editor.action;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.*;
@@ -14,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
+    private static final Logger logger = LogManager.getLogger(MouseHandlerVoronoiCreate.class);
     public List<LineSegmentVoronoi> voronoiLineSet = new ArrayList<>();
     List<LineSegmentVoronoi> lineSegment_voronoi_onePoint = new ArrayList<>(); //Line segment around one point in Voronoi diagram
 
@@ -330,7 +334,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
 
                 add_lineSegment.set(OritaCalc.bisection(d.lineStep.get(i_e_d).getA(), d.lineStep.get(center_point_count).getA(), 1000.0));
 
-                System.out.println("center_point_count= " + center_point_count + " ,i_e_d= " + i_e_d);
+                logger.info("center_point_count= " + center_point_count + " ,i_e_d= " + i_e_d);
 
                 if (i_e_d < center_point_count) {
                     add_lineSegment.setVoronoiA(i_e_d);

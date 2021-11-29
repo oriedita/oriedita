@@ -2,6 +2,9 @@ package oriedita.editor.action;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -15,6 +18,8 @@ import oriedita.editor.databinding.CanvasModel;
 
 @Singleton
 public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRestricted {
+    private static final Logger logger = LogManager.getLogger(MouseHandlerContinuousSymmetricDraw.class);
+
     private final CreasePattern_Worker d;
     private final CanvasModel canvasModel;
     CreasePattern_Worker_Toolbox e_s_dougubako;
@@ -26,7 +31,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        System.out.println("i_egaki_dankai=" + d.lineStep.size());
+        logger.info("i_egaki_dankai=" + d.lineStep.size());
 
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
@@ -38,7 +43,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
             d.lineStepAdd(new LineSegment(p, p, d.lineColor));
         }
 
-        System.out.println("i_egaki_dankai=" + d.lineStep.size());
+        logger.info("i_egaki_dankai=" + d.lineStep.size());
     }
 
     //マウス操作(ドラッグしたとき)を行う関数
@@ -93,7 +98,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
         d.lineStepAdd(s);
         s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
 
-        System.out.println("20201129 saiki repaint ");
+        logger.info("20201129 saiki repaint ");
 
         //「再帰関数における、種の生成」求めた最も近い交点から次のベクトル（＝次の再帰関数に渡す「種」）を発生する。最も近い交点が折線とＸ字型に交差している点か頂点かで、種のでき方が異なる。
 
@@ -113,7 +118,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
 
         //最も近い交点が頂点（折線端末）の場合、頂点に集まる折線の数で条件分けして、種を生成し散布、
         if ((e_s_dougubako.getLengthenUntilIntersectionFlg_new(a, b) == StraightLine.Intersection.INTERSECT_T_A_21)
-                || (e_s_dougubako.getLengthenUntilIntersectionFlg_new(a, b) == StraightLine.Intersection.INTERSECT_T_B_22)) {//System.out.println("20201129 21 or 22");
+                || (e_s_dougubako.getLengthenUntilIntersectionFlg_new(a, b) == StraightLine.Intersection.INTERSECT_T_B_22)) {//logger.info("20201129 21 or 22");
 
             StraightLine tyoku1 = new StraightLine(a, b);
             StraightLine.Intersection intersection;

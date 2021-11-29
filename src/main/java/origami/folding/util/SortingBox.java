@@ -80,16 +80,6 @@ public class SortingBox<T> {//Arrange and store data in ascending order of doubl
 
         set(nbox);
     }
-
-    public void display() {
-        System.out.println("--- narabebako.hyouji() ---");
-        for (int k = 1; k <= getTotal(); k++) {
-            WeightedValue<T> i_d_temp = new WeightedValue<>();
-            i_d_temp.set(i_d_List.get(k));
-
-            System.out.println("   Narabebako.hyouj " + k + " : " + i_d_temp.getValue() + "," + i_d_temp.getWeight());
-        }
-    }
 }
 
 

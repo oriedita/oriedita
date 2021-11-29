@@ -1,5 +1,7 @@
 package oriedita.editor.datatransfer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import oriedita.editor.save.Save;
 
 import java.awt.datatransfer.DataFlavor;
@@ -7,13 +9,15 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 
 public class SaveTransferable implements Transferable {
+    private static final Logger logger = LogManager.getLogger(SaveTransferable.class);
+
     public static DataFlavor saveFlavor;
 
     static {
         try {
             saveFlavor = new DataFlavor("data/ori;class=oriedita.editor.save.Save");
         } catch (ClassNotFoundException cle) {
-            System.err.println("error initializing oriedita.editor.transfer.SaveTransferable");
+            logger.error("error initializing oriedita.editor.transfer.SaveTransferable", cle);
         }
     }
 

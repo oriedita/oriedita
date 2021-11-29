@@ -2,6 +2,8 @@ package origami.folding;
 
 import au.com.origin.snapshots.Expect;
 import au.com.origin.snapshots.junit5.SnapshotExtension;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +15,7 @@ import java.io.IOException;
 
 @ExtendWith({SnapshotExtension.class})
 public class TwoColoredCpTest {
+    private static final Logger logger = LogManager.getLogger(TwoColoredCpTest.class);
 
     private Expect expect;
 
@@ -31,7 +34,7 @@ public class TwoColoredCpTest {
 
             expect.serializer("json").toMatchSnapshot(foldedFigure.cp_worker3.get());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.fatal("test got interrupted", e);
             Assertions.fail();
         }
     }

@@ -49,7 +49,6 @@ public class ApplicationModel implements Serializable {
     private boolean correctCpBeforeFolding;
     private boolean check4Enabled;
     private boolean helpVisible;
-    private boolean consoleVisible;
     private int foldLineDividingNumber;
     private int numPolygonCorners;
     private String defaultDirectory;
@@ -164,20 +163,6 @@ public class ApplicationModel implements Serializable {
         Point oldWindowPosition = this.windowPosition;
         this.windowPosition = windowPosition;
         this.pcs.firePropertyChange("windowPosition", oldWindowPosition, windowPosition);
-    }
-
-    public boolean getConsoleVisible() {
-        return consoleVisible;
-    }
-
-    public void setConsoleVisible(boolean consoleVisible) {
-        boolean oldConsoleVisible = this.consoleVisible;
-        this.consoleVisible = consoleVisible;
-        this.pcs.firePropertyChange("consoleVisible", oldConsoleVisible, consoleVisible);
-    }
-
-    public void toggleConsoleVisible() {
-        setConsoleVisible(!consoleVisible);
     }
 
     public boolean getHelpVisible() {
@@ -567,7 +552,6 @@ public class ApplicationModel implements Serializable {
         antiAlias = applicationModel.getAntiAlias();
         mouseWheelMovesCreasePattern = applicationModel.getMouseWheelMovesCreasePattern();
         helpVisible = applicationModel.getHelpVisible();
-        consoleVisible = applicationModel.getConsoleVisible();
         preciseZoom = applicationModel.isPreciseZoom();
 
         circleCustomizedColor = applicationModel.getCircleCustomizedColor();

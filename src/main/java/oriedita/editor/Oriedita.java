@@ -1,16 +1,23 @@
 package oriedita.editor;
 
 import com.formdev.flatlaf.FlatLaf;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.factory.AppFactory;
 import oriedita.editor.factory.DaggerAppFactory;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
 
 public class Oriedita {
-    public static void main(String[] argv) throws InterruptedException, InvocationTargetException {
+    private static final Logger logger = LogManager.getLogger(Oriedita.class);
+
+    public static void main(String[] argv) {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
         AppFactory build = DaggerAppFactory.create();
@@ -30,7 +37,7 @@ public class Oriedita {
                 try {
                     build.fileSaveService().openFile(new File(argv[0]));
                 } catch (FileReadingException e) {
-                    e.printStackTrace();
+                    logger.error("Error reading file", e);
                     JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
