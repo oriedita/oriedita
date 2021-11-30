@@ -1,5 +1,7 @@
 package oriedita.editor;
 
+import org.apache.commons.imaging.ImageReadException;
+import org.apache.commons.imaging.Imaging;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -17,10 +19,11 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.List;
 import java.awt.event.*;
-import java.util.ArrayDeque;
-import java.util.Map;
-import java.util.Queue;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 @Singleton
 public class App {
@@ -169,7 +172,11 @@ public class App {
         canvas.creasePatternCamera.setDisplayPositionX(350.0);
         canvas.creasePatternCamera.setDisplayPositionY(350.0);
 
-        frame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("fishbase.png")));
+        try {
+            frame.setIconImages(Imaging.getAllBufferedImages(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("oriedita.ico")).getFile())));
+        } catch (IOException | ImageReadException | NullPointerException e) {
+            e.printStackTrace();
+        }
         frame.setContentPane(editor.$$$getRootComponent$$$());
 
         frame.setJMenuBar(appMenuBar);
@@ -233,5 +240,9 @@ public class App {
         explanation.setVisible(applicationModel.getHelpVisible());
         //focus back to here after creating dialog
         frame.requestFocus();
+    }
+
+    private Image getImage(String loc) {
+        return new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource(loc))).getImage();
     }
 }
