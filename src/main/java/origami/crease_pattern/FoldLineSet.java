@@ -3023,7 +3023,6 @@ public class FoldLineSet {
     }
 
     private boolean i_flat_ok(Point p, List<LineSegment> list) throws InterruptedException {//Foldable flat = 1
-        double hantei_kyori = Epsilon.UNKNOWN_1EN5;
         //If the end point of the line segment closest to the point p and the end point closer to the point p is the apex, how many line segments are present (the number of line segments having an end point within the apex and r).
         int i_tss_red = 0;
         int i_tss_blue = 0;
@@ -3042,9 +3041,9 @@ public class FoldLineSet {
 
             //Put a polygonal line with p as the end point in Narabebako
             if (s.getColor().isFoldingLine()) { //Auxiliary live lines are excluded at this stage
-                if (p.distance(s.getA()) < hantei_kyori) {
+                if (p.distance(s.getA()) < Epsilon.FLAT) {
                     nbox.addByWeight(s, OritaCalc.angle(s.getA(), s.getB()));
-                } else if (p.distance(s.getB()) < hantei_kyori) {
+                } else if (p.distance(s.getB()) < Epsilon.FLAT) {
                     nbox.addByWeight(s, OritaCalc.angle(s.getB(), s.getA()));
                 }
             }
