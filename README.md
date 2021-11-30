@@ -24,7 +24,7 @@ After downloading the latest version you can use the installer to install the so
 
 You should be presented with the main interface of Oriedita.
 
-![](https://i.imgur.com/EGnaeOx.png)
+![](https://i.imgur.com/w1Nh7aC.png)
 
 Use the mouse to draw lines on the crease pattern, using the ![MVEA](https://i.imgur.com/4vm5CND.png) buttons to change the direction of the fold line, and use the ![Fold](https://i.imgur.com/jxswOXM.png) button to try and fold the crease pattern.
 
