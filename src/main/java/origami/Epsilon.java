@@ -32,7 +32,7 @@ public class Epsilon {
     // These are the constants with a known purpose.
 
     public static final double PARALLEL = factor * 0.5;
-    public static final double FUSHIMI = factor * 1E-4;
+    public static final double FLAT = factor * 1E-4;
     public static final double QUAD_TREE_ITEM = factor * 0.5;
 
     /**

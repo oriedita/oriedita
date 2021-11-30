@@ -194,11 +194,15 @@ public class OritaCalc {
     // Note! If p1 and p2 are the same, or p3 and p4 are the same, the result will be strange,
     // This function itself does not have a check mechanism, so it may be difficult to notice.
     public static LineSegment.Intersection determineLineSegmentIntersection(LineSegment s1, LineSegment s2) {
-        return determineLineSegmentIntersection(s1, s2, Epsilon.UNKNOWN_001, Epsilon.UNKNOWN_001);
+        return determineLineSegmentIntersection(s1, s2, Epsilon.UNKNOWN_001);
     }
 
     public static LineSegment.Intersection determineLineSegmentIntersectionSweet(LineSegment s1, LineSegment s2) {
         return determineLineSegmentIntersectionSweet(s1, s2, Epsilon.UNKNOWN_001, Epsilon.UNKNOWN_001);
+    }
+
+    public static LineSegment.Intersection determineLineSegmentIntersection(LineSegment s1, LineSegment s2, double precision) {
+        return determineLineSegmentIntersection(s1, s2, precision, precision);
     }
 
     public static LineSegment.Intersection determineLineSegmentIntersection(LineSegment s1, LineSegment s2, double rhit, double rhei) {    //r_hitosii and r_heikouhantei are the allowable degree of deviation between hitosii and heikou_hantei
@@ -1060,14 +1064,14 @@ public class OritaCalc {
 
     //--------------------------------------------------------
     public static boolean isLineSegmentOverlapping(LineSegment s1, LineSegment s2) {//false do not overlap. true overlaps. 20201012 added
-        LineSegment.Intersection intersection = determineLineSegmentIntersection(s1, s2, Epsilon.UNKNOWN_1EN4, Epsilon.UNKNOWN_1EN4);
+        LineSegment.Intersection intersection = determineLineSegmentIntersection(s1, s2, Epsilon.UNKNOWN_1EN4);
 
         return intersection.isSegmentOverlapping();
     }
 
     //--------------------------------------------------------
     public static boolean lineSegment_X_kousa_decide(LineSegment s1, LineSegment s2) {//0はX交差しない。1は交差する。20201017追加
-        return determineLineSegmentIntersection(s1, s2, Epsilon.UNKNOWN_1EN4, Epsilon.UNKNOWN_1EN4) == LineSegment.Intersection.INTERSECTS_1;
+        return determineLineSegmentIntersection(s1, s2, Epsilon.UNKNOWN_1EN4) == LineSegment.Intersection.INTERSECTS_1;
     }
 
     public enum ParallelJudgement {

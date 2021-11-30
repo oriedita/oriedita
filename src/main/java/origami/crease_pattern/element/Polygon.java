@@ -342,19 +342,19 @@ public class Polygon {
 
             for (int i = 1; i <= vertexCount - 1; i++) {
                 s.set(vertices[i], vertices[i + 1]); //線分
-                if (OritaCalc.determineLineSegmentIntersection(sq, s, 0.0, 0.0).isIntersection()) {
+                if (OritaCalc.determineLineSegmentIntersection(sq, s, 0.0).isIntersection()) {
                     kousakaisuu++;
                 }
-                if (OritaCalc.determineLineSegmentIntersection(sq, s, 0.0, 0.0) == LineSegment.Intersection.INTERSECTS_1) {
+                if (OritaCalc.determineLineSegmentIntersection(sq, s, 0.0) == LineSegment.Intersection.INTERSECTS_1) {
                     jyuuji_kousakaisuu++;
                 }
             }
 
             s.set(vertices[vertexCount], vertices[1]); //線分
-            if (OritaCalc.determineLineSegmentIntersection(sq, s, 0.0, 0.0).isIntersection()) {
+            if (OritaCalc.determineLineSegmentIntersection(sq, s, 0.0).isIntersection()) {
                 kousakaisuu++;
             }
-            if (OritaCalc.determineLineSegmentIntersection(sq, s, 0.0, 0.0) == LineSegment.Intersection.INTERSECTS_1) {
+            if (OritaCalc.determineLineSegmentIntersection(sq, s, 0.0) == LineSegment.Intersection.INTERSECTS_1) {
                 jyuuji_kousakaisuu++;
             }
 
