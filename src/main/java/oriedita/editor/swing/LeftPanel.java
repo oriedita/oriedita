@@ -23,7 +23,7 @@ import oriedita.editor.service.FoldingService;
 import oriedita.editor.swing.component.ColorIcon;
 import oriedita.editor.swing.component.UndoRedo;
 import oriedita.editor.service.HistoryState;
-import oriedita.tools.StringOp;
+import oriedita.editor.tools.StringOp;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;

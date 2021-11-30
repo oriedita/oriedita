@@ -1,4 +1,4 @@
-package oriedita.tools;
+package oriedita.editor.tools;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;

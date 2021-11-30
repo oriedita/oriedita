@@ -1,4 +1,4 @@
-package oriedita.tools;
+package oriedita.editor.tools;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

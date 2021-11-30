@@ -9,9 +9,9 @@ import oriedita.editor.swing.dialog.SelectKeyStrokeDialog;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.action.MouseHandlerVoronoiCreate;
 import oriedita.editor.databinding.CanvasModel;
-import oriedita.tools.KeyStrokeUtil;
-import oriedita.tools.ResourceUtil;
-import oriedita.tools.StringOp;
+import oriedita.editor.tools.KeyStrokeUtil;
+import oriedita.editor.tools.ResourceUtil;
+import oriedita.editor.tools.StringOp;
 
 import javax.inject.Singleton;
 import javax.swing.*;

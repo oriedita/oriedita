@@ -1,6 +1,6 @@
 package oriedita.editor.databinding;
 
-import oriedita.tools.StringOp;
+import oriedita.editor.tools.StringOp;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

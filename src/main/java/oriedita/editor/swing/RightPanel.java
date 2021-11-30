@@ -14,7 +14,7 @@ import oriedita.editor.databinding.*;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.HistoryState;
-import oriedita.tools.StringOp;
+import oriedita.editor.tools.StringOp;
 
 import javax.inject.Singleton;
 import javax.swing.*;

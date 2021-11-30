@@ -1,7 +1,7 @@
 package oriedita.editor.databinding;
 
 
-import oriedita.tools.ResourceUtil;
+import oriedita.editor.tools.ResourceUtil;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

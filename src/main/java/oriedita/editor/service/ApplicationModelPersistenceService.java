@@ -17,7 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static oriedita.tools.ResourceUtil.getAppDir;
+import static oriedita.editor.tools.ResourceUtil.getAppDir;
 
 @Singleton
 public class ApplicationModelPersistenceService {

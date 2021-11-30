@@ -17,7 +17,7 @@ import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveV1;
 import oriedita.editor.swing.dialog.ExportDialog;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
-import oriedita.tools.ResourceUtil;
+import oriedita.editor.tools.ResourceUtil;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;

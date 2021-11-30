@@ -13,7 +13,7 @@ import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.tools.Camera;
-import oriedita.tools.StringOp;
+import oriedita.editor.tools.StringOp;
 
 import java.awt.*;
 import java.io.*;

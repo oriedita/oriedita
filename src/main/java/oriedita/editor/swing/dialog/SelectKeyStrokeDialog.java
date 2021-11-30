@@ -1,6 +1,6 @@
 package oriedita.editor.swing.dialog;
 
-import oriedita.tools.KeyStrokeUtil;
+import oriedita.editor.tools.KeyStrokeUtil;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

@@ -6,7 +6,7 @@ import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Camera;
-import oriedita.tools.StringOp;
+import oriedita.editor.tools.StringOp;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.PointSet;

@@ -23,7 +23,7 @@ import oriedita.editor.swing.component.*;
 import oriedita.editor.task.FoldingEstimateSave100Task;
 import oriedita.editor.task.FoldingEstimateSpecificTask;
 import oriedita.editor.task.TaskExecutor;
-import oriedita.tools.StringOp;
+import oriedita.editor.tools.StringOp;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;

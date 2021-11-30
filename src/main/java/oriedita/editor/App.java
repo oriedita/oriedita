@@ -4,14 +4,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.swing.AppMenuBar;
-import oriedita.editor.swing.dialog.ConsoleDialog;
 import oriedita.editor.swing.Editor;
 import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.FoldedFigure_Worker_Drawer;
 import oriedita.editor.service.*;
-import oriedita.tools.ResourceUtil;
+import oriedita.editor.tools.ResourceUtil;
 
 import javax.inject.Inject;
 import javax.inject.Named;
