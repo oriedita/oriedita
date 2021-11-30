@@ -260,35 +260,37 @@ public class SubFace {
     }
 
     private int customConstraintInconsistentDigitRequest(CustomConstraint lc, int min) {
-        List<Integer> mins = new ArrayList<>();
+        List<Integer> localMins = new ArrayList<>();
         for (Integer x : lc.getBottom()) {
             int a = FaceId2PermutationDigit(x);
-            int min2 = min;
+            int localMin = min;
             for (Integer faceID : lc.getTop()) {
                 int b = FaceId2PermutationDigit(faceID);
                 if (lc.getFaceOrder() == CustomConstraint.FaceOrder.FLIPPED) {
-                    if (b < min2 && a < b) {
-                        min2 = b;
+                    if (b < localMin && a < b) {
+                        localMin = b;
                         break;
                     }
                 }
                 if (lc.getFaceOrder() == CustomConstraint.FaceOrder.NORMAL) {
-                    if (a < min2 && b < a) {
-                        min2 = a;
+                    if (a < localMin && b < a) {
+                        localMin = a;
                         break;
                     }
                 }
             }
-            mins.add(min2);
+            if (localMin == min) {
+                return min;
+            }
+            localMins.add(localMin);
         }
         int maxMin = 0;
-        int minMin = min;
-        for (Integer m : mins) {
+        for (Integer m : localMins) {
             if (m > maxMin) {
                 maxMin = m;
-            }
-            if (m < minMin) {
-                minMin = min;
+                if (maxMin == min) {
+                    return min;
+                }
             }
         }
         return Math.min(maxMin, min);

@@ -394,7 +394,7 @@ public class FoldedFigure_Worker_Drawer {
             } else {
                 g2.setPaint(F_color);
             }
-            g2.fillOval((int) pos.getX()-2, (int) pos.getY()-2, 4, 4);
+            g2.fillOval((int) pos.getX()-2, (int) pos.getY()-2, 5, 5);
         }
     }
 
