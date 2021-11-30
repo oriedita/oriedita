@@ -706,7 +706,7 @@ public class FoldLineSet {
                         removal_flg[j] = true;
                     }
                 } else {
-                    if (OritaCalc.determineLineSegmentIntersection(si, sj, r, r) == LineSegment.Intersection.PARALLEL_EQUAL_31) {
+                    if (OritaCalc.determineLineSegmentIntersection(si, sj, r) == LineSegment.Intersection.PARALLEL_EQUAL_31) {
                         removal_flg[j] = true;
                     }
                 }
@@ -1023,7 +1023,7 @@ public class FoldLineSet {
 
             //setiactive(j,100)とされた折線は、kousabunkatu(int i1,int i2,int i3,int i4)の操作が戻った後で削除される。
 
-            LineSegment.Intersection i_intersection_decision = OritaCalc.determineLineSegmentIntersection(si, sj, Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);//iは加える方(2)、jは元からある方(1)
+            LineSegment.Intersection i_intersection_decision = OritaCalc.determineLineSegmentIntersection(si, sj, Epsilon.UNKNOWN_1EN6);//iは加える方(2)、jは元からある方(1)
 
 
             switch (i_intersection_decision) {
@@ -2190,7 +2190,7 @@ public class FoldLineSet {
     }
 
     public LineSegment del_V(LineSegment si, LineSegment sj) {//Erasing when two fold lines are the same color and there are no end points for other fold lines
-        LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(si, sj, Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);
+        LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(si, sj, Epsilon.UNKNOWN_1EN5);
 
         LineSegment addLine = null;
         if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323) {
@@ -2324,7 +2324,7 @@ public class FoldLineSet {
             boolean i_decision;
             i_decision = false;//If i_hantei is 1, the two line segments do not overlap and are connected in a straight line.
             LineSegment.Intersection i_lineSegment_intersection_decision;
-            i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(lix, liy, Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);
+            i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(lix, liy, Epsilon.UNKNOWN_1EN6);
 
             if (i_lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323) {
                 i_decision = true;
@@ -2398,7 +2398,7 @@ public class FoldLineSet {
             LineSegment liy = lineSegments.get(iy);
             boolean i_decision = false;//i_hanteiは１なら2線分は重ならず、直線状に繋がっている
             LineSegment.Intersection lineSegment_intersection_decision;
-            lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(lix, liy, Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);
+            lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(lix, liy, Epsilon.UNKNOWN_1EN6);
 
             if (lineSegment_intersection_decision == LineSegment.Intersection.PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323) {
                 i_decision = true;
@@ -3077,9 +3077,9 @@ public class FoldLineSet {
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
             if (s.getColor().isFoldingLine()) { //この段階で補助活線は除く
-                if (t1.distance(s.getA()) < Epsilon.FUSHIMI) {
+                if (t1.distance(s.getA()) < Epsilon.FLAT) {
                     nbox.addByWeight(s, OritaCalc.angle(s.getA(), s.getB()));
-                } else if (t1.distance(s.getB()) < Epsilon.FUSHIMI) {
+                } else if (t1.distance(s.getB()) < Epsilon.FLAT) {
                     nbox.addByWeight(s, OritaCalc.angle(s.getB(), s.getA()));
                 }
             }
@@ -3164,9 +3164,9 @@ public class FoldLineSet {
         for (int i = 1; i <= getTotal(); i++) {
             LineSegment si = lineSegments.get(i);
             if (si.getColor().isFoldingLine()) { //Auxiliary live lines are excluded at this stage
-                if (b.distance(si.getA()) < Epsilon.FUSHIMI) {
+                if (b.distance(si.getA()) < Epsilon.FLAT) {
                     r_nbox.addByWeight(si, OritaCalc.angle(b, a, si.getA(), si.getB()));
-                } else if (b.distance(si.getB()) < Epsilon.FUSHIMI) {
+                } else if (b.distance(si.getB()) < Epsilon.FLAT) {
                     r_nbox.addByWeight(si, OritaCalc.angle(b, a, si.getB(), si.getA()));
                 }
             }
@@ -3191,7 +3191,7 @@ public class FoldLineSet {
         }
 
         temp_angle = nbox0.getWeight(2) - nbox0.getWeight(1);
-        if (Math.abs(temp_angle - angle_min) < Epsilon.FUSHIMI) {// 折線を1つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
+        if (Math.abs(temp_angle - angle_min) < Epsilon.FLAT) {// 折線を1つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
             for (int i = 2; i <= nbox0.getTotal(); i++) {
                 WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
                 i_d_0.set(nbox0.getWeightedValue(i));
@@ -3201,7 +3201,7 @@ public class FoldLineSet {
         }
 
         temp_angle = nbox0.getWeight(nbox0.getTotal()) - nbox0.getWeight(nbox0.getTotal() - 1);
-        if (Math.abs(temp_angle - angle_min) < Epsilon.FUSHIMI) {// 折線を1つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
+        if (Math.abs(temp_angle - angle_min) < Epsilon.FLAT) {// 折線を1つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
             for (int i = 1; i <= nbox0.getTotal() - 1; i++) {
                 WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
                 i_d_0.set(nbox0.getWeightedValue(i));
@@ -3212,7 +3212,7 @@ public class FoldLineSet {
 
         for (int k = 2; k <= nbox0.getTotal() - 2; k++) {//kは角度の順番
             temp_angle = nbox0.getWeight(k + 1) - nbox0.getWeight(k);
-            if (Math.abs(temp_angle - angle_min) < Epsilon.FUSHIMI) {
+            if (Math.abs(temp_angle - angle_min) < Epsilon.FLAT) {
                 if (nbox0.getValue(k).getColor() != nbox0.getValue(k + 1).getColor()) {//この場合に隣接する３角度を1つの角度にする
                     // 折線を2つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
 
@@ -3253,9 +3253,9 @@ public class FoldLineSet {
         for (int i = 1; i <= getTotal(); i++) {
             LineSegment si = lineSegments.get(i);
             if (si.getColor().isFoldingLine()) { //この段階で補助活線は除く
-                if (t1.distance(si.getA()) < Epsilon.FUSHIMI) {
+                if (t1.distance(si.getA()) < Epsilon.FLAT) {
                     nbox.addByWeight(si, OritaCalc.angle(si.getA(), si.getB()));
-                } else if (t1.distance(si.getB()) < Epsilon.FUSHIMI) {
+                } else if (t1.distance(si.getB()) < Epsilon.FLAT) {
                     nbox.addByWeight(si, OritaCalc.angle(si.getB(), si.getA()));
                 }
             }
@@ -3275,7 +3275,7 @@ public class FoldLineSet {
             }
 
             //The following is when the two line types are blue-blue or red-red
-            LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(nbox.getValue(1), nbox.getValue(2), Epsilon.FUSHIMI, Epsilon.FUSHIMI);
+            LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(nbox.getValue(1), nbox.getValue(2), Epsilon.FLAT);
 
             switch (i_senbun_kousa_hantei) {
                 case PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323:
@@ -3329,7 +3329,7 @@ public class FoldLineSet {
             for (int k = 1; k <= nbox.getTotal(); k++) {//kは角度の順番
                 double temp_kakudo = OritaCalc.angle_between_0_kmax(nbox.getWeight(2) - nbox.getWeight(1), fushimi_decision_angle_goukei);
 
-                if (Math.abs(temp_kakudo - kakudo_min) < Epsilon.FUSHIMI) {
+                if (Math.abs(temp_kakudo - kakudo_min) < Epsilon.FLAT) {
                     if (nbox.getValue(1).getColor() != nbox.getValue(2).getColor()) {//この場合に隣接する３角度を1つの角度にする
                         // 折線を2つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
 
@@ -3382,7 +3382,7 @@ public class FoldLineSet {
                 , fushimi_decision_angle_goukei
         );
 
-        return Math.abs(fushimi_decision_angle_goukei - temp_kakudo * 2.0) < Epsilon.FUSHIMI;//この0だけ、角度がおかしいという意味
+        return Math.abs(fushimi_decision_angle_goukei - temp_kakudo * 2.0) < Epsilon.FLAT;//この0だけ、角度がおかしいという意味
     }
 
     public double get_x_max() {//sousuu=0のときは0.0を返す
