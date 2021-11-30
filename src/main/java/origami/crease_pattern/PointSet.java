@@ -1,8 +1,7 @@
 package origami.crease_pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import origami.crease_pattern.element.*;
 import origami.data.ListArray;
 import origami.data.save.PointSave;
@@ -17,8 +16,7 @@ import java.util.*;
  * Every line can be part of a line and/or a face.
  */
 public class PointSet implements Serializable {
-    private static final Logger logger = LogManager.getLogger(PointSet.class);
-    int numFaces_temp;
+        int numFaces_temp;
 
     int numPoints;               //Total number of points actually used
     int numLines;               //Total number of lines actually used
@@ -374,7 +372,7 @@ public class PointSet implements Serializable {
 
     //-------------------------------------
     public void FaceOccurrence() throws InterruptedException {
-        logger.info("線分集合->点集合：点集合内で面を発生　開始");
+        Logger.info("線分集合->点集合：点集合内で面を発生　開始");
         boolean addNewFace;
         Face tempFace;
         numFaces = 0;
@@ -420,13 +418,13 @@ public class PointSet implements Serializable {
              * never happens, and this message is kept here in case we need to detect the
              * error and fix things again.
              */
-            logger.warn("Euler characteristic error");
+            Logger.warn("Euler characteristic error");
         }
 
-        logger.info("全面数　＝　{}", numFaces);
+        Logger.info("全面数　＝　{}", numFaces);
         findLineInFaceBorder();
 
-        logger.info("線分集合->点集合：点集合内で面を発生　終了");
+        Logger.info("線分集合->点集合：点集合内で面を発生　終了");
     }
 
     private void findLineInFaceBorder() throws InterruptedException {

@@ -1,7 +1,6 @@
 package oriedita.editor.export;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import oriedita.editor.save.Save;
@@ -11,7 +10,6 @@ import java.io.*;
 import java.util.StringTokenizer;
 
 public class Cp {
-    private static final Logger logger = LogManager.getLogger(Cp.class);
 
     public static void exportFile(Save save, File file) {
         try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw)) {
@@ -21,7 +19,7 @@ public class Cp {
                 pw.println(String.format("%d %s %s %s %s", color, s.determineAX(), s.determineAY(), s.determineBX(), s.determineBY()));
             }
         } catch (IOException e) {
-            logger.error("Error exporting cp file", e);
+            Logger.error(e, "Error exporting cp file");
         }
     }
 

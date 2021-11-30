@@ -8,8 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
 import oriedita.editor.Colors;
@@ -33,7 +32,6 @@ import java.util.Arrays;
 
 @Singleton
 public class LeftPanel {
-    private static final Logger logger = LogManager.getLogger(LeftPanel.class);
     private final MeasuresModel measuresModel;
     private JPanel root;
 
@@ -346,8 +344,8 @@ public class LeftPanel {
             mainCreasePatternWorker.unselect_all();
         });
         all_s_step_to_orisenButton.addActionListener(e -> {
-            logger.info("i_egaki_dankai = " + mainCreasePatternWorker.getDrawingStage());
-            logger.info("i_kouho_dankai = " + mainCreasePatternWorker.getCandidateSize());
+            Logger.info("i_egaki_dankai = " + mainCreasePatternWorker.getDrawingStage());
+            Logger.info("i_kouho_dankai = " + mainCreasePatternWorker.getCandidateSize());
 
             mainCreasePatternWorker.all_s_step_to_orisen();
         });
@@ -514,11 +512,11 @@ public class LeftPanel {
         });
         v_del_allButton.addActionListener(e -> {
             mainCreasePatternWorker.v_del_all();
-            logger.info("mainDrawingWorker.v_del_all()");
+            Logger.info("mainDrawingWorker.v_del_all()");
         });
         v_del_all_ccButton.addActionListener(e -> {
             mainCreasePatternWorker.v_del_all_cc();
-            logger.info("mainDrawingWorker.v_del_all_cc()");
+            Logger.info("mainDrawingWorker.v_del_all_cc()");
         });
         correctCpBeforeFoldingCheckBox.addActionListener(e -> {
             applicationModel.setCorrectCpBeforeFolding(correctCpBeforeFoldingCheckBox.isSelected());

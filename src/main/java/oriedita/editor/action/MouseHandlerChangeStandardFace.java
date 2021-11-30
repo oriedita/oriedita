@@ -3,8 +3,7 @@ package oriedita.editor.action;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import origami.crease_pattern.element.Point;
 import oriedita.editor.canvas.MouseMode;
 import origami.folding.FoldedFigure;
@@ -14,7 +13,6 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 
 @Singleton
 public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
-    private static final Logger logger = LogManager.getLogger(MouseHandlerChangeStandardFace.class);
     private final CreasePattern_Worker d;
     private final FoldedFiguresList foldedFiguresList;
 
@@ -60,10 +58,10 @@ public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
 
             selectedFigure.setStartingFaceId(newStartingFaceId);
 
-            logger.info("kijyunmen_id = " + newStartingFaceId);
+            Logger.info("kijyunmen_id = " + newStartingFaceId);
             if (selectedFigure.foldedFigure.ct_worker.face_rating != null) {//20180227追加
                 int index = selectedFigure.foldedFigure.ct_worker.nbox.getSequence(newStartingFaceId);
-                logger.info(
+                Logger.info(
                         "OZ.js.nbox.get_jyunjyo = " + index + " , rating = " + selectedFigure.foldedFigure.ct_worker.nbox.getWeight(index)
                 );
 

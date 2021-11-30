@@ -1,7 +1,6 @@
 package oriedita.editor.task;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import origami.crease_pattern.LineSegmentSet;
 import origami.folding.FoldedFigure;
 import oriedita.editor.swing.component.BulletinBoard;
@@ -10,8 +9,6 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Camera;
 
 public class FoldingEstimateTask {
-    private static Logger logger = LogManager.getLogger(FoldingEstimateTask.class);
-
     private final BulletinBoard bulletinBoard;
     private final CanvasModel canvasModel;
     private final Camera creasePatternCamera;
@@ -37,7 +34,7 @@ public class FoldingEstimateTask {
                 selectedFigure.foldedFigure.estimated_initialize();
                 bulletinBoard.clear();
 
-                logger.error("Folding estimation got interrupted.", e);
+                Logger.error(e, "Folding estimation got interrupted.");
             }
 
             canvasModel.markDirty();

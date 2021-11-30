@@ -1,7 +1,6 @@
 package origami.crease_pattern;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
@@ -29,8 +28,7 @@ import java.util.concurrent.TimeUnit;
  * Representation of the current drawn crease pattern.
  */
 public class FoldLineSet {
-    private static final Logger logger = LogManager.getLogger(FoldLineSet.class);
-    int total;               //Total number of line segments actually used
+        int total;               //Total number of line segments actually used
     List<LineSegment> lineSegments = new ArrayList<>(); //折線とする線分のインスタンス化
 
     Queue<LineSegment> Check1LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
@@ -748,7 +746,7 @@ public class FoldLineSet {
         for (int i = 1; i <= total; i++) {
             setActive(i, LineSegment.ActiveState.INACTIVE_0);
         }//削除すべき線は iactive=100とする
-        //logger.info("1234567890   kousabunkatu");
+        //Logger.info("1234567890   kousabunkatu");
         ArrayList<Integer> k_flg = new ArrayList<>();//交差分割の影響があることを示すフラッグ。
 
         for (int i = 0; i <= total + 100; i++) {
@@ -2339,7 +2337,7 @@ public class FoldLineSet {
                 i_decision = true;
             }
 
-            logger.info("i_lineSegment_intersection_decision=" + i_lineSegment_intersection_decision + "---tyouten_syuui_sensuu_for_del_V(q,r)_" + vertex_syuui_numLines_for_del_V(q, r));
+            Logger.info("i_lineSegment_intersection_decision=" + i_lineSegment_intersection_decision + "---tyouten_syuui_sensuu_for_del_V(q,r)_" + vertex_syuui_numLines_for_del_V(q, r));
             if (!i_decision) {
                 return false;
             }
@@ -2990,7 +2988,7 @@ public class FoldLineSet {
         unselect_all();
 
         PointLineMap map = new PointLineMap(lineSegments);
-        logger.info("check4_T_size() = " + map.getPoints().size());
+        Logger.info("check4_T_size() = " + map.getPoints().size());
 
         ExecutorService service = Executors.newWorkStealingPool();
 

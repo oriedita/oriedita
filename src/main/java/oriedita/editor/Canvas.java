@@ -4,8 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import origami.crease_pattern.OritaCalc;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.canvas.MouseMode;
@@ -42,7 +41,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @Singleton
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
-    private static final Logger logger = LogManager.getLogger(Canvas.class);
 
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FoldedFiguresList foldedFiguresList;
@@ -156,7 +154,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         addMouseMotionListener(this);
         addMouseWheelListener(this);
 
-        logger.info(" dim 001 :" + dim.width + " , " + dim.height);//多分削除可能
+        Logger.info(" dim 001 :" + dim.width + " , " + dim.height);//多分削除可能
 
         addComponentListener(new ComponentAdapter() {
             @Override
@@ -234,7 +232,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             selectedFigure.wireFrame_worker_drawer2.setCam_transparent_rear(selectedFigure.transparentRearCamera);
 //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         }
-        //logger.info("paint　+++++++++++++++++++++　背景表示");
+        //Logger.info("paint　+++++++++++++++++++++　背景表示");
         //背景表示
         Image backgroundImage = backgroundModel.getBackgroundImage();
 
@@ -393,7 +391,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         switch (btn) {
             case MouseEvent.BUTTON1:
                 if (e.getClickCount() == 3 && mouseMode == MouseMode.CREASE_SELECT_19 && canvasModel.isCkbox_add_frame_SelectAnd3click_isSelected()) {
-                    logger.info("3_Click");//("トリプルクリック"
+                    Logger.info("3_Click");//("トリプルクリック"
 
                     switch (canvasModel.getSelectionOperationMode()) {
                         case MOVE_1:
@@ -416,11 +414,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
                 break;
             case MouseEvent.BUTTON2:
-                logger.info("中ボタンクリック");
+                Logger.info("中ボタンクリック");
 
                 MouseWheelTarget target = foldedFigureCanvasSelectService.pointInCreasePatternOrFoldedFigure(p);
 
-                logger.info("i_cp_or_oriagari = " + target);
+                Logger.info("i_cp_or_oriagari = " + target);
 
                 FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
@@ -468,7 +466,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         repaint();
     }
 
-    //マウス操作(ドラッグしたとき)を行う関数---------- logger.info("A");------------------------------------------
+    //マウス操作(ドラッグしたとき)を行う関数---------- Logger.info("A");------------------------------------------
     public void mouseDragged(MouseEvent e) {
 
         if (mouseDraggedValid) {
@@ -577,7 +575,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     mouseReleasedValid = false;
                     return;//
                 case MouseEvent.BUTTON3:
-                    //logger.info("右ボタンクリック");
+                    //Logger.info("右ボタンクリック");
                     if (mouseMode == MouseMode.VORONOI_CREATE_62) {
                         repaint();//ボロノイ図入力時は、入力途中のボロノイ母点が消えないように、右クリックに反応させない。20181208
                     } else {
@@ -592,7 +590,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     }
                     return;
             }
-            //----------------------------logger.info("a");-----------------------
+            //----------------------------Logger.info("a");-----------------------
             //}  //20201010　コメントアウト
 
             mainCreasePatternWorker.setCamera(creasePatternCamera);
@@ -738,7 +736,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             w.setLocation(locations.poll());
         }
 
-        logger.info("新背景カメラインスタンス化");
+        Logger.info("新背景カメラインスタンス化");
         h_cam = new Background_camera();//20181202
 
         backgroundModel.setBackgroundPosition(new Polygon(new Point(120.0, 120.0),

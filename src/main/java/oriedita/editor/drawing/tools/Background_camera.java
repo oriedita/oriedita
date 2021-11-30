@@ -1,7 +1,6 @@
 package oriedita.editor.drawing.tools;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 
@@ -13,7 +12,6 @@ import origami.crease_pattern.element.Point;
  * Make h2 and h4 also overlap
  */
 public class Background_camera {
-    private static final Logger logger = LogManager.getLogger(Background_camera.class.getName());
 
     Point h1 = new Point();
     Point h2 = new Point();
@@ -122,11 +120,11 @@ public class Background_camera {
         p_rotation_x = h3.getX();
         p_rotation_y = h3.getY();
 
-        logger.info("Background_camera --- parameter_calculation");
-        logger.info("h1 " + h1);
-        logger.info("h2 " + h2);
-        logger.info("h3 " + h3);
-        logger.info("h4 " + h4);
+        Logger.info("Background_camera --- parameter_calculation");
+        Logger.info("h1 " + h1);
+        Logger.info("h2 " + h2);
+        Logger.info("h3 " + h3);
+        Logger.info("h4 " + h4);
     }
 
     public void setBackgroundWidth(double d0) {

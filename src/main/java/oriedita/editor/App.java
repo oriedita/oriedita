@@ -2,8 +2,7 @@ package oriedita.editor;
 
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.swing.AppMenuBar;
 import oriedita.editor.swing.Editor;
@@ -27,7 +26,6 @@ import java.util.*;
 
 @Singleton
 public class App {
-    private static final Logger logger = LogManager.getLogger(App.class);
     private final ApplicationModel applicationModel;
     private final CanvasModel canvasModel;
     private final FoldedFigureModel foldedFigureModel;
@@ -173,7 +171,7 @@ public class App {
         canvas.creasePatternCamera.setDisplayPositionY(350.0);
 
         try {
-            frame.setIconImages(Imaging.getAllBufferedImages(new File(Objects.requireNonNull(getClass().getClassLoader().getResource("oriedita.ico")).getFile())));
+            frame.setIconImages(Imaging.getAllBufferedImages(getClass().getClassLoader().getResourceAsStream("oriedita.ico"), "oriedita.ico"));
         } catch (IOException | ImageReadException | NullPointerException e) {
             e.printStackTrace();
         }
@@ -201,7 +199,7 @@ public class App {
 
         canvasModel.addPropertyChangeListener(e -> {
             if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
-                logger.info("mouseMode = " + canvasModel.getMouseMode().toReadableString());
+                Logger.info("mouseMode = " + canvasModel.getMouseMode().toReadableString());
             }
         });
 

@@ -1,7 +1,6 @@
 package origami.folding;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import origami.crease_pattern.FoldingException;
@@ -13,8 +12,7 @@ import oriedita.editor.export.Cp;
 import java.io.IOException;
 
 public class FoldingSolutionsTest {
-    private static final Logger logger = LogManager.getLogger(FoldingSolutionsTest.class);
-    @Test
+        @Test
     public void testFoldSolutionNumber() throws IOException {
         Save save = Cp.importFile(getClass().getClassLoader().getResourceAsStream("solution_sample_1.cp"));
 
@@ -42,7 +40,7 @@ public class FoldingSolutionsTest {
 
             Assertions.assertEquals(16, foldedFigure.discovered_fold_cases, "Expected to find 16 solutions");
         } catch (InterruptedException | FoldingException e) {
-            logger.fatal("test got interrupted", e);
+            Logger.error(e, "test got interrupted");
             Assertions.fail();
         }
     }

@@ -1,14 +1,12 @@
 package oriedita.editor.task;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.CanvasModel;
 
 import java.util.concurrent.*;
 
 public class CheckCAMVTask implements Callable<Void> {
-    private static final Logger logger = LogManager.getLogger(CheckCAMVTask.class);
     private final CreasePattern_Worker creasePattern_worker;
     private final CanvasModel canvasModel;
 
@@ -39,7 +37,7 @@ public class CheckCAMVTask implements Callable<Void> {
 
         long stop = System.currentTimeMillis();
         long L = stop - start;
-        logger.info("Check4 computation time " + L + " msec.");
+        Logger.info("Check4 computation time " + L + " msec.");
 
         canvasModel.markDirty();
 

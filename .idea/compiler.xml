@@ -34,10 +34,12 @@
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/kotlinx/kotlinx-metadata-jvm/0.3.0/kotlinx-metadata-jvm-0.3.0.jar" />
         </processorPath>
         <module name="oriedita" />
+        <module name="root" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="oriedita" target="11" />
+      <module name="root" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,7 +1,6 @@
 package oriedita.editor.export;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
@@ -25,7 +24,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class Svg {
-    private static final Logger logger = LogManager.getLogger(Svg.class);
 
     public static void exportFile(FoldLineSet foldLineSet, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize, FoldedFiguresList foldedFigures, File file) {
         try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw)) {
@@ -45,7 +43,7 @@ public class Svg {
 
             pw.println("</svg>");
         } catch (IOException e) {
-            logger.error("Error during svg export", e);
+            Logger.error(e, "Error during svg export");
         }
     }
 

@@ -1,7 +1,6 @@
 package oriedita.editor.service;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveV1;
 
@@ -15,7 +14,6 @@ import java.util.Deque;
 
 @Singleton
 public class HistoryState {
-    private static final Logger logger = LogManager.getLogger(HistoryState.class);
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     int undoTotal = 1000;//Number of times you can undo up to how many times ago
@@ -48,7 +46,7 @@ public class HistoryState {
         try {
             current = convertToBytes(s0);
         } catch (IOException e) {
-            logger.error("Saving current state failed", e);
+            Logger.error(e, "Saving current state failed");
         }
 
         // Future becomes irrelevant
@@ -92,7 +90,7 @@ public class HistoryState {
         try {
             return (Save) convertFromBytes(current);
         } catch (IOException | ClassNotFoundException e) {
-            logger.error("Restoring current save failed", e);
+            Logger.error(e, "Restoring current save failed");
         }
 
         return new SaveV1();
