@@ -1,7 +1,6 @@
 package oriedita.editor.drawing;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
@@ -14,8 +13,7 @@ import oriedita.editor.drawing.tools.Camera;
 import java.awt.*;
 
 public class FoldedFigure_Drawer {
-    private static final Logger logger = LogManager.getLogger(FoldedFigure_Drawer.class);
-    public final FoldedFigure_01 foldedFigure;
+        public final FoldedFigure_01 foldedFigure;
     public final FoldedFigure_Worker_Drawer foldedFigure_worker_drawer;
     public final WireFrame_Worker_Drawer wireFrame_worker_drawer1;
     public final WireFrame_Worker_Drawer wireFrame_worker_drawer2;
@@ -87,7 +85,7 @@ public class FoldedFigure_Drawer {
         foldedFigureModel.setScale(d_foldedFigure_scale_factor);
         foldedFigureModel.setRotation(d_foldedFigure_rotation_correction);
 
-        logger.info("cp_worker1.ten_of_kijyunmen_ob     " + wireFrame_worker_drawer1.getStartingFacePointTV(startingFaceId).getX());
+        Logger.info("cp_worker1.ten_of_kijyunmen_ob     " + wireFrame_worker_drawer1.getStartingFacePointTV(startingFaceId).getX());
 
         Point p0 = new Point();
         Point p = new Point();
@@ -248,7 +246,7 @@ public class FoldedFigure_Drawer {
                 foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.cp_worker2.get(), foldedFigure.cp_worker3.get(), transparencyColor, transparent_transparency);
             }
 
-            //Display of folded figure ************* //logger.info("paint　+++++++++++++++++++++　折り上がり図の表示");
+            //Display of folded figure ************* //Logger.info("paint　+++++++++++++++++++++　折り上がり図の表示");
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) {
                 foldedFigure_worker_drawer.draw_foldedFigure_with_camera(bufferGraphics, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }

@@ -2,8 +2,7 @@ package oriedita.editor.service;
 
 import javax.inject.Inject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.swing.dialog.SelectKeyStrokeDialog;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -30,7 +29,6 @@ public class ButtonService {
     private Frame owner;
     private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate;
     private final CanvasModel canvasModel;
-    private static final Logger logger = LogManager.getLogger(ButtonService.class);
 
     @Inject
     public ButtonService(HelpDialog explanation, CreasePattern_Worker mainCreasePatternWorker, MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate, CanvasModel canvasModel) {
@@ -78,7 +76,7 @@ public class ButtonService {
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
 
         if (!StringOp.isEmpty(keyStrokeString) && keyStroke == null) {
-            logger.error("Keystroke for \"" + key + "\": \"" + keyStrokeString + "\" is invalid");
+            Logger.error("Keystroke for \"" + key + "\": \"" + keyStrokeString + "\" is invalid");
         }
 
         setTooltip(button, key);
@@ -198,7 +196,7 @@ public class ButtonService {
     }
 
     private static class Click extends AbstractAction {
-        private final AbstractButton button;
+    private final AbstractButton button;
 
         public Click(AbstractButton button) {
             this.button = button;

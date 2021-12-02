@@ -2,8 +2,7 @@ package origami.folding;
 
 import au.com.origin.snapshots.Expect;
 import au.com.origin.snapshots.junit5.SnapshotExtension;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,8 +16,7 @@ import java.io.IOException;
 
 @ExtendWith({SnapshotExtension.class})
 public class FoldingTest {
-    private static final Logger logger = LogManager.getLogger(FoldingTest.class);
-    private Expect expect;
+        private Expect expect;
 
     @Test
     public void testFoldBirdbase() throws IOException {
@@ -36,7 +34,7 @@ public class FoldingTest {
 
             expect.serializer("json").toMatchSnapshot(foldedFigure.cp_worker3.get());
         } catch (InterruptedException | FoldingException e) {
-            logger.fatal("test got interrupted", e);
+            Logger.error(e, "test got interrupted");
             Assertions.fail();
         }
     }

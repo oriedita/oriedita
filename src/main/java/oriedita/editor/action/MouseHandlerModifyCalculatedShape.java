@@ -3,8 +3,7 @@ package oriedita.editor.action;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import origami.Epsilon;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.element.Point;
@@ -19,7 +18,6 @@ import javax.swing.*;
 
 @Singleton
 public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
-    private static final Logger logger = LogManager.getLogger(MouseHandlerModifyCalculatedShape.class);
     private final FoldingService foldingService;
     private final CanvasModel canvasModel;
     private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
@@ -114,9 +112,9 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                     try {
                         foldingService.folding_estimated(selectedFigure);
                     } catch (InterruptedException e) {
-                        logger.warn("Folding got interrupted", e);
+                        Logger.warn(e, "Folding got interrupted");
                     } catch (FoldingException e) {
-                        logger.error("An error occurred during folding", e);
+                        Logger.error(e, "An error occurred during folding");
                     }
                 }//オリジナル 20180124 これ以外だと、表示いったんもどるようでうざい
             }
@@ -195,7 +193,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
 
         move_previous_selection_point.set(selectedFigure.foldedFigure.cp_worker2.getPoint(i_closestPointId));
 
-        logger.info("i_nanini_tikai = " + i_nanini_near);
+        Logger.info("i_nanini_tikai = " + i_nanini_near);
 
         if (i_nanini_near == 1) {
             //Decide i_point_selection
@@ -238,7 +236,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                 }    //At the point specified on the origami diagram, one of the points that overlaps it is selected by cp_worker2. In short, the point displayed in green on the origami diagram is selected.
             }
             //Decide i_point_selection so far
-            logger.info("i_ten_sentaku = " + i_point_selection);
+            Logger.info("i_ten_sentaku = " + i_point_selection);
 
             switch (i_point_selection) {//Find the number of the point at the same position as i_closestPointId in the fold-up diagram, and mark the point with that number as selected with cp_worker1.
                 case NONE_0:
@@ -263,8 +261,8 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             }
         }
 
-        logger.info("cp_worker1.get_ten_sentakusuu() = " + selectedFigure.foldedFigure.cp_worker1.getSelectedPointsNum());
-        logger.info("cp_worker2.get_ten_sentakusuu() = " + selectedFigure.foldedFigure.cp_worker2.getSelectedPointsNum());
+        Logger.info("cp_worker1.get_ten_sentakusuu() = " + selectedFigure.foldedFigure.cp_worker1.getSelectedPointsNum());
+        Logger.info("cp_worker2.get_ten_sentakusuu() = " + selectedFigure.foldedFigure.cp_worker2.getSelectedPointsNum());
     }
 
     private void foldedFigure_operation_mouse_drag_1(Point p) {//Work when dragging while holding down the left mouse button in the fold-up diagram operation
@@ -316,7 +314,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
 
         move_previous_selection_point.set(selectedFigure.foldedFigure.cp_worker2.getPoint(i_closestPointId));
 
-        logger.info("i_nanini_tikai = " + i_nanini_near);
+        Logger.info("i_nanini_tikai = " + i_nanini_near);
 
         if (i_nanini_near == 1) {
 
@@ -359,7 +357,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                 }    //折図上で指定した点で、そこに重なるいずれかの点がcp_worker2で選択されている。要するに折図上の緑表示されている点を選んだ状態
             }
             //i_ten_sentakuを決める  ここまで
-            logger.info("i_ten_sentaku = " + i_point_selection);
+            Logger.info("i_ten_sentaku = " + i_point_selection);
 
             switch (i_point_selection) {//折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                 case NONE_0:
@@ -384,8 +382,8 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             }
         }
 
-        logger.info("cp_worker1.get_ten_sentakusuu() = " + selectedFigure.foldedFigure.cp_worker1.getSelectedPointsNum());
-        logger.info("cp_worker2.get_ten_sentakusuu() = " + selectedFigure.foldedFigure.cp_worker2.getSelectedPointsNum());
+        Logger.info("cp_worker1.get_ten_sentakusuu() = " + selectedFigure.foldedFigure.cp_worker1.getSelectedPointsNum());
+        Logger.info("cp_worker2.get_ten_sentakusuu() = " + selectedFigure.foldedFigure.cp_worker2.getSelectedPointsNum());
     }
 
     private void foldedFigure_operation_mouse_drag_2(Point p) {//折り上がり図操作でマウスの左ボタンを押したままドラッグしたときの作業

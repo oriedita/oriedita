@@ -4,8 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
@@ -35,8 +34,7 @@ import java.util.concurrent.Future;
  */
 @Singleton
 public class CreasePattern_Worker {
-    private static final Logger logger = LogManager.getLogger(CreasePattern_Worker.class);
-    // ------------
+        // ------------
     final int check4ColorTransparencyIncrement = 10;
     private final LineSegmentSet lineSegmentSet = new LineSegmentSet();    //Instantiation of basic branch structure
     private final Camera creasePatternCamera;
@@ -439,7 +437,7 @@ public class CreasePattern_Worker {
 
 
         //Check4Senbには0番目からsize()-1番目までデータが入っている
-        //logger.info("foldLineSet.check4_size() = "+foldLineSet.check4_size());
+        //Logger.info("foldLineSet.check4_size() = "+foldLineSet.check4_size());
         if (check4) {
             for (LineSegment s_temp : foldLineSet.getCheck4LineSegments()) {
                 DrawingUtil.pointingAt4(g, camera.object2TV(s_temp), check4ColorTransparency);
@@ -538,7 +536,7 @@ public class CreasePattern_Worker {
                 DrawingUtil.drawLineStep(g, s, camera, lineWidth, gridInputAssist);
             }
         }
-        //候補入力時の候補を描く//logger.info("_");
+        //候補入力時の候補を描く//Logger.info("_");
         g2.setStroke(new BasicStroke(lineWidth + 0.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A
 
         for (LineSegment s : lineCandidate) {
@@ -794,7 +792,7 @@ public class CreasePattern_Worker {
                 record();
             }
         } catch (InterruptedException e) {
-            logger.info("v_del_all aborted");
+            Logger.info("v_del_all aborted");
         }
     }
 
@@ -808,7 +806,7 @@ public class CreasePattern_Worker {
                 record();
             }
         } catch (InterruptedException e) {
-            logger.info("v_del_all_cc aborted");
+            Logger.info("v_del_all_cc aborted");
         }
     }
 

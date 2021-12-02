@@ -3,8 +3,7 @@ package oriedita.editor.service;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import origami.crease_pattern.element.Point;
 import origami.folding.FoldedFigure;
 import oriedita.editor.Canvas;
@@ -15,7 +14,6 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 
 @Singleton
 public class FoldedFigureCanvasSelectService {
-    private static final Logger logger = LogManager.getLogger(FoldedFigureCanvasSelectService.class);
     private final FoldedFiguresList foldedFiguresList;
     private final FoldedFigureModel foldedFigureModel;
     private final CanvasModel canvasModel;
@@ -137,7 +135,7 @@ public class FoldedFigureCanvasSelectService {
     }
 
     void setFoldedFigureIndex(int i) {//Processing when OZ is switched
-        logger.info("foldedFigureIndex = " + i);
+        Logger.info("foldedFigureIndex = " + i);
 
         FoldedFigure_Drawer newSelectedItem = foldedFiguresList.getElementAt(i);
         foldedFiguresList.setSelectedItem(newSelectedItem);

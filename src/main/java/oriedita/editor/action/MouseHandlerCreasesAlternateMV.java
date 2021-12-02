@@ -3,8 +3,7 @@ package oriedita.editor.action;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -15,7 +14,6 @@ import origami.folding.util.SortingBox;
 
 @Singleton
 public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestricted {
-    private static final Logger logger = LogManager.getLogger(MouseHandlerCreasesAlternateMV.class);
     private final MouseHandlerLineSegmentRatioSet mouseHandlerLineSegmentRatioSet;
 
     @Inject
@@ -77,7 +75,7 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
                     }
                 }
 
-                logger.info("i_d_sousuu" + nbox.getTotal());
+                Logger.info("i_d_sousuu" + nbox.getTotal());
 
                 LineColor icol_temp = d.lineColor;
 

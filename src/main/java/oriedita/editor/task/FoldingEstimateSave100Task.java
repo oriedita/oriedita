@@ -1,7 +1,6 @@
 package oriedita.editor.task;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import origami.crease_pattern.FoldingException;
 import oriedita.editor.Canvas;
 import oriedita.editor.databinding.FoldedFiguresList;
@@ -12,7 +11,6 @@ import oriedita.editor.service.FoldingService;
 import java.io.File;
 
 public class FoldingEstimateSave100Task implements Runnable {
-    private static final Logger logger = LogManager.getLogger(FoldingEstimateSave100Task.class);
 
     private final Canvas canvas;
     private final FoldingService foldingService;
@@ -63,7 +61,7 @@ public class FoldingEstimateSave100Task implements Runnable {
                     }
                 } catch (InterruptedException | FoldingException e) {
                     selectedFigure.foldedFigure.estimated_initialize();
-                    logger.warn("Folding estimate save 100 got interrupted", e);
+                    Logger.warn(e, "Folding estimate save 100 got interrupted");
                 }
             }
             selectedFigure.foldedFigure.summary_write_image_during_execution = false;

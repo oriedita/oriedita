@@ -3,8 +3,7 @@ package oriedita.editor.action;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 import oriedita.editor.canvas.MouseMode;
@@ -12,7 +11,6 @@ import oriedita.editor.canvas.CreasePattern_Worker;
 
 @Singleton
 public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
-    private static final Logger logger = LogManager.getLogger(MouseHandlerCreaseSelect.class);
     private final MouseHandlerCreaseMove4p mouseHandlerCreaseMove4p;
     private final MouseHandlerCreaseCopy4p mouseHandlerCreaseCopy4p;
     private final MouseHandlerCreaseCopy mouseHandlerCreaseCopy;
@@ -48,8 +46,8 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
 
     //マウス操作(mouseMode==19  select　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        logger.info("19  select_");
-        logger.info("i_egaki_dankai=" + d.lineStep.size());
+        Logger.info("19  select_");
+        Logger.info("i_egaki_dankai=" + d.lineStep.size());
 
         Point p = new Point();
 
