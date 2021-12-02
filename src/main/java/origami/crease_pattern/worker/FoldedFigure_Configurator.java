@@ -130,15 +130,23 @@ public class FoldedFigure_Configurator {
             }
             int constraintSubfaceId = subfaceIds.entrySet().stream().filter((e) -> e.getValue() == allFaces.size()).findFirst().get().getKey();
             SubFace constraintSubface = worker.s[constraintSubfaceId];
-            if (constraintSubface.hasCustomConstraint()) {
-                CustomConstraint c2 = constraintSubface.getCustomConstraint();
-                Set<Integer> newTop = new HashSet<>(c2.getTop());
-                newTop.retainAll(cc.getTop());
-                Set<Integer> newBottom = new HashSet<>(c2.getBottom());
-                newBottom.addAll(cc.getBottom());
-                cc = new CustomConstraint(cc.getFaceOrder(), newTop, newBottom, cc.getPos(), cc.getType());
+            switch (cc.getFaceOrder()) {
+                case NORMAL:
+                    if (constraintSubface.hasTopFaceConstraint()) {
+                        CustomConstraint c2 = constraintSubface.getConstraintTopFace();
+                        cc = mergeConstraints(cc, c2);
+                    }
+                    constraintSubface.setConstraintTopFace(cc);
+                    break;
+                case FLIPPED:
+                    if (constraintSubface.hasBottomFaceConstraint()) {
+                        CustomConstraint c2 = constraintSubface.getConstraintBottomFace();
+                        cc = mergeConstraints(cc, c2);
+                    }
+                    constraintSubface.setConstraintBottomFace(cc);
+                    break;
             }
-            constraintSubface.setCustomConstraint(cc);
+
         }
         worker.s1 = reduceSubFaceSet(worker.s0);
 
@@ -153,7 +161,16 @@ public class FoldedFigure_Configurator {
         }
     }
 
-     /**
+    private CustomConstraint mergeConstraints(CustomConstraint cc, CustomConstraint c2) {
+        Set<Integer> newTop = new HashSet<>(c2.getTop());
+        newTop.retainAll(cc.getTop());
+        Set<Integer> newBottom = new HashSet<>(c2.getBottom());
+        newBottom.addAll(cc.getBottom());
+        cc = new CustomConstraint(cc.getFaceOrder(), newTop, newBottom, cc.getPos(), cc.getType());
+        return cc;
+    }
+
+    /**
      * If the faces of a SubFace A is a subset of the faces of a SubFace B, then A
      * cannot possibly contribute any new relations that B would not contribute, so
      * we don't need to process A at all. This method removes all SubFaces that are

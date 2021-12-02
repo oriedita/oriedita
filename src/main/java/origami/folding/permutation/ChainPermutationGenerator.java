@@ -46,7 +46,8 @@ public class ChainPermutationGenerator extends PermutationGenerator {
     private int lockCount;
     private int lockRemain;
 
-    private Set<Integer> setOfAcceptedIndices;
+    private Set<Integer> topIndices;
+    private Set<Integer> bottomIndices;
 
     private boolean saved = false;
     private boolean restored = false;
@@ -179,23 +180,31 @@ public class ChainPermutationGenerator extends PermutationGenerator {
         return digit;
     }
 
-    public Set<Integer> getTopIndices() {
-        return setOfAcceptedIndices;
-    }
-
     public void setTopIndices(Collection<Integer> topIndices) {
         if (topIndices == null) {
-            this.setOfAcceptedIndices = null;
+            this.topIndices = null;
         } else {
-            this.setOfAcceptedIndices = new HashSet<>(topIndices);
+            this.topIndices = new HashSet<>(topIndices);
+        }
+    }
+
+    public void setBottomIndices(Collection<Integer> bottomIndices) {
+        if (bottomIndices == null) {
+            this.bottomIndices = null;
+        } else {
+            this.bottomIndices = new HashSet<>(bottomIndices);
         }
     }
 
     private boolean fitsConstraint(int curIndex, int curDigit) {
-        if (curIndex != 1 || setOfAcceptedIndices == null) {
+        if ((curIndex != 1 && curIndex != numDigits) || topIndices == null) {
             return true;
         }
-        return setOfAcceptedIndices.contains(curDigit);
+        if (curIndex == 1) {
+            return topIndices.contains(curDigit);
+        } else {
+            return bottomIndices.contains(curDigit);
+        }
     }
 
     @Override
