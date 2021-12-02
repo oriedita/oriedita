@@ -193,9 +193,10 @@ public class Polygon {
         LineSegment.Intersection kh; //For storing the value of oc.line_intersect_decide (s0, s)
 
         LineSegment s = new LineSegment();
-        for (int i = 1; i <= vertexCount - 1; i++) {
-            s.set(vertices[i], vertices[i + 1]); //線分
-            kh = OritaCalc.determineLineSegmentIntersection(s0, s);
+        for (int i = 1, j = vertexCount; i <= vertexCount; j = i++) {
+            s.set(vertices[j], vertices[i]); //線分
+            // We need to use the sweet version here, or things can go very wrong
+            kh = OritaCalc.determineLineSegmentIntersectionSweet(s0, s);
             if (kh == LineSegment.Intersection.INTERSECTS_1) {
                 return true;
             }
@@ -214,27 +215,6 @@ public class Polygon {
             if (kh.getState() >= 20) {
                 iflag = iflag + 1;
             }// This is actually executed when kh is 20 or more and less than 30.
-        }
-
-        s.set(vertices[vertexCount], vertices[1]); //Line segment
-        kh = OritaCalc.determineLineSegmentIntersection(s0, s);
-        if (kh == LineSegment.Intersection.INTERSECTS_1) {
-            return true;
-        }
-        if (kh == LineSegment.Intersection.INTERSECT_AT_POINT_4) {
-            return false;
-        }
-        if (kh == LineSegment.Intersection.INTERSECT_AT_POINT_S1_5) {
-            return false;
-        }
-        if (kh == LineSegment.Intersection.INTERSECT_AT_POINT_S2_6) {
-            return false;
-        }
-        if (kh.isParallel()) {
-            return false;
-        }
-        if (kh.isEndpointIntersection()) {
-            iflag = iflag + 1;
         }
 
         if (iflag == 0) {
