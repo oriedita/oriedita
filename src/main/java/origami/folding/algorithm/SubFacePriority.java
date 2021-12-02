@@ -41,6 +41,9 @@ public class SubFacePriority {
     public void processSubFace(SubFace s, int index, HierarchyList hierarchyList) {
         int count = s.getFaceIdCount();
         processed[index] = true;
+        if (s.hasCustomConstraint()) {
+            newInfoCount[index]++;
+        }
         for (int i = 1; i < count; i++) {
             for (int j = i + 1; j <= count; j++) {
                 int I = s.getFaceId(i), J = s.getFaceId(j);

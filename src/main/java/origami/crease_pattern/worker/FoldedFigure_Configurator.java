@@ -111,8 +111,8 @@ public class FoldedFigure_Configurator {
         }
         for (CustomConstraint cc : worker.hierarchyList.getCustomConstraints()) {
             Map<Integer, Integer> subfaceIds = new HashMap<>();
-            Set<Integer> allFaces = new HashSet<>(cc.getTop());
-            allFaces.addAll(cc.getBottom());
+            Set<Integer> allFaces = new HashSet<>(cc.getBottom());
+            allFaces.addAll(cc.getTop());
             for (Integer faceId : allFaces) {
                 if (subfaceIds.isEmpty()){
                     for (Integer subfaceId : faceToSubFaceMap.get(faceId)) {
@@ -130,6 +130,14 @@ public class FoldedFigure_Configurator {
             }
             int constraintSubfaceId = subfaceIds.entrySet().stream().filter((e) -> e.getValue() == allFaces.size()).findFirst().get().getKey();
             SubFace constraintSubface = worker.s[constraintSubfaceId];
+            if (constraintSubface.hasCustomConstraint()) {
+                CustomConstraint c2 = constraintSubface.getCustomConstraint();
+                Set<Integer> newTop = new HashSet<>(c2.getTop());
+                newTop.retainAll(cc.getTop());
+                Set<Integer> newBottom = new HashSet<>(c2.getBottom());
+                newBottom.addAll(cc.getBottom());
+                cc = new CustomConstraint(cc.getFaceOrder(), newTop, newBottom, cc.getPos(), cc.getType());
+            }
             constraintSubface.setCustomConstraint(cc);
         }
         worker.s1 = reduceSubFaceSet(worker.s0);

@@ -262,12 +262,12 @@ public class SubFace {
     }
 
     private int customConstraintInconsistentDigitRequest(CustomConstraint lc, int min) {
-        int[] localMins = new int[lc.getBottom().size()];
+        int[] localMins = new int[lc.getTop().size()];
         int i = 0;
-        for (Integer x : lc.getBottom()) {
+        for (Integer x : lc.getTop()) {
             int a = FaceId2PermutationDigit(x);
             int localMin = min;
-            for (Integer faceID : lc.getTop()) {
+            for (Integer faceID : lc.getBottom()) {
                 int b = FaceId2PermutationDigit(faceID);
                 if (lc.getFaceOrder() == CustomConstraint.FaceOrder.FLIPPED) {
                     if (b < localMin && a < b) {
@@ -419,13 +419,8 @@ public class SubFace {
 
             // setup custom constraints
             permutationGenerator.setTopIndices(null);
-            for (CustomConstraint customConstraint : hierarchyList.getCustomConstraints()) {
-                if (fastContains(customConstraint)) {
-                    this.customConstraint = customConstraint;
-                    permutationGenerator.setTopIndices(customConstraint.getBottom().stream().map(i -> faceIdMapArray[i]).collect(Collectors.toList()));
-                    break; // can only have 1 constraint per subface
-                }
-                if (Thread.interrupted()) return;
+            if (customConstraint != null) {
+                permutationGenerator.setTopIndices(customConstraint.getTop().stream().map(i -> faceIdMapArray[i]).collect(Collectors.toList()));
             }
 
 
@@ -444,15 +439,15 @@ public class SubFace {
     }
 
     private boolean fastContains(CustomConstraint customConstraint) {
-        if (faceIdCount != customConstraint.getBottom().size() + customConstraint.getTop().size()) {
+        if (faceIdCount != customConstraint.getTop().size() + customConstraint.getBottom().size()) {
             return false;
         }
-        for (Integer integer : customConstraint.getBottom()) {
+        for (Integer integer : customConstraint.getTop()) {
             if (faceIdMapArray[integer] == 0) {
                 return false;
             }
         }
-        for (Integer integer : customConstraint.getTop()) {
+        for (Integer integer : customConstraint.getBottom()) {
             if (faceIdMapArray[integer] == 0) {
                 return false;
             }
@@ -493,5 +488,9 @@ public class SubFace {
 
     public void setCustomConstraint(CustomConstraint cc) {
         this.customConstraint = cc;
+    }
+
+    public CustomConstraint getCustomConstraint() {
+        return this.customConstraint;
     }
 }

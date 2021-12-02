@@ -89,7 +89,7 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
                 selectedFigure.foldedFigure.ct_worker.hierarchyList.removeCustomConstraint(nearest);
                 selectedFigure.foldedFigure.ct_worker.hierarchyList.addCustomConstraint(nearest.inverted());
             } else {
-                CustomConstraint lc = new CustomConstraint(CustomConstraint.FaceOrder.NORMAL, white, colored, modelCoords, false);
+                CustomConstraint lc = new CustomConstraint(CustomConstraint.FaceOrder.NORMAL, white, colored, modelCoords, CustomConstraint.Type.COLOR_FRONT);
                 selectedFigure.foldedFigure.ct_worker.hierarchyList.addCustomConstraint(lc);
                 System.out.printf("Pressed in constraint mode %s size of faces: %d (%d/%d)%n", clickedOnFoldedModel, selectedFaces.size(), white.size(), colored.size());
             }

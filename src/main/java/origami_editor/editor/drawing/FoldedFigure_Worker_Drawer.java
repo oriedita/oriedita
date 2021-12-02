@@ -389,10 +389,15 @@ public class FoldedFigure_Worker_Drawer {
             g2.setColor(L_color);
             g2.setStroke(new BasicStroke(1));
             g2.drawOval((int) pos.getX()-3, (int) pos.getY()-3, 6, 6);
-            if (cc.isInverted()) {
-                g2.setPaint(B_color);
-            } else {
-                g2.setPaint(F_color);
+            switch (cc.getType()) {
+                case COLOR_FRONT:
+                    g2.setPaint(B_color);
+                    break;
+                case COLOR_BACK:
+                    g2.setPaint(F_color);
+                    break;
+                case CUSTOM:
+                    g2.setPaint(L_color);
             }
             g2.fillOval((int) pos.getX()-2, (int) pos.getY()-2, 5, 5);
         }
