@@ -391,6 +391,15 @@ public class FoldedFigure_Worker_Drawer {
 
     private void drawConstraints(Graphics2D g2) {
         for (CustomConstraint cc : worker.hierarchyList.getCustomConstraints()) {
+            if (camera.determineIsCameraMirrored()) {
+                if (cc.getFaceOrder() == CustomConstraint.FaceOrder.NORMAL) {
+                    continue;
+                }
+            } else {
+                if (cc.getFaceOrder() == CustomConstraint.FaceOrder.FLIPPED) {
+                    continue;
+                }
+            }
             Point pos = camera.object2TV(cc.getPos());
             g2.setStroke(new BasicStroke(1));
             switch (cc.getType()) {

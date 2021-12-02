@@ -3,6 +3,7 @@ package origami_editor.editor.canvas;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
+import origami.folding.FoldedFigure;
 import origami.folding.constraint.CustomConstraint;
 import origami_editor.editor.MouseMode;
 import origami_editor.editor.databinding.CanvasModel;
@@ -53,11 +54,37 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
         if (selectedFigure == null) {
             return;
         }
-        Camera modelCamera = selectedFigure.foldedFigureFrontCamera;
-        Point modelCoords = modelCamera.TV2object(p0);
         PointSet foldedFigureSet = selectedFigure.foldedFigure.cp_worker2.get();
+        Camera modelCameraFront = selectedFigure.foldedFigureFrontCamera;
+        Camera modelCameraBack = selectedFigure.foldedFigureRearCamera;
+        FoldedFigure.State displayState = selectedFigure.foldedFigure.ip4;
+        Point modelCoords;
+        boolean backside;
         Point cpCoords = drawingWorker.camera.TV2object(p0);
-        boolean clickedOnFoldedModel = foldedFigureSet.inside(modelCoords) != 0;
+        boolean clickedOnFoldedModel;
+        switch (displayState) {
+            case FRONT_0:
+                modelCoords = modelCameraFront.TV2object(p0);
+                backside = false;
+                break;
+            case BACK_1:
+                modelCoords = modelCameraBack.TV2object(p0);
+                backside = true;
+                break;
+            default:
+                modelCoords = modelCameraBack.TV2object(p0);
+                backside = true;
+                clickedOnFoldedModel = foldedFigureSet.inside(modelCoords) != 0;
+                if (!clickedOnFoldedModel) {
+                    modelCoords = modelCameraFront.TV2object(p0);
+                    backside = false;
+                }
+        }
+        clickedOnFoldedModel = foldedFigureSet.inside(modelCoords) != 0;
+        if (!clickedOnFoldedModel) {
+            return;
+        }
+
         selectedFaces = new ArrayList<>();
         System.out.printf("size of pointSet: %d%n", foldedFigureSet.getNumFaces());
         for (int i = 1; i <= foldedFigureSet.getNumFaces(); i++) {
@@ -89,7 +116,8 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
                 selectedFigure.foldedFigure.ct_worker.hierarchyList.removeCustomConstraint(nearest);
                 selectedFigure.foldedFigure.ct_worker.hierarchyList.addCustomConstraint(nearest.inverted());
             } else {
-                CustomConstraint lc = new CustomConstraint(CustomConstraint.FaceOrder.NORMAL, white, colored, modelCoords, CustomConstraint.Type.COLOR_FRONT);
+                CustomConstraint.FaceOrder fo = backside? CustomConstraint.FaceOrder.FLIPPED : CustomConstraint.FaceOrder.NORMAL;
+                CustomConstraint lc = new CustomConstraint(fo, white, colored, modelCoords, CustomConstraint.Type.COLOR_FRONT);
                 selectedFigure.foldedFigure.ct_worker.hierarchyList.addCustomConstraint(lc);
                 System.out.printf("Pressed in constraint mode %s size of faces: %d (%d/%d)%n", clickedOnFoldedModel, selectedFaces.size(), white.size(), colored.size());
             }
