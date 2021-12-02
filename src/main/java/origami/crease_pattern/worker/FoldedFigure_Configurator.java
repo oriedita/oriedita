@@ -319,20 +319,15 @@ public class FoldedFigure_Configurator {
                     for (int im : qt.collect(new LineSegmentCollector(p, q))) {
                         if ((im != faceId_min) && (im != faceId_max)) {
                             if (otta_face_figure.convex_inside(ibf, im)) {
-                                //下の２つのifは暫定的な処理。あとで置き換え予定
-                                if (otta_face_figure.convex_inside(Epsilon.UNKNOWN_05, ibf, im)) {
-                                    if (otta_face_figure.convex_inside(-Epsilon.UNKNOWN_05, ibf, im)) {
-                                        // AEA cannot run in parallel
-                                        synchronized (AEA) {
-                                            if (Thread.interrupted()) return;
-                                            // We add the 3EC through AEA, so if it is consumed immediately, it will not be
-                                            // actually added. This helps saves memory.
-                                            if(!AEA.addEquivalenceCondition(im, faceId_min, faceId_max)) {
-                                                // Error handling is also needed here
-                                                worker.errorPos = AEA.errorPos;
-                                                service.shutdownNow();
-                                            }
-                                        }            
+                                // AEA cannot run in parallel
+                                synchronized (AEA) {
+                                    if (Thread.interrupted()) return;
+                                    // We add the 3EC through AEA, so if it is consumed immediately, it will not be
+                                    // actually added. This helps saves memory.
+                                    if (!AEA.addEquivalenceCondition(im, faceId_min, faceId_max)) {
+                                        // Error handling is also needed here
+                                        worker.errorPos = AEA.errorPos;
+                                        service.shutdownNow();
                                     }
                                 }
                             }
