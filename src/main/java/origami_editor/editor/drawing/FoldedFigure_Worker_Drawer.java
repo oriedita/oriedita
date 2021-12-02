@@ -106,6 +106,8 @@ public class FoldedFigure_Worker_Drawer {
                 fillFace(g2, camera, subFace_figure, im);
             }
 
+            drawConstraints(g2);
+
             //Prepare the line
             g.setColor(Colors.get(Color.black));
 
@@ -384,11 +386,13 @@ public class FoldedFigure_Worker_Drawer {
             }
         }
 
+        drawConstraints(g2);
+    }
+
+    private void drawConstraints(Graphics2D g2) {
         for (CustomConstraint cc : worker.hierarchyList.getCustomConstraints()) {
             Point pos = camera.object2TV(cc.getPos());
-            g2.setColor(L_color);
             g2.setStroke(new BasicStroke(1));
-            g2.drawOval((int) pos.getX()-3, (int) pos.getY()-3, 6, 6);
             switch (cc.getType()) {
                 case COLOR_FRONT:
                     g2.setPaint(B_color);
@@ -399,7 +403,9 @@ public class FoldedFigure_Worker_Drawer {
                 case CUSTOM:
                     g2.setPaint(L_color);
             }
-            g2.fillOval((int) pos.getX()-2, (int) pos.getY()-2, 5, 5);
+            g2.fillOval((int) pos.getX()-3, (int) pos.getY()-3, 6, 6);
+            g2.setColor(L_color);
+            g2.drawOval((int) pos.getX()-3, (int) pos.getY()-3, 6, 6);
         }
     }
 
