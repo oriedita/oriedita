@@ -1,7 +1,7 @@
 package oriedita.editor;
 
-import org.apache.commons.imaging.ImageReadException;
-import org.apache.commons.imaging.Imaging;
+import jico.Ico;
+import jico.ImageReadException;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.swing.AppMenuBar;
@@ -18,9 +18,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.List;
 import java.awt.event.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -171,7 +169,7 @@ public class App {
         canvas.creasePatternCamera.setDisplayPositionY(350.0);
 
         try {
-            frame.setIconImages(Imaging.getAllBufferedImages(getClass().getClassLoader().getResourceAsStream("oriedita.ico"), "oriedita.ico"));
+            frame.setIconImages(Ico.getAllIcoImages(getClass().getClassLoader().getResourceAsStream("oriedita.ico")));
         } catch (IOException | ImageReadException | NullPointerException e) {
             e.printStackTrace();
         }
@@ -238,9 +236,5 @@ public class App {
         explanation.setVisible(applicationModel.getHelpVisible());
         //focus back to here after creating dialog
         frame.requestFocus();
-    }
-
-    private Image getImage(String loc) {
-        return new ImageIcon(Objects.requireNonNull(getClass().getClassLoader().getResource(loc))).getImage();
     }
 }
