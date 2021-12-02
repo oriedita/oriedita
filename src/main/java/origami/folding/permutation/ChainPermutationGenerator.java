@@ -1,5 +1,9 @@
 package origami.folding.permutation;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * This is a much more efficient permutation generator than the original
  * implementation by Mr.Meguro. It uses the classical digit swapping idea to
@@ -25,6 +29,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
     // located at the end.
     private final int[] initPermutation;
 
+
     // One problem with swapping algorithm is that it may reset a generator that is
     // not yet finished, and such generator completely loses its progress. To
     // overcome that, we use another array to store the progress so after reset, it
@@ -40,6 +45,8 @@ public class ChainPermutationGenerator extends PermutationGenerator {
 
     private int lockCount;
     private int lockRemain;
+
+    private Set<Integer> setOfAcceptedIndices;
 
     private boolean saved = false;
     private boolean restored = false;
@@ -128,7 +135,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
                     break;
                 }
                 curDigit = digits[swapIndex];
-            } while (pairGuide.isNotReady(curDigit));
+            } while (pairGuide.isNotReady(curDigit) || !fitsConstraint(curIndex, curDigit));
 
             // If the current digit has no available element, retract.
             if (swapIndex > numDigits - lockRemain + 1) {
@@ -170,6 +177,25 @@ public class ChainPermutationGenerator extends PermutationGenerator {
 
         count++;
         return digit;
+    }
+
+    public Set<Integer> getTopIndices() {
+        return setOfAcceptedIndices;
+    }
+
+    public void setTopIndices(Collection<Integer> topIndices) {
+        if (topIndices == null) {
+            this.setOfAcceptedIndices = null;
+        } else {
+            this.setOfAcceptedIndices = new HashSet<>(topIndices);
+        }
+    }
+
+    private boolean fitsConstraint(int curIndex, int curDigit) {
+        if (curIndex != 1 || setOfAcceptedIndices == null) {
+            return true;
+        }
+        return setOfAcceptedIndices.contains(curDigit);
     }
 
     @Override

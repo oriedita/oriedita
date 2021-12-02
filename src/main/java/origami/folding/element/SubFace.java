@@ -10,6 +10,7 @@ import origami.folding.util.EquivalenceCondition;
 import origami.folding.util.IBulletinBoard;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class folds the development view and estimates the overlap information
@@ -38,6 +39,7 @@ public class SubFace {
 
     CombinationGenerator cg;
     int cgTotal = 0;
+    private CustomConstraint customConstraint;
 
     public SubFace() {
         reset();
@@ -260,7 +262,8 @@ public class SubFace {
     }
 
     private int customConstraintInconsistentDigitRequest(CustomConstraint lc, int min) {
-        List<Integer> localMins = new ArrayList<>();
+        int[] localMins = new int[lc.getBottom().size()];
+        int i = 0;
         for (Integer x : lc.getBottom()) {
             int a = FaceId2PermutationDigit(x);
             int localMin = min;
@@ -282,10 +285,11 @@ public class SubFace {
             if (localMin == min) {
                 return min;
             }
-            localMins.add(localMin);
+            localMins[i] = localMin;
+            i++;
         }
         int maxMin = 0;
-        for (Integer m : localMins) {
+        for (int m : localMins) {
             if (m > maxMin) {
                 maxMin = m;
                 if (maxMin == min) {
@@ -329,7 +333,7 @@ public class SubFace {
         min = overlapping_inconsistent_digits_request(hierarchyList);
         min = penetration_inconsistent_digits_request(hierarchyList, min);
         min = u_penetration_inconsistent_digits_request(hierarchyList, min);
-        min = customConstraintsInconsistentDigitRequest(hierarchyList, min);
+        //min = customConstraintsInconsistentDigitRequest(hierarchyList, min);
         return min;
     }
 
@@ -394,6 +398,7 @@ public class SubFace {
                     permutationGenerator.addGuide(ueFaceId[i], faceIndex);
                 }
             }
+
             if (Thread.interrupted()) return;
         }
 
@@ -412,6 +417,19 @@ public class SubFace {
                 if (Thread.interrupted()) return;
             }
 
+            // setup custom constraints
+            permutationGenerator.setTopIndices(null);
+            for (CustomConstraint customConstraint : hierarchyList.getCustomConstraints()) {
+                if (fastContains(customConstraint)) {
+                    this.customConstraint = customConstraint;
+                    permutationGenerator.setTopIndices(customConstraint.getBottom().stream().map(i -> faceIdMapArray[i]).collect(Collectors.toList()));
+                    break; // can only have 1 constraint per subface
+                }
+                if (Thread.interrupted()) return;
+            }
+
+
+
             try {
                 // Now we're ready to reset the generator.
                 permutationGenerator.initialize();
@@ -419,6 +437,27 @@ public class SubFace {
                 // Ignore
             }
         }
+    }
+
+    public boolean hasCustomConstraint() {
+        return this.customConstraint != null;
+    }
+
+    private boolean fastContains(CustomConstraint customConstraint) {
+        if (faceIdCount != customConstraint.getBottom().size() + customConstraint.getTop().size()) {
+            return false;
+        }
+        for (Integer integer : customConstraint.getBottom()) {
+            if (faceIdMapArray[integer] == 0) {
+                return false;
+            }
+        }
+        for (Integer integer : customConstraint.getTop()) {
+            if (faceIdMapArray[integer] == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean fastContains(EquivalenceCondition ec) {
@@ -450,5 +489,9 @@ public class SubFace {
             uecSorted = true;
         }
         return uEquivalenceConditions;
+    }
+
+    public void setCustomConstraint(CustomConstraint cc) {
+        this.customConstraint = cc;
     }
 }

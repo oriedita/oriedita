@@ -2,6 +2,7 @@ package origami.folding.constraint;
 
 import origami.crease_pattern.element.Point;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -17,8 +18,8 @@ public class CustomConstraint {
 
     public CustomConstraint(FaceOrder faceOrder, List<Integer> top, List<Integer> bottom, Point pos, boolean inverted) {
         this.faceOrder = faceOrder;
-        this.top = top;
-        this.bottom = bottom;
+        this.top = inverted? bottom : top;
+        this.bottom = inverted? top : bottom;
         this.pos = pos;
         this.inverted = inverted;
     }
@@ -28,20 +29,20 @@ public class CustomConstraint {
         return pos;
     }
 
-    public List<Integer> getTop() {
-        return inverted? bottom:  top;
+    public Collection<Integer> getTop() {
+        return top;
     }
 
     public FaceOrder getFaceOrder() {
         return faceOrder;
     }
 
-    public Iterable<Integer> getBottom() {
-        return inverted? top : bottom;
+    public Collection<Integer> getBottom() {
+        return bottom;
     }
 
     public CustomConstraint inverted() {
-        return new CustomConstraint(faceOrder, this.top, bottom, pos, !inverted);
+        return new CustomConstraint(faceOrder, top, bottom, pos, !inverted);
     }
 
     public boolean isInverted() {
