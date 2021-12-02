@@ -20,6 +20,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @Singleton
@@ -169,7 +170,7 @@ public class App {
         canvas.creasePatternCamera.setDisplayPositionY(350.0);
 
         try {
-            frame.setIconImages(Ico.getAllIcoImages(getClass().getClassLoader().getResourceAsStream("oriedita.ico")));
+            frame.setIconImages(Ico.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("oriedita.ico"))));
         } catch (IOException | ImageReadException | NullPointerException e) {
             e.printStackTrace();
         }
