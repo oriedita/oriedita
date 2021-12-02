@@ -124,10 +124,7 @@ public class OritaCalc {
         StraightLine u2 = new StraightLine(p1, p2);
         u2.orthogonalize(p2);//Find the straight line u2 that passes through the point p2 and is orthogonal to t.
 
-        if (u1.calculateDistance(pa) < Epsilon.UNKNOWN_1EN5) {
-            return 1;
-        }
-        if (u2.calculateDistance(pa) < Epsilon.UNKNOWN_1EN5) {
+        if (Epsilon.high.le0(u1.calculateDistance(pa)) || Epsilon.high.le0(u2.calculateDistance(pa))) {
             return 1;
         }
 
