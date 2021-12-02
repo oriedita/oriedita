@@ -5,13 +5,17 @@ import origami.crease_pattern.element.Point;
 import java.util.Collection;
 
 /**
- * says that some face in top has to lay above every face in bottom (if faceOrder is NORMAL, or below every bottom if type is FLIPPED)
+ * Constrains the layer order in that some face in top has to lay above every face
+ * in bottom (if faceOrder is NORMAL, or below every bottom if type is FLIPPED)
+ * the faces in bottom (union) top have to be all faces of some subface (all faces of the subface must be in either
+ * bottom or top, and all faces from bottom and top have to be in the subface)
  */
 public class CustomConstraint {
     private final FaceOrder faceOrder;
     private final Collection<Integer> bottom;
     private final Collection<Integer> top;
     private final Point pos;
+    // used for drawing the constraints
     private final Type type;
 
     public enum Type {
