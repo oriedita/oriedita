@@ -68,6 +68,19 @@ public class ButtonService {
         }
     }
 
+    public void registerLabel(JLabel label, String key) {
+        String icon = ResourceUtil.getBundleString("icons", key);
+        if (!StringOp.isEmpty(icon)) {
+            GlyphIcon glyphIcon = new GlyphIcon(icon, label.getForeground());
+            label.addPropertyChangeListener("foreground", glyphIcon);
+            // Reset the text if there is no icon.
+            if (label.getIcon() == null) {
+                label.setText(null);
+            }
+            label.setIcon(glyphIcon);
+        }
+    }
+
     public void registerButton(AbstractButton button, String key) {
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
@@ -117,6 +130,10 @@ public class ButtonService {
             if (!StringOp.isEmpty(icon)) {
                 GlyphIcon glyphIcon = new GlyphIcon(icon, button.getForeground());
                 button.addPropertyChangeListener("foreground", glyphIcon);
+                // Reset the text if there is no icon.
+                if (button.getIcon() == null) {
+                    button.setText(null);
+                }
                 button.setIcon(glyphIcon);
 
                 if (button instanceof JCheckBox) {

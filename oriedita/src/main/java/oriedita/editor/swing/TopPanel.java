@@ -52,6 +52,11 @@ public class TopPanel {
     private JButton backgroundSetPositionButton;
     private JCheckBox backgroundLockButton;
     private JCheckBox mouseSettingsCheckBox;
+    private JLabel ratioLabel1;
+    private JLabel ratioLabel2;
+    private JLabel ratioLabel3;
+    private JLabel ratioLabel4;
+    private JLabel ratioLabel5;
 
     @Inject
     public TopPanel(MeasuresModel measuresModel,
@@ -94,6 +99,12 @@ public class TopPanel {
         buttonService.registerButton(backgroundSetPositionButton, "backgroundSetPositionAction");
         buttonService.registerButton(backgroundLockButton, "backgroundLockAction");
         buttonService.registerButton(mouseSettingsCheckBox, "mouseSettingsAction");
+
+        buttonService.registerLabel(ratioLabel1, "labelPlus");
+        buttonService.registerLabel(ratioLabel2, "labelSqrt");
+        buttonService.registerLabel(ratioLabel3, "labelColon");
+        buttonService.registerLabel(ratioLabel4, "labelPlus");
+        buttonService.registerLabel(ratioLabel5, "labelSqrt");
 
         operationFrameSelectButton.addActionListener(e -> {
             canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
@@ -314,25 +325,26 @@ public class TopPanel {
         ratioATextField.setMinimumSize(new Dimension(60, 30));
         ratioATextField.setText("1.0");
         panel2.add(ratioATextField, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), new Dimension(30, -1), null, 0, false));
-        final JLabel label1 = new JLabel();
-        label1.setIcon(new ImageIcon(getClass().getResource("/ppp/plus.png")));
-        panel2.add(label1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        ratioLabel1 = new JLabel();
+        ratioLabel1.setIcon(new ImageIcon(getClass().getResource("/ppp/plus.png")));
+        ratioLabel1.setText("");
+        panel2.add(ratioLabel1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         ratioBTextField = new JTextField();
         ratioBTextField.setColumns(2);
         ratioBTextField.setMinimumSize(new Dimension(60, 30));
         ratioBTextField.setText("0.0");
         panel2.add(ratioBTextField, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), new Dimension(30, -1), null, 0, false));
-        final JLabel label2 = new JLabel();
-        label2.setIcon(new ImageIcon(getClass().getResource("/ppp/root.png")));
-        panel2.add(label2, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        ratioLabel2 = new JLabel();
+        ratioLabel2.setIcon(new ImageIcon(getClass().getResource("/ppp/root.png")));
+        panel2.add(ratioLabel2, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         ratioCTextField = new JTextField();
         ratioCTextField.setColumns(2);
         ratioCTextField.setMinimumSize(new Dimension(60, 30));
         ratioCTextField.setText("0.0");
         panel2.add(ratioCTextField, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), new Dimension(30, -1), null, 0, false));
-        final JLabel label3 = new JLabel();
-        label3.setIcon(new ImageIcon(getClass().getResource("/ppp/tenten.png")));
-        panel1.add(label3, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        ratioLabel3 = new JLabel();
+        ratioLabel3.setIcon(new ImageIcon(getClass().getResource("/ppp/tenten.png")));
+        panel1.add(ratioLabel3, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridLayoutManager(1, 5, new Insets(0, 0, 0, 0), 1, 1));
         panel1.add(panel3, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -341,17 +353,17 @@ public class TopPanel {
         ratioDTextField.setMinimumSize(new Dimension(60, 30));
         ratioDTextField.setText("0.0");
         panel3.add(ratioDTextField, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), new Dimension(30, -1), null, 0, false));
-        final JLabel label4 = new JLabel();
-        label4.setIcon(new ImageIcon(getClass().getResource("/ppp/plus.png")));
-        panel3.add(label4, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        ratioLabel4 = new JLabel();
+        ratioLabel4.setIcon(new ImageIcon(getClass().getResource("/ppp/plus.png")));
+        panel3.add(ratioLabel4, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         ratioETextField = new JTextField();
         ratioETextField.setColumns(2);
         ratioETextField.setMinimumSize(new Dimension(60, 30));
         ratioETextField.setText("1.0");
         panel3.add(ratioETextField, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), new Dimension(30, -1), null, 0, false));
-        final JLabel label5 = new JLabel();
-        label5.setIcon(new ImageIcon(getClass().getResource("/ppp/root.png")));
-        panel3.add(label5, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        ratioLabel5 = new JLabel();
+        ratioLabel5.setIcon(new ImageIcon(getClass().getResource("/ppp/root.png")));
+        panel3.add(ratioLabel5, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         ratioFTextField = new JTextField();
         ratioFTextField.setColumns(2);
         ratioFTextField.setMinimumSize(new Dimension(60, 30));

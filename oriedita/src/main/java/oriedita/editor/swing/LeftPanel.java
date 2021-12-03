@@ -127,6 +127,10 @@ public class LeftPanel {
     private JTextField gridYCTextField;
     private JTextField gridAngleTextField;
     private JButton setGridParametersButton;
+    private JLabel gridXPlusLabel;
+    private JLabel gridYPlusLabel;
+    private JLabel gridXSqrtLabel;
+    private JLabel gridYSqrtLabel;
 
     @Inject
     public LeftPanel(@Named("mainFrame") JFrame frame,
@@ -239,6 +243,11 @@ public class LeftPanel {
         buttonService.registerButton(correctCpBeforeFoldingCheckBox, "correctCpBeforeFoldingAction");
         buttonService.registerButton(selectPersistentCheckBox, "selectPersistentAction");
         buttonService.registerButton(coloredXRayCheckBox, "coloredXRayAction");
+
+        buttonService.registerLabel(gridXPlusLabel, "labelPlus");
+        buttonService.registerLabel(gridYPlusLabel, "labelPlus");
+        buttonService.registerLabel(gridXSqrtLabel, "labelSqrt");
+        buttonService.registerLabel(gridYSqrtLabel, "labelSqrt");
 
 
         undoRedo.addUndoActionListener(e -> {
@@ -940,16 +949,16 @@ public class LeftPanel {
         gridXATextField.setColumns(3);
         gridXATextField.setText("0.0");
         panel13.add(gridXATextField, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), new Dimension(30, -1), null, 0, false));
-        final JLabel label1 = new JLabel();
-        label1.setIcon(new ImageIcon(getClass().getResource("/ppp/plus_min.png")));
-        panel13.add(label1, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        gridXPlusLabel = new JLabel();
+        gridXPlusLabel.setIcon(new ImageIcon(getClass().getResource("/ppp/plus_min.png")));
+        panel13.add(gridXPlusLabel, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         gridXBTextField = new JTextField();
         gridXBTextField.setColumns(3);
         gridXBTextField.setText("1.0");
         panel13.add(gridXBTextField, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), new Dimension(30, -1), null, 0, false));
-        final JLabel label2 = new JLabel();
-        label2.setIcon(new ImageIcon(getClass().getResource("/ppp/root_min.png")));
-        panel13.add(label2, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        gridXSqrtLabel = new JLabel();
+        gridXSqrtLabel.setIcon(new ImageIcon(getClass().getResource("/ppp/root_min.png")));
+        panel13.add(gridXSqrtLabel, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         gridXCTextField = new JTextField();
         gridXCTextField.setColumns(3);
         gridXCTextField.setText("1.0");
@@ -966,12 +975,12 @@ public class LeftPanel {
         gridYCTextField.setColumns(3);
         gridYCTextField.setText("1.0");
         panel13.add(gridYCTextField, new GridConstraints(4, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), new Dimension(30, -1), null, 0, false));
-        final JLabel label3 = new JLabel();
-        label3.setIcon(new ImageIcon(getClass().getResource("/ppp/root_min.png")));
-        panel13.add(label3, new GridConstraints(4, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JLabel label4 = new JLabel();
-        label4.setIcon(new ImageIcon(getClass().getResource("/ppp/plus_min.png")));
-        panel13.add(label4, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        gridYSqrtLabel = new JLabel();
+        gridYSqrtLabel.setIcon(new ImageIcon(getClass().getResource("/ppp/root_min.png")));
+        panel13.add(gridYSqrtLabel, new GridConstraints(4, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        gridYPlusLabel = new JLabel();
+        gridYPlusLabel.setIcon(new ImageIcon(getClass().getResource("/ppp/plus_min.png")));
+        panel13.add(gridYPlusLabel, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         gridAngleTextField = new JTextField();
         gridAngleTextField.setColumns(4);
         gridAngleTextField.setHorizontalAlignment(11);
@@ -1170,19 +1179,19 @@ public class LeftPanel {
 
             switch (data.getSelectionOperationMode()) {
                 case MOVE_1:
-                    moveButton.setBorder(new LineBorder(Color.green, 3, false));
+                    moveButton.setBorder(new LineBorder(Color.green, 1, false));
                     break;
                 case MOVE4P_2:
-                    move2p2pButton.setBorder(new LineBorder(Color.green, 3, false));
+                    move2p2pButton.setBorder(new LineBorder(Color.green, 1, false));
                     break;
                 case COPY_3:
-                    copyButton.setBorder(new LineBorder(Color.green, 3, false));
+                    copyButton.setBorder(new LineBorder(Color.green, 1, false));
                     break;
                 case COPY4P_4:
-                    copy2p2pButton.setBorder(new LineBorder(Color.green, 3, false));
+                    copy2p2pButton.setBorder(new LineBorder(Color.green, 1, false));
                     break;
                 case MIRROR_5:
-                    reflectButton.setBorder(new LineBorder(Color.green, 3, false));
+                    reflectButton.setBorder(new LineBorder(Color.green, 1, false));
                     break;
                 default:
                     break;
