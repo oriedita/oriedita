@@ -256,8 +256,11 @@ public class SubFace {
     }
 
     private int customConstraintsInconsistentDigitRequest(HierarchyList hierarchyList, int min) {
-        for (CustomConstraint lc: hierarchyList.getCustomConstraints()) {
-            min = customConstraintInconsistentDigitRequest(lc, min);
+        if (hasTopFaceConstraint()) {
+            min = customConstraintInconsistentDigitRequest(constraintTopFace, min);
+        }
+        if (hasBottomFaceConstraint()) {
+            min = customConstraintInconsistentDigitRequest(constraintBottomFace, min);
         }
         return min;
     }
@@ -265,30 +268,42 @@ public class SubFace {
     private int customConstraintInconsistentDigitRequest(CustomConstraint lc, int min) {
         int[] localMins = new int[lc.getTop().size()];
         int i = 0;
-        for (Integer x : lc.getTop()) {
-            int a = FaceId2PermutationDigit(x);
-            int localMin = min;
-            for (Integer faceID : lc.getBottom()) {
-                int b = FaceId2PermutationDigit(faceID);
-                if (lc.getFaceOrder() == CustomConstraint.FaceOrder.FLIPPED) {
-                    if (b < localMin && a < b) {
-                        localMin = b;
-                        break;
-                    }
-                }
-                if (lc.getFaceOrder() == CustomConstraint.FaceOrder.NORMAL) {
+        if (lc.getFaceOrder() == CustomConstraint.FaceOrder.FLIPPED) {
+            for (Integer bottomId : lc.getBottom()) {
+                int b = FaceId2PermutationDigit(bottomId);
+                int localMin = min;
+                for (Integer topId : lc.getTop()) {
+                    int a = FaceId2PermutationDigit(topId);
                     if (a < localMin && b < a) {
                         localMin = a;
                         break;
                     }
                 }
+                if (localMin == min) {
+                    return min;
+                }
+                localMins[i] = localMin;
+                i++;
             }
-            if (localMin == min) {
-                return min;
+        } else {
+            for (Integer topId : lc.getTop()) {
+                int a = FaceId2PermutationDigit(topId);
+                int localMin = min;
+                for (Integer bottomId : lc.getBottom()) {
+                    int b = FaceId2PermutationDigit(bottomId);
+                    if (a < localMin && b < a) {
+                        localMin = a;
+                        break;
+                    }
+                }
+                if (localMin == min) {
+                    return min;
+                }
+                localMins[i] = localMin;
+                i++;
             }
-            localMins[i] = localMin;
-            i++;
         }
+
         int maxMin = 0;
         for (int m : localMins) {
             if (m > maxMin) {

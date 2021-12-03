@@ -197,7 +197,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
     }
 
     private boolean fitsConstraint(int curIndex, int curDigit) {
-        if ((curIndex != 1 && curIndex != (numDigits-1))) {
+        if ((curIndex != 1 && curIndex != (numDigits))) {
             return true;
         }
         if (curIndex == 1) {
