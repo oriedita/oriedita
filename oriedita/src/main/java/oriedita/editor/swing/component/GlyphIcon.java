@@ -4,6 +4,10 @@ import oriedita.editor.Colors;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -13,26 +17,46 @@ import java.beans.PropertyChangeListener;
 public class GlyphIcon implements Icon, PropertyChangeListener {
     private final String glyph;
     private Color color;
+    private final int width;
+    private final Font font;
 
     public GlyphIcon(String glyph, Color color) {
         this.glyph = glyph;
         this.color = color;
+        font = new Font("Icons", Font.PLAIN, 21);
+
+        width = calculateGlyphWidth();
+    }
+
+    /**
+     * Draw the glyph on a bufferedImage to calculate it's size.
+     */
+    private int calculateGlyphWidth() {
+        BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = image.createGraphics();
+
+        FontRenderContext frc = g2.getFontRenderContext();
+        GlyphVector gv = font.createGlyphVector(frc, glyph);
+        Rectangle2D box = gv.getPixelBounds(frc, 0, getIconHeight());
+
+        return (int)box.getX() * 2 + (int)box.getWidth();
     }
 
     @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
         Graphics2D g2 = (Graphics2D) g;
-        Font font = g2.getFont();
-        g2.setFont(new Font("Icons", Font.PLAIN, 21));
+
+        Font originalFont = g2.getFont();
+        g2.setFont(font);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
         g2.setColor(Colors.get(color));
         g2.drawString(glyph, x, y + getIconHeight());
-        g2.setFont(font);
+        g2.setFont(originalFont);
     }
 
     @Override
     public int getIconWidth() {
-        return 21;
+        return width;
     }
 
     @Override
