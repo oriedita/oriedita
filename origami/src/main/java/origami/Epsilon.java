@@ -1,5 +1,7 @@
 package origami;
 
+import origami.crease_pattern.OritaCalc;
+
 /**
  * This class organizes all epsilon constants used throughout the source code.
  * Hopefully it will eventually replace all related comparisons.
@@ -19,7 +21,7 @@ public class Epsilon {
     private static final double factor = 0.01;
 
     // These are the constants of which purpose is uncertain.
- 
+
     public static final double UNKNOWN_01 = factor * 0.1;
     public static final double UNKNOWN_05 = factor * 0.5;
     public static final double UNKNOWN_001 = factor * 1E-2;
@@ -36,10 +38,20 @@ public class Epsilon {
     public static final double QUAD_TREE_ITEM = factor * 0.5;
 
     /**
-     * This is the smallest epsilon used in the code. Any value that is even smaller
-     * is considered zero.
+     * For the most part, this is the smallest epsilon used in the code. Any value
+     * that is even smaller is considered zero.
      */
     private static final double ZERO_COMPARISON = factor * 1E-8;
+
+    /**
+     * Tsai: This is used only in {@link OritaCalc#isInside_sweet}. For some
+     * Ryujin-type CPs, even {@link ZERO_COMPARISON} is not small enough and would
+     * lead to false positive result, causing the model to have no solution. But on
+     * the other hand, if the value is too small (say factor * 1E-12), then some
+     * other CPs may have false negative result, causing invalid solutions to be
+     * found. So I settled with this particular value which seems to work best.
+     */
+    public static final double SWEET_DISTANCE = factor * 1E-10;
 
     /**
      * This is the default instance of the Epsilon class. In the future I expect
