@@ -11,7 +11,7 @@ mvn clean package
 After compiling and packaging the jar is placed in the `target` directory, double click it or execute it with the java command.
 
 ```bash
-javaw -jar ./target/oriedita-0.0.10-SNAPSHOT.jar
+javaw -jar ./oriedita/target/oriedita-0.0.10-SNAPSHOT.jar
 ```
 
 ## (Technical) Changes made

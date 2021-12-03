@@ -2,7 +2,14 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile name="Annotation profile for oriedita" enabled="true">
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="origami" />
+        <module name="fold" />
+      </profile>
+      <profile name="Annotation profile for root" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -34,11 +41,13 @@
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/kotlinx/kotlinx-metadata-jvm/0.3.0/kotlinx-metadata-jvm-0.3.0.jar" />
         </processorPath>
         <module name="oriedita" />
-        <module name="root" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="fold" target="11" />
       <module name="oriedita" target="11" />
+      <module name="oriedita (1)" target="11" />
+      <module name="origami" target="11" />
       <module name="root" target="11" />
     </bytecodeTargetLevel>
   </component>
