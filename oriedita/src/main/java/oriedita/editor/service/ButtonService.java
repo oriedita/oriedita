@@ -46,7 +46,7 @@ public class ButtonService {
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         String tooltip = ResourceUtil.getBundleString("tooltip", key);
-        String help = ResourceUtil.getBundleString("help", key);
+        // String help = ResourceUtil.getBundleString("help", key);
 
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
 
@@ -70,7 +70,7 @@ public class ButtonService {
     public void registerButton(AbstractButton button, String key) {
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
-        String tooltip = ResourceUtil.getBundleString("tooltip", key);
+        // String tooltip = ResourceUtil.getBundleString("tooltip", key);
         String help = ResourceUtil.getBundleString("help", key);
 
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
@@ -205,10 +205,6 @@ public class ButtonService {
         @Override
         public void actionPerformed(ActionEvent e) {
             button.doClick();
-        }
-
-        public AbstractButton getButton() {
-            return button;
         }
     }
 }

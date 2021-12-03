@@ -253,6 +253,8 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                 case WORKER_1:
                     selectedFigure.foldedFigure.cp_worker2.changePointState(i_closestPointId);
                     break;
+                default:
+                    break;
             }
 
             if (canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1) {
@@ -373,6 +375,8 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
                     break;
                 case WORKER_1:
                     selectedFigure.foldedFigure.cp_worker2.changePointState(i_closestPointId);
+                    break;
+                default:
                     break;
             }
 

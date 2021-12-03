@@ -31,7 +31,7 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHa
 
         Circle closest_circumference = new Circle(); //Circle with the circumference closest to the mouse
         closest_circumference.set(d.getClosestCircleMidpoint(p));
-        Point closest_point = d.getClosestPoint(p);
+        // Point closest_point = d.getClosestPoint(p);
 
         if ((d.lineStep.size() == 0) && (d.circleStep.size() == 0)) {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {

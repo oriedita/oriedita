@@ -731,6 +731,8 @@ public class RightPanel {
             case YELLOW_7:
                 colYellowButton.setBackground(Color.YELLOW);
                 colOrangeButton.setBackground(new Color(150, 150, 150));
+            default:
+                break;
         }
     }
 }

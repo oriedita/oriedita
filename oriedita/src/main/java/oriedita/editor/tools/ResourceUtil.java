@@ -43,7 +43,8 @@ public class ResourceUtil {
                 Manifest manifest = jarFile.getManifest();
                 Attributes attributes = manifest.getMainAttributes();
                 final String version = attributes.getValue("Implementation-Version");
-
+                jarFile.close();
+                
                 if (version != null) {
                     return version;
                 }
