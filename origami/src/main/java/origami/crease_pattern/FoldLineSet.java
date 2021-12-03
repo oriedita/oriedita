@@ -802,6 +802,8 @@ public class FoldLineSet {
                             k_flg.add(0);
                             k_flg.set(total, 0);
                             break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -1235,6 +1237,8 @@ public class FoldLineSet {
                     si.setA(p3);
                     sj.setA(p1);
                     return LineSegment.Intersection.PARALLEL_S1_START_OVERLAPS_S2_START_374;
+                default:
+                    break;
             }
         }
         return LineSegment.Intersection.NO_INTERSECTION_0;
@@ -1629,6 +1633,8 @@ public class FoldLineSet {
                 addLine(p1, p3, overlapping_col);
                 return true;
             }
+            default:
+                break;
         }
 
         return false;
@@ -2218,6 +2224,8 @@ public class FoldLineSet {
                         break;
                     case CYAN_3:
                         return null;
+                    default:
+                        break;
                 }
                 break;
             case RED_1:
@@ -2233,6 +2241,8 @@ public class FoldLineSet {
                         break;
                     case CYAN_3:
                         return null;
+                    default:
+                        break;
                 }
                 break;
             case BLUE_2:
@@ -2248,6 +2258,8 @@ public class FoldLineSet {
                         break;
                     case CYAN_3:
                         return null;
+                    default:
+                        break;
                 }
                 break;
             case CYAN_3:
@@ -2259,7 +2271,11 @@ public class FoldLineSet {
                     case CYAN_3:
                         i_c = LineColor.CYAN_3;
                         break;
+                    default:
+                        break;
                 }
+                break;
+            default:
                 break;
         }
 
@@ -2507,6 +2523,8 @@ public class FoldLineSet {
                     deleteLine(iy);
                     deleteLine(ix);
                     addLine(s_ixa_iya);
+                    break;
+                default:
                     break;
             }
         }
@@ -2757,6 +2775,8 @@ public class FoldLineSet {
                                 Check1LineSegment.add(si1);
                                 Check1LineSegment.add(sj1);   /* set_select(i,2);set_select(j,2); */
                                 break;
+                            default:
+                                break;
                         }
                         if (intersection.isContainedInside()) {
                             Check1LineSegment.add(si1);
@@ -2794,6 +2814,8 @@ public class FoldLineSet {
                             case PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352:
                                 si.setSelected(2);
                                 sj.setSelected(2);
+                                break;
+                            default:
                                 break;
                         }
                         if (intersection.isContainedInside()) {
@@ -2834,6 +2856,8 @@ public class FoldLineSet {
                                 Check2LineSegment.add(si1);
                                 Check2LineSegment.add(sj1);   /* set_select(i,2);set_select(j,2); */
                                 break;
+                            default:
+                                break;
                         }
                     }
                 }
@@ -2871,6 +2895,8 @@ public class FoldLineSet {
                             case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28:
                                 applyLineSegmentDivide(sj.getB(), i);
                                 qt.grow(1);
+                                break;
+                            default:
                                 break;
                         }
                     }

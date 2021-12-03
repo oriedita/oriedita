@@ -95,13 +95,13 @@ public class PointSet implements Serializable {
     }
 
     //------------------------------
-    private double getAverage_x() {
-        double x = 0.0;
-        for (int i = 1; i <= numPoints; i++) {
-            x = x + points[i].getX();
-        }
-        return x / ((double) numPoints);
-    }
+    // private double getAverage_x() {
+    //     double x = 0.0;
+    //     for (int i = 1; i <= numPoints; i++) {
+    //         x = x + points[i].getX();
+    //     }
+    //     return x / ((double) numPoints);
+    // }
 
     public void set(PointSet ts) {
         numPoints = ts.getNumPoints();

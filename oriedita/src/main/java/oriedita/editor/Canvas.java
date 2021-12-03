@@ -5,7 +5,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.tinylog.Logger;
-import origami.crease_pattern.OritaCalc;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.swing.component.BulletinBoard;
@@ -408,6 +407,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                             break;
                         case MIRROR_5:
                             canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
+                            break;
+                        default:
                             break;
                     }
                 }

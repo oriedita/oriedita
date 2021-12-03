@@ -20,7 +20,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 @Singleton
@@ -116,7 +115,7 @@ public class App {
             }
         });//オリヒメのメインウィンドウのフォーカスが変化したときの処理 ここまで。
 
-        frame.setDefaultCloseOperation(frame.DO_NOTHING_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.setFocusable(true);
         frame.setFocusTraversalKeysEnabled(true);
         frame.addKeyListener(new KeyAdapter() {

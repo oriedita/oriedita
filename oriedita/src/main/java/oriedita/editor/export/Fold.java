@@ -8,7 +8,6 @@ import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveV1;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
-import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;

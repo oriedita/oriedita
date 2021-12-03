@@ -194,10 +194,10 @@ public class SubFace {
     }
 
     //Based on the current top and bottom table, the id number of the i-th surface counting from the top is returned. If you do not use the completed table above and below, the result may be strange.
-    private int get_fromTop_count_itino_FaceId(int iban, HierarchyList hierarchyList) {
-        set_FaceId2fromTop_counted_position(hierarchyList);
-        return faceIdList[fromTop_counted_position2FaceId[iban]];
-    }
+    // private int get_fromTop_count_itino_FaceId(int iban, HierarchyList hierarchyList) {
+    //     set_FaceId2fromTop_counted_position(hierarchyList);
+    //     return faceIdList[fromTop_counted_position2FaceId[iban]];
+    // }
 
     private int getPermutation(int i) {
         return permutationGenerator.getPermutation(i);

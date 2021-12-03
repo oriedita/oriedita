@@ -89,7 +89,7 @@ public class LeftPanel {
     private JButton v_del_ccButton;
     private JButton v_del_allButton;
     private JButton v_del_all_ccButton;
-    private JButton inputDataButton;
+    // private JButton inputDataButton;
     private JButton drawTwoColoredCpButton;
     private JButton suitei_01Button;
     private JButton koteimen_siteiButton;
@@ -1113,6 +1113,8 @@ public class LeftPanel {
                 case CYAN_3:
                     colCyanButton.setBackground(Colors.get(Color.cyan));
                     colCyanButton.setForeground(Colors.get(Color.black));
+                default:
+                    break;
             }
         }
 
@@ -1139,6 +1141,8 @@ public class LeftPanel {
                 case CREASE_TOGGLE_MV_58:
                     senbun_henkan2Button.setBackground(Colors.get(new Color(138, 43, 226)));
                     break;
+                default:
+                    break;
             }
         }
 
@@ -1164,6 +1168,8 @@ public class LeftPanel {
                     break;
                 case MIRROR_5:
                     reflectButton.setBorder(new LineBorder(Color.green, 3, false));
+                    break;
+                default:
                     break;
             }
         }

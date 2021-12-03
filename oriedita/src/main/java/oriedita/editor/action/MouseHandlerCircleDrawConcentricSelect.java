@@ -32,7 +32,7 @@ public class MouseHandlerCircleDrawConcentricSelect extends BaseMouseHandler {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
         closest_circumference.set(d.getClosestCircleMidpoint(p));
-        Point closest_point = d.getClosestPoint(p);
+        // Point closest_point = d.getClosestPoint(p);
 
         if ((d.lineStep.size() == 0) && (d.circleStep.size() == 0)) {
             if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {

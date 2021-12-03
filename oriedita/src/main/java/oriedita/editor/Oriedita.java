@@ -8,10 +8,6 @@ import oriedita.editor.factory.DaggerAppFactory;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
 
 public class Oriedita {
 

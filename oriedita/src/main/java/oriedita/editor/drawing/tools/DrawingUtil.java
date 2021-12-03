@@ -40,6 +40,8 @@ public class DrawingUtil {
             case ORANGE_4:
                 g.setColor(Colors.get(Color.orange));
                 break;
+            default:
+                break;
         }
         LineSegment sp = OritaCalc.moveParallel(s, r);
         LineSegment sm = OritaCalc.moveParallel(s, -r);
@@ -136,6 +138,8 @@ public class DrawingUtil {
                 break;
             case PURPLE_8:
                 g.setColor(Colors.get(new Color(210, 0, 255)));
+                break;
+            default:
                 break;
         }
     }
@@ -316,6 +320,8 @@ public class DrawingUtil {
                 g.fillOval((int) a.getX() - i_width_nyuiiryokuji, (int) a.getY() - i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji); //円
                 g.fillOval((int) b.getX() - i_width_nyuiiryokuji, (int) b.getY() - i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji); //円
                 break;
+            default:
+                break;
         }
     }
 
@@ -347,6 +353,8 @@ public class DrawingUtil {
 
                 g.drawLine((int) b.getX() - i_width, (int) b.getY(), (int) b.getX() + i_width, (int) b.getY()); //直線
                 g.drawLine((int) b.getX(), (int) b.getY() - i_width, (int) b.getX(), (int) b.getY() + i_width); //直線
+                break;
+            default:
                 break;
         }
     }
