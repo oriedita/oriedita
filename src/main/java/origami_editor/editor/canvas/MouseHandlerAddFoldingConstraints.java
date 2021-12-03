@@ -117,7 +117,7 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
                 selectedFigure.foldedFigure.ct_worker.hierarchyList.addCustomConstraint(nearest.inverted());
             } else {
                 CustomConstraint.FaceOrder fo = backside? CustomConstraint.FaceOrder.FLIPPED : CustomConstraint.FaceOrder.NORMAL;
-                CustomConstraint lc = new CustomConstraint(fo, white, colored, modelCoords, CustomConstraint.Type.COLOR_FRONT);
+                CustomConstraint lc = new CustomConstraint(fo, white, colored, modelCoords, CustomConstraint.Type.COLOR_BACK);
                 selectedFigure.foldedFigure.ct_worker.hierarchyList.addCustomConstraint(lc);
                 System.out.printf("Pressed in constraint mode %s size of faces: %d (%d/%d)%n", clickedOnFoldedModel, selectedFaces.size(), white.size(), colored.size());
             }

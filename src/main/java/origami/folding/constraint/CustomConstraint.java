@@ -19,16 +19,16 @@ public class CustomConstraint {
     private final Type type;
 
     public enum Type {
-        COLOR_FRONT,
         COLOR_BACK,
+        COLOR_FRONT,
         CUSTOM;
 
         public Type opposite() {
             switch (this) {
-                case COLOR_BACK:
-                    return COLOR_FRONT;
                 case COLOR_FRONT:
                     return COLOR_BACK;
+                case COLOR_BACK:
+                    return COLOR_FRONT;
                 default:
                     return CUSTOM;
             }

@@ -24,6 +24,7 @@ import java.awt.geom.Path2D;
  */
 public class FoldedFigure_Worker_Drawer {
     static boolean displaySsi = false;
+    boolean showConstraints = true;
     private final FoldedFigure_Worker worker;
     Camera camera = new Camera();
     Color F_color = new Color(255, 255, 50);//表面の色
@@ -390,6 +391,12 @@ public class FoldedFigure_Worker_Drawer {
     }
 
     private void drawConstraints(Graphics2D g2) {
+        if (!showConstraints) {
+            return;
+        }
+        Color front = F_color;
+        Color back = B_color;
+        Color border = Color.BLACK;
         for (CustomConstraint cc : worker.hierarchyList.getCustomConstraints()) {
             if (camera.determineIsCameraMirrored()) {
                 if (cc.getFaceOrder() == CustomConstraint.FaceOrder.NORMAL) {
@@ -403,14 +410,14 @@ public class FoldedFigure_Worker_Drawer {
             Point pos = camera.object2TV(cc.getPos());
             g2.setStroke(new BasicStroke(1));
             switch (cc.getType()) {
-                case COLOR_FRONT:
-                    g2.setPaint(B_color);
-                    break;
                 case COLOR_BACK:
-                    g2.setPaint(F_color);
+                    g2.setPaint(back);
+                    break;
+                case COLOR_FRONT:
+                    g2.setPaint(front);
                     break;
                 case CUSTOM:
-                    g2.setPaint(L_color);
+                    g2.setPaint(border);
             }
             g2.fillOval((int) pos.getX()-3, (int) pos.getY()-3, 6, 6);
             g2.setColor(L_color);
