@@ -132,14 +132,14 @@ public class ChainPermutationGenerator extends PermutationGenerator {
             // Find the next available element.
             do {
                 swapIndex++;
-                if (swapIndex > numDigits - lockRemain + 1) {
+                if (swapIndex > Math.min(numDigits, numDigits - lockRemain+1) ) {
                     break;
                 }
                 curDigit = digits[swapIndex];
             } while (pairGuide.isNotReady(curDigit) || !fitsConstraint(curIndex, curDigit));
 
             // If the current digit has no available element, retract.
-            if (swapIndex > numDigits - lockRemain + 1) {
+            if (swapIndex > Math.min(numDigits, numDigits - lockRemain+1)) {
                 // The nature of ChainPermutationGenerator is that it never hits a dead-end
                 // mid-way unless there's internal contradiction in the given constraints.
                 if (swapHistory[curIndex] == curIndex - 1) return 0;
@@ -197,13 +197,13 @@ public class ChainPermutationGenerator extends PermutationGenerator {
     }
 
     private boolean fitsConstraint(int curIndex, int curDigit) {
-        if ((curIndex != 1 && curIndex != numDigits) || topIndices == null) {
+        if ((curIndex != 1 && curIndex != (numDigits-1))) {
             return true;
         }
         if (curIndex == 1) {
-            return topIndices.contains(curDigit);
+            return topIndices == null || topIndices.contains(curDigit);
         } else {
-            return bottomIndices.contains(curDigit);
+            return bottomIndices == null || bottomIndices.contains(curDigit);
         }
     }
 
