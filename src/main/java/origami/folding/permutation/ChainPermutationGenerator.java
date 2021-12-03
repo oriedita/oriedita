@@ -146,7 +146,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
 
                 // If we have retracted to the beginning, then there's no more permutation.
                 swapHistory[curIndex] = curIndex - 1;
-                if (--curIndex == 0) return 0;
+                if (--curIndex <= 0) return 0;
 
                 retract(curIndex);
                 if (curIndex < digit) {
