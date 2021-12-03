@@ -59,7 +59,7 @@ public class Obj {
                 if (str.equals("v")) {
                     d1 = Double.parseDouble(tk.nextToken());
                     d2 = Double.parseDouble(tk.nextToken());
-                    // d3 = Double.parseDouble(tk.nextToken());
+                    tk.nextToken(); // d3 = Double.parseDouble(tk.nextToken());
 
                     if (d1 > xmax) {
                         xmax = d1;
@@ -108,7 +108,7 @@ public class Obj {
                     ia = Integer.parseInt(tk.nextToken());
                     ib = Integer.parseInt(tk.nextToken());
                     ic = LineColor.from(tk.nextToken());
-                    // id = Integer.parseInt(tk.nextToken());
+                    tk.nextToken(); // id = Integer.parseInt(tk.nextToken());
                     for (Line line : lineList) {
                         if ((line.getBegin() == ia) && (line.getEnd() == ib)) {
                             line.setColor(ic);

@@ -206,9 +206,5 @@ public class ButtonService {
         public void actionPerformed(ActionEvent e) {
             button.doClick();
         }
-
-        // public AbstractButton getButton() {
-        //     return button;
-        // }
     }
 }
