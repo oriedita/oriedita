@@ -388,30 +388,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         //---------ボタンの種類による動作変更-----------------------------------------
         switch (btn) {
-            case MouseEvent.BUTTON1:
-                if (e.getClickCount() == 3 && mouseMode == MouseMode.CREASE_SELECT_19 && canvasModel.isCkbox_add_frame_SelectAnd3click_isSelected()) {
-                    System.out.println("3_Click");//("トリプルクリック"
-
-                    switch (canvasModel.getSelectionOperationMode()) {
-                        case MOVE_1:
-                            canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
-                            break;
-                        case MOVE4P_2:
-                            canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
-                            break;
-                        case COPY_3:
-                            canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
-                            break;
-                        case COPY4P_4:
-                            canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
-                            break;
-                        case MIRROR_5:
-                            canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
-                            break;
-                    }
-                }
-
-                break;
             case MouseEvent.BUTTON2:
                 System.out.println("中ボタンクリック");
 

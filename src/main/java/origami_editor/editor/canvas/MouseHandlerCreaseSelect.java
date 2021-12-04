@@ -14,6 +14,7 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     private final MouseHandlerCreaseCopy mouseHandlerCreaseCopy;
     private final MouseHandlerCreaseMove mouseHandlerCreaseMove;
     private final MouseHandlerDrawCreaseSymmetric mouseHandlerDrawCreaseSymmetric;
+    private final CanvasModel canvasModel;
 
     public MouseHandlerCreaseSelect(CreasePattern_Worker d, CanvasModel canvasModel) {
         mouseHandlerCreaseMove4p = new MouseHandlerCreaseMove4p(d, canvasModel);
@@ -21,6 +22,8 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
         mouseHandlerCreaseCopy4p = new MouseHandlerCreaseCopy4p(d, canvasModel);
         mouseHandlerCreaseMove = new MouseHandlerCreaseMove(d, canvasModel);
         mouseHandlerDrawCreaseSymmetric = new MouseHandlerDrawCreaseSymmetric(d, canvasModel);
+        this.canvasModel = canvasModel;
+        setDrawingWorker(d);
     }
 
     @Override
@@ -44,13 +47,35 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     }
 
     @Override
-    public boolean accepts(MouseEvent e, int mouseButton) {
-        return super.accepts(e, mouseButton) && e.getClickCount() != 3;
+    public void mouseMoved(Point p0) {
+
     }
 
     @Override
-    public void mouseMoved(Point p0) {
+    public void mousePressed(Point p0, MouseEvent e) {
+        if (e.getClickCount() == 3 && canvasModel.isCkbox_add_frame_SelectAnd3click_isSelected()) {
+            System.out.println("3_Click");//("トリプルクリック"
 
+            switch (canvasModel.getSelectionOperationMode()) {
+                case MOVE_1:
+                    canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
+                    break;
+                case MOVE4P_2:
+                    canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
+                    break;
+                case COPY_3:
+                    canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
+                    break;
+                case COPY4P_4:
+                    canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
+                    break;
+                case MIRROR_5:
+                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
+                    break;
+            }
+        } else {
+            mousePressed(p0);
+        }
     }
 
     //マウス操作(mouseMode==19  select　でボタンを押したとき)時の作業----------------------------------------------------
