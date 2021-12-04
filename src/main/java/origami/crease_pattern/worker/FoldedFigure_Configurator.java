@@ -110,26 +110,7 @@ public class FoldedFigure_Configurator {
             if (Thread.interrupted()) throw new InterruptedException();
         }
         for (CustomConstraint cc : worker.hierarchyList.getCustomConstraints()) {
-            Map<Integer, Integer> subfaceIds = new HashMap<>();
-            Set<Integer> allFaces = new HashSet<>(cc.getBottom());
-            allFaces.addAll(cc.getTop());
-            for (Integer faceId : allFaces) {
-                if (subfaceIds.isEmpty()){
-                    for (Integer subfaceId : faceToSubFaceMap.get(faceId)) {
-                        if (worker.s[subfaceId].getFaceIdCount() == allFaces.size()) {
-                            subfaceIds.put(subfaceId, 1);
-                        }
-                    }
-                } else {
-                    for (Integer subfaceId : faceToSubFaceMap.get(faceId)) {
-                        if (subfaceIds.containsKey(subfaceId)) {
-                            subfaceIds.put(subfaceId, subfaceIds.get(subfaceId)+1);
-                        }
-                    }
-                }
-            }
-            int constraintSubfaceId = subfaceIds.entrySet().stream().filter((e) -> e.getValue() == allFaces.size()).findFirst().get().getKey();
-            SubFace constraintSubface = worker.s[constraintSubfaceId];
+            SubFace constraintSubface = findContainingSubface(cc);
             switch (cc.getFaceOrder()) {
                 case NORMAL:
                     if (constraintSubface.hasTopFaceConstraint()) {
@@ -159,6 +140,28 @@ public class FoldedFigure_Configurator {
                 worker.FaceIdCount_max = worker.s0[i].getFaceIdCount();
             }
         }
+    }
+
+    private SubFace findContainingSubface(CustomConstraint cc) {
+        Collection<Integer> allFaces = cc.getAll();
+        Map<Integer, Integer> subfaceIds = new HashMap<>();
+        for (int faceId : allFaces) {
+            if (subfaceIds.isEmpty()){
+                for (int subfaceId : faceToSubFaceMap.get(faceId)) {
+                    if (worker.s[subfaceId].getFaceIdCount() == allFaces.size()) {
+                        subfaceIds.put(subfaceId, 1);
+                    }
+                }
+            } else {
+                for (int subfaceId : faceToSubFaceMap.get(faceId)) {
+                    if (subfaceIds.containsKey(subfaceId)) {
+                        subfaceIds.put(subfaceId, subfaceIds.get(subfaceId)+1);
+                    }
+                }
+            }
+        }
+        int constraintSubfaceId = subfaceIds.entrySet().stream().filter((e) -> e.getValue() == allFaces.size()).findFirst().get().getKey();
+        return worker.s[constraintSubfaceId];
     }
 
     private CustomConstraint mergeConstraints(CustomConstraint cc, CustomConstraint c2) {

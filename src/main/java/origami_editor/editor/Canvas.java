@@ -22,8 +22,9 @@ import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -81,7 +82,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private int pointSize;
 
     Map<MouseMode, MouseModeHandler> mouseModeHandlers = new HashMap<>();
-    List<MouseModeHandler> alwaysActiveMouseModeHandlers = new ArrayList<>();
 
     public boolean flg61 = false;//Used when setting the frame 　20180524
 

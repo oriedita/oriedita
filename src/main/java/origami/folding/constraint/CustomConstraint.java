@@ -3,6 +3,8 @@ package origami.folding.constraint;
 import origami.crease_pattern.element.Point;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Constrains the layer order in that some face in top has to lay above every face
@@ -12,36 +14,21 @@ import java.util.Collection;
  */
 public class CustomConstraint {
     private final FaceOrder faceOrder;
-    private final Collection<Integer> bottom;
-    private final Collection<Integer> top;
+    private final Set<Integer> bottom;
+    private final Set<Integer> top;
+    private final Set<Integer> all;
     private final Point pos;
     // used for drawing the constraints
     private final Type type;
 
-    public enum Type {
-        COLOR_BACK,
-        COLOR_FRONT,
-        CUSTOM;
-
-        public Type opposite() {
-            switch (this) {
-                case COLOR_FRONT:
-                    return COLOR_BACK;
-                case COLOR_BACK:
-                    return COLOR_FRONT;
-                default:
-                    return CUSTOM;
-            }
-        }
-    }
-
-
     public CustomConstraint(FaceOrder faceOrder, Collection<Integer> top, Collection<Integer> bottom, Point pos, Type type) {
         this.faceOrder = faceOrder;
-        this.bottom = bottom;
-        this.top = top;
+        this.bottom = new HashSet<>(bottom);
+        this.top = new HashSet<>(top);
         this.pos = pos;
         this.type = type;
+        this.all = new HashSet<>(top);
+        this.all.addAll(bottom);
     }
 
 
@@ -61,6 +48,10 @@ public class CustomConstraint {
         return top;
     }
 
+    public Collection<Integer> getAll() {
+        return all;
+    }
+
     public CustomConstraint inverted() {
         return new CustomConstraint(faceOrder, bottom, top, pos, type.opposite());
     }
@@ -72,5 +63,22 @@ public class CustomConstraint {
     public enum FaceOrder {
         NORMAL,
         FLIPPED
+    }
+
+    public enum Type {
+        COLOR_BACK,
+        COLOR_FRONT,
+        CUSTOM;
+
+        public Type opposite() {
+            switch (this) {
+                case COLOR_FRONT:
+                    return COLOR_BACK;
+                case COLOR_BACK:
+                    return COLOR_FRONT;
+                default:
+                    return CUSTOM;
+            }
+        }
     }
 }

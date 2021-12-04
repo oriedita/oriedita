@@ -4,11 +4,10 @@ import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.folding.FoldedFigure;
+import origami.folding.HierarchyList;
 import origami.folding.constraint.CustomConstraint;
 import origami_editor.editor.MouseMode;
-import origami_editor.editor.databinding.CanvasModel;
 import origami_editor.editor.drawing.FoldedFigure_Drawer;
-import origami_editor.editor.service.FoldingService;
 import origami_editor.tools.Camera;
 
 import javax.swing.*;
@@ -18,22 +17,15 @@ import java.util.EnumSet;
 import java.util.List;
 
 public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
-    private final FoldingService foldingService;
-    private final CanvasModel canvasModel;
     private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
     private final CreasePattern_Worker drawingWorker;
-    private FoldedFigure_Drawer selectedFigure;
-    private List<Integer> selectedFaces;
 
     @Override
     public EnumSet<Feature> getSubscribedFeatures() {
         return EnumSet.of(Feature.BUTTON_1, Feature.BUTTON_3);
     }
 
-    public MouseHandlerAddFoldingConstraints(FoldingService foldingService, CanvasModel canvasModel,
-                                             DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList, CreasePattern_Worker drawingWorker) {
-        this.foldingService = foldingService;
-        this.canvasModel = canvasModel;
+    public MouseHandlerAddFoldingConstraints(DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList, CreasePattern_Worker drawingWorker) {
         this.foldedFiguresList = foldedFiguresList;
         this.drawingWorker = drawingWorker;
     }
@@ -45,12 +37,11 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
 
     @Override
     public void mouseMoved(Point p0) {
-
     }
 
     @Override
     public void mousePressed(Point p0, MouseEvent e) {
-        selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
         if (selectedFigure == null) {
             return;
         }
@@ -60,8 +51,6 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
         FoldedFigure.State displayState = selectedFigure.foldedFigure.ip4;
         Point modelCoords;
         boolean backside;
-        Point cpCoords = drawingWorker.camera.TV2object(p0);
-        boolean clickedOnFoldedModel;
         switch (displayState) {
             case FRONT_0:
                 modelCoords = modelCameraFront.TV2object(p0);
@@ -74,80 +63,102 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
             default:
                 modelCoords = modelCameraBack.TV2object(p0);
                 backside = true;
-                clickedOnFoldedModel = foldedFigureSet.inside(modelCoords) != 0;
-                if (!clickedOnFoldedModel) {
+                if (foldedFigureSet.inside(modelCoords) == 0) {
                     modelCoords = modelCameraFront.TV2object(p0);
                     backside = false;
                 }
         }
-        clickedOnFoldedModel = foldedFigureSet.inside(modelCoords) != 0;
-        if (!clickedOnFoldedModel) {
+        if (foldedFigureSet.inside(modelCoords) == 0) {
             return;
         }
 
-        selectedFaces = new ArrayList<>();
-        System.out.printf("size of pointSet: %d%n", foldedFigureSet.getNumFaces());
-        for (int i = 1; i <= foldedFigureSet.getNumFaces(); i++) {
-            if (foldedFigureSet.inside(modelCoords, i) == Polygon.Intersection.INSIDE) {
-                selectedFaces.add(i);
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            CustomConstraint nearest = nearConstraintInSelectionRadius(modelCoords, backside,
+                    selectedFigure.foldedFigure.ct_worker.hierarchyList.getCustomConstraints());
+            if (nearest != null && !e.isControlDown()) {
+                invertColor(nearest, selectedFigure.foldedFigure.ct_worker.hierarchyList);
+            } else {
+                addConstraint(modelCoords, backside, selectedFigure.foldedFigure);
             }
+        } else if (e.getButton() == MouseEvent.BUTTON3) {
+            removeNearestConstraint(modelCoords, backside, selectedFigure.foldedFigure.ct_worker.hierarchyList);
         }
+    }
+
+    private void removeNearestConstraint(Point modelCoords, boolean backside, HierarchyList hierarchyList) {
+        CustomConstraint nearest = nearConstraintInSelectionRadius(modelCoords, backside, hierarchyList.getCustomConstraints());
+        if (nearest != null) {
+            hierarchyList.removeCustomConstraint(nearest);
+        }
+    }
+
+    private void addConstraint(Point modelCoords, boolean backside, FoldedFigure foldedFigure) {
+        List<Integer> selectedFaces = findSelectedFaces(modelCoords, foldedFigure.cp_worker2.get());
 
         List<Integer> white = new ArrayList<>();
         List<Integer> colored = new ArrayList<>();
         for (Integer selFaceIndex : selectedFaces) {
-            if (selectedFigure.foldedFigure.cp_worker1.getIFacePosition(selFaceIndex)% 2 == 0) {
+            if (foldedFigure.cp_worker1.getIFacePosition(selFaceIndex)% 2 == 0) {
                 white.add(selFaceIndex);
             }else {
                 colored.add(selFaceIndex);
             }
         }
+        if (backside) {
+            List<Integer> tmp = white;
+            white = colored;
+            colored = tmp;
+        }
+        CustomConstraint.FaceOrder fo = backside ? CustomConstraint.FaceOrder.FLIPPED : CustomConstraint.FaceOrder.NORMAL;
+        CustomConstraint lc = new CustomConstraint(fo, white, colored, modelCoords, CustomConstraint.Type.COLOR_BACK);
+        foldedFigure.ct_worker.hierarchyList.addCustomConstraint(lc);
+    }
 
-        if (e.getButton() == MouseEvent.BUTTON1) {
-            CustomConstraint nearest = null;
-            double nearestDist = 100000000;
-            for (CustomConstraint customConstraint : selectedFigure.foldedFigure.ct_worker.hierarchyList.getCustomConstraints()) {
-                if (nearestDist > customConstraint.getPos().distance(modelCoords)) {
-                    nearestDist = customConstraint.getPos().distance(modelCoords);
-                    nearest = customConstraint;
+    private void invertColor(CustomConstraint nearest, HierarchyList hierarchyList) {
+        hierarchyList.removeCustomConstraint(nearest);
+        hierarchyList.addCustomConstraint(nearest.inverted());
+    }
+
+    private CustomConstraint nearConstraintInSelectionRadius(Point modelCoords, boolean backside, Iterable<CustomConstraint> constraints) {
+        CustomConstraint nearest = null;
+        double nearestDist = drawingWorker.selectionDistance;
+        for (CustomConstraint customConstraint : constraints) {
+            if (backside) {
+                if (customConstraint.getFaceOrder() != CustomConstraint.FaceOrder.FLIPPED) {
+                    continue;
                 }
-            }
-            if (nearest != null && nearestDist < drawingWorker.selectionDistance) {
-                selectedFigure.foldedFigure.ct_worker.hierarchyList.removeCustomConstraint(nearest);
-                selectedFigure.foldedFigure.ct_worker.hierarchyList.addCustomConstraint(nearest.inverted());
             } else {
-                CustomConstraint.FaceOrder fo = backside? CustomConstraint.FaceOrder.FLIPPED : CustomConstraint.FaceOrder.NORMAL;
-                CustomConstraint lc = new CustomConstraint(fo, white, colored, modelCoords, CustomConstraint.Type.COLOR_BACK);
-                selectedFigure.foldedFigure.ct_worker.hierarchyList.addCustomConstraint(lc);
-                System.out.printf("Pressed in constraint mode %s size of faces: %d (%d/%d)%n", clickedOnFoldedModel, selectedFaces.size(), white.size(), colored.size());
-            }
-        } else if (e.getButton() == MouseEvent.BUTTON3) {
-            CustomConstraint nearest = null;
-            double nearestDist = 100000000;
-            for (CustomConstraint customConstraint : selectedFigure.foldedFigure.ct_worker.hierarchyList.getCustomConstraints()) {
-                if (nearestDist > customConstraint.getPos().distance(modelCoords)) {
-                    nearestDist = customConstraint.getPos().distance(modelCoords);
-                    nearest = customConstraint;
+                if (customConstraint.getFaceOrder() != CustomConstraint.FaceOrder.NORMAL) {
+                    continue;
                 }
             }
-            if (nearest != null && nearestDist < drawingWorker.selectionDistance) {
-                selectedFigure.foldedFigure.ct_worker.hierarchyList.removeCustomConstraint(nearest);
+            if (nearestDist > customConstraint.getPos().distance(modelCoords)) {
+                nearestDist = customConstraint.getPos().distance(modelCoords);
+                nearest = customConstraint;
             }
         }
+        return nearest;
+    }
+
+    private List<Integer> findSelectedFaces(Point modelCoords, PointSet foldedFigureSet) {
+        List<Integer> selectedFaces = new ArrayList<>();
+        for (int i = 1; i <= foldedFigureSet.getNumFaces(); i++) {
+            if (foldedFigureSet.inside(modelCoords, i) == Polygon.Intersection.INSIDE) {
+                selectedFaces.add(i);
+            }
+        }
+        return selectedFaces;
     }
 
     @Override
     public void mousePressed(Point p0) {
-
     }
 
     @Override
     public void mouseDragged(Point p0) {
-
     }
 
     @Override
     public void mouseReleased(Point p0) {
-
     }
 }

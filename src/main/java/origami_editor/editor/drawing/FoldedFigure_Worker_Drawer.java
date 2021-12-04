@@ -394,9 +394,8 @@ public class FoldedFigure_Worker_Drawer {
         if (!showConstraints) {
             return;
         }
-        Color front = F_color;
-        Color back = B_color;
-        Color border = Color.BLACK;
+        Color fill, border;
+
         for (CustomConstraint cc : worker.hierarchyList.getCustomConstraints()) {
             if (camera.determineIsCameraMirrored()) {
                 if (cc.getFaceOrder() == CustomConstraint.FaceOrder.NORMAL) {
@@ -409,19 +408,20 @@ public class FoldedFigure_Worker_Drawer {
             }
             Point pos = camera.object2TV(cc.getPos());
             g2.setStroke(new BasicStroke(1));
-            switch (cc.getType()) {
-                case COLOR_BACK:
-                    g2.setPaint(back);
-                    break;
-                case COLOR_FRONT:
-                    g2.setPaint(front);
-                    break;
-                case CUSTOM:
-                    g2.setPaint(border);
+            if (cc.getType() == CustomConstraint.Type.COLOR_BACK) {
+                fill = Color.white;
+                border = Color.black;
+            } else {
+                fill = Color.black;
+                border = Color.white;
             }
-            g2.fillOval((int) pos.getX()-3, (int) pos.getY()-3, 6, 6);
-            g2.setColor(L_color);
-            g2.drawOval((int) pos.getX()-3, (int) pos.getY()-3, 6, 6);
+
+            int x = (int) pos.getX();
+            int y = (int) pos.getY();
+            g2.setPaint(fill);
+            g2.fillOval(x-4, y-4, 8, 8);
+            g2.setColor(border);
+            g2.drawOval(x-4, y-4, 8, 8);
         }
     }
 

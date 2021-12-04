@@ -266,54 +266,33 @@ public class SubFace {
     }
 
     private int customConstraintInconsistentDigitRequest(CustomConstraint lc, int min) {
-        int[] localMins = new int[lc.getTop().size()];
-        int i = 0;
+        if (lc.getTop().size() == 0) {
+            return 1;
+        }
+        int newMin = min;
         if (lc.getFaceOrder() == CustomConstraint.FaceOrder.FLIPPED) {
-            for (Integer bottomId : lc.getBottom()) {
-                int b = FaceId2PermutationDigit(bottomId);
-                int localMin = min;
-                for (Integer topId : lc.getTop()) {
-                    int a = FaceId2PermutationDigit(topId);
-                    if (a < localMin && b < a) {
-                        localMin = a;
-                        break;
-                    }
-                }
-                if (localMin == min) {
+            for (Integer faceId : lc.getTop()) {
+                int a = FaceId2PermutationDigit(faceId);
+                if (a == faceIdCount) {
                     return min;
                 }
-                localMins[i] = localMin;
-                i++;
+                if (a < newMin) {
+                    newMin = a;
+                }
             }
+            return newMin;
         } else {
-            for (Integer topId : lc.getTop()) {
-                int a = FaceId2PermutationDigit(topId);
-                int localMin = min;
-                for (Integer bottomId : lc.getBottom()) {
-                    int b = FaceId2PermutationDigit(bottomId);
-                    if (a < localMin && b < a) {
-                        localMin = a;
-                        break;
-                    }
-                }
-                if (localMin == min) {
+            for (Integer faceId : lc.getTop()) {
+                int a = FaceId2PermutationDigit(faceId);
+                if (a == 1) {
                     return min;
                 }
-                localMins[i] = localMin;
-                i++;
-            }
-        }
-
-        int maxMin = 0;
-        for (int m : localMins) {
-            if (m > maxMin) {
-                maxMin = m;
-                if (maxMin == min) {
-                    return min;
+                if (a < newMin) {
+                    newMin = a;
                 }
             }
+            return newMin;
         }
-        return Math.min(maxMin, min);
     }
 
     // Check from the top surface to find out at what number the two surfaces that share a part of the boundary line and the penetration conditions of the two surfaces are inconsistent.
@@ -463,23 +442,6 @@ public class SubFace {
 
     public boolean hasCustomConstraint() {
         return hasTopFaceConstraint() || hasBottomFaceConstraint();
-    }
-
-    private boolean fastContains(CustomConstraint customConstraint) {
-        if (faceIdCount != customConstraint.getTop().size() + customConstraint.getBottom().size()) {
-            return false;
-        }
-        for (Integer integer : customConstraint.getTop()) {
-            if (faceIdMapArray[integer] == 0) {
-                return false;
-            }
-        }
-        for (Integer integer : customConstraint.getBottom()) {
-            if (faceIdMapArray[integer] == 0) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private boolean fastContains(EquivalenceCondition ec) {

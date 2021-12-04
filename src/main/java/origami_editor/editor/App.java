@@ -404,7 +404,7 @@ public class App {
         canvas.addMouseModeHandler(new MouseHandlerBackgroundChangePosition(buttonService, backgroundModel, canvas));
         canvas.addMouseModeHandler(new MouseHandlerMoveCalculatedShape(foldedFiguresList, canvas));
         canvas.addMouseModeHandler(new MouseHandlerModifyCalculatedShape(foldingService, canvasModel, foldedFiguresList));
-        canvas.addMouseModeHandler(new MouseHandlerAddFoldingConstraints(foldingService, canvasModel, foldedFiguresList, mainCreasePatternWorker));
+        canvas.addMouseModeHandler(new MouseHandlerAddFoldingConstraints(foldedFiguresList, mainCreasePatternWorker));
         canvas.addMouseModeHandler(new MouseHandlerMoveCreasePattern(canvas, foldedFiguresList, mainCreasePatternWorker));
         canvas.addMouseModeHandler(new MouseHandlerChangeStandardFace(foldedFiguresList, mainCreasePatternWorker));
 
