@@ -67,7 +67,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
         lockRemain = lockCount;
         for (int i = 1; i <= numDigits; i++) {
             digits[i] = initPermutation[i];
-            map[i] = i;
+            map[digits[i]] = i;
             if (saved) {
                 swapHistory[i] = (saveHistory[2][i] = saveHistory[1][i]) - 1;
             } else {
@@ -254,7 +254,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
     private void retract(int index) {
         int swapIndex = swapHistory[index];
         int curDigit = digits[index];
-        if (swapIndex != index) {
+        if (swapIndex != index && swapIndex >= 0) {
             digits[index] = digits[swapIndex];
             digits[swapIndex] = curDigit;
         }
