@@ -11,7 +11,7 @@
 
     <scm>
         <url>https://github.com/oriedita/oriedita</url>
-        <developerConnection>scm:git:ssh://github.com:oriedita/oriedita.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/oriedita/oriedita.git</developerConnection>
         <connection>https://github.com/oriedita/oriedita/tree/master</connection>
     </scm>
 
