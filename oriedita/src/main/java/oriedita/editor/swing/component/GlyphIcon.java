@@ -16,30 +16,26 @@ import java.beans.PropertyChangeListener;
  */
 public class GlyphIcon implements Icon, PropertyChangeListener {
     private final String glyph;
-    private Color color;
-    private final int width;
     private final Font font;
+    private final int width;
+    private final int offset;
+
+    private Color color;
 
     public GlyphIcon(String glyph, Color color) {
         this.glyph = glyph;
         this.color = color;
         font = new Font("Icons", Font.PLAIN, 21);
 
-        width = calculateGlyphWidth();
-    }
-
-    /**
-     * Draw the glyph on a bufferedImage to calculate it's size.
-     */
-    private int calculateGlyphWidth() {
         BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = image.createGraphics();
 
         FontRenderContext frc = g2.getFontRenderContext();
-        GlyphVector gv = font.createGlyphVector(frc, glyph);
+        GlyphVector gv = font.createGlyphVector(frc, this.glyph);
         Rectangle2D box = gv.getPixelBounds(frc, 0, getIconHeight());
 
-        return (int)box.getX() * 2 + (int)box.getWidth();
+        offset = (int) box.getX();
+        width = (int) box.getWidth();
     }
 
     @Override
@@ -50,7 +46,7 @@ public class GlyphIcon implements Icon, PropertyChangeListener {
         g2.setFont(font);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
         g2.setColor(Colors.get(color));
-        g2.drawString(glyph, x, y + getIconHeight());
+        g2.drawString(glyph, x - offset, y + getIconHeight());
         g2.setFont(originalFont);
     }
 

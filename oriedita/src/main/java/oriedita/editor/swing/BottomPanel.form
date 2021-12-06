@@ -72,7 +72,7 @@
       </component>
       <component id="1ee29" class="javax.swing.JButton" binding="frontColorButton" default-binding="true">
         <constraints>
-          <grid row="0" column="21" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="21" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <icon value="ppp/F_color.png"/>
@@ -81,7 +81,7 @@
       </component>
       <component id="55752" class="javax.swing.JButton" binding="backColorButton" default-binding="true">
         <constraints>
-          <grid row="0" column="22" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="22" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <icon value="ppp/B_color.png"/>
@@ -90,7 +90,7 @@
       </component>
       <component id="f6ce8" class="javax.swing.JButton" binding="lineColorButton" default-binding="true">
         <constraints>
-          <grid row="0" column="23" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="23" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <icon value="ppp/L_color.png"/>
