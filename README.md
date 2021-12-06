@@ -1,10 +1,10 @@
-# Origami Editor
+# Oriedita
 
 _This a fork of Orihime オリヒメ and not affiliated with the original version._
 
-Origami Editor is a computer program used for drawing origami crease patterns. It comes with a wide range of tools to help you draw crease patterns.
+Oriedita is a computer program used for drawing origami crease patterns. It comes with a wide range of tools to help you draw crease patterns.
 
-Origami Editor can simulate folding a crease pattern and show if a crease pattern is flat-foldable, and if it is, show a folded version of the crease pattern.
+Oriedita can simulate folding a crease pattern and show if a crease pattern is flat-foldable, and if it is, show a folded version of the crease pattern.
 
 The software is based on Orihime, it adds performance, stability and usage improvements. Notable improvements are: 
 
@@ -16,15 +16,15 @@ The software is based on Orihime, it adds performance, stability and usage impro
 
 ## Usage
 
-**[Download the latest version from the Releases page.](https://github.com/qurben/origami-editor/releases)**
+**[Download the latest version from the Releases page.](https://github.com/oriedita/oriedita/releases)**
 
-[Download the latest development version.](https://nightly.link/qurben/origami-editor/workflows/maven/master/origami-editor-jar.zip)
+[Download the latest development version.](https://nightly.link/oriedita/oriedita/workflows/maven/master/oriedita-jar.zip)
 
 After downloading the latest version you can use the installer to install the software or run the jar using Java (at least version 8).
 
-You should be presented with the main interface of Origami Editor.
+You should be presented with the main interface of Oriedita.
 
-![](https://i.imgur.com/EGnaeOx.png)
+![](https://i.imgur.com/w1Nh7aC.png)
 
 Use the mouse to draw lines on the crease pattern, using the ![MVEA](https://i.imgur.com/4vm5CND.png) buttons to change the direction of the fold line, and use the ![Fold](https://i.imgur.com/jxswOXM.png) button to try and fold the crease pattern.
 
@@ -34,7 +34,7 @@ Clicking on buttons will update the help box with a help text for that button.
 
 <dl>
 <dt>.ori</dt>
-<dd>You can save files using the Origami Editor file format .ori, this saves the creasepattern, customized colors and the camera position. This format is recommended when developing a new crease pattern as loading it brings you back to the same state as you left it.</dd>
+<dd>You can save files using the Oriedita file format .ori, this saves the creasepattern, customized colors and the camera position. This format is recommended when developing a new crease pattern as loading it brings you back to the same state as you left it.</dd>
 <dt>.cp</dt>
 <dd>You can also use the .cp format to save files, this file format only saves creases (so no circles or state). But this format is more lightweight and portable and should be used to share a crease pattern with someone else. This format can also be opened in other origami crease pattern software.</dd>
 </dl>
@@ -47,9 +47,9 @@ This section describes advanced usage, such as custom configuration files. This 
 
 Configuration is saved to the following directory, called the _configuration directory_:
 
-- `%APPDATA%\origami-editor` on Windows
-- `~/Library/Application Support/origami-editor` on Mac
-- `~/.origami-editor` on Linux and other systems
+- `%APPDATA%\oriedita` on Windows
+- `~/Library/Application Support/oriedita` on Mac
+- `~/.oriedita` on Linux and other systems
 
 It should not be needed to access files in this directory yourself.
 
@@ -65,21 +65,21 @@ The application state is saved to `config.json` in the configuration directory. 
 
 ## FAQ
 
-### How do I reset Origami Editor?
+### How do I reset Oriedita?
 
-To reset all options in Origami Editor to the default state remove all files in the _configuration directory_, see the [Configuration](#Configuration) section to find this directory on your operating system.
+To reset all options in Oriedita to the default state remove all files in the _configuration directory_, see the [Configuration](#Configuration) section to find this directory on your operating system.
 
-### Origami Editor does not fit on my screen
+### Oriedita does not fit on my screen
 
-Some installations of windows use scaling to make everything larger and easier to use. This can cause Origami Editor to become larger than the screen. Disable ui scaling to prevent this.
+Some installations of windows use scaling to make everything larger and easier to use. This can cause Oriedita to become larger than the screen. Disable ui scaling to prevent this.
 
-When running Origami Editor from the jar, execute the jar as follwos:
+When running Oriedita from the jar, execute the jar as follwos:
 
 ```bash
-java -jar -D"sun.java2d.uiScale=1" origami-editor-vX.X.X.jar
+java -jar -D"sun.java2d.uiScale=1" oriedita-vX.X.X.jar
 ```
 
-When using the installer or portable installation navigate to the directory of the installation (C:\Program Files\Origami Editor) and edit the `Origami Editor.cfg` file in the `app` directory, add the following line at the end of the file.
+When using the installer or portable installation navigate to the directory of the installation (C:\Program Files\Oriedita) and edit the `Oriedita.cfg` file in the `app` directory, add the following line at the end of the file.
 
 ```
 java-options=-Dsun.java2d.uiScale=1

@@ -4,135 +4,74 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>origami</groupId>
-    <artifactId>origami-editor</artifactId>
-    <version>0.0.11-SNAPSHOT</version>
+    <groupId>oriedita</groupId>
+    <artifactId>root</artifactId>
+    <version>0.0.12-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.13.0</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.8.1</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
-            <groupId>com.formdev</groupId>
-            <artifactId>flatlaf</artifactId>
-            <version>1.5</version>
+            <groupId>org.tinylog</groupId>
+            <artifactId>tinylog-api</artifactId>
+            <version>2.3.2</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
+            <groupId>org.tinylog</groupId>
+            <artifactId>tinylog-impl</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tinylog</groupId>
+            <artifactId>slf4j-tinylog</artifactId>
+            <version>2.3.2</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jdk8</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.8.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.github.origin-energy</groupId>
-            <artifactId>java-snapshot-testing-junit5</artifactId>
-            <version>3.2.5</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.26</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.origin-energy</groupId>
-            <artifactId>java-snapshot-testing-plugin-jackson</artifactId>
-            <version>3.2.5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.intellij</groupId>
-            <artifactId>forms_rt</artifactId>
-            <version>7.0.3</version>
         </dependency>
     </dependencies>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jackson.version>2.12.5</jackson.version>
+        <dagger.version>2.40.1</dagger.version>
+        <snapshot-test.version>3.2.6</snapshot-test.version>
+        <junit.version>5.8.1</junit.version>
+        <lwjgl.version>3.3.0</lwjgl.version>
     </properties>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <transformers>
-                        <transformer
-                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>origami_editor.editor.OrigamiEditor</mainClass>
-                        </transformer>
-                    </transformers>
-                    <artifactSet>
-                        <excludes>
-                            <!-- Dependencies of com.intellij:forms_rt which aren't used -->
-                            <exclude>com.jgoodies:forms</exclude>
-                            <exclude>jdom:jdom</exclude>
-                            <exclude>asm:asm*</exclude>
-                        </excludes>
-                    </artifactSet>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>module-info.class</exclude>
-                                <exclude>META-INF/*</exclude>
-                                <exclude>META-INF/services/*</exclude>
-                            </excludes>
-                        </filter>
-                        <filter>
-                            <!-- Large part of com.inte..ij:forms_rt that isn't used -->
-                            <artifact>com.intellij:forms_rt</artifact>
-                            <includes>
-                                <include>com/intellij/uiDesigner/core/*</include>
-                                <include>com/intellij/uiDesigner/core</include>
-                            </includes>
-                        </filter>
-                    </filters>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -140,4 +79,10 @@
             </plugin>
         </plugins>
     </build>
+
+    <modules>
+        <module>fold</module>
+        <module>origami</module>
+        <module>oriedita</module>
+    </modules>
 </project>

@@ -10,10 +10,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 8
+      - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
-          java-version: '8'
+          java-version: '11'
           distribution: 'adopt'
           cache: maven
 
@@ -29,7 +29,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: target/origami-editor-*.jar
+          files: target/oriedita-*.jar
 
   create_executable:
     runs-on: ${{ matrix.os }}
@@ -66,38 +66,38 @@ jobs:
           mvn -B clean package --file pom.xml
           mkdir lib
           mkdir ci-build
-          cp target/origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar lib/
-          $deps = jdeps --print-module-deps --ignore-missing-deps lib/origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar
-          jlink --add-modules $deps --output ci-build/origami-editor-runtime
+          cp target/oriedita-${{ steps.get_version.outputs.version-without-v }}.jar lib/
+          $deps = jdeps --print-module-deps --ignore-missing-deps lib/oriedita-${{ steps.get_version.outputs.version-without-v }}.jar
+          jlink --add-modules $deps --output ci-build/oriedita-runtime
 
       - name: Create portable executable
         run: |
           jpackage `
             @build/jpackage-common-args `
             --type app-image `
-            --name "Origami-Editor-(Portable)" `
+            --name "Oriedita-(Portable)" `
             --app-version ${{ steps.get_version.outputs.version-without-v }} `
-            --main-jar origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar `
+            --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
 
       - name: Create zip for portable executable
         uses: papeloto/action-zip@v1
         with:
-          files: 'ci-build/Origami-Editor-(Portable)'
-          dest: ci-build/Origami Editor (Portable) ${{ steps.get_version.outputs.version-without-v }}.zip
+          files: 'ci-build/Oriedita-(Portable)'
+          dest: ci-build/Oriedita (Portable) ${{ steps.get_version.outputs.version-without-v }}.zip
 
       - name: Create installer
         run: |
           jpackage `
             @build/jpackage-common-args `
             @build/jpackage-installer-args `
-            --name "Origami Editor" `
+            --name "Oriedita" `
             --app-version ${{ steps.get_version.outputs.version-without-v }} `
-            --main-jar origami-editor-${{ steps.get_version.outputs.version-without-v }}.jar `
+            --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ci-build/origami-editor-*.exe
-            ci-build/Origami Editor*.exe
-            ci-build/Origami Editor*.zip
+            ci-build/oriedita-*.exe
+            ci-build/Oriedita*.exe
+            ci-build/Oriedita*.zip

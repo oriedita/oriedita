@@ -4,3 +4,4 @@ target/
 *.versionsBackup
 ci-build/
 lib/
+*.iml
