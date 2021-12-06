@@ -3,16 +3,11 @@ package oriedita.editor.swing;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 import org.tinylog.Logger;
-import origami.folding.FoldedFigure;
 import oriedita.editor.Canvas;
-import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.action.MouseHandlerModifyCalculatedShape;
+import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.ButtonService;
@@ -23,7 +18,11 @@ import oriedita.editor.task.FoldingEstimateSave100Task;
 import oriedita.editor.task.FoldingEstimateSpecificTask;
 import oriedita.editor.task.TaskExecutor;
 import oriedita.editor.tools.StringOp;
+import origami.folding.FoldedFigure;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -101,6 +100,7 @@ public class BottomPanel {
         buttonService.registerButton(As100Button, "As100Action");
         buttonService.registerButton(goToFoldedFigureButton, "goToFoldedFigureAction");
         buttonService.registerButton(foldedFigureMoveButton, "foldedFigureMoveAction");
+        buttonService.registerButton(constraintButton, "addColorConstraintAction");
 
         buttonService.registerButton(undoRedo.getUndoButton(), "foldedFigureUndoAction");
         buttonService.registerButton(undoRedo.getRedoButton(), "foldedFigureRedoAction");
