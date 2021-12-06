@@ -5,11 +5,11 @@
     <parent>
         <groupId>oriedita</groupId>
         <artifactId>root</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0-pre.1</version>
     </parent>
 
     <artifactId>fold</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-pre.1</version>
 
     <dependencies>
         <dependency>
