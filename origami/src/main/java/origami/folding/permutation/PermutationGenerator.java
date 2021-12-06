@@ -1,5 +1,7 @@
 package origami.folding.permutation;
 
+import java.util.Collection;
+
 /**
  * This is the base class for different permutation generator implementations.
  * 
@@ -51,4 +53,14 @@ public abstract class PermutationGenerator {
 
     /** Add a constraint saying that "from" must appear before "to". */
     public abstract void addGuide(int from, int to);
+
+    /**
+     * add Constraint that one of the indices has to be on top
+     */
+    public abstract void setTopIndices(Collection<Integer> indices);
+
+    /**
+     * add Constraint that one of the indices has to be on the bottom
+     */
+    public abstract void setBottomIndices(Collection<Integer> indices);
 }

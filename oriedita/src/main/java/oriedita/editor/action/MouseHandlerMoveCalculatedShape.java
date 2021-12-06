@@ -11,6 +11,8 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.FoldedFigureCanvasSelectService;
 import oriedita.editor.drawing.tools.Camera;
 
+import java.util.EnumSet;
+
 @Singleton
 public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
     public Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
@@ -29,6 +31,11 @@ public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
         this.creasePatternCamera = creasePatternCamera;
         this.foldedFigureCanvasSelectService = foldedFigureCanvasSelectService;
         this.canvasModel = canvasModel;
+    }
+
+    @Override
+    public EnumSet<Feature> getSubscribedFeatures() {
+        return EnumSet.of(Feature.BUTTON_1);
     }
 
     @Override

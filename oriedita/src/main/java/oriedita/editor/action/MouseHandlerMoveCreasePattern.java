@@ -10,6 +10,8 @@ import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Camera;
 
+import java.util.EnumSet;
+
 @Singleton
 public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
     public Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
@@ -23,6 +25,11 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
         this.creasePatternCamera = creasePatternCamera;
         this.foldedFiguresList = foldedFiguresList;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
+    }
+
+    @Override
+    public EnumSet<Feature> getSubscribedFeatures() {
+        return EnumSet.of(Feature.BUTTON_1);
     }
 
     @Override

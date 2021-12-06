@@ -14,12 +14,14 @@ public class ListArray {
     protected final int[] head;
     protected int[] next;
     protected int[] values;
+    protected int[] sizes;
     private int capacity;
     private int size;
 
     public ListArray(int count, int capacity) {
         this.capacity = capacity;
         head = new int[count + 1];
+        sizes = new int[count+1];
         next = new int[capacity + 1];
         values = new int[capacity + 1];
     }
@@ -30,6 +32,7 @@ public class ListArray {
         next[cursor] = head[index];
         head[index] = cursor;
         values[cursor] = value;
+        sizes[index]++;
     }
 
     private void grow() {
@@ -58,5 +61,9 @@ public class ListArray {
                 return result;
             }
         };
+    }
+
+    public final int size(int index) {
+        return sizes[index];
     }
 }

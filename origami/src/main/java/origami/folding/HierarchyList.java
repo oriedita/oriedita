@@ -1,6 +1,7 @@
 package origami.folding;
 
 import origami.data.symmetricMatrix.SymmetricMatrix;
+import origami.folding.constraint.CustomConstraint;
 import origami.folding.util.EquivalenceCondition;
 
 import java.util.*;
@@ -23,6 +24,7 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     SymmetricMatrix hierarchyList_copy;
     List<EquivalenceCondition> tL = new LinkedList<>(); // We need LinkedList here for fast removal
     Queue<EquivalenceCondition> uL = new ConcurrentLinkedQueue<>();
+    Queue<CustomConstraint> customConstraints = new ConcurrentLinkedQueue<>();
 
     public HierarchyList() {
         reset();
@@ -98,6 +100,18 @@ public class HierarchyList {//This class is used to record and utilize the hiera
         return uL;
     }
 
+    public int getCustomConstraintsTotal() {
+        return customConstraints.size();
+    }
+
+    public Iterable<CustomConstraint> getCustomConstraints() {
+        return customConstraints;
+    }
+
+    public void addCustomConstraint(CustomConstraint constraint) {
+        customConstraints.add(constraint);
+    }
+
     // Add equivalence condition. There are two adjacent faces im1 and im2 as the boundary of the bar ib,
     // Also, there are two adjacent faces im3 and im4 as the boundary of the bar jb, and when ib and jb are parallel and partially overlap, when folding is estimated.
     // The surface of the bar ib and the surface of the surface jb are not aligned with i, j, i, j or j, i, j, i. If this happens,
@@ -109,5 +123,9 @@ public class HierarchyList {//This class is used to record and utilize the hiera
     public boolean isEmpty(int i, int j) {
         int value = hierarchyList.get(i, j);
         return value == EMPTY_N100 || value == UNKNOWN_N50;
+    }
+
+    public void removeCustomConstraint(CustomConstraint cons) {
+        customConstraints.remove(cons);
     }
 }

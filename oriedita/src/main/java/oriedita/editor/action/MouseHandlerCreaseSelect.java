@@ -4,10 +4,14 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.tinylog.Logger;
+import oriedita.editor.databinding.CanvasModel;
 import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.CreasePattern_Worker;
+
+import java.awt.event.MouseEvent;
+import java.util.EnumSet;
 
 @Singleton
 public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
@@ -16,17 +20,20 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     private final MouseHandlerCreaseCopy mouseHandlerCreaseCopy;
     private final MouseHandlerCreaseMove mouseHandlerCreaseMove;
     private final MouseHandlerDrawCreaseSymmetric mouseHandlerDrawCreaseSymmetric;
+    private final CanvasModel canvasModel;
     private final CreasePattern_Worker d;
 
     @Inject
     public MouseHandlerCreaseSelect(
             CreasePattern_Worker d,
+            CanvasModel canvasModel,
             MouseHandlerCreaseMove4p mouseHandlerCreaseMove4p,
             MouseHandlerCreaseCopy4p mouseHandlerCreaseCopy4p,
             MouseHandlerCreaseMove mouseHandlerCreaseMove,
             MouseHandlerCreaseCopy mouseHandlerCreaseCopy,
             MouseHandlerDrawCreaseSymmetric mouseHandlerDrawCreaseSymmetric) {
         this.d = d;
+        this.canvasModel = canvasModel;
         this.mouseHandlerCreaseMove4p = mouseHandlerCreaseMove4p;
         this.mouseHandlerCreaseCopy4p = mouseHandlerCreaseCopy4p;
         this.mouseHandlerCreaseMove = mouseHandlerCreaseMove;
@@ -40,8 +47,40 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     }
 
     @Override
+    public EnumSet<Feature> getSubscribedFeatures() {
+        return EnumSet.of(Feature.BUTTON_1);
+    }
+
+    @Override
     public void mouseMoved(Point p0) {
 
+    }
+
+    @Override
+    public void mousePressed(Point p0, MouseEvent e) {
+        if (e.getClickCount() == 3 && canvasModel.isCkbox_add_frame_SelectAnd3click_isSelected()) {
+            System.out.println("3_Click");//("トリプルクリック"
+
+            switch (canvasModel.getSelectionOperationMode()) {
+                case MOVE_1:
+                    canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
+                    break;
+                case MOVE4P_2:
+                    canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
+                    break;
+                case COPY_3:
+                    canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
+                    break;
+                case COPY4P_4:
+                    canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
+                    break;
+                case MIRROR_5:
+                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
+                    break;
+            }
+        } else {
+            mousePressed(p0);
+        }
     }
 
     //マウス操作(mouseMode==19  select　でボタンを押したとき)時の作業----------------------------------------------------

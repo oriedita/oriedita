@@ -26,6 +26,7 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
         return MouseMode.CREASES_ALTERNATE_MV_36;
     }
 
+
     //マウス操作(mouseMode==36　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
         Point p = new Point();

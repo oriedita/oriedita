@@ -27,6 +27,9 @@ public class SubFacePriority {
 
     public void addSubFace(SubFace s, int index, HierarchyList hierarchyList) {
         int count = s.getFaceIdCount();
+        if (s.hasCustomConstraint()) {
+            newInfoCount[index]++;
+        }
         for (int i = 1; i < count; i++) {
             for (int j = i + 1; j <= count; j++) {
                 int I = s.getFaceId(i), J = s.getFaceId(j);

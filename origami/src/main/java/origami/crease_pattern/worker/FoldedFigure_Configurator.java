@@ -1,10 +1,5 @@
 package origami.crease_pattern.worker;
 
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import org.tinylog.Logger;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
@@ -21,7 +16,13 @@ import origami.data.quadTree.comparator.ExpandComparator;
 import origami.folding.HierarchyList;
 import origami.folding.algorithm.AdditionalEstimationAlgorithm;
 import origami.folding.algorithm.SubFacePriority;
+import origami.folding.constraint.CustomConstraint;
 import origami.folding.element.SubFace;
+
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class isolates those codes related to configuring {@link FoldedFigure_Worker}.
@@ -97,7 +98,7 @@ public class FoldedFigure_Configurator {
             service.execute(() -> {
                 int[] s0addFaceId = new int[faceTotal + 1]; // SubFaceに追加する面を一時記録しておく
                 int s0addFaceTotal = 0;
-    
+
                 for (int j : qt.collect(new PointCollector(subFace_insidePoint[iff]))) {
                     if (otta_face_figure.inside(subFace_insidePoint[iff], j) == Polygon.Intersection.INSIDE) {
                         s0addFaceId[++s0addFaceTotal] = j;
@@ -105,7 +106,7 @@ public class FoldedFigure_Configurator {
                     if (Thread.interrupted()) return;
                 }
                 worker.s0[iff].setNumDigits(s0addFaceTotal);
-    
+
                 for (int j = 1; j <= s0addFaceTotal; j++) {
                     worker.s0[iff].setFaceId(j, s0addFaceId[j]);//ここで面番号jは小さい方が先に追加される。
                 }
@@ -116,7 +117,33 @@ public class FoldedFigure_Configurator {
             if (Thread.interrupted()) throw new InterruptedException();
         }
         shutdownAndWait(service);
+        Logger.info("Creating full SubFace faceId map");
+        faceToSubFaceMap = new ListArray(faceTotal, faceTotal * 5);
+        for (int i = 1; i < worker.s0.length; i++) {
+            for (int j = 1; j <= worker.s0[i].getFaceIdCount(); j++) {
+                faceToSubFaceMap.add(worker.s0[i].getFaceId(j), i);
+            }
+        }
+        for (CustomConstraint cc : worker.hierarchyList.getCustomConstraints()) {
+            SubFace constraintSubface = findContainingSubface(cc);
+            switch (cc.getFaceOrder()) {
+                case NORMAL:
+                    if (constraintSubface.hasTopFaceConstraint()) {
+                        CustomConstraint c2 = constraintSubface.getConstraintTopFace();
+                        cc = mergeConstraints(cc, c2);
+                    }
+                    constraintSubface.setConstraintTopFace(cc);
+                    break;
+                case FLIPPED:
+                    if (constraintSubface.hasBottomFaceConstraint()) {
+                        CustomConstraint c2 = constraintSubface.getConstraintBottomFace();
+                        cc = mergeConstraints(cc, c2);
+                    }
+                    constraintSubface.setConstraintBottomFace(cc);
+                    break;
+            }
 
+        }
         Logger.info("Calculating reduced SubFace set");
         worker.s1 = reduceSubFaceSet(worker.s0);
         frequency = null;
@@ -141,7 +168,38 @@ public class FoldedFigure_Configurator {
         }
     }
 
-     /**
+    private SubFace findContainingSubface(CustomConstraint cc) {
+        Collection<Integer> allFaces = cc.getAll();
+        Map<Integer, Integer> subfaceIds = new HashMap<>();
+        for (int faceId : allFaces) {
+            if (subfaceIds.isEmpty()){
+                for (int subfaceId : faceToSubFaceMap.get(faceId)) {
+                    if (worker.s[subfaceId].getFaceIdCount() == allFaces.size()) {
+                        subfaceIds.put(subfaceId, 1);
+                    }
+                }
+            } else {
+                for (int subfaceId : faceToSubFaceMap.get(faceId)) {
+                    if (subfaceIds.containsKey(subfaceId)) {
+                        subfaceIds.put(subfaceId, subfaceIds.get(subfaceId)+1);
+                    }
+                }
+            }
+        }
+        int constraintSubfaceId = subfaceIds.entrySet().stream().filter((e) -> e.getValue() == allFaces.size()).findFirst().get().getKey();
+        return worker.s[constraintSubfaceId];
+    }
+
+    private CustomConstraint mergeConstraints(CustomConstraint cc, CustomConstraint c2) {
+        Set<Integer> newTop = new HashSet<>(c2.getTop());
+        newTop.retainAll(cc.getTop());
+        Set<Integer> newBottom = new HashSet<>(c2.getBottom());
+        newBottom.addAll(cc.getBottom());
+        cc = new CustomConstraint(cc.getFaceOrder(), newTop, newBottom, cc.getPos(), cc.getType());
+        return cc;
+    }
+
+    /**
      * If the faces of a SubFace A is a subset of the faces of a SubFace B, then A
      * cannot possibly contribute any new relations that B would not contribute, so
      * we don't need to process A at all. This method removes all SubFaces that are
@@ -164,6 +222,10 @@ public class FoldedFigure_Configurator {
         for (int i = 1; i < s.length; i++) {
             int count = s[i].getFaceIdCount();
             if (count == 0) continue;
+            if (s[i].hasCustomConstraint()) {
+                reduced.add(s[i]);
+                continue;
+            }
 
             // First we sort face id by frequency
             Integer[] ids = new Integer[count + 1];
@@ -400,7 +462,7 @@ public class FoldedFigure_Configurator {
         for (int i = 1; i <= reducedSubFaceTotal; i++) {
             SFP.addSubFace(worker.s1[i], i, worker.hierarchyList);
         }
-        
+
         // Priority processing
         for (int i = 1; i <= reducedSubFaceTotal; i++) {// 優先度i番目のSubFaceIdをさがす。
             long result = SFP.getMaxSubFace(worker.s1);

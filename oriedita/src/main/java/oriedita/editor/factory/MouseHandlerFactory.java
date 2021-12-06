@@ -13,6 +13,7 @@ public interface MouseHandlerFactory {
     @Multibinds
     Set<MouseModeHandler> mouseModeHandler();
 
+    @Binds @IntoSet MouseModeHandler mouseHandlerAddFoldingConstraints(MouseHandlerAddFoldingConstraints mouseHandlerAddFoldingConstraints);
     @Binds @IntoSet MouseModeHandler mouseHandlerAngleSystem(MouseHandlerAngleSystem mouseHandlerAngleSystem);
     @Binds @IntoSet MouseModeHandler mouseHandlerBackgroundChangePosition(MouseHandlerBackgroundChangePosition mouseHandlerBackgroundChangePosition);
     @Binds @IntoSet MouseModeHandler mouseHandlerChangeCreaseType(MouseHandlerChangeCreaseType mouseHandlerChangeCreaseType);

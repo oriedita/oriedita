@@ -10,6 +10,8 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import oriedita.editor.canvas.MouseMode;
 
+import java.util.EnumSet;
+
 @Singleton
 public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     double d_angle_system;
@@ -21,6 +23,11 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.ANGLE_SYSTEM_16;
+    }
+
+    @Override
+    public EnumSet<Feature> getSubscribedFeatures() {
+        return EnumSet.of(Feature.BUTTON_1);
     }
 
     //マウス操作(マウスを動かしたとき)を行う関数
@@ -179,4 +186,5 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
     }
+
 }

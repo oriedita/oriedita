@@ -13,7 +13,7 @@ import oriedita.editor.drawing.tools.Camera;
 import java.awt.*;
 
 public class FoldedFigure_Drawer {
-        public final FoldedFigure_01 foldedFigure;
+    public final FoldedFigure_01 foldedFigure;
     public final FoldedFigure_Worker_Drawer foldedFigure_worker_drawer;
     public final WireFrame_Worker_Drawer wireFrame_worker_drawer1;
     public final WireFrame_Worker_Drawer wireFrame_worker_drawer2;

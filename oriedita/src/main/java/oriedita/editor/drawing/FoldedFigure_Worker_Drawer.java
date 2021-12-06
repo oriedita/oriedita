@@ -13,6 +13,7 @@ import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.drawing.tools.Camera;
+import origami.folding.constraint.CustomConstraint;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -23,6 +24,7 @@ import java.awt.geom.Path2D;
  */
 public class FoldedFigure_Worker_Drawer {
     static boolean displaySsi = false;
+    boolean showConstraints = true;
     private final FoldedFigure_Worker worker;
     Camera camera = new Camera();
     Color F_color = new Color(255, 255, 50);//表面の色
@@ -104,6 +106,8 @@ public class FoldedFigure_Worker_Drawer {
 
                 fillFace(g2, camera, subFace_figure, im);
             }
+
+            drawConstraints(g2);
 
             //Prepare the line
             g.setColor(Colors.get(Color.black));
@@ -381,6 +385,43 @@ public class FoldedFigure_Worker_Drawer {
             if (drawing_flag) {//棒を描く。
                 drawLine(g2, camera, subFace_figure, ib);
             }
+        }
+
+        drawConstraints(g2);
+    }
+
+    private void drawConstraints(Graphics2D g2) {
+        if (!showConstraints) {
+            return;
+        }
+        Color fill, border;
+
+        for (CustomConstraint cc : worker.hierarchyList.getCustomConstraints()) {
+            if (camera.determineIsCameraMirrored()) {
+                if (cc.getFaceOrder() == CustomConstraint.FaceOrder.NORMAL) {
+                    continue;
+                }
+            } else {
+                if (cc.getFaceOrder() == CustomConstraint.FaceOrder.FLIPPED) {
+                    continue;
+                }
+            }
+            Point pos = camera.object2TV(cc.getPos());
+            g2.setStroke(new BasicStroke(1));
+            if (cc.getType() == CustomConstraint.Type.COLOR_BACK) {
+                fill = Color.white;
+                border = Color.black;
+            } else {
+                fill = Color.black;
+                border = Color.white;
+            }
+
+            int x = (int) pos.getX();
+            int y = (int) pos.getY();
+            g2.setPaint(fill);
+            g2.fillOval(x-4, y-4, 8, 8);
+            g2.setColor(border);
+            g2.drawOval(x-4, y-4, 8, 8);
         }
     }
 

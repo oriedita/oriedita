@@ -1,5 +1,9 @@
 package origami.folding.permutation;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * This is a much more efficient permutation generator than the original
  * implementation by Mr.Meguro. It uses the classical digit swapping idea to
@@ -25,6 +29,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
     // located at the end.
     private final int[] initPermutation;
 
+
     // One problem with swapping algorithm is that it may reset a generator that is
     // not yet finished, and such generator completely loses its progress. To
     // overcome that, we use another array to store the progress so after reset, it
@@ -40,6 +45,9 @@ public class ChainPermutationGenerator extends PermutationGenerator {
 
     private int lockCount;
     private int lockRemain;
+
+    private Set<Integer> topIndices;
+    private Set<Integer> bottomIndices;
 
     private boolean saved = false;
     private boolean restored = false;
@@ -59,7 +67,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
         lockRemain = lockCount;
         for (int i = 1; i <= numDigits; i++) {
             digits[i] = initPermutation[i];
-            map[i] = i;
+            map[digits[i]] = i;
             if (saved) {
                 swapHistory[i] = (saveHistory[2][i] = saveHistory[1][i]) - 1;
             } else {
@@ -126,19 +134,21 @@ public class ChainPermutationGenerator extends PermutationGenerator {
             // Find the next available element.
             do {
                 swapIndex++;
-                if (swapIndex > numDigits - lockRemain + 1) break;
+                if (swapIndex > Math.min(numDigits, numDigits - lockRemain+1) ) {
+                    break;
+                }
                 curDigit = digits[swapIndex];
-            } while (pairGuide.isNotReady(curDigit));
+            } while (pairGuide.isNotReady(curDigit) || !fitsConstraint(curIndex, curDigit));
 
             // If the current digit has no available element, retract.
-            if (swapIndex > numDigits - lockRemain + 1) {
+            if (swapIndex > Math.min(numDigits, numDigits - lockRemain+1)) {
                 // The nature of ChainPermutationGenerator is that it never hits a dead-end
                 // mid-way unless there's internal contradiction in the given constraints.
                 if (swapHistory[curIndex] == curIndex - 1) return 0;
 
                 // If we have retracted to the beginning, then there's no more permutation.
                 swapHistory[curIndex] = curIndex - 1;
-                if (--curIndex == 0) return 0;
+                if (--curIndex <= 0) return 0;
 
                 retract(curIndex);
                 if (curIndex < digit) digit = curIndex;
@@ -166,6 +176,33 @@ public class ChainPermutationGenerator extends PermutationGenerator {
 
         count++;
         return digit;
+    }
+
+    public void setTopIndices(Collection<Integer> topIndices) {
+        if (topIndices == null) {
+            this.topIndices = null;
+        } else {
+            this.topIndices = new HashSet<>(topIndices);
+        }
+    }
+
+    public void setBottomIndices(Collection<Integer> bottomIndices) {
+        if (bottomIndices == null) {
+            this.bottomIndices = null;
+        } else {
+            this.bottomIndices = new HashSet<>(bottomIndices);
+        }
+    }
+
+    private boolean fitsConstraint(int curIndex, int curDigit) {
+        if ((curIndex != 1 && curIndex != (numDigits))) {
+            return true;
+        }
+        if (curIndex == 1) {
+            return topIndices == null || topIndices.contains(curDigit);
+        } else {
+            return bottomIndices == null || bottomIndices.contains(curDigit);
+        }
     }
 
     @Override
@@ -213,7 +250,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
     private void retract(int index) {
         int swapIndex = swapHistory[index];
         int curDigit = digits[index];
-        if (swapIndex != index) {
+        if (swapIndex != index && swapIndex >= 0) {
             digits[index] = digits[swapIndex];
             digits[swapIndex] = curDigit;
         }

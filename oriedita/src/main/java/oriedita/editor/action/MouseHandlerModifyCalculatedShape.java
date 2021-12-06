@@ -15,6 +15,7 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.FoldingService;
 
 import javax.swing.*;
+import java.util.EnumSet;
 
 @Singleton
 public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
@@ -33,6 +34,11 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
         this.foldingService = foldingService;
         this.canvasModel = canvasModel;
         this.foldedFiguresList = foldedFiguresList;
+    }
+
+    @Override
+    public EnumSet<Feature> getSubscribedFeatures() {
+        return EnumSet.of(Feature.BUTTON_1);
     }
 
     @Override
