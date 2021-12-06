@@ -3,6 +3,7 @@ package oriedita.editor.service;
 import javax.inject.Inject;
 
 import org.tinylog.Logger;
+import oriedita.editor.swing.component.GlyphIcon;
 import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.swing.dialog.SelectKeyStrokeDialog;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -67,11 +68,25 @@ public class ButtonService {
         }
     }
 
+    public void registerLabel(JLabel label, String key) {
+        String icon = ResourceUtil.getBundleString("icons", key);
+        if (!StringOp.isEmpty(icon)) {
+            GlyphIcon glyphIcon = new GlyphIcon(icon, label.getForeground());
+            label.addPropertyChangeListener("foreground", glyphIcon);
+            // Reset the text if there is no icon.
+            if (label.getIcon() == null) {
+                label.setText(null);
+            }
+            label.setIcon(glyphIcon);
+        }
+    }
+
     public void registerButton(AbstractButton button, String key) {
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         // String tooltip = ResourceUtil.getBundleString("tooltip", key);
         String help = ResourceUtil.getBundleString("help", key);
+        String icon = ResourceUtil.getBundleString("icons", key);
 
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
 
@@ -111,6 +126,22 @@ public class ButtonService {
                 button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
             }
             button.getActionMap().put(key, new Click(button));
+
+            if (!StringOp.isEmpty(icon)) {
+                GlyphIcon glyphIcon = new GlyphIcon(icon, button.getForeground());
+                button.addPropertyChangeListener("foreground", glyphIcon);
+                // Reset the text if there is no icon.
+                if (button.getIcon() == null) {
+                    button.setText(null);
+                }
+                button.setIcon(glyphIcon);
+
+                if (button instanceof JCheckBox) {
+                    GlyphIcon selectedGlyphIcon = new GlyphIcon(String.valueOf((char)(icon.toCharArray()[0] + 1)), button.getForeground());
+                    button.addPropertyChangeListener("foreground", selectedGlyphIcon);
+                    button.setSelectedIcon(selectedGlyphIcon);
+                }
+            }
         }
 
         if (!StringOp.isEmpty(help)) {

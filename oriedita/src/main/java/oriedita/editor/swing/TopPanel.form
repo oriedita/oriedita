@@ -55,12 +55,13 @@
                   <text value="1.0"/>
                 </properties>
               </component>
-              <component id="4349c" class="javax.swing.JLabel">
+              <component id="4349c" class="javax.swing.JLabel" binding="ratioLabel1">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <icon value="ppp/plus.png"/>
+                  <text value=""/>
                 </properties>
               </component>
               <component id="cae05" class="javax.swing.JTextField" binding="ratioBTextField">
@@ -76,7 +77,7 @@
                   <text value="0.0"/>
                 </properties>
               </component>
-              <component id="e2e24" class="javax.swing.JLabel">
+              <component id="e2e24" class="javax.swing.JLabel" binding="ratioLabel2">
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -99,7 +100,7 @@
               </component>
             </children>
           </grid>
-          <component id="b8f93" class="javax.swing.JLabel">
+          <component id="b8f93" class="javax.swing.JLabel" binding="ratioLabel3">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -128,7 +129,7 @@
                   <text value="0.0"/>
                 </properties>
               </component>
-              <component id="d5dca" class="javax.swing.JLabel">
+              <component id="d5dca" class="javax.swing.JLabel" binding="ratioLabel4">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -149,7 +150,7 @@
                   <text value="1.0"/>
                 </properties>
               </component>
-              <component id="6a1d8" class="javax.swing.JLabel">
+              <component id="6a1d8" class="javax.swing.JLabel" binding="ratioLabel5">
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>

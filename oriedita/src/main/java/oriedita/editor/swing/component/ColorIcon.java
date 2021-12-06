@@ -22,11 +22,11 @@ public class ColorIcon implements Icon {
 
     @Override
     public int getIconWidth() {
-        return 16;
+        return 10;
     }
 
     @Override
     public int getIconHeight() {
-        return 16;
+        return 10;
     }
 }
