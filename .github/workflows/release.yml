@@ -66,7 +66,7 @@ jobs:
           mvn -B clean package --file pom.xml
           mkdir lib
           mkdir ci-build
-          cp target/oriedita-${{ steps.get_version.outputs.version-without-v }}.jar lib/
+          cp oriedita/target/oriedita-${{ steps.get_version.outputs.version-without-v }}.jar lib/
           $deps = jdeps --print-module-deps --ignore-missing-deps lib/oriedita-${{ steps.get_version.outputs.version-without-v }}.jar
           jlink --add-modules $deps --output ci-build/oriedita-runtime
 
@@ -75,15 +75,15 @@ jobs:
           jpackage `
             @build/jpackage-common-args `
             --type app-image `
-            --name "Oriedita-(Portable)" `
-            --app-version ${{ steps.get_version.outputs.version-without-v }} `
+            --name "Oriedita-Portable-${{ steps.get_version.outputs.version-without-v }}" `
+            --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }} `
             --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
 
       - name: Create zip for portable executable
         uses: papeloto/action-zip@v1
         with:
-          files: 'ci-build/Oriedita-(Portable)'
-          dest: ci-build/Oriedita (Portable) ${{ steps.get_version.outputs.version-without-v }}.zip
+          files: 'ci-build/Oriedita-Portable-${{ steps.get_version.outputs.version-without-v }}'
+          dest: ci-build/Oriedita-Portable-${{ steps.get_version.outputs.version-without-v }}.zip
 
       - name: Create installer
         run: |
@@ -91,7 +91,7 @@ jobs:
             @build/jpackage-common-args `
             @build/jpackage-installer-args `
             --name "Oriedita" `
-            --app-version ${{ steps.get_version.outputs.version-without-v }} `
+            --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }} `
             --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
 
       - name: Release
