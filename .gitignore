@@ -2,6 +2,7 @@ out/
 target/
 *.snap.debug
 *.versionsBackup
+*.releaseBackup
 ci-build/
 lib/
 *.iml
