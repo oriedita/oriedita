@@ -7,9 +7,9 @@
     <parent>
         <groupId>oriedita</groupId>
         <artifactId>root</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>origami</artifactId>
-    <version>0.0.12-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
 </project>

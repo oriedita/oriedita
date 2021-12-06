@@ -7,11 +7,11 @@
     <parent>
         <groupId>oriedita</groupId>
         <artifactId>root</artifactId>
-        <version>0.0.12-SNAPSHOT</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>oriedita</artifactId>
-    <version>0.0.12-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
 
     <dependencyManagement>
         <dependencies>
@@ -30,12 +30,12 @@
         <dependency>
             <groupId>oriedita</groupId>
             <artifactId>fold</artifactId>
-            <version>0.0.12-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>oriedita</groupId>
             <artifactId>origami</artifactId>
-            <version>0.0.12-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.google.dagger</groupId>
