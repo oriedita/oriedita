@@ -1,10 +1,5 @@
 package origami.crease_pattern.worker;
 
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import org.tinylog.Logger;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
@@ -122,6 +117,13 @@ public class FoldedFigure_Configurator {
             if (Thread.interrupted()) throw new InterruptedException();
         }
         shutdownAndWait(service);
+        Logger.info("Creating full SubFace faceId map");
+        faceToSubFaceMap = new ListArray(faceTotal, faceTotal * 5);
+        for (int i = 1; i < worker.s0.length; i++) {
+            for (int j = 1; j <= worker.s0[i].getFaceIdCount(); j++) {
+                faceToSubFaceMap.add(worker.s0[i].getFaceId(j), i);
+            }
+        }
         for (CustomConstraint cc : worker.hierarchyList.getCustomConstraints()) {
             SubFace constraintSubface = findContainingSubface(cc);
             switch (cc.getFaceOrder()) {

@@ -1,25 +1,27 @@
 package oriedita.editor.service;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.tinylog.Logger;
+import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.databinding.FoldedFiguresList;
+import oriedita.editor.drawing.FoldedFigure_Drawer;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.folded_figure.FoldedFigure_01;
+import oriedita.editor.save.Save;
+import oriedita.editor.save.SaveV1;
+import oriedita.editor.swing.component.BulletinBoard;
+import oriedita.editor.task.FoldingEstimateTask;
+import oriedita.editor.task.TaskExecutor;
+import oriedita.editor.task.TwoColoredTask;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
 import origami.folding.FoldedFigure;
-import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
-import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.swing.component.BulletinBoard;
-import oriedita.editor.databinding.*;
-import oriedita.editor.drawing.FoldedFigure_Drawer;
-import oriedita.editor.folded_figure.FoldedFigure_01;
-import oriedita.editor.task.FoldingEstimateTask;
-import oriedita.editor.task.TaskExecutor;
-import oriedita.editor.task.TwoColoredTask;
-import oriedita.editor.drawing.tools.Camera;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.swing.*;
 
@@ -34,6 +36,7 @@ public class FoldingService {
     private final FoldedFigureModel foldedFigureModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FoldedFiguresList foldedFiguresList;
+    private LineSegmentSet lastFold;
     public LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
 
     @Inject
@@ -70,6 +73,19 @@ public class FoldingService {
         if (foldType == FoldType.FOR_ALL_CONNECTED_LINES_1) {
             Point cameraPos = this.mainCreasePatternWorker.getCameraPosition();
             mainCreasePatternWorker.selectConnected(this.mainCreasePatternWorker.foldLineSet.closestPoint(cameraPos));
+            LineSegmentSet newFold = mainCreasePatternWorker.getForSelectFolding();
+            if (foldedFiguresList.getSelectedItem() != null && newFold.contentEquals(lastFold)) {
+                Logger.info("CP didnt change, refolding using constraints and starting face");
+                FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+                if (selectedFigure != null) {
+                    selectedFigure.foldedFigure.estimationOrder = estimationOrder;
+                    selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_0;
+                    FoldingEstimateTask foldingEstimateTask = new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel);
+                    foldingEstimateTask.execute(lineSegmentsForFolding, selectedFigure, estimationOrder);
+                }
+                return;
+            }
+            lastFold = newFold;
             // replace currently selected model if not using selection to fold
             foldedFiguresList.removeElement(foldedFiguresList.getSelectedItem());
         }

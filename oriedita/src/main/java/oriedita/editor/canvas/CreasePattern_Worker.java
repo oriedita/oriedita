@@ -1,10 +1,16 @@
 package oriedita.editor.canvas;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 import org.tinylog.Logger;
+import oriedita.editor.Colors;
+import oriedita.editor.databinding.*;
+import oriedita.editor.drawing.Grid;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.save.Save;
+import oriedita.editor.save.SaveV1;
+import oriedita.editor.service.HistoryState;
+import oriedita.editor.task.CheckCAMVTask;
+import oriedita.editor.task.FinishedFuture;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
@@ -12,17 +18,10 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
-import oriedita.editor.Colors;
-import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
-import oriedita.editor.databinding.*;
-import oriedita.editor.drawing.tools.DrawingUtil;
-import oriedita.editor.task.CheckCAMVTask;
-import oriedita.editor.task.FinishedFuture;
-import oriedita.editor.service.HistoryState;
-import oriedita.editor.drawing.Grid;
-import oriedita.editor.drawing.tools.Camera;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
@@ -288,8 +287,9 @@ public class CreasePattern_Worker {
     public LineSegmentSet getForSelectFolding() {//selectした折線で折り畳み推定をする。
         Save save = new SaveV1();
         foldLineSet.getSaveForSelectFolding(save);
-        lineSegmentSet.setSave(save);
-        return lineSegmentSet;
+        LineSegmentSet ls = new LineSegmentSet();
+        ls.setSave(save);
+        return ls;
     }
 
     public void calculateDecisionWidth() {

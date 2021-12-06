@@ -4,15 +4,17 @@ import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami.data.save.LineSegmentSave;
 import origami.data.quadTree.QuadTree;
 import origami.data.quadTree.adapter.LineSegmentEndPointAdapter;
 import origami.data.quadTree.adapter.LineSegmentSetLineAdapter;
 import origami.data.quadTree.collector.EndPointCollector;
 import origami.data.quadTree.collector.QuadTreeCollector;
+import origami.data.save.LineSegmentSave;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Collection of line segments. Used when calculating folded shapes and two-colored cp.
@@ -446,5 +448,18 @@ public class LineSegmentSet {
         s.set(pi, pj, i_c);
 
         lineSegments.add(s);
+    }
+
+    public boolean contentEquals(LineSegmentSet other) {
+        if (other == null || other.getNumLineSegments() != this.getNumLineSegments()) {
+            return false;
+        }
+        Set<LineSegment> own = new HashSet<>(lineSegments);
+        for (LineSegment lineSegment : other.lineSegments) {
+            if (!own.contains(lineSegment)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
