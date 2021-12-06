@@ -3,7 +3,7 @@ name: Release Jar and exe
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "v*.*"
 jobs:
   create_jar:
     runs-on: ubuntu-latest
