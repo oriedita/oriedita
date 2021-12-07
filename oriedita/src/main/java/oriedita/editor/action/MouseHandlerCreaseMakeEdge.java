@@ -1,12 +1,13 @@
 package oriedita.editor.action;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
-import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.canvas.MouseMode;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class MouseHandlerCreaseMakeEdge extends BaseMouseHandlerBoxSelect {
@@ -33,6 +34,7 @@ public class MouseHandlerCreaseMakeEdge extends BaseMouseHandlerBoxSelect {
      * converted from the auxiliary line.
      */
     public void mouseReleased(Point p0) {
+        super.mouseReleased(p0);
         d.lineStep.clear();
 
         if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {

@@ -1,26 +1,25 @@
 package oriedita.editor;
 
+import org.tinylog.Logger;
+import oriedita.editor.action.DrawingSettings;
+import oriedita.editor.action.MouseModeHandler;
+import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.LineStyle;
+import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.*;
+import oriedita.editor.drawing.FoldedFigure_Drawer;
+import oriedita.editor.drawing.tools.Background_camera;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.service.FoldedFigureCanvasSelectService;
+import oriedita.editor.swing.component.BulletinBoard;
+import oriedita.editor.task.TaskExecutor;
+import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.Polygon;
+import origami.folding.FoldedFigure;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import org.tinylog.Logger;
-import oriedita.editor.canvas.LineStyle;
-import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.swing.component.BulletinBoard;
-import oriedita.editor.databinding.*;
-import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.canvas.FoldLineAdditionalInputMode;
-import oriedita.editor.action.MouseModeHandler;
-import oriedita.editor.drawing.FoldedFigure_Drawer;
-import origami.crease_pattern.element.Polygon;
-import origami.folding.FoldedFigure;
-import origami.crease_pattern.element.Point;
-import oriedita.editor.drawing.tools.Background_camera;
-import oriedita.editor.service.FoldedFigureCanvasSelectService;
-import oriedita.editor.task.TaskExecutor;
-import oriedita.editor.drawing.tools.Camera;
-
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -51,6 +50,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private final FoldedFigureCanvasSelectService foldedFigureCanvasSelectService;
     private final CanvasModel canvasModel;
     public boolean hideOperationFrame = false;
+
+    private MouseModeHandler activeMouseHandler;
 
     Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
     Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
@@ -271,7 +272,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         //展開図表示
         mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
-
+        DrawingSettings settings = new DrawingSettings(lineWidth);
+        if (activeMouseHandler != null) {
+            activeMouseHandler.drawPreview(g2, creasePatternCamera, settings);
+        }
         if (displayComments) {
             //展開図情報の文字表示
             bufferGraphics.setColor(Colors.get(Color.black));
@@ -390,6 +394,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             MouseModeHandler handler = mouseModeHandlers.get(mouseMode);
             if (handler.accepts(e, btn)) {
                 handler.mousePressed(p, e);
+                activeMouseHandler = handler;
                 mainCreasePatternWorker.setCamera(creasePatternCamera);
                 repaint();
                 return;
@@ -431,6 +436,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             case MouseEvent.BUTTON3:
                 mainCreasePatternWorker.setCamera(creasePatternCamera);
                 mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mousePressed(p, e);
+                activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);
                 repaint();
                 return;
         }
@@ -452,7 +458,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             if (mouseModeHandlers.containsKey(mouseMode)) {
                 MouseModeHandler handler = mouseModeHandlers.get(mouseMode);
                 if (handler.accepts(e, btn)) {
-                    mouseModeHandlers.get(mouseMode).mouseDragged(p, e);
+                    handler.mouseDragged(p, e);
+                    activeMouseHandler = handler;
                     repaint();
                     return;
                 }
@@ -490,6 +497,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 case MouseEvent.BUTTON3:
                     mainCreasePatternWorker.setCamera(creasePatternCamera);
                     mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseDragged(p, e);
+                    activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);
             }
 
             mainCreasePatternWorker.setCamera(creasePatternCamera);
@@ -522,7 +530,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             if (mouseModeHandlers.containsKey(mouseMode)) {
                 MouseModeHandler handler = mouseModeHandlers.get(mouseMode);
                 if (handler.accepts(e, btn)) {
-                    mouseModeHandlers.get(mouseMode).mouseReleased(p, e);
+                    handler.mouseReleased(p, e);
+                    activeMouseHandler = handler;
                     repaint();
                     return;
                 }
@@ -564,6 +573,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     //if(i_mouse_undo_redo_mode==1){i_mouse_undo_redo_mode=0;mainDrawingWorker.unselect_all();Button_kyoutuu_sagyou();mainDrawingWorker.modosi_i_orisen_hojyosen();return;}
                     mainCreasePatternWorker.setCamera(creasePatternCamera);
                     mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseReleased(p, e);
+                    activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);
                     repaint();//なんでここにrepaintがあるか検討した方がよいかも。20181208
                     canvasModel.restoreFoldLineAdditionalInputMode();
                     mouseDraggedValid = false;

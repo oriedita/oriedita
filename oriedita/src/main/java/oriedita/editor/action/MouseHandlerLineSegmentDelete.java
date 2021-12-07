@@ -1,13 +1,14 @@
 package oriedita.editor.action;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import oriedita.editor.canvas.FoldLineAdditionalInputMode;
+import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.canvas.FoldLineAdditionalInputMode;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
@@ -28,6 +29,7 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
     //マウス操作(mouseMode==3,23 でボタンを離したとき)を行う関数----------------------------------------------------
     @Override
     public void mouseReleased(Point p0) {//折線と補助活線と円
+        super.mouseReleased(p0);
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
         d.lineStep.clear();
