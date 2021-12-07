@@ -85,6 +85,12 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
 
     @Override
     public void mouseReleased(Point p0) {
+        selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+
+        if (selectedFigure == null) {
+            return;
+        }
+
         if (canvasModel.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1) {
             foldedFigure_operation_mouse_off_1(p0);
         }
