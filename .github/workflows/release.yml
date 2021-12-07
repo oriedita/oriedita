@@ -163,5 +163,5 @@ jobs:
             ci-build/Oriedita*.exe
             ci-build/oriedita*.deb
             ci-build/Oriedita*.zip
-            ci-build/Oriedita*.app
+            ci-build/Oriedita.app
             ci-build/Oriedita*.dmg
