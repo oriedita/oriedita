@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="root" layout-manager="GridLayoutManager" row-count="21" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="2" vgap="2">
     <margin top="2" left="2" bottom="2" right="2"/>
     <constraints>
-      <xy x="45" y="33" width="337" height="1042"/>
+      <xy x="45" y="33" width="268" height="944"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -144,10 +144,10 @@
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
                 <minimum-size width="30" height="-1"/>
-                <preferred-size width="30" height="-1"/>
               </grid>
             </constraints>
             <properties>
+              <columns value="3"/>
               <text value="40.0"/>
             </properties>
           </component>
@@ -155,10 +155,10 @@
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
                 <minimum-size width="30" height="-1"/>
-                <preferred-size width="30" height="-1"/>
               </grid>
             </constraints>
             <properties>
+              <columns value="3"/>
               <text value="80.0"/>
             </properties>
           </component>
@@ -166,10 +166,10 @@
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
                 <minimum-size width="30" height="-1"/>
-                <preferred-size width="30" height="-1"/>
               </grid>
             </constraints>
             <properties>
+              <columns value="3"/>
               <text value="60.0"/>
             </properties>
           </component>
@@ -187,10 +187,10 @@
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
                 <minimum-size width="30" height="-1"/>
-                <preferred-size width="30" height="-1"/>
               </grid>
             </constraints>
             <properties>
+              <columns value="3"/>
               <text value="30.0"/>
             </properties>
           </component>
@@ -198,10 +198,10 @@
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
                 <minimum-size width="30" height="-1"/>
-                <preferred-size width="30" height="-1"/>
               </grid>
             </constraints>
             <properties>
+              <columns value="3"/>
               <text value="50.0"/>
             </properties>
           </component>
@@ -209,10 +209,10 @@
             <constraints>
               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
                 <minimum-size width="30" height="-1"/>
-                <preferred-size width="30" height="-1"/>
               </grid>
             </constraints>
             <properties>
+              <columns value="3"/>
               <text value="100.0"/>
             </properties>
           </component>
@@ -298,10 +298,7 @@
         <children>
           <component id="b89b4" class="javax.swing.JButton" binding="l1Button" default-binding="true">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <minimum-size width="35" height="-1"/>
-                <preferred-size width="35" height="-1"/>
-              </grid>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <horizontalAlignment value="11"/>
@@ -310,9 +307,7 @@
           </component>
           <component id="303d1" class="javax.swing.JTextField" binding="measuredLength1TextField">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
-                <preferred-size width="30" height="-1"/>
-              </grid>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <opaque value="true"/>
@@ -321,10 +316,7 @@
           </component>
           <component id="2b13" class="javax.swing.JButton" binding="l2Button">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <minimum-size width="35" height="-1"/>
-                <preferred-size width="35" height="-1"/>
-              </grid>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <horizontalAlignment value="11"/>
@@ -333,9 +325,7 @@
           </component>
           <component id="17b4e" class="javax.swing.JTextField" binding="measuredLength2TextField">
             <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
-                <preferred-size width="30" height="-1"/>
-              </grid>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <opaque value="true"/>
@@ -344,10 +334,7 @@
           </component>
           <component id="a1d56" class="javax.swing.JButton" binding="a3Button">
             <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <minimum-size width="35" height="-1"/>
-                <preferred-size width="35" height="-1"/>
-              </grid>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <horizontalAlignment value="11"/>
@@ -356,9 +343,7 @@
           </component>
           <component id="10b84" class="javax.swing.JTextField" binding="measuredAngle3TextField">
             <constraints>
-              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
-                <preferred-size width="30" height="-1"/>
-              </grid>
+              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <opaque value="true"/>
@@ -367,9 +352,7 @@
           </component>
           <component id="92092" class="javax.swing.JTextField" binding="measuredAngle2TextField">
             <constraints>
-              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
-                <preferred-size width="30" height="-1"/>
-              </grid>
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <opaque value="true"/>
@@ -378,9 +361,7 @@
           </component>
           <component id="171ad" class="javax.swing.JTextField" binding="measuredAngle1TextField">
             <constraints>
-              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false">
-                <preferred-size width="30" height="-1"/>
-              </grid>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <opaque value="true"/>
@@ -389,10 +370,7 @@
           </component>
           <component id="bb1f8" class="javax.swing.JButton" binding="a2Button">
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <minimum-size width="35" height="-1"/>
-                <preferred-size width="35" height="-1"/>
-              </grid>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <horizontalAlignment value="11"/>
@@ -401,10 +379,7 @@
           </component>
           <component id="49ccb" class="javax.swing.JButton" binding="a1Button">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                <minimum-size width="35" height="-1"/>
-                <preferred-size width="35" height="-1"/>
-              </grid>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <horizontalAlignment value="11"/>
