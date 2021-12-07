@@ -76,8 +76,8 @@ jobs:
         run: |
           jpackage `
             @build/jpackage-common.txt `
-            --dest ci-build/portable
             @build/jpackage-common-linux.txt `
+            --dest ci-build/portable
             --type app-image `
             --name "Oriedita" `
             --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }} `
@@ -88,8 +88,8 @@ jobs:
         run: |
           jpackage `
             @build/jpackage-common.txt `
-            --dest ci-build/portable
             @build/jpackage-common-win.txt `
+            --dest ci-build/portable
             --type app-image `
             --name "Oriedita" `
             --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }} `
