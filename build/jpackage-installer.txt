@@ -2,7 +2,3 @@
 --file-associations build/FAcreasepattern.properties
 --file-associations build/FAorh.properties
 --license-file LICENSE.md
---win-dir-chooser
---win-menu
---win-shortcut
---win-upgrade-uuid 929a6906-b868-4311-9e94-ae469bc5dbd3

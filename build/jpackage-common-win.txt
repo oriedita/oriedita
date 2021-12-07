@@ -1,0 +1,1 @@
+--icon oriedita/src/main/resources/oriedita.ico

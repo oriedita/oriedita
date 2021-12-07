@@ -1,4 +1,3 @@
---icon oriedita/src/main/resources/oriedita.ico
 --input lib
 --dest ci-build
 --java-options "'-Dfile.encoding=UTF-8'"
