@@ -66,6 +66,7 @@ jobs:
           mvn -B clean package --file pom.xml
           mkdir lib
           mkdir ci-build
+          mkdir ci-build/portable
           cp oriedita/target/oriedita-${{ steps.get_version.outputs.version-without-v }}.jar lib/
           $deps = jdeps --print-module-deps --ignore-missing-deps lib/oriedita-${{ steps.get_version.outputs.version-without-v }}.jar
           jlink --add-modules $deps --output ci-build/oriedita-runtime
@@ -75,6 +76,7 @@ jobs:
         run: |
           jpackage `
             @build/jpackage-common.txt `
+            --dest ci-build/portable
             @build/jpackage-common-linux.txt `
             --type app-image `
             --name "Oriedita" `
@@ -86,6 +88,7 @@ jobs:
         run: |
           jpackage `
             @build/jpackage-common.txt `
+            --dest ci-build/portable
             @build/jpackage-common-win.txt `
             --type app-image `
             --name "Oriedita" `
@@ -107,14 +110,14 @@ jobs:
         if: matrix.os == 'windows-latest'
         uses: papeloto/action-zip@v1
         with:
-          files: 'ci-build/Oriedita'
+          files: 'ci-build/portable'
           dest: ci-build/Oriedita Portable (Windows) ${{ steps.get_version.outputs.version-without-v }}.zip
 
       - name: Create zip for portable executable (Linux)
         if: matrix.os == 'ubuntu-latest'
         uses: papeloto/action-zip@v1
         with:
-          files: 'ci-build/Oriedita'
+          files: 'ci-build/portable'
           dest: ci-build/Oriedita Portable (Linux) ${{ steps.get_version.outputs.version-without-v }}.zip
 
       - name: Create installer (Windows)
@@ -138,7 +141,7 @@ jobs:
             @build/jpackage-installer.txt `
             @build/jpackage-installer-linux.txt `
             --name "Oriedita" `
-            --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }} `
+            --app-version ${{ steps.get_version.outputs.version-without-v }} `
             --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
 
       - name: Create DMG (Mac)
