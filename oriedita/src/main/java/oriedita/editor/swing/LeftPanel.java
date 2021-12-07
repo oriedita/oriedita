@@ -4,27 +4,27 @@ import com.formdev.flatlaf.FlatLaf;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 import org.tinylog.Logger;
-import origami.crease_pattern.element.LineColor;
-import origami.folding.FoldedFigure;
 import oriedita.editor.Colors;
-import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
+import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FoldingService;
+import oriedita.editor.service.HistoryState;
 import oriedita.editor.swing.component.ColorIcon;
 import oriedita.editor.swing.component.UndoRedo;
-import oriedita.editor.service.HistoryState;
 import oriedita.editor.tools.StringOp;
+import origami.crease_pattern.element.LineColor;
+import origami.folding.FoldedFigure;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -1120,7 +1120,7 @@ public class LeftPanel {
             }
         }
 
-        if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
+        if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode") || e.getPropertyName().equals("foldLineAdditionalInputMode")) {
             Color buttonBg = UIManager.getColor("Button.background");
             Color buttonFg = UIManager.getColor("Button.foreground");
             toMountainButton.setBackground(buttonBg);
@@ -1133,6 +1133,8 @@ public class LeftPanel {
             toAuxButton.setForeground(Colors.get(new Color(100, 200, 200)));
             senbun_henkan2Button.setBackground(buttonBg);
             senbun_henkan2Button.setForeground(buttonFg);
+            auxLiveLineSegmentDeleteButton.setBackground(buttonBg);
+            auxLiveLineSegmentDeleteButton.setForeground(Colors.get(new Color(100, 200, 200)));
 
             switch (data.getMouseMode()) {
                 case CREASE_MAKE_MOUNTAIN_23:
@@ -1155,33 +1157,39 @@ public class LeftPanel {
                     senbun_henkan2Button.setBackground(Colors.get(new Color(138, 43, 226)));
                     senbun_henkan2Button.setForeground(Colors.get(Color.white));
                     break;
+                case LINE_SEGMENT_DELETE_3:
+                    if (data.getFoldLineAdditionalInputMode() == FoldLineAdditionalInputMode.AUX_LIVE_LINE_3) {
+                        auxLiveLineSegmentDeleteButton.setBackground(Colors.get(new Color(100, 200, 200)));
+                        auxLiveLineSegmentDeleteButton.setForeground(Colors.get(Color.white));
+                    }
                 default:
                     break;
             }
         }
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("selectionOperationMode")) {
-            moveButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
-            move2p2pButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
-            copyButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
-            copy2p2pButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
-            reflectButton.setBorder(new LineBorder(new Color(150, 150, 150), 1, false));
+            Border defaultBorder = (Border) UIManager.get("Button.border");
+            moveButton.setBorder(defaultBorder);
+            move2p2pButton.setBorder(defaultBorder);
+            copyButton.setBorder(defaultBorder);
+            copy2p2pButton.setBorder(defaultBorder);
+            reflectButton.setBorder(defaultBorder);
 
             switch (data.getSelectionOperationMode()) {
                 case MOVE_1:
-                    moveButton.setBorder(new LineBorder(Color.green, 1, false));
+                    moveButton.setBorder(new LineBorder(Color.green));
                     break;
                 case MOVE4P_2:
-                    move2p2pButton.setBorder(new LineBorder(Color.green, 1, false));
+                    move2p2pButton.setBorder(new LineBorder(Color.green));
                     break;
                 case COPY_3:
-                    copyButton.setBorder(new LineBorder(Color.green, 1, false));
+                    copyButton.setBorder(new LineBorder(Color.green));
                     break;
                 case COPY4P_4:
-                    copy2p2pButton.setBorder(new LineBorder(Color.green, 1, false));
+                    copy2p2pButton.setBorder(new LineBorder(Color.green));
                     break;
                 case MIRROR_5:
-                    reflectButton.setBorder(new LineBorder(Color.green, 1, false));
+                    reflectButton.setBorder(new LineBorder(Color.green));
                     break;
                 default:
                     break;

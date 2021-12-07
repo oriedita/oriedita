@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="root" layout-manager="GridLayoutManager" row-count="21" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="2" vgap="2">
     <margin top="2" left="2" bottom="2" right="2"/>
     <constraints>
-      <xy x="45" y="33" width="268" height="944"/>
+      <xy x="45" y="33" width="327" height="944"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -414,14 +414,6 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="97ef7" class="javax.swing.JButton" binding="circleDrawFreeButton">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/en_nyuryoku_free.png"/>
-            </properties>
-          </component>
           <component id="15c28" class="javax.swing.JButton" binding="circleDrawConcentricButton">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -438,36 +430,12 @@
               <icon value="ppp/en_bunri_nyuryoku.png"/>
             </properties>
           </component>
-          <component id="e884a" class="javax.swing.JButton" binding="circleDrawButton">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/en_nyuryoku.png"/>
-            </properties>
-          </component>
           <component id="fa387" class="javax.swing.JButton" binding="circleDrawConcentricSelectButton">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <icon value="ppp/dousin_en_tuika_d.png"/>
-            </properties>
-          </component>
-          <component id="78ed2" class="javax.swing.JButton" binding="circleDrawThreePointButton">
-            <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/en_3ten_nyuryoku.png"/>
-            </properties>
-          </component>
-          <component id="412ce" class="javax.swing.JButton" binding="circleDrawTwoConcentricButton">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <icon value="ppp/en_en_dousin_en.png"/>
             </properties>
           </component>
           <component id="6f5f8" class="javax.swing.JButton" binding="circleDrawTangentLineButton">
@@ -484,6 +452,38 @@
             </constraints>
             <properties>
               <icon value="ppp/hanten.png"/>
+            </properties>
+          </component>
+          <component id="97ef7" class="javax.swing.JButton" binding="circleDrawFreeButton">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/en_nyuryoku_free.png"/>
+            </properties>
+          </component>
+          <component id="e884a" class="javax.swing.JButton" binding="circleDrawButton">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/en_nyuryoku.png"/>
+            </properties>
+          </component>
+          <component id="78ed2" class="javax.swing.JButton" binding="circleDrawThreePointButton">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/en_3ten_nyuryoku.png"/>
+            </properties>
+          </component>
+          <component id="412ce" class="javax.swing.JButton" binding="circleDrawTwoConcentricButton">
+            <constraints>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <icon value="ppp/en_en_dousin_en.png"/>
             </properties>
           </component>
         </children>
@@ -648,7 +648,6 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <foreground color="-14336"/>
               <icon value="ppp/h_senbun_sakujyo.png"/>
             </properties>
           </component>
