@@ -424,38 +424,37 @@ public class SubFace {
             if (Thread.interrupted()) return;
         }
 
-        if (faceIdCount > 0) {
-            equivalenceConditions = new HashMap<>();
-            for (EquivalenceCondition ec : hierarchyList.getEquivalenceConditions()) {
-                if (fastContains(ec)) {
-                    equivalenceConditions.computeIfAbsent(ec.getA(), k -> new ArrayList<>()).add(ec);
-                }
-                if (Thread.interrupted()) return;
-            }
+        if (faceIdCount == 0) return;
 
-            uEquivalenceConditions = new ArrayList<>();
-            for (EquivalenceCondition ec : hierarchyList.getUEquivalenceConditions()) {
-                if (fastContains(ec)) uEquivalenceConditions.add(ec);
-                if (Thread.interrupted()) return;
+        equivalenceConditions = new HashMap<>();
+        for (EquivalenceCondition ec : hierarchyList.getEquivalenceConditions()) {
+            if (fastContains(ec)) {
+                equivalenceConditions.computeIfAbsent(ec.getA(), k -> new ArrayList<>()).add(ec);
             }
+            if (Thread.interrupted()) return;
+        }
 
-            // setup custom constraints
-            permutationGenerator.setTopIndices(null);
-            if (constraintTopFace != null) {
-                permutationGenerator.setTopIndices(constraintTopFace.getTop().stream().map(i -> faceIdMapArray[i]).collect(Collectors.toList()));
-            }
-            permutationGenerator.setBottomIndices(null);
-            if (constraintBottomFace != null) {
-                permutationGenerator.setBottomIndices(constraintBottomFace.getTop().stream().map(i -> faceIdMapArray[i]).collect(Collectors.toList()));
-            }
+        uEquivalenceConditions = new ArrayList<>();
+        for (EquivalenceCondition ec : hierarchyList.getUEquivalenceConditions()) {
+            if (fastContains(ec)) uEquivalenceConditions.add(ec);
+            if (Thread.interrupted()) return;
+        }
 
+        // setup custom constraints
+        permutationGenerator.setTopIndices(null);
+        if (constraintTopFace != null) {
+            permutationGenerator.setTopIndices(constraintTopFace.getTop().stream().map(i -> faceIdMapArray[i]).collect(Collectors.toList()));
+        }
+        permutationGenerator.setBottomIndices(null);
+        if (constraintBottomFace != null) {
+            permutationGenerator.setBottomIndices(constraintBottomFace.getTop().stream().map(i -> faceIdMapArray[i]).collect(Collectors.toList()));
+        }
 
-            try {
-                // Now we're ready to reset the generator.
-                permutationGenerator.initialize();
-            } catch (InterruptedException e) {
-                // Ignore
-            }
+        try {
+            // Now we're ready to reset the generator.
+            permutationGenerator.initialize();
+        } catch (InterruptedException e) {
+            // Ignore
         }
     }
 

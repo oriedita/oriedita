@@ -367,6 +367,7 @@ public class FoldedFigure_Worker {
         CONTRADICTED_2,
         CONTRADICTED_3,
         CONTRADICTED_4,
+        CONSTRAINT_5,
         SUCCESSFUL_1000,
     }
 }     
