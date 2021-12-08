@@ -1,12 +1,13 @@
 package oriedita.editor.action;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import oriedita.editor.canvas.MouseMode;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInputRestricted {
@@ -96,8 +97,15 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
                 }
             }
         }
-
-        return OritaCalc.findProjection(d.lineStep.get(0).getB(), new Point(d.lineStep.get(0).determineBX() + Math.cos(d_rad), d.lineStep.get(0).determineBY() + Math.sin(d_rad)), p);
+        LineSegment s = d.getClosestLineSegment(p);
+        LineSegment snapLine = new LineSegment(d.lineStep.get(0).getB(), new Point(d.lineStep.get(0).determineBX() + Math.cos(d_rad), d.lineStep.get(0).determineBY() + Math.sin(d_rad)));
+        Point pret = OritaCalc.findProjection(snapLine, p);
+        if (OritaCalc.determineLineSegmentDistance(p, s) <= d.selectionDistance) {
+            if (OritaCalc.isLineSegmentParallel(s, snapLine, Epsilon.PARALLEL) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+                pret = OritaCalc.findIntersection(s, snapLine);
+            }
+        }
+        return pret;
     }
 
     // ---
