@@ -142,7 +142,8 @@ public class ChainPermutationGenerator extends PermutationGenerator {
 
                 // If we have retracted to the beginning, then there's no more permutation.
                 swapHistory[curIndex] = curIndex - 1;
-                if (--curIndex == 0) return 0;
+                if (--curIndex <= 0) return 0;
+                // <= is for the case when numDigits == 1 and an invalid constraint is given.
 
                 retract(curIndex);
                 if (curIndex < digit) digit = curIndex;
