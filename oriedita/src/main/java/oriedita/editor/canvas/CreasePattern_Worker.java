@@ -46,7 +46,7 @@ public class CreasePattern_Worker {
     public Grid grid = new Grid();
     public Polygon operationFrameBox = new Polygon(4);    //Instantiation of selection box (TV coordinates)
     public Future<?> camvTask = new FinishedFuture<>(null);
-    int pointSize = 1;
+    public int pointSize = 1;
     public LineColor lineColor;//Line segment color
     public LineColor auxLineColor = LineColor.ORANGE_4;//Auxiliary line color
     public boolean gridInputAssist = false;//1 if you use the input assist function for fine grid display, 0 if you do not use it
@@ -507,7 +507,7 @@ public class CreasePattern_Worker {
             for (int i = 1; i <= foldLineSet.getTotal(); i++) {
                 LineSegment s = foldLineSet.get(i);
                 if (s.getColor() != LineColor.CYAN_3) {
-                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize);
+                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max);
                 }
             }
         }
@@ -548,6 +548,8 @@ public class CreasePattern_Worker {
         for (Circle c : circleStep) {
             DrawingUtil.drawCircleStep(g, c, camera);
         }
+
+
 
         g.setColor(Colors.get(Color.black));
 

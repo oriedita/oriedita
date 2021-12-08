@@ -2,28 +2,15 @@ package oriedita.editor.service;
 
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.ui.FlatUIUtils;
+import oriedita.editor.App;
+import oriedita.editor.Colors;
+import oriedita.editor.databinding.ApplicationModel;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import oriedita.editor.App;
-import oriedita.editor.databinding.ApplicationModel;
-
-import javax.swing.AbstractButton;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.KeyboardFocusManager;
-import java.awt.Rectangle;
+import javax.swing.*;
+import java.awt.*;
 import java.net.URL;
 
 @Singleton
@@ -59,6 +46,7 @@ public class LookAndFeelService {
 
                 // change look and feel
                 UIManager.setLookAndFeel(lafClassName);
+                Colors.update();
 
                 // restore custom default font when switched to other FlatLaf LaF
                 if (defaultFont != null && UIManager.getLookAndFeel() instanceof FlatLaf)

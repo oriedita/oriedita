@@ -1,18 +1,16 @@
 package oriedita.editor.drawing.tools;
 
+import oriedita.editor.Colors;
+import oriedita.editor.canvas.LineStyle;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import oriedita.editor.Colors;
-import oriedita.editor.canvas.LineStyle;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
 
 /**
  * Static utility class for drawing
@@ -81,7 +79,7 @@ public class DrawingUtil {
 
     public static void drawVertex(Graphics2D g, Point a, int pointSize) {
         g.setColor(Colors.get(Color.black));
-        g.fill(new Rectangle2D.Double(a.getX() - pointSize, a.getY() - pointSize, 2 * pointSize + .5, 2 * pointSize + .5));
+        g.fillRect((int)(a.getX()-pointSize), (int)(a.getY()-pointSize), (int)(pointSize*2+0.5), (int)(pointSize*2+0.5));
     }
 
     //Draw a pointing diagram around the specified Point
@@ -372,10 +370,26 @@ public class DrawingUtil {
         g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
     }
 
-    public static void drawCpLine(Graphics g, LineSegment s, Camera camera, LineStyle lineStyle, float lineWidth, int pointSize) {
-        float[] dash_M1 = {10.0f, 3.0f, 3.0f, 3.0f};//一点鎖線
-        float[] dash_M2 = {10.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f};//二点鎖線
-        float[] dash_V = {8.0f, 8.0f};//破線
+    private static final float[] dash_M1 = {10.0f, 3.0f, 3.0f, 3.0f};//一点鎖線
+    private static final float[] dash_M2 = {10.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f};//二点鎖線
+    private static final float[] dash_V = {8.0f, 8.0f};//破線
+
+    private static final Point defaultMove = new Point(Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);
+
+    public static void drawCpLine(Graphics g, LineSegment s, Camera camera, LineStyle lineStyle, float lineWidth, int pointSize, int clipX, int clipY) {
+
+        Point a = camera.object2TV(s.getA());
+        a.move(defaultMove);
+        Point b = camera.object2TV(s.getB());
+        b.move(defaultMove);
+
+        int aflag = cohenSutherlandRegion(clipX, clipY, a);
+        if (aflag != 0) {
+            int bflag = cohenSutherlandRegion(clipX, clipY, b);
+            if ((aflag & bflag) != 0) {
+                return;
+            }
+        }
 
         Graphics2D g2 = (Graphics2D) g;
         switch (lineStyle) {
@@ -419,25 +433,20 @@ public class DrawingUtil {
                 break;
         }
 
-        LineSegment s_tv = new LineSegment();
-        s_tv.set(camera.object2TV(s));
-        Point a = new Point();
-        Point b = new Point();
-        a.set(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
-        b.set(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
-        g2.draw(new Line2D.Double(a.getX(), a.getY(), b.getX(), b.getY()));
+
+        //g2.draw(new Line2D.Double(a.getX(), a.getY(), b.getX(), b.getY()));
+        g2.drawLine((int)a.getX(), (int)a.getY(), (int)b.getX(), (int)b.getY());
+
 
         if (Epsilon.high.eq0(lineWidth)) {
 
-        } else
-
-        if (lineWidth < 2.0f) {//頂点の黒い正方形を描く
+        } else if (lineWidth < 2.0f) {//頂点の黒い正方形を描く
             drawVertex(g2, a, pointSize);
-            drawVertex(g2, b, pointSize);
-        } else
-
-        if (lineWidth >= 2.0f) {//  太線
+            if (a.distance(b) > 1) {
+                drawVertex(g2, b, pointSize);
+            }
+        } else if (lineWidth >= 2.0f) {//  太線
             g2.setStroke(new BasicStroke(1.0f + lineWidth % 1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
             if (pointSize != 0) {
                 double d_width = (double) lineWidth / 2.0 + (double) pointSize;
@@ -455,5 +464,24 @@ public class DrawingUtil {
                 g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
             }
         }
+    }
+
+    public static int cohenSutherlandRegion(int clipX, int clipY, Point point) {
+        return cohenSutherlandRegion(0,0,clipX, clipY, point);
+    }
+
+    public static int cohenSutherlandRegion(int clipLowX, int clipLowY, int clipHighX, int clipHighY, Point point) {
+        int region = 0;
+        if (point.getX() < clipLowX) {
+            region |= 1;
+        } else if (point.getX() > clipHighX) {
+            region |= 0b01;
+        }
+        if (point.getY() < clipLowY) {
+            region |= 0b001;
+        } else if (point.getY() > clipHighY) {
+            region |= 0b0001;
+        }
+        return region;
     }
 }
