@@ -3,10 +3,11 @@ name: Release Jar and exe
 on:
   push:
     tags:
-      - "v*.*"
+      - "v*.*.*"
 jobs:
   create_jar:
     runs-on: ubuntu-latest
+    name: Create Executable Jar
 
     steps:
       - uses: actions/checkout@v2
@@ -31,19 +32,13 @@ jobs:
         with:
           files: oriedita/target/oriedita-*.jar
 
-  create_executable:
-    runs-on: ${{ matrix.os }}
+  create_executable_windows:
+    runs-on: windows-latest
+    name: Create Executable (Windows)
 
     defaults:
       run:
         shell: pwsh
-
-    strategy:
-      matrix:
-        os:
-          - 'windows-latest'
-          - 'ubuntu-latest'
-          - 'macos-latest'
 
     steps:
       - uses: actions/checkout@v2
@@ -71,20 +66,7 @@ jobs:
           $deps = jdeps --print-module-deps --ignore-missing-deps lib/oriedita-${{ steps.get_version.outputs.version-without-v }}.jar
           jlink --add-modules $deps --output ci-build/oriedita-runtime --strip-debug --strip-native-commands --no-header-files --no-man-pages --compress=2
 
-      - name: Create portable executable (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          jpackage `
-            @build/jpackage-common.txt `
-            @build/jpackage-common-linux.txt `
-            --dest ci-build/portable `
-            --type app-image `
-            --name "Oriedita" `
-            --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }} `
-            --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
-
       - name: Create portable executable (Windows)
-        if: matrix.os == 'windows-latest'
         run: |
           jpackage `
             @build/jpackage-common.txt `
@@ -92,44 +74,16 @@ jobs:
             --dest ci-build/portable `
             --type app-image `
             --name "Oriedita" `
-            --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }} `
-            --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
-
-      - name: Create portable executable (Mac)
-        if: matrix.os == 'macos-latest'
-        run: |
-          jpackage `
-            @build/jpackage-common.txt `
-            @build/jpackage-common-mac.txt `
-            --dest ci-build/portable `
-            --type app-image `
-            --name "Oriedita" `
-            --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }} `
+            --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }} `
             --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
 
       - name: Create zip for portable executable (Windows)
-        if: matrix.os == 'windows-latest'
         uses: papeloto/action-zip@v1
         with:
           files: 'ci-build/portable'
           dest: ci-build/Oriedita Portable (Windows) ${{ steps.get_version.outputs.version-without-v }}.zip
 
-      - name: Create zip for portable executable (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        uses: papeloto/action-zip@v1
-        with:
-          files: 'ci-build/portable'
-          dest: ci-build/Oriedita Portable (Linux) ${{ steps.get_version.outputs.version-without-v }}.zip
-
-      - name: Create zip for portable executable (Mac)
-        if: matrix.os == 'macos-latest'
-        uses: papeloto/action-zip@v1
-        with:
-          files: 'ci-build/portable'
-          dest: ci-build/Oriedita Portable (Mac) ${{ steps.get_version.outputs.version-without-v }}.zip
-
       - name: Create installer (Windows)
-        if: matrix.os == 'windows-latest'
         run: |
           jpackage `
             @build/jpackage-common.txt `
@@ -140,8 +94,64 @@ jobs:
             --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }} `
             --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
 
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ci-build/Oriedita*.exe
+            ci-build/Oriedita*.zip
+
+  create_executable_linux:
+    name: Create Executable (Linux)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 16
+        uses: actions/setup-java@v2
+        with:
+          java-version: '16'
+          distribution: 'adopt'
+          cache: maven
+
+      - id: get_version
+        uses: battila7/get-version-action@v2
+
+      - name: Set the version
+        run: mvn -B versions:set -DnewVersion="${{ steps.get_version.outputs.version-without-v }}" --file pom.xml
+
+      - name: Build project and prepare JRE
+        run: |
+          mvn -B clean package --file pom.xml
+          mkdir lib
+          mkdir ci-build
+          mkdir ci-build/portable
+          cp oriedita/target/oriedita-${{ steps.get_version.outputs.version-without-v }}.jar lib/
+          $deps = jdeps --print-module-deps --ignore-missing-deps lib/oriedita-${{ steps.get_version.outputs.version-without-v }}.jar
+          jlink --add-modules $deps --output ci-build/oriedita-runtime --strip-debug --strip-native-commands --no-header-files --no-man-pages --compress=2
+
+      - name: Create portable executable (Windows)
+        run: |
+          jpackage `
+            @build/jpackage-common.txt `
+            @build/jpackage-common-win.txt `
+            --dest ci-build/portable `
+            --type app-image `
+            --name "Oriedita" `
+            --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }} `
+            --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
+
+      - name: Create zip for portable executable (Linux)
+        uses: papeloto/action-zip@v1
+        with:
+          files: 'ci-build/portable'
+          dest: ci-build/Oriedita Portable (Linux) ${{ steps.get_version.outputs.version-without-v }}.zip
+
       - name: Create DEB (Linux)
-        if: matrix.os == 'ubuntu-latest'
         run: |
           jpackage `
             @build/jpackage-common.txt `
@@ -152,8 +162,65 @@ jobs:
             --app-version ${{ steps.get_version.outputs.version-without-v }} `
             --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
 
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ci-build/oriedita*.deb
+            ci-build/Oriedita*.zip
+
+
+  create_executable_macos:
+    runs-on: macos-latest
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 16
+        uses: actions/setup-java@v2
+        with:
+          java-version: '16'
+          distribution: 'adopt'
+          cache: maven
+
+      - id: get_version
+        uses: battila7/get-version-action@v2
+
+      - name: Set the version
+        run: mvn -B versions:set -DnewVersion="${{ steps.get_version.outputs.version-without-v }}" --file pom.xml
+
+      - name: Build project and prepare JRE
+        run: |
+          mvn -B clean package --file pom.xml
+          mkdir lib
+          mkdir ci-build
+          mkdir ci-build/portable
+          cp oriedita/target/oriedita-${{ steps.get_version.outputs.version-without-v }}.jar lib/
+          $deps = jdeps --print-module-deps --ignore-missing-deps lib/oriedita-${{ steps.get_version.outputs.version-without-v }}.jar
+          jlink --add-modules $deps --output ci-build/oriedita-runtime --strip-debug --strip-native-commands --no-header-files --no-man-pages --compress=2
+
+      - name: Create portable executable (Mac)
+        run: |
+          jpackage `
+            @build/jpackage-common.txt `
+            @build/jpackage-common-mac.txt `
+            --dest ci-build/portable `
+            --type app-image `
+            --name "Oriedita" `
+            --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }} `
+            --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
+
+      - name: Create zip for portable executable (Mac)
+        uses: papeloto/action-zip@v1
+        with:
+          files: 'ci-build/portable'
+          dest: ci-build/Oriedita Portable (Mac) ${{ steps.get_version.outputs.version-without-v }}.zip
+
       - name: Create DMG (Mac)
-        if: matrix.os == 'macos-latest'
         run: |
           jpackage `
             @build/jpackage-common.txt `
@@ -168,7 +235,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ci-build/Oriedita*.exe
-            ci-build/oriedita*.deb
-            ci-build/Oriedita*.zip
             ci-build/Oriedita*.dmg
+            ci-build/Oriedita*.zip
