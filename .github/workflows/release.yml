@@ -23,7 +23,7 @@ jobs:
         with:
           path: ~/.m2
           key: ${{ runner.os }}-java11-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          restore-keys: ${{ runner.os }}-java11-m2
 
       - id: get_version
         uses: battila7/get-version-action@v2
@@ -62,7 +62,7 @@ jobs:
         with:
           path: ~/.m2
           key: ${{ runner.os }}-java16-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          restore-keys: ${{ runner.os }}-java16-m2
 
       - id: get_version
         uses: battila7/get-version-action@v2
@@ -108,6 +108,10 @@ jobs:
             --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }} `
             --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
 
+      - name: Fix installer version
+        run: |
+          mv Oriedita-${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }}.exe Oriedita-${{ steps.get_version.outputs.version-without-v }}.exe
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -136,7 +140,7 @@ jobs:
         with:
           path: ~/.m2
           key: ${{ runner.os }}-java16-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          restore-keys: ${{ runner.os }}-java16-m2
 
       - id: get_version
         uses: battila7/get-version-action@v2
@@ -213,7 +217,7 @@ jobs:
         with:
           path: ~/.m2
           key: ${{ runner.os }}-java16-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          restore-keys: ${{ runner.os }}-java16-m2
 
       - id: get_version
         uses: battila7/get-version-action@v2
@@ -256,8 +260,12 @@ jobs:
             @build/jpackage-installer.txt `
             @build/jpackage-installer-mac.txt `
             --name "Oriedita" `
-            --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }} `
+            --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }} `
             --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
+
+      - name: Fix dmg version
+        run: |
+          mv Oriedita-${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }}.dmg Oriedita-${{ steps.get_version.outputs.version-without-v }}.dmg
 
       - name: Release
         uses: softprops/action-gh-release@v1
