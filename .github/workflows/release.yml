@@ -105,7 +105,7 @@ jobs:
             @build/jpackage-installer.txt `
             @build/jpackage-installer-win.txt `
             --name "Oriedita" `
-            --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }} `
+            --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.output.patch }} `
             --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
 
       - name: Fix installer version
