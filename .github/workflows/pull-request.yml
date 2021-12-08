@@ -18,6 +18,13 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-java11-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
       - name: Set version for Jar
         run: mvn -B versions:set -DnewVersion="pr-${{ github.event.number }}-${{ github.sha }}" --file pom.xml
 

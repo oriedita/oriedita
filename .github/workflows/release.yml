@@ -18,6 +18,13 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-java11-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
       - id: get_version
         uses: battila7/get-version-action@v2
 
@@ -49,6 +56,13 @@ jobs:
           java-version: '16'
           distribution: 'adopt'
           cache: maven
+
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-java16-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
       - id: get_version
         uses: battila7/get-version-action@v2
@@ -117,6 +131,12 @@ jobs:
           java-version: '16'
           distribution: 'adopt'
           cache: maven
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-java16-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
       - id: get_version
         uses: battila7/get-version-action@v2
@@ -172,6 +192,7 @@ jobs:
 
   create_executable_macos:
     runs-on: macos-latest
+    name: Create Executable (MacOs)
 
     defaults:
       run:
@@ -186,6 +207,13 @@ jobs:
           java-version: '16'
           distribution: 'adopt'
           cache: maven
+
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-java16-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
       - id: get_version
         uses: battila7/get-version-action@v2
