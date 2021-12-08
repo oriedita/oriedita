@@ -1,6 +1,6 @@
 package origami.folding.permutation;
 
-import java.util.Collection;
+import java.util.*;
 
 /**
  * This is the base class for different permutation generator implementations.
@@ -20,6 +20,9 @@ public abstract class PermutationGenerator {
 
     /** map[i] gives the position of element i. */
     protected final int[] map;
+
+    protected Set<Integer> topIndices;
+    protected Set<Integer> bottomIndices;
 
     public PermutationGenerator(int numDigits) {
         this.numDigits = numDigits;
@@ -57,10 +60,22 @@ public abstract class PermutationGenerator {
     /**
      * add Constraint that one of the indices has to be on top
      */
-    public abstract void setTopIndices(Collection<Integer> indices);
+    public void setTopIndices(Collection<Integer> topIndices) {
+        if (topIndices == null || topIndices.isEmpty()) {
+            this.topIndices = null;
+        } else {
+            this.topIndices = new HashSet<>(topIndices);
+        }
+    }
 
     /**
      * add Constraint that one of the indices has to be on the bottom
      */
-    public abstract void setBottomIndices(Collection<Integer> indices);
+    public void setBottomIndices(Collection<Integer> bottomIndices) {
+        if (bottomIndices == null || bottomIndices.isEmpty()) {
+            this.bottomIndices = null;
+        } else {
+            this.bottomIndices = new HashSet<>(bottomIndices);
+        }
+    }
 }

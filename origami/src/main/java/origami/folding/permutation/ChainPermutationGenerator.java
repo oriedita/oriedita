@@ -1,9 +1,5 @@
 package origami.folding.permutation;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * This is a much more efficient permutation generator than the original
  * implementation by Mr.Meguro. It uses the classical digit swapping idea to
@@ -29,7 +25,6 @@ public class ChainPermutationGenerator extends PermutationGenerator {
     // located at the end.
     private final int[] initPermutation;
 
-
     // One problem with swapping algorithm is that it may reset a generator that is
     // not yet finished, and such generator completely loses its progress. To
     // overcome that, we use another array to store the progress so after reset, it
@@ -45,9 +40,6 @@ public class ChainPermutationGenerator extends PermutationGenerator {
 
     private int lockCount;
     private int lockRemain;
-
-    private Set<Integer> topIndices;
-    private Set<Integer> bottomIndices;
 
     private boolean saved = false;
     private boolean restored = false;
@@ -130,25 +122,27 @@ public class ChainPermutationGenerator extends PermutationGenerator {
         while (curIndex < numDigits) {
             int swapIndex = swapHistory[curIndex];
             int curDigit = 0;
+            int maxIndex =  numDigits - lockRemain + 1;
 
             // Find the next available element.
             do {
                 swapIndex++;
-                if (swapIndex > Math.min(numDigits, numDigits - lockRemain+1) ) {
-                    break;
-                }
+                if (swapIndex > maxIndex) break;
                 curDigit = digits[swapIndex];
             } while (pairGuide.isNotReady(curDigit) || !fitsConstraint(curIndex, curDigit));
 
             // If the current digit has no available element, retract.
-            if (swapIndex > Math.min(numDigits, numDigits - lockRemain+1)) {
+            if (swapIndex > maxIndex) {
                 // The nature of ChainPermutationGenerator is that it never hits a dead-end
-                // mid-way unless there's internal contradiction in the given constraints.
-                if (swapHistory[curIndex] == curIndex - 1) return 0;
+                // mid-way unless there's internal contradiction in the PairGuide...
+                if (swapHistory[curIndex] == curIndex - 1) {
+                    // ...or if it's caused by the constraints
+                    if (!isConstraintDeadEnd(curIndex)) return 0;
+                }
 
                 // If we have retracted to the beginning, then there's no more permutation.
                 swapHistory[curIndex] = curIndex - 1;
-                if (--curIndex <= 0) return 0;
+                if (--curIndex == 0) return 0;
 
                 retract(curIndex);
                 if (curIndex < digit) digit = curIndex;
@@ -178,30 +172,21 @@ public class ChainPermutationGenerator extends PermutationGenerator {
         return digit;
     }
 
-    public void setTopIndices(Collection<Integer> topIndices) {
-        if (topIndices == null) {
-            this.topIndices = null;
-        } else {
-            this.topIndices = new HashSet<>(topIndices);
-        }
-    }
-
-    public void setBottomIndices(Collection<Integer> bottomIndices) {
-        if (bottomIndices == null) {
-            this.bottomIndices = null;
-        } else {
-            this.bottomIndices = new HashSet<>(bottomIndices);
-        }
+    private boolean isConstraintDeadEnd(int curIndex) {
+        if (curIndex == 1 && topIndices != null && !topIndices.isEmpty()) return true;
+        if (curIndex == numDigits - 1 && bottomIndices != null && !bottomIndices.isEmpty()) return true;
+        return false;
     }
 
     private boolean fitsConstraint(int curIndex, int curDigit) {
-        if ((curIndex != 1 && curIndex != (numDigits))) {
+        if (curIndex != 1 && curIndex != numDigits - 1) {
             return true;
         }
         if (curIndex == 1) {
             return topIndices == null || topIndices.contains(curDigit);
         } else {
-            return bottomIndices == null || bottomIndices.contains(curDigit);
+            int otherDigit = curDigit == digits[numDigits] ? digits[numDigits - 1] : digits[numDigits];
+            return bottomIndices == null || bottomIndices.contains(otherDigit);
         }
     }
 
@@ -239,6 +224,8 @@ public class ChainPermutationGenerator extends PermutationGenerator {
             // normal elements.
             isLocked[lock[lockCount]] = false;
         } else {
+            lockCount = 1; // For consistency with maxIndex
+
             for (int i = 1; i <= numDigits; i++) {
                 initPermutation[i] = i;
             }

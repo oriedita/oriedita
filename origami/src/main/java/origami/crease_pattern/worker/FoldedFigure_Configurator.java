@@ -316,6 +316,14 @@ public class FoldedFigure_Configurator {
         setupSubFacePriority();
         setupGuideMap();
 
+        // If any SubFace failed to initialize, then the constraints are impossible.
+        for (int i = 1; i <= worker.SubFace_valid_number; i++) {
+            if (worker.s[i].get_Permutation_count() == 0) {
+                // TODO: we can add impossible constraint indication.
+                return HierarchyListStatus.CONSTRAINT_5;
+            }
+        }
+
         //SubFaceは優先順の何番目までやるかを決める
 
         Logger.info("Smen有効数は　{} ／ {}", worker.SubFace_valid_number, worker.SubFaceTotal);
