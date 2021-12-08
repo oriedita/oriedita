@@ -110,7 +110,7 @@ jobs:
 
       - name: Fix installer version
         run: |
-          mv Oriedita-${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }}.exe Oriedita-${{ steps.get_version.outputs.version-without-v }}.exe
+          mv ci-build/Oriedita-${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }}.exe ci-build/Oriedita-${{ steps.get_version.outputs.version-without-v }}.exe
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -158,11 +158,11 @@ jobs:
           $deps = jdeps --print-module-deps --ignore-missing-deps lib/oriedita-${{ steps.get_version.outputs.version-without-v }}.jar
           jlink --add-modules $deps --output ci-build/oriedita-runtime --strip-debug --strip-native-commands --no-header-files --no-man-pages --compress=2
 
-      - name: Create portable executable (Windows)
+      - name: Create portable executable (Linux)
         run: |
           jpackage `
             @build/jpackage-common.txt `
-            @build/jpackage-common-win.txt `
+            @build/jpackage-common-linux.txt `
             --dest ci-build/portable `
             --type app-image `
             --name "Oriedita" `
@@ -265,7 +265,7 @@ jobs:
 
       - name: Fix dmg version
         run: |
-          mv Oriedita-${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }}.dmg Oriedita-${{ steps.get_version.outputs.version-without-v }}.dmg
+          mv ci-build/Oriedita-${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }}.dmg ci-build/Oriedita-${{ steps.get_version.outputs.version-without-v }}.dmg
 
       - name: Release
         uses: softprops/action-gh-release@v1
