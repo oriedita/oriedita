@@ -3442,6 +3442,23 @@ public class FoldLineSet {
         return dm;
     }
 
+    public double get_y_min() {
+        if (total == 0) {
+            return 0.0;
+        }
+        double dm = lineSegments.get(1).determineAX();
+        for (int i = 1; i <= total; i++) {
+            LineSegment s = lineSegments.get(i);
+            if (dm > s.determineAY()) {
+                dm = s.determineAY();
+            }
+            if (dm > s.determineBY()) {
+                dm = s.determineBY();
+            }
+        }
+        return dm;
+    }
+
     public double get_y_max() {//sousuu=0のときは0.0を返す
         if (total == 0) {
             return 0.0;
