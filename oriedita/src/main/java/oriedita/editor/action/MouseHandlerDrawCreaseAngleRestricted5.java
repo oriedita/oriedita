@@ -1,6 +1,7 @@
 package oriedita.editor.action;
 
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.tools.SnappingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
@@ -12,6 +13,7 @@ import javax.inject.Singleton;
 @Singleton
 public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInputRestricted {
     double d_angle_system;
+    Point start;
 
     @Inject
     public MouseHandlerDrawCreaseAngleRestricted5() {
@@ -26,12 +28,12 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
     public void mousePressed(Point p0) {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-        Point closestPoint = d.getClosestPoint(p);
-        if (p.distance(closestPoint) > d.selectionDistance) {
+        start = d.getClosestPoint(p);
+        if (p.distance(start) > d.selectionDistance) {
             return;
         }
 
-        LineSegment s1 = new LineSegment(p, closestPoint, d.lineColor);
+        LineSegment s1 = new LineSegment(p, start, d.lineColor);
         s1.setActive(LineSegment.ActiveState.ACTIVE_B_2);
 
         d.lineStepAdd(s1);
@@ -72,40 +74,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
     public Point syuusei_point_A_37(Point p0) {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-
-        double d_rad = 0.0;
-        d.lineStep.get(0).setA(p);
-
-        if (d.id_angle_system != 0) {
-            d_angle_system = 180.0 / (double) d.id_angle_system;
-            d_rad = (Math.PI / 180) * d_angle_system * (int) Math.round(OritaCalc.angle(d.lineStep.get(0)) / d_angle_system);
-        } else {
-            double[] jk = new double[7];
-            double currentAngle = OritaCalc.angle(d.lineStep.get(0));
-            jk[1] = d.d_restricted_angle_1 - 180.0;
-            jk[2] = d.d_restricted_angle_2 - 180.0;
-            jk[3] = d.d_restricted_angle_3 - 180.0;
-            jk[4] = 360.0 - d.d_restricted_angle_1 - 180.0;
-            jk[5] = 360.0 - d.d_restricted_angle_2 - 180.0;
-            jk[6] = 360.0 - d.d_restricted_angle_3 - 180.0;
-
-            double d_kakudo_sa_min = 1000.0;
-            for (int i = 1; i <= 6; i++) {
-                if (Math.min(OritaCalc.angle_between_0_360(jk[i] - currentAngle), OritaCalc.angle_between_0_360(currentAngle - jk[i])) < d_kakudo_sa_min) {
-                    d_kakudo_sa_min = Math.min(OritaCalc.angle_between_0_360(jk[i] - currentAngle), OritaCalc.angle_between_0_360(currentAngle - jk[i]));
-                    d_rad = (Math.PI / 180) * jk[i];
-                }
-            }
-        }
-        LineSegment s = d.getClosestLineSegment(p);
-        LineSegment snapLine = new LineSegment(d.lineStep.get(0).getB(), new Point(d.lineStep.get(0).determineBX() + Math.cos(d_rad), d.lineStep.get(0).determineBY() + Math.sin(d_rad)));
-        Point pret = OritaCalc.findProjection(snapLine, p);
-        if (OritaCalc.determineLineSegmentDistance(p, s) <= d.selectionDistance) {
-            if (OritaCalc.isLineSegmentParallel(s, snapLine, Epsilon.PARALLEL) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
-                pret = OritaCalc.findIntersection(s, snapLine);
-            }
-        }
-        return pret;
+        return SnappingUtil.snapToActiveAngleSystem(d, start, p);
     }
 
     // ---

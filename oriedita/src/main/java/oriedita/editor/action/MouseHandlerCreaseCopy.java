@@ -29,11 +29,11 @@ public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineTransform {
     public void mouseReleased(Point p0) {
         super.mouseReleased(p0);
 
-        if (Epsilon.high.gt0(new Point(addx, addy).distance(new Point(0,0)))) {
+        if (Epsilon.high.gt0(delta.distance(new Point(0,0)))) {
             //やりたい動作はここに書く
 
             FoldLineSet ori_s_temp = lines;
-            ori_s_temp.move(addx, addy);
+            ori_s_temp.move(delta.getX(), delta.getY());
 
             int sousuu_old = d.foldLineSet.getTotal();
             Save save1 = new SaveV1();
