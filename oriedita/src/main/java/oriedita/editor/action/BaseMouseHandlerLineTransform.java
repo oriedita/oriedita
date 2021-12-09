@@ -13,7 +13,7 @@ import origami.crease_pattern.element.Point;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public abstract class MouseHandlerLineTransform extends BaseMouseHandlerLineSelect{
+public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLineSelect{
 
     protected CanvasModel canvasModel;
     protected FoldLineSet lines;
@@ -28,7 +28,7 @@ public abstract class MouseHandlerLineTransform extends BaseMouseHandlerLineSele
     private double lastZoomY;
     private double lastAngle;
 
-    protected MouseHandlerLineTransform(CanvasModel canvasModel) {
+    protected BaseMouseHandlerLineTransform(CanvasModel canvasModel) {
         this.canvasModel = canvasModel;
     }
 
@@ -80,22 +80,19 @@ public abstract class MouseHandlerLineTransform extends BaseMouseHandlerLineSele
         if (!active) {
             return;
         }
-        needsRerender = needsRerender || updateNeedsRerender(camera, settings);
-        if (updateNeedsRerender(camera, settings)) {
+        if (determineCameraChanged(camera)) {
             cacheTooBig = false;
+            needsRerender = true;
         }
         lastZoomX = camera.getCameraZoomX();
         lastZoomY = camera.getCameraZoomY();
         lastAngle = camera.getCameraAngle();
 
-
         if (needsRerender && lines != null && !cacheTooBig) {
-            cacheTooBig = !initCacheImage(g2, settings);
-            if (!cacheTooBig) {
+            initCacheImage(g2, settings);
+            if (image != null) { // image won't be created if it would be too big
                 rerender(camera, settings);
                 needsRerender = false;
-            } else {
-                needsRerender = true;
             }
         }
 
@@ -108,12 +105,12 @@ public abstract class MouseHandlerLineTransform extends BaseMouseHandlerLineSele
                     (int) (baseOffset.getY() + deltaTransformed.getY() - origin.getY()),
                     image.getWidth(), image.getHeight(), null);
         }
-        if (cacheTooBig && lines != null) {
+        if (image == null && lines != null) {
             drawDirect(g2, camera, settings);
         }
     }
 
-    private boolean initCacheImage(Graphics2D g2, DrawingSettings settings) {
+    private void initCacheImage(Graphics2D g2, DrawingSettings settings) {
         int minX = (int) lines.get_x_min();
         int maxX = (int) lines.get_x_max() + 1;
         int minY = (int) lines.get_y_min();
@@ -121,12 +118,10 @@ public abstract class MouseHandlerLineTransform extends BaseMouseHandlerLineSele
 
         int width = maxX - minX;
         int height = maxY - minY;
-        boolean cacheTooBig = width * height < settings.getWidth() * settings.getHeight() * 1.5;
-        if (!cacheTooBig) {
+        if (width * height < settings.getWidth() * settings.getHeight() * 1.5) {
             image = g2.getDeviceConfiguration().createCompatibleImage(width, height, BufferedImage.BITMASK);
             baseOffset = new Point(minX, minY);
         }
-        return !cacheTooBig;
     }
 
     protected void drawDirect(Graphics2D g2, Camera camera, DrawingSettings settings) {
@@ -161,8 +156,6 @@ public abstract class MouseHandlerLineTransform extends BaseMouseHandlerLineSele
     }
 
     protected void rerender(Camera camera, DrawingSettings settings) {
-        int width = image.getWidth();
-        int height = image.getHeight();
         Point zero = camera.TV2object(new Point(0,0));
         Point boObject = camera.TV2object(baseOffset);
         FoldLineSet ori_s_temp = new FoldLineSet();
@@ -171,13 +164,9 @@ public abstract class MouseHandlerLineTransform extends BaseMouseHandlerLineSele
         Graphics2D g = image.createGraphics();
         g.setBackground(new Color(0f,0,0,0));
         for (int i = 1; i <= ori_s_temp.getTotal(); i++) {
-            DrawingUtil.drawCpLine(g, ori_s_temp.get(i), camera, settings.getLineStyle(), settings.getLineWidth(), d.pointSize, width, height);
+            DrawingUtil.drawCpLine(g, ori_s_temp.get(i), camera, settings.getLineStyle(),
+                    settings.getLineWidth(), d.pointSize, image.getWidth(), image.getHeight());
         }
-    }
-
-    protected boolean updateNeedsRerender(Camera camera, DrawingSettings settings) {
-        return determineCameraChanged(camera);
-
     }
 
     private boolean determineCameraChanged(Camera camera) {

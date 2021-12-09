@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class MouseHandlerCreaseMove extends MouseHandlerLineTransform {
+public class MouseHandlerCreaseMove extends BaseMouseHandlerLineTransform {
 
     @Override
     public MouseMode getMouseMode() {

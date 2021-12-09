@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class MouseHandlerCreaseCopy extends MouseHandlerLineTransform {
+public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineTransform {
 
     @Inject
     public MouseHandlerCreaseCopy(CreasePattern_Worker d, CanvasModel canvasModel) {
