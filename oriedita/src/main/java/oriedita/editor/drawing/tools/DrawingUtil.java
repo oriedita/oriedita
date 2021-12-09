@@ -323,6 +323,18 @@ public class DrawingUtil {
         }
     }
 
+    public static void drawStepVertex(Graphics2D g, Point p, LineColor color, Camera camera, boolean gridInputAssist) {
+        setColor(g, color);
+        Point a = camera.object2TV(p);
+        int i_width_nyuiiryokuji = 3;
+        if (gridInputAssist) {
+            i_width_nyuiiryokuji = 2;
+        }
+
+        g.fillOval((int) a.getX() - i_width_nyuiiryokuji, (int) a.getY() - i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji); //円
+
+    }
+
     public static void drawLineCandidate(Graphics g, LineSegment s, Camera camera, int pointSize) {
         setColor(g, s.getColor());
 

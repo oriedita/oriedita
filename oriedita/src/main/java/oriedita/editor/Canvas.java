@@ -28,10 +28,7 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.beans.PropertyChangeEvent;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -76,7 +73,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     LineStyle lineStyle;
 
-    MouseMode mouseMode;
+    private MouseMode mouseMode;
 
     // Canvas width and height
     Dimension dim;
@@ -638,6 +635,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     }
 
     public void setData(PropertyChangeEvent e, CanvasModel canvasModel) {
+
+        if (Objects.equals(e.getPropertyName(), "mouseMode")) {
+            mouseModeHandlers.get(mouseMode).reset();
+        }
         mouseMode = canvasModel.getMouseMode();
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("dirty")) {
