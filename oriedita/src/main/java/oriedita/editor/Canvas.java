@@ -637,9 +637,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     public void setData(PropertyChangeEvent e, CanvasModel canvasModel) {
 
         if (Objects.equals(e.getPropertyName(), "mouseMode")) {
-            mouseModeHandlers.get(mouseMode).reset();
+            if (activeMouseHandler != null) {
+                activeMouseHandler.reset();
+            }
         }
         mouseMode = canvasModel.getMouseMode();
+        if (mouseModeHandlers.containsKey(mouseMode)){
+            activeMouseHandler = mouseModeHandlers.get(mouseMode);
+        }
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("dirty")) {
             mouseReleasedValid = false;
