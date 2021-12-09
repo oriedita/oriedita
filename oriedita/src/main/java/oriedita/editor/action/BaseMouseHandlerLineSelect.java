@@ -76,15 +76,17 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
         d.lineStep.get(0).setA(p);
         selectionLine.setA(p);
 
-        d.lineCandidate.clear();
         Point closestPoint = d.getClosestPoint(p);
         if (p.distance(closestPoint) < d.selectionDistance && !snapping) {
             selectionLine = new LineSegment(closestPoint, selectionLine.getB(), LineColor.MAGENTA_5);
         } else {
             selectionLine = new LineSegment(p, selectionLine.getB(), LineColor.MAGENTA_5);
         }
-        d.lineCandidate.add(selectionLine);
-        d.lineStep.get(0).setA(d.lineCandidate.get(0).getA());
+        if (d.gridInputAssist) {
+            d.lineCandidate.clear();
+            d.lineCandidate.add(selectionLine);
+        }
+        d.lineStep.get(0).setA(selectionLine.getA());
         if (snapping) {
             snapLine();
         }
