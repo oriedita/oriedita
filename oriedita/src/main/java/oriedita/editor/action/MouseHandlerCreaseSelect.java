@@ -1,15 +1,14 @@
 package oriedita.editor.action;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.tinylog.Logger;
+import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
 import origami.Epsilon;
 import origami.crease_pattern.element.Point;
-import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.canvas.CreasePattern_Worker;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.awt.event.MouseEvent;
 import java.util.EnumSet;
 
@@ -168,6 +167,7 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     }
 
     public void mReleased_A_box_select(Point p0) {
+        super.mouseReleased(p0);
         d.lineStep.clear();
 
         d.select(selectionStart, p0);

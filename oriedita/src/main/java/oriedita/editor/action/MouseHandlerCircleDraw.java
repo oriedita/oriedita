@@ -1,17 +1,23 @@
 package oriedita.editor.action;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
-import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import oriedita.editor.canvas.MouseMode;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.awt.*;
 
 @Singleton
 public class MouseHandlerCircleDraw extends BaseMouseHandler {
+    private Circle previewCircle;
+    private LineSegment previewLine;
+
     @Inject
     public MouseHandlerCircleDraw() {
     }
@@ -31,12 +37,11 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
         Point closestPoint = d.getClosestPoint(p);
-
         d.circleStep.clear();
         d.lineStep.clear();
         if (p.distance(closestPoint) <= d.selectionDistance) {
-            d.lineStepAdd(new LineSegment(p, closestPoint, LineColor.CYAN_3));
-            d.circleStep.add(new Circle(closestPoint, 0.0, LineColor.CYAN_3));
+            this.previewCircle = new Circle(closestPoint, 0, LineColor.CYAN_3);
+            this.previewLine = new LineSegment(p, closestPoint, LineColor.CYAN_3);
         }
     }
 
@@ -44,30 +49,40 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler {
     public void mouseDragged(Point p0) {
         Point p = new Point();
         p.set(d.camera.TV2object(p0));
-        if (d.lineStep.size() > 0) {
-            d.lineStep.get(0).setA(p);
-        }
-        if (d.circleStep.size() > 0) {
-            d.circleStep.get(0).setR(OritaCalc.distance(d.lineStep.get(0).getA(), d.lineStep.get(0).getB()));
+        if (previewLine != null) {
+            previewLine.setA(p);
+            if (previewCircle != null) {
+                previewCircle.setR(previewLine.determineLength());
+            }
         }
     }
 
     //マウス操作(mouseMode==42 円入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        if (d.lineStep.size() == 1) {
+        if (previewLine != null) {
             Point p = new Point();
             p.set(d.camera.TV2object(p0));
             Point closestPoint = d.getClosestPoint(p);
-            d.lineStep.get(0).setA(closestPoint);
+            previewLine.setA(closestPoint);
             if (p.distance(closestPoint) <= d.selectionDistance) {
-                if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
-                    d.addCircle(d.lineStep.get(0).determineBX(), d.lineStep.get(0).determineBY(), d.lineStep.get(0).determineLength(), LineColor.CYAN_3);
+                if (Epsilon.high.gt0(previewLine.determineLength())) {
+                    d.addCircle(previewLine.determineBX(), previewLine.determineBY(), previewLine.determineLength(), LineColor.CYAN_3);
                     d.record();
                 }
             }
 
-            d.lineStep.clear();
-            d.circleStep.clear();
+            previewLine = null;
+            previewCircle = null;
+        }
+    }
+
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        if (previewCircle != null) {
+            DrawingUtil.drawCircleStep(g2, previewCircle,  camera);
+        }
+        if (previewLine != null) {
+            DrawingUtil.drawLineStep(g2, previewLine, camera, settings.getLineWidth(), d.gridInputAssist);
         }
     }
 }

@@ -1,8 +1,10 @@
 package oriedita.editor.action;
 
-import origami.crease_pattern.element.Point;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.drawing.tools.Camera;
+import origami.crease_pattern.element.Point;
 
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -68,4 +70,8 @@ public interface MouseModeHandler {
     }
 
     void mouseReleased(Point p0);
+
+    default void reset() {}
+
+    default void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {}
 }

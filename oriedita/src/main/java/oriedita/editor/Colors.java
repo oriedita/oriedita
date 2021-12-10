@@ -38,13 +38,23 @@ public class Colors {
         add(new Color(230, 230, 230), new Color(230, 230, 230), new Color(54, 54, 54));
     }
 
+    private static Map<Color, Color> activeColorMap = colorMap;
+
     private static void add(Color color, Color lightColor, Color darkColor) {
         colorMap.put(color, lightColor);
         darkColorMap.put(color, darkColor);
     }
 
     public static Color get(Color color) {
-        return FlatLaf.isLafDark() ? darkColorMap.getOrDefault(color, color) : colorMap.getOrDefault(color, color);
+        return activeColorMap.getOrDefault(color, color);
+    }
+
+    public static void update() {
+        if (FlatLaf.isLafDark()) {
+            activeColorMap = darkColorMap;
+        } else {
+            activeColorMap = colorMap;
+        }
     }
 
     /**
