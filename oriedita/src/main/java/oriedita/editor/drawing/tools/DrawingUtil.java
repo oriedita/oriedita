@@ -396,9 +396,9 @@ public class DrawingUtil {
         b.move(defaultMove);
 
         int aflag = cohenSutherlandRegion(clipX, clipY, a);
-        if (aflag != 0) {
+        if (aflag != CENTER) {
             int bflag = cohenSutherlandRegion(clipX, clipY, b);
-            if ((aflag & bflag) != 0) {
+            if ((aflag & bflag) != CENTER) {
                 return;
             }
         }
@@ -446,10 +446,7 @@ public class DrawingUtil {
         }
 
 
-
-        //g2.draw(new Line2D.Double(a.getX(), a.getY(), b.getX(), b.getY()));
         g2.drawLine((int)a.getX(), (int)a.getY(), (int)b.getX(), (int)b.getY());
-
 
         if (Epsilon.high.eq0(lineWidth)) {
 
@@ -478,21 +475,38 @@ public class DrawingUtil {
         }
     }
 
+
+    public static final int CENTER = 0;
+    public static final int WEST  = 0b0001;
+    public static final int EAST  = 0b0010;
+    public static final int NORTH = 0b0100;
+    public static final int SOUTH = 0b1000;
+
     public static int cohenSutherlandRegion(int clipX, int clipY, Point point) {
         return cohenSutherlandRegion(0,0,clipX, clipY, point);
     }
 
+    /**
+     * returns the region according to the Cohen-Sutherland Line Clipping Algorithm using a viewport rectangle
+     * going from (clipLowX, clipLowY) to (clipHighX, clipHighY). If the point is inside the viewport, the region
+     * will be CENTER (= 0), otherwise, the direction of the point in relation to the viewport can be retrieved
+     * using bitwise-and with the Constants WEST, EAST, NORTH, SOUTH.
+     *
+     * If the bitwise-and of the Endpoints of a Line is not CENTER, the whole line is outside the viewport.
+     *
+     * for more info, see https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm
+     */
     public static int cohenSutherlandRegion(int clipLowX, int clipLowY, int clipHighX, int clipHighY, Point point) {
-        int region = 0;
+        int region = CENTER;
         if (point.getX() < clipLowX) {
-            region |= 1;
+            region |= WEST;
         } else if (point.getX() > clipHighX) {
-            region |= 0b01;
+            region |= EAST;
         }
         if (point.getY() < clipLowY) {
-            region |= 0b001;
+            region |= SOUTH;
         } else if (point.getY() > clipHighY) {
-            region |= 0b0001;
+            region |= NORTH;
         }
         return region;
     }

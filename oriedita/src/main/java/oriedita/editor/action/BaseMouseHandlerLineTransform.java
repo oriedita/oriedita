@@ -145,7 +145,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
             Point b = camera.object2TV(s.getB());
             int regionA = DrawingUtil.cohenSutherlandRegion(minx, miny, maxx, maxy, a);
             int regionB = DrawingUtil.cohenSutherlandRegion(minx, miny, maxx, maxy, b);
-            if ((regionA & regionB) == 0) {
+            if ((regionA & regionB) == DrawingUtil.CENTER) {
                 Point pa = new Point(s.getA());
                 pa.move(delta);
                 Point pb = new Point(s.getB());
