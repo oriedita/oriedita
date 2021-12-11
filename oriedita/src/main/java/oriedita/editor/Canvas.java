@@ -3,6 +3,7 @@ package oriedita.editor;
 import org.tinylog.Logger;
 import oriedita.editor.action.DrawingSettings;
 import oriedita.editor.action.MouseModeHandler;
+import oriedita.editor.action.selector.BaseMouseHandler_WithSelector;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.canvas.MouseMode;
@@ -182,6 +183,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     public void addMouseModeHandler(MouseModeHandler handler) {
         mouseModeHandlers.put(handler.getMouseMode(), handler);
+        if (handler instanceof BaseMouseHandler_WithSelector) {
+            ((BaseMouseHandler_WithSelector) handler).setupSelectors();
+        }
     }
 
     @Override

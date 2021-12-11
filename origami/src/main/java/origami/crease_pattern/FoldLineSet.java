@@ -3589,6 +3589,14 @@ public class FoldLineSet {
         }
     }
 
+    public Collection<LineSegment> getLines() {
+        List<LineSegment> lineSegments = new ArrayList<>();
+        for (int i = 1; i <= total; i++) {
+            lineSegments.add(get(i));
+        }
+        return lineSegments;
+    }
+
     /**
      * Internal class used for quickly copying the contents of a foldlineset.
      */

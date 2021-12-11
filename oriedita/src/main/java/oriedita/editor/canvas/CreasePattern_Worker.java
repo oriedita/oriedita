@@ -1007,6 +1007,10 @@ public class CreasePattern_Worker {
         this.foldLineSet.selectProbablyConnected(p);
     }
 
+    public LineColor getLineColor() {
+        return lineColor;
+    }
+
     //30 30 30 30 30 30 30 30 30 30 30 30 除け_線_変換
     public enum FourPointStep {
         STEP_0,
