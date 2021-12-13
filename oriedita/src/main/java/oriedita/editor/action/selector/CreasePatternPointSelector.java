@@ -7,13 +7,14 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 
 import java.awt.*;
+import java.util.function.Supplier;
 
 /**
  * Selects a Point out of the creasePattern in d
  */
 public class CreasePatternPointSelector extends ElementSelector<Point> {
     private final SelectionMode selectionMode;
-    private final LineColor color;
+    private final Supplier<LineColor> color;
 
     public enum SelectionMode {
         FREE(false), CLOSEST_POINT_ONLY(true), CLOSEST_POINT_OR_FREE(true);
@@ -29,6 +30,11 @@ public class CreasePatternPointSelector extends ElementSelector<Point> {
     }
 
     public CreasePatternPointSelector(SelectionMode selectionMode, LineColor color) {
+        this.selectionMode = selectionMode;
+        this.color = () -> color;
+    }
+
+    public CreasePatternPointSelector(SelectionMode selectionMode, Supplier<LineColor> color) {
         this.selectionMode = selectionMode;
         this.color = color;
     }
@@ -56,6 +62,6 @@ public class CreasePatternPointSelector extends ElementSelector<Point> {
 
     @Override
     public void draw(Point p, Graphics2D g2, Camera camera, DrawingSettings settings) {
-        DrawingUtil.drawStepVertex(g2, p, color, camera, d.gridInputAssist);
+        DrawingUtil.drawStepVertex(g2, p, color.get(), camera, d.gridInputAssist);
     }
 }

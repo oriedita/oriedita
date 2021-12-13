@@ -9,6 +9,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 /**
  * to simplify the drawing and implementation of tools where specific things have to be
@@ -20,7 +21,8 @@ public abstract class ElementSelector<T> {
     private boolean selectionFinished = false;
     private MouseEventInfo eventInfo;
     private boolean hidden = false;
-    private final List<Consumer<T>> observers = new ArrayList<>();
+    private final List<Consumer<T>> finishObservers = new ArrayList<>();
+    private final List<Runnable> failedFinishObservers = new ArrayList<>();
     protected CreasePattern_Worker d;
 
     /**
@@ -46,6 +48,8 @@ public abstract class ElementSelector<T> {
     public boolean tryFinishSelection() {
         if (canFinishSelection()) {
             finishSelection();
+        } else {
+            failSelection();
         }
         return selectionFinished;
     }
@@ -56,13 +60,20 @@ public abstract class ElementSelector<T> {
 
     protected final void finishSelection() {
         selectionFinished = true;
-        for (Consumer<T> observer : observers) {
-            observer.accept(selected);
-        }
+        finishObservers.forEach(observer -> observer.accept(getSelection()));
+    }
+
+    protected final void failSelection() {
+        selectionFinished = false;
+        failedFinishObservers.forEach(Runnable::run);
     }
 
     public void onFinish(Consumer<T> callback) {
-        this.observers.add(callback);
+        this.finishObservers.add(callback);
+    }
+
+    public void onFailedFinish(Runnable callback) {
+        this.failedFinishObservers.add(callback);
     }
 
     /**
@@ -104,5 +115,22 @@ public abstract class ElementSelector<T> {
 
     void setCreasePattern_Worker(CreasePattern_Worker d) {
         this.d = d;
+    }
+
+    public ElementSelector<T> then(UnaryOperator<T> operator, boolean drawOriginal) {
+        return new CalculatedElementSelector<>(this, drawOriginal) {
+
+            @Override
+            protected void draw(T element, Graphics2D g2, Camera camera, DrawingSettings settings) {
+                if (!drawOriginal) {
+                    ElementSelector.this.draw(element, g2, camera, settings);
+                }
+            }
+
+            @Override
+            protected T calculate(T baseSelected) {
+                return operator.apply(baseSelected);
+            }
+        };
     }
 }

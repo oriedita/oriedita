@@ -13,7 +13,7 @@ import java.util.EnumSet;
 public class MouseHandlerAngleSystem extends BaseMouseHandler_WithSelector {
     CreasePatternPointSelector pStartSelector;
     AngleSystemLineSetCalculator lineSetCalculator;
-    LineSelector candidateSelector;
+    LineSelectorFromCollection candidateSelector;
     LineExtender finalLineSelector;
 
     @Inject
@@ -40,25 +40,25 @@ public class MouseHandlerAngleSystem extends BaseMouseHandler_WithSelector {
                 () -> candidateSelector
         );
         candidateSelector = registerSelector(
-                new LineSelector(
+                new LineSelectorFromCollection(
                         lineSetCalculator::getSelection,
                         LineColor.PURPLE_8,
-                        LineSelector.NoCloseLineValue.NONE
+                        LineSelectorFromCollection.NoCloseLineValue.NONE
                 ),
                 () -> finalLineSelector);
         candidateSelector.onFinish(lineSegment -> {
             lineSetCalculator.setHidden(true);
             candidateSelector.setHidden(true);
         });
-
+        candidateSelector.onFailedFinish(this::reset);
         finalLineSelector = registerSelector(
                 new LineExtender(
                         candidateSelector::getSelection,
                         d::getLineColor,
-                        new LineSelector(
+                        new LineSelectorFromCollection(
                                 d.foldLineSet::getLines,
                                 LineColor.GREEN_6,
-                                LineSelector.NoCloseLineValue.MOUSE_POS
+                                LineSelectorFromCollection.NoCloseLineValue.MOUSE_POS
                         )
                 ), null
         );

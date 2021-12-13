@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  * Selects a line out of the line collection supplied by lineSegmentSetSupplier.
  * noCloseLineValue determines what value is returned when there is no line in the selection radius
  */
-public class LineSelector extends ElementSelector<LineSegment> {
+public class LineSelectorFromCollection extends ElementSelector<LineSegment> {
     private final LineColor color;
     private final Supplier<Collection<LineSegment>> lineSegmentSetSupplier;
     private final NoCloseLineValue noCloseLineValue;
@@ -27,7 +27,7 @@ public class LineSelector extends ElementSelector<LineSegment> {
         NONE, MOUSE_POS
     }
 
-    public LineSelector(
+    public LineSelectorFromCollection(
             Supplier<Collection<LineSegment>> lineSegmentSetSupplier, LineColor color,
             NoCloseLineValue noCloseLineValue) {
         this.color = color;

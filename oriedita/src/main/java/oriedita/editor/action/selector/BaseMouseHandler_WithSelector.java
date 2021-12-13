@@ -21,7 +21,7 @@ public abstract class BaseMouseHandler_WithSelector extends BaseMouseHandler {
     private final Map<Integer, Supplier<ElementSelector<?>>> nextSelectors = new HashMap<>();
     private final Map<Integer, FinishOn> finishActions = new HashMap<>();
 
-    enum FinishOn {
+    public enum FinishOn {
         RELEASE, PRESS
     }
 
@@ -97,7 +97,8 @@ public abstract class BaseMouseHandler_WithSelector extends BaseMouseHandler {
                     activeSelector.update(mousePos, eventInfo); // otherwise, preview would only start after moving the mouse
                 }
             }
-        } else {
+        }
+        if (activeSelector == null) {
             reset();
         }
     }
