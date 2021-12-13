@@ -1,5 +1,6 @@
 package oriedita.editor.action.selector;
 
+import org.tinylog.Logger;
 import oriedita.editor.action.BaseMouseHandler;
 import oriedita.editor.action.DrawingSettings;
 import oriedita.editor.drawing.tools.Camera;
@@ -7,10 +8,8 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 public abstract class BaseMouseHandler_WithSelector extends BaseMouseHandler {
@@ -20,6 +19,7 @@ public abstract class BaseMouseHandler_WithSelector extends BaseMouseHandler {
     // selectors list instead.
     private final Map<Integer, Supplier<ElementSelector<?>>> nextSelectors = new HashMap<>();
     private final Map<Integer, FinishOn> finishActions = new HashMap<>();
+    private final Deque<ElementSelector<?>> selectorHistory = new ArrayDeque<>();
 
     public enum FinishOn {
         RELEASE, PRESS
@@ -92,8 +92,10 @@ public abstract class BaseMouseHandler_WithSelector extends BaseMouseHandler {
         if (activeSelector != null) {
             activeSelector.update(mousePos, eventInfo);
             if (shouldFinishOn(finishAction, activeSelector) && activeSelector.tryFinishSelection()) {
+                ElementSelector<?> lastSelector = activeSelector;
                 activeSelector = getNextSelector(activeSelector);
                 if (activeSelector != null) {
+                    selectorHistory.push(lastSelector);
                     activeSelector.update(mousePos, eventInfo); // otherwise, preview would only start after moving the mouse
                 }
             }
@@ -108,11 +110,51 @@ public abstract class BaseMouseHandler_WithSelector extends BaseMouseHandler {
         return finishActions.containsKey(ind) && finishActions.get(ind) == finishAction;
     }
 
+    public void setupAndCheckSelectors() {
+        setupSelectors();
+        for (ElementSelector<?> selector : selectors) {
+            if (shouldFinishOn(FinishOn.RELEASE, selector) && !selector.hasFailedFinishCallback()) {
+                Logger.warn("Selector {} in {} is set to finish on release, but does not have a failed finish callback",
+                        selector, this);
+            }
+        }
+    }
+
+    /**
+     * Reverts `steps` selectors, going back to that many steps before the current selector,
+     * resetting all selectors in between (including the last one).
+     * when steps==0, just the current step will be reset
+     * @param steps number of steps to go back
+     */
+    protected void revert(int steps) {
+        assert steps >= 0;
+        assert steps <= selectorHistory.size();
+        activeSelector.reset();
+        for (int i = 0; i < steps; i++) {
+            activeSelector = selectorHistory.pop();
+            activeSelector.reset();
+        }
+    }
+
+    /**
+     * Reverts selectors, going back to the selector given in the argument,
+     * resetting all selectors in between (including the last one).
+     * if the selector is the currently active one, it will just be reset.
+     * @param selector selector to go back to
+     */
+    protected void revertTo(ElementSelector<?> selector) {
+        assert selectorHistory.contains(selector) || selector == activeSelector;
+        activeSelector.reset();
+        while (activeSelector != selector) {
+            activeSelector = selectorHistory.pop();
+            activeSelector.reset();
+        }
+    }
 
     /**
      * register all the selectors of the tools, as well as onFinish callbacks etc.
      */
-    public abstract void setupSelectors();
+    protected abstract void setupSelectors();
 
     /**
      * which selector (if any) should come after the current selector. should only return selectors that were
@@ -138,9 +180,9 @@ public abstract class BaseMouseHandler_WithSelector extends BaseMouseHandler {
     @Override
     public void reset() {
         super.reset();
-        for (ElementSelector<?> selector : selectors) {
-            selector.reset();
-        }
+        selectorHistory.clear();
+        selectors.forEach(ElementSelector::reset);
+
         assert nextSelectors.containsKey(-1);
 
         activeSelector = nextSelectors.get(-1).get();

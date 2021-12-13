@@ -2,7 +2,6 @@ package oriedita.editor.action;
 
 import oriedita.editor.action.selector.*;
 import oriedita.editor.canvas.MouseMode;
-import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 
 import javax.inject.Inject;
@@ -12,7 +11,7 @@ import javax.inject.Singleton;
 public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler_WithSelector {
     private CircleSelectorFromIterable circleSelector;
     private CreasePatternPointSelector firstPointSelector;
-    private CircleCalculator circleCalculator;
+    private CircleCalculatorFromRadius circleCalculator;
 
     @Inject
     public MouseHandlerCircleDrawConcentric() {
@@ -40,7 +39,7 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler_WithSelec
                 () -> circleCalculator
         );
         circleCalculator = registerSelector(
-                new CircleCalculator(
+                new CircleCalculatorFromRadius(
                         () -> circleSelector.getSelection().determineCenter(),
                         new LineCalculatorFrom2Points(
                                 firstPointSelector::getSelection,
@@ -49,17 +48,12 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler_WithSelec
                                         CreasePatternPointSelector.SelectionMode.CLOSEST_POINT_OR_FREE,
                                         LineColor.MAGENTA_5
                                 )
-                        ).then(line ->  // add radius of selected circle to the line
-                                OritaCalc.lineSegment_double(line,
-                                    (line.determineLength() + circleSelector.getSelection().getR())
-                                            /line.determineLength()
-                                ),
-                                true
-                        )
+                        ).thenGet(lineSegment -> circleSelector.getSelection().getR() + lineSegment.determineLength())
                 ),
                 FinishOn.RELEASE,
                 null
         );
+        circleCalculator.onFail(() -> revertTo(firstPointSelector));
         circleCalculator.onFinish(circle -> {
             d.addCircle(circle);
             d.record();

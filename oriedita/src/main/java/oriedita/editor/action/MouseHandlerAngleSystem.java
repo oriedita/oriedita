@@ -50,7 +50,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandler_WithSelector {
             lineSetCalculator.setHidden(true);
             candidateSelector.setHidden(true);
         });
-        candidateSelector.onFailedFinish(this::reset);
+        candidateSelector.onFail(this::reset);
         finalLineSelector = registerSelector(
                 new LineExtender(
                         candidateSelector::getSelection,

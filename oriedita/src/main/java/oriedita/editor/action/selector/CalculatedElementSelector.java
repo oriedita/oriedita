@@ -24,7 +24,10 @@ public abstract class CalculatedElementSelector<T, C> extends ElementSelector<C>
     @Override
     protected C determineSelected(Point mousePos, MouseEventInfo eventInfo) {
         T baseSelected = base.determineSelected(mousePos, eventInfo);
-        return calculate(baseSelected);
+        if (baseSelected != null) {
+            return calculate(baseSelected);
+        }
+        return null;
     }
 
     /**
@@ -34,13 +37,20 @@ public abstract class CalculatedElementSelector<T, C> extends ElementSelector<C>
     protected abstract C calculate(T baseSelected);
 
     @Override
+    protected boolean canFinishSelection() {
+        return super.canFinishSelection() && base.canFinishSelection();
+    }
+
+    @Override
     public boolean tryFinishSelection() {
-        if (base.canFinishSelection() && this.canFinishSelection()) {
+        if (canFinishSelection()) {
             base.finishSelection();
             super.finishSelection();
             return true;
 
         }
+        base.failSelection();
+        super.failSelection();
         return false;
     }
 

@@ -184,7 +184,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     public void addMouseModeHandler(MouseModeHandler handler) {
         mouseModeHandlers.put(handler.getMouseMode(), handler);
         if (handler instanceof BaseMouseHandler_WithSelector) {
-            ((BaseMouseHandler_WithSelector) handler).setupSelectors();
+            ((BaseMouseHandler_WithSelector) handler).setupAndCheckSelectors();
         }
     }
 

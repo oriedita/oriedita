@@ -9,6 +9,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 /**
@@ -54,7 +55,7 @@ public abstract class ElementSelector<T> {
         return selectionFinished;
     }
 
-    protected final boolean canFinishSelection() {
+    protected boolean canFinishSelection() {
         return eventInfo != null && validate(selected, eventInfo);
     }
 
@@ -72,7 +73,7 @@ public abstract class ElementSelector<T> {
         this.finishObservers.add(callback);
     }
 
-    public void onFailedFinish(Runnable callback) {
+    public void onFail(Runnable callback) {
         this.failedFinishObservers.add(callback);
     }
 
@@ -132,5 +133,22 @@ public abstract class ElementSelector<T> {
                 return operator.apply(baseSelected);
             }
         };
+    }
+
+    public <F> ElementSelector<F> thenGet(Function<T, F> getter) {
+        return new CalculatedElementSelector<>(this, true) {
+            @Override
+            protected F calculate(T baseSelected) {
+                return getter.apply(baseSelected);
+            }
+
+            @Override
+            protected void draw(F element, Graphics2D g2, Camera camera, DrawingSettings settings) {
+            }
+        };
+    }
+
+    public boolean hasFailedFinishCallback() {
+        return !failedFinishObservers.isEmpty();
     }
 }
