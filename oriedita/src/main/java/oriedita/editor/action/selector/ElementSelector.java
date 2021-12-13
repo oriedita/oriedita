@@ -66,7 +66,7 @@ public abstract class ElementSelector<T> implements Drawer<T> {
     }
 
     protected boolean canFinishSelection() {
-        return eventInfo != null && validate(selected, eventInfo);
+        return eventInfo != null && selected != null && validate(selected, eventInfo);
     }
 
     protected final void finishSelection() {

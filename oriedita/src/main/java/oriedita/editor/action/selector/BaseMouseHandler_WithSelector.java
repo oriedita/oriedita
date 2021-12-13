@@ -151,6 +151,12 @@ public abstract class BaseMouseHandler_WithSelector extends BaseMouseHandler {
         }
     }
 
+    protected void onAnyFail(Runnable callback, ElementSelector<?>... selectors) {
+        for (ElementSelector<?> selector : selectors) {
+            selector.onFail(callback);
+        }
+    }
+
     /**
      * register all the selectors of the tools, as well as onFinish callbacks etc.
      */
