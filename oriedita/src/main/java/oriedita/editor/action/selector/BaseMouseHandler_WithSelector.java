@@ -19,22 +19,40 @@ public abstract class BaseMouseHandler_WithSelector extends BaseMouseHandler {
     // selectors will change their state, so they can't be used as map indices. We're using the index in the
     // selectors list instead.
     private final Map<Integer, Supplier<ElementSelector<?>>> nextSelectors = new HashMap<>();
+    private final Map<Integer, FinishOn> finishActions = new HashMap<>();
 
+    enum FinishOn {
+        RELEASE, PRESS
+    }
 
     public final <T, F extends ElementSelector<T>> F registerStartingSelector(
             F startingSelector, Supplier<ElementSelector<?>> nextSelector
+    ) {
+        return registerStartingSelector(startingSelector, FinishOn.PRESS, nextSelector);
+    }
+
+    public final <T, F extends ElementSelector<T>> F registerStartingSelector(
+            F startingSelector, FinishOn finishAction, Supplier<ElementSelector<?>> nextSelector
     ) {
         if (nextSelectors.containsKey(-1)) {
             throw new IllegalStateException("Starting Selector already registered");
         }
         nextSelectors.put(-1, () -> startingSelector);
         this.activeSelector = startingSelector;
-        return registerSelector(startingSelector, nextSelector);
+        return registerSelector(startingSelector, finishAction, nextSelector);
     }
 
-    public final <T,F extends ElementSelector<T>> F registerSelector(F selector, Supplier<ElementSelector<?>> nextSelector) {
+    public final <T, F extends ElementSelector<T>> F registerSelector(
+            F selector, Supplier<ElementSelector<?>> nextSelector
+    ) {
+        return registerSelector(selector, FinishOn.PRESS, nextSelector);
+    }
+
+    public final <T,F extends ElementSelector<T>> F registerSelector(
+            F selector, FinishOn finishAction, Supplier<ElementSelector<?>> nextSelector) {
         selector.setCreasePattern_Worker(d);
         this.nextSelectors.put(selectors.size(), nextSelector);
+        this.finishActions.put(selectors.size(), finishAction);
         this.selectors.add(selector);
         return selector;
     }
@@ -58,21 +76,36 @@ public abstract class BaseMouseHandler_WithSelector extends BaseMouseHandler {
 
     @Override
     public void mousePressed(Point p0, MouseEvent e) {
-        MouseEventInfo eventInfo = new MouseEventInfo(e);
-        if (activeSelector != null) {
-            this.activeSelector.update(p0, eventInfo);
-            if (activeSelector.tryFinishSelection()) {
-                this.activeSelector = getNextSelector(activeSelector);
-            }
-        }
-        if (activeSelector == null) {
-            reset();
-        }
-        if (activeSelector != null) {
-            activeSelector.update(p0, eventInfo); // otherwise, preview would only start after moving the mouse
-        }
+        processFinishAction(FinishOn.PRESS, p0, e);
         super.mousePressed(p0, e);
     }
+
+    @Override
+    public void mouseReleased(Point p0, MouseEvent e) {
+        processFinishAction(FinishOn.RELEASE, p0, e);
+        super.mousePressed(p0, e);
+    }
+
+    private void processFinishAction(FinishOn finishAction, Point mousePos, MouseEvent e) {
+        MouseEventInfo eventInfo = new MouseEventInfo(e);
+        if (activeSelector != null) {
+            activeSelector.update(mousePos, eventInfo);
+            if (shouldFinishOn(finishAction, activeSelector) && activeSelector.tryFinishSelection()) {
+                activeSelector = getNextSelector(activeSelector);
+                if (activeSelector != null) {
+                    activeSelector.update(mousePos, eventInfo); // otherwise, preview would only start after moving the mouse
+                }
+            }
+        } else {
+            reset();
+        }
+    }
+
+    private boolean shouldFinishOn(FinishOn finishAction, ElementSelector<?> activeSelector) {
+        int ind = selectors.indexOf(activeSelector);
+        return finishActions.containsKey(ind) && finishActions.get(ind) == finishAction;
+    }
+
 
     /**
      * register all the selectors of the tools, as well as onFinish callbacks etc.
