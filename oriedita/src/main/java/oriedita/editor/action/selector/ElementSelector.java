@@ -156,14 +156,14 @@ public abstract class ElementSelector<T> implements Drawer<T> {
      * Creates a new ElementSelector that executes the operator on the selection of
      * this selector.
      * @param operator Operator to be applied on the selection of this selector
-     * @param drawOriginal whether to draw the original or the newly calculated Selection
+     * @param drawOriginal whether to draw the original
      */
-    public ElementSelector<T> then(UnaryOperator<T> operator, boolean drawOriginal) {
+    public ElementSelector<T> then(UnaryOperator<T> operator, boolean drawOriginal, boolean drawCalculated) {
         return new CalculatedElementSelector<>(this, drawOriginal) {
 
             @Override
             public void draw(T element, Graphics2D g2, Camera camera, DrawingSettings settings) {
-                if (!drawOriginal) {
+                if (drawCalculated) {
                     ElementSelector.this.draw(element, g2, camera, settings);
                 }
             }
@@ -175,12 +175,16 @@ public abstract class ElementSelector<T> implements Drawer<T> {
         };
     }
 
+    public <F> ElementSelector<F> thenGet(Function<T, F> getter) {
+        return thenGet(getter, (e, g, c, s) -> {});
+    }
+
     /**
      * Creates a new ElementSelector that executes the function on the selection of
      * this selector.
      * @param getter Function to be applied on the selection of this selector
      */
-    public <F> ElementSelector<F> thenGet(Function<T, F> getter) {
+    public <F> ElementSelector<F> thenGet(Function<T, F> getter, Drawer<F> drawer) {
         return new CalculatedElementSelector<>(this, true) {
             @Override
             protected F calculate(T baseSelected) {
@@ -189,6 +193,7 @@ public abstract class ElementSelector<T> implements Drawer<T> {
 
             @Override
             public void draw(F element, Graphics2D g2, Camera camera, DrawingSettings settings) {
+                drawer.draw(element, g2, camera, settings);
             }
         };
     }
