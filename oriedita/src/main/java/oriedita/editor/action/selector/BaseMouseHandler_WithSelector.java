@@ -34,9 +34,8 @@ public abstract class BaseMouseHandler_WithSelector extends BaseMouseHandler {
     public final <T, F extends ElementSelector<T>> F registerStartingSelector(
             F startingSelector, FinishOn finishAction, Supplier<ElementSelector<?>> nextSelector
     ) {
-        if (nextSelectors.containsKey(-1)) {
-            throw new IllegalStateException("Starting Selector already registered");
-        }
+        assert !nextSelectors.containsKey(-1);
+
         nextSelectors.put(-1, () -> startingSelector);
         this.activeSelector = startingSelector;
         return registerSelector(startingSelector, finishAction, nextSelector);
@@ -50,6 +49,8 @@ public abstract class BaseMouseHandler_WithSelector extends BaseMouseHandler {
 
     public final <T,F extends ElementSelector<T>> F registerSelector(
             F selector, FinishOn finishAction, Supplier<ElementSelector<?>> nextSelector) {
+        assert !selectors.contains(selector);
+
         selector.setCreasePattern_Worker(d);
         this.nextSelectors.put(selectors.size(), nextSelector);
         this.finishActions.put(selectors.size(), finishAction);
@@ -139,9 +140,8 @@ public abstract class BaseMouseHandler_WithSelector extends BaseMouseHandler {
         for (ElementSelector<?> selector : selectors) {
             selector.reset();
         }
-        if (!nextSelectors.containsKey(-1)) {
-            throw new IllegalStateException("No starting selector defined");
-        }
+        assert nextSelectors.containsKey(-1);
+
         activeSelector = nextSelectors.get(-1).get();
     }
 
