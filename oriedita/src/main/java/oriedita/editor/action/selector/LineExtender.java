@@ -1,6 +1,6 @@
 package oriedita.editor.action.selector;
 
-import oriedita.editor.action.DrawingSettings;
+import oriedita.editor.action.selector.drawing.DrawingSettings;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -46,7 +46,7 @@ public class LineExtender extends CalculatedElementSelector<LineSegment, LineSeg
     }
 
     @Override
-    protected void draw(LineSegment element, Graphics2D g2, Camera camera, DrawingSettings settings) {
-        DrawingUtil.drawLineStep(g2, element, camera, settings.getLineWidth(), d.gridInputAssist);
+    public void draw(LineSegment element, Graphics2D g2, Camera camera, DrawingSettings settings) {
+        DrawingUtil.drawLineStep(g2, element, camera, settings);
     }
 }

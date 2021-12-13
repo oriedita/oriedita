@@ -1,6 +1,6 @@
 package oriedita.editor.action.selector;
 
-import oriedita.editor.action.DrawingSettings;
+import oriedita.editor.action.selector.drawing.DrawingSettings;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.crease_pattern.OritaCalc;
@@ -87,9 +87,9 @@ public class AngleSystemLineSetCalculator extends CalculatedElementSelector<Poin
     }
 
     @Override
-    protected void draw(List<LineSegment> calculated, Graphics2D g2, Camera camera, DrawingSettings settings) {
+    public void draw(List<LineSegment> calculated, Graphics2D g2, Camera camera, DrawingSettings settings) {
         for (LineSegment lineSegment : calculated) {
-            DrawingUtil.drawLineStep(g2, lineSegment, camera, settings.getLineWidth(), d.gridInputAssist);
+            DrawingUtil.drawLineStep(g2, lineSegment, camera, settings);
         }
     }
 }

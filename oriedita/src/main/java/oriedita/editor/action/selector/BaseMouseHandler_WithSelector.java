@@ -2,7 +2,7 @@ package oriedita.editor.action.selector;
 
 import org.tinylog.Logger;
 import oriedita.editor.action.BaseMouseHandler;
-import oriedita.editor.action.DrawingSettings;
+import oriedita.editor.action.selector.drawing.DrawingSettings;
 import oriedita.editor.drawing.tools.Camera;
 import origami.crease_pattern.element.Point;
 
@@ -62,7 +62,7 @@ public abstract class BaseMouseHandler_WithSelector extends BaseMouseHandler {
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
         for (ElementSelector<?> selector : selectors) {
-            selector.draw(g2, camera, settings);
+            selector.drawPreview(g2, camera, settings);
         }
     }
 

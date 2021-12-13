@@ -1,9 +1,9 @@
 package oriedita.editor;
 
 import org.tinylog.Logger;
-import oriedita.editor.action.DrawingSettings;
 import oriedita.editor.action.MouseModeHandler;
 import oriedita.editor.action.selector.BaseMouseHandler_WithSelector;
+import oriedita.editor.action.selector.drawing.DrawingSettings;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.canvas.MouseMode;
@@ -273,7 +273,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         //展開図表示
         mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
-        DrawingSettings settings = new DrawingSettings(lineWidth, lineStyle, dim.height, dim.width);
+        DrawingSettings settings = new DrawingSettings(lineWidth, lineStyle, dim.height, dim.width, displayGridInputAssist);
         if (activeMouseHandler != null) {
             activeMouseHandler.drawPreview(g2, creasePatternCamera, settings);
         }

@@ -1,6 +1,6 @@
 package oriedita.editor.action.selector;
 
-import oriedita.editor.action.DrawingSettings;
+import oriedita.editor.action.selector.drawing.DrawingSettings;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.crease_pattern.element.LineColor;
@@ -27,7 +27,7 @@ public class LineCalculatorFrom2Points extends CalculatedElementSelector<Point, 
     }
 
     @Override
-    protected void draw(LineSegment element, Graphics2D g2, Camera camera, DrawingSettings settings) {
-        DrawingUtil.drawLineStep(g2, element, camera, settings.getLineWidth(), d.gridInputAssist);
+    public void draw(LineSegment element, Graphics2D g2, Camera camera, DrawingSettings settings) {
+        DrawingUtil.drawLineStep(g2, element, camera, settings);
     }
 }

@@ -1,6 +1,6 @@
 package oriedita.editor.action.selector;
 
-import oriedita.editor.action.DrawingSettings;
+import oriedita.editor.action.selector.drawing.DrawingSettings;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.drawing.tools.Camera;
 import origami.crease_pattern.element.Point;
@@ -76,11 +76,11 @@ public abstract class CalculatedElementSelector<T, C> extends ElementSelector<C>
     }
 
     @Override
-    public void draw(Graphics2D g2, Camera camera, DrawingSettings settings) {
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         if (drawBase) {
-            base.draw(g2, camera, settings);
+            base.drawPreview(g2, camera, settings);
         }
-        super.draw(g2, camera, settings);
+        super.drawPreview(g2, camera, settings);
     }
 
     @Override

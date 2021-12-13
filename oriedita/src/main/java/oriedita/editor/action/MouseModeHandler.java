@@ -1,5 +1,6 @@
 package oriedita.editor.action;
 
+import oriedita.editor.action.selector.drawing.DrawingSettings;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import origami.crease_pattern.element.Point;

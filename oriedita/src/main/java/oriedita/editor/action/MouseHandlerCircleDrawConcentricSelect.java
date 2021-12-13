@@ -57,6 +57,10 @@ public class MouseHandlerCircleDrawConcentricSelect extends BaseMouseHandler_Wit
                 ),
                 null
         );
+        circleCalculator.onFinish(circle -> {
+            d.addCircle(circle);
+            d.record();
+        });
     }
 
     private Double calculateRadius(Circle circle1, Circle circle2, Circle circle3) {

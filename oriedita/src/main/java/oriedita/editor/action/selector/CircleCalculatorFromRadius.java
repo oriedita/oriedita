@@ -1,6 +1,6 @@
 package oriedita.editor.action.selector;
 
-import oriedita.editor.action.DrawingSettings;
+import oriedita.editor.action.selector.drawing.DrawingSettings;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.crease_pattern.element.Circle;
@@ -24,7 +24,7 @@ public class CircleCalculatorFromRadius extends CalculatedElementSelector<Double
     }
 
     @Override
-    protected void draw(Circle element, Graphics2D g2, Camera camera, DrawingSettings settings) {
+    public void draw(Circle element, Graphics2D g2, Camera camera, DrawingSettings settings) {
         DrawingUtil.drawCircleStep(g2, element, camera);
     }
 }

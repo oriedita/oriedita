@@ -1,6 +1,6 @@
 package oriedita.editor.action.selector;
 
-import oriedita.editor.action.DrawingSettings;
+import oriedita.editor.action.selector.drawing.DrawingSettings;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.crease_pattern.element.LineColor;
@@ -62,6 +62,6 @@ public class CreasePatternPointSelector extends ElementSelector<Point> {
 
     @Override
     public void draw(Point p, Graphics2D g2, Camera camera, DrawingSettings settings) {
-        DrawingUtil.drawStepVertex(g2, p, color.get(), camera, d.gridInputAssist);
+        DrawingUtil.drawStepVertex(g2, p, color.get(), camera, settings);
     }
 }

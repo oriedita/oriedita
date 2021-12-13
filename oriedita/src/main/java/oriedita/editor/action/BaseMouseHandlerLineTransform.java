@@ -1,5 +1,6 @@
 package oriedita.editor.action;
 
+import oriedita.editor.action.selector.drawing.DrawingSettings;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;

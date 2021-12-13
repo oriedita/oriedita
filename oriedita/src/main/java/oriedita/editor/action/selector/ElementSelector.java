@@ -1,6 +1,7 @@
 package oriedita.editor.action.selector;
 
-import oriedita.editor.action.DrawingSettings;
+import oriedita.editor.action.selector.drawing.Drawer;
+import oriedita.editor.action.selector.drawing.DrawingSettings;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.drawing.tools.Camera;
 import origami.crease_pattern.element.Point;
@@ -17,7 +18,7 @@ import java.util.function.UnaryOperator;
  * clicked on using the mouse, for example points, lines, circles, etc.
  * @param <T> The kind of thing that is "selected" by clicking on it
  */
-public abstract class ElementSelector<T> {
+public abstract class ElementSelector<T> implements Drawer<T> {
     private T selected;
     private boolean selectionFinished = false;
     private MouseEventInfo eventInfo;
@@ -33,6 +34,9 @@ public abstract class ElementSelector<T> {
      */
     protected abstract T determineSelected(Point mousePos, MouseEventInfo eventInfo);
 
+    /**
+     * updates the selection
+     */
     public void update(Point mousePos, MouseEventInfo eventInfo) {
         if (selectionFinished) {
             return;
@@ -46,6 +50,12 @@ public abstract class ElementSelector<T> {
      */
     protected abstract boolean validate(T element, MouseEventInfo eventInfo);
 
+    /**
+     * finishes the selection (locking the selector until reset() is called, and calling onFinish callbacks)
+     * if the current selection is valid. Otherwise, calls the onFail callbacks.
+     * Returns whether finishing succeeded.
+     * @return true if the finishing was successful, false otherwise
+     */
     public boolean tryFinishSelection() {
         if (canFinishSelection()) {
             finishSelection();
@@ -69,10 +79,17 @@ public abstract class ElementSelector<T> {
         failedFinishObservers.forEach(Runnable::run);
     }
 
+    /**
+     * Adds a callback for when the selection is finished. The callback will be called
+     * with the selection as an argument
+     */
     public void onFinish(Consumer<T> callback) {
         this.finishObservers.add(callback);
     }
 
+    /**
+     * Adds a callback for when finishing the selection fails (by trying to finish with an invalid selection)
+     */
     public void onFail(Runnable callback) {
         this.failedFinishObservers.add(callback);
     }
@@ -84,6 +101,9 @@ public abstract class ElementSelector<T> {
         return this.selected;
     }
 
+    /**
+     * Resets the state of the selector
+     */
     public void reset() {
         eventInfo = null;
         selected = null;
@@ -91,25 +111,39 @@ public abstract class ElementSelector<T> {
         hidden = false;
     }
 
+    /**
+     * @return whether the selection is finished. If it is, calling update will have no effect
+     * until reset() is called
+     */
     public boolean isSelectionFinished() {
         return selectionFinished;
     }
 
     /**
-     * draws a preview of the element that would be selected onto the graphics object.
+     * draws a preview of the element onto the graphics object.
      */
-    protected abstract void draw(T element, Graphics2D g2, Camera camera, DrawingSettings settings);
+    public abstract void draw(T element, Graphics2D g2, Camera camera, DrawingSettings settings);
 
-    public void draw(Graphics2D g2, Camera camera, DrawingSettings settings) {
+    /**
+     * draws a preview of the element that would be selected onto the graphics object if the
+     * selector is not hidden.
+     */
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         if (selected != null && !hidden) {
             draw(selected, g2, camera, settings);
         }
     }
 
+    /**
+     * whether the selector is hidden (if it is, drawing it won't do anything)
+     */
     public boolean isHidden() {
         return hidden;
     }
 
+    /**
+     * sets whether the Selector should be rendered or not
+     */
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
     }
@@ -118,11 +152,17 @@ public abstract class ElementSelector<T> {
         this.d = d;
     }
 
+    /**
+     * Creates a new ElementSelector that executes the operator on the selection of
+     * this selector.
+     * @param operator Operator to be applied on the selection of this selector
+     * @param drawOriginal whether to draw the original or the newly calculated Selection
+     */
     public ElementSelector<T> then(UnaryOperator<T> operator, boolean drawOriginal) {
         return new CalculatedElementSelector<>(this, drawOriginal) {
 
             @Override
-            protected void draw(T element, Graphics2D g2, Camera camera, DrawingSettings settings) {
+            public void draw(T element, Graphics2D g2, Camera camera, DrawingSettings settings) {
                 if (!drawOriginal) {
                     ElementSelector.this.draw(element, g2, camera, settings);
                 }
@@ -135,6 +175,11 @@ public abstract class ElementSelector<T> {
         };
     }
 
+    /**
+     * Creates a new ElementSelector that executes the function on the selection of
+     * this selector.
+     * @param getter Function to be applied on the selection of this selector
+     */
     public <F> ElementSelector<F> thenGet(Function<T, F> getter) {
         return new CalculatedElementSelector<>(this, true) {
             @Override
@@ -143,7 +188,7 @@ public abstract class ElementSelector<T> {
             }
 
             @Override
-            protected void draw(F element, Graphics2D g2, Camera camera, DrawingSettings settings) {
+            public void draw(F element, Graphics2D g2, Camera camera, DrawingSettings settings) {
             }
         };
     }

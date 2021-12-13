@@ -1,6 +1,7 @@
 package oriedita.editor.drawing.tools;
 
 import oriedita.editor.Colors;
+import oriedita.editor.action.selector.drawing.DrawingSettings;
 import oriedita.editor.canvas.LineStyle;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
@@ -288,6 +289,10 @@ public class DrawingUtil {
         }
     }
 
+    public static void drawLineStep(Graphics g, LineSegment s, Camera camera, DrawingSettings settings) {
+        drawLineStep(g, s, camera, settings.getLineWidth(), settings.displayGridInputAssist());
+    }
+
     public static void drawLineStep(Graphics g, LineSegment s, Camera camera, float lineWidth, boolean gridInputAssist) {
         Graphics2D g2 = (Graphics2D) g;
         setColor(g, s.getColor());
@@ -321,6 +326,10 @@ public class DrawingUtil {
             default:
                 break;
         }
+    }
+
+    public static void drawStepVertex(Graphics2D g, Point p, LineColor color, Camera camera, DrawingSettings s) {
+        drawStepVertex(g, p, color, camera, s.displayGridInputAssist());
     }
 
     public static void drawStepVertex(Graphics2D g, Point p, LineColor color, Camera camera, boolean gridInputAssist) {
