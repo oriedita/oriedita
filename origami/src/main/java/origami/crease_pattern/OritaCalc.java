@@ -1,9 +1,9 @@
 package origami.crease_pattern;
 
-import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.Point;
 import origami.Epsilon;
 import origami.crease_pattern.element.Circle;
+import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 
 /**
@@ -1069,6 +1069,52 @@ public class OritaCalc {
     //--------------------------------------------------------
     public static boolean lineSegment_X_kousa_decide(LineSegment s1, LineSegment s2) {//0はX交差しない。1は交差する。20201017追加
         return determineLineSegmentIntersection(s1, s2, Epsilon.UNKNOWN_1EN4) == LineSegment.Intersection.INTERSECTS_1;
+    }
+
+    public static boolean collinear(Point p1, Point p2, Point p3) {
+        LineSegment sen1 = new LineSegment(p1, p2);
+        if (Epsilon.high.le0(sen1.determineLength())) {
+            return true;
+        }
+        LineSegment sen2 = new LineSegment(p1, p3);
+        if (Epsilon.high.le0(sen2.determineLength())) {
+            return true;
+        }
+        LineSegment sen3 = new LineSegment(p2, p3);
+        if (Epsilon.high.le0(sen3.determineLength())) {
+            return true;
+        }
+
+        if (Math.abs(OritaCalc.angle(sen1, sen2) - 0.0) < Epsilon.UNKNOWN_1EN6) {
+            return true;
+        }
+        if (Math.abs(OritaCalc.angle(sen1, sen2) - 180.0) < Epsilon.UNKNOWN_1EN6) {
+            return true;
+        }
+        if (Math.abs(OritaCalc.angle(sen1, sen2) - 360.0) < Epsilon.UNKNOWN_1EN6) {
+            return true;
+        }
+
+        if (Math.abs(OritaCalc.angle(sen2, sen3) - 0.0) < Epsilon.UNKNOWN_1EN6) {
+            return true;
+        }
+        if (Math.abs(OritaCalc.angle(sen2, sen3) - 180.0) < Epsilon.UNKNOWN_1EN6) {
+            return true;
+        }
+        if (Math.abs(OritaCalc.angle(sen2, sen3) - 360.0) < Epsilon.UNKNOWN_1EN6) {
+            return true;
+        }
+
+        if (Math.abs(OritaCalc.angle(sen3, sen1) - 0.0) < Epsilon.UNKNOWN_1EN6) {
+            return true;
+        }
+        if (Math.abs(OritaCalc.angle(sen3, sen1) - 180.0) < Epsilon.UNKNOWN_1EN6) {
+            return true;
+        }
+        if (Math.abs(OritaCalc.angle(sen3, sen1) - 360.0) < Epsilon.UNKNOWN_1EN6) {
+            return true;
+        }
+        return false;
     }
 
     public enum ParallelJudgement {
