@@ -4,6 +4,7 @@ import org.tinylog.Logger;
 import oriedita.editor.action.DrawingSettings;
 import oriedita.editor.action.MouseModeHandler;
 import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
@@ -433,6 +434,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             case MouseEvent.BUTTON3:
                 mainCreasePatternWorker.setCamera(creasePatternCamera);
                 activeMouseHandler.reset();
+                if (activeMouseHandler.getMouseMode() != MouseMode.LINE_SEGMENT_DELETE_3) {
+                    mainCreasePatternWorker.i_foldLine_additional = FoldLineAdditionalInputMode.BOTH_4;
+                }
                 mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mousePressed(p, e);
                 activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);
                 repaint();
