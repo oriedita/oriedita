@@ -4,13 +4,15 @@ import jico.Ico;
 import jico.ImageReadException;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.swing.AppMenuBar;
-import oriedita.editor.swing.Editor;
-import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.FoldedFigure_Worker_Drawer;
-import oriedita.editor.service.*;
+import oriedita.editor.service.ButtonService;
+import oriedita.editor.service.LookAndFeelService;
+import oriedita.editor.service.ResetService;
+import oriedita.editor.swing.AppMenuBar;
+import oriedita.editor.swing.Editor;
+import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.tools.ResourceUtil;
 
 import javax.inject.Inject;
@@ -20,7 +22,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Queue;
 
 @Singleton
 public class App {
@@ -118,25 +123,41 @@ public class App {
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.setFocusable(true);
         frame.setFocusTraversalKeysEnabled(true);
-        frame.addKeyListener(new KeyAdapter() {
 
+
+        foldedFiguresList.removeAllElements();
+
+        canvas.creasePatternCamera.setCameraPositionX(0.0);
+        canvas.creasePatternCamera.setCameraPositionY(0.0);
+        canvas.creasePatternCamera.setCameraAngle(0.0);
+        canvas.creasePatternCamera.setCameraMirror(1.0);
+        canvas.creasePatternCamera.setCameraZoomX(1.0);
+        canvas.creasePatternCamera.setCameraZoomY(1.0);
+        canvas.creasePatternCamera.setDisplayPositionX(350.0);
+        canvas.creasePatternCamera.setDisplayPositionY(350.0);
+
+        try {
+            frame.setIconImages(Ico.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("oriedita.ico"))));
+        } catch (IOException | ImageReadException | NullPointerException e) {
+            e.printStackTrace();
+        }
+        frame.setContentPane(editor.$$$getRootComponent$$$());
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_CONTROL, KeyEvent.CTRL_DOWN_MASK),
+                "CTRLPress");
+        frame.getRootPane().getActionMap().put("CTRLPress", new AbstractAction() {
             @Override
-            public void keyReleased(KeyEvent e) {
-                Popup popup;
-                while ((popup = popups.poll()) != null) {
-                    popup.hide();
-                }
-
-                canvasModel.setToggleLineColor(false);
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.isControlDown() && !canvasModel.getToggleLineColor()) {
+            public void actionPerformed(ActionEvent e) {
+                if (!canvasModel.getToggleLineColor()) {
                     canvasModel.setToggleLineColor(true);
                 }
-
-                if (e.isAltDown() && popups.isEmpty()) {
+            }
+        });
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ALT, KeyEvent.ALT_DOWN_MASK),
+                "ALTPress");
+        frame.getRootPane().getActionMap().put("ALTPress", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (popups.isEmpty()) {
                     for (Map.Entry<KeyStroke, AbstractButton> entry : buttonService.helpInputMap.entrySet()) {
                         AbstractButton button = entry.getValue();
                         KeyStroke keyStroke = entry.getKey();
@@ -156,24 +177,21 @@ public class App {
                 }
             }
         });
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_CONTROL, 0, true),
+                "Release");
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ALT, 0, true),
+                "Release");
+        frame.getRootPane().getActionMap().put("Release", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Popup popup;
+                while ((popup = popups.poll()) != null) {
+                    popup.hide();
+                }
 
-        foldedFiguresList.removeAllElements();
-
-        canvas.creasePatternCamera.setCameraPositionX(0.0);
-        canvas.creasePatternCamera.setCameraPositionY(0.0);
-        canvas.creasePatternCamera.setCameraAngle(0.0);
-        canvas.creasePatternCamera.setCameraMirror(1.0);
-        canvas.creasePatternCamera.setCameraZoomX(1.0);
-        canvas.creasePatternCamera.setCameraZoomY(1.0);
-        canvas.creasePatternCamera.setDisplayPositionX(350.0);
-        canvas.creasePatternCamera.setDisplayPositionY(350.0);
-
-        try {
-            frame.setIconImages(Ico.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("oriedita.ico"))));
-        } catch (IOException | ImageReadException | NullPointerException e) {
-            e.printStackTrace();
-        }
-        frame.setContentPane(editor.$$$getRootComponent$$$());
+                canvasModel.setToggleLineColor(false);
+            }
+        });
 
         frame.setJMenuBar(appMenuBar);
 
