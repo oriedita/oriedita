@@ -2,14 +2,12 @@ package oriedita.editor.swing;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
-import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
+import oriedita.editor.datatransfer.SaveTransferable;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveV1;
@@ -17,8 +15,9 @@ import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
 import oriedita.editor.task.TaskExecutor;
-import oriedita.editor.datatransfer.SaveTransferable;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
@@ -48,6 +47,13 @@ public class AppMenuBar extends JMenuBar {
     private JCheckBoxMenuItem darkModeCheckBox;
     private JCheckBoxMenuItem preciseZoomCheckBox;
     private JCheckBoxMenuItem displaySelfIntersectionCheckBox;
+
+    private JMenu displayPanelMenu;
+    private JCheckBoxMenuItem displayTopPanel;
+    private JCheckBoxMenuItem displayBottomPanel;
+    private JCheckBoxMenuItem displayLeftPanel;
+    private JCheckBoxMenuItem displayRightPanel;
+
     private JMenuItem newButton;
     private JMenuItem openButton;
     private JMenuItem saveButton;
@@ -108,6 +114,10 @@ public class AppMenuBar extends JMenuBar {
         buttonService.registerButton(displayAuxLinesCheckBox, "displayAuxLinesAction");
         buttonService.registerButton(displayLiveAuxLinesCheckBox, "displayLiveAuxLinesAction");
         buttonService.registerButton(displayStandardFaceMarksCheckBox, "displayStandardFaceMarksAction");
+        buttonService.registerButton(displayTopPanel, "displayTopPanel");
+        buttonService.registerButton(displayBottomPanel, "displayBottomPanel");
+        buttonService.registerButton(displayLeftPanel, "displayLeftPanel");
+        buttonService.registerButton(displayRightPanel, "displayRightPanel");
         buttonService.registerButton(cpOnTopCheckBox, "cpOnTopAction");
         buttonService.registerButton(toggleHelpMenuItem, "toggleHelpAction");
         buttonService.registerButton(darkModeCheckBox, "toggleDarkModeAction");
@@ -213,6 +223,10 @@ public class AppMenuBar extends JMenuBar {
         });
         preciseZoomCheckBox.addActionListener(e -> applicationModel.togglePreciseZoom());
         displaySelfIntersectionCheckBox.addActionListener(e -> applicationModel.toggleDisplaySelfIntersection());
+        displayTopPanel.addActionListener(e -> getData(applicationModel));
+        displayBottomPanel.addActionListener(e -> getData(applicationModel));
+        displayRightPanel.addActionListener(e -> getData(applicationModel));
+        displayLeftPanel.addActionListener(e -> getData(applicationModel));
 
         copyButton.addActionListener(e -> {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -354,6 +368,17 @@ public class AppMenuBar extends JMenuBar {
         displaySelfIntersectionCheckBox = new JCheckBoxMenuItem("Display self intersection");
         viewMenu.add(displaySelfIntersectionCheckBox);
 
+        displayPanelMenu = new JMenu("Panels");
+        viewMenu.add(displayPanelMenu);
+        displayTopPanel = new JCheckBoxMenuItem("Top Panel");
+        displayPanelMenu.add(displayTopPanel);
+        displayBottomPanel = new JCheckBoxMenuItem("Bottom Panel");
+        displayPanelMenu.add(displayBottomPanel);
+        displayLeftPanel = new JCheckBoxMenuItem("Left Panel");
+        displayPanelMenu.add(displayLeftPanel);
+        displayRightPanel = new JCheckBoxMenuItem("Right Panel");
+        displayPanelMenu.add(displayRightPanel);
+
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('H');
         add(helpMenu);
@@ -375,6 +400,10 @@ public class AppMenuBar extends JMenuBar {
         applicationModel.setDarkMode(darkModeCheckBox.isSelected());
         applicationModel.setPreciseZoom(preciseZoomCheckBox.isSelected());
         applicationModel.setDisplaySelfIntersection(displaySelfIntersectionCheckBox.isSelected());
+        applicationModel.setDisplayTopPanel(displayTopPanel.isSelected());
+        applicationModel.setDisplayBottomPanel(displayBottomPanel.isSelected());
+        applicationModel.setDisplayLeftPanel(displayLeftPanel.isSelected());
+        applicationModel.setDisplayRightPanel(displayRightPanel.isSelected());
     }
 
     public void setData(ApplicationModel applicationModel) {
@@ -390,6 +419,10 @@ public class AppMenuBar extends JMenuBar {
         darkModeCheckBox.setSelected(applicationModel.getLaf().equals(FlatDarkLaf.class.getName()));
         preciseZoomCheckBox.setSelected(applicationModel.isPreciseZoom());
         displaySelfIntersectionCheckBox.setSelected(applicationModel.getDisplaySelfIntersection());
+        displayTopPanel.setSelected(applicationModel.getDisplayTopPanel());
+        displayBottomPanel.setSelected(applicationModel.getDisplayBottomPanel());
+        displayLeftPanel.setSelected(applicationModel.getDisplayLeftPanel());
+        displayRightPanel.setSelected(applicationModel.getDisplayRightPanel());
 
         openRecentMenu.removeAll();
         if (applicationModel.getRecentFileList().isEmpty()) {
