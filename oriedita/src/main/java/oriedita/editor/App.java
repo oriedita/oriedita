@@ -4,13 +4,15 @@ import jico.Ico;
 import jico.ImageReadException;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.swing.AppMenuBar;
-import oriedita.editor.swing.Editor;
-import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.FoldedFigure_Worker_Drawer;
-import oriedita.editor.service.*;
+import oriedita.editor.service.ButtonService;
+import oriedita.editor.service.LookAndFeelService;
+import oriedita.editor.service.ResetService;
+import oriedita.editor.swing.AppMenuBar;
+import oriedita.editor.swing.Editor;
+import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.tools.ResourceUtil;
 
 import javax.inject.Inject;
@@ -20,7 +22,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Queue;
 
 @Singleton
 public class App {
@@ -143,7 +148,7 @@ public class App {
 
                         if (!button.isShowing()) continue;
 
-                        java.awt.Point locationOnScreen = button.getLocationOnScreen();
+                        Point locationOnScreen = button.getLocationOnScreen();
                         Dimension size = button.getSize();
                         JToolTip tooltip = new JToolTip();
                         tooltip.setTipText(keyStroke.toString().replaceAll("pressed ", ""));
@@ -183,6 +188,7 @@ public class App {
                 item.setData(applicationModel);
             }
             FoldedFigure_Worker_Drawer.setStaticData(applicationModel);
+            setData(applicationModel);
         });
 
         applicationModel.reload();
@@ -236,5 +242,12 @@ public class App {
         explanation.setVisible(applicationModel.getHelpVisible());
         //focus back to here after creating dialog
         frame.requestFocus();
+    }
+
+    private void setData(ApplicationModel applicationModel) {
+        editor.getBottomPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayBottomPanel());
+        editor.getTopPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayTopPanel());
+        editor.getRightPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayRightPanel());
+        editor.getLeftPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayLeftPanel());
     }
 }

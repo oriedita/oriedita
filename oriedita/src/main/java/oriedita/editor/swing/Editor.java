@@ -5,7 +5,6 @@ import oriedita.editor.Canvas;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -61,5 +60,21 @@ public class Editor {
 
     public Canvas getCanvas() {
         return canvas;
+    }
+
+    public RightPanel getRightPanel() {
+        return rightPanel;
+    }
+
+    public BottomPanel getBottomPanel() {
+        return bottomPanel;
+    }
+
+    public TopPanel getTopPanel() {
+        return topPanel;
+    }
+
+    public LeftPanel getLeftPanel() {
+        return leftPanel;
     }
 }
