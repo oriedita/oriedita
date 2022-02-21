@@ -45,6 +45,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
             Point syuusei_point = new Point(syuusei_point_A_37(p0));
 
             d.lineStep.get(0).setA(syuusei_point);
+            d.lineStep.get(0).setColor(d.lineColor);
 
             if (d.gridInputAssist) {
                 d.lineCandidate.clear();
