@@ -1,21 +1,20 @@
 package oriedita.editor.service;
 
-import javax.inject.Inject;
-
 import org.tinylog.Logger;
+import oriedita.editor.action.MouseHandlerVoronoiCreate;
+import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.swing.component.GlyphIcon;
 import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.swing.dialog.SelectKeyStrokeDialog;
-import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.action.MouseHandlerVoronoiCreate;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.tools.KeyStrokeUtil;
 import oriedita.editor.tools.ResourceUtil;
 import oriedita.editor.tools.StringOp;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -27,19 +26,25 @@ public class ButtonService {
     private final HelpDialog explanation;
     private final CreasePattern_Worker mainCreasePatternWorker;
     public Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
-    private Frame owner;
+    private JFrame owner;
     private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate;
     private final CanvasModel canvasModel;
 
     @Inject
-    public ButtonService(HelpDialog explanation, CreasePattern_Worker mainCreasePatternWorker, MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate, CanvasModel canvasModel) {
+    public ButtonService(
+            @Named("mainFrame") JFrame frame,
+            HelpDialog explanation,
+            CreasePattern_Worker mainCreasePatternWorker,
+            MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate,
+            CanvasModel canvasModel) {
+        this.owner = frame;
         this.explanation = explanation;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.mouseHandlerVoronoiCreate = mouseHandlerVoronoiCreate;
         this.canvasModel = canvasModel;
     }
 
-    public void setOwner(Frame owner) {
+    public void setOwner(JFrame owner) {
         this.owner = owner;
     }
 
@@ -123,9 +128,9 @@ public class ButtonService {
 
             if (keyStroke != null) {
                 helpInputMap.put(keyStroke, button);
-                button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
+                owner.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
             }
-            button.getActionMap().put(key, new Click(button));
+            owner.getRootPane().getActionMap().put(key, new Click(button));
 
             if (!StringOp.isEmpty(icon)) {
                 GlyphIcon glyphIcon = new GlyphIcon(icon, button.getForeground());

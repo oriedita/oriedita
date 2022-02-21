@@ -3,12 +3,11 @@ package oriedita.editor.databinding;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
@@ -37,6 +36,10 @@ public class ApplicationModel implements Serializable {
     private boolean displayCreasePatternOnTop;
     private boolean displayFoldingProgress;
     private boolean displaySelfIntersection;
+    private boolean displayTopPanel;
+    private boolean displayBottomPanel;
+    private boolean displayLeftPanel;
+    private boolean displayRightPanel;
     private boolean preciseZoom;
     private int lineWidth;
     private int auxLineWidth;
@@ -123,6 +126,46 @@ public class ApplicationModel implements Serializable {
         this.pcs.firePropertyChange("preciseZoom", oldPreciseZoom, preciseZoom);
     }
 
+    public boolean getDisplayTopPanel() {
+        return displayTopPanel;
+    }
+
+    public void setDisplayTopPanel(boolean displayTopPanel) {
+        boolean oldDisplayTopPanel = this.displayTopPanel;
+        this.displayTopPanel = displayTopPanel;
+        this.pcs.firePropertyChange("displayTopPanel", oldDisplayTopPanel, displayTopPanel);
+    }
+
+    public boolean getDisplayBottomPanel() {
+        return displayBottomPanel;
+    }
+
+    public void setDisplayBottomPanel(boolean displayBottomPanel) {
+        boolean oldDisplayBottomPanel = this.displayBottomPanel;
+        this.displayBottomPanel = displayBottomPanel;
+        this.pcs.firePropertyChange("displayBottomPanel", oldDisplayBottomPanel, displayBottomPanel);
+    }
+
+    public boolean getDisplayLeftPanel() {
+        return displayLeftPanel;
+    }
+
+    public void setDisplayLeftPanel(boolean displayLeftPanel) {
+        boolean oldDisplayLeftPanel = this.displayLeftPanel;
+        this.displayLeftPanel = displayLeftPanel;
+        this.pcs.firePropertyChange("displayLeftPanel", oldDisplayLeftPanel, displayLeftPanel);
+    }
+
+    public boolean getDisplayRightPanel() {
+        return displayRightPanel;
+    }
+
+    public void setDisplayRightPanel(boolean displayRightPanel) {
+        boolean oldDisplayRightPanel = this.displayRightPanel;
+        this.displayRightPanel = displayRightPanel;
+        this.pcs.firePropertyChange("displayRightPanel", oldDisplayRightPanel, displayRightPanel);
+    }
+
     public String getLaf() {
         return laf;
     }
@@ -196,6 +239,11 @@ public class ApplicationModel implements Serializable {
         helpVisible = true;
 
         check4Enabled = false;
+
+        displayTopPanel = true;
+        displayBottomPanel = true;
+        displayLeftPanel = true;
+        displayRightPanel = true;
 
         circleCustomizedColor = new Color(100, 200, 200);
 
@@ -567,6 +615,11 @@ public class ApplicationModel implements Serializable {
         gridColor = applicationModel.getGridColor();
         gridScaleColor = applicationModel.getGridScaleColor();
         gridLineWidth = applicationModel.getGridLineWidth();
+
+        displayTopPanel = applicationModel.getDisplayTopPanel();
+        displayBottomPanel = applicationModel.getDisplayBottomPanel();
+        displayRightPanel = applicationModel.getDisplayRightPanel();
+        displayLeftPanel = applicationModel.getDisplayLeftPanel();
 
         laf = applicationModel.getLaf();
         recentFileList = applicationModel.getRecentFileList().stream().filter(File::exists).collect(Collectors.toList());

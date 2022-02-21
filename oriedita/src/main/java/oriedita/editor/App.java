@@ -164,7 +164,7 @@ public class App {
 
                         if (!button.isShowing()) continue;
 
-                        java.awt.Point locationOnScreen = button.getLocationOnScreen();
+                        Point locationOnScreen = button.getLocationOnScreen();
                         Dimension size = button.getSize();
                         JToolTip tooltip = new JToolTip();
                         tooltip.setTipText(keyStroke.toString().replaceAll("pressed ", ""));
@@ -201,6 +201,7 @@ public class App {
                 item.setData(applicationModel);
             }
             FoldedFigure_Worker_Drawer.setStaticData(applicationModel);
+            setData(applicationModel);
         });
 
         applicationModel.reload();
@@ -254,5 +255,12 @@ public class App {
         explanation.setVisible(applicationModel.getHelpVisible());
         //focus back to here after creating dialog
         frame.requestFocus();
+    }
+
+    private void setData(ApplicationModel applicationModel) {
+        editor.getBottomPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayBottomPanel());
+        editor.getTopPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayTopPanel());
+        editor.getRightPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayRightPanel());
+        editor.getLeftPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayLeftPanel());
     }
 }
