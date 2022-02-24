@@ -19,10 +19,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Queue;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Representation of the current drawn crease pattern.
@@ -35,7 +32,7 @@ public class FoldLineSet {
     Queue<LineSegment> Check2LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     Queue<LineSegment> Check3LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     Queue<LineSegment> Check4LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
-
+    Map<Point, FlatFoldabilityViolation> cAMVViolations = new ConcurrentHashMap<>();
     List<Circle> circles = new ArrayList<>(); //円のインスタンス化
 
     // Specify the point Q, delete the line segments AQ and QC, and add the line segment AC (however, only two line segments have Q as the end point) // When implemented, 1 when nothing is done Returns 0.
@@ -56,6 +53,7 @@ public class FoldLineSet {
         Check2LineSegment.clear();
         Check3LineSegment.clear();
         Check4LineSegment.clear();
+        cAMVViolations.clear();
         circles.clear();
     }
 
@@ -3025,6 +3023,7 @@ public class FoldLineSet {
                 try {
                     if (!i_flat_ok(p, map.getLines(point))) {
                         Check4LineSegment.add(new LineSegment(p, p));
+                        cAMVViolations.put(point, i_flat_ok_violation(p, map.getLines(point)));
                     }
                 } catch (InterruptedException e) {
                     // finish thread.
@@ -3044,6 +3043,83 @@ public class FoldLineSet {
                 throw new RuntimeException("Check cAMV did not exit!");
             }
         }
+    }
+
+    private FlatFoldabilityViolation i_flat_ok_violation(Point p, List<LineSegment> lines) {
+        //If the end point of the line segment closest to the point p and the end point closer to the point p is the apex, how many line segments are present (the number of line segments having an end point within the apex and r).
+        int i_tss_red = 0;
+        int i_tss_blue = 0;
+        int i_tss_black = 0;
+
+        SortingBox<LineSegment> nbox = new SortingBox<>();
+
+        for (LineSegment s : lines) {
+            if (s.getColor() == LineColor.RED_1) {
+                i_tss_red++;
+            } else if (s.getColor() == LineColor.BLUE_2) {
+                i_tss_blue++;
+            } else if (s.getColor() == LineColor.BLACK_0) {
+                i_tss_black++;
+            }
+
+            //Put a polygonal line with p as the end point in Narabebako
+            if (s.getColor().isFoldingLine()) { //Auxiliary live lines are excluded at this stage
+                if (p.distance(s.getA()) < Epsilon.FLAT) {
+                    nbox.addByWeight(s, OritaCalc.angle(s.getA(), s.getB()));
+                } else if (p.distance(s.getB()) < Epsilon.FLAT) {
+                    nbox.addByWeight(s, OritaCalc.angle(s.getB(), s.getA()));
+                }
+            }
+        }
+
+        // Judgment start-------------------------------------------
+        if ((i_tss_black != 0) && (i_tss_black != 2)) {//It is strange if there are no black lines or if there are other than two lines.
+            return new FlatFoldabilityViolation(FlatFoldabilityViolation.Rule.NUMBER_OF_FOLDS, FlatFoldabilityViolation.Color.CORRECT);
+        }
+
+        FlatFoldabilityViolation.Rule r = extended_fushimi_decide_inside_violation(p, nbox, i_tss_black != 0);
+        if (i_tss_black == 0) {//If there is no black line
+            if (Math.abs(i_tss_red - i_tss_blue) != 2) {//Do not satisfy Maekawa's theorem in terms of the inside of the paper
+                if (r == FlatFoldabilityViolation.Rule.LITTLE_BIG_LITTLE || r == FlatFoldabilityViolation.Rule.NONE) {
+                    r = FlatFoldabilityViolation.Rule.MAEKAWA;
+                }
+                if (i_tss_blue == i_tss_red) {
+                    return new FlatFoldabilityViolation(r, FlatFoldabilityViolation.Color.EQUAL);
+                } else if (Math.abs(i_tss_red - i_tss_blue) > 2) {
+                    if (i_tss_blue > i_tss_red) {
+                        return new FlatFoldabilityViolation(
+                                r,
+                                FlatFoldabilityViolation.Color.NOT_ENOUGH_MOUNTAIN);
+                    }
+                    return new FlatFoldabilityViolation(
+                            r,
+                            FlatFoldabilityViolation.Color.NOT_ENOUGH_VALLEY);
+                } else {
+                    if (i_tss_blue > i_tss_red) {
+                        return new FlatFoldabilityViolation(
+                                r,
+                                FlatFoldabilityViolation.Color.NOT_ENOUGH_VALLEY);
+                    }
+                    return new FlatFoldabilityViolation(
+                            r,
+                            FlatFoldabilityViolation.Color.NOT_ENOUGH_MOUNTAIN);
+                }
+            }
+            if (r != FlatFoldabilityViolation.Rule.MAEKAWA) {
+                if (i_tss_blue == i_tss_red) {
+                    return new FlatFoldabilityViolation(r, FlatFoldabilityViolation.Color.EQUAL);
+                } else {
+                    return new FlatFoldabilityViolation(r, FlatFoldabilityViolation.Color.CORRECT);
+                }
+            }
+            return null;
+        }
+
+        //When there are two black lines
+        if (!extended_fushimi_decide_sides(p, nbox)) {
+            return new FlatFoldabilityViolation(FlatFoldabilityViolation.Rule.LITTLE_BIG_LITTLE, FlatFoldabilityViolation.Color.CORRECT);
+        }
+        return null;
     }
 
     private boolean i_flat_ok(Point p, List<LineSegment> list) throws InterruptedException {//Foldable flat = 1
@@ -3285,6 +3361,149 @@ public class FoldLineSet {
         }
 
         return extended_fushimi_decide_inside(p, nbox);
+    }
+
+    public FlatFoldabilityViolation.Rule extended_fushimi_decide_inside_violation(Point p, SortingBox<LineSegment> nbox, boolean hasEdge) {
+        if (nbox.getTotal() % 2 == 1) {//t1を端点とする折線の数が奇数のとき
+            return FlatFoldabilityViolation.Rule.NUMBER_OF_FOLDS;
+        }
+
+        if (nbox.getTotal() == 2) {//t1を端点とする折線の数が2のとき
+            if (nbox.getValue(1).getColor() != nbox.getValue(2).getColor()) {//2本の線種が違うなら角度関係なしにダメ
+                return FlatFoldabilityViolation.Rule.MAEKAWA;
+            }
+
+            //The following is when the two line types are blue-blue or red-red
+            LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(nbox.getValue(1), nbox.getValue(2), Epsilon.FLAT);
+
+            switch (i_senbun_kousa_hantei) {
+                case PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323:
+                case PARALLEL_START_OF_S1_INTERSECTS_END_OF_S2_333:
+                case PARALLEL_END_OF_S1_INTERSECTS_END_OF_S2_353:
+                case PARALLEL_END_OF_S1_INTERSECTS_START_OF_S2_343:
+                    return FlatFoldabilityViolation.Rule.NONE;
+                default:
+                    return FlatFoldabilityViolation.Rule.ANGLES;
+            }
+        }
+
+        //以下はt1を端点とする折線の数が4以上の偶数のとき
+        double fushimi_decision_angle_goukei = 360.0;
+
+        SortingBox<LineSegment> nbox1 = new SortingBox<>();
+
+        if (!hasEdge) {
+            double even = 0;
+            double odd = 0;
+            for (int k = 1; k <= nbox.getTotal(); k++) {//kは角度の順番
+                if (k % 2 == 0) {
+                    even += nbox.getWeight(k) - nbox.getWeight(k-1);
+                } else {
+                    if (k == 1) {
+                        odd += nbox.getWeight(k) - nbox.getWeight(nbox.getTotal());
+                    } else {
+                        odd += nbox.getWeight(k) - nbox.getWeight(k-1);
+                    }
+                }
+            }
+            odd = Math.abs(odd);
+            even = Math.abs(even);
+            //odd += nbox.getWeight(1) + 360.0 - nbox.getWeight(nbox.getTotal());
+            if (Math.abs(even - odd) > Epsilon.FLAT) {
+                return FlatFoldabilityViolation.Rule.ANGLES;
+            }
+        }
+
+        while (nbox.getTotal() > 2) {//点から出る折線の数が2になるまで実行する
+            SortingBox<LineSegment> result = null;//Operation to make three adjacent angles into one angle by the extended Fushimi theorem
+            SortingBox<LineSegment> nboxtemp = new SortingBox<>();
+            SortingBox<LineSegment> nbox11 = new SortingBox<>();
+            int tikai_orisen_jyunban;
+            int tooi_orisen_jyunban;
+
+            double kakudo_min = 10000.0;
+
+            //角度の最小値kakudo_minを求める
+            for (int k = 1; k <= nbox.getTotal(); k++) {//kは角度の順番
+                tikai_orisen_jyunban = k;
+                if (tikai_orisen_jyunban > nbox.getTotal()) {
+                    tikai_orisen_jyunban = tikai_orisen_jyunban - nbox.getTotal();
+                }
+                tooi_orisen_jyunban = k + 1;
+                if (tooi_orisen_jyunban > nbox.getTotal()) {
+                    tooi_orisen_jyunban = tooi_orisen_jyunban - nbox.getTotal();
+                }
+
+                double temp_kakudo = OritaCalc.angle_between_0_kmax(
+                        OritaCalc.angle_between_0_kmax(nbox.getWeight(tooi_orisen_jyunban), fushimi_decision_angle_goukei)
+                                -
+                                OritaCalc.angle_between_0_kmax(nbox.getWeight(tikai_orisen_jyunban), fushimi_decision_angle_goukei)
+
+                        , fushimi_decision_angle_goukei
+                );
+
+                if (temp_kakudo < kakudo_min) {
+                    kakudo_min = temp_kakudo;
+                }
+            }
+
+            for (int k = 1; k <= nbox.getTotal(); k++) {//kは角度の順番
+                double temp_kakudo = OritaCalc.angle_between_0_kmax(nbox.getWeight(2) - nbox.getWeight(1), fushimi_decision_angle_goukei);
+
+                if (Math.abs(temp_kakudo - kakudo_min) < Epsilon.FLAT) {
+                    if (nbox.getValue(1).getColor() != nbox.getValue(2).getColor()) {//この場合に隣接する３角度を1つの角度にする
+                        // 折線を2つ減らせる条件に適合したので、新たにnbox1を作ってリターンする。
+
+                        double kijyun_kakudo = nbox.getWeight(3);
+
+                        for (int i = 1; i <= nbox.getTotal(); i++) {
+                            WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
+                            i_d_0.set(nbox.getWeightedValue(i));
+
+                            i_d_0.setWeight(
+                                    OritaCalc.angle_between_0_kmax(i_d_0.getWeight() - kijyun_kakudo, fushimi_decision_angle_goukei)
+                            );
+
+                            nboxtemp.add(i_d_0);
+                        }
+
+                        for (int i = 3; i <= nboxtemp.getTotal(); i++) {
+                            WeightedValue<LineSegment> i_d_0 = new WeightedValue<>();
+                            i_d_0.set(nboxtemp.getWeightedValue(i));
+
+                            nbox11.add(i_d_0);
+                        }
+
+                        fushimi_decision_angle_goukei = fushimi_decision_angle_goukei - 2.0 * kakudo_min;
+                        result = nbox11;
+                        break;
+                    }
+                }
+                nbox.shift();
+
+            }
+            if (result == null) {// 折線を2つ減らせる条件に適合した角がなかった場合nbox0とおなじnbox1を作ってリターンする。
+                for (int i = 1; i <= nbox.getTotal(); i++) {
+                    nbox11.add(nbox.getWeightedValue(i));
+                }
+                result = nbox11;
+            }
+
+            nbox1.set(result);
+            if (nbox1.getTotal() == nbox.getTotal()) {
+                return FlatFoldabilityViolation.Rule.LITTLE_BIG_LITTLE;
+            }
+            nbox.set(nbox1);
+        }
+
+        double temp_kakudo = OritaCalc.angle_between_0_kmax(
+                OritaCalc.angle_between_0_kmax(nbox.getWeight(1), fushimi_decision_angle_goukei)
+                        -
+                        OritaCalc.angle_between_0_kmax(nbox.getWeight(2), fushimi_decision_angle_goukei)
+                , fushimi_decision_angle_goukei
+        );
+
+        return Math.abs(fushimi_decision_angle_goukei - temp_kakudo * 2.0) < Epsilon.FLAT? FlatFoldabilityViolation.Rule.NONE : FlatFoldabilityViolation.Rule.ANGLES;//この0だけ、角度がおかしいという意味
     }
 
     public boolean extended_fushimi_decide_inside(Point p, SortingBox<LineSegment> nbox) {//return　0=満たさない、　1=満たす。　
@@ -3587,6 +3806,10 @@ public class FoldLineSet {
         for (LineSegment connectedLine : connectedLines) {
             connectedLine.setSelected(2);
         }
+    }
+
+    public Map<Point, FlatFoldabilityViolation> getViolations() {
+        return this.cAMVViolations;
     }
 
     /**
