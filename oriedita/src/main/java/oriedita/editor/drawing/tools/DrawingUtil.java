@@ -3,6 +3,7 @@ package oriedita.editor.drawing.tools;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
 import origami.Epsilon;
+import origami.crease_pattern.FlatFoldabilityViolation;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
@@ -509,5 +510,57 @@ public class DrawingUtil {
             region |= NORTH;
         }
         return region;
+    }
+
+    public static void drawViolation(Graphics2D g, Point p, FlatFoldabilityViolation violation, int transparency) {
+        g.setColor(Colors.get(new Color(255, 0, 147, transparency)));
+
+        Color c;
+        switch (violation.getColor()) {
+            case NOT_ENOUGH_MOUNTAIN:
+                c = Colors.get(Color.RED);
+                break;
+            case NOT_ENOUGH_VALLEY:
+                c = Colors.get(Color.BLUE);
+                break;
+            default:
+                c = Colors.get(Color.GRAY);
+                break;
+        }
+        Color actualColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), transparency);
+        g.setColor(actualColor);
+        g.setStroke(new BasicStroke(2));
+        switch (violation.getViolatedRule()) {
+            case NUMBER_OF_FOLDS:
+                g.fillPolygon(new int[] {
+                        (int) p.getX(),
+                        (int) p.getX() - 10,
+                        (int) p.getX() + 10
+                }, new int[] {
+                        (int) p.getY() - 9,
+                        (int) p.getY() + 7,
+                        (int) p.getY() + 7
+                }, 3);
+                //g.drawLine((int) p.getX(), (int) p.getY(), (int) p.getX(), (int) p.getY()); //直線
+                break;
+            case ANGLES:
+                if (violation.getColor() == FlatFoldabilityViolation.Color.CORRECT) {
+                    g.drawOval((int) p.getX() - 11, (int) p.getY() - 11, 23, 23);
+                } else {
+                    g.fillOval((int) p.getX() - 11, (int) p.getY() - 11, 23, 23);
+                }
+                //g.drawLine((int) p.getX(), (int) p.getY(), (int) p.getX(), (int) p.getY()); //直線
+                break;
+            case MAEKAWA:
+
+                g.fillRect((int) p.getX() - 9, (int) p.getY() - 9, 19, 19);
+                break;
+            case LITTLE_BIG_LITTLE:
+                g.fillOval((int) p.getX() - 9, (int) p.getY() - 9, 19, 19);
+                //g.drawLine((int) p.getX(), (int) p.getY(), (int) p.getX(), (int) p.getY()); //直線
+                break;
+            case NONE:
+                break;
+        }
     }
 }

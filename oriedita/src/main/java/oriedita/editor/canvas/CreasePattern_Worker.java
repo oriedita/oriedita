@@ -12,6 +12,7 @@ import oriedita.editor.service.HistoryState;
 import oriedita.editor.task.CheckCAMVTask;
 import oriedita.editor.task.FinishedFuture;
 import origami.Epsilon;
+import origami.crease_pattern.FlatFoldabilityViolation;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
@@ -26,6 +27,7 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 /**
@@ -433,14 +435,19 @@ public class CreasePattern_Worker {
             }
         }
 
-        g2.setStroke(new BasicStroke(25.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
+        g2.setStroke(new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
 
 
         //Check4Senbには0番目からsize()-1番目までデータが入っている
         //Logger.info("foldLineSet.check4_size() = "+foldLineSet.check4_size());
         if (check4) {
-            for (LineSegment s_temp : foldLineSet.getCheck4LineSegments()) {
-                DrawingUtil.pointingAt4(g, camera.object2TV(s_temp), check4ColorTransparency);
+            //for (LineSegment s_temp : foldLineSet.getCheck4LineSegments()) {
+            //    DrawingUtil.pointingAt4(g, camera.object2TV(s_temp), check4ColorTransparency);
+            //}
+            for (Map.Entry<Point, FlatFoldabilityViolation> entry : foldLineSet.getViolations().entrySet()) {
+                Point p = entry.getKey();
+                FlatFoldabilityViolation v = entry.getValue();
+                DrawingUtil.drawViolation(g2, camera.object2TV(p), v, check4ColorTransparency);
             }
 
             if (displayComments) {
@@ -449,7 +456,7 @@ public class CreasePattern_Worker {
                     g.setColor(Colors.get(Color.orange));
                     g.drawString("... cAMV Errors", p0x_max - 100, 10);
                 } else if (camvTask.isDone()) {
-                    int numErrors = foldLineSet.getCheck4LineSegments().size();
+                    int numErrors = foldLineSet.getViolations().size();
                     if (numErrors == 0) {
                         g.setColor(Colors.get(Color.green));
                     } else {
