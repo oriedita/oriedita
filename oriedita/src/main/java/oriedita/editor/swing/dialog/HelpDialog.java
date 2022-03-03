@@ -1,15 +1,20 @@
 package oriedita.editor.swing.dialog;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import org.tinylog.Logger;
+import oriedita.editor.Oriedita;
 import oriedita.editor.databinding.ApplicationModel;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Singleton
 public class HelpDialog extends JDialog {
@@ -90,7 +95,21 @@ public class HelpDialog extends JDialog {
     }
 
     public void setExplanation(String key) {
-        helpLabel.setText(helpBundle.getString(key));
+        helpLabel.setText(processPaths(helpBundle.getString(key)));
+    }
+
+    private String processPaths(String helpText) {
+        Pattern p = Pattern.compile("src\\s*=\\s*[\"']([^\"']*)[\"']");
+        Matcher matcher = p.matcher(helpText);
+        return matcher.replaceAll(result -> {
+            String path = result.group(1);
+            URL resource = Oriedita.class.getClassLoader().getResource(path);
+            if (resource != null) {
+                return "src='" + resource + "'";
+            }
+            Logger.warn("Failed to find resource " + path);
+            return "src='' /> Failed to load " + path + "<br";
+        });
     }
 
     /**
