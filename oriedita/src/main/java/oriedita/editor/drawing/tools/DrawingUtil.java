@@ -1,9 +1,11 @@
 package oriedita.editor.drawing.tools;
 
+import org.tinylog.Logger;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
 import origami.Epsilon;
 import origami.crease_pattern.FlatFoldabilityViolation;
+import origami.crease_pattern.LittleBigLittleViolation;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
@@ -512,6 +514,15 @@ public class DrawingUtil {
         return region;
     }
 
+    /**
+     * Draws a Flatfoldability violation to the graphics object.
+     * @param g Graphics on which to draw
+     * @param p point that violates flatfoldability
+     * @param violation object that describes the violation
+     * @param transparency how transparently the violation should be drawn
+     * @param useAdvanced whether to use the "legacy" way to draw (purple circles) or the newer one which differentiates
+     *                    between types of violations
+     */
     public static void drawViolation(Graphics2D g, Point p, FlatFoldabilityViolation violation, int transparency, boolean useAdvanced) {
         g.setColor(Colors.get(new Color(255, 0, 147, transparency)));
 
@@ -528,6 +539,9 @@ public class DrawingUtil {
             case NOT_ENOUGH_VALLEY:
                 c = Colors.get(Color.BLUE);
                 break;
+            case UNKNOWN:
+                c = Colors.get(new Color(255, 0, 147));
+                break;
             default:
                 c = Colors.get(Color.GRAY);
                 break;
@@ -537,16 +551,7 @@ public class DrawingUtil {
         g.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
         switch (violation.getViolatedRule()) {
             case NUMBER_OF_FOLDS:
-                g.fillPolygon(new int[] {
-                        (int) p.getX(),
-                        (int) p.getX() - 10,
-                        (int) p.getX() + 10
-                }, new int[] {
-                        (int) p.getY() - 9,
-                        (int) p.getY() + 7,
-                        (int) p.getY() + 7
-                }, 3);
-                //g.drawLine((int) p.getX(), (int) p.getY(), (int) p.getX(), (int) p.getY()); //直線
+                drawTriangleAroundPoint(g, p);
                 break;
             case ANGLES:
                 if (violation.getColor() == FlatFoldabilityViolation.Color.CORRECT) {
@@ -554,43 +559,56 @@ public class DrawingUtil {
                 } else {
                     g.fillOval((int) p.getX() - 11, (int) p.getY() - 11, 23, 23);
                 }
-                //g.drawLine((int) p.getX(), (int) p.getY(), (int) p.getX(), (int) p.getY()); //直線
                 break;
             case MAEKAWA:
-
                 g.fillRect((int) p.getX() - 9, (int) p.getY() - 9, 19, 19);
                 break;
             case LITTLE_BIG_LITTLE:
-                //g.fillOval((int) p.getX() - 9, (int) p.getY() - 9, 19, 19);
-                //g.drawLine((int) p.getX(), (int) p.getY(), (int) p.getX(), (int) p.getY()); //直線
-                if (violation.getLineSegments() != null) {
-                    LineSegment[] segments = violation.getLineSegments();
-                    boolean[] violating = violation.getViolatingLBL();
-                    for (int i = 0; i < segments.length; i++) {
-                        if (i == segments.length - 1 && segments[i].getColor() == LineColor.BLACK_0) {
-                            break;
-                        }
-                        LineSegment orig = OritaCalc.lineSegmentChangeLength(segments[i], 15);
-                        LineSegment next = OritaCalc.lineSegmentChangeLength(segments[(i+1)%segments.length], 15);
-                        int[] xCoords = new int[] {
-                                (int) p.getX(),
-                                (int) (p.getX() + orig.getB().getX() - orig.getA().getX()),
-                                (int) (p.getX() + next.getB().getX() - next.getA().getX()),
-                        };
-                        int[] yCoords = new int[] {
-                                (int) p.getY(),
-                                (int) (p.getY() + orig.getB().getY() - orig.getA().getY()),
-                                (int) (p.getY() + next.getB().getY() - next.getA().getY()),
-                        };
-                        g.drawPolygon(xCoords, yCoords, 3);
-                        if (violating[i]) {
-                            g.fillPolygon(xCoords, yCoords, 3);
-                        }
+                LittleBigLittleViolation lViolation;
+                if (violation instanceof LittleBigLittleViolation) {
+                    lViolation = (LittleBigLittleViolation) violation;
+                } else {
+                    Logger.warn("LITTLE_BIG_LITTLE violation was not of type LittleBigLittleViolation");
+                    break;
+                }
+                LineSegment[] segments = lViolation.getLineSegments();
+                boolean[] violating = lViolation.getViolatingLBL();
+                for (int i = 0; i < segments.length; i++) {
+                    if (i == segments.length - 1 && segments[i].getColor() == LineColor.BLACK_0) {
+                        break;
+                    }
+                    LineSegment current = OritaCalc.lineSegmentChangeLength(segments[i], 15);
+                    LineSegment next = OritaCalc.lineSegmentChangeLength(segments[(i+1)%segments.length], 15);
+                    int[] xCoords = new int[] {
+                            (int) p.getX(),
+                            (int) (p.getX() + current.determineDeltaX()),
+                            (int) (p.getX() + next.determineDeltaX()),
+                    };
+                    int[] yCoords = new int[] {
+                            (int) p.getY(),
+                            (int) (p.getY() + current.determineDeltaY()),
+                            (int) (p.getY() + next.determineDeltaY()),
+                    };
+                    g.drawPolygon(xCoords, yCoords, 3);
+                    if (violating[i]) {
+                        g.fillPolygon(xCoords, yCoords, 3);
                     }
                 }
                 break;
             case NONE:
                 break;
         }
+    }
+
+    private static void drawTriangleAroundPoint(Graphics2D g, Point p) {
+        g.fillPolygon(new int[] {
+                (int) p.getX(),
+                (int) p.getX() - 10,
+                (int) p.getX() + 10
+        }, new int[] {
+                (int) p.getY() - 9,
+                (int) p.getY() + 7,
+                (int) p.getY() + 7
+        }, 3);
     }
 }
