@@ -3292,7 +3292,7 @@ public class FoldLineSet {
             nbox.set(nbox1);
         }
 
-        return null;
+        return Optional.empty();
     }
 
     //Obtain SortingBox<Integer> with a polygonal line starting at b. They are arranged in ascending order of angle with the line segment ba.
