@@ -3217,16 +3217,12 @@ public class FoldLineSet {
 
     public Optional<FlatFoldabilityViolation> findLittleBigLittleViolationOnSides(Point p, SortingBox<LineSegment> nbox) {//return　0=満たさない、　1=満たす。　
         if (nbox.getTotal() == 2) {//t1を端点とする折線の数が2のとき
-            if (nbox.getValue(1).getColor() != LineColor.BLACK_0) {//1本目が黒でないならダメ
-                return Optional.empty();
-            }
-            //2本目が黒でないならダメ
-            if (nbox.getValue(2).getColor() == LineColor.BLACK_0) {
-                return null;
-            } else {
+            if (nbox.getValue(1).getColor() != LineColor.BLACK_0 || nbox.getValue(2).getColor() != LineColor.BLACK_0) {//1本目が黒でないならダメ
                 return Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.MAEKAWA,
                         FlatFoldabilityViolation.Color.UNKNOWN));
             }
+            //2本目が黒でないならダメ
+            return Optional.empty();
 
             //2本の線種が黒黒
         }
