@@ -4,7 +4,10 @@ import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.CanvasModel;
 
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class CheckCAMVTask implements Callable<Void> {
     private final CreasePattern_Worker creasePattern_worker;
@@ -32,7 +35,7 @@ public class CheckCAMVTask implements Callable<Void> {
         try {
             creasePattern_worker.ap_check4();
         } catch (InterruptedException e) {
-            creasePattern_worker.foldLineSet.getCheck4LineSegments().clear();
+            creasePattern_worker.foldLineSet.getViolations().clear();
         }
 
         long stop = System.currentTimeMillis();

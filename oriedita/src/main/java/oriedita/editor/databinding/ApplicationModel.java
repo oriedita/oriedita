@@ -51,6 +51,7 @@ public class ApplicationModel implements Serializable {
     private boolean selectPersistent;
     private boolean correctCpBeforeFolding;
     private boolean check4Enabled;
+    private boolean advancedCheck4Display;
     private boolean helpVisible;
     private int foldLineDividingNumber;
     private int numPolygonCorners;
@@ -239,6 +240,7 @@ public class ApplicationModel implements Serializable {
         helpVisible = true;
 
         check4Enabled = false;
+        advancedCheck4Display = true;
 
         displayTopPanel = true;
         displayBottomPanel = true;
@@ -316,6 +318,16 @@ public class ApplicationModel implements Serializable {
         boolean oldCheck4Enabled = this.check4Enabled;
         this.check4Enabled = check4Enabled;
         this.pcs.firePropertyChange("check4Enabled", oldCheck4Enabled, check4Enabled);
+    }
+
+    public boolean getAdvancedCheck4Display() {
+        return advancedCheck4Display;
+    }
+
+    public void setAdvancedCheck4Display(boolean advancedCheck4Display) {
+        boolean oldAdvancedCheck4Display = this.advancedCheck4Display;
+        this.advancedCheck4Display = advancedCheck4Display;
+        this.pcs.firePropertyChange("advancedCheck4Display", oldAdvancedCheck4Display, advancedCheck4Display);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -716,4 +728,7 @@ public class ApplicationModel implements Serializable {
         setGridLineWidth(gridLineWidth + 2);
     }
 
+    public void toggleUseAdvancedCheck4Display() {
+        setAdvancedCheck4Display(!advancedCheck4Display);
+    }
 }

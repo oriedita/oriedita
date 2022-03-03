@@ -1,6 +1,6 @@
 package origami.crease_pattern.element;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -236,6 +236,14 @@ public class LineSegment implements Serializable, Cloneable {
         return b.getY();
     }
 
+    public double determineDeltaX() {
+        return b.getX() - a.getX();
+    }
+
+    public double determineDeltaY() {
+        return b.getY() - a.getY();
+    }
+
     public int getCustomized() {
         return customized;
     }
@@ -451,7 +459,7 @@ public class LineSegment implements Serializable, Cloneable {
         PARALLEL_S1_START_OVERLAPS_S2_START_374(374),
         ;
 
-        int state;
+        final int state;
 
         Intersection(int state) {
             this.state = state;
