@@ -604,6 +604,7 @@ public class ApplicationModel implements Serializable {
         displayCreasePatternOnTop = applicationModel.getDisplayCreasePatternOnTop();
         displayFoldingProgress = applicationModel.getDisplayFoldingProgress();
         displaySelfIntersection = applicationModel.getDisplaySelfIntersection();
+        advancedCheck4Display = applicationModel.getAdvancedCheck4Display();
         lineWidth = applicationModel.getLineWidth();
         auxLineWidth = applicationModel.getAuxLineWidth();
         pointSize = applicationModel.getPointSize();
