@@ -260,6 +260,7 @@ public class CreasePattern_Worker {
 
     public void allMountainValleyChange() {
         foldLineSet.allMountainValleyChange();
+        checkIfNecessary();
     }
 
     public void branch_trim() {
