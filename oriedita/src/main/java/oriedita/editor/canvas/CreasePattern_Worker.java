@@ -447,7 +447,7 @@ public class CreasePattern_Worker {
             for (Map.Entry<Point, FlatFoldabilityViolation> entry : foldLineSet.getViolations().entrySet()) {
                 Point p = entry.getKey();
                 FlatFoldabilityViolation v = entry.getValue();
-                DrawingUtil.drawViolation(g2, camera.object2TV(p), v, check4ColorTransparency);
+                DrawingUtil.drawViolation(g2, camera.object2TV(p), v, check4ColorTransparency, applicationModel.getAdvancedCheck4Display());
             }
 
             if (displayComments) {

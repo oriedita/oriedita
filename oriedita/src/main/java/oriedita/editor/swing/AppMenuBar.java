@@ -47,6 +47,7 @@ public class AppMenuBar extends JMenuBar {
     private JCheckBoxMenuItem darkModeCheckBox;
     private JCheckBoxMenuItem preciseZoomCheckBox;
     private JCheckBoxMenuItem displaySelfIntersectionCheckBox;
+    private JCheckBoxMenuItem useAdvancedCheck4Display;
 
     private JMenu displayPanelMenu;
     private JCheckBoxMenuItem displayTopPanel;
@@ -123,6 +124,7 @@ public class AppMenuBar extends JMenuBar {
         buttonService.registerButton(darkModeCheckBox, "toggleDarkModeAction");
         buttonService.registerButton(preciseZoomCheckBox, "preciseZoomAction");
         buttonService.registerButton(displaySelfIntersectionCheckBox, "displaySelfIntersectionAction");
+        buttonService.registerButton(useAdvancedCheck4Display, "useAdvancedCheck4DisplayAction");
 
         buttonService.registerButton(copyButton, "copyClipboardAction");
         buttonService.registerButton(cutButton, "cutClipboardAction");
@@ -223,6 +225,7 @@ public class AppMenuBar extends JMenuBar {
         });
         preciseZoomCheckBox.addActionListener(e -> applicationModel.togglePreciseZoom());
         displaySelfIntersectionCheckBox.addActionListener(e -> applicationModel.toggleDisplaySelfIntersection());
+        useAdvancedCheck4Display.addActionListener(e -> applicationModel.toggleUseAdvancedCheck4Display());
         displayTopPanel.addActionListener(e -> getData(applicationModel));
         displayBottomPanel.addActionListener(e -> getData(applicationModel));
         displayRightPanel.addActionListener(e -> getData(applicationModel));
@@ -367,6 +370,8 @@ public class AppMenuBar extends JMenuBar {
         viewMenu.add(cpOnTopCheckBox);
         displaySelfIntersectionCheckBox = new JCheckBoxMenuItem("Display self intersection");
         viewMenu.add(displaySelfIntersectionCheckBox);
+        useAdvancedCheck4Display = new JCheckBoxMenuItem("Use Advanced cAMV display");
+        viewMenu.add(useAdvancedCheck4Display);
 
         displayPanelMenu = new JMenu("Panels");
         viewMenu.add(displayPanelMenu);
@@ -400,6 +405,7 @@ public class AppMenuBar extends JMenuBar {
         applicationModel.setDarkMode(darkModeCheckBox.isSelected());
         applicationModel.setPreciseZoom(preciseZoomCheckBox.isSelected());
         applicationModel.setDisplaySelfIntersection(displaySelfIntersectionCheckBox.isSelected());
+        applicationModel.setAdvancedCheck4Display(useAdvancedCheck4Display.isSelected());
         applicationModel.setDisplayTopPanel(displayTopPanel.isSelected());
         applicationModel.setDisplayBottomPanel(displayBottomPanel.isSelected());
         applicationModel.setDisplayLeftPanel(displayLeftPanel.isSelected());
@@ -419,6 +425,7 @@ public class AppMenuBar extends JMenuBar {
         darkModeCheckBox.setSelected(applicationModel.getLaf().equals(FlatDarkLaf.class.getName()));
         preciseZoomCheckBox.setSelected(applicationModel.isPreciseZoom());
         displaySelfIntersectionCheckBox.setSelected(applicationModel.getDisplaySelfIntersection());
+        useAdvancedCheck4Display.setSelected(applicationModel.getAdvancedCheck4Display());
         displayTopPanel.setSelected(applicationModel.getDisplayTopPanel());
         displayBottomPanel.setSelected(applicationModel.getDisplayBottomPanel());
         displayLeftPanel.setSelected(applicationModel.getDisplayLeftPanel());

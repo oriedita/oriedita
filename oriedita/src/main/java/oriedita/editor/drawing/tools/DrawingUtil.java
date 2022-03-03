@@ -12,6 +12,7 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+import java.util.Map;
 
 /**
  * Static utility class for drawing
@@ -512,9 +513,14 @@ public class DrawingUtil {
         return region;
     }
 
-    public static void drawViolation(Graphics2D g, Point p, FlatFoldabilityViolation violation, int transparency) {
+    public static void drawViolation(Graphics2D g, Point p, FlatFoldabilityViolation violation, int transparency, boolean useAdvanced) {
         g.setColor(Colors.get(new Color(255, 0, 147, transparency)));
 
+        if (!useAdvanced) {
+            g.setColor(Colors.get(new Color(255, 0, 147, transparency)));
+            g.fillOval((int) p.getX() - 11, (int) p.getY() - 11, 23, 23);
+            return;
+        }
         Color c;
         switch (violation.getColor()) {
             case NOT_ENOUGH_MOUNTAIN:
@@ -558,6 +564,21 @@ public class DrawingUtil {
             case LITTLE_BIG_LITTLE:
                 g.fillOval((int) p.getX() - 9, (int) p.getY() - 9, 19, 19);
                 //g.drawLine((int) p.getX(), (int) p.getY(), (int) p.getX(), (int) p.getY()); //直線
+                g.setStroke(new BasicStroke(4));
+                if (violation.getLittleBigLittleViolations() != null) {
+                    for (Map.Entry<LineSegment, Boolean> entry : violation.getLittleBigLittleViolations().entrySet()) {
+                        LineSegment orig = entry.getKey();
+                        double a = -orig.determineAX() - orig.determineBX();
+                        double b = -orig.determineAY() - orig.determineBY();
+                        LineSegment s = new LineSegment(p, new Point(p.getX() + a, p.getY() + b));
+                        if (entry.getValue()) {
+                            g.setColor(Color.red);
+                        } else {
+                            g.setColor(Color.green);
+                        }
+                        g.drawLine((int) p.getX(), (int) p.getY(), (int) s.determineBX(), (int) s.determineBY());
+                    }
+                }
                 break;
             case NONE:
                 break;
