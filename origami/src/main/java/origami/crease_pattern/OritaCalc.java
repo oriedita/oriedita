@@ -1,9 +1,9 @@
 package origami.crease_pattern;
 
-import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.Point;
 import origami.Epsilon;
 import origami.crease_pattern.element.Circle;
+import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 
 /**
@@ -1069,6 +1069,14 @@ public class OritaCalc {
     //--------------------------------------------------------
     public static boolean lineSegment_X_kousa_decide(LineSegment s1, LineSegment s2) {//0はX交差しない。1は交差する。20201017追加
         return determineLineSegmentIntersection(s1, s2, Epsilon.UNKNOWN_1EN4) == LineSegment.Intersection.INTERSECTS_1;
+    }
+
+    public static LineSegment lineSegmentChangeLength(LineSegment s, double newLength) {
+        double dx = s.determineBX() - s.determineAX();
+        double dy = s.determineBY() - s.determineAY();
+        double newDx = dx / s.determineLength() * newLength;
+        double nexDy = dy / s.determineLength() * newLength;
+        return new LineSegment(s.getA(), new Point(s.getA().getX() + newDx, s.getA().getY() + nexDy));
     }
 
     public enum ParallelJudgement {

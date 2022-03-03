@@ -12,7 +12,6 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
-import java.util.Map;
 
 /**
  * Static utility class for drawing
@@ -535,7 +534,7 @@ public class DrawingUtil {
         }
         Color actualColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), transparency);
         g.setColor(actualColor);
-        g.setStroke(new BasicStroke(2));
+        g.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
         switch (violation.getViolatedRule()) {
             case NUMBER_OF_FOLDS:
                 g.fillPolygon(new int[] {
@@ -562,21 +561,31 @@ public class DrawingUtil {
                 g.fillRect((int) p.getX() - 9, (int) p.getY() - 9, 19, 19);
                 break;
             case LITTLE_BIG_LITTLE:
-                g.fillOval((int) p.getX() - 9, (int) p.getY() - 9, 19, 19);
+                //g.fillOval((int) p.getX() - 9, (int) p.getY() - 9, 19, 19);
                 //g.drawLine((int) p.getX(), (int) p.getY(), (int) p.getX(), (int) p.getY()); //直線
-                g.setStroke(new BasicStroke(4));
-                if (violation.getLittleBigLittleViolations() != null) {
-                    for (Map.Entry<LineSegment, Boolean> entry : violation.getLittleBigLittleViolations().entrySet()) {
-                        LineSegment orig = entry.getKey();
-                        double a = -orig.determineAX() - orig.determineBX();
-                        double b = -orig.determineAY() - orig.determineBY();
-                        LineSegment s = new LineSegment(p, new Point(p.getX() + a, p.getY() + b));
-                        if (entry.getValue()) {
-                            g.setColor(Color.red);
-                        } else {
-                            g.setColor(Color.green);
+                if (violation.getLineSegments() != null) {
+                    LineSegment[] segments = violation.getLineSegments();
+                    boolean[] violating = violation.getViolatingLBL();
+                    for (int i = 0; i < segments.length; i++) {
+                        if (i == segments.length - 1 && segments[i].getColor() == LineColor.BLACK_0) {
+                            break;
                         }
-                        g.drawLine((int) p.getX(), (int) p.getY(), (int) s.determineBX(), (int) s.determineBY());
+                        LineSegment orig = OritaCalc.lineSegmentChangeLength(segments[i], 15);
+                        LineSegment next = OritaCalc.lineSegmentChangeLength(segments[(i+1)%segments.length], 15);
+                        int[] xCoords = new int[] {
+                                (int) p.getX(),
+                                (int) (p.getX() + orig.getB().getX() - orig.getA().getX()),
+                                (int) (p.getX() + next.getB().getX() - next.getA().getX()),
+                        };
+                        int[] yCoords = new int[] {
+                                (int) p.getY(),
+                                (int) (p.getY() + orig.getB().getY() - orig.getA().getY()),
+                                (int) (p.getY() + next.getB().getY() - next.getA().getY()),
+                        };
+                        g.drawPolygon(xCoords, yCoords, 3);
+                        if (violating[i]) {
+                            g.fillPolygon(xCoords, yCoords, 3);
+                        }
                     }
                 }
                 break;
