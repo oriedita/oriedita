@@ -27,7 +27,6 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Future;
 
 /**
@@ -441,13 +440,9 @@ public class CreasePattern_Worker {
         //Check4Senbには0番目からsize()-1番目までデータが入っている
         //Logger.info("foldLineSet.check4_size() = "+foldLineSet.check4_size());
         if (check4) {
-            //for (LineSegment s_temp : foldLineSet.getCheck4LineSegments()) {
-            //    DrawingUtil.pointingAt4(g, camera.object2TV(s_temp), check4ColorTransparency);
-            //}
-            for (Map.Entry<Point, FlatFoldabilityViolation> entry : foldLineSet.getViolations().entrySet()) {
-                Point p = entry.getKey();
-                FlatFoldabilityViolation v = entry.getValue();
-                DrawingUtil.drawViolation(g2, camera.object2TV(p), v, check4ColorTransparency, applicationModel.getAdvancedCheck4Display());
+            for (FlatFoldabilityViolation violation : foldLineSet.getViolations()) {
+                DrawingUtil.drawViolation(g2, camera.object2TV(violation.getPoint()), violation,
+                        check4ColorTransparency, applicationModel.getAdvancedCheck4Display());
             }
 
             if (displayComments) {

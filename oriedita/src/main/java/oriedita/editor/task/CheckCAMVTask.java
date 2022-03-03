@@ -35,7 +35,6 @@ public class CheckCAMVTask implements Callable<Void> {
         try {
             creasePattern_worker.ap_check4();
         } catch (InterruptedException e) {
-            creasePattern_worker.foldLineSet.getCheck4LineSegments().clear();
             creasePattern_worker.foldLineSet.getViolations().clear();
         }
 

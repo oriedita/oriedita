@@ -1,10 +1,14 @@
 package origami.crease_pattern;
 
+import origami.crease_pattern.element.Point;
+
 public class FlatFoldabilityViolation {
     private final Rule violatedRule;
     private final Color color;
+    private final Point point;
 
-    public FlatFoldabilityViolation(Rule violatedRule, Color color) {
+    public FlatFoldabilityViolation(Point p, Rule violatedRule, Color color) {
+        this.point = p;
         this.violatedRule = violatedRule;
         this.color = color;
     }
@@ -15,6 +19,10 @@ public class FlatFoldabilityViolation {
 
     public Color getColor() {
         return color;
+    }
+
+    public Point getPoint() {
+        return point;
     }
 
     public enum Rule {

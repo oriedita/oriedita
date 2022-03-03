@@ -19,7 +19,10 @@ import java.awt.*;
 import java.util.List;
 import java.util.Queue;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Representation of the current drawn crease pattern.
@@ -31,8 +34,7 @@ public class FoldLineSet {
     Queue<LineSegment> Check1LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     Queue<LineSegment> Check2LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     Queue<LineSegment> Check3LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
-    Queue<LineSegment> Check4LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
-    Map<Point, FlatFoldabilityViolation> cAMVViolations = new ConcurrentHashMap<>();
+    Queue<FlatFoldabilityViolation> cAMVViolations = new ConcurrentLinkedQueue<>();
     List<Circle> circles = new ArrayList<>(); //円のインスタンス化
 
     // Specify the point Q, delete the line segments AQ and QC, and add the line segment AC (however, only two line segments have Q as the end point) // When implemented, 1 when nothing is done Returns 0.
@@ -52,7 +54,6 @@ public class FoldLineSet {
         Check1LineSegment.clear();
         Check2LineSegment.clear();
         Check3LineSegment.clear();
-        Check4LineSegment.clear();
         cAMVViolations.clear();
         circles.clear();
     }
@@ -2926,10 +2927,6 @@ public class FoldLineSet {
         return Check3LineSegment;
     }
 
-    public Queue<LineSegment> getCheck4LineSegments() {
-        return Check4LineSegment;
-    }
-
     public void check3() {//Check the number of lines around the vertex
         double r = Epsilon.UNKNOWN_1EN4;
         Check3LineSegment.clear();
@@ -3008,7 +3005,6 @@ public class FoldLineSet {
     }
 
     public void check4() throws InterruptedException {//Check the number of lines around the apex
-        Check4LineSegment.clear();
         cAMVViolations.clear();
         unselect_all();
 
@@ -3023,10 +3019,7 @@ public class FoldLineSet {
                 Point p = new Point(point);
                 try {
                     Optional<FlatFoldabilityViolation> violation = findFlatfoldabilityViolation(p, map.getLines(point));
-                    if (violation.isPresent()) {
-                        Check4LineSegment.add(new LineSegment(p, p));
-                        cAMVViolations.put(point, violation.get());
-                    }
+                    violation.ifPresent(cAMVViolations::add);
                 } catch (InterruptedException e) {
                     // finish thread.
                 }
@@ -3077,7 +3070,7 @@ public class FoldLineSet {
 
         // Judgment start-------------------------------------------
         if ((i_tss_black != 0) && (i_tss_black != 2)) {//It is strange if there are no black lines or if there are other than two lines.
-            return Optional.of(new FlatFoldabilityViolation(FlatFoldabilityViolation.Rule.NUMBER_OF_FOLDS,
+            return Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.NUMBER_OF_FOLDS,
                     FlatFoldabilityViolation.Color.UNKNOWN));
         }
 
@@ -3092,35 +3085,39 @@ public class FoldLineSet {
                     rule = FlatFoldabilityViolation.Rule.MAEKAWA;
                 }
                 if (i_tss_blue == i_tss_red) {
-                    return Optional.of(new FlatFoldabilityViolation(rule, FlatFoldabilityViolation.Color.EQUAL));
+                    return Optional.of(new FlatFoldabilityViolation(p, rule, FlatFoldabilityViolation.Color.EQUAL));
                 } else if (Math.abs(i_tss_red - i_tss_blue) > 2) {
                     if (i_tss_blue > i_tss_red) {
                         return Optional.of(new FlatFoldabilityViolation(
+                                p,
                                 rule,
                                 FlatFoldabilityViolation.Color.NOT_ENOUGH_MOUNTAIN));
                     }
                     return Optional.of(new FlatFoldabilityViolation(
+                            p,
                             rule,
                             FlatFoldabilityViolation.Color.NOT_ENOUGH_VALLEY));
                 } else {
                     if (i_tss_blue > i_tss_red) {
                         return Optional.of(new FlatFoldabilityViolation(
+                                p,
                                 rule,
                                 FlatFoldabilityViolation.Color.NOT_ENOUGH_VALLEY));
                     }
                     return Optional.of(new FlatFoldabilityViolation(
+                            p,
                             rule,
                             FlatFoldabilityViolation.Color.NOT_ENOUGH_MOUNTAIN));
                 }
             }
             if (rule != FlatFoldabilityViolation.Rule.MAEKAWA && rule != FlatFoldabilityViolation.Rule.NONE) {
                 if (i_tss_blue == i_tss_red) {
-                    return Optional.of(new FlatFoldabilityViolation(rule, FlatFoldabilityViolation.Color.EQUAL));
+                    return Optional.of(new FlatFoldabilityViolation(p, rule, FlatFoldabilityViolation.Color.EQUAL));
                 } else {
                     if (rule == FlatFoldabilityViolation.Rule.LITTLE_BIG_LITTLE) {
                         return angleOrLBLViolation;
                     }
-                    return Optional.of(new FlatFoldabilityViolation(rule, FlatFoldabilityViolation.Color.CORRECT));
+                    return Optional.of(new FlatFoldabilityViolation(p, rule, FlatFoldabilityViolation.Color.CORRECT));
                 }
             }
             return Optional.empty();
@@ -3227,7 +3224,7 @@ public class FoldLineSet {
             if (nbox.getValue(2).getColor() == LineColor.BLACK_0) {
                 return null;
             } else {
-                return Optional.of(new FlatFoldabilityViolation(FlatFoldabilityViolation.Rule.MAEKAWA,
+                return Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.MAEKAWA,
                         FlatFoldabilityViolation.Color.UNKNOWN));
             }
 
@@ -3256,7 +3253,7 @@ public class FoldLineSet {
         }
 
         if (saisyo_ni_suru < 0) {
-            return Optional.of(new FlatFoldabilityViolation(FlatFoldabilityViolation.Rule.MAEKAWA,
+            return Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.MAEKAWA,
                     FlatFoldabilityViolation.Color.UNKNOWN));
         }
 
@@ -3294,7 +3291,7 @@ public class FoldLineSet {
 
             nbox1.set(littleBigLittleSingleStep(nbox, littleBigLittleViolations, p));
             if (nbox1.getTotal() == nbox.getTotal()) {
-                return Optional.of(new LittleBigLittleViolation(littleBigLittleViolations));
+                return Optional.of(new LittleBigLittleViolation(p, littleBigLittleViolations));
             }
             nbox.set(nbox1);
         }
@@ -3492,7 +3489,7 @@ public class FoldLineSet {
 
     public Optional<FlatFoldabilityViolation> findFlatfoldabilityViolationInside(Point p, SortingBox<LineSegment> nbox) {
         if (nbox.getTotal() % 2 == 1) {//t1を端点とする折線の数が奇数のとき
-            return Optional.of(new FlatFoldabilityViolation(FlatFoldabilityViolation.Rule.NUMBER_OF_FOLDS,
+            return Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.NUMBER_OF_FOLDS,
                     FlatFoldabilityViolation.Color.UNKNOWN));
         }
 
@@ -3503,13 +3500,13 @@ public class FoldLineSet {
 
             if (intersectionState.isCollinear()) {
                 if (nbox.getValue(1).getColor() != nbox.getValue(2).getColor()) {//2本の線種が違うなら角度関係なしにダメ
-                    return Optional.of(new FlatFoldabilityViolation(FlatFoldabilityViolation.Rule.MAEKAWA,
+                    return Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.MAEKAWA,
                             FlatFoldabilityViolation.Color.UNKNOWN));
                 }
-                return Optional.of(new FlatFoldabilityViolation(FlatFoldabilityViolation.Rule.NONE,
+                return Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.NONE,
                         FlatFoldabilityViolation.Color.UNKNOWN));
             } else {
-                return Optional.of(new FlatFoldabilityViolation(FlatFoldabilityViolation.Rule.ANGLES,
+                return Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.ANGLES,
                         FlatFoldabilityViolation.Color.UNKNOWN));
             }
         }
@@ -3520,7 +3517,7 @@ public class FoldLineSet {
         SortingBox<LineSegment> nbox1 = new SortingBox<>();
 
         if (!angularlyFlatfoldable(nbox)) {
-            return Optional.of(new FlatFoldabilityViolation(FlatFoldabilityViolation.Rule.ANGLES,
+            return Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.ANGLES,
                     FlatFoldabilityViolation.Color.UNKNOWN));
         }
 
@@ -3621,7 +3618,7 @@ public class FoldLineSet {
 
             nbox1.set(result);
             if (nbox1.getTotal() == nbox.getTotal()) {
-                return Optional.of(new LittleBigLittleViolation(littleBigLittleViolations));
+                return Optional.of(new LittleBigLittleViolation(p, littleBigLittleViolations));
             }
             nbox.set(nbox1);
         }
@@ -3635,7 +3632,7 @@ public class FoldLineSet {
 
         return Math.abs(maxAngle - temp_kakudo * 2.0) < Epsilon.FLAT?
                 Optional.empty() :
-                Optional.of(new FlatFoldabilityViolation(FlatFoldabilityViolation.Rule.ANGLES,
+                Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.ANGLES,
                         FlatFoldabilityViolation.Color.UNKNOWN));//この0だけ、角度がおかしいという意味
     }
 
@@ -3962,7 +3959,7 @@ public class FoldLineSet {
         }
     }
 
-    public Map<Point, FlatFoldabilityViolation> getViolations() {
+    public Queue<FlatFoldabilityViolation> getViolations() {
         return this.cAMVViolations;
     }
 
