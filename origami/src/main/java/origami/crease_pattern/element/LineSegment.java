@@ -490,18 +490,6 @@ public class LineSegment implements Serializable, Cloneable {
             return state >= 360;
         }
 
-        public boolean isCollinear() {
-            switch (this) {
-                case PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323:
-                case PARALLEL_START_OF_S1_INTERSECTS_END_OF_S2_333:
-                case PARALLEL_END_OF_S1_INTERSECTS_END_OF_S2_353:
-                case PARALLEL_END_OF_S1_INTERSECTS_START_OF_S2_343:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
         public boolean isParallel() {
             return state >= 30;
         }

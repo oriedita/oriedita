@@ -3494,15 +3494,19 @@ public class FoldLineSet {
             //The following is when the two line types are blue-blue or red-red
             LineSegment.Intersection intersectionState = OritaCalc.determineLineSegmentIntersection(nbox.getValue(1), nbox.getValue(2), Epsilon.FLAT);
 
-            if (intersectionState.isCollinear()) {
-                if (nbox.getValue(1).getColor() != nbox.getValue(2).getColor()) {//2本の線種が違うなら角度関係なしにダメ
-                    return Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.MAEKAWA,
+            switch (intersectionState) {
+                case PARALLEL_START_OF_S1_INTERSECTS_START_OF_S2_323:
+                case PARALLEL_START_OF_S1_INTERSECTS_END_OF_S2_333:
+                case PARALLEL_END_OF_S1_INTERSECTS_END_OF_S2_353:
+                case PARALLEL_END_OF_S1_INTERSECTS_START_OF_S2_343:
+                    if (nbox.getValue(1).getColor() != nbox.getValue(2).getColor()) {//2本の線種が違うなら角度関係なしにダメ
+                        return Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.MAEKAWA,
+                                FlatFoldabilityViolation.Color.UNKNOWN));
+                    }
+                    return Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.NONE,
                             FlatFoldabilityViolation.Color.UNKNOWN));
-                }
-                return Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.NONE,
-                        FlatFoldabilityViolation.Color.UNKNOWN));
-            } else {
-                return Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.ANGLES,
+                default:
+                    return Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.ANGLES,
                         FlatFoldabilityViolation.Color.UNKNOWN));
             }
         }
