@@ -79,7 +79,12 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
 
         if (!d.gridInputAssist) {
             d.lineStep.get(0).setA(p);
-            d.lineStep.get(0).setColor(d.lineColor);
+
+            if (d.i_foldLine_additional == FoldLineAdditionalInputMode.AUX_LINE_1) {
+                d.lineStep.get(0).setColor(d.auxLineColor);
+            } else {
+                d.lineStep.get(0).setColor(d.lineColor);
+            }
         }
 
         if (d.gridInputAssist) {

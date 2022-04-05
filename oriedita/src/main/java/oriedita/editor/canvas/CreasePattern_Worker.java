@@ -552,8 +552,6 @@ public class CreasePattern_Worker {
             DrawingUtil.drawCircleStep(g, c, camera);
         }
 
-
-
         g.setColor(Colors.get(Color.black));
 
         if (displayComments) {
