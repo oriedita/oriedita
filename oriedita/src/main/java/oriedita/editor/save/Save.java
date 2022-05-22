@@ -40,4 +40,8 @@ public interface Save extends PointSave, LineSegmentSave, Serializable {
      * Returns if this save contains lines which are not savable to a .cp file without losing information.
      */
     boolean canSaveAsCp();
+
+    static Save createInstance() {
+        return new SaveV1_1();
+    }
 }

@@ -3,7 +3,6 @@ package oriedita.editor.drawing;
 import oriedita.editor.Colors;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1_0;
 import oriedita.editor.service.HistoryState;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
@@ -343,7 +342,7 @@ public class WireFrame_Worker_Drawer {
     }
 
     public Save getSave() {
-        Save save = new SaveV1_0();
+        Save save = Save.createInstance();
         pointSet.getSave(save);
         return save;
     }

@@ -46,7 +46,7 @@ public class SaveTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"save/save-0.0.11.ori", "save/save-0.0.12.ori", "save/save-1.0.0-ALPHA.13.ori"})
+    @ValueSource(strings = {"save/save-0.0.11.ori", "save/save-0.0.12.ori", "save/save-1.0.0-ALPHA.13.ori", "save/save-1.0.0-v1.1.ori"})
     public void testSave(String filename) throws URISyntaxException {
         File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource(filename)).toURI());
 

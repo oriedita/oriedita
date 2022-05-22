@@ -8,7 +8,6 @@ import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1_0;
 import oriedita.editor.tools.StringOp;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
@@ -30,7 +29,7 @@ public class Orh {
      * Read an Orihime file
      */
     public static Save importFile(File file) throws IOException {
-        Save save = new SaveV1_0();
+        Save save = Save.createInstance();
         Pattern p = Pattern.compile("<(.+)>(.+)</(.+)>");
 
         boolean reading;

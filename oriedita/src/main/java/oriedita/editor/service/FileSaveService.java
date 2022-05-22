@@ -15,7 +15,7 @@ import oriedita.editor.json.DefaultObjectMapper;
 import oriedita.editor.save.BaseSave;
 import oriedita.editor.save.FileVersionTester;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1_0;
+import oriedita.editor.save.SaveConverter;
 import oriedita.editor.swing.dialog.ExportDialog;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.editor.tools.ResourceUtil;
@@ -356,12 +356,12 @@ public class FileSaveService {
 
                         switch (result) {
                             case JOptionPane.YES_OPTION:
-                                return readSave;
+                                return SaveConverter.convertToNewestSave(readSave);
                             case JOptionPane.NO_OPTION:
                                 return null;
                         }
                     }
-                    return readSave;
+                    return SaveConverter.convertToNewestSave(readSave);
                 } catch (IOException e) {
                     throw new FileReadingException(e);
                 }
@@ -390,7 +390,7 @@ public class FileSaveService {
 
             fileModel.setSavedFileName(null);
 
-            return new SaveV1_0();
+            return Save.createInstance();
         }
 
         return save;

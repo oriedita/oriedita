@@ -34,7 +34,7 @@ public class BaseSave implements Save{
         this.applicationModel = applicationModel;
     }
 
-    public BaseSave() {
+    protected BaseSave() {
         lineSegments = new ArrayList<>();
         circles = new ArrayList<>();
         points = new ArrayList<>();

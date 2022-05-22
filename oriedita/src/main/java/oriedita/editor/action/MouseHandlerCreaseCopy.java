@@ -4,7 +4,6 @@ import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1_0;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.element.Point;
@@ -36,7 +35,7 @@ public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineTransform {
             ori_s_temp.move(delta.getX(), delta.getY());
 
             int sousuu_old = d.foldLineSet.getTotal();
-            Save save1 = new SaveV1_0();
+            Save save1 = Save.createInstance();
             ori_s_temp.getSave(save1);
             d.foldLineSet.addSave(save1);
             int sousuu_new = d.foldLineSet.getTotal();
