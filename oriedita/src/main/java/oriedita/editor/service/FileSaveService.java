@@ -13,6 +13,7 @@ import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.export.*;
 import oriedita.editor.json.DefaultObjectMapper;
 import oriedita.editor.save.BaseSave;
+import oriedita.editor.save.FileVersionTester;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveV1_0;
 import oriedita.editor.swing.dialog.ExportDialog;
@@ -324,6 +325,10 @@ public class FileSaveService {
     }
 
     public Save readImportFile(File file) throws FileReadingException {
+        return readImportFile(file, true);
+    }
+
+    public Save readImportFile(File file, boolean askOnUnknownFormat) throws FileReadingException {
         if (file == null) {
             return null;
         }
@@ -339,11 +344,16 @@ public class FileSaveService {
                 try {
                     ObjectMapper mapper = new DefaultObjectMapper();
                     Save readSave = mapper.readValue(file, Save.class);
-                    if (readSave.getClass() == BaseSave.class) { // happens when the version id is not recognized
-                        int result = JOptionPane.showConfirmDialog(frame, "This file was created using a newer version of oriedita.\n" +
-                                "Using it with this version of oriedita might remove parts of the file.\n" +
-                                "Do you want to open the file anyways?", "File created in newer version",
-                                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                    FileVersionTester versionTester = mapper.readValue(file, FileVersionTester.class);
+                    if (readSave.getClass() == BaseSave.class && versionTester.getVersion() == null) { // happens when the version id is not recognized
+                        int result = JOptionPane.NO_OPTION;
+                        if (askOnUnknownFormat) {
+                            result = JOptionPane.showConfirmDialog(frame, "This file was created using a newer version of oriedita.\n" +
+                                            "Using it with this version of oriedita might remove parts of the file.\n" +
+                                            "Do you want to open the file anyways?", "File created in newer version",
+                                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                        }
+
                         switch (result) {
                             case JOptionPane.YES_OPTION:
                                 return readSave;

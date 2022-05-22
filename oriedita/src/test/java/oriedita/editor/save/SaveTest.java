@@ -2,6 +2,7 @@ package oriedita.editor.save;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -45,7 +46,7 @@ public class SaveTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"save/save-0.0.11.ori", "save/save-0.0.12.ori"})
+    @ValueSource(strings = {"save/save-0.0.11.ori", "save/save-0.0.12.ori", "save/save-1.0.0-ALPHA.13.ori"})
     public void testSave(String filename) throws URISyntaxException {
         File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource(filename)).toURI());
 
@@ -88,6 +89,19 @@ public class SaveTest {
 
             LineSegment auxLineSegment = foldLineSet.get(8);
             Assertions.assertEquals(LineColor.CYAN_3, auxLineSegment.getColor());
+        } catch (FileReadingException e) {
+            Assertions.fail(e);
+        }
+    }
+
+    @Test
+    void testUnknownVersionDetection() throws URISyntaxException {
+        File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("save/corrupted.ori")).toURI());
+        try {
+            Save save = fileSaveService.readImportFile(saveFile, false);
+            Assertions.assertTrue(saveFile.exists());
+            Assertions.assertNull(save);
+
         } catch (FileReadingException e) {
             Assertions.fail(e);
         }

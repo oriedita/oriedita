@@ -1,6 +1,5 @@
 package oriedita.editor.save;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
@@ -104,7 +103,6 @@ public class BaseSave implements Save{
         for (LineSegment s : save.getAuxLineSegments()) {
             addAuxLineSegment(s);
         }
-
         setTitle(save.getTitle());
     }
 
