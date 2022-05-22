@@ -4,7 +4,7 @@ import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
+import oriedita.editor.save.SaveV1_0;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -37,7 +37,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
 
         delta = new Point(0,0);
         FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
-        Save save = new SaveV1();
+        Save save = new SaveV1_0();
         d.foldLineSet.getMemoSelectOption(save, 2);
         ori_s_temp.setSave(save);
         lines = ori_s_temp;

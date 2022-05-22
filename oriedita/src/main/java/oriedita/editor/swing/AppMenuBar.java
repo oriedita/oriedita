@@ -9,9 +9,8 @@ import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
 import oriedita.editor.datatransfer.SaveTransferable;
 import oriedita.editor.exception.FileReadingException;
-import oriedita.editor.exception.NewerFileFormatException;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
+import oriedita.editor.save.SaveV1_0;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
@@ -179,8 +178,6 @@ public class AppMenuBar extends JMenuBar {
             } catch (FileReadingException ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
-            } catch (NewerFileFormatException ex) {
-                ex.printStackTrace();
             }
             Logger.info("readFile2Memo() 終了");
 
@@ -237,7 +234,7 @@ public class AppMenuBar extends JMenuBar {
         copyButton.addActionListener(e -> {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-            Save save = new SaveV1();
+            Save save = new SaveV1_0();
             mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
 
             clipboard.setContents(new SaveTransferable(save), (clipboard1, contents) -> {});
@@ -245,7 +242,7 @@ public class AppMenuBar extends JMenuBar {
         cutButton.addActionListener(e -> {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-            Save save = new SaveV1();
+            Save save = new SaveV1_0();
             mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
 
 
@@ -450,9 +447,6 @@ public class AppMenuBar extends JMenuBar {
                 } catch (FileReadingException ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(frame, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
-                    applicationModel.removeRecentFile(recentFile);
-                } catch (NewerFileFormatException ex) {
-                    ex.printStackTrace();
                     applicationModel.removeRecentFile(recentFile);
                 }
             });

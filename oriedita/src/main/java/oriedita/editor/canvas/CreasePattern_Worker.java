@@ -7,7 +7,7 @@ import oriedita.editor.drawing.Grid;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
+import oriedita.editor.save.SaveV1_0;
 import oriedita.editor.service.HistoryState;
 import oriedita.editor.task.CheckCAMVTask;
 import oriedita.editor.task.FinishedFuture;
@@ -224,7 +224,7 @@ public class CreasePattern_Worker {
         tempFoldLineSet.move(addx, addy);//全体を移動する
 
         int total_old = foldLineSet.getTotal();
-        Save save = new SaveV1();
+        Save save = new SaveV1_0();
         tempFoldLineSet.getSave(save);
         foldLineSet.addSave(save);
         int total_new = foldLineSet.getTotal();
@@ -268,14 +268,14 @@ public class CreasePattern_Worker {
     }
 
     public LineSegmentSet get() {
-        Save save = new SaveV1();
+        Save save = new SaveV1_0();
         foldLineSet.getSave(save);
         lineSegmentSet.setSave(save);
         return lineSegmentSet;
     }
 
     public LineSegmentSet getForFolding() {
-        Save save = new SaveV1();
+        Save save = new SaveV1_0();
         foldLineSet.getMemo_for_folding(save);
         lineSegmentSet.setSave(save);
         return lineSegmentSet;
@@ -287,7 +287,7 @@ public class CreasePattern_Worker {
     }
 
     public LineSegmentSet getForSelectFolding() {//selectした折線で折り畳み推定をする。
-        Save save = new SaveV1();
+        Save save = new SaveV1_0();
         foldLineSet.getSaveForSelectFolding(save);
         LineSegmentSet ls = new LineSegmentSet();
         ls.setSave(save);
@@ -306,21 +306,21 @@ public class CreasePattern_Worker {
     }
 
     public Save getSave(String title) {
-        Save save_temp = new SaveV1();
+        Save save_temp = new SaveV1_0();
         foldLineSet.getSave(save_temp, title);
 
         saveAdditionalInformation(save_temp);
         return save_temp;
     }
 
-    public SaveV1 h_getSave() {
-        SaveV1 save = new SaveV1();
+    public SaveV1_0 h_getSave() {
+        SaveV1_0 save = new SaveV1_0();
         auxLines.h_getSave(save);
         return save;
     }
 
-    public SaveV1 getSave_for_export() {
-        SaveV1 save = new SaveV1();
+    public SaveV1_0 getSave_for_export() {
+        SaveV1_0 save = new SaveV1_0();
         foldLineSet.getSave(save);
         auxLines.h_getSave(save);
         saveAdditionalInformation(save);
@@ -328,8 +328,8 @@ public class CreasePattern_Worker {
         return save;
     }
 
-    public SaveV1 getSave_for_export_with_applicationModel() {
-        SaveV1 save = getSave_for_export();
+    public SaveV1_0 getSave_for_export_with_applicationModel() {
+        SaveV1_0 save = getSave_for_export();
 
         save.setApplicationModel(applicationModel);
 

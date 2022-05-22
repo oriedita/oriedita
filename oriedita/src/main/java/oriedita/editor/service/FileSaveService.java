@@ -10,12 +10,11 @@ import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
-import oriedita.editor.exception.NewerFileFormatException;
 import oriedita.editor.export.*;
 import oriedita.editor.json.DefaultObjectMapper;
 import oriedita.editor.save.BaseSave;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
+import oriedita.editor.save.SaveV1_0;
 import oriedita.editor.swing.dialog.ExportDialog;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.editor.tools.ResourceUtil;
@@ -77,7 +76,7 @@ public class FileSaveService {
         this.backgroundModel = backgroundModel;
     }
 
-    public void openFile(File file) throws FileReadingException, NewerFileFormatException {
+    public void openFile(File file) throws FileReadingException {
         if (file == null || !file.exists()) {
             return;
         }
@@ -112,8 +111,6 @@ public class FileSaveService {
         } catch (FileReadingException e) {
             Logger.error(e, "Error during file read");
             JOptionPane.showMessageDialog(frame, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
-        } catch (NewerFileFormatException e) {
-            Logger.error(e, "Error during file read");
         }
     }
 
@@ -138,8 +135,6 @@ public class FileSaveService {
         Save memo_temp = null;
         try {
             memo_temp = readImportFile(importFile);
-        } catch (NewerFileFormatException e) {
-            Logger.error(e, "Error during file import");
         } catch (FileReadingException e) {
             Logger.error(e, "Error during file import");
             JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
@@ -328,7 +323,7 @@ public class FileSaveService {
         return selectedFile;
     }
 
-    public Save readImportFile(File file) throws FileReadingException, NewerFileFormatException {
+    public Save readImportFile(File file) throws FileReadingException {
         if (file == null) {
             return null;
         }
@@ -347,13 +342,13 @@ public class FileSaveService {
                     if (readSave.getClass() == BaseSave.class) { // happens when the version id is not recognized
                         int result = JOptionPane.showConfirmDialog(frame, "This file was created using a newer version of oriedita.\n" +
                                 "Using it with this version of oriedita might remove parts of the file.\n" +
-                                "Do you want to open the file anyways?");
+                                "Do you want to open the file anyways?", "File created in newer version",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                         switch (result) {
                             case JOptionPane.YES_OPTION:
                                 return readSave;
                             case JOptionPane.NO_OPTION:
-                            case JOptionPane.CANCEL_OPTION:
-                                throw new NewerFileFormatException(null);
+                                return null;
                         }
                     }
                     return readSave;
@@ -385,7 +380,7 @@ public class FileSaveService {
 
             fileModel.setSavedFileName(null);
 
-            return new SaveV1();
+            return new SaveV1_0();
         }
 
         return save;

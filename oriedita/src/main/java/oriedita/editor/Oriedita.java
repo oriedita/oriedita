@@ -3,7 +3,6 @@ package oriedita.editor;
 import com.formdev.flatlaf.FlatLaf;
 import org.tinylog.Logger;
 import oriedita.editor.exception.FileReadingException;
-import oriedita.editor.exception.NewerFileFormatException;
 import oriedita.editor.factory.AppFactory;
 import oriedita.editor.factory.DaggerAppFactory;
 
@@ -44,8 +43,6 @@ public class Oriedita {
                 } catch (FileReadingException e) {
                     Logger.error(e, "Error reading file");
                     JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
-                } catch (NewerFileFormatException e) {
-                    Logger.error(e, "Error reading file");
                 }
             }
 
