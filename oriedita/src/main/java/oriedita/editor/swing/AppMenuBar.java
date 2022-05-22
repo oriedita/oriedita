@@ -9,6 +9,7 @@ import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
 import oriedita.editor.datatransfer.SaveTransferable;
 import oriedita.editor.exception.FileReadingException;
+import oriedita.editor.exception.NewerFileFormatException;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveV1;
 import oriedita.editor.service.ButtonService;
@@ -178,6 +179,8 @@ public class AppMenuBar extends JMenuBar {
             } catch (FileReadingException ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
+            } catch (NewerFileFormatException ex) {
+                ex.printStackTrace();
             }
             Logger.info("readFile2Memo() 終了");
 
@@ -447,6 +450,9 @@ public class AppMenuBar extends JMenuBar {
                 } catch (FileReadingException ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(frame, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
+                    applicationModel.removeRecentFile(recentFile);
+                } catch (NewerFileFormatException ex) {
+                    ex.printStackTrace();
                     applicationModel.removeRecentFile(recentFile);
                 }
             });

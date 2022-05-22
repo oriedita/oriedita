@@ -1,7 +1,6 @@
 package oriedita.editor.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
 import fold.FoldFileFormatException;
 import org.tinylog.Logger;
 import oriedita.editor.Canvas;
@@ -14,6 +13,7 @@ import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.exception.NewerFileFormatException;
 import oriedita.editor.export.*;
 import oriedita.editor.json.DefaultObjectMapper;
+import oriedita.editor.save.BaseSave;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveV1;
 import oriedita.editor.swing.dialog.ExportDialog;
@@ -77,7 +77,7 @@ public class FileSaveService {
         this.backgroundModel = backgroundModel;
     }
 
-    public void openFile(File file) throws FileReadingException {
+    public void openFile(File file) throws FileReadingException, NewerFileFormatException {
         if (file == null || !file.exists()) {
             return;
         }
@@ -112,6 +112,8 @@ public class FileSaveService {
         } catch (FileReadingException e) {
             Logger.error(e, "Error during file read");
             JOptionPane.showMessageDialog(frame, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
+        } catch (NewerFileFormatException e) {
+            Logger.error(e, "Error during file read");
         }
     }
 
@@ -136,6 +138,8 @@ public class FileSaveService {
         Save memo_temp = null;
         try {
             memo_temp = readImportFile(importFile);
+        } catch (NewerFileFormatException e) {
+            Logger.error(e, "Error during file import");
         } catch (FileReadingException e) {
             Logger.error(e, "Error during file import");
             JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
@@ -324,7 +328,7 @@ public class FileSaveService {
         return selectedFile;
     }
 
-    public Save readImportFile(File file) throws FileReadingException {
+    public Save readImportFile(File file) throws FileReadingException, NewerFileFormatException {
         if (file == null) {
             return null;
         }
@@ -339,9 +343,20 @@ public class FileSaveService {
             if (file.getName().endsWith(".ori")) {
                 try {
                     ObjectMapper mapper = new DefaultObjectMapper();
-                    return mapper.readValue(file, Save.class);
-                } catch (InvalidTypeIdException e) {
-                    throw new NewerFileFormatException(e);
+                    Save readSave = mapper.readValue(file, Save.class);
+                    if (readSave.getClass() == BaseSave.class) { // happens when the version id is not recognized
+                        int result = JOptionPane.showConfirmDialog(frame, "This file was created using a newer version of oriedita.\n" +
+                                "Using it with this version of oriedita might remove parts of the file.\n" +
+                                "Do you want to open the file anyways?");
+                        switch (result) {
+                            case JOptionPane.YES_OPTION:
+                                return readSave;
+                            case JOptionPane.NO_OPTION:
+                            case JOptionPane.CANCEL_OPTION:
+                                throw new NewerFileFormatException(null);
+                        }
+                    }
+                    return readSave;
                 } catch (IOException e) {
                     throw new FileReadingException(e);
                 }
@@ -363,14 +378,6 @@ public class FileSaveService {
                 save = Orh.importFile(file);
             }
 
-        } catch(NewerFileFormatException e) {
-            Logger.error(e, "Opening file failed");
-
-            JOptionPane.showMessageDialog(frame, "This file was created using a newer version of oriedita. Please update to be able to open it", "Opening failed", JOptionPane.ERROR_MESSAGE);
-
-            fileModel.setSavedFileName(null);
-
-            return new SaveV1();
         } catch (IOException | FoldFileFormatException e) {
             Logger.error(e, "Opening file failed");
 
