@@ -15,8 +15,8 @@ import java.io.Serializable;
 import static com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
-@JsonTypeInfo(use = Id.NAME, property = "@version", defaultImpl = SaveV1.class)
-@JsonSubTypes({@Type(SaveV1.class)})
+@JsonTypeInfo(use = Id.NAME, property = "@version", defaultImpl = BaseSave.class)
+@JsonSubTypes({@Type(BaseSave.class), @Type(SaveV1.class), @Type(SaveV2.class)})
 public interface Save extends PointSave, LineSegmentSave, Serializable {
     ApplicationModel getApplicationModel();
     void setApplicationModel(ApplicationModel applicationModel);

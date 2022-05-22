@@ -1,6 +1,7 @@
 package oriedita.editor.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
 import fold.FoldFileFormatException;
 import org.tinylog.Logger;
 import oriedita.editor.Canvas;
@@ -10,6 +11,7 @@ import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
+import oriedita.editor.exception.NewerFileFormatException;
 import oriedita.editor.export.*;
 import oriedita.editor.json.DefaultObjectMapper;
 import oriedita.editor.save.Save;
@@ -338,6 +340,8 @@ public class FileSaveService {
                 try {
                     ObjectMapper mapper = new DefaultObjectMapper();
                     return mapper.readValue(file, Save.class);
+                } catch (InvalidTypeIdException e) {
+                    throw new NewerFileFormatException(e);
                 } catch (IOException e) {
                     throw new FileReadingException(e);
                 }
@@ -359,6 +363,14 @@ public class FileSaveService {
                 save = Orh.importFile(file);
             }
 
+        } catch(NewerFileFormatException e) {
+            Logger.error(e, "Opening file failed");
+
+            JOptionPane.showMessageDialog(frame, "This file was created using a newer version of oriedita. Please update to be able to open it", "Opening failed", JOptionPane.ERROR_MESSAGE);
+
+            fileModel.setSavedFileName(null);
+
+            return new SaveV1();
         } catch (IOException | FoldFileFormatException e) {
             Logger.error(e, "Opening file failed");
 
