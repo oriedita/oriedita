@@ -15,6 +15,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -240,7 +242,9 @@ public class ButtonService {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            button.doClick();
+            if (!(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() instanceof JTextComponent)) {
+                button.doClick();
+            }
         }
     }
 }

@@ -22,6 +22,7 @@ public class TextWorker {
 
     public void draw(Graphics2D g2, Camera camera) {
         for (Text text : texts) {
+            text.setGraphics(g2);
             Point pt = camera.object2TV(text.getPos());
             g2.drawString(text.getText(), (int) pt.getX(), (int) pt.getY());
         }
@@ -38,5 +39,13 @@ public class TextWorker {
 
     public void addText(Text text) {
         this.texts.add(text);
+    }
+
+    public List<Text> getTexts() {
+        return this.texts;
+    }
+
+    public void removeText(Text text) {
+        this.getTexts().remove(text);
     }
 }
