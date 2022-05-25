@@ -42,7 +42,7 @@ public class CreasePattern_Worker {
     private final GridModel gridModel;
     private final FoldedFigureModel foldedFigureModel;
 
-    private final TextWorker textWorker;
+    public final TextWorker textWorker;
     private final FileModel fileModel;
     public FoldLineSet foldLineSet = new FoldLineSet();    //Store polygonal lines
     public Grid grid = new Grid();

@@ -35,4 +35,8 @@ public class TextWorker {
         texts.clear();
         texts.addAll(memo1.getTexts());
     }
+
+    public void addText(Text text) {
+        this.texts.add(text);
+    }
 }
