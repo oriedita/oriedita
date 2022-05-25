@@ -17,7 +17,7 @@ import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 @JsonTypeInfo(use = Id.NAME, property = "@version", defaultImpl = BaseSave.class)
 @JsonSubTypes({@Type(BaseSave.class), @Type(SaveV1_0.class), @Type(SaveV1_1.class)})
-public interface Save extends PointSave, LineSegmentSave, Serializable {
+public interface Save extends PointSave, LineSegmentSave, TextSave, Serializable {
     ApplicationModel getApplicationModel();
     void setApplicationModel(ApplicationModel applicationModel);
 

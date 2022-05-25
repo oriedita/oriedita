@@ -41,6 +41,8 @@ public class CreasePattern_Worker {
     private final ApplicationModel applicationModel;
     private final GridModel gridModel;
     private final FoldedFigureModel foldedFigureModel;
+
+    private final TextWorker textWorker;
     private final FileModel fileModel;
     public FoldLineSet foldLineSet = new FoldLineSet();    //Store polygonal lines
     public Grid grid = new Grid();
@@ -110,7 +112,8 @@ public class CreasePattern_Worker {
                                 FoldedFigureModel foldedFigureModel,
                                 FileModel fileModel,
                                 AngleSystemModel angleSystemModel,
-                                InternalDivisionRatioModel internalDivisionRatioModel) {
+                                InternalDivisionRatioModel internalDivisionRatioModel,
+                                TextWorker textWorker) {
         this.creasePatternCamera = creasePatternCamera;  //コンストラクタ
         this.historyState = normalHistoryState;
         this.auxHistoryState = auxHistoryState;
@@ -119,6 +122,7 @@ public class CreasePattern_Worker {
         this.gridModel = gridModel;
         this.foldedFigureModel = foldedFigureModel;
         this.fileModel = fileModel;
+        this.textWorker = textWorker;
 
         if (applicationModel != null) applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));
         if (gridModel != null) gridModel.addPropertyChangeListener(e -> setGridConfigurationData(gridModel));
@@ -210,6 +214,7 @@ public class CreasePattern_Worker {
         Memo_jyouhou_toridasi(memo1);
         foldLineSet.setSave(memo1);
         auxLines.setAuxSave(memo1);
+        textWorker.setSave(memo1);
     }
 
     public void setSave_for_reading_tuika(Save memo1) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<For reading data
@@ -322,6 +327,7 @@ public class CreasePattern_Worker {
         Save save = Save.createInstance();
         foldLineSet.getSave(save);
         auxLines.h_getSave(save);
+        textWorker.getSave(save);
         saveAdditionalInformation(save);
 
         return save;
@@ -555,6 +561,7 @@ public class CreasePattern_Worker {
 
         if (displayComments) {
             g.drawString(text_cp_setumei, 10, 55);
+            textWorker.draw(g2, camera);
         }
     }
 

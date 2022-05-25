@@ -10,6 +10,7 @@ public class SaveConverter {
         newSave.setFoldedFigureModel(save.getFoldedFigureModel());
         newSave.setGridModel(save.getGridModel());
         newSave.setPoints(save.getPoints());
+        newSave.setTexts(save.getTexts());
         return newSave;
     }
 

@@ -5,6 +5,7 @@ import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.text.Text;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -17,6 +18,8 @@ import java.util.List;
 public class BaseSave implements Save{
     private List<LineSegment> lineSegments;
     private List<Circle> circles;
+
+    private List<Text> texts;
     private String title;
     private List<Point> points;
     private List<LineSegment> auxLineSegments;
@@ -39,6 +42,7 @@ public class BaseSave implements Save{
         circles = new ArrayList<>();
         points = new ArrayList<>();
         auxLineSegments = new ArrayList<>();
+        texts = new ArrayList<>();
     }
 
     public void addPoint(Point p) {
@@ -152,12 +156,30 @@ public class BaseSave implements Save{
         for (LineSegment s : save.getAuxLineSegments()) {
             addAuxLineSegment(s);
         }
+        for (Text t : save.getTexts()) {
+            addText(t);
+        }
     }
 
     /**
      * Returns if this save contains lines which are not savable to a .cp file without losing information.
      */
     public boolean canSaveAsCp() {
-        return circles.isEmpty() && auxLineSegments.isEmpty();
+        return circles.isEmpty() && auxLineSegments.isEmpty() && texts.isEmpty();
+    }
+
+    @Override
+    public void addText(Text text) {
+        texts.add(text);
+    }
+
+    @Override
+    public List<Text> getTexts() {
+        return texts;
+    }
+
+    @Override
+    public void setTexts(List<Text> texts) {
+        this.texts = texts;
     }
 }
