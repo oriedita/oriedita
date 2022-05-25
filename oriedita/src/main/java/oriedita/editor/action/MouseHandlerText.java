@@ -59,7 +59,7 @@ public class MouseHandlerText extends BaseMouseHandler{
         Point p = d.camera.TV2object(p0);
         Text nearest = findNearest(p0);
         if (nearest == null) {
-            Text t = new Text(p.getX(), p.getY(), "Test");
+            Text t = new Text(p.getX(), p.getY(), "");
             textWorker.addText(t);
             textModel.setSelectedText(t);
             textModel.setSelected(true);
@@ -71,12 +71,13 @@ public class MouseHandlerText extends BaseMouseHandler{
 
     private Text findNearest(Point p0) {
         Point p = d.camera.TV2object(p0);
-        double minDist = 1000000;
+        double minDist = 100000000;
         Text nearest = null;
         for (Text text : textWorker.getTexts()) {
             Point posCam = d.camera.object2TV(text.getPos());
             Rectangle bounds = text.calculateBounds();
-            bounds.setLocation((int) posCam.getX(), (int) posCam.getY()-bounds.height);
+            bounds.setLocation((int) posCam.getX()-3, (int) posCam.getY()-10);
+            bounds.setSize(bounds.width+6, bounds.height+11);
             java.awt.Point p0Awt = new java.awt.Point((int) p0.getX(), (int) p0.getY());
             if (bounds.contains(p0Awt)) {
                 if (p.distance(text.getPos()) < minDist) {

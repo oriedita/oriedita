@@ -24,7 +24,13 @@ public class TextWorker {
         for (Text text : texts) {
             text.setGraphics(g2);
             Point pt = camera.object2TV(text.getPos());
-            g2.drawString(text.getText(), (int) pt.getX(), (int) pt.getY());
+            int height = g2.getFontMetrics().getHeight();
+            int y = (int) pt.getY();
+            for (String line : text.getText().split("\n")) {
+                g2.drawString(line, (int) pt.getX(), y);
+                y += height;
+            }
+
         }
     }
 

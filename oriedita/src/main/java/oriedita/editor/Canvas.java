@@ -212,11 +212,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             repaint();
             return;
         }
-        cpTextEditingArea.setText(textModel.getSelectedText().getText());
+        repaint();
+        if (!Objects.equals(cpTextEditingArea.getText(), textModel.getSelectedText().getText())) {
+            cpTextEditingArea.setText(textModel.getSelectedText().getText());
+        }
+        Rectangle bounds = textModel.getSelectedText().calculateBounds();
         cpTextEditingArea.requestFocusInWindow();
         cpTextEditingArea.setVisible(true);
         Point textPos = camera.object2TV(textModel.getSelectedText().getPos());
-        cpTextEditingArea.setBounds((int) textPos.getX(), (int) textPos.getY(), 200, 50);
+        cpTextEditingArea.setBounds((int) textPos.getX()-3, (int) textPos.getY()-10, bounds.width+30, bounds.height+30);
         repaint();
     }
 

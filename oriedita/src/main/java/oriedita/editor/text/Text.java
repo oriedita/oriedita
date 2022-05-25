@@ -63,10 +63,17 @@ public class Text {
 
     public Rectangle calculateBounds() {
         if (g == null) {
-            return new Rectangle(0,0);
+            return new Rectangle(25,3);
         }
-        int width = g.getFontMetrics().stringWidth(text);
+        int width = 0;
+        String[] lines = text.split("\n");
+        for (String line : lines) {
+            int newWidth = g.getFontMetrics().stringWidth(line);
+            if (newWidth > width) {
+                width = newWidth;
+            }
+        }
         int height = g.getFontMetrics().getHeight();
-        return new Rectangle(width, height);
+        return new Rectangle(width, (height) * (int) text.chars().filter(c -> c == '\n').count()+1);
     }
 }

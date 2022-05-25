@@ -32,7 +32,6 @@ public class SelectedTextModel {
     }
 
     public void markDirty() {
-        System.out.println("dirty");
         pcs.firePropertyChange("dirty", false, true);
     }
 
