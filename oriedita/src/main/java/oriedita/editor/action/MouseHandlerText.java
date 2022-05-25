@@ -16,6 +16,8 @@ import java.util.EnumSet;
 public class MouseHandlerText extends BaseMouseHandler{
     private final SelectedTextModel textModel;
     private final TextWorker textWorker;
+
+    private Point dragStart;
     @Inject
     public MouseHandlerText(SelectedTextModel textModel,
                             TextWorker textWorker) {
@@ -56,6 +58,7 @@ public class MouseHandlerText extends BaseMouseHandler{
 
     @Override
     public void mousePressed(Point p0) {
+        dragStart = p0;
         Point p = d.camera.TV2object(p0);
         Text nearest = findNearest(p0);
         if (nearest == null) {
@@ -76,8 +79,9 @@ public class MouseHandlerText extends BaseMouseHandler{
         for (Text text : textWorker.getTexts()) {
             Point posCam = d.camera.object2TV(text.getPos());
             Rectangle bounds = text.calculateBounds();
-            bounds.setLocation((int) posCam.getX()-3, (int) posCam.getY()-10);
-            bounds.setSize(bounds.width+6, bounds.height+11);
+            int selectionRadius = text == textModel.getSelectedText()? 7 : 0;
+            bounds.setLocation((int) posCam.getX()-3-selectionRadius, (int) posCam.getY()-10-selectionRadius);
+            bounds.setSize(bounds.width+6+selectionRadius*2, bounds.height+11+selectionRadius*2);
             java.awt.Point p0Awt = new java.awt.Point((int) p0.getX(), (int) p0.getY());
             if (bounds.contains(p0Awt)) {
                 if (p.distance(text.getPos()) < minDist) {
@@ -91,11 +95,18 @@ public class MouseHandlerText extends BaseMouseHandler{
 
     @Override
     public void mouseDragged(Point p0) {
+        Point p = d.camera.TV2object(p0);
+        Point p2 = d.camera.TV2object(dragStart);
+        dragStart = p0;
+        Text t = textModel.getSelectedText();
+        t.setY(t.getY() + p.getY() - p2.getY());
+        t.setX(t.getX() + p.getX() - p2.getX());
 
+        textModel.markDirty();
     }
 
     @Override
     public void mouseReleased(Point p0) {
-
+        dragStart = null;
     }
 }

@@ -101,6 +101,7 @@ public class CreasePattern_Worker {
     // Sub-operation mode for MouseMode.FOLDABLE_LINE_DRAW_71, either DRAW_CREASE_FREE_1, or VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38
     //--------------------------------------------
     public CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
+    private final SelectedTextModel textModel;
 
     @Inject
     public CreasePattern_Worker(@Named("creasePatternCamera") Camera creasePatternCamera,
@@ -113,7 +114,8 @@ public class CreasePattern_Worker {
                                 FileModel fileModel,
                                 AngleSystemModel angleSystemModel,
                                 InternalDivisionRatioModel internalDivisionRatioModel,
-                                TextWorker textWorker) {
+                                TextWorker textWorker,
+                                SelectedTextModel textModel) {
         this.creasePatternCamera = creasePatternCamera;  //コンストラクタ
         this.historyState = normalHistoryState;
         this.auxHistoryState = auxHistoryState;
@@ -123,6 +125,7 @@ public class CreasePattern_Worker {
         this.foldedFigureModel = foldedFigureModel;
         this.fileModel = fileModel;
         this.textWorker = textWorker;
+        this.textModel = textModel;
 
         if (applicationModel != null) applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));
         if (gridModel != null) gridModel.addPropertyChangeListener(e -> setGridConfigurationData(gridModel));
@@ -204,6 +207,8 @@ public class CreasePattern_Worker {
             foldedFigureModel.setBackColor(memo1.getFoldedFigureModel().getBackColor());
             foldedFigureModel.setLineColor(memo1.getFoldedFigureModel().getLineColor());
         }
+
+        textModel.reset();
     }
 
     public String setMemo_for_redo_undo(Save save) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用
