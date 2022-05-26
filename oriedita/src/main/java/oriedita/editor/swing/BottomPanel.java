@@ -108,11 +108,52 @@ public class BottomPanel {
 
         foldButton.addActionListener(e -> {
             Logger.info("20180220 get_i_fold_type() = " + foldingService.getFoldType());
-            foldingService.fold(FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
+            //Adding code here
+            try {
+                mainCreasePatternWorker.foldLineSet.check4();
+            } catch (InterruptedException bruh) {
+                Logger.info("Warning window broke");
+            }
+
+            if (!mainCreasePatternWorker.foldLineSet.getViolations().isEmpty()) {
+                //System.out.printf("cAMVViolations is empty.\n");
+                if (applicationModel.getFoldWarning() == false) {
+                    JCheckBox checkbox = new JCheckBox("Don't show this again");
+                    Object[] params = {"Detected errors in flat foldability. Continue to fold?", checkbox};
+                    int warningResult = JOptionPane.showConfirmDialog(null,
+                            params,
+                            "Warning",
+                            JOptionPane.YES_NO_OPTION);
+                    if (warningResult == JOptionPane.YES_OPTION || checkbox.isSelected()) {
+                        foldingService.fold(FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
+
+                        if (!applicationModel.getSelectPersistent()) {
+                            mainCreasePatternWorker.unselect_all();
+                        }
+                    }
+                    applicationModel.setFoldWarning(checkbox.isSelected());
+                } else {
+                    foldingService.fold(FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
+
+                    if (!applicationModel.getSelectPersistent()) {
+                        mainCreasePatternWorker.unselect_all();
+                    }
+                }
+            } else {
+                foldingService.fold(FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
+
+                if (!applicationModel.getSelectPersistent()) {
+                    mainCreasePatternWorker.unselect_all();
+                }
+            }
+            //End of code
+            //How tf do i test code
+
+            /*foldingService.fold(FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
 
             if (!applicationModel.getSelectPersistent()) {
                 mainCreasePatternWorker.unselect_all();
-            }
+            }*/
         });
         anotherSolutionButton.addActionListener(e -> {
             FoldedFigure_Drawer selectedItem = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();

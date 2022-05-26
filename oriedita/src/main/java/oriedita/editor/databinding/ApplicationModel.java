@@ -67,9 +67,21 @@ public class ApplicationModel implements Serializable {
     private int gridLineWidth;
     private boolean displayNumbers;
 
+    private boolean foldWarning;
+
     @Inject
     public ApplicationModel() {
         reset();
+    }
+
+    public void setFoldWarning(boolean foldWarning){
+        boolean oldFoldWarning = this.foldWarning;
+        this.foldWarning = foldWarning;
+        this.pcs.firePropertyChange("foldWarning", oldFoldWarning, foldWarning);
+    }
+
+    public boolean getFoldWarning(){
+        return foldWarning;
     }
 
     public boolean getDisplayNumbers() {
