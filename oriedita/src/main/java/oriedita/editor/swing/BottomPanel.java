@@ -108,10 +108,26 @@ public class BottomPanel {
 
         foldButton.addActionListener(e -> {
             Logger.info("20180220 get_i_fold_type() = " + foldingService.getFoldType());
-            foldingService.fold(FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
 
-            if (!applicationModel.getSelectPersistent()) {
-                mainCreasePatternWorker.unselect_all();
+            if (!applicationModel.getFoldWarning()) {
+                try {
+                    mainCreasePatternWorker.foldLineSet.check4();
+                } catch (InterruptedException bruh) {
+                    Logger.info("Warning window broke");
+                }
+                if (!mainCreasePatternWorker.foldLineSet.getViolations().isEmpty()) {
+                    JCheckBox checkbox = new JCheckBox("Don't show this again");
+                    Object[] params = {"Detected errors in flat foldability. Continue to fold?", checkbox};
+                    int warningResult = JOptionPane.showConfirmDialog(null, params, "Warning", JOptionPane.YES_NO_OPTION);
+                    if (warningResult == JOptionPane.YES_OPTION || checkbox.isSelected()) {
+                        foldCreasePattern(mainCreasePatternWorker, foldingService, applicationModel);
+                    }
+                    applicationModel.setFoldWarning(checkbox.isSelected());
+                } else {
+                    foldCreasePattern(mainCreasePatternWorker, foldingService, applicationModel);
+                }
+            } else {
+                foldCreasePattern(mainCreasePatternWorker, foldingService, applicationModel);
             }
         });
         anotherSolutionButton.addActionListener(e -> {
@@ -287,6 +303,14 @@ public class BottomPanel {
 
             }
         });
+    }
+
+    private void foldCreasePattern(CreasePattern_Worker mainCreasePatternWorker, FoldingService foldingService, ApplicationModel applicationModel) {
+        foldingService.fold(FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
+
+        if (!applicationModel.getSelectPersistent()) {
+            mainCreasePatternWorker.unselect_all();
+        }
     }
 
     /**
