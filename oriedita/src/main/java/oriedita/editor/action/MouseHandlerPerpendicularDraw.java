@@ -43,28 +43,29 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
             }
         }
 
-        //Step 2: Click a line
+        //Step 2: Click a destination line / base line
         if (d.lineStep.size() == 1) {
 
             LineSegment closestLineSegment = new LineSegment();
             closestLineSegment.set(d.getClosestLineSegment(p));
 
-            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
-                closestLineSegment.setColor(LineColor.GREEN_6);
-                d.lineStepAdd(closestLineSegment);
+            if (!(OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance)) {
+                return;
+            }
+            closestLineSegment.setColor(LineColor.GREEN_6);
+            d.lineStepAdd(closestLineSegment);
 
-                //Step 3 (situational): Show purple candidate line if the selected line goes through the selected point
-                if(OritaCalc.determineLineSegmentDistance(d.lineStep.get(0).getA(), d.lineStep.get(1)) < Epsilon.UNKNOWN_1EN4){
-                    d.lineStepAdd(new LineSegment(d.lineStep.get(0).getA(), OritaCalc.findProjection(OritaCalc.moveParallel(d.lineStep.get(1), 25.0), d.lineStep.get(0).getA())));
-                    d.lineStepAdd(new LineSegment(d.lineStep.get(0).getA(), OritaCalc.findProjection(OritaCalc.moveParallel(d.lineStep.get(1), -25.0), d.lineStep.get(0).getA())));
-                    d.lineStep.get(2).setColor(LineColor.PURPLE_8);
-                    d.lineStep.get(3).setColor(LineColor.PURPLE_8);
-                }
+            //Step 3 (situational if clicked base line): Show purple candidate line if the selected line goes through the selected point
+            if(OritaCalc.determineLineSegmentDistance(d.lineStep.get(0).getA(), d.lineStep.get(1)) < Epsilon.UNKNOWN_1EN4){
+                d.lineStepAdd(new LineSegment(d.lineStep.get(0).getA(), OritaCalc.findProjection(OritaCalc.moveParallel(d.lineStep.get(1), 25.0), d.lineStep.get(0).getA())));
+                d.lineStepAdd(new LineSegment(d.lineStep.get(0).getA(), OritaCalc.findProjection(OritaCalc.moveParallel(d.lineStep.get(1), -25.0), d.lineStep.get(0).getA())));
+                d.lineStep.get(2).setColor(LineColor.PURPLE_8);
+                d.lineStep.get(3).setColor(LineColor.PURPLE_8);
             }
             return;
         }
 
-        //Continuation from step 3
+        //Continuation from step 3: Click a final destination line
         if(d.lineStep.size() == 4){
 
             LineSegment closestLineSegment = new LineSegment();
@@ -97,7 +98,6 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
                     d.addLineSegment(d.lineStep.get(3));
                     d.record();
                 }
-                //d.lineStep.clear();
             } else{
                 //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){
 
