@@ -267,6 +267,7 @@ public class ApplicationModel implements Serializable {
         foldLineDividingNumber = 2;
         defaultDirectory = null;
         recentFileList = new ArrayList<>();
+        foldWarning = false;
 
         windowPosition = null;
         windowState = Frame.NORMAL;
@@ -636,6 +637,7 @@ public class ApplicationModel implements Serializable {
         windowSize = applicationModel.getWindowSize();
         windowPosition = applicationModel.getWindowPosition();
         windowState = applicationModel.getWindowState();
+        foldWarning = applicationModel.getFoldWarning();
 
         gridColor = applicationModel.getGridColor();
         gridScaleColor = applicationModel.getGridScaleColor();
