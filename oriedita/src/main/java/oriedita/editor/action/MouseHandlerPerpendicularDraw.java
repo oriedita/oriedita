@@ -87,28 +87,16 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
 
         if (d.lineStep.size() == 2) {
 
-            if(OritaCalc.determineLineSegmentDistance(d.lineStep.get(0).getA(), d.lineStep.get(1)) < Epsilon.UNKNOWN_1EN4){
+            //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){
 
-                if (Epsilon.high.gt0(d.lineStep.get(2).determineLength())) {
-                    d.addLineSegment(d.lineStep.get(2));
-                    d.record();
-                }
+            LineSegment add_sen = new LineSegment(d.lineStep.get(0).getA(), OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(d.lineStep.get(1)), d.lineStep.get(0).getA()), d.lineColor);
 
-                if (Epsilon.high.gt0(d.lineStep.get(3).determineLength())) {
-                    d.addLineSegment(d.lineStep.get(3));
-                    d.record();
-                }
-            } else{
-                //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){
-
-                LineSegment add_sen = new LineSegment(d.lineStep.get(0).getA(), OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(d.lineStep.get(1)), d.lineStep.get(0).getA()), d.lineColor);
-
-                if (Epsilon.high.gt0(add_sen.determineLength())) {
-                    d.addLineSegment(add_sen);
-                    d.record();
-                }
-                d.lineStep.clear();
+            if (Epsilon.high.gt0(add_sen.determineLength())) {
+                d.addLineSegment(add_sen);
+                d.record();
             }
+
+            d.lineStep.clear();
         } else if (d.lineStep.size() == 5) {
 
             LineSegment point = d.lineStep.get(0); //Point
