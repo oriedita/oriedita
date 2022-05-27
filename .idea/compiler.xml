@@ -40,7 +40,7 @@
           <entry name="$MAVEN_REPOSITORY$/net/ltgt/gradle/incap/incap/0.2/incap-0.2.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/jetbrains/kotlinx/kotlinx-metadata-jvm/0.3.0/kotlinx-metadata-jvm-0.3.0.jar" />
         </processorPath>
-        <module name="oriedita (1)" />
+        <module name="oriedita" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
