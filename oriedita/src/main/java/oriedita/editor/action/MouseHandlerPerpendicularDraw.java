@@ -88,7 +88,6 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
         if (d.lineStep.size() == 2) {
 
             //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){
-
             LineSegment add_sen = new LineSegment(d.lineStep.get(0).getA(), OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(d.lineStep.get(1)), d.lineStep.get(0).getA()), d.lineColor);
 
             if (Epsilon.high.gt0(add_sen.determineLength())) {
