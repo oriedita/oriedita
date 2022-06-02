@@ -157,7 +157,7 @@ public class RightPanel {
         buttonService.registerButton(ckOCheckBox, "ckOAction");
         buttonService.registerButton(ckTCheckBox, "ckTAction");
         buttonService.registerButton(cAMVCheckBox, "cAMVAction");
-        buttonService.registerButton(textBtn, "textTool");
+        buttonService.registerButton(textBtn, "text");
 
         ckOCheckBox.addActionListener(e -> {
             mainCreasePatternWorker.unselect_all();
@@ -201,7 +201,8 @@ public class RightPanel {
         ck4_colorIncreaseButton.addActionListener(e -> mainCreasePatternWorker.darkenCheck4Color());
         angleSystemADecreaseButton.addActionListener(e -> angleSystemModel.decreaseAngleSystemA());
 
-        angleSystemAButton.addActionListener(e -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemADivider()));
+        angleSystemAButton.addActionListener(
+            e -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemADivider()));
         angleSystemAIncreaseButton.addActionListener(e -> angleSystemModel.increaseAngleSystemA());
 
         angleSystemBDecreaseButton.addActionListener(e -> angleSystemModel.decreaseAngleSystemB());
