@@ -10,6 +10,7 @@ import oriedita.editor.drawing.tools.Background_camera;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.service.FoldedFigureCanvasSelectService;
 import oriedita.editor.swing.component.BulletinBoard;
+import oriedita.editor.swing.component.TextEditingArea;
 import oriedita.editor.task.TaskExecutor;
 import oriedita.editor.text.Text;
 import origami.crease_pattern.element.Point;
@@ -56,7 +57,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     public Background_camera h_cam = new Background_camera();
 
-    private final JTextArea cpTextEditingArea = new JTextArea();
+    private final TextEditingArea cpTextEditingArea;
 
     int btn = 0;//Stores which button in the center of the left and right is pressed. 1 =
     public Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
@@ -126,6 +127,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         this.textModel = textModel;
 
         this.setLayout(null);
+        cpTextEditingArea = new TextEditingArea(textModel, textWorker, mainCreasePatternWorker,
+                                                canvasModel, creasePatternCameraModel);
         cpTextEditingArea.setBounds(0,0, 300, 100);
         cpTextEditingArea.setVisible(false);
         this.add(cpTextEditingArea);
@@ -133,28 +136,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
         canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
         backgroundModel.addPropertyChangeListener(e -> setData(e, backgroundModel));
-        textModel.addPropertyChangeListener(e -> {
-            if (Objects.equals(e.getPropertyName(), "selectedText")) {
-                if (e.getOldValue() != null && ((Text) e.getOldValue()).getText().isBlank()) {
-                    textWorker.removeText((Text) e.getOldValue());
-                }
-            }
-            updateTextArea(textModel, creasePatternCamera);
-        });
-        canvasModel.addPropertyChangeListener(e -> {
-            if (Objects.equals(e.getPropertyName(), "mouseMode")) {
-                if (e.getNewValue() != MouseMode.TEXT) {
-                    textModel.setSelected(false);
-                }
-            }
-        });
-        cpTextEditingArea.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                updateSelectedText(textModel);
-            }
-        });
-        creasePatternCameraModel.addPropertyChangeListener(e -> updateTextArea(textModel, creasePatternCamera));
 
         creasePatternCameraModel.addPropertyChangeListener(e -> repaint());
         foldedFigureModel.addPropertyChangeListener(e -> repaint());
@@ -199,29 +180,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         for (MouseModeHandler handler : handlerList) {
             addMouseModeHandler(handler);
         }
-    }
-
-    private void updateSelectedText(SelectedTextModel textModel) {
-        textModel.getSelectedText().setText(cpTextEditingArea.getText());
-        textModel.markDirty();
-    }
-
-    private void updateTextArea(SelectedTextModel textModel, Camera camera) {
-        if (textModel.getSelectedText() == null || !textModel.isSelected()) {
-            cpTextEditingArea.setVisible(false);
-            repaint();
-            return;
-        }
-        repaint();
-        if (!Objects.equals(cpTextEditingArea.getText(), textModel.getSelectedText().getText())) {
-            cpTextEditingArea.setText(textModel.getSelectedText().getText());
-        }
-        Rectangle bounds = textModel.getSelectedText().calculateBounds();
-        cpTextEditingArea.requestFocusInWindow();
-        cpTextEditingArea.setVisible(true);
-        Point textPos = camera.object2TV(textModel.getSelectedText().getPos());
-        cpTextEditingArea.setBounds((int) textPos.getX()-3, (int) textPos.getY()-10, bounds.width+30, bounds.height+30);
-        repaint();
     }
 
     public void onResize() {
@@ -535,7 +493,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                         case CREASE_PATTERN_0: // 展開図移動。
                             creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
                             mainCreasePatternWorker.setCamera(creasePatternCamera);
-                            updateTextArea(textModel, creasePatternCamera);
+                            cpTextEditingArea.update();
                             break;
                         case FOLDED_FRONT_1:
                             if (selectedFigure != null) selectedFigure.foldedFigureFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
@@ -569,6 +527,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     //マウス操作(ボタンをクリックしたとき)を行う関数----------------------------------------------------
     public void mouseClicked(MouseEvent e) {
+
         //何もしない
     }
 

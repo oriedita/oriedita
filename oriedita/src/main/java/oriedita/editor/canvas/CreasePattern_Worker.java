@@ -212,6 +212,7 @@ public class CreasePattern_Worker {
     }
 
     public String setMemo_for_redo_undo(Save save) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用
+        textWorker.setSave(save);
         return foldLineSet.setSave(save);
     }
 
@@ -350,6 +351,8 @@ public class CreasePattern_Worker {
         Camera camera = new Camera();
         camera.setCamera(this.camera);
         memo1.setCreasePatternCamera(camera);
+
+        textWorker.getSave(memo1);
 
         memo1.setCanvasModel(canvasModel);
         memo1.setGridModel(gridModel);

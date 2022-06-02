@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import origami.crease_pattern.element.Point;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public class Text {
+public class Text implements Serializable {
     private double x,y;
     private String text;
-    private Graphics g;
+    private static Graphics g;
 
     private Text() {
         this(0,0,"");
@@ -24,7 +25,6 @@ public class Text {
         this.x = t.getX();
         this.y = t.getY();
         this.text = t.getText();
-        this.g = t.g;
     }
 
     public double getX() {
@@ -44,8 +44,8 @@ public class Text {
     }
 
     @JsonIgnore
-    public void setGraphics(Graphics g) {
-        this.g = g;
+    public static void setGraphics(Graphics g) {
+        Text.g = g;
     }
 
     @JsonIgnore

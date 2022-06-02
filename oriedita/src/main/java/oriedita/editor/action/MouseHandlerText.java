@@ -52,6 +52,7 @@ public class MouseHandlerText extends BaseMouseHandler{
                     textModel.setSelected(false);
                 }
                 textModel.markDirty();
+                d.record();
             }
         }
     }
@@ -101,12 +102,14 @@ public class MouseHandlerText extends BaseMouseHandler{
         Text t = textModel.getSelectedText();
         t.setY(t.getY() + p.getY() - p2.getY());
         t.setX(t.getX() + p.getX() - p2.getX());
-
         textModel.markDirty();
     }
 
     @Override
     public void mouseReleased(Point p0) {
+        if (dragStart != null) {
+            d.record();
+        }
         dragStart = null;
     }
 }

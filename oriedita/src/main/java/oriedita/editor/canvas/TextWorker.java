@@ -21,8 +21,8 @@ public class TextWorker {
     }
 
     public void draw(Graphics2D g2, Camera camera) {
+        Text.setGraphics(g2);
         for (Text text : texts) {
-            text.setGraphics(g2);
             Point pt = camera.object2TV(text.getPos());
             int height = g2.getFontMetrics().getHeight();
             int y = (int) pt.getY();
