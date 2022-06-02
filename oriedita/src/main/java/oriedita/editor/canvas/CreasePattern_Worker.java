@@ -213,6 +213,7 @@ public class CreasePattern_Worker {
 
     public String setMemo_for_redo_undo(Save save) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用
         textWorker.setSave(save);
+        textModel.setSelected(false);
         return foldLineSet.setSave(save);
     }
 

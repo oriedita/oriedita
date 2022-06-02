@@ -133,6 +133,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         cpTextEditingArea.setVisible(false);
         this.add(cpTextEditingArea);
 
+        cpTextEditingArea.setupListeners();
+
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
         canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
         backgroundModel.addPropertyChangeListener(e -> setData(e, backgroundModel));

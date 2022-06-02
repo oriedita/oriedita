@@ -63,14 +63,20 @@ public class MouseHandlerText extends BaseMouseHandler{
         Point p = d.camera.TV2object(p0);
         Text nearest = findNearest(p0);
         if (nearest == null) {
+            if (textModel.isSelected()) {
+                d.record();
+            }
             Text t = new Text(p.getX(), p.getY(), "");
             textWorker.addText(t);
             textModel.setSelectedText(t);
-            textModel.setSelected(true);
         } else {
+            if (textModel.isSelected() && textModel.getSelectedText() != nearest) {
+                d.record();
+            }
             textModel.setSelectedText(nearest);
-            textModel.setSelected(true);
         }
+        textModel.setSelected(true);
+        textModel.markTextClean();
     }
 
     private Text findNearest(Point p0) {
@@ -98,16 +104,21 @@ public class MouseHandlerText extends BaseMouseHandler{
     public void mouseDragged(Point p0) {
         Point p = d.camera.TV2object(p0);
         Point p2 = d.camera.TV2object(dragStart);
-        dragStart = p0;
-        Text t = textModel.getSelectedText();
-        t.setY(t.getY() + p.getY() - p2.getY());
-        t.setX(t.getX() + p.getX() - p2.getX());
-        textModel.markDirty();
+        if (textModel.isSelected()) {
+            dragStart = p0;
+            Text t = textModel.getSelectedText();
+            t.setY(t.getY() + p.getY() - p2.getY());
+            t.setX(t.getX() + p.getX() - p2.getX());
+            textModel.markDirty();
+        }
     }
 
     @Override
     public void mouseReleased(Point p0) {
-        if (dragStart != null) {
+        if (dragStart != null
+            && dragStart.distance(p0) > 2
+            && !textModel.getSelectedText().getText().isEmpty()
+        ) {
             d.record();
         }
         dragStart = null;

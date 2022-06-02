@@ -12,8 +12,7 @@ import origami.crease_pattern.element.Point;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.Objects;
 
 public class TextEditingArea extends JTextArea {
@@ -47,6 +46,7 @@ public class TextEditingArea extends JTextArea {
                 }
             }
             update(textModel, cpWorker.camera);
+            repaint();
         });
         canvasModel.addPropertyChangeListener(e -> {
             if (Objects.equals(e.getPropertyName(), "mouseMode")) {
@@ -58,7 +58,19 @@ public class TextEditingArea extends JTextArea {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
+                if (KeyEvent.VK_ESCAPE == e.getKeyCode()) {
+                    setVisible(false);
+                    textModel.setSelected(false);
+                } else {
+                    updateSelectedText(textModel);
+                }
+            }
+        });
+        addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
                 updateSelectedText(textModel);
+
                 cpWorker.record();
             }
         });
