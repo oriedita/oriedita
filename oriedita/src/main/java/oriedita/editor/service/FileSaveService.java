@@ -170,8 +170,9 @@ public class FileSaveService {
             int intLineWidth = applicationModel.getLineWidth();
             LineStyle lineStyle = applicationModel.getLineStyle();
             int pointSize = applicationModel.getPointSize();
+            boolean showText = applicationModel.getDisplayComments();
 
-            Svg.exportFile(mainCreasePatternWorker.foldLineSet, creasePatternCamera, displayCpLines, lineWidth, intLineWidth, lineStyle, pointSize, foldedFiguresList, exportFile);
+            Svg.exportFile(mainCreasePatternWorker.foldLineSet, mainCreasePatternWorker.textWorker.getTexts(), showText, mainCreasePatternWorker.camera, displayCpLines, lineWidth, intLineWidth, lineStyle, pointSize, foldedFiguresList, exportFile);
         } else if (exportFile.getName().endsWith(".png") || exportFile.getName().endsWith(".jpg") || exportFile.getName().endsWith(".jpeg")) {
             writeImageFile(exportFile);
         } else if (exportFile.getName().endsWith(".cp")) {

@@ -5,6 +5,7 @@ import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.text.Text;
 import oriedita.editor.tools.StringOp;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
@@ -22,16 +23,26 @@ import origami.folding.util.SortingBox;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Locale;
 
 public class Svg {
 
-    public static void exportFile(FoldLineSet foldLineSet, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize, FoldedFiguresList foldedFigures, File file) {
+    public static void exportFile(FoldLineSet foldLineSet, List<Text> texts, boolean showText, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize, FoldedFiguresList foldedFigures, File file) {
         try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw)) {
+            Locale.setDefault(Locale.ENGLISH);
             pw.println("<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">");
 
             if (i_cp_display) {
                 pw.println("<g id=\"crease-pattern\">");
                 exportSvgWithCamera(pw, foldLineSet, camera, fCreasePatternLineWidth, lineWidth, lineStyle, pointSize);
+                pw.println("</g>");
+            }
+
+            if (showText) {
+                pw.println("<g id=\"text\">");
+                exportSvgTextWithCamera(pw, texts, camera);
                 pw.println("</g>");
             }
 
@@ -44,6 +55,23 @@ public class Svg {
             pw.println("</svg>");
         } catch (IOException e) {
             Logger.error(e, "Error during svg export");
+        }
+    }
+
+    private static void exportSvgTextWithCamera(PrintWriter pw, List<Text> texts, Camera camera) {
+        for (Text text : texts) {
+            Point p = camera.object2TV(text.getPos());
+            DecimalFormat format = new DecimalFormat("#.#");
+            String x = format.format(p.getX());
+            String y = format.format(p.getY());
+            double yLine = p.getY();
+            pw.printf("<text style=\"font-family:sans-serif,Arial,Segoe UI;font-size:12px;\" x=\"%s\" y=\"%s\" fill=\"black\">", x, y);
+            for (String s : text.getText().split("\n")) {
+                String yLineString = format.format(yLine);
+                pw.printf("<tspan x=\"%s\" y=\"%s\" fill=\"black\">%s</tspan>", x, yLineString, s);
+                yLine += 16;
+            }
+            pw.println("</text>");
         }
     }
 
