@@ -757,6 +757,14 @@ public class CreasePattern_Worker {
         return foldLineSet.deleteInside_aux(createBox(p0a, p0b));
     }
 
+    public boolean deleteInside_text(Point p1, Point p2) {
+        if (textWorker.deleteInsideRectangle(p1, p2, camera)) {
+            textModel.markDirty();
+            return true;
+        }
+        return false;
+    }
+
     public boolean change_property_in_4kakukei(Point p0a, Point p0b) {
         return foldLineSet.change_property_in_4kakukei(createBox(p0a, p0b), customCircleColor);
     }

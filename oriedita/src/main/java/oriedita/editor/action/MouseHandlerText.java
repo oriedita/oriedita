@@ -3,6 +3,7 @@ package oriedita.editor.action;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.TextWorker;
 import oriedita.editor.databinding.SelectedTextModel;
+import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.text.Text;
 import origami.crease_pattern.element.Point;
 
@@ -13,11 +14,12 @@ import java.awt.event.MouseEvent;
 import java.util.EnumSet;
 
 @Singleton
-public class MouseHandlerText extends BaseMouseHandler{
+public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
     private final SelectedTextModel textModel;
     private final TextWorker textWorker;
 
-    private Point dragStart;
+    private int mouseButton;
+
     @Inject
     public MouseHandlerText(SelectedTextModel textModel,
                             TextWorker textWorker) {
@@ -42,41 +44,31 @@ public class MouseHandlerText extends BaseMouseHandler{
 
     @Override
     public void mousePressed(Point p0, MouseEvent e) {
+        super.mousePressed(p0);
+        mouseButton = e.getButton();
         if (e.getButton() == MouseEvent.BUTTON1) {
             mousePressed(p0);
-        } else if (e.getButton() == MouseEvent.BUTTON3) {
-            Text nearest = findNearest(p0);
-            if (nearest != null) {
-                textWorker.removeText(nearest);
-                if (textModel.getSelectedText() == nearest) {
-                    textModel.setSelected(false);
-                }
-                textModel.markDirty();
-                d.record();
-            }
         }
     }
 
     @Override
     public void mousePressed(Point p0) {
-        dragStart = p0;
         Point p = d.camera.TV2object(p0);
         Text nearest = findNearest(p0);
         if (nearest == null) {
             if (textModel.isSelected()) {
-                d.record();
+                d.record(); // save the currently selected text before creating the new one
             }
             Text t = new Text(p.getX(), p.getY(), "");
             textWorker.addText(t);
             textModel.setSelectedText(t);
         } else {
             if (textModel.isSelected() && textModel.getSelectedText() != nearest) {
-                d.record();
+                d.record(); // save the currently selected text before selecting the new one
             }
             textModel.setSelectedText(nearest);
         }
         textModel.setSelected(true);
-        textModel.markTextClean();
     }
 
     private Text findNearest(Point p0) {
@@ -101,26 +93,73 @@ public class MouseHandlerText extends BaseMouseHandler{
     }
 
     @Override
-    public void mouseDragged(Point p0) {
-        Point p = d.camera.TV2object(p0);
-        Point p2 = d.camera.TV2object(dragStart);
-        if (textModel.isSelected()) {
-            dragStart = p0;
-            Text t = textModel.getSelectedText();
-            t.setY(t.getY() + p.getY() - p2.getY());
-            t.setX(t.getX() + p.getX() - p2.getX());
-            textModel.markDirty();
+    public void mouseDragged(Point p0, MouseEvent event) {
+        if (mouseButton == MouseEvent.BUTTON1) {
+            this.mouseDragged(p0);
+        } else if (mouseButton == MouseEvent.BUTTON3) {
+            super.mouseDragged(p0);
         }
     }
 
     @Override
+    public void mouseDragged(Point p0) {
+        Point p = d.camera.TV2object(p0);
+        if (selectionStart != null) {
+            Point p2 = d.camera.TV2object(selectionStart);
+            if (textModel.isSelected()) {
+                Text t = textModel.getSelectedText();
+                t.setY(t.getY() + p.getY() - p2.getY());
+                t.setX(t.getX() + p.getX() - p2.getX());
+                textModel.markDirty();
+            }
+        }
+        if (textModel.isSelected()) {
+            selectionStart = p0;
+        }
+    }
+
+    @Override
+    public void mouseReleased(Point p0, MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            mouseReleased(p0);
+        } else {
+            if (selectionStart.distance(p0) > 2) {
+                if (d.deleteInside_text(selectionStart, p0)) {
+                    d.record();
+                    textModel.setSelected(false);
+                    textModel.markDirty();
+                }
+            } else {
+                Text nearest = findNearest(p0);
+                if (nearest != null) {
+                    textWorker.removeText(nearest);
+                    if (textModel.getSelectedText() == nearest) {
+                        textModel.setSelected(false);
+                    }
+                    textModel.markDirty();
+                    d.record();
+                }
+            }
+        }
+        mouseButton = 0;
+        super.mouseReleased(p0, e);
+    }
+
+    @Override
     public void mouseReleased(Point p0) {
-        if (dragStart != null
-            && dragStart.distance(p0) > 2
+        if (selectionStart != null
+            && selectionStart.distance(p0) > 2
             && !textModel.getSelectedText().getText().isEmpty()
         ) {
             d.record();
         }
-        dragStart = null;
+        super.mouseReleased(p0);
+    }
+
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        if (mouseButton == MouseEvent.BUTTON3) {
+            super.drawPreview(g2, camera, settings);
+        }
     }
 }

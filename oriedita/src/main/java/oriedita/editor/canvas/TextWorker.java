@@ -54,4 +54,31 @@ public class TextWorker {
     public void removeText(Text text) {
         this.getTexts().remove(text);
     }
+
+    public boolean deleteInsideRectangle(Point pa, Point pb, Camera camera) {
+        boolean changed = false;
+        List<Text> toRemove = new ArrayList<>();
+        for (Text text : texts) {
+            Rectangle r = text.calculateBounds();
+            Point p1 = camera.object2TV(text.getPos());
+            r.setLocation((int)p1.getX(), (int) p1.getY());
+            if (pa.getX() > pb.getX()) {
+                double tmp = pa.getX();
+                pa.setX(pb.getX());
+                pb.setX(tmp);
+            }
+            if (pa.getY() > pb.getY()) {
+                double tmp = pa.getY();
+                pa.setY(pb.getY());
+                pb.setY(tmp);
+            }
+            Rectangle selection = new Rectangle((int) pa.getX(), (int) pa.getY(), (int)(pb.getX() - pa.getX()), (int)(pb.getY() - pa.getY()));
+            if (selection.contains(r) || selection.intersects(r) || r.contains(selection)) {
+                changed = true;
+                toRemove.add(text);
+            }
+        }
+        texts.removeAll(toRemove);
+        return changed;
+    }
 }

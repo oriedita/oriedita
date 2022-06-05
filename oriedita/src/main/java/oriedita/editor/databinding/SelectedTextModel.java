@@ -1,13 +1,11 @@
 package oriedita.editor.databinding;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import oriedita.editor.text.Text;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.Objects;
 
 @Singleton
 public class SelectedTextModel {
@@ -17,8 +15,6 @@ public class SelectedTextModel {
     private Text selectedText;
 
     private boolean selected;
-
-    private boolean textDirty;
 
     @Inject
     public SelectedTextModel() {
@@ -32,23 +28,11 @@ public class SelectedTextModel {
     public void setSelectedText(Text selectedText) {
         Text oldText = this.selectedText;
         this.selectedText = selectedText;
-        if (!Objects.equals(selectedText, oldText)) {
-            textDirty = true;
-        }
         pcs.firePropertyChange("selectedText", oldText, selectedText);
     }
 
     public void markDirty() {
         pcs.firePropertyChange("dirty", false, true);
-    }
-
-    public void markTextClean() {
-        textDirty = false;
-    }
-
-    @JsonIgnore
-    public boolean isTextDirty() {
-        return textDirty;
     }
 
     public boolean isSelected() {
