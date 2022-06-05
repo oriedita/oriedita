@@ -125,9 +125,9 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
         } else {
             if (selectionStart.distance(p0) > 2) {
                 if (d.deleteInside_text(selectionStart, p0)) {
-                    d.record();
                     textModel.setSelected(false);
                     textModel.markDirty();
+                    d.record();
                 }
             } else {
                 Text nearest = findNearest(p0);
@@ -142,7 +142,7 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
             }
         }
         mouseButton = 0;
-        super.mouseReleased(p0, e);
+        super.mouseReleased(p0);
     }
 
     @Override
