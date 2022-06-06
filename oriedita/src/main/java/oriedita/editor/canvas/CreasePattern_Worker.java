@@ -334,7 +334,6 @@ public class CreasePattern_Worker {
         Save save = Save.createInstance();
         foldLineSet.getSave(save);
         auxLines.h_getSave(save);
-        textWorker.getSave(save);
         saveAdditionalInformation(save);
 
         return save;

@@ -4,14 +4,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.TextWorker;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.HistoryState;
 import oriedita.editor.service.ResetService;
+import oriedita.editor.text.Text;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.element.Circle;
@@ -40,14 +42,17 @@ public class SaveTest {
         CanvasModel canvasModel = new CanvasModel();
         GridModel gridModel = new GridModel();
         FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
-        mainCreasePatternWorker = new CreasePattern_Worker(creasePatternCamera, new HistoryState(), new HistoryState(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, null, null);
+        SelectedTextModel textModel = new SelectedTextModel();
+        TextWorker textWorker = new TextWorker();
+        mainCreasePatternWorker = new CreasePattern_Worker(creasePatternCamera, new HistoryState(), new HistoryState(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, null, null, textWorker, textModel);
         ResetService resetService = () -> {};
         fileSaveService = new FileSaveService(null, creasePatternCamera, mainCreasePatternWorker, null, fileModel, applicationModel, canvasModel, new FoldedFiguresList(), resetService, null);
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"save/save-0.0.11.ori", "save/save-0.0.12.ori", "save/save-1.0.0-ALPHA.13.ori", "save/save-1.0.0-v1.1.ori"})
-    public void testSave(String filename) throws URISyntaxException {
+    @CsvSource({"save/save-0.0.11.ori,false", "save/save-0.0.12.ori,false", "save/save-1.0.0-ALPHA.13.ori,false",
+            "save/save-1.0.0-v1.1.ori,true"})
+    public void testSave(String filename, boolean hasText) throws URISyntaxException {
         File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource(filename)).toURI());
 
         try {
@@ -56,7 +61,7 @@ public class SaveTest {
             FoldLineSet foldLineSet = mainCreasePatternWorker.foldLineSet;
             List<Circle> list = (List<Circle>) foldLineSet.getCircles();
 
-            Assertions.assertEquals(1, list.size(), "Excpected one circle");
+            Assertions.assertEquals(1, list.size(), "Expected one circle");
 
             Circle circle = list.get(0);
             Assertions.assertEquals(50.0, circle.getR());
@@ -89,6 +94,12 @@ public class SaveTest {
 
             LineSegment auxLineSegment = foldLineSet.get(8);
             Assertions.assertEquals(LineColor.CYAN_3, auxLineSegment.getColor());
+
+            if (hasText) {
+                Assertions.assertEquals(1, mainCreasePatternWorker.textWorker.getTexts().size());
+                Text t = mainCreasePatternWorker.textWorker.getTexts().get(0);
+                Assertions.assertEquals("Test", t.getText());
+            }
         } catch (FileReadingException e) {
             Assertions.fail(e);
         }

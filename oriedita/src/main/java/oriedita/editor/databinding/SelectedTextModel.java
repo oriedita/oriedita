@@ -39,6 +39,10 @@ public class SelectedTextModel {
         return selected;
     }
 
+    public boolean isSelected(Text t) {
+        return isSelected() && getSelectedText() == t;
+    }
+
     public void setSelected(boolean selected) {
         boolean oldSelected = this.selected;
         this.selected = selected;

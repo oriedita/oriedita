@@ -12,18 +12,21 @@ import origami.crease_pattern.element.Point;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Objects;
 
 public class TextEditingArea extends JTextArea {
-    private SelectedTextModel textModel;
-    private TextWorker textWorker;
+    private final SelectedTextModel textModel;
+    private final TextWorker textWorker;
 
-    private CreasePattern_Worker cpWorker;
+    private final CreasePattern_Worker cpWorker;
 
-    private CanvasModel canvasModel;
+    private final CanvasModel canvasModel;
 
-    private CameraModel cameraModel;
+    private final CameraModel cameraModel;
 
 
     public TextEditingArea(SelectedTextModel textModel,
@@ -91,13 +94,15 @@ public class TextEditingArea extends JTextArea {
             repaint();
             return;
         }
-        repaint();
+
         if (!Objects.equals(getText(), textModel.getSelectedText().getText())) {
             setText(textModel.getSelectedText().getText());
         }
+
         Rectangle bounds = textModel.getSelectedText().calculateBounds();
         requestFocusInWindow();
         setVisible(true);
+
         Point textPos = camera.object2TV(textModel.getSelectedText().getPos());
         setBounds((int) textPos.getX()-3, (int) textPos.getY()-10, bounds.width+30, bounds.height+30);
         repaint();
