@@ -117,6 +117,7 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
                 t.setY(t.getY() + p.getY() - selStart.getY());
                 t.setX(t.getX() + p.getX() - selStart.getX());
                 textModel.markDirty();
+                selectionStart = p0;
             }
         }
     }
