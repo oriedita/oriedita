@@ -1,10 +1,7 @@
 package origami.crease_pattern;
 
 import origami.Epsilon;
-import origami.crease_pattern.element.Circle;
-import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.Point;
-import origami.crease_pattern.element.StraightLine;
+import origami.crease_pattern.element.*;
 
 /**
  * Static utilities for calculations.
@@ -1083,5 +1080,33 @@ public class OritaCalc {
         NOT_PARALLEL,
         PARALLEL_NOT_EQUAL,
         PARALLEL_EQUAL,
+    }
+
+    public static LineSegment s_step_additional_intersection(LineSegment s_o, LineSegment s_k, LineColor icolo) {
+
+        Point cross_point = new Point();
+
+        if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.PARALLEL_NOT_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+            return null;
+        }
+
+        if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+            cross_point.set(s_k.getA());
+            if (OritaCalc.distance(s_o.getA(), s_k.getA()) > OritaCalc.distance(s_o.getA(), s_k.getB())) {
+                cross_point.set(s_k.getB());
+            }
+        }
+
+        if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
+            cross_point.set(OritaCalc.findIntersection(s_o, s_k));
+        }
+
+        LineSegment add_sen = new LineSegment(cross_point, s_o.getA(), icolo);
+
+        if (Epsilon.high.gt0(add_sen.determineLength())) {
+            return add_sen;
+        }
+
+        return null;
     }
 }
