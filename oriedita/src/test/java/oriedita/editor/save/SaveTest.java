@@ -34,10 +34,12 @@ public class SaveTest {
     private FileSaveService fileSaveService;
     private CreasePattern_Worker mainCreasePatternWorker;
 
+    private FileModel fileModel;
+
     @BeforeEach
     public void setupBeforeEach() {
         Camera creasePatternCamera = new Camera();
-        FileModel fileModel = new FileModel();
+        fileModel = new FileModel();
         ApplicationModel applicationModel = new ApplicationModel();
         CanvasModel canvasModel = new CanvasModel();
         GridModel gridModel = new GridModel();
@@ -103,6 +105,17 @@ public class SaveTest {
         } catch (FileReadingException e) {
             Assertions.fail(e);
         }
+    }
+
+    @ParameterizedTest
+    @CsvSource({"save/save-0.0.11.ori,false", "save/save-0.0.12.ori,false", "save/save-1.0.0-ALPHA.13.ori,false",
+            "save/save-1.0.0-v1.1.ori,true"})
+    void testSaveAndReload(String fileName, boolean hasText) throws URISyntaxException {
+        testSave(fileName, hasText);
+        File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("save/tmp_save.ori")).toURI());
+        fileModel.setSavedFileName(saveFile.getPath());
+        fileSaveService.saveFile();
+        testSave("save/tmp_save.ori", hasText);
     }
 
     @Test
