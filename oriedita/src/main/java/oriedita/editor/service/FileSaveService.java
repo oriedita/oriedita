@@ -438,7 +438,7 @@ public class FileSaveService {
             }
         } else if (fname.getName().endsWith(".cp")) {
             if (!save.canSaveAsCp()) {
-                JOptionPane.showMessageDialog(frame, "The saved .cp file does not contain circles and yellow aux lines. Save as a .ori file to also save these lines.", "Warning", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "The saved .cp file does not contain circles, text and yellow aux lines. Save as a .ori file to also save these lines.", "Warning", JOptionPane.WARNING_MESSAGE);
             }
 
             Cp.exportFile(save, fname);
