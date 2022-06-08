@@ -146,8 +146,8 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
 
                 /*
                  Draw purple indicators for bisector
-                 At this point, there should only be 2 lines in lineStep (first 2 initial line clicks)
-                 --> Next 2 should be at index 2 and 3
+                 At this point, there should be 3 lines in lineStep (first 2 initial line clicks and a line for midpoint)
+                 --> Next 2 should be at index 3 and 4
                 */
                 LineSegment tempPerpenLine = new LineSegment();
                 tempPerpenLine.set(d.lineStep.get(1).getA(), projectedPoint);
@@ -155,19 +155,6 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
                 d.lineStep.get(3).setColor(LineColor.PURPLE_8);
                 d.lineStepAdd(new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, 25.0), midPoint)));
                 d.lineStep.get(4).setColor(LineColor.PURPLE_8);
-
-                // Make the purple bisector indicators parallel to one of the first 2 lines
-                LineSegment bisector1 = OritaCalc.s_step_additional_intersection(d.lineStep.get(2), d.lineStep.get(3), d.lineColor);
-                LineSegment bisector2 = OritaCalc.s_step_additional_intersection(d.lineStep.get(2), d.lineStep.get(4), d.lineColor);
-
-                if (bisector1 != null) {
-                    d.lineStepAdd(bisector1);
-                    d.record();
-                }
-                if (bisector2 != null) {
-                    d.lineStepAdd(bisector2);
-                    d.record();
-                }
             }
             // Step 2: Get the 2 destination lines and form the actual bisector
             if(d.lineStep.size() == 7){
