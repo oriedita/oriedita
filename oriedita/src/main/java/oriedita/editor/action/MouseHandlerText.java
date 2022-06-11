@@ -2,6 +2,7 @@ package oriedita.editor.action;
 
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.TextWorker;
+import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.SelectedTextModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.text.Text;
@@ -9,6 +10,7 @@ import origami.crease_pattern.element.Point;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.EnumSet;
@@ -18,13 +20,19 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
     private final SelectedTextModel textModel;
     private final TextWorker textWorker;
 
+    private boolean showWarningThisSession;
+
+    private final ApplicationModel applicationModel;
+
     private int mouseButton;
 
     @Inject
     public MouseHandlerText(SelectedTextModel textModel,
-                            TextWorker textWorker) {
+                            TextWorker textWorker, ApplicationModel applicationModel) {
         this.textModel = textModel;
         this.textWorker = textWorker;
+        this.showWarningThisSession = applicationModel.getShowInvisibleTextWarning();
+        this.applicationModel = applicationModel;
     }
 
     @Override
@@ -40,10 +48,17 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
     @Override
     public void mouseMoved(Point p0, MouseEvent e) {
 
-        if (textModel.isSelected()) {
-            if (calculateBounds(textModel.getSelectedText()).contains(e.getPoint())) {
+        if (textModel.isSelected() && calculateBounds(textModel.getSelectedText()).contains(e.getPoint())) {
                 e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-            } else {
+        } else {
+            boolean changed = false;
+            for (Text text : textWorker.getTexts()) {
+                if (calculateBounds(text).contains(e.getPoint())) {
+                    e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+                    changed = true;
+                }
+            }
+            if (!changed) {
                 e.getComponent().setCursor(Cursor.getDefaultCursor());
             }
         }
@@ -67,18 +82,23 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
         if (textModel.isSelected()) {
             if (!trySelectText(p0)) {
                 textModel.setSelected(false);
-                d.record();
+                if (textModel.isDirty()) {
+                    d.record();
+                    textModel.markClean();
+                }
             }
         } else {
             selectOrCreateText(p0);
         }
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean trySelectText(Point p0) {
         Text nearest = findNearest(p0);
         if (nearest != null) {
-            if (textModel.isSelected() && textModel.getSelectedText() != nearest) {
+            if (textModel.isSelected() && textModel.getSelectedText() != nearest && textModel.isDirty()) {
                 d.record(); // save the currently selected text before selecting the new one
+                textModel.markClean();
             }
             textModel.setSelectedText(nearest);
             return true;
@@ -87,10 +107,26 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
     }
 
     private void selectOrCreateText(Point p0) {
+        if (showWarningThisSession && !applicationModel.getDisplayComments()) {
+            JCheckBox checkBox = new JCheckBox("Don't show again");
+            Object[] message = {
+                    "'display comments' is disabled.\n Without it, text will not be visible. Do you want to enable it?",
+                    checkBox};
+
+            int answer = JOptionPane.showConfirmDialog(null, message, "Enable Show comments?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (answer == JOptionPane.YES_OPTION) {
+                applicationModel.setDisplayComments(true);
+            }
+            showWarningThisSession = false;
+            if (checkBox.isSelected()) {
+                applicationModel.setShowInvisibleTextWarning(false);
+            }
+        }
         Point p = d.camera.TV2object(p0);
         if (!trySelectText(p0)) {
-            if (textModel.isSelected()) {
+            if (textModel.isSelected() && textModel.isDirty()) {
                 d.record(); // save the currently selected text before creating the new one
+                textModel.markClean();
             }
             Text t = new Text(p.getX(), p.getY(), "");
             textWorker.addText(t);
@@ -152,8 +188,8 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
                     if (!d.textWorker.getTexts().contains(textModel.getSelectedText())) {
                         textModel.setSelected(false);
                     }
-                    textModel.markDirty();
                     d.record();
+                    textModel.markClean();
                 }
             } else {
                 Text nearest = findNearest(p0);
@@ -162,8 +198,8 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
                     if (textModel.getSelectedText() == nearest) {
                         textModel.setSelected(false);
                     }
-                    textModel.markDirty();
                     d.record();
+                    textModel.markClean();
                 }
             }
         }
@@ -178,6 +214,7 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
             && !textModel.getSelectedText().getText().isEmpty()
         ) {
             d.record();
+            textModel.markClean();
         }
         super.mouseReleased(p0);
     }

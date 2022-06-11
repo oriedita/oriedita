@@ -62,6 +62,8 @@ public class ApplicationModel implements Serializable {
     private Dimension windowSize;
     private List<File> recentFileList;
 
+    private boolean showInvisibleTextWarning;
+
     private Color gridColor;
     private Color gridScaleColor;
     private int gridLineWidth;
@@ -80,6 +82,16 @@ public class ApplicationModel implements Serializable {
         boolean oldDisplayNumbers = this.displayNumbers;
         this.displayNumbers = displayNumbers;
         this.pcs.firePropertyChange("displayNumbers", oldDisplayNumbers, displayNumbers);
+    }
+
+    public boolean getShowInvisibleTextWarning() {
+        return showInvisibleTextWarning;
+    }
+
+    public void setShowInvisibleTextWarning(boolean showInvisibleTextWarning) {
+        boolean oldShowInvisibleTextWarning = this.showInvisibleTextWarning;
+        this.showInvisibleTextWarning = showInvisibleTextWarning;
+        this.pcs.firePropertyChange("showInvisibleTextWarning", oldShowInvisibleTextWarning, showInvisibleTextWarning);
     }
 
     public List<File> getRecentFileList() {
@@ -263,6 +275,8 @@ public class ApplicationModel implements Serializable {
         gridColor = Colors.GRID_LINE;
         gridScaleColor = Colors.GRID_SCALE;
         gridLineWidth = 1;
+
+        showInvisibleTextWarning = true;
 
         laf = FlatLightLaf.class.getName();
 
@@ -633,6 +647,8 @@ public class ApplicationModel implements Serializable {
         displayBottomPanel = applicationModel.getDisplayBottomPanel();
         displayRightPanel = applicationModel.getDisplayRightPanel();
         displayLeftPanel = applicationModel.getDisplayLeftPanel();
+
+        showInvisibleTextWarning = applicationModel.getShowInvisibleTextWarning();
 
         laf = applicationModel.getLaf();
         recentFileList = applicationModel.getRecentFileList().stream().filter(File::exists).collect(Collectors.toList());

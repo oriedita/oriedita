@@ -1,5 +1,7 @@
 package oriedita.editor.databinding;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.tinylog.Logger;
 import oriedita.editor.text.Text;
 
 import javax.inject.Inject;
@@ -15,6 +17,8 @@ public class SelectedTextModel {
     private Text selectedText;
 
     private boolean selected;
+
+    private boolean dirty;
 
     @Inject
     public SelectedTextModel() {
@@ -32,7 +36,24 @@ public class SelectedTextModel {
     }
 
     public void markDirty() {
-        pcs.firePropertyChange("dirty", false, true);
+        setDirty(true);
+    }
+
+    public void markClean() {
+        setDirty(false);
+    }
+
+    @JsonIgnore
+    public void setDirty(boolean dirty) {
+        boolean oldDirty = this.dirty;
+        if (dirty && !oldDirty) {
+            Logger.info("text dirty");
+        }
+        if (!dirty && oldDirty) {
+            Logger.info("text clean");
+        }
+        this.dirty = dirty;
+        pcs.firePropertyChange("dirty", !dirty, dirty); // should always trigger a PropertyChangeEvent
     }
 
     public boolean isSelected() {
@@ -52,6 +73,7 @@ public class SelectedTextModel {
     public void reset() {
         setSelected(false);
         setSelectedText(null);
+        dirty = false;
         this.pcs.firePropertyChange(null, null, null);
     }
 
@@ -63,4 +85,8 @@ public class SelectedTextModel {
         this.pcs.removePropertyChangeListener(listener);
     }
 
+    @JsonIgnore
+    public boolean isDirty() {
+        return dirty;
+    }
 }

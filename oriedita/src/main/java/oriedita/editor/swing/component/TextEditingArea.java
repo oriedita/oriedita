@@ -60,29 +60,41 @@ public class TextEditingArea extends JTextArea {
         });
         addKeyListener(new KeyAdapter() {
             @Override
-            public void keyReleased(KeyEvent e) {
+            public void keyTyped(KeyEvent e) {
+                updateSelectedText(textModel);
+            }
+            @Override
+            public void keyPressed(KeyEvent e) {
                 if (KeyEvent.VK_ESCAPE == e.getKeyCode()) {
                     setVisible(false);
                     textModel.setSelected(false);
-                } else {
-                    updateSelectedText(textModel);
                 }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                updateSelectedText(textModel);
             }
         });
         addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 updateSelectedText(textModel);
-
-                cpWorker.record();
+                if (textModel.isDirty()) {
+                    cpWorker.record();
+                    textModel.markClean();
+                }
             }
         });
         cameraModel.addPropertyChangeListener(e -> update(textModel, cpWorker.camera));
 
     }
     private void updateSelectedText(SelectedTextModel textModel) {
+        boolean changed = !textModel.getSelectedText().getText().equals(getText());
         textModel.getSelectedText().setText(getText());
-        textModel.markDirty();
+        if (changed) {
+            textModel.markDirty();
+        }
     }
 
     public void update() {
