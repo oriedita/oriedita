@@ -38,8 +38,19 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
     }
 
     @Override
-    public void mouseMoved(Point p0) {
+    public void mouseMoved(Point p0, MouseEvent e) {
 
+        if (textModel.isSelected()) {
+            if (calculateBounds(textModel.getSelectedText()).contains(e.getPoint())) {
+                e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+            } else {
+                e.getComponent().setCursor(Cursor.getDefaultCursor());
+            }
+        }
+    }
+
+    @Override
+    public void mouseMoved(Point p0) {
     }
 
     @Override
@@ -53,18 +64,31 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
 
     @Override
     public void mousePressed(Point p0) {
-        selectOrCreateText(p0);
+        if (textModel.isSelected()) {
+            if (!trySelectText(p0)) {
+                textModel.setSelected(false);
+                d.record();
+            }
+        } else {
+            selectOrCreateText(p0);
+        }
     }
 
-    private void selectOrCreateText(Point p0) {
-        Point p = d.camera.TV2object(p0);
+    private boolean trySelectText(Point p0) {
         Text nearest = findNearest(p0);
         if (nearest != null) {
             if (textModel.isSelected() && textModel.getSelectedText() != nearest) {
                 d.record(); // save the currently selected text before selecting the new one
             }
             textModel.setSelectedText(nearest);
-        } else {
+            return true;
+        }
+        return false;
+    }
+
+    private void selectOrCreateText(Point p0) {
+        Point p = d.camera.TV2object(p0);
+        if (!trySelectText(p0)) {
             if (textModel.isSelected()) {
                 d.record(); // save the currently selected text before creating the new one
             }
@@ -80,11 +104,7 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
         double minDist = 100000000;
         Text nearest = null;
         for (Text text : textWorker.getTexts()) {
-            Point posCam = d.camera.object2TV(text.getPos());
-            Rectangle bounds = text.calculateBounds();
-            int selectionRadius = textModel.isSelected(text)? 7 : 0; // make selection area bigger if editing ui is visible on this text
-            bounds.setLocation((int) posCam.getX()-3-selectionRadius, (int) posCam.getY()-10-selectionRadius);
-            bounds.setSize(bounds.width+6+selectionRadius*2, bounds.height+11+selectionRadius*2);
+            Rectangle bounds = calculateBounds(text);
             java.awt.Point p0Awt = new java.awt.Point((int) p0.getX(), (int) p0.getY());
             if (bounds.contains(p0Awt)) {
                 if (p.distance(text.getPos()) < minDist) {
@@ -167,5 +187,14 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
         if (mouseButton == MouseEvent.BUTTON3) {
             super.drawPreview(g2, camera, settings);
         }
+    }
+
+    private Rectangle calculateBounds(Text text) {
+        Point posCam = d.camera.object2TV(text.getPos());
+        Rectangle bounds = text.calculateBounds();
+        int selectionRadius = textModel.isSelected(text)? 7 : 1; // make selection area bigger if editing ui is visible on this text
+        bounds.setLocation((int) posCam.getX()-3-selectionRadius, (int) posCam.getY()-10-selectionRadius);
+        bounds.setSize(bounds.width+8+selectionRadius*5, bounds.height+10+selectionRadius*5);
+        return bounds;
     }
 }
