@@ -41,6 +41,7 @@ public class LookAndFeelService {
                     Font font = UIManager.getFont("defaultFont");
                     if (font != UIManager.getLookAndFeelDefaults().getFont("defaultFont"))
                         defaultFont = font;
+                    UIManager.put("TextArea.border", UIManager.get("TextField.border"));
                 }
                 UIManager.put("defaultFont", null);
 
