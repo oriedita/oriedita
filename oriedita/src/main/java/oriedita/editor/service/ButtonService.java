@@ -86,6 +86,11 @@ public class ButtonService {
         }
     }
 
+    private void addKeyStroke(KeyStroke keyStroke, AbstractButton button, String key) {
+        helpInputMap.put(keyStroke, button);
+        owner.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
+    }
+
     public void registerButton(AbstractButton button, String key) {
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
@@ -127,8 +132,7 @@ public class ButtonService {
             addContextMenu(button, key, keyStroke);
 
             if (keyStroke != null) {
-                helpInputMap.put(keyStroke, button);
-                owner.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
+                addKeyStroke(keyStroke, button, key);
             }
             owner.getRootPane().getActionMap().put(key, new Click(button));
 
@@ -171,25 +175,31 @@ public class ButtonService {
         Action addKeybindAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                KeyStroke currentKeyStroke = button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).keys() != null && button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).keys().length > 0
-                        ? button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).keys()[0]
-                        : null;
+                InputMap map = owner.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+                KeyStroke stroke = null;
+                for (KeyStroke keyStroke : map.keys()) {
+                    if (map.get(keyStroke).equals(key)) {
+                        stroke = keyStroke;
+                    }
+                }
+                KeyStroke currentKeyStroke = stroke;
 
                 new SelectKeyStrokeDialog(owner, button, helpInputMap, currentKeyStroke, newKeyStroke -> {
                     if (newKeyStroke != null && helpInputMap.containsKey(newKeyStroke) && helpInputMap.get(newKeyStroke) != button) {
-                        String conflictingButton = (String) helpInputMap.get(newKeyStroke).getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).get(newKeyStroke);
+                        String conflictingButton = (String) helpInputMap.get(newKeyStroke).getRootPane()
+                                                                        .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                                                                        .get(newKeyStroke);
                         JOptionPane.showMessageDialog(owner, "Conflicting KeyStroke! Conflicting with " + conflictingButton);
                         return false;
                     }
 
-                    ResourceUtil.updateBundleKey("hotkey", key, newKeyStroke == null ? null : newKeyStroke.toString());
+                    ResourceUtil.updateBundleKey("hotkey", key, newKeyStroke == null ? "" : newKeyStroke.toString());
 
                     helpInputMap.remove(currentKeyStroke);
-                    button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(currentKeyStroke);
+                    owner.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(currentKeyStroke);
 
                     if (newKeyStroke != null) {
-                        helpInputMap.put(newKeyStroke, button);
-                        button.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(newKeyStroke, key);
+                        addKeyStroke(newKeyStroke, button, key);
                         putValue(Action.NAME, "Change key stroke (Current: " + KeyStrokeUtil.toString(newKeyStroke) + ")");
                     } else {
                         putValue(Action.NAME, "Change key stroke");
