@@ -240,12 +240,13 @@ public class App {
         } else {
             frame.setLocationRelativeTo(null);
         }
-        if (applicationModel.getWindowSize() != null) {
-            frame.setSize(applicationModel.getWindowSize());
-        }
 
         frame.setExtendedState(applicationModel.getWindowState());
         frame.pack();
+
+        if (applicationModel.getWindowSize() != null) {
+            frame.setSize(applicationModel.getWindowSize());
+        }
 
         frame.setVisible(true);
 
