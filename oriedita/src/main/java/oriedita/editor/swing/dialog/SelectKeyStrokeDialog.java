@@ -20,7 +20,7 @@ public class SelectKeyStrokeDialog extends JDialog {
 
     private KeyStroke keyStroke;
 
-    public SelectKeyStrokeDialog(Frame owner, AbstractButton button, Map<KeyStroke, AbstractButton> helpInputMap, KeyStroke keyStroke, Function<KeyStroke, Boolean> select) {
+    public SelectKeyStrokeDialog(JFrame owner, AbstractButton button, Map<KeyStroke, AbstractButton> helpInputMap, KeyStroke keyStroke, Function<KeyStroke, Boolean> select) {
         super(owner, "Set Key Stroke");
         this.select = select;
         setContentPane(contentPane);
@@ -47,8 +47,11 @@ public class SelectKeyStrokeDialog extends JDialog {
                 }
 
                 KeyStroke keyStrokeForEvent = KeyStroke.getKeyStrokeForEvent(e);
-                if (keyStrokeForEvent != null && helpInputMap.containsKey(keyStrokeForEvent) && helpInputMap.get(keyStrokeForEvent) != button) {
-                    String conflictingButton = (String) helpInputMap.get(keyStrokeForEvent).getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).get(keyStrokeForEvent);
+                if (keyStrokeForEvent != null && helpInputMap.containsKey(keyStrokeForEvent) && helpInputMap.get(
+                    keyStrokeForEvent) != button) {
+                    String conflictingButton = (String) owner.getRootPane()
+                                                             .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                                                             .get(keyStrokeForEvent);
                     setConflict("Conflicting with " + conflictingButton);
                 } else {
                     setConflict(null);
