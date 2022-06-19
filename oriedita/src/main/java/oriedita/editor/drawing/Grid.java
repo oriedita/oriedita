@@ -349,7 +349,7 @@ public class Grid {
             g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
         }
         
-        if(drawDiagonalGridlines && gridAngle != -90){
+        if(drawDiagonalGridlines){
             for (int i = grid_screen_a_min; i <= grid_screen_a_max; i++) {
                 s_ob.set(d_grid_ax * i + d_grid_cx * grid_screen_b_min + okx0,
                         d_grid_ay * i + d_grid_cy * grid_screen_b_min + oky0,
@@ -357,7 +357,6 @@ public class Grid {
                         d_grid_ay * i + d_grid_cy * grid_screen_b_max + oky0);
 
                 s_tv.set(camera.object2TV(s_ob));
-                System.out.println("bmin,max: (" + grid_screen_b_min + ", " + grid_screen_b_max + ")");
                 g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
             }
         }
@@ -391,14 +390,13 @@ public class Grid {
                     s_tv.set(camera.object2TV(s_ob));
                     g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
 
-                    if (drawDiagonalGridlines && gridAngle != -90){
+                    if (drawDiagonalGridlines ){
                         s_ob.set(d_grid_ax * i + d_grid_cx * grid_screen_b_min + okx0,
                                 d_grid_ay * i + d_grid_cy * grid_screen_b_min + oky0,
                                 d_grid_ax * i + d_grid_cx * grid_screen_b_max + okx0,
                                 d_grid_ay * i + d_grid_cy * grid_screen_b_max + oky0);
 
                         s_tv.set(camera.object2TV(s_ob));
-                        System.out.println("bmin,max: (" + grid_screen_b_min + ", " + grid_screen_b_max + ")");
                         g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
                     }
                 }

@@ -51,6 +51,8 @@ public class GridModel implements Serializable {
 
         intervalGridSize = 5;
 
+        drawDiagonalGridlines = false;
+
         resetGridX();
         resetGridY();
 
@@ -309,6 +311,8 @@ public class GridModel implements Serializable {
         baseState = gridModel.getBaseState();
         verticalScalePosition = gridModel.getVerticalScalePosition();
         horizontalScalePosition = gridModel.getHorizontalScalePosition();
+
+        drawDiagonalGridlines = gridModel.getDrawDiagonalGridlines();
 
         this.pcs.firePropertyChange(null, null, null);
     }
