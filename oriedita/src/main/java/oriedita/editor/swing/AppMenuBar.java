@@ -13,7 +13,9 @@ import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveV1;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FileSaveService;
+import oriedita.editor.service.HotkeyService;
 import oriedita.editor.service.ResetService;
+import oriedita.editor.swing.dialog.SettingsDialog;
 import oriedita.editor.task.TaskExecutor;
 
 import javax.inject.Inject;
@@ -35,6 +37,8 @@ public class AppMenuBar extends JMenuBar {
     private final JFrame frame;
     private final FileSaveService fileSaveService;
     private final FileModel fileModel;
+
+    //<editor-fold desc="View">
     private JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
     private JCheckBoxMenuItem pointOffsetCheckBox;//点を離すかどうか
     private JCheckBoxMenuItem gridInputAssistCheckBox;//高密度用入力をするかどうか
@@ -54,7 +58,8 @@ public class AppMenuBar extends JMenuBar {
     private JCheckBoxMenuItem displayBottomPanel;
     private JCheckBoxMenuItem displayLeftPanel;
     private JCheckBoxMenuItem displayRightPanel;
-
+    //</editor-fold>
+    //<editor-fold desc="File">
     private JMenuItem newButton;
     private JMenuItem openButton;
     private JMenuItem saveButton;
@@ -66,11 +71,14 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem toggleHelpMenuItem;
     private JMenu openRecentMenu;
     private JMenuItem clearRecentFileMenuItem;
-
+    private JMenuItem settingsButton;
+    //</editor-fold>
+    //<editor-fold desc="Edit">
     private JMenuItem copyButton;
     private JMenuItem cutButton;
     private JMenuItem pasteButton;
     private JMenuItem pasteOffsetButton;
+    //</editor-fold>
 
     @Inject
     public AppMenuBar(@Named("mainFrame") JFrame frame,
@@ -79,6 +87,8 @@ public class AppMenuBar extends JMenuBar {
                       ButtonService buttonService,
                       CanvasModel canvasModel,
                       FileModel fileModel,
+                      HotkeyService hotkeyService,
+                      HotkeyModel hotkeyModel,
                       CreasePattern_Worker mainCreasePatternWorker,
                       FoldedFigureModel foldedFigureModel,
                       ResetService resetService,
@@ -130,6 +140,7 @@ public class AppMenuBar extends JMenuBar {
         buttonService.registerButton(cutButton, "cutClipboardAction");
         buttonService.registerButton(pasteButton, "pasteClipboardAction");
         buttonService.registerButton(pasteOffsetButton, "pasteOffsetClipboardAction");
+        buttonService.registerButton(settingsButton, "optionsAction");
 
         newButton.addActionListener(e -> {
             if (!fileModel.isSaved()) {
@@ -187,6 +198,11 @@ public class AppMenuBar extends JMenuBar {
             }
         });
         exitButton.addActionListener(e -> closing());
+        settingsButton.addActionListener(e -> {
+            SettingsDialog dialog = new SettingsDialog(frame, hotkeyService, hotkeyModel);
+            dialog.pack();
+            dialog.setVisible(true);
+        });
         showPointRangeCheckBox.addActionListener(e -> getData(applicationModel));
         pointOffsetCheckBox.addActionListener(e -> getData(applicationModel));
         gridInputAssistCheckBox.addActionListener(e -> {
@@ -316,6 +332,11 @@ public class AppMenuBar extends JMenuBar {
 
         importAddButton = new JMenuItem("Import (Add)");
         fileMenu.add(importAddButton);
+
+        fileMenu.addSeparator();
+
+        settingsButton = new JMenuItem("Settings");
+        fileMenu.add(settingsButton);
 
         fileMenu.addSeparator();
 

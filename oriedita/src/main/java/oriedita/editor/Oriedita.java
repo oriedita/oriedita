@@ -25,16 +25,12 @@ public class Oriedita {
         }
 
         AppFactory build = DaggerAppFactory.create();
-
-        // Initialize look and feel service, this will bind to the applicationModel update the look and feel (must be done early).
-        build.lookAndFeelService().init();
-        // Restore the applicationModel, this should be done as early as possible.
-        build.applicationModelPersistenceService().init();
+        build.init();
 
         SwingUtilities.invokeLater(() -> {
             FlatLaf.registerCustomDefaultsSource("oriedita.editor.themes");
 
-            build.app().start();
+            build.start();
 
             if (argv.length == 1) {
                 // We got a file
@@ -46,7 +42,7 @@ public class Oriedita {
                 }
             }
 
-            build.fileSaveService().initAutoSave();
+            build.afterStart();
         });
     }
 }

@@ -8,6 +8,7 @@ import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.FoldedFigure_Worker_Drawer;
 import oriedita.editor.service.ButtonService;
+import oriedita.editor.service.HotkeyService;
 import oriedita.editor.service.LookAndFeelService;
 import oriedita.editor.service.ResetService;
 import oriedita.editor.swing.AppMenuBar;
@@ -38,6 +39,7 @@ public class App {
     private final Queue<Popup> popups = new ArrayDeque<>();
     private final ButtonService buttonService;
     private final LookAndFeelService lookAndFeelService;
+    private final HotkeyService hotkeyService;
     private final Editor editor;
     private final AppMenuBar appMenuBar;
     private final ResetService resetService;
@@ -64,6 +66,7 @@ public class App {
             Canvas canvas,
             HelpDialog explanation,
             ButtonService buttonService,
+            HotkeyService hotkeyService,
             Editor editor,
             AppMenuBar appMenuBar,
             ResetService resetService
@@ -79,6 +82,7 @@ public class App {
         this.canvas = canvas;
         this.explanation = explanation;
         this.buttonService = buttonService;
+        this.hotkeyService = hotkeyService;
         this.editor = editor;
         this.appMenuBar = appMenuBar;
         this.resetService = resetService;
@@ -158,7 +162,7 @@ public class App {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (popups.isEmpty()) {
-                    for (Map.Entry<KeyStroke, AbstractButton> entry : buttonService.helpInputMap.entrySet()) {
+                    for (Map.Entry<KeyStroke, AbstractButton> entry : hotkeyService.helpInputMap.entrySet()) {
                         AbstractButton button = entry.getValue();
                         KeyStroke keyStroke = entry.getKey();
 

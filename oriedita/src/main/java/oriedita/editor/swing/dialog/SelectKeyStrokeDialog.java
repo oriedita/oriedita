@@ -1,12 +1,13 @@
 package oriedita.editor.swing.dialog;
 
+import oriedita.editor.databinding.HotkeyModel;
 import oriedita.editor.tools.KeyStrokeUtil;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class SelectKeyStrokeDialog extends JDialog {
@@ -20,12 +21,11 @@ public class SelectKeyStrokeDialog extends JDialog {
 
     private KeyStroke keyStroke;
 
-    public SelectKeyStrokeDialog(JFrame owner, AbstractButton button, Map<KeyStroke, AbstractButton> helpInputMap, KeyStroke keyStroke, Function<KeyStroke, Boolean> select) {
+    public SelectKeyStrokeDialog(JFrame owner, String key, HotkeyModel hotkeyModel, KeyStroke keyStroke, Function<KeyStroke, Boolean> select) {
         super(owner, "Set Key Stroke");
         this.select = select;
         setContentPane(contentPane);
         setModal(true);
-        //getRootPane().setDefaultButton(buttonOK);
 
         setKeyStroke(keyStroke);
 
@@ -47,14 +47,15 @@ public class SelectKeyStrokeDialog extends JDialog {
                 }
 
                 KeyStroke keyStrokeForEvent = KeyStroke.getKeyStrokeForEvent(e);
-                if (keyStrokeForEvent != null && helpInputMap.containsKey(keyStrokeForEvent) && helpInputMap.get(
-                    keyStrokeForEvent) != button) {
-                    String conflictingButton = (String) owner.getRootPane()
-                                                             .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                                                             .get(keyStrokeForEvent);
-                    setConflict("Conflicting with " + conflictingButton);
-                } else {
+                if (keyStrokeForEvent == null
+                        || hotkeyModel.getKey(keyStrokeForEvent) == null
+                        || Objects.equals(hotkeyModel.getKey(keyStrokeForEvent), key)) {
                     setConflict(null);
+                } else {
+                    String conflictingButton = (String) owner.getRootPane()
+                            .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                            .get(keyStrokeForEvent);
+                    setConflict("Conflicting with " + hotkeyModel.getKey(keyStrokeForEvent));
                 }
                 setKeyStroke(keyStrokeForEvent);
             }
@@ -80,6 +81,10 @@ public class SelectKeyStrokeDialog extends JDialog {
             }
         });
 
+
+    }
+
+    public void showDialog() {
         pack();
         setMinimumSize(getSize());
         setLocationRelativeTo(null);

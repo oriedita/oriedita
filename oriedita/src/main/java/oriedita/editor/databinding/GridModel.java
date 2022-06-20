@@ -310,7 +310,7 @@ public class GridModel implements Serializable {
         WITHIN_PAPER(1),
         FULL(2);
 
-        int state;
+        final int state;
 
         State(int state) {
             this.state = state;
