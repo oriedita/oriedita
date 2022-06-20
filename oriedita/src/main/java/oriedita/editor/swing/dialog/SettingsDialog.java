@@ -1,33 +1,37 @@
 package oriedita.editor.swing.dialog;
 
-import com.formdev.flatlaf.FlatLightLaf;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import oriedita.editor.swing.dialog.options.AppearanceOptionsPanel;
-import oriedita.editor.swing.dialog.options.HotkeysOptionsPanel;
+import oriedita.editor.databinding.HotkeyModel;
+import oriedita.editor.service.HotkeyService;
+import oriedita.editor.swing.dialog.settings.AppearanceSettingsPanel;
+import oriedita.editor.swing.dialog.settings.HotkeySettingsPanel;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.HashMap;
-import java.util.Hashtable;
 
-public class OptionsDialog extends JDialog {
+public class SettingsDialog extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JTree tree1;
     private JPanel view;
+    private HotkeySettingsPanel hotkeySettingsPanel;
     private DefaultMutableTreeNode stuff;
 
-    public OptionsDialog() {
+    public SettingsDialog(JFrame owner, HotkeyService hotkeyService, HotkeyModel hotkeyModel) {
+        super(owner, "Settings");
+        hotkeySettingsPanel = new HotkeySettingsPanel(owner, hotkeyService, hotkeyModel);
+
         $$$setupUI$$$();
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -35,11 +39,7 @@ public class OptionsDialog extends JDialog {
             }
         });
 
-        buttonCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        });
+        buttonCancel.addActionListener(e -> onCancel());
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -50,11 +50,7 @@ public class OptionsDialog extends JDialog {
         });
 
         // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) tree1.getCellRenderer();
         renderer.setLeafIcon(null);
@@ -79,16 +75,6 @@ public class OptionsDialog extends JDialog {
     private void onCancel() {
         // add your code here if necessary
         dispose();
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            FlatLightLaf.setup();
-            OptionsDialog dialog = new OptionsDialog();
-            dialog.pack();
-            dialog.setVisible(true);
-            System.exit(0);
-        });
     }
 
     private static class ListItem {
@@ -117,7 +103,7 @@ public class OptionsDialog extends JDialog {
     private void createUIComponents() {
         DefaultMutableTreeNode tree = new DefaultMutableTreeNode(null);
 
-        tree.add(new DefaultMutableTreeNode(new ListItem("appearance", "Appearance")));
+//        tree.add(new DefaultMutableTreeNode(new ListItem("appearance", "Appearance")));
         tree.add(new DefaultMutableTreeNode(new ListItem("hotkeys", "Hotkeys")));
 
         tree1 = new JTree(tree);
@@ -156,10 +142,9 @@ public class OptionsDialog extends JDialog {
         view = new JPanel();
         view.setLayout(new CardLayout(0, 0));
         panel3.add(view, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final AppearanceOptionsPanel nestedForm1 = new AppearanceOptionsPanel();
-        view.add(nestedForm1.$$$getRootComponent$$$(), "appearance");
-        final HotkeysOptionsPanel nestedForm2 = new HotkeysOptionsPanel();
-        view.add(nestedForm2.$$$getRootComponent$$$(), "hotkeys");
+        view.add(hotkeySettingsPanel.$$$getRootComponent$$$(), "Card1");
+        final AppearanceSettingsPanel nestedForm1 = new AppearanceSettingsPanel();
+        view.add(nestedForm1.$$$getRootComponent$$$(), "Card2");
     }
 
     /**

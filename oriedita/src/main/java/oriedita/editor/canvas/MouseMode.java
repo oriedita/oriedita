@@ -86,7 +86,7 @@ public enum MouseMode {
     UNUSED_10002(10002),
     ;
 
-    int mode;
+    final int mode;
 
     MouseMode(int mode) {
         this.mode = mode;

@@ -3,7 +3,6 @@ package oriedita.editor.tools;
 import org.tinylog.Logger;
 import oriedita.editor.App;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,11 +14,6 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 public class ResourceUtil {
-
-    public static ImageIcon createImageIcon(String url) {
-        return new ImageIcon(Objects.requireNonNull(ResourceUtil.class.getClassLoader().getResource(url)));
-    }
-
     public static Path getAppDir() {
         String osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("windows")) {
@@ -90,8 +84,6 @@ public class ResourceUtil {
         } else if (jarBundle != null && jarBundle.containsKey(key)) {
             return jarBundle.getString(key);
         }
-
-        Logger.warn(bundle + "." + key + " does not exist");
 
         return null;
     }

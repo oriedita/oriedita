@@ -1,4 +1,4 @@
-package oriedita.editor.swing.dialog.options;
+package oriedita.editor.swing.dialog.settings;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -10,7 +10,7 @@ import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.util.Locale;
 
-public class AppearanceOptionsPanel extends JPanel {
+public class AppearanceSettingsPanel extends JPanel {
     private JCheckBox checkBox1;
     private JCheckBox checkBox2;
     private JPanel root;

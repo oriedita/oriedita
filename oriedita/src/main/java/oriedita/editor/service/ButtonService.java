@@ -1,12 +1,11 @@
 package oriedita.editor.service;
 
-import org.tinylog.Logger;
 import oriedita.editor.action.MouseHandlerVoronoiCreate;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.databinding.HotkeyModel;
 import oriedita.editor.swing.component.GlyphIcon;
 import oriedita.editor.swing.dialog.HelpDialog;
-import oriedita.editor.swing.dialog.SelectKeyStrokeDialog;
 import oriedita.editor.tools.KeyStrokeUtil;
 import oriedita.editor.tools.ResourceUtil;
 import oriedita.editor.tools.StringOp;
@@ -18,44 +17,42 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
-import java.util.Map;
 
 @Singleton
 public class ButtonService {
+    private final HotkeyService hotkeyService;
+    private final HotkeyModel hotkeyModel;
     private final HelpDialog explanation;
     private final CreasePattern_Worker mainCreasePatternWorker;
-    public Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
-    private JFrame owner;
+    private final JFrame owner;
     private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate;
     private final CanvasModel canvasModel;
 
     @Inject
     public ButtonService(
             @Named("mainFrame") JFrame frame,
+            HotkeyService hotkeyService,
+            HotkeyModel hotkeyModel,
             HelpDialog explanation,
             CreasePattern_Worker mainCreasePatternWorker,
             MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate,
             CanvasModel canvasModel) {
         this.owner = frame;
+        this.hotkeyService = hotkeyService;
+        this.hotkeyModel = hotkeyModel;
         this.explanation = explanation;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.mouseHandlerVoronoiCreate = mouseHandlerVoronoiCreate;
         this.canvasModel = canvasModel;
     }
 
-    public void setOwner(JFrame owner) {
-        this.owner = owner;
-    }
 
     public void setTooltip(AbstractButton button, String key) {
         String name = ResourceUtil.getBundleString("name", key);
-        String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         String tooltip = ResourceUtil.getBundleString("tooltip", key);
         // String help = ResourceUtil.getBundleString("help", key);
 
-        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
-
+        KeyStroke keyStroke = hotkeyModel.getHotkey(key);
 
         String tooltipText = "<html>";
         if (!StringOp.isEmpty(name)) {
@@ -86,23 +83,24 @@ public class ButtonService {
         }
     }
 
-    private void addKeyStroke(KeyStroke keyStroke, AbstractButton button, String key) {
-        helpInputMap.put(keyStroke, button);
-        owner.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
+    private void addKeyStroke(KeyStroke keyStroke, String key) {
+        hotkeyService.addKeyStroke(keyStroke, key);
     }
 
     public void registerButton(AbstractButton button, String key) {
         String name = ResourceUtil.getBundleString("name", key);
-        String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         // String tooltip = ResourceUtil.getBundleString("tooltip", key);
         String help = ResourceUtil.getBundleString("help", key);
         String icon = ResourceUtil.getBundleString("icons", key);
 
-        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
+        KeyStroke keyStroke = hotkeyModel.getHotkey(key);
 
-        if (!StringOp.isEmpty(keyStrokeString) && keyStroke == null) {
-            Logger.error("Keystroke for \"" + key + "\": \"" + keyStrokeString + "\" is invalid");
-        }
+        // Update tooltip when hotkey changes.
+        hotkeyModel.addPropertyChangeListener(evt -> {
+            if (evt.getPropertyName() == null || evt.getPropertyName().equals(key)) {
+                setTooltip(button, key);
+            }
+        });
 
         setTooltip(button, key);
 
@@ -132,7 +130,7 @@ public class ButtonService {
             addContextMenu(button, key, keyStroke);
 
             if (keyStroke != null) {
-                addKeyStroke(keyStroke, button, key);
+                addKeyStroke(keyStroke, key);
             }
             owner.getRootPane().getActionMap().put(key, new Click(button));
 
@@ -172,45 +170,9 @@ public class ButtonService {
 
     private void addContextMenu(AbstractButton button, String key, KeyStroke keyStroke) {
         JPopupMenu popup = new JPopupMenu();
-        Action addKeybindAction = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                InputMap map = owner.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-                KeyStroke stroke = null;
-                for (KeyStroke keyStroke : map.keys()) {
-                    if (map.get(keyStroke).equals(key)) {
-                        stroke = keyStroke;
-                    }
-                }
-                KeyStroke currentKeyStroke = stroke;
 
-                new SelectKeyStrokeDialog(owner, button, helpInputMap, currentKeyStroke, newKeyStroke -> {
-                    if (newKeyStroke != null && helpInputMap.containsKey(newKeyStroke) && helpInputMap.get(newKeyStroke) != button) {
-                        String conflictingButton = (String) helpInputMap.get(newKeyStroke).getRootPane()
-                                                                        .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                                                                        .get(newKeyStroke);
-                        JOptionPane.showMessageDialog(owner, "Conflicting KeyStroke! Conflicting with " + conflictingButton);
-                        return false;
-                    }
+        Action addKeybindAction = hotkeyService.getAddKeybindAction(owner, key);
 
-                    ResourceUtil.updateBundleKey("hotkey", key, newKeyStroke == null ? "" : newKeyStroke.toString());
-
-                    helpInputMap.remove(currentKeyStroke);
-                    owner.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(currentKeyStroke);
-
-                    if (newKeyStroke != null) {
-                        addKeyStroke(newKeyStroke, button, key);
-                        putValue(Action.NAME, "Change key stroke (Current: " + KeyStrokeUtil.toString(newKeyStroke) + ")");
-                    } else {
-                        putValue(Action.NAME, "Change key stroke");
-                    }
-
-                    setTooltip(button, key);
-
-                    return true;
-                });
-            }
-        };
         String actionName = "Change key stroke";
         if (keyStroke != null) {
             actionName += " (Current: " + KeyStrokeUtil.toString(keyStroke) + ")";
@@ -218,13 +180,8 @@ public class ButtonService {
         addKeybindAction.putValue(Action.NAME, actionName);
         popup.add(addKeybindAction);
 
-        java.awt.Point point = new java.awt.Point();
-
         button.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                point.x = e.getX();
-                point.y = e.getY();
-
                 maybeShowPopup(e);
             }
 
