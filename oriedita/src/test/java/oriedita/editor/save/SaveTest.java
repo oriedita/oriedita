@@ -13,6 +13,7 @@ import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.HistoryState;
 import oriedita.editor.service.ResetService;
+import oriedita.editor.service.SingleTaskExecutorService;
 import oriedita.editor.text.Text;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
@@ -46,7 +47,7 @@ public class SaveTest {
         FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
         SelectedTextModel textModel = new SelectedTextModel();
         TextWorker textWorker = new TextWorker();
-        mainCreasePatternWorker = new CreasePattern_Worker(creasePatternCamera, new HistoryState(), new HistoryState(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, null, null, textWorker, textModel);
+        mainCreasePatternWorker = new CreasePattern_Worker(creasePatternCamera, new HistoryState(), new HistoryState(), new FoldLineSet(), new FoldLineSet(), new SingleTaskExecutorService(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, null, null, textWorker, textModel);
         ResetService resetService = () -> {};
         fileSaveService = new FileSaveService(null, creasePatternCamera, mainCreasePatternWorker, null, fileModel, applicationModel, canvasModel, new FoldedFiguresList(), resetService, null);
     }
