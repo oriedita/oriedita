@@ -9,10 +9,9 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Background_camera;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.service.FoldedFigureCanvasSelectService;
+import oriedita.editor.service.SingleTaskExecutorService;
 import oriedita.editor.swing.component.BulletinBoard;
 import oriedita.editor.swing.component.TextEditingArea;
-import oriedita.editor.task.TaskExecutor;
-import oriedita.editor.text.Text;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.folding.FoldedFigure;
@@ -37,6 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Singleton
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 
+    private final SingleTaskExecutorService foldingExecutor;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FoldedFiguresList foldedFiguresList;
     private final BackgroundModel backgroundModel;
@@ -98,6 +98,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     @Inject
     public Canvas(@Named("creasePatternCamera") Camera creasePatternCamera,
                   @Named("mainFrame") JFrame frame,
+                  @Named("foldingExecutor") SingleTaskExecutorService foldingExecutor,
                   CreasePattern_Worker mainCreasePatternWorker,
                   FoldedFiguresList foldedFiguresList,
                   BackgroundModel backgroundModel,
@@ -114,6 +115,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                   SelectedTextModel textModel) {
         this.creasePatternCamera = creasePatternCamera;
         this.frame = frame;
+        this.foldingExecutor = foldingExecutor;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.foldedFiguresList = foldedFiguresList;
         this.backgroundModel = backgroundModel;
@@ -315,10 +317,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) p_mouse_TV_position.getX() + 25, (int) p_mouse_TV_position.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
             }
 
-            if (TaskExecutor.isTaskRunning()) {
+            if (foldingExecutor.isTaskRunning()) {
                 bufferGraphics.setColor(Colors.get(Color.red));
 
-                bufferGraphics.drawString(TaskExecutor.getTaskName() + " Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 10, 69); //この表示内容はvoid kekka_syoriで決められる。
+                bufferGraphics.drawString(foldingExecutor.getTaskName() + " Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 10, 69); //この表示内容はvoid kekka_syoriで決められる。
                 bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 10, 83); //この表示内容はvoid kekka_syoriで決められる。
             }
 

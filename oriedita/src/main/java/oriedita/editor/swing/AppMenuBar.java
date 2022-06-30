@@ -13,7 +13,7 @@ import oriedita.editor.save.Save;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
-import oriedita.editor.task.TaskExecutor;
+import oriedita.editor.service.SingleTaskExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,6 +32,7 @@ import java.util.ArrayList;
 @Singleton
 public class AppMenuBar extends JMenuBar {
     private final JFrame frame;
+    private final SingleTaskExecutorService foldingExecutor;
     private final FileSaveService fileSaveService;
     private final FileModel fileModel;
     private JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
@@ -73,6 +74,7 @@ public class AppMenuBar extends JMenuBar {
 
     @Inject
     public AppMenuBar(@Named("mainFrame") JFrame frame,
+                      @Named("foldingExecutor") SingleTaskExecutorService foldingExecutor,
                       ApplicationModel applicationModel,
                       FileSaveService fileSaveService,
                       ButtonService buttonService,
@@ -83,6 +85,7 @@ public class AppMenuBar extends JMenuBar {
                       ResetService resetService,
                       FoldedFiguresList foldedFiguresList) {
         this.frame = frame;
+        this.foldingExecutor = foldingExecutor;
         this.fileSaveService = fileSaveService;
         this.fileModel = fileModel;
 
@@ -463,16 +466,16 @@ public class AppMenuBar extends JMenuBar {
                 case JOptionPane.YES_OPTION:
                     fileSaveService.saveFile();
 
-                    TaskExecutor.stopTask();
+                    foldingExecutor.stopTask();
                     System.exit(0);
                 case JOptionPane.NO_OPTION:
-                    TaskExecutor.stopTask();
+                    foldingExecutor.stopTask();
                     System.exit(0);
                 case JOptionPane.CANCEL_OPTION:
                     break;
             }
         } else {
-            TaskExecutor.stopTask();
+            foldingExecutor.stopTask();
             System.exit(0);
         }
     }

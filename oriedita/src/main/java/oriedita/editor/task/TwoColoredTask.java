@@ -11,7 +11,7 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.FoldingService;
 import oriedita.editor.drawing.tools.Camera;
 
-public class TwoColoredTask implements Runnable{
+public class TwoColoredTask implements OrieditaTask {
 
     private final BulletinBoard bulletinBoard;
     private final Camera creasePatternCamera;
@@ -46,5 +46,10 @@ public class TwoColoredTask implements Runnable{
         selectedFigure.foldedFigure.text_result = selectedFigure.foldedFigure.text_result + "     Computation time " + L + " msec.";
 
         canvasModel.markDirty();
+    }
+
+    @Override
+    public String getName() {
+        return "Two Colored CP";
     }
 }

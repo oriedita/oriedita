@@ -9,7 +9,7 @@ import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.FoldingService;
 
-public class FoldingEstimateSpecificTask implements Runnable{
+public class FoldingEstimateSpecificTask implements OrieditaTask {
     private final FoldedFigureModel foldedFigureModel;
     private final FoldingService foldingService;
     private final CanvasModel canvasModel;
@@ -56,5 +56,10 @@ public class FoldingEstimateSpecificTask implements Runnable{
         selectedFigure.foldedFigure.text_result = selectedFigure.foldedFigure.text_result + "     Computation time " + L + " msec.";
 
         canvasModel.markDirty();
+    }
+
+    @Override
+    public String getName() {
+        return "Folding Estimate Specific";
     }
 }
