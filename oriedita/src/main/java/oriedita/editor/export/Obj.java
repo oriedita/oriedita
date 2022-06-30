@@ -1,11 +1,10 @@
 package oriedita.editor.export;
 
+import oriedita.editor.save.Save;
 import origami.crease_pattern.element.Line;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,7 +17,7 @@ public class Obj {
     public static Save importFile(File file) throws IOException {
         int jtok;
 
-        Save save = new SaveV1();
+        Save save = Save.createInstance();
 
         ArrayList<Point> tL = new ArrayList<>();
 

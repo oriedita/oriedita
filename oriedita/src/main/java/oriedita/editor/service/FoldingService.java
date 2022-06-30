@@ -10,7 +10,6 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.folded_figure.FoldedFigure_01;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
 import oriedita.editor.swing.component.BulletinBoard;
 import oriedita.editor.task.FoldingEstimateTask;
 import oriedita.editor.task.TaskExecutor;
@@ -92,7 +91,7 @@ public class FoldingService {
 
         if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
             CreasePattern_Worker creasePatternWorker2 = backupCreasePatternWorker;
-            Save save = new SaveV1();
+            Save save = Save.createInstance();
             mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
             creasePatternWorker2.setSave_for_reading(save);
             creasePatternWorker2.point_removal();

@@ -1,16 +1,15 @@
 package oriedita.editor.drawing;
 
+import oriedita.editor.Colors;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.save.Save;
+import oriedita.editor.service.HistoryState;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.FoldedFigure;
-import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
-import oriedita.editor.Colors;
-import oriedita.editor.service.HistoryState;
-import oriedita.editor.drawing.tools.Camera;
 
 import java.awt.*;
 
@@ -343,7 +342,7 @@ public class WireFrame_Worker_Drawer {
     }
 
     public Save getSave() {
-        Save save = new SaveV1();
+        Save save = Save.createInstance();
         pointSet.getSave(save);
         return save;
     }

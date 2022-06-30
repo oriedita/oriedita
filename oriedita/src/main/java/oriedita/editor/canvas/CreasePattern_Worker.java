@@ -7,7 +7,6 @@ import oriedita.editor.drawing.Grid;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
 import oriedita.editor.service.HistoryState;
 import oriedita.editor.task.CheckCAMVTask;
 import oriedita.editor.task.FinishedFuture;
@@ -42,6 +41,8 @@ public class CreasePattern_Worker {
     private final ApplicationModel applicationModel;
     private final GridModel gridModel;
     private final FoldedFigureModel foldedFigureModel;
+
+    public final TextWorker textWorker;
     private final FileModel fileModel;
     public FoldLineSet foldLineSet = new FoldLineSet();    //Store polygonal lines
     public Grid grid = new Grid();
@@ -100,6 +101,7 @@ public class CreasePattern_Worker {
     // Sub-operation mode for MouseMode.FOLDABLE_LINE_DRAW_71, either DRAW_CREASE_FREE_1, or VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38
     //--------------------------------------------
     public CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
+    private final SelectedTextModel textModel;
 
     @Inject
     public CreasePattern_Worker(@Named("creasePatternCamera") Camera creasePatternCamera,
@@ -111,7 +113,9 @@ public class CreasePattern_Worker {
                                 FoldedFigureModel foldedFigureModel,
                                 FileModel fileModel,
                                 AngleSystemModel angleSystemModel,
-                                InternalDivisionRatioModel internalDivisionRatioModel) {
+                                InternalDivisionRatioModel internalDivisionRatioModel,
+                                TextWorker textWorker,
+                                SelectedTextModel textModel) {
         this.creasePatternCamera = creasePatternCamera;  //コンストラクタ
         this.historyState = normalHistoryState;
         this.auxHistoryState = auxHistoryState;
@@ -120,6 +124,8 @@ public class CreasePattern_Worker {
         this.gridModel = gridModel;
         this.foldedFigureModel = foldedFigureModel;
         this.fileModel = fileModel;
+        this.textWorker = textWorker;
+        this.textModel = textModel;
 
         if (applicationModel != null) applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));
         if (gridModel != null) gridModel.addPropertyChangeListener(e -> setGridConfigurationData(gridModel));
@@ -201,9 +207,13 @@ public class CreasePattern_Worker {
             foldedFigureModel.setBackColor(memo1.getFoldedFigureModel().getBackColor());
             foldedFigureModel.setLineColor(memo1.getFoldedFigureModel().getLineColor());
         }
+
+        textModel.reset();
     }
 
     public String setMemo_for_redo_undo(Save save) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用
+        textWorker.setSave(save);
+        textModel.setSelected(false);
         return foldLineSet.setSave(save);
     }
 
@@ -211,6 +221,7 @@ public class CreasePattern_Worker {
         Memo_jyouhou_toridasi(memo1);
         foldLineSet.setSave(memo1);
         auxLines.setAuxSave(memo1);
+        textWorker.setSave(memo1);
     }
 
     public void setSave_for_reading_tuika(Save memo1) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<For reading data
@@ -224,7 +235,7 @@ public class CreasePattern_Worker {
         tempFoldLineSet.move(addx, addy);//全体を移動する
 
         int total_old = foldLineSet.getTotal();
-        Save save = new SaveV1();
+        Save save = Save.createInstance();
         tempFoldLineSet.getSave(save);
         foldLineSet.addSave(save);
         int total_new = foldLineSet.getTotal();
@@ -268,14 +279,14 @@ public class CreasePattern_Worker {
     }
 
     public LineSegmentSet get() {
-        Save save = new SaveV1();
+        Save save = Save.createInstance();
         foldLineSet.getSave(save);
         lineSegmentSet.setSave(save);
         return lineSegmentSet;
     }
 
     public LineSegmentSet getForFolding() {
-        Save save = new SaveV1();
+        Save save = Save.createInstance();
         foldLineSet.getMemo_for_folding(save);
         lineSegmentSet.setSave(save);
         return lineSegmentSet;
@@ -287,7 +298,7 @@ public class CreasePattern_Worker {
     }
 
     public LineSegmentSet getForSelectFolding() {//selectした折線で折り畳み推定をする。
-        Save save = new SaveV1();
+        Save save = Save.createInstance();
         foldLineSet.getSaveForSelectFolding(save);
         LineSegmentSet ls = new LineSegmentSet();
         ls.setSave(save);
@@ -306,21 +317,21 @@ public class CreasePattern_Worker {
     }
 
     public Save getSave(String title) {
-        Save save_temp = new SaveV1();
+        Save save_temp = Save.createInstance();
         foldLineSet.getSave(save_temp, title);
 
         saveAdditionalInformation(save_temp);
         return save_temp;
     }
 
-    public SaveV1 h_getSave() {
-        SaveV1 save = new SaveV1();
+    public Save h_getSave() {
+        Save save = Save.createInstance();
         auxLines.h_getSave(save);
         return save;
     }
 
-    public SaveV1 getSave_for_export() {
-        SaveV1 save = new SaveV1();
+    public Save getSave_for_export() {
+        Save save = Save.createInstance();
         foldLineSet.getSave(save);
         auxLines.h_getSave(save);
         saveAdditionalInformation(save);
@@ -328,8 +339,8 @@ public class CreasePattern_Worker {
         return save;
     }
 
-    public SaveV1 getSave_for_export_with_applicationModel() {
-        SaveV1 save = getSave_for_export();
+    public Save getSave_for_export_with_applicationModel() {
+        Save save = getSave_for_export();
 
         save.setApplicationModel(applicationModel);
 
@@ -340,6 +351,8 @@ public class CreasePattern_Worker {
         Camera camera = new Camera();
         camera.setCamera(this.camera);
         memo1.setCreasePatternCamera(camera);
+
+        textWorker.getSave(memo1);
 
         memo1.setCanvasModel(canvasModel);
         memo1.setGridModel(gridModel);
@@ -556,6 +569,7 @@ public class CreasePattern_Worker {
 
         if (displayComments) {
             g.drawString(text_cp_setumei, 10, 55);
+            textWorker.draw(g2, camera);
         }
     }
 
@@ -740,6 +754,14 @@ public class CreasePattern_Worker {
 
     public boolean deleteInside_aux(Point p0a, Point p0b) {
         return foldLineSet.deleteInside_aux(createBox(p0a, p0b));
+    }
+
+    public boolean deleteInside_text(Point p1, Point p2) {
+        if (textWorker.deleteInsideRectangle(p1, p2, camera)) {
+            textModel.markDirty();
+            return true;
+        }
+        return false;
     }
 
     public boolean change_property_in_4kakukei(Point p0a, Point p0b) {

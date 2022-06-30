@@ -5,7 +5,6 @@ import fold.FoldFileFormatException;
 import fold.model.FoldEdgeAssignment;
 import fold.model.FoldFile;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.PointSet;
@@ -18,7 +17,7 @@ import java.io.File;
 
 public class Fold {
     public static Save toSave(FoldFile foldFile) {
-        Save save = new SaveV1();
+        Save save = Save.createInstance();
 
         double[][] verticeCoords = foldFile.getVertices().getCoords();
         FoldEdgeAssignment[] edgeAssignments = foldFile.getEdges().getAssignment();
@@ -57,7 +56,7 @@ public class Fold {
                 new Point(-200, 200)
         );
 
-        Save save1 = new SaveV1();
+        Save save1 = Save.createInstance();
         ori_s_temp.getSave(save1);
 
         return save1;

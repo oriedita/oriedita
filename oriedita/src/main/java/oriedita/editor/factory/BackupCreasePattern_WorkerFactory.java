@@ -3,6 +3,7 @@ package oriedita.editor.factory;
 import dagger.Module;
 import dagger.Provides;
 import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.TextWorker;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.service.HistoryState;
@@ -24,7 +25,9 @@ public class BackupCreasePattern_WorkerFactory {
                                                                   FoldedFigureModel foldedFigureModel,
                                                                   FileModel fileModel,
                                                                   AngleSystemModel angleSystemModel,
-                                                                  InternalDivisionRatioModel internalDivisionRatioModel) {
-        return new CreasePattern_Worker(creasePatternCamera, historyState, auxHistoryState, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, angleSystemModel, internalDivisionRatioModel);
+                                                                  InternalDivisionRatioModel internalDivisionRatioModel,
+                                                                  TextWorker textWorker,
+                                                                  SelectedTextModel textModel) {
+        return new CreasePattern_Worker(creasePatternCamera, historyState, auxHistoryState, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, angleSystemModel, internalDivisionRatioModel, textWorker, textModel);
     }
 }

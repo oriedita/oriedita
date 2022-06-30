@@ -3,19 +3,22 @@ package oriedita.editor.swing;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import javax.inject.Inject;
-import javax.inject.Named;
-import origami.crease_pattern.element.LineColor;
-import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.swing.component.ColorIcon;
-import oriedita.editor.swing.dialog.OpenFrame;
-import oriedita.editor.databinding.*;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
+import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.AngleSystemModel;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.HistoryState;
+import oriedita.editor.swing.component.ColorIcon;
+import oriedita.editor.swing.dialog.OpenFrame;
 import oriedita.editor.tools.StringOp;
+import origami.crease_pattern.element.LineColor;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
@@ -86,6 +89,7 @@ public class RightPanel {
     private JTextField measuredAngle2TextField;
     private JTextField measuredAngle3TextField;
     private JPanel root;
+    private JButton textBtn;
     private boolean darkMode;
 
     @Inject
@@ -153,6 +157,7 @@ public class RightPanel {
         buttonService.registerButton(ckOCheckBox, "ckOAction");
         buttonService.registerButton(ckTCheckBox, "ckTAction");
         buttonService.registerButton(cAMVCheckBox, "cAMVAction");
+        buttonService.registerButton(textBtn, "text");
 
         ckOCheckBox.addActionListener(e -> {
             mainCreasePatternWorker.unselect_all();
@@ -196,7 +201,8 @@ public class RightPanel {
         ck4_colorIncreaseButton.addActionListener(e -> mainCreasePatternWorker.darkenCheck4Color());
         angleSystemADecreaseButton.addActionListener(e -> angleSystemModel.decreaseAngleSystemA());
 
-        angleSystemAButton.addActionListener(e -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemADivider()));
+        angleSystemAButton.addActionListener(
+            e -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemADivider()));
         angleSystemAIncreaseButton.addActionListener(e -> angleSystemModel.increaseAngleSystemA());
 
         angleSystemBDecreaseButton.addActionListener(e -> angleSystemModel.decreaseAngleSystemB());
@@ -365,6 +371,10 @@ public class RightPanel {
 
             openFrame.setLocationRelativeTo(ad_fncButton);
             openFrame.setVisible(true);
+        });
+        textBtn.addActionListener(e -> {
+            canvasModel.setMouseMode(MouseMode.TEXT);
+            mainCreasePatternWorker.unselect_all();
         });
         ActionListener listener = e -> restrictedAngleSetDEFButton.doClick();
         angleDTextField.addActionListener(listener);
@@ -535,11 +545,14 @@ public class RightPanel {
         a1Button.setText("A1=");
         panel6.add(a1Button, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel7 = new JPanel();
-        panel7.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), 1, 1));
+        panel7.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), 1, 1));
         root.add(panel7, new GridConstraints(19, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         ad_fncButton = new JButton();
         ad_fncButton.setText("ad_fnc");
         panel7.add(ad_fncButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        textBtn = new JButton();
+        textBtn.setText("Text");
+        panel7.add(textBtn, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel8 = new JPanel();
         panel8.setLayout(new GridLayoutManager(3, 3, new Insets(0, 0, 0, 0), 1, 1));
         root.add(panel8, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));

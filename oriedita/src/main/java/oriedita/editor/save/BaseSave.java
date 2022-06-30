@@ -1,22 +1,25 @@
 package oriedita.editor.save;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import origami.crease_pattern.element.Circle;
-import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.Point;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.text.Text;
+import origami.crease_pattern.element.Circle;
+import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.element.Point;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonTypeName("v1")
-public class SaveV1 implements Save{
+
+// No json type name, because this class should never be serialized
+public class BaseSave implements Save{
     private List<LineSegment> lineSegments;
     private List<Circle> circles;
+
+    private List<Text> texts;
     private String title;
     private List<Point> points;
     private List<LineSegment> auxLineSegments;
@@ -34,11 +37,12 @@ public class SaveV1 implements Save{
         this.applicationModel = applicationModel;
     }
 
-    public SaveV1() {
+    protected BaseSave() {
         lineSegments = new ArrayList<>();
         circles = new ArrayList<>();
         points = new ArrayList<>();
         auxLineSegments = new ArrayList<>();
+        texts = new ArrayList<>();
     }
 
     public void addPoint(Point p) {
@@ -103,7 +107,6 @@ public class SaveV1 implements Save{
         for (LineSegment s : save.getAuxLineSegments()) {
             addAuxLineSegment(s);
         }
-
         setTitle(save.getTitle());
     }
 
@@ -153,12 +156,30 @@ public class SaveV1 implements Save{
         for (LineSegment s : save.getAuxLineSegments()) {
             addAuxLineSegment(s);
         }
+        for (Text t : save.getTexts()) {
+            addText(t);
+        }
     }
 
     /**
      * Returns if this save contains lines which are not savable to a .cp file without losing information.
      */
     public boolean canSaveAsCp() {
-        return circles.isEmpty() && auxLineSegments.isEmpty();
+        return circles.isEmpty() && auxLineSegments.isEmpty() && texts.isEmpty();
+    }
+
+    @Override
+    public void addText(Text text) {
+        texts.add(text);
+    }
+
+    @Override
+    public List<Text> getTexts() {
+        return texts;
+    }
+
+    @Override
+    public void setTexts(List<Text> texts) {
+        this.texts = texts;
     }
 }

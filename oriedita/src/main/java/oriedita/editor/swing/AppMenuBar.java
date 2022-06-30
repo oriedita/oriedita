@@ -10,7 +10,6 @@ import oriedita.editor.databinding.*;
 import oriedita.editor.datatransfer.SaveTransferable;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
@@ -234,7 +233,7 @@ public class AppMenuBar extends JMenuBar {
         copyButton.addActionListener(e -> {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-            Save save = new SaveV1();
+            Save save = Save.createInstance();
             mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
 
             clipboard.setContents(new SaveTransferable(save), (clipboard1, contents) -> {});
@@ -242,7 +241,7 @@ public class AppMenuBar extends JMenuBar {
         cutButton.addActionListener(e -> {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
-            Save save = new SaveV1();
+            Save save = Save.createInstance();
             mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
 
 

@@ -1,10 +1,9 @@
 package oriedita.editor.export;
 
 import org.tinylog.Logger;
+import oriedita.editor.save.Save;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
-import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
 
 import java.io.*;
 import java.util.StringTokenizer;
@@ -24,7 +23,7 @@ public class Cp {
     }
 
     public static Save importFile(BufferedReader reader) throws IOException {
-        Save save = new SaveV1();
+        Save save = Save.createInstance();
 
         double d1, d2, d3, d4;
 

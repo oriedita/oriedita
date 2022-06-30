@@ -12,8 +12,10 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.export.*;
 import oriedita.editor.json.DefaultObjectMapper;
+import oriedita.editor.save.BaseSave;
+import oriedita.editor.save.FileVersionTester;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
+import oriedita.editor.save.SaveConverter;
 import oriedita.editor.swing.dialog.ExportDialog;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.editor.tools.ResourceUtil;
@@ -168,8 +170,9 @@ public class FileSaveService {
             int intLineWidth = applicationModel.getLineWidth();
             LineStyle lineStyle = applicationModel.getLineStyle();
             int pointSize = applicationModel.getPointSize();
+            boolean showText = applicationModel.getDisplayComments();
 
-            Svg.exportFile(mainCreasePatternWorker.foldLineSet, creasePatternCamera, displayCpLines, lineWidth, intLineWidth, lineStyle, pointSize, foldedFiguresList, exportFile);
+            Svg.exportFile(mainCreasePatternWorker.foldLineSet, mainCreasePatternWorker.textWorker.getTexts(), showText, mainCreasePatternWorker.camera, displayCpLines, lineWidth, intLineWidth, lineStyle, pointSize, foldedFiguresList, exportFile);
         } else if (exportFile.getName().endsWith(".png") || exportFile.getName().endsWith(".jpg") || exportFile.getName().endsWith(".jpeg")) {
             writeImageFile(exportFile);
         } else if (exportFile.getName().endsWith(".cp")) {
@@ -323,6 +326,10 @@ public class FileSaveService {
     }
 
     public Save readImportFile(File file) throws FileReadingException {
+        return readImportFile(file, true);
+    }
+
+    public Save readImportFile(File file, boolean askOnUnknownFormat) throws FileReadingException {
         if (file == null) {
             return null;
         }
@@ -337,7 +344,25 @@ public class FileSaveService {
             if (file.getName().endsWith(".ori")) {
                 try {
                     ObjectMapper mapper = new DefaultObjectMapper();
-                    return mapper.readValue(file, Save.class);
+                    Save readSave = mapper.readValue(file, Save.class);
+                    FileVersionTester versionTester = mapper.readValue(file, FileVersionTester.class);
+                    if (readSave.getClass() == BaseSave.class && versionTester.getVersion() == null) { // happens when the version id is not recognized
+                        int result = JOptionPane.NO_OPTION;
+                        if (askOnUnknownFormat) {
+                            result = JOptionPane.showConfirmDialog(frame, "This file was created using a newer version of oriedita.\n" +
+                                            "Using it with this version of oriedita might remove parts of the file.\n" +
+                                            "Do you want to open the file anyways?", "File created in newer version",
+                                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                        }
+
+                        switch (result) {
+                            case JOptionPane.YES_OPTION:
+                                return SaveConverter.convertToNewestSave(readSave);
+                            case JOptionPane.NO_OPTION:
+                                return null;
+                        }
+                    }
+                    return SaveConverter.convertToNewestSave(readSave);
                 } catch (IOException e) {
                     throw new FileReadingException(e);
                 }
@@ -366,7 +391,7 @@ public class FileSaveService {
 
             fileModel.setSavedFileName(null);
 
-            return new SaveV1();
+            return Save.createInstance();
         }
 
         return save;
@@ -413,7 +438,7 @@ public class FileSaveService {
             }
         } else if (fname.getName().endsWith(".cp")) {
             if (!save.canSaveAsCp()) {
-                JOptionPane.showMessageDialog(frame, "The saved .cp file does not contain circles and yellow aux lines. Save as a .ori file to also save these lines.", "Warning", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "The saved .cp file does not contain circles, text and yellow aux lines. Save as a .ori file to also save these lines.", "Warning", JOptionPane.WARNING_MESSAGE);
             }
 
             Cp.exportFile(save, fname);
