@@ -3,10 +3,7 @@ package oriedita.editor.service;
 import oriedita.editor.task.OrieditaTask;
 
 import javax.inject.Singleton;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 @Singleton
 public class SingleTaskExecutorService {
@@ -39,5 +36,9 @@ public class SingleTaskExecutorService {
         if (isTaskRunning()) {
             currentTask.cancel(true);
         }
+    }
+
+    public void join() throws ExecutionException, InterruptedException, TimeoutException {
+        currentTask.get(10, TimeUnit.SECONDS);
     }
 }
