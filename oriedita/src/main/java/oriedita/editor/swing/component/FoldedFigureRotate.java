@@ -3,9 +3,10 @@ package oriedita.editor.swing.component;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import oriedita.editor.databinding.FoldedFigureModel;
-import origami.crease_pattern.OritaCalc;
 import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.service.ButtonService;
+import origami.crease_pattern.OritaCalc;
+import origami.folding.FoldedFigure;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,9 +25,23 @@ public class FoldedFigureRotate extends JPanel {
         buttonService.registerButton(foldedFigureRotateSetButton, "foldedFigureRotateSetAction");
         buttonService.registerButton(foldedFigureRotateClockwiseButton, "foldedFigureRotateClockwiseAction");
 
-        foldedFigureRotateAntiClockwiseButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() + 11.25)));
+        foldedFigureRotateAntiClockwiseButton.addActionListener(e -> {
+            if (foldedFigureModel.getState() == FoldedFigure.State.BACK_1) {
+                foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() - 11.25));
+            } else {
+                foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() + 11.25));
+            }
+        });
+
         foldedFigureRotateSetButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(measuresModel.string2double(foldedFigureRotateTextField.getText(), foldedFigureModel.getRotation()))));
-        foldedFigureRotateClockwiseButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() - 11.25)));
+        foldedFigureRotateClockwiseButton.addActionListener(e -> {
+
+            if (foldedFigureModel.getState() == FoldedFigure.State.BACK_1) {
+                foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() + 11.25));
+            } else {
+                foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(foldedFigureModel.getRotation() - 11.25));
+            }
+        });
         foldedFigureRotateTextField.addActionListener(e -> foldedFigureRotateSetButton.doClick());
     }
 
