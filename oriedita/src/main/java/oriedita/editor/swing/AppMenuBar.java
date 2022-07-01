@@ -14,6 +14,7 @@ import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
 import oriedita.editor.task.TaskExecutor;
+import oriedita.editor.tools.ResourceUtil;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -63,6 +64,8 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem importAddButton;
     private JMenuItem exitButton;
     private JMenuItem toggleHelpMenuItem;
+    private JMenuItem showConfigFolderMenuItem;
+    private JMenuItem showAutosaveFolderMenuItem;
     private JMenu openRecentMenu;
     private JMenuItem clearRecentFileMenuItem;
 
@@ -120,6 +123,8 @@ public class AppMenuBar extends JMenuBar {
         buttonService.registerButton(displayRightPanel, "displayRightPanel");
         buttonService.registerButton(cpOnTopCheckBox, "cpOnTopAction");
         buttonService.registerButton(toggleHelpMenuItem, "toggleHelpAction");
+        buttonService.registerButton(showConfigFolderMenuItem, "showConfigFolderAction");
+        buttonService.registerButton(showAutosaveFolderMenuItem, "showAutosaveFolderAction");
         buttonService.registerButton(darkModeCheckBox, "toggleDarkModeAction");
         buttonService.registerButton(preciseZoomCheckBox, "preciseZoomAction");
         buttonService.registerButton(displaySelfIntersectionCheckBox, "displaySelfIntersectionAction");
@@ -203,6 +208,28 @@ public class AppMenuBar extends JMenuBar {
         displayStandardFaceMarksCheckBox.addActionListener(e -> getData(applicationModel));
         cpOnTopCheckBox.addActionListener(e -> getData(applicationModel));
         toggleHelpMenuItem.addActionListener(e -> applicationModel.toggleHelpVisible());
+        showAutosaveFolderMenuItem.addActionListener(e -> {
+            try {
+                File f = ResourceUtil.getTempDir().toFile();
+                if (!f.exists()) {
+                    f.mkdirs();
+                }
+                Desktop.getDesktop().open(f);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        showConfigFolderMenuItem.addActionListener(e -> {
+            try {
+                File f = ResourceUtil.getAppDir().toFile();
+                if (!f.exists()) {
+                    f.mkdirs();
+                }
+                Desktop.getDesktop().open(f);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         darkModeCheckBox.addActionListener(e -> {
             applicationModel.toggleDarkMode();
 
@@ -389,6 +416,10 @@ public class AppMenuBar extends JMenuBar {
 
         toggleHelpMenuItem = new JMenuItem("Toggle help");
         helpMenu.add(toggleHelpMenuItem);
+        showConfigFolderMenuItem = new JMenuItem("Open Config Folder");
+        helpMenu.add(showConfigFolderMenuItem);
+        showAutosaveFolderMenuItem = new JMenuItem("Open Autosave Folder");
+        helpMenu.add(showAutosaveFolderMenuItem);
     }
 
     public void getData(ApplicationModel applicationModel) {
