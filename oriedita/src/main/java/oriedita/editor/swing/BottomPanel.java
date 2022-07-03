@@ -13,10 +13,10 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.FoldingService;
+import oriedita.editor.service.SingleTaskExecutorService;
 import oriedita.editor.swing.component.*;
 import oriedita.editor.task.FoldingEstimateSave100Task;
 import oriedita.editor.task.FoldingEstimateSpecificTask;
-import oriedita.editor.task.TaskExecutor;
 import oriedita.editor.tools.StringOp;
 import origami.folding.FoldedFigure;
 
@@ -62,6 +62,8 @@ public class BottomPanel {
 
     @Inject
     public BottomPanel(@Named("mainFrame") JFrame frame,
+                       @Named("camvExecutor") SingleTaskExecutorService camvTaskExecutor,
+                       @Named("foldingExecutor") SingleTaskExecutorService foldingTaskExecutor,
                        ButtonService buttonService,
                        MeasuresModel measuresModel,
                        CanvasModel canvasModel,
@@ -151,7 +153,7 @@ public class BottomPanel {
             if (selectedFigure != null && selectedFigure.foldedFigure.findAnotherOverlapValid) {
                 selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
-                TaskExecutor.executeTask("Folding Estimate Save 100", new FoldingEstimateSave100Task(canvas, foldingService, fileSaveService, foldedFiguresList));
+                foldingTaskExecutor.executeTask(new FoldingEstimateSave100Task(canvas, foldingService, fileSaveService, foldedFiguresList));
             }
         });
         goToFoldedFigureButton.addActionListener(e -> {
@@ -176,7 +178,7 @@ public class BottomPanel {
                 //1例目の折り上がり予想はi_suitei_meirei=5を指定、2例目以降の折り上がり予想はi_suitei_meirei=6で実施される
             }
 
-            TaskExecutor.executeTask("Folding Estimate Specific", new FoldingEstimateSpecificTask(foldedFigureModel, foldingService, canvasModel, foldedFiguresList));
+            foldingTaskExecutor.executeTask(new FoldingEstimateSpecificTask(foldedFigureModel, foldingService, canvasModel, foldedFiguresList));
         });
         goToFoldedFigureTextField.addActionListener(e -> goToFoldedFigureButton.doClick());
         constraintButton.addActionListener(e -> {
@@ -248,8 +250,8 @@ public class BottomPanel {
             }
         });
         haltButton.addActionListener(e -> {
-            TaskExecutor.stopTask();
-            mainCreasePatternWorker.camvTask.cancel(true);
+            camvTaskExecutor.stopTask();
+            foldingTaskExecutor.stopTask();
         });
         trashButton.addActionListener(e -> {
             if (foldedFiguresList.getSize() == 0) {

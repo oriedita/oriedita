@@ -8,8 +8,8 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.save.Save;
 import oriedita.editor.service.HistoryState;
+import oriedita.editor.service.SingleTaskExecutorService;
 import oriedita.editor.task.CheckCAMVTask;
-import oriedita.editor.task.FinishedFuture;
 import origami.Epsilon;
 import origami.crease_pattern.FlatFoldabilityViolation;
 import origami.crease_pattern.FoldLineSet;
@@ -26,6 +26,7 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 /**
@@ -37,6 +38,7 @@ public class CreasePattern_Worker {
     final int check4ColorTransparencyIncrement = 10;
     private final LineSegmentSet lineSegmentSet = new LineSegmentSet();    //Instantiation of basic branch structure
     private final Camera creasePatternCamera;
+    private final SingleTaskExecutorService camvTaskExecutor;
     private final CanvasModel canvasModel;
     private final ApplicationModel applicationModel;
     private final GridModel gridModel;
@@ -47,7 +49,6 @@ public class CreasePattern_Worker {
     public FoldLineSet foldLineSet = new FoldLineSet();    //Store polygonal lines
     public Grid grid = new Grid();
     public Polygon operationFrameBox = new Polygon(4);    //Instantiation of selection box (TV coordinates)
-    public Future<?> camvTask = new FinishedFuture<>(null);
     public int pointSize = 1;
     public LineColor lineColor;//Line segment color
     public LineColor auxLineColor = LineColor.ORANGE_4;//Auxiliary line color
@@ -107,6 +108,9 @@ public class CreasePattern_Worker {
     public CreasePattern_Worker(@Named("creasePatternCamera") Camera creasePatternCamera,
                                 @Named("normal") HistoryState normalHistoryState,
                                 @Named("aux") HistoryState auxHistoryState,
+                                @Named("auxlines") FoldLineSet auxLines,
+                                @Named("foldlines") FoldLineSet foldLineSet,
+                                @Named("camvExecutor") SingleTaskExecutorService camvTaskExecutor,
                                 CanvasModel canvasModel,
                                 ApplicationModel applicationModel,
                                 GridModel gridModel,
@@ -119,6 +123,7 @@ public class CreasePattern_Worker {
         this.creasePatternCamera = creasePatternCamera;  //コンストラクタ
         this.historyState = normalHistoryState;
         this.auxHistoryState = auxHistoryState;
+        this.camvTaskExecutor = camvTaskExecutor;
         this.canvasModel = canvasModel;
         this.applicationModel = applicationModel;
         this.gridModel = gridModel;
@@ -126,6 +131,9 @@ public class CreasePattern_Worker {
         this.fileModel = fileModel;
         this.textWorker = textWorker;
         this.textModel = textModel;
+
+        this.auxLines = auxLines;
+        this.foldLineSet = foldLineSet;
 
         if (applicationModel != null) applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));
         if (gridModel != null) gridModel.addPropertyChangeListener(e -> setGridConfigurationData(gridModel));
@@ -461,10 +469,10 @@ public class CreasePattern_Worker {
 
             if (displayComments) {
 
-                if (!camvTask.isDone() && !camvTask.isCancelled()) {
+                if (camvTaskExecutor.isTaskRunning()) {
                     g.setColor(Colors.get(Color.orange));
                     g.drawString("... cAMV Errors", p0x_max - 100, 10);
-                } else if (camvTask.isDone()) {
+                } else {
                     int numErrors = foldLineSet.getViolations().size();
                     if (numErrors == 0) {
                         g.setColor(Colors.get(Color.green));
@@ -941,12 +949,7 @@ public class CreasePattern_Worker {
     }
 
     public void check4() {
-        camvTask.cancel(true);
-        camvTask = CheckCAMVTask.execute(this, canvasModel);
-    }
-
-    public void ap_check4() throws InterruptedException {
-        foldLineSet.check4();
+        camvTaskExecutor.executeTask(new CheckCAMVTask(foldLineSet, canvasModel));
     }
 
     public void setCheck3(boolean i) {
@@ -995,8 +998,8 @@ public class CreasePattern_Worker {
         if (e.getPropertyName() == null || e.getPropertyName().equals("check4Enabled")) {
             if (data.getCheck4Enabled()) {
                 check4();
-            } else if (!camvTask.isDone()) {
-                camvTask.cancel(true);
+            } else if (camvTaskExecutor.isTaskRunning()) {
+                camvTaskExecutor.stopTask();
             }
         }
 

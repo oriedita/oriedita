@@ -12,7 +12,6 @@ import oriedita.editor.folded_figure.FoldedFigure_01;
 import oriedita.editor.save.Save;
 import oriedita.editor.swing.component.BulletinBoard;
 import oriedita.editor.task.FoldingEstimateTask;
-import oriedita.editor.task.TaskExecutor;
 import oriedita.editor.task.TwoColoredTask;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
@@ -31,6 +30,7 @@ public class FoldingService {
     private final JFrame frame;
     private final Camera creasePatternCamera;
     private final CreasePattern_Worker backupCreasePatternWorker;
+    private final SingleTaskExecutorService foldingExecutor;
     private final ApplicationModel applicationModel;
     private final FoldedFigureModel foldedFigureModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
@@ -44,6 +44,7 @@ public class FoldingService {
                           @Named("mainFrame") JFrame frame,
                           @Named("creasePatternCamera") Camera creasePatternCamera,
                           @Named("backupCreasePattern_Worker") CreasePattern_Worker backupCreasePatternWorker,
+                          @Named("foldingExecutor") SingleTaskExecutorService foldingExecutor,
                           ApplicationModel applicationModel,
                           FoldedFigureModel foldedFigureModel,
                           CreasePattern_Worker mainCreasePatternWorker,
@@ -53,6 +54,7 @@ public class FoldingService {
         this.frame = frame;
         this.creasePatternCamera = creasePatternCamera;
         this.backupCreasePatternWorker = backupCreasePatternWorker;
+        this.foldingExecutor = foldingExecutor;
         this.applicationModel = applicationModel;
         this.foldedFigureModel = foldedFigureModel;
 
@@ -79,8 +81,7 @@ public class FoldingService {
                 if (selectedFigure != null) {
                     selectedFigure.foldedFigure.estimationOrder = estimationOrder;
                     selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_0;
-                    FoldingEstimateTask foldingEstimateTask = new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel);
-                    foldingEstimateTask.execute(lineSegmentsForFolding, selectedFigure, estimationOrder);
+                    foldingExecutor.executeTask(new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel, lineSegmentsForFolding, selectedFigure, estimationOrder));
                 }
                 return;
             }
@@ -107,8 +108,7 @@ public class FoldingService {
         FoldedFigure_Drawer selectedFigure = initFoldedFigure();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
         //これより後のOZは新しいOZに変わる
 
-        FoldingEstimateTask foldingEstimateTask = new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel);
-        foldingEstimateTask.execute(lineSegmentsForFolding, selectedFigure, estimationOrder);
+        foldingExecutor.executeTask(new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel, lineSegmentsForFolding, selectedFigure, estimationOrder));
     }
 
     public FoldType getFoldType() {
@@ -143,7 +143,7 @@ public class FoldingService {
 
 
         } else if (mainCreasePatternWorker.getFoldLineTotalForSelectFolding() > 0) {
-            TaskExecutor.executeTask("Two Colored CP", new TwoColoredTask(bulletinBoard, creasePatternCamera, this, canvasModel));
+            foldingExecutor.executeTask(new TwoColoredTask(bulletinBoard, creasePatternCamera, this, canvasModel));
         }
 
         mainCreasePatternWorker.unselect_all();
@@ -158,8 +158,7 @@ public class FoldingService {
     }
 
     public void foldAnother(FoldedFigure_Drawer selectedItem) {
-        FoldingEstimateTask foldingEstimateTask = new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel);
-        foldingEstimateTask.execute(lineSegmentsForFolding, selectedItem, FoldedFigure.EstimationOrder.ORDER_6);
+        foldingExecutor.executeTask(new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel, lineSegmentsForFolding, selectedItem, FoldedFigure.EstimationOrder.ORDER_6));
     }
 
     public enum FoldType {
