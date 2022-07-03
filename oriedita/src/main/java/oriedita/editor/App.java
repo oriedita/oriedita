@@ -158,7 +158,7 @@ public class App {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (popups.isEmpty()) {
-                    for (Map.Entry<KeyStroke, AbstractButton> entry : buttonService.helpInputMap.entrySet()) {
+                    for (Map.Entry<KeyStroke, AbstractButton> entry : buttonService.getHelpInputMap().entrySet()) {
                         AbstractButton button = entry.getValue();
                         KeyStroke keyStroke = entry.getKey();
 

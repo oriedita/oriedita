@@ -17,6 +17,7 @@ import javax.inject.Singleton;
         HistoryStateFactory.class,
         TaskFactory.class,
         FoldLineSetFactory.class,
+        ServiceFactory.class,
 })
 @Singleton
 public interface AppFactory {

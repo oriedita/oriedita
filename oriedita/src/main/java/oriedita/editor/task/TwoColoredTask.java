@@ -34,7 +34,7 @@ public class TwoColoredTask implements OrieditaTask {
 
         try {
             selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
-            selectedFigure.createTwoColorCreasePattern(creasePatternCamera, foldingService.lineSegmentsForFolding);
+            selectedFigure.createTwoColorCreasePattern(creasePatternCamera, foldingService.getLineSegmentsForFolding());
         } catch (InterruptedException e) {
             selectedFigure.foldedFigure.estimated_initialize();
             bulletinBoard.clear();

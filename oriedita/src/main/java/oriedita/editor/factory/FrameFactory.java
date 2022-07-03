@@ -5,7 +5,7 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import oriedita.editor.service.ResetService;
-import oriedita.editor.service.ResetServiceImpl;
+import oriedita.editor.service.impl.ResetServiceImpl;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -20,7 +20,4 @@ public abstract class FrameFactory {
     public static JFrame mainFrame() {
         return new JFrame();
     }
-
-    @Binds
-    abstract ResetService resetService(ResetServiceImpl resetService);
 }

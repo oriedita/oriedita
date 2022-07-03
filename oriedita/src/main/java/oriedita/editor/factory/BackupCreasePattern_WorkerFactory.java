@@ -7,7 +7,7 @@ import oriedita.editor.canvas.TextWorker;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.service.HistoryState;
-import oriedita.editor.service.SingleTaskExecutorService;
+import oriedita.editor.service.TaskExecutorService;
 import origami.crease_pattern.FoldLineSet;
 
 import javax.inject.Named;
@@ -23,7 +23,7 @@ public class BackupCreasePattern_WorkerFactory {
                                                                   @Named("aux") HistoryState auxHistoryState,
                                                                   @Named("auxlines") FoldLineSet auxLines,
                                                                   @Named("foldlines") FoldLineSet foldLineSet,
-                                                                  @Named("camvExecutor") SingleTaskExecutorService camvTaskExecutor,
+                                                                  @Named("camvExecutor") TaskExecutorService camvTaskExecutor,
                                                                   CanvasModel canvasModel,
                                                                   ApplicationModel applicationModel,
                                                                   GridModel gridModel,

@@ -8,7 +8,7 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.save.Save;
 import oriedita.editor.service.HistoryState;
-import oriedita.editor.service.SingleTaskExecutorService;
+import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.task.CheckCAMVTask;
 import origami.Epsilon;
 import origami.crease_pattern.FlatFoldabilityViolation;
@@ -26,8 +26,6 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 /**
  * Responsible for holding the current creasepattern and drawing it.
@@ -38,7 +36,7 @@ public class CreasePattern_Worker {
     final int check4ColorTransparencyIncrement = 10;
     private final LineSegmentSet lineSegmentSet = new LineSegmentSet();    //Instantiation of basic branch structure
     private final Camera creasePatternCamera;
-    private final SingleTaskExecutorService camvTaskExecutor;
+    private final TaskExecutorService camvTaskExecutor;
     private final CanvasModel canvasModel;
     private final ApplicationModel applicationModel;
     private final GridModel gridModel;
@@ -110,7 +108,7 @@ public class CreasePattern_Worker {
                                 @Named("aux") HistoryState auxHistoryState,
                                 @Named("auxlines") FoldLineSet auxLines,
                                 @Named("foldlines") FoldLineSet foldLineSet,
-                                @Named("camvExecutor") SingleTaskExecutorService camvTaskExecutor,
+                                @Named("camvExecutor") TaskExecutorService camvTaskExecutor,
                                 CanvasModel canvasModel,
                                 ApplicationModel applicationModel,
                                 GridModel gridModel,
