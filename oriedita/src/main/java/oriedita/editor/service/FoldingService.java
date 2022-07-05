@@ -1,167 +1,26 @@
 package oriedita.editor.service;
 
-import org.tinylog.Logger;
-import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.databinding.ApplicationModel;
-import oriedita.editor.databinding.CanvasModel;
-import oriedita.editor.databinding.FoldedFigureModel;
-import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
-import oriedita.editor.drawing.tools.Camera;
-import oriedita.editor.folded_figure.FoldedFigure_01;
-import oriedita.editor.save.Save;
-import oriedita.editor.swing.component.BulletinBoard;
-import oriedita.editor.task.FoldingEstimateTask;
-import oriedita.editor.task.TwoColoredTask;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
-import origami.crease_pattern.element.Point;
 import origami.folding.FoldedFigure;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import javax.swing.*;
+public interface FoldingService {
+    void folding_estimated(FoldedFigure_Drawer selectedFigure) throws InterruptedException, FoldingException;
 
-@Singleton
-public class FoldingService {
-    private final BulletinBoard bulletinBoard;
-    private final CanvasModel canvasModel;
-    private final JFrame frame;
-    private final Camera creasePatternCamera;
-    private final CreasePattern_Worker backupCreasePatternWorker;
-    private final SingleTaskExecutorService foldingExecutor;
-    private final ApplicationModel applicationModel;
-    private final FoldedFigureModel foldedFigureModel;
-    private final CreasePattern_Worker mainCreasePatternWorker;
-    private final FoldedFiguresList foldedFiguresList;
-    private LineSegmentSet lastFold;
-    public LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    void fold(FoldedFigure.EstimationOrder estimationOrder);
 
-    @Inject
-    public FoldingService(BulletinBoard bulletinBoard,
-                          CanvasModel canvasModel,
-                          @Named("mainFrame") JFrame frame,
-                          @Named("creasePatternCamera") Camera creasePatternCamera,
-                          @Named("backupCreasePattern_Worker") CreasePattern_Worker backupCreasePatternWorker,
-                          @Named("foldingExecutor") SingleTaskExecutorService foldingExecutor,
-                          ApplicationModel applicationModel,
-                          FoldedFigureModel foldedFigureModel,
-                          CreasePattern_Worker mainCreasePatternWorker,
-                          FoldedFiguresList foldedFiguresList) {
-        this.bulletinBoard = bulletinBoard;
-        this.canvasModel = canvasModel;
-        this.frame = frame;
-        this.creasePatternCamera = creasePatternCamera;
-        this.backupCreasePatternWorker = backupCreasePatternWorker;
-        this.foldingExecutor = foldingExecutor;
-        this.applicationModel = applicationModel;
-        this.foldedFigureModel = foldedFigureModel;
+    FoldType getFoldType();
 
-        this.mainCreasePatternWorker = mainCreasePatternWorker;
-        this.foldedFiguresList = foldedFiguresList;
-    }
+    FoldedFigure_Drawer initFoldedFigure();
 
-    public void folding_estimated(FoldedFigure_Drawer selectedFigure) throws InterruptedException, FoldingException {
-        selectedFigure.folding_estimated(creasePatternCamera, lineSegmentsForFolding);
-    }
+    void createTwoColoredCp();
 
-    public void fold(FoldedFigure.EstimationOrder estimationOrder) {
-        fold(getFoldType(), estimationOrder);
-    }
+    void foldAnother(FoldedFigure_Drawer selectedItem);
 
-    public void fold(FoldType foldType, FoldedFigure.EstimationOrder estimationOrder) {
-        if (foldType == FoldType.FOR_ALL_CONNECTED_LINES_1) {
-            Point cameraPos = this.mainCreasePatternWorker.getCameraPosition();
-            mainCreasePatternWorker.selectConnected(this.mainCreasePatternWorker.foldLineSet.closestPoint(cameraPos));
-            LineSegmentSet newFold = mainCreasePatternWorker.getForSelectFolding();
-            if (foldedFiguresList.getSelectedItem() != null && newFold.contentEquals(lastFold)) {
-                Logger.info("CP didnt change, refolding using constraints and starting face");
-                FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
-                if (selectedFigure != null) {
-                    selectedFigure.foldedFigure.estimationOrder = estimationOrder;
-                    selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_0;
-                    foldingExecutor.executeTask(new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel, lineSegmentsForFolding, selectedFigure, estimationOrder));
-                }
-                return;
-            }
-            lastFold = newFold;
-            // replace currently selected model if not using selection to fold
-            foldedFiguresList.removeElement(foldedFiguresList.getSelectedItem());
-        }
+    LineSegmentSet getLineSegmentsForFolding();
 
-        if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
-            CreasePattern_Worker creasePatternWorker2 = backupCreasePatternWorker;
-            Save save = Save.createInstance();
-            mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
-            creasePatternWorker2.setSave_for_reading(save);
-            creasePatternWorker2.point_removal();
-            creasePatternWorker2.overlapping_line_removal();
-            creasePatternWorker2.branch_trim();
-            creasePatternWorker2.organizeCircles();
-            lineSegmentsForFolding = creasePatternWorker2.getForFolding();
-        } else {
-            lineSegmentsForFolding = mainCreasePatternWorker.getForSelectFolding();
-        }
-
-        //これより前のOZは古いOZ
-        FoldedFigure_Drawer selectedFigure = initFoldedFigure();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
-        //これより後のOZは新しいOZに変わる
-
-        foldingExecutor.executeTask(new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel, lineSegmentsForFolding, selectedFigure, estimationOrder));
-    }
-
-    public FoldType getFoldType() {
-        //= 0 Do nothing, = 1 Folding estimation for all fold lines in the normal development view, = 2 for fold estimation for selected fold lines, = 3 for changing the folding state
-        int foldLineTotalForSelectFolding = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
-        Logger.info("foldedFigures.size() = " + foldedFiguresList.getSize() + "    : foldedFigureIndex = " + foldedFiguresList.getIndexOf(foldedFiguresList.getSelectedItem()) + "    : mainDrawingWorker.get_orisensuu_for_select_oritatami() = " + foldLineTotalForSelectFolding);
-        if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
-            return FoldType.FOR_ALL_CONNECTED_LINES_1;//全展開図で折畳み
-        } else {        //折り線選択有り
-            return FoldType.FOR_SELECTED_LINES_2;//選択された展開図で折畳み
-        }
-    }
-
-    public FoldedFigure_Drawer initFoldedFigure() {//Add one new folding diagram to the foldedFigures array list, specify it as the operation target, and inherit the foldedFigures (0) common parameters.
-        Logger.info(" oritatami_jyunbi 20180107");
-
-        FoldedFigure_Drawer newFoldedFigure = new FoldedFigure_Drawer(new FoldedFigure_01(bulletinBoard));
-
-        foldedFiguresList.addElement(newFoldedFigure);
-        foldedFiguresList.setSelectedItem(newFoldedFigure);
-
-        newFoldedFigure.getData(foldedFigureModel);
-
-        return newFoldedFigure;
-    }
-
-    public void createTwoColoredCp() {
-        lineSegmentsForFolding = mainCreasePatternWorker.getForSelectFolding();
-
-        if (mainCreasePatternWorker.getFoldLineTotalForSelectFolding() == 0) {        //折り線選択無し
-            twoColorNoSelectedPolygonalLineWarning();//Warning: There is no selected polygonal line
-
-
-        } else if (mainCreasePatternWorker.getFoldLineTotalForSelectFolding() > 0) {
-            foldingExecutor.executeTask(new TwoColoredTask(bulletinBoard, creasePatternCamera, this, canvasModel));
-        }
-
-        mainCreasePatternWorker.unselect_all();
-    }
-
-    public void twoColorNoSelectedPolygonalLineWarning() {
-        JLabel label = new JLabel(
-                "<html>２色塗りわけ展開図を描くためには、あらかじめ対象範囲を選択してください（selectボタンを使う）。<br>" +
-                        "To get 2-Colored crease pattern, select the target range in advance (use the select button).<html>");
-        // TODO fix owner
-        JOptionPane.showMessageDialog(frame, label);
-    }
-
-    public void foldAnother(FoldedFigure_Drawer selectedItem) {
-        foldingExecutor.executeTask(new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel, lineSegmentsForFolding, selectedItem, FoldedFigure.EstimationOrder.ORDER_6));
-    }
-
-    public enum FoldType {
+    enum FoldType {
         FOR_ALL_CONNECTED_LINES_1,
         FOR_SELECTED_LINES_2
     }

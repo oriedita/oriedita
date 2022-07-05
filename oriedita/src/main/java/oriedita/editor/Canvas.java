@@ -9,7 +9,7 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Background_camera;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.service.FoldedFigureCanvasSelectService;
-import oriedita.editor.service.SingleTaskExecutorService;
+import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.swing.component.BulletinBoard;
 import oriedita.editor.swing.component.TextEditingArea;
 import origami.crease_pattern.element.Point;
@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Singleton
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 
-    private final SingleTaskExecutorService foldingExecutor;
+    private final TaskExecutorService foldingExecutor;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FoldedFiguresList foldedFiguresList;
     private final BackgroundModel backgroundModel;
@@ -98,7 +98,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     @Inject
     public Canvas(@Named("creasePatternCamera") Camera creasePatternCamera,
                   @Named("mainFrame") JFrame frame,
-                  @Named("foldingExecutor") SingleTaskExecutorService foldingExecutor,
+                  @Named("foldingExecutor") TaskExecutorService foldingExecutor,
                   CreasePattern_Worker mainCreasePatternWorker,
                   FoldedFiguresList foldedFiguresList,
                   BackgroundModel backgroundModel,

@@ -1,8 +1,9 @@
-package oriedita.editor.service;
+package oriedita.editor.service.impl;
 
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.service.ResetService;
 
 import javax.inject.Inject;
 import javax.inject.Named;

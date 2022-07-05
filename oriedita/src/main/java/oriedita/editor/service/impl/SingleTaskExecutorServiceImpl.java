@@ -1,26 +1,27 @@
-package oriedita.editor.service;
+package oriedita.editor.service.impl;
 
+import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.task.OrieditaTask;
 
 import javax.inject.Singleton;
 import java.util.concurrent.*;
 
 @Singleton
-public class SingleTaskExecutorService {
+public class SingleTaskExecutorServiceImpl implements TaskExecutorService {
     private final ExecutorService pool;
     private static Future<?> currentTask = CompletableFuture.completedFuture(null);
 
     private static String taskName = "";
 
-    public SingleTaskExecutorService() {
+    public SingleTaskExecutorServiceImpl() {
         pool = Executors.newFixedThreadPool(1);
     }
 
-    public String getTaskName() {
+    @Override public String getTaskName() {
         return taskName;
     }
 
-    public void executeTask(OrieditaTask task) {
+    @Override public void executeTask(OrieditaTask task) {
         stopTask();
 
         taskName = task.getName();
@@ -28,17 +29,17 @@ public class SingleTaskExecutorService {
         currentTask = pool.submit(task);
     }
 
-    public boolean isTaskRunning() {
+    @Override public boolean isTaskRunning() {
         return !currentTask.isDone();
     }
 
-    public void stopTask() {
+    @Override public void stopTask() {
         if (isTaskRunning()) {
             currentTask.cancel(true);
         }
     }
 
-    public void join() throws ExecutionException, InterruptedException, TimeoutException {
+    @Override public void join() throws ExecutionException, InterruptedException, TimeoutException {
         currentTask.get(10, TimeUnit.SECONDS);
     }
 }

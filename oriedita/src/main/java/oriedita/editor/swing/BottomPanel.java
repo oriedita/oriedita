@@ -13,7 +13,7 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.FoldingService;
-import oriedita.editor.service.SingleTaskExecutorService;
+import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.swing.component.*;
 import oriedita.editor.task.FoldingEstimateSave100Task;
 import oriedita.editor.task.FoldingEstimateSpecificTask;
@@ -62,8 +62,8 @@ public class BottomPanel {
 
     @Inject
     public BottomPanel(@Named("mainFrame") JFrame frame,
-                       @Named("camvExecutor") SingleTaskExecutorService camvTaskExecutor,
-                       @Named("foldingExecutor") SingleTaskExecutorService foldingTaskExecutor,
+                       @Named("camvExecutor") TaskExecutorService camvTaskExecutor,
+                       @Named("foldingExecutor") TaskExecutorService foldingTaskExecutor,
                        ButtonService buttonService,
                        MeasuresModel measuresModel,
                        CanvasModel canvasModel,

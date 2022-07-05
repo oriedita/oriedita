@@ -2,7 +2,8 @@ package oriedita.editor.factory;
 
 import dagger.Module;
 import dagger.Provides;
-import oriedita.editor.service.SingleTaskExecutorService;
+import oriedita.editor.service.TaskExecutorService;
+import oriedita.editor.service.impl.SingleTaskExecutorServiceImpl;
 
 import javax.inject.Named;
 
@@ -10,13 +11,13 @@ import javax.inject.Named;
 public class TaskFactory {
     @Named("camvExecutor")
     @Provides
-    SingleTaskExecutorService camvTaskExecutorService() {
-        return new SingleTaskExecutorService();
+    TaskExecutorService camvTaskExecutorService() {
+        return new SingleTaskExecutorServiceImpl();
     }
 
     @Named("foldingExecutor")
     @Provides
-    SingleTaskExecutorService foldingTaskExecutorService() {
-        return new SingleTaskExecutorService();
+    TaskExecutorService foldingTaskExecutorService() {
+        return new SingleTaskExecutorServiceImpl();
     }
 }

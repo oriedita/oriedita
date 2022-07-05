@@ -2,14 +2,15 @@ package oriedita.editor.task;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import oriedita.editor.service.SingleTaskExecutorService;
+import oriedita.editor.service.TaskExecutorService;
+import oriedita.editor.service.impl.SingleTaskExecutorServiceImpl;
 
 import java.util.concurrent.CountDownLatch;
 
 public class TaskExecutorTest {
     @Test
     public void testTaskExecutorSuccess() throws Exception {
-        SingleTaskExecutorService executorService = new SingleTaskExecutorService();
+        TaskExecutorService executorService = new SingleTaskExecutorServiceImpl();
 
         CountDownLatch latch1 = new CountDownLatch(1);
 
@@ -29,7 +30,7 @@ public class TaskExecutorTest {
 
     @Test
     public void testTaskExecutor() throws Exception {
-        SingleTaskExecutorService executorService = new SingleTaskExecutorService();
+        TaskExecutorService executorService = new SingleTaskExecutorServiceImpl();
 
         CountDownLatch latch1 = new CountDownLatch(1);
 

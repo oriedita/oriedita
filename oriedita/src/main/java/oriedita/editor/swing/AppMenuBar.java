@@ -13,7 +13,7 @@ import oriedita.editor.save.Save;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
-import oriedita.editor.service.SingleTaskExecutorService;
+import oriedita.editor.service.TaskExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 @Singleton
 public class AppMenuBar extends JMenuBar {
     private final JFrame frame;
-    private final SingleTaskExecutorService foldingExecutor;
+    private final TaskExecutorService foldingExecutor;
     private final FileSaveService fileSaveService;
     private final FileModel fileModel;
     private JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
@@ -74,7 +74,7 @@ public class AppMenuBar extends JMenuBar {
 
     @Inject
     public AppMenuBar(@Named("mainFrame") JFrame frame,
-                      @Named("foldingExecutor") SingleTaskExecutorService foldingExecutor,
+                      @Named("foldingExecutor") TaskExecutorService foldingExecutor,
                       ApplicationModel applicationModel,
                       FileSaveService fileSaveService,
                       ButtonService buttonService,
